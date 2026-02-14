@@ -607,6 +607,14 @@ class CanvasEngine {
         // 컨텍스트 메뉴 제어
         this.canvas.addEventListener('contextmenu', (e) => {
             e.preventDefault();
+
+            // 선택된 엣지가 있으면 엣지 컨텍스트 메뉴 표시
+            if (this.selectedEdge) {
+                this.showEdgeContextMenu(e.clientX, e.clientY);
+                return;
+            }
+
+            // 아니면 노드 컨텍스트 메뉴
             const worldPos = this.screenToWorld(e.offsetX, e.offsetY);
             const clickedNode = this.getNodeAt(worldPos.x, worldPos.y);
 
@@ -1068,6 +1076,167 @@ class CanvasEngine {
         }, 100);
     }
 
+    /**
+     * 선택된 엣지에 대한 컨텍스트 메뉴 표시
+     * @param {number} x - 화면 X 좌표
+     * @param {number} y - 화면 Y 좌표
+     */
+    showEdgeContextMenu(x, y) {
+        // 기존 메뉴 제거
+        const existingMenu = document.getElementById('edge-context-menu');
+        if (existingMenu) existingMenu.remove();
+
+        const menu = document.createElement('div');
+        menu.id = 'edge-context-menu';
+        menu.style.position = 'fixed';
+        menu.style.left = `${x}px`;
+        menu.style.top = `${y}px`;
+        menu.style.background = '#3c3836';
+        menu.style.border = '2px solid #fabd2f';
+        menu.style.borderRadius = '8px';
+        menu.style.padding = '8px';
+        menu.style.zIndex = '10000';
+        menu.style.fontFamily = 'Inter, sans-serif';
+        menu.style.fontSize = '12px';
+        menu.style.color = '#ebdbb2';
+        menu.style.boxShadow = '0 4px 12px rgba(0,0,0,0.5)';
+
+        // Change Type 옵션
+        const changeType = document.createElement('div');
+        changeType.textContent = '🔄 Change Type';
+        changeType.style.padding = '6px 12px';
+        changeType.style.cursor = 'pointer';
+        changeType.style.borderRadius = '4px';
+        changeType.style.transition = 'background 0.2s';
+        changeType.onmouseenter = () => changeType.style.background = '#504945';
+        changeType.onmouseleave = () => changeType.style.background = 'transparent';
+        changeType.onclick = () => {
+            menu.remove();
+            this.showEdgeTypeChangeMenu(x, y);
+        };
+        menu.appendChild(changeType);
+
+        // Delete 옵션
+        const deleteOption = document.createElement('div');
+        deleteOption.textContent = '❌ Delete';
+        deleteOption.style.padding = '6px 12px';
+        deleteOption.style.cursor = 'pointer';
+        deleteOption.style.borderRadius = '4px';
+        deleteOption.style.borderTop = '1px solid #665c54';
+        deleteOption.style.marginTop = '4px';
+        deleteOption.style.paddingTop = '8px';
+        deleteOption.style.transition = 'background 0.2s';
+        deleteOption.onmouseenter = () => deleteOption.style.background = '#504945';
+        deleteOption.onmouseleave = () => deleteOption.style.background = 'transparent';
+        deleteOption.onclick = () => {
+            menu.remove();
+            this.deleteEdge(this.selectedEdge.id);
+        };
+        menu.appendChild(deleteOption);
+
+        document.body.appendChild(menu);
+
+        // 외부 클릭 시 메뉴 닫기
+        setTimeout(() => {
+            const closeMenu = (e) => {
+                if (!menu.contains(e.target)) {
+                    menu.remove();
+                    document.removeEventListener('click', closeMenu);
+                }
+            };
+            document.addEventListener('click', closeMenu);
+        }, 100);
+    }
+
+    /**
+     * 엣지 타입 변경 메뉴 표시
+     * @param {number} x - 화면 X 좌표
+     * @param {number} y - 화면 Y 좌표
+     */
+    showEdgeTypeChangeMenu(x, y) {
+        // 기존 메뉴 제거
+        const existingMenu = document.getElementById('edge-type-change-menu');
+        if (existingMenu) existingMenu.remove();
+
+        const menu = document.createElement('div');
+        menu.id = 'edge-type-change-menu';
+        menu.style.position = 'fixed';
+        menu.style.left = `${x}px`;
+        menu.style.top = `${y}px`;
+        menu.style.background = '#3c3836';
+        menu.style.border = '2px solid #fabd2f';
+        menu.style.borderRadius = '8px';
+        menu.style.padding = '8px';
+        menu.style.zIndex = '10000';
+        menu.style.fontFamily = 'Inter, sans-serif';
+        menu.style.fontSize = '12px';
+        menu.style.color = '#ebdbb2';
+        menu.style.boxShadow = '0 4px 12px rgba(0,0,0,0.5)';
+
+        const types = [
+            { label: '🔗 Dependency', type: 'dependency', color: '#83a598' },
+            { label: '📞 Call', type: 'call', color: '#b8bb26' },
+            { label: '📊 Data Flow', type: 'data_flow', color: '#fabd2f' },
+            { label: '↔️ Bidirectional', type: 'bidirectional', color: '#d3869b' }
+        ];
+
+        types.forEach(t => {
+            const item = document.createElement('div');
+            item.textContent = t.label;
+            item.style.padding = '6px 12px';
+            item.style.cursor = 'pointer';
+            item.style.borderRadius = '4px';
+            item.style.transition = 'background 0.2s';
+
+            // 현재 타입 강조
+            if (this.selectedEdge && this.selectedEdge.type === t.type) {
+                item.style.background = '#504945';
+                item.textContent += ' ✓';
+            }
+
+            item.onmouseenter = () => item.style.background = '#504945';
+            item.onmouseleave = () => {
+                if (this.selectedEdge && this.selectedEdge.type === t.type) {
+                    item.style.background = '#504945';
+                } else {
+                    item.style.background = 'transparent';
+                }
+            };
+            item.onclick = () => {
+                this.changeEdgeType(t.type, t.color);
+                menu.remove();
+            };
+            menu.appendChild(item);
+        });
+
+        // 취소 버튼
+        const cancel = document.createElement('div');
+        cancel.textContent = '❌ Cancel';
+        cancel.style.padding = '6px 12px';
+        cancel.style.cursor = 'pointer';
+        cancel.style.borderTop = '1px solid #665c54';
+        cancel.style.marginTop = '4px';
+        cancel.style.paddingTop = '8px';
+        cancel.style.borderRadius = '4px';
+        cancel.onmouseenter = () => cancel.style.background = '#504945';
+        cancel.onmouseleave = () => cancel.style.background = 'transparent';
+        cancel.onclick = () => menu.remove();
+        menu.appendChild(cancel);
+
+        document.body.appendChild(menu);
+
+        // 외부 클릭 시 메뉴 닫기
+        setTimeout(() => {
+            const closeMenu = (e) => {
+                if (!menu.contains(e.target)) {
+                    menu.remove();
+                    document.removeEventListener('click', closeMenu);
+                }
+            };
+            document.addEventListener('click', closeMenu);
+        }, 100);
+    }
+
     createManualEdge(type, color) {
         if (!this.edgeSource || !this.edgeTarget) return;
 
@@ -1419,6 +1588,43 @@ class CanvasEngine {
         }
 
         console.log('[SYNAPSE] Edge deleted:', edgeId);
+        this.render();
+    }
+
+    /**
+     * 엣지 타입 변경
+     * @param {string} newType - 새로운 엣지 타입
+     * @param {string} newColor - 새로운 엣지 색상
+     */
+    changeEdgeType(newType, newColor) {
+        if (!this.selectedEdge) {
+            console.warn('[SYNAPSE] No edge selected');
+            return;
+        }
+
+        const edge = this.selectedEdge;
+        const oldType = edge.type;
+
+        // 로컬 상태 업데이트
+        edge.type = newType;
+        edge.label = newType.replace('_', ' ');
+        if (!edge.visual) edge.visual = {};
+        edge.visual.color = newColor;
+
+        // 백엔드에 업데이트 메시지 전송
+        if (typeof vscode !== 'undefined') {
+            vscode.postMessage({
+                command: 'updateEdge',
+                edgeId: edge.id,
+                updates: {
+                    type: newType,
+                    label: edge.label,
+                    visual: edge.visual
+                }
+            });
+        }
+
+        console.log(`[SYNAPSE] Edge type changed: ${oldType} → ${newType}`);
         this.render();
     }
 

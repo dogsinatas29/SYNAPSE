@@ -11,45 +11,7 @@
     "zoom_level": 1
   },
   "clusters": [],
-  "edges": [
-    {
-      "from": "node_1",
-      "id": "edge_manual_1771080416216",
-      "label": "bidirectional",
-      "to": "node_2",
-      "type": "bidirectional",
-      "visual": {
-        "color": "#d3869b"
-      }
-    },
-    {
-      "from": "node_0",
-      "id": "edge_manual_1771080440129",
-      "label": "data flow",
-      "to": "node_2",
-      "type": "data_flow",
-      "visual": {
-        "color": "#fabd2f"
-      }
-    },
-    {
-      "from": "node_1",
-      "id": "edge_manual_1771080791001",
-      "label": "bidirectional",
-      "to": "node_0",
-      "type": "bidirectional",
-      "visual": {
-        "color": "#d3869b"
-      }
-    },
-    {
-      "from": "node_0",
-      "id": "edge_auto_1771081130126_229",
-      "label": "ref",
-      "to": "node_1",
-      "type": "dependency"
-    }
-  ],
+  "edges": [],
   "gemini_md_path": "/home/dogsinatas/TypeScript_project/antigravity-extension-vis/GEMINI.md",
   "nodes": [
     {

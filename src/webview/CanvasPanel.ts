@@ -93,6 +93,9 @@ export class CanvasPanel {
                     case 'deleteEdge':
                         await this.handleDeleteEdge(message.edgeId);
                         return;
+                    case 'updateEdge':
+                        await this.handleUpdateEdge(message.edgeId, message.updates);
+                        return;
                 }
             },
             null,
@@ -278,6 +281,41 @@ export class CanvasPanel {
         } catch (error) {
             console.error('Failed to delete edge:', error);
             vscode.window.showErrorMessage(`Failed to delete edge: ${error}`);
+        }
+    }
+
+    private async handleUpdateEdge(edgeId: string, updates: any) {
+        const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+        if (!workspaceFolder) return;
+
+        try {
+            const projectStateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'project_state.json');
+            const data = await vscode.workspace.fs.readFile(projectStateUri);
+            const projectState = JSON.parse(data.toString());
+
+            // 엣지 찾기
+            if (!projectState.edges) projectState.edges = [];
+            const edge = projectState.edges.find((e: any) => e.id === edgeId);
+
+            if (!edge) {
+                console.warn('[SYNAPSE] Edge not found in project state:', edgeId);
+                return;
+            }
+
+            // 엣지 업데이트
+            Object.assign(edge, updates);
+
+            // 저장 (정규화 적용)
+            const normalizedJson = this.normalizeProjectState(projectState);
+            await vscode.workspace.fs.writeFile(projectStateUri, Buffer.from(normalizedJson, 'utf8'));
+            console.log('[SYNAPSE] Edge updated:', edge);
+            vscode.window.showInformationMessage(`Edge updated: ${edge.type}`);
+
+            // 캔버스 새로고침
+            await this.sendProjectState();
+        } catch (error) {
+            console.error('Failed to update edge:', error);
+            vscode.window.showErrorMessage(`Failed to update edge: ${error}`);
         }
     }
 

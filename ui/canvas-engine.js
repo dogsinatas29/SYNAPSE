@@ -1581,6 +1581,44 @@ class CanvasEngine {
         }
     }
 
+    /**
+     * 엣지 타입별 시각적 스타일 반환
+     * @param {Object} edge - 엣지 객체
+     * @returns {Object} { color, dashPattern, lineWidth, arrowStyle }
+     */
+    getEdgeStyle(edge) {
+        const type = edge.type || 'dependency';
+
+        const styles = {
+            'dependency': {
+                color: '#83a598',      // 파란색
+                dashPattern: [5, 5],   // 점선
+                lineWidth: 1.5,
+                arrowStyle: 'standard' // 표준 화살표
+            },
+            'call': {
+                color: '#b8bb26',      // 녹색
+                dashPattern: null,     // 실선
+                lineWidth: 1.5,
+                arrowStyle: 'standard'
+            },
+            'data_flow': {
+                color: '#fabd2f',      // 노란색
+                dashPattern: [10, 5],  // 긴 대시
+                lineWidth: 2.0,        // 약간 굵게
+                arrowStyle: 'thick'    // 굵은 화살표
+            },
+            'bidirectional': {
+                color: '#d3869b',      // 보라색
+                dashPattern: null,     // 실선
+                lineWidth: 1.5,
+                arrowStyle: 'double'   // 양방향 화살표
+            }
+        };
+
+        return styles[type] || styles['dependency'];
+    }
+
     renderEdge(edge) {
         const fromNode = this.nodes.find(n => n.id === edge.from);
         const toNode = this.nodes.find(n => n.id === edge.to);
@@ -1590,31 +1628,39 @@ class CanvasEngine {
         // 🔍 엣지 검증 로직 적용
         const validation = this.validateEdge(edge, fromNode, toNode);
 
+        // 🎨 엣지 타입별 스타일 가져오기
+        const style = this.getEdgeStyle(edge);
+
         const fromX = fromNode.position.x + 60;
         const fromY = fromNode.position.y + 30;
         const toX = toNode.position.x + 60;
         const toY = toNode.position.y + 30;
 
-        // 엣지 스타일 설정 (검증 결과 반영)
-        let edgeColor = validation.color; // 검증된 색상 사용!
-        this.ctx.strokeStyle = edgeColor;
-        this.ctx.lineWidth = validation.valid ? 1.5 : 2.5; // 에러는 더 굵게
+        // 엣지 색상: 검증 에러가 있으면 검증 색상 우선, 없으면 타입별 색상
+        let edgeColor = validation.valid ? style.color : validation.color;
 
-        // 자동 발견된 엣지나 'dependency' 타입은 기본적으로 대시선
-        if (edge.visual?.dashArray) {
-            this.ctx.setLineDash(edge.visual.dashArray.split(',').map(Number));
-        } else if (edge.type === 'dependency' || edge.id.startsWith('edge_auto_')) {
-            this.ctx.setLineDash([5, 5]);
-            // 검증 색상 유지 (덮어쓰지 않음)
-        } else if (!validation.valid) {
-            // 에러인 경우 점선으로 표시
+        // 선 굵기: 검증 에러는 더 굵게, 아니면 타입별 굵기
+        let lineWidth = validation.valid ? style.lineWidth : 2.5;
+
+        this.ctx.strokeStyle = edgeColor;
+        this.ctx.lineWidth = lineWidth;
+
+        // 대시 패턴 적용
+        if (!validation.valid) {
+            // 에러인 경우 짧은 점선
             this.ctx.setLineDash([3, 3]);
+        } else if (style.dashPattern) {
+            // 타입별 대시 패턴
+            this.ctx.setLineDash(style.dashPattern);
+        } else {
+            // 실선
+            this.ctx.setLineDash([]);
         }
 
+        // 곡선 그리기
         this.ctx.beginPath();
         this.ctx.moveTo(fromX, fromY);
 
-        // 곡선 화살표
         const cpX = (fromX + toX) / 2;
         const cpY = (fromY + toY) / 2 - 30;
         this.ctx.quadraticCurveTo(cpX, cpY, toX, toY);
@@ -1622,23 +1668,15 @@ class CanvasEngine {
         this.ctx.stroke();
         this.ctx.setLineDash([]);
 
-        // 화살표 머리
+        // 화살표 렌더링 (타입별 스타일)
         const angle = Math.atan2(toY - cpY, toX - cpX);
-        const arrowSize = 10 / this.transform.zoom;
+        this.renderArrow(toX, toY, angle, edgeColor, style.arrowStyle);
 
-        this.ctx.beginPath();
-        this.ctx.moveTo(toX, toY);
-        this.ctx.lineTo(
-            toX - arrowSize * Math.cos(angle - Math.PI / 6),
-            toY - arrowSize * Math.sin(angle - Math.PI / 6)
-        );
-        this.ctx.lineTo(
-            toX - arrowSize * Math.cos(angle + Math.PI / 6),
-            toY - arrowSize * Math.sin(angle + Math.PI / 6)
-        );
-        this.ctx.closePath();
-        this.ctx.fillStyle = edgeColor; // 검증 색상 사용
-        this.ctx.fill();
+        // Bidirectional인 경우 반대 방향 화살표도 그리기
+        if (style.arrowStyle === 'double') {
+            const startAngle = Math.atan2(fromY - cpY, fromX - cpX);
+            this.renderArrow(fromX, fromY, startAngle, edgeColor, 'standard');
+        }
 
         // 🔍 검증 결과 표시 (에러/경고인 경우 라벨 추가)
         if (!validation.valid || validation.color === '#fabd2f') {
@@ -1668,6 +1706,32 @@ class CanvasEngine {
             this.ctx.fillText(text, midX, midY);
             this.ctx.restore();
         }
+    }
+
+    /**
+     * 화살표 렌더링 (타입별 스타일)
+     * @param {number} x - 화살표 끝점 X
+     * @param {number} y - 화살표 끝점 Y
+     * @param {number} angle - 화살표 각도
+     * @param {string} color - 화살표 색상
+     * @param {string} style - 'standard', 'thick', 'double'
+     */
+    renderArrow(x, y, angle, color, style = 'standard') {
+        const arrowSize = style === 'thick' ? 14 / this.transform.zoom : 10 / this.transform.zoom;
+
+        this.ctx.beginPath();
+        this.ctx.moveTo(x, y);
+        this.ctx.lineTo(
+            x - arrowSize * Math.cos(angle - Math.PI / 6),
+            y - arrowSize * Math.sin(angle - Math.PI / 6)
+        );
+        this.ctx.lineTo(
+            x - arrowSize * Math.cos(angle + Math.PI / 6),
+            y - arrowSize * Math.sin(angle + Math.PI / 6)
+        );
+        this.ctx.closePath();
+        this.ctx.fillStyle = color;
+        this.ctx.fill();
     }
 
     renderConnectionHandles() {

@@ -26,8 +26,19 @@
   ],
   "edges": [
     {
+      "from": "node_1",
+      "id": "edge_manual_1771079295949",
+      "label": "dependency",
+      "to": "node_2",
+      "type": "dependency",
+      "visual": {
+        "color": "#83a598",
+        "dashArray": "5,5"
+      }
+    },
+    {
       "from": "node_0",
-      "id": "edge_auto_1771079115549_221",
+      "id": "edge_auto_1771079296005_854",
       "label": "ref",
       "to": "node_1",
       "type": "dependency"

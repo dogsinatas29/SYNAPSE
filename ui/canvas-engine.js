@@ -1717,9 +1717,9 @@ class CanvasEngine {
      * @param {string} style - 'standard', 'thick', 'double'
      */
     renderArrow(x, y, angle, color, style = 'standard') {
-        // 화살표 크기: 줌 레벨에 따라 적절히 조정 (최소 크기 보장)
-        const baseSize = style === 'thick' ? 14 : 10;
-        const minSize = 8; // 최소 크기
+        // 화살표 크기: 훨씬 크게 설정 (가시성 우선)
+        const baseSize = style === 'thick' ? 20 : 15; // 기본 크기 증가
+        const minSize = 12; // 최소 크기 증가
         const arrowSize = Math.max(minSize, baseSize / Math.sqrt(this.transform.zoom));
 
         this.ctx.beginPath();
@@ -1733,8 +1733,15 @@ class CanvasEngine {
             y - arrowSize * Math.sin(angle + Math.PI / 6)
         );
         this.ctx.closePath();
+
+        // 화살표 채우기
         this.ctx.fillStyle = color;
         this.ctx.fill();
+
+        // 화살표 테두리 (가시성 향상)
+        this.ctx.strokeStyle = '#1d2021'; // 어두운 테두리
+        this.ctx.lineWidth = 1;
+        this.ctx.stroke();
     }
 
     renderConnectionHandles() {

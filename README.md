@@ -1,8 +1,9 @@
-# 🧠 SYNAPSE: Visual Architecture Engine
+# 🧠 SYNAPSE: LLM Logic Visualization Engine
 
-> "보이는 것이 곧 논리다 (WYSIWYG Logic)"
+> **Google Antigravity Extension**  
+> "보이는 것이 곧 LLM의 논리다 (WYSIWYG Logic for AI)"
 
-SYNAPSE는 텍스트 코딩의 장벽을 허물고 물리적 공간과 선으로 시스템을 설계, 구현, 문서화하는 차세대 시각적 아키텍처 제어 엔진입니다.
+SYNAPSE는 **Google Antigravity**를 위해 구축된 차세대 확장 프로그램입니다. LLM(Large Language Model)이 생성하거나 분석한 복잡한 추론 논리를 물리적 공간과 노드-엣지 네트워크로 시각화하여, AI의 사고 과정을 직관적으로 설계, 구현, 문서화할 수 있게 돕습니다.
 
 ## 🚀 Key Features
 

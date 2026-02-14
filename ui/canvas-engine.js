@@ -310,6 +310,7 @@ class CanvasEngine {
         this.nodes = [];
         this.edges = [];
         this.selectedNode = null;
+        this.selectedEdge = null; // 선택된 엣지
         this.baselineNodes = null; // 비교를 위한 기준 데이터
         this.selectedNodes = new Set(); // 다중 선택 노드
         this.clusters = []; // 클러스터 데이터
@@ -402,9 +403,24 @@ class CanvasEngine {
                     return;
                 }
 
-                // 2. 노드 클릭
+                // 2. 엣지 클릭 (노드보다 먼저 체크)
+                const clickedEdge = this.findEdgeAtPoint(worldPos.x, worldPos.y);
+                if (clickedEdge && !e.altKey) {
+                    // 엣지 선택
+                    this.selectedEdge = clickedEdge;
+                    this.selectedNode = null;
+                    this.selectedNodes.clear();
+                    console.log('[SYNAPSE] Edge selected:', clickedEdge.id, clickedEdge.type);
+                    this.render();
+                    return;
+                }
+
+                // 3. 노드 클릭
                 const clickedNode = this.getNodeAt(worldPos.x, worldPos.y);
                 if (clickedNode) {
+                    // 엣지 선택 해제
+                    this.selectedEdge = null;
+
                     // 노드 클릭 (기존 로직)
                     if (e.ctrlKey || e.metaKey || e.shiftKey) {
                         if (this.selectedNodes.has(clickedNode)) {
@@ -422,9 +438,12 @@ class CanvasEngine {
                     }
                     this.isDragging = true;
                 } else {
-                    // 3. 클러스터 배경 클릭 확인
+                    // 4. 클러스터 배경 클릭 확인
                     const clickedCluster = this.getClusterAt(worldPos.x, worldPos.y);
                     if (clickedCluster) {
+                        // 엣지 선택 해제
+                        this.selectedEdge = null;
+
                         const clusterNodes = this.nodes.filter(n => n.cluster_id === clickedCluster.id);
                         if (clusterNodes.length > 0) {
                             if (!(e.ctrlKey || e.metaKey || e.shiftKey)) {
@@ -436,7 +455,8 @@ class CanvasEngine {
                             console.log('[SYNAPSE] Dragged cluster:', clickedCluster.label);
                         }
                     } else {
-                        // 4. 빈 공간 클릭 -> 선택 영역 시작
+                        // 5. 빈 공간 클릭 -> 선택 영역 시작 & 엣지 선택 해제
+                        this.selectedEdge = null;
                         this.isSelecting = true;
                         this.selectionRect = { x: e.offsetX, y: e.offsetY, width: 0, height: 0 };
 
@@ -1665,6 +1685,113 @@ class CanvasEngine {
         return { x: centerX, y: centerY };
     }
 
+    /**
+     * 점이 화살표 근처에 있는지 확인
+     * @param {number} px - 클릭 포인트 X
+     * @param {number} py - 클릭 포인트 Y
+     * @param {number} arrowX - 화살표 X
+     * @param {number} arrowY - 화살표 Y
+     * @param {number} threshold - 거리 임계값 (기본 20px)
+     * @returns {boolean}
+     */
+    isPointNearArrow(px, py, arrowX, arrowY, threshold = 20) {
+        const dx = px - arrowX;
+        const dy = py - arrowY;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        return distance <= threshold;
+    }
+
+    /**
+     * 점이 베지어 곡선 근처에 있는지 확인
+     * @param {number} px - 클릭 포인트 X
+     * @param {number} py - 클릭 포인트 Y
+     * @param {Object} edge - 엣지 객체
+     * @param {number} threshold - 거리 임계값 (기본 10px)
+     * @returns {boolean}
+     */
+    isPointNearCurve(px, py, edge, threshold = 10) {
+        const fromNode = this.nodes.find(n => n.id === edge.from);
+        const toNode = this.nodes.find(n => n.id === edge.to);
+
+        if (!fromNode || !toNode) return false;
+
+        const fromX = fromNode.position.x + 60;
+        const fromY = fromNode.position.y + 30;
+        const toX = toNode.position.x + 60;
+        const toY = toNode.position.y + 30;
+        const cpX = (fromX + toX) / 2;
+        const cpY = (fromY + toY) / 2 - 30;
+
+        // 베지어 곡선 상의 여러 점을 샘플링하여 최소 거리 계산
+        let minDistance = Infinity;
+        for (let t = 0; t <= 1; t += 0.05) {
+            const x = (1 - t) * (1 - t) * fromX + 2 * (1 - t) * t * cpX + t * t * toX;
+            const y = (1 - t) * (1 - t) * fromY + 2 * (1 - t) * t * cpY + t * t * toY;
+            const dx = px - x;
+            const dy = py - y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            minDistance = Math.min(minDistance, distance);
+        }
+
+        return minDistance <= threshold;
+    }
+
+    /**
+     * 클릭 위치에서 엣지 찾기 (화살표 우선, 그 다음 곡선)
+     * @param {number} px - 클릭 포인트 X
+     * @param {number} py - 클릭 포인트 Y
+     * @returns {Object|null} 찾은 엣지 또는 null
+     */
+    findEdgeAtPoint(px, py) {
+        // 1단계: 화살표 클릭 확인 (우선순위!)
+        for (const edge of this.edges) {
+            const fromNode = this.nodes.find(n => n.id === edge.from);
+            const toNode = this.nodes.find(n => n.id === edge.to);
+
+            if (!fromNode || !toNode) continue;
+
+            const fromX = fromNode.position.x + 60;
+            const fromY = fromNode.position.y + 30;
+            const toX = toNode.position.x + 60;
+            const toY = toNode.position.y + 30;
+            const cpX = (fromX + toX) / 2;
+            const cpY = (fromY + toY) / 2 - 30;
+
+            // 중앙 화살표 체크
+            const midX = (fromX + toX) / 2;
+            const midY = (fromY + toY) / 2 - 30;
+            if (this.isPointNearArrow(px, py, midX, midY, 20)) {
+                return edge;
+            }
+
+            // 끝점 화살표 체크
+            const angle = Math.atan2(toY - cpY, toX - cpX);
+            const arrowPoint = this.getNodeBoundaryPoint(toX, toY, angle);
+            if (this.isPointNearArrow(px, py, arrowPoint.x, arrowPoint.y, 20)) {
+                return edge;
+            }
+
+            // Bidirectional인 경우 시작점 화살표도 체크
+            const style = this.getEdgeStyle(edge);
+            if (style.arrowStyle === 'double') {
+                const startAngle = Math.atan2(fromY - cpY, fromX - cpX);
+                const startArrowPoint = this.getNodeBoundaryPoint(fromX, fromY, startAngle);
+                if (this.isPointNearArrow(px, py, startArrowPoint.x, startArrowPoint.y, 20)) {
+                    return edge;
+                }
+            }
+        }
+
+        // 2단계: 곡선 클릭 확인 (대체 방법)
+        for (const edge of this.edges) {
+            if (this.isPointNearCurve(px, py, edge, 10)) {
+                return edge;
+            }
+        }
+
+        return null;
+    }
+
     renderEdge(edge) {
         const fromNode = this.nodes.find(n => n.id === edge.from);
         const toNode = this.nodes.find(n => n.id === edge.to);
@@ -1687,6 +1814,16 @@ class CanvasEngine {
 
         // 선 굵기: 검증 에러는 더 굵게, 아니면 타입별 굵기
         let lineWidth = validation.valid ? style.lineWidth : 2.5;
+
+        // 🌟 선택된 엣지 강조 효과
+        const isSelected = this.selectedEdge && this.selectedEdge.id === edge.id;
+        if (isSelected) {
+            // 글로우 효과
+            this.ctx.shadowBlur = 15;
+            this.ctx.shadowColor = edgeColor;
+            // 더 굵은 선
+            lineWidth += 2;
+        }
 
         this.ctx.strokeStyle = edgeColor;
         this.ctx.lineWidth = lineWidth;
@@ -1713,6 +1850,10 @@ class CanvasEngine {
 
         this.ctx.stroke();
         this.ctx.setLineDash([]);
+
+        // 글로우 효과 리셋
+        this.ctx.shadowBlur = 0;
+        this.ctx.shadowColor = 'transparent';
 
         // 화살표 렌더링 (노드 외곽선 교점 + 엣지 중앙)
         const angle = Math.atan2(toY - cpY, toX - cpX);

@@ -1,0 +1,92 @@
+{
+  "project_name": "antigravity-extension-vis",
+  "gemini_md_path": "/home/dogsinatas/TypeScript_project/antigravity-extension-vis/GEMINI.md",
+  "canvas_state": {
+    "zoom_level": 1,
+    "offset": {
+      "x": 0,
+      "y": 0
+    },
+    "visible_layers": [
+      "source",
+      "documentation"
+    ]
+  },
+  "nodes": [
+    {
+      "id": "node_0",
+      "type": "source",
+      "status": "proposed",
+      "position": {
+        "x": 100,
+        "y": 100
+      },
+      "data": {
+        "file": "login.py",
+        "path": "src/login.py",
+        "directory": "src",
+        "label": "login.py",
+        "description": "login.py 파일",
+        "color": "#b8bb26"
+      },
+      "visual": {
+        "opacity": 0.5,
+        "dashArray": "5,5"
+      },
+      "cluster_id": "cluster_src"
+    },
+    {
+      "id": "node_1",
+      "type": "source",
+      "status": "proposed",
+      "position": {
+        "x": 300,
+        "y": 100
+      },
+      "data": {
+        "file": "board.py",
+        "path": "src/board.py",
+        "directory": "src",
+        "label": "board.py",
+        "description": "board.py 파일",
+        "color": "#b8bb26"
+      },
+      "visual": {
+        "opacity": 0.5,
+        "dashArray": "5,5"
+      },
+      "cluster_id": "cluster_src"
+    },
+    {
+      "id": "node_2",
+      "type": "source",
+      "status": "proposed",
+      "position": {
+        "x": 500,
+        "y": 100
+      },
+      "data": {
+        "file": "schema.sql",
+        "path": "src/schema.sql",
+        "directory": "src",
+        "label": "schema.sql",
+        "description": "schema.sql 파일",
+        "color": "#b8bb26"
+      },
+      "visual": {
+        "opacity": 0.5,
+        "dashArray": "5,5"
+      },
+      "cluster_id": "cluster_src"
+    }
+  ],
+  "edges": [],
+  "clusters": [
+    {
+      "id": "cluster_src",
+      "label": "Source Code",
+      "color": "#b8bb26",
+      "collapsed": false
+    }
+  ]
+}

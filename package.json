@@ -1,0 +1,105 @@
+{
+    "name": "synapse-visual-architecture",
+    "displayName": "SYNAPSE - Visual Architecture Engine",
+    "description": "Visual architecture control engine for code visualization and design",
+    "version": "0.1.0",
+    "publisher": "synapse-team",
+    "engines": {
+        "vscode": "^1.80.0"
+    },
+    "categories": [
+        "Visualization",
+        "Other"
+    ],
+    "activationEvents": [
+        "onCommand:synapse.openCanvas",
+        "onView:synapseExplorer"
+    ],
+    "main": "./dist/extension.js",
+    "contributes": {
+        "commands": [
+            {
+                "command": "synapse.openCanvas",
+                "title": "SYNAPSE: Open Canvas",
+                "icon": "$(graph)"
+            },
+            {
+                "command": "synapse.bootstrap",
+                "title": "SYNAPSE: Bootstrap from GEMINI.md"
+            },
+            {
+                "command": "synapse.fitView",
+                "title": "SYNAPSE: Fit View"
+            }
+        ],
+        "viewsContainers": {
+            "activitybar": [
+                {
+                    "id": "synapse-explorer",
+                    "title": "SYNAPSE",
+                    "icon": "resources/synapse-icon.svg"
+                }
+            ]
+        },
+        "views": {
+            "synapse-explorer": [
+                {
+                    "id": "synapseExplorer",
+                    "name": "Architecture Explorer"
+                }
+            ]
+        },
+        "menus": {
+            "editor/title": [
+                {
+                    "command": "synapse.openCanvas",
+                    "when": "resourceExtname == .md && resourceFilename == GEMINI.md",
+                    "group": "navigation"
+                }
+            ],
+            "explorer/context": [
+                {
+                    "command": "synapse.bootstrap",
+                    "when": "resourceExtname == .md && resourceFilename == GEMINI.md"
+                }
+            ]
+        },
+        "configuration": {
+            "title": "SYNAPSE",
+            "properties": {
+                "synapse.autoBootstrap": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Automatically bootstrap project when GEMINI.md is detected"
+                },
+                "synapse.defaultView": {
+                    "type": "string",
+                    "enum": [
+                        "graph",
+                        "tree",
+                        "flow"
+                    ],
+                    "default": "graph",
+                    "description": "Default view mode when opening canvas"
+                }
+            }
+        }
+    },
+    "scripts": {
+        "vscode:prepublish": "npm run compile",
+        "compile": "tsc -p ./",
+        "watch": "tsc -watch -p ./",
+        "pretest": "npm run compile",
+        "lint": "eslint src --ext ts",
+        "test": "node ./out/test/runTest.js"
+    },
+    "devDependencies": {
+        "@types/node": "^20.10.0",
+        "@types/vscode": "^1.80.0",
+        "@typescript-eslint/eslint-plugin": "^6.0.0",
+        "@typescript-eslint/parser": "^6.0.0",
+        "eslint": "^8.50.0",
+        "typescript": "^5.3.3"
+    },
+    "dependencies": {}
+}

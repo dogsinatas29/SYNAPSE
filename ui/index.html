@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SYNAPSE - Visual Architecture Engine</title>
+    <style>
+        :root {
+            --bg-dark: #1d2021;
+            --bg-panel: #282828;
+            --bg-hover: #3c3836;
+            --fg-main: #ebdbb2;
+            --fg-dim: #a89984;
+            --accent: #b8bb26;
+            --border: #3c3836;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-dark);
+            color: var(--fg-main);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        #header {
+            background: var(--bg-panel);
+            padding: 10px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-weight: bold;
+            font-size: 18px;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Toolbar */
+        #toolbar {
+            background: var(--bg-panel);
+            padding: 8px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .btn-group {
+            display: flex;
+            border-radius: 4px;
+            overflow: hidden;
+            border: 1px solid #504945;
+        }
+
+        .btn {
+            padding: 6px 14px;
+            background: #3c3836;
+            color: var(--fg-main);
+            border: none;
+            border-right: 1px solid #504945;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+
+        .btn:last-child {
+            border-right: none;
+        }
+
+        .btn:hover {
+            background: #504945;
+        }
+
+        .btn.active {
+            background: var(--accent);
+            color: #282828;
+            font-weight: bold;
+        }
+
+        /* Main Container */
+        #main-container {
+            flex: 1;
+            display: flex;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #canvas-container {
+            flex: 1;
+            position: relative;
+            background: #1e1e1e;
+        }
+
+        canvas {
+            display: block;
+        }
+
+        /* Side Panel */
+        #side-panel {
+            position: fixed;
+            right: 0;
+            top: 0;
+            width: 450px;
+            height: 100vh;
+            background: var(--bg-panel);
+            border-left: 1px solid var(--border);
+            display: none;
+            flex-direction: column;
+            box-shadow: -10px 0 25px rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+        }
+
+        #side-panel.visible {
+            display: flex;
+        }
+
+        #side-panel-header {
+            padding: 12px 16px;
+            background: #3c3836;
+            border-bottom: 1px solid #504945;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #side-panel-title {
+            color: var(--fg-main);
+            font-weight: bold;
+            font-size: 14px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        #side-panel-close {
+            background: none;
+            border: none;
+            color: var(--fg-dim);
+            font-size: 20px;
+            cursor: pointer;
+            padding: 0 5px;
+        }
+
+        #side-panel-content {
+            flex: 1;
+            overflow: auto;
+            padding: 0;
+            background: #1d2021;
+        }
+
+        #file-content {
+            margin: 0;
+            padding: 20px;
+            font-family: 'Fira Code', 'Consolas', monospace;
+            font-size: 13px;
+            line-height: 1.5;
+            color: #ebdbb2;
+            white-space: pre;
+        }
+
+        /* Loading Overlay */
+        #loading {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(29, 32, 33, 0.8);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(184, 187, 38, 0.1);
+            border-left-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Status Bar */
+        #status-bar {
+            background: var(--bg-panel);
+            padding: 4px 20px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: var(--fg-dim);
+        }
+
+        .status-item span {
+            margin-right: 15px;
+        }
+
+        strong {
+            color: var(--fg-main);
+        }
+    </style>
+</head>
+
+<body>
+    <div id="header">
+        <div class="logo">🧠 SYNAPSE</div>
+        <div id="project-path" style="font-size: 12px; color: var(--fg-dim);">Loading project...</div>
+    </div>
+
+    <div id="toolbar">
+        <div class="btn-group">
+            <button class="btn active" data-mode="graph">Graph</button>
+            <button class="btn" data-mode="tree">Tree</button>
+            <button class="btn" data-mode="flow">Flow</button>
+        </div>
+        <button class="btn" id="btn-fit">Fit View</button>
+        <button class="btn" id="btn-reset">Reset</button>
+        <div class="toolbar-divider"></div>
+        <button class="btn" id="btn-group" title="Group Selected Nodes">Group</button>
+        <button class="btn" id="btn-ungroup" title="Ungroup Selected Cluster">Ungroup</button>
+        <div class="toolbar-divider"></div>
+        <div style="flex: 1"></div>
+        <button class="btn" id="btn-test" style="background: #458588; color: white;">Test Preview</button>
+    </div>
+
+    <div id="main-container">
+        <div id="canvas-container">
+            <canvas id="canvas"></canvas>
+            <div id="loading">
+                <div class="spinner"></div>
+                <div>프로젝트 분석 중...</div>
+            </div>
+        </div>
+
+        <div id="side-panel">
+            <div id="side-panel-header">
+                <div id="side-panel-title">File Preview</div>
+                <button id="side-panel-close">×</button>
+            </div>
+            <div id="side-panel-content">
+                <pre id="file-content"></pre>
+            </div>
+        </div>
+    </div>
+
+    <div id="status-bar">
+        <div class="status-item">
+            <span>Nodes: <strong id="node-count">0</strong></span>
+            <span class="divider">|</span>
+            <span>Edges: <strong id="edge-count">0</strong></span>
+            <span class="divider">|</span>
+            <span>Selected: <strong id="selected-count">0</strong></span>
+        </div>
+        <div class="status-item">
+            <span>LOD: <strong id="lod-status">NORMAL</strong></span>
+            <span class="divider">|</span>
+            <span>Zoom: <strong id="zoom-level">100%</strong></span>
+            <span class="divider">|</span>
+            <span>Mode: <strong id="current-mode">Graph</strong></span>
+        </div>
+    </div>
+
+    <script>
+        // 전역 파일 미리보기 함수
+        window.showFilePreview = async function (filePath) {
+            console.log('[SYNAPSE] showFilePreview:', filePath);
+            const sidePanel = document.getElementById('side-panel');
+            const sidePanelTitle = document.getElementById('side-panel-title');
+            const fileContent = document.getElementById('file-content');
+
+            if (!sidePanel) return;
+
+            sidePanel.classList.add('visible');
+            sidePanelTitle.textContent = filePath;
+            fileContent.textContent = 'Loading Content...';
+
+            try {
+                // 브라우저에서는 상대 경로로 fetch, VS Code에서는 이미 postMessage가 처리함
+                const normalizedPath = filePath.startsWith('src/') ? filePath : `src/${filePath}`;
+                const response = await fetch(`../${normalizedPath}`);
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const text = await response.text();
+                fileContent.textContent = text;
+            } catch (error) {
+                fileContent.textContent = `Error: ${error.message}\n\n브라우저 환경에서는 파일이 ../src/ 폴더에 존재해야 합니다.`;
+                console.error('[SYNAPSE] Preview error:', error);
+            }
+        };
+
+        // 초기화 및 이벤트 바인딩
+        document.addEventListener('DOMContentLoaded', () => {
+            // 패널 닫기 버튼
+            document.getElementById('side-panel-close').addEventListener('click', () => {
+                document.getElementById('side-panel').classList.remove('visible');
+            });
+
+            // 테스트 버튼
+            document.getElementById('btn-test').addEventListener('click', () => {
+                window.showFilePreview('login.py');
+            });
+        });
+    </script>
+    <script src="canvas-engine.js"></script>
+</body>
+
+</html>

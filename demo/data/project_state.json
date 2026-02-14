@@ -33,13 +33,6 @@
       }
     },
     {
-      "from": "node_0",
-      "id": "edge_auto_1771080770642_278",
-      "label": "ref",
-      "to": "node_1",
-      "type": "dependency"
-    },
-    {
       "from": "node_1",
       "id": "edge_manual_1771080791001",
       "label": "bidirectional",
@@ -48,6 +41,13 @@
       "visual": {
         "color": "#d3869b"
       }
+    },
+    {
+      "from": "node_0",
+      "id": "edge_auto_1771080969235_257",
+      "label": "ref",
+      "to": "node_1",
+      "type": "dependency"
     }
   ],
   "gemini_md_path": "/home/dogsinatas/TypeScript_project/antigravity-extension-vis/GEMINI.md",

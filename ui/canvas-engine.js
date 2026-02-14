@@ -1619,6 +1619,52 @@ class CanvasEngine {
         return styles[type] || styles['dependency'];
     }
 
+    /**
+     * 노드 직사각형과 선분의 교점 계산
+     * @param {number} centerX - 노드 중심 X
+     * @param {number} centerY - 노드 중심 Y
+     * @param {number} angle - 엣지 각도 (라디안)
+     * @returns {Object} {x, y} 교점 좌표
+     */
+    getNodeBoundaryPoint(centerX, centerY, angle) {
+        const nodeWidth = 120;
+        const nodeHeight = 60;
+        const halfWidth = nodeWidth / 2;
+        const halfHeight = nodeHeight / 2;
+
+        // 각도를 기준으로 어느 면과 만나는지 계산
+        const dx = Math.cos(angle);
+        const dy = Math.sin(angle);
+
+        // 각 면과의 교점 계산
+        let intersectX, intersectY;
+
+        // 좌우 면 체크
+        if (Math.abs(dx) > 0.001) {
+            const t = (dx > 0 ? halfWidth : -halfWidth) / dx;
+            const y = t * dy;
+            if (Math.abs(y) <= halfHeight) {
+                intersectX = centerX + (dx > 0 ? halfWidth : -halfWidth);
+                intersectY = centerY + y;
+                return { x: intersectX, y: intersectY };
+            }
+        }
+
+        // 상하 면 체크
+        if (Math.abs(dy) > 0.001) {
+            const t = (dy > 0 ? halfHeight : -halfHeight) / dy;
+            const x = t * dx;
+            if (Math.abs(x) <= halfWidth) {
+                intersectX = centerX + x;
+                intersectY = centerY + (dy > 0 ? halfHeight : -halfHeight);
+                return { x: intersectX, y: intersectY };
+            }
+        }
+
+        // 기본값 (중심)
+        return { x: centerX, y: centerY };
+    }
+
     renderEdge(edge) {
         const fromNode = this.nodes.find(n => n.id === edge.from);
         const toNode = this.nodes.find(n => n.id === edge.to);

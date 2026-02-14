@@ -90,6 +90,9 @@ export class CanvasPanel {
                     case 'createManualEdge':
                         await this.handleCreateManualEdge(message.edge);
                         return;
+                    case 'deleteEdge':
+                        await this.handleDeleteEdge(message.edgeId);
+                        return;
                 }
             },
             null,
@@ -240,6 +243,41 @@ export class CanvasPanel {
         } catch (error) {
             console.error('Failed to create manual edge:', error);
             vscode.window.showErrorMessage(`Failed to create edge: ${error}`);
+        }
+    }
+
+    private async handleDeleteEdge(edgeId: string) {
+        const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+        if (!workspaceFolder) return;
+
+        try {
+            const projectStateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'project_state.json');
+            const data = await vscode.workspace.fs.readFile(projectStateUri);
+            const projectState = JSON.parse(data.toString());
+
+            // 엣지 제거
+            if (!projectState.edges) projectState.edges = [];
+            const edgeIndex = projectState.edges.findIndex((e: any) => e.id === edgeId);
+
+            if (edgeIndex === -1) {
+                console.warn('[SYNAPSE] Edge not found in project state:', edgeId);
+                return;
+            }
+
+            const deletedEdge = projectState.edges[edgeIndex];
+            projectState.edges.splice(edgeIndex, 1);
+
+            // 저장 (정규화 적용)
+            const normalizedJson = this.normalizeProjectState(projectState);
+            await vscode.workspace.fs.writeFile(projectStateUri, Buffer.from(normalizedJson, 'utf8'));
+            console.log('[SYNAPSE] Edge deleted:', deletedEdge);
+            vscode.window.showInformationMessage(`Edge deleted: ${deletedEdge.type}`);
+
+            // 캔버스 새로고침
+            await this.sendProjectState();
+        } catch (error) {
+            console.error('Failed to delete edge:', error);
+            vscode.window.showErrorMessage(`Failed to delete edge: ${error}`);
         }
     }
 

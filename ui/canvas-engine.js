@@ -596,6 +596,14 @@ class CanvasEngine {
             this.canvas.style.cursor = 'default';
         });
 
+        // Delete 키로 선택된 엣지 삭제
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Delete' && this.selectedEdge) {
+                console.log('[SYNAPSE] Deleting edge:', this.selectedEdge.id);
+                this.deleteEdge(this.selectedEdge.id);
+            }
+        });
+
         // 컨텍스트 메뉴 제어
         this.canvas.addEventListener('contextmenu', (e) => {
             e.preventDefault();
@@ -1385,6 +1393,33 @@ class CanvasEngine {
             // 브라우저 환경 (로컬 스토리지 등에 임시 저장 가능)
             console.log('[SYNAPSE] Running in browser - State saved to console (Mock)');
         }
+    }
+
+    /**
+     * 엣지 삭제
+     * @param {string} edgeId - 삭제할 엣지 ID
+     */
+    deleteEdge(edgeId) {
+        // 로컬 상태에서 엣지 제거
+        const edgeIndex = this.edges.findIndex(e => e.id === edgeId);
+        if (edgeIndex === -1) {
+            console.warn('[SYNAPSE] Edge not found:', edgeId);
+            return;
+        }
+
+        this.edges.splice(edgeIndex, 1);
+        this.selectedEdge = null;
+
+        // 백엔드에 삭제 메시지 전송
+        if (typeof vscode !== 'undefined') {
+            vscode.postMessage({
+                command: 'deleteEdge',
+                edgeId: edgeId
+            });
+        }
+
+        console.log('[SYNAPSE] Edge deleted:', edgeId);
+        this.render();
     }
 
     renderGrid() {

@@ -38,7 +38,37 @@
     },
     {
       "from": "node_0",
-      "id": "edge_auto_1771079296005_854",
+      "id": "edge_manual_1771079785110",
+      "label": "call",
+      "to": "node_2",
+      "type": "call",
+      "visual": {
+        "color": "#b8bb26"
+      }
+    },
+    {
+      "from": "node_0",
+      "id": "edge_manual_1771079797190",
+      "label": "data flow",
+      "to": "node_1",
+      "type": "data_flow",
+      "visual": {
+        "color": "#fabd2f"
+      }
+    },
+    {
+      "from": "node_1",
+      "id": "edge_manual_1771079808849",
+      "label": "bidirectional",
+      "to": "node_0",
+      "type": "bidirectional",
+      "visual": {
+        "color": "#d3869b"
+      }
+    },
+    {
+      "from": "node_0",
+      "id": "edge_auto_1771079808916_639",
       "label": "ref",
       "to": "node_1",
       "type": "dependency"

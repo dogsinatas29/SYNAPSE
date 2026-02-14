@@ -1717,7 +1717,10 @@ class CanvasEngine {
      * @param {string} style - 'standard', 'thick', 'double'
      */
     renderArrow(x, y, angle, color, style = 'standard') {
-        const arrowSize = style === 'thick' ? 14 / this.transform.zoom : 10 / this.transform.zoom;
+        // 화살표 크기: 줌 레벨에 따라 적절히 조정 (최소 크기 보장)
+        const baseSize = style === 'thick' ? 14 : 10;
+        const minSize = 8; // 최소 크기
+        const arrowSize = Math.max(minSize, baseSize / Math.sqrt(this.transform.zoom));
 
         this.ctx.beginPath();
         this.ctx.moveTo(x, y);

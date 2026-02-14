@@ -150,7 +150,7 @@ class FlowRenderer {
 class TreeRenderer {
     constructor(engine) {
         this.engine = engine;
-        this.expandedFolders = new Set(['src']); // 기본적으로 src 폴더 열림
+        this.expandedFolders = new Set(['.', 'root', 'src']); // 데모 환경 호환을 위해 '.' 추가
     }
 
     buildTree(nodes) {
@@ -310,6 +310,7 @@ class CanvasEngine {
         this.nodes = [];
         this.edges = [];
         this.selectedNode = null;
+        this.baselineNodes = null; // 비교를 위한 기준 데이터
         this.selectedNodes = new Set(); // 다중 선택 노드
         this.clusters = []; // 클러스터 데이터
 
@@ -340,6 +341,27 @@ class CanvasEngine {
         this.selectionRect = { x: 0, y: 0, width: 0, height: 0 }; // 드래그 선택 영역
         this.wasDragging = false; // 드래그/선택 후 클릭 무시용 플래그
 
+        // 전역 엔진 등록
+        window.engine = this;
+
+        // 파일 열기 통합 핸들러
+        this.handleOpenFile = (filePath) => {
+            if (!filePath) return;
+            console.log('[SYNAPSE] handleOpenFile:', filePath);
+            if (typeof vscode !== 'undefined') {
+                vscode.postMessage({ command: 'openFile', filePath });
+            } else if (typeof window.showFilePreview === 'function') {
+                window.showFilePreview(filePath);
+            }
+        };
+        this.lastMousePos = { x: 0, y: 0 };
+
+        // 엣지 생성 상태
+        this.isCreatingEdge = false;
+        this.edgeSource = null; // { type: 'node'|'cluster', id: string }
+        this.edgeCurrentPos = { x: 0, y: 0 };
+        this.edgeTarget = null; // { type: 'node'|'cluster', id: string }
+
         // 이벤트 리스너 등록
         this.setupEventListeners();
 
@@ -361,14 +383,27 @@ class CanvasEngine {
             this.zoom(delta, e.offsetX, e.offsetY);
         });
 
-        // 마우스 드래그 (팬, 노드 드래그, 선택)
+        // 마우스 드래그 (팬, 노드 드래그, 선택, 엣지 생성)
         this.canvas.addEventListener('mousedown', (e) => {
             const worldPos = this.screenToWorld(e.offsetX, e.offsetY);
-            const clickedNode = this.getNodeAt(worldPos.x, worldPos.y);
             this.dragStart = { x: e.offsetX, y: e.offsetY };
 
             if (e.button === 0) { // 왼쪽 버튼
                 this.wasDragging = false; // mousedown 시 초기화
+
+                // 1. 연결 핸들 체크 (최우선)
+                const handle = this.getConnectionHandleAt(worldPos.x, worldPos.y);
+                if (handle && e.altKey) {
+                    // Alt + 핸들 클릭 = 엣지 생성 모드
+                    this.isCreatingEdge = true;
+                    this.edgeSource = handle;
+                    this.edgeCurrentPos = worldPos;
+                    console.log('[SYNAPSE] Edge creation started from:', handle);
+                    return;
+                }
+
+                // 2. 노드 클릭
+                const clickedNode = this.getNodeAt(worldPos.x, worldPos.y);
                 if (clickedNode) {
                     // 노드 클릭 (기존 로직)
                     if (e.ctrlKey || e.metaKey || e.shiftKey) {
@@ -387,7 +422,7 @@ class CanvasEngine {
                     }
                     this.isDragging = true;
                 } else {
-                    // 노드가 아님 -> 클러스터 배경 클릭 확인
+                    // 3. 클러스터 배경 클릭 확인
                     const clickedCluster = this.getClusterAt(worldPos.x, worldPos.y);
                     if (clickedCluster) {
                         const clusterNodes = this.nodes.filter(n => n.cluster_id === clickedCluster.id);
@@ -401,7 +436,7 @@ class CanvasEngine {
                             console.log('[SYNAPSE] Dragged cluster:', clickedCluster.label);
                         }
                     } else {
-                        // 빈 공간 클릭 -> 선택 영역 시작
+                        // 4. 빈 공간 클릭 -> 선택 영역 시작
                         this.isSelecting = true;
                         this.selectionRect = { x: e.offsetX, y: e.offsetY, width: 0, height: 0 };
 
@@ -412,14 +447,41 @@ class CanvasEngine {
                     }
                 }
             } else if (e.button === 2) { // 오른쪽 버튼
+                // 오른쪽 클릭 시 노드가 있으면 자동 선택 (이미 여러 개가 선택되어 있지 않을 때만)
+                if (clickedNode && !this.selectedNodes.has(clickedNode)) {
+                    this.selectedNodes.clear();
+                    this.selectedNodes.add(clickedNode);
+                    this.selectedNode = clickedNode;
+                }
                 this.isPanning = true;
                 this.canvas.style.cursor = 'grabbing';
             }
         });
 
         this.canvas.addEventListener('mousemove', (e) => {
+            const worldPos = this.screenToWorld(e.offsetX, e.offsetY);
             const dx = e.offsetX - this.dragStart.x;
             const dy = e.offsetY - this.dragStart.y;
+
+            // 엣지 생성 모드
+            if (this.isCreatingEdge) {
+                this.edgeCurrentPos = worldPos;
+                // 타겟 감지
+                const targetHandle = this.getConnectionHandleAt(worldPos.x, worldPos.y);
+                const targetNode = this.getNodeAt(worldPos.x, worldPos.y);
+                const targetCluster = this.getClusterAt(worldPos.x, worldPos.y);
+
+                if (targetHandle) {
+                    this.edgeTarget = targetHandle;
+                } else if (targetNode) {
+                    this.edgeTarget = { type: 'node', id: targetNode.id };
+                } else if (targetCluster) {
+                    this.edgeTarget = { type: 'cluster', id: targetCluster.id };
+                } else {
+                    this.edgeTarget = null;
+                }
+                return;
+            }
 
             if (this.isDragging || this.isSelecting || this.isPanning) {
                 // 실제 이동 거리가 짧으면 드래그로 간주하지 않음 (지터 방지)
@@ -449,6 +511,18 @@ class CanvasEngine {
         });
 
         this.canvas.addEventListener('mouseup', (e) => {
+            // 엣지 생성 완료
+            if (this.isCreatingEdge) {
+                if (this.edgeTarget && this.edgeTarget.id !== this.edgeSource.id) {
+                    // 엣지 타입 선택 메뉴 표시
+                    this.showEdgeTypeSelector(e.clientX, e.clientY);
+                }
+                this.isCreatingEdge = false;
+                this.edgeSource = null;
+                this.edgeTarget = null;
+                return;
+            }
+
             if (this.isSelecting) {
                 this.isSelecting = false;
                 // 드래그 선택 영역에 포함된 노드 추가
@@ -498,11 +572,13 @@ class CanvasEngine {
             this.canvas.style.cursor = 'default';
         });
 
-        // 컨텍스트 메뉴 제어 (CTRL+우클릭 시 메뉴 차단)
+        // 컨텍스트 메뉴 제어
         this.canvas.addEventListener('contextmenu', (e) => {
-            if (e.ctrlKey || e.button === 2) {
-                e.preventDefault();
-            }
+            e.preventDefault();
+            const worldPos = this.screenToWorld(e.offsetX, e.offsetY);
+            const clickedNode = this.getNodeAt(worldPos.x, worldPos.y);
+
+            this.showContextMenu(e.clientX, e.clientY, clickedNode);
         });
         this.canvas.addEventListener('click', (e) => {
             if (this.wasDragging) {
@@ -510,62 +586,46 @@ class CanvasEngine {
                 return;
             }
 
+            const worldPos = this.screenToWorld(e.offsetX, e.offsetY);
+            const hasModifier = e.shiftKey || e.ctrlKey || e.metaKey;
+
             if (this.currentMode === 'tree') {
                 // Tree 모드
                 if (!this.treeData) return;
-                const clickedItem = this.treeRenderer.getItemAt(this.treeData, e.offsetX, e.offsetY);
+                const clickedItem = this.treeRenderer.getItemAt(this.treeData, worldPos.x, worldPos.y);
 
                 if (clickedItem) {
                     if (clickedItem.type === 'folder') {
                         this.treeRenderer.toggleFolder(clickedItem.name);
                         this.treeData = this.treeRenderer.buildTree(this.nodes);
-                    } else if (clickedItem.type === 'file' && clickedItem.node) {
-                        const filePath = clickedItem.node.data.file;
-                        if (typeof vscode !== 'undefined') {
-                            vscode.postMessage({ command: 'openFile', filePath });
-                        } else if (typeof window.showFilePreview === 'function') {
-                            window.showFilePreview(filePath);
-                        }
+                    } else if (clickedItem.type === 'file' && clickedItem.node && !hasModifier) {
+                        this.handleOpenFile(clickedItem.node.data.path || clickedItem.node.data.file);
                     }
                 }
             } else if (this.currentMode === 'flow') {
                 // Flow 모드
                 if (!this.flowData) return;
-                const clickedStep = this.flowRenderer.getStepAt(this.flowData, e.offsetX, e.offsetY);
+                const clickedStep = this.flowRenderer.getStepAt(this.flowData, worldPos.x, worldPos.y);
 
-                if (clickedStep && clickedStep.node) {
-                    const filePath = clickedStep.node.data.file;
-                    if (typeof vscode !== 'undefined') {
-                        vscode.postMessage({ command: 'openFile', filePath });
-                    } else if (typeof showFilePreview === 'function') {
-                        showFilePreview(filePath);
-                    }
+                if (clickedStep && clickedStep.node && !hasModifier) {
+                    this.handleOpenFile(clickedStep.node.data.path || clickedStep.node.data.file);
                 }
             } else {
-                // Graph 모드 (단일 클릭으로 노드 선택/해제)
-                const worldPos = this.screenToWorld(e.offsetX, e.offsetY);
+                // Graph 모드
                 const clickedNode = this.getNodeAt(worldPos.x, worldPos.y);
 
                 if (clickedNode) {
-                    if (!e.shiftKey && !e.ctrlKey && !e.metaKey) {
-                        // Shift/Ctrl/Cmd 없이 클릭하면 단일 선택
-                        this.selectedNodes.clear();
-                        this.selectedNodes.add(clickedNode);
-                        this.selectedNode = clickedNode;
-                    }
-                    // 파일 열기 로직은 그대로 유지
-                    if (clickedNode.data.file) {
-                        const filePath = clickedNode.data.file;
-                        if (typeof vscode !== 'undefined') {
-                            vscode.postMessage({ command: 'openFile', filePath });
-                        } else if (typeof window.showFilePreview === 'function') {
-                            window.showFilePreview(filePath);
-                        }
+                    // 수정 키가 없을 때만 파일 열기 수행
+                    // (선택 로직은 mousedown에서 이미 처리됨)
+                    if (!hasModifier) {
+                        this.handleOpenFile(clickedNode.data.path || clickedNode.data.file);
                     }
                 } else {
-                    // 빈 공간 클릭 시 모든 선택 해제
-                    this.selectedNode = null;
-                    this.selectedNodes.clear();
+                    // 빈 공간 클릭 시 선택 해제 (수정 키가 없을 때만)
+                    if (!hasModifier) {
+                        this.selectedNode = null;
+                        this.selectedNodes.clear();
+                    }
                 }
             }
         });
@@ -645,6 +705,61 @@ class CanvasEngine {
         return null;
     }
 
+    getConnectionHandleAt(worldX, worldY) {
+        // 노드 핸들 체크
+        for (const node of this.nodes) {
+            const centerX = node.position.x + 60;
+            const centerY = node.position.y + 30;
+
+            // 4방향 핸들 (상, 하, 좌, 우)
+            const handles = [
+                { x: centerX, y: node.position.y, type: 'node', id: node.id }, // 상
+                { x: centerX, y: node.position.y + 60, type: 'node', id: node.id }, // 하
+                { x: node.position.x, y: centerY, type: 'node', id: node.id }, // 좌
+                { x: node.position.x + 120, y: centerY, type: 'node', id: node.id } // 우
+            ];
+
+            for (const h of handles) {
+                const dist = Math.sqrt((worldX - h.x) ** 2 + (worldY - h.y) ** 2);
+                if (dist < 10 / this.transform.zoom) return h;
+            }
+        }
+
+        // 클러스터 핸들 체크
+        if (this.clusters) {
+            for (const cluster of this.clusters) {
+                const clusterNodes = this.nodes.filter(n => n.cluster_id === cluster.id);
+                if (clusterNodes.length === 0) continue;
+
+                let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+                const padding = 20;
+                for (const node of clusterNodes) {
+                    minX = Math.min(minX, node.position.x);
+                    minY = Math.min(minY, node.position.y);
+                    maxX = Math.max(maxX, node.position.x + 120);
+                    maxY = Math.max(maxY, node.position.y + 60);
+                }
+
+                const centerX = (minX + maxX) / 2;
+                const centerY = (minY + maxY) / 2;
+
+                const handles = [
+                    { x: centerX, y: minY - padding, type: 'cluster', id: cluster.id },
+                    { x: centerX, y: maxY + padding, type: 'cluster', id: cluster.id },
+                    { x: minX - padding, y: centerY, type: 'cluster', id: cluster.id },
+                    { x: maxX + padding, y: centerY, type: 'cluster', id: cluster.id }
+                ];
+
+                for (const h of handles) {
+                    const dist = Math.sqrt((worldX - h.x) ** 2 + (worldY - h.y) ** 2);
+                    if (dist < 15 / this.transform.zoom) return h;
+                }
+            }
+        }
+
+        return null;
+    }
+
     repositionIntruders(clusterId) {
         const cluster = this.clusters.find(c => c.id === clusterId);
         if (!cluster) return;
@@ -690,7 +805,214 @@ class CanvasEngine {
 
         if (movedAny) {
             this.saveState();
+            this.takeSnapshot(`Auto Push (after drag)`);
         }
+    }
+
+    showContextMenu(x, y, node) {
+        const menu = document.getElementById('context-menu');
+        menu.style.display = 'block';
+        menu.style.left = `${x}px`;
+        menu.style.top = `${y}px`;
+
+        // 노드 관련 메뉴 필터링
+        const openItem = document.getElementById('menu-open');
+        if (node) {
+            openItem.style.display = 'block';
+            openItem.onclick = () => {
+                if (node.data.file) {
+                    const filePath = node.data.file;
+                    if (typeof vscode !== 'undefined') {
+                        vscode.postMessage({ command: 'openFile', filePath });
+                    } else if (typeof window.showFilePreview === 'function') {
+                        window.showFilePreview(filePath);
+                    }
+                }
+            };
+        } else {
+            openItem.style.display = 'none';
+        }
+
+        document.getElementById('menu-group').onclick = () => {
+            this.groupSelection();
+        };
+
+        document.getElementById('menu-ungroup').onclick = () => {
+            this.ungroupSelection();
+        };
+
+        document.getElementById('menu-snapshot').onclick = () => {
+            const label = prompt('Snapshot label:', 'Manual Snapshot');
+            if (label) this.takeSnapshot(label);
+        };
+    }
+
+    showEdgeTypeSelector(x, y) {
+        // 엣지 타입 선택 메뉴 생성
+        const existingMenu = document.getElementById('edge-type-menu');
+        if (existingMenu) existingMenu.remove();
+
+        const menu = document.createElement('div');
+        menu.id = 'edge-type-menu';
+        menu.style.position = 'fixed';
+        menu.style.left = `${x}px`;
+        menu.style.top = `${y}px`;
+        menu.style.background = '#3c3836';
+        menu.style.border = '2px solid #fabd2f';
+        menu.style.borderRadius = '8px';
+        menu.style.padding = '8px';
+        menu.style.zIndex = '10000';
+        menu.style.fontFamily = 'Inter, sans-serif';
+        menu.style.fontSize = '12px';
+        menu.style.color = '#ebdbb2';
+        menu.style.boxShadow = '0 4px 12px rgba(0,0,0,0.5)';
+
+        const types = [
+            { label: '🔗 Dependency', type: 'dependency', color: '#83a598' },
+            { label: '📞 Call', type: 'call', color: '#b8bb26' },
+            { label: '📊 Data Flow', type: 'data_flow', color: '#fabd2f' },
+            { label: '↔️ Bidirectional', type: 'bidirectional', color: '#d3869b' }
+        ];
+
+        types.forEach(t => {
+            const item = document.createElement('div');
+            item.textContent = t.label;
+            item.style.padding = '6px 12px';
+            item.style.cursor = 'pointer';
+            item.style.borderRadius = '4px';
+            item.style.transition = 'background 0.2s';
+            item.onmouseenter = () => item.style.background = '#504945';
+            item.onmouseleave = () => item.style.background = 'transparent';
+            item.onclick = () => {
+                this.createManualEdge(t.type, t.color);
+                menu.remove();
+            };
+            menu.appendChild(item);
+        });
+
+        // 취소 버튼
+        const cancel = document.createElement('div');
+        cancel.textContent = '❌ Cancel';
+        cancel.style.padding = '6px 12px';
+        cancel.style.cursor = 'pointer';
+        cancel.style.borderTop = '1px solid #665c54';
+        cancel.style.marginTop = '4px';
+        cancel.style.paddingTop = '8px';
+        cancel.style.borderRadius = '4px';
+        cancel.onmouseenter = () => cancel.style.background = '#504945';
+        cancel.onmouseleave = () => cancel.style.background = 'transparent';
+        cancel.onclick = () => menu.remove();
+        menu.appendChild(cancel);
+
+        document.body.appendChild(menu);
+
+        // 외부 클릭 시 메뉴 닫기
+        setTimeout(() => {
+            const closeMenu = (e) => {
+                if (!menu.contains(e.target)) {
+                    menu.remove();
+                    document.removeEventListener('click', closeMenu);
+                }
+            };
+            document.addEventListener('click', closeMenu);
+        }, 100);
+    }
+
+    createManualEdge(type, color) {
+        if (!this.edgeSource || !this.edgeTarget) return;
+
+        const newEdge = {
+            id: `edge_manual_${Date.now()}`,
+            from: this.edgeSource.type === 'node' ? this.edgeSource.id : undefined,
+            fromCluster: this.edgeSource.type === 'cluster' ? this.edgeSource.id : undefined,
+            to: this.edgeTarget.type === 'node' ? this.edgeTarget.id : undefined,
+            toCluster: this.edgeTarget.type === 'cluster' ? this.edgeTarget.id : undefined,
+            type: type,
+            label: type.replace('_', ' '),
+            visual: {
+                color: color,
+                dashArray: type === 'dependency' ? '5,5' : undefined
+            }
+        };
+
+        this.edges.push(newEdge);
+        console.log('[SYNAPSE] Manual edge created:', newEdge);
+
+        // 백엔드에 저장
+        if (typeof vscode !== 'undefined') {
+            vscode.postMessage({ command: 'createManualEdge', edge: newEdge });
+        }
+
+        this.saveState();
+    }
+
+    takeSnapshot(label) {
+        if (typeof vscode !== 'undefined') {
+            vscode.postMessage({
+                command: 'takeSnapshot',
+                data: {
+                    label: label,
+                    data: {
+                        nodes: this.nodes,
+                        edges: this.edges,
+                        clusters: this.clusters
+                    }
+                }
+            });
+        } else {
+            console.log('[SYNAPSE] Snapshot would be taken:', label);
+        }
+    }
+
+    getHistory() {
+        if (typeof vscode !== 'undefined') {
+            vscode.postMessage({ command: 'getHistory' });
+        }
+    }
+
+    rollback(snapshotId) {
+        if (typeof vscode !== 'undefined') {
+            vscode.postMessage({
+                command: 'rollback',
+                snapshotId: snapshotId
+            });
+        }
+    }
+
+    updateHistoryUI(history) {
+        const list = document.getElementById('history-list');
+        list.innerHTML = '';
+
+        history.forEach(snap => {
+            const item = document.createElement('div');
+            item.className = 'history-item';
+            item.innerHTML = `
+                <div class="history-info">
+                    <div class="history-label">${snap.label}</div>
+                    <div class="history-time">${new Date(snap.timestamp).toLocaleString()}</div>
+                </div>
+                <div class="history-actions">
+                    <button class="btn-history-compare" title="Compare visually">🔍</button>
+                    <button class="btn-history-rollback" title="Rollback to this state">↩️</button>
+                </div>
+            `;
+
+            item.querySelector('.btn-history-compare').onclick = (e) => {
+                e.stopPropagation();
+                if (typeof vscode !== 'undefined') {
+                    vscode.postMessage({ command: 'setBaseline', snapshotId: snap.id });
+                }
+            };
+
+            item.querySelector('.btn-history-rollback').onclick = (e) => {
+                e.stopPropagation();
+                if (confirm(`Do you want to rollback to "${snap.label}"?`)) {
+                    this.rollback(snap.id);
+                }
+            };
+
+            list.appendChild(item);
+        });
     }
 
     loadProjectState(projectState) {
@@ -781,6 +1103,11 @@ class CanvasEngine {
                     }
                 }
 
+                this.renderClusters();
+
+                // 유령 노드 렌더링 (비교 모드)
+                this.renderGhostNodes(zoom);
+
                 // 노드 렌더링 (LOD 적용)
                 for (const node of this.nodes) {
                     this.renderNode(node, zoom);
@@ -795,6 +1122,14 @@ class CanvasEngine {
                     this.ctx.fillRect(this.selectionRect.x, this.selectionRect.y, this.selectionRect.width, this.selectionRect.height);
                     this.ctx.strokeRect(this.selectionRect.x, this.selectionRect.y, this.selectionRect.width, this.selectionRect.height);
                     this.ctx.save(); // 다시 스케일 좌표계로
+                }
+
+                // 연결 핸들 렌더링 (선택된 노드/클러스터)
+                this.renderConnectionHandles();
+
+                // 유령 엣지 렌더링 (엣지 생성 중)
+                if (this.isCreatingEdge && this.edgeSource) {
+                    this.renderGhostEdge();
                 }
             }
 
@@ -867,6 +1202,7 @@ class CanvasEngine {
         this.repositionIntruders(clusterId);
 
         this.saveState(); // 클러스터 생성 후 저장
+        this.takeSnapshot(`Group Created: ${newCluster.label}`);
     }
 
     ungroupSelection() {
@@ -883,6 +1219,7 @@ class CanvasEngine {
 
         console.log('[SYNAPSE] Ungrouped selection');
         this.saveState(); // 클러스터 해제 후 저장
+        this.takeSnapshot('Selection Ungrouped');
     }
 
     saveState() {
@@ -971,6 +1308,44 @@ class CanvasEngine {
         }
     }
 
+    renderGhostNodes(zoom) {
+        if (!this.baselineNodes) return;
+
+        this.ctx.save();
+        this.ctx.globalAlpha = 0.3;
+        this.ctx.setLineDash([5, 5]);
+
+        const nodeWidth = 120;
+        const nodeHeight = 60;
+
+        for (const ghost of this.baselineNodes) {
+            const currentNode = this.nodes.find(n => n.id === ghost.id);
+
+            // 1. 사라진 노드 (Ghost)
+            if (!currentNode) {
+                this.ctx.strokeStyle = '#928374';
+                this.ctx.fillStyle = '#282828';
+                this.ctx.strokeRect(ghost.position.x, ghost.position.y, nodeWidth, nodeHeight);
+                this.ctx.font = '10px Inter, sans-serif';
+                this.ctx.textAlign = 'center';
+                this.ctx.fillText(`(Removed: ${ghost.data.label})`, ghost.position.x + nodeWidth / 2, ghost.position.y + nodeHeight / 2);
+            }
+            // 2. 위치가 바뀐 노드 (Origin point ghost)
+            else if (currentNode.position.x !== ghost.position.x || currentNode.position.y !== ghost.position.y) {
+                this.ctx.strokeStyle = '#458588';
+                this.ctx.strokeRect(ghost.position.x, ghost.position.y, nodeWidth, nodeHeight);
+
+                // 이동 경로 표시 (선)
+                this.ctx.beginPath();
+                this.ctx.moveTo(ghost.position.x + nodeWidth / 2, ghost.position.y + nodeHeight / 2);
+                this.ctx.lineTo(currentNode.position.x + nodeWidth / 2, currentNode.position.y + nodeHeight / 2);
+                this.ctx.stroke();
+            }
+        }
+
+        this.ctx.restore();
+    }
+
     renderNode(node, zoom) {
         const nodeWidth = 120;
         const nodeHeight = 60;
@@ -1026,23 +1401,57 @@ class CanvasEngine {
             this.ctx.fillText(node.data.label, x + nodeWidth / 2, y + nodeHeight / 2);
         }
 
-        // Level 3: Detail View (줌이 클 때)
+        // Level 3: Detail View (줌이 클 때 - 정교한 정보 표시)
         if (zoom > 1.5) {
-            // 상단 라벨 (작게)
-            this.ctx.fillStyle = '#a89984';
-            this.ctx.font = '10px Inter, sans-serif';
+            // 상단 헤더 바 (파일 정보)
+            this.ctx.fillStyle = '#504945';
+            this.ctx.fillRect(x, y, nodeWidth, 20);
+
+            this.ctx.fillStyle = '#fabd2f'; // 파일 라벨 강조
+            this.ctx.font = 'bold 10px Inter, sans-serif';
             this.ctx.textAlign = 'left';
-            this.ctx.fillText(node.data.label, x + 5, y + 15);
+            this.ctx.textBaseline = 'top';
+            this.ctx.fillText(node.data.label, x + 5, y + 5);
 
-            // 중앙에 스니펫 가상 표시
-            this.ctx.fillStyle = '#fb4934';
-            this.ctx.font = 'bold 12px monospace';
-            this.ctx.textAlign = 'center';
-            this.ctx.fillText("class LoginEngine:", x + nodeWidth / 2, y + nodeHeight / 2);
+            // 실제 분석 데이터가 있는 경우 표시
+            if (node.data.summary) {
+                const { classes, functions } = node.data.summary;
+                let offsetY = y + 25;
 
-            this.ctx.fillStyle = '#b8bb26';
-            this.ctx.font = '10px monospace';
-            this.ctx.fillText("  def authenticate():", x + nodeWidth / 2, y + nodeHeight / 2 + 15);
+                // 클래스 표시 (Gruvbox Red)
+                if (classes && classes.length > 0) {
+                    this.ctx.fillStyle = '#fb4934';
+                    this.ctx.font = 'bold 10px monospace';
+                    classes.slice(0, 2).forEach(cls => {
+                        this.ctx.fillText(`C ${cls}`, x + 5, offsetY);
+                        offsetY += 12;
+                    });
+                }
+
+                // 함수 표시 (Gruvbox Green)
+                if (functions && functions.length > 0) {
+                    this.ctx.fillStyle = '#b8bb26';
+                    this.ctx.font = '9px monospace';
+                    functions.slice(0, 3).forEach(func => {
+                        this.ctx.fillText(`f ${func}()`, x + 5, offsetY);
+                        offsetY += 10;
+                    });
+
+                    // 더 많은 함수가 있으면 표시
+                    if (functions.length > 3) {
+                        this.ctx.fillStyle = '#928374';
+                        this.ctx.font = 'italic 8px Inter, sans-serif';
+                        this.ctx.fillText(`+ ${functions.length - 3} more...`, x + 5, offsetY);
+                    }
+                }
+            } else {
+                // 데이터가 없는 경우 장식용 자리표시자
+                this.ctx.fillStyle = '#928374';
+                this.ctx.font = 'italic 9px Inter, sans-serif';
+                this.ctx.textAlign = 'center';
+                this.ctx.textBaseline = 'middle';
+                this.ctx.fillText("(No members)", x + nodeWidth / 2, y + nodeHeight / 2 + 10);
+            }
         }
     }
 
@@ -1057,11 +1466,18 @@ class CanvasEngine {
         const toX = toNode.position.x + 60;
         const toY = toNode.position.y + 30;
 
-        this.ctx.strokeStyle = edge.visual?.color || '#665c54';
-        this.ctx.lineWidth = 2;
+        // 엣지 스타일 설정
+        let edgeColor = edge.visual?.color || '#665c54';
+        this.ctx.strokeStyle = edgeColor;
+        this.ctx.lineWidth = 1.5;
 
+        // 자동 발견된 엣지나 'dependency' 타입은 기본적으로 대시선
         if (edge.visual?.dashArray) {
             this.ctx.setLineDash(edge.visual.dashArray.split(',').map(Number));
+        } else if (edge.type === 'dependency' || edge.id.startsWith('edge_auto_')) {
+            this.ctx.setLineDash([5, 5]);
+            this.ctx.strokeStyle = '#83a598'; // Blue-ish for dependencies
+            edgeColor = '#83a598';
         }
 
         this.ctx.beginPath();
@@ -1093,6 +1509,166 @@ class CanvasEngine {
         this.ctx.fillStyle = edge.visual?.color || '#665c54';
         this.ctx.fill();
     }
+
+    renderConnectionHandles() {
+        // 선택된 노드의 연결 핸들 렌더링
+        for (const node of this.selectedNodes) {
+            const centerX = node.position.x + 60;
+            const centerY = node.position.y + 30;
+            const handleSize = 8 / this.transform.zoom;
+
+            const handles = [
+                { x: centerX, y: node.position.y }, // 상
+                { x: centerX, y: node.position.y + 60 }, // 하
+                { x: node.position.x, y: centerY }, // 좌
+                { x: node.position.x + 120, y: centerY } // 우
+            ];
+
+            handles.forEach(h => {
+                this.ctx.fillStyle = '#fabd2f';
+                this.ctx.strokeStyle = '#3c3836';
+                this.ctx.lineWidth = 2 / this.transform.zoom;
+                this.ctx.beginPath();
+                this.ctx.arc(h.x, h.y, handleSize, 0, Math.PI * 2);
+                this.ctx.fill();
+                this.ctx.stroke();
+            });
+        }
+
+        // 선택된 클러스터의 연결 핸들 렌더링
+        if (this.clusters) {
+            const selectedClusterIds = new Set();
+            for (const node of this.selectedNodes) {
+                if (node.cluster_id) selectedClusterIds.add(node.cluster_id);
+            }
+
+            for (const clusterId of selectedClusterIds) {
+                const cluster = this.clusters.find(c => c.id === clusterId);
+                if (!cluster) continue;
+
+                const clusterNodes = this.nodes.filter(n => n.cluster_id === clusterId);
+                if (clusterNodes.length === 0) continue;
+
+                let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+                const padding = 20;
+                for (const node of clusterNodes) {
+                    minX = Math.min(minX, node.position.x);
+                    minY = Math.min(minY, node.position.y);
+                    maxX = Math.max(maxX, node.position.x + 120);
+                    maxY = Math.max(maxY, node.position.y + 60);
+                }
+
+                const centerX = (minX + maxX) / 2;
+                const centerY = (minY + maxY) / 2;
+                const handleSize = 10 / this.transform.zoom;
+
+                const handles = [
+                    { x: centerX, y: minY - padding },
+                    { x: centerX, y: maxY + padding },
+                    { x: minX - padding, y: centerY },
+                    { x: maxX + padding, y: centerY }
+                ];
+
+                handles.forEach(h => {
+                    this.ctx.fillStyle = cluster.color || '#fabd2f';
+                    this.ctx.strokeStyle = '#3c3836';
+                    this.ctx.lineWidth = 2 / this.transform.zoom;
+                    this.ctx.beginPath();
+                    this.ctx.arc(h.x, h.y, handleSize, 0, Math.PI * 2);
+                    this.ctx.fill();
+                    this.ctx.stroke();
+                });
+            }
+        }
+    }
+
+    renderGhostEdge() {
+        if (!this.edgeSource) return;
+
+        // 소스 위치 계산
+        let fromX, fromY;
+        if (this.edgeSource.type === 'node') {
+            const sourceNode = this.nodes.find(n => n.id === this.edgeSource.id);
+            if (!sourceNode) return;
+            fromX = sourceNode.position.x + 60;
+            fromY = sourceNode.position.y + 30;
+        } else if (this.edgeSource.type === 'cluster') {
+            const clusterNodes = this.nodes.filter(n => n.cluster_id === this.edgeSource.id);
+            if (clusterNodes.length === 0) return;
+            let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+            for (const node of clusterNodes) {
+                minX = Math.min(minX, node.position.x);
+                minY = Math.min(minY, node.position.y);
+                maxX = Math.max(maxX, node.position.x + 120);
+                maxY = Math.max(maxY, node.position.y + 60);
+            }
+            fromX = (minX + maxX) / 2;
+            fromY = (minY + maxY) / 2;
+        }
+
+        // 타겟 위치 계산
+        let toX = this.edgeCurrentPos.x;
+        let toY = this.edgeCurrentPos.y;
+
+        if (this.edgeTarget) {
+            if (this.edgeTarget.type === 'node') {
+                const targetNode = this.nodes.find(n => n.id === this.edgeTarget.id);
+                if (targetNode) {
+                    toX = targetNode.position.x + 60;
+                    toY = targetNode.position.y + 30;
+                }
+            } else if (this.edgeTarget.type === 'cluster') {
+                const clusterNodes = this.nodes.filter(n => n.cluster_id === this.edgeTarget.id);
+                if (clusterNodes.length > 0) {
+                    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+                    for (const node of clusterNodes) {
+                        minX = Math.min(minX, node.position.x);
+                        minY = Math.min(minY, node.position.y);
+                        maxX = Math.max(maxX, node.position.x + 120);
+                        maxY = Math.max(maxY, node.position.y + 60);
+                    }
+                    toX = (minX + maxX) / 2;
+                    toY = (minY + maxY) / 2;
+                }
+            }
+        }
+
+        // 유령 엣지 그리기
+        this.ctx.strokeStyle = this.edgeTarget ? '#b8bb26' : '#928374';
+        this.ctx.lineWidth = 2;
+        this.ctx.setLineDash([5, 5]);
+
+        this.ctx.beginPath();
+        this.ctx.moveTo(fromX, fromY);
+
+        // 곡선
+        const cpX = (fromX + toX) / 2;
+        const cpY = (fromY + toY) / 2 - 30;
+        this.ctx.quadraticCurveTo(cpX, cpY, toX, toY);
+
+        this.ctx.stroke();
+        this.ctx.setLineDash([]);
+
+        // 화살표
+        if (this.edgeTarget) {
+            const angle = Math.atan2(toY - cpY, toX - cpX);
+            const arrowSize = 10 / this.transform.zoom;
+
+            this.ctx.beginPath();
+            this.ctx.moveTo(toX, toY);
+            this.ctx.lineTo(
+                toX - arrowSize * Math.cos(angle - Math.PI / 6),
+                toY - arrowSize * Math.sin(angle - Math.PI / 6)
+            );
+            this.ctx.lineTo(
+                toX - arrowSize * Math.cos(angle + Math.PI / 6),
+                toY - arrowSize * Math.sin(angle + Math.PI / 6)
+            );
+            this.ctx.closePath();
+            this.ctx.fillStyle = '#b8bb26';
+            this.ctx.fill();
+        }
+    }
 }
 
 // 초기화
@@ -1113,14 +1689,32 @@ window.addEventListener('DOMContentLoaded', async () => {
 
             // 메시지 리스너 등록
             window.addEventListener('message', event => {
-                const msg = event.data;
-                console.log('[SYNAPSE] Received message:', msg.command);
+                const message = event.data;
+                console.log('[SYNAPSE] Received message:', message.command);
 
-                if (msg.command === 'projectState') {
-                    console.log('[SYNAPSE] Loading project state');
-                    engine.loadProjectState(msg.data);
-                } else if (msg.command === 'fitView') {
-                    engine.fitView();
+                switch (message.command) {
+                    case 'projectState':
+                        console.log('[SYNAPSE] Loading project state');
+                        engine.loadProjectState(message.data);
+                        break;
+                    case 'rollback':
+                        // Rollback then clear baseline
+                        engine.loadProjectState(message.data);
+                        engine.baselineNodes = null;
+                        break;
+                    case 'setBaseline':
+                        console.log('[SYNAPSE] Setting visual baseline');
+                        engine.baselineNodes = message.data.nodes;
+                        break;
+                    case 'clearBaseline':
+                        engine.baselineNodes = null;
+                        break;
+                    case 'fitView':
+                        engine.fitView();
+                        break;
+                    case 'history':
+                        engine.updateHistoryUI(message.data);
+                        break;
                 }
             });
 

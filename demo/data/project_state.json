@@ -18,8 +18,8 @@
       "type": "source",
       "status": "proposed",
       "position": {
-        "x": 100,
-        "y": 100
+        "x": -158.6899606579339,
+        "y": -293.63530486020016
       },
       "data": {
         "file": "login.py",
@@ -27,21 +27,35 @@
         "directory": "src",
         "label": "login.py",
         "description": "login.py 파일",
-        "color": "#b8bb26"
+        "color": "#b8bb26",
+        "summary": {
+          "classes": [
+            "AuthProvider"
+          ],
+          "functions": [
+            "__init__",
+            "login",
+            "logout",
+            "validate_token"
+          ],
+          "references": [
+            "board"
+          ]
+        }
       },
       "visual": {
         "opacity": 0.5,
         "dashArray": "5,5"
       },
-      "cluster_id": "cluster_src"
+      "cluster_id": "cluster_1771077180327"
     },
     {
       "id": "node_1",
       "type": "source",
       "status": "proposed",
       "position": {
-        "x": 300,
-        "y": 100
+        "x": 83.20136360424746,
+        "y": -453.9920685685266
       },
       "data": {
         "file": "board.py",
@@ -49,21 +63,33 @@
         "directory": "src",
         "label": "board.py",
         "description": "board.py 파일",
-        "color": "#b8bb26"
+        "color": "#b8bb26",
+        "summary": {
+          "classes": [
+            "CanvasManager"
+          ],
+          "functions": [
+            "__init__",
+            "add_element",
+            "clear",
+            "get_board_config"
+          ],
+          "references": []
+        }
       },
       "visual": {
         "opacity": 0.5,
         "dashArray": "5,5"
       },
-      "cluster_id": "cluster_src"
+      "cluster_id": "cluster_1771077180327"
     },
     {
       "id": "node_2",
       "type": "source",
       "status": "proposed",
       "position": {
-        "x": 500,
-        "y": 100
+        "x": 343.0432671284848,
+        "y": -479.98361932673674
       },
       "data": {
         "file": "schema.sql",
@@ -71,21 +97,34 @@
         "directory": "src",
         "label": "schema.sql",
         "description": "schema.sql 파일",
-        "color": "#b8bb26"
+        "color": "#b8bb26",
+        "summary": {
+          "classes": [],
+          "functions": [],
+          "references": []
+        }
       },
       "visual": {
         "opacity": 0.5,
         "dashArray": "5,5"
       },
-      "cluster_id": "cluster_src"
+      "cluster_id": null
     }
   ],
-  "edges": [],
+  "edges": [
+    {
+      "id": "edge_auto_1771077134186_85",
+      "from": "node_0",
+      "to": "node_1",
+      "type": "dependency",
+      "label": "ref"
+    }
+  ],
   "clusters": [
     {
-      "id": "cluster_src",
-      "label": "Source Code",
-      "color": "#b8bb26",
+      "id": "cluster_1771077180327",
+      "label": "Group 1",
+      "color": "#fabd2f",
       "collapsed": false
     }
   ]

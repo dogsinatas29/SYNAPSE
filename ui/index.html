@@ -201,23 +201,139 @@
             }
         }
 
-        /* Status Bar */
-        #status-bar {
+        /* Context Menu */
+        #context-menu {
+            position: fixed;
             background: var(--bg-panel);
-            padding: 4px 20px;
-            border-top: 1px solid var(--border);
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            padding: 5px 0;
+            z-index: 3000;
+            display: none;
+            min-width: 150px;
+        }
+
+        .menu-item {
+            padding: 8px 16px;
+            cursor: pointer;
+            font-size: 13px;
+            color: var(--fg-main);
+            transition: background 0.2s;
+        }
+
+        .menu-item:hover {
+            background: var(--bg-hover);
+            color: var(--accent);
+        }
+
+        .menu-divider {
+            height: 1px;
+            background: var(--border);
+            margin: 4px 0;
+        }
+
+        /* History Panel */
+        #history-panel {
+            position: fixed;
+            right: 0;
+            top: 0;
+            width: 300px;
+            height: 100vh;
+            background: var(--bg-panel);
+            border-left: 1px solid var(--border);
+            display: none;
+            flex-direction: column;
+            z-index: 1500;
+            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.3);
+        }
+
+        #history-panel.visible {
             display: flex;
-            justify-content: space-between;
+        }
+
+        #history-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        .history-item {
+            padding: 12px;
+            background: #282828;
+            border: 1px solid var(--border);
+            margin-bottom: 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .history-item:hover {
+            border-color: var(--accent);
+            background: var(--bg-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .history-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: var(--accent);
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .history-item:hover::before {
+            opacity: 1;
+        }
+
+        .history-info {
+            flex: 1;
+        }
+
+        .history-label {
+            font-size: 13px;
+            color: var(--fg-main);
+            margin-bottom: 4px;
+        }
+
+        .history-time {
             font-size: 11px;
             color: var(--fg-dim);
         }
 
-        .status-item span {
-            margin-right: 15px;
+        .history-actions {
+            display: flex;
+            gap: 8px;
         }
 
-        strong {
+        .history-actions button {
+            background: #3c3836;
+            border: 1px solid #504945;
             color: var(--fg-main);
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+
+        .history-actions button:hover {
+            background: #504945;
+            color: var(--accent);
+            border-color: var(--accent);
+        }
+
+        .toolbar-divider {
+            width: 1px;
+            height: 20px;
+            background: var(--border);
+            margin: 0 5px;
         }
     </style>
 </head>
@@ -241,7 +357,8 @@
         <button class="btn" id="btn-ungroup" title="Ungroup Selected Cluster">Ungroup</button>
         <div class="toolbar-divider"></div>
         <div style="flex: 1"></div>
-        <button class="btn" id="btn-test" style="background: #458588; color: white;">Test Preview</button>
+        <button class="btn" id="btn-history">History</button>
+        <button class="btn" id="btn-snapshot" title="Take Manual Snapshot">📸</button>
     </div>
 
     <div id="main-container">
@@ -261,6 +378,31 @@
             <div id="side-panel-content">
                 <pre id="file-content"></pre>
             </div>
+        </div>
+
+        <div id="history-panel">
+            <div id="side-panel-header">
+                <span style="font-weight: bold; font-size: 14px; color: var(--fg-main);">Architecture History</span>
+                <div style="display: flex; gap: 8px;">
+                    <button id="btn-clear-baseline" title="Clear Comparison"
+                        style="background:none; border:none; color:var(--fg-dim); cursor:pointer; font-size:12px;">🚫
+                        Clear</button>
+                    <button id="history-panel-close"
+                        style="background:none; border:none; color:var(--fg-dim); cursor:pointer;">&times;</button>
+                </div>
+            </div>
+            <div id="history-list">
+                <!-- History items will be injected here -->
+            </div>
+        </div>
+
+        <div id="context-menu">
+            <div class="menu-item" id="menu-open">Open File</div>
+            <div class="menu-divider"></div>
+            <div class="menu-item" id="menu-group">Group Selected</div>
+            <div class="menu-item" id="menu-ungroup">Ungroup</div>
+            <div class="menu-divider"></div>
+            <div class="menu-item" id="menu-snapshot">Take Snapshot</div>
         </div>
     </div>
 
@@ -297,8 +439,7 @@
 
             try {
                 // 브라우저에서는 상대 경로로 fetch, VS Code에서는 이미 postMessage가 처리함
-                const normalizedPath = filePath.startsWith('src/') ? filePath : `src/${filePath}`;
-                const response = await fetch(`../${normalizedPath}`);
+                const response = await fetch(`./${filePath}`);
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 const text = await response.text();
                 fileContent.textContent = text;
@@ -315,9 +456,38 @@
                 document.getElementById('side-panel').classList.remove('visible');
             });
 
-            // 테스트 버튼
-            document.getElementById('btn-test').addEventListener('click', () => {
-                window.showFilePreview('login.py');
+            document.getElementById('history-panel-close').addEventListener('click', () => {
+                document.getElementById('history-panel').classList.remove('visible');
+            });
+
+            // 히스토리 버튼
+            document.getElementById('btn-history').addEventListener('click', () => {
+                const panel = document.getElementById('history-panel');
+                panel.classList.toggle('visible');
+                if (panel.classList.contains('visible')) {
+                    if (window.engine) {
+                        window.engine.getHistory();
+                    }
+                }
+            });
+
+            // 스냅샷 버튼
+            document.getElementById('btn-snapshot').addEventListener('click', () => {
+                if (window.engine) {
+                    window.engine.takeSnapshot('Manual Snapshot');
+                }
+            });
+
+            // 기준선 제거 버튼
+            document.getElementById('btn-clear-baseline').addEventListener('click', () => {
+                if (typeof vscode !== 'undefined') {
+                    vscode.postMessage({ command: 'clearBaseline' });
+                }
+            });
+
+            // 배경 클릭 시 컨텍스트 메뉴 닫기
+            document.addEventListener('click', () => {
+                document.getElementById('context-menu').style.display = 'none';
             });
         });
     </script>

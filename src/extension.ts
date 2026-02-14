@@ -29,20 +29,93 @@ export function activate(context: vscode.ExtensionContext) {
         })
     );
 
-    // Auto-open canvas if project_state.json exists
+    // Auto-open canvas and sync logic
     const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
     if (workspaceFolder) {
-        const projectStatePath = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'project_state.json');
-        vscode.workspace.fs.stat(projectStatePath).then(
-            () => {
-                // File exists, auto-open canvas
-                vscode.commands.executeCommand('synapse.openCanvas');
-            },
-            () => {
-                // File doesn't exist, do nothing
-            }
-        );
+        checkProjectStatus(workspaceFolder, context);
+        setupFileWatcher(workspaceFolder, context);
     }
+}
+
+async function checkProjectStatus(workspaceFolder: vscode.WorkspaceFolder, context: vscode.ExtensionContext) {
+    const geminiUri = vscode.Uri.joinPath(workspaceFolder.uri, 'GEMINI.md');
+    const projectStateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'project_state.json');
+
+    try {
+        const geminiStat = await vscode.workspace.fs.stat(geminiUri);
+        let projectStateStat: vscode.FileStat | undefined;
+
+        try {
+            projectStateStat = await vscode.workspace.fs.stat(projectStateUri);
+        } catch (e) {
+            // project_state.json doesn't exist
+        }
+
+        if (!projectStateStat) {
+            // Case 1: GEMINI.md exists but no project_state.json
+            const config = vscode.workspace.getConfiguration('synapse');
+            const autoBootstrap = config.get<boolean>('autoBootstrap', false);
+
+            if (autoBootstrap) {
+                console.log('[SYNAPSE] Auto-bootstrapping project...');
+                await bootstrapFromGemini(geminiUri, context);
+            } else {
+                const action = await vscode.window.showInformationMessage(
+                    'GEMINI.md detected. Would you like to initialize the SYNAPSE canvas?',
+                    'Initialize'
+                );
+                if (action === 'Initialize') {
+                    await bootstrapFromGemini(geminiUri, context);
+                }
+            }
+        } else {
+            // Case 2: Both exist, compare timestamps for sync
+            if (geminiStat.mtime > projectStateStat.mtime) {
+                const action = await vscode.window.showInformationMessage(
+                    'GEMINI.md has been updated. Would you like to sync the architecture canvas?',
+                    'Sync Now'
+                );
+                if (action === 'Sync Now') {
+                    await bootstrapFromGemini(geminiUri, context);
+                }
+            }
+            // Auto-open if project state exists
+            vscode.commands.executeCommand('synapse.openCanvas');
+        }
+    } catch (e) {
+        // GEMINI.md doesn't exist, do nothing
+    }
+}
+
+function setupFileWatcher(workspaceFolder: vscode.WorkspaceFolder, context: vscode.ExtensionContext) {
+    const watcher = vscode.workspace.createFileSystemWatcher(
+        new vscode.RelativePattern(workspaceFolder, 'GEMINI.md')
+    );
+
+    watcher.onDidChange(async () => {
+        const action = await vscode.window.showInformationMessage(
+            'GEMINI.md changed. Sync architecture?',
+            'Sync'
+        );
+        if (action === 'Sync') {
+            const geminiUri = vscode.Uri.joinPath(workspaceFolder.uri, 'GEMINI.md');
+            await bootstrapFromGemini(geminiUri, context);
+        }
+    });
+
+    // Source files watcher (auto-refresh canvas state)
+    const sourceWatcher = vscode.workspace.createFileSystemWatcher(
+        new vscode.RelativePattern(workspaceFolder, 'src/**/*.{py,ts,js}')
+    );
+
+    sourceWatcher.onDidChange(async () => {
+        console.log('[SYNAPSE] Source file changed, refreshing canvas state...');
+        if (CanvasPanel.currentPanel) {
+            await CanvasPanel.currentPanel.refreshState();
+        }
+    });
+
+    context.subscriptions.push(watcher, sourceWatcher);
 }
 
 async function bootstrapFromGemini(uri: vscode.Uri, context: vscode.ExtensionContext) {

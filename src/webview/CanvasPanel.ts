@@ -472,14 +472,13 @@ export class CanvasPanel {
 
             // 5. 웹뷰로 전송
             this._panel.webview.postMessage({
-                command: 'setProjectState',
+                command: 'projectState',
                 data: stateForWebview
             });
 
             // The original projectState (without auto-discovered edges) is not sent directly anymore.
             // The stateForWebview is sent instead.
             // The original line `this._panel.webview.postMessage({ command: 'projectState', data: projectState });`
-            // is replaced by the new logic above.
 
         } catch (error) {
             console.error('Failed to load project state:', error);

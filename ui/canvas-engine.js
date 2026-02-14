@@ -1722,6 +1722,11 @@ class CanvasEngine {
         const minSize = 12; // 최소 크기 증가
         const arrowSize = Math.max(minSize, baseSize / Math.sqrt(this.transform.zoom));
 
+        console.log(`[DEBUG] renderArrow called: x=${x}, y=${y}, angle=${angle}, color=${color}, size=${arrowSize}`);
+
+        // Canvas 상태 저장
+        this.ctx.save();
+
         this.ctx.beginPath();
         this.ctx.moveTo(x, y);
         this.ctx.lineTo(
@@ -1742,6 +1747,9 @@ class CanvasEngine {
         this.ctx.strokeStyle = '#1d2021'; // 어두운 테두리
         this.ctx.lineWidth = 1;
         this.ctx.stroke();
+
+        // Canvas 상태 복원
+        this.ctx.restore();
     }
 
     renderConnectionHandles() {

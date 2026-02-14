@@ -10,57 +10,13 @@
     ],
     "zoom_level": 1
   },
-  "clusters": [
-    {
-      "collapsed": false,
-      "color": "#fabd2f",
-      "id": "cluster_1771077180327",
-      "label": "Group 1"
-    },
-    {
-      "collapsed": false,
-      "color": "#fabd2f",
-      "id": "cluster_1771078439481",
-      "label": "Group 2"
-    }
-  ],
+  "clusters": [],
   "edges": [
     {
       "from": "node_1",
-      "id": "edge_manual_1771079295949",
-      "label": "dependency",
-      "to": "node_2",
-      "type": "dependency",
-      "visual": {
-        "color": "#83a598",
-        "dashArray": "5,5"
-      }
-    },
-    {
-      "from": "node_0",
-      "id": "edge_manual_1771079785110",
-      "label": "call",
-      "to": "node_2",
-      "type": "call",
-      "visual": {
-        "color": "#b8bb26"
-      }
-    },
-    {
-      "from": "node_0",
-      "id": "edge_manual_1771079797190",
-      "label": "data flow",
-      "to": "node_1",
-      "type": "data_flow",
-      "visual": {
-        "color": "#fabd2f"
-      }
-    },
-    {
-      "from": "node_1",
-      "id": "edge_manual_1771079808849",
+      "id": "edge_manual_1771080416216",
       "label": "bidirectional",
-      "to": "node_0",
+      "to": "node_2",
       "type": "bidirectional",
       "visual": {
         "color": "#d3869b"
@@ -68,7 +24,17 @@
     },
     {
       "from": "node_0",
-      "id": "edge_auto_1771080067267_153",
+      "id": "edge_manual_1771080440129",
+      "label": "data flow",
+      "to": "node_2",
+      "type": "data_flow",
+      "visual": {
+        "color": "#fabd2f"
+      }
+    },
+    {
+      "from": "node_0",
+      "id": "edge_auto_1771080551049_798",
       "label": "ref",
       "to": "node_1",
       "type": "dependency"
@@ -77,7 +43,7 @@
   "gemini_md_path": "/home/dogsinatas/TypeScript_project/antigravity-extension-vis/GEMINI.md",
   "nodes": [
     {
-      "cluster_id": "cluster_1771078439481",
+      "cluster_id": null,
       "data": {
         "color": "#b8bb26",
         "description": "login.py 파일",
@@ -102,8 +68,8 @@
       },
       "id": "node_0",
       "position": {
-        "x": -141.62243163894004,
-        "y": 141.30897567437407
+        "x": 8.437196508680831,
+        "y": 151.96661971894937
       },
       "status": "proposed",
       "type": "source",
@@ -113,7 +79,7 @@
       }
     },
     {
-      "cluster_id": "cluster_1771078439481",
+      "cluster_id": null,
       "data": {
         "color": "#b8bb26",
         "description": "board.py 파일",
@@ -147,7 +113,7 @@
       }
     },
     {
-      "cluster_id": "cluster_1771078439481",
+      "cluster_id": null,
       "data": {
         "color": "#b8bb26",
         "description": "schema.sql 파일",

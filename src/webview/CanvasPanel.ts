@@ -496,15 +496,16 @@ export class CanvasPanel {
         const htmlPath = vscode.Uri.joinPath(this._extensionUri, 'ui', 'index.html');
         let html = fs.readFileSync(htmlPath.fsPath, 'utf8');
 
-        // Get URIs for resources
+        // Get URIs for resources with cache busting
+        const timestamp = Date.now();
         const scriptUri = webview.asWebviewUri(
             vscode.Uri.joinPath(this._extensionUri, 'ui', 'canvas-engine.js')
         );
 
-        // Replace script src with webview URI
+        // Replace script src with webview URI + cache busting
         html = html.replace(
             'src="canvas-engine.js"',
-            `src="${scriptUri}"`
+            `src="${scriptUri}?v=${timestamp}"`
         );
 
         // Add CSP - relaxed for webview compatibility

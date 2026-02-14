@@ -1,5 +1,763 @@
 [
   {
+    "id": "snap_1771080404976",
+    "timestamp": 1771080404976,
+    "label": "Selection Ungrouped",
+    "data": {
+      "nodes": [
+        {
+          "cluster_id": null,
+          "data": {
+            "color": "#b8bb26",
+            "description": "login.py 파일",
+            "directory": "src",
+            "file": "login.py",
+            "label": "login.py",
+            "path": "src/login.py",
+            "summary": {
+              "classes": [
+                "AuthProvider"
+              ],
+              "functions": [
+                "__init__",
+                "login",
+                "logout",
+                "validate_token"
+              ],
+              "references": [
+                "board"
+              ]
+            }
+          },
+          "id": "node_0",
+          "position": {
+            "x": -141.62243163894004,
+            "y": 141.30897567437407
+          },
+          "status": "proposed",
+          "type": "source",
+          "visual": {
+            "dashArray": "5,5",
+            "opacity": 0.5
+          }
+        },
+        {
+          "cluster_id": null,
+          "data": {
+            "color": "#b8bb26",
+            "description": "board.py 파일",
+            "directory": "src",
+            "file": "board.py",
+            "label": "board.py",
+            "path": "src/board.py",
+            "summary": {
+              "classes": [
+                "CanvasManager"
+              ],
+              "functions": [
+                "__init__",
+                "add_element",
+                "clear",
+                "get_board_config"
+              ],
+              "references": []
+            }
+          },
+          "id": "node_1",
+          "position": {
+            "x": 83.23401407566509,
+            "y": -13.085580542300537
+          },
+          "status": "proposed",
+          "type": "source",
+          "visual": {
+            "dashArray": "5,5",
+            "opacity": 0.5
+          }
+        },
+        {
+          "cluster_id": null,
+          "data": {
+            "color": "#b8bb26",
+            "description": "schema.sql 파일",
+            "directory": "src",
+            "file": "schema.sql",
+            "label": "schema.sql",
+            "path": "src/schema.sql",
+            "summary": {
+              "classes": [],
+              "functions": [],
+              "references": []
+            }
+          },
+          "id": "node_2",
+          "position": {
+            "x": 360.1107961474788,
+            "y": -45.03933879216252
+          },
+          "status": "proposed",
+          "type": "source",
+          "visual": {
+            "dashArray": "5,5",
+            "opacity": 0.5
+          }
+        }
+      ],
+      "edges": [
+        {
+          "id": "edge_auto_1771080397629_177",
+          "from": "node_0",
+          "to": "node_1",
+          "type": "dependency",
+          "label": "ref"
+        }
+      ],
+      "clusters": []
+    }
+  },
+  {
+    "id": "snap_1771080255783",
+    "timestamp": 1771080255783,
+    "label": "Group Created: Group 1",
+    "data": {
+      "nodes": [
+        {
+          "cluster_id": null,
+          "data": {
+            "color": "#b8bb26",
+            "description": "login.py 파일",
+            "directory": "src",
+            "file": "login.py",
+            "label": "login.py",
+            "path": "src/login.py",
+            "summary": {
+              "classes": [
+                "AuthProvider"
+              ],
+              "functions": [
+                "__init__",
+                "login",
+                "logout",
+                "validate_token"
+              ],
+              "references": [
+                "board"
+              ]
+            }
+          },
+          "id": "node_0",
+          "position": {
+            "x": -141.62243163894004,
+            "y": 141.30897567437407
+          },
+          "status": "proposed",
+          "type": "source",
+          "visual": {
+            "dashArray": "5,5",
+            "opacity": 0.5
+          }
+        },
+        {
+          "cluster_id": "cluster_1771080255780",
+          "data": {
+            "color": "#b8bb26",
+            "description": "board.py 파일",
+            "directory": "src",
+            "file": "board.py",
+            "label": "board.py",
+            "path": "src/board.py",
+            "summary": {
+              "classes": [
+                "CanvasManager"
+              ],
+              "functions": [
+                "__init__",
+                "add_element",
+                "clear",
+                "get_board_config"
+              ],
+              "references": []
+            }
+          },
+          "id": "node_1",
+          "position": {
+            "x": 83.23401407566509,
+            "y": -13.085580542300537
+          },
+          "status": "proposed",
+          "type": "source",
+          "visual": {
+            "dashArray": "5,5",
+            "opacity": 0.5
+          }
+        },
+        {
+          "cluster_id": "cluster_1771080255780",
+          "data": {
+            "color": "#b8bb26",
+            "description": "schema.sql 파일",
+            "directory": "src",
+            "file": "schema.sql",
+            "label": "schema.sql",
+            "path": "src/schema.sql",
+            "summary": {
+              "classes": [],
+              "functions": [],
+              "references": []
+            }
+          },
+          "id": "node_2",
+          "position": {
+            "x": 360.1107961474788,
+            "y": -45.03933879216252
+          },
+          "status": "proposed",
+          "type": "source",
+          "visual": {
+            "dashArray": "5,5",
+            "opacity": 0.5
+          }
+        }
+      ],
+      "edges": [
+        {
+          "from": "node_1",
+          "id": "edge_manual_1771079295949",
+          "label": "dependency",
+          "to": "node_2",
+          "type": "dependency",
+          "visual": {
+            "color": "#83a598",
+            "dashArray": "5,5"
+          }
+        },
+        {
+          "from": "node_0",
+          "id": "edge_manual_1771079785110",
+          "label": "call",
+          "to": "node_2",
+          "type": "call",
+          "visual": {
+            "color": "#b8bb26"
+          }
+        },
+        {
+          "from": "node_0",
+          "id": "edge_manual_1771079797190",
+          "label": "data flow",
+          "to": "node_1",
+          "type": "data_flow",
+          "visual": {
+            "color": "#fabd2f"
+          }
+        },
+        {
+          "from": "node_1",
+          "id": "edge_manual_1771079808849",
+          "label": "bidirectional",
+          "to": "node_0",
+          "type": "bidirectional",
+          "visual": {
+            "color": "#d3869b"
+          }
+        },
+        {
+          "id": "edge_auto_1771080225615_896",
+          "from": "node_0",
+          "to": "node_1",
+          "type": "dependency",
+          "label": "ref"
+        }
+      ],
+      "clusters": [
+        {
+          "id": "cluster_1771080255780",
+          "label": "Group 1",
+          "color": "#fabd2f",
+          "collapsed": false
+        }
+      ]
+    }
+  },
+  {
+    "id": "snap_1771080254815",
+    "timestamp": 1771080254815,
+    "label": "Selection Ungrouped",
+    "data": {
+      "nodes": [
+        {
+          "cluster_id": null,
+          "data": {
+            "color": "#b8bb26",
+            "description": "login.py 파일",
+            "directory": "src",
+            "file": "login.py",
+            "label": "login.py",
+            "path": "src/login.py",
+            "summary": {
+              "classes": [
+                "AuthProvider"
+              ],
+              "functions": [
+                "__init__",
+                "login",
+                "logout",
+                "validate_token"
+              ],
+              "references": [
+                "board"
+              ]
+            }
+          },
+          "id": "node_0",
+          "position": {
+            "x": -141.62243163894004,
+            "y": 141.30897567437407
+          },
+          "status": "proposed",
+          "type": "source",
+          "visual": {
+            "dashArray": "5,5",
+            "opacity": 0.5
+          }
+        },
+        {
+          "cluster_id": null,
+          "data": {
+            "color": "#b8bb26",
+            "description": "board.py 파일",
+            "directory": "src",
+            "file": "board.py",
+            "label": "board.py",
+            "path": "src/board.py",
+            "summary": {
+              "classes": [
+                "CanvasManager"
+              ],
+              "functions": [
+                "__init__",
+                "add_element",
+                "clear",
+                "get_board_config"
+              ],
+              "references": []
+            }
+          },
+          "id": "node_1",
+          "position": {
+            "x": 83.23401407566509,
+            "y": -13.085580542300537
+          },
+          "status": "proposed",
+          "type": "source",
+          "visual": {
+            "dashArray": "5,5",
+            "opacity": 0.5
+          }
+        },
+        {
+          "cluster_id": null,
+          "data": {
+            "color": "#b8bb26",
+            "description": "schema.sql 파일",
+            "directory": "src",
+            "file": "schema.sql",
+            "label": "schema.sql",
+            "path": "src/schema.sql",
+            "summary": {
+              "classes": [],
+              "functions": [],
+              "references": []
+            }
+          },
+          "id": "node_2",
+          "position": {
+            "x": 360.1107961474788,
+            "y": -45.03933879216252
+          },
+          "status": "proposed",
+          "type": "source",
+          "visual": {
+            "dashArray": "5,5",
+            "opacity": 0.5
+          }
+        }
+      ],
+      "edges": [
+        {
+          "from": "node_1",
+          "id": "edge_manual_1771079295949",
+          "label": "dependency",
+          "to": "node_2",
+          "type": "dependency",
+          "visual": {
+            "color": "#83a598",
+            "dashArray": "5,5"
+          }
+        },
+        {
+          "from": "node_0",
+          "id": "edge_manual_1771079785110",
+          "label": "call",
+          "to": "node_2",
+          "type": "call",
+          "visual": {
+            "color": "#b8bb26"
+          }
+        },
+        {
+          "from": "node_0",
+          "id": "edge_manual_1771079797190",
+          "label": "data flow",
+          "to": "node_1",
+          "type": "data_flow",
+          "visual": {
+            "color": "#fabd2f"
+          }
+        },
+        {
+          "from": "node_1",
+          "id": "edge_manual_1771079808849",
+          "label": "bidirectional",
+          "to": "node_0",
+          "type": "bidirectional",
+          "visual": {
+            "color": "#d3869b"
+          }
+        },
+        {
+          "id": "edge_auto_1771080225615_896",
+          "from": "node_0",
+          "to": "node_1",
+          "type": "dependency",
+          "label": "ref"
+        }
+      ],
+      "clusters": []
+    }
+  },
+  {
+    "id": "snap_1771080246181",
+    "timestamp": 1771080246181,
+    "label": "Selection Ungrouped",
+    "data": {
+      "nodes": [
+        {
+          "cluster_id": null,
+          "data": {
+            "color": "#b8bb26",
+            "description": "login.py 파일",
+            "directory": "src",
+            "file": "login.py",
+            "label": "login.py",
+            "path": "src/login.py",
+            "summary": {
+              "classes": [
+                "AuthProvider"
+              ],
+              "functions": [
+                "__init__",
+                "login",
+                "logout",
+                "validate_token"
+              ],
+              "references": [
+                "board"
+              ]
+            }
+          },
+          "id": "node_0",
+          "position": {
+            "x": -141.62243163894004,
+            "y": 141.30897567437407
+          },
+          "status": "proposed",
+          "type": "source",
+          "visual": {
+            "dashArray": "5,5",
+            "opacity": 0.5
+          }
+        },
+        {
+          "cluster_id": null,
+          "data": {
+            "color": "#b8bb26",
+            "description": "board.py 파일",
+            "directory": "src",
+            "file": "board.py",
+            "label": "board.py",
+            "path": "src/board.py",
+            "summary": {
+              "classes": [
+                "CanvasManager"
+              ],
+              "functions": [
+                "__init__",
+                "add_element",
+                "clear",
+                "get_board_config"
+              ],
+              "references": []
+            }
+          },
+          "id": "node_1",
+          "position": {
+            "x": 83.23401407566509,
+            "y": -13.085580542300537
+          },
+          "status": "proposed",
+          "type": "source",
+          "visual": {
+            "dashArray": "5,5",
+            "opacity": 0.5
+          }
+        },
+        {
+          "cluster_id": null,
+          "data": {
+            "color": "#b8bb26",
+            "description": "schema.sql 파일",
+            "directory": "src",
+            "file": "schema.sql",
+            "label": "schema.sql",
+            "path": "src/schema.sql",
+            "summary": {
+              "classes": [],
+              "functions": [],
+              "references": []
+            }
+          },
+          "id": "node_2",
+          "position": {
+            "x": 360.1107961474788,
+            "y": -45.03933879216252
+          },
+          "status": "proposed",
+          "type": "source",
+          "visual": {
+            "dashArray": "5,5",
+            "opacity": 0.5
+          }
+        }
+      ],
+      "edges": [
+        {
+          "from": "node_1",
+          "id": "edge_manual_1771079295949",
+          "label": "dependency",
+          "to": "node_2",
+          "type": "dependency",
+          "visual": {
+            "color": "#83a598",
+            "dashArray": "5,5"
+          }
+        },
+        {
+          "from": "node_0",
+          "id": "edge_manual_1771079785110",
+          "label": "call",
+          "to": "node_2",
+          "type": "call",
+          "visual": {
+            "color": "#b8bb26"
+          }
+        },
+        {
+          "from": "node_0",
+          "id": "edge_manual_1771079797190",
+          "label": "data flow",
+          "to": "node_1",
+          "type": "data_flow",
+          "visual": {
+            "color": "#fabd2f"
+          }
+        },
+        {
+          "from": "node_1",
+          "id": "edge_manual_1771079808849",
+          "label": "bidirectional",
+          "to": "node_0",
+          "type": "bidirectional",
+          "visual": {
+            "color": "#d3869b"
+          }
+        },
+        {
+          "id": "edge_auto_1771080225615_896",
+          "from": "node_0",
+          "to": "node_1",
+          "type": "dependency",
+          "label": "ref"
+        }
+      ],
+      "clusters": []
+    }
+  },
+  {
+    "id": "snap_1771080240539",
+    "timestamp": 1771080240539,
+    "label": "Selection Ungrouped",
+    "data": {
+      "nodes": [
+        {
+          "cluster_id": "cluster_1771078439481",
+          "data": {
+            "color": "#b8bb26",
+            "description": "login.py 파일",
+            "directory": "src",
+            "file": "login.py",
+            "label": "login.py",
+            "path": "src/login.py",
+            "summary": {
+              "classes": [
+                "AuthProvider"
+              ],
+              "functions": [
+                "__init__",
+                "login",
+                "logout",
+                "validate_token"
+              ],
+              "references": [
+                "board"
+              ]
+            }
+          },
+          "id": "node_0",
+          "position": {
+            "x": -141.62243163894004,
+            "y": 141.30897567437407
+          },
+          "status": "proposed",
+          "type": "source",
+          "visual": {
+            "dashArray": "5,5",
+            "opacity": 0.5
+          }
+        },
+        {
+          "cluster_id": null,
+          "data": {
+            "color": "#b8bb26",
+            "description": "board.py 파일",
+            "directory": "src",
+            "file": "board.py",
+            "label": "board.py",
+            "path": "src/board.py",
+            "summary": {
+              "classes": [
+                "CanvasManager"
+              ],
+              "functions": [
+                "__init__",
+                "add_element",
+                "clear",
+                "get_board_config"
+              ],
+              "references": []
+            }
+          },
+          "id": "node_1",
+          "position": {
+            "x": 83.23401407566509,
+            "y": -13.085580542300537
+          },
+          "status": "proposed",
+          "type": "source",
+          "visual": {
+            "dashArray": "5,5",
+            "opacity": 0.5
+          }
+        },
+        {
+          "cluster_id": "cluster_1771078439481",
+          "data": {
+            "color": "#b8bb26",
+            "description": "schema.sql 파일",
+            "directory": "src",
+            "file": "schema.sql",
+            "label": "schema.sql",
+            "path": "src/schema.sql",
+            "summary": {
+              "classes": [],
+              "functions": [],
+              "references": []
+            }
+          },
+          "id": "node_2",
+          "position": {
+            "x": 360.1107961474788,
+            "y": -45.03933879216252
+          },
+          "status": "proposed",
+          "type": "source",
+          "visual": {
+            "dashArray": "5,5",
+            "opacity": 0.5
+          }
+        }
+      ],
+      "edges": [
+        {
+          "from": "node_1",
+          "id": "edge_manual_1771079295949",
+          "label": "dependency",
+          "to": "node_2",
+          "type": "dependency",
+          "visual": {
+            "color": "#83a598",
+            "dashArray": "5,5"
+          }
+        },
+        {
+          "from": "node_0",
+          "id": "edge_manual_1771079785110",
+          "label": "call",
+          "to": "node_2",
+          "type": "call",
+          "visual": {
+            "color": "#b8bb26"
+          }
+        },
+        {
+          "from": "node_0",
+          "id": "edge_manual_1771079797190",
+          "label": "data flow",
+          "to": "node_1",
+          "type": "data_flow",
+          "visual": {
+            "color": "#fabd2f"
+          }
+        },
+        {
+          "from": "node_1",
+          "id": "edge_manual_1771079808849",
+          "label": "bidirectional",
+          "to": "node_0",
+          "type": "bidirectional",
+          "visual": {
+            "color": "#d3869b"
+          }
+        },
+        {
+          "id": "edge_auto_1771080225615_896",
+          "from": "node_0",
+          "to": "node_1",
+          "type": "dependency",
+          "label": "ref"
+        }
+      ],
+      "clusters": [
+        {
+          "collapsed": false,
+          "color": "#fabd2f",
+          "id": "cluster_1771078439481",
+          "label": "Group 2"
+        }
+      ]
+    }
+  },
+  {
     "id": "snap_1771078439485",
     "timestamp": 1771078439485,
     "label": "Group Created: Group 2",

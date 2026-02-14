@@ -357,6 +357,7 @@
         <button class="btn" id="btn-ungroup" title="Ungroup Selected Cluster">Ungroup</button>
         <div class="toolbar-divider"></div>
         <div style="flex: 1"></div>
+        <button class="btn" id="btn-animate" title="Toggle Edge Animations">🎬 On</button>
         <button class="btn" id="btn-history">History</button>
         <button class="btn" id="btn-snapshot" title="Take Manual Snapshot">📸</button>
     </div>
@@ -468,6 +469,15 @@
                     if (window.engine) {
                         window.engine.getHistory();
                     }
+                }
+            });
+
+            // 애니메이션 토글 버튼 (Phase 3)
+            document.getElementById('btn-animate').addEventListener('click', (e) => {
+                if (window.engine) {
+                    const isNowAnimating = window.engine.toggleAnimation();
+                    e.target.textContent = isNowAnimating ? '🎬 On' : '⏸️ Off';
+                    e.target.classList.toggle('active', isNowAnimating);
                 }
             });
 

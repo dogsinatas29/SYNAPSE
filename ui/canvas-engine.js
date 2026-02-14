@@ -338,6 +338,8 @@ class CanvasEngine {
         // 인터랙션 상태
         this.isDragging = false;
         this.dragStart = { x: 0, y: 0 };
+        this.animationOffset = 0;
+        this.isAnimating = true;
         this.isSelecting = false; // 드래그 선택 중인지 여부
         this.selectionRect = { x: 0, y: 0, width: 0, height: 0 }; // 드래그 선택 영역
         this.wasDragging = false; // 드래그/선택 후 클릭 무시용 플래그
@@ -368,12 +370,37 @@ class CanvasEngine {
 
         // 렌더링 루프 시작
         this.render();
+        this.startAnimationLoop();
     }
 
     resizeCanvas() {
         const container = this.canvas.parentElement;
         this.canvas.width = container.clientWidth;
         this.canvas.height = container.clientHeight;
+    }
+
+    /**
+     * 애니메이션 토글 (Phase 3)
+     */
+    toggleAnimation() {
+        this.isAnimating = !this.isAnimating;
+        if (this.isAnimating) {
+            this.startAnimationLoop();
+        }
+        console.log('[SYNAPSE] Animation toggled:', this.isAnimating);
+        return this.isAnimating;
+    }
+
+    startAnimationLoop() {
+        const animate = () => {
+            if (this.isAnimating) {
+                // 부드러운 이동을 위한 오프셋 증가
+                this.animationOffset = (this.animationOffset + 0.5) % 40;
+                this.render(); // 매 프레임 재포착
+                requestAnimationFrame(animate);
+            }
+        };
+        requestAnimationFrame(animate);
     }
 
     setupEventListeners() {
@@ -2089,8 +2116,26 @@ class CanvasEngine {
         const cpY = (fromY + toY) / 2 - 30;
         this.ctx.quadraticCurveTo(cpX, cpY, toX, toY);
 
+        // 화살표 아이콘 결정 (Phase 3)
+        // LOD 적용: 줌이 0.6 이상일 때만 아이콘 표시 (절제된 미학)
+        const showIcons = this.transform.zoom > 0.6;
+        const iconMap = {
+            'dependency': 'D',
+            'call': 'C',
+            'data_flow': 'F',
+            'bidirectional': 'B'
+        };
+        const edgeIcon = (showIcons && iconMap[edge.type]) || '';
+
+        // 펄스 애니메이션 적용 (Phase 3)
+        // 시니어 엔지니어 제언: Data Flow와 같은 동적인 관계에만 우선 적용 (절제)
+        if (this.isAnimating && edge.type === 'data_flow') {
+            this.ctx.lineDashOffset = -this.animationOffset;
+        }
+
         this.ctx.stroke();
         this.ctx.setLineDash([]);
+        this.ctx.lineDashOffset = 0; // 리셋
 
         // 글로우 효과 리셋
         this.ctx.shadowBlur = 0;
@@ -2101,23 +2146,23 @@ class CanvasEngine {
         const arrowPoint = this.getNodeBoundaryPoint(toX, toY, angle);
 
         // 1. 끝점 화살표 (노드 경계)
-        this.renderArrow(arrowPoint.x, arrowPoint.y, angle, edgeColor, style.arrowStyle);
+        this.renderArrow(arrowPoint.x, arrowPoint.y, angle, edgeColor, style.arrowStyle, edgeIcon);
 
         // 2. 중앙 화살표 (엣지 중간) - 시각적 명확성 향상!
         const midX = (fromX + toX) / 2;
         const midY = (fromY + toY) / 2 - 30; // 곡선 중앙점
         const midAngle = Math.atan2(toY - midY, toX - midX);
-        this.renderArrow(midX, midY, midAngle, edgeColor, style.arrowStyle);
+        this.renderArrow(midX, midY, midAngle, edgeColor, style.arrowStyle, edgeIcon);
 
         // Bidirectional인 경우 반대 방향 화살표도 그리기
         if (style.arrowStyle === 'double') {
             const startAngle = Math.atan2(fromY - cpY, fromX - cpX);
             const startArrowPoint = this.getNodeBoundaryPoint(fromX, fromY, startAngle);
-            this.renderArrow(startArrowPoint.x, startArrowPoint.y, startAngle, edgeColor, 'standard');
+            this.renderArrow(startArrowPoint.x, startArrowPoint.y, startAngle, edgeColor, 'standard', edgeIcon);
 
             // 중앙 반대 방향 화살표
             const midStartAngle = Math.atan2(fromY - midY, fromX - midX);
-            this.renderArrow(midX, midY, midStartAngle, edgeColor, 'standard');
+            this.renderArrow(midX, midY, midStartAngle, edgeColor, 'standard', edgeIcon);
         }
 
         // 🔍 검증 결과 표시 (에러/경고인 경우 라벨 추가)
@@ -2157,8 +2202,9 @@ class CanvasEngine {
      * @param {number} angle - 화살표 각도
      * @param {string} color - 화살표 색상
      * @param {string} style - 'standard', 'thick', 'double'
+     * @param {string} text - 화살표 내부에 표시할 아이콘 (D, C, F, B 등)
      */
-    renderArrow(x, y, angle, color, style = 'standard') {
+    renderArrow(x, y, angle, color, style = 'standard', text = '') {
         // 화살표 크기: 2배로 증가 (테스트용)
         const baseSize = style === 'thick' ? 40 : 30; // 기본 크기 2배
         const minSize = 24; // 최소 크기 2배
@@ -2186,9 +2232,30 @@ class CanvasEngine {
         this.ctx.fill();
 
         // 화살표 테두리 (가시성 향상)
-        this.ctx.strokeStyle = '#1d2021'; // 어두운 테두리
         this.ctx.lineWidth = 1;
         this.ctx.stroke();
+
+        // 아이콘 텍스트 추가 (Phase 3)
+        if (text) {
+            this.ctx.save();
+            // 텍스트 위치 계산: 화살표 중심부 근처
+            // 화살표 끝(x,y)에서 약간 뒤로 이동
+            const textDist = arrowSize * 0.6;
+            const tx = x - textDist * Math.cos(angle);
+            const ty = y - textDist * Math.sin(angle);
+
+            this.ctx.translate(tx, ty);
+
+            // 텍스트 색상: 어두운 배경/색상에는 밝은색, 밝은 색상에는 어두운색
+            // 여기서는 고정적으로 어두운 Gruvbox 브라운 사용 (가장 잘 보임)
+            this.ctx.fillStyle = '#1d2021';
+
+            this.ctx.font = `bold ${Math.max(10, arrowSize * 0.45)}px Inter, sans-serif`;
+            this.ctx.textAlign = 'center';
+            this.ctx.textBaseline = 'middle';
+            this.ctx.fillText(text, 0, 0);
+            this.ctx.restore();
+        }
 
         // Canvas 상태 복원
         this.ctx.restore();

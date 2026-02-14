@@ -1668,14 +1668,25 @@ class CanvasEngine {
         this.ctx.stroke();
         this.ctx.setLineDash([]);
 
-        // 화살표 렌더링 (타입별 스타일)
+        // 화살표 렌더링 (노드 경계선에 그리기)
+        // 노드 크기 (중심 기준)
+        const nodeWidth = 120;
+        const nodeHeight = 60;
+
+        // 화살표를 그릴 위치: 노드 경계선과의 교점 계산
         const angle = Math.atan2(toY - cpY, toX - cpX);
-        this.renderArrow(toX, toY, angle, edgeColor, style.arrowStyle);
+        const arrowOffset = 15; // 노드 경계에서 약간 떨어진 위치
+        const arrowX = toX - arrowOffset * Math.cos(angle);
+        const arrowY = toY - arrowOffset * Math.sin(angle);
+
+        this.renderArrow(arrowX, arrowY, angle, edgeColor, style.arrowStyle);
 
         // Bidirectional인 경우 반대 방향 화살표도 그리기
         if (style.arrowStyle === 'double') {
             const startAngle = Math.atan2(fromY - cpY, fromX - cpX);
-            this.renderArrow(fromX, fromY, startAngle, edgeColor, 'standard');
+            const startArrowX = fromX - arrowOffset * Math.cos(startAngle);
+            const startArrowY = fromY - arrowOffset * Math.sin(startAngle);
+            this.renderArrow(startArrowX, startArrowY, startAngle, edgeColor, 'standard');
         }
 
         // 🔍 검증 결과 표시 (에러/경고인 경우 라벨 추가)
@@ -1717,9 +1728,9 @@ class CanvasEngine {
      * @param {string} style - 'standard', 'thick', 'double'
      */
     renderArrow(x, y, angle, color, style = 'standard') {
-        // 화살표 크기: 훨씬 크게 설정 (가시성 우선)
-        const baseSize = style === 'thick' ? 20 : 15; // 기본 크기 증가
-        const minSize = 12; // 최소 크기 증가
+        // 화살표 크기: 2배로 증가 (테스트용)
+        const baseSize = style === 'thick' ? 40 : 30; // 기본 크기 2배
+        const minSize = 24; // 최소 크기 2배
         const arrowSize = Math.max(minSize, baseSize / Math.sqrt(this.transform.zoom));
 
         console.log(`[DEBUG] renderArrow called: x=${x}, y=${y}, angle=${angle}, color=${color}, size=${arrowSize}`);

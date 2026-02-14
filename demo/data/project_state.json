@@ -34,10 +34,20 @@
     },
     {
       "from": "node_0",
-      "id": "edge_auto_1771080551049_798",
+      "id": "edge_auto_1771080770642_278",
       "label": "ref",
       "to": "node_1",
       "type": "dependency"
+    },
+    {
+      "from": "node_1",
+      "id": "edge_manual_1771080791001",
+      "label": "bidirectional",
+      "to": "node_0",
+      "type": "bidirectional",
+      "visual": {
+        "color": "#d3869b"
+      }
     }
   ],
   "gemini_md_path": "/home/dogsinatas/TypeScript_project/antigravity-extension-vis/GEMINI.md",
@@ -102,8 +112,8 @@
       },
       "id": "node_1",
       "position": {
-        "x": 83.23401407566509,
-        "y": -13.085580542300537
+        "x": 31.234014075665087,
+        "y": -288.08558054230053
       },
       "status": "proposed",
       "type": "source",

@@ -1,8 +1,5 @@
 {
-  "project_name": "antigravity-extension-vis",
-  "gemini_md_path": "/home/dogsinatas/TypeScript_project/antigravity-extension-vis/GEMINI.md",
   "canvas_state": {
-    "zoom_level": 1,
     "offset": {
       "x": 0,
       "y": 0
@@ -10,24 +7,43 @@
     "visible_layers": [
       "source",
       "documentation"
-    ]
+    ],
+    "zoom_level": 1
   },
+  "clusters": [
+    {
+      "collapsed": false,
+      "color": "#fabd2f",
+      "id": "cluster_1771077180327",
+      "label": "Group 1"
+    },
+    {
+      "collapsed": false,
+      "color": "#fabd2f",
+      "id": "cluster_1771078439481",
+      "label": "Group 2"
+    }
+  ],
+  "edges": [
+    {
+      "from": "node_0",
+      "id": "edge_auto_1771079115549_221",
+      "label": "ref",
+      "to": "node_1",
+      "type": "dependency"
+    }
+  ],
+  "gemini_md_path": "/home/dogsinatas/TypeScript_project/antigravity-extension-vis/GEMINI.md",
   "nodes": [
     {
-      "id": "node_0",
-      "type": "source",
-      "status": "proposed",
-      "position": {
-        "x": -158.6899606579339,
-        "y": -293.63530486020016
-      },
+      "cluster_id": "cluster_1771078439481",
       "data": {
-        "file": "login.py",
-        "path": "src/login.py",
-        "directory": "src",
-        "label": "login.py",
-        "description": "login.py 파일",
         "color": "#b8bb26",
+        "description": "login.py 파일",
+        "directory": "src",
+        "file": "login.py",
+        "label": "login.py",
+        "path": "src/login.py",
         "summary": {
           "classes": [
             "AuthProvider"
@@ -43,27 +59,27 @@
           ]
         }
       },
-      "visual": {
-        "opacity": 0.5,
-        "dashArray": "5,5"
+      "id": "node_0",
+      "position": {
+        "x": -434.6549931286694,
+        "y": -329.40854981011034
       },
-      "cluster_id": "cluster_1771077180327"
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
     },
     {
-      "id": "node_1",
-      "type": "source",
-      "status": "proposed",
-      "position": {
-        "x": 83.20136360424746,
-        "y": -453.9920685685266
-      },
+      "cluster_id": "cluster_1771078439481",
       "data": {
-        "file": "board.py",
-        "path": "src/board.py",
-        "directory": "src",
-        "label": "board.py",
-        "description": "board.py 파일",
         "color": "#b8bb26",
+        "description": "board.py 파일",
+        "directory": "src",
+        "file": "board.py",
+        "label": "board.py",
+        "path": "src/board.py",
         "summary": {
           "classes": [
             "CanvasManager"
@@ -77,55 +93,45 @@
           "references": []
         }
       },
-      "visual": {
-        "opacity": 0.5,
-        "dashArray": "5,5"
+      "id": "node_1",
+      "position": {
+        "x": -209.79854741406425,
+        "y": -483.80310602678503
       },
-      "cluster_id": "cluster_1771077180327"
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
     },
     {
-      "id": "node_2",
-      "type": "source",
-      "status": "proposed",
-      "position": {
-        "x": 343.0432671284848,
-        "y": -479.98361932673674
-      },
+      "cluster_id": "cluster_1771078439481",
       "data": {
-        "file": "schema.sql",
-        "path": "src/schema.sql",
-        "directory": "src",
-        "label": "schema.sql",
-        "description": "schema.sql 파일",
         "color": "#b8bb26",
+        "description": "schema.sql 파일",
+        "directory": "src",
+        "file": "schema.sql",
+        "label": "schema.sql",
+        "path": "src/schema.sql",
         "summary": {
           "classes": [],
           "functions": [],
           "references": []
         }
       },
-      "visual": {
-        "opacity": 0.5,
-        "dashArray": "5,5"
+      "id": "node_2",
+      "position": {
+        "x": 67.07823465774939,
+        "y": -515.756864276647
       },
-      "cluster_id": null
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
     }
   ],
-  "edges": [
-    {
-      "id": "edge_auto_1771077134186_85",
-      "from": "node_0",
-      "to": "node_1",
-      "type": "dependency",
-      "label": "ref"
-    }
-  ],
-  "clusters": [
-    {
-      "id": "cluster_1771077180327",
-      "label": "Group 1",
-      "color": "#fabd2f",
-      "collapsed": false
-    }
-  ]
+  "project_name": "antigravity-extension-vis"
 }

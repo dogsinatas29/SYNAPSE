@@ -516,10 +516,14 @@ class CanvasEngine {
                 if (this.edgeTarget && this.edgeTarget.id !== this.edgeSource.id) {
                     // 엣지 타입 선택 메뉴 표시
                     this.showEdgeTypeSelector(e.clientX, e.clientY);
+                } else {
+                    // 타겟이 없거나 자기 자신이면 취소
+                    this.isCreatingEdge = false;
+                    this.edgeSource = null;
+                    this.edgeTarget = null;
                 }
+                // 주의: edgeSource/edgeTarget은 createManualEdge에서 사용하므로 여기서 초기화하지 않음!
                 this.isCreatingEdge = false;
-                this.edgeSource = null;
-                this.edgeTarget = null;
                 return;
             }
 
@@ -847,6 +851,124 @@ class CanvasEngine {
         };
     }
 
+    /**
+     * 엣지 검증 로직 - 논리적 정합성 체크
+     * @param {Object} edge - 검증할 엣지 객체
+     * @param {Object} sourceNode - 소스 노드
+     * @param {Object} targetNode - 타겟 노드
+     * @returns {Object} { valid: boolean, color: string, reason: string }
+     */
+    validateEdge(edge, sourceNode, targetNode) {
+        if (!sourceNode || !targetNode) {
+            return { valid: true, color: edge.visual?.color || '#83a598', reason: 'Unknown nodes' };
+        }
+
+        // 파일 확장자 추출
+        const getFileExt = (node) => {
+            const filePath = node.data?.file || node.data?.path || '';
+            const match = filePath.match(/\.([^.]+)$/);
+            return match ? match[1].toLowerCase() : '';
+        };
+
+        const sourceExt = getFileExt(sourceNode);
+        const targetExt = getFileExt(targetNode);
+        const edgeType = edge.type || 'dependency';
+
+        // 규칙 1: 타입 불일치 감지
+        // SQL 파일을 "호출"하는 것은 논리적으로 불가능
+        if (edgeType === 'call' && (targetExt === 'sql' || targetExt === 'json')) {
+            return {
+                valid: false,
+                color: '#fb4934', // 빨간색 (에러)
+                reason: `Cannot call ${targetExt.toUpperCase()} file`
+            };
+        }
+
+        // 규칙 2: 방향성 검증
+        // 스키마 파일(.sql, .json)이 소스인 경우 경고
+        const schemaExtensions = ['sql', 'json', 'yaml', 'yml'];
+        const codeExtensions = ['py', 'js', 'ts', 'jsx', 'tsx'];
+
+        if (schemaExtensions.includes(sourceExt) && codeExtensions.includes(targetExt)) {
+            // 스키마 → 코드 방향은 의심스러움
+            if (edgeType === 'dependency' || edgeType === 'call') {
+                return {
+                    valid: true,
+                    color: '#fabd2f', // 노란색 (경고)
+                    reason: `Unusual: Schema file referencing code`
+                };
+            }
+        }
+
+        // 규칙 3: Data Flow 방향 검증
+        // 코드 → 스키마로 데이터가 흐르는 것은 부자연스러움
+        if (edgeType === 'data_flow') {
+            if (codeExtensions.includes(sourceExt) && schemaExtensions.includes(targetExt)) {
+                return {
+                    valid: true,
+                    color: '#fabd2f', // 노란색 (경고)
+                    reason: `Unusual data flow: Code → Schema`
+                };
+            }
+        }
+
+        // 규칙 4: 순환 참조 감지 (간단한 버전)
+        // A → B → A 패턴 체크
+        const circularCheck = this.detectCircularDependency(sourceNode.id, targetNode.id);
+        if (circularCheck) {
+            return {
+                valid: false,
+                color: '#fb4934', // 빨간색 (에러)
+                reason: 'Circular dependency detected'
+            };
+        }
+
+        // 기본값: 정상
+        return {
+            valid: true,
+            color: edge.visual?.color || '#83a598',
+            reason: 'Valid edge'
+        };
+    }
+
+    /**
+     * 순환 참조 감지 (간단한 BFS)
+     * @param {string} sourceId - 소스 노드 ID
+     * @param {string} targetId - 타겟 노드 ID
+     * @returns {boolean} 순환 참조 여부
+     */
+    detectCircularDependency(sourceId, targetId) {
+        // targetId에서 시작해서 sourceId로 돌아오는 경로가 있는지 확인
+        const visited = new Set();
+        const queue = [targetId];
+
+        while (queue.length > 0) {
+            const currentId = queue.shift();
+
+            if (currentId === sourceId) {
+                return true; // 순환 발견!
+            }
+
+            if (visited.has(currentId)) continue;
+            visited.add(currentId);
+
+            // 현재 노드에서 나가는 엣지 찾기
+            const outgoingEdges = this.edges.filter(e =>
+                (e.from === currentId || e.fromCluster === currentId) &&
+                !e.id.startsWith('edge_auto_') // 자동 엣지는 제외
+            );
+
+            outgoingEdges.forEach(edge => {
+                const nextId = edge.to || edge.toCluster;
+                if (nextId && !visited.has(nextId)) {
+                    queue.push(nextId);
+                }
+            });
+        }
+
+        return false;
+    }
+
     showEdgeTypeSelector(x, y) {
         // 엣지 타입 선택 메뉴 생성
         const existingMenu = document.getElementById('edge-type-menu');
@@ -944,6 +1066,10 @@ class CanvasEngine {
         }
 
         this.saveState();
+
+        // 엣지 생성 완료 후 상태 초기화
+        this.edgeSource = null;
+        this.edgeTarget = null;
     }
 
     takeSnapshot(label) {
@@ -1461,23 +1587,28 @@ class CanvasEngine {
 
         if (!fromNode || !toNode) return;
 
+        // 🔍 엣지 검증 로직 적용
+        const validation = this.validateEdge(edge, fromNode, toNode);
+
         const fromX = fromNode.position.x + 60;
         const fromY = fromNode.position.y + 30;
         const toX = toNode.position.x + 60;
         const toY = toNode.position.y + 30;
 
-        // 엣지 스타일 설정
-        let edgeColor = edge.visual?.color || '#665c54';
+        // 엣지 스타일 설정 (검증 결과 반영)
+        let edgeColor = validation.color; // 검증된 색상 사용!
         this.ctx.strokeStyle = edgeColor;
-        this.ctx.lineWidth = 1.5;
+        this.ctx.lineWidth = validation.valid ? 1.5 : 2.5; // 에러는 더 굵게
 
         // 자동 발견된 엣지나 'dependency' 타입은 기본적으로 대시선
         if (edge.visual?.dashArray) {
             this.ctx.setLineDash(edge.visual.dashArray.split(',').map(Number));
         } else if (edge.type === 'dependency' || edge.id.startsWith('edge_auto_')) {
             this.ctx.setLineDash([5, 5]);
-            this.ctx.strokeStyle = '#83a598'; // Blue-ish for dependencies
-            edgeColor = '#83a598';
+            // 검증 색상 유지 (덮어쓰지 않음)
+        } else if (!validation.valid) {
+            // 에러인 경우 점선으로 표시
+            this.ctx.setLineDash([3, 3]);
         }
 
         this.ctx.beginPath();
@@ -1506,8 +1637,37 @@ class CanvasEngine {
             toY - arrowSize * Math.sin(angle + Math.PI / 6)
         );
         this.ctx.closePath();
-        this.ctx.fillStyle = edge.visual?.color || '#665c54';
+        this.ctx.fillStyle = edgeColor; // 검증 색상 사용
         this.ctx.fill();
+
+        // 🔍 검증 결과 표시 (에러/경고인 경우 라벨 추가)
+        if (!validation.valid || validation.color === '#fabd2f') {
+            const midX = (fromX + toX) / 2;
+            const midY = (fromY + toY) / 2 - 35;
+
+            this.ctx.save();
+            this.ctx.font = `${12 / this.transform.zoom}px Inter, sans-serif`;
+            this.ctx.fillStyle = validation.valid ? '#fabd2f' : '#fb4934';
+            this.ctx.textAlign = 'center';
+            this.ctx.textBaseline = 'middle';
+
+            // 배경 박스
+            const text = validation.valid ? '⚠️' : '❌';
+            const metrics = this.ctx.measureText(text);
+            const padding = 4 / this.transform.zoom;
+
+            this.ctx.fillStyle = '#282828';
+            this.ctx.fillRect(
+                midX - metrics.width / 2 - padding,
+                midY - 8 / this.transform.zoom,
+                metrics.width + padding * 2,
+                16 / this.transform.zoom
+            );
+
+            this.ctx.fillStyle = validation.valid ? '#fabd2f' : '#fb4934';
+            this.ctx.fillText(text, midX, midY);
+            this.ctx.restore();
+        }
     }
 
     renderConnectionHandles() {

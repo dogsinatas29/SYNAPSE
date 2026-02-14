@@ -1,5 +1,134 @@
 [
   {
+    "id": "snap_1771078439485",
+    "timestamp": 1771078439485,
+    "label": "Group Created: Group 2",
+    "data": {
+      "nodes": [
+        {
+          "id": "node_0",
+          "type": "source",
+          "status": "proposed",
+          "position": {
+            "x": -158.6899606579339,
+            "y": -293.63530486020016
+          },
+          "data": {
+            "file": "login.py",
+            "path": "src/login.py",
+            "directory": "src",
+            "label": "login.py",
+            "description": "login.py 파일",
+            "color": "#b8bb26",
+            "summary": {
+              "classes": [
+                "AuthProvider"
+              ],
+              "functions": [
+                "__init__",
+                "login",
+                "logout",
+                "validate_token"
+              ],
+              "references": [
+                "board"
+              ]
+            }
+          },
+          "visual": {
+            "opacity": 0.5,
+            "dashArray": "5,5"
+          },
+          "cluster_id": "cluster_1771078439481"
+        },
+        {
+          "id": "node_1",
+          "type": "source",
+          "status": "proposed",
+          "position": {
+            "x": 83.20136360424746,
+            "y": -453.9920685685266
+          },
+          "data": {
+            "file": "board.py",
+            "path": "src/board.py",
+            "directory": "src",
+            "label": "board.py",
+            "description": "board.py 파일",
+            "color": "#b8bb26",
+            "summary": {
+              "classes": [
+                "CanvasManager"
+              ],
+              "functions": [
+                "__init__",
+                "add_element",
+                "clear",
+                "get_board_config"
+              ],
+              "references": []
+            }
+          },
+          "visual": {
+            "opacity": 0.5,
+            "dashArray": "5,5"
+          },
+          "cluster_id": "cluster_1771078439481"
+        },
+        {
+          "id": "node_2",
+          "type": "source",
+          "status": "proposed",
+          "position": {
+            "x": 343.0432671284848,
+            "y": -479.98361932673674
+          },
+          "data": {
+            "file": "schema.sql",
+            "path": "src/schema.sql",
+            "directory": "src",
+            "label": "schema.sql",
+            "description": "schema.sql 파일",
+            "color": "#b8bb26",
+            "summary": {
+              "classes": [],
+              "functions": [],
+              "references": []
+            }
+          },
+          "visual": {
+            "opacity": 0.5,
+            "dashArray": "5,5"
+          },
+          "cluster_id": "cluster_1771078439481"
+        }
+      ],
+      "edges": [
+        {
+          "id": "edge_auto_1771078429702_703",
+          "from": "node_0",
+          "to": "node_1",
+          "type": "dependency",
+          "label": "ref"
+        }
+      ],
+      "clusters": [
+        {
+          "id": "cluster_1771077180327",
+          "label": "Group 1",
+          "color": "#fabd2f",
+          "collapsed": false
+        },
+        {
+          "id": "cluster_1771078439481",
+          "label": "Group 2",
+          "color": "#fabd2f",
+          "collapsed": false
+        }
+      ]
+    }
+  },
+  {
     "id": "snap_1771077180334",
     "timestamp": 1771077180334,
     "label": "Group Created: Group 1",

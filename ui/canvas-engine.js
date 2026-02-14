@@ -1714,25 +1714,17 @@ class CanvasEngine {
         this.ctx.stroke();
         this.ctx.setLineDash([]);
 
-        // 화살표 렌더링 (노드 경계선에 그리기)
-        // 노드 크기 (중심 기준)
-        const nodeWidth = 120;
-        const nodeHeight = 60;
-
-        // 화살표를 그릴 위치: 노드 경계선과의 교점 계산
+        // 화살표 렌더링 (노드 외곽선 교점에 정확히 그리기)
         const angle = Math.atan2(toY - cpY, toX - cpX);
-        const arrowOffset = 15; // 노드 경계에서 약간 떨어진 위치
-        const arrowX = toX - arrowOffset * Math.cos(angle);
-        const arrowY = toY - arrowOffset * Math.sin(angle);
+        const arrowPoint = this.getNodeBoundaryPoint(toX, toY, angle);
 
-        this.renderArrow(arrowX, arrowY, angle, edgeColor, style.arrowStyle);
+        this.renderArrow(arrowPoint.x, arrowPoint.y, angle, edgeColor, style.arrowStyle);
 
         // Bidirectional인 경우 반대 방향 화살표도 그리기
         if (style.arrowStyle === 'double') {
             const startAngle = Math.atan2(fromY - cpY, fromX - cpX);
-            const startArrowX = fromX - arrowOffset * Math.cos(startAngle);
-            const startArrowY = fromY - arrowOffset * Math.sin(startAngle);
-            this.renderArrow(startArrowX, startArrowY, startAngle, edgeColor, 'standard');
+            const startArrowPoint = this.getNodeBoundaryPoint(fromX, fromY, startAngle);
+            this.renderArrow(startArrowPoint.x, startArrowPoint.y, startAngle, edgeColor, 'standard');
         }
 
         // 🔍 검증 결과 표시 (에러/경고인 경우 라벨 추가)

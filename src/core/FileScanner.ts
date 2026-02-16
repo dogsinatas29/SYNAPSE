@@ -30,6 +30,8 @@ export class FileScanner {
                 this.parsePython(content, summary);
             } else if (['.ts', '.js'].includes(ext)) {
                 this.parseJavaScript(content, summary);
+            } else if (['.cpp', '.h', '.c', '.hpp', '.cc'].includes(ext)) {
+                this.parseCpp(content, summary);
             }
         } catch (error) {
             console.error(`[SYNAPSE] Failed to scan file ${filePath}:`, error);
@@ -53,7 +55,6 @@ export class FileScanner {
         }
 
         // Python 임포트 (references)
-        // import os, from board import Board 등 (더 유연하게 ^ 제거)
         const importRegex = /(?:from\s+([a-zA-Z0-9_.]+)\s+import|import\s+([a-zA-Z0-9_.,\s]+))/g;
         while ((match = importRegex.exec(content)) !== null) {
             const ref = match[1] || match[2];
@@ -86,13 +87,41 @@ export class FileScanner {
         }
 
         // JS/TS 임포트 (references)
-        // import { x } from './y', const x = require('z')
         const importRegex = /import\s+.*from\s+['"](.+)['"]|require\s*\(\s*['"](.+)['"]\s*\)|import\s*\(\s*['"](.+)['"]\s*\)/g;
         while ((match = importRegex.exec(content)) !== null) {
             const ref = match[1] || match[2] || match[3];
             if (ref && !summary.references.includes(ref)) {
-                // 경로에서 파일명 추출 (예: ./utils -> utils)
                 const cleanRef = path.basename(ref, path.extname(ref));
+                if (cleanRef && !summary.references.includes(cleanRef)) {
+                    summary.references.push(cleanRef);
+                }
+            }
+        }
+    }
+
+    private parseCpp(content: string, summary: CodeSummary) {
+        // C++ 클래스
+        const classRegex = /class\s+([a-zA-Z0-9_]+)[\s{:]|struct\s+([a-zA-Z0-9_]+)[\s{:]/gm;
+        let match;
+        while ((match = classRegex.exec(content)) !== null) {
+            summary.classes.push(match[1] || match[2]);
+        }
+
+        // C/C++ 함수
+        const funcRegex = /^(?:[a-zA-Z0-9_*&::\s]+)\s+([a-zA-Z0-9_]+)\s*\([^;]*\)\s*{/gm;
+        while ((match = funcRegex.exec(content)) !== null) {
+            const funcName = match[1];
+            if (funcName && !['if', 'while', 'for', 'switch', 'return'].includes(funcName)) {
+                summary.functions.push(funcName);
+            }
+        }
+
+        // C/C++ 인클루드 (references)
+        const includeRegex = /#include\s+["<]([^">]+)[">]/g;
+        while ((match = includeRegex.exec(content)) !== null) {
+            const ref = match[1];
+            if (ref && !summary.references.includes(ref)) {
+                const cleanRef = path.basename(ref);
                 if (cleanRef && !summary.references.includes(cleanRef)) {
                     summary.references.push(cleanRef);
                 }

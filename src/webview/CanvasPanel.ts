@@ -1,14 +1,11 @@
-/**
- * Canvas Webview Panel
- * Manages the SYNAPSE canvas webview
- */
-
 import * as vscode from 'vscode';
 import * as path from 'path';
-import { FileScanner } from '../core/FileScanner';
 import * as fs from 'fs';
+import { ProjectStructure, Node, Edge, ProjectState, EdgeType, NodeType } from '../types/schema';
+import { FileScanner } from '../core/FileScanner';
 import { GeminiParser } from '../core/GeminiParser';
 import { FlowchartGenerator } from '../core/FlowchartGenerator';
+import { BootstrapEngine } from '../bootstrap/BootstrapEngine';
 import { client } from '../extension';
 
 export class CanvasPanel {
@@ -856,6 +853,20 @@ export class CanvasPanel {
                 // Save default state
                 const normalizedJson = this.normalizeProjectState(projectState);
                 await vscode.workspace.fs.writeFile(projectStateUri, Buffer.from(normalizedJson, 'utf-8'));
+            }
+
+            // 고도화: 노드가 전혀 없는 경우 (신규 프로젝트) 자동 발견 시도
+            if (projectState.nodes.length === 0) {
+                console.log('[SYNAPSE] Project state is empty, triggering auto-discovery...');
+                const engine = new BootstrapEngine();
+                const discoveredState = await engine.autoDiscover(workspaceFolder.uri.fsPath);
+
+                if (discoveredState.nodes.length > 0) {
+                    projectState = discoveredState;
+                    // 자동 발견된 상태 저장
+                    const normalizedJson = this.normalizeProjectState(projectState);
+                    await vscode.workspace.fs.writeFile(projectStateUri, Buffer.from(normalizedJson, 'utf-8'));
+                }
             }
 
             // 1. FileScanner 인스턴스 생성

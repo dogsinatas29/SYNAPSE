@@ -34,12 +34,23 @@ SYNAPSE는 **Google Antigravity**를 위해 구축된 차세대 확장 프로그
    npm install
    ```
 
-3. **Development Server Run**
+3. **Development Server (VS Code Extension)**
    ```bash
-   npm run dev
-   # OR
-   python3 -m http.server 8080
+   npm run watch
+   # Then press F5 in VS Code to start extension development host
    ```
+
+4. **Standalone Bridge Mode (New! 🚀)**
+   VS Code 없이 브라우저에서 직접 엔진을 구동하고 싶을 때 사용합니다.
+   ```bash
+   # Terminal 1: API Server
+   npm run dev:standalone
+
+   # Terminal 2: UI Server
+   npm run dev:ui
+   ```
+   - API Server: `http://localhost:3000`
+   - UI Server: `http://localhost:8080`
 
 ## 🎯 Usage Guide
 

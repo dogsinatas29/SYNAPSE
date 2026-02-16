@@ -1,7 +1,7 @@
 {
   "nodes": [
     {
-      "cluster_id": "cluster_1771250109257",
+      "cluster_id": "cluster_1771255066453",
       "data": {
         "color": "#b8bb26",
         "description": "board.py 파일",
@@ -17,15 +17,15 @@
       },
       "id": "node_1",
       "position": {
-        "x": 409.02966443098444,
-        "y": -218.7025521379247
+        "x": -255.35251761024455,
+        "y": -289.1830332281021
       },
       "status": "active",
       "type": "source",
       "visual": {}
     },
     {
-      "cluster_id": "cluster_1771250109257",
+      "cluster_id": "cluster_1771255077660",
       "data": {
         "color": "#b8bb26",
         "description": "schema.sql 파일",
@@ -39,15 +39,15 @@
       },
       "id": "node_2",
       "position": {
-        "x": 746.6491921813064,
-        "y": -406.8380449492168
+        "x": -16.792891990694017,
+        "y": -539.5091712414576
       },
       "status": "active",
       "type": "source",
       "visual": {}
     },
     {
-      "cluster_id": "cluster_1771250103616",
+      "cluster_id": "cluster_1771255066453",
       "data": {
         "description": "Manually created node",
         "file": "src/Login.py",
@@ -62,30 +62,30 @@
       },
       "id": "node_manual_1771248987477",
       "position": {
-        "x": -140.05189141326778,
-        "y": -304.4563728605053
+        "x": -415.49705697043305,
+        "y": -289.14973118659054
       },
       "status": "active",
       "type": "logic",
       "visual": {}
     },
     {
-      "cluster_id": "cluster_1771250109257",
+      "cluster_id": "cluster_1771255077660",
       "data": {
         "description": "Manually created node",
         "label": "payment,api"
       },
       "id": "node_manual_1771249019965",
       "position": {
-        "x": 564.7879871841998,
-        "y": -31.40058740072656
+        "x": -246.33206948997938,
+        "y": -539.5091712414576
       },
       "status": "active",
       "type": "service",
       "visual": {}
     },
     {
-      "cluster_id": "cluster_1771250103616",
+      "cluster_id": "cluster_1771255077660",
       "data": {
         "description": "Manually created node",
         "file": "src/AuthService.tx",
@@ -98,8 +98,8 @@
       },
       "id": "node_manual_1771249852105",
       "position": {
-        "x": 227.55163028002787,
-        "y": -416.8706327376092
+        "x": -250.60120371699276,
+        "y": -539.5091712414576
       },
       "status": "active",
       "type": "logic",
@@ -108,8 +108,11 @@
     {
       "id": "node_manual_1771253854441",
       "type": 100,
-      "status": "proposed",
-      "position": {},
+      "status": "active",
+      "position": {
+        "x": 357.05672137816083,
+        "y": 174.18929938104935
+      },
       "data": {
         "label": 100,
         "description": "Manually created node"
@@ -118,13 +121,16 @@
         "opacity": 1
       },
       "name": "Node A",
-      "cluster_id": "cluster_1771253877903"
+      "cluster_id": "cluster_1771257052868"
     },
     {
       "id": "node_manual_1771253854449",
       "type": 100,
-      "status": "proposed",
-      "position": {},
+      "status": "active",
+      "position": {
+        "x": 148.2033281306049,
+        "y": 174.18929938104935
+      },
       "data": {
         "label": 300,
         "description": "Manually created node"
@@ -133,81 +139,158 @@
         "opacity": 1
       },
       "name": "Node B",
-      "cluster_id": "cluster_1771253877903"
+      "cluster_id": "cluster_1771257052868"
+    },
+    {
+      "id": "node_manual_1771255036797",
+      "type": "ui",
+      "status": "active",
+      "position": {
+        "x": -248.94103625886208,
+        "y": -539.5091712414576
+      },
+      "data": {
+        "label": "test_node1",
+        "description": "Manually created node"
+      },
+      "visual": {
+        "opacity": 1
+      },
+      "cluster_id": "cluster_1771255077660"
+    },
+    {
+      "id": "node_manual_1771256968935",
+      "type": "ui",
+      "status": "proposed",
+      "position": {
+        "x": 598.5321741221944,
+        "y": -272.5321650541485
+      },
+      "data": {
+        "label": "test_node3",
+        "description": "Manually created node"
+      },
+      "visual": {
+        "opacity": 1
+      },
+      "cluster_id": "cluster_1771257052868"
     }
   ],
   "edges": [
     {
-      "_validationReason": "Appropriate architectural relationship.",
+      "id": "edge_manual_1771255087038",
       "from": "node_manual_1771248987477",
-      "id": "edge_manual_1771249287255",
-      "label": "dependency",
       "to": "node_1",
       "type": "dependency",
-      "validation": {
-        "confidence": 0.95,
-        "reason": "Appropriate architectural relationship.",
-        "valid": true
-      },
+      "label": "dependency",
       "visual": {
         "color": "#83a598",
         "dashArray": "5,5"
       }
     },
     {
-      "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_manual_1771248987477",
-      "id": "edge_manual_1771249927537",
-      "label": "bidirectional",
+      "id": "edge_manual_1771255107388",
+      "from": "node_1",
       "to": "node_manual_1771249852105",
       "type": "bidirectional",
-      "validation": {
-        "confidence": 0.95,
-        "reason": "Appropriate architectural relationship.",
-        "valid": true
-      },
+      "label": "bidirectional",
       "visual": {
-        "color": "#d3869b",
+        "color": "#d3869b"
+      },
+      "_validationReason": "Valid relationship"
+    },
+    {
+      "id": "edge_manual_1771255126354",
+      "from": "node_manual_1771249852105",
+      "to": "node_manual_1771255036797",
+      "type": "dependency",
+      "label": "dependency",
+      "visual": {
+        "color": "#83a598",
         "dashArray": "5,5"
       }
+    },
+    {
+      "id": "edge_manual_1771255131502",
+      "from": "node_manual_1771249852105",
+      "to": "node_manual_1771249019965",
+      "type": "dependency",
+      "label": "dependency",
+      "visual": {
+        "color": "#83a598",
+        "dashArray": "5,5"
+      }
+    },
+    {
+      "id": "edge_manual_1771255136922",
+      "from": "node_manual_1771249852105",
+      "to": "node_2",
+      "type": "bidirectional",
+      "label": "bidirectional",
+      "visual": {
+        "color": "#d3869b"
+      }
+    },
+    {
+      "id": "edge_manual_1771257015230",
+      "from": "node_2",
+      "to": "node_manual_1771256968935",
+      "type": "bidirectional",
+      "label": "bidirectional",
+      "visual": {
+        "color": "#d3869b"
+      },
+      "_validationReason": "Valid relationship"
     }
   ],
   "clusters": [
     {
-      "collapsed": false,
-      "color": "#fabd2f",
-      "id": "cluster_1771250103616",
-      "label": "Group 1",
-      "_headerBounds": {
-        "x": -160.05189141326778,
-        "y": -466.8706327376092,
-        "width": 527.6035216932956,
-        "height": 30
-      }
-    },
-    {
-      "collapsed": false,
-      "color": "#fe8019",
-      "id": "cluster_1771250109257",
-      "label": "Group 2",
-      "_headerBounds": {
-        "x": 389.02966443098444,
-        "y": -456.8380449492168,
-        "width": 497.61952775032194,
-        "height": 30
-      }
-    },
-    {
-      "id": "cluster_1771253868673",
-      "label": "Node A",
-      "color": "#fabd2f",
-      "collapsed": false
-    },
-    {
       "id": "cluster_1771253877903",
       "label": "Node B",
       "color": "#fe8019",
-      "collapsed": false
+      "collapsed": false,
+      "_headerBounds": {
+        "x": 80,
+        "y": -50,
+        "width": 368.853393247556,
+        "height": 30
+      }
+    },
+    {
+      "id": "cluster_1771255066453",
+      "label": "front_end",
+      "color": "#fabd2f",
+      "collapsed": false,
+      "_headerBounds": {
+        "x": -435.49705697043305,
+        "y": -339.1830332281021,
+        "width": 320.1445393601885,
+        "height": 30
+      }
+    },
+    {
+      "id": "cluster_1771255077660",
+      "label": "back_end",
+      "color": "#fe8019",
+      "collapsed": false,
+      "_headerBounds": {
+        "x": -270.60120371699276,
+        "y": -589.5091712414576,
+        "width": 393.8083117262987,
+        "height": 30
+      }
+    },
+    {
+      "id": "cluster_1771257052868",
+      "label": "test",
+      "color": "#fabd2f",
+      "collapsed": false,
+      "_headerBounds": {
+        "x": 128.2033281306049,
+        "y": -322.5321650541485,
+        "width": 610.3288459915896,
+        "height": 30
+      }
     }
   ]
 }

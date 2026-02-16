@@ -105,6 +105,7 @@
 
         canvas {
             display: block;
+            pointer-events: auto !important;
         }
 
         /* Side Panel */
@@ -142,6 +143,21 @@
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
+        }
+
+        /* Status Indicator */
+        #status-indicator {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+            display: none;
+        }
+
+        #status-indicator.browser-mode {
+            display: inline-block;
+            background: #fe8019;
+            color: #282828;
         }
 
         #side-panel-close {
@@ -182,7 +198,10 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
+            align-items: center;
             z-index: 1000;
+            pointer-events: none;
+            /* Ensure clicks pass through if opacity lingers */
         }
 
         .spinner {
@@ -400,6 +419,8 @@
         <div id="context-menu">
             <div class="menu-item" id="menu-open">Open File</div>
             <div class="menu-divider"></div>
+            <div class="menu-item" id="menu-generate-flow">Generate Flow (AI)</div>
+            <div class="menu-divider"></div>
             <div class="menu-item" id="menu-group">Group Selected</div>
             <div class="menu-item" id="menu-ungroup">Ungroup</div>
             <div class="menu-divider"></div>
@@ -439,8 +460,8 @@
             fileContent.textContent = 'Loading Content...';
 
             try {
-                // 브라우저에서는 상대 경로로 fetch, VS Code에서는 이미 postMessage가 처리함
-                const response = await fetch(`./${filePath}`);
+                // 브라우저에서는 상대 경로로 fetch (src 폴더 기준)
+                const response = await fetch(`../src/${filePath}`);
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 const text = await response.text();
                 fileContent.textContent = text;
@@ -499,6 +520,13 @@
             document.addEventListener('click', () => {
                 document.getElementById('context-menu').style.display = 'none';
             });
+
+            // 브라우저 모드 체크
+            if (typeof vscode === 'undefined') {
+                const indicator = document.getElementById('status-indicator');
+                indicator.textContent = 'BROWSER MODE';
+                indicator.classList.add('browser-mode');
+            }
         });
     </script>
     <script src="canvas-engine.js"></script>

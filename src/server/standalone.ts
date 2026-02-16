@@ -1,0 +1,110 @@
+import express from 'express';
+import cors from 'cors';
+import * as fs from 'fs';
+import * as path from 'path';
+import { GeminiParser } from '../core/GeminiParser';
+import { FlowScanner } from '../core/FlowScanner';
+
+const app = express();
+const port = 3000;
+
+app.use(cors());
+app.use(express.json());
+
+// 프로젝트 루트 경로 설정 (demo 폴더 기준)
+const projectRoot = path.resolve(__dirname, '../../demo');
+const stateFilePath = path.join(projectRoot, 'data', 'project_state.json');
+
+console.log('🚀 SYNAPSE Standalone Dev Server starting...');
+console.log(`📂 Project Root: ${projectRoot}`);
+console.log(`📄 State File: ${stateFilePath}`);
+
+// 1. 노드 승인 및 분석 (V 버튼)
+app.post('/api/analyze', async (req, res) => {
+    const { filePath } = req.body;
+    console.log(`[API] analyze: ${filePath}`);
+
+    try {
+        // 경로 해결: 루트 또는 src 폴더 확인
+        let fullPath = path.join(projectRoot, filePath);
+        if (!fs.existsSync(fullPath)) {
+            const srcPath = path.join(projectRoot, 'src', filePath);
+            if (fs.existsSync(srcPath)) {
+                fullPath = srcPath;
+            }
+        }
+
+        console.log(`  - Resolving path: ${fullPath}`);
+        if (!fs.existsSync(fullPath)) {
+            throw new Error(`File not found: ${filePath}`);
+        }
+
+        const ext = path.extname(fullPath);
+        let summaryResult: any = null;
+
+        if (ext === '.md') {
+            const parser = new GeminiParser();
+            summaryResult = await parser.parseGeminiMd(fullPath);
+        } else {
+            // 소스 파일이면 FlowScanner 사용
+            const scanner = new FlowScanner();
+            const flowData = scanner.scanForFlow(fullPath);
+            summaryResult = {
+                functions: flowData.steps.filter((s: any) => s.type === 'process' || s.type === 'decision').map((s: any) => s.label),
+                classes: [] // TODO: 클래스 추출 로직 추가 가능
+            };
+        }
+
+        // 현재 상태 업데이트
+        if (fs.existsSync(stateFilePath)) {
+            const currentState = JSON.parse(fs.readFileSync(stateFilePath, 'utf-8'));
+            const node = currentState.nodes.find((n: any) => n.data.file === filePath || n.data.path === filePath);
+            if (node) {
+                console.log(`  - Updating node ${node.id} to active`);
+                node.status = 'active';
+                node.state = 'active';
+                node.data.summary = summaryResult;
+                fs.writeFileSync(stateFilePath, JSON.stringify(currentState, null, 2), 'utf-8');
+            }
+        }
+
+        res.json({ success: true, summary: summaryResult });
+    } catch (error) {
+        console.error('[API] analyze error:', error);
+        res.status(500).json({ success: false, error: String(error) });
+    }
+});
+
+// 2. 흐름 스캔
+app.post('/api/scan', async (req, res) => {
+    const { filePath } = req.body;
+    console.log(`[API] scanFlow: ${filePath}`);
+
+    const scanner = new FlowScanner();
+    try {
+        const fullPath = path.isAbsolute(filePath) ? filePath : path.join(projectRoot, filePath);
+        const flowData = scanner.scanForFlow(fullPath);
+        res.json({ success: true, flowData });
+    } catch (error) {
+        console.error('[API] scanFlow error:', error);
+        res.status(500).json({ success: false, error: String(error) });
+    }
+});
+
+// 3. 상태 저장 (UI에서 호출)
+app.post('/api/save-state', (req, res) => {
+    try {
+        const state = req.body;
+        fs.writeFileSync(stateFilePath, JSON.stringify(state, null, 2), 'utf-8');
+        console.log('✅ Project state saved to file system');
+        res.json({ success: true });
+    } catch (error) {
+        console.error('[API] saveState error:', error);
+        res.status(500).json({ success: false, error: String(error) });
+    }
+});
+
+app.listen(port, () => {
+    console.log(`\n✅ Standalone API server running at http://localhost:${port}`);
+    console.log(`ℹ️  Browser UI should now send requests to this server.`);
+});

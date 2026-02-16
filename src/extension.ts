@@ -1,14 +1,58 @@
-/**
- * SYNAPSE VS Code Extension
- * Main extension entry point
- */
-
 import * as vscode from 'vscode';
+import * as path from 'path';
+import {
+    LanguageClient,
+    LanguageClientOptions,
+    ServerOptions,
+    TransportKind
+} from 'vscode-languageclient/node';
 import { CanvasPanel } from './webview/CanvasPanel';
 import { BootstrapEngine } from './bootstrap/BootstrapEngine';
 
+export let client: LanguageClient;
+
 export function activate(context: vscode.ExtensionContext) {
     console.log('SYNAPSE extension is now active!');
+
+    // The server is implemented in node
+    const serverModule = context.asAbsolutePath(
+        path.join('dist', 'server', 'server.js')
+    );
+    // The debug options for the server
+    // --inspect=6009: runs the server in Node's Inspector mode so VS Code can attach to the server for debugging
+    const debugOptions = { execArgv: ['--nolazy', '--inspect=6009'] };
+
+    // If the extension is launched in debug mode then the debug server options are used
+    // Otherwise the run options are used
+    const serverOptions: ServerOptions = {
+        run: { module: serverModule, transport: TransportKind.ipc },
+        debug: {
+            module: serverModule,
+            transport: TransportKind.ipc,
+            options: debugOptions
+        }
+    };
+
+    // Options to control the language client
+    const clientOptions: LanguageClientOptions = {
+        // Register the server for plain text documents
+        documentSelector: [{ scheme: 'file', language: 'markdown' }],
+        synchronize: {
+            // Notify the server about file changes to '.clientrc files contained in the workspace
+            fileEvents: vscode.workspace.createFileSystemWatcher('**/.clientrc')
+        }
+    };
+
+    // Create the language client and start the client.
+    client = new LanguageClient(
+        'synapseLanguageServer',
+        'SYNAPSE Language Server',
+        serverOptions,
+        clientOptions
+    );
+
+    // Start the client. This will also launch the server
+    client.start();
 
     // Register commands
     context.subscriptions.push(
@@ -18,8 +62,24 @@ export function activate(context: vscode.ExtensionContext) {
     );
 
     context.subscriptions.push(
-        vscode.commands.registerCommand('synapse.bootstrap', async (uri: vscode.Uri) => {
-            await bootstrapFromGemini(uri, context);
+        vscode.commands.registerCommand('synapse.bootstrap', async (uri: vscode.Uri | undefined) => {
+            if (!uri) {
+                // Determine URI from context if not provided (e.g. Command Palette)
+                if (vscode.window.activeTextEditor && vscode.window.activeTextEditor.document.fileName.endsWith('GEMINI.md')) {
+                    uri = vscode.window.activeTextEditor.document.uri;
+                } else {
+                    const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+                    if (workspaceFolder) {
+                        uri = vscode.Uri.joinPath(workspaceFolder.uri, 'GEMINI.md');
+                    }
+                }
+            }
+
+            if (uri) {
+                await bootstrapFromGemini(uri, context);
+            } else {
+                vscode.window.showErrorMessage('Could not determine GEMINI.md path. Please open the file or right-click it in Explorer.');
+            }
         })
     );
 
@@ -158,6 +218,10 @@ async function bootstrapFromGemini(uri: vscode.Uri, context: vscode.ExtensionCon
     }
 }
 
-export function deactivate() {
+export function deactivate(): Thenable<void> | undefined {
     console.log('SYNAPSE extension is now deactivated');
+    if (!client) {
+        return undefined;
+    }
+    return client.stop();
 }

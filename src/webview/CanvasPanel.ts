@@ -5,14 +5,19 @@
 
 import * as vscode from 'vscode';
 import * as path from 'path';
-import { FileScanner } from './FileScanner';
+import { FileScanner } from '../core/FileScanner';
 import * as fs from 'fs';
+import { GeminiParser } from '../core/GeminiParser';
+import { FlowchartGenerator } from '../core/FlowchartGenerator';
+import { client } from '../extension';
 
 export class CanvasPanel {
     public static currentPanel: CanvasPanel | undefined;
     private readonly _panel: vscode.WebviewPanel;
     private readonly _extensionUri: vscode.Uri;
     private _disposables: vscode.Disposable[] = [];
+    private proposedNodes: any[] = [];
+    private proposedEdges: any[] = [];
 
     public static createOrShow(extensionUri: vscode.Uri) {
         const column = vscode.window.activeTextEditor
@@ -95,6 +100,27 @@ export class CanvasPanel {
                         return;
                     case 'updateEdge':
                         await this.handleUpdateEdge(message.edgeId, message.updates);
+                        return;
+                    case 'approveNode':
+                        await this.handleApproveNode(message.nodeId);
+                        return;
+                    case 'rejectNode':
+                        await this.handleRejectNode(message.nodeId);
+                        return;
+                    case 'generateFlow':
+                        await this.handleGenerateFlow(message.nodeId, message.filePath);
+                        return;
+                    case 'validateEdge':
+                        await this.handleValidateEdge(message.edgeId, message.fromNode, message.toNode, message.type);
+                        return;
+                    case 'analyzeGemini':
+                        await this.handleAnalyzeGemini(message.filePath);
+                        return;
+                    case 'approveNode':
+                        await this.handleApproveNode(message.nodeId);
+                        return;
+                    case 'rejectNode':
+                        await this.handleRejectNode(message.nodeId);
                         return;
                 }
             },
@@ -316,6 +342,205 @@ export class CanvasPanel {
         } catch (error) {
             console.error('Failed to update edge:', error);
             vscode.window.showErrorMessage(`Failed to update edge: ${error}`);
+        }
+    }
+
+
+
+    private async handleGenerateFlow(nodeId: string, filePath: string) {
+        const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+        if (!workspaceFolder) return;
+
+        try {
+            console.log(`[SYNAPSE] Generating flow for ${filePath}...`);
+
+            // Request flow analysis from LSP server
+            const result: any = await client.sendRequest('synapse/scanFlow', {
+                filePath: path.join(workspaceFolder.uri.fsPath, filePath)
+            });
+
+            if (result.success) {
+                // 캔버스에 플로우 데이터 전송
+                this._panel.webview.postMessage({
+                    command: 'flowData',
+                    data: result.flowData
+                });
+                console.log(`[SYNAPSE] Flow data sent for ${nodeId}`);
+            } else {
+                throw new Error(result.error || 'Unknown error during flow scan');
+            }
+        } catch (error) {
+            console.error('Failed to generate flow:', error);
+            vscode.window.showErrorMessage(`Flow generation failed: ${error}`);
+        }
+    }
+
+    private async handleAnalyzeGemini(filePath: string) {
+        // AI 분석 시작 알림
+        console.log(`[SYNAPSE] Analyzing GEMINI.md: ${filePath}`);
+
+        try {
+            // Request GEMINI analysis from LSP server
+            const result: any = await client.sendRequest('synapse/analyzeGemini', { filePath });
+
+            if (!result.success) {
+                throw new Error(result.error || 'Unknown error during GEMINI analysis');
+            }
+
+            const structure = result.structure;
+
+            // 3. 순서도 생성 (제안 상태의 노드/엣지 반환)
+            const generator = new FlowchartGenerator();
+            const { nodes, edges } = generator.generateInitialFlowchart(structure);
+
+            // Store for approval
+            this.proposedNodes = nodes;
+            this.proposedEdges = edges;
+
+            // 4. 제안(Proposal) 상태로 웹뷰에 전송
+            // 이 데이터는 아직 저장되지 않은 상태이며, 사용자가 승인해야 저장됨
+            this._panel.webview.postMessage({
+                command: 'projectProposal',
+                data: {
+                    nodes: nodes,
+                    edges: edges,
+                    structure: structure
+                }
+            });
+
+            vscode.window.showInformationMessage(`GEMINI.md analyzed. ${nodes.length} nodes proposed.`);
+
+        } catch (error) {
+            console.error('Failed to analyze GEMINI.md:', error);
+            vscode.window.showErrorMessage(`Failed to analyze GEMINI.md: ${error}`);
+        }
+    }
+
+    private async handleApproveNode(nodeId: string) {
+        const nodeIndex = this.proposedNodes.findIndex(n => n.id === nodeId);
+        if (nodeIndex === -1) {
+            console.warn(`[SYNAPSE] Node ${nodeId} not found in proposal`);
+            return;
+        }
+
+        const node = this.proposedNodes[nodeIndex];
+
+        // Modify node specific data for active state
+        delete node.status;
+        if (node.visual) {
+            delete node.visual.opacity;
+            delete node.visual.dashArray;
+        }
+        node.state = 'active';
+
+        const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+        if (!workspaceFolder) return;
+
+        const projectStateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'project_state.json');
+
+        try {
+            // Read existing
+            let currentState: any = { nodes: [], edges: [], clusters: [] };
+            try {
+                const data = await vscode.workspace.fs.readFile(projectStateUri);
+                currentState = JSON.parse(data.toString());
+            } catch (e) { /* ignore */ }
+
+            // Add node
+            // Ensure no duplicate IDs
+            if (!currentState.nodes.find((n: any) => n.id === node.id)) {
+                currentState.nodes.push(node);
+            }
+
+            // Check for related edges in proposed list that connect to ALREADY approved nodes
+            const relevantEdges = this.proposedEdges.filter(e => {
+                const fromApproved = currentState.nodes.find((n: any) => n.id === e.from) || node.id === e.from;
+                const toApproved = currentState.nodes.find((n: any) => n.id === e.to) || node.id === e.to;
+                return fromApproved && toApproved;
+            });
+
+            relevantEdges.forEach(edge => {
+                // Approve edge
+                edge.is_approved = true;
+                if (edge.visual) {
+                    edge.visual.style = 'solid'; // remove dashed
+                }
+
+                if (!currentState.edges.find((e: any) => e.id === edge.id)) {
+                    currentState.edges.push(edge);
+                }
+
+                // Remove from proposed edges
+                const edgeIndex = this.proposedEdges.findIndex(e => e.id === edge.id);
+                if (edgeIndex !== -1) this.proposedEdges.splice(edgeIndex, 1);
+            });
+
+            // Save state
+            await this.handleSaveState(currentState);
+
+            // Send updated state to view
+            await this.sendProjectState();
+
+            // Remove from proposed nodes
+            this.proposedNodes.splice(nodeIndex, 1);
+
+        } catch (error) {
+            console.error('Failed to approve node:', error);
+        }
+    }
+
+    private async handleRejectNode(nodeId: string) {
+        const nodeIndex = this.proposedNodes.findIndex(n => n.id === nodeId);
+        if (nodeIndex !== -1) {
+            this.proposedNodes.splice(nodeIndex, 1);
+            // Also remove related edges
+            this.proposedEdges = this.proposedEdges.filter(e => e.from !== nodeId && e.to !== nodeId);
+
+            console.log(`[SYNAPSE] Node ${nodeId} rejected and removed from proposal.`);
+        }
+    }
+
+    private async handleValidateEdge(edgeId: string, fromNode: any, toNode: any, edgeType: string) {
+        try {
+            console.log(`[SYNAPSE] Validating edge ${edgeId}: ${fromNode.data.label} -> ${toNode.data.label} (${edgeType})`);
+
+            // 1. 컨텍스트 수집 (간단한 버전)
+            const fromContext = fromNode.type + (fromNode.data.description ? `: ${fromNode.data.description}` : '');
+            const toContext = toNode.type + (toNode.data.description ? `: ${toNode.data.description}` : '');
+
+            // 2. AI 검증 시뮬레이션 (Phase 4의 핵심 - 실제 LLM 연동 포인트)
+            // 실제 구현에서는 여기서 AI 서비스를 호출합니다.
+            let result = {
+                valid: true,
+                reason: 'Appropriate architectural relationship.',
+                confidence: 0.95
+            };
+
+            // 간단한 규칙 기반 시뮬레이션 (AI 대신)
+            if (fromNode.type === 'config' && (toNode.type === 'logic' || toNode.type === 'source')) {
+                // Config가 로직으로 흐르는 것은 정상
+            } else if ((fromNode.type === 'logic' || fromNode.type === 'source') && fromNode.data.label.toLowerCase().includes('ui') && toNode.type === 'data') {
+                result = {
+                    valid: false,
+                    reason: 'Potential bypass: UI components should not directly access Data stores. Consider using an API or Service layer.',
+                    confidence: 0.88
+                };
+            } else if (fromNode.id === toNode.id) {
+                result = {
+                    valid: false,
+                    reason: 'Circular dependency: Self-reference is not allowed in this layer.',
+                    confidence: 1.0
+                };
+            }
+
+            // 3. 결과 전송
+            this._panel.webview.postMessage({
+                command: 'edgeValidationResult',
+                edgeId: edgeId,
+                result: result
+            });
+        } catch (error) {
+            console.error('Failed to validate edge:', error);
         }
     }
 
@@ -547,6 +772,7 @@ export class CanvasPanel {
             console.log(`[SYNAPSE] Discovered ${discoveredEdges.length} auto edges (volatile, not persisted)`);
 
             // 5. 웹뷰로 전송
+            console.log('[SYNAPSE] Sending projectState to webview:', JSON.stringify(stateForWebview).substring(0, 200) + '...');
             this._panel.webview.postMessage({
                 command: 'projectState',
                 data: stateForWebview

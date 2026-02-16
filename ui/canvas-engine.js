@@ -57,7 +57,13 @@ class FlowRenderer {
             // 다음 단계로 연결선
             if (step.next) {
                 const nextPos = positions[step.next];
-                this.renderConnection(ctx, pos.x, pos.y, nextPos.x, nextPos.y);
+                this.renderConnection(ctx, pos.x, pos.y, nextPos.x, nextPos.y, step.type === 'decision' ? 'True' : null);
+            }
+
+            // 결정 단계의 대체 경로 (False)
+            if (step.type === 'decision' && step.alternateNext) {
+                const altPos = positions[step.alternateNext];
+                this.renderConnection(ctx, pos.x, pos.y, altPos.x, altPos.y, 'False');
             }
         }
     }
@@ -83,7 +89,16 @@ class FlowRenderer {
             ctx.lineTo(x - width / 2, y);
             ctx.closePath();
             ctx.fill();
-            ctx.strokeStyle = '#fabd2f';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+        } else if (step.type === 'start' || step.type === 'end') {
+            // 캡슐 형태 (라운드 렉트)
+            const radius = height / 2;
+            ctx.fillStyle = '#3c3836';
+            ctx.beginPath();
+            ctx.roundRect(x - width / 2, y - height / 2, width, height, radius);
+            ctx.fill();
+            ctx.strokeStyle = '#8ec07c'; // Aqua/Green for start/end
             ctx.lineWidth = 2;
             ctx.stroke();
         }
@@ -105,30 +120,38 @@ class FlowRenderer {
         };
     }
 
-    renderConnection(ctx, x1, y1, x2, y2) {
+    renderConnection(ctx, x1, y1, x2, y2, label) {
         ctx.strokeStyle = '#665c54';
         ctx.lineWidth = 2;
         ctx.beginPath();
         ctx.moveTo(x1, y1 + 30);
-        ctx.lineTo(x2, y2 - 30);
+
+        // 굴곡진 연결선 (기본적으로 수직)
+        const cpY = (y1 + y2) / 2;
+        ctx.bezierCurveTo(x1, cpY, x2, cpY, x2, y2 - 30);
         ctx.stroke();
 
+        // 라벨 (True/False 등)
+        if (label) {
+            ctx.fillStyle = '#a89984';
+            ctx.font = '10px Inter, sans-serif';
+            ctx.fillText(label, (x1 + x2) / 2 + 10, (y1 + y2) / 2);
+        }
+
         // 화살표
-        const angle = Math.atan2(y2 - y1, x2 - x1);
+        const angle = Math.atan2(y2 - (y1 + 10), x2 - x1);
         const arrowSize = 10;
         ctx.fillStyle = '#665c54';
+        ctx.save();
+        ctx.translate(x2, y2 - 30);
+        ctx.rotate(angle);
         ctx.beginPath();
-        ctx.moveTo(x2, y2 - 30);
-        ctx.lineTo(
-            x2 - arrowSize * Math.cos(angle - Math.PI / 6),
-            y2 - 30 - arrowSize * Math.sin(angle - Math.PI / 6)
-        );
-        ctx.lineTo(
-            x2 - arrowSize * Math.cos(angle + Math.PI / 6),
-            y2 - 30 - arrowSize * Math.sin(angle + Math.PI / 6)
-        );
+        ctx.moveTo(0, 0);
+        ctx.lineTo(-arrowSize, -arrowSize / 2);
+        ctx.lineTo(-arrowSize, arrowSize / 2);
         ctx.closePath();
         ctx.fill();
+        ctx.restore();
     }
 
     getStepAt(flow, x, y) {
@@ -147,6 +170,7 @@ class FlowRenderer {
 /**
  * TreeRenderer - 파일 트리 구조 렌더링
  */
+console.log('[SYNAPSE] canvas-engine.js loaded');
 class TreeRenderer {
     constructor(engine) {
         this.engine = engine;
@@ -371,12 +395,71 @@ class CanvasEngine {
         // 렌더링 루프 시작
         this.render();
         this.startAnimationLoop();
+
+        // 🔍 툴팁 요소 생성 (Phase 4)
+        this.tooltip = document.createElement('div');
+        this.tooltip.id = 'synapse-tooltip';
+        this.tooltip.style.position = 'fixed';
+        this.tooltip.style.background = '#3c3836';
+        this.tooltip.style.border = '1px solid #fabd2f';
+        this.tooltip.style.borderRadius = '4px';
+        this.tooltip.style.padding = '8px 12px';
+        this.tooltip.style.color = '#ebdbb2';
+        this.tooltip.style.fontSize = '12px';
+        this.tooltip.style.pointerEvents = 'none';
+        this.tooltip.style.display = 'none';
+        this.tooltip.style.zIndex = '10001';
+        this.tooltip.style.maxWidth = '250px';
+        this.tooltip.style.boxShadow = '0 4px 12px rgba(0,0,0,0.5)';
+        this.tooltip.style.fontFamily = 'Inter, sans-serif';
+        document.body.appendChild(this.tooltip);
+
+        // Request initial state
+        this.getProjectState();
+    }
+
+    async getProjectState() {
+        if (typeof vscode !== 'undefined') {
+            vscode.postMessage({ command: 'getProjectState' });
+        } else {
+            console.warn('[SYNAPSE] VS Code API not available (Browser mode). Attempting to fetch state...');
+            try {
+                // 상위 디렉토리의 data/project_state.json 시도 (demo 환경 등)
+                const response = await fetch('../data/project_state.json');
+                if (response.ok) {
+                    const state = await response.json();
+                    console.log('[SYNAPSE] State loaded via fetch:', state);
+                    this.loadProjectState(state);
+                }
+            } catch (error) {
+                console.error('[SYNAPSE] Browser mode fetch failed:', error);
+            }
+        }
     }
 
     resizeCanvas() {
         const container = this.canvas.parentElement;
-        this.canvas.width = container.clientWidth;
-        this.canvas.height = container.clientHeight;
+        if (!container) return;
+
+        const dpr = window.devicePixelRatio || 1;
+        const width = container.clientWidth;
+        const height = container.clientHeight;
+
+        // Set actual size in memory (scaled to account for extra pixel density)
+        this.canvas.width = width * dpr;
+        this.canvas.height = height * dpr;
+
+        // Normalize coordinate system to use css pixels
+        // This means drawing logic (like 100, 100) will map to correct high-DPI pixels
+        if (this.ctx) {
+            this.ctx.scale(dpr, dpr);
+        }
+
+        // Make canvas element size match the css pixel size (so it fits in layout)
+        this.canvas.style.width = `${width}px`;
+        this.canvas.style.height = `${height}px`;
+
+        console.log(`[SYNAPSE] Canvas resized. DPR: ${dpr}, Size: ${width}x${height} (Buffer: ${this.canvas.width}x${this.canvas.height})`);
     }
 
     /**
@@ -404,12 +487,85 @@ class CanvasEngine {
     }
 
     setupEventListeners() {
+        // Window Resize Listener
+        window.addEventListener('resize', () => {
+            this.resizeCanvas();
+            this.render();
+        });
+
+        // File Drop Support (Phase 1) - Handle GEMINI.md drop
+        // Attach to document to ensure we catch drops anywhere in the webview
+        document.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            this.canvas.style.boxShadow = 'inset 0 0 50px #fabd2f'; // Stronger visual feedback
+        });
+
+        document.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            this.canvas.style.boxShadow = 'none';
+        });
+
+        document.addEventListener('drop', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            this.canvas.style.boxShadow = 'none';
+
+            console.log('[SYNAPSE] Drop event detected on document');
+
+            const files = e.dataTransfer.files;
+            if (files && files.length > 0) {
+                const file = files[0];
+                // Electron might not provide 'path' in restricted contexts, but let's try
+                const filePath = file.path || (file.name.endsWith('.md') ? file.name : null);
+
+                console.log('[SYNAPSE] File dropped:', file.name, file.path, file.type);
+
+                if (filePath && filePath.endsWith('.md')) {
+                    console.log('[SYNAPSE] Dropped Markdown file:', filePath);
+                    if (typeof vscode !== 'undefined') {
+                        vscode.postMessage({
+                            command: 'analyzeGemini',
+                            filePath: filePath
+                        });
+                    }
+                } else {
+                    console.log('[SYNAPSE] Ignored non-md file or missing path:', file);
+                }
+            } else {
+                // Handle VS Code explorer drag & drop (text/uri-list)
+                const items = e.dataTransfer.items;
+                if (items) {
+                    for (let i = 0; i < items.length; i++) {
+                        if (items[i].kind === 'string') {
+                            items[i].getAsString((s) => {
+                                console.log('[SYNAPSE] Dropped string content:', s);
+                                if (s.endsWith('.md')) {
+                                    if (typeof vscode !== 'undefined') {
+                                        vscode.postMessage({
+                                            command: 'analyzeGemini',
+                                            filePath: s
+                                        });
+                                    }
+                                }
+                            });
+                        }
+                    }
+                }
+            }
+        });
+
+
+
         // 마우스 휠 (줌)
         this.canvas.addEventListener('wheel', (e) => {
+            console.log('[DEBUG] Wheel event detected:', e.deltaY);
             e.preventDefault();
+            e.stopPropagation(); // 브라우저 전체 줌 방지
             const delta = e.deltaY > 0 ? 0.9 : 1.1;
             this.zoom(delta, e.offsetX, e.offsetY);
-        });
+        }, { passive: false });
 
         // 마우스 드래그 (팬, 노드 드래그, 선택, 엣지 생성)
         this.canvas.addEventListener('mousedown', (e) => {
@@ -418,6 +574,11 @@ class CanvasEngine {
 
             if (e.button === 0) { // 왼쪽 버튼
                 this.wasDragging = false; // mousedown 시 초기화
+
+                // 0. 노드 승인/취소 버튼 체크 (가장 먼저)
+                if (this.checkNodeButtonClick(worldPos.x, worldPos.y)) {
+                    return;
+                }
 
                 // 1. 연결 핸들 체크 (최우선)
                 const handle = this.getConnectionHandleAt(worldPos.x, worldPos.y);
@@ -554,6 +715,14 @@ class CanvasEngine {
                 // 캔버스 팬
                 this.pan(dx, dy);
                 this.dragStart = { x: e.offsetX, y: e.offsetY };
+            } else {
+                // 🔍 툴팁 처리 (Phase 4)
+                const edge = this.findEdgeAtPoint(worldPos.x, worldPos.y);
+                if (edge && edge._validationReason) {
+                    this.showTooltip(e.clientX, e.clientY, edge._validationReason);
+                } else {
+                    this.hideTooltip();
+                }
             }
         });
 
@@ -699,6 +868,7 @@ class CanvasEngine {
     }
 
     zoom(delta, centerX, centerY) {
+        console.log('[DEBUG] zoom called:', { delta, centerX, centerY, currentZoom: this.transform.zoom });
         const oldZoom = this.transform.zoom;
         this.transform.zoom *= delta;
         this.transform.zoom = Math.max(0.1, Math.min(5.0, this.transform.zoom));
@@ -708,7 +878,9 @@ class CanvasEngine {
         this.transform.offsetX = centerX - (centerX - this.transform.offsetX) * zoomRatio;
         this.transform.offsetY = centerY - (centerY - this.transform.offsetY) * zoomRatio;
 
+        console.log('[DEBUG] New transform:', this.transform);
         this.updateZoomDisplay();
+        this.render();
     }
 
     pan(dx, dy) {
@@ -900,6 +1072,16 @@ class CanvasEngine {
             openItem.style.display = 'none';
         }
 
+        const flowItem = document.getElementById('menu-generate-flow');
+        if (node) {
+            flowItem.style.display = 'block';
+            flowItem.onclick = () => {
+                this.generateFlow(node);
+            };
+        } else {
+            flowItem.style.display = 'none';
+        }
+
         document.getElementById('menu-group').onclick = () => {
             this.groupSelection();
         };
@@ -976,13 +1158,23 @@ class CanvasEngine {
         }
 
         // 규칙 4: 순환 참조 감지 (간단한 버전)
-        // A → B → A 패턴 체크
         const circularCheck = this.detectCircularDependency(sourceNode.id, targetNode.id);
         if (circularCheck) {
             return {
                 valid: false,
-                color: '#fb4934', // 빨간색 (에러)
+                color: '#fb4934',
                 reason: 'Circular dependency detected'
+            };
+        }
+
+        // 규칙 5: AI 지능형 검증 (Phase 4)
+        // 백엔드(LLM)에서 받은 검증 결과가 있으면 적용
+        if (edge.validation) {
+            return {
+                valid: edge.validation.valid,
+                color: edge.validation.valid ? (edge.validation.confidence > 0.9 ? style.color : '#fabd2f') : '#fb4934',
+                reason: edge.validation.reason,
+                isAi: true
             };
         }
 
@@ -990,7 +1182,7 @@ class CanvasEngine {
         return {
             valid: true,
             color: edge.visual?.color || '#83a598',
-            reason: 'Valid edge'
+            reason: 'Valid relationship'
         };
     }
 
@@ -1287,6 +1479,19 @@ class CanvasEngine {
         // 백엔드에 저장
         if (typeof vscode !== 'undefined') {
             vscode.postMessage({ command: 'createManualEdge', edge: newEdge });
+
+            // 🔍 즉시 아키텍처 검증 요청 (Phase 4)
+            const fromNode = this.nodes.find(n => n.id === newEdge.from);
+            const toNode = this.nodes.find(n => n.id === newEdge.to);
+            if (fromNode && toNode) {
+                vscode.postMessage({
+                    command: 'validateEdge',
+                    edgeId: newEdge.id,
+                    fromNode: fromNode,
+                    toNode: toNode,
+                    type: type
+                });
+            }
         }
 
         this.saveState();
@@ -1365,41 +1570,114 @@ class CanvasEngine {
         });
     }
 
+    updateEdgeValidation(edgeId, result) {
+        const edge = this.edges.find(e => e.id === edgeId);
+        if (edge) {
+            edge.validation = result;
+            this.render();
+        }
+    }
+
+    showTooltip(x, y, content) {
+        this.tooltip.innerHTML = `
+            <div style="font-weight: bold; color: #fabd2f; margin-bottom: 4px;">🤖 AI Architectural Reasoning</div>
+            <div style="line-height: 1.4;">${content}</div>
+        `;
+        this.tooltip.style.display = 'block';
+
+        // 툴팁 위치 조정 (화면 밖으로 나가지 않게)
+        const rect = this.tooltip.getBoundingClientRect();
+        let left = x + 15;
+        let top = y + 15;
+
+        if (left + rect.width > window.innerWidth) left = x - rect.width - 15;
+        if (top + rect.height > window.innerHeight) top = y - rect.height - 15;
+
+        this.tooltip.style.left = `${left}px`;
+        this.tooltip.style.top = `${top}px`;
+    }
+
+    hideTooltip() {
+        this.tooltip.style.display = 'none';
+    }
+
     loadProjectState(projectState) {
-        this.nodes = projectState.nodes;
-        this.edges = projectState.edges;
-        this.clusters = projectState.clusters || []; // 클러스터 데이터 로드
+        try {
+            this.nodes = projectState.nodes || [];
+            this.edges = projectState.edges || [];
+            this.clusters = projectState.clusters || [];
 
-        // Tree 데이터 빌드
-        this.treeData = this.treeRenderer.buildTree(this.nodes);
+            // Tree 데이터 빌드
+            if (this.treeRenderer) {
+                this.treeData = this.treeRenderer.buildTree(this.nodes);
+            }
 
-        // Flow 데이터 빌드
-        this.flowData = this.flowRenderer.buildFlow(this.nodes);
+            // Flow 데이터 빌드
+            if (this.flowRenderer) {
+                this.flowData = this.flowRenderer.buildFlow(this.nodes);
+            }
 
-        // UI 업데이트
-        document.getElementById('node-count').textContent = this.nodes.length;
-        document.getElementById('edge-count').textContent = this.edges.length;
+            // UI 업데이트
+            const nodeCountEl = document.getElementById('node-count');
+            const edgeCountEl = document.getElementById('edge-count');
+            if (nodeCountEl) nodeCountEl.textContent = this.nodes.length;
+            if (edgeCountEl) edgeCountEl.textContent = this.edges.length;
 
-        // 로딩 숨기기
-        document.getElementById('loading').style.display = 'none';
+            // Fit view
+            this.resizeCanvas(); // Ensure canvas size is correct before fitting
+            this.fitView();
 
-        // Fit view
-        this.fitView();
+            // 로딩 오버레이 제거
+            const loadingEl = document.getElementById('loading');
+            if (loadingEl) {
+                console.log('[SYNAPSE] Removing loading overlay after data load');
+                loadingEl.remove();
+            }
 
-        console.log('[SYNAPSE] Loaded project state with', this.nodes.length, 'nodes');
-        console.log('[SYNAPSE] Tree data:', this.treeData);
-        console.log('[SYNAPSE] Flow data:', this.flowData);
-        console.log('[SYNAPSE] Clusters:', this.clusters);
+            // 로드 시 모든 엣지에 대해 비동기 검증 요청
+            if (typeof vscode !== 'undefined' && this.edges.length > 0) {
+                this.edges.forEach(edge => {
+                    const fromNode = this.nodes.find(n => n.id === edge.from);
+                    const toNode = this.nodes.find(n => n.id === edge.to);
+                    if (fromNode && toNode) {
+                        vscode.postMessage({
+                            command: 'validateEdge',
+                            edgeId: edge.id,
+                            fromNode: fromNode,
+                            toNode: toNode,
+                            type: edge.type
+                        });
+                    }
+                });
+            }
+
+            console.log('[SYNAPSE] Loaded project state with', this.nodes.length, 'nodes');
+            console.log('[SYNAPSE] Tree data:', this.treeData);
+            console.log('[SYNAPSE] Flow data:', this.flowData);
+            console.log('[SYNAPSE] Clusters:', this.clusters);
+        } catch (error) {
+            console.error('[SYNAPSE] loadProjectState error:', error);
+        } finally {
+            // 로딩 숨기기 (무조건 실행)
+            // 로딩 숨기기 (무조건 실행)
+            const loadingEl = document.getElementById('loading');
+            if (loadingEl) loadingEl.remove(); // Force remove to prevent blocking
+            this.render();
+        }
     }
 
     fitView() {
-        if (this.nodes.length === 0) return;
+        if (!this.nodes || this.nodes.length === 0) {
+            this.transform = { zoom: 1.0, offsetX: 0, offsetY: 0 };
+            this.updateZoomDisplay();
+            return;
+        }
 
-        // 모든 노드를 포함하는 바운딩 박스 계산
         let minX = Infinity, minY = Infinity;
         let maxX = -Infinity, maxY = -Infinity;
 
         for (const node of this.nodes) {
+            if (!node.position || typeof node.position.x !== 'number' || typeof node.position.y !== 'number') continue;
             minX = Math.min(minX, node.position.x);
             minY = Math.min(minY, node.position.y);
             maxX = Math.max(maxX, node.position.x + 120);
@@ -1410,30 +1688,63 @@ class CanvasEngine {
         const height = maxY - minY;
 
         // 캔버스에 맞게 줌 조정
-        const zoomX = this.canvas.width / (width + 100);
-        const zoomY = this.canvas.height / (height + 100);
-        this.transform.zoom = Math.min(zoomX, zoomY, 1.0);
+        // Padding 100px
+        const padding = 100;
+        const availableWidth = this.canvas.clientWidth - padding;
+        const availableHeight = this.canvas.clientHeight - padding;
+
+        const zoomX = availableWidth / Math.max(width, 1);
+        const zoomY = availableHeight / Math.max(height, 1);
+
+        let newZoom = Math.min(zoomX, zoomY);
+        newZoom = Math.min(Math.max(newZoom, 0.1), 2.0);
+
+        this.transform.zoom = newZoom;
 
         // 중앙 정렬
-        this.transform.offsetX = (this.canvas.width - width * this.transform.zoom) / 2 - minX * this.transform.zoom;
-        this.transform.offsetY = (this.canvas.height - height * this.transform.zoom) / 2 - minY * this.transform.zoom;
+        this.transform.offsetX = (this.canvas.clientWidth - width * this.transform.zoom) / 2 - minX * this.transform.zoom;
+        this.transform.offsetY = (this.canvas.clientHeight - height * this.transform.zoom) / 2 - minY * this.transform.zoom;
+
+        console.log('[DEBUG] fitView calculated:', {
+            minX, minY, width, height,
+            canvasWidth: this.canvas.width,
+            canvasHeight: this.canvas.height,
+            zoom: this.transform.zoom,
+            offsetX: this.transform.offsetX,
+            offsetY: this.transform.offsetY
+        });
 
         this.updateZoomDisplay();
     }
 
     updateZoomDisplay() {
-        document.getElementById('zoom-level').textContent = Math.round(this.transform.zoom * 100) + '%';
+        if (document.getElementById('zoom-level')) {
+            document.getElementById('zoom-level').textContent = Math.round(this.transform.zoom * 100) + '%';
+        }
     }
 
     render() {
         try {
-            // 배경 클리어
-            this.ctx.fillStyle = '#1e1e1e';
-            this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+            const ctx = this.ctx;
+            const canvas = this.canvas;
 
-            this.ctx.save();
-            this.ctx.translate(this.transform.offsetX, this.transform.offsetY);
-            this.ctx.scale(this.transform.zoom, this.transform.zoom);
+            // 1. 캔버스 해상도 강제 동기화 (Zero Point Adjustment)
+            this.resizeCanvas();
+
+            // 2. 변환 매트릭스 초기화 & 클리어
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
+            ctx.fillStyle = '#1e1e1e';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // 3. Coordinate System (DPR Scale only)
+            // Note: renderGrid() here was removed because it needs camera transform
+            const dpr = window.devicePixelRatio || 1;
+            ctx.scale(dpr, dpr);
+
+            // 4. 카메라 변환 적용
+            ctx.save();
+            ctx.translate(this.transform.offsetX, this.transform.offsetY);
+            ctx.scale(this.transform.zoom, this.transform.zoom);
 
             const zoom = this.transform.zoom;
 
@@ -1498,15 +1809,25 @@ class CanvasEngine {
             const lodStatusEl = document.getElementById('lod-status');
             if (lodStatusEl) {
                 let lodText = "NORMAL";
+                const zoom = this.transform.zoom;
                 if (zoom < 0.4) lodText = "SATELLITE";
                 else if (zoom > 1.5) lodText = "DETAIL";
                 lodStatusEl.textContent = lodText;
             }
+
+            // Debug Overlay
+            this.renderDebugInfo();
+
         } catch (error) {
             console.error('[SYNAPSE] Render error:', error);
+            const ctx = this.ctx;
+            ctx.save();
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
+            ctx.fillStyle = 'red';
+            ctx.font = 'bold 14px monospace';
+            ctx.fillText(`Render Error: ${error.message}`, 10, 50);
+            ctx.restore();
         }
-
-        requestAnimationFrame(() => this.render());
     }
 
     groupSelection() {
@@ -1586,8 +1907,30 @@ class CanvasEngine {
                 data: projectState
             });
         } else {
-            // 브라우저 환경 (로컬 스토리지 등에 임시 저장 가능)
-            console.log('[SYNAPSE] Running in browser - State saved to console (Mock)');
+            // 브라우저 환경 - 스탠드얼론 서버에 저장 요청
+            const projectState = {
+                nodes: this.nodes,
+                edges: this.edges,
+                clusters: this.clusters
+            };
+            this.callStandaloneApi('/api/save-state', projectState)
+                .then(res => {
+                    if (res?.success) console.log('[SYNAPSE] State saved to standalone server');
+                });
+        }
+    }
+
+    async callStandaloneApi(endpoint, data) {
+        try {
+            const response = await fetch(`http://localhost:3000${endpoint}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            return await response.json();
+        } catch (error) {
+            console.error(`[SYNAPSE] Standalone API error (${endpoint}):`, error);
+            return { success: false, error: String(error) };
         }
     }
 
@@ -1616,6 +1959,41 @@ class CanvasEngine {
 
         console.log('[SYNAPSE] Edge deleted:', edgeId);
         this.render();
+    }
+
+    generateFlow(node) {
+        console.log('[SYNAPSE] Generating flow for node:', node.id);
+        if (typeof vscode !== 'undefined') {
+            document.getElementById('loading').style.display = 'flex';
+            vscode.postMessage({
+                command: 'generateFlow',
+                nodeId: node.id,
+                filePath: node.data.file || node.data.path
+            });
+        } else {
+            // Standalone API 호출
+            const loadingEl = document.getElementById('loading');
+            if (loadingEl) loadingEl.style.display = 'flex';
+
+            this.callStandaloneApi('/api/scan', {
+                filePath: node.data.file || node.data.path
+            }).then(res => {
+                if (loadingEl) loadingEl.style.display = 'none';
+                if (res?.success) {
+                    console.log('[SYNAPSE] Flow scan complete (Standalone):', res.flowData);
+                    // 결과 반영 (Mock UI 상단 표시)
+                    this.flowData = res.flowData;
+                    this.currentMode = 'flow';
+                    this.render();
+                } else {
+                    // Fallback to Mock if API fails
+                    console.warn('[SYNAPSE] falling back to mock flow scan');
+                    this.flowData = this.flowRenderer.buildFlow([node, ...this.nodes.slice(0, 3)]);
+                    this.currentMode = 'flow';
+                    this.render();
+                }
+            });
+        }
     }
 
     /**
@@ -1649,6 +2027,19 @@ class CanvasEngine {
                     visual: edge.visual
                 }
             });
+
+            // 🔍 타입 변경 시 아키텍처 재검증 요청 (Phase 4)
+            const fromNode = this.nodes.find(n => n.id === edge.from);
+            const toNode = this.nodes.find(n => n.id === edge.to);
+            if (fromNode && toNode) {
+                vscode.postMessage({
+                    command: 'validateEdge',
+                    edgeId: edge.id,
+                    fromNode: fromNode,
+                    toNode: toNode,
+                    type: newType
+                });
+            }
         }
 
         console.log(`[SYNAPSE] Edge type changed: ${oldType} → ${newType}`);
@@ -1661,22 +2052,28 @@ class CanvasEngine {
         if (zoom < 0.2) return; // 너무 작으면 그리드 생략
 
         this.ctx.beginPath();
-        this.ctx.strokeStyle = '#282828';
-        this.ctx.lineWidth = 1 / zoom;
+        this.ctx.strokeStyle = '#333333'; // Contrast increase
+        this.ctx.lineWidth = Math.max(1 / zoom, 0.5);
 
-        // 화면 영역 계산
-        const startX = Math.floor(-this.transform.offsetX / zoom / gridSize) * gridSize;
-        const startY = Math.floor(-this.transform.offsetY / zoom / gridSize) * gridSize;
-        const endX = startX + this.canvas.width / zoom + gridSize;
-        const endY = startY + this.canvas.height / zoom + gridSize;
+        // 화면 영역 계산 (CSS 픽셀 단위 기준)
+        const viewWidth = this.canvas.clientWidth;
+        const viewHeight = this.canvas.clientHeight;
+
+        const startX = Math.floor((-this.transform.offsetX / zoom) / gridSize) * gridSize;
+        const startY = Math.floor((-this.transform.offsetY / zoom) / gridSize) * gridSize;
+        const endX = startX + (viewWidth / zoom) + gridSize;
+        const endY = startY + (viewHeight / zoom) + gridSize;
+
+        // Offset for sharp lines
+        const offset = (1 / zoom) / 2;
 
         for (let x = startX; x <= endX; x += gridSize) {
-            this.ctx.moveTo(x, startY);
-            this.ctx.lineTo(x, endY);
+            this.ctx.moveTo(x + offset, startY);
+            this.ctx.lineTo(x + offset, endY);
         }
         for (let y = startY; y <= endY; y += gridSize) {
-            this.ctx.moveTo(startX, y);
-            this.ctx.lineTo(endX, y);
+            this.ctx.moveTo(startX, y + offset);
+            this.ctx.lineTo(endX, y + offset);
         }
         this.ctx.stroke();
     }
@@ -1760,7 +2157,97 @@ class CanvasEngine {
         this.ctx.restore();
     }
 
+    /**
+     * 노드 타입별 스타일 가져오기 (Phase 3.5: Identity)
+     */
+    getNodeStyle(node) {
+        const defaultStyle = {
+            borderColor: '#a89984',
+            bgColor: '#3c3836',
+            icon: '{}',
+            lineWidth: 2,
+            typeLabel: 'Logic'
+        };
+
+        const typeMap = {
+            // Logic (Code)
+            'source': {
+                borderColor: '#a89984', // Bright Grey
+                bgColor: '#3c3836',
+                icon: 'f()',
+                lineWidth: 2,
+                typeLabel: 'Logic'
+            },
+            'logic': { // Alias
+                borderColor: '#a89984',
+                bgColor: '#3c3836',
+                icon: 'f()',
+                lineWidth: 2,
+                typeLabel: 'Logic'
+            },
+            // Data (Store)
+            'config': {
+                borderColor: '#83a598', // Blue
+                bgColor: '#076678', // Dark Blue
+                icon: '📋',
+                lineWidth: 4, // 두꺼운 테두리
+                typeLabel: 'Data'
+            },
+            'data': { // Alias
+                borderColor: '#83a598',
+                bgColor: '#076678',
+                icon: 'DB',
+                lineWidth: 4,
+                typeLabel: 'Data'
+            },
+            // Entry (Gate)
+            'entry': {
+                borderColor: '#fe8019', // Orange
+                bgColor: '#3c3836',
+                icon: '▶',
+                lineWidth: 2.5,
+                glow: true,
+                typeLabel: 'Entry'
+            },
+            // External
+            'external': {
+                borderColor: '#8ec07c', // Aqua
+                bgColor: 'rgba(40, 40, 40, 0.7)', // Translucent
+                icon: '☁',
+                lineWidth: 2,
+                dash: [5, 5],
+                typeLabel: 'External'
+            },
+            'documentation': {
+                borderColor: '#fabd2f',
+                bgColor: '#3c3836',
+                icon: '📄',
+                lineWidth: 2,
+                typeLabel: 'Doc'
+            },
+            'test': {
+                borderColor: '#fe8019',
+                bgColor: '#3c3836',
+                icon: '🧪',
+                lineWidth: 2,
+                typeLabel: 'Test'
+            }
+        };
+
+        // 파일명이나 경로를 보고 Entry 포인트를 동적으로 판단 (Main gate)
+        const filePath = node.data?.file || '';
+        if (filePath.match(/(main|app|index|server)\.(ts|js|py)$/i)) {
+            return typeMap['entry'];
+        }
+
+        return typeMap[node.type] || defaultStyle;
+    }
+
     renderNode(node, zoom) {
+        if (!node || !node.position || typeof node.position.x !== 'number' || typeof node.position.y !== 'number') {
+            return;
+        }
+
         const nodeWidth = 120;
         const nodeHeight = 60;
         const x = node.position.x;
@@ -1782,90 +2269,293 @@ class CanvasEngine {
             return;
         }
 
-        // 기본 노드 배경
-        this.ctx.fillStyle = '#3c3836';
-        if (this.selectedNode === node || (this.selectedNodes && this.selectedNodes.has(node))) {
-            this.ctx.strokeStyle = '#fabd2f';
-            this.ctx.lineWidth = 3;
-        } else {
-            // 클러스터 소속이라면 클러스터 색상 사용, 아니면 기본 색상
-            let borderColor = node.data.color || '#458588';
-            if (node.cluster_id) {
-                const cluster = this.clusters.find(c => c.id === node.cluster_id);
-                if (cluster) borderColor = cluster.color;
-            }
-            this.ctx.strokeStyle = borderColor;
-            this.ctx.lineWidth = 2 / zoom; // 클러스터 테두리와 두께 통일
+        // --- Phase 3 Advanced Rendering ---
+        const style = this.getNodeStyle(node);
+        const isSelected = this.selectedNode === node || (this.selectedNodes && this.selectedNodes.has(node));
+
+        // 1. 상태별 특수 효과 계산
+        let borderColor = style.borderColor;
+        let lineWidth = style.lineWidth;
+        let bgColor = style.bgColor;
+        let dash = style.dash || [];
+        let glowColor = null;
+
+        if (node.state === 'error') {
+            borderColor = '#fb4934'; // Strong Red
+            lineWidth += 1.5;
+            glowColor = '#fb4934';
+        } else if (node.state === 'pending' || node.status === 'proposed') {
+            dash = [5, 5];
+            // Silver/Bright Pulse 효과 (사령관의 승인을 기다리는 생명체처럼)
+            const pulse = 0.4 + 0.6 * Math.sin(Date.now() / 400);
+            borderColor = `rgba(235, 219, 178, ${pulse})`; // Bright Cream/Silver pulse
+            glowColor = `rgba(235, 219, 178, ${pulse * 0.3})`;
+        } else if (style.glow) {
+            glowColor = style.borderColor;
         }
 
-        if (node.visual && node.visual.dashArray) {
-            this.ctx.setLineDash(node.visual.dashArray.split(',').map(Number));
+        if (isSelected) {
+            borderColor = '#fabd2f';
+            lineWidth = 3;
+            glowColor = '#fabd2f';
         }
 
+        // 2. 배경 및 글로우 렌더링
+        this.ctx.save();
+        if (glowColor && this.isAnimating) {
+            this.ctx.shadowBlur = 15;
+            this.ctx.shadowColor = glowColor;
+        }
+
+        this.ctx.fillStyle = bgColor;
         this.ctx.fillRect(x, y, nodeWidth, nodeHeight);
+
+        this.ctx.strokeStyle = borderColor;
+        this.ctx.lineWidth = lineWidth;
+        if (dash.length > 0) {
+            this.ctx.setLineDash(dash);
+            if ((node.state === 'pending' || node.status === 'proposed') && this.isAnimating) {
+                this.ctx.lineDashOffset = -this.animationOffset;
+            }
+        }
         this.ctx.strokeRect(x, y, nodeWidth, nodeHeight);
+        this.ctx.restore();
         this.ctx.setLineDash([]);
+
+        // 3. 우측 상단 'Dirty' 도트 (수정됨/싱크 필요)
+        if (node.state === 'dirty' || node.isDirty) {
+            this.ctx.fillStyle = '#fb4934'; // Red Dot
+            this.ctx.beginPath();
+            this.ctx.arc(x + nodeWidth - 5, y + 5, 4, 0, Math.PI * 2);
+            this.ctx.fill();
+            // 도트 외곽선
+            this.ctx.strokeStyle = '#ebdbb2';
+            this.ctx.lineWidth = 1;
+            this.ctx.stroke();
+        }
+
+        // 4. 타입별 아이콘 (Identity) - LOD 연동
+        if (zoom > 1.2) {
+            this.ctx.fillStyle = borderColor;
+            this.ctx.font = 'bold 12px Inter, sans-serif';
+            this.ctx.textAlign = 'left';
+            this.ctx.textBaseline = 'top';
+            this.ctx.fillText(style.icon, x + 5, y + 5);
+        }
+
+        // 5. 중앙 에러 아이콘 (Error state)
+        if (node.state === 'error' && zoom > 0.8) {
+            this.ctx.fillStyle = '#fb4934';
+            this.ctx.font = 'bold 24px Inter, sans-serif';
+            this.ctx.textAlign = 'center';
+            this.ctx.textBaseline = 'middle';
+            this.ctx.fillText('⚠️', x + nodeWidth / 2, y + nodeHeight / 2 - 5);
+        }
 
         // Level 2: Normal View
         if (zoom >= 0.4 && zoom <= 1.5) {
             this.ctx.fillStyle = '#ebdbb2';
-            this.ctx.font = '12px Inter, sans-serif';
+            this.ctx.font = 'bold 13px Inter, sans-serif';
             this.ctx.textAlign = 'center';
             this.ctx.textBaseline = 'middle';
-            this.ctx.fillText(node.data.label, x + nodeWidth / 2, y + nodeHeight / 2);
+
+            let label = node.data.label;
+            const textY = node.state === 'error' ? y + nodeHeight / 2 + 15 : y + nodeHeight / 2 + 5;
+            this.ctx.fillText(label, x + nodeWidth / 2, textY);
+
+            // Proposed 안내문 (높은 줌레벨에서만)
+            if ((node.status === 'proposed' || node.state === 'pending') && zoom > 1.2) {
+                this.ctx.font = 'italic 9px Inter, sans-serif';
+                this.ctx.fillStyle = 'rgba(235, 219, 178, 0.7)';
+                this.ctx.fillText('Commander, approve?', x + nodeWidth / 2, y + nodeHeight - 8);
+            }
         }
 
-        // Level 3: Detail View (줌이 클 때 - 정교한 정보 표시)
+        // Level 3: Detail View & Deep LOD
         if (zoom > 1.5) {
-            // 상단 헤더 바 (파일 정보)
-            this.ctx.fillStyle = '#504945';
-            this.ctx.fillRect(x, y, nodeWidth, 20);
+            this.ctx.fillStyle = '#ebdbb2';
+            this.ctx.font = 'bold 11px Inter, sans-serif';
+            this.ctx.textAlign = 'center';
+            this.ctx.fillText(node.data.label, x + nodeWidth / 2, y + 15);
 
-            this.ctx.fillStyle = '#fabd2f'; // 파일 라벨 강조
-            this.ctx.font = 'bold 10px Inter, sans-serif';
-            this.ctx.textAlign = 'left';
-            this.ctx.textBaseline = 'top';
-            this.ctx.fillText(node.data.label, x + 5, y + 5);
-
-            // 실제 분석 데이터가 있는 경우 표시
-            if (node.data.summary) {
-                const { classes, functions } = node.data.summary;
-                let offsetY = y + 25;
-
-                // 클래스 표시 (Gruvbox Red)
-                if (classes && classes.length > 0) {
-                    this.ctx.fillStyle = '#fb4934';
-                    this.ctx.font = 'bold 10px monospace';
-                    classes.slice(0, 2).forEach(cls => {
-                        this.ctx.fillText(`C ${cls}`, x + 5, offsetY);
-                        offsetY += 12;
-                    });
-                }
-
-                // 함수 표시 (Gruvbox Green)
-                if (functions && functions.length > 0) {
-                    this.ctx.fillStyle = '#b8bb26';
-                    this.ctx.font = '9px monospace';
-                    functions.slice(0, 3).forEach(func => {
-                        this.ctx.fillText(`f ${func}()`, x + 5, offsetY);
-                        offsetY += 10;
-                    });
-
-                    // 더 많은 함수가 있으면 표시
-                    if (functions.length > 3) {
-                        this.ctx.fillStyle = '#928374';
-                        this.ctx.font = 'italic 8px Inter, sans-serif';
-                        this.ctx.fillText(`+ ${functions.length - 3} more...`, x + 5, offsetY);
-                    }
-                }
-            } else {
-                // 데이터가 없는 경우 장식용 자리표시자
-                this.ctx.fillStyle = '#928374';
-                this.ctx.font = 'italic 9px Inter, sans-serif';
-                this.ctx.textAlign = 'center';
-                this.ctx.textBaseline = 'middle';
-                this.ctx.fillText("(No members)", x + nodeWidth / 2, y + nodeHeight / 2 + 10);
+            // Proposed 모드 가이드 버튼 ([V], [X])
+            if (node.status === 'proposed' || node.state === 'pending') {
+                this.renderNodeButtons(node, x, y, nodeWidth, nodeHeight);
             }
+
+            // 구분선
+            this.ctx.strokeStyle = '#504945';
+            this.ctx.lineWidth = 1;
+            this.ctx.beginPath();
+            this.ctx.moveTo(x + 10, y + 25);
+            this.ctx.lineTo(x + nodeWidth - 10, y + 25);
+            this.ctx.stroke();
+
+            // 타입별 Deep LOD 정보 (Priority-based)
+            let offsetY = y + 35;
+            this.ctx.textAlign = 'left';
+            this.ctx.font = '9px Inter, sans-serif';
+
+            // 1. Logic Node: Functions/Classes
+            if ((node.type === 'logic' || node.type === 'source') && node.data.summary) {
+                const { functions, classes } = node.data.summary;
+                this.ctx.fillStyle = '#fabd2f'; // Yellowish for logical items
+                const items = [...(classes || []), ...(functions || [])];
+                items.slice(0, 3).forEach(item => {
+                    this.ctx.fillText(`• ${item}`, x + 10, offsetY);
+                    offsetY += 10;
+                });
+            }
+            // 2. Data Node: Tables/Schema Keys
+            else if ((node.type === 'data' || node.type === 'config') && node.data.summary) {
+                const { tables, keys } = node.data.summary;
+                this.ctx.fillStyle = '#83a598'; // Blue for data items
+                const items = [...(tables || []), ...(keys || [])];
+                items.slice(0, 3).forEach(item => {
+                    this.ctx.fillText(`◆ ${item}`, x + 10, offsetY);
+                    offsetY += 10;
+                });
+            }
+            // 3. External Node: Status/Latency
+            else if (node.type === 'external' && node.data.summary) {
+                const { status, latency } = node.data.summary;
+                this.ctx.fillStyle = '#fe8019';
+                if (status) {
+                    this.ctx.fillText(`Status: ${status}`, x + 10, offsetY);
+                    offsetY += 10;
+                }
+                if (latency) {
+                    this.ctx.fillText(`Latency: ${latency}ms`, x + 10, offsetY);
+                    offsetY += 10;
+                }
+            } else if (node.status === 'proposed' || node.state === 'pending') {
+                this.ctx.fillStyle = '#a89984';
+                this.ctx.fillText('⚡ Awaiting Approval', x + 10, offsetY);
+                offsetY += 12;
+                this.ctx.font = '8px Inter, sans-serif';
+                this.ctx.fillText('Click [V] to start deep scan', x + 10, offsetY);
+            } else {
+                this.ctx.fillStyle = '#a89984';
+                const desc = node.data.description || 'No detailed analysis available.';
+                this.ctx.fillText(desc.substring(0, 30) + (desc.length > 30 ? '...' : ''), x + 10, offsetY);
+            }
+        }
+    }
+
+    /**
+     * 노드 승인/취소 버튼 렌더링
+     */
+    renderNodeButtons(node, x, y, width, height) {
+        const btnSize = 20;
+        const spacing = 4;
+        const zoom = this.transform.zoom;
+
+        // 버튼 위치 (우측 상단 위로 배치)
+        const vBtnX = x + width - (btnSize * 2) - spacing;
+        const xBtnX = x + width - btnSize;
+        const btnY = y - btnSize - 5;
+
+        // [V] 버튼 (Approve)
+        this.ctx.fillStyle = '#b8bb26';
+        this.ctx.fillRect(vBtnX, btnY, btnSize, btnSize);
+        this.ctx.fillStyle = '#282828';
+        this.ctx.font = 'bold 12px Inter, sans-serif';
+        this.ctx.textAlign = 'center';
+        this.ctx.textBaseline = 'middle';
+        this.ctx.fillText('V', vBtnX + btnSize / 2, btnY + btnSize / 2);
+
+        // [X] 버튼 (Reject)
+        this.ctx.fillStyle = '#fb4934';
+        this.ctx.fillRect(xBtnX, btnY, btnSize, btnSize);
+        this.ctx.fillStyle = '#282828';
+        this.ctx.fillText('X', xBtnX + btnSize / 2, btnY + btnSize / 2);
+
+        // 줌이 크면 라벨 표시
+        if (zoom > 1.8) {
+            this.ctx.font = '9px Inter, sans-serif';
+            this.ctx.textAlign = 'right';
+            this.ctx.fillStyle = '#b8bb26';
+            this.ctx.fillText('Approve', vBtnX - 5, btnY + btnSize / 2);
+            this.ctx.fillStyle = '#fb4934';
+            this.ctx.fillText('Reject', xBtnX + btnSize + 30, btnY + btnSize / 2); // 우측으로 시선 분산
+            // 그냥 버튼 아래나 옆에 작게
+            this.ctx.textAlign = 'center';
+            this.ctx.fillText('Approve', vBtnX + btnSize / 2, btnY - 5);
+            this.ctx.fillText('Reject', xBtnX + btnSize / 2, btnY - 5);
+        }
+    }
+
+    /**
+     * 노드 버튼 클릭 체크
+     */
+    checkNodeButtonClick(worldX, worldY) {
+        const nodeWidth = 120;
+        const btnSize = 20;
+        const spacing = 4;
+
+        for (const node of this.nodes) {
+            if (node.status !== 'proposed' && node.state !== 'pending') continue;
+
+            const x = node.position.x;
+            const y = node.position.y;
+            const vBtnX = x + nodeWidth - (btnSize * 2) - spacing;
+            const xBtnX = x + nodeWidth - btnSize;
+            const btnY = y - btnSize - 5;
+
+            // [V] 버튼 클릭 검사
+            if (worldX >= vBtnX && worldX <= vBtnX + btnSize &&
+                worldY >= btnY && worldY <= btnY + btnSize) {
+                this.approveNode(node.id);
+                return true;
+            }
+
+            // [X] 버튼 클릭 검사
+            if (worldX >= xBtnX && worldX <= xBtnX + btnSize &&
+                worldY >= btnY && worldY <= btnY + btnSize) {
+                this.rejectNode(node.id);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    approveNode(nodeId) {
+        console.log('[SYNAPSE] Approving node:', nodeId);
+        if (typeof vscode !== 'undefined') {
+            vscode.postMessage({ command: 'approveNode', nodeId });
+        } else {
+            // Standalone API 호출 (분석 요청)
+            const node = this.nodes.find(n => n.id === nodeId);
+            if (node) {
+                const loadingEl = document.getElementById('loading');
+                if (loadingEl) loadingEl.style.display = 'flex';
+
+                this.callStandaloneApi('/api/analyze', {
+                    filePath: node.data.file || node.data.path
+                }).then(res => {
+                    if (loadingEl) loadingEl.style.display = 'none';
+                    if (res?.success) {
+                        node.status = 'active';
+                        node.state = 'active';
+                        node.visual.opacity = 1.0;
+                        delete node.visual.dashArray;
+                        this.saveState();
+                        this.render();
+                    }
+                });
+            }
+        }
+    }
+
+    rejectNode(nodeId) {
+        console.log('[SYNAPSE] Rejecting node:', nodeId);
+        if (typeof vscode !== 'undefined') {
+            vscode.postMessage({ command: 'rejectNode', nodeId });
+        } else {
+            // Mock behavior for browser
+            this.nodes = this.nodes.filter(n => n.id !== nodeId);
+            this.edges = this.edges.filter(e => e.from !== nodeId && e.to !== nodeId);
+            this.render();
         }
     }
 
@@ -2034,7 +2724,7 @@ class CanvasEngine {
 
             // 끝점 화살표 체크
             const angle = Math.atan2(toY - cpY, toX - cpX);
-            const arrowPoint = this.getNodeBoundaryPoint(toX, toY, angle);
+            const arrowPoint = this.getNodeBoundaryPoint(toX, toY, angle + Math.PI);
             if (this.isPointNearArrow(px, py, arrowPoint.x, arrowPoint.y, 20)) {
                 return edge;
             }
@@ -2043,7 +2733,7 @@ class CanvasEngine {
             const style = this.getEdgeStyle(edge);
             if (style.arrowStyle === 'double') {
                 const startAngle = Math.atan2(fromY - cpY, fromX - cpX);
-                const startArrowPoint = this.getNodeBoundaryPoint(fromX, fromY, startAngle);
+                const startArrowPoint = this.getNodeBoundaryPoint(fromX, fromY, startAngle + Math.PI);
                 if (this.isPointNearArrow(px, py, startArrowPoint.x, startArrowPoint.y, 20)) {
                     return edge;
                 }
@@ -2117,8 +2807,8 @@ class CanvasEngine {
         this.ctx.quadraticCurveTo(cpX, cpY, toX, toY);
 
         // 화살표 아이콘 결정 (Phase 3)
-        // LOD 적용: 줌이 0.6 이상일 때만 아이콘 표시 (절제된 미학)
-        const showIcons = this.transform.zoom > 0.6;
+        // LOD 적용: 줌이 1.2 이상일 때만 아이콘 표시 (절제된 미학 - 노드 아이콘과 높이 맞춤)
+        const showIcons = this.transform.zoom > 1.2;
         const iconMap = {
             'dependency': 'D',
             'call': 'C',
@@ -2143,7 +2833,7 @@ class CanvasEngine {
 
         // 화살표 렌더링 (노드 외곽선 교점 + 엣지 중앙)
         const angle = Math.atan2(toY - cpY, toX - cpX);
-        const arrowPoint = this.getNodeBoundaryPoint(toX, toY, angle);
+        const arrowPoint = this.getNodeBoundaryPoint(toX, toY, angle + Math.PI);
 
         // 1. 끝점 화살표 (노드 경계)
         this.renderArrow(arrowPoint.x, arrowPoint.y, angle, edgeColor, style.arrowStyle, edgeIcon);
@@ -2157,7 +2847,7 @@ class CanvasEngine {
         // Bidirectional인 경우 반대 방향 화살표도 그리기
         if (style.arrowStyle === 'double') {
             const startAngle = Math.atan2(fromY - cpY, fromX - cpX);
-            const startArrowPoint = this.getNodeBoundaryPoint(fromX, fromY, startAngle);
+            const startArrowPoint = this.getNodeBoundaryPoint(fromX, fromY, startAngle + Math.PI);
             this.renderArrow(startArrowPoint.x, startArrowPoint.y, startAngle, edgeColor, 'standard', edgeIcon);
 
             // 중앙 반대 방향 화살표
@@ -2166,32 +2856,44 @@ class CanvasEngine {
         }
 
         // 🔍 검증 결과 표시 (에러/경고인 경우 라벨 추가)
-        if (!validation.valid || validation.color === '#fabd2f') {
+        if (!validation.valid || validation.color === '#fabd2f' || validation.isAi) {
             const midX = (fromX + toX) / 2;
             const midY = (fromY + toY) / 2 - 35;
 
             this.ctx.save();
             this.ctx.font = `${12 / this.transform.zoom}px Inter, sans-serif`;
+
+            // AI 검증인 경우 특수 효과 (Pulsing)
+            let opacity = 1.0;
+            if (validation.isAi && this.isAnimating) {
+                opacity = 0.7 + 0.3 * Math.sin(Date.now() / 200);
+            }
+
+            this.ctx.globalAlpha = opacity;
             this.ctx.fillStyle = validation.valid ? '#fabd2f' : '#fb4934';
             this.ctx.textAlign = 'center';
             this.ctx.textBaseline = 'middle';
 
             // 배경 박스
-            const text = validation.valid ? '⚠️' : '❌';
+            const text = (validation.isAi ? '🤖 ' : '') + (validation.valid ? '⚠️' : '❌');
             const metrics = this.ctx.measureText(text);
-            const padding = 4 / this.transform.zoom;
+            const padding = 6 / this.transform.zoom;
 
             this.ctx.fillStyle = '#282828';
-            this.ctx.fillRect(
-                midX - metrics.width / 2 - padding,
-                midY - 8 / this.transform.zoom,
-                metrics.width + padding * 2,
-                16 / this.transform.zoom
-            );
+            this.ctx.shadowBlur = 4;
+            this.ctx.shadowColor = 'rgba(0,0,0,0.5)';
+            this.ctx.beginPath();
+            const bw = metrics.width + padding * 2;
+            const bh = 18 / this.transform.zoom;
+            this.ctx.roundRect(midX - bw / 2, midY - bh / 2, bw, bh, 4);
+            this.ctx.fill();
 
             this.ctx.fillStyle = validation.valid ? '#fabd2f' : '#fb4934';
             this.ctx.fillText(text, midX, midY);
             this.ctx.restore();
+
+            // 💡 마우스 오버 시 AI 판단 이유 저장 (툴팁용)
+            edge._validationReason = validation.reason;
         }
     }
 
@@ -2205,9 +2907,9 @@ class CanvasEngine {
      * @param {string} text - 화살표 내부에 표시할 아이콘 (D, C, F, B 등)
      */
     renderArrow(x, y, angle, color, style = 'standard', text = '') {
-        // 화살표 크기: 2배로 증가 (테스트용)
-        const baseSize = style === 'thick' ? 40 : 30; // 기본 크기 2배
-        const minSize = 24; // 최소 크기 2배
+        // 화살표 크기 최적화 (Sustainable Beauty)
+        const baseSize = style === 'thick' ? 24 : 18;
+        const minSize = 14;
         const arrowSize = Math.max(minSize, baseSize / Math.sqrt(this.transform.zoom));
 
         console.log(`[DEBUG] renderArrow called: x=${x}, y=${y}, angle=${angle}, color=${color}, size=${arrowSize}`);
@@ -2279,10 +2981,19 @@ class CanvasEngine {
                 this.ctx.fillStyle = '#fabd2f';
                 this.ctx.strokeStyle = '#3c3836';
                 this.ctx.lineWidth = 2 / this.transform.zoom;
+
+                // 광택/발광 효과
+                if (this.isAnimating) {
+                    this.ctx.shadowBlur = 10 / this.transform.zoom;
+                    this.ctx.shadowColor = '#fabd2f';
+                }
+
                 this.ctx.beginPath();
                 this.ctx.arc(h.x, h.y, handleSize, 0, Math.PI * 2);
                 this.ctx.fill();
                 this.ctx.stroke();
+
+                this.ctx.shadowBlur = 0; // 리셋
             });
         }
 
@@ -2420,82 +3131,137 @@ class CanvasEngine {
             this.ctx.fill();
         }
     }
+
+    resizeCanvas() {
+        const canvas = this.canvas;
+        const dpr = window.devicePixelRatio || 1;
+        const rect = canvas.parentElement.getBoundingClientRect();
+        const targetWidth = Math.floor(rect.width * dpr);
+        const targetHeight = Math.floor(rect.height * dpr);
+
+        if (canvas.width !== targetWidth || canvas.height !== targetHeight) {
+            canvas.width = targetWidth;
+            canvas.height = targetHeight;
+            canvas.style.width = `${rect.width}px`;
+            canvas.style.height = `${rect.height}px`;
+        }
+    }
+
+    renderDebugInfo() {
+        const ctx = this.ctx;
+        ctx.save();
+        ctx.setTransform(1, 0, 0, 1, 0, 0); // Reset transform for HUD
+        ctx.font = '12px monospace';
+        ctx.fillStyle = 'lime';
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'top';
+
+        const info = [
+            `Nodes: ${this.nodes.length}`,
+            `Edges: ${this.edges.length}`,
+            `Zoom: ${this.transform.zoom.toFixed(2)}`,
+            `Offset: ${this.transform.offsetX.toFixed(0)}, ${this.transform.offsetY.toFixed(0)}`,
+            `Canvas: ${this.canvas.width}x${this.canvas.height}`,
+            `Last Input: ${this.lastInputTime ? new Date(this.lastInputTime).toLocaleTimeString() : 'None'}`
+        ];
+
+        info.forEach((text, i) => {
+            ctx.fillText(text, 10, 10 + (i * 15));
+        });
+        ctx.restore();
+    }
 }
 
 // 초기화
+// 초기화
 let engine;
 
-window.addEventListener('DOMContentLoaded', async () => {
+function initCanvas() {
+    if (engine) return;
+
+    // index.html의 <canvas id="canvas">와 일치해야 함
     engine = new CanvasEngine('canvas');
+    console.log('[SYNAPSE] Engine initialized:', engine);
 
-    // 프로젝트 상태 로드
-    try {
-        console.log('[SYNAPSE] Initializing...');
-        console.log('[SYNAPSE] VS Code API available:', typeof window.vscode !== 'undefined');
-
-        const vscode = window.vscode;
-        if (vscode) {
-            // VS Code 환경
-            console.log('[SYNAPSE] Running in VS Code webview');
-
-            // 메시지 리스너 등록
-            window.addEventListener('message', event => {
-                const message = event.data;
-                console.log('[SYNAPSE] Received message:', message.command);
-
-                switch (message.command) {
-                    case 'projectState':
-                        console.log('[SYNAPSE] Loading project state');
-                        engine.loadProjectState(message.data);
-                        break;
-                    case 'rollback':
-                        // Rollback then clear baseline
-                        engine.loadProjectState(message.data);
-                        engine.baselineNodes = null;
-                        break;
-                    case 'setBaseline':
-                        console.log('[SYNAPSE] Setting visual baseline');
-                        engine.baselineNodes = message.data.nodes;
-                        break;
-                    case 'clearBaseline':
-                        engine.baselineNodes = null;
-                        break;
-                    case 'fitView':
-                        engine.fitView();
-                        break;
-                    case 'history':
-                        engine.updateHistoryUI(message.data);
-                        break;
-                }
-            });
-
-            // 프로젝트 상태 요청
-            console.log('[SYNAPSE] Requesting project state from extension');
-            vscode.postMessage({ command: 'getProjectState' });
-        } else {
-            // 브라우저 환경
-            console.log('[SYNAPSE] Running in browser');
-            const response = await fetch('../data/project_state.json');
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
-            const projectState = await response.json();
-            engine.loadProjectState(projectState);
+    // Failsafe: Remove loading overlay after 3 seconds no matter what
+    setTimeout(() => {
+        const loadingEl = document.getElementById('loading');
+        if (loadingEl) {
+            console.warn('[SYNAPSE] Force removing loading overlay via timeout');
+            loadingEl.remove();
         }
-    } catch (error) {
-        console.error('[SYNAPSE] Load error:', error);
-        document.getElementById('loading').innerHTML = `
-            <div>❌ Failed to load project</div>
-            <div style="font-size: 12px; margin-top: 8px; color: #fb4934;">${error.message}</div>
-        `;
+    }, 3000);
+
+    // DEBUG: Global Input Logger
+    window.addEventListener('mousedown', (e) => {
+        console.log('[DEBUG] MouseDown on:', e.target.tagName, e.target.id, e.target.className);
+        if (engine) {
+            engine.lastInputTime = Date.now();
+            engine.render(); // Force render to update debug info
+        }
+    }, true); // Capture phase
+
+    // VS Code API 연동 확인
+    if (typeof acquireVsCodeApi !== 'undefined' && typeof window.vscode === 'undefined') {
+        window.vscode = acquireVsCodeApi();
     }
 
-    // 툴바 버튼 이벤트
-    document.getElementById('btn-fit').addEventListener('click', () => {
+    // 메시지 리스너 등록
+    window.addEventListener('message', event => {
+        const message = event.data;
+        console.log('[SYNAPSE] Received message:', message.command);
+
+        switch (message.command) {
+            case 'projectState':
+                engine.loadProjectState(message.data);
+                break;
+            case 'projectProposal':
+                engine.loadProjectState(message.data);
+                engine.fitView();
+                break;
+            case 'history':
+                engine.updateHistoryUI(message.data);
+                break;
+            case 'fitView':
+                engine.fitView();
+                break;
+            case 'setBaseline':
+                engine.baselineNodes = message.data.nodes;
+                engine.render();
+                break;
+            case 'clearBaseline':
+                engine.baselineNodes = null;
+                engine.render();
+                break;
+            case 'edgeValidationResult':
+                engine.updateEdgeValidation(message.edgeId, message.result);
+                break;
+            case 'flowData':
+                engine.flowData = message.data;
+                engine.currentMode = 'flow';
+                document.getElementById('loading').style.display = 'none';
+                engine.render();
+
+                // Update UI buttons for flow mode
+                document.querySelectorAll('[data-mode]').forEach(b => b.classList.remove('active'));
+                document.querySelector('[data-mode="flow"]')?.classList.add('active');
+                document.getElementById('current-mode').textContent = 'Flow';
+                break;
+        }
+    });
+
+    // Initial request
+    engine.getProjectState();
+
+    // Toolbar Event Listeners
+    document.getElementById('btn-fit')?.addEventListener('click', () => {
         engine.fitView();
     });
 
-    document.getElementById('btn-reset').addEventListener('click', () => {
+    document.getElementById('btn-reset')?.addEventListener('click', () => {
         engine.transform = { zoom: 1.0, offsetX: 0, offsetY: 0 };
         engine.updateZoomDisplay();
+        engine.render();
     });
 
     document.getElementById('btn-group')?.addEventListener('click', () => {
@@ -2506,25 +3272,39 @@ window.addEventListener('DOMContentLoaded', async () => {
         engine.ungroupSelection();
     });
 
-    // 모드 전환 버튼
+    document.getElementById('btn-animate')?.addEventListener('click', (e) => {
+        engine.isAnimating = !engine.isAnimating;
+        e.target.textContent = engine.isAnimating ? '🎬 On' : '⏸ Off';
+        if (engine.isAnimating) engine.startAnimationLoop();
+    });
+
+    // Mode Switcher
     document.querySelectorAll('[data-mode]').forEach(btn => {
         btn.addEventListener('click', () => {
             const mode = btn.dataset.mode;
 
-            // UI 업데이트
+            // Update UI
             document.querySelectorAll('[data-mode]').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             document.getElementById('current-mode').textContent = mode.charAt(0).toUpperCase() + mode.slice(1);
 
-            // 엔진 모드 전환
+            // Switch Mode
             engine.currentMode = mode;
             console.log('[SYNAPSE] Switched to mode:', mode);
 
-            // Tree 모드로 전환 시 tree 데이터 재빌드
+            // Rebuild tree if needed
             if (mode === 'tree' && engine.nodes.length > 0) {
                 engine.treeData = engine.treeRenderer.buildTree(engine.nodes);
             }
+
+            engine.render();
         });
     });
+}
 
-});
+// Ensure DOM is ready before initializing
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initCanvas);
+} else {
+    initCanvas();
+}

@@ -1,4 +1,4 @@
-import { FileScanner } from '../webview/FileScanner';
+import { FileScanner } from '../core/FileScanner';
 import * as fs from 'fs';
 import * as path from 'path';
 

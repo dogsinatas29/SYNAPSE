@@ -4,16 +4,13 @@
     "description": "Visual architecture control engine for code visualization and design",
     "version": "0.1.0",
     "publisher": "synapse-team",
+    "icon": "resources/synapse-icon.png",
     "engines": {
         "vscode": "^1.80.0"
     },
     "categories": [
         "Visualization",
         "Other"
-    ],
-    "activationEvents": [
-        "onCommand:synapse.openCanvas",
-        "onView:synapseExplorer"
     ],
     "main": "./dist/extension.js",
     "contributes": {
@@ -45,7 +42,8 @@
             "synapse-explorer": [
                 {
                     "id": "synapseExplorer",
-                    "name": "Architecture Explorer"
+                    "name": "Architecture Explorer",
+                    "icon": "resources/synapse-icon.svg"
                 }
             ]
         },
@@ -93,7 +91,8 @@
         "lint": "eslint src --ext ts",
         "test": "node ./out/test/runTest.js",
         "test:unit": "jest",
-        "dev:ui": "cd demo && python3 -m http.server 8080"
+        "dev:ui": "cd demo && python3 -m http.server 8080",
+        "dev:standalone": "ts-node src/server/standalone.ts"
     },
     "jest": {
         "preset": "ts-jest",
@@ -113,5 +112,14 @@
         "ts-jest": "^29.4.6",
         "ts-node": "^10.9.2",
         "typescript": "^5.3.3"
+    },
+    "dependencies": {
+        "@types/cors": "^2.8.19",
+        "@types/express": "^5.0.6",
+        "cors": "^2.8.6",
+        "express": "^5.2.1",
+        "vscode-languageclient": "^9.0.1",
+        "vscode-languageserver": "^9.0.1",
+        "vscode-languageserver-textdocument": "^1.0.12"
     }
 }

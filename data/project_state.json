@@ -1,5 +1,37 @@
 {
+  "project_name": "antigravity-extension-vis",
+  "gemini_md_path": "/home/dogsinatas/TypeScript_project/antigravity-extension-vis/GEMINI.md",
+  "canvas_state": {
+    "zoom_level": 1,
+    "offset": {
+      "x": 0,
+      "y": 0
+    },
+    "visible_layers": [
+      "source",
+      "documentation"
+    ]
+  },
   "nodes": [
+    {
+      "id": "node_0",
+      "type": "source",
+      "status": "proposed",
+      "position": {
+        "x": 100,
+        "y": 100
+      },
+      "data": {
+        "file": "login.py",
+        "label": "login.py",
+        "description": "login.py 파일",
+        "color": "#b8bb26"
+      },
+      "visual": {
+        "opacity": 0.5,
+        "dashArray": "5,5"
+      }
+    },
     {
       "id": "node_1",
       "type": "source",

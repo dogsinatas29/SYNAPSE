@@ -5,8 +5,8 @@
 
 import * as path from 'path';
 import * as fs from 'fs';
-import { GeminiParser } from './GeminiParser';
-import { FlowchartGenerator } from './FlowchartGenerator';
+import { GeminiParser } from '../core/GeminiParser';
+import { FlowchartGenerator } from '../core/FlowchartGenerator';
 import { BootstrapResult, ProjectState } from '../types/schema';
 
 export class BootstrapEngine {

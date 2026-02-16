@@ -14,6 +14,21 @@ SYNAPSE는 **Google Antigravity**를 위해 구축된 차세대 확장 프로그
 - **⚡ Smart Push (Collision Avoidance)**: 클러스터 영역 내 불필요한 노드 중첩을 자동으로 방지하는 물리 엔진.
 - **🔍 Semantic Zooming (LOD)**: 줌 레벨에 따라 정보 밀도를 최적화하여 수천 개의 노드 조작 가능.
 - **💾 Persistence**: 모든 시각적 배치와 클러스터 상태를 `project_state.json`에 영구 저장.
+- **🛠️ Standalone Bridge**: VS Code 없이 브라우저 단독으로 구동 가능한 개발 환경 제공.
+
+## 🖼️ Visual Overviews
+
+### 🌐 Graph View
+LLM의 추론 논리와 파일 간의 물리적 연결 상태를 노드-엣지 네트워크로 시각화합니다.
+![Graph View](docs/media/synapse_graph_view.png)
+
+### 🌳 Tree View
+프로젝트의 폴더 구조와 파일 계층을 직관적으로 조감할 수 있습니다.
+![Tree View](docs/media/synapse_tree_view.png)
+
+### ➡️ Flow View
+특정 이벤트나 함수의 로직 실행 흐름을 선형적인 순서도로 투사합니다.
+![Flow View](docs/media/synapse_flow_view.png)
 
 ## 🛠️ Technology Stack
 

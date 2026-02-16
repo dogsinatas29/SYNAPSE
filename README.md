@@ -99,7 +99,8 @@ SYNAPSE의 핵심 기능인 **드래그 앤 드롭 엣지 생성**으로 코드 
     *   (브라우저 모드에서는 확인 창이 뜹니다)
 
 ## 🎥 Demo Video
-![Workflow Demo](docs/media/synapse_demo.webp)
+[![Workflow Demo](docs/media/synapse_demo.webp)](https://www.youtube.com/watch?v=Va4vZWkqC8E)
+> *Click the image above to watch the full video on YouTube.*
 
 ## 🧹 Data Hygiene Principles
 

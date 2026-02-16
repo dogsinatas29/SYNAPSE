@@ -205,6 +205,12 @@ async function bootstrapFromGemini(uri: vscode.Uri, context: vscode.ExtensionCon
                 if (result.success) {
                     progress.report({ message: 'Opening canvas...' });
                     await vscode.commands.executeCommand('synapse.openCanvas');
+
+                    // Force refresh the canvas to load the new state
+                    if (CanvasPanel.currentPanel) {
+                        await CanvasPanel.currentPanel.sendProjectState();
+                    }
+
                     vscode.window.showInformationMessage(
                         `✅ Bootstrap complete! Created ${result.initial_nodes.length} nodes.`
                     );

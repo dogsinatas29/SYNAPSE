@@ -13,7 +13,15 @@ app.use(express.json());
 
 // 프로젝트 루트 경로 설정 (demo 폴더 기준)
 const projectRoot = path.resolve(__dirname, '../../demo');
+const uiRoot = path.resolve(__dirname, '../../ui');
 const stateFilePath = path.join(projectRoot, 'data', 'project_state.json');
+
+app.use(cors());
+app.use(express.json());
+
+// 정적 파일 서빙 (UI & Data)
+app.use('/', express.static(uiRoot)); // UI 메인
+app.use('/data', express.static(path.join(projectRoot, 'data'))); // 데이터 폴더
 
 console.log('🚀 SYNAPSE Standalone Dev Server starting...');
 console.log(`📂 Project Root: ${projectRoot}`);
@@ -100,6 +108,67 @@ app.post('/api/save-state', (req, res) => {
         res.json({ success: true });
     } catch (error) {
         console.error('[API] saveState error:', error);
+        res.status(500).json({ success: false, error: String(error) });
+    }
+});
+
+// 4. 히스토리 조회
+app.get('/api/history', (req, res) => {
+    try {
+        const historyPath = path.join(projectRoot, 'data', 'synapse_history.json');
+        if (fs.existsSync(historyPath)) {
+            const history = JSON.parse(fs.readFileSync(historyPath, 'utf-8'));
+            res.json({ success: true, history });
+        } else {
+            res.json({ success: true, history: [] });
+        }
+    } catch (error) {
+        res.status(500).json({ success: false, error: String(error) });
+    }
+});
+
+// 5. 스냅샷 저장
+app.post('/api/snapshot', (req, res) => {
+    try {
+        const { label, data } = req.body;
+        const historyPath = path.join(projectRoot, 'data', 'synapse_history.json');
+        let history = [];
+        if (fs.existsSync(historyPath)) {
+            history = JSON.parse(fs.readFileSync(historyPath, 'utf-8'));
+        }
+
+        const snapshot = {
+            id: `snap_${Date.now()}`,
+            timestamp: Date.now(),
+            label: label || `Snapshot ${history.length + 1}`,
+            data: data
+        };
+
+        history.unshift(snapshot);
+        fs.writeFileSync(historyPath, JSON.stringify(history, null, 2), 'utf-8');
+        res.json({ success: true, snapshot });
+    } catch (error) {
+        res.status(500).json({ success: false, error: String(error) });
+    }
+});
+
+// 6. 롤백
+app.post('/api/rollback', (req, res) => {
+    try {
+        const { snapshotId } = req.body;
+        const historyPath = path.join(projectRoot, 'data', 'synapse_history.json');
+        if (!fs.existsSync(historyPath)) throw new Error('History not found');
+
+        const history = JSON.parse(fs.readFileSync(historyPath, 'utf-8'));
+        const snapshot = history.find((s: any) => s.id === snapshotId);
+
+        if (snapshot) {
+            fs.writeFileSync(stateFilePath, JSON.stringify(snapshot.data, null, 2), 'utf-8');
+            res.json({ success: true });
+        } else {
+            res.status(404).json({ success: false, error: 'Snapshot not found' });
+        }
+    } catch (error) {
         res.status(500).json({ success: false, error: String(error) });
     }
 });

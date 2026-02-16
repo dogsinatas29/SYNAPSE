@@ -389,8 +389,13 @@ class CanvasEngine {
         this.edgeCurrentPos = { x: 0, y: 0 };
         this.edgeTarget = null; // { type: 'node'|'cluster', id: string }
 
+        // 노드 생성 상태
+        this.isAddingNode = false;
+        this.pendingNodePos = { x: 0, y: 0 };
+
         // 이벤트 리스너 등록
         this.setupEventListeners();
+        this.setupToolbarListeners(); // New listener setup
 
         // 렌더링 루프 시작
         this.render();
@@ -418,6 +423,105 @@ class CanvasEngine {
         this.getProjectState();
     }
 
+    setupToolbarListeners() {
+        // Add Node Button
+        const btnAddNode = document.getElementById('btn-add-node');
+        if (btnAddNode) {
+            btnAddNode.addEventListener('click', () => {
+                this.isAddingNode = !this.isAddingNode;
+                this.isCreatingEdge = false; // Reset other modes
+                btnAddNode.classList.toggle('active', this.isAddingNode);
+                document.getElementById('btn-connect')?.classList.remove('active');
+
+                this.canvas.style.cursor = this.isAddingNode ? 'crosshair' : 'default';
+                console.log('[SYNAPSE] Add Node Mode:', this.isAddingNode);
+            });
+        }
+
+        // Connect Button
+        const btnConnect = document.getElementById('btn-connect');
+        if (btnConnect) {
+            btnConnect.addEventListener('click', () => {
+                this.isCreatingEdge = !this.isCreatingEdge;
+                this.isAddingNode = false; // Reset other modes
+                btnConnect.classList.toggle('active', this.isCreatingEdge);
+                document.getElementById('btn-add-node')?.classList.remove('active');
+
+                // Clear any partial edge state
+                this.edgeSource = null;
+                this.edgeTarget = null;
+
+                console.log('[SYNAPSE] Connect Mode:', this.isCreatingEdge);
+            });
+        }
+
+        // Node Creation Dialog
+        const btnConfirmNode = document.getElementById('btn-confirm-node');
+        const btnCancelNode = document.getElementById('btn-cancel-node');
+        const nodeDialog = document.getElementById('node-dialog');
+
+        if (btnConfirmNode) {
+            btnConfirmNode.addEventListener('click', () => {
+                const labelInput = document.getElementById('node-label-input');
+                const typeInput = document.getElementById('node-type-input');
+
+                if (labelInput && typeInput) {
+                    const label = labelInput.value;
+                    const type = typeInput.value;
+
+                    if (label) {
+                        this.createManualNode(label, type, this.pendingNodePos.x, this.pendingNodePos.y);
+
+                        // Reset and hide
+                        labelInput.value = '';
+                        nodeDialog.style.display = 'none';
+                        this.isAddingNode = false;
+                        document.getElementById('btn-add-node')?.classList.remove('active');
+                        this.canvas.style.cursor = 'default';
+                    }
+                }
+            });
+        }
+
+        if (btnCancelNode) {
+            btnCancelNode.addEventListener('click', () => {
+                if (nodeDialog) nodeDialog.style.display = 'none';
+                this.isAddingNode = false;
+                document.getElementById('btn-add-node')?.classList.remove('active');
+                this.canvas.style.cursor = 'default';
+            });
+        }
+    }
+
+    createManualNode(label, type, x, y) {
+        const newNode = {
+            id: `node_manual_${Date.now()}`,
+            type: type,
+            status: 'proposed', // Start as proposed
+            position: { x, y },
+            data: {
+                label: label,
+                description: 'Manually created node'
+            },
+            visual: {
+                opacity: 1 // Make it fully visible immediately
+            }
+        };
+
+        console.log('[SYNAPSE] Creating manual node:', newNode);
+
+        if (typeof vscode !== 'undefined') {
+            vscode.postMessage({
+                command: 'createManualNode',
+                node: newNode
+            });
+        }
+
+        // Optimistic update
+        this.nodes.push(newNode);
+        this.render();
+    }
+
     async getProjectState() {
         if (typeof vscode !== 'undefined') {
             vscode.postMessage({ command: 'getProjectState' });
@@ -425,7 +529,7 @@ class CanvasEngine {
             console.warn('[SYNAPSE] VS Code API not available (Browser mode). Attempting to fetch state...');
             try {
                 // 상위 디렉토리의 data/project_state.json 시도 (demo 환경 등)
-                const response = await fetch('../data/project_state.json');
+                const response = await fetch('/data/project_state.json');
                 if (response.ok) {
                     const state = await response.json();
                     console.log('[SYNAPSE] State loaded via fetch:', state);
@@ -575,23 +679,57 @@ class CanvasEngine {
             if (e.button === 0) { // 왼쪽 버튼
                 this.wasDragging = false; // mousedown 시 초기화
 
+                // -1. 클러스터 헤더 버튼 체크 (최우선)
+                const clickedCluster = this.getClusterAt(worldPos.x, worldPos.y);
+                if (clickedCluster) {
+                    // 버튼 영역 체크 (오른쪽 끝 30px 정도)
+                    const b = clickedCluster._headerBounds;
+                    if (worldPos.x > b.x + b.width - 40) {
+                        this.toggleClusterCollapse(clickedCluster.id);
+                        return;
+                    }
+                }
+
+                // 0. 노드 추가 모드 (최우선)
+                if (this.isAddingNode) {
+                    this.pendingNodePos = worldPos;
+                    const nodeDialog = document.getElementById('node-dialog');
+                    if (nodeDialog) {
+                        nodeDialog.style.display = 'block';
+                        document.getElementById('node-label-input')?.focus();
+                    }
+                    return;
+                }
+
                 // 0. 노드 승인/취소 버튼 체크 (가장 먼저)
                 if (this.checkNodeButtonClick(worldPos.x, worldPos.y)) {
                     return;
                 }
 
-                // 1. 연결 핸들 체크 (최우선)
+                // 1. 연결 핸들 체크 (최우선) OR 연결 모드일 때 노드 클릭
                 const handle = this.getConnectionHandleAt(worldPos.x, worldPos.y);
-                if (handle && e.altKey) {
+                const clickedNodeForEdge = this.getNodeAt(worldPos.x, worldPos.y);
+
+                if ((handle && e.altKey) || (this.isCreatingEdge && (clickedNodeForEdge || handle))) {
                     // Alt + 핸들 클릭 = 엣지 생성 모드
-                    this.isCreatingEdge = true;
-                    this.edgeSource = handle;
-                    this.edgeCurrentPos = worldPos;
-                    console.log('[SYNAPSE] Edge creation started from:', handle);
-                    return;
+                    // OR 'Connect' button is active and user clicked a node/handle
+
+                    // If manually toggled mode and click is on body, ignore (wait for node click)
+                    if (this.isCreatingEdge && !clickedNodeForEdge && !handle) {
+                        // Just deselect if clicking empty space? Or allow pan?
+                        // For now let it fall through to pan/select
+                    } else {
+                        // Start edge creation
+                        this.isCreatingEdge = true; // Ensure true
+                        this.edgeSource = handle || { type: 'node', id: clickedNodeForEdge.id };
+                        this.edgeCurrentPos = worldPos;
+                        console.log('[SYNAPSE] Edge creation started from:', this.edgeSource);
+                        return;
+                    }
                 }
 
                 // 2. 엣지 클릭 (노드보다 먼저 체크)
+
                 const clickedEdge = this.findEdgeAtPoint(worldPos.x, worldPos.y);
                 if (clickedEdge && !e.altKey) {
                     // 엣지 선택
@@ -1172,7 +1310,7 @@ class CanvasEngine {
         if (edge.validation) {
             return {
                 valid: edge.validation.valid,
-                color: edge.validation.valid ? (edge.validation.confidence > 0.9 ? style.color : '#fabd2f') : '#fb4934',
+                color: edge.validation.valid ? (edge.validation.confidence > 0.9 ? (edge.visual?.color || '#83a598') : '#fabd2f') : '#fb4934',
                 reason: edge.validation.reason,
                 isAi: true
             };
@@ -1501,6 +1639,9 @@ class CanvasEngine {
         this.edgeTarget = null;
     }
 
+
+
+
     takeSnapshot(label) {
         if (typeof vscode !== 'undefined') {
             vscode.postMessage({
@@ -1515,13 +1656,40 @@ class CanvasEngine {
                 }
             });
         } else {
-            console.log('[SYNAPSE] Snapshot would be taken:', label);
+            console.log('[SYNAPSE] Browser mode: taking snapshot', label);
+            fetch('/api/snapshot', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    label: label,
+                    data: {
+                        nodes: this.nodes,
+                        edges: this.edges,
+                        clusters: this.clusters
+                    }
+                })
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        console.log('Snapshot saved');
+                        this.getHistory(); // Refresh history
+                    }
+                });
         }
     }
 
     getHistory() {
         if (typeof vscode !== 'undefined') {
             vscode.postMessage({ command: 'getHistory' });
+        } else {
+            fetch('/api/history')
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        this.updateHistoryUI(data.history);
+                    }
+                });
         }
     }
 
@@ -1531,6 +1699,19 @@ class CanvasEngine {
                 command: 'rollback',
                 snapshotId: snapshotId
             });
+        } else {
+            fetch('/api/rollback', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ snapshotId })
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        console.log('Rollback successful');
+                        this.getProjectState();
+                    }
+                });
         }
     }
 
@@ -1561,8 +1742,17 @@ class CanvasEngine {
 
             item.querySelector('.btn-history-rollback').onclick = (e) => {
                 e.stopPropagation();
-                if (confirm(`Do you want to rollback to "${snap.label}"?`)) {
-                    this.rollback(snap.id);
+                // Request confirmation from backend
+                if (typeof vscode !== 'undefined') {
+                    vscode.postMessage({
+                        command: 'requestRollback',
+                        snapshotId: snap.id,
+                        label: snap.label
+                    });
+                } else {
+                    if (confirm(`Rollback to "${snap.label}"? Unsaved changes will be lost.`)) {
+                        this.rollback(snap.id);
+                    }
                 }
             };
 
@@ -1606,6 +1796,12 @@ class CanvasEngine {
             this.nodes = projectState.nodes || [];
             this.edges = projectState.edges || [];
             this.clusters = projectState.clusters || [];
+
+            // Reset transient states
+            this.baselineNodes = null; // Clear comparison artifacts
+            this.selectedNodes = new Set(); // Clear selection
+            this.selectedEdge = null;
+
 
             // Tree 데이터 빌드
             if (this.treeRenderer) {
@@ -1771,6 +1967,11 @@ class CanvasEngine {
 
                 // 노드 렌더링 (LOD 적용)
                 for (const node of this.nodes) {
+                    // 클러스터가 접혀있으면 렌더링 스킵
+                    if (node.cluster_id) {
+                        const cluster = this.clusters.find(c => c.id === node.cluster_id);
+                        if (cluster && cluster.collapsed) continue;
+                    }
                     this.renderNode(node, zoom);
                 }
 
@@ -1851,13 +2052,16 @@ class CanvasEngine {
             }
         }
 
+        const label = prompt("Enter group name:", `Group ${this.clusters.length + 1}`);
+        if (label === null) return; // Cancelled
+
         const clusterId = `cluster_${Date.now()}`;
         const color = this.clusterColors[this.colorCounter % this.clusterColors.length];
         this.colorCounter++;
 
         const newCluster = {
             id: clusterId,
-            label: `Group ${this.clusters.length + 1}`,
+            label: label || `Group ${this.clusters.length + 1}`,
             color: color,
             collapsed: false
         };
@@ -1891,6 +2095,42 @@ class CanvasEngine {
         console.log('[SYNAPSE] Ungrouped selection');
         this.saveState(); // 클러스터 해제 후 저장
         this.takeSnapshot('Selection Ungrouped');
+    }
+
+    getClusterAt(x, y) {
+        if (!this.clusters) return null;
+        // 헤더 영역만 클릭 체크
+        for (const cluster of this.clusters) {
+            if (cluster._headerBounds) {
+                const b = cluster._headerBounds;
+                if (x >= b.x && x <= b.x + b.width && y >= b.y && y <= b.y + b.height) {
+                    return cluster;
+                }
+            }
+        }
+        return null;
+    }
+
+    toggleClusterCollapse(clusterId) {
+        const cluster = this.clusters.find(c => c.id === clusterId);
+        if (cluster) {
+            cluster.collapsed = !cluster.collapsed;
+            console.log(`[SYNAPSE] Toggled cluster ${cluster.label}: ${cluster.collapsed ? 'Collapsed' : 'Expanded'}`);
+            this.render();
+            this.saveState();
+        }
+    }
+
+    renameCluster(clusterId) {
+        const cluster = this.clusters.find(c => c.id === clusterId);
+        if (cluster) {
+            const newName = prompt("Rename group:", cluster.label);
+            if (newName !== null && newName.trim() !== "") {
+                cluster.label = newName;
+                this.render();
+                this.saveState();
+            }
+        }
     }
 
     saveState() {
@@ -2100,22 +2340,78 @@ class CanvasEngine {
             // 클러스터 박스 그리기
             this.ctx.beginPath();
 
-            // 배경 채우기 (매우 연하게, 겹침 확인을 위해 낮은 알파값)
-            this.ctx.fillStyle = (cluster.color || '#458588') + '15'; // 8% 투명도
-            this.ctx.fillRect(minX - padding, minY - padding, (maxX - minX) + padding * 2, (maxY - minY) + padding * 2);
+            // Collapsed 상태 처리
+            if (cluster.collapsed) {
+                // 접혔을 때는 헤더만 표시
+                const headerHeight = 30;
 
-            this.ctx.setLineDash([10, 5]);
-            this.ctx.strokeStyle = cluster.color || '#458588';
-            this.ctx.lineWidth = 2 / this.transform.zoom; // 일관된 시각적 두께 (2px 기준)
-            this.ctx.rect(minX - padding, minY - padding, (maxX - minX) + padding * 2, (maxY - minY) + padding * 2);
-            this.ctx.stroke();
-            this.ctx.setLineDash([]);
+                // 배경 (헤더)
+                this.ctx.fillStyle = cluster.color || '#458588';
+                this.ctx.fillRect(minX - padding, minY - padding - headerHeight, (maxX - minX) + padding * 2, headerHeight);
 
-            // 클러스터 라벨
-            this.ctx.fillStyle = cluster.color || '#458588';
-            this.ctx.font = `${14 / this.transform.zoom}px Inter, sans-serif`;
-            this.ctx.textAlign = 'left';
-            this.ctx.fillText(cluster.label, minX - padding, minY - padding - 5);
+                // 테두리
+                this.ctx.strokeStyle = cluster.color || '#458588';
+                this.ctx.lineWidth = 2 / this.transform.zoom;
+                this.ctx.strokeRect(minX - padding, minY - padding - headerHeight, (maxX - minX) + padding * 2, headerHeight);
+
+                // 라벨
+                this.ctx.fillStyle = '#282828'; // Dark text on colored header
+                this.ctx.font = `bold ${14 / this.transform.zoom}px Inter, sans-serif`;
+                this.ctx.textAlign = 'left';
+                this.ctx.textBaseline = 'middle';
+                this.ctx.fillText(cluster.label, minX - padding + 10, minY - padding - headerHeight / 2);
+
+                // 접힘 표시 (요약)
+                this.ctx.fillStyle = '#282828';
+                this.ctx.textAlign = 'right';
+                this.ctx.font = `${12 / this.transform.zoom}px Inter, sans-serif`;
+                this.ctx.fillText(`(${clusterNodes.length} items)`, maxX + padding - 30, minY - padding - headerHeight / 2);
+
+                // 버튼 [+]
+                this.ctx.textAlign = 'center';
+                this.ctx.fillText('[+]', maxX + padding - 10, minY - padding - headerHeight / 2);
+
+            } else {
+                // 펼쳐졌을 때
+                const headerHeight = 30;
+
+                // 1. 헤더 영역 (상단)
+                this.ctx.fillStyle = cluster.color || '#458588';
+                this.ctx.fillRect(minX - padding, minY - padding - headerHeight, (maxX - minX) + padding * 2, headerHeight);
+
+                // 2. 본문 영역 배경 (매우 연하게)
+                this.ctx.fillStyle = (cluster.color || '#458588') + '15'; // 8% 투명도
+                this.ctx.fillRect(minX - padding, minY - padding, (maxX - minX) + padding * 2, (maxY - minY) + padding * 2);
+
+                // 3. 테두리 (점선)
+                this.ctx.beginPath();
+                this.ctx.setLineDash([10, 5]);
+                this.ctx.strokeStyle = cluster.color || '#458588';
+                this.ctx.lineWidth = 2 / this.transform.zoom;
+                this.ctx.rect(minX - padding, minY - padding, (maxX - minX) + padding * 2, (maxY - minY) + padding * 2);
+                this.ctx.stroke();
+                this.ctx.setLineDash([]);
+
+                // 4. 헤더 텍스트 (라벨)
+                this.ctx.fillStyle = '#282828'; // Dark text on colored header
+                this.ctx.font = `bold ${14 / this.transform.zoom}px Inter, sans-serif`;
+                this.ctx.textAlign = 'left';
+                this.ctx.textBaseline = 'middle';
+                this.ctx.fillText(cluster.label, minX - padding + 10, minY - padding - headerHeight / 2);
+
+                // 5. 버튼 [-]
+                this.ctx.textAlign = 'right';
+                this.ctx.fillText('[-]', maxX + padding - 10, minY - padding - headerHeight / 2);
+            }
+
+            // 헤더 영역 정보 저장 (클릭 감지용)
+            // 주의: 줌/팬이 적용된 상태의 좌표계임. 그대로 저장해도 됨 (screenToWorld로 변환해서 체크할 것이므로)
+            cluster._headerBounds = {
+                x: minX - padding,
+                y: minY - padding - 30,
+                width: (maxX - minX) + padding * 2,
+                height: 30
+            };
         }
     }
 
@@ -2311,7 +2607,17 @@ class CanvasEngine {
         this.ctx.fillRect(x, y, nodeWidth, nodeHeight);
 
         this.ctx.strokeStyle = borderColor;
-        this.ctx.lineWidth = lineWidth;
+        if (isSelected) {
+            borderColor = '#fabd2f';
+            lineWidth = 3;
+            glowColor = '#fabd2f';
+        }
+
+        // 1.5. 클러스터 접힘 체크
+        if (node.cluster_id) {
+            const cluster = this.clusters?.find(c => c.id === node.cluster_id);
+            if (cluster && cluster.collapsed) return;
+        }
         if (dash.length > 0) {
             this.ctx.setLineDash(dash);
             if ((node.state === 'pending' || node.status === 'proposed') && this.isAnimating) {
@@ -3007,6 +3313,7 @@ class CanvasEngine {
             for (const clusterId of selectedClusterIds) {
                 const cluster = this.clusters.find(c => c.id === clusterId);
                 if (!cluster) continue;
+                if (cluster.collapsed) continue; // 접힌 클러스터는 핸들 표시 안 함
 
                 const clusterNodes = this.nodes.filter(n => n.cluster_id === clusterId);
                 if (clusterNodes.length === 0) continue;
@@ -3213,6 +3520,7 @@ function initCanvas() {
 
         switch (message.command) {
             case 'projectState':
+                console.log(`[SYNAPSE] Received projectState with ${message.data.nodes?.length || 0} nodes.`);
                 engine.loadProjectState(message.data);
                 break;
             case 'projectProposal':
@@ -3220,7 +3528,15 @@ function initCanvas() {
                 engine.fitView();
                 break;
             case 'history':
+                console.log(`[SYNAPSE] Received history with ${message.data.length} snapshots.`);
                 engine.updateHistoryUI(message.data);
+                break;
+            // ... (other cases)
+            case 'rollbackComplete':
+                console.log('[SYNAPSE] Rollback complete msg received. Fetching new state in 200ms...');
+                setTimeout(() => {
+                    engine.getProjectState();
+                }, 200);
                 break;
             case 'fitView':
                 engine.fitView();
@@ -3272,6 +3588,28 @@ function initCanvas() {
         engine.ungroupSelection();
     });
 
+    document.getElementById('btn-snapshot')?.addEventListener('click', () => {
+        // Request UI from backend (VS Code InputBox)
+        if (typeof vscode !== 'undefined') {
+            vscode.postMessage({ command: 'requestSnapshot' });
+        }
+    });
+
+    document.getElementById('btn-history')?.addEventListener('click', () => {
+        engine.getHistory();
+        const panel = document.getElementById('history-panel');
+        if (panel) panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
+    });
+
+    document.getElementById('history-panel-close')?.addEventListener('click', () => {
+        const panel = document.getElementById('history-panel');
+        if (panel) panel.style.display = 'none';
+    });
+
+    document.getElementById('side-panel-close')?.addEventListener('click', () => {
+        document.getElementById('side-panel')?.classList.remove('visible');
+    });
+
     document.getElementById('btn-animate')?.addEventListener('click', (e) => {
         engine.isAnimating = !engine.isAnimating;
         e.target.textContent = engine.isAnimating ? '🎬 On' : '⏸ Off';
@@ -3299,6 +3637,15 @@ function initCanvas() {
 
             engine.render();
         });
+    });
+
+    // 0. dblclick listener for cluster renaming
+    engine.canvas.addEventListener('dblclick', (e) => {
+        const worldPos = engine.screenToWorld(e.offsetX, e.offsetY);
+        const clickedCluster = engine.getClusterAt(worldPos.x, worldPos.y);
+        if (clickedCluster) {
+            engine.renameCluster(clickedCluster.id);
+        }
     });
 }
 

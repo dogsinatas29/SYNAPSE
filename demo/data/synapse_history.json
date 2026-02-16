@@ -1,5 +1,2884 @@
 [
   {
+    "id": "snap_1771253877953",
+    "timestamp": 1771253877985,
+    "label": "Snapshot 29",
+    "data": {
+      "nodes": [
+        {
+          "cluster_id": "cluster_1771250109257",
+          "data": {
+            "color": "#b8bb26",
+            "description": "board.py 파일",
+            "file": "board.py",
+            "label": "board.py",
+            "summary": {
+              "classes": [],
+              "functions": [
+                "main"
+              ],
+              "references": []
+            }
+          },
+          "id": "node_1",
+          "position": {
+            "x": 409.02966443098444,
+            "y": -218.7025521379247
+          },
+          "status": "active",
+          "type": "source",
+          "visual": {}
+        },
+        {
+          "cluster_id": "cluster_1771250109257",
+          "data": {
+            "color": "#b8bb26",
+            "description": "schema.sql 파일",
+            "file": "schema.sql",
+            "label": "schema.sql",
+            "summary": {
+              "classes": [],
+              "functions": [],
+              "references": []
+            }
+          },
+          "id": "node_2",
+          "position": {
+            "x": 746.6491921813064,
+            "y": -406.8380449492168
+          },
+          "status": "active",
+          "type": "source",
+          "visual": {}
+        },
+        {
+          "cluster_id": "cluster_1771250103616",
+          "data": {
+            "description": "Manually created node",
+            "file": "src/Login.py",
+            "label": "Login.py",
+            "summary": {
+              "classes": [],
+              "functions": [
+                "main"
+              ],
+              "references": []
+            }
+          },
+          "id": "node_manual_1771248987477",
+          "position": {
+            "x": -140.05189141326778,
+            "y": -304.4563728605053
+          },
+          "status": "active",
+          "type": "logic",
+          "visual": {}
+        },
+        {
+          "cluster_id": "cluster_1771250109257",
+          "data": {
+            "description": "Manually created node",
+            "label": "payment,api"
+          },
+          "id": "node_manual_1771249019965",
+          "position": {
+            "x": 564.7879871841998,
+            "y": -31.40058740072656
+          },
+          "status": "active",
+          "type": "service",
+          "visual": {}
+        },
+        {
+          "cluster_id": "cluster_1771250103616",
+          "data": {
+            "description": "Manually created node",
+            "file": "src/AuthService.tx",
+            "label": "AuthService.tx",
+            "summary": {
+              "classes": [],
+              "functions": [],
+              "references": []
+            }
+          },
+          "id": "node_manual_1771249852105",
+          "position": {
+            "x": 227.55163028002787,
+            "y": -416.8706327376092
+          },
+          "status": "active",
+          "type": "logic",
+          "visual": {}
+        },
+        {
+          "id": "node_manual_1771253854441",
+          "type": 100,
+          "status": "proposed",
+          "position": {},
+          "data": {
+            "label": 100,
+            "description": "Manually created node"
+          },
+          "visual": {
+            "opacity": 1
+          },
+          "name": "Node A",
+          "cluster_id": "cluster_1771253877903"
+        },
+        {
+          "id": "node_manual_1771253854449",
+          "type": 100,
+          "status": "proposed",
+          "position": {},
+          "data": {
+            "label": 300,
+            "description": "Manually created node"
+          },
+          "visual": {
+            "opacity": 1
+          },
+          "name": "Node B",
+          "cluster_id": "cluster_1771253877903"
+        }
+      ],
+      "edges": [
+        {
+          "_validationReason": "Appropriate architectural relationship.",
+          "from": "node_manual_1771248987477",
+          "id": "edge_manual_1771249287255",
+          "label": "dependency",
+          "to": "node_1",
+          "type": "dependency",
+          "validation": {
+            "confidence": 0.95,
+            "reason": "Appropriate architectural relationship.",
+            "valid": true
+          },
+          "visual": {
+            "color": "#83a598",
+            "dashArray": "5,5"
+          }
+        },
+        {
+          "_validationReason": "Appropriate architectural relationship.",
+          "from": "node_manual_1771248987477",
+          "id": "edge_manual_1771249927537",
+          "label": "bidirectional",
+          "to": "node_manual_1771249852105",
+          "type": "bidirectional",
+          "validation": {
+            "confidence": 0.95,
+            "reason": "Appropriate architectural relationship.",
+            "valid": true
+          },
+          "visual": {
+            "color": "#d3869b",
+            "dashArray": "5,5"
+          }
+        }
+      ],
+      "clusters": [
+        {
+          "collapsed": false,
+          "color": "#fabd2f",
+          "id": "cluster_1771250103616",
+          "label": "Group 1",
+          "_headerBounds": {
+            "x": -160.05189141326778,
+            "y": -466.8706327376092,
+            "width": 527.6035216932956,
+            "height": 30
+          }
+        },
+        {
+          "collapsed": false,
+          "color": "#fe8019",
+          "id": "cluster_1771250109257",
+          "label": "Group 2",
+          "_headerBounds": {
+            "x": 389.02966443098444,
+            "y": -456.8380449492168,
+            "width": 497.61952775032194,
+            "height": 30
+          }
+        },
+        {
+          "id": "cluster_1771253868673",
+          "label": "Node A",
+          "color": "#fabd2f",
+          "collapsed": false
+        },
+        {
+          "id": "cluster_1771253877903",
+          "label": "Node B",
+          "color": "#fe8019",
+          "collapsed": false
+        }
+      ]
+    }
+  },
+  {
+    "id": "snap_1771253877935",
+    "timestamp": 1771253877935,
+    "label": "Group Created: Node B",
+    "data": {
+      "nodes": [
+        {
+          "cluster_id": "cluster_1771250109257",
+          "data": {
+            "color": "#b8bb26",
+            "description": "board.py 파일",
+            "file": "board.py",
+            "label": "board.py",
+            "summary": {
+              "classes": [],
+              "functions": [
+                "main"
+              ],
+              "references": []
+            }
+          },
+          "id": "node_1",
+          "position": {
+            "x": 409.02966443098444,
+            "y": -218.7025521379247
+          },
+          "status": "active",
+          "type": "source",
+          "visual": {}
+        },
+        {
+          "cluster_id": "cluster_1771250109257",
+          "data": {
+            "color": "#b8bb26",
+            "description": "schema.sql 파일",
+            "file": "schema.sql",
+            "label": "schema.sql",
+            "summary": {
+              "classes": [],
+              "functions": [],
+              "references": []
+            }
+          },
+          "id": "node_2",
+          "position": {
+            "x": 746.6491921813064,
+            "y": -406.8380449492168
+          },
+          "status": "active",
+          "type": "source",
+          "visual": {}
+        },
+        {
+          "cluster_id": "cluster_1771250103616",
+          "data": {
+            "description": "Manually created node",
+            "file": "src/Login.py",
+            "label": "Login.py",
+            "summary": {
+              "classes": [],
+              "functions": [
+                "main"
+              ],
+              "references": []
+            }
+          },
+          "id": "node_manual_1771248987477",
+          "position": {
+            "x": -140.05189141326778,
+            "y": -304.4563728605053
+          },
+          "status": "active",
+          "type": "logic",
+          "visual": {}
+        },
+        {
+          "cluster_id": "cluster_1771250109257",
+          "data": {
+            "description": "Manually created node",
+            "label": "payment,api"
+          },
+          "id": "node_manual_1771249019965",
+          "position": {
+            "x": 564.7879871841998,
+            "y": -31.40058740072656
+          },
+          "status": "active",
+          "type": "service",
+          "visual": {}
+        },
+        {
+          "cluster_id": "cluster_1771250103616",
+          "data": {
+            "description": "Manually created node",
+            "file": "src/AuthService.tx",
+            "label": "AuthService.tx",
+            "summary": {
+              "classes": [],
+              "functions": [],
+              "references": []
+            }
+          },
+          "id": "node_manual_1771249852105",
+          "position": {
+            "x": 227.55163028002787,
+            "y": -416.8706327376092
+          },
+          "status": "active",
+          "type": "logic",
+          "visual": {}
+        },
+        {
+          "id": "node_manual_1771253854441",
+          "type": 100,
+          "status": "proposed",
+          "position": {},
+          "data": {
+            "label": 100,
+            "description": "Manually created node"
+          },
+          "visual": {
+            "opacity": 1
+          },
+          "name": "Node A",
+          "cluster_id": "cluster_1771253877903"
+        },
+        {
+          "id": "node_manual_1771253854449",
+          "type": 100,
+          "status": "proposed",
+          "position": {},
+          "data": {
+            "label": 300,
+            "description": "Manually created node"
+          },
+          "visual": {
+            "opacity": 1
+          },
+          "name": "Node B",
+          "cluster_id": "cluster_1771253877903"
+        }
+      ],
+      "edges": [
+        {
+          "_validationReason": "Appropriate architectural relationship.",
+          "from": "node_manual_1771248987477",
+          "id": "edge_manual_1771249287255",
+          "label": "dependency",
+          "to": "node_1",
+          "type": "dependency",
+          "validation": {
+            "confidence": 0.95,
+            "reason": "Appropriate architectural relationship.",
+            "valid": true
+          },
+          "visual": {
+            "color": "#83a598",
+            "dashArray": "5,5"
+          }
+        },
+        {
+          "_validationReason": "Appropriate architectural relationship.",
+          "from": "node_manual_1771248987477",
+          "id": "edge_manual_1771249927537",
+          "label": "bidirectional",
+          "to": "node_manual_1771249852105",
+          "type": "bidirectional",
+          "validation": {
+            "confidence": 0.95,
+            "reason": "Appropriate architectural relationship.",
+            "valid": true
+          },
+          "visual": {
+            "color": "#d3869b",
+            "dashArray": "5,5"
+          }
+        }
+      ],
+      "clusters": [
+        {
+          "collapsed": false,
+          "color": "#fabd2f",
+          "id": "cluster_1771250103616",
+          "label": "Group 1",
+          "_headerBounds": {
+            "x": -160.05189141326778,
+            "y": -466.8706327376092,
+            "width": 527.6035216932956,
+            "height": 30
+          }
+        },
+        {
+          "collapsed": false,
+          "color": "#fe8019",
+          "id": "cluster_1771250109257",
+          "label": "Group 2",
+          "_headerBounds": {
+            "x": 389.02966443098444,
+            "y": -456.8380449492168,
+            "width": 497.61952775032194,
+            "height": 30
+          }
+        },
+        {
+          "id": "cluster_1771253868673",
+          "label": "Node A",
+          "color": "#fabd2f",
+          "collapsed": false
+        },
+        {
+          "id": "cluster_1771253877903",
+          "label": "Node B",
+          "color": "#fe8019",
+          "collapsed": false
+        }
+      ]
+    }
+  },
+  {
+    "id": "snap_1771252746977",
+    "timestamp": 1771252746977,
+    "label": "Selection Ungrouped",
+    "data": {
+      "nodes": [
+        {
+          "cluster_id": null,
+          "data": {
+            "color": "#b8bb26",
+            "description": "board.py 파일",
+            "file": "board.py",
+            "label": "board.py",
+            "summary": {
+              "classes": [],
+              "functions": [
+                "main"
+              ],
+              "references": []
+            }
+          },
+          "id": "node_1",
+          "position": {
+            "x": 452.16360498007185,
+            "y": -271.13830041657104
+          },
+          "status": "active",
+          "type": "source",
+          "visual": {}
+        },
+        {
+          "cluster_id": null,
+          "data": {
+            "color": "#b8bb26",
+            "description": "schema.sql 파일",
+            "file": "schema.sql",
+            "label": "schema.sql",
+            "summary": {
+              "classes": [],
+              "functions": [],
+              "references": []
+            }
+          },
+          "id": "node_2",
+          "position": {
+            "x": 788.9360859544087,
+            "y": -459.27379322786317
+          },
+          "status": "active",
+          "type": "source",
+          "visual": {}
+        },
+        {
+          "cluster_id": null,
+          "data": {
+            "description": "Manually created node",
+            "file": "src/Login.py",
+            "label": "Login.py",
+            "summary": {
+              "classes": [],
+              "functions": [
+                "main"
+              ],
+              "references": []
+            }
+          },
+          "id": "node_manual_1771248987477",
+          "position": {
+            "x": -252.68929097425692,
+            "y": 127.86994362513428
+          },
+          "status": "active",
+          "type": "logic",
+          "visual": {}
+        },
+        {
+          "cluster_id": null,
+          "data": {
+            "description": "Manually created node",
+            "label": "payment,api"
+          },
+          "id": "node_manual_1771249019965",
+          "position": {
+            "x": 607.9219277332877,
+            "y": -83.83633567937295
+          },
+          "status": "active",
+          "type": "service",
+          "visual": {}
+        },
+        {
+          "cluster_id": null,
+          "data": {
+            "description": "Manually created node",
+            "file": "src/AuthService.tx",
+            "label": "AuthService.tx",
+            "summary": {
+              "classes": [],
+              "functions": [],
+              "references": []
+            }
+          },
+          "id": "node_manual_1771249852105",
+          "position": {
+            "x": -101.75543622100493,
+            "y": -208.5741836968927
+          },
+          "status": "active",
+          "type": "logic",
+          "visual": {}
+        }
+      ],
+      "edges": [
+        {
+          "_validationReason": "Appropriate architectural relationship.",
+          "from": "node_manual_1771248987477",
+          "id": "edge_manual_1771249287255",
+          "label": "dependency",
+          "to": "node_1",
+          "type": "dependency",
+          "validation": {
+            "confidence": 0.95,
+            "reason": "Appropriate architectural relationship.",
+            "valid": true
+          },
+          "visual": {
+            "color": "#83a598",
+            "dashArray": "5,5"
+          }
+        },
+        {
+          "_validationReason": "Appropriate architectural relationship.",
+          "from": "node_manual_1771248987477",
+          "id": "edge_manual_1771249927537",
+          "label": "dependency",
+          "to": "node_manual_1771249852105",
+          "type": "dependency",
+          "validation": {
+            "confidence": 0.95,
+            "reason": "Appropriate architectural relationship.",
+            "valid": true
+          },
+          "visual": {
+            "color": "#83a598",
+            "dashArray": "5,5"
+          }
+        }
+      ],
+      "clusters": []
+    }
+  },
+  {
+    "id": "snap_1771252717400",
+    "timestamp": 1771252717400,
+    "label": "Selection Ungrouped",
+    "data": {
+      "nodes": [
+        {
+          "cluster_id": null,
+          "data": {
+            "color": "#b8bb26",
+            "description": "board.py 파일",
+            "file": "board.py",
+            "label": "board.py",
+            "summary": {
+              "classes": [],
+              "functions": [
+                "main"
+              ],
+              "references": []
+            }
+          },
+          "id": "node_1",
+          "position": {
+            "x": 452.16360498007185,
+            "y": -271.13830041657104
+          },
+          "status": "active",
+          "type": "source",
+          "visual": {}
+        },
+        {
+          "cluster_id": "cluster_1771250109257",
+          "data": {
+            "color": "#b8bb26",
+            "description": "schema.sql 파일",
+            "file": "schema.sql",
+            "label": "schema.sql",
+            "summary": {
+              "classes": [],
+              "functions": [],
+              "references": []
+            }
+          },
+          "id": "node_2",
+          "position": {
+            "x": 788.9360859544087,
+            "y": -459.27379322786317
+          },
+          "status": "active",
+          "type": "source",
+          "visual": {}
+        },
+        {
+          "cluster_id": null,
+          "data": {
+            "description": "Manually created node",
+            "file": "src/Login.py",
+            "label": "Login.py",
+            "summary": {
+              "classes": [],
+              "functions": [
+                "main"
+              ],
+              "references": []
+            }
+          },
+          "id": "node_manual_1771248987477",
+          "position": {
+            "x": -252.68929097425692,
+            "y": 127.86994362513428
+          },
+          "status": "active",
+          "type": "logic",
+          "visual": {}
+        },
+        {
+          "cluster_id": null,
+          "data": {
+            "description": "Manually created node",
+            "label": "payment,api"
+          },
+          "id": "node_manual_1771249019965",
+          "position": {
+            "x": 607.9219277332877,
+            "y": -83.83633567937295
+          },
+          "status": "active",
+          "type": "service",
+          "visual": {}
+        },
+        {
+          "cluster_id": null,
+          "data": {
+            "description": "Manually created node",
+            "file": "src/AuthService.tx",
+            "label": "AuthService.tx",
+            "summary": {
+              "classes": [],
+              "functions": [],
+              "references": []
+            }
+          },
+          "id": "node_manual_1771249852105",
+          "position": {
+            "x": -101.75543622100493,
+            "y": -208.5741836968927
+          },
+          "status": "active",
+          "type": "logic",
+          "visual": {}
+        }
+      ],
+      "edges": [
+        {
+          "_validationReason": "Appropriate architectural relationship.",
+          "from": "node_manual_1771248987477",
+          "id": "edge_manual_1771249287255",
+          "label": "dependency",
+          "to": "node_1",
+          "type": "dependency",
+          "validation": {
+            "confidence": 0.95,
+            "reason": "Appropriate architectural relationship.",
+            "valid": true
+          },
+          "visual": {
+            "color": "#83a598",
+            "dashArray": "5,5"
+          }
+        },
+        {
+          "_validationReason": "Appropriate architectural relationship.",
+          "from": "node_manual_1771248987477",
+          "id": "edge_manual_1771249927537",
+          "label": "dependency",
+          "to": "node_manual_1771249852105",
+          "type": "dependency",
+          "validation": {
+            "confidence": 0.95,
+            "reason": "Appropriate architectural relationship.",
+            "valid": true
+          },
+          "visual": {
+            "color": "#83a598",
+            "dashArray": "5,5"
+          }
+        }
+      ],
+      "clusters": [
+        {
+          "collapsed": false,
+          "color": "#fe8019",
+          "id": "cluster_1771250109257",
+          "label": "Group 2"
+        }
+      ]
+    }
+  },
+  {
+    "id": "snap_1771252714797",
+    "timestamp": 1771252714797,
+    "label": "Selection Ungrouped",
+    "data": {
+      "nodes": [
+        {
+          "cluster_id": "cluster_1771250109257",
+          "data": {
+            "color": "#b8bb26",
+            "description": "board.py 파일",
+            "file": "board.py",
+            "label": "board.py",
+            "summary": {
+              "classes": [],
+              "functions": [
+                "main"
+              ],
+              "references": []
+            }
+          },
+          "id": "node_1",
+          "position": {
+            "x": 451.3165582040863,
+            "y": -271.13830041657104
+          },
+          "status": "active",
+          "type": "source",
+          "visual": {}
+        },
+        {
+          "cluster_id": "cluster_1771250109257",
+          "data": {
+            "color": "#b8bb26",
+            "description": "schema.sql 파일",
+            "file": "schema.sql",
+            "label": "schema.sql",
+            "summary": {
+              "classes": [],
+              "functions": [],
+              "references": []
+            }
+          },
+          "id": "node_2",
+          "position": {
+            "x": 788.9360859544087,
+            "y": -459.27379322786317
+          },
+          "status": "active",
+          "type": "source",
+          "visual": {}
+        },
+        {
+          "cluster_id": null,
+          "data": {
+            "description": "Manually created node",
+            "file": "src/Login.py",
+            "label": "Login.py",
+            "summary": {
+              "classes": [],
+              "functions": [
+                "main"
+              ],
+              "references": []
+            }
+          },
+          "id": "node_manual_1771248987477",
+          "position": {
+            "x": -252.68929097425692,
+            "y": 127.86994362513428
+          },
+          "status": "active",
+          "type": "logic",
+          "visual": {}
+        },
+        {
+          "cluster_id": "cluster_1771250109257",
+          "data": {
+            "description": "Manually created node",
+            "label": "payment,api"
+          },
+          "id": "node_manual_1771249019965",
+          "position": {
+            "x": 607.0748809573021,
+            "y": -83.83633567937295
+          },
+          "status": "active",
+          "type": "service",
+          "visual": {}
+        },
+        {
+          "cluster_id": null,
+          "data": {
+            "description": "Manually created node",
+            "file": "src/AuthService.tx",
+            "label": "AuthService.tx",
+            "summary": {
+              "classes": [],
+              "functions": [],
+              "references": []
+            }
+          },
+          "id": "node_manual_1771249852105",
+          "position": {
+            "x": -101.75543622100493,
+            "y": -208.5741836968927
+          },
+          "status": "active",
+          "type": "logic",
+          "visual": {}
+        }
+      ],
+      "edges": [
+        {
+          "_validationReason": "Appropriate architectural relationship.",
+          "from": "node_manual_1771248987477",
+          "id": "edge_manual_1771249287255",
+          "label": "dependency",
+          "to": "node_1",
+          "type": "dependency",
+          "validation": {
+            "confidence": 0.95,
+            "reason": "Appropriate architectural relationship.",
+            "valid": true
+          },
+          "visual": {
+            "color": "#83a598",
+            "dashArray": "5,5"
+          }
+        },
+        {
+          "_validationReason": "Appropriate architectural relationship.",
+          "from": "node_manual_1771248987477",
+          "id": "edge_manual_1771249927537",
+          "label": "dependency",
+          "to": "node_manual_1771249852105",
+          "type": "dependency",
+          "validation": {
+            "confidence": 0.95,
+            "reason": "Appropriate architectural relationship.",
+            "valid": true
+          },
+          "visual": {
+            "color": "#83a598",
+            "dashArray": "5,5"
+          }
+        }
+      ],
+      "clusters": [
+        {
+          "collapsed": false,
+          "color": "#fe8019",
+          "id": "cluster_1771250109257",
+          "label": "Group 2"
+        }
+      ]
+    }
+  },
+  {
+    "id": "snap_1771252680359",
+    "timestamp": 1771252680359,
+    "label": "Group Created: Group 2",
+    "data": {
+      "nodes": [
+        {
+          "cluster_id": "cluster_1771250109257",
+          "data": {
+            "color": "#b8bb26",
+            "description": "board.py 파일",
+            "file": "board.py",
+            "label": "board.py",
+            "summary": {
+              "classes": [],
+              "functions": [
+                "main"
+              ],
+              "references": []
+            }
+          },
+          "id": "node_1",
+          "position": {
+            "x": 451.3165582040863,
+            "y": -271.13830041657104
+          },
+          "status": "active",
+          "type": "source",
+          "visual": {}
+        },
+        {
+          "cluster_id": "cluster_1771250109257",
+          "data": {
+            "color": "#b8bb26",
+            "description": "schema.sql 파일",
+            "file": "schema.sql",
+            "label": "schema.sql",
+            "summary": {
+              "classes": [],
+              "functions": [],
+              "references": []
+            }
+          },
+          "id": "node_2",
+          "position": {
+            "x": 788.9360859544087,
+            "y": -459.27379322786317
+          },
+          "status": "active",
+          "type": "source",
+          "visual": {}
+        },
+        {
+          "cluster_id": "cluster_1771252680355",
+          "data": {
+            "description": "Manually created node",
+            "file": "src/Login.py",
+            "label": "Login.py",
+            "summary": {
+              "classes": [],
+              "functions": [
+                "main"
+              ],
+              "references": []
+            }
+          },
+          "id": "node_manual_1771248987477",
+          "position": {
+            "x": -252.68929097425692,
+            "y": 127.86994362513428
+          },
+          "status": "active",
+          "type": "logic",
+          "visual": {}
+        },
+        {
+          "cluster_id": "cluster_1771250109257",
+          "data": {
+            "description": "Manually created node",
+            "label": "payment,api"
+          },
+          "id": "node_manual_1771249019965",
+          "position": {
+            "x": 607.0748809573021,
+            "y": -83.83633567937295
+          },
+          "status": "active",
+          "type": "service",
+          "visual": {}
+        },
+        {
+          "cluster_id": "cluster_1771252680355",
+          "data": {
+            "description": "Manually created node",
+            "file": "src/AuthService.tx",
+            "label": "AuthService.tx",
+            "summary": {
+              "classes": [],
+              "functions": [],
+              "references": []
+            }
+          },
+          "id": "node_manual_1771249852105",
+          "position": {
+            "x": -101.75543622100493,
+            "y": -208.5741836968927
+          },
+          "status": "active",
+          "type": "logic",
+          "visual": {}
+        }
+      ],
+      "edges": [
+        {
+          "_validationReason": "Appropriate architectural relationship.",
+          "from": "node_manual_1771248987477",
+          "id": "edge_manual_1771249287255",
+          "label": "dependency",
+          "to": "node_1",
+          "type": "dependency",
+          "validation": {
+            "confidence": 0.95,
+            "reason": "Appropriate architectural relationship.",
+            "valid": true
+          },
+          "visual": {
+            "color": "#83a598",
+            "dashArray": "5,5"
+          }
+        },
+        {
+          "_validationReason": "Appropriate architectural relationship.",
+          "from": "node_manual_1771248987477",
+          "id": "edge_manual_1771249927537",
+          "label": "dependency",
+          "to": "node_manual_1771249852105",
+          "type": "dependency",
+          "validation": {
+            "confidence": 0.95,
+            "reason": "Appropriate architectural relationship.",
+            "valid": true
+          },
+          "visual": {
+            "color": "#83a598",
+            "dashArray": "5,5"
+          }
+        }
+      ],
+      "clusters": [
+        {
+          "collapsed": false,
+          "color": "#fe8019",
+          "id": "cluster_1771250109257",
+          "label": "Group 2"
+        },
+        {
+          "id": "cluster_1771252680355",
+          "label": "Group 2",
+          "color": "#fabd2f",
+          "collapsed": false
+        }
+      ]
+    }
+  },
+  {
+    "id": "snap_1771252673311",
+    "timestamp": 1771252673311,
+    "label": "Selection Ungrouped",
+    "data": {
+      "nodes": [
+        {
+          "cluster_id": "cluster_1771250109257",
+          "data": {
+            "color": "#b8bb26",
+            "description": "board.py 파일",
+            "file": "board.py",
+            "label": "board.py",
+            "summary": {
+              "classes": [],
+              "functions": [
+                "main"
+              ],
+              "references": []
+            }
+          },
+          "id": "node_1",
+          "position": {
+            "x": 451.3165582040863,
+            "y": -271.13830041657104
+          },
+          "status": "active",
+          "type": "source",
+          "visual": {}
+        },
+        {
+          "cluster_id": "cluster_1771250109257",
+          "data": {
+            "color": "#b8bb26",
+            "description": "schema.sql 파일",
+            "file": "schema.sql",
+            "label": "schema.sql",
+            "summary": {
+              "classes": [],
+              "functions": [],
+              "references": []
+            }
+          },
+          "id": "node_2",
+          "position": {
+            "x": 788.9360859544087,
+            "y": -459.27379322786317
+          },
+          "status": "active",
+          "type": "source",
+          "visual": {}
+        },
+        {
+          "cluster_id": null,
+          "data": {
+            "description": "Manually created node",
+            "file": "src/Login.py",
+            "label": "Login.py",
+            "summary": {
+              "classes": [],
+              "functions": [
+                "main"
+              ],
+              "references": []
+            }
+          },
+          "id": "node_manual_1771248987477",
+          "position": {
+            "x": -252.68929097425692,
+            "y": 127.86994362513428
+          },
+          "status": "active",
+          "type": "logic",
+          "visual": {}
+        },
+        {
+          "cluster_id": "cluster_1771250109257",
+          "data": {
+            "description": "Manually created node",
+            "label": "payment,api"
+          },
+          "id": "node_manual_1771249019965",
+          "position": {
+            "x": 607.0748809573021,
+            "y": -83.83633567937295
+          },
+          "status": "active",
+          "type": "service",
+          "visual": {}
+        },
+        {
+          "cluster_id": null,
+          "data": {
+            "description": "Manually created node",
+            "file": "src/AuthService.tx",
+            "label": "AuthService.tx",
+            "summary": {
+              "classes": [],
+              "functions": [],
+              "references": []
+            }
+          },
+          "id": "node_manual_1771249852105",
+          "position": {
+            "x": -101.75543622100493,
+            "y": -208.5741836968927
+          },
+          "status": "active",
+          "type": "logic",
+          "visual": {}
+        }
+      ],
+      "edges": [
+        {
+          "_validationReason": "Appropriate architectural relationship.",
+          "from": "node_manual_1771248987477",
+          "id": "edge_manual_1771249287255",
+          "label": "dependency",
+          "to": "node_1",
+          "type": "dependency",
+          "validation": {
+            "confidence": 0.95,
+            "reason": "Appropriate architectural relationship.",
+            "valid": true
+          },
+          "visual": {
+            "color": "#83a598",
+            "dashArray": "5,5"
+          }
+        },
+        {
+          "_validationReason": "Appropriate architectural relationship.",
+          "from": "node_manual_1771248987477",
+          "id": "edge_manual_1771249927537",
+          "label": "dependency",
+          "to": "node_manual_1771249852105",
+          "type": "dependency",
+          "validation": {
+            "confidence": 0.95,
+            "reason": "Appropriate architectural relationship.",
+            "valid": true
+          },
+          "visual": {
+            "color": "#83a598",
+            "dashArray": "5,5"
+          }
+        }
+      ],
+      "clusters": [
+        {
+          "collapsed": false,
+          "color": "#fe8019",
+          "id": "cluster_1771250109257",
+          "label": "Group 2"
+        }
+      ]
+    }
+  },
+  {
+    "id": "snap_1771252573444",
+    "timestamp": 1771252573444,
+    "label": "Manual Snapshot",
+    "data": {
+      "nodes": [
+        {
+          "cluster_id": "cluster_1771250109257",
+          "data": {
+            "color": "#b8bb26",
+            "description": "board.py 파일",
+            "file": "board.py",
+            "label": "board.py",
+            "summary": {
+              "classes": [],
+              "functions": [
+                "main"
+              ],
+              "references": []
+            }
+          },
+          "id": "node_1",
+          "position": {
+            "x": 451.3165582040863,
+            "y": -271.13830041657104
+          },
+          "status": "active",
+          "type": "source",
+          "visual": {}
+        },
+        {
+          "cluster_id": "cluster_1771250109257",
+          "data": {
+            "color": "#b8bb26",
+            "description": "schema.sql 파일",
+            "file": "schema.sql",
+            "label": "schema.sql",
+            "summary": {
+              "classes": [],
+              "functions": [],
+              "references": []
+            }
+          },
+          "id": "node_2",
+          "position": {
+            "x": 788.9360859544087,
+            "y": -459.27379322786317
+          },
+          "status": "active",
+          "type": "source",
+          "visual": {}
+        },
+        {
+          "cluster_id": "cluster_1771250103616",
+          "data": {
+            "description": "Manually created node",
+            "file": "src/Login.py",
+            "label": "Login.py",
+            "summary": {
+              "classes": [],
+              "functions": [
+                "main"
+              ],
+              "references": []
+            }
+          },
+          "id": "node_manual_1771248987477",
+          "position": {
+            "x": -252.68929097425692,
+            "y": 127.86994362513428
+          },
+          "status": "active",
+          "type": "logic",
+          "visual": {}
+        },
+        {
+          "cluster_id": "cluster_1771250109257",
+          "data": {
+            "description": "Manually created node",
+            "label": "payment,api"
+          },
+          "id": "node_manual_1771249019965",
+          "position": {
+            "x": 607.0748809573021,
+            "y": -83.83633567937295
+          },
+          "status": "active",
+          "type": "service",
+          "visual": {}
+        },
+        {
+          "cluster_id": "cluster_1771250103616",
+          "data": {
+            "description": "Manually created node",
+            "file": "src/AuthService.tx",
+            "label": "AuthService.tx",
+            "summary": {
+              "classes": [],
+              "functions": [],
+              "references": []
+            }
+          },
+          "id": "node_manual_1771249852105",
+          "position": {
+            "x": 226.55163028002787,
+            "y": -415.8706327376092
+          },
+          "status": "active",
+          "type": "logic",
+          "visual": {}
+        }
+      ],
+      "edges": [
+        {
+          "_validationReason": "Appropriate architectural relationship.",
+          "from": "node_manual_1771248987477",
+          "id": "edge_manual_1771249287255",
+          "label": "dependency",
+          "to": "node_1",
+          "type": "dependency",
+          "validation": {
+            "confidence": 0.95,
+            "reason": "Appropriate architectural relationship.",
+            "valid": true
+          },
+          "visual": {
+            "color": "#83a598",
+            "dashArray": "5,5"
+          }
+        },
+        {
+          "_validationReason": "Appropriate architectural relationship.",
+          "from": "node_manual_1771248987477",
+          "id": "edge_manual_1771249927537",
+          "label": "dependency",
+          "to": "node_manual_1771249852105",
+          "type": "dependency",
+          "validation": {
+            "confidence": 0.95,
+            "reason": "Appropriate architectural relationship.",
+            "valid": true
+          },
+          "visual": {
+            "color": "#83a598",
+            "dashArray": "5,5"
+          }
+        }
+      ],
+      "clusters": [
+        {
+          "collapsed": false,
+          "color": "#fabd2f",
+          "id": "cluster_1771250103616",
+          "label": "Group 1"
+        },
+        {
+          "collapsed": false,
+          "color": "#fe8019",
+          "id": "cluster_1771250109257",
+          "label": "Group 2"
+        }
+      ]
+    }
+  },
+  {
+    "id": "snap_1771252571695",
+    "timestamp": 1771252571695,
+    "label": "Manual Snapshot",
+    "data": {
+      "nodes": [
+        {
+          "cluster_id": "cluster_1771250109257",
+          "data": {
+            "color": "#b8bb26",
+            "description": "board.py 파일",
+            "file": "board.py",
+            "label": "board.py",
+            "summary": {
+              "classes": [],
+              "functions": [
+                "main"
+              ],
+              "references": []
+            }
+          },
+          "id": "node_1",
+          "position": {
+            "x": 451.3165582040863,
+            "y": -271.13830041657104
+          },
+          "status": "active",
+          "type": "source",
+          "visual": {}
+        },
+        {
+          "cluster_id": "cluster_1771250109257",
+          "data": {
+            "color": "#b8bb26",
+            "description": "schema.sql 파일",
+            "file": "schema.sql",
+            "label": "schema.sql",
+            "summary": {
+              "classes": [],
+              "functions": [],
+              "references": []
+            }
+          },
+          "id": "node_2",
+          "position": {
+            "x": 788.9360859544087,
+            "y": -459.27379322786317
+          },
+          "status": "active",
+          "type": "source",
+          "visual": {}
+        },
+        {
+          "cluster_id": "cluster_1771250103616",
+          "data": {
+            "description": "Manually created node",
+            "file": "src/Login.py",
+            "label": "Login.py",
+            "summary": {
+              "classes": [],
+              "functions": [
+                "main"
+              ],
+              "references": []
+            }
+          },
+          "id": "node_manual_1771248987477",
+          "position": {
+            "x": -252.68929097425692,
+            "y": 127.86994362513428
+          },
+          "status": "active",
+          "type": "logic",
+          "visual": {}
+        },
+        {
+          "cluster_id": "cluster_1771250109257",
+          "data": {
+            "description": "Manually created node",
+            "label": "payment,api"
+          },
+          "id": "node_manual_1771249019965",
+          "position": {
+            "x": 607.0748809573021,
+            "y": -83.83633567937295
+          },
+          "status": "active",
+          "type": "service",
+          "visual": {}
+        },
+        {
+          "cluster_id": "cluster_1771250103616",
+          "data": {
+            "description": "Manually created node",
+            "file": "src/AuthService.tx",
+            "label": "AuthService.tx",
+            "summary": {
+              "classes": [],
+              "functions": [],
+              "references": []
+            }
+          },
+          "id": "node_manual_1771249852105",
+          "position": {
+            "x": 226.55163028002787,
+            "y": -415.8706327376092
+          },
+          "status": "active",
+          "type": "logic",
+          "visual": {}
+        }
+      ],
+      "edges": [
+        {
+          "_validationReason": "Appropriate architectural relationship.",
+          "from": "node_manual_1771248987477",
+          "id": "edge_manual_1771249287255",
+          "label": "dependency",
+          "to": "node_1",
+          "type": "dependency",
+          "validation": {
+            "confidence": 0.95,
+            "reason": "Appropriate architectural relationship.",
+            "valid": true
+          },
+          "visual": {
+            "color": "#83a598",
+            "dashArray": "5,5"
+          }
+        },
+        {
+          "_validationReason": "Appropriate architectural relationship.",
+          "from": "node_manual_1771248987477",
+          "id": "edge_manual_1771249927537",
+          "label": "dependency",
+          "to": "node_manual_1771249852105",
+          "type": "dependency",
+          "validation": {
+            "confidence": 0.95,
+            "reason": "Appropriate architectural relationship.",
+            "valid": true
+          },
+          "visual": {
+            "color": "#83a598",
+            "dashArray": "5,5"
+          }
+        }
+      ],
+      "clusters": [
+        {
+          "collapsed": false,
+          "color": "#fabd2f",
+          "id": "cluster_1771250103616",
+          "label": "Group 1"
+        },
+        {
+          "collapsed": false,
+          "color": "#fe8019",
+          "id": "cluster_1771250109257",
+          "label": "Group 2"
+        }
+      ]
+    }
+  },
+  {
+    "id": "snap_1771250976613",
+    "timestamp": 1771250976613,
+    "label": "Manual Snapshot",
+    "data": {
+      "nodes": [
+        {
+          "cluster_id": "cluster_1771250109257",
+          "data": {
+            "color": "#b8bb26",
+            "description": "board.py 파일",
+            "file": "board.py",
+            "label": "board.py",
+            "summary": {
+              "classes": [],
+              "functions": [
+                "main"
+              ],
+              "references": []
+            }
+          },
+          "id": "node_1",
+          "position": {
+            "x": 346.69169208987336,
+            "y": -289.8036354380753
+          },
+          "status": "active",
+          "type": "source",
+          "visual": {}
+        },
+        {
+          "cluster_id": "cluster_1771250109257",
+          "data": {
+            "color": "#b8bb26",
+            "description": "schema.sql 파일",
+            "file": "schema.sql",
+            "label": "schema.sql",
+            "summary": {
+              "classes": [],
+              "functions": [],
+              "references": []
+            }
+          },
+          "id": "node_2",
+          "position": {
+            "x": 684.3112198401961,
+            "y": -477.9391282493674
+          },
+          "status": "active",
+          "type": "source",
+          "visual": {}
+        },
+        {
+          "cluster_id": "cluster_1771250103616",
+          "data": {
+            "description": "Manually created node",
+            "file": "src/Login.py",
+            "label": "Login.py",
+            "summary": {
+              "classes": [],
+              "functions": [
+                "main"
+              ],
+              "references": []
+            }
+          },
+          "id": "node_manual_1771248987477",
+          "position": {
+            "x": -252.68929097425692,
+            "y": 127.86994362513428
+          },
+          "status": "active",
+          "type": "logic",
+          "visual": {}
+        },
+        {
+          "cluster_id": "cluster_1771250109257",
+          "data": {
+            "description": "Manually created node",
+            "label": "payment,api"
+          },
+          "id": "node_manual_1771249019965",
+          "position": {
+            "x": 502.4500148430895,
+            "y": -102.5016707008773
+          },
+          "status": "active",
+          "type": "service",
+          "visual": {}
+        },
+        {
+          "cluster_id": "cluster_1771250103616",
+          "data": {
+            "description": "Manually created node",
+            "file": "src/AuthService.tx",
+            "label": "AuthService.tx",
+            "summary": {
+              "classes": [],
+              "functions": [],
+              "references": []
+            }
+          },
+          "id": "node_manual_1771249852105",
+          "position": {
+            "x": -29.14906574481507,
+            "y": -431.65462631938965
+          },
+          "status": "active",
+          "type": "logic",
+          "visual": {}
+        }
+      ],
+      "edges": [
+        {
+          "_validationReason": "Appropriate architectural relationship.",
+          "from": "node_manual_1771248987477",
+          "id": "edge_manual_1771249287255",
+          "label": "dependency",
+          "to": "node_1",
+          "type": "dependency",
+          "validation": {
+            "valid": true,
+            "reason": "Appropriate architectural relationship.",
+            "confidence": 0.95
+          },
+          "visual": {
+            "color": "#83a598",
+            "dashArray": "5,5"
+          }
+        },
+        {
+          "_validationReason": "Appropriate architectural relationship.",
+          "from": "node_manual_1771248987477",
+          "id": "edge_manual_1771249927537",
+          "label": "dependency",
+          "to": "node_manual_1771249852105",
+          "type": "dependency",
+          "validation": {
+            "valid": true,
+            "reason": "Appropriate architectural relationship.",
+            "confidence": 0.95
+          },
+          "visual": {
+            "color": "#83a598",
+            "dashArray": "5,5"
+          }
+        },
+        {
+          "_validationReason": "Appropriate architectural relationship.",
+          "from": "node_manual_1771249852105",
+          "id": "edge_manual_1771249958097",
+          "label": "data flow",
+          "to": "node_1",
+          "type": "data_flow",
+          "validation": {
+            "valid": true,
+            "reason": "Appropriate architectural relationship.",
+            "confidence": 0.95
+          },
+          "visual": {
+            "color": "#fabd2f"
+          }
+        },
+        {
+          "from": "node_1",
+          "id": "edge_manual_1771250941034",
+          "label": "dependency",
+          "to": "node_manual_1771249019965",
+          "type": "dependency",
+          "visual": {
+            "color": "#83a598",
+            "dashArray": "5,5"
+          },
+          "validation": {
+            "valid": true,
+            "reason": "Appropriate architectural relationship.",
+            "confidence": 0.95
+          },
+          "_validationReason": "Appropriate architectural relationship."
+        }
+      ],
+      "clusters": [
+        {
+          "collapsed": false,
+          "color": "#fabd2f",
+          "id": "cluster_1771250103616",
+          "label": "Group 1"
+        },
+        {
+          "collapsed": false,
+          "color": "#fe8019",
+          "id": "cluster_1771250109257",
+          "label": "Group 2"
+        }
+      ]
+    }
+  },
+  {
+    "id": "snap_1771250954701",
+    "timestamp": 1771250954701,
+    "label": "Manual Snapshot",
+    "data": {
+      "nodes": [
+        {
+          "cluster_id": "cluster_1771250109257",
+          "data": {
+            "color": "#b8bb26",
+            "description": "board.py 파일",
+            "file": "board.py",
+            "label": "board.py",
+            "summary": {
+              "classes": [],
+              "functions": [
+                "main"
+              ],
+              "references": []
+            }
+          },
+          "id": "node_1",
+          "position": {
+            "x": 346.69169208987336,
+            "y": -289.8036354380753
+          },
+          "status": "active",
+          "type": "source",
+          "visual": {}
+        },
+        {
+          "cluster_id": "cluster_1771250109257",
+          "data": {
+            "color": "#b8bb26",
+            "description": "schema.sql 파일",
+            "file": "schema.sql",
+            "label": "schema.sql",
+            "summary": {
+              "classes": [],
+              "functions": [],
+              "references": []
+            }
+          },
+          "id": "node_2",
+          "position": {
+            "x": 684.3112198401961,
+            "y": -477.9391282493674
+          },
+          "status": "active",
+          "type": "source",
+          "visual": {}
+        },
+        {
+          "cluster_id": "cluster_1771250103616",
+          "data": {
+            "description": "Manually created node",
+            "file": "src/Login.py",
+            "label": "Login.py",
+            "summary": {
+              "classes": [],
+              "functions": [
+                "main"
+              ],
+              "references": []
+            }
+          },
+          "id": "node_manual_1771248987477",
+          "position": {
+            "x": -252.68929097425692,
+            "y": 127.86994362513428
+          },
+          "status": "active",
+          "type": "logic",
+          "visual": {}
+        },
+        {
+          "cluster_id": "cluster_1771250109257",
+          "data": {
+            "description": "Manually created node",
+            "label": "payment,api"
+          },
+          "id": "node_manual_1771249019965",
+          "position": {
+            "x": 502.4500148430895,
+            "y": -102.5016707008773
+          },
+          "status": "active",
+          "type": "service",
+          "visual": {}
+        },
+        {
+          "cluster_id": "cluster_1771250103616",
+          "data": {
+            "description": "Manually created node",
+            "file": "src/AuthService.tx",
+            "label": "AuthService.tx",
+            "summary": {
+              "classes": [],
+              "functions": [],
+              "references": []
+            }
+          },
+          "id": "node_manual_1771249852105",
+          "position": {
+            "x": -29.14906574481507,
+            "y": -431.65462631938965
+          },
+          "status": "active",
+          "type": "logic",
+          "visual": {}
+        }
+      ],
+      "edges": [
+        {
+          "_validationReason": "Appropriate architectural relationship.",
+          "from": "node_manual_1771248987477",
+          "id": "edge_manual_1771249287255",
+          "label": "dependency",
+          "to": "node_1",
+          "type": "dependency",
+          "validation": {
+            "valid": true,
+            "reason": "Appropriate architectural relationship.",
+            "confidence": 0.95
+          },
+          "visual": {
+            "color": "#83a598",
+            "dashArray": "5,5"
+          }
+        },
+        {
+          "_validationReason": "Appropriate architectural relationship.",
+          "from": "node_manual_1771248987477",
+          "id": "edge_manual_1771249927537",
+          "label": "dependency",
+          "to": "node_manual_1771249852105",
+          "type": "dependency",
+          "validation": {
+            "valid": true,
+            "reason": "Appropriate architectural relationship.",
+            "confidence": 0.95
+          },
+          "visual": {
+            "color": "#83a598",
+            "dashArray": "5,5"
+          }
+        },
+        {
+          "_validationReason": "Appropriate architectural relationship.",
+          "from": "node_manual_1771249852105",
+          "id": "edge_manual_1771249958097",
+          "label": "data flow",
+          "to": "node_1",
+          "type": "data_flow",
+          "validation": {
+            "valid": true,
+            "reason": "Appropriate architectural relationship.",
+            "confidence": 0.95
+          },
+          "visual": {
+            "color": "#fabd2f"
+          }
+        },
+        {
+          "from": "node_1",
+          "id": "edge_manual_1771250941034",
+          "label": "dependency",
+          "to": "node_manual_1771249019965",
+          "type": "dependency",
+          "visual": {
+            "color": "#83a598",
+            "dashArray": "5,5"
+          },
+          "validation": {
+            "valid": true,
+            "reason": "Appropriate architectural relationship.",
+            "confidence": 0.95
+          },
+          "_validationReason": "Appropriate architectural relationship."
+        }
+      ],
+      "clusters": [
+        {
+          "collapsed": false,
+          "color": "#fabd2f",
+          "id": "cluster_1771250103616",
+          "label": "Group 1"
+        },
+        {
+          "collapsed": false,
+          "color": "#fe8019",
+          "id": "cluster_1771250109257",
+          "label": "Group 2"
+        }
+      ]
+    }
+  },
+  {
+    "id": "snap_1771250953318",
+    "timestamp": 1771250953318,
+    "label": "Manual Snapshot",
+    "data": {
+      "nodes": [
+        {
+          "cluster_id": "cluster_1771250109257",
+          "data": {
+            "color": "#b8bb26",
+            "description": "board.py 파일",
+            "file": "board.py",
+            "label": "board.py",
+            "summary": {
+              "classes": [],
+              "functions": [
+                "main"
+              ],
+              "references": []
+            }
+          },
+          "id": "node_1",
+          "position": {
+            "x": 346.69169208987336,
+            "y": -289.8036354380753
+          },
+          "status": "active",
+          "type": "source",
+          "visual": {}
+        },
+        {
+          "cluster_id": "cluster_1771250109257",
+          "data": {
+            "color": "#b8bb26",
+            "description": "schema.sql 파일",
+            "file": "schema.sql",
+            "label": "schema.sql",
+            "summary": {
+              "classes": [],
+              "functions": [],
+              "references": []
+            }
+          },
+          "id": "node_2",
+          "position": {
+            "x": 684.3112198401961,
+            "y": -477.9391282493674
+          },
+          "status": "active",
+          "type": "source",
+          "visual": {}
+        },
+        {
+          "cluster_id": "cluster_1771250103616",
+          "data": {
+            "description": "Manually created node",
+            "file": "src/Login.py",
+            "label": "Login.py",
+            "summary": {
+              "classes": [],
+              "functions": [
+                "main"
+              ],
+              "references": []
+            }
+          },
+          "id": "node_manual_1771248987477",
+          "position": {
+            "x": -252.68929097425692,
+            "y": 127.86994362513428
+          },
+          "status": "active",
+          "type": "logic",
+          "visual": {}
+        },
+        {
+          "cluster_id": "cluster_1771250109257",
+          "data": {
+            "description": "Manually created node",
+            "label": "payment,api"
+          },
+          "id": "node_manual_1771249019965",
+          "position": {
+            "x": 502.4500148430895,
+            "y": -102.5016707008773
+          },
+          "status": "active",
+          "type": "service",
+          "visual": {}
+        },
+        {
+          "cluster_id": "cluster_1771250103616",
+          "data": {
+            "description": "Manually created node",
+            "file": "src/AuthService.tx",
+            "label": "AuthService.tx",
+            "summary": {
+              "classes": [],
+              "functions": [],
+              "references": []
+            }
+          },
+          "id": "node_manual_1771249852105",
+          "position": {
+            "x": -29.14906574481507,
+            "y": -431.65462631938965
+          },
+          "status": "active",
+          "type": "logic",
+          "visual": {}
+        }
+      ],
+      "edges": [
+        {
+          "_validationReason": "Appropriate architectural relationship.",
+          "from": "node_manual_1771248987477",
+          "id": "edge_manual_1771249287255",
+          "label": "dependency",
+          "to": "node_1",
+          "type": "dependency",
+          "validation": {
+            "valid": true,
+            "reason": "Appropriate architectural relationship.",
+            "confidence": 0.95
+          },
+          "visual": {
+            "color": "#83a598",
+            "dashArray": "5,5"
+          }
+        },
+        {
+          "_validationReason": "Appropriate architectural relationship.",
+          "from": "node_manual_1771248987477",
+          "id": "edge_manual_1771249927537",
+          "label": "dependency",
+          "to": "node_manual_1771249852105",
+          "type": "dependency",
+          "validation": {
+            "valid": true,
+            "reason": "Appropriate architectural relationship.",
+            "confidence": 0.95
+          },
+          "visual": {
+            "color": "#83a598",
+            "dashArray": "5,5"
+          }
+        },
+        {
+          "_validationReason": "Appropriate architectural relationship.",
+          "from": "node_manual_1771249852105",
+          "id": "edge_manual_1771249958097",
+          "label": "data flow",
+          "to": "node_1",
+          "type": "data_flow",
+          "validation": {
+            "valid": true,
+            "reason": "Appropriate architectural relationship.",
+            "confidence": 0.95
+          },
+          "visual": {
+            "color": "#fabd2f"
+          }
+        },
+        {
+          "from": "node_1",
+          "id": "edge_manual_1771250941034",
+          "label": "dependency",
+          "to": "node_manual_1771249019965",
+          "type": "dependency",
+          "visual": {
+            "color": "#83a598",
+            "dashArray": "5,5"
+          },
+          "validation": {
+            "valid": true,
+            "reason": "Appropriate architectural relationship.",
+            "confidence": 0.95
+          },
+          "_validationReason": "Appropriate architectural relationship."
+        }
+      ],
+      "clusters": [
+        {
+          "collapsed": false,
+          "color": "#fabd2f",
+          "id": "cluster_1771250103616",
+          "label": "Group 1"
+        },
+        {
+          "collapsed": false,
+          "color": "#fe8019",
+          "id": "cluster_1771250109257",
+          "label": "Group 2"
+        }
+      ]
+    }
+  },
+  {
+    "id": "snap_1771250109260",
+    "timestamp": 1771250109260,
+    "label": "Group Created: Group 2",
+    "data": {
+      "nodes": [
+        {
+          "cluster_id": "cluster_1771250109257",
+          "data": {
+            "color": "#b8bb26",
+            "description": "board.py 파일",
+            "file": "board.py",
+            "label": "board.py",
+            "summary": {
+              "classes": [],
+              "functions": [
+                "main"
+              ],
+              "references": []
+            }
+          },
+          "id": "node_1",
+          "position": {
+            "x": 405.5,
+            "y": 140.5
+          },
+          "status": "active",
+          "type": "source",
+          "visual": {}
+        },
+        {
+          "cluster_id": "cluster_1771250109257",
+          "data": {
+            "color": "#b8bb26",
+            "description": "schema.sql 파일",
+            "file": "schema.sql",
+            "label": "schema.sql",
+            "summary": {
+              "classes": [],
+              "functions": [],
+              "references": []
+            }
+          },
+          "id": "node_2",
+          "position": {
+            "x": 472.5805263425291,
+            "y": -377.7654405663092
+          },
+          "status": "active",
+          "type": "source",
+          "visual": {}
+        },
+        {
+          "cluster_id": "cluster_1771250103616",
+          "data": {
+            "description": "Manually created node",
+            "file": "src/Login.py",
+            "label": "Login.py",
+            "summary": {
+              "classes": [],
+              "functions": [
+                "main"
+              ],
+              "references": []
+            }
+          },
+          "id": "node_manual_1771248987477",
+          "position": {
+            "x": 92.75,
+            "y": 99.25
+          },
+          "status": "active",
+          "type": "logic",
+          "visual": {}
+        },
+        {
+          "cluster_id": "cluster_1771250109257",
+          "data": {
+            "description": "Manually created node",
+            "label": "payment,api"
+          },
+          "id": "node_manual_1771249019965",
+          "position": {
+            "x": 239.9780006468684,
+            "y": 254.375
+          },
+          "status": "active",
+          "type": "service",
+          "visual": {}
+        },
+        {
+          "data": {
+            "description": "Manually created node",
+            "file": "src/AuthService.tx",
+            "label": "AuthService.tx",
+            "summary": {
+              "classes": [],
+              "functions": [],
+              "references": []
+            }
+          },
+          "id": "node_manual_1771249852105",
+          "position": {
+            "x": 78.875,
+            "y": -165.1875
+          },
+          "status": "active",
+          "type": "logic",
+          "visual": {},
+          "cluster_id": "cluster_1771250103616"
+        }
+      ],
+      "edges": [
+        {
+          "_validationReason": "Appropriate architectural relationship.",
+          "from": "node_manual_1771248987477",
+          "id": "edge_manual_1771249287255",
+          "label": "dependency",
+          "to": "node_1",
+          "type": "dependency",
+          "validation": {
+            "valid": true,
+            "reason": "Appropriate architectural relationship.",
+            "confidence": 0.95
+          },
+          "visual": {
+            "color": "#83a598",
+            "dashArray": "5,5"
+          }
+        },
+        {
+          "_validationReason": "Appropriate architectural relationship.",
+          "from": "node_manual_1771248987477",
+          "id": "edge_manual_1771249927537",
+          "label": "dependency",
+          "to": "node_manual_1771249852105",
+          "type": "dependency",
+          "validation": {
+            "valid": true,
+            "reason": "Appropriate architectural relationship.",
+            "confidence": 0.95
+          },
+          "visual": {
+            "color": "#83a598",
+            "dashArray": "5,5"
+          }
+        },
+        {
+          "_validationReason": "Appropriate architectural relationship.",
+          "from": "node_manual_1771249852105",
+          "id": "edge_manual_1771249958097",
+          "label": "data flow",
+          "to": "node_1",
+          "type": "data_flow",
+          "validation": {
+            "valid": true,
+            "reason": "Appropriate architectural relationship.",
+            "confidence": 0.95
+          },
+          "visual": {
+            "color": "#fabd2f"
+          }
+        }
+      ],
+      "clusters": [
+        {
+          "id": "cluster_1771250103616",
+          "label": "Group 1",
+          "color": "#fabd2f",
+          "collapsed": false
+        },
+        {
+          "id": "cluster_1771250109257",
+          "label": "Group 2",
+          "color": "#fe8019",
+          "collapsed": false
+        }
+      ]
+    }
+  },
+  {
+    "id": "snap_1771250103621",
+    "timestamp": 1771250103621,
+    "label": "Group Created: Group 1",
+    "data": {
+      "nodes": [
+        {
+          "cluster_id": null,
+          "data": {
+            "color": "#b8bb26",
+            "description": "board.py 파일",
+            "file": "board.py",
+            "label": "board.py",
+            "summary": {
+              "classes": [],
+              "functions": [
+                "main"
+              ],
+              "references": []
+            }
+          },
+          "id": "node_1",
+          "position": {
+            "x": 405.5,
+            "y": 140.5
+          },
+          "status": "active",
+          "type": "source",
+          "visual": {}
+        },
+        {
+          "cluster_id": null,
+          "data": {
+            "color": "#b8bb26",
+            "description": "schema.sql 파일",
+            "file": "schema.sql",
+            "label": "schema.sql",
+            "summary": {
+              "classes": [],
+              "functions": [],
+              "references": []
+            }
+          },
+          "id": "node_2",
+          "position": {
+            "x": 472.5805263425291,
+            "y": -377.7654405663092
+          },
+          "status": "active",
+          "type": "source",
+          "visual": {}
+        },
+        {
+          "cluster_id": "cluster_1771250103616",
+          "data": {
+            "description": "Manually created node",
+            "file": "src/Login.py",
+            "label": "Login.py",
+            "summary": {
+              "classes": [],
+              "functions": [
+                "main"
+              ],
+              "references": []
+            }
+          },
+          "id": "node_manual_1771248987477",
+          "position": {
+            "x": 92.75,
+            "y": 99.25
+          },
+          "status": "active",
+          "type": "logic",
+          "visual": {}
+        },
+        {
+          "cluster_id": null,
+          "data": {
+            "description": "Manually created node",
+            "label": "payment,api"
+          },
+          "id": "node_manual_1771249019965",
+          "position": {
+            "x": 239.9780006468684,
+            "y": 254.375
+          },
+          "status": "active",
+          "type": "service",
+          "visual": {}
+        },
+        {
+          "data": {
+            "description": "Manually created node",
+            "file": "src/AuthService.tx",
+            "label": "AuthService.tx",
+            "summary": {
+              "classes": [],
+              "functions": [],
+              "references": []
+            }
+          },
+          "id": "node_manual_1771249852105",
+          "position": {
+            "x": 78.875,
+            "y": -165.1875
+          },
+          "status": "active",
+          "type": "logic",
+          "visual": {},
+          "cluster_id": "cluster_1771250103616"
+        }
+      ],
+      "edges": [
+        {
+          "_validationReason": "Appropriate architectural relationship.",
+          "from": "node_manual_1771248987477",
+          "id": "edge_manual_1771249287255",
+          "label": "dependency",
+          "to": "node_1",
+          "type": "dependency",
+          "validation": {
+            "valid": true,
+            "reason": "Appropriate architectural relationship.",
+            "confidence": 0.95
+          },
+          "visual": {
+            "color": "#83a598",
+            "dashArray": "5,5"
+          }
+        },
+        {
+          "_validationReason": "Appropriate architectural relationship.",
+          "from": "node_manual_1771248987477",
+          "id": "edge_manual_1771249927537",
+          "label": "dependency",
+          "to": "node_manual_1771249852105",
+          "type": "dependency",
+          "validation": {
+            "valid": true,
+            "reason": "Appropriate architectural relationship.",
+            "confidence": 0.95
+          },
+          "visual": {
+            "color": "#83a598",
+            "dashArray": "5,5"
+          }
+        },
+        {
+          "_validationReason": "Appropriate architectural relationship.",
+          "from": "node_manual_1771249852105",
+          "id": "edge_manual_1771249958097",
+          "label": "data flow",
+          "to": "node_1",
+          "type": "data_flow",
+          "validation": {
+            "valid": true,
+            "reason": "Appropriate architectural relationship.",
+            "confidence": 0.95
+          },
+          "visual": {
+            "color": "#fabd2f"
+          }
+        }
+      ],
+      "clusters": [
+        {
+          "id": "cluster_1771250103616",
+          "label": "Group 1",
+          "color": "#fabd2f",
+          "collapsed": false
+        }
+      ]
+    }
+  },
+  {
+    "id": "snap_1771250074459",
+    "timestamp": 1771250074459,
+    "label": "Manual Snapshot",
+    "data": {
+      "nodes": [
+        {
+          "cluster_id": null,
+          "data": {
+            "color": "#b8bb26",
+            "description": "board.py 파일",
+            "file": "board.py",
+            "label": "board.py",
+            "summary": {
+              "classes": [],
+              "functions": [
+                "main"
+              ],
+              "references": []
+            }
+          },
+          "id": "node_1",
+          "position": {
+            "x": 405.5,
+            "y": 140.5
+          },
+          "status": "active",
+          "type": "source",
+          "visual": {}
+        },
+        {
+          "cluster_id": null,
+          "data": {
+            "color": "#b8bb26",
+            "description": "schema.sql 파일",
+            "file": "schema.sql",
+            "label": "schema.sql",
+            "summary": {
+              "classes": [],
+              "functions": [],
+              "references": []
+            }
+          },
+          "id": "node_2",
+          "position": {
+            "x": 472.5805263425291,
+            "y": -377.7654405663092
+          },
+          "status": "active",
+          "type": "source",
+          "visual": {}
+        },
+        {
+          "cluster_id": null,
+          "data": {
+            "description": "Manually created node",
+            "file": "src/Login.py",
+            "label": "Login.py",
+            "summary": {
+              "classes": [],
+              "functions": [
+                "main"
+              ],
+              "references": []
+            }
+          },
+          "id": "node_manual_1771248987477",
+          "position": {
+            "x": 92.75,
+            "y": 99.25
+          },
+          "status": "active",
+          "type": "logic",
+          "visual": {}
+        },
+        {
+          "cluster_id": null,
+          "data": {
+            "description": "Manually created node",
+            "label": "payment,api"
+          },
+          "id": "node_manual_1771249019965",
+          "position": {
+            "x": 239.9780006468684,
+            "y": 254.375
+          },
+          "status": "active",
+          "type": "service",
+          "visual": {}
+        },
+        {
+          "data": {
+            "description": "Manually created node",
+            "file": "src/AuthService.tx",
+            "label": "AuthService.tx",
+            "summary": {
+              "classes": [],
+              "functions": [],
+              "references": []
+            }
+          },
+          "id": "node_manual_1771249852105",
+          "position": {
+            "x": 78.875,
+            "y": -165.1875
+          },
+          "status": "active",
+          "type": "logic",
+          "visual": {}
+        }
+      ],
+      "edges": [
+        {
+          "_validationReason": "Appropriate architectural relationship.",
+          "from": "node_manual_1771248987477",
+          "id": "edge_manual_1771249287255",
+          "label": "dependency",
+          "to": "node_1",
+          "type": "dependency",
+          "validation": {
+            "valid": true,
+            "reason": "Appropriate architectural relationship.",
+            "confidence": 0.95
+          },
+          "visual": {
+            "color": "#83a598",
+            "dashArray": "5,5"
+          }
+        },
+        {
+          "_validationReason": "Appropriate architectural relationship.",
+          "from": "node_manual_1771248987477",
+          "id": "edge_manual_1771249927537",
+          "label": "dependency",
+          "to": "node_manual_1771249852105",
+          "type": "dependency",
+          "validation": {
+            "valid": true,
+            "reason": "Appropriate architectural relationship.",
+            "confidence": 0.95
+          },
+          "visual": {
+            "color": "#83a598",
+            "dashArray": "5,5"
+          }
+        },
+        {
+          "_validationReason": "Appropriate architectural relationship.",
+          "from": "node_manual_1771249852105",
+          "id": "edge_manual_1771249958097",
+          "label": "data flow",
+          "to": "node_1",
+          "type": "data_flow",
+          "validation": {
+            "valid": true,
+            "reason": "Appropriate architectural relationship.",
+            "confidence": 0.95
+          },
+          "visual": {
+            "color": "#fabd2f"
+          }
+        }
+      ],
+      "clusters": []
+    }
+  },
+  {
+    "id": "snap_1771249758005",
+    "timestamp": 1771249758005,
+    "label": "Selection Ungrouped",
+    "data": {
+      "nodes": [
+        {
+          "cluster_id": null,
+          "data": {
+            "color": "#b8bb26",
+            "description": "board.py 파일",
+            "file": "board.py",
+            "label": "board.py",
+            "summary": {
+              "classes": [],
+              "functions": [],
+              "references": []
+            }
+          },
+          "id": "node_1",
+          "position": {
+            "x": 300,
+            "y": 100
+          },
+          "status": "proposed",
+          "type": "source",
+          "visual": {
+            "dashArray": "5,5",
+            "opacity": 0.5
+          }
+        },
+        {
+          "cluster_id": null,
+          "data": {
+            "color": "#b8bb26",
+            "description": "schema.sql 파일",
+            "file": "schema.sql",
+            "label": "schema.sql",
+            "summary": {
+              "classes": [],
+              "functions": [],
+              "references": []
+            }
+          },
+          "id": "node_2",
+          "position": {
+            "x": 500,
+            "y": 100
+          },
+          "status": "proposed",
+          "type": "source",
+          "visual": {
+            "dashArray": "5,5",
+            "opacity": 0.5
+          }
+        },
+        {
+          "cluster_id": null,
+          "data": {
+            "description": "Manually created node",
+            "label": "Login.py"
+          },
+          "id": "node_manual_1771248987477",
+          "position": {
+            "x": 92.75,
+            "y": 99.25
+          },
+          "status": "proposed",
+          "type": "logic",
+          "visual": {
+            "opacity": 1
+          }
+        },
+        {
+          "cluster_id": null,
+          "data": {
+            "description": "Manually created node",
+            "label": "payment,api"
+          },
+          "id": "node_manual_1771249019965",
+          "position": {
+            "x": 159.4780006468684,
+            "y": 206.875
+          },
+          "status": "proposed",
+          "type": "service",
+          "visual": {
+            "opacity": 1
+          }
+        }
+      ],
+      "edges": [
+        {
+          "from": "node_manual_1771248987477",
+          "id": "edge_manual_1771249287255",
+          "label": "dependency",
+          "to": "node_1",
+          "type": "dependency",
+          "validation": {
+            "valid": true,
+            "reason": "Appropriate architectural relationship.",
+            "confidence": 0.95
+          },
+          "visual": {
+            "color": "#83a598",
+            "dashArray": "5,5"
+          },
+          "_validationReason": "Appropriate architectural relationship."
+        }
+      ],
+      "clusters": []
+    }
+  },
+  {
+    "id": "snap_1771249281571",
+    "timestamp": 1771249281571,
+    "label": "Group Created: Group 1",
+    "data": {
+      "nodes": [
+        {
+          "data": {
+            "color": "#b8bb26",
+            "description": "board.py 파일",
+            "file": "board.py",
+            "label": "board.py",
+            "summary": {
+              "classes": [],
+              "functions": [],
+              "references": []
+            }
+          },
+          "id": "node_1",
+          "position": {
+            "x": 300,
+            "y": 100
+          },
+          "status": "proposed",
+          "type": "source",
+          "visual": {
+            "dashArray": "5,5",
+            "opacity": 0.5
+          },
+          "cluster_id": "cluster_1771249281567"
+        },
+        {
+          "data": {
+            "color": "#b8bb26",
+            "description": "schema.sql 파일",
+            "file": "schema.sql",
+            "label": "schema.sql",
+            "summary": {
+              "classes": [],
+              "functions": [],
+              "references": []
+            }
+          },
+          "id": "node_2",
+          "position": {
+            "x": 500,
+            "y": 100
+          },
+          "status": "proposed",
+          "type": "source",
+          "visual": {
+            "dashArray": "5,5",
+            "opacity": 0.5
+          },
+          "cluster_id": "cluster_1771249281567"
+        },
+        {
+          "data": {
+            "description": "Manually created node",
+            "label": "Login.py"
+          },
+          "id": "node_manual_1771248987477",
+          "position": {
+            "x": 92.75,
+            "y": 99.25
+          },
+          "status": "proposed",
+          "type": "logic",
+          "visual": {
+            "opacity": 1
+          },
+          "cluster_id": "cluster_1771249281567"
+        },
+        {
+          "data": {
+            "description": "Manually created node",
+            "label": "payment,api"
+          },
+          "id": "node_manual_1771249019965",
+          "position": {
+            "x": 161.375,
+            "y": 206.875
+          },
+          "status": "proposed",
+          "type": "service",
+          "visual": {
+            "opacity": 1
+          },
+          "cluster_id": "cluster_1771249281567"
+        }
+      ],
+      "edges": [],
+      "clusters": [
+        {
+          "id": "cluster_1771249281567",
+          "label": "Group 1",
+          "color": "#fabd2f",
+          "collapsed": false
+        }
+      ]
+    }
+  },
+  {
     "id": "snap_1771080404976",
     "timestamp": 1771080404976,
     "label": "Selection Ungrouped",

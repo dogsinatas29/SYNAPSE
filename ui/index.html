@@ -360,6 +360,7 @@
 <body>
     <div id="header">
         <div class="logo">🧠 SYNAPSE</div>
+        <div id="status-indicator" style="font-size: 12px; color: #fabd2f; font-weight: bold;"></div>
         <div id="project-path" style="font-size: 12px; color: var(--fg-dim);">Loading project...</div>
     </div>
 
@@ -371,6 +372,10 @@
         </div>
         <button class="btn" id="btn-fit">Fit View</button>
         <button class="btn" id="btn-reset">Reset</button>
+        <div class="toolbar-divider"></div>
+        <button class="btn" id="btn-add-node" title="Add New Node">➕ Node</button>
+        <button class="btn" id="btn-connect" title="Connect Nodes (Alt+Click)">🔗 Connect</button>
+
         <div class="toolbar-divider"></div>
         <button class="btn" id="btn-group" title="Group Selected Nodes">Group</button>
         <button class="btn" id="btn-ungroup" title="Ungroup Selected Cluster">Ungroup</button>
@@ -442,6 +447,35 @@
             <span>Zoom: <strong id="zoom-level">100%</strong></span>
             <span class="divider">|</span>
             <span>Mode: <strong id="current-mode">Graph</strong></span>
+        </div>
+    </div>
+
+    <!-- Node Creation Dialog -->
+    <div id="node-dialog"
+        style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:var(--bg-panel); border:1px solid var(--border); padding:20px; z-index:4000; box-shadow:0 10px 30px rgba(0,0,0,0.5); border-radius:8px; min-width:300px;">
+        <h3 style="margin-top:0; color:var(--accent);">Add New Node</h3>
+        <div style="margin-bottom:15px;">
+            <label style="display:block; margin-bottom:5px; color:var(--fg-dim); font-size:12px;">Label</label>
+            <input type="text" id="node-label-input"
+                style="width:100%; padding:8px; background:#1d2021; border:1px solid #504945; color:var(--fg-main); border-radius:4px;"
+                placeholder="Node Name">
+        </div>
+        <div style="margin-bottom:20px;">
+            <label style="display:block; margin-bottom:5px; color:var(--fg-dim); font-size:12px;">Type</label>
+            <select id="node-type-input"
+                style="width:100%; padding:8px; background:#1d2021; border:1px solid #504945; color:var(--fg-main); border-radius:4px;">
+                <option value="logic">Logic</option>
+                <option value="data">Data</option>
+                <option value="ui">UI</option>
+                <option value="service">Service</option>
+                <option value="config">Config</option>
+                <option value="documentation">Documentation</option>
+            </select>
+        </div>
+        <div style="display:flex; justify-content:flex-end; gap:10px;">
+            <button id="btn-cancel-node" class="btn">Cancel</button>
+            <button id="btn-confirm-node" class="btn"
+                style="background:var(--accent); color:#282828; font-weight:bold;">Add</button>
         </div>
     </div>
 

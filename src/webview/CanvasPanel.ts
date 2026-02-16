@@ -116,17 +116,97 @@ export class CanvasPanel {
                     case 'analyzeGemini':
                         await this.handleAnalyzeGemini(message.filePath);
                         return;
-                    case 'approveNode':
-                        await this.handleApproveNode(message.nodeId);
+                    case 'createManualNode':
+                        await this.handleCreateManualNode(message.node);
                         return;
-                    case 'rejectNode':
-                        await this.handleRejectNode(message.nodeId);
+                    case 'requestSnapshot':
+                        const label = await vscode.window.showInputBox({
+                            placeHolder: 'Enter snapshot label',
+                            prompt: 'Snapshot Name',
+                            value: `Snapshot ${new Date().toLocaleTimeString()}`
+                        });
+                        if (label) {
+                            await this.handleTakeSnapshot({ label }); // Pass label wrapper, logic needs adjustment or use existing
+                        }
                         return;
-                }
-            },
-            null,
-            this._disposables
+                    case 'requestRollback':
+                        const answer = await vscode.window.showWarningMessage(
+                            `Are you sure you want to rollback to "${message.label}"?`,
+                            { modal: true },
+                            'Rollback'
+                        );
+                        if (answer === 'Rollback') {
+                            await this.handleRollback(message.snapshotId);
+                        }
+                        return;
+                },
+                null,
+                    this._disposables
         );
+    }
+
+    public async sendProjectState() {
+        if (!this._panel) return;
+
+        const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+        if (!workspaceFolder) return;
+
+        try {
+            const projectStateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'project_state.json');
+
+            // Check if file exists
+            try {
+                await vscode.workspace.fs.stat(projectStateUri);
+            } catch (e) {
+                // File doesn't exist, send empty state or creating message
+                this._panel.webview.postMessage({ command: 'projectState', data: { nodes: [], edges: [], clusters: [] } });
+                return;
+            }
+
+            const data = await vscode.workspace.fs.readFile(projectStateUri);
+            const projectState = JSON.parse(data.toString());
+
+            this._panel.webview.postMessage({ command: 'projectState', data: projectState });
+        } catch (error) {
+            console.error('Failed to load project state:', error);
+            vscode.window.showErrorMessage(`Failed to load project state: ${error}`);
+        }
+    }
+
+    private async handleCreateManualNode(node: any) {
+        const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+        if (!workspaceFolder) return;
+
+        try {
+            const projectStateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'project_state.json');
+
+            // Read existing state
+            let currentState: any = { nodes: [], edges: [], clusters: [] };
+            try {
+                const data = await vscode.workspace.fs.readFile(projectStateUri);
+                currentState = JSON.parse(data.toString());
+            } catch (e) {
+                // Create file if it doesn't exist
+            }
+
+            // Add new node
+            if (!currentState.nodes) currentState.nodes = [];
+            currentState.nodes.push(node);
+
+            // Save state (using normalization)
+            const normalizedJson = this.normalizeProjectState(currentState);
+            await vscode.workspace.fs.writeFile(projectStateUri, Buffer.from(normalizedJson, 'utf8'));
+
+            console.log('[SYNAPSE] Manual node created and saved:', node.id);
+            vscode.window.showInformationMessage(`Node created: ${node.data.label}`);
+
+            // Refresh view
+            await this.sendProjectState();
+
+        } catch (error) {
+            console.error('Failed to create manual node:', error);
+            vscode.window.showErrorMessage(`Failed to create manual node: ${error}`);
+        }
     }
 
     private async handleSetBaseline(snapshotId: string) {
@@ -417,63 +497,84 @@ export class CanvasPanel {
     }
 
     private async handleApproveNode(nodeId: string) {
-        const nodeIndex = this.proposedNodes.findIndex(n => n.id === nodeId);
-        if (nodeIndex === -1) {
-            console.warn(`[SYNAPSE] Node ${nodeId} not found in proposal`);
-            return;
-        }
-
-        const node = this.proposedNodes[nodeIndex];
-
-        // Modify node specific data for active state
-        delete node.status;
-        if (node.visual) {
-            delete node.visual.opacity;
-            delete node.visual.dashArray;
-        }
-        node.state = 'active';
-
         const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
         if (!workspaceFolder) return;
 
         const projectStateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'project_state.json');
 
         try {
-            // Read existing
+            // Read existing state
             let currentState: any = { nodes: [], edges: [], clusters: [] };
             try {
                 const data = await vscode.workspace.fs.readFile(projectStateUri);
                 currentState = JSON.parse(data.toString());
             } catch (e) { /* ignore */ }
 
-            // Add node
-            // Ensure no duplicate IDs
-            if (!currentState.nodes.find((n: any) => n.id === node.id)) {
-                currentState.nodes.push(node);
+            // Find the node (check both proposedNodes and currentState)
+            let node = currentState.nodes.find((n: any) => n.id === nodeId);
+            let isFromProposal = false;
+
+            if (!node) {
+                // Try to find in proposedNodes (from Gemini analysis)
+                const nodeIndex = this.proposedNodes.findIndex(n => n.id === nodeId);
+                if (nodeIndex !== -1) {
+                    node = this.proposedNodes[nodeIndex];
+                    isFromProposal = true;
+                    currentState.nodes.push(node); // Add to state
+                    this.proposedNodes.splice(nodeIndex, 1); // Remove from proposal queue
+                }
             }
 
-            // Check for related edges in proposed list that connect to ALREADY approved nodes
-            const relevantEdges = this.proposedEdges.filter(e => {
-                const fromApproved = currentState.nodes.find((n: any) => n.id === e.from) || node.id === e.from;
-                const toApproved = currentState.nodes.find((n: any) => n.id === e.to) || node.id === e.to;
-                return fromApproved && toApproved;
-            });
+            if (!node) {
+                console.warn(`[SYNAPSE] Node ${nodeId} not found for approval.`);
+                return;
+            }
 
-            relevantEdges.forEach(edge => {
-                // Approve edge
-                edge.is_approved = true;
-                if (edge.visual) {
-                    edge.visual.style = 'solid'; // remove dashed
+            // Update status
+            node.status = 'active';
+            if (node.visual && node.visual.opacity) {
+                delete node.visual.opacity;
+            }
+            if (node.visual && node.visual.dashArray) {
+                delete node.visual.dashArray;
+            }
+
+            // FILE CREATION LOGIC
+            const label = node.data?.label || '';
+            // Simple check for file extension
+            if (label.includes('.')) {
+                const fileName = label;
+                // Determine path: default to src/ if it exists, otherwise root
+                // For now, let's look for known folders or just put in src/ if checking 'logic' type
+                let targetDir = workspaceFolder.uri;
+
+                // Simple heuristic for folder placement
+                if (node.type === 'logic' || node.type === 'service' || node.type === 'ui') {
+                    try {
+                        const srcUri = vscode.Uri.joinPath(workspaceFolder.uri, 'src');
+                        await vscode.workspace.fs.stat(srcUri);
+                        targetDir = srcUri;
+                    } catch { /* src doesn't exist, stay in root */ }
                 }
 
-                if (!currentState.edges.find((e: any) => e.id === edge.id)) {
-                    currentState.edges.push(edge);
-                }
+                const fileUri = vscode.Uri.joinPath(targetDir, fileName);
 
-                // Remove from proposed edges
-                const edgeIndex = this.proposedEdges.findIndex(e => e.id === edge.id);
-                if (edgeIndex !== -1) this.proposedEdges.splice(edgeIndex, 1);
-            });
+                try {
+                    await vscode.workspace.fs.stat(fileUri);
+                    console.log(`[SYNAPSE] File already exists: ${fileName}`);
+                } catch {
+                    // File doesn't exist, create it
+                    const boilerplate = this.getBoilerplate(fileName, node.type);
+                    await vscode.workspace.fs.writeFile(fileUri, Buffer.from(boilerplate, 'utf8'));
+                    console.log(`[SYNAPSE] Created file: ${fileName}`);
+                    vscode.window.showInformationMessage(`Created file: ${fileName}`);
+
+                    // Update node data with file path
+                    if (!node.data.file) {
+                        node.data.file = vscode.workspace.asRelativePath(fileUri);
+                    }
+                }
+            }
 
             // Save state
             await this.handleSaveState(currentState);
@@ -481,12 +582,25 @@ export class CanvasPanel {
             // Send updated state to view
             await this.sendProjectState();
 
-            // Remove from proposed nodes
-            this.proposedNodes.splice(nodeIndex, 1);
-
         } catch (error) {
             console.error('Failed to approve node:', error);
+            vscode.window.showErrorMessage(`Failed to approve node: ${error}`);
         }
+    }
+
+    private getBoilerplate(fileName: string, type: string): string {
+        if (fileName.endsWith('.py')) {
+            return `# ${fileName}\n# Created by SYNAPSE\n\ndef main():\n    pass\n`;
+        } else if (fileName.endsWith('.ts')) {
+            return `/**\n * ${fileName}\n * Created by SYNAPSE\n */\n\nexport class ${fileName.replace('.ts', '')} {\n    constructor() {}\n}\n`;
+        } else if (fileName.endsWith('.js')) {
+            return `/**\n * ${fileName}\n * Created by SYNAPSE\n */\n\nmodule.exports = {};\n`;
+        } else if (fileName.endsWith('.md')) {
+            return `# ${fileName.replace('.md', '')}\n\nCreated by SYNAPSE\n`;
+        } else if (fileName.endsWith('.sql')) {
+            return `-- ${fileName}\n-- Created by SYNAPSE\n`;
+        }
+        return `// ${fileName}\n// Created by SYNAPSE\n`;
     }
 
     private async handleRejectNode(nodeId: string) {
@@ -583,6 +697,20 @@ export class CanvasPanel {
         if (!workspaceFolder) return;
 
         try {
+            const projectStateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'project_state.json');
+            let currentProjectState = state.data;
+
+            // If state data is missing (e.g. called from requestSnapshot), read it from disk
+            if (!currentProjectState) {
+                try {
+                    const data = await vscode.workspace.fs.readFile(projectStateUri);
+                    currentProjectState = JSON.parse(data.toString());
+                } catch (e) {
+                    vscode.window.showErrorMessage('Cannot take snapshot: Project state is empty or invalid.');
+                    return;
+                }
+            }
+
             const historyUri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'synapse_history.json');
             let history: any[] = [];
 
@@ -597,7 +725,7 @@ export class CanvasPanel {
                 id: `snap_${Date.now()}`,
                 timestamp: Date.now(),
                 label: state.label || `Snapshot ${history.length + 1}`,
-                data: state.data // nodes, edges, clusters
+                data: currentProjectState // nodes, edges, clusters
             };
 
             history.unshift(snapshot); // Newest first
@@ -688,8 +816,12 @@ export class CanvasPanel {
             // 3. Notify webview to reload
             await this.sendProjectState();
             await this.sendHistory(); // Update history list with backup
+
+            this._panel.webview.postMessage({ command: 'rollbackComplete' });
+
             vscode.window.showInformationMessage(`Rolled back to: ${snapshot.label}. Current state backed up.`);
         } catch (error) {
+            console.error('[SYNAPSE] Rollback failed:', error);
             vscode.window.showErrorMessage(`Rollback failed: ${error}`);
         }
     }

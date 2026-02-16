@@ -832,7 +832,23 @@ export class CanvasPanel {
                         offset: { x: 0, y: 0 },
                         visible_layers: ['source', 'documentation']
                     },
-                    nodes: [],
+                    nodes: [
+                        {
+                            id: 'node_entry',
+                            type: 'source',
+                            status: 'proposed',
+                            position: { x: 400, y: 300 },
+                            data: {
+                                label: 'CLI_Main.ts',
+                                description: 'System Entry Point (Template)',
+                                color: '#b8bb26'
+                            },
+                            visual: {
+                                opacity: 0.5,
+                                dashArray: '5,5'
+                            }
+                        }
+                    ],
                     edges: [],
                     clusters: []
                 };

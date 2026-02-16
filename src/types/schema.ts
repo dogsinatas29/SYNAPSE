@@ -85,6 +85,7 @@ export interface ProjectStructure {
         from: string;
         to: string;
         type: EdgeType;
+        label?: string;
     }[];
 }
 

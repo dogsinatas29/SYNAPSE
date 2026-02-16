@@ -1,36 +1,201 @@
 {
+  "canvas_state": {
+    "offset": {
+      "x": 0,
+      "y": 0
+    },
+    "visible_layers": [
+      "source",
+      "documentation"
+    ],
+    "zoom_level": 1
+  },
+  "clusters": [],
+  "edges": [
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_7",
+      "id": "edge_0",
+      "is_approved": false,
+      "to": "node_1",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_1",
+      "id": "edge_1",
+      "is_approved": false,
+      "to": "node_2",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_2",
+      "id": "edge_2",
+      "is_approved": false,
+      "to": "node_3",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_3",
+      "id": "edge_3",
+      "is_approved": false,
+      "to": "node_5",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_3",
+      "id": "edge_4",
+      "is_approved": false,
+      "to": "node_4",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_4",
+      "id": "edge_5",
+      "is_approved": false,
+      "to": "node_8",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_5",
+      "id": "edge_6",
+      "is_approved": false,
+      "to": "node_0",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    }
+  ],
+  "gemini_md_path": "/home/dogsinatas/TypeScript_project/antigravity-extension-vis/demo/GEMINI.md",
   "nodes": [
     {
-      "cluster_id": "cluster_1771255066453",
       "data": {
         "color": "#b8bb26",
-        "description": "board.py 파일",
-        "file": "board.py",
-        "label": "board.py",
+        "description": "터미널 명령줄 입력 및 옵션 처리 (-f, --level).",
+        "file": "CLI_Main.ts",
+        "label": "CLI_Main.ts",
         "summary": {
           "classes": [],
-          "functions": [
-            "main"
-          ],
+          "functions": [],
           "references": []
         }
       },
-      "id": "node_1",
+      "id": "node_0",
       "position": {
-        "x": -255.35251761024455,
-        "y": -289.1830332281021
+        "x": 100,
+        "y": 100
       },
       "status": "active",
       "type": "source",
       "visual": {}
     },
     {
-      "cluster_id": "cluster_1771255077660",
       "data": {
         "color": "#b8bb26",
-        "description": "schema.sql 파일",
-        "file": "schema.sql",
-        "label": "schema.sql",
+        "description": "tail -f와 유사하게 로그 파일의 신규 라인을 감시.",
+        "file": "Log_Watcher.ts",
+        "label": "Log_Watcher.ts",
+        "summary": {
+          "classes": [],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_1",
+      "position": {
+        "x": 300,
+        "y": 100
+      },
+      "status": "active",
+      "type": "source",
+      "visual": {}
+    },
+    {
+      "data": {
+        "color": "#b8bb26",
+        "description": "정규표현식을 사용하여 Timestamp, Service, Level, Message로 분리.",
+        "file": "Log_Parser.ts",
+        "label": "Log_Parser.ts",
         "summary": {
           "classes": [],
           "functions": [],
@@ -39,258 +204,139 @@
       },
       "id": "node_2",
       "position": {
-        "x": -16.792891990694017,
-        "y": -539.5091712414576
+        "x": 500,
+        "y": 100
       },
       "status": "active",
       "type": "source",
       "visual": {}
     },
     {
-      "cluster_id": "cluster_1771255066453",
       "data": {
-        "description": "Manually created node",
-        "file": "src/Login.py",
-        "label": "Login.py",
-        "summary": {
-          "classes": [],
-          "functions": [
-            "main"
-          ],
-          "references": []
-        }
-      },
-      "id": "node_manual_1771248987477",
-      "position": {
-        "x": -415.49705697043305,
-        "y": -289.14973118659054
-      },
-      "status": "active",
-      "type": "logic",
-      "visual": {}
-    },
-    {
-      "cluster_id": "cluster_1771255077660",
-      "data": {
-        "description": "Manually created node",
-        "label": "payment,api"
-      },
-      "id": "node_manual_1771249019965",
-      "position": {
-        "x": -246.33206948997938,
-        "y": -539.5091712414576
-      },
-      "status": "active",
-      "type": "service",
-      "visual": {}
-    },
-    {
-      "cluster_id": "cluster_1771255077660",
-      "data": {
-        "description": "Manually created node",
-        "file": "src/AuthService.tx",
-        "label": "AuthService.tx",
+        "color": "#b8bb26",
+        "description": "사용자가 지정한 레벨이나 키워드에 따라 로그를 선별.",
+        "file": "Filter_Engine.ts",
+        "label": "Filter_Engine.ts",
         "summary": {
           "classes": [],
           "functions": [],
           "references": []
         }
       },
-      "id": "node_manual_1771249852105",
+      "id": "node_3",
       "position": {
-        "x": -250.60120371699276,
-        "y": -539.5091712414576
+        "x": 100,
+        "y": 300
       },
       "status": "active",
-      "type": "logic",
+      "type": "source",
       "visual": {}
     },
     {
-      "id": "node_manual_1771253854441",
-      "type": 100,
-      "status": "active",
-      "position": {
-        "x": 357.05672137816083,
-        "y": 174.18929938104935
-      },
       "data": {
-        "label": 100,
-        "description": "Manually created node"
+        "color": "#b8bb26",
+        "description": "Critical 등급 발생 시 시스템 알림(Notify-send) 전송.",
+        "file": "Alert_Manager.ts",
+        "label": "Alert_Manager.ts",
+        "summary": {
+          "classes": [],
+          "functions": [],
+          "references": []
+        }
       },
-      "visual": {
-        "opacity": 1
+      "id": "node_4",
+      "position": {
+        "x": 300,
+        "y": 300
       },
-      "name": "Node A",
-      "cluster_id": "cluster_1771257052868"
+      "status": "active",
+      "type": "source",
+      "visual": {}
     },
     {
-      "id": "node_manual_1771253854449",
-      "type": 100,
-      "status": "active",
-      "position": {
-        "x": 148.2033281306049,
-        "y": 174.18929938104935
-      },
       "data": {
-        "label": 300,
-        "description": "Manually created node"
+        "color": "#b8bb26",
+        "description": "SQLite 데이터베이스. 선별된 로그를 영구 저장.",
+        "file": "Log_Store.ts",
+        "label": "Log_Store.ts",
+        "summary": {
+          "classes": [],
+          "functions": [],
+          "references": []
+        }
       },
-      "visual": {
-        "opacity": 1
+      "id": "node_5",
+      "position": {
+        "x": 500,
+        "y": 300
       },
-      "name": "Node B",
-      "cluster_id": "cluster_1771257052868"
+      "status": "active",
+      "type": "source",
+      "visual": {}
     },
     {
-      "id": "node_manual_1771255036797",
-      "type": "ui",
-      "status": "active",
-      "position": {
-        "x": -248.94103625886208,
-        "y": -539.5091712414576
-      },
       "data": {
-        "label": "test_node1",
-        "description": "Manually created node"
+        "color": "#b8bb26",
+        "description": "대량 로그 발생 시 메모리에 잠시 보관하는 큐.",
+        "file": "Cache_Buffer.ts",
+        "label": "Cache_Buffer.ts",
+        "summary": {
+          "classes": [],
+          "functions": [],
+          "references": []
+        }
       },
-      "visual": {
-        "opacity": 1
+      "id": "node_6",
+      "position": {
+        "x": 100,
+        "y": 500
       },
-      "cluster_id": "cluster_1771255077660"
+      "status": "active",
+      "type": "source",
+      "visual": {}
     },
     {
-      "id": "node_manual_1771256968935",
-      "type": "ui",
-      "status": "proposed",
-      "position": {
-        "x": 598.5321741221944,
-        "y": -272.5321650541485
-      },
       "data": {
-        "label": "test_node3",
-        "description": "Manually created node"
+        "color": "#b8bb26",
+        "description": "실제 리눅스 시스템 로그 파일 (/var/log/auth.log 등).",
+        "file": "System_Logs.ts",
+        "label": "System_Logs.ts",
+        "summary": {
+          "classes": [],
+          "functions": [],
+          "references": []
+        }
       },
-      "visual": {
-        "opacity": 1
+      "id": "node_7",
+      "position": {
+        "x": 300,
+        "y": 500
       },
-      "cluster_id": "cluster_1771257052868"
+      "status": "active",
+      "type": "source",
+      "visual": {}
+    },
+    {
+      "data": {
+        "color": "#b8bb26",
+        "description": "리눅스 데스크톱 알림 서버.",
+        "file": "Desktop_Notify.ts",
+        "label": "Desktop_Notify.ts",
+        "summary": {
+          "classes": [],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_8",
+      "position": {
+        "x": 500,
+        "y": 500
+      },
+      "status": "active",
+      "type": "source",
+      "visual": {}
     }
   ],
-  "edges": [
-    {
-      "id": "edge_manual_1771255087038",
-      "from": "node_manual_1771248987477",
-      "to": "node_1",
-      "type": "dependency",
-      "label": "dependency",
-      "visual": {
-        "color": "#83a598",
-        "dashArray": "5,5"
-      }
-    },
-    {
-      "id": "edge_manual_1771255107388",
-      "from": "node_1",
-      "to": "node_manual_1771249852105",
-      "type": "bidirectional",
-      "label": "bidirectional",
-      "visual": {
-        "color": "#d3869b"
-      },
-      "_validationReason": "Valid relationship"
-    },
-    {
-      "id": "edge_manual_1771255126354",
-      "from": "node_manual_1771249852105",
-      "to": "node_manual_1771255036797",
-      "type": "dependency",
-      "label": "dependency",
-      "visual": {
-        "color": "#83a598",
-        "dashArray": "5,5"
-      }
-    },
-    {
-      "id": "edge_manual_1771255131502",
-      "from": "node_manual_1771249852105",
-      "to": "node_manual_1771249019965",
-      "type": "dependency",
-      "label": "dependency",
-      "visual": {
-        "color": "#83a598",
-        "dashArray": "5,5"
-      }
-    },
-    {
-      "id": "edge_manual_1771255136922",
-      "from": "node_manual_1771249852105",
-      "to": "node_2",
-      "type": "bidirectional",
-      "label": "bidirectional",
-      "visual": {
-        "color": "#d3869b"
-      }
-    },
-    {
-      "id": "edge_manual_1771257015230",
-      "from": "node_2",
-      "to": "node_manual_1771256968935",
-      "type": "bidirectional",
-      "label": "bidirectional",
-      "visual": {
-        "color": "#d3869b"
-      },
-      "_validationReason": "Valid relationship"
-    }
-  ],
-  "clusters": [
-    {
-      "id": "cluster_1771253877903",
-      "label": "Node B",
-      "color": "#fe8019",
-      "collapsed": false,
-      "_headerBounds": {
-        "x": 80,
-        "y": -50,
-        "width": 368.853393247556,
-        "height": 30
-      }
-    },
-    {
-      "id": "cluster_1771255066453",
-      "label": "front_end",
-      "color": "#fabd2f",
-      "collapsed": false,
-      "_headerBounds": {
-        "x": -435.49705697043305,
-        "y": -339.1830332281021,
-        "width": 320.1445393601885,
-        "height": 30
-      }
-    },
-    {
-      "id": "cluster_1771255077660",
-      "label": "back_end",
-      "color": "#fe8019",
-      "collapsed": false,
-      "_headerBounds": {
-        "x": -270.60120371699276,
-        "y": -589.5091712414576,
-        "width": 393.8083117262987,
-        "height": 30
-      }
-    },
-    {
-      "id": "cluster_1771257052868",
-      "label": "test",
-      "color": "#fabd2f",
-      "collapsed": false,
-      "_headerBounds": {
-        "x": 128.2033281306049,
-        "y": -322.5321650541485,
-        "width": 610.3288459915896,
-        "height": 30
-      }
-    }
-  ]
+  "project_name": "demo"
 }

@@ -41,7 +41,7 @@ export class GeminiParser {
             dependencies: []
         };
 
-        // 폴더 패턴 감지: 📂 src/, 📂 database/ 등
+        // 1. 기존 패턴 (📂, 📄)
         const folderPattern = /📂\s+([^\s/]+)\//g;
         let match;
         while ((match = folderPattern.exec(content)) !== null) {
@@ -51,12 +51,10 @@ export class GeminiParser {
             }
         }
 
-        // 파일 패턴 감지: 📄 login.py, 📄 board.py 등
         const filePattern = /📄\s+([^\s]+\.(py|ts|js|md|json|sql))/g;
         while ((match = filePattern.exec(content)) !== null) {
             const fileName = match[1];
             const ext = match[2];
-
             let type: NodeType = 'source';
             if (ext === 'md') type = 'documentation';
             if (ext === 'json') type = 'config';
@@ -66,6 +64,44 @@ export class GeminiParser {
                 path: fileName,
                 type,
                 description: `${fileName} 파일`
+            });
+        }
+
+        // 2. 새로운 패턴 (NodeName: Description) - [Nodes] 섹션 이후
+        const nodesSection = content.split(/1\.\s+아키텍처 토폴로지|\[Nodes\]/i)[1];
+        if (nodesSection) {
+            const nodesContent = nodesSection.split(/2\.\s+데이터 흐름|\[Edges\]/i)[0];
+            const nodeLines = nodesContent.split('\n');
+            nodeLines.forEach(line => {
+                const nodeMatch = line.match(/^([a-zA-Z0-9_]+):\s*(.*)/);
+                if (nodeMatch) {
+                    const nodeName = nodeMatch[1];
+                    const description = nodeMatch[2].trim();
+
+                    // 파일 경로 추측 (이미 있으면 건너뜀)
+                    if (!structure.files.find(f => f.path.startsWith(nodeName))) {
+                        structure.files.push({
+                            path: `${nodeName}.ts`, // 기본값은 .ts
+                            type: 'source',
+                            description: description
+                        });
+                    }
+                }
+            });
+        }
+
+        // 3. 엣지 패턴 (NodeA --> NodeB: Label)
+        const edgePattern = /([a-zA-Z0-9_]+)\s*-->\s*([a-zA-Z0-9_]+)(?::\s*(.*))?/g;
+        while ((match = edgePattern.exec(content)) !== null) {
+            const from = match[1];
+            const to = match[2];
+            const label = match[3] || '';
+
+            structure.dependencies.push({
+                from: `${from}.ts`,
+                to: `${to}.ts`,
+                type: 'dependency',
+                label: label
             });
         }
 
@@ -79,7 +115,6 @@ export class GeminiParser {
                 { path: 'README.md', type: 'documentation', description: '프로젝트 문서' }
             ];
 
-            // 기본 의존성
             structure.dependencies = [
                 { from: 'src/main.ts', to: 'src/types/schema.ts', type: 'dependency' },
                 { from: 'src/main.ts', to: 'data/config.json', type: 'data_flow' }

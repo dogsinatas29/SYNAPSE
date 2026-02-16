@@ -139,39 +139,13 @@ export class CanvasPanel {
                             await this.handleRollback(message.snapshotId);
                         }
                         return;
-                },
-                null,
-                    this._disposables
+                }
+            },
+            null,
+            this._disposables
         );
     }
 
-    public async sendProjectState() {
-        if (!this._panel) return;
-
-        const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
-        if (!workspaceFolder) return;
-
-        try {
-            const projectStateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'project_state.json');
-
-            // Check if file exists
-            try {
-                await vscode.workspace.fs.stat(projectStateUri);
-            } catch (e) {
-                // File doesn't exist, send empty state or creating message
-                this._panel.webview.postMessage({ command: 'projectState', data: { nodes: [], edges: [], clusters: [] } });
-                return;
-            }
-
-            const data = await vscode.workspace.fs.readFile(projectStateUri);
-            const projectState = JSON.parse(data.toString());
-
-            this._panel.webview.postMessage({ command: 'projectState', data: projectState });
-        } catch (error) {
-            console.error('Failed to load project state:', error);
-            vscode.window.showErrorMessage(`Failed to load project state: ${error}`);
-        }
-    }
 
     private async handleCreateManualNode(node: any) {
         const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
@@ -826,7 +800,8 @@ export class CanvasPanel {
         }
     }
 
-    private async sendProjectState() {
+    public async sendProjectState() {
+        if (!this._panel) return;
         const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
         if (!workspaceFolder) {
             console.error('No workspace folder found');
@@ -835,8 +810,37 @@ export class CanvasPanel {
 
         try {
             const projectStateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'project_state.json');
-            const data = await vscode.workspace.fs.readFile(projectStateUri);
-            const projectState = JSON.parse(data.toString());
+
+            let projectState;
+            try {
+                const data = await vscode.workspace.fs.readFile(projectStateUri);
+                projectState = JSON.parse(data.toString());
+            } catch (e) {
+                // File missing or invalid: create default
+                console.log('[SYNAPSE] project_state.json not found, initializing default state...');
+
+                // Ensure data directory exists
+                const dataDirUri = vscode.Uri.joinPath(workspaceFolder.uri, 'data');
+                try {
+                    await vscode.workspace.fs.createDirectory(dataDirUri);
+                } catch (dirError) { /* ignore */ }
+
+                projectState = {
+                    project_name: workspaceFolder.name,
+                    canvas_state: {
+                        zoom_level: 1.0,
+                        offset: { x: 0, y: 0 },
+                        visible_layers: ['source', 'documentation']
+                    },
+                    nodes: [],
+                    edges: [],
+                    clusters: []
+                };
+
+                // Save default state
+                const normalizedJson = this.normalizeProjectState(projectState);
+                await vscode.workspace.fs.writeFile(projectStateUri, Buffer.from(normalizedJson, 'utf-8'));
+            }
 
             // 1. FileScanner 인스턴스 생성
             const scanner = new FileScanner();

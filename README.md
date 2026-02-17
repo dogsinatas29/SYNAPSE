@@ -157,6 +157,30 @@ SYNAPSE의 핵심 기능인 **드래그 앤 드롭 엣지 생성**으로 코드 
 - **롤백**: 시계 아이콘(History) 클릭 -> 원하는 시점의 되돌리기 버튼 클릭
     *   (브라우저 모드에서는 확인 창이 뜹니다)
 
+## 📦 VSIX Packaging & Installation
+
+직접 설치 파일(.vsix)을 생성하고 설치하는 방법입니다:
+
+### 1. 패키징 도구 설치
+```bash
+npm install -g @vscode/vsce
+```
+
+### 2. VSIX 파일 생성
+프로젝트 루트 디렉토리에서 아래 명령어를 실행합니다:
+```bash
+# vsce package 명령으로 .vsix 파일 생성
+npx vsce package --out synapse-extension.vsix
+```
+*주의: 패키징 과정에서 `repository` 정보나 `README.md` 관련 경고가 뜰 수 있으나, 'y'를 눌러 진행하면 설치 파일이 생성됩니다.*
+
+### 3. 확장 설치
+생성된 파일을 VS Code에 설치합니다:
+```bash
+code --install-extension synapse-extension.vsix
+```
+또는 VS Code의 확장 탭 -> `...` 메뉴 -> `Install from VSIX...`를 통해 설치할 수 있습니다.
+
 ## 🎥 Demo Video
 https://www.youtube.com/watch?v=Va4vZWkqC8E
 > *Click the image above to watch the full video on YouTube.*

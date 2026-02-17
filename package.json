@@ -4,6 +4,10 @@
     "description": "Visual architecture control engine for code visualization and design",
     "version": "0.1.0",
     "publisher": "synapse-team",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/dogsinatas29/SYNAPSE.git"
+    },
     "icon": "resources/synapse-icon.png",
     "engines": {
         "vscode": "^1.80.0"

@@ -87,6 +87,7 @@ export interface ProjectStructure {
         type: EdgeType;
         label?: string;
     }[];
+    includePaths?: string[];   // 스캔 범위 제한
 }
 
 /**

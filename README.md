@@ -7,16 +7,32 @@ SYNAPSE는 **Google Antigravity**를 위해 구축된 차세대 확장 프로그
 
 ## 🚀 Key Features
 
-- **🌐 Topology View**: 파일 간의 의존성 및 물리적 연결 상태를 박스와 선으로 조감.
-- **🌳 Tree View**: 프로젝트의 폴더 구조를 계층적으로 시각화.
-- **➡️ Flow View**: 특정 이벤트나 함수의 실행 흐름을 선형적/분기적 순서도로 투사.
-- **🧊 Smart Clustering**: 노드들을 기능적 덩어리로 묶어 인지 부하 감소.
-- **⚡ Smart Push (Collision Avoidance)**: 클러스터 영역 내 불필요한 노드 중첩을 자동으로 방지하는 물리 엔진.
-- **🔍 Semantic Zooming (LOD)**: 줌 레벨에 따라 정보 밀도를 최적화하여 수천 개의 노드 조작 가능.
-- **💾 Persistence**: 모든 시각적 배치와 클러스터 상태를 `project_state.json`에 영구 저장.
-- **🛠️ Standalone Bridge**: VS Code 없이 브라우저 단독으로 구동 가능한 개발 환경 제공.
+- **🌐 Topology View**: 프로젝트의 폴더 구조 및 파일 간의 의존성을 노드-엣지 네트워크로 시각화.
+- **🌳 Tree View**: 프로젝트 구조를 계층적으로 조감.
+- **➡️ Flow View**: 특정 로직의 실행 흐름을 순서도로 투사.
+- **🛡️ Node Diet (Smart Scanning)**: `.venv`, `node_modules` 등 불필요한 폴더를 자동으로 무시하여 핵심 소스에 집중.
+- **📂 Auto Folder Clustering**: 디렉토리 구조에 기반한 자동 그룹화로 대규모 프로젝트 가독성 보장.
+- **🔄 Deep Reset**: 엉망이 된 배치를 즉시 초기화하고 최신 필터로 재스캔하는 심층 초기화.
+- **🎯 Scan Scope Control**: `GEMINI.md`에서 `Scan Paths`를 지정하여 원하는 영역만 정밀 스캔 가능.
+- **🔍 Semantic Zooming (LOD)**: 수천 개의 노드도 성능 저하 없이 조작 가능한 단계별 상세도 제어.
+- **💾 Persistence**: 모든 시각적 상태를 `project_state.json`에 영구 저장 및 Git 관리.
+- **🛠️ Standalone Bridge**: VS Code 없이 브라우저 단독 구동 모드 지원.
 
-## 🖼️ Visual Overviews
+## 🗂️ Language Support
+
+SYNAPSE는 다국어 아키텍처 분석을 지원합니다:
+- 🐍 **Python**: `.py` 파일 분석 및 가상환경 필터링 지원
+- 🦀 **Rust**: `Cargo` 프로젝트 구조 및 `.rs` 로직 분석
+- 🇨 **C / C++**: 헤더 및 소스 파일 의존성 분석 (ReDoS 방지 최적화 완료)
+- 📜 **TypeScript / JavaScript**: 기본 지원 및 폴더링 최적화
+
+## 🛠️ Technology Stack
+
+- **Base**: Antigravity (Advanced Agentic Coding IDE)
+- **Language**: TypeScript
+- **Engine**: HTML5 Canvas API (High Performance Rendering)
+- **Scanner**: Regex-based Fast Multi-Language Scanner
+- **Architecture**: Visual-First Design with LSP integration
 
 ### 🌐 Graph View
 LLM의 추론 논리와 파일 간의 물리적 연결 상태를 노드-엣지 네트워크로 시각화합니다.
@@ -66,6 +82,19 @@ LLM의 추론 논리와 파일 간의 물리적 연결 상태를 노드-엣지 �
    ```
    - API Server: `http://localhost:3000`
    - UI Server: `http://localhost:8080`
+
+5. **Installation (Production)**
+    If you want to use the extension permanently without running the source code:
+    ```bash
+    # 1. Install vsce globally
+    npm install -g @vscode/vsce
+
+    # 2. Package the extension
+    npx vsce package
+
+    # 3. Install in VS Code
+    # Open VS Code Extension tab -> Click '...' -> 'Install from VSIX...' -> Select the generated .vsix file
+    ```
 
 ## 🎯 Usage Guide
 

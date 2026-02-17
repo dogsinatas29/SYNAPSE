@@ -1,36 +1,87 @@
-/**
- * 초기 순서도 생성기
- * 프로젝트 구조를 기반으로 초기 노드와 엣지 생성
- */
-
-import { ProjectStructure, Node, Edge, NodeType, EdgeType } from '../types/schema';
+import { ProjectStructure, Node, Edge, Cluster, NodeType, EdgeType } from '../types/schema';
+import * as path from 'path';
 
 export class FlowchartGenerator {
     private nodeIdCounter = 0;
     private edgeIdCounter = 0;
+    private clusterIdCounter = 0;
 
     /**
-     * 프로젝트 구조로부터 초기 순서도 생성
+     * 프로젝트 구조로부터 초기 순서도 생성 (클러스터링 포함)
      */
     public generateInitialFlowchart(structure: ProjectStructure): {
         nodes: Node[];
         edges: Edge[];
+        clusters: Cluster[];
     } {
         const nodes: Node[] = [];
         const edges: Edge[] = [];
+        const clusters: Cluster[] = [];
 
-        // 파일별 노드 생성
-        structure.files.forEach((file, index) => {
-            const node = this.createNode(
-                file.path,
-                file.type,
-                file.description,
-                index
-            );
-            nodes.push(node);
+        // 1. 파일들을 디렉토리별로 그룹화
+        const directoryGroups = new Map<string, typeof structure.files>();
+
+        structure.files.forEach(file => {
+            const dir = path.dirname(file.path);
+            const group = directoryGroups.get(dir) || [];
+            group.push(file);
+            directoryGroups.set(dir, group);
         });
 
-        // 의존성 기반 엣지 생성
+        // 2. 각 디렉토리별로 클러스터 및 노드 생성
+        let clusterIdx = 0;
+        const totalClusters = directoryGroups.size;
+        const clusterCols = Math.ceil(Math.sqrt(totalClusters));
+
+        directoryGroups.forEach((files, dirName) => {
+            const clusterId = `cluster_${this.clusterIdCounter++}`;
+            const clusterLabel = dirName === '.' ? 'ROOT' : dirName;
+
+            // 클러스터 위치 계산 (그리드)
+            const clusterSpacingX = 600;
+            const clusterSpacingY = 400;
+            const clusterX = (clusterIdx % clusterCols) * clusterSpacingX;
+            const clusterY = Math.floor(clusterIdx / clusterCols) * clusterSpacingY;
+
+            const clusterNodes: string[] = [];
+            const nodeCount = files.length;
+            const nodeCols = Math.ceil(Math.sqrt(nodeCount));
+            const nodeSpacing = 150;
+
+            files.forEach((file, fIdx) => {
+                const nodeX = (fIdx % nodeCols) * nodeSpacing + 50;
+                const nodeY = Math.floor(fIdx / nodeCols) * nodeSpacing + 50;
+
+                const node = this.createNode(
+                    file.path,
+                    file.type,
+                    file.description,
+                    clusterX + nodeX,
+                    clusterY + nodeY,
+                    clusterId
+                );
+                nodes.push(node);
+                clusterNodes.push(node.id);
+            });
+
+            // 클러스터 정보 생성
+            clusters.push({
+                id: clusterId,
+                label: clusterLabel,
+                collapsed: false,
+                bounds: {
+                    x: clusterX,
+                    y: clusterY,
+                    width: nodeCols * nodeSpacing + 100,
+                    height: Math.ceil(nodeCount / nodeCols) * nodeSpacing + 100
+                },
+                children: clusterNodes
+            });
+
+            clusterIdx++;
+        });
+
+        // 3. 의존성 기반 엣지 생성
         structure.dependencies.forEach((dep) => {
             const fromNode = nodes.find(n => n.data.file === dep.from);
             const toNode = nodes.find(n => n.data.file === dep.to);
@@ -41,29 +92,26 @@ export class FlowchartGenerator {
             }
         });
 
-        console.log('✅ 초기 순서도 생성 완료');
+        console.log('✅ 초기 순서도 생성 완료 (Clustered)');
         console.log(`  - 노드: ${nodes.length}개`);
         console.log(`  - 엣지: ${edges.length}개`);
+        console.log(`  - 클러스터: ${clusters.length}개`);
 
-        return { nodes, edges };
+        return { nodes, edges, clusters };
     }
 
     /**
-     * 노드 생성
+     * 노드 생성 (명시적 좌표 지정)
      */
     private createNode(
         filePath: string,
         type: NodeType,
         description: string,
-        index: number
+        x: number,
+        y: number,
+        clusterId?: string
     ): Node {
         const id = `node_${this.nodeIdCounter++}`;
-
-        // 노드 위치 자동 배치 (간단한 그리드 레이아웃)
-        const cols = 3;
-        const spacing = 200;
-        const x = (index % cols) * spacing + 100;
-        const y = Math.floor(index / cols) * spacing + 100;
 
         // 타입별 색상
         const colorMap: Record<NodeType, string> = {
@@ -77,17 +125,18 @@ export class FlowchartGenerator {
         return {
             id,
             type,
-            status: 'proposed',     // 초기에는 제안 상태
+            status: 'proposed',
             position: { x, y },
             data: {
                 file: filePath,
-                label: filePath.split('/').pop() || filePath,
+                label: path.basename(filePath),
                 description,
-                color: colorMap[type]
+                color: colorMap[type],
+                cluster_id: clusterId
             },
             visual: {
-                opacity: 0.5,         // 반투명 (제안 상태)
-                dashArray: '5,5'      // 점선
+                opacity: 0.5,
+                dashArray: '5,5'
             }
         };
     }
@@ -95,11 +144,7 @@ export class FlowchartGenerator {
     /**
      * 엣지 생성
      */
-    private createEdge(
-        fromId: string,
-        toId: string,
-        type: EdgeType
-    ): Edge {
+    private createEdge(fromId: string, toId: string, type: EdgeType): Edge {
         const id = `edge_${this.edgeIdCounter++}`;
 
         // 타입별 스타일
@@ -110,17 +155,17 @@ export class FlowchartGenerator {
             conditional: { color: '#d3869b', thickness: 1 }
         };
 
-        const style = styleMap[type];
+        const style = styleMap[type] || styleMap['dependency'];
 
         return {
             id,
             from: fromId,
             to: toId,
             type,
-            is_approved: false,     // 초기에는 미승인
+            is_approved: false,
             visual: {
                 thickness: style.thickness,
-                style: 'dashed',      // 제안 상태는 점선
+                style: 'dashed',
                 color: style.color,
                 animated: false
             }
@@ -128,12 +173,11 @@ export class FlowchartGenerator {
     }
 
     /**
-     * Mermaid 다이어그램 생성
+     * Mermaid 다이어그램 생성 (기존 호환성 유지)
      */
     public generateMermaidDiagram(nodes: Node[], edges: Edge[]): string {
         let mermaid = 'flowchart TD\n';
 
-        // 노드 정의
         nodes.forEach(node => {
             const label = node.data.label;
             const shape = this.getNodeShape(node.type);
@@ -142,7 +186,6 @@ export class FlowchartGenerator {
 
         mermaid += '\n';
 
-        // 엣지 정의
         edges.forEach(edge => {
             const arrow = edge.visual.style === 'dashed' ? '-.->' : '-->';
             mermaid += `  ${edge.from} ${arrow} ${edge.to}\n`;
@@ -151,23 +194,14 @@ export class FlowchartGenerator {
         return mermaid;
     }
 
-    /**
-     * 노드 타입별 Mermaid 형태
-     */
     private getNodeShape(type: NodeType): [string, string] {
         switch (type) {
-            case 'source':
-                return ['[', ']'];        // 사각형
-            case 'cluster':
-                return ['[[', ']]'];      // 서브루틴
-            case 'documentation':
-                return ['[/', '/]'];      // 평행사변형
-            case 'test':
-                return ['{', '}'];        // 다이아몬드
-            case 'config':
-                return ['[(', ')]'];      // 원통
-            default:
-                return ['[', ']'];
+            case 'source': return ['[', ']'];
+            case 'cluster': return ['[[', ']]'];
+            case 'documentation': return ['[/', '/]'];
+            case 'test': return ['{', '}'];
+            case 'config': return ['[(', ')]'];
+            default: return ['[', ']'];
         }
     }
 }

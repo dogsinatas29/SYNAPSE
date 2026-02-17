@@ -143,6 +143,9 @@ export class CanvasPanel {
                             await this.handleRollback(message.snapshotId);
                         }
                         return;
+                    case 'reBootstrap':
+                        await this.handleReBootstrap();
+                        return;
                 }
             },
             null,
@@ -365,6 +368,44 @@ export class CanvasPanel {
         } catch (error) {
             console.error('Failed to delete edge:', error);
             vscode.window.showErrorMessage(`Failed to delete edge: ${error}`);
+        }
+    }
+
+    private async handleReBootstrap() {
+        const workspaceFolder = this._workspaceFolder;
+        if (!workspaceFolder) return;
+
+        const confirm = await vscode.window.showWarningMessage(
+            '프로젝트 지도를 초기화하고 다시 스캔하시겠습니까? (수동으로 작업한 내용은 삭제됩니다)',
+            { modal: true },
+            'Deep Reset'
+        );
+
+        if (confirm === 'Deep Reset') {
+            try {
+                const projectStateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'project_state.json');
+
+                // 1. 기존 데이터 삭제 (또는 백업 후 생성)
+                if (fs.existsSync(projectStateUri.fsPath)) {
+                    fs.unlinkSync(projectStateUri.fsPath);
+                }
+
+                console.log('[SYNAPSE] Re-bootstrapping project...');
+
+                // 2. 새로운 메커니즘으로 부트스트랩 재실행
+                const engine = new BootstrapEngine();
+                const result = await engine.liteBootstrap(workspaceFolder.uri.fsPath);
+
+                if (result.success) {
+                    vscode.window.showInformationMessage('Project maps re-generated successfully with folder clustering.');
+                    await this.sendProjectState();
+                } else {
+                    throw new Error(result.error);
+                }
+            } catch (error) {
+                console.error('Failed to re-bootstrap:', error);
+                vscode.window.showErrorMessage(`Re-bootstrap failed: ${error}`);
+            }
         }
     }
 
@@ -891,16 +932,21 @@ export class CanvasPanel {
             const scanner = new FileScanner();
 
             // 2. 각 노드에 대해 실제 파일 분석 수행
+            console.log(`[SYNAPSE] Starting file scan for ${projectState.nodes.length} nodes...`);
             for (const node of projectState.nodes) {
                 if (node.data && (node.data.path || node.data.file)) {
                     const relativePath = node.data.path || node.data.file;
                     const filePath = path.join(workspaceFolder.uri.fsPath, relativePath);
+
+                    console.log(`[SYNAPSE] Scanning node: ${node.id} (${relativePath})`);
                     const summary = scanner.scanFile(filePath);
+                    console.log(`[SYNAPSE] Scan complete for ${node.id}: ${summary.classes.length} classes, ${summary.functions.length} functions, ${summary.references.length} refs`);
 
                     // 노드 데이터에 요약본 추가
                     node.data.summary = summary;
                 }
             }
+            console.log('[SYNAPSE] All nodes scanned successfully.');
 
             // 3. 자동 엣지(의존성) 발견 로직 - 실시간 생성, 저장하지 않음!
             const discoveredEdges: any[] = [];
@@ -914,7 +960,14 @@ export class CanvasPanel {
                 nodeMap.set(fullPath, n.id);
                 nodeMap.set(fileName, n.id);
                 nodeMap.set(fileNameNoExt, n.id);
+
+                // Add sub-parts for better matching (e.g. "Namespace::Class" -> "Class")
+                if (n.data.label && n.data.label.includes('::')) {
+                    const parts = n.data.label.split('::');
+                    nodeMap.set(parts[parts.length - 1], n.id);
+                }
             });
+            console.log(`[SYNAPSE] Node map built with ${nodeMap.size} keys.`);
 
             projectState.nodes.forEach((sourceNode: any) => {
                 if (sourceNode.data.summary && sourceNode.data.summary.references) {

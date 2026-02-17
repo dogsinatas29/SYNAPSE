@@ -3582,6 +3582,14 @@ function initCanvas() {
         engine.render();
     });
 
+    document.getElementById('btn-rebootstrap')?.addEventListener('click', () => {
+        if (typeof vscode !== 'undefined') {
+            vscode.postMessage({ command: 'reBootstrap' });
+        } else {
+            alert('Deep Reset is only available in VS Code mode.');
+        }
+    });
+
     document.getElementById('btn-group')?.addEventListener('click', () => {
         engine.groupSelection();
     });

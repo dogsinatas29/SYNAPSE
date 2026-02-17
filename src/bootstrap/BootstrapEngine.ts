@@ -30,15 +30,28 @@ export class BootstrapEngine {
 
         try {
             // 1. GEMINI.md 파싱
-            const structure = await this.parser.parseGeminiMd(geminiMdPath);
+            let structure = await this.parser.parseGeminiMd(geminiMdPath);
 
-            // 2. 디렉토리 구조 생성
+            // 2. 스마트 폴백: GEMINI.md에 파일 정보가 전혀 없는 경우 autoDiscover 실행
+            if (structure.files.length === 0) {
+                console.log('⚠️ [SYNAPSE] GEMINI.md contains no file definitions. Falling back to Auto-Discovery...');
+                const discoveredState = await this.autoDiscover(projectRoot, structure.includePaths);
+
+                // 검색된 노드 정보를 structure 형식으로 변환 (createStructure 지원을 위해)
+                structure.files = discoveredState.nodes.map(n => ({
+                    path: n.data.file || '',
+                    type: n.type as any,
+                    description: n.data.description || ''
+                })).filter(f => f.path);
+            }
+
+            // 3. 디렉토리 구조 생성
             if (autoApprove) {
                 await this.parser.createStructure(projectRoot, structure);
             }
 
-            // 3. 초기 순서도 생성
-            const { nodes, edges } = this.flowchartGen.generateInitialFlowchart(structure);
+            // 4. 초기 순서도 및 클러스터 생성
+            const { nodes, edges, clusters } = this.flowchartGen.generateInitialFlowchart(structure);
 
             // 프로젝트 상태 저장
             const projectState: ProjectState = {
@@ -51,7 +64,7 @@ export class BootstrapEngine {
                 },
                 nodes,
                 edges,
-                clusters: []
+                clusters
             };
 
             const statePath = path.join(projectRoot, 'data', 'project_state.json');
@@ -118,8 +131,11 @@ export class BootstrapEngine {
     /**
      * 프로젝트 자동 발견 (Headless Bootstrap)
      */
-    public async autoDiscover(projectRoot: string): Promise<ProjectState> {
+    public async autoDiscover(projectRoot: string, includePaths?: string[]): Promise<ProjectState> {
         console.log(`🔍 [SYNAPSE] Auto-discovering source files in: ${projectRoot}`);
+        if (includePaths && includePaths.length > 0) {
+            console.log(`  - Limited to paths: ${includePaths.join(', ')}`);
+        }
 
         const structure: any = {
             folders: [],
@@ -128,13 +144,30 @@ export class BootstrapEngine {
         };
 
         const scanDir = (dir: string, relPath: string = '') => {
+            if (!fs.existsSync(dir)) return;
             const files = fs.readdirSync(dir);
             for (const file of files) {
-                // Ignore common directories and data/project_state.json
-                if (['node_modules', '.git', 'build', 'dist', 'data', 'out'].includes(file)) continue;
-
                 const fullPath = path.join(dir, file);
-                const currentRelPath = path.join(relPath, file);
+                const currentRelPath = path.join(relPath, file).replace(/\\/g, '/');
+
+                // [Node Diet] 파이썬 가상환경, 캐시, 빌드 폴더 등 무시
+                const ignoreFolders = [
+                    'node_modules', '.git', 'build', 'dist', 'data', 'out',
+                    '.venv', 'venv', 'env', '__pycache__', '.pytest_cache',
+                    '.idea', '.vscode', '.github', 'target', 'vendor',
+                    'bin', 'obj'
+                ];
+                if (ignoreFolders.includes(file)) continue;
+
+                // [Scan Scope] includePaths가 지정된 경우, 해당 경로에 포함되지 않는 루트 직계 폴더/파일 무시
+                if (includePaths && includePaths.length > 0 && relPath === '') {
+                    const isIncluded = includePaths.some(p => {
+                        const normalizedP = p.replace(/^\.\//, '').replace(/\/$/, '');
+                        return file === normalizedP || file.startsWith(normalizedP + '/');
+                    });
+                    if (!isIncluded) continue;
+                }
+
                 const stat = fs.statSync(fullPath);
 
                 if (stat.isDirectory()) {
@@ -163,7 +196,7 @@ export class BootstrapEngine {
             console.error('[SYNAPSE] Scan error:', e);
         }
 
-        const { nodes, edges } = this.flowchartGen.generateInitialFlowchart(structure);
+        const { nodes, edges, clusters } = this.flowchartGen.generateInitialFlowchart(structure);
 
         return {
             project_name: path.basename(projectRoot),
@@ -175,7 +208,7 @@ export class BootstrapEngine {
             },
             nodes,
             edges,
-            clusters: []
+            clusters
         };
     }
 

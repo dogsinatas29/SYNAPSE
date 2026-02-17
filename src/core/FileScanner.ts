@@ -27,14 +27,19 @@ export class FileScanner {
             const ext = path.extname(filePath);
 
             if (ext === '.py') {
+                console.log(`[SYNAPSE] Parsing Python: ${filePath}`);
                 this.parsePython(content, summary);
             } else if (['.ts', '.js'].includes(ext)) {
+                console.log(`[SYNAPSE] Parsing JavaScript/TypeScript: ${filePath}`);
                 this.parseJavaScript(content, summary);
             } else if (['.cpp', '.h', '.c', '.hpp', '.cc'].includes(ext)) {
+                console.log(`[SYNAPSE] Parsing C/C++: ${filePath}`);
                 this.parseCpp(content, summary);
             } else if (ext === '.rs') {
+                console.log(`[SYNAPSE] Parsing Rust: ${filePath}`);
                 this.parseRust(content, summary);
             }
+            console.log(`[SYNAPSE] Finished parsing: ${path.basename(filePath)}`);
         } catch (error) {
             console.error(`[SYNAPSE] Failed to scan file ${filePath}:`, error);
         }
@@ -113,12 +118,13 @@ export class FileScanner {
             }
         }
 
-        // C/C++ 함수 (반환 타입, 포인터, 레퍼런스, 네임스페이스 포함)
-        const funcRegex = /^\s*[\w\s:*&<>]+?\s+([\w::]+)\s*\((?:[^()]*|\([^()]*\))*\)\s*(?:const)?\s*{/gm;
+        // C/C++ 함수 (정의 { 와 선언 ; 모두 지원, ReDoS 방지를 위해 단순화)
+        // 기본 구조: 반환타입 [공백] 함수명 (인자) [const] { 또는 ;
+        const funcRegex = /^\s*(?:[\w\s:*&<>]+\s+)?([\w::]+)\s*\([^)]*\)\s*(?:const)?\s*(?={|;)/gm;
         while ((match = funcRegex.exec(content)) !== null) {
             const funcName = match[1];
             // 키워드 제외
-            if (funcName && !['if', 'while', 'for', 'switch', 'return', 'catch'].includes(funcName)) {
+            if (funcName && !['if', 'while', 'for', 'switch', 'return', 'catch', 'template', 'using', 'static', 'explicit'].includes(funcName)) {
                 if (!summary.functions.includes(funcName)) {
                     summary.functions.push(funcName);
                 }

@@ -38,11 +38,20 @@ export class GeminiParser {
         const structure: ProjectStructure = {
             folders: [],
             files: [],
-            dependencies: []
+            dependencies: [],
+            includePaths: []
         };
 
-        // 1. 기존 패턴 (📂, 📄)
-        const folderPattern = /📂\s+([^\s/]+)\//g;
+        // 0. 스캔 경로(Include Paths) 추출
+        const scanPathPattern = /(?:Scan Paths|스캔 경로|Scope):\s*([^\n]+)/i;
+        const scanPathMatch = content.match(scanPathPattern);
+        if (scanPathMatch) {
+            structure.includePaths = scanPathMatch[1].split(',').map(p => p.trim());
+            console.log(`🔍 [SYNAPSE] Found Scan Paths: ${structure.includePaths.join(', ')}`);
+        }
+
+        // 1. 기존 패턴 (📂, 📄) + 확장된 필드 패턴
+        const folderPattern = /(?:📂|\*\*Folder\*\*|Folder:)\s+([^\s/]+)\/?/g;
         let match;
         while ((match = folderPattern.exec(content)) !== null) {
             const folderName = match[1];
@@ -51,14 +60,18 @@ export class GeminiParser {
             }
         }
 
-        const filePattern = /📄\s+([^\s]+\.(py|ts|json|js|md|sql|cpp|h|hpp|cc|c|rs))/g;
+        // 파일 패턴 확장: 📄 아이콘, 불렛 포인트, 백틱, 굵게 표시 등 지원
+        const filePattern = /(?:📄|[-\*]\s+[`]?|파일:\s*)([a-zA-Z0-9_./-]+\.(py|ts|json|js|md|sql|cpp|h|hpp|cc|c|rs|txt|xml|yaml|yml))[`]?/g;
         while ((match = filePattern.exec(content)) !== null) {
             const fileName = match[1];
-            const ext = path.extname(fileName).slice(1);
+            // 중복 체크
+            if (structure.files.find(f => f.path === fileName)) continue;
+
+            const ext = path.extname(fileName).slice(1).toLowerCase();
             let type: NodeType = 'source';
-            if (ext === 'md') type = 'documentation';
-            if (ext === 'json') type = 'config';
-            if (fileName.includes('test')) type = 'test';
+            if (['md', 'txt'].includes(ext)) type = 'documentation';
+            if (['json', 'yaml', 'yml', 'xml'].includes(ext)) type = 'config';
+            if (fileName.toLowerCase().includes('test')) type = 'test';
 
             structure.files.push({
                 path: fileName,
@@ -68,21 +81,27 @@ export class GeminiParser {
         }
 
         // 2. 새로운 패턴 (NodeName: Description) - [Nodes] 섹션 이후
-        const nodesSection = content.split(/1\.\s+아키텍처 토폴로지|\[Nodes\]/i)[1];
+        const nodesSection = content.split(/1\.\s+아키텍처 토폴로지|\[Nodes\]|## 주요 파일|## 프로젝트 개요/i)[1];
         if (nodesSection) {
-            const nodesContent = nodesSection.split(/2\.\s+데이터 흐름|\[Edges\]/i)[0];
+            // 다음 섹션 이전까지만 파싱
+            const nodesContent = nodesSection.split(/2\.\s+데이터 흐름|\[Edges\]|## 개발 가이드라인|## 에이전트 지침/i)[0];
             const nodeLines = nodesContent.split('\n');
             nodeLines.forEach(line => {
-                const nodeMatch = line.match(/^([a-zA-Z0-9_]+):\s*(.*)/);
+                // 예: - dungeon/Start.py: 설명
+                const nodeMatch = line.match(/^\s*[-\*]?\s*[`]?([a-zA-Z0-9_./-]+\.[a-z]+)[`]?:\s*(.*)/);
                 if (nodeMatch) {
-                    const nodeName = nodeMatch[1];
+                    const filePath = nodeMatch[1];
                     const description = nodeMatch[2].trim();
 
-                    // 파일 경로 추측 (이미 있으면 건너뜀)
-                    if (!structure.files.find(f => f.path.startsWith(nodeName))) {
+                    if (!structure.files.find(f => f.path === filePath)) {
+                        const ext = path.extname(filePath).slice(1).toLowerCase();
+                        let type: NodeType = 'source';
+                        if (['md', 'txt'].includes(ext)) type = 'documentation';
+                        if (['json', 'yaml', 'yml'].includes(ext)) type = 'config';
+
                         structure.files.push({
-                            path: `${nodeName}.ts`, // 기본값은 .ts
-                            type: 'source',
+                            path: filePath,
+                            type,
                             description: description
                         });
                     }
@@ -91,36 +110,27 @@ export class GeminiParser {
         }
 
         // 3. 엣지 패턴 (NodeA --> NodeB: Label)
-        const edgePattern = /([a-zA-Z0-9_]+)\s*-->\s*([a-zA-Z0-9_]+)(?::\s*(.*))?/g;
+        // 확장자가 없는 경우를 위해 캡처 후 나중에 처리
+        const edgePattern = /([a-zA-Z0-9_./-]+)\s*(?:-->|->)\s*([a-zA-Z0-9_./-]+)(?::\s*(.*))?/g;
         while ((match = edgePattern.exec(content)) !== null) {
             const from = match[1];
             const to = match[2];
             const label = match[3] || '';
 
+            // 만약 파일 목록에 있으면 그 경로 그대로 사용, 없으면 추측
+            const fromFile = structure.files.find(f => f.path.includes(from))?.path || from;
+            const toFile = structure.files.find(f => f.path.includes(to))?.path || to;
+
             structure.dependencies.push({
-                from: `${from}.ts`,
-                to: `${to}.ts`,
+                from: fromFile,
+                to: toFile,
                 type: 'dependency',
                 label: label
             });
         }
 
-        // 기본 구조가 없으면 샘플 구조 생성 (폴더나 파일 중 하나라도 비어있으면 트리거)
-        if (structure.folders.length === 0 || structure.files.length === 0) {
-            structure.folders = ['src', 'data', 'assets'];
-            structure.files = [
-                { path: 'src/main.ts', type: 'source', description: '메인 엔트리 포인트' },
-                { path: 'src/types/schema.ts', type: 'source', description: '데이터 스키마' },
-                { path: 'data/config.json', type: 'config', description: '설정 파일' },
-                { path: 'README.md', type: 'documentation', description: '프로젝트 문서' }
-            ];
-
-            structure.dependencies = [
-                { from: 'src/main.ts', to: 'src/types/schema.ts', type: 'dependency' },
-                { from: 'src/main.ts', to: 'data/config.json', type: 'data_flow' }
-            ];
-        }
-
+        // NOTE: 하드코딩된 샘플 구조 로직 제거.
+        // 대신 BootstrapEngine에서 결과가 비어있으면 autoDiscover를 호출하도록 유도.
         return structure;
     }
 

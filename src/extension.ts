@@ -10,6 +10,7 @@ import { CanvasPanel } from './webview/CanvasPanel';
 import { BootstrapEngine } from './bootstrap/BootstrapEngine';
 
 import { client, setClient } from './client';
+import { PromptLogger } from './core/PromptLogger';
 
 export function activate(context: vscode.ExtensionContext) {
     try {
@@ -127,6 +128,54 @@ export function activate(context: vscode.ExtensionContext) {
             })
         );
 
+        // Command to log prompts (accessible from Canvas or other extensions)
+        const promptLogger = PromptLogger.getInstance();
+        context.subscriptions.push(
+            vscode.commands.registerCommand('synapse.logPrompt', async (args?: { prompt: string, title?: string, workspacePath?: string }) => {
+                let promptContent = args?.prompt;
+                let title = args?.title;
+                let projectRoot = args?.workspacePath;
+
+                // 1. Interactive Mode (Keybinding triggered)
+                if (!promptContent) {
+                    // Get Prompt Content
+                    promptContent = await vscode.window.showInputBox({
+                        placeHolder: 'Enter your design decision, goal, or reasoning...',
+                        prompt: 'Log Prompt to Architecture History',
+                        ignoreFocusOut: true
+                    }) || '';
+
+                    if (!promptContent) {
+                        return; // User cancelled
+                    }
+
+                    // Get Title (Optional)
+                    const config = vscode.workspace.getConfiguration('synapse');
+                    const autoSave = config.get<boolean>('prompt.autoSave');
+
+                    if (!autoSave && !title) {
+                        title = await vscode.window.showInputBox({
+                            placeHolder: 'Enter a title (optional)...',
+                            prompt: 'Title for this log (Press Enter to skip)',
+                            ignoreFocusOut: true
+                        });
+                    }
+                }
+
+                if (!projectRoot) {
+                    const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+                    projectRoot = workspaceFolder?.uri.fsPath;
+                }
+
+                if (projectRoot && promptContent) {
+                    await promptLogger.logPrompt(projectRoot, promptContent, title);
+                    vscode.window.showInformationMessage('Prompt logged successfully.');
+                } else if (!projectRoot) {
+                    vscode.window.showErrorMessage('No workspace open to log prompt');
+                }
+            })
+        );
+
         // Auto-open canvas and sync logic
         const workspaceFolders = vscode.workspace.workspaceFolders;
         if (workspaceFolders) {
@@ -238,14 +287,27 @@ function setupFileWatcher(workspaceFolder: vscode.WorkspaceFolder, context: vsco
         new vscode.RelativePattern(workspaceFolder, 'src/**/*.{py,ts,js}')
     );
 
-    sourceWatcher.onDidChange(async () => {
-        console.log('[SYNAPSE] Source file changed, refreshing canvas state...');
+    // Prompt files watcher (auto-refresh canvas state for history nodes)
+    const promptWatcher = vscode.workspace.createFileSystemWatcher(
+        new vscode.RelativePattern(workspaceFolder, 'prompts/**/*.md')
+    );
+
+    const refreshCanvas = async () => {
+        console.log('[SYNAPSE] File changed, refreshing canvas state...');
         if (CanvasPanel.currentPanel) {
             await CanvasPanel.currentPanel.refreshState();
         }
-    });
+    };
 
-    context.subscriptions.push(watcher, sourceWatcher);
+    sourceWatcher.onDidChange(refreshCanvas);
+    sourceWatcher.onDidCreate(refreshCanvas);
+    sourceWatcher.onDidDelete(refreshCanvas);
+
+    promptWatcher.onDidCreate(refreshCanvas);
+    promptWatcher.onDidChange(refreshCanvas);
+    promptWatcher.onDidDelete(refreshCanvas);
+
+    context.subscriptions.push(watcher, sourceWatcher, promptWatcher);
 }
 
 async function liteBootstrap(context: vscode.ExtensionContext, folder?: vscode.WorkspaceFolder) {

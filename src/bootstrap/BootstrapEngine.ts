@@ -7,15 +7,18 @@ import * as path from 'path';
 import * as fs from 'fs';
 import { GeminiParser } from '../core/GeminiParser';
 import { FlowchartGenerator } from '../core/FlowchartGenerator';
+import { FileScanner } from '../core/FileScanner'; // Import Scanner
 import { BootstrapResult, ProjectState, NodeType } from '../types/schema';
 
 export class BootstrapEngine {
     private parser: GeminiParser;
     private flowchartGen: FlowchartGenerator;
+    private fileScanner: FileScanner; // Add Scanner
 
     constructor() {
         this.parser = new GeminiParser();
         this.flowchartGen = new FlowchartGenerator();
+        this.fileScanner = new FileScanner(); // Initialize
     }
 
     /**
@@ -43,6 +46,19 @@ export class BootstrapEngine {
                     type: n.type as any,
                     description: n.data.description || ''
                 })).filter(f => f.path);
+
+                // 의존성 정보 매핑 (중요: autoDiscover에서 찾아낸 엣지들을 structure에 반영)
+                // Note: discoveredState.edges has {from, to, type}. structure.dependencies needs file paths.
+                // We need to map node IDs back to file paths.
+                const nodeMap = new Map<string, string>();
+                discoveredState.nodes.forEach(n => nodeMap.set(n.id, n.data.file || ''));
+
+                structure.dependencies = discoveredState.edges.map(e => ({
+                    from: nodeMap.get(e.from) || '',
+                    to: nodeMap.get(e.to) || '',
+                    type: e.type,
+                    label: e.type
+                })).filter(d => d.from && d.to);
             }
 
             // 3. 디렉토리 구조 생성
@@ -159,7 +175,7 @@ export class BootstrapEngine {
                 ];
                 if (ignoreFolders.includes(file)) continue;
 
-                // [Scan Scope] includePaths가 지정된 경우, 해당 경로에 포함되지 않는 루트 직계 폴더/파일 무시
+                // [Scan Scope] includePaths가 지정된 경우
                 if (includePaths && includePaths.length > 0 && relPath === '') {
                     const isIncluded = includePaths.some(p => {
                         const normalizedP = p.replace(/^\.\//, '').replace(/\/$/, '');
@@ -188,9 +204,23 @@ export class BootstrapEngine {
                         if (['.json', '.yaml', '.yml', '.toml'].includes(ext)) type = 'config';
 
                         structure.files.push({
-                            path: currentRelPath.replace(/\\/g, '/'), // Force forward slashes
+                            path: currentRelPath.replace(/\\/g, '/'),
                             type,
                             description: type === 'history' ? `Prompt: ${file}` : `${file} (Auto-detected)`
+                        });
+
+                        // [Deep Scan] 의존성 분석
+                        const summary = this.fileScanner.scanFile(fullPath);
+
+                        // 참조(Import) 기반 의존성 추가
+                        summary.references.forEach(ref => {
+                            // 단순화: 참조된 이름이 파일명과 일치하는지 확인 (상대 경로 고려 필요하지만 여기선 단순 매칭)
+                            // 실제로는 경로 해석 로직이 필요함. 여기서는 "추정" 의존성으로 추가.
+                            structure.dependencies.push({
+                                from: currentRelPath.replace(/\\/g, '/'),
+                                to: ref, // 나중에 실제 파일 경로와 매칭해야 함
+                                type: 'dependency'
+                            });
                         });
                     }
                 }
@@ -199,6 +229,38 @@ export class BootstrapEngine {
 
         try {
             scanDir(projectRoot);
+
+            // Re-process dependencies to match actual file paths
+            const filePaths = new Set(structure.files.map((f: any) => f.path));
+            const validDependencies: any[] = [];
+
+            structure.dependencies.forEach((dep: any) => {
+                // 'ref' might be a module name or partial path. 
+                // Try to find a file that ends with this name (naive resolution)
+                // or exactly matches.
+
+                // 1. Exact match
+                if (filePaths.has(dep.to)) {
+                    validDependencies.push(dep);
+                    return;
+                }
+
+                // 2. Fuzzy match (reference 'User' -> 'src/models/User.ts')
+                const match = structure.files.find((f: any) => {
+                    const fName = path.basename(f.path, path.extname(f.path));
+                    return fName === dep.to || f.path.endsWith(dep.to + '.ts') || f.path.endsWith(dep.to + '.js') || f.path.endsWith(dep.to + '.py');
+                });
+
+                if (match) {
+                    validDependencies.push({
+                        ...dep,
+                        to: match.path
+                    });
+                }
+            });
+
+            structure.dependencies = validDependencies;
+
         } catch (e) {
             console.error('[SYNAPSE] Scan error:', e);
         }

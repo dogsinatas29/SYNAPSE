@@ -2,7 +2,7 @@
     "name": "synapse-visual-architecture",
     "displayName": "SYNAPSE - Visual Architecture Engine",
     "description": "Visual architecture control engine for code visualization and design",
-    "version": "0.1.1",
+    "version": "0.1.4",
     "publisher": "synapse-team",
     "repository": {
         "type": "git",
@@ -18,9 +18,6 @@
     ],
     "main": "./dist/extension.js",
     "activationEvents": [
-        "onCommand:synapse.openCanvas",
-        "onCommand:synapse.bootstrap",
-        "onCommand:synapse.fitView",
         "onView:synapseExplorer",
         "onStartupFinished"
     ],
@@ -38,6 +35,18 @@
             {
                 "command": "synapse.fitView",
                 "title": "SYNAPSE: Fit View"
+            },
+            {
+                "command": "synapse.logPrompt",
+                "title": "SYNAPSE: Log Prompt",
+                "icon": "$(edit)"
+            }
+        ],
+        "keybindings": [
+            {
+                "command": "synapse.logPrompt",
+                "key": "ctrl+alt+m",
+                "mac": "cmd+alt+m"
             }
         ],
         "viewsContainers": {

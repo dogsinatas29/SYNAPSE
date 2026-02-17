@@ -158,8 +158,12 @@ Save and restore critical design points!
 
 Log your design decisions and prompts directly from the canvas.
 
+- **Log Prompt**: Press `Ctrl+Alt+M` (or run `Synapse: Log Prompt`) to capture your design thoughts.
 - **Save Prompt**: Click the `Save` icon (💾) on the toolbar.
 - **Content**: Enter the prompt or reasoning you want to save.
+- **Structured Parsing**: Automatically extracts `# Goal`, `# Decision`, etc.
+- **Git Integration**: Generated `.md` files in `prompts/` are automatically staged.
+- **Graph Linking**: Referenced files in the prompt appear as 'origin' edges in the canvas.
 - **Auto-Save Option**: Enable `synapse.prompt.autoSave` in settings to automatically save with a timestamp filename without asking for a title.
 
 ## ⚙️ How to Install (VS Code)

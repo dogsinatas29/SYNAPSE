@@ -932,11 +932,40 @@ class CanvasEngine {
             this.canvas.style.cursor = 'default';
         });
 
-        // Delete 키로 선택된 엣지 삭제
+        // Delete 키로 선택된 엣지 삭제 및 방향키 내비게이션
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Delete' && this.selectedEdge) {
                 console.log('[SYNAPSE] Deleting edge:', this.selectedEdge.id);
                 this.deleteEdge(this.selectedEdge.id);
+                return;
+            }
+
+            // 방향키 내비게이션 (Phase 7)
+            const panStep = e.shiftKey ? 200 : 50;
+            let moved = false;
+
+            switch (e.key) {
+                case 'ArrowLeft':
+                    this.pan(panStep, 0);
+                    moved = true;
+                    break;
+                case 'ArrowRight':
+                    this.pan(-panStep, 0);
+                    moved = true;
+                    break;
+                case 'ArrowUp':
+                    this.pan(0, panStep);
+                    moved = true;
+                    break;
+                case 'ArrowDown':
+                    this.pan(0, -panStep);
+                    moved = true;
+                    break;
+            }
+
+            if (moved) {
+                e.preventDefault();
+                this.render();
             }
         });
 

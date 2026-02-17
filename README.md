@@ -156,13 +156,20 @@ SYNAPSE의 핵심 기능인 **드래그 앤 드롭 엣지 생성**으로 코드 
 ### 1. Release에서 다운로드 (추천)
 [Releases 탭](https://github.com/dogsinatas29/SYNAPSE/releases)에서 가장 최신의 `.vsix` 파일을 다운로드하십시오.
 
-### 2. 설치 방법
-- **드래그 앤 드롭**: 다운로드한 `.vsix` 파일을 VS Code 창 안으로 직접 끌어다 놓으십시오.
-- **메뉴 활용**: 확장(Extensions) 탭 -> `...` 메뉴 -> `Install from VSIX...` 선택 후 파일 지정.
-- **CLI 명령어**:
-  ```bash
-  code --install-extension synapse-extension.vsix
-  ```
+### 2. VS Code에 로드 (설치 방법)
+다운로드한 `.vsix` 파일을 다음 중 하나의 방법으로 VS Code에 설치할 수 있습니다:
+
+*   **방법 A: 드래그 앤 드롭 (가장 간편)**
+    - 다운로드한 `synapse-extension.vsix` 파일을 열려 있는 **VS Code 창 위로 직접 드래그**하여 놓으십시오. 우측 하단에 설치 확인 알림이 뜨면 'Install'을 클릭합니다.
+*   **방법 B: 확장 메뉴 이용**
+    1. VS Code 좌측 사이드바에서 **확장(Extensions)** 아이콘을 클릭합니다 (단축키: `Ctrl+Shift+X`).
+    2. 확장 창 상단의 더보기 **`...` 메뉴** (Views and More Actions)를 클릭합니다.
+    3. **'Install from VSIX...'**를 선택한 후, 다운로드한 파일을 선택합니다.
+*   **방법 C: 터미널 명령어**
+    - 터미널(또는 명령 프롬프트)에서 아래 명령어를 입력합니다:
+    ```bash
+    code --install-extension synapse-extension.vsix
+    ```
 
 ---
 

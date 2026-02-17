@@ -94,6 +94,7 @@ export class BootstrapEngine {
             if (!fs.existsSync(stateDir)) {
                 fs.mkdirSync(stateDir, { recursive: true });
             }
+            console.log(`💾 [SYNAPSE] Saving initial project state to: ${statePath}`);
             fs.writeFileSync(statePath, JSON.stringify(projectState, null, 2), 'utf-8');
 
             return {

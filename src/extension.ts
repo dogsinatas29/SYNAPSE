@@ -79,38 +79,48 @@ export function activate(context: vscode.ExtensionContext) {
 
         context.subscriptions.push(
             vscode.commands.registerCommand('synapse.bootstrap', async (uri: vscode.Uri | undefined) => {
-                if (!uri) {
-                    // Determine URI from context if not provided (e.g. Command Palette)
-                    if (vscode.window.activeTextEditor && vscode.window.activeTextEditor.document.fileName.endsWith('GEMINI.md')) {
+                let targetFolder: vscode.WorkspaceFolder | undefined;
+
+                if (uri) {
+                    targetFolder = vscode.workspace.getWorkspaceFolder(uri);
+                } else if (vscode.window.activeTextEditor) {
+                    targetFolder = vscode.workspace.getWorkspaceFolder(vscode.window.activeTextEditor.document.uri);
+                    if (vscode.window.activeTextEditor.document.fileName.endsWith('GEMINI.md')) {
                         uri = vscode.window.activeTextEditor.document.uri;
-                    } else {
-                        const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
-                        if (workspaceFolder) {
-                            const geminiUri = vscode.Uri.joinPath(workspaceFolder.uri, 'GEMINI.md');
-                            try {
-                                await vscode.workspace.fs.stat(geminiUri);
-                                uri = geminiUri;
-                            } catch (e) {
-                                // GEMINI.md doesn't exist, offer Lite Bootstrap
-                                const action = await vscode.window.showInformationMessage(
-                                    'GEMINI.md not found. Would you like to use Lite Bootstrap to auto-discover the project?',
-                                    'Lite Bootstrap'
-                                );
-                                if (action === 'Lite Bootstrap') {
-                                    await liteBootstrap(context);
-                                    return;
-                                }
-                            }
-                        }
                     }
                 }
 
-                if (uri) {
+                if (!targetFolder) {
+                    targetFolder = vscode.workspace.workspaceFolders?.[0];
+                }
+
+                if (!targetFolder) {
+                    vscode.window.showErrorMessage('Please open a folder first.');
+                    return;
+                }
+
+                if (uri && uri.fsPath.endsWith('GEMINI.md')) {
                     await bootstrapFromGemini(uri, context);
+                } else {
+                    // Find GEMINI.md in target folder
+                    const geminiUri = vscode.Uri.joinPath(targetFolder.uri, 'GEMINI.md');
+                    try {
+                        await vscode.workspace.fs.stat(geminiUri);
+                        await bootstrapFromGemini(geminiUri, context);
+                    } catch (e) {
+                        // GEMINI.md doesn't exist, offer Lite Bootstrap
+                        const action = await vscode.window.showInformationMessage(
+                            `GEMINI.md not found in ${targetFolder.name}. Would you like to use Lite Bootstrap to auto-discover the project?`,
+                            'Lite Bootstrap'
+                        );
+                        if (action === 'Lite Bootstrap') {
+                            await liteBootstrap(context, targetFolder);
+                            return;
+                        }
+                    }
                 }
             })
         );
-
         context.subscriptions.push(
             vscode.commands.registerCommand('synapse.fitView', () => {
                 CanvasPanel.currentPanel?.fitView();
@@ -176,7 +186,7 @@ async function checkProjectStatus(workspaceFolder: vscode.WorkspaceFolder, conte
                     'Lite Bootstrap'
                 );
                 if (action === 'Lite Bootstrap') {
-                    await liteBootstrap(context);
+                    await liteBootstrap(context, workspaceFolder);
                 }
             }
         } else {
@@ -238,10 +248,13 @@ function setupFileWatcher(workspaceFolder: vscode.WorkspaceFolder, context: vsco
     context.subscriptions.push(watcher, sourceWatcher);
 }
 
-async function liteBootstrap(context: vscode.ExtensionContext) {
-    const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+async function liteBootstrap(context: vscode.ExtensionContext, folder?: vscode.WorkspaceFolder) {
+    const workspaceFolder = folder || (vscode.window.activeTextEditor
+        ? vscode.workspace.getWorkspaceFolder(vscode.window.activeTextEditor.document.uri)
+        : vscode.workspace.workspaceFolders?.[0]);
+
     if (!workspaceFolder) {
-        vscode.window.showErrorMessage('No workspace folder open');
+        vscode.window.showErrorMessage('No workspace folder found for Lite Bootstrap');
         return;
     }
 

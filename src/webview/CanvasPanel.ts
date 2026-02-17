@@ -814,52 +814,63 @@ export class CanvasPanel {
 
         try {
             const projectStateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'project_state.json');
+            console.log(`[SYNAPSE] Reading project state from: ${projectStateUri.fsPath}`);
 
             let projectState;
             try {
                 const data = await vscode.workspace.fs.readFile(projectStateUri);
                 projectState = JSON.parse(data.toString());
-            } catch (e) {
-                // File missing or invalid: create default
-                console.log('[SYNAPSE] project_state.json not found, initializing default state...');
+                console.log(`[SYNAPSE] Successfully loaded project state with ${projectState.nodes?.length || 0} nodes.`);
+            } catch (e: any) {
+                // Only create default if file truly doesn't exist
+                const fileDoesNotExist = e.code === 'FileNotFound' || e.message.includes('EntryNotFound');
 
-                // Ensure data directory exists
-                const dataDirUri = vscode.Uri.joinPath(workspaceFolder.uri, 'data');
-                try {
-                    await vscode.workspace.fs.createDirectory(dataDirUri);
-                } catch (dirError) { /* ignore */ }
+                if (fileDoesNotExist) {
+                    console.log('[SYNAPSE] project_state.json not found, initializing default state...');
 
-                projectState = {
-                    project_name: workspaceFolder.name,
-                    canvas_state: {
-                        zoom_level: 1.0,
-                        offset: { x: 0, y: 0 },
-                        visible_layers: ['source', 'documentation']
-                    },
-                    nodes: [
-                        {
-                            id: 'node_entry',
-                            type: 'source',
-                            status: 'proposed',
-                            position: { x: 400, y: 300 },
-                            data: {
-                                label: 'CLI_Main.ts',
-                                description: 'System Entry Point (Template)',
-                                color: '#b8bb26'
-                            },
-                            visual: {
-                                opacity: 0.5,
-                                dashArray: '5,5'
+                    // Ensure data directory exists
+                    const dataDirUri = vscode.Uri.joinPath(workspaceFolder.uri, 'data');
+                    try {
+                        await vscode.workspace.fs.createDirectory(dataDirUri);
+                    } catch (dirError) { /* ignore */ }
+
+                    projectState = {
+                        project_name: workspaceFolder.name,
+                        canvas_state: {
+                            zoom_level: 1.0,
+                            offset: { x: 0, y: 0 },
+                            visible_layers: ['source', 'documentation']
+                        },
+                        nodes: [
+                            {
+                                id: 'node_entry',
+                                type: 'source',
+                                status: 'proposed',
+                                position: { x: 400, y: 300 },
+                                data: {
+                                    label: 'Entrypoint (Template)',
+                                    description: 'System Entry Point (Auto-generated template)',
+                                    color: '#b8bb26'
+                                },
+                                visual: {
+                                    opacity: 0.5,
+                                    dashArray: '5,5'
+                                }
                             }
-                        }
-                    ],
-                    edges: [],
-                    clusters: []
-                };
+                        ],
+                        edges: [],
+                        clusters: []
+                    };
 
-                // Save default state
-                const normalizedJson = this.normalizeProjectState(projectState);
-                await vscode.workspace.fs.writeFile(projectStateUri, Buffer.from(normalizedJson, 'utf-8'));
+                    // Save default state
+                    const normalizedJson = this.normalizeProjectState(projectState);
+                    await vscode.workspace.fs.writeFile(projectStateUri, Buffer.from(normalizedJson, 'utf-8'));
+                } else {
+                    // Critical error reading existing file (e.g. JSON parse error or permissions)
+                    console.error(`[SYNAPSE] Failed to read project_state.json: ${e.message}`);
+                    vscode.window.showErrorMessage(`Failed to load architecture state: ${e.message}`);
+                    return;
+                }
             }
 
             // 고도화: 노드가 전혀 없는 경우 (신규 프로젝트) 자동 발견 시도

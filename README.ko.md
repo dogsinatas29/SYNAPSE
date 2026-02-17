@@ -24,7 +24,7 @@ SYNAPSE는 **Google Antigravity** 및 **Visual Studio Code** 사용자를 위해
 
 ## 🗂️ Language Support
 
-SYNAPSE는 다국어 아키텍처 분석을 지원합니다:
+SYNAPSE는 다양한 언어 아키텍처 분석을 지원합니다:
 - 🐍 **Python**: `.py` 파일 분석 및 가상환경 필터링 지원
 - 🦀 **Rust**: `Cargo` 프로젝트 구조 및 `.rs` 로직 분석
 - 🇨 **C / C++**: 헤더 및 소스 파일 의존성 분석 (ReDoS 방지 최적화 완료)

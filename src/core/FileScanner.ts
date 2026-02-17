@@ -38,6 +38,15 @@ export class FileScanner {
             } else if (ext === '.rs') {
                 console.log(`[SYNAPSE] Parsing Rust: ${filePath}`);
                 this.parseRust(content, summary);
+            } else if (ext === '.sh') {
+                console.log(`[SYNAPSE] Parsing Shell Script: ${filePath}`);
+                this.parseShell(content, summary);
+            } else if (ext === '.sql') {
+                console.log(`[SYNAPSE] Parsing SQL: ${filePath}`);
+                this.parseSql(content, summary);
+            } else if (['.json', '.yaml', '.yml', '.toml'].includes(ext)) {
+                console.log(`[SYNAPSE] Parsing Configuration: ${filePath}`);
+                this.parseConfig(content, summary);
             }
             console.log(`[SYNAPSE] Finished parsing: ${path.basename(filePath)}`);
         } catch (error) {
@@ -187,6 +196,53 @@ export class FileScanner {
                 if (lastPart && lastPart !== '*' && !summary.references.includes(lastPart)) {
                     summary.references.push(lastPart);
                 }
+            }
+        }
+    }
+
+    private parseShell(content: string, summary: CodeSummary) {
+        // Shell functions: function name() or name()
+        const funcRegex = /^(?:function\s+)?([a-zA-Z0-9_-]+)\s*\(\s*\)/gm;
+        let match;
+        while ((match = funcRegex.exec(content)) !== null) {
+            summary.functions.push(match[1]);
+        }
+
+        // References (scripts calling other scripts or bins)
+        const refRegex = /(?:\.|\.\/|source\s+|bash\s+|sh\s+)([a-zA-Z0-9_-]+\.sh)/g;
+        while ((match = refRegex.exec(content)) !== null) {
+            const ref = match[1];
+            if (ref && !summary.references.includes(ref)) {
+                summary.references.push(ref);
+            }
+        }
+    }
+
+    private parseSql(content: string, summary: CodeSummary) {
+        // SQL Tables
+        const tableRegex = /CREATE\s+TABLE\s+(?:IF\s+NOT\s+EXISTS\s+)?([a-zA-Z0-9_."]+)/gi;
+        let match;
+        while ((match = tableRegex.exec(content)) !== null) {
+            summary.classes.push(match[1]);
+        }
+
+        // SQL Views/Procedures
+        const procRegex = /CREATE\s+(?:OR\s+REPLACE\s+)?(?:VIEW|PROCEDURE|FUNCTION)\s+([a-zA-Z0-9_."]+)/gi;
+        while ((match = procRegex.exec(content)) !== null) {
+            summary.functions.push(match[1]);
+        }
+    }
+
+    private parseConfig(content: string, summary: CodeSummary) {
+        // Config files (JSON/YAML/TOML) - look for key names that look like imports/extends
+        const refRegex = /"(?:extends|import|using|include|source)"\s*:\s*"([^"]+)"|extends\s*:\s*([^\n]+)|import\s+([^\n]+)/gi;
+        let match;
+        while ((match = refRegex.exec(content)) !== null) {
+            const ref = (match[1] || match[2] || match[3] || '').trim();
+            if (ref && !summary.references.includes(ref)) {
+                // Remove quotes if present
+                const cleanRef = ref.replace(/['"]/g, '');
+                summary.references.push(cleanRef);
             }
         }
     }

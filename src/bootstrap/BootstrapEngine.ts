@@ -175,10 +175,15 @@ export class BootstrapEngine {
                     scanDir(fullPath, currentRelPath);
                 } else {
                     const ext = path.extname(file).toLowerCase();
-                    if (['.ts', '.js', '.py', '.cpp', '.h', '.c', '.hpp', '.cc', '.md', '.rs'].includes(ext)) {
+                    const scanExtensions = [
+                        '.ts', '.js', '.py', '.cpp', '.h', '.c', '.hpp', '.cc',
+                        '.md', '.rs', '.sh', '.sql', '.json', '.yaml', '.yml', '.toml'
+                    ];
+
+                    if (scanExtensions.includes(ext)) {
                         let type: any = 'source';
                         if (ext === '.md') type = 'documentation';
-                        if (['.json', '.yaml', '.yml'].includes(ext)) type = 'config';
+                        if (['.json', '.yaml', '.yml', '.toml'].includes(ext)) type = 'config';
 
                         structure.files.push({
                             path: currentRelPath.replace(/\\/g, '/'), // Force forward slashes

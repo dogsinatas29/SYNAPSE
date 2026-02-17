@@ -24,6 +24,9 @@ SYNAPSE는 다국어 아키텍처 분석을 지원합니다:
 - 🐍 **Python**: `.py` 파일 분석 및 가상환경 필터링 지원
 - 🦀 **Rust**: `Cargo` 프로젝트 구조 및 `.rs` 로직 분석
 - 🇨 **C / C++**: 헤더 및 소스 파일 의존성 분석 (ReDoS 방지 최적화 완료)
+- 🐚 **Shell Script**: `.sh` 자동화 스크립트 흐름 및 함수 분석
+- 🗄️ **SQL**: `.sql` 테이블 정의 및 스키마 시각화
+- ⚙️ **Config (JSON/YAML/TOML)**: 인프라 설정 파일 간의 관계 분석 (The Glue)
 - 📜 **TypeScript / JavaScript**: 기본 지원 및 폴더링 최적화
 
 ## 🛠️ Technology Stack

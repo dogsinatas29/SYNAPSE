@@ -1,9 +1,9 @@
-# 🧠 SYNAPSE: LLM Logic Visualization Engine
+# 🧠 SYNAPSE: VS Code Visual Architecture Engine
 
-> **Google Antigravity Extension**  
+> **Visual Studio Code (VS Code) Extension**  
 > "보이는 것이 곧 LLM의 논리다 (WYSIWYG Logic for AI)"
 
-SYNAPSE는 **Google Antigravity**를 위해 구축된 차세대 확장 프로그램입니다. LLM(Large Language Model)이 생성하거나 분석한 복잡한 추론 논리를 물리적 공간과 노드-엣지 네트워크로 시각화하여, AI의 사고 과정을 직관적으로 설계, 구현, 문서화할 수 있게 돕습니다.
+SYNAPSE는 **Google Antigravity** 및 **Visual Studio Code** 사용자를 위해 구축된 차세대 확장 프로그램입니다. LLM(Large Language Model)이 생성하거나 분석한 복잡한 추론 논리를 물리적 공간과 노드-엣지 네트워크로 시각화하여, AI의 사고 과정을 직관적으로 설계, 구현, 문서화할 수 있게 돕습니다.
 
 ## 🚀 Key Features
 

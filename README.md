@@ -232,6 +232,20 @@ SYNAPSE follows 3 principles to prevent "Spaghetti Data":
 - Real-time regeneration upon every canvas load
 - `project_state.json` saves only the user's intent
 
+## 🔥 Core Strategies
+
+### 1. Multi-MD Strategy (Context Awareness)
+SYNAPSE automatically scans and categorizes all Markdown (`.md`) files in your project:
+- **History**: Files in `prompts/` are treated as conversation history or decision logs.
+- **Documentation**: Other `.md` files are treated as project documentation.
+- **Integration**: These files are parsed to establish relationships between your code and your design documents/prompts.
+
+### 2. Automatic File Saving (Zero-Friction Logging)
+Never lose a thought. SYNAPSE supports a robust prompt saving mechanism:
+- **Auto-Save**: When enabled, prompts are saved instantly with a timestamped filename, allowing you to stay in the flow without interruption.
+- **Manual Control**: Option to manually name files when precision is needed.
+- **Traceability**: Every design decision is logged as a Markdown file, creating a permanent audit trail of your project's evolution.
+
 ## 📐 Philosophy
 
 "An intuitive playground for children, a powerful control tower for experts."  

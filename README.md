@@ -1,34 +1,37 @@
 # 🧠 SYNAPSE: VS Code Visual Architecture Engine
 
 > **Visual Studio Code (VS Code) Extension**  
-> "보이는 것이 곧 LLM의 논리다 (WYSIWYG Logic for AI)"
+> "What you see is the logic of LLM (WYSIWYG Logic for AI)"
 
-SYNAPSE는 **Google Antigravity** 및 **Visual Studio Code** 사용자를 위해 구축된 차세대 확장 프로그램입니다. LLM(Large Language Model)이 생성하거나 분석한 복잡한 추론 논리를 물리적 공간과 노드-엣지 네트워크로 시각화하여, AI의 사고 과정을 직관적으로 설계, 구현, 문서화할 수 있게 돕습니다.
+[🇰🇷 한국어 (Korean)](README.ko.md) | [🇺🇸 English (English)](README.md)
+
+SYNAPSE is a next-generation extension built for **Google Antigravity** and **Visual Studio Code** users. It visualizes complex reasoning logic generated or analyzed by Large Language Models (LLMs) into a physical node-edge network, helping you intuitively design, implement, and document AI thought processes.
 
 ## 🚀 Key Features
 
-- **🌐 Topology View**: 프로젝트의 폴더 구조 및 파일 간의 의존성을 노드-엣지 네트워크로 시각화.
-- **🌳 Tree View**: 프로젝트 구조를 계층적으로 조감.
-- **➡️ Flow View**: 특정 로직의 실행 흐름을 순서도로 투사.
-- **🛡️ Node Diet (Smart Scanning)**: `.venv`, `node_modules` 등 불필요한 폴더를 자동으로 무시하여 핵심 소스에 집중.
-- **📂 Auto Folder Clustering**: 디렉토리 구조에 기반한 자동 그룹화로 대규모 프로젝트 가독성 보장.
-- **🔄 Deep Reset**: 엉망이 된 배치를 즉시 초기화하고 최신 필터로 재스캔하는 심층 초기화.
-- **🎯 Scan Scope Control**: `GEMINI.md`에서 `Scan Paths`를 지정하여 원하는 영역만 정밀 스캔 가능.
-- **⌨️ Arrow Key Navigation**: 방향키와 Shift 키를 이용한 빠르고 정밀한 캔버스 탐색 지원.
-- **🔍 Semantic Zooming (LOD)**: 수천 개의 노드도 성능 저하 없이 조작 가능한 단계별 상세도 제어.
-- **💾 Persistence**: 모든 시각적 상태를 `project_state.json`에 영구 저장 및 Git 관리.
-- **🛠️ Standalone Bridge**: VS Code 없이 브라우저 단독 구동 모드 지원.
+- **🌐 Topology View**: visualize project folder structure and file dependencies as a node-edge network.
+- **🌳 Tree View**: A hierarchical overview of the project structure.
+- **➡️ Flow View**: Projects the execution flow of specific logic into a flowchart.
+- **🛡️ Node Diet (Smart Scanning)**: Automatically ignores unnecessary folders like `.venv`, `node_modules` to focus on core source code.
+- **📂 Auto Folder Clustering**: Automatically groups nodes based on directory structure to ensure readability for large projects.
+- **🔄 Deep Reset**: Instantly resets a messy layout and rescans with the latest filters.
+- **🎯 Scan Scope Control**: Specify `Scan Paths` in `GEMINI.md` to precisely scan only desired areas.
+- **⌨️ Arrow Key Navigation**: Fast and precise canvas navigation using arrow keys and Shift.
+- **🔍 Semantic Zooming (LOD)**: Step-by-step detail control to manipulate thousands of nodes without performance degradation.
+- **💾 Persistence**: Permanently save all visual states to `project_state.json` and manage with Git.
+- **🛠️ Standalone Bridge**: Support for browser-only mode without VS Code.
+- **💾 Prompt Traceability**: Save your prompts and design decisions directly from the canvas (Auto-save supported).
 
 ## 🗂️ Language Support
 
-SYNAPSE는 다국어 아키텍처 분석을 지원합니다:
-- 🐍 **Python**: `.py` 파일 분석 및 가상환경 필터링 지원
-- 🦀 **Rust**: `Cargo` 프로젝트 구조 및 `.rs` 로직 분석
-- 🇨 **C / C++**: 헤더 및 소스 파일 의존성 분석 (ReDoS 방지 최적화 완료)
-- 🐚 **Shell Script**: `.sh` 자동화 스크립트 흐름 및 함수 분석
-- 🗄️ **SQL**: `.sql` 테이블 정의 및 스키마 시각화
-- ⚙️ **Config (JSON/YAML/TOML)**: 인프라 설정 파일 간의 관계 분석 (The Glue)
-- 📜 **TypeScript / JavaScript**: 기본 지원 및 폴더링 최적화
+SYNAPSE supports multi-language architecture analysis:
+- 🐍 **Python**: `.py` file analysis and virtual environment filtering
+- 🦀 **Rust**: `Cargo` project structure and `.rs` logic analysis
+- 🇨 **C / C++**: Header and source file dependency analysis (ReDoS prevention optimized)
+- 🐚 **Shell Script**: `.sh` automation script flow and function analysis
+- 🗄️ **SQL**: `.sql` table definition and schema visualization
+- ⚙️ **Config (JSON/YAML/TOML)**: Analyzing relationships between infrastructure configuration files (The Glue)
+- 📜 **TypeScript / JavaScript**: Basic support and folder optimization
 
 ## 🛠️ Technology Stack
 
@@ -39,15 +42,15 @@ SYNAPSE는 다국어 아키텍처 분석을 지원합니다:
 - **Architecture**: Visual-First Design with LSP integration
 
 ### 🌐 Graph View
-LLM의 추론 논리와 파일 간의 물리적 연결 상태를 노드-엣지 네트워크로 시각화합니다.
+Visualizes the physical connection status between LLM reasoning logic and files as a node-edge network.
 ![Graph View](docs/media/synapse_graph_view.png)
 
 ### 🌳 Tree View
-프로젝트의 폴더 구조와 파일 계층을 직관적으로 조감할 수 있습니다.
+Intuitively overview the project's folder structure and file hierarchy.
 ![Tree View](docs/media/synapse_tree_view.png)
 
 ### ➡️ Flow View
-특정 이벤트나 함수의 로직 실행 흐름을 선형적인 순서도로 투사합니다.
+Projects the logic execution flow of a specific event or function into a linear flowchart.
 ![Flow View](docs/media/synapse_flow_view.png)
 
 
@@ -70,7 +73,7 @@ LLM의 추론 논리와 파일 간의 물리적 연결 상태를 노드-엣지 �
    ```
 
 4. **Standalone Bridge Mode (New! 🚀)**
-   VS Code 없이 브라우저에서 직접 엔진을 구동하고 싶을 때 사용합니다.
+   Use this when you want to run the engine directly in the browser without VS Code.
    ```bash
    # Terminal 1: API Server
    npm run dev:standalone
@@ -97,76 +100,84 @@ LLM의 추론 논리와 파일 간의 물리적 연결 상태를 노드-엣지 �
 ## 🎯 Usage Guide
 
 ### 🧱 Node Creation (New!)
-- **Add Node**: 상단 툴바의 `Add Node` 버튼을 클릭하여 새 노드를 생성합니다.
-- **Node Input**: 생성된 노드를 선택하고 이름을 변경할 수 있습니다.
+- **Add Node**: Click the `Add Node` button on the top toolbar to create a new node.
+- **Node Input**: Select the created node to rename it.
 
 ### 🎨 Manual Edge Creation (WYSIWYG)
 
-SYNAPSE의 핵심 기능인 **드래그 앤 드롭 엣지 생성**으로 코드 없이 아키텍처를 설계하세요!
+Design your architecture without code using SYNAPSE's core feature, **Drag & Drop Edge Creation**!
 
-#### 1. 노드 선택
-- 캔버스에서 노드를 클릭하여 선택
-- 선택된 노드 주변에 **4방향 연결 핸들** (상/하/좌/우)이 자동으로 나타남
+#### 1. Select Node
+- Click a node on the canvas to select it.
+- **4-way connection handles** (Up/Down/Left/Right) automatically appear around the selected node.
 
-#### 2. 엣지 생성 시작
-- **Alt + 연결 핸들 클릭**으로 엣지 생성 모드 진입
-- 마우스를 움직이면 **유령 엣지**(Ghost Edge)가 실시간으로 표시됨
+#### 2. Start Edge Creation
+- Enter edge creation mode by **Alt + Clicking a connection handle**.
+- A **Ghost Edge** is displayed in real-time as you move the mouse.
 
-#### 3. 타겟 선택
-- 다른 노드나 클러스터로 드래그
-- 유효한 타겟 위에 마우스를 올리면 유령 엣지가 **녹색**으로 변경
+#### 3. Select Target
+- Drag to another node or cluster.
+- When hovering over a valid target, the Ghost Edge turns **Green**.
 
-#### 4. 관계 타입 선택
-- 마우스를 릴리즈하면 **엣지 타입 선택 메뉴** 표시
-- 선택 가능한 타입:
-  - 🔗 **Dependency**: 의존성 관계
-  - 📞 **Call**: 함수 호출 관계
-  - 📊 **Data Flow**: 데이터 흐름
-  - ↔️ **Bidirectional**: 양방향 관계
+#### 4. Select Relationship Type
+- Upon releasing the mouse, the **Edge Type Selection Menu** appears.
+- Available types:
+  - 🔗 **Dependency**: Dependency relationship
+  - 📞 **Call**: Function call relationship
+  - 📊 **Data Flow**: Data flow
+  - ↔️ **Bidirectional**: Two-way relationship
 
-#### 5. 자동 저장
-- 타입 선택 시 `project_state.json`에 자동 저장
-- Git으로 형상 관리 가능 (정규화된 JSON 형식)
+#### 5. Auto Save
+- Automatically saved to `project_state.json` upon type selection.
+- Manageable via Git (Normalized JSON format).
 
 ### 📦 Clustering & Management
 
-복잡한 노드들을 그룹화하여 관리하세요!
+Manage complex nodes by grouping them!
 
-1.  **그룹 생성**:
-    *   Shift/Ctrl + 클릭으로 여러 노드 선택
-    *   툴바의 `Group` 버튼 클릭
-    *   **이름 입력**: 팝업에서 그룹 이름을 지정
-2.  **그룹 관리**:
-    *   **이름 변경**: 그룹 헤더를 **더블 클릭**하여 이름 수정
-    *   **접기/펴기**: 헤더 우측의 `[-]`/`[+]` 버튼으로 노드 숨기기/보이기
-    *   **Smart Push**: 클러스터 영역 내 겹치는 노드 자동 재배치
-3.  **그룹 해제**: 그룹 선택 후 `Ungroup` 버튼 클릭
+1.  **Create Group**:
+    *   Select multiple nodes with Shift/Ctrl + Click.
+    *   Click the `Group` button on the toolbar.
+    *   **Enter Name**: Specify a group name in the popup.
+2.  **Manage Group**:
+    *   **Rename**: **Double-click** the group header to edit the name.
+    *   **Collapse/Expand**: Hide/Show nodes with the `[-]`/`[+]` buttons on the header right.
+    *   **Smart Push**: Automatically reposition overlapping nodes within the cluster area.
+3.  **Ungroup**: Select a group and click the `Ungroup` button.
 
 ### 💾 Snapshot & Rollback
 
-중요한 설계 지점을 저장하고 복원하세요!
+Save and restore critical design points!
 
-- **수동 스냅샷**: 툴바의 카메라 아이콘(Snapshot) 클릭
-- **자동 스냅샷**: 주요 변경(그룹 생성, 해제 등) 시 자동 저장
-- **롤백**: 시계 아이콘(History) 클릭 -> 원하는 시점의 되돌리기 버튼 클릭
-    *   (브라우저 모드에서는 확인 창이 뜹니다)
+- **Manual Snapshot**: Click the camera icon (Snapshot) on the toolbar.
+- **Auto Snapshot**: Automatically saved upon major changes (group creation, ungrouping, etc.).
+- **Rollback**: Click the clock icon (History) -> Click the revert button for the desired point.
+    *   (A confirmation window appears in browser mode)
+
+### 💾 Prompt Traceability (New! v0.1.1)
+
+Log your design decisions and prompts directly from the canvas.
+
+- **Save Prompt**: Click the `Save` icon (💾) on the toolbar.
+- **Content**: Enter the prompt or reasoning you want to save.
+- **Auto-Save Option**: Enable `synapse.prompt.autoSave` in settings to automatically save with a timestamp filename without asking for a title.
 
 ## ⚙️ How to Install (VS Code)
 
-### 1. Release에서 다운로드 (추천)
-[Releases 탭](https://github.com/dogsinatas29/SYNAPSE/releases)에서 가장 최신의 `.vsix` 파일을 다운로드하십시오.
+### 1. Download from Release (Recommended)
+Download the latest `.vsix` file from the [Releases tab](https://github.com/dogsinatas29/SYNAPSE/releases).
 
-### 2. VS Code에 로드 (설치 방법)
-다운로드한 `.vsix` 파일을 다음 중 하나의 방법으로 VS Code에 설치할 수 있습니다:
+### 2. Load into VS Code (Installation Method)
+You can install the downloaded `.vsix` file into VS Code using one of the following methods:
 
-*   **방법 A: 드래그 앤 드롭 (가장 간편)**
-    - 다운로드한 `synapse-extension.vsix` 파일을 열려 있는 **VS Code 창 위로 직접 드래그**하여 놓으십시오. 우측 하단에 설치 확인 알림이 뜨면 'Install'을 클릭합니다.
-*   **방법 B: 확장 메뉴 이용**
-    1. VS Code 좌측 사이드바에서 **확장(Extensions)** 아이콘을 클릭합니다 (단축키: `Ctrl+Shift+X`).
-    2. 확장 창 상단의 더보기 **`...` 메뉴** (Views and More Actions)를 클릭합니다.
-    3. **'Install from VSIX...'**를 선택한 후, 다운로드한 파일을 선택합니다.
-*   **방법 C: 터미널 명령어**
-    - 터미널(또는 명령 프롬프트)에서 아래 명령어를 입력합니다:
+*   **Method A: Drag & Drop (Easiest)**
+    - Drag and drop the downloaded `synapse-extension.vsix` file directly onto an open **VS Code window**. When the installation confirmation notification appears in the bottom right, click 'Install'.
+*   **Method B: Using the Extension Menu**
+    1. Click the **Extensions** icon in the VS Code left sidebar (Shortcut: `Ctrl+Shift+X`).
+    2. Click the **`...` menu** (Views and More Actions) at the top of the Extensions pane.
+    3. Select **'Install from VSIX...'** and choose the downloaded file.
+*   **Method C: Terminal Command**
+    - Enter the following command in the terminal (or command prompt):
     ```bash
     code --install-extension synapse-extension.vsix
     ```
@@ -175,28 +186,28 @@ SYNAPSE의 핵심 기능인 **드래그 앤 드롭 엣지 생성**으로 코드 
 
 ## 🌐 Standalone Mode (Web Browser)
 
-VS Code가 없는 환경이거나 브라우저에서 단독으로 분석 도구를 사용하고 싶은 경우 Standalone 모드를 이용하십시오.
+Use Standalone mode if you are in an environment without VS Code or want to use the analysis tool independently in a browser.
 
-### 1. 사전 준비
+### 1. Prerequisites
 ```bash
 git clone https://github.com/dogsinatas29/SYNAPSE.git
 cd SYNAPSE
 npm install
 ```
 
-### 2. 브라우저 엔진 기동
+### 2. Launch Browser Engine
 ```bash
-# Standalone 브리지 서버 실행
+# Run Standalone Bridge Server
 npm run dev:standalone
 ```
 
-### 3. 접속
-서버가 실행되면 브라우저에서 `http://localhost:8080` (또는 지정된 포트)으로 접속하여 캔버스를 조작할 수 있습니다.
+### 3. Access
+Once the server is running, access `http://localhost:8080` (or specified port) in your browser to manipulate the canvas.
 
 ---
 
 ## 🛠️ For Developers (Build from Source)
-직접 패키징 파일을 만들고 싶을 경우:
+If you want to create the package file yourself:
 1. `npm install -g @vscode/vsce`
 2. `npx vsce package --out synapse-extension.vsix`
 
@@ -206,25 +217,25 @@ https://www.youtube.com/watch?v=Va4vZWkqC8E
 
 ## 🧹 Data Hygiene Principles
 
-SYNAPSE는 "스파게티 데이터" 방지를 위한 3대 원칙을 따릅니다:
+SYNAPSE follows 3 principles to prevent "Spaghetti Data":
 
-### 원칙 1: 원천 소스와 상태값의 분리
-- **GEMINI.md**: 선언적 아키텍처 정의
-- **project_state.json**: UI 메타데이터 (좌표, 줌 레벨)
+### Principle 1: Separation of Source and State
+- **GEMINI.md**: Declarative architecture definition
+- **project_state.json**: UI metadata (coordinates, zoom level)
 
-### 원칙 2: 자동 정규화
-- JSON 키 알파벳 순 정렬 → Git Diff 최소화
-- 기본값과 동일한 속성 자동 제거
+### Principle 2: Auto-Normalization
+- JSON keys sorted alphabetically → Minimize Git Diff
+- Automatic removal of properties identical to default values
 
-### 원칙 3: 휘발성 자동 엣지
-- 코드 분석으로 발견된 엣지는 저장하지 않음
-- 캔버스 로드 시마다 실시간 재생성
-- `project_state.json`은 오직 사용자의 의도만 저장
+### Principle 3: Volatile Auto-Edges
+- Edges discovered by code analysis are not saved
+- Real-time regeneration upon every canvas load
+- `project_state.json` saves only the user's intent
 
 ## 📐 Philosophy
 
-"아이들에게는 직관적인 놀이터, 전문가에게는 강력한 관제탑."  
-복잡한 시스템을 선으로 연결하는 단순한 행위가 사실은 가장 고차원적인 아키텍처 설계라는 믿음으로 제작되었습니다.
+"An intuitive playground for children, a powerful control tower for experts."  
+Created with the belief that the simple act of connecting lines in complex systems is, in fact, the highest level of architectural design.
 
 ---
 Created by [dogsinatas29](https://github.com/dogsinatas29)

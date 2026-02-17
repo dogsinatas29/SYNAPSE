@@ -2,7 +2,7 @@
     "name": "synapse-visual-architecture",
     "displayName": "SYNAPSE - Visual Architecture Engine",
     "description": "Visual architecture control engine for code visualization and design",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "publisher": "synapse-team",
     "repository": {
         "type": "git",
@@ -90,6 +90,11 @@
                     ],
                     "default": "graph",
                     "description": "Default view mode when opening canvas"
+                },
+                "synapse.prompt.autoSave": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Automatically save prompts with a timestamp filename without asking for a title."
                 }
             }
         }

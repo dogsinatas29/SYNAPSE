@@ -569,6 +569,18 @@ class CanvasEngine {
     }
 
     /**
+     * 프롬프트 저장 요청 (Phase 4)
+     */
+    requestLogPrompt() {
+        console.log('[SYNAPSE] Requesting log prompt UI...');
+        if (typeof vscode !== 'undefined') {
+            vscode.postMessage({ command: 'requestLogPrompt' });
+        } else {
+            alert('Cannot log prompt in browser mode without backend connection.');
+        }
+    }
+
+    /**
      * 애니메이션 토글 (Phase 3)
      */
     toggleAnimation() {

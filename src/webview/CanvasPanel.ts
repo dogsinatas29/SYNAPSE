@@ -149,6 +149,9 @@ export class CanvasPanel {
                     case 'logPrompt':
                         await this.handleLogPrompt(message.prompt, message.title);
                         return;
+                    case 'requestLogPrompt':
+                        await this.handleRequestLogPrompt();
+                        return;
                 }
             },
             null,
@@ -792,6 +795,41 @@ export class CanvasPanel {
             await this.sendProjectState(); // Refresh to show the new history node
         } catch (e) {
             vscode.window.showErrorMessage(`Failed to log prompt: ${e}`);
+        }
+    }
+
+    private async handleRequestLogPrompt() {
+        const workspaceFolder = this._workspaceFolder;
+        if (!workspaceFolder) return;
+
+        try {
+            // 1. Check Auto-Save Setting
+            const config = vscode.workspace.getConfiguration('synapse');
+            const autoSave = config.get<boolean>('prompt.autoSave', false);
+
+            // 2. Ask for Prompt Content (always required)
+            const prompt = await vscode.window.showInputBox({
+                placeHolder: 'Enter the prompt or design decision to log',
+                prompt: 'Prompt Content'
+            });
+
+            if (!prompt) return; // User cancelled
+
+            let title: string | undefined;
+
+            // 3. Ask for Title (if Auto-Save is OFF)
+            if (!autoSave) {
+                title = await vscode.window.showInputBox({
+                    placeHolder: 'Enter a filename/title (optional)',
+                    prompt: 'Prompt Title'
+                });
+            }
+
+            // 4. Log the prompt
+            await this.handleLogPrompt(prompt, title);
+
+        } catch (e) {
+            vscode.window.showErrorMessage(`Error handling log prompt request: ${e}`);
         }
     }
 

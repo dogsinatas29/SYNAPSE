@@ -386,6 +386,7 @@
         <button class="btn" id="btn-animate" title="Toggle Edge Animations">🎬 On</button>
         <button class="btn" id="btn-history">History</button>
         <button class="btn" id="btn-snapshot" title="Take Manual Snapshot">📸</button>
+        <button class="btn" id="btn-save-prompt" title="Save Prompt / Decision Log">💾</button>
     </div>
 
     <div id="main-container">
@@ -542,6 +543,13 @@
             document.getElementById('btn-snapshot').addEventListener('click', () => {
                 if (window.engine) {
                     window.engine.takeSnapshot('Manual Snapshot');
+                }
+            });
+
+            // 프롬프트 저장 버튼
+            document.getElementById('btn-save-prompt').addEventListener('click', () => {
+                if (window.engine) {
+                    window.engine.requestLogPrompt();
                 }
             });
 

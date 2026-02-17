@@ -1,3 +1,22 @@
+# Release Notes - v0.1.7
+
+## 🚀 Bug Fixes & Packaging
+- **Activation Fix**: Resolved "command not found" errors after reload by explicitly defining activation events for all commands.
+- **Dependency Bundle**: Fixed `.vscodeignore` to ensure `node_modules` are included in the VSIX package, preventing activation crashes due to missing libraries.
+- **Verbose Logging**: Added internal logs (`[SYNAPSE]`) to track activation progress and identify failure points.
+
+# Release Notes - v0.1.6
+
+## 📜 Legal & Documentation
+- **GPL 3.0 License**: Confirmed and added license information to all README files.
+- **Header Standardization**: Ensured GPL 3.0 headers are present in core source files.
+
+# Release Notes - v0.1.5
+
+## 🔧 Maintenance
+- Internal optimizations for extension activation and path resolving.
+- Refined styling of the visual canvas for better consistency.
+
 # Release Notes - v0.1.4
 
 ## 🚀 Hotfix: Always-On Thought Stream

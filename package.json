@@ -2,7 +2,7 @@
     "name": "synapse-visual-architecture",
     "displayName": "SYNAPSE - Visual Architecture Engine",
     "description": "Visual architecture control engine for code visualization and design",
-    "version": "0.1.4",
+    "version": "0.1.7",
     "publisher": "synapse-team",
     "repository": {
         "type": "git",
@@ -18,8 +18,11 @@
     ],
     "main": "./dist/extension.js",
     "activationEvents": [
-        "onView:synapseExplorer",
-        "onStartupFinished"
+        "onStartupFinished",
+        "onCommand:synapse.openCanvas",
+        "onCommand:synapse.bootstrap",
+        "onCommand:synapse.fitView",
+        "onCommand:synapse.logPrompt"
     ],
     "contributes": {
         "commands": [

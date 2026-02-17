@@ -28,3 +28,7 @@ npm run watch  # Auto-compile on changes
 3. In the new window, open a project with GEMINI.md
 4. Right-click GEMINI.md > "SYNAPSE: Bootstrap from GEMINI.md"
 5. Canvas will open automatically
+
+## License
+
+This extension is licensed under the [GNU General Public License v3.0](LICENSE).

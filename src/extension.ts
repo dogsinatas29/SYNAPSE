@@ -32,11 +32,12 @@ import { PromptLogger } from './core/PromptLogger';
 
 export async function activate(context: vscode.ExtensionContext) {
     console.log('[SYNAPSE] Extension activation started');
-    vscode.window.showInformationMessage('SYNAPSE Extension Activated (v0.1.6)'); // Debugging only
 
-    // Register commands FIRST so they work even if the Language Server fails
     try {
-        // Serializer for restoring the webview after reload
+        console.log('[SYNAPSE] Initializing components...');
+        vscode.window.showInformationMessage('SYNAPSE: Initializing (v0.1.6)...');
+
+        console.log('[SYNAPSE] Registering WebviewPanelSerializer...');
         if (vscode.window.registerWebviewPanelSerializer) {
             vscode.window.registerWebviewPanelSerializer('synapseCanvas', {
                 async deserializeWebviewPanel(webviewPanel: vscode.WebviewPanel, state: any) {
@@ -56,7 +57,9 @@ export async function activate(context: vscode.ExtensionContext) {
                 }
             });
         }
+        console.log('[SYNAPSE] WebviewPanelSerializer registered');
 
+        console.log('[SYNAPSE] Registering synapse.openCanvas command...');
         context.subscriptions.push(
             vscode.commands.registerCommand('synapse.openCanvas', () => {
                 let workspaceFolder: vscode.WorkspaceFolder | undefined;
@@ -121,6 +124,7 @@ export async function activate(context: vscode.ExtensionContext) {
                 }
             })
         );
+
         context.subscriptions.push(
             vscode.commands.registerCommand('synapse.fitView', () => {
                 CanvasPanel.currentPanel?.fitView();
@@ -128,11 +132,12 @@ export async function activate(context: vscode.ExtensionContext) {
         );
 
         // Command to log prompts (accessible from Canvas or other extensions)
+        console.log('[SYNAPSE] Initializing PromptLogger...');
         const promptLogger = PromptLogger.getInstance();
+        console.log('[SYNAPSE] Registering synapse.logPrompt command...');
         context.subscriptions.push(
             vscode.commands.registerCommand('synapse.logPrompt', async (args?: { prompt: string, title?: string, workspacePath?: string }) => {
                 console.log('[SYNAPSE] synapse.logPrompt triggered', args);
-                vscode.window.showInformationMessage('SYNAPSE: Log Prompt Command Triggered'); // Debugging
                 try {
                     let promptContent = args?.prompt;
                     let title = args?.title;
@@ -186,13 +191,8 @@ export async function activate(context: vscode.ExtensionContext) {
         );
 
         console.log('[SYNAPSE] Commands registered successfully');
-    } catch (e) {
-        console.error('[SYNAPSE] Failed to register commands:', e);
-        vscode.window.showErrorMessage(`SYNAPSE: Failed to register commands: ${e}`);
-    }
 
-    // Auto-open canvas and sync logic
-    try {
+        // Auto-open canvas and sync logic
         const workspaceFolders = vscode.workspace.workspaceFolders;
         if (workspaceFolders) {
             workspaceFolders.forEach(folder => {
@@ -200,23 +200,11 @@ export async function activate(context: vscode.ExtensionContext) {
                 setupFileWatcher(folder, context);
             });
         }
-    } catch (e) {
-        console.error('[SYNAPSE] Failed to initialize project status/watchers:', e);
-    }
 
-    // Language Client Setup
-    try {
+        // Language Client Setup
         console.log('[SYNAPSE] Starting Language Server...');
-        // The server is implemented in node
-        const serverModule = context.asAbsolutePath(
-            path.join('dist', 'server', 'server.js')
-        );
-        // The debug options for the server
-        // --inspect=6009: runs the server in Node's Inspector mode so VS Code can attach to the server for debugging
+        const serverModule = context.asAbsolutePath(path.join('dist', 'server', 'server.js'));
         const debugOptions = { execArgv: ['--nolazy', '--inspect=6009'] };
-
-        // If the extension is launched in debug mode then the debug server options are used
-        // Otherwise the run options are used
         const serverOptions: ServerOptions = {
             run: { module: serverModule, transport: TransportKind.ipc },
             debug: {
@@ -226,17 +214,13 @@ export async function activate(context: vscode.ExtensionContext) {
             }
         };
 
-        // Options to control the language client
         const clientOptions: LanguageClientOptions = {
-            // Register the server for plain text documents
             documentSelector: [{ scheme: 'file', language: 'markdown' }],
             synchronize: {
-                // Notify the server about file changes to '.clientrc files contained in the workspace
                 fileEvents: vscode.workspace.createFileSystemWatcher('**/.clientrc')
             }
         };
 
-        // Create the language client and start the client.
         const languageClient = new LanguageClient(
             'synapseLanguageServer',
             'SYNAPSE Language Server',
@@ -244,16 +228,15 @@ export async function activate(context: vscode.ExtensionContext) {
             clientOptions
         );
         setClient(languageClient);
-
-        // Start the client. This will also launch the server
         await languageClient.start();
         console.log('[SYNAPSE] Language Server started successfully');
-    } catch (e) {
-        console.error('[SYNAPSE] Language Server failed to start:', e);
-        // Do not throw, as we want the rest of the extension (like the canvas) to keep working
-    }
 
-    console.log('[SYNAPSE] Extension activation completed');
+        vscode.window.setStatusBarMessage('SYNAPSE Engine Ready (v0.1.6)', 5000);
+        console.log('[SYNAPSE] Extension activation completed');
+    } catch (e: any) {
+        console.error('[SYNAPSE] Extension activation failed:', e);
+        vscode.window.showErrorMessage(`SYNAPSE: Activation Failed! Error: ${e.message || e}`);
+    }
 }
 
 async function checkProjectStatus(workspaceFolder: vscode.WorkspaceFolder, context: vscode.ExtensionContext) {

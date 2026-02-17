@@ -1,296 +1,115 @@
 {
-  "nodes": [
-    {
-      "cluster_id": "cluster_1771255066453",
-      "data": {
-        "color": "#b8bb26",
-        "description": "board.py 파일",
-        "file": "board.py",
-        "label": "board.py",
-        "summary": {
-          "classes": [],
-          "functions": [
-            "main"
-          ],
-          "references": []
-        }
-      },
-      "id": "node_1",
-      "position": {
-        "x": -255.35251761024455,
-        "y": -289.1830332281021
-      },
-      "status": "active",
-      "type": "source",
-      "visual": {}
+  "canvas_state": {
+    "offset": {
+      "x": 0,
+      "y": 0
     },
-    {
-      "cluster_id": "cluster_1771255077660",
-      "data": {
-        "color": "#b8bb26",
-        "description": "schema.sql 파일",
-        "file": "schema.sql",
-        "label": "schema.sql",
-        "summary": {
-          "classes": [],
-          "functions": [],
-          "references": []
-        }
-      },
-      "id": "node_2",
-      "position": {
-        "x": -16.792891990694017,
-        "y": -539.5091712414576
-      },
-      "status": "active",
-      "type": "source",
-      "visual": {}
-    },
-    {
-      "cluster_id": "cluster_1771255066453",
-      "data": {
-        "description": "Manually created node",
-        "file": "src/Login.py",
-        "label": "Login.py",
-        "summary": {
-          "classes": [],
-          "functions": [
-            "main"
-          ],
-          "references": []
-        }
-      },
-      "id": "node_manual_1771248987477",
-      "position": {
-        "x": -415.49705697043305,
-        "y": -289.14973118659054
-      },
-      "status": "active",
-      "type": "logic",
-      "visual": {}
-    },
-    {
-      "cluster_id": "cluster_1771255077660",
-      "data": {
-        "description": "Manually created node",
-        "label": "payment,api"
-      },
-      "id": "node_manual_1771249019965",
-      "position": {
-        "x": -246.33206948997938,
-        "y": -539.5091712414576
-      },
-      "status": "active",
-      "type": "service",
-      "visual": {}
-    },
-    {
-      "cluster_id": "cluster_1771255077660",
-      "data": {
-        "description": "Manually created node",
-        "file": "src/AuthService.tx",
-        "label": "AuthService.tx",
-        "summary": {
-          "classes": [],
-          "functions": [],
-          "references": []
-        }
-      },
-      "id": "node_manual_1771249852105",
-      "position": {
-        "x": -250.60120371699276,
-        "y": -539.5091712414576
-      },
-      "status": "active",
-      "type": "logic",
-      "visual": {}
-    },
-    {
-      "id": "node_manual_1771253854441",
-      "type": 100,
-      "status": "active",
-      "position": {
-        "x": 357.05672137816083,
-        "y": 174.18929938104935
-      },
-      "data": {
-        "label": 100,
-        "description": "Manually created node"
-      },
-      "visual": {
-        "opacity": 1
-      },
-      "name": "Node A",
-      "cluster_id": "cluster_1771257052868"
-    },
-    {
-      "id": "node_manual_1771253854449",
-      "type": 100,
-      "status": "active",
-      "position": {
-        "x": 148.2033281306049,
-        "y": 174.18929938104935
-      },
-      "data": {
-        "label": 300,
-        "description": "Manually created node"
-      },
-      "visual": {
-        "opacity": 1
-      },
-      "name": "Node B",
-      "cluster_id": "cluster_1771257052868"
-    },
-    {
-      "id": "node_manual_1771255036797",
-      "type": "ui",
-      "status": "active",
-      "position": {
-        "x": -248.94103625886208,
-        "y": -539.5091712414576
-      },
-      "data": {
-        "label": "test_node1",
-        "description": "Manually created node"
-      },
-      "visual": {
-        "opacity": 1
-      },
-      "cluster_id": "cluster_1771255077660"
-    },
-    {
-      "id": "node_manual_1771256968935",
-      "type": "ui",
-      "status": "proposed",
-      "position": {
-        "x": 598.5321741221944,
-        "y": -272.5321650541485
-      },
-      "data": {
-        "label": "test_node3",
-        "description": "Manually created node"
-      },
-      "visual": {
-        "opacity": 1
-      },
-      "cluster_id": "cluster_1771257052868"
-    }
-  ],
-  "edges": [
-    {
-      "id": "edge_manual_1771255087038",
-      "from": "node_manual_1771248987477",
-      "to": "node_1",
-      "type": "dependency",
-      "label": "dependency",
-      "visual": {
-        "color": "#83a598",
-        "dashArray": "5,5"
-      }
-    },
-    {
-      "id": "edge_manual_1771255107388",
-      "from": "node_1",
-      "to": "node_manual_1771249852105",
-      "type": "bidirectional",
-      "label": "bidirectional",
-      "visual": {
-        "color": "#d3869b"
-      },
-      "_validationReason": "Valid relationship"
-    },
-    {
-      "id": "edge_manual_1771255126354",
-      "from": "node_manual_1771249852105",
-      "to": "node_manual_1771255036797",
-      "type": "dependency",
-      "label": "dependency",
-      "visual": {
-        "color": "#83a598",
-        "dashArray": "5,5"
-      }
-    },
-    {
-      "id": "edge_manual_1771255131502",
-      "from": "node_manual_1771249852105",
-      "to": "node_manual_1771249019965",
-      "type": "dependency",
-      "label": "dependency",
-      "visual": {
-        "color": "#83a598",
-        "dashArray": "5,5"
-      }
-    },
-    {
-      "id": "edge_manual_1771255136922",
-      "from": "node_manual_1771249852105",
-      "to": "node_2",
-      "type": "bidirectional",
-      "label": "bidirectional",
-      "visual": {
-        "color": "#d3869b"
-      }
-    },
-    {
-      "id": "edge_manual_1771257015230",
-      "from": "node_2",
-      "to": "node_manual_1771256968935",
-      "type": "bidirectional",
-      "label": "bidirectional",
-      "visual": {
-        "color": "#d3869b"
-      },
-      "_validationReason": "Valid relationship"
-    }
-  ],
+    "visible_layers": [
+      "source",
+      "documentation"
+    ],
+    "zoom_level": 1
+  },
   "clusters": [
     {
-      "id": "cluster_1771253877903",
-      "label": "Node B",
-      "color": "#fe8019",
+      "bounds": {
+        "height": 250,
+        "width": 250,
+        "x": 0,
+        "y": 0
+      },
+      "children": [
+        "node_0"
+      ],
       "collapsed": false,
-      "_headerBounds": {
-        "x": 80,
-        "y": -50,
-        "width": 368.853393247556,
-        "height": 30
-      }
-    },
+      "id": "cluster_0",
+      "label": "ROOT"
+    }
+  ],
+  "edges": [],
+  "gemini_md_path": "/home/dogsinatas/TypeScript_project/antigravity-extension-vis/GEMINI.md",
+  "nodes": [
     {
-      "id": "cluster_1771255066453",
-      "label": "front_end",
-      "color": "#fabd2f",
-      "collapsed": false,
-      "_headerBounds": {
-        "x": -435.49705697043305,
-        "y": -339.1830332281021,
-        "width": 320.1445393601885,
-        "height": 30
-      }
-    },
-    {
-      "id": "cluster_1771255077660",
-      "label": "back_end",
-      "color": "#fe8019",
-      "collapsed": false,
-      "_headerBounds": {
-        "x": -270.60120371699276,
-        "y": -589.5091712414576,
-        "width": 393.8083117262987,
-        "height": 30
-      }
-    },
-    {
-      "id": "cluster_1771257052868",
-      "label": "test",
-      "color": "#fabd2f",
-      "collapsed": false,
-      "_headerBounds": {
-        "x": 128.2033281306049,
-        "y": -322.5321650541485,
-        "width": 610.3288459915896,
-        "height": 30
+      "data": {
+        "cluster_id": "cluster_0",
+        "color": "#fabd2f",
+        "description": "GEMINI.md 파일",
+        "file": "GEMINI.md",
+        "label": "GEMINI.md",
+        "summary": {
+          "classes": [
+            "4. Bridge (코드 연동)",
+            "🧹 [데이터 위생 원칙: 스파게티 방지 3대 철칙]",
+            "원칙 1: 원천 소스와 상태값의 엄격한 분리",
+            "원칙 2: 자동 정규화(Auto-Normalization) 엔진",
+            "원칙 3: '데이터의 혈통' 중심의 정적 분석 활용",
+            "🧠 SYNAPSE: Visual Architecture Engine",
+            "🏗️ 핵심 워크플로우 (The Command Chain)",
+            "🛠️ 기술 스택",
+            "🚀 Saturday Sprint: Phase 1",
+            "1. 웹뷰 캔버스 초기화",
+            "2. 드롭 앤 분석 로직",
+            "3. 승인 UI (Pending State)",
+            "4. 스냅샷 엔진",
+            "🔄 [SYNAPSE: 동적 순서도(Flowchart) 통합 설계]",
+            "1. 모드 전환 (View Toggle)",
+            "Topology View (기본)",
+            "Flow View (호출)",
+            "2. 순서도 자동 생성 로직",
+            "Step 1: Trace Entry",
+            "Step 2: Logic Branching",
+            "Step 3: Asynchronous Flow",
+            "3. 사용자 시나리오: '눈으로 하는 디버깅'",
+            "시나리오 흐름",
+            "예시",
+            "4. Senior Engineer's Note: 기술적 난제와 해결책",
+            "난제: 정교한 파싱 필요",
+            "해결책 1: 추상 구문 트리(AST) 활용",
+            "해결책 2: Mermaid.js 스타일 적용",
+            "5. UI 통합 설계",
+            "모드 전환 버튼",
+            "우클릭 컨텍스트 메뉴",
+            "Flow View 렌더링",
+            "6. 참고 화면 (Reference Screenshot)",
+            "🌳 [SYNAPSE: 계층 구조(File Tree) 통합 설계]",
+            "1. 듀얼 레이아웃 모드 (Context Switching)",
+            "Graph Mode (기본)",
+            "Tree Mode (호출)",
+            "전환 방식",
+            "2. '폴더' 노드의 추상화",
+            "Container Node",
+            "Group Collapse",
+            "상태 전이 (State Propagation)",
+            "3. 시각적 연동 및 탐색",
+            "Breadcrumb Link",
+            "Shadow Structure",
+            "4. Senior Engineer's Note: 실무 구현 팁",
+            "OS 종속성 배제",
+            "Lazy Loading",
+            "🎯 [연휴 프로젝트의 4대 축 완성]",
+            "1. Topology (노드/엣지)",
+            "2. Flowchart (순서도)",
+            "3. File Tree (계층 구조)",
+            "4. Bridge (코드 연동)"
+          ],
+          "functions": [],
+          "references": [
+            "synapse_topology_view"
+          ]
+        }
+      },
+      "id": "node_0",
+      "position": {
+        "x": 50,
+        "y": 50
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
       }
     }
-  ]
+  ],
+  "project_name": "antigravity-extension-vis"
 }

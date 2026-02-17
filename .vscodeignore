@@ -17,7 +17,7 @@ implementation_plan.md
 walkthrough.md
 task.md
 workspace_rust_plan.md
-node_modules/**
+
 demo/**
 **/*.backup
 **/*.original

@@ -255,5 +255,9 @@ Never lose a thought. SYNAPSE supports a robust prompt saving mechanism:
 "An intuitive playground for children, a powerful control tower for experts."  
 Created with the belief that the simple act of connecting lines in complex systems is, in fact, the highest level of architectural design.
 
+## 📜 License
+
+This project is licensed under the [GNU General Public License v3.0](LICENSE).
+
 ---
 Created by [dogsinatas29](https://github.com/dogsinatas29)

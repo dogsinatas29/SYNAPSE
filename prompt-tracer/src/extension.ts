@@ -11,12 +11,30 @@ export function activate(context: vscode.ExtensionContext) {
     console.log('[SYNAPSE Tracer] Prompt Tracer is now active');
 
     // synapse.logPrompt 명령 등록
-    let disposable = vscode.commands.registerCommand('synapse.logPrompt', async (args: { prompt: string, title?: string, workspacePath?: string }) => {
-        const { prompt, title, workspacePath } = args;
+    let disposable = vscode.commands.registerCommand('synapse.logPrompt', async (args?: { prompt: string, title?: string, workspacePath?: string }) => {
+        let { prompt, title, workspacePath } = args || {};
 
+        // 1. Interactive Mode (Keybinding triggered)
         if (!prompt) {
-            console.error('[SYNAPSE Tracer] No prompt provided');
-            return;
+            // Get Prompt Content
+            prompt = await vscode.window.showInputBox({
+                placeHolder: 'Enter your design decision, goal, or reasoning...',
+                prompt: 'Log Prompt to Architecture History',
+                ignoreFocusOut: true
+            });
+
+            if (!prompt) {
+                return; // User cancelled
+            }
+
+            // Get Title (Optional)
+            if (!title) {
+                title = await vscode.window.showInputBox({
+                    placeHolder: 'Enter a title (optional)...',
+                    prompt: 'Title for this log (Press Enter to skip)',
+                    ignoreFocusOut: true
+                });
+            }
         }
 
         // 워크스페이스 경로 결정
@@ -32,6 +50,7 @@ export function activate(context: vscode.ExtensionContext) {
 
         try {
             const filePath = savePrompt(targetWorkspace, prompt, title);
+            vscode.window.showInformationMessage('Prompt logged successfully.');
             return { success: true, filePath };
         } catch (error) {
             console.error('[SYNAPSE Tracer] Failed to log prompt:', error);

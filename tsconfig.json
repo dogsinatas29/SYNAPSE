@@ -24,6 +24,7 @@
         ".vscode-test",
         "ui",
         "demo",
-        "prompt-tracer"
+        "prompt-tracer",
+        "synapse-visual-architecture-0.1.7"
     ]
 }

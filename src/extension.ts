@@ -35,7 +35,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
     try {
         console.log('[SYNAPSE] Initializing components...');
-        vscode.window.showInformationMessage('SYNAPSE: Initializing (v0.1.6)...');
+        vscode.window.showInformationMessage('SYNAPSE: Initializing (v0.1.8)...');
 
         console.log('[SYNAPSE] Registering WebviewPanelSerializer...');
         if (vscode.window.registerWebviewPanelSerializer) {
@@ -231,7 +231,7 @@ export async function activate(context: vscode.ExtensionContext) {
         await languageClient.start();
         console.log('[SYNAPSE] Language Server started successfully');
 
-        vscode.window.setStatusBarMessage('SYNAPSE Engine Ready (v0.1.6)', 5000);
+        vscode.window.setStatusBarMessage('SYNAPSE Engine Ready (v0.1.8)', 5000);
         console.log('[SYNAPSE] Extension activation completed');
     } catch (e: any) {
         console.error('[SYNAPSE] Extension activation failed:', e);

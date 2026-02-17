@@ -21,6 +21,7 @@ SYNAPSE is a next-generation extension built for **Google Antigravity** and **Vi
 - **💾 Persistence**: Permanently save all visual states to `project_state.json` and manage with Git.
 - **🛠️ Standalone Bridge**: Support for browser-only mode without VS Code.
 - **💾 Prompt Traceability**: Save your prompts and design decisions directly from the canvas (Auto-save supported).
+- **🔌 Enhanced LSP Integration (New! 🚀)**: Directly link `GEMINI.md` to code with Hover, Go to Definition, and Real-time Diagnostics.
 
 ## 🗂️ Language Support
 

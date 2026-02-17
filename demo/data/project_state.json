@@ -1,5 +1,8 @@
 {
+  "project_name": "demo",
+  "gemini_md_path": "/home/dogsinatas/TypeScript_project/antigravity-extension-vis/demo/GEMINI.md",
   "canvas_state": {
+    "zoom_level": 1,
     "offset": {
       "x": 0,
       "y": 0
@@ -7,336 +10,539 @@
     "visible_layers": [
       "source",
       "documentation"
-    ],
-    "zoom_level": 1
+    ]
   },
-  "clusters": [],
-  "edges": [
-    {
-      "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_7",
-      "id": "edge_0",
-      "is_approved": false,
-      "to": "node_1",
-      "type": "dependency",
-      "validation": {
-        "confidence": 0.95,
-        "reason": "Appropriate architectural relationship.",
-        "valid": true
-      },
-      "visual": {
-        "animated": false,
-        "color": "#ebdbb2",
-        "style": "dashed",
-        "thickness": 2
-      }
-    },
-    {
-      "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_1",
-      "id": "edge_1",
-      "is_approved": false,
-      "to": "node_2",
-      "type": "dependency",
-      "validation": {
-        "confidence": 0.95,
-        "reason": "Appropriate architectural relationship.",
-        "valid": true
-      },
-      "visual": {
-        "animated": false,
-        "color": "#ebdbb2",
-        "style": "dashed",
-        "thickness": 2
-      }
-    },
-    {
-      "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_2",
-      "id": "edge_2",
-      "is_approved": false,
-      "to": "node_3",
-      "type": "dependency",
-      "validation": {
-        "confidence": 0.95,
-        "reason": "Appropriate architectural relationship.",
-        "valid": true
-      },
-      "visual": {
-        "animated": false,
-        "color": "#ebdbb2",
-        "style": "dashed",
-        "thickness": 2
-      }
-    },
-    {
-      "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_3",
-      "id": "edge_3",
-      "is_approved": false,
-      "to": "node_5",
-      "type": "dependency",
-      "validation": {
-        "confidence": 0.95,
-        "reason": "Appropriate architectural relationship.",
-        "valid": true
-      },
-      "visual": {
-        "animated": false,
-        "color": "#ebdbb2",
-        "style": "dashed",
-        "thickness": 2
-      }
-    },
-    {
-      "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_3",
-      "id": "edge_4",
-      "is_approved": false,
-      "to": "node_4",
-      "type": "dependency",
-      "validation": {
-        "confidence": 0.95,
-        "reason": "Appropriate architectural relationship.",
-        "valid": true
-      },
-      "visual": {
-        "animated": false,
-        "color": "#ebdbb2",
-        "style": "dashed",
-        "thickness": 2
-      }
-    },
-    {
-      "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_4",
-      "id": "edge_5",
-      "is_approved": false,
-      "to": "node_8",
-      "type": "dependency",
-      "validation": {
-        "confidence": 0.95,
-        "reason": "Appropriate architectural relationship.",
-        "valid": true
-      },
-      "visual": {
-        "animated": false,
-        "color": "#ebdbb2",
-        "style": "dashed",
-        "thickness": 2
-      }
-    },
-    {
-      "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_5",
-      "id": "edge_6",
-      "is_approved": false,
-      "to": "node_0",
-      "type": "dependency",
-      "validation": {
-        "confidence": 0.95,
-        "reason": "Appropriate architectural relationship.",
-        "valid": true
-      },
-      "visual": {
-        "animated": false,
-        "color": "#ebdbb2",
-        "style": "dashed",
-        "thickness": 2
-      }
-    }
-  ],
-  "gemini_md_path": "/home/dogsinatas/TypeScript_project/antigravity-extension-vis/demo/GEMINI.md",
   "nodes": [
     {
-      "data": {
-        "color": "#b8bb26",
-        "description": "터미널 명령줄 입력 및 옵션 처리 (-f, --level).",
-        "file": "CLI_Main.ts",
-        "label": "CLI_Main.ts",
-        "summary": {
-          "classes": [],
-          "functions": [],
-          "references": []
-        }
-      },
-      "id": "node_0",
-      "position": {
-        "x": 100,
-        "y": 100
-      },
-      "status": "active",
+      "id": "node_22",
       "type": "source",
-      "visual": {}
-    },
-    {
-      "data": {
-        "color": "#b8bb26",
-        "description": "tail -f와 유사하게 로그 파일의 신규 라인을 감시.",
-        "file": "Log_Watcher.ts",
-        "label": "Log_Watcher.ts",
-        "summary": {
-          "classes": [],
-          "functions": [],
-          "references": []
-        }
-      },
-      "id": "node_1",
+      "status": "proposed",
       "position": {
-        "x": 300,
-        "y": 100
+        "x": 50,
+        "y": 50
       },
-      "status": "active",
-      "type": "source",
-      "visual": {}
-    },
-    {
       "data": {
-        "color": "#b8bb26",
-        "description": "정규표현식을 사용하여 Timestamp, Service, Level, Message로 분리.",
-        "file": "Log_Parser.ts",
-        "label": "Log_Parser.ts",
-        "summary": {
-          "classes": [],
-          "functions": [],
-          "references": []
-        }
-      },
-      "id": "node_2",
-      "position": {
-        "x": 500,
-        "y": 100
-      },
-      "status": "active",
-      "type": "source",
-      "visual": {}
-    },
-    {
-      "data": {
-        "color": "#b8bb26",
-        "description": "사용자가 지정한 레벨이나 키워드에 따라 로그를 선별.",
-        "file": "Filter_Engine.ts",
-        "label": "Filter_Engine.ts",
-        "summary": {
-          "classes": [],
-          "functions": [],
-          "references": []
-        }
-      },
-      "id": "node_3",
-      "position": {
-        "x": 100,
-        "y": 300
-      },
-      "status": "active",
-      "type": "source",
-      "visual": {}
-    },
-    {
-      "data": {
-        "color": "#b8bb26",
-        "description": "Critical 등급 발생 시 시스템 알림(Notify-send) 전송.",
         "file": "Alert_Manager.ts",
         "label": "Alert_Manager.ts",
-        "summary": {
-          "classes": [],
-          "functions": [],
-          "references": []
-        }
+        "description": "Alert_Manager.ts (Auto-detected)",
+        "color": "#b8bb26",
+        "cluster_id": "cluster_4"
       },
-      "id": "node_4",
-      "position": {
-        "x": 300,
-        "y": 300
-      },
-      "status": "active",
-      "type": "source",
-      "visual": {}
+      "visual": {
+        "opacity": 0.5,
+        "dashArray": "5,5"
+      }
     },
     {
-      "data": {
-        "color": "#b8bb26",
-        "description": "SQLite 데이터베이스. 선별된 로그를 영구 저장.",
-        "file": "Log_Store.ts",
-        "label": "Log_Store.ts",
-        "summary": {
-          "classes": [],
-          "functions": [],
-          "references": []
-        }
-      },
-      "id": "node_5",
-      "position": {
-        "x": 500,
-        "y": 300
-      },
-      "status": "active",
+      "id": "node_23",
       "type": "source",
-      "visual": {}
+      "status": "proposed",
+      "position": {
+        "x": 200,
+        "y": 50
+      },
+      "data": {
+        "file": "CLI_Main.ts",
+        "label": "CLI_Main.ts",
+        "description": "CLI_Main.ts (Auto-detected)",
+        "color": "#b8bb26",
+        "cluster_id": "cluster_4"
+      },
+      "visual": {
+        "opacity": 0.5,
+        "dashArray": "5,5"
+      }
     },
     {
+      "id": "node_24",
+      "type": "source",
+      "status": "proposed",
+      "position": {
+        "x": 350,
+        "y": 50
+      },
       "data": {
-        "color": "#b8bb26",
-        "description": "대량 로그 발생 시 메모리에 잠시 보관하는 큐.",
         "file": "Cache_Buffer.ts",
         "label": "Cache_Buffer.ts",
-        "summary": {
-          "classes": [],
-          "functions": [],
-          "references": []
-        }
+        "description": "Cache_Buffer.ts (Auto-detected)",
+        "color": "#b8bb26",
+        "cluster_id": "cluster_4"
       },
-      "id": "node_6",
-      "position": {
-        "x": 100,
-        "y": 500
-      },
-      "status": "active",
-      "type": "source",
-      "visual": {}
+      "visual": {
+        "opacity": 0.5,
+        "dashArray": "5,5"
+      }
     },
     {
-      "data": {
-        "color": "#b8bb26",
-        "description": "실제 리눅스 시스템 로그 파일 (/var/log/auth.log 등).",
-        "file": "System_Logs.ts",
-        "label": "System_Logs.ts",
-        "summary": {
-          "classes": [],
-          "functions": [],
-          "references": []
-        }
-      },
-      "id": "node_7",
-      "position": {
-        "x": 300,
-        "y": 500
-      },
-      "status": "active",
+      "id": "node_25",
       "type": "source",
-      "visual": {}
-    },
-    {
-      "data": {
-        "color": "#b8bb26",
-        "description": "리눅스 데스크톱 알림 서버.",
-        "file": "Desktop_Notify.ts",
-        "label": "Desktop_Notify.ts",
-        "summary": {
-          "classes": [],
-          "functions": [],
-          "references": []
-        }
-      },
-      "id": "node_8",
+      "status": "proposed",
       "position": {
         "x": 500,
+        "y": 50
+      },
+      "data": {
+        "file": "Desktop_Notify.ts",
+        "label": "Desktop_Notify.ts",
+        "description": "Desktop_Notify.ts (Auto-detected)",
+        "color": "#b8bb26",
+        "cluster_id": "cluster_4"
+      },
+      "visual": {
+        "opacity": 0.5,
+        "dashArray": "5,5"
+      }
+    },
+    {
+      "id": "node_26",
+      "type": "source",
+      "status": "proposed",
+      "position": {
+        "x": 50,
+        "y": 200
+      },
+      "data": {
+        "file": "Filter_Engine.ts",
+        "label": "Filter_Engine.ts",
+        "description": "Filter_Engine.ts (Auto-detected)",
+        "color": "#b8bb26",
+        "cluster_id": "cluster_4"
+      },
+      "visual": {
+        "opacity": 0.5,
+        "dashArray": "5,5"
+      }
+    },
+    {
+      "id": "node_27",
+      "type": "documentation",
+      "status": "proposed",
+      "position": {
+        "x": 200,
+        "y": 200
+      },
+      "data": {
+        "file": "GEMINI.md",
+        "label": "GEMINI.md",
+        "description": "GEMINI.md (Auto-detected)",
+        "color": "#fabd2f",
+        "cluster_id": "cluster_4"
+      },
+      "visual": {
+        "opacity": 0.5,
+        "dashArray": "5,5"
+      }
+    },
+    {
+      "id": "node_28",
+      "type": "source",
+      "status": "proposed",
+      "position": {
+        "x": 350,
+        "y": 200
+      },
+      "data": {
+        "file": "Log_Parser.ts",
+        "label": "Log_Parser.ts",
+        "description": "Log_Parser.ts (Auto-detected)",
+        "color": "#b8bb26",
+        "cluster_id": "cluster_4"
+      },
+      "visual": {
+        "opacity": 0.5,
+        "dashArray": "5,5"
+      }
+    },
+    {
+      "id": "node_29",
+      "type": "source",
+      "status": "proposed",
+      "position": {
+        "x": 500,
+        "y": 200
+      },
+      "data": {
+        "file": "Log_Store.ts",
+        "label": "Log_Store.ts",
+        "description": "Log_Store.ts (Auto-detected)",
+        "color": "#b8bb26",
+        "cluster_id": "cluster_4"
+      },
+      "visual": {
+        "opacity": 0.5,
+        "dashArray": "5,5"
+      }
+    },
+    {
+      "id": "node_30",
+      "type": "source",
+      "status": "proposed",
+      "position": {
+        "x": 50,
+        "y": 350
+      },
+      "data": {
+        "file": "Log_Watcher.ts",
+        "label": "Log_Watcher.ts",
+        "description": "Log_Watcher.ts (Auto-detected)",
+        "color": "#b8bb26",
+        "cluster_id": "cluster_4"
+      },
+      "visual": {
+        "opacity": 0.5,
+        "dashArray": "5,5"
+      }
+    },
+    {
+      "id": "node_31",
+      "type": "documentation",
+      "status": "proposed",
+      "position": {
+        "x": 200,
+        "y": 350
+      },
+      "data": {
+        "file": "README.md",
+        "label": "README.md",
+        "description": "README.md (Auto-detected)",
+        "color": "#fabd2f",
+        "cluster_id": "cluster_4"
+      },
+      "visual": {
+        "opacity": 0.5,
+        "dashArray": "5,5"
+      }
+    },
+    {
+      "id": "node_32",
+      "type": "source",
+      "status": "proposed",
+      "position": {
+        "x": 350,
+        "y": 350
+      },
+      "data": {
+        "file": "System_Logs.ts",
+        "label": "System_Logs.ts",
+        "description": "System_Logs.ts (Auto-detected)",
+        "color": "#b8bb26",
+        "cluster_id": "cluster_4"
+      },
+      "visual": {
+        "opacity": 0.5,
+        "dashArray": "5,5"
+      }
+    },
+    {
+      "id": "node_33",
+      "type": "documentation",
+      "status": "proposed",
+      "position": {
+        "x": 500,
+        "y": 350
+      },
+      "data": {
+        "file": "architecture.md",
+        "label": "architecture.md",
+        "description": "architecture.md (Auto-detected)",
+        "color": "#fabd2f",
+        "cluster_id": "cluster_4"
+      },
+      "visual": {
+        "opacity": 0.5,
+        "dashArray": "5,5"
+      }
+    },
+    {
+      "id": "node_34",
+      "type": "source",
+      "status": "proposed",
+      "position": {
+        "x": 50,
         "y": 500
       },
-      "status": "active",
+      "data": {
+        "file": "board.py",
+        "label": "board.py",
+        "description": "board.py (Auto-detected)",
+        "color": "#b8bb26",
+        "cluster_id": "cluster_4"
+      },
+      "visual": {
+        "opacity": 0.5,
+        "dashArray": "5,5"
+      }
+    },
+    {
+      "id": "node_35",
       "type": "source",
-      "visual": {}
+      "status": "proposed",
+      "position": {
+        "x": 200,
+        "y": 500
+      },
+      "data": {
+        "file": "schema.sql",
+        "label": "schema.sql",
+        "description": "schema.sql (Auto-detected)",
+        "color": "#b8bb26",
+        "cluster_id": "cluster_4"
+      },
+      "visual": {
+        "opacity": 0.5,
+        "dashArray": "5,5"
+      }
+    },
+    {
+      "id": "node_36",
+      "type": "source",
+      "status": "proposed",
+      "position": {
+        "x": 650,
+        "y": 50
+      },
+      "data": {
+        "file": "src/board.py",
+        "label": "board.py",
+        "description": "board.py (Auto-detected)",
+        "color": "#b8bb26",
+        "cluster_id": "cluster_5"
+      },
+      "visual": {
+        "opacity": 0.5,
+        "dashArray": "5,5"
+      }
+    },
+    {
+      "id": "node_37",
+      "type": "source",
+      "status": "proposed",
+      "position": {
+        "x": 800,
+        "y": 50
+      },
+      "data": {
+        "file": "src/login.py",
+        "label": "login.py",
+        "description": "login.py (Auto-detected)",
+        "color": "#b8bb26",
+        "cluster_id": "cluster_5"
+      },
+      "visual": {
+        "opacity": 0.5,
+        "dashArray": "5,5"
+      }
+    },
+    {
+      "id": "node_38",
+      "type": "source",
+      "status": "proposed",
+      "position": {
+        "x": 950,
+        "y": 50
+      },
+      "data": {
+        "file": "src/main.js",
+        "label": "main.js",
+        "description": "main.js (Auto-detected)",
+        "color": "#b8bb26",
+        "cluster_id": "cluster_5"
+      },
+      "visual": {
+        "opacity": 0.5,
+        "dashArray": "5,5"
+      }
+    },
+    {
+      "id": "node_39",
+      "type": "source",
+      "status": "proposed",
+      "position": {
+        "x": 650,
+        "y": 200
+      },
+      "data": {
+        "file": "src/main.ts",
+        "label": "main.ts",
+        "description": "main.ts (Auto-detected)",
+        "color": "#b8bb26",
+        "cluster_id": "cluster_5"
+      },
+      "visual": {
+        "opacity": 0.5,
+        "dashArray": "5,5"
+      }
+    },
+    {
+      "id": "node_40",
+      "type": "source",
+      "status": "proposed",
+      "position": {
+        "x": 800,
+        "y": 200
+      },
+      "data": {
+        "file": "src/schema.sql",
+        "label": "schema.sql",
+        "description": "schema.sql (Auto-detected)",
+        "color": "#b8bb26",
+        "cluster_id": "cluster_5"
+      },
+      "visual": {
+        "opacity": 0.5,
+        "dashArray": "5,5"
+      }
+    },
+    {
+      "id": "node_41",
+      "type": "source",
+      "status": "proposed",
+      "position": {
+        "x": 50,
+        "y": 450
+      },
+      "data": {
+        "file": "src/types/schema.js",
+        "label": "schema.js",
+        "description": "schema.js (Auto-detected)",
+        "color": "#b8bb26",
+        "cluster_id": "cluster_6"
+      },
+      "visual": {
+        "opacity": 0.5,
+        "dashArray": "5,5"
+      }
+    },
+    {
+      "id": "node_42",
+      "type": "source",
+      "status": "proposed",
+      "position": {
+        "x": 200,
+        "y": 450
+      },
+      "data": {
+        "file": "src/types/schema.ts",
+        "label": "schema.ts",
+        "description": "schema.ts (Auto-detected)",
+        "color": "#b8bb26",
+        "cluster_id": "cluster_6"
+      },
+      "visual": {
+        "opacity": 0.5,
+        "dashArray": "5,5"
+      }
+    },
+    {
+      "id": "node_43",
+      "type": "source",
+      "status": "proposed",
+      "position": {
+        "x": 650,
+        "y": 450
+      },
+      "data": {
+        "file": "ui/canvas-engine.js",
+        "label": "canvas-engine.js",
+        "description": "canvas-engine.js (Auto-detected)",
+        "color": "#b8bb26",
+        "cluster_id": "cluster_7"
+      },
+      "visual": {
+        "opacity": 0.5,
+        "dashArray": "5,5"
+      }
     }
   ],
-  "project_name": "demo"
+  "edges": [
+    {
+      "id": "edge_1",
+      "from": "node_37",
+      "to": "node_34",
+      "type": "dependency",
+      "is_approved": false,
+      "visual": {
+        "thickness": 2,
+        "style": "dashed",
+        "color": "#ebdbb2",
+        "animated": false
+      }
+    }
+  ],
+  "clusters": [
+    {
+      "id": "cluster_4",
+      "label": "ROOT",
+      "collapsed": false,
+      "bounds": {
+        "x": 0,
+        "y": 0,
+        "width": 700,
+        "height": 700
+      },
+      "children": [
+        "node_22",
+        "node_23",
+        "node_24",
+        "node_25",
+        "node_26",
+        "node_27",
+        "node_28",
+        "node_29",
+        "node_30",
+        "node_31",
+        "node_32",
+        "node_33",
+        "node_34",
+        "node_35"
+      ]
+    },
+    {
+      "id": "cluster_5",
+      "label": "src",
+      "collapsed": false,
+      "bounds": {
+        "x": 600,
+        "y": 0,
+        "width": 550,
+        "height": 400
+      },
+      "children": [
+        "node_36",
+        "node_37",
+        "node_38",
+        "node_39",
+        "node_40"
+      ]
+    },
+    {
+      "id": "cluster_6",
+      "label": "src/types",
+      "collapsed": false,
+      "bounds": {
+        "x": 0,
+        "y": 400,
+        "width": 400,
+        "height": 250
+      },
+      "children": [
+        "node_41",
+        "node_42"
+      ]
+    },
+    {
+      "id": "cluster_7",
+      "label": "ui",
+      "collapsed": false,
+      "bounds": {
+        "x": 600,
+        "y": 400,
+        "width": 250,
+        "height": 250
+      },
+      "children": [
+        "node_43"
+      ]
+    }
+  ]
 }

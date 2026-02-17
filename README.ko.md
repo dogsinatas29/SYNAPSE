@@ -21,6 +21,7 @@ SYNAPSE는 **Google Antigravity** 및 **Visual Studio Code** 사용자를 위해
 - **💾 Persistence**: 모든 시각적 상태를 `project_state.json`에 영구 저장 및 Git 관리.
 - **🛠️ Standalone Bridge**: VS Code 없이 브라우저 단독 구동 모드 지원.
 - **💾 Prompt Traceability**: 캔버스에서 직접 프롬프트와 설계 결정을 기록 및 저장 (자동 저장 지원).
+- **🔌 강화된 LSP 연동 (New! 🚀)**: `GEMINI.md`에서 코드 Hover, 정의 이동(Definition), 실시간 유효성 검사를 통해 설계와 실제 코드를 강력하게 연결.
 
 ## 🗂️ Language Support
 

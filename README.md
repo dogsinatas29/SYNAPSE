@@ -157,29 +157,47 @@ SYNAPSE의 핵심 기능인 **드래그 앤 드롭 엣지 생성**으로 코드 
 - **롤백**: 시계 아이콘(History) 클릭 -> 원하는 시점의 되돌리기 버튼 클릭
     *   (브라우저 모드에서는 확인 창이 뜹니다)
 
-## 📦 VSIX Packaging & Installation
+## ⚙️ How to Install (VS Code)
 
-직접 설치 파일(.vsix)을 생성하고 설치하는 방법입니다:
+### 1. Release에서 다운로드 (추천)
+[Releases 탭](https://github.com/dogsinatas29/SYNAPSE/releases)에서 가장 최신의 `.vsix` 파일을 다운로드하십시오.
 
-### 1. 패키징 도구 설치
+### 2. 설치 방법
+- **드래그 앤 드롭**: 다운로드한 `.vsix` 파일을 VS Code 창 안으로 직접 끌어다 놓으십시오.
+- **메뉴 활용**: 확장(Extensions) 탭 -> `...` 메뉴 -> `Install from VSIX...` 선택 후 파일 지정.
+- **CLI 명령어**:
+  ```bash
+  code --install-extension synapse-extension.vsix
+  ```
+
+---
+
+## 🌐 Standalone Mode (Web Browser)
+
+VS Code가 없는 환경이거나 브라우저에서 단독으로 분석 도구를 사용하고 싶은 경우 Standalone 모드를 이용하십시오.
+
+### 1. 사전 준비
 ```bash
-npm install -g @vscode/vsce
+git clone https://github.com/dogsinatas29/SYNAPSE.git
+cd SYNAPSE
+npm install
 ```
 
-### 2. VSIX 파일 생성
-프로젝트 루트 디렉토리에서 아래 명령어를 실행합니다:
+### 2. 브라우저 엔진 기동
 ```bash
-# vsce package 명령으로 .vsix 파일 생성
-npx vsce package --out synapse-extension.vsix
+# Standalone 브리지 서버 실행
+npm run dev:standalone
 ```
-*주의: 패키징 과정에서 `repository` 정보나 `README.md` 관련 경고가 뜰 수 있으나, 'y'를 눌러 진행하면 설치 파일이 생성됩니다.*
 
-### 3. 확장 설치
-생성된 파일을 VS Code에 설치합니다:
-```bash
-code --install-extension synapse-extension.vsix
-```
-또는 VS Code의 확장 탭 -> `...` 메뉴 -> `Install from VSIX...`를 통해 설치할 수 있습니다.
+### 3. 접속
+서버가 실행되면 브라우저에서 `http://localhost:8080` (또는 지정된 포트)으로 접속하여 캔버스를 조작할 수 있습니다.
+
+---
+
+## 🛠️ For Developers (Build from Source)
+직접 패키징 파일을 만들고 싶을 경우:
+1. `npm install -g @vscode/vsce`
+2. `npx vsce package --out synapse-extension.vsix`
 
 ## 🎥 Demo Video
 https://www.youtube.com/watch?v=Va4vZWkqC8E

@@ -47,6 +47,9 @@ export class FileScanner {
             } else if (['.json', '.yaml', '.yml', '.toml'].includes(ext)) {
                 console.log(`[SYNAPSE] Parsing Configuration: ${filePath}`);
                 this.parseConfig(content, summary);
+            } else if (ext === '.md') {
+                console.log(`[SYNAPSE] Parsing Markdown: ${filePath}`);
+                this.parseMarkdown(content, summary);
             }
             console.log(`[SYNAPSE] Finished parsing: ${path.basename(filePath)}`);
         } catch (error) {
@@ -243,6 +246,28 @@ export class FileScanner {
                 // Remove quotes if present
                 const cleanRef = ref.replace(/['"]/g, '');
                 summary.references.push(cleanRef);
+            }
+        }
+    }
+
+    private parseMarkdown(content: string, summary: CodeSummary) {
+        // MD Headers (# Header) as classes/sections
+        const headerRegex = /^(#{1,6})\s+(.+)$/gm;
+        let match;
+        while ((match = headerRegex.exec(content)) !== null) {
+            summary.classes.push(match[2].trim());
+        }
+
+        // MD Links ([label](path/to/file)) as references
+        const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
+        while ((match = linkRegex.exec(content)) !== null) {
+            const ref = match[2].trim();
+            if (ref && !ref.startsWith('http') && !ref.startsWith('#')) {
+                // Clean path to file basename
+                const cleanRef = path.basename(ref, path.extname(ref));
+                if (cleanRef && !summary.references.includes(cleanRef)) {
+                    summary.references.push(cleanRef);
+                }
             }
         }
     }

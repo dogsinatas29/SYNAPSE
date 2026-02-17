@@ -1,0 +1,37 @@
+{
+    "name": "synapse-prompt-tracer",
+    "displayName": "SYNAPSE - Prompt Tracer",
+    "description": "Preserve your AI design instructions as traceable markdown history.",
+    "version": "0.1.0",
+    "publisher": "synapse-team",
+    "engines": {
+        "vscode": "^1.80.0"
+    },
+    "categories": [
+        "Other"
+    ],
+    "main": "./dist/extension.js",
+    "activationEvents": [
+        "onCommand:synapse.logPrompt"
+    ],
+    "contributes": {
+        "commands": [
+            {
+                "command": "synapse.logPrompt",
+                "title": "SYNAPSE: Log Prompt"
+            }
+        ]
+    },
+    "scripts": {
+        "vscode:prepublish": "npm run compile",
+        "compile": "tsc -p ./",
+        "watch": "tsc -watch -p ./",
+        "pretest": "npm run compile",
+        "lint": "eslint src --ext ts"
+    },
+    "devDependencies": {
+        "@types/vscode": "^1.80.0",
+        "@types/node": "^20.10.0",
+        "typescript": "^5.3.3"
+    }
+}

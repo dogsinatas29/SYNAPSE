@@ -119,7 +119,8 @@ export class FlowchartGenerator {
             cluster: '#83a598',     // 파란색
             documentation: '#fabd2f', // 노란색
             test: '#fe8019',        // 주황색
-            config: '#d3869b'       // 분홍색
+            config: '#d3869b',      // 분홍색
+            history: '#d65d0e'      // 주황/갈색 (브라운)
         };
 
         return {
@@ -152,8 +153,9 @@ export class FlowchartGenerator {
             dependency: { color: '#ebdbb2', thickness: 2 },
             data_flow: { color: '#83a598', thickness: 3 },
             event: { color: '#fe8019', thickness: 2 },
-            conditional: { color: '#d3869b', thickness: 1 }
-        };
+            conditional: { color: '#d3869b', thickness: 1 },
+            origin: { color: '#d65d0e', thickness: 1.5 } // 프롬프트 기원 링크
+        } as Record<EdgeType, { color: string; thickness: number }>;
 
         const style = styleMap[type] || styleMap['dependency'];
 
@@ -201,6 +203,7 @@ export class FlowchartGenerator {
             case 'documentation': return ['[/', '/]'];
             case 'test': return ['{', '}'];
             case 'config': return ['[(', ')]'];
+            case 'history': return ['((', '))'];
             default: return ['[', ']'];
         }
     }

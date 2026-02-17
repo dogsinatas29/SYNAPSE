@@ -7,7 +7,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 import { GeminiParser } from '../core/GeminiParser';
 import { FlowchartGenerator } from '../core/FlowchartGenerator';
-import { BootstrapResult, ProjectState } from '../types/schema';
+import { BootstrapResult, ProjectState, NodeType } from '../types/schema';
 
 export class BootstrapEngine {
     private parser: GeminiParser;
@@ -181,14 +181,16 @@ export class BootstrapEngine {
                     ];
 
                     if (scanExtensions.includes(ext)) {
-                        let type: any = 'source';
-                        if (ext === '.md') type = 'documentation';
+                        let type: NodeType = 'source';
+                        if (ext === '.md') {
+                            type = currentRelPath.startsWith('prompts/') ? 'history' : 'documentation';
+                        }
                         if (['.json', '.yaml', '.yml', '.toml'].includes(ext)) type = 'config';
 
                         structure.files.push({
                             path: currentRelPath.replace(/\\/g, '/'), // Force forward slashes
                             type,
-                            description: `${file} (Auto-detected)`
+                            description: type === 'history' ? `Prompt: ${file}` : `${file} (Auto-detected)`
                         });
                     }
                 }

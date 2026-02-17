@@ -23,6 +23,7 @@
         "node_modules",
         ".vscode-test",
         "ui",
-        "demo"
+        "demo",
+        "prompt-tracer"
     ]
 }

@@ -4,13 +4,13 @@
  */
 
 // 노드 타입
-export type NodeType = 'source' | 'cluster' | 'documentation' | 'test' | 'config';
+export type NodeType = 'source' | 'cluster' | 'documentation' | 'test' | 'config' | 'history';
 
 // 노드 상태
 export type NodeStatus = 'proposed' | 'active' | 'error' | 'completed' | 'warning';
 
 // 엣지 타입
-export type EdgeType = 'dependency' | 'data_flow' | 'event' | 'conditional';
+export type EdgeType = 'dependency' | 'data_flow' | 'event' | 'conditional' | 'origin';
 
 // 엣지 스타일
 export type EdgeStyle = 'solid' | 'dashed' | 'dotted';

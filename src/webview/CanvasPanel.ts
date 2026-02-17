@@ -146,6 +146,9 @@ export class CanvasPanel {
                     case 'reBootstrap':
                         await this.handleReBootstrap();
                         return;
+                    case 'logPrompt':
+                        await this.handleLogPrompt(message.prompt, message.title);
+                        return;
                 }
             },
             null,
@@ -383,6 +386,13 @@ export class CanvasPanel {
 
         if (confirm === 'Deep Reset') {
             try {
+                // Decision logging via command (Modular Extension Communication)
+                vscode.commands.executeCommand('synapse.logPrompt', {
+                    prompt: "User triggered a Deep Reset (Re-bootstrap) to refresh the visualization map.",
+                    title: "Deep Reset Triggered",
+                    workspacePath: workspaceFolder.uri.fsPath
+                });
+
                 const projectStateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'project_state.json');
 
                 // 1. 기존 데이터 삭제 (또는 백업 후 생성)
@@ -751,10 +761,37 @@ export class CanvasPanel {
             if (history.length > 50) history.pop(); // Limit history size
 
             await vscode.workspace.fs.writeFile(historyUri, Buffer.from(JSON.stringify(history, null, 2), 'utf8'));
+
+            // Record decision if label is provided
+            if (state.label) {
+                vscode.commands.executeCommand('synapse.logPrompt', {
+                    prompt: `Snapshot taken: ${state.label}`,
+                    title: state.label,
+                    workspacePath: workspaceFolder.uri.fsPath
+                });
+            }
+
             this.sendHistory(); // Update UI
             vscode.window.showInformationMessage(`Snapshot saved: ${snapshot.label}`);
         } catch (error) {
             vscode.window.showErrorMessage(`Failed to take snapshot: ${error}`);
+        }
+    }
+
+    private async handleLogPrompt(prompt: string, title?: string) {
+        const workspaceFolder = this._workspaceFolder;
+        if (!workspaceFolder || !prompt) return;
+
+        try {
+            await vscode.commands.executeCommand('synapse.logPrompt', {
+                prompt,
+                title,
+                workspacePath: workspaceFolder.uri.fsPath
+            });
+            vscode.window.showInformationMessage(`Prompt logged: ${title || 'Untitled'}`);
+            await this.sendProjectState(); // Refresh to show the new history node
+        } catch (e) {
+            vscode.window.showErrorMessage(`Failed to log prompt: ${e}`);
         }
     }
 

@@ -154,17 +154,10 @@ Save and restore critical design points!
 - **Rollback**: Click the clock icon (History) -> Click the revert button for the desired point.
     *   (A confirmation window appears in browser mode)
 
-### 💾 Prompt Traceability (New! v0.1.1)
-
-Log your design decisions and prompts directly from the canvas.
-
-- **Log Prompt**: Press `Ctrl+Alt+M` (or run `Synapse: Log Prompt`) to capture your design thoughts.
-- **Save Prompt**: Click the `Save` icon (💾) on the toolbar.
-- **Content**: Enter the prompt or reasoning you want to save.
-- **Structured Parsing**: Automatically extracts `# Goal`, `# Decision`, etc.
-- **Git Integration**: Generated `.md` files in `prompts/` are automatically staged.
-- **Graph Linking**: Referenced files in the prompt appear as 'origin' edges in the canvas.
-- **Auto-Save Option**: Enable `synapse.prompt.autoSave` in settings to automatically save with a timestamp filename without asking for a title.
+- **Log Prompt**: Press `Ctrl+Alt+M` (or run `Synapse: Log Prompt`) to capture your design thoughts instantly.
+- **Auto-Save Toggle**: In VS Code Settings, search for `synapse.prompt.autoSave`. If enabled, files are saved immediately with a timestamp.
+- **Visual Feedback**: Logged prompts appear as **History Nodes** (Grey/Ivory) on the canvas.
+- **Traceability**: If your prompt contains a file link like `[src/main.ts](src/main.ts)`, SYNAPSE creates an **Origin Edge** from the prompt node to that file node.
 
 ## ⚙️ How to Install (VS Code)
 
@@ -239,16 +232,28 @@ SYNAPSE follows 3 principles to prevent "Spaghetti Data":
 ## 🔥 Core Strategies
 
 ### 1. Multi-MD Strategy (Context Awareness)
-SYNAPSE automatically scans and categorizes all Markdown (`.md`) files in your project:
-- **History**: Files in `prompts/` are treated as conversation history or decision logs.
-- **Documentation**: Other `.md` files are treated as project documentation.
-- **Integration**: These files are parsed to establish relationships between your code and your design documents/prompts.
+SYNAPSE doesn't just scan code; it scans your **thinking**. All Markdown (`.md`) files are treated as semantic context:
+- **Automatic Discovery**: Any `.md` file in your project (except `node_modules`) is scanned.
+- **Role Assignment**:
+    - `prompts/*.md`: Treated as **Design History**. These nodes are categorized and grouped by the engine.
+    - `docs/*.md` or root `.md`: Treated as **Knowledge Base**.
+- **Cross-Linking**: Use standard Markdown links `[File Name](path/to/file)` within your MD files. SYNAPSE will draw an edge from the document node to the target file node on the canvas.
 
-### 2. Automatic File Saving (Zero-Friction Logging)
-Never lose a thought. SYNAPSE supports a robust prompt saving mechanism:
-- **Auto-Save**: When enabled, prompts are saved instantly with a timestamped filename, allowing you to stay in the flow without interruption.
-- **Manual Control**: Option to manually name files when precision is needed.
-- **Traceability**: Every design decision is logged as a Markdown file, creating a permanent audit trail of your project's evolution.
+### 2. Automatic File Saving & Organization
+Keep your architecture history clean and versioned:
+- **The `prompts/` Directory**: All manual logs are stored here. We recommend keeping this folder in your Git repository.
+- **File Structure**: Each log follows this template automatically:
+  ```markdown
+  # [Title or Timestamp]
+  
+  ## 📝 Prompt
+  [Your input here]
+  
+  ## 🛠️ Context
+  - Workspace: /path/to/project
+  - Date: 2024-xx-xx
+  ```
+- **Git Workflow**: SYNAPSE runs `git add prompts/prompt_*.md` every time you save, ensuring your design history is never lost during a commit.
 
 ## 📐 Philosophy
 

@@ -1,3 +1,11 @@
+# Release Notes - v0.1.8
+
+## 🔌 Enhanced LSP Integration (Editor-First Design)
+- **Hover Provider**: Added real-time information tooltips for file paths and references within ALL Markdown files.
+- **Definition Provider (Go to Definition)**: Enabled `Ctrl+Click` navigation from Markdown documentation directly to the referenced source code.
+- **Diagnostics**: Implemented automatic file existence checks; invalid file paths in documentation are now highlighted as warnings.
+- **Build Optimization**: Refined `tsconfig.json` to exclude build artifacts, ensuring cleaner packaging and faster compilation.
+
 # Release Notes - v0.1.7
 
 ## 🚀 Bug Fixes & Packaging

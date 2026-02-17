@@ -1,3 +1,21 @@
+/*
+ * SYNAPSE - Visual Architecture Engine
+ * Copyright (C) 2024 synapse-team (and contributors)
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 import * as vscode from 'vscode';
 import * as path from 'path';
 import {
@@ -12,52 +30,33 @@ import { BootstrapEngine } from './bootstrap/BootstrapEngine';
 import { client, setClient } from './client';
 import { PromptLogger } from './core/PromptLogger';
 
-export function activate(context: vscode.ExtensionContext) {
+export async function activate(context: vscode.ExtensionContext) {
+    console.log('[SYNAPSE] Extension activation started');
+    vscode.window.showInformationMessage('SYNAPSE Extension Activated (v0.1.6)'); // Debugging only
+
+    // Register commands FIRST so they work even if the Language Server fails
     try {
-        console.log('[SYNAPSE] Extension activation started');
+        // Serializer for restoring the webview after reload
+        if (vscode.window.registerWebviewPanelSerializer) {
+            vscode.window.registerWebviewPanelSerializer('synapseCanvas', {
+                async deserializeWebviewPanel(webviewPanel: vscode.WebviewPanel, state: any) {
+                    console.log(`[SYNAPSE] Reviving webview panel`);
+                    // Reset the webview options so we use latest uri for `localResourceRoots`.
+                    webviewPanel.webview.options = {
+                        enableScripts: true,
+                        localResourceRoots: [
+                            vscode.Uri.joinPath(context.extensionUri, 'ui'),
+                            vscode.Uri.joinPath(context.extensionUri, 'data')
+                        ]
+                    };
+                    const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+                    if (workspaceFolder) {
+                        CanvasPanel.revive(webviewPanel, context.extensionUri, workspaceFolder);
+                    }
+                }
+            });
+        }
 
-        // The server is implemented in node
-        const serverModule = context.asAbsolutePath(
-            path.join('dist', 'server', 'server.js')
-        );
-        // The debug options for the server
-        // --inspect=6009: runs the server in Node's Inspector mode so VS Code can attach to the server for debugging
-        const debugOptions = { execArgv: ['--nolazy', '--inspect=6009'] };
-
-        // If the extension is launched in debug mode then the debug server options are used
-        // Otherwise the run options are used
-        const serverOptions: ServerOptions = {
-            run: { module: serverModule, transport: TransportKind.ipc },
-            debug: {
-                module: serverModule,
-                transport: TransportKind.ipc,
-                options: debugOptions
-            }
-        };
-
-        // Options to control the language client
-        const clientOptions: LanguageClientOptions = {
-            // Register the server for plain text documents
-            documentSelector: [{ scheme: 'file', language: 'markdown' }],
-            synchronize: {
-                // Notify the server about file changes to '.clientrc files contained in the workspace
-                fileEvents: vscode.workspace.createFileSystemWatcher('**/.clientrc')
-            }
-        };
-
-        // Create the language client and start the client.
-        const languageClient = new LanguageClient(
-            'synapseLanguageServer',
-            'SYNAPSE Language Server',
-            serverOptions,
-            clientOptions
-        );
-        setClient(languageClient);
-
-        // Start the client. This will also launch the server
-        client.start();
-
-        // Register commands
         context.subscriptions.push(
             vscode.commands.registerCommand('synapse.openCanvas', () => {
                 let workspaceFolder: vscode.WorkspaceFolder | undefined;
@@ -132,51 +131,68 @@ export function activate(context: vscode.ExtensionContext) {
         const promptLogger = PromptLogger.getInstance();
         context.subscriptions.push(
             vscode.commands.registerCommand('synapse.logPrompt', async (args?: { prompt: string, title?: string, workspacePath?: string }) => {
-                let promptContent = args?.prompt;
-                let title = args?.title;
-                let projectRoot = args?.workspacePath;
+                console.log('[SYNAPSE] synapse.logPrompt triggered', args);
+                vscode.window.showInformationMessage('SYNAPSE: Log Prompt Command Triggered'); // Debugging
+                try {
+                    let promptContent = args?.prompt;
+                    let title = args?.title;
+                    let projectRoot = args?.workspacePath;
 
-                // 1. Interactive Mode (Keybinding triggered)
-                if (!promptContent) {
-                    // Get Prompt Content
-                    promptContent = await vscode.window.showInputBox({
-                        placeHolder: 'Enter your design decision, goal, or reasoning...',
-                        prompt: 'Log Prompt to Architecture History',
-                        ignoreFocusOut: true
-                    }) || '';
-
+                    // 1. Interactive Mode (Keybinding triggered)
                     if (!promptContent) {
-                        return; // User cancelled
-                    }
-
-                    // Get Title (Optional)
-                    const config = vscode.workspace.getConfiguration('synapse');
-                    const autoSave = config.get<boolean>('prompt.autoSave');
-
-                    if (!autoSave && !title) {
-                        title = await vscode.window.showInputBox({
-                            placeHolder: 'Enter a title (optional)...',
-                            prompt: 'Title for this log (Press Enter to skip)',
+                        console.log('[SYNAPSE] Prompt content missing, entering interactive mode');
+                        // Get Prompt Content
+                        promptContent = await vscode.window.showInputBox({
+                            placeHolder: 'Enter your design decision, goal, or reasoning...',
+                            prompt: 'Log Prompt to Architecture History',
                             ignoreFocusOut: true
-                        });
+                        }) || '';
+
+                        if (!promptContent) {
+                            return; // User cancelled
+                        }
+
+                        // Get Title (Optional)
+                        const config = vscode.workspace.getConfiguration('synapse');
+                        const autoSave = config.get<boolean>('prompt.autoSave');
+
+                        if (!autoSave && !title) {
+                            title = await vscode.window.showInputBox({
+                                placeHolder: 'Enter a title (optional)...',
+                                prompt: 'Title for this log (Press Enter to skip)',
+                                ignoreFocusOut: true
+                            });
+                        }
                     }
-                }
 
-                if (!projectRoot) {
-                    const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
-                    projectRoot = workspaceFolder?.uri.fsPath;
-                }
+                    if (!projectRoot) {
+                        const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+                        projectRoot = workspaceFolder?.uri.fsPath;
+                    }
 
-                if (projectRoot && promptContent) {
-                    await promptLogger.logPrompt(projectRoot, promptContent, title);
-                    vscode.window.showInformationMessage('Prompt logged successfully.');
-                } else if (!projectRoot) {
-                    vscode.window.showErrorMessage('No workspace open to log prompt');
+                    if (projectRoot && promptContent) {
+                        console.log(`[SYNAPSE] Logging prompt to ${projectRoot}`);
+                        await promptLogger.logPrompt(projectRoot, promptContent, title);
+                        vscode.window.showInformationMessage('Prompt logged successfully.');
+                    } else if (!projectRoot) {
+                        console.warn('[SYNAPSE] No project root found');
+                        vscode.window.showErrorMessage('No workspace open to log prompt');
+                    }
+                } catch (error: any) {
+                    console.error('[SYNAPSE] Failed to log prompt:', error);
+                    vscode.window.showErrorMessage(`Failed to log prompt: ${error.message || error}`);
                 }
             })
         );
 
-        // Auto-open canvas and sync logic
+        console.log('[SYNAPSE] Commands registered successfully');
+    } catch (e) {
+        console.error('[SYNAPSE] Failed to register commands:', e);
+        vscode.window.showErrorMessage(`SYNAPSE: Failed to register commands: ${e}`);
+    }
+
+    // Auto-open canvas and sync logic
+    try {
         const workspaceFolders = vscode.workspace.workspaceFolders;
         if (workspaceFolders) {
             workspaceFolders.forEach(folder => {
@@ -184,10 +200,60 @@ export function activate(context: vscode.ExtensionContext) {
                 setupFileWatcher(folder, context);
             });
         }
-        console.log('[SYNAPSE] Extension activation completed');
     } catch (e) {
-        console.error('[SYNAPSE] Extension activation failed:', e);
+        console.error('[SYNAPSE] Failed to initialize project status/watchers:', e);
     }
+
+    // Language Client Setup
+    try {
+        console.log('[SYNAPSE] Starting Language Server...');
+        // The server is implemented in node
+        const serverModule = context.asAbsolutePath(
+            path.join('dist', 'server', 'server.js')
+        );
+        // The debug options for the server
+        // --inspect=6009: runs the server in Node's Inspector mode so VS Code can attach to the server for debugging
+        const debugOptions = { execArgv: ['--nolazy', '--inspect=6009'] };
+
+        // If the extension is launched in debug mode then the debug server options are used
+        // Otherwise the run options are used
+        const serverOptions: ServerOptions = {
+            run: { module: serverModule, transport: TransportKind.ipc },
+            debug: {
+                module: serverModule,
+                transport: TransportKind.ipc,
+                options: debugOptions
+            }
+        };
+
+        // Options to control the language client
+        const clientOptions: LanguageClientOptions = {
+            // Register the server for plain text documents
+            documentSelector: [{ scheme: 'file', language: 'markdown' }],
+            synchronize: {
+                // Notify the server about file changes to '.clientrc files contained in the workspace
+                fileEvents: vscode.workspace.createFileSystemWatcher('**/.clientrc')
+            }
+        };
+
+        // Create the language client and start the client.
+        const languageClient = new LanguageClient(
+            'synapseLanguageServer',
+            'SYNAPSE Language Server',
+            serverOptions,
+            clientOptions
+        );
+        setClient(languageClient);
+
+        // Start the client. This will also launch the server
+        await languageClient.start();
+        console.log('[SYNAPSE] Language Server started successfully');
+    } catch (e) {
+        console.error('[SYNAPSE] Language Server failed to start:', e);
+        // Do not throw, as we want the rest of the extension (like the canvas) to keep working
+    }
+
+    console.log('[SYNAPSE] Extension activation completed');
 }
 
 async function checkProjectStatus(workspaceFolder: vscode.WorkspaceFolder, context: vscode.ExtensionContext) {

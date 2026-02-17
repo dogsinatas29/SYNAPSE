@@ -48,6 +48,7 @@ class FlowRenderer {
     }
 
     renderFlow(ctx, flow) {
+        if (!flow || !flow.steps) return;
         const positions = this.layoutFlow(flow);
 
         for (const step of flow.steps) {
@@ -217,6 +218,7 @@ class TreeRenderer {
     }
 
     renderTree(ctx, treeData, transform) {
+        if (!treeData || !Array.isArray(treeData)) return;
         const startX = 50;
         const startY = 100;
         const lineHeight = 30;
@@ -342,9 +344,9 @@ class CanvasEngine {
         // 모드 및 렌더러
         this.currentMode = 'graph'; // 'graph' | 'tree' | 'flow'
         this.treeRenderer = new TreeRenderer(this);
-        this.treeData = null;
+        this.treeData = [];
         this.flowRenderer = new FlowRenderer(this);
-        this.flowData = null;
+        this.flowData = { steps: [] };
 
         // 클러스터 색상 팔레트 (Gruvbox palette)
         this.clusterColors = [
@@ -1805,12 +1807,12 @@ class CanvasEngine {
 
             // Tree 데이터 빌드
             if (this.treeRenderer) {
-                this.treeData = this.treeRenderer.buildTree(this.nodes);
+                this.treeData = this.treeRenderer.buildTree(this.nodes) || [];
             }
 
             // Flow 데이터 빌드
             if (this.flowRenderer) {
-                this.flowData = this.flowRenderer.buildFlow(this.nodes);
+                this.flowData = this.flowRenderer.buildFlow(this.nodes) || { steps: [] };
             }
 
             // UI 업데이트
@@ -3631,8 +3633,11 @@ function initCanvas() {
             console.log('[SYNAPSE] Switched to mode:', mode);
 
             // Rebuild tree if needed
-            if (mode === 'tree' && engine.nodes.length > 0) {
+            if (mode === 'tree') {
                 engine.treeData = engine.treeRenderer.buildTree(engine.nodes);
+            }
+            if (mode === 'flow') {
+                engine.flowData = engine.flowRenderer.buildFlow(engine.nodes);
             }
 
             engine.render();

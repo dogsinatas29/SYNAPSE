@@ -12,17 +12,23 @@ export class CanvasPanel {
     public static currentPanel: CanvasPanel | undefined;
     private readonly _panel: vscode.WebviewPanel;
     private readonly _extensionUri: vscode.Uri;
+    private _workspaceFolder: vscode.WorkspaceFolder;
     private _disposables: vscode.Disposable[] = [];
     private proposedNodes: any[] = [];
     private proposedEdges: any[] = [];
 
-    public static createOrShow(extensionUri: vscode.Uri) {
+    public static createOrShow(extensionUri: vscode.Uri, workspaceFolder: vscode.WorkspaceFolder) {
         const column = vscode.window.activeTextEditor
             ? vscode.window.activeTextEditor.viewColumn
             : undefined;
 
         // If we already have a panel, show it
         if (CanvasPanel.currentPanel) {
+            if (CanvasPanel.currentPanel._workspaceFolder.uri.fsPath !== workspaceFolder.uri.fsPath) {
+                console.log(`[SYNAPSE] Switching canvas context to: ${workspaceFolder.name}`);
+                CanvasPanel.currentPanel._workspaceFolder = workspaceFolder;
+                CanvasPanel.currentPanel.refreshState();
+            }
             CanvasPanel.currentPanel._panel.reveal(column);
             return;
         }
@@ -42,12 +48,13 @@ export class CanvasPanel {
             }
         );
 
-        CanvasPanel.currentPanel = new CanvasPanel(panel, extensionUri);
+        CanvasPanel.currentPanel = new CanvasPanel(panel, extensionUri, workspaceFolder);
     }
 
-    private constructor(panel: vscode.WebviewPanel, extensionUri: vscode.Uri) {
+    private constructor(panel: vscode.WebviewPanel, extensionUri: vscode.Uri, workspaceFolder: vscode.WorkspaceFolder) {
         this._panel = panel;
         this._extensionUri = extensionUri;
+        this._workspaceFolder = workspaceFolder;
 
         // Set the webview's initial html content
         this._update();
@@ -145,7 +152,7 @@ export class CanvasPanel {
 
 
     private async handleCreateManualNode(node: any) {
-        const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+        const workspaceFolder = this._workspaceFolder;
         if (!workspaceFolder) return;
 
         try {
@@ -181,7 +188,7 @@ export class CanvasPanel {
     }
 
     private async handleSetBaseline(snapshotId: string) {
-        const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+        const workspaceFolder = this._workspaceFolder;
         if (!workspaceFolder) return;
 
         try {
@@ -216,7 +223,7 @@ export class CanvasPanel {
     }
 
     private async openFile(filePath: string) {
-        const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+        const workspaceFolder = this._workspaceFolder;
         if (!workspaceFolder) return;
 
         const fileUri = vscode.Uri.joinPath(workspaceFolder.uri, filePath);
@@ -300,7 +307,7 @@ export class CanvasPanel {
     }
 
     private async handleCreateManualEdge(edge: any) {
-        const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+        const workspaceFolder = this._workspaceFolder;
         if (!workspaceFolder) return;
 
         try {
@@ -327,7 +334,7 @@ export class CanvasPanel {
     }
 
     private async handleDeleteEdge(edgeId: string) {
-        const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+        const workspaceFolder = this._workspaceFolder;
         if (!workspaceFolder) return;
 
         try {
@@ -362,7 +369,7 @@ export class CanvasPanel {
     }
 
     private async handleUpdateEdge(edgeId: string, updates: any) {
-        const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+        const workspaceFolder = this._workspaceFolder;
         if (!workspaceFolder) return;
 
         try {
@@ -399,7 +406,7 @@ export class CanvasPanel {
 
 
     private async handleGenerateFlow(nodeId: string, filePath: string) {
-        const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+        const workspaceFolder = this._workspaceFolder;
         if (!workspaceFolder) return;
 
         try {
@@ -468,7 +475,7 @@ export class CanvasPanel {
     }
 
     private async handleApproveNode(nodeId: string) {
-        const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+        const workspaceFolder = this._workspaceFolder;
         if (!workspaceFolder) return;
 
         const projectStateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'project_state.json');
@@ -630,7 +637,7 @@ export class CanvasPanel {
     }
 
     private async handleSaveState(newState: any) {
-        const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+        const workspaceFolder = this._workspaceFolder;
         if (!workspaceFolder) return;
 
         try {
@@ -664,7 +671,7 @@ export class CanvasPanel {
     }
 
     private async handleTakeSnapshot(state: any) {
-        const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+        const workspaceFolder = this._workspaceFolder;
         if (!workspaceFolder) return;
 
         try {
@@ -711,7 +718,7 @@ export class CanvasPanel {
     }
 
     private async sendHistory() {
-        const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+        const workspaceFolder = this._workspaceFolder;
         if (!workspaceFolder) return;
 
         try {
@@ -733,7 +740,7 @@ export class CanvasPanel {
     }
 
     private async handleRollback(snapshotId: string) {
-        const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+        const workspaceFolder = this._workspaceFolder;
         if (!workspaceFolder) return;
 
         try {
@@ -799,7 +806,7 @@ export class CanvasPanel {
 
     public async sendProjectState() {
         if (!this._panel) return;
-        const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+        const workspaceFolder = this._workspaceFolder;
         if (!workspaceFolder) {
             console.error('No workspace folder found');
             return;

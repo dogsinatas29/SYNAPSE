@@ -81,6 +81,40 @@ export class BootstrapEngine {
     }
 
     /**
+     * 프로젝트 자동 발견 및 초기화 (Lite Bootstrap)
+     */
+    public async liteBootstrap(projectRoot: string): Promise<BootstrapResult> {
+        console.log(`🔍 [SYNAPSE] Lite Bootstrapping project at: ${projectRoot}`);
+
+        try {
+            const projectState = await this.autoDiscover(projectRoot);
+
+            const statePath = path.join(projectRoot, 'data', 'project_state.json');
+            const stateDir = path.dirname(statePath);
+            if (!fs.existsSync(stateDir)) {
+                fs.mkdirSync(stateDir, { recursive: true });
+            }
+            fs.writeFileSync(statePath, JSON.stringify(projectState, null, 2), 'utf-8');
+
+            return {
+                success: true,
+                structure: { folders: [], files: [], dependencies: [] }, // Lite bootstrap doesn't use standard structure
+                initial_nodes: projectState.nodes,
+                initial_edges: projectState.edges
+            };
+        } catch (error) {
+            console.error('\n❌ Lite Bootstrap 실패:', error);
+            return {
+                success: false,
+                structure: { folders: [], files: [], dependencies: [] },
+                initial_nodes: [],
+                initial_edges: [],
+                error: error instanceof Error ? error.message : String(error)
+            };
+        }
+    }
+
+    /**
      * 프로젝트 자동 발견 (Headless Bootstrap)
      */
     public async autoDiscover(projectRoot: string): Promise<ProjectState> {
@@ -95,7 +129,8 @@ export class BootstrapEngine {
         const scanDir = (dir: string, relPath: string = '') => {
             const files = fs.readdirSync(dir);
             for (const file of files) {
-                if (['node_modules', '.git', 'build', 'dist', 'data'].includes(file)) continue;
+                // Ignore common directories and data/project_state.json
+                if (['node_modules', '.git', 'build', 'dist', 'data', 'out'].includes(file)) continue;
 
                 const fullPath = path.join(dir, file);
                 const currentRelPath = path.join(relPath, file);
@@ -106,13 +141,13 @@ export class BootstrapEngine {
                     scanDir(fullPath, currentRelPath);
                 } else {
                     const ext = path.extname(file).toLowerCase();
-                    if (['.ts', '.js', '.py', '.cpp', '.h', '.c', '.hpp', '.cc', '.md'].includes(ext)) {
+                    if (['.ts', '.js', '.py', '.cpp', '.h', '.c', '.hpp', '.cc', '.md', '.rs'].includes(ext)) {
                         let type: any = 'source';
                         if (ext === '.md') type = 'documentation';
                         if (['.json', '.yaml', '.yml'].includes(ext)) type = 'config';
 
                         structure.files.push({
-                            path: currentRelPath,
+                            path: currentRelPath.replace(/\\/g, '/'), // Force forward slashes
                             type,
                             description: `${file} (Auto-detected)`
                         });

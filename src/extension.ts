@@ -57,7 +57,21 @@ export function activate(context: vscode.ExtensionContext) {
     // Register commands
     context.subscriptions.push(
         vscode.commands.registerCommand('synapse.openCanvas', () => {
-            CanvasPanel.createOrShow(context.extensionUri);
+            let workspaceFolder: vscode.WorkspaceFolder | undefined;
+
+            if (vscode.window.activeTextEditor) {
+                workspaceFolder = vscode.workspace.getWorkspaceFolder(vscode.window.activeTextEditor.document.uri);
+            }
+
+            if (!workspaceFolder) {
+                workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+            }
+
+            if (workspaceFolder) {
+                CanvasPanel.createOrShow(context.extensionUri, workspaceFolder);
+            } else {
+                vscode.window.showErrorMessage('No workspace folder found to open SYNAPSE Canvas.');
+            }
         })
     );
 
@@ -70,15 +84,27 @@ export function activate(context: vscode.ExtensionContext) {
                 } else {
                     const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
                     if (workspaceFolder) {
-                        uri = vscode.Uri.joinPath(workspaceFolder.uri, 'GEMINI.md');
+                        const geminiUri = vscode.Uri.joinPath(workspaceFolder.uri, 'GEMINI.md');
+                        try {
+                            await vscode.workspace.fs.stat(geminiUri);
+                            uri = geminiUri;
+                        } catch (e) {
+                            // GEMINI.md doesn't exist, offer Lite Bootstrap
+                            const action = await vscode.window.showInformationMessage(
+                                'GEMINI.md not found. Would you like to use Lite Bootstrap to auto-discover the project?',
+                                'Lite Bootstrap'
+                            );
+                            if (action === 'Lite Bootstrap') {
+                                await liteBootstrap(context);
+                                return;
+                            }
+                        }
                     }
                 }
             }
 
             if (uri) {
                 await bootstrapFromGemini(uri, context);
-            } else {
-                vscode.window.showErrorMessage('Could not determine GEMINI.md path. Please open the file or right-click it in Explorer.');
             }
         })
     );
@@ -90,10 +116,12 @@ export function activate(context: vscode.ExtensionContext) {
     );
 
     // Auto-open canvas and sync logic
-    const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
-    if (workspaceFolder) {
-        checkProjectStatus(workspaceFolder, context);
-        setupFileWatcher(workspaceFolder, context);
+    const workspaceFolders = vscode.workspace.workspaceFolders;
+    if (workspaceFolders) {
+        workspaceFolders.forEach(folder => {
+            checkProjectStatus(folder, context);
+            setupFileWatcher(folder, context);
+        });
     }
 }
 
@@ -102,9 +130,15 @@ async function checkProjectStatus(workspaceFolder: vscode.WorkspaceFolder, conte
     const projectStateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'project_state.json');
 
     try {
-        const geminiStat = await vscode.workspace.fs.stat(geminiUri);
-        let projectStateStat: vscode.FileStat | undefined;
+        let geminiExists = false;
+        try {
+            await vscode.workspace.fs.stat(geminiUri);
+            geminiExists = true;
+        } catch (e) {
+            // GEMINI.md doesn't exist
+        }
 
+        let projectStateStat: vscode.FileStat | undefined;
         try {
             projectStateStat = await vscode.workspace.fs.stat(projectStateUri);
         } catch (e) {
@@ -112,38 +146,58 @@ async function checkProjectStatus(workspaceFolder: vscode.WorkspaceFolder, conte
         }
 
         if (!projectStateStat) {
-            // Case 1: GEMINI.md exists but no project_state.json
-            const config = vscode.workspace.getConfiguration('synapse');
-            const autoBootstrap = config.get<boolean>('autoBootstrap', false);
+            if (geminiExists) {
+                // Case 1: GEMINI.md exists but no project_state.json
+                const config = vscode.workspace.getConfiguration('synapse');
+                const autoBootstrap = config.get<boolean>('autoBootstrap', false);
 
-            if (autoBootstrap) {
-                console.log('[SYNAPSE] Auto-bootstrapping project...');
-                await bootstrapFromGemini(geminiUri, context);
-            } else {
-                const action = await vscode.window.showInformationMessage(
-                    'GEMINI.md detected. Would you like to initialize the SYNAPSE canvas?',
-                    'Initialize'
-                );
-                if (action === 'Initialize') {
+                if (autoBootstrap) {
+                    console.log(`[SYNAPSE] Auto-bootstrapping project: ${workspaceFolder.name}`);
                     await bootstrapFromGemini(geminiUri, context);
+                } else {
+                    const action = await vscode.window.showInformationMessage(
+                        `GEMINI.md detected in ${workspaceFolder.name}. Would you like to initialize the SYNAPSE canvas?`,
+                        'Initialize'
+                    );
+                    if (action === 'Initialize') {
+                        await bootstrapFromGemini(geminiUri, context);
+                    }
+                }
+            } else {
+                // Case 3: No GEMINI.md and no project_state.json -> Offer Lite Bootstrap
+                const action = await vscode.window.showInformationMessage(
+                    `No architecture state found for ${workspaceFolder.name}. Would you like to auto-discover project structure?`,
+                    'Lite Bootstrap'
+                );
+                if (action === 'Lite Bootstrap') {
+                    await liteBootstrap(context);
                 }
             }
         } else {
-            // Case 2: Both exist, compare timestamps for sync
-            if (geminiStat.mtime > projectStateStat.mtime) {
-                const action = await vscode.window.showInformationMessage(
-                    'GEMINI.md has been updated. Would you like to sync the architecture canvas?',
-                    'Sync Now'
-                );
-                if (action === 'Sync Now') {
-                    await bootstrapFromGemini(geminiUri, context);
+            // Case 2: project_state.json exists
+            if (geminiExists) {
+                const geminiStat = await vscode.workspace.fs.stat(geminiUri);
+                if (geminiStat.mtime > projectStateStat.mtime) {
+                    const action = await vscode.window.showInformationMessage(
+                        `GEMINI.md in ${workspaceFolder.name} has been updated. Would you like to sync the architecture canvas?`,
+                        'Sync Now'
+                    );
+                    if (action === 'Sync Now') {
+                        await bootstrapFromGemini(geminiUri, context);
+                    }
                 }
             }
-            // Auto-open if project state exists
-            vscode.commands.executeCommand('synapse.openCanvas');
+            // Auto-open if project state exists (only if this is the active workspace or first one)
+            const activeWorkspace = vscode.window.activeTextEditor
+                ? vscode.workspace.getWorkspaceFolder(vscode.window.activeTextEditor.document.uri)
+                : vscode.workspace.workspaceFolders?.[0];
+
+            if (activeWorkspace?.uri.fsPath === workspaceFolder.uri.fsPath) {
+                CanvasPanel.createOrShow(context.extensionUri, workspaceFolder);
+            }
         }
     } catch (e) {
-        // GEMINI.md doesn't exist, do nothing
+        console.error('[SYNAPSE] checkProjectStatus error:', e);
     }
 }
 
@@ -176,6 +230,47 @@ function setupFileWatcher(workspaceFolder: vscode.WorkspaceFolder, context: vsco
     });
 
     context.subscriptions.push(watcher, sourceWatcher);
+}
+
+async function liteBootstrap(context: vscode.ExtensionContext) {
+    const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+    if (!workspaceFolder) {
+        vscode.window.showErrorMessage('No workspace folder open');
+        return;
+    }
+
+    try {
+        await vscode.window.withProgress(
+            {
+                location: vscode.ProgressLocation.Notification,
+                title: 'SYNAPSE Lite Bootstrap',
+                cancellable: false
+            },
+            async (progress) => {
+                progress.report({ message: 'Auto-discovering project structure...' });
+
+                const engine = new BootstrapEngine();
+                const result = await engine.liteBootstrap(workspaceFolder.uri.fsPath);
+
+                if (result.success) {
+                    progress.report({ message: 'Opening canvas...' });
+                    await vscode.commands.executeCommand('synapse.openCanvas');
+
+                    if (CanvasPanel.currentPanel) {
+                        await CanvasPanel.currentPanel.sendProjectState();
+                    }
+
+                    vscode.window.showInformationMessage(
+                        `✅ Lite Bootstrap complete! Discovered ${result.initial_nodes.length} nodes.`
+                    );
+                } else {
+                    vscode.window.showErrorMessage(`❌ Lite Bootstrap failed: ${result.error}`);
+                }
+            }
+        );
+    } catch (error) {
+        vscode.window.showErrorMessage(`Lite Bootstrap error: ${error}`);
+    }
 }
 
 async function bootstrapFromGemini(uri: vscode.Uri, context: vscode.ExtensionContext) {

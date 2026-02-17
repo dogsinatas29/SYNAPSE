@@ -51,10 +51,10 @@ export class GeminiParser {
             }
         }
 
-        const filePattern = /📄\s+([^\s]+\.(py|ts|js|md|json|sql))/g;
+        const filePattern = /📄\s+([^\s]+\.(py|ts|json|js|md|sql|cpp|h|hpp|cc|c|rs))/g;
         while ((match = filePattern.exec(content)) !== null) {
             const fileName = match[1];
-            const ext = match[2];
+            const ext = path.extname(fileName).slice(1);
             let type: NodeType = 'source';
             if (ext === 'md') type = 'documentation';
             if (ext === 'json') type = 'config';
@@ -105,8 +105,8 @@ export class GeminiParser {
             });
         }
 
-        // 기본 구조가 없으면 샘플 구조 생성
-        if (structure.folders.length === 0 && structure.files.length === 0) {
+        // 기본 구조가 없으면 샘플 구조 생성 (폴더나 파일 중 하나라도 비어있으면 트리거)
+        if (structure.folders.length === 0 || structure.files.length === 0) {
             structure.folders = ['src', 'data', 'assets'];
             structure.files = [
                 { path: 'src/main.ts', type: 'source', description: '메인 엔트리 포인트' },

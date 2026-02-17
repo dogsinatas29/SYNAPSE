@@ -13,6 +13,13 @@
         "Other"
     ],
     "main": "./dist/extension.js",
+    "activationEvents": [
+        "onCommand:synapse.openCanvas",
+        "onCommand:synapse.bootstrap",
+        "onCommand:synapse.fitView",
+        "onView:synapseExplorer",
+        "onStartupFinished"
+    ],
     "contributes": {
         "commands": [
             {

@@ -9,119 +9,125 @@ import {
 import { CanvasPanel } from './webview/CanvasPanel';
 import { BootstrapEngine } from './bootstrap/BootstrapEngine';
 
-export let client: LanguageClient;
+import { client, setClient } from './client';
 
 export function activate(context: vscode.ExtensionContext) {
-    console.log('SYNAPSE extension is now active!');
+    try {
+        console.log('[SYNAPSE] Extension activation started');
 
-    // The server is implemented in node
-    const serverModule = context.asAbsolutePath(
-        path.join('dist', 'server', 'server.js')
-    );
-    // The debug options for the server
-    // --inspect=6009: runs the server in Node's Inspector mode so VS Code can attach to the server for debugging
-    const debugOptions = { execArgv: ['--nolazy', '--inspect=6009'] };
+        // The server is implemented in node
+        const serverModule = context.asAbsolutePath(
+            path.join('dist', 'server', 'server.js')
+        );
+        // The debug options for the server
+        // --inspect=6009: runs the server in Node's Inspector mode so VS Code can attach to the server for debugging
+        const debugOptions = { execArgv: ['--nolazy', '--inspect=6009'] };
 
-    // If the extension is launched in debug mode then the debug server options are used
-    // Otherwise the run options are used
-    const serverOptions: ServerOptions = {
-        run: { module: serverModule, transport: TransportKind.ipc },
-        debug: {
-            module: serverModule,
-            transport: TransportKind.ipc,
-            options: debugOptions
-        }
-    };
-
-    // Options to control the language client
-    const clientOptions: LanguageClientOptions = {
-        // Register the server for plain text documents
-        documentSelector: [{ scheme: 'file', language: 'markdown' }],
-        synchronize: {
-            // Notify the server about file changes to '.clientrc files contained in the workspace
-            fileEvents: vscode.workspace.createFileSystemWatcher('**/.clientrc')
-        }
-    };
-
-    // Create the language client and start the client.
-    client = new LanguageClient(
-        'synapseLanguageServer',
-        'SYNAPSE Language Server',
-        serverOptions,
-        clientOptions
-    );
-
-    // Start the client. This will also launch the server
-    client.start();
-
-    // Register commands
-    context.subscriptions.push(
-        vscode.commands.registerCommand('synapse.openCanvas', () => {
-            let workspaceFolder: vscode.WorkspaceFolder | undefined;
-
-            if (vscode.window.activeTextEditor) {
-                workspaceFolder = vscode.workspace.getWorkspaceFolder(vscode.window.activeTextEditor.document.uri);
+        // If the extension is launched in debug mode then the debug server options are used
+        // Otherwise the run options are used
+        const serverOptions: ServerOptions = {
+            run: { module: serverModule, transport: TransportKind.ipc },
+            debug: {
+                module: serverModule,
+                transport: TransportKind.ipc,
+                options: debugOptions
             }
+        };
 
-            if (!workspaceFolder) {
-                workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+        // Options to control the language client
+        const clientOptions: LanguageClientOptions = {
+            // Register the server for plain text documents
+            documentSelector: [{ scheme: 'file', language: 'markdown' }],
+            synchronize: {
+                // Notify the server about file changes to '.clientrc files contained in the workspace
+                fileEvents: vscode.workspace.createFileSystemWatcher('**/.clientrc')
             }
+        };
 
-            if (workspaceFolder) {
-                CanvasPanel.createOrShow(context.extensionUri, workspaceFolder);
-            } else {
-                vscode.window.showErrorMessage('No workspace folder found to open SYNAPSE Canvas.');
-            }
-        })
-    );
+        // Create the language client and start the client.
+        const languageClient = new LanguageClient(
+            'synapseLanguageServer',
+            'SYNAPSE Language Server',
+            serverOptions,
+            clientOptions
+        );
+        setClient(languageClient);
 
-    context.subscriptions.push(
-        vscode.commands.registerCommand('synapse.bootstrap', async (uri: vscode.Uri | undefined) => {
-            if (!uri) {
-                // Determine URI from context if not provided (e.g. Command Palette)
-                if (vscode.window.activeTextEditor && vscode.window.activeTextEditor.document.fileName.endsWith('GEMINI.md')) {
-                    uri = vscode.window.activeTextEditor.document.uri;
+        // Start the client. This will also launch the server
+        client.start();
+
+        // Register commands
+        context.subscriptions.push(
+            vscode.commands.registerCommand('synapse.openCanvas', () => {
+                let workspaceFolder: vscode.WorkspaceFolder | undefined;
+
+                if (vscode.window.activeTextEditor) {
+                    workspaceFolder = vscode.workspace.getWorkspaceFolder(vscode.window.activeTextEditor.document.uri);
+                }
+
+                if (!workspaceFolder) {
+                    workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+                }
+
+                if (workspaceFolder) {
+                    CanvasPanel.createOrShow(context.extensionUri, workspaceFolder);
                 } else {
-                    const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
-                    if (workspaceFolder) {
-                        const geminiUri = vscode.Uri.joinPath(workspaceFolder.uri, 'GEMINI.md');
-                        try {
-                            await vscode.workspace.fs.stat(geminiUri);
-                            uri = geminiUri;
-                        } catch (e) {
-                            // GEMINI.md doesn't exist, offer Lite Bootstrap
-                            const action = await vscode.window.showInformationMessage(
-                                'GEMINI.md not found. Would you like to use Lite Bootstrap to auto-discover the project?',
-                                'Lite Bootstrap'
-                            );
-                            if (action === 'Lite Bootstrap') {
-                                await liteBootstrap(context);
-                                return;
+                    vscode.window.showErrorMessage('No workspace folder found to open SYNAPSE Canvas.');
+                }
+            })
+        );
+
+        context.subscriptions.push(
+            vscode.commands.registerCommand('synapse.bootstrap', async (uri: vscode.Uri | undefined) => {
+                if (!uri) {
+                    // Determine URI from context if not provided (e.g. Command Palette)
+                    if (vscode.window.activeTextEditor && vscode.window.activeTextEditor.document.fileName.endsWith('GEMINI.md')) {
+                        uri = vscode.window.activeTextEditor.document.uri;
+                    } else {
+                        const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+                        if (workspaceFolder) {
+                            const geminiUri = vscode.Uri.joinPath(workspaceFolder.uri, 'GEMINI.md');
+                            try {
+                                await vscode.workspace.fs.stat(geminiUri);
+                                uri = geminiUri;
+                            } catch (e) {
+                                // GEMINI.md doesn't exist, offer Lite Bootstrap
+                                const action = await vscode.window.showInformationMessage(
+                                    'GEMINI.md not found. Would you like to use Lite Bootstrap to auto-discover the project?',
+                                    'Lite Bootstrap'
+                                );
+                                if (action === 'Lite Bootstrap') {
+                                    await liteBootstrap(context);
+                                    return;
+                                }
                             }
                         }
                     }
                 }
-            }
 
-            if (uri) {
-                await bootstrapFromGemini(uri, context);
-            }
-        })
-    );
+                if (uri) {
+                    await bootstrapFromGemini(uri, context);
+                }
+            })
+        );
 
-    context.subscriptions.push(
-        vscode.commands.registerCommand('synapse.fitView', () => {
-            CanvasPanel.currentPanel?.fitView();
-        })
-    );
+        context.subscriptions.push(
+            vscode.commands.registerCommand('synapse.fitView', () => {
+                CanvasPanel.currentPanel?.fitView();
+            })
+        );
 
-    // Auto-open canvas and sync logic
-    const workspaceFolders = vscode.workspace.workspaceFolders;
-    if (workspaceFolders) {
-        workspaceFolders.forEach(folder => {
-            checkProjectStatus(folder, context);
-            setupFileWatcher(folder, context);
-        });
+        // Auto-open canvas and sync logic
+        const workspaceFolders = vscode.workspace.workspaceFolders;
+        if (workspaceFolders) {
+            workspaceFolders.forEach(folder => {
+                checkProjectStatus(folder, context);
+                setupFileWatcher(folder, context);
+            });
+        }
+        console.log('[SYNAPSE] Extension activation completed');
+    } catch (e) {
+        console.error('[SYNAPSE] Extension activation failed:', e);
     }
 }
 

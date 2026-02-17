@@ -6,7 +6,7 @@ import { FileScanner } from '../core/FileScanner';
 import { GeminiParser } from '../core/GeminiParser';
 import { FlowchartGenerator } from '../core/FlowchartGenerator';
 import { BootstrapEngine } from '../bootstrap/BootstrapEngine';
-import { client } from '../extension';
+import { client } from '../client';
 
 export class CanvasPanel {
     public static currentPanel: CanvasPanel | undefined;

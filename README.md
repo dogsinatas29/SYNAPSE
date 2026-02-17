@@ -32,10 +32,10 @@ SYNAPSE는 다국어 아키텍처 분석을 지원합니다:
 
 ## 🛠️ Technology Stack
 
-- **Base**: Antigravity (Advanced Agentic Coding IDE)
+- **Base**: Google Antigravity & Visual Studio Code (VS Code)
 - **Language**: TypeScript
 - **Engine**: HTML5 Canvas API (High Performance Rendering)
-- **Scanner**: Regex-based Fast Multi-Language Scanner
+- **Scanner**: Regex-based Fast Multi-Language Scanner (Python, C++, Rust, Shell, SQL, Config)
 - **Architecture**: Visual-First Design with LSP integration
 
 ### 🌐 Graph View
@@ -50,12 +50,6 @@ LLM의 추론 논리와 파일 간의 물리적 연결 상태를 노드-엣지 �
 특정 이벤트나 함수의 로직 실행 흐름을 선형적인 순서도로 투사합니다.
 ![Flow View](docs/media/synapse_flow_view.png)
 
-## 🛠️ Technology Stack
-
-- **Base**: Antigravity (Advanced Agentic Coding IDE)
-- **Language**: TypeScript
-- **Engine**: HTML5 Canvas API (High Performance Rendering)
-- **Architecture**: Visual-First Design with LSP integration
 
 ## 📦 Getting Started
 

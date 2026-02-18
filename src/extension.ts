@@ -157,16 +157,30 @@ export async function activate(context: vscode.ExtensionContext) {
                             return; // User cancelled
                         }
 
-                        // Get Title (Optional)
-                        const config = vscode.workspace.getConfiguration('synapse');
-                        const autoSave = config.get<boolean>('prompt.autoSave');
+                        // 2. Select Log Mode (QuickPick)
+                        const logMode = await vscode.window.showQuickPick(
+                            [
+                                { label: '$(repo) Append to context.md', description: 'Keep context in a single file', detail: 'prompts/context.md' },
+                                { label: '$(new-file) Create New Log File', description: 'Create a separate file', detail: 'prompts/YYYY-MM-DD_Title.md' }
+                            ],
+                            {
+                                placeHolder: 'Select how to save this log',
+                                ignoreFocusOut: true
+                            }
+                        );
 
-                        if (!autoSave && !title) {
+                        if (!logMode) return; // User cancelled
+
+                        // If "New File" selected, ask for title
+                        if (logMode.label.includes('Create New Log')) {
                             title = await vscode.window.showInputBox({
                                 placeHolder: 'Enter a title (optional)...',
                                 prompt: 'Title for this log (Press Enter to skip)',
                                 ignoreFocusOut: true
                             });
+                        } else {
+                            // Context mode
+                            title = 'context.md'; // Flag or filename
                         }
                     }
 
@@ -177,8 +191,15 @@ export async function activate(context: vscode.ExtensionContext) {
 
                     if (projectRoot && promptContent) {
                         console.log(`[SYNAPSE] Logging prompt to ${projectRoot}`);
-                        await promptLogger.logPrompt(projectRoot, promptContent, title);
-                        vscode.window.showInformationMessage('Prompt logged successfully.');
+
+                        // Check title/mode
+                        if (title === 'context.md') {
+                            await promptLogger.appendLog(projectRoot, 'context.md', promptContent);
+                            vscode.window.showInformationMessage('Prompt appended to context.md');
+                        } else {
+                            await promptLogger.logPrompt(projectRoot, promptContent, title);
+                            vscode.window.showInformationMessage('Prompt logged to new file.');
+                        }
                     } else if (!projectRoot) {
                         console.warn('[SYNAPSE] No project root found');
                         vscode.window.showErrorMessage('No workspace open to log prompt');

@@ -60,9 +60,12 @@ export class GeminiParser {
             includePaths: []
         };
 
+        // Code Block 제거 (예제 코드 내으 파일명 파싱 방지)
+        const contentForScanning = content.replace(/```[\s\S]*?```/g, '');
+
         // 0. 스캔 경로(Include Paths) 추출
         const scanPathPattern = /(?:Scan Paths|스캔 경로|Scope):\s*([^\n]+)/i;
-        const scanPathMatch = content.match(scanPathPattern);
+        const scanPathMatch = contentForScanning.match(scanPathPattern);
         if (scanPathMatch) {
             structure.includePaths = scanPathMatch[1].split(',').map(p => p.trim());
             console.log(`🔍 [SYNAPSE] Found Scan Paths: ${structure.includePaths.join(', ')}`);
@@ -71,7 +74,7 @@ export class GeminiParser {
         // 1. 기존 패턴 (📂, 📄) + 확장된 필드 패턴
         const folderPattern = /(?:📂|\*\*Folder\*\*|Folder:)\s+([^\s/]+)\/?/g;
         let match;
-        while ((match = folderPattern.exec(content)) !== null) {
+        while ((match = folderPattern.exec(contentForScanning)) !== null) {
             const folderName = match[1];
             if (!structure.folders.includes(folderName)) {
                 structure.folders.push(folderName);
@@ -82,7 +85,7 @@ export class GeminiParser {
         // 리뉴얼: 📄 뒤에 공백 허용, 불렛은 라인 시작에서만, m 플래그 추가
         // [Whitelisting] 프로그래밍 소스 파일 + 문서 파일
         const filePattern = /(?:📄\s*|^\s*[-\*]\s+[`]?|파일:\s*)([a-zA-Z0-9_./-]+\.(py|ts|js|cpp|h|hpp|cc|c|rs|sh|sql|md))[`]?/gm;
-        while ((match = filePattern.exec(content)) !== null) {
+        while ((match = filePattern.exec(contentForScanning)) !== null) {
             const fileName = match[1];
             // 중복 체크
             if (structure.files.find(f => f.path === fileName)) continue;

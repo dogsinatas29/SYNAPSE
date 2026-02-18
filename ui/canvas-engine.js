@@ -446,6 +446,7 @@ class CanvasEngine {
         this.baselineNodes = null; // 비교를 위한 기준 데이터
         this.selectedNodes = new Set(); // 다중 선택 노드
         this.clusters = []; // 클러스터 데이터
+        this.isExpectingUpdate = false; // 데이터 업데이트 시 뷰 유지 여부 플래그
 
         // 모드 및 렌더러
         this.currentMode = 'graph'; // 'graph' | 'tree' | 'flow'
@@ -1987,7 +1988,7 @@ class CanvasEngine {
         this.tooltip.style.display = 'none';
     }
 
-    loadProjectState(projectState) {
+    loadProjectState(projectState, preserveView = false) {
         try {
             this.nodes = projectState.nodes || [];
             this.edges = projectState.edges || [];
@@ -2015,9 +2016,14 @@ class CanvasEngine {
             if (nodeCountEl) nodeCountEl.textContent = this.nodes.length;
             if (edgeCountEl) edgeCountEl.textContent = this.edges.length;
 
-            // Fit view
+            // Fit view (only if not preserving)
             this.resizeCanvas(); // Ensure canvas size is correct before fitting
-            this.fitView();
+            if (!preserveView) {
+                this.fitView();
+            } else {
+                // 뷰를 유지하더라도 렌더링은 해야 함
+                this.render();
+            }
 
             // 로딩 오버레이 제거
             const loadingEl = document.getElementById('loading');
@@ -3120,6 +3126,7 @@ class CanvasEngine {
     approveNode(nodeId) {
         console.log('[SYNAPSE] Approving node:', nodeId);
         if (typeof vscode !== 'undefined') {
+            this.isExpectingUpdate = true; // 응답으로 올 상태 업데이트에서 뷰 유지
             vscode.postMessage({ command: 'approveNode', nodeId });
         } else {
             // Standalone API 호출 (분석 요청)
@@ -3148,6 +3155,7 @@ class CanvasEngine {
     rejectNode(nodeId) {
         console.log('[SYNAPSE] Rejecting node:', nodeId);
         if (typeof vscode !== 'undefined') {
+            this.isExpectingUpdate = true; // 응답으로 올 상태 업데이트에서 뷰 유지
             vscode.postMessage({ command: 'rejectNode', nodeId });
         } else {
             // Mock behavior for browser
@@ -3813,7 +3821,10 @@ function initCanvas() {
         switch (message.command) {
             case 'projectState':
                 console.log(`[SYNAPSE] Received projectState with ${message.data.nodes?.length || 0} nodes.`);
-                engine.loadProjectState(message.data);
+                // 승인/거절 등의 인터랙션 후라면 뷰 유지
+                const preserve = engine.isExpectingUpdate;
+                engine.loadProjectState(message.data, preserve);
+                engine.isExpectingUpdate = false; // 플래그 리셋
                 break;
             case 'projectProposal':
                 engine.loadProjectState(message.data);

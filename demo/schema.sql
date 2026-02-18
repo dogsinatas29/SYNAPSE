@@ -1,2 +1,0 @@
--- schema.sql
--- Created by SYNAPSE

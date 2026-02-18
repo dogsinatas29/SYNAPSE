@@ -1,5 +1,1005 @@
 [
   {
+    "id": "snap_1771407341888",
+    "timestamp": 1771407341888,
+    "label": "Selection Ungrouped",
+    "data": {
+      "nodes": [
+        {
+          "data": {
+            "cluster_id": null,
+            "color": "#b8bb26",
+            "description": "login.py (Source)",
+            "file": "login.py",
+            "label": "login.py",
+            "layer": 1,
+            "priority": 30,
+            "summary": {
+              "classes": [],
+              "functions": [],
+              "references": []
+            }
+          },
+          "id": "node_login_py",
+          "position": {
+            "x": 3831.531503896794,
+            "y": 258.55106951280686
+          },
+          "status": "proposed",
+          "type": "source",
+          "visual": {
+            "dashArray": "5,5",
+            "opacity": 0.5
+          },
+          "cluster_id": null
+        },
+        {
+          "data": {
+            "cluster_id": null,
+            "color": "#b8bb26",
+            "description": "board.py (Source)",
+            "file": "board.py",
+            "label": "board.py",
+            "layer": 1,
+            "priority": 30,
+            "summary": {
+              "classes": [],
+              "functions": [],
+              "references": []
+            }
+          },
+          "id": "node_board_py",
+          "position": {
+            "x": 3792.6200844730997,
+            "y": 421.4432786910352
+          },
+          "status": "proposed",
+          "type": "source",
+          "visual": {
+            "dashArray": "5,5",
+            "opacity": 0.5
+          },
+          "cluster_id": null
+        },
+        {
+          "data": {
+            "cluster_id": null,
+            "color": "#b8bb26",
+            "description": "schema.sql (Source)",
+            "file": "schema.sql",
+            "label": "schema.sql",
+            "layer": 1,
+            "priority": 50,
+            "summary": {
+              "classes": [],
+              "functions": [],
+              "references": []
+            }
+          },
+          "id": "node_schema_sql",
+          "position": {
+            "x": 3808.8420695318,
+            "y": 586.9608880827105
+          },
+          "status": "proposed",
+          "type": "source",
+          "visual": {
+            "dashArray": "5,5",
+            "opacity": 0.5
+          },
+          "cluster_id": null
+        },
+        {
+          "data": {
+            "cluster_id": null,
+            "color": "#b8bb26",
+            "description": "src/extension.ts (Source)",
+            "file": "src/extension.ts",
+            "label": "extension.ts",
+            "layer": 1,
+            "priority": 50,
+            "summary": {
+              "classes": [],
+              "functions": [
+                "Copyright",
+                "team",
+                "activate",
+                "log",
+                "showInformationMessage",
+                "Initializing",
+                "registerWebviewPanelSerializer",
+                "deserializeWebviewPanel",
+                "joinPath",
+                "revive",
+                "push",
+                "registerCommand",
+                "getWorkspaceFolder",
+                "createOrShow",
+                "showErrorMessage",
+                "endsWith",
+                "bootstrapFromGemini",
+                "stat",
+                "liteBootstrap",
+                "fitView",
+                "prompts",
+                "getInstance",
+                "Mode",
+                "showInputBox",
+                "Title",
+                "getConfiguration",
+                "title",
+                "logPrompt",
+                "warn",
+                "error",
+                "forEach",
+                "checkProjectStatus",
+                "setupFileWatcher",
+                "asAbsolutePath",
+                "join",
+                "createFileSystemWatcher",
+                "LanguageClient",
+                "setClient",
+                "start",
+                "setStatusBarMessage",
+                "Ready",
+                "exists",
+                "RelativePattern",
+                "onDidChange",
+                "watcher",
+                "refreshState",
+                "onDidCreate",
+                "onDidDelete",
+                "withProgress",
+                "report",
+                "BootstrapEngine",
+                "executeCommand",
+                "sendProjectState",
+                "bootstrap",
+                "deactivate",
+                "stop"
+              ],
+              "references": [
+                "CanvasPanel",
+                "BootstrapEngine",
+                "client",
+                "PromptLogger"
+              ]
+            }
+          },
+          "id": "node_src_extension_ts",
+          "position": {
+            "x": 4886.19532460117,
+            "y": 153.53506097491993
+          },
+          "status": "proposed",
+          "type": "source",
+          "visual": {
+            "dashArray": "5,5",
+            "opacity": 0.5
+          },
+          "cluster_id": null
+        },
+        {
+          "data": {
+            "cluster_id": null,
+            "color": "#b8bb26",
+            "description": "src/bootstrap/BootstrapEngine.ts (Source)",
+            "file": "src/bootstrap/BootstrapEngine.ts",
+            "label": "BootstrapEngine.ts",
+            "layer": 1,
+            "priority": 25,
+            "summary": {
+              "classes": [
+                "BootstrapEngine",
+                "as"
+              ],
+              "functions": [
+                "parser",
+                "flowchartGen",
+                "fileScanner",
+                "constructor",
+                "GeminiParser",
+                "FlowchartGenerator",
+                "FileScanner",
+                "bootstrap",
+                "log",
+                "parseGeminiMd",
+                "toLowerCase",
+                "endsWith",
+                "autoDiscover",
+                "map",
+                "filter",
+                "forEach",
+                "set",
+                "get",
+                "createStructure",
+                "generateInitialFlowchart",
+                "basename",
+                "join",
+                "dirname",
+                "existsSync",
+                "mkdirSync",
+                "writeFileSync",
+                "stringify",
+                "error",
+                "String",
+                "liteBootstrap",
+                "readdirSync",
+                "replace",
+                "includes",
+                "some",
+                "startsWith",
+                "statSync",
+                "isDirectory",
+                "push",
+                "scanDir",
+                "extname",
+                "scanFile",
+                "Set",
+                "name",
+                "has",
+                "match",
+                "find",
+                "printStructurePreview"
+              ],
+              "references": [
+                "GeminiParser",
+                "FlowchartGenerator",
+                "FileScanner",
+                "schema"
+              ]
+            }
+          },
+          "id": "node_src_bootstrap_BootstrapEngine_ts",
+          "position": {
+            "x": 5677.3177796633545,
+            "y": 153.53506097491993
+          },
+          "status": "proposed",
+          "type": "source",
+          "visual": {
+            "dashArray": "5,5",
+            "opacity": 0.5
+          },
+          "cluster_id": null
+        },
+        {
+          "data": {
+            "cluster_id": null,
+            "color": "#b8bb26",
+            "description": "src/core/FileScanner.ts (Source)",
+            "file": "src/core/FileScanner.ts",
+            "label": "FileScanner.ts",
+            "layer": 0,
+            "priority": 8,
+            "summary": {
+              "classes": [
+                "CodeSummary",
+                "FileScanner",
+                "name"
+              ],
+              "functions": [
+                "scanFile",
+                "existsSync",
+                "readFileSync",
+                "extname",
+                "log",
+                "parsePython",
+                "includes",
+                "parseJavaScript",
+                "parseCpp",
+                "parseRust",
+                "parseShell",
+                "parseSql",
+                "parseConfig",
+                "parseMarkdown",
+                "basename",
+                "error",
+                "s",
+                "exec",
+                "push",
+                "split",
+                "forEach",
+                "trim",
+                "startsWith",
+                "pub",
+                "blocks",
+                "impl",
+                "statements",
+                "match",
+                "name",
+                "References",
+                "files",
+                "replace",
+                "Headers",
+                "Links"
+              ],
+              "references": []
+            }
+          },
+          "id": "node_src_core_FileScanner_ts",
+          "position": {
+            "x": 4116.415904370978,
+            "y": 631.2632044765062
+          },
+          "status": "proposed",
+          "type": "source",
+          "visual": {
+            "dashArray": "5,5",
+            "opacity": 0.5
+          },
+          "cluster_id": null
+        },
+        {
+          "data": {
+            "cluster_id": null,
+            "color": "#b8bb26",
+            "description": "src/core/FlowScanner.ts (Source)",
+            "file": "src/core/FlowScanner.ts",
+            "label": "FlowScanner.ts",
+            "layer": 0,
+            "priority": 8,
+            "summary": {
+              "classes": [
+                "FlowStep",
+                "FlowData",
+                "FlowScanner",
+                "members"
+              ],
+              "functions": [
+                "scanForFlow",
+                "basename",
+                "existsSync",
+                "readFileSync",
+                "extname",
+                "includes",
+                "parseJSFlow",
+                "parsePythonFlow",
+                "push",
+                "error",
+                "split",
+                "min",
+                "trim",
+                "startsWith",
+                "detection",
+                "match",
+                "b",
+                "extractCondition",
+                "find",
+                "Block",
+                "Exports",
+                "extractLabel",
+                "Set",
+                "map",
+                "forEach",
+                "has",
+                "myMethod"
+              ],
+              "references": []
+            }
+          },
+          "id": "node_src_core_FlowScanner_ts",
+          "position": {
+            "x": 6186.985079136924,
+            "y": 644.7943992886862
+          },
+          "status": "proposed",
+          "type": "source",
+          "visual": {
+            "dashArray": "5,5",
+            "opacity": 0.5
+          },
+          "cluster_id": null
+        },
+        {
+          "data": {
+            "cluster_id": null,
+            "color": "#b8bb26",
+            "description": "src/core/GeminiParser.ts (Source)",
+            "file": "src/core/GeminiParser.ts",
+            "label": "GeminiParser.ts",
+            "layer": 0,
+            "priority": 10,
+            "summary": {
+              "classes": [
+                "GeminiParser"
+              ],
+              "functions": [
+                "Copyright",
+                "team",
+                "parseGeminiMd",
+                "readFileSync",
+                "analyzeContent",
+                "log",
+                "error",
+                "replace",
+                "match",
+                "split",
+                "map",
+                "trim",
+                "join",
+                "exec",
+                "includes",
+                "push",
+                "find",
+                "extname",
+                "slice",
+                "toLowerCase",
+                "forEach",
+                "createStructure",
+                "existsSync",
+                "mkdirSync",
+                "dirname",
+                "getFileTemplate",
+                "writeFileSync",
+                "basename"
+              ],
+              "references": [
+                "schema"
+              ]
+            }
+          },
+          "id": "node_src_core_GeminiParser_ts",
+          "position": {
+            "x": 5908.331629891846,
+            "y": 923.5968263245544
+          },
+          "status": "proposed",
+          "type": "source",
+          "visual": {
+            "dashArray": "5,5",
+            "opacity": 0.5
+          },
+          "cluster_id": null
+        },
+        {
+          "data": {
+            "cluster_id": null,
+            "color": "#b8bb26",
+            "description": "src/core/FlowchartGenerator.ts (Source)",
+            "file": "src/core/FlowchartGenerator.ts",
+            "label": "FlowchartGenerator.ts",
+            "layer": 1,
+            "priority": 50,
+            "summary": {
+              "classes": [
+                "FlowchartGenerator"
+              ],
+              "functions": [
+                "nodeIdCounter",
+                "edgeIdCounter",
+                "clusterIdCounter",
+                "generateInitialFlowchart",
+                "forEach",
+                "dirname",
+                "get",
+                "push",
+                "set",
+                "ceil",
+                "sqrt",
+                "floor",
+                "getVisualHints",
+                "some",
+                "createNode",
+                "max",
+                "from",
+                "values",
+                "filter",
+                "find",
+                "map",
+                "Nodes",
+                "createEdge",
+                "log",
+                "replace",
+                "basename",
+                "toLowerCase",
+                "includes",
+                "random",
+                "generateMermaidDiagram",
+                "getNodeShape"
+              ],
+              "references": [
+                "schema",
+                "visualHints"
+              ]
+            }
+          },
+          "id": "node_src_core_FlowchartGenerator_ts",
+          "position": {
+            "x": 4459.3170095196265,
+            "y": 827.920165698486
+          },
+          "status": "proposed",
+          "type": "source",
+          "visual": {
+            "dashArray": "5,5",
+            "opacity": 0.5
+          },
+          "cluster_id": null
+        },
+        {
+          "data": {
+            "cluster_id": null,
+            "color": "#b8bb26",
+            "description": "src/webview/CanvasPanel.ts (Source)",
+            "file": "src/webview/CanvasPanel.ts",
+            "label": "CanvasPanel.ts",
+            "layer": 1,
+            "priority": 50,
+            "summary": {
+              "classes": [
+                "CanvasPanel",
+                "let"
+              ],
+              "functions": [
+                "Copyright",
+                "team",
+                "static",
+                "readonly",
+                "_workspaceFolder",
+                "_disposables",
+                "proposedNodes",
+                "proposedEdges",
+                "createOrShow",
+                "log",
+                "refreshState",
+                "reveal",
+                "createWebviewPanel",
+                "joinPath",
+                "CanvasPanel",
+                "revive",
+                "constructor",
+                "_update",
+                "onDidDispose",
+                "dispose",
+                "onDidReceiveMessage",
+                "showInformationMessage",
+                "handleNodeSelected",
+                "openFile",
+                "sendProjectState",
+                "handleSaveState",
+                "handleTakeSnapshot",
+                "sendHistory",
+                "handleRollback",
+                "handleSetBaseline",
+                "postMessage",
+                "handleCreateManualEdge",
+                "handleDeleteEdge",
+                "handleDeleteNode",
+                "handleUpdateEdge",
+                "handleApproveNode",
+                "handleRejectNode",
+                "handleGenerateFlow",
+                "handleValidateEdge",
+                "handleAnalyzeGemini",
+                "handleCreateManualNode",
+                "showInputBox",
+                "Date",
+                "toLocaleTimeString",
+                "showWarningMessage",
+                "handleReBootstrap",
+                "handleLogPrompt",
+                "handleRequestLogPrompt",
+                "readFile",
+                "parse",
+                "toString",
+                "push",
+                "state",
+                "normalizeProjectState",
+                "writeFile",
+                "from",
+                "error",
+                "showErrorMessage",
+                "find",
+                "fitView",
+                "openTextDocument",
+                "showTextDocument",
+                "pop",
+                "isArray",
+                "stringify",
+                "pruneDefaults",
+                "map",
+                "keys",
+                "sort",
+                "forEach",
+                "sortKeys",
+                "findIndex",
+                "warn",
+                "splice",
+                "setStatusBarMessage",
+                "filter",
+                "command",
+                "executeCommand",
+                "Reset",
+                "existsSync",
+                "unlinkSync",
+                "BootstrapEngine",
+                "liteBootstrap",
+                "Error",
+                "assign",
+                "sendRequest",
+                "join",
+                "FlowchartGenerator",
+                "generateInitialFlowchart",
+                "Set",
+                "has",
+                "node",
+                "includes",
+                "stat",
+                "getBoilerplate",
+                "asRelativePath",
+                "endsWith",
+                "main",
+                "replace",
+                "toLowerCase",
+                "missing",
+                "now",
+                "unshift",
+                "getConfiguration",
+                "Content",
+                "Title",
+                "title",
+                "Backup",
+                "createDirectory",
+                "Entrypoint",
+                "Point",
+                "file",
+                "autoDiscover",
+                "FileScanner",
+                "scanFile",
+                "basename",
+                "set",
+                "matching",
+                "split",
+                "get",
+                "some",
+                "floor",
+                "random",
+                "startsWith",
+                "edges",
+                "substring",
+                "projectState",
+                "_getHtmlForWebview",
+                "readFileSync",
+                "asWebviewUri",
+                "getNonce",
+                "acquireVsCodeApi",
+                "charAt"
+              ],
+              "references": [
+                "schema",
+                "FileScanner",
+                "GeminiParser",
+                "FlowchartGenerator",
+                "BootstrapEngine",
+                "client"
+              ]
+            }
+          },
+          "id": "node_src_webview_CanvasPanel_ts",
+          "position": {
+            "x": 5016.143817611345,
+            "y": 658.4617262693333
+          },
+          "status": "proposed",
+          "type": "source",
+          "visual": {
+            "dashArray": "5,5",
+            "opacity": 0.5
+          },
+          "cluster_id": null
+        },
+        {
+          "data": {
+            "cluster_id": null,
+            "color": "#b8bb26",
+            "description": "src/server/server.ts (Source)",
+            "file": "src/server/server.ts",
+            "label": "server.ts",
+            "layer": 1,
+            "priority": 50,
+            "summary": {
+              "classes": [],
+              "functions": [
+                "Copyright",
+                "team",
+                "createConnection",
+                "TextDocuments",
+                "onInitialize",
+                "log",
+                "onInitialized",
+                "onRequest",
+                "GeminiParser",
+                "parseGeminiMd",
+                "error",
+                "String",
+                "FlowScanner",
+                "scanForFlow",
+                "getFilePathAtPosition",
+                "test",
+                "slice",
+                "trim",
+                "path",
+                "includes",
+                "onHover",
+                "get",
+                "getText",
+                "split",
+                "onDefinition",
+                "startsWith",
+                "replace",
+                "dirname",
+                "resolve",
+                "onDidChangeContent",
+                "validateTextDocument",
+                "exec",
+                "existsSync",
+                "push",
+                "positionAt",
+                "sendDiagnostics",
+                "listen"
+              ],
+              "references": [
+                "vscode-languageserver-textdocument",
+                "GeminiParser",
+                "FlowScanner"
+              ]
+            }
+          },
+          "id": "node_src_server_server_ts",
+          "position": {
+            "x": 5607.621817199665,
+            "y": 546.6455811210435
+          },
+          "status": "proposed",
+          "type": "source",
+          "visual": {
+            "dashArray": "5,5",
+            "opacity": 0.5
+          },
+          "cluster_id": null
+        },
+        {
+          "data": {
+            "cluster_id": null,
+            "color": "#b8bb26",
+            "description": "src/types/schema.ts (Source)",
+            "file": "src/types/schema.ts",
+            "label": "schema.ts",
+            "layer": 1,
+            "priority": 50,
+            "summary": {
+              "classes": [
+                "NodeType",
+                "NodeStatus",
+                "EdgeType",
+                "EdgeStyle",
+                "Node",
+                "Edge",
+                "Cluster",
+                "ProjectStructure",
+                "ProjectState",
+                "BootstrapResult"
+              ],
+              "functions": [],
+              "references": []
+            }
+          },
+          "id": "node_src_types_schema_ts",
+          "position": {
+            "x": 5216.096834243875,
+            "y": 959.0931396154027
+          },
+          "status": "proposed",
+          "type": "source",
+          "visual": {
+            "dashArray": "5,5",
+            "opacity": 0.5
+          },
+          "cluster_id": null
+        }
+      ],
+      "edges": [
+        {
+          "id": "edge_auto_1771407304739_296",
+          "from": "node_src_extension_ts",
+          "to": "node_src_webview_CanvasPanel_ts",
+          "type": "dependency",
+          "label": "ref",
+          "validation": {
+            "valid": true,
+            "reason": "Appropriate architectural relationship.",
+            "confidence": 0.95
+          },
+          "_validationReason": "Appropriate architectural relationship."
+        },
+        {
+          "id": "edge_auto_1771407304739_281",
+          "from": "node_src_extension_ts",
+          "to": "node_src_bootstrap_BootstrapEngine_ts",
+          "type": "dependency",
+          "label": "ref",
+          "validation": {
+            "valid": true,
+            "reason": "Appropriate architectural relationship.",
+            "confidence": 0.95
+          },
+          "_validationReason": "Appropriate architectural relationship."
+        },
+        {
+          "id": "edge_auto_1771407304739_831",
+          "from": "node_src_bootstrap_BootstrapEngine_ts",
+          "to": "node_src_core_GeminiParser_ts",
+          "type": "dependency",
+          "label": "ref",
+          "validation": {
+            "valid": true,
+            "reason": "Appropriate architectural relationship.",
+            "confidence": 0.95
+          },
+          "_validationReason": "Appropriate architectural relationship."
+        },
+        {
+          "id": "edge_auto_1771407304739_636",
+          "from": "node_src_bootstrap_BootstrapEngine_ts",
+          "to": "node_src_core_FlowchartGenerator_ts",
+          "type": "dependency",
+          "label": "ref",
+          "validation": {
+            "valid": true,
+            "reason": "Appropriate architectural relationship.",
+            "confidence": 0.95
+          },
+          "_validationReason": "Appropriate architectural relationship."
+        },
+        {
+          "id": "edge_auto_1771407304739_724",
+          "from": "node_src_bootstrap_BootstrapEngine_ts",
+          "to": "node_src_core_FileScanner_ts",
+          "type": "dependency",
+          "label": "ref",
+          "validation": {
+            "valid": true,
+            "reason": "Appropriate architectural relationship.",
+            "confidence": 0.95
+          },
+          "_validationReason": "Appropriate architectural relationship."
+        },
+        {
+          "id": "edge_auto_1771407304739_560",
+          "from": "node_src_bootstrap_BootstrapEngine_ts",
+          "to": "node_src_types_schema_ts",
+          "type": "dependency",
+          "label": "ref",
+          "validation": {
+            "valid": true,
+            "reason": "Appropriate architectural relationship.",
+            "confidence": 0.95
+          },
+          "_validationReason": "Appropriate architectural relationship."
+        },
+        {
+          "id": "edge_auto_1771407304739_8",
+          "from": "node_src_core_GeminiParser_ts",
+          "to": "node_src_types_schema_ts",
+          "type": "dependency",
+          "label": "ref",
+          "validation": {
+            "valid": true,
+            "reason": "Appropriate architectural relationship.",
+            "confidence": 0.95
+          },
+          "_validationReason": "Appropriate architectural relationship."
+        },
+        {
+          "id": "edge_auto_1771407304739_320",
+          "from": "node_src_core_FlowchartGenerator_ts",
+          "to": "node_src_types_schema_ts",
+          "type": "dependency",
+          "label": "ref",
+          "validation": {
+            "valid": true,
+            "reason": "Appropriate architectural relationship.",
+            "confidence": 0.95
+          },
+          "_validationReason": "Appropriate architectural relationship."
+        },
+        {
+          "id": "edge_auto_1771407304739_947",
+          "from": "node_src_webview_CanvasPanel_ts",
+          "to": "node_src_types_schema_ts",
+          "type": "dependency",
+          "label": "ref",
+          "validation": {
+            "valid": true,
+            "reason": "Appropriate architectural relationship.",
+            "confidence": 0.95
+          },
+          "_validationReason": "Appropriate architectural relationship."
+        },
+        {
+          "id": "edge_auto_1771407304739_923",
+          "from": "node_src_webview_CanvasPanel_ts",
+          "to": "node_src_core_FileScanner_ts",
+          "type": "dependency",
+          "label": "ref",
+          "validation": {
+            "valid": true,
+            "reason": "Appropriate architectural relationship.",
+            "confidence": 0.95
+          },
+          "_validationReason": "Appropriate architectural relationship."
+        },
+        {
+          "id": "edge_auto_1771407304739_304",
+          "from": "node_src_webview_CanvasPanel_ts",
+          "to": "node_src_core_GeminiParser_ts",
+          "type": "dependency",
+          "label": "ref",
+          "validation": {
+            "valid": true,
+            "reason": "Appropriate architectural relationship.",
+            "confidence": 0.95
+          },
+          "_validationReason": "Appropriate architectural relationship."
+        },
+        {
+          "id": "edge_auto_1771407304739_733",
+          "from": "node_src_webview_CanvasPanel_ts",
+          "to": "node_src_core_FlowchartGenerator_ts",
+          "type": "dependency",
+          "label": "ref",
+          "validation": {
+            "valid": true,
+            "reason": "Appropriate architectural relationship.",
+            "confidence": 0.95
+          },
+          "_validationReason": "Appropriate architectural relationship."
+        },
+        {
+          "id": "edge_auto_1771407304739_900",
+          "from": "node_src_webview_CanvasPanel_ts",
+          "to": "node_src_bootstrap_BootstrapEngine_ts",
+          "type": "dependency",
+          "label": "ref",
+          "validation": {
+            "valid": true,
+            "reason": "Appropriate architectural relationship.",
+            "confidence": 0.95
+          },
+          "_validationReason": "Appropriate architectural relationship."
+        },
+        {
+          "id": "edge_auto_1771407304739_406",
+          "from": "node_src_server_server_ts",
+          "to": "node_src_core_GeminiParser_ts",
+          "type": "dependency",
+          "label": "ref",
+          "validation": {
+            "valid": true,
+            "reason": "Appropriate architectural relationship.",
+            "confidence": 0.95
+          },
+          "_validationReason": "Appropriate architectural relationship."
+        },
+        {
+          "id": "edge_auto_1771407304739_659",
+          "from": "node_src_server_server_ts",
+          "to": "node_src_core_FlowScanner_ts",
+          "type": "dependency",
+          "label": "ref",
+          "validation": {
+            "valid": true,
+            "reason": "Appropriate architectural relationship.",
+            "confidence": 0.95
+          },
+          "_validationReason": "Appropriate architectural relationship."
+        }
+      ],
+      "clusters": []
+    }
+  },
+  {
     "id": "snap_1771257052995",
     "timestamp": 1771257052995,
     "label": "Group Created: test",

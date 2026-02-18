@@ -141,6 +141,11 @@ Created with the belief that the simple act of connecting lines in complex syste
 
 ## 🆕 Version History
 
+### v0.2.5
+- **🧹 Cleanup**: Removed legacy root files and example artifacts.
+- **✨ Log Prompt**: Added support for appending context to `context.md`.
+- **🐛 Fixes**: Resolved focus reset on node approval and ghost node parsing issues.
+
 ### v0.2.4
 - **🚀 Fix Manual Grouping**: Replaced the browser's native `prompt()` dialog with a custom in-canvas modal. This resolves the issue where manual grouping was blocked or failed to appear in the VS Code extension environment.
 - **✨ Enhanced UX**: Group creation flow is now non-blocking and visually integrated with the dark theme.

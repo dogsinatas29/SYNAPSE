@@ -45,7 +45,7 @@ SYNAPSE는 다양한 언어 아키텍처 분석을 지원합니다:
 
 ### 🌐 Graph View
 LLM의 추론 논리와 파일 간의 물리적 연결 상태를 노드-엣지 네트워크로 시각화합니다.
-![Graph View](docs/media/graph_v0.1.9_rev2.png)
+![Graph View](docs/media/graph_v0.2.0.png)
 
 ### 🌳 Tree View
 프로젝트의 폴더 구조와 파일 계층을 직관적으로 조감할 수 있습니다.
@@ -53,7 +53,7 @@ LLM의 추론 논리와 파일 간의 물리적 연결 상태를 노드-엣지 �
 
 ### ➡️ Flow View
 특정 이벤트나 함수의 로직 실행 흐름을 선형적인 순서도로 투사합니다.
-![Flow View](docs/media/flow_v0.1.9_rev2.png)
+![Flow View](docs/media/flow_v0.2.0.png)
 
 
 ## 📦 Getting Started

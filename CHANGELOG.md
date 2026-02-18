@@ -1,10 +1,16 @@
-# Release Notes - v0.1.9
+# Release Notes - v0.2.0
 
 ## 🏁 Strategic Execution Flow & Single Source of Truth
-- **Authoritative Flow**: Formally defined Flow View as the final authoritative state to prevent synchronization drift between different editing modes.
-- **START/END Markers**: Added explicit terminal markers for logical clarity.
+- **Authoritative Flow**: Formally defined Flow View as the final authoritative state (SSOT) to prevent synchronization drift between different editing modes.
+- **START/END Markers**: Added explicit terminal markers for logical clarity in execution paths.
 - **Functional Entry Points**: Prioritized functional roots (`main.*`, `index.*`) over configuration metadata.
-- **Ghost Node Isolation**: Automated isolation of degree-0 nodes into a "Storage" cluster.
+- **Ghost Node Isolation**: Automated isolation of degree-0 nodes into a "Storage" cluster for a cleaner main view.
+
+## 🏗️ Full TypeScript & Logic Support (Core Enhancement)
+- **Advanced Scanning**: Comprehensive support for TypeScript `interface`, `type`, and `enum` declarations.
+- **TS Modifiers**: Correct detection of `public`, `private`, `protected`, and `async` method combinations.
+- **Type-Safe Dependencies**: Improved handling of `import type` to accurately map architectural bonds without execution overhead.
+- **Logic Flow Recognition**: Added detection for `try/catch` blocks and `switch` statements within the logic flow visualization.
 
 # Release Notes - v0.1.8
 

@@ -17,6 +17,7 @@ class FlowRenderer {
 
         // 1. 진짜 실행 루트 탐색 ( Cargo.toml, GEMINI.md 등 메타데이터 제외하고 main 위주)
         const roots = nodes.filter(n => {
+            if (!n.data || !n.data.file) return false;
             const fileName = n.data.file.toLowerCase();
             return fileName.includes('main.') || fileName.includes('index.') || fileName.includes('app.');
         });
@@ -65,7 +66,7 @@ class FlowRenderer {
 
             // 로직 패턴 (router, checker 등) 확인하여 실제 Decision 여부 결정
             // v0.2.0: Scanner가 이미 type을 지정했다면 그것을 따름
-            const fileName = node.data.file.toLowerCase();
+            const fileName = (node.data && node.data.file) ? node.data.file.toLowerCase() : '';
             const isLogicalDecision = node.type === 'decision' ||
                 fileName.includes('router') ||
                 fileName.includes('checker') ||
@@ -287,6 +288,7 @@ class TreeRenderer {
         const tree = {};
 
         for (const node of nodes) {
+            if (!node.data) continue;
             const dir = node.data.directory || 'root';
             if (!tree[dir]) {
                 tree[dir] = {

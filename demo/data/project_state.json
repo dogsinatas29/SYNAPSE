@@ -12,6 +12,12 @@
   },
   "clusters": [
     {
+      "_headerBounds": {
+        "height": 30,
+        "width": 2610.000000000006,
+        "x": 1871.8638819969624,
+        "y": 995.3410787247694
+      },
       "bounds": {
         "height": 1250,
         "width": 3350,
@@ -32,6 +38,12 @@
       "label": "ROOT"
     },
     {
+      "_headerBounds": {
+        "height": 30,
+        "width": 160,
+        "x": 2458.9898811222215,
+        "y": 422.993466730917
+      },
       "bounds": {
         "height": 1250,
         "width": 1600,
@@ -70,6 +82,12 @@
       "label": "ui"
     },
     {
+      "_headerBounds": {
+        "height": 30,
+        "width": 1360,
+        "x": 2980,
+        "y": 50
+      },
       "bounds": {
         "height": 1200,
         "width": 800,
@@ -272,7 +290,7 @@
     {
       "_validationReason": "Circular dependency detected",
       "from": "node_0",
-      "id": "edge_auto_1771390196695_988",
+      "id": "edge_auto_1771393146556_748",
       "label": "ref",
       "to": "node_6",
       "type": "dependency",
@@ -285,7 +303,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_1",
-      "id": "edge_auto_1771390196695_198",
+      "id": "edge_auto_1771393146556_669",
       "label": "ref",
       "to": "node_8",
       "type": "dependency",
@@ -298,7 +316,7 @@
     {
       "_validationReason": "Circular dependency detected",
       "from": "node_4",
-      "id": "edge_auto_1771390196695_440",
+      "id": "edge_auto_1771393146556_381",
       "label": "ref",
       "to": "node_7",
       "type": "dependency",
@@ -311,7 +329,7 @@
     {
       "_validationReason": "Circular dependency detected",
       "from": "node_4",
-      "id": "edge_auto_1771390196695_371",
+      "id": "edge_auto_1771393146556_893",
       "label": "ref",
       "to": "node_0",
       "type": "dependency",
@@ -324,7 +342,7 @@
     {
       "_validationReason": "Circular dependency detected",
       "from": "node_4",
-      "id": "edge_auto_1771390196695_362",
+      "id": "edge_auto_1771393146556_999",
       "label": "ref",
       "to": "node_6",
       "type": "dependency",
@@ -337,7 +355,7 @@
     {
       "_validationReason": "Circular dependency detected",
       "from": "node_6",
-      "id": "edge_auto_1771390196695_998",
+      "id": "edge_auto_1771393146556_500",
       "label": "ref",
       "to": "node_4",
       "type": "dependency",
@@ -350,7 +368,7 @@
     {
       "_validationReason": "Circular dependency detected",
       "from": "node_7",
-      "id": "edge_auto_1771390196695_573",
+      "id": "edge_auto_1771393146556_688",
       "label": "ref",
       "to": "node_6",
       "type": "dependency",
@@ -363,7 +381,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_8",
-      "id": "edge_auto_1771390196695_375",
+      "id": "edge_auto_1771393146556_654",
       "label": "ref",
       "to": "node_6",
       "type": "dependency",
@@ -376,7 +394,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_15",
-      "id": "edge_auto_1771390196695_787",
+      "id": "edge_auto_1771393146556_938",
       "label": "ref",
       "to": "node_14",
       "type": "dependency",
@@ -413,8 +431,8 @@
       },
       "id": "node_0",
       "position": {
-        "x": -350,
-        "y": 400
+        "x": 1891.8638819969624,
+        "y": 1395.34107872477
       },
       "status": "proposed",
       "type": "source",
@@ -453,8 +471,8 @@
       },
       "id": "node_1",
       "position": {
-        "x": -350,
-        "y": 50
+        "x": 1891.8638819969624,
+        "y": 1045.3410787247694
       },
       "status": "proposed",
       "type": "source",
@@ -549,8 +567,8 @@
       },
       "id": "node_4",
       "position": {
-        "x": 719.5703427743264,
-        "y": 400
+        "x": 2961.4342247712875,
+        "y": 1395.34107872477
       },
       "status": "proposed",
       "type": "source",
@@ -615,8 +633,8 @@
       },
       "id": "node_6",
       "position": {
-        "x": 350,
-        "y": 50
+        "x": 2591.863881996961,
+        "y": 1045.3410787247694
       },
       "status": "proposed",
       "type": "source",
@@ -649,8 +667,8 @@
       },
       "id": "node_7",
       "position": {
-        "x": 1050,
-        "y": 400
+        "x": 3291.863881996962,
+        "y": 1395.34107872477
       },
       "status": "proposed",
       "type": "source",
@@ -687,8 +705,8 @@
       },
       "id": "node_8",
       "position": {
-        "x": 1400,
-        "y": 550
+        "x": 3641.863881996961,
+        "y": 1545.3410787247706
       },
       "status": "proposed",
       "type": "source",
@@ -801,8 +819,8 @@
       },
       "id": "node_12",
       "position": {
-        "x": 2100,
-        "y": 550
+        "x": 4341.863881996968,
+        "y": 1545.3410787247706
       },
       "status": "proposed",
       "type": "source",
@@ -898,8 +916,8 @@
       },
       "id": "node_15",
       "position": {
-        "x": 800,
-        "y": 400
+        "x": 2478.9898811222215,
+        "y": 472.993466730917
       },
       "status": "proposed",
       "type": "source",
@@ -1010,8 +1028,8 @@
       },
       "id": "node_19",
       "position": {
-        "x": 3000,
-        "y": 1300
+        "x": 3127.6681674361516,
+        "y": 751.2174295281854
       },
       "status": "proposed",
       "type": "source",
@@ -1037,8 +1055,8 @@
       },
       "id": "node_20",
       "position": {
-        "x": 3200,
-        "y": 1350
+        "x": 3327.6681674361516,
+        "y": 801.2174295281854
       },
       "status": "proposed",
       "type": "source",
@@ -1129,6 +1147,9 @@
             "toggle",
             "remove",
             "createManualNode",
+            "Button",
+            "deleteEdge",
+            "deleteSelectedNodes",
             "now",
             "warn",
             "available",
@@ -1170,7 +1191,6 @@
             "saveState",
             "from",
             "repositionIntruders",
-            "deleteEdge",
             "showEdgeContextMenu",
             "showContextMenu",
             "handleOpenFile",
@@ -1183,6 +1203,7 @@
             "generateFlow",
             "groupSelection",
             "ungroupSelection",
+            "deleteNode",
             "prompt",
             "validateEdge",
             "match",
@@ -1230,6 +1251,7 @@
             "callStandaloneApi",
             "String",
             "splice",
+            "needed",
             "complete",
             "floor",
             "setLineDash",
@@ -1265,8 +1287,8 @@
       },
       "id": "node_21",
       "position": {
-        "x": 3800,
-        "y": 1300
+        "x": 3927.6681674361507,
+        "y": 751.2174295281854
       },
       "status": "proposed",
       "type": "source",

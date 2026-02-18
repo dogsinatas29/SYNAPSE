@@ -18,7 +18,7 @@ SYNAPSE is a next-generation extension built for **Google Antigravity** and **Vi
 - **📝 Mermaid Export**: Export your visual diagram to Mermaid.js format for easy sharing and documentation.
 - **🌐 Topology View**: visualize project folder structure and file dependencies as a node-edge network.
 - **🌳 Tree View**: A hierarchical overview of the project structure.
-- **➡️ Flow View (Enhanced! 🏁)**: Projects the execution flow of specific logic into a flowchart with horizontal branching for decisions and improved Mermaid diagram support with clustering (v0.2.2).
+- **➡️ Flow View (Enhanced!)**: Projects the execution flow of specific logic into a flowchart. Now more robust in v0.2.3.
 - **🛡️ Node Diet (Smart Scanning)**: Automatically ignores unnecessary folders like `.venv`, `node_modules`.
 - **📦 Ghost Node Storage (New! 📥)**: Automatically isolates disconnected (degree-0) nodes into a dedicated storage cluster to keep the main view clean.
 - **📂 Auto Folder Clustering**: Automatically groups nodes based on directory structure. This clustering is now also preserved in Mermaid exports (v0.2.2).

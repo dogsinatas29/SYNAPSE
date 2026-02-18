@@ -11,8 +11,9 @@ SYNAPSE는 **Google Antigravity** 및 **Visual Studio Code** 사용자를 위해
 
 - **🌐 Topology View**: 프로젝트의 폴더 구조 및 파일 간의 의존성을 노드-엣지 네트워크로 시각화.
 - **🌳 Tree View**: 프로젝트 구조를 계층적으로 조감.
-- **➡️ Flow View**: 특정 로직의 실행 흐름을 순서도로 투사.
-- **🛡️ Node Diet (Smart Scanning)**: `.venv`, `node_modules` 등 불필요한 폴더를 자동으로 무시하여 핵심 소스에 집중.
+- **➡️ Flow View (정밀화! 🏁)**: 특정 로직의 실행 흐름을 **[START]** 및 **[END]** 마커가 포함된 순서도로 투사합니다.
+- **🛡️ Node Diet (Smart Scanning)**: `.venv`, `node_modules` 등 불필요한 폴더를 자동으로 무시합니다.
+- **📦 Ghost Node Storage (신규! 📥)**: 의존성이 없는 고립된 노드들을 별도의 보관소(Storage) 클러스터로 자동 격리하여 메인 뷰를 깨끗하게 유지합니다.
 - **📂 Auto Folder Clustering**: 디렉토리 구조에 기반한 자동 그룹화로 대규모 프로젝트 가독성 보장.
 - **🔄 Deep Reset**: 엉망이 된 배치를 즉시 초기화하고 최신 필터로 재스캔하는 심층 초기화.
 - **🎯 Scan Scope Control**: `GEMINI.md`에서 `Scan Paths`를 지정하여 원하는 영역만 정밀 스캔 가능.

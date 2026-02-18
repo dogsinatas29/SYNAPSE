@@ -11,8 +11,9 @@ SYNAPSE is a next-generation extension built for **Google Antigravity** and **Vi
 
 - **🌐 Topology View**: visualize project folder structure and file dependencies as a node-edge network.
 - **🌳 Tree View**: A hierarchical overview of the project structure.
-- **➡️ Flow View**: Projects the execution flow of specific logic into a flowchart.
-- **🛡️ Node Diet (Smart Scanning)**: Automatically ignores unnecessary folders like `.venv`, `node_modules` to focus on core source code.
+- **➡️ Flow View (Refined! 🏁)**: Projects the execution flow of specific logic into a flowchart with explicit **[START]** and **[END]** markers.
+- **🛡️ Node Diet (Smart Scanning)**: Automatically ignores unnecessary folders like `.venv`, `node_modules`.
+- **📦 Ghost Node Storage (New! 📥)**: Automatically isolates disconnected (degree-0) nodes into a dedicated storage cluster to keep the main view clean.
 - **📂 Auto Folder Clustering**: Automatically groups nodes based on directory structure to ensure readability for large projects.
 - **🔄 Deep Reset**: Instantly resets a messy layout and rescans with the latest filters.
 - **🎯 Scan Scope Control**: Specify `Scan Paths` in `GEMINI.md` to precisely scan only desired areas.

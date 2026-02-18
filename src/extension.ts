@@ -27,15 +27,18 @@ import {
 import { CanvasPanel } from './webview/CanvasPanel';
 import { BootstrapEngine } from './bootstrap/BootstrapEngine';
 
+
 import { client, setClient } from './client';
 import { PromptLogger } from './core/PromptLogger';
+import { Logger } from './utils/Logger';
 
 export async function activate(context: vscode.ExtensionContext) {
-    console.log('[SYNAPSE] Extension activation started');
+    Logger.initialize(context);
+    Logger.info('Extension activation started');
 
     try {
         console.log('[SYNAPSE] Initializing components...');
-        vscode.window.showInformationMessage('SYNAPSE: Initializing (v0.1.8)...');
+        vscode.window.showInformationMessage('SYNAPSE: Initializing (v0.2.10)...');
 
         console.log('[SYNAPSE] Registering WebviewPanelSerializer...');
         if (vscode.window.registerWebviewPanelSerializer) {
@@ -58,6 +61,8 @@ export async function activate(context: vscode.ExtensionContext) {
             });
         }
         console.log('[SYNAPSE] WebviewPanelSerializer registered');
+
+
 
         console.log('[SYNAPSE] Registering synapse.openCanvas command...');
         context.subscriptions.push(

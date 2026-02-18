@@ -71,13 +71,8 @@ export class FlowchartGenerator {
                     nodeX = (currentCount % 4) * 200;
                     nodeY = Math.floor(currentCount / 4) * 150 + 100;
                     finalClusterId = 'doc_shelf';
-                } else if (isDisconnected) {
-                    // 수평 상 멀리 떨어진 Storage 영역 (오른쪽 구석)
-                    nodeX = 3000 + (currentCount % 3) * 200;
-                    nodeY = (currentCount / 3) * 150 + 100;
-                    finalClusterId = 'storage_cluster';
                 } else {
-                    nodeX = (currentCount - 2) * nodeSpacingX + 350;
+                    nodeX = (currentCount % 5) * nodeSpacingX + 350;
                     nodeY = Math.floor(currentCount / 5) * nodeSpacingY + layerYOffset;
                 }
 
@@ -126,14 +121,7 @@ export class FlowchartGenerator {
             children: nodes.filter(n => n.data.cluster_id === 'doc_shelf').map(n => n.id)
         });
 
-        // [Ghost Nodes Storage]
-        clusters.push({
-            id: 'storage_cluster',
-            label: '📦 Ghost Nodes (Storage)',
-            collapsed: true,
-            bounds: { x: clusterCols * clusterSpacingX + 1000, y: 0, width: 800, height: 1200 },
-            children: nodes.filter(n => n.data.cluster_id === 'storage_cluster').map(n => n.id)
-        });
+
 
         // 3. 의존성 기반 엣지 생성
         structure.dependencies.forEach((dep) => {

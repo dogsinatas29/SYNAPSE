@@ -24,7 +24,7 @@ This document defines the rules for how SYNAPSE discovers, parses, and visualize
 - **Node Diet (최적화)**: Non-architectural documents and build artifacts are excluded from the canvas:
   (아래와 같은 파일들은 캔버스 렌더링에서 배제합니다.)
     - `README.md`, `README_KR.md`
-    - `CHANGELOG.md`
+    - `CHANGELOG.md`, `test_exclusion.js`
     - `.vsix` (Build files)
     - `.js.map` (Source maps)
     - `node_modules`, `.git`, `dist`, `build`, `ui` (Folders)

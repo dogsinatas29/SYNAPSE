@@ -25,6 +25,7 @@ import { GeminiParser } from '../core/GeminiParser';
 import { FlowchartGenerator } from '../core/FlowchartGenerator';
 import { BootstrapEngine } from '../bootstrap/BootstrapEngine';
 import { client } from '../client';
+import { Logger } from '../utils/Logger';
 
 export class CanvasPanel {
     public static currentPanel: CanvasPanel | undefined;
@@ -88,6 +89,12 @@ export class CanvasPanel {
         // Handle messages from the webview
         this._panel.webview.onDidReceiveMessage(
             async message => {
+                if (message.command !== 'contextData') {
+                    Logger.info(`[CanvasPanel] Received command: ${message.command}`);
+                    if (message.command === 'deleteNodes') {
+                        Logger.info(`[CanvasPanel] Payload:`, message);
+                    }
+                }
                 switch (message.command) {
                     case 'alert':
                         vscode.window.showInformationMessage(message.text);
@@ -103,6 +110,10 @@ export class CanvasPanel {
                         return;
                     case 'saveState':
                         await this.handleSaveState(message.data);
+                        return;
+                    case 'ungroup':
+                        // [New] Ungroup command
+                        await this.handleUngroup(message.nodeIds);
                         return;
                     case 'takeSnapshot':
                         await this.handleTakeSnapshot(message.data);
@@ -125,11 +136,9 @@ export class CanvasPanel {
                     case 'deleteEdge':
                         await this.handleDeleteEdge(message.edgeId);
                         return;
-                    case 'deleteNode':
-                        await this.handleDeleteNode(message.nodeId);
-                        return;
                     case 'deleteNodes':
-                        await this.handleDeleteNodes(message.nodeIds);
+                        // Pass the entire message object to let handleDeleteNodes extract IDs robustly
+                        await this.handleDeleteNodes(message);
                         return;
                     case 'updateEdge':
                         await this.handleUpdateEdge(message.edgeId, message.updates);
@@ -441,7 +450,7 @@ export class CanvasPanel {
         await this.handleDeleteNodes([nodeId]);
     }
 
-    private async handleDeleteNodes(nodeIds: string[]) {
+    private async handleUngroup(nodeIds: string[]) {
         const workspaceFolder = this._workspaceFolder;
         if (!workspaceFolder || !nodeIds || nodeIds.length === 0) return;
 
@@ -450,12 +459,110 @@ export class CanvasPanel {
             const data = await vscode.workspace.fs.readFile(projectStateUri);
             const projectState = JSON.parse(data.toString());
 
-            if (!projectState.nodes) projectState.nodes = [];
+            if (!projectState.nodes) return;
 
             const nodeIdSet = new Set(nodeIds);
+            let updatedCount = 0;
+
+            // 1. Clear cluster_id for target nodes
+            projectState.nodes.forEach((n: any) => {
+                if (nodeIdSet.has(n.id)) {
+                    if (n.cluster_id) {
+                        n.cluster_id = null;
+                        updatedCount++;
+                    }
+                    if (n.data && n.data.cluster_id) {
+                        n.data.cluster_id = null;
+                    }
+                }
+            });
+
+            if (updatedCount === 0) {
+                console.log('[SYNAPSE] No nodes needed ungrouping.');
+                return;
+            }
+
+            // 2. Cleanup empty clusters
+            if (projectState.clusters) {
+                const activeClusterIds = new Set(projectState.nodes.map((n: any) => n.cluster_id || (n.data && n.data.cluster_id)).filter((id: string) => id));
+                const initialClusterCount = projectState.clusters.length;
+                projectState.clusters = projectState.clusters.filter((c: any) => activeClusterIds.has(c.id));
+                const removedClusters = initialClusterCount - projectState.clusters.length;
+                if (removedClusters > 0) {
+                    console.log(`[SYNAPSE] Cleaned up ${removedClusters} empty clusters (Ungroup)`);
+                }
+            }
+
+            // 3. Save state (Atomic)
+            const normalizedJson = this.normalizeProjectState(projectState);
+            await vscode.workspace.fs.writeFile(projectStateUri, Buffer.from(normalizedJson, 'utf8'));
+            console.log(`[SYNAPSE] Ungrouped ${updatedCount} nodes.`);
+
+            // 4. Broadcast update
+            await this.sendProjectState();
+
+        } catch (error) {
+            console.error('Failed to ungroup nodes:', error);
+            vscode.window.showErrorMessage(`Failed to ungroup nodes: ${error}`);
+        }
+    }
+
+    // [Updated] Robust Delete Handler
+    private async handleDeleteNodes(rawInput: any) {
+        // [HOT-FIX] Force show output channel and log immediately
+        Logger.show();
+        Logger.info(`[CanvasPanel] handleDeleteNodes CALLED. Raw Input:`, rawInput);
+
+        const workspaceFolder = this._workspaceFolder;
+        if (!workspaceFolder) return;
+
+        // [Bulletproof ID Extraction]
+        let targetIds: string[] = [];
+
+        if (Array.isArray(rawInput)) {
+            targetIds = rawInput;
+        } else if (typeof rawInput === 'object' && rawInput !== null) {
+            // Handle "Proxy" or "Array-like" objects by forcing conversion
+            // Check if it's the message object wrapping nodeIds
+            if (rawInput.nodeIds) {
+                if (Array.isArray(rawInput.nodeIds)) {
+                    targetIds = rawInput.nodeIds;
+                } else {
+                    targetIds = Object.values(rawInput.nodeIds);
+                }
+            } else if (rawInput.nodeId) {
+                targetIds = [rawInput.nodeId];
+            } else {
+                // Try to convert the object itself if it looks like an array
+                targetIds = Object.values(rawInput);
+            }
+        } else if (typeof rawInput === 'string') {
+            targetIds = [rawInput];
+        }
+
+        // Filter valid strings only
+        targetIds = targetIds.filter((id: any) => typeof id === 'string' && id.length > 0);
+
+        Logger.info(`[CanvasPanel] Target IDs for deletion:`, targetIds);
+
+        if (targetIds.length === 0) {
+            Logger.warn('[CanvasPanel] No valid node IDs extracted for deletion from input:', JSON.stringify(rawInput));
+            return;
+        }
+
+        try {
+            const projectStateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'project_state.json');
+            const data = await vscode.workspace.fs.readFile(projectStateUri);
+            const projectState = JSON.parse(data.toString());
+
+            if (!projectState.nodes) projectState.nodes = [];
+
+            const nodeIdSet = new Set(targetIds);
+            const initialNodeCount = projectState.nodes.length;
+
             let deletedCount = 0;
 
-            // 1. 노드 제거
+            // 1. Remove Nodes
             projectState.nodes = projectState.nodes.filter((n: any) => {
                 if (nodeIdSet.has(n.id)) {
                     deletedCount++;
@@ -464,50 +571,40 @@ export class CanvasPanel {
                 return true;
             });
 
-            if (deletedCount === 0) {
-                console.warn('[SYNAPSE] No nodes found for deletion:', nodeIds);
-                return;
-            }
-
-            // 2. 연결된 엣지 제거
+            // 2. Remove connected edges
             if (projectState.edges) {
                 const initialEdgeCount = projectState.edges.length;
                 projectState.edges = projectState.edges.filter((e: any) => !nodeIdSet.has(e.from) && !nodeIdSet.has(e.to));
                 console.log(`[SYNAPSE] Removed ${initialEdgeCount - projectState.edges.length} edges connected to deleted nodes`);
             }
 
-            // 3. 클러스터 자식 목록에서 제거 & 빈 클러스터 삭제
+            // 3. Remove from cluster children & cleanup empty clusters
             if (projectState.clusters) {
-                // Remove deleted nodes from children arrays
                 projectState.clusters.forEach((c: any) => {
                     if (c.children) {
                         c.children = c.children.filter((id: string) => !nodeIdSet.has(id));
                     }
                 });
 
-                // Check which clusters are still active (referenced by remaining nodes)
                 const activeClusterIds = new Set(projectState.nodes.map((n: any) => n.data?.cluster_id || n.cluster_id).filter((id: string) => id));
-
                 const initialClusterCount = projectState.clusters.length;
                 projectState.clusters = projectState.clusters.filter((c: any) => activeClusterIds.has(c.id));
-
                 const removedClusters = initialClusterCount - projectState.clusters.length;
                 if (removedClusters > 0) {
-                    console.log(`[SYNAPSE] Cleaned up ${removedClusters} empty clusters (Backend)`);
+                    console.log(`[SYNAPSE] Cleaned up ${removedClusters} empty clusters`);
                 }
             }
 
-            // 저장 (정규화 적용)
             const normalizedJson = this.normalizeProjectState(projectState);
             await vscode.workspace.fs.writeFile(projectStateUri, Buffer.from(normalizedJson, 'utf8'));
 
             console.log(`[SYNAPSE] ${deletedCount} nodes deleted.`);
+            Logger.info(`[CanvasPanel] Successfully deleted ${deletedCount} nodes.`);
             vscode.window.setStatusBarMessage(`${deletedCount} nodes deleted`, 3000);
 
-            // 캔버스 새로고침
             await this.sendProjectState();
         } catch (error) {
-            console.error('Failed to delete nodes:', error);
+            Logger.error('Failed to delete nodes:', error);
             vscode.window.showErrorMessage(`Failed to delete nodes: ${error}`);
         }
     }

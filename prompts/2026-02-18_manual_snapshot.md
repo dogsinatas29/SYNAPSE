@@ -1,14 +1,14 @@
 ---
 type: history
-date: 2026. 2. 19. 오전 1:03:17
+date: 2026. 2. 19. 오전 12:17:10
 tags: ["#Decision", "#Reasoning", "#Prompt"]
 status: active
 ---
 
-# Selection Ungrouped
+# Manual Snapshot
 
 ## 🎯 Goal
-Snapshot taken: Selection Ungrouped 
+Snapshot taken: Manual Snapshot 
 
 ## 🧠 Key Decisions
 Not specified
@@ -18,7 +18,7 @@ No specific files referenced.
 
 ## 📝 Original Prompt
 ```text
-Snapshot taken: Selection Ungrouped
+Snapshot taken: Manual Snapshot
 ```
 
 ---

@@ -156,8 +156,10 @@ Created with the belief that the simple act of connecting lines in complex syste
 ## 🆕 Version History
 
 ### v0.2.10
-- **🐛 Activation Fix**: Fixed "command not found" error by updating `vscode` engine requirement to `^1.82.0`.
-- **⚙️ Compatibility**: Ensured compatibility with `vscode-languageclient` v9.0.1.
+- **🐛 Critical Fixes**:
+    - **Activation Error**: Resolved `Cannot find module` error by bundling dependencies with **Webpack**.
+    - **Silent Deletion**: Fixed multi-node deletion failure by removing blocking UI dialogs and ensuring canvas focus.
+- **✨ Enhanced Logging**: output channel now automatically opens to show detailed backend operations.
 
 ### v0.2.8
 - **📜 Rule Externalization**: Introduced `RULES.md` to define and control architecture discovery rules (inclusion/exclusion/icons).

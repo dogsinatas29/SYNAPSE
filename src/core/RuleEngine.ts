@@ -56,7 +56,8 @@ export class RuleEngine {
             'package-lock.json',
             'license',
             'v0.2.0_self_sync.js',
-            'canvas-engine.js'
+            'canvas-engine.js',
+            'test_exclusion.js'
         ]);
         this.binaryExcludes = new Set([
             '.vsix', '.zip', '.tar.gz', '.exe', '.dll', '.so', '.bin', '.js.map',
@@ -79,17 +80,22 @@ export class RuleEngine {
             }
 
             // Extract inline code backticks as potential paths
-            // Pattern matches `- ` or `* ` followed by backticks
-            const listMatch = trimmed.match(/^[-*]\s+[`]([^`]+)[`]/);
-            if (listMatch) {
-                const item = listMatch[1];
-                if (currentSection.includes('exclusion')) {
-                    if (item.startsWith('.')) {
-                        this.binaryExcludes.add(item.toLowerCase());
-                    } else if (item.includes('/') || item.includes('.')) {
-                        this.blacklistFiles.add(path.basename(item).toLowerCase());
-                    } else {
-                        this.ignoreFolders.add(item.toLowerCase());
+            // Pattern matches `- ` or `* ` followed by content
+            // We need to find ALL occurrences of `text` in the line
+            if (trimmed.startsWith('-') || trimmed.startsWith('*')) {
+                const regex = /`([^`]+)`/g;
+                let match;
+
+                while ((match = regex.exec(trimmed)) !== null) {
+                    const item = match[1];
+                    if (currentSection.includes('exclusion')) {
+                        if (item.startsWith('.')) {
+                            this.binaryExcludes.add(item.toLowerCase());
+                        } else if (item.includes('/') || item.includes('.')) {
+                            this.blacklistFiles.add(path.basename(item).toLowerCase());
+                        } else {
+                            this.ignoreFolders.add(item.toLowerCase());
+                        }
                     }
                 }
             }

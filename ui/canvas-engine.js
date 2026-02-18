@@ -808,6 +808,9 @@ class CanvasEngine {
 
         // 마우스 드래그 (팬, 노드 드래그, 선택, 엣지 생성)
         this.canvas.addEventListener('mousedown', (e) => {
+            // [Fix] Ensure canvas receives keyboard focus for keydown events
+            this.canvas.focus();
+
             const worldPos = this.screenToWorld(e.offsetX, e.offsetY);
             this.dragStart = { x: e.offsetX, y: e.offsetY };
 
@@ -886,14 +889,17 @@ class CanvasEngine {
                     if (e.ctrlKey || e.metaKey || e.shiftKey) {
                         if (this.selectedNodes.has(clickedNode)) {
                             this.selectedNodes.delete(clickedNode);
+                            console.log('[SYNAPSE] Node deselected (Multi). Total selected:', this.selectedNodes.size);
                         } else {
                             this.selectedNodes.add(clickedNode);
+                            console.log('[SYNAPSE] Node selected (Multi). Total selected:', this.selectedNodes.size);
                         }
                         this.selectedNode = null;
                     } else {
                         if (!this.selectedNodes.has(clickedNode)) {
                             this.selectedNodes.clear();
                             this.selectedNodes.add(clickedNode);
+                            console.log('[SYNAPSE] Node selected (Single). ID:', clickedNode.id);
                         }
                         this.selectedNode = clickedNode;
                     }
@@ -1074,6 +1080,7 @@ class CanvasEngine {
         // Delete 키로 선택된 노드/엣지 삭제 및 방향키 내비게이션
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Delete' || e.key === 'Backspace') {
+                console.log(`[SYNAPSE-FRONT] Keydown detected: ${e.key}. Selected nodes: ${this.selectedNodes.size}`);
                 if (this.selectedEdge) {
                     console.log('[SYNAPSE] Deleting edge:', this.selectedEdge.id);
                     this.deleteEdge(this.selectedEdge.id);
@@ -2352,34 +2359,37 @@ class CanvasEngine {
     ungroupSelection() {
         if (this.selectedNodes.size === 0) return;
 
+        const nodesToUngroup = Array.from(this.selectedNodes);
+        // Ensure robust ID extraction
+        const nodeIds = nodesToUngroup
+            .map(n => n.id)
+            .filter(id => id && (typeof id === 'string' || typeof id === 'number'));
+
+        console.log(`[SYNAPSE] Ungrouping ${nodeIds.length} nodes:`, nodeIds);
+
+        // Optimistic UI Update
         for (const node of this.selectedNodes) {
             if (node.data) node.data.cluster_id = null;
             node.cluster_id = null;
         }
 
-        // 사용되지 않는 클러스터 정리
+        // 사용되지 않는 클러스터 정리 (Local)
         this.clusters = this.clusters.filter(c => {
             return this.nodes.some(n => (n.data?.cluster_id === c.id) || n.cluster_id === c.id);
         });
 
-        console.log('[SYNAPSE] Ungrouped selection');
-        this.saveState(); // 클러스터 해제 후 저장
-        this.takeSnapshot('Selection Ungrouped');
+        // Force render immediately to update visuals (pop out)
+        this.render();
+
+        // Backend Update (New 'ungroup' command avoids race condition with concurrent delete)
+        if (typeof vscode !== 'undefined') {
+            vscode.postMessage({
+                command: 'ungroup',
+                nodeIds: nodeIds
+            });
+        }
     }
 
-    getClusterAt(x, y) {
-        if (!this.clusters) return null;
-        // 헤더 영역만 클릭 체크
-        for (const cluster of this.clusters) {
-            if (cluster._headerBounds) {
-                const b = cluster._headerBounds;
-                if (x >= b.x && x <= b.x + b.width && y >= b.y && y <= b.y + b.height) {
-                    return cluster;
-                }
-            }
-        }
-        return null;
-    }
 
     toggleClusterCollapse(clusterId) {
         const cluster = this.clusters.find(c => c.id === clusterId);
@@ -2495,7 +2505,7 @@ class CanvasEngine {
         if (typeof vscode !== 'undefined') {
             vscode.postMessage({
                 command: 'deleteNodes',
-                nodeIds: [nodeId]
+                nodeId: nodeId
             });
         }
 
@@ -2505,17 +2515,34 @@ class CanvasEngine {
 
     deleteSelectedNodes() {
         const nodesToDelete = Array.from(this.selectedNodes);
-        if (nodesToDelete.length === 0) return;
+        console.log(`[SYNAPSE-FRONT] deleteSelectedNodes called. IDs:`, nodesToDelete.map(n => n.id));
+
+        if (nodesToDelete.length === 0) {
+            console.warn('[SYNAPSE] No nodes selected for deletion.');
+            return;
+        }
 
         // Confirmation for multiple nodes
         if (nodesToDelete.length > 1) {
-            const confirmMsg = `Are you sure you want to delete ${nodesToDelete.length} nodes and their connections?`;
-            if (!confirm(confirmMsg)) {
-                return;
-            }
+            console.log(`[SYNAPSE] Skipping confirmation dialog for ${nodesToDelete.length} nodes to force deletion.`);
+            // [Fix] Removed blocking confirm dialog to ensure deletion proceeds
+            // const confirmMsg = `Are you sure you want to delete ${nodesToDelete.length} nodes and their connections?`;
+            // if (!confirm(confirmMsg)) {
+            //     return;
+            // }
         }
 
-        const nodeIds = nodesToDelete.map(n => n.id);
+        // Ensure we are getting valid IDs (Sanitization)
+        const nodeIds = nodesToDelete
+            .map(n => n.id)
+            .filter(id => id && (typeof id === 'string' || typeof id === 'number')); // Strict type check
+
+        console.log(`[SYNAPSE] IDs to delete (Sanitized):`, nodeIds);
+
+        if (nodeIds.length === 0) {
+            console.error('[SYNAPSE] Failed to extract node IDs from selection.');
+            return;
+        }
 
         // 1. 로컬 상태 일괄 업데이트
         this.nodes = this.nodes.filter(n => !nodeIds.includes(n.id));
@@ -2541,10 +2568,14 @@ class CanvasEngine {
 
         // 3. 백엔드에 일괄 삭제 메시지 전송
         if (typeof vscode !== 'undefined') {
+            console.log(`[SYNAPSE] Sending deleteNodes command. IDs:`, nodeIds);
             vscode.postMessage({
                 command: 'deleteNodes',
                 nodeIds: nodeIds
             });
+            console.log(`[SYNAPSE] Sent deleteNodes command for ${nodeIds.length} nodes`);
+        } else {
+            console.warn('[SYNAPSE] VS Code API not available, deletion limited to frontend.');
         }
 
         console.log(`[SYNAPSE] ${nodeIds.length} nodes deleted.`);

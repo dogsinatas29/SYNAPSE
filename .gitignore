@@ -1,6 +1,20 @@
 node_modules/
 dist/
+out/
 *.log
 .DS_Store
 data/snapshots/
 *.tsbuildinfo
+
+# SYNAPSE specific
+GEMINI.md
+*.vsix
+synapse-visual-architecture-*/
+
+# Temporary / Build artifacts
+*.backup
+*.original
+*_self_sync.js*
+test_*.js
+demo_bootstrap.js
+sync_check.js

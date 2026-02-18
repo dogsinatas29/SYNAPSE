@@ -11,7 +11,7 @@ SYNAPSE is a next-generation extension built for **Google Antigravity** and **Vi
 
 - **🌐 Topology View**: visualize project folder structure and file dependencies as a node-edge network.
 - **🌳 Tree View**: A hierarchical overview of the project structure.
-- **➡️ Flow View (Refined! 🏁)**: Projects the execution flow of specific logic into a flowchart with explicit **[START]** and **[END]** markers.
+- **➡️ Flow View (Enhanced! 🏁)**: Projects the execution flow of specific logic into a flowchart with horizontal branching for decisions and improved TypeScript support (v0.2.1).
 - **🛡️ Node Diet (Smart Scanning)**: Automatically ignores unnecessary folders like `.venv`, `node_modules`.
 - **📦 Ghost Node Storage (New! 📥)**: Automatically isolates disconnected (degree-0) nodes into a dedicated storage cluster to keep the main view clean.
 - **📂 Auto Folder Clustering**: Automatically groups nodes based on directory structure to ensure readability for large projects.
@@ -51,7 +51,7 @@ SYNAPSE supports multi-language architecture analysis:
 - 🐚 **Shell Script**: `.sh` automation script flow and function analysis
 - 🗄️ **SQL**: `.sql` table definition and schema visualization
 - ⚙️ **Config (JSON/YAML/TOML)**: Analyzing relationships between infrastructure configuration files (The Glue)
-- 📜 **TypeScript / JavaScript**: Full support for interfaces, types, and async logic (New in v0.2.0! 🚀)
+- 📜 **TypeScript / JavaScript**: Full engine support for interfaces, types, and complex async logic (Enhanced in v0.2.1! 🚀)
 
 ## 🛠️ Technology Stack
 
@@ -104,6 +104,7 @@ npm run dev:ui
 
 ### 🧱 Node & Edge Management (WYSIWYG)
 - **Add Node**: Click the `Add Node` button on the top toolbar.
+- **Delete Node/Edge**: Use the **🗑️ Delete** button in the toolbar, the `Delete` key, or the right-click context menu.
 - **Manual Edge**: **Alt + Click a connection handle** on a node, then drag to the target. Release to select the relationship type (Dependency, Call, Data Flow, etc.).
 
 ### 📦 Clustering & Management
@@ -119,6 +120,7 @@ npm run dev:ui
 ### 🧹 Data Hygiene Principles
 - **Separation**: `GEMINI.md` holds the logic; `project_state.json` holds the coordinates.
 - **Normalization**: Minimized Git Diff through sorted JSON keys.
+- **Git Shield**: Common artifacts like `.vsix` and root `GEMINI.md` are automatically ignored (v0.2.1).
 - **Volatile Auto-Edges**: Scanned edges are regenerated in real-time to prevent stale data.
 
 ### 🔥 Core Strategies

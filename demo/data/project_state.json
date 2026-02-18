@@ -13,86 +13,97 @@
   "clusters": [
     {
       "bounds": {
-        "height": 700,
-        "width": 700,
+        "height": 1250,
+        "width": 3350,
         "x": 0,
         "y": 0
       },
       "children": [
-        "node_22",
-        "node_23",
-        "node_24",
-        "node_25",
-        "node_26",
-        "node_27",
-        "node_28",
-        "node_29",
-        "node_30",
-        "node_31",
-        "node_32",
-        "node_33",
-        "node_34",
-        "node_35"
+        "node_0",
+        "node_1",
+        "node_4",
+        "node_6",
+        "node_7",
+        "node_8",
+        "node_12"
       ],
       "collapsed": false,
-      "id": "cluster_4",
+      "id": "cluster_0",
       "label": "ROOT"
     },
     {
       "bounds": {
-        "height": 400,
-        "width": 550,
-        "x": 600,
+        "height": 1250,
+        "width": 1600,
+        "x": 800,
         "y": 0
       },
       "children": [
-        "node_36",
-        "node_37",
-        "node_38",
-        "node_39",
-        "node_40"
+        "node_15"
       ],
       "collapsed": false,
-      "id": "cluster_5",
+      "id": "cluster_1",
       "label": "src"
     },
     {
       "bounds": {
-        "height": 250,
-        "width": 400,
+        "height": 1250,
+        "width": 1250,
         "x": 0,
-        "y": 400
+        "y": 1200
       },
-      "children": [
-        "node_41",
-        "node_42"
-      ],
+      "children": [],
       "collapsed": false,
-      "id": "cluster_6",
+      "id": "cluster_2",
       "label": "src/types"
     },
     {
       "bounds": {
-        "height": 250,
-        "width": 250,
-        "x": 600,
-        "y": 400
+        "height": 1250,
+        "width": 1250,
+        "x": 800,
+        "y": 1200
+      },
+      "children": [],
+      "collapsed": false,
+      "id": "cluster_3",
+      "label": "ui"
+    },
+    {
+      "bounds": {
+        "height": 1200,
+        "width": 800,
+        "x": 2600,
+        "y": 0
       },
       "children": [
-        "node_43"
+        "node_2",
+        "node_3",
+        "node_5",
+        "node_9",
+        "node_10",
+        "node_11",
+        "node_13",
+        "node_14",
+        "node_16",
+        "node_17",
+        "node_18",
+        "node_19",
+        "node_20",
+        "node_21"
       ],
-      "collapsed": false,
-      "id": "cluster_7",
-      "label": "ui"
+      "collapsed": true,
+      "id": "storage_cluster",
+      "label": "📦 Ghost Nodes (Storage)"
     }
   ],
   "edges": [
     {
-      "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_37",
-      "id": "edge_1",
+      "_validationReason": "Circular dependency detected",
+      "from": "node_0",
+      "id": "edge_0",
       "is_approved": false,
-      "to": "node_34",
+      "to": "node_6",
       "type": "dependency",
       "validation": {
         "confidence": 0.95,
@@ -108,10 +119,266 @@
     },
     {
       "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_37",
-      "id": "edge_auto_1771387003886_206",
+      "from": "node_1",
+      "id": "edge_1",
+      "is_approved": false,
+      "to": "node_8",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Circular dependency detected",
+      "from": "node_4",
+      "id": "edge_2",
+      "is_approved": false,
+      "to": "node_7",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Circular dependency detected",
+      "from": "node_4",
+      "id": "edge_3",
+      "is_approved": false,
+      "to": "node_0",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Circular dependency detected",
+      "from": "node_4",
+      "id": "edge_4",
+      "is_approved": false,
+      "to": "node_6",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Circular dependency detected",
+      "from": "node_6",
+      "id": "edge_5",
+      "is_approved": false,
+      "to": "node_4",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Circular dependency detected",
+      "from": "node_7",
+      "id": "edge_6",
+      "is_approved": false,
+      "to": "node_6",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_8",
+      "id": "edge_7",
+      "is_approved": false,
+      "to": "node_6",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_15",
+      "id": "edge_8",
+      "is_approved": false,
+      "to": "node_12",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Circular dependency detected",
+      "from": "node_0",
+      "id": "edge_auto_1771390196695_988",
       "label": "ref",
-      "to": "node_36",
+      "to": "node_6",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_1",
+      "id": "edge_auto_1771390196695_198",
+      "label": "ref",
+      "to": "node_8",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Circular dependency detected",
+      "from": "node_4",
+      "id": "edge_auto_1771390196695_440",
+      "label": "ref",
+      "to": "node_7",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Circular dependency detected",
+      "from": "node_4",
+      "id": "edge_auto_1771390196695_371",
+      "label": "ref",
+      "to": "node_0",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Circular dependency detected",
+      "from": "node_4",
+      "id": "edge_auto_1771390196695_362",
+      "label": "ref",
+      "to": "node_6",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Circular dependency detected",
+      "from": "node_6",
+      "id": "edge_auto_1771390196695_998",
+      "label": "ref",
+      "to": "node_4",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Circular dependency detected",
+      "from": "node_7",
+      "id": "edge_auto_1771390196695_573",
+      "label": "ref",
+      "to": "node_6",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_8",
+      "id": "edge_auto_1771390196695_375",
+      "label": "ref",
+      "to": "node_6",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_15",
+      "id": "edge_auto_1771390196695_787",
+      "label": "ref",
+      "to": "node_14",
       "type": "dependency",
       "validation": {
         "confidence": 0.95,
@@ -124,21 +391,30 @@
   "nodes": [
     {
       "data": {
-        "cluster_id": "cluster_4",
+        "cluster_id": "cluster_0",
         "color": "#b8bb26",
         "description": "Alert_Manager.ts (Auto-detected)",
         "file": "Alert_Manager.ts",
         "label": "Alert_Manager.ts",
+        "layer": 1,
+        "priority": 50,
         "summary": {
-          "classes": [],
-          "functions": [],
-          "references": []
+          "classes": [
+            "AlertManager"
+          ],
+          "functions": [
+            "notify",
+            "log"
+          ],
+          "references": [
+            "Log_Parser"
+          ]
         }
       },
-      "id": "node_22",
+      "id": "node_0",
       "position": {
-        "x": 50,
-        "y": 50
+        "x": -350,
+        "y": 400
       },
       "status": "proposed",
       "type": "source",
@@ -149,20 +425,35 @@
     },
     {
       "data": {
-        "cluster_id": "cluster_4",
+        "cluster_id": "cluster_0",
         "color": "#b8bb26",
         "description": "CLI_Main.ts (Auto-detected)",
         "file": "CLI_Main.ts",
         "label": "CLI_Main.ts",
+        "layer": 0,
+        "priority": 5,
         "summary": {
-          "classes": [],
-          "functions": [],
-          "references": []
+          "classes": [
+            "CLIMain"
+          ],
+          "functions": [
+            "watcher",
+            "constructor",
+            "LogWatcher",
+            "main",
+            "log",
+            "includes",
+            "startWatching",
+            "CLIMain"
+          ],
+          "references": [
+            "Log_Watcher"
+          ]
         }
       },
-      "id": "node_23",
+      "id": "node_1",
       "position": {
-        "x": 200,
+        "x": -350,
         "y": 50
       },
       "status": "proposed",
@@ -174,21 +465,23 @@
     },
     {
       "data": {
-        "cluster_id": "cluster_4",
+        "cluster_id": "storage_cluster",
         "color": "#b8bb26",
         "description": "Cache_Buffer.ts (Auto-detected)",
         "file": "Cache_Buffer.ts",
         "label": "Cache_Buffer.ts",
+        "layer": 1,
+        "priority": 50,
         "summary": {
           "classes": [],
           "functions": [],
           "references": []
         }
       },
-      "id": "node_24",
+      "id": "node_2",
       "position": {
-        "x": 350,
-        "y": 50
+        "x": 3200,
+        "y": 150
       },
       "status": "proposed",
       "type": "source",
@@ -199,21 +492,23 @@
     },
     {
       "data": {
-        "cluster_id": "cluster_4",
+        "cluster_id": "storage_cluster",
         "color": "#b8bb26",
         "description": "Desktop_Notify.ts (Auto-detected)",
         "file": "Desktop_Notify.ts",
         "label": "Desktop_Notify.ts",
+        "layer": 1,
+        "priority": 50,
         "summary": {
           "classes": [],
           "functions": [],
           "references": []
         }
       },
-      "id": "node_25",
+      "id": "node_3",
       "position": {
-        "x": 500,
-        "y": 50
+        "x": 3400,
+        "y": 200
       },
       "status": "proposed",
       "type": "source",
@@ -224,21 +519,38 @@
     },
     {
       "data": {
-        "cluster_id": "cluster_4",
+        "cluster_id": "cluster_0",
         "color": "#b8bb26",
         "description": "Filter_Engine.ts (Auto-detected)",
         "file": "Filter_Engine.ts",
         "label": "Filter_Engine.ts",
+        "layer": 1,
+        "priority": 25,
         "summary": {
-          "classes": [],
-          "functions": [],
-          "references": []
+          "classes": [
+            "FilterEngine"
+          ],
+          "functions": [
+            "store",
+            "alert",
+            "constructor",
+            "LogStore",
+            "AlertManager",
+            "process",
+            "notify",
+            "save"
+          ],
+          "references": [
+            "Log_Store",
+            "Alert_Manager",
+            "Log_Parser"
+          ]
         }
       },
-      "id": "node_26",
+      "id": "node_4",
       "position": {
-        "x": 50,
-        "y": 200
+        "x": 719.5703427743264,
+        "y": 400
       },
       "status": "proposed",
       "type": "source",
@@ -249,21 +561,23 @@
     },
     {
       "data": {
-        "cluster_id": "cluster_4",
+        "cluster_id": "storage_cluster",
         "color": "#fabd2f",
         "description": "GEMINI.md (Auto-detected)",
         "file": "GEMINI.md",
         "label": "GEMINI.md",
+        "layer": 0,
+        "priority": 1,
         "summary": {
           "classes": [],
           "functions": [],
           "references": []
         }
       },
-      "id": "node_27",
+      "id": "node_5",
       "position": {
-        "x": 200,
-        "y": 200
+        "x": 3200,
+        "y": 150
       },
       "status": "proposed",
       "type": "documentation",
@@ -274,21 +588,35 @@
     },
     {
       "data": {
-        "cluster_id": "cluster_4",
+        "cluster_id": "cluster_0",
         "color": "#b8bb26",
         "description": "Log_Parser.ts (Auto-detected)",
         "file": "Log_Parser.ts",
         "label": "Log_Parser.ts",
+        "layer": 0,
+        "priority": 10,
         "summary": {
-          "classes": [],
-          "functions": [],
-          "references": []
+          "classes": [
+            "LogEntry",
+            "LogParser"
+          ],
+          "functions": [
+            "filter",
+            "constructor",
+            "FilterEngine",
+            "parse",
+            "match",
+            "process"
+          ],
+          "references": [
+            "Filter_Engine"
+          ]
         }
       },
-      "id": "node_28",
+      "id": "node_6",
       "position": {
         "x": 350,
-        "y": 200
+        "y": 50
       },
       "status": "proposed",
       "type": "source",
@@ -299,21 +627,30 @@
     },
     {
       "data": {
-        "cluster_id": "cluster_4",
+        "cluster_id": "cluster_0",
         "color": "#b8bb26",
         "description": "Log_Store.ts (Auto-detected)",
         "file": "Log_Store.ts",
         "label": "Log_Store.ts",
+        "layer": 1,
+        "priority": 50,
         "summary": {
-          "classes": [],
-          "functions": [],
-          "references": []
+          "classes": [
+            "LogStore"
+          ],
+          "functions": [
+            "save",
+            "log"
+          ],
+          "references": [
+            "Log_Parser"
+          ]
         }
       },
-      "id": "node_29",
+      "id": "node_7",
       "position": {
-        "x": 500,
-        "y": 200
+        "x": 1050,
+        "y": 400
       },
       "status": "proposed",
       "type": "source",
@@ -324,21 +661,34 @@
     },
     {
       "data": {
-        "cluster_id": "cluster_4",
+        "cluster_id": "cluster_0",
         "color": "#b8bb26",
         "description": "Log_Watcher.ts (Auto-detected)",
         "file": "Log_Watcher.ts",
         "label": "Log_Watcher.ts",
+        "layer": 1,
+        "priority": 50,
         "summary": {
-          "classes": [],
-          "functions": [],
-          "references": []
+          "classes": [
+            "LogWatcher"
+          ],
+          "functions": [
+            "parser",
+            "constructor",
+            "LogParser",
+            "startWatching",
+            "log",
+            "parse"
+          ],
+          "references": [
+            "Log_Parser"
+          ]
         }
       },
-      "id": "node_30",
+      "id": "node_8",
       "position": {
-        "x": 50,
-        "y": 350
+        "x": 1400,
+        "y": 550
       },
       "status": "proposed",
       "type": "source",
@@ -349,11 +699,13 @@
     },
     {
       "data": {
-        "cluster_id": "cluster_4",
+        "cluster_id": "storage_cluster",
         "color": "#fabd2f",
         "description": "README.md (Auto-detected)",
         "file": "README.md",
         "label": "README.md",
+        "layer": 0,
+        "priority": 1,
         "summary": {
           "classes": [
             "README"
@@ -362,10 +714,10 @@
           "references": []
         }
       },
-      "id": "node_31",
+      "id": "node_9",
       "position": {
-        "x": 200,
-        "y": 350
+        "x": 3000,
+        "y": 250
       },
       "status": "proposed",
       "type": "documentation",
@@ -376,21 +728,23 @@
     },
     {
       "data": {
-        "cluster_id": "cluster_4",
+        "cluster_id": "storage_cluster",
         "color": "#b8bb26",
         "description": "System_Logs.ts (Auto-detected)",
         "file": "System_Logs.ts",
         "label": "System_Logs.ts",
+        "layer": 1,
+        "priority": 50,
         "summary": {
           "classes": [],
           "functions": [],
           "references": []
         }
       },
-      "id": "node_32",
+      "id": "node_10",
       "position": {
-        "x": 350,
-        "y": 350
+        "x": 3000,
+        "y": 400
       },
       "status": "proposed",
       "type": "source",
@@ -401,11 +755,13 @@
     },
     {
       "data": {
-        "cluster_id": "cluster_4",
+        "cluster_id": "storage_cluster",
         "color": "#fabd2f",
         "description": "architecture.md (Auto-detected)",
         "file": "architecture.md",
         "label": "architecture.md",
+        "layer": 0,
+        "priority": 1,
         "summary": {
           "classes": [
             "프로젝트 아키텍처"
@@ -414,10 +770,10 @@
           "references": []
         }
       },
-      "id": "node_33",
+      "id": "node_11",
       "position": {
-        "x": 500,
-        "y": 350
+        "x": 3200,
+        "y": 300
       },
       "status": "proposed",
       "type": "documentation",
@@ -428,11 +784,13 @@
     },
     {
       "data": {
-        "cluster_id": "cluster_4",
+        "cluster_id": "cluster_0",
         "color": "#b8bb26",
         "description": "board.py (Auto-detected)",
         "file": "board.py",
         "label": "board.py",
+        "layer": 1,
+        "priority": 30,
         "summary": {
           "classes": [],
           "functions": [
@@ -441,10 +799,10 @@
           "references": []
         }
       },
-      "id": "node_34",
+      "id": "node_12",
       "position": {
-        "x": 50,
-        "y": 500
+        "x": 2100,
+        "y": 550
       },
       "status": "proposed",
       "type": "source",
@@ -455,20 +813,22 @@
     },
     {
       "data": {
-        "cluster_id": "cluster_4",
+        "cluster_id": "storage_cluster",
         "color": "#b8bb26",
         "description": "schema.sql (Auto-detected)",
         "file": "schema.sql",
         "label": "schema.sql",
+        "layer": 1,
+        "priority": 50,
         "summary": {
           "classes": [],
           "functions": [],
           "references": []
         }
       },
-      "id": "node_35",
+      "id": "node_13",
       "position": {
-        "x": 200,
+        "x": 3400,
         "y": 500
       },
       "status": "proposed",
@@ -480,11 +840,13 @@
     },
     {
       "data": {
-        "cluster_id": "cluster_5",
+        "cluster_id": "storage_cluster",
         "color": "#b8bb26",
         "description": "board.py (Auto-detected)",
         "file": "src/board.py",
         "label": "board.py",
+        "layer": 1,
+        "priority": 30,
         "summary": {
           "classes": [
             "CanvasManager"
@@ -498,10 +860,10 @@
           "references": []
         }
       },
-      "id": "node_36",
+      "id": "node_14",
       "position": {
-        "x": 650,
-        "y": 50
+        "x": 3800,
+        "y": 100
       },
       "status": "proposed",
       "type": "source",
@@ -512,11 +874,13 @@
     },
     {
       "data": {
-        "cluster_id": "cluster_5",
+        "cluster_id": "cluster_1",
         "color": "#b8bb26",
         "description": "login.py (Auto-detected)",
         "file": "src/login.py",
         "label": "login.py",
+        "layer": 1,
+        "priority": 30,
         "summary": {
           "classes": [
             "AuthProvider"
@@ -532,10 +896,10 @@
           ]
         }
       },
-      "id": "node_37",
+      "id": "node_15",
       "position": {
         "x": 800,
-        "y": 50
+        "y": 400
       },
       "status": "proposed",
       "type": "source",
@@ -546,21 +910,25 @@
     },
     {
       "data": {
-        "cluster_id": "cluster_5",
+        "cluster_id": "storage_cluster",
         "color": "#b8bb26",
         "description": "main.js (Auto-detected)",
         "file": "src/main.js",
         "label": "main.js",
+        "layer": 1,
+        "priority": 50,
         "summary": {
           "classes": [],
-          "functions": [],
+          "functions": [
+            "defineProperty"
+          ],
           "references": []
         }
       },
-      "id": "node_38",
+      "id": "node_16",
       "position": {
-        "x": 950,
-        "y": 50
+        "x": 4200,
+        "y": 200
       },
       "status": "proposed",
       "type": "source",
@@ -571,21 +939,23 @@
     },
     {
       "data": {
-        "cluster_id": "cluster_5",
+        "cluster_id": "storage_cluster",
         "color": "#b8bb26",
         "description": "main.ts (Auto-detected)",
         "file": "src/main.ts",
         "label": "main.ts",
+        "layer": 0,
+        "priority": 5,
         "summary": {
           "classes": [],
           "functions": [],
           "references": []
         }
       },
-      "id": "node_39",
+      "id": "node_17",
       "position": {
-        "x": 650,
-        "y": 200
+        "x": 3800,
+        "y": 100
       },
       "status": "proposed",
       "type": "source",
@@ -596,21 +966,23 @@
     },
     {
       "data": {
-        "cluster_id": "cluster_5",
+        "cluster_id": "storage_cluster",
         "color": "#b8bb26",
         "description": "schema.sql (Auto-detected)",
         "file": "src/schema.sql",
         "label": "schema.sql",
+        "layer": 1,
+        "priority": 50,
         "summary": {
           "classes": [],
           "functions": [],
           "references": []
         }
       },
-      "id": "node_40",
+      "id": "node_18",
       "position": {
-        "x": 800,
-        "y": 200
+        "x": 3800,
+        "y": 250
       },
       "status": "proposed",
       "type": "source",
@@ -621,21 +993,25 @@
     },
     {
       "data": {
-        "cluster_id": "cluster_6",
+        "cluster_id": "storage_cluster",
         "color": "#b8bb26",
         "description": "schema.js (Auto-detected)",
         "file": "src/types/schema.js",
         "label": "schema.js",
+        "layer": 1,
+        "priority": 50,
         "summary": {
           "classes": [],
-          "functions": [],
+          "functions": [
+            "defineProperty"
+          ],
           "references": []
         }
       },
-      "id": "node_41",
+      "id": "node_19",
       "position": {
-        "x": 50,
-        "y": 450
+        "x": 3000,
+        "y": 1300
       },
       "status": "proposed",
       "type": "source",
@@ -646,21 +1022,23 @@
     },
     {
       "data": {
-        "cluster_id": "cluster_6",
+        "cluster_id": "storage_cluster",
         "color": "#b8bb26",
         "description": "schema.ts (Auto-detected)",
         "file": "src/types/schema.ts",
         "label": "schema.ts",
+        "layer": 1,
+        "priority": 50,
         "summary": {
           "classes": [],
           "functions": [],
           "references": []
         }
       },
-      "id": "node_42",
+      "id": "node_20",
       "position": {
-        "x": 200,
-        "y": 450
+        "x": 3200,
+        "y": 1350
       },
       "status": "proposed",
       "type": "source",
@@ -671,29 +1049,224 @@
     },
     {
       "data": {
-        "cluster_id": "cluster_7",
+        "cluster_id": "storage_cluster",
         "color": "#b8bb26",
         "description": "canvas-engine.js (Auto-detected)",
         "file": "ui/canvas-engine.js",
         "label": "canvas-engine.js",
+        "layer": 2,
+        "priority": 80,
         "summary": {
           "classes": [
             "FlowRenderer",
             "TreeRenderer",
-            "CanvasEngine"
+            "CanvasEngine",
+            "changed"
           ],
           "functions": [
+            "constructor",
+            "buildFlow",
+            "filter",
+            "toLowerCase",
+            "includes",
+            "Set",
+            "map",
+            "forEach",
+            "add",
+            "shift",
+            "has",
+            "push",
+            "sort",
+            "findIndex",
+            "layoutFlow",
+            "renderFlow",
+            "renderStep",
+            "renderConnection",
+            "beginPath",
+            "roundRect",
+            "rect",
+            "fill",
+            "fillText",
+            "fillRect",
+            "strokeRect",
+            "moveTo",
+            "lineTo",
+            "closePath",
+            "stroke",
+            "bezierCurveTo",
+            "atan2",
+            "save",
+            "translate",
+            "rotate",
+            "restore",
+            "getStepAt",
+            "log",
+            "buildTree",
+            "toggleFolder",
+            "delete",
+            "renderTree",
+            "isArray",
+            "renderTreeItem",
+            "getItemAt",
+            "checkItemBounds",
+            "getElementById",
+            "error",
+            "getContext",
+            "resizeCanvas",
+            "addEventListener",
+            "TreeRenderer",
+            "FlowRenderer",
+            "postMessage",
+            "showFilePreview",
+            "setupEventListeners",
+            "setupToolbarListeners",
+            "render",
+            "startAnimationLoop",
+            "createElement",
+            "rgba",
+            "appendChild",
             "getProjectState",
+            "toggle",
+            "remove",
+            "createManualNode",
+            "now",
+            "warn",
+            "available",
+            "fetch",
+            "json",
+            "loadProjectState",
+            "memory",
+            "logic",
+            "scale",
+            "size",
+            "requestLogPrompt",
+            "alert",
+            "toggleAnimation",
+            "requestAnimationFrame",
+            "Support",
+            "preventDefault",
+            "stopPropagation",
+            "endsWith",
+            "drop",
+            "getAsString",
+            "zoom",
+            "screenToWorld",
+            "getClusterAt",
+            "toggleClusterCollapse",
+            "focus",
+            "checkNodeButtonClick",
+            "getConnectionHandleAt",
+            "getNodeAt",
+            "ignore",
+            "findEdgeAtPoint",
+            "clear",
+            "abs",
+            "pan",
+            "showTooltip",
+            "hideTooltip",
+            "showEdgeTypeSelector",
+            "min",
+            "max",
+            "saveState",
+            "from",
+            "repositionIntruders",
+            "deleteEdge",
+            "showEdgeContextMenu",
+            "showContextMenu",
+            "handleOpenFile",
+            "updateZoomDisplay",
+            "worldToScreen",
+            "sqrt",
+            "find",
+            "takeSnapshot",
+            "Push",
+            "generateFlow",
+            "groupSelection",
+            "ungroupSelection",
+            "prompt",
+            "validateEdge",
+            "match",
+            "getFileExt",
+            "toUpperCase",
+            "detectCircularDependency",
+            "startsWith",
+            "createManualEdge",
+            "setTimeout",
+            "contains",
+            "removeEventListener",
+            "showEdgeTypeChangeMenu",
+            "changeEdgeType",
+            "replace",
+            "stringify",
+            "then",
+            "getHistory",
+            "updateHistoryUI",
+            "rollback",
+            "Date",
+            "toLocaleString",
+            "querySelector",
+            "confirm",
+            "updateEdgeValidation",
+            "getBoundingClientRect",
+            "fitView",
+            "round",
+            "setTransform",
+            "System",
+            "renderGrid",
+            "renderClusters",
+            "renderEdge",
+            "renderGhostNodes",
+            "renderNode",
+            "renderConnectionHandles",
+            "renderGhostEdge",
+            "toFixed",
+            "charAt",
+            "slice",
+            "renderDebugInfo",
+            "every",
+            "some",
+            "renameCluster",
+            "trim",
             "callStandaloneApi",
-            "initCanvas"
+            "String",
+            "splice",
+            "complete",
+            "floor",
+            "setLineDash",
+            "getNodeStyle",
+            "Logic",
+            "f",
+            "Data",
+            "Entry",
+            "View",
+            "arc",
+            "sin",
+            "renderNodeButtons",
+            "substring",
+            "approveNode",
+            "rejectNode",
+            "getEdgeStyle",
+            "getNodeBoundaryPoint",
+            "cos",
+            "isPointNearArrow",
+            "isPointNearCurve",
+            "quadraticCurveTo",
+            "renderArrow",
+            "measureText",
+            "toLocaleTimeString",
+            "initCanvas",
+            "CanvasEngine",
+            "acquireVsCodeApi",
+            "querySelectorAll",
+            "backend"
           ],
           "references": []
         }
       },
-      "id": "node_43",
+      "id": "node_21",
       "position": {
-        "x": 650,
-        "y": 450
+        "x": 3800,
+        "y": 1300
       },
       "status": "proposed",
       "type": "source",

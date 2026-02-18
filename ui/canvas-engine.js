@@ -64,8 +64,10 @@ class FlowRenderer {
             }).filter(id => id !== null);
 
             // 로직 패턴 (router, checker 등) 확인하여 실제 Decision 여부 결정
+            // v0.2.0: Scanner가 이미 type을 지정했다면 그것을 따름
             const fileName = node.data.file.toLowerCase();
-            const isLogicalDecision = fileName.includes('router') ||
+            const isLogicalDecision = node.type === 'decision' ||
+                fileName.includes('router') ||
                 fileName.includes('checker') ||
                 fileName.includes('enforcer') ||
                 fileName.includes('prompt');
@@ -109,24 +111,31 @@ class FlowRenderer {
     layoutFlow(flow) {
         const startX = 400;
         const startY = 100;
-        const stepWidth = 250;
-        const stepHeight = 120;
+        const stepWidth = 300;
+        const stepHeight = 150;
 
         const positions = {};
-        const layerBranchCount = {}; // 레이어별 X 오프셋 계산용
+        const layerBranchCount = {};
 
+        // 1. 레이아웃 계산을 위한 BFS/DFS 대신 순차적 배치 + 분기 보정
         flow.steps.forEach((step, index) => {
-            const layer = step.layer;
-            layerBranchCount[layer] = (layerBranchCount[layer] || 0) + 1;
+            const layer = step.layer || 0;
 
-            // 레이어에 따라 기본 Y 좌표 결정, 같은 레이어 내에서는 순서대로
-            // 하지만 전체 흐름을 위해 index도 고려
-            const xOffset = (layerBranchCount[layer] - 1) * 50; // 약간의 지그재그
+            // 기본 수직 위치
+            if (!positions[step.id]) {
+                positions[step.id] = {
+                    x: startX + (layer * 50),
+                    y: startY + (index * stepHeight)
+                };
+            }
 
-            positions[step.id] = {
-                x: startX + xOffset,
-                y: startY + (index * stepHeight)
-            };
+            // 분기(alternateNext)가 있다면 오른쪽으로 오프셋 부여
+            if (step.alternateNext) {
+                positions[step.alternateNext] = {
+                    x: positions[step.id].x + stepWidth,
+                    y: positions[step.id].y + (stepHeight * 0.5) // 약간 아래로
+                };
+            }
         });
 
         return positions;
@@ -588,6 +597,20 @@ class CanvasEngine {
                 this.canvas.style.cursor = 'default';
             });
         }
+
+        // Delete Button (Phase 0.2.0 enhancement)
+        const btnDelete = document.getElementById('btn-delete');
+        if (btnDelete) {
+            btnDelete.addEventListener('click', () => {
+                if (this.selectedEdge) {
+                    this.deleteEdge(this.selectedEdge.id);
+                } else if (this.selectedNodes.size > 0) {
+                    this.deleteSelectedNodes();
+                } else {
+                    console.log('[SYNAPSE] Nothing selected to delete');
+                }
+            });
+        }
     }
 
     createManualNode(label, type, x, y) {
@@ -1039,12 +1062,19 @@ class CanvasEngine {
             this.canvas.style.cursor = 'default';
         });
 
-        // Delete 키로 선택된 엣지 삭제 및 방향키 내비게이션
+        // Delete 키로 선택된 노드/엣지 삭제 및 방향키 내비게이션
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Delete' && this.selectedEdge) {
-                console.log('[SYNAPSE] Deleting edge:', this.selectedEdge.id);
-                this.deleteEdge(this.selectedEdge.id);
-                return;
+            if (e.key === 'Delete') {
+                if (this.selectedEdge) {
+                    console.log('[SYNAPSE] Deleting edge:', this.selectedEdge.id);
+                    this.deleteEdge(this.selectedEdge.id);
+                    return;
+                }
+                if (this.selectedNodes.size > 0) {
+                    console.log(`[SYNAPSE] Deleting ${this.selectedNodes.size} selected nodes`);
+                    this.deleteSelectedNodes();
+                    return;
+                }
             }
 
             // 방향키 내비게이션 (Phase 7)
@@ -1365,6 +1395,32 @@ class CanvasEngine {
         document.getElementById('menu-ungroup').onclick = () => {
             this.ungroupSelection();
         };
+
+        const deleteItem = document.getElementById('menu-delete-node');
+        if (node || this.selectedNodes.size > 0 || this.selectedEdge) {
+            deleteItem.style.display = 'block';
+
+            // Context-aware label
+            if (this.selectedEdge) {
+                deleteItem.textContent = '❌ Delete Edge';
+            } else if (this.selectedNodes.size > 1) {
+                deleteItem.textContent = `❌ Delete ${this.selectedNodes.size} Nodes`;
+            } else {
+                deleteItem.textContent = '❌ Delete Node';
+            }
+
+            deleteItem.onclick = () => {
+                if (this.selectedEdge) {
+                    this.deleteEdge(this.selectedEdge.id);
+                } else if (this.selectedNodes.size > 1) {
+                    this.deleteSelectedNodes();
+                } else if (node) {
+                    this.deleteNode(node.id);
+                }
+            };
+        } else {
+            deleteItem.style.display = 'none';
+        }
 
         document.getElementById('menu-snapshot').onclick = () => {
             const label = prompt('Snapshot label:', 'Manual Snapshot');
@@ -2336,6 +2392,60 @@ class CanvasEngine {
         }
 
         console.log('[SYNAPSE] Edge deleted:', edgeId);
+        this.render();
+    }
+
+    deleteNode(nodeId) {
+        // 1. 로컬 상태에서 노드 제거
+        const nodeIndex = this.nodes.findIndex(n => n.id === nodeId);
+        if (nodeIndex === -1) {
+            console.warn('[SYNAPSE] Node not found:', nodeId);
+            return;
+        }
+
+        const deletedNode = this.nodes[nodeIndex];
+        this.nodes.splice(nodeIndex, 1);
+
+        // 2. 연결된 엣지들 제거
+        this.edges = this.edges.filter(e => e.from !== nodeId && e.to !== nodeId);
+
+        // 3. 선택 해제
+        this.selectedNodes.delete(deletedNode);
+        if (this.selectedNode === deletedNode) {
+            this.selectedNode = null;
+        }
+
+        // 4. 백엔드에 삭제 메시지 전송
+        if (typeof vscode !== 'undefined') {
+            vscode.postMessage({
+                command: 'deleteNode',
+                nodeId: nodeId
+            });
+        }
+
+        console.log('[SYNAPSE] Node deleted:', nodeId);
+        this.render();
+    }
+
+    deleteSelectedNodes() {
+        const nodesToDelete = Array.from(this.selectedNodes);
+        if (nodesToDelete.length === 0) return;
+
+        // Confirmation for multiple nodes
+        if (nodesToDelete.length > 1) {
+            const confirmMsg = `Are you sure you want to delete ${nodesToDelete.length} nodes and their connections?`;
+            // Browser confirm or VS Code specific if needed (using confirm for simplicity in webview)
+            if (!confirm(confirmMsg)) {
+                return;
+            }
+        }
+
+        nodesToDelete.forEach(node => {
+            this.deleteNode(node.id);
+        });
+
+        this.selectedNodes.clear();
+        this.selectedNode = null;
         this.render();
     }
 

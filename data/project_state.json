@@ -1,8 +1,5 @@
 {
-  "project_name": "antigravity-extension-vis",
-  "gemini_md_path": "/home/dogsinatas/TypeScript_project/antigravity-extension-vis/GEMINI.md",
   "canvas_state": {
-    "zoom_level": 1,
     "offset": {
       "x": 0,
       "y": 0
@@ -10,369 +7,16 @@
     "visible_layers": [
       "source",
       "documentation"
-    ]
+    ],
+    "zoom_level": 1
   },
-  "nodes": [
-    {
-      "id": "node_0",
-      "type": "source",
-      "status": "proposed",
-      "position": {
-        "x": 3000,
-        "y": 100
-      },
-      "data": {
-        "file": "login.py",
-        "label": "login.py",
-        "description": "login.py 파일",
-        "color": "#b8bb26",
-        "cluster_id": "storage_cluster",
-        "layer": 1,
-        "priority": 30
-      },
-      "visual": {
-        "opacity": 0.5,
-        "dashArray": "5,5"
-      }
-    },
-    {
-      "id": "node_1",
-      "type": "source",
-      "status": "proposed",
-      "position": {
-        "x": 3200,
-        "y": 150
-      },
-      "data": {
-        "file": "board.py",
-        "label": "board.py",
-        "description": "board.py 파일",
-        "color": "#b8bb26",
-        "cluster_id": "storage_cluster",
-        "layer": 1,
-        "priority": 30
-      },
-      "visual": {
-        "opacity": 0.5,
-        "dashArray": "5,5"
-      }
-    },
-    {
-      "id": "node_2",
-      "type": "source",
-      "status": "proposed",
-      "position": {
-        "x": 3400,
-        "y": 200
-      },
-      "data": {
-        "file": "schema.sql",
-        "label": "schema.sql",
-        "description": "schema.sql 파일",
-        "color": "#b8bb26",
-        "cluster_id": "storage_cluster",
-        "layer": 1,
-        "priority": 50
-      },
-      "visual": {
-        "opacity": 0.5,
-        "dashArray": "5,5"
-      }
-    },
-    {
-      "id": "node_3",
-      "type": "source",
-      "status": "proposed",
-      "position": {
-        "x": 3800,
-        "y": 100
-      },
-      "data": {
-        "file": "src/extension.ts",
-        "label": "extension.ts",
-        "description": "src/extension.ts 파일",
-        "color": "#b8bb26",
-        "cluster_id": "storage_cluster",
-        "layer": 1,
-        "priority": 50
-      },
-      "visual": {
-        "opacity": 0.5,
-        "dashArray": "5,5"
-      }
-    },
-    {
-      "id": "node_4",
-      "type": "source",
-      "status": "proposed",
-      "position": {
-        "x": 4615.354382700359,
-        "y": 100
-      },
-      "data": {
-        "file": "src/bootstrap/BootstrapEngine.ts",
-        "label": "BootstrapEngine.ts",
-        "description": "src/bootstrap/BootstrapEngine.ts 파일",
-        "color": "#b8bb26",
-        "cluster_id": "storage_cluster",
-        "layer": 1,
-        "priority": 25
-      },
-      "visual": {
-        "opacity": 0.5,
-        "dashArray": "5,5"
-      }
-    },
-    {
-      "id": "node_5",
-      "type": "source",
-      "status": "proposed",
-      "position": {
-        "x": 3000,
-        "y": 1300
-      },
-      "data": {
-        "file": "src/core/FileScanner.ts",
-        "label": "FileScanner.ts",
-        "description": "src/core/FileScanner.ts 파일",
-        "color": "#b8bb26",
-        "cluster_id": "storage_cluster",
-        "layer": 0,
-        "priority": 8
-      },
-      "visual": {
-        "opacity": 0.5,
-        "dashArray": "5,5"
-      }
-    },
-    {
-      "id": "node_6",
-      "type": "source",
-      "status": "proposed",
-      "position": {
-        "x": 3200,
-        "y": 1350
-      },
-      "data": {
-        "file": "src/core/FlowScanner.ts",
-        "label": "FlowScanner.ts",
-        "description": "src/core/FlowScanner.ts 파일",
-        "color": "#b8bb26",
-        "cluster_id": "storage_cluster",
-        "layer": 0,
-        "priority": 8
-      },
-      "visual": {
-        "opacity": 0.5,
-        "dashArray": "5,5"
-      }
-    },
-    {
-      "id": "node_7",
-      "type": "source",
-      "status": "proposed",
-      "position": {
-        "x": 3400,
-        "y": 1400
-      },
-      "data": {
-        "file": "src/core/GeminiParser.ts",
-        "label": "GeminiParser.ts",
-        "description": "src/core/GeminiParser.ts 파일",
-        "color": "#b8bb26",
-        "cluster_id": "storage_cluster",
-        "layer": 0,
-        "priority": 10
-      },
-      "visual": {
-        "opacity": 0.5,
-        "dashArray": "5,5"
-      }
-    },
-    {
-      "id": "node_8",
-      "type": "source",
-      "status": "proposed",
-      "position": {
-        "x": 3000,
-        "y": 1300
-      },
-      "data": {
-        "file": "src/core/FlowchartGenerator.ts",
-        "label": "FlowchartGenerator.ts",
-        "description": "src/core/FlowchartGenerator.ts 파일",
-        "color": "#b8bb26",
-        "cluster_id": "storage_cluster",
-        "layer": 1,
-        "priority": 50
-      },
-      "visual": {
-        "opacity": 0.5,
-        "dashArray": "5,5"
-      }
-    },
-    {
-      "id": "node_9",
-      "type": "source",
-      "status": "proposed",
-      "position": {
-        "x": 3800,
-        "y": 1300
-      },
-      "data": {
-        "file": "src/webview/CanvasPanel.ts",
-        "label": "CanvasPanel.ts",
-        "description": "src/webview/CanvasPanel.ts 파일",
-        "color": "#b8bb26",
-        "cluster_id": "storage_cluster",
-        "layer": 1,
-        "priority": 50
-      },
-      "visual": {
-        "opacity": 0.5,
-        "dashArray": "5,5"
-      }
-    },
-    {
-      "id": "node_10",
-      "type": "source",
-      "status": "proposed",
-      "position": {
-        "x": 4600,
-        "y": 1300
-      },
-      "data": {
-        "file": "src/server/server.ts",
-        "label": "server.ts",
-        "description": "src/server/server.ts 파일",
-        "color": "#b8bb26",
-        "cluster_id": "storage_cluster",
-        "layer": 1,
-        "priority": 50
-      },
-      "visual": {
-        "opacity": 0.5,
-        "dashArray": "5,5"
-      }
-    },
-    {
-      "id": "node_11",
-      "type": "source",
-      "status": "proposed",
-      "position": {
-        "x": 3000,
-        "y": 2500
-      },
-      "data": {
-        "file": "src/types/schema.ts",
-        "label": "schema.ts",
-        "description": "src/types/schema.ts 파일",
-        "color": "#b8bb26",
-        "cluster_id": "storage_cluster",
-        "layer": 1,
-        "priority": 50
-      },
-      "visual": {
-        "opacity": 0.5,
-        "dashArray": "5,5"
-      }
-    }
-  ],
-  "edges": [],
   "clusters": [
     {
-      "id": "cluster_0",
-      "label": "ROOT",
-      "collapsed": false,
       "bounds": {
+        "height": 850,
+        "width": 850,
         "x": 0,
-        "y": 0,
-        "width": 1250,
-        "height": 1250
-      },
-      "children": []
-    },
-    {
-      "id": "cluster_1",
-      "label": "src",
-      "collapsed": false,
-      "bounds": {
-        "x": 800,
-        "y": 0,
-        "width": 1250,
-        "height": 1250
-      },
-      "children": []
-    },
-    {
-      "id": "cluster_2",
-      "label": "src/bootstrap",
-      "collapsed": false,
-      "bounds": {
-        "x": 1600,
-        "y": 0,
-        "width": 1250,
-        "height": 1250
-      },
-      "children": []
-    },
-    {
-      "id": "cluster_3",
-      "label": "src/core",
-      "collapsed": false,
-      "bounds": {
-        "x": 0,
-        "y": 1200,
-        "width": 1250,
-        "height": 1250
-      },
-      "children": []
-    },
-    {
-      "id": "cluster_4",
-      "label": "src/webview",
-      "collapsed": false,
-      "bounds": {
-        "x": 800,
-        "y": 1200,
-        "width": 1250,
-        "height": 1250
-      },
-      "children": []
-    },
-    {
-      "id": "cluster_5",
-      "label": "src/server",
-      "collapsed": false,
-      "bounds": {
-        "x": 1600,
-        "y": 1200,
-        "width": 1250,
-        "height": 1250
-      },
-      "children": []
-    },
-    {
-      "id": "cluster_6",
-      "label": "src/types",
-      "collapsed": false,
-      "bounds": {
-        "x": 0,
-        "y": 2400,
-        "width": 1250,
-        "height": 1250
-      },
-      "children": []
-    },
-    {
-      "id": "storage_cluster",
-      "label": "📦 Ghost Nodes (Storage)",
-      "collapsed": true,
-      "bounds": {
-        "x": 3400,
-        "y": 0,
-        "width": 800,
-        "height": 1200
+        "y": 0
       },
       "children": [
         "node_0",
@@ -386,8 +30,4961 @@
         "node_8",
         "node_9",
         "node_10",
-        "node_11"
-      ]
+        "node_11",
+        "node_12",
+        "node_13",
+        "node_14",
+        "node_15",
+        "node_16",
+        "node_17",
+        "node_18",
+        "node_19",
+        "node_20"
+      ],
+      "collapsed": false,
+      "id": "cluster_0",
+      "label": "ROOT"
+    },
+    {
+      "bounds": {
+        "height": 700,
+        "width": 700,
+        "x": 600,
+        "y": 0
+      },
+      "children": [
+        "node_21",
+        "node_22",
+        "node_23",
+        "node_24",
+        "node_25",
+        "node_26",
+        "node_27",
+        "node_28",
+        "node_29",
+        "node_30",
+        "node_31",
+        "node_32",
+        "node_33",
+        "node_34"
+      ],
+      "collapsed": false,
+      "id": "cluster_1",
+      "label": "demo"
+    },
+    {
+      "bounds": {
+        "height": 400,
+        "width": 550,
+        "x": 1200,
+        "y": 0
+      },
+      "children": [
+        "node_35",
+        "node_36",
+        "node_37",
+        "node_38",
+        "node_39"
+      ],
+      "collapsed": false,
+      "id": "cluster_2",
+      "label": "demo/src"
+    },
+    {
+      "bounds": {
+        "height": 250,
+        "width": 400,
+        "x": 1800,
+        "y": 0
+      },
+      "children": [
+        "node_40",
+        "node_41"
+      ],
+      "collapsed": false,
+      "id": "cluster_3",
+      "label": "demo/src/types"
+    },
+    {
+      "bounds": {
+        "height": 250,
+        "width": 250,
+        "x": 2400,
+        "y": 0
+      },
+      "children": [
+        "node_42"
+      ],
+      "collapsed": false,
+      "id": "cluster_4",
+      "label": "demo/ui"
+    },
+    {
+      "bounds": {
+        "height": 250,
+        "width": 400,
+        "x": 0,
+        "y": 400
+      },
+      "children": [
+        "node_43",
+        "node_44"
+      ],
+      "collapsed": false,
+      "id": "cluster_5",
+      "label": "prompt-tracer"
+    },
+    {
+      "bounds": {
+        "height": 250,
+        "width": 400,
+        "x": 600,
+        "y": 400
+      },
+      "children": [
+        "node_45",
+        "node_46"
+      ],
+      "collapsed": false,
+      "id": "cluster_6",
+      "label": "prompt-tracer/src"
+    },
+    {
+      "bounds": {
+        "height": 400,
+        "width": 400,
+        "x": 1200,
+        "y": 400
+      },
+      "children": [
+        "node_47",
+        "node_48",
+        "node_49",
+        "node_50"
+      ],
+      "collapsed": false,
+      "id": "cluster_7",
+      "label": "prompts"
+    },
+    {
+      "bounds": {
+        "height": 400,
+        "width": 550,
+        "x": 1800,
+        "y": 400
+      },
+      "children": [
+        "node_51",
+        "node_52",
+        "node_53",
+        "node_54",
+        "node_55",
+        "node_56"
+      ],
+      "collapsed": false,
+      "id": "cluster_8",
+      "label": "src"
+    },
+    {
+      "bounds": {
+        "height": 250,
+        "width": 250,
+        "x": 2400,
+        "y": 400
+      },
+      "children": [
+        "node_57"
+      ],
+      "collapsed": false,
+      "id": "cluster_9",
+      "label": "src/bootstrap"
+    },
+    {
+      "bounds": {
+        "height": 400,
+        "width": 550,
+        "x": 0,
+        "y": 800
+      },
+      "children": [
+        "node_58",
+        "node_59",
+        "node_60",
+        "node_61",
+        "node_62"
+      ],
+      "collapsed": false,
+      "id": "cluster_10",
+      "label": "src/core"
+    },
+    {
+      "bounds": {
+        "height": 250,
+        "width": 400,
+        "x": 600,
+        "y": 800
+      },
+      "children": [
+        "node_63",
+        "node_64"
+      ],
+      "collapsed": false,
+      "id": "cluster_11",
+      "label": "src/server"
+    },
+    {
+      "bounds": {
+        "height": 400,
+        "width": 400,
+        "x": 1200,
+        "y": 800
+      },
+      "children": [
+        "node_65",
+        "node_66",
+        "node_67"
+      ],
+      "collapsed": false,
+      "id": "cluster_12",
+      "label": "src/test"
+    },
+    {
+      "bounds": {
+        "height": 250,
+        "width": 250,
+        "x": 1800,
+        "y": 800
+      },
+      "children": [
+        "node_68"
+      ],
+      "collapsed": false,
+      "id": "cluster_13",
+      "label": "src/types"
+    },
+    {
+      "bounds": {
+        "height": 250,
+        "width": 250,
+        "x": 2400,
+        "y": 800
+      },
+      "children": [
+        "node_69"
+      ],
+      "collapsed": false,
+      "id": "cluster_14",
+      "label": "src/utils"
+    },
+    {
+      "bounds": {
+        "height": 250,
+        "width": 250,
+        "x": 0,
+        "y": 1200
+      },
+      "children": [
+        "node_70"
+      ],
+      "collapsed": false,
+      "id": "cluster_15",
+      "label": "src/webview"
+    },
+    {
+      "bounds": {
+        "height": 400,
+        "width": 400,
+        "x": 600,
+        "y": 1200
+      },
+      "children": [
+        "node_71",
+        "node_72",
+        "node_73",
+        "node_74"
+      ],
+      "collapsed": false,
+      "id": "cluster_16",
+      "label": "synapse-visual-architecture-0.1.7/extension"
+    },
+    {
+      "bounds": {
+        "height": 250,
+        "width": 400,
+        "x": 1200,
+        "y": 1200
+      },
+      "children": [
+        "node_75",
+        "node_76"
+      ],
+      "collapsed": false,
+      "id": "cluster_17",
+      "label": "synapse-visual-architecture-0.1.7/extension/prompt-tracer"
+    },
+    {
+      "bounds": {
+        "height": 250,
+        "width": 400,
+        "x": 1800,
+        "y": 1200
+      },
+      "children": [
+        "node_77",
+        "node_78"
+      ],
+      "collapsed": false,
+      "id": "cluster_18",
+      "label": "synapse-visual-architecture-0.1.7/extension/prompt-tracer/src"
+    },
+    {
+      "bounds": {
+        "height": 400,
+        "width": 400,
+        "x": 2400,
+        "y": 1200
+      },
+      "children": [
+        "node_79",
+        "node_80",
+        "node_81"
+      ],
+      "collapsed": false,
+      "id": "cluster_19",
+      "label": "synapse-visual-architecture-0.1.7/extension/prompts"
+    },
+    {
+      "bounds": {
+        "height": 250,
+        "width": 250,
+        "x": 0,
+        "y": 1600
+      },
+      "children": [
+        "node_82"
+      ],
+      "collapsed": false,
+      "id": "cluster_20",
+      "label": "synapse-visual-architecture-0.1.7/extension/ui"
+    },
+    {
+      "bounds": {
+        "height": 250,
+        "width": 250,
+        "x": 600,
+        "y": 1600
+      },
+      "children": [
+        "node_83"
+      ],
+      "collapsed": false,
+      "id": "cluster_21",
+      "label": "ui"
     }
-  ]
+  ],
+  "edges": [
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_0",
+      "id": "edge_0",
+      "is_approved": false,
+      "to": "node_37",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_0",
+      "id": "edge_1",
+      "is_approved": false,
+      "to": "node_4",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_0",
+      "id": "edge_2",
+      "is_approved": false,
+      "to": "node_5",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Circular dependency detected",
+      "from": "node_4",
+      "id": "edge_3",
+      "is_approved": false,
+      "to": "node_4",
+      "type": "dependency",
+      "validation": {
+        "confidence": 1,
+        "reason": "Circular dependency: Self-reference is not allowed in this layer.",
+        "valid": false
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Circular dependency detected",
+      "from": "node_4",
+      "id": "edge_4",
+      "is_approved": false,
+      "to": "node_5",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Circular dependency detected",
+      "from": "node_5",
+      "id": "edge_5",
+      "is_approved": false,
+      "to": "node_4",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Circular dependency detected",
+      "from": "node_5",
+      "id": "edge_6",
+      "is_approved": false,
+      "to": "node_5",
+      "type": "dependency",
+      "validation": {
+        "confidence": 1,
+        "reason": "Circular dependency: Self-reference is not allowed in this layer.",
+        "valid": false
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Circular dependency detected",
+      "from": "node_21",
+      "id": "edge_7",
+      "is_approved": false,
+      "to": "node_27",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_22",
+      "id": "edge_8",
+      "is_approved": false,
+      "to": "node_29",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Circular dependency detected",
+      "from": "node_25",
+      "id": "edge_9",
+      "is_approved": false,
+      "to": "node_28",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Circular dependency detected",
+      "from": "node_25",
+      "id": "edge_10",
+      "is_approved": false,
+      "to": "node_21",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Circular dependency detected",
+      "from": "node_25",
+      "id": "edge_11",
+      "is_approved": false,
+      "to": "node_27",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Circular dependency detected",
+      "from": "node_27",
+      "id": "edge_12",
+      "is_approved": false,
+      "to": "node_25",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Circular dependency detected",
+      "from": "node_28",
+      "id": "edge_13",
+      "is_approved": false,
+      "to": "node_27",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_29",
+      "id": "edge_14",
+      "is_approved": false,
+      "to": "node_27",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_36",
+      "id": "edge_15",
+      "is_approved": false,
+      "to": "node_7",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_8",
+      "id": "edge_16",
+      "is_approved": false,
+      "to": "node_57",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_47",
+      "id": "edge_17",
+      "is_approved": false,
+      "to": "node_11",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_48",
+      "id": "edge_18",
+      "is_approved": false,
+      "to": "node_62",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_48",
+      "id": "edge_19",
+      "is_approved": false,
+      "to": "node_57",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_57",
+      "id": "edge_20",
+      "is_approved": false,
+      "to": "node_61",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_57",
+      "id": "edge_21",
+      "is_approved": false,
+      "to": "node_60",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_57",
+      "id": "edge_22",
+      "is_approved": false,
+      "to": "node_58",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_57",
+      "id": "edge_23",
+      "is_approved": false,
+      "to": "node_34",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_52",
+      "id": "edge_24",
+      "is_approved": false,
+      "to": "node_57",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_60",
+      "id": "edge_25",
+      "is_approved": false,
+      "to": "node_34",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_60",
+      "id": "edge_26",
+      "is_approved": false,
+      "to": "node_69",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_61",
+      "id": "edge_27",
+      "is_approved": false,
+      "to": "node_34",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_54",
+      "id": "edge_28",
+      "is_approved": false,
+      "to": "node_70",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_54",
+      "id": "edge_29",
+      "is_approved": false,
+      "to": "node_57",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_54",
+      "id": "edge_30",
+      "is_approved": false,
+      "to": "node_53",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_54",
+      "id": "edge_31",
+      "is_approved": false,
+      "to": "node_62",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_63",
+      "id": "edge_32",
+      "is_approved": false,
+      "to": "node_61",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_63",
+      "id": "edge_33",
+      "is_approved": false,
+      "to": "node_59",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_64",
+      "id": "edge_34",
+      "is_approved": false,
+      "to": "node_61",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_64",
+      "id": "edge_35",
+      "is_approved": false,
+      "to": "node_59",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_65",
+      "id": "edge_36",
+      "is_approved": false,
+      "to": "node_58",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_66",
+      "id": "edge_37",
+      "is_approved": false,
+      "to": "node_61",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_67",
+      "id": "edge_38",
+      "is_approved": false,
+      "to": "node_69",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_70",
+      "id": "edge_39",
+      "is_approved": false,
+      "to": "node_34",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_70",
+      "id": "edge_40",
+      "is_approved": false,
+      "to": "node_58",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_70",
+      "id": "edge_41",
+      "is_approved": false,
+      "to": "node_61",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_70",
+      "id": "edge_42",
+      "is_approved": false,
+      "to": "node_60",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_70",
+      "id": "edge_43",
+      "is_approved": false,
+      "to": "node_57",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_70",
+      "id": "edge_44",
+      "is_approved": false,
+      "to": "node_53",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_71",
+      "id": "edge_45",
+      "is_approved": false,
+      "to": "node_4",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_71",
+      "id": "edge_46",
+      "is_approved": false,
+      "to": "node_5",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_79",
+      "id": "edge_47",
+      "is_approved": false,
+      "to": "node_11",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_80",
+      "id": "edge_48",
+      "is_approved": false,
+      "to": "node_62",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_80",
+      "id": "edge_49",
+      "is_approved": false,
+      "to": "node_57",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_13",
+      "id": "edge_50",
+      "is_approved": false,
+      "to": "node_57",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_20",
+      "id": "edge_51",
+      "is_approved": false,
+      "to": "node_57",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_0",
+      "id": "edge_auto_1771390627668_524",
+      "label": "ref",
+      "to": "node_38",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_0",
+      "id": "edge_auto_1771390627668_730",
+      "label": "ref",
+      "to": "node_71",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_0",
+      "id": "edge_auto_1771390627668_699",
+      "label": "ref",
+      "to": "node_30",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Circular dependency detected",
+      "from": "node_4",
+      "id": "edge_auto_1771390627668_627",
+      "label": "ref",
+      "to": "node_71",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_4",
+      "id": "edge_auto_1771390627668_170",
+      "label": "ref",
+      "to": "node_30",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Circular dependency detected",
+      "from": "node_5",
+      "id": "edge_auto_1771390627668_854",
+      "label": "ref",
+      "to": "node_71",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_5",
+      "id": "edge_auto_1771390627668_423",
+      "label": "ref",
+      "to": "node_30",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_8",
+      "id": "edge_auto_1771390627668_281",
+      "label": "ref",
+      "to": "node_57",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_13",
+      "id": "edge_auto_1771390627668_586",
+      "label": "ref",
+      "to": "node_57",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_20",
+      "id": "edge_auto_1771390627668_172",
+      "label": "ref",
+      "to": "node_57",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Circular dependency detected",
+      "from": "node_21",
+      "id": "edge_auto_1771390627668_604",
+      "label": "ref",
+      "to": "node_27",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_22",
+      "id": "edge_auto_1771390627668_176",
+      "label": "ref",
+      "to": "node_29",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Circular dependency detected",
+      "from": "node_25",
+      "id": "edge_auto_1771390627668_307",
+      "label": "ref",
+      "to": "node_28",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Circular dependency detected",
+      "from": "node_25",
+      "id": "edge_auto_1771390627668_883",
+      "label": "ref",
+      "to": "node_21",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Circular dependency detected",
+      "from": "node_25",
+      "id": "edge_auto_1771390627668_582",
+      "label": "ref",
+      "to": "node_27",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Circular dependency detected",
+      "from": "node_27",
+      "id": "edge_auto_1771390627668_134",
+      "label": "ref",
+      "to": "node_25",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Circular dependency detected",
+      "from": "node_28",
+      "id": "edge_auto_1771390627668_790",
+      "label": "ref",
+      "to": "node_27",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_29",
+      "id": "edge_auto_1771390627668_920",
+      "label": "ref",
+      "to": "node_27",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_36",
+      "id": "edge_auto_1771390627668_575",
+      "label": "ref",
+      "to": "node_51",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_47",
+      "id": "edge_auto_1771390627668_525",
+      "label": "ref",
+      "to": "node_75",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_48",
+      "id": "edge_auto_1771390627668_794",
+      "label": "ref",
+      "to": "node_62",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_48",
+      "id": "edge_auto_1771390627668_709",
+      "label": "ref",
+      "to": "node_57",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_52",
+      "id": "edge_auto_1771390627668_59",
+      "label": "ref",
+      "to": "node_57",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_54",
+      "id": "edge_auto_1771390627668_583",
+      "label": "ref",
+      "to": "node_70",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_54",
+      "id": "edge_auto_1771390627668_1",
+      "label": "ref",
+      "to": "node_57",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_54",
+      "id": "edge_auto_1771390627668_231",
+      "label": "ref",
+      "to": "node_53",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_54",
+      "id": "edge_auto_1771390627668_760",
+      "label": "ref",
+      "to": "node_62",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_57",
+      "id": "edge_auto_1771390627668_50",
+      "label": "ref",
+      "to": "node_61",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_57",
+      "id": "edge_auto_1771390627668_571",
+      "label": "ref",
+      "to": "node_60",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_57",
+      "id": "edge_auto_1771390627668_993",
+      "label": "ref",
+      "to": "node_58",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_57",
+      "id": "edge_auto_1771390627668_951",
+      "label": "ref",
+      "to": "node_68",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_60",
+      "id": "edge_auto_1771390627669_196",
+      "label": "ref",
+      "to": "node_68",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_60",
+      "id": "edge_auto_1771390627669_556",
+      "label": "ref",
+      "to": "node_69",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_61",
+      "id": "edge_auto_1771390627669_346",
+      "label": "ref",
+      "to": "node_68",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_63",
+      "id": "edge_auto_1771390627669_552",
+      "label": "ref",
+      "to": "node_61",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_63",
+      "id": "edge_auto_1771390627669_956",
+      "label": "ref",
+      "to": "node_59",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_64",
+      "id": "edge_auto_1771390627669_283",
+      "label": "ref",
+      "to": "node_61",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_64",
+      "id": "edge_auto_1771390627669_634",
+      "label": "ref",
+      "to": "node_59",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_65",
+      "id": "edge_auto_1771390627669_221",
+      "label": "ref",
+      "to": "node_58",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_66",
+      "id": "edge_auto_1771390627669_729",
+      "label": "ref",
+      "to": "node_61",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_67",
+      "id": "edge_auto_1771390627669_780",
+      "label": "ref",
+      "to": "node_69",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_70",
+      "id": "edge_auto_1771390627669_306",
+      "label": "ref",
+      "to": "node_68",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_70",
+      "id": "edge_auto_1771390627669_85",
+      "label": "ref",
+      "to": "node_58",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_70",
+      "id": "edge_auto_1771390627669_747",
+      "label": "ref",
+      "to": "node_61",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_70",
+      "id": "edge_auto_1771390627669_580",
+      "label": "ref",
+      "to": "node_60",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_70",
+      "id": "edge_auto_1771390627669_370",
+      "label": "ref",
+      "to": "node_57",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_70",
+      "id": "edge_auto_1771390627669_352",
+      "label": "ref",
+      "to": "node_53",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_71",
+      "id": "edge_auto_1771390627669_280",
+      "label": "ref",
+      "to": "node_30",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_79",
+      "id": "edge_auto_1771390627669_471",
+      "label": "ref",
+      "to": "node_75",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_80",
+      "id": "edge_auto_1771390627669_401",
+      "label": "ref",
+      "to": "node_62",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_80",
+      "id": "edge_auto_1771390627669_194",
+      "label": "ref",
+      "to": "node_57",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    }
+  ],
+  "gemini_md_path": "/home/dogsinatas/TypeScript_project/antigravity-extension-vis/GEMINI.md",
+  "nodes": [
+    {
+      "data": {
+        "cluster_id": "cluster_0",
+        "color": "#fabd2f",
+        "description": "CHANGELOG.md (Auto-detected)",
+        "file": "CHANGELOG.md",
+        "label": "CHANGELOG.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "Release Notes - v0.2.0",
+            "🏁 Strategic Execution Flow & Single Source of Truth",
+            "🏗️ Full TypeScript & Logic Support (Core Enhancement)",
+            "Release Notes - v0.1.8",
+            "🔌 Enhanced LSP Integration (Editor-First Design)",
+            "Release Notes - v0.1.7",
+            "🚀 Bug Fixes & Packaging",
+            "Release Notes - v0.1.6",
+            "📜 Legal & Documentation",
+            "Release Notes - v0.1.5",
+            "🔧 Maintenance",
+            "Release Notes - v0.1.4",
+            "🚀 Hotfix: Always-On Thought Stream",
+            "Release Notes - v0.1.3",
+            "🐛 Bug Fixes",
+            "Release Notes - v0.1.2",
+            "✨ New Feature: Prompt Traceability Engine",
+            "Release Notes - v0.1.1",
+            "🚀 New Features",
+            "💾 Prompt Traceability (New!)",
+            "📚 Multilingual Documentation",
+            "🔥 Core Strategies",
+            "Multi-MD Strategy & Auto-Save",
+            "🛠️ Enhancements"
+          ],
+          "functions": [],
+          "references": [
+            "main",
+            "README.ko",
+            "README"
+          ]
+        }
+      },
+      "id": "node_0",
+      "position": {
+        "x": 50,
+        "y": 50
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_0",
+        "color": "#fabd2f",
+        "description": "DEBUG_GUIDE.md (Auto-detected)",
+        "file": "DEBUG_GUIDE.md",
+        "label": "DEBUG_GUIDE.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "SYNAPSE 디버깅 가이드",
+            "현재 상황",
+            "체크리스트",
+            "1. Extension Development Host에서 프로젝트 폴더가 열려있는가?",
+            "2. Webview Developer Tools 콘솔 확인",
+            "3. Extension 콘솔 확인",
+            "4. 파일 경로 확인",
+            "해결 방법",
+            "방법 1: 프로젝트 폴더 열기",
+            "방법 2: Extension 재시작",
+            "방법 3: 수동으로 workspace 확인"
+          ],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_1",
+      "position": {
+        "x": 200,
+        "y": 50
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_0",
+        "color": "#fabd2f",
+        "description": "EXTENSION_README.md (Auto-detected)",
+        "file": "EXTENSION_README.md",
+        "label": "EXTENSION_README.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "SYNAPSE VS Code Extension",
+            "Commands",
+            "Development",
+            "Testing",
+            "License"
+          ],
+          "functions": [],
+          "references": [
+            "LICENSE"
+          ]
+        }
+      },
+      "id": "node_2",
+      "position": {
+        "x": 350,
+        "y": 50
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_0",
+        "color": "#fabd2f",
+        "description": "GEMINI.md (Auto-detected)",
+        "file": "GEMINI.md",
+        "label": "GEMINI.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "🏁 v0.2.0: Strategic Execution Flow (진실의 정의)",
+            "1. 왜 순서도가 최종본이어야 하는가? (Rationale)",
+            "2. v0.2.0 주요 변경점",
+            "4. Bridge (코드 연동)",
+            "🧹 [데이터 위생 원칙: 스파게티 방지 3대 철칙]",
+            "원칙 1: 원천 소스와 상태값의 엄격한 분리",
+            "원칙 2: 자동 정규화(Auto-Normalization) 엔진",
+            "원칙 3: '데이터의 혈통' 중심의 정적 분석 활용",
+            "🧠 SYNAPSE: Visual Architecture Engine",
+            "🏗️ 핵심 워크플로우 (The Command Chain)",
+            "🛠️ 기술 스택",
+            "🚀 Saturday Sprint: Phase 1",
+            "1. 웹뷰 캔버스 초기화",
+            "2. 드롭 앤 분석 로직",
+            "3. 승인 UI (Pending State)",
+            "4. 스냅샷 엔진",
+            "🔄 [SYNAPSE: 동적 순서도(Flowchart) 통합 설계]",
+            "1. 모드 전환 (View Toggle)",
+            "Topology View (기본)",
+            "Flow View (호출)",
+            "2. 순서도 자동 생성 로직",
+            "Step 1: Trace Entry",
+            "Step 2: Logic Branching",
+            "Step 3: Asynchronous Flow",
+            "3. 사용자 시나리오: '눈으로 하는 디버깅'",
+            "시나리오 흐름",
+            "예시",
+            "4. Senior Engineer's Note: 기술적 난제와 해결책",
+            "난제: 정교한 파싱 필요",
+            "해결책 1: 추상 구문 트리(AST) 활용",
+            "해결책 2: Mermaid.js 스타일 적용",
+            "5. UI 통합 설계",
+            "모드 전환 버튼",
+            "우클릭 컨텍스트 메뉴",
+            "Flow View 렌더링",
+            "6. 참고 화면 (Reference Screenshot)",
+            "🌳 [SYNAPSE: 계층 구조(File Tree) 통합 설계]",
+            "1. 듀얼 레이아웃 모드 (Context Switching)",
+            "Graph Mode (기본)",
+            "Tree Mode (호출)",
+            "전환 방식",
+            "2. '폴더' 노드의 추상화",
+            "Container Node",
+            "Group Collapse",
+            "상태 전이 (State Propagation)",
+            "3. 시각적 연동 및 탐색",
+            "Breadcrumb Link",
+            "Shadow Structure",
+            "4. Senior Engineer's Note: 실무 구현 팁",
+            "OS 종속성 배제",
+            "Lazy Loading",
+            "🎯 [연휴 프로젝트의 4대 축 완성]",
+            "1. Topology (노드/엣지)",
+            "2. Flowchart (순서도)",
+            "3. File Tree (계층 구조)",
+            "4. Bridge (코드 연동)",
+            "📁 [SYNAPSE: 소스 코드 명세 (Self-Visualization)]",
+            "🛠️ Core Engine",
+            "🌐 View & Interface",
+            "🔗 Core Dependencies"
+          ],
+          "functions": [],
+          "references": [
+            "synapse_topology_view"
+          ]
+        }
+      },
+      "id": "node_3",
+      "position": {
+        "x": 500,
+        "y": 50
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_0",
+        "color": "#fabd2f",
+        "description": "README.ko.md (Auto-detected)",
+        "file": "README.ko.md",
+        "label": "README.ko.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "🧠 SYNAPSE: VS Code Visual Architecture Engine",
+            "🚀 Key Features",
+            "🎥 데모 비디오",
+            "📸 스크린샷",
+            "🌐 Graph View",
+            "🌳 Tree View",
+            "➡️ Flow View",
+            "🗂️ 언어 지원 (Language Support)",
+            "🛠️ 기술 스택 (Technology Stack)",
+            "📦 설치 및 시작하기",
+            "1. VS Code 확장 프로그램 (추천)",
+            "설치 방법:",
+            "2. 소스 코드에서 빌드하기",
+            "VS Code에서 F5를 눌러 실행",
+            "3. Standalone 브라우저 모드",
+            "터미널 1: API Server",
+            "터미널 2: UI Server",
+            "4. 개발자 패키징 (Build)",
+            "🎯 매뉴얼 및 사용 가이드",
+            "🧱 노드 및 엣지 관리 (WYSIWYG)",
+            "📦 클러스터링 및 관리",
+            "💾 스냅샷 및 롤백",
+            "🧹 데이터 정형화 원칙",
+            "🔥 핵심 전략",
+            "📐 Philosophy",
+            "📜 License"
+          ],
+          "functions": [],
+          "references": [
+            "README.ko",
+            "README",
+            "graph_v0.2.0",
+            "synapse_tree_view",
+            "flow_v0.2.0",
+            "경로",
+            "LICENSE"
+          ]
+        }
+      },
+      "id": "node_4",
+      "position": {
+        "x": 650,
+        "y": 50
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_0",
+        "color": "#fabd2f",
+        "description": "README.md (Auto-detected)",
+        "file": "README.md",
+        "label": "README.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "🧠 SYNAPSE: VS Code Visual Architecture Engine",
+            "🚀 Key Features",
+            "🎥 Demo Video",
+            "📸 Screenshots",
+            "🌐 Graph View",
+            "🌳 Tree View",
+            "➡️ Flow View",
+            "🗂️ Language Support",
+            "🛠️ Technology Stack",
+            "📦 Installation & Setup",
+            "1. VS Code Extension (Recommended)",
+            "How to Install:",
+            "2. Getting Started (From Source)",
+            "Press F5 in VS Code to start",
+            "3. Standalone Bridge Mode (Web Browser)",
+            "Terminal 1: API Server",
+            "Terminal 2: UI Server",
+            "4. For Developers (Build)",
+            "🎯 Manual & Usage Guide",
+            "🧱 Node & Edge Management (WYSIWYG)",
+            "📦 Clustering & Management",
+            "💾 Snapshot & Rollback",
+            "🧹 Data Hygiene Principles",
+            "🔥 Core Strategies",
+            "📐 Philosophy",
+            "📜 License"
+          ],
+          "functions": [],
+          "references": [
+            "README.ko",
+            "README",
+            "graph_v0.2.0",
+            "synapse_tree_view",
+            "flow_v0.2.0",
+            "path",
+            "LICENSE"
+          ]
+        }
+      },
+      "id": "node_5",
+      "position": {
+        "x": 50,
+        "y": 200
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_0",
+        "color": "#fabd2f",
+        "description": "architecture.md (Auto-detected)",
+        "file": "architecture.md",
+        "label": "architecture.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "프로젝트 아키텍처"
+          ],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_6",
+      "position": {
+        "x": 200,
+        "y": 200
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_0",
+        "color": "#b8bb26",
+        "description": "board.py (Auto-detected)",
+        "file": "board.py",
+        "label": "board.py",
+        "layer": 1,
+        "priority": 25,
+        "summary": {
+          "classes": [],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_7",
+      "position": {
+        "x": 350,
+        "y": 600
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_0",
+        "color": "#b8bb26",
+        "description": "demo_bootstrap.js (Auto-detected)",
+        "file": "demo_bootstrap.js",
+        "label": "demo_bootstrap.js",
+        "layer": 0,
+        "priority": 10,
+        "summary": {
+          "classes": [],
+          "functions": [
+            "runDemoBootstrap"
+          ],
+          "references": [
+            "path",
+            "fs",
+            "BootstrapEngine"
+          ]
+        }
+      },
+      "id": "node_8",
+      "position": {
+        "x": 500,
+        "y": 200
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_0",
+        "color": "#b8bb26",
+        "description": "login.py (Auto-detected)",
+        "file": "login.py",
+        "label": "login.py",
+        "layer": 1,
+        "priority": 25,
+        "summary": {
+          "classes": [],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_9",
+      "position": {
+        "x": 650,
+        "y": 600
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_0",
+        "color": "#d3869b",
+        "description": "package-lock.json (Auto-detected)",
+        "file": "package-lock.json",
+        "label": "package-lock.json",
+        "layer": 1,
+        "priority": 50,
+        "summary": {
+          "classes": [],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_10",
+      "position": {
+        "x": 50,
+        "y": 750
+      },
+      "status": "proposed",
+      "type": "config",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_0",
+        "color": "#d3869b",
+        "description": "package.json (Auto-detected)",
+        "file": "package.json",
+        "label": "package.json",
+        "layer": 1,
+        "priority": 50,
+        "summary": {
+          "classes": [],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_11",
+      "position": {
+        "x": 200,
+        "y": 750
+      },
+      "status": "proposed",
+      "type": "config",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_0",
+        "color": "#b8bb26",
+        "description": "schema.sql (Auto-detected)",
+        "file": "schema.sql",
+        "label": "schema.sql",
+        "layer": 1,
+        "priority": 50,
+        "summary": {
+          "classes": [],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_12",
+      "position": {
+        "x": 350,
+        "y": 750
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_0",
+        "color": "#b8bb26",
+        "description": "test_bootstrap.js (Auto-detected)",
+        "file": "test_bootstrap.js",
+        "label": "test_bootstrap.js",
+        "layer": 0,
+        "priority": 10,
+        "summary": {
+          "classes": [],
+          "functions": [
+            "test"
+          ],
+          "references": [
+            "path",
+            "BootstrapEngine"
+          ]
+        }
+      },
+      "id": "node_13",
+      "position": {
+        "x": 500,
+        "y": 350
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_0",
+        "color": "#b8bb26",
+        "description": "test_rollback.js (Auto-detected)",
+        "file": "test_rollback.js",
+        "label": "test_rollback.js",
+        "layer": 1,
+        "priority": 50,
+        "summary": {
+          "classes": [],
+          "functions": [
+            "testRollback"
+          ],
+          "references": [
+            "fs",
+            "path"
+          ]
+        }
+      },
+      "id": "node_14",
+      "position": {
+        "x": 650,
+        "y": 750
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_0",
+        "color": "#d3869b",
+        "description": "tsconfig.json (Auto-detected)",
+        "file": "tsconfig.json",
+        "label": "tsconfig.json",
+        "layer": 1,
+        "priority": 50,
+        "summary": {
+          "classes": [],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_15",
+      "position": {
+        "x": 50,
+        "y": 900
+      },
+      "status": "proposed",
+      "type": "config",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_0",
+        "color": "#fabd2f",
+        "description": "v0.1.6_release_notes.md (Auto-detected)",
+        "file": "v0.1.6_release_notes.md",
+        "label": "v0.1.6_release_notes.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "release_v0.1.6 - Release Summary",
+            "📜 Legal & Documentation",
+            "🔧 Maintenance"
+          ],
+          "functions": [],
+          "references": [
+            "LICENSE"
+          ]
+        }
+      },
+      "id": "node_16",
+      "position": {
+        "x": 200,
+        "y": 500
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_0",
+        "color": "#fabd2f",
+        "description": "v0.1.7_release_notes.md (Auto-detected)",
+        "file": "v0.1.7_release_notes.md",
+        "label": "v0.1.7_release_notes.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "Release Notes v0.1.7 - SYNAPSE Visual Architecture",
+            "[English] Core Delivery: Multi-MD Strategy & Intelligent Logging",
+            "🚀 Key Features",
+            "🔧 Stability & Deployment Improvements",
+            "[Korean] 핵심 배포 사항: 멀티 MD 전략 및 지능형 로깅",
+            "🚀 주요 기능",
+            "🔧 안정성 및 배포 개선 사항"
+          ],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_17",
+      "position": {
+        "x": 350,
+        "y": 500
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_0",
+        "color": "#fabd2f",
+        "description": "v0.1.8_release_notes.md (Auto-detected)",
+        "file": "v0.1.8_release_notes.md",
+        "label": "v0.1.8_release_notes.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "SYNAPSE Release Notes - v0.1.8",
+            "🚀 What's New",
+            "1. LSP 기능 강화 (Editor Integration)",
+            "2. 안성성 및 빌드 개선",
+            "🛠 설치 및 업데이트 방법"
+          ],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_18",
+      "position": {
+        "x": 500,
+        "y": 500
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_0",
+        "color": "#fabd2f",
+        "description": "v0.2.0_release_notes.md (Auto-detected)",
+        "file": "v0.2.0_release_notes.md",
+        "label": "v0.2.0_release_notes.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "Release Notes - v0.2.0 (Milestone: Strategic Evolution)",
+            "[English]",
+            "🏁 Strategic Execution Flow (SSOT)",
+            "🏗️ Full TypeScript & Logic Support",
+            "[한국어]",
+            "🏁 전략적 실행 흐름 (Strategic Execution Flow - SSOT)",
+            "🏗️ 완벽한 TypeScript 및 로직 지원"
+          ],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_19",
+      "position": {
+        "x": 650,
+        "y": 500
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_0",
+        "color": "#b8bb26",
+        "description": "v0.2.0_self_sync.js (Auto-detected)",
+        "file": "v0.2.0_self_sync.js",
+        "label": "v0.2.0_self_sync.js",
+        "layer": 1,
+        "priority": 50,
+        "summary": {
+          "classes": [],
+          "functions": [
+            "runSync"
+          ],
+          "references": [
+            "BootstrapEngine",
+            "path"
+          ]
+        }
+      },
+      "id": "node_20",
+      "position": {
+        "x": 50,
+        "y": 1050
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_1",
+        "color": "#b8bb26",
+        "description": "Alert_Manager.ts (Auto-detected)",
+        "file": "demo/Alert_Manager.ts",
+        "label": "Alert_Manager.ts",
+        "layer": 1,
+        "priority": 50,
+        "summary": {
+          "classes": [
+            "AlertManager"
+          ],
+          "functions": [
+            "notify"
+          ],
+          "references": [
+            "Log_Parser"
+          ]
+        }
+      },
+      "id": "node_21",
+      "position": {
+        "x": 650,
+        "y": 450
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_1",
+        "color": "#b8bb26",
+        "description": "CLI_Main.ts (Auto-detected)",
+        "file": "demo/CLI_Main.ts",
+        "label": "CLI_Main.ts",
+        "layer": 0,
+        "priority": 5,
+        "summary": {
+          "classes": [
+            "CLIMain"
+          ],
+          "functions": [
+            "main"
+          ],
+          "references": [
+            "Log_Watcher"
+          ]
+        }
+      },
+      "id": "node_22",
+      "position": {
+        "x": 800,
+        "y": 50
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_1",
+        "color": "#b8bb26",
+        "description": "Cache_Buffer.ts (Auto-detected)",
+        "file": "demo/Cache_Buffer.ts",
+        "label": "Cache_Buffer.ts",
+        "layer": 1,
+        "priority": 50,
+        "summary": {
+          "classes": [],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_23",
+      "position": {
+        "x": 950,
+        "y": 450
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_1",
+        "color": "#b8bb26",
+        "description": "Desktop_Notify.ts (Auto-detected)",
+        "file": "demo/Desktop_Notify.ts",
+        "label": "Desktop_Notify.ts",
+        "layer": 1,
+        "priority": 50,
+        "summary": {
+          "classes": [],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_24",
+      "position": {
+        "x": 1100,
+        "y": 450
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_1",
+        "color": "#b8bb26",
+        "description": "Filter_Engine.ts (Auto-detected)",
+        "file": "demo/Filter_Engine.ts",
+        "label": "Filter_Engine.ts",
+        "layer": 1,
+        "priority": 30,
+        "summary": {
+          "classes": [
+            "FilterEngine"
+          ],
+          "functions": [
+            "process"
+          ],
+          "references": [
+            "Log_Store",
+            "Alert_Manager",
+            "Log_Parser"
+          ]
+        }
+      },
+      "id": "node_25",
+      "position": {
+        "x": 317.4937240643672,
+        "y": 600
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_1",
+        "color": "#fabd2f",
+        "description": "GEMINI.md (Auto-detected)",
+        "file": "demo/GEMINI.md",
+        "label": "GEMINI.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_26",
+      "position": {
+        "x": 800,
+        "y": 200
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_1",
+        "color": "#b8bb26",
+        "description": "Log_Parser.ts (Auto-detected)",
+        "file": "demo/Log_Parser.ts",
+        "label": "Log_Parser.ts",
+        "layer": 0,
+        "priority": 10,
+        "summary": {
+          "classes": [
+            "LogParser"
+          ],
+          "functions": [
+            "parse"
+          ],
+          "references": [
+            "Filter_Engine"
+          ]
+        }
+      },
+      "id": "node_27",
+      "position": {
+        "x": 950,
+        "y": 200
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_1",
+        "color": "#b8bb26",
+        "description": "Log_Store.ts (Auto-detected)",
+        "file": "demo/Log_Store.ts",
+        "label": "Log_Store.ts",
+        "layer": 1,
+        "priority": 50,
+        "summary": {
+          "classes": [
+            "LogStore"
+          ],
+          "functions": [
+            "save"
+          ],
+          "references": [
+            "Log_Parser"
+          ]
+        }
+      },
+      "id": "node_28",
+      "position": {
+        "x": 1100,
+        "y": 600
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_1",
+        "color": "#b8bb26",
+        "description": "Log_Watcher.ts (Auto-detected)",
+        "file": "demo/Log_Watcher.ts",
+        "label": "Log_Watcher.ts",
+        "layer": 1,
+        "priority": 50,
+        "summary": {
+          "classes": [
+            "LogWatcher"
+          ],
+          "functions": [
+            "startWatching"
+          ],
+          "references": [
+            "Log_Parser"
+          ]
+        }
+      },
+      "id": "node_29",
+      "position": {
+        "x": 650,
+        "y": 750
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_1",
+        "color": "#fabd2f",
+        "description": "README.md (Auto-detected)",
+        "file": "demo/README.md",
+        "label": "README.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "README"
+          ],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_30",
+      "position": {
+        "x": 800,
+        "y": 350
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_1",
+        "color": "#b8bb26",
+        "description": "System_Logs.ts (Auto-detected)",
+        "file": "demo/System_Logs.ts",
+        "label": "System_Logs.ts",
+        "layer": 1,
+        "priority": 50,
+        "summary": {
+          "classes": [],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_31",
+      "position": {
+        "x": 950,
+        "y": 750
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_1",
+        "color": "#fabd2f",
+        "description": "architecture.md (Auto-detected)",
+        "file": "demo/architecture.md",
+        "label": "architecture.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "프로젝트 아키텍처"
+          ],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_32",
+      "position": {
+        "x": 1100,
+        "y": 350
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_1",
+        "color": "#b8bb26",
+        "description": "board.py (Auto-detected)",
+        "file": "demo/board.py",
+        "label": "board.py",
+        "layer": 1,
+        "priority": 25,
+        "summary": {
+          "classes": [],
+          "functions": [
+            "main"
+          ],
+          "references": []
+        }
+      },
+      "id": "node_33",
+      "position": {
+        "x": 650,
+        "y": 900
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_1",
+        "color": "#b8bb26",
+        "description": "schema.sql (Auto-detected)",
+        "file": "demo/schema.sql",
+        "label": "schema.sql",
+        "layer": 1,
+        "priority": 50,
+        "summary": {
+          "classes": [],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_34",
+      "position": {
+        "x": 800,
+        "y": 900
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_2",
+        "color": "#b8bb26",
+        "description": "board.py (Auto-detected)",
+        "file": "demo/src/board.py",
+        "label": "board.py",
+        "layer": 1,
+        "priority": 25,
+        "summary": {
+          "classes": [
+            "CanvasManager"
+          ],
+          "functions": [
+            "__init__",
+            "add_element",
+            "clear",
+            "get_board_config"
+          ],
+          "references": []
+        }
+      },
+      "id": "node_35",
+      "position": {
+        "x": 1250,
+        "y": 450
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_2",
+        "color": "#b8bb26",
+        "description": "login.py (Auto-detected)",
+        "file": "demo/src/login.py",
+        "label": "login.py",
+        "layer": 1,
+        "priority": 25,
+        "summary": {
+          "classes": [
+            "AuthProvider"
+          ],
+          "functions": [
+            "__init__",
+            "login",
+            "logout",
+            "validate_token"
+          ],
+          "references": [
+            "board"
+          ]
+        }
+      },
+      "id": "node_36",
+      "position": {
+        "x": 1400,
+        "y": 450
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_2",
+        "color": "#b8bb26",
+        "description": "main.js (Auto-detected)",
+        "file": "demo/src/main.js",
+        "label": "main.js",
+        "layer": 1,
+        "priority": 50,
+        "summary": {
+          "classes": [],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_37",
+      "position": {
+        "x": 1550,
+        "y": 450
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_2",
+        "color": "#b8bb26",
+        "description": "main.ts (Auto-detected)",
+        "file": "demo/src/main.ts",
+        "label": "main.ts",
+        "layer": 0,
+        "priority": 5,
+        "summary": {
+          "classes": [],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_38",
+      "position": {
+        "x": 1250,
+        "y": 200
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_2",
+        "color": "#b8bb26",
+        "description": "schema.sql (Auto-detected)",
+        "file": "demo/src/schema.sql",
+        "label": "schema.sql",
+        "layer": 1,
+        "priority": 50,
+        "summary": {
+          "classes": [],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_39",
+      "position": {
+        "x": 1400,
+        "y": 600
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_3",
+        "color": "#b8bb26",
+        "description": "schema.js (Auto-detected)",
+        "file": "demo/src/types/schema.js",
+        "label": "schema.js",
+        "layer": 1,
+        "priority": 50,
+        "summary": {
+          "classes": [],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_40",
+      "position": {
+        "x": 1850,
+        "y": 450
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_3",
+        "color": "#b8bb26",
+        "description": "schema.ts (Auto-detected)",
+        "file": "demo/src/types/schema.ts",
+        "label": "schema.ts",
+        "layer": 1,
+        "priority": 50,
+        "summary": {
+          "classes": [],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_41",
+      "position": {
+        "x": 2000,
+        "y": 450
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_4",
+        "color": "#b8bb26",
+        "description": "canvas-engine.js (Auto-detected)",
+        "file": "demo/ui/canvas-engine.js",
+        "label": "canvas-engine.js",
+        "layer": 2,
+        "priority": 80,
+        "summary": {
+          "classes": [
+            "FlowRenderer",
+            "TreeRenderer",
+            "CanvasEngine"
+          ],
+          "functions": [
+            "getProjectState",
+            "callStandaloneApi",
+            "initCanvas"
+          ],
+          "references": []
+        }
+      },
+      "id": "node_42",
+      "position": {
+        "x": 2450,
+        "y": 850
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_5",
+        "color": "#d3869b",
+        "description": "package.json (Auto-detected)",
+        "file": "prompt-tracer/package.json",
+        "label": "package.json",
+        "layer": 1,
+        "priority": 20,
+        "summary": {
+          "classes": [],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_43",
+      "position": {
+        "x": 50,
+        "y": 850
+      },
+      "status": "proposed",
+      "type": "config",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_5",
+        "color": "#d3869b",
+        "description": "tsconfig.json (Auto-detected)",
+        "file": "prompt-tracer/tsconfig.json",
+        "label": "tsconfig.json",
+        "layer": 1,
+        "priority": 20,
+        "summary": {
+          "classes": [],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_44",
+      "position": {
+        "x": 200,
+        "y": 850
+      },
+      "status": "proposed",
+      "type": "config",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_6",
+        "color": "#b8bb26",
+        "description": "extension.js (Auto-detected)",
+        "file": "prompt-tracer/src/extension.js",
+        "label": "extension.js",
+        "layer": 1,
+        "priority": 20,
+        "summary": {
+          "classes": [],
+          "functions": [
+            "activate",
+            "savePrompt",
+            "deactivate"
+          ],
+          "references": [
+            "vscode",
+            "fs",
+            "path"
+          ]
+        }
+      },
+      "id": "node_45",
+      "position": {
+        "x": 650,
+        "y": 850
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_6",
+        "color": "#b8bb26",
+        "description": "extension.ts (Auto-detected)",
+        "file": "prompt-tracer/src/extension.ts",
+        "label": "extension.ts",
+        "layer": 1,
+        "priority": 20,
+        "summary": {
+          "classes": [],
+          "functions": [
+            "activate",
+            "savePrompt",
+            "deactivate"
+          ],
+          "references": [
+            "vscode",
+            "fs",
+            "path"
+          ]
+        }
+      },
+      "id": "node_46",
+      "position": {
+        "x": 800,
+        "y": 850
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_7",
+        "color": "#d65d0e",
+        "description": "Prompt: 2026-02-17_keybinding_check.md",
+        "file": "prompts/2026-02-17_keybinding_check.md",
+        "label": "2026-02-17_keybinding_check.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "Keybinding Check",
+            "🎯 Goal",
+            "Goal",
+            "🧠 Key Decisions",
+            "🔗 Context & References",
+            "📝 Original Prompt",
+            "Goal"
+          ],
+          "functions": [],
+          "references": [
+            "package"
+          ]
+        }
+      },
+      "id": "node_47",
+      "position": {
+        "x": 1250,
+        "y": 450
+      },
+      "status": "proposed",
+      "type": "history",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_7",
+        "color": "#d65d0e",
+        "description": "Prompt: 2026-02-17_origin_edge_verification.md",
+        "file": "prompts/2026-02-17_origin_edge_verification.md",
+        "label": "2026-02-17_origin_edge_verification.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "Origin Edge Verification",
+            "🎯 Goal",
+            "Goal",
+            "🧠 Key Decisions",
+            "🔗 Context & References",
+            "📝 Original Prompt",
+            "Goal"
+          ],
+          "functions": [],
+          "references": [
+            "PromptLogger",
+            "BootstrapEngine"
+          ]
+        }
+      },
+      "id": "node_48",
+      "position": {
+        "x": 1400,
+        "y": 450
+      },
+      "status": "proposed",
+      "type": "history",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_7",
+        "color": "#d65d0e",
+        "description": "Prompt: 2026-02-17_test.md",
+        "file": "prompts/2026-02-17_test.md",
+        "label": "2026-02-17_test.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "Test Prompt"
+          ],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_49",
+      "position": {
+        "x": 1250,
+        "y": 600
+      },
+      "status": "proposed",
+      "type": "history",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_7",
+        "color": "#d65d0e",
+        "description": "Prompt: 2026-02-18_deep_reset_triggered.md",
+        "file": "prompts/2026-02-18_deep_reset_triggered.md",
+        "label": "2026-02-18_deep_reset_triggered.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "Deep Reset Triggered",
+            "🎯 Goal",
+            "🧠 Key Decisions",
+            "🔗 Context & References",
+            "📝 Original Prompt"
+          ],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_50",
+      "position": {
+        "x": 1400,
+        "y": 600
+      },
+      "status": "proposed",
+      "type": "history",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_8",
+        "color": "#b8bb26",
+        "description": "board.py (Auto-detected)",
+        "file": "src/board.py",
+        "label": "board.py",
+        "layer": 1,
+        "priority": 25,
+        "summary": {
+          "classes": [],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_51",
+      "position": {
+        "x": 1850,
+        "y": 850
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_8",
+        "color": "#b8bb26",
+        "description": "cli.ts (Auto-detected)",
+        "file": "src/cli.ts",
+        "label": "cli.ts",
+        "layer": 1,
+        "priority": 50,
+        "summary": {
+          "classes": [],
+          "functions": [
+            "main"
+          ],
+          "references": [
+            "path",
+            "BootstrapEngine"
+          ]
+        }
+      },
+      "id": "node_52",
+      "position": {
+        "x": 2000,
+        "y": 850
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_8",
+        "color": "#b8bb26",
+        "description": "client.ts (Auto-detected)",
+        "file": "src/client.ts",
+        "label": "client.ts",
+        "layer": 1,
+        "priority": 50,
+        "summary": {
+          "classes": [],
+          "functions": [
+            "setClient"
+          ],
+          "references": [
+            "node"
+          ]
+        }
+      },
+      "id": "node_53",
+      "position": {
+        "x": 2150,
+        "y": 850
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_8",
+        "color": "#b8bb26",
+        "description": "extension.ts (Auto-detected)",
+        "file": "src/extension.ts",
+        "label": "extension.ts",
+        "layer": 1,
+        "priority": 50,
+        "summary": {
+          "classes": [],
+          "functions": [
+            "activate",
+            "deserializeWebviewPanel",
+            "checkProjectStatus",
+            "setupFileWatcher",
+            "liteBootstrap",
+            "bootstrapFromGemini",
+            "deactivate"
+          ],
+          "references": [
+            "vscode",
+            "path",
+            "CanvasPanel",
+            "BootstrapEngine",
+            "client",
+            "PromptLogger"
+          ]
+        }
+      },
+      "id": "node_54",
+      "position": {
+        "x": 1850,
+        "y": 1000
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_8",
+        "color": "#b8bb26",
+        "description": "login.py (Auto-detected)",
+        "file": "src/login.py",
+        "label": "login.py",
+        "layer": 1,
+        "priority": 25,
+        "summary": {
+          "classes": [],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_55",
+      "position": {
+        "x": 2000,
+        "y": 1000
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_8",
+        "color": "#b8bb26",
+        "description": "schema.sql (Auto-detected)",
+        "file": "src/schema.sql",
+        "label": "schema.sql",
+        "layer": 1,
+        "priority": 50,
+        "summary": {
+          "classes": [],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_56",
+      "position": {
+        "x": 2150,
+        "y": 1000
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_9",
+        "color": "#b8bb26",
+        "description": "BootstrapEngine.ts (Auto-detected)",
+        "file": "src/bootstrap/BootstrapEngine.ts",
+        "label": "BootstrapEngine.ts",
+        "layer": 1,
+        "priority": 30,
+        "summary": {
+          "classes": [
+            "BootstrapEngine"
+          ],
+          "functions": [
+            "bootstrap",
+            "liteBootstrap",
+            "autoDiscover",
+            "printStructurePreview"
+          ],
+          "references": [
+            "path",
+            "fs",
+            "GeminiParser",
+            "FlowchartGenerator",
+            "FileScanner",
+            "schema"
+          ]
+        }
+      },
+      "id": "node_57",
+      "position": {
+        "x": 268.1302996332555,
+        "y": 850
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_10",
+        "color": "#b8bb26",
+        "description": "FileScanner.ts (Auto-detected)",
+        "file": "src/core/FileScanner.ts",
+        "label": "FileScanner.ts",
+        "layer": 0,
+        "priority": 10,
+        "summary": {
+          "classes": [
+            "FileScanner"
+          ],
+          "functions": [
+            "scanFile",
+            "parsePython",
+            "parseJavaScript",
+            "parseCpp",
+            "parseRust",
+            "parseShell",
+            "name",
+            "parseSql",
+            "parseConfig",
+            "parseMarkdown"
+          ],
+          "references": [
+            "fs",
+            "path"
+          ]
+        }
+      },
+      "id": "node_58",
+      "position": {
+        "x": 50,
+        "y": 850
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_10",
+        "color": "#b8bb26",
+        "description": "FlowScanner.ts (Auto-detected)",
+        "file": "src/core/FlowScanner.ts",
+        "label": "FlowScanner.ts",
+        "layer": 0,
+        "priority": 10,
+        "summary": {
+          "classes": [
+            "FlowScanner"
+          ],
+          "functions": [
+            "scanForFlow",
+            "parseJSFlow",
+            "parsePythonFlow",
+            "extractCondition",
+            "extractLabel"
+          ],
+          "references": [
+            "fs",
+            "path"
+          ]
+        }
+      },
+      "id": "node_59",
+      "position": {
+        "x": 200,
+        "y": 850
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_10",
+        "color": "#b8bb26",
+        "description": "FlowchartGenerator.ts (Auto-detected)",
+        "file": "src/core/FlowchartGenerator.ts",
+        "label": "FlowchartGenerator.ts",
+        "layer": 1,
+        "priority": 50,
+        "summary": {
+          "classes": [
+            "FlowchartGenerator"
+          ],
+          "functions": [
+            "generateInitialFlowchart",
+            "createNode",
+            "createEdge",
+            "generateMermaidDiagram",
+            "getNodeShape"
+          ],
+          "references": [
+            "schema",
+            "path",
+            "visualHints"
+          ]
+        }
+      },
+      "id": "node_60",
+      "position": {
+        "x": 350,
+        "y": 1250
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_10",
+        "color": "#b8bb26",
+        "description": "GeminiParser.ts (Auto-detected)",
+        "file": "src/core/GeminiParser.ts",
+        "label": "GeminiParser.ts",
+        "layer": 0,
+        "priority": 10,
+        "summary": {
+          "classes": [
+            "GeminiParser"
+          ],
+          "functions": [
+            "parseGeminiMd",
+            "analyzeContent",
+            "createStructure",
+            "getFileTemplate"
+          ],
+          "references": [
+            "fs",
+            "path",
+            "schema"
+          ]
+        }
+      },
+      "id": "node_61",
+      "position": {
+        "x": 50,
+        "y": 1000
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_10",
+        "color": "#b8bb26",
+        "description": "PromptLogger.ts (Auto-detected)",
+        "file": "src/core/PromptLogger.ts",
+        "label": "PromptLogger.ts",
+        "layer": 1,
+        "priority": 20,
+        "summary": {
+          "classes": [
+            "PromptLogger"
+          ],
+          "functions": [
+            "constructor",
+            "logPrompt",
+            "parseStructuredOutput",
+            "gitStageFile"
+          ],
+          "references": [
+            "fs",
+            "path",
+            "child_process",
+            "vscode"
+          ]
+        }
+      },
+      "id": "node_62",
+      "position": {
+        "x": 344.3035656491659,
+        "y": 1400
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_11",
+        "color": "#b8bb26",
+        "description": "server.ts (Auto-detected)",
+        "file": "src/server/server.ts",
+        "label": "server.ts",
+        "layer": 1,
+        "priority": 50,
+        "summary": {
+          "classes": [],
+          "functions": [
+            "getFilePathAtPosition",
+            "validateTextDocument"
+          ],
+          "references": [
+            "vscode-languageserver-textdocument",
+            "GeminiParser",
+            "FlowScanner",
+            "path",
+            "fs"
+          ]
+        }
+      },
+      "id": "node_63",
+      "position": {
+        "x": 650,
+        "y": 1250
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_11",
+        "color": "#b8bb26",
+        "description": "standalone.ts (Auto-detected)",
+        "file": "src/server/standalone.ts",
+        "label": "standalone.ts",
+        "layer": 1,
+        "priority": 50,
+        "summary": {
+          "classes": [],
+          "functions": [],
+          "references": [
+            "express",
+            "cors",
+            "fs",
+            "path",
+            "GeminiParser",
+            "FlowScanner"
+          ]
+        }
+      },
+      "id": "node_64",
+      "position": {
+        "x": 800,
+        "y": 1250
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_12",
+        "color": "#b8bb26",
+        "description": "FileScanner.test.ts (Auto-detected)",
+        "file": "src/test/FileScanner.test.ts",
+        "label": "FileScanner.test.ts",
+        "layer": 0,
+        "priority": 10,
+        "summary": {
+          "classes": [
+            "TestClass",
+            "MyClass"
+          ],
+          "functions": [],
+          "references": [
+            "FileScanner",
+            "fs",
+            "path"
+          ]
+        }
+      },
+      "id": "node_65",
+      "position": {
+        "x": 1250,
+        "y": 850
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_12",
+        "color": "#b8bb26",
+        "description": "GeminiParser.test.ts (Auto-detected)",
+        "file": "src/test/GeminiParser.test.ts",
+        "label": "GeminiParser.test.ts",
+        "layer": 0,
+        "priority": 10,
+        "summary": {
+          "classes": [],
+          "functions": [],
+          "references": [
+            "GeminiParser",
+            "fs",
+            "path"
+          ]
+        }
+      },
+      "id": "node_66",
+      "position": {
+        "x": 1400,
+        "y": 850
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_12",
+        "color": "#b8bb26",
+        "description": "visualHints.test.ts (Auto-detected)",
+        "file": "src/test/visualHints.test.ts",
+        "label": "visualHints.test.ts",
+        "layer": 1,
+        "priority": 50,
+        "summary": {
+          "classes": [],
+          "functions": [],
+          "references": [
+            "visualHints"
+          ]
+        }
+      },
+      "id": "node_67",
+      "position": {
+        "x": 1250,
+        "y": 1400
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_13",
+        "color": "#b8bb26",
+        "description": "schema.ts (Auto-detected)",
+        "file": "src/types/schema.ts",
+        "label": "schema.ts",
+        "layer": 1,
+        "priority": 50,
+        "summary": {
+          "classes": [],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_68",
+      "position": {
+        "x": 1850,
+        "y": 1250
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_14",
+        "color": "#b8bb26",
+        "description": "visualHints.ts (Auto-detected)",
+        "file": "src/utils/visualHints.ts",
+        "label": "visualHints.ts",
+        "layer": 1,
+        "priority": 50,
+        "summary": {
+          "classes": [],
+          "functions": [
+            "getVisualHints"
+          ],
+          "references": []
+        }
+      },
+      "id": "node_69",
+      "position": {
+        "x": 2450,
+        "y": 1250
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_15",
+        "color": "#b8bb26",
+        "description": "CanvasPanel.ts (Auto-detected)",
+        "file": "src/webview/CanvasPanel.ts",
+        "label": "CanvasPanel.ts",
+        "layer": 1,
+        "priority": 50,
+        "summary": {
+          "classes": [
+            "CanvasPanel"
+          ],
+          "functions": [
+            "constructor",
+            "handleCreateManualNode",
+            "handleSetBaseline",
+            "fitView",
+            "refreshState",
+            "handleNodeSelected",
+            "openFile",
+            "dispose",
+            "normalizeProjectState",
+            "handleCreateManualEdge",
+            "handleDeleteEdge",
+            "handleDeleteNode",
+            "handleReBootstrap",
+            "handleUpdateEdge",
+            "handleGenerateFlow",
+            "handleAnalyzeGemini",
+            "handleApproveNode",
+            "getBoilerplate",
+            "handleRejectNode",
+            "handleValidateEdge",
+            "handleSaveState",
+            "handleTakeSnapshot",
+            "handleLogPrompt",
+            "handleRequestLogPrompt",
+            "sendHistory",
+            "handleRollback",
+            "sendProjectState",
+            "_update",
+            "_getHtmlForWebview",
+            "getNonce"
+          ],
+          "references": [
+            "vscode",
+            "path",
+            "fs",
+            "schema",
+            "FileScanner",
+            "GeminiParser",
+            "FlowchartGenerator",
+            "BootstrapEngine",
+            "client"
+          ]
+        }
+      },
+      "id": "node_70",
+      "position": {
+        "x": 50,
+        "y": 1650
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_16",
+        "color": "#fabd2f",
+        "description": "README.ko.md (Auto-detected)",
+        "file": "synapse-visual-architecture-0.1.7/extension/README.ko.md",
+        "label": "README.ko.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "🧠 SYNAPSE: VS Code Visual Architecture Engine",
+            "🚀 Key Features",
+            "🗂️ Language Support",
+            "🛠️ Technology Stack",
+            "🌐 Graph View",
+            "🌳 Tree View",
+            "➡️ Flow View",
+            "📦 Getting Started",
+            "🎯 Usage Guide",
+            "🧱 Node Creation (New!)",
+            "🎨 Manual Edge Creation (WYSIWYG)",
+            "1. 노드 선택",
+            "2. 엣지 생성 시작",
+            "3. 타겟 선택",
+            "4. 관계 타입 선택",
+            "5. 자동 저장",
+            "📦 Clustering & Management",
+            "💾 Snapshot & Rollback",
+            "💾 Prompt Traceability (New! v0.1.1)",
+            "⚙️ How to Install (VS Code)",
+            "1. Release에서 다운로드 (추천)",
+            "2. VS Code에 로드 (설치 방법)",
+            "🌐 Standalone Mode (Web Browser)",
+            "1. 사전 준비",
+            "2. 브라우저 엔진 기동",
+            "Standalone 브리지 서버 실행",
+            "3. 접속",
+            "🛠️ For Developers (Build from Source)",
+            "🎥 Demo Video",
+            "🧹 Data Hygiene Principles",
+            "원칙 1: 원천 소스와 상태값의 분리",
+            "원칙 2: 자동 정규화",
+            "원칙 3: 휘발성 자동 엣지",
+            "🔥 핵심 전략 (Core Strategies)",
+            "1. 멀티 MD 전략 (Multi-MD Strategy)",
+            "2. 자동 파일 저장 (Automatic File Saving)",
+            "📐 Philosophy",
+            "📜 License"
+          ],
+          "functions": [],
+          "references": [
+            "README.ko",
+            "README",
+            "synapse_graph_view",
+            "synapse_tree_view",
+            "synapse_flow_view",
+            "LICENSE"
+          ]
+        }
+      },
+      "id": "node_71",
+      "position": {
+        "x": 650,
+        "y": 1250
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_16",
+        "color": "#fabd2f",
+        "description": "changelog.md (Auto-detected)",
+        "file": "synapse-visual-architecture-0.1.7/extension/changelog.md",
+        "label": "changelog.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "Release Notes - v0.1.7",
+            "🚀 Bug Fixes & Packaging",
+            "Release Notes - v0.1.6",
+            "📜 Legal & Documentation",
+            "Release Notes - v0.1.5",
+            "🔧 Maintenance",
+            "Release Notes - v0.1.4",
+            "🚀 Hotfix: Always-On Thought Stream",
+            "Release Notes - v0.1.3",
+            "🐛 Bug Fixes",
+            "Release Notes - v0.1.2",
+            "✨ New Feature: Prompt Traceability Engine",
+            "Release Notes - v0.1.1",
+            "🚀 New Features",
+            "💾 Prompt Traceability (New!)",
+            "📚 Multilingual Documentation",
+            "🔥 Core Strategies",
+            "Multi-MD Strategy & Auto-Save",
+            "🛠️ Enhancements"
+          ],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_72",
+      "position": {
+        "x": 800,
+        "y": 1250
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_16",
+        "color": "#d3869b",
+        "description": "package.json (Auto-detected)",
+        "file": "synapse-visual-architecture-0.1.7/extension/package.json",
+        "label": "package.json",
+        "layer": 1,
+        "priority": 50,
+        "summary": {
+          "classes": [],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_73",
+      "position": {
+        "x": 650,
+        "y": 1800
+      },
+      "status": "proposed",
+      "type": "config",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_16",
+        "color": "#fabd2f",
+        "description": "readme.md (Auto-detected)",
+        "file": "synapse-visual-architecture-0.1.7/extension/readme.md",
+        "label": "readme.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "🧠 SYNAPSE: VS Code Visual Architecture Engine",
+            "🚀 Key Features",
+            "🗂️ Language Support",
+            "🛠️ Technology Stack",
+            "🌐 Graph View",
+            "🌳 Tree View",
+            "➡️ Flow View",
+            "📦 Getting Started",
+            "🎯 Usage Guide",
+            "🧱 Node Creation (New!)",
+            "🎨 Manual Edge Creation (WYSIWYG)",
+            "1. Select Node",
+            "2. Start Edge Creation",
+            "3. Select Target",
+            "4. Select Relationship Type",
+            "5. Auto Save",
+            "📦 Clustering & Management",
+            "💾 Snapshot & Rollback",
+            "💾 Prompt Traceability (New! v0.1.1)",
+            "⚙️ How to Install (VS Code)",
+            "1. Download from Release (Recommended)",
+            "2. Load into VS Code (Installation Method)",
+            "🌐 Standalone Mode (Web Browser)",
+            "1. Prerequisites",
+            "2. Launch Browser Engine",
+            "Run Standalone Bridge Server",
+            "3. Access",
+            "🛠️ For Developers (Build from Source)",
+            "🎥 Demo Video",
+            "🧹 Data Hygiene Principles",
+            "Principle 1: Separation of Source and State",
+            "Principle 2: Auto-Normalization",
+            "Principle 3: Volatile Auto-Edges",
+            "🔥 Core Strategies",
+            "1. Multi-MD Strategy (Context Awareness)",
+            "2. Automatic File Saving (Zero-Friction Logging)",
+            "📐 Philosophy",
+            "📜 License"
+          ],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_74",
+      "position": {
+        "x": 800,
+        "y": 1400
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_17",
+        "color": "#d3869b",
+        "description": "package.json (Auto-detected)",
+        "file": "synapse-visual-architecture-0.1.7/extension/prompt-tracer/package.json",
+        "label": "package.json",
+        "layer": 1,
+        "priority": 20,
+        "summary": {
+          "classes": [],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_75",
+      "position": {
+        "x": 1250,
+        "y": 1650
+      },
+      "status": "proposed",
+      "type": "config",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_17",
+        "color": "#d3869b",
+        "description": "tsconfig.json (Auto-detected)",
+        "file": "synapse-visual-architecture-0.1.7/extension/prompt-tracer/tsconfig.json",
+        "label": "tsconfig.json",
+        "layer": 1,
+        "priority": 20,
+        "summary": {
+          "classes": [],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_76",
+      "position": {
+        "x": 1400,
+        "y": 1650
+      },
+      "status": "proposed",
+      "type": "config",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_18",
+        "color": "#b8bb26",
+        "description": "extension.js (Auto-detected)",
+        "file": "synapse-visual-architecture-0.1.7/extension/prompt-tracer/src/extension.js",
+        "label": "extension.js",
+        "layer": 1,
+        "priority": 20,
+        "summary": {
+          "classes": [],
+          "functions": [
+            "activate",
+            "savePrompt",
+            "deactivate"
+          ],
+          "references": [
+            "vscode",
+            "fs",
+            "path"
+          ]
+        }
+      },
+      "id": "node_77",
+      "position": {
+        "x": 1850,
+        "y": 1650
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_18",
+        "color": "#b8bb26",
+        "description": "extension.ts (Auto-detected)",
+        "file": "synapse-visual-architecture-0.1.7/extension/prompt-tracer/src/extension.ts",
+        "label": "extension.ts",
+        "layer": 1,
+        "priority": 20,
+        "summary": {
+          "classes": [],
+          "functions": [
+            "activate",
+            "savePrompt",
+            "deactivate"
+          ],
+          "references": [
+            "vscode",
+            "fs",
+            "path"
+          ]
+        }
+      },
+      "id": "node_78",
+      "position": {
+        "x": 2000,
+        "y": 1650
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_19",
+        "color": "#fabd2f",
+        "description": "2026-02-17_keybinding_check.md (Auto-detected)",
+        "file": "synapse-visual-architecture-0.1.7/extension/prompts/2026-02-17_keybinding_check.md",
+        "label": "2026-02-17_keybinding_check.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "Keybinding Check",
+            "🎯 Goal",
+            "Goal",
+            "🧠 Key Decisions",
+            "🔗 Context & References",
+            "📝 Original Prompt",
+            "Goal"
+          ],
+          "functions": [],
+          "references": [
+            "package"
+          ]
+        }
+      },
+      "id": "node_79",
+      "position": {
+        "x": 2450,
+        "y": 1250
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_19",
+        "color": "#fabd2f",
+        "description": "2026-02-17_origin_edge_verification.md (Auto-detected)",
+        "file": "synapse-visual-architecture-0.1.7/extension/prompts/2026-02-17_origin_edge_verification.md",
+        "label": "2026-02-17_origin_edge_verification.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "Origin Edge Verification",
+            "🎯 Goal",
+            "Goal",
+            "🧠 Key Decisions",
+            "🔗 Context & References",
+            "📝 Original Prompt",
+            "Goal"
+          ],
+          "functions": [],
+          "references": [
+            "PromptLogger",
+            "BootstrapEngine"
+          ]
+        }
+      },
+      "id": "node_80",
+      "position": {
+        "x": 2600,
+        "y": 1250
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_19",
+        "color": "#fabd2f",
+        "description": "2026-02-17_test.md (Auto-detected)",
+        "file": "synapse-visual-architecture-0.1.7/extension/prompts/2026-02-17_test.md",
+        "label": "2026-02-17_test.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "Test Prompt"
+          ],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_81",
+      "position": {
+        "x": 2450,
+        "y": 1400
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_20",
+        "color": "#b8bb26",
+        "description": "canvas-engine.js (Auto-detected)",
+        "file": "synapse-visual-architecture-0.1.7/extension/ui/canvas-engine.js",
+        "label": "canvas-engine.js",
+        "layer": 2,
+        "priority": 80,
+        "summary": {
+          "classes": [
+            "FlowRenderer",
+            "TreeRenderer",
+            "CanvasEngine"
+          ],
+          "functions": [
+            "getProjectState",
+            "callStandaloneApi",
+            "initCanvas"
+          ],
+          "references": []
+        }
+      },
+      "id": "node_82",
+      "position": {
+        "x": 50,
+        "y": 2450
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_21",
+        "color": "#b8bb26",
+        "description": "canvas-engine.js (Auto-detected)",
+        "file": "ui/canvas-engine.js",
+        "label": "canvas-engine.js",
+        "layer": 2,
+        "priority": 80,
+        "summary": {
+          "classes": [
+            "FlowRenderer",
+            "TreeRenderer",
+            "CanvasEngine"
+          ],
+          "functions": [
+            "getProjectState",
+            "callStandaloneApi",
+            "initCanvas"
+          ],
+          "references": []
+        }
+      },
+      "id": "node_83",
+      "position": {
+        "x": 650,
+        "y": 2450
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    }
+  ],
+  "project_name": "antigravity-extension-vis"
 }

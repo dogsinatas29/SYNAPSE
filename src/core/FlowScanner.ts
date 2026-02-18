@@ -67,7 +67,7 @@ export class FlowScanner {
     }
 
     private parseJSFlow(content: string, flow: FlowData) {
-        // Step 1: Entry Point (Main functions/classes)
+        // Step 1: Entry Point
         flow.steps.push({
             id: 'entry',
             type: 'start',
@@ -75,17 +75,17 @@ export class FlowScanner {
             next: 'step_analysis_0'
         });
 
-        // Step 2: Very simple regex-based "logical block" extractor
-        // In a real Phase 3, we would use a proper AST parser like 'typescript'
         const lines = content.split('\n');
         let stepCounter = 0;
         let lastStepId = 'entry';
 
-        for (let i = 0; i < Math.min(lines.length, 500); i++) {
+        // Increased limit for broader analysis
+        for (let i = 0; i < Math.min(lines.length, 1000); i++) {
             const line = lines[i].trim();
+            if (!line || line.startsWith('//') || line.startsWith('/*')) continue;
 
-            // 1. If/Switch detection
-            if (line.startsWith('if (') || line.includes(' if (') || line.startsWith('switch (') || line.includes(' switch (')) {
+            // 1. If/Switch/While detection (Flow Branches)
+            if (line.match(/\b(if|switch|while|for)\b\s*\(/)) {
                 const condition = this.extractCondition(line) || 'Decision Point';
                 const stepId = `step_analysis_${stepCounter++}`;
 
@@ -93,38 +93,50 @@ export class FlowScanner {
                     id: stepId,
                     type: 'decision',
                     label: condition,
-                    next: `step_analysis_${stepCounter++}`,
+                    next: `step_analysis_${stepCounter}`,
                     alternateNext: `step_analysis_${stepCounter + 1}`
                 });
 
+                // Link previous step
                 const prevStep = flow.steps.find(s => s.id === lastStepId);
-                if (prevStep) prevStep.next = stepId;
+                if (prevStep) {
+                    if (prevStep.type === 'decision') {
+                        // If previous was decision, connect its TRUE path if it wasn't connected
+                        if (!prevStep.next) prevStep.next = stepId;
+                    } else {
+                        prevStep.next = stepId;
+                    }
+                }
 
                 lastStepId = stepId;
             }
-            // 2. Try/Catch detection
-            else if (line.startsWith('try {') || line.includes(' try {')) {
+            // 2. Try/Catch
+            else if (line.match(/\btry\b\s*\{/)) {
                 const stepId = `step_analysis_${stepCounter++}`;
                 flow.steps.push({
                     id: stepId,
                     type: 'process',
-                    label: 'Try Block',
-                    next: `step_analysis_${stepCounter++}`
+                    label: 'Try Block (Safe Execution)',
+                    next: `step_analysis_${stepCounter}`
                 });
                 const prevStep = flow.steps.find(s => s.id === lastStepId);
                 if (prevStep) prevStep.next = stepId;
                 lastStepId = stepId;
             }
-            // 3. Exported components/functions/async methods
-            else if (line.startsWith('export ') || line.startsWith('function ') || line.includes('function(') || line.includes('async ')) {
-                const label = this.extractLabel(line) || 'Process Task';
-                const stepId = `step_analysis_${stepCounter++}`;
+            // 3. Methods / Functions / Exports (Enhanced Regex for TS)
+            else if (line.match(/\b(export|function|async|private|public|protected|static|class|const|let)\s+([a-zA-Z0-9_]+)\b/)) {
+                const label = this.extractLabel(line);
+                if (!label) continue;
 
+                // Skip common noise
+                if (['from', 'import', 'return', 'const', 'let', 'var'].includes(label)) continue;
+
+                const stepId = `step_analysis_${stepCounter++}`;
                 flow.steps.push({
                     id: stepId,
                     type: 'process',
                     label: label,
-                    next: `step_analysis_${stepCounter++}`
+                    next: `step_analysis_${stepCounter}`
                 });
 
                 const prevStep = flow.steps.find(s => s.id === lastStepId);
@@ -133,12 +145,12 @@ export class FlowScanner {
                 lastStepId = stepId;
             }
 
-            // Limit flow depth for now
-            if (stepCounter > 8) break;
+            // Limit flow depth to 50 for performance and clarity
+            if (stepCounter > 50) break;
         }
 
         // Final Step
-        const finalStepId = `step_analysis_${stepCounter}`;
+        const finalStepId = 'final_end';
         flow.steps.push({
             id: finalStepId,
             type: 'end',
@@ -148,7 +160,7 @@ export class FlowScanner {
         const lastStep = flow.steps.find(s => s.id === lastStepId);
         if (lastStep) lastStep.next = finalStepId;
 
-        // Cleanup: Remove dangling 'next' references that don't exist
+        // Cleanup: Remove dangling 'next' references
         const validIds = new Set(flow.steps.map(s => s.id));
         flow.steps.forEach(s => {
             if (s.next && !validIds.has(s.next)) s.next = undefined;
@@ -157,27 +169,62 @@ export class FlowScanner {
     }
 
     private parsePythonFlow(content: string, flow: FlowData) {
-        // Similar pattern for Python...
+        // Simple Python entry
         flow.steps.push({
             id: 'entry',
             type: 'start',
             label: 'Python Initialization',
-            next: 'final'
+            next: 'step_py_0'
         });
+
+        const lines = content.split('\n');
+        let stepCounter = 0;
+        let lastStepId = 'entry';
+
+        for (let i = 0; i < Math.min(lines.length, 500); i++) {
+            const line = lines[i].trim();
+            if (line.match(/^(def|class|if|try)\s+/)) {
+                const stepId = `step_py_${stepCounter++}`;
+                flow.steps.push({
+                    id: stepId,
+                    type: line.startsWith('if') ? 'decision' : 'process',
+                    label: line.split(/[\s\(:]/)[1] || 'Logic Component',
+                    next: `step_py_${stepCounter}`
+                });
+                const prevStep = flow.steps.find(s => s.id === lastStepId);
+                if (prevStep) prevStep.next = stepId;
+                lastStepId = stepId;
+            }
+            if (stepCounter > 30) break;
+        }
+
         flow.steps.push({
-            id: 'final',
+            id: 'step_py_final',
             type: 'end',
             label: 'End'
         });
+        const lastStep = flow.steps.find(s => s.id === lastStepId);
+        if (lastStep) lastStep.next = 'step_py_final';
     }
 
     private extractCondition(line: string): string | null {
-        const match = line.match(/(?:if|switch)\s*\((.*)\)/);
+        const match = line.match(/(?:if|switch|while|for)\s*\((.*)\)/);
         return match ? match[1].trim() : null;
     }
 
     private extractLabel(line: string): string | null {
-        const match = line.match(/(?:function|class|export|const)\s+([a-zA-Z0-9_]+)/);
-        return match ? match[1].trim() : null;
+        // Handle TypeScript modifiers and async
+        const match = line.match(/(?:async\s+)?(?:function\s+)?(?:const|let|var|class|interface|type|export\s+)?([a-zA-Z0-9_]+)\b/);
+
+        // Secondary check for TS class members: private myMethod()
+        const memberMatch = line.match(/(?:private|public|protected|static)\s+(?:async\s+)?([a-zA-Z0-9_]+)\s*\(/);
+
+        const label = (memberMatch ? memberMatch[1] : (match ? match[1] : null));
+
+        // Filter out keywords
+        const keywords = ['const', 'let', 'var', 'if', 'else', 'for', 'while', 'switch', 'case', 'break', 'return', 'import', 'export', 'from'];
+        if (label && keywords.includes(label)) return null;
+
+        return label ? label.trim() : null;
     }
 }

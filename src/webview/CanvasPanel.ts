@@ -124,6 +124,9 @@ export class CanvasPanel {
                     case 'deleteEdge':
                         await this.handleDeleteEdge(message.edgeId);
                         return;
+                    case 'deleteNode':
+                        await this.handleDeleteNode(message.nodeId);
+                        return;
                     case 'updateEdge':
                         await this.handleUpdateEdge(message.edgeId, message.updates);
                         return;
@@ -389,13 +392,65 @@ export class CanvasPanel {
             const normalizedJson = this.normalizeProjectState(projectState);
             await vscode.workspace.fs.writeFile(projectStateUri, Buffer.from(normalizedJson, 'utf8'));
             console.log('[SYNAPSE] Edge deleted:', deletedEdge);
-            vscode.window.showInformationMessage(`Edge deleted: ${deletedEdge.type}`);
+            vscode.window.setStatusBarMessage(`Edge deleted`, 3000);
 
             // 캔버스 새로고침
             await this.sendProjectState();
         } catch (error) {
             console.error('Failed to delete edge:', error);
             vscode.window.showErrorMessage(`Failed to delete edge: ${error}`);
+        }
+    }
+
+    private async handleDeleteNode(nodeId: string) {
+        const workspaceFolder = this._workspaceFolder;
+        if (!workspaceFolder) return;
+
+        try {
+            const projectStateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'project_state.json');
+            const data = await vscode.workspace.fs.readFile(projectStateUri);
+            const projectState = JSON.parse(data.toString());
+
+            // 1. 노드 제거
+            if (!projectState.nodes) projectState.nodes = [];
+            const nodeIndex = projectState.nodes.findIndex((n: any) => n.id === nodeId);
+
+            if (nodeIndex === -1) {
+                console.warn('[SYNAPSE] Node not found in project state:', nodeId);
+                return;
+            }
+
+            const deletedNode = projectState.nodes[nodeIndex];
+            projectState.nodes.splice(nodeIndex, 1);
+
+            // 2. 연결된 엣지 제거
+            if (projectState.edges) {
+                const initialEdgeCount = projectState.edges.length;
+                projectState.edges = projectState.edges.filter((e: any) => e.from !== nodeId && e.to !== nodeId);
+                console.log(`[SYNAPSE] Removed ${initialEdgeCount - projectState.edges.length} edges connected to node ${nodeId}`);
+            }
+
+            // 3. 클러스터 자식 목록에서 제거
+            if (projectState.clusters) {
+                projectState.clusters.forEach((c: any) => {
+                    if (c.children) {
+                        c.children = c.children.filter((id: string) => id !== nodeId);
+                    }
+                });
+            }
+
+            // 저장 (정규화 적용)
+            const normalizedJson = this.normalizeProjectState(projectState);
+            await vscode.workspace.fs.writeFile(projectStateUri, Buffer.from(normalizedJson, 'utf8'));
+
+            console.log('[SYNAPSE] Node deleted:', deletedNode.id);
+            vscode.window.setStatusBarMessage(`Node deleted: ${deletedNode.data?.label || nodeId}`, 3000);
+
+            // 캔버스 새로고침
+            await this.sendProjectState();
+        } catch (error) {
+            console.error('Failed to delete node:', error);
+            vscode.window.showErrorMessage(`Failed to delete node: ${error}`);
         }
     }
 

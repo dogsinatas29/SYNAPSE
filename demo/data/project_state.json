@@ -58,30 +58,6 @@
       "label": "src"
     },
     {
-      "bounds": {
-        "height": 1250,
-        "width": 1250,
-        "x": 0,
-        "y": 1200
-      },
-      "children": [],
-      "collapsed": false,
-      "id": "cluster_2",
-      "label": "src/types"
-    },
-    {
-      "bounds": {
-        "height": 1250,
-        "width": 1250,
-        "x": 800,
-        "y": 1200
-      },
-      "children": [],
-      "collapsed": false,
-      "id": "cluster_3",
-      "label": "ui"
-    },
-    {
       "_headerBounds": {
         "height": 30,
         "width": 1360,
@@ -113,6 +89,18 @@
       "collapsed": false,
       "id": "storage_cluster",
       "label": "📦 Ghost Nodes (Storage)"
+    },
+    {
+      "_headerBounds": {
+        "height": 30,
+        "width": 959.0010662880209,
+        "x": 3108.66710114813,
+        "y": 701.2174295281854
+      },
+      "collapsed": false,
+      "color": "#fabd2f",
+      "id": "cluster_1771394553936",
+      "label": "test"
     }
   ],
   "edges": [
@@ -290,7 +278,7 @@
     {
       "_validationReason": "Circular dependency detected",
       "from": "node_0",
-      "id": "edge_auto_1771393635223_615",
+      "id": "edge_auto_1771394554164_441",
       "label": "ref",
       "to": "node_6",
       "type": "dependency",
@@ -303,7 +291,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_1",
-      "id": "edge_auto_1771393635224_669",
+      "id": "edge_auto_1771394554164_577",
       "label": "ref",
       "to": "node_8",
       "type": "dependency",
@@ -316,7 +304,7 @@
     {
       "_validationReason": "Circular dependency detected",
       "from": "node_4",
-      "id": "edge_auto_1771393635224_939",
+      "id": "edge_auto_1771394554164_4",
       "label": "ref",
       "to": "node_7",
       "type": "dependency",
@@ -329,7 +317,7 @@
     {
       "_validationReason": "Circular dependency detected",
       "from": "node_4",
-      "id": "edge_auto_1771393635224_480",
+      "id": "edge_auto_1771394554164_147",
       "label": "ref",
       "to": "node_0",
       "type": "dependency",
@@ -342,7 +330,7 @@
     {
       "_validationReason": "Circular dependency detected",
       "from": "node_4",
-      "id": "edge_auto_1771393635224_528",
+      "id": "edge_auto_1771394554164_74",
       "label": "ref",
       "to": "node_6",
       "type": "dependency",
@@ -355,7 +343,7 @@
     {
       "_validationReason": "Circular dependency detected",
       "from": "node_6",
-      "id": "edge_auto_1771393635224_7",
+      "id": "edge_auto_1771394554164_996",
       "label": "ref",
       "to": "node_4",
       "type": "dependency",
@@ -368,7 +356,7 @@
     {
       "_validationReason": "Circular dependency detected",
       "from": "node_7",
-      "id": "edge_auto_1771393635224_705",
+      "id": "edge_auto_1771394554164_709",
       "label": "ref",
       "to": "node_6",
       "type": "dependency",
@@ -381,7 +369,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_8",
-      "id": "edge_auto_1771393635224_70",
+      "id": "edge_auto_1771394554164_623",
       "label": "ref",
       "to": "node_6",
       "type": "dependency",
@@ -394,7 +382,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_15",
-      "id": "edge_auto_1771393635224_14",
+      "id": "edge_auto_1771394554164_129",
       "label": "ref",
       "to": "node_14",
       "type": "dependency",
@@ -1010,8 +998,9 @@
       }
     },
     {
+      "cluster_id": "cluster_1771394553936",
       "data": {
-        "cluster_id": "storage_cluster",
+        "cluster_id": "cluster_1771394553936",
         "color": "#b8bb26",
         "description": "schema.js (Auto-detected)",
         "file": "src/types/schema.js",
@@ -1039,8 +1028,9 @@
       }
     },
     {
+      "cluster_id": "cluster_1771394553936",
       "data": {
-        "cluster_id": "storage_cluster",
+        "cluster_id": "cluster_1771394553936",
         "color": "#b8bb26",
         "description": "schema.ts (Auto-detected)",
         "file": "src/types/schema.ts",
@@ -1066,8 +1056,9 @@
       }
     },
     {
+      "cluster_id": "cluster_1771394553936",
       "data": {
-        "cluster_id": "storage_cluster",
+        "cluster_id": "cluster_1771394553936",
         "color": "#b8bb26",
         "description": "canvas-engine.js (Auto-detected)",
         "file": "ui/canvas-engine.js",
@@ -1244,6 +1235,12 @@
             "charAt",
             "slice",
             "renderDebugInfo",
+            "showInputModal",
+            "select",
+            "callback",
+            "close",
+            "handleConfirm",
+            "handleCancel",
             "every",
             "some",
             "renameCluster",

@@ -12,6 +12,12 @@
   },
   "clusters": [
     {
+      "_headerBounds": {
+        "height": 30,
+        "width": 760,
+        "x": -87,
+        "y": 80
+      },
       "bounds": {
         "height": 850,
         "width": 850,
@@ -46,6 +52,12 @@
       "label": "ROOT"
     },
     {
+      "_headerBounds": {
+        "height": 30,
+        "width": 942.5062759356329,
+        "x": 297.4937240643672,
+        "y": 0
+      },
       "bounds": {
         "height": 700,
         "width": 700,
@@ -73,6 +85,12 @@
       "label": "demo"
     },
     {
+      "_headerBounds": {
+        "height": 30,
+        "width": 460,
+        "x": 1230,
+        "y": 150
+      },
       "bounds": {
         "height": 400,
         "width": 550,
@@ -91,6 +109,12 @@
       "label": "demo/src"
     },
     {
+      "_headerBounds": {
+        "height": 30,
+        "width": 310,
+        "x": 1830,
+        "y": 400
+      },
       "bounds": {
         "height": 250,
         "width": 400,
@@ -106,6 +130,12 @@
       "label": "demo/src/types"
     },
     {
+      "_headerBounds": {
+        "height": 30,
+        "width": 160,
+        "x": 2430,
+        "y": 800
+      },
       "bounds": {
         "height": 250,
         "width": 250,
@@ -120,6 +150,12 @@
       "label": "demo/ui"
     },
     {
+      "_headerBounds": {
+        "height": 30,
+        "width": 310,
+        "x": 30,
+        "y": 800
+      },
       "bounds": {
         "height": 250,
         "width": 400,
@@ -135,6 +171,12 @@
       "label": "prompt-tracer"
     },
     {
+      "_headerBounds": {
+        "height": 30,
+        "width": 310,
+        "x": 630,
+        "y": 800
+      },
       "bounds": {
         "height": 250,
         "width": 400,
@@ -150,6 +192,12 @@
       "label": "prompt-tracer/src"
     },
     {
+      "_headerBounds": {
+        "height": 30,
+        "width": 310,
+        "x": 1230,
+        "y": 400
+      },
       "bounds": {
         "height": 400,
         "width": 400,
@@ -167,6 +215,12 @@
       "label": "prompts"
     },
     {
+      "_headerBounds": {
+        "height": 30,
+        "width": 460,
+        "x": 1830,
+        "y": 800
+      },
       "bounds": {
         "height": 400,
         "width": 550,
@@ -186,6 +240,12 @@
       "label": "src"
     },
     {
+      "_headerBounds": {
+        "height": 30,
+        "width": 160,
+        "x": 248.1302996332555,
+        "y": 800
+      },
       "bounds": {
         "height": 250,
         "width": 250,
@@ -200,6 +260,12 @@
       "label": "src/bootstrap"
     },
     {
+      "_headerBounds": {
+        "height": 30,
+        "width": 460,
+        "x": 30,
+        "y": 800
+      },
       "bounds": {
         "height": 400,
         "width": 550,
@@ -218,6 +284,12 @@
       "label": "src/core"
     },
     {
+      "_headerBounds": {
+        "height": 30,
+        "width": 310,
+        "x": 630,
+        "y": 1200
+      },
       "bounds": {
         "height": 250,
         "width": 400,
@@ -233,6 +305,12 @@
       "label": "src/server"
     },
     {
+      "_headerBounds": {
+        "height": 30,
+        "width": 310,
+        "x": 1230,
+        "y": 800
+      },
       "bounds": {
         "height": 400,
         "width": 400,
@@ -249,6 +327,12 @@
       "label": "src/test"
     },
     {
+      "_headerBounds": {
+        "height": 30,
+        "width": 160,
+        "x": 1830,
+        "y": 1200
+      },
       "bounds": {
         "height": 250,
         "width": 250,
@@ -263,6 +347,12 @@
       "label": "src/types"
     },
     {
+      "_headerBounds": {
+        "height": 30,
+        "width": 160,
+        "x": 2430,
+        "y": 1200
+      },
       "bounds": {
         "height": 250,
         "width": 250,
@@ -277,6 +367,12 @@
       "label": "src/utils"
     },
     {
+      "_headerBounds": {
+        "height": 30,
+        "width": 160,
+        "x": 30,
+        "y": 1600
+      },
       "bounds": {
         "height": 250,
         "width": 250,
@@ -291,6 +387,12 @@
       "label": "src/webview"
     },
     {
+      "_headerBounds": {
+        "height": 30,
+        "width": 310,
+        "x": 630,
+        "y": 1200
+      },
       "bounds": {
         "height": 400,
         "width": 400,
@@ -308,6 +410,12 @@
       "label": "synapse-visual-architecture-0.1.7/extension"
     },
     {
+      "_headerBounds": {
+        "height": 30,
+        "width": 310,
+        "x": 1230,
+        "y": 1600
+      },
       "bounds": {
         "height": 250,
         "width": 400,
@@ -323,6 +431,12 @@
       "label": "synapse-visual-architecture-0.1.7/extension/prompt-tracer"
     },
     {
+      "_headerBounds": {
+        "height": 30,
+        "width": 310,
+        "x": 1830,
+        "y": 1600
+      },
       "bounds": {
         "height": 250,
         "width": 400,
@@ -338,6 +452,12 @@
       "label": "synapse-visual-architecture-0.1.7/extension/prompt-tracer/src"
     },
     {
+      "_headerBounds": {
+        "height": 30,
+        "width": 310,
+        "x": 2430,
+        "y": 1200
+      },
       "bounds": {
         "height": 400,
         "width": 400,
@@ -354,6 +474,12 @@
       "label": "synapse-visual-architecture-0.1.7/extension/prompts"
     },
     {
+      "_headerBounds": {
+        "height": 30,
+        "width": 160,
+        "x": 30,
+        "y": 2400
+      },
       "bounds": {
         "height": 250,
         "width": 250,
@@ -368,6 +494,12 @@
       "label": "synapse-visual-architecture-0.1.7/extension/ui"
     },
     {
+      "_headerBounds": {
+        "height": 30,
+        "width": 160,
+        "x": 630,
+        "y": 2400
+      },
       "bounds": {
         "height": 250,
         "width": 250,
@@ -1374,7 +1506,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_0",
-      "id": "edge_auto_1771392562974_949",
+      "id": "edge_auto_1771394588585_786",
       "label": "ref",
       "to": "node_38",
       "type": "dependency",
@@ -1387,7 +1519,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_0",
-      "id": "edge_auto_1771392562974_84",
+      "id": "edge_auto_1771394588585_180",
       "label": "ref",
       "to": "node_71",
       "type": "dependency",
@@ -1400,7 +1532,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_0",
-      "id": "edge_auto_1771392562974_350",
+      "id": "edge_auto_1771394588585_464",
       "label": "ref",
       "to": "node_30",
       "type": "dependency",
@@ -1413,7 +1545,7 @@
     {
       "_validationReason": "Circular dependency detected",
       "from": "node_4",
-      "id": "edge_auto_1771392562974_251",
+      "id": "edge_auto_1771394588585_856",
       "label": "ref",
       "to": "node_71",
       "type": "dependency",
@@ -1426,7 +1558,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_4",
-      "id": "edge_auto_1771392562974_638",
+      "id": "edge_auto_1771394588585_65",
       "label": "ref",
       "to": "node_30",
       "type": "dependency",
@@ -1439,7 +1571,7 @@
     {
       "_validationReason": "Circular dependency detected",
       "from": "node_5",
-      "id": "edge_auto_1771392562974_987",
+      "id": "edge_auto_1771394588585_969",
       "label": "ref",
       "to": "node_71",
       "type": "dependency",
@@ -1452,7 +1584,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_5",
-      "id": "edge_auto_1771392562974_751",
+      "id": "edge_auto_1771394588585_400",
       "label": "ref",
       "to": "node_30",
       "type": "dependency",
@@ -1465,7 +1597,7 @@
     {
       "_validationReason": "Circular dependency detected",
       "from": "node_21",
-      "id": "edge_auto_1771392562974_506",
+      "id": "edge_auto_1771394588585_393",
       "label": "ref",
       "to": "node_27",
       "type": "dependency",
@@ -1478,7 +1610,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_22",
-      "id": "edge_auto_1771392562974_9",
+      "id": "edge_auto_1771394588585_457",
       "label": "ref",
       "to": "node_29",
       "type": "dependency",
@@ -1491,7 +1623,7 @@
     {
       "_validationReason": "Circular dependency detected",
       "from": "node_25",
-      "id": "edge_auto_1771392562974_678",
+      "id": "edge_auto_1771394588585_540",
       "label": "ref",
       "to": "node_28",
       "type": "dependency",
@@ -1504,7 +1636,7 @@
     {
       "_validationReason": "Circular dependency detected",
       "from": "node_25",
-      "id": "edge_auto_1771392562974_694",
+      "id": "edge_auto_1771394588585_912",
       "label": "ref",
       "to": "node_21",
       "type": "dependency",
@@ -1517,7 +1649,7 @@
     {
       "_validationReason": "Circular dependency detected",
       "from": "node_25",
-      "id": "edge_auto_1771392562974_711",
+      "id": "edge_auto_1771394588585_348",
       "label": "ref",
       "to": "node_27",
       "type": "dependency",
@@ -1530,7 +1662,7 @@
     {
       "_validationReason": "Circular dependency detected",
       "from": "node_27",
-      "id": "edge_auto_1771392562974_146",
+      "id": "edge_auto_1771394588585_946",
       "label": "ref",
       "to": "node_25",
       "type": "dependency",
@@ -1543,7 +1675,7 @@
     {
       "_validationReason": "Circular dependency detected",
       "from": "node_28",
-      "id": "edge_auto_1771392562974_463",
+      "id": "edge_auto_1771394588585_366",
       "label": "ref",
       "to": "node_27",
       "type": "dependency",
@@ -1556,7 +1688,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_29",
-      "id": "edge_auto_1771392562974_840",
+      "id": "edge_auto_1771394588585_872",
       "label": "ref",
       "to": "node_27",
       "type": "dependency",
@@ -1569,7 +1701,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_36",
-      "id": "edge_auto_1771392562974_187",
+      "id": "edge_auto_1771394588585_688",
       "label": "ref",
       "to": "node_51",
       "type": "dependency",
@@ -1582,7 +1714,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_47",
-      "id": "edge_auto_1771392562974_242",
+      "id": "edge_auto_1771394588585_622",
       "label": "ref",
       "to": "node_75",
       "type": "dependency",
@@ -1595,7 +1727,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_48",
-      "id": "edge_auto_1771392562974_535",
+      "id": "edge_auto_1771394588585_177",
       "label": "ref",
       "to": "node_62",
       "type": "dependency",
@@ -1608,7 +1740,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_48",
-      "id": "edge_auto_1771392562974_886",
+      "id": "edge_auto_1771394588585_242",
       "label": "ref",
       "to": "node_57",
       "type": "dependency",
@@ -1621,7 +1753,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_52",
-      "id": "edge_auto_1771392562974_49",
+      "id": "edge_auto_1771394588585_515",
       "label": "ref",
       "to": "node_57",
       "type": "dependency",
@@ -1634,7 +1766,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_54",
-      "id": "edge_auto_1771392562974_402",
+      "id": "edge_auto_1771394588585_510",
       "label": "ref",
       "to": "node_70",
       "type": "dependency",
@@ -1647,7 +1779,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_54",
-      "id": "edge_auto_1771392562974_237",
+      "id": "edge_auto_1771394588585_402",
       "label": "ref",
       "to": "node_57",
       "type": "dependency",
@@ -1660,7 +1792,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_54",
-      "id": "edge_auto_1771392562974_502",
+      "id": "edge_auto_1771394588585_379",
       "label": "ref",
       "to": "node_53",
       "type": "dependency",
@@ -1673,7 +1805,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_54",
-      "id": "edge_auto_1771392562974_940",
+      "id": "edge_auto_1771394588585_122",
       "label": "ref",
       "to": "node_62",
       "type": "dependency",
@@ -1686,7 +1818,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_57",
-      "id": "edge_auto_1771392562974_745",
+      "id": "edge_auto_1771394588585_849",
       "label": "ref",
       "to": "node_61",
       "type": "dependency",
@@ -1699,7 +1831,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_57",
-      "id": "edge_auto_1771392562974_595",
+      "id": "edge_auto_1771394588585_959",
       "label": "ref",
       "to": "node_60",
       "type": "dependency",
@@ -1712,7 +1844,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_57",
-      "id": "edge_auto_1771392562974_832",
+      "id": "edge_auto_1771394588585_802",
       "label": "ref",
       "to": "node_58",
       "type": "dependency",
@@ -1725,7 +1857,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_57",
-      "id": "edge_auto_1771392562974_928",
+      "id": "edge_auto_1771394588585_924",
       "label": "ref",
       "to": "node_68",
       "type": "dependency",
@@ -1738,7 +1870,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_60",
-      "id": "edge_auto_1771392562974_966",
+      "id": "edge_auto_1771394588585_539",
       "label": "ref",
       "to": "node_68",
       "type": "dependency",
@@ -1749,16 +1881,22 @@
       }
     },
     {
+      "_validationReason": "Appropriate architectural relationship.",
       "from": "node_60",
-      "id": "edge_auto_1771392562974_84",
+      "id": "edge_auto_1771394588585_767",
       "label": "ref",
       "to": "node_69",
-      "type": "dependency"
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
     },
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_61",
-      "id": "edge_auto_1771392562974_579",
+      "id": "edge_auto_1771394588585_675",
       "label": "ref",
       "to": "node_68",
       "type": "dependency",
@@ -1771,7 +1909,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_63",
-      "id": "edge_auto_1771392562974_960",
+      "id": "edge_auto_1771394588585_880",
       "label": "ref",
       "to": "node_61",
       "type": "dependency",
@@ -1784,7 +1922,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_63",
-      "id": "edge_auto_1771392562974_983",
+      "id": "edge_auto_1771394588585_733",
       "label": "ref",
       "to": "node_59",
       "type": "dependency",
@@ -1797,7 +1935,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_64",
-      "id": "edge_auto_1771392562974_917",
+      "id": "edge_auto_1771394588585_214",
       "label": "ref",
       "to": "node_61",
       "type": "dependency",
@@ -1810,7 +1948,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_64",
-      "id": "edge_auto_1771392562974_76",
+      "id": "edge_auto_1771394588585_667",
       "label": "ref",
       "to": "node_59",
       "type": "dependency",
@@ -1821,16 +1959,22 @@
       }
     },
     {
+      "_validationReason": "Appropriate architectural relationship.",
       "from": "node_65",
-      "id": "edge_auto_1771392562974_251",
+      "id": "edge_auto_1771394588585_755",
       "label": "ref",
       "to": "node_58",
-      "type": "dependency"
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
     },
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_66",
-      "id": "edge_auto_1771392562974_555",
+      "id": "edge_auto_1771394588585_224",
       "label": "ref",
       "to": "node_61",
       "type": "dependency",
@@ -1843,7 +1987,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_67",
-      "id": "edge_auto_1771392562974_900",
+      "id": "edge_auto_1771394588585_248",
       "label": "ref",
       "to": "node_69",
       "type": "dependency",
@@ -1856,7 +2000,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_70",
-      "id": "edge_auto_1771392562974_261",
+      "id": "edge_auto_1771394588585_895",
       "label": "ref",
       "to": "node_68",
       "type": "dependency",
@@ -1869,7 +2013,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_70",
-      "id": "edge_auto_1771392562974_136",
+      "id": "edge_auto_1771394588585_482",
       "label": "ref",
       "to": "node_58",
       "type": "dependency",
@@ -1882,7 +2026,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_70",
-      "id": "edge_auto_1771392562974_346",
+      "id": "edge_auto_1771394588585_254",
       "label": "ref",
       "to": "node_61",
       "type": "dependency",
@@ -1895,7 +2039,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_70",
-      "id": "edge_auto_1771392562974_792",
+      "id": "edge_auto_1771394588585_710",
       "label": "ref",
       "to": "node_60",
       "type": "dependency",
@@ -1908,7 +2052,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_70",
-      "id": "edge_auto_1771392562974_425",
+      "id": "edge_auto_1771394588585_940",
       "label": "ref",
       "to": "node_57",
       "type": "dependency",
@@ -1921,7 +2065,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_70",
-      "id": "edge_auto_1771392562974_813",
+      "id": "edge_auto_1771394588585_816",
       "label": "ref",
       "to": "node_53",
       "type": "dependency",
@@ -1934,7 +2078,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_71",
-      "id": "edge_auto_1771392562974_120",
+      "id": "edge_auto_1771394588585_176",
       "label": "ref",
       "to": "node_30",
       "type": "dependency",
@@ -1947,7 +2091,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_79",
-      "id": "edge_auto_1771392562974_541",
+      "id": "edge_auto_1771394588585_207",
       "label": "ref",
       "to": "node_75",
       "type": "dependency",
@@ -1960,7 +2104,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_80",
-      "id": "edge_auto_1771392562974_850",
+      "id": "edge_auto_1771394588585_232",
       "label": "ref",
       "to": "node_62",
       "type": "dependency",
@@ -1973,7 +2117,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_80",
-      "id": "edge_auto_1771392562974_258",
+      "id": "edge_auto_1771394588585_322",
       "label": "ref",
       "to": "node_57",
       "type": "dependency",
@@ -2032,8 +2176,8 @@
       },
       "id": "node_0",
       "position": {
-        "x": 50,
-        "y": 50
+        "x": -67,
+        "y": 130
       },
       "status": "proposed",
       "type": "documentation",
@@ -2071,8 +2215,8 @@
       },
       "id": "node_1",
       "position": {
-        "x": 200,
-        "y": 50
+        "x": 83,
+        "y": 130
       },
       "status": "proposed",
       "type": "documentation",
@@ -2106,8 +2250,8 @@
       },
       "id": "node_2",
       "position": {
-        "x": 350,
-        "y": 50
+        "x": 233,
+        "y": 130
       },
       "status": "proposed",
       "type": "documentation",
@@ -2196,8 +2340,8 @@
       },
       "id": "node_3",
       "position": {
-        "x": 500,
-        "y": 50
+        "x": 383,
+        "y": 130
       },
       "status": "proposed",
       "type": "documentation",
@@ -2218,6 +2362,7 @@
         "summary": {
           "classes": [
             "🧠 SYNAPSE: VS Code Visual Architecture Engine",
+            "🆕 v0.2.3 변경 사항",
             "🚀 Key Features",
             "🎥 데모 비디오",
             "📸 스크린샷",
@@ -2258,8 +2403,8 @@
       },
       "id": "node_4",
       "position": {
-        "x": 650,
-        "y": 50
+        "x": 533,
+        "y": 130
       },
       "status": "proposed",
       "type": "documentation",
@@ -2280,6 +2425,7 @@
         "summary": {
           "classes": [
             "🧠 SYNAPSE: VS Code Visual Architecture Engine",
+            "🆕 What's New in v0.2.3",
             "🚀 Key Features",
             "🎥 Demo Video",
             "📸 Screenshots",
@@ -2320,8 +2466,8 @@
       },
       "id": "node_5",
       "position": {
-        "x": 50,
-        "y": 200
+        "x": -67,
+        "y": 280
       },
       "status": "proposed",
       "type": "documentation",
@@ -2349,8 +2495,8 @@
       },
       "id": "node_6",
       "position": {
-        "x": 200,
-        "y": 200
+        "x": 83,
+        "y": 280
       },
       "status": "proposed",
       "type": "documentation",
@@ -2376,8 +2522,8 @@
       },
       "id": "node_7",
       "position": {
-        "x": 350,
-        "y": 600
+        "x": 233,
+        "y": 680
       },
       "status": "proposed",
       "type": "source",
@@ -2412,8 +2558,8 @@
       },
       "id": "node_8",
       "position": {
-        "x": 500,
-        "y": 200
+        "x": 383,
+        "y": 280
       },
       "status": "proposed",
       "type": "source",
@@ -2439,8 +2585,8 @@
       },
       "id": "node_9",
       "position": {
-        "x": 650,
-        "y": 600
+        "x": 533,
+        "y": 680
       },
       "status": "proposed",
       "type": "source",
@@ -2466,8 +2612,8 @@
       },
       "id": "node_10",
       "position": {
-        "x": 50,
-        "y": 750
+        "x": -67,
+        "y": 830
       },
       "status": "proposed",
       "type": "config",
@@ -2493,8 +2639,8 @@
       },
       "id": "node_11",
       "position": {
-        "x": 200,
-        "y": 750
+        "x": 83,
+        "y": 830
       },
       "status": "proposed",
       "type": "config",
@@ -2520,8 +2666,8 @@
       },
       "id": "node_12",
       "position": {
-        "x": 350,
-        "y": 750
+        "x": 233,
+        "y": 830
       },
       "status": "proposed",
       "type": "source",
@@ -2556,8 +2702,8 @@
       },
       "id": "node_13",
       "position": {
-        "x": 500,
-        "y": 350
+        "x": 383,
+        "y": 430
       },
       "status": "proposed",
       "type": "source",
@@ -2596,8 +2742,8 @@
       },
       "id": "node_14",
       "position": {
-        "x": 650,
-        "y": 750
+        "x": 533,
+        "y": 830
       },
       "status": "proposed",
       "type": "source",
@@ -2623,8 +2769,8 @@
       },
       "id": "node_15",
       "position": {
-        "x": 50,
-        "y": 900
+        "x": -67,
+        "y": 980
       },
       "status": "proposed",
       "type": "config",
@@ -2656,8 +2802,8 @@
       },
       "id": "node_16",
       "position": {
-        "x": 200,
-        "y": 500
+        "x": 83,
+        "y": 580
       },
       "status": "proposed",
       "type": "documentation",
@@ -2691,8 +2837,8 @@
       },
       "id": "node_17",
       "position": {
-        "x": 350,
-        "y": 500
+        "x": 233,
+        "y": 580
       },
       "status": "proposed",
       "type": "documentation",
@@ -2724,8 +2870,8 @@
       },
       "id": "node_18",
       "position": {
-        "x": 500,
-        "y": 500
+        "x": 383,
+        "y": 580
       },
       "status": "proposed",
       "type": "documentation",
@@ -2759,8 +2905,8 @@
       },
       "id": "node_19",
       "position": {
-        "x": 650,
-        "y": 500
+        "x": 533,
+        "y": 580
       },
       "status": "proposed",
       "type": "documentation",
@@ -2805,8 +2951,8 @@
       },
       "id": "node_20",
       "position": {
-        "x": 50,
-        "y": 1050
+        "x": -67,
+        "y": 1130
       },
       "status": "proposed",
       "type": "source",
@@ -3652,6 +3798,12 @@
             "charAt",
             "slice",
             "renderDebugInfo",
+            "showInputModal",
+            "select",
+            "callback",
+            "close",
+            "handleConfirm",
+            "handleCancel",
             "every",
             "some",
             "renameCluster",
@@ -6040,6 +6192,12 @@
             "charAt",
             "slice",
             "renderDebugInfo",
+            "showInputModal",
+            "select",
+            "callback",
+            "close",
+            "handleConfirm",
+            "handleCancel",
             "every",
             "some",
             "renameCluster",

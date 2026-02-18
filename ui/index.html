@@ -486,6 +486,22 @@
         </div>
     </div>
 
+    <!-- Generic Input Dialog -->
+    <div id="input-dialog"
+        style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:var(--bg-panel); border:1px solid var(--border); padding:20px; z-index:4000; box-shadow:0 10px 30px rgba(0,0,0,0.5); border-radius:8px; min-width:300px;">
+        <h3 id="input-dialog-title" style="margin-top:0; color:var(--accent);">Input</h3>
+        <div style="margin-bottom:15px;">
+            <input type="text" id="input-dialog-value"
+                style="width:100%; padding:8px; background:#1d2021; border:1px solid #504945; color:var(--fg-main); border-radius:4px;"
+                placeholder="">
+        </div>
+        <div style="display:flex; justify-content:flex-end; gap:10px;">
+            <button id="btn-cancel-input" class="btn">Cancel</button>
+            <button id="btn-confirm-input" class="btn"
+                style="background:var(--accent); color:#282828; font-weight:bold;">OK</button>
+        </div>
+    </div>
+
     <script>
         // 전역 파일 미리보기 함수
         window.showFilePreview = async function (filePath) {

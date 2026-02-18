@@ -2227,6 +2227,44 @@ class CanvasEngine {
         }
     }
 
+    showInputModal(title, defaultValue, callback) {
+        const dialog = document.getElementById('input-dialog');
+        const titleEl = document.getElementById('input-dialog-title');
+        const inputEl = document.getElementById('input-dialog-value');
+        const btnConfirm = document.getElementById('btn-confirm-input');
+        const btnCancel = document.getElementById('btn-cancel-input');
+
+        if (!dialog || !inputEl || !btnConfirm || !btnCancel) {
+            console.error('[SYNAPSE] Input dialog elements not found');
+            return;
+        }
+
+        titleEl.textContent = title;
+        inputEl.value = defaultValue;
+        dialog.style.display = 'block';
+        inputEl.focus();
+        inputEl.select();
+
+        const close = (val) => {
+            btnConfirm.removeEventListener('click', handleConfirm);
+            btnCancel.removeEventListener('click', handleCancel);
+            inputEl.removeEventListener('keyup', handleKey);
+            dialog.style.display = 'none';
+            if (callback) callback(val);
+        };
+
+        const handleConfirm = () => close(inputEl.value);
+        const handleCancel = () => close(null);
+        const handleKey = (e) => {
+            if (e.key === 'Enter') handleConfirm();
+            if (e.key === 'Escape') handleCancel();
+        };
+
+        btnConfirm.addEventListener('click', handleConfirm);
+        btnCancel.addEventListener('click', handleCancel);
+        inputEl.addEventListener('keyup', handleKey);
+    }
+
     groupSelection() {
         if (this.selectedNodes.size < 2) {
             console.warn('[SYNAPSE] Select at least 2 nodes to group');
@@ -2248,34 +2286,35 @@ class CanvasEngine {
             }
         }
 
-        const label = prompt("Enter group name:", `Group ${this.clusters.length + 1}`);
-        if (label === null) return; // Cancelled
+        this.showInputModal("Enter group name:", `Group ${this.clusters.length + 1}`, (label) => {
+            if (label === null) return; // Cancelled
 
-        const clusterId = `cluster_${Date.now()}`;
-        const color = this.clusterColors[this.colorCounter % this.clusterColors.length];
-        this.colorCounter++;
+            const clusterId = `cluster_${Date.now()}`;
+            const color = this.clusterColors[this.colorCounter % this.clusterColors.length];
+            this.colorCounter++;
 
-        const newCluster = {
-            id: clusterId,
-            label: label || `Group ${this.clusters.length + 1}`,
-            color: color,
-            collapsed: false
-        };
+            const newCluster = {
+                id: clusterId,
+                label: label || `Group ${this.clusters.length + 1}`,
+                color: color,
+                collapsed: false
+            };
 
-        this.clusters.push(newCluster);
-        for (const node of this.selectedNodes) {
-            if (!node.data) node.data = {};
-            node.data.cluster_id = clusterId;
-            node.cluster_id = clusterId; // 하위 호환성 유지
-        }
+            this.clusters.push(newCluster);
+            for (const node of this.selectedNodes) {
+                if (!node.data) node.data = {};
+                node.data.cluster_id = clusterId;
+                node.cluster_id = clusterId; // 하위 호환성 유지
+            }
 
-        console.log('[SYNAPSE] Created cluster:', clusterId);
+            console.log('[SYNAPSE] Created cluster:', clusterId);
 
-        // 침범한 노드(소속되지 않은 노드) 밀어내기
-        this.repositionIntruders(clusterId);
+            // 침범한 노드(소속되지 않은 노드) 밀어내기
+            this.repositionIntruders(clusterId);
 
-        this.saveState(); // 클러스터 생성 후 저장
-        this.takeSnapshot(`Group Created: ${newCluster.label}`);
+            this.saveState(); // 클러스터 생성 후 저장
+            this.takeSnapshot(`Group Created: ${newCluster.label}`);
+        });
     }
 
     ungroupSelection() {

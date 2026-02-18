@@ -14,8 +14,8 @@
     {
       "_headerBounds": {
         "height": 30,
-        "width": 2610.000000000006,
-        "x": 1871.8638819969624,
+        "width": 2610.0000000000064,
+        "x": 1872.8628157089406,
         "y": 995.3410787247694
       },
       "bounds": {
@@ -110,7 +110,7 @@
         "node_20",
         "node_21"
       ],
-      "collapsed": true,
+      "collapsed": false,
       "id": "storage_cluster",
       "label": "📦 Ghost Nodes (Storage)"
     }
@@ -290,7 +290,7 @@
     {
       "_validationReason": "Circular dependency detected",
       "from": "node_0",
-      "id": "edge_auto_1771393505953_7",
+      "id": "edge_auto_1771393635223_615",
       "label": "ref",
       "to": "node_6",
       "type": "dependency",
@@ -303,7 +303,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_1",
-      "id": "edge_auto_1771393505953_103",
+      "id": "edge_auto_1771393635224_669",
       "label": "ref",
       "to": "node_8",
       "type": "dependency",
@@ -316,7 +316,7 @@
     {
       "_validationReason": "Circular dependency detected",
       "from": "node_4",
-      "id": "edge_auto_1771393505953_537",
+      "id": "edge_auto_1771393635224_939",
       "label": "ref",
       "to": "node_7",
       "type": "dependency",
@@ -329,7 +329,7 @@
     {
       "_validationReason": "Circular dependency detected",
       "from": "node_4",
-      "id": "edge_auto_1771393505953_665",
+      "id": "edge_auto_1771393635224_480",
       "label": "ref",
       "to": "node_0",
       "type": "dependency",
@@ -342,7 +342,7 @@
     {
       "_validationReason": "Circular dependency detected",
       "from": "node_4",
-      "id": "edge_auto_1771393505953_225",
+      "id": "edge_auto_1771393635224_528",
       "label": "ref",
       "to": "node_6",
       "type": "dependency",
@@ -355,7 +355,7 @@
     {
       "_validationReason": "Circular dependency detected",
       "from": "node_6",
-      "id": "edge_auto_1771393505953_414",
+      "id": "edge_auto_1771393635224_7",
       "label": "ref",
       "to": "node_4",
       "type": "dependency",
@@ -368,7 +368,7 @@
     {
       "_validationReason": "Circular dependency detected",
       "from": "node_7",
-      "id": "edge_auto_1771393505953_589",
+      "id": "edge_auto_1771393635224_705",
       "label": "ref",
       "to": "node_6",
       "type": "dependency",
@@ -381,7 +381,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_8",
-      "id": "edge_auto_1771393505953_156",
+      "id": "edge_auto_1771393635224_70",
       "label": "ref",
       "to": "node_6",
       "type": "dependency",
@@ -394,7 +394,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_15",
-      "id": "edge_auto_1771393505953_149",
+      "id": "edge_auto_1771393635224_14",
       "label": "ref",
       "to": "node_14",
       "type": "dependency",
@@ -431,7 +431,7 @@
       },
       "id": "node_0",
       "position": {
-        "x": 1891.8638819969624,
+        "x": 1892.8628157089406,
         "y": 1395.34107872477
       },
       "status": "proposed",
@@ -471,7 +471,7 @@
       },
       "id": "node_1",
       "position": {
-        "x": 1891.8638819969624,
+        "x": 1892.8628157089406,
         "y": 1045.3410787247694
       },
       "status": "proposed",
@@ -567,7 +567,7 @@
       },
       "id": "node_4",
       "position": {
-        "x": 2961.4342247712875,
+        "x": 2962.4331584832657,
         "y": 1395.34107872477
       },
       "status": "proposed",
@@ -633,7 +633,7 @@
       },
       "id": "node_6",
       "position": {
-        "x": 2591.863881996961,
+        "x": 2592.8628157089393,
         "y": 1045.3410787247694
       },
       "status": "proposed",
@@ -667,7 +667,7 @@
       },
       "id": "node_7",
       "position": {
-        "x": 3291.863881996962,
+        "x": 3292.86281570894,
         "y": 1395.34107872477
       },
       "status": "proposed",
@@ -705,7 +705,7 @@
       },
       "id": "node_8",
       "position": {
-        "x": 3641.863881996961,
+        "x": 3642.8628157089393,
         "y": 1545.3410787247706
       },
       "status": "proposed",
@@ -819,7 +819,7 @@
       },
       "id": "node_12",
       "position": {
-        "x": 4341.863881996968,
+        "x": 4342.862815708947,
         "y": 1545.3410787247706
       },
       "status": "proposed",
@@ -1028,7 +1028,7 @@
       },
       "id": "node_19",
       "position": {
-        "x": 3127.6681674361516,
+        "x": 3128.66710114813,
         "y": 751.2174295281854
       },
       "status": "proposed",
@@ -1055,7 +1055,7 @@
       },
       "id": "node_20",
       "position": {
-        "x": 3327.6681674361516,
+        "x": 3328.66710114813,
         "y": 801.2174295281854
       },
       "status": "proposed",

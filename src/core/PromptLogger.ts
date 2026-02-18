@@ -45,7 +45,7 @@ export class PromptLogger {
     /**
      * 프롬프트를 기존 파일에 추가 (Context Log)
      */
-    public async appendLog(projectRoot: string, fileName: string, prompt: string): Promise<string> {
+    public async appendLog(projectRoot: string, fileName: string, prompt: string, tag?: string, snapshot?: any): Promise<string> {
         const promptsDir = path.join(projectRoot, 'prompts');
         if (!fs.existsSync(promptsDir)) {
             fs.mkdirSync(promptsDir, { recursive: true });
@@ -62,7 +62,13 @@ export class PromptLogger {
         }
 
         // 구분선 및 새 엔트리 추가
-        contentToAppend += `\n---\n\n## 📅 ${timestamp}\n\n${prompt}\n`;
+        const tagDisplay = tag ? ` ${tag}` : '';
+        contentToAppend += `\n---\n\n## 📅 ${timestamp}${tagDisplay}\n\n${prompt}\n`;
+
+        // 스냅샷 추가
+        if (snapshot) {
+            contentToAppend += `\n<details><summary>View Snapshot</summary>\n<!-- synapse-snapshot: ${JSON.stringify(snapshot)} -->\n</details>\n`;
+        }
 
         fs.appendFileSync(filePath, contentToAppend, 'utf-8');
         console.log(`[SYNAPSE] Appended log to: ${filePath}`);

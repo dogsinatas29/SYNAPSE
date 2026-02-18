@@ -23,7 +23,11 @@ SYNAPSE는 **Google Antigravity** 및 **Visual Studio Code** 사용자를 위해
 - **💾 Persistence**: 모든 시각적 상태를 `project_state.json`에 영구 저장 및 Git 관리.
 - **🛠️ Standalone Bridge**: VS Code 없이 브라우저 단독 구동 모드 지원.
 - **💾 Prompt Traceability**: 캔버스에서 직접 프롬프트와 설계 결정을 기록 및 저장 (자동 저장 지원).
-- **🔌 강화된 LSP 연동 (New! 🚀)**: `GEMINI.md`에서 코드 Hover, 정의 이동(Definition), 실시간 유효성 검사를 통해 설계와 실제 코드를 강력하게 연결.
+- **🧠 맥락 인식형 로깅 (New in v0.2.6! 🚀)**:
+    - **노드 자동 바인딩 (Auto-Binding)**: 노드를 선택하면 로그가 해당 컴포넌트에 자동으로 초점을 맞춥니다.
+    - **시각적 태깅 (Visual Tagging)**: 로그의 성격을 분류합니다 (`[Discovery]`, `[Reasoning]`, `[Action]`).
+    - **상태 스냅샷 (State Snapshotting)**: 현재 캔버스의 상세 뷰(Zoom/Pan)를 로그와 함께 저장하여 나중에 복원할 수 있습니다.
+- **🔌 강화된 LSP 연동**: `GEMINI.md`에서 코드 Hover, 정의 이동(Definition), 실시간 유효성 검사를 통해 설계와 실제 코드를 강력하게 연결.
 
 ## 🎥 데모 비디오
 https://www.youtube.com/watch?v=Va4vZWkqC8E
@@ -118,6 +122,13 @@ npm run dev:ui
 - **롤백**: 시계 아이콘을 클릭해 설계 히스토리 확인 및 복원.
 - **프롬프트 기록**: `Ctrl+Alt+M`으로 설계 아이디어를 캔버스에 즉시 노드로 추가.
 
+### 🧠 로그 프롬프트 & 맥락 (New in v0.2.6)
+1.  **노드 선택** (선택 사항): 로그를 남길 대상 노드를 클릭합니다.
+2.  **실행**: `Ctrl+Alt+M`을 누릅니다.
+3.  **태깅**: 생각의 종류(`[Discovery]`, `[Reasoning]` 등)를 선택합니다.
+4.  **저장**: `context.md`에 추가(권장)하거나 새 파일로 저장합니다.
+    -   *보너스*: 현재 보고 있는 캔버스 화면이 자동으로 함께 저장됩니다!
+
 ### 🧹 데이터 정형화 원칙
 - **분리**: 로직은 `GEMINI.md`에, 좌표는 `project_state.json`에 저장됩니다.
 - **정규화**: 정렬된 JSON 키를 통해 Git Diff를 최소화합니다.
@@ -133,6 +144,10 @@ npm run dev:ui
 복잡한 시스템을 선으로 연결하는 단순한 행위가 사실은 가장 고차원적인 아키텍처 설계라는 믿음으로 제작되었습니다.
 
 ## 🆕 버전 히스토리 (Version History)
+
+### v0.2.6
+- **🧠 Context UI**: `Log Prompt` (`Ctrl+Alt+M`) 기능이 대폭 강화되었습니다. (태깅, 자동 바인딩, 뷰 스냅샷)
+- **📄 context.md**: 모든 아키텍처 결정을 한 곳에서 관리하고, 클릭 한 번으로 접근 및 뷰 복원이 가능해졌습니다.
 
 ### v0.2.5
 - **🧹 정리**: 프로젝트 루트의 불필요한 파일과 예제 아티팩트를 삭제했습니다.

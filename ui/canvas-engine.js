@@ -3754,6 +3754,29 @@ class CanvasEngine {
         }
     }
 
+    /**
+     * Send current context data to extension
+     */
+    sendContextData() {
+        const context = {
+            selectedNode: this.selectedNode ? {
+                id: this.selectedNode.id,
+                label: this.selectedNode.data.label,
+                file: this.selectedNode.data.file,
+                type: this.selectedNode.type
+            } : null,
+            viewState: {
+                zoom: this.transform.zoom,
+                offsetX: this.transform.offsetX,
+                offsetY: this.transform.offsetY
+            }
+        };
+        console.log('[SYNAPSE] Sending context data:', context);
+        if (typeof vscode !== 'undefined') {
+            vscode.postMessage({ command: 'contextData', data: context });
+        }
+    }
+
     renderDebugInfo() {
         const ctx = this.ctx;
         ctx.save();
@@ -3847,6 +3870,12 @@ function initCanvas() {
             case 'setBaseline':
                 engine.baselineNodes = message.data.nodes;
                 engine.render();
+                break;
+            case 'requestContext':
+                engine.sendContextData();
+                break;
+            case 'requestContext':
+                engine.sendContextData();
                 break;
             case 'clearBaseline':
                 engine.baselineNodes = null;

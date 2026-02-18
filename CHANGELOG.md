@@ -1,3 +1,21 @@
+# Release Notes - v0.2.6
+
+> **"Context is King"**
+
+Version 0.2.6 introduces a major upgrade to the **Log Prompt** workflow, making it a powerful tool for capturing the "Why" behind your architecture.
+
+## 🌟 New Features
+- **Context-Aware Logging (`Ctrl+Alt+M`)**:
+    - **Node Auto-Binding**: Selecting a node automatically focuses the log on that component.
+    - **Visual Tagging**: Categorize logs (`[Discovery]`, `[Reasoning]`, `[Action]`, `[Fix]`).
+    - **State Snapshotting**: Saves the exact canvas view (Zoom/Pan) with the log for future restoration.
+    - **One-Click Access**: Open `context.md` directly from the notification.
+
+## 📄 Documentation
+- Updated `README.md` and `README.ko.md` with new Context UI guides.
+
+---
+
 # Release Notes - v0.2.5
 
 ## 🧹 Housekeeping & Cleanup

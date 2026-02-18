@@ -143,12 +143,30 @@ export async function activate(context: vscode.ExtensionContext) {
                     let title = args?.title;
                     let projectRoot = args?.workspacePath;
 
-                    // 1. Interactive Mode (Keybinding triggered)
+                    // 1. Fetch Context (Selection & View State)
+                    let contextData: any = null;
+                    if (CanvasPanel.currentPanel) {
+                        try {
+                            contextData = await CanvasPanel.currentPanel.getCanvasContext();
+                            console.log('[SYNAPSE] Context data received:', contextData);
+                        } catch (e) {
+                            console.warn('[SYNAPSE] Failed to get canvas context:', e);
+                        }
+                    }
+
+                    // 2. Interactive Mode (Keybinding triggered)
                     if (!promptContent) {
                         console.log('[SYNAPSE] Prompt content missing, entering interactive mode');
+
+                        // Dynamic Placeholder
+                        let placeholder = 'Enter your design decision, goal, or reasoning...';
+                        if (contextData?.selectedNode) {
+                            placeholder = `(Selected: ${contextData.selectedNode.label}) Enter your thought...`;
+                        }
+
                         // Get Prompt Content
                         promptContent = await vscode.window.showInputBox({
-                            placeHolder: 'Enter your design decision, goal, or reasoning...',
+                            placeHolder: placeholder,
                             prompt: 'Log Prompt to Architecture History',
                             ignoreFocusOut: true
                         }) || '';
@@ -157,7 +175,24 @@ export async function activate(context: vscode.ExtensionContext) {
                             return; // User cancelled
                         }
 
-                        // 2. Select Log Mode (QuickPick)
+                        // 3. Select Tag (QuickPick 1)
+                        const tagPick = await vscode.window.showQuickPick(
+                            [
+                                { label: '🔍 [Discovery]', description: 'Exploring code, investigating issues' },
+                                { label: '🧠 [Reasoning]', description: 'Making design decisions, planning' },
+                                { label: '⚡ [Action]', description: 'Implementing changes, refactoring' },
+                                { label: '🐛 [Fix]', description: 'Fixing bugs, resolving errors' }
+                            ],
+                            {
+                                placeHolder: 'Select a tag for this log',
+                                ignoreFocusOut: true
+                            }
+                        );
+
+                        if (!tagPick) return; // User cancelled
+                        const selectedTag = tagPick.label.split(' ')[1]; // Extract [Tag]
+
+                        // 4. Select Log Mode (QuickPick 2)
                         const logMode = await vscode.window.showQuickPick(
                             [
                                 { label: '$(repo) Append to context.md', description: 'Keep context in a single file', detail: 'prompts/context.md' },
@@ -180,29 +215,50 @@ export async function activate(context: vscode.ExtensionContext) {
                             });
                         } else {
                             // Context mode
-                            title = 'context.md'; // Flag or filename
+                            title = 'context.md'; // Flag
                         }
-                    }
 
-                    if (!projectRoot) {
-                        const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
-                        projectRoot = workspaceFolder?.uri.fsPath;
-                    }
+                        // Execute Log
+                        if (!projectRoot) {
+                            const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+                            projectRoot = workspaceFolder?.uri.fsPath;
+                        }
 
-                    if (projectRoot && promptContent) {
-                        console.log(`[SYNAPSE] Logging prompt to ${projectRoot}`);
+                        if (projectRoot) {
+                            if (title === 'context.md') {
+                                // Pass context data (snapshot) here
+                                await promptLogger.appendLog(projectRoot, 'context.md', promptContent, selectedTag, contextData?.viewState);
 
-                        // Check title/mode
-                        if (title === 'context.md') {
-                            await promptLogger.appendLog(projectRoot, 'context.md', promptContent);
-                            vscode.window.showInformationMessage('Prompt appended to context.md');
+                                const openAction = await vscode.window.showInformationMessage('Prompt appended to context.md', 'Open context.md');
+                                if (openAction === 'Open context.md') {
+                                    const doc = await vscode.workspace.openTextDocument(path.join(projectRoot, 'prompts', 'context.md'));
+                                    await vscode.window.showTextDocument(doc);
+                                }
+                            } else {
+                                await promptLogger.logPrompt(projectRoot, promptContent, title);
+                                vscode.window.showInformationMessage('Prompt logged to new file.');
+                            }
                         } else {
-                            await promptLogger.logPrompt(projectRoot, promptContent, title);
-                            vscode.window.showInformationMessage('Prompt logged to new file.');
+                            console.warn('[SYNAPSE] No project root found');
+                            vscode.window.showErrorMessage('No workspace open to log prompt');
                         }
-                    } else if (!projectRoot) {
-                        console.warn('[SYNAPSE] No project root found');
-                        vscode.window.showErrorMessage('No workspace open to log prompt');
+                    } else {
+                        // Non-interactive mode (called from API) implementation...
+                        // For now we keep the existing logic for non-interactive or just handle it simply
+                        if (!projectRoot) {
+                            const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+                            projectRoot = workspaceFolder?.uri.fsPath;
+                        }
+                        if (projectRoot) {
+                            if (title === 'context.md') {
+                                await promptLogger.appendLog(projectRoot, 'context.md', promptContent);
+                            } else {
+                                await promptLogger.logPrompt(projectRoot, promptContent, title);
+                            }
+                        } else {
+                            console.warn('[SYNAPSE] No project root found');
+                            vscode.window.showErrorMessage('No workspace open to log prompt');
+                        }
                     }
                 } catch (error: any) {
                     console.error('[SYNAPSE] Failed to log prompt:', error);

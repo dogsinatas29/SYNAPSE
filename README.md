@@ -30,7 +30,11 @@ SYNAPSE is a next-generation extension built for **Google Antigravity** and **Vi
 - **💾 Persistence**: Permanently save all visual states to `project_state.json` and manage with Git.
 - **🛠️ Standalone Bridge**: Support for browser-only mode without VS Code.
 - **💾 Prompt Traceability**: Save your prompts and design decisions directly from the canvas (Auto-save supported).
-- **🔌 Enhanced LSP Integration (New! 🚀)**: Directly link `GEMINI.md` to code with Hover, Go to Definition, and Real-time Diagnostics.
+- **🧠 Context-Aware Logging (New in v0.2.6! 🚀)**:
+    - **Node Auto-Binding**: Selecting a node automatically focuses the log on that component.
+    - **Visual Tagging**: Categorize logs (`[Discovery]`, `[Reasoning]`, `[Action]`).
+    - **State Snapshotting**: Saves the exact canvas view (Zoom/Pan) with the log for future restoration.
+- **🔌 Enhanced LSP Integration**: Directly link `GEMINI.md` to code with Hover, Go to Definition, and Real-time Diagnostics.
 
 ## 🎥 Demo Video
 https://www.youtube.com/watch?v=Va4vZWkqC8E
@@ -125,6 +129,13 @@ npm run dev:ui
 - **Rollback**: Click the clock icon to see history and revert to a previous design point.
 - **Log Prompt**: Press `Ctrl+Alt+M` to capture your design thoughts as a node on the canvas.
 
+### 🧠 Log Prompt & Context (New in v0.2.6)
+1.  **Select a Node** (Optional): Click a node to bind the log to it.
+2.  **Trigger**: Press `Ctrl+Alt+M`.
+3.  **Tagging**: Select a tag (`[Discovery]`, `[Reasoning]`, etc.) to categorize your thought.
+4.  **Save**: Choose to append to `context.md` (Recommended) or create a new file.
+    -   *Bonus*: The current canvas view is automatically saved!
+
 ### 🧹 Data Hygiene Principles
 - **Separation**: `GEMINI.md` holds the logic; `project_state.json` holds the coordinates.
 - **Normalization**: Minimized Git Diff through sorted JSON keys.
@@ -140,6 +151,10 @@ npm run dev:ui
 Created with the belief that the simple act of connecting lines in complex systems is, in fact, the highest level of architectural design.
 
 ## 🆕 Version History
+
+### v0.2.6
+- **🧠 Context UI**: Enhanced `Log Prompt` (`Ctrl+Alt+M`) with Visual Tagging, Node Auto-Binding, and State Snapshotting.
+- **📄 context.md**: Unified architecture decision log with one-click access and view restoration metadata.
 
 ### v0.2.5
 - **🧹 Cleanup**: Removed legacy root files and example artifacts.

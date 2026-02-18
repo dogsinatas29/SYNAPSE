@@ -34,6 +34,7 @@ export class CanvasPanel {
     private _disposables: vscode.Disposable[] = [];
     private proposedNodes: any[] = [];
     private proposedEdges: any[] = [];
+    private _contextRequestCallback: ((context: any) => void) | undefined;
 
     public static createOrShow(extensionUri: vscode.Uri, workspaceFolder: vscode.WorkspaceFolder) {
         const column = vscode.window.activeTextEditor
@@ -177,6 +178,12 @@ export class CanvasPanel {
                     case 'requestLogPrompt':
                         await this.handleRequestLogPrompt();
                         return;
+                    case 'contextData':
+                        if (this._contextRequestCallback) {
+                            this._contextRequestCallback(message.data);
+                            this._contextRequestCallback = undefined;
+                        }
+                        return;
                 }
             },
             null,
@@ -249,6 +256,28 @@ export class CanvasPanel {
 
     public async refreshState() {
         await this.sendProjectState();
+    }
+
+    /**
+     * Get current canvas context (selection, view state)
+     */
+    public async getCanvasContext(): Promise<any> {
+        return new Promise<any>((resolve) => {
+            // Set up one-time callback
+            this._contextRequestCallback = resolve;
+
+            // Timeout to prevent hanging
+            setTimeout(() => {
+                if (this._contextRequestCallback) {
+                    console.warn('[SYNAPSE] Context request timed out');
+                    this._contextRequestCallback(null);
+                    this._contextRequestCallback = undefined;
+                }
+            }, 1000);
+
+            // Request context from webview
+            this._panel.webview.postMessage({ command: 'requestContext' });
+        });
     }
 
     private handleNodeSelected(node: any) {

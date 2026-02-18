@@ -7,17 +7,6 @@
 
 SYNAPSE is a next-generation extension built for **Google Antigravity** and **Visual Studio Code** users. It visualizes complex reasoning logic generated or analyzed by Large Language Models (LLMs) into a physical node-edge network, helping you intuitively design, implement, and document AI thought processes.
 
-## 🆕 Release Notes
-
-### v0.2.4
-- **🚀 Fix Manual Grouping**: Replaced the browser's native `prompt()` dialog with a custom in-canvas modal. This resolves the issue where manual grouping was blocked or failed to appear in the VS Code extension environment.
-- **✨ Enhanced UX**: Group creation flow is now non-blocking and visually integrated with the dark theme.
-
-### v0.2.3
-- **🚀 Hotfix for Tree/Flow Views**: Resolved rendering issues for projects with missing metadata.
-- **📚 Documentation Shelf**: Dedicated area for `.md` files.
-- **🎯 Manual Clustering**: Create and persist custom node groups.
-- **🛡️ Enhanced Stability**: Improved error handling across all views.
 
 ## 🚀 Key Features
 
@@ -149,6 +138,18 @@ npm run dev:ui
 ## 📐 Philosophy
 "An intuitive playground for children, a powerful control tower for experts."  
 Created with the belief that the simple act of connecting lines in complex systems is, in fact, the highest level of architectural design.
+
+## 🆕 Version History
+
+### v0.2.4
+- **🚀 Fix Manual Grouping**: Replaced the browser's native `prompt()` dialog with a custom in-canvas modal. This resolves the issue where manual grouping was blocked or failed to appear in the VS Code extension environment.
+- **✨ Enhanced UX**: Group creation flow is now non-blocking and visually integrated with the dark theme.
+
+### v0.2.3
+- **🚀 Hotfix for Tree/Flow Views**: Resolved rendering issues for projects with missing metadata.
+- **📚 Documentation Shelf**: Dedicated area for `.md` files.
+- **🎯 Manual Clustering**: Create and persist custom node groups.
+- **🛡️ Enhanced Stability**: Improved error handling across all views.
 
 ## 📜 License
 This project is licensed under the [GNU General Public License v3.0](LICENSE).

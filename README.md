@@ -7,6 +7,12 @@
 
 SYNAPSE is a next-generation extension built for **Google Antigravity** and **Visual Studio Code** users. It visualizes complex reasoning logic generated or analyzed by Large Language Models (LLMs) into a physical node-edge network, helping you intuitively design, implement, and document AI thought processes.
 
+## 🆕 What's New in v0.2.3
+- **🚀 Hotfix for Tree/Flow Views**: Resolved rendering issues for projects with missing metadata.
+- **📚 Documentation Shelf**: Dedicated area for `.md` files.
+- **🎯 Manual Clustering**: Create and persist custom node groups.
+- **🛡️ Enhanced Stability**: Improved error handling across all views.
+
 ## 🚀 Key Features
 
 - **📂 Project Bootstrap**: Generates a structured view from `GEMINI.md` or scans your codebase directly.

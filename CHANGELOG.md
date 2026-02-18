@@ -1,3 +1,11 @@
+# Release Notes - v0.1.9
+
+## 🏁 Strategic Execution Flow & Single Source of Truth
+- **Authoritative Flow**: Formally defined Flow View as the final authoritative state to prevent synchronization drift between different editing modes.
+- **START/END Markers**: Added explicit terminal markers for logical clarity.
+- **Functional Entry Points**: Prioritized functional roots (`main.*`, `index.*`) over configuration metadata.
+- **Ghost Node Isolation**: Automated isolation of degree-0 nodes into a "Storage" cluster.
+
 # Release Notes - v0.1.8
 
 ## 🔌 Enhanced LSP Integration (Editor-First Design)

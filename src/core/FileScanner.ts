@@ -98,29 +98,36 @@ export class FileScanner {
     }
 
     private parseJavaScript(content: string, summary: CodeSummary) {
-        // JS/TS 클래스
-        const classRegex = /export\s+class\s+([a-zA-Z0-9_]+)|class\s+([a-zA-Z0-9_]+)/g;
+        // JS/TS 클래스, 인터페이스, 타입, 열거형
+        const classRegex = /(?:export\s+)?(?:class|interface|type|enum)\s+([a-zA-Z0-9_]+)/g;
         let match;
         while ((match = classRegex.exec(content)) !== null) {
-            summary.classes.push(match[1] || match[2]);
-        }
-
-        // JS/TS 함수 및 메서드
-        const funcRegex = /export\s+function\s+([a-zA-Z0-9_]+)|function\s+([a-zA-Z0-9_]+)|async\s+([a-zA-Z0-9_]+)\s*\(|public\s+([a-zA-Z0-9_]+)\s*\(|private\s+([a-zA-Z0-9_]+)\s*\(/g;
-        while ((match = funcRegex.exec(content)) !== null) {
-            const name = match[1] || match[2] || match[3] || match[4] || match[5];
-            if (name && !summary.functions.includes(name)) {
-                summary.functions.push(name);
+            const name = match[1];
+            if (name && !summary.classes.includes(name)) {
+                summary.classes.push(name);
             }
         }
 
-        // JS/TS 임포트 (references)
-        const importRegex = /import\s+.*from\s+['"](.+)['"]|require\s*\(\s*['"](.+)['"]\s*\)|import\s*\(\s*['"](.+)['"]\s*\)/g;
+        // JS/TS 함수 및 메서드 (TS 접근 제어자 및 async 지원 강화)
+        const funcRegex = /(?:export\s+)?(?:async\s+)?(?:function\s+([a-zA-Z0-9_]+)|([a-zA-Z0-9_]+)\s*\(|public\s+([a-zA-Z0-9_]+)|private\s+([a-zA-Z0-9_]+)|protected\s+([a-zA-Z0-9_]+))/g;
+        while ((match = funcRegex.exec(content)) !== null) {
+            const name = match[1] || match[2] || match[3] || match[4] || match[5];
+            // 키워드 제외
+            if (name && !['if', 'while', 'for', 'switch', 'return', 'catch', 'export', 'class', 'interface', 'type', 'enum', 'async', 'await'].includes(name)) {
+                if (!summary.functions.includes(name)) {
+                    summary.functions.push(name);
+                }
+            }
+        }
+
+        // JS/TS 임포트 (references, import type 지원)
+        const importRegex = /(?:import|require)\s+(?:type\s+)?(?:.*from\s+)?['"](.+)['"]|import\s*\(\s*['"](.+)['"]\s*\)/g;
         while ((match = importRegex.exec(content)) !== null) {
-            const ref = match[1] || match[2] || match[3];
-            if (ref && !summary.references.includes(ref)) {
-                const cleanRef = path.basename(ref, path.extname(ref));
-                if (cleanRef && !summary.references.includes(cleanRef)) {
+            const ref = match[1] || match[2];
+            if (ref) {
+                // 상대 경로인 경우 파일명만 추출, 아니면 패키지명
+                const cleanRef = ref.startsWith('.') ? path.basename(ref, path.extname(ref)) : ref.split('/')[0];
+                if (cleanRef && !['react', 'vscode', 'path', 'fs'].includes(cleanRef) && !summary.references.includes(cleanRef)) {
                     summary.references.push(cleanRef);
                 }
             }

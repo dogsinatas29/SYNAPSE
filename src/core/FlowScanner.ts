@@ -84,9 +84,9 @@ export class FlowScanner {
         for (let i = 0; i < Math.min(lines.length, 500); i++) {
             const line = lines[i].trim();
 
-            // 1. If-statement detection
-            if (line.startsWith('if (') || line.includes(' if (')) {
-                const condition = this.extractCondition(line) || 'Check Condition';
+            // 1. If/Switch detection
+            if (line.startsWith('if (') || line.includes(' if (') || line.startsWith('switch (') || line.includes(' switch (')) {
+                const condition = this.extractCondition(line) || 'Decision Point';
                 const stepId = `step_analysis_${stepCounter++}`;
 
                 flow.steps.push({
@@ -97,14 +97,26 @@ export class FlowScanner {
                     alternateNext: `step_analysis_${stepCounter + 1}`
                 });
 
-                // Link previous step to this decision
                 const prevStep = flow.steps.find(s => s.id === lastStepId);
                 if (prevStep) prevStep.next = stepId;
 
                 lastStepId = stepId;
             }
-            // 2. Exported components/functions as process blocks
-            else if (line.startsWith('export ') || line.startsWith('function ') || line.includes('function(')) {
+            // 2. Try/Catch detection
+            else if (line.startsWith('try {') || line.includes(' try {')) {
+                const stepId = `step_analysis_${stepCounter++}`;
+                flow.steps.push({
+                    id: stepId,
+                    type: 'process',
+                    label: 'Try Block',
+                    next: `step_analysis_${stepCounter++}`
+                });
+                const prevStep = flow.steps.find(s => s.id === lastStepId);
+                if (prevStep) prevStep.next = stepId;
+                lastStepId = stepId;
+            }
+            // 3. Exported components/functions/async methods
+            else if (line.startsWith('export ') || line.startsWith('function ') || line.includes('function(') || line.includes('async ')) {
                 const label = this.extractLabel(line) || 'Process Task';
                 const stepId = `step_analysis_${stepCounter++}`;
 
@@ -160,7 +172,7 @@ export class FlowScanner {
     }
 
     private extractCondition(line: string): string | null {
-        const match = line.match(/if\s*\((.*)\)/);
+        const match = line.match(/(?:if|switch)\s*\((.*)\)/);
         return match ? match[1].trim() : null;
     }
 

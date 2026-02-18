@@ -24,24 +24,11 @@ SYNAPSE는 **Google Antigravity** 및 **Visual Studio Code** 사용자를 위해
 - **💾 Prompt Traceability**: 캔버스에서 직접 프롬프트와 설계 결정을 기록 및 저장 (자동 저장 지원).
 - **🔌 강화된 LSP 연동 (New! 🚀)**: `GEMINI.md`에서 코드 Hover, 정의 이동(Definition), 실시간 유효성 검사를 통해 설계와 실제 코드를 강력하게 연결.
 
-## 🗂️ Language Support
+## 🎥 데모 비디오
+https://www.youtube.com/watch?v=Va4vZWkqC8E
+> *위 링크를 클릭하면 YouTube에서 전체 영상을 시청할 수 있습니다.*
 
-SYNAPSE는 다양한 언어 아키텍처 분석을 지원합니다:
-- 🐍 **Python**: `.py` 파일 분석 및 가상환경 필터링 지원
-- 🦀 **Rust**: `Cargo` 프로젝트 구조 및 `.rs` 로직 분석
-- 🇨 **C / C++**: 헤더 및 소스 파일 의존성 분석 (ReDoS 방지 최적화 완료)
-- 🐚 **Shell Script**: `.sh` 자동화 스크립트 흐름 및 함수 분석
-- 🗄️ **SQL**: `.sql` 테이블 정의 및 스키마 시각화
-- ⚙️ **Config (JSON/YAML/TOML)**: 인프라 설정 파일 간의 관계 분석 (The Glue)
-- 📜 **TypeScript / JavaScript**: 기본 지원 및 폴더링 최적화
-
-## 🛠️ Technology Stack
-
-- **Base**: Google Antigravity & Visual Studio Code (VS Code)
-- **Language**: TypeScript
-- **Engine**: HTML5 Canvas API (High Performance Rendering)
-- **Scanner**: Regex-based Fast Multi-Language Scanner (Python, C++, Rust, Shell, SQL, Config)
-- **Architecture**: Visual-First Design with LSP integration
+## 📸 스크린샷
 
 ### 🌐 Graph View
 LLM의 추론 논리와 파일 간의 물리적 연결 상태를 노드-엣지 네트워크로 시각화합니다.
@@ -55,215 +42,94 @@ LLM의 추론 논리와 파일 간의 물리적 연결 상태를 노드-엣지 �
 특정 이벤트나 함수의 로직 실행 흐름을 선형적인 순서도로 투사합니다.
 ![Flow View](docs/media/flow_v0.2.0.png)
 
+## 🗂️ 언어 지원 (Language Support)
 
-## 📦 Getting Started
+SYNAPSE는 다양한 언어 아키텍처 분석을 지원합니다:
+- 🐍 **Python**: `.py` 파일 분석 및 가상환경 필터링 지원
+- 🦀 **Rust**: `Cargo` 프로젝트 구조 및 `.rs` 로직 분석
+- 🇨 **C / C++**: 헤더 및 소스 파일 의존성 분석 (ReDoS 방지 최적화 완료)
+- 🐚 **Shell Script**: `.sh` 자동화 스크립트 흐름 및 함수 분석
+- 🗄️ **SQL**: `.sql` 테이블 정의 및 스키마 시각화
+- ⚙️ **Config (JSON/YAML/TOML)**: 인프라 설정 파일 간의 관계 분석 (The Glue)
+- 📜 **TypeScript / JavaScript**: 인터페이스, 타입, 비동기 로직 완벽 분석 (v0.2.0 신규 지원! 🚀)
 
-1. **Repository Clone**
-   ```bash
-   git clone https://github.com/dogsinatas29/SYNAPSE.git
-   ```
+## 🛠️ 기술 스택 (Technology Stack)
 
-2. **Dependency Installation**
-   ```bash
-   npm install
-   ```
+- **Base**: Google Antigravity & Visual Studio Code (VS Code)
+- **Language**: TypeScript
+- **Engine**: HTML5 Canvas API (High Performance Rendering)
+- **Scanner**: 정규식 기반 고속 다중 언어 스캐너 (Python, C++, Rust, Shell, SQL, Config, TS)
+- **Architecture**: LSP 연동 기반 Visual-First 설계
 
-3. **Development Server (VS Code Extension)**
-   ```bash
-   npm run watch
-   # Then press F5 in VS Code to start extension development host
-   ```
+## 📦 설치 및 시작하기
 
-4. **Standalone Bridge Mode (New! 🚀)**
-   VS Code 없이 브라우저에서 직접 엔진을 구동하고 싶을 때 사용합니다.
-   ```bash
-   # Terminal 1: API Server
-   npm run dev:standalone
-
-   # Terminal 2: UI Server
-   npm run dev:ui
-   ```
-   - API Server: `http://localhost:3000`
-   - UI Server: `http://localhost:8080`
-
-5. **Installation (Production)**
-    If you want to use the extension permanently without running the source code:
-    ```bash
-    # 1. Install vsce globally
-    npm install -g @vscode/vsce
-
-    # 2. Package the extension
-    npx vsce package
-
-    # 3. Install in VS Code
-    # Open VS Code Extension tab -> Click '...' -> 'Install from VSIX...' -> Select the generated .vsix file
-    ```
-
-## 🎯 Usage Guide
-
-### 🧱 Node Creation (New!)
-- **Add Node**: 상단 툴바의 `Add Node` 버튼을 클릭하여 새 노드를 생성합니다.
-- **Node Input**: 생성된 노드를 선택하고 이름을 변경할 수 있습니다.
-
-### 🎨 Manual Edge Creation (WYSIWYG)
-
-SYNAPSE의 핵심 기능인 **드래그 앤 드롭 엣지 생성**으로 코드 없이 아키텍처를 설계하세요!
-
-#### 1. 노드 선택
-- 캔버스에서 노드를 클릭하여 선택
-- 선택된 노드 주변에 **4방향 연결 핸들** (상/하/좌/우)이 자동으로 나타남
-
-#### 2. 엣지 생성 시작
-- **Alt + 연결 핸들 클릭**으로 엣지 생성 모드 진입
-- 마우스를 움직이면 **유령 엣지**(Ghost Edge)가 실시간으로 표시됨
-
-#### 3. 타겟 선택
-- 다른 노드나 클러스터로 드래그
-- 유효한 타겟 위에 마우스를 올리면 유령 엣지가 **녹색**으로 변경
-
-#### 4. 관계 타입 선택
-- 마우스를 릴리즈하면 **엣지 타입 선택 메뉴** 표시
-- 선택 가능한 타입:
-  - 🔗 **Dependency**: 의존성 관계
-  - 📞 **Call**: 함수 호출 관계
-  - 📊 **Data Flow**: 데이터 흐름
-  - ↔️ **Bidirectional**: 양방향 관계
-
-#### 5. 자동 저장
-- 타입 선택 시 `project_state.json`에 자동 저장
-- Git으로 형상 관리 가능 (정규화된 JSON 형식)
-
-### 📦 Clustering & Management
-
-복잡한 노드들을 그룹화하여 관리하세요!
-
-1.  **그룹 생성**:
-    *   Shift/Ctrl + 클릭으로 여러 노드 선택
-    *   툴바의 `Group` 버튼 클릭
-    *   **이름 입력**: 팝업에서 그룹 이름을 지정
-2.  **그룹 관리**:
-    *   **이름 변경**: 그룹 헤더를 **더블 클릭**하여 이름 수정
-    *   **접기/펴기**: 헤더 우측의 `[-]`/`[+]` 버튼으로 노드 숨기기/보이기
-    *   **Smart Push**: 클러스터 영역 내 겹치는 노드 자동 재배치
-3.  **그룹 해제**: 그룹 선택 후 `Ungroup` 버튼 클릭
-
-### 💾 Snapshot & Rollback
-
-중요한 설계 지점을 저장하고 복원하세요!
-
-- **수동 스냅샷**: 툴바의 카메라 아이콘(Snapshot) 클릭
-- **자동 스냅샷**: 주요 변경(그룹 생성, 해제 등) 시 자동 저장
-- **롤백**: 시계 아이콘(History) 클릭 -> 원하는 시점의 되돌리기 버튼 클릭
-    *   (브라우저 모드에서는 확인 창이 뜹니다)
-
-- **프롬프트 저장**: `Ctrl+Alt+M` (또는 `Synapse: Log Prompt` 실행)을 누르면 즉시 설계 결정 사항을 기록할 수 있습니다.
-- **자동 저장 토글**: 설정에서 `synapse.prompt.autoSave`를 검색해 활성화하면, 제목을 묻지 않고 타임스탬프와 함께 즉시 저장됩니다.
-- **시각적 피드백**: 기록된 프롬프트는 캔버스에 **History Node** (회색/아이보리색 노드)로 나타납니다.
-- **추적성(Traceability)**: 프롬프트 내용에 `[src/main.ts](src/main.ts)`와 같은 마크다운 링크를 포함하면, 해당 파일 노드로 연결되는 **Origin Edge**가 자동으로 생성됩니다.
-
-## ⚙️ How to Install (VS Code)
-
-### 1. Release에서 다운로드 (추천)
+### 1. VS Code 확장 프로그램 (추천)
 [Releases 탭](https://github.com/dogsinatas29/SYNAPSE/releases)에서 가장 최신의 `.vsix` 파일을 다운로드하십시오.
 
-### 2. VS Code에 로드 (설치 방법)
-다운로드한 `.vsix` 파일을 다음 중 하나의 방법으로 VS Code에 설치할 수 있습니다:
-
+#### 설치 방법:
 *   **방법 A: 드래그 앤 드롭 (가장 간편)**
-    - 다운로드한 `synapse-extension.vsix` 파일을 열려 있는 **VS Code 창 위로 직접 드래그**하여 놓으십시오. 우측 하단에 설치 확인 알림이 뜨면 'Install'을 클릭합니다.
+    - 다운로드한 `.vsix` 파일을 VS Code 창으로 드래그합니다.
 *   **방법 B: 확장 메뉴 이용**
-    1. VS Code 좌측 사이드바에서 **확장(Extensions)** 아이콘을 클릭합니다 (단축키: `Ctrl+Shift+X`).
-    2. 확장 창 상단의 더보기 **`...` 메뉴** (Views and More Actions)를 클릭합니다.
-    3. **'Install from VSIX...'**를 선택한 후, 다운로드한 파일을 선택합니다.
+    1. 확장(Extensions) 아이콘 클릭 (`Ctrl+Shift+X`).
+    2. 상단 더보기 `...` 메뉴 클릭.
+    3. **'Install from VSIX...'** 선택 후 파일 지정.
 *   **방법 C: 터미널 명령어**
-    - 터미널(또는 명령 프롬프트)에서 아래 명령어를 입력합니다:
-    ```bash
-    code --install-extension synapse-extension.vsix
-    ```
+    - `code --install-extension synapse-extension.vsix`
 
----
-
-## 🌐 Standalone Mode (Web Browser)
-
-VS Code가 없는 환경이거나 브라우저에서 단독으로 분석 도구를 사용하고 싶은 경우 Standalone 모드를 이용하십시오.
-
-### 1. 사전 준비
+### 2. 소스 코드에서 빌드하기
 ```bash
 git clone https://github.com/dogsinatas29/SYNAPSE.git
-cd SYNAPSE
 npm install
+npm run watch
+# VS Code에서 F5를 눌러 실행
 ```
 
-### 2. 브라우저 엔진 기동
+### 3. Standalone 브라우저 모드
+VS Code 없이 브라우저에서 직접 엔진을 구동하고 싶을 때 사용합니다.
 ```bash
-# Standalone 브리지 서버 실행
+# 터미널 1: API Server
 npm run dev:standalone
+
+# 터미널 2: UI Server
+npm run dev:ui
 ```
+- API 서버: `http://localhost:3000`
+- UI 서버: `http://localhost:8080`
 
-### 3. 접속
-서버가 실행되면 브라우저에서 `http://localhost:8080` (또는 지정된 포트)으로 접속하여 캔버스를 조작할 수 있습니다.
-
----
-
-## 🛠️ For Developers (Build from Source)
-직접 패키징 파일을 만들고 싶을 경우:
+### 4. 개발자 패키징 (Build)
 1. `npm install -g @vscode/vsce`
 2. `npx vsce package --out synapse-extension.vsix`
 
-## 🎥 Demo Video
-https://www.youtube.com/watch?v=Va4vZWkqC8E
-> *Click the image above to watch the full video on YouTube.*
+## 🎯 매뉴얼 및 사용 가이드
 
-## 🧹 Data Hygiene Principles
+### 🧱 노드 및 엣지 관리 (WYSIWYG)
+- **노드 추가**: 상단 툴바의 `Add Node` 버튼 클릭.
+- **수동 엣지**: 노드의 연결 핸들을 **Alt + 클릭**한 후 대상 노드로 드래그하여 관계(Dependency, Call 등)를 설정합니다.
 
-SYNAPSE는 "스파게티 데이터" 방지를 위한 3대 원칙을 따릅니다:
+### 📦 클러스터링 및 관리
+- **그룹 생성**: 여러 노드 선택 후 `Group` 클릭.
+- **그룹 관리**: 헤더 더블 클릭으로 이름 수정, `[-]`/`[+]` 버튼으로 접기/펴기 가능.
+- **그룹 해제**: 그룹 선택 후 `Ungroup` 클릭.
 
-### 원칙 1: 원천 소스와 상태값의 분리
-- **GEMINI.md**: 선언적 아키텍처 정의
-- **project_state.json**: UI 메타데이터 (좌표, 줌 레벨)
+### 💾 스냅샷 및 롤백
+- **스냅샷**: 카메라 아이콘을 클릭해 현재 시각적 상태 저장.
+- **롤백**: 시계 아이콘을 클릭해 설계 히스토리 확인 및 복원.
+- **프롬프트 기록**: `Ctrl+Alt+M`으로 설계 아이디어를 캔버스에 즉시 노드로 추가.
 
-### 원칙 2: 자동 정규화
-- JSON 키 알파벳 순 정렬 → Git Diff 최소화
-- 기본값과 동일한 속성 자동 제거
+### 🧹 데이터 정형화 원칙
+- **분리**: 로직은 `GEMINI.md`에, 좌표는 `project_state.json`에 저장됩니다.
+- **정규화**: 정렬된 JSON 키를 통해 Git Diff를 최소화합니다.
+- **휘발성 엣지**: 자동 스캔된 엣지는 실시간으로 재생성되어 데이터의 무결성을 지킵니다.
 
-### 원칙 3: 휘발성 자동 엣지
-- 코드 분석으로 발견된 엣지는 저장하지 않음
-- 캔버스 로드 시마다 실시간 재생성
-- `project_state.json`은 오직 사용자의 의도만 저장
-
-## 🔥 핵심 전략 (Core Strategies)
-
-### 1. 멀티 MD 전략 (Multi-MD Strategy)
-SYNAPSE는 코드뿐만 아니라 사용자의 **사고 과정**을 스캔합니다. 모든 마크다운(`.md`) 파일은 의미론적 컨텍스트로 처리됩니다:
-- **자동 탐색**: `node_modules`를 제외한 프로젝트 내의 모든 `.md` 파일을 스캔합니다.
-- **역할 할당**:
-    - `prompts/*.md`: **설계 히스토리**로 간주됩니다. 이 노드들은 엔진에 의해 별도로 분류되고 관리됩니다.
-    - `docs/*.md` 또는 루트의 `.md`: **지식 베이스(Knowledge Base)**로 처리됩니다.
-- **상호 연결**: 문서 내부에서 `[파일명](파일경로)`와 같은 표준 마크다운 링크를 사용하십시오. SYNAPSE는 해당 문서 노드에서 대상 파일 노드로 이어지는 엣지를 캔버스에 그려줍니다.
-
-### 2. 자동 파일 저장 및 관리
-아키텍처 히스토리를 깔끔하게 버전 관리하십시오:
-- **`prompts/` 디렉토리**: 모든 수동 로그는 이 폴더에 저장됩니다. 이 폴더를 Git 저장소에 포함하는 것을 권장합니다.
-- **파일 구조**: 각 로그는 자동으로 다음 템플릿을 따릅니다:
-  ```markdown
-  # [제목 또는 타임스탬프]
-  
-  ## 📝 Prompt
-  [입력한 내용]
-  
-  ## 🛠️ Context
-  - Workspace: /프로젝트/경로
-  - Date: 2024-xx-xx
-  ```
-- **Git 워크플로우**: 저장할 때마다 SYNAPSE가 `git add prompts/prompt_*.md`를 자동으로 실행하여 설계 히스토리가 커밋에서 누락되지 않도록 보장합니다.
+### 🔥 핵심 전략
+- **멀티 MD 전략**: 모든 `.md` 파일을 컨텍스트로 활용합니다. `[링크](경로)`를 통해 문서와 코드를 연결하세요.
+- **자동 파일 관리**: 모든 로그는 `prompts/` 폴더에 저장되며 Git에 자동 커밋되어 설계 히스토리를 보존합니다.
 
 ## 📐 Philosophy
-
 "아이들에게는 직관적인 놀이터, 전문가에게는 강력한 관제탑."  
 복잡한 시스템을 선으로 연결하는 단순한 행위가 사실은 가장 고차원적인 아키텍처 설계라는 믿음으로 제작되었습니다.
 
 ## 📜 License
-
 이 프로젝트는 [GNU General Public License v3.0](LICENSE) 라이선스 하에 배포됩니다.
 
 ---

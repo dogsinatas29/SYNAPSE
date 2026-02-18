@@ -24,24 +24,11 @@ SYNAPSE is a next-generation extension built for **Google Antigravity** and **Vi
 - **💾 Prompt Traceability**: Save your prompts and design decisions directly from the canvas (Auto-save supported).
 - **🔌 Enhanced LSP Integration (New! 🚀)**: Directly link `GEMINI.md` to code with Hover, Go to Definition, and Real-time Diagnostics.
 
-## 🗂️ Language Support
+## 🎥 Demo Video
+https://www.youtube.com/watch?v=Va4vZWkqC8E
+> *Click the link above to watch the full video on YouTube.*
 
-SYNAPSE supports multi-language architecture analysis:
-- 🐍 **Python**: `.py` file analysis and virtual environment filtering
-- 🦀 **Rust**: `Cargo` project structure and `.rs` logic analysis
-- 🇨 **C / C++**: Header and source file dependency analysis (ReDoS prevention optimized)
-- 🐚 **Shell Script**: `.sh` automation script flow and function analysis
-- 🗄️ **SQL**: `.sql` table definition and schema visualization
-- ⚙️ **Config (JSON/YAML/TOML)**: Analyzing relationships between infrastructure configuration files (The Glue)
-- 📜 **TypeScript / JavaScript**: Basic support and folder optimization
-
-## 🛠️ Technology Stack
-
-- **Base**: Google Antigravity & Visual Studio Code (VS Code)
-- **Language**: TypeScript
-- **Engine**: HTML5 Canvas API (High Performance Rendering)
-- **Scanner**: Regex-based Fast Multi-Language Scanner (Python, C++, Rust, Shell, SQL, Config)
-- **Architecture**: Visual-First Design with LSP integration
+## 📸 Screenshots
 
 ### 🌐 Graph View
 Visualizes the physical connection status between LLM reasoning logic and files as a node-edge network.
@@ -55,215 +42,94 @@ Intuitively overview the project's folder structure and file hierarchy.
 Projects the logic execution flow of a specific event or function into a linear flowchart.
 ![Flow View](docs/media/flow_v0.2.0.png)
 
+## 🗂️ Language Support
 
-## 📦 Getting Started
+SYNAPSE supports multi-language architecture analysis:
+- 🐍 **Python**: `.py` file analysis and virtual environment filtering
+- 🦀 **Rust**: `Cargo` project structure and `.rs` logic analysis
+- 🇨 **C / C++**: Header and source file dependency analysis (ReDoS prevention optimized)
+- 🐚 **Shell Script**: `.sh` automation script flow and function analysis
+- 🗄️ **SQL**: `.sql` table definition and schema visualization
+- ⚙️ **Config (JSON/YAML/TOML)**: Analyzing relationships between infrastructure configuration files (The Glue)
+- 📜 **TypeScript / JavaScript**: Full support for interfaces, types, and async logic (New in v0.2.0! 🚀)
 
-1. **Repository Clone**
-   ```bash
-   git clone https://github.com/dogsinatas29/SYNAPSE.git
-   ```
+## 🛠️ Technology Stack
 
-2. **Dependency Installation**
-   ```bash
-   npm install
-   ```
+- **Base**: Google Antigravity & Visual Studio Code (VS Code)
+- **Language**: TypeScript
+- **Engine**: HTML5 Canvas API (High Performance Rendering)
+- **Scanner**: Regex-based Fast Multi-Language Scanner (Python, C++, Rust, Shell, SQL, Config)
+- **Architecture**: Visual-First Design with LSP integration
 
-3. **Development Server (VS Code Extension)**
-   ```bash
-   npm run watch
-   # Then press F5 in VS Code to start extension development host
-   ```
+## 📦 Installation & Setup
 
-4. **Standalone Bridge Mode (New! 🚀)**
-   Use this when you want to run the engine directly in the browser without VS Code.
-   ```bash
-   # Terminal 1: API Server
-   npm run dev:standalone
-
-   # Terminal 2: UI Server
-   npm run dev:ui
-   ```
-   - API Server: `http://localhost:3000`
-   - UI Server: `http://localhost:8080`
-
-5. **Installation (Production)**
-    If you want to use the extension permanently without running the source code:
-    ```bash
-    # 1. Install vsce globally
-    npm install -g @vscode/vsce
-
-    # 2. Package the extension
-    npx vsce package
-
-    # 3. Install in VS Code
-    # Open VS Code Extension tab -> Click '...' -> 'Install from VSIX...' -> Select the generated .vsix file
-    ```
-
-## 🎯 Usage Guide
-
-### 🧱 Node Creation (New!)
-- **Add Node**: Click the `Add Node` button on the top toolbar to create a new node.
-- **Node Input**: Select the created node to rename it.
-
-### 🎨 Manual Edge Creation (WYSIWYG)
-
-Design your architecture without code using SYNAPSE's core feature, **Drag & Drop Edge Creation**!
-
-#### 1. Select Node
-- Click a node on the canvas to select it.
-- **4-way connection handles** (Up/Down/Left/Right) automatically appear around the selected node.
-
-#### 2. Start Edge Creation
-- Enter edge creation mode by **Alt + Clicking a connection handle**.
-- A **Ghost Edge** is displayed in real-time as you move the mouse.
-
-#### 3. Select Target
-- Drag to another node or cluster.
-- When hovering over a valid target, the Ghost Edge turns **Green**.
-
-#### 4. Select Relationship Type
-- Upon releasing the mouse, the **Edge Type Selection Menu** appears.
-- Available types:
-  - 🔗 **Dependency**: Dependency relationship
-  - 📞 **Call**: Function call relationship
-  - 📊 **Data Flow**: Data flow
-  - ↔️ **Bidirectional**: Two-way relationship
-
-#### 5. Auto Save
-- Automatically saved to `project_state.json` upon type selection.
-- Manageable via Git (Normalized JSON format).
-
-### 📦 Clustering & Management
-
-Manage complex nodes by grouping them!
-
-1.  **Create Group**:
-    *   Select multiple nodes with Shift/Ctrl + Click.
-    *   Click the `Group` button on the toolbar.
-    *   **Enter Name**: Specify a group name in the popup.
-2.  **Manage Group**:
-    *   **Rename**: **Double-click** the group header to edit the name.
-    *   **Collapse/Expand**: Hide/Show nodes with the `[-]`/`[+]` buttons on the header right.
-    *   **Smart Push**: Automatically reposition overlapping nodes within the cluster area.
-3.  **Ungroup**: Select a group and click the `Ungroup` button.
-
-### 💾 Snapshot & Rollback
-
-Save and restore critical design points!
-
-- **Manual Snapshot**: Click the camera icon (Snapshot) on the toolbar.
-- **Auto Snapshot**: Automatically saved upon major changes (group creation, ungrouping, etc.).
-- **Rollback**: Click the clock icon (History) -> Click the revert button for the desired point.
-    *   (A confirmation window appears in browser mode)
-
-- **Log Prompt**: Press `Ctrl+Alt+M` (or run `Synapse: Log Prompt`) to capture your design thoughts instantly.
-- **Auto-Save Toggle**: In VS Code Settings, search for `synapse.prompt.autoSave`. If enabled, files are saved immediately with a timestamp.
-- **Visual Feedback**: Logged prompts appear as **History Nodes** (Grey/Ivory) on the canvas.
-- **Traceability**: If your prompt contains a file link like `[src/main.ts](src/main.ts)`, SYNAPSE creates an **Origin Edge** from the prompt node to that file node.
-
-## ⚙️ How to Install (VS Code)
-
-### 1. Download from Release (Recommended)
+### 1. VS Code Extension (Recommended)
 Download the latest `.vsix` file from the [Releases tab](https://github.com/dogsinatas29/SYNAPSE/releases).
 
-### 2. Load into VS Code (Installation Method)
-You can install the downloaded `.vsix` file into VS Code using one of the following methods:
-
+#### How to Install:
 *   **Method A: Drag & Drop (Easiest)**
-    - Drag and drop the downloaded `synapse-extension.vsix` file directly onto an open **VS Code window**. When the installation confirmation notification appears in the bottom right, click 'Install'.
+    - Drag and drop the downloaded `synapse-extension.vsix` file directly onto an open **VS Code window**.
 *   **Method B: Using the Extension Menu**
-    1. Click the **Extensions** icon in the VS Code left sidebar (Shortcut: `Ctrl+Shift+X`).
-    2. Click the **`...` menu** (Views and More Actions) at the top of the Extensions pane.
-    3. Select **'Install from VSIX...'** and choose the downloaded file.
+    1. Click the **Extensions** icon (Shortcut: `Ctrl+Shift+X`).
+    2. Click the **`...` menu** at the top.
+    3. Select **'Install from VSIX...'** and choose the file.
 *   **Method C: Terminal Command**
-    - Enter the following command in the terminal (or command prompt):
-    ```bash
-    code --install-extension synapse-extension.vsix
-    ```
+    - `code --install-extension synapse-extension.vsix`
 
----
-
-## 🌐 Standalone Mode (Web Browser)
-
-Use Standalone mode if you are in an environment without VS Code or want to use the analysis tool independently in a browser.
-
-### 1. Prerequisites
+### 2. Getting Started (From Source)
 ```bash
 git clone https://github.com/dogsinatas29/SYNAPSE.git
-cd SYNAPSE
 npm install
+npm run watch
+# Press F5 in VS Code to start
 ```
 
-### 2. Launch Browser Engine
+### 3. Standalone Bridge Mode (Web Browser)
+Use this when you want to run the engine directly in the browser without VS Code.
 ```bash
-# Run Standalone Bridge Server
+# Terminal 1: API Server
 npm run dev:standalone
+
+# Terminal 2: UI Server
+npm run dev:ui
 ```
+- API Server: `http://localhost:3000`
+- UI Server: `http://localhost:8080`
 
-### 3. Access
-Once the server is running, access `http://localhost:8080` (or specified port) in your browser to manipulate the canvas.
-
----
-
-## 🛠️ For Developers (Build from Source)
-If you want to create the package file yourself:
+### 4. For Developers (Build)
 1. `npm install -g @vscode/vsce`
 2. `npx vsce package --out synapse-extension.vsix`
 
-## 🎥 Demo Video
-https://www.youtube.com/watch?v=Va4vZWkqC8E
-> *Click the image above to watch the full video on YouTube.*
+## 🎯 Manual & Usage Guide
 
-## 🧹 Data Hygiene Principles
+### 🧱 Node & Edge Management (WYSIWYG)
+- **Add Node**: Click the `Add Node` button on the top toolbar.
+- **Manual Edge**: **Alt + Click a connection handle** on a node, then drag to the target. Release to select the relationship type (Dependency, Call, Data Flow, etc.).
 
-SYNAPSE follows 3 principles to prevent "Spaghetti Data":
+### 📦 Clustering & Management
+- **Create Group**: Select multiple nodes (Shift/Ctrl + Click) and click `Group`.
+- **Manage Group**: Double-click the header to rename. Collapsable with `[-]`/`[+]` buttons.
+- **Ungroup**: Select a group and click `Ungroup`.
 
-### Principle 1: Separation of Source and State
-- **GEMINI.md**: Declarative architecture definition
-- **project_state.json**: UI metadata (coordinates, zoom level)
+### 💾 Snapshot & Rollback
+- **Snapshot**: Click the camera icon to save the current visual state.
+- **Rollback**: Click the clock icon to see history and revert to a previous design point.
+- **Log Prompt**: Press `Ctrl+Alt+M` to capture your design thoughts as a node on the canvas.
 
-### Principle 2: Auto-Normalization
-- JSON keys sorted alphabetically → Minimize Git Diff
-- Automatic removal of properties identical to default values
+### 🧹 Data Hygiene Principles
+- **Separation**: `GEMINI.md` holds the logic; `project_state.json` holds the coordinates.
+- **Normalization**: Minimized Git Diff through sorted JSON keys.
+- **Volatile Auto-Edges**: Scanned edges are regenerated in real-time to prevent stale data.
 
-### Principle 3: Volatile Auto-Edges
-- Edges discovered by code analysis are not saved
-- Real-time regeneration upon every canvas load
-- `project_state.json` saves only the user's intent
-
-## 🔥 Core Strategies
-
-### 1. Multi-MD Strategy (Context Awareness)
-SYNAPSE doesn't just scan code; it scans your **thinking**. All Markdown (`.md`) files are treated as semantic context:
-- **Automatic Discovery**: Any `.md` file in your project (except `node_modules`) is scanned.
-- **Role Assignment**:
-    - `prompts/*.md`: Treated as **Design History**. These nodes are categorized and grouped by the engine.
-    - `docs/*.md` or root `.md`: Treated as **Knowledge Base**.
-- **Cross-Linking**: Use standard Markdown links `[File Name](path/to/file)` within your MD files. SYNAPSE will draw an edge from the document node to the target file node on the canvas.
-
-### 2. Automatic File Saving & Organization
-Keep your architecture history clean and versioned:
-- **The `prompts/` Directory**: All manual logs are stored here. We recommend keeping this folder in your Git repository.
-- **File Structure**: Each log follows this template automatically:
-  ```markdown
-  # [Title or Timestamp]
-  
-  ## 📝 Prompt
-  [Your input here]
-  
-  ## 🛠️ Context
-  - Workspace: /path/to/project
-  - Date: 2024-xx-xx
-  ```
-- **Git Workflow**: SYNAPSE runs `git add prompts/prompt_*.md` every time you save, ensuring your design history is never lost during a commit.
+### 🔥 Core Strategies
+- **Multi-MD Strategy**: All `.md` files are treated as semantic context. Use `[Link](path)` to connect documents to code nodes.
+- **Automatic Organization**: Manual logs are stored in `prompts/` and auto-committed to Git to preserve architecture history.
 
 ## 📐 Philosophy
-
 "An intuitive playground for children, a powerful control tower for experts."  
 Created with the belief that the simple act of connecting lines in complex systems is, in fact, the highest level of architectural design.
 
 ## 📜 License
-
 This project is licensed under the [GNU General Public License v3.0](LICENSE).
 
 ---

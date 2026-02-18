@@ -24,6 +24,8 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { ProjectStructure, NodeType, EdgeType } from '../types/schema';
+import { isIgnoredFile, isIgnoredFolder } from '../utils/exclusionRules';
+import { RuleEngine } from './RuleEngine';
 
 export class GeminiParser {
     /**
@@ -32,6 +34,10 @@ export class GeminiParser {
     public async parseGeminiMd(filePath: string): Promise<ProjectStructure> {
         try {
             const content = fs.readFileSync(filePath, 'utf-8');
+
+            // Ensure rules are loaded (if not already by BootstrapEngine)
+            const projectRoot = path.dirname(filePath);
+            RuleEngine.getInstance().loadRules(projectRoot);
 
             // AI를 사용하여 구조 분석 (현재는 간단한 패턴 매칭)
             const structure = this.analyzeContent(content);
@@ -60,8 +66,18 @@ export class GeminiParser {
             includePaths: []
         };
 
-        // Code Block 제거 (예제 코드 내으 파일명 파싱 방지)
-        const contentForScanning = content.replace(/```[\s\S]*?```/g, '');
+        // 스캔용 콘텐츠 정제 (필터링 순서 중요: 큰 단위부터 제거)
+        let contentForScanning = content;
+
+        // 1. HTML 주석 제거 (주석 내부의 📄 아이콘 등 무시)
+        contentForScanning = contentForScanning.replace(/<!--[\s\S]*?-->/g, '');
+
+        // 2. 멀티라인 코드 블록 제거 (``` 및 ~~~ 지원)
+        contentForScanning = contentForScanning.replace(/```[\s\S]*?```/g, '');
+        contentForScanning = contentForScanning.replace(/~~~[\s\S]*?~~~/g, '');
+
+        // 3. 인라인 코드 블록 제거 (`...`) - 줄바꿈을 포함하지 않는 백틱 쌍만 타겟팅
+        contentForScanning = contentForScanning.replace(/`[^`\n]+`/g, '');
 
         // 0. 스캔 경로(Include Paths) 추출
         const scanPathPattern = /(?:Scan Paths|스캔 경로|Scope):\s*([^\n]+)/i;
@@ -76,6 +92,7 @@ export class GeminiParser {
         let match;
         while ((match = folderPattern.exec(contentForScanning)) !== null) {
             const folderName = match[1];
+            if (isIgnoredFolder(folderName)) continue;
             if (!structure.folders.includes(folderName)) {
                 structure.folders.push(folderName);
             }
@@ -87,6 +104,9 @@ export class GeminiParser {
         const filePattern = /(?:📄\s*|^\s*[-\*]\s+[`]?|파일:\s*)([a-zA-Z0-9_./-]+\.(py|ts|js|cpp|h|hpp|cc|c|rs|sh|sql|md))[`]?/gm;
         while ((match = filePattern.exec(contentForScanning)) !== null) {
             const fileName = match[1];
+            // [Node Diet] 블랙리스트 및 무시된 폴더 경로 필터링
+            if (isIgnoredFile(fileName) || fileName.split('/').some(isIgnoredFolder)) continue;
+
             // 중복 체크
             if (structure.files.find(f => f.path === fileName)) continue;
 
@@ -102,7 +122,7 @@ export class GeminiParser {
         }
 
         // 2. 새로운 패턴 (NodeName: Description) - [Nodes] 섹션 이후
-        const nodesSection = content.split(/1\.\s+아키텍처 토폴로지|\[Nodes\]|## 주요 파일|## 프로젝트 개요/i)[1];
+        const nodesSection = contentForScanning.split(/1\.\s+아키텍처 토폴로지|\[Nodes\]|## 주요 파일|## 프로젝트 개요/i)[1];
         if (nodesSection) {
             // 다음 섹션 이전까지만 파싱
             const nodesContent = nodesSection.split(/2\.\s+데이터 흐름|\[Edges\]|## 개발 가이드라인|## 에이전트 지침/i)[0];
@@ -113,6 +133,9 @@ export class GeminiParser {
                 if (nodeMatch) {
                     const filePath = nodeMatch[1];
                     const description = nodeMatch[2].trim();
+
+                    // [Node Diet] 블랙리스트 및 무시된 폴더 경로 필터링
+                    if (isIgnoredFile(filePath) || filePath.split('/').some(isIgnoredFolder)) return;
 
                     if (!structure.files.find(f => f.path === filePath)) {
                         const ext = path.extname(filePath).slice(1).toLowerCase();
@@ -133,7 +156,7 @@ export class GeminiParser {
         // 3. 엣지 패턴 (NodeA --> NodeB: Label)
         // 확장자가 없는 경우를 위해 캡처 후 나중에 처리
         const edgePattern = /([a-zA-Z0-9_./-]+)\s*(?:-->|->)\s*([a-zA-Z0-9_./-]+)(?::\s*(.*))?/g;
-        while ((match = edgePattern.exec(content)) !== null) {
+        while ((match = edgePattern.exec(contentForScanning)) !== null) {
             const from = match[1];
             const to = match[2];
             const label = match[3] || '';

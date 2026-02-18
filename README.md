@@ -30,10 +30,13 @@ SYNAPSE is a next-generation extension built for **Google Antigravity** and **Vi
 - **💾 Persistence**: Permanently save all visual states to `project_state.json` and manage with Git.
 - **🛠️ Standalone Bridge**: Support for browser-only mode without VS Code.
 - **💾 Prompt Traceability**: Save your prompts and design decisions directly from the canvas (Auto-save supported).
-- **🧠 Context-Aware Logging (New in v0.2.6! 🚀)**:
+- **🧠 Context-Aware Logging (Enhanced in v0.2.6! 🚀)**:
     - **Node Auto-Binding**: Selecting a node automatically focuses the log on that component.
     - **Visual Tagging**: Categorize logs (`[Discovery]`, `[Reasoning]`, `[Action]`).
     - **State Snapshotting**: Saves the exact canvas view (Zoom/Pan) with the log for future restoration.
+- **🛡️ Robust Ghost Node Prevention (v0.2.7+ 🛡️)**: Deep filtering of code blocks, inline code, and HTML comments, now guided by a centralized **Rule Engine**.
+- **📜 Rule Externalization (v0.2.8! ⚖️)**: Technical rules for discovery and icon standards are now externalized in `RULES.md`.
+- **⚖️ Rules UI**: Instant access to the project's architecture rules via a new toolbar button.
 - **🔌 Enhanced LSP Integration**: Directly link `GEMINI.md` to code with Hover, Go to Definition, and Real-time Diagnostics.
 
 ## 🎥 Demo Video
@@ -151,6 +154,16 @@ npm run dev:ui
 Created with the belief that the simple act of connecting lines in complex systems is, in fact, the highest level of architectural design.
 
 ## 🆕 Version History
+
+### v0.2.8
+- **📜 Rule Externalization**: Introduced `RULES.md` to define and control architecture discovery rules (inclusion/exclusion/icons).
+- **⚖️ Rules Button**: Added a dedicated button to the canvas UI for instant rule access.
+- **🛠️ Auto-Generation**: `RULES.md` is now automatically created during project bootstrap if missing.
+- **🐛 Fixed**: Resolved ghost node resurrection and multi-node deletion stability.
+
+### v0.2.7
+- **🛡️ Ghost Node Prevention**: Implemented stringent filtering for `GEMINI.md` content.
+- **📝 Node Rules**: Added formal **Node Rules** and **Exclusion Rules** to `GEMINI.md`.
 
 ### v0.2.6
 - **🧠 Context UI**: Enhanced `Log Prompt` (`Ctrl+Alt+M`) with Visual Tagging, Node Auto-Binding, and State Snapshotting.

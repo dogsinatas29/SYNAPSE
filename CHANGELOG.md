@@ -1,3 +1,45 @@
+# Release Notes - v0.2.9
+
+> **"Ghostbusters"**
+
+Version 0.2.9 focuses on **Visual Integrity**. We've eliminated "Ghost Nodes" that plagued collapsed clusters and implemented automatic cleanup for empty groups, ensuring your architecture map remains clean and truthful.
+
+## 👻 Ghost Node Fixes
+- **Hit-Testing Logic**: Fixed an issue where nodes inside collapsed clusters were still selectable (invisible but interactive). Now, hidden nodes are truly hidden from mouse events.
+- **Drag Selection**: Box selection now correctly ignores nodes currently hidden within a collapsed cluster.
+
+## 🧹 Auto-Cleanup
+- **Empty Cluster Removal**: When all nodes in a cluster are deleted, the empty container is now automatically removed to prevent visual clutter.
+- **Backend Sync**: This cleanup logic is synchronized between the frontend canvas and the persistent backend state.
+
+---
+
+# Release Notes - v0.2.8
+
+> **"Law & Order"**
+
+Version 0.2.8 introduces the **Rule Externalization** system, giving you granular control over your architecture's integrity. It also brings significant quality-of-life improvements to the canvas interactions.
+
+## ⚖️ Rule Externalization
+- **`RULES.md` Integration**: Synapse now respects a `RULES.md` file in your project root.
+    - Define **Inclusion/Exclusion** patterns (e.g., ignore `*.test.ts`, include `src/core/*`).
+    - Set **Edge Constraints** (e.g., `Controller` cannot depend on `Repository` directly).
+- **Auto-Generation**: If missing, a default `RULES.md` is automatically created to get you started.
+- **UI Access**: Added a **Rules (⚖️)** button to the toolbar for quick access to your architectural constitution.
+
+## 🛠️ Canvas Enhancements
+- **Cluster Rollup**: Fixed an issue where collapsing a cluster did not visually hide its child nodes. Now executes a clean "fold" animation.
+- **Multi-Node Deletion**:
+    - Select multiple nodes (Shift+Click or Drag) and delete them all at once.
+    - **Backspace Support**: Added `Backspace` as a hotkey for deletion (in addition to `Delete`).
+- **Ghost Node Exorcism**: Improved logic to prevent "zombie" nodes from reappearing after deletion if they were referenced in `GEMINI.md` code blocks.
+
+## 🐛 Bug Fixes
+- **View State Preservation**: Fixed camera resetting unexpectedly during certain graph updates.
+- **Drag Selection**: Improved collision detection for box selection.
+
+---
+
 # Release Notes - v0.2.6
 
 > **"Context is King"**

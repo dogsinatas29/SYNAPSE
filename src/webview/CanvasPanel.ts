@@ -128,6 +128,9 @@ export class CanvasPanel {
                     case 'deleteNode':
                         await this.handleDeleteNode(message.nodeId);
                         return;
+                    case 'deleteNodes':
+                        await this.handleDeleteNodes(message.nodeIds);
+                        return;
                     case 'updateEdge':
                         await this.handleUpdateEdge(message.edgeId, message.updates);
                         return;
@@ -177,6 +180,9 @@ export class CanvasPanel {
                         return;
                     case 'requestLogPrompt':
                         await this.handleRequestLogPrompt();
+                        return;
+                    case 'openRules':
+                        await vscode.commands.executeCommand('synapse.openRules');
                         return;
                     case 'contextData':
                         if (this._contextRequestCallback) {
@@ -432,54 +438,77 @@ export class CanvasPanel {
     }
 
     private async handleDeleteNode(nodeId: string) {
+        await this.handleDeleteNodes([nodeId]);
+    }
+
+    private async handleDeleteNodes(nodeIds: string[]) {
         const workspaceFolder = this._workspaceFolder;
-        if (!workspaceFolder) return;
+        if (!workspaceFolder || !nodeIds || nodeIds.length === 0) return;
 
         try {
             const projectStateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'project_state.json');
             const data = await vscode.workspace.fs.readFile(projectStateUri);
             const projectState = JSON.parse(data.toString());
 
-            // 1. 노드 제거
             if (!projectState.nodes) projectState.nodes = [];
-            const nodeIndex = projectState.nodes.findIndex((n: any) => n.id === nodeId);
 
-            if (nodeIndex === -1) {
-                console.warn('[SYNAPSE] Node not found in project state:', nodeId);
+            const nodeIdSet = new Set(nodeIds);
+            let deletedCount = 0;
+
+            // 1. 노드 제거
+            projectState.nodes = projectState.nodes.filter((n: any) => {
+                if (nodeIdSet.has(n.id)) {
+                    deletedCount++;
+                    return false;
+                }
+                return true;
+            });
+
+            if (deletedCount === 0) {
+                console.warn('[SYNAPSE] No nodes found for deletion:', nodeIds);
                 return;
             }
-
-            const deletedNode = projectState.nodes[nodeIndex];
-            projectState.nodes.splice(nodeIndex, 1);
 
             // 2. 연결된 엣지 제거
             if (projectState.edges) {
                 const initialEdgeCount = projectState.edges.length;
-                projectState.edges = projectState.edges.filter((e: any) => e.from !== nodeId && e.to !== nodeId);
-                console.log(`[SYNAPSE] Removed ${initialEdgeCount - projectState.edges.length} edges connected to node ${nodeId}`);
+                projectState.edges = projectState.edges.filter((e: any) => !nodeIdSet.has(e.from) && !nodeIdSet.has(e.to));
+                console.log(`[SYNAPSE] Removed ${initialEdgeCount - projectState.edges.length} edges connected to deleted nodes`);
             }
 
-            // 3. 클러스터 자식 목록에서 제거
+            // 3. 클러스터 자식 목록에서 제거 & 빈 클러스터 삭제
             if (projectState.clusters) {
+                // Remove deleted nodes from children arrays
                 projectState.clusters.forEach((c: any) => {
                     if (c.children) {
-                        c.children = c.children.filter((id: string) => id !== nodeId);
+                        c.children = c.children.filter((id: string) => !nodeIdSet.has(id));
                     }
                 });
+
+                // Check which clusters are still active (referenced by remaining nodes)
+                const activeClusterIds = new Set(projectState.nodes.map((n: any) => n.data?.cluster_id || n.cluster_id).filter((id: string) => id));
+
+                const initialClusterCount = projectState.clusters.length;
+                projectState.clusters = projectState.clusters.filter((c: any) => activeClusterIds.has(c.id));
+
+                const removedClusters = initialClusterCount - projectState.clusters.length;
+                if (removedClusters > 0) {
+                    console.log(`[SYNAPSE] Cleaned up ${removedClusters} empty clusters (Backend)`);
+                }
             }
 
             // 저장 (정규화 적용)
             const normalizedJson = this.normalizeProjectState(projectState);
             await vscode.workspace.fs.writeFile(projectStateUri, Buffer.from(normalizedJson, 'utf8'));
 
-            console.log('[SYNAPSE] Node deleted:', deletedNode.id);
-            vscode.window.setStatusBarMessage(`Node deleted: ${deletedNode.data?.label || nodeId}`, 3000);
+            console.log(`[SYNAPSE] ${deletedCount} nodes deleted.`);
+            vscode.window.setStatusBarMessage(`${deletedCount} nodes deleted`, 3000);
 
             // 캔버스 새로고침
             await this.sendProjectState();
         } catch (error) {
-            console.error('Failed to delete node:', error);
-            vscode.window.showErrorMessage(`Failed to delete node: ${error}`);
+            console.error('Failed to delete nodes:', error);
+            vscode.window.showErrorMessage(`Failed to delete nodes: ${error}`);
         }
     }
 

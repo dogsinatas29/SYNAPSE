@@ -388,6 +388,7 @@
         <button class="btn" id="btn-animate" title="Toggle Edge Animations">🎬 On</button>
         <button class="btn" id="btn-history">History</button>
         <button class="btn" id="btn-snapshot" title="Take Manual Snapshot">📸</button>
+        <button class="btn" id="btn-rules" title="View Architecture Rules">⚖️ Rules</button>
         <button class="btn" id="btn-save-prompt" title="Save Prompt / Decision Log">💾</button>
     </div>
 
@@ -563,6 +564,15 @@
             document.getElementById('btn-snapshot').addEventListener('click', () => {
                 if (window.engine) {
                     window.engine.takeSnapshot('Manual Snapshot');
+                }
+            });
+
+            // 룰 확인 버튼
+            document.getElementById('btn-rules').addEventListener('click', () => {
+                if (typeof vscode !== 'undefined') {
+                    vscode.postMessage({ command: 'openRules' });
+                } else {
+                    alert('Rules are defined in RULES.md in the project root.');
                 }
             });
 

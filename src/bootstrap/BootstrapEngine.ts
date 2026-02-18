@@ -9,6 +9,8 @@ import { GeminiParser } from '../core/GeminiParser';
 import { FlowchartGenerator } from '../core/FlowchartGenerator';
 import { FileScanner } from '../core/FileScanner'; // Import Scanner
 import { BootstrapResult, ProjectState, NodeType } from '../types/schema';
+import { isIgnoredFolder, isIgnoredFile } from '../utils/exclusionRules';
+import { RuleEngine } from '../core/RuleEngine';
 
 export class BootstrapEngine {
     private parser: GeminiParser;
@@ -32,6 +34,10 @@ export class BootstrapEngine {
         console.log('🚀 SYNAPSE Bootstrap 시작...');
 
         try {
+            // Ensure RULES.md exists and load it
+            this.ensureRulesFile(projectRoot);
+            RuleEngine.getInstance().loadRules(projectRoot);
+
             // 1. GEMINI.md 파싱
             let structure = await this.parser.parseGeminiMd(geminiMdPath);
 
@@ -116,6 +122,10 @@ export class BootstrapEngine {
         console.log(`🔍 [SYNAPSE] Lite Bootstrapping project at: ${projectRoot}`);
 
         try {
+            // Ensure RULES.md exists and load it
+            this.ensureRulesFile(projectRoot);
+            RuleEngine.getInstance().loadRules(projectRoot);
+
             const projectState = await this.autoDiscover(projectRoot);
 
             const statePath = path.join(projectRoot, 'data', 'project_state.json');
@@ -145,6 +155,44 @@ export class BootstrapEngine {
     }
 
     /**
+     * Ensures that RULES.md exists in the project root.
+     * If not, creates it with default content.
+     */
+    private ensureRulesFile(projectRoot: string): void {
+        const rulesPath = path.join(projectRoot, 'RULES.md');
+        if (!fs.existsSync(rulesPath)) {
+            console.log('📝 [SYNAPSE] RULES.md not found. Generating default rules file...');
+            const defaultRules = `# SYNAPSE Architecture & Discovery Rules (설계 및 발견 규칙)
+
+This document defines the rules for how SYNAPSE discovers, parses, and visualizes the project architecture.
+본 문서는 SYNAPSE가 프로젝트 아키텍처를 발견, 파싱 및 시각화하는 규칙을 정의합니다.
+
+---
+
+## 1. Node Inclusion Rules (노드 포함 규칙)
+- **Real Path Priority (실제 경로 우선)**: Only files and folders that actually exist in the project root (e.g., \`src/\`, \`prompts/\`) are valid nodes.
+- **Icon Standards (아이콘 표준)**: 
+    - Folder nodes MUST be prefixed with the 📁 icon.
+    - File nodes MUST be prefixed with the 📄 icon.
+- **Core Components (중추 컴포넌트)**: Critical system logic must always be placed in the top-level cluster.
+
+## 2. Exclusion & Refinement Rules (제외 및 정제 규칙)
+- **Code Block Isolation (코드 블록 격리)**: Text inside multi-line code blocks is excluded from scanning.
+- **Inline Code Protection (인라인 코드 보호)**: Filenames wrapped in single backticks (\`...\`) do not trigger node creation.
+- **Comment Ignores (주석 무시)**: Text inside HTML comments \`<!-- ... -->\` is ignored.
+- **Node Diet (최적화)**: Non-architectural documents and build artifacts are excluded:
+    - \`README.md\`, \`README_KR.md\`, \`CHANGELOG.md\`, \`.vsix\`, \`.js.map\`
+    - \`node_modules\`, \`.git\`, \`dist\`, \`build\`, \`ui\`
+
+## 3. Edge & Flow Definitions (엣지 및 흐름 정의)
+- **Execution Flow Priority (실행 흐름 우선)**: Connections (\`-->\`) should represent actual **'Execution Flow'**.
+- **Layer Compliance (레이어 준수)**: Connections should follow: \`Discovery\` -> \`Reasoning\` -> \`Action\`.
+`;
+            fs.writeFileSync(rulesPath, defaultRules, 'utf8');
+        }
+    }
+
+    /**
      * 프로젝트 자동 발견 (Headless Bootstrap)
      */
     public async autoDiscover(projectRoot: string, includePaths?: string[]): Promise<ProjectState> {
@@ -167,13 +215,7 @@ export class BootstrapEngine {
                 const currentRelPath = path.join(relPath, file).replace(/\\/g, '/');
 
                 // [Node Diet] 파이썬 가상환경, 캐시, 빌드 폴더 등 무시
-                const ignoreFolders = [
-                    'node_modules', '.git', 'build', 'dist', 'data', 'out',
-                    '.venv', 'venv', 'env', '__pycache__', '.pytest_cache',
-                    '.idea', '.vscode', '.github', 'target', 'vendor',
-                    'bin', 'obj'
-                ];
-                if (ignoreFolders.includes(file)) continue;
+                if (isIgnoredFolder(file)) continue;
 
                 // [Scan Scope] includePaths가 지정된 경우
                 if (includePaths && includePaths.length > 0 && relPath === '') {
@@ -191,13 +233,9 @@ export class BootstrapEngine {
                     scanDir(fullPath, currentRelPath);
                 } else {
                     const ext = path.extname(file).toLowerCase();
-                    const fileName = file.toLowerCase();
 
                     // [Failsafe] 블랙리스트 및 빌드 결과물 필터링
-                    const blacklist = ['package-lock.json', 'license'];
-                    const binaryExcludes = ['.vsix', '.zip', '.tar.gz', '.exe', '.dll', '.so', '.bin'];
-
-                    if (blacklist.includes(fileName) || binaryExcludes.some(ex => file.endsWith(ex))) {
+                    if (isIgnoredFile(currentRelPath)) {
                         continue;
                     }
 

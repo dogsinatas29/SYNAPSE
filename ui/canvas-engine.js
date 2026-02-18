@@ -1032,6 +1032,12 @@ class CanvasEngine {
                 }
 
                 for (const node of this.nodes) {
+                    // Check if node is hidden by a collapsed cluster
+                    if (node.cluster_id) {
+                        const cluster = this.clusters.find(c => c.id === node.cluster_id);
+                        if (cluster && cluster.collapsed) continue;
+                    }
+
                     const nodeWidth = 120;
                     const nodeHeight = 60;
                     // node.position.x/y 사용
@@ -1067,7 +1073,7 @@ class CanvasEngine {
 
         // Delete 키로 선택된 노드/엣지 삭제 및 방향키 내비게이션
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Delete') {
+            if (e.key === 'Delete' || e.key === 'Backspace') {
                 if (this.selectedEdge) {
                     console.log('[SYNAPSE] Deleting edge:', this.selectedEdge.id);
                     this.deleteEdge(this.selectedEdge.id);
@@ -1215,6 +1221,12 @@ class CanvasEngine {
         for (const node of this.nodes) {
             const nodeWidth = 120;
             const nodeHeight = 60;
+
+            // Check if node is hidden (collapsed cluster)
+            if (node.cluster_id) {
+                const cluster = this.clusters?.find(c => c.id === node.cluster_id);
+                if (cluster && cluster.collapsed) continue;
+            }
 
             if (worldX >= node.position.x && worldX <= node.position.x + nodeWidth &&
                 worldY >= node.position.y && worldY <= node.position.y + nodeHeight) {
@@ -1999,6 +2011,20 @@ class CanvasEngine {
             this.selectedNodes = new Set(); // Clear selection
             this.selectedEdge = null;
 
+            // 🔍 데이터 무결성 보정 (Data Hygiene)
+            // node.data.cluster_id와 node.cluster_id 동기화
+            this.nodes.forEach(node => {
+                // 1. data.cluster_id -> cluster_id
+                if (node.data && node.data.cluster_id && !node.cluster_id) {
+                    node.cluster_id = node.data.cluster_id;
+                }
+                // 2. cluster_id -> data.cluster_id
+                if (node.cluster_id && (!node.data || !node.data.cluster_id)) {
+                    if (!node.data) node.data = {};
+                    node.data.cluster_id = node.cluster_id;
+                }
+            });
+
 
             // Tree 데이터 빌드
             if (this.treeRenderer) {
@@ -2468,8 +2494,8 @@ class CanvasEngine {
         // 4. 백엔드에 삭제 메시지 전송
         if (typeof vscode !== 'undefined') {
             vscode.postMessage({
-                command: 'deleteNode',
-                nodeId: nodeId
+                command: 'deleteNodes',
+                nodeIds: [nodeId]
             });
         }
 
@@ -2484,18 +2510,44 @@ class CanvasEngine {
         // Confirmation for multiple nodes
         if (nodesToDelete.length > 1) {
             const confirmMsg = `Are you sure you want to delete ${nodesToDelete.length} nodes and their connections?`;
-            // Browser confirm or VS Code specific if needed (using confirm for simplicity in webview)
             if (!confirm(confirmMsg)) {
                 return;
             }
         }
 
-        nodesToDelete.forEach(node => {
-            this.deleteNode(node.id);
+        const nodeIds = nodesToDelete.map(n => n.id);
+
+        // 1. 로컬 상태 일괄 업데이트
+        this.nodes = this.nodes.filter(n => !nodeIds.includes(n.id));
+        this.edges = this.edges.filter(e => !nodeIds.includes(e.from) && !nodeIds.includes(e.to));
+
+        // 1.5. 빈 클러스터 정리 (Garbage Collection)
+        const activeClusterIds = new Set(this.nodes.map(n => n.cluster_id).filter(id => id));
+        const initialClusterCount = this.clusters.length;
+        this.clusters = this.clusters.filter(c => {
+            // 클러스터에 속한 노드가 하나라도 남아있는지 확인
+            // (방금 삭제된 노드들은 이미 this.nodes에서 제거됨)
+            return activeClusterIds.has(c.id);
         });
 
+        const removedClusters = initialClusterCount - this.clusters.length;
+        if (removedClusters > 0) {
+            console.log(`[SYNAPSE] Cleaned up ${removedClusters} empty clusters`);
+        }
+
+        // 2. 선택 해제
         this.selectedNodes.clear();
         this.selectedNode = null;
+
+        // 3. 백엔드에 일괄 삭제 메시지 전송
+        if (typeof vscode !== 'undefined') {
+            vscode.postMessage({
+                command: 'deleteNodes',
+                nodeIds: nodeIds
+            });
+        }
+
+        console.log(`[SYNAPSE] ${nodeIds.length} nodes deleted.`);
         this.render();
     }
 

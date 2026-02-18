@@ -81,6 +81,22 @@ export async function activate(context: vscode.ExtensionContext) {
         );
 
         context.subscriptions.push(
+            vscode.commands.registerCommand('synapse.openRules', async () => {
+                const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+                if (workspaceFolder) {
+                    const rulesUri = vscode.Uri.joinPath(workspaceFolder.uri, 'RULES.md');
+                    try {
+                        await vscode.workspace.fs.stat(rulesUri);
+                        const doc = await vscode.workspace.openTextDocument(rulesUri);
+                        await vscode.window.showTextDocument(doc);
+                    } catch (e) {
+                        vscode.window.showErrorMessage('RULES.md not found in the project root.');
+                    }
+                }
+            })
+        );
+
+        context.subscriptions.push(
             vscode.commands.registerCommand('synapse.bootstrap', async (uri: vscode.Uri | undefined) => {
                 let targetFolder: vscode.WorkspaceFolder | undefined;
 

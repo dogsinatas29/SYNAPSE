@@ -10,12 +10,1033 @@
     ],
     "zoom_level": 1
   },
-  "clusters": [],
+  "clusters": [
+    {
+      "_headerBounds": {
+        "height": 30,
+        "width": 160,
+        "x": 898.9440967791893,
+        "y": 276.2475515590109
+      },
+      "bounds": {
+        "height": 1250,
+        "width": 1250,
+        "x": 1600,
+        "y": 0
+      },
+      "children": [
+        "node_src_bootstrap_BootstrapEngine_ts"
+      ],
+      "collapsed": false,
+      "id": "cluster_13",
+      "label": "src/bootstrap"
+    },
+    {
+      "_headerBounds": {
+        "height": 30,
+        "width": 171.60641303546095,
+        "x": 1860.8032065177306,
+        "y": 297.93944815930183
+      },
+      "bounds": {
+        "height": 1250,
+        "width": 1250,
+        "x": 2400,
+        "y": 0
+      },
+      "children": [
+        "node_src_cli_ts",
+        "node_src_client_ts",
+        "node_src_extension_ts"
+      ],
+      "collapsed": false,
+      "id": "cluster_14",
+      "label": "src"
+    },
+    {
+      "_headerBounds": {
+        "height": 30,
+        "width": 860,
+        "x": -370,
+        "y": 1200
+      },
+      "bounds": {
+        "height": 1250,
+        "width": 1250,
+        "x": 0,
+        "y": 1200
+      },
+      "children": [
+        "node_src_core_FileScanner_ts",
+        "node_src_core_FlowScanner_ts",
+        "node_src_core_FlowchartGenerator_ts",
+        "node_src_core_GeminiParser_ts",
+        "node_src_core_PromptLogger_ts"
+      ],
+      "collapsed": false,
+      "id": "cluster_15",
+      "label": "src/core"
+    },
+    {
+      "_headerBounds": {
+        "height": 30,
+        "width": 510.0000000000002,
+        "x": 689.5003291050837,
+        "y": 1384.9342906608167
+      },
+      "bounds": {
+        "height": 1250,
+        "width": 1250,
+        "x": 800,
+        "y": 1200
+      },
+      "children": [
+        "node_src_server_server_ts",
+        "node_src_server_standalone_ts"
+      ],
+      "collapsed": false,
+      "id": "cluster_16",
+      "label": "src/server"
+    },
+    {
+      "_headerBounds": {
+        "height": 30,
+        "width": 510,
+        "x": 1310.2600174210766,
+        "y": 1239.0454138805237
+      },
+      "bounds": {
+        "height": 1250,
+        "width": 1250,
+        "x": 1600,
+        "y": 1200
+      },
+      "children": [
+        "node_src_test_FileScanner_test_ts",
+        "node_src_test_FlowchartGenerator_test_ts",
+        "node_src_test_GeminiParser_test_ts",
+        "node_src_test_visualHints_test_ts"
+      ],
+      "collapsed": false,
+      "id": "cluster_17",
+      "label": "src/test"
+    },
+    {
+      "_headerBounds": {
+        "height": 30,
+        "width": 160,
+        "x": 995.296532166124,
+        "y": 745.2306361292065
+      },
+      "bounds": {
+        "height": 1250,
+        "width": 1250,
+        "x": 2400,
+        "y": 1200
+      },
+      "children": [
+        "node_src_types_schema_ts"
+      ],
+      "collapsed": false,
+      "id": "cluster_18",
+      "label": "src/types"
+    },
+    {
+      "_headerBounds": {
+        "height": 30,
+        "width": 160,
+        "x": -203.13066477893508,
+        "y": 1844.4237149798976
+      },
+      "bounds": {
+        "height": 1250,
+        "width": 1250,
+        "x": 0,
+        "y": 2400
+      },
+      "children": [
+        "node_src_utils_visualHints_ts"
+      ],
+      "collapsed": false,
+      "id": "cluster_19",
+      "label": "src/utils"
+    },
+    {
+      "_headerBounds": {
+        "height": 30,
+        "width": 160,
+        "x": 540.3028572931754,
+        "y": 2026.267899380593
+      },
+      "bounds": {
+        "height": 1250,
+        "width": 1250,
+        "x": 800,
+        "y": 2400
+      },
+      "children": [
+        "node_src_webview_CanvasPanel_ts"
+      ],
+      "collapsed": false,
+      "id": "cluster_20",
+      "label": "src/webview"
+    },
+    {
+      "_headerBounds": {
+        "height": 30,
+        "width": 760,
+        "x": -382.842417859604,
+        "y": 232.26219086570813
+      },
+      "bounds": {
+        "height": 1200,
+        "width": 900,
+        "x": -1600,
+        "y": -100
+      },
+      "children": [
+        "node_CHANGELOG_md",
+        "node_DEBUG_GUIDE_md",
+        "node_EXTENSION_README_md",
+        "node_GEMINI_md",
+        "node_README_ko_md",
+        "node_README_md",
+        "node_RELEASES_v0_2_7_md",
+        "node_architecture_md",
+        "node_v0_1_6_release_notes_md",
+        "node_v0_1_7_release_notes_md",
+        "node_v0_1_8_release_notes_md",
+        "node_v0_2_0_release_notes_md",
+        "node_v0_2_1_release_notes_md",
+        "node_v0_2_2_release_notes_md",
+        "node_v0_2_3_release_notes_md",
+        "node_v0_2_4_release_notes_md",
+        "node_v0_2_5_release_notes_md",
+        "node_v0_2_6_release_notes_md",
+        "node_prompts_2026_02_17_keybinding_check_md",
+        "node_prompts_2026_02_17_origin_edge_verification_md",
+        "node_prompts_2026_02_17_test_md",
+        "node_prompts_2026_02_18_deep_reset_triggered_md",
+        "node_prompts_2026_02_18_selection_ungrouped_md"
+      ],
+      "collapsed": false,
+      "id": "doc_shelf",
+      "label": "📚 Documentation Shelf"
+    }
+  ],
   "edges": [
     {
       "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_CHANGELOG_md",
+      "id": "edge_35",
+      "is_approved": false,
+      "to": "node_README_ko_md",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_CHANGELOG_md",
+      "id": "edge_36",
+      "is_approved": false,
+      "to": "node_README_md",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Circular dependency detected",
+      "from": "node_README_ko_md",
+      "id": "edge_37",
+      "is_approved": false,
+      "to": "node_README_ko_md",
+      "type": "dependency",
+      "validation": {
+        "confidence": 1,
+        "reason": "Circular dependency: Self-reference is not allowed in this layer.",
+        "valid": false
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Circular dependency detected",
+      "from": "node_README_ko_md",
+      "id": "edge_38",
+      "is_approved": false,
+      "to": "node_README_md",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Circular dependency detected",
+      "from": "node_README_md",
+      "id": "edge_39",
+      "is_approved": false,
+      "to": "node_README_ko_md",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Circular dependency detected",
+      "from": "node_README_md",
+      "id": "edge_40",
+      "is_approved": false,
+      "to": "node_README_md",
+      "type": "dependency",
+      "validation": {
+        "confidence": 1,
+        "reason": "Circular dependency: Self-reference is not allowed in this layer.",
+        "valid": false
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_prompts_2026_02_17_origin_edge_verification_md",
+      "id": "edge_41",
+      "is_approved": false,
+      "to": "node_src_core_PromptLogger_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_prompts_2026_02_17_origin_edge_verification_md",
+      "id": "edge_42",
+      "is_approved": false,
+      "to": "node_src_bootstrap_BootstrapEngine_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_bootstrap_BootstrapEngine_ts",
+      "id": "edge_43",
+      "is_approved": false,
+      "to": "node_src_core_GeminiParser_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_bootstrap_BootstrapEngine_ts",
+      "id": "edge_44",
+      "is_approved": false,
+      "to": "node_src_core_FlowchartGenerator_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_bootstrap_BootstrapEngine_ts",
+      "id": "edge_45",
+      "is_approved": false,
+      "to": "node_src_core_FileScanner_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_bootstrap_BootstrapEngine_ts",
+      "id": "edge_46",
+      "is_approved": false,
+      "to": "node_src_types_schema_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_cli_ts",
+      "id": "edge_47",
+      "is_approved": false,
+      "to": "node_src_bootstrap_BootstrapEngine_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_core_FlowchartGenerator_ts",
+      "id": "edge_48",
+      "is_approved": false,
+      "to": "node_src_types_schema_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_core_FlowchartGenerator_ts",
+      "id": "edge_49",
+      "is_approved": false,
+      "to": "node_src_utils_visualHints_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_core_GeminiParser_ts",
+      "id": "edge_50",
+      "is_approved": false,
+      "to": "node_src_types_schema_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_extension_ts",
-      "id": "edge_auto_1771407984547_240",
+      "id": "edge_51",
+      "is_approved": false,
+      "to": "node_src_webview_CanvasPanel_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_extension_ts",
+      "id": "edge_52",
+      "is_approved": false,
+      "to": "node_src_bootstrap_BootstrapEngine_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_extension_ts",
+      "id": "edge_53",
+      "is_approved": false,
+      "to": "node_src_client_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_extension_ts",
+      "id": "edge_54",
+      "is_approved": false,
+      "to": "node_src_core_PromptLogger_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_server_server_ts",
+      "id": "edge_55",
+      "is_approved": false,
+      "to": "node_src_core_GeminiParser_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_server_server_ts",
+      "id": "edge_56",
+      "is_approved": false,
+      "to": "node_src_core_FlowScanner_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_server_standalone_ts",
+      "id": "edge_57",
+      "is_approved": false,
+      "to": "node_src_core_GeminiParser_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_server_standalone_ts",
+      "id": "edge_58",
+      "is_approved": false,
+      "to": "node_src_core_FlowScanner_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_test_FileScanner_test_ts",
+      "id": "edge_59",
+      "is_approved": false,
+      "to": "node_src_core_FileScanner_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_test_FlowchartGenerator_test_ts",
+      "id": "edge_60",
+      "is_approved": false,
+      "to": "node_src_core_FlowchartGenerator_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_test_FlowchartGenerator_test_ts",
+      "id": "edge_61",
+      "is_approved": false,
+      "to": "node_src_types_schema_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_test_GeminiParser_test_ts",
+      "id": "edge_62",
+      "is_approved": false,
+      "to": "node_src_core_GeminiParser_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_test_visualHints_test_ts",
+      "id": "edge_63",
+      "is_approved": false,
+      "to": "node_src_utils_visualHints_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_webview_CanvasPanel_ts",
+      "id": "edge_64",
+      "is_approved": false,
+      "to": "node_src_types_schema_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_webview_CanvasPanel_ts",
+      "id": "edge_65",
+      "is_approved": false,
+      "to": "node_src_core_FileScanner_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_webview_CanvasPanel_ts",
+      "id": "edge_66",
+      "is_approved": false,
+      "to": "node_src_core_GeminiParser_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_webview_CanvasPanel_ts",
+      "id": "edge_67",
+      "is_approved": false,
+      "to": "node_src_core_FlowchartGenerator_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_webview_CanvasPanel_ts",
+      "id": "edge_68",
+      "is_approved": false,
+      "to": "node_src_bootstrap_BootstrapEngine_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_webview_CanvasPanel_ts",
+      "id": "edge_69",
+      "is_approved": false,
+      "to": "node_src_client_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_CHANGELOG_md",
+      "id": "edge_auto_1771426514704_354",
+      "label": "ref",
+      "to": "node_README_ko_md",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_CHANGELOG_md",
+      "id": "edge_auto_1771426514704_634",
+      "label": "ref",
+      "to": "node_README_md",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Circular dependency detected",
+      "from": "node_README_ko_md",
+      "id": "edge_auto_1771426514704_227",
+      "label": "ref",
+      "to": "node_README_md",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Circular dependency detected",
+      "from": "node_README_md",
+      "id": "edge_auto_1771426514704_35",
+      "label": "ref",
+      "to": "node_README_ko_md",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_prompts_2026_02_17_origin_edge_verification_md",
+      "id": "edge_auto_1771426514704_699",
+      "label": "ref",
+      "to": "node_src_core_PromptLogger_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_prompts_2026_02_17_origin_edge_verification_md",
+      "id": "edge_auto_1771426514704_64",
+      "label": "ref",
+      "to": "node_src_bootstrap_BootstrapEngine_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_bootstrap_BootstrapEngine_ts",
+      "id": "edge_auto_1771426514704_929",
+      "label": "ref",
+      "to": "node_src_core_GeminiParser_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_bootstrap_BootstrapEngine_ts",
+      "id": "edge_auto_1771426514704_188",
+      "label": "ref",
+      "to": "node_src_core_FlowchartGenerator_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_bootstrap_BootstrapEngine_ts",
+      "id": "edge_auto_1771426514704_4",
+      "label": "ref",
+      "to": "node_src_core_FileScanner_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_bootstrap_BootstrapEngine_ts",
+      "id": "edge_auto_1771426514704_288",
+      "label": "ref",
+      "to": "node_src_types_schema_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_cli_ts",
+      "id": "edge_auto_1771426514704_996",
+      "label": "ref",
+      "to": "node_src_bootstrap_BootstrapEngine_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_extension_ts",
+      "id": "edge_auto_1771426514704_693",
       "label": "ref",
       "to": "node_src_webview_CanvasPanel_ts",
       "type": "dependency",
@@ -28,7 +1049,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_extension_ts",
-      "id": "edge_auto_1771407984547_131",
+      "id": "edge_auto_1771426514704_252",
       "label": "ref",
       "to": "node_src_bootstrap_BootstrapEngine_ts",
       "type": "dependency",
@@ -40,10 +1061,10 @@
     },
     {
       "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_src_bootstrap_BootstrapEngine_ts",
-      "id": "edge_auto_1771407984547_400",
+      "from": "node_src_extension_ts",
+      "id": "edge_auto_1771426514704_648",
       "label": "ref",
-      "to": "node_src_core_GeminiParser_ts",
+      "to": "node_src_client_ts",
       "type": "dependency",
       "validation": {
         "confidence": 0.95,
@@ -53,10 +1074,10 @@
     },
     {
       "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_src_bootstrap_BootstrapEngine_ts",
-      "id": "edge_auto_1771407984547_612",
+      "from": "node_src_extension_ts",
+      "id": "edge_auto_1771426514704_509",
       "label": "ref",
-      "to": "node_src_core_FlowchartGenerator_ts",
+      "to": "node_src_core_PromptLogger_ts",
       "type": "dependency",
       "validation": {
         "confidence": 0.95,
@@ -66,34 +1087,8 @@
     },
     {
       "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_src_bootstrap_BootstrapEngine_ts",
-      "id": "edge_auto_1771407984547_353",
-      "label": "ref",
-      "to": "node_src_core_FileScanner_ts",
-      "type": "dependency",
-      "validation": {
-        "confidence": 0.95,
-        "reason": "Appropriate architectural relationship.",
-        "valid": true
-      }
-    },
-    {
-      "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_src_bootstrap_BootstrapEngine_ts",
-      "id": "edge_auto_1771407984547_488",
-      "label": "ref",
-      "to": "node_src_types_schema_ts",
-      "type": "dependency",
-      "validation": {
-        "confidence": 0.95,
-        "reason": "Appropriate architectural relationship.",
-        "valid": true
-      }
-    },
-    {
-      "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_src_core_GeminiParser_ts",
-      "id": "edge_auto_1771407984547_26",
+      "from": "node_src_core_FlowchartGenerator_ts",
+      "id": "edge_auto_1771426514704_342",
       "label": "ref",
       "to": "node_src_types_schema_ts",
       "type": "dependency",
@@ -106,7 +1101,150 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_core_FlowchartGenerator_ts",
-      "id": "edge_auto_1771407984547_609",
+      "id": "edge_auto_1771426514704_322",
+      "label": "ref",
+      "to": "node_src_utils_visualHints_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_core_GeminiParser_ts",
+      "id": "edge_auto_1771426514704_569",
+      "label": "ref",
+      "to": "node_src_types_schema_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_server_server_ts",
+      "id": "edge_auto_1771426514704_956",
+      "label": "ref",
+      "to": "node_src_core_GeminiParser_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_server_server_ts",
+      "id": "edge_auto_1771426514704_424",
+      "label": "ref",
+      "to": "node_src_core_FlowScanner_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_server_standalone_ts",
+      "id": "edge_auto_1771426514704_401",
+      "label": "ref",
+      "to": "node_src_core_GeminiParser_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_server_standalone_ts",
+      "id": "edge_auto_1771426514704_919",
+      "label": "ref",
+      "to": "node_src_core_FlowScanner_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_test_FileScanner_test_ts",
+      "id": "edge_auto_1771426514704_733",
+      "label": "ref",
+      "to": "node_src_core_FileScanner_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_test_FlowchartGenerator_test_ts",
+      "id": "edge_auto_1771426514704_394",
+      "label": "ref",
+      "to": "node_src_core_FlowchartGenerator_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_test_FlowchartGenerator_test_ts",
+      "id": "edge_auto_1771426514704_497",
+      "label": "ref",
+      "to": "node_src_types_schema_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_test_GeminiParser_test_ts",
+      "id": "edge_auto_1771426514704_707",
+      "label": "ref",
+      "to": "node_src_core_GeminiParser_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_test_visualHints_test_ts",
+      "id": "edge_auto_1771426514704_59",
+      "label": "ref",
+      "to": "node_src_utils_visualHints_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_webview_CanvasPanel_ts",
+      "id": "edge_auto_1771426514704_158",
       "label": "ref",
       "to": "node_src_types_schema_ts",
       "type": "dependency",
@@ -119,20 +1257,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_webview_CanvasPanel_ts",
-      "id": "edge_auto_1771407984547_411",
-      "label": "ref",
-      "to": "node_src_types_schema_ts",
-      "type": "dependency",
-      "validation": {
-        "confidence": 0.95,
-        "reason": "Appropriate architectural relationship.",
-        "valid": true
-      }
-    },
-    {
-      "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_src_webview_CanvasPanel_ts",
-      "id": "edge_auto_1771407984547_251",
+      "id": "edge_auto_1771426514704_350",
       "label": "ref",
       "to": "node_src_core_FileScanner_ts",
       "type": "dependency",
@@ -145,7 +1270,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_webview_CanvasPanel_ts",
-      "id": "edge_auto_1771407984547_458",
+      "id": "edge_auto_1771426514704_249",
       "label": "ref",
       "to": "node_src_core_GeminiParser_ts",
       "type": "dependency",
@@ -158,7 +1283,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_webview_CanvasPanel_ts",
-      "id": "edge_auto_1771407984547_563",
+      "id": "edge_auto_1771426514704_769",
       "label": "ref",
       "to": "node_src_core_FlowchartGenerator_ts",
       "type": "dependency",
@@ -171,7 +1296,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_webview_CanvasPanel_ts",
-      "id": "edge_auto_1771407984547_434",
+      "id": "edge_auto_1771426514704_145",
       "label": "ref",
       "to": "node_src_bootstrap_BootstrapEngine_ts",
       "type": "dependency",
@@ -183,23 +1308,10 @@
     },
     {
       "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_src_server_server_ts",
-      "id": "edge_auto_1771407984547_882",
+      "from": "node_src_webview_CanvasPanel_ts",
+      "id": "edge_auto_1771426514704_251",
       "label": "ref",
-      "to": "node_src_core_GeminiParser_ts",
-      "type": "dependency",
-      "validation": {
-        "confidence": 0.95,
-        "reason": "Appropriate architectural relationship.",
-        "valid": true
-      }
-    },
-    {
-      "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_src_server_server_ts",
-      "id": "edge_auto_1771407984547_329",
-      "label": "ref",
-      "to": "node_src_core_FlowScanner_ts",
+      "to": "node_src_client_ts",
       "type": "dependency",
       "validation": {
         "confidence": 0.95,
@@ -211,11 +1323,1207 @@
   "gemini_md_path": "/home/dogsinatas/TypeScript_project/antigravity-extension-vis/GEMINI.md",
   "nodes": [
     {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "color": "#fabd2f",
+        "description": "CHANGELOG.md (Doc)",
+        "file": "CHANGELOG.md",
+        "label": "CHANGELOG.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "Release Notes - v0.2.8",
+            "⚖️ Rule Externalization",
+            "🛠️ Canvas Enhancements",
+            "🐛 Bug Fixes",
+            "Release Notes - v0.2.6",
+            "🌟 New Features",
+            "📄 Documentation",
+            "Release Notes - v0.2.5",
+            "🧹 Housekeeping & Cleanup",
+            "🐛 Bug Fixes",
+            "✨ New Features",
+            "Release Notes - v0.2.4",
+            "🏁 Strategic Execution Flow & Single Source of Truth",
+            "🏗️ Full TypeScript & Logic Support (Core Enhancement)",
+            "Release Notes - v0.1.8",
+            "🔌 Enhanced LSP Integration (Editor-First Design)",
+            "Release Notes - v0.1.7",
+            "🚀 Bug Fixes & Packaging",
+            "Release Notes - v0.1.6",
+            "📜 Legal & Documentation",
+            "Release Notes - v0.1.5",
+            "🔧 Maintenance",
+            "Release Notes - v0.1.4",
+            "🚀 Hotfix: Always-On Thought Stream",
+            "Release Notes - v0.1.3",
+            "🐛 Bug Fixes",
+            "Release Notes - v0.1.2",
+            "✨ New Feature: Prompt Traceability Engine",
+            "Release Notes - v0.1.1",
+            "🚀 New Features",
+            "💾 Prompt Traceability (New!)",
+            "📚 Multilingual Documentation",
+            "🔥 Core Strategies",
+            "Multi-MD Strategy & Auto-Save",
+            "🛠️ Enhancements"
+          ],
+          "functions": [],
+          "references": [
+            "main",
+            "README.ko",
+            "README"
+          ]
+        }
+      },
+      "id": "node_CHANGELOG_md",
+      "position": {
+        "x": -362.842417859604,
+        "y": 282.26219086570813
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "color": "#fabd2f",
+        "description": "DEBUG_GUIDE.md (Doc)",
+        "file": "DEBUG_GUIDE.md",
+        "label": "DEBUG_GUIDE.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "SYNAPSE 디버깅 가이드",
+            "현재 상황",
+            "체크리스트",
+            "1. Extension Development Host에서 프로젝트 폴더가 열려있는가?",
+            "2. Webview Developer Tools 콘솔 확인",
+            "3. Extension 콘솔 확인",
+            "4. 파일 경로 확인",
+            "해결 방법",
+            "방법 1: 프로젝트 폴더 열기",
+            "방법 2: Extension 재시작",
+            "방법 3: 수동으로 workspace 확인"
+          ],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_DEBUG_GUIDE_md",
+      "position": {
+        "x": -162.8424178596038,
+        "y": 282.26219086570813
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "color": "#fabd2f",
+        "description": "EXTENSION_README.md (Doc)",
+        "file": "EXTENSION_README.md",
+        "label": "EXTENSION_README.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "SYNAPSE VS Code Extension",
+            "Commands",
+            "Development",
+            "Testing",
+            "License"
+          ],
+          "functions": [],
+          "references": [
+            "LICENSE"
+          ]
+        }
+      },
+      "id": "node_EXTENSION_README_md",
+      "position": {
+        "x": 37.15758214039626,
+        "y": 282.26219086570813
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "color": "#fabd2f",
+        "description": "GEMINI.md (Doc)",
+        "file": "GEMINI.md",
+        "label": "GEMINI.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "🏁 v0.2.0: Strategic Execution Flow (진실의 정의)",
+            "1. 왜 순서도가 최종본이어야 하는가? (Rationale)",
+            "2. v0.2.0 주요 변경점",
+            "4. Bridge (코드 연동)",
+            "🛡️ Node Rules (노드 생성 규칙)",
+            "🚫 Exclusion Rules (제외 및 필터 규칙)",
+            "🧹 [데이터 위생 원칙: 스파게티 방지 3대 철칙]",
+            "원칙 1: 원천 소스와 상태값의 엄격한 분리",
+            "원칙 2: 자동 정규화(Auto-Normalization) 엔진",
+            "원칙 3: '데이터의 혈통' 중심의 정적 분석 활용",
+            "🧠 SYNAPSE: Visual Architecture Engine",
+            "🏗️ 핵심 워크플로우 (The Command Chain)",
+            "🛠️ 기술 스택",
+            "🚀 Saturday Sprint: Phase 1",
+            "1. 웹뷰 캔버스 초기화",
+            "2. 드롭 앤 분석 로직",
+            "3. 승인 UI (Pending State)",
+            "4. 스냅샷 엔진",
+            "🔄 [SYNAPSE: 동적 순서도(Flowchart) 통합 설계]",
+            "1. 모드 전환 (View Toggle)",
+            "Topology View (기본)",
+            "Flow View (호출)",
+            "2. 순서도 자동 생성 로직",
+            "Step 1: Trace Entry",
+            "Step 2: Logic Branching",
+            "Step 3: Asynchronous Flow",
+            "3. 사용자 시나리오: '눈으로 하는 디버깅'",
+            "시나리오 흐름",
+            "예시",
+            "4. Senior Engineer's Note: 기술적 난제와 해결책",
+            "난제: 정교한 파싱 필요",
+            "해결책 1: 추상 구문 트리(AST) 활용",
+            "해결책 2: Mermaid.js 스타일 적용",
+            "5. UI 통합 설계",
+            "모드 전환 버튼",
+            "우클릭 컨텍스트 메뉴",
+            "Flow View 렌더링",
+            "6. 참고 화면 (Reference Screenshot)",
+            "🌳 [SYNAPSE: 계층 구조(File Tree) 통합 설계]",
+            "1. 듀얼 레이아웃 모드 (Context Switching)",
+            "Graph Mode (기본)",
+            "Tree Mode (호출)",
+            "전환 방식",
+            "2. '폴더' 노드의 추상화",
+            "Container Node",
+            "Group Collapse",
+            "상태 전이 (State Propagation)",
+            "3. 시각적 연동 및 탐색",
+            "Breadcrumb Link",
+            "Shadow Structure",
+            "4. Senior Engineer's Note: 실무 구현 팁",
+            "OS 종속성 배제",
+            "Lazy Loading",
+            "🎯 [연휴 프로젝트의 4대 축 완성]",
+            "1. Topology (노드/엣지)",
+            "2. Flowchart (순서도)",
+            "3. File Tree (계층 구조)",
+            "4. Bridge (코드 연동)",
+            "📁 [SYNAPSE: 소스 코드 명세 (Self-Visualization)]",
+            "🛠️ Core Engine",
+            "🌐 View & Interface",
+            "🔗 Core Dependencies"
+          ],
+          "functions": [],
+          "references": [
+            "synapse_topology_view"
+          ]
+        }
+      },
+      "id": "node_GEMINI_md",
+      "position": {
+        "x": 237.15758214039607,
+        "y": 282.26219086570813
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "color": "#fabd2f",
+        "description": "README.ko.md (Doc)",
+        "file": "README.ko.md",
+        "label": "README.ko.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "🧠 SYNAPSE: VS Code Visual Architecture Engine",
+            "🚀 Key Features",
+            "🎥 데모 비디오",
+            "📸 스크린샷",
+            "🌐 Graph View",
+            "🌳 Tree View",
+            "➡️ Flow View",
+            "🗂️ 언어 지원 (Language Support)",
+            "🛠️ 기술 스택 (Technology Stack)",
+            "📦 설치 및 시작하기",
+            "1. VS Code 확장 프로그램 (추천)",
+            "설치 방법:",
+            "2. 소스 코드에서 빌드하기",
+            "VS Code에서 F5를 눌러 실행",
+            "3. Standalone 브라우저 모드",
+            "터미널 1: API Server",
+            "터미널 2: UI Server",
+            "4. 개발자 패키징 (Build)",
+            "🎯 매뉴얼 및 사용 가이드",
+            "🧱 노드 및 엣지 관리 (WYSIWYG)",
+            "📦 클러스터링 및 관리",
+            "💾 스냅샷 및 롤백",
+            "🧠 로그 프롬프트 & 맥락 (New in v0.2.6)",
+            "🧹 데이터 정형화 원칙",
+            "🔥 핵심 전략",
+            "📐 Philosophy",
+            "🆕 버전 히스토리 (Version History)",
+            "v0.2.8",
+            "v0.2.7",
+            "v0.2.6",
+            "v0.2.5",
+            "v0.2.4",
+            "v0.2.3",
+            "📜 License"
+          ],
+          "functions": [],
+          "references": [
+            "README.ko",
+            "README",
+            "graph_v0.2.0",
+            "synapse_tree_view",
+            "flow_v0.2.0",
+            "경로",
+            "LICENSE"
+          ]
+        }
+      },
+      "id": "node_README_ko_md",
+      "position": {
+        "x": -362.842417859604,
+        "y": 432.26219086570813
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "color": "#fabd2f",
+        "description": "README.md (Doc)",
+        "file": "README.md",
+        "label": "README.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "🧠 SYNAPSE: VS Code Visual Architecture Engine",
+            "🚀 Key Features",
+            "🎥 Demo Video",
+            "📸 Screenshots",
+            "🌐 Graph View",
+            "🌳 Tree View",
+            "➡️ Flow View",
+            "🗂️ Language Support",
+            "🛠️ Technology Stack",
+            "📦 Installation & Setup",
+            "1. VS Code Extension (Recommended)",
+            "How to Install:",
+            "2. Getting Started (From Source)",
+            "Press F5 in VS Code to start",
+            "3. Standalone Bridge Mode (Web Browser)",
+            "Terminal 1: API Server",
+            "Terminal 2: UI Server",
+            "4. For Developers (Build)",
+            "🎯 Manual & Usage Guide",
+            "🧱 Node & Edge Management (WYSIWYG)",
+            "📦 Clustering & Management",
+            "💾 Snapshot & Rollback",
+            "🧠 Log Prompt & Context (New in v0.2.6)",
+            "🧹 Data Hygiene Principles",
+            "🔥 Core Strategies",
+            "📐 Philosophy",
+            "🆕 Version History",
+            "v0.2.8",
+            "v0.2.7",
+            "v0.2.6",
+            "v0.2.5",
+            "v0.2.4",
+            "v0.2.3",
+            "📜 License"
+          ],
+          "functions": [],
+          "references": [
+            "README.ko",
+            "README",
+            "graph_v0.2.0",
+            "synapse_tree_view",
+            "flow_v0.2.0",
+            "path",
+            "LICENSE"
+          ]
+        }
+      },
+      "id": "node_README_md",
+      "position": {
+        "x": -162.8424178596038,
+        "y": 432.26219086570813
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "color": "#fabd2f",
+        "description": "RELEASES_v0.2.7.md (Doc)",
+        "file": "RELEASES_v0.2.7.md",
+        "label": "RELEASES_v0.2.7.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "SYNAPSE Release Notes - v0.2.7",
+            "🛡️ Robust Architecture Hygiene",
+            "[New] Deep Filtering Logic",
+            "[New] Formal Node Rules in GEMINI.md",
+            "🚀 Release v0.2.7 (한글)",
+            "🛡️ 더욱 강력해진 아키텍처 정화 (Architecture Hygiene)",
+            "[신규] 심층 필터링 로직 도입",
+            "[신규] GEMINI.md 내 표준 노드 규칙 정의"
+          ],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_RELEASES_v0_2_7_md",
+      "position": {
+        "x": 37.15758214039626,
+        "y": 432.26219086570813
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "color": "#fabd2f",
+        "description": "architecture.md (Doc)",
+        "file": "architecture.md",
+        "label": "architecture.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "프로젝트 아키텍처"
+          ],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_architecture_md",
+      "position": {
+        "x": 237.15758214039607,
+        "y": 432.26219086570813
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "color": "#fabd2f",
+        "description": "v0.1.6_release_notes.md (Doc)",
+        "file": "v0.1.6_release_notes.md",
+        "label": "v0.1.6_release_notes.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "release_v0.1.6 - Release Summary",
+            "📜 Legal & Documentation",
+            "🔧 Maintenance"
+          ],
+          "functions": [],
+          "references": [
+            "LICENSE"
+          ]
+        }
+      },
+      "id": "node_v0_1_6_release_notes_md",
+      "position": {
+        "x": -362.842417859604,
+        "y": 582.2621908657081
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "color": "#fabd2f",
+        "description": "v0.1.7_release_notes.md (Doc)",
+        "file": "v0.1.7_release_notes.md",
+        "label": "v0.1.7_release_notes.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "Release Notes v0.1.7 - SYNAPSE Visual Architecture",
+            "[English] Core Delivery: Multi-MD Strategy & Intelligent Logging",
+            "🚀 Key Features",
+            "🔧 Stability & Deployment Improvements",
+            "[Korean] 핵심 배포 사항: 멀티 MD 전략 및 지능형 로깅",
+            "🚀 주요 기능",
+            "🔧 안정성 및 배포 개선 사항"
+          ],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_v0_1_7_release_notes_md",
+      "position": {
+        "x": -162.8424178596038,
+        "y": 582.2621908657081
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "color": "#fabd2f",
+        "description": "v0.1.8_release_notes.md (Doc)",
+        "file": "v0.1.8_release_notes.md",
+        "label": "v0.1.8_release_notes.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "SYNAPSE Release Notes - v0.1.8",
+            "🚀 What's New",
+            "1. LSP 기능 강화 (Editor Integration)",
+            "2. 안성성 및 빌드 개선",
+            "🛠 설치 및 업데이트 방법"
+          ],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_v0_1_8_release_notes_md",
+      "position": {
+        "x": 37.15758214039626,
+        "y": 582.2621908657081
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "color": "#fabd2f",
+        "description": "v0.2.0_release_notes.md (Doc)",
+        "file": "v0.2.0_release_notes.md",
+        "label": "v0.2.0_release_notes.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "Release Notes - v0.2.0 (Milestone: Strategic Evolution)",
+            "[English]",
+            "🏁 Strategic Execution Flow (SSOT)",
+            "🏗️ Full TypeScript & Logic Support",
+            "[한국어]",
+            "🏁 전략적 실행 흐름 (Strategic Execution Flow - SSOT)",
+            "🏗️ 완벽한 TypeScript 및 로직 지원"
+          ],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_v0_2_0_release_notes_md",
+      "position": {
+        "x": 237.15758214039607,
+        "y": 582.2621908657081
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
       "cluster_id": null,
       "data": {
         "cluster_id": null,
         "color": "#b8bb26",
-        "description": "src/extension.ts (Source)",
+        "description": "v0.2.0_self_sync.js (Auto-detected)",
+        "file": "v0.2.0_self_sync.js",
+        "label": "v0.2.0_self_sync.js",
+        "layer": 1,
+        "priority": 50,
+        "summary": {
+          "classes": [],
+          "functions": [
+            "function",
+            "getOwnPropertyDescriptor",
+            "defineProperty",
+            "call",
+            "ownKeys",
+            "__createBinding",
+            "__setModuleDefault",
+            "require",
+            "__importStar",
+            "runSync",
+            "log",
+            "BootstrapEngine",
+            "resolve",
+            "join",
+            "bootstrap",
+            "filter",
+            "map",
+            "error"
+          ],
+          "references": []
+        }
+      },
+      "id": "node_v0_2_0_self_sync_js",
+      "position": {
+        "x": 1943.9331734879447,
+        "y": 1122.1341484304833
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "color": "#fabd2f",
+        "description": "v0.2.1_release_notes.md (Doc)",
+        "file": "v0.2.1_release_notes.md",
+        "label": "v0.2.1_release_notes.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "🚀 SYNAPSE v0.2.1 Release Notes",
+            "🇺🇸 English",
+            "[New Features]",
+            "[Enhancements]",
+            "🇰🇷 한국어",
+            "[신규 기능]",
+            "[기능 개선]"
+          ],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_v0_2_1_release_notes_md",
+      "position": {
+        "x": -362.842417859604,
+        "y": 732.2621908657077
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "color": "#fabd2f",
+        "description": "v0.2.2_release_notes.md (Doc)",
+        "file": "v0.2.2_release_notes.md",
+        "label": "v0.2.2_release_notes.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "🚀 SYNAPSE v0.2.2 Release Notes",
+            "🇺🇸 English",
+            "[New Features]",
+            "[Bug Fixes]",
+            "🇰🇷 한국어",
+            "[신규 기능]",
+            "[버그 수정]"
+          ],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_v0_2_2_release_notes_md",
+      "position": {
+        "x": -162.8424178596038,
+        "y": 732.2621908657077
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "color": "#fabd2f",
+        "description": "v0.2.3_release_notes.md (Doc)",
+        "file": "v0.2.3_release_notes.md",
+        "label": "v0.2.3_release_notes.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "🚀 SYNAPSE v0.2.3 Release Notes",
+            "🇺🇸 English",
+            "[Hotfix]",
+            "🇰🇷 한국어",
+            "[긴급 수정]"
+          ],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_v0_2_3_release_notes_md",
+      "position": {
+        "x": 37.15758214039626,
+        "y": 732.2621908657077
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "color": "#fabd2f",
+        "description": "v0.2.4_release_notes.md (Doc)",
+        "file": "v0.2.4_release_notes.md",
+        "label": "v0.2.4_release_notes.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "🚀 SYNAPSE v0.2.4 Release Notes",
+            "🇺🇸 English",
+            "[Bug Fixes]",
+            "🇰🇷 한국어",
+            "[버그 수정]"
+          ],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_v0_2_4_release_notes_md",
+      "position": {
+        "x": 237.15758214039607,
+        "y": 732.2621908657077
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "color": "#fabd2f",
+        "description": "v0.2.5_release_notes.md (Doc)",
+        "file": "v0.2.5_release_notes.md",
+        "label": "v0.2.5_release_notes.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "Release Notes - v0.2.5",
+            "🇰🇷 한국어 (Korean)",
+            "🧹 정리 및 하우스키핑",
+            "🐛 버그 수정",
+            "✨ 새로운 기능",
+            "🇺🇸 English",
+            "🧹 Housekeeping & Cleanup",
+            "🐛 Bug Fixes",
+            "✨ New Features"
+          ],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_v0_2_5_release_notes_md",
+      "position": {
+        "x": -362.842417859604,
+        "y": 882.2621908657077
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "color": "#fabd2f",
+        "description": "v0.2.6_release_notes.md (Doc)",
+        "file": "v0.2.6_release_notes.md",
+        "label": "v0.2.6_release_notes.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "🚀 SYNAPSE v0.2.6 Release Notes",
+            "🌟 New Features (기능 추가)",
+            "🧠 Context-Aware Logging (맥락 인식형 로깅)",
+            "📄 Documentation (문서화)",
+            "🐛 Bug Fixes & Improvements"
+          ],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_v0_2_6_release_notes_md",
+      "position": {
+        "x": -162.8424178596038,
+        "y": 882.2621908657077
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "color": "#fabd2f",
+        "description": "2026-02-17_keybinding_check.md (Doc)",
+        "file": "prompts/2026-02-17_keybinding_check.md",
+        "label": "2026-02-17_keybinding_check.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "Keybinding Check",
+            "🎯 Goal",
+            "Goal",
+            "🧠 Key Decisions",
+            "🔗 Context & References",
+            "📝 Original Prompt",
+            "Goal"
+          ],
+          "functions": [],
+          "references": [
+            "package"
+          ]
+        }
+      },
+      "id": "node_prompts_2026_02_17_keybinding_check_md",
+      "position": {
+        "x": -362.842417859604,
+        "y": 282.26219086570813
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "color": "#fabd2f",
+        "description": "2026-02-17_origin_edge_verification.md (Doc)",
+        "file": "prompts/2026-02-17_origin_edge_verification.md",
+        "label": "2026-02-17_origin_edge_verification.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "Origin Edge Verification",
+            "🎯 Goal",
+            "Goal",
+            "🧠 Key Decisions",
+            "🔗 Context & References",
+            "📝 Original Prompt",
+            "Goal"
+          ],
+          "functions": [],
+          "references": [
+            "PromptLogger",
+            "BootstrapEngine"
+          ]
+        }
+      },
+      "id": "node_prompts_2026_02_17_origin_edge_verification_md",
+      "position": {
+        "x": -162.8424178596038,
+        "y": 282.26219086570813
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "color": "#fabd2f",
+        "description": "2026-02-17_test.md (Doc)",
+        "file": "prompts/2026-02-17_test.md",
+        "label": "2026-02-17_test.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "Test Prompt"
+          ],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_prompts_2026_02_17_test_md",
+      "position": {
+        "x": 37.15758214039626,
+        "y": 282.26219086570813
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "color": "#fabd2f",
+        "description": "2026-02-18_deep_reset_triggered.md (Doc)",
+        "file": "prompts/2026-02-18_deep_reset_triggered.md",
+        "label": "2026-02-18_deep_reset_triggered.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "Deep Reset Triggered",
+            "🎯 Goal",
+            "🧠 Key Decisions",
+            "🔗 Context & References",
+            "📝 Original Prompt"
+          ],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_prompts_2026_02_18_deep_reset_triggered_md",
+      "position": {
+        "x": 237.15758214039607,
+        "y": 282.26219086570813
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "color": "#fabd2f",
+        "description": "2026-02-18_selection_ungrouped.md (Doc)",
+        "file": "prompts/2026-02-18_selection_ungrouped.md",
+        "label": "2026-02-18_selection_ungrouped.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "Selection Ungrouped",
+            "🎯 Goal",
+            "🧠 Key Decisions",
+            "🔗 Context & References",
+            "📝 Original Prompt"
+          ],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_prompts_2026_02_18_selection_ungrouped_md",
+      "position": {
+        "x": -362.842417859604,
+        "y": 432.26219086570813
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "cluster_13",
+      "data": {
+        "cluster_id": "cluster_13",
+        "color": "#b8bb26",
+        "description": "BootstrapEngine.ts (Auto-detected)",
+        "file": "src/bootstrap/BootstrapEngine.ts",
+        "label": "BootstrapEngine.ts",
+        "layer": 1,
+        "priority": 25,
+        "summary": {
+          "classes": [
+            "BootstrapEngine",
+            "as"
+          ],
+          "functions": [
+            "parser",
+            "flowchartGen",
+            "fileScanner",
+            "constructor",
+            "GeminiParser",
+            "FlowchartGenerator",
+            "FileScanner",
+            "bootstrap",
+            "log",
+            "ensureRulesFile",
+            "getInstance",
+            "loadRules",
+            "parseGeminiMd",
+            "toLowerCase",
+            "endsWith",
+            "autoDiscover",
+            "map",
+            "filter",
+            "forEach",
+            "set",
+            "get",
+            "createStructure",
+            "generateInitialFlowchart",
+            "basename",
+            "join",
+            "dirname",
+            "existsSync",
+            "mkdirSync",
+            "writeFileSync",
+            "stringify",
+            "error",
+            "String",
+            "liteBootstrap",
+            "Rules",
+            "Priority",
+            "root",
+            "Standards",
+            "Components",
+            "Isolation",
+            "Protection",
+            "backticks",
+            "Ignores",
+            "Diet",
+            "Definitions",
+            "Connections",
+            "Compliance",
+            "readdirSync",
+            "replace",
+            "isIgnoredFolder",
+            "some",
+            "startsWith",
+            "statSync",
+            "isDirectory",
+            "push",
+            "scanDir",
+            "extname",
+            "isIgnoredFile",
+            "includes",
+            "scanFile",
+            "Set",
+            "name",
+            "has",
+            "match",
+            "find",
+            "printStructurePreview"
+          ],
+          "references": [
+            "GeminiParser",
+            "FlowchartGenerator",
+            "FileScanner",
+            "schema",
+            "exclusionRules",
+            "RuleEngine"
+          ]
+        }
+      },
+      "id": "node_src_bootstrap_BootstrapEngine_ts",
+      "position": {
+        "x": 918.9440967791893,
+        "y": 326.2475515590109
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "cluster_14",
+      "data": {
+        "cluster_id": "cluster_14",
+        "color": "#b8bb26",
+        "description": "cli.ts (Auto-detected)",
+        "file": "src/cli.ts",
+        "label": "cli.ts",
+        "layer": 1,
+        "priority": 50,
+        "summary": {
+          "classes": [],
+          "functions": [
+            "main",
+            "slice",
+            "log",
+            "exit",
+            "resolve",
+            "cwd",
+            "BootstrapEngine",
+            "bootstrap",
+            "error"
+          ],
+          "references": [
+            "BootstrapEngine"
+          ]
+        }
+      },
+      "id": "node_src_cli_ts",
+      "position": {
+        "x": 1880.8032065177306,
+        "y": 347.93944815930183
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "cluster_14",
+      "data": {
+        "cluster_id": "cluster_14",
+        "color": "#b8bb26",
+        "description": "client.ts (Auto-detected)",
+        "file": "src/client.ts",
+        "label": "client.ts",
+        "layer": 2,
+        "priority": 80,
+        "summary": {
+          "classes": [],
+          "functions": [
+            "setClient"
+          ],
+          "references": [
+            "vscode-languageclient"
+          ]
+        }
+      },
+      "id": "node_src_client_ts",
+      "position": {
+        "x": 1880.8032065177306,
+        "y": 697.9394481593021
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "cluster_14",
+      "data": {
+        "cluster_id": "cluster_14",
+        "color": "#b8bb26",
+        "description": "extension.ts (Auto-detected)",
         "file": "src/extension.ts",
         "label": "extension.ts",
         "layer": 1,
@@ -238,27 +2546,35 @@
             "getWorkspaceFolder",
             "createOrShow",
             "showErrorMessage",
+            "stat",
+            "openTextDocument",
+            "showTextDocument",
             "endsWith",
             "bootstrapFromGemini",
-            "stat",
             "liteBootstrap",
             "fitView",
             "prompts",
             "getInstance",
+            "Context",
+            "getCanvasContext",
+            "warn",
             "Mode",
             "showInputBox",
+            "Tag",
             "showQuickPick",
+            "split",
             "includes",
             "title",
+            "data",
             "appendLog",
+            "join",
             "logPrompt",
-            "warn",
+            "mode",
             "error",
             "forEach",
             "checkProjectStatus",
             "setupFileWatcher",
             "asAbsolutePath",
-            "join",
             "createFileSystemWatcher",
             "LanguageClient",
             "setClient",
@@ -292,100 +2608,22 @@
       },
       "id": "node_src_extension_ts",
       "position": {
-        "x": 5020.011753340546,
-        "y": 94.47445899209356
+        "x": 1892.4096195531915,
+        "y": 486.7675864011637
       },
-      "status": "active",
+      "status": "proposed",
       "type": "source",
-      "visual": {}
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
     },
     {
-      "cluster_id": null,
+      "cluster_id": "cluster_15",
       "data": {
-        "cluster_id": null,
+        "cluster_id": "cluster_15",
         "color": "#b8bb26",
-        "description": "src/bootstrap/BootstrapEngine.ts (Source)",
-        "file": "src/bootstrap/BootstrapEngine.ts",
-        "label": "BootstrapEngine.ts",
-        "layer": 1,
-        "priority": 25,
-        "summary": {
-          "classes": [
-            "BootstrapEngine",
-            "as"
-          ],
-          "functions": [
-            "parser",
-            "flowchartGen",
-            "fileScanner",
-            "constructor",
-            "GeminiParser",
-            "FlowchartGenerator",
-            "FileScanner",
-            "bootstrap",
-            "log",
-            "parseGeminiMd",
-            "toLowerCase",
-            "endsWith",
-            "autoDiscover",
-            "map",
-            "filter",
-            "forEach",
-            "set",
-            "get",
-            "createStructure",
-            "generateInitialFlowchart",
-            "basename",
-            "join",
-            "dirname",
-            "existsSync",
-            "mkdirSync",
-            "writeFileSync",
-            "stringify",
-            "error",
-            "String",
-            "liteBootstrap",
-            "readdirSync",
-            "replace",
-            "includes",
-            "some",
-            "startsWith",
-            "statSync",
-            "isDirectory",
-            "push",
-            "scanDir",
-            "extname",
-            "scanFile",
-            "Set",
-            "name",
-            "has",
-            "match",
-            "find",
-            "printStructurePreview"
-          ],
-          "references": [
-            "GeminiParser",
-            "FlowchartGenerator",
-            "FileScanner",
-            "schema"
-          ]
-        }
-      },
-      "id": "node_src_bootstrap_BootstrapEngine_ts",
-      "position": {
-        "x": 5247.970706126253,
-        "y": 94.92409429003904
-      },
-      "status": "active",
-      "type": "source",
-      "visual": {}
-    },
-    {
-      "cluster_id": null,
-      "data": {
-        "cluster_id": null,
-        "color": "#b8bb26",
-        "description": "src/core/FileScanner.ts (Source)",
+        "description": "FileScanner.ts (Auto-detected)",
         "file": "src/core/FileScanner.ts",
         "label": "FileScanner.ts",
         "layer": 0,
@@ -437,19 +2675,22 @@
       },
       "id": "node_src_core_FileScanner_ts",
       "position": {
-        "x": 5004.968788104184,
-        "y": 231.12537845178406
+        "x": -350,
+        "y": 1250
       },
-      "status": "active",
+      "status": "proposed",
       "type": "source",
-      "visual": {}
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
     },
     {
-      "cluster_id": null,
+      "cluster_id": "cluster_15",
       "data": {
-        "cluster_id": null,
+        "cluster_id": "cluster_15",
         "color": "#b8bb26",
-        "description": "src/core/FlowScanner.ts (Source)",
+        "description": "FlowScanner.ts (Auto-detected)",
         "file": "src/core/FlowScanner.ts",
         "label": "FlowScanner.ts",
         "layer": 0,
@@ -495,77 +2736,22 @@
       },
       "id": "node_src_core_FlowScanner_ts",
       "position": {
-        "x": 5776.957559034362,
-        "y": 280.81758628276333
+        "x": 0,
+        "y": 1250
       },
-      "status": "active",
+      "status": "proposed",
       "type": "source",
-      "visual": {}
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
     },
     {
-      "cluster_id": null,
+      "cluster_id": "cluster_15",
       "data": {
-        "cluster_id": null,
+        "cluster_id": "cluster_15",
         "color": "#b8bb26",
-        "description": "src/core/GeminiParser.ts (Source)",
-        "file": "src/core/GeminiParser.ts",
-        "label": "GeminiParser.ts",
-        "layer": 0,
-        "priority": 10,
-        "summary": {
-          "classes": [
-            "GeminiParser"
-          ],
-          "functions": [
-            "Copyright",
-            "team",
-            "parseGeminiMd",
-            "readFileSync",
-            "analyzeContent",
-            "log",
-            "error",
-            "replace",
-            "match",
-            "split",
-            "map",
-            "trim",
-            "join",
-            "exec",
-            "includes",
-            "push",
-            "find",
-            "extname",
-            "slice",
-            "toLowerCase",
-            "forEach",
-            "createStructure",
-            "existsSync",
-            "mkdirSync",
-            "dirname",
-            "getFileTemplate",
-            "writeFileSync",
-            "basename"
-          ],
-          "references": [
-            "schema"
-          ]
-        }
-      },
-      "id": "node_src_core_GeminiParser_ts",
-      "position": {
-        "x": 5416.60108248025,
-        "y": 284.00217082824537
-      },
-      "status": "active",
-      "type": "source",
-      "visual": {}
-    },
-    {
-      "cluster_id": null,
-      "data": {
-        "cluster_id": null,
-        "color": "#b8bb26",
-        "description": "src/core/FlowchartGenerator.ts (Source)",
+        "description": "FlowchartGenerator.ts (Auto-detected)",
         "file": "src/core/FlowchartGenerator.ts",
         "label": "FlowchartGenerator.ts",
         "layer": 1,
@@ -615,19 +2801,547 @@
       },
       "id": "node_src_core_FlowchartGenerator_ts",
       "position": {
-        "x": 5012.116753377688,
-        "y": 383.16684225667944
+        "x": -350,
+        "y": 1600
       },
-      "status": "active",
+      "status": "proposed",
       "type": "source",
-      "visual": {}
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
     },
     {
-      "cluster_id": null,
+      "cluster_id": "cluster_15",
       "data": {
-        "cluster_id": null,
+        "cluster_id": "cluster_15",
         "color": "#b8bb26",
-        "description": "src/webview/CanvasPanel.ts (Source)",
+        "description": "GeminiParser.ts (Auto-detected)",
+        "file": "src/core/GeminiParser.ts",
+        "label": "GeminiParser.ts",
+        "layer": 0,
+        "priority": 10,
+        "summary": {
+          "classes": [
+            "GeminiParser"
+          ],
+          "functions": [
+            "Copyright",
+            "team",
+            "parseGeminiMd",
+            "readFileSync",
+            "loaded",
+            "dirname",
+            "getInstance",
+            "loadRules",
+            "analyzeContent",
+            "log",
+            "error",
+            "replace",
+            "match",
+            "split",
+            "map",
+            "trim",
+            "join",
+            "exec",
+            "isIgnoredFolder",
+            "includes",
+            "push",
+            "isIgnoredFile",
+            "some",
+            "find",
+            "extname",
+            "slice",
+            "toLowerCase",
+            "forEach",
+            "createStructure",
+            "existsSync",
+            "mkdirSync",
+            "getFileTemplate",
+            "writeFileSync",
+            "basename"
+          ],
+          "references": [
+            "schema",
+            "exclusionRules",
+            "RuleEngine"
+          ]
+        }
+      },
+      "id": "node_src_core_GeminiParser_ts",
+      "position": {
+        "x": 350,
+        "y": 1250
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "cluster_15",
+      "data": {
+        "cluster_id": "cluster_15",
+        "color": "#b8bb26",
+        "description": "PromptLogger.ts (Auto-detected)",
+        "file": "src/core/PromptLogger.ts",
+        "label": "PromptLogger.ts",
+        "layer": 1,
+        "priority": 20,
+        "summary": {
+          "classes": [
+            "PromptLogger"
+          ],
+          "functions": [
+            "static",
+            "constructor",
+            "getInstance",
+            "PromptLogger",
+            "logPrompt",
+            "join",
+            "existsSync",
+            "mkdirSync",
+            "Date",
+            "toISOString",
+            "split",
+            "toLowerCase",
+            "replace",
+            "now",
+            "parseStructuredOutput",
+            "writeFileSync",
+            "log",
+            "Commit",
+            "gitStageFile",
+            "appendLog",
+            "toLocaleString",
+            "stringify",
+            "appendFileSync",
+            "includes",
+            "trim",
+            "exec",
+            "startsWith",
+            "push",
+            "error",
+            "setStatusBarMessage",
+            "basename"
+          ],
+          "references": [
+            "child_process"
+          ]
+        }
+      },
+      "id": "node_src_core_PromptLogger_ts",
+      "position": {
+        "x": 18.959117052800337,
+        "y": 1600
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "cluster_16",
+      "data": {
+        "cluster_id": "cluster_16",
+        "color": "#b8bb26",
+        "description": "server.ts (Auto-detected)",
+        "file": "src/server/server.ts",
+        "label": "server.ts",
+        "layer": 1,
+        "priority": 50,
+        "summary": {
+          "classes": [],
+          "functions": [
+            "Copyright",
+            "team",
+            "createConnection",
+            "TextDocuments",
+            "onInitialize",
+            "log",
+            "onInitialized",
+            "onRequest",
+            "GeminiParser",
+            "parseGeminiMd",
+            "error",
+            "String",
+            "FlowScanner",
+            "scanForFlow",
+            "getFilePathAtPosition",
+            "test",
+            "slice",
+            "trim",
+            "path",
+            "includes",
+            "onHover",
+            "get",
+            "getText",
+            "split",
+            "onDefinition",
+            "startsWith",
+            "replace",
+            "dirname",
+            "resolve",
+            "onDidChangeContent",
+            "validateTextDocument",
+            "exec",
+            "existsSync",
+            "push",
+            "positionAt",
+            "sendDiagnostics",
+            "listen"
+          ],
+          "references": [
+            "vscode-languageserver-textdocument",
+            "GeminiParser",
+            "FlowScanner"
+          ]
+        }
+      },
+      "id": "node_src_server_server_ts",
+      "position": {
+        "x": 709.5003291050837,
+        "y": 1434.9342906608167
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "cluster_16",
+      "data": {
+        "cluster_id": "cluster_16",
+        "color": "#b8bb26",
+        "description": "standalone.ts (Auto-detected)",
+        "file": "src/server/standalone.ts",
+        "label": "standalone.ts",
+        "layer": 1,
+        "priority": 50,
+        "summary": {
+          "classes": [],
+          "functions": [
+            "express",
+            "use",
+            "cors",
+            "json",
+            "resolve",
+            "join",
+            "static",
+            "log",
+            "post",
+            "existsSync",
+            "Error",
+            "extname",
+            "GeminiParser",
+            "parseGeminiMd",
+            "FlowScanner",
+            "scanForFlow",
+            "filter",
+            "map",
+            "parse",
+            "readFileSync",
+            "find",
+            "writeFileSync",
+            "stringify",
+            "error",
+            "status",
+            "String",
+            "isAbsolute",
+            "get",
+            "now",
+            "unshift",
+            "listen"
+          ],
+          "references": [
+            "express",
+            "cors",
+            "GeminiParser",
+            "FlowScanner"
+          ]
+        }
+      },
+      "id": "node_src_server_standalone_ts",
+      "position": {
+        "x": 1059.500329105084,
+        "y": 1434.9342906608167
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "cluster_17",
+      "data": {
+        "cluster_id": "cluster_17",
+        "color": "#b8bb26",
+        "description": "FileScanner.test.ts (Auto-detected)",
+        "file": "src/test/FileScanner.test.ts",
+        "label": "FileScanner.test.ts",
+        "layer": 0,
+        "priority": 8,
+        "summary": {
+          "classes": [
+            "TestClass",
+            "MyClass"
+          ],
+          "functions": [
+            "describe",
+            "FileScanner",
+            "join",
+            "beforeAll",
+            "method_one",
+            "standalone_func",
+            "writeFileSync",
+            "afterAll",
+            "existsSync",
+            "unlinkSync",
+            "it",
+            "scanFile",
+            "expect",
+            "toContain",
+            "myMethod",
+            "Base",
+            "main",
+            "Function",
+            "PointerFunc",
+            "fly",
+            "connect",
+            "helper_func",
+            "toEqual"
+          ],
+          "references": [
+            "FileScanner"
+          ]
+        }
+      },
+      "id": "node_src_test_FileScanner_test_ts",
+      "position": {
+        "x": 1330.2600174210766,
+        "y": 1289.0454138805237
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "cluster_17",
+      "data": {
+        "cluster_id": "cluster_17",
+        "color": "#b8bb26",
+        "description": "FlowchartGenerator.test.ts (Auto-detected)",
+        "file": "src/test/FlowchartGenerator.test.ts",
+        "label": "FlowchartGenerator.test.ts",
+        "layer": 1,
+        "priority": 50,
+        "summary": {
+          "classes": [],
+          "functions": [
+            "describe",
+            "FlowchartGenerator",
+            "it",
+            "generateMermaidDiagram",
+            "expect",
+            "toContain",
+            "generateInitialFlowchart",
+            "find",
+            "toBe",
+            "toBeLessThan",
+            "toBeDefined"
+          ],
+          "references": [
+            "FlowchartGenerator",
+            "schema"
+          ]
+        }
+      },
+      "id": "node_src_test_FlowchartGenerator_test_ts",
+      "position": {
+        "x": 1330.2600174210766,
+        "y": 1639.0454138805237
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "cluster_17",
+      "data": {
+        "cluster_id": "cluster_17",
+        "color": "#b8bb26",
+        "description": "GeminiParser.test.ts (Auto-detected)",
+        "file": "src/test/GeminiParser.test.ts",
+        "label": "GeminiParser.test.ts",
+        "layer": 0,
+        "priority": 10,
+        "summary": {
+          "classes": [],
+          "functions": [
+            "mock",
+            "describe",
+            "GeminiParser",
+            "it",
+            "mockReturnValue",
+            "parseGeminiMd",
+            "map",
+            "expect",
+            "toContain",
+            "toBe"
+          ],
+          "references": [
+            "GeminiParser"
+          ]
+        }
+      },
+      "id": "node_src_test_GeminiParser_test_ts",
+      "position": {
+        "x": 1680.2600174210766,
+        "y": 1289.0454138805237
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "cluster_17",
+      "data": {
+        "cluster_id": "cluster_17",
+        "color": "#b8bb26",
+        "description": "visualHints.test.ts (Auto-detected)",
+        "file": "src/test/visualHints.test.ts",
+        "label": "visualHints.test.ts",
+        "layer": 1,
+        "priority": 50,
+        "summary": {
+          "classes": [],
+          "functions": [
+            "describe",
+            "it",
+            "getVisualHints",
+            "expect",
+            "toBe",
+            "toBeLessThanOrEqual"
+          ],
+          "references": [
+            "visualHints"
+          ]
+        }
+      },
+      "id": "node_src_test_visualHints_test_ts",
+      "position": {
+        "x": 1680.2600174210766,
+        "y": 1639.0454138805237
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "cluster_18",
+      "data": {
+        "cluster_id": "cluster_18",
+        "color": "#b8bb26",
+        "description": "schema.ts (Auto-detected)",
+        "file": "src/types/schema.ts",
+        "label": "schema.ts",
+        "layer": 1,
+        "priority": 50,
+        "summary": {
+          "classes": [
+            "NodeType",
+            "NodeStatus",
+            "EdgeType",
+            "EdgeStyle",
+            "Node",
+            "Edge",
+            "Cluster",
+            "ProjectStructure",
+            "ProjectState",
+            "BootstrapResult"
+          ],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_src_types_schema_ts",
+      "position": {
+        "x": 1015.296532166124,
+        "y": 795.2306361292065
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "cluster_19",
+      "data": {
+        "cluster_id": "cluster_19",
+        "color": "#b8bb26",
+        "description": "visualHints.ts (Auto-detected)",
+        "file": "src/utils/visualHints.ts",
+        "label": "visualHints.ts",
+        "layer": 1,
+        "priority": 50,
+        "summary": {
+          "classes": [
+            "VisualHints"
+          ],
+          "functions": [
+            "100",
+            "getVisualHints",
+            "toLowerCase",
+            "Discovery",
+            "includes",
+            "Reasoning",
+            "endsWith",
+            "Action",
+            "layer"
+          ],
+          "references": []
+        }
+      },
+      "id": "node_src_utils_visualHints_ts",
+      "position": {
+        "x": -183.13066477893508,
+        "y": 1894.4237149798976
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "cluster_20",
+      "data": {
+        "cluster_id": "cluster_20",
+        "color": "#b8bb26",
+        "description": "CanvasPanel.ts (Auto-detected)",
         "file": "src/webview/CanvasPanel.ts",
         "label": "CanvasPanel.ts",
         "layer": 1,
@@ -646,6 +3360,7 @@
             "_disposables",
             "proposedNodes",
             "proposedEdges",
+            "_contextRequestCallback",
             "createOrShow",
             "log",
             "refreshState",
@@ -672,6 +3387,7 @@
             "handleCreateManualEdge",
             "handleDeleteEdge",
             "handleDeleteNode",
+            "handleDeleteNodes",
             "handleUpdateEdge",
             "handleApproveNode",
             "handleRejectNode",
@@ -686,6 +3402,7 @@
             "handleReBootstrap",
             "handleLogPrompt",
             "handleRequestLogPrompt",
+            "executeCommand",
             "readFile",
             "parse",
             "toString",
@@ -698,6 +3415,10 @@
             "showErrorMessage",
             "find",
             "fitView",
+            "context",
+            "getCanvasContext",
+            "setTimeout",
+            "warn",
             "openTextDocument",
             "showTextDocument",
             "pop",
@@ -710,12 +3431,14 @@
             "forEach",
             "sortKeys",
             "findIndex",
-            "warn",
             "splice",
             "setStatusBarMessage",
+            "Set",
             "filter",
+            "has",
+            "active",
+            "clusters",
             "command",
-            "executeCommand",
             "Reset",
             "existsSync",
             "unlinkSync",
@@ -727,8 +3450,6 @@
             "join",
             "FlowchartGenerator",
             "generateInitialFlowchart",
-            "Set",
-            "has",
             "node",
             "includes",
             "stat",
@@ -784,115 +3505,256 @@
       },
       "id": "node_src_webview_CanvasPanel_ts",
       "position": {
-        "x": 5169.4750886800175,
-        "y": 308.9771281951128
+        "x": 560.3028572931754,
+        "y": 2076.267899380593
       },
-      "status": "active",
+      "status": "proposed",
       "type": "source",
-      "visual": {}
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
     },
     {
       "cluster_id": null,
       "data": {
         "cluster_id": null,
         "color": "#b8bb26",
-        "description": "src/server/server.ts (Source)",
-        "file": "src/server/server.ts",
-        "label": "server.ts",
-        "layer": 1,
-        "priority": 50,
-        "summary": {
-          "classes": [],
-          "functions": [
-            "Copyright",
-            "team",
-            "createConnection",
-            "TextDocuments",
-            "onInitialize",
-            "log",
-            "onInitialized",
-            "onRequest",
-            "GeminiParser",
-            "parseGeminiMd",
-            "error",
-            "String",
-            "FlowScanner",
-            "scanForFlow",
-            "getFilePathAtPosition",
-            "test",
-            "slice",
-            "trim",
-            "path",
-            "includes",
-            "onHover",
-            "get",
-            "getText",
-            "split",
-            "onDefinition",
-            "startsWith",
-            "replace",
-            "dirname",
-            "resolve",
-            "onDidChangeContent",
-            "validateTextDocument",
-            "exec",
-            "existsSync",
-            "push",
-            "positionAt",
-            "sendDiagnostics",
-            "listen"
-          ],
-          "references": [
-            "vscode-languageserver-textdocument",
-            "GeminiParser",
-            "FlowScanner"
-          ]
-        }
-      },
-      "id": "node_src_server_server_ts",
-      "position": {
-        "x": 5581.265942192295,
-        "y": 282.8193245400651
-      },
-      "status": "active",
-      "type": "source",
-      "visual": {}
-    },
-    {
-      "cluster_id": null,
-      "data": {
-        "cluster_id": null,
-        "color": "#b8bb26",
-        "description": "src/types/schema.ts (Source)",
-        "file": "src/types/schema.ts",
-        "label": "schema.ts",
-        "layer": 1,
-        "priority": 50,
+        "description": "canvas-engine.js (Auto-detected)",
+        "file": "ui/canvas-engine.js",
+        "label": "canvas-engine.js",
+        "layer": 2,
+        "priority": 80,
         "summary": {
           "classes": [
-            "NodeType",
-            "NodeStatus",
-            "EdgeType",
-            "EdgeStyle",
-            "Node",
-            "Edge",
-            "Cluster",
-            "ProjectStructure",
-            "ProjectState",
-            "BootstrapResult"
+            "FlowRenderer",
+            "TreeRenderer",
+            "CanvasEngine",
+            "changed"
           ],
-          "functions": [],
+          "functions": [
+            "constructor",
+            "buildFlow",
+            "filter",
+            "toLowerCase",
+            "includes",
+            "Set",
+            "map",
+            "forEach",
+            "add",
+            "shift",
+            "has",
+            "push",
+            "sort",
+            "findIndex",
+            "layoutFlow",
+            "renderFlow",
+            "renderStep",
+            "renderConnection",
+            "beginPath",
+            "roundRect",
+            "rect",
+            "fill",
+            "fillText",
+            "fillRect",
+            "strokeRect",
+            "moveTo",
+            "lineTo",
+            "closePath",
+            "stroke",
+            "bezierCurveTo",
+            "atan2",
+            "save",
+            "translate",
+            "rotate",
+            "restore",
+            "getStepAt",
+            "log",
+            "buildTree",
+            "toggleFolder",
+            "delete",
+            "renderTree",
+            "isArray",
+            "renderTreeItem",
+            "getItemAt",
+            "checkItemBounds",
+            "getElementById",
+            "error",
+            "getContext",
+            "resizeCanvas",
+            "addEventListener",
+            "TreeRenderer",
+            "FlowRenderer",
+            "postMessage",
+            "showFilePreview",
+            "setupEventListeners",
+            "setupToolbarListeners",
+            "render",
+            "startAnimationLoop",
+            "createElement",
+            "rgba",
+            "appendChild",
+            "getProjectState",
+            "toggle",
+            "remove",
+            "createManualNode",
+            "Button",
+            "deleteEdge",
+            "deleteSelectedNodes",
+            "now",
+            "warn",
+            "available",
+            "fetch",
+            "json",
+            "loadProjectState",
+            "memory",
+            "logic",
+            "scale",
+            "size",
+            "requestLogPrompt",
+            "alert",
+            "toggleAnimation",
+            "requestAnimationFrame",
+            "Support",
+            "preventDefault",
+            "stopPropagation",
+            "endsWith",
+            "drop",
+            "getAsString",
+            "zoom",
+            "screenToWorld",
+            "getClusterAt",
+            "toggleClusterCollapse",
+            "focus",
+            "checkNodeButtonClick",
+            "getConnectionHandleAt",
+            "getNodeAt",
+            "ignore",
+            "findEdgeAtPoint",
+            "clear",
+            "abs",
+            "pan",
+            "showTooltip",
+            "hideTooltip",
+            "showEdgeTypeSelector",
+            "min",
+            "max",
+            "find",
+            "saveState",
+            "from",
+            "repositionIntruders",
+            "showEdgeContextMenu",
+            "showContextMenu",
+            "handleOpenFile",
+            "updateZoomDisplay",
+            "worldToScreen",
+            "hidden",
+            "sqrt",
+            "takeSnapshot",
+            "Push",
+            "generateFlow",
+            "groupSelection",
+            "ungroupSelection",
+            "deleteNode",
+            "prompt",
+            "validateEdge",
+            "match",
+            "getFileExt",
+            "toUpperCase",
+            "detectCircularDependency",
+            "startsWith",
+            "createManualEdge",
+            "setTimeout",
+            "contains",
+            "removeEventListener",
+            "showEdgeTypeChangeMenu",
+            "changeEdgeType",
+            "replace",
+            "stringify",
+            "then",
+            "getHistory",
+            "updateHistoryUI",
+            "rollback",
+            "Date",
+            "toLocaleString",
+            "querySelector",
+            "confirm",
+            "updateEdgeValidation",
+            "getBoundingClientRect",
+            "view",
+            "fitView",
+            "round",
+            "setTransform",
+            "System",
+            "renderGrid",
+            "renderClusters",
+            "renderEdge",
+            "renderGhostNodes",
+            "renderNode",
+            "renderConnectionHandles",
+            "renderGhostEdge",
+            "toFixed",
+            "charAt",
+            "slice",
+            "renderDebugInfo",
+            "showInputModal",
+            "select",
+            "callback",
+            "close",
+            "handleConfirm",
+            "handleCancel",
+            "every",
+            "some",
+            "renameCluster",
+            "trim",
+            "callStandaloneApi",
+            "String",
+            "splice",
+            "complete",
+            "floor",
+            "setLineDash",
+            "getNodeStyle",
+            "Logic",
+            "f",
+            "Data",
+            "Entry",
+            "View",
+            "arc",
+            "sin",
+            "renderNodeButtons",
+            "substring",
+            "approveNode",
+            "rejectNode",
+            "getEdgeStyle",
+            "getNodeBoundaryPoint",
+            "cos",
+            "isPointNearArrow",
+            "isPointNearCurve",
+            "quadraticCurveTo",
+            "renderArrow",
+            "measureText",
+            "sendContextData",
+            "toLocaleTimeString",
+            "initCanvas",
+            "CanvasEngine",
+            "acquireVsCodeApi",
+            "querySelectorAll",
+            "backend"
+          ],
           "references": []
         }
       },
-      "id": "node_src_types_schema_ts",
+      "id": "node_ui_canvas_engine_js",
       "position": {
-        "x": 5243.087434020753,
-        "y": 443.07208669157774
+        "x": 2261.3162751744044,
+        "y": 1183.3817058751863
       },
-      "status": "active",
+      "status": "proposed",
       "type": "source",
-      "visual": {}
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
     }
   ],
   "project_name": "antigravity-extension-vis"

@@ -1,5 +1,8 @@
 {
+  "project_name": "antigravity-extension-vis",
+  "gemini_md_path": "/home/dogsinatas/TypeScript_project/antigravity-extension-vis/GEMINI.md",
   "canvas_state": {
+    "zoom_level": 1,
     "offset": {
       "x": 0,
       "y": 0
@@ -7,111 +10,384 @@
     "visible_layers": [
       "source",
       "documentation"
-    ],
-    "zoom_level": 1
+    ]
   },
+  "nodes": [
+    {
+      "id": "node_0",
+      "type": "source",
+      "status": "proposed",
+      "position": {
+        "x": 3000,
+        "y": 100
+      },
+      "data": {
+        "file": "login.py",
+        "label": "login.py",
+        "description": "login.py 파일",
+        "color": "#b8bb26",
+        "cluster_id": "storage_cluster",
+        "layer": 1,
+        "priority": 30
+      },
+      "visual": {
+        "opacity": 0.5,
+        "dashArray": "5,5"
+      }
+    },
+    {
+      "id": "node_1",
+      "type": "source",
+      "status": "proposed",
+      "position": {
+        "x": 3200,
+        "y": 150
+      },
+      "data": {
+        "file": "board.py",
+        "label": "board.py",
+        "description": "board.py 파일",
+        "color": "#b8bb26",
+        "cluster_id": "storage_cluster",
+        "layer": 1,
+        "priority": 30
+      },
+      "visual": {
+        "opacity": 0.5,
+        "dashArray": "5,5"
+      }
+    },
+    {
+      "id": "node_2",
+      "type": "source",
+      "status": "proposed",
+      "position": {
+        "x": 3400,
+        "y": 200
+      },
+      "data": {
+        "file": "schema.sql",
+        "label": "schema.sql",
+        "description": "schema.sql 파일",
+        "color": "#b8bb26",
+        "cluster_id": "storage_cluster",
+        "layer": 1,
+        "priority": 50
+      },
+      "visual": {
+        "opacity": 0.5,
+        "dashArray": "5,5"
+      }
+    },
+    {
+      "id": "node_3",
+      "type": "source",
+      "status": "proposed",
+      "position": {
+        "x": 3800,
+        "y": 100
+      },
+      "data": {
+        "file": "src/extension.ts",
+        "label": "extension.ts",
+        "description": "src/extension.ts 파일",
+        "color": "#b8bb26",
+        "cluster_id": "storage_cluster",
+        "layer": 1,
+        "priority": 50
+      },
+      "visual": {
+        "opacity": 0.5,
+        "dashArray": "5,5"
+      }
+    },
+    {
+      "id": "node_4",
+      "type": "source",
+      "status": "proposed",
+      "position": {
+        "x": 4615.354382700359,
+        "y": 100
+      },
+      "data": {
+        "file": "src/bootstrap/BootstrapEngine.ts",
+        "label": "BootstrapEngine.ts",
+        "description": "src/bootstrap/BootstrapEngine.ts 파일",
+        "color": "#b8bb26",
+        "cluster_id": "storage_cluster",
+        "layer": 1,
+        "priority": 25
+      },
+      "visual": {
+        "opacity": 0.5,
+        "dashArray": "5,5"
+      }
+    },
+    {
+      "id": "node_5",
+      "type": "source",
+      "status": "proposed",
+      "position": {
+        "x": 3000,
+        "y": 1300
+      },
+      "data": {
+        "file": "src/core/FileScanner.ts",
+        "label": "FileScanner.ts",
+        "description": "src/core/FileScanner.ts 파일",
+        "color": "#b8bb26",
+        "cluster_id": "storage_cluster",
+        "layer": 0,
+        "priority": 8
+      },
+      "visual": {
+        "opacity": 0.5,
+        "dashArray": "5,5"
+      }
+    },
+    {
+      "id": "node_6",
+      "type": "source",
+      "status": "proposed",
+      "position": {
+        "x": 3200,
+        "y": 1350
+      },
+      "data": {
+        "file": "src/core/FlowScanner.ts",
+        "label": "FlowScanner.ts",
+        "description": "src/core/FlowScanner.ts 파일",
+        "color": "#b8bb26",
+        "cluster_id": "storage_cluster",
+        "layer": 0,
+        "priority": 8
+      },
+      "visual": {
+        "opacity": 0.5,
+        "dashArray": "5,5"
+      }
+    },
+    {
+      "id": "node_7",
+      "type": "source",
+      "status": "proposed",
+      "position": {
+        "x": 3400,
+        "y": 1400
+      },
+      "data": {
+        "file": "src/core/GeminiParser.ts",
+        "label": "GeminiParser.ts",
+        "description": "src/core/GeminiParser.ts 파일",
+        "color": "#b8bb26",
+        "cluster_id": "storage_cluster",
+        "layer": 0,
+        "priority": 10
+      },
+      "visual": {
+        "opacity": 0.5,
+        "dashArray": "5,5"
+      }
+    },
+    {
+      "id": "node_8",
+      "type": "source",
+      "status": "proposed",
+      "position": {
+        "x": 3000,
+        "y": 1300
+      },
+      "data": {
+        "file": "src/core/FlowchartGenerator.ts",
+        "label": "FlowchartGenerator.ts",
+        "description": "src/core/FlowchartGenerator.ts 파일",
+        "color": "#b8bb26",
+        "cluster_id": "storage_cluster",
+        "layer": 1,
+        "priority": 50
+      },
+      "visual": {
+        "opacity": 0.5,
+        "dashArray": "5,5"
+      }
+    },
+    {
+      "id": "node_9",
+      "type": "source",
+      "status": "proposed",
+      "position": {
+        "x": 3800,
+        "y": 1300
+      },
+      "data": {
+        "file": "src/webview/CanvasPanel.ts",
+        "label": "CanvasPanel.ts",
+        "description": "src/webview/CanvasPanel.ts 파일",
+        "color": "#b8bb26",
+        "cluster_id": "storage_cluster",
+        "layer": 1,
+        "priority": 50
+      },
+      "visual": {
+        "opacity": 0.5,
+        "dashArray": "5,5"
+      }
+    },
+    {
+      "id": "node_10",
+      "type": "source",
+      "status": "proposed",
+      "position": {
+        "x": 4600,
+        "y": 1300
+      },
+      "data": {
+        "file": "src/server/server.ts",
+        "label": "server.ts",
+        "description": "src/server/server.ts 파일",
+        "color": "#b8bb26",
+        "cluster_id": "storage_cluster",
+        "layer": 1,
+        "priority": 50
+      },
+      "visual": {
+        "opacity": 0.5,
+        "dashArray": "5,5"
+      }
+    },
+    {
+      "id": "node_11",
+      "type": "source",
+      "status": "proposed",
+      "position": {
+        "x": 3000,
+        "y": 2500
+      },
+      "data": {
+        "file": "src/types/schema.ts",
+        "label": "schema.ts",
+        "description": "src/types/schema.ts 파일",
+        "color": "#b8bb26",
+        "cluster_id": "storage_cluster",
+        "layer": 1,
+        "priority": 50
+      },
+      "visual": {
+        "opacity": 0.5,
+        "dashArray": "5,5"
+      }
+    }
+  ],
+  "edges": [],
   "clusters": [
     {
+      "id": "cluster_0",
+      "label": "ROOT",
+      "collapsed": false,
       "bounds": {
-        "height": 400,
-        "width": 400,
         "x": 0,
-        "y": 0
+        "y": 0,
+        "width": 1250,
+        "height": 1250
+      },
+      "children": []
+    },
+    {
+      "id": "cluster_1",
+      "label": "src",
+      "collapsed": false,
+      "bounds": {
+        "x": 800,
+        "y": 0,
+        "width": 1250,
+        "height": 1250
+      },
+      "children": []
+    },
+    {
+      "id": "cluster_2",
+      "label": "src/bootstrap",
+      "collapsed": false,
+      "bounds": {
+        "x": 1600,
+        "y": 0,
+        "width": 1250,
+        "height": 1250
+      },
+      "children": []
+    },
+    {
+      "id": "cluster_3",
+      "label": "src/core",
+      "collapsed": false,
+      "bounds": {
+        "x": 0,
+        "y": 1200,
+        "width": 1250,
+        "height": 1250
+      },
+      "children": []
+    },
+    {
+      "id": "cluster_4",
+      "label": "src/webview",
+      "collapsed": false,
+      "bounds": {
+        "x": 800,
+        "y": 1200,
+        "width": 1250,
+        "height": 1250
+      },
+      "children": []
+    },
+    {
+      "id": "cluster_5",
+      "label": "src/server",
+      "collapsed": false,
+      "bounds": {
+        "x": 1600,
+        "y": 1200,
+        "width": 1250,
+        "height": 1250
+      },
+      "children": []
+    },
+    {
+      "id": "cluster_6",
+      "label": "src/types",
+      "collapsed": false,
+      "bounds": {
+        "x": 0,
+        "y": 2400,
+        "width": 1250,
+        "height": 1250
+      },
+      "children": []
+    },
+    {
+      "id": "storage_cluster",
+      "label": "📦 Ghost Nodes (Storage)",
+      "collapsed": true,
+      "bounds": {
+        "x": 3400,
+        "y": 0,
+        "width": 800,
+        "height": 1200
       },
       "children": [
         "node_0",
         "node_1",
-        "node_2"
-      ],
-      "collapsed": false,
-      "id": "cluster_0",
-      "label": "ROOT"
+        "node_2",
+        "node_3",
+        "node_4",
+        "node_5",
+        "node_6",
+        "node_7",
+        "node_8",
+        "node_9",
+        "node_10",
+        "node_11"
+      ]
     }
-  ],
-  "edges": [],
-  "gemini_md_path": "/home/dogsinatas/TypeScript_project/antigravity-extension-vis/GEMINI.md",
-  "nodes": [
-    {
-      "data": {
-        "cluster_id": "cluster_0",
-        "color": "#b8bb26",
-        "description": "login.py 파일",
-        "file": "login.py",
-        "label": "login.py",
-        "layer": 1,
-        "priority": 25,
-        "summary": {
-          "classes": [],
-          "functions": [],
-          "references": []
-        }
-      },
-      "id": "node_0",
-      "position": {
-        "x": 50,
-        "y": 450
-      },
-      "status": "proposed",
-      "type": "source",
-      "visual": {
-        "dashArray": "5,5",
-        "opacity": 0.5
-      }
-    },
-    {
-      "data": {
-        "cluster_id": "cluster_0",
-        "color": "#b8bb26",
-        "description": "board.py 파일",
-        "file": "board.py",
-        "label": "board.py",
-        "layer": 1,
-        "priority": 25,
-        "summary": {
-          "classes": [],
-          "functions": [],
-          "references": []
-        }
-      },
-      "id": "node_1",
-      "position": {
-        "x": 200,
-        "y": 450
-      },
-      "status": "proposed",
-      "type": "source",
-      "visual": {
-        "dashArray": "5,5",
-        "opacity": 0.5
-      }
-    },
-    {
-      "data": {
-        "cluster_id": "cluster_0",
-        "color": "#b8bb26",
-        "description": "schema.sql 파일",
-        "file": "schema.sql",
-        "label": "schema.sql",
-        "layer": 1,
-        "priority": 50,
-        "summary": {
-          "classes": [],
-          "functions": [],
-          "references": []
-        }
-      },
-      "id": "node_2",
-      "position": {
-        "x": 50,
-        "y": 600
-      },
-      "status": "proposed",
-      "type": "source",
-      "visual": {
-        "dashArray": "5,5",
-        "opacity": 0.5
-      }
-    }
-  ],
-  "project_name": "antigravity-extension-vis"
+  ]
 }

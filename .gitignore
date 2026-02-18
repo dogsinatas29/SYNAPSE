@@ -4,4 +4,3 @@ dist/
 .DS_Store
 data/snapshots/
 *.tsbuildinfo
-GEMINI.md

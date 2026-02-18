@@ -39,7 +39,7 @@ Intuitively overview the project's folder structure and file hierarchy.
 ![Tree View](docs/media/synapse_tree_view.png)
 
 ### ➡️ Flow View
-Projects the logic execution flow of a specific event or function into a linear flowchart.
+Projects the logic execution flow of a specific event or function into a linear flowchart. This is the **authoritative final result** that integrates and reflects both manual node editing and source code changes.
 ![Flow View](docs/media/flow_v0.2.0.png)
 
 ## 🗂️ Language Support

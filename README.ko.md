@@ -39,7 +39,7 @@ LLM의 추론 논리와 파일 간의 물리적 연결 상태를 노드-엣지 �
 ![Tree View](docs/media/synapse_tree_view.png)
 
 ### ➡️ Flow View
-특정 이벤트나 함수의 로직 실행 흐름을 선형적인 순서도로 투사합니다.
+특정 이벤트나 함수의 로직 실행 흐름을 선형적인 순서도로 투사합니다. 이는 코드 편집과 노드 편집의 모든 결과물이 결합되어 반영되는 **최종적인 권위적 산출물**입니다.
 ![Flow View](docs/media/flow_v0.2.0.png)
 
 ## 🗂️ 언어 지원 (Language Support)

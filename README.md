@@ -155,6 +155,10 @@ Created with the belief that the simple act of connecting lines in complex syste
 
 ## 🆕 Version History
 
+### v0.2.10
+- **🐛 Activation Fix**: Fixed "command not found" error by updating `vscode` engine requirement to `^1.82.0`.
+- **⚙️ Compatibility**: Ensured compatibility with `vscode-languageclient` v9.0.1.
+
 ### v0.2.8
 - **📜 Rule Externalization**: Introduced `RULES.md` to define and control architecture discovery rules (inclusion/exclusion/icons).
 - **⚖️ Rules Button**: Added a dedicated button to the canvas UI for instant rule access.

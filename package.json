@@ -2,7 +2,7 @@
     "name": "synapse-visual-architecture",
     "displayName": "SYNAPSE - Visual Architecture Engine",
     "description": "Visual architecture control engine for code visualization and design",
-    "version": "0.2.9",
+    "version": "0.2.10",
     "publisher": "synapse-team",
     "repository": {
         "type": "git",
@@ -10,7 +10,7 @@
     },
     "icon": "resources/synapse-icon.png",
     "engines": {
-        "vscode": "^1.80.0"
+        "vscode": "^1.82.0"
     },
     "categories": [
         "Visualization",

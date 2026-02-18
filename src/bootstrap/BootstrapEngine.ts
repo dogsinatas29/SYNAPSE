@@ -191,22 +191,26 @@ export class BootstrapEngine {
                     scanDir(fullPath, currentRelPath);
                 } else {
                     const ext = path.extname(file).toLowerCase();
+                    const fileName = file.toLowerCase();
+
+                    // [Failsafe] 블랙리스트 및 빌드 결과물 필터링
+                    const blacklist = ['package-lock.json', 'license'];
+                    const binaryExcludes = ['.vsix', '.zip', '.tar.gz', '.exe', '.dll', '.so', '.bin'];
+
+                    if (blacklist.includes(fileName) || binaryExcludes.some(ex => file.endsWith(ex))) {
+                        continue;
+                    }
+
                     const scanExtensions = [
-                        '.ts', '.js', '.py', '.cpp', '.h', '.c', '.hpp', '.cc',
-                        '.md', '.rs', '.sh', '.sql', '.json', '.yaml', '.yml', '.toml'
+                        '.ts', '.js', '.py', '.cpp', '.h', '.c', '.hpp', '.cc', '.rs', '.sh', '.sql', '.md'
                     ];
 
                     if (scanExtensions.includes(ext)) {
-                        let type: NodeType = 'source';
-                        if (ext === '.md') {
-                            type = currentRelPath.startsWith('prompts/') ? 'history' : 'documentation';
-                        }
-                        if (['.json', '.yaml', '.yml', '.toml'].includes(ext)) type = 'config';
-
+                        const type: NodeType = ext === '.md' ? 'documentation' : 'source';
                         structure.files.push({
                             path: currentRelPath.replace(/\\/g, '/'),
                             type,
-                            description: type === 'history' ? `Prompt: ${file}` : `${file} (Auto-detected)`
+                            description: `${file} (${type === 'documentation' ? 'Doc' : 'Auto-detected'})`
                         });
 
                         // [Deep Scan] 의존성 분석

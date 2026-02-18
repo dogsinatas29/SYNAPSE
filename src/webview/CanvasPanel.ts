@@ -580,10 +580,24 @@ export class CanvasPanel {
 
             // 3. 순서도 생성 (제안 상태의 노드/엣지 반환)
             const generator = new FlowchartGenerator();
-            const { nodes, edges } = generator.generateInitialFlowchart(structure);
+            const { nodes: allProposedNodes, edges } = generator.generateInitialFlowchart(structure);
+
+            // 3.5. 기존 노드와 대조하여 중복 필터링
+            const workspaceFolder = this._workspaceFolder;
+            let currentState: any = { nodes: [] };
+            if (workspaceFolder) {
+                const projectStateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'project_state.json');
+                try {
+                    const data = await vscode.workspace.fs.readFile(projectStateUri);
+                    currentState = JSON.parse(data.toString());
+                } catch (e) { /* ignore */ }
+            }
+
+            const activeFiles = new Set(currentState.nodes.map((n: any) => n.data?.file).filter(Boolean));
+            const filteredNodes = allProposedNodes.filter(n => !activeFiles.has(n.data?.file));
 
             // Store for approval
-            this.proposedNodes = nodes;
+            this.proposedNodes = filteredNodes;
             this.proposedEdges = edges;
 
             // 4. 제안(Proposal) 상태로 웹뷰에 전송
@@ -591,13 +605,17 @@ export class CanvasPanel {
             this._panel.webview.postMessage({
                 command: 'projectProposal',
                 data: {
-                    nodes: nodes,
+                    nodes: filteredNodes,
                     edges: edges,
                     structure: structure
                 }
             });
 
-            vscode.window.showInformationMessage(`GEMINI.md analyzed. ${nodes.length} nodes proposed.`);
+            const skippedCount = allProposedNodes.length - filteredNodes.length;
+            vscode.window.showInformationMessage(
+                `GEMINI.md analyzed. ${filteredNodes.length} nodes proposed.` +
+                (skippedCount > 0 ? ` (${skippedCount} existing nodes skipped)` : '')
+            );
 
         } catch (error) {
             console.error('Failed to analyze GEMINI.md:', error);
@@ -627,7 +645,17 @@ export class CanvasPanel {
                 // Try to find in proposedNodes (from Gemini analysis)
                 const nodeIndex = this.proposedNodes.findIndex(n => n.id === nodeId);
                 if (nodeIndex !== -1) {
-                    node = this.proposedNodes[nodeIndex];
+                    const proposedNode = this.proposedNodes[nodeIndex];
+
+                    // CRITICAL: Check if a node with the same file path already exists in currentState
+                    const existingNode = currentState.nodes.find((n: any) => n.data && n.data.file === proposedNode.data.file);
+                    if (existingNode) {
+                        console.log(`[SYNAPSE] Node for ${proposedNode.data.file} already exists. Skipping duplicate approval.`);
+                        this.proposedNodes.splice(nodeIndex, 1);
+                        return;
+                    }
+
+                    node = proposedNode;
                     isFromProposal = true;
                     currentState.nodes.push(node); // Add to state
                     this.proposedNodes.splice(nodeIndex, 1); // Remove from proposal queue

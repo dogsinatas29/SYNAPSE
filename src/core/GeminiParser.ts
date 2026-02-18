@@ -80,22 +80,21 @@ export class GeminiParser {
 
         // 파일 패턴 확장: 📄 아이콘, 불렛 포인트, 백틱, 굵게 표시 등 지원
         // 리뉴얼: 📄 뒤에 공백 허용, 불렛은 라인 시작에서만, m 플래그 추가
-        const filePattern = /(?:📄\s*|^\s*[-\*]\s+[`]?|파일:\s*)([a-zA-Z0-9_./-]+\.(py|ts|json|js|md|sql|cpp|h|hpp|cc|c|rs|txt|xml|yaml|yml))[`]?/gm;
+        // [Whitelisting] 프로그래밍 소스 파일 + 문서 파일
+        const filePattern = /(?:📄\s*|^\s*[-\*]\s+[`]?|파일:\s*)([a-zA-Z0-9_./-]+\.(py|ts|js|cpp|h|hpp|cc|c|rs|sh|sql|md))[`]?/gm;
         while ((match = filePattern.exec(content)) !== null) {
             const fileName = match[1];
             // 중복 체크
             if (structure.files.find(f => f.path === fileName)) continue;
 
             const ext = path.extname(fileName).slice(1).toLowerCase();
-            let type: NodeType = 'source';
-            if (['md', 'txt'].includes(ext)) type = 'documentation';
-            if (['json', 'yaml', 'yml', 'xml'].includes(ext)) type = 'config';
+            let type: NodeType = ext === 'md' ? 'documentation' : 'source';
             if (fileName.toLowerCase().includes('test')) type = 'test';
 
             structure.files.push({
                 path: fileName,
                 type,
-                description: `${fileName} 파일`
+                description: type === 'documentation' ? `${fileName} (Doc)` : `${fileName} (Source)`
             });
         }
 
@@ -114,15 +113,15 @@ export class GeminiParser {
 
                     if (!structure.files.find(f => f.path === filePath)) {
                         const ext = path.extname(filePath).slice(1).toLowerCase();
-                        let type: NodeType = 'source';
-                        if (['md', 'txt'].includes(ext)) type = 'documentation';
-                        if (['json', 'yaml', 'yml'].includes(ext)) type = 'config';
+                        const whitelist = ['py', 'ts', 'js', 'cpp', 'h', 'hpp', 'cc', 'c', 'rs', 'sh', 'sql'];
 
-                        structure.files.push({
-                            path: filePath,
-                            type,
-                            description: description
-                        });
+                        if (whitelist.includes(ext)) {
+                            structure.files.push({
+                                path: filePath,
+                                type: 'source',
+                                description: description
+                            });
+                        }
                     }
                 }
             });

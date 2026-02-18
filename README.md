@@ -9,12 +9,19 @@ SYNAPSE is a next-generation extension built for **Google Antigravity** and **Vi
 
 ## 🚀 Key Features
 
+- **📂 Project Bootstrap**: Generates a structured view from `GEMINI.md` or scans your codebase directly.
+- **📚 Documentation Shelf**: Automatically organizes Markdown (`.md`) files into a dedicated shelf, keeping them separate from code logic.
+- **🎯 Manual Clustering**: Group related nodes manually to organize your thought process. These groups are preserved in exports.
+- **🔍 Smart File Scanning**: Focuses on source code and documentation, filtering out noise like build artifacts and config files.
+- **🤖 Deep Analysis**: Understands typical project structures (src, tests, docs) and categorizes nodes accordingly.
+- **🎨 Interactive Canvas**: Drag, drop, zoom, and pan to explore your architecture.
+- **📝 Mermaid Export**: Export your visual diagram to Mermaid.js format for easy sharing and documentation.
 - **🌐 Topology View**: visualize project folder structure and file dependencies as a node-edge network.
 - **🌳 Tree View**: A hierarchical overview of the project structure.
-- **➡️ Flow View (Enhanced! 🏁)**: Projects the execution flow of specific logic into a flowchart with horizontal branching for decisions and improved TypeScript support (v0.2.1).
+- **➡️ Flow View (Enhanced! 🏁)**: Projects the execution flow of specific logic into a flowchart with horizontal branching for decisions and improved Mermaid diagram support with clustering (v0.2.2).
 - **🛡️ Node Diet (Smart Scanning)**: Automatically ignores unnecessary folders like `.venv`, `node_modules`.
 - **📦 Ghost Node Storage (New! 📥)**: Automatically isolates disconnected (degree-0) nodes into a dedicated storage cluster to keep the main view clean.
-- **📂 Auto Folder Clustering**: Automatically groups nodes based on directory structure to ensure readability for large projects.
+- **📂 Auto Folder Clustering**: Automatically groups nodes based on directory structure. This clustering is now also preserved in Mermaid exports (v0.2.2).
 - **🔄 Deep Reset**: Instantly resets a messy layout and rescans with the latest filters.
 - **🎯 Scan Scope Control**: Specify `Scan Paths` in `GEMINI.md` to precisely scan only desired areas.
 - **⌨️ Arrow Key Navigation**: Fast and precise canvas navigation using arrow keys and Shift.
@@ -51,7 +58,7 @@ SYNAPSE supports multi-language architecture analysis:
 - 🐚 **Shell Script**: `.sh` automation script flow and function analysis
 - 🗄️ **SQL**: `.sql` table definition and schema visualization
 - ⚙️ **Config (JSON/YAML/TOML)**: Analyzing relationships between infrastructure configuration files (The Glue)
-- 📜 **TypeScript / JavaScript**: Full engine support for interfaces, types, and complex async logic (Enhanced in v0.2.1! 🚀)
+- 📜 **TypeScript / JavaScript**: Full engine support for interfaces, types, and complex async logic (Enhanced in v0.2.1+! 🚀)
 
 ## 🛠️ Technology Stack
 
@@ -120,7 +127,7 @@ npm run dev:ui
 ### 🧹 Data Hygiene Principles
 - **Separation**: `GEMINI.md` holds the logic; `project_state.json` holds the coordinates.
 - **Normalization**: Minimized Git Diff through sorted JSON keys.
-- **Git Shield**: Common artifacts like `.vsix` and root `GEMINI.md` are automatically ignored (v0.2.1).
+- **Git Shield**: Common artifacts like `.vsix` and root `GEMINI.md` are automatically ignored (v0.2.2).
 - **Volatile Auto-Edges**: Scanned edges are regenerated in real-time to prevent stale data.
 
 ### 🔥 Core Strategies

@@ -66,7 +66,12 @@ export class FlowchartGenerator {
                 let nodeX, nodeY;
                 let finalClusterId = clusterId;
 
-                if (isDisconnected) {
+                if (file.type === 'documentation') {
+                    // [Doc Shelf] 문서 파일은 별도의 고정 영역에 배치
+                    nodeX = (currentCount % 4) * 200;
+                    nodeY = Math.floor(currentCount / 4) * 150 + 100;
+                    finalClusterId = 'doc_shelf';
+                } else if (isDisconnected) {
                     // 수평 상 멀리 떨어진 Storage 영역 (오른쪽 구석)
                     nodeX = 3000 + (currentCount % 3) * 200;
                     nodeY = (currentCount / 3) * 150 + 100;
@@ -80,8 +85,8 @@ export class FlowchartGenerator {
                     file.path,
                     file.type,
                     file.description,
-                    clusterX + nodeX,
-                    clusterY + nodeY,
+                    finalClusterId === 'doc_shelf' ? -1500 + nodeX : clusterX + nodeX,
+                    finalClusterId === 'doc_shelf' ? 0 + nodeY : clusterY + nodeY,
                     hints.layer,
                     hints.priority,
                     finalClusterId
@@ -90,7 +95,7 @@ export class FlowchartGenerator {
                 clusterNodes.push(node.id);
             });
 
-            // 클러스터 영역 계산 (Storage 노드 제외)
+            // 클러스터 영역 계산 (Storage/Doc 노드 제외)
             const maxNodesInLayer = Math.max(...Array.from(layerCounters.values()), 1);
             clusters.push({
                 id: clusterId,
@@ -111,7 +116,17 @@ export class FlowchartGenerator {
             clusterIdx++;
         });
 
-        // 3. Storage 클러스터 추가 (Disconnected 노드들을 위한 가상 컨테이너)
+        // 3. Special Clusters 추가
+        // [Documentation Shelf] 모든 MD 파일들을 모아두는 고정 영역
+        clusters.push({
+            id: 'doc_shelf',
+            label: '📚 Documentation Shelf',
+            collapsed: false,
+            bounds: { x: -1600, y: -100, width: 900, height: 1200 },
+            children: nodes.filter(n => n.data.cluster_id === 'doc_shelf').map(n => n.id)
+        });
+
+        // [Ghost Nodes Storage]
         clusters.push({
             id: 'storage_cluster',
             label: '📦 Ghost Nodes (Storage)',
@@ -152,7 +167,8 @@ export class FlowchartGenerator {
         priority: number,
         clusterId?: string
     ): Node {
-        const id = `node_${this.nodeIdCounter++}`;
+        const safeId = filePath.replace(/[^a-zA-Z0-9]/g, '_');
+        const id = `node_${safeId}`;
 
         // 타입별 색상
         const colorMap: Record<NodeType, string> = {
@@ -236,16 +252,43 @@ export class FlowchartGenerator {
     }
 
     /**
-     * Mermaid 다이어그램 생성 (기존 호환성 유지)
+     * Mermaid 다이어그램 생성 (클러스터 지원)
      */
-    public generateMermaidDiagram(nodes: Node[], edges: Edge[]): string {
+    public generateMermaidDiagram(nodes: Node[], edges: Edge[], clusters?: Cluster[]): string {
         let mermaid = 'flowchart TD\n';
 
-        nodes.forEach(node => {
-            const label = node.data.label;
-            const shape = this.getNodeShape(node.type);
-            mermaid += `  ${node.id}${shape[0]}${label}${shape[1]}\n`;
-        });
+        // 1. 클러스터(subgraph) 처리
+        if (clusters && clusters.length > 0) {
+            clusters.forEach(cluster => {
+                // 특정 클러스터에 속한 노드들 찾기
+                const clusterNodes = nodes.filter(n => n.data.cluster_id === cluster.id || (n as any).cluster_id === cluster.id);
+
+                if (clusterNodes.length > 0) {
+                    mermaid += `  subgraph ${cluster.id} ["${cluster.label}"]\n`;
+                    clusterNodes.forEach(node => {
+                        const label = node.data.label;
+                        const shape = this.getNodeShape(node.type);
+                        mermaid += `    ${node.id}${shape[0]}${label}${shape[1]}\n`;
+                    });
+                    mermaid += '  end\n\n';
+                }
+            });
+
+            // 클러스터에 속하지 않은 노드들 처리
+            const standaloneNodes = nodes.filter(n => !n.data.cluster_id || !clusters.some(c => c.id === n.data.cluster_id));
+            standaloneNodes.forEach(node => {
+                const label = node.data.label;
+                const shape = this.getNodeShape(node.type);
+                mermaid += `  ${node.id}${shape[0]}${label}${shape[1]}\n`;
+            });
+        } else {
+            // 기존 하위 호환성 유지 (클러스터 정보가 없는 경우)
+            nodes.forEach(node => {
+                const label = node.data.label;
+                const shape = this.getNodeShape(node.type);
+                mermaid += `  ${node.id}${shape[0]}${label}${shape[1]}\n`;
+            });
+        }
 
         mermaid += '\n';
 

@@ -11,10 +11,10 @@ SYNAPSE는 **Google Antigravity** 및 **Visual Studio Code** 사용자를 위해
 
 - **🌐 Topology View**: 프로젝트의 폴더 구조 및 파일 간의 의존성을 노드-엣지 네트워크로 시각화.
 - **🌳 Tree View**: 프로젝트 구조를 계층적으로 조감.
-- **➡️ Flow View (강화! 🏁)**: 특정 로직의 실행 흐름을 수평 분기가 포함된 순서도로 투사하며, TypeScript 분석 능력이 향상되었습니다 (v0.2.1).
+- **➡️ Flow View (강화! 🏁)**: 특정 로직의 실행 흐름을 수평 분기가 포함된 순서도로 투사하며, Mermaid 출력 시 클러스터링(subgraph) 지원이 추가되었습니다 (v0.2.2).
 - **🛡️ Node Diet (Smart Scanning)**: `.venv`, `node_modules` 등 불필요한 폴더를 자동으로 무시합니다.
 - **📦 Ghost Node Storage (신규! 📥)**: 의존성이 없는 고립된 노드들을 별도의 보관소(Storage) 클러스터로 자동 격리하여 메인 뷰를 깨끗하게 유지합니다.
-- **📂 Auto Folder Clustering**: 디렉토리 구조에 기반한 자동 그룹화로 대규모 프로젝트 가독성 보장.
+- **📂 Auto Folder Clustering**: 디렉토리 구조에 기반한 자동 그룹화 기능을 제공하며, 이제 Mermaid 파일 생성 시에도 이 그룹화가 유지됩니다 (v0.2.2).
 - **🔄 Deep Reset**: 엉망이 된 배치를 즉시 초기화하고 최신 필터로 재스캔하는 심층 초기화.
 - **🎯 Scan Scope Control**: `GEMINI.md`에서 `Scan Paths`를 지정하여 원하는 영역만 정밀 스캔 가능.
 - **⌨️ Arrow Key Navigation**: 방향키와 Shift 키를 이용한 빠르고 정밀한 캔버스 탐색 지원.
@@ -51,7 +51,7 @@ SYNAPSE는 다양한 언어 아키텍처 분석을 지원합니다:
 - 🐚 **Shell Script**: `.sh` 자동화 스크립트 흐름 및 함수 분석
 - 🗄️ **SQL**: `.sql` 테이블 정의 및 스키마 시각화
 - ⚙️ **Config (JSON/YAML/TOML)**: 인프라 설정 파일 간의 관계 분석 (The Glue)
-- 📜 **TypeScript / JavaScript**: 인터페이스, 타입, 비동기 로직 완벽 분석 (v0.2.1 엔진 강화! 🚀)
+- 📜 **TypeScript / JavaScript**: 인터페이스, 타입, 비동기 로직 완벽 분석 (v0.2.1+ 엔진 강화! 🚀)
 
 ## 🛠️ 기술 스택 (Technology Stack)
 
@@ -120,7 +120,7 @@ npm run dev:ui
 ### 🧹 데이터 정형화 원칙
 - **분리**: 로직은 `GEMINI.md`에, 좌표는 `project_state.json`에 저장됩니다.
 - **정규화**: 정렬된 JSON 키를 통해 Git Diff를 최소화합니다.
-- **Git Shield**: `.vsix` 및 루트 `GEMINI.md` 등 불필요한 파일을 자동 무시합니다 (v0.2.1).
+- **Git Shield**: `.vsix` 및 루트 `GEMINI.md` 등 불필요한 파일을 자동 무시합니다 (v0.2.2).
 - **휘발성 엣지**: 자동 스캔된 엣지는 실시간으로 재생성되어 데이터의 무결성을 지킵니다.
 
 ### 🔥 핵심 전략

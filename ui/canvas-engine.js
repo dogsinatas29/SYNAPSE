@@ -902,7 +902,7 @@ class CanvasEngine {
                         // 엣지 선택 해제
                         this.selectedEdge = null;
 
-                        const clusterNodes = this.nodes.filter(n => n.cluster_id === clickedCluster.id);
+                        const clusterNodes = this.nodes.filter(n => (n.data && n.data.cluster_id === clickedCluster.id) || n.cluster_id === clickedCluster.id);
                         if (clusterNodes.length > 0) {
                             if (!(e.ctrlKey || e.metaKey || e.shiftKey)) {
                                 this.selectedNodes.clear();
@@ -1273,7 +1273,7 @@ class CanvasEngine {
         // 클러스터 핸들 체크
         if (this.clusters) {
             for (const cluster of this.clusters) {
-                const clusterNodes = this.nodes.filter(n => n.cluster_id === cluster.id);
+                const clusterNodes = this.nodes.filter(n => (n.data && n.data.cluster_id === cluster.id) || n.cluster_id === cluster.id);
                 if (clusterNodes.length === 0) continue;
 
                 let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
@@ -1309,7 +1309,7 @@ class CanvasEngine {
         const cluster = this.clusters.find(c => c.id === clusterId);
         if (!cluster) return;
 
-        const clusterNodes = this.nodes.filter(n => n.cluster_id === cluster.id);
+        const clusterNodes = this.nodes.filter(n => (n.data && n.data.cluster_id === cluster.id) || n.cluster_id === cluster.id);
         if (clusterNodes.length === 0) return;
 
         // 클러스터 영역 계산
@@ -1329,7 +1329,7 @@ class CanvasEngine {
         // 소속되지 않았으면서 영역 안에 있는 노드 찾기
         let movedAny = false;
         for (const node of this.nodes) {
-            if (node.cluster_id === cluster.id) continue;
+            if ((node.data && node.data.cluster_id === cluster.id) || node.cluster_id === cluster.id) continue;
 
             const nx = node.position.x;
             const ny = node.position.y;
@@ -2233,13 +2233,13 @@ class CanvasEngine {
 
         // 이미 모두 같은 클러스터에 속해 있는지 확인
         const nodeArray = Array.from(this.selectedNodes);
-        const firstClusterId = nodeArray[0].cluster_id;
-        const allInSameCluster = firstClusterId && nodeArray.every(n => n.cluster_id === firstClusterId);
+        const firstClusterId = nodeArray[0].data?.cluster_id || nodeArray[0].cluster_id;
+        const allInSameCluster = firstClusterId && nodeArray.every(n => (n.data?.cluster_id === firstClusterId) || n.cluster_id === firstClusterId);
 
         if (allInSameCluster) {
             // 선택된 모든 노드가 이미 동일한 클러스터에 있고, 
             // 그 클러스터에 다른 노드가 없다면 새로 생성할 필요 없음
-            const nodesInCluster = this.nodes.filter(n => n.cluster_id === firstClusterId);
+            const nodesInCluster = this.nodes.filter(n => (n.data?.cluster_id === firstClusterId) || n.cluster_id === firstClusterId);
             if (nodesInCluster.length === this.selectedNodes.size) {
                 console.log('[SYNAPSE] Selection already forms a unique cluster:', firstClusterId);
                 return;
@@ -2262,7 +2262,9 @@ class CanvasEngine {
 
         this.clusters.push(newCluster);
         for (const node of this.selectedNodes) {
-            node.cluster_id = clusterId;
+            if (!node.data) node.data = {};
+            node.data.cluster_id = clusterId;
+            node.cluster_id = clusterId; // 하위 호환성 유지
         }
 
         console.log('[SYNAPSE] Created cluster:', clusterId);
@@ -2278,12 +2280,13 @@ class CanvasEngine {
         if (this.selectedNodes.size === 0) return;
 
         for (const node of this.selectedNodes) {
+            if (node.data) node.data.cluster_id = null;
             node.cluster_id = null;
         }
 
         // 사용되지 않는 클러스터 정리
         this.clusters = this.clusters.filter(c => {
-            return this.nodes.some(n => n.cluster_id === c.id);
+            return this.nodes.some(n => (n.data?.cluster_id === c.id) || n.cluster_id === c.id);
         });
 
         console.log('[SYNAPSE] Ungrouped selection');
@@ -2570,7 +2573,7 @@ class CanvasEngine {
 
         for (const cluster of this.clusters) {
             // 해당 클러스터에 속한 노드들 찾기
-            const clusterNodes = this.nodes.filter(n => n.cluster_id === cluster.id);
+            const clusterNodes = this.nodes.filter(n => (n.data?.cluster_id === cluster.id) || n.cluster_id === cluster.id);
             if (clusterNodes.length === 0) continue;
 
             // 바운딩 박스 계산
@@ -3830,7 +3833,12 @@ function initCanvas() {
 
     document.getElementById('btn-rebootstrap')?.addEventListener('click', () => {
         if (typeof vscode !== 'undefined') {
-            vscode.postMessage({ command: 'reBootstrap' });
+            const confirmed = window.confirm(
+                'Deep Reset을 실행하시겠습니까?\n\n이 작업은 프로젝트를 전체 재스캔하며, 현재까지 편집한 노드 위치, 커스텀 연결, 클러스터링 등의 모든 캔버스 수정 사항이 초기화됩니다.\n계속하시겠습니까?'
+            );
+            if (confirmed) {
+                vscode.postMessage({ command: 'reBootstrap' });
+            }
         } else {
             alert('Deep Reset is only available in VS Code mode.');
         }

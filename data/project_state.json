@@ -13,13 +13,15 @@
   "clusters": [
     {
       "bounds": {
-        "height": 250,
-        "width": 250,
+        "height": 400,
+        "width": 400,
         "x": 0,
         "y": 0
       },
       "children": [
-        "node_0"
+        "node_0",
+        "node_1",
+        "node_2"
       ],
       "collapsed": false,
       "id": "cluster_0",
@@ -32,79 +34,79 @@
     {
       "data": {
         "cluster_id": "cluster_0",
-        "color": "#fabd2f",
-        "description": "GEMINI.md 파일",
-        "file": "GEMINI.md",
-        "label": "GEMINI.md",
+        "color": "#b8bb26",
+        "description": "login.py 파일",
+        "file": "login.py",
+        "label": "login.py",
+        "layer": 1,
+        "priority": 25,
         "summary": {
-          "classes": [
-            "4. Bridge (코드 연동)",
-            "🧹 [데이터 위생 원칙: 스파게티 방지 3대 철칙]",
-            "원칙 1: 원천 소스와 상태값의 엄격한 분리",
-            "원칙 2: 자동 정규화(Auto-Normalization) 엔진",
-            "원칙 3: '데이터의 혈통' 중심의 정적 분석 활용",
-            "🧠 SYNAPSE: Visual Architecture Engine",
-            "🏗️ 핵심 워크플로우 (The Command Chain)",
-            "🛠️ 기술 스택",
-            "🚀 Saturday Sprint: Phase 1",
-            "1. 웹뷰 캔버스 초기화",
-            "2. 드롭 앤 분석 로직",
-            "3. 승인 UI (Pending State)",
-            "4. 스냅샷 엔진",
-            "🔄 [SYNAPSE: 동적 순서도(Flowchart) 통합 설계]",
-            "1. 모드 전환 (View Toggle)",
-            "Topology View (기본)",
-            "Flow View (호출)",
-            "2. 순서도 자동 생성 로직",
-            "Step 1: Trace Entry",
-            "Step 2: Logic Branching",
-            "Step 3: Asynchronous Flow",
-            "3. 사용자 시나리오: '눈으로 하는 디버깅'",
-            "시나리오 흐름",
-            "예시",
-            "4. Senior Engineer's Note: 기술적 난제와 해결책",
-            "난제: 정교한 파싱 필요",
-            "해결책 1: 추상 구문 트리(AST) 활용",
-            "해결책 2: Mermaid.js 스타일 적용",
-            "5. UI 통합 설계",
-            "모드 전환 버튼",
-            "우클릭 컨텍스트 메뉴",
-            "Flow View 렌더링",
-            "6. 참고 화면 (Reference Screenshot)",
-            "🌳 [SYNAPSE: 계층 구조(File Tree) 통합 설계]",
-            "1. 듀얼 레이아웃 모드 (Context Switching)",
-            "Graph Mode (기본)",
-            "Tree Mode (호출)",
-            "전환 방식",
-            "2. '폴더' 노드의 추상화",
-            "Container Node",
-            "Group Collapse",
-            "상태 전이 (State Propagation)",
-            "3. 시각적 연동 및 탐색",
-            "Breadcrumb Link",
-            "Shadow Structure",
-            "4. Senior Engineer's Note: 실무 구현 팁",
-            "OS 종속성 배제",
-            "Lazy Loading",
-            "🎯 [연휴 프로젝트의 4대 축 완성]",
-            "1. Topology (노드/엣지)",
-            "2. Flowchart (순서도)",
-            "3. File Tree (계층 구조)",
-            "4. Bridge (코드 연동)"
-          ],
+          "classes": [],
           "functions": [],
-          "references": [
-            "synapse_topology_view"
-          ]
+          "references": []
         }
       },
       "id": "node_0",
       "position": {
         "x": 50,
-        "y": 50
+        "y": 450
       },
       "status": "proposed",
-      "type": "documentation",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_0",
+        "color": "#b8bb26",
+        "description": "board.py 파일",
+        "file": "board.py",
+        "label": "board.py",
+        "layer": 1,
+        "priority": 25,
+        "summary": {
+          "classes": [],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_1",
+      "position": {
+        "x": 200,
+        "y": 450
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_0",
+        "color": "#b8bb26",
+        "description": "schema.sql 파일",
+        "file": "schema.sql",
+        "label": "schema.sql",
+        "layer": 1,
+        "priority": 50,
+        "summary": {
+          "classes": [],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_2",
+      "position": {
+        "x": 50,
+        "y": 600
+      },
+      "status": "proposed",
+      "type": "source",
       "visual": {
         "dashArray": "5,5",
         "opacity": 0.5

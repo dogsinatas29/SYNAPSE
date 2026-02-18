@@ -30,6 +30,8 @@ export interface Node {
         content?: string;        // 코드 스니펫 (확대 시)
         color?: string;          // 상태 색상
         description?: string;    // 설명
+        layer?: number;          // 계층 (0: Discovery, 1: Reasoning, 2: Action)
+        priority?: number;       // 실행 우선순위
     };
     visual: {
         opacity: number;         // 0.5 = 제안 상태

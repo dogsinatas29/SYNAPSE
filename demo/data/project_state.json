@@ -1,8 +1,5 @@
 {
-  "project_name": "demo",
-  "gemini_md_path": "/home/dogsinatas/TypeScript_project/antigravity-extension-vis/demo/GEMINI.md",
   "canvas_state": {
-    "zoom_level": 1,
     "offset": {
       "x": 0,
       "y": 0
@@ -10,475 +7,16 @@
     "visible_layers": [
       "source",
       "documentation"
-    ]
+    ],
+    "zoom_level": 1
   },
-  "nodes": [
-    {
-      "id": "node_22",
-      "type": "source",
-      "status": "proposed",
-      "position": {
-        "x": 50,
-        "y": 50
-      },
-      "data": {
-        "file": "Alert_Manager.ts",
-        "label": "Alert_Manager.ts",
-        "description": "Alert_Manager.ts (Auto-detected)",
-        "color": "#b8bb26",
-        "cluster_id": "cluster_4"
-      },
-      "visual": {
-        "opacity": 0.5,
-        "dashArray": "5,5"
-      }
-    },
-    {
-      "id": "node_23",
-      "type": "source",
-      "status": "proposed",
-      "position": {
-        "x": 200,
-        "y": 50
-      },
-      "data": {
-        "file": "CLI_Main.ts",
-        "label": "CLI_Main.ts",
-        "description": "CLI_Main.ts (Auto-detected)",
-        "color": "#b8bb26",
-        "cluster_id": "cluster_4"
-      },
-      "visual": {
-        "opacity": 0.5,
-        "dashArray": "5,5"
-      }
-    },
-    {
-      "id": "node_24",
-      "type": "source",
-      "status": "proposed",
-      "position": {
-        "x": 350,
-        "y": 50
-      },
-      "data": {
-        "file": "Cache_Buffer.ts",
-        "label": "Cache_Buffer.ts",
-        "description": "Cache_Buffer.ts (Auto-detected)",
-        "color": "#b8bb26",
-        "cluster_id": "cluster_4"
-      },
-      "visual": {
-        "opacity": 0.5,
-        "dashArray": "5,5"
-      }
-    },
-    {
-      "id": "node_25",
-      "type": "source",
-      "status": "proposed",
-      "position": {
-        "x": 500,
-        "y": 50
-      },
-      "data": {
-        "file": "Desktop_Notify.ts",
-        "label": "Desktop_Notify.ts",
-        "description": "Desktop_Notify.ts (Auto-detected)",
-        "color": "#b8bb26",
-        "cluster_id": "cluster_4"
-      },
-      "visual": {
-        "opacity": 0.5,
-        "dashArray": "5,5"
-      }
-    },
-    {
-      "id": "node_26",
-      "type": "source",
-      "status": "proposed",
-      "position": {
-        "x": 50,
-        "y": 200
-      },
-      "data": {
-        "file": "Filter_Engine.ts",
-        "label": "Filter_Engine.ts",
-        "description": "Filter_Engine.ts (Auto-detected)",
-        "color": "#b8bb26",
-        "cluster_id": "cluster_4"
-      },
-      "visual": {
-        "opacity": 0.5,
-        "dashArray": "5,5"
-      }
-    },
-    {
-      "id": "node_27",
-      "type": "documentation",
-      "status": "proposed",
-      "position": {
-        "x": 200,
-        "y": 200
-      },
-      "data": {
-        "file": "GEMINI.md",
-        "label": "GEMINI.md",
-        "description": "GEMINI.md (Auto-detected)",
-        "color": "#fabd2f",
-        "cluster_id": "cluster_4"
-      },
-      "visual": {
-        "opacity": 0.5,
-        "dashArray": "5,5"
-      }
-    },
-    {
-      "id": "node_28",
-      "type": "source",
-      "status": "proposed",
-      "position": {
-        "x": 350,
-        "y": 200
-      },
-      "data": {
-        "file": "Log_Parser.ts",
-        "label": "Log_Parser.ts",
-        "description": "Log_Parser.ts (Auto-detected)",
-        "color": "#b8bb26",
-        "cluster_id": "cluster_4"
-      },
-      "visual": {
-        "opacity": 0.5,
-        "dashArray": "5,5"
-      }
-    },
-    {
-      "id": "node_29",
-      "type": "source",
-      "status": "proposed",
-      "position": {
-        "x": 500,
-        "y": 200
-      },
-      "data": {
-        "file": "Log_Store.ts",
-        "label": "Log_Store.ts",
-        "description": "Log_Store.ts (Auto-detected)",
-        "color": "#b8bb26",
-        "cluster_id": "cluster_4"
-      },
-      "visual": {
-        "opacity": 0.5,
-        "dashArray": "5,5"
-      }
-    },
-    {
-      "id": "node_30",
-      "type": "source",
-      "status": "proposed",
-      "position": {
-        "x": 50,
-        "y": 350
-      },
-      "data": {
-        "file": "Log_Watcher.ts",
-        "label": "Log_Watcher.ts",
-        "description": "Log_Watcher.ts (Auto-detected)",
-        "color": "#b8bb26",
-        "cluster_id": "cluster_4"
-      },
-      "visual": {
-        "opacity": 0.5,
-        "dashArray": "5,5"
-      }
-    },
-    {
-      "id": "node_31",
-      "type": "documentation",
-      "status": "proposed",
-      "position": {
-        "x": 200,
-        "y": 350
-      },
-      "data": {
-        "file": "README.md",
-        "label": "README.md",
-        "description": "README.md (Auto-detected)",
-        "color": "#fabd2f",
-        "cluster_id": "cluster_4"
-      },
-      "visual": {
-        "opacity": 0.5,
-        "dashArray": "5,5"
-      }
-    },
-    {
-      "id": "node_32",
-      "type": "source",
-      "status": "proposed",
-      "position": {
-        "x": 350,
-        "y": 350
-      },
-      "data": {
-        "file": "System_Logs.ts",
-        "label": "System_Logs.ts",
-        "description": "System_Logs.ts (Auto-detected)",
-        "color": "#b8bb26",
-        "cluster_id": "cluster_4"
-      },
-      "visual": {
-        "opacity": 0.5,
-        "dashArray": "5,5"
-      }
-    },
-    {
-      "id": "node_33",
-      "type": "documentation",
-      "status": "proposed",
-      "position": {
-        "x": 500,
-        "y": 350
-      },
-      "data": {
-        "file": "architecture.md",
-        "label": "architecture.md",
-        "description": "architecture.md (Auto-detected)",
-        "color": "#fabd2f",
-        "cluster_id": "cluster_4"
-      },
-      "visual": {
-        "opacity": 0.5,
-        "dashArray": "5,5"
-      }
-    },
-    {
-      "id": "node_34",
-      "type": "source",
-      "status": "proposed",
-      "position": {
-        "x": 50,
-        "y": 500
-      },
-      "data": {
-        "file": "board.py",
-        "label": "board.py",
-        "description": "board.py (Auto-detected)",
-        "color": "#b8bb26",
-        "cluster_id": "cluster_4"
-      },
-      "visual": {
-        "opacity": 0.5,
-        "dashArray": "5,5"
-      }
-    },
-    {
-      "id": "node_35",
-      "type": "source",
-      "status": "proposed",
-      "position": {
-        "x": 200,
-        "y": 500
-      },
-      "data": {
-        "file": "schema.sql",
-        "label": "schema.sql",
-        "description": "schema.sql (Auto-detected)",
-        "color": "#b8bb26",
-        "cluster_id": "cluster_4"
-      },
-      "visual": {
-        "opacity": 0.5,
-        "dashArray": "5,5"
-      }
-    },
-    {
-      "id": "node_36",
-      "type": "source",
-      "status": "proposed",
-      "position": {
-        "x": 650,
-        "y": 50
-      },
-      "data": {
-        "file": "src/board.py",
-        "label": "board.py",
-        "description": "board.py (Auto-detected)",
-        "color": "#b8bb26",
-        "cluster_id": "cluster_5"
-      },
-      "visual": {
-        "opacity": 0.5,
-        "dashArray": "5,5"
-      }
-    },
-    {
-      "id": "node_37",
-      "type": "source",
-      "status": "proposed",
-      "position": {
-        "x": 800,
-        "y": 50
-      },
-      "data": {
-        "file": "src/login.py",
-        "label": "login.py",
-        "description": "login.py (Auto-detected)",
-        "color": "#b8bb26",
-        "cluster_id": "cluster_5"
-      },
-      "visual": {
-        "opacity": 0.5,
-        "dashArray": "5,5"
-      }
-    },
-    {
-      "id": "node_38",
-      "type": "source",
-      "status": "proposed",
-      "position": {
-        "x": 950,
-        "y": 50
-      },
-      "data": {
-        "file": "src/main.js",
-        "label": "main.js",
-        "description": "main.js (Auto-detected)",
-        "color": "#b8bb26",
-        "cluster_id": "cluster_5"
-      },
-      "visual": {
-        "opacity": 0.5,
-        "dashArray": "5,5"
-      }
-    },
-    {
-      "id": "node_39",
-      "type": "source",
-      "status": "proposed",
-      "position": {
-        "x": 650,
-        "y": 200
-      },
-      "data": {
-        "file": "src/main.ts",
-        "label": "main.ts",
-        "description": "main.ts (Auto-detected)",
-        "color": "#b8bb26",
-        "cluster_id": "cluster_5"
-      },
-      "visual": {
-        "opacity": 0.5,
-        "dashArray": "5,5"
-      }
-    },
-    {
-      "id": "node_40",
-      "type": "source",
-      "status": "proposed",
-      "position": {
-        "x": 800,
-        "y": 200
-      },
-      "data": {
-        "file": "src/schema.sql",
-        "label": "schema.sql",
-        "description": "schema.sql (Auto-detected)",
-        "color": "#b8bb26",
-        "cluster_id": "cluster_5"
-      },
-      "visual": {
-        "opacity": 0.5,
-        "dashArray": "5,5"
-      }
-    },
-    {
-      "id": "node_41",
-      "type": "source",
-      "status": "proposed",
-      "position": {
-        "x": 50,
-        "y": 450
-      },
-      "data": {
-        "file": "src/types/schema.js",
-        "label": "schema.js",
-        "description": "schema.js (Auto-detected)",
-        "color": "#b8bb26",
-        "cluster_id": "cluster_6"
-      },
-      "visual": {
-        "opacity": 0.5,
-        "dashArray": "5,5"
-      }
-    },
-    {
-      "id": "node_42",
-      "type": "source",
-      "status": "proposed",
-      "position": {
-        "x": 200,
-        "y": 450
-      },
-      "data": {
-        "file": "src/types/schema.ts",
-        "label": "schema.ts",
-        "description": "schema.ts (Auto-detected)",
-        "color": "#b8bb26",
-        "cluster_id": "cluster_6"
-      },
-      "visual": {
-        "opacity": 0.5,
-        "dashArray": "5,5"
-      }
-    },
-    {
-      "id": "node_43",
-      "type": "source",
-      "status": "proposed",
-      "position": {
-        "x": 650,
-        "y": 450
-      },
-      "data": {
-        "file": "ui/canvas-engine.js",
-        "label": "canvas-engine.js",
-        "description": "canvas-engine.js (Auto-detected)",
-        "color": "#b8bb26",
-        "cluster_id": "cluster_7"
-      },
-      "visual": {
-        "opacity": 0.5,
-        "dashArray": "5,5"
-      }
-    }
-  ],
-  "edges": [
-    {
-      "id": "edge_1",
-      "from": "node_37",
-      "to": "node_34",
-      "type": "dependency",
-      "is_approved": false,
-      "visual": {
-        "thickness": 2,
-        "style": "dashed",
-        "color": "#ebdbb2",
-        "animated": false
-      }
-    }
-  ],
   "clusters": [
     {
-      "id": "cluster_4",
-      "label": "ROOT",
-      "collapsed": false,
       "bounds": {
-        "x": 0,
-        "y": 0,
+        "height": 700,
         "width": 700,
-        "height": 700
+        "x": 0,
+        "y": 0
       },
       "children": [
         "node_22",
@@ -495,17 +33,17 @@
         "node_33",
         "node_34",
         "node_35"
-      ]
+      ],
+      "collapsed": false,
+      "id": "cluster_4",
+      "label": "ROOT"
     },
     {
-      "id": "cluster_5",
-      "label": "src",
-      "collapsed": false,
       "bounds": {
-        "x": 600,
-        "y": 0,
+        "height": 400,
         "width": 550,
-        "height": 400
+        "x": 600,
+        "y": 0
       },
       "children": [
         "node_36",
@@ -513,36 +51,657 @@
         "node_38",
         "node_39",
         "node_40"
-      ]
+      ],
+      "collapsed": false,
+      "id": "cluster_5",
+      "label": "src"
     },
     {
-      "id": "cluster_6",
-      "label": "src/types",
-      "collapsed": false,
       "bounds": {
-        "x": 0,
-        "y": 400,
+        "height": 250,
         "width": 400,
-        "height": 250
+        "x": 0,
+        "y": 400
       },
       "children": [
         "node_41",
         "node_42"
-      ]
+      ],
+      "collapsed": false,
+      "id": "cluster_6",
+      "label": "src/types"
     },
     {
-      "id": "cluster_7",
-      "label": "ui",
-      "collapsed": false,
       "bounds": {
-        "x": 600,
-        "y": 400,
+        "height": 250,
         "width": 250,
-        "height": 250
+        "x": 600,
+        "y": 400
       },
       "children": [
         "node_43"
-      ]
+      ],
+      "collapsed": false,
+      "id": "cluster_7",
+      "label": "ui"
     }
-  ]
+  ],
+  "edges": [
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_37",
+      "id": "edge_1",
+      "is_approved": false,
+      "to": "node_34",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_37",
+      "id": "edge_auto_1771387003886_206",
+      "label": "ref",
+      "to": "node_36",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    }
+  ],
+  "gemini_md_path": "/home/dogsinatas/TypeScript_project/antigravity-extension-vis/demo/GEMINI.md",
+  "nodes": [
+    {
+      "data": {
+        "cluster_id": "cluster_4",
+        "color": "#b8bb26",
+        "description": "Alert_Manager.ts (Auto-detected)",
+        "file": "Alert_Manager.ts",
+        "label": "Alert_Manager.ts",
+        "summary": {
+          "classes": [],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_22",
+      "position": {
+        "x": 50,
+        "y": 50
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_4",
+        "color": "#b8bb26",
+        "description": "CLI_Main.ts (Auto-detected)",
+        "file": "CLI_Main.ts",
+        "label": "CLI_Main.ts",
+        "summary": {
+          "classes": [],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_23",
+      "position": {
+        "x": 200,
+        "y": 50
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_4",
+        "color": "#b8bb26",
+        "description": "Cache_Buffer.ts (Auto-detected)",
+        "file": "Cache_Buffer.ts",
+        "label": "Cache_Buffer.ts",
+        "summary": {
+          "classes": [],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_24",
+      "position": {
+        "x": 350,
+        "y": 50
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_4",
+        "color": "#b8bb26",
+        "description": "Desktop_Notify.ts (Auto-detected)",
+        "file": "Desktop_Notify.ts",
+        "label": "Desktop_Notify.ts",
+        "summary": {
+          "classes": [],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_25",
+      "position": {
+        "x": 500,
+        "y": 50
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_4",
+        "color": "#b8bb26",
+        "description": "Filter_Engine.ts (Auto-detected)",
+        "file": "Filter_Engine.ts",
+        "label": "Filter_Engine.ts",
+        "summary": {
+          "classes": [],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_26",
+      "position": {
+        "x": 50,
+        "y": 200
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_4",
+        "color": "#fabd2f",
+        "description": "GEMINI.md (Auto-detected)",
+        "file": "GEMINI.md",
+        "label": "GEMINI.md",
+        "summary": {
+          "classes": [],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_27",
+      "position": {
+        "x": 200,
+        "y": 200
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_4",
+        "color": "#b8bb26",
+        "description": "Log_Parser.ts (Auto-detected)",
+        "file": "Log_Parser.ts",
+        "label": "Log_Parser.ts",
+        "summary": {
+          "classes": [],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_28",
+      "position": {
+        "x": 350,
+        "y": 200
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_4",
+        "color": "#b8bb26",
+        "description": "Log_Store.ts (Auto-detected)",
+        "file": "Log_Store.ts",
+        "label": "Log_Store.ts",
+        "summary": {
+          "classes": [],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_29",
+      "position": {
+        "x": 500,
+        "y": 200
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_4",
+        "color": "#b8bb26",
+        "description": "Log_Watcher.ts (Auto-detected)",
+        "file": "Log_Watcher.ts",
+        "label": "Log_Watcher.ts",
+        "summary": {
+          "classes": [],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_30",
+      "position": {
+        "x": 50,
+        "y": 350
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_4",
+        "color": "#fabd2f",
+        "description": "README.md (Auto-detected)",
+        "file": "README.md",
+        "label": "README.md",
+        "summary": {
+          "classes": [
+            "README"
+          ],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_31",
+      "position": {
+        "x": 200,
+        "y": 350
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_4",
+        "color": "#b8bb26",
+        "description": "System_Logs.ts (Auto-detected)",
+        "file": "System_Logs.ts",
+        "label": "System_Logs.ts",
+        "summary": {
+          "classes": [],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_32",
+      "position": {
+        "x": 350,
+        "y": 350
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_4",
+        "color": "#fabd2f",
+        "description": "architecture.md (Auto-detected)",
+        "file": "architecture.md",
+        "label": "architecture.md",
+        "summary": {
+          "classes": [
+            "프로젝트 아키텍처"
+          ],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_33",
+      "position": {
+        "x": 500,
+        "y": 350
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_4",
+        "color": "#b8bb26",
+        "description": "board.py (Auto-detected)",
+        "file": "board.py",
+        "label": "board.py",
+        "summary": {
+          "classes": [],
+          "functions": [
+            "main"
+          ],
+          "references": []
+        }
+      },
+      "id": "node_34",
+      "position": {
+        "x": 50,
+        "y": 500
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_4",
+        "color": "#b8bb26",
+        "description": "schema.sql (Auto-detected)",
+        "file": "schema.sql",
+        "label": "schema.sql",
+        "summary": {
+          "classes": [],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_35",
+      "position": {
+        "x": 200,
+        "y": 500
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_5",
+        "color": "#b8bb26",
+        "description": "board.py (Auto-detected)",
+        "file": "src/board.py",
+        "label": "board.py",
+        "summary": {
+          "classes": [
+            "CanvasManager"
+          ],
+          "functions": [
+            "__init__",
+            "add_element",
+            "clear",
+            "get_board_config"
+          ],
+          "references": []
+        }
+      },
+      "id": "node_36",
+      "position": {
+        "x": 650,
+        "y": 50
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_5",
+        "color": "#b8bb26",
+        "description": "login.py (Auto-detected)",
+        "file": "src/login.py",
+        "label": "login.py",
+        "summary": {
+          "classes": [
+            "AuthProvider"
+          ],
+          "functions": [
+            "__init__",
+            "login",
+            "logout",
+            "validate_token"
+          ],
+          "references": [
+            "board"
+          ]
+        }
+      },
+      "id": "node_37",
+      "position": {
+        "x": 800,
+        "y": 50
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_5",
+        "color": "#b8bb26",
+        "description": "main.js (Auto-detected)",
+        "file": "src/main.js",
+        "label": "main.js",
+        "summary": {
+          "classes": [],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_38",
+      "position": {
+        "x": 950,
+        "y": 50
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_5",
+        "color": "#b8bb26",
+        "description": "main.ts (Auto-detected)",
+        "file": "src/main.ts",
+        "label": "main.ts",
+        "summary": {
+          "classes": [],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_39",
+      "position": {
+        "x": 650,
+        "y": 200
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_5",
+        "color": "#b8bb26",
+        "description": "schema.sql (Auto-detected)",
+        "file": "src/schema.sql",
+        "label": "schema.sql",
+        "summary": {
+          "classes": [],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_40",
+      "position": {
+        "x": 800,
+        "y": 200
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_6",
+        "color": "#b8bb26",
+        "description": "schema.js (Auto-detected)",
+        "file": "src/types/schema.js",
+        "label": "schema.js",
+        "summary": {
+          "classes": [],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_41",
+      "position": {
+        "x": 50,
+        "y": 450
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_6",
+        "color": "#b8bb26",
+        "description": "schema.ts (Auto-detected)",
+        "file": "src/types/schema.ts",
+        "label": "schema.ts",
+        "summary": {
+          "classes": [],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_42",
+      "position": {
+        "x": 200,
+        "y": 450
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "data": {
+        "cluster_id": "cluster_7",
+        "color": "#b8bb26",
+        "description": "canvas-engine.js (Auto-detected)",
+        "file": "ui/canvas-engine.js",
+        "label": "canvas-engine.js",
+        "summary": {
+          "classes": [
+            "FlowRenderer",
+            "TreeRenderer",
+            "CanvasEngine"
+          ],
+          "functions": [
+            "getProjectState",
+            "callStandaloneApi",
+            "initCanvas"
+          ],
+          "references": []
+        }
+      },
+      "id": "node_43",
+      "position": {
+        "x": 650,
+        "y": 450
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    }
+  ],
+  "project_name": "demo"
 }

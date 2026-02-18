@@ -76,10 +76,19 @@ export class FileScanner {
         // Python 임포트 (references)
         const importRegex = /(?:from\s+([a-zA-Z0-9_.]+)\s+import|import\s+([a-zA-Z0-9_.,\s]+))/g;
         while ((match = importRegex.exec(content)) !== null) {
-            const ref = match[1] || match[2];
-            if (ref) {
-                ref.split(',').forEach(r => {
-                    const trimmed = r.trim().split(' ')[0]; // 'as' 제거
+            const fromPart = match[1];
+            const importPart = match[2];
+
+            if (fromPart) {
+                // from a.b import c -> 'a.b' 가 핵심 참조
+                const rootMod = fromPart.split('.')[0];
+                if (rootMod && !summary.references.includes(rootMod)) {
+                    summary.references.push(rootMod);
+                }
+            } else if (importPart) {
+                // import a, b as bb -> 'a', 'b' 추출
+                importPart.split(',').forEach(r => {
+                    const trimmed = r.trim().split(/\s+/)[0];
                     if (trimmed && !summary.references.includes(trimmed)) {
                         summary.references.push(trimmed);
                     }
@@ -188,16 +197,26 @@ export class FileScanner {
         }
 
         // Rust use statements (references)
-        const useRegex = /^\s*use\s+([^;]+);/gm;
+        const useRegex = /^\s*use\s+([a-zA-Z0-9_:]+(?:::[a-zA-Z0-9_:{}, *]+)?);/gm;
         while ((match = useRegex.exec(content)) !== null) {
-            const ref = match[1].trim();
-            if (ref) {
-                // Get the last part of the path
-                const parts = ref.split('::');
-                const lastPart = parts[parts.length - 1].replace(/[{}]/g, '').split(',')[0].trim();
+            const fullPath = match[1].trim();
+            if (fullPath) {
+                // 경로에서 핵심 모듈명 추출 (:: 기준 마지막 또는 중괄호 내 첫 번째)
+                const parts = fullPath.split('::');
+                const lastPart = parts[parts.length - 1];
 
-                if (lastPart && lastPart !== '*' && !summary.references.includes(lastPart)) {
-                    summary.references.push(lastPart);
+                if (lastPart.includes('{')) {
+                    // {a, b} 형태에서 첫 번째 모듈 추출
+                    const subMatch = lastPart.match(/{([^,}]+)/);
+                    if (subMatch && subMatch[1]) {
+                        const m = subMatch[1].trim();
+                        if (m && !summary.references.includes(m)) summary.references.push(m);
+                    }
+                } else {
+                    const m = lastPart.trim();
+                    if (m && m !== '*' && !summary.references.includes(m)) {
+                        summary.references.push(m);
+                    }
                 }
             }
         }
@@ -212,7 +231,7 @@ export class FileScanner {
         }
 
         // References (scripts calling other scripts or bins)
-        const refRegex = /(?:\.|\.\/|source\s+|bash\s+|sh\s+)([a-zA-Z0-9_-]+\.sh)/g;
+        const refRegex = /(?:\.|\.\/|source\s+|bash\s+|sh\s+)([a-zA-Z0-9_-]+)(?:\.sh)?/g;
         while ((match = refRegex.exec(content)) !== null) {
             const ref = match[1];
             if (ref && !summary.references.includes(ref)) {

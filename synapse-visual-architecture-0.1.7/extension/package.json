@@ -1,0 +1,153 @@
+{
+    "name": "synapse-visual-architecture",
+    "displayName": "SYNAPSE - Visual Architecture Engine",
+    "description": "Visual architecture control engine for code visualization and design",
+    "version": "0.1.7",
+    "publisher": "synapse-team",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/dogsinatas29/SYNAPSE.git"
+    },
+    "icon": "resources/synapse-icon.png",
+    "engines": {
+        "vscode": "^1.80.0"
+    },
+    "categories": [
+        "Visualization",
+        "Other"
+    ],
+    "main": "./dist/extension.js",
+    "activationEvents": [
+        "onStartupFinished",
+        "onCommand:synapse.openCanvas",
+        "onCommand:synapse.bootstrap",
+        "onCommand:synapse.fitView",
+        "onCommand:synapse.logPrompt"
+    ],
+    "contributes": {
+        "commands": [
+            {
+                "command": "synapse.openCanvas",
+                "title": "SYNAPSE: Open Canvas",
+                "icon": "$(graph)"
+            },
+            {
+                "command": "synapse.bootstrap",
+                "title": "SYNAPSE: Bootstrap from GEMINI.md"
+            },
+            {
+                "command": "synapse.fitView",
+                "title": "SYNAPSE: Fit View"
+            },
+            {
+                "command": "synapse.logPrompt",
+                "title": "SYNAPSE: Log Prompt",
+                "icon": "$(edit)"
+            }
+        ],
+        "keybindings": [
+            {
+                "command": "synapse.logPrompt",
+                "key": "ctrl+alt+m",
+                "mac": "cmd+alt+m"
+            }
+        ],
+        "viewsContainers": {
+            "activitybar": [
+                {
+                    "id": "synapse-explorer",
+                    "title": "SYNAPSE",
+                    "icon": "resources/synapse-icon.svg"
+                }
+            ]
+        },
+        "views": {
+            "synapse-explorer": [
+                {
+                    "id": "synapseExplorer",
+                    "name": "Architecture Explorer",
+                    "icon": "resources/synapse-icon.svg"
+                }
+            ]
+        },
+        "menus": {
+            "editor/title": [
+                {
+                    "command": "synapse.openCanvas",
+                    "when": "resourceExtname == .md && resourceFilename == GEMINI.md",
+                    "group": "navigation"
+                }
+            ],
+            "explorer/context": [
+                {
+                    "command": "synapse.bootstrap",
+                    "when": "resourceExtname == .md && resourceFilename == GEMINI.md"
+                }
+            ]
+        },
+        "configuration": {
+            "title": "SYNAPSE",
+            "properties": {
+                "synapse.autoBootstrap": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Automatically bootstrap project when GEMINI.md is detected"
+                },
+                "synapse.defaultView": {
+                    "type": "string",
+                    "enum": [
+                        "graph",
+                        "tree",
+                        "flow"
+                    ],
+                    "default": "graph",
+                    "description": "Default view mode when opening canvas"
+                },
+                "synapse.prompt.autoSave": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Automatically save prompts with a timestamp filename without asking for a title."
+                }
+            }
+        }
+    },
+    "scripts": {
+        "vscode:prepublish": "npm run compile",
+        "compile": "tsc -p ./",
+        "watch": "tsc -watch -p ./",
+        "pretest": "npm run compile",
+        "lint": "eslint src --ext ts",
+        "test": "node ./out/test/runTest.js",
+        "test:unit": "jest",
+        "dev:ui": "cd demo && python3 -m http.server 8080",
+        "dev:standalone": "ts-node src/server/standalone.ts"
+    },
+    "jest": {
+        "preset": "ts-jest",
+        "testEnvironment": "node",
+        "testMatch": [
+            "**/src/test/**/*.test.ts"
+        ]
+    },
+    "devDependencies": {
+        "@types/jest": "^30.0.0",
+        "@types/node": "^20.10.0",
+        "@types/vscode": "^1.80.0",
+        "@typescript-eslint/eslint-plugin": "^6.0.0",
+        "@typescript-eslint/parser": "^6.0.0",
+        "eslint": "^8.50.0",
+        "jest": "^30.2.0",
+        "ts-jest": "^29.4.6",
+        "ts-node": "^10.9.2",
+        "typescript": "^5.3.3"
+    },
+    "dependencies": {
+        "@types/cors": "^2.8.19",
+        "@types/express": "^5.0.6",
+        "cors": "^2.8.6",
+        "express": "^5.2.1",
+        "vscode-languageclient": "^9.0.1",
+        "vscode-languageserver": "^9.0.1",
+        "vscode-languageserver-textdocument": "^1.0.12"
+    }
+}

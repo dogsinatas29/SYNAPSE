@@ -13,33 +13,118 @@ class FlowRenderer {
     }
 
     buildFlow(nodes) {
-        // 간단한 버전: 파일 순서대로 선형 플로우 생성
-        const steps = nodes.map((node, index) => ({
-            id: `step_${index}`,
-            type: 'process',
-            label: node.data.label,
-            file: node.data.file,
-            node: node,
-            next: index < nodes.length - 1 ? `step_${index + 1}` : null
-        }));
+        const edges = this.engine.edges || [];
+
+        // 1. 진짜 실행 루트 탐색 ( Cargo.toml, GEMINI.md 등 메타데이터 제외하고 main 위주)
+        const roots = nodes.filter(n => {
+            const fileName = n.data.file.toLowerCase();
+            return fileName.includes('main.') || fileName.includes('index.') || fileName.includes('app.');
+        });
+
+        // 2. 의존성 트레이싱 (Reachability)
+        const reachableIds = new Set();
+        const queue = [...roots.map(r => r.id)];
+        roots.forEach(r => reachableIds.add(r.id));
+
+        while (queue.length > 0) {
+            const currentId = queue.shift();
+            const targets = edges.filter(e => e.from === currentId).map(e => e.to);
+            for (const targetId of targets) {
+                if (!reachableIds.has(targetId)) {
+                    reachableIds.add(targetId);
+                    queue.push(targetId);
+                }
+            }
+        }
+
+        // 3. 도달 가능한 노드 필터링 및 정렬
+        const filteredNodes = nodes.filter(n => reachableIds.has(n.id));
+        const sortedNodes = [...filteredNodes].sort((a, b) => {
+            const layerA = a.data.layer || 0;
+            const layerB = b.data.layer || 0;
+            if (layerA !== layerB) return layerA - layerB;
+            return (a.data.priority || 50) - (b.data.priority || 50);
+        });
+
+        // 4. 스텝 생성 (START 인젝션)
+        const steps = [];
+        steps.push({
+            id: 'step_start',
+            type: 'terminal',
+            label: 'START',
+            file: 'system',
+            next: sortedNodes.length > 0 ? `step_0` : null
+        });
+
+        sortedNodes.forEach((node, index) => {
+            const outEdges = edges.filter(e => e.from === node.id);
+            const nextSteps = outEdges.map(e => {
+                const targetIdx = sortedNodes.findIndex(sn => sn.id === e.to);
+                return targetIdx !== -1 ? `step_${targetIdx}` : null;
+            }).filter(id => id !== null);
+
+            // 로직 패턴 (router, checker 등) 확인하여 실제 Decision 여부 결정
+            const fileName = node.data.file.toLowerCase();
+            const isLogicalDecision = fileName.includes('router') ||
+                fileName.includes('checker') ||
+                fileName.includes('enforcer') ||
+                fileName.includes('prompt');
+
+            steps.push({
+                id: `step_${index}`,
+                type: isLogicalDecision ? 'decision' : 'process',
+                label: node.data.label,
+                file: node.data.file,
+                node: node,
+                next: nextSteps.length > 0 ? nextSteps[0] : null,
+                alternateNext: (isLogicalDecision && nextSteps.length > 1) ? nextSteps[1] : null,
+                allNexts: nextSteps,
+                layer: node.data.layer || 0,
+                isRealDecision: isLogicalDecision
+            });
+        });
+
+        // END 인젝션
+        steps.push({
+            id: 'step_end',
+            type: 'terminal',
+            label: 'END',
+            file: 'system'
+        });
+
+        // 마지막 일반 프로세스 노드들을 END로 연결
+        steps.forEach(step => {
+            if (step.id !== 'step_end' && !step.next && !step.alternateNext) {
+                step.next = 'step_end';
+            }
+        });
 
         return {
             id: 'flow_main',
-            name: 'Main Flow',
+            name: 'Strategic Execution Flow',
             steps: steps
         };
     }
 
     layoutFlow(flow) {
-        // 수직 레이아웃: 위에서 아래로
         const startX = 400;
         const startY = 100;
-        const stepHeight = 100;
+        const stepWidth = 250;
+        const stepHeight = 120;
 
         const positions = {};
+        const layerBranchCount = {}; // 레이어별 X 오프셋 계산용
+
         flow.steps.forEach((step, index) => {
+            const layer = step.layer;
+            layerBranchCount[layer] = (layerBranchCount[layer] || 0) + 1;
+
+            // 레이어에 따라 기본 Y 좌표 결정, 같은 레이어 내에서는 순서대로
+            // 하지만 전체 흐름을 위해 index도 고려
+            const xOffset = (layerBranchCount[layer] - 1) * 50; // 약간의 지그재그
+
             positions[step.id] = {
-                x: startX,
+                x: startX + xOffset,
                 y: startY + (index * stepHeight)
             };
         });
@@ -58,11 +143,13 @@ class FlowRenderer {
             // 다음 단계로 연결선
             if (step.next) {
                 const nextPos = positions[step.next];
-                this.renderConnection(ctx, pos.x, pos.y, nextPos.x, nextPos.y, step.type === 'decision' ? 'True' : null);
+                // 진짜 조건문일 때만 'True' 표시
+                const label = step.isRealDecision ? 'True' : null;
+                this.renderConnection(ctx, pos.x, pos.y, nextPos.x, nextPos.y, label);
             }
 
-            // 결정 단계의 대체 경로 (False)
-            if (step.type === 'decision' && step.alternateNext) {
+            // 진짜 조건문일 때만 대체 경로 표시
+            if (step.isRealDecision && step.alternateNext) {
                 const altPos = positions[step.alternateNext];
                 this.renderConnection(ctx, pos.x, pos.y, altPos.x, altPos.y, 'False');
             }
@@ -70,36 +157,44 @@ class FlowRenderer {
     }
 
     renderStep(ctx, step, x, y) {
-        const width = 200;
-        const height = 60;
+        const width = 220;
+        const height = 65;
+
+        if (step.type === 'terminal') {
+            // 둥근 캡슐형 (START/END)
+            ctx.fillStyle = '#b8bb26'; // Green/Aqua for terminal
+            ctx.beginPath();
+            if (ctx.roundRect) {
+                ctx.roundRect(x - 80, y - 30, 160, 60, 30);
+            } else {
+                ctx.rect(x - 80, y - 30, 160, 60);
+            }
+            ctx.fill();
+            ctx.fillStyle = '#1d2021';
+            ctx.font = 'bold 16px Monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText(step.label, x, y + 6);
+            return;
+        }
 
         if (step.type === 'process') {
             // 사각형
             ctx.fillStyle = '#3c3836';
             ctx.fillRect(x - width / 2, y - height / 2, width, height);
-            ctx.strokeStyle = '#b8bb26';
+            ctx.strokeStyle = '#ebdbb2';
             ctx.lineWidth = 2;
             ctx.strokeRect(x - width / 2, y - height / 2, width, height);
         } else if (step.type === 'decision') {
             // 다이아몬드
-            ctx.fillStyle = '#3c3836';
+            ctx.fillStyle = '#504945';
             ctx.beginPath();
-            ctx.moveTo(x, y - height / 2);
-            ctx.lineTo(x + width / 2, y);
-            ctx.lineTo(x, y + height / 2);
-            ctx.lineTo(x - width / 2, y);
+            ctx.moveTo(x, y - height / 2 - 10);
+            ctx.lineTo(x + width / 2 + 10, y);
+            ctx.lineTo(x, y + height / 2 + 10);
+            ctx.lineTo(x - width / 2 - 10, y);
             ctx.closePath();
             ctx.fill();
-            ctx.lineWidth = 2;
-            ctx.stroke();
-        } else if (step.type === 'start' || step.type === 'end') {
-            // 캡슐 형태 (라운드 렉트)
-            const radius = height / 2;
-            ctx.fillStyle = '#3c3836';
-            ctx.beginPath();
-            ctx.roundRect(x - width / 2, y - height / 2, width, height, radius);
-            ctx.fill();
-            ctx.strokeStyle = '#8ec07c'; // Aqua/Green for start/end
+            ctx.strokeStyle = '#fabd2f';
             ctx.lineWidth = 2;
             ctx.stroke();
         }

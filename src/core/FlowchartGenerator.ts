@@ -1,5 +1,6 @@
 import { ProjectStructure, Node, Edge, Cluster, NodeType, EdgeType } from '../types/schema';
 import * as path from 'path';
+import { getVisualHints } from '../utils/visualHints';
 
 export class FlowchartGenerator {
     private nodeIdCounter = 0;
@@ -31,26 +32,49 @@ export class FlowchartGenerator {
         // 2. 각 디렉토리별로 클러스터 및 노드 생성
         let clusterIdx = 0;
         const totalClusters = directoryGroups.size;
+
+        // 레이어 기반 레이아웃을 위해 클러스터 배치를 더 넓게 가져감
+        const clusterSpacingX = 800;
+        const clusterSpacingY = 1200; // 레이어 높이를 고려하여 크게 잡음
         const clusterCols = Math.ceil(Math.sqrt(totalClusters));
 
         directoryGroups.forEach((files, dirName) => {
             const clusterId = `cluster_${this.clusterIdCounter++}`;
             const clusterLabel = dirName === '.' ? 'ROOT' : dirName;
 
-            // 클러스터 위치 계산 (그리드)
-            const clusterSpacingX = 600;
-            const clusterSpacingY = 400;
             const clusterX = (clusterIdx % clusterCols) * clusterSpacingX;
             const clusterY = Math.floor(clusterIdx / clusterCols) * clusterSpacingY;
 
             const clusterNodes: string[] = [];
-            const nodeCount = files.length;
-            const nodeCols = Math.ceil(Math.sqrt(nodeCount));
-            const nodeSpacing = 150;
+            const nodeSpacingX = 350;
+            const nodeSpacingY = 150;
 
-            files.forEach((file, fIdx) => {
-                const nodeX = (fIdx % nodeCols) * nodeSpacing + 50;
-                const nodeY = Math.floor(fIdx / nodeCols) * nodeSpacing + 50;
+            const layerCounters = new Map<number, number>();
+
+            files.forEach((file) => {
+                const hints = getVisualHints(file.path);
+                const layer = hints.layer;
+
+                // 의존성 확인 (degree 0 노드 식별)
+                const isDisconnected = !structure.dependencies.some(d => d.from === file.path || d.to === file.path);
+
+                const currentCount = layerCounters.get(layer) || 0;
+                layerCounters.set(layer, currentCount + 1);
+
+                const layerYOffset = layer * 350 + 50;
+
+                let nodeX, nodeY;
+                let finalClusterId = clusterId;
+
+                if (isDisconnected) {
+                    // 수평 상 멀리 떨어진 Storage 영역 (오른쪽 구석)
+                    nodeX = 3000 + (currentCount % 3) * 200;
+                    nodeY = (currentCount / 3) * 150 + 100;
+                    finalClusterId = 'storage_cluster';
+                } else {
+                    nodeX = (currentCount - 2) * nodeSpacingX + 350;
+                    nodeY = Math.floor(currentCount / 5) * nodeSpacingY + layerYOffset;
+                }
 
                 const node = this.createNode(
                     file.path,
@@ -58,13 +82,16 @@ export class FlowchartGenerator {
                     file.description,
                     clusterX + nodeX,
                     clusterY + nodeY,
-                    clusterId
+                    hints.layer,
+                    hints.priority,
+                    finalClusterId
                 );
                 nodes.push(node);
                 clusterNodes.push(node.id);
             });
 
-            // 클러스터 정보 생성
+            // 클러스터 영역 계산 (Storage 노드 제외)
+            const maxNodesInLayer = Math.max(...Array.from(layerCounters.values()), 1);
             clusters.push({
                 id: clusterId,
                 label: clusterLabel,
@@ -72,13 +99,25 @@ export class FlowchartGenerator {
                 bounds: {
                     x: clusterX,
                     y: clusterY,
-                    width: nodeCols * nodeSpacing + 100,
-                    height: Math.ceil(nodeCount / nodeCols) * nodeSpacing + 100
+                    width: Math.max(maxNodesInLayer, 3) * nodeSpacingX + 200,
+                    height: 3 * 350 + 200
                 },
-                children: clusterNodes
+                children: clusterNodes.filter(id => {
+                    const n = nodes.find(node => node.id === id);
+                    return n && n.data.cluster_id === clusterId;
+                })
             });
 
             clusterIdx++;
+        });
+
+        // 3. Storage 클러스터 추가 (Disconnected 노드들을 위한 가상 컨테이너)
+        clusters.push({
+            id: 'storage_cluster',
+            label: '📦 Ghost Nodes (Storage)',
+            collapsed: true,
+            bounds: { x: clusterCols * clusterSpacingX + 1000, y: 0, width: 800, height: 1200 },
+            children: nodes.filter(n => n.data.cluster_id === 'storage_cluster').map(n => n.id)
         });
 
         // 3. 의존성 기반 엣지 생성
@@ -109,6 +148,8 @@ export class FlowchartGenerator {
         description: string,
         x: number,
         y: number,
+        layer: number,
+        priority: number,
         clusterId?: string
     ): Node {
         const id = `node_${this.nodeIdCounter++}`;
@@ -123,17 +164,37 @@ export class FlowchartGenerator {
             history: '#d65d0e'      // 주황/갈색 (브라운)
         };
 
+        // 중앙 집중화 (Reasoning 레이어의 핵심 파일들)
+        let finalX = x;
+        const fileName = path.basename(filePath).toLowerCase();
+        if (layer === 1) {
+            const isCore = fileName.includes('router') ||
+                fileName.includes('prompt') ||
+                fileName.includes('engine') ||
+                fileName.includes('inference');
+
+            if (isCore) {
+                // 클러스터의 중앙 부근으로 유도
+                // x는 이미 clusterX + nodeX 형태로 들어옴. 
+                // 여기서는 x의 기저값(nodeX 부분)을 조정하거나 
+                // 전체 cluster width의 절반 정도로 보정
+                finalX = x + (Math.random() * 40 - 20); // 약간의 변동성만 줌
+            }
+        }
+
         return {
             id,
             type,
             status: 'proposed',
-            position: { x, y },
+            position: { x: finalX, y },
             data: {
                 file: filePath,
                 label: path.basename(filePath),
                 description,
                 color: colorMap[type],
-                cluster_id: clusterId
+                cluster_id: clusterId,
+                layer,
+                priority
             },
             visual: {
                 opacity: 0.5,

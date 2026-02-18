@@ -79,7 +79,8 @@ export class GeminiParser {
         }
 
         // 파일 패턴 확장: 📄 아이콘, 불렛 포인트, 백틱, 굵게 표시 등 지원
-        const filePattern = /(?:📄|[-\*]\s+[`]?|파일:\s*)([a-zA-Z0-9_./-]+\.(py|ts|json|js|md|sql|cpp|h|hpp|cc|c|rs|txt|xml|yaml|yml))[`]?/g;
+        // 리뉴얼: 📄 뒤에 공백 허용, 불렛은 라인 시작에서만, m 플래그 추가
+        const filePattern = /(?:📄\s*|^\s*[-\*]\s+[`]?|파일:\s*)([a-zA-Z0-9_./-]+\.(py|ts|json|js|md|sql|cpp|h|hpp|cc|c|rs|txt|xml|yaml|yml))[`]?/gm;
         while ((match = filePattern.exec(content)) !== null) {
             const fileName = match[1];
             // 중복 체크

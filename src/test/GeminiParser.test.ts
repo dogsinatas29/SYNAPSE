@@ -27,10 +27,51 @@ describe('GeminiParser', () => {
         expect(files).toContain('data/config.json');
     });
 
-    it('should trigger fallback when no files are found', async () => {
-        (fs.readFileSync as jest.Mock).mockReturnValue('Empty file');
+    it('should correctly parse files with icons and spaces', async () => {
+        const content = `
+## Files
+├── 📄 login.py
+├── 📄 board.py
+└── 📄 schema.sql
+        `;
+        (fs.readFileSync as jest.Mock).mockReturnValue(content);
         const structure = await parser.parseGeminiMd('GEMINI.md');
-        expect(structure.files.length).toBeGreaterThan(0);
-        expect(structure.files[0].path).toBe('src/main.ts');
+        const paths = structure.files.map(f => f.path);
+        expect(paths).toContain('login.py');
+        expect(paths).toContain('board.py');
+        expect(paths).toContain('schema.sql');
+    });
+
+    it('should ignore filenames in the middle of sentences with hyphens', async () => {
+        const content = `
+[Scene 2: Analysis - GEMINI.md Analysis and Approval]
+- This is a bullet point.
+- another_file.ts: description
+        `;
+        (fs.readFileSync as jest.Mock).mockReturnValue(content);
+        const structure = await parser.parseGeminiMd('GEMINI.md');
+        const paths = structure.files.map(f => f.path);
+        expect(paths).not.toContain('GEMINI.md');
+        expect(paths).toContain('another_file.ts');
+    });
+
+    it('should match multiple files correctly with the new regex', async () => {
+        const content = `
+- src/main.ts
+* src/utils.ts
+📄 config.json
+        `;
+        (fs.readFileSync as jest.Mock).mockReturnValue(content);
+        const structure = await parser.parseGeminiMd('GEMINI.md');
+        const paths = structure.files.map(f => f.path);
+        expect(paths).toContain('src/main.ts');
+        expect(paths).toContain('src/utils.ts');
+        expect(paths).toContain('config.json');
+    });
+
+    it('should return empty structure when no files are found', async () => {
+        (fs.readFileSync as jest.Mock).mockReturnValue('Empty file without any markers');
+        const structure = await parser.parseGeminiMd('GEMINI.md');
+        expect(structure.files.length).toBe(0);
     });
 });

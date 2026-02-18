@@ -35,8 +35,8 @@ export class BootstrapEngine {
             // 1. GEMINI.md 파싱
             let structure = await this.parser.parseGeminiMd(geminiMdPath);
 
-            // 2. 스마트 폴백: GEMINI.md에 파일 정보가 전혀 없는 경우 autoDiscover 실행
-            if (structure.files.length === 0) {
+            // 2. 스마트 폴백: GEMINI.md에 파일 정보가 전혀 없거나 자기 자신(GEMINI.md)만 있는 경우 autoDiscover 실행
+            if (structure.files.length === 0 || (structure.files.length === 1 && structure.files[0].path.toLowerCase().endsWith('gemini.md'))) {
                 console.log('⚠️ [SYNAPSE] GEMINI.md contains no file definitions. Falling back to Auto-Discovery...');
                 const discoveredState = await this.autoDiscover(projectRoot, structure.includePaths);
 

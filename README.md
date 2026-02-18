@@ -44,7 +44,7 @@ SYNAPSE supports multi-language architecture analysis:
 
 ### 🌐 Graph View
 Visualizes the physical connection status between LLM reasoning logic and files as a node-edge network.
-![Graph View](docs/media/synapse_graph_view.png)
+![Graph View](docs/media/graph_v0.1.9.png)
 
 ### 🌳 Tree View
 Intuitively overview the project's folder structure and file hierarchy.
@@ -52,7 +52,7 @@ Intuitively overview the project's folder structure and file hierarchy.
 
 ### ➡️ Flow View
 Projects the logic execution flow of a specific event or function into a linear flowchart.
-![Flow View](docs/media/synapse_flow_view.png)
+![Flow View](docs/media/flow_v0.1.9.png)
 
 
 ## 📦 Getting Started

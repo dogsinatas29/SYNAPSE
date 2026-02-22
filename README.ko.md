@@ -148,6 +148,12 @@ npm run dev:ui
 
 ## 🆕 버전 히스토리 (Version History)
 
+### v0.2.11
+- **✨ Python & Flow Intelligence**:
+    - **고급 임포트 해석**: Python 임포트 스캐닝 및 매핑의 정확도를 향상시켰습니다.
+    - **플로우 시각화 개선**: 복잡한 분기 로직을 위한 순서도 생성 기능을 정교화했습니다.
+    - **노드 식별 정확도**: 내부 Python 함수가 외부 노드로 식별되는 문제를 해결했습니다.
+
 ### v0.2.10
 - **🐛 중요 수정 (Critical Fixes)**:
     - **Activation Error**: Webpack을 통한 의존성 번들링으로 `Cannot find module` 오류를 원천 해결했습니다.

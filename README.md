@@ -155,6 +155,12 @@ Created with the belief that the simple act of connecting lines in complex syste
 
 ## 🆕 Version History
 
+### v0.2.11
+- **✨ Python & Flow Intelligence**:
+    - **Advanced Import Resolution**: Improved accuracy of Python import scanning and mapping.
+    - **Improved Flow Visualization**: Refined flowchart generation for complex branching logic.
+    - **Node Accuracy**: Fixed misidentification of internal Python functions as external nodes.
+
 ### v0.2.10
 - **🐛 Critical Fixes**:
     - **Activation Error**: Resolved `Cannot find module` error by bundling dependencies with **Webpack**.

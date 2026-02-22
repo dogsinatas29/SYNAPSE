@@ -191,12 +191,14 @@ export class FileScanner {
                         summary.references.push(cleanRef);
                     }
                 } else if (type === '<') {
-                    // 표준 라이브러리나 외부 라이브러리 (필요 시 external 노드로 활용 가능)
+                    // 표준 라이브러리나 외부 라이브러리 (시스템 헤더)
                     const systemLib = ref.split('/')[0];
-                    // 흔한 표준 라이브러리 제외
-                    if (!['iostream', 'vector', 'string', 'map', 'set', 'algorithm', 'stdio.h', 'stdlib.h'].includes(systemLib)) {
+                    // 흔한 표준 라이브러리는 노이즈 방지를 위해 제외
+                    const standardLibs = ['iostream', 'vector', 'string', 'map', 'set', 'algorithm', 'stdio.h', 'stdlib.h', 'stdint.h', 'stdbool.h', 'cmath', 'cstdio'];
+                    if (!standardLibs.includes(systemLib)) {
                         if (!summary.references.includes(systemLib)) {
-                            // summary.references.push(systemLib); // 일단 보류하거나 주석으로 남김
+                            console.log(`  [DEP] Added C++ system/external reference: ${systemLib}`);
+                            summary.references.push(systemLib);
                         }
                     }
                 }

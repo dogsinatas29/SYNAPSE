@@ -30,6 +30,7 @@ import { BootstrapEngine } from './bootstrap/BootstrapEngine';
 
 import { client, setClient } from './client';
 import { PromptLogger } from './core/PromptLogger';
+import { ChatExtractor } from './utils/ChatExtractor';
 import { Logger } from './utils/Logger';
 
 export async function activate(context: vscode.ExtensionContext) {
@@ -214,6 +215,7 @@ export async function activate(context: vscode.ExtensionContext) {
         let isRecording = false;
         let recordingStartTime: Date | null = null;
         let sessionFilePath: string | null = null; // 레코딩 시작 시 생성된 파일 경로
+        let activeCommandContext = ''; // 레코딩 시작 시 수집된 맥락/명령 저장
 
         // 상태바 아이템 생성 (우측에 배치)
         const recordingStatusBar = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 1000);
@@ -252,13 +254,26 @@ export async function activate(context: vscode.ExtensionContext) {
                 }
 
                 if (!isRecording) {
+                    // ── 레코딩 시작 전, 작업 맵핑 (프롬프트/컨텍스트 자동 수집) ──────────────────
+                    let autoExtractedContext = await ChatExtractor.getLatestChatContext(context);
+                    let command = autoExtractedContext;
+
+                    if (!command || command.trim() === '') {
+                        try { command = (await vscode.env.clipboard.readText()).trim(); } catch { }
+                    }
+
+                    if (!command || !command.trim()) {
+                        command = `작업 기록 (${new Date().toLocaleString('ko-KR')})`;
+                    }
+
+                    activeCommandContext = command;
+
                     // ── 레코딩 시작 ──────────────────────────────────────
                     isRecording = true;
                     recordingStartTime = new Date();
 
                     // GEMINI.md 기준: 레코딩 시작 즉시 YYYY-MM-DD_HHMM.md 파일 생성
                     sessionFilePath = promptLogger.startSession(projectRoot);
-
 
                     recordingStatusBar.text = '$(record) REC';
                     recordingStatusBar.backgroundColor = new vscode.ThemeColor('statusBarItem.errorBackground');
@@ -277,16 +292,9 @@ export async function activate(context: vscode.ExtensionContext) {
                     // 캔버스 레코딩 상태 해제
                     CanvasPanel.currentPanel?.postRecordingState(false);
 
-                    // 에디터 선택 텍스트 → 없으면 클립보드 → 없으면 타임스탬프
-                    let command = '';
-                    const editor = vscode.window.activeTextEditor;
-                    if (editor && !editor.selection.isEmpty) {
-                        command = editor.document.getText(editor.selection).trim();
-                    }
-                    if (!command) {
-                        try { command = (await vscode.env.clipboard.readText()).trim(); } catch { }
-                    }
-                    if (!command) {
+                    // 시작 시 수집했던 맥락을 그대로 사용 (별도 팝업 없음)
+                    let command = activeCommandContext;
+                    if (!command || !command.trim()) { // 폴백 (혹시 모를 에러 방지)
                         command = `작업 기록 (${recordingStartTime?.toLocaleString('ko-KR') ?? ''})`;
                     }
 

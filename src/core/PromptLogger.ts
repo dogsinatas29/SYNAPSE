@@ -97,10 +97,23 @@ export class PromptLogger {
                 : `_변경된 파일 없음_\n`)
             + `\n---\n*SYNAPSE Context Vault*\n`;
 
-        // 헤더의 "레코딩 중..." → 완료 내용으로 교체
-        const existingHeader = fs.readFileSync(filePath, 'utf-8')
-            .replace('> 레코딩 중... (CTRL+ALT+M으로 완료)\n\n', '');
-        fs.writeFileSync(filePath, existingHeader + content, 'utf-8');
+        const now = new Date();
+        const timestamp = now.toLocaleString('ko-KR', {
+            year: 'numeric', month: '2-digit', day: '2-digit',
+            hour: '2-digit', minute: '2-digit'
+        });
+
+        // 파일 읽기 및 헤더 교체
+        let existingContent = '';
+        try {
+            existingContent = fs.readFileSync(filePath, 'utf-8');
+            // 헤더의 "레코딩 중..." 텍스트를 정규식으로 안전하게 제거
+            existingContent = existingContent.replace(/> 레코딩 중\.\.\. \(CTRL\+ALT\+M으로 완료\)\n*/g, '');
+        } catch (e) {
+            existingContent = `# 🧠 Session: ${timestamp}\n\n`; // 파일이 없을 경우 기본 헤더
+        }
+
+        fs.writeFileSync(filePath, existingContent + content, 'utf-8');
         this.gitStageFile(projectRoot, filePath);
         console.log(`[SYNAPSE] Session completed: ${filePath}`);
     }

@@ -1194,6 +1194,7 @@ export class CanvasPanel {
         const contextDir = path.join(projectRoot, '.synapse_contexts');
         const CLUSTER_ID = 'ctx_vault_cluster';
         const emptyResult = { cluster: null as any, nodes: [] };
+        console.log(`[SYNAPSE] Checking Context Vault at: ${contextDir}`);
 
         try {
             if (!fs.existsSync(contextDir)) return emptyResult;

@@ -172,14 +172,33 @@ export class FileScanner {
             }
         }
 
-        // C/C++ 인클루드 (references)
-        const includeRegex = /#include\s+["<]([^">]+)[">]/g;
-        while ((match = includeRegex.exec(content)) !== null) {
-            const ref = match[1];
-            if (ref) {
-                const cleanRef = path.basename(ref, path.extname(ref));
-                if (cleanRef && !summary.references.includes(cleanRef)) {
-                    summary.references.push(cleanRef);
+        // C/C++ 인클루드 (references) - 시스템 헤더와 로컬 헤더 구분 강화
+        const lines = content.split('\n');
+        for (const line of lines) {
+            const trimmed = line.trim();
+            if (!trimmed.startsWith('#include')) continue;
+
+            const includeMatch = trimmed.match(/#include\s+(["<])([^">]+)([">])/);
+            if (includeMatch) {
+                const type = includeMatch[1]; // " 또는 <
+                const ref = includeMatch[2];
+
+                // 로컬 헤더("")는 프로젝트 내 의존성으로 처리, 시스템 헤더(<>)는 필터링하거나 별도 처리
+                if (type === '"') {
+                    const cleanRef = path.basename(ref, path.extname(ref));
+                    if (cleanRef && !summary.references.includes(cleanRef)) {
+                        console.log(`  [DEP] Added C++ local reference: ${cleanRef}`);
+                        summary.references.push(cleanRef);
+                    }
+                } else if (type === '<') {
+                    // 표준 라이브러리나 외부 라이브러리 (필요 시 external 노드로 활용 가능)
+                    const systemLib = ref.split('/')[0];
+                    // 흔한 표준 라이브러리 제외
+                    if (!['iostream', 'vector', 'string', 'map', 'set', 'algorithm', 'stdio.h', 'stdlib.h'].includes(systemLib)) {
+                        if (!summary.references.includes(systemLib)) {
+                            // summary.references.push(systemLib); // 일단 보류하거나 주석으로 남김
+                        }
+                    }
                 }
             }
         }

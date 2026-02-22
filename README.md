@@ -156,10 +156,10 @@ Created with the belief that the simple act of connecting lines in complex syste
 ## 🆕 Version History
 
 ### v0.2.11
-- **✨ Python & Flow Intelligence**:
-    - **Advanced Import Resolution**: Improved accuracy of Python import scanning and mapping.
-    - **Improved Flow Visualization**: Refined flowchart generation for complex branching logic.
-    - **Node Accuracy**: Fixed misidentification of internal Python functions as external nodes.
+- **✨ Multi-Language Intelligence (Python & C/C++)**:
+    - **Advanced Resolution**: Significantly improved scanning accuracy. Python now supports deep import resolution, and C/C++ distinguishes between local and system headers.
+    - **Expanded Flow Visualization**: Added support for C/C++ control structures (`if`, `while`, `for`, `switch`) in Flow View.
+    - **Node Accuracy**: Fixed misidentification of internal functions as external nodes across Python and C/C++.
 
 ### v0.2.10
 - **🐛 Critical Fixes**:

@@ -39,6 +39,8 @@ export class FlowScanner {
                 this.parseJSFlow(content, flowData);
             } else if (ext === '.py') {
                 this.parsePythonFlow(content, flowData);
+            } else if (['.c', '.cpp', '.h', '.hpp', '.cc'].includes(ext)) {
+                this.parseCppFlow(content, flowData);
             } else {
                 // Fallback: Simple file sequence
                 flowData.steps.push({
@@ -159,6 +161,80 @@ export class FlowScanner {
 
         const lastStep = flow.steps.find(s => s.id === lastStepId);
         if (lastStep) lastStep.next = finalStepId;
+
+        // Cleanup: Remove dangling 'next' references
+        const validIds = new Set(flow.steps.map(s => s.id));
+        flow.steps.forEach(s => {
+            if (s.next && !validIds.has(s.next)) s.next = undefined;
+            if (s.alternateNext && !validIds.has(s.alternateNext)) s.alternateNext = undefined;
+        });
+    }
+
+    private parseCppFlow(content: string, flow: FlowData) {
+        // Step 1: Entry Point
+        flow.steps.push({
+            id: 'entry',
+            type: 'start',
+            label: 'C/C++ Initialization',
+            next: 'step_cpp_0'
+        });
+
+        const lines = content.split('\n');
+        let stepCounter = 0;
+        let lastStepId = 'entry';
+
+        for (let i = 0; i < Math.min(lines.length, 1000); i++) {
+            const line = lines[i].trim();
+            if (!line || line.startsWith('//') || line.startsWith('/*')) continue;
+
+            // 1. Blocks (if, for, while, switch, try, catch)
+            const blockMatch = line.match(/^\s*(if|for|while|switch|try|catch|case)\b/);
+            if (blockMatch) {
+                const type = blockMatch[1];
+                let label = type === 'case' ? line : this.extractCondition(line) || type;
+
+                const stepId = `step_cpp_${stepCounter++}`;
+                flow.steps.push({
+                    id: stepId,
+                    type: (['if', 'while', 'switch', 'case'].includes(type)) ? 'decision' : 'process',
+                    label: label,
+                    next: `step_cpp_${stepCounter}`
+                });
+
+                const prevStep = flow.steps.find(s => s.id === lastStepId);
+                if (prevStep) prevStep.next = stepId;
+                lastStepId = stepId;
+            }
+            // 2. Function calls or assignments that look like operations
+            else if (line.match(/^\s*[a-zA-Z0-9_.]+\s*=[^=]|^\s*[a-zA-Z0-9_.]+\(/)) {
+                const callMatch = line.match(/([a-zA-Z0-9_.]+\s*)\(/);
+                if (callMatch) {
+                    const funcName = callMatch[1].trim();
+                    if (!['if', 'for', 'while', 'switch', 'printf', 'scanf', 'try', 'catch', 'using', 'template'].includes(funcName)) {
+                        const stepId = `step_cpp_${stepCounter++}`;
+                        flow.steps.push({
+                            id: stepId,
+                            type: 'process',
+                            label: `Call: ${funcName}`,
+                            next: `step_cpp_${stepCounter}`
+                        });
+                        const prevStep = flow.steps.find(s => s.id === lastStepId);
+                        if (prevStep) prevStep.next = stepId;
+                        lastStepId = stepId;
+                    }
+                }
+            }
+
+            if (stepCounter > 50) break;
+        }
+
+        flow.steps.push({
+            id: 'step_cpp_final',
+            type: 'end',
+            label: 'Execution Complete'
+        });
+        const lastStep = flow.steps.find(s => s.id === lastStepId);
+        if (lastStep) lastStep.next = 'step_cpp_final';
 
         // Cleanup: Remove dangling 'next' references
         const validIds = new Set(flow.steps.map(s => s.id));

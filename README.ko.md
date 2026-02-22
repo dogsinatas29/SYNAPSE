@@ -2,7 +2,7 @@
 
 > **"눈에 보이는 것이 곧 LLM의 논리입니다."** — *AI를 위한 WYSIWYG 논리 설계 도구*
 
-[![Release](https://img.shields.io/badge/Release-v0.2.11-orange?style=flat-square)](https://github.com/dogsinatas29/SYNAPSE/releases)
+[![Release](https://img.shields.io/badge/Release-v0.2.13-orange?style=flat-square)](https://github.com/dogsinatas29/SYNAPSE/releases)
 [![Language](https://img.shields.io/badge/Language-TypeScript-blue?style=flat-square)](https://www.typescriptlang.org/)
 [![Platform](https://img.shields.io/badge/Platform-VS_Code-007ACC?style=flat-square)](https://code.visualstudio.com/)
 
@@ -39,8 +39,8 @@ SYNAPSE는 이제 사용하는 언어에 관계없이 프로젝트의 깊은 의
 - **Rust 패턴 지원**: Rust 고유의 `match` 식과 에러 처리 패턴을 완벽하게 시각화합니다.
 - **권위 있는 결과**: 수동 설계 결정과 실제 소스 코드 로직을 결합하여 최종 결과물을 도출합니다.
 
-### 🧠 컨텍스트 기반 설계
-- **로그 프롬프트 (`Ctrl+Alt+M`)**: 노드 자동 바인딩 및 상태 스냅샷 기능을 통해 설계 결정을 캔버스에서 직접 기록합니다.
+### 🧠 지능형 컨텍스트 보관소 (Intelligent Context Vault)
+- **무중단 컨텍스트 캡처 (`Ctrl+Alt+M`)**: 레코딩 시작(`REC`) 시 백그라운드에서 최근 VS Code AI 채팅(예: GitHub Copilot) 세션을 팝업 없이 자동으로 추적합니다. 코딩 완료 후 다시 버튼을 누르면, **[AI와 나눈 질답 + 실제 수정된 소스코드 Git Diff]**가 완벽한 마크다운 문서로 자동 병합/기록됩니다.
 - **시맨틱 줌 (LOD)**: 수천 개의 노드도 성능 저하 없이 부드럽게 탐색할 수 있는 단계별 상세도 제어 기능을 제공합니다.
 - **지속성(Persistence)**: 모든 시각적 상태를 Git 친화적인 `project_state.json`에 영구적으로 저장합니다.
 
@@ -66,13 +66,23 @@ LLM 추론 논리와 소스 파일 간의 물리적 연결 상태를 시각화�
 
 1. [Releases](https://github.com/dogsinatas29/SYNAPSE/releases) 페이지에서 최신 `.vsix` 파일을 다운로드합니다.
 2. 파일을 **VS Code** 창으로 드래그 앤 드롭합니다.
-3. 또는 터미널에서 다음 명령어를 입력합니다: `code --install-extension synapse-visual-architecture-0.2.11.vsix`
+3. 또는 터미널에서 다음 명령어를 입력합니다: `code --install-extension synapse-visual-architecture-0.2.13.vsix`
 
 ---
 
 ## 🆕 버전 히스토리
 
-### v0.2.11 (최종판)
+### v0.2.13 (최신판)
+- **🌟 클러스터 UX 전면 개편**: 캔버스 상호작용이 획기적으로 개선되었습니다.
+- **드래그 앤 드롭**: 이제 전체 클러스터를 상단 헤더 블록을 잡고 부드럽게 끌어서 이동할 수 있습니다.
+- **내부 노드 일괄 선택**: 클러스터를 실수로 드래그하지 않고도, 내부 빈 공간에 다중 선택 박스를 그려 특정 노드들을 손쉽게 선택 가능합니다.
+- **Gruvbox 색상 지원**: 식별성 강화를 위해 모든 클러스터에 고유 ID 해시값을 적용하여 일관된 개별 색상(Gruvbox Palette)을 자동 부여합니다.
+
+### v0.2.12
+- **🧠 지능형 컨텍스트 보관소**: 팝업창 및 수동 복사/붙여넣기 없이, VS Code Copilot 채팅 기록을 캔버스 기록(`context.md`)으로 자동 추출합니다.
+- **Zero-Click 워크플로 맵핑**: `Ctrl+Alt+M` 누르면 알아서 최신 대화록과 Git Diff를 병합하여 마크다운 문서 생성.
+
+### v0.2.11
 - **✨ 다중 언어 지능화**: Python, C/C++, Rust를 위한 정교한 스캐닝 지원.
 - **고급 해석 엔진**: 모든 주요 언어의 내부 경로 추적 기능 강화.
 - **통합 플로우 뷰**: C/C++ 및 Rust의 로직 실행 시각화 지원 추가.

@@ -880,14 +880,14 @@ class CanvasEngine {
             this.dragStart = { x: e.offsetX, y: e.offsetY };
 
             if (e.button === 0) { // 왼쪽 버튼
-                this.wasDragging = false; // mousedown 시 초기화
+                this.wasDragging = false;
 
                 // -1. 클러스터 헤더 버튼 체크 (최우선)
                 const clickedCluster = this.getClusterAt(worldPos.x, worldPos.y);
                 if (clickedCluster) {
                     // 버튼 영역 체크 (오른쪽 끝 30px 정도)
                     const b = clickedCluster._headerBounds;
-                    if (worldPos.x > b.x + b.width - 40) {
+                    if (b && worldPos.x > b.x + b.width - 40) { // Check if _headerBounds exists
                         this.toggleClusterCollapse(clickedCluster.id);
                         return;
                     }
@@ -970,13 +970,25 @@ class CanvasEngine {
                     }
                     this.isDragging = true;
                 } else {
-                    // 4. 클러스터 배경 클릭 확인
-                    const clickedCluster = this.getClusterAt(worldPos.x, worldPos.y);
-                    if (clickedCluster) {
+                    // 4. 클러스터 타이틀 클릭 확인 (드래그 지원)
+                    const clickedClusterHeader = typeof this.getClusterHeaderAt === 'function' ? this.getClusterHeaderAt(worldPos.x, worldPos.y) : null;
+                    if (clickedClusterHeader) {
                         // 엣지 선택 해제
                         this.selectedEdge = null;
 
-                        const clusterNodes = this.nodes.filter(n => (n.data && n.data.cluster_id === clickedCluster.id) || n.cluster_id === clickedCluster.id);
+                        // 클러스터 내의 모든 노드 (자식 클러스터 포함) 재귀적 탐색
+                        const getAllNodes = (clusterId) => {
+                            let res = this.nodes.filter(n => (n.data && n.data.cluster_id === clusterId) || n.cluster_id === clusterId);
+                            if (this.clusters) {
+                                const childClusters = this.clusters.filter(c => c.parent_id === clusterId);
+                                for (const child of childClusters) {
+                                    res = res.concat(getAllNodes(child.id));
+                                }
+                            }
+                            return res;
+                        };
+                        const clusterNodes = getAllNodes(clickedClusterHeader.id);
+
                         if (clusterNodes.length > 0) {
                             if (!(e.ctrlKey || e.metaKey || e.shiftKey)) {
                                 this.selectedNodes.clear();
@@ -984,7 +996,7 @@ class CanvasEngine {
                             clusterNodes.forEach(n => this.selectedNodes.add(n));
                             this.isDragging = true;
                             this.wasDragging = true; // 클러스터 선택 효과
-                            console.log('[SYNAPSE] Dragged cluster:', clickedCluster.label);
+                            console.log('[SYNAPSE] Dragged cluster header:', clickedClusterHeader.label);
                         }
                     } else {
                         // 5. 빈 공간 클릭 -> 선택 영역 시작 & 엣지 선택 해제
@@ -1315,6 +1327,16 @@ class CanvasEngine {
         // 역순으로 검사 (위에 그려진 클러스터 우선)
         for (let i = this.clusters.length - 1; i >= 0; i--) {
             const cluster = this.clusters[i];
+
+            // _bodyBounds나 _headerBounds를 활용한 더 정확한 판별
+            if (cluster._headerBounds) {
+                const b = cluster._headerBounds;
+                if (worldX >= b.x && worldX <= b.x + b.width &&
+                    worldY >= b.y && worldY <= b.y + b.height + (cluster.collapsed ? 0 : cluster._bodyHeight || 0)) {
+                    return cluster;
+                }
+            }
+
             const clusterNodes = this.nodes.filter(n => n.cluster_id === cluster.id);
             if (clusterNodes.length === 0) continue;
 
@@ -1331,8 +1353,26 @@ class CanvasEngine {
 
             // 클러스터 박스 영역 (배경 또는 라벨 영역)
             if (worldX >= minX - padding && worldX <= maxX + padding &&
-                worldY >= minY - padding && worldY <= maxY + padding) {
+                worldY >= minY - padding - 30 && worldY <= maxY + padding) {
                 return cluster;
+            }
+        }
+        return null;
+    }
+
+    getClusterHeaderAt(worldX, worldY) {
+        if (!this.clusters) return null;
+
+        // 역순으로 검사 (위에 그려진 클러스터 우선)
+        for (let i = this.clusters.length - 1; i >= 0; i--) {
+            const cluster = this.clusters[i];
+            if (cluster._headerBounds) {
+                const b = cluster._headerBounds;
+                // 헤더 바운딩 박스 내부인지 확인
+                if (worldX >= b.x && worldX <= b.x + b.width &&
+                    worldY >= b.y && worldY <= b.y + b.height) {
+                    return cluster;
+                }
             }
         }
         return null;
@@ -2839,6 +2879,14 @@ class CanvasEngine {
             const b = getClusterBounds(cluster);
             if (b.minX === Infinity) continue;
 
+            // Generate a consistent color based on cluster ID
+            let hash = 0;
+            for (let i = 0; i < cluster.id.length; i++) {
+                hash = cluster.id.charCodeAt(i) + ((hash << 5) - hash);
+            }
+            const colorIndex = Math.abs(hash) % this.clusterColors.length;
+            cluster.color = this.clusterColors[colorIndex];
+
             const { minX, minY, maxX, maxY } = b;
             const padding = 20;
 
@@ -2887,6 +2935,7 @@ class CanvasEngine {
                 width: (maxX - minX) + padding * 2,
                 height: 30
             };
+            cluster._bodyHeight = (maxY - minY) + padding * 2;
         }
     }
 

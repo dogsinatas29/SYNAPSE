@@ -2,7 +2,7 @@
 
 > **"What you see is the logic of LLM"** — *WYSIWYG Logic for AI*
 
-[![Release](https://img.shields.io/badge/Release-v0.2.11-orange?style=flat-square)](https://github.com/dogsinatas29/SYNAPSE/releases)
+[![Release](https://img.shields.io/badge/Release-v0.2.13-orange?style=flat-square)](https://github.com/dogsinatas29/SYNAPSE/releases)
 [![Language](https://img.shields.io/badge/Language-TypeScript-blue?style=flat-square)](https://www.typescriptlang.org/)
 [![Platform](https://img.shields.io/badge/Platform-VS_Code-007ACC?style=flat-square)](https://code.visualstudio.com/)
 
@@ -39,8 +39,8 @@ Project complex execution flows into intuitive flowcharts.
 - **Match Support (Rust)**: Native visualization of Rust's powerful pattern matching.
 - **Authoritative Result**: Integrates manual design decisions with real source code logic.
 
-### 🧠 Context-Aware Design
-- **Log Prompting (`Ctrl+Alt+M`)**: Capture design decisions directly on the canvas with automatic node binding and state snapshotting.
+### 🧠 Intelligent Context Vault
+- **Zero-Click Context Capture (`Ctrl+Alt+M`)**: Start recording (`REC`), and SYNAPSE will automatically locate and extract your latest VS Code AI Chat session (e.g. GitHub Copilot) in the background without any popups. When you're done coding, press it again, and your LLM prompt, response, and live Git diffs are saved into a perfectly documented Markdown artifact.
 - **Semantic Zoom (LOD)**: Navigate thousands of nodes with smooth, performance-optimized rendering.
 - **Persistence**: Save your entire visual state to Git-friendly `project_state.json`.
 
@@ -66,13 +66,23 @@ A deep, organized overview of your project structure.
 
 1. Download the latest `.vsix` from the [Releases](https://github.com/dogsinatas29/SYNAPSE/releases) page.
 2. Drag and drop the file into **VS Code**.
-3. Or use the terminal: `code --install-extension synapse-visual-architecture-0.2.11.vsix`
+3. Or use the terminal: `code --install-extension synapse-visual-architecture-0.2.13.vsix`
 
 ---
 
 ## 🆕 Revision History
 
-### v0.2.11 (Final)
+### v0.2.13 (Current)
+- **🌟 Cluster UX Overhaul**: Radically improved Canvas interaction.
+- **Drag & Drop**: Entire clusters can now be seamlessly dragged by pulling their top header block.
+- **Body Selection**: Added the ability to draw Multi-Select boxes over cluster bodies without dragging the cluster itself.
+- **Gruvbox Colors**: All clusters are now automatically rendered with consistent, distinct hash-based colors for instant visual recognition.
+
+### v0.2.12
+- **🧠 Intelligent Context Vault**: Seamless, popup-free extraction of your hidden VS Code Copilot Chat sessions directly into your project's `context.md`.
+- **Zero-Click Work Mapping**: Press `Ctrl+Alt+M` to auto-capture your AI conversation and Git diffs without breaking your flow.
+
+### v0.2.11
 - **✨ Multi-Language Intelligence**: Sophisticated scanning for Python, C/C++, and Rust.
 - **Advanced Resolution**: Deep internal pathway tracking for all major languages.
 - **Unified Flow**: C/C++ and Rust now support full Flow View visualization.

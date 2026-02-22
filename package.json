@@ -1,8 +1,8 @@
 {
     "name": "synapse-visual-architecture",
     "displayName": "SYNAPSE - Visual Architecture Engine",
-    "description": "Visual architecture control engine for code visualization and design",
-    "version": "0.2.12",
+    "description": "Visual architecture control engine for code outer-space visualization and design",
+    "version": "0.2.13",
     "publisher": "synapse-team",
     "repository": {
         "type": "git",

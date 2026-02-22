@@ -1,196 +1,87 @@
-# 🧠 SYNAPSE: VS Code Visual Architecture Engine
+# <img src="resources/synapse-icon.png" width="40" height="40" /> SYNAPSE: 비주얼 아키텍처 엔진
 
-> **Visual Studio Code (VS Code) Extension**  
-> "보이는 것이 곧 LLM의 논리다 (WYSIWYG Logic for AI)"
+> **"눈에 보이는 것이 곧 LLM의 논리입니다."** — *AI를 위한 WYSIWYG 논리 설계 도구*
 
-[🇰🇷 한국어 (Korean)](README.ko.md) | [🇺🇸 English (English)](README.md)
+[![Release](https://img.shields.io/badge/Release-v0.2.11-orange?style=flat-square)](https://github.com/dogsinatas29/SYNAPSE/releases)
+[![Language](https://img.shields.io/badge/Language-TypeScript-blue?style=flat-square)](https://www.typescriptlang.org/)
+[![Platform](https://img.shields.io/badge/Platform-VS_Code-007ACC?style=flat-square)](https://code.visualstudio.com/)
 
-SYNAPSE는 **Google Antigravity** 및 **Visual Studio Code** 사용자를 위해 구축된 차세대 확장 프로그램입니다. LLM(Large Language Model)이 생성하거나 분석한 복잡한 추론 논리를 물리적 공간과 노드-엣지 네트워크로 시각화하여, AI의 사고 과정을 직관적으로 설계, 구현, 문서화할 수 있게 돕습니다.
-
-
-## 🚀 Key Features
-
-- **🌐 Topology View**: 프로젝트의 폴더 구조 및 파일 간의 의존성을 노드-엣지 네트워크로 시각화.
-- **🌳 Tree View**: 프로젝트 구조를 계층적으로 조감.
-- **➡️ Flow View (강화! 🏁)**: 특정 로직의 실행 흐름을 수평 분기가 포함된 순서도로 투사하며, Mermaid 출력 시 클러스터링(subgraph) 지원이 추가되었습니다 (v0.2.2).
-- **🛡️ Node Diet (Smart Scanning)**: `.venv`, `node_modules` 등 불필요한 폴더를 자동으로 무시합니다.
-- **📦 Ghost Node Storage (신규! 📥)**: 의존성이 없는 고립된 노드들을 별도의 보관소(Storage) 클러스터로 자동 격리하여 메인 뷰를 깨끗하게 유지합니다.
-- **📂 Auto Folder Clustering**: 디렉토리 구조에 기반한 자동 그룹화 기능을 제공하며, 이제 Mermaid 파일 생성 시에도 이 그룹화가 유지됩니다 (v0.2.2).
-- **🔄 Deep Reset**: 엉망이 된 배치를 즉시 초기화하고 최신 필터로 재스캔하는 심층 초기화.
-- **🎯 Scan Scope Control**: `GEMINI.md`에서 `Scan Paths`를 지정하여 원하는 영역만 정밀 스캔 가능.
-- **⌨️ Arrow Key Navigation**: 방향키와 Shift 키를 이용한 빠르고 정밀한 캔버스 탐색 지원.
-- **🔍 Semantic Zooming (LOD)**: 수천 개의 노드도 성능 저하 없이 조작 가능한 단계별 상세도 제어.
-- **💾 Persistence**: 모든 시각적 상태를 `project_state.json`에 영구 저장 및 Git 관리.
-- **🛠️ Standalone Bridge**: VS Code 없이 브라우저 단독 구동 모드 지원.
-- **💾 Prompt Traceability**: 캔버스에서 직접 프롬프트와 설계 결정을 기록 및 저장 (자동 저장 지원).
-- **🧠 맥락 인식형 로깅 (v0.2.6 강화! 🚀)**:
-    - **노드 자동 바인딩 (Auto-Binding)**: 노드를 선택하면 로그가 해당 컴포넌트에 자동으로 초점을 맞춥니다.
-    - **시각적 태깅 (Visual Tagging)**: 로그의 성격을 분류합니다 (`[Discovery]`, `[Reasoning]`, `[Action]`).
-    - **상태 스냅샷 (State Snapshotting)**: 현재 캔버스의 상세 뷰(Zoom/Pan)를 로그와 함께 저장하여 나중에 복원할 수 있습니다.
-- **🛡️ 강력한 고스트 노드 방지 (v0.2.7+ 🛡️)**: 코드 블록, 인라인 백틱, HTML 주석에 대한 심층 필터링과 중앙 집중형 **Rule Engine**을 통한 아키텍처 위생 강화.
-- **📜 규칙 외부화 (v0.2.8! ⚖️)**: 발견 규칙 및 아이콘 표준을 `RULES.md` 작업 영역으로 외부화하여 제어력을 높였습니다.
-- **⚖️ Rules UI**: 툴바의 새 버튼을 통해 프로젝트 아키텍처 규칙에 즉시 접근 가능.
-- **🔌 강화된 LSP 연동**: `GEMINI.md`에서 코드 Hover, 정의 이동(Definition), 실시간 유효성 검사를 통해 설계와 실제 코드를 강력하게 연결.
-
-## 🎥 데모 비디오
-https://www.youtube.com/watch?v=Va4vZWkqC8E
-> *위 링크를 클릭하면 YouTube에서 전체 영상을 시청할 수 있습니다.*
-
-## 📸 스크린샷
-
-### 🌐 Graph View
-LLM의 추론 논리와 파일 간의 물리적 연결 상태를 노드-엣지 네트워크로 시각화합니다.
-![Graph View](docs/media/graph_v0.2.0.png)
-
-### 🌳 Tree View
-프로젝트의 폴더 구조와 파일 계층을 직관적으로 조감할 수 있습니다.
-![Tree View](docs/media/synapse_tree_view.png)
-
-### ➡️ Flow View
-특정 이벤트나 함수의 로직 실행 흐름을 선형적인 순서도로 투사합니다. 이는 코드 편집과 노드 편집의 모든 결과물이 결합되어 반영되는 **최종적인 권위적 산출물**입니다.
-![Flow View](docs/media/flow_v0.2.0.png)
-
-## 🗂️ 언어 지원 (Language Support)
-
-SYNAPSE는 다양한 언어 아키텍처 분석을 지원합니다:
-- 🐍 **Python**: `.py` 파일 분석 및 가상환경 필터링 지원
-- 🦀 **Rust**: `Cargo` 프로젝트 구조 및 `.rs` 로직 분석
-- 🇨 **C / C++**: 헤더 및 소스 파일 의존성 분석 (ReDoS 방지 최적화 완료)
-- 🐚 **Shell Script**: `.sh` 자동화 스크립트 흐름 및 함수 분석
-- 🗄️ **SQL**: `.sql` 테이블 정의 및 스키마 시각화
-- ⚙️ **Config (JSON/YAML/TOML)**: 인프라 설정 파일 간의 관계 분석 (The Glue)
-- 📜 **TypeScript / JavaScript**: 인터페이스, 타입, 비동기 로직 완벽 분석 (v0.2.1+ 엔진 강화! 🚀)
-
-## 🛠️ 기술 스택 (Technology Stack)
-
-- **Base**: Google Antigravity & Visual Studio Code (VS Code)
-- **Language**: TypeScript
-- **Engine**: HTML5 Canvas API (High Performance Rendering)
-- **Scanner**: 정규식 기반 고속 다중 언어 스캐너 (Python, C++, Rust, Shell, SQL, Config, TS)
-- **Architecture**: LSP 연동 기반 Visual-First 설계
-
-## 📦 설치 및 시작하기
-
-### 1. VS Code 확장 프로그램 (추천)
-[Releases 탭](https://github.com/dogsinatas29/SYNAPSE/releases)에서 가장 최신의 `.vsix` 파일을 다운로드하십시오.
-
-#### 설치 방법:
-*   **방법 A: 드래그 앤 드롭 (가장 간편)**
-    - 다운로드한 `.vsix` 파일을 VS Code 창으로 드래그합니다.
-*   **방법 B: 확장 메뉴 이용**
-    1. 확장(Extensions) 아이콘 클릭 (`Ctrl+Shift+X`).
-    2. 상단 더보기 `...` 메뉴 클릭.
-    3. **'Install from VSIX...'** 선택 후 파일 지정.
-*   **방법 C: 터미널 명령어**
-    - `code --install-extension synapse-extension.vsix`
-
-### 2. 소스 코드에서 빌드하기
-```bash
-git clone https://github.com/dogsinatas29/SYNAPSE.git
-npm install
-npm run watch
-# VS Code에서 F5를 눌러 실행
-```
-
-### 3. Standalone 브라우저 모드
-VS Code 없이 브라우저에서 직접 엔진을 구동하고 싶을 때 사용합니다.
-```bash
-# 터미널 1: API Server
-npm run dev:standalone
-
-# 터미널 2: UI Server
-npm run dev:ui
-```
-- API 서버: `http://localhost:3000`
-- UI 서버: `http://localhost:8080`
-
-### 4. 개발자 패키징 (Build)
-1. `npm install -g @vscode/vsce`
-2. `npx vsce package --out synapse-extension.vsix`
-
-## 🎯 매뉴얼 및 사용 가이드
-
-### 🧱 노드 및 엣지 관리 (WYSIWYG)
-- **노드 추가**: 상단 툴바의 `Add Node` 버튼 클릭.
-- **삭제**: 툴바의 **🗑️ Delete** 버튼, `Delete` 키, 또는 우클릭 컨텍스트 메뉴를 사용하여 노드와 엣지를 삭제합니다.
-- **수동 엣지**: 노드의 연결 핸들을 **Alt + 클릭**한 후 대상 노드로 드래그하여 관계(Dependency, Call 등)를 설정합니다.
-
-### 📦 클러스터링 및 관리
-- **그룹 생성**: 여러 노드 선택 후 `Group` 클릭.
-- **그룹 관리**: 헤더 더블 클릭으로 이름 수정, `[-]`/`[+]` 버튼으로 접기/펴기 가능.
-- **그룹 해제**: 그룹 선택 후 `Ungroup` 클릭.
-
-### 💾 스냅샷 및 롤백
-- **스냅샷**: 카메라 아이콘을 클릭해 현재 시각적 상태 저장.
-- **롤백**: 시계 아이콘을 클릭해 설계 히스토리 확인 및 복원.
-- **프롬프트 기록**: `Ctrl+Alt+M`으로 설계 아이디어를 캔버스에 즉시 노드로 추가.
-
-### 🧠 로그 프롬프트 & 맥락 (New in v0.2.6)
-1.  **노드 선택** (선택 사항): 로그를 남길 대상 노드를 클릭합니다.
-2.  **실행**: `Ctrl+Alt+M`을 누릅니다.
-3.  **태깅**: 생각의 종류(`[Discovery]`, `[Reasoning]` 등)를 선택합니다.
-4.  **저장**: `context.md`에 추가(권장)하거나 새 파일로 저장합니다.
-    -   *보너스*: 현재 보고 있는 캔버스 화면이 자동으로 함께 저장됩니다!
-
-### 🧹 데이터 정형화 원칙
-- **분리**: 로직은 `GEMINI.md`에, 좌표는 `project_state.json`에 저장됩니다.
-- **정규화**: 정렬된 JSON 키를 통해 Git Diff를 최소화합니다.
-- **Git Shield**: `.vsix` 및 루트 `GEMINI.md` 등 불필요한 파일을 자동 무시합니다 (v0.2.2).
-- **휘발성 엣지**: 자동 스캔된 엣지는 실시간으로 재생성되어 데이터의 무결성을 지킵니다.
-
-### 🔥 핵심 전략
-- **멀티 MD 전략**: 모든 `.md` 파일을 컨텍스트로 활용합니다. `[링크](경로)`를 통해 문서와 코드를 연결하세요.
-- **자동 파일 관리**: 모든 로그는 `prompts/` 폴더에 저장되며 Git에 자동 커밋되어 설계 히스토리를 보존합니다.
-
-## 📐 Philosophy
-"아이들에게는 직관적인 놀이터, 전문가에게는 강력한 관제탑."  
-복잡한 시스템을 선으로 연결하는 단순한 행위가 사실은 가장 고차원적인 아키텍처 설계라는 믿음으로 제작되었습니다.
-
-## 🆕 버전 히스토리 (Version History)
-
-### v0.2.11
-- **✨ 다중 언어 지능화 (Python, C/C++, Rust)**:
-    - **고급 해석 엔진**: 스캐닝 정확도를 대폭 향상했습니다. Python 심층 임포트, C/C++ 로컬/시스템 헤더 구분, Rust 내부 경로(`crate`/`self`/`super`) 분석을 지원합니다.
-    - **확장된 플로우 시각화**: Flow View에서 **C/C++ 및 Rust** 제어 구조(Rust `match` 포함) 분석 지원이 추가되었습니다.
-    - **노드 식별 정확도**: 주요 언어 전반에서 내부 함수가 외부 노드로 식별되는 문제를 해결했습니다.
-
-### v0.2.10
-- **🐛 중요 수정 (Critical Fixes)**:
-    - **Activation Error**: Webpack을 통한 의존성 번들링으로 `Cannot find module` 오류를 원천 해결했습니다.
-    - **침묵의 삭제 해결**: 다중 노드 삭제 시 UI 차단 및 포커스 유실로 인해 발생하던 무반응 현상을 수정했습니다.
-- **✨ 로깅 강화**: 주요 작업 수행 시 Output 로그 창이 자동으로 열리며 상세한 백엔드 처리 과정을 보여줍니다.
-
-### v0.2.8
-- **📜 규칙 외부화 (Rule Externalization)**: `RULES.md`를 통해 아키텍처 발견 규칙(포함/제외/아이콘)을 정의하고 제어합니다.
-- **⚖️ Rules 버튼**: 캔버스 UI에 규칙 즉시 확인 버튼을 추가했습니다.
-- **🛠️ 자동 생성**: 부트스트랩 시 `RULES.md` 파일이 없으면 자동으로 생성합니다.
-- **🐛 수정**: 고스트 노드 부활 현상 및 다중 노드 삭제 안정성을 해결했습니다.
-
-### v0.2.7
-- **🛡️ 고스트 노드 생성 원천 차단**: `GEMINI.md` 분석 시 불필요한 직관적 요소들을 완벽하게 필터링합니다.
-- **📝 노드 정의 규칙 추가**: `GEMINI.md` 내에 **Node Rules** 및 **Exclusion Rules** 섹션을 표준화했습니다.
-
-### v0.2.6
-- **🧠 Context UI**: `Log Prompt` (`Ctrl+Alt+M`) 기능이 대폭 강화되었습니다. (태깅, 자동 바인딩, 뷰 스냅샷)
-- **📄 context.md**: 모든 아키텍처 결정을 한 곳에서 관리하고, 클릭 한 번으로 접근 및 뷰 복원이 가능해졌습니다.
-
-### v0.2.5
-- **🧹 정리**: 프로젝트 루트의 불필요한 파일과 예제 아티팩트를 삭제했습니다.
-- **✨ 로그 프롬프트**: `context.md`에 맥락을 이어붙여 저장하는 기능을 추가했습니다.
-- **🐛 수정**: 노드 승인 시 화면 초점이 초기화되는 문제와 고스트 노드 파싱 오류를 해결했습니다.
-
-### v0.2.4
-- **🚀 수동 그룹화 오작동 수정**: VS Code 환경에서 차단되거나 보이지 않던 브라우저 기본 `prompt()` 대화 상자를 제거하고, 캔버스 내장형 **커스텀 입력 모달**로 전면 교체했습니다. 이제 그룹 생성 시 이름을 입력하는 창이 정상적으로 뜨고 동작합니다.
-- **✨ 사용자 경험 개선**: 그룹 생성 과정이 더 이상 전체 UI를 차단하지 않으며, 다크 테마와 어울리는 디자인으로 개선되었습니다.
-
-### v0.2.3
-- **🚀 트리/플로우 뷰 핫픽스**: 메타데이터가 없는 프로젝트에서 뷰가 깨지는 문제를 해결했습니다.
-- **📚 문서 선반 (Documentation Shelf)**: `.md` 파일을 위한 전용 공간이 추가되었습니다.
-- **🎯 수동 클러스터링**: 사용자 정의 그룹을 생성하고 유지할 수 있습니다.
-- **🛡️ 안정성 강화**: 모든 뷰에서의 에러 처리 로직이 개선되었습니다.
-
-## 📜 License
-이 프로젝트는 [GNU General Public License v3.0](LICENSE) 라이선스 하에 배포됩니다.
+[🇺🇸 English Version](README.md) | [🇰🇷 한국어 버전](README.ko.md)
 
 ---
-Created by [dogsinatas29](https://github.com/dogsinatas29)
+
+**SYNAPSE**는 **Google Antigravity**와 **VS Code** 사용자를 위한 차세대 시각적 제어 센터입니다. 대규모 언어 모델(LLM)의 추론 과정과 실제 코드 아키텍처 사이의 간극을 메워, 추상적인 논리를 고성능의 인터랙티브 노드-에지 네트워크로 변환합니다.
+
+## 🌟 다중 언어 지능 (v0.2.11 신규 기능)
+
+SYNAPSE는 이제 사용하는 언어에 관계없이 프로젝트의 깊은 의미를 이해하는 통합 스캐닝 엔진을 탑재했습니다.
+
+| 언어 | 고급 해석 엔진 | 로직 플로우 분석 | 최적의 용도 |
+| :--- | :---: | :---: | :--- |
+| 🐍 **Python** | 심층 임포트 해석 | 전체 지원 | 웹, 데이터 과학, AI |
+| 🦀 **Rust** | Crate/Super/Self | `match` 및 에러 핸들링 | 시스템, 고성능 엔진 |
+| 🇨 **C / C++** | 로컬 vs 시스템 헤더 | 제어 구조 분석 | 레거시, 성능 최적화, 임베디드 |
+| 📜 **JS / TS** | Async/Types | 전체 지원 | 웹, 확장 프로그램, 툴링 |
+
+---
+
+## 🚀 핵심 기능
+
+### 🌐 토폴로지 뷰 (아키텍처 맵)
+프로젝트의 폴더 구조와 파일 의존성을 네트워크 형태로 시각화합니다.
+- **Node Diet**: 빌드 결과물, 모듈 폴더 등 불필요한 노이즈를 자동으로 필터링합니다.
+- **Ghost Node Storage**: 연결되지 않은 컴포넌트들을 별도 클러스터로 격리하여 캔버스를 깨끗하게 유지합니다.
+- **Rule Engine**: `RULES.md`를 통해 일관된 발견 규칙과 아이콘 표준을 적용합니다.
+
+### ➡️ 플로우 뷰 (로직 실행 흐름)
+복잡한 실행 흐름을 직관적인 순서도로 투영합니다.
+- **지능형 분기 감지**: `if/else`, 루프, `try/catch` 등을 높은 정밀도로 포착합니다.
+- **Rust 패턴 지원**: Rust 고유의 `match` 식과 에러 처리 패턴을 완벽하게 시각화합니다.
+- **권위 있는 결과**: 수동 설계 결정과 실제 소스 코드 로직을 결합하여 최종 결과물을 도출합니다.
+
+### 🧠 컨텍스트 기반 설계
+- **로그 프롬프트 (`Ctrl+Alt+M`)**: 노드 자동 바인딩 및 상태 스냅샷 기능을 통해 설계 결정을 캔버스에서 직접 기록합니다.
+- **시맨틱 줌 (LOD)**: 수천 개의 노드도 성능 저하 없이 부드럽게 탐색할 수 있는 단계별 상세도 제어 기능을 제공합니다.
+- **지속성(Persistence)**: 모든 시각적 상태를 Git 친화적인 `project_state.json`에 영구적으로 저장합니다.
+
+---
+
+## 📸 시각적 개요
+
+### 프로젝트 토폴로지 (Topology)
+LLM 추론 논리와 소스 파일 간의 물리적 연결 상태를 시각화합니다.
+![Topology View](docs/media/graph_v0.2.11.png)
+
+### 논리 흐름 (Flow)
+코드 변경 사항과 수동 편집 사항이 모두 반영된 논리 실행 흐름도입니다.
+![Flow View](docs/media/flow_v0.2.11.png)
+
+### 계층 구조 (Tree)
+프로젝트 구조를 한눈에 파악할 수 있는 체계적인 트리 뷰를 제공합니다.
+![Tree View](docs/media/tree_v0.2.11.png)
+
+---
+
+## 🛠️ 설치 방법
+
+1. [Releases](https://github.com/dogsinatas29/SYNAPSE/releases) 페이지에서 최신 `.vsix` 파일을 다운로드합니다.
+2. 파일을 **VS Code** 창으로 드래그 앤 드롭합니다.
+3. 또는 터미널에서 다음 명령어를 입력합니다: `code --install-extension synapse-visual-architecture-0.2.11.vsix`
+
+---
+
+## 🆕 버전 히스토리
+
+### v0.2.11 (최종판)
+- **✨ 다중 언어 지능화**: Python, C/C++, Rust를 위한 정교한 스캐닝 지원.
+- **고급 해석 엔진**: 모든 주요 언어의 내부 경로 추적 기능 강화.
+- **통합 플로우 뷰**: C/C++ 및 Rust의 로직 실행 시각화 지원 추가.
+
+### v0.2.10
+- **🐛 중요 수정**: 활성화 오류 해결 및 다중 노드 삭제 안정성 개선.
+
+---
+
+## 📜 라이선스 및 제작자
+본 프로젝트는 [GNU General Public License v3.0](LICENSE) 라이선스를 따릅니다.  
+[dogsinatas29](https://github.com/dogsinatas29)가 🧠와 정성을 담아 제작했습니다.

@@ -169,7 +169,7 @@ export class FlowScanner {
     }
 
     private parsePythonFlow(content: string, flow: FlowData) {
-        // Simple Python entry
+        // Step 1: Entry Point
         flow.steps.push({
             id: 'entry',
             type: 'start',
@@ -181,30 +181,68 @@ export class FlowScanner {
         let stepCounter = 0;
         let lastStepId = 'entry';
 
-        for (let i = 0; i < Math.min(lines.length, 500); i++) {
+        for (let i = 0; i < Math.min(lines.length, 1000); i++) {
             const line = lines[i].trim();
-            if (line.match(/^(def|class|if|try)\s+/)) {
+            if (!line || line.startsWith('#')) continue;
+
+            // 1. Blocks (if, for, while, with, try, def, class)
+            const blockMatch = line.match(/^(def|class|if|for|while|with|try|elif)\s+([a-zA-Z0-9_(]+)/);
+            if (blockMatch) {
+                const type = blockMatch[1];
+                let label = blockMatch[2];
+
+                // Special handling for __main__
+                if (line.includes('if __name__ == "__main__"')) {
+                    label = 'Main Execution Block';
+                }
+
                 const stepId = `step_py_${stepCounter++}`;
                 flow.steps.push({
                     id: stepId,
-                    type: line.startsWith('if') ? 'decision' : 'process',
-                    label: line.split(/[\s\(:]/)[1] || 'Logic Component',
+                    type: (type === 'if' || type === 'elif' || type === 'while') ? 'decision' : 'process',
+                    label: label.replace('(', ''),
                     next: `step_py_${stepCounter}`
                 });
+
                 const prevStep = flow.steps.find(s => s.id === lastStepId);
                 if (prevStep) prevStep.next = stepId;
                 lastStepId = stepId;
             }
-            if (stepCounter > 30) break;
+            // 2. Significant Calls (e.g., logger.info, parser.parse)
+            else if (line.match(/^[a-zA-Z0-9_.]+\s*=[^=]|^\s*[a-zA-Z0-9_.]+\(/)) {
+                // Try to extract function call
+                const callMatch = line.match(/([a-zA-Z0-9_.]+\s*)\(/);
+                if (callMatch && !['if', 'for', 'while', 'print', 'super'].includes(callMatch[1].trim())) {
+                    const stepId = `step_py_${stepCounter++}`;
+                    flow.steps.push({
+                        id: stepId,
+                        type: 'process',
+                        label: `Call: ${callMatch[1].trim()}`,
+                        next: `step_py_${stepCounter}`
+                    });
+                    const prevStep = flow.steps.find(s => s.id === lastStepId);
+                    if (prevStep) prevStep.next = stepId;
+                    lastStepId = stepId;
+                }
+            }
+
+            if (stepCounter > 50) break;
         }
 
         flow.steps.push({
             id: 'step_py_final',
             type: 'end',
-            label: 'End'
+            label: 'Execution Complete'
         });
         const lastStep = flow.steps.find(s => s.id === lastStepId);
         if (lastStep) lastStep.next = 'step_py_final';
+
+        // Cleanup: Remove dangling 'next' references
+        const validIds = new Set(flow.steps.map(s => s.id));
+        flow.steps.forEach(s => {
+            if (s.next && !validIds.has(s.next)) s.next = undefined;
+            if (s.alternateNext && !validIds.has(s.alternateNext)) s.alternateNext = undefined;
+        });
     }
 
     private extractCondition(line: string): string | null {

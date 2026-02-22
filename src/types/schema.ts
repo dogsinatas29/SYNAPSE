@@ -4,7 +4,7 @@
  */
 
 // 노드 타입
-export type NodeType = 'source' | 'cluster' | 'documentation' | 'test' | 'config' | 'history';
+export type NodeType = 'source' | 'cluster' | 'documentation' | 'test' | 'config' | 'history' | 'external';
 
 // 노드 상태
 export type NodeStatus = 'proposed' | 'active' | 'error' | 'completed' | 'warning';
@@ -70,6 +70,7 @@ export interface Cluster {
         height: number;
     };
     children: string[];        // 포함된 노드 ID 목록
+    parent_id?: string;        // 부모 클러스터 ID (계층 구조 지원)
     representative_edge?: string; // 접혔을 때 표시할 대표 선
 }
 

@@ -280,113 +280,178 @@ console.log('[SYNAPSE] canvas-engine.js loaded');
 class TreeRenderer {
     constructor(engine) {
         this.engine = engine;
-        this.expandedFolders = new Set(['.', 'root', 'src']); // 데모 환경 호환을 위해 '.' 추가
+        this.expandedFolders = new Set(['.', 'root', 'src']);
+        this.initializeDefaultExpansion();
+    }
+
+    initializeDefaultExpansion() {
+        // Automatically expand immediate subfolders of src for better first-time visibility
+        const srcSubfolders = ['src/core', 'src/bootstrap', 'src/webview', 'src/server', 'src/providers'];
+        srcSubfolders.forEach(folder => this.expandedFolders.add(folder));
     }
 
     buildTree(nodes) {
-        // 노드를 디렉토리별로 그룹화
-        const tree = {};
+        console.log(`[SYNAPSE] buildTree called with ${nodes.length} nodes`);
+        const root = { name: 'Root', type: 'folder', children: {}, fullPath: '', expanded: true };
 
         for (const node of nodes) {
             if (!node.data) continue;
-            const dir = node.data.directory || 'root';
-            if (!tree[dir]) {
-                tree[dir] = {
-                    name: dir,
-                    type: 'folder',
-                    children: [],
-                    expanded: this.expandedFolders.has(dir)
-                };
+
+            // 파일 경로를 기반으로 트리 구축
+            const pathStr = node.data.path || node.data.file || '';
+            if (!pathStr) continue;
+
+            // Normalize slashes and split
+            const normalizedPath = pathStr.replace(/\\/g, '/');
+            const parts = normalizedPath.split('/').filter(p => p !== '' && p !== '.');
+
+            let current = root;
+            for (let i = 0; i < parts.length; i++) {
+                const part = parts[i];
+                const isFile = (i === parts.length - 1);
+                const currentPath = parts.slice(0, i + 1).join('/');
+
+                if (isFile) {
+                    current.children[part] = {
+                        name: part,
+                        type: 'file',
+                        path: normalizedPath,
+                        node: node
+                    };
+                } else {
+                    if (!current.children[part]) {
+                        current.children[part] = {
+                            name: part,
+                            type: 'folder',
+                            children: {},
+                            fullPath: currentPath,
+                            expanded: this.expandedFolders.has(currentPath)
+                        };
+                    }
+                    current = current.children[part];
+                }
             }
-            tree[dir].children.push({
-                name: node.data.file,
-                type: 'file',
-                path: node.data.path,
-                node: node
+        }
+
+        // 객체를 배열로 변환하고 정렬
+        const convertToArray = (obj) => {
+            const items = Object.values(obj).map(item => {
+                if (item.type === 'folder') {
+                    return {
+                        ...item,
+                        children: convertToArray(item.children)
+                    };
+                }
+                return item;
             });
-        }
 
-        // 트리 구조로 변환
-        const rootItems = [];
-        for (const dirName in tree) {
-            rootItems.push(tree[dirName]);
-        }
+            // 폴더가 먼저 오고 그 다음 파일, 이름순 정렬
+            return items.sort((a, b) => {
+                if (a.type !== b.type) return a.type === 'folder' ? -1 : 1;
+                return a.name.localeCompare(b.name);
+            });
+        };
 
-        return rootItems;
+        const treeArr = convertToArray(root.children);
+        console.log(`[SYNAPSE] buildTree finished. Root children count: ${treeArr.length}`);
+
+        return [{
+            ...root,
+            name: 'root',
+            children: treeArr
+        }];
     }
 
-    toggleFolder(folderName) {
-        if (this.expandedFolders.has(folderName)) {
-            this.expandedFolders.delete(folderName);
+    toggleFolder(folderPath) {
+        if (this.expandedFolders.has(folderPath)) {
+            this.expandedFolders.delete(folderPath);
         } else {
-            this.expandedFolders.add(folderName);
+            this.expandedFolders.add(folderPath);
         }
     }
 
     renderTree(ctx, treeData, transform) {
         if (!treeData || !Array.isArray(treeData)) return;
-        const startX = 50;
+
+        const canvasWidth = this.engine.canvas.width / (window.devicePixelRatio || 1);
+        const columnWidth = 350;
+        const padding = 50;
         const startY = 100;
         const lineHeight = 30;
-        const indent = 20;
+        const indentSize = 20;
 
-        let currentY = startY;
+        // 보이는 모든 항목을 리스트로 수집 (평면화)
+        const visibleItems = [];
+        const collectVisible = (items, level) => {
+            for (const item of items) {
+                visibleItems.push({ ...item, level });
+                if (item.type === 'folder' && item.expanded && item.children) {
+                    collectVisible(item.children, level + 1);
+                }
+            }
+        };
+        collectVisible(treeData, 0);
 
-        for (const item of treeData) {
-            currentY = this.renderTreeItem(ctx, item, startX, currentY, lineHeight, indent, 0);
+        // 컬럼 수 계산
+        const numColumns = Math.max(1, Math.floor((canvasWidth - padding) / columnWidth));
+        const itemsPerColumn = Math.ceil(visibleItems.length / numColumns);
+
+        // 컬럼별로 렌더링
+        for (let col = 0; col < numColumns; col++) {
+            const colStartX = padding + (col * columnWidth);
+            const startIdx = col * itemsPerColumn;
+            const endIdx = Math.min(startIdx + itemsPerColumn, visibleItems.length);
+
+            for (let i = startIdx; i < endIdx; i++) {
+                const item = visibleItems[i];
+                const y = startY + ((i - startIdx) * lineHeight);
+                this.renderTreeItem(ctx, item, colStartX, y, lineHeight, indentSize, item.level);
+            }
         }
     }
 
     renderTreeItem(ctx, item, x, y, lineHeight, indent, level) {
         const indentX = x + (level * indent);
 
+        // 마우스 호버 효과를 위한 배경 (옵션)
+        if (this.engine.lastMousePos) {
+            const mx = this.engine.lastMousePos.x;
+            const my = this.engine.lastMousePos.y;
+            if (mx >= indentX && mx <= indentX + 250 && my >= y - 20 && my <= y + 10) {
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.05)';
+                ctx.fillRect(x, y - 20, 300, lineHeight);
+            }
+        }
+
         if (item.type === 'folder') {
-            // 폴더 아이콘
             const icon = item.expanded ? '▼' : '▶';
             ctx.fillStyle = '#fabd2f';
             ctx.font = '12px monospace';
             ctx.fillText(icon, indentX, y);
 
-            // 폴더 이름
             ctx.fillStyle = '#fabd2f';
-            ctx.font = '14px Inter, sans-serif';
-            ctx.fillText(`📁 ${item.name}/`, indentX + 20, y);
+            ctx.font = 'bold 14px Inter, sans-serif';
+            ctx.fillText(`📁 /${item.name.replace(/^\//, '')}`, indentX + 20, y);
 
-            // 클릭 영역 저장 (나중에 클릭 감지용)
             item._bounds = {
                 x: indentX,
-                y: y - 12,
-                width: 200,
+                y: y - 20,
+                width: 250,
                 height: lineHeight,
                 item: item
             };
-
-            let currentY = y + lineHeight;
-
-            // 하위 항목 렌더링 (폴더가 열려있을 때만)
-            if (item.expanded && item.children) {
-                for (const child of item.children) {
-                    currentY = this.renderTreeItem(ctx, child, x, currentY, lineHeight, indent, level + 1);
-                }
-            }
-
-            return currentY;
         } else {
-            // 파일 아이콘
             ctx.fillStyle = '#ebdbb2';
             ctx.font = '14px Inter, sans-serif';
-            ctx.fillText(`📄 ${item.name}`, indentX + 20, y);
+            ctx.fillText(`L 📄 ${item.name}`, indentX + 20, y);
 
-            // 클릭 영역 저장
             item._bounds = {
                 x: indentX,
-                y: y - 12,
-                width: 200,
+                y: y - 20,
+                width: 250,
                 height: lineHeight,
                 item: item
             };
-
-            return y + lineHeight;
         }
     }
 
@@ -1154,7 +1219,7 @@ class CanvasEngine {
 
                 if (clickedItem) {
                     if (clickedItem.type === 'folder') {
-                        this.treeRenderer.toggleFolder(clickedItem.name);
+                        this.treeRenderer.toggleFolder(clickedItem.fullPath);
                         this.treeData = this.treeRenderer.buildTree(this.nodes);
                     } else if (clickedItem.type === 'file' && clickedItem.node && !hasModifier) {
                         this.handleOpenFile(clickedItem.node.data.path || clickedItem.node.data.file);
@@ -1208,6 +1273,7 @@ class CanvasEngine {
     pan(dx, dy) {
         this.transform.offsetX += dx;
         this.transform.offsetY += dy;
+        this.render();
     }
 
     screenToWorld(screenX, screenY) {
@@ -2701,92 +2767,108 @@ class CanvasEngine {
     renderClusters() {
         if (!this.clusters || this.clusters.length === 0) return;
 
-        for (const cluster of this.clusters) {
-            // 해당 클러스터에 속한 노드들 찾기
-            const clusterNodes = this.nodes.filter(n => (n.data?.cluster_id === cluster.id) || n.cluster_id === cluster.id);
-            if (clusterNodes.length === 0) continue;
+        // 계층 구조에 따른 그리기 순서 결정 (부모를 먼저 그려서 자식이 위에 오게 함)
+        // 하지만 실제로는 바운딩 박스를 자식 노드+자식 클러스터 기준으로 먼저 계산해야 함
 
-            // 바운딩 박스 계산
+        // 1. 모든 클러스터의 '계산된 바운드' 초기화
+        const computedBounds = new Map();
+
+        // 2. 바닥 수준(자식 클러스터가 없는)부터 위로 올라가며 바운드 계산
+        // (단순화를 위해 여기서는 매 프레임 노드 위치 기준으로 재계산)
+        const getClusterBounds = (cluster) => {
+            if (computedBounds.has(cluster.id)) return computedBounds.get(cluster.id);
+
+            // 해당 클러스터의 직계 노드들
+            const directNodes = this.nodes.filter(n => (n.data?.cluster_id === cluster.id) || n.cluster_id === cluster.id);
+
             let minX = Infinity, minY = Infinity;
             let maxX = -Infinity, maxY = -Infinity;
-            const padding = 20;
+            const padding = 30;
 
-            for (const node of clusterNodes) {
+            // 직계 노드들 포함
+            for (const node of directNodes) {
                 minX = Math.min(minX, node.position.x);
                 minY = Math.min(minY, node.position.y);
                 maxX = Math.max(maxX, node.position.x + 120);
                 maxY = Math.max(maxY, node.position.y + 60);
             }
 
+            // 자식 클러스터들 포함
+            const childClusters = this.clusters.filter(c => c.parent_id === cluster.id);
+            for (const child of childClusters) {
+                const b = getClusterBounds(child);
+                if (b.minX !== Infinity) {
+                    minX = Math.min(minX, b.minX - padding);
+                    minY = Math.min(minY, b.minY - padding);
+                    maxX = Math.max(maxX, b.maxX + padding);
+                    maxY = Math.max(maxY, b.maxY + padding);
+                }
+            }
+
+            const bounds = { minX, minY, maxX, maxY };
+            computedBounds.set(cluster.id, bounds);
+            return bounds;
+        };
+
+        // 깊이(계층 수)에 따라 정렬하여 큰 부모부터 렌더링
+        const getDepth = (c) => {
+            let depth = 0;
+            let curr = c;
+            while (curr && curr.parent_id) {
+                depth++;
+                curr = this.clusters.find(p => p.id === curr.parent_id);
+            }
+            return depth;
+        };
+
+        const sortedClusters = [...this.clusters].sort((a, b) => getDepth(a) - getDepth(b));
+
+        for (const cluster of sortedClusters) {
+            const b = getClusterBounds(cluster);
+            if (b.minX === Infinity) continue;
+
+            const { minX, minY, maxX, maxY } = b;
+            const padding = 20;
+
             // 클러스터 박스 그리기
             this.ctx.beginPath();
 
-            // Collapsed 상태 처리
             if (cluster.collapsed) {
-                // 접혔을 때는 헤더만 표시
+                // Collapsed (Header only)
                 const headerHeight = 30;
-
-                // 배경 (헤더)
                 this.ctx.fillStyle = cluster.color || '#458588';
                 this.ctx.fillRect(minX - padding, minY - padding - headerHeight, (maxX - minX) + padding * 2, headerHeight);
 
-                // 테두리
-                this.ctx.strokeStyle = cluster.color || '#458588';
-                this.ctx.lineWidth = 2 / this.transform.zoom;
-                this.ctx.strokeRect(minX - padding, minY - padding - headerHeight, (maxX - minX) + padding * 2, headerHeight);
-
-                // 라벨
-                this.ctx.fillStyle = '#282828'; // Dark text on colored header
+                this.ctx.fillStyle = '#282828';
                 this.ctx.font = `bold ${14 / this.transform.zoom}px Inter, sans-serif`;
                 this.ctx.textAlign = 'left';
                 this.ctx.textBaseline = 'middle';
-                this.ctx.fillText(cluster.label, minX - padding + 10, minY - padding - headerHeight / 2);
-
-                // 접힘 표시 (요약)
-                this.ctx.fillStyle = '#282828';
-                this.ctx.textAlign = 'right';
-                this.ctx.font = `${12 / this.transform.zoom}px Inter, sans-serif`;
-                this.ctx.fillText(`(${clusterNodes.length} items)`, maxX + padding - 30, minY - padding - headerHeight / 2);
-
-                // 버튼 [+]
-                this.ctx.textAlign = 'center';
-                this.ctx.fillText('[+]', maxX + padding - 10, minY - padding - headerHeight / 2);
-
+                this.ctx.fillText(`[+] ${cluster.label}`, minX - padding + 10, minY - padding - headerHeight / 2);
             } else {
-                // 펼쳐졌을 때
+                // Expanded
                 const headerHeight = 30;
 
-                // 1. 헤더 영역 (상단)
-                this.ctx.fillStyle = cluster.color || '#458588';
+                // Header
+                this.ctx.fillStyle = (cluster.color || '#458588');
                 this.ctx.fillRect(minX - padding, minY - padding - headerHeight, (maxX - minX) + padding * 2, headerHeight);
 
-                // 2. 본문 영역 배경 (매우 연하게)
-                this.ctx.fillStyle = (cluster.color || '#458588') + '15'; // 8% 투명도
+                // Body background
+                this.ctx.fillStyle = (cluster.color || '#458588') + '10'; // 6% alpha
                 this.ctx.fillRect(minX - padding, minY - padding, (maxX - minX) + padding * 2, (maxY - minY) + padding * 2);
 
-                // 3. 테두리 (점선)
-                this.ctx.beginPath();
-                this.ctx.setLineDash([10, 5]);
+                // Border
                 this.ctx.strokeStyle = cluster.color || '#458588';
-                this.ctx.lineWidth = 2 / this.transform.zoom;
-                this.ctx.rect(minX - padding, minY - padding, (maxX - minX) + padding * 2, (maxY - minY) + padding * 2);
-                this.ctx.stroke();
-                this.ctx.setLineDash([]);
+                this.ctx.lineWidth = 1.5 / this.transform.zoom;
+                this.ctx.strokeRect(minX - padding, minY - padding, (maxX - minX) + padding * 2, (maxY - minY) + padding * 2);
 
-                // 4. 헤더 텍스트 (라벨)
-                this.ctx.fillStyle = '#282828'; // Dark text on colored header
+                // Label
+                this.ctx.fillStyle = '#282828';
                 this.ctx.font = `bold ${14 / this.transform.zoom}px Inter, sans-serif`;
                 this.ctx.textAlign = 'left';
                 this.ctx.textBaseline = 'middle';
-                this.ctx.fillText(cluster.label, minX - padding + 10, minY - padding - headerHeight / 2);
-
-                // 5. 버튼 [-]
-                this.ctx.textAlign = 'right';
-                this.ctx.fillText('[-]', maxX + padding - 10, minY - padding - headerHeight / 2);
+                this.ctx.fillText(`[-] ${cluster.label}`, minX - padding + 10, minY - padding - headerHeight / 2);
             }
 
-            // 헤더 영역 정보 저장 (클릭 감지용)
-            // 주의: 줌/팬이 적용된 상태의 좌표계임. 그대로 저장해도 됨 (screenToWorld로 변환해서 체크할 것이므로)
             cluster._headerBounds = {
                 x: minX - padding,
                 y: minY - padding - 30,

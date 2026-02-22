@@ -281,6 +281,26 @@ This document defines the rules for how SYNAPSE discovers, parses, and visualize
                 // Try to find a file that ends with this name (naive resolution)
                 // or exactly matches.
 
+                // 0. Handle relative imports (from .module import X)
+                if (dep.to.startsWith('.')) {
+                    const fromDir = path.dirname(dep.from);
+                    const cleanTo = dep.to.replace(/^\.+/, '');
+                    const resolvedPath = path.join(fromDir, cleanTo).replace(/\\/g, '/');
+
+                    // Try with extensions
+                    const extensions = ['.ts', '.js', '.py'];
+                    for (const ext of extensions) {
+                        if (filePaths.has(resolvedPath + ext)) {
+                            validDependencies.push({ ...dep, to: resolvedPath + ext });
+                            return;
+                        }
+                    }
+                    if (filePaths.has(resolvedPath)) {
+                        validDependencies.push({ ...dep, to: resolvedPath });
+                        return;
+                    }
+                }
+
                 // 1. Exact match
                 if (filePaths.has(dep.to)) {
                     validDependencies.push(dep);
@@ -290,7 +310,18 @@ This document defines the rules for how SYNAPSE discovers, parses, and visualize
                 // 2. Fuzzy match (reference 'User' -> 'src/models/User.ts')
                 const match = structure.files.find((f: any) => {
                     const fName = path.basename(f.path, path.extname(f.path));
-                    return fName === dep.to || f.path.endsWith(dep.to + '.ts') || f.path.endsWith(dep.to + '.js') || f.path.endsWith(dep.to + '.py');
+                    const extensions = ['.ts', '.js', '.py'];
+
+                    // Match by filename (e.g., 'calculator' matches 'calculator.py')
+                    if (fName === dep.to) return true;
+
+                    // Match by partial path (e.g., 'models/User' matches 'src/models/User.ts')
+                    for (const ext of extensions) {
+                        const target = dep.to + ext;
+                        if (f.path === target || f.path.endsWith('/' + target)) return true;
+                    }
+
+                    return false;
                 });
 
                 if (match) {
@@ -298,6 +329,24 @@ This document defines the rules for how SYNAPSE discovers, parses, and visualize
                         ...dep,
                         to: match.path
                     });
+                } else {
+                    // 3. External Library Support (Not found in project, but keep it)
+                    // Skip common built-in modules or very short noise
+                    if (dep.to.length > 1 && !dep.to.startsWith('/') && !dep.to.includes('\\')) {
+                        // Add to structure.files if not already there as an external node
+                        if (!structure.files.some((f: any) => f.path === dep.to && f.type === 'external')) {
+                            structure.files.push({
+                                path: dep.to,
+                                type: 'external',
+                                description: `External Library: ${dep.to}`
+                            });
+                        }
+                        validDependencies.push({
+                            ...dep,
+                            to: dep.to,
+                            type: 'dependency'
+                        });
+                    }
                 }
             });
 

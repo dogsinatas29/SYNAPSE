@@ -81,7 +81,8 @@ export class FileScanner {
 
             if (fromPart) {
                 // from a.b import c -> 'a.b' 가 핵심 참조
-                const rootMod = fromPart.split('.')[0];
+                // 상대 경로 지원을 위해 첫 글자가 .인 경우 유지
+                const rootMod = fromPart.startsWith('.') ? fromPart : fromPart.split('.')[0];
                 if (rootMod && !summary.references.includes(rootMod)) {
                     summary.references.push(rootMod);
                 }
@@ -89,8 +90,11 @@ export class FileScanner {
                 // import a, b as bb -> 'a', 'b' 추출
                 importPart.split(',').forEach(r => {
                     const trimmed = r.trim().split(/\s+/)[0];
-                    if (trimmed && !summary.references.includes(trimmed)) {
-                        summary.references.push(trimmed);
+                    if (trimmed) {
+                        const rootMod = trimmed.startsWith('.') ? trimmed : trimmed.split('.')[0];
+                        if (rootMod && !summary.references.includes(rootMod)) {
+                            summary.references.push(rootMod);
+                        }
                     }
                 });
             }

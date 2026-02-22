@@ -19,45 +19,76 @@ export class FlowchartGenerator {
         const edges: Edge[] = [];
         const clusters: Cluster[] = [];
 
-        // 1. 파일들을 디렉토리별로 그룹화
-        const directoryGroups = new Map<string, typeof structure.files>();
+        // 1. 모든 관련 폴더 수집 및 클러스터 맵 생성
+        const clusterMap = new Map<string, Cluster>();
+        const folders = new Set<string>();
 
+        // 파일들의 상위 폴더들 모두 수집
+        structure.files.forEach(f => {
+            let dir = path.dirname(f.path);
+            while (dir !== '.' && dir !== '/' && dir !== '') {
+                folders.add(dir.replace(/\\/g, '/'));
+                dir = path.dirname(dir);
+            }
+        });
+        // structure.folders에 있는 것들도 추가
+        structure.folders.forEach(f => folders.add(f.replace(/\\/g, '/')));
+
+        // 2. 클러스터 생성 (계층 구조 포함)
+        const sortedFolders = Array.from(folders).sort((a, b) => a.split('/').length - b.split('/').length);
+
+        sortedFolders.forEach(dirPath => {
+            const clusterId = `cluster_${dirPath.replace(/[^a-zA-Z0-9]/g, '_')}`;
+            const parentPath = path.dirname(dirPath).replace(/\\/g, '/');
+            const parentId = parentPath !== '.' && parentPath !== '' ? `cluster_${parentPath.replace(/[^a-zA-Z0-9]/g, '_')}` : undefined;
+
+            const cluster: Cluster = {
+                id: clusterId,
+                label: path.basename(dirPath),
+                collapsed: false,
+                bounds: { x: 0, y: 0, width: 0, height: 0 }, // 나중에 계산
+                children: [],
+                parent_id: parentId
+            };
+            clusterMap.set(dirPath, cluster);
+            clusters.push(cluster);
+        });
+
+        // 3. 노드 생성 및 클러스터 할당
+        const nodeSpacingX = 350;
+        const nodeSpacingY = 150;
+        const clusterSpacingX = 1000;
+        const clusterSpacingY = 1500;
+        const clusterCols = Math.ceil(Math.sqrt(Math.max(clusters.filter(c => !c.parent_id).length, 1)));
+
+        // 최상위 폴더(부모가 없는 클러스터) 기준으로 배치 시작
+        let topClusterIdx = 0;
+        const directoryGroups = new Map<string, typeof structure.files>();
         structure.files.forEach(file => {
-            const dir = path.dirname(file.path);
+            const dir = path.dirname(file.path).replace(/\\/g, '/');
             const group = directoryGroups.get(dir) || [];
             group.push(file);
             directoryGroups.set(dir, group);
         });
 
-        // 2. 각 디렉토리별로 클러스터 및 노드 생성
-        let clusterIdx = 0;
-        const totalClusters = directoryGroups.size;
-
-        // 레이어 기반 레이아웃을 위해 클러스터 배치를 더 넓게 가져감
-        const clusterSpacingX = 800;
-        const clusterSpacingY = 1200; // 레이어 높이를 고려하여 크게 잡음
-        const clusterCols = Math.ceil(Math.sqrt(totalClusters));
-
         directoryGroups.forEach((files, dirName) => {
-            const clusterId = `cluster_${this.clusterIdCounter++}`;
-            const clusterLabel = dirName === '.' ? 'ROOT' : dirName;
+            const clusterPath = dirName === '.' ? '' : dirName;
+            const cluster = clusterMap.get(clusterPath);
+            const clusterId = cluster ? cluster.id : 'root_cluster';
 
-            const clusterX = (clusterIdx % clusterCols) * clusterSpacingX;
-            const clusterY = Math.floor(clusterIdx / clusterCols) * clusterSpacingY;
+            // ROOT에 파일이 있는 경우를 위한 가상 클러스터 처리
+            if (dirName === '.' && !clusterMap.has('')) {
+                // Skip or handle root files later
+            }
 
-            const clusterNodes: string[] = [];
-            const nodeSpacingX = 350;
-            const nodeSpacingY = 150;
+            const clusterX = (topClusterIdx % clusterCols) * clusterSpacingX;
+            const clusterY = Math.floor(topClusterIdx / clusterCols) * clusterSpacingY;
 
             const layerCounters = new Map<number, number>();
 
             files.forEach((file) => {
                 const hints = getVisualHints(file.path);
                 const layer = hints.layer;
-
-                // 의존성 확인 (degree 0 노드 식별)
-                const isDisconnected = !structure.dependencies.some(d => d.from === file.path || d.to === file.path);
-
                 const currentCount = layerCounters.get(layer) || 0;
                 layerCounters.set(layer, currentCount + 1);
 
@@ -67,7 +98,6 @@ export class FlowchartGenerator {
                 let finalClusterId = clusterId;
 
                 if (file.type === 'documentation') {
-                    // [Doc Shelf] 문서 파일은 별도의 고정 영역에 배치
                     nodeX = (currentCount % 4) * 200;
                     nodeY = Math.floor(currentCount / 4) * 150 + 100;
                     finalClusterId = 'doc_shelf';
@@ -87,32 +117,20 @@ export class FlowchartGenerator {
                     finalClusterId
                 );
                 nodes.push(node);
-                clusterNodes.push(node.id);
+
+                if (finalClusterId === 'doc_shelf') {
+                    // Handled by doc_shelf special cluster
+                } else if (cluster) {
+                    cluster.children.push(node.id);
+                }
             });
 
-            // 클러스터 영역 계산 (Storage/Doc 노드 제외)
-            const maxNodesInLayer = Math.max(...Array.from(layerCounters.values()), 1);
-            clusters.push({
-                id: clusterId,
-                label: clusterLabel,
-                collapsed: false,
-                bounds: {
-                    x: clusterX,
-                    y: clusterY,
-                    width: Math.max(maxNodesInLayer, 3) * nodeSpacingX + 200,
-                    height: 3 * 350 + 200
-                },
-                children: clusterNodes.filter(id => {
-                    const n = nodes.find(node => node.id === id);
-                    return n && n.data.cluster_id === clusterId;
-                })
-            });
-
-            clusterIdx++;
+            if (clusterPath === '' || !clusterMap.get(path.dirname(clusterPath).replace(/\\/g, '/'))) {
+                topClusterIdx++;
+            }
         });
 
-        // 3. Special Clusters 추가
-        // [Documentation Shelf] 모든 MD 파일들을 모아두는 고정 영역
+        // 4. Special Clusters 및 미지정 노드 처리
         clusters.push({
             id: 'doc_shelf',
             label: '📚 Documentation Shelf',
@@ -121,9 +139,26 @@ export class FlowchartGenerator {
             children: nodes.filter(n => n.data.cluster_id === 'doc_shelf').map(n => n.id)
         });
 
+        // External Modules Cluster
+        const externalNodes = nodes.filter(n => n.type === 'external');
+        if (externalNodes.length > 0) {
+            clusters.push({
+                id: 'cluster_external',
+                label: '🌐 External Modules',
+                collapsed: false,
+                bounds: { x: 3000, y: 0, width: 1000, height: 1500 },
+                children: externalNodes.map(n => {
+                    n.data.cluster_id = 'cluster_external';
+                    // Reposition external nodes to be inside this cluster
+                    const idx = externalNodes.indexOf(n);
+                    n.position.x = 3100 + (idx % 3) * 300;
+                    n.position.y = 100 + Math.floor(idx / 3) * 200;
+                    return n.id;
+                })
+            });
+        }
 
-
-        // 3. 의존성 기반 엣지 생성
+        // 5. 의존성 기반 엣지 생성
         structure.dependencies.forEach((dep) => {
             const fromNode = nodes.find(n => n.data.file === dep.from);
             const toNode = nodes.find(n => n.data.file === dep.to);
@@ -134,11 +169,7 @@ export class FlowchartGenerator {
             }
         });
 
-        console.log('✅ 초기 순서도 생성 완료 (Clustered)');
-        console.log(`  - 노드: ${nodes.length}개`);
-        console.log(`  - 엣지: ${edges.length}개`);
-        console.log(`  - 클러스터: ${clusters.length}개`);
-
+        console.log('✅ 초기 순서도 생성 완료 (Hierarchical Clustered)');
         return { nodes, edges, clusters };
     }
 
@@ -165,7 +196,8 @@ export class FlowchartGenerator {
             documentation: '#fabd2f', // 노란색
             test: '#fe8019',        // 주황색
             config: '#d3869b',      // 분홍색
-            history: '#d65d0e'      // 주황/갈색 (브라운)
+            history: '#d65d0e',     // 주황/갈색 (브라운)
+            external: '#83a598'      // 파란색 (외부 라이브러리)
         };
 
         // 중앙 집중화 (Reasoning 레이어의 핵심 파일들)
@@ -232,9 +264,9 @@ export class FlowchartGenerator {
             is_approved: false,
             visual: {
                 thickness: style.thickness,
-                style: 'dashed',
+                style: 'solid',
                 color: style.color,
-                animated: false
+                animated: true
             }
         };
     }
@@ -296,6 +328,7 @@ export class FlowchartGenerator {
             case 'test': return ['{', '}'];
             case 'config': return ['[(', ')]'];
             case 'history': return ['((', '))'];
+            case 'external': return ['[[', ']]'];
             default: return ['[', ']'];
         }
     }

@@ -14,7 +14,7 @@
     {
       "_headerBounds": {
         "height": 30,
-        "width": 510,
+        "width": 860,
         "x": 330,
         "y": 350
       },
@@ -26,18 +26,31 @@
       },
       "children": [
         "node_verify_rules_js",
-        "node_verify_rules_only_js"
+        "node_verify_rules_only_js",
+        "node_webpack_config_js"
       ],
       "collapsed": false,
       "id": "cluster_10",
       "label": "ROOT"
     },
     {
+      "bounds": {
+        "height": 1250,
+        "width": 3350,
+        "x": 800,
+        "y": 0
+      },
+      "children": [],
+      "collapsed": false,
+      "id": "cluster_11",
+      "label": "prompts"
+    },
+    {
       "_headerBounds": {
         "height": 30,
-        "width": 159.99999999999977,
-        "x": 1933.4000731838507,
-        "y": 350
+        "width": 160,
+        "x": 1728.9611167885473,
+        "y": 557.7111977721149
       },
       "bounds": {
         "height": 1250,
@@ -77,9 +90,9 @@
     {
       "_headerBounds": {
         "height": 30,
-        "width": 860,
-        "x": 330,
-        "y": 1200
+        "width": 860.0000000000002,
+        "x": -228.67986798679902,
+        "y": 1111.9471947194727
       },
       "bounds": {
         "height": 1250,
@@ -102,9 +115,9 @@
     {
       "_headerBounds": {
         "height": 30,
-        "width": 510,
-        "x": 1307.4843436619444,
-        "y": 1472.3505996478996
+        "width": 511.1828483951997,
+        "x": 1130,
+        "y": 1547.6343032096008
       },
       "bounds": {
         "height": 1250,
@@ -123,9 +136,9 @@
     {
       "_headerBounds": {
         "height": 30,
-        "width": 510,
-        "x": 1930,
-        "y": 1200
+        "width": 510.0000000000007,
+        "x": 2005.9075907590761,
+        "y": 1233.3993399339934
       },
       "bounds": {
         "height": 1250,
@@ -166,9 +179,9 @@
     {
       "_headerBounds": {
         "height": 30,
-        "width": 510.0000000000002,
-        "x": 640.9452056367884,
-        "y": 2081.1744633472854
+        "width": 860,
+        "x": 700.94318322755,
+        "y": 2271.953503305339
       },
       "bounds": {
         "height": 1250,
@@ -177,6 +190,7 @@
         "y": 2400
       },
       "children": [
+        "node_src_utils_Logger_ts",
         "node_src_utils_exclusionRules_ts",
         "node_src_utils_visualHints_ts"
       ],
@@ -188,8 +202,8 @@
       "_headerBounds": {
         "height": 30,
         "width": 160,
-        "x": 1628.68570715334,
-        "y": 2069.4406820025015
+        "x": 1500.94318322755,
+        "y": 2391.953503305339
       },
       "bounds": {
         "height": 1250,
@@ -207,21 +221,56 @@
     {
       "_headerBounds": {
         "height": 30,
-        "width": 770.1861997051152,
-        "x": -885.9856494895209,
-        "y": 164.92779769104501
+        "width": 760,
+        "x": -1520,
+        "y": 50
       },
+      "bounds": {
+        "height": 1200,
+        "width": 900,
+        "x": -1600,
+        "y": -100
+      },
+      "children": [
+        "node_DEBUG_GUIDE_md",
+        "node_EXTENSION_README_md",
+        "node_GEMINI_md",
+        "node_README_ko_md",
+        "node_RELEASES_v0_2_7_md",
+        "node_RULES_md",
+        "node_architecture_md",
+        "node_v0_1_6_release_notes_md",
+        "node_v0_1_7_release_notes_md",
+        "node_v0_1_8_release_notes_md",
+        "node_v0_2_0_release_notes_md",
+        "node_v0_2_10_release_notes_md",
+        "node_v0_2_1_release_notes_md",
+        "node_v0_2_2_release_notes_md",
+        "node_v0_2_3_release_notes_md",
+        "node_v0_2_4_release_notes_md",
+        "node_v0_2_5_release_notes_md",
+        "node_v0_2_6_release_notes_md",
+        "node_v0_2_9_release_notes_md",
+        "node_prompts_2026_02_17_keybinding_check_md",
+        "node_prompts_2026_02_17_origin_edge_verification_md",
+        "node_prompts_2026_02_17_test_md",
+        "node_prompts_2026_02_18_auto_push_after_drag_md",
+        "node_prompts_2026_02_18_deep_reset_triggered_md",
+        "node_prompts_2026_02_18_group_created_doc_md",
+        "node_prompts_2026_02_18_manual_snapshot_md",
+        "node_prompts_2026_02_18_selection_ungrouped_md",
+        "node_prompts_2026_02_18_snapshot__121710_md"
+      ],
       "collapsed": false,
-      "color": "#fe8019",
-      "id": "cluster_1771430663574",
-      "label": "Doc"
+      "id": "doc_shelf",
+      "label": "📚 Documentation Shelf"
     }
   ],
   "edges": [
     {
       "_validationReason": "Circular dependency detected",
       "from": "node_README_ko_md",
-      "id": "edge_35",
+      "id": "edge_37",
       "is_approved": false,
       "to": "node_README_ko_md",
       "type": "dependency",
@@ -240,7 +289,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_prompts_2026_02_17_origin_edge_verification_md",
-      "id": "edge_36",
+      "id": "edge_38",
       "is_approved": false,
       "to": "node_src_core_PromptLogger_ts",
       "type": "dependency",
@@ -259,47 +308,9 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_prompts_2026_02_17_origin_edge_verification_md",
-      "id": "edge_37",
-      "is_approved": false,
-      "to": "node_src_bootstrap_BootstrapEngine_ts",
-      "type": "dependency",
-      "validation": {
-        "confidence": 0.95,
-        "reason": "Appropriate architectural relationship.",
-        "valid": true
-      },
-      "visual": {
-        "animated": false,
-        "color": "#ebdbb2",
-        "style": "dashed",
-        "thickness": 2
-      }
-    },
-    {
-      "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_src_bootstrap_BootstrapEngine_ts",
-      "id": "edge_38",
-      "is_approved": false,
-      "to": "node_src_core_GeminiParser_ts",
-      "type": "dependency",
-      "validation": {
-        "confidence": 0.95,
-        "reason": "Appropriate architectural relationship.",
-        "valid": true
-      },
-      "visual": {
-        "animated": false,
-        "color": "#ebdbb2",
-        "style": "dashed",
-        "thickness": 2
-      }
-    },
-    {
-      "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_src_bootstrap_BootstrapEngine_ts",
       "id": "edge_39",
       "is_approved": false,
-      "to": "node_src_core_FlowchartGenerator_ts",
+      "to": "node_src_bootstrap_BootstrapEngine_ts",
       "type": "dependency",
       "validation": {
         "confidence": 0.95,
@@ -318,7 +329,7 @@
       "from": "node_src_bootstrap_BootstrapEngine_ts",
       "id": "edge_40",
       "is_approved": false,
-      "to": "node_src_core_FileScanner_ts",
+      "to": "node_src_core_GeminiParser_ts",
       "type": "dependency",
       "validation": {
         "confidence": 0.95,
@@ -337,7 +348,7 @@
       "from": "node_src_bootstrap_BootstrapEngine_ts",
       "id": "edge_41",
       "is_approved": false,
-      "to": "node_src_types_schema_ts",
+      "to": "node_src_core_FlowchartGenerator_ts",
       "type": "dependency",
       "validation": {
         "confidence": 0.95,
@@ -356,7 +367,7 @@
       "from": "node_src_bootstrap_BootstrapEngine_ts",
       "id": "edge_42",
       "is_approved": false,
-      "to": "node_src_utils_exclusionRules_ts",
+      "to": "node_src_core_FileScanner_ts",
       "type": "dependency",
       "validation": {
         "confidence": 0.95,
@@ -375,6 +386,44 @@
       "from": "node_src_bootstrap_BootstrapEngine_ts",
       "id": "edge_43",
       "is_approved": false,
+      "to": "node_src_types_schema_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_bootstrap_BootstrapEngine_ts",
+      "id": "edge_44",
+      "is_approved": false,
+      "to": "node_src_utils_exclusionRules_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_bootstrap_BootstrapEngine_ts",
+      "id": "edge_45",
+      "is_approved": false,
       "to": "node_src_core_RuleEngine_ts",
       "type": "dependency",
       "validation": {
@@ -392,7 +441,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_cli_ts",
-      "id": "edge_44",
+      "id": "edge_46",
       "is_approved": false,
       "to": "node_src_bootstrap_BootstrapEngine_ts",
       "type": "dependency",
@@ -411,44 +460,6 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_core_FlowchartGenerator_ts",
-      "id": "edge_45",
-      "is_approved": false,
-      "to": "node_src_types_schema_ts",
-      "type": "dependency",
-      "validation": {
-        "confidence": 0.95,
-        "reason": "Appropriate architectural relationship.",
-        "valid": true
-      },
-      "visual": {
-        "animated": false,
-        "color": "#ebdbb2",
-        "style": "dashed",
-        "thickness": 2
-      }
-    },
-    {
-      "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_src_core_FlowchartGenerator_ts",
-      "id": "edge_46",
-      "is_approved": false,
-      "to": "node_src_utils_visualHints_ts",
-      "type": "dependency",
-      "validation": {
-        "confidence": 0.95,
-        "reason": "Appropriate architectural relationship.",
-        "valid": true
-      },
-      "visual": {
-        "animated": false,
-        "color": "#ebdbb2",
-        "style": "dashed",
-        "thickness": 2
-      }
-    },
-    {
-      "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_src_core_GeminiParser_ts",
       "id": "edge_47",
       "is_approved": false,
       "to": "node_src_types_schema_ts",
@@ -467,10 +478,10 @@
     },
     {
       "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_src_core_GeminiParser_ts",
+      "from": "node_src_core_FlowchartGenerator_ts",
       "id": "edge_48",
       "is_approved": false,
-      "to": "node_src_utils_exclusionRules_ts",
+      "to": "node_src_utils_visualHints_ts",
       "type": "dependency",
       "validation": {
         "confidence": 0.95,
@@ -489,7 +500,7 @@
       "from": "node_src_core_GeminiParser_ts",
       "id": "edge_49",
       "is_approved": false,
-      "to": "node_src_core_RuleEngine_ts",
+      "to": "node_src_types_schema_ts",
       "type": "dependency",
       "validation": {
         "confidence": 0.95,
@@ -505,10 +516,10 @@
     },
     {
       "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_src_extension_ts",
+      "from": "node_src_core_GeminiParser_ts",
       "id": "edge_50",
       "is_approved": false,
-      "to": "node_src_webview_CanvasPanel_ts",
+      "to": "node_src_utils_exclusionRules_ts",
       "type": "dependency",
       "validation": {
         "confidence": 0.95,
@@ -524,10 +535,10 @@
     },
     {
       "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_src_extension_ts",
+      "from": "node_src_core_GeminiParser_ts",
       "id": "edge_51",
       "is_approved": false,
-      "to": "node_src_bootstrap_BootstrapEngine_ts",
+      "to": "node_src_core_RuleEngine_ts",
       "type": "dependency",
       "validation": {
         "confidence": 0.95,
@@ -546,7 +557,7 @@
       "from": "node_src_extension_ts",
       "id": "edge_52",
       "is_approved": false,
-      "to": "node_src_client_ts",
+      "to": "node_src_webview_CanvasPanel_ts",
       "type": "dependency",
       "validation": {
         "confidence": 0.95,
@@ -565,6 +576,63 @@
       "from": "node_src_extension_ts",
       "id": "edge_53",
       "is_approved": false,
+      "to": "node_src_bootstrap_BootstrapEngine_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_extension_ts",
+      "id": "edge_54",
+      "is_approved": false,
+      "to": "node_src_client_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_extension_ts",
+      "id": "edge_55",
+      "is_approved": false,
+      "to": "node_src_core_PromptLogger_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_extension_ts",
+      "id": "edge_56",
+      "is_approved": false,
       "to": "node_src_core_PromptLogger_ts",
       "type": "dependency",
       "validation": {
@@ -582,7 +650,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_server_server_ts",
-      "id": "edge_54",
+      "id": "edge_57",
       "is_approved": false,
       "to": "node_src_core_GeminiParser_ts",
       "type": "dependency",
@@ -601,7 +669,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_server_server_ts",
-      "id": "edge_55",
+      "id": "edge_58",
       "is_approved": false,
       "to": "node_src_core_FlowScanner_ts",
       "type": "dependency",
@@ -620,7 +688,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_server_standalone_ts",
-      "id": "edge_56",
+      "id": "edge_59",
       "is_approved": false,
       "to": "node_src_core_GeminiParser_ts",
       "type": "dependency",
@@ -639,7 +707,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_server_standalone_ts",
-      "id": "edge_57",
+      "id": "edge_60",
       "is_approved": false,
       "to": "node_src_core_FlowScanner_ts",
       "type": "dependency",
@@ -658,7 +726,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_test_FileScanner_test_ts",
-      "id": "edge_58",
+      "id": "edge_61",
       "is_approved": false,
       "to": "node_src_core_FileScanner_ts",
       "type": "dependency",
@@ -677,7 +745,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_test_FlowchartGenerator_test_ts",
-      "id": "edge_59",
+      "id": "edge_62",
       "is_approved": false,
       "to": "node_src_core_FlowchartGenerator_ts",
       "type": "dependency",
@@ -696,7 +764,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_test_FlowchartGenerator_test_ts",
-      "id": "edge_60",
+      "id": "edge_63",
       "is_approved": false,
       "to": "node_src_types_schema_ts",
       "type": "dependency",
@@ -715,7 +783,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_test_GeminiParser_test_ts",
-      "id": "edge_61",
+      "id": "edge_64",
       "is_approved": false,
       "to": "node_src_core_GeminiParser_ts",
       "type": "dependency",
@@ -734,7 +802,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_test_visualHints_test_ts",
-      "id": "edge_62",
+      "id": "edge_65",
       "is_approved": false,
       "to": "node_src_utils_visualHints_ts",
       "type": "dependency",
@@ -753,66 +821,9 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_utils_exclusionRules_ts",
-      "id": "edge_63",
-      "is_approved": false,
-      "to": "node_src_core_RuleEngine_ts",
-      "type": "dependency",
-      "validation": {
-        "confidence": 0.95,
-        "reason": "Appropriate architectural relationship.",
-        "valid": true
-      },
-      "visual": {
-        "animated": false,
-        "color": "#ebdbb2",
-        "style": "dashed",
-        "thickness": 2
-      }
-    },
-    {
-      "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_src_webview_CanvasPanel_ts",
-      "id": "edge_64",
-      "is_approved": false,
-      "to": "node_src_types_schema_ts",
-      "type": "dependency",
-      "validation": {
-        "confidence": 0.95,
-        "reason": "Appropriate architectural relationship.",
-        "valid": true
-      },
-      "visual": {
-        "animated": false,
-        "color": "#ebdbb2",
-        "style": "dashed",
-        "thickness": 2
-      }
-    },
-    {
-      "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_src_webview_CanvasPanel_ts",
-      "id": "edge_65",
-      "is_approved": false,
-      "to": "node_src_core_FileScanner_ts",
-      "type": "dependency",
-      "validation": {
-        "confidence": 0.95,
-        "reason": "Appropriate architectural relationship.",
-        "valid": true
-      },
-      "visual": {
-        "animated": false,
-        "color": "#ebdbb2",
-        "style": "dashed",
-        "thickness": 2
-      }
-    },
-    {
-      "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_src_webview_CanvasPanel_ts",
       "id": "edge_66",
       "is_approved": false,
-      "to": "node_src_core_GeminiParser_ts",
+      "to": "node_src_core_RuleEngine_ts",
       "type": "dependency",
       "validation": {
         "confidence": 0.95,
@@ -831,7 +842,7 @@
       "from": "node_src_webview_CanvasPanel_ts",
       "id": "edge_67",
       "is_approved": false,
-      "to": "node_src_core_FlowchartGenerator_ts",
+      "to": "node_src_types_schema_ts",
       "type": "dependency",
       "validation": {
         "confidence": 0.95,
@@ -850,7 +861,7 @@
       "from": "node_src_webview_CanvasPanel_ts",
       "id": "edge_68",
       "is_approved": false,
-      "to": "node_src_bootstrap_BootstrapEngine_ts",
+      "to": "node_src_core_FileScanner_ts",
       "type": "dependency",
       "validation": {
         "confidence": 0.95,
@@ -869,6 +880,63 @@
       "from": "node_src_webview_CanvasPanel_ts",
       "id": "edge_69",
       "is_approved": false,
+      "to": "node_src_core_GeminiParser_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_webview_CanvasPanel_ts",
+      "id": "edge_70",
+      "is_approved": false,
+      "to": "node_src_core_FlowchartGenerator_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_webview_CanvasPanel_ts",
+      "id": "edge_71",
+      "is_approved": false,
+      "to": "node_src_bootstrap_BootstrapEngine_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_webview_CanvasPanel_ts",
+      "id": "edge_72",
+      "is_approved": false,
       "to": "node_src_client_ts",
       "type": "dependency",
       "validation": {
@@ -885,8 +953,26 @@
     },
     {
       "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_webview_CanvasPanel_ts",
+      "id": "edge_73",
+      "is_approved": false,
+      "to": "node_src_core_PromptLogger_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": false,
+        "color": "#ebdbb2",
+        "style": "dashed",
+        "thickness": 2
+      }
+    },
+    {
       "from": "node_prompts_2026_02_17_origin_edge_verification_md",
-      "id": "edge_auto_1771430971663_574",
+      "id": "edge_auto_1771724878533_693",
       "label": "ref",
       "to": "node_src_core_PromptLogger_ts",
       "type": "dependency",
@@ -897,9 +983,8 @@
       }
     },
     {
-      "_validationReason": "Appropriate architectural relationship.",
       "from": "node_prompts_2026_02_17_origin_edge_verification_md",
-      "id": "edge_auto_1771430971663_265",
+      "id": "edge_auto_1771724878533_635",
       "label": "ref",
       "to": "node_src_bootstrap_BootstrapEngine_ts",
       "type": "dependency",
@@ -910,9 +995,8 @@
       }
     },
     {
-      "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_bootstrap_BootstrapEngine_ts",
-      "id": "edge_auto_1771430971663_304",
+      "id": "edge_auto_1771724878533_458",
       "label": "ref",
       "to": "node_src_core_GeminiParser_ts",
       "type": "dependency",
@@ -923,9 +1007,8 @@
       }
     },
     {
-      "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_bootstrap_BootstrapEngine_ts",
-      "id": "edge_auto_1771430971663_951",
+      "id": "edge_auto_1771724878533_841",
       "label": "ref",
       "to": "node_src_core_FlowchartGenerator_ts",
       "type": "dependency",
@@ -937,15 +1020,19 @@
     },
     {
       "from": "node_src_bootstrap_BootstrapEngine_ts",
-      "id": "edge_auto_1771430971663_265",
+      "id": "edge_auto_1771724878533_803",
       "label": "ref",
       "to": "node_src_core_FileScanner_ts",
-      "type": "dependency"
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
     },
     {
-      "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_bootstrap_BootstrapEngine_ts",
-      "id": "edge_auto_1771430971663_16",
+      "id": "edge_auto_1771724878533_789",
       "label": "ref",
       "to": "node_src_types_schema_ts",
       "type": "dependency",
@@ -956,9 +1043,8 @@
       }
     },
     {
-      "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_bootstrap_BootstrapEngine_ts",
-      "id": "edge_auto_1771430971663_358",
+      "id": "edge_auto_1771724878533_627",
       "label": "ref",
       "to": "node_src_utils_exclusionRules_ts",
       "type": "dependency",
@@ -969,9 +1055,8 @@
       }
     },
     {
-      "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_bootstrap_BootstrapEngine_ts",
-      "id": "edge_auto_1771430971663_665",
+      "id": "edge_auto_1771724878533_174",
       "label": "ref",
       "to": "node_src_core_RuleEngine_ts",
       "type": "dependency",
@@ -982,9 +1067,8 @@
       }
     },
     {
-      "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_cli_ts",
-      "id": "edge_auto_1771430971663_896",
+      "id": "edge_auto_1771724878533_937",
       "label": "ref",
       "to": "node_src_bootstrap_BootstrapEngine_ts",
       "type": "dependency",
@@ -995,9 +1079,8 @@
       }
     },
     {
-      "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_extension_ts",
-      "id": "edge_auto_1771430971663_657",
+      "id": "edge_auto_1771724878533_986",
       "label": "ref",
       "to": "node_src_webview_CanvasPanel_ts",
       "type": "dependency",
@@ -1008,9 +1091,8 @@
       }
     },
     {
-      "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_extension_ts",
-      "id": "edge_auto_1771430971663_586",
+      "id": "edge_auto_1771724878533_507",
       "label": "ref",
       "to": "node_src_bootstrap_BootstrapEngine_ts",
       "type": "dependency",
@@ -1021,9 +1103,8 @@
       }
     },
     {
-      "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_extension_ts",
-      "id": "edge_auto_1771430971663_15",
+      "id": "edge_auto_1771724878533_184",
       "label": "ref",
       "to": "node_src_client_ts",
       "type": "dependency",
@@ -1035,15 +1116,50 @@
     },
     {
       "from": "node_src_extension_ts",
-      "id": "edge_auto_1771430971663_15",
+      "id": "edge_auto_1771724878533_56",
       "label": "ref",
       "to": "node_src_core_PromptLogger_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "from": "node_src_extension_ts",
+      "id": "edge_auto_1771724878533_180",
+      "label": "ref",
+      "to": "node_src_utils_Logger_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "from": "node_src_core_FlowchartGenerator_ts",
+      "id": "edge_auto_1771724878533_721",
+      "label": "ref",
+      "to": "node_src_types_schema_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "from": "node_src_core_FlowchartGenerator_ts",
+      "id": "edge_auto_1771724878533_174",
+      "label": "ref",
+      "to": "node_src_utils_visualHints_ts",
       "type": "dependency"
     },
     {
-      "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_src_core_FlowchartGenerator_ts",
-      "id": "edge_auto_1771430971663_830",
+      "from": "node_src_core_GeminiParser_ts",
+      "id": "edge_auto_1771724878533_53",
       "label": "ref",
       "to": "node_src_types_schema_ts",
       "type": "dependency",
@@ -1054,35 +1170,8 @@
       }
     },
     {
-      "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_src_core_FlowchartGenerator_ts",
-      "id": "edge_auto_1771430971663_865",
-      "label": "ref",
-      "to": "node_src_utils_visualHints_ts",
-      "type": "dependency",
-      "validation": {
-        "confidence": 0.95,
-        "reason": "Appropriate architectural relationship.",
-        "valid": true
-      }
-    },
-    {
-      "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_core_GeminiParser_ts",
-      "id": "edge_auto_1771430971663_480",
-      "label": "ref",
-      "to": "node_src_types_schema_ts",
-      "type": "dependency",
-      "validation": {
-        "confidence": 0.95,
-        "reason": "Appropriate architectural relationship.",
-        "valid": true
-      }
-    },
-    {
-      "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_src_core_GeminiParser_ts",
-      "id": "edge_auto_1771430971663_925",
+      "id": "edge_auto_1771724878533_439",
       "label": "ref",
       "to": "node_src_utils_exclusionRules_ts",
       "type": "dependency",
@@ -1093,9 +1182,8 @@
       }
     },
     {
-      "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_core_GeminiParser_ts",
-      "id": "edge_auto_1771430971663_101",
+      "id": "edge_auto_1771724878533_780",
       "label": "ref",
       "to": "node_src_core_RuleEngine_ts",
       "type": "dependency",
@@ -1106,9 +1194,8 @@
       }
     },
     {
-      "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_server_server_ts",
-      "id": "edge_auto_1771430971663_28",
+      "id": "edge_auto_1771724878533_427",
       "label": "ref",
       "to": "node_src_core_GeminiParser_ts",
       "type": "dependency",
@@ -1119,9 +1206,8 @@
       }
     },
     {
-      "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_server_server_ts",
-      "id": "edge_auto_1771430971663_549",
+      "id": "edge_auto_1771724878533_196",
       "label": "ref",
       "to": "node_src_core_FlowScanner_ts",
       "type": "dependency",
@@ -1132,9 +1218,8 @@
       }
     },
     {
-      "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_server_standalone_ts",
-      "id": "edge_auto_1771430971663_48",
+      "id": "edge_auto_1771724878533_636",
       "label": "ref",
       "to": "node_src_core_GeminiParser_ts",
       "type": "dependency",
@@ -1145,9 +1230,8 @@
       }
     },
     {
-      "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_server_standalone_ts",
-      "id": "edge_auto_1771430971663_939",
+      "id": "edge_auto_1771724878533_643",
       "label": "ref",
       "to": "node_src_core_FlowScanner_ts",
       "type": "dependency",
@@ -1158,9 +1242,8 @@
       }
     },
     {
-      "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_test_FileScanner_test_ts",
-      "id": "edge_auto_1771430971663_400",
+      "id": "edge_auto_1771724878533_907",
       "label": "ref",
       "to": "node_src_core_FileScanner_ts",
       "type": "dependency",
@@ -1171,9 +1254,8 @@
       }
     },
     {
-      "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_test_FlowchartGenerator_test_ts",
-      "id": "edge_auto_1771430971663_532",
+      "id": "edge_auto_1771724878533_664",
       "label": "ref",
       "to": "node_src_core_FlowchartGenerator_ts",
       "type": "dependency",
@@ -1184,9 +1266,8 @@
       }
     },
     {
-      "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_test_FlowchartGenerator_test_ts",
-      "id": "edge_auto_1771430971663_515",
+      "id": "edge_auto_1771724878533_54",
       "label": "ref",
       "to": "node_src_types_schema_ts",
       "type": "dependency",
@@ -1197,9 +1278,8 @@
       }
     },
     {
-      "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_test_GeminiParser_test_ts",
-      "id": "edge_auto_1771430971663_393",
+      "id": "edge_auto_1771724878533_261",
       "label": "ref",
       "to": "node_src_core_GeminiParser_ts",
       "type": "dependency",
@@ -1210,9 +1290,8 @@
       }
     },
     {
-      "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_test_visualHints_test_ts",
-      "id": "edge_auto_1771430971663_468",
+      "id": "edge_auto_1771724878533_485",
       "label": "ref",
       "to": "node_src_utils_visualHints_ts",
       "type": "dependency",
@@ -1223,9 +1302,8 @@
       }
     },
     {
-      "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_utils_exclusionRules_ts",
-      "id": "edge_auto_1771430971663_922",
+      "id": "edge_auto_1771724878533_831",
       "label": "ref",
       "to": "node_src_core_RuleEngine_ts",
       "type": "dependency",
@@ -1236,9 +1314,8 @@
       }
     },
     {
-      "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_webview_CanvasPanel_ts",
-      "id": "edge_auto_1771430971663_264",
+      "id": "edge_auto_1771724878533_160",
       "label": "ref",
       "to": "node_src_types_schema_ts",
       "type": "dependency",
@@ -1249,9 +1326,8 @@
       }
     },
     {
-      "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_webview_CanvasPanel_ts",
-      "id": "edge_auto_1771430971663_735",
+      "id": "edge_auto_1771724878533_24",
       "label": "ref",
       "to": "node_src_core_FileScanner_ts",
       "type": "dependency",
@@ -1262,9 +1338,8 @@
       }
     },
     {
-      "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_webview_CanvasPanel_ts",
-      "id": "edge_auto_1771430971663_798",
+      "id": "edge_auto_1771724878533_797",
       "label": "ref",
       "to": "node_src_core_GeminiParser_ts",
       "type": "dependency",
@@ -1275,9 +1350,8 @@
       }
     },
     {
-      "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_webview_CanvasPanel_ts",
-      "id": "edge_auto_1771430971663_957",
+      "id": "edge_auto_1771724878533_352",
       "label": "ref",
       "to": "node_src_core_FlowchartGenerator_ts",
       "type": "dependency",
@@ -1288,9 +1362,8 @@
       }
     },
     {
-      "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_webview_CanvasPanel_ts",
-      "id": "edge_auto_1771430971663_79",
+      "id": "edge_auto_1771724878533_120",
       "label": "ref",
       "to": "node_src_bootstrap_BootstrapEngine_ts",
       "type": "dependency",
@@ -1301,11 +1374,22 @@
       }
     },
     {
-      "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_webview_CanvasPanel_ts",
-      "id": "edge_auto_1771430971663_683",
+      "id": "edge_auto_1771724878533_25",
       "label": "ref",
       "to": "node_src_client_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "from": "node_src_webview_CanvasPanel_ts",
+      "id": "edge_auto_1771724878533_908",
+      "label": "ref",
+      "to": "node_src_utils_Logger_ts",
       "type": "dependency",
       "validation": {
         "confidence": 0.95,
@@ -1317,9 +1401,9 @@
   "gemini_md_path": "/home/dogsinatas/TypeScript_project/antigravity-extension-vis/GEMINI.md",
   "nodes": [
     {
-      "cluster_id": "cluster_1771430663574",
+      "cluster_id": "doc_shelf",
       "data": {
-        "cluster_id": "cluster_1771430663574",
+        "cluster_id": "doc_shelf",
         "color": "#fabd2f",
         "description": "DEBUG_GUIDE.md (Doc)",
         "file": "DEBUG_GUIDE.md",
@@ -1346,8 +1430,8 @@
       },
       "id": "node_DEBUG_GUIDE_md",
       "position": {
-        "x": -855.7994497844056,
-        "y": 214.92779769104501
+        "x": -1500,
+        "y": 100
       },
       "status": "proposed",
       "type": "documentation",
@@ -1357,9 +1441,9 @@
       }
     },
     {
-      "cluster_id": "cluster_1771430663574",
+      "cluster_id": "doc_shelf",
       "data": {
-        "cluster_id": "cluster_1771430663574",
+        "cluster_id": "doc_shelf",
         "color": "#fabd2f",
         "description": "EXTENSION_README.md (Doc)",
         "file": "EXTENSION_README.md",
@@ -1382,8 +1466,8 @@
       },
       "id": "node_EXTENSION_README_md",
       "position": {
-        "x": -655.7994497844056,
-        "y": 214.92779769104501
+        "x": -1300,
+        "y": 100
       },
       "status": "proposed",
       "type": "documentation",
@@ -1393,9 +1477,9 @@
       }
     },
     {
-      "cluster_id": "cluster_1771430663574",
+      "cluster_id": "doc_shelf",
       "data": {
-        "cluster_id": "cluster_1771430663574",
+        "cluster_id": "doc_shelf",
         "color": "#fabd2f",
         "description": "GEMINI.md (Doc)",
         "file": "GEMINI.md",
@@ -1475,8 +1559,8 @@
       },
       "id": "node_GEMINI_md",
       "position": {
-        "x": -455.7994497844057,
-        "y": 214.92779769104501
+        "x": -1100,
+        "y": 100
       },
       "status": "proposed",
       "type": "documentation",
@@ -1486,9 +1570,9 @@
       }
     },
     {
-      "cluster_id": "cluster_1771430663574",
+      "cluster_id": "doc_shelf",
       "data": {
-        "cluster_id": "cluster_1771430663574",
+        "cluster_id": "doc_shelf",
         "color": "#fabd2f",
         "description": "README.ko.md (Doc)",
         "file": "README.ko.md",
@@ -1547,8 +1631,8 @@
       },
       "id": "node_README_ko_md",
       "position": {
-        "x": -255.7994497844057,
-        "y": 214.92779769104501
+        "x": -900,
+        "y": 100
       },
       "status": "proposed",
       "type": "documentation",
@@ -1558,9 +1642,9 @@
       }
     },
     {
-      "cluster_id": "cluster_1771430663574",
+      "cluster_id": "doc_shelf",
       "data": {
-        "cluster_id": "cluster_1771430663574",
+        "cluster_id": "doc_shelf",
         "color": "#fabd2f",
         "description": "RELEASES_v0.2.7.md (Doc)",
         "file": "RELEASES_v0.2.7.md",
@@ -1584,8 +1668,8 @@
       },
       "id": "node_RELEASES_v0_2_7_md",
       "position": {
-        "x": -855.7994497844056,
-        "y": 364.92779769104493
+        "x": -1500,
+        "y": 250
       },
       "status": "proposed",
       "type": "documentation",
@@ -1595,9 +1679,9 @@
       }
     },
     {
-      "cluster_id": "cluster_1771430663574",
+      "cluster_id": "doc_shelf",
       "data": {
-        "cluster_id": "cluster_1771430663574",
+        "cluster_id": "doc_shelf",
         "color": "#fabd2f",
         "description": "RULES.md (Doc)",
         "file": "RULES.md",
@@ -1617,8 +1701,8 @@
       },
       "id": "node_RULES_md",
       "position": {
-        "x": -655.7994497844056,
-        "y": 364.92779769104493
+        "x": -1300,
+        "y": 250
       },
       "status": "proposed",
       "type": "documentation",
@@ -1628,9 +1712,9 @@
       }
     },
     {
-      "cluster_id": "cluster_1771430663574",
+      "cluster_id": "doc_shelf",
       "data": {
-        "cluster_id": "cluster_1771430663574",
+        "cluster_id": "doc_shelf",
         "color": "#fabd2f",
         "description": "architecture.md (Doc)",
         "file": "architecture.md",
@@ -1647,8 +1731,8 @@
       },
       "id": "node_architecture_md",
       "position": {
-        "x": -455.7994497844057,
-        "y": 364.92779769104493
+        "x": -1100,
+        "y": 250
       },
       "status": "proposed",
       "type": "documentation",
@@ -1658,9 +1742,9 @@
       }
     },
     {
-      "cluster_id": "cluster_1771430663574",
+      "cluster_id": "doc_shelf",
       "data": {
-        "cluster_id": "cluster_1771430663574",
+        "cluster_id": "doc_shelf",
         "color": "#fabd2f",
         "description": "v0.1.6_release_notes.md (Doc)",
         "file": "v0.1.6_release_notes.md",
@@ -1681,8 +1765,8 @@
       },
       "id": "node_v0_1_6_release_notes_md",
       "position": {
-        "x": -255.7994497844057,
-        "y": 364.92779769104493
+        "x": -900,
+        "y": 250
       },
       "status": "proposed",
       "type": "documentation",
@@ -1692,9 +1776,9 @@
       }
     },
     {
-      "cluster_id": "cluster_1771430663574",
+      "cluster_id": "doc_shelf",
       "data": {
-        "cluster_id": "cluster_1771430663574",
+        "cluster_id": "doc_shelf",
         "color": "#fabd2f",
         "description": "v0.1.7_release_notes.md (Doc)",
         "file": "v0.1.7_release_notes.md",
@@ -1717,8 +1801,8 @@
       },
       "id": "node_v0_1_7_release_notes_md",
       "position": {
-        "x": -833.7293504233207,
-        "y": 491.1599983791074
+        "x": -1500,
+        "y": 400
       },
       "status": "proposed",
       "type": "documentation",
@@ -1728,9 +1812,9 @@
       }
     },
     {
-      "cluster_id": "cluster_1771430663574",
+      "cluster_id": "doc_shelf",
       "data": {
-        "cluster_id": "cluster_1771430663574",
+        "cluster_id": "doc_shelf",
         "color": "#fabd2f",
         "description": "v0.1.8_release_notes.md (Doc)",
         "file": "v0.1.8_release_notes.md",
@@ -1751,8 +1835,8 @@
       },
       "id": "node_v0_1_8_release_notes_md",
       "position": {
-        "x": -655.7994497844056,
-        "y": 514.9277976910449
+        "x": -1300,
+        "y": 400
       },
       "status": "proposed",
       "type": "documentation",
@@ -1762,9 +1846,9 @@
       }
     },
     {
-      "cluster_id": "cluster_1771430663574",
+      "cluster_id": "doc_shelf",
       "data": {
-        "cluster_id": "cluster_1771430663574",
+        "cluster_id": "doc_shelf",
         "color": "#fabd2f",
         "description": "v0.2.0_release_notes.md (Doc)",
         "file": "v0.2.0_release_notes.md",
@@ -1787,8 +1871,8 @@
       },
       "id": "node_v0_2_0_release_notes_md",
       "position": {
-        "x": -455.7994497844057,
-        "y": 514.9277976910449
+        "x": -1100,
+        "y": 400
       },
       "status": "proposed",
       "type": "documentation",
@@ -1798,9 +1882,9 @@
       }
     },
     {
-      "cluster_id": "cluster_1771430663574",
+      "cluster_id": "doc_shelf",
       "data": {
-        "cluster_id": "cluster_1771430663574",
+        "cluster_id": "doc_shelf",
         "color": "#fabd2f",
         "description": "v0.2.10_release_notes.md (Doc)",
         "file": "v0.2.10_release_notes.md",
@@ -1821,8 +1905,8 @@
       },
       "id": "node_v0_2_10_release_notes_md",
       "position": {
-        "x": -255.7994497844057,
-        "y": 514.9277976910449
+        "x": -900,
+        "y": 400
       },
       "status": "proposed",
       "type": "documentation",
@@ -1832,9 +1916,9 @@
       }
     },
     {
-      "cluster_id": "cluster_1771430663574",
+      "cluster_id": "doc_shelf",
       "data": {
-        "cluster_id": "cluster_1771430663574",
+        "cluster_id": "doc_shelf",
         "color": "#fabd2f",
         "description": "v0.2.1_release_notes.md (Doc)",
         "file": "v0.2.1_release_notes.md",
@@ -1857,8 +1941,8 @@
       },
       "id": "node_v0_2_1_release_notes_md",
       "position": {
-        "x": -842.2178501775838,
-        "y": 586.8335999518209
+        "x": -1500,
+        "y": 550
       },
       "status": "proposed",
       "type": "documentation",
@@ -1868,9 +1952,9 @@
       }
     },
     {
-      "cluster_id": "cluster_1771430663574",
+      "cluster_id": "doc_shelf",
       "data": {
-        "cluster_id": "cluster_1771430663574",
+        "cluster_id": "doc_shelf",
         "color": "#fabd2f",
         "description": "v0.2.2_release_notes.md (Doc)",
         "file": "v0.2.2_release_notes.md",
@@ -1893,8 +1977,8 @@
       },
       "id": "node_v0_2_2_release_notes_md",
       "position": {
-        "x": -655.7994497844056,
-        "y": 706.8335999518209
+        "x": -1300,
+        "y": 550
       },
       "status": "proposed",
       "type": "documentation",
@@ -1904,9 +1988,9 @@
       }
     },
     {
-      "cluster_id": "cluster_1771430663574",
+      "cluster_id": "doc_shelf",
       "data": {
-        "cluster_id": "cluster_1771430663574",
+        "cluster_id": "doc_shelf",
         "color": "#fabd2f",
         "description": "v0.2.3_release_notes.md (Doc)",
         "file": "v0.2.3_release_notes.md",
@@ -1927,8 +2011,8 @@
       },
       "id": "node_v0_2_3_release_notes_md",
       "position": {
-        "x": -455.7994497844057,
-        "y": 706.8335999518209
+        "x": -1100,
+        "y": 550
       },
       "status": "proposed",
       "type": "documentation",
@@ -1938,9 +2022,9 @@
       }
     },
     {
-      "cluster_id": "cluster_1771430663574",
+      "cluster_id": "doc_shelf",
       "data": {
-        "cluster_id": "cluster_1771430663574",
+        "cluster_id": "doc_shelf",
         "color": "#fabd2f",
         "description": "v0.2.4_release_notes.md (Doc)",
         "file": "v0.2.4_release_notes.md",
@@ -1961,8 +2045,8 @@
       },
       "id": "node_v0_2_4_release_notes_md",
       "position": {
-        "x": -255.7994497844057,
-        "y": 706.8335999518209
+        "x": -900,
+        "y": 550
       },
       "status": "proposed",
       "type": "documentation",
@@ -1972,9 +2056,9 @@
       }
     },
     {
-      "cluster_id": "cluster_1771430663574",
+      "cluster_id": "doc_shelf",
       "data": {
-        "cluster_id": "cluster_1771430663574",
+        "cluster_id": "doc_shelf",
         "color": "#fabd2f",
         "description": "v0.2.5_release_notes.md (Doc)",
         "file": "v0.2.5_release_notes.md",
@@ -1999,8 +2083,8 @@
       },
       "id": "node_v0_2_5_release_notes_md",
       "position": {
-        "x": -865.9856494895209,
-        "y": 770.7875989688749
+        "x": -1500,
+        "y": 700
       },
       "status": "proposed",
       "type": "documentation",
@@ -2010,9 +2094,9 @@
       }
     },
     {
-      "cluster_id": "cluster_1771430663574",
+      "cluster_id": "doc_shelf",
       "data": {
-        "cluster_id": "cluster_1771430663574",
+        "cluster_id": "doc_shelf",
         "color": "#fabd2f",
         "description": "v0.2.6_release_notes.md (Doc)",
         "file": "v0.2.6_release_notes.md",
@@ -2033,8 +2117,8 @@
       },
       "id": "node_v0_2_6_release_notes_md",
       "position": {
-        "x": -655.7994497844056,
-        "y": 814.9277976910449
+        "x": -1300,
+        "y": 700
       },
       "status": "proposed",
       "type": "documentation",
@@ -2044,9 +2128,9 @@
       }
     },
     {
-      "cluster_id": "cluster_1771430663574",
+      "cluster_id": "doc_shelf",
       "data": {
-        "cluster_id": "cluster_1771430663574",
+        "cluster_id": "doc_shelf",
         "color": "#fabd2f",
         "description": "v0.2.9_release_notes.md (Doc)",
         "file": "v0.2.9_release_notes.md",
@@ -2069,8 +2153,8 @@
       },
       "id": "node_v0_2_9_release_notes_md",
       "position": {
-        "x": -455.7994497844057,
-        "y": 814.9277976910449
+        "x": -1100,
+        "y": 700
       },
       "status": "proposed",
       "type": "documentation",
@@ -2161,9 +2245,42 @@
       }
     },
     {
-      "cluster_id": "cluster_1771430663574",
+      "cluster_id": "cluster_10",
       "data": {
-        "cluster_id": "cluster_1771430663574",
+        "cluster_id": "cluster_10",
+        "color": "#b8bb26",
+        "description": "webpack.config.js (Auto-detected)",
+        "file": "webpack.config.js",
+        "label": "webpack.config.js",
+        "layer": 1,
+        "priority": 50,
+        "summary": {
+          "classes": [],
+          "functions": [
+            "require",
+            "folder",
+            "resolve",
+            "LimitChunkCountPlugin"
+          ],
+          "references": []
+        }
+      },
+      "id": "node_webpack_config_js",
+      "position": {
+        "x": 1050,
+        "y": 400
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
         "color": "#fabd2f",
         "description": "2026-02-17_keybinding_check.md (Doc)",
         "file": "prompts/2026-02-17_keybinding_check.md",
@@ -2188,8 +2305,8 @@
       },
       "id": "node_prompts_2026_02_17_keybinding_check_md",
       "position": {
-        "x": -855.7994497844056,
-        "y": 214.92779769104501
+        "x": -1500,
+        "y": 100
       },
       "status": "proposed",
       "type": "documentation",
@@ -2199,9 +2316,9 @@
       }
     },
     {
-      "cluster_id": "cluster_1771430663574",
+      "cluster_id": "doc_shelf",
       "data": {
-        "cluster_id": "cluster_1771430663574",
+        "cluster_id": "doc_shelf",
         "color": "#fabd2f",
         "description": "2026-02-17_origin_edge_verification.md (Doc)",
         "file": "prompts/2026-02-17_origin_edge_verification.md",
@@ -2227,8 +2344,8 @@
       },
       "id": "node_prompts_2026_02_17_origin_edge_verification_md",
       "position": {
-        "x": -655.7994497844056,
-        "y": 214.92779769104501
+        "x": -1300,
+        "y": 100
       },
       "status": "proposed",
       "type": "documentation",
@@ -2238,9 +2355,9 @@
       }
     },
     {
-      "cluster_id": "cluster_1771430663574",
+      "cluster_id": "doc_shelf",
       "data": {
-        "cluster_id": "cluster_1771430663574",
+        "cluster_id": "doc_shelf",
         "color": "#fabd2f",
         "description": "2026-02-17_test.md (Doc)",
         "file": "prompts/2026-02-17_test.md",
@@ -2257,8 +2374,8 @@
       },
       "id": "node_prompts_2026_02_17_test_md",
       "position": {
-        "x": -455.7994497844057,
-        "y": 214.92779769104501
+        "x": -1100,
+        "y": 100
       },
       "status": "proposed",
       "type": "documentation",
@@ -2268,9 +2385,43 @@
       }
     },
     {
-      "cluster_id": "cluster_1771430663574",
+      "cluster_id": "doc_shelf",
       "data": {
-        "cluster_id": "cluster_1771430663574",
+        "cluster_id": "doc_shelf",
+        "color": "#fabd2f",
+        "description": "2026-02-18_auto_push_after_drag.md (Doc)",
+        "file": "prompts/2026-02-18_auto_push_after_drag.md",
+        "label": "2026-02-18_auto_push_after_drag.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "Auto Push (after drag)",
+            "🎯 Goal",
+            "🧠 Key Decisions",
+            "🔗 Context & References",
+            "📝 Original Prompt"
+          ],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_prompts_2026_02_18_auto_push_after_drag_md",
+      "position": {
+        "x": -900,
+        "y": 100
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
         "color": "#fabd2f",
         "description": "2026-02-18_deep_reset_triggered.md (Doc)",
         "file": "prompts/2026-02-18_deep_reset_triggered.md",
@@ -2291,8 +2442,8 @@
       },
       "id": "node_prompts_2026_02_18_deep_reset_triggered_md",
       "position": {
-        "x": -255.7994497844057,
-        "y": 214.92779769104501
+        "x": -1500,
+        "y": 250
       },
       "status": "proposed",
       "type": "documentation",
@@ -2302,9 +2453,43 @@
       }
     },
     {
-      "cluster_id": "cluster_1771430663574",
+      "cluster_id": "doc_shelf",
       "data": {
-        "cluster_id": "cluster_1771430663574",
+        "cluster_id": "doc_shelf",
+        "color": "#fabd2f",
+        "description": "2026-02-18_group_created_doc.md (Doc)",
+        "file": "prompts/2026-02-18_group_created_doc.md",
+        "label": "2026-02-18_group_created_doc.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "Group Created: Doc",
+            "🎯 Goal",
+            "🧠 Key Decisions",
+            "🔗 Context & References",
+            "📝 Original Prompt"
+          ],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_prompts_2026_02_18_group_created_doc_md",
+      "position": {
+        "x": -1300,
+        "y": 250
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
         "color": "#fabd2f",
         "description": "2026-02-18_manual_snapshot.md (Doc)",
         "file": "prompts/2026-02-18_manual_snapshot.md",
@@ -2325,8 +2510,8 @@
       },
       "id": "node_prompts_2026_02_18_manual_snapshot_md",
       "position": {
-        "x": -855.7994497844056,
-        "y": 364.92779769104493
+        "x": -1100,
+        "y": 250
       },
       "status": "proposed",
       "type": "documentation",
@@ -2336,9 +2521,9 @@
       }
     },
     {
-      "cluster_id": "cluster_1771430663574",
+      "cluster_id": "doc_shelf",
       "data": {
-        "cluster_id": "cluster_1771430663574",
+        "cluster_id": "doc_shelf",
         "color": "#fabd2f",
         "description": "2026-02-18_selection_ungrouped.md (Doc)",
         "file": "prompts/2026-02-18_selection_ungrouped.md",
@@ -2359,8 +2544,8 @@
       },
       "id": "node_prompts_2026_02_18_selection_ungrouped_md",
       "position": {
-        "x": -655.7994497844056,
-        "y": 364.92779769104493
+        "x": -900,
+        "y": 250
       },
       "status": "proposed",
       "type": "documentation",
@@ -2370,9 +2555,9 @@
       }
     },
     {
-      "cluster_id": "cluster_1771430663574",
+      "cluster_id": "doc_shelf",
       "data": {
-        "cluster_id": "cluster_1771430663574",
+        "cluster_id": "doc_shelf",
         "color": "#fabd2f",
         "description": "2026-02-18_snapshot__121710.md (Doc)",
         "file": "prompts/2026-02-18_snapshot__121710.md",
@@ -2393,8 +2578,8 @@
       },
       "id": "node_prompts_2026_02_18_snapshot__121710_md",
       "position": {
-        "x": -455.7994497844057,
-        "y": 364.92779769104493
+        "x": -1500,
+        "y": 400
       },
       "status": "proposed",
       "type": "documentation",
@@ -2480,9 +2665,13 @@
             "scanFile",
             "Set",
             "name",
+            "imports",
             "has",
             "match",
             "find",
+            "filename",
+            "path",
+            "Support",
             "printStructurePreview"
           ],
           "references": [
@@ -2497,8 +2686,8 @@
       },
       "id": "node_src_bootstrap_BootstrapEngine_ts",
       "position": {
-        "x": 1953.4000731838507,
-        "y": 400
+        "x": 1748.9611167885473,
+        "y": 607.7111977721149
       },
       "status": "proposed",
       "type": "source",
@@ -2718,10 +2907,10 @@
             "s",
             "exec",
             "push",
+            "startsWith",
             "split",
             "forEach",
             "trim",
-            "startsWith",
             "pub",
             "blocks",
             "impl",
@@ -2739,8 +2928,8 @@
       },
       "id": "node_src_core_FileScanner_ts",
       "position": {
-        "x": 350,
-        "y": 1250
+        "x": -208.67986798679902,
+        "y": 1161.9471947194727
       },
       "status": "proposed",
       "type": "source",
@@ -2793,6 +2982,11 @@
             "map",
             "forEach",
             "has",
+            "Blocks",
+            "9_",
+            "replace",
+            "Calls",
+            "call",
             "myMethod"
           ],
           "references": []
@@ -2800,8 +2994,8 @@
       },
       "id": "node_src_core_FlowScanner_ts",
       "position": {
-        "x": 700,
-        "y": 1250
+        "x": 141.32013201320143,
+        "y": 1161.9471947194727
       },
       "status": "proposed",
       "type": "source",
@@ -2831,30 +3025,34 @@
             "generateInitialFlowchart",
             "forEach",
             "dirname",
-            "get",
-            "push",
+            "add",
+            "replace",
+            "from",
+            "sort",
+            "split",
+            "basename",
             "set",
+            "push",
             "ceil",
             "sqrt",
+            "max",
+            "filter",
+            "get",
+            "has",
             "floor",
             "getVisualHints",
-            "some",
             "createNode",
-            "max",
-            "from",
-            "values",
-            "filter",
-            "find",
             "map",
+            "indexOf",
+            "find",
             "createEdge",
             "log",
-            "replace",
-            "basename",
             "toLowerCase",
             "includes",
             "random",
             "generateMermaidDiagram",
-            "getNodeShape"
+            "getNodeShape",
+            "some"
           ],
           "references": [
             "schema",
@@ -2864,8 +3062,8 @@
       },
       "id": "node_src_core_FlowchartGenerator_ts",
       "position": {
-        "x": 350,
-        "y": 1600
+        "x": -208.67986798679902,
+        "y": 1511.9471947194727
       },
       "status": "proposed",
       "type": "source",
@@ -2933,8 +3131,8 @@
       },
       "id": "node_src_core_GeminiParser_ts",
       "position": {
-        "x": 1050,
-        "y": 1250
+        "x": 491.32013201320126,
+        "y": 1161.9471947194727
       },
       "status": "proposed",
       "type": "source",
@@ -2997,8 +3195,8 @@
       },
       "id": "node_src_core_PromptLogger_ts",
       "position": {
-        "x": 706.0045687854981,
-        "y": 1600
+        "x": 139.1441914809314,
+        "y": 1511.9471947194727
       },
       "status": "proposed",
       "type": "source",
@@ -3061,8 +3259,8 @@
       },
       "id": "node_src_core_RuleEngine_ts",
       "position": {
-        "x": 1044.5380422220085,
-        "y": 1600
+        "x": 478.7397868186491,
+        "y": 1631.9471947194727
       },
       "status": "proposed",
       "type": "source",
@@ -3131,8 +3329,8 @@
       },
       "id": "node_src_server_server_ts",
       "position": {
-        "x": 1327.4843436619444,
-        "y": 1522.3505996478996
+        "x": 1150,
+        "y": 1600
       },
       "status": "proposed",
       "type": "source",
@@ -3196,8 +3394,8 @@
       },
       "id": "node_src_server_standalone_ts",
       "position": {
-        "x": 1677.4843436619444,
-        "y": 1522.3505996478996
+        "x": 1501.1828483951997,
+        "y": 1597.6343032096008
       },
       "status": "proposed",
       "type": "source",
@@ -3253,8 +3451,8 @@
       },
       "id": "node_src_test_FileScanner_test_ts",
       "position": {
-        "x": 1950,
-        "y": 1250
+        "x": 2025.9075907590761,
+        "y": 1283.3993399339934
       },
       "status": "proposed",
       "type": "source",
@@ -3296,8 +3494,8 @@
       },
       "id": "node_src_test_FlowchartGenerator_test_ts",
       "position": {
-        "x": 1950,
-        "y": 1600
+        "x": 2025.9075907590761,
+        "y": 1633.3993399339934
       },
       "status": "proposed",
       "type": "source",
@@ -3337,8 +3535,8 @@
       },
       "id": "node_src_test_GeminiParser_test_ts",
       "position": {
-        "x": 2300,
-        "y": 1250
+        "x": 2375.907590759077,
+        "y": 1283.3993399339934
       },
       "status": "proposed",
       "type": "source",
@@ -3374,8 +3572,8 @@
       },
       "id": "node_src_test_visualHints_test_ts",
       "position": {
-        "x": 2300,
-        "y": 1600
+        "x": 2375.907590759077,
+        "y": 1633.3993399339934
       },
       "status": "proposed",
       "type": "source",
@@ -3407,7 +3605,9 @@
             "ProjectState",
             "BootstrapResult"
           ],
-          "functions": [],
+          "functions": [
+            "ID"
+          ],
           "references": []
         }
       },
@@ -3415,6 +3615,53 @@
       "position": {
         "x": 2750,
         "y": 1600
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "cluster_18",
+      "data": {
+        "cluster_id": "cluster_18",
+        "color": "#b8bb26",
+        "description": "Logger.ts (Auto-detected)",
+        "file": "src/utils/Logger.ts",
+        "label": "Logger.ts",
+        "layer": 1,
+        "priority": 50,
+        "summary": {
+          "classes": [
+            "Logger"
+          ],
+          "functions": [
+            "static",
+            "initialize",
+            "createOutputChannel",
+            "push",
+            "info",
+            "_log",
+            "warn",
+            "error",
+            "show",
+            "Date",
+            "toLocaleTimeString",
+            "map",
+            "stringify",
+            "join",
+            "appendLine",
+            "log"
+          ],
+          "references": []
+        }
+      },
+      "id": "node_src_utils_Logger_ts",
+      "position": {
+        "x": 720.94318322755,
+        "y": 2321.953503305339
       },
       "status": "proposed",
       "type": "source",
@@ -3450,8 +3697,8 @@
       },
       "id": "node_src_utils_exclusionRules_ts",
       "position": {
-        "x": 660.9452056367884,
-        "y": 2131.1744633472854
+        "x": 1070.94318322755,
+        "y": 2321.953503305339
       },
       "status": "proposed",
       "type": "source",
@@ -3490,8 +3737,8 @@
       },
       "id": "node_src_utils_visualHints_ts",
       "position": {
-        "x": 1010.9452056367886,
-        "y": 2131.1744633472854
+        "x": 1420.94318322755,
+        "y": 2321.953503305339
       },
       "status": "proposed",
       "type": "source",
@@ -3538,6 +3785,7 @@
             "onDidDispose",
             "dispose",
             "onDidReceiveMessage",
+            "info",
             "showInformationMessage",
             "handleNodeSelected",
             "openFile",
@@ -3551,7 +3799,6 @@
             "postMessage",
             "handleCreateManualEdge",
             "handleDeleteEdge",
-            "isArray",
             "handleDeleteNodes",
             "handleUpdateEdge",
             "handleApproveNode",
@@ -3587,6 +3834,7 @@
             "openTextDocument",
             "showTextDocument",
             "pop",
+            "isArray",
             "stringify",
             "pruneDefaults",
             "map",
@@ -3602,6 +3850,7 @@
             "has",
             "filter",
             "clusters",
+            "show",
             "values",
             "command",
             "Reset",
@@ -3664,14 +3913,15 @@
             "GeminiParser",
             "FlowchartGenerator",
             "BootstrapEngine",
-            "client"
+            "client",
+            "Logger"
           ]
         }
       },
       "id": "node_src_webview_CanvasPanel_ts",
       "position": {
-        "x": 1648.68570715334,
-        "y": 2119.4406820025015
+        "x": 1520.94318322755,
+        "y": 2441.953503305339
       },
       "status": "proposed",
       "type": "source",

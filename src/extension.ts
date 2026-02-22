@@ -237,8 +237,15 @@ export async function activate(context: vscode.ExtensionContext) {
                     return;
                 }
 
-                // projectRoot 결정
-                const projectRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
+                // projectRoot 결정: 현재 열린 에디터의 워크스페이스 우선, 없으면 첫 번째 워크스페이스
+                let projectRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
+                if (vscode.window.activeTextEditor) {
+                    const workspaceFolder = vscode.workspace.getWorkspaceFolder(vscode.window.activeTextEditor.document.uri);
+                    if (workspaceFolder) {
+                        projectRoot = workspaceFolder.uri.fsPath;
+                    }
+                }
+
                 if (!projectRoot) {
                     vscode.window.showErrorMessage('No workspace open.');
                     return;

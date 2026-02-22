@@ -354,6 +354,34 @@
             background: var(--border);
             margin: 0 5px;
         }
+
+        /* REC 버튼 */
+        #btn-record {
+            background: #3c3836;
+            color: #a89984;
+            border: 1px solid #504945;
+            transition: all 0.2s;
+        }
+
+        #btn-record.recording {
+            background: #cc241d;
+            color: #fff;
+            border-color: #cc241d;
+            animation: rec-pulse 1.2s ease-in-out infinite;
+            font-weight: bold;
+        }
+
+        @keyframes rec-pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.65;
+            }
+        }
     </style>
 </head>
 
@@ -390,6 +418,8 @@
         <button class="btn" id="btn-snapshot" title="Take Manual Snapshot">📸</button>
         <button class="btn" id="btn-rules" title="View Architecture Rules">⚖️ Rules</button>
         <button class="btn" id="btn-save-prompt" title="Save Prompt / Decision Log">💾</button>
+        <div class="toolbar-divider"></div>
+        <button class="btn" id="btn-record" title="Context 레코딩 토글 (CTRL+ALT+M)">⏺ REC</button>
     </div>
 
     <div id="main-container">
@@ -573,6 +603,13 @@
                     vscode.postMessage({ command: 'openRules' });
                 } else {
                     alert('Rules are defined in RULES.md in the project root.');
+                }
+            });
+
+            // REC 버튼: CTRL+ALT+M 토글과 연동
+            document.getElementById('btn-record').addEventListener('click', () => {
+                if (typeof vscode !== 'undefined') {
+                    vscode.postMessage({ command: 'triggerLogPrompt' });
                 }
             });
 

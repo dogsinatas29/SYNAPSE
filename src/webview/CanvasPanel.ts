@@ -193,6 +193,10 @@ export class CanvasPanel {
                     case 'openRules':
                         await vscode.commands.executeCommand('synapse.openRules');
                         return;
+                    case 'triggerLogPrompt':
+                        // REC/STOP 버튼 클릭 → synapse.logPrompt 토글 트리거
+                        await vscode.commands.executeCommand('synapse.logPrompt');
+                        return;
                     case 'contextData':
                         if (this._contextRequestCallback) {
                             this._contextRequestCallback(message.data);
@@ -1180,6 +1184,74 @@ export class CanvasPanel {
         }
     }
 
+    /**
+     * .synapse_contexts/ 디렉터리를 스캔하여 '기억의 성단' 클러스터를 빌드.
+     * - GEMINI.md 정의: "./.synapse_contexts/" | "YYYY-MM-DD_HHMM.md"
+     * - 휘발성 (project_state.json에 저장하지 않음)
+     * - Read-Only: 삭제·수정 불가
+     */
+    private async buildContextVaultCluster(projectRoot: string): Promise<{ cluster: any; nodes: any[] }> {
+        const contextDir = path.join(projectRoot, '.synapse_contexts');
+        const CLUSTER_ID = 'ctx_vault_cluster';
+        const emptyResult = { cluster: null as any, nodes: [] };
+
+        try {
+            if (!fs.existsSync(contextDir)) return emptyResult;
+
+            const files = fs.readdirSync(contextDir)
+                .filter(f => f.endsWith('.md'))
+                .sort()
+                .reverse(); // 최신 파일 위로 (YYYY-MM-DD 정렬)
+
+            if (files.length === 0) return emptyResult;
+
+            // 클러스터 우측 상단에 배치 (Document Shelf와 분리된 공간)
+            const VAULT_X = 1400;
+            const VAULT_Y = 80;
+            const NODE_SPACING = 55;
+
+            const nodes = files.map((fileName, i) => ({
+                id: `ctx_vault_node_${fileName}`,
+                type: 'documentation',
+                status: 'read_only',
+                position: { x: VAULT_X, y: VAULT_Y + i * NODE_SPACING },
+                cluster_id: CLUSTER_ID,
+                data: {
+                    label: fileName,
+                    file: `.synapse_contexts/${fileName}`,
+                    description: '기억의 성단 — 맥락 기록 (read-only)',
+                    color: '#d79921',
+                    readOnly: true
+                }
+            }));
+
+            const cluster = {
+                id: CLUSTER_ID,
+                label: '🧠 Intelligent Context Vault',
+                collapsed: false,
+                readOnly: true,
+                style: {
+                    borderColor: '#d79921',
+                    backgroundColor: 'rgba(215, 153, 33, 0.07)'
+                }
+            };
+
+            return { cluster, nodes };
+        } catch (e) {
+            console.warn('[SYNAPSE] Failed to build Context Vault cluster:', e);
+            return emptyResult;
+        }
+    }
+
+    /** 레코딩 상태를 캔버스 웹뷰로 전달 (REC 버튼 동기화) */
+    public postRecordingState(isRecording: boolean) {
+        if (!this._panel) return;
+        this._panel.webview.postMessage({
+            command: 'recordingState',
+            isRecording
+        });
+    }
+
     public async sendProjectState() {
         if (!this._panel) return;
         const workspaceFolder = this._workspaceFolder;
@@ -1338,9 +1410,24 @@ export class CanvasPanel {
                 ]
             };
 
+            // 5. Context Vault 클러스터 주입 (read-only, volatile — 저장하지 않음)
+            const contextVaultCluster = await this.buildContextVaultCluster(workspaceFolder.uri.fsPath);
+            if (contextVaultCluster.nodes.length > 0) {
+                // 기존 context vault 노드/클러스터 제거 후 새로 주입
+                stateForWebview.nodes = (stateForWebview.nodes || []).filter(
+                    (n: any) => !n.id.startsWith('ctx_vault_node_')
+                );
+                stateForWebview.clusters = (stateForWebview.clusters || []).filter(
+                    (c: any) => c.id !== 'ctx_vault_cluster'
+                );
+
+                stateForWebview.nodes.push(...contextVaultCluster.nodes);
+                stateForWebview.clusters = [...(stateForWebview.clusters || []), contextVaultCluster.cluster];
+            }
+
             console.log(`[SYNAPSE] Discovered ${discoveredEdges.length} auto edges (volatile, not persisted)`);
 
-            // 5. 웹뷰로 전송
+            // 6. 웹뷰로 전송
             console.log('[SYNAPSE] Sending projectState to webview:', JSON.stringify(stateForWebview).substring(0, 200) + '...');
             this._panel.webview.postMessage({
                 command: 'projectState',

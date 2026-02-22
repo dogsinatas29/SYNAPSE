@@ -2580,11 +2580,23 @@ class CanvasEngine {
     }
 
     deleteSelectedNodes() {
-        const nodesToDelete = Array.from(this.selectedNodes);
+        const nodesToDelete = Array.from(this.selectedNodes)
+            .filter(n => {
+                // Context Vault 노드는 삭제 불가 (read-only)
+                if (n.id && n.id.startsWith('ctx_vault_node_')) {
+                    console.warn('[SYNAPSE] Cannot delete read-only Context Vault node:', n.id);
+                    return false;
+                }
+                if (n.data && n.data.readOnly) {
+                    console.warn('[SYNAPSE] Cannot delete read-only node:', n.id);
+                    return false;
+                }
+                return true;
+            });
         console.log(`[SYNAPSE-FRONT] deleteSelectedNodes called. IDs:`, nodesToDelete.map(n => n.id));
 
         if (nodesToDelete.length === 0) {
-            console.warn('[SYNAPSE] No nodes selected for deletion.');
+            console.warn('[SYNAPSE] No (deletable) nodes selected for deletion.');
             return;
         }
 
@@ -4046,6 +4058,22 @@ function initCanvas() {
                 engine.baselineNodes = null;
                 engine.render();
                 break;
+            case 'recordingState': {
+                // REC 버튼 시각적 상태 동기화
+                const recBtn = document.getElementById('btn-record');
+                if (recBtn) {
+                    if (message.isRecording) {
+                        recBtn.classList.add('recording');
+                        recBtn.textContent = '⏹ STOP';
+                        recBtn.title = '레코딩 중... (클릭하여 저장)';
+                    } else {
+                        recBtn.classList.remove('recording');
+                        recBtn.textContent = '⏺ REC';
+                        recBtn.title = 'Context 레코딩 토글 (CTRL+ALT+M)';
+                    }
+                }
+                break;
+            }
             case 'edgeValidationResult':
                 engine.updateEdgeValidation(message.edgeId, message.result);
                 break;

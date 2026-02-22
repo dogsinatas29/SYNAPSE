@@ -2,7 +2,7 @@
     "name": "synapse-visual-architecture",
     "displayName": "SYNAPSE - Visual Architecture Engine",
     "description": "Visual architecture control engine for code visualization and design",
-    "version": "0.2.11",
+    "version": "0.2.12",
     "publisher": "synapse-team",
     "repository": {
         "type": "git",
@@ -29,7 +29,7 @@
             },
             {
                 "command": "synapse.bootstrap",
-                "title": "SYNAPSE: Bootstrap from GEMINI.md"
+                "title": "SYNAPSE: Bootstrap from MD…"
             },
             {
                 "command": "synapse.fitView",
@@ -51,6 +51,11 @@
                 "command": "synapse.logPrompt",
                 "key": "ctrl+alt+m",
                 "mac": "cmd+alt+m"
+            },
+            {
+                "command": "synapse.bootstrap",
+                "key": "ctrl+alt+p",
+                "mac": "cmd+alt+p"
             }
         ],
         "viewsContainers": {

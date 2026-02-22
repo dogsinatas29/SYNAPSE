@@ -971,8 +971,9 @@
       }
     },
     {
+      "_validationReason": "Appropriate architectural relationship.",
       "from": "node_prompts_2026_02_17_origin_edge_verification_md",
-      "id": "edge_auto_1771724878533_693",
+      "id": "edge_auto_1771728606970_816",
       "label": "ref",
       "to": "node_src_core_PromptLogger_ts",
       "type": "dependency",
@@ -983,8 +984,9 @@
       }
     },
     {
+      "_validationReason": "Appropriate architectural relationship.",
       "from": "node_prompts_2026_02_17_origin_edge_verification_md",
-      "id": "edge_auto_1771724878533_635",
+      "id": "edge_auto_1771728606970_724",
       "label": "ref",
       "to": "node_src_bootstrap_BootstrapEngine_ts",
       "type": "dependency",
@@ -995,8 +997,9 @@
       }
     },
     {
+      "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_bootstrap_BootstrapEngine_ts",
-      "id": "edge_auto_1771724878533_458",
+      "id": "edge_auto_1771728606970_131",
       "label": "ref",
       "to": "node_src_core_GeminiParser_ts",
       "type": "dependency",
@@ -1007,8 +1010,9 @@
       }
     },
     {
+      "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_bootstrap_BootstrapEngine_ts",
-      "id": "edge_auto_1771724878533_841",
+      "id": "edge_auto_1771728606970_908",
       "label": "ref",
       "to": "node_src_core_FlowchartGenerator_ts",
       "type": "dependency",
@@ -1019,8 +1023,9 @@
       }
     },
     {
+      "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_bootstrap_BootstrapEngine_ts",
-      "id": "edge_auto_1771724878533_803",
+      "id": "edge_auto_1771728606970_818",
       "label": "ref",
       "to": "node_src_core_FileScanner_ts",
       "type": "dependency",
@@ -1031,8 +1036,9 @@
       }
     },
     {
+      "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_bootstrap_BootstrapEngine_ts",
-      "id": "edge_auto_1771724878533_789",
+      "id": "edge_auto_1771728606970_846",
       "label": "ref",
       "to": "node_src_types_schema_ts",
       "type": "dependency",
@@ -1043,8 +1049,9 @@
       }
     },
     {
+      "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_bootstrap_BootstrapEngine_ts",
-      "id": "edge_auto_1771724878533_627",
+      "id": "edge_auto_1771728606970_639",
       "label": "ref",
       "to": "node_src_utils_exclusionRules_ts",
       "type": "dependency",
@@ -1055,8 +1062,9 @@
       }
     },
     {
+      "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_bootstrap_BootstrapEngine_ts",
-      "id": "edge_auto_1771724878533_174",
+      "id": "edge_auto_1771728606970_830",
       "label": "ref",
       "to": "node_src_core_RuleEngine_ts",
       "type": "dependency",
@@ -1067,8 +1075,9 @@
       }
     },
     {
+      "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_cli_ts",
-      "id": "edge_auto_1771724878533_937",
+      "id": "edge_auto_1771728606970_468",
       "label": "ref",
       "to": "node_src_bootstrap_BootstrapEngine_ts",
       "type": "dependency",
@@ -1079,8 +1088,9 @@
       }
     },
     {
+      "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_extension_ts",
-      "id": "edge_auto_1771724878533_986",
+      "id": "edge_auto_1771728606970_562",
       "label": "ref",
       "to": "node_src_webview_CanvasPanel_ts",
       "type": "dependency",
@@ -1091,8 +1101,9 @@
       }
     },
     {
+      "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_extension_ts",
-      "id": "edge_auto_1771724878533_507",
+      "id": "edge_auto_1771728606970_985",
       "label": "ref",
       "to": "node_src_bootstrap_BootstrapEngine_ts",
       "type": "dependency",
@@ -1103,8 +1114,9 @@
       }
     },
     {
+      "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_extension_ts",
-      "id": "edge_auto_1771724878533_184",
+      "id": "edge_auto_1771728606970_601",
       "label": "ref",
       "to": "node_src_client_ts",
       "type": "dependency",
@@ -1115,8 +1127,9 @@
       }
     },
     {
+      "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_extension_ts",
-      "id": "edge_auto_1771724878533_56",
+      "id": "edge_auto_1771728606970_681",
       "label": "ref",
       "to": "node_src_core_PromptLogger_ts",
       "type": "dependency",
@@ -1127,8 +1140,9 @@
       }
     },
     {
+      "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_extension_ts",
-      "id": "edge_auto_1771724878533_180",
+      "id": "edge_auto_1771728606970_640",
       "label": "ref",
       "to": "node_src_utils_Logger_ts",
       "type": "dependency",
@@ -1139,8 +1153,9 @@
       }
     },
     {
+      "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_core_FlowchartGenerator_ts",
-      "id": "edge_auto_1771724878533_721",
+      "id": "edge_auto_1771728606970_860",
       "label": "ref",
       "to": "node_src_types_schema_ts",
       "type": "dependency",
@@ -1151,15 +1166,22 @@
       }
     },
     {
+      "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_core_FlowchartGenerator_ts",
-      "id": "edge_auto_1771724878533_174",
+      "id": "edge_auto_1771728606970_758",
       "label": "ref",
       "to": "node_src_utils_visualHints_ts",
-      "type": "dependency"
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
     },
     {
+      "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_core_GeminiParser_ts",
-      "id": "edge_auto_1771724878533_53",
+      "id": "edge_auto_1771728606970_407",
       "label": "ref",
       "to": "node_src_types_schema_ts",
       "type": "dependency",
@@ -1170,8 +1192,9 @@
       }
     },
     {
+      "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_core_GeminiParser_ts",
-      "id": "edge_auto_1771724878533_439",
+      "id": "edge_auto_1771728606970_582",
       "label": "ref",
       "to": "node_src_utils_exclusionRules_ts",
       "type": "dependency",
@@ -1182,8 +1205,9 @@
       }
     },
     {
+      "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_core_GeminiParser_ts",
-      "id": "edge_auto_1771724878533_780",
+      "id": "edge_auto_1771728606970_386",
       "label": "ref",
       "to": "node_src_core_RuleEngine_ts",
       "type": "dependency",
@@ -1194,8 +1218,9 @@
       }
     },
     {
+      "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_server_server_ts",
-      "id": "edge_auto_1771724878533_427",
+      "id": "edge_auto_1771728606970_305",
       "label": "ref",
       "to": "node_src_core_GeminiParser_ts",
       "type": "dependency",
@@ -1206,8 +1231,9 @@
       }
     },
     {
+      "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_server_server_ts",
-      "id": "edge_auto_1771724878533_196",
+      "id": "edge_auto_1771728606970_821",
       "label": "ref",
       "to": "node_src_core_FlowScanner_ts",
       "type": "dependency",
@@ -1218,8 +1244,9 @@
       }
     },
     {
+      "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_server_standalone_ts",
-      "id": "edge_auto_1771724878533_636",
+      "id": "edge_auto_1771728606970_726",
       "label": "ref",
       "to": "node_src_core_GeminiParser_ts",
       "type": "dependency",
@@ -1230,8 +1257,9 @@
       }
     },
     {
+      "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_server_standalone_ts",
-      "id": "edge_auto_1771724878533_643",
+      "id": "edge_auto_1771728606970_112",
       "label": "ref",
       "to": "node_src_core_FlowScanner_ts",
       "type": "dependency",
@@ -1242,8 +1270,9 @@
       }
     },
     {
+      "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_test_FileScanner_test_ts",
-      "id": "edge_auto_1771724878533_907",
+      "id": "edge_auto_1771728606970_788",
       "label": "ref",
       "to": "node_src_core_FileScanner_ts",
       "type": "dependency",
@@ -1254,8 +1283,9 @@
       }
     },
     {
+      "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_test_FlowchartGenerator_test_ts",
-      "id": "edge_auto_1771724878533_664",
+      "id": "edge_auto_1771728606970_508",
       "label": "ref",
       "to": "node_src_core_FlowchartGenerator_ts",
       "type": "dependency",
@@ -1266,8 +1296,9 @@
       }
     },
     {
+      "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_test_FlowchartGenerator_test_ts",
-      "id": "edge_auto_1771724878533_54",
+      "id": "edge_auto_1771728606970_186",
       "label": "ref",
       "to": "node_src_types_schema_ts",
       "type": "dependency",
@@ -1278,8 +1309,9 @@
       }
     },
     {
+      "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_test_GeminiParser_test_ts",
-      "id": "edge_auto_1771724878533_261",
+      "id": "edge_auto_1771728606970_782",
       "label": "ref",
       "to": "node_src_core_GeminiParser_ts",
       "type": "dependency",
@@ -1290,8 +1322,9 @@
       }
     },
     {
+      "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_test_visualHints_test_ts",
-      "id": "edge_auto_1771724878533_485",
+      "id": "edge_auto_1771728606970_283",
       "label": "ref",
       "to": "node_src_utils_visualHints_ts",
       "type": "dependency",
@@ -1302,8 +1335,9 @@
       }
     },
     {
+      "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_utils_exclusionRules_ts",
-      "id": "edge_auto_1771724878533_831",
+      "id": "edge_auto_1771728606970_586",
       "label": "ref",
       "to": "node_src_core_RuleEngine_ts",
       "type": "dependency",
@@ -1314,8 +1348,9 @@
       }
     },
     {
+      "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_webview_CanvasPanel_ts",
-      "id": "edge_auto_1771724878533_160",
+      "id": "edge_auto_1771728606970_271",
       "label": "ref",
       "to": "node_src_types_schema_ts",
       "type": "dependency",
@@ -1326,8 +1361,9 @@
       }
     },
     {
+      "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_webview_CanvasPanel_ts",
-      "id": "edge_auto_1771724878533_24",
+      "id": "edge_auto_1771728606970_482",
       "label": "ref",
       "to": "node_src_core_FileScanner_ts",
       "type": "dependency",
@@ -1338,8 +1374,9 @@
       }
     },
     {
+      "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_webview_CanvasPanel_ts",
-      "id": "edge_auto_1771724878533_797",
+      "id": "edge_auto_1771728606970_905",
       "label": "ref",
       "to": "node_src_core_GeminiParser_ts",
       "type": "dependency",
@@ -1350,8 +1387,9 @@
       }
     },
     {
+      "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_webview_CanvasPanel_ts",
-      "id": "edge_auto_1771724878533_352",
+      "id": "edge_auto_1771728606970_83",
       "label": "ref",
       "to": "node_src_core_FlowchartGenerator_ts",
       "type": "dependency",
@@ -1362,8 +1400,9 @@
       }
     },
     {
+      "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_webview_CanvasPanel_ts",
-      "id": "edge_auto_1771724878533_120",
+      "id": "edge_auto_1771728606970_50",
       "label": "ref",
       "to": "node_src_bootstrap_BootstrapEngine_ts",
       "type": "dependency",
@@ -1374,8 +1413,9 @@
       }
     },
     {
+      "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_webview_CanvasPanel_ts",
-      "id": "edge_auto_1771724878533_25",
+      "id": "edge_auto_1771728606970_457",
       "label": "ref",
       "to": "node_src_client_ts",
       "type": "dependency",
@@ -1386,8 +1426,9 @@
       }
     },
     {
+      "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_webview_CanvasPanel_ts",
-      "id": "edge_auto_1771724878533_908",
+      "id": "edge_auto_1771728606970_349",
       "label": "ref",
       "to": "node_src_utils_Logger_ts",
       "type": "dependency",
@@ -2907,15 +2948,16 @@
             "s",
             "exec",
             "push",
-            "startsWith",
             "split",
-            "forEach",
             "trim",
+            "startsWith",
+            "match",
+            "reference",
+            "forEach",
             "pub",
             "blocks",
             "impl",
             "statements",
-            "match",
             "name",
             "References",
             "files",
@@ -3043,10 +3085,10 @@
             "getVisualHints",
             "createNode",
             "map",
+            "log",
             "indexOf",
             "find",
             "createEdge",
-            "log",
             "toLowerCase",
             "includes",
             "random",

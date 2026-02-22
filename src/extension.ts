@@ -38,7 +38,21 @@ export async function activate(context: vscode.ExtensionContext) {
 
     try {
         console.log('[SYNAPSE] Initializing components...');
-        vscode.window.showInformationMessage('SYNAPSE: Initializing (v0.2.10)...');
+        vscode.window.showInformationMessage('SYNAPSE: Initializing (v0.2.12)...');
+
+        // 시작 시 .synapse_contexts/ 디렉터리 자동 생성
+        {
+            const folders = vscode.workspace.workspaceFolders;
+            if (folders) {
+                for (const folder of folders) {
+                    const contextDir = path.join(folder.uri.fsPath, '.synapse_contexts');
+                    if (!require('fs').existsSync(contextDir)) {
+                        require('fs').mkdirSync(contextDir, { recursive: true });
+                        console.log(`[SYNAPSE] Created .synapse_contexts: ${contextDir}`);
+                    }
+                }
+            }
+        }
 
         console.log('[SYNAPSE] Registering WebviewPanelSerializer...');
         if (vscode.window.registerWebviewPanelSerializer) {
@@ -103,48 +117,86 @@ export async function activate(context: vscode.ExtensionContext) {
 
         context.subscriptions.push(
             vscode.commands.registerCommand('synapse.bootstrap', async (uri: vscode.Uri | undefined) => {
-                let targetFolder: vscode.WorkspaceFolder | undefined;
-
-                if (uri) {
-                    targetFolder = vscode.workspace.getWorkspaceFolder(uri);
-                } else if (vscode.window.activeTextEditor) {
-                    targetFolder = vscode.workspace.getWorkspaceFolder(vscode.window.activeTextEditor.document.uri);
-                    if (vscode.window.activeTextEditor.document.fileName.endsWith('GEMINI.md')) {
-                        uri = vscode.window.activeTextEditor.document.uri;
-                    }
-                }
-
-                if (!targetFolder) {
-                    targetFolder = vscode.workspace.workspaceFolders?.[0];
-                }
+                const targetFolder = uri
+                    ? vscode.workspace.getWorkspaceFolder(uri)
+                    : (vscode.window.activeTextEditor
+                        ? vscode.workspace.getWorkspaceFolder(vscode.window.activeTextEditor.document.uri)
+                        : undefined)
+                    ?? vscode.workspace.workspaceFolders?.[0];
 
                 if (!targetFolder) {
                     vscode.window.showErrorMessage('Please open a folder first.');
                     return;
                 }
 
-                if (uri && uri.fsPath.endsWith('GEMINI.md')) {
+                // uri가 직접 .md 파일을 가리키는 경우 (우클릭 컨텍스트 등) → 바로 부트스트랩
+                if (uri && uri.fsPath.endsWith('.md')) {
                     await bootstrapFromGemini(uri, context);
-                } else {
-                    // Find GEMINI.md in target folder
-                    const geminiUri = vscode.Uri.joinPath(targetFolder.uri, 'GEMINI.md');
-                    try {
-                        await vscode.workspace.fs.stat(geminiUri);
-                        await bootstrapFromGemini(geminiUri, context);
-                    } catch (e) {
-                        // GEMINI.md doesn't exist, offer Lite Bootstrap
-                        const action = await vscode.window.showInformationMessage(
-                            `GEMINI.md not found in ${targetFolder.name}. Would you like to use Lite Bootstrap to auto-discover the project?`,
-                            'Lite Bootstrap'
-                        );
-                        if (action === 'Lite Bootstrap') {
-                            await liteBootstrap(context, targetFolder);
-                            return;
-                        }
+                    return;
+                }
+
+                // 워크스페이스 루트의 .md 파일 목록 수집
+                const mdFiles = await vscode.workspace.findFiles(
+                    new vscode.RelativePattern(targetFolder, '*.md'),
+                    '**/node_modules/**',
+                    20 // 최대 20개
+                );
+
+                // QuickPick 아이템 구성
+                const items: vscode.QuickPickItem[] = mdFiles.map(f => {
+                    const fileName = path.basename(f.fsPath);
+                    const isGemini = fileName === 'GEMINI.md';
+                    return {
+                        label: `$(file) ${fileName}`,
+                        description: isGemini ? '기본 아키텍처 설계 문서' : '',
+                        detail: vscode.workspace.asRelativePath(f),
+                        // 선택 후 사용하기 위해 uri를 패키징
+                        _uri: f
+                    } as any;
+                });
+
+                // GEMINI.md가 있으면 맨 앞으로 정렬
+                items.sort((a: any, b: any) => {
+                    if (a._uri.fsPath.endsWith('GEMINI.md')) return -1;
+                    if (b._uri.fsPath.endsWith('GEMINI.md')) return 1;
+                    return a.label.localeCompare(b.label);
+                });
+
+                // Lite Bootstrap 옵션 항상 추가
+                items.push({
+                    label: '$(zap) Lite Bootstrap',
+                    description: 'MD 파일 없이 프로젝트 구조 자동 탐색',
+                    detail: 'GEMINI.md 없이도 파일 스캔으로 캔버스를 초기화합니다',
+                    _isLite: true
+                } as any);
+
+                if (items.length === 1) {
+                    // md 파일이 없고 Lite Bootstrap만 있는 경우
+                    const action = await vscode.window.showInformationMessage(
+                        `No .md files found in ${targetFolder.name}.`,
+                        'Lite Bootstrap'
+                    );
+                    if (action === 'Lite Bootstrap') {
+                        await liteBootstrap(context, targetFolder);
                     }
+                    return;
+                }
+
+                const selected = await vscode.window.showQuickPick(items, {
+                    placeHolder: `Bootstrap할 MD 파일 선택 (${targetFolder.name})`,
+                    matchOnDetail: true
+                }) as any;
+
+                if (!selected) return; // 취소
+
+                if (selected._isLite) {
+                    await liteBootstrap(context, targetFolder);
+                } else {
+                    await bootstrapFromGemini(selected._uri, context);
                 }
             })
         );
+
 
         context.subscriptions.push(
             vscode.commands.registerCommand('synapse.fitView', () => {
@@ -152,141 +204,105 @@ export async function activate(context: vscode.ExtensionContext) {
             })
         );
 
-        // Command to log prompts (accessible from Canvas or other extensions)
+        // CTRL+ALT+M — 토글 레코딩 모드
+        // 1번째 누름: 레코딩 시작 (입력창 없음, 상태바 표시)
+        // 2번째 누름: 레코딩 종료 + git diff 자동 캡처 + .synapse_contexts/ 저장
         console.log('[SYNAPSE] Initializing PromptLogger...');
         const promptLogger = PromptLogger.getInstance();
+
+        // 레코딩 상태
+        let isRecording = false;
+        let recordingStartTime: Date | null = null;
+        let sessionFilePath: string | null = null; // 레코딩 시작 시 생성된 파일 경로
+
+        // 상태바 아이템 생성 (우측에 배치)
+        const recordingStatusBar = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 1000);
+        recordingStatusBar.command = 'synapse.logPrompt';
+        context.subscriptions.push(recordingStatusBar);
+
         console.log('[SYNAPSE] Registering synapse.logPrompt command...');
         context.subscriptions.push(
             vscode.commands.registerCommand('synapse.logPrompt', async (args?: { prompt: string, title?: string, workspacePath?: string }) => {
-                console.log('[SYNAPSE] synapse.logPrompt triggered', args);
-                try {
-                    let promptContent = args?.prompt;
-                    let title = args?.title;
-                    let projectRoot = args?.workspacePath;
+                console.log('[SYNAPSE] synapse.logPrompt triggered (recording toggle)', args);
 
-                    // 1. Fetch Context (Selection & View State)
-                    let contextData: any = null;
-                    if (CanvasPanel.currentPanel) {
-                        try {
-                            contextData = await CanvasPanel.currentPanel.getCanvasContext();
-                            console.log('[SYNAPSE] Context data received:', contextData);
-                        } catch (e) {
-                            console.warn('[SYNAPSE] Failed to get canvas context:', e);
-                        }
-                    }
-
-                    // 2. Interactive Mode (Keybinding triggered)
-                    if (!promptContent) {
-                        console.log('[SYNAPSE] Prompt content missing, entering interactive mode');
-
-                        // Dynamic Placeholder
-                        let placeholder = 'Enter your design decision, goal, or reasoning...';
-                        if (contextData?.selectedNode) {
-                            placeholder = `(Selected: ${contextData.selectedNode.label}) Enter your thought...`;
-                        }
-
-                        // Get Prompt Content
-                        promptContent = await vscode.window.showInputBox({
-                            placeHolder: placeholder,
-                            prompt: 'Log Prompt to Architecture History',
-                            ignoreFocusOut: true
-                        }) || '';
-
-                        if (!promptContent) {
-                            return; // User cancelled
-                        }
-
-                        // 3. Select Tag (QuickPick 1)
-                        const tagPick = await vscode.window.showQuickPick(
-                            [
-                                { label: '🔍 [Discovery]', description: 'Exploring code, investigating issues' },
-                                { label: '🧠 [Reasoning]', description: 'Making design decisions, planning' },
-                                { label: '⚡ [Action]', description: 'Implementing changes, refactoring' },
-                                { label: '🐛 [Fix]', description: 'Fixing bugs, resolving errors' }
-                            ],
-                            {
-                                placeHolder: 'Select a tag for this log',
-                                ignoreFocusOut: true
-                            }
-                        );
-
-                        if (!tagPick) return; // User cancelled
-                        const selectedTag = tagPick.label.split(' ')[1]; // Extract [Tag]
-
-                        // 4. Select Log Mode (QuickPick 2)
-                        const logMode = await vscode.window.showQuickPick(
-                            [
-                                { label: '$(repo) Append to context.md', description: 'Keep context in a single file', detail: 'prompts/context.md' },
-                                { label: '$(new-file) Create New Log File', description: 'Create a separate file', detail: 'prompts/YYYY-MM-DD_Title.md' }
-                            ],
-                            {
-                                placeHolder: 'Select how to save this log',
-                                ignoreFocusOut: true
-                            }
-                        );
-
-                        if (!logMode) return; // User cancelled
-
-                        // If "New File" selected, ask for title
-                        if (logMode.label.includes('Create New Log')) {
-                            title = await vscode.window.showInputBox({
-                                placeHolder: 'Enter a title (optional)...',
-                                prompt: 'Title for this log (Press Enter to skip)',
-                                ignoreFocusOut: true
-                            });
-                        } else {
-                            // Context mode
-                            title = 'context.md'; // Flag
-                        }
-
-                        // Execute Log
-                        if (!projectRoot) {
-                            const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
-                            projectRoot = workspaceFolder?.uri.fsPath;
-                        }
-
-                        if (projectRoot) {
-                            if (title === 'context.md') {
-                                // Pass context data (snapshot) here
-                                await promptLogger.appendLog(projectRoot, 'context.md', promptContent, selectedTag, contextData?.viewState);
-
-                                const openAction = await vscode.window.showInformationMessage('Prompt appended to context.md', 'Open context.md');
-                                if (openAction === 'Open context.md') {
-                                    const doc = await vscode.workspace.openTextDocument(path.join(projectRoot, 'prompts', 'context.md'));
-                                    await vscode.window.showTextDocument(doc);
-                                }
-                            } else {
-                                await promptLogger.logPrompt(projectRoot, promptContent, title);
-                                vscode.window.showInformationMessage('Prompt logged to new file.');
-                            }
-                        } else {
-                            console.warn('[SYNAPSE] No project root found');
-                            vscode.window.showErrorMessage('No workspace open to log prompt');
-                        }
+                // 비대화형 API 호출 (Deep Reset, Snapshot 등) → 기존 로직 유지
+                if (args?.prompt) {
+                    const projectRoot = args.workspacePath ?? vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
+                    if (!projectRoot) return;
+                    if (args.title === 'context.md') {
+                        await promptLogger.appendLog(projectRoot, 'context.md', args.prompt);
                     } else {
-                        // Non-interactive mode (called from API) implementation...
-                        // For now we keep the existing logic for non-interactive or just handle it simply
-                        if (!projectRoot) {
-                            const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
-                            projectRoot = workspaceFolder?.uri.fsPath;
-                        }
-                        if (projectRoot) {
-                            if (title === 'context.md') {
-                                await promptLogger.appendLog(projectRoot, 'context.md', promptContent);
-                            } else {
-                                await promptLogger.logPrompt(projectRoot, promptContent, title);
-                            }
-                        } else {
-                            console.warn('[SYNAPSE] No project root found');
-                            vscode.window.showErrorMessage('No workspace open to log prompt');
-                        }
+                        await promptLogger.logPrompt(projectRoot, args.prompt, args.title);
                     }
-                } catch (error: any) {
-                    console.error('[SYNAPSE] Failed to log prompt:', error);
-                    vscode.window.showErrorMessage(`Failed to log prompt: ${error.message || error}`);
+                    return;
+                }
+
+                // projectRoot 결정
+                const projectRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
+                if (!projectRoot) {
+                    vscode.window.showErrorMessage('No workspace open.');
+                    return;
+                }
+
+                if (!isRecording) {
+                    // ── 레코딩 시작 ──────────────────────────────────────
+                    isRecording = true;
+                    recordingStartTime = new Date();
+
+                    // GEMINI.md 기준: 레코딩 시작 즉시 YYYY-MM-DD_HHMM.md 파일 생성
+                    sessionFilePath = promptLogger.startSession(projectRoot);
+
+
+                    recordingStatusBar.text = '$(record) REC';
+                    recordingStatusBar.backgroundColor = new vscode.ThemeColor('statusBarItem.errorBackground');
+                    recordingStatusBar.tooltip = `🔴 SYNAPSE 레코딩 중... (CTRL+ALT+M으로 저장)\n시작: ${recordingStartTime.toLocaleTimeString('ko-KR')}`;
+                    recordingStatusBar.show();
+
+                    // 캔버스에도 레코딩 상태 전달 + 클러스터 즉시 갱신
+                    CanvasPanel.currentPanel?.postRecordingState(true);
+                    // 새 파일이 Intelligent Context Vault에 즉시 반영되도록 갱신
+                    setTimeout(() => CanvasPanel.currentPanel?.sendProjectState(), 100);
+                } else {
+                    // ── 레코딩 종료 + 저장 ────────────────────────────────
+                    isRecording = false;
+                    recordingStatusBar.hide();
+
+                    // 캔버스 레코딩 상태 해제
+                    CanvasPanel.currentPanel?.postRecordingState(false);
+
+                    // 에디터 선택 텍스트 → 없으면 클립보드 → 없으면 타임스탬프
+                    let command = '';
+                    const editor = vscode.window.activeTextEditor;
+                    if (editor && !editor.selection.isEmpty) {
+                        command = editor.document.getText(editor.selection).trim();
+                    }
+                    if (!command) {
+                        try { command = (await vscode.env.clipboard.readText()).trim(); } catch { }
+                    }
+                    if (!command) {
+                        command = `작업 기록 (${recordingStartTime?.toLocaleString('ko-KR') ?? ''})`;
+                    }
+
+                    try {
+                        const targetFile = sessionFilePath ?? path.join(projectRoot, '.synapse_contexts', 'context.md');
+                        await promptLogger.endSession(projectRoot, targetFile, command);
+                        sessionFilePath = null;
+                        const action = await vscode.window.showInformationMessage(
+                            '✅ Context 저장 완료', 'Open'
+                        );
+                        if (action === 'Open') {
+                            const doc = await vscode.workspace.openTextDocument(targetFile);
+                            await vscode.window.showTextDocument(doc);
+                        }
+                        // 캔버스 새로고침 (기억의 성단 업데이트)
+                        CanvasPanel.currentPanel?.sendProjectState();
+                    } catch (error: any) {
+                        vscode.window.showErrorMessage(`Context 저장 실패: ${error.message || error}`);
+                    }
                 }
             })
         );
+
 
         console.log('[SYNAPSE] Commands registered successfully');
 

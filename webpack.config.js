@@ -6,7 +6,8 @@ module.exports = {
     mode: 'production', // "production" | "development" | "none"
     target: 'node', // extensions run in a node context
     entry: {
-        extension: './src/extension.ts' // the entry point of this extension, 
+        extension: './src/extension.ts',
+        'server/server': './src/server/server.ts'
     },
     output: {
         // the bundle is stored in the 'dist' folder (check package.json), 

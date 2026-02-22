@@ -142,6 +142,7 @@ export class FlowchartGenerator {
         // External Modules Cluster
         const externalNodes = nodes.filter(n => n.type === 'external');
         if (externalNodes.length > 0) {
+            console.log(`[SYNAPSE] Grouping ${externalNodes.length} external modules.`);
             clusters.push({
                 id: 'cluster_external',
                 label: '🌐 External Modules',
@@ -151,8 +152,11 @@ export class FlowchartGenerator {
                     n.data.cluster_id = 'cluster_external';
                     // Reposition external nodes to be inside this cluster
                     const idx = externalNodes.indexOf(n);
-                    n.position.x = 3100 + (idx % 3) * 300;
+                    n.position.x = 3100 + (idx % 3) * 350;
                     n.position.y = 100 + Math.floor(idx / 3) * 200;
+
+                    // Add visual distinction
+                    n.data.label = `[[ ${n.data.label} ]]`;
                     return n.id;
                 })
             });

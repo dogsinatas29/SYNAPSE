@@ -325,6 +325,7 @@ This document defines the rules for how SYNAPSE discovers, parses, and visualize
                 });
 
                 if (match) {
+                    console.log(`  - [Resolved] ${dep.to} -> ${match.path}`);
                     validDependencies.push({
                         ...dep,
                         to: match.path
@@ -333,6 +334,7 @@ This document defines the rules for how SYNAPSE discovers, parses, and visualize
                     // 3. External Library Support (Not found in project, but keep it)
                     // Skip common built-in modules or very short noise
                     if (dep.to.length > 1 && !dep.to.startsWith('/') && !dep.to.includes('\\')) {
+                        console.log(`  - [External] ${dep.to} (Potential library)`);
                         // Add to structure.files if not already there as an external node
                         if (!structure.files.some((f: any) => f.path === dep.to && f.type === 'external')) {
                             structure.files.push({

@@ -182,14 +182,15 @@ export class FlowScanner {
         let lastStepId = 'entry';
 
         for (let i = 0; i < Math.min(lines.length, 1000); i++) {
-            const line = lines[i].trim();
+            const rawLine = lines[i];
+            const line = rawLine.trim();
             if (!line || line.startsWith('#')) continue;
 
-            // 1. Blocks (if, for, while, with, try, def, class)
-            const blockMatch = line.match(/^(def|class|if|for|while|with|try|elif)\s+([a-zA-Z0-9_(]+)/);
+            // 1. Blocks (if, for, while, with, try, def, class, except)
+            const blockMatch = line.match(/^(def|class|if|for|while|with|try|elif|except)\s*([a-zA-Z0-9_(.]+)?/);
             if (blockMatch) {
                 const type = blockMatch[1];
-                let label = blockMatch[2];
+                let label = blockMatch[2] || type;
 
                 // Special handling for __main__
                 if (line.includes('if __name__ == "__main__"')) {
@@ -199,7 +200,7 @@ export class FlowScanner {
                 const stepId = `step_py_${stepCounter++}`;
                 flow.steps.push({
                     id: stepId,
-                    type: (type === 'if' || type === 'elif' || type === 'while') ? 'decision' : 'process',
+                    type: (['if', 'elif', 'while'].includes(type)) ? 'decision' : 'process',
                     label: label.replace('(', ''),
                     next: `step_py_${stepCounter}`
                 });
@@ -209,20 +210,24 @@ export class FlowScanner {
                 lastStepId = stepId;
             }
             // 2. Significant Calls (e.g., logger.info, parser.parse)
+            // Allow indented calls
             else if (line.match(/^[a-zA-Z0-9_.]+\s*=[^=]|^\s*[a-zA-Z0-9_.]+\(/)) {
                 // Try to extract function call
                 const callMatch = line.match(/([a-zA-Z0-9_.]+\s*)\(/);
-                if (callMatch && !['if', 'for', 'while', 'print', 'super'].includes(callMatch[1].trim())) {
-                    const stepId = `step_py_${stepCounter++}`;
-                    flow.steps.push({
-                        id: stepId,
-                        type: 'process',
-                        label: `Call: ${callMatch[1].trim()}`,
-                        next: `step_py_${stepCounter}`
-                    });
-                    const prevStep = flow.steps.find(s => s.id === lastStepId);
-                    if (prevStep) prevStep.next = stepId;
-                    lastStepId = stepId;
+                if (callMatch) {
+                    const funcName = callMatch[1].trim();
+                    if (!['if', 'for', 'while', 'print', 'super', 'try', 'except', 'with', 'def', 'class'].includes(funcName)) {
+                        const stepId = `step_py_${stepCounter++}`;
+                        flow.steps.push({
+                            id: stepId,
+                            type: 'process',
+                            label: `Call: ${funcName}`,
+                            next: `step_py_${stepCounter}`
+                        });
+                        const prevStep = flow.steps.find(s => s.id === lastStepId);
+                        if (prevStep) prevStep.next = stepId;
+                        lastStepId = stepId;
+                    }
                 }
             }
 

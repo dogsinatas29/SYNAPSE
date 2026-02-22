@@ -73,26 +73,35 @@ export class FileScanner {
             summary.functions.push(match[1]);
         }
 
-        // Python 임포트 (references)
-        const importRegex = /(?:from\s+([a-zA-Z0-9_.]+)\s+import|import\s+([a-zA-Z0-9_.,\s]+))/g;
-        while ((match = importRegex.exec(content)) !== null) {
-            const fromPart = match[1];
-            const importPart = match[2];
+        // Python 임포트 (references) - 줄 단위로 파싱하여 더 정확하게 추출
+        const lines = content.split('\n');
+        for (const line of lines) {
+            const trimmed = line.trim();
+            if (!trimmed || trimmed.startsWith('#')) continue;
 
-            if (fromPart) {
-                // from a.b import c -> 'a.b' 가 핵심 참조
-                // 상대 경로 지원을 위해 첫 글자가 .인 경우 유지
+            // 1. from a.b import c
+            const fromMatch = trimmed.match(/^from\s+([a-zA-Z0-9_.]+)\s+import/);
+            if (fromMatch) {
+                const fromPart = fromMatch[1];
                 const rootMod = fromPart.startsWith('.') ? fromPart : fromPart.split('.')[0];
                 if (rootMod && !summary.references.includes(rootMod)) {
+                    console.log(`  [DEP] Added reference (from): ${rootMod}`);
                     summary.references.push(rootMod);
                 }
-            } else if (importPart) {
-                // import a, b as bb -> 'a', 'b' 추출
+                continue; // from ... import 라인인 경우 처리 완료
+            }
+
+            // 2. import a, b as bb
+            const importMatch = trimmed.match(/^import\s+([a-zA-Z0-9_.,\s]+)/);
+            if (importMatch) {
+                const importPart = importMatch[1];
                 importPart.split(',').forEach(r => {
-                    const trimmed = r.trim().split(/\s+/)[0];
-                    if (trimmed) {
-                        const rootMod = trimmed.startsWith('.') ? trimmed : trimmed.split('.')[0];
+                    const parts = r.trim().split(/\s+/);
+                    const name = parts[0];
+                    if (name) {
+                        const rootMod = name.startsWith('.') ? name : name.split('.')[0];
                         if (rootMod && !summary.references.includes(rootMod)) {
+                            console.log(`  [DEP] Added reference (import): ${rootMod}`);
                             summary.references.push(rootMod);
                         }
                     }

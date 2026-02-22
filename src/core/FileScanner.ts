@@ -4,7 +4,7 @@ import * as path from 'path';
 export interface CodeSummary {
     classes: string[];
     functions: string[];
-    references: string[]; // 추가: 임포트 및 참조 관계
+    references: { target: string, type: string }[]; // Updated: Semantic references
 }
 
 export class FileScanner {
@@ -84,11 +84,15 @@ export class FileScanner {
             if (fromMatch) {
                 const fromPart = fromMatch[1];
                 const rootMod = fromPart.startsWith('.') ? fromPart : fromPart.split('.')[0];
-                if (rootMod && !summary.references.includes(rootMod)) {
-                    console.log(`  [DEP] Added reference (from): ${rootMod}`);
-                    summary.references.push(rootMod);
+                if (rootMod && !summary.references.some(r => r.target === rootMod)) {
+                    let type = 'dependency';
+                    if (rootMod.match(/api|http|fetch|request/i)) type = 'api_call';
+                    else if (rootMod.match(/db|sql|database|query/i)) type = 'db_query';
+
+                    console.log(`  [DEP] Added reference (from): ${rootMod} (${type})`);
+                    summary.references.push({ target: rootMod, type });
                 }
-                continue; // from ... import 라인인 경우 처리 완료
+                continue;
             }
 
             // 2. import a, b as bb
@@ -100,9 +104,13 @@ export class FileScanner {
                     const name = parts[0];
                     if (name) {
                         const rootMod = name.startsWith('.') ? name : name.split('.')[0];
-                        if (rootMod && !summary.references.includes(rootMod)) {
-                            console.log(`  [DEP] Added reference (import): ${rootMod}`);
-                            summary.references.push(rootMod);
+                        if (rootMod && !summary.references.some(r => r.target === rootMod)) {
+                            let type = 'dependency';
+                            if (rootMod.match(/api|http|fetch|request/i)) type = 'api_call';
+                            else if (rootMod.match(/db|sql|database|query/i)) type = 'db_query';
+
+                            console.log(`  [DEP] Added reference (import): ${rootMod} (${type})`);
+                            summary.references.push({ target: rootMod, type });
                         }
                     }
                 });
@@ -138,10 +146,13 @@ export class FileScanner {
         while ((match = importRegex.exec(content)) !== null) {
             const ref = match[1] || match[2];
             if (ref) {
-                // 상대 경로인 경우 파일명만 추출, 아니면 패키지명
                 const cleanRef = ref.startsWith('.') ? path.basename(ref, path.extname(ref)) : ref.split('/')[0];
-                if (cleanRef && !['react', 'vscode', 'path', 'fs'].includes(cleanRef) && !summary.references.includes(cleanRef)) {
-                    summary.references.push(cleanRef);
+                if (cleanRef && !['react', 'vscode', 'path', 'fs'].includes(cleanRef) && !summary.references.some(r => r.target === cleanRef)) {
+                    let type = 'dependency';
+                    if (cleanRef.match(/api|http|fetch|axios/i)) type = 'api_call';
+                    else if (cleanRef.match(/db|sql|database|query/i)) type = 'db_query';
+
+                    summary.references.push({ target: cleanRef, type });
                 }
             }
         }
@@ -186,9 +197,9 @@ export class FileScanner {
                 // 로컬 헤더("")는 프로젝트 내 의존성으로 처리, 시스템 헤더(<>)는 필터링하거나 별도 처리
                 if (type === '"') {
                     const cleanRef = path.basename(ref, path.extname(ref));
-                    if (cleanRef && !summary.references.includes(cleanRef)) {
+                    if (cleanRef && !summary.references.some(r => r.target === cleanRef)) {
                         console.log(`  [DEP] Added C++ local reference: ${cleanRef}`);
-                        summary.references.push(cleanRef);
+                        summary.references.push({ target: cleanRef, type: 'dependency' });
                     }
                 } else if (type === '<') {
                     // 표준 라이브러리나 외부 라이브러리 (시스템 헤더)
@@ -196,9 +207,9 @@ export class FileScanner {
                     // 흔한 표준 라이브러리는 노이즈 방지를 위해 제외
                     const standardLibs = ['iostream', 'vector', 'string', 'map', 'set', 'algorithm', 'stdio.h', 'stdlib.h', 'stdint.h', 'stdbool.h', 'cmath', 'cstdio'];
                     if (!standardLibs.includes(systemLib)) {
-                        if (!summary.references.includes(systemLib)) {
+                        if (!summary.references.some(r => r.target === systemLib)) {
                             console.log(`  [DEP] Added C++ system/external reference: ${systemLib}`);
-                            summary.references.push(systemLib);
+                            summary.references.push({ target: systemLib, type: 'api_call' });
                         }
                     }
                 }
@@ -253,16 +264,16 @@ export class FileScanner {
                 if (['crate', 'self', 'super'].includes(rootMod)) {
                     // 내부 모듈 의존성으로 처리 (실제 매핑을 위해 더 상세한 분석 가능)
                     const targetMod = parts[1] || rootMod;
-                    if (targetMod && !summary.references.includes(targetMod)) {
+                    if (targetMod && !summary.references.some(r => r.target === targetMod)) {
                         console.log(`  [DEP] Added Rust internal reference: ${targetMod}`);
-                        summary.references.push(targetMod);
+                        summary.references.push({ target: targetMod, type: 'dependency' });
                     }
                 } else if (rootMod) {
                     // 외부 크레이트 또는 표준 라이브러리
                     if (!['std', 'core', 'alloc', 'prelude'].includes(rootMod)) {
-                        if (!summary.references.includes(rootMod)) {
+                        if (!summary.references.some(r => r.target === rootMod)) {
                             console.log(`  [DEP] Added Rust external reference: ${rootMod}`);
-                            summary.references.push(rootMod);
+                            summary.references.push({ target: rootMod, type: 'api_call' });
                         }
                     }
                 }
@@ -282,8 +293,8 @@ export class FileScanner {
         const refRegex = /(?:\.|\.\/|source\s+|bash\s+|sh\s+)([a-zA-Z0-9_-]+)(?:\.sh)?/g;
         while ((match = refRegex.exec(content)) !== null) {
             const ref = match[1];
-            if (ref && !summary.references.includes(ref)) {
-                summary.references.push(ref);
+            if (ref && !summary.references.some(r => r.target === ref)) {
+                summary.references.push({ target: ref, type: 'dependency' });
             }
         }
     }
@@ -309,10 +320,10 @@ export class FileScanner {
         let match;
         while ((match = refRegex.exec(content)) !== null) {
             const ref = (match[1] || match[2] || match[3] || '').trim();
-            if (ref && !summary.references.includes(ref)) {
+            if (ref && !summary.references.some(r => r.target === ref)) {
                 // Remove quotes if present
-                const cleanRef = ref.replace(/['"]/g, '');
-                summary.references.push(cleanRef);
+                const cleanRefActual = ref.replace(/['"]/g, '');
+                summary.references.push({ target: cleanRefActual, type: 'dependency' });
             }
         }
     }
@@ -332,8 +343,8 @@ export class FileScanner {
             if (ref && !ref.startsWith('http') && !ref.startsWith('#')) {
                 // Clean path to file basename
                 const cleanRef = path.basename(ref, path.extname(ref));
-                if (cleanRef && !summary.references.includes(cleanRef)) {
-                    summary.references.push(cleanRef);
+                if (cleanRef && !summary.references.some(r => r.target === cleanRef)) {
+                    summary.references.push({ target: cleanRef, type: 'dependency' });
                 }
             }
         }

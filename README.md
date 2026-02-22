@@ -2,7 +2,8 @@
 
 > **"What you see is the logic of LLM"** — *WYSIWYG Logic for AI*
 
-[![Release](https://img.shields.io/badge/Release-v0.2.13-orange?style=flat-square)](https://github.com/dogsinatas29/SYNAPSE/releases)
+[![Version](https://img.shields.io/badge/version-v0.2.15-brightgreen.svg)
+![Status](https://img.shields.io/badge/status-War_Room_Ready-orange.svg)
 [![Language](https://img.shields.io/badge/Language-TypeScript-blue?style=flat-square)](https://www.typescriptlang.org/)
 [![Platform](https://img.shields.io/badge/Platform-VS_Code-007ACC?style=flat-square)](https://code.visualstudio.com/)
 
@@ -28,13 +29,13 @@ SYNAPSE now features a unified scanning engine that understands the deep semanti
 ## 🚀 Key Capabilities
 
 ### 🌐 Topology View (Architecture Map)
-Visualize your project's folder structure and file dependencies as a live network. 
+Visualize your project's folder structure and file dependencies as a live network.
 - **Node Diet**: Automatically filters noise (venv, node_modules, build artifacts).
 - **Ghost Node Storage**: Keeps your workspace clean by isolating disconnected components.
 - **Rule Engine**: Guided by `RULES.md` for consistent discovery and icon standards.
 
 ### ➡️ Flow View (Logic Execution)
-Project complex execution flows into intuitive flowcharts. 
+Project complex execution flows into intuitive flowcharts.
 - **Intelligent Branching**: High-fidelity detection of `if/else`, `loops`, and `try/catch`.
 - **Match Support (Rust)**: Native visualization of Rust's powerful pattern matching.
 - **Authoritative Result**: Integrates manual design decisions with real source code logic.
@@ -66,13 +67,23 @@ A deep, organized overview of your project structure.
 
 1. Download the latest `.vsix` from the [Releases](https://github.com/dogsinatas29/SYNAPSE/releases) page.
 2. Drag and drop the file into **VS Code**.
-3. Or use the terminal: `code --install-extension synapse-visual-architecture-0.2.13.vsix`
+### Quick Installation
+```bash
+code --install-extension synapse-visual-architecture-0.2.15.vsix
+```
+Current Version: **v0.2.15** (Bypass Logic & Flow Fix)
 
 ---
 
 ## 🆕 Revision History
 
-### v0.2.13 (Current)
+### v0.2.14 (Current)
+- **🛡️ War Room Implementation**: Transform SYNAPSE into a technical audit center.
+- **Logic Analyzer**: Detect Circular Dependencies, Bottlenecks, and Dead-ends.
+- **Pulse Animation**: Real-time signal traversal to visualize logic flow reachability.
+- **Interactive Reports**: Clicking findings in `리포트.md` automatically focuses the node on the canvas.
+
+### v0.2.13
 - **🌟 Cluster UX Overhaul**: Radically improved Canvas interaction.
 - **Drag & Drop**: Entire clusters can now be seamlessly dragged by pulling their top header block.
 - **Body Selection**: Added the ability to draw Multi-Select boxes over cluster bodies without dragging the cluster itself.

@@ -779,14 +779,34 @@ SYNAPSE는 다음 4개의 핵심 축으로 구성됩니다:
 
 ---
 
-# 🎖️ SYNAPSE War Room Operation Log: v0.2.11 & Context Vault
-**Date:** 2026-02-22  
-**Commander:** Gemini (Senior Embedded Linux Engineer / Tactical Support AI)  
-**Status:** Multi-MD Bootstrap Architecture Designed | War Room Integration Ready
+# SYNAPSE - Visual Architecture Engine (v0.2.15)
+> **Code Outer-space Visualization & Design Control Engine**
+
+## [v0.2.15] - War Room: Legacy Logic Fix & Flow Precision
+> **Korean: 워룸(War Room) 시리즈 - 레거시 로직 수정 및 플로우 정밀화***
+
+v0.2.14은 SYNAPSE를 단순한 시각화 도구에서 **아키텍처 진단 및 감사 엔진**으로 격상시켰습니다.
+
+### 1. Logic Analyzer (로직 분석기)
+- **순환 의존성 탐지**: 코드의 유연성을 저해하는 복잡한 사이클을 탐지하여 리포트합니다.
+- **병목 지점 식별**: 의존성이 과도하게 집중된 모듈을 주황색 오라로 표시합니다.
+- **로직 단절(Dead-end) 감지**: 흐름이 끊긴 지점이나 사용되지 않는 고립된 노드를 탐지합니다.
+
+### 2. War Room Visual Experience
+- **🛡️ Test Logic**: 캔버스 상단 버튼을 통해 실시간 로직 전파 시뮬레이션을 수행합니다.
+- **Signal Pulse**: 로직의 흐름을 가시화하는 입자 애니메이션이 엣지를 따라 이동합니다.
+- **Architectural Auras**:
+    - **Red**: 순환 의존성 및 중대 오류.
+    - **Orange**: 병목 및 잠재적 위험.
+    - **Ghosting**: 고립된 노드 및 데드엔드.
+
+### 3. Interactive Health Report (`리포트.md`)
+- 분석 결과를 기반으로 아키텍처 건강 점수와 세부 결함 사항을 마크다운 리포트로 생성합니다.
+- 리포트 내의 노드 ID를 클릭하면 캔버스가 즉시 해당 위치로 이동하여 포커싱합니다.
 
 ---
 
-## 1. 🚀 v0.2.11 릴리즈 및 엣지 복구 성과
+## 🎖️ SYNAPSE War Room Operation Log: v0.2.11 & Context Vault
 - **LSP & Flow Analysis**: 서버 번들링 및 파이썬 인덴트/루프 분석 최적화로 `main -> database` 연결 완벽 복구.
 - **Visual Segregation**: 외부 라이브러리를 전용 클러스터로 격리하여 순수 로직 가시성 확보.
 

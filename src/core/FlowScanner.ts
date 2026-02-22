@@ -8,6 +8,7 @@ export interface FlowStep {
     description?: string;
     next?: string;
     alternateNext?: string; // For 'decision' type: true -> next, false -> alternateNext
+    hidden?: boolean;
 }
 
 export interface FlowData {
@@ -71,270 +72,133 @@ export class FlowScanner {
     }
 
     private parseJSFlow(content: string, flow: FlowData) {
-        // Step 1: Entry Point
         flow.steps.push({
             id: 'entry',
             type: 'start',
             label: 'Module Entry',
-            next: 'step_analysis_0'
+            next: 'step_js_0'
         });
 
         const lines = content.split('\n');
         let stepCounter = 0;
         let lastStepId = 'entry';
+        let lastPoppedBlock: { bracketLevel: number, headerId: string, type: string, joinPointId?: string, lastDecisionId?: string } | null = null;
 
-        // Increased limit for broader analysis
+        const blockStack: { bracketLevel: number, headerId: string, type: string, joinPointId?: string, lastDecisionId?: string }[] = [];
+        let currentBracketLevel = 0;
+
         for (let i = 0; i < Math.min(lines.length, 1000); i++) {
             const line = lines[i].trim();
             if (!line || line.startsWith('//') || line.startsWith('/*')) continue;
 
-            // 1. If/Switch/While detection (Flow Branches)
-            if (line.match(/\b(if|switch|while|for)\b\s*\(/)) {
-                const condition = this.extractCondition(line) || 'Decision Point';
-                const stepId = `step_analysis_${stepCounter++}`;
+            const openBrackets = (line.match(/\{/g) || []).length;
+            const closeBrackets = (line.match(/\}/g) || []).length;
 
-                flow.steps.push({
-                    id: stepId,
-                    type: 'decision',
-                    label: condition,
-                    next: `step_analysis_${stepCounter}`,
-                    alternateNext: `step_analysis_${stepCounter + 1}`
-                });
-
-                // Link previous step
-                const prevStep = flow.steps.find(s => s.id === lastStepId);
-                if (prevStep) {
-                    if (prevStep.type === 'decision') {
-                        // If previous was decision, connect its TRUE path if it wasn't connected
-                        if (!prevStep.next) prevStep.next = stepId;
-                    } else {
-                        prevStep.next = stepId;
+            if (line.startsWith('}') && blockStack.length > 0) {
+                const top = blockStack[blockStack.length - 1];
+                if (currentBracketLevel <= top.bracketLevel + 1 && closeBrackets > 0) {
+                    lastPoppedBlock = blockStack.pop() || null;
+                    if (lastPoppedBlock) {
+                        if (lastPoppedBlock.type === 'while' || lastPoppedBlock.type === 'for') {
+                            const lastStep = flow.steps.find(s => s.id === lastStepId);
+                            if (lastStep) lastStep.next = lastPoppedBlock.headerId;
+                            lastStepId = lastPoppedBlock.headerId;
+                        } else if (lastPoppedBlock.joinPointId) {
+                            const lastStep = flow.steps.find(s => s.id === lastStepId);
+                            if (lastStep && !lastStep.next) lastStep.next = lastPoppedBlock.joinPointId;
+                            lastStepId = lastPoppedBlock.joinPointId;
+                        }
                     }
                 }
-
-                lastStepId = stepId;
             }
-            // 2. Try/Catch
-            else if (line.match(/\btry\b\s*\{/)) {
-                const stepId = `step_analysis_${stepCounter++}`;
+
+            const branchMatch = line.match(/\b(if|switch|while|for|catch|try)\b/);
+            if (branchMatch) {
+                const type = branchMatch[1];
+                const condition = this.extractCondition(line) || type;
+                const stepId = `step_js_${stepCounter++}`;
+                const isDecision = ['if', 'while', 'switch'].includes(type);
+
+                // Semantic tagging for EdgeType hints
+                let edgeTypeHint: string | undefined;
+                if (type === 'while' || type === 'for') edgeTypeHint = 'loop_back';
+
                 flow.steps.push({
                     id: stepId,
-                    type: 'process',
-                    label: 'Try Block (Safe Execution)',
-                    next: `step_analysis_${stepCounter}`
-                });
-                const prevStep = flow.steps.find(s => s.id === lastStepId);
-                if (prevStep) prevStep.next = stepId;
+                    type: isDecision ? 'decision' : 'process',
+                    label: condition,
+                    data: { edgeType: edgeTypeHint }
+                } as any);
+
+                if ((line.startsWith('else') || line.startsWith('} else')) && lastPoppedBlock && lastPoppedBlock.lastDecisionId) {
+                    const decStep = flow.steps.find(s => s.id === lastPoppedBlock!.lastDecisionId);
+                    if (decStep) decStep.alternateNext = stepId;
+
+                    // If this else has a block, keep the same joinPointId
+                    if (line.includes('{')) {
+                        blockStack.push({
+                            bracketLevel: currentBracketLevel,
+                            headerId: stepId,
+                            type,
+                            joinPointId: lastPoppedBlock.joinPointId,
+                            lastDecisionId: stepId
+                        });
+                    }
+                } else {
+                    const prevStep = flow.steps.find(s => s.id === lastStepId);
+                    if (prevStep) prevStep.next = stepId;
+
+                    if (line.includes('{')) {
+                        let joinPointId: string | undefined;
+                        if (type === 'if') {
+                            joinPointId = `join_js_${stepCounter++}`;
+                            flow.steps.push({ id: joinPointId, type: 'process', label: 'Merge', hidden: true });
+                        }
+                        blockStack.push({ bracketLevel: currentBracketLevel, headerId: stepId, type, joinPointId, lastDecisionId: stepId });
+                    }
+                }
                 lastStepId = stepId;
+            } else if (line.match(/^[a-zA-Z0-9_.]+\s*=[^=]|^\s*[a-zA-Z0-9_.]+\(/)) {
+                const callMatch = line.match(/([a-zA-Z0-9_.]+\s*)\(/);
+                if (callMatch) {
+                    const funcName = callMatch[1].trim();
+                    if (!['if', 'switch', 'while', 'for', 'loop', 'require'].includes(funcName)) {
+                        const stepId = `step_js_${stepCounter++}`;
+
+                        // Check for API/DB semantic hints or Print
+                        let semanticType: 'api_call' | 'db_query' | 'process' = 'process';
+                        let labelPrefix = 'Call';
+
+                        if (funcName.match(/fetch|axios|request|api|http/i)) semanticType = 'api_call';
+                        else if (funcName.match(/query|find|save|update|delete|db|sql/i)) semanticType = 'db_query';
+                        else if (funcName === 'console.log' || funcName === 'print') labelPrefix = 'Print';
+
+                        flow.steps.push({
+                            id: stepId,
+                            type: 'process',
+                            label: `${labelPrefix}: ${funcName === 'console.log' ? line.trim() : funcName}`,
+                            data: { edgeType: semanticType === 'process' ? undefined : semanticType }
+                        } as any);
+                        const prevStep = flow.steps.find(s => s.id === lastStepId);
+                        if (prevStep) prevStep.next = stepId;
+                        lastStepId = stepId;
+                    }
+                }
             }
-            // 3. Methods / Functions / Exports (Enhanced Regex for TS)
-            else if (line.match(/\b(export|function|async|private|public|protected|static|class|const|let)\s+([a-zA-Z0-9_]+)\b/)) {
-                const label = this.extractLabel(line);
-                if (!label) continue;
 
-                // Skip common noise
-                if (['from', 'import', 'return', 'const', 'let', 'var'].includes(label)) continue;
-
-                const stepId = `step_analysis_${stepCounter++}`;
-                flow.steps.push({
-                    id: stepId,
-                    type: 'process',
-                    label: label,
-                    next: `step_analysis_${stepCounter}`
-                });
-
-                const prevStep = flow.steps.find(s => s.id === lastStepId);
-                if (prevStep) prevStep.next = stepId;
-
-                lastStepId = stepId;
-            }
-
-            // Limit flow depth to 50 for performance and clarity
-            if (stepCounter > 50) break;
+            currentBracketLevel += (openBrackets - closeBrackets);
+            if (stepCounter > 100) break;
         }
 
-        // Final Step
-        const finalStepId = 'final_end';
-        flow.steps.push({
-            id: finalStepId,
-            type: 'end',
-            label: 'Execution Complete'
-        });
-
+        const finalStepId = 'step_js_final';
+        flow.steps.push({ id: finalStepId, type: 'end', label: 'Execution Complete' });
         const lastStep = flow.steps.find(s => s.id === lastStepId);
         if (lastStep) lastStep.next = finalStepId;
 
-        // Cleanup: Remove dangling 'next' references
-        const validIds = new Set(flow.steps.map(s => s.id));
-        flow.steps.forEach(s => {
-            if (s.next && !validIds.has(s.next)) s.next = undefined;
-            if (s.alternateNext && !validIds.has(s.alternateNext)) s.alternateNext = undefined;
-        });
-    }
-
-    private parseCppFlow(content: string, flow: FlowData) {
-        // Step 1: Entry Point
-        flow.steps.push({
-            id: 'entry',
-            type: 'start',
-            label: 'C/C++ Initialization',
-            next: 'step_cpp_0'
-        });
-
-        const lines = content.split('\n');
-        let stepCounter = 0;
-        let lastStepId = 'entry';
-
-        for (let i = 0; i < Math.min(lines.length, 1000); i++) {
-            const line = lines[i].trim();
-            if (!line || line.startsWith('//') || line.startsWith('/*')) continue;
-
-            // 1. Blocks (if, for, while, switch, try, catch)
-            const blockMatch = line.match(/^\s*(if|for|while|switch|try|catch|case)\b/);
-            if (blockMatch) {
-                const type = blockMatch[1];
-                let label = type === 'case' ? line : this.extractCondition(line) || type;
-
-                const stepId = `step_cpp_${stepCounter++}`;
-                flow.steps.push({
-                    id: stepId,
-                    type: (['if', 'while', 'switch', 'case'].includes(type)) ? 'decision' : 'process',
-                    label: label,
-                    next: `step_cpp_${stepCounter}`
-                });
-
-                const prevStep = flow.steps.find(s => s.id === lastStepId);
-                if (prevStep) prevStep.next = stepId;
-                lastStepId = stepId;
-            }
-            // 2. Function calls or assignments that look like operations
-            else if (line.match(/^\s*[a-zA-Z0-9_.]+\s*=[^=]|^\s*[a-zA-Z0-9_.]+\(/)) {
-                const callMatch = line.match(/([a-zA-Z0-9_.]+\s*)\(/);
-                if (callMatch) {
-                    const funcName = callMatch[1].trim();
-                    if (!['if', 'for', 'while', 'switch', 'printf', 'scanf', 'try', 'catch', 'using', 'template'].includes(funcName)) {
-                        const stepId = `step_cpp_${stepCounter++}`;
-                        flow.steps.push({
-                            id: stepId,
-                            type: 'process',
-                            label: `Call: ${funcName}`,
-                            next: `step_cpp_${stepCounter}`
-                        });
-                        const prevStep = flow.steps.find(s => s.id === lastStepId);
-                        if (prevStep) prevStep.next = stepId;
-                        lastStepId = stepId;
-                    }
-                }
-            }
-
-            if (stepCounter > 50) break;
-        }
-
-        flow.steps.push({
-            id: 'step_cpp_final',
-            type: 'end',
-            label: 'Execution Complete'
-        });
-        const lastStep = flow.steps.find(s => s.id === lastStepId);
-        if (lastStep) lastStep.next = 'step_cpp_final';
-
-        // Cleanup: Remove dangling 'next' references
-        const validIds = new Set(flow.steps.map(s => s.id));
-        flow.steps.forEach(s => {
-            if (s.next && !validIds.has(s.next)) s.next = undefined;
-            if (s.alternateNext && !validIds.has(s.alternateNext)) s.alternateNext = undefined;
-        });
-    }
-
-    private parseRustFlow(content: string, flow: FlowData) {
-        // Step 1: Entry Point
-        flow.steps.push({
-            id: 'entry',
-            type: 'start',
-            label: 'Rust Initialization',
-            next: 'step_rs_0'
-        });
-
-        const lines = content.split('\n');
-        let stepCounter = 0;
-        let lastStepId = 'entry';
-
-        for (let i = 0; i < Math.min(lines.length, 1000); i++) {
-            const line = lines[i].trim();
-            if (!line || line.startsWith('//') || line.startsWith('/*')) continue;
-
-            // 1. Blocks (if, match, while, for, loop)
-            const blockMatch = line.match(/^\s*(if|match|while|for|loop)\b/);
-            if (blockMatch) {
-                const type = blockMatch[1];
-                let label = this.extractCondition(line) || type;
-
-                const stepId = `step_rs_${stepCounter++}`;
-                flow.steps.push({
-                    id: stepId,
-                    type: (['if', 'match', 'while'].includes(type)) ? 'decision' : 'process',
-                    label: label,
-                    next: `step_rs_${stepCounter}`
-                });
-
-                const prevStep = flow.steps.find(s => s.id === lastStepId);
-                if (prevStep) prevStep.next = stepId;
-                lastStepId = stepId;
-            }
-            // 2. Result/Option handling (unwrap, expect, ok_or)
-            else if (line.match(/\.(unwrap|expect|ok_or|map|and_then)\(/)) {
-                const stepId = `step_rs_${stepCounter++}`;
-                flow.steps.push({
-                    id: stepId,
-                    type: 'process',
-                    label: `Safe Operation: ${line.split('(')[0].split('.').pop()}`,
-                    next: `step_rs_${stepCounter}`
-                });
-                const prevStep = flow.steps.find(s => s.id === lastStepId);
-                if (prevStep) prevStep.next = stepId;
-                lastStepId = stepId;
-            }
-            // 3. Function/Method calls
-            else if (line.match(/^[a-zA-Z0-9_.]+\s*=[^=]|^\s*[a-zA-Z0-9_.]+\(/)) {
-                const callMatch = line.match(/([a-zA-Z0-9_.]+\s*)\(/);
-                if (callMatch) {
-                    const funcName = callMatch[1].trim();
-                    if (!['if', 'match', 'while', 'for', 'loop', 'println', 'format', 'panic'].includes(funcName)) {
-                        const stepId = `step_rs_${stepCounter++}`;
-                        flow.steps.push({
-                            id: stepId,
-                            type: 'process',
-                            label: `Call: ${funcName}`,
-                            next: `step_rs_${stepCounter}`
-                        });
-                        const prevStep = flow.steps.find(s => s.id === lastStepId);
-                        if (prevStep) prevStep.next = stepId;
-                        lastStepId = stepId;
-                    }
-                }
-            }
-
-            if (stepCounter > 50) break;
-        }
-
-        flow.steps.push({
-            id: 'step_rs_final',
-            type: 'end',
-            label: 'Execution Complete'
-        });
-        const lastStep = flow.steps.find(s => s.id === lastStepId);
-        if (lastStep) lastStep.next = 'step_rs_final';
-
-        // Cleanup
-        const validIds = new Set(flow.steps.map(s => s.id));
-        flow.steps.forEach(s => {
-            if (s.next && !validIds.has(s.next)) s.next = undefined;
-            if (s.alternateNext && !validIds.has(s.alternateNext)) s.alternateNext = undefined;
-        });
+        this.cleanupFlow(flow);
     }
 
     private parsePythonFlow(content: string, flow: FlowData) {
-        // Step 1: Entry Point
         flow.steps.push({
             id: 'entry',
             type: 'start',
@@ -346,49 +210,91 @@ export class FlowScanner {
         let stepCounter = 0;
         let lastStepId = 'entry';
 
+        // { indent: number, headerId: string, type: string, joinPointId?: string, lastDecisionId?: string }
+        const blockStack: { indent: number, headerId: string, type: string, joinPointId?: string, lastDecisionId?: string }[] = [];
+
         for (let i = 0; i < Math.min(lines.length, 1000); i++) {
             const rawLine = lines[i];
-            const line = rawLine.trim();
-            if (!line || line.startsWith('#')) continue;
+            const trimmedLine = rawLine.trim();
+            if (!trimmedLine || trimmedLine.startsWith('#')) continue;
 
-            // 1. Blocks (if, for, while, with, try, def, class, except)
-            const blockMatch = line.match(/^(def|class|if|for|while|with|try|elif|except)\s*([a-zA-Z0-9_(.]+)?/);
+            const currentIndent = rawLine.search(/\S/);
+
+            // Check if blocks ended
+            while (blockStack.length > 0 && currentIndent <= blockStack[blockStack.length - 1].indent &&
+                !trimmedLine.startsWith('elif') && !trimmedLine.startsWith('else') && !trimmedLine.startsWith('except')) {
+                const endedBlock = blockStack.pop();
+                if (endedBlock) {
+                    if (endedBlock.type === 'while' || endedBlock.type === 'for') {
+                        const lastStep = flow.steps.find(s => s.id === lastStepId);
+                        if (lastStep) lastStep.next = endedBlock.headerId;
+                        lastStepId = endedBlock.headerId;
+                    } else if (endedBlock.joinPointId) {
+                        const lastStep = flow.steps.find(s => s.id === lastStepId);
+                        if (lastStep && !lastStep.next) lastStep.next = endedBlock.joinPointId;
+                        lastStepId = endedBlock.joinPointId;
+                    }
+                }
+            }
+
+            const blockMatch = trimmedLine.match(/^(def|class|if|for|while|with|try|elif|else|except|finally)\b\s*([a-zA-Z0-9_(.]+)?/);
             if (blockMatch) {
                 const type = blockMatch[1];
                 let label = blockMatch[2] || type;
-
-                // Special handling for __main__
-                if (line.includes('if __name__ == "__main__"')) {
-                    label = 'Main Execution Block';
-                }
+                if (trimmedLine.includes('if __name__ == "__main__"')) label = 'Main Execution Block';
 
                 const stepId = `step_py_${stepCounter++}`;
-                flow.steps.push({
-                    id: stepId,
-                    type: (['if', 'elif', 'while'].includes(type)) ? 'decision' : 'process',
-                    label: label.replace('(', ''),
-                    next: `step_py_${stepCounter}`
-                });
+                const isDecision = ['if', 'elif', 'while'].includes(type);
 
-                const prevStep = flow.steps.find(s => s.id === lastStepId);
-                if (prevStep) prevStep.next = stepId;
+                flow.steps.push({ id: stepId, type: isDecision ? 'decision' : 'process', label: label.replace(':', '').trim() });
+
+                // Link logic
+                if (type === 'elif' || type === 'else') {
+                    const topBlock = blockStack.length > 0 ? blockStack[blockStack.length - 1] : null;
+
+                    // [Fix] Before starting elif/else, link the PREVIOUS branch's last step to the join point
+                    if (topBlock && topBlock.joinPointId) {
+                        const lastStepInPrevBranch = flow.steps.find(s => s.id === lastStepId);
+                        if (lastStepInPrevBranch && !lastStepInPrevBranch.next) {
+                            lastStepInPrevBranch.next = topBlock.joinPointId;
+                        }
+                    }
+
+                    if (topBlock && topBlock.lastDecisionId) {
+                        const decisionNode = flow.steps.find(s => s.id === topBlock.lastDecisionId);
+                        if (decisionNode) {
+                            decisionNode.alternateNext = stepId;
+                        }
+                    }
+                } else {
+                    const prevStep = flow.steps.find(s => s.id === lastStepId);
+                    if (prevStep) prevStep.next = stepId;
+                }
+
+                if (trimmedLine.endsWith(':')) {
+                    let joinPointId: string | undefined;
+                    if (type === 'if') {
+                        joinPointId = `join_py_${stepCounter++}`;
+                        flow.steps.push({ id: joinPointId, type: 'process', label: 'Merge', hidden: true });
+                        blockStack.push({ indent: currentIndent, headerId: stepId, type, joinPointId, lastDecisionId: stepId });
+                    } else if (type === 'elif') {
+                        // Update the lastDecisionId for the next elif/else
+                        const topBlock = blockStack[blockStack.length - 1];
+                        if (topBlock) topBlock.lastDecisionId = stepId;
+                    } else {
+                        blockStack.push({ indent: currentIndent, headerId: stepId, type });
+                    }
+                }
                 lastStepId = stepId;
-            }
-            // 2. Significant Calls (e.g., logger.info, parser.parse)
-            // Allow indented calls
-            else if (line.match(/^[a-zA-Z0-9_.]+\s*=[^=]|^\s*[a-zA-Z0-9_.]+\(/)) {
-                // Try to extract function call
-                const callMatch = line.match(/([a-zA-Z0-9_.]+\s*)\(/);
+            } else if (trimmedLine.match(/^[a-zA-Z0-9_.]+\s*=[^=]|^\s*[a-zA-Z0-9_.]+\(/)) {
+                const callMatch = trimmedLine.match(/([a-zA-Z0-9_.]+\s*)\(/);
                 if (callMatch) {
                     const funcName = callMatch[1].trim();
-                    if (!['if', 'for', 'while', 'print', 'super', 'try', 'except', 'with', 'def', 'class'].includes(funcName)) {
+                    // Include print in Python
+                    if (!['super', 'len', 'range', 'enumerate', 'dict', 'list', 'set', 'str', 'int'].includes(funcName)) {
                         const stepId = `step_py_${stepCounter++}`;
-                        flow.steps.push({
-                            id: stepId,
-                            type: 'process',
-                            label: `Call: ${funcName}`,
-                            next: `step_py_${stepCounter}`
-                        });
+                        const label = funcName === 'print' ? trimmedLine : `Call: ${funcName}`;
+                        flow.steps.push({ id: stepId, type: 'process', label: label });
                         const prevStep = flow.steps.find(s => s.id === lastStepId);
                         if (prevStep) prevStep.next = stepId;
                         lastStepId = stepId;
@@ -396,18 +302,223 @@ export class FlowScanner {
                 }
             }
 
-            if (stepCounter > 50) break;
+            if (stepCounter > 100) break;
         }
 
-        flow.steps.push({
-            id: 'step_py_final',
-            type: 'end',
-            label: 'Execution Complete'
-        });
+        const finalStepId = 'step_py_final';
+        flow.steps.push({ id: finalStepId, type: 'end', label: 'Execution Complete' });
         const lastStep = flow.steps.find(s => s.id === lastStepId);
-        if (lastStep) lastStep.next = 'step_py_final';
+        if (lastStep) lastStep.next = finalStepId;
 
-        // Cleanup: Remove dangling 'next' references
+        this.cleanupFlow(flow);
+    }
+
+    private parseCppFlow(content: string, flow: FlowData) {
+        flow.steps.push({
+            id: 'entry',
+            type: 'start',
+            label: 'C++ Main Entry',
+            next: 'step_cpp_0'
+        });
+
+        const lines = content.split('\n');
+        let stepCounter = 0;
+        let lastStepId = 'entry';
+        let lastPoppedBlock: { bracketLevel: number, headerId: string, type: string, joinPointId?: string, lastDecisionId?: string } | null = null;
+
+        const blockStack: { bracketLevel: number, headerId: string, type: string, joinPointId?: string, lastDecisionId?: string }[] = [];
+        let currentBracketLevel = 0;
+
+        for (let i = 0; i < Math.min(lines.length, 1000); i++) {
+            const line = lines[i].trim();
+            if (!line || line.startsWith('//') || line.startsWith('/*')) continue;
+
+            const openBrackets = (line.match(/\{/g) || []).length;
+            const closeBrackets = (line.match(/\}/g) || []).length;
+
+            if (line.startsWith('}') && blockStack.length > 0) {
+                const top = blockStack[blockStack.length - 1];
+                if (currentBracketLevel <= top.bracketLevel + 1 && closeBrackets > 0) {
+                    lastPoppedBlock = blockStack.pop() || null;
+                    if (lastPoppedBlock) {
+                        if (lastPoppedBlock.type === 'while' || lastPoppedBlock.type === 'for') {
+                            const lastStep = flow.steps.find(s => s.id === lastStepId);
+                            if (lastStep) lastStep.next = lastPoppedBlock.headerId;
+                            lastStepId = lastPoppedBlock.headerId;
+                        } else if (lastPoppedBlock.joinPointId) {
+                            const lastStep = flow.steps.find(s => s.id === lastStepId);
+                            if (lastStep && !lastStep.next) lastStep.next = lastPoppedBlock.joinPointId;
+                            lastStepId = lastPoppedBlock.joinPointId;
+                        }
+                    }
+                }
+            }
+
+            const branchMatch = line.match(/\b(if|switch|while|for)\b\s*\(/);
+            if (branchMatch) {
+                const type = branchMatch[1];
+                const condition = this.extractCondition(line) || type;
+                const stepId = `step_cpp_${stepCounter++}`;
+                const isDecision = ['if', 'while', 'switch'].includes(type);
+
+                flow.steps.push({ id: stepId, type: isDecision ? 'decision' : 'process', label: condition });
+
+                if ((line.startsWith('else') || line.startsWith('} else')) && lastPoppedBlock && lastPoppedBlock.lastDecisionId) {
+                    const decStep = flow.steps.find(s => s.id === lastPoppedBlock!.lastDecisionId);
+                    if (decStep) decStep.alternateNext = stepId;
+
+                    if (line.includes('{')) {
+                        blockStack.push({
+                            bracketLevel: currentBracketLevel,
+                            headerId: stepId,
+                            type,
+                            joinPointId: lastPoppedBlock.joinPointId,
+                            lastDecisionId: stepId
+                        });
+                    }
+                } else {
+                    const prevStep = flow.steps.find(s => s.id === lastStepId);
+                    if (prevStep) prevStep.next = stepId;
+
+                    if (line.includes('{')) {
+                        let joinPointId: string | undefined;
+                        if (type === 'if') {
+                            joinPointId = `join_cpp_${stepCounter++}`;
+                            flow.steps.push({ id: joinPointId, type: 'process', label: 'Merge', hidden: true });
+                        }
+                        blockStack.push({ bracketLevel: currentBracketLevel, headerId: stepId, type, joinPointId, lastDecisionId: stepId });
+                    }
+                }
+                lastStepId = stepId;
+            } else if (line.match(/^[a-zA-Z0-9_.]+\s*=[^=]|^\s*[a-zA-Z0-9_.]+\(/)) {
+                const callMatch = line.match(/([a-zA-Z0-9_.]+\s*)\(/);
+                if (callMatch) {
+                    const funcName = callMatch[1].trim();
+                    if (!['if', 'switch', 'while', 'for', 'loop', 'printf', 'fprintf', 'std::cout'].includes(funcName)) {
+                        const stepId = `step_cpp_${stepCounter++}`;
+                        flow.steps.push({ id: stepId, type: 'process', label: `Call: ${funcName}` });
+                        const prevStep = flow.steps.find(s => s.id === lastStepId);
+                        if (prevStep) prevStep.next = stepId;
+                        lastStepId = stepId;
+                    }
+                }
+            }
+
+            currentBracketLevel += (openBrackets - closeBrackets);
+            if (stepCounter > 100) break;
+        }
+
+        const finalStepId = 'step_cpp_final';
+        flow.steps.push({ id: finalStepId, type: 'end', label: 'Execution Complete' });
+        const lastStep = flow.steps.find(s => s.id === lastStepId);
+        if (lastStep) lastStep.next = finalStepId;
+
+        this.cleanupFlow(flow);
+    }
+
+    private parseRustFlow(content: string, flow: FlowData) {
+        flow.steps.push({
+            id: 'entry',
+            type: 'start',
+            label: 'Rust Main Entry',
+            next: 'step_rs_0'
+        });
+
+        const lines = content.split('\n');
+        let stepCounter = 0;
+        let lastStepId = 'entry';
+        let lastPoppedBlock: { bracketLevel: number, headerId: string, type: string, joinPointId?: string, lastDecisionId?: string } | null = null;
+
+        const blockStack: { bracketLevel: number, headerId: string, type: string, joinPointId?: string, lastDecisionId?: string }[] = [];
+        let currentBracketLevel = 0;
+
+        for (let i = 0; i < Math.min(lines.length, 1000); i++) {
+            const line = lines[i].trim();
+            if (!line || line.startsWith('//') || line.startsWith('/*')) continue;
+
+            const openBrackets = (line.match(/\{/g) || []).length;
+            const closeBrackets = (line.match(/\}/g) || []).length;
+
+            if (line.startsWith('}') && blockStack.length > 0) {
+                const top = blockStack[blockStack.length - 1];
+                if (currentBracketLevel <= top.bracketLevel + 1 && closeBrackets > 0) {
+                    lastPoppedBlock = blockStack.pop() || null;
+                    if (lastPoppedBlock) {
+                        if (lastPoppedBlock.type === 'while' || lastPoppedBlock.type === 'for' || lastPoppedBlock.type === 'loop') {
+                            const lastStep = flow.steps.find(s => s.id === lastStepId);
+                            if (lastStep) lastStep.next = lastPoppedBlock.headerId;
+                            lastStepId = lastPoppedBlock.headerId;
+                        } else if (lastPoppedBlock.joinPointId) {
+                            const lastStep = flow.steps.find(s => s.id === lastStepId);
+                            if (lastStep && !lastStep.next) lastStep.next = lastPoppedBlock.joinPointId;
+                            lastStepId = lastPoppedBlock.joinPointId;
+                        }
+                    }
+                }
+            }
+
+            const branchMatch = line.match(/\b(if|match|while|for|loop)\b/);
+            if (branchMatch) {
+                const type = branchMatch[1];
+                const stepId = `step_rs_${stepCounter++}`;
+                const isDecision = ['if', 'while', 'match'].includes(type);
+
+                flow.steps.push({ id: stepId, type: isDecision ? 'decision' : 'process', label: type });
+
+                if ((line.startsWith('else') || line.startsWith('} else')) && lastPoppedBlock && lastPoppedBlock.lastDecisionId) {
+                    const decStep = flow.steps.find(s => s.id === lastPoppedBlock!.lastDecisionId);
+                    if (decStep) decStep.alternateNext = stepId;
+
+                    if (line.includes('{')) {
+                        blockStack.push({
+                            bracketLevel: currentBracketLevel,
+                            headerId: stepId,
+                            type,
+                            joinPointId: lastPoppedBlock.joinPointId,
+                            lastDecisionId: stepId
+                        });
+                    }
+                } else {
+                    const prevStep = flow.steps.find(s => s.id === lastStepId);
+                    if (prevStep) prevStep.next = stepId;
+
+                    if (line.includes('{')) {
+                        let joinPointId: string | undefined;
+                        if (type === 'if' || type === 'match') {
+                            joinPointId = `join_rs_${stepCounter++}`;
+                            flow.steps.push({ id: joinPointId, type: 'process', label: 'Merge', hidden: true });
+                        }
+                        blockStack.push({ bracketLevel: currentBracketLevel, headerId: stepId, type, joinPointId, lastDecisionId: stepId });
+                    }
+                }
+                lastStepId = stepId;
+            } else if (line.match(/^[a-zA-Z0-9_.]+\s*=[^=]|^\s*[a-zA-Z0-9_.]+\(/)) {
+                const callMatch = line.match(/([a-zA-Z0-9_.]+\s*)\(/);
+                if (callMatch) {
+                    const funcName = callMatch[1].trim();
+                    if (!['if', 'match', 'while', 'for', 'loop', 'println', 'format', 'panic'].includes(funcName)) {
+                        const stepId = `step_rs_${stepCounter++}`;
+                        flow.steps.push({ id: stepId, type: 'process', label: `Call: ${funcName}` });
+                        const prevStep = flow.steps.find(s => s.id === lastStepId);
+                        if (prevStep) prevStep.next = stepId;
+                        lastStepId = stepId;
+                    }
+                }
+            }
+
+            currentBracketLevel += (openBrackets - closeBrackets);
+            if (stepCounter > 100) break;
+        }
+
+        const finalStepId = 'step_rs_final';
+        flow.steps.push({ id: finalStepId, type: 'end', label: 'Execution Complete' });
+        const lastStep = flow.steps.find(s => s.id === lastStepId);
+        if (lastStep) lastStep.next = finalStepId;
+
+        this.cleanupFlow(flow);
+    }
+
+    private cleanupFlow(flow: FlowData) {
         const validIds = new Set(flow.steps.map(s => s.id));
         flow.steps.forEach(s => {
             if (s.next && !validIds.has(s.next)) s.next = undefined;
@@ -421,18 +532,11 @@ export class FlowScanner {
     }
 
     private extractLabel(line: string): string | null {
-        // Handle TypeScript modifiers and async
         const match = line.match(/(?:async\s+)?(?:function\s+)?(?:const|let|var|class|interface|type|export\s+)?([a-zA-Z0-9_]+)\b/);
-
-        // Secondary check for TS class members: private myMethod()
         const memberMatch = line.match(/(?:private|public|protected|static)\s+(?:async\s+)?([a-zA-Z0-9_]+)\s*\(/);
-
         const label = (memberMatch ? memberMatch[1] : (match ? match[1] : null));
-
-        // Filter out keywords
         const keywords = ['const', 'let', 'var', 'if', 'else', 'for', 'while', 'switch', 'case', 'break', 'return', 'import', 'export', 'from'];
         if (label && keywords.includes(label)) return null;
-
         return label ? label.trim() : null;
     }
 }

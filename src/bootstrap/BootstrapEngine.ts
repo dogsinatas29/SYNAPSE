@@ -257,11 +257,10 @@ This document defines the rules for how SYNAPSE discovers, parses, and visualize
                         // 참조(Import) 기반 의존성 추가
                         summary.references.forEach(ref => {
                             // 단순화: 참조된 이름이 파일명과 일치하는지 확인 (상대 경로 고려 필요하지만 여기선 단순 매칭)
-                            // 실제로는 경로 해석 로직이 필요함. 여기서는 "추정" 의존성으로 추가.
                             structure.dependencies.push({
                                 from: currentRelPath.replace(/\\/g, '/'),
-                                to: ref, // 나중에 실제 파일 경로와 매칭해야 함
-                                type: 'dependency'
+                                to: ref.target,
+                                type: ref.type as any
                             });
                         });
                     }

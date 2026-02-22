@@ -15,12 +15,38 @@ class FlowRenderer {
     buildFlow(nodes) {
         const edges = this.engine.edges || [];
 
-        // 1. 진짜 실행 루트 탐색 ( Cargo.toml, GEMINI.md 등 메타데이터 제외하고 main 위주)
-        const roots = nodes.filter(n => {
-            if (!n.data || !n.data.file) return false;
-            const fileName = n.data.file.toLowerCase();
-            return fileName.includes('main.') || fileName.includes('index.') || fileName.includes('app.');
+        // 1. 진짜 실행 루트 탐색 (실제 그래프 상의 Root: In-degree가 0인 노드들)
+        // [Fix] External 노드는 루트에서 제외 (로직의 시작점이 될 수 없음)
+        const inDegrees = {};
+        edges.forEach(e => {
+            inDegrees[e.to] = (inDegrees[e.to] || 0) + 1;
         });
+
+        // [Fix] Root 우선순위 부여: main, app, index 등이 최상단에 오도록 하며, helper/util 등은 후순위
+        const roots = nodes.filter(n => !inDegrees[n.id] && n.type !== 'external');
+
+        // Root 정렬: main을 가장 앞으로, validators/helpers 등은 뒤로
+        roots.sort((a, b) => {
+            const fileNameA = (a.data && a.data.file) ? a.data.file.toLowerCase() : '';
+            const fileNameB = (b.data && b.data.file) ? b.data.file.toLowerCase() : '';
+
+            const isPriority = (name) => name.includes('main.') || name.includes('app.') || name.includes('index.');
+            const isHelper = (name) => name.includes('validator') || name.includes('helper') || name.includes('util');
+
+            if (isPriority(fileNameA) && !isPriority(fileNameB)) return -1;
+            if (!isPriority(fileNameA) && isPriority(fileNameB)) return 1;
+            if (isHelper(fileNameA) && !isHelper(fileNameB)) return 1;
+            if (!isHelper(fileNameA) && isHelper(fileNameB)) return -1;
+            return 0;
+        });
+
+        if (roots.length === 0 && nodes.length > 0) {
+            const priorityNode = nodes.find(n => {
+                const name = (n.data && n.data.file) ? n.data.file.toLowerCase() : '';
+                return name.includes('main.') || name.includes('app.') || name.includes('index.');
+            }) || (nodes.find(n => n.type !== 'external') || nodes[0]);
+            roots.push(priorityNode);
+        }
 
         // 2. 의존성 트레이싱 (Reachability)
         const reachableIds = new Set();
@@ -39,7 +65,13 @@ class FlowRenderer {
         }
 
         // 3. 도달 가능한 노드 필터링 및 정렬
-        const filteredNodes = nodes.filter(n => reachableIds.has(n.id));
+        // [Refine] Flow 뷰에서는 '순수 로직'만 표현하기 위해 문서(.md) 파일은 다시 제외
+        // 문서 파일은 Graph 뷰의 'Documentation Shelf'에서 탐색 가능함
+        const filteredNodes = nodes.filter(n => {
+            const fileName = (n.data && n.data.file) ? n.data.file.toLowerCase() : '';
+            const isDoc = fileName.endsWith('.md') || fileName.endsWith('.txt') || fileName.includes('license');
+            return reachableIds.has(n.id) && n.type !== 'external' && !isDoc;
+        });
         const sortedNodes = [...filteredNodes].sort((a, b) => {
             const layerA = a.data.layer || 0;
             const layerB = b.data.layer || 0;
@@ -49,12 +81,20 @@ class FlowRenderer {
 
         // 4. 스텝 생성 (START 인젝션)
         const steps = [];
+        const rootStepIds = roots.map(r => {
+            const idx = sortedNodes.findIndex(sn => sn.id === r.id);
+            return idx !== -1 ? `step_${idx}` : null;
+        }).filter(id => id !== null);
+
         steps.push({
             id: 'step_start',
             type: 'terminal',
             label: 'START',
             file: 'system',
-            next: sortedNodes.length > 0 ? `step_0` : null
+            next: rootStepIds.length > 0 ? rootStepIds[0] : (sortedNodes.length > 0 ? 'step_0' : null),
+            // [Improvement] START에서 모든 루트로 향하는 연결을 명시
+            allNexts: rootStepIds,
+            roots: rootStepIds
         });
 
         sortedNodes.forEach((node, index) => {
@@ -71,19 +111,25 @@ class FlowRenderer {
                 fileName.includes('router') ||
                 fileName.includes('checker') ||
                 fileName.includes('enforcer') ||
-                fileName.includes('prompt');
+                fileName.includes('prompt') ||
+                fileName.includes('valid') ||
+                fileName.startsWith('is_') ||
+                fileName.includes('check') ||
+                fileName.includes('verify');
 
             steps.push({
                 id: `step_${index}`,
                 type: isLogicalDecision ? 'decision' : 'process',
-                label: node.data.label,
+                label: node.data.label || node.id,
                 file: node.data.file,
                 node: node,
+                // [Improvement] Show more branches in global flow
                 next: nextSteps.length > 0 ? nextSteps[0] : null,
-                alternateNext: (isLogicalDecision && nextSteps.length > 1) ? nextSteps[1] : null,
+                alternateNext: (nextSteps.length > 1) ? nextSteps[1] : null,
                 allNexts: nextSteps,
                 layer: node.data.layer || 0,
-                isRealDecision: isLogicalDecision
+                isRealDecision: isLogicalDecision,
+                decisionLabel: isLogicalDecision ? `Check: ${node.data.label || node.id}` : null
             });
         });
 
@@ -104,6 +150,7 @@ class FlowRenderer {
 
         return {
             id: 'flow_main',
+            type: 'global', // [New] Distinguish from 'internal' flow
             name: 'Strategic Execution Flow',
             steps: steps
         };
@@ -112,31 +159,97 @@ class FlowRenderer {
     layoutFlow(flow) {
         const startX = 400;
         const startY = 100;
-        const stepWidth = 300;
-        const stepHeight = 150;
+        // [Golden Mean] 넓은 뷰와 좁은 뷰 사이의 균형점 탐색 (Enriched logic: 280)
+        let stepWidth = 280;
+        // [Refine] Decision(다이아몬드) 노드와 라벨 공간 확보를 위해 세로 높이 확대 (160 -> 180)
+        const stepHeight = 180;
 
         const positions = {};
-        const layerBranchCount = {};
+        const levels = {}; // stepId -> level
+        const offsets = {}; // stepId -> xOffset
 
-        // 1. 레이아웃 계산을 위한 BFS/DFS 대신 순차적 배치 + 분기 보정
-        flow.steps.forEach((step, index) => {
-            const layer = step.layer || 0;
+        // 1. Level Calculation (Topological-ish: level = max(parents) + 1)
+        const queue = [flow.steps[0].id];
+        levels[flow.steps[0].id] = 0;
+        offsets[flow.steps[0].id] = 0;
 
-            // 기본 수직 위치
-            if (!positions[step.id]) {
-                positions[step.id] = {
-                    x: startX + (layer * 50),
-                    y: startY + (index * stepHeight)
-                };
-            }
+        // BFS traversal for proper layering and horizontal spreading
+        const visited = new Set();
+        const levelCounters = {}; // level -> { min, max }
+        const levelOccupied = {}; // level -> { offset: stepId }
 
-            // 분기(alternateNext)가 있다면 오른쪽으로 오프셋 부여
-            if (step.alternateNext) {
-                positions[step.alternateNext] = {
-                    x: positions[step.id].x + stepWidth,
-                    y: positions[step.id].y + (stepHeight * 0.5) // 약간 아래로
-                };
-            }
+        visited.add(flow.steps[0].id);
+        levels[flow.steps[0].id] = 0;
+        offsets[flow.steps[0].id] = 0;
+        levelCounters[0] = { min: 0, max: 0 };
+        levelOccupied[0] = { 0: flow.steps[0].id };
+
+        let head = 0;
+        while (head < queue.length) {
+            const currentId = queue[head++];
+            const currentStep = flow.steps.find(s => s.id === currentId);
+            if (!currentStep) continue;
+
+            // Sort children to keep logical consistency
+            const nextIdsRaw = currentStep.allNexts || [];
+            const nextIds = [...new Set([
+                ...(currentStep.next ? [currentStep.next] : []),
+                ...(currentStep.alternateNext ? [currentStep.alternateNext] : []),
+                ...nextIdsRaw,
+                ...(currentStep.roots || [])
+            ])];
+
+            const currentLevel = levels[currentId];
+            const parentOffset = offsets[currentId];
+
+            nextIds.forEach((nextId, idx) => {
+                const nextStep = flow.steps.find(s => s.id === nextId);
+                if (!nextStep) return;
+
+                const newLevel = currentLevel + 1;
+
+                // If this is the first time reaching this node at this level, or a deeper path is found
+                if (levels[nextId] === undefined || newLevel > levels[nextId]) {
+                    // Update level
+                    levels[nextId] = newLevel;
+
+                    // Assign a unique horizontal offset for this level to avoid overlapping
+                    if (!levelOccupied[newLevel]) levelOccupied[newLevel] = {};
+                    let idealOffset = parentOffset + (idx === 0 ? 0 : (idx % 2 === 0 ? -Math.ceil(idx / 2) : Math.ceil(idx / 2)));
+                    let actualOffset = idealOffset;
+                    let shift = 0;
+                    while (levelOccupied[newLevel][actualOffset] !== undefined && levelOccupied[newLevel][actualOffset] !== nextId) {
+                        shift = (shift <= 0) ? -shift + 1 : -shift;
+                        actualOffset = idealOffset + shift;
+                    }
+                    offsets[nextId] = actualOffset;
+                    levelOccupied[newLevel][actualOffset] = nextId;
+                    if (levelCounters[newLevel] === undefined) levelCounters[newLevel] = { min: actualOffset, max: actualOffset };
+                    levelCounters[newLevel].min = Math.min(levelCounters[newLevel].min, actualOffset);
+                    levelCounters[newLevel].max = Math.max(levelCounters[newLevel].max, actualOffset);
+
+                    if (!visited.has(nextId) || newLevel > levels[nextId]) {
+                        visited.add(nextId);
+                        queue.push(nextId);
+                    }
+                }
+            });
+
+            if (queue.length > 500) break;
+        }
+
+
+        // 2. Final position assignment (Center the horizontal spread)
+        flow.steps.forEach(step => {
+            const level = levels[step.id] || 0;
+            const offset = offsets[step.id] || 0;
+            const stats = levelCounters[level] || { min: 0, max: 0 };
+            const centeredOffset = offset - (stats.min + stats.max) / 2;
+
+            positions[step.id] = {
+                x: startX + (centeredOffset * stepWidth),
+                y: startY + (level * stepHeight)
+            };
         });
 
         return positions;
@@ -148,20 +261,40 @@ class FlowRenderer {
 
         for (const step of flow.steps) {
             const pos = positions[step.id];
-            this.renderStep(ctx, step, pos.x, pos.y);
-
-            // 다음 단계로 연결선
-            if (step.next) {
-                const nextPos = positions[step.next];
-                // 진짜 조건문일 때만 'True' 표시
-                const label = step.isRealDecision ? 'True' : null;
-                this.renderConnection(ctx, pos.x, pos.y, nextPos.x, nextPos.y, label);
+            if (!step.hidden) {
+                this.renderStep(ctx, step, pos.x, pos.y);
             }
 
-            // 진짜 조건문일 때만 대체 경로 표시
-            if (step.isRealDecision && step.alternateNext) {
-                const altPos = positions[step.alternateNext];
-                this.renderConnection(ctx, pos.x, pos.y, altPos.x, altPos.y, 'False');
+            // [Improvement] allNexts에 포함된 모든 연결선을 렌더링
+            const nextIds = step.allNexts || [];
+            // next와 alternateNext가 명시적으로 있고 allNexts에 없다면 추가 (하위 호환)
+            if (step.next && !nextIds.includes(step.next)) nextIds.push(step.next);
+            if (step.alternateNext && !nextIds.includes(step.alternateNext)) nextIds.push(step.alternateNext);
+
+            nextIds.forEach((nextId, idx) => {
+                const nextPos = positions[nextId];
+                if (!nextPos) return;
+
+                // Decision 노드인 경우 첫 번째는 YES/TRUE, 나머지는 NO/FALSE 또는 라벨 없음
+                let label = null;
+                if (step.type === 'decision') {
+                    if (nextId === step.next) label = 'YES';
+                    else if (nextId === step.alternateNext) label = 'NO';
+                    else label = `Path ${idx}`;
+                }
+
+                const edgeType = (step.data && step.data.edgeType) || null;
+                this.renderConnection(ctx, pos.x, pos.y, nextPos.x, nextPos.y, label, edgeType);
+            });
+
+            // [New] START에서 여러 루트로 가는 멀티 연결선 지원
+            if (step.id === 'step_start' && step.roots) {
+                step.roots.forEach(rootId => {
+                    const rootPos = positions[rootId];
+                    if (rootPos) {
+                        this.renderConnection(ctx, pos.x, pos.y, rootPos.x, rootPos.y);
+                    }
+                });
             }
         }
     }
@@ -171,8 +304,7 @@ class FlowRenderer {
         const height = 65;
 
         if (step.type === 'terminal') {
-            // 둥근 캡슐형 (START/END)
-            ctx.fillStyle = '#b8bb26'; // Green/Aqua for terminal
+            ctx.fillStyle = '#b8bb26';
             ctx.beginPath();
             if (ctx.roundRect) {
                 ctx.roundRect(x - 80, y - 30, 160, 60, 30);
@@ -188,35 +320,41 @@ class FlowRenderer {
         }
 
         if (step.type === 'process') {
-            // 사각형
             ctx.fillStyle = '#3c3836';
             ctx.fillRect(x - width / 2, y - height / 2, width, height);
             ctx.strokeStyle = '#ebdbb2';
             ctx.lineWidth = 2;
             ctx.strokeRect(x - width / 2, y - height / 2, width, height);
         } else if (step.type === 'decision') {
-            // 다이아몬드
-            ctx.fillStyle = '#504945';
+            ctx.fillStyle = '#1d2021'; // 다크 바디
             ctx.beginPath();
-            ctx.moveTo(x, y - height / 2 - 10);
-            ctx.lineTo(x + width / 2 + 10, y);
-            ctx.lineTo(x, y + height / 2 + 10);
-            ctx.lineTo(x - width / 2 - 10, y);
+            ctx.moveTo(x, y - height / 2 - 15);
+            ctx.lineTo(x + width / 2 + 30, y);
+            ctx.lineTo(x, y + height / 2 + 15);
+            ctx.lineTo(x - width / 2 - 30, y);
             ctx.closePath();
             ctx.fill();
-            ctx.strokeStyle = '#fabd2f';
-            ctx.lineWidth = 2;
+
+            ctx.strokeStyle = '#fabd2f'; // Gold Border
+            ctx.lineWidth = 3;
             ctx.stroke();
+
+            // 상단 작은 텍스트로 타입 표시
+            ctx.fillStyle = '#fabd2f';
+            ctx.font = 'bold 10px Inter, sans-serif';
+            ctx.fillText('DECISION', x, y - height / 2 - 2);
         }
 
-        // 텍스트
         ctx.fillStyle = '#ebdbb2';
         ctx.font = '14px Inter, sans-serif';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        ctx.fillText(step.label, x, y);
 
-        // 클릭 영역 저장
+        // 너무 긴 라벨 생략
+        let displayLabel = step.label;
+        if (displayLabel.length > 25) displayLabel = displayLabel.substring(0, 22) + '...';
+        ctx.fillText(displayLabel, x, y);
+
         step._bounds = {
             x: x - width / 2,
             y: y - height / 2,
@@ -226,38 +364,85 @@ class FlowRenderer {
         };
     }
 
-    renderConnection(ctx, x1, y1, x2, y2, label) {
-        ctx.strokeStyle = '#665c54';
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.moveTo(x1, y1 + 30);
+    renderConnection(ctx, x1, y1, x2, y2, label, type) {
+        const isLoop = type === 'loop_back' || y2 < y1;
+        const arrowSize = 10;
 
-        // 굴곡진 연결선 (기본적으로 수직)
-        const cpY = (y1 + y2) / 2;
-        ctx.bezierCurveTo(x1, cpY, x2, cpY, x2, y2 - 30);
-        ctx.stroke();
+        // Semantic Colors
+        let strokeColor = '#665c54'; // Default
+        let lineWidth = isLoop ? 3 : 2;
+        let dash = [];
 
-        // 라벨 (True/False 등)
-        if (label) {
-            ctx.fillStyle = '#a89984';
-            ctx.font = '10px Inter, sans-serif';
-            ctx.fillText(label, (x1 + x2) / 2 + 10, (y1 + y2) / 2);
+        if (type === 'api_call') {
+            strokeColor = '#8ec07c'; // Aqua/Cyan
+            dash = [4, 4];
+        } else if (type === 'db_query') {
+            strokeColor = '#d3869b'; // Magenta
+            lineWidth = 3;
+        } else if (isLoop) {
+            strokeColor = '#fe8019'; // Orange
         }
 
-        // 화살표
-        const angle = Math.atan2(y2 - (y1 + 10), x2 - x1);
-        const arrowSize = 10;
-        ctx.fillStyle = '#665c54';
-        ctx.save();
-        ctx.translate(x2, y2 - 30);
-        ctx.rotate(angle);
+        ctx.strokeStyle = strokeColor;
+        ctx.lineWidth = lineWidth;
+        ctx.setLineDash(dash);
         ctx.beginPath();
-        ctx.moveTo(0, 0);
-        ctx.lineTo(-arrowSize, -arrowSize / 2);
-        ctx.lineTo(-arrowSize, arrowSize / 2);
-        ctx.closePath();
-        ctx.fill();
-        ctx.restore();
+
+        if (isLoop) {
+            // 회귀문(Loop)은 옆으로 돌아서 올라가는 아크 형태
+            const offset = 150;
+            ctx.moveTo(x1 - 110, y1);
+            ctx.bezierCurveTo(x1 - offset, y1, x2 - offset, y2, x2 - 110, y2);
+            ctx.stroke();
+
+            // 루프 라벨
+            ctx.fillStyle = strokeColor;
+            ctx.font = 'bold 10px Monospace';
+            ctx.fillText(label || 'LOOP', x1 - offset + 20, (y1 + y2) / 2);
+
+            // 루프 화살표 (입력부)
+            const angle = Math.PI; // pointing right
+            ctx.save();
+            ctx.translate(x2 - 110, y2);
+            ctx.rotate(angle);
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.lineTo(arrowSize, arrowSize / 2);
+            ctx.lineTo(arrowSize, -arrowSize / 2);
+            ctx.closePath();
+            ctx.fill();
+            ctx.restore();
+        } else {
+            // 일반 연결 (수직 굴곡)
+            ctx.moveTo(x1, y1 + 33);
+            const cpY = (y1 + y2) / 2;
+            ctx.bezierCurveTo(x1, cpY, x2, cpY, x2, y2 - 33);
+            ctx.stroke();
+
+            if (label) {
+                ctx.save();
+                ctx.fillStyle = label === 'YES' ? '#b8bb26' : (label === 'NO' ? '#fb4934' : '#fabd2f');
+                ctx.font = 'bold 12px Inter, sans-serif';
+                ctx.shadowBlur = 4;
+                ctx.shadowColor = 'rgba(0,0,0,0.5)';
+                ctx.fillText(label, (x1 + x2) / 2 + 20, (y1 + y2) / 2 - 10);
+                ctx.restore();
+            }
+
+            // 화살표
+            const angle = Math.atan2(y2 - (y1 + 33), x2 - x1);
+            ctx.save();
+            ctx.translate(x2, y2 - 33);
+            ctx.rotate(angle);
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.lineTo(-arrowSize, -arrowSize / 2);
+            ctx.lineTo(-arrowSize, arrowSize / 2);
+            ctx.closePath();
+            ctx.fill();
+            ctx.restore();
+        }
+        ctx.setLineDash([]); // Reset
     }
 
     getStepAt(flow, x, y) {
@@ -593,6 +778,11 @@ class CanvasEngine {
         this.tooltip.style.fontFamily = 'Inter, sans-serif';
         document.body.appendChild(this.tooltip);
 
+        // Logic Analysis State
+        this.isTestingLogic = false;
+        this.analysisIssues = [];
+        this.pulses = []; // [{ edgeId: string, progress: number, speed: number }]
+
         // Request initial state
         this.getProjectState();
     }
@@ -678,6 +868,34 @@ class CanvasEngine {
                     console.log('[SYNAPSE] Nothing selected to delete');
                 }
             });
+        }
+        // Test Logic Button
+        const btnTestLogic = document.getElementById('btn-test-logic');
+        if (btnTestLogic) {
+            btnTestLogic.addEventListener('click', () => {
+                this.testLogic();
+            });
+        }
+    }
+
+    testLogic() {
+        if (typeof vscode !== 'undefined') {
+            this.isTestingLogic = true;
+            this.analysisIssues = [];
+            this.pulses = [];
+            vscode.postMessage({ command: 'testLogic' });
+
+            // Visual feedback: clear existing state
+            this.nodes.forEach(n => {
+                delete n.isError;
+                delete n.isBottleneck;
+                delete n.isIsolated;
+            });
+            this.edges.forEach(e => {
+                delete e.isCircular;
+                delete e.isBottleneck;
+            });
+            this.render();
         }
     }
 
@@ -778,11 +996,57 @@ class CanvasEngine {
         return this.isAnimating;
     }
 
+    focusNodeInGraph(nodeId) {
+        const node = this.nodes.find(n => n.id === nodeId);
+        if (!node) return;
+
+        console.log('[SYNAPSE] Focusing node:', nodeId);
+
+        // Switch to graph mode if not already
+        if (this.currentMode !== 'graph') {
+            this.currentMode = 'graph';
+            document.querySelectorAll('[data-mode]').forEach(b => b.classList.remove('active'));
+            document.querySelector('[data-mode="graph"]')?.classList.add('active');
+        }
+
+        // Select the node
+        this.selectedNodes.clear();
+        this.selectedNodes.add(node);
+        this.selectedNode = node;
+
+        // Center view on node
+        const canvasWidth = this.canvas.width / (window.devicePixelRatio || 1);
+        const canvasHeight = this.canvas.height / (window.devicePixelRatio || 1);
+
+        this.transform.zoom = 1.0; // Reset zoom for clarity
+        this.transform.offsetX = canvasWidth / 2 - node.position.x;
+        this.transform.offsetY = canvasHeight / 2 - node.position.y;
+
+        this.updateZoomDisplay();
+        this.render();
+    }
+
     startAnimationLoop() {
         const animate = () => {
-            if (this.isAnimating) {
+            if (this.isAnimating || this.isTestingLogic) {
                 // 부드러운 이동을 위한 오프셋 증가
                 this.animationOffset = (this.animationOffset + 0.5) % 40;
+
+                // 펄스 애니메이션 업데이트 (War Room 기능)
+                if (this.isTestingLogic && this.edges.length > 0) {
+                    // 랜덤하게 새 펄스 주입
+                    if (Math.random() < 0.05 && this.pulses.length < 20) {
+                        const randomEdge = this.edges[Math.floor(Math.random() * this.edges.length)];
+                        this.pulses.push({ edgeId: randomEdge.id, progress: 0, speed: 0.01 + Math.random() * 0.02 });
+                    }
+
+                    // 기존 펄스 진행
+                    this.pulses = this.pulses.filter(p => {
+                        p.progress += p.speed;
+                        return p.progress < 1;
+                    });
+                }
+
                 this.render(); // 매 프레임 재포착
                 requestAnimationFrame(animate);
             }
@@ -2146,7 +2410,14 @@ class CanvasEngine {
 
             // Flow 데이터 빌드
             if (this.flowRenderer) {
-                this.flowData = this.flowRenderer.buildFlow(this.nodes) || { steps: [] };
+                // [Fix] 기존 데이터가 'internal'(상세 로직)인 경우 덮어쓰지 않음
+                const needsReset = !this.flowData || this.flowData.type === 'global' || !this.flowData.steps || this.flowData.steps.length === 0;
+                if (needsReset) {
+                    this.flowData = this.flowRenderer.buildFlow(this.nodes) || { steps: [] };
+                    console.log('[SYNAPSE] Refreshed Global Flow data');
+                } else {
+                    console.log('[SYNAPSE] Preserved Internal Flow data during state load');
+                }
             }
 
             // UI 업데이트
@@ -2289,6 +2560,14 @@ class CanvasEngine {
                 this.treeRenderer.renderTree(this.ctx, this.treeData, this.transform);
             } else if (this.currentMode === 'flow') {
                 this.flowRenderer.renderFlow(this.ctx, this.flowData);
+
+                // [New] Render Flow Type Indicator
+                const type = this.flowData.type === 'internal' ? '🔍 INTERNAL LOGIC' : '🌐 GLOBAL ARCHITECTURE';
+                const color = this.flowData.type === 'internal' ? '#b8bb26' : '#83a598';
+                this.ctx.fillStyle = color;
+                this.ctx.font = 'bold 16px Inter, sans-serif';
+                this.ctx.fillText(`MODE: ${type}`, 20, 40);
+
             } else {
                 // Graph 모드: 그리드 -> 클러스터 -> 엣지 -> 노드 순으로 렌더링
                 this.renderGrid();
@@ -2308,10 +2587,10 @@ class CanvasEngine {
 
                 // 노드 렌더링 (LOD 적용)
                 for (const node of this.nodes) {
-                    // 클러스터가 접혀있으면 렌더링 스킵
+                    // 클러스터가 접혀있으면 렌더링 스킵 (단, Documentation Shelf는 예외)
                     if (node.cluster_id) {
                         const cluster = this.clusters.find(c => c.id === node.cluster_id);
-                        if (cluster && cluster.collapsed) continue;
+                        if (cluster && cluster.collapsed && node.cluster_id !== 'doc_shelf') continue;
                     }
                     this.renderNode(node, zoom);
                 }
@@ -2720,8 +2999,9 @@ class CanvasEngine {
                 if (loadingEl) loadingEl.style.display = 'none';
                 if (res?.success) {
                     console.log('[SYNAPSE] Flow scan complete (Standalone):', res.flowData);
-                    // 결과 반영 (Mock UI 상단 표시)
                     this.flowData = res.flowData;
+                    if (this.flowData) this.flowData.type = 'internal'; // Mark as high-precision logic
+                    // 결과 반영 (Mock UI 상단 표시)
                     this.currentMode = 'flow';
                     this.render();
                 } else {
@@ -2978,6 +3258,56 @@ class CanvasEngine {
     }
 
     /**
+     * Draw specific shape based on typeLabel
+     */
+    drawNodeShape(ctx, x, y, width, height, typeLabel) {
+        ctx.beginPath();
+        if (typeLabel === 'Decision') {
+            // Diamond
+            ctx.moveTo(x + width / 2, y);
+            ctx.lineTo(x + width, y + height / 2);
+            ctx.lineTo(x + width / 2, y + height);
+            ctx.lineTo(x, y + height / 2);
+        } else if (typeLabel === 'Loop') {
+            // Hexagon
+            const offset = 20;
+            ctx.moveTo(x + offset, y);
+            ctx.lineTo(x + width - offset, y);
+            ctx.lineTo(x + width, y + height / 2);
+            ctx.lineTo(x + width - offset, y + height);
+            ctx.lineTo(x + offset, y + height);
+            ctx.lineTo(x, y + height / 2);
+        } else if (typeLabel === 'Print') {
+            // Parallelogram
+            const offset = 20;
+            ctx.moveTo(x + offset, y);
+            ctx.lineTo(x + width, y);
+            ctx.lineTo(x + width - offset, y + height);
+            ctx.lineTo(x, y + height);
+        } else if (typeLabel === 'Entry' || typeLabel === 'Data' || typeLabel === 'Test') {
+            // Rounded Rectangle
+            const radius = 10;
+            if (ctx.roundRect) {
+                ctx.roundRect(x, y, width, height, radius);
+            } else {
+                ctx.moveTo(x + radius, y);
+                ctx.lineTo(x + width - radius, y);
+                ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+                ctx.lineTo(x + width, y + height - radius);
+                ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+                ctx.lineTo(x + radius, y + height);
+                ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+                ctx.lineTo(x, y + radius);
+                ctx.quadraticCurveTo(x, y, x + radius, y);
+            }
+        } else {
+            // Standard Rectangle
+            ctx.rect(x, y, width, height);
+        }
+        ctx.closePath();
+    }
+
+    /**
      * 노드 타입별 스타일 가져오기 (Phase 3.5: Identity)
      */
     getNodeStyle(node) {
@@ -3060,6 +3390,68 @@ class CanvasEngine {
             return typeMap['entry'];
         }
 
+        // --- New Logic: Identify If/For/While/Print based on Label and Type ---
+        const label = (node.data?.label || '').toLowerCase();
+        const type = node.type || '';
+
+        // Print 노드 감지
+        if (label.startsWith('print:') || label.startsWith('print ') || label.startsWith('console.log') || label === 'print' || label.startsWith('call: print') || label.startsWith('call: console.log')) {
+            return {
+                borderColor: '#b8bb26', // Green
+                bgColor: '#3c3836',
+                icon: '🖨️', // or '💬'
+                lineWidth: 2,
+                typeLabel: 'Print'
+            };
+        }
+
+        // Loop (For/While) 노드 감지
+        if (type === 'for' || type === 'while' || label.startsWith('for ') || label.startsWith('while ') || label === 'for' || label === 'while' || label === 'loop') {
+            return {
+                borderColor: '#fe8019', // Orange
+                bgColor: '#3c3836',
+                icon: '↻',
+                lineWidth: 2,
+                typeLabel: 'Loop'
+            };
+        }
+
+        // Decision (If/Switch/Decision) 감지
+        if (type === 'decision' || type === 'if' || type === 'switch' || label.startsWith('if ') || label.startsWith('switch ') || label === 'if' || label === 'switch') {
+            return {
+                borderColor: '#fabd2f', // Yellow
+                bgColor: '#3c3836',
+                icon: '◈',
+                lineWidth: 2,
+                typeLabel: 'Decision'
+            };
+        }
+
+        // --- Filename Semantics Fallback ---
+        const fileName = (node.data?.file || '').toLowerCase();
+
+        // Loop/Iterator Semantic
+        if (fileName.includes('loop') || fileName.includes('iter')) {
+            return {
+                borderColor: '#fe8019',
+                bgColor: '#3c3836',
+                icon: '↻',
+                lineWidth: 2,
+                typeLabel: 'Loop'
+            };
+        }
+
+        // Decision/Validation Semantic
+        if (fileName.includes('valid_') || fileName.includes('validator') || fileName.includes('checker') || fileName.includes('router') || fileName.startsWith('is_')) {
+            return {
+                borderColor: '#fabd2f',
+                bgColor: '#3c3836',
+                icon: '◈',
+                lineWidth: 2,
+                typeLabel: 'Decision'
+            };
+        }
+
         return typeMap[node.type] || defaultStyle;
     }
 
@@ -3120,6 +3512,21 @@ class CanvasEngine {
             glowColor = '#fabd2f';
         }
 
+        // Logic Analysis Auras
+        if (node.isError) {
+            borderColor = '#fb4934';
+            lineWidth = 3;
+            glowColor = '#fb4934';
+        } else if (node.isBottleneck) {
+            borderColor = '#fe8019';
+            lineWidth = 3;
+            glowColor = '#fe8019';
+        }
+
+        if (node.isIsolated || node.isDeadEnd) {
+            this.ctx.globalAlpha *= 0.4; // Ghosting
+        }
+
         // 2. 배경 및 글로우 렌더링
         this.ctx.save();
         if (glowColor && this.isAnimating) {
@@ -3128,7 +3535,8 @@ class CanvasEngine {
         }
 
         this.ctx.fillStyle = bgColor;
-        this.ctx.fillRect(x, y, nodeWidth, nodeHeight);
+        this.drawNodeShape(this.ctx, x, y, nodeWidth, nodeHeight, style.typeLabel);
+        this.ctx.fill();
 
         this.ctx.strokeStyle = borderColor;
         if (isSelected) {
@@ -3140,7 +3548,19 @@ class CanvasEngine {
         // 1.5. 클러스터 접힘 체크
         if (node.cluster_id) {
             const cluster = this.clusters?.find(c => c.id === node.cluster_id);
-            if (cluster && cluster.collapsed) return;
+            if (cluster && cluster.collapsed) {
+                // [Refine] Documentation Shelf는 접혀있어도 가시성을 위해 최소한의 표시는 남김
+                if (node.cluster_id === 'doc_shelf') {
+                    this.ctx.globalAlpha = 0.5; // 좀 더 선명하게 (기존 0.2)
+                } else {
+                    return;
+                }
+            }
+        }
+
+        // [New] Documentation Shelf 노드는 항상 은은한 노란색 아우라 부여
+        if (node.cluster_id === 'doc_shelf' && !isSelected) {
+            glowColor = '#fabd2f';
         }
         if (dash.length > 0) {
             this.ctx.setLineDash(dash);
@@ -3148,9 +3568,11 @@ class CanvasEngine {
                 this.ctx.lineDashOffset = -this.animationOffset;
             }
         }
-        this.ctx.strokeRect(x, y, nodeWidth, nodeHeight);
+        this.drawNodeShape(this.ctx, x, y, nodeWidth, nodeHeight, style.typeLabel);
+        this.ctx.stroke();
         this.ctx.restore();
         this.ctx.setLineDash([]);
+        this.ctx.globalAlpha = 1.0; // Reset alpha after ghosting
 
         // 3. 우측 상단 'Dirty' 도트 (수정됨/싱크 필요)
         if (node.state === 'dirty' || node.isDirty) {
@@ -3423,6 +3845,24 @@ class CanvasEngine {
                 dashPattern: null,     // 실선
                 lineWidth: 1.5,
                 arrowStyle: 'double'   // 양방향 화살표
+            },
+            'api_call': {
+                color: '#8ec07c',      // Aqua
+                dashPattern: [4, 4],
+                lineWidth: 2.0,
+                arrowStyle: 'standard'
+            },
+            'db_query': {
+                color: '#d3869b',      // Magenta (보라)
+                dashPattern: null,
+                lineWidth: 2.5,
+                arrowStyle: 'thick'
+            },
+            'loop_back': {
+                color: '#fe8019',      // Orange
+                dashPattern: [2, 2],
+                lineWidth: 2.0,
+                arrowStyle: 'standard'
             }
         };
 
@@ -3607,12 +4047,22 @@ class CanvasEngine {
 
         // 🌟 선택된 엣지 강조 효과
         const isSelected = this.selectedEdge && this.selectedEdge.id === edge.id;
-        if (isSelected) {
+
+        // Logic Analysis Highlights
+        if (edge.isCircular) {
+            edgeColor = '#fb4934';
+            lineWidth += 2;
+        } else if (edge.isBottleneck) {
+            edgeColor = '#fe8019';
+            lineWidth += 2;
+        }
+
+        if (isSelected || edge.isCircular || edge.isBottleneck) {
             // 글로우 효과
             this.ctx.shadowBlur = 15;
             this.ctx.shadowColor = edgeColor;
             // 더 굵은 선
-            lineWidth += 2;
+            if (isSelected) lineWidth += 2;
         }
 
         this.ctx.strokeStyle = edgeColor;
@@ -3656,6 +4106,23 @@ class CanvasEngine {
         }
 
         this.ctx.stroke();
+
+        // 🟢 펄스 애니메이션 (Edge Traversal)
+        if (this.isTestingLogic) {
+            const activePulses = this.pulses.filter(p => p.edgeId === edge.id);
+            activePulses.forEach(p => {
+                const t = p.progress;
+                // 곡선상의 위치 계산 (Quadratic Bezier)
+                const px = (1 - t) * (1 - t) * fromX + 2 * (1 - t) * t * cpX + t * t * toX;
+                const py = (1 - t) * (1 - t) * fromY + 2 * (1 - t) * t * cpY + t * t * toY;
+
+                this.ctx.fillStyle = '#fabd2f';
+                this.ctx.beginPath();
+                this.ctx.arc(px, py, 4, 0, Math.PI * 2);
+                this.ctx.fill();
+            });
+        }
+
         this.ctx.setLineDash([]);
         this.ctx.lineDashOffset = 0; // 리셋
 
@@ -4126,8 +4593,38 @@ function initCanvas() {
             case 'edgeValidationResult':
                 engine.updateEdgeValidation(message.edgeId, message.result);
                 break;
+            case 'analysisResults':
+                this.isTestingLogic = false;
+                this.analysisIssues = message.issues;
+
+                // 이슈를 노드/엣지에 매핑
+                this.analysisIssues.forEach(issue => {
+                    issue.nodeIds.forEach(nodeId => {
+                        const node = this.nodes.find(n => n.id === nodeId);
+                        if (node) {
+                            if (issue.type === 'circular') node.isError = true;
+                            if (issue.type === 'dead-end') node.isDeadEnd = true;
+                            if (issue.type === 'bottleneck') node.isBottleneck = true;
+                            if (issue.type === 'isolated') node.isIsolated = true;
+                        }
+
+                        // 엣지도 매핑
+                        if (issue.type === 'circular') {
+                            // 현재 이슈의 노드들 사이에 있는 엣지 찾기
+                            this.edges.forEach(e => {
+                                if (issue.nodeIds.includes(e.from) && issue.nodeIds.includes(e.to)) {
+                                    e.isCircular = true;
+                                }
+                            });
+                        }
+                    });
+                });
+
+                this.render();
+                break;
             case 'flowData':
                 engine.flowData = message.data;
+                if (engine.flowData) engine.flowData.type = 'internal'; // [New] Mark as internal
                 engine.currentMode = 'flow';
                 document.getElementById('loading').style.display = 'none';
                 engine.render();
@@ -4136,6 +4633,9 @@ function initCanvas() {
                 document.querySelectorAll('[data-mode]').forEach(b => b.classList.remove('active'));
                 document.querySelector('[data-mode="flow"]')?.classList.add('active');
                 document.getElementById('current-mode').textContent = 'Flow';
+                break;
+            case 'focusNode':
+                engine.focusNodeInGraph(message.nodeId);
                 break;
         }
     });

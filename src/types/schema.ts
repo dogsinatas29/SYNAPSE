@@ -10,7 +10,8 @@ export type NodeType = 'source' | 'cluster' | 'documentation' | 'test' | 'config
 export type NodeStatus = 'proposed' | 'active' | 'error' | 'completed' | 'warning';
 
 // 엣지 타입
-export type EdgeType = 'dependency' | 'data_flow' | 'event' | 'conditional' | 'origin';
+export type EdgeType = 'dependency' | 'data_flow' | 'event' | 'conditional' | 'origin' |
+    'api_call' | 'db_query' | 'loop_back' | 'error_path';
 
 // 엣지 스타일
 export type EdgeStyle = 'solid' | 'dashed' | 'dotted';

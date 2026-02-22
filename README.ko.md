@@ -2,7 +2,8 @@
 
 > **"눈에 보이는 것이 곧 LLM의 논리입니다."** — *AI를 위한 WYSIWYG 논리 설계 도구*
 
-[![Release](https://img.shields.io/badge/Release-v0.2.13-orange?style=flat-square)](https://github.com/dogsinatas29/SYNAPSE/releases)
+[![Version](https://img.shields.io/badge/version-v0.2.15-brightgreen.svg)
+![Status](https://img.shields.io/badge/status-War_Room_Ready-orange.svg)
 [![Language](https://img.shields.io/badge/Language-TypeScript-blue?style=flat-square)](https://www.typescriptlang.org/)
 [![Platform](https://img.shields.io/badge/Platform-VS_Code-007ACC?style=flat-square)](https://code.visualstudio.com/)
 
@@ -66,13 +67,23 @@ LLM 추론 논리와 소스 파일 간의 물리적 연결 상태를 시각화�
 
 1. [Releases](https://github.com/dogsinatas29/SYNAPSE/releases) 페이지에서 최신 `.vsix` 파일을 다운로드합니다.
 2. 파일을 **VS Code** 창으로 드래그 앤 드롭합니다.
-3. 또는 터미널에서 다음 명령어를 입력합니다: `code --install-extension synapse-visual-architecture-0.2.13.vsix`
+3. 또는 터미널에서 다음 명령어를 입력합니다:### 빠른 설치
+```bash
+code --install-extension synapse-visual-architecture-0.2.15.vsix
+```
+현재 버전: **v0.2.15** (Bypass 로직 및 플로우 수정)
 
 ---
 
 ## 🆕 버전 히스토리
 
-### v0.2.13 (최신판)
+### v0.2.14
+- **🛡️ 작전 지휘소(War Room) 엔진 도입**: SYNAPSE를 기술 감사 및 진단 센터로 변모시킵니다.
+- **로직 분석기(Logic Analyzer)**: 순환 의존성, 병목 지점, 논리 단절을 자동으로 탐지합니다.
+- **실시간 펄스 애니메이션**: 로직의 전파 가시성(Reachability)을 가시화하는 입자 효과를 지원합니다.
+- **인터랙티브 리포트**: `리포트.md`의 탐지 항목 클릭 시 캔버스가 해당 노드로 즉시 자동 포커싱됩니다.
+
+### v0.2.13
 - **🌟 클러스터 UX 전면 개편**: 캔버스 상호작용이 획기적으로 개선되었습니다.
 - **드래그 앤 드롭**: 이제 전체 클러스터를 상단 헤더 블록을 잡고 부드럽게 끌어서 이동할 수 있습니다.
 - **내부 노드 일괄 선택**: 클러스터를 실수로 드래그하지 않고도, 내부 빈 공간에 다중 선택 박스를 그려 특정 노드들을 손쉽게 선택 가능합니다.

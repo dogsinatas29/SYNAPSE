@@ -255,7 +255,10 @@ export class FlowchartGenerator {
             data_flow: { color: '#83a598', thickness: 3 },
             event: { color: '#fe8019', thickness: 2 },
             conditional: { color: '#d3869b', thickness: 1 },
-            origin: { color: '#d65d0e', thickness: 1.5 } // 프롬프트 기원 링크
+            origin: { color: '#d65d0e', thickness: 1.5 }, // 프롬프트 기원 링크
+            api_call: { color: '#8ec07c', thickness: 2 },
+            db_query: { color: '#d3869b', thickness: 3 },
+            loop_back: { color: '#fe8019', thickness: 2 }
         } as Record<EdgeType, { color: string; thickness: number }>;
 
         const style = styleMap[type] || styleMap['dependency'];

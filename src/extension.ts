@@ -39,7 +39,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
     try {
         console.log('[SYNAPSE] Initializing components...');
-        vscode.window.showInformationMessage('SYNAPSE: Initializing (v0.2.12)...');
+        vscode.window.showInformationMessage('SYNAPSE: Initializing (v0.2.14)...');
 
         // 시작 시 .synapse_contexts/ 디렉터리 자동 생성
         {
@@ -198,6 +198,14 @@ export async function activate(context: vscode.ExtensionContext) {
             })
         );
 
+
+        context.subscriptions.push(
+            vscode.commands.registerCommand('synapse.focusNode', (nodeId: string) => {
+                if (CanvasPanel.currentPanel) {
+                    CanvasPanel.currentPanel.focusNode(nodeId);
+                }
+            })
+        );
 
         context.subscriptions.push(
             vscode.commands.registerCommand('synapse.fitView', () => {

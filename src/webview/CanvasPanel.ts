@@ -21,6 +21,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 import { ProjectStructure, Node, Edge, ProjectState, EdgeType, NodeType } from '../types/schema';
 import { FileScanner } from '../core/FileScanner';
+import { LogicAnalyzer } from '../core/LogicAnalyzer';
 import { GeminiParser } from '../core/GeminiParser';
 import { FlowchartGenerator } from '../core/FlowchartGenerator';
 import { BootstrapEngine } from '../bootstrap/BootstrapEngine';
@@ -193,6 +194,9 @@ export class CanvasPanel {
                     case 'openRules':
                         await vscode.commands.executeCommand('synapse.openRules');
                         return;
+                    case 'testLogic':
+                        await this.handleTestLogic();
+                        break;
                     case 'triggerLogPrompt':
                         // REC/STOP 버튼 클릭 → synapse.logPrompt 토글 트리거
                         await vscode.commands.executeCommand('synapse.logPrompt');
@@ -335,6 +339,31 @@ export class CanvasPanel {
      * - 기본값과 동일한 속성 제거 (Pruning)
      * - JSON 키를 알파벳 순으로 정렬하여 Git Diff 최소화
      */
+    private async handleTestLogic() {
+        const workspaceFolder = this._workspaceFolder;
+        if (!workspaceFolder) return;
+
+        try {
+            const projectStateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'project_state.json');
+            const data = await vscode.workspace.fs.readFile(projectStateUri);
+            const state = JSON.parse(data.toString());
+
+            const analyzer = new LogicAnalyzer();
+            const issues = analyzer.analyze(state);
+            analyzer.generateReport(issues, workspaceFolder.uri.fsPath, state.nodes);
+
+            this._panel.webview.postMessage({
+                command: 'analysisResults',
+                issues: issues
+            });
+
+            vscode.window.showInformationMessage(`[SYNAPSE] Logic analysis complete. '리포트.md' generated.`);
+        } catch (error) {
+            console.error('[SYNAPSE] Logic Analysis failed:', error);
+            vscode.window.showErrorMessage(`Logic Analysis failed: ${error}`);
+        }
+    }
+
     private normalizeProjectState(state: any): string {
         // 1. 기본값 제거 (Pruning)
         const pruneDefaults = (obj: any, defaults: any): any => {
@@ -1245,6 +1274,14 @@ export class CanvasPanel {
     }
 
     /** 레코딩 상태를 캔버스 웹뷰로 전달 (REC 버튼 동기화) */
+    public focusNode(nodeId: string) {
+        if (!this._panel) return;
+        this._panel.webview.postMessage({
+            command: 'focusNode',
+            nodeId: nodeId
+        });
+    }
+
     public postRecordingState(isRecording: boolean) {
         if (!this._panel) return;
         this._panel.webview.postMessage({
@@ -1379,10 +1416,14 @@ export class CanvasPanel {
 
             projectState.nodes.forEach((sourceNode: any) => {
                 if (sourceNode.data.summary && sourceNode.data.summary.references) {
-                    sourceNode.data.summary.references.forEach((ref: string) => {
+                    sourceNode.data.summary.references.forEach((ref: any) => {
+                        // ref는 이제 string이 아니라 { target: string, type: string } 임
+                        const targetName = typeof ref === 'string' ? ref : ref.target;
+                        const edgeType = typeof ref === 'string' ? 'dependency' : ref.type;
+
                         // 다양한 매칭 시도 (상대 경로 제거 등)
-                        const cleanRef = ref.replace(/^\.\//, '').replace(/^\.\.\//, '');
-                        const targetNodeId = nodeMap.get(ref) || nodeMap.get(cleanRef) || nodeMap.get(path.parse(cleanRef).name);
+                        const cleanRef = targetName.replace(/^\.\//, '').replace(/^\.\.\//, '');
+                        const targetNodeId = nodeMap.get(targetName) || nodeMap.get(cleanRef) || nodeMap.get(path.parse(cleanRef).name);
 
                         if (targetNodeId && targetNodeId !== sourceNode.id) {
                             // 중복 체크 및 엣지 추가 (메모리에만)
@@ -1393,8 +1434,8 @@ export class CanvasPanel {
                                     id: `edge_auto_${Date.now()}_${Math.floor(Math.random() * 1000)}`,
                                     from: sourceNode.id,
                                     to: targetNodeId,
-                                    type: 'dependency',
-                                    label: 'ref'
+                                    type: edgeType, // 시맨틱 타입 반영
+                                    label: edgeType === 'dependency' ? 'ref' : edgeType
                                 });
                             }
                         }

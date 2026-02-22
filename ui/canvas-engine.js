@@ -456,7 +456,7 @@ class TreeRenderer {
     }
 
     getItemAt(treeData, x, y) {
-        // 재귀적으로 모든 항목의 bounds 확인
+        if (!treeData) return null;
         for (const item of treeData) {
             const result = this.checkItemBounds(item, x, y);
             if (result) return result;

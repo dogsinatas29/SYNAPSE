@@ -156,10 +156,10 @@ Created with the belief that the simple act of connecting lines in complex syste
 ## 🆕 Version History
 
 ### v0.2.11
-- **✨ Multi-Language Intelligence (Python & C/C++)**:
-    - **Advanced Resolution**: Significantly improved scanning accuracy. Python now supports deep import resolution, and C/C++ distinguishes between local and system headers.
-    - **Expanded Flow Visualization**: Added support for C/C++ control structures (`if`, `while`, `for`, `switch`) in Flow View.
-    - **Node Accuracy**: Fixed misidentification of internal functions as external nodes across Python and C/C++.
+- **✨ Multi-Language Intelligence (Python, C/C++, Rust)**:
+    - **Advanced Resolution**: Significantly improved scanning accuracy. Python supports deep import resolution, C/C++ distinguishes local/system headers, and Rust correctly identifies internal `crate`/`self`/`super` paths.
+    - **Expanded Flow Visualization**: Added support for **C/C++ and Rust** control structures (including Rust `match`) in Flow View.
+    - **Node Accuracy**: Fixed misidentification of internal functions as external nodes across all major languages.
 
 ### v0.2.10
 - **🐛 Critical Fixes**:

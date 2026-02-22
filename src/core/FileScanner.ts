@@ -235,26 +235,33 @@ export class FileScanner {
             }
         }
 
-        // Rust use statements (references)
-        const useRegex = /^\s*use\s+([a-zA-Z0-9_:]+(?:::[a-zA-Z0-9_:{}, *]+)?);/gm;
-        while ((match = useRegex.exec(content)) !== null) {
-            const fullPath = match[1].trim();
-            if (fullPath) {
-                // 경로에서 핵심 모듈명 추출 (:: 기준 마지막 또는 중괄호 내 첫 번째)
-                const parts = fullPath.split('::');
-                const lastPart = parts[parts.length - 1];
+        // Rust use statements (references) - 정밀 분석
+        const lines = content.split('\n');
+        for (const line of lines) {
+            const trimmed = line.trim();
+            if (!trimmed.startsWith('use ')) continue;
 
-                if (lastPart.includes('{')) {
-                    // {a, b} 형태에서 첫 번째 모듈 추출
-                    const subMatch = lastPart.match(/{([^,}]+)/);
-                    if (subMatch && subMatch[1]) {
-                        const m = subMatch[1].trim();
-                        if (m && !summary.references.includes(m)) summary.references.push(m);
+            const useMatch = trimmed.match(/^use\s+([a-zA-Z0-9_:]+)/);
+            if (useMatch) {
+                const fullPath = useMatch[1];
+                const parts = fullPath.split('::');
+                const rootMod = parts[0];
+
+                // crate, self, super 등 내부 참조 처리
+                if (['crate', 'self', 'super'].includes(rootMod)) {
+                    // 내부 모듈 의존성으로 처리 (실제 매핑을 위해 더 상세한 분석 가능)
+                    const targetMod = parts[1] || rootMod;
+                    if (targetMod && !summary.references.includes(targetMod)) {
+                        console.log(`  [DEP] Added Rust internal reference: ${targetMod}`);
+                        summary.references.push(targetMod);
                     }
-                } else {
-                    const m = lastPart.trim();
-                    if (m && m !== '*' && !summary.references.includes(m)) {
-                        summary.references.push(m);
+                } else if (rootMod) {
+                    // 외부 크레이트 또는 표준 라이브러리
+                    if (!['std', 'core', 'alloc', 'prelude'].includes(rootMod)) {
+                        if (!summary.references.includes(rootMod)) {
+                            console.log(`  [DEP] Added Rust external reference: ${rootMod}`);
+                            summary.references.push(rootMod);
+                        }
                     }
                 }
             }

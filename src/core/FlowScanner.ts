@@ -41,6 +41,8 @@ export class FlowScanner {
                 this.parsePythonFlow(content, flowData);
             } else if (['.c', '.cpp', '.h', '.hpp', '.cc'].includes(ext)) {
                 this.parseCppFlow(content, flowData);
+            } else if (ext === '.rs') {
+                this.parseRustFlow(content, flowData);
             } else {
                 // Fallback: Simple file sequence
                 flowData.steps.push({
@@ -237,6 +239,93 @@ export class FlowScanner {
         if (lastStep) lastStep.next = 'step_cpp_final';
 
         // Cleanup: Remove dangling 'next' references
+        const validIds = new Set(flow.steps.map(s => s.id));
+        flow.steps.forEach(s => {
+            if (s.next && !validIds.has(s.next)) s.next = undefined;
+            if (s.alternateNext && !validIds.has(s.alternateNext)) s.alternateNext = undefined;
+        });
+    }
+
+    private parseRustFlow(content: string, flow: FlowData) {
+        // Step 1: Entry Point
+        flow.steps.push({
+            id: 'entry',
+            type: 'start',
+            label: 'Rust Initialization',
+            next: 'step_rs_0'
+        });
+
+        const lines = content.split('\n');
+        let stepCounter = 0;
+        let lastStepId = 'entry';
+
+        for (let i = 0; i < Math.min(lines.length, 1000); i++) {
+            const line = lines[i].trim();
+            if (!line || line.startsWith('//') || line.startsWith('/*')) continue;
+
+            // 1. Blocks (if, match, while, for, loop)
+            const blockMatch = line.match(/^\s*(if|match|while|for|loop)\b/);
+            if (blockMatch) {
+                const type = blockMatch[1];
+                let label = this.extractCondition(line) || type;
+
+                const stepId = `step_rs_${stepCounter++}`;
+                flow.steps.push({
+                    id: stepId,
+                    type: (['if', 'match', 'while'].includes(type)) ? 'decision' : 'process',
+                    label: label,
+                    next: `step_rs_${stepCounter}`
+                });
+
+                const prevStep = flow.steps.find(s => s.id === lastStepId);
+                if (prevStep) prevStep.next = stepId;
+                lastStepId = stepId;
+            }
+            // 2. Result/Option handling (unwrap, expect, ok_or)
+            else if (line.match(/\.(unwrap|expect|ok_or|map|and_then)\(/)) {
+                const stepId = `step_rs_${stepCounter++}`;
+                flow.steps.push({
+                    id: stepId,
+                    type: 'process',
+                    label: `Safe Operation: ${line.split('(')[0].split('.').pop()}`,
+                    next: `step_rs_${stepCounter}`
+                });
+                const prevStep = flow.steps.find(s => s.id === lastStepId);
+                if (prevStep) prevStep.next = stepId;
+                lastStepId = stepId;
+            }
+            // 3. Function/Method calls
+            else if (line.match(/^[a-zA-Z0-9_.]+\s*=[^=]|^\s*[a-zA-Z0-9_.]+\(/)) {
+                const callMatch = line.match(/([a-zA-Z0-9_.]+\s*)\(/);
+                if (callMatch) {
+                    const funcName = callMatch[1].trim();
+                    if (!['if', 'match', 'while', 'for', 'loop', 'println', 'format', 'panic'].includes(funcName)) {
+                        const stepId = `step_rs_${stepCounter++}`;
+                        flow.steps.push({
+                            id: stepId,
+                            type: 'process',
+                            label: `Call: ${funcName}`,
+                            next: `step_rs_${stepCounter}`
+                        });
+                        const prevStep = flow.steps.find(s => s.id === lastStepId);
+                        if (prevStep) prevStep.next = stepId;
+                        lastStepId = stepId;
+                    }
+                }
+            }
+
+            if (stepCounter > 50) break;
+        }
+
+        flow.steps.push({
+            id: 'step_rs_final',
+            type: 'end',
+            label: 'Execution Complete'
+        });
+        const lastStep = flow.steps.find(s => s.id === lastStepId);
+        if (lastStep) lastStep.next = 'step_rs_final';
+
+        // Cleanup
         const validIds = new Set(flow.steps.map(s => s.id));
         flow.steps.forEach(s => {
             if (s.next && !validIds.has(s.next)) s.next = undefined;

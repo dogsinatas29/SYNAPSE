@@ -77,7 +77,8 @@ Current Version: **v0.2.15** (Bypass Logic & Flow Fix)
 
 ## 🆕 Revision History
 
-### v0.2.14 (Current)
+### v0.2.14
+- **💎 Flowchart Geometric Shapes**: The Graph View now renders nodes in standard flowchart shapes based on their semantic logic (Diamonds for `if/valid_`, Hexagons for `for/loop`, Parallelograms for `print`).
 - **🛡️ War Room Implementation**: Transform SYNAPSE into a technical audit center.
 - **Logic Analyzer**: Detect Circular Dependencies, Bottlenecks, and Dead-ends.
 - **Pulse Animation**: Real-time signal traversal to visualize logic flow reachability.

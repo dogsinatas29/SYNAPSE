@@ -78,6 +78,7 @@ code --install-extension synapse-visual-architecture-0.2.15.vsix
 ## 🆕 버전 히스토리
 
 ### v0.2.14
+- **💎 순서도 기하학 도형 반영**: Graph View의 노드들이 의미론적 로직에 기반하여 표준 순서도 도형으로 렌더링됩니다 (`if/valid_`는 다이아몬드, `for/loop`는 육각형, `print`는 평행사변형).
 - **🛡️ 작전 지휘소(War Room) 엔진 도입**: SYNAPSE를 기술 감사 및 진단 센터로 변모시킵니다.
 - **로직 분석기(Logic Analyzer)**: 순환 의존성, 병목 지점, 논리 단절을 자동으로 탐지합니다.
 - **실시간 펄스 애니메이션**: 로직의 전파 가시성(Reachability)을 가시화하는 입자 효과를 지원합니다.

@@ -51,11 +51,11 @@ SYNAPSE는 이제 사용하는 언어에 관계없이 프로젝트의 깊은 의
 
 ### 프로젝트 토폴로지 (Topology)
 LLM 추론 논리와 소스 파일 간의 물리적 연결 상태를 시각화합니다.
-![Topology View](assets/v0.2.15/synapse_graph_v0.2.15.png)
+![Topology View](./assets/v0.2.15/synapse_graph_v0.2.15.png)
 
 ### 논리 흐름 (Flow)
 코드 변경 사항과 수동 편집 사항이 모두 반영된 논리 실행 흐름도입니다. 그룹 기반 계층화와 직교 라우팅을 통해 얽힘 없는 깔끔한 로직을 제공합니다.
-![Flow View](assets/v0.2.15/synapse_flow_v0.2.15.png)
+![Flow View](./assets/v0.2.15/synapse_flow_v0.2.15.png)
 
 ### 계층 구조 (Tree)
 프로젝트 구조를 한눈에 파악할 수 있는 체계적인 트리 뷰를 제공합니다.

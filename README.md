@@ -51,11 +51,11 @@ Project complex execution flows into intuitive flowcharts.
 
 ### Project Topology
 Visualizes the physical connections between LLM reasoning logic and source files.
-![Topology View](assets/v0.2.15/synapse_graph_v0.2.15.png)
+![Topology View](./assets/v0.2.15/synapse_graph_v0.2.15.png)
 
 ### Logical Flow
 Linear execution flow of specific events, reflecting both manual edits and code changes. Group-Aware Hierarchy and Orthogonal Edge Routing create clean, readable diagrams.
-![Flow View](assets/v0.2.15/synapse_flow_v0.2.15.png)
+![Flow View](./assets/v0.2.15/synapse_flow_v0.2.15.png)
 
 ### Hierarchical Tree
 A deep, organized overview of your project structure.

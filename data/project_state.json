@@ -24,11 +24,12 @@
       "label": "prompts"
     },
     {
+      "_bodyHeight": 1512.2228015723585,
       "_headerBounds": {
         "height": 30,
-        "width": 2296.2699239823646,
-        "x": 273.73007601763544,
-        "y": 1470
+        "width": 1850.3980401965398,
+        "x": 739.389067038733,
+        "y": 433.9790038555426
       },
       "bounds": {
         "height": 0,
@@ -42,15 +43,17 @@
         "node_src_extension_ts"
       ],
       "collapsed": false,
+      "color": "#fe8019",
       "id": "cluster_src",
       "label": "src"
     },
     {
+      "_bodyHeight": 100,
       "_headerBounds": {
         "height": 30,
         "width": 160,
-        "x": 303.73007601763544,
-        "y": 2884.7640796025075
+        "x": 1359.962853634326,
+        "y": 591.0991691602894
       },
       "bounds": {
         "height": 0,
@@ -62,16 +65,18 @@
         "node_src_bootstrap_BootstrapEngine_ts"
       ],
       "collapsed": false,
+      "color": "#b8bb26",
       "id": "cluster_src_bootstrap",
       "label": "bootstrap",
       "parent_id": "cluster_src"
     },
     {
+      "_bodyHeight": 449.99999999999955,
       "_headerBounds": {
         "height": 30,
-        "width": 860,
-        "x": 1330,
-        "y": 1500
+        "width": 1202.6374955497272,
+        "x": 914.8548056639339,
+        "y": 1195.7694331352513
       },
       "bounds": {
         "height": 0,
@@ -84,20 +89,23 @@
         "node_src_core_FlowScanner_ts",
         "node_src_core_FlowchartGenerator_ts",
         "node_src_core_GeminiParser_ts",
+        "node_src_core_LogicAnalyzer_ts",
         "node_src_core_PromptLogger_ts",
         "node_src_core_RuleEngine_ts"
       ],
       "collapsed": false,
+      "color": "#ebdbb2",
       "id": "cluster_src_core",
       "label": "core",
       "parent_id": "cluster_src"
     },
     {
+      "_bodyHeight": 363,
       "_headerBounds": {
         "height": 30,
-        "width": 510,
-        "x": 1330,
-        "y": 1970
+        "width": 171.31200481708333,
+        "x": 1741.7674127916207,
+        "y": 586.8596275130395
       },
       "bounds": {
         "height": 0,
@@ -110,16 +118,18 @@
         "node_src_server_standalone_ts"
       ],
       "collapsed": false,
+      "color": "#8ec07c",
       "id": "cluster_src_server",
       "label": "server",
       "parent_id": "cluster_src"
     },
     {
+      "_bodyHeight": 450,
       "_headerBounds": {
         "height": 30,
-        "width": 510,
-        "x": 1330,
-        "y": 1970
+        "width": 510.00000000000136,
+        "x": 2049.7871072352714,
+        "y": 463.9790038555426
       },
       "bounds": {
         "height": 0,
@@ -134,16 +144,18 @@
         "node_src_test_visualHints_test_ts"
       ],
       "collapsed": false,
+      "color": "#fb4934",
       "id": "cluster_src_test",
       "label": "test",
       "parent_id": "cluster_src"
     },
     {
+      "_bodyHeight": 100,
       "_headerBounds": {
         "height": 30,
         "width": 160,
-        "x": 1330,
-        "y": 1970
+        "x": 1085.6006955502282,
+        "y": 1816.201805427901
       },
       "bounds": {
         "height": 0,
@@ -155,16 +167,18 @@
         "node_src_types_schema_ts"
       ],
       "collapsed": false,
+      "color": "#ebdbb2",
       "id": "cluster_src_types",
       "label": "types",
       "parent_id": "cluster_src"
     },
     {
+      "_bodyHeight": 383.0842474409242,
       "_headerBounds": {
         "height": 30,
-        "width": 1210,
-        "x": 1330,
-        "y": 1850
+        "width": 186.86037477419904,
+        "x": 2297.7632026372644,
+        "y": 1124.6153836168633
       },
       "bounds": {
         "height": 0,
@@ -179,16 +193,18 @@
         "node_src_utils_visualHints_ts"
       ],
       "collapsed": false,
+      "color": "#ebdbb2",
       "id": "cluster_src_utils",
       "label": "utils",
       "parent_id": "cluster_src"
     },
     {
+      "_bodyHeight": 100,
       "_headerBounds": {
         "height": 30,
         "width": 160,
-        "x": 1330,
-        "y": 1970
+        "x": 1433.6106781776205,
+        "y": 1783.2342250008253
       },
       "bounds": {
         "height": 0,
@@ -200,16 +216,18 @@
         "node_src_webview_CanvasPanel_ts"
       ],
       "collapsed": false,
+      "color": "#fe8019",
       "id": "cluster_src_webview",
       "label": "webview",
       "parent_id": "cluster_src"
     },
     {
+      "_bodyHeight": 1000.0000000000006,
       "_headerBounds": {
         "height": 30,
-        "width": 760,
-        "x": -576.843987063815,
-        "y": 253.31506865690233
+        "width": 759.9999999999995,
+        "x": -261.1160478782989,
+        "y": 195.46010662770243
       },
       "bounds": {
         "height": 1200,
@@ -226,6 +244,7 @@
         "node_RULES_md",
         "node_architecture_md",
         "node_release_notes_0_2_12_md",
+        "node_release_notes_0_2_14_md",
         "node_v0_1_6_release_notes_md",
         "node_v0_1_7_release_notes_md",
         "node_v0_1_8_release_notes_md",
@@ -233,6 +252,9 @@
         "node_v0_2_10_release_notes_md",
         "node_v0_2_11_release_notes_md",
         "node_v0_2_12_release_notes_md",
+        "node_v0_2_13_release_notes_md",
+        "node_v0_2_14_release_notes_md",
+        "node_v0_2_15_release_notes_md",
         "node_v0_2_1_release_notes_md",
         "node_v0_2_2_release_notes_md",
         "node_v0_2_3_release_notes_md",
@@ -249,18 +271,21 @@
         "node_prompts_2026_02_18_manual_snapshot_md",
         "node_prompts_2026_02_18_selection_ungrouped_md",
         "node_prompts_2026_02_18_snapshot__121710_md",
-        "node_prompts_2026_02_20_auto_push_after_drag_md"
+        "node_prompts_2026_02_20_auto_push_after_drag_md",
+        "node_prompts_2026_02_22_auto_push_after_drag_md"
       ],
       "collapsed": false,
+      "color": "#d3869b",
       "id": "doc_shelf",
       "label": "📚 Documentation Shelf"
     },
     {
+      "_bodyHeight": 352.49948727144874,
       "_headerBounds": {
         "height": 30,
-        "width": 859.9999999999993,
-        "x": -678.4508478631523,
-        "y": 1290.0238109534548
+        "width": 1439.6103572197828,
+        "x": -783.3806657080379,
+        "y": 1275.4088818800892
       },
       "bounds": {
         "height": 1500,
@@ -272,9 +297,9 @@
         "node_LICENSE",
         "node_synapse_topology_view",
         "node_README",
-        "node_graph_v0_2_11",
-        "node_flow_v0_2_11",
-        "node_tree_v0_2_11",
+        "node_graph_v0_2_14",
+        "node_flow_v0_2_14",
+        "node_tree_v0_2_14",
         "node_package",
         "node_vscode_languageclient",
         "node_child_process",
@@ -283,15 +308,34 @@
         "node_cors"
       ],
       "collapsed": false,
+      "color": "#fabd2f",
       "id": "cluster_external",
       "label": "🌐 External Modules"
+    },
+    {
+      "_bodyHeight": 210,
+      "_headerBounds": {
+        "height": 30,
+        "width": 160,
+        "x": 1380,
+        "y": 30
+      },
+      "collapsed": false,
+      "color": "#8ec07c",
+      "id": "ctx_vault_cluster",
+      "label": "🧠 Intelligent Context Vault",
+      "readOnly": true,
+      "style": {
+        "backgroundColor": "rgba(215, 153, 33, 0.07)",
+        "borderColor": "#d79921"
+      }
     }
   ],
   "edges": [
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_EXTENSION_README_md",
-      "id": "edge_52",
+      "id": "edge_54",
       "is_approved": false,
       "to": "node_LICENSE",
       "type": "dependency",
@@ -310,7 +354,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_GEMINI_md",
-      "id": "edge_53",
+      "id": "edge_55",
       "is_approved": false,
       "to": "node_synapse_topology_view",
       "type": "dependency",
@@ -329,7 +373,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_README_ko_md",
-      "id": "edge_54",
+      "id": "edge_56",
       "is_approved": false,
       "to": "node_README",
       "type": "dependency",
@@ -348,7 +392,7 @@
     {
       "_validationReason": "Circular dependency detected",
       "from": "node_README_ko_md",
-      "id": "edge_55",
+      "id": "edge_57",
       "is_approved": false,
       "to": "node_README_ko_md",
       "type": "dependency",
@@ -367,47 +411,9 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_README_ko_md",
-      "id": "edge_56",
-      "is_approved": false,
-      "to": "node_graph_v0_2_11",
-      "type": "dependency",
-      "validation": {
-        "confidence": 0.95,
-        "reason": "Appropriate architectural relationship.",
-        "valid": true
-      },
-      "visual": {
-        "animated": true,
-        "color": "#ebdbb2",
-        "style": "solid",
-        "thickness": 2
-      }
-    },
-    {
-      "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_README_ko_md",
-      "id": "edge_57",
-      "is_approved": false,
-      "to": "node_flow_v0_2_11",
-      "type": "dependency",
-      "validation": {
-        "confidence": 0.95,
-        "reason": "Appropriate architectural relationship.",
-        "valid": true
-      },
-      "visual": {
-        "animated": true,
-        "color": "#ebdbb2",
-        "style": "solid",
-        "thickness": 2
-      }
-    },
-    {
-      "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_README_ko_md",
       "id": "edge_58",
       "is_approved": false,
-      "to": "node_tree_v0_2_11",
+      "to": "node_graph_v0_2_14",
       "type": "dependency",
       "validation": {
         "confidence": 0.95,
@@ -426,6 +432,44 @@
       "from": "node_README_ko_md",
       "id": "edge_59",
       "is_approved": false,
+      "to": "node_flow_v0_2_14",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": true,
+        "color": "#ebdbb2",
+        "style": "solid",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_README_ko_md",
+      "id": "edge_60",
+      "is_approved": false,
+      "to": "node_tree_v0_2_14",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": true,
+        "color": "#ebdbb2",
+        "style": "solid",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_README_ko_md",
+      "id": "edge_61",
+      "is_approved": false,
       "to": "node_LICENSE",
       "type": "dependency",
       "validation": {
@@ -443,7 +487,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_prompts_2026_02_17_keybinding_check_md",
-      "id": "edge_60",
+      "id": "edge_62",
       "is_approved": false,
       "to": "node_package",
       "type": "dependency",
@@ -462,7 +506,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_prompts_2026_02_17_origin_edge_verification_md",
-      "id": "edge_61",
+      "id": "edge_63",
       "is_approved": false,
       "to": "node_src_core_PromptLogger_ts",
       "type": "dependency",
@@ -481,47 +525,9 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_prompts_2026_02_17_origin_edge_verification_md",
-      "id": "edge_62",
-      "is_approved": false,
-      "to": "node_src_bootstrap_BootstrapEngine_ts",
-      "type": "dependency",
-      "validation": {
-        "confidence": 0.95,
-        "reason": "Appropriate architectural relationship.",
-        "valid": true
-      },
-      "visual": {
-        "animated": true,
-        "color": "#ebdbb2",
-        "style": "solid",
-        "thickness": 2
-      }
-    },
-    {
-      "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_src_bootstrap_BootstrapEngine_ts",
-      "id": "edge_63",
-      "is_approved": false,
-      "to": "node_src_core_GeminiParser_ts",
-      "type": "dependency",
-      "validation": {
-        "confidence": 0.95,
-        "reason": "Appropriate architectural relationship.",
-        "valid": true
-      },
-      "visual": {
-        "animated": true,
-        "color": "#ebdbb2",
-        "style": "solid",
-        "thickness": 2
-      }
-    },
-    {
-      "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_src_bootstrap_BootstrapEngine_ts",
       "id": "edge_64",
       "is_approved": false,
-      "to": "node_src_core_FlowchartGenerator_ts",
+      "to": "node_src_bootstrap_BootstrapEngine_ts",
       "type": "dependency",
       "validation": {
         "confidence": 0.95,
@@ -540,7 +546,7 @@
       "from": "node_src_bootstrap_BootstrapEngine_ts",
       "id": "edge_65",
       "is_approved": false,
-      "to": "node_src_core_FileScanner_ts",
+      "to": "node_src_core_GeminiParser_ts",
       "type": "dependency",
       "validation": {
         "confidence": 0.95,
@@ -559,7 +565,7 @@
       "from": "node_src_bootstrap_BootstrapEngine_ts",
       "id": "edge_66",
       "is_approved": false,
-      "to": "node_src_types_schema_ts",
+      "to": "node_src_core_FlowchartGenerator_ts",
       "type": "dependency",
       "validation": {
         "confidence": 0.95,
@@ -578,7 +584,7 @@
       "from": "node_src_bootstrap_BootstrapEngine_ts",
       "id": "edge_67",
       "is_approved": false,
-      "to": "node_src_utils_exclusionRules_ts",
+      "to": "node_src_core_FileScanner_ts",
       "type": "dependency",
       "validation": {
         "confidence": 0.95,
@@ -597,6 +603,44 @@
       "from": "node_src_bootstrap_BootstrapEngine_ts",
       "id": "edge_68",
       "is_approved": false,
+      "to": "node_src_types_schema_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": true,
+        "color": "#ebdbb2",
+        "style": "solid",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_bootstrap_BootstrapEngine_ts",
+      "id": "edge_69",
+      "is_approved": false,
+      "to": "node_src_utils_exclusionRules_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": true,
+        "color": "#ebdbb2",
+        "style": "solid",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_bootstrap_BootstrapEngine_ts",
+      "id": "edge_70",
+      "is_approved": false,
       "to": "node_src_core_RuleEngine_ts",
       "type": "dependency",
       "validation": {
@@ -614,7 +658,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_cli_ts",
-      "id": "edge_69",
+      "id": "edge_71",
       "is_approved": false,
       "to": "node_src_bootstrap_BootstrapEngine_ts",
       "type": "dependency",
@@ -633,7 +677,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_client_ts",
-      "id": "edge_70",
+      "id": "edge_72",
       "is_approved": false,
       "to": "node_vscode_languageclient",
       "type": "dependency",
@@ -652,44 +696,6 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_core_FlowchartGenerator_ts",
-      "id": "edge_71",
-      "is_approved": false,
-      "to": "node_src_types_schema_ts",
-      "type": "dependency",
-      "validation": {
-        "confidence": 0.95,
-        "reason": "Appropriate architectural relationship.",
-        "valid": true
-      },
-      "visual": {
-        "animated": true,
-        "color": "#ebdbb2",
-        "style": "solid",
-        "thickness": 2
-      }
-    },
-    {
-      "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_src_core_FlowchartGenerator_ts",
-      "id": "edge_72",
-      "is_approved": false,
-      "to": "node_src_utils_visualHints_ts",
-      "type": "dependency",
-      "validation": {
-        "confidence": 0.95,
-        "reason": "Appropriate architectural relationship.",
-        "valid": true
-      },
-      "visual": {
-        "animated": true,
-        "color": "#ebdbb2",
-        "style": "solid",
-        "thickness": 2
-      }
-    },
-    {
-      "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_src_core_GeminiParser_ts",
       "id": "edge_73",
       "is_approved": false,
       "to": "node_src_types_schema_ts",
@@ -708,10 +714,10 @@
     },
     {
       "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_src_core_GeminiParser_ts",
+      "from": "node_src_core_FlowchartGenerator_ts",
       "id": "edge_74",
       "is_approved": false,
-      "to": "node_src_utils_exclusionRules_ts",
+      "to": "node_src_utils_visualHints_ts",
       "type": "dependency",
       "validation": {
         "confidence": 0.95,
@@ -730,6 +736,44 @@
       "from": "node_src_core_GeminiParser_ts",
       "id": "edge_75",
       "is_approved": false,
+      "to": "node_src_types_schema_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": true,
+        "color": "#ebdbb2",
+        "style": "solid",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_core_GeminiParser_ts",
+      "id": "edge_76",
+      "is_approved": false,
+      "to": "node_src_utils_exclusionRules_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": true,
+        "color": "#ebdbb2",
+        "style": "solid",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_core_GeminiParser_ts",
+      "id": "edge_77",
+      "is_approved": false,
       "to": "node_src_core_RuleEngine_ts",
       "type": "dependency",
       "validation": {
@@ -746,48 +790,10 @@
     },
     {
       "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_src_core_PromptLogger_ts",
-      "id": "edge_76",
-      "is_approved": false,
-      "to": "node_child_process",
-      "type": "dependency",
-      "validation": {
-        "confidence": 0.95,
-        "reason": "Appropriate architectural relationship.",
-        "valid": true
-      },
-      "visual": {
-        "animated": true,
-        "color": "#ebdbb2",
-        "style": "solid",
-        "thickness": 2
-      }
-    },
-    {
-      "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_src_extension_ts",
-      "id": "edge_77",
-      "is_approved": false,
-      "to": "node_src_webview_CanvasPanel_ts",
-      "type": "dependency",
-      "validation": {
-        "confidence": 0.95,
-        "reason": "Appropriate architectural relationship.",
-        "valid": true
-      },
-      "visual": {
-        "animated": true,
-        "color": "#ebdbb2",
-        "style": "solid",
-        "thickness": 2
-      }
-    },
-    {
-      "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_src_extension_ts",
+      "from": "node_src_core_LogicAnalyzer_ts",
       "id": "edge_78",
       "is_approved": false,
-      "to": "node_src_bootstrap_BootstrapEngine_ts",
+      "to": "node_src_types_schema_ts",
       "type": "dependency",
       "validation": {
         "confidence": 0.95,
@@ -803,10 +809,10 @@
     },
     {
       "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_src_extension_ts",
+      "from": "node_src_core_PromptLogger_ts",
       "id": "edge_79",
       "is_approved": false,
-      "to": "node_src_client_ts",
+      "to": "node_child_process",
       "type": "dependency",
       "validation": {
         "confidence": 0.95,
@@ -825,7 +831,7 @@
       "from": "node_src_extension_ts",
       "id": "edge_80",
       "is_approved": false,
-      "to": "node_src_core_PromptLogger_ts",
+      "to": "node_src_webview_CanvasPanel_ts",
       "type": "dependency",
       "validation": {
         "confidence": 0.95,
@@ -844,7 +850,7 @@
       "from": "node_src_extension_ts",
       "id": "edge_81",
       "is_approved": false,
-      "to": "node_src_utils_ChatExtractor_ts",
+      "to": "node_src_bootstrap_BootstrapEngine_ts",
       "type": "dependency",
       "validation": {
         "confidence": 0.95,
@@ -863,6 +869,63 @@
       "from": "node_src_extension_ts",
       "id": "edge_82",
       "is_approved": false,
+      "to": "node_src_client_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": true,
+        "color": "#ebdbb2",
+        "style": "solid",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_extension_ts",
+      "id": "edge_83",
+      "is_approved": false,
+      "to": "node_src_core_PromptLogger_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": true,
+        "color": "#ebdbb2",
+        "style": "solid",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_extension_ts",
+      "id": "edge_84",
+      "is_approved": false,
+      "to": "node_src_utils_ChatExtractor_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": true,
+        "color": "#ebdbb2",
+        "style": "solid",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_extension_ts",
+      "id": "edge_85",
+      "is_approved": false,
       "to": "node_src_utils_Logger_ts",
       "type": "dependency",
       "validation": {
@@ -880,7 +943,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_server_server_ts",
-      "id": "edge_83",
+      "id": "edge_86",
       "is_approved": false,
       "to": "node_vscode_languageserver_textdocument",
       "type": "dependency",
@@ -899,7 +962,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_server_server_ts",
-      "id": "edge_84",
+      "id": "edge_87",
       "is_approved": false,
       "to": "node_src_core_GeminiParser_ts",
       "type": "dependency",
@@ -918,66 +981,9 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_server_server_ts",
-      "id": "edge_85",
-      "is_approved": false,
-      "to": "node_src_core_FlowScanner_ts",
-      "type": "dependency",
-      "validation": {
-        "confidence": 0.95,
-        "reason": "Appropriate architectural relationship.",
-        "valid": true
-      },
-      "visual": {
-        "animated": true,
-        "color": "#ebdbb2",
-        "style": "solid",
-        "thickness": 2
-      }
-    },
-    {
-      "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_src_server_standalone_ts",
-      "id": "edge_86",
-      "is_approved": false,
-      "to": "node_express",
-      "type": "dependency",
-      "validation": {
-        "confidence": 0.95,
-        "reason": "Appropriate architectural relationship.",
-        "valid": true
-      },
-      "visual": {
-        "animated": true,
-        "color": "#ebdbb2",
-        "style": "solid",
-        "thickness": 2
-      }
-    },
-    {
-      "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_src_server_standalone_ts",
-      "id": "edge_87",
-      "is_approved": false,
-      "to": "node_cors",
-      "type": "dependency",
-      "validation": {
-        "confidence": 0.95,
-        "reason": "Appropriate architectural relationship.",
-        "valid": true
-      },
-      "visual": {
-        "animated": true,
-        "color": "#ebdbb2",
-        "style": "solid",
-        "thickness": 2
-      }
-    },
-    {
-      "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_src_server_standalone_ts",
       "id": "edge_88",
       "is_approved": false,
-      "to": "node_src_core_GeminiParser_ts",
+      "to": "node_src_core_FlowScanner_ts",
       "type": "dependency",
       "validation": {
         "confidence": 0.95,
@@ -996,6 +1002,63 @@
       "from": "node_src_server_standalone_ts",
       "id": "edge_89",
       "is_approved": false,
+      "to": "node_express",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": true,
+        "color": "#ebdbb2",
+        "style": "solid",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_server_standalone_ts",
+      "id": "edge_90",
+      "is_approved": false,
+      "to": "node_cors",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": true,
+        "color": "#ebdbb2",
+        "style": "solid",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_server_standalone_ts",
+      "id": "edge_91",
+      "is_approved": false,
+      "to": "node_src_core_GeminiParser_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": true,
+        "color": "#ebdbb2",
+        "style": "solid",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_server_standalone_ts",
+      "id": "edge_92",
+      "is_approved": false,
       "to": "node_src_core_FlowScanner_ts",
       "type": "dependency",
       "validation": {
@@ -1013,7 +1076,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_test_FileScanner_test_ts",
-      "id": "edge_90",
+      "id": "edge_93",
       "is_approved": false,
       "to": "node_src_core_FileScanner_ts",
       "type": "dependency",
@@ -1032,7 +1095,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_test_FlowchartGenerator_test_ts",
-      "id": "edge_91",
+      "id": "edge_94",
       "is_approved": false,
       "to": "node_src_core_FlowchartGenerator_ts",
       "type": "dependency",
@@ -1051,7 +1114,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_test_FlowchartGenerator_test_ts",
-      "id": "edge_92",
+      "id": "edge_95",
       "is_approved": false,
       "to": "node_src_types_schema_ts",
       "type": "dependency",
@@ -1070,7 +1133,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_test_GeminiParser_test_ts",
-      "id": "edge_93",
+      "id": "edge_96",
       "is_approved": false,
       "to": "node_src_core_GeminiParser_ts",
       "type": "dependency",
@@ -1089,7 +1152,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_test_visualHints_test_ts",
-      "id": "edge_94",
+      "id": "edge_97",
       "is_approved": false,
       "to": "node_src_utils_visualHints_ts",
       "type": "dependency",
@@ -1108,66 +1171,9 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_utils_exclusionRules_ts",
-      "id": "edge_95",
-      "is_approved": false,
-      "to": "node_src_core_RuleEngine_ts",
-      "type": "dependency",
-      "validation": {
-        "confidence": 0.95,
-        "reason": "Appropriate architectural relationship.",
-        "valid": true
-      },
-      "visual": {
-        "animated": true,
-        "color": "#ebdbb2",
-        "style": "solid",
-        "thickness": 2
-      }
-    },
-    {
-      "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_src_webview_CanvasPanel_ts",
-      "id": "edge_96",
-      "is_approved": false,
-      "to": "node_src_types_schema_ts",
-      "type": "dependency",
-      "validation": {
-        "confidence": 0.95,
-        "reason": "Appropriate architectural relationship.",
-        "valid": true
-      },
-      "visual": {
-        "animated": true,
-        "color": "#ebdbb2",
-        "style": "solid",
-        "thickness": 2
-      }
-    },
-    {
-      "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_src_webview_CanvasPanel_ts",
-      "id": "edge_97",
-      "is_approved": false,
-      "to": "node_src_core_FileScanner_ts",
-      "type": "dependency",
-      "validation": {
-        "confidence": 0.95,
-        "reason": "Appropriate architectural relationship.",
-        "valid": true
-      },
-      "visual": {
-        "animated": true,
-        "color": "#ebdbb2",
-        "style": "solid",
-        "thickness": 2
-      }
-    },
-    {
-      "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_src_webview_CanvasPanel_ts",
       "id": "edge_98",
       "is_approved": false,
-      "to": "node_src_core_GeminiParser_ts",
+      "to": "node_src_core_RuleEngine_ts",
       "type": "dependency",
       "validation": {
         "confidence": 0.95,
@@ -1186,7 +1192,7 @@
       "from": "node_src_webview_CanvasPanel_ts",
       "id": "edge_99",
       "is_approved": false,
-      "to": "node_src_core_FlowchartGenerator_ts",
+      "to": "node_src_types_schema_ts",
       "type": "dependency",
       "validation": {
         "confidence": 0.95,
@@ -1205,7 +1211,7 @@
       "from": "node_src_webview_CanvasPanel_ts",
       "id": "edge_100",
       "is_approved": false,
-      "to": "node_src_bootstrap_BootstrapEngine_ts",
+      "to": "node_src_core_FileScanner_ts",
       "type": "dependency",
       "validation": {
         "confidence": 0.95,
@@ -1224,7 +1230,7 @@
       "from": "node_src_webview_CanvasPanel_ts",
       "id": "edge_101",
       "is_approved": false,
-      "to": "node_src_client_ts",
+      "to": "node_src_core_LogicAnalyzer_ts",
       "type": "dependency",
       "validation": {
         "confidence": 0.95,
@@ -1243,6 +1249,82 @@
       "from": "node_src_webview_CanvasPanel_ts",
       "id": "edge_102",
       "is_approved": false,
+      "to": "node_src_core_GeminiParser_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": true,
+        "color": "#ebdbb2",
+        "style": "solid",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_webview_CanvasPanel_ts",
+      "id": "edge_103",
+      "is_approved": false,
+      "to": "node_src_core_FlowchartGenerator_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": true,
+        "color": "#ebdbb2",
+        "style": "solid",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_webview_CanvasPanel_ts",
+      "id": "edge_104",
+      "is_approved": false,
+      "to": "node_src_bootstrap_BootstrapEngine_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": true,
+        "color": "#ebdbb2",
+        "style": "solid",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_webview_CanvasPanel_ts",
+      "id": "edge_105",
+      "is_approved": false,
+      "to": "node_src_client_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": true,
+        "color": "#ebdbb2",
+        "style": "solid",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_webview_CanvasPanel_ts",
+      "id": "edge_106",
+      "is_approved": false,
       "to": "node_src_utils_Logger_ts",
       "type": "dependency",
       "validation": {
@@ -1260,7 +1342,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_v0_1_6_release_notes_md",
-      "id": "edge_103",
+      "id": "edge_107",
       "is_approved": false,
       "to": "node_LICENSE",
       "type": "dependency",
@@ -1279,7 +1361,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_EXTENSION_README_md",
-      "id": "edge_auto_1771740984825_860",
+      "id": "edge_auto_1772234644305_232",
       "label": "ref",
       "to": "node_LICENSE",
       "type": "dependency",
@@ -1292,7 +1374,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_GEMINI_md",
-      "id": "edge_auto_1771740984825_653",
+      "id": "edge_auto_1772234644305_378",
       "label": "ref",
       "to": "node_synapse_topology_view",
       "type": "dependency",
@@ -1305,7 +1387,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_README_ko_md",
-      "id": "edge_auto_1771740984825_402",
+      "id": "edge_auto_1772234644305_287",
       "label": "ref",
       "to": "node_README",
       "type": "dependency",
@@ -1318,9 +1400,9 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_README_ko_md",
-      "id": "edge_auto_1771740984825_417",
+      "id": "edge_auto_1772234644305_781",
       "label": "ref",
-      "to": "node_graph_v0_2_11",
+      "to": "node_graph_v0_2_14",
       "type": "dependency",
       "validation": {
         "confidence": 0.95,
@@ -1331,9 +1413,9 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_README_ko_md",
-      "id": "edge_auto_1771740984825_77",
+      "id": "edge_auto_1772234644305_745",
       "label": "ref",
-      "to": "node_flow_v0_2_11",
+      "to": "node_flow_v0_2_14",
       "type": "dependency",
       "validation": {
         "confidence": 0.95,
@@ -1344,9 +1426,9 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_README_ko_md",
-      "id": "edge_auto_1771740984825_925",
+      "id": "edge_auto_1772234644305_444",
       "label": "ref",
-      "to": "node_tree_v0_2_11",
+      "to": "node_tree_v0_2_14",
       "type": "dependency",
       "validation": {
         "confidence": 0.95,
@@ -1357,7 +1439,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_README_ko_md",
-      "id": "edge_auto_1771740984825_947",
+      "id": "edge_auto_1772234644305_530",
       "label": "ref",
       "to": "node_LICENSE",
       "type": "dependency",
@@ -1370,7 +1452,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_v0_1_6_release_notes_md",
-      "id": "edge_auto_1771740984825_252",
+      "id": "edge_auto_1772234644305_330",
       "label": "ref",
       "to": "node_LICENSE",
       "type": "dependency",
@@ -1383,7 +1465,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_prompts_2026_02_17_keybinding_check_md",
-      "id": "edge_auto_1771740984825_439",
+      "id": "edge_auto_1772234644305_77",
       "label": "ref",
       "to": "node_package",
       "type": "dependency",
@@ -1396,7 +1478,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_prompts_2026_02_17_origin_edge_verification_md",
-      "id": "edge_auto_1771740984825_642",
+      "id": "edge_auto_1772234644305_359",
       "label": "ref",
       "to": "node_src_core_PromptLogger_ts",
       "type": "dependency",
@@ -1409,7 +1491,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_prompts_2026_02_17_origin_edge_verification_md",
-      "id": "edge_auto_1771740984825_573",
+      "id": "edge_auto_1772234644305_195",
       "label": "ref",
       "to": "node_src_bootstrap_BootstrapEngine_ts",
       "type": "dependency",
@@ -1422,7 +1504,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_bootstrap_BootstrapEngine_ts",
-      "id": "edge_auto_1771740984825_253",
+      "id": "edge_auto_1772234644305_899",
       "label": "ref",
       "to": "node_src_core_GeminiParser_ts",
       "type": "dependency",
@@ -1435,7 +1517,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_bootstrap_BootstrapEngine_ts",
-      "id": "edge_auto_1771740984825_398",
+      "id": "edge_auto_1772234644305_684",
       "label": "ref",
       "to": "node_src_core_FlowchartGenerator_ts",
       "type": "dependency",
@@ -1448,7 +1530,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_bootstrap_BootstrapEngine_ts",
-      "id": "edge_auto_1771740984825_980",
+      "id": "edge_auto_1772234644305_633",
       "label": "ref",
       "to": "node_src_core_FileScanner_ts",
       "type": "dependency",
@@ -1461,7 +1543,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_bootstrap_BootstrapEngine_ts",
-      "id": "edge_auto_1771740984825_816",
+      "id": "edge_auto_1772234644305_176",
       "label": "ref",
       "to": "node_src_types_schema_ts",
       "type": "dependency",
@@ -1474,7 +1556,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_bootstrap_BootstrapEngine_ts",
-      "id": "edge_auto_1771740984825_806",
+      "id": "edge_auto_1772234644305_234",
       "label": "ref",
       "to": "node_src_utils_exclusionRules_ts",
       "type": "dependency",
@@ -1487,7 +1569,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_bootstrap_BootstrapEngine_ts",
-      "id": "edge_auto_1771740984825_306",
+      "id": "edge_auto_1772234644305_82",
       "label": "ref",
       "to": "node_src_core_RuleEngine_ts",
       "type": "dependency",
@@ -1500,7 +1582,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_cli_ts",
-      "id": "edge_auto_1771740984825_294",
+      "id": "edge_auto_1772234644305_866",
       "label": "ref",
       "to": "node_src_bootstrap_BootstrapEngine_ts",
       "type": "dependency",
@@ -1513,7 +1595,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_client_ts",
-      "id": "edge_auto_1771740984825_179",
+      "id": "edge_auto_1772234644305_619",
       "label": "ref",
       "to": "node_vscode_languageclient",
       "type": "dependency",
@@ -1526,7 +1608,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_extension_ts",
-      "id": "edge_auto_1771740984825_8",
+      "id": "edge_auto_1772234644305_629",
       "label": "ref",
       "to": "node_src_webview_CanvasPanel_ts",
       "type": "dependency",
@@ -1539,7 +1621,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_extension_ts",
-      "id": "edge_auto_1771740984825_239",
+      "id": "edge_auto_1772234644305_512",
       "label": "ref",
       "to": "node_src_bootstrap_BootstrapEngine_ts",
       "type": "dependency",
@@ -1552,7 +1634,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_extension_ts",
-      "id": "edge_auto_1771740984825_809",
+      "id": "edge_auto_1772234644305_267",
       "label": "ref",
       "to": "node_src_client_ts",
       "type": "dependency",
@@ -1565,7 +1647,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_extension_ts",
-      "id": "edge_auto_1771740984825_303",
+      "id": "edge_auto_1772234644305_923",
       "label": "ref",
       "to": "node_src_core_PromptLogger_ts",
       "type": "dependency",
@@ -1578,7 +1660,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_extension_ts",
-      "id": "edge_auto_1771740984825_372",
+      "id": "edge_auto_1772234644305_169",
       "label": "ref",
       "to": "node_src_utils_ChatExtractor_ts",
       "type": "dependency",
@@ -1591,7 +1673,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_extension_ts",
-      "id": "edge_auto_1771740984825_1",
+      "id": "edge_auto_1772234644305_747",
       "label": "ref",
       "to": "node_src_utils_Logger_ts",
       "type": "dependency",
@@ -1604,7 +1686,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_core_FlowchartGenerator_ts",
-      "id": "edge_auto_1771740984825_298",
+      "id": "edge_auto_1772234644305_991",
       "label": "ref",
       "to": "node_src_types_schema_ts",
       "type": "dependency",
@@ -1617,7 +1699,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_core_FlowchartGenerator_ts",
-      "id": "edge_auto_1771740984825_714",
+      "id": "edge_auto_1772234644305_825",
       "label": "ref",
       "to": "node_src_utils_visualHints_ts",
       "type": "dependency",
@@ -1630,7 +1712,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_core_GeminiParser_ts",
-      "id": "edge_auto_1771740984825_45",
+      "id": "edge_auto_1772234644305_71",
       "label": "ref",
       "to": "node_src_types_schema_ts",
       "type": "dependency",
@@ -1643,7 +1725,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_core_GeminiParser_ts",
-      "id": "edge_auto_1771740984825_985",
+      "id": "edge_auto_1772234644305_481",
       "label": "ref",
       "to": "node_src_utils_exclusionRules_ts",
       "type": "dependency",
@@ -1656,7 +1738,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_core_GeminiParser_ts",
-      "id": "edge_auto_1771740984825_42",
+      "id": "edge_auto_1772234644305_51",
       "label": "ref",
       "to": "node_src_core_RuleEngine_ts",
       "type": "dependency",
@@ -1668,8 +1750,21 @@
     },
     {
       "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_core_LogicAnalyzer_ts",
+      "id": "edge_auto_1772234644305_928",
+      "label": "ref",
+      "to": "node_src_types_schema_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_core_PromptLogger_ts",
-      "id": "edge_auto_1771740984825_37",
+      "id": "edge_auto_1772234644305_289",
       "label": "ref",
       "to": "node_child_process",
       "type": "dependency",
@@ -1682,7 +1777,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_server_server_ts",
-      "id": "edge_auto_1771740984825_489",
+      "id": "edge_auto_1772234644305_375",
       "label": "ref",
       "to": "node_vscode_languageserver_textdocument",
       "type": "dependency",
@@ -1695,7 +1790,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_server_server_ts",
-      "id": "edge_auto_1771740984825_285",
+      "id": "edge_auto_1772234644305_572",
       "label": "ref",
       "to": "node_src_core_GeminiParser_ts",
       "type": "dependency",
@@ -1708,7 +1803,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_server_server_ts",
-      "id": "edge_auto_1771740984825_772",
+      "id": "edge_auto_1772234644305_403",
       "label": "ref",
       "to": "node_src_core_FlowScanner_ts",
       "type": "dependency",
@@ -1721,7 +1816,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_server_standalone_ts",
-      "id": "edge_auto_1771740984825_191",
+      "id": "edge_auto_1772234644305_122",
       "label": "ref",
       "to": "node_express",
       "type": "dependency",
@@ -1734,7 +1829,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_server_standalone_ts",
-      "id": "edge_auto_1771740984825_733",
+      "id": "edge_auto_1772234644305_640",
       "label": "ref",
       "to": "node_cors",
       "type": "dependency",
@@ -1747,7 +1842,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_server_standalone_ts",
-      "id": "edge_auto_1771740984825_174",
+      "id": "edge_auto_1772234644305_841",
       "label": "ref",
       "to": "node_src_core_GeminiParser_ts",
       "type": "dependency",
@@ -1760,7 +1855,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_server_standalone_ts",
-      "id": "edge_auto_1771740984825_717",
+      "id": "edge_auto_1772234644305_669",
       "label": "ref",
       "to": "node_src_core_FlowScanner_ts",
       "type": "dependency",
@@ -1771,22 +1866,16 @@
       }
     },
     {
-      "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_test_FileScanner_test_ts",
-      "id": "edge_auto_1771740984825_96",
+      "id": "edge_auto_1772234644305_82",
       "label": "ref",
       "to": "node_src_core_FileScanner_ts",
-      "type": "dependency",
-      "validation": {
-        "confidence": 0.95,
-        "reason": "Appropriate architectural relationship.",
-        "valid": true
-      }
+      "type": "dependency"
     },
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_test_FlowchartGenerator_test_ts",
-      "id": "edge_auto_1771740984825_155",
+      "id": "edge_auto_1772234644305_694",
       "label": "ref",
       "to": "node_src_core_FlowchartGenerator_ts",
       "type": "dependency",
@@ -1799,7 +1888,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_test_FlowchartGenerator_test_ts",
-      "id": "edge_auto_1771740984825_918",
+      "id": "edge_auto_1772234644305_21",
       "label": "ref",
       "to": "node_src_types_schema_ts",
       "type": "dependency",
@@ -1812,7 +1901,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_test_GeminiParser_test_ts",
-      "id": "edge_auto_1771740984825_278",
+      "id": "edge_auto_1772234644305_298",
       "label": "ref",
       "to": "node_src_core_GeminiParser_ts",
       "type": "dependency",
@@ -1825,7 +1914,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_test_visualHints_test_ts",
-      "id": "edge_auto_1771740984825_91",
+      "id": "edge_auto_1772234644305_931",
       "label": "ref",
       "to": "node_src_utils_visualHints_ts",
       "type": "dependency",
@@ -1838,7 +1927,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_utils_exclusionRules_ts",
-      "id": "edge_auto_1771740984825_202",
+      "id": "edge_auto_1772234644305_862",
       "label": "ref",
       "to": "node_src_core_RuleEngine_ts",
       "type": "dependency",
@@ -1851,7 +1940,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_webview_CanvasPanel_ts",
-      "id": "edge_auto_1771740984825_790",
+      "id": "edge_auto_1772234644305_601",
       "label": "ref",
       "to": "node_src_types_schema_ts",
       "type": "dependency",
@@ -1864,7 +1953,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_webview_CanvasPanel_ts",
-      "id": "edge_auto_1771740984825_50",
+      "id": "edge_auto_1772234644305_967",
       "label": "ref",
       "to": "node_src_core_FileScanner_ts",
       "type": "dependency",
@@ -1877,7 +1966,20 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_webview_CanvasPanel_ts",
-      "id": "edge_auto_1771740984825_822",
+      "id": "edge_auto_1772234644305_336",
+      "label": "ref",
+      "to": "node_src_core_LogicAnalyzer_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_webview_CanvasPanel_ts",
+      "id": "edge_auto_1772234644305_542",
       "label": "ref",
       "to": "node_src_core_GeminiParser_ts",
       "type": "dependency",
@@ -1888,16 +1990,22 @@
       }
     },
     {
+      "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_webview_CanvasPanel_ts",
-      "id": "edge_auto_1771740984825_714",
+      "id": "edge_auto_1772234644305_670",
       "label": "ref",
       "to": "node_src_core_FlowchartGenerator_ts",
-      "type": "dependency"
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
     },
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_webview_CanvasPanel_ts",
-      "id": "edge_auto_1771740984825_619",
+      "id": "edge_auto_1772234644305_995",
       "label": "ref",
       "to": "node_src_bootstrap_BootstrapEngine_ts",
       "type": "dependency",
@@ -1910,7 +2018,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_webview_CanvasPanel_ts",
-      "id": "edge_auto_1771740984825_409",
+      "id": "edge_auto_1772234644305_311",
       "label": "ref",
       "to": "node_src_client_ts",
       "type": "dependency",
@@ -1923,7 +2031,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_webview_CanvasPanel_ts",
-      "id": "edge_auto_1771740984825_591",
+      "id": "edge_auto_1772234644305_675",
       "label": "ref",
       "to": "node_src_utils_Logger_ts",
       "type": "dependency",
@@ -1966,8 +2074,8 @@
       },
       "id": "node_DEBUG_GUIDE_md",
       "position": {
-        "x": -556.843987063815,
-        "y": 303.3150686569023
+        "x": -241.11604787829887,
+        "y": 245.46010662770243
       },
       "status": "proposed",
       "type": "documentation",
@@ -1996,14 +2104,17 @@
           ],
           "functions": [],
           "references": [
-            "LICENSE"
+            {
+              "target": "LICENSE",
+              "type": "dependency"
+            }
           ]
         }
       },
       "id": "node_EXTENSION_README_md",
       "position": {
-        "x": -356.8439870638149,
-        "y": 303.3150686569023
+        "x": -41.11604787829929,
+        "y": 245.46010662770243
       },
       "status": "proposed",
       "type": "documentation",
@@ -2086,26 +2197,51 @@
             "🛠️ Core Engine",
             "🌐 View & Interface",
             "🔗 Core Dependencies",
+            "SYNAPSE - Visual Architecture Engine (v0.2.15)",
+            "[v0.2.15] - War Room: Legacy Logic Fix & Flow Precision",
+            "1. Logic Analyzer (로직 분석기)",
+            "2. War Room Visual Experience",
+            "3. Interactive Health Report (`리포트.md`)",
+            "4. 시각적 실패 복구 작전: '심연'을 '질서'로 바꾸는 법",
             "🎖️ SYNAPSE War Room Operation Log: v0.2.11 & Context Vault",
-            "1. 🚀 v0.2.11 릴리즈 및 엣지 복구 성과",
             "2. 📑 다중 MD 부트스트랩 (Multi-MD Bootstrap Engine)",
             "3. 🧠 [UPGRADED] 인텔리전트 맥락 보관소 (Intelligent Context Vault)",
             "3.1. 맥락 파일 데이터 구조 (File Content Blueprint)",
             "3.2. 자동 기록 프로세스 (Auto-Documentation Flow)",
             "3.3. 활용 시나리오",
             "4. ⚔️ 최종 비전: 시냅스 '워룸(War Room)' 인터페이스",
-            "5. 🛠️ 사령관의 즉시 기동 지침 (Next Action)"
+            "5. 🛠️ 사령관의 즉시 기동 지침 (Next Action)",
+            "🛸 SYNAPSE: War Room & Intelligence Context Vault (v0.2.20)",
+            "1. 개요 (Philosophy)",
+            "2. 핵심 사양 (Core Specs) [cite: 2026-02-14]",
+            "A. 인텔리전트 맥락 보관소 (Intelligent Context Vault)",
+            "B. 워룸 로직 제어 시스템 (War Room Logic Control)",
+            "C. 아키텍처-코드 동기화 (Architecture Sync)",
+            "3. 사용자 경험 (UX)",
+            "4. [v0.2.20 작전 설계: 논리 리포트(Logic Report) 시스템]",
+            "4.1. 리포트.md 구성 사양 (Logic Audit Structure)",
+            "4.2. 워룸 연동 시나리오 (Report Generation)",
+            "5. [v0.2.20 작전 설계: 리포트-그래프 실시간 동기화 (Visual Audit)]",
+            "5.1. 그래프 시각적 피드백 (Visual Indicator)",
+            "5.2. 상호작용 (Interactivity)",
+            "6. [v0.2.15 개량 설계: 계층적 노드 생성 및 동적 쉐이프(Dynamic Shape) 시스템]",
+            "6.1. 2단계 계층형 선택 인터페이스 (Hierarchical Selector)",
+            "6.2. 로직 유형별 동적 쉐이프(Shape) 정의 [cite: 2026-02-11]",
+            "6.3. 리포트 및 시뮬레이션 연동"
           ],
           "functions": [],
           "references": [
-            "synapse_topology_view"
+            {
+              "target": "synapse_topology_view",
+              "type": "dependency"
+            }
           ]
         }
       },
       "id": "node_GEMINI_md",
       "position": {
-        "x": -156.84398706381495,
-        "y": 303.3150686569023
+        "x": 158.88395212170056,
+        "y": 245.46010662770243
       },
       "status": "proposed",
       "type": "documentation",
@@ -2138,26 +2274,46 @@
             "계층 구조 (Tree)",
             "🛠️ 설치 방법",
             "🆕 버전 히스토리",
-            "v0.2.12 (최신판)",
+            "v0.2.14",
+            "v0.2.13",
+            "v0.2.12",
             "v0.2.11",
             "v0.2.10",
             "📜 라이선스 및 제작자"
           ],
           "functions": [],
           "references": [
-            "README",
-            "README.ko",
-            "graph_v0.2.11",
-            "flow_v0.2.11",
-            "tree_v0.2.11",
-            "LICENSE"
+            {
+              "target": "README",
+              "type": "dependency"
+            },
+            {
+              "target": "README.ko",
+              "type": "dependency"
+            },
+            {
+              "target": "graph_v0.2.14",
+              "type": "dependency"
+            },
+            {
+              "target": "flow_v0.2.14",
+              "type": "dependency"
+            },
+            {
+              "target": "tree_v0.2.14",
+              "type": "dependency"
+            },
+            {
+              "target": "LICENSE",
+              "type": "dependency"
+            }
           ]
         }
       },
       "id": "node_README_ko_md",
       "position": {
-        "x": 43.156012936185064,
-        "y": 303.3150686569023
+        "x": 358.88395212170064,
+        "y": 245.46010662770243
       },
       "status": "proposed",
       "type": "documentation",
@@ -2193,8 +2349,8 @@
       },
       "id": "node_RELEASES_v0_2_7_md",
       "position": {
-        "x": -556.843987063815,
-        "y": 453.31506865690227
+        "x": -241.11604787829887,
+        "y": 395.46010662770243
       },
       "status": "proposed",
       "type": "documentation",
@@ -2226,8 +2382,8 @@
       },
       "id": "node_RULES_md",
       "position": {
-        "x": -356.8439870638149,
-        "y": 453.31506865690227
+        "x": -41.11604787829929,
+        "y": 395.46010662770243
       },
       "status": "proposed",
       "type": "documentation",
@@ -2256,8 +2412,8 @@
       },
       "id": "node_architecture_md",
       "position": {
-        "x": -156.84398706381495,
-        "y": 453.31506865690227
+        "x": 158.88395212170056,
+        "y": 395.46010662770243
       },
       "status": "proposed",
       "type": "documentation",
@@ -2291,8 +2447,42 @@
       },
       "id": "node_release_notes_0_2_12_md",
       "position": {
-        "x": 43.156012936185064,
-        "y": 453.31506865690227
+        "x": 358.88395212170064,
+        "y": 395.46010662770243
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "color": "#fabd2f",
+        "description": "release_notes_0.2.14.md (Doc)",
+        "file": "release_notes_0.2.14.md",
+        "label": "release_notes_0.2.14.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "SYNAPSE v0.2.14 Release Notes",
+            "🇬🇧 English",
+            "New Features & Enhancements",
+            "🇰🇷 한국어",
+            "주요 기능 및 개선 사항"
+          ],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_release_notes_0_2_14_md",
+      "position": {
+        "x": -241.11604787829887,
+        "y": 545.4601066277024
       },
       "status": "proposed",
       "type": "documentation",
@@ -2326,8 +2516,8 @@
       },
       "id": "node_test_tree_logic_js",
       "position": {
-        "x": 742.5110353237416,
-        "y": 128.9132417907972
+        "x": 859.0497047123947,
+        "y": 275.2921287488762
       },
       "status": "proposed",
       "type": "source",
@@ -2354,14 +2544,17 @@
           ],
           "functions": [],
           "references": [
-            "LICENSE"
+            {
+              "target": "LICENSE",
+              "type": "dependency"
+            }
           ]
         }
       },
       "id": "node_v0_1_6_release_notes_md",
       "position": {
-        "x": -556.843987063815,
-        "y": 603.3150686569023
+        "x": -41.11604787829929,
+        "y": 545.4601066277024
       },
       "status": "proposed",
       "type": "documentation",
@@ -2396,8 +2589,8 @@
       },
       "id": "node_v0_1_7_release_notes_md",
       "position": {
-        "x": -356.8439870638149,
-        "y": 603.3150686569023
+        "x": 158.88395212170056,
+        "y": 545.4601066277024
       },
       "status": "proposed",
       "type": "documentation",
@@ -2430,8 +2623,8 @@
       },
       "id": "node_v0_1_8_release_notes_md",
       "position": {
-        "x": -156.84398706381495,
-        "y": 603.3150686569023
+        "x": 358.88395212170064,
+        "y": 545.4601066277024
       },
       "status": "proposed",
       "type": "documentation",
@@ -2466,8 +2659,8 @@
       },
       "id": "node_v0_2_0_release_notes_md",
       "position": {
-        "x": 43.156012936185064,
-        "y": 603.3150686569023
+        "x": -241.11604787829887,
+        "y": 695.4601066277025
       },
       "status": "proposed",
       "type": "documentation",
@@ -2500,8 +2693,8 @@
       },
       "id": "node_v0_2_10_release_notes_md",
       "position": {
-        "x": -556.843987063815,
-        "y": 753.3150686569022
+        "x": -41.11604787829929,
+        "y": 695.4601066277025
       },
       "status": "proposed",
       "type": "documentation",
@@ -2542,8 +2735,8 @@
       },
       "id": "node_v0_2_11_release_notes_md",
       "position": {
-        "x": -356.8439870638149,
-        "y": 753.3150686569022
+        "x": 158.88395212170056,
+        "y": 695.4601066277025
       },
       "status": "proposed",
       "type": "documentation",
@@ -2579,8 +2772,112 @@
       },
       "id": "node_v0_2_12_release_notes_md",
       "position": {
-        "x": -156.84398706381495,
-        "y": 753.3150686569022
+        "x": 358.88395212170064,
+        "y": 695.4601066277025
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "color": "#fabd2f",
+        "description": "v0.2.13_release_notes.md (Doc)",
+        "file": "v0.2.13_release_notes.md",
+        "label": "v0.2.13_release_notes.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "SYNAPSE v0.2.13 Release Notes",
+            "Cluster UX Updates (클러스터 UX 개선)",
+            "🌟 New Features & Improvements"
+          ],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_v0_2_13_release_notes_md",
+      "position": {
+        "x": -241.11604787829887,
+        "y": 845.4601066277029
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "color": "#fabd2f",
+        "description": "v0.2.14_release_notes.md (Doc)",
+        "file": "v0.2.14_release_notes.md",
+        "label": "v0.2.14_release_notes.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "SYNAPSE v0.2.14 Release Notes (Eng/Kor)",
+            "📡 [English] Logic Audit & War Room Implementation",
+            "🛡️ Core Features",
+            "🛡️ [한국어] 작전 지휘소(War Room) 및 로직 진단 엔진 도입",
+            "🚀 주요 변경 사항"
+          ],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_v0_2_14_release_notes_md",
+      "position": {
+        "x": -41.11604787829929,
+        "y": 845.4601066277029
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "color": "#fabd2f",
+        "description": "v0.2.15_release_notes.md (Doc)",
+        "file": "v0.2.15_release_notes.md",
+        "label": "v0.2.15_release_notes.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "SYNAPSE Release Notes - v0.2.15",
+            "[v0.2.15] - 2026-02-22",
+            "War Room: Legacy Logic Fix & Flow Precision",
+            "🚀 주요 변경 사항",
+            "1. Flow Scanner 리팩토링 (Flow Logic Fix)",
+            "2. Canvas Engine 업데이트 (Visual Support)",
+            "3. UX 개선",
+            "📦 설치 방법",
+            "🎖️ 작전 지휘"
+          ],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_v0_2_15_release_notes_md",
+      "position": {
+        "x": 158.88395212170056,
+        "y": 845.4601066277029
       },
       "status": "proposed",
       "type": "documentation",
@@ -2615,8 +2912,8 @@
       },
       "id": "node_v0_2_1_release_notes_md",
       "position": {
-        "x": 43.156012936185064,
-        "y": 753.3150686569022
+        "x": 358.88395212170064,
+        "y": 845.4601066277029
       },
       "status": "proposed",
       "type": "documentation",
@@ -2651,8 +2948,8 @@
       },
       "id": "node_v0_2_2_release_notes_md",
       "position": {
-        "x": -556.843987063815,
-        "y": 903.315068656902
+        "x": -241.11604787829887,
+        "y": 995.4601066277029
       },
       "status": "proposed",
       "type": "documentation",
@@ -2685,8 +2982,8 @@
       },
       "id": "node_v0_2_3_release_notes_md",
       "position": {
-        "x": -356.8439870638149,
-        "y": 903.315068656902
+        "x": -41.11604787829929,
+        "y": 995.4601066277029
       },
       "status": "proposed",
       "type": "documentation",
@@ -2719,8 +3016,8 @@
       },
       "id": "node_v0_2_4_release_notes_md",
       "position": {
-        "x": -156.84398706381495,
-        "y": 903.315068656902
+        "x": 158.88395212170056,
+        "y": 995.4601066277029
       },
       "status": "proposed",
       "type": "documentation",
@@ -2757,8 +3054,8 @@
       },
       "id": "node_v0_2_5_release_notes_md",
       "position": {
-        "x": 43.156012936185064,
-        "y": 903.315068656902
+        "x": 358.88395212170064,
+        "y": 995.4601066277029
       },
       "status": "proposed",
       "type": "documentation",
@@ -2791,8 +3088,8 @@
       },
       "id": "node_v0_2_6_release_notes_md",
       "position": {
-        "x": -556.843987063815,
-        "y": 1053.315068656902
+        "x": -241.11604787829887,
+        "y": 1145.460106627703
       },
       "status": "proposed",
       "type": "documentation",
@@ -2827,8 +3124,8 @@
       },
       "id": "node_v0_2_9_release_notes_md",
       "position": {
-        "x": -356.8439870638149,
-        "y": 1053.315068656902
+        "x": -41.11604787829929,
+        "y": 1145.460106627703
       },
       "status": "proposed",
       "type": "documentation",
@@ -2868,8 +3165,8 @@
       },
       "id": "node_verify_rules_js",
       "position": {
-        "x": 1092.5110353237424,
-        "y": 128.9132417907972
+        "x": 1209.049704712394,
+        "y": 275.2921287488762
       },
       "status": "proposed",
       "type": "source",
@@ -2908,8 +3205,8 @@
       },
       "id": "node_verify_rules_only_js",
       "position": {
-        "x": 1442.5110353237426,
-        "y": 128.9132417907972
+        "x": 1559.0497047123938,
+        "y": 275.2921287488762
       },
       "status": "proposed",
       "type": "source",
@@ -2941,8 +3238,8 @@
       },
       "id": "node_webpack_config_js",
       "position": {
-        "x": 1792.5110353237426,
-        "y": 128.9132417907972
+        "x": 1909.0497047123938,
+        "y": 275.2921287488762
       },
       "status": "proposed",
       "type": "source",
@@ -2969,8 +3266,8 @@
       },
       "id": "node_LICENSE",
       "position": {
-        "x": -658.4508478631523,
-        "y": 1340.0238109534548
+        "x": -455.2282302216577,
+        "y": 1331.5398167774783
       },
       "status": "proposed",
       "type": "external",
@@ -2997,8 +3294,8 @@
       },
       "id": "node_synapse_topology_view",
       "position": {
-        "x": -308.450847863152,
-        "y": 1340.0238109534548
+        "x": -105.22823022165862,
+        "y": 1331.5398167774783
       },
       "status": "proposed",
       "type": "external",
@@ -3025,8 +3322,8 @@
       },
       "id": "node_README",
       "position": {
-        "x": 41.54915213684701,
-        "y": 1340.0238109534548
+        "x": 62.35377285162102,
+        "y": 1331.592542792862
       },
       "status": "proposed",
       "type": "external",
@@ -3040,9 +3337,9 @@
       "data": {
         "cluster_id": "cluster_external",
         "color": "#83a598",
-        "description": "External Library: graph_v0.2.11",
-        "file": "graph_v0.2.11",
-        "label": "[[ graph_v0.2.11 ]]",
+        "description": "External Library: graph_v0.2.14",
+        "file": "graph_v0.2.14",
+        "label": "[[ graph_v0.2.14 ]]",
         "layer": 1,
         "priority": 50,
         "summary": {
@@ -3051,10 +3348,10 @@
           "references": []
         }
       },
-      "id": "node_graph_v0_2_11",
+      "id": "node_graph_v0_2_14",
       "position": {
-        "x": -658.4508478631523,
-        "y": 1540.0238109534548
+        "x": -601.5748718238856,
+        "y": 1333.662667568832
       },
       "status": "proposed",
       "type": "external",
@@ -3068,9 +3365,9 @@
       "data": {
         "cluster_id": "cluster_external",
         "color": "#83a598",
-        "description": "External Library: flow_v0.2.11",
-        "file": "flow_v0.2.11",
-        "label": "[[ flow_v0.2.11 ]]",
+        "description": "External Library: flow_v0.2.14",
+        "file": "flow_v0.2.14",
+        "label": "[[ flow_v0.2.14 ]]",
         "layer": 1,
         "priority": 50,
         "summary": {
@@ -3079,10 +3376,10 @@
           "references": []
         }
       },
-      "id": "node_flow_v0_2_11",
+      "id": "node_flow_v0_2_14",
       "position": {
-        "x": -308.450847863152,
-        "y": 1540.0238109534548
+        "x": -283.52378653986517,
+        "y": 1329.5402269603178
       },
       "status": "proposed",
       "type": "external",
@@ -3096,9 +3393,9 @@
       "data": {
         "cluster_id": "cluster_external",
         "color": "#83a598",
-        "description": "External Library: tree_v0.2.11",
-        "file": "tree_v0.2.11",
-        "label": "[[ tree_v0.2.11 ]]",
+        "description": "External Library: tree_v0.2.14",
+        "file": "tree_v0.2.14",
+        "label": "[[ tree_v0.2.14 ]]",
         "layer": 1,
         "priority": 50,
         "summary": {
@@ -3107,10 +3404,10 @@
           "references": []
         }
       },
-      "id": "node_tree_v0_2_11",
+      "id": "node_tree_v0_2_14",
       "position": {
-        "x": 41.54915213684701,
-        "y": 1540.0238109534548
+        "x": 212.82285506236212,
+        "y": 1325.4088818800892
       },
       "status": "proposed",
       "type": "external",
@@ -3137,8 +3434,8 @@
       },
       "id": "node_package",
       "position": {
-        "x": -658.4508478631523,
-        "y": 1740.0238109534548
+        "x": -763.3806657080379,
+        "y": 1339.9079589686971
       },
       "status": "proposed",
       "type": "external",
@@ -3165,8 +3462,8 @@
       },
       "id": "node_vscode_languageclient",
       "position": {
-        "x": -308.450847863152,
-        "y": 1740.0238109534548
+        "x": 364.72999914887527,
+        "y": 1326.5100269910267
       },
       "status": "proposed",
       "type": "external",
@@ -3193,8 +3490,8 @@
       },
       "id": "node_child_process",
       "position": {
-        "x": 41.54915213684701,
-        "y": 1740.0238109534548
+        "x": 515.8222397881009,
+        "y": 1577.908369151538
       },
       "status": "proposed",
       "type": "external",
@@ -3221,8 +3518,8 @@
       },
       "id": "node_vscode_languageserver_textdocument",
       "position": {
-        "x": -658.4508478631523,
-        "y": 1940.0238109534548
+        "x": 513.545312779004,
+        "y": 1424.479621930322
       },
       "status": "proposed",
       "type": "external",
@@ -3249,8 +3546,8 @@
       },
       "id": "node_express",
       "position": {
-        "x": -308.450847863152,
-        "y": 1940.0238109534548
+        "x": 516.2296915117449,
+        "y": 1504.8672137963313
       },
       "status": "proposed",
       "type": "external",
@@ -3277,8 +3574,8 @@
       },
       "id": "node_cors",
       "position": {
-        "x": 41.54915213684701,
-        "y": 1940.0238109534548
+        "x": 513.7610194838445,
+        "y": 1328.5007123364742
       },
       "status": "proposed",
       "type": "external",
@@ -3309,14 +3606,17 @@
           ],
           "functions": [],
           "references": [
-            "package"
+            {
+              "target": "package",
+              "type": "dependency"
+            }
           ]
         }
       },
       "id": "node_prompts_2026_02_17_keybinding_check_md",
       "position": {
-        "x": -556.843987063815,
-        "y": 303.3150686569023
+        "x": -241.11604787829887,
+        "y": 245.46010662770243
       },
       "status": "proposed",
       "type": "documentation",
@@ -3347,15 +3647,21 @@
           ],
           "functions": [],
           "references": [
-            "PromptLogger",
-            "BootstrapEngine"
+            {
+              "target": "PromptLogger",
+              "type": "dependency"
+            },
+            {
+              "target": "BootstrapEngine",
+              "type": "dependency"
+            }
           ]
         }
       },
       "id": "node_prompts_2026_02_17_origin_edge_verification_md",
       "position": {
-        "x": -356.8439870638149,
-        "y": 303.3150686569023
+        "x": -41.11604787829929,
+        "y": 245.46010662770243
       },
       "status": "proposed",
       "type": "documentation",
@@ -3384,8 +3690,8 @@
       },
       "id": "node_prompts_2026_02_17_test_md",
       "position": {
-        "x": -156.84398706381495,
-        "y": 303.3150686569023
+        "x": 158.88395212170056,
+        "y": 245.46010662770243
       },
       "status": "proposed",
       "type": "documentation",
@@ -3418,8 +3724,8 @@
       },
       "id": "node_prompts_2026_02_18_auto_push_after_drag_md",
       "position": {
-        "x": 43.156012936185064,
-        "y": 303.3150686569023
+        "x": 358.88395212170064,
+        "y": 245.46010662770243
       },
       "status": "proposed",
       "type": "documentation",
@@ -3452,8 +3758,8 @@
       },
       "id": "node_prompts_2026_02_18_deep_reset_triggered_md",
       "position": {
-        "x": -556.843987063815,
-        "y": 453.31506865690227
+        "x": -241.11604787829887,
+        "y": 395.46010662770243
       },
       "status": "proposed",
       "type": "documentation",
@@ -3486,8 +3792,8 @@
       },
       "id": "node_prompts_2026_02_18_group_created_doc_md",
       "position": {
-        "x": -356.8439870638149,
-        "y": 453.31506865690227
+        "x": -41.11604787829929,
+        "y": 395.46010662770243
       },
       "status": "proposed",
       "type": "documentation",
@@ -3520,8 +3826,8 @@
       },
       "id": "node_prompts_2026_02_18_manual_snapshot_md",
       "position": {
-        "x": -156.84398706381495,
-        "y": 453.31506865690227
+        "x": 158.88395212170056,
+        "y": 395.46010662770243
       },
       "status": "proposed",
       "type": "documentation",
@@ -3554,8 +3860,8 @@
       },
       "id": "node_prompts_2026_02_18_selection_ungrouped_md",
       "position": {
-        "x": 43.156012936185064,
-        "y": 453.31506865690227
+        "x": 358.88395212170064,
+        "y": 395.46010662770243
       },
       "status": "proposed",
       "type": "documentation",
@@ -3588,8 +3894,8 @@
       },
       "id": "node_prompts_2026_02_18_snapshot__121710_md",
       "position": {
-        "x": -556.843987063815,
-        "y": 603.3150686569023
+        "x": -241.11604787829887,
+        "y": 545.4601066277024
       },
       "status": "proposed",
       "type": "documentation",
@@ -3622,8 +3928,42 @@
       },
       "id": "node_prompts_2026_02_20_auto_push_after_drag_md",
       "position": {
-        "x": -356.8439870638149,
-        "y": 603.3150686569023
+        "x": -41.11604787829929,
+        "y": 545.4601066277024
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "color": "#fabd2f",
+        "description": "2026-02-22_auto_push_after_drag.md (Doc)",
+        "file": "prompts/2026-02-22_auto_push_after_drag.md",
+        "label": "2026-02-22_auto_push_after_drag.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "Auto Push (after drag)",
+            "🎯 Goal",
+            "🧠 Key Decisions",
+            "🔗 Context & References",
+            "📝 Original Prompt"
+          ],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_prompts_2026_02_22_auto_push_after_drag_md",
+      "position": {
+        "x": 158.88395212170056,
+        "y": 545.4601066277024
       },
       "status": "proposed",
       "type": "documentation",
@@ -3719,19 +4059,37 @@
             "printStructurePreview"
           ],
           "references": [
-            "GeminiParser",
-            "FlowchartGenerator",
-            "FileScanner",
-            "schema",
-            "exclusionRules",
-            "RuleEngine"
+            {
+              "target": "GeminiParser",
+              "type": "dependency"
+            },
+            {
+              "target": "FlowchartGenerator",
+              "type": "dependency"
+            },
+            {
+              "target": "FileScanner",
+              "type": "dependency"
+            },
+            {
+              "target": "schema",
+              "type": "dependency"
+            },
+            {
+              "target": "exclusionRules",
+              "type": "dependency"
+            },
+            {
+              "target": "RuleEngine",
+              "type": "dependency"
+            }
           ]
         }
       },
       "id": "node_src_bootstrap_BootstrapEngine_ts",
       "position": {
-        "x": 323.73007601763544,
-        "y": 2934.7640796025075
+        "x": 1379.962853634326,
+        "y": 641.0991691602894
       },
       "status": "proposed",
       "type": "source",
@@ -3764,14 +4122,17 @@
             "error"
           ],
           "references": [
-            "BootstrapEngine"
+            {
+              "target": "BootstrapEngine",
+              "type": "dependency"
+            }
           ]
         }
       },
       "id": "node_src_cli_ts",
       "position": {
-        "x": 310.4665144278245,
-        "y": 2584.7640796025075
+        "x": 995.2986486851572,
+        "y": 741.8141423869765
       },
       "status": "proposed",
       "type": "source",
@@ -3796,14 +4157,17 @@
             "setClient"
           ],
           "references": [
-            "vscode-languageclient"
+            {
+              "target": "vscode-languageclient",
+              "type": "dependency"
+            }
           ]
         }
       },
       "id": "node_src_client_ts",
       "position": {
-        "x": 310.4665144278245,
-        "y": 2814.7640796025075
+        "x": 759.389067038733,
+        "y": 632.0894460307031
       },
       "status": "proposed",
       "type": "source",
@@ -3860,6 +4224,7 @@
             "localeCompare",
             "liteBootstrap",
             "showQuickPick",
+            "focusNode",
             "fitView",
             "getInstance",
             "createStatusBarItem",
@@ -3907,19 +4272,37 @@
             "stop"
           ],
           "references": [
-            "CanvasPanel",
-            "BootstrapEngine",
-            "client",
-            "PromptLogger",
-            "ChatExtractor",
-            "Logger"
+            {
+              "target": "CanvasPanel",
+              "type": "dependency"
+            },
+            {
+              "target": "BootstrapEngine",
+              "type": "dependency"
+            },
+            {
+              "target": "client",
+              "type": "dependency"
+            },
+            {
+              "target": "PromptLogger",
+              "type": "dependency"
+            },
+            {
+              "target": "ChatExtractor",
+              "type": "dependency"
+            },
+            {
+              "target": "Logger",
+              "type": "dependency"
+            }
           ]
         }
       },
       "id": "node_src_extension_ts",
       "position": {
-        "x": 660.4665144278247,
-        "y": 2464.7640796025075
+        "x": 817.0823585571914,
+        "y": 921.2854966882549
       },
       "status": "proposed",
       "type": "source",
@@ -3968,6 +4351,7 @@
             "trim",
             "startsWith",
             "match",
+            "some",
             "reference",
             "forEach",
             "pub",
@@ -3986,8 +4370,8 @@
       },
       "id": "node_src_core_FileScanner_ts",
       "position": {
-        "x": 1350,
-        "y": 1550
+        "x": 1018.1176789327945,
+        "y": 1307.3115568557128
       },
       "status": "proposed",
       "type": "source",
@@ -4010,8 +4394,7 @@
           "classes": [
             "FlowStep",
             "FlowData",
-            "FlowScanner",
-            "members"
+            "FlowScanner"
           ],
           "functions": [
             "scanForFlow",
@@ -4030,34 +4413,29 @@
             "min",
             "trim",
             "startsWith",
-            "detection",
             "match",
+            "pop",
+            "find",
             "b",
             "extractCondition",
-            "find",
-            "Block",
-            "Exports",
-            "extractLabel",
+            "cleanupFlow",
+            "search",
+            "9_",
+            "replace",
+            "endsWith",
             "Set",
             "map",
             "forEach",
             "has",
-            "Blocks",
-            "handling",
-            "pop",
-            "9_",
-            "replace",
-            "Calls",
-            "call",
-            "myMethod"
+            "extractLabel"
           ],
           "references": []
         }
       },
       "id": "node_src_core_FlowScanner_ts",
       "position": {
-        "x": 1700,
-        "y": 1550
+        "x": 1284.8548056639343,
+        "y": 1245.7694331352513
       },
       "status": "proposed",
       "type": "source",
@@ -4117,15 +4495,21 @@
             "some"
           ],
           "references": [
-            "schema",
-            "visualHints"
+            {
+              "target": "schema",
+              "type": "dependency"
+            },
+            {
+              "target": "visualHints",
+              "type": "dependency"
+            }
           ]
         }
       },
       "id": "node_src_core_FlowchartGenerator_ts",
       "position": {
-        "x": 1350,
-        "y": 1900
+        "x": 934.8548056639339,
+        "y": 1595.769433135251
       },
       "status": "proposed",
       "type": "source",
@@ -4185,16 +4569,89 @@
             "basename"
           ],
           "references": [
-            "schema",
-            "exclusionRules",
-            "RuleEngine"
+            {
+              "target": "schema",
+              "type": "dependency"
+            },
+            {
+              "target": "exclusionRules",
+              "type": "dependency"
+            },
+            {
+              "target": "RuleEngine",
+              "type": "dependency"
+            }
           ]
         }
       },
       "id": "node_src_core_GeminiParser_ts",
       "position": {
-        "x": 2050,
-        "y": 1550
+        "x": 1634.854805663936,
+        "y": 1245.7694331352513
+      },
+      "status": "proposed",
+      "type": "source",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "cluster_src_core",
+      "data": {
+        "cluster_id": "cluster_src_core",
+        "color": "#b8bb26",
+        "description": "LogicAnalyzer.ts (Auto-detected)",
+        "file": "src/core/LogicAnalyzer.ts",
+        "label": "LogicAnalyzer.ts",
+        "layer": 1,
+        "priority": 30,
+        "summary": {
+          "classes": [
+            "AnalysisIssue",
+            "LogicAnalyzer"
+          ],
+          "functions": [
+            "analyze",
+            "detectIsolatedNodes",
+            "detectCircularDependencies",
+            "detectDeadEnds",
+            "detectBottlenecks",
+            "forEach",
+            "some",
+            "push",
+            "set",
+            "get",
+            "add",
+            "has",
+            "findCycles",
+            "indexOf",
+            "slice",
+            "delete",
+            "map",
+            "find",
+            "join",
+            "filter",
+            "generateReport",
+            "Date",
+            "toLocaleString",
+            "encodeURIComponent",
+            "stringify",
+            "toUpperCase",
+            "writeFileSync"
+          ],
+          "references": [
+            {
+              "target": "schema",
+              "type": "dependency"
+            }
+          ]
+        }
+      },
+      "id": "node_src_core_LogicAnalyzer_ts",
+      "position": {
+        "x": 1284.8548056639343,
+        "y": 1595.769433135251
       },
       "status": "proposed",
       "type": "source",
@@ -4252,14 +4709,17 @@
             "basename"
           ],
           "references": [
-            "child_process"
+            {
+              "target": "child_process",
+              "type": "dependency"
+            }
           ]
         }
       },
       "id": "node_src_core_PromptLogger_ts",
       "position": {
-        "x": 1688.023495223875,
-        "y": 1900
+        "x": 1624.081564119646,
+        "y": 1595.769433135251
       },
       "status": "proposed",
       "type": "source",
@@ -4322,8 +4782,8 @@
       },
       "id": "node_src_core_RuleEngine_ts",
       "position": {
-        "x": 2045.8912492181844,
-        "y": 1900
+        "x": 1977.492301213661,
+        "y": 1595.769433135251
       },
       "status": "proposed",
       "type": "source",
@@ -4384,16 +4844,25 @@
             "listen"
           ],
           "references": [
-            "vscode-languageserver-textdocument",
-            "GeminiParser",
-            "FlowScanner"
+            {
+              "target": "vscode-languageserver-textdocument",
+              "type": "dependency"
+            },
+            {
+              "target": "GeminiParser",
+              "type": "dependency"
+            },
+            {
+              "target": "FlowScanner",
+              "type": "dependency"
+            }
           ]
         }
       },
       "id": "node_src_server_server_ts",
       "position": {
-        "x": 1350,
-        "y": 2020
+        "x": 1761.7674127916207,
+        "y": 899.8596275130395
       },
       "status": "proposed",
       "type": "source",
@@ -4448,17 +4917,29 @@
             "listen"
           ],
           "references": [
-            "express",
-            "cors",
-            "GeminiParser",
-            "FlowScanner"
+            {
+              "target": "express",
+              "type": "dependency"
+            },
+            {
+              "target": "cors",
+              "type": "dependency"
+            },
+            {
+              "target": "GeminiParser",
+              "type": "dependency"
+            },
+            {
+              "target": "FlowScanner",
+              "type": "dependency"
+            }
           ]
         }
       },
       "id": "node_src_server_standalone_ts",
       "position": {
-        "x": 1700,
-        "y": 2020
+        "x": 1773.079417608704,
+        "y": 636.8596275130395
       },
       "status": "proposed",
       "type": "source",
@@ -4508,14 +4989,17 @@
             "toEqual"
           ],
           "references": [
-            "FileScanner"
+            {
+              "target": "FileScanner",
+              "type": "dependency"
+            }
           ]
         }
       },
       "id": "node_src_test_FileScanner_test_ts",
       "position": {
-        "x": 1350,
-        "y": 2020
+        "x": 2069.7871072352714,
+        "y": 513.9790038555426
       },
       "status": "proposed",
       "type": "source",
@@ -4550,15 +5034,21 @@
             "toBeDefined"
           ],
           "references": [
-            "FlowchartGenerator",
-            "schema"
+            {
+              "target": "FlowchartGenerator",
+              "type": "dependency"
+            },
+            {
+              "target": "schema",
+              "type": "dependency"
+            }
           ]
         }
       },
       "id": "node_src_test_FlowchartGenerator_test_ts",
       "position": {
-        "x": 1350,
-        "y": 2020
+        "x": 2069.7871072352714,
+        "y": 863.9790038555426
       },
       "status": "proposed",
       "type": "source",
@@ -4592,14 +5082,17 @@
             "toBe"
           ],
           "references": [
-            "GeminiParser"
+            {
+              "target": "GeminiParser",
+              "type": "dependency"
+            }
           ]
         }
       },
       "id": "node_src_test_GeminiParser_test_ts",
       "position": {
-        "x": 1700,
-        "y": 2020
+        "x": 2419.7871072352727,
+        "y": 513.9790038555426
       },
       "status": "proposed",
       "type": "source",
@@ -4629,14 +5122,17 @@
             "toBeLessThanOrEqual"
           ],
           "references": [
-            "visualHints"
+            {
+              "target": "visualHints",
+              "type": "dependency"
+            }
           ]
         }
       },
       "id": "node_src_test_visualHints_test_ts",
       "position": {
-        "x": 1700,
-        "y": 2020
+        "x": 2419.7871072352727,
+        "y": 863.9790038555426
       },
       "status": "proposed",
       "type": "source",
@@ -4676,8 +5172,8 @@
       },
       "id": "node_src_types_schema_ts",
       "position": {
-        "x": 1350,
-        "y": 2020
+        "x": 1105.6006955502282,
+        "y": 1866.201805427901
       },
       "status": "proposed",
       "type": "source",
@@ -4730,8 +5226,8 @@
       },
       "id": "node_src_utils_ChatExtractor_ts",
       "position": {
-        "x": 1350,
-        "y": 2020
+        "x": 2331.7203173256926,
+        "y": 1265.893110886248
       },
       "status": "proposed",
       "type": "source",
@@ -4777,8 +5273,8 @@
       },
       "id": "node_src_utils_Logger_ts",
       "position": {
-        "x": 1700,
-        "y": 2020
+        "x": 2317.7632026372644,
+        "y": 1174.6153836168633
       },
       "status": "proposed",
       "type": "source",
@@ -4808,14 +5304,17 @@
             "shouldIgnoreFile"
           ],
           "references": [
-            "RuleEngine"
+            {
+              "target": "RuleEngine",
+              "type": "dependency"
+            }
           ]
         }
       },
       "id": "node_src_utils_exclusionRules_ts",
       "position": {
-        "x": 2050,
-        "y": 2020
+        "x": 2344.6235774114634,
+        "y": 1347.6996310577874
       },
       "status": "proposed",
       "type": "source",
@@ -4854,8 +5353,8 @@
       },
       "id": "node_src_utils_visualHints_ts",
       "position": {
-        "x": 2400,
-        "y": 1900
+        "x": 2333.6235774114634,
+        "y": 1457.6996310577874
       },
       "status": "proposed",
       "type": "source",
@@ -4932,6 +5431,7 @@
             "handleLogPrompt",
             "handleRequestLogPrompt",
             "executeCommand",
+            "handleTestLogic",
             "readFile",
             "parse",
             "toString",
@@ -4951,6 +5451,9 @@
             "openTextDocument",
             "showTextDocument",
             "pop",
+            "LogicAnalyzer",
+            "analyze",
+            "generateReport",
             "isArray",
             "stringify",
             "pruneDefaults",
@@ -5002,6 +5505,7 @@
             "readdirSync",
             "reverse",
             "rgba",
+            "focusNode",
             "postRecordingState",
             "createDirectory",
             "Entrypoint",
@@ -5030,20 +5534,45 @@
             "charAt"
           ],
           "references": [
-            "schema",
-            "FileScanner",
-            "GeminiParser",
-            "FlowchartGenerator",
-            "BootstrapEngine",
-            "client",
-            "Logger"
+            {
+              "target": "schema",
+              "type": "dependency"
+            },
+            {
+              "target": "FileScanner",
+              "type": "dependency"
+            },
+            {
+              "target": "LogicAnalyzer",
+              "type": "dependency"
+            },
+            {
+              "target": "GeminiParser",
+              "type": "dependency"
+            },
+            {
+              "target": "FlowchartGenerator",
+              "type": "dependency"
+            },
+            {
+              "target": "BootstrapEngine",
+              "type": "dependency"
+            },
+            {
+              "target": "client",
+              "type": "dependency"
+            },
+            {
+              "target": "Logger",
+              "type": "dependency"
+            }
           ]
         }
       },
       "id": "node_src_webview_CanvasPanel_ts",
       "position": {
-        "x": 1350,
-        "y": 2020
+        "x": 1453.6106781776205,
+        "y": 1833.2342250008253
       },
       "status": "proposed",
       "type": "source",
@@ -5051,6 +5580,60 @@
         "dashArray": "5,5",
         "opacity": 0.5
       }
+    },
+    {
+      "cluster_id": "ctx_vault_cluster",
+      "data": {
+        "cluster_id": "ctx_vault_cluster",
+        "color": "#d79921",
+        "description": "기억의 성단 — 맥락 기록 (read-only)",
+        "file": ".synapse_contexts/2026-02-22_2021_auto_push_after_drag.md",
+        "label": "2026-02-22_2021_auto_push_after_drag.md",
+        "readOnly": true
+      },
+      "id": "ctx_vault_node_2026-02-22_2021_auto_push_after_drag.md",
+      "position": {
+        "x": 1400,
+        "y": 80
+      },
+      "status": "read_only",
+      "type": "documentation"
+    },
+    {
+      "cluster_id": "ctx_vault_cluster",
+      "data": {
+        "cluster_id": "ctx_vault_cluster",
+        "color": "#d79921",
+        "description": "기억의 성단 — 맥락 기록 (read-only)",
+        "file": ".synapse_contexts/2026-02-22_2020_auto_push_after_drag.md",
+        "label": "2026-02-22_2020_auto_push_after_drag.md",
+        "readOnly": true
+      },
+      "id": "ctx_vault_node_2026-02-22_2020_auto_push_after_drag.md",
+      "position": {
+        "x": 1400,
+        "y": 135
+      },
+      "status": "read_only",
+      "type": "documentation"
+    },
+    {
+      "cluster_id": "ctx_vault_cluster",
+      "data": {
+        "cluster_id": "ctx_vault_cluster",
+        "color": "#d79921",
+        "description": "기억의 성단 — 맥락 기록 (read-only)",
+        "file": ".synapse_contexts/2026-02-22_2019_auto_push_after_drag.md",
+        "label": "2026-02-22_2019_auto_push_after_drag.md",
+        "readOnly": true
+      },
+      "id": "ctx_vault_node_2026-02-22_2019_auto_push_after_drag.md",
+      "position": {
+        "x": 1400,
+        "y": 190
+      },
+      "status": "read_only",
+      "type": "documentation"
     }
   ],
   "project_name": "antigravity-extension-vis"

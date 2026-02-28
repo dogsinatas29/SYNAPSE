@@ -51,11 +51,11 @@ SYNAPSE는 이제 사용하는 언어에 관계없이 프로젝트의 깊은 의
 
 ### 프로젝트 토폴로지 (Topology)
 LLM 추론 논리와 소스 파일 간의 물리적 연결 상태를 시각화합니다.
-![Topology View](docs/media/graph_v0.2.14.png)
+![Topology View](docs/media/image_a989e0.jpg)
 
 ### 논리 흐름 (Flow)
-코드 변경 사항과 수동 편집 사항이 모두 반영된 논리 실행 흐름도입니다.
-![Flow View](docs/media/flow_v0.2.14.png)
+코드 변경 사항과 수동 편집 사항이 모두 반영된 논리 실행 흐름도입니다. 그룹 기반 계층화와 직교 라우팅을 통해 얽힘 없는 깔끔한 로직을 제공합니다.
+![Flow View](docs/media/image_a98ce3.jpg)
 
 ### 계층 구조 (Tree)
 프로젝트 구조를 한눈에 파악할 수 있는 체계적인 트리 뷰를 제공합니다.
@@ -76,6 +76,12 @@ code --install-extension synapse-visual-architecture-0.2.15.vsix
 ---
 
 ## 🆕 버전 히스토리
+
+### v0.2.14fix (명확성 업데이트)
+- **논리적 클러스터 보존 (Group-Aware Hierarchy)**: Flow 뷰의 노드들이 Graph 뷰에서 할당된 `cluster_id`를 유지하며 시각적 바운딩 박스(`[ MODULES ]`)로 묶여 렌더링됩니다.
+- **맨해튼 라우팅 & 회피 기동 (Orthogonal Routing)**: 무차별적으로 노드를 관통하던 대각선 스파게티 선들을 제거하고 90도로 꺾여 우회하는 스마트 직교 라우팅을 도입했습니다.
+- **가상 버스 터미널 (Virtual End-Point Bus)**: 하단의 `END` 노드로 모이는 수많은 로직들을 하나로 통합해주는 `Merge / Sync` 가상 노드를 추가하여 과밀화(병목) 현상을 해소했습니다.
+- **결정 노드 비율 보정 (Decision Node Resizing)**: 주변 형제 노드를 침범하던 거대한 마름모 노드 텍스트의 좌우폭을 날씬하게 줄여 간격을 확보했습니다.
 
 ### v0.2.14
 - **💎 순서도 기하학 도형 반영**: Graph View의 노드들이 의미론적 로직에 기반하여 표준 순서도 도형으로 렌더링됩니다 (`if/valid_`는 다이아몬드, `for/loop`는 육각형, `print`는 평행사변형).

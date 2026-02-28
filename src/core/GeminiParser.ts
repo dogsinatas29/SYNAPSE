@@ -101,7 +101,7 @@ export class GeminiParser {
         // 파일 패턴 확장: 📄 아이콘, 불렛 포인트, 백틱, 굵게 표시 등 지원
         // 리뉴얼: 📄 뒤에 공백 허용, 불렛은 라인 시작에서만, m 플래그 추가
         // [Whitelisting] 프로그래밍 소스 파일 + 문서 파일
-        const filePattern = /(?:📄\s*|^\s*[-\*]\s+[`]?|파일:\s*)([a-zA-Z0-9_./-]+\.(py|ts|js|cpp|h|hpp|cc|c|rs|sh|sql|md))[`]?/gm;
+        const filePattern = /(?:📄\s*|^\s*[-\*]\s+[`]?|파일:\s*)([a-zA-Z0-9_./-]+\.(json|py|ts|js|cpp|h|hpp|cc|c|rs|sh|sql|md))[`]?/gm;
         while ((match = filePattern.exec(contentForScanning)) !== null) {
             const fileName = match[1];
             // [Node Diet] 블랙리스트 및 무시된 폴더 경로 필터링
@@ -139,7 +139,7 @@ export class GeminiParser {
 
                     if (!structure.files.find(f => f.path === filePath)) {
                         const ext = path.extname(filePath).slice(1).toLowerCase();
-                        const whitelist = ['py', 'ts', 'js', 'cpp', 'h', 'hpp', 'cc', 'c', 'rs', 'sh', 'sql'];
+                        const whitelist = ['py', 'ts', 'js', 'cpp', 'h', 'hpp', 'cc', 'c', 'rs', 'sh', 'sql', 'json'];
 
                         if (whitelist.includes(ext)) {
                             structure.files.push({

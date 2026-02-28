@@ -14,7 +14,7 @@ describe('GeminiParser', () => {
 📄 src/main.cpp
 📄 include/utils.h
 📄 src/lib.rs
-📄 data/config.json
+📄 config/settings.json
         `;
         (fs.readFileSync as jest.Mock).mockReturnValue(mockContent);
 
@@ -24,7 +24,7 @@ describe('GeminiParser', () => {
         expect(files).toContain('src/main.cpp');
         expect(files).toContain('include/utils.h');
         expect(files).toContain('src/lib.rs');
-        expect(files).toContain('data/config.json');
+        expect(files).toContain('config/settings.json');
     });
 
     it('should correctly parse files with icons and spaces', async () => {

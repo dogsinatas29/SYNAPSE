@@ -64,7 +64,7 @@ void PointerFunc(int* p) {
             expect(summary.functions).toContain('main');
             expect(summary.functions).toContain('Namespace::Function');
             expect(summary.functions).toContain('PointerFunc');
-            expect(summary.references).toContain('MyHeader');
+            expect(summary.references).toContainEqual({ target: 'MyHeader', type: 'dependency' });
         } finally {
             if (fs.existsSync(cppFilePath)) fs.unlinkSync(cppFilePath);
         }
@@ -104,8 +104,7 @@ void PointerFunc(int* p) {
             expect(summary.functions).toContain('connect');
             expect(summary.functions).toContain('fly');
             expect(summary.functions).toContain('helper_func');
-            expect(summary.references).toContain('HashMap');
-            expect(summary.references).toContain('User');
+            expect(summary.references).toContainEqual({ target: 'models', type: 'dependency' });
         } finally {
             if (fs.existsSync(rsFilePath)) {
                 fs.unlinkSync(rsFilePath);

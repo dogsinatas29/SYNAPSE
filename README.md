@@ -51,11 +51,11 @@ Project complex execution flows into intuitive flowcharts.
 
 ### Project Topology
 Visualizes the physical connections between LLM reasoning logic and source files.
-![Topology View](docs/media/graph_v0.2.14.png)
+![Topology View](docs/media/image_a989e0.jpg)
 
 ### Logical Flow
-Linear execution flow of specific events, reflecting both manual edits and code changes.
-![Flow View](docs/media/flow_v0.2.14.png)
+Linear execution flow of specific events, reflecting both manual edits and code changes. Group-Aware Hierarchy and Orthogonal Edge Routing create clean, readable diagrams.
+![Flow View](docs/media/image_a98ce3.jpg)
 
 ### Hierarchical Tree
 A deep, organized overview of your project structure.
@@ -76,6 +76,12 @@ Current Version: **v0.2.15** (Bypass Logic & Flow Fix)
 ---
 
 ## 🆕 Revision History
+
+### v0.2.14fix (The Clarity Update)
+- **Group-Aware Hierarchy**: Nodes in the Flow View now persist their grouped `cluster_id` from the Graph view, preserving modular context with visual dashed boxes (`[ MODULES ]`).
+- **Orthogonal Edge Routing**: Eradicated diagonal spaghetti edges. Edges now use 90-degree Manhattan routing with smart bypass logic to avoid piercing unrelated nodes.
+- **Virtual End-Point Bus**: Added a `Merge / Sync` virtual node before `END` to multiplex and cleanly route parallel pathways down a logical bus line.
+- **Decision Node Resizing**: Scaled down the horizontal bloat of decision diamonds to preserve grid layout integrity.
 
 ### v0.2.14
 - **💎 Flowchart Geometric Shapes**: The Graph View now renders nodes in standard flowchart shapes based on their semantic logic (Diamonds for `if/valid_`, Hexagons for `for/loop`, Parallelograms for `print`).

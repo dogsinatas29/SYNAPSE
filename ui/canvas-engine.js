@@ -159,95 +159,126 @@ class FlowRenderer {
     layoutFlow(flow) {
         const startX = 400;
         const startY = 100;
-        // [Golden Mean] 넓은 뷰와 좁은 뷰 사이의 균형점 탐색 (Enriched logic: 280)
-        let stepWidth = 280;
-        // [Refine] Decision(다이아몬드) 노드와 라벨 공간 확보를 위해 세로 높이 확대 (160 -> 180)
+        const stepWidth = 260; // 220(node) + 40(gap) to prevent overlap, resolving the crowded feeling
         const stepHeight = 180;
 
         const positions = {};
         const levels = {}; // stepId -> level
-        const offsets = {}; // stepId -> xOffset
 
-        // 1. Level Calculation (Topological-ish: level = max(parents) + 1)
-        const queue = [flow.steps[0].id];
-        levels[flow.steps[0].id] = 0;
-        offsets[flow.steps[0].id] = 0;
+        // 1. Calculate In-degree and Adjacency List
+        const inDegree = {};
+        const adj = {};
+        flow.steps.forEach(step => {
+            inDegree[step.id] = 0;
+            adj[step.id] = [];
+        });
 
-        // BFS traversal for proper layering and horizontal spreading
-        const visited = new Set();
-        const levelCounters = {}; // level -> { min, max }
-        const levelOccupied = {}; // level -> { offset: stepId }
-
-        visited.add(flow.steps[0].id);
-        levels[flow.steps[0].id] = 0;
-        offsets[flow.steps[0].id] = 0;
-        levelCounters[0] = { min: 0, max: 0 };
-        levelOccupied[0] = { 0: flow.steps[0].id };
-
-        let head = 0;
-        while (head < queue.length) {
-            const currentId = queue[head++];
-            const currentStep = flow.steps.find(s => s.id === currentId);
-            if (!currentStep) continue;
-
-            // Sort children to keep logical consistency
-            const nextIdsRaw = currentStep.allNexts || [];
+        // Build edges
+        flow.steps.forEach(step => {
+            const nextIdsRaw = step.allNexts || [];
             const nextIds = [...new Set([
-                ...(currentStep.next ? [currentStep.next] : []),
-                ...(currentStep.alternateNext ? [currentStep.alternateNext] : []),
+                ...(step.next ? [step.next] : []),
+                ...(step.alternateNext ? [step.alternateNext] : []),
                 ...nextIdsRaw,
-                ...(currentStep.roots || [])
+                ...(step.roots || [])
             ])];
 
-            const currentLevel = levels[currentId];
-            const parentOffset = offsets[currentId];
-
-            nextIds.forEach((nextId, idx) => {
-                const nextStep = flow.steps.find(s => s.id === nextId);
-                if (!nextStep) return;
-
-                const newLevel = currentLevel + 1;
-
-                // If this is the first time reaching this node at this level, or a deeper path is found
-                if (levels[nextId] === undefined || newLevel > levels[nextId]) {
-                    // Update level
-                    levels[nextId] = newLevel;
-
-                    // Assign a unique horizontal offset for this level to avoid overlapping
-                    if (!levelOccupied[newLevel]) levelOccupied[newLevel] = {};
-                    let idealOffset = parentOffset + (idx === 0 ? 0 : (idx % 2 === 0 ? -Math.ceil(idx / 2) : Math.ceil(idx / 2)));
-                    let actualOffset = idealOffset;
-                    let shift = 0;
-                    while (levelOccupied[newLevel][actualOffset] !== undefined && levelOccupied[newLevel][actualOffset] !== nextId) {
-                        shift = (shift <= 0) ? -shift + 1 : -shift;
-                        actualOffset = idealOffset + shift;
-                    }
-                    offsets[nextId] = actualOffset;
-                    levelOccupied[newLevel][actualOffset] = nextId;
-                    if (levelCounters[newLevel] === undefined) levelCounters[newLevel] = { min: actualOffset, max: actualOffset };
-                    levelCounters[newLevel].min = Math.min(levelCounters[newLevel].min, actualOffset);
-                    levelCounters[newLevel].max = Math.max(levelCounters[newLevel].max, actualOffset);
-
-                    if (!visited.has(nextId) || newLevel > levels[nextId]) {
-                        visited.add(nextId);
-                        queue.push(nextId);
-                    }
+            nextIds.forEach(nextId => {
+                if (inDegree[nextId] !== undefined) {
+                    inDegree[nextId]++;
+                    adj[step.id].push(nextId);
                 }
             });
+        });
 
-            if (queue.length > 500) break;
+        // 2. Assign Levels (Longest Path from roots)
+        const queue = [];
+        flow.steps.forEach(step => {
+            if (inDegree[step.id] === 0) {
+                queue.push(step.id);
+                levels[step.id] = 0;
+            }
+        });
+
+        const visited = new Set();
+        while (queue.length > 0) {
+            const current = queue.shift();
+            const currentLevel = levels[current] || 0;
+
+            if (visited.has(current)) continue;
+            visited.add(current);
+
+            const neighbors = adj[current] || [];
+            neighbors.forEach(neighbor => {
+                const existingLevel = levels[neighbor];
+                if (existingLevel === undefined || currentLevel + 1 > existingLevel) {
+                    levels[neighbor] = currentLevel + 1;
+                    visited.delete(neighbor); // Re-evaluate path
+                    queue.push(neighbor);
+                }
+            });
+            if (queue.length > 1000) break; // Infinite loop safety
         }
 
+        // 3. X-Axis Balancing (Group by level)
+        const nodesByLevel = {};
+        flow.steps.forEach(step => {
+            const lvl = levels[step.id] || 0;
+            if (!nodesByLevel[lvl]) nodesByLevel[lvl] = [];
+            nodesByLevel[lvl].push(step.id);
+        });
 
-        // 2. Final position assignment (Center the horizontal spread)
+        const offsets = {};
+
+        // Root nodes center
+        const roots = nodesByLevel[0] || [];
+        roots.forEach((rootId, idx) => {
+            const shift = (idx % 2 === 0 ? 1 : -1) * Math.ceil(idx / 2);
+            offsets[rootId] = shift;
+        });
+
+        // Flow downwards, place children near parents
+        Object.keys(nodesByLevel).sort((a, b) => a - b).forEach(lvl => {
+            const levelNum = parseInt(lvl);
+            if (levelNum === 0) return;
+
+            const nodesInLevel = nodesByLevel[lvl];
+            const occupied = new Set();
+
+            nodesInLevel.forEach(nodeId => {
+                // Find parent(s) to align X coordinate
+                let parentOffsetSum = 0;
+                let parentCount = 0;
+
+                Object.keys(adj).forEach(parentId => {
+                    if (adj[parentId].includes(nodeId) && offsets[parentId] !== undefined) {
+                        parentOffsetSum += offsets[parentId];
+                        parentCount++;
+                    }
+                });
+
+                let idealOffset = parentCount > 0 ? Math.round(parentOffsetSum / parentCount) : 0;
+
+                // Spiral out to find empty slot
+                let actualOffset = idealOffset;
+                let shift = 0;
+                while (occupied.has(actualOffset)) {
+                    shift = (shift <= 0) ? -shift + 1 : -shift;
+                    actualOffset = idealOffset + shift;
+                }
+
+                occupied.add(actualOffset);
+                offsets[nodeId] = actualOffset;
+            });
+        });
+
+        // 4. Final Position Assignment
         flow.steps.forEach(step => {
             const level = levels[step.id] || 0;
             const offset = offsets[step.id] || 0;
-            const stats = levelCounters[level] || { min: 0, max: 0 };
-            const centeredOffset = offset - (stats.min + stats.max) / 2;
 
             positions[step.id] = {
-                x: startX + (centeredOffset * stepWidth),
+                x: startX + (offset * stepWidth),
                 y: startY + (level * stepHeight)
             };
         });
@@ -259,6 +290,60 @@ class FlowRenderer {
         if (!flow || !flow.steps) return;
         const positions = this.layoutFlow(flow);
 
+        // [New] 노드 논리적 그룹화 (Grouping)
+        // 이름의 첫 단어(prefix)가 같은 노드들을 묶어 시각적 클러스터 박스를 렌더링
+        const groups = {};
+        flow.steps.forEach(step => {
+            const match = step.label.match(/^([a-z]+)_/i);
+            if (match && match[1]) {
+                const prefix = match[1].toLowerCase();
+                if (!groups[prefix]) groups[prefix] = [];
+                groups[prefix].push(step);
+            }
+        });
+
+        // 뒷배경에 그룹 클러스터 박스 그리기
+        Object.keys(groups).forEach(prefix => {
+            const groupSteps = groups[prefix];
+            // 2개 이상일 때만 그룹으로 시각화 (단일 노드는 무시)
+            if (groupSteps.length > 1) {
+                let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+                groupSteps.forEach(s => {
+                    const pos = positions[s.id];
+                    if (!pos) return;
+                    // 노드 bounds 기준 (width 220, height 65 => decision은 약간 다름)
+                    minX = Math.min(minX, pos.x - 110);
+                    minY = Math.min(minY, pos.y - 45);
+                    maxX = Math.max(maxX, pos.x + 110);
+                    maxY = Math.max(maxY, pos.y + 45);
+                });
+
+                // 여백 추가
+                const pad = 30;
+                ctx.fillStyle = 'rgba(250, 189, 47, 0.03)';
+                ctx.strokeStyle = 'rgba(250, 189, 47, 0.4)';
+                ctx.lineWidth = 1;
+                ctx.setLineDash([6, 4]);
+
+                ctx.beginPath();
+                if (ctx.roundRect) {
+                    ctx.roundRect(minX - pad, minY - pad, (maxX - minX) + pad * 2, (maxY - minY) + pad * 2, 12);
+                } else {
+                    ctx.rect(minX - pad, minY - pad, (maxX - minX) + pad * 2, (maxY - minY) + pad * 2);
+                }
+                ctx.fill();
+                ctx.stroke();
+                ctx.setLineDash([]); // reset
+
+                // 그룹 라벨 타이틀
+                ctx.fillStyle = 'rgba(250, 189, 47, 0.8)';
+                ctx.font = 'bold 12px Inter, Monospace';
+                ctx.textAlign = 'left';
+                ctx.fillText(`[ ${prefix.toUpperCase()} GROUP ]`, minX - pad + 5, minY - pad - 8);
+            }
+        });
+
+        // 상위 연결선 렌더링
         for (const step of flow.steps) {
             const pos = positions[step.id];
             if (!step.hidden) {
@@ -413,27 +498,57 @@ class FlowRenderer {
             ctx.fill();
             ctx.restore();
         } else {
-            // 일반 연결 (수직 굴곡)
-            ctx.moveTo(x1, y1 + 33);
-            const cpY = (y1 + y2) / 2;
-            ctx.bezierCurveTo(x1, cpY, x2, cpY, x2, y2 - 33);
+            // 일반 연결 (Orthogonal / Manhattan Routing)
+            const gapY = y2 - y1;
+            const isBypass = gapY > 200 && Math.abs(x1 - x2) < 220; // 층을 건너뛰면서 수직으로 노드를 관통할 위험이 있는 경우
+
+            const startY = y1 + 33;
+            const endY = y2 - 33;
+
+            // 공통 목적지를 향하는 선들을 모으는 Bus 라인 (목적지 60px 위)
+            const busY = y2 - 60;
+
+            ctx.moveTo(x1, startY);
+
+            if (isBypass) {
+                // 노드를 우회하는 경로 (바깥쪽으로 빼기)
+                const bypassX = x1 > x2 ? x1 + 180 : x1 - 180;
+                ctx.lineTo(x1, startY + 20);
+                ctx.lineTo(bypassX, startY + 20);
+                ctx.lineTo(bypassX, busY);
+                ctx.lineTo(x2, busY);
+            } else {
+                // 일반적인 직교 경로
+                const midY = (startY + endY) / 2;
+                // 만약 목적지가 같은 엣지들이 모이는 곳이라면 busY를 사용해 통합(Bus) 효과
+                const turnY = gapY > 150 ? busY : midY;
+                ctx.lineTo(x1, turnY);
+                ctx.lineTo(x2, turnY);
+            }
+
+            // 목적지로 수직 하강
+            ctx.lineTo(x2, endY);
             ctx.stroke();
 
+            // 라벨 배치
             if (label) {
                 ctx.save();
                 ctx.fillStyle = label === 'YES' ? '#b8bb26' : (label === 'NO' ? '#fb4934' : '#fabd2f');
                 ctx.font = 'bold 12px Inter, sans-serif';
                 ctx.shadowBlur = 4;
                 ctx.shadowColor = 'rgba(0,0,0,0.5)';
-                ctx.fillText(label, (x1 + x2) / 2 + 20, (y1 + y2) / 2 - 10);
+                // 라벨은 수평 버스 라인이나 꺾이는 지점 근처에 배치
+                const labelY = isBypass ? busY - 10 : (gapY > 150 ? busY - 10 : ((startY + endY) / 2) - 10);
+                const labelX = isBypass ? x2 + 20 : (x1 + x2) / 2 + 20;
+                ctx.fillText(label, labelX, labelY);
                 ctx.restore();
             }
 
-            // 화살표
-            const angle = Math.atan2(y2 - (y1 + 33), x2 - x1);
+            // 화살표 (이제 무조건 수직 아래를 향함)
             ctx.save();
-            ctx.translate(x2, y2 - 33);
-            ctx.rotate(angle);
+            ctx.translate(x2, endY);
+            // 수직 하강이므로 각도는 90도(Math.PI/2)
+            ctx.rotate(Math.PI / 2);
             ctx.beginPath();
             ctx.moveTo(0, 0);
             ctx.lineTo(-arrowSize, -arrowSize / 2);
@@ -4537,8 +4652,8 @@ function initCanvas() {
         switch (message.command) {
             case 'projectState':
                 console.log(`[SYNAPSE] Received projectState with ${message.data.nodes?.length || 0} nodes.`);
-                // 승인/거절 등의 인터랙션 후라면 뷰 유지
-                const preserve = engine.isExpectingUpdate;
+                // 기존 노드가 존재하면 시점(Viewport) 유지 (Context Preservation)
+                const preserve = engine.nodes && engine.nodes.length > 0;
                 engine.loadProjectState(message.data, preserve);
                 engine.isExpectingUpdate = false; // 플래그 리셋
                 break;

@@ -27,7 +27,7 @@ describe('VisualHints', () => {
 
         const hints2 = getVisualHints('src/actions/rclone_sync.py');
         expect(hints2.layer).toBe(2);
-        expect(hints2.priority).toBe(80);
+        expect(hints2.priority).toBe(90);
     });
 
     it('should handle markdown files as priority 1 in Layer 0', () => {

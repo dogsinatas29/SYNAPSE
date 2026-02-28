@@ -54,7 +54,57 @@ export class FlowchartGenerator {
             clusters.push(cluster);
         });
 
-        // 3. 노드 생성 및 클러스터 할당
+        // 3. 의존성 기반 Rank 계산 (Topological Leveling)
+        const inDegree = new Map<string, number>();
+        const adj = new Map<string, string[]>();
+
+        structure.files.forEach(f => {
+            inDegree.set(f.path, 0);
+            adj.set(f.path, []);
+        });
+
+        structure.dependencies.forEach(dep => {
+            if (inDegree.has(dep.to)) {
+                inDegree.set(dep.to, (inDegree.get(dep.to) || 0) + 1);
+            }
+            if (adj.has(dep.from)) {
+                adj.get(dep.from)!.push(dep.to);
+            }
+        });
+
+        const ranks = new Map<string, number>();
+        const queue: string[] = [];
+
+        // In-degree 0인 노드 랭크 0으로 시작
+        structure.files.forEach(f => {
+            if (inDegree.get(f.path) === 0 && f.type !== 'documentation') {
+                queue.push(f.path);
+                ranks.set(f.path, 0);
+            }
+        });
+
+        // 순환 참조 방지
+        const visited = new Set<string>();
+
+        while (queue.length > 0) {
+            const current = queue.shift()!;
+            const currentRank = ranks.get(current) || 0;
+
+            if (visited.has(current)) continue;
+            visited.add(current);
+
+            const neighbors = adj.get(current) || [];
+            for (const neighbor of neighbors) {
+                const existingRank = ranks.get(neighbor);
+                if (existingRank === undefined || currentRank + 1 > existingRank) {
+                    ranks.set(neighbor, currentRank + 1);
+                    visited.delete(neighbor); // 더 긴 경로 발견 시 재계산
+                    queue.push(neighbor);
+                }
+            }
+        }
+
+        // 4. 노드 생성 및 클러스터 할당
         const nodeSpacingX = 350;
         const nodeSpacingY = 150;
         const clusterSpacingX = 1000;
@@ -85,25 +135,30 @@ export class FlowchartGenerator {
             const clusterY = Math.floor(topClusterIdx / clusterCols) * clusterSpacingY;
 
             const layerCounters = new Map<number, number>();
+            const rankCounters = new Map<number, number>();
 
             files.forEach((file) => {
                 const hints = getVisualHints(file.path);
                 const layer = hints.layer;
-                const currentCount = layerCounters.get(layer) || 0;
-                layerCounters.set(layer, currentCount + 1);
-
-                const layerYOffset = layer * 350 + 50;
 
                 let nodeX, nodeY;
                 let finalClusterId = clusterId;
 
                 if (file.type === 'documentation') {
-                    nodeX = (currentCount % 4) * 200;
-                    nodeY = Math.floor(currentCount / 4) * 150 + 100;
+                    const docCount = layerCounters.get(-1) || 0;
+                    layerCounters.set(-1, docCount + 1);
+                    nodeX = (docCount % 4) * 200;
+                    nodeY = Math.floor(docCount / 4) * 150 + 100;
                     finalClusterId = 'doc_shelf';
                 } else {
-                    nodeX = (currentCount % 5) * nodeSpacingX + 350;
-                    nodeY = Math.floor(currentCount / 5) * nodeSpacingY + layerYOffset;
+                    const rank = ranks.get(file.path) || 0;
+                    const rankCount = rankCounters.get(rank) || 0;
+                    rankCounters.set(rank, rankCount + 1);
+
+                    // X-axis 밸런싱: 350 기준으로 좌우로 번갈아 펼침 (-1, 1, -2, 2...)
+                    const shift = (rankCount % 2 === 0 ? 1 : -1) * Math.ceil(rankCount / 2);
+                    nodeX = 350 + (shift * nodeSpacingX);
+                    nodeY = rank * nodeSpacingY + 100;
                 }
 
                 const node = this.createNode(

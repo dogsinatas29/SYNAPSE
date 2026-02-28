@@ -51,11 +51,11 @@ Project complex execution flows into intuitive flowcharts.
 
 ### Project Topology
 Visualizes the physical connections between LLM reasoning logic and source files.
-![Topology View](docs/media/image_a989e0.jpg)
+![Topology View](assets/v0.2.15/synapse_graph_v0.2.15.png)
 
 ### Logical Flow
 Linear execution flow of specific events, reflecting both manual edits and code changes. Group-Aware Hierarchy and Orthogonal Edge Routing create clean, readable diagrams.
-![Flow View](docs/media/image_a98ce3.jpg)
+![Flow View](assets/v0.2.15/synapse_flow_v0.2.15.png)
 
 ### Hierarchical Tree
 A deep, organized overview of your project structure.
@@ -76,6 +76,12 @@ Current Version: **v0.2.15** (Bypass Logic & Flow Fix)
 ---
 
 ## 🆕 Revision History
+
+### v0.2.15 (Performance & Visibility Release)
+- **Coordinate Drift Fix**: Resolved the critical `save/restore` imbalance in the rendering engine, ensuring node labels and icons are always perfectly positioned.
+- **CPU Optimization**: Dramatically reduced CPU usage by selectively applying shadow effects only to the active path (hovered/selected nodes).
+- **Mode-Specific Hover**: mouse hover highlighting now works seamlessly across Graph, Flow, and Tree modes.
+- **Non-linear Flow Scanning**: Enhanced AST analysis to support branching logic (`if`, `loops`, `try/except`) in flowcharts.
 
 ### v0.2.14fix (The Clarity Update)
 - **Group-Aware Hierarchy**: Nodes in the Flow View now persist their grouped `cluster_id` from the Graph view, preserving modular context with visual dashed boxes (`[ MODULES ]`).

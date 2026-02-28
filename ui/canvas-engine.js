@@ -369,7 +369,19 @@ class FlowRenderer {
                 }
 
                 const edgeType = (step.data && step.data.edgeType) || null;
-                this.renderConnection(ctx, pos.x, pos.y, nextPos.x, nextPos.y, label, edgeType);
+
+                // [New] Flow View Path Highlighting
+                const isFromSelected = this.engine.selectedNodes.has(step.node);
+                const targetNode = flow.steps.find(s => s.id === nextId)?.node;
+                const isToSelected = targetNode && this.engine.selectedNodes.has(targetNode);
+
+                // [v0.2.16] Expand highlighting to include hover state
+                const isFromHovered = this.engine.hoveredNode && this.engine.hoveredNode.id === step.node?.id;
+                const isToHovered = targetNode && this.engine.hoveredNode && this.engine.hoveredNode.id === targetNode.id;
+
+                const isPathHighlighted = isFromSelected || isToSelected || isFromHovered || isToHovered;
+
+                this.renderConnection(ctx, pos.x, pos.y, nextPos.x, nextPos.y, label, edgeType, isPathHighlighted);
             });
 
             // [New] START에서 여러 루트로 가는 멀티 연결선 지원
@@ -449,7 +461,7 @@ class FlowRenderer {
         };
     }
 
-    renderConnection(ctx, x1, y1, x2, y2, label, type) {
+    renderConnection(ctx, x1, y1, x2, y2, label, type, isHighlighted = false) {
         const isLoop = type === 'loop_back' || y2 < y1;
         const arrowSize = 10;
 
@@ -466,6 +478,18 @@ class FlowRenderer {
             lineWidth = 3;
         } else if (isLoop) {
             strokeColor = '#fe8019'; // Orange
+        }
+
+        if (isHighlighted) {
+            strokeColor = '#fabd2f'; // Highlight color
+            lineWidth += 5; // [v0.2.16] Dramatically increased thickness (+2 -> +5)
+            // 펄스 애니메이션 적용
+            if (this.engine.isAnimating) {
+                ctx.shadowBlur = 15 + 5 * Math.sin(Date.now() / 200);
+                ctx.shadowColor = strokeColor;
+                dash = [12, 6];
+                ctx.lineDashOffset = -this.engine.animationOffset * 2.5;
+            }
         }
 
         ctx.strokeStyle = strokeColor;
@@ -810,6 +834,8 @@ class CanvasEngine {
         this.selectedEdge = null; // 선택된 엣지
         this.baselineNodes = null; // 비교를 위한 기준 데이터
         this.selectedNodes = new Set(); // 다중 선택 노드
+        this.hoveredNode = null; // 마우스 오버된 노드
+        this.hoveredEdge = null; // 마우스 오버된 엣지
         this.clusters = []; // 클러스터 데이터
         this.isExpectingUpdate = false; // 데이터 업데이트 시 뷰 유지 여부 플래그
 
@@ -1453,6 +1479,11 @@ class CanvasEngine {
             } else {
                 // 🔍 툴팁 처리 (Phase 4)
                 const edge = this.findEdgeAtPoint(worldPos.x, worldPos.y);
+                const node = this.getNodeAt(worldPos.x, worldPos.y);
+
+                this.hoveredEdge = edge;
+                this.hoveredNode = node;
+
                 if (edge && edge._validationReason) {
                     this.showTooltip(e.clientX, e.clientY, edge._validationReason);
                 } else {
@@ -1682,6 +1713,18 @@ class CanvasEngine {
     }
 
     getNodeAt(worldX, worldY) {
+        // [v0.2.16] Mode-specific hit testing for better hover support
+        if (this.currentMode === 'flow' && this.flowRenderer && this.flowData) {
+            const step = this.flowRenderer.getStepAt(this.flowData, worldX, worldY);
+            return step ? step.node : null;
+        }
+
+        if (this.currentMode === 'tree' && this.treeRenderer && this.treeData) {
+            const item = this.treeRenderer.getItemAt(this.treeData, worldX, worldY);
+            return item ? item.node : null;
+        }
+
+        // Default Graph Mode hit testing
         for (const node of this.nodes) {
             const nodeWidth = 120;
             const nodeHeight = 60;
@@ -2695,8 +2738,6 @@ class CanvasEngine {
                     }
                 }
 
-                this.renderClusters();
-
                 // 유령 노드 렌더링 (비교 모드)
                 this.renderGhostNodes(zoom);
 
@@ -3575,16 +3616,27 @@ class CanvasEngine {
             return;
         }
 
+        // 1.5. 클러스터 접힘 체크 - 최상단으로 이동하여 렌더링 스킵
+        if (node.cluster_id) {
+            const cluster = this.clusters?.find(c => c.id === node.cluster_id);
+            if (cluster && cluster.collapsed) {
+                // [Refine] Documentation Shelf는 접혀있어도 가시성을 위해 최소한의 표시는 남김
+                if (node.cluster_id !== 'doc_shelf') {
+                    return;
+                }
+            }
+        }
+
         const nodeWidth = 120;
         const nodeHeight = 60;
-        const x = node.position.x;
-        const y = node.position.y;
+        const x = 0; // translate(node.position.x, node.position.y) 이후이므로 0으로 설정
+        const y = 0;
 
         // Level 1: Satellite View (줌이 매우 작을 때)
         if (zoom < 0.4) {
             this.ctx.fillStyle = node.data.color || '#458588';
             this.ctx.beginPath();
-            this.ctx.arc(x + nodeWidth / 2, y + nodeHeight / 2, 10 / zoom, 0, Math.PI * 2);
+            this.ctx.arc(nodeWidth / 2, nodeHeight / 2, 10 / zoom, 0, Math.PI * 2);
             this.ctx.fill();
 
             // 선택 표시 (Satellite)
@@ -3596,9 +3648,32 @@ class CanvasEngine {
             return;
         }
 
-        // --- Phase 3 Advanced Rendering ---
+        // 🎨 노드 스타일 (v0.2.14 Identity)
         const style = this.getNodeStyle(node);
-        const isSelected = this.selectedNode === node || (this.selectedNodes && this.selectedNodes.has(node));
+        const isSelected = this.selectedNodes.has(node);
+        const isHovered = this.hoveredNode === node;
+
+        // [v0.2.15] Path Highlighting
+        // 노드 자체가 선택/호버되었거나, 연결된 엣지가 선택/호버되었을 때 하이라이트
+        const isPartofActivePath = isSelected || isHovered || Array.from(this.selectedNodes).some(n => {
+            return this.edges.some(e => (e.from === n.id && e.to === node.id) || (e.from === node.id && e.to === n.id));
+        }) || (this.hoveredEdge && (this.hoveredEdge.from === node.id || this.hoveredEdge.to === node.id));
+
+        // 기본 투명도 (Dimmed by default)
+        let opacity = node.visual?.opacity || 0.4;
+        if (isPartofActivePath) {
+            opacity = 1.0;
+        }
+
+        this.ctx.save();
+        this.ctx.globalAlpha = opacity;
+        this.ctx.translate(node.position.x, node.position.y);
+
+        // 🌟 하이라이트 글로우 효과
+        if (isPartofActivePath) {
+            this.ctx.shadowBlur = 15 + 5 * Math.sin(Date.now() / 200);
+            this.ctx.shadowColor = isSelected ? '#fabd2f' : style.borderColor;
+        }
 
         // 1. 상태별 특수 효과 계산
         let borderColor = style.borderColor;
@@ -3608,14 +3683,13 @@ class CanvasEngine {
         let glowColor = null;
 
         if (node.state === 'error') {
-            borderColor = '#fb4934'; // Strong Red
+            borderColor = '#fb4934';
             lineWidth += 1.5;
             glowColor = '#fb4934';
         } else if (node.state === 'pending' || node.status === 'proposed') {
             dash = [5, 5];
-            // Silver/Bright Pulse 효과 (사령관의 승인을 기다리는 생명체처럼)
             const pulse = 0.4 + 0.6 * Math.sin(Date.now() / 400);
-            borderColor = `rgba(235, 219, 178, ${pulse})`; // Bright Cream/Silver pulse
+            borderColor = `rgba(235, 219, 178, ${pulse})`;
             glowColor = `rgba(235, 219, 178, ${pulse * 0.3})`;
         } else if (style.glow) {
             glowColor = style.borderColor;
@@ -3639,13 +3713,13 @@ class CanvasEngine {
         }
 
         if (node.isIsolated || node.isDeadEnd) {
-            this.ctx.globalAlpha *= 0.4; // Ghosting
+            this.ctx.globalAlpha *= 0.4;
         }
 
         // 2. 배경 및 글로우 렌더링
         this.ctx.save();
-        if (glowColor && this.isAnimating) {
-            this.ctx.shadowBlur = 15;
+        if (glowColor && isPartofActivePath && this.isAnimating) {
+            this.ctx.shadowBlur = 10;
             this.ctx.shadowColor = glowColor;
         }
 
@@ -3654,40 +3728,30 @@ class CanvasEngine {
         this.ctx.fill();
 
         this.ctx.strokeStyle = borderColor;
-        if (isSelected) {
-            borderColor = '#fabd2f';
-            lineWidth = 3;
-            glowColor = '#fabd2f';
-        }
-
-        // 1.5. 클러스터 접힘 체크
-        if (node.cluster_id) {
-            const cluster = this.clusters?.find(c => c.id === node.cluster_id);
-            if (cluster && cluster.collapsed) {
-                // [Refine] Documentation Shelf는 접혀있어도 가시성을 위해 최소한의 표시는 남김
-                if (node.cluster_id === 'doc_shelf') {
-                    this.ctx.globalAlpha = 0.5; // 좀 더 선명하게 (기존 0.2)
-                } else {
-                    return;
-                }
-            }
-        }
+        this.ctx.lineWidth = lineWidth;
 
         // [New] Documentation Shelf 노드는 항상 은은한 노란색 아우라 부여
         if (node.cluster_id === 'doc_shelf' && !isSelected) {
             glowColor = '#fabd2f';
+            if (isPartofActivePath && this.isAnimating) {
+                this.ctx.shadowBlur = 10;
+                this.ctx.shadowColor = glowColor;
+            }
         }
+
+        // 테두리 대시 설정
         if (dash.length > 0) {
             this.ctx.setLineDash(dash);
             if ((node.state === 'pending' || node.status === 'proposed') && this.isAnimating) {
                 this.ctx.lineDashOffset = -this.animationOffset;
             }
         }
+
         this.drawNodeShape(this.ctx, x, y, nodeWidth, nodeHeight, style.typeLabel);
         this.ctx.stroke();
         this.ctx.restore();
         this.ctx.setLineDash([]);
-        this.ctx.globalAlpha = 1.0; // Reset alpha after ghosting
+        this.ctx.globalAlpha = 1.0;
 
         // 3. 우측 상단 'Dirty' 도트 (수정됨/싱크 필요)
         if (node.state === 'dirty' || node.isDirty) {
@@ -3807,6 +3871,7 @@ class CanvasEngine {
                 this.ctx.fillText(desc.substring(0, 30) + (desc.length > 30 ? '...' : ''), x + 10, offsetY);
             }
         }
+        this.ctx.restore(); // [CRITICAL] Matches ctx.save() at the start of node rendering
     }
 
     /**
@@ -4162,6 +4227,15 @@ class CanvasEngine {
 
         // 🌟 선택된 엣지 강조 효과
         const isSelected = this.selectedEdge && this.selectedEdge.id === edge.id;
+        const isHovered = this.hoveredEdge && this.hoveredEdge.id === edge.id;
+
+        // [New] 연결된 노드가 선택/호버되었을 때의 강조 효과 (Path Highlighting)
+        const isPathSelected = isSelected || isHovered || Array.from(this.selectedNodes).some(n => n.id === edge.from || n.id === edge.to) ||
+            (this.hoveredNode && (this.hoveredNode.id === edge.from || this.hoveredNode.id === edge.to));
+
+        // [v0.2.14] Dimmed State (마우스를 올리거나 선택하지 않은 노드/엣지는 흐리게)
+        const opacity = isPathSelected ? 1.0 : (edge.visual?.opacity || 0.25);
+        this.ctx.globalAlpha = opacity;
 
         // Logic Analysis Highlights
         if (edge.isCircular) {
@@ -4172,27 +4246,39 @@ class CanvasEngine {
             lineWidth += 2;
         }
 
-        if (isSelected || edge.isCircular || edge.isBottleneck) {
+        if (isSelected || isPathSelected || edge.isCircular || edge.isBottleneck) {
+            // [Fix] Ensure strikeStyle uses highlight color regardless of animation state
+            edgeColor = isPathSelected ? '#fabd2f' : edgeColor;
+
             // 글로우 효과
-            this.ctx.shadowBlur = 15;
-            this.ctx.shadowColor = edgeColor;
-            // 더 굵은 선
-            if (isSelected) lineWidth += 2;
+            this.ctx.shadowBlur = isPathSelected ? (15 + 8 * Math.sin(Date.now() / 200)) : 15;
+            this.ctx.shadowColor = isPathSelected ? '#fabd2f' : edgeColor; // Path highlighting uses Gold
+
+            // [v0.2.16] Significantly bolder lines (+2 -> +6)
+            if (isSelected || isPathSelected) lineWidth += 6;
         }
 
         this.ctx.strokeStyle = edgeColor;
         this.ctx.lineWidth = lineWidth;
 
         // 대시 패턴 적용
+        let currentDash = [];
         if (!validation.valid) {
-            // 에러인 경우 짧은 점선
-            this.ctx.setLineDash([3, 3]);
+            currentDash = [3, 3];
         } else if (style.dashPattern) {
-            // 타입별 대시 패턴
-            this.ctx.setLineDash(style.dashPattern);
+            currentDash = style.dashPattern;
+        } else if (isPathSelected && this.isAnimating) {
+            currentDash = [10, 5];
+        }
+
+        this.ctx.setLineDash(currentDash);
+
+        // 펄스 애니메이션 적용 (Phase 3)
+        // [v0.2.15] 모든 점선 엣지에 'marching ants' 효과 적용
+        if (this.isAnimating && currentDash.length > 0) {
+            this.ctx.lineDashOffset = -this.animationOffset * (isPathSelected ? 2 : 1);
         } else {
-            // 실선
-            this.ctx.setLineDash([]);
+            this.ctx.lineDashOffset = 0;
         }
 
         // 곡선 그리기
@@ -4202,9 +4288,10 @@ class CanvasEngine {
         const cpX = (fromX + toX) / 2;
         const cpY = (fromY + toY) / 2 - 30;
         this.ctx.quadraticCurveTo(cpX, cpY, toX, toY);
+        this.ctx.stroke();
 
         // 화살표 아이콘 결정 (Phase 3)
-        // LOD 적용: 줌이 1.2 이상일 때만 아이콘 표시 (절제된 미학 - 노드 아이콘과 높이 맞춤)
+        // LOD 적용: 줌이 1.2 이상일 때만 아이콘 표시
         const showIcons = this.transform.zoom > 1.2;
         const iconMap = {
             'dependency': 'D',
@@ -4213,14 +4300,6 @@ class CanvasEngine {
             'bidirectional': 'B'
         };
         const edgeIcon = (showIcons && iconMap[edge.type]) || '';
-
-        // 펄스 애니메이션 적용 (Phase 3)
-        // 시니어 엔지니어 제언: Data Flow와 같은 동적인 관계에만 우선 적용 (절제)
-        if (this.isAnimating && edge.type === 'data_flow') {
-            this.ctx.lineDashOffset = -this.animationOffset;
-        }
-
-        this.ctx.stroke();
 
         // 🟢 펄스 애니메이션 (Edge Traversal)
         if (this.isTestingLogic) {

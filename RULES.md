@@ -35,3 +35,23 @@ This document defines the rules for how SYNAPSE discovers, parses, and visualize
 - **Layer Compliance (레이어 준수)**: Connections should follow the architectural layering:
   (노드 간 연결은 가급적 레이어 순서를 따릅니다.)
     - `Discovery` -> `Reasoning` -> `Action`
+
+---
+
+## 🛡️ 빌드 정합성 규칙 (Build Guard Rules)
+
+1. **환경 변수 기반 빌드 트리거 (Secret Injection)**
+- **규칙**: 빌드 엔진은 프로젝트 외부의 BM 파일을 직접 읽지 않는다. 대신, 사령관(Dogsinatas)이 시스템 환경 변수(BM_AUTH_KEY)로 주입한 인증 토큰이 현재 마일스톤 버전과 일치할 때만 vsix 컴파일을 시작한다.
+- **검증**: `npm run build` 실행 시, `.env` 또는 시스템 환경 변수에 `BM_SYNC_VER`가 `v0.2.x`와 일치하지 않으면 "BM Policy Mismatch: Build Aborted" 에러를 뱉고 즉시 중단한다.
+
+2. **마일스톤-빌드 타겟 강제 동기화 (Target Enforcement)**
+- **규칙**: 생성되는 파일명은 반드시 `synapse-visual-architecture-v[마일스톤버전].vsix`여야 한다.
+- **동기화**: 빌드 스크립트는 `package.json`의 버전을 무시하고, 현재 활성화된 `mile_stone/vX.X.X.md` 파일의 헤더 버전을 추출하여 파일명을 강제 명명한다. 만약 마일스톤 문서가 없으면 빌드는 불가능하다.
+
+3. **릴리즈 노트 무결성 검사 (Pre-release Check)**
+- **규칙**: 빌드 전, `release_note/v버전_release_notes.md` 파일의 존재 여부와 내용의 완결성을 스캔한다.
+- **조건**: 릴리즈 노트에 `[Status: Verified by Commander]` 태그가 명시되지 않은 상태에서 빌드를 시도하면, 이는 '미승인 배포'로 간주하여 바이너리 생성을 거부한다.
+
+4. **외곽 참조 투명성 (External Integrity)**
+- **규칙**: LLM은 프로젝트 폴더 밖의 파일을 참조할 수 없음을 인지하고, 빌드 관련 에러 발생 시 "외부 보안 정책(BM Policy) 위반 가능성"을 최우선 리포트한다.
+- **보안**: 빌드 로그에 외부 경로(Path)가 노출되지 않도록 모든 경로는 프로젝트 루트 기준 상대 경로로 마스킹한다.

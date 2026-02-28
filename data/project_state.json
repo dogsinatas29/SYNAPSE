@@ -1,16 +1,29 @@
 {
-  "canvas_state": {
-    "offset": {
-      "x": 0,
-      "y": 0
-    },
-    "visible_layers": [
-      "source",
-      "documentation"
-    ],
-    "zoom_level": 1
-  },
   "clusters": [
+    {
+      "bounds": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0
+      },
+      "children": [],
+      "collapsed": false,
+      "id": "cluster__synapse_contexts",
+      "label": ".synapse_contexts"
+    },
+    {
+      "bounds": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0
+      },
+      "children": [],
+      "collapsed": false,
+      "id": "cluster_mile_stone",
+      "label": "mile_stone"
+    },
     {
       "bounds": {
         "height": 0,
@@ -24,12 +37,24 @@
       "label": "prompts"
     },
     {
-      "_bodyHeight": 1512.2228015723585,
+      "bounds": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0
+      },
+      "children": [],
+      "collapsed": false,
+      "id": "cluster_release_note",
+      "label": "release_note"
+    },
+    {
+      "_bodyHeight": 1663.6818973928455,
       "_headerBounds": {
         "height": 30,
-        "width": 1850.3980401965398,
-        "x": 739.389067038733,
-        "y": 433.9790038555426
+        "width": 2492.377950317059,
+        "x": -717.5572367357228,
+        "y": 577.6643324436293
       },
       "bounds": {
         "height": 0,
@@ -52,8 +77,8 @@
       "_headerBounds": {
         "height": 30,
         "width": 160,
-        "x": 1359.962853634326,
-        "y": 591.0991691602894
+        "x": 351.6075108545655,
+        "y": 607.6643324436293
       },
       "bounds": {
         "height": 0,
@@ -71,12 +96,12 @@
       "parent_id": "cluster_src"
     },
     {
-      "_bodyHeight": 449.99999999999955,
+      "_bodyHeight": 291.8301244213776,
       "_headerBounds": {
         "height": 30,
-        "width": 1202.6374955497272,
-        "x": 914.8548056639339,
-        "y": 1195.7694331352513
+        "width": 1080.445672732514,
+        "x": -687.5572367357228,
+        "y": 1046.0144720170733
       },
       "bounds": {
         "height": 0,
@@ -100,12 +125,12 @@
       "parent_id": "cluster_src"
     },
     {
-      "_bodyHeight": 363,
+      "_bodyHeight": 378.4064219873285,
       "_headerBounds": {
         "height": 30,
-        "width": 171.31200481708333,
-        "x": 1741.7674127916207,
-        "y": 586.8596275130395
+        "width": 197.13914557675207,
+        "x": 1145.666272499563,
+        "y": 1832.9398078491463
       },
       "bounds": {
         "height": 0,
@@ -124,12 +149,12 @@
       "parent_id": "cluster_src"
     },
     {
-      "_bodyHeight": 450,
+      "_bodyHeight": 220.0000000000008,
       "_headerBounds": {
         "height": 30,
-        "width": 510.00000000000136,
-        "x": 2049.7871072352714,
-        "y": 463.9790038555426
+        "width": 859.9999999999999,
+        "x": -684.8481636404811,
+        "y": 714.0757920096561
       },
       "bounds": {
         "height": 0,
@@ -154,8 +179,8 @@
       "_headerBounds": {
         "height": 30,
         "width": 160,
-        "x": 1085.6006955502282,
-        "y": 1816.201805427901
+        "x": 690.7763614311478,
+        "y": 2051.3308110934927
       },
       "bounds": {
         "height": 0,
@@ -173,12 +198,12 @@
       "parent_id": "cluster_src"
     },
     {
-      "_bodyHeight": 383.0842474409242,
+      "_bodyHeight": 309.3911354751765,
       "_headerBounds": {
         "height": 30,
-        "width": 186.86037477419904,
-        "x": 2297.7632026372644,
-        "y": 1124.6153836168633
+        "width": 736.2873221795917,
+        "x": 1008.5333914017444,
+        "y": 1351.5134699766277
       },
       "bounds": {
         "height": 0,
@@ -203,8 +228,8 @@
       "_headerBounds": {
         "height": 30,
         "width": 160,
-        "x": 1433.6106781776205,
-        "y": 1783.2342250008253
+        "x": -471.38941435722865,
+        "y": 2079.545620223028
       },
       "bounds": {
         "height": 0,
@@ -222,12 +247,12 @@
       "parent_id": "cluster_src"
     },
     {
-      "_bodyHeight": 1000.0000000000006,
+      "_bodyHeight": 1000,
       "_headerBounds": {
         "height": 30,
-        "width": 759.9999999999995,
-        "x": -261.1160478782989,
-        "y": 195.46010662770243
+        "width": 759.9999999999998,
+        "x": -1885.3883387939036,
+        "y": 316.14323082376995
       },
       "bounds": {
         "height": 1200,
@@ -236,32 +261,31 @@
         "y": -100
       },
       "children": [
-        "node_DEBUG_GUIDE_md",
-        "node_EXTENSION_README_md",
+        "node__synapse_contexts_2026_02_22_2019_auto_push_after_drag_md",
+        "node__synapse_contexts_2026_02_22_2020_auto_push_after_drag_md",
+        "node__synapse_contexts_2026_02_22_2021_auto_push_after_drag_md",
+        "node__synapse_contexts_2026_02_28_1057_auto_push_after_drag_md",
+        "node__synapse_contexts_2026_02_28_1058_auto_push_after_drag_md",
+        "node__synapse_contexts_2026_02_28_1102_auto_push_after_drag_md",
+        "node__synapse_contexts_2026_02_28_1142_auto_push_after_drag_md",
+        "node__synapse_contexts_2026_02_28_1143_auto_push_after_drag_md",
+        "node__synapse_contexts_2026_02_28_1146_auto_push_after_drag_md",
         "node_GEMINI_md",
         "node_README_ko_md",
-        "node_RELEASES_v0_2_7_md",
         "node_RULES_md",
-        "node_architecture_md",
-        "node_release_notes_0_2_12_md",
-        "node_release_notes_0_2_14_md",
-        "node_v0_1_6_release_notes_md",
-        "node_v0_1_7_release_notes_md",
-        "node_v0_1_8_release_notes_md",
-        "node_v0_2_0_release_notes_md",
-        "node_v0_2_10_release_notes_md",
-        "node_v0_2_11_release_notes_md",
-        "node_v0_2_12_release_notes_md",
-        "node_v0_2_13_release_notes_md",
-        "node_v0_2_14_release_notes_md",
-        "node_v0_2_15_release_notes_md",
-        "node_v0_2_1_release_notes_md",
-        "node_v0_2_2_release_notes_md",
-        "node_v0_2_3_release_notes_md",
-        "node_v0_2_4_release_notes_md",
-        "node_v0_2_5_release_notes_md",
-        "node_v0_2_6_release_notes_md",
-        "node_v0_2_9_release_notes_md",
+        "node_core_synapse_md",
+        "node_data_scheme_md",
+        "node_reporting_md",
+        "node_vega_agent_md",
+        "node_mile_stone_GEMINI_md",
+        "node_mile_stone_v0_2_14fix_md",
+        "node_mile_stone_v0_2_15_md",
+        "node_mile_stone_v0_2_17_md",
+        "node_mile_stone_v0_2_18_md",
+        "node_mile_stone_v0_2_19_md",
+        "node_mile_stone_v0_2_20_md",
+        "node_mile_stone_v0_2_21_md",
+        "node_mile_stone______md_______md",
         "node_prompts_2026_02_17_keybinding_check_md",
         "node_prompts_2026_02_17_origin_edge_verification_md",
         "node_prompts_2026_02_17_test_md",
@@ -272,7 +296,33 @@
         "node_prompts_2026_02_18_selection_ungrouped_md",
         "node_prompts_2026_02_18_snapshot__121710_md",
         "node_prompts_2026_02_20_auto_push_after_drag_md",
-        "node_prompts_2026_02_22_auto_push_after_drag_md"
+        "node_prompts_2026_02_22_auto_push_after_drag_md",
+        "node_release_note_DEBUG_GUIDE_md",
+        "node_release_note_EXTENSION_README_md",
+        "node_release_note_GEMINI______md",
+        "node_release_note_RELEASES_v0_2_7_md",
+        "node_release_note_architecture_md",
+        "node_release_note_release_notes_0_2_12_md",
+        "node_release_note_release_notes_0_2_14_md",
+        "node_release_note_v0_1_6_release_notes_md",
+        "node_release_note_v0_1_7_release_notes_md",
+        "node_release_note_v0_1_8_release_notes_md",
+        "node_release_note_v0_2_0_release_notes_md",
+        "node_release_note_v0_2_10_release_notes_md",
+        "node_release_note_v0_2_11_release_notes_md",
+        "node_release_note_v0_2_12_release_notes_md",
+        "node_release_note_v0_2_13_release_notes_md",
+        "node_release_note_v0_2_14_hotfix_release_notes_md",
+        "node_release_note_v0_2_14_release_notes_md",
+        "node_release_note_v0_2_14fix_release_notes_md",
+        "node_release_note_v0_2_15_release_notes_md",
+        "node_release_note_v0_2_1_release_notes_md",
+        "node_release_note_v0_2_2_release_notes_md",
+        "node_release_note_v0_2_3_release_notes_md",
+        "node_release_note_v0_2_4_release_notes_md",
+        "node_release_note_v0_2_5_release_notes_md",
+        "node_release_note_v0_2_6_release_notes_md",
+        "node_release_note_v0_2_9_release_notes_md"
       ],
       "collapsed": false,
       "color": "#d3869b",
@@ -280,12 +330,12 @@
       "label": "📚 Documentation Shelf"
     },
     {
-      "_bodyHeight": 352.49948727144874,
+      "_bodyHeight": 952.8377877087873,
       "_headerBounds": {
         "height": 30,
-        "width": 1439.6103572197828,
-        "x": -783.3806657080379,
-        "y": 1275.4088818800892
+        "width": 860.0000000000034,
+        "x": 2018.1356407243136,
+        "y": 104.11996304851101
       },
       "bounds": {
         "height": 1500,
@@ -294,12 +344,12 @@
         "y": 0
       },
       "children": [
-        "node_LICENSE",
         "node_synapse_topology_view",
         "node_README",
-        "node_graph_v0_2_14",
-        "node_flow_v0_2_14",
+        "node_image_a989e0",
+        "node_image_a98ce3",
         "node_tree_v0_2_14",
+        "node_LICENSE",
         "node_package",
         "node_vscode_languageclient",
         "node_child_process",
@@ -313,14 +363,14 @@
       "label": "🌐 External Modules"
     },
     {
-      "_bodyHeight": 210,
+      "_bodyHeight": 760.0000000000005,
       "_headerBounds": {
         "height": 30,
         "width": 160,
-        "x": 1380,
-        "y": 30
+        "x": -1266.5034685895228,
+        "y": 1423.6665876863908
       },
-      "collapsed": false,
+      "collapsed": true,
       "color": "#8ec07c",
       "id": "ctx_vault_cluster",
       "label": "🧠 Intelligent Context Vault",
@@ -334,27 +384,8 @@
   "edges": [
     {
       "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_EXTENSION_README_md",
-      "id": "edge_54",
-      "is_approved": false,
-      "to": "node_LICENSE",
-      "type": "dependency",
-      "validation": {
-        "confidence": 0.95,
-        "reason": "Appropriate architectural relationship.",
-        "valid": true
-      },
-      "visual": {
-        "animated": true,
-        "color": "#ebdbb2",
-        "style": "solid",
-        "thickness": 2
-      }
-    },
-    {
-      "_validationReason": "Appropriate architectural relationship.",
       "from": "node_GEMINI_md",
-      "id": "edge_55",
+      "id": "edge_56",
       "is_approved": false,
       "to": "node_synapse_topology_view",
       "type": "dependency",
@@ -373,7 +404,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_README_ko_md",
-      "id": "edge_56",
+      "id": "edge_57",
       "is_approved": false,
       "to": "node_README",
       "type": "dependency",
@@ -392,7 +423,7 @@
     {
       "_validationReason": "Circular dependency detected",
       "from": "node_README_ko_md",
-      "id": "edge_57",
+      "id": "edge_58",
       "is_approved": false,
       "to": "node_README_ko_md",
       "type": "dependency",
@@ -411,28 +442,9 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_README_ko_md",
-      "id": "edge_58",
-      "is_approved": false,
-      "to": "node_graph_v0_2_14",
-      "type": "dependency",
-      "validation": {
-        "confidence": 0.95,
-        "reason": "Appropriate architectural relationship.",
-        "valid": true
-      },
-      "visual": {
-        "animated": true,
-        "color": "#ebdbb2",
-        "style": "solid",
-        "thickness": 2
-      }
-    },
-    {
-      "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_README_ko_md",
       "id": "edge_59",
       "is_approved": false,
-      "to": "node_flow_v0_2_14",
+      "to": "node_image_a989e0",
       "type": "dependency",
       "validation": {
         "confidence": 0.95,
@@ -451,7 +463,7 @@
       "from": "node_README_ko_md",
       "id": "edge_60",
       "is_approved": false,
-      "to": "node_tree_v0_2_14",
+      "to": "node_image_a98ce3",
       "type": "dependency",
       "validation": {
         "confidence": 0.95,
@@ -470,6 +482,25 @@
       "from": "node_README_ko_md",
       "id": "edge_61",
       "is_approved": false,
+      "to": "node_tree_v0_2_14",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": true,
+        "color": "#ebdbb2",
+        "style": "solid",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_README_ko_md",
+      "id": "edge_62",
+      "is_approved": false,
       "to": "node_LICENSE",
       "type": "dependency",
       "validation": {
@@ -486,8 +517,27 @@
     },
     {
       "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_mile_stone_GEMINI_md",
+      "id": "edge_63",
+      "is_approved": false,
+      "to": "node_synapse_topology_view",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": true,
+        "color": "#ebdbb2",
+        "style": "solid",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
       "from": "node_prompts_2026_02_17_keybinding_check_md",
-      "id": "edge_62",
+      "id": "edge_64",
       "is_approved": false,
       "to": "node_package",
       "type": "dependency",
@@ -506,7 +556,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_prompts_2026_02_17_origin_edge_verification_md",
-      "id": "edge_63",
+      "id": "edge_65",
       "is_approved": false,
       "to": "node_src_core_PromptLogger_ts",
       "type": "dependency",
@@ -525,7 +575,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_prompts_2026_02_17_origin_edge_verification_md",
-      "id": "edge_64",
+      "id": "edge_66",
       "is_approved": false,
       "to": "node_src_bootstrap_BootstrapEngine_ts",
       "type": "dependency",
@@ -543,48 +593,10 @@
     },
     {
       "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_src_bootstrap_BootstrapEngine_ts",
-      "id": "edge_65",
-      "is_approved": false,
-      "to": "node_src_core_GeminiParser_ts",
-      "type": "dependency",
-      "validation": {
-        "confidence": 0.95,
-        "reason": "Appropriate architectural relationship.",
-        "valid": true
-      },
-      "visual": {
-        "animated": true,
-        "color": "#ebdbb2",
-        "style": "solid",
-        "thickness": 2
-      }
-    },
-    {
-      "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_src_bootstrap_BootstrapEngine_ts",
-      "id": "edge_66",
-      "is_approved": false,
-      "to": "node_src_core_FlowchartGenerator_ts",
-      "type": "dependency",
-      "validation": {
-        "confidence": 0.95,
-        "reason": "Appropriate architectural relationship.",
-        "valid": true
-      },
-      "visual": {
-        "animated": true,
-        "color": "#ebdbb2",
-        "style": "solid",
-        "thickness": 2
-      }
-    },
-    {
-      "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_src_bootstrap_BootstrapEngine_ts",
+      "from": "node_release_note_EXTENSION_README_md",
       "id": "edge_67",
       "is_approved": false,
-      "to": "node_src_core_FileScanner_ts",
+      "to": "node_LICENSE",
       "type": "dependency",
       "validation": {
         "confidence": 0.95,
@@ -600,10 +612,10 @@
     },
     {
       "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_src_bootstrap_BootstrapEngine_ts",
+      "from": "node_release_note_GEMINI______md",
       "id": "edge_68",
       "is_approved": false,
-      "to": "node_src_types_schema_ts",
+      "to": "node_synapse_topology_view",
       "type": "dependency",
       "validation": {
         "confidence": 0.95,
@@ -619,10 +631,10 @@
     },
     {
       "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_src_bootstrap_BootstrapEngine_ts",
+      "from": "node_release_note_v0_1_6_release_notes_md",
       "id": "edge_69",
       "is_approved": false,
-      "to": "node_src_utils_exclusionRules_ts",
+      "to": "node_LICENSE",
       "type": "dependency",
       "validation": {
         "confidence": 0.95,
@@ -641,7 +653,7 @@
       "from": "node_src_bootstrap_BootstrapEngine_ts",
       "id": "edge_70",
       "is_approved": false,
-      "to": "node_src_core_RuleEngine_ts",
+      "to": "node_src_core_GeminiParser_ts",
       "type": "dependency",
       "validation": {
         "confidence": 0.95,
@@ -657,10 +669,10 @@
     },
     {
       "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_src_cli_ts",
+      "from": "node_src_bootstrap_BootstrapEngine_ts",
       "id": "edge_71",
       "is_approved": false,
-      "to": "node_src_bootstrap_BootstrapEngine_ts",
+      "to": "node_src_core_FlowchartGenerator_ts",
       "type": "dependency",
       "validation": {
         "confidence": 0.95,
@@ -676,10 +688,10 @@
     },
     {
       "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_src_client_ts",
+      "from": "node_src_bootstrap_BootstrapEngine_ts",
       "id": "edge_72",
       "is_approved": false,
-      "to": "node_vscode_languageclient",
+      "to": "node_src_core_FileScanner_ts",
       "type": "dependency",
       "validation": {
         "confidence": 0.95,
@@ -695,7 +707,7 @@
     },
     {
       "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_src_core_FlowchartGenerator_ts",
+      "from": "node_src_bootstrap_BootstrapEngine_ts",
       "id": "edge_73",
       "is_approved": false,
       "to": "node_src_types_schema_ts",
@@ -714,46 +726,8 @@
     },
     {
       "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_src_core_FlowchartGenerator_ts",
+      "from": "node_src_bootstrap_BootstrapEngine_ts",
       "id": "edge_74",
-      "is_approved": false,
-      "to": "node_src_utils_visualHints_ts",
-      "type": "dependency",
-      "validation": {
-        "confidence": 0.95,
-        "reason": "Appropriate architectural relationship.",
-        "valid": true
-      },
-      "visual": {
-        "animated": true,
-        "color": "#ebdbb2",
-        "style": "solid",
-        "thickness": 2
-      }
-    },
-    {
-      "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_src_core_GeminiParser_ts",
-      "id": "edge_75",
-      "is_approved": false,
-      "to": "node_src_types_schema_ts",
-      "type": "dependency",
-      "validation": {
-        "confidence": 0.95,
-        "reason": "Appropriate architectural relationship.",
-        "valid": true
-      },
-      "visual": {
-        "animated": true,
-        "color": "#ebdbb2",
-        "style": "solid",
-        "thickness": 2
-      }
-    },
-    {
-      "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_src_core_GeminiParser_ts",
-      "id": "edge_76",
       "is_approved": false,
       "to": "node_src_utils_exclusionRules_ts",
       "type": "dependency",
@@ -771,8 +745,8 @@
     },
     {
       "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_src_core_GeminiParser_ts",
-      "id": "edge_77",
+      "from": "node_src_bootstrap_BootstrapEngine_ts",
+      "id": "edge_75",
       "is_approved": false,
       "to": "node_src_core_RuleEngine_ts",
       "type": "dependency",
@@ -790,7 +764,45 @@
     },
     {
       "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_src_core_LogicAnalyzer_ts",
+      "from": "node_src_cli_ts",
+      "id": "edge_76",
+      "is_approved": false,
+      "to": "node_src_bootstrap_BootstrapEngine_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": true,
+        "color": "#ebdbb2",
+        "style": "solid",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_client_ts",
+      "id": "edge_77",
+      "is_approved": false,
+      "to": "node_vscode_languageclient",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": true,
+        "color": "#ebdbb2",
+        "style": "solid",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_core_FlowchartGenerator_ts",
       "id": "edge_78",
       "is_approved": false,
       "to": "node_src_types_schema_ts",
@@ -809,10 +821,10 @@
     },
     {
       "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_src_core_PromptLogger_ts",
+      "from": "node_src_core_FlowchartGenerator_ts",
       "id": "edge_79",
       "is_approved": false,
-      "to": "node_child_process",
+      "to": "node_src_utils_visualHints_ts",
       "type": "dependency",
       "validation": {
         "confidence": 0.95,
@@ -828,10 +840,10 @@
     },
     {
       "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_src_extension_ts",
+      "from": "node_src_core_GeminiParser_ts",
       "id": "edge_80",
       "is_approved": false,
-      "to": "node_src_webview_CanvasPanel_ts",
+      "to": "node_src_types_schema_ts",
       "type": "dependency",
       "validation": {
         "confidence": 0.95,
@@ -847,10 +859,10 @@
     },
     {
       "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_src_extension_ts",
+      "from": "node_src_core_GeminiParser_ts",
       "id": "edge_81",
       "is_approved": false,
-      "to": "node_src_bootstrap_BootstrapEngine_ts",
+      "to": "node_src_utils_exclusionRules_ts",
       "type": "dependency",
       "validation": {
         "confidence": 0.95,
@@ -866,10 +878,10 @@
     },
     {
       "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_src_extension_ts",
+      "from": "node_src_core_GeminiParser_ts",
       "id": "edge_82",
       "is_approved": false,
-      "to": "node_src_client_ts",
+      "to": "node_src_core_RuleEngine_ts",
       "type": "dependency",
       "validation": {
         "confidence": 0.95,
@@ -885,10 +897,10 @@
     },
     {
       "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_src_extension_ts",
+      "from": "node_src_core_LogicAnalyzer_ts",
       "id": "edge_83",
       "is_approved": false,
-      "to": "node_src_core_PromptLogger_ts",
+      "to": "node_src_types_schema_ts",
       "type": "dependency",
       "validation": {
         "confidence": 0.95,
@@ -904,10 +916,10 @@
     },
     {
       "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_src_extension_ts",
+      "from": "node_src_core_PromptLogger_ts",
       "id": "edge_84",
       "is_approved": false,
-      "to": "node_src_utils_ChatExtractor_ts",
+      "to": "node_child_process",
       "type": "dependency",
       "validation": {
         "confidence": 0.95,
@@ -926,6 +938,101 @@
       "from": "node_src_extension_ts",
       "id": "edge_85",
       "is_approved": false,
+      "to": "node_src_webview_CanvasPanel_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": true,
+        "color": "#ebdbb2",
+        "style": "solid",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_extension_ts",
+      "id": "edge_86",
+      "is_approved": false,
+      "to": "node_src_bootstrap_BootstrapEngine_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": true,
+        "color": "#ebdbb2",
+        "style": "solid",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_extension_ts",
+      "id": "edge_87",
+      "is_approved": false,
+      "to": "node_src_client_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": true,
+        "color": "#ebdbb2",
+        "style": "solid",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_extension_ts",
+      "id": "edge_88",
+      "is_approved": false,
+      "to": "node_src_core_PromptLogger_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": true,
+        "color": "#ebdbb2",
+        "style": "solid",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_extension_ts",
+      "id": "edge_89",
+      "is_approved": false,
+      "to": "node_src_utils_ChatExtractor_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": true,
+        "color": "#ebdbb2",
+        "style": "solid",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_extension_ts",
+      "id": "edge_90",
+      "is_approved": false,
       "to": "node_src_utils_Logger_ts",
       "type": "dependency",
       "validation": {
@@ -943,7 +1050,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_server_server_ts",
-      "id": "edge_86",
+      "id": "edge_91",
       "is_approved": false,
       "to": "node_vscode_languageserver_textdocument",
       "type": "dependency",
@@ -962,7 +1069,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_server_server_ts",
-      "id": "edge_87",
+      "id": "edge_92",
       "is_approved": false,
       "to": "node_src_core_GeminiParser_ts",
       "type": "dependency",
@@ -981,7 +1088,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_server_server_ts",
-      "id": "edge_88",
+      "id": "edge_93",
       "is_approved": false,
       "to": "node_src_core_FlowScanner_ts",
       "type": "dependency",
@@ -1000,7 +1107,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_server_standalone_ts",
-      "id": "edge_89",
+      "id": "edge_94",
       "is_approved": false,
       "to": "node_express",
       "type": "dependency",
@@ -1019,7 +1126,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_server_standalone_ts",
-      "id": "edge_90",
+      "id": "edge_95",
       "is_approved": false,
       "to": "node_cors",
       "type": "dependency",
@@ -1038,101 +1145,6 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_server_standalone_ts",
-      "id": "edge_91",
-      "is_approved": false,
-      "to": "node_src_core_GeminiParser_ts",
-      "type": "dependency",
-      "validation": {
-        "confidence": 0.95,
-        "reason": "Appropriate architectural relationship.",
-        "valid": true
-      },
-      "visual": {
-        "animated": true,
-        "color": "#ebdbb2",
-        "style": "solid",
-        "thickness": 2
-      }
-    },
-    {
-      "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_src_server_standalone_ts",
-      "id": "edge_92",
-      "is_approved": false,
-      "to": "node_src_core_FlowScanner_ts",
-      "type": "dependency",
-      "validation": {
-        "confidence": 0.95,
-        "reason": "Appropriate architectural relationship.",
-        "valid": true
-      },
-      "visual": {
-        "animated": true,
-        "color": "#ebdbb2",
-        "style": "solid",
-        "thickness": 2
-      }
-    },
-    {
-      "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_src_test_FileScanner_test_ts",
-      "id": "edge_93",
-      "is_approved": false,
-      "to": "node_src_core_FileScanner_ts",
-      "type": "dependency",
-      "validation": {
-        "confidence": 0.95,
-        "reason": "Appropriate architectural relationship.",
-        "valid": true
-      },
-      "visual": {
-        "animated": true,
-        "color": "#ebdbb2",
-        "style": "solid",
-        "thickness": 2
-      }
-    },
-    {
-      "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_src_test_FlowchartGenerator_test_ts",
-      "id": "edge_94",
-      "is_approved": false,
-      "to": "node_src_core_FlowchartGenerator_ts",
-      "type": "dependency",
-      "validation": {
-        "confidence": 0.95,
-        "reason": "Appropriate architectural relationship.",
-        "valid": true
-      },
-      "visual": {
-        "animated": true,
-        "color": "#ebdbb2",
-        "style": "solid",
-        "thickness": 2
-      }
-    },
-    {
-      "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_src_test_FlowchartGenerator_test_ts",
-      "id": "edge_95",
-      "is_approved": false,
-      "to": "node_src_types_schema_ts",
-      "type": "dependency",
-      "validation": {
-        "confidence": 0.95,
-        "reason": "Appropriate architectural relationship.",
-        "valid": true
-      },
-      "visual": {
-        "animated": true,
-        "color": "#ebdbb2",
-        "style": "solid",
-        "thickness": 2
-      }
-    },
-    {
-      "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_src_test_GeminiParser_test_ts",
       "id": "edge_96",
       "is_approved": false,
       "to": "node_src_core_GeminiParser_ts",
@@ -1151,8 +1163,103 @@
     },
     {
       "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_src_test_visualHints_test_ts",
+      "from": "node_src_server_standalone_ts",
       "id": "edge_97",
+      "is_approved": false,
+      "to": "node_src_core_FlowScanner_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": true,
+        "color": "#ebdbb2",
+        "style": "solid",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_test_FileScanner_test_ts",
+      "id": "edge_98",
+      "is_approved": false,
+      "to": "node_src_core_FileScanner_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": true,
+        "color": "#ebdbb2",
+        "style": "solid",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_test_FlowchartGenerator_test_ts",
+      "id": "edge_99",
+      "is_approved": false,
+      "to": "node_src_core_FlowchartGenerator_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": true,
+        "color": "#ebdbb2",
+        "style": "solid",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_test_FlowchartGenerator_test_ts",
+      "id": "edge_100",
+      "is_approved": false,
+      "to": "node_src_types_schema_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": true,
+        "color": "#ebdbb2",
+        "style": "solid",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_test_GeminiParser_test_ts",
+      "id": "edge_101",
+      "is_approved": false,
+      "to": "node_src_core_GeminiParser_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": true,
+        "color": "#ebdbb2",
+        "style": "solid",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_test_visualHints_test_ts",
+      "id": "edge_102",
       "is_approved": false,
       "to": "node_src_utils_visualHints_ts",
       "type": "dependency",
@@ -1171,104 +1278,9 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_utils_exclusionRules_ts",
-      "id": "edge_98",
-      "is_approved": false,
-      "to": "node_src_core_RuleEngine_ts",
-      "type": "dependency",
-      "validation": {
-        "confidence": 0.95,
-        "reason": "Appropriate architectural relationship.",
-        "valid": true
-      },
-      "visual": {
-        "animated": true,
-        "color": "#ebdbb2",
-        "style": "solid",
-        "thickness": 2
-      }
-    },
-    {
-      "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_src_webview_CanvasPanel_ts",
-      "id": "edge_99",
-      "is_approved": false,
-      "to": "node_src_types_schema_ts",
-      "type": "dependency",
-      "validation": {
-        "confidence": 0.95,
-        "reason": "Appropriate architectural relationship.",
-        "valid": true
-      },
-      "visual": {
-        "animated": true,
-        "color": "#ebdbb2",
-        "style": "solid",
-        "thickness": 2
-      }
-    },
-    {
-      "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_src_webview_CanvasPanel_ts",
-      "id": "edge_100",
-      "is_approved": false,
-      "to": "node_src_core_FileScanner_ts",
-      "type": "dependency",
-      "validation": {
-        "confidence": 0.95,
-        "reason": "Appropriate architectural relationship.",
-        "valid": true
-      },
-      "visual": {
-        "animated": true,
-        "color": "#ebdbb2",
-        "style": "solid",
-        "thickness": 2
-      }
-    },
-    {
-      "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_src_webview_CanvasPanel_ts",
-      "id": "edge_101",
-      "is_approved": false,
-      "to": "node_src_core_LogicAnalyzer_ts",
-      "type": "dependency",
-      "validation": {
-        "confidence": 0.95,
-        "reason": "Appropriate architectural relationship.",
-        "valid": true
-      },
-      "visual": {
-        "animated": true,
-        "color": "#ebdbb2",
-        "style": "solid",
-        "thickness": 2
-      }
-    },
-    {
-      "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_src_webview_CanvasPanel_ts",
-      "id": "edge_102",
-      "is_approved": false,
-      "to": "node_src_core_GeminiParser_ts",
-      "type": "dependency",
-      "validation": {
-        "confidence": 0.95,
-        "reason": "Appropriate architectural relationship.",
-        "valid": true
-      },
-      "visual": {
-        "animated": true,
-        "color": "#ebdbb2",
-        "style": "solid",
-        "thickness": 2
-      }
-    },
-    {
-      "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_src_webview_CanvasPanel_ts",
       "id": "edge_103",
       "is_approved": false,
-      "to": "node_src_core_FlowchartGenerator_ts",
+      "to": "node_src_core_RuleEngine_ts",
       "type": "dependency",
       "validation": {
         "confidence": 0.95,
@@ -1287,7 +1299,7 @@
       "from": "node_src_webview_CanvasPanel_ts",
       "id": "edge_104",
       "is_approved": false,
-      "to": "node_src_bootstrap_BootstrapEngine_ts",
+      "to": "node_src_types_schema_ts",
       "type": "dependency",
       "validation": {
         "confidence": 0.95,
@@ -1306,7 +1318,7 @@
       "from": "node_src_webview_CanvasPanel_ts",
       "id": "edge_105",
       "is_approved": false,
-      "to": "node_src_client_ts",
+      "to": "node_src_core_FileScanner_ts",
       "type": "dependency",
       "validation": {
         "confidence": 0.95,
@@ -1325,6 +1337,101 @@
       "from": "node_src_webview_CanvasPanel_ts",
       "id": "edge_106",
       "is_approved": false,
+      "to": "node_src_core_LogicAnalyzer_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": true,
+        "color": "#ebdbb2",
+        "style": "solid",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_webview_CanvasPanel_ts",
+      "id": "edge_107",
+      "is_approved": false,
+      "to": "node_src_core_GeminiParser_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": true,
+        "color": "#ebdbb2",
+        "style": "solid",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_webview_CanvasPanel_ts",
+      "id": "edge_108",
+      "is_approved": false,
+      "to": "node_src_core_FlowchartGenerator_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": true,
+        "color": "#ebdbb2",
+        "style": "solid",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_webview_CanvasPanel_ts",
+      "id": "edge_109",
+      "is_approved": false,
+      "to": "node_src_bootstrap_BootstrapEngine_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": true,
+        "color": "#ebdbb2",
+        "style": "solid",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_webview_CanvasPanel_ts",
+      "id": "edge_110",
+      "is_approved": false,
+      "to": "node_src_client_ts",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "animated": true,
+        "color": "#ebdbb2",
+        "style": "solid",
+        "thickness": 2
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_src_webview_CanvasPanel_ts",
+      "id": "edge_111",
+      "is_approved": false,
       "to": "node_src_utils_Logger_ts",
       "type": "dependency",
       "validation": {
@@ -1341,40 +1448,8 @@
     },
     {
       "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_v0_1_6_release_notes_md",
-      "id": "edge_107",
-      "is_approved": false,
-      "to": "node_LICENSE",
-      "type": "dependency",
-      "validation": {
-        "confidence": 0.95,
-        "reason": "Appropriate architectural relationship.",
-        "valid": true
-      },
-      "visual": {
-        "animated": true,
-        "color": "#ebdbb2",
-        "style": "solid",
-        "thickness": 2
-      }
-    },
-    {
-      "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_EXTENSION_README_md",
-      "id": "edge_auto_1772234644305_232",
-      "label": "ref",
-      "to": "node_LICENSE",
-      "type": "dependency",
-      "validation": {
-        "confidence": 0.95,
-        "reason": "Appropriate architectural relationship.",
-        "valid": true
-      }
-    },
-    {
-      "_validationReason": "Appropriate architectural relationship.",
       "from": "node_GEMINI_md",
-      "id": "edge_auto_1772234644305_378",
+      "id": "edge_auto_1772247975369_439",
       "label": "ref",
       "to": "node_synapse_topology_view",
       "type": "dependency",
@@ -1387,7 +1462,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_README_ko_md",
-      "id": "edge_auto_1772234644305_287",
+      "id": "edge_auto_1772247975369_889",
       "label": "ref",
       "to": "node_README",
       "type": "dependency",
@@ -1400,9 +1475,9 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_README_ko_md",
-      "id": "edge_auto_1772234644305_781",
+      "id": "edge_auto_1772247975369_270",
       "label": "ref",
-      "to": "node_graph_v0_2_14",
+      "to": "node_image_a989e0",
       "type": "dependency",
       "validation": {
         "confidence": 0.95,
@@ -1413,9 +1488,9 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_README_ko_md",
-      "id": "edge_auto_1772234644305_745",
+      "id": "edge_auto_1772247975369_739",
       "label": "ref",
-      "to": "node_flow_v0_2_14",
+      "to": "node_image_a98ce3",
       "type": "dependency",
       "validation": {
         "confidence": 0.95,
@@ -1426,7 +1501,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_README_ko_md",
-      "id": "edge_auto_1772234644305_444",
+      "id": "edge_auto_1772247975369_580",
       "label": "ref",
       "to": "node_tree_v0_2_14",
       "type": "dependency",
@@ -1439,7 +1514,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_README_ko_md",
-      "id": "edge_auto_1772234644305_530",
+      "id": "edge_auto_1772247975369_865",
       "label": "ref",
       "to": "node_LICENSE",
       "type": "dependency",
@@ -1451,10 +1526,10 @@
     },
     {
       "_validationReason": "Appropriate architectural relationship.",
-      "from": "node_v0_1_6_release_notes_md",
-      "id": "edge_auto_1772234644305_330",
+      "from": "node_mile_stone_GEMINI_md",
+      "id": "edge_auto_1772247975369_2",
       "label": "ref",
-      "to": "node_LICENSE",
+      "to": "node_synapse_topology_view",
       "type": "dependency",
       "validation": {
         "confidence": 0.95,
@@ -1465,7 +1540,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_prompts_2026_02_17_keybinding_check_md",
-      "id": "edge_auto_1772234644305_77",
+      "id": "edge_auto_1772247975369_123",
       "label": "ref",
       "to": "node_package",
       "type": "dependency",
@@ -1478,7 +1553,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_prompts_2026_02_17_origin_edge_verification_md",
-      "id": "edge_auto_1772234644305_359",
+      "id": "edge_auto_1772247975369_799",
       "label": "ref",
       "to": "node_src_core_PromptLogger_ts",
       "type": "dependency",
@@ -1491,7 +1566,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_prompts_2026_02_17_origin_edge_verification_md",
-      "id": "edge_auto_1772234644305_195",
+      "id": "edge_auto_1772247975369_177",
       "label": "ref",
       "to": "node_src_bootstrap_BootstrapEngine_ts",
       "type": "dependency",
@@ -1503,8 +1578,47 @@
     },
     {
       "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_release_note_EXTENSION_README_md",
+      "id": "edge_auto_1772247975369_78",
+      "label": "ref",
+      "to": "node_LICENSE",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_release_note_GEMINI______md",
+      "id": "edge_auto_1772247975369_600",
+      "label": "ref",
+      "to": "node_synapse_topology_view",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
+      "from": "node_release_note_v0_1_6_release_notes_md",
+      "id": "edge_auto_1772247975369_763",
+      "label": "ref",
+      "to": "node_LICENSE",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
+    },
+    {
+      "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_bootstrap_BootstrapEngine_ts",
-      "id": "edge_auto_1772234644305_899",
+      "id": "edge_auto_1772247975369_722",
       "label": "ref",
       "to": "node_src_core_GeminiParser_ts",
       "type": "dependency",
@@ -1517,7 +1631,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_bootstrap_BootstrapEngine_ts",
-      "id": "edge_auto_1772234644305_684",
+      "id": "edge_auto_1772247975369_236",
       "label": "ref",
       "to": "node_src_core_FlowchartGenerator_ts",
       "type": "dependency",
@@ -1530,7 +1644,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_bootstrap_BootstrapEngine_ts",
-      "id": "edge_auto_1772234644305_633",
+      "id": "edge_auto_1772247975369_495",
       "label": "ref",
       "to": "node_src_core_FileScanner_ts",
       "type": "dependency",
@@ -1543,7 +1657,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_bootstrap_BootstrapEngine_ts",
-      "id": "edge_auto_1772234644305_176",
+      "id": "edge_auto_1772247975369_584",
       "label": "ref",
       "to": "node_src_types_schema_ts",
       "type": "dependency",
@@ -1556,7 +1670,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_bootstrap_BootstrapEngine_ts",
-      "id": "edge_auto_1772234644305_234",
+      "id": "edge_auto_1772247975369_986",
       "label": "ref",
       "to": "node_src_utils_exclusionRules_ts",
       "type": "dependency",
@@ -1569,7 +1683,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_bootstrap_BootstrapEngine_ts",
-      "id": "edge_auto_1772234644305_82",
+      "id": "edge_auto_1772247975369_257",
       "label": "ref",
       "to": "node_src_core_RuleEngine_ts",
       "type": "dependency",
@@ -1582,7 +1696,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_cli_ts",
-      "id": "edge_auto_1772234644305_866",
+      "id": "edge_auto_1772247975369_86",
       "label": "ref",
       "to": "node_src_bootstrap_BootstrapEngine_ts",
       "type": "dependency",
@@ -1595,7 +1709,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_client_ts",
-      "id": "edge_auto_1772234644305_619",
+      "id": "edge_auto_1772247975369_219",
       "label": "ref",
       "to": "node_vscode_languageclient",
       "type": "dependency",
@@ -1608,7 +1722,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_extension_ts",
-      "id": "edge_auto_1772234644305_629",
+      "id": "edge_auto_1772247975369_838",
       "label": "ref",
       "to": "node_src_webview_CanvasPanel_ts",
       "type": "dependency",
@@ -1621,7 +1735,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_extension_ts",
-      "id": "edge_auto_1772234644305_512",
+      "id": "edge_auto_1772247975369_820",
       "label": "ref",
       "to": "node_src_bootstrap_BootstrapEngine_ts",
       "type": "dependency",
@@ -1634,7 +1748,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_extension_ts",
-      "id": "edge_auto_1772234644305_267",
+      "id": "edge_auto_1772247975369_700",
       "label": "ref",
       "to": "node_src_client_ts",
       "type": "dependency",
@@ -1647,7 +1761,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_extension_ts",
-      "id": "edge_auto_1772234644305_923",
+      "id": "edge_auto_1772247975369_571",
       "label": "ref",
       "to": "node_src_core_PromptLogger_ts",
       "type": "dependency",
@@ -1660,7 +1774,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_extension_ts",
-      "id": "edge_auto_1772234644305_169",
+      "id": "edge_auto_1772247975369_894",
       "label": "ref",
       "to": "node_src_utils_ChatExtractor_ts",
       "type": "dependency",
@@ -1673,7 +1787,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_extension_ts",
-      "id": "edge_auto_1772234644305_747",
+      "id": "edge_auto_1772247975369_630",
       "label": "ref",
       "to": "node_src_utils_Logger_ts",
       "type": "dependency",
@@ -1686,7 +1800,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_core_FlowchartGenerator_ts",
-      "id": "edge_auto_1772234644305_991",
+      "id": "edge_auto_1772247975369_470",
       "label": "ref",
       "to": "node_src_types_schema_ts",
       "type": "dependency",
@@ -1699,7 +1813,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_core_FlowchartGenerator_ts",
-      "id": "edge_auto_1772234644305_825",
+      "id": "edge_auto_1772247975369_225",
       "label": "ref",
       "to": "node_src_utils_visualHints_ts",
       "type": "dependency",
@@ -1712,7 +1826,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_core_GeminiParser_ts",
-      "id": "edge_auto_1772234644305_71",
+      "id": "edge_auto_1772247975369_359",
       "label": "ref",
       "to": "node_src_types_schema_ts",
       "type": "dependency",
@@ -1725,7 +1839,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_core_GeminiParser_ts",
-      "id": "edge_auto_1772234644305_481",
+      "id": "edge_auto_1772247975369_43",
       "label": "ref",
       "to": "node_src_utils_exclusionRules_ts",
       "type": "dependency",
@@ -1738,7 +1852,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_core_GeminiParser_ts",
-      "id": "edge_auto_1772234644305_51",
+      "id": "edge_auto_1772247975369_740",
       "label": "ref",
       "to": "node_src_core_RuleEngine_ts",
       "type": "dependency",
@@ -1751,7 +1865,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_core_LogicAnalyzer_ts",
-      "id": "edge_auto_1772234644305_928",
+      "id": "edge_auto_1772247975369_199",
       "label": "ref",
       "to": "node_src_types_schema_ts",
       "type": "dependency",
@@ -1764,7 +1878,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_core_PromptLogger_ts",
-      "id": "edge_auto_1772234644305_289",
+      "id": "edge_auto_1772247975369_595",
       "label": "ref",
       "to": "node_child_process",
       "type": "dependency",
@@ -1777,7 +1891,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_server_server_ts",
-      "id": "edge_auto_1772234644305_375",
+      "id": "edge_auto_1772247975369_9",
       "label": "ref",
       "to": "node_vscode_languageserver_textdocument",
       "type": "dependency",
@@ -1790,7 +1904,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_server_server_ts",
-      "id": "edge_auto_1772234644305_572",
+      "id": "edge_auto_1772247975369_530",
       "label": "ref",
       "to": "node_src_core_GeminiParser_ts",
       "type": "dependency",
@@ -1803,7 +1917,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_server_server_ts",
-      "id": "edge_auto_1772234644305_403",
+      "id": "edge_auto_1772247975369_231",
       "label": "ref",
       "to": "node_src_core_FlowScanner_ts",
       "type": "dependency",
@@ -1816,7 +1930,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_server_standalone_ts",
-      "id": "edge_auto_1772234644305_122",
+      "id": "edge_auto_1772247975369_833",
       "label": "ref",
       "to": "node_express",
       "type": "dependency",
@@ -1829,7 +1943,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_server_standalone_ts",
-      "id": "edge_auto_1772234644305_640",
+      "id": "edge_auto_1772247975369_46",
       "label": "ref",
       "to": "node_cors",
       "type": "dependency",
@@ -1842,7 +1956,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_server_standalone_ts",
-      "id": "edge_auto_1772234644305_841",
+      "id": "edge_auto_1772247975369_501",
       "label": "ref",
       "to": "node_src_core_GeminiParser_ts",
       "type": "dependency",
@@ -1855,7 +1969,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_server_standalone_ts",
-      "id": "edge_auto_1772234644305_669",
+      "id": "edge_auto_1772247975369_698",
       "label": "ref",
       "to": "node_src_core_FlowScanner_ts",
       "type": "dependency",
@@ -1866,16 +1980,22 @@
       }
     },
     {
+      "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_test_FileScanner_test_ts",
-      "id": "edge_auto_1772234644305_82",
+      "id": "edge_auto_1772247975369_372",
       "label": "ref",
       "to": "node_src_core_FileScanner_ts",
-      "type": "dependency"
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      }
     },
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_test_FlowchartGenerator_test_ts",
-      "id": "edge_auto_1772234644305_694",
+      "id": "edge_auto_1772247975369_44",
       "label": "ref",
       "to": "node_src_core_FlowchartGenerator_ts",
       "type": "dependency",
@@ -1888,7 +2008,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_test_FlowchartGenerator_test_ts",
-      "id": "edge_auto_1772234644305_21",
+      "id": "edge_auto_1772247975369_516",
       "label": "ref",
       "to": "node_src_types_schema_ts",
       "type": "dependency",
@@ -1901,7 +2021,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_test_GeminiParser_test_ts",
-      "id": "edge_auto_1772234644305_298",
+      "id": "edge_auto_1772247975369_74",
       "label": "ref",
       "to": "node_src_core_GeminiParser_ts",
       "type": "dependency",
@@ -1914,7 +2034,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_test_visualHints_test_ts",
-      "id": "edge_auto_1772234644305_931",
+      "id": "edge_auto_1772247975369_725",
       "label": "ref",
       "to": "node_src_utils_visualHints_ts",
       "type": "dependency",
@@ -1927,7 +2047,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_utils_exclusionRules_ts",
-      "id": "edge_auto_1772234644305_862",
+      "id": "edge_auto_1772247975369_819",
       "label": "ref",
       "to": "node_src_core_RuleEngine_ts",
       "type": "dependency",
@@ -1940,7 +2060,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_webview_CanvasPanel_ts",
-      "id": "edge_auto_1772234644305_601",
+      "id": "edge_auto_1772247975369_498",
       "label": "ref",
       "to": "node_src_types_schema_ts",
       "type": "dependency",
@@ -1953,7 +2073,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_webview_CanvasPanel_ts",
-      "id": "edge_auto_1772234644305_967",
+      "id": "edge_auto_1772247975369_715",
       "label": "ref",
       "to": "node_src_core_FileScanner_ts",
       "type": "dependency",
@@ -1966,7 +2086,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_webview_CanvasPanel_ts",
-      "id": "edge_auto_1772234644305_336",
+      "id": "edge_auto_1772247975369_450",
       "label": "ref",
       "to": "node_src_core_LogicAnalyzer_ts",
       "type": "dependency",
@@ -1979,7 +2099,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_webview_CanvasPanel_ts",
-      "id": "edge_auto_1772234644305_542",
+      "id": "edge_auto_1772247975369_794",
       "label": "ref",
       "to": "node_src_core_GeminiParser_ts",
       "type": "dependency",
@@ -1992,7 +2112,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_webview_CanvasPanel_ts",
-      "id": "edge_auto_1772234644305_670",
+      "id": "edge_auto_1772247975369_53",
       "label": "ref",
       "to": "node_src_core_FlowchartGenerator_ts",
       "type": "dependency",
@@ -2005,7 +2125,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_webview_CanvasPanel_ts",
-      "id": "edge_auto_1772234644305_995",
+      "id": "edge_auto_1772247975369_778",
       "label": "ref",
       "to": "node_src_bootstrap_BootstrapEngine_ts",
       "type": "dependency",
@@ -2018,7 +2138,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_webview_CanvasPanel_ts",
-      "id": "edge_auto_1772234644305_311",
+      "id": "edge_auto_1772247975369_381",
       "label": "ref",
       "to": "node_src_client_ts",
       "type": "dependency",
@@ -2031,7 +2151,7 @@
     {
       "_validationReason": "Appropriate architectural relationship.",
       "from": "node_src_webview_CanvasPanel_ts",
-      "id": "edge_auto_1772234644305_675",
+      "id": "edge_auto_1772247975369_832",
       "label": "ref",
       "to": "node_src_utils_Logger_ts",
       "type": "dependency",
@@ -2042,40 +2162,31 @@
       }
     }
   ],
-  "gemini_md_path": "/home/dogsinatas/TypeScript_project/antigravity-extension-vis/GEMINI.md",
   "nodes": [
     {
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
         "color": "#fabd2f",
-        "description": "DEBUG_GUIDE.md (Doc)",
-        "file": "DEBUG_GUIDE.md",
-        "label": "DEBUG_GUIDE.md",
+        "description": "2026-02-22_2019_auto_push_after_drag.md (Doc)",
+        "file": ".synapse_contexts/2026-02-22_2019_auto_push_after_drag.md",
+        "label": "2026-02-22_2019_auto_push_after_drag.md",
         "layer": 0,
         "priority": 1,
         "summary": {
           "classes": [
-            "SYNAPSE 디버깅 가이드",
-            "현재 상황",
-            "체크리스트",
-            "1. Extension Development Host에서 프로젝트 폴더가 열려있는가?",
-            "2. Webview Developer Tools 콘솔 확인",
-            "3. Extension 콘솔 확인",
-            "4. 파일 경로 확인",
-            "해결 방법",
-            "방법 1: 프로젝트 폴더 열기",
-            "방법 2: Extension 재시작",
-            "방법 3: 수동으로 workspace 확인"
+            "Context: Auto Push (after drag)",
+            "💬 명령",
+            "📝 변경 요약"
           ],
           "functions": [],
           "references": []
         }
       },
-      "id": "node_DEBUG_GUIDE_md",
+      "id": "node__synapse_contexts_2026_02_22_2019_auto_push_after_drag_md",
       "position": {
-        "x": -241.11604787829887,
-        "y": 245.46010662770243
+        "x": -1865.3883387939036,
+        "y": 366.14323082376995
       },
       "status": "proposed",
       "type": "documentation",
@@ -2089,32 +2200,249 @@
       "data": {
         "cluster_id": "doc_shelf",
         "color": "#fabd2f",
-        "description": "EXTENSION_README.md (Doc)",
-        "file": "EXTENSION_README.md",
-        "label": "EXTENSION_README.md",
+        "description": "2026-02-22_2020_auto_push_after_drag.md (Doc)",
+        "file": ".synapse_contexts/2026-02-22_2020_auto_push_after_drag.md",
+        "label": "2026-02-22_2020_auto_push_after_drag.md",
         "layer": 0,
         "priority": 1,
         "summary": {
           "classes": [
-            "SYNAPSE VS Code Extension",
-            "Commands",
-            "Development",
-            "Testing",
-            "License"
+            "Context: Auto Push (after drag)",
+            "💬 명령",
+            "📝 변경 요약"
           ],
           "functions": [],
-          "references": [
-            {
-              "target": "LICENSE",
-              "type": "dependency"
-            }
-          ]
+          "references": []
         }
       },
-      "id": "node_EXTENSION_README_md",
+      "id": "node__synapse_contexts_2026_02_22_2020_auto_push_after_drag_md",
       "position": {
-        "x": -41.11604787829929,
-        "y": 245.46010662770243
+        "x": -1665.3883387939034,
+        "y": 366.14323082376995
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "color": "#fabd2f",
+        "description": "2026-02-22_2021_auto_push_after_drag.md (Doc)",
+        "file": ".synapse_contexts/2026-02-22_2021_auto_push_after_drag.md",
+        "label": "2026-02-22_2021_auto_push_after_drag.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "Context: Auto Push (after drag)",
+            "💬 명령",
+            "📝 변경 요약"
+          ],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node__synapse_contexts_2026_02_22_2021_auto_push_after_drag_md",
+      "position": {
+        "x": -1465.3883387939038,
+        "y": 366.14323082376995
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "color": "#fabd2f",
+        "description": "2026-02-28_1057_auto_push_after_drag.md (Doc)",
+        "file": ".synapse_contexts/2026-02-28_1057_auto_push_after_drag.md",
+        "label": "2026-02-28_1057_auto_push_after_drag.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "Context: Auto Push (after drag)",
+            "💬 명령",
+            "📝 변경 요약"
+          ],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node__synapse_contexts_2026_02_28_1057_auto_push_after_drag_md",
+      "position": {
+        "x": -1453.1626808085148,
+        "y": 1231.870284414392
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "color": "#fabd2f",
+        "description": "2026-02-28_1058_auto_push_after_drag.md (Doc)",
+        "file": ".synapse_contexts/2026-02-28_1058_auto_push_after_drag.md",
+        "label": "2026-02-28_1058_auto_push_after_drag.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "Context: Auto Push (after drag)",
+            "💬 명령",
+            "📝 변경 요약"
+          ],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node__synapse_contexts_2026_02_28_1058_auto_push_after_drag_md",
+      "position": {
+        "x": -1865.3883387939036,
+        "y": 516.14323082377
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "color": "#fabd2f",
+        "description": "2026-02-28_1102_auto_push_after_drag.md (Doc)",
+        "file": ".synapse_contexts/2026-02-28_1102_auto_push_after_drag.md",
+        "label": "2026-02-28_1102_auto_push_after_drag.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "Context: Auto Push (after drag)",
+            "💬 명령",
+            "📝 변경 요약"
+          ],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node__synapse_contexts_2026_02_28_1102_auto_push_after_drag_md",
+      "position": {
+        "x": -1665.3883387939034,
+        "y": 516.14323082377
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "color": "#fabd2f",
+        "description": "2026-02-28_1142_auto_push_after_drag.md (Doc)",
+        "file": ".synapse_contexts/2026-02-28_1142_auto_push_after_drag.md",
+        "label": "2026-02-28_1142_auto_push_after_drag.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "Context: Auto Push (after drag)",
+            "💬 명령",
+            "📝 변경 요약"
+          ],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node__synapse_contexts_2026_02_28_1142_auto_push_after_drag_md",
+      "position": {
+        "x": -1465.3883387939038,
+        "y": 516.14323082377
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "color": "#fabd2f",
+        "description": "2026-02-28_1143_auto_push_after_drag.md (Doc)",
+        "file": ".synapse_contexts/2026-02-28_1143_auto_push_after_drag.md",
+        "label": "2026-02-28_1143_auto_push_after_drag.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "Context: Auto Push (after drag)",
+            "💬 명령",
+            "📝 변경 요약"
+          ],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node__synapse_contexts_2026_02_28_1143_auto_push_after_drag_md",
+      "position": {
+        "x": -1265.3883387939038,
+        "y": 516.14323082377
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "color": "#fabd2f",
+        "description": "2026-02-28_1146_auto_push_after_drag.md (Doc)",
+        "file": ".synapse_contexts/2026-02-28_1146_auto_push_after_drag.md",
+        "label": "2026-02-28_1146_auto_push_after_drag.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "Context: Auto Push (after drag)",
+            "💬 명령",
+            "📝 변경 요약"
+          ],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node__synapse_contexts_2026_02_28_1146_auto_push_after_drag_md",
+      "position": {
+        "x": -1865.3883387939036,
+        "y": 666.1432308237694
       },
       "status": "proposed",
       "type": "documentation",
@@ -2240,8 +2568,8 @@
       },
       "id": "node_GEMINI_md",
       "position": {
-        "x": 158.88395212170056,
-        "y": 245.46010662770243
+        "x": -1865.3883387939036,
+        "y": 366.14323082376995
       },
       "status": "proposed",
       "type": "documentation",
@@ -2274,6 +2602,7 @@
             "계층 구조 (Tree)",
             "🛠️ 설치 방법",
             "🆕 버전 히스토리",
+            "v0.2.14fix (명확성 업데이트)",
             "v0.2.14",
             "v0.2.13",
             "v0.2.12",
@@ -2292,11 +2621,11 @@
               "type": "dependency"
             },
             {
-              "target": "graph_v0.2.14",
+              "target": "image_a989e0",
               "type": "dependency"
             },
             {
-              "target": "flow_v0.2.14",
+              "target": "image_a98ce3",
               "type": "dependency"
             },
             {
@@ -2312,45 +2641,8 @@
       },
       "id": "node_README_ko_md",
       "position": {
-        "x": 358.88395212170064,
-        "y": 245.46010662770243
-      },
-      "status": "proposed",
-      "type": "documentation",
-      "visual": {
-        "dashArray": "5,5",
-        "opacity": 0.5
-      }
-    },
-    {
-      "cluster_id": "doc_shelf",
-      "data": {
-        "cluster_id": "doc_shelf",
-        "color": "#fabd2f",
-        "description": "RELEASES_v0.2.7.md (Doc)",
-        "file": "RELEASES_v0.2.7.md",
-        "label": "RELEASES_v0.2.7.md",
-        "layer": 0,
-        "priority": 1,
-        "summary": {
-          "classes": [
-            "SYNAPSE Release Notes - v0.2.7",
-            "🛡️ Robust Architecture Hygiene",
-            "[New] Deep Filtering Logic",
-            "[New] Formal Node Rules in GEMINI.md",
-            "🚀 Release v0.2.7 (한글)",
-            "🛡️ 더욱 강력해진 아키텍처 정화 (Architecture Hygiene)",
-            "[신규] 심층 필터링 로직 도입",
-            "[신규] GEMINI.md 내 표준 노드 규칙 정의"
-          ],
-          "functions": [],
-          "references": []
-        }
-      },
-      "id": "node_RELEASES_v0_2_7_md",
-      "position": {
-        "x": -241.11604787829887,
-        "y": 395.46010662770243
+        "x": -1665.3883387939034,
+        "y": 366.14323082376995
       },
       "status": "proposed",
       "type": "documentation",
@@ -2382,8 +2674,8 @@
       },
       "id": "node_RULES_md",
       "position": {
-        "x": -41.11604787829929,
-        "y": 395.46010662770243
+        "x": -1465.3883387939038,
+        "y": 366.14323082376995
       },
       "status": "proposed",
       "type": "documentation",
@@ -2397,23 +2689,25 @@
       "data": {
         "cluster_id": "doc_shelf",
         "color": "#fabd2f",
-        "description": "architecture.md (Doc)",
-        "file": "architecture.md",
-        "label": "architecture.md",
+        "description": "core_synapse.md (Doc)",
+        "file": "core_synapse.md",
+        "label": "core_synapse.md",
         "layer": 0,
         "priority": 1,
         "summary": {
           "classes": [
-            "프로젝트 아키텍처"
+            "🧠 core_synapse.md: Visual Architecture Engine Specs",
+            "🏗️ Node & Edge Rendering",
+            "🛑 Kill Signal & Inference Monitoring"
           ],
           "functions": [],
           "references": []
         }
       },
-      "id": "node_architecture_md",
+      "id": "node_core_synapse_md",
       "position": {
-        "x": 158.88395212170056,
-        "y": 395.46010662770243
+        "x": -1265.3883387939038,
+        "y": 366.14323082376995
       },
       "status": "proposed",
       "type": "documentation",
@@ -2427,28 +2721,25 @@
       "data": {
         "cluster_id": "doc_shelf",
         "color": "#fabd2f",
-        "description": "release_notes_0.2.12.md (Doc)",
-        "file": "release_notes_0.2.12.md",
-        "label": "release_notes_0.2.12.md",
+        "description": "data_scheme.md (Doc)",
+        "file": "data_scheme.md",
+        "label": "data_scheme.md",
         "layer": 0,
         "priority": 1,
         "summary": {
           "classes": [
-            "SYNAPSE v0.2.12 Release Notes",
-            "🧠 Intelligent Context Vault (Zero-Click Context Capture)",
-            "Simply Press `Ctrl+Alt+M`",
-            "SYNAPSE v0.2.12 릴리즈 노트",
-            "🧠 지능형 컨텍스트 보관소 (팝업 없는 완벽 자동화)",
-            "`Ctrl+Alt+M` 하나면 끝입니다"
+            "📦 data_scheme.md: Data Specifications",
+            "💾 State Management",
+            "🔗 Schema Definitions"
           ],
           "functions": [],
           "references": []
         }
       },
-      "id": "node_release_notes_0_2_12_md",
+      "id": "node_data_scheme_md",
       "position": {
-        "x": 358.88395212170064,
-        "y": 395.46010662770243
+        "x": -1865.3883387939036,
+        "y": 516.14323082377
       },
       "status": "proposed",
       "type": "documentation",
@@ -2462,27 +2753,25 @@
       "data": {
         "cluster_id": "doc_shelf",
         "color": "#fabd2f",
-        "description": "release_notes_0.2.14.md (Doc)",
-        "file": "release_notes_0.2.14.md",
-        "label": "release_notes_0.2.14.md",
+        "description": "reporting.md (Doc)",
+        "file": "reporting.md",
+        "label": "reporting.md",
         "layer": 0,
         "priority": 1,
         "summary": {
           "classes": [
-            "SYNAPSE v0.2.14 Release Notes",
-            "🇬🇧 English",
-            "New Features & Enhancements",
-            "🇰🇷 한국어",
-            "주요 기능 및 개선 사항"
+            "📜 reporting.md: Documentation & Diagnosis",
+            "🧪 Diagnostic Reports",
+            "🏗️ Templates"
           ],
           "functions": [],
           "references": []
         }
       },
-      "id": "node_release_notes_0_2_14_md",
+      "id": "node_reporting_md",
       "position": {
-        "x": -241.11604787829887,
-        "y": 545.4601066277024
+        "x": -1665.3883387939034,
+        "y": 516.14323082377
       },
       "status": "proposed",
       "type": "documentation",
@@ -2516,8 +2805,8 @@
       },
       "id": "node_test_tree_logic_js",
       "position": {
-        "x": 859.0497047123947,
-        "y": 275.2921287488762
+        "x": -2480.6964655286647,
+        "y": 1487.9808956483248
       },
       "status": "proposed",
       "type": "source",
@@ -2531,601 +2820,25 @@
       "data": {
         "cluster_id": "doc_shelf",
         "color": "#fabd2f",
-        "description": "v0.1.6_release_notes.md (Doc)",
-        "file": "v0.1.6_release_notes.md",
-        "label": "v0.1.6_release_notes.md",
+        "description": "vega_agent.md (Doc)",
+        "file": "vega_agent.md",
+        "label": "vega_agent.md",
         "layer": 0,
         "priority": 1,
         "summary": {
           "classes": [
-            "release_v0.1.6 - Release Summary",
-            "📜 Legal & Documentation",
-            "🔧 Maintenance"
-          ],
-          "functions": [],
-          "references": [
-            {
-              "target": "LICENSE",
-              "type": "dependency"
-            }
-          ]
-        }
-      },
-      "id": "node_v0_1_6_release_notes_md",
-      "position": {
-        "x": -41.11604787829929,
-        "y": 545.4601066277024
-      },
-      "status": "proposed",
-      "type": "documentation",
-      "visual": {
-        "dashArray": "5,5",
-        "opacity": 0.5
-      }
-    },
-    {
-      "cluster_id": "doc_shelf",
-      "data": {
-        "cluster_id": "doc_shelf",
-        "color": "#fabd2f",
-        "description": "v0.1.7_release_notes.md (Doc)",
-        "file": "v0.1.7_release_notes.md",
-        "label": "v0.1.7_release_notes.md",
-        "layer": 0,
-        "priority": 1,
-        "summary": {
-          "classes": [
-            "Release Notes v0.1.7 - SYNAPSE Visual Architecture",
-            "[English] Core Delivery: Multi-MD Strategy & Intelligent Logging",
-            "🚀 Key Features",
-            "🔧 Stability & Deployment Improvements",
-            "[Korean] 핵심 배포 사항: 멀티 MD 전략 및 지능형 로깅",
-            "🚀 주요 기능",
-            "🔧 안정성 및 배포 개선 사항"
+            "🚀 vega_agent.md: System Control & Execution",
+            "🔧 Agent Capabilities",
+            "🛡️ Execution Safety"
           ],
           "functions": [],
           "references": []
         }
       },
-      "id": "node_v0_1_7_release_notes_md",
+      "id": "node_vega_agent_md",
       "position": {
-        "x": 158.88395212170056,
-        "y": 545.4601066277024
-      },
-      "status": "proposed",
-      "type": "documentation",
-      "visual": {
-        "dashArray": "5,5",
-        "opacity": 0.5
-      }
-    },
-    {
-      "cluster_id": "doc_shelf",
-      "data": {
-        "cluster_id": "doc_shelf",
-        "color": "#fabd2f",
-        "description": "v0.1.8_release_notes.md (Doc)",
-        "file": "v0.1.8_release_notes.md",
-        "label": "v0.1.8_release_notes.md",
-        "layer": 0,
-        "priority": 1,
-        "summary": {
-          "classes": [
-            "SYNAPSE Release Notes - v0.1.8",
-            "🚀 What's New",
-            "1. LSP 기능 강화 (Editor Integration)",
-            "2. 안성성 및 빌드 개선",
-            "🛠 설치 및 업데이트 방법"
-          ],
-          "functions": [],
-          "references": []
-        }
-      },
-      "id": "node_v0_1_8_release_notes_md",
-      "position": {
-        "x": 358.88395212170064,
-        "y": 545.4601066277024
-      },
-      "status": "proposed",
-      "type": "documentation",
-      "visual": {
-        "dashArray": "5,5",
-        "opacity": 0.5
-      }
-    },
-    {
-      "cluster_id": "doc_shelf",
-      "data": {
-        "cluster_id": "doc_shelf",
-        "color": "#fabd2f",
-        "description": "v0.2.0_release_notes.md (Doc)",
-        "file": "v0.2.0_release_notes.md",
-        "label": "v0.2.0_release_notes.md",
-        "layer": 0,
-        "priority": 1,
-        "summary": {
-          "classes": [
-            "Release Notes - v0.2.0 (Milestone: Strategic Evolution)",
-            "[English]",
-            "🏁 Strategic Execution Flow (SSOT)",
-            "🏗️ Full TypeScript & Logic Support",
-            "[한국어]",
-            "🏁 전략적 실행 흐름 (Strategic Execution Flow - SSOT)",
-            "🏗️ 완벽한 TypeScript 및 로직 지원"
-          ],
-          "functions": [],
-          "references": []
-        }
-      },
-      "id": "node_v0_2_0_release_notes_md",
-      "position": {
-        "x": -241.11604787829887,
-        "y": 695.4601066277025
-      },
-      "status": "proposed",
-      "type": "documentation",
-      "visual": {
-        "dashArray": "5,5",
-        "opacity": 0.5
-      }
-    },
-    {
-      "cluster_id": "doc_shelf",
-      "data": {
-        "cluster_id": "doc_shelf",
-        "color": "#fabd2f",
-        "description": "v0.2.10_release_notes.md (Doc)",
-        "file": "v0.2.10_release_notes.md",
-        "label": "v0.2.10_release_notes.md",
-        "layer": 0,
-        "priority": 1,
-        "summary": {
-          "classes": [
-            "Release Notes - v0.2.10 \"Engine Compatibility\"",
-            "🇺🇸 English",
-            "🐛 Bug Fixes",
-            "🇰🇷 Korean",
-            "🐛 버그 수정"
-          ],
-          "functions": [],
-          "references": []
-        }
-      },
-      "id": "node_v0_2_10_release_notes_md",
-      "position": {
-        "x": -41.11604787829929,
-        "y": 695.4601066277025
-      },
-      "status": "proposed",
-      "type": "documentation",
-      "visual": {
-        "dashArray": "5,5",
-        "opacity": 0.5
-      }
-    },
-    {
-      "cluster_id": "doc_shelf",
-      "data": {
-        "cluster_id": "doc_shelf",
-        "color": "#fabd2f",
-        "description": "v0.2.11_release_notes.md (Doc)",
-        "file": "v0.2.11_release_notes.md",
-        "label": "v0.2.11_release_notes.md",
-        "layer": 0,
-        "priority": 1,
-        "summary": {
-          "classes": [
-            "🚀 Release Notes - v0.2.11 \"Multi-Language Intelligence\"",
-            "🇺🇸 English",
-            "✨ What's New?",
-            "🧠 Unified Multi-Language Intelligence",
-            "➡️ Advanced Flow Analysis (Flow View)",
-            "🛡️ Architecture Integrity",
-            "🛠️ Technical Improvements",
-            "🇰🇷 Korean",
-            "✨ 주요 변경 사항",
-            "🧠 통합 다중 언어 지능 (Multi-Language Intelligence)",
-            "➡️ 확장된 플로우 분석 (Flow View)",
-            "🛡️ 아키텍처 무결성 보장",
-            "🛠️ 기술 개선 사항"
-          ],
-          "functions": [],
-          "references": []
-        }
-      },
-      "id": "node_v0_2_11_release_notes_md",
-      "position": {
-        "x": 158.88395212170056,
-        "y": 695.4601066277025
-      },
-      "status": "proposed",
-      "type": "documentation",
-      "visual": {
-        "dashArray": "5,5",
-        "opacity": 0.5
-      }
-    },
-    {
-      "cluster_id": "doc_shelf",
-      "data": {
-        "cluster_id": "doc_shelf",
-        "color": "#fabd2f",
-        "description": "v0.2.12_release_notes.md (Doc)",
-        "file": "v0.2.12_release_notes.md",
-        "label": "v0.2.12_release_notes.md",
-        "layer": 0,
-        "priority": 1,
-        "summary": {
-          "classes": [
-            "🚀 SYNAPSE v0.2.12 Release Notes",
-            "🆕 새로운 기능",
-            "1. 🧠 Intelligent Context Vault",
-            "2. 🗂️ Intelligent Context Vault 클러스터 (그래프 뷰)",
-            "3. 📋 Multi-MD Bootstrap 선택기 (CTRL+ALT+P)",
-            "⌨️ 새로운 단축키",
-            "🐛 개선 사항",
-            "📁 패키지 정보"
-          ],
-          "functions": [],
-          "references": []
-        }
-      },
-      "id": "node_v0_2_12_release_notes_md",
-      "position": {
-        "x": 358.88395212170064,
-        "y": 695.4601066277025
-      },
-      "status": "proposed",
-      "type": "documentation",
-      "visual": {
-        "dashArray": "5,5",
-        "opacity": 0.5
-      }
-    },
-    {
-      "cluster_id": "doc_shelf",
-      "data": {
-        "cluster_id": "doc_shelf",
-        "color": "#fabd2f",
-        "description": "v0.2.13_release_notes.md (Doc)",
-        "file": "v0.2.13_release_notes.md",
-        "label": "v0.2.13_release_notes.md",
-        "layer": 0,
-        "priority": 1,
-        "summary": {
-          "classes": [
-            "SYNAPSE v0.2.13 Release Notes",
-            "Cluster UX Updates (클러스터 UX 개선)",
-            "🌟 New Features & Improvements"
-          ],
-          "functions": [],
-          "references": []
-        }
-      },
-      "id": "node_v0_2_13_release_notes_md",
-      "position": {
-        "x": -241.11604787829887,
-        "y": 845.4601066277029
-      },
-      "status": "proposed",
-      "type": "documentation",
-      "visual": {
-        "dashArray": "5,5",
-        "opacity": 0.5
-      }
-    },
-    {
-      "cluster_id": "doc_shelf",
-      "data": {
-        "cluster_id": "doc_shelf",
-        "color": "#fabd2f",
-        "description": "v0.2.14_release_notes.md (Doc)",
-        "file": "v0.2.14_release_notes.md",
-        "label": "v0.2.14_release_notes.md",
-        "layer": 0,
-        "priority": 1,
-        "summary": {
-          "classes": [
-            "SYNAPSE v0.2.14 Release Notes (Eng/Kor)",
-            "📡 [English] Logic Audit & War Room Implementation",
-            "🛡️ Core Features",
-            "🛡️ [한국어] 작전 지휘소(War Room) 및 로직 진단 엔진 도입",
-            "🚀 주요 변경 사항"
-          ],
-          "functions": [],
-          "references": []
-        }
-      },
-      "id": "node_v0_2_14_release_notes_md",
-      "position": {
-        "x": -41.11604787829929,
-        "y": 845.4601066277029
-      },
-      "status": "proposed",
-      "type": "documentation",
-      "visual": {
-        "dashArray": "5,5",
-        "opacity": 0.5
-      }
-    },
-    {
-      "cluster_id": "doc_shelf",
-      "data": {
-        "cluster_id": "doc_shelf",
-        "color": "#fabd2f",
-        "description": "v0.2.15_release_notes.md (Doc)",
-        "file": "v0.2.15_release_notes.md",
-        "label": "v0.2.15_release_notes.md",
-        "layer": 0,
-        "priority": 1,
-        "summary": {
-          "classes": [
-            "SYNAPSE Release Notes - v0.2.15",
-            "[v0.2.15] - 2026-02-22",
-            "War Room: Legacy Logic Fix & Flow Precision",
-            "🚀 주요 변경 사항",
-            "1. Flow Scanner 리팩토링 (Flow Logic Fix)",
-            "2. Canvas Engine 업데이트 (Visual Support)",
-            "3. UX 개선",
-            "📦 설치 방법",
-            "🎖️ 작전 지휘"
-          ],
-          "functions": [],
-          "references": []
-        }
-      },
-      "id": "node_v0_2_15_release_notes_md",
-      "position": {
-        "x": 158.88395212170056,
-        "y": 845.4601066277029
-      },
-      "status": "proposed",
-      "type": "documentation",
-      "visual": {
-        "dashArray": "5,5",
-        "opacity": 0.5
-      }
-    },
-    {
-      "cluster_id": "doc_shelf",
-      "data": {
-        "cluster_id": "doc_shelf",
-        "color": "#fabd2f",
-        "description": "v0.2.1_release_notes.md (Doc)",
-        "file": "v0.2.1_release_notes.md",
-        "label": "v0.2.1_release_notes.md",
-        "layer": 0,
-        "priority": 1,
-        "summary": {
-          "classes": [
-            "🚀 SYNAPSE v0.2.1 Release Notes",
-            "🇺🇸 English",
-            "[New Features]",
-            "[Enhancements]",
-            "🇰🇷 한국어",
-            "[신규 기능]",
-            "[기능 개선]"
-          ],
-          "functions": [],
-          "references": []
-        }
-      },
-      "id": "node_v0_2_1_release_notes_md",
-      "position": {
-        "x": 358.88395212170064,
-        "y": 845.4601066277029
-      },
-      "status": "proposed",
-      "type": "documentation",
-      "visual": {
-        "dashArray": "5,5",
-        "opacity": 0.5
-      }
-    },
-    {
-      "cluster_id": "doc_shelf",
-      "data": {
-        "cluster_id": "doc_shelf",
-        "color": "#fabd2f",
-        "description": "v0.2.2_release_notes.md (Doc)",
-        "file": "v0.2.2_release_notes.md",
-        "label": "v0.2.2_release_notes.md",
-        "layer": 0,
-        "priority": 1,
-        "summary": {
-          "classes": [
-            "🚀 SYNAPSE v0.2.2 Release Notes",
-            "🇺🇸 English",
-            "[New Features]",
-            "[Bug Fixes]",
-            "🇰🇷 한국어",
-            "[신규 기능]",
-            "[버그 수정]"
-          ],
-          "functions": [],
-          "references": []
-        }
-      },
-      "id": "node_v0_2_2_release_notes_md",
-      "position": {
-        "x": -241.11604787829887,
-        "y": 995.4601066277029
-      },
-      "status": "proposed",
-      "type": "documentation",
-      "visual": {
-        "dashArray": "5,5",
-        "opacity": 0.5
-      }
-    },
-    {
-      "cluster_id": "doc_shelf",
-      "data": {
-        "cluster_id": "doc_shelf",
-        "color": "#fabd2f",
-        "description": "v0.2.3_release_notes.md (Doc)",
-        "file": "v0.2.3_release_notes.md",
-        "label": "v0.2.3_release_notes.md",
-        "layer": 0,
-        "priority": 1,
-        "summary": {
-          "classes": [
-            "🚀 SYNAPSE v0.2.3 Release Notes",
-            "🇺🇸 English",
-            "[Hotfix]",
-            "🇰🇷 한국어",
-            "[긴급 수정]"
-          ],
-          "functions": [],
-          "references": []
-        }
-      },
-      "id": "node_v0_2_3_release_notes_md",
-      "position": {
-        "x": -41.11604787829929,
-        "y": 995.4601066277029
-      },
-      "status": "proposed",
-      "type": "documentation",
-      "visual": {
-        "dashArray": "5,5",
-        "opacity": 0.5
-      }
-    },
-    {
-      "cluster_id": "doc_shelf",
-      "data": {
-        "cluster_id": "doc_shelf",
-        "color": "#fabd2f",
-        "description": "v0.2.4_release_notes.md (Doc)",
-        "file": "v0.2.4_release_notes.md",
-        "label": "v0.2.4_release_notes.md",
-        "layer": 0,
-        "priority": 1,
-        "summary": {
-          "classes": [
-            "🚀 SYNAPSE v0.2.4 Release Notes",
-            "🇺🇸 English",
-            "[Bug Fixes]",
-            "🇰🇷 한국어",
-            "[버그 수정]"
-          ],
-          "functions": [],
-          "references": []
-        }
-      },
-      "id": "node_v0_2_4_release_notes_md",
-      "position": {
-        "x": 158.88395212170056,
-        "y": 995.4601066277029
-      },
-      "status": "proposed",
-      "type": "documentation",
-      "visual": {
-        "dashArray": "5,5",
-        "opacity": 0.5
-      }
-    },
-    {
-      "cluster_id": "doc_shelf",
-      "data": {
-        "cluster_id": "doc_shelf",
-        "color": "#fabd2f",
-        "description": "v0.2.5_release_notes.md (Doc)",
-        "file": "v0.2.5_release_notes.md",
-        "label": "v0.2.5_release_notes.md",
-        "layer": 0,
-        "priority": 1,
-        "summary": {
-          "classes": [
-            "Release Notes - v0.2.5",
-            "🇰🇷 한국어 (Korean)",
-            "🧹 정리 및 하우스키핑",
-            "🐛 버그 수정",
-            "✨ 새로운 기능",
-            "🇺🇸 English",
-            "🧹 Housekeeping & Cleanup",
-            "🐛 Bug Fixes",
-            "✨ New Features"
-          ],
-          "functions": [],
-          "references": []
-        }
-      },
-      "id": "node_v0_2_5_release_notes_md",
-      "position": {
-        "x": 358.88395212170064,
-        "y": 995.4601066277029
-      },
-      "status": "proposed",
-      "type": "documentation",
-      "visual": {
-        "dashArray": "5,5",
-        "opacity": 0.5
-      }
-    },
-    {
-      "cluster_id": "doc_shelf",
-      "data": {
-        "cluster_id": "doc_shelf",
-        "color": "#fabd2f",
-        "description": "v0.2.6_release_notes.md (Doc)",
-        "file": "v0.2.6_release_notes.md",
-        "label": "v0.2.6_release_notes.md",
-        "layer": 0,
-        "priority": 1,
-        "summary": {
-          "classes": [
-            "🚀 SYNAPSE v0.2.6 Release Notes",
-            "🌟 New Features (기능 추가)",
-            "🧠 Context-Aware Logging (맥락 인식형 로깅)",
-            "📄 Documentation (문서화)",
-            "🐛 Bug Fixes & Improvements"
-          ],
-          "functions": [],
-          "references": []
-        }
-      },
-      "id": "node_v0_2_6_release_notes_md",
-      "position": {
-        "x": -241.11604787829887,
-        "y": 1145.460106627703
-      },
-      "status": "proposed",
-      "type": "documentation",
-      "visual": {
-        "dashArray": "5,5",
-        "opacity": 0.5
-      }
-    },
-    {
-      "cluster_id": "doc_shelf",
-      "data": {
-        "cluster_id": "doc_shelf",
-        "color": "#fabd2f",
-        "description": "v0.2.9_release_notes.md (Doc)",
-        "file": "v0.2.9_release_notes.md",
-        "label": "v0.2.9_release_notes.md",
-        "layer": 0,
-        "priority": 1,
-        "summary": {
-          "classes": [
-            "Release Notes - v0.2.9 \"Ghostbusters\"",
-            "🇺🇸 English",
-            "👻 Ghost Node Fixes",
-            "🧹 Auto-Cleanup",
-            "🇰🇷 Korean",
-            "👻 유령 노드(Ghost Node) 수정",
-            "🧹 자동 정리(Auto-Cleanup)"
-          ],
-          "functions": [],
-          "references": []
-        }
-      },
-      "id": "node_v0_2_9_release_notes_md",
-      "position": {
-        "x": -41.11604787829929,
-        "y": 1145.460106627703
+        "x": -1465.3883387939038,
+        "y": 516.14323082377
       },
       "status": "proposed",
       "type": "documentation",
@@ -3165,8 +2878,8 @@
       },
       "id": "node_verify_rules_js",
       "position": {
-        "x": 1209.049704712394,
-        "y": 275.2921287488762
+        "x": -2826.325432694037,
+        "y": 1468.133802969089
       },
       "status": "proposed",
       "type": "source",
@@ -3205,8 +2918,8 @@
       },
       "id": "node_verify_rules_only_js",
       "position": {
-        "x": 1559.0497047123938,
-        "y": 275.2921287488762
+        "x": -2126.325432694037,
+        "y": 1468.133802969089
       },
       "status": "proposed",
       "type": "source",
@@ -3238,39 +2951,11 @@
       },
       "id": "node_webpack_config_js",
       "position": {
-        "x": 1909.0497047123938,
-        "y": 275.2921287488762
+        "x": -3176.325432694037,
+        "y": 1468.133802969089
       },
       "status": "proposed",
       "type": "source",
-      "visual": {
-        "dashArray": "5,5",
-        "opacity": 0.5
-      }
-    },
-    {
-      "cluster_id": "cluster_external",
-      "data": {
-        "cluster_id": "cluster_external",
-        "color": "#83a598",
-        "description": "External Library: LICENSE",
-        "file": "LICENSE",
-        "label": "[[ LICENSE ]]",
-        "layer": 1,
-        "priority": 50,
-        "summary": {
-          "classes": [],
-          "functions": [],
-          "references": []
-        }
-      },
-      "id": "node_LICENSE",
-      "position": {
-        "x": -455.2282302216577,
-        "y": 1331.5398167774783
-      },
-      "status": "proposed",
-      "type": "external",
       "visual": {
         "dashArray": "5,5",
         "opacity": 0.5
@@ -3294,8 +2979,8 @@
       },
       "id": "node_synapse_topology_view",
       "position": {
-        "x": -105.22823022165862,
-        "y": 1331.5398167774783
+        "x": 2038.1356407243136,
+        "y": 478.6133959521624
       },
       "status": "proposed",
       "type": "external",
@@ -3322,8 +3007,8 @@
       },
       "id": "node_README",
       "position": {
-        "x": 62.35377285162102,
-        "y": 1331.592542792862
+        "x": 2388.135640724315,
+        "y": 154.119963048511
       },
       "status": "proposed",
       "type": "external",
@@ -3337,9 +3022,9 @@
       "data": {
         "cluster_id": "cluster_external",
         "color": "#83a598",
-        "description": "External Library: graph_v0.2.14",
-        "file": "graph_v0.2.14",
-        "label": "[[ graph_v0.2.14 ]]",
+        "description": "External Library: image_a989e0",
+        "file": "image_a989e0",
+        "label": "[[ image_a989e0 ]]",
         "layer": 1,
         "priority": 50,
         "summary": {
@@ -3348,10 +3033,10 @@
           "references": []
         }
       },
-      "id": "node_graph_v0_2_14",
+      "id": "node_image_a989e0",
       "position": {
-        "x": -601.5748718238856,
-        "y": 1333.662667568832
+        "x": 2738.135640724317,
+        "y": 154.119963048511
       },
       "status": "proposed",
       "type": "external",
@@ -3365,9 +3050,9 @@
       "data": {
         "cluster_id": "cluster_external",
         "color": "#83a598",
-        "description": "External Library: flow_v0.2.14",
-        "file": "flow_v0.2.14",
-        "label": "[[ flow_v0.2.14 ]]",
+        "description": "External Library: image_a98ce3",
+        "file": "image_a98ce3",
+        "label": "[[ image_a98ce3 ]]",
         "layer": 1,
         "priority": 50,
         "summary": {
@@ -3376,10 +3061,10 @@
           "references": []
         }
       },
-      "id": "node_flow_v0_2_14",
+      "id": "node_image_a98ce3",
       "position": {
-        "x": -283.52378653986517,
-        "y": 1329.5402269603178
+        "x": 2038.1356407243136,
+        "y": 478.6133959521624
       },
       "status": "proposed",
       "type": "external",
@@ -3406,8 +3091,36 @@
       },
       "id": "node_tree_v0_2_14",
       "position": {
-        "x": 212.82285506236212,
-        "y": 1325.4088818800892
+        "x": 2388.135640724315,
+        "y": 354.11996304851095
+      },
+      "status": "proposed",
+      "type": "external",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "cluster_external",
+      "data": {
+        "cluster_id": "cluster_external",
+        "color": "#83a598",
+        "description": "External Library: LICENSE",
+        "file": "LICENSE",
+        "label": "[[ LICENSE ]]",
+        "layer": 1,
+        "priority": 50,
+        "summary": {
+          "classes": [],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_LICENSE",
+      "position": {
+        "x": 2738.135640724317,
+        "y": 354.11996304851095
       },
       "status": "proposed",
       "type": "external",
@@ -3434,8 +3147,8 @@
       },
       "id": "node_package",
       "position": {
-        "x": -763.3806657080379,
-        "y": 1339.9079589686971
+        "x": 2038.1356407243136,
+        "y": 554.1199630485106
       },
       "status": "proposed",
       "type": "external",
@@ -3462,8 +3175,8 @@
       },
       "id": "node_vscode_languageclient",
       "position": {
-        "x": 364.72999914887527,
-        "y": 1326.5100269910267
+        "x": 2388.135640724315,
+        "y": 554.1199630485106
       },
       "status": "proposed",
       "type": "external",
@@ -3490,8 +3203,8 @@
       },
       "id": "node_child_process",
       "position": {
-        "x": 515.8222397881009,
-        "y": 1577.908369151538
+        "x": 2738.135640724317,
+        "y": 554.1199630485106
       },
       "status": "proposed",
       "type": "external",
@@ -3518,8 +3231,8 @@
       },
       "id": "node_vscode_languageserver_textdocument",
       "position": {
-        "x": 513.545312779004,
-        "y": 1424.479621930322
+        "x": 2038.1356407243136,
+        "y": 1006.9577507572983
       },
       "status": "proposed",
       "type": "external",
@@ -3546,8 +3259,8 @@
       },
       "id": "node_express",
       "position": {
-        "x": 516.2296915117449,
-        "y": 1504.8672137963313
+        "x": 2388.135640724315,
+        "y": 754.1199630485102
       },
       "status": "proposed",
       "type": "external",
@@ -3574,11 +3287,410 @@
       },
       "id": "node_cors",
       "position": {
-        "x": 513.7610194838445,
-        "y": 1328.5007123364742
+        "x": 2738.135640724317,
+        "y": 754.1199630485102
       },
       "status": "proposed",
       "type": "external",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "color": "#fabd2f",
+        "description": "GEMINI.md (Doc)",
+        "file": "mile_stone/GEMINI.md",
+        "label": "GEMINI.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "🚀 Milestone [버전명] - [기능 대표 명칭]",
+            "📅 작업 정보",
+            "🧠 상세 설계 및 로직",
+            "🛠️ 기술적 변경 사항",
+            "⚠️ 예외 처리 및 주의 사항",
+            "📝 Post-Work Log (작업 후 기록)",
+            "🏁 v0.2.0: Strategic Execution Flow (진실의 정의)",
+            "1. 왜 순서도가 최종본이어야 하는가? (Rationale)",
+            "2. v0.2.0 주요 변경점",
+            "4. Bridge (코드 연동)",
+            "🛡️ Node Rules (노드 생성 규칙)",
+            "🚫 Exclusion Rules (제외 및 필터 규칙)",
+            "🧹 [데이터 위생 원칙: 스파게티 방지 3대 철칙]",
+            "원칙 1: 원천 소스와 상태값의 엄격한 분리",
+            "원칙 2: 자동 정규화(Auto-Normalization) 엔진",
+            "원칙 3: '데이터의 혈통' 중심의 정적 분석 활용",
+            "🧠 SYNAPSE: Visual Architecture Engine",
+            "🏗️ 핵심 워크플로우 (The Command Chain)",
+            "🛠️ 기술 스택",
+            "🚀 Saturday Sprint: Phase 1",
+            "1. 웹뷰 캔버스 초기화",
+            "2. 드롭 앤 분석 로직",
+            "3. 승인 UI (Pending State)",
+            "4. 스냅샷 엔진",
+            "🔄 [SYNAPSE: 동적 순서도(Flowchart) 통합 설계]",
+            "1. 모드 전환 (View Toggle)",
+            "Topology View (기본)",
+            "Flow View (호출)",
+            "2. 순서도 자동 생성 로직",
+            "Step 1: Trace Entry",
+            "Step 2: Logic Branching",
+            "Step 3: Asynchronous Flow",
+            "3. 사용자 시나리오: '눈으로 하는 디버깅'",
+            "시나리오 흐름",
+            "예시",
+            "4. Senior Engineer's Note: 기술적 난제와 해결책",
+            "난제: 정교한 파싱 필요",
+            "해결책 1: 추상 구문 트리(AST) 활용",
+            "해결책 2: Mermaid.js 스타일 적용",
+            "5. UI 통합 설계",
+            "모드 전환 버튼",
+            "우클릭 컨텍스트 메뉴",
+            "Flow View 렌더링",
+            "6. 참고 화면 (Reference Screenshot)",
+            "🌳 [SYNAPSE: 계층 구조(File Tree) 통합 설계]",
+            "1. 듀얼 레이아웃 모드 (Context Switching)",
+            "Graph Mode (기본)",
+            "Tree Mode (호출)",
+            "전환 방식",
+            "2. '폴더' 노드의 추상화",
+            "Container Node",
+            "Group Collapse",
+            "상태 전이 (State Propagation)",
+            "3. 시각적 연동 및 탐색",
+            "Breadcrumb Link",
+            "Shadow Structure",
+            "4. Senior Engineer's Note: 실무 구현 팁",
+            "OS 종속성 배제",
+            "Lazy Loading",
+            "🎯 [연휴 프로젝트의 4대 축 완성]",
+            "1. Topology (노드/엣지)",
+            "2. Flowchart (순서도)",
+            "3. File Tree (계층 구조)",
+            "4. Bridge (코드 연동)",
+            "📁 [SYNAPSE: 소스 코드 명세 (Self-Visualization)]",
+            "🛠️ Core Engine",
+            "🌐 View & Interface",
+            "🔗 Core Dependencies",
+            "SYNAPSE - Visual Architecture Engine (v0.2.15)",
+            "[v0.2.15] - War Room: Legacy Logic Fix & Flow Precision",
+            "1. Logic Analyzer (로직 분석기)",
+            "2. War Room Visual Experience",
+            "3. Interactive Health Report (`리포트.md`)",
+            "4. 시각적 실패 복구 작전: '심연'을 '질서'로 바꾸는 법",
+            "🎖️ SYNAPSE War Room Operation Log: v0.2.11 & Context Vault",
+            "2. 📑 다중 MD 부트스트랩 (Multi-MD Bootstrap Engine)",
+            "3. 🧠 [UPGRADED] 인텔리전트 맥락 보관소 (Intelligent Context Vault)",
+            "3.1. 맥락 파일 데이터 구조 (File Content Blueprint)",
+            "3.2. 자동 기록 프로세스 (Auto-Documentation Flow)",
+            "3.3. 활용 시나리오",
+            "4. ⚔️ 최종 비전: 시냅스 '워룸(War Room)' 인터페이스",
+            "5. 🛠️ 사령관의 즉시 기동 지침 (Next Action)",
+            "🛸 SYNAPSE: War Room & Intelligence Context Vault (v0.2.20)",
+            "1. 개요 (Philosophy)",
+            "2. 핵심 사양 (Core Specs) [cite: 2026-02-14]",
+            "A. 인텔리전트 맥락 보관소 (Intelligent Context Vault)",
+            "B. 워룸 로직 제어 시스템 (War Room Logic Control)",
+            "C. 아키텍처-코드 동기화 (Architecture Sync)",
+            "3. 사용자 경험 (UX)",
+            "4. [v0.2.20 작전 설계: 논리 리포트(Logic Report) 시스템]",
+            "4.1. 리포트.md 구성 사양 (Logic Audit Structure)",
+            "4.2. 워룸 연동 시나리오 (Report Generation)",
+            "5. [v0.2.20 작전 설계: 리포트-그래프 실시간 동기화 (Visual Audit)]",
+            "5.1. 그래프 시각적 피드백 (Visual Indicator)",
+            "5.2. 상호작용 (Interactivity)",
+            "6. [v0.2.15 개량 설계: 계층적 노드 생성 및 동적 쉐이프(Dynamic Shape) 시스템]",
+            "6.1. 2단계 계층형 선택 인터페이스 (Hierarchical Selector)",
+            "6.2. 로직 유형별 동적 쉐이프(Shape) 정의 [cite: 2026-02-11]",
+            "6.3. 리포트 및 시뮬레이션 연동"
+          ],
+          "functions": [],
+          "references": [
+            {
+              "target": "synapse_topology_view",
+              "type": "dependency"
+            }
+          ]
+        }
+      },
+      "id": "node_mile_stone_GEMINI_md",
+      "position": {
+        "x": -1865.3883387939036,
+        "y": 366.14323082376995
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "color": "#fabd2f",
+        "description": "v0.2.14fix.md (Doc)",
+        "file": "mile_stone/v0.2.14fix.md",
+        "label": "v0.2.14fix.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_mile_stone_v0_2_14fix_md",
+      "position": {
+        "x": -1665.3883387939034,
+        "y": 366.14323082376995
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "color": "#fabd2f",
+        "description": "v0.2.15.md (Doc)",
+        "file": "mile_stone/v0.2.15.md",
+        "label": "v0.2.15.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "🎯 SYNAPSE v0.2.15 핵심 구현 목표 (Flowchart Enhancements)",
+            "1. Semantic Zooming (시맨틱 줌 - 시각적 깊이 제어)",
+            "2. Milestone Anchor (마일스톤 앵커 - 핵심 흐름 수직 정렬)",
+            "3. Path Highlighting (경로 하이라이팅 - 활성 흐름 추적)"
+          ],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_mile_stone_v0_2_15_md",
+      "position": {
+        "x": -1465.3883387939038,
+        "y": 366.14323082376995
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "color": "#fabd2f",
+        "description": "v0.2.17.md (Doc)",
+        "file": "mile_stone/v0.2.17.md",
+        "label": "v0.2.17.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "Antigravity & SYNAPSE: 사고 제어 및 캔버스 물리 규칙 (Rules.md)",
+            "1. DTR(Deep-Thinking Ratio)의 정의",
+            "2. 사고 밀도(Logical Density: $\\rho$)의 정의",
+            "3. DTR 제어 및 운용 규칙 (The Valve Rules)",
+            "3.1 상황별 DTR 밸브 운용",
+            "3.2 SYNAPSE 캔버스 렌더링 규칙",
+            "4. 사용자 강제 제어 (Manual Override)",
+            "Antigravity & SYNAPSE: DTR 사고 제어 원칙 (Rules.md)",
+            "1. DTR(Deep-Thinking Ratio) 운용 철학",
+            "2. 상황별 DTR 가이드라인",
+            "3. SYNAPSE 시각화 피드백",
+            "[SYSTEM_LOGIC] DTR 기반 추론 및 SYNAPSE 연동 엔진 (GEMINI.md)",
+            "1. DTR 추론 프로세스 (Backend Logic)",
+            "1.1 Pre-Processing: 복잡도 스캔",
+            "1.2 Processing: 가변 추론 (Dynamic Inference)",
+            "2. SYNAPSE 데이터 인터페이스 (Visual Integration)",
+            "2.1 노드 데이터 스키마",
+            "[SYSTEM_LOGIC] DTR Valve Control Engine (GEMINI.md)",
+            "1. 입력 컨텍스트 분석 로직 (Pre-Inference)",
+            "2. SYNAPSE 인터랙션 메커니즘",
+            "3. Think@n 자동화 스케줄링",
+            "4. Antigravity LSP 확장",
+            "5. UI/UX 구현 참조 (External Reference)",
+            "5.1 데이터-UI 매핑 규칙",
+            "5.2 구현 단계별 체크리스트"
+          ],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_mile_stone_v0_2_17_md",
+      "position": {
+        "x": -1265.3883387939038,
+        "y": 366.14323082376995
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "color": "#fabd2f",
+        "description": "v0.2.18.md (Doc)",
+        "file": "mile_stone/v0.2.18.md",
+        "label": "v0.2.18.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_mile_stone_v0_2_18_md",
+      "position": {
+        "x": -1865.3883387939036,
+        "y": 516.14323082377
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "color": "#fabd2f",
+        "description": "v0.2.19.md (Doc)",
+        "file": "mile_stone/v0.2.19.md",
+        "label": "v0.2.19.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_mile_stone_v0_2_19_md",
+      "position": {
+        "x": -1665.3883387939034,
+        "y": 516.14323082377
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "color": "#fabd2f",
+        "description": "v0.2.20.md (Doc)",
+        "file": "mile_stone/v0.2.20.md",
+        "label": "v0.2.20.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_mile_stone_v0_2_20_md",
+      "position": {
+        "x": -1465.3883387939038,
+        "y": 516.14323082377
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "color": "#fabd2f",
+        "description": "v0.2.21.md (Doc)",
+        "file": "mile_stone/v0.2.21.md",
+        "label": "v0.2.21.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "[HUB: HUB_001]",
+            "[CLUSTER: CL_FILE_WATCHER]",
+            "[NODE: N001]"
+          ],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_mile_stone_v0_2_21_md",
+      "position": {
+        "x": -1265.3883387939038,
+        "y": 516.14323082377
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "color": "#fabd2f",
+        "description": "제미나이.md파일 개편안.md (Doc)",
+        "file": "mile_stone/제미나이.md파일 개편안.md",
+        "label": "제미나이.md파일 개편안.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "🚀 Milestone [버전명] - [기능 대표 명칭]",
+            "📅 작업 정보",
+            "🧠 상세 설계 및 로직",
+            "🛠️ 기술적 변경 사항",
+            "⚠️ 예외 처리 및 주의 사항",
+            "📝 Post-Work Log (작업 후 기록)"
+          ],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_mile_stone______md_______md",
+      "position": {
+        "x": -1865.3883387939036,
+        "y": 666.1432308237694
+      },
+      "status": "proposed",
+      "type": "documentation",
       "visual": {
         "dashArray": "5,5",
         "opacity": 0.5
@@ -3615,8 +3727,8 @@
       },
       "id": "node_prompts_2026_02_17_keybinding_check_md",
       "position": {
-        "x": -241.11604787829887,
-        "y": 245.46010662770243
+        "x": -1865.3883387939036,
+        "y": 366.14323082376995
       },
       "status": "proposed",
       "type": "documentation",
@@ -3660,8 +3772,8 @@
       },
       "id": "node_prompts_2026_02_17_origin_edge_verification_md",
       "position": {
-        "x": -41.11604787829929,
-        "y": 245.46010662770243
+        "x": -1665.3883387939034,
+        "y": 366.14323082376995
       },
       "status": "proposed",
       "type": "documentation",
@@ -3690,8 +3802,8 @@
       },
       "id": "node_prompts_2026_02_17_test_md",
       "position": {
-        "x": 158.88395212170056,
-        "y": 245.46010662770243
+        "x": -1465.3883387939038,
+        "y": 366.14323082376995
       },
       "status": "proposed",
       "type": "documentation",
@@ -3724,8 +3836,8 @@
       },
       "id": "node_prompts_2026_02_18_auto_push_after_drag_md",
       "position": {
-        "x": 358.88395212170064,
-        "y": 245.46010662770243
+        "x": -1265.3883387939038,
+        "y": 366.14323082376995
       },
       "status": "proposed",
       "type": "documentation",
@@ -3758,8 +3870,8 @@
       },
       "id": "node_prompts_2026_02_18_deep_reset_triggered_md",
       "position": {
-        "x": -241.11604787829887,
-        "y": 395.46010662770243
+        "x": -1865.3883387939036,
+        "y": 516.14323082377
       },
       "status": "proposed",
       "type": "documentation",
@@ -3792,8 +3904,8 @@
       },
       "id": "node_prompts_2026_02_18_group_created_doc_md",
       "position": {
-        "x": -41.11604787829929,
-        "y": 395.46010662770243
+        "x": -1665.3883387939034,
+        "y": 516.14323082377
       },
       "status": "proposed",
       "type": "documentation",
@@ -3826,8 +3938,8 @@
       },
       "id": "node_prompts_2026_02_18_manual_snapshot_md",
       "position": {
-        "x": 158.88395212170056,
-        "y": 395.46010662770243
+        "x": -1465.3883387939038,
+        "y": 516.14323082377
       },
       "status": "proposed",
       "type": "documentation",
@@ -3860,8 +3972,8 @@
       },
       "id": "node_prompts_2026_02_18_selection_ungrouped_md",
       "position": {
-        "x": 358.88395212170064,
-        "y": 395.46010662770243
+        "x": -1265.3883387939038,
+        "y": 516.14323082377
       },
       "status": "proposed",
       "type": "documentation",
@@ -3894,8 +4006,8 @@
       },
       "id": "node_prompts_2026_02_18_snapshot__121710_md",
       "position": {
-        "x": -241.11604787829887,
-        "y": 545.4601066277024
+        "x": -1865.3883387939036,
+        "y": 666.1432308237694
       },
       "status": "proposed",
       "type": "documentation",
@@ -3928,8 +4040,8 @@
       },
       "id": "node_prompts_2026_02_20_auto_push_after_drag_md",
       "position": {
-        "x": -41.11604787829929,
-        "y": 545.4601066277024
+        "x": -1665.3883387939034,
+        "y": 666.1432308237694
       },
       "status": "proposed",
       "type": "documentation",
@@ -3962,8 +4074,1031 @@
       },
       "id": "node_prompts_2026_02_22_auto_push_after_drag_md",
       "position": {
-        "x": 158.88395212170056,
-        "y": 545.4601066277024
+        "x": -1465.3883387939038,
+        "y": 666.1432308237694
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "color": "#fabd2f",
+        "description": "DEBUG_GUIDE.md (Doc)",
+        "file": "release_note/DEBUG_GUIDE.md",
+        "label": "DEBUG_GUIDE.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "SYNAPSE 디버깅 가이드",
+            "현재 상황",
+            "체크리스트",
+            "1. Extension Development Host에서 프로젝트 폴더가 열려있는가?",
+            "2. Webview Developer Tools 콘솔 확인",
+            "3. Extension 콘솔 확인",
+            "4. 파일 경로 확인",
+            "해결 방법",
+            "방법 1: 프로젝트 폴더 열기",
+            "방법 2: Extension 재시작",
+            "방법 3: 수동으로 workspace 확인"
+          ],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_release_note_DEBUG_GUIDE_md",
+      "position": {
+        "x": -1865.3883387939036,
+        "y": 366.14323082376995
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "color": "#fabd2f",
+        "description": "EXTENSION_README.md (Doc)",
+        "file": "release_note/EXTENSION_README.md",
+        "label": "EXTENSION_README.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "SYNAPSE VS Code Extension",
+            "Commands",
+            "Development",
+            "Testing",
+            "License"
+          ],
+          "functions": [],
+          "references": [
+            {
+              "target": "LICENSE",
+              "type": "dependency"
+            }
+          ]
+        }
+      },
+      "id": "node_release_note_EXTENSION_README_md",
+      "position": {
+        "x": -1665.3883387939034,
+        "y": 366.14323082376995
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "color": "#fabd2f",
+        "description": "GEMINI (사본).md (Doc)",
+        "file": "release_note/GEMINI (사본).md",
+        "label": "GEMINI (사본).md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "🏁 v0.2.0: Strategic Execution Flow (진실의 정의)",
+            "1. 왜 순서도가 최종본이어야 하는가? (Rationale)",
+            "2. v0.2.0 주요 변경점",
+            "4. Bridge (코드 연동)",
+            "🛡️ Node Rules (노드 생성 규칙)",
+            "🚫 Exclusion Rules (제외 및 필터 규칙)",
+            "🧹 [데이터 위생 원칙: 스파게티 방지 3대 철칙]",
+            "원칙 1: 원천 소스와 상태값의 엄격한 분리",
+            "원칙 2: 자동 정규화(Auto-Normalization) 엔진",
+            "원칙 3: '데이터의 혈통' 중심의 정적 분석 활용",
+            "🧠 SYNAPSE: Visual Architecture Engine",
+            "🏗️ 핵심 워크플로우 (The Command Chain)",
+            "🛠️ 기술 스택",
+            "🚀 Saturday Sprint: Phase 1",
+            "1. 웹뷰 캔버스 초기화",
+            "2. 드롭 앤 분석 로직",
+            "3. 승인 UI (Pending State)",
+            "4. 스냅샷 엔진",
+            "🔄 [SYNAPSE: 동적 순서도(Flowchart) 통합 설계]",
+            "1. 모드 전환 (View Toggle)",
+            "Topology View (기본)",
+            "Flow View (호출)",
+            "2. 순서도 자동 생성 로직",
+            "Step 1: Trace Entry",
+            "Step 2: Logic Branching",
+            "Step 3: Asynchronous Flow",
+            "3. 사용자 시나리오: '눈으로 하는 디버깅'",
+            "시나리오 흐름",
+            "예시",
+            "4. Senior Engineer's Note: 기술적 난제와 해결책",
+            "난제: 정교한 파싱 필요",
+            "해결책 1: 추상 구문 트리(AST) 활용",
+            "해결책 2: Mermaid.js 스타일 적용",
+            "5. UI 통합 설계",
+            "모드 전환 버튼",
+            "우클릭 컨텍스트 메뉴",
+            "Flow View 렌더링",
+            "6. 참고 화면 (Reference Screenshot)",
+            "🌳 [SYNAPSE: 계층 구조(File Tree) 통합 설계]",
+            "1. 듀얼 레이아웃 모드 (Context Switching)",
+            "Graph Mode (기본)",
+            "Tree Mode (호출)",
+            "전환 방식",
+            "2. '폴더' 노드의 추상화",
+            "Container Node",
+            "Group Collapse",
+            "상태 전이 (State Propagation)",
+            "3. 시각적 연동 및 탐색",
+            "Breadcrumb Link",
+            "Shadow Structure",
+            "4. Senior Engineer's Note: 실무 구현 팁",
+            "OS 종속성 배제",
+            "Lazy Loading",
+            "🎯 [연휴 프로젝트의 4대 축 완성]",
+            "1. Topology (노드/엣지)",
+            "2. Flowchart (순서도)",
+            "3. File Tree (계층 구조)",
+            "4. Bridge (코드 연동)",
+            "📁 [SYNAPSE: 소스 코드 명세 (Self-Visualization)]",
+            "🛠️ Core Engine",
+            "🌐 View & Interface",
+            "🔗 Core Dependencies",
+            "SYNAPSE - Visual Architecture Engine (v0.2.15)",
+            "[v0.2.15] - War Room: Legacy Logic Fix & Flow Precision",
+            "1. Logic Analyzer (로직 분석기)",
+            "2. War Room Visual Experience",
+            "3. Interactive Health Report (`리포트.md`)",
+            "4. 시각적 실패 복구 작전: '심연'을 '질서'로 바꾸는 법",
+            "🎖️ SYNAPSE War Room Operation Log: v0.2.11 & Context Vault",
+            "2. 📑 다중 MD 부트스트랩 (Multi-MD Bootstrap Engine)",
+            "3. 🧠 [UPGRADED] 인텔리전트 맥락 보관소 (Intelligent Context Vault)",
+            "3.1. 맥락 파일 데이터 구조 (File Content Blueprint)",
+            "3.2. 자동 기록 프로세스 (Auto-Documentation Flow)",
+            "3.3. 활용 시나리오",
+            "4. ⚔️ 최종 비전: 시냅스 '워룸(War Room)' 인터페이스",
+            "5. 🛠️ 사령관의 즉시 기동 지침 (Next Action)",
+            "🛸 SYNAPSE: War Room & Intelligence Context Vault (v0.2.20)",
+            "1. 개요 (Philosophy)",
+            "2. 핵심 사양 (Core Specs) [cite: 2026-02-14]",
+            "A. 인텔리전트 맥락 보관소 (Intelligent Context Vault)",
+            "B. 워룸 로직 제어 시스템 (War Room Logic Control)",
+            "C. 아키텍처-코드 동기화 (Architecture Sync)",
+            "3. 사용자 경험 (UX)",
+            "4. [v0.2.20 작전 설계: 논리 리포트(Logic Report) 시스템]",
+            "4.1. 리포트.md 구성 사양 (Logic Audit Structure)",
+            "4.2. 워룸 연동 시나리오 (Report Generation)",
+            "5. [v0.2.20 작전 설계: 리포트-그래프 실시간 동기화 (Visual Audit)]",
+            "5.1. 그래프 시각적 피드백 (Visual Indicator)",
+            "5.2. 상호작용 (Interactivity)",
+            "6. [v0.2.15 개량 설계: 계층적 노드 생성 및 동적 쉐이프(Dynamic Shape) 시스템]",
+            "6.1. 2단계 계층형 선택 인터페이스 (Hierarchical Selector)",
+            "6.2. 로직 유형별 동적 쉐이프(Shape) 정의 [cite: 2026-02-11]",
+            "6.3. 리포트 및 시뮬레이션 연동"
+          ],
+          "functions": [],
+          "references": [
+            {
+              "target": "synapse_topology_view",
+              "type": "dependency"
+            }
+          ]
+        }
+      },
+      "id": "node_release_note_GEMINI______md",
+      "position": {
+        "x": -1465.3883387939038,
+        "y": 366.14323082376995
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "color": "#fabd2f",
+        "description": "RELEASES_v0.2.7.md (Doc)",
+        "file": "release_note/RELEASES_v0.2.7.md",
+        "label": "RELEASES_v0.2.7.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "SYNAPSE Release Notes - v0.2.7",
+            "🛡️ Robust Architecture Hygiene",
+            "[New] Deep Filtering Logic",
+            "[New] Formal Node Rules in GEMINI.md",
+            "🚀 Release v0.2.7 (한글)",
+            "🛡️ 더욱 강력해진 아키텍처 정화 (Architecture Hygiene)",
+            "[신규] 심층 필터링 로직 도입",
+            "[신규] GEMINI.md 내 표준 노드 규칙 정의"
+          ],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_release_note_RELEASES_v0_2_7_md",
+      "position": {
+        "x": -1265.3883387939038,
+        "y": 366.14323082376995
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "color": "#fabd2f",
+        "description": "architecture.md (Doc)",
+        "file": "release_note/architecture.md",
+        "label": "architecture.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "프로젝트 아키텍처"
+          ],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_release_note_architecture_md",
+      "position": {
+        "x": -1865.3883387939036,
+        "y": 516.14323082377
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "color": "#fabd2f",
+        "description": "release_notes_0.2.12.md (Doc)",
+        "file": "release_note/release_notes_0.2.12.md",
+        "label": "release_notes_0.2.12.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "SYNAPSE v0.2.12 Release Notes",
+            "🧠 Intelligent Context Vault (Zero-Click Context Capture)",
+            "Simply Press `Ctrl+Alt+M`",
+            "SYNAPSE v0.2.12 릴리즈 노트",
+            "🧠 지능형 컨텍스트 보관소 (팝업 없는 완벽 자동화)",
+            "`Ctrl+Alt+M` 하나면 끝입니다"
+          ],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_release_note_release_notes_0_2_12_md",
+      "position": {
+        "x": -1665.3883387939034,
+        "y": 516.14323082377
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "color": "#fabd2f",
+        "description": "release_notes_0.2.14.md (Doc)",
+        "file": "release_note/release_notes_0.2.14.md",
+        "label": "release_notes_0.2.14.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "SYNAPSE v0.2.14 Release Notes",
+            "🇬🇧 English",
+            "New Features & Enhancements",
+            "🇰🇷 한국어",
+            "주요 기능 및 개선 사항"
+          ],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_release_note_release_notes_0_2_14_md",
+      "position": {
+        "x": -1465.3883387939038,
+        "y": 516.14323082377
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "color": "#fabd2f",
+        "description": "v0.1.6_release_notes.md (Doc)",
+        "file": "release_note/v0.1.6_release_notes.md",
+        "label": "v0.1.6_release_notes.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "release_v0.1.6 - Release Summary",
+            "📜 Legal & Documentation",
+            "🔧 Maintenance"
+          ],
+          "functions": [],
+          "references": [
+            {
+              "target": "LICENSE",
+              "type": "dependency"
+            }
+          ]
+        }
+      },
+      "id": "node_release_note_v0_1_6_release_notes_md",
+      "position": {
+        "x": -1265.3883387939038,
+        "y": 516.14323082377
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "color": "#fabd2f",
+        "description": "v0.1.7_release_notes.md (Doc)",
+        "file": "release_note/v0.1.7_release_notes.md",
+        "label": "v0.1.7_release_notes.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "Release Notes v0.1.7 - SYNAPSE Visual Architecture",
+            "[English] Core Delivery: Multi-MD Strategy & Intelligent Logging",
+            "🚀 Key Features",
+            "🔧 Stability & Deployment Improvements",
+            "[Korean] 핵심 배포 사항: 멀티 MD 전략 및 지능형 로깅",
+            "🚀 주요 기능",
+            "🔧 안정성 및 배포 개선 사항"
+          ],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_release_note_v0_1_7_release_notes_md",
+      "position": {
+        "x": -1865.3883387939036,
+        "y": 666.1432308237694
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "color": "#fabd2f",
+        "description": "v0.1.8_release_notes.md (Doc)",
+        "file": "release_note/v0.1.8_release_notes.md",
+        "label": "v0.1.8_release_notes.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "SYNAPSE Release Notes - v0.1.8",
+            "🚀 What's New",
+            "1. LSP 기능 강화 (Editor Integration)",
+            "2. 안성성 및 빌드 개선",
+            "🛠 설치 및 업데이트 방법"
+          ],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_release_note_v0_1_8_release_notes_md",
+      "position": {
+        "x": -1665.3883387939034,
+        "y": 666.1432308237694
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "color": "#fabd2f",
+        "description": "v0.2.0_release_notes.md (Doc)",
+        "file": "release_note/v0.2.0_release_notes.md",
+        "label": "v0.2.0_release_notes.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "Release Notes - v0.2.0 (Milestone: Strategic Evolution)",
+            "[English]",
+            "🏁 Strategic Execution Flow (SSOT)",
+            "🏗️ Full TypeScript & Logic Support",
+            "[한국어]",
+            "🏁 전략적 실행 흐름 (Strategic Execution Flow - SSOT)",
+            "🏗️ 완벽한 TypeScript 및 로직 지원"
+          ],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_release_note_v0_2_0_release_notes_md",
+      "position": {
+        "x": -1465.3883387939038,
+        "y": 666.1432308237694
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "color": "#fabd2f",
+        "description": "v0.2.10_release_notes.md (Doc)",
+        "file": "release_note/v0.2.10_release_notes.md",
+        "label": "v0.2.10_release_notes.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "Release Notes - v0.2.10 \"Engine Compatibility\"",
+            "🇺🇸 English",
+            "🐛 Bug Fixes",
+            "🇰🇷 Korean",
+            "🐛 버그 수정"
+          ],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_release_note_v0_2_10_release_notes_md",
+      "position": {
+        "x": -1265.3883387939038,
+        "y": 666.1432308237694
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "color": "#fabd2f",
+        "description": "v0.2.11_release_notes.md (Doc)",
+        "file": "release_note/v0.2.11_release_notes.md",
+        "label": "v0.2.11_release_notes.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "🚀 Release Notes - v0.2.11 \"Multi-Language Intelligence\"",
+            "🇺🇸 English",
+            "✨ What's New?",
+            "🧠 Unified Multi-Language Intelligence",
+            "➡️ Advanced Flow Analysis (Flow View)",
+            "🛡️ Architecture Integrity",
+            "🛠️ Technical Improvements",
+            "🇰🇷 Korean",
+            "✨ 주요 변경 사항",
+            "🧠 통합 다중 언어 지능 (Multi-Language Intelligence)",
+            "➡️ 확장된 플로우 분석 (Flow View)",
+            "🛡️ 아키텍처 무결성 보장",
+            "🛠️ 기술 개선 사항"
+          ],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_release_note_v0_2_11_release_notes_md",
+      "position": {
+        "x": -1865.3883387939036,
+        "y": 816.1432308237694
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "color": "#fabd2f",
+        "description": "v0.2.12_release_notes.md (Doc)",
+        "file": "release_note/v0.2.12_release_notes.md",
+        "label": "v0.2.12_release_notes.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "🚀 SYNAPSE v0.2.12 Release Notes",
+            "🆕 새로운 기능",
+            "1. 🧠 Intelligent Context Vault",
+            "2. 🗂️ Intelligent Context Vault 클러스터 (그래프 뷰)",
+            "3. 📋 Multi-MD Bootstrap 선택기 (CTRL+ALT+P)",
+            "⌨️ 새로운 단축키",
+            "🐛 개선 사항",
+            "📁 패키지 정보"
+          ],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_release_note_v0_2_12_release_notes_md",
+      "position": {
+        "x": -1665.3883387939034,
+        "y": 816.1432308237694
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "color": "#fabd2f",
+        "description": "v0.2.13_release_notes.md (Doc)",
+        "file": "release_note/v0.2.13_release_notes.md",
+        "label": "v0.2.13_release_notes.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "SYNAPSE v0.2.13 Release Notes",
+            "Cluster UX Updates (클러스터 UX 개선)",
+            "🌟 New Features & Improvements"
+          ],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_release_note_v0_2_13_release_notes_md",
+      "position": {
+        "x": -1465.3883387939038,
+        "y": 816.1432308237694
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "color": "#fabd2f",
+        "description": "v0.2.14_hotfix_release_notes.md (Doc)",
+        "file": "release_note/v0.2.14_hotfix_release_notes.md",
+        "label": "v0.2.14_hotfix_release_notes.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "SYNAPSE Release Notes - v0.2.14 Hotfix",
+            "[v0.2.14 Hotfix] - 2026-02-28",
+            "War Room: Globe Layout Destruction & Viewport Memory Sync",
+            "🚀 주요 변경 사항",
+            "1. 지구본 파괴 작전: Rank-based Node Positioning",
+            "2. 컨텍스트 유지: Viewport Memory System",
+            "📦 설치 방법",
+            "🎖️ 작전 지휘"
+          ],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_release_note_v0_2_14_hotfix_release_notes_md",
+      "position": {
+        "x": -1265.3883387939038,
+        "y": 816.1432308237694
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "color": "#fabd2f",
+        "description": "v0.2.14_release_notes.md (Doc)",
+        "file": "release_note/v0.2.14_release_notes.md",
+        "label": "v0.2.14_release_notes.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "SYNAPSE v0.2.14 Release Notes (Eng/Kor)",
+            "📡 [English] Logic Audit & War Room Implementation",
+            "🛡️ Core Features",
+            "🛡️ [한국어] 작전 지휘소(War Room) 및 로직 진단 엔진 도입",
+            "🚀 주요 변경 사항"
+          ],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_release_note_v0_2_14_release_notes_md",
+      "position": {
+        "x": -1865.3883387939036,
+        "y": 966.1432308237694
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "color": "#fabd2f",
+        "description": "v0.2.14fix_release_notes.md (Doc)",
+        "file": "release_note/v0.2.14fix_release_notes.md",
+        "label": "v0.2.14fix_release_notes.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "🚀 SYNAPSE v0.2.14fix: The Clarity Update (Flow View Overhaul)",
+            "🛠️ Major Improvements (주요 개선 사항)",
+            "1. Group-Aware Hierarchy (논리적 클러스터 보존)",
+            "2. Orthogonal Edge Routing (맨해튼 라우팅 & 회피 기동)",
+            "3. Virtual End-Point Bus (가상 버스 터미널)",
+            "4. Decision Node Resizing (결정 노드 비율 보정)",
+            "💡 Architectural Impact (설계적 가치)"
+          ],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_release_note_v0_2_14fix_release_notes_md",
+      "position": {
+        "x": -1665.3883387939034,
+        "y": 966.1432308237694
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "color": "#fabd2f",
+        "description": "v0.2.15_release_notes.md (Doc)",
+        "file": "release_note/v0.2.15_release_notes.md",
+        "label": "v0.2.15_release_notes.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "SYNAPSE Release Notes - v0.2.15",
+            "[v0.2.15] - 2026-02-22",
+            "War Room: Legacy Logic Fix & Flow Precision",
+            "🚀 주요 변경 사항",
+            "1. Flow Scanner 리팩토링 (Flow Logic Fix)",
+            "2. Canvas Engine 업데이트 (Visual Support)",
+            "3. UX 개선",
+            "📦 설치 방법",
+            "🎖️ 작전 지휘"
+          ],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_release_note_v0_2_15_release_notes_md",
+      "position": {
+        "x": -1465.3883387939038,
+        "y": 966.1432308237694
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "color": "#fabd2f",
+        "description": "v0.2.1_release_notes.md (Doc)",
+        "file": "release_note/v0.2.1_release_notes.md",
+        "label": "v0.2.1_release_notes.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "🚀 SYNAPSE v0.2.1 Release Notes",
+            "🇺🇸 English",
+            "[New Features]",
+            "[Enhancements]",
+            "🇰🇷 한국어",
+            "[신규 기능]",
+            "[기능 개선]"
+          ],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_release_note_v0_2_1_release_notes_md",
+      "position": {
+        "x": -1265.3883387939038,
+        "y": 966.1432308237694
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "color": "#fabd2f",
+        "description": "v0.2.2_release_notes.md (Doc)",
+        "file": "release_note/v0.2.2_release_notes.md",
+        "label": "v0.2.2_release_notes.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "🚀 SYNAPSE v0.2.2 Release Notes",
+            "🇺🇸 English",
+            "[New Features]",
+            "[Bug Fixes]",
+            "🇰🇷 한국어",
+            "[신규 기능]",
+            "[버그 수정]"
+          ],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_release_note_v0_2_2_release_notes_md",
+      "position": {
+        "x": -1865.3883387939036,
+        "y": 1116.1432308237697
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "color": "#fabd2f",
+        "description": "v0.2.3_release_notes.md (Doc)",
+        "file": "release_note/v0.2.3_release_notes.md",
+        "label": "v0.2.3_release_notes.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "🚀 SYNAPSE v0.2.3 Release Notes",
+            "🇺🇸 English",
+            "[Hotfix]",
+            "🇰🇷 한국어",
+            "[긴급 수정]"
+          ],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_release_note_v0_2_3_release_notes_md",
+      "position": {
+        "x": -1665.3883387939034,
+        "y": 1116.1432308237697
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "color": "#fabd2f",
+        "description": "v0.2.4_release_notes.md (Doc)",
+        "file": "release_note/v0.2.4_release_notes.md",
+        "label": "v0.2.4_release_notes.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "🚀 SYNAPSE v0.2.4 Release Notes",
+            "🇺🇸 English",
+            "[Bug Fixes]",
+            "🇰🇷 한국어",
+            "[버그 수정]"
+          ],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_release_note_v0_2_4_release_notes_md",
+      "position": {
+        "x": -1465.3883387939038,
+        "y": 1116.1432308237697
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "color": "#fabd2f",
+        "description": "v0.2.5_release_notes.md (Doc)",
+        "file": "release_note/v0.2.5_release_notes.md",
+        "label": "v0.2.5_release_notes.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "Release Notes - v0.2.5",
+            "🇰🇷 한국어 (Korean)",
+            "🧹 정리 및 하우스키핑",
+            "🐛 버그 수정",
+            "✨ 새로운 기능",
+            "🇺🇸 English",
+            "🧹 Housekeeping & Cleanup",
+            "🐛 Bug Fixes",
+            "✨ New Features"
+          ],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_release_note_v0_2_5_release_notes_md",
+      "position": {
+        "x": -1265.3883387939038,
+        "y": 1116.1432308237697
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "color": "#fabd2f",
+        "description": "v0.2.6_release_notes.md (Doc)",
+        "file": "release_note/v0.2.6_release_notes.md",
+        "label": "v0.2.6_release_notes.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "🚀 SYNAPSE v0.2.6 Release Notes",
+            "🌟 New Features (기능 추가)",
+            "🧠 Context-Aware Logging (맥락 인식형 로깅)",
+            "📄 Documentation (문서화)",
+            "🐛 Bug Fixes & Improvements"
+          ],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_release_note_v0_2_6_release_notes_md",
+      "position": {
+        "x": -1865.3883387939036,
+        "y": 1266.14323082377
+      },
+      "status": "proposed",
+      "type": "documentation",
+      "visual": {
+        "dashArray": "5,5",
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "color": "#fabd2f",
+        "description": "v0.2.9_release_notes.md (Doc)",
+        "file": "release_note/v0.2.9_release_notes.md",
+        "label": "v0.2.9_release_notes.md",
+        "layer": 0,
+        "priority": 1,
+        "summary": {
+          "classes": [
+            "Release Notes - v0.2.9 \"Ghostbusters\"",
+            "🇺🇸 English",
+            "👻 Ghost Node Fixes",
+            "🧹 Auto-Cleanup",
+            "🇰🇷 Korean",
+            "👻 유령 노드(Ghost Node) 수정",
+            "🧹 자동 정리(Auto-Cleanup)"
+          ],
+          "functions": [],
+          "references": []
+        }
+      },
+      "id": "node_release_note_v0_2_9_release_notes_md",
+      "position": {
+        "x": -1665.3883387939034,
+        "y": 1266.14323082377
       },
       "status": "proposed",
       "type": "documentation",
@@ -4088,8 +5223,8 @@
       },
       "id": "node_src_bootstrap_BootstrapEngine_ts",
       "position": {
-        "x": 1379.962853634326,
-        "y": 641.0991691602894
+        "x": 371.6075108545655,
+        "y": 657.6643324436293
       },
       "status": "proposed",
       "type": "source",
@@ -4131,8 +5266,8 @@
       },
       "id": "node_src_cli_ts",
       "position": {
-        "x": 995.2986486851572,
-        "y": 741.8141423869765
+        "x": 1065.488665461017,
+        "y": 744.1482157104005
       },
       "status": "proposed",
       "type": "source",
@@ -4166,8 +5301,8 @@
       },
       "id": "node_src_client_ts",
       "position": {
-        "x": 759.389067038733,
-        "y": 632.0894460307031
+        "x": 1602.8066704623964,
+        "y": 1110.6263348556206
       },
       "status": "proposed",
       "type": "source",
@@ -4301,8 +5436,8 @@
       },
       "id": "node_src_extension_ts",
       "position": {
-        "x": 817.0823585571914,
-        "y": 921.2854966882549
+        "x": 915.9825728905616,
+        "y": 1089.5771135116984
       },
       "status": "proposed",
       "type": "source",
@@ -4370,8 +5505,8 @@
       },
       "id": "node_src_core_FileScanner_ts",
       "position": {
-        "x": 1018.1176789327945,
-        "y": 1307.3115568557128
+        "x": -381.1689288363094,
+        "y": 1244.4096320520077
       },
       "status": "proposed",
       "type": "source",
@@ -4434,8 +5569,8 @@
       },
       "id": "node_src_core_FlowScanner_ts",
       "position": {
-        "x": 1284.8548056639343,
-        "y": 1245.7694331352513
+        "x": 252.8884359967912,
+        "y": 1096.0144720170733
       },
       "status": "proposed",
       "type": "source",
@@ -4473,12 +5608,14 @@
             "basename",
             "set",
             "push",
+            "has",
+            "get",
+            "shift",
+            "delete",
             "ceil",
             "sqrt",
             "max",
             "filter",
-            "get",
-            "has",
             "floor",
             "getVisualHints",
             "createNode",
@@ -4508,8 +5645,8 @@
       },
       "id": "node_src_core_FlowchartGenerator_ts",
       "position": {
-        "x": 934.8548056639339,
-        "y": 1595.769433135251
+        "x": -667.5572367357228,
+        "y": 1287.844596438451
       },
       "status": "proposed",
       "type": "source",
@@ -4586,8 +5723,8 @@
       },
       "id": "node_src_core_GeminiParser_ts",
       "position": {
-        "x": 1634.854805663936,
-        "y": 1245.7694331352513
+        "x": -6.548615619063885,
+        "y": 1118.117417769787
       },
       "status": "proposed",
       "type": "source",
@@ -4650,8 +5787,8 @@
       },
       "id": "node_src_core_LogicAnalyzer_ts",
       "position": {
-        "x": 1284.8548056639343,
-        "y": 1595.769433135251
+        "x": -221.191461117322,
+        "y": 1117.0948850809898
       },
       "status": "proposed",
       "type": "source",
@@ -4718,8 +5855,8 @@
       },
       "id": "node_src_core_PromptLogger_ts",
       "position": {
-        "x": 1624.081564119646,
-        "y": 1595.769433135251
+        "x": -571.8741926441403,
+        "y": 1125.8798932328868
       },
       "status": "proposed",
       "type": "source",
@@ -4782,8 +5919,8 @@
       },
       "id": "node_src_core_RuleEngine_ts",
       "position": {
-        "x": 1977.492301213661,
-        "y": 1595.769433135251
+        "x": 11.182144075624613,
+        "y": 1268.286982645884
       },
       "status": "proposed",
       "type": "source",
@@ -4861,8 +5998,8 @@
       },
       "id": "node_src_server_server_ts",
       "position": {
-        "x": 1761.7674127916207,
-        "y": 899.8596275130395
+        "x": 1165.666272499563,
+        "y": 2161.346229836475
       },
       "status": "proposed",
       "type": "source",
@@ -4938,8 +6075,8 @@
       },
       "id": "node_src_server_standalone_ts",
       "position": {
-        "x": 1773.079417608704,
-        "y": 636.8596275130395
+        "x": 1202.8054180763152,
+        "y": 1882.9398078491463
       },
       "status": "proposed",
       "type": "source",
@@ -4983,6 +6120,7 @@
             "main",
             "Function",
             "PointerFunc",
+            "toContainEqual",
             "fly",
             "connect",
             "helper_func",
@@ -4998,8 +6136,8 @@
       },
       "id": "node_src_test_FileScanner_test_ts",
       "position": {
-        "x": 2069.7871072352714,
-        "y": 513.9790038555426
+        "x": -314.8481636404813,
+        "y": 884.0757920096569
       },
       "status": "proposed",
       "type": "source",
@@ -5047,8 +6185,8 @@
       },
       "id": "node_src_test_FlowchartGenerator_test_ts",
       "position": {
-        "x": 2069.7871072352714,
-        "y": 863.9790038555426
+        "x": -664.8481636404811,
+        "y": 884.0757920096569
       },
       "status": "proposed",
       "type": "source",
@@ -5091,8 +6229,8 @@
       },
       "id": "node_src_test_GeminiParser_test_ts",
       "position": {
-        "x": 2419.7871072352727,
-        "y": 513.9790038555426
+        "x": 35.15183635951882,
+        "y": 764.0757920096561
       },
       "status": "proposed",
       "type": "source",
@@ -5131,8 +6269,8 @@
       },
       "id": "node_src_test_visualHints_test_ts",
       "position": {
-        "x": 2419.7871072352727,
-        "y": 863.9790038555426
+        "x": -205.6348139597407,
+        "y": 788.5045576869468
       },
       "status": "proposed",
       "type": "source",
@@ -5172,8 +6310,8 @@
       },
       "id": "node_src_types_schema_ts",
       "position": {
-        "x": 1105.6006955502282,
-        "y": 1866.201805427901
+        "x": 710.7763614311478,
+        "y": 2101.3308110934927
       },
       "status": "proposed",
       "type": "source",
@@ -5226,8 +6364,8 @@
       },
       "id": "node_src_utils_ChatExtractor_ts",
       "position": {
-        "x": 2331.7203173256926,
-        "y": 1265.893110886248
+        "x": 1206.8785361236085,
+        "y": 1495.3307986552632
       },
       "status": "proposed",
       "type": "source",
@@ -5273,8 +6411,8 @@
       },
       "id": "node_src_utils_Logger_ts",
       "position": {
-        "x": 2317.7632026372644,
-        "y": 1174.6153836168633
+        "x": 1604.8207135813361,
+        "y": 1610.9046054518042
       },
       "status": "proposed",
       "type": "source",
@@ -5313,8 +6451,8 @@
       },
       "id": "node_src_utils_exclusionRules_ts",
       "position": {
-        "x": 2344.6235774114634,
-        "y": 1347.6996310577874
+        "x": 1416.7531213657523,
+        "y": 1573.626797058737
       },
       "status": "proposed",
       "type": "source",
@@ -5353,8 +6491,8 @@
       },
       "id": "node_src_utils_visualHints_ts",
       "position": {
-        "x": 2333.6235774114634,
-        "y": 1457.6996310577874
+        "x": 1028.5333914017444,
+        "y": 1401.5134699766277
       },
       "status": "proposed",
       "type": "source",
@@ -5571,8 +6709,8 @@
       },
       "id": "node_src_webview_CanvasPanel_ts",
       "position": {
-        "x": 1453.6106781776205,
-        "y": 1833.2342250008253
+        "x": -451.38941435722865,
+        "y": 2129.545620223028
       },
       "status": "proposed",
       "type": "source",
@@ -5587,14 +6725,194 @@
         "cluster_id": "ctx_vault_cluster",
         "color": "#d79921",
         "description": "기억의 성단 — 맥락 기록 (read-only)",
+        "file": ".synapse_contexts/2026-02-28_1156_auto_push_after_drag.md",
+        "label": "2026-02-28_1156_auto_push_after_drag.md",
+        "readOnly": true
+      },
+      "id": "ctx_vault_node_2026-02-28_1156_auto_push_after_drag.md",
+      "position": {
+        "x": -1246.5034685895228,
+        "y": 1473.6665876863908
+      },
+      "status": "read_only",
+      "type": "documentation"
+    },
+    {
+      "cluster_id": "ctx_vault_cluster",
+      "data": {
+        "cluster_id": "ctx_vault_cluster",
+        "color": "#d79921",
+        "description": "기억의 성단 — 맥락 기록 (read-only)",
+        "file": ".synapse_contexts/2026-02-28_1153_auto_push_after_drag.md",
+        "label": "2026-02-28_1153_auto_push_after_drag.md",
+        "readOnly": true
+      },
+      "id": "ctx_vault_node_2026-02-28_1153_auto_push_after_drag.md",
+      "position": {
+        "x": -1246.5034685895228,
+        "y": 1528.6665876863908
+      },
+      "status": "read_only",
+      "type": "documentation"
+    },
+    {
+      "cluster_id": "ctx_vault_cluster",
+      "data": {
+        "cluster_id": "ctx_vault_cluster",
+        "color": "#d79921",
+        "description": "기억의 성단 — 맥락 기록 (read-only)",
+        "file": ".synapse_contexts/2026-02-28_1152_auto_push_after_drag.md",
+        "label": "2026-02-28_1152_auto_push_after_drag.md",
+        "readOnly": true
+      },
+      "id": "ctx_vault_node_2026-02-28_1152_auto_push_after_drag.md",
+      "position": {
+        "x": -1246.5034685895228,
+        "y": 1583.6665876863908
+      },
+      "status": "read_only",
+      "type": "documentation"
+    },
+    {
+      "cluster_id": "ctx_vault_cluster",
+      "data": {
+        "cluster_id": "ctx_vault_cluster",
+        "color": "#d79921",
+        "description": "기억의 성단 — 맥락 기록 (read-only)",
+        "file": ".synapse_contexts/2026-02-28_1150_auto_push_after_drag.md",
+        "label": "2026-02-28_1150_auto_push_after_drag.md",
+        "readOnly": true
+      },
+      "id": "ctx_vault_node_2026-02-28_1150_auto_push_after_drag.md",
+      "position": {
+        "x": -1246.5034685895228,
+        "y": 1638.6665876863908
+      },
+      "status": "read_only",
+      "type": "documentation"
+    },
+    {
+      "cluster_id": "ctx_vault_cluster",
+      "data": {
+        "cluster_id": "ctx_vault_cluster",
+        "color": "#d79921",
+        "description": "기억의 성단 — 맥락 기록 (read-only)",
+        "file": ".synapse_contexts/2026-02-28_1146_auto_push_after_drag.md",
+        "label": "2026-02-28_1146_auto_push_after_drag.md",
+        "readOnly": true
+      },
+      "id": "ctx_vault_node_2026-02-28_1146_auto_push_after_drag.md",
+      "position": {
+        "x": -1246.5034685895228,
+        "y": 1693.6665876863908
+      },
+      "status": "read_only",
+      "type": "documentation"
+    },
+    {
+      "cluster_id": "ctx_vault_cluster",
+      "data": {
+        "cluster_id": "ctx_vault_cluster",
+        "color": "#d79921",
+        "description": "기억의 성단 — 맥락 기록 (read-only)",
+        "file": ".synapse_contexts/2026-02-28_1143_auto_push_after_drag.md",
+        "label": "2026-02-28_1143_auto_push_after_drag.md",
+        "readOnly": true
+      },
+      "id": "ctx_vault_node_2026-02-28_1143_auto_push_after_drag.md",
+      "position": {
+        "x": -1246.5034685895228,
+        "y": 1748.6665876863908
+      },
+      "status": "read_only",
+      "type": "documentation"
+    },
+    {
+      "cluster_id": "ctx_vault_cluster",
+      "data": {
+        "cluster_id": "ctx_vault_cluster",
+        "color": "#d79921",
+        "description": "기억의 성단 — 맥락 기록 (read-only)",
+        "file": ".synapse_contexts/2026-02-28_1142_auto_push_after_drag.md",
+        "label": "2026-02-28_1142_auto_push_after_drag.md",
+        "readOnly": true
+      },
+      "id": "ctx_vault_node_2026-02-28_1142_auto_push_after_drag.md",
+      "position": {
+        "x": -1246.5034685895228,
+        "y": 1803.6665876863908
+      },
+      "status": "read_only",
+      "type": "documentation"
+    },
+    {
+      "cluster_id": "ctx_vault_cluster",
+      "data": {
+        "cluster_id": "ctx_vault_cluster",
+        "color": "#d79921",
+        "description": "기억의 성단 — 맥락 기록 (read-only)",
+        "file": ".synapse_contexts/2026-02-28_1102_auto_push_after_drag.md",
+        "label": "2026-02-28_1102_auto_push_after_drag.md",
+        "readOnly": true
+      },
+      "id": "ctx_vault_node_2026-02-28_1102_auto_push_after_drag.md",
+      "position": {
+        "x": -1246.5034685895228,
+        "y": 1858.6665876863908
+      },
+      "status": "read_only",
+      "type": "documentation"
+    },
+    {
+      "cluster_id": "ctx_vault_cluster",
+      "data": {
+        "cluster_id": "ctx_vault_cluster",
+        "color": "#d79921",
+        "description": "기억의 성단 — 맥락 기록 (read-only)",
+        "file": ".synapse_contexts/2026-02-28_1058_auto_push_after_drag.md",
+        "label": "2026-02-28_1058_auto_push_after_drag.md",
+        "readOnly": true
+      },
+      "id": "ctx_vault_node_2026-02-28_1058_auto_push_after_drag.md",
+      "position": {
+        "x": -1246.5034685895228,
+        "y": 1913.6665876863913
+      },
+      "status": "read_only",
+      "type": "documentation"
+    },
+    {
+      "cluster_id": "ctx_vault_cluster",
+      "data": {
+        "cluster_id": "ctx_vault_cluster",
+        "color": "#d79921",
+        "description": "기억의 성단 — 맥락 기록 (read-only)",
+        "file": ".synapse_contexts/2026-02-28_1057_auto_push_after_drag.md",
+        "label": "2026-02-28_1057_auto_push_after_drag.md",
+        "readOnly": true
+      },
+      "id": "ctx_vault_node_2026-02-28_1057_auto_push_after_drag.md",
+      "position": {
+        "x": -1246.5034685895228,
+        "y": 1968.6665876863913
+      },
+      "status": "read_only",
+      "type": "documentation"
+    },
+    {
+      "cluster_id": "ctx_vault_cluster",
+      "data": {
+        "cluster_id": "ctx_vault_cluster",
+        "color": "#d79921",
+        "description": "기억의 성단 — 맥락 기록 (read-only)",
         "file": ".synapse_contexts/2026-02-22_2021_auto_push_after_drag.md",
         "label": "2026-02-22_2021_auto_push_after_drag.md",
         "readOnly": true
       },
       "id": "ctx_vault_node_2026-02-22_2021_auto_push_after_drag.md",
       "position": {
-        "x": 1400,
-        "y": 80
+        "x": -1246.5034685895228,
+        "y": 2023.6665876863913
       },
       "status": "read_only",
       "type": "documentation"
@@ -5611,8 +6929,8 @@
       },
       "id": "ctx_vault_node_2026-02-22_2020_auto_push_after_drag.md",
       "position": {
-        "x": 1400,
-        "y": 135
+        "x": -1246.5034685895228,
+        "y": 2078.666587686391
       },
       "status": "read_only",
       "type": "documentation"
@@ -5629,12 +6947,11 @@
       },
       "id": "ctx_vault_node_2026-02-22_2019_auto_push_after_drag.md",
       "position": {
-        "x": 1400,
-        "y": 190
+        "x": -1246.5034685895228,
+        "y": 2133.6665876863913
       },
       "status": "read_only",
       "type": "documentation"
     }
-  ],
-  "project_name": "antigravity-extension-vis"
+  ]
 }

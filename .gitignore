@@ -7,7 +7,6 @@ data/snapshots/
 *.tsbuildinfo
 
 # SYNAPSE specific
-GEMINI.md
 *.vsix
 synapse-visual-architecture-*/
 

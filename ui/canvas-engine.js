@@ -2519,7 +2519,7 @@ class CanvasEngine {
         const _fromNode = this.nodes.find(n => n.id === (this.edgeSource.type === 'node' ? this.edgeSource.id : null));
         const _toNode = this.nodes.find(n => n.id === (this.edgeTarget.type === 'node' ? this.edgeTarget.id : null));
         const newEdge = {
-            id: `edge_manual_${Date.now()}`,
+            id: `edge_${this.edgeSource.id}_${this.edgeTarget.id}_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`,
             from: this.edgeSource.type === 'node' ? this.edgeSource.id : undefined,
             fromCluster: this.edgeSource.type === 'cluster' ? this.edgeSource.id : undefined,
             to: this.edgeTarget.type === 'node' ? this.edgeTarget.id : undefined,
@@ -4913,7 +4913,16 @@ class CanvasEngine {
         }
 
         // [v0.2.17] Confirmation badge: ? (pending_confirm) or ! (confirmed)
-        const confirmStatus = edge.status;
+        let confirmStatus = edge.status;
+
+        // [v0.2.18] 강제 가상 노드 배지 (Virtual Edge) 처리
+        if (toNode && toNode.data) {
+            const targetFile = toNode.data.file || toNode.data.label || '';
+            if (targetFile && !targetFile.includes('.')) {
+                confirmStatus = 'pending_confirm';
+            }
+        }
+
         if (confirmStatus === 'pending_confirm' || confirmStatus === 'confirmed') {
             const bMidX = (fromX + toX) / 2;
             const bMidY = (fromY + toY) / 2 - 30;

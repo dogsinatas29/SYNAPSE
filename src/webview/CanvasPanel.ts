@@ -1031,18 +1031,24 @@ export class CanvasPanel {
 
         try {
             const fileUri = vscode.Uri.file(fromAbs);
-            const existing = Buffer.from(await vscode.workspace.fs.readFile(fileUri)).toString('utf-8');
+            let existing = '';
+            try {
+                existing = Buffer.from(await vscode.workspace.fs.readFile(fileUri)).toString('utf-8');
+            } catch (readErr) {
+                Logger.info(`[CanvasPanel] injectImport: Source file ${fromFile} not found or empty, creating new.`);
+            }
 
             // 이미 import 되어 있으면 중복 삽입 방지 (단어 단위 정확히 일치)
             const regex = new RegExp(`\\b${toBase}\\b`);
-            if (regex.test(existing)) {
+            if (existing && regex.test(existing)) {
                 Logger.info(`[CanvasPanel] injectImport: '${toBase}' already referenced in ${fromFile}, skipping.`);
                 return;
             }
 
-            const newContent = importLine + '\n' + existing;
+            const newContent = importLine + (existing ? '\n' + existing : '\n');
+            Logger.info(`[CanvasPanel] injectImport: Writing to ${fromAbs}`);
             await vscode.workspace.fs.writeFile(fileUri, Buffer.from(newContent, 'utf-8'));
-            Logger.info(`[CanvasPanel] injectImport: Inserted '${importLine}' into ${fromFile}`);
+            Logger.info(`[CanvasPanel] injectImport: Successfully inserted '${importLine}' into ${fromFile}`);
             vscode.window.showInformationMessage(`[SYNAPSE] ✅ import 삽입 완료: ${fromFile} 최상단에 '${toBase}' 추가됨`);
         } catch (e) {
             Logger.error(`[CanvasPanel] injectImport failed for ${fromFile}:`, e);

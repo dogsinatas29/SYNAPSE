@@ -72,37 +72,52 @@ export class FlowchartGenerator {
             }
         });
 
+        // --- [v0.2.16] Vertical Waterfall Algorithm: Layered Digraph & Rank Alignment ---
+        // 1. inDegree 대신 longest-path 기반의 DFS Depth 계산으로 각 노드의 적절한 Layer를 강제 배정.
         const ranks = new Map<string, number>();
-        const queue: string[] = [];
+        const visited = new Set<string>();
+        const pathStack = new Set<string>(); // 순환 참조 감지용
 
-        // In-degree 0인 노드 랭크 0으로 시작
+        // DFS 기반 랭크 계산 함수 (Longest path to leaf)
+        const calculateRank = (nodePath: string): number => {
+            if (ranks.has(nodePath)) return ranks.get(nodePath)!;
+            if (pathStack.has(nodePath)) return 0; // 순환 참조 시 임의 랭크 부여 후 진행
+
+            pathStack.add(nodePath);
+            let maxRank = 0;
+            const neighbors = adj.get(nodePath) || [];
+
+            for (const neighbor of neighbors) {
+                const neighborRank = calculateRank(neighbor);
+                maxRank = Math.max(maxRank, neighborRank + 1);
+            }
+
+            pathStack.delete(nodePath);
+            ranks.set(nodePath, maxRank);
+            return maxRank;
+        };
+
+        // 루트 노드(inDegree === 0)부터 시작
         structure.files.forEach(f => {
             if (inDegree.get(f.path) === 0 && f.type !== 'documentation') {
-                queue.push(f.path);
-                ranks.set(f.path, 0);
+                calculateRank(f.path);
             }
         });
 
-        // 순환 참조 방지
-        const visited = new Set<string>();
-
-        while (queue.length > 0) {
-            const current = queue.shift()!;
-            const currentRank = ranks.get(current) || 0;
-
-            if (visited.has(current)) continue;
-            visited.add(current);
-
-            const neighbors = adj.get(current) || [];
-            for (const neighbor of neighbors) {
-                const existingRank = ranks.get(neighbor);
-                if (existingRank === undefined || currentRank + 1 > existingRank) {
-                    ranks.set(neighbor, currentRank + 1);
-                    visited.delete(neighbor); // 더 긴 경로 발견 시 재계산
-                    queue.push(neighbor);
-                }
+        // 그래프가 분리되어 inDegree 0이 없는 순환 컴포넌트 처리
+        let recursionLimit = 0;
+        structure.files.forEach(f => {
+            if (!ranks.has(f.path) && f.type !== 'documentation') {
+                if (recursionLimit++ > 1000) return; // Safety break
+                calculateRank(f.path);
             }
-        }
+        });
+
+        // 현재 랭크는 Leaf to Root 방향이므로, Root to Leaf로 반전시킴 (Top-Down Waterfall)
+        let maxOverallRank = 0;
+        ranks.forEach(rank => maxOverallRank = Math.max(maxOverallRank, rank));
+        ranks.forEach((rank, nodeId) => ranks.set(nodeId, maxOverallRank - rank));
+        // ------------------------------------------------------------------------------
 
         // 4. 노드 생성 및 클러스터 할당
         const nodeSpacingX = 350;
@@ -112,7 +127,7 @@ export class FlowchartGenerator {
         const clusterCols = Math.ceil(Math.sqrt(Math.max(clusters.filter(c => !c.parent_id).length, 1)));
 
         // 최상위 폴더(부모가 없는 클러스터) 기준으로 배치 시작
-        let topClusterIdx = 0;
+        let topClusterIdx = 1; // 0번 인덱스는 Root용으로 비워둠 (아래에서 처리)
         const directoryGroups = new Map<string, typeof structure.files>();
         structure.files.forEach(file => {
             const dir = path.dirname(file.path).replace(/\\/g, '/');
@@ -121,15 +136,52 @@ export class FlowchartGenerator {
             directoryGroups.set(dir, group);
         });
 
+        // 4.1 Root Cluster 처리 (루트 디렉토리에 파일이 있는 경우)
+        const rootFiles = directoryGroups.get('.') || [];
+        if (rootFiles.length > 0) {
+            const rootClusterId = 'cluster_root';
+            clusters.push({
+                id: rootClusterId,
+                label: '🏠 Project Root',
+                collapsed: false,
+                bounds: { x: 0, y: 1500, width: 0, height: 0 },
+                children: []
+            });
+
+            const layerCounters = new Map<number, number>();
+            const rankCounters = new Map<number, number>();
+
+            rootFiles.forEach((file) => {
+                const hints = getVisualHints(file.path);
+                const rank = ranks.get(file.path) || 0;
+                const rankCount = rankCounters.get(rank) || 0;
+                rankCounters.set(rank, rankCount + 1);
+
+                const shift = (rankCount % 2 === 0 ? 1 : -1) * Math.ceil(rankCount / 2);
+                const nodeX = 350 + (shift * nodeSpacingX);
+                const yOffset = (rankCount % 3) * 30;
+                const nodeY = rank * nodeSpacingY + 100 + yOffset;
+
+                const node = this.createNode(
+                    file.path,
+                    file.type,
+                    file.description,
+                    0 + nodeX,
+                    1500 + nodeY,
+                    hints.layer,
+                    hints.priority,
+                    rootClusterId
+                );
+                nodes.push(node);
+                clusters.find(c => c.id === rootClusterId)?.children.push(node.id);
+            });
+            directoryGroups.delete('.');
+        }
+
         directoryGroups.forEach((files, dirName) => {
-            const clusterPath = dirName === '.' ? '' : dirName;
+            const clusterPath = dirName;
             const cluster = clusterMap.get(clusterPath);
             const clusterId = cluster ? cluster.id : 'root_cluster';
-
-            // ROOT에 파일이 있는 경우를 위한 가상 클러스터 처리
-            if (dirName === '.' && !clusterMap.has('')) {
-                // Skip or handle root files later
-            }
 
             const clusterX = (topClusterIdx % clusterCols) * clusterSpacingX;
             const clusterY = Math.floor(topClusterIdx / clusterCols) * clusterSpacingY;
@@ -155,18 +207,19 @@ export class FlowchartGenerator {
                     const rankCount = rankCounters.get(rank) || 0;
                     rankCounters.set(rank, rankCount + 1);
 
-                    // X-axis 밸런싱: 350 기준으로 좌우로 번갈아 펼침 (-1, 1, -2, 2...)
                     const shift = (rankCount % 2 === 0 ? 1 : -1) * Math.ceil(rankCount / 2);
                     nodeX = 350 + (shift * nodeSpacingX);
-                    nodeY = rank * nodeSpacingY + 100;
+
+                    const yOffset = (rankCount % 3) * 30;
+                    nodeY = rank * nodeSpacingY + 100 + yOffset;
                 }
 
                 const node = this.createNode(
                     file.path,
                     file.type,
                     file.description,
-                    finalClusterId === 'doc_shelf' ? -1500 + nodeX : clusterX + nodeX,
-                    finalClusterId === 'doc_shelf' ? 0 + nodeY : clusterY + nodeY,
+                    finalClusterId === 'doc_shelf' ? -2000 + nodeX : clusterX + nodeX,
+                    finalClusterId === 'doc_shelf' ? -500 + nodeY : clusterY + nodeY,
                     hints.layer,
                     hints.priority,
                     finalClusterId
@@ -190,7 +243,7 @@ export class FlowchartGenerator {
             id: 'doc_shelf',
             label: '📚 Documentation Shelf',
             collapsed: false,
-            bounds: { x: -1600, y: -100, width: 900, height: 1200 },
+            bounds: { x: -2100, y: -600, width: 900, height: 1200 },
             children: nodes.filter(n => n.data.cluster_id === 'doc_shelf').map(n => n.id)
         });
 
@@ -217,19 +270,43 @@ export class FlowchartGenerator {
             });
         }
 
-        // 5. 의존성 기반 엣지 생성
+        // 5. 의존성 기반 엣지 생성 (Logic Inversion Handling 포함)
         structure.dependencies.forEach((dep) => {
             const fromNode = nodes.find(n => n.data.file === dep.from);
             const toNode = nodes.find(n => n.data.file === dep.to);
 
             if (fromNode && toNode) {
                 const edge = this.createEdge(fromNode.id, toNode.id, dep.type);
+
+                // [v0.2.16] Logic Inversion: 상위로 흐르는 엣지(콜백/피드백)는 점선으로 처리하여 시각적 혼선 차단
+                const fromRank = ranks.get(dep.from) || 0;
+                const toRank = ranks.get(dep.to) || 0;
+
+                if (toRank < fromRank) {
+                    edge.visual.style = 'dotted'; // 역방향 엣지는 점선
+                    edge.type = 'loop_back'; // 타입도 루프백으로 간주
+                }
+
                 edges.push(edge);
             }
         });
 
         console.log('✅ 초기 순서도 생성 완료 (Hierarchical Clustered)');
-        return { nodes, edges, clusters };
+
+        // [v0.2.17] Filter out empty clusters that have no nodes and no non-empty child clusters
+        const finalClusters = clusters.filter(cluster => {
+            // Keep special clusters
+            if (cluster.id === 'doc_shelf' || cluster.id === 'cluster_external' || cluster.id === 'cluster_root') return true;
+
+            const hasNodes = cluster.children && cluster.children.length > 0;
+            const hasChildClusters = clusters.some(c => c.parent_id === cluster.id);
+
+            // To be thorough, recursive check would be better, but for single-level nesting this is usually enough.
+            // Let's at least keep it if it has nodes or sub-clusters.
+            return hasNodes || hasChildClusters;
+        });
+
+        return { nodes, edges, clusters: finalClusters };
     }
 
     /**

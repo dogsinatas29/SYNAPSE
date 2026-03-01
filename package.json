@@ -2,7 +2,7 @@
     "name": "synapse-visual-architecture",
     "displayName": "SYNAPSE - Visual Architecture Engine",
     "description": "Visual architecture control engine for code outer-space visualization and design",
-    "version": "0.2.14",
+    "version": "0.2.16",
     "publisher": "synapse-team",
     "repository": {
         "type": "git",
@@ -44,6 +44,11 @@
                 "command": "synapse.openRules",
                 "title": "SYNAPSE: Open Architecture Rules",
                 "icon": "$(law)"
+            },
+            {
+                "command": "synapse.exportReport",
+                "title": "SYNAPSE: Export Executive Summary PDF",
+                "icon": "$(file-pdf)"
             }
         ],
         "keybindings": [
@@ -56,6 +61,11 @@
                 "command": "synapse.bootstrap",
                 "key": "ctrl+alt+p",
                 "mac": "cmd+alt+p"
+            },
+            {
+                "command": "synapse.exportReport",
+                "key": "ctrl+alt+e",
+                "mac": "cmd+alt+e"
             }
         ],
         "viewsContainers": {
@@ -155,6 +165,7 @@
         "@types/express": "^5.0.6",
         "cors": "^2.8.6",
         "express": "^5.2.1",
+        "sqlite3": "^5.1.7",
         "vscode-languageclient": "^9.0.1",
         "vscode-languageserver": "^9.0.1",
         "vscode-languageserver-textdocument": "^1.0.12"

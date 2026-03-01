@@ -2,7 +2,7 @@
 
 > **"눈에 보이는 것이 곧 LLM의 논리입니다."** — *AI를 위한 WYSIWYG 논리 설계 도구*
 
-[![Version](https://img.shields.io/badge/version-v0.2.15-brightgreen.svg)
+[![Version](https://img.shields.io/badge/version-v0.2.16-brightgreen.svg)
 ![Status](https://img.shields.io/badge/status-War_Room_Ready-orange.svg)
 [![Language](https://img.shields.io/badge/Language-TypeScript-blue?style=flat-square)](https://www.typescriptlang.org/)
 [![Platform](https://img.shields.io/badge/Platform-VS_Code-007ACC?style=flat-square)](https://code.visualstudio.com/)
@@ -69,13 +69,20 @@ LLM 추론 논리와 소스 파일 간의 물리적 연결 상태를 시각화�
 2. 파일을 **VS Code** 창으로 드래그 앤 드롭합니다.
 3. 또는 터미널에서 다음 명령어를 입력합니다:### 빠른 설치
 ```bash
-code --install-extension synapse-visual-architecture-0.2.15.vsix
+code --install-extension synapse-visual-architecture-0.2.16.vsix
 ```
-현재 버전: **v0.2.15** (Bypass 로직 및 플로우 수정)
+현재 버전: **v0.2.16** (Strategic Execution Flow)
 
 ---
 
 ## 🆕 버전 히스토리
+
+### v0.2.16 (Strategic Execution Flow 업데이트)
+- **Ready Handshake**: Extension이 WebView의 준비 상태를 대기한 후 데이터를 전송하여 초기화 타이밍 문제를 해결했습니다.
+- **Stable Layout BFS**: 무한 루프 위험이 있는 BFS 로직을 안정적인 위상 정렬 기반 랭크 계산법으로 교체했습니다.
+- **NaN/Infinity 가드**: 복잡한 그래프에서 좌표가 잘못 계산되어 UI가 멈추는 현상을 방지하기 위해 엄격한 좌표 검증 로직을 추가했습니다.
+- **메시지 통신 최적화**: 진행률 업데이트 빈도를 조절하고 메시지를 일괄 처리하여 UI 성능을 대폭 개선했습니다.
+- **재귀 Depth 제한**: 매우 복잡하거나 순환 참조가 있는 프로젝트에서도 안정적으로 분석을 마칠 수 있도록 계산 깊이 제한을 적용했습니다.
 
 ### v0.2.15 (성능 및 가시성 업데이트)
 - **노드 좌표 드리프트 해결**: 렌더링 엔진의 `save/restore` 불균형 문제를 수정하여, 줌 레벨에 관계없이 노드 라벨과 아이콘이 항상 정확한 위치에 표시됩니다.

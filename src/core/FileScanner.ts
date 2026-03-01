@@ -23,7 +23,21 @@ export class FileScanner {
         }
 
         try {
+            // [v0.2.16 Opt] Skip files larger than 1MB to prevent hangs
+            const stats = fs.statSync(filePath);
+            if (stats.size > 1024 * 1024) {
+                console.warn(`[SYNAPSE] Skipping large file: ${filePath} (${Math.round(stats.size / 1024)} KB)`);
+                return summary;
+            }
+
             const content = fs.readFileSync(filePath, 'utf-8');
+
+            // Basic binary check (look for null chars)
+            if (content.includes('\0')) {
+                console.warn(`[SYNAPSE] Skipping potential binary file: ${filePath}`);
+                return summary;
+            }
+
             const ext = path.extname(filePath);
 
             if (ext === '.py') {
@@ -51,7 +65,7 @@ export class FileScanner {
                 console.log(`[SYNAPSE] Parsing Markdown: ${filePath}`);
                 this.parseMarkdown(content, summary);
             }
-            console.log(`[SYNAPSE] Finished parsing: ${path.basename(filePath)}`);
+            // console.log(`[SYNAPSE] Finished parsing: ${path.basename(filePath)}`);
         } catch (error) {
             console.error(`[SYNAPSE] Failed to scan file ${filePath}:`, error);
         }

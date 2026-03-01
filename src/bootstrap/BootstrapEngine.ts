@@ -118,15 +118,16 @@ export class BootstrapEngine {
     /**
      * 프로젝트 자동 발견 및 초기화 (Lite Bootstrap)
      */
-    public async liteBootstrap(projectRoot: string): Promise<BootstrapResult> {
+    public async liteBootstrap(projectRoot: string, onProgress?: (msg: string) => void): Promise<BootstrapResult> {
         console.log(`🔍 [SYNAPSE] Lite Bootstrapping project at: ${projectRoot}`);
+        if (onProgress) onProgress('Initializing rules...');
 
         try {
             // Ensure RULES.md exists and load it
             this.ensureRulesFile(projectRoot);
             RuleEngine.getInstance().loadRules(projectRoot);
 
-            const projectState = await this.autoDiscover(projectRoot);
+            const projectState = await this.autoDiscover(projectRoot, undefined, onProgress);
 
             const statePath = path.join(projectRoot, 'data', 'project_state.json');
             const stateDir = path.dirname(statePath);
@@ -195,11 +196,9 @@ This document defines the rules for how SYNAPSE discovers, parses, and visualize
     /**
      * 프로젝트 자동 발견 (Headless Bootstrap)
      */
-    public async autoDiscover(projectRoot: string, includePaths?: string[]): Promise<ProjectState> {
+    public async autoDiscover(projectRoot: string, includePaths?: string[], onProgress?: (msg: string) => void): Promise<ProjectState> {
         console.log(`🔍 [SYNAPSE] Auto-discovering source files in: ${projectRoot}`);
-        if (includePaths && includePaths.length > 0) {
-            console.log(`  - Limited to paths: ${includePaths.join(', ')}`);
-        }
+        if (onProgress) onProgress('Discovering project files...');
 
         const structure: any = {
             folders: [],
@@ -207,6 +206,7 @@ This document defines the rules for how SYNAPSE discovers, parses, and visualize
             dependencies: []
         };
 
+        let fileCount = 0;
         const scanDir = (dir: string, relPath: string = '') => {
             if (!fs.existsSync(dir)) return;
             const files = fs.readdirSync(dir);
@@ -214,10 +214,8 @@ This document defines the rules for how SYNAPSE discovers, parses, and visualize
                 const fullPath = path.join(dir, file);
                 const currentRelPath = path.join(relPath, file).replace(/\\/g, '/');
 
-                // [Node Diet] 파이썬 가상환경, 캐시, 빌드 폴더 등 무시
                 if (isIgnoredFolder(file)) continue;
 
-                // [Scan Scope] includePaths가 지정된 경우
                 if (includePaths && includePaths.length > 0 && relPath === '') {
                     const isIncluded = includePaths.some(p => {
                         const normalizedP = p.replace(/^\.\//, '').replace(/\/$/, '');
@@ -234,7 +232,6 @@ This document defines the rules for how SYNAPSE discovers, parses, and visualize
                 } else {
                     const ext = path.extname(file).toLowerCase();
 
-                    // [Failsafe] 블랙리스트 및 빌드 결과물 필터링
                     if (isIgnoredFile(currentRelPath)) {
                         continue;
                     }
@@ -244,6 +241,11 @@ This document defines the rules for how SYNAPSE discovers, parses, and visualize
                     ];
 
                     if (scanExtensions.includes(ext)) {
+                        fileCount++;
+                        if (fileCount % 50 === 0 && onProgress) {
+                            onProgress(`Discovering files (${fileCount} found)...`);
+                        }
+
                         const type: NodeType = ext === '.md' ? 'documentation' : 'source';
                         structure.files.push({
                             path: currentRelPath.replace(/\\/g, '/'),
@@ -251,18 +253,8 @@ This document defines the rules for how SYNAPSE discovers, parses, and visualize
                             description: `${file} (${type === 'documentation' ? 'Doc' : 'Auto-detected'})`
                         });
 
-                        // [Deep Scan] 의존성 분석
-                        const summary = this.fileScanner.scanFile(fullPath);
-
-                        // 참조(Import) 기반 의존성 추가
-                        summary.references.forEach(ref => {
-                            // 단순화: 참조된 이름이 파일명과 일치하는지 확인 (상대 경로 고려 필요하지만 여기선 단순 매칭)
-                            structure.dependencies.push({
-                                from: currentRelPath.replace(/\\/g, '/'),
-                                to: ref.target,
-                                type: ref.type as any
-                            });
-                        });
+                        // [v0.2.16 Opt] Deep Scanning decoupled from discovery walk to prevent hangs
+                        // Content summary will be populated separately during sendProjectState
                     }
                 }
             }
@@ -270,6 +262,7 @@ This document defines the rules for how SYNAPSE discovers, parses, and visualize
 
         try {
             scanDir(projectRoot);
+            if (onProgress) onProgress(`Finalizing structure for ${fileCount} files...`);
 
             // Re-process dependencies to match actual file paths
             const filePaths = new Set(structure.files.map((f: any) => f.path));

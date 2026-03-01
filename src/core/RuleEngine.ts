@@ -50,14 +50,18 @@ export class RuleEngine {
             'node_modules', '.git', 'build', 'dist', 'data', 'out',
             '.venv', 'venv', 'env', '__pycache__', '.pytest_cache',
             '.idea', '.vscode', '.github', 'target', 'vendor',
-            'bin', 'obj', 'ui', '.synapse_contents'
+            'bin', 'obj', 'ui', '.synapse_contexts'
         ]);
         this.blacklistFiles = new Set([
             'package-lock.json',
             'license',
             'v0.2.0_self_sync.js',
             'canvas-engine.js',
-            'test_exclusion.js'
+            'test_exclusion.js',
+            'webpack.config.js',
+            'verify_rules.js',
+            'verify_rules_only.js',
+            'test_tree_logic.js'
         ]);
         this.binaryExcludes = new Set([
             '.vsix', '.zip', '.tar.gz', '.exe', '.dll', '.so', '.bin', '.js.map',

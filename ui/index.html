@@ -387,7 +387,7 @@
 
 <body>
     <div id="header">
-        <div class="logo">🧠 SYNAPSE</div>
+        <div class="logo">🧠 SYNAPSE <span style="font-size: 10px; opacity: 0.6; margin-left: 5px;">v0.2.16</span></div>
         <div id="status-indicator" style="font-size: 12px; color: #fabd2f; font-weight: bold;"></div>
         <div id="project-path" style="font-size: 12px; color: var(--fg-dim);">Loading project...</div>
     </div>
@@ -640,6 +640,15 @@
                 indicator.textContent = 'BROWSER MODE';
                 indicator.classList.add('browser-mode');
             }
+
+            // [v0.2.16 Safety] Force remove loading overlay after 15 seconds if it gets stuck
+            setTimeout(() => {
+                const loadingEl = document.getElementById('loading');
+                if (loadingEl) {
+                    console.warn('[SYNAPSE] Loading timeout reached. Force-closing overlay.');
+                    loadingEl.remove();
+                }
+            }, 15000);
         });
     </script>
     <script src="canvas-engine.js"></script>

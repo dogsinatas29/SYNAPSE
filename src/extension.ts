@@ -32,15 +32,23 @@ import { client, setClient } from './client';
 import { PromptLogger } from './core/PromptLogger';
 import { ChatExtractor } from './utils/ChatExtractor';
 import { Logger } from './utils/Logger';
+import { BillingManager } from './core/BillingManager';
+import { ReportExporter } from './core/ReportExporter';
 
 export async function activate(context: vscode.ExtensionContext) {
     Logger.initialize(context);
     Logger.info('Extension activation started');
 
     try {
-        console.log('[SYNAPSE] Initializing components...');
-        vscode.window.showInformationMessage('SYNAPSE: Initializing (v0.2.14)...');
+        console.log('[SYNAPSE] Starting activation sequence...');
+        vscode.window.showInformationMessage('SYNAPSE: Initializing (v0.2.16)...');
 
+        // [v0.2.16 Monetization Lock] All monetization logic is strictly disabled
+        console.log('[SYNAPSE] BillingManager initialization skipped (Lock Active)');
+        // BillingManager.initialize(context);
+        // BillingManager.getInstance().trackSessionStart();
+
+        console.log('[SYNAPSE] Initializing context vault directory...');
         // 시작 시 .synapse_contexts/ 디렉터리 자동 생성
         {
             const folders = vscode.workspace.workspaceFolders;
@@ -113,6 +121,25 @@ export async function activate(context: vscode.ExtensionContext) {
                         vscode.window.showErrorMessage('RULES.md not found in the project root.');
                     }
                 }
+            })
+        );
+
+        context.subscriptions.push(
+            vscode.commands.registerCommand('synapse.exportReport', async () => {
+                if (!CanvasPanel.currentPanel) {
+                    vscode.window.showErrorMessage('Please open SYNAPSE Canvas first to generate a report.');
+                    return;
+                }
+
+                const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+                const projectName = workspaceFolder ? workspaceFolder.name : 'Unknown Project';
+
+                // Get active context from canvas to calculate complexity
+                const canvasCtx = await CanvasPanel.currentPanel.getCanvasContext();
+                const activeNodes = canvasCtx?.nodes?.length || 0;
+                const activeEdges = canvasCtx?.edges?.length || 0;
+
+                await ReportExporter.exportExecutiveSummary(context, projectName, activeNodes, activeEdges);
             })
         );
 
@@ -368,7 +395,7 @@ export async function activate(context: vscode.ExtensionContext) {
         await languageClient.start();
         console.log('[SYNAPSE] Language Server started successfully');
 
-        vscode.window.setStatusBarMessage('SYNAPSE Engine Ready (v0.1.8)', 5000);
+        vscode.window.setStatusBarMessage('SYNAPSE Engine Ready (v0.2.16)', 5000);
         console.log('[SYNAPSE] Extension activation completed');
     } catch (e: any) {
         console.error('[SYNAPSE] Extension activation failed:', e);

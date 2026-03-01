@@ -25,6 +25,8 @@ This document defines the rules for how SYNAPSE discovers, parses, and visualize
   (아래와 같은 파일들은 캔버스 렌더링에서 배제합니다.)
     - `README.md`, `README_KR.md`
     - `CHANGELOG.md`, `test_exclusion.js`
+    - `verify_rules.js`, `verify_rules_only.js`
+    - `webpack.config.js`
     - `.vsix` (Build files)
     - `.js.map` (Source maps)
     - `node_modules`, `.git`, `dist`, `build`, `ui` (Folders)

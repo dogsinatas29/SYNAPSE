@@ -2,7 +2,7 @@
 
 > **"What you see is the logic of LLM"** — *WYSIWYG Logic for AI*
 
-[![Version](https://img.shields.io/badge/version-v0.2.15-brightgreen.svg)
+[![Version](https://img.shields.io/badge/version-v0.2.16-brightgreen.svg)
 ![Status](https://img.shields.io/badge/status-War_Room_Ready-orange.svg)
 [![Language](https://img.shields.io/badge/Language-TypeScript-blue?style=flat-square)](https://www.typescriptlang.org/)
 [![Platform](https://img.shields.io/badge/Platform-VS_Code-007ACC?style=flat-square)](https://code.visualstudio.com/)
@@ -47,6 +47,23 @@ Project complex execution flows into intuitive flowcharts.
 
 ---
 
+## 🔗 Edge & Line Conventions (선과 색상의 의미)
+SYNAPSE uses distinct colors and styles to represent different types of logical connections and data flows between nodes.
+
+| Edge Type (종류) | Color (색상) | Style & Thickness | Meaning (의미) |
+| :--- | :---: | :---: | :--- |
+| **Dependency** | `#ebdbb2` (Beige) | Solid (2px) | Standard module dependency or import. (일반적인 모듈 의존성 및 참조) |
+| **Data Flow** | `#83a598` (Blue) | Solid (3px) | Heavy data transfer or payload movement. (데이터의 흐름 및 전달) |
+| **Event** | `#fe8019` (Orange) | Solid (2px) | Event triggers or asynchronous callbacks. (이벤트 생성 및 비동기 콜백) |
+| **Conditional** | `#d3869b` (Pink) | Solid (1px) | Conditional branches like if/else or match. (조건부 로직 분기) |
+| **Origin** | `#d65d0e` (Brown) | Solid (1.5px)| Prompt origin links for AI logic tracking. (프롬프트 기원 및 LLM 추적) |
+| **API Call** | `#8ec07c` (Aqua) | Dashed (2px) | External API or cross-service network calls. (외부 API 호출 및 통신) |
+| **DB Query** | `#d3869b` (Magenta)| Solid (3px) | Database queries, mutations, or transactions. (데이터베이스 쿼리 및 트랜잭션) |
+| **Loop / Back**| `#fe8019` (Orange) | Dotted (2px) | Loop-backs (`while`/`for`) or reverse logic flow. (반복문 또는 역방향 피드백 흐름) |
+| **Highlighted**| `#fabd2f` (Gold) | Pulse (+5px) | Active execution path (Hovered/Selected). (마우스 호버나 선택 시 활성화된 실행 경로) |
+
+---
+
 ## 📸 visual Overview
 
 ### Project Topology
@@ -69,19 +86,22 @@ A deep, organized overview of your project structure.
 2. Drag and drop the file into **VS Code**.
 ### Quick Installation
 ```bash
-code --install-extension synapse-visual-architecture-0.2.15.vsix
+code --install-extension synapse-visual-architecture-0.2.16.vsix
 ```
-Current Version: **v0.2.15** (Bypass Logic & Flow Fix)
+Current Version: **v0.2.16** (Strategic Execution Flow)
 
 ---
 
 ## 🆕 Revision History
 
+### v0.2.16 (Strategic Execution Flow Update)
+- **Ready Handshake**: Extension now waits for WebView readiness, preventing initialization race conditions.
+- **Stable Layout BFS**: Replaced potentially infinite BFS loops with a stable topological rank calculation.
+- **NaN/Infinity Guards**: Strict coordinate validation to prevent UI engine freezes on complex graphs.
+- **Throttled Communication**: Reduced progress update frequency and batched messages for smoother UI performance.
+- **Recursion Safety**: Added depth limits to rank calculation to handle extremely complex or circular dependencies.
+
 ### v0.2.15 (Performance & Visibility Release)
-- **Coordinate Drift Fix**: Resolved the critical `save/restore` imbalance in the rendering engine, ensuring node labels and icons are always perfectly positioned.
-- **CPU Optimization**: Dramatically reduced CPU usage by selectively applying shadow effects only to the active path (hovered/selected nodes).
-- **Mode-Specific Hover**: mouse hover highlighting now works seamlessly across Graph, Flow, and Tree modes.
-- **Non-linear Flow Scanning**: Enhanced AST analysis to support branching logic (`if`, `loops`, `try/except`) in flowcharts.
 
 ### v0.2.14fix (The Clarity Update)
 - **Group-Aware Hierarchy**: Nodes in the Flow View now persist their grouped `cluster_id` from the Graph view, preserving modular context with visual dashed boxes (`[ MODULES ]`).

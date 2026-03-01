@@ -19,6 +19,7 @@ class FlowRenderer {
         // [Fix] External 노드는 루트에서 제외 (로직의 시작점이 될 수 없음)
         const inDegrees = {};
         edges.forEach(e => {
+            if (!e || !e.to) return;
             inDegrees[e.to] = (inDegrees[e.to] || 0) + 1;
         });
 
@@ -191,7 +192,8 @@ class FlowRenderer {
             });
         });
 
-        // 2. Assign Levels (Longest Path from roots)
+        // 2. Assign Levels (Topological-based Longest Path)
+        // [Opt] Initial queue: nodes with in-degree 0
         const queue = [];
         flow.steps.forEach(step => {
             if (inDegree[step.id] === 0) {
@@ -200,24 +202,27 @@ class FlowRenderer {
             }
         });
 
-        const visited = new Set();
+        // Use a simple BFS but WITHOUT re-evaluating visited nodes to prevent cycles from hanging
+        // Cycles are handled by the rank comparison (currentLevel + 1 > existingLevel)
+        let processedCount = 0;
         while (queue.length > 0) {
             const current = queue.shift();
+            processedCount++;
             const currentLevel = levels[current] || 0;
-
-            if (visited.has(current)) continue;
-            visited.add(current);
 
             const neighbors = adj[current] || [];
             neighbors.forEach(neighbor => {
                 const existingLevel = levels[neighbor];
                 if (existingLevel === undefined || currentLevel + 1 > existingLevel) {
                     levels[neighbor] = currentLevel + 1;
-                    visited.delete(neighbor); // Re-evaluate path
                     queue.push(neighbor);
                 }
             });
-            if (queue.length > 1000) break; // Infinite loop safety
+
+            if (processedCount > 5000) {
+                console.warn('[SYNAPSE] Flow layout safety break: Too many iterations (Cycle likely).');
+                break;
+            }
         }
 
         // 3. X-Axis Balancing (Group by level)
@@ -230,9 +235,18 @@ class FlowRenderer {
 
         const offsets = {};
 
+        // [Opt] Build reverse-adjacency map (children -> parents) for O(1) parent lookup
+        const parentsMap = {};
+        Object.entries(adj).forEach(([parentId, childIds]) => {
+            childIds.forEach(childId => {
+                if (!parentsMap[childId]) parentsMap[childId] = [];
+                parentsMap[childId].push(parentId);
+            });
+        });
+
         // Root nodes center
-        const roots = nodesByLevel[0] || [];
-        roots.forEach((rootId, idx) => {
+        const rootsInLevel0 = nodesByLevel[0] || [];
+        rootsInLevel0.forEach((rootId, idx) => {
             const shift = (idx % 2 === 0 ? 1 : -1) * Math.ceil(idx / 2);
             offsets[rootId] = shift;
         });
@@ -246,12 +260,13 @@ class FlowRenderer {
             const occupied = new Set();
 
             nodesInLevel.forEach(nodeId => {
-                // Find parent(s) to align X coordinate
+                // Find parent(s) to align X coordinate - [Opt] using parentsMap instead of iterating all keys
                 let parentOffsetSum = 0;
                 let parentCount = 0;
 
-                Object.keys(adj).forEach(parentId => {
-                    if (adj[parentId].includes(nodeId) && offsets[parentId] !== undefined) {
+                const parents = parentsMap[nodeId] || [];
+                parents.forEach(parentId => {
+                    if (offsets[parentId] !== undefined) {
                         parentOffsetSum += offsets[parentId];
                         parentCount++;
                     }
@@ -277,10 +292,16 @@ class FlowRenderer {
             const level = levels[step.id] || 0;
             const offset = offsets[step.id] || 0;
 
-            positions[step.id] = {
-                x: startX + (offset * stepWidth),
-                y: startY + (level * stepHeight)
-            };
+            const x = startX + (offset * stepWidth);
+            const y = startY + (level * stepHeight);
+
+            // [v0.2.16 Safety] Guard against NaN/Infinity to prevent UI freeze
+            if (Number.isFinite(x) && Number.isFinite(y)) {
+                positions[step.id] = { x, y };
+            } else {
+                console.error(`[SYNAPSE] Invalid coordinates for node ${step.id}: (${x}, ${y})`);
+                positions[step.id] = { x: startX, y: startY + (level * stepHeight) }; // Fallback
+            }
         });
 
         return positions;
@@ -1288,12 +1309,12 @@ class CanvasEngine {
                 this.wasDragging = false;
 
                 // -1. 클러스터 헤더 버튼 체크 (최우선)
-                const clickedCluster = this.getClusterAt(worldPos.x, worldPos.y);
-                if (clickedCluster) {
-                    // 버튼 영역 체크 (오른쪽 끝 30px 정도)
-                    const b = clickedCluster._headerBounds;
-                    if (b && worldPos.x > b.x + b.width - 40) { // Check if _headerBounds exists
-                        this.toggleClusterCollapse(clickedCluster.id);
+                const clickedClusterHeader = this.getClusterHeaderAt(worldPos.x, worldPos.y);
+                if (clickedClusterHeader) {
+                    // 버튼 영역 체크 (왼쪽 끝 [+] 텍스트 영역)
+                    const b = clickedClusterHeader._headerBounds;
+                    if (b && worldPos.x >= b.x && worldPos.x <= b.x + 60) { // Check if _headerBounds exists and click is on left side
+                        this.toggleClusterCollapse(clickedClusterHeader.id);
                         return;
                     }
                 }
@@ -2600,21 +2621,32 @@ class CanvasEngine {
                 loadingEl.remove();
             }
 
-            // 로드 시 모든 엣지에 대해 비동기 검증 요청
+            // 로드 시 모든 엣지에 대해 비동기 검증 요청 [v0.2.16 Opt: Throttled Batching]
             if (typeof vscode !== 'undefined' && this.edges.length > 0) {
-                this.edges.forEach(edge => {
-                    const fromNode = this.nodes.find(n => n.id === edge.from);
-                    const toNode = this.nodes.find(n => n.id === edge.to);
-                    if (fromNode && toNode) {
-                        vscode.postMessage({
-                            command: 'validateEdge',
-                            edgeId: edge.id,
-                            fromNode: fromNode,
-                            toNode: toNode,
-                            type: edge.type
+                console.log(`[SYNAPSE] Throttling validation for ${this.edges.length} edges...`);
+
+                const BATCH_SIZE = 20;
+                const BATCH_INTERVAL = 100; // ms
+
+                for (let i = 0; i < this.edges.length; i += BATCH_SIZE) {
+                    const batch = this.edges.slice(i, i + BATCH_SIZE);
+                    setTimeout(() => {
+                        batch.forEach(edge => {
+                            if (!edge || !edge.from || !edge.to) return;
+                            const fromNode = this.nodes.find(n => n.id === edge.from);
+                            const toNode = this.nodes.find(n => n.id === edge.to);
+                            if (fromNode && toNode) {
+                                vscode.postMessage({
+                                    command: 'validateEdge',
+                                    edgeId: edge.id,
+                                    fromNode: fromNode,
+                                    toNode: toNode,
+                                    type: edge.type
+                                });
+                            }
                         });
-                    }
-                });
+                    }, (i / BATCH_SIZE) * BATCH_INTERVAL);
+                }
             }
 
             console.log('[SYNAPSE] Loaded project state with', this.nodes.length, 'nodes');
@@ -3388,7 +3420,8 @@ class CanvasEngine {
         for (const ghost of this.baselineNodes) {
             const currentNode = this.nodes.find(n => n.id === ghost.id);
 
-            // 1. 사라진 노드 (Ghost)
+            // 1. 사라진 노드 (Ghost) - [v0.2.17] Disabled as it adds visual clutter for explicitly deleted nodes
+            /*
             if (!currentNode) {
                 this.ctx.strokeStyle = '#928374';
                 this.ctx.fillStyle = '#282828';
@@ -3397,8 +3430,9 @@ class CanvasEngine {
                 this.ctx.textAlign = 'center';
                 this.ctx.fillText(`(Removed: ${ghost.data.label})`, ghost.position.x + nodeWidth / 2, ghost.position.y + nodeHeight / 2);
             }
+            */
             // 2. 위치가 바뀐 노드 (Origin point ghost)
-            else if (currentNode.position.x !== ghost.position.x || currentNode.position.y !== ghost.position.y) {
+            if (currentNode.position.x !== ghost.position.x || currentNode.position.y !== ghost.position.y) {
                 this.ctx.strokeStyle = '#458588';
                 this.ctx.strokeRect(ghost.position.x, ghost.position.y, nodeWidth, nodeHeight);
 
@@ -3583,7 +3617,7 @@ class CanvasEngine {
             };
         }
 
-        // --- Filename Semantics Fallback ---
+        // --- Filename Semantics Fallback (Existing) ---
         const fileName = (node.data?.file || '').toLowerCase();
 
         // Loop/Iterator Semantic
@@ -3608,7 +3642,51 @@ class CanvasEngine {
             };
         }
 
-        return typeMap[node.type] || defaultStyle;
+        // --- New v0.2.16 Node Types ---
+        const v16TypeMap = {
+            'processor': {
+                borderColor: '#b16286', // Purple
+                bgColor: '#3c3836',
+                icon: '⚙️',
+                lineWidth: 2.5,
+                typeLabel: 'Proc'
+            },
+            'service': {
+                borderColor: '#458588', // Blue
+                bgColor: '#3c3836',
+                icon: '🤝',
+                lineWidth: 2.5,
+                typeLabel: 'Serv'
+            },
+            'gate': {
+                borderColor: '#d79921', // Yellow-ish
+                bgColor: '#3c3836',
+                icon: '⛩️',
+                lineWidth: 3,
+                typeLabel: 'Gate'
+            },
+            'trigger': {
+                borderColor: '#cc241d', // Red
+                bgColor: '#3c3836',
+                icon: '⚡',
+                lineWidth: 2,
+                glow: true,
+                typeLabel: 'Trig'
+            },
+            'data': {
+                borderColor: '#83a598', // Blue
+                bgColor: '#076678', // Dark Blue
+                icon: '📋',
+                lineWidth: 4, // 두꺼운 테두리
+                typeLabel: 'Data'
+            }
+        };
+
+        if (v16TypeMap[type]) {
+            return v16TypeMap[type];
+        }
+
+        return typeMap[type] || defaultStyle;
     }
 
     renderNode(node, zoom) {
@@ -3617,12 +3695,14 @@ class CanvasEngine {
         }
 
         // 1.5. 클러스터 접힘 체크 - 최상단으로 이동하여 렌더링 스킵
-        if (node.cluster_id) {
-            const cluster = this.clusters?.find(c => c.id === node.cluster_id);
+        // Bugfix: node.data.cluster_id 확인, node.cluster_id는 ungroup 시 null이 되거나 혼용될 수 있음
+        const clusterId = node.cluster_id || node.data?.cluster_id;
+        if (clusterId) {
+            const cluster = this.clusters?.find(c => c.id === clusterId);
             if (cluster && cluster.collapsed) {
                 // [Refine] Documentation Shelf는 접혀있어도 가시성을 위해 최소한의 표시는 남김
-                if (node.cluster_id !== 'doc_shelf') {
-                    return;
+                if (clusterId !== 'doc_shelf') {
+                    return; // 완전히 숨김 (이전처럼 다시 나타나지 않는 문제 해결: collapsed 상태가 해제되면 렌더링 됨)
                 }
             }
         }
@@ -3999,7 +4079,10 @@ class CanvasEngine {
      * @returns {Object} { color, dashPattern, lineWidth, arrowStyle }
      */
     getEdgeStyle(edge) {
+        // [v0.2.16] Extract Weight and Type
         const type = edge.type || 'dependency';
+        const weight = typeof edge.weight === 'number' ? edge.weight : 0; // Default weight 0
+
 
         const styles = {
             'dependency': {
@@ -4046,7 +4129,14 @@ class CanvasEngine {
             }
         };
 
-        return styles[type] || styles['dependency'];
+        const style = styles[type] || styles['dependency'];
+
+        // [v0.2.16] Apply Weight Dynamics (Thickness increases by 1 for every weight unit)
+        if (weight > 0) {
+            style.lineWidth += (weight * 0.8); // 0.8 pixel per weight unit increment
+        }
+
+        return style;
     }
 
     /**
@@ -4222,8 +4312,8 @@ class CanvasEngine {
         // 엣지 색상: 검증 에러가 있으면 검증 색상 우선, 없으면 타입별 색상
         let edgeColor = validation.valid ? style.color : validation.color;
 
-        // 선 굵기: 검증 에러는 더 굵게, 아니면 타입별 굵기
-        let lineWidth = validation.valid ? style.lineWidth : 2.5;
+        // 선 굵기: 검증 에러는 더 굵게, 아니면 타입(및 가중치)별 굵기
+        let lineWidth = validation.valid ? style.lineWidth : (style.lineWidth + 1.5);
 
         // 🌟 선택된 엣지 강조 효과
         const isSelected = this.selectedEdge && this.selectedEdge.id === edge.id;
@@ -4736,6 +4826,13 @@ function initCanvas() {
                 engine.loadProjectState(message.data, preserve);
                 engine.isExpectingUpdate = false; // 플래그 리셋
                 break;
+            case 'analysisProgress': {
+                const loadingText = document.querySelector('#loading div:not(.spinner)');
+                if (loadingText) {
+                    loadingText.textContent = message.message || '프로젝트 분석 중...';
+                }
+                break;
+            }
             case 'projectProposal':
                 engine.loadProjectState(message.data);
                 engine.fitView();
@@ -4757,9 +4854,6 @@ function initCanvas() {
             case 'setBaseline':
                 engine.baselineNodes = message.data.nodes;
                 engine.render();
-                break;
-            case 'requestContext':
-                engine.sendContextData();
                 break;
             case 'requestContext':
                 engine.sendContextData();
@@ -4931,6 +5025,11 @@ function initCanvas() {
             engine.renameCluster(clickedCluster.id);
         }
     });
+    // [v0.2.16 Handshake] Signal readiness to the extension
+    if (typeof vscode !== 'undefined') {
+        console.log('[SYNAPSE] UI Ready. Sending handshake to extension...');
+        vscode.postMessage({ command: 'ready' });
+    }
 }
 
 // Ensure DOM is ready before initializing

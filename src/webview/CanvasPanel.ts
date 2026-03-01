@@ -201,11 +201,15 @@ export class CanvasPanel {
                         // REC/STOP 버튼 클릭 → synapse.logPrompt 토글 트리거
                         await vscode.commands.executeCommand('synapse.logPrompt');
                         return;
-                    case 'contextData':
+                    case 'contextData': // Restored contextData case
                         if (this._contextRequestCallback) {
                             this._contextRequestCallback(message.data);
                             this._contextRequestCallback = undefined;
                         }
+                        return;
+                    case 'ready':
+                        console.log('[SYNAPSE] WebView Ready signal received. Starting initial analysis...');
+                        await this.sendProjectState();
                         return;
                 }
             },
@@ -672,7 +676,15 @@ export class CanvasPanel {
 
                 // 2. 새로운 메커니즘으로 부트스트랩 재실행
                 const engine = new BootstrapEngine();
-                const result = await engine.liteBootstrap(workspaceFolder.uri.fsPath);
+                const result = await engine.liteBootstrap(
+                    workspaceFolder.uri.fsPath,
+                    (msg) => {
+                        this._panel.webview.postMessage({
+                            command: 'analysisProgress',
+                            message: msg
+                        });
+                    }
+                );
 
                 if (result.success) {
                     vscode.window.showInformationMessage('Project maps re-generated successfully with folder clustering.');
@@ -906,7 +918,6 @@ export class CanvasPanel {
 
             // Send updated state to view
             await this.sendProjectState();
-
         } catch (error) {
             console.error('Failed to approve node:', error);
             vscode.window.showErrorMessage(`Failed to approve node: ${error}`);
@@ -1360,10 +1371,19 @@ export class CanvasPanel {
             }
 
             // 고도화: 노드가 전혀 없는 경우 (신규 프로젝트) 자동 발견 시도
-            if (projectState.nodes.length === 0) {
+            if (!projectState.nodes || projectState.nodes.length === 0) {
                 console.log('[SYNAPSE] Project state is empty, triggering auto-discovery...');
                 const engine = new BootstrapEngine();
-                const discoveredState = await engine.autoDiscover(workspaceFolder.uri.fsPath);
+                const discoveredState = await engine.autoDiscover(
+                    workspaceFolder.uri.fsPath,
+                    undefined,
+                    (msg) => {
+                        this._panel.webview.postMessage({
+                            command: 'analysisProgress',
+                            message: msg
+                        });
+                    }
+                );
 
                 if (discoveredState.nodes.length > 0) {
                     projectState = discoveredState;
@@ -1376,22 +1396,54 @@ export class CanvasPanel {
             // 1. FileScanner 인스턴스 생성
             const scanner = new FileScanner();
 
-            // 2. 각 노드에 대해 실제 파일 분석 수행
-            console.log(`[SYNAPSE] Starting file scan for ${projectState.nodes.length} nodes...`);
-            for (const node of projectState.nodes) {
-                if (node.data && (node.data.path || node.data.file)) {
-                    const relativePath = node.data.path || node.data.file;
-                    const filePath = path.join(workspaceFolder.uri.fsPath, relativePath);
+            // 2. 각 노드에 대해 실제 파일 분석 수행 (Parallelized with Concurrency Limit for v0.2.16)
+            console.log(`[SYNAPSE] Starting throttled file scan for ${projectState.nodes.length} nodes...`);
+            console.time('[SYNAPSE] Total Scan Time');
 
-                    console.log(`[SYNAPSE] Scanning node: ${node.id} (${relativePath})`);
-                    const summary = scanner.scanFile(filePath);
-                    console.log(`[SYNAPSE] Scan complete for ${node.id}: ${summary.classes.length} classes, ${summary.functions.length} functions, ${summary.references.length} refs`);
+            this._panel.webview.postMessage({
+                command: 'analysisProgress',
+                progress: 0,
+                total: projectState.nodes.length,
+                message: 'Analyzing file contents...'
+            });
 
-                    // 노드 데이터에 요약본 추가
-                    node.data.summary = summary;
-                }
+            const CONCURRENCY_LIMIT = 5;
+            const nodesToScan = projectState.nodes;
+
+            for (let i = 0; i < nodesToScan.length; i += CONCURRENCY_LIMIT) {
+                const chunk = nodesToScan.slice(i, i + CONCURRENCY_LIMIT);
+                await Promise.all(chunk.map(async (node: any, chunkIndex: number) => {
+                    const actualIndex = i + chunkIndex;
+                    if (node.data && (node.data.path || node.data.file)) {
+                        const relativePath = node.data.path || node.data.file;
+                        const filePath = path.join(workspaceFolder.uri.fsPath, relativePath);
+
+                        try {
+                            // Diagnostics: log start of scan for large/suspicious files
+                            if (actualIndex % 10 === 0) console.log(`[SYNAPSE] Scanning [${actualIndex}/${nodesToScan.length}]: ${relativePath}`);
+                            const summary = scanner.scanFile(filePath);
+                            node.data.summary = summary;
+                        } catch (e) {
+                            console.error(`[SYNAPSE] Error scanning ${relativePath}:`, e);
+                        }
+                    }
+
+                    // Send progress update periodically
+                    // Throttled UI Progress: Only update every 10% or at significant milestones
+                    const progressPercent = Math.round((actualIndex / nodesToScan.length) * 100);
+                    const lastProgressPercent = Math.round(((actualIndex - 1) / nodesToScan.length) * 100);
+
+                    if (progressPercent % 10 === 0 && progressPercent !== lastProgressPercent || actualIndex === nodesToScan.length - 1) {
+                        this._panel.webview.postMessage({
+                            command: 'analysisProgress',
+                            progress: actualIndex,
+                            total: nodesToScan.length,
+                            message: `Analyzing file contents... (${progressPercent}%)`
+                        });
+                    }
+                }));
             }
-            console.log('[SYNAPSE] All nodes scanned successfully.');
+            console.timeEnd('[SYNAPSE] Total Scan Time');
 
             // 3. 자동 엣지(의존성) 발견 로직 - 실시간 생성, 저장하지 않음!
             const discoveredEdges: any[] = [];
@@ -1414,36 +1466,50 @@ export class CanvasPanel {
             });
             console.log(`[SYNAPSE] Node map built with ${nodeMap.size} keys.`);
 
+            console.log(`[SYNAPSE] Discovering edges for ${projectState.nodes.length} nodes...`);
+            console.time('[SYNAPSE] Edge Discovery Time');
+            this._panel.webview.postMessage({
+                command: 'analysisProgress',
+                message: 'Discovering high-level connections...'
+            });
+
+            const existingEdgeKeys = new Set();
+            if (projectState.edges) {
+                projectState.edges.forEach((e: any) => existingEdgeKeys.add(`${e.from}->${e.to}`));
+            }
+
             projectState.nodes.forEach((sourceNode: any) => {
-                if (sourceNode.data.summary && sourceNode.data.summary.references) {
-                    sourceNode.data.summary.references.forEach((ref: any) => {
-                        // ref는 이제 string이 아니라 { target: string, type: string } 임
+                const summary = sourceNode.data?.summary;
+                if (summary && summary.references) {
+                    for (const ref of summary.references) {
                         const targetName = typeof ref === 'string' ? ref : ref.target;
                         const edgeType = typeof ref === 'string' ? 'dependency' : ref.type;
 
-                        // 다양한 매칭 시도 (상대 경로 제거 등)
                         const cleanRef = targetName.replace(/^\.\//, '').replace(/^\.\.\//, '');
                         const targetNodeId = nodeMap.get(targetName) || nodeMap.get(cleanRef) || nodeMap.get(path.parse(cleanRef).name);
 
                         if (targetNodeId && targetNodeId !== sourceNode.id) {
-                            // 중복 체크 및 엣지 추가 (메모리에만)
-                            const alreadyDiscovered = discoveredEdges.some((e: any) => e.from === sourceNode.id && e.to === targetNodeId);
-
-                            if (!alreadyDiscovered) {
+                            const edgeKey = `${sourceNode.id}->${targetNodeId}`;
+                            if (!existingEdgeKeys.has(edgeKey)) {
                                 discoveredEdges.push({
-                                    id: `edge_auto_${Date.now()}_${Math.floor(Math.random() * 1000)}`,
+                                    id: `edge_auto_${Date.now()}_${Math.floor(Math.random() * 1000000)}`,
                                     from: sourceNode.id,
                                     to: targetNodeId,
-                                    type: edgeType, // 시맨틱 타입 반영
+                                    type: edgeType,
                                     label: edgeType === 'dependency' ? 'ref' : edgeType
                                 });
+                                existingEdgeKeys.add(edgeKey); // Prevent duplicate auto-edges
                             }
                         }
-                    });
+                    }
                 }
             });
+            console.timeEnd('[SYNAPSE] Edge Discovery Time');
+
+            console.log(`[SYNAPSE] Edge discovery complete. Found ${discoveredEdges.length} auto-edges.`);
 
             // 4. 웹뷰로 전송할 때만 자동 발견된 엣지 포함 (저장하지 않음!)
+            console.log('[SYNAPSE] Preparing state for webview...');
             const stateForWebview = {
                 ...projectState,
                 edges: [

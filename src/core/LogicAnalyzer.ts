@@ -3,7 +3,7 @@ import * as path from 'path';
 import { ProjectState, Node, Edge } from '../types/schema';
 
 export interface AnalysisIssue {
-    type: 'circular' | 'dead-end' | 'bottleneck' | 'isolated' | 'warning';
+    type: 'circular' | 'dead-end' | 'bottleneck' | 'isolated' | 'warning' | 'schema-violation';
     severity: 'critical' | 'high' | 'medium' | 'low';
     message: string;
     nodeIds: string[];
@@ -30,18 +30,47 @@ export class LogicAnalyzer {
         // 4. 병목 지점 탐색 (Bottlenecks)
         this.detectBottlenecks(nodes, edges, issues);
 
+        // 5. [v0.2.16] Schema 무결성 검증 (Schema Validation)
+        this.detectSchemaViolations(nodes, edges, issues);
+
         return issues;
     }
 
     private detectIsolatedNodes(nodes: Node[], edges: Edge[], issues: AnalysisIssue[]) {
         nodes.forEach(node => {
             const hasEdge = edges.some(e => e.from === node.id || e.to === node.id);
-            if (!hasEdge && node.type !== 'cluster') {
+            if (!hasEdge && node.type !== 'cluster' && node.type !== 'documentation') {
                 issues.push({
                     type: 'isolated',
                     severity: 'medium',
                     message: `고립된 노드: '${node.data.label}'이(가) 어떤 흐름과도 연결되어 있지 않습니다.`,
                     nodeIds: [node.id]
+                });
+            }
+        });
+    }
+
+    private detectSchemaViolations(nodes: Node[], edges: Edge[], issues: AnalysisIssue[]) {
+        const validNodeTypes = new Set(['component', 'entry', 'database', 'external', 'documentation', 'test', 'config', 'source', 'history', 'cluster', 'Data', 'Processor', 'Service', 'Gate', 'Trigger']);
+
+        nodes.forEach(node => {
+            if (!validNodeTypes.has(node.type)) {
+                issues.push({
+                    type: 'schema-violation',
+                    severity: 'high',
+                    message: `스키마 위반: '${node.data.label}' 노드가 알 수 없는 타입('${node.type}')을 가지고 있습니다. LLM 환각(Hallucination)일 수 있습니다.`,
+                    nodeIds: [node.id]
+                });
+            }
+        });
+
+        edges.forEach(edge => {
+            if (!edge.from || !edge.to) {
+                issues.push({
+                    type: 'schema-violation',
+                    severity: 'critical',
+                    message: `스키마 위반: 식별자 '${edge.id}'를 가진 엣지의 연결점(from/to)이 유실되었습니다.`,
+                    nodeIds: []
                 });
             }
         });

@@ -9,6 +9,8 @@ data/snapshots/
 # SYNAPSE specific
 *.vsix
 synapse-visual-architecture-*/
+mile_stone/
+GEMINI.md
 
 # Temporary / Build artifacts
 *.backup

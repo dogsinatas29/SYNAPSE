@@ -3332,6 +3332,7 @@ class CanvasEngine {
         }
 
         console.log('[SYNAPSE] Edge deleted:', edgeId);
+        this.saveState(); // [v0.2.18] Ensure state is saved after deletion so it doesn't revert
         this.render();
     }
 
@@ -3365,6 +3366,7 @@ class CanvasEngine {
         }
 
         console.log('[SYNAPSE] Node deleted:', nodeId);
+        this.saveState(); // [v0.2.18] Ensure state is saved after deletion so it doesn't revert
         this.render();
     }
 
@@ -3447,6 +3449,7 @@ class CanvasEngine {
         }
 
         console.log(`[SYNAPSE] ${nodeIds.length} nodes deleted.`);
+        this.saveState(); // [v0.2.18] Ensure state is saved after batch deletion so it doesn't revert
         this.render();
     }
 

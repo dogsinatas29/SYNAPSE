@@ -1009,8 +1009,9 @@ export class CanvasPanel {
             const fileUri = vscode.Uri.file(fromAbs);
             const existing = Buffer.from(await vscode.workspace.fs.readFile(fileUri)).toString('utf-8');
 
-            // 이미 import 되어 있으면 중복 삽입 방지
-            if (existing.includes(toBase)) {
+            // 이미 import 되어 있으면 중복 삽입 방지 (단어 단위 정확히 일치)
+            const regex = new RegExp(`\\b${toBase}\\b`);
+            if (regex.test(existing)) {
                 Logger.info(`[CanvasPanel] injectImport: '${toBase}' already referenced in ${fromFile}, skipping.`);
                 return;
             }
@@ -1407,7 +1408,6 @@ export class CanvasPanel {
     }
 
     private async handleSaveState(newState: any) {
-        /* [CPR Step 3] Temporarily disabled to prevent data erasure/RangeError
         const workspaceFolder = this._workspaceFolder;
         if (!workspaceFolder) return;
 
@@ -1419,31 +1419,39 @@ export class CanvasPanel {
             try {
                 const existingData = await vscode.workspace.fs.readFile(projectStateUri);
                 currentState = JSON.parse(Buffer.from(existingData).toString('utf-8'));
-                if (typeof currentState === 'string') {
-                    currentState = JSON.parse(currentState); // Auto-heal double encoded state
-                }
+                if (typeof currentState === 'string') currentState = JSON.parse(currentState);
             } catch (e) {
-                console.warn('[SYNAPSE] No existing project state to merge');
+                console.warn('[SYNAPSE] No existing project state to update positions');
+                return;
             }
 
-            // 2. 새로운 데이터 병합 (노드, 엣지, 클러스터만 교체)
-            const MergedState = {
-                ...currentState,
-                nodes: newState.nodes,
-                edges: newState.edges,
-                clusters: newState.clusters
-            };
+            // 2. 안전한 좌표 병합 (기존 데이터를 전혀 파괴하지 않음)
+            if (newState.nodes && Array.isArray(newState.nodes)) {
+                for (const uiNode of newState.nodes) {
+                    const backendNode = (currentState.nodes || []).find((n: any) => n.id === uiNode.id);
+                    if (backendNode && uiNode.position) {
+                        backendNode.position = uiNode.position;
+                    }
+                }
+            }
+
+            if (newState.clusters && Array.isArray(newState.clusters)) {
+                for (const uiCluster of newState.clusters) {
+                    const backendCluster = (currentState.clusters || []).find((c: any) => c.id === uiCluster.id);
+                    if (backendCluster) {
+                        if (uiCluster.position) backendCluster.position = uiCluster.position;
+                        if (uiCluster.width) backendCluster.width = uiCluster.width;
+                        if (uiCluster.height) backendCluster.height = uiCluster.height;
+                    }
+                }
+            }
 
             // 3. 파일 저장 (정규화 적용)
-            const normalizedJson = this.normalizeProjectState(MergedState);
+            const normalizedJson = this.normalizeProjectState(currentState);
             await vscode.workspace.fs.writeFile(projectStateUri, Buffer.from(normalizedJson, 'utf8'));
-            console.log('[SYNAPSE] State merged and saved successfully');
         } catch (error) {
-            console.error('Failed to save project state:', error);
-            vscode.window.showErrorMessage(`Failed to save project state: ${error}`);
+            console.error('Failed to safely save project state positions:', error);
         }
-        */
-        console.warn('[SYNAPSE] [CPR] handleSaveState is currently disabled.');
     }
 
     private async handleTakeSnapshot(state: any) {

@@ -1896,7 +1896,7 @@ class CanvasEngine {
 
         // Default Graph Mode hit testing
         for (const node of this.nodes) {
-            const nodeWidth = 120;
+            const nodeWidth = node._width || 120;
             const nodeHeight = 60;
             const HIT_PADDING = 12; // 클릭/선택 영역 확장
 
@@ -1906,8 +1906,12 @@ class CanvasEngine {
                 if (cluster && cluster.collapsed) continue;
             }
 
-            if (worldX >= node.position.x - HIT_PADDING && worldX <= node.position.x + nodeWidth + HIT_PADDING &&
-                worldY >= node.position.y - HIT_PADDING && worldY <= node.position.y + nodeHeight + HIT_PADDING) {
+            const left = node.position.x - nodeWidth / 2 - HIT_PADDING;
+            const right = node.position.x + nodeWidth / 2 + HIT_PADDING;
+            const top = node.position.y - nodeHeight / 2 - HIT_PADDING;
+            const bottom = node.position.y + nodeHeight / 2 + HIT_PADDING;
+
+            if (worldX >= left && worldX <= right && worldY >= top && worldY <= bottom) {
                 return node;
             }
         }

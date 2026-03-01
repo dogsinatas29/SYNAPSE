@@ -107,14 +107,15 @@ export class EdgeCodeRefactorer {
         const newLines = lines.map(line => {
             const trimmed = line.trim();
             // TS/JS Match
-            if (trimmed.startsWith('import ') && (line.includes(`'${importPath}'`) || line.includes(`"${importPath}"`))) {
+            if ((trimmed.startsWith('import ') || trimmed.includes('= require(')) && (line.includes(`'${importPath}'`) || line.includes(`"${importPath}"`))) {
                 removedLine = trimmed;
                 return `// [SYNAPSE_DELETED] ${line}`;
             }
             // Python Match
             if (ext === '.py') {
                 const pyModule = path.basename(toFile, '.py');
-                if (trimmed === `import ${pyModule}` || trimmed.startsWith(`from ${pyModule} import`)) {
+                const pyRegex = new RegExp(`^(import|from)\\s+${pyModule}\\b`);
+                if (pyRegex.test(trimmed)) {
                     removedLine = trimmed;
                     return `# [SYNAPSE_DELETED] ${line}`;
                 }

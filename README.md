@@ -88,11 +88,40 @@ A deep, organized overview of your project structure.
 ```bash
 code --install-extension synapse-visual-architecture-0.2.16.vsix
 ```
-Current Version: **v0.2.16** (Strategic Execution Flow)
+    Current Version: **v0.2.17** (Edge Connectivity & Safe Deletion)
+
+---
+
+## 📖 Usage Guide (v0.2.17 Key Features)
+
+### 1. 🔄 Reset State (Full Factory Reset)
+If your canvas becomes corrupted or you want to start a completely new architecture from scratch, use the **`Reset State`** button in the top toolbar.
+- **Disk Purge**: Instantly wipes all nodes, edges, and clusters from `project_state.json`.
+- **Memory Flush & Visual Reset**: Clears the currently active canvas and internal engine memory.
+- **Re-Bootstrap**: Prompts you to reload `GEMINI.md` to begin generating a fresh architecture.
+
+### 2. ✏️ Edit Logic Mode (WSIWYG File Management)
+The `Edit Logic` button in the toolbar empowers you to shape your workspace directly from the canvas. 
+- **Creating Files**: Toggle `Edit Logic` ON, double-click anywhere on the empty canvas to spawn a new node, give it a module name, and SYNAPSE will **physically create an empty file** in your workspace.
+- **Safe Deletion**: Deleting a node in `Edit Logic` mode intercepts the file system. Instead of destructive deletion, SYNAPSE wraps the physical source code entirely in `// [SYNAPSE_DELETED]` comments, ensuring no code is ever permanently lost.
+- **Resurrection**: If you delete a node by mistake, the automatic Snapshot & Rollback system allows you to revert to the previous state and revive the file.
+
+### 3. 🔗 Edge Management & Auto-Imports
+SYNAPSE v0.2.17 bridges the gap between drawing pictures and writing code.
+- **Inline Trash (`X`)**: Hover over any edge to reveal a red `X` badge at its center. Click it to instantly sever the logical and visual connection.
+- **Confirmation Flow (`?` → `!`)**: When you manually connect two nodes in `Edit Logic` mode, the edge appears with a yellow **`?`** badge indicating a `pending_confirm` state.
+- **Auto-Injected Imports**: Click the **`?`** badge to confirm the architectural decision. SYNAPSE will analyze the target node, detect the file language (`.py`, `.ts`, `.js`), and **automatically inject the correct `import` or `require()` statement at the very top of the source file.** The badge then turns perfectly green (**`!`**).
 
 ---
 
 ## 🆕 Revision History
+
+### v0.2.17 (Edge Connectivity & Safe Deletion)
+- **Safe Node Deletion**: Physical files are commented out instead of hard-deleted to prevent data loss.
+- **Edge Auto-Imports**: Confirming an edge visually injects the actual `import` statement into the source file.
+- **Reset State Protocol**: 4-step full reset system (Disk, Memory, Canvas, Prompt).
+- **V/X Redundancy Removed**: Cleared the redundant Node Approve/Reject texts in favor of seamless Edit Logic interactions.
+- **Data Hygiene**: Eliminated JSON buffer encoding corruption and RangeErrors.
 
 ### v0.2.16 (Strategic Execution Flow Update)
 - **Ready Handshake**: Extension now waits for WebView readiness, preventing initialization race conditions.

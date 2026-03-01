@@ -77,7 +77,9 @@ export class GeminiParser {
         contentForScanning = contentForScanning.replace(/~~~[\s\S]*?~~~/g, '');
 
         // 3. 인라인 코드 블록 제거 (`...`) - 줄바꿈을 포함하지 않는 백틱 쌍만 타겟팅
-        contentForScanning = contentForScanning.replace(/`[^`\n]+`/g, '');
+        // [v0.2.17 Fix] 주석 처리: 불렛 리스트 안의 노드 정의(- **`main.py`**)까지 지워버리는 치명적 부작용 발생.
+        // Node 정의 정규식 자체가 불렛이나 아이콘으로 제한되어 있으므로 인라인 백틱을 무차별 제거할 필요가 없음.
+        // contentForScanning = contentForScanning.replace(/`[^`\n]+`/g, '');
 
         // 0. 스캔 경로(Include Paths) 추출
         const scanPathPattern = /(?:Scan Paths|스캔 경로|Scope):\s*([^\n]+)/i;
@@ -99,8 +101,8 @@ export class GeminiParser {
         }
 
         // 파일 패턴 확장: 📄 아이콘이 있거나 [Nodes] 섹션에 명시된 경우만 문서로 인정
-        // 소스 파일은 불렛 포인트 등으로도 탐색 가능
-        const filePattern = /(?:📄\s*|^\s*[-\*]\s+[`]?|파일:\s*)([a-zA-Z0-9_./-]+\.(json|py|ts|js|cpp|h|hpp|cc|c|rs|sh|sql|md))[`]?/gm;
+        // 소스 파일은 불렛 포인트 등으로도 탐색 가능 (별표 표시와 백틱 완화)
+        const filePattern = /(?:📄\s*|^\s*[-\*]\s*(?:\*\*|__)?\s*[`]?|파일:\s*)([a-zA-Z0-9_./-]+\.(json|py|ts|js|cpp|h|hpp|cc|c|rs|sh|sql|md))[`]?(?:\*\*|__)?/gm;
         while ((match = filePattern.exec(contentForScanning)) !== null) {
             const fileName = match[1];
             const isExplicitDoc = match[0].includes('📄') || match[0].includes('파일:');

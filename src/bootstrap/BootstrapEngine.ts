@@ -246,7 +246,33 @@ This document defines the rules for how SYNAPSE discovers, parses, and visualize
                             onProgress(`Discovering files (${fileCount} found)...`);
                         }
 
-                        const type: NodeType = ext === '.md' ? 'documentation' : 'source';
+                        // [v0.2.25 Bugfix] Skip files that have been "safely deleted" by SYNAPSE
+                        try {
+                            // Read first 100 bytes to check for deletion marker
+                            const fd = fs.openSync(fullPath, 'r');
+                            const buffer = Buffer.alloc(100);
+                            fs.readSync(fd, buffer, 0, 100, 0);
+                            fs.closeSync(fd);
+                            const topContent = buffer.toString('utf8');
+
+                            if (topContent.includes('[SYNAPSE_DELETED]')) {
+                                continue;
+                            }
+                        } catch (e) {
+                            // Ignore read errors
+                        }
+
+                        let type: NodeType = 'source';
+                        if (ext === '.md') {
+                            const isRoot = !currentRelPath.includes('/') && !currentRelPath.includes('\\');
+                            const isDocFolder = currentRelPath.toLowerCase().startsWith('doc/') || currentRelPath.toLowerCase().startsWith('docs/');
+                            if (isRoot || isDocFolder) {
+                                type = 'documentation';
+                            } else {
+                                continue; // Filter out other .md files
+                            }
+                        }
+
                         const dtrData = this.scoutDTR(fullPath, type);
 
                         structure.files.push({

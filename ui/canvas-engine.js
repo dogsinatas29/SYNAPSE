@@ -1161,14 +1161,23 @@ class CanvasEngine {
             position: { x, y },
             data: {
                 label: label,
-                description: 'Manually created node'
+                description: 'Manually created node',
+                cluster_id: 'sys_cluster_reserved' // [v0.2.22] Assign to Reserved Cluster
             },
+            cluster_id: 'sys_cluster_reserved', // Backend compat
             visual: {
                 opacity: 1 // Make it fully visible immediately
             }
         };
         if (this.isEditMode) {
             newNode.createPhysicalFile = true;
+        }
+
+        // [v0.2.21 Fix] Frontend duplicate check
+        const existingNode = this.nodes.find(n => n.data?.label === label && n.type === type);
+        if (existingNode) {
+            console.warn('[SYNAPSE] Duplicate node detected (Frontend):', label);
+            return; // Backend will also check, but we block here for immediate feedback
         }
 
         console.log('[SYNAPSE] Creating manual node:', newNode);
@@ -1898,7 +1907,7 @@ class CanvasEngine {
         for (const node of this.nodes) {
             const nodeWidth = node._width || 120;
             const nodeHeight = 60;
-            const HIT_PADDING = 12; // 클릭/선택 영역 확장
+            const HIT_PADDING = 30; // [v0.2.25] 클릭/선택 영역 확장 (12 -> 30)
 
             // Check if node is hidden (collapsed cluster)
             if (node.cluster_id) {
@@ -2142,6 +2151,7 @@ class CanvasEngine {
                 } else if (node) {
                     this.deleteNode(node.id);
                 }
+                this.hideContextMenu();
             };
         } else {
             deleteItem.style.display = 'none';
@@ -2516,14 +2526,53 @@ class CanvasEngine {
     createManualEdge(type, color) {
         if (!this.edgeSource || !this.edgeTarget) return;
 
+        const fromId = this.edgeSource.type === 'node' ? this.edgeSource.id : undefined;
+        const fromClusterId = this.edgeSource.type === 'cluster' ? this.edgeSource.id : undefined;
+        const toId = this.edgeTarget.type === 'node' ? this.edgeTarget.id : undefined;
+        const toClusterId = this.edgeTarget.type === 'cluster' ? this.edgeTarget.id : undefined;
+
+        // [v0.2.20 Fix] Prevent creating logically identical edges
+        const isDuplicate = this.edges.some(e =>
+            e.from === fromId && e.to === toId && e.type === type &&
+            e.fromCluster === fromClusterId && e.toCluster === toClusterId
+        );
+
+        if (isDuplicate) {
+            console.warn('[SYNAPSE] Logically identical edge already exists in UI, skipping creation.');
+            if (typeof vscode !== 'undefined') {
+                vscode.postMessage({ command: 'showWarning', message: 'A connection between these nodes already exists.' });
+            } else {
+                alert('A connection between these nodes already exists.');
+            }
+            this.edgeSource = null;
+            this.edgeTarget = null;
+            this.render();
+            return;
+        }
+
         const _fromNode = this.nodes.find(n => n.id === (this.edgeSource.type === 'node' ? this.edgeSource.id : null));
         const _toNode = this.nodes.find(n => n.id === (this.edgeTarget.type === 'node' ? this.edgeTarget.id : null));
+
+        // [v0.2.24] Block Edge Connections to Document Nodes
+        if ((_fromNode && _fromNode.type === 'documentation') || (_toNode && _toNode.type === 'documentation')) {
+            console.warn('[SYNAPSE] Documentation nodes cannot have logical edges.');
+            if (typeof vscode !== 'undefined') {
+                vscode.postMessage({ command: 'showWarning', message: '문서 노드에는 엣지를 연결할 수 없습니다.' });
+            } else {
+                alert('문서 노드에는 엣지를 연결할 수 없습니다.');
+            }
+            this.edgeSource = null;
+            this.edgeTarget = null;
+            this.render();
+            return;
+        }
+
         const newEdge = {
             id: `edge_${this.edgeSource.id}_${this.edgeTarget.id}_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`,
-            from: this.edgeSource.type === 'node' ? this.edgeSource.id : undefined,
-            fromCluster: this.edgeSource.type === 'cluster' ? this.edgeSource.id : undefined,
-            to: this.edgeTarget.type === 'node' ? this.edgeTarget.id : undefined,
-            toCluster: this.edgeTarget.type === 'cluster' ? this.edgeTarget.id : undefined,
+            from: fromId,
+            fromCluster: fromClusterId,
+            to: toId,
+            toCluster: toClusterId,
             type: type,
             label: type.replace('_', ' '),
             status: 'pending_confirm',  // [v0.2.17] awaits source confirmation
@@ -2721,6 +2770,31 @@ class CanvasEngine {
         this.tooltip.style.display = 'none';
     }
 
+    getOrCreateSystemClusters() {
+        const createSysCluster = (id, label, x, y, color) => {
+            let cluster = this.clusters.find(c => c.id === id);
+            if (!cluster) {
+                cluster = {
+                    id: id,
+                    label: label,
+                    position: { x, y },
+                    width: 300,
+                    height: 200,
+                    color: color,
+                    collapsed: false,
+                    isSystem: true
+                };
+                this.clusters.push(cluster);
+                console.log(`[SYNAPSE] Initialized System Cluster: ${label}`);
+            }
+            return cluster;
+        };
+
+        // UI placement for System Clusters. We'll put them firmly on the left bottom side.
+        createSysCluster('sys_cluster_reserved', '🕒 Reserved Cluster', -1500, 1000, '#fabd2f'); // Yellow-ish
+        createSysCluster('sys_cluster_buffer', '🛡️ Buffer Cluster', -1100, 1000, '#83a598'); // Blue-ish
+    }
+
     loadProjectState(projectState, preserveView = false) {
         this.log(`loadProjectState triggered. Nodes: ${projectState.nodes?.length}, Edges: ${projectState.edges?.length}`);
         try {
@@ -2732,12 +2806,18 @@ class CanvasEngine {
             this.edges = projectState.edges || [];
             this.clusters = projectState.clusters || [];
 
-            // [v0.2.17 New Rule] Documentation Shelf & Intelligent Context Vault are collapsed by default
+            // [v0.2.22] System Clusters initialization
+            this.getOrCreateSystemClusters();
+
+            // [v0.2.24 New Rule] Documentation Shelf is collapsed by default
             this.clusters.forEach(cluster => {
                 if (cluster.id === 'doc_shelf' || cluster.id === 'context_vault') {
-                    // Only set if not already explicitly defined in the state
                     if (cluster.collapsed === undefined) {
-                        cluster.collapsed = true;
+                        cluster.collapsed = true; // Collapse by default
+                    }
+                } else if (cluster.id.startsWith('sys_cluster_')) {
+                    if (cluster.collapsed === undefined) {
+                        cluster.collapsed = false; // System clusters are expanded by default
                     }
                 }
             });
@@ -3208,6 +3288,7 @@ class CanvasEngine {
         for (const node of this.selectedNodes) {
             if (node.data) node.data.cluster_id = null;
             node.cluster_id = null;
+            node._ungrouped = true; // [v0.2.21 Fix] Prevent FlowRenderer from snapping this back to default cluster
         }
 
         // 사용되지 않는 클러스터 정리 (Local)
@@ -4553,20 +4634,27 @@ class CanvasEngine {
             }
         };
 
-        const style = styles[type] || styles['dependency'];
+        const style = { ... (styles[type] || styles['dependency']) };
 
         // [v0.2.16] Apply Weight Dynamics (Thickness increases by 1 for every weight unit)
         if (weight > 0) {
             style.lineWidth += (weight * 0.8); // 0.8 pixel per weight unit increment
         }
 
-        if (edge.intelligence && edge.intelligence.dtr !== undefined) {
-            const dtr = edge.intelligence.dtr;
-            if (dtr >= 0.7) {
-                style.borderColor = '#8A2BE2'; // Violet for Deep Thinking
-                style.glow = true;
-                style.lineWidth += (dtr - 0.7) * 4;
-            }
+        // [v0.2.20] Apply DTR (Deep Thought Ratio) weighted visual tension
+        const dtr = (edge.intelligence && edge.intelligence.dtr !== undefined)
+            ? edge.intelligence.dtr
+            : this.currentDTR;
+
+        if (dtr >= 0.7) {
+            // High pressure (Inference Weight Expansion)
+            style.borderColor = '#8A2BE2'; // Violet for Deep Thinking
+            style.glow = true;
+            style.lineWidth += (dtr - 0.7) * 8; // Doubled weight scaling (+ρ)
+            style.glowIntensity = (dtr - 0.7) * 2;
+        } else if (dtr >= 0.4) {
+            // Balanced (Subtle Glow)
+            style.lineWidth += (dtr - 0.4) * 2;
         }
 
         return style;

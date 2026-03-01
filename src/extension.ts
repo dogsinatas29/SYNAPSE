@@ -34,6 +34,7 @@ import { ChatExtractor } from './utils/ChatExtractor';
 import { Logger } from './utils/Logger';
 import { BillingManager } from './core/BillingManager';
 import { ReportExporter } from './core/ReportExporter';
+import { AiOrchestrator } from './core/AiOrchestrator';
 
 export async function activate(context: vscode.ExtensionContext) {
     Logger.initialize(context);
@@ -421,6 +422,9 @@ export async function activate(context: vscode.ExtensionContext) {
                     dtrStatusBar.text = `$(dashboard) DTR: ${value.toFixed(2)}`;
                     dtrStatusBar.color = color;
                     dtrStatusBar.tooltip = `SYNAPSE: Inference Pressure (${label})`;
+
+                    // Sync with AiOrchestrator
+                    AiOrchestrator.getInstance().setDTR(value);
 
                     // Notify CanvasPanel to update visual tension
                     if (CanvasPanel.currentPanel) {

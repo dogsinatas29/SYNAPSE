@@ -31,7 +31,7 @@ SYNAPSE now features a unified scanning engine that understands the deep semanti
 ### 🌐 Topology View (Architecture Map)
 Visualize your project's folder structure and file dependencies as a live network.
 - **Node Diet**: Automatically filters noise (venv, node_modules, build artifacts).
-- **Ghost Node Storage**: Keeps your workspace clean by isolating disconnected components.
+- **Ghost Node Storage**: Keeps your workspace clean by isolating disconnected components. ([View Ghost Node Guide](GHOST_NODE.md))
 - **Rule Engine**: Guided by `RULES.md` for consistent discovery and icon standards.
 
 ### ➡️ Flow View (Logic Execution)
@@ -118,6 +118,7 @@ SYNAPSE v0.2.17 bridges the gap between drawing pictures and writing code.
 
 ### v0.2.17 (Edge Connectivity & Safe Deletion)
 - **Safe Node Deletion**: Physical files are commented out instead of hard-deleted to prevent data loss.
+- **Auto-Snapshot on State Change**: Any canvas action (node/edge deletion or position change) automatically captures the latest state into the snapshot history. This strictly seals the new state and prevents old data (`Ghost nodes` or stale imports) from resurrecting.
 - **Edge Auto-Imports**: Confirming an edge visually injects the actual `import` statement into the source file.
 - **Reset State Protocol**: 4-step full reset system (Disk, Memory, Canvas, Prompt).
 - **V/X Redundancy Removed**: Cleared the redundant Node Approve/Reject texts in favor of seamless Edit Logic interactions.

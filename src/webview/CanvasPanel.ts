@@ -933,24 +933,42 @@ export class CanvasPanel {
         const workspaceFolder = this._workspaceFolder;
         if (!workspaceFolder) return;
 
-        const choice = await vscode.window.showInformationMessage(
-            `[SYNAPSE] 이 엣지를 확정하시겠습니까?\n${fromFile || '?'} → ${toFile || '?'}\n\n확정 시 ${fromFile || 'fromFile'} 최상단에 import 문이 삽입됩니다.`,
-            { modal: true }, '✅ 확정', '❌ 취소'
-        );
-        if (choice !== '✅ 확정') return;
-
         try {
-            // 1. project_state.json 에 confirmed 저장
+            // 1. project_state.json 로드
             const stateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'project_state.json');
             const stateData = await vscode.workspace.fs.readFile(stateUri);
             const projectState = JSON.parse(Buffer.from(stateData).toString('utf-8'));
             const edge = (projectState.edges || []).find((e: any) => e.id === edgeId);
+
+            // [v0.2.17] Dynamic File Resolution (새로 생성된 노드의 경우 파라미터가 누락될 수 있음)
+            let actualFromFile = fromFile || edge?._fromFile;
+            let actualToFile = toFile || edge?._toFile;
+
+            if (!actualFromFile || !actualToFile) {
+                const fNode = (projectState.nodes || []).find((n: any) => n.id === edge?.from);
+                const tNode = (projectState.nodes || []).find((n: any) => n.id === edge?.to);
+                if (!actualFromFile && fNode?.data?.file) actualFromFile = fNode.data.file;
+                else if (!actualFromFile && fNode?.data?.label) actualFromFile = fNode.data.label; // Fallback
+
+                if (!actualToFile && tNode?.data?.file) actualToFile = tNode.data.file;
+                else if (!actualToFile && tNode?.data?.label) actualToFile = tNode.data.label; // Fallback
+            }
+
+            const choice = await vscode.window.showInformationMessage(
+                `[SYNAPSE] 이 엣지를 확정하시겠습니까?\n${actualFromFile || '?'} → ${actualToFile || '?'}\n\n확정 시 ${actualFromFile || '상위 모듈'} 최상단에 import 문이 삽입됩니다.`,
+                { modal: true }, '✅ 확정', '❌ 취소'
+            );
+            if (choice !== '✅ 확정') return;
+
+            // status 업데이트 및 저장
             if (edge) edge.status = 'confirmed';
             await vscode.workspace.fs.writeFile(stateUri, Buffer.from(this.normalizeProjectState(projectState), 'utf8'));
 
             // 2. fromFile 최상단에 import 문 삽입
-            if (fromFile && toFile) {
-                await this.injectImportStatement(workspaceFolder.uri.fsPath, fromFile, toFile);
+            if (actualFromFile && actualToFile) {
+                await this.injectImportStatement(workspaceFolder.uri.fsPath, actualFromFile, actualToFile);
+            } else {
+                vscode.window.showWarningMessage('[SYNAPSE] 파일 경로를 찾을 수 없어 코드 주입을 건너뜁니다.');
             }
 
             this._panel.webview.postMessage({ command: 'edgeConfirmed', edgeId });

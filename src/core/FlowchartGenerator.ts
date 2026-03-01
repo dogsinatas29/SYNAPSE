@@ -148,32 +148,41 @@ export class FlowchartGenerator {
                 children: []
             });
 
-            const layerCounters = new Map<number, number>();
-            const rankCounters = new Map<number, number>();
+            // [Fix] Use grid layout to prevent overlap; send .md files to doc_shelf
+            let rootGridIdx = 0;
+            const GRID_COLS = 4;
+            const CELL_W = 200;
+            const CELL_H = 150;
 
             rootFiles.forEach((file) => {
                 const hints = getVisualHints(file.path);
-                const rank = ranks.get(file.path) || 0;
-                const rankCount = rankCounters.get(rank) || 0;
-                rankCounters.set(rank, rankCount + 1);
+                // [Fix] Root .md files belong in documentation shelf, not project root
+                if (file.type === 'documentation') {
+                    const docCount = nodes.filter(n => n.data.cluster_id === 'doc_shelf').length;
+                    const node = this.createNode(
+                        file.path, file.type, file.description,
+                        -2000 + (docCount % GRID_COLS) * CELL_W,
+                        -500 + Math.floor(docCount / GRID_COLS) * CELL_H + 100,
+                        hints.layer, hints.priority, 'doc_shelf',
+                        (file as any).intelligence
+                    );
+                    nodes.push(node);
+                    return;
+                }
 
-                const shift = (rankCount % 2 === 0 ? 1 : -1) * Math.ceil(rankCount / 2);
-                const nodeX = 350 + (shift * nodeSpacingX);
-                const yOffset = (rankCount % 3) * 30;
-                const nodeY = rank * nodeSpacingY + 100 + yOffset;
-
+                // Source/config files: strict grid to prevent overlap
+                const col = rootGridIdx % GRID_COLS;
+                const row = Math.floor(rootGridIdx / GRID_COLS);
                 const node = this.createNode(
-                    file.path,
-                    file.type,
-                    file.description,
-                    0 + nodeX,
-                    1500 + nodeY,
-                    hints.layer,
-                    hints.priority,
-                    rootClusterId
+                    file.path, file.type, file.description,
+                    col * CELL_W + 30,
+                    1500 + row * CELL_H + 100,
+                    hints.layer, hints.priority, rootClusterId,
+                    (file as any).intelligence
                 );
                 nodes.push(node);
                 clusters.find(c => c.id === rootClusterId)?.children.push(node.id);
+                rootGridIdx++;
             });
             directoryGroups.delete('.');
         }
@@ -189,46 +198,41 @@ export class FlowchartGenerator {
             const layerCounters = new Map<number, number>();
             const rankCounters = new Map<number, number>();
 
+            // [Fix] Strict grid layout — shared counter per cluster to prevent overlap
+            let clusterGridIdx = 0;
+            const GRID_COLS_C = 4;
+            const CELL_W_C = 200;
+            const CELL_H_C = 150;
+
             files.forEach((file) => {
                 const hints = getVisualHints(file.path);
-                const layer = hints.layer;
-
-                let nodeX, nodeY;
                 let finalClusterId = clusterId;
+                let nodeX: number, nodeY: number;
 
                 if (file.type === 'documentation') {
-                    const docCount = layerCounters.get(-1) || 0;
-                    layerCounters.set(-1, docCount + 1);
-                    nodeX = (docCount % 4) * 200;
-                    nodeY = Math.floor(docCount / 4) * 150 + 100;
+                    // [Fix] All .md files go to doc_shelf regardless of their directory
+                    const docCount = nodes.filter(n => n.data.cluster_id === 'doc_shelf').length;
+                    nodeX = -2000 + (docCount % GRID_COLS_C) * CELL_W_C;
+                    nodeY = -500 + Math.floor(docCount / GRID_COLS_C) * CELL_H_C + 100;
                     finalClusterId = 'doc_shelf';
                 } else {
-                    const rank = ranks.get(file.path) || 0;
-                    const rankCount = rankCounters.get(rank) || 0;
-                    rankCounters.set(rank, rankCount + 1);
-
-                    const shift = (rankCount % 2 === 0 ? 1 : -1) * Math.ceil(rankCount / 2);
-                    nodeX = 350 + (shift * nodeSpacingX);
-
-                    const yOffset = (rankCount % 3) * 30;
-                    nodeY = rank * nodeSpacingY + 100 + yOffset;
+                    // [Fix] Grid placement to prevent overlap
+                    const col = clusterGridIdx % GRID_COLS_C;
+                    const row = Math.floor(clusterGridIdx / GRID_COLS_C);
+                    nodeX = clusterX + col * CELL_W_C + 30;
+                    nodeY = clusterY + row * CELL_H_C + 100;
+                    clusterGridIdx++;
                 }
 
                 const node = this.createNode(
-                    file.path,
-                    file.type,
-                    file.description,
-                    finalClusterId === 'doc_shelf' ? -2000 + nodeX : clusterX + nodeX,
-                    finalClusterId === 'doc_shelf' ? -500 + nodeY : clusterY + nodeY,
-                    hints.layer,
-                    hints.priority,
-                    finalClusterId
+                    file.path, file.type, file.description,
+                    nodeX, nodeY,
+                    hints.layer, hints.priority, finalClusterId,
+                    (file as any).intelligence
                 );
                 nodes.push(node);
 
-                if (finalClusterId === 'doc_shelf') {
-                    // Handled by doc_shelf special cluster
-                } else if (cluster) {
+                if (finalClusterId !== 'doc_shelf' && cluster) {
                     cluster.children.push(node.id);
                 }
             });
@@ -320,7 +324,8 @@ export class FlowchartGenerator {
         y: number,
         layer: number,
         priority: number,
-        clusterId?: string
+        clusterId?: string,
+        intelligence?: any
     ): Node {
         const safeId = filePath.replace(/[^a-zA-Z0-9]/g, '_');
         const id = `node_${safeId}`;
@@ -368,9 +373,11 @@ export class FlowchartGenerator {
                 layer,
                 priority
             },
+            intelligence,
             visual: {
                 opacity: 0.5,
-                dashArray: '5,5'
+                dashArray: '5,5',
+                glow_intensity: intelligence?.dtr > 0.7 ? 1.0 + (intelligence.dtr - 0.7) * 2 : 0
             }
         };
     }

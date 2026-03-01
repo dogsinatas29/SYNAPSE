@@ -22,6 +22,7 @@ import * as fs from 'fs';
 import { ProjectStructure, Node, Edge, ProjectState, EdgeType, NodeType } from '../types/schema';
 import { FileScanner } from '../core/FileScanner';
 import { LogicAnalyzer } from '../core/LogicAnalyzer';
+import { EdgeCodeRefactorer } from '../core/EdgeCodeRefactorer';
 import { GeminiParser } from '../core/GeminiParser';
 import { FlowchartGenerator } from '../core/FlowchartGenerator';
 import { BootstrapEngine } from '../bootstrap/BootstrapEngine';
@@ -81,8 +82,14 @@ export class CanvasPanel {
         this._extensionUri = extensionUri;
         this._workspaceFolder = workspaceFolder;
 
-        // Set the webview's initial html content
-        this._update();
+        // [v0.2.17 Fix] Delay initial update to allow Webview host to stabilize
+        // This addresses "ServiceWorker: InvalidStateError" in certain environments
+        setTimeout(() => {
+            if (this._panel && this._panel.webview) {
+                Logger.info(`[CanvasPanel] Performing initial update...`);
+                this._update();
+            }
+        }, 100);
 
         // Listen for when the panel is disposed
         this._panel.onDidDispose(() => this.dispose(), null, this._disposables);
@@ -104,13 +111,16 @@ export class CanvasPanel {
                         this.handleNodeSelected(message.node);
                         return;
                     case 'openFile':
-                        await this.openFile(message.filePath);
+                        await this.openFile(message.filePath, message.createIfNotExists);
                         return;
                     case 'getProjectState':
                         await this.sendProjectState();
                         return;
                     case 'saveState':
                         await this.handleSaveState(message.data);
+                        return;
+                    case 'readFile':
+                        await this.handleReadFile(message.filePath);
                         return;
                     case 'ungroup':
                         // [New] Ungroup command
@@ -153,6 +163,18 @@ export class CanvasPanel {
                     case 'generateFlow':
                         await this.handleGenerateFlow(message.nodeId, message.filePath);
                         return;
+                    case 'updateNodeDTR':
+                        await this.handleUpdateNodeDTR(message.nodeId, message.dtr);
+                        return;
+                    case 'requestDeleteEdgeSource':
+                        await this.handleRequestDeleteEdgeSource(message.edgeId, message.fromFile, message.toFile);
+                        return;
+                    case 'requestDeleteEdgeUI':
+                        await this.handleRequestDeleteEdgeUI(message.edgeId);
+                        return;
+                    case 'showMessage':
+                        vscode.window.showInformationMessage(`[SYNAPSE] ${message.text}`);
+                        return;
                     case 'validateEdge':
                         await this.handleValidateEdge(message.edgeId, message.fromNode, message.toNode, message.type);
                         return;
@@ -185,6 +207,12 @@ export class CanvasPanel {
                     case 'reBootstrap':
                         await this.handleReBootstrap();
                         return;
+                    case 'requestConfirmEdge':
+                        await this.handleRequestConfirmEdge(message.edgeId, message.fromFile, message.toFile);
+                        return;
+                    case 'resetProjectState':
+                        await this.handleResetProjectState();
+                        return;
                     case 'logPrompt':
                         await this.handleLogPrompt(message.prompt, message.title);
                         return;
@@ -211,6 +239,15 @@ export class CanvasPanel {
                         console.log('[SYNAPSE] WebView Ready signal received. Starting initial analysis...');
                         await this.sendProjectState();
                         return;
+                    case 'log':
+                        if (message.level === 'error') {
+                            Logger.error(`[WebView] ${message.text}`, message.data);
+                        } else if (message.level === 'warn') {
+                            Logger.warn(`[WebView] ${message.text}`);
+                        } else {
+                            Logger.info(`[WebView] ${message.text}`);
+                        }
+                        return;
                 }
             },
             null,
@@ -230,9 +267,30 @@ export class CanvasPanel {
             let currentState: any = { nodes: [], edges: [], clusters: [] };
             try {
                 const data = await vscode.workspace.fs.readFile(projectStateUri);
-                currentState = JSON.parse(data.toString());
+                currentState = JSON.parse(Buffer.from(data).toString('utf-8'));
+                if (typeof currentState === 'string') {
+                    currentState = JSON.parse(currentState); // Auto-heal double encoded state
+                }
             } catch (e) {
                 // Create file if it doesn't exist
+            }
+
+            // Try to create physical file if requested
+            if (node.createPhysicalFile && node.data?.label) {
+                try {
+                    const fileUri = vscode.Uri.joinPath(workspaceFolder.uri, node.data.label);
+                    await vscode.workspace.fs.stat(fileUri);
+                    // File exists, just link it
+                    node.data.file = vscode.workspace.asRelativePath(fileUri);
+                } catch {
+                    // Create empty file
+                    const fileUri = vscode.Uri.joinPath(workspaceFolder.uri, node.data.label);
+                    await vscode.workspace.fs.writeFile(fileUri, Buffer.from('', 'utf8'));
+                    Logger.info(`[CanvasPanel] Physical file auto-created: ${node.data.label}`);
+                    node.data.file = vscode.workspace.asRelativePath(fileUri);
+                }
+                // Cleanup temp flag
+                delete node.createPhysicalFile;
             }
 
             // Add new node
@@ -286,6 +344,16 @@ export class CanvasPanel {
     }
 
     /**
+     * [v0.2.17] Notify webview about DTR (Deep-Thinking Ratio) change
+     */
+    public notifyDTRChange(value: number) {
+        this._panel.webview.postMessage({
+            command: 'dtrChanged',
+            value: value
+        });
+    }
+
+    /**
      * Get current canvas context (selection, view state)
      */
     public async getCanvasContext(): Promise<any> {
@@ -312,16 +380,53 @@ export class CanvasPanel {
         // TODO: Update sidebar, show node details
     }
 
-    private async openFile(filePath: string) {
+    private async openFile(filePath: string, createIfNotExists: boolean = false) {
         const workspaceFolder = this._workspaceFolder;
         if (!workspaceFolder) return;
 
         const fileUri = vscode.Uri.joinPath(workspaceFolder.uri, filePath);
         try {
+            // Check if file exists
+            try {
+                await vscode.workspace.fs.stat(fileUri);
+            } catch (err: any) {
+                // File does not exist
+                if (createIfNotExists) {
+                    Logger.info(`[CanvasPanel] Creating missing file: ${filePath}`);
+                    await vscode.workspace.fs.writeFile(fileUri, Buffer.from('', 'utf8'));
+                    vscode.window.showInformationMessage(`[SYNAPSE] File created: ${filePath}`);
+                } else {
+                    throw err; // Re-throw if we shouldn't create it
+                }
+            }
+
             const doc = await vscode.workspace.openTextDocument(fileUri);
             await vscode.window.showTextDocument(doc);
         } catch (error) {
+            Logger.error(`Failed to open/create file: ${filePath}`, error);
             vscode.window.showErrorMessage(`Failed to open file: ${filePath}`);
+        }
+    }
+
+    private async handleReadFile(filePath: string) {
+        const workspaceFolder = this._workspaceFolder;
+        if (!workspaceFolder) return;
+
+        const fileUri = vscode.Uri.joinPath(workspaceFolder.uri, filePath);
+        try {
+            const data = await vscode.workspace.fs.readFile(fileUri);
+            this._panel.webview.postMessage({
+                command: 'fileContent',
+                filePath: filePath,
+                content: Buffer.from(data).toString('utf8')
+            });
+        } catch (error) {
+            Logger.error(`Failed to read file for preview: ${filePath}`, error);
+            this._panel.webview.postMessage({
+                command: 'fileContent',
+                filePath: filePath,
+                error: `Could not read file: ${filePath}`
+            });
         }
     }
 
@@ -361,7 +466,7 @@ export class CanvasPanel {
                 issues: issues
             });
 
-            vscode.window.showInformationMessage(`[SYNAPSE] Logic analysis complete. '리포트.md' generated.`);
+            vscode.window.showInformationMessage(`[SYNAPSE] Logic analysis complete. 'architecture_report.md' generated.`);
         } catch (error) {
             console.error('[SYNAPSE] Logic Analysis failed:', error);
             vscode.window.showErrorMessage(`Logic Analysis failed: ${error}`);
@@ -369,6 +474,24 @@ export class CanvasPanel {
     }
 
     private normalizeProjectState(state: any): string {
+        // 0. Circular Reference Prevention & Plain Data Extraction
+        const decycle = (obj: any, stack = new Set()): any => {
+            if (!obj || typeof obj !== 'object') return obj;
+            if (stack.has(obj)) return '[Circular]';
+            stack.add(obj);
+
+            let res: any = Array.isArray(obj) ? [] : {};
+            for (const key in obj) {
+                // Ignore DOM nodes or internal VSCode specific heavy objects if any creep in
+                if (key.startsWith('_')) continue;
+                res[key] = decycle(obj[key], stack);
+            }
+            stack.delete(obj);
+            return res;
+        };
+
+        const safeState = decycle(state);
+
         // 1. 기본값 제거 (Pruning)
         const pruneDefaults = (obj: any, defaults: any): any => {
             if (!obj || typeof obj !== 'object') return obj;
@@ -384,7 +507,7 @@ export class CanvasPanel {
                 }
 
                 // 재귀적으로 처리
-                if (typeof value === 'object' && value !== null) {
+                if (typeof value === 'object' && value !== null && value !== '[Circular]') {
                     pruned[key] = pruneDefaults(value, defaultValue);
                 } else {
                     pruned[key] = value;
@@ -414,7 +537,7 @@ export class CanvasPanel {
         };
 
         // 3. 정규화 적용
-        const prunedState = pruneDefaults(state, {});
+        const prunedState = pruneDefaults(safeState, {});
         const sortedState = sortKeys(prunedState);
 
         // 4. 정렬된 JSON 문자열 반환
@@ -448,14 +571,132 @@ export class CanvasPanel {
         }
     }
 
+    // [v0.2.17] Handle edge confirmation request: show warning dialog, apply import to source
+    // [v0.2.17] Handle edge source deletion (Logic Edit Mode)
+    private async handleRequestDeleteEdgeSource(edgeId: string, fromFile: string | null, toFile: string | null) {
+        const workspaceFolder = this._workspaceFolder;
+        if (!workspaceFolder) return;
+
+        // Dynamic File Resolution Check
+        const uri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'project_state.json');
+        let projectState: any = { nodes: [], edges: [] };
+        try {
+            const data = await vscode.workspace.fs.readFile(uri);
+            projectState = JSON.parse(Buffer.from(data).toString('utf-8'));
+            if (typeof projectState === 'string') projectState = JSON.parse(projectState);
+        } catch (e) { }
+
+        const edge = (projectState.edges || []).find((e: any) => e.id === edgeId);
+        let actualFromFile = fromFile || edge?._fromFile;
+        let actualToFile = toFile || edge?._toFile;
+
+        if (!actualFromFile || !actualToFile) {
+            const fromNode = (projectState.nodes || []).find((n: any) => n.id === edge?.from);
+            const toNode = (projectState.nodes || []).find((n: any) => n.id === edge?.to);
+            if (!actualFromFile && fromNode?.data?.file) actualFromFile = fromNode.data.file;
+            if (!actualToFile && toNode?.data?.file) actualToFile = toNode.data.file;
+        }
+
+        if (!actualFromFile || !actualToFile) {
+            // No source files available to edit physically, so tell UI and backend to just visibly delete it
+            await this.handleDeleteEdge(edgeId);
+            this._panel.webview.postMessage({ command: 'edgeDeletedSource', edgeId, success: true });
+            return;
+        }
+
+        const choice = await vscode.window.showWarningMessage(
+            `[SYNAPSE] 진짜로 소스 코드에서 연결을 끊으시겠습니까?\n\n` +
+            `"${actualFromFile}" 파일에 있는 "${actualToFile}" 의 import 구문이 완전히 삭제됩니다.\n` +
+            `⚠️ 이 작업은 되돌릴 수 없습니다.`,
+            { modal: true },
+            '💣 삭제 (파괴적)', '❌ 취소'
+        );
+
+        if (choice !== '💣 삭제 (파괴적)') {
+            this._panel.webview.postMessage({ command: 'edgeDeletedSource', edgeId, success: false });
+            return;
+        }
+
+        try {
+            const projectRoot = workspaceFolder.uri.fsPath;
+            const refactorer = new EdgeCodeRefactorer();
+            const result = refactorer.removeEdgeFromSource(actualFromFile, actualToFile, projectRoot);
+
+            if (!result.success) {
+                vscode.window.showErrorMessage(`[SYNAPSE] 소스 삭제 중 문제 발생: ${result.message}`);
+                // Proceed with UI delete or not? Yes, the edge from UI can be deleted still, or let the user decide.
+                this._panel.webview.postMessage({ command: 'edgeDeletedSource', edgeId, success: false });
+                return;
+            }
+
+            // Also remove from project_state and UI
+            await this.handleDeleteEdge(edgeId);
+
+            this._panel.webview.postMessage({ command: 'edgeDeletedSource', edgeId, success: true });
+            vscode.window.showInformationMessage(`[SYNAPSE] ✅ 소스 코드 삭제됨: ${result.importLine}`);
+        } catch (e) {
+            vscode.window.showErrorMessage(`[SYNAPSE] 소스 삭제 실패: ${e}`);
+            this._panel.webview.postMessage({ command: 'edgeDeletedSource', edgeId, success: false });
+        }
+    }
+
+    // [v0.2.17] Handle edge deletion initiated by the trash badge on the UI
+    private async handleRequestDeleteEdgeUI(edgeId: string) {
+        const choice = await vscode.window.showWarningMessage(
+            `[SYNAPSE] 이 엣지를 휴지통으로 지우시겠습니까? \n\n` +
+            `(로직 편집 모드가 활성화되어 있다면 소스 코드 참조도 함께 주석 처리됩니다.)`,
+            { modal: true },
+            '💣 삭제', '❌ 취소'
+        );
+
+        if (choice === '💣 삭제') {
+            const isEditLogicMode = this._workspaceFolder && vscode.workspace.getConfiguration('synapse').get('editLogicMode', false);
+            // We just let the backend decide whether to prune source based on the mode or just blindly remove it from state
+            // since we don't have fromFile/toFile passed directly, we'll try to resolve it dynamically from handleRequestDeleteEdgeSource if needed
+            // Actually, handleRequestDeleteEdgeSource will resolve it dynamically from project_state.
+            await this.handleRequestDeleteEdgeSource(edgeId, null, null);
+            // It will call edgeDeletedSource, from there we should trigger actual edge state removal if it wasn't aborted
+        }
+    }
+
+    // [v0.2.17] Persist per-node DTR change from the canvas slider
+    private async handleUpdateNodeDTR(nodeId: string, dtr: number) {
+        const workspaceFolder = this._workspaceFolder;
+        if (!workspaceFolder) return;
+        try {
+            const uri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'project_state.json');
+            const data = await vscode.workspace.fs.readFile(uri);
+            const projectState = JSON.parse(data.toString());
+            const node = (projectState.nodes || []).find((n: any) => n.id === nodeId);
+            if (!node) return;
+            if (!node.intelligence) node.intelligence = {};
+            node.intelligence.dtr = dtr;
+            if (!node.data) node.data = {};
+            if (!node.data.intelligence) node.data.intelligence = {};
+            node.data.intelligence.dtr = dtr;
+            const normalized = this.normalizeProjectState(projectState);
+            await vscode.workspace.fs.writeFile(uri, Buffer.from(normalized, 'utf8'));
+        } catch (e) {
+            console.error('[SYNAPSE] Failed to update node DTR:', e);
+        }
+    }
+
     private async handleDeleteEdge(edgeId: string) {
         const workspaceFolder = this._workspaceFolder;
         if (!workspaceFolder) return;
 
         try {
             const projectStateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'project_state.json');
-            const data = await vscode.workspace.fs.readFile(projectStateUri);
-            const projectState = JSON.parse(data.toString());
+            let projectState: any = { nodes: [], edges: [], clusters: [] };
+            try {
+                const data = await vscode.workspace.fs.readFile(projectStateUri);
+                projectState = JSON.parse(Buffer.from(data).toString('utf-8'));
+                if (typeof projectState === 'string') {
+                    projectState = JSON.parse(projectState); // Auto-heal double encoded state
+                }
+            } catch (e) {
+                // Ignore missing file
+            }
 
             // 엣지 제거
             if (!projectState.edges) projectState.edges = [];
@@ -590,7 +831,10 @@ export class CanvasPanel {
         try {
             const projectStateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'project_state.json');
             const data = await vscode.workspace.fs.readFile(projectStateUri);
-            const projectState = JSON.parse(data.toString());
+            let projectState = JSON.parse(Buffer.from(data).toString('utf-8'));
+            if (typeof projectState === 'string') {
+                projectState = JSON.parse(projectState); // Auto-heal double encoded state
+            }
 
             if (!projectState.nodes) projectState.nodes = [];
 
@@ -598,15 +842,54 @@ export class CanvasPanel {
             const initialNodeCount = projectState.nodes.length;
 
             let deletedCount = 0;
+            const filesToDelete: string[] = [];
 
-            // 1. Remove Nodes
+            // 1. Remove Nodes & collect files to delete
             projectState.nodes = projectState.nodes.filter((n: any) => {
                 if (nodeIdSet.has(n.id)) {
                     deletedCount++;
+                    if (n.data && n.data.file) {
+                        filesToDelete.push(n.data.file);
+                    }
                     return false;
                 }
                 return true;
             });
+
+            // [v0.2.18] Physical File Deletion (Logic Edit Mode)
+            const isPhysicalDelete = rawInput.deleteFiles === true;
+            if (isPhysicalDelete && filesToDelete.length > 0) {
+                const choice = await vscode.window.showWarningMessage(
+                    `[SYNAPSE] 진짜로 소스 파일을 삭제하시겠습니까?\n\n` +
+                    `${filesToDelete.length}개의 실제 파일이 물리적으로 삭제됩니다.\n` +
+                    `⚠️ 삭제 전 자동 스냅샷(백업)이 생성됩니다.`,
+                    { modal: true },
+                    '💣 삭제 (파괴적)', '❌ 취소'
+                );
+
+                if (choice !== '💣 삭제 (파괴적)') {
+                    return; // Abort entirely
+                }
+
+                // Create safety backup with current state (before node removal is saved)
+                try {
+                    const backupState = JSON.parse(data.toString());
+                    await this.handleTakeSnapshot({ label: `Auto Backup (Before File Deletion)`, data: backupState });
+                } catch (e) {
+                    Logger.warn('[CanvasPanel] Failed to take pre-deletion snapshot', e);
+                }
+
+                // Delete physical files
+                for (const relPath of filesToDelete) {
+                    try {
+                        const fileUri = vscode.Uri.joinPath(workspaceFolder.uri, relPath);
+                        await vscode.workspace.fs.delete(fileUri, { useTrash: true });
+                        Logger.info(`[CanvasPanel] Physically deleted file: ${relPath}`);
+                    } catch (e) {
+                        Logger.error(`[CanvasPanel] Failed to delete file: ${relPath}`, e);
+                    }
+                }
+            }
 
             // 2. Remove connected edges
             if (projectState.edges) {
@@ -643,6 +926,117 @@ export class CanvasPanel {
         } catch (error) {
             Logger.error('Failed to delete nodes:', error);
             vscode.window.showErrorMessage(`Failed to delete nodes: ${error}`);
+        }
+    }
+
+    private async handleRequestConfirmEdge(edgeId: string, fromFile: string | null, toFile: string | null) {
+        const workspaceFolder = this._workspaceFolder;
+        if (!workspaceFolder) return;
+
+        const choice = await vscode.window.showInformationMessage(
+            `[SYNAPSE] 이 엣지를 확정하시겠습니까?\n${fromFile || '?'} → ${toFile || '?'}\n\n확정 시 ${fromFile || 'fromFile'} 최상단에 import 문이 삽입됩니다.`,
+            { modal: true }, '✅ 확정', '❌ 취소'
+        );
+        if (choice !== '✅ 확정') return;
+
+        try {
+            // 1. project_state.json 에 confirmed 저장
+            const stateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'project_state.json');
+            const stateData = await vscode.workspace.fs.readFile(stateUri);
+            const projectState = JSON.parse(Buffer.from(stateData).toString('utf-8'));
+            const edge = (projectState.edges || []).find((e: any) => e.id === edgeId);
+            if (edge) edge.status = 'confirmed';
+            await vscode.workspace.fs.writeFile(stateUri, Buffer.from(this.normalizeProjectState(projectState), 'utf8'));
+
+            // 2. fromFile 최상단에 import 문 삽입
+            if (fromFile && toFile) {
+                await this.injectImportStatement(workspaceFolder.uri.fsPath, fromFile, toFile);
+            }
+
+            this._panel.webview.postMessage({ command: 'edgeConfirmed', edgeId });
+            Logger.info(`[CanvasPanel] Edge ${edgeId} confirmed.`);
+        } catch (e) {
+            vscode.window.showErrorMessage(`[SYNAPSE] 확정 실패: ${e}`);
+        }
+    }
+
+    /**
+     * fromFile 최상단에 toFile에 대한 import 문 삽입 (언어별 자동 감지)
+     */
+    private async injectImportStatement(rootPath: string, fromFile: string, toFile: string) {
+        const path = require('path');
+        const fromAbs = path.join(rootPath, fromFile);
+        const toBase = path.parse(toFile).name; // 확장자 제거
+        const toRelDir = path.dirname(toFile);
+        const fromDir = path.dirname(fromFile);
+
+        // 상대 경로 계산
+        let relPath = path.relative(fromDir, path.join(toRelDir, toBase));
+        if (!relPath.startsWith('.')) relPath = './' + relPath;
+
+        const ext = path.extname(fromFile).toLowerCase();
+        let importLine: string;
+        if (ext === '.py') {
+            importLine = `import ${toBase}  # [SYNAPSE] auto-imported`;
+        } else if (ext === '.ts' || ext === '.tsx') {
+            importLine = `import { ${toBase} } from '${relPath}';  // [SYNAPSE] auto-imported`;
+        } else if (ext === '.js' || ext === '.jsx') {
+            importLine = `const ${toBase} = require('${relPath}');  // [SYNAPSE] auto-imported`;
+        } else {
+            Logger.info(`[CanvasPanel] injectImport: unsupported extension ${ext}, skipping.`);
+            return;
+        }
+
+        try {
+            const fileUri = vscode.Uri.file(fromAbs);
+            const existing = Buffer.from(await vscode.workspace.fs.readFile(fileUri)).toString('utf-8');
+
+            // 이미 import 되어 있으면 중복 삽입 방지
+            if (existing.includes(toBase)) {
+                Logger.info(`[CanvasPanel] injectImport: '${toBase}' already referenced in ${fromFile}, skipping.`);
+                return;
+            }
+
+            const newContent = importLine + '\n' + existing;
+            await vscode.workspace.fs.writeFile(fileUri, Buffer.from(newContent, 'utf-8'));
+            Logger.info(`[CanvasPanel] injectImport: Inserted '${importLine}' into ${fromFile}`);
+            vscode.window.showInformationMessage(`[SYNAPSE] ✅ import 삽입 완료: ${fromFile} 최상단에 '${toBase}' 추가됨`);
+        } catch (e) {
+            Logger.error(`[CanvasPanel] injectImport failed for ${fromFile}:`, e);
+        }
+    }
+
+    private async handleResetProjectState() {
+        const workspaceFolder = this._workspaceFolder;
+        if (!workspaceFolder) return;
+
+        // STEP 1: Disk Purge - project_state.json 물리적 초기화
+        const emptyState = { nodes: [], edges: [], clusters: [] };
+        const uri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'project_state.json');
+        try {
+            await vscode.workspace.fs.writeFile(uri, Buffer.from(JSON.stringify(emptyState, null, 2), 'utf8'));
+            Logger.info('[CanvasPanel] STEP 1: Disk Purge complete.');
+        } catch (e) {
+            Logger.error('[CanvasPanel] Failed to reset project state:', e);
+            vscode.window.showErrorMessage(`[SYNAPSE] 초기화 실패: ${e}`);
+            return;
+        }
+
+        // STEP 2: Memory Flush - 익스텐션 호스트 내 상태 변수 초기화
+        // (sendProjectState는 파일을 다시 읽으므로 별도 초기화 불필요, 파일이 이미 비어있음)
+        Logger.info('[CanvasPanel] STEP 2: Memory Flush complete (state will be re-read from empty file).');
+
+        // STEP 3: Visual Reset - 웹뷰에 RESET_CANVAS 신호 전송
+        this._panel.webview.postMessage({ command: 'resetCanvas' });
+        Logger.info('[CanvasPanel] STEP 3: Visual Reset signal sent to webview.');
+
+        // STEP 4: Re-Bootstrap Prompt
+        const choice = await vscode.window.showInformationMessage(
+            '🧹 캔버스가 깨끗해졌습니다. 이제 GEMINI.md를 불러올까요?',
+            'Bootstrap', '닫기'
+        );
+        if (choice === 'Bootstrap') {
+            await this.handleReBootstrap();
         }
     }
 
@@ -995,6 +1389,7 @@ export class CanvasPanel {
     }
 
     private async handleSaveState(newState: any) {
+        /* [CPR Step 3] Temporarily disabled to prevent data erasure/RangeError
         const workspaceFolder = this._workspaceFolder;
         if (!workspaceFolder) return;
 
@@ -1005,7 +1400,10 @@ export class CanvasPanel {
             let currentState: any = {};
             try {
                 const existingData = await vscode.workspace.fs.readFile(projectStateUri);
-                currentState = JSON.parse(existingData.toString());
+                currentState = JSON.parse(Buffer.from(existingData).toString('utf-8'));
+                if (typeof currentState === 'string') {
+                    currentState = JSON.parse(currentState); // Auto-heal double encoded state
+                }
             } catch (e) {
                 console.warn('[SYNAPSE] No existing project state to merge');
             }
@@ -1026,6 +1424,8 @@ export class CanvasPanel {
             console.error('Failed to save project state:', error);
             vscode.window.showErrorMessage(`Failed to save project state: ${error}`);
         }
+        */
+        console.warn('[SYNAPSE] [CPR] handleSaveState is currently disabled.');
     }
 
     private async handleTakeSnapshot(state: any) {
@@ -1040,7 +1440,7 @@ export class CanvasPanel {
             if (!currentProjectState) {
                 try {
                     const data = await vscode.workspace.fs.readFile(projectStateUri);
-                    currentProjectState = JSON.parse(data.toString());
+                    currentProjectState = JSON.parse(Buffer.from(data).toString('utf-8'));
                 } catch (e) {
                     vscode.window.showErrorMessage('Cannot take snapshot: Project state is empty or invalid.');
                     return;
@@ -1052,16 +1452,36 @@ export class CanvasPanel {
 
             try {
                 const existingHistory = await vscode.workspace.fs.readFile(historyUri);
-                history = JSON.parse(existingHistory.toString());
+                history = JSON.parse(Buffer.from(existingHistory).toString('utf-8'));
             } catch (e) {
                 // History file doesn't exist yet
             }
+
+            // [v0.2.18 Rollback - Phase 3 CPR] Temporarily disabled file backups to prevent RangeError
+            /*
+            const fileBackups: Record<string, string> = {};
+            if (currentProjectState.nodes && Array.isArray(currentProjectState.nodes)) {
+                for (const node of currentProjectState.nodes) {
+                    if (node.data && node.data.file) {
+                        try {
+                            const fileUri = vscode.Uri.joinPath(workspaceFolder.uri, node.data.file);
+                            const fileData = await vscode.workspace.fs.readFile(fileUri);
+                            fileBackups[node.data.file] = fileData.toString();
+                        } catch (e) {
+                            Logger.warn(`[CanvasPanel] Snapshot: failed to backup file ${node.data.file}`, e);
+                        }
+                    }
+                }
+            }
+            */
+            const fileBackups = {}; // Emergency fallback
 
             const snapshot = {
                 id: `snap_${Date.now()}`,
                 timestamp: Date.now(),
                 label: state.label || `Snapshot ${history.length + 1}`,
-                data: currentProjectState // nodes, edges, clusters
+                data: currentProjectState, // nodes, edges, clusters
+                fileBackups // [v0.2.18] Storing file contents
             };
 
             history.unshift(snapshot); // Newest first
@@ -1187,7 +1607,8 @@ export class CanvasPanel {
                         nodes: currentState.nodes,
                         edges: currentState.edges,
                         clusters: currentState.clusters
-                    }
+                    },
+                    fileBackups: {} // We could back up files here too, but skipping for speed unless strictly needed
                 };
                 history.unshift(backupSnapshot);
                 await vscode.workspace.fs.writeFile(historyUri, Buffer.from(JSON.stringify(history, null, 2), 'utf8'));
@@ -1199,7 +1620,7 @@ export class CanvasPanel {
             let existingState: any = {};
             try {
                 const data = await vscode.workspace.fs.readFile(projectStateUri);
-                existingState = JSON.parse(data.toString());
+                existingState = JSON.parse(Buffer.from(data).toString('utf-8'));
             } catch (e) { }
 
             const newState = {
@@ -1210,6 +1631,23 @@ export class CanvasPanel {
             };
 
             await vscode.workspace.fs.writeFile(projectStateUri, Buffer.from(JSON.stringify(newState, null, 2), 'utf8'));
+
+            // [v0.2.18] Restore File Backups physically to disk
+            if (snapshot.fileBackups) {
+                let restoredCount = 0;
+                for (const [relPath, content] of Object.entries(snapshot.fileBackups)) {
+                    try {
+                        const fileUri = vscode.Uri.joinPath(workspaceFolder.uri, relPath);
+                        await vscode.workspace.fs.writeFile(fileUri, Buffer.from(content as string, 'utf8'));
+                        restoredCount++;
+                    } catch (e) {
+                        Logger.error(`[CanvasPanel] Rollback: Failed to restore file ${relPath}`, e);
+                    }
+                }
+                if (restoredCount > 0) {
+                    Logger.info(`[CanvasPanel] Rollback: Restored ${restoredCount} physical files from snapshot.`);
+                }
+            }
 
             // 3. Notify webview to reload
             await this.sendProjectState();
@@ -1311,13 +1749,13 @@ export class CanvasPanel {
 
         try {
             const projectStateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'project_state.json');
-            console.log(`[SYNAPSE] Reading project state from: ${projectStateUri.fsPath}`);
+            Logger.info(`[CanvasPanel] sendProjectState: Reading state from ${projectStateUri.fsPath}`);
 
             let projectState;
             try {
                 const data = await vscode.workspace.fs.readFile(projectStateUri);
                 projectState = JSON.parse(data.toString());
-                console.log(`[SYNAPSE] Successfully loaded project state with ${projectState.nodes?.length || 0} nodes.`);
+                Logger.info(`[CanvasPanel] sendProjectState: Loaded ${projectState.nodes?.length || 0} nodes and ${projectState.edges?.length || 0} edges.`);
             } catch (e: any) {
                 // Only create default if file truly doesn't exist
                 const fileDoesNotExist = e.code === 'FileNotFound' || e.message.includes('EntryNotFound');
@@ -1513,8 +1951,8 @@ export class CanvasPanel {
             const stateForWebview = {
                 ...projectState,
                 edges: [
-                    ...(projectState.edges || []).filter((e: any) => !e.id.startsWith('edge_auto_')), // 수동 엣지만
-                    ...discoveredEdges // 자동 발견 엣지 (휘발성)
+                    ...(projectState.edges || []), // 저장된 엣지 전부 (수동 + 이전 자동 발견)
+                    ...discoveredEdges.filter((de: any) => !(projectState.edges || []).some((e: any) => e.from === de.from && e.to === de.to)) // 중복 방지
                 ]
             };
 
@@ -1533,27 +1971,33 @@ export class CanvasPanel {
                 stateForWebview.clusters = [...(stateForWebview.clusters || []), contextVaultCluster.cluster];
             }
 
-            console.log(`[SYNAPSE] Discovered ${discoveredEdges.length} auto edges (volatile, not persisted)`);
-
             // 6. 웹뷰로 전송
-            console.log('[SYNAPSE] Sending projectState to webview:', JSON.stringify(stateForWebview).substring(0, 200) + '...');
-            this._panel.webview.postMessage({
+            const payload = {
                 command: 'projectState',
                 data: stateForWebview
-            });
+            };
+            const payloadSize = JSON.stringify(payload).length;
+            Logger.info(`[CanvasPanel] sendProjectState: Sending projectState to webview (${stateForWebview.nodes.length} nodes, ${stateForWebview.edges.length} edges). Payload size: ${(payloadSize / 1024).toFixed(2)} KB`);
 
-            // The original projectState (without auto-discovered edges) is not sent directly anymore.
-            // The stateForWebview is sent instead.
-            // The original line `this._panel.webview.postMessage({ command: 'projectState', data: projectState });`
+            // Log a small sample for debugging
+            if (stateForWebview.nodes.length > 0) {
+                Logger.info(`[CanvasPanel] Sample Node [0]:`, stateForWebview.nodes[0]);
+            }
+
+            this._panel.webview.postMessage(payload);
 
         } catch (error) {
-            console.error('Failed to load project state:', error);
+            Logger.error('[CanvasPanel] sendProjectState failed:', error);
             vscode.window.showErrorMessage(`Failed to load project state: ${error}`);
         }
     }
 
     private _update() {
+        if (!this._panel.visible) {
+            return;
+        }
         const webview = this._panel.webview;
+        Logger.info(`[CanvasPanel] Updating Webview HTML...`);
         this._panel.webview.html = this._getHtmlForWebview(webview);
     }
 
@@ -1562,16 +2006,14 @@ export class CanvasPanel {
         const htmlPath = vscode.Uri.joinPath(this._extensionUri, 'ui', 'index.html');
         let html = fs.readFileSync(htmlPath.fsPath, 'utf8');
 
-        // Get URIs for resources with cache busting
-        const timestamp = Date.now();
         const scriptUri = webview.asWebviewUri(
             vscode.Uri.joinPath(this._extensionUri, 'ui', 'canvas-engine.js')
         );
 
-        // Replace script src with webview URI + cache busting
+        // Replace script src with webview URI
         html = html.replace(
             'src="canvas-engine.js"',
-            `src="${scriptUri}?v=${timestamp}"`
+            `src="${scriptUri}"`
         );
 
         // Add CSP - relaxed for webview compatibility
@@ -1579,7 +2021,7 @@ export class CanvasPanel {
         html = html.replace(
             '<head>',
             `<head>
-            <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource} 'unsafe-inline'; script-src ${webview.cspSource} 'nonce-${nonce}' 'unsafe-inline' 'unsafe-eval'; img-src ${webview.cspSource} https:;">
+            <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource} 'unsafe-inline'; script-src ${webview.cspSource} 'nonce-${nonce}' 'unsafe-inline' 'unsafe-eval'; img-src ${webview.cspSource} https:; connect-src ${webview.cspSource} https:; worker-src ${webview.cspSource} blob:;">
             `
         );
 

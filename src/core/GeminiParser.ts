@@ -98,19 +98,29 @@ export class GeminiParser {
             }
         }
 
-        // 파일 패턴 확장: 📄 아이콘, 불렛 포인트, 백틱, 굵게 표시 등 지원
-        // 리뉴얼: 📄 뒤에 공백 허용, 불렛은 라인 시작에서만, m 플래그 추가
-        // [Whitelisting] 프로그래밍 소스 파일 + 문서 파일
+        // 파일 패턴 확장: 📄 아이콘이 있거나 [Nodes] 섹션에 명시된 경우만 문서로 인정
+        // 소스 파일은 불렛 포인트 등으로도 탐색 가능
         const filePattern = /(?:📄\s*|^\s*[-\*]\s+[`]?|파일:\s*)([a-zA-Z0-9_./-]+\.(json|py|ts|js|cpp|h|hpp|cc|c|rs|sh|sql|md))[`]?/gm;
         while ((match = filePattern.exec(contentForScanning)) !== null) {
             const fileName = match[1];
+            const isExplicitDoc = match[0].includes('📄') || match[0].includes('파일:');
+            const ext = path.extname(fileName).slice(1).toLowerCase();
+
+            // [Refinement] .md 파일은 📄 아이콘이 있거나 명시적으로 '파일:' 키워드가 있는 경우만 수집
+            // [v0.2.17 New Rule] .md 파일은 루트 또는 Doc/ 폴더에 있는 것만 Documentation Shelf로 인정
+            if (ext === 'md') {
+                if (!isExplicitDoc) continue;
+                const isRoot = !fileName.includes('/');
+                const isDocFolder = fileName.toLowerCase().startsWith('doc/');
+                if (!isRoot && !isDocFolder) continue;
+            }
+
             // [Node Diet] 블랙리스트 및 무시된 폴더 경로 필터링
             if (isIgnoredFile(fileName) || fileName.split('/').some(isIgnoredFolder)) continue;
 
             // 중복 체크
             if (structure.files.find(f => f.path === fileName)) continue;
 
-            const ext = path.extname(fileName).slice(1).toLowerCase();
             let type: NodeType = ext === 'md' ? 'documentation' : 'source';
             if (fileName.toLowerCase().includes('test')) type = 'test';
 

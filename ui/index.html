@@ -14,6 +14,9 @@
             --fg-dim: #a89984;
             --accent: #b8bb26;
             --border: #3c3836;
+            --dtr-violet: #8A2BE2;
+            --dtr-emerald: #50C878;
+            --dtr-skyblue: #87CEEB;
         }
 
         body {
@@ -26,6 +29,26 @@
             height: 100vh;
             display: flex;
             flex-direction: column;
+        }
+
+        /* Custom Scrollbars */
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-dark);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #3c3836;
+            border-radius: 5px;
+            border: 2px solid var(--bg-dark);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #504945;
         }
 
         /* Header */
@@ -382,12 +405,124 @@
                 opacity: 0.65;
             }
         }
+
+        /* DTR Floating Valve Controller */
+        #dtr-controller {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(40, 40, 40, 0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 15px;
+            width: 220px;
+            z-index: 100;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        #dtr-controller:hover {
+            transform: scale(1.02);
+            border-color: var(--dtr-violet);
+        }
+
+        .dtr-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .dtr-label {
+            font-size: 11px;
+            font-weight: bold;
+            color: var(--fg-dim);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .dtr-value {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--dtr-violet);
+            font-family: 'Fira Code', monospace;
+        }
+
+        .dtr-gauge-container {
+            height: 6px;
+            background: #3c3836;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+
+        #dtr-gauge-fill {
+            height: 100%;
+            width: 30%;
+            background: linear-gradient(90deg, var(--dtr-skyblue), var(--dtr-emerald), var(--dtr-violet));
+            background-size: 200% 100%;
+            transition: width 0.5s ease;
+        }
+
+        .dtr-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            font-size: 10px;
+            color: var(--fg-dim);
+        }
+
+        .dtr-stat-val {
+            display: block;
+            color: var(--fg-main);
+            font-weight: bold;
+            font-size: 12px;
+            margin-top: 2px;
+        }
+
+        /* Canvas Scrollbars (Overlays) */
+        .canvas-scrollbar {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(2px);
+            z-index: 50;
+        }
+
+        .canvas-scrollbar:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        #scrollbar-v {
+            right: 0;
+            top: 0;
+            bottom: 0;
+            width: 12px;
+        }
+
+        #scrollbar-h {
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 12px;
+        }
+
+        .scrollbar-thumb {
+            position: absolute;
+            background: rgba(235, 219, 178, 0.2);
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+
+        .scrollbar-thumb:hover {
+            background: rgba(235, 219, 178, 0.4);
+        }
     </style>
 </head>
 
 <body>
     <div id="header">
-        <div class="logo">🧠 SYNAPSE <span style="font-size: 10px; opacity: 0.6; margin-left: 5px;">v0.2.16</span></div>
+        <div class="logo">🧠 SYNAPSE <span style="font-size: 10px; opacity: 0.6; margin-left: 5px;">v0.2.17</span></div>
         <div id="status-indicator" style="font-size: 12px; color: #fabd2f; font-weight: bold;"></div>
         <div id="project-path" style="font-size: 12px; color: var(--fg-dim);">Loading project...</div>
     </div>
@@ -402,6 +537,8 @@
         <button class="btn" id="btn-reset">Reset View</button>
         <button class="btn" id="btn-rebootstrap" title="Deep Reset: Re-scan complete project"
             style="color: #fb4934; font-weight: bold;">Deep Reset</button>
+        <button class="btn" id="btn-reset-state" title="project_state.json을 빈 상태로 초기화" style="color: #d3869b;">🔄 Reset
+            State</button>
         <div class="toolbar-divider"></div>
         <button class="btn" id="btn-add-node" title="Add New Node">➕ Node</button>
         <button class="btn" id="btn-connect" title="Connect Nodes (Alt+Click)">🔗 Connect</button>
@@ -411,6 +548,8 @@
         <button class="btn" id="btn-ungroup" title="Ungroup Selected Cluster">Ungroup</button>
         <button class="btn" id="btn-test-logic" title="Run Architectural Logic Analysis"
             style="color: #fabd2f; font-weight: bold;">🛡️ Test Logic</button>
+        <button class="btn" id="btn-edit-logic" title="Toggle Destructive Source Editing"
+            style="color: #fb4934; font-weight: bold;">🔓 Edit Logic</button>
         <div class="toolbar-divider"></div>
         <div style="flex: 1"></div>
         <button class="btn" id="btn-delete" title="Delete Selected Nodes/Edges" style="color: #fb4934;">🗑️
@@ -427,6 +566,43 @@
     <div id="main-container">
         <div id="canvas-container">
             <canvas id="canvas" tabindex="0" style="outline: none;"></canvas>
+
+            <!-- v0.2.17 DTR Controller -->
+            <div id="dtr-controller">
+                <div class="dtr-header">
+                    <span class="dtr-label">Inference Pressure</span>
+                    <span id="dtr-value-display" class="dtr-value">0.30</span>
+                </div>
+                <div id="dtr-node-label"
+                    style="font-size:10px; color:var(--fg-dim,#aaa); margin-bottom:4px; text-overflow:ellipsis; overflow:hidden; white-space:nowrap; display:none;">
+                </div>
+                <div class="dtr-gauge-container">
+                    <div id="dtr-gauge-fill" style="width: 30%;"></div>
+                </div>
+                <!-- [v0.2.17] Node DTR slider: visible only when a single node is selected -->
+                <input id="dtr-slider" type="range" min="0" max="1" step="0.01" value="0.30"
+                    style="width:100%; margin:6px 0 2px; display:none; accent-color:#f28b82;"
+                    title="이 노드의 사고 밀도를 조정합니다">
+                <div class="dtr-stats">
+                    <div>
+                        THINK@N
+                        <span id="dtr-stat-n" class="dtr-stat-val">1</span>
+                    </div>
+                    <div>
+                        EST. COST
+                        <span id="dtr-stat-cost" class="dtr-stat-val">Low</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- v0.2.17 Canvas Scrollbars -->
+            <div id="scrollbar-v" class="canvas-scrollbar">
+                <div id="thumb-v" class="scrollbar-thumb" style="width:100%; height:20%; top:0;"></div>
+            </div>
+            <div id="scrollbar-h" class="canvas-scrollbar">
+                <div id="thumb-h" class="scrollbar-thumb" style="height:100%; width:20%; left:0;"></div>
+            </div>
+
             <div id="loading">
                 <div class="spinner"></div>
                 <div>프로젝트 분석 중...</div>
@@ -549,17 +725,39 @@
             sidePanelTitle.textContent = filePath;
             fileContent.textContent = 'Loading Content...';
 
-            try {
-                // 브라우저에서는 상대 경로로 fetch (src 폴더 기준)
-                const response = await fetch(`../src/${filePath}`);
-                if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                const text = await response.text();
-                fileContent.textContent = text;
-            } catch (error) {
-                fileContent.textContent = `Error: ${error.message}\n\n브라우저 환경에서는 파일이 ../src/ 폴더에 존재해야 합니다.`;
-                console.error('[SYNAPSE] Preview error:', error);
+            if (typeof vscode !== 'undefined') {
+                // Request file content from extension
+                vscode.postMessage({
+                    command: 'readFile',
+                    filePath: filePath
+                });
+            } else {
+                // Browser mode fallback
+                try {
+                    const response = await fetch(`../src/${filePath}`);
+                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                    const text = await response.text();
+                    fileContent.textContent = text;
+                } catch (error) {
+                    fileContent.textContent = `Error: ${error.message}\n\n브라우저 환경에서는 파일이 ../src/ 폴더에 존재해야 합니다.`;
+                }
             }
         };
+
+        // Listen for messages from extension (for file content)
+        window.addEventListener('message', event => {
+            const message = event.data;
+            if (message.command === 'fileContent') {
+                const fileContent = document.getElementById('file-content');
+                const sidePanelTitle = document.getElementById('side-panel-title');
+
+                if (message.error) {
+                    fileContent.textContent = message.error;
+                } else {
+                    fileContent.textContent = message.content;
+                }
+            }
+        });
 
         // 초기화 및 이벤트 바인딩
         document.addEventListener('DOMContentLoaded', () => {

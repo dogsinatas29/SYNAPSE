@@ -160,7 +160,7 @@ export class LogicAnalyzer {
      * 분석 결과를 바탕으로 리포트 생성
      */
     public generateReport(issues: AnalysisIssue[], projectRoot: string, nodes: Node[]): string {
-        const reportPath = path.join(projectRoot, '리포트.md');
+        const reportPath = path.join(projectRoot, 'architecture_report.md');
         let content = `# 🛡️ SYNAPSE 아키텍처 로직 리포트\n\n`;
         content += `생성 일시: ${new Date().toLocaleString()}\n\n`;
 

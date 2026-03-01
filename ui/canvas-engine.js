@@ -515,9 +515,8 @@ class FlowRenderer {
 
         ctx.strokeStyle = strokeColor;
         ctx.lineWidth = lineWidth;
-        ctx.setLineDash(dash);
-        ctx.beginPath();
 
+        ctx.setLineDash(dash);
         if (isLoop) {
             // 회귀문(Loop)은 옆으로 돌아서 올라가는 아크 형태
             const offset = 150;
@@ -857,6 +856,10 @@ class CanvasEngine {
         this.selectedNodes = new Set(); // 다중 선택 노드
         this.hoveredNode = null; // 마우스 오버된 노드
         this.hoveredEdge = null; // 마우스 오버된 엣지
+        // [v0.2.17] Logic Edit Mode state
+        this.isEditMode = false;
+        // [v0.2.17] DTR State
+        this.currentDTR = 0.3;
         this.clusters = []; // 클러스터 데이터
         this.isExpectingUpdate = false; // 데이터 업데이트 시 뷰 유지 여부 플래그
 
@@ -892,12 +895,28 @@ class CanvasEngine {
         // 전역 엔진 등록
         window.engine = this;
 
-        // 파일 열기 통합 핸들러
+        // [Remote Logging Bridge]
+        this.log = (text, level = 'info', data = null) => {
+            if (level === 'error') console.error(`[SYNAPSE] ${text}`, data || '');
+            else if (level === 'warn') console.warn(`[SYNAPSE] ${text}`, data || '');
+            else console.log(`[SYNAPSE] ${text}`, data || '');
+
+            if (typeof vscode !== 'undefined') {
+                vscode.postMessage({ command: 'log', level, text, data });
+            }
+        };
+
+        this.log('CanvasEngine initialized');
+
         this.handleOpenFile = (filePath) => {
             if (!filePath) return;
             console.log('[SYNAPSE] handleOpenFile:', filePath);
             if (typeof vscode !== 'undefined') {
-                vscode.postMessage({ command: 'openFile', filePath });
+                vscode.postMessage({
+                    command: 'openFile',
+                    filePath,
+                    createIfNotExists: this.isEditMode
+                });
             } else if (typeof window.showFilePreview === 'function') {
                 window.showFilePreview(filePath);
             }
@@ -1038,6 +1057,79 @@ class CanvasEngine {
                 this.testLogic();
             });
         }
+
+        // Edit Logic Button (Destructive Source Sync)
+        const btnEditLogic = document.getElementById('btn-edit-logic');
+        if (btnEditLogic) {
+            btnEditLogic.addEventListener('click', () => {
+                this.isEditMode = !this.isEditMode;
+                btnEditLogic.classList.toggle('active', this.isEditMode);
+                if (this.isEditMode) {
+                    this.canvas.style.boxShadow = 'inset 0 0 20px #fb4934';
+                    btnEditLogic.style.backgroundColor = '#fb4934';
+                    btnEditLogic.style.color = '#fff';
+                } else {
+                    this.canvas.style.boxShadow = 'none';
+                    btnEditLogic.style.backgroundColor = '';
+                    btnEditLogic.style.color = '#fb4934';
+                }
+            });
+        }
+
+        // [v0.2.17] Scrollbar drag interaction
+        this._initScrollbarDrag();
+    }
+
+    _initScrollbarDrag() {
+        const thumbV = document.getElementById('thumb-v');
+        const thumbH = document.getElementById('thumb-h');
+        const container = document.getElementById('canvas-container');
+        if (!thumbV || !thumbH || !container) return;
+
+        let dragging = null; // 'v' | 'h' | null
+        let dragStartY = 0, dragStartX = 0;
+        let startOffsetY = 0, startOffsetX = 0;
+
+        const onMouseDown = (axis) => (e) => {
+            e.preventDefault();
+            dragging = axis;
+            dragStartY = e.clientY;
+            dragStartX = e.clientX;
+            startOffsetY = this.transform.offsetY;
+            startOffsetX = this.transform.offsetX;
+        };
+
+        thumbV.addEventListener('mousedown', onMouseDown('v'));
+        thumbH.addEventListener('mousedown', onMouseDown('h'));
+
+        document.addEventListener('mousemove', (e) => {
+            if (!dragging) return;
+            const zoom = this.transform.zoom;
+
+            if (dragging === 'v') {
+                const dy = e.clientY - dragStartY;
+                const viewHeight = container.clientHeight;
+                // Max content height estimate
+                const maxY = this.nodes.length > 0
+                    ? Math.max(...this.nodes.map(n => n.position.y + 60)) : viewHeight * 2;
+                const contentHeight = Math.max(viewHeight * 2, maxY * zoom);
+                // Map thumb pixel drag to world offset change
+                const worldDelta = (dy / viewHeight) * contentHeight / zoom;
+                this.transform.offsetY = startOffsetY - worldDelta * zoom;
+                this.render();
+            } else if (dragging === 'h') {
+                const dx = e.clientX - dragStartX;
+                const viewWidth = container.clientWidth;
+                const maxX = this.nodes.length > 0
+                    ? Math.max(...this.nodes.map(n => n.position.x + 120)) : viewWidth * 2;
+                const contentWidth = Math.max(viewWidth * 2, maxX * zoom);
+                const worldDelta = (dx / viewWidth) * contentWidth / zoom;
+                this.transform.offsetX = startOffsetX - worldDelta * zoom;
+                this.render();
+            }
+        });
+
+        document.addEventListener('mouseup', () => { dragging = null; });
     }
 
     testLogic() {
@@ -1075,6 +1167,9 @@ class CanvasEngine {
                 opacity: 1 // Make it fully visible immediately
             }
         };
+        if (this.isEditMode) {
+            newNode.createPhysicalFile = true;
+        }
 
         console.log('[SYNAPSE] Creating manual node:', newNode);
 
@@ -1308,6 +1403,50 @@ class CanvasEngine {
             if (e.button === 0) { // 왼쪽 버튼
                 this.wasDragging = false;
 
+                // [v0.2.17] Confirm badge click check (? or !)
+                if (this._confirmBadgeHits && this._confirmBadgeHits.length > 0) {
+                    const wx = worldPos.x, wy = worldPos.y;
+                    for (const hit of this._confirmBadgeHits) {
+                        const dist = Math.sqrt((wx - hit.x) ** 2 + (wy - hit.y) ** 2);
+                        if (dist <= hit.r * 1.5) {
+                            if (hit.isPending && typeof vscode !== 'undefined') {
+                                vscode.postMessage({
+                                    command: 'requestConfirmEdge',
+                                    edgeId: hit.edge.id,
+                                    fromFile: hit.edge._fromFile || null,
+                                    toFile: hit.edge._toFile || null
+                                });
+                            }
+                            e.stopPropagation();
+                            return;
+                        }
+                    }
+                }
+
+                // [v0.2.17] Handle quick delete edge badge hit
+                if (this._deleteBadgeHits && this._deleteBadgeHits.length > 0) {
+                    const wx = worldPos.x, wy = worldPos.y;
+                    for (const hit of this._deleteBadgeHits) {
+                        const dist = Math.sqrt((wx - hit.x) ** 2 + (wy - hit.y) ** 2);
+                        if (dist <= hit.r * 1.5) {
+                            if (typeof vscode !== 'undefined') {
+                                vscode.postMessage({
+                                    command: 'requestDeleteEdgeUI',
+                                    edgeId: hit.edge.id
+                                });
+                            } else {
+                                this.deleteEdge(hit.edge.id);
+                            }
+                            // [New] 即時 Sync: 삭제 후 바로 FlowData 갱신
+                            if (this.flowRenderer) {
+                                this.flowData = this.flowRenderer.buildFlow(this.nodes) || { steps: [] };
+                            }
+                            e.stopPropagation();
+                            return;
+                        }
+                    }
+                }
+
                 // -1. 클러스터 헤더 버튼 체크 (최우선)
                 const clickedClusterHeader = this.getClusterHeaderAt(worldPos.x, worldPos.y);
                 if (clickedClusterHeader) {
@@ -1330,10 +1469,7 @@ class CanvasEngine {
                     return;
                 }
 
-                // 0. 노드 승인/취소 버튼 체크 (가장 먼저)
-                if (this.checkNodeButtonClick(worldPos.x, worldPos.y)) {
-                    return;
-                }
+
 
                 // 1. 연결 핸들 체크 (최우선) OR 연결 모드일 때 노드 클릭
                 const handle = this.getConnectionHandleAt(worldPos.x, worldPos.y);
@@ -1393,6 +1529,7 @@ class CanvasEngine {
                             console.log('[SYNAPSE] Node selected (Single). ID:', clickedNode.id);
                         }
                         this.selectedNode = clickedNode;
+                        this._onNodeSelected(clickedNode); // [DTR] show node DTR in gauge
                     }
                     this.isDragging = true;
                 } else {
@@ -1433,6 +1570,7 @@ class CanvasEngine {
                         if (!(e.ctrlKey || e.metaKey || e.shiftKey)) {
                             this.selectedNodes.clear();
                             this.selectedNode = null;
+                            this._onNodeSelected(null); // [DTR] revert to global DTR
                         }
                     }
                 }
@@ -1640,8 +1778,19 @@ class CanvasEngine {
                 return;
             }
 
-            // 아니면 노드 컨텍스트 메뉴
+            // 안 선택되었어도, 우클릭 위치에 엣지가 있는지 판별
             const worldPos = this.screenToWorld(e.offsetX, e.offsetY);
+            const clickedEdge = this.findEdgeAtPoint(worldPos.x, worldPos.y);
+            if (clickedEdge) {
+                this.selectedEdge = clickedEdge;
+                this.selectedNode = null;
+                this.selectedNodes.clear();
+                this.render();
+                this.showEdgeContextMenu(e.clientX, e.clientY);
+                return;
+            }
+
+            // 아니면 노드 컨텍스트 메뉴
             const clickedNode = this.getNodeAt(worldPos.x, worldPos.y);
 
             this.showContextMenu(e.clientX, e.clientY, clickedNode);
@@ -1652,13 +1801,13 @@ class CanvasEngine {
                 return;
             }
 
-            const worldPos = this.screenToWorld(e.offsetX, e.offsetY);
+            const worldPosClick = this.screenToWorld(e.offsetX, e.offsetY);
             const hasModifier = e.shiftKey || e.ctrlKey || e.metaKey;
 
             if (this.currentMode === 'tree') {
                 // Tree 모드
                 if (!this.treeData) return;
-                const clickedItem = this.treeRenderer.getItemAt(this.treeData, worldPos.x, worldPos.y);
+                const clickedItem = this.treeRenderer.getItemAt(this.treeData, worldPosClick.x, worldPosClick.y);
 
                 if (clickedItem) {
                     if (clickedItem.type === 'folder') {
@@ -1671,14 +1820,14 @@ class CanvasEngine {
             } else if (this.currentMode === 'flow') {
                 // Flow 모드
                 if (!this.flowData) return;
-                const clickedStep = this.flowRenderer.getStepAt(this.flowData, worldPos.x, worldPos.y);
+                const clickedStep = this.flowRenderer.getStepAt(this.flowData, worldPosClick.x, worldPosClick.y);
 
                 if (clickedStep && clickedStep.node && !hasModifier) {
                     this.handleOpenFile(clickedStep.node.data.path || clickedStep.node.data.file);
                 }
             } else {
                 // Graph 모드
-                const clickedNode = this.getNodeAt(worldPos.x, worldPos.y);
+                const clickedNode = this.getNodeAt(worldPosClick.x, worldPosClick.y);
 
                 if (clickedNode) {
                     // 수정 키가 없을 때만 파일 열기 수행
@@ -1749,6 +1898,7 @@ class CanvasEngine {
         for (const node of this.nodes) {
             const nodeWidth = 120;
             const nodeHeight = 60;
+            const HIT_PADDING = 12; // 클릭/선택 영역 확장
 
             // Check if node is hidden (collapsed cluster)
             if (node.cluster_id) {
@@ -1756,8 +1906,8 @@ class CanvasEngine {
                 if (cluster && cluster.collapsed) continue;
             }
 
-            if (worldX >= node.position.x && worldX <= node.position.x + nodeWidth &&
-                worldY >= node.position.y && worldY <= node.position.y + nodeHeight) {
+            if (worldX >= node.position.x - HIT_PADDING && worldX <= node.position.x + nodeWidth + HIT_PADDING &&
+                worldY >= node.position.y - HIT_PADDING && worldY <= node.position.y + nodeHeight + HIT_PADDING) {
                 return node;
             }
         }
@@ -2362,6 +2512,8 @@ class CanvasEngine {
     createManualEdge(type, color) {
         if (!this.edgeSource || !this.edgeTarget) return;
 
+        const _fromNode = this.nodes.find(n => n.id === (this.edgeSource.type === 'node' ? this.edgeSource.id : null));
+        const _toNode = this.nodes.find(n => n.id === (this.edgeTarget.type === 'node' ? this.edgeTarget.id : null));
         const newEdge = {
             id: `edge_manual_${Date.now()}`,
             from: this.edgeSource.type === 'node' ? this.edgeSource.id : undefined,
@@ -2370,6 +2522,9 @@ class CanvasEngine {
             toCluster: this.edgeTarget.type === 'cluster' ? this.edgeTarget.id : undefined,
             type: type,
             label: type.replace('_', ' '),
+            status: 'pending_confirm',  // [v0.2.17] awaits source confirmation
+            _fromFile: _fromNode?.data?.file || null,
+            _toFile: _toNode?.data?.file || null,
             visual: {
                 color: color,
                 dashArray: type === 'dependency' ? '5,5' : undefined
@@ -2378,10 +2533,16 @@ class CanvasEngine {
 
         this.edges.push(newEdge);
         console.log('[SYNAPSE] Manual edge created:', newEdge);
+        if (this.flowRenderer) {
+            this.flowData = this.flowRenderer.buildFlow(this.nodes) || { steps: [] };
+        }
 
         // 백엔드에 저장
         if (typeof vscode !== 'undefined') {
-            vscode.postMessage({ command: 'createManualEdge', edge: newEdge });
+            vscode.postMessage({
+                command: 'createManualEdge',
+                edge: newEdge
+            });
 
             // 🔍 즉시 아키텍처 검증 요청 (Phase 4)
             const fromNode = this.nodes.find(n => n.id === newEdge.from);
@@ -2557,10 +2718,25 @@ class CanvasEngine {
     }
 
     loadProjectState(projectState, preserveView = false) {
+        this.log(`loadProjectState triggered. Nodes: ${projectState.nodes?.length}, Edges: ${projectState.edges?.length}`);
         try {
+            if (!projectState.nodes || projectState.nodes.length === 0) {
+                console.warn('[SYNAPSE] loadProjectState: Received empty nodes list.');
+            }
+
             this.nodes = projectState.nodes || [];
             this.edges = projectState.edges || [];
             this.clusters = projectState.clusters || [];
+
+            // [v0.2.17 New Rule] Documentation Shelf & Intelligent Context Vault are collapsed by default
+            this.clusters.forEach(cluster => {
+                if (cluster.id === 'doc_shelf' || cluster.id === 'context_vault') {
+                    // Only set if not already explicitly defined in the state
+                    if (cluster.collapsed === undefined) {
+                        cluster.collapsed = true;
+                    }
+                }
+            });
 
             // Reset transient states
             this.baselineNodes = null; // Clear comparison artifacts
@@ -2583,20 +2759,35 @@ class CanvasEngine {
 
 
             // Tree 데이터 빌드
-            if (this.treeRenderer) {
-                this.treeData = this.treeRenderer.buildTree(this.nodes) || [];
+            try {
+                if (this.treeRenderer) {
+                    this.treeData = this.treeRenderer.buildTree(this.nodes) || [];
+                }
+            } catch (treeErr) {
+                this.log('Tree build failed but continuing', 'error', treeErr.message);
             }
 
             // Flow 데이터 빌드
-            if (this.flowRenderer) {
-                // [Fix] 기존 데이터가 'internal'(상세 로직)인 경우 덮어쓰지 않음
-                const needsReset = !this.flowData || this.flowData.type === 'global' || !this.flowData.steps || this.flowData.steps.length === 0;
-                if (needsReset) {
-                    this.flowData = this.flowRenderer.buildFlow(this.nodes) || { steps: [] };
-                    console.log('[SYNAPSE] Refreshed Global Flow data');
-                } else {
-                    console.log('[SYNAPSE] Preserved Internal Flow data during state load');
+            try {
+                if (this.flowRenderer) {
+                    // [Fix] 기존 데이터가 'internal'(상세 로직)인 경우 덮어쓰지 않음
+                    const needsReset = !this.flowData || this.flowData.type === 'global' || !this.flowData.steps || this.flowData.steps.length === 0;
+                    if (needsReset) {
+                        this.flowData = this.flowRenderer.buildFlow(this.nodes) || { steps: [] };
+                        this.log('Refreshed Global Flow data');
+                    } else {
+                        this.log('Preserved Internal Flow data during state load');
+                    }
                 }
+            } catch (flowErr) {
+                this.log('Flow build failed but continuing', 'error', flowErr.message);
+            }
+
+            // [v0.2.17 New Rule] Prevent node overlaps
+            try {
+                this.resolveOverlaps();
+            } catch (overlapErr) {
+                this.log('resolveOverlaps failed but continuing', 'error', overlapErr.message);
             }
 
             // UI 업데이트
@@ -2650,6 +2841,11 @@ class CanvasEngine {
             }
 
             console.log('[SYNAPSE] Loaded project state with', this.nodes.length, 'nodes');
+
+            // Critical check for positions
+            const validPositions = this.nodes.filter(n => n.position && typeof n.position.x === 'number' && typeof n.position.y === 'number').length;
+            console.log(`[SYNAPSE] Valid positions: ${validPositions} / ${this.nodes.length}`);
+
             console.log('[SYNAPSE] Tree data:', this.treeData);
             console.log('[SYNAPSE] Flow data:', this.flowData);
             console.log('[SYNAPSE] Clusters:', this.clusters);
@@ -2661,6 +2857,66 @@ class CanvasEngine {
             const loadingEl = document.getElementById('loading');
             if (loadingEl) loadingEl.remove(); // Force remove to prevent blocking
             this.render();
+        }
+    }
+
+    resolveOverlaps() {
+        if (!this.nodes || this.nodes.length < 2) return;
+
+        const MIN_DISTANCE_X = 150;
+        const MIN_DISTANCE_Y = 100;
+        const ITERATIONS = 3;
+
+        for (let iter = 0; iter < ITERATIONS; iter++) {
+            let moved = false;
+            for (let i = 0; i < this.nodes.length; i++) {
+                for (let j = i + 1; j < this.nodes.length; j++) {
+                    const nodeA = this.nodes[i];
+                    const nodeB = this.nodes[j];
+
+                    // Documentation Shelf나 Context Vault 등 접힌 클러스터 내부 노드는 무시
+                    if (nodeA.cluster_id) {
+                        const cA = this.clusters.find(c => c.id === nodeA.cluster_id);
+                        if (cA && cA.collapsed) continue;
+                    }
+                    if (nodeB.cluster_id) {
+                        const cB = this.clusters.find(c => c.id === nodeB.cluster_id);
+                        if (cB && cB.collapsed) continue;
+                    }
+
+                    // position이 없는 노드(auto-discovered)는 건너뜀
+                    if (!nodeA.position || !nodeB.position) continue;
+
+                    const dx = nodeB.position.x - nodeA.position.x;
+                    const dy = nodeB.position.y - nodeA.position.y;
+                    const adx = Math.abs(dx);
+                    const ady = Math.abs(dy);
+
+                    if (adx < MIN_DISTANCE_X && ady < MIN_DISTANCE_Y) {
+                        moved = true;
+                        // 충첩 해제 (단순 수평/수직 밀어내기)
+                        const shiftX = (MIN_DISTANCE_X - adx) / 2;
+                        const shiftY = (MIN_DISTANCE_Y - ady) / 2;
+
+                        if (dx >= 0) {
+                            nodeA.position.x -= shiftX;
+                            nodeB.position.x += shiftX;
+                        } else {
+                            nodeA.position.x += shiftX;
+                            nodeB.position.x -= shiftX;
+                        }
+
+                        if (dy >= 0) {
+                            nodeA.position.y -= shiftY;
+                            nodeB.position.y += shiftY;
+                        } else {
+                            nodeA.position.y += shiftY;
+                            nodeB.position.y -= shiftY;
+                        }
+                    }
+                }
+            }
+            if (!moved) break;
         }
     }
 
@@ -2722,9 +2978,17 @@ class CanvasEngine {
     }
 
     render() {
+        if (this.isRendering) return; // Prevent recursive or double render
+        this.isRendering = true;
+
         try {
             const ctx = this.ctx;
             const canvas = this.canvas;
+
+            if (!ctx || !canvas) {
+                console.error('[SYNAPSE] Render failed: ctx or canvas is missing');
+                return;
+            }
 
             // 1. 캔버스 해상도 강제 동기화 (Zero Point Adjustment)
             this.resizeCanvas();
@@ -2762,8 +3026,11 @@ class CanvasEngine {
                 // Graph 모드: 그리드 -> 클러스터 -> 엣지 -> 노드 순으로 렌더링
                 this.renderGrid();
                 this.renderClusters();
+                this.renderScrollbars();
 
                 // 엣지 렌더링 (줌이 너무 작으면 생략 가능)
+                this._confirmBadgeHits = []; // [v0.2.17] reset hit areas each frame
+                this._deleteBadgeHits = []; // [v0.2.17] reset trash areas
                 if (zoom > 0.3) {
                     for (const edge of this.edges) {
                         this.renderEdge(edge);
@@ -2775,10 +3042,10 @@ class CanvasEngine {
 
                 // 노드 렌더링 (LOD 적용)
                 for (const node of this.nodes) {
-                    // 클러스터가 접혀있으면 렌더링 스킵 (단, Documentation Shelf는 예외)
+                    // 클러스터가 접혀있으면 렌더링 스킵 (Documentation Shelf 포함 모든 클러스터 준수)
                     if (node.cluster_id) {
                         const cluster = this.clusters.find(c => c.id === node.cluster_id);
-                        if (cluster && cluster.collapsed && node.cluster_id !== 'doc_shelf') continue;
+                        if (cluster && cluster.collapsed) continue;
                     }
                     this.renderNode(node, zoom);
                 }
@@ -2827,15 +3094,8 @@ class CanvasEngine {
             // Debug Overlay
             this.renderDebugInfo();
 
-        } catch (error) {
-            console.error('[SYNAPSE] Render error:', error);
-            const ctx = this.ctx;
-            ctx.save();
-            ctx.setTransform(1, 0, 0, 1, 0, 0);
-            ctx.fillStyle = 'red';
-            ctx.font = 'bold 14px monospace';
-            ctx.fillText(`Render Error: ${error.message}`, 10, 50);
-            ctx.restore();
+        } finally {
+            this.isRendering = false;
         }
     }
 
@@ -3032,13 +3292,30 @@ class CanvasEngine {
      * @param {string} edgeId - 삭제할 엣지 ID
      */
     deleteEdge(edgeId) {
-        // 로컬 상태에서 엣지 제거
+        // 로컬 상태에서 엣지 객체 찾기
         const edgeIndex = this.edges.findIndex(e => e.id === edgeId);
         if (edgeIndex === -1) {
             console.warn('[SYNAPSE] Edge not found:', edgeId);
             return;
         }
 
+        const edge = this.edges[edgeIndex];
+
+        // Edit Mode: intercept and send to backend for destructive source sync
+        if (this.isEditMode && typeof vscode !== 'undefined') {
+            const fromLabel = edge._fromFile || edge.from || '(unknown)';
+            const toLabel = edge._toFile || edge.to || '(unknown)';
+            vscode.postMessage({
+                command: 'requestDeleteEdgeSource',
+                edgeId: edge.id,
+                fromFile: edge._fromFile,
+                toFile: edge._toFile,
+                fromLabel, toLabel
+            });
+            return; // Only delete locally if the backend says so later
+        }
+
+        // Normal View mode: safe visual-only delete
         this.edges.splice(edgeIndex, 1);
         this.selectedEdge = null;
 
@@ -3078,7 +3355,8 @@ class CanvasEngine {
         if (typeof vscode !== 'undefined') {
             vscode.postMessage({
                 command: 'deleteNodes',
-                nodeId: nodeId
+                nodeId: nodeId,
+                deleteFiles: this.isEditMode
             });
         }
 
@@ -3156,7 +3434,8 @@ class CanvasEngine {
             console.log(`[SYNAPSE] Sending deleteNodes command. IDs:`, nodeIds);
             vscode.postMessage({
                 command: 'deleteNodes',
-                nodeIds: nodeIds
+                nodeIds: nodeIds,
+                deleteFiles: this.isEditMode
             });
             console.log(`[SYNAPSE] Sent deleteNodes command for ${nodeIds.length} nodes`);
         } else {
@@ -3251,6 +3530,141 @@ class CanvasEngine {
 
         console.log(`[SYNAPSE] Edge type changed: ${oldType} → ${newType}`);
         this.render();
+    }
+
+    // [v0.2.17] DTR UI Sync — global value from CanvasPanel
+    handleDTRChange(value) {
+        this.currentDTR = value;
+        this._updateDTRDisplay(value);
+        this.render();
+    }
+
+    // Shared display updater (nodeLabel: string shows slider; undefined hides it)
+    _updateDTRDisplay(value, nodeLabel) {
+        const display = document.getElementById('dtr-value-display');
+        const fill = document.getElementById('dtr-gauge-fill');
+        const nSpan = document.getElementById('dtr-stat-n');
+        const costSpan = document.getElementById('dtr-stat-cost');
+        const nodeLabelEl = document.getElementById('dtr-node-label');
+        const slider = document.getElementById('dtr-slider');
+
+        if (display) display.textContent = value.toFixed(2);
+        if (fill) fill.style.width = `${value * 100}%`;
+
+        const n = value < 0.4 ? 1 : (value < 0.8 ? 4 : 8);
+        if (nSpan) nSpan.textContent = n;
+        if (costSpan) costSpan.textContent = value < 0.4 ? 'Low' : (value < 0.8 ? 'Mid' : 'High');
+
+        if (nodeLabel !== undefined) {
+            if (nodeLabelEl) { nodeLabelEl.textContent = `📄 ${nodeLabel}`; nodeLabelEl.style.display = 'block'; }
+            if (slider) { slider.value = value; slider.style.display = 'block'; }
+        } else {
+            if (nodeLabelEl) nodeLabelEl.style.display = 'none';
+            if (slider) slider.style.display = 'none';
+        }
+    }
+
+    // Called on single-node selection — reads node DTR and wires slider to edit it
+    _onNodeSelected(node) {
+        if (!node) {
+            this._updateDTRDisplay(this.currentDTR);
+            return;
+        }
+        const dtr = (node.intelligence && node.intelligence.dtr != null)
+            ? node.intelligence.dtr
+            : (node.data && node.data.intelligence && node.data.intelligence.dtr != null
+                ? node.data.intelligence.dtr : this.currentDTR);
+        const label = (node.data && node.data.label) ? node.data.label : node.id;
+        this._updateDTRDisplay(dtr, label);
+
+        const slider = document.getElementById('dtr-slider');
+        if (!slider) return;
+        if (this._dtrSliderHandler) slider.removeEventListener('input', this._dtrSliderHandler);
+        this._dtrSliderHandler = (e) => {
+            const newDTR = parseFloat(e.target.value);
+            if (!node.intelligence) node.intelligence = {};
+            node.intelligence.dtr = newDTR;
+            if (!node.data) node.data = {};
+            if (!node.data.intelligence) node.data.intelligence = {};
+            node.data.intelligence.dtr = newDTR;
+            this._updateDTRDisplay(newDTR, (node.data && node.data.label) ? node.data.label : node.id);
+            vscode.postMessage({ command: 'updateNodeDTR', nodeId: node.id, dtr: newDTR });
+            this.render();
+        };
+        slider.addEventListener('input', this._dtrSliderHandler);
+    }
+
+    // [v0.2.17] Canvas Scrollbars Logic
+    renderScrollbars() {
+        const container = document.getElementById('canvas-container');
+        if (!container) return;
+
+        const thumbV = document.getElementById('thumb-v');
+        const thumbH = document.getElementById('thumb-h');
+
+        // Simple heuristic for scrollbar position based on transform
+        // transform.x/y is offset, transform.k is zoom
+        const zoom = this.transform.zoom; // Use this.transform.zoom
+        const offsetX = this.transform.offsetX;
+        const offsetY = this.transform.offsetY;
+
+        // Vertical scrollbar
+        if (thumbV) {
+            const viewHeight = container.clientHeight;
+            // Estimate content height based on max Y of nodes, or a large multiple of viewHeight
+            let maxY = 0;
+            if (this.nodes.length > 0) {
+                maxY = Math.max(...this.nodes.map(n => n.position.y + 60));
+            }
+            const contentHeight = Math.max(viewHeight * 2, maxY * zoom); // At least 2x viewHeight, or based on content
+
+            // Calculate scroll percentage
+            // The canvas origin (0,0) is at offsetX, offsetY in screen space.
+            // So, the top of the world view is at -offsetY / zoom.
+            const worldViewTop = -offsetY / zoom;
+
+            // Map worldViewTop to a percentage of the total scrollable content
+            // Assuming the scrollable area starts at some negative world Y and ends at contentHeight
+            // This is a simplified model. A more accurate one would involve min/max world bounds.
+            const scrollRange = contentHeight - viewHeight / zoom;
+            let scrollPercent = 0;
+            if (scrollRange > 0) {
+                scrollPercent = (worldViewTop / scrollRange) * 100;
+            }
+
+            // Clamp to 0-100
+            scrollPercent = Math.max(0, Math.min(100, scrollPercent));
+
+            // Thumb height should be proportional to the visible content vs total content
+            const thumbHeightPercent = Math.max(10, (viewHeight / zoom / contentHeight) * 100);
+
+            thumbV.style.top = `${scrollPercent}%`;
+            thumbV.style.height = `${thumbHeightPercent}%`;
+        }
+
+        // Horizontal scrollbar
+        if (thumbH) {
+            const viewWidth = container.clientWidth;
+            // Estimate content width
+            let maxX = 0;
+            if (this.nodes.length > 0) {
+                maxX = Math.max(...this.nodes.map(n => n.position.x + 120));
+            }
+            const contentWidth = Math.max(viewWidth * 2, maxX * zoom);
+
+            const worldViewLeft = -offsetX / zoom;
+            const scrollRange = contentWidth - viewWidth / zoom;
+            let scrollPercent = 0;
+            if (scrollRange > 0) {
+                scrollPercent = (worldViewLeft / scrollRange) * 100;
+            }
+            scrollPercent = Math.max(0, Math.min(100, scrollPercent));
+
+            const thumbWidthPercent = Math.max(10, (viewWidth / zoom / contentWidth) * 100);
+
+            thumbH.style.left = `${scrollPercent}%`;
+            thumbH.style.width = `${thumbWidthPercent}%`;
+        }
     }
 
     renderGrid() {
@@ -3771,14 +4185,29 @@ class CanvasEngine {
             const pulse = 0.4 + 0.6 * Math.sin(Date.now() / 400);
             borderColor = `rgba(235, 219, 178, ${pulse})`;
             glowColor = `rgba(235, 219, 178, ${pulse * 0.3})`;
-        } else if (style.glow) {
+        }
+
+        let dtrPulse = null;
+
+        if (style.glow) {
             glowColor = style.borderColor;
+        }
+
+        // [v0.2.17] DTR Glow Intensity (Highest Priority for Glow)
+        let isDtrGlow = false;
+        if (node.intelligence && node.intelligence.dtr !== undefined && node.intelligence.dtr >= 0.7) {
+            isDtrGlow = true;
+            dtrPulse = 0.8 + 0.2 * Math.sin(Date.now() / 250);
+            glowColor = '#8A2BE2'; // Purple
         }
 
         if (isSelected) {
             borderColor = '#fabd2f';
             lineWidth = 3;
-            glowColor = '#fabd2f';
+            // Only set glow to yellow if it's not a DTR glowing node
+            if (!isDtrGlow) {
+                glowColor = '#fabd2f';
+            }
         }
 
         // Logic Analysis Auras
@@ -3798,7 +4227,12 @@ class CanvasEngine {
 
         // 2. 배경 및 글로우 렌더링
         this.ctx.save();
-        if (glowColor && isPartofActivePath && this.isAnimating) {
+
+        // Apply Glow logic
+        if (isDtrGlow && dtrPulse !== null) {
+            this.ctx.shadowBlur = 50 * dtrPulse * (node.visual?.glow_intensity || 1);
+            this.ctx.shadowColor = '#8A2BE2';
+        } else if (glowColor && (isSelected || node.isError || node.isBottleneck || (isPartofActivePath && this.isAnimating))) {
             this.ctx.shadowBlur = 10;
             this.ctx.shadowColor = glowColor;
         }
@@ -3889,10 +4323,7 @@ class CanvasEngine {
             this.ctx.textAlign = 'center';
             this.ctx.fillText(node.data.label, x + nodeWidth / 2, y + 15);
 
-            // Proposed 모드 가이드 버튼 ([V], [X])
-            if (node.status === 'proposed' || node.state === 'pending') {
-                this.renderNodeButtons(node, x, y, nodeWidth, nodeHeight);
-            }
+
 
             // 구분선
             this.ctx.strokeStyle = '#504945';
@@ -3981,20 +4412,6 @@ class CanvasEngine {
         this.ctx.fillRect(xBtnX, btnY, btnSize, btnSize);
         this.ctx.fillStyle = '#282828';
         this.ctx.fillText('X', xBtnX + btnSize / 2, btnY + btnSize / 2);
-
-        // 줌이 크면 라벨 표시
-        if (zoom > 1.8) {
-            this.ctx.font = '9px Inter, sans-serif';
-            this.ctx.textAlign = 'right';
-            this.ctx.fillStyle = '#b8bb26';
-            this.ctx.fillText('Approve', vBtnX - 5, btnY + btnSize / 2);
-            this.ctx.fillStyle = '#fb4934';
-            this.ctx.fillText('Reject', xBtnX + btnSize + 30, btnY + btnSize / 2); // 우측으로 시선 분산
-            // 그냥 버튼 아래나 옆에 작게
-            this.ctx.textAlign = 'center';
-            this.ctx.fillText('Approve', vBtnX + btnSize / 2, btnY - 5);
-            this.ctx.fillText('Reject', xBtnX + btnSize / 2, btnY - 5);
-        }
     }
 
     /**
@@ -4134,6 +4551,15 @@ class CanvasEngine {
         // [v0.2.16] Apply Weight Dynamics (Thickness increases by 1 for every weight unit)
         if (weight > 0) {
             style.lineWidth += (weight * 0.8); // 0.8 pixel per weight unit increment
+        }
+
+        if (edge.intelligence && edge.intelligence.dtr !== undefined) {
+            const dtr = edge.intelligence.dtr;
+            if (dtr >= 0.7) {
+                style.borderColor = '#8A2BE2'; // Violet for Deep Thinking
+                style.glow = true;
+                style.lineWidth += (dtr - 0.7) * 4;
+            }
         }
 
         return style;
@@ -4284,7 +4710,7 @@ class CanvasEngine {
 
         // 2단계: 곡선 클릭 확인 (대체 방법)
         for (const edge of this.edges) {
-            if (this.isPointNearCurve(px, py, edge, 10)) {
+            if (this.isPointNearCurve(px, py, edge, 15)) { // [v0.2.17] Increased tolerance 10->15
                 return edge;
             }
         }
@@ -4477,6 +4903,39 @@ class CanvasEngine {
 
             // 💡 마우스 오버 시 AI 판단 이유 저장 (툴팁용)
             edge._validationReason = validation.reason;
+        }
+
+        // [v0.2.17] Confirmation badge: ? (pending_confirm) or ! (confirmed)
+        const confirmStatus = edge.status;
+        if (confirmStatus === 'pending_confirm' || confirmStatus === 'confirmed') {
+            const bMidX = (fromX + toX) / 2;
+            const bMidY = (fromY + toY) / 2 - 30;
+            const isPending = confirmStatus === 'pending_confirm';
+            const badgeChar = isPending ? '?' : '!';
+            const badgeColor = isPending ? '#fabd2f' : '#b8bb26';
+            const badgeSize = Math.max(16, 22 / this.transform.zoom);
+
+            this.ctx.save();
+            this.ctx.font = `bold ${badgeSize}px Inter, monospace`;
+            this.ctx.textAlign = 'center';
+            this.ctx.textBaseline = 'middle';
+
+            this.ctx.beginPath();
+            this.ctx.arc(bMidX, bMidY, badgeSize * 0.75, 0, Math.PI * 2);
+            this.ctx.fillStyle = isPending ? 'rgba(250,189,47,0.25)' : 'rgba(184,187,38,0.25)';
+            this.ctx.fill();
+            this.ctx.strokeStyle = badgeColor;
+            this.ctx.lineWidth = 1.5 / this.transform.zoom;
+            this.ctx.stroke();
+            this.ctx.fillStyle = badgeColor;
+            this.ctx.fillText(badgeChar, bMidX, bMidY);
+            this.ctx.restore();
+
+            if (!this._confirmBadgeHits) this._confirmBadgeHits = [];
+            this._confirmBadgeHits.push({
+                x: bMidX, y: bMidY, r: badgeSize * 0.75,
+                edge: edge, isPending
+            });
         }
     }
 
@@ -4826,6 +5285,23 @@ function initCanvas() {
                 engine.loadProjectState(message.data, preserve);
                 engine.isExpectingUpdate = false; // 플래그 리셋
                 break;
+            case 'resetCanvas': {
+                // Visual Reset: 모든 노드/엣지/클러스터 즉시 제거 및 캔버스 초기화
+                engine.nodes = [];
+                engine.edges = [];
+                engine.clusters = [];
+                engine.selectedNodes = new Set();
+                engine.selectedEdge = null;
+                engine.transform = { zoom: 1.0, offsetX: 0, offsetY: 0 };
+                engine.updateZoomDisplay();
+                const nodeCountEl = document.getElementById('node-count');
+                const edgeCountEl = document.getElementById('edge-count');
+                if (nodeCountEl) nodeCountEl.textContent = '0';
+                if (edgeCountEl) edgeCountEl.textContent = '0';
+                engine.render();
+                console.log('[SYNAPSE] RESET_CANVAS received. Canvas cleared.');
+                break;
+            }
             case 'analysisProgress': {
                 const loadingText = document.querySelector('#loading div:not(.spinner)');
                 if (loadingText) {
@@ -4850,6 +5326,33 @@ function initCanvas() {
                 break;
             case 'fitView':
                 engine.fitView();
+                break;
+            case 'edgeConfirmed':
+                const edgeToConfirm = engine.edges.find(e => e.id === message.edgeId);
+                if (edgeToConfirm) {
+                    edgeToConfirm.status = 'confirmed';
+                    engine.render();
+                }
+                break;
+            case 'edgeDeletedSource':
+                if (message.success) {
+                    const edgeIdx = engine.edges.findIndex(e => e.id === message.edgeId);
+                    if (edgeIdx !== -1) {
+                        engine.edges.splice(edgeIdx, 1);
+                        engine.selectedEdge = null;
+
+                        // [v0.2.17] Refresh flowchart on deletion
+                        if (engine.flowRenderer) {
+                            engine.flowData = engine.flowRenderer.buildFlow(engine.nodes) || { steps: [] };
+                        }
+
+                        engine.saveState();
+                        engine.render();
+                    }
+                }
+                break;
+            case 'dtrChanged':
+                engine.handleDTRChange(message.value);
                 break;
             case 'setBaseline':
                 engine.baselineNodes = message.data.nodes;
@@ -4952,6 +5455,17 @@ function initCanvas() {
             }
         } else {
             alert('Deep Reset is only available in VS Code mode.');
+        }
+    });
+
+    document.getElementById('btn-reset-state')?.addEventListener('click', () => {
+        if (typeof vscode !== 'undefined') {
+            const confirmed = window.confirm(
+                '🔄 project_state.json을 빈 상태로 초기화하시겠습니까?\n\n노드, 엣지, 클러스터 등 저장된 모든 캔버스 상태가 삭제됩니다.\n(소스 코드는 변경되지 않습니다.)'
+            );
+            if (confirmed) {
+                vscode.postMessage({ command: 'resetProjectState' });
+            }
         }
     });
 

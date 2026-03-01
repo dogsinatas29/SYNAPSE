@@ -247,10 +247,13 @@ This document defines the rules for how SYNAPSE discovers, parses, and visualize
                         }
 
                         const type: NodeType = ext === '.md' ? 'documentation' : 'source';
+                        const dtrData = this.scoutDTR(fullPath, type);
+
                         structure.files.push({
                             path: currentRelPath.replace(/\\/g, '/'),
                             type,
-                            description: `${file} (${type === 'documentation' ? 'Doc' : 'Auto-detected'})`
+                            description: `${file} (${type === 'documentation' ? 'Doc' : 'Auto-detected'})`,
+                            intelligence: dtrData // This needs to be stored somewhere or passed to flowchartGen
                         });
 
                         // [v0.2.16 Opt] Deep Scanning decoupled from discovery walk to prevent hangs
@@ -368,5 +371,53 @@ This document defines the rules for how SYNAPSE discovers, parses, and visualize
 
     private printStructurePreview(structure: any): void {
         // Implementation remains same or simplified
+    }
+
+    /**
+     * ComplexityScouter: Heuristic DTR calculation
+     */
+    private scoutDTR(filePath: string, type: NodeType): any {
+        if (type === 'documentation' || type === 'config' || type === 'external') {
+            return { dtr: 0.2, confidence: 0.9 };
+        }
+
+        try {
+            const content = fs.readFileSync(filePath, 'utf8');
+            const complexity = this.calculateComplexityHeuristic(content);
+
+            // DTR Logic based on RULES.md
+            let dtr = 0.3; // Default Mid-Low
+            if (complexity > 15) dtr = 0.85;      // High
+            else if (complexity > 8) dtr = 0.6;   // Mid
+            else if (complexity < 3) dtr = 0.2;   // Low
+
+            return {
+                dtr,
+                density_rho: Math.min(1, complexity / 20),
+                confidence: 0.9,
+                think_at_n: dtr > 0.7 ? 5 : 1
+            };
+        } catch (e) {
+            return { dtr: 0.3, confidence: 0.5 };
+        }
+    }
+
+    private calculateComplexityHeuristic(content: string): number {
+        // Naive Cyclomatic Complexity heuristic
+        const keywords = ['if', 'else', 'for', 'while', 'switch', 'case', 'catch', '&&', '||', '?', 'await'];
+        let score = 1;
+
+        const tokens = content.split(/\s+/);
+        tokens.forEach(t => {
+            if (keywords.includes(t.replace(/[^a-z&|?]/gi, ''))) {
+                score++;
+            }
+        });
+
+        // Scale by function density
+        const functionMatches = content.match(/function|=>|async\s+async/g);
+        if (functionMatches) score += functionMatches.length * 0.5;
+
+        return score;
     }
 }

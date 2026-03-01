@@ -346,8 +346,16 @@ export class FileScanner {
         // MD Headers (# Header) as classes/sections
         const headerRegex = /^(#{1,6})\s+(.+)$/gm;
         let match;
+        let count = 0;
+        const LIMIT = 20;
+
         while ((match = headerRegex.exec(content)) !== null) {
-            summary.classes.push(match[2].trim());
+            if (count < LIMIT) {
+                summary.classes.push(match[2].trim());
+            } else if (count === LIMIT) {
+                summary.classes.push('... (too many headers, truncated)');
+            }
+            count++;
         }
 
         // MD Links ([label](path/to/file)) as references

@@ -34,9 +34,16 @@ export interface Node {
         layer?: number;          // 계층 (0: Discovery, 1: Reasoning, 2: Action)
         priority?: number;       // 실행 우선순위
     };
+    intelligence?: {
+        dtr: number;             // 사고 밀도 (0.0 ~ 1.0)
+        density_rho?: number;    // 정보 함축률
+        think_at_n?: number;     // 시뮬레이션된 경로 수
+        confidence?: number;     // AI 확신도
+    };
     visual: {
         opacity: number;         // 0.5 = 제안 상태
         dashArray?: string;      // 점선 패턴
+        glow_intensity?: number; // DTR에 따른 발광 강도
     };
 }
 
@@ -49,8 +56,11 @@ export interface Edge {
     to: string;                // 도착 노드 ID
     type: EdgeType;
     is_approved: boolean;      // 승인 여부
+    intelligence?: {
+        dtr: number;             // 해당 연결의 검증 밀도
+    };
     visual: {
-        thickness: number;       // 선 굵기 (중요도)
+        thickness: number;       // 선 굵기 (중요도/DTR 비례)
         style: EdgeStyle;
         color: string;           // 상태 색상
         animated?: boolean;      // 입자 흐름 효과

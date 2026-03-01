@@ -257,6 +257,14 @@ export async function activate(context: vscode.ExtensionContext) {
         recordingStatusBar.command = 'synapse.logPrompt';
         context.subscriptions.push(recordingStatusBar);
 
+        // [v0.2.17] DTR Inference Pressure Gauge
+        const dtrStatusBar = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 1001);
+        dtrStatusBar.text = '$(dashboard) DTR: 0.30';
+        dtrStatusBar.tooltip = 'SYNAPSE: Inference Pressure (Shallow)';
+        dtrStatusBar.command = 'synapse.toggleDTRValve';
+        dtrStatusBar.show();
+        context.subscriptions.push(dtrStatusBar);
+
         console.log('[SYNAPSE] Registering synapse.logPrompt command...');
         context.subscriptions.push(
             vscode.commands.registerCommand('synapse.logPrompt', async (args?: { prompt: string, title?: string, workspacePath?: string }) => {
@@ -395,7 +403,33 @@ export async function activate(context: vscode.ExtensionContext) {
         await languageClient.start();
         console.log('[SYNAPSE] Language Server started successfully');
 
-        vscode.window.setStatusBarMessage('SYNAPSE Engine Ready (v0.2.16)', 5000);
+        vscode.window.setStatusBarMessage('SYNAPSE Engine Ready (v0.2.17)', 5000);
+
+        // [v0.2.17] Register DTR Control Command
+        context.subscriptions.push(
+            vscode.commands.registerCommand('synapse.toggleDTRValve', async () => {
+                const modes = ['Shallow (0.2)', 'Balanced (0.5)', 'Deep (0.9)'];
+                const selected = await vscode.window.showQuickPick(modes, {
+                    placeHolder: 'Select DTR Inference Mode'
+                });
+
+                if (selected) {
+                    const value = selected.includes('0.2') ? 0.2 : (selected.includes('0.5') ? 0.5 : 0.9);
+                    const color = value < 0.4 ? '#87CEEB' : (value < 0.8 ? '#50C878' : '#8A2BE2');
+                    const label = value < 0.4 ? 'Shallow' : (value < 0.8 ? 'Balanced' : 'Deep');
+
+                    dtrStatusBar.text = `$(dashboard) DTR: ${value.toFixed(2)}`;
+                    dtrStatusBar.color = color;
+                    dtrStatusBar.tooltip = `SYNAPSE: Inference Pressure (${label})`;
+
+                    // Notify CanvasPanel to update visual tension
+                    if (CanvasPanel.currentPanel) {
+                        CanvasPanel.currentPanel.notifyDTRChange(value);
+                    }
+                }
+            })
+        );
+
         console.log('[SYNAPSE] Extension activation completed');
     } catch (e: any) {
         console.error('[SYNAPSE] Extension activation failed:', e);

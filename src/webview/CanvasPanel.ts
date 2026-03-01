@@ -966,7 +966,7 @@ export class CanvasPanel {
 
             // 2. fromFile 최상단에 import 문 삽입
             if (actualFromFile && actualToFile) {
-                await this.injectImportStatement(workspaceFolder.uri.fsPath, actualFromFile, actualToFile);
+                await this.injectImportStatement(workspaceFolder.uri.fsPath, actualFromFile, actualToFile, edge?.type);
             } else {
                 vscode.window.showWarningMessage('[SYNAPSE] 파일 경로를 찾을 수 없어 코드 주입을 건너뜁니다.');
             }
@@ -981,12 +981,24 @@ export class CanvasPanel {
     /**
      * fromFile 최상단에 toFile에 대한 import 문 삽입 (언어별 자동 감지)
      */
-    private async injectImportStatement(rootPath: string, fromFile: string, toFile: string) {
+    private async injectImportStatement(rootPath: string, fromFile: string, toFile: string, edgeType?: string) {
         const path = require('path');
         const fromAbs = path.join(rootPath, fromFile);
         const toBase = path.parse(toFile).name; // 확장자 제거
-        const toRelDir = path.dirname(toFile);
+        const toExt = path.extname(toFile).toLowerCase();
         const fromDir = path.dirname(fromFile);
+        const toRelDir = path.dirname(toFile);
+
+        // 비-코드 파일(.csv, .json, .db, .md 등)은 Import 문장을 강제로 주입하지 않음
+        const nonCodeExts = ['.csv', '.json', '.md', '.txt', '.db', '.sql', '.yaml', '.yml'];
+        if (nonCodeExts.includes(toExt) || toExt === '') {
+            // 확장자가 없는 가상 노드(예: TEST_DB_CONVERTER)이거나 데이터 파일인 경우
+            // 사용자의 파이썬 코드 문법을 깨트리지 않기 위해 주입을 생략하거나 단순히 주석만 남깁니다.
+            if (edgeType !== 'dependency' && edgeType !== 'call') {
+                Logger.info(`[CanvasPanel] injectImport: Skipping auto-import for non-code target ${toFile} (type: ${edgeType})`);
+                return;
+            }
+        }
 
         // 상대 경로 계산
         let relPath = path.relative(fromDir, path.join(toRelDir, toBase));

@@ -553,6 +553,18 @@ export class CanvasPanel {
             const data = await vscode.workspace.fs.readFile(projectStateUri);
             const projectState = JSON.parse(data.toString());
 
+            // Resolve missing file paths dynamically before saving
+            // (Newly approved nodes in the UI might not have synced their data.file back to the edge Source)
+            const fromNode = (projectState.nodes || []).find((n: any) => n.id === edge.from);
+            const toNode = (projectState.nodes || []).find((n: any) => n.id === edge.to);
+
+            if (!edge._fromFile && fromNode?.data) {
+                edge._fromFile = fromNode.data.file || fromNode.data.label || null;
+            }
+            if (!edge._toFile && toNode?.data) {
+                edge._toFile = toNode.data.file || toNode.data.label || null;
+            }
+
             // 엣지 추가
             if (!projectState.edges) projectState.edges = [];
             projectState.edges.push(edge);
@@ -1437,12 +1449,21 @@ export class CanvasPanel {
                 return;
             }
 
-            // 2. 안전한 좌표 병합 (기존 데이터를 전혀 파괴하지 않음)
+            // 2. 안전한 좌표 병합 및 신규 노드 추가 (기존 데이터를 전혀 파괴하지 않음)
             if (newState.nodes && Array.isArray(newState.nodes)) {
+                if (!currentState.nodes) currentState.nodes = [];
                 for (const uiNode of newState.nodes) {
-                    const backendNode = (currentState.nodes || []).find((n: any) => n.id === uiNode.id);
-                    if (backendNode && uiNode.position) {
-                        backendNode.position = uiNode.position;
+                    const backendNode = currentState.nodes.find((n: any) => n.id === uiNode.id);
+                    if (backendNode) {
+                        if (uiNode.position) backendNode.position = uiNode.position;
+                        // Synchronize label updates from UI (like renaming new nodes)
+                        if (uiNode.data?.label && backendNode.data) {
+                            backendNode.data.label = uiNode.data.label;
+                        }
+                    } else {
+                        // [v0.2.18] This is a brand new node created from the UI! Add it to the backend.
+                        currentState.nodes.push(uiNode);
+                        Logger.info(`[CanvasPanel] handleSaveState: Appended new UI node ${uiNode.id}`);
                     }
                 }
             }

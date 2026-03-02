@@ -5112,6 +5112,7 @@ class CanvasEngine {
             const metrics = this.ctx.measureText(text);
             const padding = 6 / this.transform.zoom;
 
+            this.ctx.save(); // [v0.2.18 Fix] Prevent context popping!
             this.ctx.fillStyle = '#282828';
             this.ctx.shadowBlur = 4;
             this.ctx.shadowColor = 'rgba(0,0,0,0.5)';

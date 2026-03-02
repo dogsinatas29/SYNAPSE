@@ -1,8 +1,8 @@
-# <img src="resources/synapse-icon.png" width="40" height="40" /> SYNAPSE: 비주얼 아키텍처 엔진
+# <img src="resources/synapse-icon.png" width="40" height="40" /> SYNAPSE: 비주얼 아키텍처 엔진 (v0.2.18)
 
 > **"눈에 보이는 것이 곧 LLM의 논리입니다."** — *AI를 위한 WYSIWYG 논리 설계 도구*
 
-[![Version](https://img.shields.io/badge/version-v0.2.16-brightgreen.svg)
+[![Version](https://img.shields.io/badge/version-v0.2.18-brightgreen.svg)
 ![Status](https://img.shields.io/badge/status-War_Room_Ready-orange.svg)
 [![Language](https://img.shields.io/badge/Language-TypeScript-blue?style=flat-square)](https://www.typescriptlang.org/)
 [![Platform](https://img.shields.io/badge/Platform-VS_Code-007ACC?style=flat-square)](https://code.visualstudio.com/)
@@ -85,11 +85,10 @@ LLM 추론 논리와 소스 파일 간의 물리적 연결 상태를 시각화�
 1. [Releases](https://github.com/dogsinatas29/SYNAPSE/releases) 페이지에서 최신 `.vsix` 파일을 다운로드합니다.
 2. 파일을 **VS Code** 창으로 드래그 앤 드롭합니다.
 3. 또는 터미널에서 다음 명령어를 입력합니다:### 빠른 설치
-# 🧠 SYNAPSE: Visual Architecture Engine (v0.2.17)
 ```bash
-code --install-extension synapse-visual-architecture-0.2.17.vsix
+code --install-extension synapse-visual-architecture-0.2.18.vsix
 ```
-현재 버전: **v0.2.17** (DTR - 사고의 공명)
+현재 버전: **v0.2.18** (SSoT 강화 및 좀비 노드 차단)
 
 ---
 

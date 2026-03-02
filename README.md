@@ -116,12 +116,14 @@ SYNAPSE v0.2.17 bridges the gap between drawing pictures and writing code.
 
 ## 🆕 Revision History
 
-### v0.2.17 (Edge Connectivity & Safe Deletion)
+### v0.2.17 (DTR & WYSIWYG Logic Editing)
+- **DTR Visualization**: AI reasoning density glows purple, with Inference Pressure control straight from the VS Code status bar.
+- **Buffer Cluster Automation**: Manually created nodes auto-spawn into the strictly managed `Buffer Cluster` with camera auto-focus.
+- **Logic Edit Toggle**: Destructive generation tools (`Node`, `Connect`) are completely hidden until the `Edit Logic` master switch is engaged.
 - **Safe Node Deletion**: Physical files are commented out instead of hard-deleted to prevent data loss.
-- **Auto-Snapshot on State Change**: Any canvas action (node/edge deletion or position change) automatically captures the latest state into the snapshot history. This strictly seals the new state and prevents old data (`Ghost nodes` or stale imports) from resurrecting.
-- **Edge Auto-Imports**: Confirming an edge visually injects the actual `import` statement into the source file.
+- **Auto-Snapshot on State Change**: Any canvas action (node/edge deletion or position change) automatically captures the latest state into the snapshot history.
+- **Edge Auto-Imports**: Confirming an edge visually injects the actual `import` statement into the source file. Wait/confirm badges (`?`, `!`) are massively enlarged for clarity.
 - **Reset State Protocol**: 4-step full reset system (Disk, Memory, Canvas, Prompt).
-- **V/X Redundancy Removed**: Cleared the redundant Node Approve/Reject texts in favor of seamless Edit Logic interactions.
 - **Data Hygiene**: Eliminated JSON buffer encoding corruption and RangeErrors.
 
 ### v0.2.16 (Strategic Execution Flow Update)

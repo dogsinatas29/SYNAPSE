@@ -116,6 +116,12 @@ SYNAPSE v0.2.17 bridges the gap between drawing pictures and writing code.
 
 ## 🆕 Revision History
 
+### v0.2.18 (Edge Semantics & SSoT Enforcement)
+- **Ghost Node Resurrection Blocked**: Implemented an explicit validation check during the `saveState` sequence (`CanvasPanel.ts`). Nodes deleted in the UI can no longer be resurrected by stale cache.
+- **Edge Badge Hitbox Expansion**: The clickable radius for Edge confirmation (`?`) and Edge deletion (`trash`) badges has been dramatically enlarged for better accessibility.
+- **Buffer ➔ Reserved Automation Leap**: Dropped dragging nodes falling out of Buffer Cluster. Added physical coordinate jump to `[-1500, 1000]` when a node is officially assigned to the Reserved Cluster.
+- **Strict Edge Import Semantics (A ➔ B)**: Formalized the rule that connecting Node A to Node B explicitly means Node A imports Node B, alongside status bar notifications.
+
 ### v0.2.17 (DTR & WYSIWYG Logic Editing)
 - **DTR Visualization**: AI reasoning density glows purple, with Inference Pressure control straight from the VS Code status bar.
 - **Buffer Cluster Automation**: Manually created nodes auto-spawn into the strictly managed `Buffer Cluster` with camera auto-focus.

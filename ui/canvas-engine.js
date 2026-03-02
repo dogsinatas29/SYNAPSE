@@ -1187,7 +1187,8 @@ class CanvasEngine {
             data: {
                 label: label,
                 description: 'Manually created node',
-                cluster_id: 'sys_cluster_buffer' // Assign to Buffer Cluster
+                cluster_id: 'sys_cluster_buffer', // Assign to Buffer Cluster
+                priority_cluster: 'sys_cluster_buffer' // [v0.2.19] Lock prevent unassignment if dragged out
             },
             cluster_id: 'sys_cluster_buffer', // Backend compat
 
@@ -1450,7 +1451,7 @@ class CanvasEngine {
                     const wx = worldPos.x, wy = worldPos.y;
                     for (const hit of this._confirmBadgeHits) {
                         const dist = Math.sqrt((wx - hit.x) ** 2 + (wy - hit.y) ** 2);
-                        if (dist <= hit.r * 1.5) {
+                        if (dist <= hit.r * 2.5) { // [v0.2.18 Fix] Enlarge hit radius so clicks don't miss
                             if (hit.isPending && typeof vscode !== 'undefined') {
                                 vscode.postMessage({
                                     command: 'requestConfirmEdge',
@@ -5145,7 +5146,7 @@ class CanvasEngine {
             const isPending = confirmStatus === 'pending_confirm';
             const badgeChar = isPending ? '?' : '!';
             const badgeColor = isPending ? '#fabd2f' : '#b8bb26';
-            const badgeSize = Math.max(16, 22 / this.transform.zoom);
+            const badgeSize = Math.max(30, 40 / this.transform.zoom); // [v0.2.19 Fix] Make badges much larger globally
 
             this.ctx.save();
             this.ctx.font = `bold ${badgeSize}px Inter, monospace`;

@@ -95,6 +95,12 @@ code --install-extension synapse-visual-architecture-0.2.17.vsix
 
 ## 🆕 버전 히스토리
 
+### v0.2.18 (Edge 방향성 & 백엔드 강제 동기화)
+- **좀비 노드(Ghost Node) 부활 현상 차단**: 비동기 저장 타이밍 오류로 삭제된 노드가 부활하던 치명적인 버그를 수정했습니다.
+- **배지 클릭 반경 대폭 상향**: 엣지의 확정(`?`) 버튼이나 삭제(휴지통) 아이콘의 클릭 허용 반경(Hit Radius)을 기존 1.5배에서 2.5배로 대폭 확장했습니다.
+- **스마트 Import 중복 방지 및 알림**: A ➔ B 로 선을 긋는 즉시 VS Code 우측 하단 상태바에 피드백이 표시되며, 코드 최상단에 중복 없이 정확하게 `import`문이 주입됩니다.
+- **물리적 Reserved Cluster 도약**: `Buffer Cluster`에 대기하던 노드가 선이 연결되어 `Reserved Cluster`로 승격되는 순간, 화면 물리 좌표계 `(-1500, 1000)` 구역으로 즉시 도약(Jump)합니다.
+
 ### v0.2.16 (Strategic Execution Flow 업데이트)
 - **Ready Handshake**: Extension이 WebView의 준비 상태를 대기한 후 데이터를 전송하여 초기화 타이밍 문제를 해결했습니다.
 - **Stable Layout BFS**: 무한 루프 위험이 있는 BFS 로직을 안정적인 위상 정렬 기반 랭크 계산법으로 교체했습니다.

@@ -688,10 +688,12 @@ export class CanvasPanel {
             if (fromNode && (fromNode.cluster_id === 'sys_cluster_buffer' || fromNode.data?.cluster_id === 'sys_cluster_buffer')) {
                 fromNode.cluster_id = 'sys_cluster_reserved';
                 if (fromNode.data) fromNode.data.cluster_id = 'sys_cluster_reserved';
+                fromNode.position = { x: -1500 + Math.random() * 200, y: 1000 + Math.random() * 200 };
             }
             if (toNode && (toNode.cluster_id === 'sys_cluster_buffer' || toNode.data?.cluster_id === 'sys_cluster_buffer')) {
                 toNode.cluster_id = 'sys_cluster_reserved';
                 if (toNode.data) toNode.data.cluster_id = 'sys_cluster_reserved';
+                toNode.position = { x: -1500 + Math.random() * 200, y: 1000 + Math.random() * 200 };
             }
 
             // [v0.2.17-patch4] Proactive commented import injection (Logic Edit Mode)
@@ -708,7 +710,15 @@ export class CanvasPanel {
             const normalizedJson = this.normalizeProjectState(projectState);
             await vscode.workspace.fs.writeFile(projectStateUri, Buffer.from(normalizedJson, 'utf8'));
             console.log('[SYNAPSE] Manual edge persisted successfully.');
-            vscode.window.setStatusBarMessage(`Edge created: ${edge.type} (Pending Confirmation)`, 3000);
+
+            // [v0.2.18] Explicit Edge Direction Notification
+            let notificationMsg = `Edge created: ${edge.type} (Pending Confirmation)`;
+            if (edge._fromFile && edge._toFile) {
+                const bFrom = edge._fromFile.split(/[\\/]/).pop();
+                const bTo = edge._toFile.split(/[\\/]/).pop();
+                notificationMsg = `Edge ${bFrom} ➔ ${bTo} connected: Injecting pending import.`;
+            }
+            vscode.window.setStatusBarMessage(notificationMsg, 5000);
 
             // 캔버스 새로고침
             await this.sendProjectState();
@@ -1673,10 +1683,10 @@ export class CanvasPanel {
                             backendNode._ungrouped = true;
                         }
                     } else {
-                        // [v0.2.21 Fix] Stop resurrecting nodes from UI state!
+                        // [v0.2.18 Policy] Stop resurrecting nodes from UI state!
                         // New nodes MUST be added via the 'createManualNode' command only.
                         // This prevents race conditions where a deleted node is re-added by a concurrent save message.
-                        // Logger.info(`[CanvasPanel] handleSaveState: Skipping unknown UI node ${uiNode.id} to prevent resurrection.`);
+                        Logger.info(`[CanvasPanel] handleSaveState: Skipping unknown UI node ${uiNode.id} to prevent Ghost Node resurrection.`);
                     }
                 }
             }

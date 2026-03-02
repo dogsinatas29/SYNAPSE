@@ -11,12 +11,13 @@ export interface RefactorResult {
 export class EdgeCodeRefactorer {
     /**
      * Adds an import from `fromFile` to `toFile` in the actual source.
-     * Only supports .ts / .js files in v0.2.17.
+     * Only supports .ts / .js / .py / .c files in v0.2.17.
      */
-    public applyEdgeToSource(fromFile: string, toFile: string, projectRoot: string): RefactorResult {
+    public applyEdgeToSource(fromFile: string, toFile: string, projectRoot: string, options?: { commented?: boolean, toNodeId?: string }): RefactorResult {
         const ext = path.extname(fromFile).toLowerCase();
-        if (!['.ts', '.js', '.tsx', '.jsx', '.py'].includes(ext)) {
-            return { success: false, importLine: '', message: `확장자가 없는 파일은 소스 코드 연동(import)이 불가능합니다. (.py, .ts, .js 등 지원 필수)` };
+        // [v0.2.17-patch4] Added .c support
+        if (!['.ts', '.js', '.tsx', '.jsx', '.py', '.c'].includes(ext)) {
+            return { success: false, importLine: '', message: `확장자가 없는 파일은 소스 코드 연동(import)이 불가능합니다. (.py, .ts, .js, .c 등 지원 필수)` };
         }
 
         const absFrom = path.join(projectRoot, fromFile);
@@ -36,7 +37,11 @@ export class EdgeCodeRefactorer {
         const importName = baseName.replace(/[-_](.)/g, (_, c) => c.toUpperCase())
             .replace(/^./, c => c.toUpperCase());
 
-        const importLine = `import * as ${importName} from '${importPath}';`;
+        const isCommented = options?.commented === true;
+        const nodeId = options?.toNodeId;
+        const tag = isCommented ? (nodeId ? `[SYNAPSE_PENDING:${nodeId}]` : '[SYNAPSE_PENDING]') : (nodeId ? `[SYNAPSE:${nodeId}]` : '[SYNAPSE]');
+        const jsImportLine = isCommented ? `// ${tag} import * as ${importName} from '${importPath}';` : `import * as ${importName} from '${importPath}'; // ${tag}`;
+
         const content = fs.readFileSync(absFrom, 'utf8');
         const lines = content.split('\n');
 
@@ -44,19 +49,47 @@ export class EdgeCodeRefactorer {
         if (ext === '.py') {
             const pyModule = path.basename(toFile, '.py');
             const pyImport = `import ${pyModule}`;
+            const fullImportLine = isCommented ? `# ${tag} ${pyImport}` : `${pyImport}  # ${tag} auto-imported`;
 
-            // 1. Check if already exists (active)
-            if (lines.some(l => l.trim() === pyImport || l.includes(`import ${pyModule}  # [SYNAPSE]`))) {
-                return { success: true, importLine: pyImport, skipped: true, message: `Already imported: ${pyModule}` };
+            // 1. Check if truly active (not a comment)
+            const isActive = (line: string) => {
+                const trimmed = line.trim();
+                // [v0.2.17 Patch 13] Use strict regex with optional ID tagging
+                const pyImportStrictRegex = new RegExp(`^(import|from)\\s+${pyModule}(\\s+|#|$)`);
+                const hasMatch = pyImportStrictRegex.test(trimmed);
+
+                if (hasMatch && nodeId && line.includes(`[SYNAPSE:${nodeId}]`)) {
+                    return true;
+                }
+                return hasMatch && !nodeId; // If no nodeId provided, fallback to standard matching
+            };
+
+            if (lines.some(isActive)) {
+                return { success: true, importLine: pyImport, skipped: true, message: `Already active: ${pyModule}` };
             }
 
             // 2. Check if exists but commented out by SYNAPSE
-            const deletedIdx = lines.findIndex(l => l.includes('[SYNAPSE_DELETED]') && l.includes(`import ${pyModule}`));
+            const deletedIdx = lines.findIndex(l => (l.includes('[SYNAPSE_DELETED]') || l.includes('[SYNAPSE_PENDING]')) &&
+                l.includes(`import ${pyModule}`) &&
+                (!nodeId || l.includes(`:${nodeId}]`)));
             if (deletedIdx !== -1) {
-                // Restore it: Remove the comment prefix
-                lines[deletedIdx] = lines[deletedIdx].replace(/^#\s*\[SYNAPSE_DELETED\]\s*/, '').replace('// [SYNAPSE_DELETED] ', '');
-                fs.writeFileSync(absFrom, lines.join('\n'), 'utf8');
-                return { success: true, importLine: pyImport, message: `Restored (Uncommented): ${pyModule}` };
+                if (isCommented) {
+                    // Update to PENDING if it was DELETED?
+                    lines[deletedIdx] = `# [SYNAPSE_PENDING] ${pyImport}`;
+                    fs.writeFileSync(absFrom, lines.join('\n'), 'utf8');
+                    return { success: true, importLine: pyImport, message: `Updated to Pending: ${pyModule}` };
+                } else {
+                    // Restore it: Remove the comment prefix
+                    lines[deletedIdx] = lines[deletedIdx].replace(/^#\s*\[SYNAPSE_DELETED\]\s*/, '')
+                        .replace(/^#\s*\[SYNAPSE_PENDING\]\s*/, '')
+                        .replace('// [SYNAPSE_DELETED] ', '')
+                        .replace('// [SYNAPSE_PENDING] ', '');
+                    if (!lines[deletedIdx].includes('# [SYNAPSE]')) {
+                        lines[deletedIdx] = lines[deletedIdx].trim() + '  # [SYNAPSE] restored';
+                    }
+                    fs.writeFileSync(absFrom, lines.join('\n'), 'utf8');
+                    return { success: true, importLine: pyImport, message: `Restored (Uncommented): ${pyModule}` };
+                }
             }
 
             // 3. New import: Always at the TOP (after shebang if present)
@@ -64,40 +97,66 @@ export class EdgeCodeRefactorer {
             if (lines.length > 0 && lines[0].startsWith('#!')) {
                 insertAt = 1;
             }
-            lines.splice(insertAt, 0, pyImport + '  # [SYNAPSE] auto-imported');
+            lines.splice(insertAt, 0, fullImportLine);
             fs.writeFileSync(absFrom, lines.join('\n'), 'utf8');
-            return { success: true, importLine: pyImport, message: `Added: ${pyImport}` };
+            return { success: true, importLine: pyImport, message: `Added: ${fullImportLine}` };
+        }
+
+        // C Support (v0.2.17-patch4)
+        if (ext === '.c') {
+            const cInclude = `#include "${path.basename(toFile)}"`;
+            const fullIncludeLine = isCommented ? `// ${tag} ${cInclude}` : `${cInclude} // ${tag}`;
+
+            if (lines.some(l => l.trim().includes(cInclude))) {
+                return { success: true, importLine: cInclude, skipped: true, message: `Already included: ${cInclude}` };
+            }
+
+            lines.splice(0, 0, fullIncludeLine);
+            fs.writeFileSync(absFrom, lines.join('\n'), 'utf8');
+            return { success: true, importLine: cInclude, message: `Added: ${fullIncludeLine}` };
         }
 
         // TS/JS Support
-        // 1. Check if active
-        if (content.includes(`from '${importPath}'`) || content.includes(`from "${importPath}"`)) {
-            // But ensure it's not the commented one
-            const activeLine = lines.find(l => !l.includes('[SYNAPSE_DELETED]') && (l.includes(`from '${importPath}'`) || l.includes(`from "${importPath}"`)));
-            if (activeLine) {
-                return { success: true, importLine, skipped: true, message: `Already imported: ${importPath}` };
-            }
+        // 1. Check if truly active (not a comment)
+        const isJsActive = (line: string) => {
+            const trimmed = line.trim();
+            return (trimmed.startsWith('import ') || trimmed.includes('= require(')) &&
+                !trimmed.startsWith('/') &&
+                (trimmed.includes(`'${importPath}'`) || trimmed.includes(`"${importPath}"`));
+        };
+
+        if (lines.some(isJsActive)) {
+            return { success: true, importLine: jsImportLine, skipped: true, message: `Already active: ${importPath}` };
         }
 
         // 2. Check if commented
-        const deletedIdx = lines.findIndex(l => l.includes('[SYNAPSE_DELETED]') && (l.includes(`from '${importPath}'`) || l.includes(`from "${importPath}"`)));
+        const deletedIdx = lines.findIndex(l => (l.includes('[SYNAPSE_DELETED]') || l.includes('[SYNAPSE_PENDING]')) && (l.includes(`from '${importPath}'`) || l.includes(`from "${importPath}"`)));
         if (deletedIdx !== -1) {
-            lines[deletedIdx] = lines[deletedIdx].replace(/^\/\/\s*\[SYNAPSE_DELETED\]\s*/, '');
-            fs.writeFileSync(absFrom, lines.join('\n'), 'utf8');
-            return { success: true, importLine, message: `Restored (Uncommented): ${importPath}` };
+            if (isCommented) {
+                lines[deletedIdx] = `// [SYNAPSE_PENDING] import * as ${importName} from '${importPath}';`;
+                fs.writeFileSync(absFrom, lines.join('\n'), 'utf8');
+                return { success: true, importLine: jsImportLine, message: `Updated to Pending: ${importPath}` };
+            } else {
+                lines[deletedIdx] = lines[deletedIdx].replace(/^\/\/\s*\[SYNAPSE_DELETED\]\s*/, '').replace(/^\/\/\s*\[SYNAPSE_PENDING\]\s*/, '');
+                if (!lines[deletedIdx].includes('// [SYNAPSE]')) {
+                    lines[deletedIdx] = lines[deletedIdx].trim() + ' // [SYNAPSE] restored';
+                }
+                fs.writeFileSync(absFrom, lines.join('\n'), 'utf8');
+                return { success: true, importLine: jsImportLine, message: `Restored (Uncommented): ${importPath}` };
+            }
         }
 
         // 3. New import: Always at the very TOP for TS/JS
-        lines.splice(0, 0, importLine);
+        lines.splice(0, 0, jsImportLine);
         fs.writeFileSync(absFrom, lines.join('\n'), 'utf8');
-        return { success: true, importLine, message: `Added: ${importLine}` };
+        return { success: true, importLine: jsImportLine, message: `Added: ${jsImportLine}` };
     }
 
     /**
      * Removes the import for `toFile` from `fromFile`.
      * Used in Logic Edit Mode (WYSIWYG destructive delete).
      */
-    public removeEdgeFromSource(fromFile: string, toFile: string, projectRoot: string): RefactorResult {
+    public removeEdgeFromSource(fromFile: string, toFile: string, projectRoot: string, toNodeId?: string): RefactorResult {
         const ext = path.extname(fromFile).toLowerCase();
         if (!['.ts', '.js', '.tsx', '.jsx', '.py'].includes(ext)) {
             return { success: false, importLine: '', message: `Not supported file type: ${ext}` };
@@ -123,11 +182,17 @@ export class EdgeCodeRefactorer {
         const newLines = lines.map(line => {
             const trimmed = line.trim();
             // If already commented by SYNAPSE, don't double-comment
-            if (trimmed.includes('[SYNAPSE_DELETED]')) {
+            if (trimmed.includes('[SYNAPSE_DELETED]') || trimmed.includes('[SYNAPSE_PENDING]')) {
                 // If it's a match for our target, we've "found" it but don't need to change it
                 if (ext === '.py') {
                     const pyModule = path.basename(toFile, '.py');
-                    if (trimmed.includes(`import ${pyModule}`)) {
+                    if (trimmed.includes(`import ${pyModule}`) && (!toNodeId || trimmed.includes(`:${toNodeId}]`))) {
+                        removedLine = trimmed;
+                        return line;
+                    }
+                } else if (ext === '.c') {
+                    const cInclude = `#include "${path.basename(toFile)}"`;
+                    if (trimmed.includes(cInclude)) {
                         removedLine = trimmed;
                         return line;
                     }
@@ -145,11 +210,26 @@ export class EdgeCodeRefactorer {
             // Python Match
             if (ext === '.py') {
                 const pyModule = path.basename(toFile, '.py');
-                // Allow matches like "import module_name" or "import module_name  # comment"
-                const pyRegex = new RegExp(`^(import|from)\\s+${pyModule}\\b`);
-                if (pyRegex.test(trimmed) || trimmed.includes(`import ${pyModule} `) || trimmed === `import ${pyModule}`) {
+                // [v0.2.17 Patch 13] Strict regex + ID check for removal
+                const pyImportStrictRegex = new RegExp(`^(import|from)\\s+${pyModule}(\\s+|#|$)`);
+                const isMatch = pyImportStrictRegex.test(trimmed);
+                const hasIdMatch = toNodeId ? line.includes(`:${toNodeId}]`) : true;
+
+                if (isMatch && hasIdMatch) {
                     removedLine = trimmed;
-                    return `# [SYNAPSE_DELETED] ${line}`;
+                    const cleanLine = line.trim().startsWith('#')
+                        ? line.replace(/^#\s*\[SYNAPSE_PENDING(:[^\]]*)?\]\s*/, '').replace(/^#\s*\[SYNAPSE_DELETED(:[^\]]*)?\]\s*/, '')
+                        : line;
+                    const deleteTag = toNodeId ? `[SYNAPSE_DELETED:${toNodeId}]` : '[SYNAPSE_DELETED]';
+                    return `# ${deleteTag} ${cleanLine}`;
+                }
+            }
+            // C Match
+            if (ext === '.c') {
+                const cInclude = `#include "${path.basename(toFile)}"`;
+                if (trimmed.includes(cInclude)) {
+                    removedLine = trimmed;
+                    return `// [SYNAPSE_DELETED] ${line.trim().startsWith('/') ? line.replace(/^\/\/\s*\[SYNAPSE_PENDING\]\s*/, '').replace(/^\/\/\s*\[SYNAPSE_DELETED\]\s*/, '') : line}`;
                 }
             }
             return line;

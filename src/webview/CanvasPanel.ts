@@ -76,7 +76,8 @@ export class CanvasPanel {
     private _disposables: vscode.Disposable[] = [];
     private proposedNodes: any[] = [];
     private proposedEdges: any[] = [];
-    private _contextRequestCallback: ((context: any) => void) | undefined;
+    private _contextRequestCallback: ((data: any) => void) | undefined;
+    private _isProcessingConfirm: boolean = false; // [v0.2.17 Patch 13.2] Prevent duplicate dialogs
     private _taskQueue = new SequentialTaskQueue();
 
 
@@ -148,6 +149,11 @@ export class CanvasPanel {
                 ];
 
                 if (stateModifyingCommands.includes(message.command)) {
+                    // [v0.2.17 Patch 13.2] Strict Guard for confirm dialog
+                    if (message.command === 'requestConfirmEdge' && this._isProcessingConfirm) {
+                        Logger.warn('[CanvasPanel] Confirmation already in progress, ignoring duplicate request.');
+                        return;
+                    }
                     await this._taskQueue.push(() => this._handleMessage(message));
                 } else {
                     await this._handleMessage(message);
@@ -648,6 +654,19 @@ export class CanvasPanel {
                 edge._toFile = toNode.data.file || toNode.data.label || null;
             }
 
+            // [v0.2.17 Patch 7] Strict Extension Validation (Pre-validation)
+            const filesToCheck = [edge._fromFile, edge._toFile];
+            for (const file of filesToCheck) {
+                if (file) {
+                    const ext = path.extname(file).toLowerCase();
+                    const supportedExts = ['.ts', '.js', '.tsx', '.jsx', '.py', '.c', '.h', '.cpp', '.hpp', '.rs'];
+                    if (!supportedExts.includes(ext) || ext === '') {
+                        vscode.window.showWarningMessage(`[SYNAPSE] ⚠️ ${file}: 연결할 수 없는 파일 형식입니다. (확장자가 필요합니다)`);
+                        return; // Block edge creation
+                    }
+                }
+            }
+
             // [v0.2.20 Fix] Ensure we don't duplicate edges or add edges with non-existent nodes in state
             if (!projectState.edges) projectState.edges = [];
 
@@ -665,11 +684,31 @@ export class CanvasPanel {
                 console.log(`[SYNAPSE] Pushed new edge to projectState. Current count: ${projectState.edges.length}`);
             }
 
+            // [v0.2.18] Move from Buffer to Reserved Cluster on Connection
+            if (fromNode && (fromNode.cluster_id === 'sys_cluster_buffer' || fromNode.data?.cluster_id === 'sys_cluster_buffer')) {
+                fromNode.cluster_id = 'sys_cluster_reserved';
+                if (fromNode.data) fromNode.data.cluster_id = 'sys_cluster_reserved';
+            }
+            if (toNode && (toNode.cluster_id === 'sys_cluster_buffer' || toNode.data?.cluster_id === 'sys_cluster_buffer')) {
+                toNode.cluster_id = 'sys_cluster_reserved';
+                if (toNode.data) toNode.data.cluster_id = 'sys_cluster_reserved';
+            }
+
+            // [v0.2.17-patch4] Proactive commented import injection (Logic Edit Mode)
+            const isEditLogicMode = vscode.workspace.getConfiguration('synapse').get('editLogicMode', false);
+            if (isEditLogicMode && edge._fromFile && edge._toFile) {
+                const refactorer = new EdgeCodeRefactorer();
+                const result = refactorer.applyEdgeToSource(edge._fromFile, edge._toFile, workspaceFolder.uri.fsPath, { commented: true });
+                if (result.success) {
+                    Logger.info(`[CanvasPanel] Manual edge created with PENDING import: ${result.message}`);
+                }
+            }
+
             // 저장 (정규화 적용)
             const normalizedJson = this.normalizeProjectState(projectState);
             await vscode.workspace.fs.writeFile(projectStateUri, Buffer.from(normalizedJson, 'utf8'));
             console.log('[SYNAPSE] Manual edge persisted successfully.');
-            vscode.window.showInformationMessage(`Edge created: ${edge.type}`);
+            vscode.window.setStatusBarMessage(`Edge created: ${edge.type} (Pending Confirmation)`, 3000);
 
             // 캔버스 새로고침
             await this.sendProjectState();
@@ -1084,6 +1123,9 @@ export class CanvasPanel {
     }
 
     private async handleRequestConfirmEdge(edgeId: string, fromFile: string | null, toFile: string | null) {
+        if (this._isProcessingConfirm) return;
+        this._isProcessingConfirm = true;
+
         const workspaceFolder = this._workspaceFolder;
         if (!workspaceFolder) return;
 
@@ -1094,24 +1136,41 @@ export class CanvasPanel {
             const projectState = JSON.parse(Buffer.from(stateData).toString('utf-8'));
             const edge = (projectState.edges || []).find((e: any) => e.id === edgeId);
 
-            // [v0.2.17] Dynamic File Resolution (새로 생성된 노드의 경우 파라미터가 누락될 수 있음)
-            let actualFromFile = fromFile || edge?._fromFile;
-            let actualToFile = toFile || edge?._toFile;
+            // [v0.2.17 Patch 13.2] SSOT: Focus on Node IDs, derived names should match IDs
+            const fNode = (projectState.nodes || []).find((n: any) => n.id === edge?.from);
+            const tNode = (projectState.nodes || []).find((n: any) => n.id === edge?.to);
 
-            if (!actualFromFile || !actualToFile) {
-                const fNode = (projectState.nodes || []).find((n: any) => n.id === edge?.from);
-                const tNode = (projectState.nodes || []).find((n: any) => n.id === edge?.to);
-                if (!actualFromFile && fNode?.data?.file) actualFromFile = fNode.data.file;
-                else if (!actualFromFile && fNode?.data?.label) actualFromFile = fNode.data.label; // Fallback
+            let actualFromFile = fromFile;
+            let actualToFile = toFile;
 
-                if (!actualToFile && tNode?.data?.file) actualToFile = tNode.data.file;
-                else if (!actualToFile && tNode?.data?.label) actualToFile = tNode.data.label; // Fallback
+            // [v0.2.17 Patch 13.3] SSoT Enforcement
+            // ALWAYS override with Backend data if available, ignoring webview labels
+            if (fNode?.data?.file) {
+                if (fromFile && fromFile !== fNode.data.file) {
+                    Logger.warn(`[CanvasPanel] Source name mismatch overridden: Param '${fromFile}' vs Node '${fNode.data.file}'. Using Node data.`);
+                }
+                actualFromFile = fNode.data.file;
+            } else if (!actualFromFile) {
+                actualFromFile = fNode?.data?.path || fNode?.data?.label || edge?._fromFile;
             }
+
+            if (tNode?.data?.file) {
+                if (toFile && toFile !== tNode.data.file) {
+                    Logger.warn(`[CanvasPanel] Target name mismatch overridden: Param '${toFile}' vs Node '${tNode.data.file}'. Using Node data.`);
+                }
+                actualToFile = tNode.data.file;
+            } else if (!actualToFile) {
+                actualToFile = tNode?.data?.path || tNode?.data?.label || edge?._toFile;
+            }
+
+            // Cleanup Manual Labels
+            actualFromFile = actualFromFile?.replace(/^[📄📁]\s*/, '').trim() ?? null;
+            actualToFile = actualToFile?.replace(/^[📄📁]\s*/, '').trim() ?? null;
 
             // [v0.2.23] Extension Guard: 확정 시점에 확장자 체크하여 가상 노드 연결 차단
             if (actualFromFile) {
                 const ext = path.extname(actualFromFile).toLowerCase();
-                const supportedExts = ['.ts', '.js', '.tsx', '.jsx', '.py'];
+                const supportedExts = ['.ts', '.js', '.tsx', '.jsx', '.py', '.c'];
 
                 if (!supportedExts.includes(ext) || ext === '') {
                     vscode.window.showWarningMessage(`[SYNAPSE] ⚠️ ${actualFromFile}: 연결할 수 없는 노드 타입입니다. (확장자가 없는 파일은 소스 연결 지원 불가)`);
@@ -1143,7 +1202,8 @@ export class CanvasPanel {
                     node.cluster_id = 'sys_cluster_buffer';
                     if (!node.data) node.data = {};
                     node.data.cluster_id = 'sys_cluster_buffer';
-                    Logger.info(`[CanvasPanel] Promoted node ${node.id} to Buffer Cluster.`);
+                    node.data.priority_cluster = 'sys_cluster_buffer'; // [v0.2.17 Patch 7] Lock this cluster
+                    Logger.info(`[CanvasPanel] Promoted node ${node.id} to Buffer Cluster with priority lock.`);
                 }
             };
             if (edge) {
@@ -1157,7 +1217,7 @@ export class CanvasPanel {
             if (actualFromFile && actualToFile) {
                 // [v0.2.20 Fix] Proactive extension check
                 const ext = path.extname(actualFromFile).toLowerCase();
-                const supportedExts = ['.ts', '.js', '.tsx', '.jsx', '.py'];
+                const supportedExts = ['.ts', '.js', '.tsx', '.jsx', '.py', '.c'];
 
                 if (!supportedExts.includes(ext)) {
                     vscode.window.showErrorMessage(`[SYNAPSE] ⚠️ ${actualFromFile}: 확장자가 없는 파일(가상 노드)은 코드 주입을 지원하지 않습니다. (.py, .ts, .js 파일만 가능)`);
@@ -1165,7 +1225,11 @@ export class CanvasPanel {
                 }
 
                 const refactorer = new EdgeCodeRefactorer();
-                const result = refactorer.applyEdgeToSource(actualFromFile, actualToFile, workspaceFolder.uri.fsPath);
+                const toNodeId = edge?.to;
+                const result = refactorer.applyEdgeToSource(actualFromFile, actualToFile, workspaceFolder.uri.fsPath, {
+                    commented: false,
+                    toNodeId: toNodeId
+                });
 
                 if (result.success) {
                     if (result.skipped) {
@@ -1184,6 +1248,8 @@ export class CanvasPanel {
             Logger.info(`[CanvasPanel] Edge ${edgeId} confirmed.`);
         } catch (e) {
             vscode.window.showErrorMessage(`[SYNAPSE] 확정 실패: ${e}`);
+        } finally {
+            this._isProcessingConfirm = false;
         }
     }
 
@@ -2122,33 +2188,88 @@ export class CanvasPanel {
 
             // 3. 자동 엣지(의존성) 발견 로직 - 실시간 생성, 저장하지 않음!
             const nodeMap = new Map<string, string>(); // 파일명/경로 -> 노드 ID
+            const ambiguousNames = new Set<string>(); // [v0.2.17 Patch 12] Track name-only collisions
 
             projectState.nodes.forEach((n: any) => {
                 const fullPath = n.data.path || n.data.file || '';
                 const fileName = path.basename(fullPath);
                 const fileNameNoExt = path.parse(fileName).name;
 
+                // Priority 1: Full Path (Always Safe)
                 nodeMap.set(fullPath, n.id);
-                nodeMap.set(fileName, n.id);
-                nodeMap.set(fileNameNoExt, n.id);
+
+                // Priority 2: Filename with extension (Safe if unique)
+                if (nodeMap.has(fileName) && nodeMap.get(fileName) !== n.id) {
+                    // Collision even with extension? (Extremely rare but possible in different folders)
+                    nodeMap.delete(fileName);
+                } else {
+                    nodeMap.set(fileName, n.id);
+                }
+
+                // Priority 3: Name-only (Prone to collisions like TEST.py vs TEST.c)
+                if (fileNameNoExt && fileNameNoExt.length > 0) {
+                    if (nodeMap.has(fileNameNoExt) && nodeMap.get(fileNameNoExt) !== n.id) {
+                        Logger.info(`[CanvasPanel] nodeMap: Ambiguity detected for name '${fileNameNoExt}'. Disabling auto-resolve for this name.`);
+                        nodeMap.delete(fileNameNoExt);
+                        ambiguousNames.add(fileNameNoExt);
+                    } else if (!ambiguousNames.has(fileNameNoExt)) {
+                        nodeMap.set(fileNameNoExt, n.id);
+                    }
+                }
 
                 // Add sub-parts for better matching (e.g. "Namespace::Class" -> "Class")
                 if (n.data.label && n.data.label.includes('::')) {
                     const parts = n.data.label.split('::');
-                    nodeMap.set(parts[parts.length - 1], n.id);
+                    const leaf = parts[parts.length - 1];
+                    if (!ambiguousNames.has(leaf)) nodeMap.set(leaf, n.id);
                 }
 
-                // [v0.2.21 Fix] Handle manual nodes (e.g. "input_day.py") that only have a label, not a file path
+                // [v0.2.21 Fix] Handle manual nodes
                 if (n.data.label) {
-                    nodeMap.set(n.data.label, n.id);
-                    // Also strip typical icons and spaces if they exist (e.g. "📄 input_day.py" -> "input_day.py")
                     const cleanLabel = n.data.label.replace(/^[📄📁]\s*/, '').trim();
-                    nodeMap.set(cleanLabel, n.id);
                     const labelNoExt = path.parse(cleanLabel).name;
-                    nodeMap.set(labelNoExt, n.id);
+
+                    // Priority 4: Clean Label (extension-aware)
+                    if (nodeMap.has(cleanLabel) && nodeMap.get(cleanLabel) !== n.id) {
+                        const existingId = nodeMap.get(cleanLabel);
+                        const existingNode = projectState.nodes.find((nn: any) => nn.id === existingId);
+
+                        // Collision resolution: Real file > Manual Label
+                        if (existingNode && existingNode.id.startsWith('node_manual_') && !n.id.startsWith('node_manual_')) {
+                            nodeMap.set(cleanLabel, n.id);
+                        } else if (existingNode && !existingNode.id.startsWith('node_manual_') && n.id.startsWith('node_manual_')) {
+                            // Keep file-based node
+                        } else {
+                            nodeMap.delete(cleanLabel);
+                            ambiguousNames.add(cleanLabel);
+                        }
+                    } else if (!ambiguousNames.has(cleanLabel)) {
+                        nodeMap.set(cleanLabel, n.id);
+                    }
+
+                    // Priority 5: Label No Extension (Collision prone)
+                    if (labelNoExt && labelNoExt.length > 0) {
+                        if (nodeMap.has(labelNoExt) && nodeMap.get(labelNoExt) !== n.id) {
+                            nodeMap.delete(labelNoExt);
+                            ambiguousNames.add(labelNoExt);
+                        } else if (!ambiguousNames.has(labelNoExt)) {
+                            nodeMap.set(labelNoExt, n.id);
+                        }
+                    }
                 }
             });
-            console.log(`[SYNAPSE] Node map built with ${nodeMap.size} keys.`);
+
+            // [v0.2.17 Fix] Also map clusters (folders) by label so "import folder" maps to the cluster
+            if (projectState.clusters) {
+                projectState.clusters.forEach((c: any) => {
+                    nodeMap.set(c.id, c.id);
+                    nodeMap.set(c.label, c.id);
+                    // Standardize: "📄 inputs" / "📁 inputs" -> "inputs"
+                    const cleanLabel = c.label.replace(/^[📄📁]\s*/, '').trim();
+                    nodeMap.set(cleanLabel, c.id);
+                });
+            }
+            console.log(`[SYNAPSE] Node/Cluster map built with ${nodeMap.size} keys.`);
 
             // 4. 웹뷰용 상태 객체 초기 생성 (v0.2.17 Fix: Initialize before use in loops)
             const stateForWebview = {
@@ -2169,7 +2290,10 @@ export class CanvasPanel {
                 projectState.edges.forEach((e: any) => existingEdgeKeys.add(`${e.from}->${e.to}`));
             }
             const discoveredEdges: any[] = [];
-            const IGNORE_GHOST_TARGETS = new Set(['os', 'sys', 'sqlite3', 'math', 'pandas', 'numpy', 'rich', 'datetime', 'json', 'time', 're', 'unittest', 'path', 'fs', 'vscode', 'react']);
+            const IGNORE_GHOST_TARGETS = new Set([
+                'os', 'sys', 'sqlite3', 'math', 'pandas', 'numpy', 'rich', 'datetime', 'json', 'time', 're',
+                'unittest', 'path', 'fs', 'vscode', 'react', 'pathlib', 'dateutil', 'relativedelta', 'abc', 'typing'
+            ]);
 
             let ghostCount = 0;
             projectState.nodes.forEach((sourceNode: any) => {
@@ -2178,10 +2302,65 @@ export class CanvasPanel {
                     for (const ref of summary.references) {
                         const targetName = typeof ref === 'string' ? ref : ref.target;
                         const edgeType = typeof ref === 'string' ? 'dependency' : ref.type;
+                        const refNodeId = (ref as any).nodeId; // [v0.2.17 Patch 13]
 
                         const cleanRef = targetName.replace(/^\.\//, '').replace(/^\.\.\//, '');
-                        // Resolve node ID from map
-                        let targetNodeId = nodeMap.get(targetName) || nodeMap.get(cleanRef) || nodeMap.get(path.parse(cleanRef).name);
+                        // [v0.2.17 Patch 13] Priority 0: ID-based match (Guarantees precision)
+                        let targetNodeId = refNodeId;
+                        let resolutionMethod = 'ID_TAG';
+
+                        // [v0.2.17 Patch 13.2] Verify ID existence before using it
+                        if (targetNodeId && !projectState.nodes.some((n: any) => n.id === targetNodeId)) {
+                            Logger.warn(`[CanvasPanel] Stale Node ID found in comment: ${targetNodeId}. Falling back to name-based resolution.`);
+                            targetNodeId = undefined;
+                        }
+
+                        // Priority 1: EXACT match (with extension)
+                        if (!targetNodeId) {
+                            targetNodeId = nodeMap.get(targetName) || nodeMap.get(cleanRef);
+                            resolutionMethod = 'EXACT_NAME';
+                        }
+
+                        // Fallback to name-only match ONLY if an exact match was not found
+                        if (!targetNodeId) {
+                            const baseName = path.parse(cleanRef).name;
+                            targetNodeId = nodeMap.get(baseName);
+                            resolutionMethod = 'BASE_NAME';
+
+                            // [v0.2.17 Patch 12] Context-Aware Fallback: 
+                            // If name-only fails (due to ambiguity guard), try source-compatible extensions.
+                            if (!targetNodeId && baseName) {
+                                const sourceExt = path.extname(sourceNode.data?.file || '').toLowerCase();
+                                if (sourceExt === '.py') {
+                                    targetNodeId = nodeMap.get(`${baseName}.py`);
+                                } else if (['.ts', '.js'].includes(sourceExt)) {
+                                    targetNodeId = nodeMap.get(`${baseName}.ts`) || nodeMap.get(`${baseName}.js`);
+                                }
+                                if (targetNodeId) resolutionMethod = 'CONTEXT_FALLBACK';
+                            }
+                        }
+
+                        // [v0.2.17 Fix] Folder-module resolution fallback (e.g. "import inputs" -> "inputs" cluster/folder)
+                        if (!targetNodeId) {
+                            // First check if targetName is a known cluster in our map
+                            targetNodeId = nodeMap.get(targetName) || nodeMap.get(`${targetName}/`);
+                            if (targetNodeId) resolutionMethod = 'CLUSTER_FOLDER';
+                        }
+
+                        // Second, if it's a python import of a folder, it might refer to __init__.py inside it
+                        if (!targetNodeId && sourceNode.data?.file?.endsWith('.py')) {
+                            const initNodeId = nodeMap.get(path.join(targetName, '__init__.py'));
+                            if (initNodeId) {
+                                targetNodeId = initNodeId;
+                                resolutionMethod = 'PYTHON_INIT';
+                            }
+                        }
+
+                        if (targetNodeId) {
+                            Logger.info(`[CanvasPanel] Edge Resolved: ${sourceNode.data?.file || sourceNode.id} -> ${targetName} (${targetNodeId}) via ${resolutionMethod}`);
+                        } else {
+                            Logger.warn(`[CanvasPanel] Edge Failed to Resolve: ${sourceNode.data?.file || sourceNode.id} -> ${targetName} (Ambiguous or Missing)`);
+                        }
 
                         // [v0.2.18] Smart Ghost Node Fallback
                         if (!targetNodeId && targetName.length > 1 && !IGNORE_GHOST_TARGETS.has(targetName.toLowerCase())) {
@@ -2205,14 +2384,21 @@ export class CanvasPanel {
                                         description: 'Ghost Node: Import found in code, but physical file is missing.',
                                         file: targetName,
                                         isGhost: true,
+                                        cluster_id: 'cluster_ghosts', // [v0.2.17] Add to ghost cluster
                                         dtr: 0 // Auto-confirmed
                                     },
                                     position: {
                                         x: (sourceNode.position?.x || 0) + offsetX,
                                         y: (sourceNode.position?.y || 0) - offsetY
                                     },
-                                    style: { opacity: 0.6, borderStyle: 'dashed' }
+                                    visual: { opacity: 0.5 }
                                 });
+                                // [v0.2.17] Update cluster children
+                                const ghostCluster = stateForWebview.clusters?.find((c: any) => c.id === 'cluster_ghosts');
+                                if (ghostCluster) {
+                                    if (!ghostCluster.children) ghostCluster.children = [];
+                                    ghostCluster.children.push(ghostId);
+                                }
                             }
                             targetNodeId = ghostId;
                         }
@@ -2220,6 +2406,13 @@ export class CanvasPanel {
                         if (targetNodeId && targetNodeId !== sourceNode.id) {
                             const edgeKey = `${sourceNode.id}->${targetNodeId}`;
                             if (!existingEdgeKeys.has(edgeKey)) {
+                                // [v0.2.17 Patch 6] Cross-Language Edge Styling (External Bridge)
+                                const sourceExt = path.extname(sourceNode.data?.file || '').toLowerCase();
+                                const targetNode = stateForWebview.nodes.find((n: any) => n.id === targetNodeId);
+                                const targetExt = path.extname(targetNode?.data?.file || '').toLowerCase();
+
+                                const isCrossLanguage = sourceExt !== '' && targetExt !== '' && sourceExt !== targetExt;
+
                                 const newEdge = {
                                     id: `edge_auto_${Date.now()}_${Math.floor(Math.random() * 1000000)}`,
                                     from: sourceNode.id,
@@ -2229,7 +2422,11 @@ export class CanvasPanel {
                                     data: {
                                         dtr: 0 // [v0.2.18] Auto-confirmed (Removes "?" badge)
                                     },
-                                    style: targetNodeId.startsWith('ghost_') ? { strokeDasharray: '5,5', opacity: 0.5 } : {}
+                                    visual: {
+                                        opacity: targetNodeId.startsWith('ghost_') ? 0 : 0.8,
+                                        style: targetNodeId.startsWith('ghost_') || isCrossLanguage ? 'dashed' : 'solid',
+                                        color: isCrossLanguage ? '#d3869b' : '#888' // Purple-ish for cross-lang bridges
+                                    }
                                 };
                                 discoveredEdges.push(newEdge);
                                 stateForWebview.edges.push(newEdge); // Add to current state directly
@@ -2257,6 +2454,167 @@ export class CanvasPanel {
                 stateForWebview.nodes.push(...contextVaultCluster.nodes);
                 stateForWebview.clusters = [...(stateForWebview.clusters || []), contextVaultCluster.cluster];
             }
+
+            // [v0.2.17 Patch 3] Resilient Documentation Discovery
+            // Check if doc_shelf already exists and has children. If not, perform emergency scan.
+            let docShelf = stateForWebview.clusters?.find((c: any) => c.id === 'doc_shelf');
+            if (!docShelf || !docShelf.children || docShelf.children.length === 0) {
+                Logger.info('[CanvasPanel] Documentation Shelf empty or missing. Performing specific scan for core documents...');
+                const coreFiles = ['GEMINI.md', 'RULES.md', 'architecture_report.md', 'README.md', 'INTERFACE.md'];
+                const discoveredDocIds: string[] = [];
+
+                coreFiles.forEach((fileName, idx) => {
+                    const fullPath = path.join(workspaceFolder.uri.fsPath, fileName);
+                    if (fs.existsSync(fullPath)) {
+                        const nodeId = `node_${fileName.replace(/\./g, '_')}`;
+                        discoveredDocIds.push(nodeId);
+
+                        if (!stateForWebview.nodes.some((n: any) => n.id === nodeId)) {
+                            stateForWebview.nodes.push({
+                                id: nodeId,
+                                type: 'documentation',
+                                status: 'proposed',
+                                // Position relative to where source nodes usually are
+                                position: { x: (idx % 4) * 200, y: 1200 + Math.floor(idx / 4) * 150 },
+                                data: {
+                                    label: fileName,
+                                    file: fileName,
+                                    description: `${fileName} (Resilient Discovery)`,
+                                    cluster_id: 'doc_shelf',
+                                    color: '#fabd2f'
+                                },
+                                visual: { opacity: 0.5, dashArray: '5,5' }
+                            });
+                        }
+                    }
+                });
+
+                // Ensure doc_shelf exists and has these children
+                if (!docShelf) {
+                    docShelf = {
+                        id: 'doc_shelf',
+                        label: '📚 Documentation Shelf',
+                        collapsed: true, // Only collapse on creation
+                        bounds: { x: -100, y: 1150, width: 1000, height: 600 },
+                        children: discoveredDocIds
+                    };
+                    stateForWebview.clusters.push(docShelf);
+                } else {
+                    docShelf.children = [...new Set([...(docShelf.children || []), ...discoveredDocIds])];
+                    docShelf.bounds = { x: -100, y: 1150, width: 1000, height: 600 };
+                }
+            }
+
+            // [v0.2.17] UI Polish: Ensure special clusters exist
+            if (!stateForWebview.clusters) stateForWebview.clusters = [];
+
+            // 1. Ensure cluster_ghosts exists
+            if (!stateForWebview.clusters.some((c: any) => c.id === 'cluster_ghosts')) {
+                stateForWebview.clusters.push({
+                    id: 'cluster_ghosts',
+                    label: '👻 External Ghosts',
+                    collapsed: true,
+                    bounds: { x: 0, y: -800, width: 600, height: 400 },
+                    children: stateForWebview.nodes.filter((n: any) => n.id.startsWith('ghost_')).map((n: any) => n.id)
+                });
+            } else {
+                const ghostCluster = stateForWebview.clusters.find((c: any) => c.id === 'cluster_ghosts');
+                ghostCluster.children = stateForWebview.nodes.filter((n: any) => n.id.startsWith('ghost_') || n.data?.cluster_id === 'cluster_ghosts').map((n: any) => n.id);
+            }
+
+            // [v0.2.17 Patch 5] 2. Ensure cluster_external exists (for non-primary language nodes like .c)
+            if (!stateForWebview.clusters.some((c: any) => c.id === 'cluster_external')) {
+                stateForWebview.clusters.push({
+                    id: 'cluster_external',
+                    label: '⚙️ External Modules',
+                    collapsed: false,
+                    bounds: { x: 1200, y: 0, width: 600, height: 400 },
+                    children: []
+                });
+            }
+
+            // Categorize external nodes (.c, .cpp, etc. in a presumed python/ts project)
+            const externalCluster = stateForWebview.clusters.find((c: any) => c.id === 'cluster_external');
+            const externalNodeIds = stateForWebview.nodes.filter((n: any) => {
+                // [v0.2.17 Patch 7] Hierarchical Clustering: Respect priority_cluster
+                if (n.data?.priority_cluster) return false;
+
+                const file = n.data?.file || '';
+                const ext = path.extname(file).toLowerCase();
+                // [v0.2.17-patch5] Categorize .c, .h, etc. as external if the project is primarily something else
+                // For now, let's explicitly include .c and .h as external candidates
+                return ['.c', '.h', '.cpp', '.hpp', '.rs'].includes(ext) || n.data?.cluster_id === 'cluster_external';
+            }).map((n: any) => n.id);
+
+            if (externalCluster) {
+                externalCluster.children = [...new Set([...(externalCluster.children || []), ...externalNodeIds])];
+                // Update node data to reflect cluster membership if not already set
+                stateForWebview.nodes.forEach((n: any) => {
+                    if (externalNodeIds.includes(n.id) && !n.data.cluster_id) {
+                        n.data.cluster_id = 'cluster_external';
+                    }
+                });
+            }
+
+            // Schema Migration & Cleanup
+            // NOTE: We don't force collapse here anymore to preserve user interaction state
+            stateForWebview.clusters = stateForWebview.clusters.map((c: any) => {
+                // Ensure 'children' array exists for all clusters
+                if (!c.children) {
+                    c.children = [];
+                }
+                // Ensure 'bounds' object exists for all clusters
+                if (!c.bounds) {
+                    c.bounds = { x: 0, y: 0, width: 100, height: 100 }; // Default bounds
+                }
+                // Ensure 'collapsed' property exists
+                if (c.collapsed === undefined) {
+                    c.collapsed = false; // Default to not collapsed
+                }
+                return c;
+            });
+
+            // [v0.2.17 Patch] Schema Migration & Data Hygiene
+            // 1. Map old 'style' to 'visual' for edges + Cross-Language Styling
+            stateForWebview.edges = stateForWebview.edges.map((edge: any) => {
+                // Resolve nodes to check extensions
+                const fromNode = stateForWebview.nodes.find((n: any) => n.id === edge.from);
+                const toNode = stateForWebview.nodes.find((n: any) => n.id === edge.to);
+
+                if (fromNode && toNode) {
+                    const fromExt = path.extname(fromNode.data?.file || '').toLowerCase();
+                    const toExt = path.extname(toNode.data?.file || '').toLowerCase();
+                    const isCrossLanguage = fromExt !== '' && toExt !== '' && fromExt !== toExt;
+
+                    if (isCrossLanguage) {
+                        if (!edge.visual) edge.visual = {};
+                        edge.visual.color = '#d3869b'; // Purple-ish
+                        edge.visual.style = 'dashed';
+                    }
+                }
+
+                if (edge.style && !edge.visual) {
+                    edge.visual = {
+                        thickness: edge.style.thickness || 1,
+                        color: edge.style.color || '#888',
+                        style: edge.style.style || 'solid',
+                        opacity: (edge.style.opacity !== undefined) ? edge.style.opacity :
+                            (edge.visual?.opacity !== undefined ? edge.visual.opacity : 1)
+                    };
+                }
+                return edge;
+            });
+
+            // 2. Ensure all nodes have basic visual properties
+            stateForWebview.nodes = stateForWebview.nodes.map((node: any) => {
+                if (!node.visual) {
+                    node.visual = {
+                        opacity: node.status === 'proposed' ? 0.5 : 1,
+                        glow_intensity: 0
+                    };
+                }
+                return node;
+            });
 
             // 6. 웹뷰로 전송
             const payload = {

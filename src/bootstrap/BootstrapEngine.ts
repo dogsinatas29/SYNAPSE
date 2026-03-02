@@ -264,12 +264,18 @@ This document defines the rules for how SYNAPSE discovers, parses, and visualize
 
                         let type: NodeType = 'source';
                         if (ext === '.md') {
-                            const isRoot = !currentRelPath.includes('/') && !currentRelPath.includes('\\');
-                            const isDocFolder = currentRelPath.toLowerCase().startsWith('doc/') || currentRelPath.toLowerCase().startsWith('docs/');
-                            if (isRoot || isDocFolder) {
+                            const fileName = path.basename(currentRelPath).toLowerCase();
+                            // Always allow core SYNAPSE docs
+                            if (fileName === 'gemini.md' || fileName === 'rules.md' || fileName.includes('architecture_report')) {
                                 type = 'documentation';
                             } else {
-                                continue; // Filter out other .md files
+                                const isRoot = !currentRelPath.includes('/') && !currentRelPath.includes('\\');
+                                const isDocFolder = currentRelPath.toLowerCase().startsWith('doc/') || currentRelPath.toLowerCase().startsWith('docs/');
+                                if (isRoot || isDocFolder) {
+                                    type = 'documentation';
+                                } else {
+                                    continue; // Filter out other .md files
+                                }
                             }
                         }
 

@@ -277,16 +277,18 @@
         /* History Panel */
         #history-panel {
             position: fixed;
-            right: 0;
-            top: 0;
-            width: 300px;
-            height: 100vh;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 450px;
+            height: 70vh;
             background: var(--bg-panel);
-            border-left: 1px solid var(--border);
+            border: 1px solid var(--border);
+            border-radius: 8px;
             display: none;
             flex-direction: column;
-            z-index: 1500;
-            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.3);
+            z-index: 5000;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
         }
 
         #history-panel.visible {
@@ -295,27 +297,36 @@
 
         #history-list {
             flex: 1;
-            overflow-y: auto;
+            overflow-y: scroll !important;
+            /* Force scrollbar space */
             padding: 10px;
+            scroll-behavior: smooth;
+            min-height: 0;
+            /* Flexbox overflow fix */
         }
 
-        /* [v0.2.25] Custom Scrollbar for History List */
+        /* [v0.2.17 Patch 9] Atomic High-Visibility Scrollbar */
         #history-list::-webkit-scrollbar {
-            width: 8px;
+            width: 12px !important;
+            display: block !important;
         }
 
         #history-list::-webkit-scrollbar-track {
-            background: #1d2021;
-            border-radius: 4px;
+            background: #1d2021 !important;
+            border-radius: 6px;
+            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
         }
 
         #history-list::-webkit-scrollbar-thumb {
-            background: #504945;
-            border-radius: 4px;
+            background: #b8bb26 !important;
+            /* Solid Accent color for max visibility */
+            border-radius: 6px;
+            border: 3px solid #1d2021;
         }
 
         #history-list::-webkit-scrollbar-thumb:hover {
-            background: #665c54;
+            background: #ebdbb2 !important;
+            cursor: pointer;
         }
 
         .history-item {
@@ -559,16 +570,15 @@
         <button class="btn" id="btn-reset-state" title="project_state.json을 빈 상태로 초기화" style="color: #d3869b;">🔄 Reset
             State</button>
         <div class="toolbar-divider"></div>
-        <button class="btn" id="btn-add-node" title="Add New Node">➕ Node</button>
-        <button class="btn" id="btn-connect" title="Connect Nodes (Alt+Click)">🔗 Connect</button>
-
-        <div class="toolbar-divider"></div>
         <button class="btn" id="btn-group" title="Group Selected Nodes">Group</button>
         <button class="btn" id="btn-ungroup" title="Ungroup Selected Cluster">Ungroup</button>
         <button class="btn" id="btn-test-logic" title="Run Architectural Logic Analysis"
             style="color: #fabd2f; font-weight: bold;">🛡️ Test Logic</button>
         <button class="btn" id="btn-edit-logic" title="Toggle Destructive Source Editing"
             style="color: #fb4934; font-weight: bold;">🔓 Edit Logic</button>
+        <button class="btn" id="btn-add-node" title="Add New Node" style="display: none;">➕ Node</button>
+        <button class="btn" id="btn-connect" title="Connect Nodes (Alt+Click)" style="display: none;">🔗
+            Connect</button>
         <div class="toolbar-divider"></div>
         <div style="flex: 1"></div>
         <button class="btn" id="btn-delete" title="Delete Selected Nodes/Edges" style="color: #fb4934;">🗑️
@@ -656,6 +666,10 @@
 
         <div id="context-menu">
             <div class="menu-item" id="menu-open">Open File</div>
+            <div class="menu-divider"></div>
+            <div class="menu-item" id="menu-copy-id" style="color: var(--accent);">Copy Node ID</div>
+            <div class="menu-item" id="menu-inspect-node">🔍 Inspect Node</div>
+            <div class="menu-item" id="menu-inspect-edge">🔍 Inspect Edge</div>
             <div class="menu-divider"></div>
             <div class="menu-item" id="menu-generate-flow">Generate Flow (AI)</div>
             <div class="menu-divider"></div>

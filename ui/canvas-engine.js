@@ -1020,9 +1020,7 @@ class CanvasEngine {
                         // Reset and hide
                         labelInput.value = '';
                         nodeDialog.style.display = 'none';
-                        this.isAddingNode = false;
-                        document.getElementById('btn-add-node')?.classList.remove('active');
-                        this.canvas.style.cursor = 'default';
+                        // Keep AddNode mode persistent
                     }
                 }
             });
@@ -1060,6 +1058,8 @@ class CanvasEngine {
 
         // Edit Logic Button (Destructive Source Sync)
         const btnEditLogic = document.getElementById('btn-edit-logic');
+        const _btnAddNode = document.getElementById('btn-add-node');
+        const _btnConnect = document.getElementById('btn-connect');
         if (btnEditLogic) {
             btnEditLogic.addEventListener('click', () => {
                 this.isEditMode = !this.isEditMode;
@@ -1068,10 +1068,23 @@ class CanvasEngine {
                     this.canvas.style.boxShadow = 'inset 0 0 20px #fb4934';
                     btnEditLogic.style.backgroundColor = '#fb4934';
                     btnEditLogic.style.color = '#fff';
+                    if (_btnAddNode) _btnAddNode.style.display = 'inline-block';
+                    if (_btnConnect) _btnConnect.style.display = 'inline-block';
                 } else {
                     this.canvas.style.boxShadow = 'none';
                     btnEditLogic.style.backgroundColor = '';
                     btnEditLogic.style.color = '#fb4934';
+                    if (_btnAddNode) {
+                        _btnAddNode.style.display = 'none';
+                        _btnAddNode.classList.remove('active');
+                    }
+                    if (_btnConnect) {
+                        _btnConnect.style.display = 'none';
+                        _btnConnect.classList.remove('active');
+                    }
+                    this.isAddingNode = false;
+                    this.isCreatingEdge = false;
+                    this.canvas.style.cursor = 'default';
                 }
             });
         }
@@ -1154,17 +1167,30 @@ class CanvasEngine {
     }
 
     createManualNode(label, type, x, y) {
+        // [v0.2.20 Fix] Place manual nodes securely in the Buffer Cluster physical area
+        const bufferBaseX = -1100;
+        const bufferBaseY = 1000;
+
+        // Find how many buffer nodes exist to stack them neatly
+        const bufferNodes = this.nodes.filter(n => n.cluster_id === 'sys_cluster_buffer' || n.data?.cluster_id === 'sys_cluster_buffer');
+        const offsetX = (bufferNodes.length % 4) * 160;
+        const offsetY = Math.floor(bufferNodes.length / 4) * 100;
+
+        const targetX = bufferBaseX + offsetX;
+        const targetY = bufferBaseY + offsetY;
+
         const newNode = {
             id: `node_manual_${Date.now()}`,
             type: type,
-            status: 'proposed', // Start as proposed
-            position: { x, y },
+            status: 'active', // Manually added nodes are already approved
+            position: { x: targetX, y: targetY },
             data: {
                 label: label,
                 description: 'Manually created node',
-                cluster_id: 'sys_cluster_reserved' // [v0.2.22] Assign to Reserved Cluster
+                cluster_id: 'sys_cluster_buffer' // Assign to Buffer Cluster
             },
-            cluster_id: 'sys_cluster_reserved', // Backend compat
+            cluster_id: 'sys_cluster_buffer', // Backend compat
+
             visual: {
                 opacity: 1 // Make it fully visible immediately
             }
@@ -1192,6 +1218,13 @@ class CanvasEngine {
         // Optimistic update
         this.nodes.push(newNode);
         this.render();
+
+        // [v0.2.20] Auto zoom to the new node in the buffer cluster
+        setTimeout(() => {
+            if (typeof this.focusNodeInGraph === 'function') {
+                this.focusNodeInGraph(newNode.id);
+            }
+        }, 150);
     }
 
     async getProjectState() {
@@ -1505,12 +1538,24 @@ class CanvasEngine {
                 // 2. 엣지 클릭 (노드보다 먼저 체크)
 
                 const clickedEdge = this.findEdgeAtPoint(worldPos.x, worldPos.y);
-                if (clickedEdge && !e.altKey) {
+
+                // Fallback for edge hit detection
+                let fallbackEdge = clickedEdge;
+                if (!fallbackEdge) {
+                    for (const edge of this.edges) {
+                        if (this.isPointNearCurve(worldPos.x, worldPos.y, edge, 25)) {
+                            fallbackEdge = edge;
+                            break;
+                        }
+                    }
+                }
+
+                if (fallbackEdge && !e.altKey) {
                     // 엣지 선택
-                    this.selectedEdge = clickedEdge;
+                    this.selectedEdge = fallbackEdge;
                     this.selectedNode = null;
                     this.selectedNodes.clear();
-                    console.log('[SYNAPSE] Edge selected:', clickedEdge.id, clickedEdge.type);
+                    console.log('[SYNAPSE] Edge selected:', fallbackEdge.id, fallbackEdge.type);
                     this.render();
                     return;
                 }
@@ -1789,7 +1834,19 @@ class CanvasEngine {
 
             // 안 선택되었어도, 우클릭 위치에 엣지가 있는지 판별
             const worldPos = this.screenToWorld(e.offsetX, e.offsetY);
-            const clickedEdge = this.findEdgeAtPoint(worldPos.x, worldPos.y);
+            let clickedEdge = this.findEdgeAtPoint(worldPos.x, worldPos.y);
+
+            // Hit detection fallback for edge selection
+            if (!clickedEdge) {
+                // Try looser tolerance if not found initially
+                for (const edge of this.edges) {
+                    if (this.isPointNearCurve(worldPos.x, worldPos.y, edge, 25)) {
+                        clickedEdge = edge;
+                        break;
+                    }
+                }
+            }
+
             if (clickedEdge) {
                 this.selectedEdge = clickedEdge;
                 this.selectedNode = null;
@@ -2095,6 +2152,51 @@ class CanvasEngine {
         menu.style.top = `${y}px`;
 
         // 노드 관련 메뉴 필터링
+        const copyIdItem = document.getElementById('menu-copy-id');
+        const inspectNodeItem = document.getElementById('menu-inspect-node');
+        const inspectEdgeItem = document.getElementById('menu-inspect-edge');
+
+        if (node) {
+            copyIdItem.style.display = 'block';
+            inspectNodeItem.style.display = 'block';
+            inspectEdgeItem.style.display = 'none';
+
+            copyIdItem.onclick = () => {
+                navigator.clipboard.writeText(node.id).then(() => {
+                    if (typeof vscode !== 'undefined') {
+                        vscode.postMessage({ command: 'showMessage', text: `Node ID copied: ${node.id}` });
+                    }
+                });
+            };
+
+            inspectNodeItem.onclick = () => {
+                const info = `ID: ${node.id}\nLabel: ${node.data?.label || 'N/A'}\nFile: ${node.data?.file || 'None'}\nType: ${node.type || 'N/A'}\nCluster: ${node.data?.cluster_id || 'Root'}`;
+                if (typeof vscode !== 'undefined') {
+                    vscode.postMessage({ command: 'showMessage', text: `[NODE INSPECT]\n${info}` });
+                } else {
+                    alert(`[NODE INSPECT]\n${info}`);
+                }
+            };
+        } else if (this.selectedEdge) {
+            copyIdItem.style.display = 'none';
+            inspectNodeItem.style.display = 'none';
+            inspectEdgeItem.style.display = 'block';
+
+            inspectEdgeItem.onclick = () => {
+                const edge = this.selectedEdge;
+                const info = `ID: ${edge.id}\nFrom: ${edge.source || edge.from}\nTo: ${edge.target || edge.to}\nType: ${edge.type || 'N/A'}`;
+                if (typeof vscode !== 'undefined') {
+                    vscode.postMessage({ command: 'showMessage', text: `[EDGE INSPECT]\n${info}` });
+                } else {
+                    alert(`[EDGE INSPECT]\n${info}`);
+                }
+            };
+        } else {
+            copyIdItem.style.display = 'none';
+            inspectNodeItem.style.display = 'none';
+            inspectEdgeItem.style.display = 'none';
+        }
+
         const openItem = document.getElementById('menu-open');
         if (node) {
             openItem.style.display = 'block';
@@ -2545,7 +2647,8 @@ class CanvasEngine {
                 alert('A connection between these nodes already exists.');
             }
             this.edgeSource = null;
-            this.edgeTarget = null;
+            // Persistent connect mode
+            // this.edgeTarget = null;
             this.render();
             return;
         }
@@ -2603,10 +2706,28 @@ class CanvasEngine {
             if (fromNode && toNode) {
                 vscode.postMessage({
                     command: 'validateEdge',
-                    edgeId: newEdge.id,
-                    fromNode: fromNode,
-                    toNode: toNode,
-                    type: type
+                    edge: newEdge,
+                    sourceStr: JSON.stringify(fromNode),
+                    targetStr: JSON.stringify(toNode)
+                });
+            }
+
+            // Move from Buffer to Reserved if applicable
+            if (fromNode && (fromNode.cluster_id === 'sys_cluster_buffer' || fromNode.data?.cluster_id === 'sys_cluster_buffer')) {
+                fromNode.cluster_id = 'sys_cluster_reserved';
+                if (fromNode.data) fromNode.data.cluster_id = 'sys_cluster_reserved';
+                // Send node update to backend if necessary
+                vscode.postMessage({
+                    command: 'updateNodeData',
+                    node: fromNode
+                });
+            }
+            if (toNode && (toNode.cluster_id === 'sys_cluster_buffer' || toNode.data?.cluster_id === 'sys_cluster_buffer')) {
+                toNode.cluster_id = 'sys_cluster_reserved';
+                if (toNode.data) toNode.data.cluster_id = 'sys_cluster_reserved';
+                vscode.postMessage({
+                    command: 'updateNodeData',
+                    node: toNode
                 });
             }
         }
@@ -2615,7 +2736,12 @@ class CanvasEngine {
 
         // 엣지 생성 완료 후 상태 초기화
         this.edgeSource = null;
+        // Persistent connect mode: don't clear target so we can connect from target to next? Actually, user wants continuous connect mode, so we keep mode active but reset source/target
         this.edgeTarget = null;
+
+        // Remove: this.isCreatingEdge = false; 
+        // Remove: document.getElementById('btn-connect')?.classList.remove('active');
+        this.render();
     }
 
 
@@ -2793,6 +2919,8 @@ class CanvasEngine {
         // UI placement for System Clusters. We'll put them firmly on the left bottom side.
         createSysCluster('sys_cluster_reserved', '🕒 Reserved Cluster', -1500, 1000, '#fabd2f'); // Yellow-ish
         createSysCluster('sys_cluster_buffer', '🛡️ Buffer Cluster', -1100, 1000, '#83a598'); // Blue-ish
+        createSysCluster('cluster_ghosts', '👻 External Ghosts', 0, -800, '#928374'); // Gray-ish
+        createSysCluster('cluster_external', '⚙️ External Modules', 1500, 0, '#458588'); // Blue-ish
     }
 
     loadProjectState(projectState, preserveView = false) {

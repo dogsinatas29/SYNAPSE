@@ -4,7 +4,7 @@ import * as path from 'path';
 export interface CodeSummary {
     classes: string[];
     functions: string[];
-    references: { target: string, type: string }[]; // Updated: Semantic references
+    references: { target: string, type: string, nodeId?: string }[]; // [v0.2.17 Patch 13] Strict ID-Based Symmetry
 }
 
 export class FileScanner {
@@ -93,18 +93,30 @@ export class FileScanner {
             const trimmed = line.trim();
             if (!trimmed || trimmed.startsWith('#')) continue;
 
-            // 1. from a.b import c
+            // 1. from a.b import c (Handles dots as path delimiters or extensions)
             const fromMatch = trimmed.match(/^from\s+([a-zA-Z0-9_.]+)\s+import/);
             if (fromMatch) {
                 const fromPart = fromMatch[1];
-                const rootMod = fromPart.startsWith('.') ? fromPart : fromPart.split('.')[0];
+                // [v0.2.17 Patch 10] Recognize extensions for non-Python bridges (e.g., TEST.c)
+                const knownExts = ['.c', '.ts', '.js', '.rs', '.sql', '.cpp', '.h', '.hpp', '.cc'];
+                let rootMod = fromPart;
+
+                const hasKnownExt = knownExts.some(ext => fromPart.toLowerCase().endsWith(ext));
+                if (!hasKnownExt && !fromPart.startsWith('.')) {
+                    rootMod = fromPart.split('.')[0];
+                }
+
                 if (rootMod && !summary.references.some(r => r.target === rootMod)) {
                     let type = 'dependency';
                     if (rootMod.match(/api|http|fetch|request/i)) type = 'api_call';
                     else if (rootMod.match(/db|sql|database|query/i)) type = 'db_query';
 
-                    console.log(`  [DEP] Added reference (from): ${rootMod} (${type})`);
-                    summary.references.push({ target: rootMod, type });
+                    // [v0.2.17 Patch 13] Check for ID tag in the same line
+                    const idMatch = line.match(/\[SYNAPSE(?:_PENDING|_DELETED)?:([^\]]+)\]/);
+                    const nodeId = idMatch ? idMatch[1] : undefined;
+
+                    console.log(`  [DEP] Added reference (from): ${rootMod} (ID: ${nodeId || 'none'}, Type: ${type})`);
+                    summary.references.push({ target: rootMod, type, nodeId });
                 }
                 continue;
             }
@@ -117,14 +129,26 @@ export class FileScanner {
                     const parts = r.trim().split(/\s+/);
                     const name = parts[0];
                     if (name) {
-                        const rootMod = name.startsWith('.') ? name : name.split('.')[0];
+                        // [v0.2.17 Patch 10] Preserve extensions in import name
+                        const knownExts = ['.c', '.ts', '.js', '.rs', '.sql', '.cpp', '.h', '.hpp', '.cc'];
+                        let rootMod = name;
+
+                        const hasKnownExt = knownExts.some(ext => name.toLowerCase().endsWith(ext));
+                        if (!hasKnownExt && !name.startsWith('.')) {
+                            rootMod = name.split('.')[0];
+                        }
+
                         if (rootMod && !summary.references.some(r => r.target === rootMod)) {
                             let type = 'dependency';
                             if (rootMod.match(/api|http|fetch|request/i)) type = 'api_call';
                             else if (rootMod.match(/db|sql|database|query/i)) type = 'db_query';
 
-                            console.log(`  [DEP] Added reference (import): ${rootMod} (${type})`);
-                            summary.references.push({ target: rootMod, type });
+                            // [v0.2.17 Patch 13] Check for ID tag in the same line
+                            const idMatch = line.match(/\[SYNAPSE(?:_PENDING|_DELETED)?:([^\]]+)\]/);
+                            const nodeId = idMatch ? idMatch[1] : undefined;
+
+                            console.log(`  [DEP] Added reference (import): ${rootMod} (ID: ${nodeId || 'none'}, Type: ${type})`);
+                            summary.references.push({ target: rootMod, type, nodeId });
                         }
                     }
                 });

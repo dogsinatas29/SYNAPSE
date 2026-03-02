@@ -113,6 +113,11 @@ export class RuleEngine {
     public shouldIgnoreFile(filePath: string): boolean {
         const fileName = path.basename(filePath).toLowerCase();
 
+        // [v0.2.17 Patch] Never ignore core SYNAPSE documents
+        if (fileName === 'gemini.md' || fileName === 'rules.md') {
+            return false;
+        }
+
         if (this.blacklistFiles.has(fileName)) {
             return true;
         }

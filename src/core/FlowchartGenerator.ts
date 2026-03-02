@@ -3,10 +3,6 @@ import * as path from 'path';
 import { getVisualHints } from '../utils/visualHints';
 
 export class FlowchartGenerator {
-    private nodeIdCounter = 0;
-    private edgeIdCounter = 0;
-    private clusterIdCounter = 0;
-
     /**
      * 프로젝트 구조로부터 초기 순서도 생성 (클러스터링 포함)
      */
@@ -23,7 +19,6 @@ export class FlowchartGenerator {
         const clusterMap = new Map<string, Cluster>();
         const folders = new Set<string>();
 
-        // 파일들의 상위 폴더들 모두 수집
         structure.files.forEach(f => {
             let dir = path.dirname(f.path);
             while (dir !== '.' && dir !== '/' && dir !== '') {
@@ -31,12 +26,10 @@ export class FlowchartGenerator {
                 dir = path.dirname(dir);
             }
         });
-        // structure.folders에 있는 것들도 추가
         structure.folders.forEach(f => folders.add(f.replace(/\\/g, '/')));
 
         // 2. 클러스터 생성 (계층 구조 포함)
         const sortedFolders = Array.from(folders).sort((a, b) => a.split('/').length - b.split('/').length);
-
         sortedFolders.forEach(dirPath => {
             const clusterId = `cluster_${dirPath.replace(/[^a-zA-Z0-9]/g, '_')}`;
             const parentPath = path.dirname(dirPath).replace(/\\/g, '/');
@@ -46,7 +39,7 @@ export class FlowchartGenerator {
                 id: clusterId,
                 label: path.basename(dirPath),
                 collapsed: false,
-                bounds: { x: 0, y: 0, width: 0, height: 0 }, // 나중에 계산
+                bounds: { x: 0, y: 0, width: 0, height: 0 },
                 children: [],
                 parent_id: parentId
             };
@@ -57,7 +50,6 @@ export class FlowchartGenerator {
         // 3. 의존성 기반 Rank 계산 (Topological Leveling)
         const inDegree = new Map<string, number>();
         const adj = new Map<string, string[]>();
-
         structure.files.forEach(f => {
             inDegree.set(f.path, 0);
             adj.set(f.path, []);
@@ -72,62 +64,55 @@ export class FlowchartGenerator {
             }
         });
 
-        // --- [v0.2.16] Vertical Waterfall Algorithm: Layered Digraph & Rank Alignment ---
-        // 1. inDegree 대신 longest-path 기반의 DFS Depth 계산으로 각 노드의 적절한 Layer를 강제 배정.
         const ranks = new Map<string, number>();
-        const visited = new Set<string>();
-        const pathStack = new Set<string>(); // 순환 참조 감지용
-
-        // DFS 기반 랭크 계산 함수 (Longest path to leaf)
+        const pathStack = new Set<string>();
         const calculateRank = (nodePath: string): number => {
             if (ranks.has(nodePath)) return ranks.get(nodePath)!;
-            if (pathStack.has(nodePath)) return 0; // 순환 참조 시 임의 랭크 부여 후 진행
-
+            if (pathStack.has(nodePath)) return 0;
             pathStack.add(nodePath);
             let maxRank = 0;
             const neighbors = adj.get(nodePath) || [];
-
             for (const neighbor of neighbors) {
-                const neighborRank = calculateRank(neighbor);
-                maxRank = Math.max(maxRank, neighborRank + 1);
+                maxRank = Math.max(maxRank, calculateRank(neighbor) + 1);
             }
-
             pathStack.delete(nodePath);
             ranks.set(nodePath, maxRank);
             return maxRank;
         };
 
-        // 루트 노드(inDegree === 0)부터 시작
         structure.files.forEach(f => {
             if (inDegree.get(f.path) === 0 && f.type !== 'documentation') {
                 calculateRank(f.path);
             }
         });
 
-        // 그래프가 분리되어 inDegree 0이 없는 순환 컴포넌트 처리
         let recursionLimit = 0;
         structure.files.forEach(f => {
             if (!ranks.has(f.path) && f.type !== 'documentation') {
-                if (recursionLimit++ > 1000) return; // Safety break
+                if (recursionLimit++ > 1000) return;
                 calculateRank(f.path);
             }
         });
 
-        // 현재 랭크는 Leaf to Root 방향이므로, Root to Leaf로 반전시킴 (Top-Down Waterfall)
         let maxOverallRank = 0;
         ranks.forEach(rank => maxOverallRank = Math.max(maxOverallRank, rank));
         ranks.forEach((rank, nodeId) => ranks.set(nodeId, maxOverallRank - rank));
-        // ------------------------------------------------------------------------------
 
         // 4. 노드 생성 및 클러스터 할당
-        const nodeSpacingX = 350;
-        const nodeSpacingY = 150;
         const clusterSpacingX = 1000;
         const clusterSpacingY = 1500;
         const clusterCols = Math.ceil(Math.sqrt(Math.max(clusters.filter(c => !c.parent_id).length, 1)));
 
-        // 최상위 폴더(부모가 없는 클러스터) 기준으로 배치 시작
-        let topClusterIdx = 1; // 0번 인덱스는 Root용으로 비워둠 (아래에서 처리)
+        // Ghost Node Clustering (Pre-pass) - [v0.2.17] Always initialize to avoid undefined
+        clusters.push({
+            id: 'cluster_ghosts',
+            label: '👻 External Ghosts',
+            collapsed: true,
+            bounds: { x: 0, y: -800, width: 600, height: 400 },
+            children: []
+        });
+
+        let topClusterIdx = 1;
         const directoryGroups = new Map<string, typeof structure.files>();
         structure.files.forEach(file => {
             const dir = path.dirname(file.path).replace(/\\/g, '/');
@@ -136,10 +121,10 @@ export class FlowchartGenerator {
             directoryGroups.set(dir, group);
         });
 
-        // 4.1 Root Cluster 처리 (루트 디렉토리에 파일이 있는 경우)
+        // Handle Project Root
         const rootFiles = directoryGroups.get('.') || [];
+        const rootClusterId = 'cluster_root';
         if (rootFiles.length > 0) {
-            const rootClusterId = 'cluster_root';
             clusters.push({
                 id: rootClusterId,
                 label: '🏠 Project Root',
@@ -148,334 +133,119 @@ export class FlowchartGenerator {
                 children: []
             });
 
-            // [Fix] Use grid layout to prevent overlap; send .md files to doc_shelf
-            let rootGridIdx = 0;
-            const GRID_COLS = 4;
-            const CELL_W = 200;
-            const CELL_H = 150;
-
-            rootFiles.forEach((file) => {
+            rootFiles.forEach((file, idx) => {
                 const hints = getVisualHints(file.path);
-                // [Fix] Root .md files belong in documentation shelf, not project root
                 if (file.type === 'documentation') {
-                    const docCount = nodes.filter(n => n.data.cluster_id === 'doc_shelf').length;
-                    const node = this.createNode(
-                        file.path, file.type, file.description,
-                        -2000 + (docCount % GRID_COLS) * CELL_W,
-                        -500 + Math.floor(docCount / GRID_COLS) * CELL_H + 100,
-                        hints.layer, hints.priority, 'doc_shelf',
-                        (file as any).intelligence
-                    );
+                    const node = this.createNode(file.path, file.type, file.description, -200 + (idx % 4) * 200, 1100 + Math.floor(idx / 4) * 150, hints.layer, hints.priority, 'doc_shelf', (file as any).intelligence);
                     nodes.push(node);
-                    return;
+                } else {
+                    const node = this.createNode(file.path, file.type, file.description, (idx % 4) * 200 + 30, 1500 + Math.floor(idx / 4) * 150 + 100, hints.layer, hints.priority, rootClusterId, (file as any).intelligence);
+                    nodes.push(node);
+                    clusters.find(c => c.id === rootClusterId)?.children.push(node.id);
                 }
-
-                // Source/config files: strict grid to prevent overlap
-                const col = rootGridIdx % GRID_COLS;
-                const row = Math.floor(rootGridIdx / GRID_COLS);
-                const node = this.createNode(
-                    file.path, file.type, file.description,
-                    col * CELL_W + 30,
-                    1500 + row * CELL_H + 100,
-                    hints.layer, hints.priority, rootClusterId,
-                    (file as any).intelligence
-                );
-                nodes.push(node);
-                clusters.find(c => c.id === rootClusterId)?.children.push(node.id);
-                rootGridIdx++;
             });
             directoryGroups.delete('.');
         }
 
+        // Handle Nested Clusters
         directoryGroups.forEach((files, dirName) => {
-            const clusterPath = dirName;
-            const cluster = clusterMap.get(clusterPath);
+            const cluster = clusterMap.get(dirName);
             const clusterId = cluster ? cluster.id : 'root_cluster';
-
             const clusterX = (topClusterIdx % clusterCols) * clusterSpacingX;
             const clusterY = Math.floor(topClusterIdx / clusterCols) * clusterSpacingY;
 
-            const layerCounters = new Map<number, number>();
-            const rankCounters = new Map<number, number>();
-
-            // [Fix] Strict grid layout — shared counter per cluster to prevent overlap
-            let clusterGridIdx = 0;
-            const GRID_COLS_C = 4;
-            const CELL_W_C = 200;
-            const CELL_H_C = 150;
-
-            files.forEach((file) => {
+            files.forEach((file, idx) => {
                 const hints = getVisualHints(file.path);
-                let finalClusterId = clusterId;
-                let nodeX: number, nodeY: number;
-
                 if (file.type === 'documentation') {
-                    // [Fix] All .md files go to doc_shelf regardless of their directory
-                    const docCount = nodes.filter(n => n.data.cluster_id === 'doc_shelf').length;
-                    nodeX = -2000 + (docCount % GRID_COLS_C) * CELL_W_C;
-                    nodeY = -500 + Math.floor(docCount / GRID_COLS_C) * CELL_H_C + 100;
-                    finalClusterId = 'doc_shelf';
+                    const node = this.createNode(file.path, file.type, file.description, -200 + (idx % 4) * 200, 1100 + Math.floor(idx / 4) * 150, hints.layer, hints.priority, 'doc_shelf', (file as any).intelligence);
+                    nodes.push(node);
                 } else {
-                    // [Fix] Grid placement to prevent overlap
-                    const col = clusterGridIdx % GRID_COLS_C;
-                    const row = Math.floor(clusterGridIdx / GRID_COLS_C);
-                    nodeX = clusterX + col * CELL_W_C + 30;
-                    nodeY = clusterY + row * CELL_H_C + 100;
-                    clusterGridIdx++;
-                }
-
-                const node = this.createNode(
-                    file.path, file.type, file.description,
-                    nodeX, nodeY,
-                    hints.layer, hints.priority, finalClusterId,
-                    (file as any).intelligence
-                );
-                nodes.push(node);
-
-                if (finalClusterId !== 'doc_shelf' && cluster) {
-                    cluster.children.push(node.id);
+                    const node = this.createNode(file.path, file.type, file.description, clusterX + (idx % 4) * 200 + 30, clusterY + Math.floor(idx / 4) * 150 + 100, hints.layer, hints.priority, clusterId, (file as any).intelligence);
+                    nodes.push(node);
+                    if (cluster) cluster.children.push(node.id);
                 }
             });
-
-            if (clusterPath === '' || !clusterMap.get(path.dirname(clusterPath).replace(/\\/g, '/'))) {
-                topClusterIdx++;
-            }
+            topClusterIdx++;
         });
 
-        // 4. Special Clusters 및 미지정 노드 처리
+        // 4. Special Clusters
         clusters.push({
             id: 'doc_shelf',
             label: '📚 Documentation Shelf',
-            collapsed: false,
-            bounds: { x: -2100, y: -600, width: 900, height: 1200 },
+            collapsed: true,
+            bounds: { x: -200, y: 1100, width: 800, height: 600 },
             children: nodes.filter(n => n.data.cluster_id === 'doc_shelf').map(n => n.id)
         });
 
-        // External Modules Cluster
-        const externalNodes = nodes.filter(n => n.type === 'external');
-        if (externalNodes.length > 0) {
-            console.log(`[SYNAPSE] Grouping ${externalNodes.length} external modules.`);
-            clusters.push({
-                id: 'cluster_external',
-                label: '🌐 External Modules',
-                collapsed: false,
-                bounds: { x: 3000, y: 0, width: 1000, height: 1500 },
-                children: externalNodes.map(n => {
-                    n.data.cluster_id = 'cluster_external';
-                    // Reposition external nodes to be inside this cluster
-                    const idx = externalNodes.indexOf(n);
-                    n.position.x = 3100 + (idx % 3) * 350;
-                    n.position.y = 100 + Math.floor(idx / 3) * 200;
-
-                    // Add visual distinction
-                    n.data.label = `[[ ${n.data.label} ]]`;
-                    return n.id;
-                })
-            });
-        }
-
-        // 5. 의존성 기반 엣지 생성 (Logic Inversion Handling 포함)
-        structure.dependencies.forEach((dep) => {
+        // 5. Edges
+        structure.dependencies.forEach(dep => {
             const fromNode = nodes.find(n => n.data.file === dep.from);
             const toNode = nodes.find(n => n.data.file === dep.to);
-
             if (fromNode && toNode) {
                 const edge = this.createEdge(fromNode.id, toNode.id, dep.type);
-
-                // [v0.2.16] Logic Inversion: 상위로 흐르는 엣지(콜백/피드백)는 점선으로 처리하여 시각적 혼선 차단
-                const fromRank = ranks.get(dep.from) || 0;
-                const toRank = ranks.get(dep.to) || 0;
-
-                if (toRank < fromRank) {
-                    edge.visual.style = 'dotted'; // 역방향 엣지는 점선
-                    edge.type = 'loop_back'; // 타입도 루프백으로 간주
-                }
-
                 edges.push(edge);
             }
         });
 
-        console.log('✅ 초기 순서도 생성 완료 (Hierarchical Clustered)');
-
-        // [v0.2.17] Filter out empty clusters that have no nodes and no non-empty child clusters
-        const finalClusters = clusters.filter(cluster => {
-            // Keep special clusters
-            if (cluster.id === 'doc_shelf' || cluster.id === 'cluster_external' || cluster.id === 'cluster_root') return true;
-
-            const hasNodes = cluster.children && cluster.children.length > 0;
-            const hasChildClusters = clusters.some(c => c.parent_id === cluster.id);
-
-            // To be thorough, recursive check would be better, but for single-level nesting this is usually enough.
-            // Let's at least keep it if it has nodes or sub-clusters.
-            return hasNodes || hasChildClusters;
-        });
-
-        return { nodes, edges, clusters: finalClusters };
+        return { nodes, edges, clusters: clusters.filter(c => c.children.length > 0 || c.id === 'doc_shelf' || c.id === 'cluster_ghosts') };
     }
 
-    /**
-     * 노드 생성 (명시적 좌표 지정)
-     */
-    private createNode(
-        filePath: string,
-        type: NodeType,
-        description: string,
-        x: number,
-        y: number,
-        layer: number,
-        priority: number,
-        clusterId?: string,
-        intelligence?: any
-    ): Node {
-        const safeId = filePath.replace(/[^a-zA-Z0-9]/g, '_');
-        const id = `node_${safeId}`;
-
-        // 타입별 색상
+    private createNode(file: string, type: NodeType, description: string, x: number, y: number, layer: number, priority: number, clusterId: string, intelligence: any): Node {
         const colorMap: Record<NodeType, string> = {
-            source: '#b8bb26',      // 초록색
-            cluster: '#83a598',     // 파란색
-            documentation: '#fabd2f', // 노란색
-            test: '#fe8019',        // 주황색
-            config: '#d3869b',      // 분홍색
-            history: '#d65d0e',     // 주황/갈색 (브라운)
-            external: '#83a598'      // 파란색 (외부 라이브러리)
+            source: '#b8bb26', cluster: '#83a598', documentation: '#fabd2f',
+            test: '#fe8019', config: '#d3869b', history: '#d65d0e', external: '#83a598'
         };
-
-        // 중앙 집중화 (Reasoning 레이어의 핵심 파일들)
-        let finalX = x;
-        const fileName = path.basename(filePath).toLowerCase();
-        if (layer === 1) {
-            const isCore = fileName.includes('router') ||
-                fileName.includes('prompt') ||
-                fileName.includes('engine') ||
-                fileName.includes('inference');
-
-            if (isCore) {
-                // 클러스터의 중앙 부근으로 유도
-                // x는 이미 clusterX + nodeX 형태로 들어옴. 
-                // 여기서는 x의 기저값(nodeX 부분)을 조정하거나 
-                // 전체 cluster width의 절반 정도로 보정
-                finalX = x + (Math.random() * 40 - 20); // 약간의 변동성만 줌
-            }
-        }
-
         return {
-            id,
+            id: `node_${file.replace(/[^a-zA-Z0-9]/g, '_')}_${Date.now()}`,
             type,
+            position: { x, y },
             status: 'proposed',
-            position: { x: finalX, y },
             data: {
-                file: filePath,
-                label: path.basename(filePath),
+                label: path.basename(file),
+                file,
                 description,
-                color: colorMap[type],
-                cluster_id: clusterId,
                 layer,
-                priority
+                priority,
+                cluster_id: clusterId,
+                color: colorMap[type]
             },
             intelligence,
-            visual: {
-                opacity: 0.5,
-                dashArray: '5,5',
-                glow_intensity: intelligence?.dtr > 0.7 ? 1.0 + (intelligence.dtr - 0.7) * 2 : 0
-            }
+            visual: { opacity: 0.5 }
         };
     }
 
-    /**
-     * 엣지 생성
-     */
     private createEdge(fromId: string, toId: string, type: EdgeType): Edge {
-        const id = `edge_${this.edgeIdCounter++}`;
-
-        // 타입별 스타일
-        const styleMap: Record<EdgeType, { color: string; thickness: number }> = {
-            dependency: { color: '#ebdbb2', thickness: 2 },
-            data_flow: { color: '#83a598', thickness: 3 },
-            event: { color: '#fe8019', thickness: 2 },
-            conditional: { color: '#d3869b', thickness: 1 },
-            origin: { color: '#d65d0e', thickness: 1.5 }, // 프롬프트 기원 링크
-            api_call: { color: '#8ec07c', thickness: 2 },
-            db_query: { color: '#d3869b', thickness: 3 },
-            loop_back: { color: '#fe8019', thickness: 2 }
-        } as Record<EdgeType, { color: string; thickness: number }>;
-
-        const style = styleMap[type] || styleMap['dependency'];
-
+        const edgeStyles: Record<string, { color: string, thickness: number }> = {
+            'dependency': { color: '#888', thickness: 1 },
+            'flow': { color: '#4a9eff', thickness: 2 },
+            'loop_back': { color: '#ff4a4a', thickness: 1 },
+            'event': { color: '#ffcc00', thickness: 1 }
+        };
+        const style = edgeStyles[type] || edgeStyles['dependency'];
         return {
-            id,
+            id: `edge_${fromId}_${toId}_${Date.now()}`,
             from: fromId,
             to: toId,
             type,
-            is_approved: false,
-            visual: {
-                thickness: style.thickness,
-                style: 'solid',
-                color: style.color,
-                animated: true
-            }
+            is_approved: true,
+            visual: { color: style.color, thickness: style.thickness, style: 'solid' }
         };
     }
 
-    /**
-     * Mermaid 다이어그램 생성 (클러스터 지원)
-     */
     public generateMermaidDiagram(nodes: Node[], edges: Edge[], clusters?: Cluster[]): string {
         let mermaid = 'flowchart TD\n';
-
-        // 1. 클러스터(subgraph) 처리
-        if (clusters && clusters.length > 0) {
-            clusters.forEach(cluster => {
-                // 특정 클러스터에 속한 노드들 찾기
-                const clusterNodes = nodes.filter(n => n.data.cluster_id === cluster.id || (n as any).cluster_id === cluster.id);
-
-                if (clusterNodes.length > 0) {
-                    mermaid += `  subgraph ${cluster.id} ["${cluster.label}"]\n`;
-                    clusterNodes.forEach(node => {
-                        const label = node.data.label;
-                        const shape = this.getNodeShape(node.type);
-                        mermaid += `    ${node.id}${shape[0]}${label}${shape[1]}\n`;
-                    });
-                    mermaid += '  end\n\n';
-                }
-            });
-
-            // 클러스터에 속하지 않은 노드들 처리
-            const standaloneNodes = nodes.filter(n => !n.data.cluster_id || !clusters.some(c => c.id === n.data.cluster_id));
-            standaloneNodes.forEach(node => {
-                const label = node.data.label;
-                const shape = this.getNodeShape(node.type);
-                mermaid += `  ${node.id}${shape[0]}${label}${shape[1]}\n`;
-            });
-        } else {
-            // 기존 하위 호환성 유지 (클러스터 정보가 없는 경우)
-            nodes.forEach(node => {
-                const label = node.data.label;
-                const shape = this.getNodeShape(node.type);
-                mermaid += `  ${node.id}${shape[0]}${label}${shape[1]}\n`;
+        if (clusters) {
+            clusters.forEach(c => {
+                mermaid += `  subgraph ${c.id} ["${c.label}"]\n`;
+                nodes.filter(n => n.data.cluster_id === c.id).forEach(n => {
+                    mermaid += `    ${n.id}["${n.data.label}"]\n`;
+                });
+                mermaid += '  end\n';
             });
         }
-
-        mermaid += '\n';
-
-        edges.forEach(edge => {
-            const arrow = edge.visual.style === 'dashed' ? '-.->' : '-->';
-            mermaid += `  ${edge.from} ${arrow} ${edge.to}\n`;
+        edges.forEach(e => {
+            mermaid += `  ${e.from} --> ${e.to}\n`;
         });
-
         return mermaid;
-    }
-
-    private getNodeShape(type: NodeType): [string, string] {
-        switch (type) {
-            case 'source': return ['[', ']'];
-            case 'cluster': return ['[[', ']]'];
-            case 'documentation': return ['[/', '/]'];
-            case 'test': return ['{', '}'];
-            case 'config': return ['[(', ')]'];
-            case 'history': return ['((', '))'];
-            case 'external': return ['[[', ']]'];
-            default: return ['[', ']'];
-        }
     }
 }

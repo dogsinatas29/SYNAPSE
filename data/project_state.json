@@ -1696,6 +1696,26 @@
         "opacity": 0,
         "style": "dashed"
       }
+    },
+    {
+      "data": {
+        "dtr": 0
+      },
+      "from": "node_README_ko_md_1772842987428",
+      "id": "edge_auto_1772853467150_996555",
+      "label": "ref",
+      "to": "node_GHOST_NODE_md_1772842987428",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "color": "#888",
+        "opacity": 0.8,
+        "style": "solid"
+      }
     }
   ],
   "gemini_md_path": "/home/dogsinatas/TypeScript_project/antigravity-extension-vis/GEMINI.md",
@@ -2069,8 +2089,8 @@
       },
       "id": "node_src_cli_ts_1772842987428",
       "position": {
-        "x": 1276.430790513812,
-        "y": 3586.1293666059246
+        "x": 1276.4307904882698,
+        "y": 3586.1293665142475
       },
       "status": "proposed",
       "type": "source",
@@ -2153,8 +2173,8 @@
       },
       "id": "node_src_core_BillingManager_ts_1772842987428",
       "position": {
-        "x": 382.2051001470593,
-        "y": 3583.372534375
+        "x": 382.20510000639587,
+        "y": 3583.3725343285805
       },
       "status": "proposed",
       "type": "source",
@@ -2237,8 +2257,8 @@
       },
       "id": "node_src_core_FlowScanner_ts_1772842987428",
       "position": {
-        "x": 682.205099932715,
-        "y": 3783.3725343042656
+        "x": 682.2051000030467,
+        "y": 3783.3725343274755
       },
       "status": "proposed",
       "type": "source",
@@ -2279,8 +2299,8 @@
       },
       "id": "node_src_core_GeminiParser_ts_1772842987428",
       "position": {
-        "x": 1264.781219067946,
-        "y": 3838.430902786701
+        "x": 1264.7886147801255,
+        "y": 3838.4345698889683
       },
       "status": "proposed",
       "type": "source",
@@ -2321,8 +2341,8 @@
       },
       "id": "node_src_core_PromptLogger_ts_1772842987428",
       "position": {
-        "x": 532.205099932715,
-        "y": 3683.3725343042656
+        "x": 532.2051000030467,
+        "y": 3683.3725343274755
       },
       "status": "proposed",
       "type": "source",
@@ -2342,8 +2362,8 @@
       },
       "id": "node_src_core_ReportExporter_ts_1772842987428",
       "position": {
-        "x": 814.7938974316824,
-        "y": 3538.437189247731
+        "x": 814.7901995755926,
+        "y": 3538.435355696597
       },
       "status": "proposed",
       "type": "source",
@@ -2363,8 +2383,8 @@
       },
       "id": "node_src_core_RuleEngine_ts_1772842987428",
       "position": {
-        "x": 964.7938974316824,
-        "y": 3638.437189247731
+        "x": 964.7901995755926,
+        "y": 3638.435355696597
       },
       "status": "proposed",
       "type": "source",
@@ -2384,8 +2404,8 @@
       },
       "id": "node_src_server_server_ts_1772842987428",
       "position": {
-        "x": 1426.4307904748907,
-        "y": 3686.129366466226
+        "x": 1426.4307904876619,
+        "y": 3686.1293665120647
       },
       "status": "proposed",
       "type": "source",
@@ -2405,8 +2425,8 @@
       },
       "id": "node_src_server_standalone_ts_1772842987428",
       "position": {
-        "x": 1576.4307904748907,
-        "y": 3786.129366466226
+        "x": 1576.4307904876619,
+        "y": 3786.1293665120647
       },
       "status": "proposed",
       "type": "source",

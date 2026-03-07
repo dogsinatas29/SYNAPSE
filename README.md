@@ -165,6 +165,24 @@ The **DTR Controller** manages the "cognitive density" of the architecture:
 
 ---
 
+## 🔍 Technical Specifications: Analysis Depth
+SYNAPSE provides professional-grade architectural validation while maintaining visual clarity.
+
+### 🔄 Circular Dependency Detection
+The engine safeguards your project against architectural rot by detecting cyclic dependencies (e.g., `A → B → C → A`).
+- **Algorithm**: Depth-First Search (DFS) based cycle detection in `LogicAnalyzer.ts`.
+- **Reporting**: Reports cycles as **`CRITICAL`** issues in the `architecture_report.md`.
+- **Visual Feedback**: Use the `🛡️ Test Logic` toolbar button to trigger a full validation sweep.
+
+### 🔗 Edge Generation: Level 1 vs. Level 2
+To prevent "Visual Spaghetti," SYNAPSE employs a hybrid approach to edge density:
+- **Level 1: File-Level (Automatic)**: The `FileScanner` automatically maps `import`, `require`, `include`, and `use` statements to show the high-level dependency forest.
+- **Level 2: Logic-Flow (Manual/Hybrid)**: Deep function calls and data flows are managed via **'Logic Edit' mode**.
+    - **Intent-Driven**: Users draw the *critical* logic paths they want to enforce.
+    - **Code Sync**: Manual edges are synchronized with code using `[SYNAPSE_PENDING]` tags, ensuring the diagram remains a living extension of the source.
+
+---
+
 ## 🛠️ Toolbar & Menu Structure
 The SYNAPSE toolbar is organized into logical groups to streamline your architectural workflow.
 

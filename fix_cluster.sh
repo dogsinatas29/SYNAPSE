@@ -1,2 +1,0 @@
-sed -i 's/if (fromNode.data) fromNode.data.cluster_id = '\''sys_cluster_reserved'\'';/if (fromNode.data) fromNode.data.cluster_id = '\''sys_cluster_reserved'\'';\n            fromNode.position = { x: -1500 + Math.random() * 200, y: 1000 + Math.random() * 200 };/' src/webview/CanvasPanel.ts
-sed -i 's/if (toNode.data) toNode.data.cluster_id = '\''sys_cluster_reserved'\'';/if (toNode.data) toNode.data.cluster_id = '\''sys_cluster_reserved'\'';\n            toNode.position = { x: -1500 + Math.random() * 200, y: 1000 + Math.random() * 200 };/' src/webview/CanvasPanel.ts

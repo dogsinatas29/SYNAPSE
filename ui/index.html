@@ -112,6 +112,74 @@
             font-weight: bold;
         }
 
+        /* [v0.2.19] Hierarchical Menu Styles */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background: var(--bg-panel);
+            min-width: 160px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.5);
+            z-index: 1000;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            top: 100%;
+            left: 0;
+            margin-top: 4px;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown-content .btn {
+            width: 100%;
+            text-align: left;
+            border-right: none;
+            border-bottom: 1px solid var(--border);
+            border-radius: 0;
+            padding: 10px 16px;
+        }
+
+        .dropdown-content .btn:last-child {
+            border-bottom: none;
+        }
+
+        .dropdown-content .btn:hover {
+            background: var(--bg-hover);
+            color: var(--accent);
+        }
+
+        .menu-label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: bold;
+            color: var(--fg-main);
+            background: #3c3836;
+            border-radius: 4px;
+            border: 1px solid #504945;
+            transition: all 0.2s;
+        }
+
+        .menu-label:hover {
+            background: #504945;
+            border-color: var(--accent);
+        }
+
+        .dropdown:hover .menu-label {
+            background: var(--accent);
+            color: #282828;
+            border-color: var(--accent);
+        }
+
         /* Main Container */
         #main-container {
             flex: 1;
@@ -552,44 +620,80 @@
 
 <body>
     <div id="header">
-        <div class="logo">🧠 SYNAPSE <span style="font-size: 10px; opacity: 0.6; margin-left: 5px;">v0.2.17</span></div>
+        <div class="logo">🧠 SYNAPSE <span style="font-size: 10px; opacity: 0.6; margin-left: 5px;">v0.2.18.1</span></div>
         <div id="status-indicator" style="font-size: 12px; color: #fabd2f; font-weight: bold;"></div>
         <div id="project-path" style="font-size: 12px; color: var(--fg-dim);">Loading project...</div>
     </div>
 
     <div id="toolbar">
-        <div class="btn-group">
-            <button class="btn active" data-mode="graph">Graph</button>
-            <button class="btn" data-mode="tree">Tree</button>
-            <button class="btn" data-mode="flow">Flow</button>
+        <!-- View Menu -->
+        <div class="dropdown">
+            <div class="menu-label">👁️ View</div>
+            <div class="dropdown-content">
+                <button class="btn active" data-mode="graph">Graph View</button>
+                <button class="btn" data-mode="tree">Tree View</button>
+                <button class="btn" data-mode="flow">Flow View</button>
+                <button class="btn" id="btn-toggle-vault">📂 Show Vault: OFF</button>
+            </div>
         </div>
-        <button class="btn" id="btn-fit">Fit View</button>
-        <button class="btn" id="btn-reset">Reset View</button>
-        <button class="btn" id="btn-rebootstrap" title="Deep Reset: Re-scan complete project"
-            style="color: #fb4934; font-weight: bold;">Deep Reset</button>
-        <button class="btn" id="btn-reset-state" title="project_state.json을 빈 상태로 초기화" style="color: #d3869b;">🔄 Reset
-            State</button>
-        <div class="toolbar-divider"></div>
+
+        <button class="btn" id="btn-fit" title="Fit All Nodes in View">📷 Fit View</button>
+        <button class="btn" id="btn-reset" title="Reset Zoom/Offset">🔄 Reset View</button>
+
         <button class="btn" id="btn-group" title="Group Selected Nodes">Group</button>
         <button class="btn" id="btn-ungroup" title="Ungroup Selected Cluster">Ungroup</button>
-        <button class="btn" id="btn-test-logic" title="Run Architectural Logic Analysis"
-            style="color: #fabd2f; font-weight: bold;">🛡️ Test Logic</button>
-        <button class="btn" id="btn-edit-logic" title="Toggle Destructive Source Editing"
-            style="color: #fb4934; font-weight: bold;">🔓 Edit Logic</button>
-        <button class="btn" id="btn-add-node" title="Add New Node" style="display: none;">➕ Node</button>
-        <button class="btn" id="btn-connect" title="Connect Nodes (Alt+Click)" style="display: none;">🔗
-            Connect</button>
-        <div class="toolbar-divider"></div>
+        
+        <!-- Logic Edit Menu -->
+        <div class="dropdown">
+            <div class="menu-label" id="btn-edit-logic-label" style="color: #fb4934;">🔓 Edit Logic: OFF</div>
+            <div class="dropdown-content">
+                <button class="btn" id="btn-edit-logic" title="Toggle Destructive Source Editing" style="color: #fb4934; font-weight: bold;">Toggle Edit Mode</button>
+                <button class="btn" id="btn-test-logic" title="Run Architectural Logic Analysis" style="color: #fabd2f; font-weight: bold;">🛡️ Test Logic</button>
+                <button class="btn" id="btn-add-node" title="Add New Node">➕ Node</button>
+                <button class="btn" id="btn-connect" title="Connect Nodes (Alt+Click)">🔗 Connect</button>
+                <button class="btn" id="btn-delete" title="Delete Selected Nodes/Edges" style="color: #fb4934;">🗑️ Delete</button>
+            </div>
+        </div>
+
+        <!-- System Menu -->
+        <div class="dropdown">
+            <div class="menu-label">⚙️ System</div>
+            <div class="dropdown-content">
+                <button class="btn" id="btn-rebootstrap" title="Deep Reset: Re-scan complete project" style="color: #fb4934; font-weight: bold;">Deep Reset</button>
+                <button class="btn" id="btn-reset-state" title="project_state.json을 빈 상태로 초기화" style="color: #d3869b;">🔄 Reset State</button>
+                <button class="btn" id="btn-animate" title="Toggle Edge Animations">🎬 Animation: On</button>
+            </div>
+        </div>
+
+        <!-- Protocol Menu -->
+        <div class="dropdown">
+            <div class="menu-label">⚖️ Protocol</div>
+            <div class="dropdown-content">
+                <button class="btn" id="btn-rules" title="View Architecture Rules">Rules.md</button>
+                <button class="btn" id="btn-master-hub" title="Open Master Hub (Architecture.md)">Architecture.md</button>
+                <button class="btn" id="btn-modular-specs" title="Open Modular Specs">Modular Specs</button>
+            </div>
+        </div>
+
         <div style="flex: 1"></div>
-        <button class="btn" id="btn-delete" title="Delete Selected Nodes/Edges" style="color: #fb4934;">🗑️
-            Delete</button>
-        <button class="btn" id="btn-animate" title="Toggle Edge Animations">🎬 On</button>
-        <button class="btn" id="btn-history">History</button>
-        <button class="btn" id="btn-snapshot" title="Take Manual Snapshot">📸</button>
-        <button class="btn" id="btn-rules" title="View Architecture Rules">⚖️ Rules</button>
-        <button class="btn" id="btn-save-prompt" title="Save Prompt / Decision Log">💾</button>
-        <div class="toolbar-divider"></div>
-        <button class="btn" id="btn-record" title="Context 레코딩 토글 (CTRL+ALT+M)">⏺ REC</button>
+
+        <!-- Snap Shot Menu -->
+        <div class="dropdown">
+            <div class="menu-label">📸 Snap Shot</div>
+            <div class="dropdown-content">
+                <button class="btn" id="btn-snapshot" title="Take Manual Snapshot">Save Now</button>
+                <button class="btn" id="btn-history">History View</button>
+            </div>
+        </div>
+
+        <!-- Context Menu -->
+        <div class="dropdown">
+            <div class="menu-label" id="btn-record-label">⏺ Context</div>
+            <div class="dropdown-content">
+                <button class="btn" id="btn-record" title="Context 레코딩 토글 (CTRL+ALT+M)">REC Toggle</button>
+                <button class="btn" id="btn-context-vault" title="Open Context Vault External Panel">Vault History</button>
+            </div>
+        </div>
     </div>
 
     <div id="main-container">

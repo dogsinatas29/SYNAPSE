@@ -4,14 +4,15 @@
  */
 
 // 노드 타입
-export type NodeType = 'source' | 'cluster' | 'documentation' | 'test' | 'config' | 'history' | 'external';
+export type NodeType = 'source' | 'cluster' | 'documentation' | 'test' | 'config' | 'history' | 'external' | 'event';
 
 // 노드 상태
 export type NodeStatus = 'proposed' | 'active' | 'error' | 'completed' | 'warning';
 
 // 엣지 타입
 export type EdgeType = 'dependency' | 'data_flow' | 'event' | 'conditional' | 'origin' |
-    'api_call' | 'db_query' | 'loop_back' | 'error_path';
+    'api_call' | 'db_query' | 'loop_back' | 'error_path' |
+    'reference' | 'static_unidirectional' | 'control_bidirectional';
 
 // 엣지 스타일
 export type EdgeStyle = 'solid' | 'dashed' | 'dotted';
@@ -100,6 +101,7 @@ export interface ProjectStructure {
         to: string;
         type: EdgeType;
         label?: string;
+        isApproved?: boolean;   // [v0.2.18.1.2]
     }[];
     includePaths?: string[];   // 스캔 범위 제한
 }

@@ -71,7 +71,9 @@ class FlowRenderer {
         const filteredNodes = nodes.filter(n => {
             const fileName = (n.data && n.data.file) ? n.data.file.toLowerCase() : '';
             const isDoc = fileName.endsWith('.md') || fileName.endsWith('.txt') || fileName.includes('license');
-            return reachableIds.has(n.id) && n.type !== 'external' && !isDoc;
+            const isGhost = n.status === 'ghost';
+            const isContext = n.id.startsWith('ctx_vault_node_') || n.cluster_id === 'context_vault' || n.data?.cluster_id === 'context_vault';
+            return reachableIds.has(n.id) && n.type !== 'external' && !isDoc && !isGhost && !isContext;
         });
         const sortedNodes = [...filteredNodes].sort((a, b) => {
             const layerA = a.data.layer || 0;
@@ -640,6 +642,10 @@ class TreeRenderer {
 
         for (const node of nodes) {
             if (!node.data) continue;
+            
+            // [v0.2.19] Skip Ghost and Context nodes in Tree View
+            if (node.status === 'ghost') continue;
+            if (node.id.startsWith('ctx_vault_node_') || node.cluster_id === 'context_vault' || node.data?.cluster_id === 'context_vault') continue;
 
             // 파일 경로를 기반으로 트리 구축
             const pathStr = node.data.path || node.data.file || '';
@@ -862,6 +868,9 @@ class CanvasEngine {
         this.currentDTR = 0.3;
         this.clusters = []; // 클러스터 데이터
         this.isExpectingUpdate = false; // 데이터 업데이트 시 뷰 유지 여부 플래그
+        
+        // [v0.2.18.3] Context Vault visibility state
+        this.showContextVault = false;
 
         // 모드 및 렌더러
         this.currentMode = 'graph'; // 'graph' | 'tree' | 'flow'
@@ -1000,6 +1009,17 @@ class CanvasEngine {
             });
         }
 
+        // [v0.2.18.3] Context Vault Toggle
+        const btnToggleVault = document.getElementById('btn-toggle-vault');
+        if (btnToggleVault) {
+            btnToggleVault.addEventListener('click', () => {
+                this.showContextVault = !this.showContextVault;
+                btnToggleVault.textContent = `📂 Show Vault: ${this.showContextVault ? 'ON' : 'OFF'}`;
+                btnToggleVault.style.color = this.showContextVault ? '#fabd2f' : '#ebdbb2';
+                this.render();
+            });
+        }
+
         // Node Creation Dialog
         const btnConfirmNode = document.getElementById('btn-confirm-node');
         const btnCancelNode = document.getElementById('btn-cancel-node');
@@ -1063,25 +1083,21 @@ class CanvasEngine {
         if (btnEditLogic) {
             btnEditLogic.addEventListener('click', () => {
                 this.isEditMode = !this.isEditMode;
-                btnEditLogic.classList.toggle('active', this.isEditMode);
+                const label = document.getElementById('btn-edit-logic-label');
+                if (label) {
+                    label.textContent = `🔓 Edit Logic: ${this.isEditMode ? 'ON' : 'OFF'}`;
+                    label.style.color = this.isEditMode ? '#fabd2f' : '#fb4934';
+                }
+                btnEditLogic.textContent = `Turn ${this.isEditMode ? 'OFF' : 'ON'} Edit Mode`;
+                
                 if (this.isEditMode) {
                     this.canvas.style.boxShadow = 'inset 0 0 20px #fb4934';
-                    btnEditLogic.style.backgroundColor = '#fb4934';
-                    btnEditLogic.style.color = '#fff';
-                    if (_btnAddNode) _btnAddNode.style.display = 'inline-block';
-                    if (_btnConnect) _btnConnect.style.display = 'inline-block';
+                    if (_btnAddNode) _btnAddNode.style.display = 'block';
+                    if (_btnConnect) _btnConnect.style.display = 'block';
                 } else {
                     this.canvas.style.boxShadow = 'none';
-                    btnEditLogic.style.backgroundColor = '';
-                    btnEditLogic.style.color = '#fb4934';
-                    if (_btnAddNode) {
-                        _btnAddNode.style.display = 'none';
-                        _btnAddNode.classList.remove('active');
-                    }
-                    if (_btnConnect) {
-                        _btnConnect.style.display = 'none';
-                        _btnConnect.classList.remove('active');
-                    }
+                    if (_btnAddNode) _btnAddNode.style.display = 'none';
+                    if (_btnConnect) _btnConnect.style.display = 'none';
                     this.isAddingNode = false;
                     this.isCreatingEdge = false;
                     this.canvas.style.cursor = 'default';
@@ -2418,6 +2434,7 @@ class CanvasEngine {
             { label: '🔗 Dependency', type: 'dependency', color: '#83a598' },
             { label: '📞 Call', type: 'call', color: '#b8bb26' },
             { label: '📊 Data Flow', type: 'data_flow', color: '#fabd2f' },
+            { label: '📝 Reference', type: 'reference', color: '#b8bb26' },
             { label: '↔️ Bidirectional', type: 'bidirectional', color: '#d3869b' }
         ];
 
@@ -2566,6 +2583,7 @@ class CanvasEngine {
             { label: '🔗 Dependency', type: 'dependency', color: '#83a598' },
             { label: '📞 Call', type: 'call', color: '#b8bb26' },
             { label: '📊 Data Flow', type: 'data_flow', color: '#fabd2f' },
+            { label: '📝 Reference', type: 'reference', color: '#b8bb26' },
             { label: '↔️ Bidirectional', type: 'bidirectional', color: '#d3869b' }
         ];
 
@@ -3975,6 +3993,9 @@ class CanvasEngine {
         const sortedClusters = [...this.clusters].sort((a, b) => getDepth(a) - getDepth(b));
 
         for (const cluster of sortedClusters) {
+            // [v0.2.18.3] Isolate Context Vault unless toggled ON
+            if (cluster.id === 'context_vault' && !this.showContextVault) continue;
+            
             const b = getClusterBounds(cluster);
             if (b.minX === Infinity) continue;
 
@@ -4325,9 +4346,14 @@ class CanvasEngine {
             return;
         }
 
+        // [v0.2.18.3] Strict Hiding for Context Vault Nodes unless toggled ON
+        const clusterId = node.cluster_id || node.data?.cluster_id;
+        if ((clusterId === 'context_vault' || node.id.startsWith('ctx_vault_node_')) && !this.showContextVault) {
+            return;
+        }
+
         // 1.5. 클러스터 접힘 체크 - 최상단으로 이동하여 렌더링 스킵
         // Bugfix: node.data.cluster_id 확인, node.cluster_id는 ungroup 시 null이 되거나 혼용될 수 있음
-        const clusterId = node.cluster_id || node.data?.cluster_id;
         if (clusterId) {
             const cluster = this.clusters?.find(c => c.id === clusterId);
             if (cluster && cluster.collapsed) {
@@ -4402,6 +4428,11 @@ class CanvasEngine {
             const pulse = 0.4 + 0.6 * Math.sin(Date.now() / 400);
             borderColor = `rgba(235, 219, 178, ${pulse})`;
             glowColor = `rgba(235, 219, 178, ${pulse * 0.3})`;
+        } else if (node.status === 'ghost' || node.data?.status === 'ghost') {
+            // [v0.2.19] Ghost Node style: dashed border, lower opacity, no glow
+            dash = [4, 4];
+            borderColor = '#928374'; // Grayish
+            opacity *= 0.6; // Apply to the calculated opacity
         }
 
         let dtrPulse = null;
@@ -5735,8 +5766,68 @@ function initCanvas() {
 
     document.getElementById('btn-animate')?.addEventListener('click', (e) => {
         engine.isAnimating = !engine.isAnimating;
-        e.target.textContent = engine.isAnimating ? '🎬 On' : '⏸ Off';
+        e.target.textContent = `🎬 Animation: ${engine.isAnimating ? 'On' : 'Off'}`;
         if (engine.isAnimating) engine.startAnimationLoop();
+    });
+
+    // Protocol & Context Listeners
+    document.getElementById('btn-master-hub')?.addEventListener('click', () => {
+        vscode?.postMessage({ command: 'openFile', filePath: 'architecture.md' });
+    });
+
+    document.getElementById('btn-rules')?.addEventListener('click', () => {
+        vscode?.postMessage({ command: 'openRules' });
+    });
+
+    document.getElementById('btn-context-vault')?.addEventListener('click', () => {
+        // [v0.2.19] Show Context Vault nodes in a special filtered view or just focus on them
+        const vaultCluster = engine.clusters.find(c => c.id === 'context_vault');
+        if (vaultCluster) {
+            // Temporarily show and fit to it? No, let's just alert for now or implement a panel
+            vscode?.postMessage({ command: 'showMessage', text: 'Opening Context Vault History...' });
+            
+            // For now, let's just make it visible on canvas temporarily if they really want to see it?
+            // Actually, the request is to "isolate into external panel". 
+            // I'll implement a basic panel toggle.
+            const panel = document.getElementById('side-panel');
+            if (panel) {
+                panel.classList.add('visible');
+                document.getElementById('side-panel-title').textContent = 'Context Vault';
+                document.getElementById('side-panel-content').innerHTML = `
+                    <div style="padding: 10px;">
+                        <h3>📜 Context History</h3>
+                        <p>Searchable context history nodes will appear here.</p>
+                        <ul id="vault-list" style="list-style: none; padding: 0;"></ul>
+                    </div>
+                `;
+                
+                // Populate from vault nodes
+                const vaultNodes = engine.nodes.filter(n => n.id.startsWith('ctx_vault_node_') || n.cluster_id === 'context_vault');
+                const list = document.getElementById('vault-list');
+                vaultNodes.forEach(n => {
+                    const li = document.createElement('li');
+                    li.style.padding = '8px';
+                    li.style.borderBottom = '1px solid #504945';
+                    li.style.cursor = 'pointer';
+                    li.textContent = n.data?.label || n.id;
+                    li.onclick = () => engine.focusNodeInGraph(n.id);
+                    list.appendChild(li);
+                });
+            }
+        } else {
+            vscode?.postMessage({ command: 'showWarning', message: 'No Context Vault data found yet.' });
+        }
+    });
+
+    document.getElementById('btn-record')?.addEventListener('click', () => {
+        // Toggle recording state
+        engine.isRecording = !engine.isRecording;
+        const btn = document.getElementById('btn-record-label');
+        if (btn) {
+            btn.textContent = engine.isRecording ? '🔴 Recording' : '⏺ Context';
+            btn.style.color = engine.isRecording ? '#fb4934' : '';
+        }
+        vscode?.postMessage({ command: 'showMessage', text: `Context Recording: ${engine.isRecording ? 'STARTED' : 'STOPPED'}` });
     });
 
     // Mode Switcher

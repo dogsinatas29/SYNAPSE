@@ -182,7 +182,7 @@ export class FlowchartGenerator {
             const fromNode = nodes.find(n => n.data.file === dep.from);
             const toNode = nodes.find(n => n.data.file === dep.to);
             if (fromNode && toNode) {
-                const edge = this.createEdge(fromNode.id, toNode.id, dep.type);
+                const edge = this.createEdge(fromNode.id, toNode.id, dep.type, dep.isApproved !== false);
                 edges.push(edge);
             }
         });
@@ -193,7 +193,8 @@ export class FlowchartGenerator {
     private createNode(file: string, type: NodeType, description: string, x: number, y: number, layer: number, priority: number, clusterId: string, intelligence: any): Node {
         const colorMap: Record<NodeType, string> = {
             source: '#b8bb26', cluster: '#83a598', documentation: '#fabd2f',
-            test: '#fe8019', config: '#d3869b', history: '#d65d0e', external: '#83a598'
+            test: '#fe8019', config: '#d3869b', history: '#d65d0e', external: '#83a598',
+            event: '#b16286'
         };
         return {
             id: `node_${file.replace(/[^a-zA-Z0-9]/g, '_')}_${Date.now()}`,
@@ -214,12 +215,16 @@ export class FlowchartGenerator {
         };
     }
 
-    private createEdge(fromId: string, toId: string, type: EdgeType): Edge {
+    private createEdge(fromId: string, toId: string, type: EdgeType, isApproved: boolean = true): Edge {
         const edgeStyles: Record<string, { color: string, thickness: number }> = {
             'dependency': { color: '#888', thickness: 1 },
             'flow': { color: '#4a9eff', thickness: 2 },
+            'data_flow': { color: '#4a9eff', thickness: 2 }, // [v0.2.18.1.1] Same as flow
             'loop_back': { color: '#ff4a4a', thickness: 1 },
-            'event': { color: '#ffcc00', thickness: 1 }
+            'event': { color: '#ffcc00', thickness: 1 },
+            'reference': { color: '#b8bb26', thickness: 1.5 },
+            'static_unidirectional': { color: '#fabd2f', thickness: 2 },
+            'control_bidirectional': { color: '#d3869b', thickness: 2 }
         };
         const style = edgeStyles[type] || edgeStyles['dependency'];
         return {
@@ -227,7 +232,7 @@ export class FlowchartGenerator {
             from: fromId,
             to: toId,
             type,
-            is_approved: true,
+            is_approved: isApproved,
             visual: { color: style.color, thickness: style.thickness, style: 'solid' }
         };
     }

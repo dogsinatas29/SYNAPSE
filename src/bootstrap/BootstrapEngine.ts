@@ -288,7 +288,7 @@ This document defines the rules for how SYNAPSE discovers, parses, and visualize
                             intelligence: dtrData // This needs to be stored somewhere or passed to flowchartGen
                         });
 
-                        // [v0.2.16 Opt] Deep Scanning decoupled from discovery walk to prevent hangs
+                        // [v0.2.18.1 Opt] Deep Scanning decoupled from discovery walk to prevent hangs
                         // Content summary will be populated separately during sendProjectState
                     }
                 }

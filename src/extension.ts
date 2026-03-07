@@ -42,9 +42,9 @@ export async function activate(context: vscode.ExtensionContext) {
 
     try {
         console.log('[SYNAPSE] Starting activation sequence...');
-        vscode.window.showInformationMessage('SYNAPSE: Initializing (v0.2.16)...');
+        vscode.window.showInformationMessage('SYNAPSE: Initializing (v0.2.18.1)...');
 
-        // [v0.2.16 Monetization Lock] All monetization logic is strictly disabled
+        // [v0.2.18.1 Monetization Lock] All monetization logic is strictly disabled
         console.log('[SYNAPSE] BillingManager initialization skipped (Lock Active)');
         // BillingManager.initialize(context);
         // BillingManager.getInstance().trackSessionStart();

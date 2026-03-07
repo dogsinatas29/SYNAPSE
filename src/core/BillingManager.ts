@@ -12,7 +12,7 @@ export class BillingManager {
     private constructor(context: vscode.ExtensionContext) {
         this.db = DatabaseEngine.getInstance(context);
 
-        // [v0.2.16-dev] Force Pro mode for this engineering build to avoid blocking debugging
+        // [v0.2.18.1-dev] Force Pro mode for this engineering build to avoid blocking debugging
         const meta = this.db.getBillingMeta();
         if (!meta.isPro) {
             meta.isPro = true;
@@ -51,7 +51,7 @@ export class BillingManager {
 
         this.db.updateBillingMeta(meta);
 
-        // [v0.2.16 Monetization Lock] 
+        // [v0.2.18.1 Monetization Lock] 
         /*
         if (meta.dailySessions > this.FREE_DAILY_SESSIONS && !meta.isPro) {
             vscode.window.showWarningMessage(`[SYNAPSE] You have exceeded the free daily session limit (${this.FREE_DAILY_SESSIONS}). Please consider upgrading to PRO.`);
@@ -83,7 +83,7 @@ export class BillingManager {
         }
 
         /* 
-        // [v0.2.16 Monetization Lock] Node limit check is disabled for testing/dev
+        // [v0.2.18.1 Monetization Lock] Node limit check is disabled for testing/dev
         if (existingNodes.length > this.FREE_NODE_LIMIT) {
             vscode.window.showErrorMessage(`[SYNAPSE] Free plan node limit reached (${this.FREE_NODE_LIMIT} nodes). You are currently tracking ${existingNodes.length} nodes. Upgrade to PRO to view more logic.`);
             return false;

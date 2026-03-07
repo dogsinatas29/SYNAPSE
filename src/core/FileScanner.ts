@@ -4,7 +4,7 @@ import * as path from 'path';
 export interface CodeSummary {
     classes: string[];
     functions: string[];
-    references: { target: string, type: string, nodeId?: string }[]; // [v0.2.17 Patch 13] Strict ID-Based Symmetry
+    references: { target: string, type: string, nodeId?: string, isApproved?: boolean }[]; // [v0.2.18.1.2] Keep track of approval state
 }
 
 export class FileScanner {
@@ -23,7 +23,7 @@ export class FileScanner {
         }
 
         try {
-            // [v0.2.16 Opt] Skip files larger than 1MB to prevent hangs
+            // [v0.2.18.1 Opt] Skip files larger than 1MB to prevent hangs
             const stats = fs.statSync(filePath);
             if (stats.size > 1024 * 1024) {
                 console.warn(`[SYNAPSE] Skipping large file: ${filePath} (${Math.round(stats.size / 1024)} KB)`);
@@ -91,10 +91,16 @@ export class FileScanner {
         const lines = content.split('\n');
         for (const line of lines) {
             const trimmed = line.trim();
-            if (!trimmed || trimmed.startsWith('#')) continue;
+            if (!trimmed) continue;
+
+            // [v0.2.18.1.2] Support parsing commented (pending/deleted) edges
+            const isCommented = trimmed.startsWith('#');
+            const isPendingOrDeleted = /\[SYNAPSE_(?:PENDING|DELETED)/.test(line);
+            
+            if (isCommented && !isPendingOrDeleted) continue;
 
             // 1. from a.b import c (Handles dots as path delimiters or extensions)
-            const fromMatch = trimmed.match(/^from\s+([a-zA-Z0-9_.]+)\s+import/);
+            const fromMatch = trimmed.match(/^(?:#\s*)?(?:\[SYNAPSE(?:_PENDING|_DELETED)?:[^\]]+\]\s*)?from\s+([a-zA-Z0-9_.]+)\s+import/);
             if (fromMatch) {
                 const fromPart = fromMatch[1];
                 // [v0.2.17 Patch 10] Recognize extensions for non-Python bridges (e.g., TEST.c)
@@ -115,14 +121,18 @@ export class FileScanner {
                     const idMatch = line.match(/\[SYNAPSE(?:_PENDING|_DELETED)?:([^\]]+)\]/);
                     const nodeId = idMatch ? idMatch[1] : undefined;
 
-                    console.log(`  [DEP] Added reference (from): ${rootMod} (ID: ${nodeId || 'none'}, Type: ${type})`);
-                    summary.references.push({ target: rootMod, type, nodeId });
+                    // [v0.2.18.1] Infer Edge Type from syntax
+                    if (trimmed.startsWith('from ')) type = 'reference';
+                    else if (line.includes(' # static')) type = 'static_unidirectional';
+
+                    console.log(`  [DEP] Added reference (from): ${rootMod} (ID: ${nodeId || 'none'}, Type: ${type}, Approved: ${!isPendingOrDeleted})`);
+                    summary.references.push({ target: rootMod, type, nodeId, isApproved: !isPendingOrDeleted });
                 }
                 continue;
             }
 
             // 2. import a, b as bb
-            const importMatch = trimmed.match(/^import\s+([a-zA-Z0-9_.,\s]+)/);
+            const importMatch = trimmed.match(/^(?:#\s*)?(?:\[SYNAPSE(?:_PENDING|_DELETED)?:([^\]]+)\]\s*)?import\s+([a-zA-Z0-9_.,\s]+)/);
             if (importMatch) {
                 const importPart = importMatch[1];
                 importPart.split(',').forEach(r => {
@@ -147,8 +157,8 @@ export class FileScanner {
                             const idMatch = line.match(/\[SYNAPSE(?:_PENDING|_DELETED)?:([^\]]+)\]/);
                             const nodeId = idMatch ? idMatch[1] : undefined;
 
-                            console.log(`  [DEP] Added reference (import): ${rootMod} (ID: ${nodeId || 'none'}, Type: ${type})`);
-                            summary.references.push({ target: rootMod, type, nodeId });
+                            console.log(`  [DEP] Added reference (import): ${rootMod} (ID: ${nodeId || 'none'}, Type: ${type}, Approved: ${!isPendingOrDeleted})`);
+                            summary.references.push({ target: rootMod, type, nodeId, isApproved: !isPendingOrDeleted });
                         }
                     }
                 });
@@ -180,12 +190,16 @@ export class FileScanner {
         }
 
         // JS/TS 임포트 (references, import type 지원)
-        const importRegex = /(?:import|require)\s+(?:type\s+)?(?:.*from\s+)?['"](.+)['"]|import\s*\(\s*['"](.+)['"]\s*\)/g;
+        // [v0.2.18.2 Opt] Prevent matching inside template literals or dynamic requires with variables
+        const importRegex = /(?:import|require)\s+(?:type\s+)?(?:.*from\s+)?['"]([^'"`${}]+)['"]|import\s*\(\s*['"]([^'"`${}]+)['"]\s*\)/g;
         while ((match = importRegex.exec(content)) !== null) {
             const ref = match[1] || match[2];
             if (ref) {
+                // Ignore dynamic paths or very long non-file strings
+                if (ref.includes('${') || ref.length > 100) continue;
+
                 const cleanRef = ref.startsWith('.') ? path.basename(ref, path.extname(ref)) : ref.split('/')[0];
-                if (cleanRef && !['react', 'vscode', 'path', 'fs'].includes(cleanRef) && !summary.references.some(r => r.target === cleanRef)) {
+                if (cleanRef && !['react', 'vscode', 'path', 'fs', 'os', 'child_process'].includes(cleanRef) && !summary.references.some(r => r.target === cleanRef)) {
                     let type = 'dependency';
                     if (cleanRef.match(/api|http|fetch|axios/i)) type = 'api_call';
                     else if (cleanRef.match(/db|sql|database|query/i)) type = 'db_query';
@@ -225,21 +239,33 @@ export class FileScanner {
         const lines = content.split('\n');
         for (const line of lines) {
             const trimmed = line.trim();
-            if (!trimmed.startsWith('#include')) continue;
+            if (!trimmed) continue;
 
-            const includeMatch = trimmed.match(/#include\s+(["<])([^">]+)([">])/);
+            const isCommented = trimmed.startsWith('//') || trimmed.startsWith('/*');
+            const isPendingOrDeleted = /\[SYNAPSE_(?:PENDING|DELETED)/.test(line);
+            
+            if (isCommented && !isPendingOrDeleted) continue;
+
+            // Search for include in both active and commented lines
+            const includeMatch = trimmed.match(/(?:#\s*include|#include)\s+(["<])([^">]+)([">])/);
             if (includeMatch) {
-                const type = includeMatch[1]; // " 또는 <
+                const quoteType = includeMatch[1]; // " 또는 <
                 const ref = includeMatch[2];
 
-                // 로컬 헤더("")는 프로젝트 내 의존성으로 처리, 시스템 헤더(<>)는 필터링하거나 별도 처리
-                if (type === '"') {
+                // 로컬 헤더("")는 프로젝트 내 의존성으로 처리
+                if (quoteType === '"') {
                     const cleanRef = path.basename(ref, path.extname(ref));
                     if (cleanRef && !summary.references.some(r => r.target === cleanRef)) {
-                        console.log(`  [DEP] Added C++ local reference: ${cleanRef}`);
-                        summary.references.push({ target: cleanRef, type: 'dependency' });
+                        let type = 'dependency';
+                        
+                        // [v0.2.18.1.2] Extract metadata from C++ comment line
+                        const idMatch = line.match(/\[SYNAPSE(?:_PENDING|_DELETED)?:([^\]]+)\]/);
+                        const nodeId = idMatch ? idMatch[1] : undefined;
+
+                        console.log(`  [DEP] Added C++ reference: ${cleanRef} (Approved: ${!isPendingOrDeleted})`);
+                        summary.references.push({ target: cleanRef, type, nodeId, isApproved: !isPendingOrDeleted });
                     }
-                } else if (type === '<') {
+                } else if (quoteType === '<') {
                     // 표준 라이브러리나 외부 라이브러리 (시스템 헤더)
                     const systemLib = ref.split('/')[0];
                     // 흔한 표준 라이브러리는 노이즈 방지를 위해 제외
@@ -286,13 +312,19 @@ export class FileScanner {
             }
         }
 
-        // Rust use statements (references) - 정밀 분석
+        // Rust use & mod statements (references) - 정밀 분석
         const lines = content.split('\n');
         for (const line of lines) {
             const trimmed = line.trim();
-            if (!trimmed.startsWith('use ')) continue;
+            if (!trimmed) continue;
 
-            const useMatch = trimmed.match(/^use\s+([a-zA-Z0-9_:]+)/);
+            const isCommented = trimmed.startsWith('//');
+            const isPendingOrDeleted = /\[SYNAPSE_(?:PENDING|DELETED)/.test(line);
+
+            if (isCommented && !isPendingOrDeleted) continue;
+
+            // 1. Rust use statements
+            const useMatch = trimmed.match(/^(?:\/\/\s*)?(?:\[SYNAPSE(?:_PENDING|_DELETED)?:[^\]]+\]\s*)?use\s+([a-zA-Z0-9_:]+)/);
             if (useMatch) {
                 const fullPath = useMatch[1];
                 const parts = fullPath.split('::');
@@ -300,20 +332,31 @@ export class FileScanner {
 
                 // crate, self, super 등 내부 참조 처리
                 if (['crate', 'self', 'super'].includes(rootMod)) {
-                    // 내부 모듈 의존성으로 처리 (실제 매핑을 위해 더 상세한 분석 가능)
                     const targetMod = parts[1] || rootMod;
                     if (targetMod && !summary.references.some(r => r.target === targetMod)) {
-                        console.log(`  [DEP] Added Rust internal reference: ${targetMod}`);
-                        summary.references.push({ target: targetMod, type: 'dependency' });
+                        const idMatch = line.match(/\[SYNAPSE(?:_PENDING|_DELETED)?:([^\]]+)\]/);
+                        const nodeId = idMatch ? idMatch[1] : undefined;
+                        summary.references.push({ target: targetMod, type: 'dependency', nodeId, isApproved: !isPendingOrDeleted });
                     }
                 } else if (rootMod) {
-                    // 외부 크레이트 또는 표준 라이브러리
                     if (!['std', 'core', 'alloc', 'prelude'].includes(rootMod)) {
                         if (!summary.references.some(r => r.target === rootMod)) {
-                            console.log(`  [DEP] Added Rust external reference: ${rootMod}`);
-                            summary.references.push({ target: rootMod, type: 'api_call' });
+                            const idMatch = line.match(/\[SYNAPSE(?:_PENDING|_DELETED)?:([^\]]+)\]/);
+                            const nodeId = idMatch ? idMatch[1] : undefined;
+                            summary.references.push({ target: rootMod, type: 'api_call', nodeId, isApproved: !isPendingOrDeleted });
                         }
                     }
+                }
+            }
+
+            // 2. Rust mod statements
+            const modMatch = trimmed.match(/^(?:\/\/\s*)?(?:\[SYNAPSE(?:_PENDING|_DELETED)?:[^\]]+\]\s*)?mod\s+([a-zA-Z0-9_]+);/);
+            if (modMatch) {
+                const modName = modMatch[1];
+                if (modName && !summary.references.some(r => r.target === modName)) {
+                    const idMatch = line.match(/\[SYNAPSE(?:_PENDING|_DELETED)?:([^\]]+)\]/);
+                    const nodeId = idMatch ? idMatch[1] : undefined;
+                    summary.references.push({ target: modName, type: 'dependency', nodeId, isApproved: !isPendingOrDeleted });
                 }
             }
         }
@@ -328,10 +371,13 @@ export class FileScanner {
         }
 
         // References (scripts calling other scripts or bins)
-        const refRegex = /(?:\.|\.\/|source\s+|bash\s+|sh\s+)([a-zA-Z0-9_-]+)(?:\.sh)?/g;
+        // [v0.2.18.2 Opt] Ignore common shell keywords and prevent matching bash variables as files
+        const refRegex = /(?:\.|\.\/|source\s+|bash\s+|sh\s+)([a-zA-Z0-9_-]+)(?:\.sh)?(?:\s|$)/g;
+        const shellKeywords = ['then', 'else', 'done', 'fi', 'exit', 'true', 'false', 'echo', 'grep', 'sed', 'awk', 'cat'];
+        
         while ((match = refRegex.exec(content)) !== null) {
             const ref = match[1];
-            if (ref && !summary.references.some(r => r.target === ref)) {
+            if (ref && !shellKeywords.includes(ref) && !summary.references.some(r => r.target === ref)) {
                 summary.references.push({ target: ref, type: 'dependency' });
             }
         }

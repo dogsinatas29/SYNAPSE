@@ -545,7 +545,39 @@ export class CanvasPanel {
         }
     }
 
+    /**
+     * [v0.2.18.1] Lightweight Schema Guard
+     * Validates that the state has the essential structure before persisting.
+     */
+    private validateProjectState(state: any): boolean {
+        if (!state || typeof state !== 'object') return false;
+
+        // Essential keys check
+        const essentialKeys = ['nodes', 'edges', 'clusters'];
+        for (const key of essentialKeys) {
+            if (!Array.isArray(state[key])) {
+                Logger.error(`[SYNAPSE:v0.2.18.1] Schema Validation Failed: ${key} must be an array.`);
+                return false;
+            }
+        }
+
+        // Basic Node integrity
+        for (const node of state.nodes) {
+            if (!node.id || !node.type) {
+                Logger.error(`[SYNAPSE:v0.2.18.1] Schema Validation Failed: Node ${node.id || 'unknown'} missing essential properties.`);
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     private normalizeProjectState(state: any): string {
+        // [v0.2.18.1] Pre-save Validation
+        if (!this.validateProjectState(state)) {
+            Logger.warn('[SYNAPSE:v0.2.18.1] State normalization halted due to validation failure.');
+        }
+
         // 0. Circular Reference Prevention & Plain Data Extraction
         const decycle = (obj: any, stack = new Set()): any => {
             if (!obj || typeof obj !== 'object') return obj;
@@ -563,6 +595,12 @@ export class CanvasPanel {
         };
 
         const safeState = decycle(state);
+
+        // [v0.2.18.1] UTF8 & Byte-Oriented Header Logic
+        // Calculate total byte size of the state for the header
+        const stateString = JSON.stringify(safeState);
+        const byteSize = Buffer.byteLength(stateString, 'utf8');
+        console.log(`[SYNAPSE:v0.2.18.1] Exporting state - Size: ${byteSize} bytes (UTF-8)`);
 
         // 1. 기본값 제거 (Pruning)
         const pruneDefaults = (obj: any, defaults: any): any => {
@@ -602,6 +640,7 @@ export class CanvasPanel {
             if (Array.isArray(obj)) return obj.map(sortKeys);
 
             const sorted: any = {};
+            // [v0.2.18.1] Memory Alignment Simulation: Sort keys to ensure predictable layout
             Object.keys(obj).sort().forEach(key => {
                 sorted[key] = sortKeys(obj[key]);
             });
@@ -621,6 +660,16 @@ export class CanvasPanel {
                 seen.add(key);
                 return true;
             });
+        }
+
+        // [v0.2.18.1] Add Byte-Oriented Metadata for Iron Guard Protocol
+        if (sortedState && typeof sortedState === 'object') {
+            sortedState._iron_guard = {
+                version: '0.2.18.1',
+                byte_size: byteSize,
+                encoding: 'UTF-8',
+                alignment: 8
+            };
         }
 
         // 4. 정렬된 JSON 문자열 반환
@@ -680,8 +729,10 @@ export class CanvasPanel {
                 console.log(`[SYNAPSE] Logically identical edge already exists (ID: ${duplicate.id}), skipping push.`);
                 // If the new edge has more info (e.g. coordinates or metadata), we could merge, but for now just skip to prevent "10-20 times delete" issue
             } else {
+                // [v0.2.18.1.1] Force is_approved: false for manual edges to show "?" badge
+                edge.is_approved = false;
                 projectState.edges.push(edge);
-                console.log(`[SYNAPSE] Pushed new edge to projectState. Current count: ${projectState.edges.length}`);
+                console.log(`[SYNAPSE] Pushed new manual edge (is_approved: false) to projectState. Current count: ${projectState.edges.length}`);
             }
 
             // [v0.2.18] Move from Buffer to Reserved Cluster on Connection
@@ -777,11 +828,15 @@ export class CanvasPanel {
         try {
             const projectRoot = workspaceFolder.uri.fsPath;
             const refactorer = new EdgeCodeRefactorer();
-            const result = refactorer.removeEdgeFromSource(actualFromFile, actualToFile, projectRoot);
+            
+            // [v0.2.18.1.1] Pass toNodeId for precise tagging
+            const toNodeId = edge?.to;
+            const result = refactorer.removeEdgeFromSource(actualFromFile, actualToFile, projectRoot, toNodeId);
 
             if (!result.success) {
-                // [v0.2.19 Hotfix] Even if source removal fails (e.g. import not found or non-code file), 
-                // we MUST delete the logical edge from the Canvas and state.
+                Logger.warn(`[SYNAPSE] Source removal unsuccessful: ${result.message} (File: ${actualFromFile})`);
+                // Even if source removal fails, we might want to continue deleting logically if the user insists
+                // But for now, let's keep the existing hotfix behavior
                 vscode.window.showWarningMessage(`[SYNAPSE] 소스 내 import 검색 실패 (캔버스 연결만 끊습니다): ${result.message}`);
             }
 
@@ -872,14 +927,28 @@ export class CanvasPanel {
             // 저장 (정규화 적용)
             const normalizedJson = this.normalizeProjectState(projectState);
             await vscode.workspace.fs.writeFile(projectStateUri, Buffer.from(normalizedJson, 'utf8'));
-            console.log('[SYNAPSE] Edge deleted:', deletedEdge);
+            console.log('[SYNAPSE] Edge deleted from state:', deletedEdge);
+
+            // 2. 소스 코드 동기화 (Hibernate 로직)
+            const fromNode = projectState.nodes.find((n: any) => n.id === deletedEdge.from);
+            const toNode = projectState.nodes.find((n: any) => n.id === deletedEdge.to);
+
+            if (fromNode && toNode) {
+                const refactorer = new EdgeCodeRefactorer();
+                const result = refactorer.removeEdgeFromSource(fromNode.data.file, toNode.data.file, workspaceFolder.uri.fsPath, toNode.id);
+                console.log(`[SYNAPSE] Source refactor result:`, result.message);
+                if (result.success) {
+                    vscode.window.setStatusBarMessage(`Edge hibernated in source: ${path.basename(fromNode.data.file)}`, 3000);
+                }
+            }
+
             vscode.window.setStatusBarMessage(`Edge deleted`, 3000);
 
             // [v0.2.26 Bugfix] Auto-snapshot on edge deletion to seal the state
+            // handleTakeSnapshot internally calls sendProjectState, so we don't need duplicate call
             await this.handleTakeSnapshot({ label: `Auto Backup (After Edge Deletion)` });
 
-            // 캔버스 새로고침
-            await this.sendProjectState();
+            // await this.sendProjectState(); // REMOVED to prevent double refresh
         } catch (error) {
             console.error('Failed to delete edge:', error);
             vscode.window.showErrorMessage(`Failed to delete edge: ${error}`);
@@ -1180,7 +1249,7 @@ export class CanvasPanel {
             // [v0.2.23] Extension Guard: 확정 시점에 확장자 체크하여 가상 노드 연결 차단
             if (actualFromFile) {
                 const ext = path.extname(actualFromFile).toLowerCase();
-                const supportedExts = ['.ts', '.js', '.tsx', '.jsx', '.py', '.c'];
+                const supportedExts = ['.ts', '.js', '.tsx', '.jsx', '.py', '.c', '.h', '.cpp', '.hpp', '.rs'];
 
                 if (!supportedExts.includes(ext) || ext === '') {
                     vscode.window.showWarningMessage(`[SYNAPSE] ⚠️ ${actualFromFile}: 연결할 수 없는 노드 타입입니다. (확장자가 없는 파일은 소스 연결 지원 불가)`);
@@ -1227,7 +1296,7 @@ export class CanvasPanel {
             if (actualFromFile && actualToFile) {
                 // [v0.2.20 Fix] Proactive extension check
                 const ext = path.extname(actualFromFile).toLowerCase();
-                const supportedExts = ['.ts', '.js', '.tsx', '.jsx', '.py', '.c'];
+                const supportedExts = ['.ts', '.js', '.tsx', '.jsx', '.py', '.c', '.h', '.cpp', '.hpp', '.rs'];
 
                 if (!supportedExts.includes(ext)) {
                     vscode.window.showErrorMessage(`[SYNAPSE] ⚠️ ${actualFromFile}: 확장자가 없는 파일(가상 노드)은 코드 주입을 지원하지 않습니다. (.py, .ts, .js 파일만 가능)`);
@@ -1587,6 +1656,8 @@ export class CanvasPanel {
             return `# ${fileName.replace('.md', '')}\n\nCreated by SYNAPSE\n`;
         } else if (fileName.endsWith('.sql')) {
             return `-- ${fileName}\n-- Created by SYNAPSE\n`;
+        } else if (fileName.endsWith('.rs')) {
+            return `// ${fileName}\n// Created by SYNAPSE\n\npub fn main() {\n    println!("Hello from ${fileName}");\n}\n`;
         }
         return `// ${fileName}\n// Created by SYNAPSE\n`;
     }
@@ -1712,9 +1783,16 @@ export class CanvasPanel {
                         if (uiEdge.status) backendEdge.status = uiEdge.status;
                         if (uiEdge.type) backendEdge.type = uiEdge.type;
                     } else {
-                        // New manual edge! Append to the backend
-                        currentState.edges.push(uiEdge);
-                        Logger.info(`[CanvasPanel] handleSaveState: Appended new UI edge ${uiEdge.id}`);
+                        // [v0.2.18.2 Validation] Ensure both nodes exist before adding a new UI edge
+                        const fromExists = currentState.nodes.some((n: any) => n.id === uiEdge.from);
+                        const toExists = currentState.nodes.some((n: any) => n.id === uiEdge.to);
+
+                        if (fromExists && toExists) {
+                            currentState.edges.push(uiEdge);
+                            Logger.info(`[CanvasPanel] handleSaveState: Appended valid new UI edge ${uiEdge.id}`);
+                        } else {
+                            Logger.warn(`[CanvasPanel] handleSaveState: DROPPING Ghost Edge ${uiEdge.id} (From: ${uiEdge.from} [${fromExists}], To: ${uiEdge.to} [${toExists}])`);
+                        }
                     }
                 }
 
@@ -2138,7 +2216,7 @@ export class CanvasPanel {
             // 1. FileScanner 인스턴스 생성
             const scanner = new FileScanner();
 
-            // 2. 각 노드에 대해 실제 파일 분석 수행 (Parallelized with Concurrency Limit for v0.2.16)
+            // 2. 각 노드에 대해 실제 파일 분석 수행 (Parallelized with Concurrency Limit for v0.2.18.1)
             console.log(`[SYNAPSE] Starting throttled file scan for ${projectState.nodes.length} nodes...`);
             console.time('[SYNAPSE] Total Scan Time');
 
@@ -2428,6 +2506,7 @@ export class CanvasPanel {
                                     from: sourceNode.id,
                                     to: targetNodeId,
                                     type: edgeType,
+                                    is_approved: (ref as any).isApproved !== false, // [v0.2.18.1.1] Sync with scanner results
                                     label: edgeType === 'dependency' ? 'ref' : edgeType,
                                     data: {
                                         dtr: 0 // [v0.2.18] Auto-confirmed (Removes "?" badge)

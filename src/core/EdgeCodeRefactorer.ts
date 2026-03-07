@@ -15,9 +15,9 @@ export class EdgeCodeRefactorer {
      */
     public applyEdgeToSource(fromFile: string, toFile: string, projectRoot: string, options?: { commented?: boolean, toNodeId?: string }): RefactorResult {
         const ext = path.extname(fromFile).toLowerCase();
-        // [v0.2.17-patch4] Added .c support
-        if (!['.ts', '.js', '.tsx', '.jsx', '.py', '.c'].includes(ext)) {
-            return { success: false, importLine: '', message: `확장자가 없는 파일은 소스 코드 연동(import)이 불가능합니다. (.py, .ts, .js, .c 등 지원 필수)` };
+        // [v0.2.18.1] Expanded Polyglot support (C/C++, Rust)
+        if (!['.ts', '.js', '.tsx', '.jsx', '.py', '.c', '.cpp', '.h', '.hpp', '.rs'].includes(ext)) {
+            return { success: false, importLine: '', message: `지원하지 않는 파일 타입입니다: ${ext}` };
         }
 
         const absFrom = path.join(projectRoot, fromFile);
@@ -102,9 +102,10 @@ export class EdgeCodeRefactorer {
             return { success: true, importLine: pyImport, message: `Added: ${fullImportLine}` };
         }
 
-        // C Support (v0.2.17-patch4)
-        if (ext === '.c') {
-            const cInclude = `#include "${path.basename(toFile)}"`;
+        // C/C++ Support (v0.2.18.1 Extended)
+        if (['.c', '.cpp', '.h', '.hpp'].includes(ext)) {
+            const fileName = path.basename(toFile);
+            const cInclude = `#include "${fileName}"`;
             const fullIncludeLine = isCommented ? `// ${tag} ${cInclude}` : `${cInclude} // ${tag}`;
 
             if (lines.some(l => l.trim().includes(cInclude))) {
@@ -114,6 +115,21 @@ export class EdgeCodeRefactorer {
             lines.splice(0, 0, fullIncludeLine);
             fs.writeFileSync(absFrom, lines.join('\n'), 'utf8');
             return { success: true, importLine: cInclude, message: `Added: ${fullIncludeLine}` };
+        }
+
+        // Rust Support (v0.2.18.1 New)
+        if (ext === '.rs') {
+            const modName = path.basename(toFile, '.rs');
+            const rustLine = `mod ${modName};`;
+            const fullRustLine = isCommented ? `// ${tag} ${rustLine}` : `${rustLine} // ${tag}`;
+
+            if (lines.some(l => l.trim().includes(rustLine))) {
+                return { success: true, importLine: rustLine, skipped: true, message: `Already declared: ${rustLine}` };
+            }
+
+            lines.splice(0, 0, fullRustLine);
+            fs.writeFileSync(absFrom, lines.join('\n'), 'utf8');
+            return { success: true, importLine: rustLine, message: `Added: ${fullRustLine}` };
         }
 
         // TS/JS Support
@@ -158,8 +174,9 @@ export class EdgeCodeRefactorer {
      */
     public removeEdgeFromSource(fromFile: string, toFile: string, projectRoot: string, toNodeId?: string): RefactorResult {
         const ext = path.extname(fromFile).toLowerCase();
-        if (!['.ts', '.js', '.tsx', '.jsx', '.py'].includes(ext)) {
-            return { success: false, importLine: '', message: `Not supported file type: ${ext}` };
+        // [v0.2.18.1] Expanded removal support
+        if (!['.ts', '.js', '.tsx', '.jsx', '.py', '.c', '.cpp', '.h', '.hpp', '.rs'].includes(ext)) {
+            return { success: false, importLine: '', message: `지원하지 않는 파일 타입입니다: ${ext}` };
         }
 
         const absFrom = path.join(projectRoot, fromFile);
@@ -224,12 +241,35 @@ export class EdgeCodeRefactorer {
                     return `# ${deleteTag} ${cleanLine}`;
                 }
             }
-            // C Match
-            if (ext === '.c') {
+            // C/C++ Match
+            if (['.c', '.cpp', '.h', '.hpp'].includes(ext)) {
+                // [v0.2.18.1.1] Enhanced matching with ID support
                 const cInclude = `#include "${path.basename(toFile)}"`;
-                if (trimmed.includes(cInclude)) {
+                const hasIdMatch = toNodeId ? line.includes(`[SYNAPSE:${toNodeId}]`) : true;
+
+                if (trimmed.includes(cInclude) && hasIdMatch) {
                     removedLine = trimmed;
-                    return `// [SYNAPSE_DELETED] ${line.trim().startsWith('/') ? line.replace(/^\/\/\s*\[SYNAPSE_PENDING\]\s*/, '').replace(/^\/\/\s*\[SYNAPSE_DELETED\]\s*/, '') : line}`;
+                    const cleanLine = line.trim().startsWith('/')
+                        ? line.replace(/^\/\/\s*\[SYNAPSE_PENDING(:[^\]]*)?\]\s*/, '').replace(/^\/\/\s*\[SYNAPSE_DELETED(:[^\]]*)?\]\s*/, '')
+                        : line;
+                    const deleteTag = toNodeId ? `[SYNAPSE_DELETED:${toNodeId}]` : '[SYNAPSE_DELETED]';
+                    return `// ${deleteTag} ${cleanLine}`;
+                }
+            }
+            // Rust Match
+            if (ext === '.rs') {
+                const modName = path.basename(toFile, '.rs');
+                const rustMod = `mod ${modName};`;
+                const rustUse = `use ${modName}`; // Matches 'use modName' or 'use modName::...'
+                const hasIdMatch = toNodeId ? line.includes(`[SYNAPSE:${toNodeId}]`) : true;
+
+                if ((trimmed.includes(rustMod) || trimmed.includes(rustUse)) && hasIdMatch) {
+                    removedLine = trimmed;
+                    const cleanLine = line.trim().startsWith('/')
+                        ? line.replace(/^\/\/\s*\[SYNAPSE_PENDING(:[^\]]*)?\]\s*/, '').replace(/^\/\/\s*\[SYNAPSE_DELETED(:[^\]]*)?\]\s*/, '')
+                        : line;
+                    const deleteTag = toNodeId ? `[SYNAPSE_DELETED:${toNodeId}]` : '[SYNAPSE_DELETED]';
+                    return `// ${deleteTag} ${cleanLine}`;
                 }
             }
             return line;
@@ -240,7 +280,7 @@ export class EdgeCodeRefactorer {
         }
 
         fs.writeFileSync(absFrom, newLines.join('\n'), 'utf8');
-        return { success: true, importLine: removedLine, message: `Skipped execution logic removal, only commented out module reference: ${removedLine}` };
+        return { success: true, importLine: removedLine, message: `[v0.2.18.1] 엣지를 가수면 상태로 전환: ${removedLine}` };
     }
 
     /**
@@ -248,7 +288,7 @@ export class EdgeCodeRefactorer {
      */
     public pruneReferencesToNode(targetNodeName: string, projectRoot: string): { affectedFiles: string[] } {
         const affectedFiles: string[] = [];
-        const supportedExts = ['.ts', '.js', '.tsx', '.jsx', '.py'];
+        const supportedExts = ['.ts', '.js', '.tsx', '.jsx', '.py', '.c', '.cpp', '.h', '.hpp', '.rs'];
 
         const scanAndPrune = (dir: string) => {
             if (!fs.existsSync(dir)) return;

@@ -30,7 +30,7 @@ export class LogicAnalyzer {
         // 4. 병목 지점 탐색 (Bottlenecks)
         this.detectBottlenecks(nodes, edges, issues);
 
-        // 5. [v0.2.16] Schema 무결성 검증 (Schema Validation)
+        // 5. [v0.2.18.1] Schema 무결성 검증 (Schema Validation)
         this.detectSchemaViolations(nodes, edges, issues);
 
         return issues;

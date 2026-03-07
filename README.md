@@ -1,8 +1,8 @@
-# <img src="resources/synapse-icon.png" width="40" height="40" /> 🧠 SYNAPSE: Visual Architecture Engine (v0.2.18)
+# <img src="resources/synapse-icon.png" width="40" height="40" /> 🧠 SYNAPSE: Visual Architecture Engine (v0.2.18.1)
 
 > **"What you see is the logic of LLM"** — *WYSIWYG Logic for AI*
 
-[![Version](https://img.shields.io/badge/version-v0.2.18-brightgreen.svg)
+[![Version](https://img.shields.io/badge/version-v0.2.18.1-brightgreen.svg)
 ![Status](https://img.shields.io/badge/status-War_Room_Ready-orange.svg)
 [![Language](https://img.shields.io/badge/Language-TypeScript-blue?style=flat-square)](https://www.typescriptlang.org/)
 [![Platform](https://img.shields.io/badge/Platform-VS_Code-007ACC?style=flat-square)](https://code.visualstudio.com/)
@@ -47,6 +47,20 @@ Project complex execution flows into intuitive flowcharts.
 
 ---
 
+## 🧠 DTR (Density of Thought Reasoning) Engine
+SYNAPSE v0.2.18 introduces the **DTR Engine**, a quantitative measure of AI reasoning depth and architectural density. It transforms fuzzy AI confidence into measurable engineering metrics.
+
+### 🌓 The DTR Metric Spectrum
+- **DTR (Density of Thought)**: (0.0 ~ 1.0) Represents how much reasoning effort was concentrated in a specific node. High DTR nodes glow with a purple aura, indicating critical decision points.
+- **$\rho$ (Density Rho)**: The information compression ratio. Measures how much raw code/logic is encapsulated within a single visual abstraction.
+- **Think-at-N (Simulation Paths)**: The number of alternative architectural paths simulated by the LLM before materializing the current node.
+- **Panic Isolation**: A safety protocol that ensures logic failures in one language cluster (e.g., C++ crash) are contained and reported via structured error codes rather than crashing the visual engine.
+
+### 🚀 Deterministic Thinking Foundation
+DTR is not just a visual effect; it is the foundation for **Deterministic Thinking**. By quantifying reasoning density, SYNAPSE identifies "weak links" in the architecture where AI confidence is low, prompting the user for manual validation (the `?` badge flow).
+
+---
+
 ## 🔗 Edge & Line Conventions (선과 색상의 의미)
 SYNAPSE uses distinct colors and styles to represent different types of logical connections and data flows between nodes.
 
@@ -68,11 +82,11 @@ SYNAPSE uses distinct colors and styles to represent different types of logical 
 
 ### Project Topology
 Visualizes the physical connections between LLM reasoning logic and source files.
-![Topology View](./assets/v0.2.16/synapse_graph_v0.2.16.png)
+![Topology View](./resources/screenshots/v0.2.18/graph_view.png)
 
 ### Logical Flow
 Linear execution flow of specific events, reflecting both manual edits and code changes. Group-Aware Hierarchy and Orthogonal Edge Routing create clean, readable diagrams.
-![Flow View](./assets/v0.2.16/synapse_flow_v0.2.16.png)
+![Flow View](./resources/screenshots/v0.2.18/flow_view.png)
 
 ### Hierarchical Tree
 A deep, organized overview of your project structure.
@@ -86,9 +100,9 @@ A deep, organized overview of your project structure.
 2. Drag and drop the file into **VS Code**.
 ### Quick Installation
 ```bash
-code --install-extension synapse-visual-architecture-0.2.16.vsix
+code --install-extension synapse-visual-architecture-0.2.18.1.vsix
 ```
-    Current Version: **v0.2.18** (SSoT Enforcement & Zombie Node Block)
+    Current Version: **v0.2.18.1** (Iron Guard Protocol & Modular Architecture)
 
 ---
 
@@ -116,7 +130,13 @@ SYNAPSE v0.2.17 bridges the gap between drawing pictures and writing code.
 
 ## 🆕 Revision History
 
-### v0.2.18 (Edge Semantics & SSoT Enforcement)
+### v0.2.18.1 (Iron Guard Protocol & Modular Architecture)
+- **Modular Documentation Hub**: Split the massive `architecture.md` into 4 specialized specs (`core_synapse`, `vega_agent`, `reporting`, `data_scheme`) with a Master Hub orchestration.
+- **Lightweight Schema Guard (LOD)**: Implemented a Level of Detail validation engine for `project_state.json`. Essential fields (ID, Type, Status) are now strictly verified during save/load.
+- **Panic Isolation Foundation**: Established cross-language exception handling standards to prevent error contagion.
+- **Ghost Node Workflow**: Formalized the transistion model: `Ghost` (Proposal) -> `Materialize` (Approval) -> `Reserved` (Staging) -> `Active` (Code).
+- **Hierarchical UI Optimization**: Restructured the toolbar into logical menu groups (`View`, `System`, `Protocol`, `Snap Shot`) for a cleaner workspace.
+- **Context Vault Isolation**: Physically decoupled bulky context nodes into an external panel, accessible via a dedicated link button.
 - **Ghost Node Resurrection Blocked**: Implemented an explicit validation check during the `saveState` sequence (`CanvasPanel.ts`). Nodes deleted in the UI can no longer be resurrected by stale cache.
 - **Edge Badge Hitbox Expansion**: The clickable radius for Edge confirmation (`?`) and Edge deletion (`trash`) badges has been dramatically enlarged for better accessibility.
 - **Buffer ➔ Reserved Automation Leap**: Dropped dragging nodes falling out of Buffer Cluster. Added physical coordinate jump to `[-1500, 1000]` when a node is officially assigned to the Reserved Cluster.

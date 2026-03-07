@@ -135,6 +135,40 @@ code --install-extension synapse-visual-architecture-0.2.18.1.vsix
 ```
 현재 버전: **v0.2.18.1** (Iron Guard Protocol & Modular Architecture)
 
+## 🛠️ 툴바 및 메뉴 구조 (Toolbar & Menu Structure)
+SYNAPSE 툴바는 아키텍처 작업 흐름을 최적화하기 위해 논리적인 그룹으로 구성되어 있습니다.
+
+### 👁️ 뷰 메뉴 (View Menu)
+- **Graph View**: 파일 의존성과 폴더 구조를 보여주는 병렬 네트워크 맵입니다.
+- **Tree View**: 프로젝트 구조를 전통적인 계층형 트리 형태로 보여줍니다.
+- **Flow View**: 실행 경로와 분기 로직을 시각화하는 논리 중심의 순서도입니다.
+- **Show Vault**: **콘텍스트 볼트(AI 레코딩 브라우저)** 패널을 토글합니다.
+
+### 🔓 로직 편집 메뉴 (Edit Logic Menu)
+- **Toggle Edit Mode**: 노드 생성, 엣지 그리기, 삭제 등 파괴적인 편집 액션을 활성화하는 마스터 스위치입니다.
+- **🛡️ Test Logic**: 데드엔드, 순환 참조, 병목 현상을 감지하는 정적 분석 엔진을 실행합니다.
+- **➕ Node**: 새로운 아키텍처 노드를 생성합니다 (실제 파일이 자동으로 생성됩니다).
+- **🔗 Connect**: 노드 간의 엣지 연결 모드를 활성화합니다 (Alt+클릭 단축키 지원).
+- **🗑️ Delete**: 노드를 안전하게 삭제(코드 주석 처리)하거나 논리적 연결을 끊습니다.
+
+### ⚙️ 시스템 메뉴 (System Menu)
+- **Deep Reset**: 프로젝트 전체를 다시 스캔하여 전체 토폴로지를 초기화합니다.
+- **🔄 Reset State**: `project_state.json`을 초기화하여 완전히 깨끗한 캔버스에서 시작합니다.
+- **🎬 Animation**: 논리 경로 시각화를 위한 실시간 엣지 애니메이션을 토글합니다.
+
+### ⚖️ 프로토콜 메뉴 (Protocol Menu)
+- **Rules.md**: 프로젝트를 규정하는 아키텍처 규칙 파일로 즉시 이동합니다.
+- **Architecture.md**: 상위 수준 설계를 위한 중앙 **마스터 허브(Master Hub)** 파일을 엽니다.
+- **Modular Specs**: 분리된 세부 스펙 문서(`core`, `agent`, `reporting` 등)에 접근합니다.
+
+### 📸 스냅샷 메뉴 (Snap Shot Menu)
+- **Save Now**: 현재 캔버스의 좌표, 줌 레벨, 색상 상태를 즉시 캡처하여 저장합니다.
+- **History View**: 이전 설계 상태로 되돌릴 수 있는 **아키텍처 타임라인**을 엽니다.
+
+### ⏺ 콘텍스트 메뉴 (Context Menu)
+- **REC Toggle**: 제로-클릭 AI 콘텍스트 레코딩을 활성화합니다 (`Ctrl+Alt+M`).
+- **Vault History**: 이전에 저장된 LLM 상호작용 아티팩트 목록을 확인하고 검토합니다.
+
 ---
 
 ## 📖 사용 가이드 (v0.2.17 주요 기능)

@@ -135,6 +135,40 @@ code --install-extension synapse-visual-architecture-0.2.18.1.vsix
 ```
     Current Version: **v0.2.18.1** (Iron Guard Protocol & Modular Architecture)
 
+## 🛠️ Toolbar & Menu Structure
+The SYNAPSE toolbar is organized into logical groups to streamline your architectural workflow.
+
+### 👁️ View Menu
+- **Graph View**: Parallel network map showing file dependencies and folder topology.
+- **Tree View**: Traditional hierarchical overview of the project structure.
+- **Flow View**: Logic-first flowchart visualizing execution paths and branching.
+- **Show Vault**: Toggles the visibility of the **Context Vault** (AI recording browser).
+
+### 🔓 Edit Logic Menu (Master Switch)
+- **Toggle Edit Mode**: Enables destructive actions like node creation, edge drawing, and deletion.
+- **🛡️ Test Logic**: Runs a static analysis engine to detect dead-ends, circular dependencies, and bottlenecks.
+- **➕ Node**: Manually spawns a new architectural node (automatically creates a physical file).
+- **🔗 Connect**: Enables edge drawing between nodes (Alt+Click shortcut available).
+- **🗑️ Delete**: Safely removes nodes (comments out code) or severs logical edges.
+
+### ⚙️ System Menu
+- **Deep Reset**: Performs a complete re-scan of the project, re-initializing the entire topology.
+- **🔄 Reset State**: Hard-reset of `project_state.json` to start from a clean canvas.
+- **🎬 Animation**: Toggles real-time edge flow animations for logic path visualization.
+
+### ⚖️ Protocol Menu
+- **Rules.md**: Direct access to the project's governing architectural rules.
+- **Architecture.md**: Opens the central **Master Hub** for high-level design.
+- **Modular Specs**: Access to specialized sub-specifications (`core`, `agent`, `reporting`).
+
+### 📸 Snap Shot Menu
+- **Save Now**: Captures the exact coordinate, zoom level, and color state of the current canvas.
+- **History View**: Opens the **Architecture Timeline** for rolling back to previous design states.
+
+### ⏺ Context Menu
+- **REC Toggle**: Activates zero-click AI context recording (`Ctrl+Alt+M`).
+- **Vault History**: Browse and review previously saved LLM interaction artifacts.
+
 ---
 
 ## 📖 Usage Guide (v0.2.17 Key Features)

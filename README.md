@@ -140,8 +140,17 @@ Launch your visual architecture journey in seconds.
 
 1. **Install Extension**: Install the `synapse-visual-architecture-v0.2.20.vsix` (or latest) in Antigravity/VS Code.
 2. **DNA Injection**: Create or drop a `GEMINI.md` (or `Project_Spec.md`) file into your workspace root.
-3. **Bootstrap**: Open the **SYNAPSE Canvas** from the sidebar or command palette. The engine will automatically scan your folder structure and propose an initial architecture.
-4. **Confirm & Solidify**: Review the proposed nodes in the canvas and click **[Confirm]** to generate the actual project structure and files.
+3. **Bootstrap Phase**: Open the **SYNAPSE Canvas** from the sidebar or command palette (`Ctrl+Shift+P` -> `SYNAPSE: Open Canvas`).
+4. **First Visualization**: 
+    - The engine will scan your folder and display **Proposed Nodes** (transparent boxes with dashed borders).
+    - **Click [Confirm]** in the proposal popup to materialize these nodes into actual files and clusters.
+    - **See the Connections**: The engine automatically detects `import` or `require` calls and draws the first set of logic lines (Edges).
+
+### 🖱️ Navigation for Beginners
+- **Pan**: Left-click and drag the background canvas.
+- **Zoom**: Use the mouse wheel to zoom in (Detail View) or zoom out (Satellite View).
+- **Fit All**: Press the **`📷 Fit View`** button to center all nodes if you get lost.
+- **Select**: Left-click a node to select it (Right-panel opens for file preview).
 
 ---
 
@@ -184,38 +193,41 @@ To prevent "Visual Spaghetti," SYNAPSE employs a hybrid approach to edge density
 ---
 
 ## 🛠️ Toolbar & Menu Structure
-The SYNAPSE toolbar is organized into logical groups to streamline your architectural workflow.
+The SYNAPSE toolbar is the command center for your architectural workflow.
 
-### 👁️ View Menu
-- **Graph View**: Parallel network map showing file dependencies and folder topology.
-- **Tree View**: Traditional hierarchical overview of the project structure.
-- **Flow View**: Logic-first flowchart visualizing execution paths and branching.
-- **Show Vault**: Toggles the visibility of the **Context Vault** (AI recording browser).
+### 👁️ View Menu (Layout Control)
+- **Graph View**: A sprawling 2D network map showing file logic and folder clusters.
+- **Tree View**: A hierarchical, left-to-right tree centered on your project's logic core.
+- **Flow View**: Specialized for execution order and sequence diagrams.
+- **Show Vault**: Toggles the **Context Vault** side panel for reviewing AI-assisted sessions.
 
-### 🔓 Edit Logic Menu (Master Switch)
-- **Toggle Edit Mode**: Enables destructive actions like node creation, edge drawing, and deletion.
-- **🛡️ Test Logic**: Runs a static analysis engine to detect dead-ends, circular dependencies, and bottlenecks.
-- **➕ Node**: Manually spawns a new architectural node (automatically creates a physical file).
-- **🔗 Connect**: Enables edge drawing between nodes (Alt+Click shortcut available).
-- **🗑️ Delete**: Safely removes nodes (comments out code) or severs logical edges.
+### 📷 Navigation Control
+- **Fit View**: Instantly zooms and pans to bring all existing nodes into the center of your screen.
+- **Reset View**: Clears all manual zoom levels and returns to the default 1:1 view.
 
-### ⚙️ System Menu
-- **Deep Reset**: Performs a complete re-scan of the project, re-initializing the entire topology.
-- **🔄 Reset State**: Hard-reset of `project_state.json` to start from a clean canvas.
-- **🎬 Animation**: Toggles real-time edge flow animations for logic path visualization.
+### 🔓 Edit Logic Menu (Active Design)
+- **Toggle Edit Mode**: **The Master Switch.** Must be `ON` to drag nodes, create edges, or delete files.
+- **🛡️ Test Logic**: Triggers the `LogicAnalyzer` to generate an **`architecture_report.md`** checking for circular dependencies.
+- **➕ Node**: Creates a new logical node. If "Physical File" is checked, an empty source file is created instantly. **Important: You must include the file extension (e.g., `logic.ts`, `engine.py`) in the name.**
+- **🔗 Connect**: Enables drag-and-drop connection mode (Click **Source Node** -> Click **Target Node**).
+- **🗑️ Delete**: Permanently removes selected nodes or edges from both the canvas and `project_state.json`.
 
-### ⚖️ Protocol Menu
-- **Rules.md**: Direct access to the project's governing architectural rules.
-- **Architecture.md**: Opens the central **Master Hub** for high-level design.
-- **Modular Specs**: Access to specialized sub-specifications (`core`, `agent`, `reporting`).
+### ⚙️ System Menu (Meta Operations)
+- **Deep Reset**: Forces the engine to perform a full project re-scan, clearing all cached topology.
+- **🔄 Reset State**: Hard-wipes the current architecture to start from a blank canvas.
+- **🎬 Animation**: Toggles the particle flow on edges to visualize data/execution direction.
 
-### 📸 Snap Shot Menu
-- **Save Now**: Captures the exact coordinate, zoom level, and color state of the current canvas.
-- **History View**: Opens the **Architecture Timeline** for rolling back to previous design states.
+### ⚖️ Protocol Menu (Rules & Hubs)
+- **Rules.md**: Opens the governance file containing your project's architectural constraints.
+- **Architecture.md**: Opens the **Master Hub**, a central documentation file that SYNAPSE reads to understand global intent.
 
-### ⏺ Context Menu
-- **REC Toggle**: Activates zero-click AI context recording (`Ctrl+Alt+M`).
-- **Vault History**: Browse and review previously saved LLM interaction artifacts.
+### 📸 Snap Shot Menu (Version Control)
+- **Save Now**: Captures a visual and logical timestamp of your current canvas state.
+- **History View**: Opens the **Snapshot Timeline**, allowing you to preview and rollback to any previous design state.
+
+### ⏺ Context Menu (AI Memory)
+- **REC Toggle**: Toggles live recording of your interactions to provide "Dense Context" for LLM prompts.
+- **Vault History**: Allows you to browser and retrieve previously recorded architectural context clips.
 
 ---
 

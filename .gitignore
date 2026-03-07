@@ -21,3 +21,4 @@ demo_bootstrap.js
 sync_check.js
 backup_md/
 .synapse_contexts/
+prompts/

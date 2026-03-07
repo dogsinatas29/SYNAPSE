@@ -135,6 +135,36 @@ code --install-extension synapse-visual-architecture-0.2.18.1.vsix
 ```
     Current Version: **v0.2.18.1** (Iron Guard Protocol & Modular Architecture)
 
+## 🚀 Getting Started
+Launch your visual architecture journey in seconds.
+
+1. **Install Extension**: Install the `synapse-visual-architecture-v0.2.20.vsix` (or latest) in Antigravity/VS Code.
+2. **DNA Injection**: Create or drop a `GEMINI.md` (or `Project_Spec.md`) file into your workspace root.
+3. **Bootstrap**: Open the **SYNAPSE Canvas** from the sidebar or command palette. The engine will automatically scan your folder structure and propose an initial architecture.
+4. **Confirm & Solidify**: Review the proposed nodes in the canvas and click **[Confirm]** to generate the actual project structure and files.
+
+---
+
+## 🧠 Core Principles: DNA to Architecture
+SYNAPSE operates on a "Physical Abstraction" model where the diagram is not just a drawing, but the source of truth.
+
+### 1. Static Analysis (LSP-Driven)
+The **`FileScanner`** engine performs real-time static analysis across multiple languages:
+- **Node Generation**: Identifies `class`, `interface`, `struct`, and `function` export statements to map out the system's entities.
+- **Edge Generation**: Analyzes `import`, `require`, `include`, and `use` statements to detect dependencies and logical flow.
+- **Auto-Normalization**: Strips redundant metadata to keep `project_state.json` lean and Git-friendly.
+
+### 2. DTR (Deep-Thinking Ratio) Engine
+The **DTR Controller** manages the "cognitive density" of the architecture:
+- **High DTR (Purple Glow)**: Indicates complex nodes that require more reasoning cycles or have high dependency fan-in.
+- **Dynamic LOD**: Visual density changes based on zoom level—satellite view for structure, detail view for code snippets.
+
+### 3. Logic Edit & Confirmation
+- **Pending Edges (❓)**: Manually drawn edges are marked as pending until the underlying code (e.g., an `import` statement) is successfully injected and verified.
+- **Ghost Nodes (📦)**: Orphaned files or unimplemented requirements are isolated in the **Storage Cluster** until linked to the main logic.
+
+---
+
 ## 🛠️ Toolbar & Menu Structure
 The SYNAPSE toolbar is organized into logical groups to streamline your architectural workflow.
 

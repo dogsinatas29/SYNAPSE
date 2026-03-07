@@ -135,6 +135,36 @@ code --install-extension synapse-visual-architecture-0.2.18.1.vsix
 ```
 현재 버전: **v0.2.18.1** (Iron Guard Protocol & Modular Architecture)
 
+## 🚀 시작하기 (Getting Started)
+시각적 아키텍처 설계를 즉시 시작하는 방법입니다.
+
+1. **확장 기능 설치**: Antigravity/VS Code에 `synapse-visual-architecture-v0.2.20.vsix` (또는 최신 버전) 파일을 설치합니다.
+2. **DNA 주입**: 워크스페이스 루트에 `GEMINI.md` (또는 `Project_Spec.md`) 파일을 생성하거나 드롭합니다.
+3. **부트스트랩 (Bootstrap)**: 사이드바나 커맨드 팔레트에서 **SYNAPSE Canvas**를 엽니다. 엔진이 자동으로 폴더 구조를 스캔하고 초기 아키텍처를 제안합니다.
+4. **승인 및 실체화**: 캔버스에서 제안된 노드들을 검토하고 **[Confirm]** 버튼을 눌러 실제 프로젝트 구조와 파일을 생성합니다.
+
+---
+
+## 🧠 핵심 원리: DNA에서 아키텍처로 (Core Principles)
+SYNAPSE는 다이어그램이 단순한 그림이 아닌 '진실의 원천'이 되는 '물리적 추상화' 모델을 따릅니다.
+
+### 1. 정적 분석 (LSP 기반)
+**`FileScanner`** 엔진은 여러 언어에 대해 실시간 정적 분석을 수행합니다.
+- **노드 생성**: `class`, `interface`, `struct`, `function` 등의 선언문을 식별하여 시스템 엔티티를 매핑합니다.
+- **엣지 생성**: `import`, `require`, `include`, `use` 구문을 분석하여 의존성과 논리 흐름을 감지합니다.
+- **자동 정규화**: 불필요한 메타데이터를 제거하여 `project_state.json` 파일을 가볍고 Git 친화적으로 유지합니다.
+
+### 2. DTR (Deep-Thinking Ratio) 엔진
+**DTR 컨트롤러**는 아키텍처의 '인지 밀도'를 관리합니다.
+- **High DTR (보라색 광채)**: 더 많은 추론 사이클이 필요하거나 의존성 유입(Fan-in)이 높은 복잡한 노드를 나타냅니다.
+- **동적 LOD**: 줌 레벨에 따라 시각적 밀도가 변합니다 (전체 구조를 위한 위성 뷰 ↔ 코드 스니펫을 위한 상세 뷰).
+
+### 3. 로직 편집 및 승인
+- **보류 중인 엣지 (❓)**: 수동으로 그린 선은 실제 코드(예: `import` 문)가 주입되고 검증될 때까지 '보류' 상태로 표시됩니다.
+- **고스트 노드 (📦)**: 연결되지 않은 파일이나 구현되지 않은 요구사항은 메인 로직에 연결될 때까지 **Storage 클러스터**에 격리됩니다.
+
+---
+
 ## 🛠️ 툴바 및 메뉴 구조 (Toolbar & Menu Structure)
 SYNAPSE 툴바는 아키텍처 작업 흐름을 최적화하기 위해 논리적인 그룹으로 구성되어 있습니다.
 

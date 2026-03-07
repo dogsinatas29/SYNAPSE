@@ -75,11 +75,11 @@ SYNAPSE uses specific icons and colors to represent different types of component
 ### 🎨 Node Status & Glow
 | Status | Visual Hint | Color | Meaning |
 | :--- | :---: | :---: | :--- |
-| **Active** | Solid Border | `#83a598` | Verified and currently active in the codebase. |
-| **High DTR** | **Purple Glow** | `#8a2be2` | High reasoning density; critical logic point. |
-| **Ghost** | Dashed Border | `#928374` | Proposed architectural node (not yet materialized). |
-| **Deleted** | Grayed Out | `#282828` | Safely commented out/decommissioned node. |
-| **Warning** | Red Pulse | `#fb4934` | Logic error, circular dependency, or dead-end detected. |
+| **Active** | ![solid border](resources/node_styles/hint_solid_border.svg) | ![#83a598](resources/node_styles/node_active.svg) | Verified and currently active in the codebase. |
+| **High DTR** | ![purple glow](resources/node_styles/hint_purple_glow.svg) | ![#8a2be2](resources/node_styles/node_high_dtr.svg) | High reasoning density; critical logic point. |
+| **Ghost** | ![dashed border](resources/node_styles/hint_dashed_border.svg) | ![#928374](resources/node_styles/node_ghost.svg) | Proposed architectural node (not yet materialized). |
+| **Deleted** | ![grayed out](resources/node_styles/hint_grayed_out.svg) | ![#282828](resources/node_styles/node_deleted.svg) | Safely commented out/decommissioned node. |
+| **Warning** | ![red pulse](resources/node_styles/hint_red_pulse.svg) | ![#fb4934](resources/node_styles/node_warning.svg) | Logic error, circular dependency, or dead-end detected. |
 
 ---
 

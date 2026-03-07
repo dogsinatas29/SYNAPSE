@@ -75,11 +75,11 @@ SYNAPSE는 컴포넌트의 종류와 현재 추론 상태를 표현하기 위해
 ### 🎨 노드 상태 및 발광 (Node Status & Glow)
 | 상태 | 시각적 힌트 | 색상 | 의미 |
 | :--- | :---: | :---: | :--- |
-| **Active** | 실선 테두리 | `#83a598` | 검증되었으며 코드베이스에서 활성화된 상태입니다. |
-| **High DTR** | **보라색 발광** | `#8a2be2` | 높은 추론 밀도; 핵심 로직 지점입니다. |
-| **Ghost** | 점선 테두리 | `#928374` | 제안된 아키텍처 노드 (아직 실체화되지 않음)입니다. |
-| **Deleted** | 회색 처리 | `#282828` | 안전하게 주석 처리되거나 제거된 노드입니다. |
-| **Warning** | 빨간색 펄스 | `#fb4934` | 로직 에러, 순환 참조, 또는 데드엔드가 감지되었습니다. |
+| **Active** | ![solid border](resources/node_styles/hint_solid_border.svg) | ![#83a598](resources/node_styles/node_active.svg) | 검증되었으며 코드베이스에서 활성화된 상태입니다. |
+| **High DTR** | ![purple glow](resources/node_styles/hint_purple_glow.svg) | ![#8a2be2](resources/node_styles/node_high_dtr.svg) | 높은 추론 밀도; 핵심 로직 지점입니다. |
+| **Ghost** | ![dashed border](resources/node_styles/hint_dashed_border.svg) | ![#928374](resources/node_styles/node_ghost.svg) | 제안된 아키텍처 노드 (아직 실체화되지 않음)입니다. |
+| **Deleted** | ![grayed out](resources/node_styles/hint_grayed_out.svg) | ![#282828](resources/node_styles/node_deleted.svg) | 안전하게 주석 처리되거나 제거된 노드입니다. |
+| **Warning** | ![red pulse](resources/node_styles/hint_red_pulse.svg) | ![#fb4934](resources/node_styles/node_warning.svg) | 로직 에러, 순환 참조, 또는 데드엔드가 감지되었습니다. |
 
 ---
 

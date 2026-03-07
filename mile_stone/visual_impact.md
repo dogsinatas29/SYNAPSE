@@ -1,5 +1,5 @@
 # encoding: utf-8
-# 🧠 Axon - 에러 트레이서 및 논리 테스트 아키텍처
+# 🧠 Visual Impact - 에러 트레이서 및 논리 테스트 아키텍처
 
 ---
 

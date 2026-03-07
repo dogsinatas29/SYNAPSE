@@ -61,20 +61,42 @@ DTR은 단순한 시각 효과가 아닙니다. 이는 **결정론적 사고**�
 
 ---
 
-## 🔗 엣지 및 선 규격 (선과 색상의 의미)
+## 🏗️ 노드 규격 (Node Conventions)
+SYNAPSE는 컴포넌트의 종류와 현재 추론 상태를 표현하기 위해 고유한 아이콘과 색상을 사용합니다.
+
+### 📄 엔티티 타입 (Entity Types)
+| 아이콘 | 타입 | 설명 |
+| :---: | :--- | :--- |
+| 📄 | **File** | 워크스페이스 내의 실제 소스 파일입니다. |
+| 📁 | **Folder** | 여러 노드나 클러스터를 포함하는 디렉토리입니다. |
+| 🧩 | **Component** | 논리적 그룹 또는 추상화된 모듈입니다. |
+| ⚡ | **Trigger** | 진입점 또는 이벤트 소스입니다. |
+
+### 🎨 노드 상태 및 발광 (Node Status & Glow)
+| 상태 | 시각적 힌트 | 색상 | 의미 |
+| :--- | :---: | :---: | :--- |
+| **Active** | 실선 테두리 | `#83a598` | 검증되었으며 코드베이스에서 활성화된 상태입니다. |
+| **High DTR** | **보라색 발광** | `#8a2be2` | 높은 추론 밀도; 핵심 로직 지점입니다. |
+| **Ghost** | 점선 테두리 | `#928374` | 제안된 아키텍처 노드 (아직 실체화되지 않음)입니다. |
+| **Deleted** | 회색 처리 | `#282828` | 안전하게 주석 처리되거나 제거된 노드입니다. |
+| **Warning** | 빨간색 펄스 | `#fb4934` | 로직 에러, 순환 참조, 또는 데드엔드가 감지되었습니다. |
+
+---
+
+## 🔗 엣지 및 선 규격 (Edge & Line Conventions)
 SYNAPSE는 노드 간의 다양한 논리적 연결과 데이터 흐름을 표현하기 위해 고유한 색상과 스타일을 사용합니다.
 
 | 엣지 타입 (종류) | 색상 (색상) | 스타일 및 두께 | 의미 (의미) |
 | :--- | :---: | :---: | :--- |
-| **Dependency** | `#ebdbb2` (Beige) | 실선 (2px) | 표준 모듈 의존성 및 참조. (일반적인 모듈 의존성 및 참조) |
-| **Data Flow** | `#83a598` (Blue) | 실선 (3px) | 대량 데이터 전송 또는 페이로드 이동. (데이터의 흐름 및 전달) |
-| **Event** | `#fe8019` (Orange) | 실선 (2px) | 이벤트 트리거 또는 비동기 콜백. (이벤트 생성 및 비동기 콜백) |
-| **Conditional** | `#d3869b` (Pink) | 실선 (1px) | if/else 또는 match와 같은 조건부 분기. (조건부 로직 분기) |
-| **Origin** | `#d65d0e` (Brown) | 실선 (1.5px)| AI 로직 추적을 위한 프롬프트 기원 링크. (프롬프트 기원 및 LLM 추적) |
-| **API Call** | `#8ec07c` (Aqua) | 점선 (2px) | 외부 API 또는 서비스 간 네트워크 호출. (외부 API 호출 및 통신) |
-| **DB Query** | `#d3869b` (Magenta)| 실선 (3px) | 데이터베이스 쿼리, 수정 또는 트랜잭션. (데이터베이스 쿼리 및 트랜잭션) |
-| **Loop / Back**| `#fe8019` (Orange) | 점선 (2px) | 반복문 (`while`/`for`) 또는 역방향 로직 흐름. (반복문 또는 역방향 피드백 흐름) |
-| **Highlighted**| `#fabd2f` (Gold) | 펄스 (+5px) | 현재 활성화된 실행 경로 (호버/선택). (마우스 호버나 선택 시 활성화된 실행 경로) |
+| **Dependency** | ![#ebdbb2](resources/edge_styles/color_beige.svg) | ![solid 2px](resources/edge_styles/style_solid_2px.svg) | 표준 모듈 의존성 및 참조. (일반적인 모듈 의존성 및 참조) |
+| **Data Flow** | ![#83a598](resources/edge_styles/color_blue.svg) | ![solid 3px](resources/edge_styles/style_solid_3px.svg) | 대량 데이터 전송 또는 페이로드 이동. (데이터의 흐름 및 전달) |
+| **Event** | ![#fe8019](resources/edge_styles/color_orange.svg) | ![solid 2px](resources/edge_styles/style_solid_2px.svg) | 이벤트 트리거 또는 비동기 콜백. (이벤트 생성 및 비동기 콜백) |
+| **Conditional** | ![#d3869b](resources/edge_styles/color_pink.svg) | ![solid 1px](resources/edge_styles/style_solid_1px.svg) | if/else 또는 match와 같은 조건부 분기. (조건부 로직 분기) |
+| **Origin** | ![#d65d0e](resources/edge_styles/color_brown.svg) | ![solid 1.5px](resources/edge_styles/style_solid_1.5px.svg) | AI 로직 추적을 위한 프롬프트 기원 링크. (프롬프트 기원 및 LLM 추적) |
+| **API Call** | ![#8ec07c](resources/edge_styles/color_aqua.svg) | ![dashed 2px](resources/edge_styles/style_dashed_2px.svg) | 외부 API 또는 서비스 간 네트워크 호출. (외부 API 호출 및 통신) |
+| **DB Query** | ![#d3869b](resources/edge_styles/color_magenta.svg) | ![solid 3px](resources/edge_styles/style_solid_3px.svg) | 데이터베이스 쿼리, 수정 또는 트랜잭션. (데이터베이스 쿼리 및 트랜잭션) |
+| **Loop / Back**| ![#fe8019](resources/edge_styles/color_orange.svg) | ![dotted 2px](resources/edge_styles/style_dotted_2px.svg) | 반복문 (`while`/`for`) 또는 역방향 로직 흐름. (반복문 또는 역방향 피드백 흐름) |
+| **Highlighted**| ![#fabd2f](resources/edge_styles/color_gold.svg) | ![pulse 5px](resources/edge_styles/style_pulse_5px.svg) | 현재 활성화된 실행 경로 (호버/선택). (마우스 호버나 선택 시 활성화된 실행 경로) |
 
 ---
 

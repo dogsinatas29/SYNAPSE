@@ -7,7 +7,7 @@
 [![Language](https://img.shields.io/badge/Language-TypeScript-blue?style=flat-square)](https://www.typescriptlang.org/)
 [![Platform](https://img.shields.io/badge/Platform-VS_Code-007ACC?style=flat-square)](https://code.visualstudio.com/)
 
-[🇰🇷 한국어 버전](README.ko.md) | [🇺🇸 English Version](README.md)
+[🇰🇷 Korean Version](README.ko.md) | [🇺🇸 English Version](README.md)
 
 ---
 
@@ -61,20 +61,42 @@ DTR is not just a visual effect; it is the foundation for **Deterministic Thinki
 
 ---
 
-## 🔗 Edge & Line Conventions (선과 색상의 의미)
+## 🏗️ Node Conventions
+SYNAPSE uses specific icons and colors to represent different types of components and their current reasoning states.
+
+### 📄 Entity Types
+| Icon | Type | Description |
+| :---: | :--- | :--- |
+| 📄 | **File** | A physical source file in the workspace. |
+| 📁 | **Folder** | A directory containing multiple nodes or clusters. |
+| 🧩 | **Component** | A logical grouping or abstract module. |
+| ⚡ | **Trigger** | An entry point or event source. |
+
+### 🎨 Node Status & Glow
+| Status | Visual Hint | Color | Meaning |
+| :--- | :---: | :---: | :--- |
+| **Active** | Solid Border | `#83a598` | Verified and currently active in the codebase. |
+| **High DTR** | **Purple Glow** | `#8a2be2` | High reasoning density; critical logic point. |
+| **Ghost** | Dashed Border | `#928374` | Proposed architectural node (not yet materialized). |
+| **Deleted** | Grayed Out | `#282828` | Safely commented out/decommissioned node. |
+| **Warning** | Red Pulse | `#fb4934` | Logic error, circular dependency, or dead-end detected. |
+
+---
+
+## 🔗 Edge & Line Conventions
 SYNAPSE uses distinct colors and styles to represent different types of logical connections and data flows between nodes.
 
-| Edge Type (종류) | Color (색상) | Style & Thickness | Meaning (의미) |
+| Edge Type | Color | Style & Thickness | Meaning |
 | :--- | :---: | :---: | :--- |
-| **Dependency** | `#ebdbb2` (Beige) | Solid (2px) | Standard module dependency or import. (일반적인 모듈 의존성 및 참조) |
-| **Data Flow** | `#83a598` (Blue) | Solid (3px) | Heavy data transfer or payload movement. (데이터의 흐름 및 전달) |
-| **Event** | `#fe8019` (Orange) | Solid (2px) | Event triggers or asynchronous callbacks. (이벤트 생성 및 비동기 콜백) |
-| **Conditional** | `#d3869b` (Pink) | Solid (1px) | Conditional branches like if/else or match. (조건부 로직 분기) |
-| **Origin** | `#d65d0e` (Brown) | Solid (1.5px)| Prompt origin links for AI logic tracking. (프롬프트 기원 및 LLM 추적) |
-| **API Call** | `#8ec07c` (Aqua) | Dashed (2px) | External API or cross-service network calls. (외부 API 호출 및 통신) |
-| **DB Query** | `#d3869b` (Magenta)| Solid (3px) | Database queries, mutations, or transactions. (데이터베이스 쿼리 및 트랜잭션) |
-| **Loop / Back**| `#fe8019` (Orange) | Dotted (2px) | Loop-backs (`while`/`for`) or reverse logic flow. (반복문 또는 역방향 피드백 흐름) |
-| **Highlighted**| `#fabd2f` (Gold) | Pulse (+5px) | Active execution path (Hovered/Selected). (마우스 호버나 선택 시 활성화된 실행 경로) |
+| **Dependency** | ![#ebdbb2](resources/edge_styles/color_beige.svg) | ![solid 2px](resources/edge_styles/style_solid_2px.svg) | Standard module dependency or import. |
+| **Data Flow** | ![#83a598](resources/edge_styles/color_blue.svg) | ![solid 3px](resources/edge_styles/style_solid_3px.svg) | Heavy data transfer or payload movement. |
+| **Event** | ![#fe8019](resources/edge_styles/color_orange.svg) | ![solid 2px](resources/edge_styles/style_solid_2px.svg) | Event triggers or asynchronous callbacks. |
+| **Conditional** | ![#d3869b](resources/edge_styles/color_pink.svg) | ![solid 1px](resources/edge_styles/style_solid_1px.svg) | Conditional branches like if/else or match. |
+| **Origin** | ![#d65d0e](resources/edge_styles/color_brown.svg) | ![solid 1.5px](resources/edge_styles/style_solid_1.5px.svg) | Prompt origin links for AI logic tracking. |
+| **API Call** | ![#8ec07c](resources/edge_styles/color_aqua.svg) | ![dashed 2px](resources/edge_styles/style_dashed_2px.svg) | External API or cross-service network calls. |
+| **DB Query** | ![#d3869b](resources/edge_styles/color_magenta.svg) | ![solid 3px](resources/edge_styles/style_solid_3px.svg) | Database queries, mutations, or transactions. |
+| **Loop / Back**| ![#fe8019](resources/edge_styles/color_orange.svg) | ![dotted 2px](resources/edge_styles/style_dotted_2px.svg) | Loop-backs (`while`/`for`) or reverse logic flow. |
+| **Highlighted**| ![#fabd2f](resources/edge_styles/color_gold.svg) | ![pulse 5px](resources/edge_styles/style_pulse_5px.svg) | Active execution path (Hovered/Selected). |
 
 ---
 

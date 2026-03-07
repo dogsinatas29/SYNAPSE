@@ -98,6 +98,15 @@ SYNAPSE는 노드 간의 다양한 논리적 연결과 데이터 흐름을 표�
 | **Loop / Back**| ![#fe8019](resources/edge_styles/color_orange.svg) | ![dotted 2px](resources/edge_styles/style_dotted_2px.svg) | 반복문 (`while`/`for`) 또는 역방향 로직 흐름. (반복문 또는 역방향 피드백 흐름) |
 | **Highlighted**| ![#fabd2f](resources/edge_styles/color_gold.svg) | ![pulse 5px](resources/edge_styles/style_pulse_5px.svg) | 현재 활성화된 실행 경로 (호버/선택). (마우스 호버나 선택 시 활성화된 실행 경로) |
 
+### 🏷️ 엣지 상호작용 배지 (Edge Interactive Badges)
+**Edit Logic** 모드에서 엣지 조작 및 설계를 돕기 위해 상호작용 배지가 나타납니다.
+
+| 배지 | 액션 | 의미 |
+| :---: | :--- | :--- |
+| ❌ | **삭제 (Delete)** | 빨간색 'X' 아이콘을 클릭하면 엣지와 해당 논리 의존성이 즉시 제거됩니다. |
+| ❓ | **대기 (Pending)** | 수동으로 생성된 엣지가 아키텍처 확정을 기다리고 있음을 나타냅니다. |
+| ❗️ | **확정 (Confirmed)** | 확정된 설계입니다. 지원되는 언어에서는 클릭 시 **자동 임포트 주입**이 실행됩니다. |
+
 ---
 
 ## 📸 시각적 개요

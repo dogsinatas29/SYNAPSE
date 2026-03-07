@@ -98,6 +98,15 @@ SYNAPSE uses distinct colors and styles to represent different types of logical 
 | **Loop / Back**| ![#fe8019](resources/edge_styles/color_orange.svg) | ![dotted 2px](resources/edge_styles/style_dotted_2px.svg) | Loop-backs (`while`/`for`) or reverse logic flow. |
 | **Highlighted**| ![#fabd2f](resources/edge_styles/color_gold.svg) | ![pulse 5px](resources/edge_styles/style_pulse_5px.svg) | Active execution path (Hovered/Selected). |
 
+### 🏷️ Edge Interactive Badges
+Interactive badges appear on edges during **Edit Logic** mode to facilitate architectural decisions.
+
+| Badge | Action | Meaning |
+| :---: | :--- | :--- |
+| ❌ | **Delete** | Clicking the red 'X' instantly removes the edge and its logical connection. |
+| ❓ | **Pending** | Indicates a manually created edge that is awaiting architectural confirmation. |
+| ❗️ | **Confirmed** | A confirmed edge. In supported languages, this triggers an **automatic import injection**. |
+
 ---
 
 ## 📸 visual Overview

@@ -103,7 +103,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
                 const principles = context.globalState.get<string[]>('synapse.sovereign_principles', []);
                 if (principles.length === 0) {
-                    vscode.window.showErrorMessage('🔒 [Lockdown] Sovereign Principles missing in GEMINI.md. Activation denied.');
+                    vscode.window.showErrorMessage('🔒 [Lockdown v0.2.21] Sovereign Principles missing in GEMINI.md. Activation denied.');
                     return;
                 }
 

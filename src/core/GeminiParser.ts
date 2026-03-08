@@ -65,10 +65,22 @@ export class GeminiParser {
             // HTML 주석 제거 후 분석
             const cleanContent = content.replace(/<!--[\s\S]*?-->/g, '');
 
-            // 1. 헤더 레벨과 섹션을 정확하게 찾기 위한 정규식 (e.g., ## 1. 원칙)
-            const headerPattern = /^([#]+).*(?:Principles|원칙).*/mi;
+            // 1. 헤더 레벨과 섹션을 정확하게 찾기 위한 정규식 (e.g., ## 1. 원칙, ## 핵심 설계 원칙, # Principles)
+            const headerPattern = /^([#]+).*(?:Principles|원칙|규약|Manifesto).*/mi;
             const headerMatch = cleanContent.match(headerPattern);
-            if (!headerMatch) return [];
+            if (!headerMatch) {
+                // 헤더가 없는 경우 [Principles] 같은 대괄호 형태나 단순 텍스트 섹션 탐색 시도
+                const altHeaderPattern = /^(?:\[|\*\*|#)*\s*(?:Principles|원칙|규약|Manifesto).*/mi;
+                const altMatch = cleanContent.match(altHeaderPattern);
+                if (!altMatch) return [];
+                
+                // 대안 헤더가 있는 경우 해당 위치부터 텍스트 추출 시도
+                const altStartIndex = altMatch.index! + altMatch[0].length;
+                const altSection = cleanContent.substring(altStartIndex);
+                const firstHeaderMatch = altSection.match(/^#+/m);
+                const altContent = firstHeaderMatch ? altSection.substring(0, firstHeaderMatch.index) : altSection;
+                return this.extractFromLines(altContent);
+            }
 
             const level = headerMatch[1].length;
             
@@ -80,24 +92,29 @@ export class GeminiParser {
             // 만약 ##에서 시작했다면, 다음 # 또는 ## 까지만. ###은 포함.
             const boundaryRegex = new RegExp(`^#{1,${level}}(?=[^#]|$)`, 'm');
             const principlesContent = principlesSection.split(boundaryRegex)[0];
-            
-            // 불렛 포인트 추출 (- ..., * ..., 1. ...)
-            const lines = principlesContent.split('\n');
-            const principles: string[] = [];
-            
-            lines.forEach((line: string) => {
-                const match = line.match(/^\s*[-\*\d\.]+\s*(.*)/);
-                if (match && match[1].trim()) {
-                    principles.push(match[1].trim());
-                }
-            });
-            
-            console.log(`✅ GEMINI.md에서 ${principles.length}개의 원칙 추출 완료`);
-            return principles;
+            return this.extractFromLines(principlesContent);
         } catch (error) {
             console.error('❌ Principles 추출 실패:', error);
             return [];
         }
+    }
+
+    /**
+     * 줄 단위 텍스트에서 불렛 포인트 추출
+     */
+    private extractFromLines(content: string): string[] {
+        const lines = content.split('\n');
+        const principles: string[] = [];
+        
+        lines.forEach((line: string) => {
+            const match = line.match(/^\s*[-\*\d\.]+\s*(?:\[.*?\])?\s*(.*)/);
+            if (match && match[1].trim() && match[1].trim().length > 3) {
+                principles.push(match[1].trim());
+            }
+        });
+        
+        console.log(`✅ GEMINI.md에서 ${principles.length}개의 원칙 추출 완료`);
+        return principles;
     }
 
     /**

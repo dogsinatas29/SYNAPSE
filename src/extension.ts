@@ -103,8 +103,8 @@ export async function activate(context: vscode.ExtensionContext) {
 
                 const principles = context.globalState.get<string[]>('synapse.sovereign_principles', []);
                 if (principles.length === 0) {
-                    vscode.window.showErrorMessage('🔒 [Lockdown v0.2.20] Sovereign Principles missing in GEMINI.md. Activation denied.');
-                    return;
+                    vscode.window.showWarningMessage('⚠️ [Sovereign Protocol] Principles missing or unparsed in GEMINI.md. Running in Unbound Mode.');
+                    // Don't return, allow opening the canvas
                 }
 
                 if (vscode.window.activeTextEditor) {

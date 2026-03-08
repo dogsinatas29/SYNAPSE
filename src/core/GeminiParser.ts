@@ -71,11 +71,10 @@ export class GeminiParser {
             if (!headerMatch) return [];
 
             const level = headerMatch[1].length;
-            const sections = cleanContent.split(headerPattern);
-            // split 결과: [before, header_level, after]
-            if (sections.length < 3) return [];
-
-            const principlesSection = sections[2];
+            
+            // 첫 번째 매치 지점의 끝부터 내용 시작 (split을 쓰면 여러 헤더가 잡혀 내용이 짤릴 수 있음)
+            const startIndex = headerMatch.index! + headerMatch[0].length;
+            const principlesSection = cleanContent.substring(startIndex);
 
             // 2. 현재 레벨과 같거나 더 높은 레벨의 헤더가 나오기 전까지가 내용
             // 만약 ##에서 시작했다면, 다음 # 또는 ## 까지만. ###은 포함.

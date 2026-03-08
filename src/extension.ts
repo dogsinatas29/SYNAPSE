@@ -94,18 +94,24 @@ export async function activate(context: vscode.ExtensionContext) {
 
         console.log('[SYNAPSE] Registering synapse.openCanvas command...');
         context.subscriptions.push(
-            vscode.commands.registerCommand('synapse.openCanvas', () => {
-                // [v0.2.20 Lockdown Check]
+            vscode.commands.registerCommand('synapse.openCanvas', async () => {
+                // [v0.2.20 Lockdown Check & Auto-Refresh]
+                let workspaceFolder: vscode.WorkspaceFolder | undefined = vscode.workspace.workspaceFolders?.[0];
+                if (workspaceFolder) {
+                    await loadSovereignPrinciples(context, workspaceFolder);
+                }
+
                 const principles = context.globalState.get<string[]>('synapse.sovereign_principles', []);
                 if (principles.length === 0) {
-                    vscode.window.showErrorMessage('🏛️ [Lockdown] Sovereign Principles missing in GEMINI.md. Activation denied.');
+                    vscode.window.showErrorMessage('🔒 [Lockdown] Sovereign Principles missing in GEMINI.md. Activation denied.');
                     return;
                 }
 
-                let workspaceFolder: vscode.WorkspaceFolder | undefined;
-
                 if (vscode.window.activeTextEditor) {
-                    workspaceFolder = vscode.workspace.getWorkspaceFolder(vscode.window.activeTextEditor.document.uri);
+                    const activeFolder = vscode.workspace.getWorkspaceFolder(vscode.window.activeTextEditor.document.uri);
+                    if (activeFolder) {
+                        workspaceFolder = activeFolder;
+                    }
                 }
 
                 if (!workspaceFolder) {

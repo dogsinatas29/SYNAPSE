@@ -62,21 +62,31 @@ export class GeminiParser {
             if (!fs.existsSync(filePath)) return [];
             const content = fs.readFileSync(filePath, 'utf-8');
             
-            // # Principles, ## 원칙, ### 핵심 설계 원칙 등 다양한 형태 지원
+            // HTML 주석 제거 후 분석
             const cleanContent = content.replace(/<!--[\s\S]*?-->/g, '');
-            const sections = cleanContent.split(/^[#\s]+.*(?:Principles|원칙).*/mi);
-            if (sections.length < 2) return [];
 
-            const principlesSection = sections[1];
+            // 1. 헤더 레벨과 섹션을 정확하게 찾기 위한 정규식 (e.g., ## 1. 원칙)
+            const headerPattern = /^([#]+).*(?:Principles|원칙).*/mi;
+            const headerMatch = cleanContent.match(headerPattern);
+            if (!headerMatch) return [];
 
-            // 다음 섹션 이전까지만 추출
-            const principlesContent = principlesSection.split(/^#|^##/m)[0];
+            const level = headerMatch[1].length;
+            const sections = cleanContent.split(headerPattern);
+            // split 결과: [before, header_level, after]
+            if (sections.length < 3) return [];
+
+            const principlesSection = sections[2];
+
+            // 2. 현재 레벨과 같거나 더 높은 레벨의 헤더가 나오기 전까지가 내용
+            // 만약 ##에서 시작했다면, 다음 # 또는 ## 까지만. ###은 포함.
+            const boundaryRegex = new RegExp(`^#{1,${level}}(?=[^#]|$)`, 'm');
+            const principlesContent = principlesSection.split(boundaryRegex)[0];
             
             // 불렛 포인트 추출 (- ..., * ..., 1. ...)
             const lines = principlesContent.split('\n');
             const principles: string[] = [];
             
-            lines.forEach(line => {
+            lines.forEach((line: string) => {
                 const match = line.match(/^\s*[-\*\d\.]+\s*(.*)/);
                 if (match && match[1].trim()) {
                     principles.push(match[1].trim());

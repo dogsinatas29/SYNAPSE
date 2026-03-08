@@ -72,6 +72,7 @@ export class CanvasPanel {
     public static currentPanel: CanvasPanel | undefined;
     private readonly _panel: vscode.WebviewPanel;
     private readonly _extensionUri: vscode.Uri;
+    private readonly _context: vscode.ExtensionContext;
     private _workspaceFolder: vscode.WorkspaceFolder;
     private _disposables: vscode.Disposable[] = [];
     private proposedNodes: any[] = [];
@@ -81,7 +82,8 @@ export class CanvasPanel {
     private _taskQueue = new SequentialTaskQueue();
 
 
-    public static createOrShow(extensionUri: vscode.Uri, workspaceFolder: vscode.WorkspaceFolder) {
+    public static createOrShow(context: vscode.ExtensionContext, workspaceFolder: vscode.WorkspaceFolder) {
+        const extensionUri = context.extensionUri;
         const column = vscode.window.activeTextEditor
             ? vscode.window.activeTextEditor.viewColumn
             : undefined;
@@ -112,16 +114,17 @@ export class CanvasPanel {
             }
         );
 
-        CanvasPanel.currentPanel = new CanvasPanel(panel, extensionUri, workspaceFolder);
+        CanvasPanel.currentPanel = new CanvasPanel(panel, context, workspaceFolder);
     }
 
-    public static revive(panel: vscode.WebviewPanel, extensionUri: vscode.Uri, workspaceFolder: vscode.WorkspaceFolder) {
-        CanvasPanel.currentPanel = new CanvasPanel(panel, extensionUri, workspaceFolder);
+    public static revive(panel: vscode.WebviewPanel, context: vscode.ExtensionContext, workspaceFolder: vscode.WorkspaceFolder) {
+        CanvasPanel.currentPanel = new CanvasPanel(panel, context, workspaceFolder);
     }
 
-    private constructor(panel: vscode.WebviewPanel, extensionUri: vscode.Uri, workspaceFolder: vscode.WorkspaceFolder) {
+    private constructor(panel: vscode.WebviewPanel, context: vscode.ExtensionContext, workspaceFolder: vscode.WorkspaceFolder) {
         this._panel = panel;
-        this._extensionUri = extensionUri;
+        this._extensionUri = context.extensionUri;
+        this._context = context;
         this._workspaceFolder = workspaceFolder;
 
         // [v0.2.17 Fix] Delay initial update to allow Webview host to stabilize
@@ -2301,7 +2304,8 @@ export class CanvasPanel {
 
                         try {
                             // Diagnostics: log start of scan for large/suspicious files
-                            if (actualIndex % 10 === 0) console.log(`[SYNAPSE] Scanning [${actualIndex}/${nodesToScan.length}]: ${relativePath}`);
+                            // Diagnostics: log start of scan for every file when debugging hangs
+                            console.log(`[SYNAPSE] Scanning [${actualIndex + 1}/${nodesToScan.length}]: ${relativePath}`);
                             const summary = scanner.scanFile(filePath);
                             node.data.summary = summary;
 
@@ -2765,6 +2769,12 @@ export class CanvasPanel {
                 }
                 return node;
             });
+
+            // [v0.2.20] Sovereign Principles & Context Injection
+            const principles = this._context.globalState.get<string[]>('synapse.sovereign_principles', []);
+            stateForWebview.system_context = {
+                principles: principles
+            };
 
             // 6. 웹뷰로 전송
             const payload = {

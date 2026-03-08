@@ -22,6 +22,7 @@ import { LanguageClient, LanguageClientOptions, ServerOptions, TransportKind } f
 import { CanvasPanel } from './webview/CanvasPanel';
 import { BootstrapEngine } from './bootstrap/BootstrapEngine';
 import { LogicAnalyzer } from './core/LogicAnalyzer';
+import { GeminiParser } from './core/GeminiParser';
 
 
 import { client, setClient } from './client';
@@ -38,7 +39,14 @@ export async function activate(context: vscode.ExtensionContext) {
 
     try {
         console.log('[SYNAPSE] Starting activation sequence...');
-        vscode.window.showInformationMessage('SYNAPSE: Initializing (v0.2.18.1)...');
+        const version = context.extension.packageJSON.version;
+        vscode.window.showInformationMessage(`SYNAPSE: Initializing (v${version})...`);
+
+        // [v0.2.20] Mandatory Principle Load
+        const firstFolder = vscode.workspace.workspaceFolders?.[0];
+        if (firstFolder) {
+            await loadSovereignPrinciples(context, firstFolder);
+        }
 
         // [v0.2.18.1 Monetization Lock] All monetization logic is strictly disabled
         console.log('[SYNAPSE] BillingManager initialization skipped (Lock Active)');
@@ -75,7 +83,7 @@ export async function activate(context: vscode.ExtensionContext) {
                     };
                     const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
                     if (workspaceFolder) {
-                        CanvasPanel.revive(webviewPanel, context.extensionUri, workspaceFolder);
+                        CanvasPanel.revive(webviewPanel, context, workspaceFolder);
                     }
                 }
             });
@@ -87,6 +95,13 @@ export async function activate(context: vscode.ExtensionContext) {
         console.log('[SYNAPSE] Registering synapse.openCanvas command...');
         context.subscriptions.push(
             vscode.commands.registerCommand('synapse.openCanvas', () => {
+                // [v0.2.20 Lockdown Check]
+                const principles = context.globalState.get<string[]>('synapse.sovereign_principles', []);
+                if (principles.length === 0) {
+                    vscode.window.showErrorMessage('🏛️ [Lockdown] Sovereign Principles missing in GEMINI.md. Activation denied.');
+                    return;
+                }
+
                 let workspaceFolder: vscode.WorkspaceFolder | undefined;
 
                 if (vscode.window.activeTextEditor) {
@@ -98,7 +113,7 @@ export async function activate(context: vscode.ExtensionContext) {
                 }
 
                 if (workspaceFolder) {
-                    CanvasPanel.createOrShow(context.extensionUri, workspaceFolder);
+                    CanvasPanel.createOrShow(context, workspaceFolder);
                 } else {
                     vscode.window.showErrorMessage('No workspace folder found to open SYNAPSE Canvas.');
                 }
@@ -400,7 +415,7 @@ export async function activate(context: vscode.ExtensionContext) {
         await languageClient.start();
         console.log('[SYNAPSE] Language Server started successfully');
 
-        vscode.window.setStatusBarMessage('SYNAPSE Engine Ready (v0.2.17)', 5000);
+        vscode.window.setStatusBarMessage(`SYNAPSE Engine Ready (v${version})`, 5000);
 
         // [v0.2.17] Register DTR Control Command
         context.subscriptions.push(
@@ -515,6 +530,34 @@ export async function activate(context: vscode.ExtensionContext) {
     }
 }
 
+/**
+ * [v0.2.20] GEMINI.md에서 원칙을 로드하여 GlobalState에 주입
+ */
+async function loadSovereignPrinciples(context: vscode.ExtensionContext, folder: vscode.WorkspaceFolder) {
+    try {
+        const geminiUri = vscode.Uri.joinPath(folder.uri, 'GEMINI.md');
+        const parser = new GeminiParser();
+        const principles = await parser.extractPrinciples(geminiUri.fsPath);
+        
+        if (principles.length === 0) {
+            Logger.warn('🏛️ Sovereign Principles Not Found: GEMINI.md must contain a # Principles section.');
+            await context.globalState.update('synapse.sovereign_principles', []);
+            return false;
+        }
+        
+        await context.globalState.update('synapse.sovereign_principles', principles);
+        
+        // IDE 전역 법칙으로 인지시키기 위한 환경 변수 주입 (현재 프로세스 레벨)
+        process.env.SYNAPSE_PRINCIPLES = JSON.stringify(principles);
+        
+        Logger.info(`🏛️ Sovereign Principles Grafted: ${principles.length} rules loaded into GlobalState.`);
+        return true;
+    } catch (e) {
+        Logger.error('Failed to load sovereign principles:', e);
+        return false;
+    }
+}
+
 async function checkProjectStatus(workspaceFolder: vscode.WorkspaceFolder, context: vscode.ExtensionContext) {
     const geminiUri = vscode.Uri.joinPath(workspaceFolder.uri, 'GEMINI.md');
     const projectStateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'project_state.json');
@@ -583,7 +626,13 @@ async function checkProjectStatus(workspaceFolder: vscode.WorkspaceFolder, conte
                 : vscode.workspace.workspaceFolders?.[0];
 
             if (activeWorkspace?.uri.fsPath === workspaceFolder.uri.fsPath) {
-                CanvasPanel.createOrShow(context.extensionUri, workspaceFolder);
+                // [v0.2.20 Lockdown Check]
+                const principles = context.globalState.get<string[]>('synapse.sovereign_principles', []);
+                if (principles.length > 0) {
+                    CanvasPanel.createOrShow(context, workspaceFolder);
+                } else {
+                    Logger.warn('[Lockdown] Auto-open cancelled: Principles missing.');
+                }
             }
         }
     } catch (e) {
@@ -603,9 +652,13 @@ function setupFileWatcher(workspaceFolder: vscode.WorkspaceFolder, context: vsco
         );
         if (action === 'Sync') {
             const geminiUri = vscode.Uri.joinPath(workspaceFolder.uri, 'GEMINI.md');
+            await loadSovereignPrinciples(context, workspaceFolder); // 원칙 최우선 갱신
             await bootstrapFromGemini(geminiUri, context);
         }
     });
+
+    // Principles 실시간 원칙 감시 (Sync 버튼 없이도 로드)
+    watcher.onDidCreate(() => loadSovereignPrinciples(context, workspaceFolder));
 
     // Source files watcher (auto-refresh canvas state)
     const sourceWatcher = vscode.workspace.createFileSystemWatcher(

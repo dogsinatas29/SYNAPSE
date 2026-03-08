@@ -1,0 +1,30 @@
+{
+  "project": "SYNAPSE",
+  "version": "v0.3.0",
+  "architecture_guardrail": {
+    "layers": [
+      { "id": "shared", "index": 0, "description": "공통 유틸리티, 상수, 모든 레이어에서 접근 가능" },
+      { "id": "frontend", "index": 1, "description": "UI 컴포넌트 및 클라이언트 로직" },
+      { "id": "api", "index": 2, "description": "외부 통신 및 데이터 매핑" },
+      { "id": "service", "index": 3, "description": "핵심 비즈니스 로직 및 도메인 모델" },
+      { "id": "database", "index": 4, "description": "데이터 영속성 및 원천 데이터 모델" }
+    ],
+    "policies": {
+      "gravity_rule": { "enabled": true, "mode": "strict" },
+      "inter_cluster_rule": { "enabled": true, "enforce_bridge": true },
+      "same_layer_communication": { "allow": true }
+    },
+    "exceptions": {
+      "bypass_keyword": "@synapse-bypass",
+      "allowed_cross_layer_paths": [
+        { "from": "service", "to": "frontend", "type": "event_bus" }
+      ]
+    },
+    "supported_languages": [
+      ".ts",
+      ".js",
+      ".py",
+      ".md"
+    ]
+  }
+}

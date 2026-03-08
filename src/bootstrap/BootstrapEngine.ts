@@ -414,6 +414,12 @@ This document defines the rules for how SYNAPSE discovers, parses, and visualize
         }
 
         try {
+            // [v0.2.18.1 Opt] Skip complexity analysis for large files (> 1MB)
+            const stats = fs.statSync(filePath);
+            if (stats.size > 1024 * 1024) {
+                return { dtr: 0.5, confidence: 0.7, note: 'large file' };
+            }
+
             const content = fs.readFileSync(filePath, 'utf8');
             const complexity = this.calculateComplexityHeuristic(content);
 
@@ -447,7 +453,7 @@ This document defines the rules for how SYNAPSE discovers, parses, and visualize
         });
 
         // Scale by function density
-        const functionMatches = content.match(/function|=>|async\s+async/g);
+        const functionMatches = content.match(/function|=>|async\s+function/g);
         if (functionMatches) score += functionMatches.length * 0.5;
 
         return score;

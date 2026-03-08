@@ -59,6 +59,12 @@ export class LogicAnalyzer {
         // 6. [v0.2.18.2] Architecture Guardrail 검증 (The Iron Guard)
         this.detectArchitectureViolations(nodes, edges, issues);
 
+        // 7. [v0.2.20] Sovereign Principles 검증 (Mandatory Principles)
+        if (state.system_context?.principles) {
+            const principleIssues = this.validatePrinciples(state, state.system_context.principles);
+            issues.push(...principleIssues);
+        }
+
         return issues;
     }
 
@@ -347,5 +353,67 @@ export class LogicAnalyzer {
                 });
             }
         });
+    }
+
+    /**
+     * [v0.2.20] 주입된 원칙(Sovereign Principles)을 기준으로 설계 분석
+     */
+    public validatePrinciples(state: ProjectState, principles: string[]): AnalysisIssue[] {
+        const issues: AnalysisIssue[] = [];
+        const nodes = state.nodes;
+        const clusters = state.clusters;
+
+        principles.forEach(principle => {
+            const pLower = principle.toLowerCase();
+
+            // Case 1: Simplicity First (단순성 우선)
+            if (pLower.includes('simplicity') || pLower.includes('단순성')) {
+                // 클러스터당 노드 수 체크 (예: 20개 초과 시 경고)
+                clusters.forEach(cluster => {
+                    if (cluster.children.length > 20) {
+                        issues.push({
+                            type: 'warning',
+                            severity: 'medium',
+                            message: `[SYNS-RULE-01] Principle Violation: '${cluster.label}' 클러스터가 너무 비대합니다. (Limit: 20 nodes)`,
+                            nodeIds: cluster.children.slice(0, 5)
+                        });
+                    }
+                });
+            }
+
+            // Case 2: No Placeholders (플레이스홀더 금지)
+            if (pLower.includes('placeholder') || pLower.includes('플레이스홀더') || pLower.includes('todo')) {
+                nodes.forEach(node => {
+                    const hasPlaceholder = 
+                        (node.data.label.toLowerCase().includes('todo')) ||
+                        (node.data.description?.toLowerCase().includes('todo')) ||
+                        (node.data.label.toLowerCase().includes('placeholder'));
+                    
+                    if (hasPlaceholder) {
+                        issues.push({
+                            type: 'warning',
+                            severity: 'low',
+                            message: `[SYNS-RULE-02] Principle Violation: '${node.data.label}' 노드에 플레이스홀더/TODO가 발견되었습니다.`,
+                            nodeIds: [node.id]
+                        });
+                    }
+                });
+            }
+            
+            // Case 3: Goal-Oriented (목표 중심) -> 과도한 동시 구현 시도 방지
+            if (pLower.includes('goal-oriented') || pLower.includes('단계별')) {
+                const draftNodes = nodes.filter(n => n.visual.opacity < 1.0);
+                if (draftNodes.length > 30) {
+                    issues.push({
+                        type: 'warning',
+                        severity: 'high',
+                        message: `[SYNS-RULE-03] Principle Violation: 너무 많은 제안 노드(${draftNodes.length}개)가 있습니다. 단계를 나누세요.`,
+                        nodeIds: draftNodes.slice(0, 5).map(n => n.id)
+                    });
+                }
+            }
+        });
+
+        return issues;
     }
 }

@@ -1,0 +1,43 @@
+// PATCH: Replace lines 335-355 with this code
+// Delete lines 335-355 and insert:
+
+    // 프로젝트 상태 로드
+    try {
+        console.log('Loading project state...');
+        console.log('vscode available:', typeof vscode !== 'undefined');
+        
+        // VS Code 환경인지 확인
+        if (typeof vscode !== 'undefined') {
+            console.log('[SYNAPSE] Running in VS Code webview');
+            
+            // 메시지 리스너 등록
+            window.addEventListener('message', event => {
+                const msg = event.data;
+                console.log('[SYNAPSE] Message received:', msg.command);
+                
+                if (msg.command === 'projectState') {
+                    console.log('[SYNAPSE] Loading project state');
+                    engine.loadProjectState(msg.data);
+                } else if (msg.command === 'fitView') {
+                    engine.fitView();
+                }
+            });
+            
+            // 프로젝트 상태 요청
+            console.log('[SYNAPSE] Requesting project state from extension');
+            vscode.postMessage({ command: 'getProjectState' });
+        } else {
+            // 브라우저 환경
+            console.log('[SYNAPSE] Running in browser');
+            const response = await fetch('/data/project_state.json');
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            const projectState = await response.json();
+            engine.loadProjectState(projectState);
+        }
+    } catch (error) {
+        console.error('[SYNAPSE] Load error:', error);
+        document.getElementById('loading').innerHTML = `
+            <div>❌ Failed to load project</div>
+            <div style="font-size: 12px; margin-top: 8px; color: #fb4934;">${error.message}</div>
+        `;
+    }

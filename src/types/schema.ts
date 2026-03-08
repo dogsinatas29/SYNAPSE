@@ -104,6 +104,7 @@ export interface ProjectStructure {
         isApproved?: boolean;   // [v0.2.18.1.2]
     }[];
     includePaths?: string[];   // 스캔 범위 제한
+    principles?: string[];     // [v0.2.20] Sovereign Principles
 }
 
 /**
@@ -121,6 +122,9 @@ export interface ProjectState {
     nodes: Node[];
     edges: Edge[];
     clusters: Cluster[];
+    system_context?: {          // [v0.2.20] Sovereign Principles
+        principles: string[];
+    };
 }
 
 /**

@@ -1716,6 +1716,33 @@
         "opacity": 0.8,
         "style": "solid"
       }
+    },
+    {
+      "data": {
+        "dtr": 0
+      },
+      "from": "node_src_extension_ts_1772842987428",
+      "id": "edge_auto_1772943216646_398604",
+      "is_approved": true,
+      "label": "ref",
+      "to": "node_src_core_LogicAnalyzer_ts_1772842987428",
+      "type": "dependency",
+      "validation": {
+        "confidence": 1,
+        "reason": "[Boundary Violation] 타 클러스터의 내부 구현체('LogicAnalyzer.ts')에 직접 연결되었습니다. Bridge/Facade를 사용하세요.",
+        "valid": true,
+        "visual": {
+          "color": "#fabd2f",
+          "dashArray": "5,5",
+          "style": "dashed",
+          "thickness": 2
+        }
+      },
+      "visual": {
+        "color": "#888",
+        "opacity": 0.8,
+        "style": "solid"
+      }
     }
   ],
   "gemini_md_path": "/home/dogsinatas/TypeScript_project/antigravity-extension-vis/GEMINI.md",
@@ -2089,8 +2116,8 @@
       },
       "id": "node_src_cli_ts_1772842987428",
       "position": {
-        "x": 1276.4307904882698,
-        "y": 3586.1293665142475
+        "x": 1276.4307904878642,
+        "y": 3586.1293665127923
       },
       "status": "proposed",
       "type": "source",
@@ -2173,8 +2200,8 @@
       },
       "id": "node_src_core_BillingManager_ts_1772842987428",
       "position": {
-        "x": 382.20510000639587,
-        "y": 3583.3725343285805
+        "x": 382.2051000041636,
+        "y": 3583.3725343278443
       },
       "status": "proposed",
       "type": "source",
@@ -2257,8 +2284,8 @@
       },
       "id": "node_src_core_FlowScanner_ts_1772842987428",
       "position": {
-        "x": 682.2051000030467,
-        "y": 3783.3725343274755
+        "x": 682.2051000041628,
+        "y": 3783.372534327844
       },
       "status": "proposed",
       "type": "source",
@@ -2299,8 +2326,8 @@
       },
       "id": "node_src_core_GeminiParser_ts_1772842987428",
       "position": {
-        "x": 1264.7886147801255,
-        "y": 3838.4345698889683
+        "x": 1264.7896548021508,
+        "y": 3838.4350855752245
       },
       "status": "proposed",
       "type": "source",
@@ -2341,8 +2368,8 @@
       },
       "id": "node_src_core_PromptLogger_ts_1772842987428",
       "position": {
-        "x": 532.2051000030467,
-        "y": 3683.3725343274755
+        "x": 532.2051000041628,
+        "y": 3683.372534327844
       },
       "status": "proposed",
       "type": "source",
@@ -2362,8 +2389,8 @@
       },
       "id": "node_src_core_ReportExporter_ts_1772842987428",
       "position": {
-        "x": 814.7901995755926,
-        "y": 3538.435355696597
+        "x": 814.78967956458,
+        "y": 3538.4350978534694
       },
       "status": "proposed",
       "type": "source",
@@ -2383,8 +2410,8 @@
       },
       "id": "node_src_core_RuleEngine_ts_1772842987428",
       "position": {
-        "x": 964.7901995755926,
-        "y": 3638.435355696597
+        "x": 964.78967956458,
+        "y": 3638.4350978534694
       },
       "status": "proposed",
       "type": "source",
@@ -2404,8 +2431,8 @@
       },
       "id": "node_src_server_server_ts_1772842987428",
       "position": {
-        "x": 1426.4307904876619,
-        "y": 3686.1293665120647
+        "x": 1426.4307904878642,
+        "y": 3686.129366512792
       },
       "status": "proposed",
       "type": "source",
@@ -2425,8 +2452,8 @@
       },
       "id": "node_src_server_standalone_ts_1772842987428",
       "position": {
-        "x": 1576.4307904876619,
-        "y": 3786.1293665120647
+        "x": 1576.4307904878642,
+        "y": 3786.129366512792
       },
       "status": "proposed",
       "type": "source",
@@ -2728,5 +2755,11 @@
       }
     }
   ],
-  "project_name": "antigravity-extension-vis"
+  "project_name": "antigravity-extension-vis",
+  "_iron_guard": {
+    "version": "0.2.18.1",
+    "byte_size": 48368,
+    "encoding": "UTF-8",
+    "alignment": 8
+  }
 }

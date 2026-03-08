@@ -55,6 +55,43 @@ export class GeminiParser {
     }
 
     /**
+     * GEMINI.md에서 원칙(Principles) 섹션 추출
+     */
+    public async extractPrinciples(filePath: string): Promise<string[]> {
+        try {
+            if (!fs.existsSync(filePath)) return [];
+            const content = fs.readFileSync(filePath, 'utf-8');
+            
+            // # Principles 또는 ## Principles 섹션 탐색 (HTML 주석 제거 후)
+            const cleanContent = content.replace(/<!--[\s\S]*?-->/g, '');
+            const sections = cleanContent.split(/# Principles|## Principles|# 원칙|## 원칙/i);
+            if (sections.length < 2) return [];
+
+            const principlesSection = sections[1];
+
+            // 다음 섹션 이전까지만 추출
+            const principlesContent = principlesSection.split(/^#|^##/m)[0];
+            
+            // 불렛 포인트 추출 (- ..., * ..., 1. ...)
+            const lines = principlesContent.split('\n');
+            const principles: string[] = [];
+            
+            lines.forEach(line => {
+                const match = line.match(/^\s*[-\*\d\.]+\s*(.*)/);
+                if (match && match[1].trim()) {
+                    principles.push(match[1].trim());
+                }
+            });
+            
+            console.log(`✅ GEMINI.md에서 ${principles.length}개의 원칙 추출 완료`);
+            return principles;
+        } catch (error) {
+            console.error('❌ Principles 추출 실패:', error);
+            return [];
+        }
+    }
+
+    /**
      * 내용 분석 (간단한 패턴 매칭)
      * TODO: 실제로는 AI API를 호출하여 더 정교한 분석 수행
      */

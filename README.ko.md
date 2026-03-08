@@ -1,8 +1,8 @@
-# <img src="resources/synapse-icon.png" width="40" height="40" /> 🧠 SYNAPSE: 비주얼 아키텍처 엔진 (v0.2.18.1)
+# <img src="resources/synapse-icon.png" width="40" height="40" /> 🧠 SYNAPSE: 비주얼 아키텍처 엔진 (v0.2.20)
 
 > **"눈에 보이는 것이 곧 LLM의 논리입니다."** — *AI를 위한 WYSIWYG 논리 설계 도구*
 
-[![Version](https://img.shields.io/badge/version-v0.2.18.1-brightgreen.png)](https://github.com/dogsinatas29/SYNAPSE/releases)
+[![Version](https://img.shields.io/badge/version-v0.2.20-brightgreen.png)](https://github.com/dogsinatas29/SYNAPSE/releases)
 ![Status](https://img.shields.io/badge/status-War_Room_Ready-orange.png)
 [![Language](https://img.shields.io/badge/Language-TypeScript-blue?style=flat-square)](https://www.typescriptlang.org/)
 [![Platform](https://img.shields.io/badge/Platform-VS_Code-007ACC?style=flat-square)](https://code.visualstudio.com/)
@@ -170,9 +170,9 @@ LLM 추론 논리와 소스 파일 간의 실제 연결 상태를 시각화합�
 2. 파일을 **VS Code** 창으로 드래그 앤 드롭합니다.
 ### 빠른 설치
 ```bash
-code --install-extension synapse-visual-architecture-0.2.18.1.vsix
+code --install-extension synapse-visual-architecture-0.2.20.vsix
 ```
-현재 버전: **v0.2.18.1** (Iron Guard Protocol & Modular Architecture)
+현재 버전: **v0.2.20** (Iron Guard & Promotion Awareness)
 
 ## 🚀 시작하기 (Getting Started)
 시각적 아키텍처 설계를 즉시 시작하는 방법입니다.
@@ -291,6 +291,17 @@ SYNAPSE v0.2.17은 그림 그리기와 코드 작성 간의 간극을 메웁니�
 
 ## 🆕 버전 히스토리
 
+### v0.2.20 (Hybrid Guardrail & Promotion Awareness)
+- **Iron Guard Protocol (v0.3.0 Preview)**: `LogicAnalyzer.ts` 및 VS Code Diagnostics를 연동하여 실시간 엣지 위반(💀) 건을 시각적으로 도출.
+- **Promotion Awareness System**: 노드가 고스트(Ghost)에서 활성(Active)으로 전환될 때 파티클 애니메이션(`PromotionParticle`) 및 컬러 모핑 연출 추가.
+- **Sovereign Principles Validation**: 캔버스 기동 시 `GEMINI.md`의 `# Principles`를 강제 검증하고, 위반 시 사용자 경고 알림. 조작 차단 방식을 해제하여 원칙이 없어도 접근은 가능하도록 UX 완화.
+- **UX & 안정성 확보**: 드래그 Jitter(5px 임계점 도입) 버그 및 다중 선택, 클러스터 제목 드래그 관련 참조 소실 버그 해결. 0 FPS(Idle) 상태에서 인터랙션 발생 시 즉시 60 FPS로 전환되는 Wake-up 구현.
+- **가상 디버그 엔진 (Virtual Debug)**: LSP 진단 정보의 노드 괴사(Necrosis), 엣지 파손, 시스템 레드아웃 시뮬레이션 적용.
+
+### v0.2.19 (Promotion & Side Panel Optimization)
+- **고스트 전이 시각화**: 캔버스 상에서 기능 실체가 등록될 때의 직관적인 변화(Morphing) 효과 제공.
+- **패널 분리 효율성**: Context Vault와 Snapshot History 창을 캔버스 메인 영역에서 분리된 플로팅/슬라이딩 UI 형태로 변경하여 작업 도메인을 확보.
+
 ### v0.2.18.1 (Iron Guard Protocol & Modular Architecture)
 - **문서 모듈화 허브**: 거대한 `architecture.md`를 4개의 전문 스펙(`core_synapse`, `vega_agent`, `reporting`, `data_scheme`)으로 분리하고 마스터 허브 체계를 수립했습니다.
 - **경량 스키마 가드 (LOD)**: `project_state.json` 저장/로드 시 핵심 필드(ID, Type, Status) 무결성을 엄격히 검증합니다.
@@ -348,6 +359,17 @@ SYNAPSE v0.2.17은 그림 그리기와 코드 작성 간의 간극을 메웁니�
 
 ### v0.2.10
 - **🐛 Critical Fixes**: 활성화 에러 수정 및 다중 노드 삭제 안정성 개선.
+
+---
+
+## 🗺️ 로드맵: v0.3.0 (The Iron Guard Protocol)
+
+SYNAPSE는 단순한 시각화 분석 도구에서 **아키텍처 규칙 엔진(Architecture Guardrail)**으로 진화합니다.
+
+- **Sovereign Mastery (마스터 허브 체계)**: `architecture.md`를 최상위 중심으로 하여 하위 모듈 문서를 중앙 통제.
+- **클러스터 간 시맨틱 연결**: 축소 시 여러 복잡한 엣지를 '단 하나의 대표선'으로 추출하는 시맨틱 줌(Semantic Zooming) 및 제약선(Constraint Edge) 강제 기능.
+- **실시간 가드레일 제재**: UI에서 Repository 등 지정되지 않은 레이어를 건너뛰는 역류(Layer Gravity 위반) 발견 즉시 차단(CRITICAL VIOLATION).
+- **인터랙티브 프로토타이핑**: 드래그 앤 드롭으로 구조적 제약을 만들면 시스템 코어 템플릿 코드 구조까지 자동화 생성.
 
 ---
 

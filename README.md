@@ -1,8 +1,8 @@
-# <img src="resources/synapse-icon.png" width="40" height="40" /> 🧠 SYNAPSE: Visual Architecture Engine (v0.2.18.1)
+# <img src="resources/synapse-icon.png" width="40" height="40" /> 🧠 SYNAPSE: Visual Architecture Engine (v0.2.20)
 
 > **"What you see is the logic of LLM"** — *WYSIWYG Logic for AI*
 
-[![Version](https://img.shields.io/badge/version-v0.2.18.1-brightgreen.png)
+[![Version](https://img.shields.io/badge/version-v0.2.20-brightgreen.png)
 ![Status](https://img.shields.io/badge/status-War_Room_Ready-orange.png)
 [![Language](https://img.shields.io/badge/Language-TypeScript-blue?style=flat-square)](https://www.typescriptlang.org/)
 [![Platform](https://img.shields.io/badge/Platform-VS_Code-007ACC?style=flat-square)](https://code.visualstudio.com/)
@@ -131,9 +131,9 @@ A deep, organized overview of your project structure.
 2. Drag and drop the file into **VS Code**.
 ### Quick Installation
 ```bash
-code --install-extension synapse-visual-architecture-0.2.18.1.vsix
+code --install-extension synapse-visual-architecture-0.2.20.vsix
 ```
-    Current Version: **v0.2.18.1** (Iron Guard Protocol & Modular Architecture)
+    Current Version: **v0.2.20** (Iron Guard & Promotion Awareness)
 
 ## 🚀 Getting Started
 Launch your visual architecture journey in seconds.
@@ -255,6 +255,17 @@ SYNAPSE v0.2.17 bridges the gap between drawing pictures and writing code.
 
 ## 🆕 Revision History
 
+### v0.2.20 (Hybrid Guardrail & Promotion Awareness)
+- **Iron Guard Protocol (v0.3.0 Preview)**: Implemented real-time edge validation via `LogicAnalyzer.ts` and VS Code Diagnostics integration.
+- **Promotion Awareness System**: Added path animations (`PromotionParticle`) and visual morping for 'ghost to active' node transitions.
+- **Sovereign Principles Validation**: Interactive principle monitoring that halts canvas if `# Principles` in `GEMINI.md` are violated.
+- **UX & Stability Hardening**: Resolved Jitter Tracking (5px threshold), fixed multi-select drag bugs, and implemented interaction wake-up (60 FPS on demand).
+- **Virtual Debug Engine**: Visual necrosis and fracture rendering for LSP diagnostic errors.
+
+### v0.2.19 (Promotion & Side Panel Optimization)
+- **Ghost-to-Active Transition**: Enhanced visual feedback during node promotion.
+- **Space Management**: Decoupled History and Context Vault into side panels to maximize canvas real estate.
+
 ### v0.2.18.1 (Iron Guard Protocol & Modular Architecture)
 - **Modular Documentation Hub**: Split the massive `architecture.md` into 4 specialized specs (`core_synapse`, `vega_agent`, `reporting`, `data_scheme`) with a Master Hub orchestration.
 - **Lightweight Schema Guard (LOD)**: Implemented a Level of Detail validation engine for `project_state.json`. Essential fields (ID, Type, Status) are now strictly verified during save/load.
@@ -316,6 +327,17 @@ SYNAPSE v0.2.17 bridges the gap between drawing pictures and writing code.
 
 ### v0.2.10
 - **🐛 Critical Fixes**: Resolved activation errors and improved multi-node deletion stability.
+
+---
+
+## 🗺️ Roadmap: v0.3.0 (The Iron Guard Protocol)
+
+SYNAPSE is evolving from a visual analysis tool into an **enforceable architecture control tower**.
+
+- **Sovereign Mastery**: Full implementation of the Master Hub (`architecture.md`) to govern all sub-modules.
+- **Cluster-to-Cluster Semantic Connections**: Advanced zoom-out logic that merges complex connections into a single, high-level "representative edge".
+- **Real-time Guardrails**: Automated rejection of circular dependencies and layer gravity violations (e.g., UI cannot call Database directly).
+- **Interactive Prototyping**: Drag-and-drop architectural design that automatically generates structural code templates.
 
 ---
 

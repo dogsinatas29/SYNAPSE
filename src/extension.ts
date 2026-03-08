@@ -18,14 +18,10 @@
 
 import * as vscode from 'vscode';
 import * as path from 'path';
-import {
-    LanguageClient,
-    LanguageClientOptions,
-    ServerOptions,
-    TransportKind
-} from 'vscode-languageclient/node';
+import { LanguageClient, LanguageClientOptions, ServerOptions, TransportKind } from 'vscode-languageclient/node';
 import { CanvasPanel } from './webview/CanvasPanel';
 import { BootstrapEngine } from './bootstrap/BootstrapEngine';
+import { LogicAnalyzer } from './core/LogicAnalyzer';
 
 
 import { client, setClient } from './client';
@@ -435,6 +431,84 @@ export async function activate(context: vscode.ExtensionContext) {
         );
 
         console.log('[SYNAPSE] Extension activation completed');
+
+        // [v0.2.18.2] Architecture Guardrail - Debounced AST validation on Save
+        const diagnosticCollection = vscode.languages.createDiagnosticCollection('synapse-architecture');
+        context.subscriptions.push(diagnosticCollection);
+
+        let validationTimeout: NodeJS.Timeout | null = null;
+        context.subscriptions.push(
+            vscode.workspace.onDidSaveTextDocument(async (document) => {
+                // Ignore non-supported files (just skip ones that don't match typical source)
+                if (document.uri.scheme !== 'file') return;
+                
+                const workspaceFolder = vscode.workspace.getWorkspaceFolder(document.uri);
+                if (!workspaceFolder) return;
+
+                if (validationTimeout) {
+                    clearTimeout(validationTimeout);
+                }
+
+                // Debounce to avoid spamming
+                validationTimeout = setTimeout(async () => {
+                    try {
+                        const projectStateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'project_state.json');
+                        let stateStr = '';
+                        try {
+                            const data = await vscode.workspace.fs.readFile(projectStateUri);
+                            stateStr = data.toString();
+                        } catch (e) {
+                            return; // No project state, no validation
+                        }
+
+                        const state = JSON.parse(stateStr);
+                        const analyzer = new LogicAnalyzer();
+                        const issues = analyzer.analyze(state, workspaceFolder.uri.fsPath);
+
+                        // Clear previous diagnostics
+                        diagnosticCollection.clear();
+
+                        const diagnosticsMap = new Map<string, vscode.Diagnostic[]>();
+
+                        issues.forEach(issue => {
+                            if (issue.type === 'architecture-violation') {
+                                issue.nodeIds.forEach(nodeId => {
+                                    const node = state.nodes.find((n: any) => n.id === nodeId);
+                                    if (node && node.data && node.data.file) {
+                                        const fileUri = vscode.Uri.joinPath(workspaceFolder.uri, node.data.file);
+                                        const uriStr = fileUri.toString();
+
+                                        let diagSeverity = vscode.DiagnosticSeverity.Error;
+                                        if (issue.severity === 'medium' || issue.severity === 'low') {
+                                            diagSeverity = vscode.DiagnosticSeverity.Warning;
+                                        }
+
+                                        const diagnostic = new vscode.Diagnostic(
+                                            new vscode.Range(0, 0, 0, 0), // Top of file by default 
+                                            `[SYNAPSE Guardrail] ${issue.message}`,
+                                            diagSeverity
+                                        );
+
+                                        if (!diagnosticsMap.has(uriStr)) {
+                                            diagnosticsMap.set(uriStr, []);
+                                        }
+                                        diagnosticsMap.get(uriStr)!.push(diagnostic);
+                                    }
+                                });
+                            }
+                        });
+
+                        // Apply new diagnostics
+                        diagnosticsMap.forEach((diags, uriStr) => {
+                            diagnosticCollection.set(vscode.Uri.parse(uriStr), diags);
+                        });
+
+                    } catch (e) {
+                        console.error('[SYNAPSE] Architecture validation on save failed:', e);
+                    }
+                }, 1000); // 1-second debounce
+            })
+        );
     } catch (e: any) {
         console.error('[SYNAPSE] Extension activation failed:', e);
         vscode.window.showErrorMessage(`SYNAPSE: Activation Failed! Error: ${e.message || e}`);

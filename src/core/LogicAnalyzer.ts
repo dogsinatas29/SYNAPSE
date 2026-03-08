@@ -3,17 +3,40 @@ import * as path from 'path';
 import { ProjectState, Node, Edge } from '../types/schema';
 
 export interface AnalysisIssue {
-    type: 'circular' | 'dead-end' | 'bottleneck' | 'isolated' | 'warning' | 'schema-violation';
+    type: 'circular' | 'dead-end' | 'bottleneck' | 'isolated' | 'warning' | 'schema-violation' | 'architecture-violation';
     severity: 'critical' | 'high' | 'medium' | 'low';
     message: string;
     nodeIds: string[];
 }
 
+export interface ArchitectureConfig {
+    architecture_guardrail?: {
+        layers: { id: string; index: number; description: string }[];
+        policies: {
+            gravity_rule: { enabled: boolean; mode: string };
+            inter_cluster_rule: { enabled: boolean; enforce_bridge: boolean };
+            same_layer_communication: { allow: boolean };
+        };
+        exceptions: {
+            bypass_keyword: string;
+            allowed_cross_layer_paths: { from: string; to: string; type: string }[];
+        };
+        supported_languages?: string[];
+    };
+}
+
 export class LogicAnalyzer {
+    private config: ArchitectureConfig | null = null;
+    private projectRoot: string = '';
+
     /**
      * 프로젝트 상태를 분석하여 아키텍처 결함 및 병목 지점을 찾음
      */
-    public analyze(state: ProjectState): AnalysisIssue[] {
+    public analyze(state: ProjectState, workspaceRoot?: string): AnalysisIssue[] {
+        if (workspaceRoot) {
+            this.projectRoot = workspaceRoot;
+            this.loadConfig();
+        }
         const issues: AnalysisIssue[] = [];
         const nodes = state.nodes;
         const edges = state.edges;
@@ -33,7 +56,23 @@ export class LogicAnalyzer {
         // 5. [v0.2.18.1] Schema 무결성 검증 (Schema Validation)
         this.detectSchemaViolations(nodes, edges, issues);
 
+        // 6. [v0.2.18.2] Architecture Guardrail 검증 (The Iron Guard)
+        this.detectArchitectureViolations(nodes, edges, issues);
+
         return issues;
+    }
+
+    private loadConfig() {
+        if (this.config) return; // 이미 로드됨
+        try {
+            const configPath = path.join(this.projectRoot, 'synapse.config.json');
+            if (fs.existsSync(configPath)) {
+                const content = fs.readFileSync(configPath, 'utf8');
+                this.config = JSON.parse(content);
+            }
+        } catch (e) {
+            console.error('Failed to load synapse.config.json', e);
+        }
     }
 
     private detectIsolatedNodes(nodes: Node[], edges: Edge[], issues: AnalysisIssue[]) {
@@ -196,5 +235,117 @@ export class LogicAnalyzer {
 
         fs.writeFileSync(reportPath, content, 'utf8');
         return reportPath;
+    }
+
+    private detectArchitectureViolations(nodes: Node[], edges: Edge[], issues: AnalysisIssue[]) {
+        if (!this.config || !this.config.architecture_guardrail) return;
+
+        const guardrail = this.config.architecture_guardrail;
+        const policies = guardrail.policies;
+        const exceptions = guardrail.exceptions;
+
+        const bypassRegex = new RegExp(`//\\s*${exceptions.bypass_keyword}`);
+
+        edges.forEach(edge => {
+            const sourceNode = nodes.find(n => n.id === edge.from);
+            const targetNode = nodes.find(n => n.id === edge.to);
+
+            if (!sourceNode || !targetNode) return;
+
+            // AST 기반 우회 주석 확인 (간이 구현: 노드의 file 스니펫 확인 등)
+            let isBypassed = false;
+            // 만약 node.data.content 등에 해당 코드가 있다면 체크 가능. 현재는 확장성을 위해 열어둠.
+            if (sourceNode.data.content && bypassRegex.test(sourceNode.data.content)) {
+                isBypassed = true;
+            }
+
+            const sourceLayer = sourceNode.data.layer !== undefined ? sourceNode.data.layer : 1; // Default Layer 1
+            const targetLayer = targetNode.data.layer !== undefined ? targetNode.data.layer : 1;
+
+            const sourceCluster = sourceNode.data.cluster_id;
+            const targetCluster = targetNode.data.cluster_id;
+
+            // Step 0: Supported Language Check
+            if (guardrail.supported_languages && guardrail.supported_languages.length > 0) {
+                const getExt = (file?: string) => file ? path.extname(file).toLowerCase() : '';
+                const sourceExt = getExt(sourceNode.data.file);
+                const targetExt = getExt(targetNode.data.file);
+
+                const sourceSupported = !sourceExt || guardrail.supported_languages.includes(sourceExt);
+                const targetSupported = !targetExt || guardrail.supported_languages.includes(targetExt);
+
+                if (!sourceSupported || !targetSupported) {
+                    issues.push({
+                        type: 'architecture-violation',
+                        severity: 'medium', // Use 'medium' instead of 'warning' because 'warning' is not in the severity union type
+                        message: `[Unsupported Language] 연결된 노드 중 일부가 분석 지원 대상 언어가 아닙니다 (${guardrail.supported_languages.join(', ')} 권장).`,
+                        nodeIds: [edge.from, edge.to]
+                    });
+                }
+            }
+
+            // Step 1: Shared Pass (Layer 0) or Global Layer (Layer 99)
+            if (sourceLayer === 0 || targetLayer === 0 || sourceLayer === 99 || targetLayer === 99) {
+                return; // VALID
+            }
+
+            // Step 2: Gravity Check (The Core)
+            if (policies.gravity_rule.enabled) {
+                if (targetLayer < sourceLayer) {
+                    // Exception Wormhole Check
+                    const isWormhole = exceptions.allowed_cross_layer_paths.some(
+                        path => {
+                            // Layer 이름 변환 매핑이 필요하지만 index 기반으로 간이 처리
+                            // 실제 구현에선 Layer ID <-> Index 매핑 사용 권장
+                            // 여기서는 일단 단순 역행 자체가 웜홀에 있는지 확인하는 로직 (타입이 event 인지 등)
+                            return edge.type === 'event' || edge.type === path.type;
+                        }
+                    );
+
+                    if (!isWormhole) {
+                        if (isBypassed) {
+                            issues.push({
+                                type: 'architecture-violation',
+                                severity: 'medium',
+                                message: `[Layer Gravity Bypassed] '${sourceNode.data.label}' -> '${targetNode.data.label}' (Layer ${sourceLayer} -> ${targetLayer})`,
+                                nodeIds: [edge.from, edge.to]
+                            });
+                        } else {
+                            issues.push({
+                                type: 'architecture-violation',
+                                severity: 'critical',
+                                message: `[Layer Gravity Violation] '${sourceNode.data.label}' -> '${targetNode.data.label}' (Layer ${sourceLayer} -> ${targetLayer}). 역행은 금지됩니다.`,
+                                nodeIds: [edge.from, edge.to]
+                            });
+                        }
+                    }
+                }
+            }
+
+            // Step 3: Boundary Check (Cluster-to-Cluster)
+            if (policies.inter_cluster_rule.enabled && sourceCluster && targetCluster && sourceCluster !== targetCluster) {
+                if (policies.inter_cluster_rule.enforce_bridge) {
+                    // target 노드가 Bridge 타입이 아니면 경고
+                    if (!targetNode.data.label.toLowerCase().includes('bridge') && !targetNode.data.label.toLowerCase().includes('facade')) {
+                        issues.push({
+                            type: 'architecture-violation',
+                            severity: 'medium',
+                            message: `[Boundary Violation] 타 클러스터의 내부 구현체('${targetNode.data.label}')에 직접 연결되었습니다. Bridge/Facade를 사용하세요.`,
+                            nodeIds: [edge.from, edge.to]
+                        });
+                    }
+                }
+            }
+
+            // Step 4: Same Layer Policy
+            if (sourceLayer === targetLayer && !policies.same_layer_communication.allow) {
+                issues.push({
+                    type: 'architecture-violation',
+                    severity: 'medium',
+                    message: `[Same Layer Policy] '${sourceNode.data.label}' -> '${targetNode.data.label}'. 동일 레이어 간 직접 호출이 제한되었습니다.`,
+                    nodeIds: [edge.from, edge.to]
+                });
+            }
+        });
     }
 }

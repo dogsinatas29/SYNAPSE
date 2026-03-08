@@ -4,6 +4,39 @@
  */
 
 /**
+ * PromotionParticle - 설계 승격 효과를 위한 파티클 클래스
+ */
+class PromotionParticle {
+    constructor(x, y, color) {
+        this.x = x;
+        this.y = y;
+        this.vx = (Math.random() - 0.5) * 4;
+        this.vy = (Math.random() - 0.5) * 4;
+        this.life = 1.0;
+        this.decay = 0.01 + Math.random() * 0.02;
+        this.color = color;
+        this.size = 2 + Math.random() * 3;
+    }
+
+    update() {
+        this.x += this.vx;
+        this.y += this.vy;
+        this.life -= this.decay;
+        return this.life > 0;
+    }
+
+    render(ctx, transform) {
+        const screenX = this.x * transform.zoom + transform.offsetX;
+        const screenY = this.y * transform.zoom + transform.offsetY;
+        
+        ctx.beginPath();
+        ctx.arc(screenX, screenY, this.size * transform.zoom, 0, Math.PI * 2);
+        ctx.fillStyle = this.color.replace(')', `, ${this.life})`).replace('rgb', 'rgba');
+        ctx.fill();
+    }
+}
+
+/**
  * FlowRenderer - 함수 실행 순서 플로우차트 렌더링
  */
 class FlowRenderer {
@@ -867,8 +900,13 @@ class CanvasEngine {
         // [v0.2.17] DTR State
         this.currentDTR = 0.3;
         this.clusters = []; // 클러스터 데이터
+        this.contextVaultNodes = []; // [v0.3.0] 저장된 컨텍스트 전용 패널 리스트
         this.isExpectingUpdate = false; // 데이터 업데이트 시 뷰 유지 여부 플래그
         
+        // [v0.2.19] Layer Visibility State
+        this.showBaseLayer = true;
+        this.showUserLayer = true;
+
         // [v0.2.18.3] Context Vault visibility state
         this.showContextVault = false;
 
@@ -972,6 +1010,11 @@ class CanvasEngine {
         this.isTestingLogic = false;
         this.analysisIssues = [];
         this.pulses = []; // [{ edgeId: string, progress: number, speed: number }]
+        
+        // [v0.2.18.2] Promotion Awareness System
+        this.particles = [];
+        this.promotionSites = []; // [{ x, y, startTime, label }]
+        this.promotingNodeIds = new Set(); // Currently animating nodes
 
         // Request initial state
         this.getProjectState();
@@ -1013,10 +1056,69 @@ class CanvasEngine {
         const btnToggleVault = document.getElementById('btn-toggle-vault');
         if (btnToggleVault) {
             btnToggleVault.addEventListener('click', () => {
-                this.showContextVault = !this.showContextVault;
-                btnToggleVault.textContent = `📂 Show Vault: ${this.showContextVault ? 'ON' : 'OFF'}`;
-                btnToggleVault.style.color = this.showContextVault ? '#fabd2f' : '#ebdbb2';
+                const panel = document.getElementById('context-vault-panel');
+                if (panel) {
+                    panel.classList.toggle('visible');
+                    if (panel.classList.contains('visible')) {
+                        this.renderContextVaultList(document.getElementById('vault-search-input')?.value || '');
+                    }
+                }
+            });
+        }
+
+        // [v0.2.19] Layer Visibility Toggles
+        const btnLayerBase = document.getElementById('btn-layer-base');
+        if (btnLayerBase) {
+            btnLayerBase.addEventListener('click', () => {
+                this.showBaseLayer = !this.showBaseLayer;
+                btnLayerBase.classList.toggle('active', this.showBaseLayer);
+                btnLayerBase.textContent = this.showBaseLayer ? 'ON' : 'OFF';
                 this.render();
+            });
+        }
+
+        const btnLayerUser = document.getElementById('btn-layer-user');
+        if (btnLayerUser) {
+            btnLayerUser.addEventListener('click', () => {
+                this.showUserLayer = !this.showUserLayer;
+                btnLayerUser.classList.toggle('active', this.showUserLayer);
+                btnLayerUser.textContent = this.showUserLayer ? 'ON' : 'OFF';
+                this.render();
+            });
+        }
+
+        // Draggable Layer Panel Logic
+        const layerPanel = document.getElementById('layer-controller');
+        const layerHeader = document.getElementById('layer-controller-header');
+        if (layerPanel && layerHeader) {
+            let isDragging = false;
+            let dragOffsetX = 0;
+            let dragOffsetY = 0;
+
+            layerHeader.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                const rect = layerPanel.getBoundingClientRect();
+                dragOffsetX = e.clientX - rect.left;
+                dragOffsetY = e.clientY - rect.top;
+                e.preventDefault(); // Prevent text selection
+            });
+
+            document.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+                let newLeft = e.clientX - dragOffsetX;
+                let newTop = e.clientY - dragOffsetY;
+
+                // Restrict to viewport bounds
+                newLeft = Math.max(0, Math.min(newLeft, window.innerWidth - layerPanel.offsetWidth));
+                newTop = Math.max(0, Math.min(newTop, window.innerHeight - layerPanel.offsetHeight));
+
+                layerPanel.style.left = `${newLeft}px`;
+                layerPanel.style.top = `${newTop}px`;
+                layerPanel.style.bottom = 'auto'; // Disable bottom pinning after drag
+            });
+
+            document.addEventListener('mouseup', () => {
+                isDragging = false;
             });
         }
 
@@ -1078,31 +1180,40 @@ class CanvasEngine {
 
         // Edit Logic Button (Destructive Source Sync)
         const btnEditLogic = document.getElementById('btn-edit-logic');
+        const btnEditLogicLabel = document.getElementById('btn-edit-logic-label');
         const _btnAddNode = document.getElementById('btn-add-node');
         const _btnConnect = document.getElementById('btn-connect');
-        if (btnEditLogic) {
-            btnEditLogic.addEventListener('click', () => {
-                this.isEditMode = !this.isEditMode;
-                const label = document.getElementById('btn-edit-logic-label');
-                if (label) {
-                    label.textContent = `🔓 Edit Logic: ${this.isEditMode ? 'ON' : 'OFF'}`;
-                    label.style.color = this.isEditMode ? '#fabd2f' : '#fb4934';
-                }
+        
+        const toggleEditLogic = () => {
+            this.isEditMode = !this.isEditMode;
+            if (btnEditLogicLabel) {
+                btnEditLogicLabel.textContent = `🔓 Edit Logic: ${this.isEditMode ? 'ON' : 'OFF'}`;
+                btnEditLogicLabel.style.color = this.isEditMode ? '#fabd2f' : '#fb4934';
+            }
+            if (btnEditLogic) {
                 btnEditLogic.textContent = `Turn ${this.isEditMode ? 'OFF' : 'ON'} Edit Mode`;
-                
-                if (this.isEditMode) {
-                    this.canvas.style.boxShadow = 'inset 0 0 20px #fb4934';
-                    if (_btnAddNode) _btnAddNode.style.display = 'block';
-                    if (_btnConnect) _btnConnect.style.display = 'block';
-                } else {
-                    this.canvas.style.boxShadow = 'none';
-                    if (_btnAddNode) _btnAddNode.style.display = 'none';
-                    if (_btnConnect) _btnConnect.style.display = 'none';
-                    this.isAddingNode = false;
-                    this.isCreatingEdge = false;
-                    this.canvas.style.cursor = 'default';
-                }
-            });
+            }
+            
+            if (this.isEditMode) {
+                this.canvas.style.boxShadow = 'inset 0 0 20px #fb4934';
+                if (_btnAddNode) _btnAddNode.style.display = 'block';
+                if (_btnConnect) _btnConnect.style.display = 'block';
+            } else {
+                this.canvas.style.boxShadow = 'none';
+                if (_btnAddNode) _btnAddNode.style.display = 'none';
+                if (_btnConnect) _btnConnect.style.display = 'none';
+                this.isAddingNode = false;
+                this.isCreatingEdge = false;
+                this.canvas.style.cursor = 'default';
+            }
+        };
+
+        if (btnEditLogic) {
+            btnEditLogic.addEventListener('click', toggleEditLogic);
+        }
+        if (btnEditLogicLabel) {
+            btnEditLogicLabel.addEventListener('click', toggleEditLogic);
+            btnEditLogicLabel.style.cursor = 'pointer';
         }
 
         // [v0.2.17] Scrollbar drag interaction
@@ -1363,11 +1474,141 @@ class CanvasEngine {
                     });
                 }
 
+                // [v0.2.18.2] Particle update
+                this.updateParticles();
+
                 this.render(); // 매 프레임 재포착
                 requestAnimationFrame(animate);
             }
         };
         requestAnimationFrame(animate);
+    }
+
+    updateParticles() {
+        if (this.particles.length === 0 && this.promotionSites.length === 0) return;
+
+        // Emit from sites
+        const now = Date.now();
+        this.promotionSites = this.promotionSites.filter(site => {
+            const elapsed = now - site.startTime;
+            if (elapsed < 2000) { // Emit for 2 seconds
+                if (Math.random() < 0.3) {
+                    this.emitPromotionParticles(site.x, site.y);
+                }
+                return true;
+            }
+            return false;
+        });
+
+        // Update existing particles
+        this.particles = this.particles.filter(p => p.update());
+    }
+
+    emitPromotionParticles(x, y) {
+        // Gruvbox Aqua/Greenish tones
+        const colors = ['rgb(142, 192, 124)', 'rgb(184, 187, 38)', 'rgb(235, 219, 178)'];
+        for (let i = 0; i < 5; i++) {
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            this.particles.push(new PromotionParticle(x + (Math.random() - 0.5) * 60, y + (Math.random() - 0.5) * 30, color));
+        }
+    }
+
+    renderParticles() {
+        if (this.particles.length === 0) return;
+        this.particles.forEach(p => p.render(this.ctx, this.transform));
+    }
+
+    /**
+     * _lerpColor: 두 색상 사이를 보간 (Morphing용)
+     */
+    _lerpColor(a, b, amount) {
+        const ah = parseInt(a.replace(/#/g, ''), 16),
+            ar = ah >> 16, ag = ah >> 8 & 0xff, ab = ah & 0xff,
+            bh = parseInt(b.replace(/#/g, ''), 16),
+            br = bh >> 16, bg = bh >> 8 & 0xff, bb = bh & 0xff,
+            rr = ar + amount * (br - ar),
+            rg = ag + amount * (bg - ag),
+            rb = ab + amount * (bb - ab);
+
+        return '#' + ((1 << 24) + (Math.round(rr) << 16) + (Math.round(rg) << 8) + Math.round(rb)).toString(16).slice(1);
+    }
+
+    /**
+     * _showPromotionToast: 승격 완료 알림 출력
+     */
+    _showPromotionToast(labels) {
+        const toastId = `promotion-toast-${Date.now()}`;
+        const toast = document.createElement('div');
+        toast.id = toastId;
+        toast.className = 'promotion-toast';
+        toast.style.position = 'fixed';
+        toast.style.bottom = '20px';
+        toast.style.left = '50%';
+        toast.style.transform = 'translateX(-50%)';
+        toast.style.background = '#282828';
+        toast.style.border = '1px solid #b8bb26';
+        toast.style.borderRadius = '8px';
+        toast.style.padding = '12px 24px';
+        toast.style.color = '#ebdbb2';
+        toast.style.zIndex = '10002';
+        toast.style.boxShadow = '0 8px 32px rgba(0,0,0,0.8)';
+        toast.style.display = 'flex';
+        toast.style.alignItems = 'center';
+        toast.style.gap = '12px';
+        toast.style.fontFamily = 'Inter, sans-serif';
+        toast.style.animation = 'toast-slide-up 0.5s ease-out';
+
+        const icon = document.createElement('span');
+        icon.textContent = '🚀';
+        icon.style.fontSize = '20px';
+
+        const content = document.createElement('div');
+        const mainText = document.createElement('strong');
+        mainText.textContent = '설계 승격 완료: Base Logic 통합';
+        mainText.style.display = 'block';
+        mainText.style.color = '#b8bb26';
+
+        const subText = document.createElement('span');
+        subText.textContent = labels.length === 1 ? `[${labels[0]}] 노드가 실체화되었습니다.` : `[${labels[0]}] 외 ${labels.length - 1}개 노드가 실체화되었습니다.`;
+        subText.style.fontSize = '12px';
+        subText.style.opacity = '0.8';
+
+        content.appendChild(mainText);
+        content.appendChild(subText);
+        toast.appendChild(icon);
+        toast.appendChild(content);
+
+        document.body.appendChild(toast);
+
+        // Remove after 5 seconds
+        setTimeout(() => {
+            toast.style.animation = 'toast-fade-out 0.5s ease-in forwards';
+            setTimeout(() => toast.remove(), 500);
+        }, 5000);
+    }
+
+    /**
+     * _updateLayerCounts: 레이어 패널의 노드 숫자 업데이트 및 애니메이션
+     */
+    _updateLayerCounts() {
+        const elBase = document.getElementById('layer-count-base');
+        const elUser = document.getElementById('layer-count-user');
+        if (!elBase || !elUser) return;
+
+        const baseCount = this.nodes.filter(n => !((n.id && n.id.startsWith('node_manual_')) || n.cluster_id === 'sys_cluster_buffer' || n.cluster_id === 'sys_cluster_reserved' || n.data?.cluster_id === 'sys_cluster_buffer' || n.data?.cluster_id === 'sys_cluster_reserved')).length;
+        const userCount = this.nodes.length - baseCount;
+
+        const updateBadge = (el, newCount) => {
+            const oldCount = parseInt(el.textContent);
+            if (oldCount !== newCount) {
+                el.textContent = newCount;
+                el.classList.add('changed');
+                setTimeout(() => el.classList.remove('changed'), 600);
+            }
+        };
+
+        updateBadge(elBase, baseCount);
+        updateBadge(elUser, userCount);
     }
 
     setupEventListeners() {
@@ -2839,6 +3080,24 @@ class CanvasEngine {
         }
     }
 
+    updateEdgeValidation(edgeId, result) {
+        const edge = this.edges.find(e => e.id === edgeId);
+        if (edge) {
+            edge.validationReason = result.reason;
+            edge.isValid = result.valid;
+            
+            if (result.visual) {
+                edge.visual = {
+                    ...edge.visual,
+                    ...result.visual
+                };
+            }
+            
+            // Re-render to show updated colors
+            this.render();
+        }
+    }
+
     updateHistoryUI(history) {
         const list = document.getElementById('history-list');
         list.innerHTML = '';
@@ -2944,21 +3203,64 @@ class CanvasEngine {
 
     loadProjectState(projectState, preserveView = false) {
         this.log(`loadProjectState triggered. Nodes: ${projectState.nodes?.length}, Edges: ${projectState.edges?.length}`);
+        
+        // [v0.2.18.2] Promotion Detection
+        const oldManualNodes = this.nodes.filter(n => n.id.startsWith('node_manual_'));
+        const promotedLabels = [];
+
         try {
             if (!projectState.nodes || projectState.nodes.length === 0) {
                 console.warn('[SYNAPSE] loadProjectState: Received empty nodes list.');
             }
 
-            this.nodes = projectState.nodes || [];
-            this.edges = projectState.edges || [];
-            this.clusters = projectState.clusters || [];
+            const rawNodes = projectState.nodes || [];
+            this.contextVaultNodes = rawNodes.filter(n => n.id.startsWith('ctx_vault_node_') || n.cluster_id === 'context_vault' || n.data?.cluster_id === 'context_vault');
+            this.nodes = rawNodes.filter(n => !this.contextVaultNodes.includes(n));
+            
+            const vaultIds = new Set(this.contextVaultNodes.map(n => n.id));
+            const rawEdges = projectState.edges || [];
+            this.edges = rawEdges.filter(e => !vaultIds.has(e.from) && !vaultIds.has(e.to));
+
+            // [v0.2.18.2] Detect matches between old manual nodes and new solid nodes
+            oldManualNodes.forEach(oldNode => {
+                const label = oldNode.data?.label || oldNode.id;
+                // Find a real node (not manual) with the same label
+                const solidMatch = this.nodes.find(n => !n.id.startsWith('node_manual_') && n.data?.label === label);
+                if (solidMatch) {
+                    this.log(`[SYNAPSE] Promotion detected for: ${label}`, 'info');
+                    this.promotionSites.push({
+                        x: solidMatch.position.x + 60,
+                        y: solidMatch.position.y + 30,
+                        startTime: Date.now(),
+                        label: label
+                    });
+                    this.promotingNodeIds.add(solidMatch.id);
+                    promotedLabels.push(label);
+                    
+                    // Trigger particles immediately
+                    this.emitPromotionParticles(solidMatch.position.x + 60, solidMatch.position.y + 30);
+                }
+            });
+
+            if (promotedLabels.length > 0) {
+                // Show toast (Simple implementation for now)
+                this._showPromotionToast(promotedLabels);
+            }
+            
+            this._updateLayerCounts();
+
+            const rawClusters = projectState.clusters || [];
+            this.clusters = rawClusters.filter(c => c.id !== 'context_vault');
+
+            // 외부 패널 UI 즉시 렌더링
+            this.renderContextVaultList();
 
             // [v0.2.22] System Clusters initialization
             this.getOrCreateSystemClusters();
 
             // [v0.2.24 New Rule] Documentation Shelf is collapsed by default
             this.clusters.forEach(cluster => {
-                if (cluster.id === 'doc_shelf' || cluster.id === 'context_vault') {
+                if (cluster.id === 'doc_shelf') {
                     if (cluster.collapsed === undefined) {
                         cluster.collapsed = true; // Collapse by default
                     }
@@ -3089,6 +3391,51 @@ class CanvasEngine {
             if (loadingEl) loadingEl.remove(); // Force remove to prevent blocking
             this.render();
         }
+    }
+
+    // [v0.3.0] 컨텍스트 볼트를 외부 리스트 UI로 렌더링
+    renderContextVaultList(filterQuery = '') {
+        const listEl = document.getElementById('context-vault-list');
+        if (!listEl) return;
+        
+        listEl.innerHTML = '';
+        const search = filterQuery.toLowerCase();
+        
+        const filtered = this.contextVaultNodes.filter(n => {
+            if (!search) return true;
+            const text = (n.data?.label || '') + ' ' + (n.data?.description || '') + ' ' + n.id;
+            return text.toLowerCase().includes(search);
+        });
+
+        if (filtered.length === 0) {
+            listEl.innerHTML = '<div style="color:var(--fg-dim); padding:10px;">No context matches found.</div>';
+            return;
+        }
+
+        filtered.forEach(node => {
+            const item = document.createElement('div');
+            item.className = 'vault-item';
+            
+            const title = document.createElement('div');
+            title.className = 'vault-item-title';
+            title.textContent = node.data?.label || node.id;
+            
+            const preview = document.createElement('div');
+            preview.className = 'vault-item-preview';
+            preview.textContent = node.data?.description || 'No description available.';
+            
+            item.appendChild(title);
+            item.appendChild(preview);
+            
+            // Allow opening this markdown in VSCode
+            item.addEventListener('click', () => {
+                if (typeof vscode !== 'undefined' && node.data?.file) {
+                    vscode.postMessage({ command: 'openFile', filePath: node.data.file });
+                }
+            });
+            
+            listEl.appendChild(item);
+        });
     }
 
     resolveOverlaps() {
@@ -3264,6 +3611,16 @@ class CanvasEngine {
                 this._deleteBadgeHits = []; // [v0.2.17] reset trash areas
                 if (zoom > 0.3) {
                     for (const edge of this.edges) {
+                        // [v0.2.19] Layer Visibility Edge Filter
+                        const srcNode = this.nodes.find(n => n.id === edge.from);
+                        const tgtNode = this.nodes.find(n => n.id === edge.to);
+                        if (srcNode && tgtNode) {
+                            const isUserLogic = (n) => n.id.startsWith('node_manual_') || n.cluster_id === 'sys_cluster_buffer' || n.cluster_id === 'sys_cluster_reserved' || n.data?.cluster_id === 'sys_cluster_buffer' || n.data?.cluster_id === 'sys_cluster_reserved';
+                            const isSrcUser = isUserLogic(srcNode);
+                            const isTgtUser = isUserLogic(tgtNode);
+                            if ((isSrcUser && !this.showUserLayer) || (!isSrcUser && !this.showBaseLayer)) continue;
+                            if ((isTgtUser && !this.showUserLayer) || (!isTgtUser && !this.showBaseLayer)) continue;
+                        }
                         this.renderEdge(edge);
                     }
                 }
@@ -3273,6 +3630,11 @@ class CanvasEngine {
 
                 // 노드 렌더링 (LOD 적용)
                 for (const node of this.nodes) {
+                    // [v0.2.19] Layer Visibility Filtering
+                    const isUserCustom = (node.id && node.id.startsWith('node_manual_')) || node.cluster_id === 'sys_cluster_buffer' || node.cluster_id === 'sys_cluster_reserved' || node.data?.cluster_id === 'sys_cluster_buffer' || node.data?.cluster_id === 'sys_cluster_reserved';
+                    if (isUserCustom && !this.showUserLayer) continue;
+                    if (!isUserCustom && !this.showBaseLayer) continue;
+
                     // 클러스터가 접혀있으면 렌더링 스킵 (Documentation Shelf 포함 모든 클러스터 준수)
                     if (node.cluster_id) {
                         const cluster = this.clusters.find(c => c.id === node.cluster_id);
@@ -3299,6 +3661,9 @@ class CanvasEngine {
                 if (this.isCreatingEdge && this.edgeSource) {
                     this.renderGhostEdge();
                 }
+
+                // [v0.2.18.2] Render particles
+                this.renderParticles();
             }
 
             this.ctx.restore();
@@ -3995,6 +4360,21 @@ class CanvasEngine {
         for (const cluster of sortedClusters) {
             // [v0.2.18.3] Isolate Context Vault unless toggled ON
             if (cluster.id === 'context_vault' && !this.showContextVault) continue;
+
+            // [v0.2.19] Layer Visibility - Hide User Clusters if User Layer is off
+            if ((cluster.id === 'sys_cluster_buffer' || cluster.id === 'sys_cluster_reserved' || cluster.id.startsWith('node_manual_')) && !this.showUserLayer) {
+                continue;
+            }
+
+            // [v0.2.19] Layer Visibility - Hide Base Clusters if Base Layer is off
+            // Base clusters are everything that isn't buffer, reserved, or manual
+            const isBaseCluster = !(cluster.id === 'sys_cluster_buffer' || cluster.id === 'sys_cluster_reserved' || cluster.id.startsWith('node_manual_'));
+            if (isBaseCluster && !this.showBaseLayer) {
+                // However, Context Vault is base logic, but we handle its visibility separately.
+                if (cluster.id !== 'context_vault') {
+                    continue; 
+                }
+            }
             
             const b = getClusterBounds(cluster);
             if (b.minX === Infinity) continue;
@@ -4068,6 +4448,12 @@ class CanvasEngine {
 
         const nodeWidth = 120;
         const nodeHeight = 60;
+
+        // [v0.2.19] Ghost Nodes belong to Base Logic. If Base Logic is off, hide them.
+        if (!this.showBaseLayer) {
+            this.ctx.restore();
+            return;
+        }
 
         for (const ghost of this.baselineNodes) {
             const currentNode = this.nodes.find(n => n.id === ghost.id);
@@ -4419,6 +4805,23 @@ class CanvasEngine {
         let dash = style.dash || [];
         let glowColor = null;
 
+        // [v0.2.18.2] Promotion Effects (Color Morphing & Glow)
+        const isPromoting = this.promotingNodeIds.has(node.id);
+        if (isPromoting) {
+            const promotionElapsed = Date.now() - (this.promotionSites.find(s => s.label === node.data?.label)?.startTime || 0);
+            if (promotionElapsed < 3000) { // 3 seconds phase
+                const ratio = Math.min(1, promotionElapsed / 3000);
+                // Morph from Yellow (#fabd2f) to Green (#b8bb26)
+                bgColor = this._lerpColor('#fabd2f', '#b8bb26', ratio);
+                borderColor = '#b8bb26';
+                glowColor = '#8ec07c'; // Aqua glow
+                this.ctx.shadowBlur = 20 * (1 - ratio) + 10;
+                this.ctx.shadowColor = glowColor;
+            } else {
+                this.promotingNodeIds.delete(node.id);
+            }
+        }
+
         if (node.state === 'error') {
             borderColor = '#fb4934';
             lineWidth += 1.5;
@@ -4480,6 +4883,8 @@ class CanvasEngine {
         if (isDtrGlow && dtrPulse !== null) {
             this.ctx.shadowBlur = 50 * dtrPulse * (node.visual?.glow_intensity || 1);
             this.ctx.shadowColor = '#8A2BE2';
+        } else if (isPromoting) {
+            // Shadow already set in promotion block above
         } else if (glowColor && (isSelected || node.isError || node.isBottleneck || (isPartofActivePath && this.isAnimating))) {
             this.ctx.shadowBlur = 10;
             this.ctx.shadowColor = glowColor;
@@ -5780,42 +6185,18 @@ function initCanvas() {
     });
 
     document.getElementById('btn-context-vault')?.addEventListener('click', () => {
-        // [v0.2.19] Show Context Vault nodes in a special filtered view or just focus on them
-        const vaultCluster = engine.clusters.find(c => c.id === 'context_vault');
-        if (vaultCluster) {
-            // Temporarily show and fit to it? No, let's just alert for now or implement a panel
-            vscode?.postMessage({ command: 'showMessage', text: 'Opening Context Vault History...' });
-            
-            // For now, let's just make it visible on canvas temporarily if they really want to see it?
-            // Actually, the request is to "isolate into external panel". 
-            // I'll implement a basic panel toggle.
-            const panel = document.getElementById('side-panel');
-            if (panel) {
-                panel.classList.add('visible');
-                document.getElementById('side-panel-title').textContent = 'Context Vault';
-                document.getElementById('side-panel-content').innerHTML = `
-                    <div style="padding: 10px;">
-                        <h3>📜 Context History</h3>
-                        <p>Searchable context history nodes will appear here.</p>
-                        <ul id="vault-list" style="list-style: none; padding: 0;"></ul>
-                    </div>
-                `;
-                
-                // Populate from vault nodes
-                const vaultNodes = engine.nodes.filter(n => n.id.startsWith('ctx_vault_node_') || n.cluster_id === 'context_vault');
-                const list = document.getElementById('vault-list');
-                vaultNodes.forEach(n => {
-                    const li = document.createElement('li');
-                    li.style.padding = '8px';
-                    li.style.borderBottom = '1px solid #504945';
-                    li.style.cursor = 'pointer';
-                    li.textContent = n.data?.label || n.id;
-                    li.onclick = () => engine.focusNodeInGraph(n.id);
-                    list.appendChild(li);
-                });
+        const panel = document.getElementById('context-vault-panel');
+        if (panel) {
+            panel.classList.toggle('visible');
+            if (panel.classList.contains('visible') && engine) {
+                engine.renderContextVaultList(document.getElementById('vault-search-input')?.value || '');
             }
-        } else {
-            vscode?.postMessage({ command: 'showWarning', message: 'No Context Vault data found yet.' });
+        }
+    });
+
+    document.getElementById('vault-search-input')?.addEventListener('input', (e) => {
+        if (engine && document.getElementById('context-vault-panel')?.classList.contains('visible')) {
+            engine.renderContextVaultList(e.target.value);
         }
     });
 

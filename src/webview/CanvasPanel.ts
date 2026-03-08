@@ -19,7 +19,7 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
-import { ProjectStructure, Node, Edge, ProjectState, EdgeType, NodeType } from '../types/schema';
+import { Node, Edge, ProjectState, EdgeType, NodeType } from '../types/schema';
 import { FileScanner } from '../core/FileScanner';
 import { LogicAnalyzer } from '../core/LogicAnalyzer';
 import { EdgeCodeRefactorer } from '../core/EdgeCodeRefactorer';
@@ -1675,45 +1675,106 @@ export class CanvasPanel {
 
     private async handleValidateEdge(edgeId: string, fromNode: any, toNode: any, edgeType: string) {
         try {
-            console.log(`[SYNAPSE] Validating edge ${edgeId}: ${fromNode.data.label} -> ${toNode.data.label} (${edgeType})`);
+            console.log(`[SYNAPSE] Validating edge ${edgeId}: ${fromNode?.data?.label} -> ${toNode?.data?.label} (${edgeType})`);
 
-            // 1. 컨텍스트 수집 (간단한 버전)
-            const fromContext = fromNode.type + (fromNode.data.description ? `: ${fromNode.data.description}` : '');
-            const toContext = toNode.type + (toNode.data.description ? `: ${toNode.data.description}` : '');
-
-            // 2. AI 검증 시뮬레이션 (Phase 4의 핵심 - 실제 LLM 연동 포인트)
-            // 실제 구현에서는 여기서 AI 서비스를 호출합니다.
-            let result = {
-                valid: true,
-                reason: 'Appropriate architectural relationship.',
-                confidence: 0.95
-            };
-
-            // 간단한 규칙 기반 시뮬레이션 (AI 대신)
-            if (fromNode.type === 'config' && (toNode.type === 'logic' || toNode.type === 'source')) {
-                // Config가 로직으로 흐르는 것은 정상
-            } else if ((fromNode.type === 'logic' || fromNode.type === 'source') && fromNode.data.label.toLowerCase().includes('ui') && toNode.type === 'data') {
-                result = {
-                    valid: false,
-                    reason: 'Potential bypass: UI components should not directly access Data stores. Consider using an API or Service layer.',
-                    confidence: 0.88
-                };
-            } else if (fromNode.id === toNode.id) {
-                result = {
-                    valid: false,
-                    reason: 'Circular dependency: Self-reference is not allowed in this layer.',
-                    confidence: 1.0
-                };
+            if (!this._workspaceFolder || !fromNode || !toNode) {
+                this._panel.webview.postMessage({
+                    command: 'edgeValidationResult',
+                    edgeId: edgeId,
+                    result: { valid: true, reason: 'Insufficient context', confidence: 1.0 }
+                });
+                return;
             }
 
-            // 3. 결과 전송
+            // 1. 기존 프로젝트 상태 읽기
+            const projectStateUri = vscode.Uri.joinPath(this._workspaceFolder.uri, 'data', 'project_state.json');
+            let state: any = { nodes: [], edges: [], clusters: [] };
+            try {
+                const data = await vscode.workspace.fs.readFile(projectStateUri);
+                state = JSON.parse(data.toString());
+            } catch (e) {
+                // Ignore missing file, use empty state
+            }
+
+            const analyzer = new LogicAnalyzer();
+            
+            // 2. 현재 엣지를 임시로 추가하여 검사 (상태에 없는 새 엣지일 수 있으므로)
+            const tempEdge = {
+                id: edgeId,
+                from: fromNode.id,
+                to: toNode.id,
+                type: edgeType as any,
+                is_approved: false,
+                visual: { thickness: 2, style: 'solid', color: '#665c54' }
+            };
+
+            // 노드 리스트에 from/to가 최신 상태로 들어있도록 덮어쓰기
+            const existingNodes = state.nodes || [];
+            const tempNodes = existingNodes.filter((n: any) => n.id !== fromNode.id && n.id !== toNode.id);
+            tempNodes.push(fromNode, toNode);
+
+            const tempState = {
+                ...state,
+                nodes: tempNodes,
+                edges: [...(state.edges || []), tempEdge]
+            };
+
+            // 3. LogicAnalyzer 가동
+            const issues = analyzer.analyze(tempState as any, this._workspaceFolder.uri.fsPath);
+
+            // 해당 엣지와 연관된 이슈만 필터링
+            const relevantIssues = issues.filter(issue =>
+                issue.nodeIds.includes(fromNode.id) && issue.nodeIds.includes(toNode.id)
+            );
+
+            let isValid = true;
+            let validationMessage = '연결이 유효합니다. (LogicAnalyzer ✅)';
+            let visualStyle = undefined;
+
+            if (relevantIssues.length > 0) {
+                const critical = relevantIssues.find(i => i.severity === 'critical');
+                const warning = relevantIssues.find(i => i.severity === 'high' || i.severity === 'medium' || i.severity === 'low');
+
+                if (critical) {
+                    isValid = false;
+                    validationMessage = critical.message;
+                    visualStyle = { color: '#fb4934', style: 'solid', thickness: 3 }; // Gruvbox Red
+                } else if (warning) {
+                    isValid = true; // Warning doesn't hard-block yet
+                    validationMessage = warning.message;
+                    visualStyle = { color: '#fabd2f', style: 'dashed', thickness: 2, dashArray: '5,5' }; // Gruvbox Yellow
+                }
+            } else {
+                // 통과 시 녹색
+                visualStyle = { color: '#b8bb26', style: 'solid', thickness: 2 };
+            }
+
+            // 4. 결과 전송 (Canvas 측에서는 edgeValidationResult를 수신 처리)
             this._panel.webview.postMessage({
                 command: 'edgeValidationResult',
                 edgeId: edgeId,
-                result: result
+                result: {
+                    valid: isValid,
+                    reason: validationMessage,
+                    confidence: 1.0,
+                    visual: visualStyle
+                }
             });
+
+            // 피드백 알림
+            if (!isValid) {
+                vscode.window.showErrorMessage(`[Architecture Violation] ${validationMessage}`);
+            } else if (validationMessage !== '연결이 유효합니다. (LogicAnalyzer ✅)') {
+                vscode.window.showWarningMessage(`[Architecture Warning] ${validationMessage}`);
+            }
+
         } catch (error) {
             console.error('Failed to validate edge:', error);
+            this._panel.webview.postMessage({
+                command: 'edgeValidationResult',
+                edgeId: edgeId,
+                result: { valid: true, reason: 'Validation error fallback', confidence: 0 }
+            });
         }
     }
 

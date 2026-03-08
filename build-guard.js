@@ -16,7 +16,7 @@ function runBuild() {
     try {
         // 2. 마일스톤-빌드 타겟 강제 동기화: 가장 최신 마일스톤 파일 찾기
         const files = fs.readdirSync(milestoneDir);
-        const milestoneFiles = files.filter(f => f.startsWith('v') && f.endsWith('.md')).sort().reverse();
+        const milestoneFiles = files.filter(f => /^v\d/.test(f) && f.endsWith('.md')).sort().reverse();
 
         if (milestoneFiles.length === 0) {
             throw new Error('BM Policy Mismatch: No milestone documents found.');

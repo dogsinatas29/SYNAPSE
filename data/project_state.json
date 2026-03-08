@@ -1743,6 +1743,1046 @@
         "opacity": 0.8,
         "style": "solid"
       }
+    },
+    {
+      "data": {
+        "dtr": 0
+      },
+      "from": "node_README_ko_md_1772842987428",
+      "id": "edge_auto_1772953811598_551043",
+      "label": "ref",
+      "to": "ghost_hint_solid_border",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "color": "#888",
+        "opacity": 0,
+        "style": "dashed"
+      }
+    },
+    {
+      "data": {
+        "dtr": 0
+      },
+      "from": "node_README_ko_md_1772842987428",
+      "id": "edge_auto_1772953811599_864481",
+      "label": "ref",
+      "to": "ghost_node_active",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "color": "#888",
+        "opacity": 0,
+        "style": "dashed"
+      }
+    },
+    {
+      "data": {
+        "dtr": 0
+      },
+      "from": "node_README_ko_md_1772842987428",
+      "id": "edge_auto_1772953811599_544831",
+      "label": "ref",
+      "to": "ghost_hint_purple_glow",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "color": "#888",
+        "opacity": 0,
+        "style": "dashed"
+      }
+    },
+    {
+      "data": {
+        "dtr": 0
+      },
+      "from": "node_README_ko_md_1772842987428",
+      "id": "edge_auto_1772953811599_228065",
+      "label": "ref",
+      "to": "ghost_node_high_dtr",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "color": "#888",
+        "opacity": 0,
+        "style": "dashed"
+      }
+    },
+    {
+      "data": {
+        "dtr": 0
+      },
+      "from": "node_README_ko_md_1772842987428",
+      "id": "edge_auto_1772953811599_79285",
+      "label": "ref",
+      "to": "ghost_hint_dashed_border",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "color": "#888",
+        "opacity": 0,
+        "style": "dashed"
+      }
+    },
+    {
+      "data": {
+        "dtr": 0
+      },
+      "from": "node_README_ko_md_1772842987428",
+      "id": "edge_auto_1772953811601_727593",
+      "label": "ref",
+      "to": "ghost_node_ghost",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "color": "#888",
+        "opacity": 0,
+        "style": "dashed"
+      }
+    },
+    {
+      "data": {
+        "dtr": 0
+      },
+      "from": "node_README_ko_md_1772842987428",
+      "id": "edge_auto_1772953811601_620660",
+      "label": "ref",
+      "to": "ghost_hint_grayed_out",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "color": "#888",
+        "opacity": 0,
+        "style": "dashed"
+      }
+    },
+    {
+      "data": {
+        "dtr": 0
+      },
+      "from": "node_README_ko_md_1772842987428",
+      "id": "edge_auto_1772953811601_38837",
+      "label": "ref",
+      "to": "ghost_node_deleted",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "color": "#888",
+        "opacity": 0,
+        "style": "dashed"
+      }
+    },
+    {
+      "data": {
+        "dtr": 0
+      },
+      "from": "node_README_ko_md_1772842987428",
+      "id": "edge_auto_1772953811602_30412",
+      "label": "ref",
+      "to": "ghost_hint_red_pulse",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "color": "#888",
+        "opacity": 0,
+        "style": "dashed"
+      }
+    },
+    {
+      "data": {
+        "dtr": 0
+      },
+      "from": "node_README_ko_md_1772842987428",
+      "id": "edge_auto_1772953811602_59729",
+      "label": "ref",
+      "to": "ghost_node_warning",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "color": "#888",
+        "opacity": 0,
+        "style": "dashed"
+      }
+    },
+    {
+      "data": {
+        "dtr": 0
+      },
+      "from": "node_README_ko_md_1772842987428",
+      "id": "edge_auto_1772953811602_779542",
+      "label": "ref",
+      "to": "ghost_color_beige",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "color": "#888",
+        "opacity": 0,
+        "style": "dashed"
+      }
+    },
+    {
+      "data": {
+        "dtr": 0
+      },
+      "from": "node_README_ko_md_1772842987428",
+      "id": "edge_auto_1772953811602_722116",
+      "label": "ref",
+      "to": "ghost_style_solid_2px",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "color": "#888",
+        "opacity": 0,
+        "style": "dashed"
+      }
+    },
+    {
+      "data": {
+        "dtr": 0
+      },
+      "from": "node_README_ko_md_1772842987428",
+      "id": "edge_auto_1772953811602_180691",
+      "label": "ref",
+      "to": "ghost_color_blue",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "color": "#888",
+        "opacity": 0,
+        "style": "dashed"
+      }
+    },
+    {
+      "data": {
+        "dtr": 0
+      },
+      "from": "node_README_ko_md_1772842987428",
+      "id": "edge_auto_1772953811602_905845",
+      "label": "ref",
+      "to": "ghost_style_solid_3px",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "color": "#888",
+        "opacity": 0,
+        "style": "dashed"
+      }
+    },
+    {
+      "data": {
+        "dtr": 0
+      },
+      "from": "node_README_ko_md_1772842987428",
+      "id": "edge_auto_1772953811603_622810",
+      "label": "ref",
+      "to": "ghost_color_orange",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "color": "#888",
+        "opacity": 0,
+        "style": "dashed"
+      }
+    },
+    {
+      "data": {
+        "dtr": 0
+      },
+      "from": "node_README_ko_md_1772842987428",
+      "id": "edge_auto_1772953811603_981394",
+      "label": "ref",
+      "to": "ghost_color_pink",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "color": "#888",
+        "opacity": 0,
+        "style": "dashed"
+      }
+    },
+    {
+      "data": {
+        "dtr": 0
+      },
+      "from": "node_README_ko_md_1772842987428",
+      "id": "edge_auto_1772953811603_751606",
+      "label": "ref",
+      "to": "ghost_style_solid_1px",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "color": "#888",
+        "opacity": 0,
+        "style": "dashed"
+      }
+    },
+    {
+      "data": {
+        "dtr": 0
+      },
+      "from": "node_README_ko_md_1772842987428",
+      "id": "edge_auto_1772953811603_583672",
+      "label": "ref",
+      "to": "ghost_color_brown",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "color": "#888",
+        "opacity": 0,
+        "style": "dashed"
+      }
+    },
+    {
+      "data": {
+        "dtr": 0
+      },
+      "from": "node_README_ko_md_1772842987428",
+      "id": "edge_auto_1772953811603_482678",
+      "label": "ref",
+      "to": "ghost_style_solid_1.5px",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "color": "#d3869b",
+        "opacity": 0,
+        "style": "dashed"
+      }
+    },
+    {
+      "data": {
+        "dtr": 0
+      },
+      "from": "node_README_ko_md_1772842987428",
+      "id": "edge_auto_1772953811603_54678",
+      "label": "ref",
+      "to": "ghost_color_aqua",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "color": "#888",
+        "opacity": 0,
+        "style": "dashed"
+      }
+    },
+    {
+      "data": {
+        "dtr": 0
+      },
+      "from": "node_README_ko_md_1772842987428",
+      "id": "edge_auto_1772953811604_296507",
+      "label": "ref",
+      "to": "ghost_style_dashed_2px",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "color": "#888",
+        "opacity": 0,
+        "style": "dashed"
+      }
+    },
+    {
+      "data": {
+        "dtr": 0
+      },
+      "from": "node_README_ko_md_1772842987428",
+      "id": "edge_auto_1772953811604_871579",
+      "label": "ref",
+      "to": "ghost_color_magenta",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "color": "#888",
+        "opacity": 0,
+        "style": "dashed"
+      }
+    },
+    {
+      "data": {
+        "dtr": 0
+      },
+      "from": "node_README_ko_md_1772842987428",
+      "id": "edge_auto_1772953811604_224583",
+      "label": "ref",
+      "to": "ghost_style_dotted_2px",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "color": "#888",
+        "opacity": 0,
+        "style": "dashed"
+      }
+    },
+    {
+      "data": {
+        "dtr": 0
+      },
+      "from": "node_README_ko_md_1772842987428",
+      "id": "edge_auto_1772953811604_537982",
+      "label": "ref",
+      "to": "ghost_color_gold",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "color": "#888",
+        "opacity": 0,
+        "style": "dashed"
+      }
+    },
+    {
+      "data": {
+        "dtr": 0
+      },
+      "from": "node_README_ko_md_1772842987428",
+      "id": "edge_auto_1772953811604_624188",
+      "label": "ref",
+      "to": "ghost_style_pulse_5px",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "color": "#888",
+        "opacity": 0,
+        "style": "dashed"
+      }
+    },
+    {
+      "data": {
+        "dtr": 0
+      },
+      "from": "node_README_md_1772842987428",
+      "id": "edge_auto_1772953811605_505389",
+      "label": "ref",
+      "to": "ghost_hint_solid_border",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "color": "#888",
+        "opacity": 0,
+        "style": "dashed"
+      }
+    },
+    {
+      "data": {
+        "dtr": 0
+      },
+      "from": "node_README_md_1772842987428",
+      "id": "edge_auto_1772953811605_534339",
+      "label": "ref",
+      "to": "ghost_node_active",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "color": "#888",
+        "opacity": 0,
+        "style": "dashed"
+      }
+    },
+    {
+      "data": {
+        "dtr": 0
+      },
+      "from": "node_README_md_1772842987428",
+      "id": "edge_auto_1772953811605_762160",
+      "label": "ref",
+      "to": "ghost_hint_purple_glow",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "color": "#888",
+        "opacity": 0,
+        "style": "dashed"
+      }
+    },
+    {
+      "data": {
+        "dtr": 0
+      },
+      "from": "node_README_md_1772842987428",
+      "id": "edge_auto_1772953811605_502962",
+      "label": "ref",
+      "to": "ghost_node_high_dtr",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "color": "#888",
+        "opacity": 0,
+        "style": "dashed"
+      }
+    },
+    {
+      "data": {
+        "dtr": 0
+      },
+      "from": "node_README_md_1772842987428",
+      "id": "edge_auto_1772953811605_80566",
+      "label": "ref",
+      "to": "ghost_hint_dashed_border",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "color": "#888",
+        "opacity": 0,
+        "style": "dashed"
+      }
+    },
+    {
+      "data": {
+        "dtr": 0
+      },
+      "from": "node_README_md_1772842987428",
+      "id": "edge_auto_1772953811605_90650",
+      "label": "ref",
+      "to": "ghost_node_ghost",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "color": "#888",
+        "opacity": 0,
+        "style": "dashed"
+      }
+    },
+    {
+      "data": {
+        "dtr": 0
+      },
+      "from": "node_README_md_1772842987428",
+      "id": "edge_auto_1772953811606_957960",
+      "label": "ref",
+      "to": "ghost_hint_grayed_out",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "color": "#888",
+        "opacity": 0,
+        "style": "dashed"
+      }
+    },
+    {
+      "data": {
+        "dtr": 0
+      },
+      "from": "node_README_md_1772842987428",
+      "id": "edge_auto_1772953811606_780088",
+      "label": "ref",
+      "to": "ghost_node_deleted",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "color": "#888",
+        "opacity": 0,
+        "style": "dashed"
+      }
+    },
+    {
+      "data": {
+        "dtr": 0
+      },
+      "from": "node_README_md_1772842987428",
+      "id": "edge_auto_1772953811606_987006",
+      "label": "ref",
+      "to": "ghost_hint_red_pulse",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "color": "#888",
+        "opacity": 0,
+        "style": "dashed"
+      }
+    },
+    {
+      "data": {
+        "dtr": 0
+      },
+      "from": "node_README_md_1772842987428",
+      "id": "edge_auto_1772953811606_12934",
+      "label": "ref",
+      "to": "ghost_node_warning",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "color": "#888",
+        "opacity": 0,
+        "style": "dashed"
+      }
+    },
+    {
+      "data": {
+        "dtr": 0
+      },
+      "from": "node_README_md_1772842987428",
+      "id": "edge_auto_1772953811606_30095",
+      "label": "ref",
+      "to": "ghost_color_beige",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "color": "#888",
+        "opacity": 0,
+        "style": "dashed"
+      }
+    },
+    {
+      "data": {
+        "dtr": 0
+      },
+      "from": "node_README_md_1772842987428",
+      "id": "edge_auto_1772953811606_856165",
+      "label": "ref",
+      "to": "ghost_style_solid_2px",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "color": "#888",
+        "opacity": 0,
+        "style": "dashed"
+      }
+    },
+    {
+      "data": {
+        "dtr": 0
+      },
+      "from": "node_README_md_1772842987428",
+      "id": "edge_auto_1772953811606_664928",
+      "label": "ref",
+      "to": "ghost_color_blue",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "color": "#888",
+        "opacity": 0,
+        "style": "dashed"
+      }
+    },
+    {
+      "data": {
+        "dtr": 0
+      },
+      "from": "node_README_md_1772842987428",
+      "id": "edge_auto_1772953811606_947818",
+      "label": "ref",
+      "to": "ghost_style_solid_3px",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "color": "#888",
+        "opacity": 0,
+        "style": "dashed"
+      }
+    },
+    {
+      "data": {
+        "dtr": 0
+      },
+      "from": "node_README_md_1772842987428",
+      "id": "edge_auto_1772953811606_430069",
+      "label": "ref",
+      "to": "ghost_color_orange",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "color": "#888",
+        "opacity": 0,
+        "style": "dashed"
+      }
+    },
+    {
+      "data": {
+        "dtr": 0
+      },
+      "from": "node_README_md_1772842987428",
+      "id": "edge_auto_1772953811607_904593",
+      "label": "ref",
+      "to": "ghost_color_pink",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "color": "#888",
+        "opacity": 0,
+        "style": "dashed"
+      }
+    },
+    {
+      "data": {
+        "dtr": 0
+      },
+      "from": "node_README_md_1772842987428",
+      "id": "edge_auto_1772953811607_714883",
+      "label": "ref",
+      "to": "ghost_style_solid_1px",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "color": "#888",
+        "opacity": 0,
+        "style": "dashed"
+      }
+    },
+    {
+      "data": {
+        "dtr": 0
+      },
+      "from": "node_README_md_1772842987428",
+      "id": "edge_auto_1772953811607_803689",
+      "label": "ref",
+      "to": "ghost_color_brown",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "color": "#888",
+        "opacity": 0,
+        "style": "dashed"
+      }
+    },
+    {
+      "data": {
+        "dtr": 0
+      },
+      "from": "node_README_md_1772842987428",
+      "id": "edge_auto_1772953811607_487920",
+      "label": "ref",
+      "to": "ghost_style_solid_1.5px",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "color": "#d3869b",
+        "opacity": 0,
+        "style": "dashed"
+      }
+    },
+    {
+      "data": {
+        "dtr": 0
+      },
+      "from": "node_README_md_1772842987428",
+      "id": "edge_auto_1772953811607_101487",
+      "label": "ref",
+      "to": "ghost_color_aqua",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "color": "#888",
+        "opacity": 0,
+        "style": "dashed"
+      }
+    },
+    {
+      "data": {
+        "dtr": 0
+      },
+      "from": "node_README_md_1772842987428",
+      "id": "edge_auto_1772953811608_522560",
+      "label": "ref",
+      "to": "ghost_style_dashed_2px",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "color": "#888",
+        "opacity": 0,
+        "style": "dashed"
+      }
+    },
+    {
+      "data": {
+        "dtr": 0
+      },
+      "from": "node_README_md_1772842987428",
+      "id": "edge_auto_1772953811608_352818",
+      "label": "ref",
+      "to": "ghost_color_magenta",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "color": "#888",
+        "opacity": 0,
+        "style": "dashed"
+      }
+    },
+    {
+      "data": {
+        "dtr": 0
+      },
+      "from": "node_README_md_1772842987428",
+      "id": "edge_auto_1772953811608_750082",
+      "label": "ref",
+      "to": "ghost_style_dotted_2px",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "color": "#888",
+        "opacity": 0,
+        "style": "dashed"
+      }
+    },
+    {
+      "data": {
+        "dtr": 0
+      },
+      "from": "node_README_md_1772842987428",
+      "id": "edge_auto_1772953811608_511835",
+      "label": "ref",
+      "to": "ghost_color_gold",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "color": "#888",
+        "opacity": 0,
+        "style": "dashed"
+      }
+    },
+    {
+      "data": {
+        "dtr": 0
+      },
+      "from": "node_README_md_1772842987428",
+      "id": "edge_auto_1772953811608_416156",
+      "label": "ref",
+      "to": "ghost_style_pulse_5px",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "color": "#888",
+        "opacity": 0,
+        "style": "dashed"
+      }
+    },
+    {
+      "data": {
+        "dtr": 0
+      },
+      "from": "node_src_extension_ts_1772842987428",
+      "id": "edge_auto_1772953811611_299051",
+      "label": "ref",
+      "to": "ghost_vscode-languageclient",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "color": "#888",
+        "opacity": 0,
+        "style": "dashed"
+      }
+    },
+    {
+      "data": {
+        "dtr": 0
+      },
+      "from": "node_src_extension_ts_1772842987428",
+      "id": "edge_auto_1772953811611_547066",
+      "label": "ref",
+      "to": "node_src_core_GeminiParser_ts_1772842987428",
+      "type": "dependency",
+      "validation": {
+        "confidence": 0.95,
+        "reason": "Appropriate architectural relationship.",
+        "valid": true
+      },
+      "visual": {
+        "color": "#888",
+        "opacity": 0.8,
+        "style": "solid"
+      }
     }
   ],
   "gemini_md_path": "/home/dogsinatas/TypeScript_project/antigravity-extension-vis/GEMINI.md",
@@ -2200,8 +3240,8 @@
       },
       "id": "node_src_core_BillingManager_ts_1772842987428",
       "position": {
-        "x": 382.2051000041636,
-        "y": 3583.3725343278443
+        "x": 382.2051000041632,
+        "y": 3583.372534327844
       },
       "status": "proposed",
       "type": "source",
@@ -2326,8 +3366,8 @@
       },
       "id": "node_src_core_GeminiParser_ts_1772842987428",
       "position": {
-        "x": 1264.7896548021508,
-        "y": 3838.4350855752245
+        "x": 1264.7896692469012,
+        "y": 3838.4350927375335
       },
       "status": "proposed",
       "type": "source",
@@ -2368,7 +3408,7 @@
       },
       "id": "node_src_core_PromptLogger_ts_1772842987428",
       "position": {
-        "x": 532.2051000041628,
+        "x": 532.2051000041632,
         "y": 3683.372534327844
       },
       "status": "proposed",
@@ -2389,8 +3429,8 @@
       },
       "id": "node_src_core_ReportExporter_ts_1772842987428",
       "position": {
-        "x": 814.78967956458,
-        "y": 3538.4350978534694
+        "x": 814.7896723422048,
+        "y": 3538.435094272315
       },
       "status": "proposed",
       "type": "source",
@@ -2410,8 +3450,8 @@
       },
       "id": "node_src_core_RuleEngine_ts_1772842987428",
       "position": {
-        "x": 964.78967956458,
-        "y": 3638.4350978534694
+        "x": 964.7896723422048,
+        "y": 3638.435094272315
       },
       "status": "proposed",
       "type": "source",
@@ -2755,11 +3795,5 @@
       }
     }
   ],
-  "project_name": "antigravity-extension-vis",
-  "_iron_guard": {
-    "version": "0.2.18.1",
-    "byte_size": 48368,
-    "encoding": "UTF-8",
-    "alignment": 8
-  }
+  "project_name": "antigravity-extension-vis"
 }

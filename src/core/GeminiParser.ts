@@ -62,9 +62,9 @@ export class GeminiParser {
             if (!fs.existsSync(filePath)) return [];
             const content = fs.readFileSync(filePath, 'utf-8');
             
-            // # Principles 또는 ## Principles 섹션 탐색 (HTML 주석 제거 후)
+            // # Principles, ## 원칙, ### 핵심 설계 원칙 등 다양한 형태 지원
             const cleanContent = content.replace(/<!--[\s\S]*?-->/g, '');
-            const sections = cleanContent.split(/# Principles|## Principles|# 원칙|## 원칙/i);
+            const sections = cleanContent.split(/^[#\s]+.*(?:Principles|원칙).*/mi);
             if (sections.length < 2) return [];
 
             const principlesSection = sections[1];

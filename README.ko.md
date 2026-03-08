@@ -293,6 +293,7 @@ SYNAPSE v0.2.17은 그림 그리기와 코드 작성 간의 간극을 메웁니�
 
 ### v0.2.20 (Hybrid Guardrail & Promotion Awareness)
 - **Iron Guard Protocol (v0.3.0 Preview)**: `LogicAnalyzer.ts` 및 VS Code Diagnostics를 연동하여 실시간 엣지 위반(💀) 건을 시각적으로 도출.
+- **폭포수 규칙 (Layer Gravity)**: 단방향 참조 흐름(예: Frontend -> API -> DB)을 강제하여, 하위 계층이 상위를 호출하는 역류 현상을 즉시 차단(CRITICAL VIOLATION)합니다.
 - **Promotion Awareness System**: 노드가 고스트(Ghost)에서 활성(Active)으로 전환될 때 파티클 애니메이션(`PromotionParticle`) 및 컬러 모핑 연출 추가.
 - **Sovereign Principles Validation**: 캔버스 기동 시 `GEMINI.md`의 `# Principles`를 강제 검증하고, 위반 시 사용자 경고 알림. 조작 차단 방식을 해제하여 원칙이 없어도 접근은 가능하도록 UX 완화.
 - **UX & 안정성 확보**: 드래그 Jitter(5px 임계점 도입) 버그 및 다중 선택, 클러스터 제목 드래그 관련 참조 소실 버그 해결. 0 FPS(Idle) 상태에서 인터랙션 발생 시 즉시 60 FPS로 전환되는 Wake-up 구현.

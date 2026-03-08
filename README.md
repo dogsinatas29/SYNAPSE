@@ -257,6 +257,7 @@ SYNAPSE v0.2.17 bridges the gap between drawing pictures and writing code.
 
 ### v0.2.20 (Hybrid Guardrail & Promotion Awareness)
 - **Iron Guard Protocol (v0.3.0 Preview)**: Implemented real-time edge validation via `LogicAnalyzer.ts` and VS Code Diagnostics integration.
+- **Layer Gravity (Waterfall Protocol)**: Enforces unidirectional architectural flow (e.g., Frontend -> API -> Database), instantly flagging backflow references as CRITICAL VIOLATIONS.
 - **Promotion Awareness System**: Added path animations (`PromotionParticle`) and visual morping for 'ghost to active' node transitions.
 - **Sovereign Principles Validation**: Interactive principle monitoring that halts canvas if `# Principles` in `GEMINI.md` are violated.
 - **UX & Stability Hardening**: Resolved Jitter Tracking (5px threshold), fixed multi-select drag bugs, and implemented interaction wake-up (60 FPS on demand).

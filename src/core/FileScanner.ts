@@ -90,123 +90,136 @@ export class FileScanner {
         // Python 임포트 (references) - 줄 단위로 파싱하여 더 정확하게 추출
         const lines = content.split('\n');
         for (const line of lines) {
-            const trimmed = line.trim();
-            if (!trimmed) continue;
+            try {
+                const trimmed = line.trim();
+                if (!trimmed) continue;
 
-            // [v0.2.18.1.2] Support parsing commented (pending/deleted) edges
-            const isCommented = trimmed.startsWith('#');
-            const isPendingOrDeleted = /\[SYNAPSE_(?:PENDING|DELETED)/.test(line);
-            
-            if (isCommented && !isPendingOrDeleted) continue;
+                // [v0.2.18.1.2] Support parsing commented (pending/deleted) edges
+                const isCommented = trimmed.startsWith('#');
+                const isPendingOrDeleted = /\[SYNAPSE_(?:PENDING|DELETED)/.test(line);
+                
+                if (isCommented && !isPendingOrDeleted) continue;
 
-            // 1. from a.b import c (Handles dots as path delimiters or extensions)
-            const fromMatch = trimmed.match(/^(?:#\s*)?(?:\[SYNAPSE(?:_PENDING|_DELETED)?:[^\]]+\]\s*)?from\s+([a-zA-Z0-9_.]+)\s+import/);
-            if (fromMatch) {
-                const fromPart = fromMatch[1];
-                // [v0.2.17 Patch 10] Recognize extensions for non-Python bridges (e.g., TEST.c)
-                const knownExts = ['.c', '.ts', '.js', '.rs', '.sql', '.cpp', '.h', '.hpp', '.cc'];
-                let rootMod = fromPart;
+                // 1. from a.b import c (Handles dots as path delimiters or extensions)
+                const fromMatch = trimmed.match(/^(?:#\s*)?(?:\[SYNAPSE(?:_PENDING|_DELETED)?:([^\]]+)\]\s*)?from\s+([a-zA-Z0-9_.]+)\s+import/);
+                if (fromMatch) {
+                    const nodeId = fromMatch[1];
+                    const fromPart = fromMatch[2];
+                    if (!fromPart) continue; // Safety check
+                    // [v0.2.17 Patch 10] Recognize extensions for non-Python bridges (e.g., TEST.c)
+                    const knownExts = ['.c', '.ts', '.js', '.rs', '.sql', '.cpp', '.h', '.hpp', '.cc'];
+                    let rootMod = fromPart;
 
-                const hasKnownExt = knownExts.some(ext => fromPart.toLowerCase().endsWith(ext));
-                if (!hasKnownExt && !fromPart.startsWith('.')) {
-                    rootMod = fromPart.split('.')[0];
-                }
-
-                if (rootMod && !summary.references.some(r => r.target === rootMod)) {
-                    let type = 'dependency';
-                    if (rootMod.match(/api|http|fetch|request/i)) type = 'api_call';
-                    else if (rootMod.match(/db|sql|database|query/i)) type = 'db_query';
-
-                    // [v0.2.17 Patch 13] Check for ID tag in the same line
-                    const idMatch = line.match(/\[SYNAPSE(?:_PENDING|_DELETED)?:([^\]]+)\]/);
-                    const nodeId = idMatch ? idMatch[1] : undefined;
-
-                    // [v0.2.18.1] Infer Edge Type from syntax
-                    if (trimmed.startsWith('from ')) type = 'reference';
-                    else if (line.includes(' # static')) type = 'static_unidirectional';
-
-                    console.log(`  [DEP] Added reference (from): ${rootMod} (ID: ${nodeId || 'none'}, Type: ${type}, Approved: ${!isPendingOrDeleted})`);
-                    summary.references.push({ target: rootMod, type, nodeId, isApproved: !isPendingOrDeleted });
-                }
-                continue;
-            }
-
-            // 2. import a, b as bb
-            const importMatch = trimmed.match(/^(?:#\s*)?(?:\[SYNAPSE(?:_PENDING|_DELETED)?:([^\]]+)\]\s*)?import\s+([a-zA-Z0-9_.,\s]+)/);
-            if (importMatch) {
-                const importPart = importMatch[1];
-                importPart.split(',').forEach(r => {
-                    const parts = r.trim().split(/\s+/);
-                    const name = parts[0];
-                    if (name) {
-                        // [v0.2.17 Patch 10] Preserve extensions in import name
-                        const knownExts = ['.c', '.ts', '.js', '.rs', '.sql', '.cpp', '.h', '.hpp', '.cc'];
-                        let rootMod = name;
-
-                        const hasKnownExt = knownExts.some(ext => name.toLowerCase().endsWith(ext));
-                        if (!hasKnownExt && !name.startsWith('.')) {
-                            rootMod = name.split('.')[0];
-                        }
-
-                        if (rootMod && !summary.references.some(r => r.target === rootMod)) {
-                            let type = 'dependency';
-                            if (rootMod.match(/api|http|fetch|request/i)) type = 'api_call';
-                            else if (rootMod.match(/db|sql|database|query/i)) type = 'db_query';
-
-                            // [v0.2.17 Patch 13] Check for ID tag in the same line
-                            const idMatch = line.match(/\[SYNAPSE(?:_PENDING|_DELETED)?:([^\]]+)\]/);
-                            const nodeId = idMatch ? idMatch[1] : undefined;
-
-                            console.log(`  [DEP] Added reference (import): ${rootMod} (ID: ${nodeId || 'none'}, Type: ${type}, Approved: ${!isPendingOrDeleted})`);
-                            summary.references.push({ target: rootMod, type, nodeId, isApproved: !isPendingOrDeleted });
-                        }
+                    const hasKnownExt = knownExts.some(ext => fromPart.toLowerCase().endsWith(ext));
+                    if (!hasKnownExt && !fromPart.startsWith('.')) {
+                        rootMod = fromPart.split('.')[0];
                     }
-                });
+
+                    if (rootMod && !summary.references.some(r => r.target === rootMod)) {
+                        let type = 'dependency';
+                        if (rootMod.match(/api|http|fetch|request/i)) type = 'api_call';
+                        else if (rootMod.match(/db|sql|database|query/i)) type = 'db_query';
+
+                        // [v0.2.17 Patch 13] Check for ID tag already extracted
+                        // const nodeId = nodeId; // Taken from capture group 1
+
+                        // [v0.2.18.1] Infer Edge Type from syntax
+                        if (trimmed.startsWith('from ')) type = 'reference';
+                        else if (line.includes(' # static')) type = 'static_unidirectional';
+
+                        console.log(`  [DEP] Added reference (from): ${rootMod} (ID: ${nodeId || 'none'}, Type: ${type}, Approved: ${!isPendingOrDeleted})`);
+                        summary.references.push({ target: rootMod, type, nodeId, isApproved: !isPendingOrDeleted });
+                    }
+                    continue;
+                }
+
+                // 2. import a, b as bb
+                const importMatch = trimmed.match(/^(?:#\s*)?(?:\[SYNAPSE(?:_PENDING|_DELETED)?:([^\]]+)\]\s*)?import\s+([a-zA-Z0-9_.,\s]+)/);
+                if (importMatch) {
+                    const importPart = importMatch[2];
+                    const nodeId = importMatch[1];
+                    if (!importPart) continue; // Safety check
+                    
+                    importPart.split(',').forEach(r => {
+                        const parts = r.trim().split(/\s+/);
+                        if (!parts || parts.length === 0) return;
+                        const name = parts[0];
+                        if (name) {
+                            // [v0.2.17 Patch 10] Preserve extensions in import name
+                            const knownExts = ['.c', '.ts', '.js', '.rs', '.sql', '.cpp', '.h', '.hpp', '.cc'];
+                            let rootMod = name;
+
+                            const hasKnownExt = knownExts.some(ext => name.toLowerCase().endsWith(ext));
+                            if (!hasKnownExt && !name.startsWith('.')) {
+                                rootMod = name.split('.')[0];
+                            }
+
+                            if (rootMod && !summary.references.some(r => r.target === rootMod)) {
+                                let type = 'dependency';
+                                if (rootMod.match(/api|http|fetch|request/i)) type = 'api_call';
+                                else if (rootMod.match(/db|sql|database|query/i)) type = 'db_query';
+
+                                // [v0.2.17 Patch 13] Check for ID tag already extracted
+                                // const nodeId = nodeId;
+
+                                console.log(`  [DEP] Added reference (import): ${rootMod} (ID: ${nodeId || 'none'}, Type: ${type}, Approved: ${!isPendingOrDeleted})`);
+                                summary.references.push({ target: rootMod, type, nodeId, isApproved: !isPendingOrDeleted });
+                            }
+                        }
+                    });
+                }
+            } catch (err) {
+                console.error(`[SYNAPSE] Python line parse error:`, err);
+                continue; // Skip faulty line
             }
         }
     }
 
     private parseJavaScript(content: string, summary: CodeSummary) {
-        // JS/TS 클래스, 인터페이스, 타입, 열거형
-        const classRegex = /(?:export\s+)?(?:class|interface|type|enum)\s+([a-zA-Z0-9_]+)/g;
-        let match;
-        while ((match = classRegex.exec(content)) !== null) {
-            const name = match[1];
-            if (name && !summary.classes.includes(name)) {
-                summary.classes.push(name);
-            }
-        }
-
-        // JS/TS 함수 및 메서드 (TS 접근 제어자 및 async 지원 강화)
-        const funcRegex = /(?:export\s+)?(?:async\s+)?(?:function\s+([a-zA-Z0-9_]+)|([a-zA-Z0-9_]+)\s*\(|public\s+([a-zA-Z0-9_]+)|private\s+([a-zA-Z0-9_]+)|protected\s+([a-zA-Z0-9_]+))/g;
-        while ((match = funcRegex.exec(content)) !== null) {
-            const name = match[1] || match[2] || match[3] || match[4] || match[5];
-            // 키워드 제외
-            if (name && !['if', 'while', 'for', 'switch', 'return', 'catch', 'export', 'class', 'interface', 'type', 'enum', 'async', 'await'].includes(name)) {
-                if (!summary.functions.includes(name)) {
-                    summary.functions.push(name);
+        try {
+            // JS/TS 클래스, 인터페이스, 타입, 열거형
+            const classRegex = /(?:export\s+)?(?:class|interface|type|enum)\s+([a-zA-Z0-9_]+)/g;
+            let match;
+            while ((match = classRegex.exec(content)) !== null) {
+                const name = match[1];
+                if (name && !summary.classes.includes(name)) {
+                    summary.classes.push(name);
                 }
             }
-        }
 
-        // JS/TS 임포트 (references, import type 지원)
-        // [v0.2.18.2 Opt] Prevent matching inside template literals or dynamic requires with variables
-        const importRegex = /(?:import|require)\s+(?:type\s+)?(?:.*from\s+)?['"]([^'"`${}]+)['"]|import\s*\(\s*['"]([^'"`${}]+)['"]\s*\)/g;
-        while ((match = importRegex.exec(content)) !== null) {
-            const ref = match[1] || match[2];
-            if (ref) {
-                // Ignore dynamic paths or very long non-file strings
-                if (ref.includes('${') || ref.length > 100) continue;
-
-                const cleanRef = ref.startsWith('.') ? path.basename(ref, path.extname(ref)) : ref.split('/')[0];
-                if (cleanRef && !['react', 'vscode', 'path', 'fs', 'os', 'child_process'].includes(cleanRef) && !summary.references.some(r => r.target === cleanRef)) {
-                    let type = 'dependency';
-                    if (cleanRef.match(/api|http|fetch|axios/i)) type = 'api_call';
-                    else if (cleanRef.match(/db|sql|database|query/i)) type = 'db_query';
-
-                    summary.references.push({ target: cleanRef, type });
+            // JS/TS 함수 및 메서드 (TS 접근 제어자 및 async 지원 강화)
+            const funcRegex = /(?:export\s+)?(?:async\s+)?(?:function\s+([a-zA-Z0-9_]+)|([a-zA-Z0-9_]+)\s*\(|public\s+([a-zA-Z0-9_]+)|private\s+([a-zA-Z0-9_]+)|protected\s+([a-zA-Z0-9_]+))/g;
+            while ((match = funcRegex.exec(content)) !== null) {
+                const name = match[1] || match[2] || match[3] || match[4] || match[5];
+                // 키워드 제외
+                if (name && !['if', 'while', 'for', 'switch', 'return', 'catch', 'export', 'class', 'interface', 'type', 'enum', 'async', 'await'].includes(name)) {
+                    if (!summary.functions.includes(name)) {
+                        summary.functions.push(name);
+                    }
                 }
             }
+
+            // JS/TS 임포트 (references, import type 지원)
+            // [v0.2.18.2 Opt] Prevent matching inside template literals or dynamic requires with variables
+            const importRegex = /(?:import|require)\s+(?:type\s+)?(?:.*from\s+)?['"]([^'"`${}]+)['"]|import\s*\(\s*['"]([^'"`${}]+)['"]\s*\)/g;
+            while ((match = importRegex.exec(content)) !== null) {
+                const ref = match[1] || match[2];
+                if (ref) {
+                    // Ignore dynamic paths or very long non-file strings
+                    if (ref.includes('${') || ref.length > 100) continue;
+
+                    const cleanRef = ref.startsWith('.') ? path.basename(ref, path.extname(ref)) : ref.split('/')[0];
+                    if (cleanRef && !['react', 'vscode', 'path', 'fs', 'os', 'child_process'].includes(cleanRef) && !summary.references.some(r => r.target === cleanRef)) {
+                        let type = 'dependency';
+                        if (cleanRef.match(/api|http|fetch|axios/i)) type = 'api_call';
+                        else if (cleanRef.match(/db|sql|database|query/i)) type = 'db_query';
+
+                        summary.references.push({ target: cleanRef, type });
+                    }
+                }
+            }
+        } catch (error) {
+            console.error('[SYNAPSE] JS/TS parse error:', error);
         }
     }
 
@@ -363,38 +376,46 @@ export class FileScanner {
     }
 
     private parseShell(content: string, summary: CodeSummary) {
-        // Shell functions: function name() or name()
-        const funcRegex = /^(?:function\s+)?([a-zA-Z0-9_-]+)\s*\(\s*\)/gm;
-        let match;
-        while ((match = funcRegex.exec(content)) !== null) {
-            summary.functions.push(match[1]);
-        }
-
-        // References (scripts calling other scripts or bins)
-        // [v0.2.18.2 Opt] Ignore common shell keywords and prevent matching bash variables as files
-        const refRegex = /(?:\.|\.\/|source\s+|bash\s+|sh\s+)([a-zA-Z0-9_-]+)(?:\.sh)?(?:\s|$)/g;
-        const shellKeywords = ['then', 'else', 'done', 'fi', 'exit', 'true', 'false', 'echo', 'grep', 'sed', 'awk', 'cat'];
-        
-        while ((match = refRegex.exec(content)) !== null) {
-            const ref = match[1];
-            if (ref && !shellKeywords.includes(ref) && !summary.references.some(r => r.target === ref)) {
-                summary.references.push({ target: ref, type: 'dependency' });
+        try {
+            // Shell functions: function name() or name()
+            const funcRegex = /^(?:function\s+)?([a-zA-Z0-9_-]+)\s*\(\s*\)/gm;
+            let match;
+            while ((match = funcRegex.exec(content)) !== null) {
+                summary.functions.push(match[1]);
             }
+
+            // References (scripts calling other scripts or bins)
+            // [v0.2.18.2 Opt] Ignore common shell keywords and prevent matching bash variables as files
+            const refRegex = /(?:\.|\.\/|source\s+|bash\s+|sh\s+)([a-zA-Z0-9_-]+)(?:\.sh)?(?:\s|$)/g;
+            const shellKeywords = ['then', 'else', 'done', 'fi', 'exit', 'true', 'false', 'echo', 'grep', 'sed', 'awk', 'cat'];
+            
+            while ((match = refRegex.exec(content)) !== null) {
+                const ref = match[1];
+                if (ref && !shellKeywords.includes(ref) && !summary.references.some(r => r.target === ref)) {
+                    summary.references.push({ target: ref, type: 'dependency' });
+                }
+            }
+        } catch (error) {
+            console.error('[SYNAPSE] Shell parse error:', error);
         }
     }
 
     private parseSql(content: string, summary: CodeSummary) {
-        // SQL Tables
-        const tableRegex = /CREATE\s+TABLE\s+(?:IF\s+NOT\s+EXISTS\s+)?([a-zA-Z0-9_."]+)/gi;
-        let match;
-        while ((match = tableRegex.exec(content)) !== null) {
-            summary.classes.push(match[1]);
-        }
+        try {
+            // SQL Tables
+            const tableRegex = /CREATE\s+TABLE\s+(?:IF\s+NOT\s+EXISTS\s+)?([a-zA-Z0-9_."]+)/gi;
+            let match;
+            while ((match = tableRegex.exec(content)) !== null) {
+                summary.classes.push(match[1]);
+            }
 
-        // SQL Views/Procedures
-        const procRegex = /CREATE\s+(?:OR\s+REPLACE\s+)?(?:VIEW|PROCEDURE|FUNCTION)\s+([a-zA-Z0-9_."]+)/gi;
-        while ((match = procRegex.exec(content)) !== null) {
-            summary.functions.push(match[1]);
+            // SQL Views/Procedures
+            const procRegex = /CREATE\s+(?:OR\s+REPLACE\s+)?(?:VIEW|PROCEDURE|FUNCTION)\s+([a-zA-Z0-9_."]+)/gi;
+            while ((match = procRegex.exec(content)) !== null) {
+                summary.functions.push(match[1]);
+            }
+        } catch (error) {
+            console.error('[SYNAPSE] SQL parse error:', error);
         }
     }
 
@@ -413,32 +434,36 @@ export class FileScanner {
     }
 
     private parseMarkdown(content: string, summary: CodeSummary) {
-        // MD Headers (# Header) as classes/sections
-        const headerRegex = /^(#{1,6})\s+(.+)$/gm;
-        let match;
-        let count = 0;
-        const LIMIT = 20;
+        try {
+            // MD Headers (# Header) as classes/sections
+            const headerRegex = /^(#{1,6})\s+(.+)$/gm;
+            let match;
+            let count = 0;
+            const LIMIT = 20;
 
-        while ((match = headerRegex.exec(content)) !== null) {
-            if (count < LIMIT) {
-                summary.classes.push(match[2].trim());
-            } else if (count === LIMIT) {
-                summary.classes.push('... (too many headers, truncated)');
+            while ((match = headerRegex.exec(content)) !== null) {
+                if (count < LIMIT) {
+                    summary.classes.push(match[2].trim());
+                } else if (count === LIMIT) {
+                    summary.classes.push('... (too many headers, truncated)');
+                }
+                count++;
             }
-            count++;
-        }
 
-        // MD Links ([label](path/to/file)) as references
-        const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
-        while ((match = linkRegex.exec(content)) !== null) {
-            const ref = match[2].trim();
-            if (ref && !ref.startsWith('http') && !ref.startsWith('#')) {
-                // Clean path to file basename
-                const cleanRef = path.basename(ref, path.extname(ref));
-                if (cleanRef && !summary.references.some(r => r.target === cleanRef)) {
-                    summary.references.push({ target: cleanRef, type: 'dependency' });
+            // MD Links ([label](path/to/file)) as references
+            const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
+            while ((match = linkRegex.exec(content)) !== null) {
+                const ref = match[2].trim();
+                if (ref && !ref.startsWith('http') && !ref.startsWith('#')) {
+                    // Clean path to file basename
+                    const cleanRef = path.basename(ref, path.extname(ref));
+                    if (cleanRef && !summary.references.some(r => r.target === cleanRef)) {
+                        summary.references.push({ target: cleanRef, type: 'dependency' });
+                    }
                 }
             }
+        } catch (error) {
+            console.error('[SYNAPSE] Markdown parse error:', error);
         }
     }
 }

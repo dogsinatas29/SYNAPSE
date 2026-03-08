@@ -194,7 +194,7 @@
         "node_core_synapse_md_1772842987428",
         "node_data_scheme_md_1772842987428",
         "node_reporting_md_1772842987428",
-        "node_vega_agent_md_1772842987428",
+        "node_visual_impact.md_1772842987428",
         "node_walkthrough_md_1772842987428",
         "node_____md_1772842987428",
         "node_backup_md_GEMINI_md_1772842987428",
@@ -624,7 +624,7 @@
       "from": "node_architecture_md_1772842987428",
       "id": "edge_auto_1772848851239_975764",
       "label": "ref",
-      "to": "node_vega_agent_md_1772842987428",
+      "to": "node_visual_impact.md_1772842987428",
       "type": "dependency",
       "validation": {
         "confidence": 0.95,
@@ -3022,13 +3022,13 @@
       "data": {
         "cluster_id": "doc_shelf",
         "color": "#fabd2f",
-        "description": "vega_agent.md (Doc)",
-        "file": "vega_agent.md",
-        "label": "vega_agent.md",
+        "description": "visual_impact.md (Doc)",
+        "file": "visual_impact.md",
+        "label": "visual_impact.md",
         "layer": 0,
         "priority": 1
       },
-      "id": "node_vega_agent_md_1772842987428",
+      "id": "node_visual_impact.md_1772842987428",
       "position": {
         "x": 815.3768204912509,
         "y": 3686.1293665127923

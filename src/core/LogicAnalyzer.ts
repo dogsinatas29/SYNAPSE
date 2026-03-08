@@ -205,39 +205,47 @@ export class LogicAnalyzer {
      * 분석 결과를 바탕으로 리포트 생성
      */
     public generateReport(issues: AnalysisIssue[], projectRoot: string, nodes: Node[]): string {
-        const reportPath = path.join(projectRoot, 'architecture_report.md');
-        let content = `# 🛡️ SYNAPSE 아키텍처 로직 리포트\n\n`;
-        content += `생성 일시: ${new Date().toLocaleString()}\n\n`;
+        const reportPath = path.join(projectRoot, 'LOGIC_REPORT.md');
+        let content = `# 🛡️ [VISUAL IMPACT] LOGIC_REPORT.md - 아키텍처 로직 리포트\n\n`;
+        content += `생성 일시: ${new Date().toLocaleString()}\n`;
+        content += `Test Status: ${issues.length === 0 ? '✅ Pass' : '❌ Fail (Visual Indicator: Red-out)'}\n\n`;
 
         if (issues.length === 0) {
-            content += `✅ 분석 결과, 발견된 아키텍처 결함이 없습니다. 깨끗한 구조입니다!\n`;
+            content += `✅ 분석 결과, 발견된 아키텍처 결함이 없으며 시스템 형상이 매우 견고합니다.\n`;
         } else {
-            const criticals = issues.filter(i => i.severity === 'critical');
-            const highs = issues.filter(i => i.severity === 'high');
-            const others = issues.filter(i => i.severity !== 'critical' && i.severity !== 'high');
-
-            content += `## 🚨 주요 위험 요소 (${criticals.length + highs.length})\n\n`;
-
-            [...criticals, ...highs].forEach(issue => {
-                const icon = issue.severity === 'critical' ? '🔴' : '🟠';
-                content += `### ${icon} ${issue.message}\n`;
-                const links = issue.nodeIds.map(id => {
-                    const node = nodes.find(n => n.id === id);
-                    const label = node?.data?.label || id;
-                    return `[\`${label}\`](command:synapse.focusNode?${encodeURIComponent(JSON.stringify(id))})`;
+            const necrosis = issues.filter(i => i.type === 'circular' || i.type === 'schema-violation');
+            
+            content += `## 💀 [Fail Node] Necrosis Nodes\n`;
+            if (necrosis.length > 0) {
+                necrosis.forEach(issue => {
+                    const links = issue.nodeIds.map(id => {
+                        const node = nodes.find(n => n.id === id);
+                        return `[\`${node?.data?.label || id}\`](command:synapse.focusNode?${encodeURIComponent(JSON.stringify(id))})`;
+                    });
+                    content += `- 🔴 **${issue.message}**: ${links.join(', ')}\n`;
                 });
-                content += `- 관련 노드: ${links.join(', ')}\n\n`;
-            });
-
-            if (others.length > 0) {
-                content += `## ⚠️ 참고 및 병목 사항 (${others.length})\n\n`;
-                others.forEach(issue => {
-                    content += `- [${issue.type.toUpperCase()}] ${issue.message}\n`;
-                });
+            } else {
+                content += `- 발견된 괴사 노드가 없습니다.\n`;
             }
+
+            content += `\n## ⚡ [Broken Edge] Fractured Edges\n`;
+            const fractures = issues.filter(i => i.type === 'circular' || i.type === 'schema-violation');
+            if (fractures.length > 0) {
+                content += `- 구조적 결함으로 인해 다수의 엣지가 굴절 및 단절되었습니다. (시각적 파손 적용됨)\n`;
+            } else {
+                content += `- 논리적 흐름이 안전하게 연결되어 있습니다.\n`;
+            }
+
+            content += `\n## 🌡️ [Pressure Log] Inference Pressure\n`;
+            const pressure = Math.min(100, (issues.length * 15));
+            content += `- **현재 시스템 압력**: \`${pressure}%\` ${pressure >= 70 ? '🔥 (Critical Red-out)' : '🟢 (Stable)'}\n`;
+            content += `- 인퍼런스 압력이 최고조였던 지점에서 시각적 경고가 발생했습니다.\n`;
+
+            content += `\n## 🚀 [Turbo Mode Feedback]\n`;
+            content += `- 터보 모드(고밀도 추론) 분석을 통해 잠재적인 논리 병목 지점을 ${issues.length > 0 ? '확인' : '최적화'}했습니다.\n`;
         }
 
-        content += `\n---\n*이 리포트는 SYNAPSE Logic Analyzer에 의해 자동 생성되었습니다.*`;
+        content += `\n---\n*이 리포트는 SYNAPSE Logic Analyzer v2.0(Visual Impact Engine)에 의해 자동 생성되었습니다.*`;
 
         fs.writeFileSync(reportPath, content, 'utf8');
         return reportPath;

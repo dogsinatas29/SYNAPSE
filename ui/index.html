@@ -132,7 +132,9 @@
             margin-top: 4px;
         }
 
-        .dropdown:hover .dropdown-content {
+        /* [v0.2.20 Fix] Dropdown is now controlled by JS .open class instead of CSS :hover
+           This prevents menus from closing when moving mouse to click inner buttons */
+        .dropdown.open .dropdown-content {
             display: block;
         }
 
@@ -174,7 +176,7 @@
             border-color: var(--accent);
         }
 
-        .dropdown:hover .menu-label {
+        .dropdown.open .menu-label {
             background: var(--accent);
             color: #282828;
             border-color: var(--accent);
@@ -358,6 +360,8 @@
             flex-direction: column;
             z-index: 5000;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            /* [v0.2.20 Fix] Crucial: overflow:hidden on panel prevents header from scrolling away */
+            overflow: hidden;
         }
 
         #history-panel.visible {
@@ -365,13 +369,12 @@
         }
 
         #history-list {
-            flex: 1;
-            overflow-y: scroll !important;
-            /* Force scrollbar space */
+            flex: 1 1 0;
+            overflow-y: scroll; /* [v0.2.20 Fix] Force always-visible scrollbar - 'auto' may be clipped */
+            overflow-x: hidden;
             padding: 10px;
             scroll-behavior: smooth;
-            min-height: 0;
-            /* Flexbox overflow fix */
+            min-height: 0; /* [CRITICAL] Required for flex overflow in column layouts */
         }
 
         /* [v0.2.17 Patch 9] Atomic High-Visibility Scrollbar */
@@ -485,6 +488,8 @@
             flex-direction: column;
             z-index: 5000;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+            /* [v0.2.20 Fix] Crucial: overflow:hidden on panel prevents header/search from scrolling away */
+            overflow: hidden;
         }
 
         #context-vault-panel.visible {
@@ -495,10 +500,14 @@
             padding: 10px;
             border-bottom: 1px solid var(--border);
             background: #3c3836;
+            flex-shrink: 0; /* [v0.2.20 Fix] Prevent container from expanding and pushing list out */
+            box-sizing: border-box; /* [v0.2.20 Fix] Include padding in width calculation */
         }
 
         #vault-search-input {
             width: 100%;
+            max-width: 100%; /* [v0.2.20 Fix] Prevent horizontal overflow */
+            box-sizing: border-box; /* [v0.2.20 Fix] Include padding in width calculation */
             padding: 8px;
             background: #1d2021;
             border: 1px solid #504945;
@@ -512,8 +521,9 @@
         }
 
         #context-vault-list {
-            flex: 1;
-            overflow-y: scroll !important;
+            flex: 1 1 0;
+            overflow-y: scroll; /* [v0.2.20 Fix] Force always-visible scrollbar, not auto */
+            overflow-x: hidden;
             padding: 10px;
             min-height: 0;
         }
@@ -874,6 +884,7 @@
             <div class="menu-label">⚙️ System</div>
             <div class="dropdown-content">
                 <button class="btn" id="btn-rebootstrap" title="Deep Reset: Re-scan complete project" style="color: #fb4934; font-weight: bold;">Deep Reset</button>
+                <button class="btn" id="btn-virtual-debug" title="Virtual Debug (Stateless Scan)" style="color: #fabd2f; font-weight: bold;">🔍 Virtual Debug</button>
                 <button class="btn" id="btn-reset-state" title="project_state.json을 빈 상태로 초기화" style="color: #d3869b;">🔄 Reset State</button>
                 <button class="btn" id="btn-animate" title="Toggle Edge Animations">🎬 Animation: On</button>
             </div>
@@ -1027,6 +1038,8 @@
             <span>Zoom: <strong id="zoom-level">100%</strong></span>
             <span class="divider">|</span>
             <span>Mode: <strong id="current-mode">Graph</strong></span>
+            <span class="divider">|</span>
+            <span>FPS: <strong id="fps-display" style="color:#b8bb26;">--</strong></span>
         </div>
     </div>
 
@@ -1076,6 +1089,48 @@
     </div>
 
     <script>
+        // [v0.2.20 Fix] Dropdown menu stability: use click-toggle + .open class instead of CSS :hover
+        // This prevents menus from closing when user moves mouse to click inner buttons
+        document.addEventListener('DOMContentLoaded', () => {
+            const allDropdowns = document.querySelectorAll('.dropdown');
+            
+            allDropdowns.forEach(dropdown => {
+                const label = dropdown.querySelector('.menu-label');
+                if (!label) return;
+
+                let closeTimer = null;
+
+                // Click on label toggles the dropdown open/closed
+                label.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const isOpen = dropdown.classList.contains('open');
+                    // Close all dropdowns first
+                    allDropdowns.forEach(d => d.classList.remove('open'));
+                    // Toggle current
+                    if (!isOpen) dropdown.classList.add('open');
+                });
+
+                // Hover open: open immediately on mouseenter
+                dropdown.addEventListener('mouseenter', () => {
+                    if (closeTimer) { clearTimeout(closeTimer); closeTimer = null; }
+                    allDropdowns.forEach(d => { if (d !== dropdown) d.classList.remove('open'); });
+                    dropdown.classList.add('open');
+                });
+
+                // Hover close: delay so user has time to move cursor to inner buttons
+                dropdown.addEventListener('mouseleave', () => {
+                    closeTimer = setTimeout(() => {
+                        dropdown.classList.remove('open');
+                    }, 300); // 300ms grace period
+                });
+            });
+
+            // Click anywhere outside toolbar closes all dropdowns
+            document.addEventListener('click', () => {
+                allDropdowns.forEach(d => d.classList.remove('open'));
+            });
+        });
+
         // 전역 파일 미리보기 함수
         window.showFilePreview = async function (filePath) {
             console.log('[SYNAPSE] showFilePreview:', filePath);
@@ -1126,12 +1181,12 @@
         // 초기화 및 이벤트 바인딩
         document.addEventListener('DOMContentLoaded', () => {
             // 패널 닫기 버튼
-            document.getElementById('side-panel-close').addEventListener('click', () => {
-                document.getElementById('side-panel').classList.remove('visible');
+            document.getElementById('side-panel-close')?.addEventListener('click', () => {
+                document.getElementById('side-panel')?.classList.remove('visible');
             });
 
-            document.getElementById('history-panel-close').addEventListener('click', () => {
-                document.getElementById('history-panel').classList.remove('visible');
+            document.getElementById('history-panel-close')?.addEventListener('click', () => {
+                document.getElementById('history-panel')?.classList.remove('visible');
             });
 
             // 히스토리 버튼
@@ -1197,8 +1252,19 @@
             makeDraggable('history-panel', 'history-panel-header-drag');
             makeDraggable('context-vault-panel', 'context-vault-header-drag');
 
+            // [v0.2.20 Fix] Explicit wheel scroll support for panels (VS Code webview workaround)
+            // Without this, fixed panels may not receive native scroll events properly
+            ['history-list', 'context-vault-list'].forEach(listId => {
+                const listEl = document.getElementById(listId);
+                if (!listEl) return;
+                listEl.addEventListener('wheel', (e) => {
+                    e.stopPropagation(); // Prevent canvas from receiving this event
+                    listEl.scrollTop += e.deltaY;
+                }, { passive: true });
+            });
+
             // 애니메이션 토글 버튼 (Phase 3)
-            document.getElementById('btn-animate').addEventListener('click', (e) => {
+            document.getElementById('btn-animate')?.addEventListener('click', (e) => {
                 if (window.engine) {
                     const isNowAnimating = window.engine.toggleAnimation();
                     e.target.textContent = isNowAnimating ? '🎬 On' : '⏸️ Off';
@@ -1207,14 +1273,14 @@
             });
 
             // 스냅샷 버튼
-            document.getElementById('btn-snapshot').addEventListener('click', () => {
+            document.getElementById('btn-snapshot')?.addEventListener('click', () => {
                 if (window.engine) {
                     window.engine.takeSnapshot('Manual Snapshot');
                 }
             });
 
             // 룰 확인 버튼
-            document.getElementById('btn-rules').addEventListener('click', () => {
+            document.getElementById('btn-rules')?.addEventListener('click', () => {
                 if (typeof vscode !== 'undefined') {
                     vscode.postMessage({ command: 'openRules' });
                 } else {
@@ -1223,21 +1289,21 @@
             });
 
             // REC 버튼: CTRL+ALT+M 토글과 연동
-            document.getElementById('btn-record').addEventListener('click', () => {
+            document.getElementById('btn-record')?.addEventListener('click', () => {
                 if (typeof vscode !== 'undefined') {
                     vscode.postMessage({ command: 'triggerLogPrompt' });
                 }
             });
 
             // 프롬프트 저장 버튼
-            document.getElementById('btn-save-prompt').addEventListener('click', () => {
+            document.getElementById('btn-save-prompt')?.addEventListener('click', () => {
                 if (window.engine) {
                     window.engine.requestLogPrompt();
                 }
             });
 
             // 기준선 제거 버튼
-            document.getElementById('btn-clear-baseline').addEventListener('click', () => {
+            document.getElementById('btn-clear-baseline')?.addEventListener('click', () => {
                 if (typeof vscode !== 'undefined') {
                     vscode.postMessage({ command: 'clearBaseline' });
                 }

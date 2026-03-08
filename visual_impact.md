@@ -1,4 +1,4 @@
-# 🚀 vega_agent.md: System Control & Execution
+# 🚀 visual_impact.md: System Control & Execution
 
 ## 🔧 Agent Capabilities
 - **SSH Inventory Management**: Tracking and maintaining connections to remote environments.

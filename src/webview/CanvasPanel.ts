@@ -28,6 +28,7 @@ import { FlowchartGenerator } from '../core/FlowchartGenerator';
 import { BootstrapEngine } from '../bootstrap/BootstrapEngine';
 import { client } from '../client';
 import { Logger } from '../utils/Logger';
+import { VirtualDebugger } from '../core/VirtualDebugger';
 
 /**
  * SequentialTaskQueue - Asynchronous task serializer
@@ -148,7 +149,7 @@ export class CanvasPanel {
                     'updateEdge', 'approveNode', 'rejectNode',
                     'requestDeleteEdgeSource', 'createManualNode',
                     'reBootstrap', 'requestConfirmEdge', 'setBaseline',
-                    'resetProjectState'
+                    'resetProjectState', 'virtualDebug'
                 ];
 
                 if (stateModifyingCommands.includes(message.command)) {
@@ -243,7 +244,8 @@ export class CanvasPanel {
                 vscode.window.showInformationMessage(`[SYNAPSE] ${message.text}`);
                 return;
             case 'showWarning':
-                vscode.window.showWarningMessage(`[SYNAPSE] ${message.message}`);
+                // [v0.2.20 Fix] Support both 'message' and 'text' for warning consistency
+                vscode.window.showWarningMessage(`[SYNAPSE] ${message.message || message.text || 'Unknown warning'}`);
                 return;
             case 'validateEdge':
                 await this.handleValidateEdge(message.edgeId, message.fromNode, message.toNode, message.type);
@@ -292,8 +294,14 @@ export class CanvasPanel {
             case 'openRules':
                 await vscode.commands.executeCommand('synapse.openRules');
                 return;
+            case 'openModularSpecs':
+                await this.handleOpenModularSpecs();
+                return;
             case 'testLogic':
                 await this.handleTestLogic();
+                break;
+            case 'virtualDebug':
+                await this.handleVirtualDebug();
                 break;
             case 'triggerLogPrompt':
                 await vscode.commands.executeCommand('synapse.logPrompt');
@@ -455,24 +463,71 @@ export class CanvasPanel {
         // TODO: Update sidebar, show node details
     }
 
+    private async handleOpenModularSpecs() {
+        const workspaceFolder = this._workspaceFolder;
+        if (!workspaceFolder) return;
+
+        try {
+            const mdFiles = await vscode.workspace.findFiles('**/*.md', '**/node_modules/**');
+            
+            const specFiles = mdFiles.filter(uri => {
+                const name = uri.path.split('/').pop() || '';
+                const lowerName = name.toLowerCase();
+                return !lowerName.startsWith('gemini') && 
+                       lowerName !== 'architecture.md' && 
+                       lowerName !== 'readme.md' && 
+                       lowerName !== 'readme.ko.md';
+            });
+
+            if (specFiles.length === 0) {
+                vscode.window.showInformationMessage('[SYNAPSE] No modular spec files (.md) found.');
+                return;
+            }
+
+            const items = specFiles.map(uri => ({
+                label: `$(markdown) ${uri.path.split('/').pop()}`,
+                description: vscode.workspace.asRelativePath(uri),
+                uri: uri
+            }));
+
+            const selected = await vscode.window.showQuickPick(items, {
+                placeHolder: 'Select a Modular Spec to open (e.g., core_synapse.md)'
+            });
+
+            if (selected) {
+                const doc = await vscode.workspace.openTextDocument(selected.uri);
+                await vscode.window.showTextDocument(doc);
+            }
+        } catch (error) {
+            Logger.error('Failed to open modular specs quick pick', error);
+            vscode.window.showErrorMessage('Failed to load Modular Specs list.');
+        }
+    }
+
     private async openFile(filePath: string, createIfNotExists: boolean = false) {
         const workspaceFolder = this._workspaceFolder;
         if (!workspaceFolder) return;
 
         const fileUri = vscode.Uri.joinPath(workspaceFolder.uri, filePath);
         try {
-            // Check if file exists
+            let stat;
             try {
-                await vscode.workspace.fs.stat(fileUri);
+                stat = await vscode.workspace.fs.stat(fileUri);
             } catch (err: any) {
-                // File does not exist
                 if (createIfNotExists) {
                     Logger.info(`[CanvasPanel] Creating missing file: ${filePath}`);
                     await vscode.workspace.fs.writeFile(fileUri, Buffer.from('', 'utf8'));
+                    stat = await vscode.workspace.fs.stat(fileUri);
                     vscode.window.showInformationMessage(`[SYNAPSE] File created: ${filePath}`);
                 } else {
-                    throw err; // Re-throw if we shouldn't create it
+                    throw err;
                 }
+            }
+
+            if ((stat.type & vscode.FileType.Directory) !== 0) {
+                // If it's a directory, reveal in explorer instead of opening as text document
+                await vscode.commands.executeCommand('revealInExplorer', fileUri);
+                return;
             }
 
             const doc = await vscode.workspace.openTextDocument(fileUri);
@@ -541,10 +596,50 @@ export class CanvasPanel {
                 issues: issues
             });
 
-            vscode.window.showInformationMessage(`[SYNAPSE] Logic analysis complete. 'architecture_report.md' generated.`);
+            vscode.window.showInformationMessage(`[SYNAPSE] Logic analysis complete. 'LOGIC_REPORT.md' generated.`);
         } catch (error) {
             console.error('[SYNAPSE] Logic Analysis failed:', error);
             vscode.window.showErrorMessage(`Logic Analysis failed: ${error}`);
+        }
+    }
+    
+    /**
+     * [v0.2.20] Virtual Debugging: Static Analysis visualization
+     */
+    private async handleVirtualDebug() {
+        const workspaceFolder = this._workspaceFolder;
+        if (!workspaceFolder) return;
+
+        try {
+            // 1. Get current project state
+            const projectStateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'project_state.json');
+            const data = await vscode.workspace.fs.readFile(projectStateUri);
+            const state = JSON.parse(data.toString());
+
+            // 2. Perform Virtual Debug scan
+            const vDebugger = new VirtualDebugger();
+            const impact = await vDebugger.performVirtualDebug(state, workspaceFolder.uri.fsPath);
+
+            // 3. Send results to WebView
+            this._panel.webview.postMessage({
+                command: 'virtualDebugImpact',
+                impact: impact
+            });
+
+            // Optional: Log results for traceability
+            Logger.info(`[SYNAPSE] Virtual Debug Impact sent: ${impact.necrosisNodeIds.length} nodes influenced.`);
+            
+            // Show a summary message
+            if (impact.reports.length > 0) {
+                const errorCount = impact.reports.filter(r => r.severity === vscode.DiagnosticSeverity.Error).length;
+                vscode.window.showWarningMessage(`[SYNAPSE] Virtual Debugging found ${errorCount} Errors and ${impact.reports.length - errorCount} Warnings.`);
+            } else {
+                vscode.window.showInformationMessage(`[SYNAPSE] Virtual Debugging complete: No physical errors found.`);
+            }
+
+        } catch (error) {
+            Logger.error('[SYNAPSE] Virtual Debug failed:', error);
+            vscode.window.showErrorMessage(`Virtual Debugging failed: ${error}`);
         }
     }
 
@@ -1810,7 +1905,7 @@ export class CanvasPanel {
                         if (uiNode.data?.label && backendNode.data) {
                             backendNode.data.label = uiNode.data.label;
                         }
-                        // [v0.2.21 Fix] Preserve intentional ungrouping
+                        // [v0.2.20 Fix] Preserve intentional ungrouping
                         if (uiNode._ungrouped === true) {
                             if (backendNode.data) backendNode.data.cluster_id = null;
                             backendNode.cluster_id = null;
@@ -1820,8 +1915,11 @@ export class CanvasPanel {
                     } else {
                         // [v0.2.18 Policy] Stop resurrecting nodes from UI state!
                         // New nodes MUST be added via the 'createManualNode' command only.
-                        // This prevents race conditions where a deleted node is re-added by a concurrent save message.
-                        Logger.info(`[CanvasPanel] handleSaveState: Skipping unknown UI node ${uiNode.id} to prevent Ghost Node resurrection.`);
+                        // [v0.2.20 Noise Reduction] Ephemeral UI nodes (GEMINI, RULES, ghost_) are skipped silently.
+                        const isEphemeral = uiNode.id.includes('GEMINI') || uiNode.id.includes('RULES') || uiNode.id.startsWith('ghost_');
+                        if (!isEphemeral) {
+                            Logger.info(`[CanvasPanel] handleSaveState: Skipping unknown UI node ${uiNode.id} to prevent Ghost Node resurrection.`);
+                        }
                     }
                 }
             }
@@ -1935,8 +2033,13 @@ export class CanvasPanel {
 
             await vscode.workspace.fs.writeFile(historyUri, Buffer.from(JSON.stringify(history, null, 2), 'utf8'));
 
-            // Record decision if label is provided
-            if (state.label) {
+            // [v0.2.20 Fix] Only record to Context Vault when it's a user-triggered snapshot,
+            // NOT for auto-save events which just produce meaningless empty files
+            const isAutoSave = !state.label || 
+                state.label.startsWith('Auto Backup') || 
+                state.label.startsWith('auto_') ||
+                state.label === 'Auto-Save';
+            if (state.label && !isAutoSave) {
                 vscode.commands.executeCommand('synapse.logPrompt', {
                     prompt: `Snapshot taken: ${state.label}`,
                     title: state.label,
@@ -2377,7 +2480,7 @@ export class CanvasPanel {
                     if (!ambiguousNames.has(leaf)) nodeMap.set(leaf, n.id);
                 }
 
-                // [v0.2.21 Fix] Handle manual nodes
+                // [v0.2.20 Fix] Handle manual nodes
                 if (n.data.label) {
                     const cleanLabel = n.data.label.replace(/^[📄📁]\s*/, '').trim();
                     const labelNoExt = path.parse(cleanLabel).name;
@@ -2759,14 +2862,27 @@ export class CanvasPanel {
                 return edge;
             });
 
-            // 2. Ensure all nodes have basic visual properties
+            // 2. Ensure all nodes have basic visual properties (Autonomous Default Style)
             stateForWebview.nodes = stateForWebview.nodes.map((node: any) => {
+                const isProposed = node.status === 'proposed';
+                
+                // [v0.2.20 Stability] Force high-contrast defaults if missing
                 if (!node.visual) {
                     node.visual = {
-                        opacity: node.status === 'proposed' ? 0.5 : 1,
-                        glow_intensity: 0
+                        opacity: isProposed ? 0.6 : 1,
+                        glow_intensity: isProposed ? 0.2 : 0,
+                        color: node.type === 'source' ? '#b8bb26' : '#fabd2f' // Gruvbox primary colors
                     };
+                } else {
+                    // Fill partial visual objects
+                    if (node.visual.opacity === undefined) node.visual.opacity = isProposed ? 0.6 : 1;
+                    if (node.visual.glow_intensity === undefined) node.visual.glow_intensity = 0;
+                    if (!node.visual.color) node.visual.color = node.type === 'source' ? '#b8bb26' : '#fabd2f';
                 }
+
+                // Ensure status is valid
+                if (!node.status) node.status = 'proposed';
+                
                 return node;
             });
 

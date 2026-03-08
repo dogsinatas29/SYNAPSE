@@ -14,7 +14,9 @@ class PromotionParticle {
         this.vy = (Math.random() - 0.5) * 4;
         this.life = 1.0;
         this.decay = 0.01 + Math.random() * 0.02;
-        this.color = color;
+        // Parse "rgb(r, g, b)" for faster rendering
+        const match = color.match(/\d+/g);
+        this.rgb = match ? match.map(Number) : [184, 187, 38];
         this.size = 2 + Math.random() * 3;
     }
 
@@ -31,7 +33,7 @@ class PromotionParticle {
         
         ctx.beginPath();
         ctx.arc(screenX, screenY, this.size * transform.zoom, 0, Math.PI * 2);
-        ctx.fillStyle = this.color.replace(')', `, ${this.life})`).replace('rgb', 'rgba');
+        ctx.fillStyle = `rgba(${this.rgb[0]}, ${this.rgb[1]}, ${this.rgb[2]}, ${this.life})`;
         ctx.fill();
     }
 }
@@ -886,6 +888,12 @@ class CanvasEngine {
             offsetY: 0
         };
 
+        // [v0.2.20] Loop guard initialization
+        this.isAnimationLoopActive = false;
+        this.isDirty = true; // [v0.2.20] Dirty Flag Pattern
+        this.lastActivityTime = Date.now();
+        this.inactivityTimeout = 2000; // 2 seconds of active rendering after last activity
+
         // 데이터
         this.nodes = [];
         this.edges = [];
@@ -902,6 +910,11 @@ class CanvasEngine {
         this.clusters = []; // 클러스터 데이터
         this.contextVaultNodes = []; // [v0.3.0] 저장된 컨텍스트 전용 패널 리스트
         this.isExpectingUpdate = false; // 데이터 업데이트 시 뷰 유지 여부 플래그
+        
+        // [v0.2.20] Visual Impact State
+        this.systemPressure = 0.0; // 0.0 to 1.0
+        this.isRedOut = false;
+        this.lastPressureUpdate = Date.now();
         
         // [v0.2.19] Layer Visibility State
         this.showBaseLayer = true;
@@ -980,14 +993,6 @@ class CanvasEngine {
         this.isAddingNode = false;
         this.pendingNodePos = { x: 0, y: 0 };
 
-        // 이벤트 리스너 등록
-        this.setupEventListeners();
-        this.setupToolbarListeners(); // New listener setup
-
-        // 렌더링 루프 시작
-        this.render();
-        this.startAnimationLoop();
-
         // 🔍 툴팁 요소 생성 (Phase 4)
         this.tooltip = document.createElement('div');
         this.tooltip.id = 'synapse-tooltip';
@@ -1005,6 +1010,11 @@ class CanvasEngine {
         this.tooltip.style.boxShadow = '0 4px 12px rgba(0,0,0,0.5)';
         this.tooltip.style.fontFamily = 'Inter, sans-serif';
         document.body.appendChild(this.tooltip);
+
+
+        // 이벤트 리스너 등록
+        this.setupEventListeners();
+        this.setupToolbarListeners(); 
 
         // Logic Analysis State
         this.isTestingLogic = false;
@@ -1327,7 +1337,7 @@ class CanvasEngine {
             newNode.createPhysicalFile = true;
         }
 
-        // [v0.2.21 Fix] Frontend duplicate check
+        // [v0.2.20 Fix] Frontend duplicate check
         const existingNode = this.nodes.find(n => n.data?.label === label && n.type === type);
         if (existingNode) {
             console.warn('[SYNAPSE] Duplicate node detected (Frontend):', label);
@@ -1381,22 +1391,33 @@ class CanvasEngine {
         const dpr = window.devicePixelRatio || 1;
         const width = container.clientWidth;
         const height = container.clientHeight;
+        const targetWidth = Math.floor(width * dpr);
+        const targetHeight = Math.floor(height * dpr);
 
-        // Set actual size in memory (scaled to account for extra pixel density)
-        this.canvas.width = width * dpr;
-        this.canvas.height = height * dpr;
-
-        // Normalize coordinate system to use css pixels
-        // This means drawing logic (like 100, 100) will map to correct high-DPI pixels
-        if (this.ctx) {
-            this.ctx.scale(dpr, dpr);
+        // [v0.2.20] Only reset buffer if size changed to prevent unnecessary context loss
+        if (this.canvas.width !== targetWidth || this.canvas.height !== targetHeight) {
+            this.canvas.width = targetWidth;
+            this.canvas.height = targetHeight;
+            this.canvas.style.width = `${width}px`;
+            this.canvas.style.height = `${height}px`;
+            
+            // Context scale must be re-applied after width/height reset
+            if (this.ctx) {
+                this.ctx.scale(dpr, dpr);
+            }
+            console.log(`[SYNAPSE] Canvas resized & buffer reset. DPR: ${dpr}, Size: ${width}x${height}`);
         }
 
-        // Make canvas element size match the css pixel size (so it fits in layout)
-        this.canvas.style.width = `${width}px`;
-        this.canvas.style.height = `${height}px`;
-
-        console.log(`[SYNAPSE] Canvas resized. DPR: ${dpr}, Size: ${width}x${height} (Buffer: ${this.canvas.width}x${this.canvas.height})`);
+        // [v0.2.20] Virtual Debug Button Listener
+        const btnVirtualDebug = document.getElementById('btn-virtual-debug');
+        if (btnVirtualDebug && !btnVirtualDebug._initialized) {
+            btnVirtualDebug._initialized = true;
+            btnVirtualDebug.addEventListener('click', () => {
+                if (typeof vscode !== 'undefined') {
+                    vscode.postMessage({ command: 'virtualDebug' });
+                }
+            });
+        }
     }
 
     /**
@@ -1417,10 +1438,22 @@ class CanvasEngine {
     toggleAnimation() {
         this.isAnimating = !this.isAnimating;
         if (this.isAnimating) {
+            this.lastActivityTime = Date.now();
             this.startAnimationLoop();
+        } else {
+            this.render(); // Ensure 'IDLE' is shown immediately when stopped
         }
         console.log('[SYNAPSE] Animation toggled:', this.isAnimating);
         return this.isAnimating;
+    }
+
+    wakeUp() {
+        this.lastActivityTime = Date.now();
+        if (!this.isAnimating) {
+            this.isAnimating = true;
+            this.isDirty = true;
+            this.startAnimationLoop();
+        }
     }
 
     focusNodeInGraph(nodeId) {
@@ -1454,6 +1487,10 @@ class CanvasEngine {
     }
 
     startAnimationLoop() {
+        // [v0.2.20] Prevent duplicate animation loops
+        if (this.isAnimationLoopActive) return;
+        this.isAnimationLoopActive = true;
+
         const animate = () => {
             if (this.isAnimating || this.isTestingLogic) {
                 // 부드러운 이동을 위한 오프셋 증가
@@ -1461,24 +1498,33 @@ class CanvasEngine {
 
                 // 펄스 애니메이션 업데이트 (War Room 기능)
                 if (this.isTestingLogic && this.edges.length > 0) {
-                    // 랜덤하게 새 펄스 주입
                     if (Math.random() < 0.05 && this.pulses.length < 20) {
                         const randomEdge = this.edges[Math.floor(Math.random() * this.edges.length)];
                         this.pulses.push({ edgeId: randomEdge.id, progress: 0, speed: 0.01 + Math.random() * 0.02 });
                     }
 
-                    // 기존 펄스 진행
                     this.pulses = this.pulses.filter(p => {
                         p.progress += p.speed;
                         return p.progress < 1;
                     });
                 }
 
-                // [v0.2.18.2] Particle update
                 this.updateParticles();
 
-                this.render(); // 매 프레임 재포착
+                // [v0.2.20] Smart Deactivation: If no animations left AND no recent activity, sleep the loop
+                const now = Date.now();
+                const isPassive = this.particles.length === 0 && this.pulses.length === 0 && !this.isDragging && !this.isTestingLogic;
+                if (isPassive && (now - this.lastActivityTime > this.inactivityTimeout)) {
+                    this.isAnimating = false;
+                    this.isAnimationLoopActive = false;
+                    this.render(); // Show 'IDLE' explicitly
+                    return; 
+                }
+
+                this.render();
                 requestAnimationFrame(animate);
+            } else {
+                this.isAnimationLoopActive = false;
             }
         };
         requestAnimationFrame(animate);
@@ -1685,6 +1731,7 @@ class CanvasEngine {
 
         // 마우스 휠 (줌)
         this.canvas.addEventListener('wheel', (e) => {
+            this.wakeUp();
             console.log('[DEBUG] Wheel event detected:', e.deltaY);
             e.preventDefault();
             e.stopPropagation(); // 브라우저 전체 줌 방지
@@ -1694,21 +1741,34 @@ class CanvasEngine {
 
         // 마우스 드래그 (팬, 노드 드래그, 선택, 엣지 생성)
         this.canvas.addEventListener('mousedown', (e) => {
+            this.wakeUp();
             // [Fix] Ensure canvas receives keyboard focus for keydown events
             this.canvas.focus();
 
             const worldPos = this.screenToWorld(e.offsetX, e.offsetY);
             this.dragStart = { x: e.offsetX, y: e.offsetY };
+            this.dragStartAbsolute = { x: e.offsetX, y: e.offsetY }; // [v0.2.20 Fix] Added for jitter tracking
 
             if (e.button === 0) { // 왼쪽 버튼
                 this.wasDragging = false;
 
                 // [v0.2.17] Confirm badge click check (? or !)
+                // [v0.2.20] Allow click detection even when Edit Logic is OFF, to provide explicit feedback
                 if (this._confirmBadgeHits && this._confirmBadgeHits.length > 0) {
                     const wx = worldPos.x, wy = worldPos.y;
                     for (const hit of this._confirmBadgeHits) {
                         const dist = Math.sqrt((wx - hit.x) ** 2 + (wy - hit.y) ** 2);
                         if (dist <= hit.r * 2.5) { // [v0.2.18 Fix] Enlarge hit radius so clicks don't miss
+                            if (!this.isEditMode) {
+                                if (typeof vscode !== 'undefined') {
+                                    vscode.postMessage({
+                                        command: 'showWarning',
+                                        message: 'Edit Logic 모드가 꺼져 있어 엣지를 승인/수정할 수 없습니다.'
+                                    });
+                                }
+                                e.stopPropagation();
+                                return;
+                            }
                             if (hit.isPending && typeof vscode !== 'undefined') {
                                 vscode.postMessage({
                                     command: 'requestConfirmEdge',
@@ -1729,6 +1789,16 @@ class CanvasEngine {
                     for (const hit of this._deleteBadgeHits) {
                         const dist = Math.sqrt((wx - hit.x) ** 2 + (wy - hit.y) ** 2);
                         if (dist <= hit.r * 1.5) {
+                            if (!this.isEditMode) {
+                                if (typeof vscode !== 'undefined') {
+                                    vscode.postMessage({
+                                        command: 'showWarning',
+                                        message: 'Edit Logic 모드가 꺼져 있어 엣지를 삭제할 수 없습니다.'
+                                    });
+                                }
+                                e.stopPropagation();
+                                return;
+                            }
                             if (typeof vscode !== 'undefined') {
                                 vscode.postMessage({
                                     command: 'requestDeleteEdgeUI',
@@ -1818,61 +1888,61 @@ class CanvasEngine {
                     return;
                 }
 
-                // 3. 노드 클릭
-                const clickedNode = this.getNodeAt(worldPos.x, worldPos.y);
-                if (clickedNode) {
+                // 3. 클러스터 타이틀 클릭 확인 (드래그 지원) - 노드보다 우선순위 높임 (헤더 클릭 시 클러스터 전체 이동)
+                clickedClusterHeader = typeof this.getClusterHeaderAt === 'function' ? this.getClusterHeaderAt(worldPos.x, worldPos.y) : null;
+                if (clickedClusterHeader) {
                     // 엣지 선택 해제
                     this.selectedEdge = null;
 
-                    // 노드 클릭 (기존 로직)
-                    if (e.ctrlKey || e.metaKey || e.shiftKey) {
-                        if (this.selectedNodes.has(clickedNode)) {
-                            this.selectedNodes.delete(clickedNode);
-                            console.log('[SYNAPSE] Node deselected (Multi). Total selected:', this.selectedNodes.size);
-                        } else {
-                            this.selectedNodes.add(clickedNode);
-                            console.log('[SYNAPSE] Node selected (Multi). Total selected:', this.selectedNodes.size);
+                    // 클러스터 내의 모든 노드 (자식 클러스터 포함) 재귀적 탐색
+                    const getAllNodes = (clusterId) => {
+                        let res = this.nodes.filter(n => n.cluster_id === clusterId || n.data?.cluster_id === clusterId);
+                        if (this.clusters) {
+                            const childClusters = this.clusters.filter(c => c.parent_id === clusterId);
+                            for (const child of childClusters) {
+                                res = res.concat(getAllNodes(child.id));
+                            }
                         }
-                        this.selectedNode = null;
-                    } else {
-                        if (!this.selectedNodes.has(clickedNode)) {
+                        return res;
+                    };
+                    const clusterNodes = getAllNodes(clickedClusterHeader.id);
+
+                    if (clusterNodes.length > 0) {
+                        if (!(e.ctrlKey || e.metaKey || e.shiftKey)) {
                             this.selectedNodes.clear();
-                            this.selectedNodes.add(clickedNode);
-                            console.log('[SYNAPSE] Node selected (Single). ID:', clickedNode.id);
                         }
-                        this.selectedNode = clickedNode;
-                        this._onNodeSelected(clickedNode); // [DTR] show node DTR in gauge
+                        clusterNodes.forEach(n => this.selectedNodes.add(n));
+                        this.isDragging = true;
+                        this.wasDragging = true; // 클러스터 선택 효과
+                        console.log('[SYNAPSE] Dragged cluster header:', clickedClusterHeader.label);
                     }
-                    this.isDragging = true;
                 } else {
-                    // 4. 클러스터 타이틀 클릭 확인 (드래그 지원)
-                    const clickedClusterHeader = typeof this.getClusterHeaderAt === 'function' ? this.getClusterHeaderAt(worldPos.x, worldPos.y) : null;
-                    if (clickedClusterHeader) {
+                    // 4. 노드 클릭
+                    const clickedNode = this.getNodeAt(worldPos.x, worldPos.y);
+                    if (clickedNode) {
                         // 엣지 선택 해제
                         this.selectedEdge = null;
 
-                        // 클러스터 내의 모든 노드 (자식 클러스터 포함) 재귀적 탐색
-                        const getAllNodes = (clusterId) => {
-                            let res = this.nodes.filter(n => (n.data && n.data.cluster_id === clusterId) || n.cluster_id === clusterId);
-                            if (this.clusters) {
-                                const childClusters = this.clusters.filter(c => c.parent_id === clusterId);
-                                for (const child of childClusters) {
-                                    res = res.concat(getAllNodes(child.id));
-                                }
+                        // 노드 클릭 (기존 로직)
+                        if (e.ctrlKey || e.metaKey || e.shiftKey) {
+                            if (this.selectedNodes.has(clickedNode)) {
+                                this.selectedNodes.delete(clickedNode);
+                                console.log('[SYNAPSE] Node deselected (Multi). Total selected:', this.selectedNodes.size);
+                            } else {
+                                this.selectedNodes.add(clickedNode);
+                                console.log('[SYNAPSE] Node selected (Multi). Total selected:', this.selectedNodes.size);
                             }
-                            return res;
-                        };
-                        const clusterNodes = getAllNodes(clickedClusterHeader.id);
-
-                        if (clusterNodes.length > 0) {
-                            if (!(e.ctrlKey || e.metaKey || e.shiftKey)) {
+                            this.selectedNode = null;
+                        } else {
+                            if (!this.selectedNodes.has(clickedNode)) {
                                 this.selectedNodes.clear();
+                                this.selectedNodes.add(clickedNode);
+                                console.log('[SYNAPSE] Node selected (Single). ID:', clickedNode.id);
                             }
-                            clusterNodes.forEach(n => this.selectedNodes.add(n));
-                            this.isDragging = true;
-                            this.wasDragging = true; // 클러스터 선택 효과
-                            console.log('[SYNAPSE] Dragged cluster header:', clickedClusterHeader.label);
+                            this.selectedNode = clickedNode;
+                            this._onNodeSelected(clickedNode); // [DTR] show node DTR in gauge
                         }
+                        this.isDragging = true;
                     } else {
                         // 5. 빈 공간 클릭 -> 선택 영역 시작 & 엣지 선택 해제
                         this.selectedEdge = null;
@@ -1899,6 +1969,7 @@ class CanvasEngine {
         });
 
         this.canvas.addEventListener('mousemove', (e) => {
+            this.lastActivityTime = Date.now(); // Frequent mousemove updates timer but doesn't force wakeUp unless needed
             const worldPos = this.screenToWorld(e.offsetX, e.offsetY);
             const dx = e.offsetX - this.dragStart.x;
             const dy = e.offsetY - this.dragStart.y;
@@ -1925,7 +1996,9 @@ class CanvasEngine {
 
             if (this.isDragging || this.isSelecting || this.isPanning) {
                 // 실제 이동 거리가 짧으면 드래그로 간주하지 않음 (지터 방지)
-                if (Math.abs(dx) > 3 || Math.abs(dy) > 3) {
+                const totalDx = e.offsetX - this.dragStartAbsolute.x;
+                const totalDy = e.offsetY - this.dragStartAbsolute.y;
+                if (Math.abs(totalDx) > 5 || Math.abs(totalDy) > 5) {
                     this.wasDragging = true;
                 }
             }
@@ -2010,18 +2083,31 @@ class CanvasEngine {
                         this.selectedNodes.add(node);
                     }
                 }
-                this.saveState();
+                
+                // [v0.2.20 Fix] Removed invalid saveState() call here.
+                // Saving state triggers a full JSON reload which overwrote Node objects with new ones.
+                // This caused 'selectedNodes' to contain dead references, breaking subsequent drag logic.
             } else if (this.isDragging) {
                 this.isDragging = false;
 
-                // 클러스터 드래그 종료 시 침범한 노드 밀어내기
-                const draggedNodes = Array.from(this.selectedNodes);
-                const clusterIds = new Set(draggedNodes.map(n => n.cluster_id).filter(id => id));
-                for (const cid of clusterIds) {
-                    this.repositionIntruders(cid);
-                }
+                // [v0.2.20 Fix] Only trigger saveState if actual movement occurred (not just a click)
+                if (this.wasDragging) {
+                    // 클러스터 드래그 종료 시 침범한 노드 밀어내기
+                    const draggedNodes = Array.from(this.selectedNodes);
+                    const clusterIds = new Set(draggedNodes.map(n => n.cluster_id).filter(id => id));
+                    for (const cid of clusterIds) {
+                        this.repositionIntruders(cid);
+                    }
 
-                this.saveState();
+                // [v0.2.20 Perf Fix] Only saveState if drag distance > 10px to avoid redundant JSON serialization
+                const absDragDist = Math.sqrt(
+                    Math.pow(this.dragStartAbsolute.x - (this.dragStart?.x ?? 0), 2) +
+                    Math.pow(this.dragStartAbsolute.y - (this.dragStart?.y ?? 0), 2)
+                );
+                if (absDragDist > 10) {
+                    this.saveState();
+                }
+                }
             } else if (this.isPanning) {
                 this.isPanning = false;
                 this.canvas.style.cursor = 'default';
@@ -2180,16 +2266,15 @@ class CanvasEngine {
         const zoomRatio = this.transform.zoom / oldZoom;
         this.transform.offsetX = centerX - (centerX - this.transform.offsetX) * zoomRatio;
         this.transform.offsetY = centerY - (centerY - this.transform.offsetY) * zoomRatio;
-
         console.log('[DEBUG] New transform:', this.transform);
         this.updateZoomDisplay();
-        this.render();
+        this.wakeUp();
     }
 
     pan(dx, dy) {
         this.transform.offsetX += dx;
         this.transform.offsetY += dy;
-        this.render();
+        this.wakeUp();
     }
 
     screenToWorld(screenX, screenY) {
@@ -2748,38 +2833,49 @@ class CanvasEngine {
         menu.style.color = '#ebdbb2';
         menu.style.boxShadow = '0 4px 12px rgba(0,0,0,0.5)';
 
-        // Change Type 옵션
-        const changeType = document.createElement('div');
-        changeType.textContent = '🔄 Change Type';
-        changeType.style.padding = '6px 12px';
-        changeType.style.cursor = 'pointer';
-        changeType.style.borderRadius = '4px';
-        changeType.style.transition = 'background 0.2s';
-        changeType.onmouseenter = () => changeType.style.background = '#504945';
-        changeType.onmouseleave = () => changeType.style.background = 'transparent';
-        changeType.onclick = () => {
-            menu.remove();
-            this.showEdgeTypeChangeMenu(x, y);
-        };
-        menu.appendChild(changeType);
+        // [v0.2.20 Fix] Only show edit options if Edit Logic is ON
+        if (this.isEditMode) {
+            // Change Type 옵션
+            const changeType = document.createElement('div');
+            changeType.textContent = '🔄 Change Type';
+            changeType.style.padding = '6px 12px';
+            changeType.style.cursor = 'pointer';
+            changeType.style.borderRadius = '4px';
+            changeType.style.transition = 'background 0.2s';
+            changeType.onmouseenter = () => changeType.style.background = '#504945';
+            changeType.onmouseleave = () => changeType.style.background = 'transparent';
+            changeType.onclick = () => {
+                menu.remove();
+                this.showEdgeTypeChangeMenu(x, y);
+            };
+            menu.appendChild(changeType);
 
-        // Delete 옵션
-        const deleteOption = document.createElement('div');
-        deleteOption.textContent = '❌ Delete';
-        deleteOption.style.padding = '6px 12px';
-        deleteOption.style.cursor = 'pointer';
-        deleteOption.style.borderRadius = '4px';
-        deleteOption.style.borderTop = '1px solid #665c54';
-        deleteOption.style.marginTop = '4px';
-        deleteOption.style.paddingTop = '8px';
-        deleteOption.style.transition = 'background 0.2s';
-        deleteOption.onmouseenter = () => deleteOption.style.background = '#504945';
-        deleteOption.onmouseleave = () => deleteOption.style.background = 'transparent';
-        deleteOption.onclick = () => {
-            menu.remove();
-            this.deleteEdge(this.selectedEdge.id);
-        };
-        menu.appendChild(deleteOption);
+            // Delete 옵션
+            const deleteOption = document.createElement('div');
+            deleteOption.textContent = '❌ Delete';
+            deleteOption.style.padding = '6px 12px';
+            deleteOption.style.cursor = 'pointer';
+            deleteOption.style.borderRadius = '4px';
+            deleteOption.style.borderTop = '1px solid #665c54';
+            deleteOption.style.marginTop = '4px';
+            deleteOption.style.paddingTop = '8px';
+            deleteOption.style.transition = 'background 0.2s';
+            deleteOption.onmouseenter = () => deleteOption.style.background = '#504945';
+            deleteOption.onmouseleave = () => deleteOption.style.background = 'transparent';
+            deleteOption.onclick = () => {
+                menu.remove();
+                this.deleteEdge(this.selectedEdge.id);
+            };
+            menu.appendChild(deleteOption);
+        } else {
+            // Edit Logic: OFF 일 때는 수정 불가 안내
+            const notAllowed = document.createElement('div');
+            notAllowed.textContent = '🔒 Edit Logic: OFF';
+            notAllowed.style.padding = '6px 12px';
+            notAllowed.style.color = '#a89984';
+            notAllowed.style.cursor = 'not-allowed';
+            menu.appendChild(notAllowed);
+        }
 
         document.body.appendChild(menu);
 
@@ -3152,6 +3248,7 @@ class CanvasEngine {
     }
 
     showTooltip(x, y, content) {
+        if (!this.tooltip || !this.tooltip.style) return;
         this.tooltip.innerHTML = `
             <div style="font-weight: bold; color: #fabd2f; margin-bottom: 4px;">🤖 AI Architectural Reasoning</div>
             <div style="line-height: 1.4;">${content}</div>
@@ -3171,6 +3268,7 @@ class CanvasEngine {
     }
 
     hideTooltip() {
+        if (!this.tooltip || !this.tooltip.style) return;
         this.tooltip.style.display = 'none';
     }
 
@@ -3556,8 +3654,32 @@ class CanvasEngine {
     }
 
     render() {
-        if (this.isRendering) return; // Prevent recursive or double render
+        if (!this.isDirty && !this.isAnimating) {
+            const fpsEl = document.getElementById('fps-display');
+            if (fpsEl && fpsEl.textContent !== 'IDLE') {
+                fpsEl.textContent = 'IDLE';
+                fpsEl.style.color = '#a89984'; // Gruvbox Gray
+            }
+            return; 
+        }
+        if (this.isRendering) return;
         this.isRendering = true;
+        this.isDirty = false;
+
+        // [v0.2.20] FPS Counter - rolling average over last 30 frames
+        const now = performance.now();
+        if (!this._fpsFrames) this._fpsFrames = [];
+        this._fpsFrames.push(now);
+        if (this._fpsFrames.length > 30) this._fpsFrames.shift();
+        if (this._fpsFrames.length >= 2) {
+            const elapsed = this._fpsFrames[this._fpsFrames.length - 1] - this._fpsFrames[0];
+            const fps = Math.round((this._fpsFrames.length - 1) / (elapsed / 1000));
+            const fpsEl = document.getElementById('fps-display');
+            if (fpsEl) {
+                fpsEl.textContent = fps;
+                fpsEl.style.color = fps >= 50 ? '#b8bb26' : fps >= 30 ? '#fabd2f' : '#fb4934';
+            }
+        }
 
         try {
             const ctx = this.ctx;
@@ -3569,11 +3691,21 @@ class CanvasEngine {
             }
 
             // 1. 캔버스 해상도 강제 동기화 (Zero Point Adjustment)
-            this.resizeCanvas();
+            // [v0.2.20] Removed from render loop to avoid layout thrashing
+            // this.resizeCanvas();
 
             // 2. 변환 매트릭스 초기화 & 클리어
             ctx.setTransform(1, 0, 0, 1, 0, 0);
-            ctx.fillStyle = '#1e1e1e';
+            ctx.globalAlpha = 1.0; 
+            
+            // [v0.2.20] System Red-out Background Pulse
+            if (this.isRedOut || this.systemPressure > 0.8) {
+                const pulse = Math.sin(Date.now() / 150) * 0.5 + 0.5;
+                const redIntensity = Math.floor(30 + pulse * 40 * (this.systemPressure || 1));
+                ctx.fillStyle = `rgb(${redIntensity}, 10, 10)`;
+            } else {
+                ctx.fillStyle = '#1e1e1e';
+            }
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
             // 3. Coordinate System (DPR Scale only)
@@ -3800,7 +3932,7 @@ class CanvasEngine {
         for (const node of this.selectedNodes) {
             if (node.data) node.data.cluster_id = null;
             node.cluster_id = null;
-            node._ungrouped = true; // [v0.2.21 Fix] Prevent FlowRenderer from snapping this back to default cluster
+            node._ungrouped = true; // [v0.2.20 Fix] Prevent FlowRenderer from snapping this back to default cluster
         }
 
         // 사용되지 않는 클러스터 정리 (Local)
@@ -4799,6 +4931,13 @@ class CanvasEngine {
         }
 
         // 1. 상태별 특수 효과 계산
+        if (node.status === 'error_necrosis') {
+            style.bgColor = '#1d2021'; // Dark Necrosis Base
+            style.borderColor = '#fb4934'; // Red Border
+            this.ctx.shadowBlur = 20;
+            this.ctx.shadowColor = '#000000';
+        }
+
         let borderColor = style.borderColor;
         let lineWidth = style.lineWidth;
         let bgColor = style.bgColor;
@@ -4893,6 +5032,40 @@ class CanvasEngine {
         this.ctx.fillStyle = bgColor;
         this.drawNodeShape(this.ctx, x, y, nodeWidth, nodeHeight, style.typeLabel);
         this.ctx.fill();
+
+        // 🎨 [v0.2.20] Necrosis Overlay (Necrotic Core & Static Noise)
+        if (node.status === 'error_necrosis') {
+            const centerX = x;
+            const centerY = y;
+            const radius = Math.min(nodeWidth, nodeHeight) * 0.45;
+            
+            this.ctx.save();
+            // 1. Necrotic Core (Radial Gradient: Black to Dark Purple/Red)
+            const grad = this.ctx.createRadialGradient(centerX, centerY, 2, centerX, centerY, radius);
+            grad.addColorStop(0, '#000000');
+            grad.addColorStop(0.6, 'rgba(138, 43, 226, 0.4)'); // Purple necrosis
+            grad.addColorStop(1, 'rgba(251, 73, 52, 0)'); // Fades out
+            
+            this.ctx.fillStyle = grad;
+            this.ctx.beginPath();
+            this.ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+            this.ctx.fill();
+
+            // 2. High-intensity Static Noise (Digital Decay)
+            this.ctx.globalAlpha = 0.3 * (0.8 + 0.2 * Math.sin(Date.now() / 50)); // Flickering noise
+            this.ctx.fillStyle = '#ebdbb2'; // Light noise
+            for (let i = 0; i < 60; i++) {
+                const rx = x - nodeWidth / 2 + Math.random() * nodeWidth;
+                const ry = y - nodeHeight / 2 + Math.random() * nodeHeight;
+                const rSize = 1 + Math.random() * 2;
+                this.ctx.fillRect(rx, ry, rSize, rSize);
+            }
+            this.ctx.restore();
+            
+            // Highlight the necrotic state further
+            borderColor = '#fb4934';
+            lineWidth = 3;
+        }
 
         this.ctx.strokeStyle = borderColor;
         this.ctx.lineWidth = lineWidth;
@@ -5459,11 +5632,44 @@ class CanvasEngine {
 
         // 곡선 그리기
         this.ctx.beginPath();
-        this.ctx.moveTo(fromX, fromY);
-
         const cpX = (fromX + toX) / 2;
         const cpY = (fromY + toY) / 2 - 30;
-        this.ctx.quadraticCurveTo(cpX, cpY, toX, toY);
+
+        // [v0.2.20] Fracture Rendering (Dramatic Structural Failure)
+        if (edge.type === 'broken_fracture') {
+            this.ctx.beginPath();
+            this.ctx.moveTo(fromX, fromY);
+            
+            // Generate sharp fractals/zig-zags towards target but with logic breakdown
+            const midX = (fromX + toX) / 2;
+            const midY = (fromY + toY) / 2;
+            
+            // First break point
+            const b1x = fromX + (midX - fromX) * 0.4 + (Math.random() - 0.5) * 40;
+            const b1y = fromY + (midY - fromY) * 0.4 + (Math.random() - 0.5) * 40;
+            
+            // Second break point (The "Fracture")
+            const b2x = midX + (Math.random() - 0.5) * 60;
+            const b2y = midY + 40; // Drop downwards (Gravity effect)
+            
+            this.ctx.lineTo(b1x, b1y);
+            this.ctx.lineTo(b2x, b2y);
+            
+            // Final scramble towards target or just hanging
+            if (this.isAnimating && Math.random() > 0.3) {
+                // Occasional "hanging" effect where it doesn't reach target
+                const b3x = b2x + (toX - b2x) * 0.5 + (Math.random() - 0.5) * 20;
+                const b3y = b2y + 20;
+                this.ctx.lineTo(b3x, b3y);
+            } else {
+                this.ctx.lineTo(toX, toY);
+            }
+            
+            this.ctx.strokeStyle = '#fb4934'; // Necrosis Red
+            this.ctx.lineWidth = lineWidth + 2;
+            this.ctx.stroke();
+            return; // Skip standard curve rendering
+        }
         this.ctx.stroke();
 
         // 화살표 아이콘 결정 (Phase 3)
@@ -5582,7 +5788,7 @@ class CanvasEngine {
             const bMidY = (fromY + toY) / 2 - 30;
             const isPending = confirmStatus === 'pending_confirm';
             const badgeChar = isPending ? '?' : '!';
-            const badgeColor = isPending ? '#fabd2f' : '#b8bb26';
+            const badgeColor = isPending ? '#504945' : '#83a598'; // [v0.2.20] '?' is dark gray, '!' is blue
             const badgeSize = Math.max(30, 40 / this.transform.zoom); // [v0.2.19 Fix] Make badges much larger globally
 
             this.ctx.save();
@@ -5592,7 +5798,7 @@ class CanvasEngine {
 
             this.ctx.beginPath();
             this.ctx.arc(bMidX, bMidY, badgeSize * 0.75, 0, Math.PI * 2);
-            this.ctx.fillStyle = isPending ? 'rgba(250,189,47,0.25)' : 'rgba(184,187,38,0.25)';
+            this.ctx.fillStyle = isPending ? 'rgba(80,73,69,0.8)' : 'rgba(131,165,152,0.8)';
             this.ctx.fill();
             this.ctx.strokeStyle = badgeColor;
             this.ctx.lineWidth = 1.5 / this.transform.zoom;
@@ -5624,7 +5830,7 @@ class CanvasEngine {
         const minSize = 14;
         const arrowSize = Math.max(minSize, baseSize / Math.sqrt(this.transform.zoom));
 
-        console.log(`[DEBUG] renderArrow called: x=${x}, y=${y}, angle=${angle}, color=${color}, size=${arrowSize}`);
+        // console.log(`[DEBUG] renderArrow called: x=${x}, y=${y}, angle=${angle}, color=${color}, size=${arrowSize}`);
 
         // Canvas 상태 저장
         this.ctx.save();
@@ -5845,20 +6051,7 @@ class CanvasEngine {
         }
     }
 
-    resizeCanvas() {
-        const canvas = this.canvas;
-        const dpr = window.devicePixelRatio || 1;
-        const rect = canvas.parentElement.getBoundingClientRect();
-        const targetWidth = Math.floor(rect.width * dpr);
-        const targetHeight = Math.floor(rect.height * dpr);
-
-        if (canvas.width !== targetWidth || canvas.height !== targetHeight) {
-            canvas.width = targetWidth;
-            canvas.height = targetHeight;
-            canvas.style.width = `${rect.width}px`;
-            canvas.style.height = `${rect.height}px`;
-        }
-    }
+// [v0.2.20] Deleted duplicate resizeCanvas definition
 
     /**
      * Send current context data to extension
@@ -6055,33 +6248,56 @@ function initCanvas() {
                 engine.updateEdgeValidation(message.edgeId, message.result);
                 break;
             case 'analysisResults':
-                this.isTestingLogic = false;
-                this.analysisIssues = message.issues;
+                engine.isTestingLogic = false;
+                engine.analysisIssues = message.issues;
 
-                // 이슈를 노드/엣지에 매핑
-                this.analysisIssues.forEach(issue => {
-                    issue.nodeIds.forEach(nodeId => {
-                        const node = this.nodes.find(n => n.id === nodeId);
-                        if (node) {
-                            if (issue.type === 'circular') node.isError = true;
-                            if (issue.type === 'dead-end') node.isDeadEnd = true;
-                            if (issue.type === 'bottleneck') node.isBottleneck = true;
-                            if (issue.type === 'isolated') node.isIsolated = true;
-                        }
-
-                        // 엣지도 매핑
-                        if (issue.type === 'circular') {
-                            // 현재 이슈의 노드들 사이에 있는 엣지 찾기
-                            this.edges.forEach(e => {
-                                if (issue.nodeIds.includes(e.from) && issue.nodeIds.includes(e.to)) {
-                                    e.isCircular = true;
-                                }
-                            });
-                        }
-                    });
+                // [v0.2.20 Visual Impact] 초기화: 기존 상태 제거
+                engine.nodes.forEach(n => {
+                    delete n.status;
+                    n.isError = false;
+                    n.isDeadEnd = false;
+                    n.isBottleneck = false;
+                    n.isIsolated = false;
+                });
+                engine.edges.forEach(e => {
+                    e.isCircular = false;
+                    if (e.type === 'broken_fracture') e.type = 'dependency';
                 });
 
-                this.render();
+                // 시스템 압박도 계산 (이슈 개수에 비례)
+                engine.systemPressure = Math.min(1.0, (message.issues?.length || 0) * 0.15);
+                engine.isRedOut = engine.systemPressure > 0.7;
+
+                // 이슈를 노드/엣지에 매핑
+                if (message.issues) {
+                    message.issues.forEach(issue => {
+                        issue.nodeIds.forEach(nodeId => {
+                            const node = engine.nodes.find(n => n.id === nodeId);
+                            if (node) {
+                                // 임계값 이상의 심각한 오류는 '괴사(Necrosis)'로 표현
+                                if (issue.type === 'circular' || issue.type === 'schema-violation') {
+                                    node.isError = true;
+                                    node.status = 'error_necrosis';
+                                }
+                                if (issue.type === 'dead-end') node.isDeadEnd = true;
+                                if (issue.type === 'bottleneck') node.isBottleneck = true;
+                                if (issue.type === 'isolated') node.isIsolated = true;
+                            }
+
+                            // 심각한 구조적 결함은 '엣지 파손(Fracture)'으로 표현
+                            if (issue.type === 'circular' || issue.type === 'schema-violation') {
+                                engine.edges.forEach(e => {
+                                    if (issue.nodeIds.includes(e.from) && issue.nodeIds.includes(e.to)) {
+                                        e.isCircular = true;
+                                        e.type = 'broken_fracture';
+                                    }
+                                });
+                            }
+                        });
+                    });
+                }
+
+                engine.render();
                 break;
             case 'flowData':
                 engine.flowData = message.data;
@@ -6169,15 +6385,18 @@ function initCanvas() {
         document.getElementById('side-panel')?.classList.remove('visible');
     });
 
-    document.getElementById('btn-animate')?.addEventListener('click', (e) => {
-        engine.isAnimating = !engine.isAnimating;
-        e.target.textContent = `🎬 Animation: ${engine.isAnimating ? 'On' : 'Off'}`;
-        if (engine.isAnimating) engine.startAnimationLoop();
-    });
+    // [v0.2.20 Fix] Duplicate btn-animate listener removed.
+    // The correct handler is in index.html DOMContentLoaded → calls engine.toggleAnimation()
 
     // Protocol & Context Listeners
     document.getElementById('btn-master-hub')?.addEventListener('click', () => {
-        vscode?.postMessage({ command: 'openFile', filePath: 'architecture.md' });
+        engine.handleOpenFile('architecture.md');
+    });
+
+    document.getElementById('btn-modular-specs')?.addEventListener('click', () => {
+        if (typeof vscode !== 'undefined') {
+            vscode.postMessage({ command: 'openModularSpecs' });
+        }
     });
 
     document.getElementById('btn-rules')?.addEventListener('click', () => {
@@ -6245,6 +6464,58 @@ function initCanvas() {
             engine.renameCluster(clickedCluster.id);
         }
     });
+
+    // [v0.2.20] Make DTR Controller draggable
+    const dtrController = document.getElementById('dtr-controller');
+    if (dtrController) {
+        let isDraggingDtr = false;
+        let dtrDragStartX, dtrDragStartY;
+
+        dtrController.addEventListener('mousedown', (e) => {
+            // Only allow dragging from the header area to not break slider interaction
+            if (e.target.closest('.dtr-header') || e.target === dtrController) {
+                isDraggingDtr = true;
+                dtrDragStartX = e.clientX - dtrController.offsetLeft;
+                dtrDragStartY = e.clientY - dtrController.offsetTop;
+                dtrController.style.cursor = 'grabbing';
+                // Remove bottom/right positioning to allow arbitrary top/left movement
+                dtrController.style.bottom = 'auto';
+                dtrController.style.right = 'auto';
+            }
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isDraggingDtr) return;
+            e.preventDefault();
+            
+            // Constrain to window bounds
+            let newX = e.clientX - dtrDragStartX;
+            let newY = e.clientY - dtrDragStartY;
+            
+            const maxX = window.innerWidth - dtrController.offsetWidth;
+            const maxY = window.innerHeight - dtrController.offsetHeight;
+            
+            newX = Math.max(0, Math.min(newX, maxX));
+            newY = Math.max(0, Math.min(newY, maxY));
+
+            dtrController.style.left = `${newX}px`;
+            dtrController.style.top = `${newY}px`;
+        });
+
+        document.addEventListener('mouseup', () => {
+            if (isDraggingDtr) {
+                isDraggingDtr = false;
+                dtrController.style.cursor = 'grab';
+            }
+        });
+        
+        // Initial cursor style for the draggable area
+        const dtrHeader = dtrController.querySelector('.dtr-header');
+        if (dtrHeader) {
+            dtrHeader.style.cursor = 'grab';
+        }
+    }
+
     // [v0.2.16 Handshake] Signal readiness to the extension
     if (typeof vscode !== 'undefined') {
         console.log('[SYNAPSE] UI Ready. Sending handshake to extension...');

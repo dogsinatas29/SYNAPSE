@@ -42,7 +42,7 @@ Path: ~/언어_프로젝트/프로젝트명/mile_stone/v[버전명].md
 - **[architecture.md](file:///home/dogsinatas/TypeScript_project/antigravity-extension-vis/architecture.md)**: 전체 시스템의 권한 지도 및 계층 구조(Hub -> Cluster -> Node)를 총괄하는 최상위 허브입니다.
 - **모듈화 스펙**:
   - `core_synapse.md`: 시각화 및 엔진 규격
-  - `vega_agent.md`: 실행 및 에이전트 제어
+  - `visual_impact.md`: 실행 및 에이전트 제어
   - `reporting.md`: 진단 및 리포트 템플릿
   - `data_scheme.md`: 데이터 스키마 및 상태 정의
 

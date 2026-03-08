@@ -103,8 +103,14 @@ export async function activate(context: vscode.ExtensionContext) {
 
                 const principles = context.globalState.get<string[]>('synapse.sovereign_principles', []);
                 if (principles.length === 0) {
-                    vscode.window.showWarningMessage('⚠️ [Sovereign Protocol] Principles missing or unparsed in GEMINI.md. Running in Unbound Mode.');
-                    // Don't return, allow opening the canvas
+                    vscode.window.showInformationMessage(
+                        '💡 설계 규칙을 추가하면 더 정밀한 분석이 가능합니다.',
+                        'GEMINI.md 열기'
+                    ).then(selection => {
+                        if (selection === 'GEMINI.md 열기') {
+                            vscode.commands.executeCommand('synapse.openRules');
+                        }
+                    });
                 }
 
                 if (vscode.window.activeTextEditor) {
@@ -521,7 +527,10 @@ export async function activate(context: vscode.ExtensionContext) {
 
                         // Apply new diagnostics
                         diagnosticsMap.forEach((diags, uriStr) => {
-                            diagnosticCollection.set(vscode.Uri.parse(uriStr), diags);
+                            // Find the corresponding URI object from our map keys or reconstruction
+                            // Better: use the URI object directly if we stored it
+                            const targetUri = vscode.Uri.parse(uriStr); 
+                            diagnosticCollection.set(targetUri, diags);
                         });
 
                     } catch (e) {
@@ -632,12 +641,12 @@ async function checkProjectStatus(workspaceFolder: vscode.WorkspaceFolder, conte
                 : vscode.workspace.workspaceFolders?.[0];
 
             if (activeWorkspace?.uri.fsPath === workspaceFolder.uri.fsPath) {
-                // [v0.2.20 Lockdown Check]
+                // [v0.2.20] Soft Binding: Auto-open even without principles
+                CanvasPanel.createOrShow(context, workspaceFolder);
+                
                 const principles = context.globalState.get<string[]>('synapse.sovereign_principles', []);
-                if (principles.length > 0) {
-                    CanvasPanel.createOrShow(context, workspaceFolder);
-                } else {
-                    Logger.warn('[Lockdown] Auto-open cancelled: Principles missing.');
+                if (principles.length === 0) {
+                    Logger.info('[Secretary\'s Suggestion] Canvas opened in Unbound Mode.');
                 }
             }
         }

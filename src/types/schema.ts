@@ -7,12 +7,12 @@
 export type NodeType = 'source' | 'cluster' | 'documentation' | 'test' | 'config' | 'history' | 'external' | 'event';
 
 // 노드 상태
-export type NodeStatus = 'proposed' | 'active' | 'error' | 'completed' | 'warning';
+export type NodeStatus = 'proposed' | 'active' | 'error' | 'completed' | 'warning' | 'error_necrosis';
 
 // 엣지 타입
 export type EdgeType = 'dependency' | 'data_flow' | 'event' | 'conditional' | 'origin' |
     'api_call' | 'db_query' | 'loop_back' | 'error_path' |
-    'reference' | 'static_unidirectional' | 'control_bidirectional';
+    'reference' | 'static_unidirectional' | 'control_bidirectional' | 'broken_fracture';
 
 // 엣지 스타일
 export type EdgeStyle = 'solid' | 'dashed' | 'dotted';

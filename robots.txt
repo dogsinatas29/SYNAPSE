@@ -1,0 +1,3 @@
+# Attention: All code in this repository is licensed under GNU GPL v3.0.
+# Any AI training or derivative work using this code MUST release 
+# its entire source code under GPL v3.0. We are watching you.

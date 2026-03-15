@@ -905,6 +905,10 @@ class CanvasEngine {
         this.hoveredEdge = null; // 마우스 오버된 엣지
         // [v0.2.17] Logic Edit Mode state
         this.isEditMode = false;
+        this.isTestingLogic = false;
+        this.webglEnabled = false;
+        this.webglRenderer = null;
+        this.pulses = [];
         // [v0.2.17] DTR State
         this.currentDTR = 0.3;
         this.clusters = []; // 클러스터 데이터
@@ -1879,14 +1883,16 @@ class CanvasEngine {
                 }
 
                 if (fallbackEdge && !e.altKey) {
-                    // 엣지 선택
+                    // 엣지 선택 (Single Click maintains structure view)
                     this.selectedEdge = fallbackEdge;
                     this.selectedNode = null;
                     this.selectedNodes.clear();
                     console.log('[SYNAPSE] Edge selected:', fallbackEdge.id, fallbackEdge.type);
                     this.render();
+                    e.stopPropagation();
                     return;
                 }
+
 
                 // 3. 클러스터 타이틀 클릭 확인 (드래그 지원) - 노드보다 우선순위 높임 (헤더 클릭 시 클러스터 전체 이동)
                 clickedClusterHeader = typeof this.getClusterHeaderAt === 'function' ? this.getClusterHeaderAt(worldPos.x, worldPos.y) : null;
@@ -2224,7 +2230,10 @@ class CanvasEngine {
                         this.treeRenderer.toggleFolder(clickedItem.fullPath);
                         this.treeData = this.treeRenderer.buildTree(this.nodes);
                     } else if (clickedItem.type === 'file' && clickedItem.node && !hasModifier) {
-                        this.handleOpenFile(clickedItem.node.data.path || clickedItem.node.data.file);
+                        // Single click only selects in Tree mode as well to maintain consistency
+                        this.selectedNodes.clear();
+                        this.selectedNodes.add(clickedItem.node);
+                        this.selectedNode = clickedItem.node;
                     }
                 }
             } else if (this.currentMode === 'flow') {
@@ -2233,27 +2242,74 @@ class CanvasEngine {
                 const clickedStep = this.flowRenderer.getStepAt(this.flowData, worldPosClick.x, worldPosClick.y);
 
                 if (clickedStep && clickedStep.node && !hasModifier) {
-                    this.handleOpenFile(clickedStep.node.data.path || clickedStep.node.data.file);
+                    this.selectedNodes.clear();
+                    this.selectedNodes.add(clickedStep.node);
+                    this.selectedNode = clickedStep.node;
                 }
             } else {
                 // Graph 모드
                 const clickedNode = this.getNodeAt(worldPosClick.x, worldPosClick.y);
 
+                if (!clickedNode && !hasModifier) {
+                    // 빈 공간 클릭 시 선택 해제
+                    this.selectedNode = null;
+                    this.selectedNodes.clear();
+                    this.selectedEdge = null;
+                }
+            }
+            this.render();
+        });
+
+        // [v0.2.21] Double Click to Open File (Separation of Navigation and Editing)
+        this.canvas.addEventListener('dblclick', (e) => {
+            const worldPosDbl = this.screenToWorld(e.offsetX, e.offsetY);
+            
+            if (this.currentMode === 'tree') {
+                const clickedItem = this.treeRenderer.getItemAt(this.treeData, worldPosDbl.x, worldPosDbl.y);
+                if (clickedItem && clickedItem.type === 'file' && clickedItem.node) {
+                    this.handleOpenFile(clickedItem.node.data.path || clickedItem.node.data.file);
+                }
+            } else if (this.currentMode === 'flow') {
+                const clickedStep = this.flowRenderer.getStepAt(this.flowData, worldPosDbl.x, worldPosDbl.y);
+                if (clickedStep && clickedStep.node) {
+                    this.handleOpenFile(clickedStep.node.data.path || clickedStep.node.data.file);
+                }
+            } else {
+                const clickedNode = this.getNodeAt(worldPosDbl.x, worldPosDbl.y);
                 if (clickedNode) {
-                    // 수정 키가 없을 때만 파일 열기 수행
-                    // (선택 로직은 mousedown에서 이미 처리됨)
-                    if (!hasModifier) {
-                        this.handleOpenFile(clickedNode.data.path || clickedNode.data.file);
-                    }
+                    this.handleOpenFile(clickedNode.data.path || clickedNode.data.file);
                 } else {
-                    // 빈 공간 클릭 시 선택 해제 (수정 키가 없을 때만)
-                    if (!hasModifier) {
-                        this.selectedNode = null;
-                        this.selectedNodes.clear();
+                    // Check for edge double click
+                    const clickedEdge = this.findEdgeAtPoint(worldPosDbl.x, worldPosDbl.y);
+                    if (clickedEdge) {
+                        // [v0.2.21] Edge Double Click: Open definition or reference point
+                        if (typeof vscode !== 'undefined') {
+                            vscode.postMessage({
+                                command: 'openEdgeDefinition',
+                                edgeId: clickedEdge.id,
+                                from: clickedEdge.from,
+                                to: clickedEdge.to
+                            });
+                        }
                     }
                 }
             }
         });
+
+        // [v0.2.21] WebGL Acceleration Toggle
+        const btnWebGL = document.getElementById('btn-webgl');
+        if (btnWebGL) {
+            btnWebGL.addEventListener('click', () => {
+                this.webglEnabled = !this.webglEnabled;
+                if (this.webglEnabled && !this.webglRenderer) {
+                    this.webglRenderer = new WebGLRenderer('canvas');
+                }
+                btnWebGL.textContent = `🚀 Acceleration: ${this.webglEnabled ? 'ON' : 'OFF'}`;
+                btnWebGL.classList.toggle('active', this.webglEnabled);
+                console.log('[SYNAPSE] WebGL Acceleration:', this.webglEnabled);
+                this.render();
+            });
+        }
     }
 
     zoom(delta, centerX, centerY) {
@@ -3654,6 +3710,14 @@ class CanvasEngine {
     }
 
     render() {
+        if (this.webglEnabled && this.webglRenderer) {
+            this.webglRenderer.render(this.nodes, this.edges, this.transform);
+            // We still want to render some high-level UI elements via Canvas if needed
+            // For now, let's keep it pure for performance check
+            return;
+        }
+
+        if (!this.ctx) return;
         if (!this.isDirty && !this.isAnimating) {
             const fpsEl = document.getElementById('fps-display');
             if (fpsEl && fpsEl.textContent !== 'IDLE') {
@@ -4922,7 +4986,14 @@ class CanvasEngine {
 
         this.ctx.save();
         this.ctx.globalAlpha = opacity;
-        this.ctx.translate(node.position.x, node.position.y);
+
+        // [v0.2.21] Ghost Jitter (아키텍처 위반 노드 떨림 효과 — Tier 2 Warning)
+        let jitterX = 0, jitterY = 0;
+        if (node.isArchViolation && this.isAnimating) {
+            jitterX = (Math.random() - 0.5) * 2.5;
+            jitterY = (Math.random() - 0.5) * 2.5;
+        }
+        this.ctx.translate(node.position.x + jitterX, node.position.y + jitterY);
 
         // 🌟 하이라이트 글로우 효과
         if (isPartofActivePath) {
@@ -4931,11 +5002,20 @@ class CanvasEngine {
         }
 
         // 1. 상태별 특수 효과 계산
-        if (node.status === 'error_necrosis') {
+        const isTombstone = node.status === 'error_tombstone' || (node.data?.issues?.some(i => i.includes('Tombstone')));
+        
+        if (node.status === 'error_necrosis' || isTombstone) {
             style.bgColor = '#1d2021'; // Dark Necrosis Base
             style.borderColor = '#fb4934'; // Red Border
             this.ctx.shadowBlur = 20;
-            this.ctx.shadowColor = '#000000';
+            this.ctx.shadowColor = '#fb4934';
+        }
+
+        // [v0.2.21] Tombstone Rendering (묘비)
+        if (isTombstone) {
+            this.renderTombstone(nodeWidth, nodeHeight, style);
+            this.ctx.restore();
+            return;
         }
 
         let borderColor = style.borderColor;
@@ -4944,8 +5024,14 @@ class CanvasEngine {
         let dash = style.dash || [];
         let glowColor = null;
 
-        // [v0.2.18.2] Promotion Effects (Color Morphing & Glow)
-        const isPromoting = this.promotingNodeIds.has(node.id);
+        // 🩸 System Red-out Effect (Visual Stress)
+        if (node.system_pressure > 70) {
+            this.ctx.save();
+            this.ctx.globalAlpha = (node.system_pressure - 70) / 30 * (0.3 + 0.2 * Math.sin(Date.now() / 150));
+            this.ctx.fillStyle = '#fb4934';
+            this.ctx.fillRect(-5, -5, nodeWidth + 10, nodeHeight + 10);
+            this.ctx.restore();
+        }
         if (isPromoting) {
             const promotionElapsed = Date.now() - (this.promotionSites.find(s => s.label === node.data?.label)?.startTime || 0);
             if (promotionElapsed < 3000) { // 3 seconds phase
@@ -5009,6 +5095,16 @@ class CanvasEngine {
             borderColor = '#fe8019';
             lineWidth = 3;
             glowColor = '#fe8019';
+        } else if (node.isArchViolation) {
+            // [v0.2.21 Fix] Architecture Violation → Ghost Jitter (Yellow Warning Aura)
+            const jitterPhase = Date.now() / 180;
+            const jitter = Math.sin(jitterPhase) * 2;
+            borderColor = '#fabd2f'; // Gruvbox Yellow
+            lineWidth = 2;
+            glowColor = `rgba(250, 189, 47, ${0.4 + 0.3 * Math.abs(Math.sin(jitterPhase))})`;
+            // Ghost Jitter: apply subtle positional offset via shadow
+            this.ctx.shadowOffsetX = jitter;
+            this.ctx.shadowOffsetY = jitter * 0.5;
         }
 
         if (node.isIsolated || node.isDeadEnd) {
@@ -5018,12 +5114,23 @@ class CanvasEngine {
         // 2. 배경 및 글로우 렌더링
         this.ctx.save();
 
+        // [v0.2.21 Fix] Reset shadow offset before applying (prevent bleed from arch-violation nodes)
+        this.ctx.shadowOffsetX = 0;
+        this.ctx.shadowOffsetY = 0;
+
         // Apply Glow logic
         if (isDtrGlow && dtrPulse !== null) {
             this.ctx.shadowBlur = 50 * dtrPulse * (node.visual?.glow_intensity || 1);
             this.ctx.shadowColor = '#8A2BE2';
         } else if (isPromoting) {
             // Shadow already set in promotion block above
+        } else if (node.isArchViolation && glowColor) {
+            // [v0.2.21 Fix] Ghost Jitter: animated shadow offset + pulsing glow for arch violations
+            const jitterPhase = Date.now() / 180;
+            this.ctx.shadowBlur = 12 + 6 * Math.abs(Math.sin(jitterPhase));
+            this.ctx.shadowColor = glowColor;
+            this.ctx.shadowOffsetX = Math.sin(jitterPhase) * 2;
+            this.ctx.shadowOffsetY = Math.sin(jitterPhase * 0.7) * 1;
         } else if (glowColor && (isSelected || node.isError || node.isBottleneck || (isPartofActivePath && this.isAnimating))) {
             this.ctx.shadowBlur = 10;
             this.ctx.shadowColor = glowColor;
@@ -5543,10 +5650,12 @@ class CanvasEngine {
 
         // 2단계: 곡선 클릭 확인 (대체 방법)
         for (const edge of this.edges) {
-            if (this.isPointNearCurve(px, py, edge, 15)) { // [v0.2.17] Increased tolerance 10->15
+            // [v0.2.21] Significantly expanded hitbox (15 -> 30) to facilitate easier tactical selection
+            if (this.isPointNearCurve(px, py, edge, 30)) {
                 return edge;
             }
         }
+
 
         return null;
     }
@@ -5573,6 +5682,16 @@ class CanvasEngine {
 
         // 선 굵기: 검증 에러는 더 굵게, 아니면 타입(및 가중치)별 굵기
         let lineWidth = validation.valid ? style.lineWidth : (style.lineWidth + 1.5);
+
+        // [v0.2.21 Fix] Deterministic Fracture: 결정론 위반 노드의 출력 엣지 → broken_fracture 시각 경로로 강제 전환
+        if (edge.isDeterministicFracture && edge.type !== 'broken_fracture') {
+            edge.type = 'broken_fracture'; // Promote to fracture path for zig-zag rendering
+        }
+        if (edge.isDeterministicFracture) {
+            const jitter = this.isAnimating ? (Math.random() - 0.5) * 4 : 0;
+            edgeColor = `hsla(${270 + jitter * 20}, 80%, 65%, 0.85)`; // Ghost Purple
+            lineWidth = 2;
+        }
 
         // 🌟 선택된 엣지 강조 효과
         const isSelected = this.selectedEdge && this.selectedEdge.id === edge.id;
@@ -5630,31 +5749,31 @@ class CanvasEngine {
             this.ctx.lineDashOffset = 0;
         }
 
-        // 곡선 그리기
-        this.ctx.beginPath();
+        // 곡선 제어점 계산
         const cpX = (fromX + toX) / 2;
         const cpY = (fromY + toY) / 2 - 30;
 
-        // [v0.2.20] Fracture Rendering (Dramatic Structural Failure)
+        // [v0.2.20/v0.2.21 Fix] Fracture Rendering (Dramatic Structural Failure)
+        // Handles both circular-dependency (broken_fracture) and deterministic violations (isDeterministicFracture)
         if (edge.type === 'broken_fracture') {
             this.ctx.beginPath();
             this.ctx.moveTo(fromX, fromY);
-            
+
             // Generate sharp fractals/zig-zags towards target but with logic breakdown
             const midX = (fromX + toX) / 2;
             const midY = (fromY + toY) / 2;
-            
+
             // First break point
             const b1x = fromX + (midX - fromX) * 0.4 + (Math.random() - 0.5) * 40;
             const b1y = fromY + (midY - fromY) * 0.4 + (Math.random() - 0.5) * 40;
-            
+
             // Second break point (The "Fracture")
             const b2x = midX + (Math.random() - 0.5) * 60;
             const b2y = midY + 40; // Drop downwards (Gravity effect)
-            
+
             this.ctx.lineTo(b1x, b1y);
             this.ctx.lineTo(b2x, b2y);
-            
+
             // Final scramble towards target or just hanging
             if (this.isAnimating && Math.random() > 0.3) {
                 // Occasional "hanging" effect where it doesn't reach target
@@ -5664,12 +5783,18 @@ class CanvasEngine {
             } else {
                 this.ctx.lineTo(toX, toY);
             }
-            
-            this.ctx.strokeStyle = '#fb4934'; // Necrosis Red
+
+            // [v0.2.21] Deterministic Fracture uses Ghost Purple; circular uses Necrosis Red
+            this.ctx.strokeStyle = edge.isDeterministicFracture ? edgeColor : '#fb4934';
             this.ctx.lineWidth = lineWidth + 2;
             this.ctx.stroke();
             return; // Skip standard curve rendering
         }
+
+        // 표준 곡선 그리기 (Standard Bezier Path)
+        this.ctx.beginPath();
+        this.ctx.moveTo(fromX, fromY);
+        this.ctx.quadraticCurveTo(cpX, cpY, toX, toY);
         this.ctx.stroke();
 
         // 화살표 아이콘 결정 (Phase 3)
@@ -6099,6 +6224,45 @@ class CanvasEngine {
         });
         ctx.restore();
     }
+
+    // [v0.2.21] Tombstone Visual (Sovereign Quality)
+    renderTombstone(width, height, style) {
+        this.ctx.save();
+        
+        // Tombstone Shape
+        this.ctx.beginPath();
+        this.ctx.moveTo(10, height);
+        this.ctx.lineTo(10, 25);
+        this.ctx.arc(width / 2, 25, width / 2 - 10, Math.PI, 0);
+        this.ctx.lineTo(width - 10, height);
+        this.ctx.closePath();
+
+        this.ctx.fillStyle = '#1d2021';
+        this.ctx.fill();
+        this.ctx.strokeStyle = '#fb4934';
+        this.ctx.lineWidth = 3;
+        this.ctx.stroke();
+
+        // Cracks
+        this.ctx.strokeStyle = 'rgba(251, 73, 52, 0.3)';
+        this.ctx.lineWidth = 1;
+        this.ctx.beginPath();
+        this.ctx.moveTo(width / 2, 25);
+        this.ctx.lineTo(width / 2 + 10, 45);
+        this.ctx.lineTo(width / 2 - 5, 60);
+        this.ctx.stroke();
+
+        // Label
+        this.ctx.fillStyle = '#fb4934';
+        this.ctx.font = 'bold 18px Inter, sans-serif';
+        this.ctx.textAlign = 'center';
+        this.ctx.fillText('💀', width / 2, 38);
+        this.ctx.font = 'bold 9px Inter, sans-serif';
+        this.ctx.fillText('DETERMINISTIC', width / 2, 52);
+        this.ctx.fillText('FAILURE', width / 2, 63);
+
+        this.ctx.restore();
+    }
 }
 
 // 초기화
@@ -6274,10 +6438,19 @@ function initCanvas() {
                         issue.nodeIds.forEach(nodeId => {
                             const node = engine.nodes.find(n => n.id === nodeId);
                             if (node) {
-                                // 임계값 이상의 심각한 오류는 '괴사(Necrosis)'로 표현
-                                if (issue.type === 'circular' || issue.type === 'schema-violation') {
+                                // [v0.2.21] 결정론적 위반 → Tombstone
+                                if (issue.message && issue.message.includes('Tombstone')) {
+                                    node.status = 'error_tombstone';
+                                    // Store issues on node for dblclick display
+                                    if (!node.data.issues) node.data.issues = [];
+                                    node.data.issues.push(issue.message);
+                                } else if (issue.type === 'circular' || issue.type === 'schema-violation') {
+                                    // 순환/스키마 위반 → 괴사(Necrosis)
                                     node.isError = true;
                                     node.status = 'error_necrosis';
+                                } else if (issue.type === 'architecture-violation') {
+                                    // 아키텍처 위반 → 경고 상태 (Ghost Jitter 발동)
+                                    node.isArchViolation = true;
                                 }
                                 if (issue.type === 'dead-end') node.isDeadEnd = true;
                                 if (issue.type === 'bottleneck') node.isBottleneck = true;
@@ -6293,12 +6466,66 @@ function initCanvas() {
                                     }
                                 });
                             }
+                            // [v0.2.21] 결정론적 위반 노드의 출력 엣지도 Fracture
+                            if (issue.message && issue.message.includes('Tombstone')) {
+                                engine.edges.forEach(e => {
+                                    if (e.from === nodeId) {
+                                        e.isDeterministicFracture = true;
+                                    }
+                                });
+                            }
                         });
                     });
                 }
 
                 engine.render();
                 break;
+            case 'virtualDebugImpact': {
+                // [v0.2.21] Apply VirtualDebugger results to visual state
+                const impact = message.impact;
+                if (!impact) break;
+
+                // Reset previous virtual debug states
+                engine.nodes.forEach(n => {
+                    if (n.status === 'error_necrosis' || n.status === 'error_tombstone') {
+                        n.status = 'active';
+                    }
+                    n.isVirtualDebugError = false;
+                });
+                engine.edges.forEach(e => {
+                    e.isVirtualDebugFracture = false;
+                });
+
+                // Apply necrosis to error nodes
+                impact.necrosisNodeIds.forEach(nid => {
+                    const node = engine.nodes.find(n => n.id === nid);
+                    if (node) {
+                        node.status = 'error_necrosis';
+                        node.isVirtualDebugError = true;
+                    }
+                });
+
+                // Apply fracture to broken edges
+                impact.fractureEdgeIds.forEach(eid => {
+                    const edge = engine.edges.find(e => e.id === eid);
+                    if (edge) {
+                        edge.isVirtualDebugFracture = true;
+                        edge.isDeterministicFracture = true;
+                    }
+                });
+
+                // System pressure = ratio of necrotic nodes
+                const pressureRatio = engine.nodes.length > 0
+                    ? impact.necrosisNodeIds.length / engine.nodes.length
+                    : 0;
+                engine.systemPressure = Math.min(1.0, pressureRatio * 3.0);
+                engine.isRedOut = engine.systemPressure > 0.7;
+
+                engine.wakeUp();
+                engine.render();
+                console.log(`[SYNAPSE] Virtual Debug Impact applied: ${impact.necrosisNodeIds.length} necrotic, ${impact.fractureEdgeIds.length} fractured.`);
+                break;
+            }
             case 'flowData':
                 engine.flowData = message.data;
                 if (engine.flowData) engine.flowData.type = 'internal'; // [New] Mark as internal

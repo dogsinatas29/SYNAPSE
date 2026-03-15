@@ -1,8 +1,8 @@
-# <img src="resources/synapse-icon.png" width="40" height="40" /> 🧠 SYNAPSE: 비주얼 아키텍처 엔진 (v0.2.20)
+# <img src="resources/synapse-icon.png" width="40" height="40" /> 🧠 SYNAPSE: 비주얼 아키텍처 엔진 (v0.2.21)
 
 > **"눈에 보이는 것이 곧 LLM의 논리입니다."** — *AI를 위한 WYSIWYG 논리 설계 도구*
 
-[![Version](https://img.shields.io/badge/version-v0.2.20-brightgreen.png)](https://github.com/dogsinatas29/SYNAPSE/releases)
+[![Version](https://img.shields.io/badge/version-v0.2.21-brightgreen.png)](https://github.com/dogsinatas29/SYNAPSE/releases)
 ![Status](https://img.shields.io/badge/status-War_Room_Ready-orange.png)
 [![Language](https://img.shields.io/badge/Language-TypeScript-blue?style=flat-square)](https://www.typescriptlang.org/)
 [![Platform](https://img.shields.io/badge/Platform-VS_Code-007ACC?style=flat-square)](https://code.visualstudio.com/)
@@ -75,11 +75,11 @@ SYNAPSE는 컴포넌트의 종류와 현재 추론 상태를 표현하기 위해
 ### 🎨 노드 상태 및 발광 (Node Status & Glow)
 | 상태 | 시각적 힌트 | 색상 | 의미 |
 | :--- | :---: | :---: | :--- |
-| **Active** | ![solid border](resources/node_styles/hint_solid_border.png) | ![#83a598](resources/node_styles/node_active.png) | 검증되었으며 코드베이스에서 활성화된 상태입니다. |
-| **High DTR** | ![purple glow](resources/node_styles/hint_purple_glow.png) | ![#8a2be2](resources/node_styles/node_high_dtr.png) | 높은 추론 밀도; 핵심 로직 지점입니다. |
-| **Ghost** | ![dashed border](resources/node_styles/hint_dashed_border.png) | ![#928374](resources/node_styles/node_ghost.png) | 제안된 아키텍처 노드 (아직 실체화되지 않음)입니다. |
-| **Deleted** | ![grayed out](resources/node_styles/hint_grayed_out.png) | ![#282828](resources/node_styles/node_deleted.png) | 안전하게 주석 처리되거나 제거된 노드입니다. |
-| **Warning** | ![red pulse](resources/node_styles/hint_red_pulse.png) | ![#fb4934](resources/node_styles/node_warning.png) | 로직 에러, 순환 참조, 또는 데드엔드가 감지되었습니다. |
+| **Active** | ![solid border](resources/node_styles/hint_solid_border.svg) | ![#83a598](resources/node_styles/node_active.svg) | 검증되었으며 코드베이스에서 활성화된 상태입니다. |
+| **High DTR** | ![purple glow](resources/node_styles/hint_purple_glow.svg) | ![#8a2be2](resources/node_styles/node_high_dtr.svg) | 높은 추론 밀도; 핵심 로직 지점입니다. |
+| **Ghost** | ![dashed border](resources/node_styles/hint_dashed_border.svg) | ![#928374](resources/node_styles/node_ghost.svg) | 제안된 아키텍처 노드 (아직 실체화되지 않음)입니다. |
+| **Deleted** | ![grayed out](resources/node_styles/hint_grayed_out.svg) | ![#282828](resources/node_styles/node_deleted.svg) | 안전하게 주석 처리되거나 제거된 노드입니다. |
+| **Warning** | ![red pulse](resources/node_styles/hint_red_pulse.svg) | ![#fb4934](resources/node_styles/node_warning.svg) | 로직 에러, 순환 참조, 또는 데드엔드가 감지되었습니다. |
 
 ---
 
@@ -88,15 +88,15 @@ SYNAPSE는 노드 간의 다양한 논리적 연결과 데이터 흐름을 표�
 
 | 엣지 타입 (종류) | 색상 (색상) | 스타일 및 두께 | 의미 (의미) |
 | :--- | :---: | :---: | :--- |
-| **Dependency** | ![#ebdbb2](resources/edge_styles/color_beige.png) | ![solid 2px](resources/edge_styles/style_solid_2px.png) | 표준 모듈 의존성 및 참조. (일반적인 모듈 의존성 및 참조) |
-| **Data Flow** | ![#83a598](resources/edge_styles/color_blue.png) | ![solid 3px](resources/edge_styles/style_solid_3px.png) | 대량 데이터 전송 또는 페이로드 이동. (데이터의 흐름 및 전달) |
-| **Event** | ![#fe8019](resources/edge_styles/color_orange.png) | ![solid 2px](resources/edge_styles/style_solid_2px.png) | 이벤트 트리거 또는 비동기 콜백. (이벤트 생성 및 비동기 콜백) |
-| **Conditional** | ![#d3869b](resources/edge_styles/color_pink.png) | ![solid 1px](resources/edge_styles/style_solid_1px.png) | if/else 또는 match와 같은 조건부 분기. (조건부 로직 분기) |
-| **Origin** | ![#d65d0e](resources/edge_styles/color_brown.png) | ![solid 1.5px](resources/edge_styles/style_solid_1.5px.png) | AI 로직 추적을 위한 프롬프트 기원 링크. (프롬프트 기원 및 LLM 추적) |
-| **API Call** | ![#8ec07c](resources/edge_styles/color_aqua.png) | ![dashed 2px](resources/edge_styles/style_dashed_2px.png) | 외부 API 또는 서비스 간 네트워크 호출. (외부 API 호출 및 통신) |
-| **DB Query** | ![#d3869b](resources/edge_styles/color_magenta.png) | ![solid 3px](resources/edge_styles/style_solid_3px.png) | 데이터베이스 쿼리, 수정 또는 트랜잭션. (데이터베이스 쿼리 및 트랜잭션) |
-| **Loop / Back**| ![#fe8019](resources/edge_styles/color_orange.png) | ![dotted 2px](resources/edge_styles/style_dotted_2px.png) | 반복문 (`while`/`for`) 또는 역방향 로직 흐름. (반복문 또는 역방향 피드백 흐름) |
-| **Highlighted**| ![#fabd2f](resources/edge_styles/color_gold.png) | ![pulse 5px](resources/edge_styles/style_pulse_5px.png) | 현재 활성화된 실행 경로 (호버/선택). (마우스 호버나 선택 시 활성화된 실행 경로) |
+| **Dependency** | ![#ebdbb2](resources/edge_styles/color_beige.svg) | ![solid 2px](resources/edge_styles/style_solid_2px.svg) | 표준 모듈 의존성 및 참조. (일반적인 모듈 의존성 및 참조) |
+| **Data Flow** | ![#83a598](resources/edge_styles/color_blue.svg) | ![solid 3px](resources/edge_styles/style_solid_3px.svg) | 대량 데이터 전송 또는 페이로드 이동. (데이터의 흐름 및 전달) |
+| **Event** | ![#fe8019](resources/edge_styles/color_orange.svg) | ![solid 2px](resources/edge_styles/style_solid_2px.svg) | 이벤트 트리거 또는 비동기 콜백. (이벤트 생성 및 비동기 콜백) |
+| **Conditional** | ![#d3869b](resources/edge_styles/color_pink.svg) | ![solid 1px](resources/edge_styles/style_solid_1px.svg) | if/else 또는 match와 같은 조건부 분기. (조건부 로직 분기) |
+| **Origin** | ![#d65d0e](resources/edge_styles/color_brown.svg) | ![solid 1.5px](resources/edge_styles/style_solid_1.5px.svg) | AI 로직 추적을 위한 프롬프트 기원 링크. (프롬프트 기원 및 LLM 추적) |
+| **API Call** | ![#8ec07c](resources/edge_styles/color_aqua.svg) | ![dashed 2px](resources/edge_styles/style_dashed_2px.svg) | 외부 API 또는 서비스 간 네트워크 호출. (외부 API 호출 및 통신) |
+| **DB Query** | ![#d3869b](resources/edge_styles/color_magenta.svg) | ![solid 3px](resources/edge_styles/style_solid_3px.svg) | 데이터베이스 쿼리, 수정 또는 트랜잭션. (데이터베이스 쿼리 및 트랜잭션) |
+| **Loop / Back**| ![#fe8019](resources/edge_styles/color_orange.svg) | ![dotted 2px](resources/edge_styles/style_dotted_2px.svg) | 반복문 (`while`/`for`) 또는 역방향 로직 흐름. (반복문 또는 역방향 피드백 흐름) |
+| **Highlighted**| ![#fabd2f](resources/edge_styles/color_gold.svg) | ![pulse 5px](resources/edge_styles/style_pulse_5px.svg) | 현재 활성화된 실행 경로 (호버/선택). (마우스 호버나 선택 시 활성화된 실행 경로) |
 
 ### 🏷️ 엣지 상호작용 배지 (Edge Interactive Badges)
 **Edit Logic** 모드에서 엣지 조작 및 설계를 돕기 위해 상호작용 배지가 나타납니다.

@@ -125,9 +125,16 @@ Linear execution flow of specific events, reflecting both manual edits and code 
 A deep, organized overview of your project structure.
 ![Tree View](./assets/v0.2.16/synapse_tree_v0.2.16.png)
 
+### 🔍 Virtual Debugging (VDE)
+SYNAPSE integrates VS Code's real-time diagnostics directly into the architecture map.
+- **Trigger**: Click the **"🔍 Virtual Debug"** button in the top toolbar.
+- **Node Necrosis**: Nodes associated with files containing Errors/Warnings will automatically morph into a 'Necrotic' state (dark red glow).
+- **Edge Fracture**: Edges originating from nodes with code errors are flagged as 'Fractured', indicating unstable dependencies.
+- **Impact Analysis**: Use this to visually track how a single compilation error "poisons" the rest of the architectural flow.
+
 ---
 
-## 🛠️ Installation
+## 🛠️ Performance & 3D Acceleration
 
 1. Download the latest `.vsix` from the [Releases](https://github.com/dogsinatas29/SYNAPSE/releases) page.
 2. Drag and drop the file into **VS Code**.

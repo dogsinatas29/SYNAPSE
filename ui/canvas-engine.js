@@ -913,6 +913,7 @@ class CanvasEngine {
         this.currentDTR = 0.3;
         this.clusters = []; // 클러스터 데이터
         this.contextVaultNodes = []; // [v0.3.0] 저장된 컨텍스트 전용 패널 리스트
+        this.docShelfNodes = []; // [v0.3.1] 문서화 전용 패널 리스트
         this.isExpectingUpdate = false; // 데이터 업데이트 시 뷰 유지 여부 플래그
         
         // [v0.2.20] Visual Impact State
@@ -926,6 +927,7 @@ class CanvasEngine {
 
         // [v0.2.18.3] Context Vault visibility state
         this.showContextVault = false;
+        this.showDocShelf = false;
 
         // 모드 및 렌더러
         this.currentMode = 'graph'; // 'graph' | 'tree' | 'flow'
@@ -1077,6 +1079,34 @@ class CanvasEngine {
                         this.renderContextVaultList(document.getElementById('vault-search-input')?.value || '');
                     }
                 }
+            });
+        }
+
+        // [v0.3.1] Documentation Shelf Toggle
+        const btnToggleDocs = document.getElementById('btn-toggle-docs');
+        if (btnToggleDocs) {
+            btnToggleDocs.addEventListener('click', () => {
+                const panel = document.getElementById('docs-shelf-panel');
+                if (panel) {
+                    panel.classList.toggle('visible');
+                    if (panel.classList.contains('visible')) {
+                        this.renderDocShelfList(document.getElementById('docs-search-input')?.value || '');
+                    }
+                }
+            });
+        }
+
+        const docsCloseBtn = document.getElementById('docs-shelf-close');
+        if (docsCloseBtn) {
+            docsCloseBtn.addEventListener('click', () => {
+                document.getElementById('docs-shelf-panel')?.classList.remove('visible');
+            });
+        }
+
+        const docsSearchInput = document.getElementById('docs-search-input');
+        if (docsSearchInput) {
+            docsSearchInput.addEventListener('input', (e) => {
+                this.renderDocShelfList(e.target.value);
             });
         }
 
@@ -3369,7 +3399,8 @@ class CanvasEngine {
 
             const rawNodes = projectState.nodes || [];
             this.contextVaultNodes = rawNodes.filter(n => n.id.startsWith('ctx_vault_node_') || n.cluster_id === 'context_vault' || n.data?.cluster_id === 'context_vault');
-            this.nodes = rawNodes.filter(n => !this.contextVaultNodes.includes(n));
+            this.docShelfNodes = rawNodes.filter(n => n.type === 'documentation' || n.cluster_id === 'doc_shelf' || n.data?.cluster_id === 'doc_shelf');
+            this.nodes = rawNodes.filter(n => !this.contextVaultNodes.includes(n) && !this.docShelfNodes.includes(n));
             
             const vaultIds = new Set(this.contextVaultNodes.map(n => n.id));
             const rawEdges = projectState.edges || [];
@@ -3404,10 +3435,11 @@ class CanvasEngine {
             this._updateLayerCounts();
 
             const rawClusters = projectState.clusters || [];
-            this.clusters = rawClusters.filter(c => c.id !== 'context_vault');
+            this.clusters = rawClusters.filter(c => c.id !== 'context_vault' && c.id !== 'doc_shelf');
 
             // 외부 패널 UI 즉시 렌더링
             this.renderContextVaultList();
+            this.renderDocShelfList();
 
             // [v0.2.22] System Clusters initialization
             this.getOrCreateSystemClusters();
@@ -3588,6 +3620,50 @@ class CanvasEngine {
                 }
             });
             
+            listEl.appendChild(item);
+        });
+    }
+
+    // [v0.3.1] 문서 노드들을 외부 패널 UI로 렌더링 (Documentation Shelf)
+    renderDocShelfList(filterQuery = '') {
+        const listEl = document.getElementById('docs-shelf-list');
+        if (!listEl) return;
+
+        listEl.innerHTML = '';
+        const search = filterQuery.toLowerCase();
+
+        const filtered = this.docShelfNodes.filter(n => {
+            if (!search) return true;
+            const text = (n.data?.label || '') + ' ' + (n.data?.description || '') + ' ' + n.id;
+            return text.toLowerCase().includes(search);
+        });
+
+        if (filtered.length === 0) {
+            listEl.innerHTML = '<div style="color:var(--fg-dim); padding:10px;">No documentation matches found.</div>';
+            return;
+        }
+
+        filtered.forEach(node => {
+            const item = document.createElement('div');
+            item.className = 'doc-item';
+
+            const title = document.createElement('div');
+            title.className = 'doc-item-title';
+            title.textContent = node.data?.label || node.id;
+
+            const preview = document.createElement('div');
+            preview.className = 'doc-item-preview';
+            preview.textContent = node.data?.description || 'Structural documentation file.';
+
+            item.appendChild(title);
+            item.appendChild(preview);
+
+            item.addEventListener('click', () => {
+                if (typeof vscode !== 'undefined' && node.data?.file) {
+                    vscode.postMessage({ command: 'openFile', filePath: node.data.file });
+                }
+            });
+
             listEl.appendChild(item);
         });
     }

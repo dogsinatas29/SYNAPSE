@@ -607,6 +607,109 @@
             }
         }
 
+        /* Documentation Shelf Panel */
+        #docs-shelf-panel {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 500px;
+            height: 70vh;
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            display: none;
+            flex-direction: column;
+            z-index: 5000;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+            overflow: hidden;
+        }
+
+        #docs-shelf-panel.visible {
+            display: flex;
+        }
+
+        #docs-search-container {
+            padding: 10px;
+            border-bottom: 1px solid var(--border);
+            background: #3c3836;
+            flex-shrink: 0;
+            box-sizing: border-box;
+        }
+
+        #docs-search-input {
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+            padding: 8px;
+            background: #1d2021;
+            border: 1px solid #504945;
+            color: var(--fg-main);
+            border-radius: 4px;
+            outline: none;
+        }
+
+        #docs-search-input:focus {
+            border-color: var(--accent);
+        }
+
+        #docs-shelf-list {
+            flex: 1 1 0;
+            overflow-y: scroll;
+            overflow-x: hidden;
+            padding: 10px;
+            min-height: 0;
+        }
+
+        #docs-shelf-list::-webkit-scrollbar {
+            width: 12px !important;
+            display: block !important;
+        }
+
+        #docs-shelf-list::-webkit-scrollbar-track {
+            background: #1d2021 !important;
+            border-radius: 6px;
+        }
+
+        #docs-shelf-list::-webkit-scrollbar-thumb {
+            background: #bc7ad9 !important; /* purple for docs */
+            border-radius: 6px;
+            border: 3px solid #1d2021;
+        }
+
+        .doc-item {
+            padding: 12px;
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+            transition: background 0.2s;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .doc-item:hover {
+            background: #3c3836;
+        }
+
+        .doc-item-title {
+            font-weight: bold;
+            color: #bc7ad9;
+            font-size: 14px;
+            margin-bottom: 2px;
+        }
+
+        .doc-item-preview {
+            color: var(--fg-dim);
+            font-size: 12px;
+            line-height: 1.5;
+            display: -webkit-box;
+            line-clamp: 2;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
         /* Promotion Awareness System CSS */
         @keyframes toast-slide-up {
             from { transform: translate(-50%, 40px); opacity: 0; }
@@ -858,6 +961,7 @@
                 <button class="btn" data-mode="tree">Tree View</button>
                 <button class="btn" data-mode="flow">Flow View</button>
                 <button class="btn" id="btn-toggle-vault">📂 Context Vault Panel</button>
+                <button class="btn" id="btn-toggle-docs">📚 Documentation Shelf</button>
                 <div class="menu-divider"></div>
                 <button class="btn" id="btn-webgl" title="WebGL 3D GPU Acceleration">🚀 Acceleration: OFF</button>
             </div>
@@ -1005,6 +1109,18 @@
             </div>
             <div id="context-vault-list">
                 <!-- Context vault items will be dynamically injected here -->
+            </div>
+        </div>
+        <div id="docs-shelf-panel">
+            <div class="panel-header" id="docs-shelf-header-drag">
+                <span style="font-weight: bold; font-size: 14px; color: var(--fg-main);">Documentation Shelf</span>
+                <button id="docs-shelf-close" style="background:none; border:none; color:var(--fg-dim); cursor:pointer;">&times;</button>
+            </div>
+            <div id="docs-search-container">
+                <input type="text" id="docs-search-input" placeholder="Search documentation...">
+            </div>
+            <div id="docs-shelf-list">
+                <!-- Doc items will be injected here -->
             </div>
         </div>
 
@@ -1253,10 +1369,11 @@
 
             makeDraggable('history-panel', 'history-panel-header-drag');
             makeDraggable('context-vault-panel', 'context-vault-header-drag');
+            makeDraggable('docs-shelf-panel', 'docs-shelf-header-drag');
 
             // [v0.2.20 Fix] Explicit wheel scroll support for panels (VS Code webview workaround)
             // Without this, fixed panels may not receive native scroll events properly
-            ['history-list', 'context-vault-list'].forEach(listId => {
+            ['history-list', 'context-vault-list', 'docs-shelf-list'].forEach(listId => {
                 const listEl = document.getElementById(listId);
                 if (!listEl) return;
                 listEl.addEventListener('wheel', (e) => {

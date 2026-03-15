@@ -18,6 +18,7 @@
 
 import * as vscode from 'vscode';
 import * as path from 'path';
+import * as fs from 'fs';
 import { LanguageClient, LanguageClientOptions, ServerOptions, TransportKind } from 'vscode-languageclient/node';
 import { CanvasPanel } from './webview/CanvasPanel';
 import { BootstrapEngine } from './bootstrap/BootstrapEngine';
@@ -272,16 +273,100 @@ export async function activate(context: vscode.ExtensionContext) {
         const promptLogger = PromptLogger.getInstance();
 
         // 레코딩 상태
-        let isRecording = false;
-        let recordingStartTime: Date | null = null;
-        let sessionFilePath: string | null = null; // 레코딩 시작 시 생성된 파일 경로
-        let activeCommandContext = ''; // 레코딩 시작 시 수집된 맥락/명령 저장
-        let activeAiResponse = ''; // 레코딩 시작 시 수집된 AI 답변 저장
+        let auditLogFilePath: string | null = null;
+        let lastChatFilePos = 0;
+        let currentChatFile: string | null = null;
 
-        // 상태바 아이템 생성 (우측에 배치)
-        const recordingStatusBar = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 1000);
-        recordingStatusBar.command = 'synapse.logPrompt';
-        context.subscriptions.push(recordingStatusBar);
+        // [Pure Event Channel] Audit Log Initialization
+        const initAuditLog = async () => {
+            const projectRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
+            if (!projectRoot) return;
+
+            auditLogFilePath = promptLogger.initializeSession(projectRoot);
+            console.log(`[SYNAPSE] Audit Log initialized: ${auditLogFilePath}`);
+
+            // Watch for Chat Events via Storage
+            const storagePath = ChatExtractor.getChatSessionsFolderPath(context);
+            if (storagePath && fs.existsSync(storagePath)) {
+                fs.watch(storagePath, (event: string, filename: string | null) => {
+                    if (filename && filename.endsWith('.jsonl')) {
+                        const fullPath = path.join(storagePath, filename);
+                        syncChatEvents(fullPath, projectRoot);
+                    }
+                });
+            }
+        };
+
+        const syncChatEvents = (filePath: string, projectRoot: string) => {
+            try {
+                if (!auditLogFilePath) return;
+                const stats = fs.statSync(filePath);
+                
+                // If it's a new file or we haven't tracked it yet
+                if (currentChatFile !== filePath) {
+                    currentChatFile = filePath;
+                    lastChatFilePos = 0;
+                }
+
+                if (stats.size > lastChatFilePos) {
+                    const fd = fs.openSync(filePath, 'r');
+                    const buffer = Buffer.alloc(stats.size - lastChatFilePos);
+                    fs.readSync(fd, buffer, 0, stats.size - lastChatFilePos, lastChatFilePos);
+                    fs.closeSync(fd);
+
+                    const newContent = buffer.toString('utf-8');
+                    const newLines = newContent.split('\n').filter(l => l.trim().length > 0);
+
+                    newLines.forEach(line => {
+                        try {
+                            const parsed = JSON.parse(line);
+                            // User Prompt Event
+                            if (parsed.kind === 2 && Array.isArray(parsed.v)) {
+                                parsed.v.forEach((req: any) => {
+                                    if (req.message && req.message.text) {
+                                        promptLogger.appendUser(auditLogFilePath!, req.message.text);
+                                    }
+                                });
+                            }
+                            // Assistant Response Event
+                            if (parsed.k && Array.isArray(parsed.k) && parsed.k[2] === 'response') {
+                                if (parsed.v && Array.isArray(parsed.v)) {
+                                    const text = parsed.v.filter((r: any) => r.value && r.kind !== 'thinking').map((r: any) => r.value).join('');
+                                    if (text) promptLogger.appendAssistant(auditLogFilePath!, text);
+                                }
+                            }
+                        } catch(e) {}
+                    });
+                    lastChatFilePos = stats.size;
+                }
+            } catch(e) {}
+        };
+
+        initAuditLog();
+
+        // [Pure Event Channel] Real-time File Action Tracking
+        context.subscriptions.push(
+            vscode.workspace.onDidOpenTextDocument(doc => {
+                if (auditLogFilePath && doc.uri.scheme === 'file') {
+                    const relPath = vscode.workspace.asRelativePath(doc.uri);
+                    if (!relPath.startsWith('.synapse_contexts') && !relPath.includes('node_modules')) {
+                        promptLogger.appendAction(auditLogFilePath, 'read', relPath, vscode.workspace.asRelativePath(doc.uri));
+                    }
+                }
+            }),
+            vscode.workspace.onDidSaveTextDocument(doc => {
+                if (auditLogFilePath && doc.uri.scheme === 'file') {
+                    promptLogger.appendAction(auditLogFilePath, 'modify', vscode.workspace.asRelativePath(doc.uri), vscode.workspace.workspaceFolders![0].uri.fsPath);
+                }
+            }),
+            vscode.workspace.onDidCreateFiles(e => {
+                if (auditLogFilePath) {
+                    e.files.forEach(uri => {
+                        promptLogger.appendAction(auditLogFilePath!, 'create', vscode.workspace.asRelativePath(uri), vscode.workspace.workspaceFolders![0].uri.fsPath);
+                    });
+                }
+            })
+        );
 
         // [v0.2.17] DTR Inference Pressure Gauge
         const dtrStatusBar = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 1001);
@@ -290,107 +375,6 @@ export async function activate(context: vscode.ExtensionContext) {
         dtrStatusBar.command = 'synapse.toggleDTRValve';
         dtrStatusBar.show();
         context.subscriptions.push(dtrStatusBar);
-
-        console.log('[SYNAPSE] Registering synapse.logPrompt command...');
-        context.subscriptions.push(
-            vscode.commands.registerCommand('synapse.logPrompt', async (args?: { prompt: string, title?: string, workspacePath?: string }) => {
-                console.log('[SYNAPSE] synapse.logPrompt triggered (recording toggle)', args);
-
-                // 비대화형 API 호출 (Deep Reset, Snapshot 등) → 기존 로직 유지
-                if (args?.prompt) {
-                    const projectRoot = args.workspacePath ?? vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
-                    if (!projectRoot) return;
-                    if (args.title === 'context.md') {
-                        await promptLogger.appendLog(projectRoot, 'context.md', args.prompt);
-                    } else {
-                        // args.prompt itself might contain the answer if passed from some parts, 
-                        // but usually it's just the prompt text.
-                        await promptLogger.logPrompt(projectRoot, args.prompt, args.title);
-                    }
-                    return;
-                }
-
-                // projectRoot 결정: 현재 열린 에디터의 워크스페이스 우선, 없으면 첫 번째 워크스페이스
-                let projectRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
-                if (vscode.window.activeTextEditor) {
-                    const workspaceFolder = vscode.workspace.getWorkspaceFolder(vscode.window.activeTextEditor.document.uri);
-                    if (workspaceFolder) {
-                        projectRoot = workspaceFolder.uri.fsPath;
-                    }
-                }
-
-                if (!projectRoot) {
-                    vscode.window.showErrorMessage('No workspace open.');
-                    return;
-                }
-
-                if (!isRecording) {
-                    // ── 레코딩 시작 전, 작업 맵핑 (프롬프트/컨텍스트 자동 수집) ──────────────────
-                    const latestChat = await ChatExtractor.getLatestChatContext(context);
-                    let command = latestChat ? latestChat.userMessage : '';
-                    let aiResponse = latestChat ? latestChat.llmResponse : '';
-
-                    if (!command || command.trim() === '') {
-                        try { command = (await vscode.env.clipboard.readText()).trim(); } catch { }
-                    }
-
-                    if (!command || !command.trim()) {
-                        command = `작업 기록 (${new Date().toLocaleString('ko-KR')})`;
-                    }
-
-                    activeCommandContext = command;
-                    activeAiResponse = aiResponse;
-
-                    // ── 레코딩 시작 ──────────────────────────────────────
-                    isRecording = true;
-                    recordingStartTime = new Date();
-
-                    // GEMINI.md 기준: 레코딩 시작 즉시 YYYY-MM-DD_HHMM.md 파일 생성
-                    sessionFilePath = promptLogger.startSession(projectRoot);
-
-                    recordingStatusBar.text = '$(record) REC';
-                    recordingStatusBar.backgroundColor = new vscode.ThemeColor('statusBarItem.errorBackground');
-                    recordingStatusBar.tooltip = `🔴 SYNAPSE 레코딩 중... (CTRL+ALT+M으로 저장)\n시작: ${recordingStartTime.toLocaleTimeString('ko-KR')}`;
-                    recordingStatusBar.show();
-
-                    // 캔버스에도 레코딩 상태 전달 + 클러스터 즉시 갱신
-                    CanvasPanel.currentPanel?.postRecordingState(true);
-                    // 새 파일이 Intelligent Context Vault에 즉시 반영되도록 갱신
-                    setTimeout(() => CanvasPanel.currentPanel?.sendProjectState(), 100);
-                } else {
-                    // ── 레코딩 종료 + 저장 ────────────────────────────────
-                    isRecording = false;
-                    recordingStatusBar.hide();
-
-                    // 캔버스 레코딩 상태 해제
-                    CanvasPanel.currentPanel?.postRecordingState(false);
-
-                    // 시작 시 수집했던 맥락을 그대로 사용 (별도 팝업 없음)
-                    let command = activeCommandContext;
-                    if (!command || !command.trim()) { // 폴백 (혹시 모를 에러 방지)
-                        command = `작업 기록 (${recordingStartTime?.toLocaleString('ko-KR') ?? ''})`;
-                    }
-
-                    try {
-                        const targetFile = sessionFilePath ?? path.join(projectRoot, '.synapse_contexts', 'context.md');
-                        await promptLogger.endSession(projectRoot, targetFile, command, activeAiResponse);
-                        sessionFilePath = null;
-                        activeAiResponse = ''; // Reset after use
-                        const action = await vscode.window.showInformationMessage(
-                            '✅ Context 저장 완료', 'Open'
-                        );
-                        if (action === 'Open') {
-                            const doc = await vscode.workspace.openTextDocument(targetFile);
-                            await vscode.window.showTextDocument(doc);
-                        }
-                        // 캔버스 새로고침 (기억의 성단 업데이트)
-                        CanvasPanel.currentPanel?.sendProjectState();
-                    } catch (error: any) {
-                        vscode.window.showErrorMessage(`Context 저장 실패: ${error.message || error}`);
-                    }
-                }
-            })
-        );
 
 
         console.log('[SYNAPSE] Commands registered successfully');

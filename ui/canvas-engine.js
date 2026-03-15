@@ -1815,7 +1815,7 @@ class CanvasEngine {
         // 마우스 휠 (줌)
         this.canvas.addEventListener('wheel', (e) => {
             this.wakeUp();
-            console.log('[DEBUG] Wheel event detected:', e.deltaY);
+
             e.preventDefault();
             e.stopPropagation(); // 브라우저 전체 줌 방지
             const delta = e.deltaY > 0 ? 0.9 : 1.1;
@@ -2380,7 +2380,7 @@ class CanvasEngine {
     }
 
     zoom(delta, centerX, centerY) {
-        console.log('[DEBUG] zoom called:', { delta, centerX, centerY, currentZoom: this.transform.zoom });
+
         const oldZoom = this.transform.zoom;
         this.transform.zoom *= delta;
         this.transform.zoom = Math.max(0.1, Math.min(5.0, this.transform.zoom));
@@ -2389,7 +2389,7 @@ class CanvasEngine {
         const zoomRatio = this.transform.zoom / oldZoom;
         this.transform.offsetX = centerX - (centerX - this.transform.offsetX) * zoomRatio;
         this.transform.offsetY = centerY - (centerY - this.transform.offsetY) * zoomRatio;
-        console.log('[DEBUG] New transform:', this.transform);
+
         this.updateZoomDisplay();
         this.wakeUp();
     }
@@ -5161,6 +5161,8 @@ class CanvasEngine {
         let bgColor = style.bgColor;
         let dash = style.dash || [];
         let glowColor = null;
+        // [v0.2.18.2] Promotion Awareness: node is currently in promotion animation
+        const isPromoting = this.promotingNodeIds && this.promotingNodeIds.has(node.id);
 
         // 🩸 System Red-out Effect (Visual Stress)
         if (node.system_pressure > 70) {
@@ -6538,7 +6540,7 @@ function initCanvas() {
 
     // DEBUG: Global Input Logger
     window.addEventListener('mousedown', (e) => {
-        console.log('[DEBUG] MouseDown on:', e.target.tagName, e.target.id, e.target.className);
+
         if (engine) {
             engine.lastInputTime = Date.now();
             engine.render(); // Force render to update debug info

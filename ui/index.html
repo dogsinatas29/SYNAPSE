@@ -990,9 +990,21 @@
             <div class="menu-label">⚙️ System</div>
             <div class="dropdown-content">
                 <button class="btn" id="btn-rebootstrap" title="Deep Reset: Re-scan complete project" style="color: #fb4934; font-weight: bold;">Deep Reset</button>
-                <button class="btn" id="btn-virtual-debug" title="Virtual Debug (Stateless Scan)" style="color: #fabd2f; font-weight: bold;">🔍 Virtual Debug</button>
                 <button class="btn" id="btn-reset-state" title="project_state.json을 빈 상태로 초기화" style="color: #d3869b;">🔄 Reset State</button>
                 <button class="btn" id="btn-animate" title="Toggle Edge Animations">🎬 Animation: On</button>
+            </div>
+        </div>
+
+        <!-- Debug Menu -->
+        <div class="dropdown">
+            <div class="menu-label" style="color: #fabd2f;">🐞 Debug</div>
+            <div class="dropdown-content">
+                <button class="btn" id="btn-virtual-debug" title="Virtual Debug (Stateless Scan)" style="color: #fabd2f; font-weight: bold;">🔍 Virtual Debug</button>
+                <div class="menu-divider"></div>
+                <div style="padding: 5px 10px; font-size: 10px; color: var(--fg-dim); text-transform: uppercase;">UI Simulation</div>
+                <button class="btn" id="btn-sim-necrosis" title="Simulate Necrosis on Selection">💀 Simulate Necrosis</button>
+                <button class="btn" id="btn-sim-tombstone" title="Simulate Tombstone on Selection">🪦 Simulate Tombstone</button>
+                <button class="btn" id="btn-sim-clear" title="Clear Debug Visuals">🧹 Clear Debug</button>
             </div>
         </div>
 

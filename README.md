@@ -127,7 +127,8 @@ A deep, organized overview of your project structure.
 
 ### 🔍 Virtual Debugging (VDE)
 SYNAPSE integrates VS Code's real-time diagnostics directly into the architecture map.
-- **Trigger**: Click the **"🔍 Virtual Debug"** button in the top toolbar.
+- **Trigger**: Access the **"🐞 Debug"** menu in the top toolbar and click **"🔍 Virtual Debug"**.
+- **Simulation Mode**: Even without real errors, you can force selected nodes into **💀 Necrosis** or **🪦 Tombstone** states to test visual impact via the simulation buttons in the Debug menu.
 - **Node Necrosis**: Nodes associated with files containing Errors/Warnings will automatically morph into a 'Necrotic' state (dark red glow).
 - **Edge Fracture**: Edges originating from nodes with code errors are flagged as 'Fractured', indicating unstable dependencies.
 - **Impact Analysis**: Use this to visually track how a single compilation error "poisons" the rest of the architectural flow.

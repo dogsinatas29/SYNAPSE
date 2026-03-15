@@ -1452,6 +1452,45 @@ class CanvasEngine {
                 }
             });
         }
+
+        // [v0.2.21] Debug Simulation Buttons
+        const btnSimNecrosis = document.getElementById('btn-sim-necrosis');
+        if (btnSimNecrosis) {
+            btnSimNecrosis.addEventListener('click', () => {
+                this.selectedNodes.forEach(node => {
+                    node.status = 'error_necrosis';
+                });
+                this.render();
+            });
+        }
+
+        const btnSimTombstone = document.getElementById('btn-sim-tombstone');
+        if (btnSimTombstone) {
+            btnSimTombstone.addEventListener('click', () => {
+                this.selectedNodes.forEach(node => {
+                    node.status = 'error_tombstone';
+                });
+                this.render();
+            });
+        }
+
+        const btnSimClear = document.getElementById('btn-sim-clear');
+        if (btnSimClear) {
+            btnSimClear.addEventListener('click', () => {
+                this.nodes.forEach(node => {
+                    if (node.status === 'error_necrosis' || node.status === 'error_tombstone') {
+                        node.status = 'active';
+                    }
+                    delete node.isVirtualDebugError;
+                    delete node.isError;
+                    delete node.isArchViolation;
+                });
+                this.edges.forEach(edge => {
+                    delete edge.isFractured;
+                });
+                this.render();
+            });
+        }
     }
 
     /**

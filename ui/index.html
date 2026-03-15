@@ -1271,9 +1271,20 @@
                     eng.webglEnabled = !eng.webglEnabled;
                     console.log('[SYNAPSE] WebGL toggled:', eng.webglEnabled);
 
-                    if (eng.webglEnabled && !eng.webglRenderer) {
-                        eng.webglRenderer = new WebGLRenderer(eng.canvas);
-                        eng.isGraphDataDirty = true;
+                    if (eng.webglEnabled) {
+                        // ON: create WebGL renderer with its own overlay canvas
+                        if (!eng.webglRenderer) {
+                            eng.webglRenderer = new WebGLRenderer(eng.canvas);
+                            eng.isGraphDataDirty = true;
+                        }
+                        // Show the overlay canvas
+                        const overlay = document.getElementById('webgl-overlay-canvas');
+                        if (overlay) overlay.style.display = 'block';
+                    } else {
+                        // OFF: hide and destroy the overlay canvas
+                        const overlay = document.getElementById('webgl-overlay-canvas');
+                        if (overlay) overlay.remove();
+                        eng.webglRenderer = null; // allow re-creation on next ON
                     }
 
                     btnWebgl.textContent = `🚀 Accel: ${eng.webglEnabled ? 'ON' : 'OFF'}`;

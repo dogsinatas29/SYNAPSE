@@ -4,9 +4,31 @@
  * Refined to separate data updates from draw calls.
  */
 class WebGLRenderer {
-    constructor(canvas) {
-        this.canvas = canvas;
-        this.gl = canvas.getContext('webgl', { antialias: true, alpha: true, depth: false });
+    constructor(canvas2d) {
+        // [v0.2.21-fix] WebGL needs its OWN canvas.
+        // A canvas with getContext('2d') already called cannot also get a WebGL context.
+        // We create a sibling canvas element overlaid on top of the 2D canvas.
+        this.canvas2d = canvas2d;
+        this.glCanvas = document.createElement('canvas');
+        this.glCanvas.id = 'webgl-overlay-canvas';
+        this.glCanvas.width = canvas2d.width;
+        this.glCanvas.height = canvas2d.height;
+        this.glCanvas.style.cssText = `
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        `;
+        // Insert the GL canvas right before the 2D canvas in the DOM
+        canvas2d.parentElement.insertBefore(this.glCanvas, canvas2d);
+        // Ensure parent is relatively positioned
+        if (canvas2d.parentElement.style.position === '') {
+            canvas2d.parentElement.style.position = 'relative';
+        }
+
+        this.canvas = this.glCanvas; // alias for render methods
+        this.gl = this.glCanvas.getContext('webgl', { antialias: true, alpha: true, depth: false });
 
         if (!this.gl) {
             console.error('[SYNAPSE] WebGL not supported.');
@@ -181,6 +203,12 @@ class WebGLRenderer {
      */
     render(nodes, transform, isDataDirty = false) {
         if (!this.gl) return;
+
+        // Sync overlay canvas size with the 2D canvas (handles window resize)
+        if (this.glCanvas.width !== this.canvas2d.width || this.glCanvas.height !== this.canvas2d.height) {
+            this.glCanvas.width = this.canvas2d.width;
+            this.glCanvas.height = this.canvas2d.height;
+        }
 
         // [v0.2.21 Optimization] Only upload to GPU when data actually changed
         // pan/zoom → isDataDirty=false → buffer 재업로드 없음, uniform만 갱신

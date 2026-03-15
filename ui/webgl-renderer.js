@@ -6,7 +6,7 @@ class WebGLRenderer {
     constructor(canvas) {
         this.canvas = canvas;
         this.gl = canvas.getContext('webgl', { antialias: true, alpha: true });
-        
+
         if (!this.gl) {
             console.error('[SYNAPSE] WebGL not supported.');
             return;
@@ -20,7 +20,7 @@ class WebGLRenderer {
         this.initShaders();
         this.initBuffers();
         this.initStarfield();
-        
+
         this.nodeCount = 0;
         this.starRotation = 0;
     }
@@ -62,7 +62,7 @@ class WebGLRenderer {
         `;
 
         this.nodeProgram = this.createProgram(vsSource, fsSource);
-        
+
         // Starfield Shaders
         const starVS = `
             attribute vec3 aPosition;
@@ -120,7 +120,7 @@ class WebGLRenderer {
 
     initStarfield() {
         const stars = [];
-        for(let i=0; i<3000; i++) {
+        for (let i = 0; i < 3000; i++) {
             stars.push(Math.random() * 4000 - 2000); // X
             stars.push(Math.random() * 4000 - 2000); // Y
             stars.push(Math.random() * 4.0);         // Size/Brightness
@@ -132,7 +132,7 @@ class WebGLRenderer {
 
     render(nodes, edges, transform) {
         if (!this.gl) return;
-        
+
         this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
         this.gl.clear(this.gl.COLOR_BUFFER_BIT);
         this.gl.enable(this.gl.BLEND);
@@ -145,7 +145,7 @@ class WebGLRenderer {
     renderStars(transform) {
         this.gl.useProgram(this.starProgram);
         this.starRotation += 0.0005;
-        
+
         const zoomScale = transform.zoom * 0.2;
         const matrix = [
             zoomScale, 0, 0, 0,
@@ -153,15 +153,15 @@ class WebGLRenderer {
             0, 0, 1, 0,
             (transform.offsetX * 0.001), (transform.offsetY * 0.001), 0, 1
         ];
-        
+
         const loc = this.gl.getUniformLocation(this.starProgram, 'uMatrix');
         this.gl.uniformMatrix4fv(loc, false, matrix);
-        
+
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.starBuffer);
         const posLoc = this.gl.getAttribLocation(this.starProgram, 'aPosition');
         this.gl.vertexAttribPointer(posLoc, 3, this.gl.FLOAT, false, 0, 0);
         this.gl.enableVertexAttribArray(posLoc);
-        
+
         this.gl.drawArrays(this.gl.POINTS, 0, 3000);
     }
 
@@ -183,14 +183,14 @@ class WebGLRenderer {
         const positions = new Float32Array(nodes.length * 2);
         const colors = new Float32Array(nodes.length * 3);
         const sizes = new Float32Array(nodes.length);
-        
+
         nodes.forEach((n, i) => {
-            positions[i*2] = n.position.x + 60;
-            positions[i*2+1] = n.position.y + 30;
+            positions[i * 2] = n.position.x + 60;
+            positions[i * 2 + 1] = n.position.y + 30;
             const rgb = this.hexToRgb(n.data.color || '#458588');
-            colors[i*3] = rgb.r;
-            colors[i*3+1] = rgb.g;
-            colors[i*3+2] = rgb.b;
+            colors[i * 3] = rgb.r;
+            colors[i * 3 + 1] = rgb.g;
+            colors[i * 3 + 2] = rgb.b;
             sizes[i] = 30;
         });
 

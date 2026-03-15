@@ -974,6 +974,11 @@ class CanvasEngine {
 
         this.log('CanvasEngine initialized');
 
+        // [v0.2.21] WebGL Data Sync Optimization
+        this.isGraphDataDirty = true;
+        this.webglEnabled = false;
+        this.webglRenderer = null;
+
         this.handleOpenFile = (filePath) => {
             if (!filePath) return;
             console.log('[SYNAPSE] handleOpenFile:', filePath);
@@ -1019,8 +1024,8 @@ class CanvasEngine {
 
 
         // 이벤트 리스너 등록
-        this.setupEventListeners();
-        this.setupToolbarListeners(); 
+        // this.setupEventListeners(); // Moved to constructor start
+        // this.setupToolbarListeners(); // Moved to constructor start
 
         // Logic Analysis State
         this.isTestingLogic = false;
@@ -1034,6 +1039,9 @@ class CanvasEngine {
 
         // Request initial state
         this.getProjectState();
+
+        this.setupToolbarListeners();
+        this.setupEventListeners();
     }
 
     setupToolbarListeners() {
@@ -1082,6 +1090,27 @@ class CanvasEngine {
             });
         }
 
+        // [v0.2.21] WebGL Acceleration Toggle
+        const btnWebGL = document.getElementById('btn-webgl');
+        if (btnWebGL) {
+            btnWebGL.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevent dropdown from closing prematurely or blocking
+                this.webglEnabled = !this.webglEnabled;
+                if (this.webglEnabled && !this.webglRenderer) {
+                    this.webglRenderer = new WebGLRenderer(this.canvas);
+                    this.isGraphDataDirty = true;
+                }
+                btnWebGL.textContent = `🚀 Acceleration: ${this.webglEnabled ? 'ON' : 'OFF'}`;
+                btnWebGL.classList.toggle('active', this.webglEnabled);
+                console.log('[SYNAPSE] WebGL Acceleration:', this.webglEnabled);
+                
+                if (this.webglEnabled) {
+                    this.isGraphDataDirty = true; // Initial sync
+                    this.wakeUp(); // Ensure animation loop is active for WebGL
+                }
+                this.render();
+            });
+        }
         // [v0.3.1] Documentation Shelf Toggle
         const btnToggleDocs = document.getElementById('btn-toggle-docs');
         if (btnToggleDocs) {
@@ -2086,6 +2115,7 @@ class CanvasEngine {
                     node.position.x += worldDx;
                     node.position.y += worldDy;
                 }
+                this.isGraphDataDirty = true; // Nodes moved, need buffer update in WebGL
                 this.dragStart = { x: e.offsetX, y: e.offsetY };
             } else if (this.isSelecting) {
                 // 드래그 선택 영역 업데이트
@@ -2365,20 +2395,7 @@ class CanvasEngine {
             }
         });
 
-        // [v0.2.21] WebGL Acceleration Toggle
-        const btnWebGL = document.getElementById('btn-webgl');
-        if (btnWebGL) {
-            btnWebGL.addEventListener('click', () => {
-                this.webglEnabled = !this.webglEnabled;
-                if (this.webglEnabled && !this.webglRenderer) {
-                    this.webglRenderer = new WebGLRenderer(this.canvas);
-                }
-                btnWebGL.textContent = `🚀 Acceleration: ${this.webglEnabled ? 'ON' : 'OFF'}`;
-                btnWebGL.classList.toggle('active', this.webglEnabled);
-                console.log('[SYNAPSE] WebGL Acceleration:', this.webglEnabled);
-                this.render();
-            });
-        }
+        // [v0.2.21] WebGL Acceleration Toggle Moved to setupToolbarListeners
     }
 
     zoom(delta, centerX, centerY) {
@@ -3841,10 +3858,13 @@ class CanvasEngine {
 
     render() {
         if (this.webglEnabled && this.webglRenderer) {
-            this.webglRenderer.render(this.nodes, this.edges, this.transform);
-            // We still want to render some high-level UI elements via Canvas if needed
-            // For now, let's keep it pure for performance check
-            return;
+            // [v0.2.21] WebGL: GPU accelerates background stars + node quads only
+            // Edges, labels, selection UI are still drawn via Canvas 2D on top
+            this.webglRenderer.render(this.nodes, this.transform, this.isGraphDataDirty);
+            this.isGraphDataDirty = false;
+            // NOTE: Do NOT early-return here.
+            // Canvas 2D continues below to draw edges, labels and UI overlays.
+            // The canvas element is the same, so 2D will composite on top of WebGL output.
         }
 
         if (!this.ctx) return;
@@ -3892,15 +3912,22 @@ class CanvasEngine {
             ctx.setTransform(1, 0, 0, 1, 0, 0);
             ctx.globalAlpha = 1.0; 
             
-            // [v0.2.20] System Red-out Background Pulse
-            if (this.isRedOut || this.systemPressure > 0.8) {
-                const pulse = Math.sin(Date.now() / 150) * 0.5 + 0.5;
-                const redIntensity = Math.floor(30 + pulse * 40 * (this.systemPressure || 1));
-                ctx.fillStyle = `rgb(${redIntensity}, 10, 10)`;
+            // [v0.2.21] WebGL 활성 시 배경은 WebGL이 그리므로 Canvas 2D 배경 생략
+            // WebGL mode: skip solid bg fill (WebGL already drew stars + clear color)
+            if (!this.webglEnabled) {
+                // [v0.2.20] System Red-out Background Pulse
+                if (this.isRedOut || this.systemPressure > 0.8) {
+                    const pulse = Math.sin(Date.now() / 150) * 0.5 + 0.5;
+                    const redIntensity = Math.floor(30 + pulse * 40 * (this.systemPressure || 1));
+                    ctx.fillStyle = `rgb(${redIntensity}, 10, 10)`;
+                } else {
+                    ctx.fillStyle = '#1e1e1e';
+                }
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
             } else {
-                ctx.fillStyle = '#1e1e1e';
+                // WebGL 모드: 배경 클리어만 (nodes는 GL, edges는 Canvas2D)
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
             }
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
 
             // 3. Coordinate System (DPR Scale only)
             // Note: renderGrid() here was removed because it needs camera transform

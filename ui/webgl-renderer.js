@@ -1,11 +1,12 @@
 /**
- * SYNAPSE WebGL Renderer (v0.2.21-instanced)
+ * SYNAPSE WebGL Renderer (v0.2.21-optimized)
  * High-performance GPU-accelerated rendering path.
+ * Refined to separate data updates from draw calls.
  */
 class WebGLRenderer {
     constructor(canvas) {
         this.canvas = canvas;
-        this.gl = canvas.getContext('webgl', { antialias: true, alpha: true });
+        this.gl = canvas.getContext('webgl', { antialias: true, alpha: true, depth: false });
 
         if (!this.gl) {
             console.error('[SYNAPSE] WebGL not supported.');
@@ -13,9 +14,12 @@ class WebGLRenderer {
         }
 
         this.ext = this.gl.getExtension('ANGLE_instanced_arrays');
-        if (!this.ext) {
-            console.warn('[SYNAPSE] Instanced Rendering not supported. Performance may be degraded.');
-        }
+        
+        // [Optimization] Global GL States
+        this.gl.disable(this.gl.DEPTH_TEST);
+        this.gl.enable(this.gl.BLEND);
+        this.gl.blendFunc(this.gl.SRC_ALPHA, this.gl.ONE_MINUS_SRC_ALPHA);
+        this.gl.clearColor(0, 0, 0, 0);
 
         this.initShaders();
         this.initBuffers();
@@ -23,6 +27,10 @@ class WebGLRenderer {
 
         this.nodeCount = 0;
         this.starRotation = 0;
+        
+        // Cache for change detection
+        this._nodeCache = null;
+        this._lastDataVersion = 0;
     }
 
     initShaders() {
@@ -130,13 +138,58 @@ class WebGLRenderer {
         this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(stars), this.gl.STATIC_DRAW);
     }
 
-    render(nodes, edges, transform) {
+    /**
+     * updateNodeData: 노드 데이터가 변경되었을 때만 버퍼를 갱신
+     */
+    updateNodeData(nodes) {
+        if (!this.gl || nodes.length === 0) return;
+        
+        console.log('[SYNAPSE] WebGL: Updating Node Buffers...');
+        this.nodeCount = nodes.length;
+
+        const positions = new Float32Array(nodes.length * 2);
+        const colors = new Float32Array(nodes.length * 3);
+        const sizes = new Float32Array(nodes.length);
+
+        nodes.forEach((n, i) => {
+            positions[i * 2] = n.position.x + 60;
+            positions[i * 2 + 1] = n.position.y + 30;
+            const rgb = this.hexToRgb(n.data?.color || '#458588');
+            colors[i * 3] = rgb.r;
+            colors[i * 3 + 1] = rgb.g;
+            colors[i * 3 + 2] = rgb.b;
+            sizes[i] = 30; // Base size
+        });
+
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.posBuffer);
+        this.gl.bufferData(this.gl.ARRAY_BUFFER, positions, this.gl.DYNAMIC_DRAW);
+
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.colorBuffer);
+        this.gl.bufferData(this.gl.ARRAY_BUFFER, colors, this.gl.DYNAMIC_DRAW);
+
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.sizeBuffer);
+        this.gl.bufferData(this.gl.ARRAY_BUFFER, sizes, this.gl.DYNAMIC_DRAW);
+    }
+
+    /**
+     * render: GPU 가속 렌더링
+     * NOTE: edges는 Canvas2D에서 그립니다 (canvas-engine.js의 renderEdge).
+     *       WebGL 경로는 배경(stars) + 노드(instanced) 만 처리합니다.
+     * @param {Array} nodes - 노드 배열
+     * @param {Object} transform - { zoom, offsetX, offsetY }
+     * @param {boolean} isDataDirty - 노드 위치/색상이 변경됐을 때만 true
+     */
+    render(nodes, transform, isDataDirty = false) {
         if (!this.gl) return;
+
+        // [v0.2.21 Optimization] Only upload to GPU when data actually changed
+        // pan/zoom → isDataDirty=false → buffer 재업로드 없음, uniform만 갱신
+        if (isDataDirty || this.nodeCount !== nodes.length) {
+            this.updateNodeData(nodes);
+        }
 
         this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
         this.gl.clear(this.gl.COLOR_BUFFER_BIT);
-        this.gl.enable(this.gl.BLEND);
-        this.gl.blendFunc(this.gl.SRC_ALPHA, this.gl.ONE_MINUS_SRC_ALPHA);
 
         this.renderStars(transform);
         this.renderNodes(nodes, transform);
@@ -144,8 +197,7 @@ class WebGLRenderer {
 
     renderStars(transform) {
         this.gl.useProgram(this.starProgram);
-        this.starRotation += 0.0005;
-
+        
         const zoomScale = transform.zoom * 0.2;
         const matrix = [
             zoomScale, 0, 0, 0,
@@ -166,10 +218,10 @@ class WebGLRenderer {
     }
 
     renderNodes(nodes, transform) {
-        if (nodes.length === 0) return;
+        if (this.nodeCount === 0) return;
         this.gl.useProgram(this.nodeProgram);
 
-        // Prep Projection
+        // Prep Projection Matrix (Only update Uniforms, NO Buffer Sync)
         const scaleX = 2 / this.canvas.width;
         const scaleY = -2 / this.canvas.height;
         const mat = [
@@ -179,45 +231,29 @@ class WebGLRenderer {
         ];
         this.gl.uniformMatrix3fv(this.gl.getUniformLocation(this.nodeProgram, 'uProjectionMatrix'), false, mat);
 
-        // Data Prep
-        const positions = new Float32Array(nodes.length * 2);
-        const colors = new Float32Array(nodes.length * 3);
-        const sizes = new Float32Array(nodes.length);
-
-        nodes.forEach((n, i) => {
-            positions[i * 2] = n.position.x + 60;
-            positions[i * 2 + 1] = n.position.y + 30;
-            const rgb = this.hexToRgb(n.data.color || '#458588');
-            colors[i * 3] = rgb.r;
-            colors[i * 3 + 1] = rgb.g;
-            colors[i * 3 + 2] = rgb.b;
-            sizes[i] = 30;
-        });
-
-        // Bind Base Quad
+        // 1. Bind Base Quad
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.rectBuffer);
         const vPos = this.gl.getAttribLocation(this.nodeProgram, 'aVertexPosition');
         this.gl.vertexAttribPointer(vPos, 2, this.gl.FLOAT, false, 0, 0);
         this.gl.enableVertexAttribArray(vPos);
 
-        // Bind Instance Buffers
-        this.updateBuffer(this.posBuffer, positions, 'aInstancePosition', 2);
-        this.updateBuffer(this.colorBuffer, colors, 'aInstanceColor', 3);
-        this.updateBuffer(this.sizeBuffer, sizes, 'aInstanceSize', 1);
+        // 2. Bind Attribute Buffers (Already updated via updateNodeData)
+        this.setAttrPointer(this.posBuffer, 'aInstancePosition', 2);
+        this.setAttrPointer(this.colorBuffer, 'aInstanceColor', 3);
+        this.setAttrPointer(this.sizeBuffer, 'aInstanceSize', 1);
 
         if (this.ext) {
-            this.ext.drawArraysInstancedANGLE(this.gl.TRIANGLE_STRIP, 0, 4, nodes.length);
+            this.ext.drawArraysInstancedANGLE(this.gl.TRIANGLE_STRIP, 0, 4, this.nodeCount);
         } else {
             // Fallback for non-instanced (slow)
-            for (let i = 0; i < nodes.length; i++) {
+            for (let i = 0; i < this.nodeCount; i++) {
                 this.gl.drawArrays(this.gl.TRIANGLE_STRIP, 0, 4);
             }
         }
     }
 
-    updateBuffer(buffer, data, attrName, size) {
+    setAttrPointer(buffer, attrName, size) {
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, buffer);
-        this.gl.bufferData(this.gl.ARRAY_BUFFER, data, this.gl.DYNAMIC_DRAW);
         const loc = this.gl.getAttribLocation(this.nodeProgram, attrName);
         this.gl.enableVertexAttribArray(loc);
         this.gl.vertexAttribPointer(loc, size, this.gl.FLOAT, false, 0, 0);
@@ -227,6 +263,7 @@ class WebGLRenderer {
     }
 
     hexToRgb(hex) {
+        if (!hex || typeof hex !== 'string') return { r: 0.27, g: 0.52, b: 0.53 };
         const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
         return result ? {
             r: parseInt(result[1], 16) / 255,
@@ -235,3 +272,4 @@ class WebGLRenderer {
         } : { r: 1, g: 1, b: 1 };
     }
 }
+

@@ -1,4 +1,4 @@
-# <img src="resources/synapse-icon.png" width="40" height="40" /> 🧠 SYNAPSE: Visual Architecture Engine (v0.2.21)
+# <img src="./resources/synapse-icon.png" width="40" height="40" /> 🧠 SYNAPSE: Visual Architecture Engine (v0.2.21)
 
 > **"What you see is the logic of LLM"** — *WYSIWYG Logic for AI*
 
@@ -75,11 +75,11 @@ SYNAPSE uses specific icons and colors to represent different types of component
 ### 🎨 Node Status & Glow
 | Status | Visual Hint | Color | Meaning |
 | :--- | :---: | :---: | :--- |
-| **Active** | ![solid border](resources/node_styles/hint_solid_border.svg) | ![#83a598](resources/node_styles/node_active.svg) | Verified and currently active in the codebase. |
-| **High DTR** | ![purple glow](resources/node_styles/hint_purple_glow.svg) | ![#8a2be2](resources/node_styles/node_high_dtr.svg) | High reasoning density; critical logic point. |
-| **Ghost** | ![dashed border](resources/node_styles/hint_dashed_border.svg) | ![#928374](resources/node_styles/node_ghost.svg) | Proposed architectural node (not yet materialized). |
-| **Deleted** | ![grayed out](resources/node_styles/hint_grayed_out.svg) | ![#282828](resources/node_styles/node_deleted.svg) | Safely commented out/decommissioned node. |
-| **Warning** | ![red pulse](resources/node_styles/hint_red_pulse.svg) | ![#fb4934](resources/node_styles/node_warning.svg) | Logic error, circular dependency, or dead-end detected. |
+| **Active** | ![solid border](./resources/node_styles/hint_solid_border.png) | ![#83a598](./resources/node_styles/node_active.png) | Verified and currently active in the codebase. |
+| **High DTR** | ![purple glow](./resources/node_styles/hint_purple_glow.png) | ![#8a2be2](./resources/node_styles/node_high_dtr.png) | High reasoning density; critical logic point. |
+| **Ghost** | ![dashed border](./resources/node_styles/hint_dashed_border.png) | ![#928374](./resources/node_styles/node_ghost.png) | Proposed architectural node (not yet materialized). |
+| **Deleted** | ![grayed out](./resources/node_styles/hint_grayed_out.png) | ![#282828](./resources/node_styles/node_deleted.png) | Safely commented out/decommissioned node. |
+| **Warning** | ![red pulse](./resources/node_styles/hint_red_pulse.png) | ![#fb4934](./resources/node_styles/node_warning.png) | Logic error, circular dependency, or dead-end detected. |
 
 ---
 
@@ -88,15 +88,15 @@ SYNAPSE uses distinct colors and styles to represent different types of logical 
 
 | Edge Type | Color | Style & Thickness | Meaning |
 | :--- | :---: | :---: | :--- |
-| **Dependency** | ![#ebdbb2](resources/edge_styles/color_beige.svg) | ![solid 2px](resources/edge_styles/style_solid_2px.svg) | Standard module dependency or import. |
-| **Data Flow** | ![#83a598](resources/edge_styles/color_blue.svg) | ![solid 3px](resources/edge_styles/style_solid_3px.svg) | Heavy data transfer or payload movement. |
-| **Event** | ![#fe8019](resources/edge_styles/color_orange.svg) | ![solid 2px](resources/edge_styles/style_solid_2px.svg) | Event triggers or asynchronous callbacks. |
-| **Conditional** | ![#d3869b](resources/edge_styles/color_pink.svg) | ![solid 1px](resources/edge_styles/style_solid_1px.svg) | Conditional branches like if/else or match. |
-| **Origin** | ![#d65d0e](resources/edge_styles/color_brown.svg) | ![solid 1.5px](resources/edge_styles/style_solid_1.5px.svg) | Prompt origin links for AI logic tracking. |
-| **API Call** | ![#8ec07c](resources/edge_styles/color_aqua.svg) | ![dashed 2px](resources/edge_styles/style_dashed_2px.svg) | External API or cross-service network calls. |
-| **DB Query** | ![#d3869b](resources/edge_styles/color_magenta.svg) | ![solid 3px](resources/edge_styles/style_solid_3px.svg) | Database queries, mutations, or transactions. |
-| **Loop / Back**| ![#fe8019](resources/edge_styles/color_orange.svg) | ![dotted 2px](resources/edge_styles/style_dotted_2px.svg) | Loop-backs (`while`/`for`) or reverse logic flow. |
-| **Highlighted**| ![#fabd2f](resources/edge_styles/color_gold.svg) | ![pulse 5px](resources/edge_styles/style_pulse_5px.svg) | Active execution path (Hovered/Selected). |
+| **Dependency** | ![#ebdbb2](./resources/edge_styles/color_beige.png) | ![solid 2px](./resources/edge_styles/style_solid_2px.png) | Standard module dependency or import. |
+| **Data Flow** | ![#83a598](./resources/edge_styles/color_blue.png) | ![solid 3px](./resources/edge_styles/style_solid_3px.png) | Heavy data transfer or payload movement. |
+| **Event** | ![#fe8019](./resources/edge_styles/color_orange.png) | ![solid 2px](./resources/edge_styles/style_solid_2px.png) | Event triggers or asynchronous callbacks. |
+| **Conditional** | ![#d3869b](./resources/edge_styles/color_pink.png) | ![solid 1px](./resources/edge_styles/style_solid_1px.png) | Conditional branches like if/else or match. |
+| **Origin** | ![#d65d0e](./resources/edge_styles/color_brown.png) | ![solid 1.5px](./resources/edge_styles/style_solid_1.5px.png) | Prompt origin links for AI logic tracking. |
+| **API Call** | ![#8ec07c](./resources/edge_styles/color_aqua.png) | ![dashed 2px](./resources/edge_styles/style_dashed_2px.png) | External API or cross-service network calls. |
+| **DB Query** | ![#d3869b](./resources/edge_styles/color_magenta.png) | ![solid 3px](./resources/edge_styles/style_solid_3px.png) | Database queries, mutations, or transactions. |
+| **Loop / Back**| ![#fe8019](./resources/edge_styles/color_orange.png) | ![dotted 2px](./resources/edge_styles/style_dotted_2px.png) | Loop-backs (`while`/`for`) or reverse logic flow. |
+| **Highlighted**| ![#fabd2f](./resources/edge_styles/color_gold.png) | ![pulse 5px](./resources/edge_styles/style_pulse_5px.png) | Active execution path (Hovered/Selected). |
 
 ### 🏷️ Edge Interactive Badges
 Interactive badges appear on edges during **Edit Logic** mode to facilitate architectural decisions.
@@ -113,11 +113,11 @@ Interactive badges appear on edges during **Edit Logic** mode to facilitate arch
 
 ### Project Topology
 Visualizes the physical connections between LLM reasoning logic and source files.
-![Topology View](./resources/screenshots/v0.2.18/graph_view.png)
+![Topology View](./resources/screenshots/v0.2.21/topology_view.png)
 
 ### Logical Flow
 Linear execution flow of specific events, reflecting both manual edits and code changes. Group-Aware Hierarchy and Orthogonal Edge Routing create clean, readable diagrams.
-![Flow View](./resources/screenshots/v0.2.18/flow_view.png)
+![Flow View](./resources/screenshots/v0.2.21/flow_view.png)
 
 ### Hierarchical Tree
 A deep, organized overview of your project structure.
@@ -254,6 +254,13 @@ SYNAPSE v0.2.17 bridges the gap between drawing pictures and writing code.
 ---
 
 ## 🆕 Revision History
+
+### v0.2.21 (Iron Guard & GPU Acceleration)
+- **Iron Guard Protocol (v0.3.0 Preview)**: Implemented real-time edge validation via `LogicAnalyzer.ts` and VS Code Diagnostics integration.
+- **Layer Gravity (Waterfall Protocol)**: Enforces unidirectional architectural flow (e.g., Frontend -> API -> Database), instantly flagging backflow references as CRITICAL VIOLATIONS.
+- **Promotion Awareness System**: Added path animations (`PromotionParticle`) and visual morphing for 'ghost to active' node transitions.
+- **GPU Accelerated Rendering**: Integrated WebGL-based renderer for handling large graphs (10k+ nodes) with 60 FPS performance.
+- **Virtual Debug Engine**: Visual necrosis and fracture rendering for LSP diagnostic errors.
 
 ### v0.2.20 (Hybrid Guardrail & Promotion Awareness)
 - **Iron Guard Protocol (v0.3.0 Preview)**: Implemented real-time edge validation via `LogicAnalyzer.ts` and VS Code Diagnostics integration.

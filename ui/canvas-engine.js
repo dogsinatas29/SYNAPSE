@@ -1090,26 +1090,8 @@ class CanvasEngine {
             });
         }
 
-        // [v0.2.21] WebGL Acceleration Toggle
-        const btnWebGL = document.getElementById('btn-webgl');
-        if (btnWebGL) {
-            btnWebGL.addEventListener('click', () => {
-                this.webglEnabled = !this.webglEnabled;
-                if (this.webglEnabled && !this.webglRenderer) {
-                    this.webglRenderer = new WebGLRenderer(this.canvas);
-                    this.isGraphDataDirty = true;
-                }
-                btnWebGL.textContent = `🚀 Accel: ${this.webglEnabled ? 'ON' : 'OFF'}`;
-                btnWebGL.classList.toggle('active', this.webglEnabled);
-                console.log('[SYNAPSE] WebGL Acceleration:', this.webglEnabled);
-                
-                if (this.webglEnabled) {
-                    this.isGraphDataDirty = true;
-                    this.wakeUp();
-                }
-                this.render();
-            });
-        }
+        // [v0.2.21-fix] WebGL Acceleration Toggle is handled in index.html DOMContentLoaded
+        // to guarantee DOM timing and avoid class initialization race conditions.
         // [v0.3.1] Documentation Shelf Toggle
         const btnToggleDocs = document.getElementById('btn-toggle-docs');
         if (btnToggleDocs) {

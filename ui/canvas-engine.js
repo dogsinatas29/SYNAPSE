@@ -3579,6 +3579,21 @@ class CanvasEngine {
         }
     }
 
+    // [v0.3.2] Fuzzy Match Helper (fzf-style)
+    // Characters must appear in order, but not necessarily consecutively.
+    fuzzyMatch(text, query) {
+        if (!query) return true;
+        text = text.toLowerCase();
+        query = query.toLowerCase();
+        let queryIdx = 0;
+        for (let i = 0; i < text.length && queryIdx < query.length; i++) {
+            if (text[i] === query[queryIdx]) {
+                queryIdx++;
+            }
+        }
+        return queryIdx === query.length;
+    }
+
     // [v0.3.0] 컨텍스트 볼트를 외부 리스트 UI로 렌더링
     renderContextVaultList(filterQuery = '') {
         const listEl = document.getElementById('context-vault-list');
@@ -3590,7 +3605,7 @@ class CanvasEngine {
         const filtered = this.contextVaultNodes.filter(n => {
             if (!search) return true;
             const text = (n.data?.label || '') + ' ' + (n.data?.description || '') + ' ' + n.id;
-            return text.toLowerCase().includes(search);
+            return this.fuzzyMatch(text, search);
         });
 
         if (filtered.length === 0) {
@@ -3635,7 +3650,7 @@ class CanvasEngine {
         const filtered = this.docShelfNodes.filter(n => {
             if (!search) return true;
             const text = (n.data?.label || '') + ' ' + (n.data?.description || '') + ' ' + n.id;
-            return text.toLowerCase().includes(search);
+            return this.fuzzyMatch(text, search);
         });
 
         if (filtered.length === 0) {

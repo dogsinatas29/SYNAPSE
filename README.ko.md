@@ -80,6 +80,8 @@ SYNAPSE는 컴포넌트의 종류와 현재 추론 상태를 표현하기 위해
 | **Ghost** | ![dashed border](./resources/node_styles/hint_dashed_border.png) | ![#928374](./resources/node_styles/node_ghost.png) | 제안된 아키텍처 노드 (아직 실체화되지 않음)입니다. |
 | **Deleted** | ![grayed out](./resources/node_styles/hint_grayed_out.png) | ![#282828](./resources/node_styles/node_deleted.png) | 안전하게 주석 처리되거나 제거된 노드입니다. |
 | **Warning** | ![red pulse](./resources/node_styles/hint_red_pulse.png) | ![#fb4934](./resources/node_styles/node_warning.png) | 로직 에러, 순환 참조, 또는 데드엔드가 감지되었습니다. |
+| **Necrosis** | 💀 | ![#1d2021](./resources/node_styles/node_warning.png) | 치명적 로직 실패; 빌드 붕괴 또는 심각한 물리적 결함 상태입니다. |
+| **Tombstone** | 🪦 | ![#1d2021](./resources/node_styles/node_warning.png) | 회복 불가능한 결정론적 실패; 명시적인 삭제 권고 대상입니다. |
 
 ---
 

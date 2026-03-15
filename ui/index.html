@@ -1259,12 +1259,11 @@
                 allDropdowns.forEach(d => d.classList.remove('open'));
             });
 
-            // [v0.2.21-fix] WebGL Acceleration button — registered here to guarantee DOM timing
-            // Delegates to window.engine which is set after CanvasEngine init
+            // [v0.2.21-fix] WebGL Acceleration button
+            // overlay canvas는 최초 ON 시 한 번만 생성, 이후 show/hide로 토글
             const btnWebgl = document.getElementById('btn-webgl');
             if (btnWebgl) {
                 btnWebgl.addEventListener('click', () => {
-                    console.log('[SYNAPSE] btn-webgl clicked. engine:', !!window.engine);
                     const eng = window.engine;
                     if (!eng) return;
 
@@ -1272,33 +1271,28 @@
                     console.log('[SYNAPSE] WebGL toggled:', eng.webglEnabled);
 
                     if (eng.webglEnabled) {
-                        // ON: create WebGL renderer with its own overlay canvas
+                        // ON: 최초 1회만 renderer + overlay canvas 생성
                         if (!eng.webglRenderer) {
                             eng.webglRenderer = new WebGLRenderer(eng.canvas);
                             eng.isGraphDataDirty = true;
                         }
-                        // Show the overlay canvas
+                        // overlay canvas 표시 (이미 생성되어 있으면 그냥 보여줌)
                         const overlay = document.getElementById('webgl-overlay-canvas');
                         if (overlay) overlay.style.display = 'block';
+                        eng.isGraphDataDirty = true;
+                        eng.wakeUp();
                     } else {
-                        // OFF: hide and destroy the overlay canvas
+                        // OFF: overlay canvas를 숨김만 (제거/null화 하지 않음)
+                        // → 다음 ON 시 재생성 비용 없음, GL context 유지
                         const overlay = document.getElementById('webgl-overlay-canvas');
-                        if (overlay) overlay.remove();
-                        eng.webglRenderer = null; // allow re-creation on next ON
+                        if (overlay) overlay.style.display = 'none';
                     }
 
                     btnWebgl.textContent = `🚀 Accel: ${eng.webglEnabled ? 'ON' : 'OFF'}`;
                     btnWebgl.classList.toggle('active', eng.webglEnabled);
-
-                    if (eng.webglEnabled) {
-                        eng.isGraphDataDirty = true;
-                        eng.wakeUp();
-                    }
                     eng.render();
                 });
-                console.log('[SYNAPSE] btn-webgl listener registered from index.html');
-            } else {
-                console.warn('[SYNAPSE] btn-webgl not found in DOM!');
+                console.log('[SYNAPSE] btn-webgl listener registered');
             }
         });
 

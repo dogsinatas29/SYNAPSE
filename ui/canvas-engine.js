@@ -1093,20 +1093,19 @@ class CanvasEngine {
         // [v0.2.21] WebGL Acceleration Toggle
         const btnWebGL = document.getElementById('btn-webgl');
         if (btnWebGL) {
-            btnWebGL.addEventListener('click', (e) => {
-                e.stopPropagation(); // Prevent dropdown from closing prematurely or blocking
+            btnWebGL.addEventListener('click', () => {
                 this.webglEnabled = !this.webglEnabled;
                 if (this.webglEnabled && !this.webglRenderer) {
                     this.webglRenderer = new WebGLRenderer(this.canvas);
                     this.isGraphDataDirty = true;
                 }
-                btnWebGL.textContent = `🚀 Acceleration: ${this.webglEnabled ? 'ON' : 'OFF'}`;
+                btnWebGL.textContent = `🚀 Accel: ${this.webglEnabled ? 'ON' : 'OFF'}`;
                 btnWebGL.classList.toggle('active', this.webglEnabled);
                 console.log('[SYNAPSE] WebGL Acceleration:', this.webglEnabled);
                 
                 if (this.webglEnabled) {
-                    this.isGraphDataDirty = true; // Initial sync
-                    this.wakeUp(); // Ensure animation loop is active for WebGL
+                    this.isGraphDataDirty = true;
+                    this.wakeUp();
                 }
                 this.render();
             });

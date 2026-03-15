@@ -5087,7 +5087,16 @@ class CanvasEngine {
         }
 
         // Logic Analysis Auras
-        if (node.isError) {
+        if (node.isVirtualDebugError) {
+            // [v0.2.21 Fix B1] Virtual Debug Error → Cyan Scanner Aura
+            // Distinct from LogicAnalyzer errors (those are red/orange)
+            const scanPhase = Date.now() / 120;
+            borderColor = '#83a598'; // Gruvbox Teal/Cyan
+            lineWidth = 3;
+            glowColor = `rgba(131, 165, 152, ${0.5 + 0.4 * Math.abs(Math.sin(scanPhase))})`;
+            // Scanner line effect: oscillating shadow
+            this.ctx.shadowOffsetY = Math.sin(scanPhase) * 3;
+        } else if (node.isError) {
             borderColor = '#fb4934';
             lineWidth = 3;
             glowColor = '#fb4934';
@@ -5114,14 +5123,20 @@ class CanvasEngine {
         // 2. 배경 및 글로우 렌더링
         this.ctx.save();
 
-        // [v0.2.21 Fix] Reset shadow offset before applying (prevent bleed from arch-violation nodes)
+        // [v0.2.21 Fix] Reset shadow offset before applying (prevent bleed)
         this.ctx.shadowOffsetX = 0;
         this.ctx.shadowOffsetY = 0;
 
-        // Apply Glow logic
+        // Apply Glow logic (priority order: DTR > VirtualDebug > Promoting > ArchViolation > Selected/Error)
         if (isDtrGlow && dtrPulse !== null) {
             this.ctx.shadowBlur = 50 * dtrPulse * (node.visual?.glow_intensity || 1);
             this.ctx.shadowColor = '#8A2BE2';
+        } else if (node.isVirtualDebugError && glowColor) {
+            // [v0.2.21 Fix B1] Virtual Debug: pulsing Cyan scanner beam
+            const scanPhase = Date.now() / 120;
+            this.ctx.shadowBlur = 18 + 8 * Math.abs(Math.sin(scanPhase));
+            this.ctx.shadowColor = glowColor;
+            this.ctx.shadowOffsetY = Math.sin(scanPhase) * 3;
         } else if (isPromoting) {
             // Shadow already set in promotion block above
         } else if (node.isArchViolation && glowColor) {
@@ -6263,6 +6278,104 @@ class CanvasEngine {
 
         this.ctx.restore();
     }
+
+    /**
+     * [v0.2.21] Virtual Debug HUD Toast
+     * Displays a compact diagnostic panel after VirtualDebug completes.
+     * @param {Object} data - { necroCount, fractureCount, errorCount, warnCount, pressure }
+     */
+    _showVirtualDebugHUD(data) {
+        // Remove any existing HUD
+        const existing = document.getElementById('vd-hud-panel');
+        if (existing) existing.remove();
+
+        const { necroCount, fractureCount, errorCount, warnCount, pressure } = data;
+        const isClean = necroCount === 0 && fractureCount === 0;
+
+        const panel = document.createElement('div');
+        panel.id = 'vd-hud-panel';
+        panel.style.cssText = `
+            position: fixed;
+            bottom: 60px;
+            right: 20px;
+            min-width: 260px;
+            background: rgba(29, 32, 33, 0.97);
+            border: 1px solid ${isClean ? '#b8bb26' : '#83a598'};
+            border-radius: 10px;
+            padding: 14px 18px;
+            color: #ebdbb2;
+            font-family: 'Inter', 'JetBrains Mono', monospace;
+            font-size: 12px;
+            z-index: 10050;
+            box-shadow: 0 6px 32px rgba(0,0,0,0.85), 0 0 18px ${isClean ? 'rgba(184,187,38,0.2)' : 'rgba(131,165,152,0.25)'};
+            animation: vd-hud-in 0.35s cubic-bezier(0.22,1,0.36,1);
+            line-height: 1.7;
+        `;
+
+        // Pressure bar
+        const barFill = Math.min(100, pressure);
+        const barColor = pressure >= 70 ? '#fb4934' : pressure >= 40 ? '#fabd2f' : '#b8bb26';
+
+        panel.innerHTML = `
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+                <span style="font-size:16px;">${isClean ? '✅' : '🔍'}</span>
+                <span style="font-weight:bold;color:${isClean ? '#b8bb26' : '#83a598'};font-size:13px;">
+                    VIRTUAL DEBUG ${isClean ? 'CLEAN' : 'SCAN COMPLETE'}
+                </span>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 16px;margin-bottom:10px;">
+                <span style="color:#a89984;">☣ Necrotic Nodes</span>
+                <span style="color:${necroCount > 0 ? '#fb4934' : '#b8bb26'};font-weight:bold;">${necroCount}</span>
+                <span style="color:#a89984;">⚡ Fractured Edges</span>
+                <span style="color:${fractureCount > 0 ? '#d3869b' : '#b8bb26'};font-weight:bold;">${fractureCount}</span>
+                <span style="color:#a89984;">🔴 Errors</span>
+                <span style="color:${errorCount > 0 ? '#fb4934' : '#b8bb26'};font-weight:bold;">${errorCount}</span>
+                <span style="color:#a89984;">⚠ Warnings</span>
+                <span style="color:${warnCount > 0 ? '#fabd2f' : '#b8bb26'};font-weight:bold;">${warnCount}</span>
+            </div>
+            <div style="margin-bottom:6px;">
+                <div style="display:flex;justify-content:space-between;margin-bottom:3px;">
+                    <span style="color:#a89984;font-size:10px;">SYSTEM PRESSURE</span>
+                    <span style="color:${barColor};font-size:10px;font-weight:bold;">${pressure}%</span>
+                </div>
+                <div style="background:#3c3836;border-radius:3px;height:5px;overflow:hidden;">
+                    <div style="width:${barFill}%;height:100%;background:${barColor};border-radius:3px;
+                        transition:width 0.6s ease;box-shadow:0 0 6px ${barColor};"></div>
+                </div>
+            </div>
+            <div style="color:#665c54;font-size:10px;text-align:right;margin-top:6px;">
+                ${isClean ? 'No physical errors detected.' : 'Cyan nodes = VD affected. Purple edges = fractured.'}
+            </div>
+        `;
+
+        // Close on click
+        panel.addEventListener('click', () => panel.remove());
+
+        // Add CSS animation if not already present
+        if (!document.getElementById('vd-hud-style')) {
+            const style = document.createElement('style');
+            style.id = 'vd-hud-style';
+            style.textContent = `
+                @keyframes vd-hud-in {
+                    from { opacity: 0; transform: translateY(12px) scale(0.96); }
+                    to   { opacity: 1; transform: translateY(0) scale(1); }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+
+        document.body.appendChild(panel);
+
+        // Auto-dismiss after 7 seconds
+        setTimeout(() => {
+            if (document.body.contains(panel)) {
+                panel.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                panel.style.opacity = '0';
+                panel.style.transform = 'translateY(8px)';
+                setTimeout(() => panel.remove(), 500);
+            }
+        }, 7000);
+    }
 }
 
 // 초기화
@@ -6481,22 +6594,29 @@ function initCanvas() {
                 engine.render();
                 break;
             case 'virtualDebugImpact': {
-                // [v0.2.21] Apply VirtualDebugger results to visual state
+                // [v0.2.21 Fix] Apply VirtualDebugger results to visual state
                 const impact = message.impact;
                 if (!impact) break;
 
-                // Reset previous virtual debug states
+                // [Fix B4] Safe Reset: only reset VD-specific flags, don't stomp LogicAnalyzer state
                 engine.nodes.forEach(n => {
-                    if (n.status === 'error_necrosis' || n.status === 'error_tombstone') {
-                        n.status = 'active';
+                    // Only clear states that were set by a previous VD run
+                    if (n.isVirtualDebugError) {
+                        n.isVirtualDebugError = false;
+                        // Restore status if it was VD-set (not from logic analyzer)
+                        if (n.status === 'error_necrosis' && !n._logicAnalyzerError) {
+                            n.status = undefined;
+                        }
                     }
-                    n.isVirtualDebugError = false;
                 });
                 engine.edges.forEach(e => {
-                    e.isVirtualDebugFracture = false;
+                    if (e.isVirtualDebugFracture) {
+                        e.isVirtualDebugFracture = false;
+                        e.isDeterministicFracture = false;
+                    }
                 });
 
-                // Apply necrosis to error nodes
+                // Apply necrosis + cyan scanner aura to VS Code error nodes
                 impact.necrosisNodeIds.forEach(nid => {
                     const node = engine.nodes.find(n => n.id === nid);
                     if (node) {
@@ -6505,12 +6625,12 @@ function initCanvas() {
                     }
                 });
 
-                // Apply fracture to broken edges
+                // [Fix B2] Apply VD Fracture (Ghost Purple) to broken edges
                 impact.fractureEdgeIds.forEach(eid => {
                     const edge = engine.edges.find(e => e.id === eid);
                     if (edge) {
                         edge.isVirtualDebugFracture = true;
-                        edge.isDeterministicFracture = true;
+                        edge.isDeterministicFracture = true; // Reuse Ghost Purple fracture path
                     }
                 });
 
@@ -6521,9 +6641,22 @@ function initCanvas() {
                 engine.systemPressure = Math.min(1.0, pressureRatio * 3.0);
                 engine.isRedOut = engine.systemPressure > 0.7;
 
+                // [Fix B3] Virtual Debug HUD: Result summary toast
+                const necroCount = impact.necrosisNodeIds.length;
+                const fractureCount = impact.fractureEdgeIds.length;
+                const errorCount = (impact.reports || []).filter(r => r.severity === 0).length; // 0 = Error
+                const warnCount = (impact.reports || []).filter(r => r.severity === 1).length;  // 1 = Warning
+                engine._showVirtualDebugHUD({
+                    necroCount,
+                    fractureCount,
+                    errorCount,
+                    warnCount,
+                    pressure: Math.round(engine.systemPressure * 100)
+                });
+
                 engine.wakeUp();
                 engine.render();
-                console.log(`[SYNAPSE] Virtual Debug Impact applied: ${impact.necrosisNodeIds.length} necrotic, ${impact.fractureEdgeIds.length} fractured.`);
+                console.log(`[SYNAPSE] Virtual Debug Impact applied: ${necroCount} necrotic, ${fractureCount} fractured.`);
                 break;
             }
             case 'flowData':

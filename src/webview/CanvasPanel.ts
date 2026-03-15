@@ -2930,11 +2930,18 @@ export class CanvasPanel {
         const scriptUri = webview.asWebviewUri(
             vscode.Uri.joinPath(this._extensionUri, 'ui', 'canvas-engine.js')
         );
+        const webglRendererUri = webview.asWebviewUri(
+            vscode.Uri.joinPath(this._extensionUri, 'ui', 'webgl-renderer.js')
+        );
 
         // Replace script src with webview URI
         html = html.replace(
             'src="canvas-engine.js"',
             `src="${scriptUri}"`
+        );
+        html = html.replace(
+            'src="webgl-renderer.js"',
+            `src="${webglRendererUri}"`
         );
 
         // Add CSP - relaxed for webview compatibility

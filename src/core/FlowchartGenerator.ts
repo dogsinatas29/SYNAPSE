@@ -239,15 +239,27 @@ export class FlowchartGenerator {
 
     public generateMermaidDiagram(nodes: Node[], edges: Edge[], clusters?: Cluster[]): string {
         let mermaid = 'flowchart TD\n';
+        const renderedNodeIds = new Set<string>();
+
         if (clusters) {
             clusters.forEach(c => {
                 mermaid += `  subgraph ${c.id} ["${c.label}"]\n`;
-                nodes.filter(n => n.data.cluster_id === c.id).forEach(n => {
-                    mermaid += `    ${n.id}["${n.data.label}"]\n`;
+                const clusterNodes = nodes.filter(n => (n.data.cluster_id === c.id) || ((n as any).cluster_id === c.id));
+                clusterNodes.forEach(n => {
+                    mermaid += `    ${n.id}[${n.data.label}]\n`;
+                    renderedNodeIds.add(n.id);
                 });
                 mermaid += '  end\n';
             });
         }
+
+        // Render remaining nodes that were not in any cluster
+        nodes.forEach(n => {
+            if (!renderedNodeIds.has(n.id)) {
+                mermaid += `  ${n.id}[${n.data.label}]\n`;
+            }
+        });
+
         edges.forEach(e => {
             mermaid += `  ${e.from} --> ${e.to}\n`;
         });

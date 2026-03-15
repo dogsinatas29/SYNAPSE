@@ -32,6 +32,7 @@ import { Logger } from './utils/Logger';
 import { BillingManager } from './core/BillingManager';
 import { ReportExporter } from './core/ReportExporter';
 import { AiOrchestrator } from './core/AiOrchestrator';
+import { ArchitectureExplorerProvider } from './explorer/ArchitectureExplorer';
 
 export async function activate(context: vscode.ExtensionContext) {
     Logger.initialize(context);
@@ -275,6 +276,7 @@ export async function activate(context: vscode.ExtensionContext) {
         let recordingStartTime: Date | null = null;
         let sessionFilePath: string | null = null; // 레코딩 시작 시 생성된 파일 경로
         let activeCommandContext = ''; // 레코딩 시작 시 수집된 맥락/명령 저장
+        let activeAiResponse = ''; // 레코딩 시작 시 수집된 AI 답변 저장
 
         // 상태바 아이템 생성 (우측에 배치)
         const recordingStatusBar = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 1000);
@@ -301,6 +303,8 @@ export async function activate(context: vscode.ExtensionContext) {
                     if (args.title === 'context.md') {
                         await promptLogger.appendLog(projectRoot, 'context.md', args.prompt);
                     } else {
+                        // args.prompt itself might contain the answer if passed from some parts, 
+                        // but usually it's just the prompt text.
                         await promptLogger.logPrompt(projectRoot, args.prompt, args.title);
                     }
                     return;
@@ -322,8 +326,9 @@ export async function activate(context: vscode.ExtensionContext) {
 
                 if (!isRecording) {
                     // ── 레코딩 시작 전, 작업 맵핑 (프롬프트/컨텍스트 자동 수집) ──────────────────
-                    let autoExtractedContext = await ChatExtractor.getLatestChatContext(context);
-                    let command = autoExtractedContext;
+                    const latestChat = await ChatExtractor.getLatestChatContext(context);
+                    let command = latestChat ? latestChat.userMessage : '';
+                    let aiResponse = latestChat ? latestChat.llmResponse : '';
 
                     if (!command || command.trim() === '') {
                         try { command = (await vscode.env.clipboard.readText()).trim(); } catch { }
@@ -334,6 +339,7 @@ export async function activate(context: vscode.ExtensionContext) {
                     }
 
                     activeCommandContext = command;
+                    activeAiResponse = aiResponse;
 
                     // ── 레코딩 시작 ──────────────────────────────────────
                     isRecording = true;
@@ -367,8 +373,9 @@ export async function activate(context: vscode.ExtensionContext) {
 
                     try {
                         const targetFile = sessionFilePath ?? path.join(projectRoot, '.synapse_contexts', 'context.md');
-                        await promptLogger.endSession(projectRoot, targetFile, command);
+                        await promptLogger.endSession(projectRoot, targetFile, command, activeAiResponse);
                         sessionFilePath = null;
+                        activeAiResponse = ''; // Reset after use
                         const action = await vscode.window.showInformationMessage(
                             '✅ Context 저장 완료', 'Open'
                         );
@@ -426,6 +433,18 @@ export async function activate(context: vscode.ExtensionContext) {
         setClient(languageClient);
         await languageClient.start();
         console.log('[SYNAPSE] Language Server started successfully');
+
+        // Architecture Explorer Setup
+        const architectureExplorerProvider = new ArchitectureExplorerProvider(
+            vscode.workspace.workspaceFolders?.[0]?.uri.fsPath
+        );
+        vscode.window.registerTreeDataProvider('synapseExplorer', architectureExplorerProvider);
+
+        context.subscriptions.push(
+            vscode.commands.registerCommand('synapse.refreshExplorer', () => {
+                architectureExplorerProvider.refresh();
+            })
+        );
 
         vscode.window.setStatusBarMessage(`SYNAPSE Engine Ready (v${version})`, 5000);
 
@@ -690,6 +709,8 @@ function setupFileWatcher(workspaceFolder: vscode.WorkspaceFolder, context: vsco
         if (CanvasPanel.currentPanel) {
             await CanvasPanel.currentPanel.refreshState();
         }
+        // Also refresh the explorer
+        vscode.commands.executeCommand('synapse.refreshExplorer');
     };
 
     sourceWatcher.onDidChange(refreshCanvas);

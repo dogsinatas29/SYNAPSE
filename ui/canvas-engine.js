@@ -2302,7 +2302,7 @@ class CanvasEngine {
             btnWebGL.addEventListener('click', () => {
                 this.webglEnabled = !this.webglEnabled;
                 if (this.webglEnabled && !this.webglRenderer) {
-                    this.webglRenderer = new WebGLRenderer('canvas');
+                    this.webglRenderer = new WebGLRenderer(this.canvas);
                 }
                 btnWebGL.textContent = `🚀 Acceleration: ${this.webglEnabled ? 'ON' : 'OFF'}`;
                 btnWebGL.classList.toggle('active', this.webglEnabled);

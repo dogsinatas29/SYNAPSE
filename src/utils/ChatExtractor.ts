@@ -11,12 +11,12 @@ export class ChatExtractor {
     /**
      * Extracts the most recent user prompt and LLM response.
      */
-    public static async getLatestChatContext(context: vscode.ExtensionContext): Promise<string> {
+    public static async getLatestChatContext(context: vscode.ExtensionContext): Promise<{ userMessage: string, llmResponse: string } | null> {
         try {
             // Extension Context storageUri points to the workspace-specific storage:
             // e.g. ~/.config/Code/User/workspaceStorage/<hash>/dogsinatas.synapse-visual-architecture
             if (!context.storageUri) {
-                return '';
+                return null;
             }
 
             // Go up one level to the workspace hash root
@@ -25,7 +25,7 @@ export class ChatExtractor {
             const chatSessionsPath = path.join(workspaceStoragePath, 'chatSessions');
 
             if (!fs.existsSync(chatSessionsPath)) {
-                return '';
+                return null;
             }
 
             // Find all .jsonl files in chatSessions
@@ -34,7 +34,7 @@ export class ChatExtractor {
                 .map(f => path.join(chatSessionsPath, f));
 
             if (files.length === 0) {
-                return '';
+                return null;
             }
 
             // Find the most recently modified file
@@ -91,17 +91,16 @@ export class ChatExtractor {
             });
 
             if (latestUserMessage) {
-                let contextStr = `👤 질문:\n${latestUserMessage}\n`;
-                if (latestLLMResponse) {
-                    contextStr += `\n🤖 답변:\n${latestLLMResponse}`;
-                }
-                return contextStr;
+                return {
+                    userMessage: latestUserMessage,
+                    llmResponse: latestLLMResponse
+                };
             }
 
-            return '';
+            return null;
         } catch (e: any) {
             console.error('[SYNAPSE] Failed to extract chat context:', e);
-            return '';
+            return null;
         }
     }
 }

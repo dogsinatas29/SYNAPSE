@@ -18,7 +18,7 @@ export class PromptLogger {
     /**
      * 사용자 명령(입력)과 그 결과로 변경된 내용(git diff)을 맥락 파일로 저장
      */
-    public async appendLog(projectRoot: string, fileName: string, userCommand: string, _tag?: string, _snapshot?: any): Promise<string> {
+    public async appendLog(projectRoot: string, fileName: string, userCommand: string, aiResponse?: string): Promise<string> {
         const contextDir = path.join(projectRoot, '.synapse_contexts');
         if (!fs.existsSync(contextDir)) {
             fs.mkdirSync(contextDir, { recursive: true });
@@ -41,6 +41,11 @@ export class PromptLogger {
         contentToAppend += `\n---\n\n`;
         contentToAppend += `## 📅 ${timestamp}\n\n`;
         contentToAppend += `### 💬 명령\n${userCommand}\n\n`;
+
+        if (aiResponse) {
+            contentToAppend += `### 🤖 답변 요약\n${this.cleanAiResponse(aiResponse)}\n\n`;
+        }
+
         contentToAppend += `### 📝 변경 요약\n`;
 
         if (diffSummary.trim()) {
@@ -85,13 +90,18 @@ export class PromptLogger {
     }
 
     /**
-     * 레코딩 종료 시 해당 파일에 명령 + git diff를 추가
+     * 레코딩 종료 시 해당 파일에 명령 + 답변 + git diff를 추가
      */
-    public async endSession(projectRoot: string, filePath: string, command: string): Promise<void> {
+    public async endSession(projectRoot: string, filePath: string, command: string, aiResponse?: string): Promise<void> {
         const diffSummary = await this.getGitDiffSummary(projectRoot);
 
-        const content = `## 💬 명령\n${command}\n\n`
-            + `## 📝 변경 요약\n`
+        let content = `## 💬 명령\n${command}\n\n`;
+
+        if (aiResponse) {
+            content += `## 🤖 답변 요약\n${this.cleanAiResponse(aiResponse)}\n\n`;
+        }
+
+        content += `## 📝 변경 요약\n`
             + (diffSummary.trim()
                 ? `\`\`\`diff\n${diffSummary}\n\`\`\`\n`
                 : `_변경된 파일 없음_\n`)
@@ -122,7 +132,7 @@ export class PromptLogger {
      * 별도 파일로 저장 (새 파일 모드)
 
      */
-    public async logPrompt(projectRoot: string, userCommand: string, title?: string): Promise<string> {
+    public async logPrompt(projectRoot: string, userCommand: string, title?: string, aiResponse?: string): Promise<string> {
         const contextDir = path.join(projectRoot, '.synapse_contexts');
         if (!fs.existsSync(contextDir)) {
             fs.mkdirSync(contextDir, { recursive: true });
@@ -144,11 +154,16 @@ export class PromptLogger {
 
         const diffSummary = await this.getGitDiffSummary(projectRoot);
 
-        const content = `# Context: ${title || '작업 기록'}\n\n`
+        let content = `# Context: ${title || '작업 기록'}\n\n`
             + `**시각**: ${timestamp}\n\n`
             + `---\n\n`
-            + `## 💬 명령\n${userCommand}\n\n`
-            + `## 📝 변경 요약\n`
+            + `## 💬 명령\n${userCommand}\n\n`;
+
+        if (aiResponse) {
+            content += `## 🤖 답변 요약\n${this.cleanAiResponse(aiResponse)}\n\n`;
+        }
+
+        content += `## 📝 변경 요약\n`
             + (diffSummary.trim()
                 ? `\`\`\`diff\n${diffSummary}\n\`\`\`\n`
                 : `_변경된 파일 없음_\n`)
@@ -159,6 +174,24 @@ export class PromptLogger {
 
         this.gitStageFile(projectRoot, filePath);
         return filePath;
+    }
+
+    /**
+     * AI 답변에서 코드 블록과 불필요한 마크다운 노이즈 제거
+     */
+    private cleanAiResponse(text: string): string {
+        if (!text) return '';
+        
+        // 1. 코드 블록 제거 (``` ... ```)
+        let cleaned = text.replace(/```[\s\S]*?```/g, '\n> [Code Block Excluded]\n');
+        
+        // 2. 인라인 코드 제거
+        cleaned = cleaned.replace(/`[^`]+`/g, (match) => match.length > 30 ? '[...]' : match);
+        
+        // 3. 다중 줄바꿈 정리
+        cleaned = cleaned.replace(/\n{3,}/g, '\n\n');
+        
+        return cleaned.trim();
     }
 
     /**

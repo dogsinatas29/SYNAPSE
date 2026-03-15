@@ -59,7 +59,10 @@ export class LogicAnalyzer {
         // 6. [v0.2.18.2] Architecture Guardrail 검증 (The Iron Guard)
         this.detectArchitectureViolations(nodes, edges, issues);
 
-        // 7. [v0.2.20] Sovereign Principles 검증 (Mandatory Principles)
+        // 7. [v0.2.21] Deterministic C++ Rule 검증 (The Static Pillar)
+        this.detectDeterministicViolations(nodes, edges, issues);
+
+        // 8. [v0.2.20] Sovereign Principles 검증 (Mandatory Principles)
         if (state.system_context?.principles) {
             const principleIssues = this.validatePrinciples(state, state.system_context.principles);
             issues.push(...principleIssues);
@@ -359,6 +362,47 @@ export class LogicAnalyzer {
                     message: `[Same Layer Policy] '${sourceNode.data.label}' -> '${targetNode.data.label}'. 동일 레이어 간 직접 호출이 제한되었습니다.`,
                     nodeIds: [edge.from, edge.to]
                 });
+            }
+        });
+    }
+
+    private detectDeterministicViolations(nodes: Node[], edges: Edge[], issues: AnalysisIssue[]) {
+        const rules = [
+            { keyword: 'virtual', type: 'virtual', message: 'Deterministic Violation: virtual 키워드 사용 금지 (VTable 오버헤드)' },
+            { keyword: 'malloc', type: 'allocation', message: 'Deterministic Violation: dynamic allocation (malloc) 금지' },
+            { keyword: 'new ', type: 'allocation', message: 'Deterministic Violation: dynamic allocation (new) 금지' },
+            { keyword: 'throw', type: 'exception', message: 'Deterministic Violation: exception handling (throw) 금지' },
+            { keyword: 'try', type: 'exception', message: 'Deterministic Violation: exception handling (try) 금지' }
+        ];
+
+        nodes.forEach(node => {
+            const content = node.data.content || '';
+            if (!content) return;
+
+            rules.forEach(rule => {
+                if (content.includes(rule.keyword)) {
+                    issues.push({
+                        type: 'architecture-violation',
+                        severity: 'critical',
+                        message: `[💀 Tombstone] ${rule.message}`,
+                        nodeIds: [node.id]
+                    });
+                }
+            });
+
+            // Recursion check (Simple heuristic: function calling itself by name)
+            const nodeName = node.data.label;
+            if (nodeName && content.includes(`${nodeName}(`)) {
+                // Check if it's a definition or a call
+                const occurrences = content.split(`${nodeName}(`).length - 1;
+                if (occurrences > 1) { // 1 for definition, > 1 implies potential recursion if it's within the body
+                    issues.push({
+                        type: 'architecture-violation',
+                        severity: 'critical',
+                        message: `[💀 Tombstone] Deterministic Violation: Recursion detected in '${nodeName}'`,
+                        nodeIds: [node.id]
+                    });
+                }
             }
         });
     }

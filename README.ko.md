@@ -291,12 +291,12 @@ SYNAPSE v0.2.17은 그림 그리기와 코드 작성 간의 간극을 메웁니�
 
 ## 🆕 버전 히스토리
 
-### v0.2.21 (Iron Guard & GPU Acceleration)
-- **Iron Guard Protocol (v0.3.0 Preview)**: `LogicAnalyzer.ts` 및 VS Code Diagnostics를 연동하여 실시간 엣지 위반(💀) 건을 시각적으로 도출.
-- **폭포수 규칙 (Layer Gravity)**: 단방향 참조 흐름(예: Frontend -> API -> DB)을 강제하여, 하위 계층이 상위를 호출하는 역류 현상을 즉시 차단(CRITICAL VIOLATION)합니다.
-- **Promotion Awareness System**: 노드가 고스트(Ghost)에서 활성(Active)으로 전환될 때 파티클 애니메이션(`PromotionParticle`) 및 컬러 모핑 연출 추가.
-- **GPU Accelerated Rendering**: 10,000개 이상의 노드와 20,000개 이상의 엣지를 60 FPS로 처리할 수 있는 WebGL 기반의 고성능 렌더러 통합.
-- **가상 디버그 엔진 (Virtual Debug)**: LSP 진단 정보를 기반으로 노드 괴사(Necrosis) 및 엣지 파손을 시각적으로 렌더링.
+### v0.2.21 (결정판: GPU 가속 및 UI 정밀화)
+- **Documentation Shelf 외부 패널화**: 문서 리스트를 독립적이고 드래그 가능한 외부 패널로 분리하여 캔버스 공간을 확보했습니다.
+- **FZF 방식의 퍼지 검색**: Context Vault 및 Documentation Shelf 검색에 퍼지 매칭 알고리즘을 도입했습니다.
+- **선택 인터페이스 정교화**: 단일 클릭(탐색)과 더블 클릭(파일 열기)을 분리하고, 엣지 히트박스를 개선했습니다.
+- **GPU 가속 렌더링**: 수만 개의 노드를 실시간으로 핸들링하는 WebGL 기반 렌더러를 통합했습니다.
+- **가상 디버그 엔진 (Virtual Debug)**: LSP 진단 정보를 기반으로 노드 괴사 및 엣지 파손을 시각적으로 렌더링합니다.
 
 ### v0.2.20 (Hybrid Guardrail & Promotion Awareness)
 - **Iron Guard Protocol (v0.3.0 Preview)**: `LogicAnalyzer.ts` 및 VS Code Diagnostics를 연동하여 실시간 엣지 위반(💀) 건을 시각적으로 도출.

@@ -255,10 +255,15 @@ SYNAPSE v0.2.17 bridges the gap between drawing pictures and writing code.
 
 ## 🆕 Revision History
 
-### v0.2.21 (Iron Guard & GPU Acceleration)
-- **Iron Guard Protocol (v0.3.0 Preview)**: Implemented real-time edge validation via `LogicAnalyzer.ts` and VS Code Diagnostics integration.
-- **Layer Gravity (Waterfall Protocol)**: Enforces unidirectional architectural flow (e.g., Frontend -> API -> Database), instantly flagging backflow references as CRITICAL VIOLATIONS.
-- **Promotion Awareness System**: Added path animations (`PromotionParticle`) and visual morphing for 'ghost to active' node transitions.
+| Version | Date | Description (English) | Description (Korean) |
+| :--- | :--- | :--- | :--- |
+| **v0.2.21** | 2026-03-15 | WebGL Acceleration, External Doc Shelf, Fuzzy search (fzf), Selection UI refinement. | WebGL 가속, Documentation Shelf 패널화, 퍼지 검색(fzf), 선택 인터페이스 정밀화. |
+| **v0.2.20** | 2026-03-15 | Hybrid Guardrail & Promotion Awareness. | 하이브리드 가드레일 및 프로모션 인식. |
+
+### v0.2.21 (The Definitive Edition: GPU & UI Refinement)
+- **External Doc Shelf**: Moved the documentation list to an independent, draggable external panel.
+- **FZF-style Fuzzy Search**: Implemented fuzzy matching for Context Vault and Documentation Shelf searches.
+- **Selection UI Refined**: Separated Single Click (Navigation) from Double Click (Open File) and improved edge hitboxes.
 - **GPU Accelerated Rendering**: Integrated WebGL-based renderer for handling large graphs (10k+ nodes) with 60 FPS performance.
 - **Virtual Debug Engine**: Visual necrosis and fracture rendering for LSP diagnostic errors.
 

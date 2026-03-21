@@ -245,9 +245,19 @@ class WebGLRenderer {
         if (!this.gl || nodes.length === 0) return;
         this.nodeCount = nodes.length;
 
-        const positions = new Float32Array(nodes.length * 2);
-        const colors = new Float32Array(nodes.length * 3);
-        const sizes = new Float32Array(nodes.length);
+        // [Perf Check] Step 2 & 3: 로그 출력하여 매 프레임 불리는지 검증
+        console.warn("[Perf] webgl-renderer: build array & bufferData called");
+
+        // 배열 재사용 로직 (GC 압박 완화 - Step 3 최적화 보완)
+        if (!this._positions || this._positions.length !== nodes.length * 2) {
+            this._positions = new Float32Array(nodes.length * 2);
+            this._colors = new Float32Array(nodes.length * 3);
+            this._sizes = new Float32Array(nodes.length);
+        }
+
+        const positions = this._positions;
+        const colors = this._colors;
+        const sizes = this._sizes;
 
         nodes.forEach((n, i) => {
             positions[i * 2] = n.position.x + 60;

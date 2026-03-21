@@ -1133,12 +1133,14 @@ class CanvasEngine {
         }
 
         // [v0.2.19] Layer Visibility Toggles
-        const btnLayerBase = document.getElementById('btn-layer-base');
         if (btnLayerBase) {
             btnLayerBase.addEventListener('click', () => {
                 this.showBaseLayer = !this.showBaseLayer;
                 btnLayerBase.classList.toggle('active', this.showBaseLayer);
                 btnLayerBase.textContent = this.showBaseLayer ? 'ON' : 'OFF';
+                // [v0.2.24] WebGL 버퍼 갱신 강제 (레이어 필터링 적용)
+                this.isGraphDataDirty = true;
+                this.isEdgeDirty = true;
                 this.render();
             });
         }
@@ -1149,6 +1151,9 @@ class CanvasEngine {
                 this.showUserLayer = !this.showUserLayer;
                 btnLayerUser.classList.toggle('active', this.showUserLayer);
                 btnLayerUser.textContent = this.showUserLayer ? 'ON' : 'OFF';
+                // [v0.2.24] WebGL 버퍼 갱신 강제 (레이어 필터링 적용)
+                this.isGraphDataDirty = true;
+                this.isEdgeDirty = true;
                 this.render();
             });
         }
@@ -3972,9 +3977,26 @@ class CanvasEngine {
         }
 
         if (this.webglEnabled && this.webglRenderer) {
-            // [v0.2.24] 3️⃣ WebGL에 edges 및 text 전달 및 Dirty Flag 분리 적용
-            this.webglRenderer.render(this.nodes, this.transform, this.isGraphDataDirty, this.edges, this.nodeMap, this.isEdgeDirty, this.isTextDirty);
-            if (shouldLog) console.log("after webgl");
+            // [v0.2.24] Layer Filtering: Only pass nodes/edges that should be visible
+            const isUserLogic = (n) => 
+                (n.id && n.id.startsWith('node_manual_')) || 
+                (n.cluster_id && n.cluster_id.startsWith('sys_')) || 
+                (n.data?.cluster_id && n.data.cluster_id.startsWith('sys_'));
+            
+            const visibleNodes = this.nodes.filter(n => {
+                const isUser = isUserLogic(n);
+                if (isUser && !this.showUserLayer) return false;
+                if (!isUser && !this.showBaseLayer) return false;
+                return true;
+            });
+
+            // Filtering edges is slightly more complex — need to check both ends
+            const visibleNodeIds = new Set(visibleNodes.map(n => n.id));
+            const visibleEdges = this.edges.filter(e => visibleNodeIds.has(e.from) && visibleNodeIds.has(e.to));
+
+            this.webglRenderer.render(visibleNodes, this.transform, this.isGraphDataDirty, visibleEdges, this.nodeMap, this.isEdgeDirty, this.isTextDirty);
+            
+            if (shouldLog) console.log(`after webgl (filtered: ${visibleNodes.length}/${this.nodes.length} nodes)`);
             this.isGraphDataDirty = false;
             this.isEdgeDirty = false;
             this.isTextDirty = false;

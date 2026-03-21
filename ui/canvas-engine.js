@@ -893,6 +893,8 @@ class CanvasEngine {
         this._loopRunning = false; // [v0.2.24] Robust loop protection
         this._frameCounter = 0; // [v0.2.24] Log throttling
         this.isGraphDataDirty = true;
+        this.isEdgeDirty = true;
+        this.isTextDirty = true;
         this.nodeMap = new Map(); // [v0.2.24] O(1) Cache
         this.edgeValidationCache = new Map(); // [v0.2.24] BFS Cache
         this._lastDataHash = null; // [v0.2.24] Data integrity guard
@@ -3964,11 +3966,12 @@ class CanvasEngine {
         }
 
         if (this.webglEnabled && this.webglRenderer) {
-            // [v0.2.24] 3️⃣ WebGL에 edges 전달 및 Dirty Flag 분리 적용
-            this.webglRenderer.render(this.nodes, this.transform, this.isGraphDataDirty, this.edges, this.nodeMap, this.isEdgeDirty);
+            // [v0.2.24] 3️⃣ WebGL에 edges 및 text 전달 및 Dirty Flag 분리 적용
+            this.webglRenderer.render(this.nodes, this.transform, this.isGraphDataDirty, this.edges, this.nodeMap, this.isEdgeDirty, this.isTextDirty);
             if (shouldLog) console.log("after webgl");
             this.isGraphDataDirty = false;
             this.isEdgeDirty = false;
+            this.isTextDirty = false;
         }
 
         if (!this.ctx) return;

@@ -1,7 +1,86 @@
 /**
  * SYNAPSE WebGL Renderer (v0.2.23-optimized)
- * High-performance GPU-accelerated rendering path with Layer-based Caching (FBO).
+ * @file webgl-renderer.js
+ * @description WebGL 2D Renderer for Synapse Node Elements and Background (High Performance)
  */
+
+class TextAtlas {
+    constructor(gl) {
+        this.gl = gl;
+        this.glyphMap = new Map();
+        this.canvas = document.createElement('canvas');
+        this.ctx = this.canvas.getContext('2d', { willReadFrequently: true });
+
+        this.canvas.width = 1024;
+        this.canvas.height = 1024;
+
+        this.x = 0;
+        this.y = 0;
+        this.rowHeight = 0;
+
+        this.texture = gl.createTexture();
+        this.needsUpload = false;
+        
+        // Blank transparent background
+        this.ctx.clearRect(0, 0, 1024, 1024);
+    }
+
+    addText(text) {
+        if (!text) return;
+        let modified = false;
+        for (const ch of text) {
+            if (this.glyphMap.has(ch)) continue;
+            const metrics = this._drawGlyph(ch);
+            this.glyphMap.set(ch, metrics);
+            modified = true;
+        }
+        if (modified) this.needsUpload = true;
+    }
+
+    _drawGlyph(ch) {
+        const ctx = this.ctx;
+        ctx.font = '12px Inter, sans-serif'; // Default UI font
+        
+        const m = ctx.measureText(ch);
+        const w = Math.ceil(m.width) + 2;
+        const h = 16;
+        
+        if (this.x + w > this.canvas.width) {
+            this.x = 0;
+            this.y += this.rowHeight;
+            this.rowHeight = 0;
+        }
+        
+        ctx.fillStyle = '#ebdbb2'; // Gruvbox light text
+        ctx.textBaseline = 'top';
+        ctx.fillText(ch, this.x + 1, this.y + 2);
+        
+        const glyph = {
+            u0: this.x / this.canvas.width,
+            v0: this.y / this.canvas.height,
+            u1: (this.x + w) / this.canvas.width,
+            v1: (this.y + h) / this.canvas.height,
+            w, h
+        };
+        
+        this.x += w;
+        this.rowHeight = Math.max(this.rowHeight, h);
+        return glyph;
+    }
+
+    upload() {
+        if (!this.needsUpload) return;
+        const gl = this.gl;
+        gl.bindTexture(gl.TEXTURE_2D, this.texture);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, this.canvas);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        this.needsUpload = false;
+    }
+}
+
 class WebGLRenderer {
     constructor(canvas2d) {
         // [v0.2.21-fix] WebGL needs its OWN canvas.
@@ -43,6 +122,8 @@ class WebGLRenderer {
         this.gl.blendFunc(this.gl.SRC_ALPHA, this.gl.ONE_MINUS_SRC_ALPHA);
         this.gl.clearColor(0, 0, 0, 0);
 
+        this.textAtlas = new TextAtlas(this.gl);
+
         this.initShaders();
         this.cacheLocations();
         this.initBuffers();
@@ -51,6 +132,8 @@ class WebGLRenderer {
 
         console.log('[SYNAPSE WebGL] Renderer Initialized. Instancing:', !!this.ext);
         this.nodeCount = 0;
+        this.edgeCount = 0;
+        this.charCount = 0;
         this.starRotation = 0;
         
         this._nodeCache = null;
@@ -140,6 +223,31 @@ class WebGLRenderer {
         `;
         this.edgeProgram = this.createProgram(vsEdge, fsEdge);
 
+        // Text Instanced Shader
+        const vsText = `
+            attribute vec2 aVertexPosition; // [0,0] to [1,1]
+            attribute vec4 aInstancePosArea; // [x, y, w, h]
+            attribute vec4 aInstanceUV;      // [u0, v0, u1, v1]
+            uniform mat3 uProjectionMatrix;
+            varying vec2 v_uv;
+
+            void main() {
+                vec2 pos = aInstancePosArea.xy + aVertexPosition * aInstancePosArea.zw;
+                vec3 projected = uProjectionMatrix * vec3(pos, 1.0);
+                gl_Position = vec4(projected.xy, 0.0, 1.0);
+                v_uv = mix(aInstanceUV.xy, aInstanceUV.zw, aVertexPosition);
+            }
+        `;
+        const fsText = `
+            precision mediump float;
+            varying vec2 v_uv;
+            uniform sampler2D u_tex;
+            void main() {
+                gl_FragColor = texture2D(u_tex, v_uv);
+            }
+        `;
+        this.textProgram = this.createProgram(vsText, fsText);
+
         // [v0.2.23] Composite Shader (Kept for compatibility, though currently unused)
         const compVS = `
             attribute vec2 aPosition;
@@ -177,6 +285,13 @@ class WebGLRenderer {
                 vertex: this.gl.getAttribLocation(this.edgeProgram, 'aVertexPosition'),
                 instanceEdge: this.gl.getAttribLocation(this.edgeProgram, 'aInstanceEdge'),
                 uProj: this.gl.getUniformLocation(this.edgeProgram, 'uProjectionMatrix')
+            },
+            text: {
+                vertex: this.gl.getAttribLocation(this.textProgram, 'aVertexPosition'),
+                instancePosArea: this.gl.getAttribLocation(this.textProgram, 'aInstancePosArea'),
+                instanceUV: this.gl.getAttribLocation(this.textProgram, 'aInstanceUV'),
+                uProj: this.gl.getUniformLocation(this.textProgram, 'uProjectionMatrix'),
+                uTex: this.gl.getUniformLocation(this.textProgram, 'u_tex')
             }
         };
     }
@@ -219,6 +334,14 @@ class WebGLRenderer {
         this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(edgeVertices), this.gl.STATIC_DRAW);
 
         this.edgeInstanceBuffer = this.gl.createBuffer();
+
+        // Text Buffer setup
+        const textVertices = [0, 0, 1, 0, 0, 1, 1, 1];
+        this.textRectBuffer = this.gl.createBuffer();
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.textRectBuffer);
+        this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(textVertices), this.gl.STATIC_DRAW);
+
+        this.textInstanceBuffer = this.gl.createBuffer();
 
         // [v0.2.23] Full-screen quad for composite
         const quadPos = [-1, -1, 1, -1, -1, 1, 1, 1];
@@ -371,6 +494,49 @@ class WebGLRenderer {
         }
     }
 
+    updateTextData(nodes) {
+        if (!this.gl || !this.textAtlas || !nodes || nodes.length === 0) {
+            this.charCount = 0;
+            return;
+        }
+
+        let chars = [];
+        for (const n of nodes) {
+            const label = n.data?.label || n.id || "";
+            this.textAtlas.addText(label);
+
+            // Calculate center x and below y
+            let totalW = 0;
+            for(const ch of label) {
+                const g = this.textAtlas.glyphMap.get(ch);
+                if (g) totalW += g.w;
+            }
+
+            let offsetX = n.position.x + 60 - totalW / 2;
+            let offsetY = n.position.y + 65; // Below node
+
+            for (const ch of label) {
+                const g = this.textAtlas.glyphMap.get(ch);
+                if (!g) continue;
+
+                chars.push(
+                    offsetX, offsetY,
+                    g.w, g.h,
+                    g.u0, g.v0,
+                    g.u1, g.v1
+                );
+                offsetX += g.w;
+            }
+        }
+
+        const data = new Float32Array(chars);
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.textInstanceBuffer);
+        this.gl.bufferData(this.gl.ARRAY_BUFFER, data, this.gl.DYNAMIC_DRAW);
+        this.charCount = chars.length / 8;
+
+        this.textAtlas.upload();
+    }
+
     /**
      * [v0.2.24] Direct Rendering Optimization — Bye bye FBO caching for now.
      * Everything is drawn directly to screen buffer in a single pass.
@@ -389,7 +555,7 @@ class WebGLRenderer {
         }
     }
 
-    render(nodes, transform, isDataDirty = false, edges = null, nodeMap = null, isEdgeDirty = false) {
+    render(nodes, transform, isDataDirty = false, edges = null, nodeMap = null, isEdgeDirty = false, isTextDirty = false) {
         if (!this.gl) return;
         this.drawCalls = 0;
 
@@ -403,6 +569,7 @@ class WebGLRenderer {
             this.updateNodeData(nodes);
             // 만약 노드가 바뀌면 선 위치도 바뀌어야 하므로 edgeDirty 강제 처리
             isEdgeDirty = true; 
+            isTextDirty = true;
         }
 
         if (isEdgeDirty || this.lastEdgeCount !== edgeLen) {
@@ -412,10 +579,15 @@ class WebGLRenderer {
             this.lastEdgeCount = edgeLen;
         }
 
-        // Draw Sequence: Background (Stars) -> Edges -> Nodes
+        if (isTextDirty) {
+            this.updateTextData(nodes);
+        }
+
+        // Draw Sequence: Background (Stars) -> Edges -> Nodes -> Text
         this.drawStars(transform);
         if (this.edgeCount > 0) this.drawEdges(transform);
         this.drawNodes(transform);
+        if (this.charCount > 0) this.drawText(transform);
 
         this._lastTransform = { ...transform };
 
@@ -502,6 +674,38 @@ class WebGLRenderer {
         }
     }
 
+    drawText(transform) {
+        if (!this.ext || this.charCount === 0) return;
+        this.gl.useProgram(this.textProgram);
+
+        this.gl.activeTexture(this.gl.TEXTURE0);
+        this.gl.bindTexture(this.gl.TEXTURE_2D, this.textAtlas.texture);
+        this.gl.uniform1i(this.locs.text.uTex, 0);
+
+        const scaleX = 2 / this.canvas.width;
+        const scaleY = -2 / this.canvas.height;
+        const mat = [
+            transform.zoom * scaleX, 0, 0,
+            0, transform.zoom * scaleY, 0,
+            -1 + transform.offsetX * transform.zoom * scaleX, 1 + transform.offsetY * transform.zoom * scaleY, 1
+        ];
+        this.gl.uniformMatrix3fv(this.locs.text.uProj, false, mat);
+
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.textRectBuffer);
+        const vPos = this.locs.text.vertex;
+        this.gl.vertexAttribPointer(vPos, 2, this.gl.FLOAT, false, 0, 0);
+        this.gl.enableVertexAttribArray(vPos);
+
+        // Interleaved: [x, y, w, h, u0, v0, u1, v1] = 8 floats = 32 bytes
+        this.setAttrPointer(this.textInstanceBuffer, this.locs.text.instancePosArea, 4, 32, 0);
+        this.setAttrPointer(this.textInstanceBuffer, this.locs.text.instanceUV, 4, 32, 16);
+
+        if (this.ext) {
+            this.ext.drawArraysInstancedANGLE(this.gl.TRIANGLE_STRIP, 0, 4, this.charCount);
+            this.drawCalls++;
+        }
+    }
+
     composite() {
         this.gl.useProgram(this.compProgram);
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.quadBuffer);
@@ -521,11 +725,11 @@ class WebGLRenderer {
         });
     }
 
-    setAttrPointer(buffer, loc, size) {
+    setAttrPointer(buffer, loc, size, stride = 0, offset = 0) {
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, buffer);
         if (loc === -1) return;
         this.gl.enableVertexAttribArray(loc);
-        this.gl.vertexAttribPointer(loc, size, this.gl.FLOAT, false, 0, 0);
+        this.gl.vertexAttribPointer(loc, size, this.gl.FLOAT, false, stride, offset);
         if (this.ext) {
             this.ext.vertexAttribDivisorANGLE(loc, 1);
         }

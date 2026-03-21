@@ -3981,6 +3981,19 @@ class CanvasEngine {
         }
 
         if (!this.ctx) return;
+
+        // [v0.2.24] Move background clear to TOP — ensures WebGL is visible even if IDLE
+        const ctx = this.ctx;
+        const canvas = this.canvas;
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        if (!this.webglEnabled) {
+            ctx.fillStyle = '#1e1e1e';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        } else {
+            // Important: Clear 2D layer so WebGL underneath is visible
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
         if (!this.isDirty && !this.isAnimating) {
             const fpsEl = document.getElementById('fps-display');
             if (fpsEl && fpsEl.textContent !== 'IDLE') {
@@ -4008,22 +4021,6 @@ class CanvasEngine {
         }
 
         try {
-            const ctx = this.ctx;
-            const canvas = this.canvas;
-            if (!ctx || !canvas) return;
-
-            // [v0.2.24] Optimizing hot path: setTransform only if really drawing
-            ctx.setTransform(1, 0, 0, 1, 0, 0);
-            
-            // WebGL mode: clear only, DO NOT fill background if WebGL already did it
-            if (!this.webglEnabled) {
-                ctx.fillStyle = '#1e1e1e';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-            } else {
-                // [v0.2.24] 2️⃣ clearRect 필수 (2D UI 레이어 투명화)
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-            }
-
             const dpr = window.devicePixelRatio || 1;
             ctx.scale(dpr, dpr);
 

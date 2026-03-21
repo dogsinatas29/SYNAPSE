@@ -291,11 +291,13 @@ class WebGLRenderer {
         // [Perf Check] Step 2 & 3: 로그 출력하여 매 프레임 불리는지 검증
         console.warn("[Perf] webgl-renderer: build array & bufferData called");
 
+        let sizeChanged = false;
         // 배열 재사용 로직 (GC 압박 완화 - Step 3 최적화 보완)
         if (!this._positions || this._positions.length !== nodes.length * 2) {
             this._positions = new Float32Array(nodes.length * 2);
             this._colors = new Float32Array(nodes.length * 3);
             this._sizes = new Float32Array(nodes.length);
+            sizeChanged = true;
         }
 
         const positions = this._positions;
@@ -313,11 +315,16 @@ class WebGLRenderer {
         });
 
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.posBuffer);
-        this.gl.bufferData(this.gl.ARRAY_BUFFER, positions, this.gl.DYNAMIC_DRAW);
+        if (sizeChanged) this.gl.bufferData(this.gl.ARRAY_BUFFER, positions, this.gl.DYNAMIC_DRAW);
+        else this.gl.bufferSubData(this.gl.ARRAY_BUFFER, 0, positions);
+        
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.colorBuffer);
-        this.gl.bufferData(this.gl.ARRAY_BUFFER, colors, this.gl.DYNAMIC_DRAW);
+        if (sizeChanged) this.gl.bufferData(this.gl.ARRAY_BUFFER, colors, this.gl.DYNAMIC_DRAW);
+        else this.gl.bufferSubData(this.gl.ARRAY_BUFFER, 0, colors);
+        
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.sizeBuffer);
-        this.gl.bufferData(this.gl.ARRAY_BUFFER, sizes, this.gl.DYNAMIC_DRAW);
+        if (sizeChanged) this.gl.bufferData(this.gl.ARRAY_BUFFER, sizes, this.gl.DYNAMIC_DRAW);
+        else this.gl.bufferSubData(this.gl.ARRAY_BUFFER, 0, sizes);
     }
 
     updateEdgeData(edges, nodeMap) {
@@ -326,27 +333,42 @@ class WebGLRenderer {
             return;
         }
 
+        let sizeChanged = false;
         if (!this._edgeData || this._edgeData.length !== edges.length * 4) {
             this._edgeData = new Float32Array(edges.length * 4);
+            sizeChanged = true;
         }
         
         const data = this._edgeData;
         let cnt = 0;
         for (const e of edges) {
-            const src = nodeMap.get(e.from);
-            const tgt = nodeMap.get(e.to);
-            if (src && tgt && src.position && tgt.position) {
-                // Nodes are shifted by +60 and +30 to point to center
-                data[cnt++] = src.position.x + 60;
-                data[cnt++] = src.position.y + 30;
-                data[cnt++] = tgt.position.x + 60;
-                data[cnt++] = tgt.position.y + 30;
+            // [v0.2.24] O(N) Map Lookup 제거: 한 번 찾으면 직접 참조
+            if (e.srcNode && e.tgtNode) {
+                data[cnt++] = e.srcNode.position.x + 60;
+                data[cnt++] = e.srcNode.position.y + 30;
+                data[cnt++] = e.tgtNode.position.x + 60;
+                data[cnt++] = e.tgtNode.position.y + 30;
+            } else {
+                const src = nodeMap.get(e.from);
+                const tgt = nodeMap.get(e.to);
+                if (src && tgt && src.position && tgt.position) {
+                    e.srcNode = src; // cache it!
+                    e.tgtNode = tgt;
+                    data[cnt++] = src.position.x + 60;
+                    data[cnt++] = src.position.y + 30;
+                    data[cnt++] = tgt.position.x + 60;
+                    data[cnt++] = tgt.position.y + 30;
+                }
             }
         }
         this.edgeCount = cnt / 4;
 
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.edgeInstanceBuffer);
-        this.gl.bufferData(this.gl.ARRAY_BUFFER, data.subarray(0, cnt), this.gl.DYNAMIC_DRAW);
+        if (sizeChanged) {
+            this.gl.bufferData(this.gl.ARRAY_BUFFER, data.subarray(0, cnt), this.gl.DYNAMIC_DRAW);
+        } else {
+            this.gl.bufferSubData(this.gl.ARRAY_BUFFER, 0, data.subarray(0, cnt));
+        }
     }
 
     /**

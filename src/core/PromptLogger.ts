@@ -92,13 +92,8 @@ export class PromptLogger {
 
     private cleanAiResponse(text: string): string {
         if (!text) return '';
-        // 1. 코드 블록 제거 및 요약 표시
-        let cleaned = text.replace(/```[\s\S]*?```/g, '\n> [Code Block Excluded]\n');
-        // 2. 인라인 코드 축약
-        cleaned = cleaned.replace(/`[^`]+`/g, (match) => match.length > 40 ? '`...`' : match);
-        // 3. 공백 정리
-        cleaned = cleaned.replace(/\n{3,}/g, '\n\n');
-        return cleaned.trim();
+        // [v0.2.22] Full Content Preservation - Do not exclude code blocks
+        return text.trim();
     }
 
     private gitStageFile(rootPath: string, filePath: string) {

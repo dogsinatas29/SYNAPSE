@@ -98,19 +98,38 @@ export class ChatExtractor {
     }
 
     private static getWorkspaceStoragePath(context: vscode.ExtensionContext): string | null {
-        // Standard extension storage path: .../workspaceStorage/<hash>/<extension-id>
+        // [v0.2.22] Robust Storage Path Discovery
         if (context.storageUri) {
-            return path.dirname(context.storageUri.fsPath);
+            const potentialPath = path.dirname(context.storageUri.fsPath);
+            if (fs.existsSync(path.join(potentialPath, 'chatSessions'))) {
+                return potentialPath;
+            }
         }
         
-        // Fallback for some forks or specific environments
-        // Try searching up from global storage if workspaceStorage is nearby
-        if (context.globalStorageUri) {
-            const userDir = path.dirname(path.dirname(context.globalStorageUri.fsPath));
-            const wsStorage = path.join(userDir, 'workspaceStorage');
-            if (fs.existsSync(wsStorage)) {
-                 // But we need the <hash>. This is hard to guess without storageUri.
-                 // So we return null if storageUri is missing.
+        // Fallback: Linux Standard Path Search
+        const homeDir = process.env.HOME || process.env.USERPROFILE;
+        if (homeDir) {
+            const wsStorageRoot = path.join(homeDir, '.config', 'Code', 'User', 'workspaceStorage');
+            if (fs.existsSync(wsStorageRoot)) {
+                try {
+                    const folders = fs.readdirSync(wsStorageRoot);
+                    for (const folder of folders) {
+                        const wsJsonPath = path.join(wsStorageRoot, folder, 'workspace.json');
+                        if (fs.existsSync(wsJsonPath)) {
+                            const content = fs.readFileSync(wsJsonPath, 'utf-8');
+                            // Check if this storage folder belongs to the current workspace
+                            const workspaceFolders = vscode.workspace.workspaceFolders;
+                            if (workspaceFolders && workspaceFolders.length > 0) {
+                                const currentWsPath = workspaceFolders[0].uri.toString();
+                                if (content.includes(currentWsPath)) {
+                                    return path.join(wsStorageRoot, folder);
+                                }
+                            }
+                        }
+                    }
+                } catch (e) {
+                    console.error('[SYNAPSE] Failed to crawl workspaceStorage:', e);
+                }
             }
         }
         

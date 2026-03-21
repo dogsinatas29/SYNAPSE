@@ -367,7 +367,7 @@ class WebGLRenderer {
         }
     }
 
-    render(nodes, transform, isDataDirty = false, edges = null, nodeMap = null) {
+    render(nodes, transform, isDataDirty = false, edges = null, nodeMap = null, isEdgeDirty = false) {
         if (!this.gl) return;
         this.drawCalls = 0;
 
@@ -377,8 +377,13 @@ class WebGLRenderer {
         this.gl.clear(this.gl.COLOR_BUFFER_BIT);
 
         const edgeLen = edges ? edges.length : 0;
-        if (isDataDirty || this.nodeCount !== nodes.length || this.lastEdgeCount !== edgeLen) {
+        if (isDataDirty || this.nodeCount !== nodes.length) {
             this.updateNodeData(nodes);
+            // 만약 노드가 바뀌면 선 위치도 바뀌어야 하므로 edgeDirty 강제 처리
+            isEdgeDirty = true; 
+        }
+
+        if (isEdgeDirty || this.lastEdgeCount !== edgeLen) {
             if (edges && nodeMap) {
                 this.updateEdgeData(edges, nodeMap);
             }

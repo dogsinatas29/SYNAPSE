@@ -1,0 +1,22 @@
+{
+    "nodes": [
+        {
+            "id": "normal_node",
+            "position": { "x": 100, "y": 100 },
+            "data": { "label": "Normal Node" }
+        },
+        {
+            "id": "crash_node",
+            "position": { "x": 500, "y": 500 },
+            "data": { "label": "CRASH TEST (NaN Trigger)" }
+        }
+    ],
+    "edges": [
+        {
+            "from": "normal_node",
+            "to": "crash_node",
+            "data": { "label": "Edge to NaN" }
+        }
+    ],
+    "clusters": []
+}

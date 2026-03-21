@@ -146,12 +146,26 @@ connection.onDefinition((params) => {
     return null;
 });
 
+const validationTimers: Map<string, NodeJS.Timeout> = new Map();
+const validationTokens: Map<string, number> = new Map();
+
 // Diagnostics logic
 documents.onDidChangeContent(change => {
-    validateTextDocument(change.document);
+    const uri = change.document.uri;
+    if (validationTimers.has(uri)) {
+        clearTimeout(validationTimers.get(uri)!);
+    }
+    
+    const token = (validationTokens.get(uri) || 0) + 1;
+    validationTokens.set(uri, token);
+
+    validationTimers.set(uri, setTimeout(() => {
+        validateTextDocument(change.document, token);
+        validationTimers.delete(uri);
+    }, 500)); // 500ms debounce
 });
 
-async function validateTextDocument(textDocument: TextDocument): Promise<void> {
+async function validateTextDocument(textDocument: TextDocument, token: number): Promise<void> {
     const text = textDocument.getText();
     const pattern = /(?:📄|[-\*]\s+[`]?|파일:\s*)([a-zA-Z0-9_./-]+\.[a-z]+)/g;
     let m: RegExpExecArray | null;
@@ -162,10 +176,17 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 
     const diagnostics: any[] = [];
     while ((m = pattern.exec(text))) {
+        // [v0.2.24] LSP Cancellation check: prevent async backlog
+        if (validationTokens.get(baseUri) !== token) {
+            return; // Exit early if superseded
+        }
+
         const filePath = m[1];
         const targetFsPath = path.resolve(baseDir, filePath);
 
-        if (!fs.existsSync(targetFsPath)) {
+        try {
+            await fs.promises.stat(targetFsPath);
+        } catch (error) {
             diagnostics.push({
                 severity: 2, // Warning
                 range: {

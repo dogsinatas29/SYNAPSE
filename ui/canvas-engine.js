@@ -3964,10 +3964,11 @@ class CanvasEngine {
         }
 
         if (this.webglEnabled && this.webglRenderer) {
-            // [v0.2.24] 3️⃣ WebGL에 edges 전달
-            this.webglRenderer.render(this.nodes, this.transform, this.isGraphDataDirty, this.edges, this.nodeMap);
+            // [v0.2.24] 3️⃣ WebGL에 edges 전달 및 Dirty Flag 분리 적용
+            this.webglRenderer.render(this.nodes, this.transform, this.isGraphDataDirty, this.edges, this.nodeMap, this.isEdgeDirty);
             if (shouldLog) console.log("after webgl");
             this.isGraphDataDirty = false;
+            this.isEdgeDirty = false;
         }
 
         if (!this.ctx) return;

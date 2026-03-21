@@ -65,6 +65,7 @@ export interface Edge {
         style: EdgeStyle;
         color: string;           // 상태 색상
         animated?: boolean;      // 입자 흐름 효과
+        dashArray?: string;      // [v0.2.24] 점선 패턴 지원
     };
 }
 

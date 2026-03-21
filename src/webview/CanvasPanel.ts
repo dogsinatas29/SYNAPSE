@@ -250,6 +250,9 @@ export class CanvasPanel {
             case 'validateEdge':
                 await this.handleValidateEdge(message.edgeId, message.fromNode, message.toNode, message.type);
                 return;
+            case 'validateEdgesBatch': // [v0.2.24] IPC & I/O Optimization
+                await this.handleValidateEdgesBatch(message.batch);
+                return;
             case 'analyzeGemini':
                 await this.handleAnalyzeGemini(message.filePath);
                 return;
@@ -684,8 +687,9 @@ export class CanvasPanel {
 
             let res: any = Array.isArray(obj) ? [] : {};
             for (const key in obj) {
-                // Ignore DOM nodes or internal VSCode specific heavy objects if any creep in
-                if (key.startsWith('_')) continue;
+                // Ignore DOM nodes or internal VSCode specific heavy objects
+                // [v0.2.23] Allow _ungrouped for persistent manual state
+                if (key.startsWith('_') && key !== '_ungrouped') continue;
                 res[key] = decycle(obj[key], stack);
             }
             stack.delete(obj);
@@ -1771,10 +1775,101 @@ export class CanvasPanel {
         }
     }
 
+    /**
+     * [v0.2.24] Batched Edge Validation
+     * Optimized to read project_state once for multiple edges, preventing I/O flood.
+     */
+    private async handleValidateEdgesBatch(batch: any[]) {
+        try {
+            if (!this._workspaceFolder || !batch || batch.length === 0) return;
+            Logger.info(`[CanvasPanel] Batch validating ${batch.length} edges...`);
+
+            // 1. Read project state ONLY ONCE
+            const projectStateUri = vscode.Uri.joinPath(this._workspaceFolder.uri, 'data', 'project_state.json');
+            let baseState: any = { nodes: [], edges: [], clusters: [] };
+            try {
+                const data = await vscode.workspace.fs.readFile(projectStateUri);
+                baseState = JSON.parse(data.toString());
+            } catch (e) {}
+
+            const analyzer = new LogicAnalyzer();
+            
+            // 2. Build a single TEMP STATE containing all new edges for a single-pass analysis
+            const tempNodes = [...(baseState.nodes || [])];
+            const tempEdges = [...(baseState.edges || [])];
+            
+            for (const item of batch) {
+                const { edgeId, fromNode, toNode, type } = item;
+                // Ensure nodes exist in state
+                if (!tempNodes.find(n => n.id === fromNode.id)) tempNodes.push(fromNode);
+                if (!tempNodes.find(n => n.id === toNode.id)) tempNodes.push(toNode);
+                
+                // Add proposed edge
+                tempEdges.push({
+                    id: edgeId,
+                    from: fromNode.id,
+                    to: toNode.id,
+                    type: type as any,
+                    is_approved: false
+                });
+            }
+
+            const tempState = { ...baseState, nodes: tempNodes, edges: tempEdges };
+            
+            // 3. RUN ANALYSIS ONCE
+            const issues = analyzer.analyze(tempState as any, this._workspaceFolder.uri.fsPath);
+
+            const resultsBatch: any[] = [];
+            for (const item of batch) {
+                const { edgeId, fromNode, toNode } = item;
+                const relevantIssues = issues.filter(issue =>
+                    issue.nodeIds.includes(fromNode.id) && issue.nodeIds.includes(toNode.id)
+                );
+
+                let isValid = true;
+                let validationMessage = '연결이 유효합니다. (LogicAnalyzer ✅)';
+                let visualStyle: any = { color: '#b8bb26', style: 'solid', thickness: 2 }; // Pass
+
+                if (relevantIssues.length > 0) {
+                    const critical = relevantIssues.find(i => i.severity === 'critical');
+                    const warning = relevantIssues.find(i => i.severity === 'high' || i.severity === 'medium' || i.severity === 'low');
+
+                    if (critical) {
+                        isValid = false;
+                        validationMessage = critical.message;
+                        visualStyle = { color: '#fb4934', style: 'solid', thickness: 3 }; // Fail
+                    } else if (warning) {
+                        isValid = true;
+                        validationMessage = warning.message;
+                        visualStyle = { color: '#fabd2f', style: 'dashed', thickness: 2, dashArray: '5,5' }; // Warning
+                    }
+                }
+
+                resultsBatch.push({
+                    edgeId: edgeId,
+                    result: {
+                        valid: isValid,
+                        reason: validationMessage,
+                        confidence: 1.0,
+                        visual: visualStyle,
+                        isAi: false
+                    }
+                });
+            }
+
+            this._panel.webview.postMessage({
+                command: 'edgeValidationResultsBatch',
+                results: resultsBatch
+            });
+
+            Logger.info(`[CanvasPanel] Batch validation for ${batch.length} edges complete. Results sent.`);
+        } catch (error) {
+            Logger.error('[CanvasPanel] handleValidateEdgesBatch error:', error);
+        }
+    }
+
     private async handleValidateEdge(edgeId: string, fromNode: any, toNode: any, edgeType: string) {
         try {
-            console.log(`[SYNAPSE] Validating edge ${edgeId}: ${fromNode?.data?.label} -> ${toNode?.data?.label} (${edgeType})`);
-
             if (!this._workspaceFolder || !fromNode || !toNode) {
                 this._panel.webview.postMessage({
                     command: 'edgeValidationResult',
@@ -1931,6 +2026,14 @@ export class CanvasPanel {
                         if (uiCluster.position) backendCluster.position = uiCluster.position;
                         if (uiCluster.width) backendCluster.width = uiCluster.width;
                         if (uiCluster.height) backendCluster.height = uiCluster.height;
+                        // [v0.2.23] Persist collapsed state
+                        if (uiCluster.collapsed !== undefined) {
+                            backendCluster.collapsed = uiCluster.collapsed;
+                        }
+                        // [v0.2.23] Persist bounds for faster reloading
+                        if (uiCluster.bounds) {
+                            backendCluster.bounds = uiCluster.bounds;
+                        }
                     }
                 }
             }

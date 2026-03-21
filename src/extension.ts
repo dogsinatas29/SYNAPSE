@@ -266,6 +266,25 @@ export async function activate(context: vscode.ExtensionContext) {
             })
         );
 
+        context.subscriptions.push(
+            vscode.commands.registerCommand('synapse.logPrompt', async (data: any) => {
+                const projectRoot = data?.workspacePath || vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
+                if (!projectRoot) return;
+
+                if (!auditLogFilePath) {
+                    auditLogFilePath = promptLogger.initializeSession(projectRoot);
+                }
+
+                if (auditLogFilePath && data?.prompt) {
+                    if (data.title) {
+                        promptLogger.appendUser(auditLogFilePath, `[${data.title}] ${data.prompt}`);
+                    } else {
+                        promptLogger.appendUser(auditLogFilePath, data.prompt);
+                    }
+                }
+            })
+        );
+
         // CTRL+ALT+M — 토글 레코딩 모드
         // 1번째 누름: 레코딩 시작 (입력창 없음, 상태바 표시)
         // 2번째 누름: 레코딩 종료 + git diff 자동 캡처 + .synapse_contexts/ 저장
@@ -288,6 +307,22 @@ export async function activate(context: vscode.ExtensionContext) {
             // Watch for Chat Events via Storage
             const storagePath = ChatExtractor.getChatSessionsFolderPath(context);
             if (storagePath && fs.existsSync(storagePath)) {
+                // 1. Initial Scan: Capture history that happened before activation
+                const files = fs.readdirSync(storagePath)
+                    .filter(f => f.endsWith('.jsonl'))
+                    .map(f => path.join(storagePath, f));
+                
+                if (files.length > 0) {
+                    const latestFile = files.reduce((latest, current) => {
+                        const latestStat = fs.statSync(latest);
+                        const currentStat = fs.statSync(current);
+                        return latestStat.mtimeMs > currentStat.mtimeMs ? latest : current;
+                    });
+                    console.log(`[SYNAPSE] Initial scan of chat history: ${latestFile}`);
+                    syncChatEvents(latestFile, projectRoot);
+                }
+
+                // 2. Real-time Watcher
                 fs.watch(storagePath, (event: string, filename: string | null) => {
                     if (filename && filename.endsWith('.jsonl')) {
                         const fullPath = path.join(storagePath, filename);
@@ -299,10 +334,10 @@ export async function activate(context: vscode.ExtensionContext) {
 
         const syncChatEvents = (filePath: string, projectRoot: string) => {
             try {
-                if (!auditLogFilePath) return;
+                if (!auditLogFilePath || !fs.existsSync(filePath)) return;
                 const stats = fs.statSync(filePath);
                 
-                // If it's a new file or we haven't tracked it yet
+                // If it's a new file or we haven't tracked it yet, reset pos
                 if (currentChatFile !== filePath) {
                     currentChatFile = filePath;
                     lastChatFilePos = 0;
@@ -310,8 +345,9 @@ export async function activate(context: vscode.ExtensionContext) {
 
                 if (stats.size > lastChatFilePos) {
                     const fd = fs.openSync(filePath, 'r');
-                    const buffer = Buffer.alloc(stats.size - lastChatFilePos);
-                    fs.readSync(fd, buffer, 0, stats.size - lastChatFilePos, lastChatFilePos);
+                    const sizeToRead = stats.size - lastChatFilePos;
+                    const buffer = Buffer.alloc(sizeToRead);
+                    fs.readSync(fd, buffer, 0, sizeToRead, lastChatFilePos);
                     fs.closeSync(fd);
 
                     const newContent = buffer.toString('utf-8');
@@ -320,8 +356,9 @@ export async function activate(context: vscode.ExtensionContext) {
                     newLines.forEach(line => {
                         try {
                             const parsed = JSON.parse(line);
+                            // [v0.2.22] Enhanced Detection for multiple VS Code versions
                             // User Prompt Event
-                            if (parsed.kind === 2 && Array.isArray(parsed.v)) {
+                            if ((parsed.kind === 2 || parsed.k?.[0] === 'requests') && Array.isArray(parsed.v)) {
                                 parsed.v.forEach((req: any) => {
                                     if (req.message && req.message.text) {
                                         promptLogger.appendUser(auditLogFilePath!, req.message.text);
@@ -329,9 +366,12 @@ export async function activate(context: vscode.ExtensionContext) {
                                 });
                             }
                             // Assistant Response Event
-                            if (parsed.k && Array.isArray(parsed.k) && parsed.k[2] === 'response') {
+                            if (parsed.k && Array.isArray(parsed.k) && parsed.k.includes('response')) {
                                 if (parsed.v && Array.isArray(parsed.v)) {
-                                    const text = parsed.v.filter((r: any) => r.value && r.kind !== 'thinking').map((r: any) => r.value).join('');
+                                    const text = parsed.v
+                                        .filter((r: any) => r.value && r.kind !== 'thinking' && !r.kind?.includes('mcp'))
+                                        .map((r: any) => r.value)
+                                        .join('');
                                     if (text) promptLogger.appendAssistant(auditLogFilePath!, text);
                                 }
                             }
@@ -339,7 +379,9 @@ export async function activate(context: vscode.ExtensionContext) {
                     });
                     lastChatFilePos = stats.size;
                 }
-            } catch(e) {}
+            } catch(e) {
+                console.error(`[SYNAPSE] Chat sync error: ${e}`);
+            }
         };
 
         initAuditLog();
@@ -423,6 +465,12 @@ export async function activate(context: vscode.ExtensionContext) {
             vscode.workspace.workspaceFolders?.[0]?.uri.fsPath
         );
         vscode.window.registerTreeDataProvider('synapseExplorer', architectureExplorerProvider);
+
+        // [v0.2.22] Final Audit Log Initialization - Force start after UI is ready
+        setTimeout(() => {
+            console.log('[SYNAPSE] Triggering final audit log sync sequence...');
+            initAuditLog();
+        }, 2000);
 
         context.subscriptions.push(
             vscode.commands.registerCommand('synapse.refreshExplorer', () => {

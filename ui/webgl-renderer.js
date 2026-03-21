@@ -110,6 +110,36 @@ class WebGLRenderer {
         `;
         this.starProgram = this.createProgram(starVS, starFS);
 
+        // Edge Instanced Shader
+        const vsEdge = `
+            attribute vec2 aVertexPosition;
+            attribute vec4 aInstanceEdge;
+            uniform mat3 uProjectionMatrix;
+            void main() {
+                vec2 start = aInstanceEdge.xy;
+                vec2 end = aInstanceEdge.zw;
+                vec2 dir = end - start;
+                float len = length(dir);
+                if (len < 0.001) {
+                    gl_Position = vec4(0.0, 0.0, 0.0, 1.0);
+                    return;
+                }
+                vec2 norm = normalize(dir);
+                vec2 perp = vec2(-norm.y, norm.x);
+                float thickness = 2.0; 
+                vec2 pos = start + dir * aVertexPosition.x + perp * (aVertexPosition.y * thickness);
+                vec3 projected = uProjectionMatrix * vec3(pos, 1.0);
+                gl_Position = vec4(projected.xy, 0.0, 1.0);
+            }
+        `;
+        const fsEdge = `
+            precision mediump float;
+            void main() {
+                gl_FragColor = vec4(0.4, 0.36, 0.33, 0.6); // #665c54 with opacity
+            }
+        `;
+        this.edgeProgram = this.createProgram(vsEdge, fsEdge);
+
         // [v0.2.23] Composite Shader (Kept for compatibility, though currently unused)
         const compVS = `
             attribute vec2 aPosition;
@@ -142,6 +172,11 @@ class WebGLRenderer {
             star: {
                 pos: this.gl.getAttribLocation(this.starProgram, 'aPosition'),
                 uMat: this.gl.getUniformLocation(this.starProgram, 'uMatrix')
+            },
+            edge: {
+                vertex: this.gl.getAttribLocation(this.edgeProgram, 'aVertexPosition'),
+                instanceEdge: this.gl.getAttribLocation(this.edgeProgram, 'aInstanceEdge'),
+                uProj: this.gl.getUniformLocation(this.edgeProgram, 'uProjectionMatrix')
             }
         };
     }
@@ -176,6 +211,14 @@ class WebGLRenderer {
         this.posBuffer = this.gl.createBuffer();
         this.colorBuffer = this.gl.createBuffer();
         this.sizeBuffer = this.gl.createBuffer();
+
+        // Edge Buffer setup
+        const edgeVertices = [0, -0.5, 1, -0.5, 0, 0.5, 1, 0.5];
+        this.edgeRectBuffer = this.gl.createBuffer();
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.edgeRectBuffer);
+        this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(edgeVertices), this.gl.STATIC_DRAW);
+
+        this.edgeInstanceBuffer = this.gl.createBuffer();
 
         // [v0.2.23] Full-screen quad for composite
         const quadPos = [-1, -1, 1, -1, -1, 1, 1, 1];
@@ -277,6 +320,35 @@ class WebGLRenderer {
         this.gl.bufferData(this.gl.ARRAY_BUFFER, sizes, this.gl.DYNAMIC_DRAW);
     }
 
+    updateEdgeData(edges, nodeMap) {
+        if (!this.gl || !edges || edges.length === 0) {
+            this.edgeCount = 0;
+            return;
+        }
+
+        if (!this._edgeData || this._edgeData.length !== edges.length * 4) {
+            this._edgeData = new Float32Array(edges.length * 4);
+        }
+        
+        const data = this._edgeData;
+        let cnt = 0;
+        for (const e of edges) {
+            const src = nodeMap.get(e.from);
+            const tgt = nodeMap.get(e.to);
+            if (src && tgt && src.position && tgt.position) {
+                // Nodes are shifted by +60 and +30 to point to center
+                data[cnt++] = src.position.x + 60;
+                data[cnt++] = src.position.y + 30;
+                data[cnt++] = tgt.position.x + 60;
+                data[cnt++] = tgt.position.y + 30;
+            }
+        }
+        this.edgeCount = cnt / 4;
+
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.edgeInstanceBuffer);
+        this.gl.bufferData(this.gl.ARRAY_BUFFER, data.subarray(0, cnt), this.gl.DYNAMIC_DRAW);
+    }
+
     /**
      * [v0.2.24] Direct Rendering Optimization — Bye bye FBO caching for now.
      * Everything is drawn directly to screen buffer in a single pass.
@@ -295,7 +367,7 @@ class WebGLRenderer {
         }
     }
 
-    render(nodes, transform, isDataDirty = false) {
+    render(nodes, transform, isDataDirty = false, edges = null, nodeMap = null) {
         if (!this.gl) return;
         this.drawCalls = 0;
 
@@ -304,13 +376,18 @@ class WebGLRenderer {
         this.gl.clearColor(0, 0, 0, 0);
         this.gl.clear(this.gl.COLOR_BUFFER_BIT);
 
-        // Always update node data if something changed or number of nodes mismatched
-        if (isDataDirty || this.nodeCount !== nodes.length) {
+        const edgeLen = edges ? edges.length : 0;
+        if (isDataDirty || this.nodeCount !== nodes.length || this.lastEdgeCount !== edgeLen) {
             this.updateNodeData(nodes);
+            if (edges && nodeMap) {
+                this.updateEdgeData(edges, nodeMap);
+            }
+            this.lastEdgeCount = edgeLen;
         }
 
-        // Draw Sequence: Background (Stars) -> Main Content (Nodes)
+        // Draw Sequence: Background (Stars) -> Edges -> Nodes
         this.drawStars(transform);
+        if (this.edgeCount > 0) this.drawEdges(transform);
         this.drawNodes(transform);
 
         this._lastTransform = { ...transform };
@@ -321,7 +398,7 @@ class WebGLRenderer {
 
         // ALWAYS log at least once, then every 60 frames
         if (this.__perfCounter < 10 || this.__perfCounter % 60 === 0) {
-            console.log(`[SYNAPSE WebGL] Frame #${this.__perfCounter} | DrawCalls: ${this.drawCalls} | Instancing: ${this.ext ? 'ON' : 'OFF'} | Nodes: ${nodes.length}`);
+            console.log(`[SYNAPSE WebGL] Frame #${this.__perfCounter} | DrawCalls: ${this.drawCalls} | Instancing: ${this.ext ? 'ON' : 'OFF'} | Nodes: ${nodes.length} | Edges: ${this.edgeCount}`);
         }
     }
 
@@ -341,6 +418,32 @@ class WebGLRenderer {
         this.gl.enableVertexAttribArray(posLoc);
         this.gl.drawArrays(this.gl.POINTS, 0, 3000);
         this.drawCalls++;
+    }
+
+    drawEdges(transform) {
+        if (!this.ext || this.edgeCount === 0) return;
+        this.gl.useProgram(this.edgeProgram);
+        
+        const scaleX = 2 / this.canvas.width;
+        const scaleY = -2 / this.canvas.height;
+        const mat = [
+            transform.zoom * scaleX, 0, 0,
+            0, transform.zoom * scaleY, 0,
+            -1 + transform.offsetX * transform.zoom * scaleX, 1 + transform.offsetY * transform.zoom * scaleY, 1
+        ];
+        this.gl.uniformMatrix3fv(this.locs.edge.uProj, false, mat);
+
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.edgeRectBuffer);
+        const vPos = this.locs.edge.vertex;
+        this.gl.vertexAttribPointer(vPos, 2, this.gl.FLOAT, false, 0, 0);
+        this.gl.enableVertexAttribArray(vPos);
+
+        this.setAttrPointer(this.edgeInstanceBuffer, this.locs.edge.instanceEdge, 4);
+
+        if (this.ext) {
+            this.ext.drawArraysInstancedANGLE(this.gl.TRIANGLE_STRIP, 0, 4, this.edgeCount);
+            this.drawCalls++;
+        }
     }
 
     drawNodes(transform) {

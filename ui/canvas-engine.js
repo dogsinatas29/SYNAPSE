@@ -3964,7 +3964,8 @@ class CanvasEngine {
         }
 
         if (this.webglEnabled && this.webglRenderer) {
-            this.webglRenderer.render(this.nodes, this.transform, this.isGraphDataDirty);
+            // [v0.2.24] 3️⃣ WebGL에 edges 전달
+            this.webglRenderer.render(this.nodes, this.transform, this.isGraphDataDirty, this.edges, this.nodeMap);
             if (shouldLog) console.log("after webgl");
             this.isGraphDataDirty = false;
         }
@@ -4009,12 +4010,11 @@ class CanvasEngine {
                 ctx.fillStyle = '#1e1e1e';
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
             } else {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                // [v0.2.24] 2️⃣ clearRect 제거
+                // ctx.clearRect(0, 0, canvas.width, canvas.height);
             }
 
             const dpr = window.devicePixelRatio || 1;
-            // No need to scale(dpr, dpr) here every frame if setTransform is used correctly
-            // Actually, we use translate/scale below, so let's stick to simple
             ctx.scale(dpr, dpr);
 
             ctx.save();
@@ -4037,20 +4037,23 @@ class CanvasEngine {
 
             } else {
                 // Graph 모드: 그리드 -> 클러스터 -> 엣지 -> 노드 순으로 렌더링
-                this.renderGrid();
-                this.renderClusters();
+                // [v0.2.24] WebGL 모드에서는 무거운 2D 렌더링 생략
+                if (!this.webglEnabled) {
+                    this.renderGrid();
+                    this.renderClusters();
+                }
                 this.renderScrollbars();
 
                 // [v0.2.24] Overlay Frequency Separation (2D at 30fps to save CPU)
                 if (!this.debugDisableOverlay && (this._frameCounter % 2 === 0 || this.isDirty)) {
-                    // [테스트를 위해 라벨 및 엣지 임시 OFF]
-                    // this.renderEdges2D();
-                    if (shouldLog) console.log("after edges");
+                    if (!this.webglEnabled) {
+                        // 1️⃣ edges 및 labels 완전 제거 (Canvas에서 제거)
+                        // this.renderEdges2D();  
+                        // this.renderLabels2D(); 
+                    }
+                    if (shouldLog) console.log("after edges/labels");
                     
                     this.renderGhostNodes(zoom);
-
-                    // this.renderLabels2D();
-                    if (shouldLog) console.log("after labels");
                 }
 
                 // 드래그 선택 영역 표시 (Always on top of overlay)

@@ -4014,8 +4014,8 @@ class CanvasEngine {
                 ctx.fillStyle = '#1e1e1e';
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
             } else {
-                // [v0.2.24] 2️⃣ clearRect 제거
-                // ctx.clearRect(0, 0, canvas.width, canvas.height);
+                // [v0.2.24] 2️⃣ clearRect 필수 (2D UI 레이어 투명화)
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
             }
 
             const dpr = window.devicePixelRatio || 1;
@@ -4048,12 +4048,11 @@ class CanvasEngine {
                 }
                 this.renderScrollbars();
 
-                // [v0.2.24] Overlay Frequency Separation (2D at 30fps to save CPU)
                 if (!this.debugDisableOverlay && (this._frameCounter % 2 === 0 || this.isDirty)) {
                     if (!this.webglEnabled) {
-                        // 1️⃣ edges 및 labels 완전 제거 (Canvas에서 제거)
-                        // this.renderEdges2D();  
-                        // this.renderLabels2D(); 
+                        // 1️⃣ 2D 모드에서는 노드와 엣지를 직접 그림 (Fallback 복구)
+                        this.renderEdges2D();  
+                        this.renderLabels2D(); 
                     }
                     if (shouldLog) console.log("after edges/labels");
                     

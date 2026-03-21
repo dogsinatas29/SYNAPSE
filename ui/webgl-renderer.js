@@ -628,7 +628,7 @@ class WebGLRenderer {
         const mat = [
             transform.zoom * scaleX, 0, 0,
             0, transform.zoom * scaleY, 0,
-            -1 + transform.offsetX * transform.zoom * scaleX, 1 + transform.offsetY * transform.zoom * scaleY, 1
+            -1 + transform.offsetX * scaleX, 1 + transform.offsetY * scaleY, 1
         ];
         this.gl.uniformMatrix3fv(this.locs.edge.uProj, false, mat);
 
@@ -653,7 +653,7 @@ class WebGLRenderer {
         const mat = [
             transform.zoom * scaleX, 0, 0,
             0, transform.zoom * scaleY, 0,
-            -1 + transform.offsetX * transform.zoom * scaleX, 1 + transform.offsetY * transform.zoom * scaleY, 1
+            -1 + transform.offsetX * scaleX, 1 + transform.offsetY * scaleY, 1
         ];
         this.gl.uniformMatrix3fv(this.locs.node.uProj, false, mat);
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.rectBuffer);
@@ -687,7 +687,7 @@ class WebGLRenderer {
         const mat = [
             transform.zoom * scaleX, 0, 0,
             0, transform.zoom * scaleY, 0,
-            -1 + transform.offsetX * transform.zoom * scaleX, 1 + transform.offsetY * transform.zoom * scaleY, 1
+            -1 + transform.offsetX * scaleX, 1 + transform.offsetY * scaleY, 1
         ];
         this.gl.uniformMatrix3fv(this.locs.text.uProj, false, mat);
 

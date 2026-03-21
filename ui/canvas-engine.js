@@ -4043,12 +4043,13 @@ class CanvasEngine {
 
                 // [v0.2.24] Overlay Frequency Separation (2D at 30fps to save CPU)
                 if (!this.debugDisableOverlay && (this._frameCounter % 2 === 0 || this.isDirty)) {
-                    this.renderEdges2D();
+                    // [테스트를 위해 라벨 및 엣지 임시 OFF]
+                    // this.renderEdges2D();
                     if (shouldLog) console.log("after edges");
                     
                     this.renderGhostNodes(zoom);
 
-                    this.renderLabels2D();
+                    // this.renderLabels2D();
                     if (shouldLog) console.log("after labels");
                 }
 

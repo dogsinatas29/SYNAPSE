@@ -1,13 +1,10 @@
 /**
- * SYNAPSE WebGL Renderer (v0.2.21-optimized)
- * High-performance GPU-accelerated rendering path.
- * Refined to separate data updates from draw calls.
+ * SYNAPSE WebGL Renderer (v0.2.23-optimized)
+ * High-performance GPU-accelerated rendering path with Layer-based Caching (FBO).
  */
 class WebGLRenderer {
     constructor(canvas2d) {
         // [v0.2.21-fix] WebGL needs its OWN canvas.
-        // A canvas with getContext('2d') already called cannot also get a WebGL context.
-        // We create a sibling canvas element overlaid on top of the 2D canvas.
         this.canvas2d = canvas2d;
         this.glCanvas = document.createElement('canvas');
         this.glCanvas.id = 'webgl-overlay-canvas';
@@ -20,14 +17,12 @@ class WebGLRenderer {
             pointer-events: none;
             z-index: 0;
         `;
-        // Insert the GL canvas right before the 2D canvas in the DOM
         canvas2d.parentElement.insertBefore(this.glCanvas, canvas2d);
-        // Ensure parent is relatively positioned
         if (canvas2d.parentElement.style.position === '') {
             canvas2d.parentElement.style.position = 'relative';
         }
 
-        this.canvas = this.glCanvas; // alias for render methods
+        this.canvas = this.glCanvas;
         this.gl = this.glCanvas.getContext('webgl', { antialias: true, alpha: true, depth: false });
 
         if (!this.gl) {
@@ -37,35 +32,42 @@ class WebGLRenderer {
 
         this.ext = this.gl.getExtension('ANGLE_instanced_arrays');
         
-        // [Optimization] Global GL States
+        // [v0.2.23] Layer Management
+        this.layers = {
+            background: { id: 'background', fbo: null, texture: null, isDirty: true },
+            middle: { id: 'middle', fbo: null, texture: null, isDirty: true }
+        };
+
         this.gl.disable(this.gl.DEPTH_TEST);
         this.gl.enable(this.gl.BLEND);
         this.gl.blendFunc(this.gl.SRC_ALPHA, this.gl.ONE_MINUS_SRC_ALPHA);
         this.gl.clearColor(0, 0, 0, 0);
 
         this.initShaders();
+        this.cacheLocations();
         this.initBuffers();
         this.initStarfield();
+        this.initLayerFBOs();
 
+        console.log('[SYNAPSE WebGL] Renderer Initialized. Instancing:', !!this.ext);
         this.nodeCount = 0;
         this.starRotation = 0;
         
-        // Cache for change detection
         this._nodeCache = null;
         this._lastDataVersion = 0;
+        this._lastTransform = { zoom: 1, offsetX: 0, offsetY: 0 };
     }
 
     initShaders() {
+        // Node Instanced Shader
         const vsSource = `
             attribute vec2 aVertexPosition;
             attribute vec2 aInstancePosition;
             attribute vec3 aInstanceColor;
             attribute float aInstanceSize;
-            
             uniform mat3 uProjectionMatrix;
             varying vec3 vColor;
             varying vec2 vCoord;
-            
             void main() {
                 vColor = aInstanceColor;
                 vCoord = aVertexPosition;
@@ -74,23 +76,18 @@ class WebGLRenderer {
                 gl_Position = vec4(projected.xy, 0.0, 1.0);
             }
         `;
-
         const fsSource = `
             precision mediump float;
             varying vec3 vColor;
             varying vec2 vCoord;
-            
             void main() {
                 float dist = length(vCoord);
                 if (dist > 1.0) discard;
-                
-                // Soft circle with glow
                 float alpha = 1.0 - smoothstep(0.8, 1.0, dist);
                 vec3 glow = vColor * (1.2 - dist * 0.5);
                 gl_FragColor = vec4(glow, alpha);
             }
         `;
-
         this.nodeProgram = this.createProgram(vsSource, fsSource);
 
         // Starfield Shaders
@@ -112,6 +109,41 @@ class WebGLRenderer {
             }
         `;
         this.starProgram = this.createProgram(starVS, starFS);
+
+        // [v0.2.23] Composite Shader (Kept for compatibility, though currently unused)
+        const compVS = `
+            attribute vec2 aPosition;
+            varying vec2 vTexCoord;
+            void main() {
+                vTexCoord = aPosition * 0.5 + 0.5;
+                gl_Position = vec4(aPosition, 0.0, 1.0);
+            }
+        `;
+        const compFS = `
+            precision mediump float;
+            uniform sampler2D uTexture;
+            varying vec2 vTexCoord;
+            void main() {
+                gl_FragColor = texture2D(uTexture, vTexCoord);
+            }
+        `;
+        this.compProgram = this.createProgram(compVS, compFS);
+    }
+
+    cacheLocations() {
+        this.locs = {
+            node: {
+                pos: this.gl.getAttribLocation(this.nodeProgram, 'aInstancePosition'),
+                color: this.gl.getAttribLocation(this.nodeProgram, 'aInstanceColor'),
+                size: this.gl.getAttribLocation(this.nodeProgram, 'aInstanceSize'),
+                vertex: this.gl.getAttribLocation(this.nodeProgram, 'aVertexPosition'),
+                uProj: this.gl.getUniformLocation(this.nodeProgram, 'uProjectionMatrix')
+            },
+            star: {
+                pos: this.gl.getAttribLocation(this.starProgram, 'aPosition'),
+                uMat: this.gl.getUniformLocation(this.starProgram, 'uMatrix')
+            }
+        };
     }
 
     createProgram(vsSource, fsSource) {
@@ -136,16 +168,20 @@ class WebGLRenderer {
     }
 
     initBuffers() {
-        // Node Quad Base
         const positions = [-1, 1, 1, 1, -1, -1, 1, -1];
         this.rectBuffer = this.gl.createBuffer();
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.rectBuffer);
         this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(positions), this.gl.STATIC_DRAW);
 
-        // Instance Buffers
         this.posBuffer = this.gl.createBuffer();
         this.colorBuffer = this.gl.createBuffer();
         this.sizeBuffer = this.gl.createBuffer();
+
+        // [v0.2.23] Full-screen quad for composite
+        const quadPos = [-1, -1, 1, -1, -1, 1, 1, 1];
+        this.quadBuffer = this.gl.createBuffer();
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.quadBuffer);
+        this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(quadPos), this.gl.STATIC_DRAW);
     }
 
     initStarfield() {
@@ -161,12 +197,52 @@ class WebGLRenderer {
     }
 
     /**
-     * updateNodeData: 노드 데이터가 변경되었을 때만 버퍼를 갱신
+     * [v0.2.23] FBO Initialization & Layer Texture allocation
      */
+    initLayerFBOs() {
+        Object.values(this.layers).forEach(layer => {
+            const { fbo, texture } = this.createFBO(this.canvas.width, this.canvas.height);
+            layer.fbo = fbo;
+            layer.texture = texture;
+            layer.isDirty = true;
+        });
+    }
+
+    createFBO(width, height) {
+        const gl = this.gl;
+        const fbo = gl.createFramebuffer();
+        gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
+
+        const texture = gl.createTexture();
+        gl.bindTexture(gl.TEXTURE_2D, texture);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+
+        gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0);
+        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+
+        return { fbo, texture };
+    }
+
+    resizeLayers(width, height) {
+        console.log(`[SYNAPSE] FBO Resize: ${width}x${height}`);
+        this.glCanvas.width = width;
+        this.glCanvas.height = height;
+
+        Object.values(this.layers).forEach(layer => {
+            if (layer.fbo) this.gl.deleteFramebuffer(layer.fbo);
+            if (layer.texture) this.gl.deleteTexture(layer.texture);
+            const { fbo, texture } = this.createFBO(width, height);
+            layer.fbo = fbo;
+            layer.texture = texture;
+            layer.isDirty = true;
+        });
+    }
+
     updateNodeData(nodes) {
         if (!this.gl || nodes.length === 0) return;
-        
-        console.log('[SYNAPSE] WebGL: Updating Node Buffers...');
         this.nodeCount = nodes.length;
 
         const positions = new Float32Array(nodes.length * 2);
@@ -180,52 +256,67 @@ class WebGLRenderer {
             colors[i * 3] = rgb.r;
             colors[i * 3 + 1] = rgb.g;
             colors[i * 3 + 2] = rgb.b;
-            sizes[i] = 30; // Base size
+            sizes[i] = 30; 
         });
 
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.posBuffer);
         this.gl.bufferData(this.gl.ARRAY_BUFFER, positions, this.gl.DYNAMIC_DRAW);
-
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.colorBuffer);
         this.gl.bufferData(this.gl.ARRAY_BUFFER, colors, this.gl.DYNAMIC_DRAW);
-
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.sizeBuffer);
         this.gl.bufferData(this.gl.ARRAY_BUFFER, sizes, this.gl.DYNAMIC_DRAW);
     }
 
     /**
-     * render: GPU 가속 렌더링
-     * NOTE: edges는 Canvas2D에서 그립니다 (canvas-engine.js의 renderEdge).
-     *       WebGL 경로는 배경(stars) + 노드(instanced) 만 처리합니다.
-     * @param {Array} nodes - 노드 배열
-     * @param {Object} transform - { zoom, offsetX, offsetY }
-     * @param {boolean} isDataDirty - 노드 위치/색상이 변경됐을 때만 true
+     * [v0.2.24] Direct Rendering Optimization — Bye bye FBO caching for now.
+     * Everything is drawn directly to screen buffer in a single pass.
      */
+    handleResize() {
+        const width = Math.floor(this.canvas2d.width);
+        const height = Math.floor(this.canvas2d.height);
+        
+        if (this.glCanvas.width !== width || this.glCanvas.height !== height) {
+            this.glCanvas.width = width;
+            this.glCanvas.height = height;
+            if (this.gl) {
+                this.gl.viewport(0, 0, width, height);
+            }
+            console.log(`[SYNAPSE WebGL] Context resize sync: ${width}x${height}`);
+        }
+    }
+
     render(nodes, transform, isDataDirty = false) {
         if (!this.gl) return;
+        this.drawCalls = 0;
 
-        // Sync overlay canvas size with the 2D canvas (handles window resize)
-        if (this.glCanvas.width !== this.canvas2d.width || this.glCanvas.height !== this.canvas2d.height) {
-            this.glCanvas.width = this.canvas2d.width;
-            this.glCanvas.height = this.canvas2d.height;
-        }
+        // [v0.2.24] Buffer state setup
+        this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, null);
+        this.gl.clearColor(0, 0, 0, 0);
+        this.gl.clear(this.gl.COLOR_BUFFER_BIT);
 
-        // [v0.2.21 Optimization] Only upload to GPU when data actually changed
-        // pan/zoom → isDataDirty=false → buffer 재업로드 없음, uniform만 갱신
+        // Always update node data if something changed or number of nodes mismatched
         if (isDataDirty || this.nodeCount !== nodes.length) {
             this.updateNodeData(nodes);
         }
 
-        this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
-        this.gl.clear(this.gl.COLOR_BUFFER_BIT);
+        // Draw Sequence: Background (Stars) -> Main Content (Nodes)
+        this.drawStars(transform);
+        this.drawNodes(transform);
 
-        this.renderStars(transform);
-        this.renderNodes(nodes, transform);
+        this._lastTransform = { ...transform };
+
+        // [v0.2.24] Perf Audit & Robust Logging
+        if (!this.__perfCounter) this.__perfCounter = 0;
+        this.__perfCounter++;
+
+        // ALWAYS log at least once, then every 60 frames
+        if (this.__perfCounter < 10 || this.__perfCounter % 60 === 0) {
+            console.log(`[SYNAPSE WebGL] Frame #${this.__perfCounter} | DrawCalls: ${this.drawCalls} | Instancing: ${this.ext ? 'ON' : 'OFF'} | Nodes: ${nodes.length}`);
+        }
     }
 
-    renderStars(transform) {
+    drawStars(transform) {
         this.gl.useProgram(this.starProgram);
-        
         const zoomScale = transform.zoom * 0.2;
         const matrix = [
             zoomScale, 0, 0, 0,
@@ -233,23 +324,18 @@ class WebGLRenderer {
             0, 0, 1, 0,
             (transform.offsetX * 0.001), (transform.offsetY * 0.001), 0, 1
         ];
-
-        const loc = this.gl.getUniformLocation(this.starProgram, 'uMatrix');
-        this.gl.uniformMatrix4fv(loc, false, matrix);
-
+        this.gl.uniformMatrix4fv(this.locs.star.uMat, false, matrix);
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.starBuffer);
-        const posLoc = this.gl.getAttribLocation(this.starProgram, 'aPosition');
+        const posLoc = this.locs.star.pos;
         this.gl.vertexAttribPointer(posLoc, 3, this.gl.FLOAT, false, 0, 0);
         this.gl.enableVertexAttribArray(posLoc);
-
         this.gl.drawArrays(this.gl.POINTS, 0, 3000);
+        this.drawCalls++;
     }
 
-    renderNodes(nodes, transform) {
+    drawNodes(transform) {
         if (this.nodeCount === 0) return;
         this.gl.useProgram(this.nodeProgram);
-
-        // Prep Projection Matrix (Only update Uniforms, NO Buffer Sync)
         const scaleX = 2 / this.canvas.width;
         const scaleY = -2 / this.canvas.height;
         const mat = [
@@ -257,32 +343,47 @@ class WebGLRenderer {
             0, transform.zoom * scaleY, 0,
             -1 + transform.offsetX * transform.zoom * scaleX, 1 + transform.offsetY * transform.zoom * scaleY, 1
         ];
-        this.gl.uniformMatrix3fv(this.gl.getUniformLocation(this.nodeProgram, 'uProjectionMatrix'), false, mat);
-
-        // 1. Bind Base Quad
+        this.gl.uniformMatrix3fv(this.locs.node.uProj, false, mat);
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.rectBuffer);
-        const vPos = this.gl.getAttribLocation(this.nodeProgram, 'aVertexPosition');
+        const vPos = this.locs.node.vertex;
         this.gl.vertexAttribPointer(vPos, 2, this.gl.FLOAT, false, 0, 0);
         this.gl.enableVertexAttribArray(vPos);
-
-        // 2. Bind Attribute Buffers (Already updated via updateNodeData)
-        this.setAttrPointer(this.posBuffer, 'aInstancePosition', 2);
-        this.setAttrPointer(this.colorBuffer, 'aInstanceColor', 3);
-        this.setAttrPointer(this.sizeBuffer, 'aInstanceSize', 1);
-
+        this.setAttrPointer(this.posBuffer, this.locs.node.pos, 2);
+        this.setAttrPointer(this.colorBuffer, this.locs.node.color, 3);
+        this.setAttrPointer(this.sizeBuffer, this.locs.node.size, 1);
         if (this.ext) {
             this.ext.drawArraysInstancedANGLE(this.gl.TRIANGLE_STRIP, 0, 4, this.nodeCount);
+            this.drawCalls++;
         } else {
-            // Fallback for non-instanced (slow)
             for (let i = 0; i < this.nodeCount; i++) {
                 this.gl.drawArrays(this.gl.TRIANGLE_STRIP, 0, 4);
+                this.drawCalls++;
             }
         }
     }
 
-    setAttrPointer(buffer, attrName, size) {
+    composite() {
+        this.gl.useProgram(this.compProgram);
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.quadBuffer);
+        const posLoc = this.gl.getAttribLocation(this.compProgram, 'aPosition');
+        this.gl.enableVertexAttribArray(posLoc);
+        this.gl.vertexAttribPointer(posLoc, 2, this.gl.FLOAT, false, 0, 0);
+
+        const texLoc = this.gl.getUniformLocation(this.compProgram, 'uTexture');
+
+        // Draw In Order: background -> middle
+        [this.layers.background, this.layers.middle].forEach(layer => {
+            if (!layer.texture) return;
+            this.gl.activeTexture(this.gl.TEXTURE0);
+            this.gl.bindTexture(this.gl.TEXTURE_2D, layer.texture);
+            this.gl.uniform1i(texLoc, 0);
+            this.gl.drawArrays(this.gl.TRIANGLE_STRIP, 0, 4);
+        });
+    }
+
+    setAttrPointer(buffer, loc, size) {
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, buffer);
-        const loc = this.gl.getAttribLocation(this.nodeProgram, attrName);
+        if (loc === -1) return;
         this.gl.enableVertexAttribArray(loc);
         this.gl.vertexAttribPointer(loc, size, this.gl.FLOAT, false, 0, 0);
         if (this.ext) {
@@ -300,4 +401,5 @@ class WebGLRenderer {
         } : { r: 1, g: 1, b: 1 };
     }
 }
+
 

@@ -890,9 +890,13 @@ class CanvasEngine {
 
         // [v0.2.20] Loop guard initialization
         this.isAnimationLoopActive = false;
-        this.isDirty = true; // [v0.2.20] Dirty Flag Pattern
-        this.lastActivityTime = Date.now();
-        this.inactivityTimeout = 2000; // 2 seconds of active rendering after last activity
+        this._loopRunning = false; // [v0.2.24] Robust loop protection
+        this._frameCounter = 0; // [v0.2.24] Log throttling
+        this.isGraphDataDirty = true;
+        this.nodeMap = new Map(); // [v0.2.24] O(1) Cache
+        this.edgeValidationCache = new Map(); // [v0.2.24] BFS Cache
+        this._lastDataHash = null; // [v0.2.24] Data integrity guard
+        this._lastLoadTime = 0; // [v0.2.24] Load throttling
 
         // 데이터
         this.nodes = [];
@@ -948,15 +952,21 @@ class CanvasEngine {
             '#ebdbb2'  // Light
         ];
         this.colorCounter = 0;
+        this.debugDisableOverlay = false;
+        this._fpsFrames = [];
 
         // 인터랙션 상태
         this.isDragging = false;
         this.dragStart = { x: 0, y: 0 };
+        this._isInteracting = false; // [v0.2.24] Interaction Guard
+        this._pendingState = null;   // [v0.2.24] Queued updates
         this.animationOffset = 0;
         this.isAnimating = true;
         this.isSelecting = false; // 드래그 선택 중인지 여부
         this.selectionRect = { x: 0, y: 0, width: 0, height: 0 }; // 드래그 선택 영역
         this.wasDragging = false; // 드래그/선택 후 클릭 무시용 플래그
+        this.needsUpdate = true;   // [v0.2.24] Passive rendering flag (High CPU fix)
+        this._lastRenderTime = 0;
 
         // 전역 엔진 등록
         window.engine = this;
@@ -1415,7 +1425,6 @@ class CanvasEngine {
         } else {
             console.warn('[SYNAPSE] VS Code API not available (Browser mode). Attempting to fetch state...');
             try {
-                // 상위 디렉토리의 data/project_state.json 시도 (demo 환경 등)
                 const response = await fetch('/data/project_state.json');
                 if (response.ok) {
                     const state = await response.json();
@@ -1428,7 +1437,7 @@ class CanvasEngine {
         }
     }
 
-    resizeCanvas() {
+    resizeCanvas(immediate = false) {
         const container = this.canvas.parentElement;
         if (!container) return;
 
@@ -1438,18 +1447,30 @@ class CanvasEngine {
         const targetWidth = Math.floor(width * dpr);
         const targetHeight = Math.floor(height * dpr);
 
-        // [v0.2.20] Only reset buffer if size changed to prevent unnecessary context loss
         if (this.canvas.width !== targetWidth || this.canvas.height !== targetHeight) {
-            this.canvas.width = targetWidth;
-            this.canvas.height = targetHeight;
-            this.canvas.style.width = `${width}px`;
-            this.canvas.style.height = `${height}px`;
-            
-            // Context scale must be re-applied after width/height reset
-            if (this.ctx) {
-                this.ctx.scale(dpr, dpr);
+            // [v0.2.24] Resize Debounce: Wait for resize to settle before heavy buffer reset
+            if (this._resizeTimeout) clearTimeout(this._resizeTimeout);
+            const updateBuffer = () => {
+                this.canvas.width = targetWidth;
+                this.canvas.height = targetHeight;
+                this.canvas.style.width = `${width}px`;
+                this.canvas.style.height = `${height}px`;
+                
+                if (this.webglEnabled && this.webglRenderer) {
+                    this.webglRenderer.handleResize();
+                }
+
+                console.log(`[SYNAPSE] Canvas stabilized (${immediate ? 'Sync' : 'Async'}). Size: ${width}x${height}`);
+                this.render();
+            };
+
+            if (immediate) {
+                if (this._resizeTimeout) clearTimeout(this._resizeTimeout);
+                updateBuffer();
+            } else {
+                if (this._resizeTimeout) clearTimeout(this._resizeTimeout);
+                this._resizeTimeout = setTimeout(updateBuffer, 100);
             }
-            console.log(`[SYNAPSE] Canvas resized & buffer reset. DPR: ${dpr}, Size: ${width}x${height}`);
         }
 
         // [v0.2.20] Virtual Debug Button Listener
@@ -1522,7 +1543,7 @@ class CanvasEngine {
         this.isAnimating = !this.isAnimating;
         if (this.isAnimating) {
             this.lastActivityTime = Date.now();
-            this.startAnimationLoop();
+            this.startLoop();
         } else {
             this.render(); // Ensure 'IDLE' is shown immediately when stopped
         }
@@ -1535,7 +1556,7 @@ class CanvasEngine {
         if (!this.isAnimating) {
             this.isAnimating = true;
             this.isDirty = true;
-            this.startAnimationLoop();
+            this.startLoop();
         }
     }
 
@@ -1569,48 +1590,53 @@ class CanvasEngine {
         this.render();
     }
 
-    startAnimationLoop() {
-        // [v0.2.20] Prevent duplicate animation loops
-        if (this.isAnimationLoopActive) return;
-        this.isAnimationLoopActive = true;
+    startLoop() {
+        if (this._loopRunning) return;
+        this._loopRunning = true;
+        console.log("[SYNAPSE] starting main loop (eco-mode with auto-sleep)");
 
-        const animate = () => {
-            if (this.isAnimating || this.isTestingLogic) {
-                // 부드러운 이동을 위한 오프셋 증가
-                this.animationOffset = (this.animationOffset + 0.5) % 40;
-
-                // 펄스 애니메이션 업데이트 (War Room 기능)
-                if (this.isTestingLogic && this.edges.length > 0) {
-                    if (Math.random() < 0.05 && this.pulses.length < 20) {
-                        const randomEdge = this.edges[Math.floor(Math.random() * this.edges.length)];
-                        this.pulses.push({ edgeId: randomEdge.id, progress: 0, speed: 0.01 + Math.random() * 0.02 });
-                    }
-
-                    this.pulses = this.pulses.filter(p => {
-                        p.progress += p.speed;
-                        return p.progress < 1;
-                    });
-                }
-
-                this.updateParticles();
-
-                // [v0.2.20] Smart Deactivation: If no animations left AND no recent activity, sleep the loop
+        const loop = () => {
+            try {
+                // [v0.2.24] Auto-Sleep Logic: Idle for 2 seconds -> Set isAnimating to false
                 const now = Date.now();
-                const isPassive = this.particles.length === 0 && this.pulses.length === 0 && !this.isDragging && !this.isTestingLogic;
-                if (isPassive && (now - this.lastActivityTime > this.inactivityTimeout)) {
-                    this.isAnimating = false;
-                    this.isAnimationLoopActive = false;
-                    this.render(); // Show 'IDLE' explicitly
-                    return; 
+                const idleTime = now - (this.lastActivityTime || 0);
+                const hasActiveParticles = this.particles.length > 0 || this.promotionSites.length > 0;
+                
+                if (idleTime > 2000 && !hasActiveParticles && !this.isDragging && !this.isSelecting && !this.needsUpdate) {
+                    if (this.isAnimating) {
+                        this.log('[SYNAPSE] Eco-mode: Entering Sleep (IDLE > 2s)');
+                        this.isAnimating = false;
+                        this.needsUpdate = true; // Final indicator draw
+                        this.render(); 
+                    }
+                    this._loopRunning = false; // Stop recursive RAF
+                    return; // EXIT LOOP
                 }
 
-                this.render();
-                requestAnimationFrame(animate);
-            } else {
-                this.isAnimationLoopActive = false;
+                // [v0.2.24] Demand-driven rendering: Only draw if needed
+                const shouldRender = this._isInteracting || this.isDragging || this.isSelecting || hasActiveParticles || this.needsUpdate || this.isAnimating;
+
+                if (shouldRender) {
+                    this.render();
+                    this.needsUpdate = false; // Reset after render
+                }
+            } catch (e) {
+                console.error("[SYNAPSE] render crash", e);
+                this._loopRunning = false;
+            }
+            if (this._loopRunning) {
+                requestAnimationFrame(loop);
             }
         };
-        requestAnimationFrame(animate);
+
+        requestAnimationFrame(loop);
+    }
+
+    requestRender() {
+        this.needsUpdate = true;
+        if (!this._loopRunning) {
+            this.startLoop();
+        }
     }
 
     updateParticles() {
@@ -1794,7 +1820,7 @@ class CanvasEngine {
                     for (let i = 0; i < items.length; i++) {
                         if (items[i].kind === 'string') {
                             items[i].getAsString((s) => {
-                                console.log('[SYNAPSE] Dropped string content:', s);
+                                console.log('[SYNAPSE] Dropped string content:', s.substring(0, 50) + (s.length > 50 ? '...' : ''));
                                 if (s.endsWith('.md')) {
                                     if (typeof vscode !== 'undefined') {
                                         vscode.postMessage({
@@ -1815,6 +1841,18 @@ class CanvasEngine {
         // 마우스 휠 (줌)
         this.canvas.addEventListener('wheel', (e) => {
             this.wakeUp();
+            this._isInteracting = true; // [v0.2.24] Lock during interaction
+            
+            // Interaction Debounce: Reset lock after wheel activity pauses
+            if (this._wheelTimeout) clearTimeout(this._wheelTimeout);
+            this._wheelTimeout = setTimeout(() => {
+                this._isInteracting = false;
+                if (this._pendingState) {
+                    this.log('[SYNAPSE] Applying deferred projectState after zoom');
+                    this.loadProjectState(this._pendingState, true);
+                    this._pendingState = null;
+                }
+            }, 600);
 
             e.preventDefault();
             e.stopPropagation(); // 브라우저 전체 줌 방지
@@ -1825,6 +1863,7 @@ class CanvasEngine {
         // 마우스 드래그 (팬, 노드 드래그, 선택, 엣지 생성)
         this.canvas.addEventListener('mousedown', (e) => {
             this.wakeUp();
+            this._isInteracting = true; // [v0.2.24] Lock during interaction
             // [Fix] Ensure canvas receives keyboard focus for keydown events
             this.canvas.focus();
 
@@ -2107,17 +2146,22 @@ class CanvasEngine {
                 this.pan(dx, dy);
                 this.dragStart = { x: e.offsetX, y: e.offsetY };
             } else {
-                // 🔍 툴팁 처리 (Phase 4)
-                const edge = this.findEdgeAtPoint(worldPos.x, worldPos.y);
-                const node = this.getNodeAt(worldPos.x, worldPos.y);
+                // [v0.2.24] 🚀 Throttle tooltip and hit detection logic to save CPU
+                const now = Date.now();
+                if (now - (this._lastHoverCheck || 0) > 50) {
+                    this._lastHoverCheck = now;
+                    // 🔍 툴팁 처리 (Phase 4)
+                    const edge = this.findEdgeAtPoint(worldPos.x, worldPos.y);
+                    const node = this.getNodeAt(worldPos.x, worldPos.y);
 
-                this.hoveredEdge = edge;
-                this.hoveredNode = node;
+                    this.hoveredEdge = edge;
+                    this.hoveredNode = node;
 
-                if (edge && edge._validationReason) {
-                    this.showTooltip(e.clientX, e.clientY, edge._validationReason);
-                } else {
-                    this.hideTooltip();
+                    if (edge && edge._validationReason) {
+                        this.showTooltip(e.clientX, e.clientY, edge._validationReason);
+                    } else {
+                        this.hideTooltip();
+                    }
                 }
             }
         });
@@ -2174,29 +2218,47 @@ class CanvasEngine {
                 // Saving state triggers a full JSON reload which overwrote Node objects with new ones.
                 // This caused 'selectedNodes' to contain dead references, breaking subsequent drag logic.
             } else if (this.isDragging) {
-                this.isDragging = false;
-
                 // [v0.2.20 Fix] Only trigger saveState if actual movement occurred (not just a click)
                 if (this.wasDragging) {
                     // 클러스터 드래그 종료 시 침범한 노드 밀어내기
                     const draggedNodes = Array.from(this.selectedNodes);
                     const clusterIds = new Set(draggedNodes.map(n => n.cluster_id).filter(id => id));
+                    let movedByIntruder = false;
                     for (const cid of clusterIds) {
-                        this.repositionIntruders(cid);
+                        if (this.repositionIntruders(cid)) {
+                            movedByIntruder = true;
+                        }
                     }
 
-                // [v0.2.20 Perf Fix] Only saveState if drag distance > 10px to avoid redundant JSON serialization
-                const absDragDist = Math.sqrt(
-                    Math.pow(this.dragStartAbsolute.x - (this.dragStart?.x ?? 0), 2) +
-                    Math.pow(this.dragStartAbsolute.y - (this.dragStart?.y ?? 0), 2)
-                );
-                if (absDragDist > 10) {
-                    this.saveState();
+                    // [v0.2.23 Fix] Reduced threshold to 15px for better UX (Allow small drag-save)
+                    const absDragDist = Math.sqrt(
+                        Math.pow(this.dragStartAbsolute.x - (this.dragStart?.x ?? 0), 2) +
+                        Math.pow(this.dragStartAbsolute.y - (this.dragStart?.y ?? 0), 2)
+                    );
+                    
+                    if (absDragDist > 15 || movedByIntruder) {
+                        this.saveState();
+                        if (movedByIntruder) {
+                            this.takeSnapshot(`Auto Push (after drag)`);
+                        }
+                    }
                 }
-                }
+                this.isDragging = false;
+                this.wasDragging = false;
+                this.activeNodeId = null;
+                this.dragTarget = null;
+                this.canvas.style.cursor = 'default';
             } else if (this.isPanning) {
                 this.isPanning = false;
                 this.canvas.style.cursor = 'default';
+            }
+
+            // [v0.2.24] End Interaction Lock and apply any deferred updates
+            this._isInteracting = false;
+            if (this._pendingState) {
+                this.log('[SYNAPSE] Applying deferred projectState after interaction end');
+                this.loadProjectState(this._pendingState, true);
+                this._pendingState = null;
             }
         });
 
@@ -2430,7 +2492,7 @@ class CanvasEngine {
         for (const node of this.nodes) {
             const nodeWidth = node._width || 120;
             const nodeHeight = 60;
-            const HIT_PADDING = 30; // [v0.2.25] 클릭/선택 영역 확장 (12 -> 30)
+            const HIT_PADDING = 30; // [v0.2.24] 클릭/선택 영역 확장 (12 -> 30)
 
             // Check if node is hidden (collapsed cluster)
             if (node.cluster_id) {
@@ -2438,10 +2500,11 @@ class CanvasEngine {
                 if (cluster && cluster.collapsed) continue;
             }
 
-            const left = node.position.x - nodeWidth / 2 - HIT_PADDING;
-            const right = node.position.x + nodeWidth / 2 + HIT_PADDING;
-            const top = node.position.y - nodeHeight / 2 - HIT_PADDING;
-            const bottom = node.position.y + nodeHeight / 2 + HIT_PADDING;
+            // [v0.2.23-fix] Match Top-Left origin used in renderNode
+            const left = node.position.x - HIT_PADDING;
+            const right = node.position.x + nodeWidth + HIT_PADDING;
+            const top = node.position.y - HIT_PADDING;
+            const bottom = node.position.y + nodeHeight + HIT_PADDING;
 
             if (worldX >= left && worldX <= right && worldY >= top && worldY <= bottom) {
                 return node;
@@ -2598,17 +2661,13 @@ class CanvasEngine {
                 ny + nh >= minY - padding && ny <= maxY + padding) {
 
                 // 침범 발생 -> 아래쪽으로 밀어내기 (가장 간단한 전략)
-                // TODO: 위/아래 중 가까운 곳으로 밀어내기 등 고도화 가능
                 node.position.y = maxY + padding + intruderPadding;
                 movedAny = true;
-                console.log(`[SYNAPSE] Pushing intruder node '${node.data.label}' out of ${cluster.label}`);
+                // console.log(`[SYNAPSE] Pushing intruder node '${node.data?.label}' out of ${cluster.label}`);
             }
         }
 
-        if (movedAny) {
-            this.saveState();
-            this.takeSnapshot(`Auto Push (after drag)`);
-        }
+        return movedAny;
     }
 
     showContextMenu(x, y, node) {
@@ -3302,18 +3361,20 @@ class CanvasEngine {
     updateEdgeValidation(edgeId, result) {
         const edge = this.edges.find(e => e.id === edgeId);
         if (edge) {
-            edge.validationReason = result.reason;
+            edge.validation = result;
+            edge._validationReason = result.reason;
             edge.isValid = result.valid;
             
             if (result.visual) {
-                edge.visual = {
-                    ...edge.visual,
-                    ...result.visual
-                };
+                edge.visual = { ...edge.visual, ...result.visual };
+                result.color = result.visual.color; // renderEdge 호환성 브릿지
             }
             
-            // Re-render to show updated colors
-            this.render();
+            // [v0.2.24] 캐시 직접 주입 (이후 renderEdge()가 캐시히트하여 빨간색 등 정상출력 가능)
+            this.edgeValidationCache.set(edgeId, result);
+
+            // 단건마다 synchronous `this.render()` 호출하지 않고 loop flag 점화
+            this.requestRender();
         }
     }
 
@@ -3362,13 +3423,7 @@ class CanvasEngine {
         });
     }
 
-    updateEdgeValidation(edgeId, result) {
-        const edge = this.edges.find(e => e.id === edgeId);
-        if (edge) {
-            edge.validation = result;
-            this.render();
-        }
-    }
+
 
     showTooltip(x, y, content) {
         if (!this.tooltip || !this.tooltip.style) return;
@@ -3393,6 +3448,7 @@ class CanvasEngine {
     hideTooltip() {
         if (!this.tooltip || !this.tooltip.style) return;
         this.tooltip.style.display = 'none';
+        this.needsUpdate = true; // [v0.2.24] Ensure first draw after clear
     }
 
     getOrCreateSystemClusters() {
@@ -3423,16 +3479,32 @@ class CanvasEngine {
     }
 
     loadProjectState(projectState, preserveView = false) {
-        this.log(`loadProjectState triggered. Nodes: ${projectState.nodes?.length}, Edges: ${projectState.edges?.length}`);
+        // [v0.2.24] Throttling & Data Integrity Guard
+        const now = Date.now();
+        const dataHash = `n${projectState.nodes?.length}e${projectState.edges?.length}c${projectState.clusters?.length}`;
         
-        // [v0.2.18.2] Promotion Detection
-        const oldManualNodes = this.nodes.filter(n => n.id.startsWith('node_manual_'));
+        if (this._lastDataHash === dataHash && (now - this._lastLoadTime < 1000) && preserveView) {
+            // console.log('[SYNAPSE] Skipping redundant loadProjectState');
+            return;
+        }
+        
+        this._lastDataHash = dataHash;
+        this._lastLoadTime = now;
+        
+        // [v0.2.24] Selection Preservation: Remember IDs before object replacement
+        const selectedIds = new Set(Array.from(this.selectedNodes).map(n => n.id));
+        const oldSelectedNodeId = this.selectedNode?.id;
+
+        this.log(`loadProjectState triggered. Nodes: ${projectState.nodes?.length}, Edges: ${projectState.edges?.length}`);
         const promotedLabels = [];
 
         try {
             if (!projectState.nodes || projectState.nodes.length === 0) {
                 console.warn('[SYNAPSE] loadProjectState: Received empty nodes list.');
             }
+
+            // [Fix] Capture manual nodes before overriding this.nodes
+            const oldManualNodes = (this.nodes || []).filter(n => n.id.startsWith('node_manual_'));
 
             const rawNodes = projectState.nodes || [];
             this.contextVaultNodes = rawNodes.filter(n => n.id.startsWith('ctx_vault_node_') || n.cluster_id === 'context_vault' || n.data?.cluster_id === 'context_vault');
@@ -3540,10 +3612,15 @@ class CanvasEngine {
             }
 
             // [v0.2.17 New Rule] Prevent node overlaps
-            try {
-                this.resolveOverlaps();
-            } catch (overlapErr) {
-                this.log('resolveOverlaps failed but continuing', 'error', overlapErr.message);
+            // [v0.2.24] Skip overlap resolution during background sync to prevent jitter
+            if (!preserveView) {
+                try {
+                    this.resolveOverlaps();
+                } catch (overlapErr) {
+                    this.log('resolveOverlaps failed but continuing', 'error', overlapErr.message);
+                }
+            } else {
+                this.log('Skipping overlap resolution for background sync to preserve user layout');
             }
 
             // UI 업데이트
@@ -3552,8 +3629,22 @@ class CanvasEngine {
             if (nodeCountEl) nodeCountEl.textContent = this.nodes.length;
             if (edgeCountEl) edgeCountEl.textContent = this.edges.length;
 
+            // [v0.2.24] Selection Recovery: Re-link selected nodes to NEW objects
+            if (selectedIds && selectedIds.size > 0) {
+                this.selectedNodes.clear();
+                this.nodes.forEach(node => {
+                    if (selectedIds.has(node.id)) {
+                        this.selectedNodes.add(node);
+                        if (node.id === oldSelectedNodeId) {
+                            this.selectedNode = node;
+                        }
+                    }
+                });
+                this.log(`Recovered selection for ${this.selectedNodes.size} nodes.`);
+            }
+
             // Fit view (only if not preserving)
-            this.resizeCanvas(); // Ensure canvas size is correct before fitting
+            this.resizeCanvas(!preserveView); // [v0.2.24] Force immediate resize before fitView
             if (!preserveView) {
                 this.fitView();
             } else {
@@ -3568,31 +3659,35 @@ class CanvasEngine {
                 loadingEl.remove();
             }
 
-            // 로드 시 모든 엣지에 대해 비동기 검증 요청 [v0.2.16 Opt: Throttled Batching]
+            // [v0.2.24] IPC Optimization: Batched Architecture Validation (O(1) Message count)
             if (typeof vscode !== 'undefined' && this.edges.length > 0) {
-                console.log(`[SYNAPSE] Throttling validation for ${this.edges.length} edges...`);
+                const edgesToValidate = this.edges.filter(edge => {
+                    if (!edge || !edge.from || !edge.to) return false;
+                    // Skip if already has AI validation or logic validation is unchanged
+                    return !edge.validation;
+                });
 
-                const BATCH_SIZE = 20;
-                const BATCH_INTERVAL = 100; // ms
+                if (edgesToValidate.length > 0) {
+                    console.log(`[SYNAPSE] Requesting batched validation for ${edgesToValidate.length} edges...`);
+                    
+                    // Group edges with their node context to save backend lookup time
+                    const validationPayload = edgesToValidate.map(edge => {
+                        const fromNode = this.nodeMap.get(edge.from);
+                        const toNode = this.nodeMap.get(edge.to);
+                        return fromNode && toNode ? {
+                            edgeId: edge.id,
+                            fromNode,
+                            toNode,
+                            type: edge.type
+                        } : null;
+                    }).filter(Boolean);
 
-                for (let i = 0; i < this.edges.length; i += BATCH_SIZE) {
-                    const batch = this.edges.slice(i, i + BATCH_SIZE);
-                    setTimeout(() => {
-                        batch.forEach(edge => {
-                            if (!edge || !edge.from || !edge.to) return;
-                            const fromNode = this.nodes.find(n => n.id === edge.from);
-                            const toNode = this.nodes.find(n => n.id === edge.to);
-                            if (fromNode && toNode) {
-                                vscode.postMessage({
-                                    command: 'validateEdge',
-                                    edgeId: edge.id,
-                                    fromNode: fromNode,
-                                    toNode: toNode,
-                                    type: edge.type
-                                });
-                            }
+                    if (validationPayload.length > 0) {
+                        vscode.postMessage({
+                            command: 'validateEdgesBatch', // [v0.2.24] New Batched Command
+                            batch: validationPayload
                         });
-                    }, (i / BATCH_SIZE) * BATCH_INTERVAL);
+                    }
                 }
             }
 
@@ -3838,14 +3933,40 @@ class CanvasEngine {
     }
 
     render() {
+        this._frameCounter++;
+        const shouldLog = this._frameCounter % 120 === 0;
+        if (shouldLog) console.log("frame start");
+
+        // [v0.2.24] Strategic Cache Invalidation (Validate Map & Edge Cache)
+        if (this.isGraphDataDirty || this.nodeMap.size !== this.nodes.length) {
+            this.nodeMap.clear();
+            for (const n of this.nodes) this.nodeMap.set(n.id, n);
+            this.edgeValidationCache.clear(); // Clear heavy validation results
+        }
+
+        // [v0.2.24] Unified Animation Updates (Eco-mode aware)
+        if (this.isAnimating || this.isTestingLogic) {
+            const hasActivity = this._isInteracting || this.isDragging || this.particles.length > 0;
+            if (hasActivity || (this._frameCounter % 2 === 0)) { // Half-rate if idle
+                this.animationOffset = (this.animationOffset + 0.5) % 40;
+            }
+            if (this.isTestingLogic && this.edges.length > 0) {
+                if (Math.random() < 0.05 && this.pulses.length < 20) {
+                    const randomEdge = this.edges[Math.floor(Math.random() * this.edges.length)];
+                    this.pulses.push({ edgeId: randomEdge.id, progress: 0, speed: 0.01 + Math.random() * 0.02 });
+                }
+                this.pulses = this.pulses.filter(p => {
+                    p.progress += p.speed;
+                    return p.progress < 1;
+                });
+            }
+            this.updateParticles();
+        }
+
         if (this.webglEnabled && this.webglRenderer) {
-            // [v0.2.21] WebGL: GPU accelerates background stars + node quads only
-            // Edges, labels, selection UI are still drawn via Canvas 2D on top
             this.webglRenderer.render(this.nodes, this.transform, this.isGraphDataDirty);
+            if (shouldLog) console.log("after webgl");
             this.isGraphDataDirty = false;
-            // NOTE: Do NOT early-return here.
-            // Canvas 2D continues below to draw edges, labels and UI overlays.
-            // The canvas element is the same, so 2D will composite on top of WebGL output.
         }
 
         if (!this.ctx) return;
@@ -3853,7 +3974,7 @@ class CanvasEngine {
             const fpsEl = document.getElementById('fps-display');
             if (fpsEl && fpsEl.textContent !== 'IDLE') {
                 fpsEl.textContent = 'IDLE';
-                fpsEl.style.color = '#a89984'; // Gruvbox Gray
+                fpsEl.style.color = '#a89984'; 
             }
             return; 
         }
@@ -3861,7 +3982,6 @@ class CanvasEngine {
         this.isRendering = true;
         this.isDirty = false;
 
-        // [v0.2.20] FPS Counter - rolling average over last 30 frames
         const now = performance.now();
         if (!this._fpsFrames) this._fpsFrames = [];
         this._fpsFrames.push(now);
@@ -3879,43 +3999,24 @@ class CanvasEngine {
         try {
             const ctx = this.ctx;
             const canvas = this.canvas;
+            if (!ctx || !canvas) return;
 
-            if (!ctx || !canvas) {
-                console.error('[SYNAPSE] Render failed: ctx or canvas is missing');
-                return;
-            }
-
-            // 1. 캔버스 해상도 강제 동기화 (Zero Point Adjustment)
-            // [v0.2.20] Removed from render loop to avoid layout thrashing
-            // this.resizeCanvas();
-
-            // 2. 변환 매트릭스 초기화 & 클리어
+            // [v0.2.24] Optimizing hot path: setTransform only if really drawing
             ctx.setTransform(1, 0, 0, 1, 0, 0);
-            ctx.globalAlpha = 1.0; 
             
-            // [v0.2.21] WebGL 활성 시 배경은 WebGL이 그리므로 Canvas 2D 배경 생략
-            // WebGL mode: skip solid bg fill (WebGL already drew stars + clear color)
+            // WebGL mode: clear only, DO NOT fill background if WebGL already did it
             if (!this.webglEnabled) {
-                // [v0.2.20] System Red-out Background Pulse
-                if (this.isRedOut || this.systemPressure > 0.8) {
-                    const pulse = Math.sin(Date.now() / 150) * 0.5 + 0.5;
-                    const redIntensity = Math.floor(30 + pulse * 40 * (this.systemPressure || 1));
-                    ctx.fillStyle = `rgb(${redIntensity}, 10, 10)`;
-                } else {
-                    ctx.fillStyle = '#1e1e1e';
-                }
+                ctx.fillStyle = '#1e1e1e';
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
             } else {
-                // WebGL 모드: 배경 클리어만 (nodes는 GL, edges는 Canvas2D)
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
             }
 
-            // 3. Coordinate System (DPR Scale only)
-            // Note: renderGrid() here was removed because it needs camera transform
             const dpr = window.devicePixelRatio || 1;
+            // No need to scale(dpr, dpr) here every frame if setTransform is used correctly
+            // Actually, we use translate/scale below, so let's stick to simple
             ctx.scale(dpr, dpr);
 
-            // 4. 카메라 변환 적용
             ctx.save();
             ctx.translate(this.transform.offsetX, this.transform.offsetY);
             ctx.scale(this.transform.zoom, this.transform.zoom);
@@ -3940,63 +4041,29 @@ class CanvasEngine {
                 this.renderClusters();
                 this.renderScrollbars();
 
-                // 엣지 렌더링 (줌이 너무 작으면 생략 가능)
-                this._confirmBadgeHits = []; // [v0.2.17] reset hit areas each frame
-                this._deleteBadgeHits = []; // [v0.2.17] reset trash areas
-                if (zoom > 0.3) {
-                    for (const edge of this.edges) {
-                        // [v0.2.19] Layer Visibility Edge Filter
-                        const srcNode = this.nodes.find(n => n.id === edge.from);
-                        const tgtNode = this.nodes.find(n => n.id === edge.to);
-                        if (srcNode && tgtNode) {
-                            const isUserLogic = (n) => n.id.startsWith('node_manual_') || n.cluster_id === 'sys_cluster_buffer' || n.cluster_id === 'sys_cluster_reserved' || n.data?.cluster_id === 'sys_cluster_buffer' || n.data?.cluster_id === 'sys_cluster_reserved';
-                            const isSrcUser = isUserLogic(srcNode);
-                            const isTgtUser = isUserLogic(tgtNode);
-                            if ((isSrcUser && !this.showUserLayer) || (!isSrcUser && !this.showBaseLayer)) continue;
-                            if ((isTgtUser && !this.showUserLayer) || (!isTgtUser && !this.showBaseLayer)) continue;
-                        }
-                        this.renderEdge(edge);
-                    }
+                // [v0.2.24] Overlay Frequency Separation (2D at 30fps to save CPU)
+                if (!this.debugDisableOverlay && (this._frameCounter % 2 === 0 || this.isDirty)) {
+                    this.renderEdges2D();
+                    if (shouldLog) console.log("after edges");
+                    
+                    this.renderGhostNodes(zoom);
+
+                    this.renderLabels2D();
+                    if (shouldLog) console.log("after labels");
                 }
 
-                // 유령 노드 렌더링 (비교 모드)
-                this.renderGhostNodes(zoom);
-
-                // 노드 렌더링 (LOD 적용)
-                for (const node of this.nodes) {
-                    // [v0.2.19] Layer Visibility Filtering
-                    const isUserCustom = (node.id && node.id.startsWith('node_manual_')) || node.cluster_id === 'sys_cluster_buffer' || node.cluster_id === 'sys_cluster_reserved' || node.data?.cluster_id === 'sys_cluster_buffer' || node.data?.cluster_id === 'sys_cluster_reserved';
-                    if (isUserCustom && !this.showUserLayer) continue;
-                    if (!isUserCustom && !this.showBaseLayer) continue;
-
-                    // 클러스터가 접혀있으면 렌더링 스킵 (Documentation Shelf 포함 모든 클러스터 준수)
-                    if (node.cluster_id) {
-                        const cluster = this.clusters.find(c => c.id === node.cluster_id);
-                        if (cluster && cluster.collapsed) continue;
-                    }
-                    this.renderNode(node, zoom);
-                }
-
-                // 드래그 선택 영역 표시
+                // 드래그 선택 영역 표시 (Always on top of overlay)
                 if (this.isSelecting) {
-                    this.ctx.restore(); // 원래 좌표계로 복구 (스크린 좌표)
+                    this.ctx.restore();
                     this.ctx.fillStyle = 'rgba(69, 133, 136, 0.2)';
                     this.ctx.strokeStyle = '#458588';
-                    this.ctx.lineWidth = 1;
                     this.ctx.fillRect(this.selectionRect.x, this.selectionRect.y, this.selectionRect.width, this.selectionRect.height);
                     this.ctx.strokeRect(this.selectionRect.x, this.selectionRect.y, this.selectionRect.width, this.selectionRect.height);
-                    this.ctx.save(); // 다시 스케일 좌표계로
+                    this.ctx.save();
                 }
 
-                // 연결 핸들 렌더링 (선택된 노드/클러스터)
                 this.renderConnectionHandles();
-
-                // 유령 엣지 렌더링 (엣지 생성 중)
-                if (this.isCreatingEdge && this.edgeSource) {
-                    this.renderGhostEdge();
-                }
-
-                // [v0.2.18.2] Render particles
+                if (this.isCreatingEdge && this.edgeSource) this.renderGhostEdge();
                 this.renderParticles();
             }
 
@@ -4021,6 +4088,9 @@ class CanvasEngine {
                 lodStatusEl.textContent = lodText;
             }
 
+            // [v0.2.24] Real-time Diagnostic HUD (Performance Measuring)
+            this._renderDiagnosticHUD();
+
             // Debug Overlay
             this.renderDebugInfo();
 
@@ -4028,6 +4098,80 @@ class CanvasEngine {
             this.isRendering = false;
         }
     }
+
+    renderEdges2D() {
+        const zoom = this.transform.zoom;
+        if (zoom <= 0.3) return;
+
+        const offsetX = this.transform.offsetX;
+        const offsetY = this.transform.offsetY;
+        const canvasWidth = this.canvas.width / (window.devicePixelRatio || 1);
+        const canvasHeight = this.canvas.height / (window.devicePixelRatio || 1);
+
+        // Pre-calculate viewport bounds in world coordinates
+        const worldLeft = -offsetX / zoom;
+        const worldTop = -offsetY / zoom;
+        const worldRight = (canvasWidth - offsetX) / zoom;
+        const worldBottom = (canvasHeight - offsetY) / zoom;
+        const nodeSizePadding = 150; // Use a bit of padding for safety
+
+        this._confirmBadgeHits = [];
+        this._deleteBadgeHits = [];
+        for (const edge of this.edges) {
+            // [v0.2.24] Optimized Node Lookup via nodeMap
+            const srcNode = this.nodeMap.get(edge.from);
+            const tgtNode = this.nodeMap.get(edge.to);
+            if (srcNode && tgtNode) {
+                // [v0.2.24] Edge Culling: Skip if both nodes are entirely outside the screen
+                const srcVisible = !(srcNode.position.x + 120 < worldLeft || srcNode.position.x > worldRight || srcNode.position.y + 60 < worldTop || srcNode.position.y > worldBottom);
+                const tgtVisible = !(tgtNode.position.x + 120 < worldLeft || tgtNode.position.x > worldRight || tgtNode.position.y + 60 < worldTop || tgtNode.position.y > worldBottom);
+                
+                if (!srcVisible && !tgtVisible) continue; // BOTH out of screen
+
+                const isUserLogic = (n) => n.id.startsWith('node_manual_') || n.cluster_id?.startsWith('sys_') || n.data?.cluster_id?.startsWith('sys_');
+                if ((isUserLogic(srcNode) && !this.showUserLayer) || (!isUserLogic(srcNode) && !this.showBaseLayer)) continue;
+                if ((isUserLogic(tgtNode) && !this.showUserLayer) || (!isUserLogic(tgtNode) && !this.showBaseLayer)) continue;
+            }
+            this.renderEdge(edge);
+        }
+    }
+
+    renderLabels2D() {
+        const zoom = this.transform.zoom;
+        const offsetX = this.transform.offsetX;
+        const offsetY = this.transform.offsetY;
+        const canvasWidth = this.canvas.width / (window.devicePixelRatio || 1);
+        const canvasHeight = this.canvas.height / (window.devicePixelRatio || 1);
+
+        // Pre-calculate viewport bounds in world coordinates for fast comparison
+        const worldLeft = -offsetX / zoom;
+        const worldTop = -offsetY / zoom;
+        const worldRight = (canvasWidth - offsetX) / zoom;
+        const worldBottom = (canvasHeight - offsetY) / zoom;
+        const nodeWidth = 120;
+        const nodeHeight = 60;
+
+        for (const node of this.nodes) {
+            if (!node.position) continue;
+            
+            // [v0.2.24] Viewport Culling: Skip if node is entirely outside the screen
+            if (node.position.x + nodeWidth < worldLeft || node.position.x > worldRight ||
+                node.position.y + nodeHeight < worldTop || node.position.y > worldBottom) {
+                continue;
+            }
+
+            const isUserCustom = (node.id && node.id.startsWith('node_manual_')) || node.cluster_id?.startsWith('sys_') || node.data?.cluster_id?.startsWith('sys_');
+            if (isUserCustom && !this.showUserLayer) continue;
+            if (!isUserCustom && !this.showBaseLayer) continue;
+
+            if (node.cluster_id) {
+                const cluster = this.clusters.find(c => c.id === node.cluster_id);
+                if (cluster && cluster.collapsed) continue;
+            }
+            this.renderNode(node, zoom);
+        }
+    }
+
 
     showInputModal(title, defaultValue, callback) {
         const dialog = document.getElementById('input-dialog');
@@ -5133,8 +5277,8 @@ class CanvasEngine {
         }
         this.ctx.translate(node.position.x + jitterX, node.position.y + jitterY);
 
-        // 🌟 하이라이트 글로우 효과
-        if (isPartofActivePath) {
+        // 🌟 하이라이트 글로우 효과 (최적화: 기본 OFF, 선택/호버 시만 활성)
+        if ((isSelected || isHovered) && zoom > 0.5) {
             this.ctx.shadowBlur = 15 + 5 * Math.sin(Date.now() / 200);
             this.ctx.shadowColor = isSelected ? '#fabd2f' : style.borderColor;
         }
@@ -5142,7 +5286,7 @@ class CanvasEngine {
         // 1. 상태별 특수 효과 계산
         const isTombstone = node.status === 'error_tombstone' || (node.data?.issues?.some(i => i.includes('Tombstone')));
         
-        if (node.status === 'error_necrosis' || isTombstone) {
+        if ((node.status === 'error_necrosis' || isTombstone) && zoom > 0.4) {
             style.bgColor = '#1d2021'; // Dark Necrosis Base
             style.borderColor = '#fb4934'; // Red Border
             this.ctx.shadowBlur = 20;
@@ -5180,8 +5324,10 @@ class CanvasEngine {
                 bgColor = this._lerpColor('#fabd2f', '#b8bb26', ratio);
                 borderColor = '#b8bb26';
                 glowColor = '#8ec07c'; // Aqua glow
-                this.ctx.shadowBlur = 20 * (1 - ratio) + 10;
-                this.ctx.shadowColor = glowColor;
+                if (!this.isDragging) {
+                    this.ctx.shadowBlur = 20 * (1 - ratio) + 10;
+                    this.ctx.shadowColor = glowColor;
+                }
             } else {
                 this.promotingNodeIds.delete(node.id);
             }
@@ -5268,27 +5414,29 @@ class CanvasEngine {
         this.ctx.shadowOffsetY = 0;
 
         // Apply Glow logic (priority order: DTR > VirtualDebug > Promoting > ArchViolation > Selected/Error)
-        if (isDtrGlow && dtrPulse !== null) {
-            this.ctx.shadowBlur = 50 * dtrPulse * (node.visual?.glow_intensity || 1);
-            this.ctx.shadowColor = '#8A2BE2';
-        } else if (node.isVirtualDebugError && glowColor) {
-            // [v0.2.21 Fix B1] Virtual Debug: pulsing Cyan scanner beam
-            const scanPhase = Date.now() / 120;
-            this.ctx.shadowBlur = 18 + 8 * Math.abs(Math.sin(scanPhase));
-            this.ctx.shadowColor = glowColor;
-            this.ctx.shadowOffsetY = Math.sin(scanPhase) * 3;
-        } else if (isPromoting) {
-            // Shadow already set in promotion block above
-        } else if (node.isArchViolation && glowColor) {
-            // [v0.2.21 Fix] Ghost Jitter: animated shadow offset + pulsing glow for arch violations
-            const jitterPhase = Date.now() / 180;
-            this.ctx.shadowBlur = 12 + 6 * Math.abs(Math.sin(jitterPhase));
-            this.ctx.shadowColor = glowColor;
-            this.ctx.shadowOffsetX = Math.sin(jitterPhase) * 2;
-            this.ctx.shadowOffsetY = Math.sin(jitterPhase * 0.7) * 1;
-        } else if (glowColor && (isSelected || node.isError || node.isBottleneck || (isPartofActivePath && this.isAnimating))) {
-            this.ctx.shadowBlur = 10;
-            this.ctx.shadowColor = glowColor;
+        if (!this.isDragging) {
+            if (isDtrGlow && dtrPulse !== null) {
+                this.ctx.shadowBlur = 50 * dtrPulse * (node.visual?.glow_intensity || 1);
+                this.ctx.shadowColor = '#8A2BE2';
+            } else if (node.isVirtualDebugError && glowColor) {
+                // [v0.2.21 Fix B1] Virtual Debug: pulsing Cyan scanner beam
+                const scanPhase = Date.now() / 120;
+                this.ctx.shadowBlur = 18 + 8 * Math.abs(Math.sin(scanPhase));
+                this.ctx.shadowColor = glowColor;
+                this.ctx.shadowOffsetY = Math.sin(scanPhase) * 3;
+            } else if (isPromoting) {
+                // Shadow already set in promotion block above
+            } else if (node.isArchViolation && glowColor) {
+                // [v0.2.21 Fix] Ghost Jitter: animated shadow offset + pulsing glow for arch violations
+                const jitterPhase = Date.now() / 180;
+                this.ctx.shadowBlur = 12 + 6 * Math.abs(Math.sin(jitterPhase));
+                this.ctx.shadowColor = glowColor;
+                this.ctx.shadowOffsetX = Math.sin(jitterPhase) * 2;
+                this.ctx.shadowOffsetY = Math.sin(jitterPhase * 0.7) * 1;
+            } else if (glowColor && (isSelected || node.isError || node.isBottleneck || (isPartofActivePath && this.isAnimating))) {
+                this.ctx.shadowBlur = 10;
+                this.ctx.shadowColor = glowColor;
+            }
         }
 
         this.ctx.fillStyle = bgColor;
@@ -5743,6 +5891,17 @@ class CanvasEngine {
         const cpX = (fromX + toX) / 2;
         const cpY = (fromY + toY) / 2 - 30;
 
+        // [v0.2.24] Hit Detection Optimization - O(1) Bounding Box Prefilter
+        // 50px buffer for control curve bending distance
+        const minX = Math.min(fromX, toX, cpX) - threshold - 50;
+        const maxX = Math.max(fromX, toX, cpX) + threshold + 50;
+        const minY = Math.min(fromY, toY, cpY) - threshold - 50;
+        const maxY = Math.max(fromY, toY, cpY) + threshold + 50;
+        
+        if (px < minX || px > maxX || py < minY || py > maxY) {
+            return false; // Point is outside bounding box, skip expensive O(Segments) Math
+        }
+
         // 베지어 곡선 상의 여러 점을 샘플링하여 최소 거리 계산
         let minDistance = Infinity;
         for (let t = 0; t <= 1; t += 0.05) {
@@ -5816,13 +5975,18 @@ class CanvasEngine {
     }
 
     renderEdge(edge) {
-        const fromNode = this.nodes.find(n => n.id === edge.from);
-        const toNode = this.nodes.find(n => n.id === edge.to);
+        const fromNode = this.nodeMap.get(edge.from);
+        const toNode = this.nodeMap.get(edge.to);
 
         if (!fromNode || !toNode) return;
 
         // 🔍 엣지 검증 로직 적용
-        const validation = this.validateEdge(edge, fromNode, toNode);
+        // [v0.2.24] Validation Result Caching (A-1)
+        let validation = this.edgeValidationCache.get(edge.id);
+        if (!validation) {
+            // [v0.2.24] Rendering Contract Strict Adherence: render 중 IPC 통신(validateEdge) 절대 금지
+            validation = { valid: true }; // Batch 검증 결과가 도착할 때까지 기본값 유지
+        }
 
         // 🎨 엣지 타입별 스타일 가져오기
         const style = this.getEdgeStyle(edge);
@@ -5873,9 +6037,11 @@ class CanvasEngine {
             // [Fix] Ensure strikeStyle uses highlight color regardless of animation state
             edgeColor = isPathSelected ? '#fabd2f' : edgeColor;
 
-            // 글로우 효과
-            this.ctx.shadowBlur = isPathSelected ? (15 + 8 * Math.sin(Date.now() / 200)) : 15;
-            this.ctx.shadowColor = isPathSelected ? '#fabd2f' : edgeColor; // Path highlighting uses Gold
+            // 글로우 효과 (최적화: 기본 OFF, 선택/호버 시만 정밀 타격, [v0.2.24] 드래그 중엔 임시 해제 처리하여 FPS 폭락 방지)
+            if ((isSelected || isHovered) && !this.isDragging) {
+                this.ctx.shadowBlur = 15 + 8 * Math.sin(Date.now() / 200);
+                this.ctx.shadowColor = '#fabd2f';
+            }
 
             // [v0.2.16] Significantly bolder lines (+2 -> +6)
             if (isSelected || isPathSelected) lineWidth += 6;
@@ -6181,7 +6347,7 @@ class CanvasEngine {
                 this.ctx.lineWidth = 2 / this.transform.zoom;
 
                 // 광택/발광 효과
-                if (this.isAnimating) {
+                if (this.isAnimating && !this.isDragging) {
                     this.ctx.shadowBlur = 10 / this.transform.zoom;
                     this.ctx.shadowColor = '#fabd2f';
                 }
@@ -6234,10 +6400,19 @@ class CanvasEngine {
                     this.ctx.fillStyle = cluster.color || '#fabd2f';
                     this.ctx.strokeStyle = '#3c3836';
                     this.ctx.lineWidth = 2 / this.transform.zoom;
+                    
+                    // 광택/발광 효과 (드래그 중 임시 차단)
+                    if (this.isAnimating && !this.isDragging) {
+                        this.ctx.shadowBlur = 10 / this.transform.zoom;
+                        this.ctx.shadowColor = '#fabd2f';
+                    }
+
                     this.ctx.beginPath();
                     this.ctx.arc(h.x, h.y, handleSize, 0, Math.PI * 2);
                     this.ctx.fill();
                     this.ctx.stroke();
+
+                    this.ctx.shadowBlur = 0; // 리셋
                 });
             }
         }
@@ -6326,8 +6501,16 @@ class CanvasEngine {
                 toY - arrowSize * Math.sin(angle + Math.PI / 6)
             );
             this.ctx.closePath();
+            
+            // 타겟 중심부의 그림자/글로우 연산도 드래그 중 오프 처리
+            if (!this.isDragging) {
+                this.ctx.shadowBlur = 15;
+                this.ctx.shadowColor = '#b8bb26';
+            }
+            
             this.ctx.fillStyle = '#b8bb26';
             this.ctx.fill();
+            this.ctx.shadowBlur = 0; // 리셋
         }
     }
 
@@ -6378,6 +6561,27 @@ class CanvasEngine {
             ctx.fillText(text, 10, 10 + (i * 15));
         });
         ctx.restore();
+    }
+
+    /**
+     * [v0.2.24] Real-time Diagnostic HUD
+     * Shows detailed stats about FPS, WebGL, and Caching.
+     */
+    _renderDiagnosticHUD() {
+        const fpsEl = document.getElementById('fps-display');
+        if (!fpsEl) return;
+
+        const now = performance.now();
+        if (!this._fpsHistory) this._fpsHistory = [];
+        this._fpsHistory.push(now);
+        while (this._fpsHistory.length > 0 && now - this._fpsHistory[0] > 1000) this._fpsHistory.shift();
+        const fps = this._fpsHistory.length;
+
+        const webglStatus = this.webglEnabled ? 'ACTIVE' : 'OFF';
+        const cacheSize = this.edgeValidationCache ? this.edgeValidationCache.size : 0;
+        const color = fps > 55 ? '#b8bb26' : (fps > 30 ? '#fabd2f' : '#fb4934');
+
+        fpsEl.innerHTML = `<span style="color: ${color}">${fps} FPS</span> | <span style="color: #83a598">WebGL: ${webglStatus}</span> | <span style="color: #d3869b">Cache: ${cacheSize}</span>`;
     }
 
     // [v0.2.21] Tombstone Visual (Sovereign Quality)
@@ -6559,11 +6763,15 @@ function initCanvas() {
 
         switch (message.command) {
             case 'projectState':
+                if (this.engine && (this.engine.isDragging || this.engine._isInteracting)) {
+                    // console.log('[SYNAPSE] Deferring projectState update during interaction');
+                    this.engine._pendingState = message.data;
+                    return;
+                }
                 console.log(`[SYNAPSE] Received projectState with ${message.data.nodes?.length || 0} nodes.`);
-                // 기존 노드가 존재하면 시점(Viewport) 유지 (Context Preservation)
                 const preserve = engine.nodes && engine.nodes.length > 0;
                 engine.loadProjectState(message.data, preserve);
-                engine.isExpectingUpdate = false; // 플래그 리셋
+                engine.isExpectingUpdate = false;
                 break;
             case 'resetCanvas': {
                 // Visual Reset: 모든 노드/엣지/클러스터 즉시 제거 및 캔버스 초기화
@@ -6663,6 +6871,15 @@ function initCanvas() {
             }
             case 'edgeValidationResult':
                 engine.updateEdgeValidation(message.edgeId, message.result);
+                break;
+            case 'edgeValidationResultsBatch': // [v0.2.24] Batched Response Handling
+                if (message.results && Array.isArray(message.results)) {
+                    console.log(`[SYNAPSE] Applying batched validation for ${message.results.length} edges...`);
+                    message.results.forEach(res => {
+                        engine.updateEdgeValidation(res.edgeId, res.result);
+                    });
+                    engine.isDirty = true; // One final flag for all updates
+                }
                 break;
             case 'analysisResults':
                 engine.isTestingLogic = false;

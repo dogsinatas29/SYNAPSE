@@ -138,6 +138,9 @@ class WebGLRenderer {
         
         this._nodeCache = null;
         this._lastDataVersion = 0;
+        
+        // [v0.2.24] Buffers for reuse to minimize GC
+        this._textData = null;
         this._lastTransform = { zoom: 1, offsetX: 0, offsetY: 0 };
     }
 
@@ -500,41 +503,94 @@ class WebGLRenderer {
             return;
         }
 
-        let chars = [];
-        for (const n of nodes) {
+        const t0 = performance.now();
+
+        // 1️⃣ Pre-bake Relative Layout per Node (O(N) only when label changes)
+        nodes.forEach(n => {
             const label = n.data?.label || n.id || "";
-            this.textAtlas.addText(label);
-
-            // Calculate center x and below y
-            let totalW = 0;
-            for(const ch of label) {
-                const g = this.textAtlas.glyphMap.get(ch);
-                if (g) totalW += g.w;
+            // If label changed or layout missing, bake it
+            if (!n._textLayout || n._textLayoutLabel !== label) {
+                this.textAtlas.addText(label);
+                const items = [];
+                let totalW = 0;
+                for (const ch of label) {
+                    const g = this.textAtlas.glyphMap.get(ch);
+                    if (g) totalW += g.w;
+                }
+                
+                // Rel centers (relative to node top-left)
+                let relXStart = 60 - totalW / 2;
+                let relY = 65; 
+                let curX = relXStart;
+                
+                for (const ch of label) {
+                    const g = this.textAtlas.glyphMap.get(ch);
+                    if (!g) continue;
+                    items.push({
+                        dx: curX, dy: relY,
+                        w: g.w, h: g.h,
+                        u0: g.u0, v0: g.v0, u1: g.u1, v1: g.v1
+                    });
+                    curX += g.w;
+                }
+                n._textLayout = items;
+                n._textLayoutLabel = label;
             }
+        });
 
-            let offsetX = n.position.x + 60 - totalW / 2;
-            let offsetY = n.position.y + 65; // Below node
+        // 2️⃣ Calculate Total Buffer Size
+        let totalChars = 0;
+        for (const n of nodes) {
+            if (n._textLayout) totalChars += n._textLayout.length;
+        }
 
-            for (const ch of label) {
-                const g = this.textAtlas.glyphMap.get(ch);
-                if (!g) continue;
+        if (totalChars === 0) {
+            this.charCount = 0;
+            return;
+        }
 
-                chars.push(
-                    offsetX, offsetY,
-                    g.w, g.h,
-                    g.u0, g.v0,
-                    g.u1, g.v1
-                );
-                offsetX += g.w;
+        // 3️⃣ Reuse Float32Array (O(1) buffer allocation after first run)
+        if (!this._textData || this._textData.length !== totalChars * 8) {
+            this._textData = new Float32Array(totalChars * 8);
+        }
+        const data = this._textData;
+
+        // 4️⃣ Fast Fill (No string ops, pure math, zero GC)
+        let idx = 0;
+        for (let i = 0; i < nodes.length; i++) {
+            const n = nodes[i];
+            // Safety: Skip if node isn't fully ready
+            if (!n.position || typeof n.position.x !== 'number') continue;
+            
+            const px = n.position.x;
+            const py = n.position.y;
+            const layout = n._textLayout;
+            if (!layout) continue;
+            
+            for (let j = 0; j < layout.length; j++) {
+                const l = layout[j];
+                data[idx++] = px + l.dx;
+                data[idx++] = py + l.dy;
+                data[idx++] = l.w;
+                data[idx++] = l.h;
+                data[idx++] = l.u0;
+                data[idx++] = l.v0;
+                data[idx++] = l.u1;
+                data[idx++] = l.v1;
             }
         }
 
-        const data = new Float32Array(chars);
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.textInstanceBuffer);
         this.gl.bufferData(this.gl.ARRAY_BUFFER, data, this.gl.DYNAMIC_DRAW);
-        this.charCount = chars.length / 8;
+        this.charCount = totalChars;
 
+        // 5️⃣ Atlas Upload (Lazy - only if new glyphs were added)
         this.textAtlas.upload();
+
+        const dt = performance.now() - t0;
+        if (dt > 10) {
+            console.warn(`[SYNAPSE WebGL] Heavy Text Update: ${dt.toFixed(2)}ms for ${totalChars} chars`);
+        }
     }
 
     /**
@@ -615,6 +671,9 @@ class WebGLRenderer {
         const posLoc = this.locs.star.pos;
         this.gl.vertexAttribPointer(posLoc, 3, this.gl.FLOAT, false, 0, 0);
         this.gl.enableVertexAttribArray(posLoc);
+        // Important: Reset divisor for non-instanced drawing
+        if (this.ext) this.ext.vertexAttribDivisorANGLE(posLoc, 0);
+        
         this.gl.drawArrays(this.gl.POINTS, 0, 3000);
         this.drawCalls++;
     }
@@ -625,10 +684,11 @@ class WebGLRenderer {
         
         const scaleX = 2 / this.canvas.width;
         const scaleY = -2 / this.canvas.height;
+        const dpr = window.devicePixelRatio || 1;
         const mat = [
             transform.zoom * scaleX, 0, 0,
             0, transform.zoom * scaleY, 0,
-            -1 + transform.offsetX * scaleX, 1 + transform.offsetY * scaleY, 1
+            -1 + (transform.offsetX * dpr) * scaleX, 1 + (transform.offsetY * dpr) * scaleY, 1
         ];
         this.gl.uniformMatrix3fv(this.locs.edge.uProj, false, mat);
 
@@ -636,8 +696,9 @@ class WebGLRenderer {
         const vPos = this.locs.edge.vertex;
         this.gl.vertexAttribPointer(vPos, 2, this.gl.FLOAT, false, 0, 0);
         this.gl.enableVertexAttribArray(vPos);
+        if (this.ext) this.ext.vertexAttribDivisorANGLE(vPos, 0);
 
-        this.setAttrPointer(this.edgeInstanceBuffer, this.locs.edge.instanceEdge, 4);
+        this.setAttrPointer(this.edgeInstanceBuffer, this.locs.edge.instanceEdge, 4, 0, 0, 1);
 
         if (this.ext) {
             this.ext.drawArraysInstancedANGLE(this.gl.TRIANGLE_STRIP, 0, 4, this.edgeCount);
@@ -650,19 +711,22 @@ class WebGLRenderer {
         this.gl.useProgram(this.nodeProgram);
         const scaleX = 2 / this.canvas.width;
         const scaleY = -2 / this.canvas.height;
+        const dpr = window.devicePixelRatio || 1;
         const mat = [
             transform.zoom * scaleX, 0, 0,
             0, transform.zoom * scaleY, 0,
-            -1 + transform.offsetX * scaleX, 1 + transform.offsetY * scaleY, 1
+            -1 + (transform.offsetX * dpr) * scaleX, 1 + (transform.offsetY * dpr) * scaleY, 1
         ];
         this.gl.uniformMatrix3fv(this.locs.node.uProj, false, mat);
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.rectBuffer);
         const vPos = this.locs.node.vertex;
         this.gl.vertexAttribPointer(vPos, 2, this.gl.FLOAT, false, 0, 0);
         this.gl.enableVertexAttribArray(vPos);
-        this.setAttrPointer(this.posBuffer, this.locs.node.pos, 2);
-        this.setAttrPointer(this.colorBuffer, this.locs.node.color, 3);
-        this.setAttrPointer(this.sizeBuffer, this.locs.node.size, 1);
+        if (this.ext) this.ext.vertexAttribDivisorANGLE(vPos, 0); // Core Quad vertex: divisor 0
+
+        this.setAttrPointer(this.posBuffer, this.locs.node.pos, 2, 0, 0, 1);
+        this.setAttrPointer(this.colorBuffer, this.locs.node.color, 3, 0, 0, 1);
+        this.setAttrPointer(this.sizeBuffer, this.locs.node.size, 1, 0, 0, 1);
         if (this.ext) {
             this.ext.drawArraysInstancedANGLE(this.gl.TRIANGLE_STRIP, 0, 4, this.nodeCount);
             this.drawCalls++;
@@ -684,10 +748,11 @@ class WebGLRenderer {
 
         const scaleX = 2 / this.canvas.width;
         const scaleY = -2 / this.canvas.height;
+        const dpr = window.devicePixelRatio || 1;
         const mat = [
             transform.zoom * scaleX, 0, 0,
             0, transform.zoom * scaleY, 0,
-            -1 + transform.offsetX * scaleX, 1 + transform.offsetY * scaleY, 1
+            -1 + (transform.offsetX * dpr) * scaleX, 1 + (transform.offsetY * dpr) * scaleY, 1
         ];
         this.gl.uniformMatrix3fv(this.locs.text.uProj, false, mat);
 
@@ -695,10 +760,11 @@ class WebGLRenderer {
         const vPos = this.locs.text.vertex;
         this.gl.vertexAttribPointer(vPos, 2, this.gl.FLOAT, false, 0, 0);
         this.gl.enableVertexAttribArray(vPos);
+        if (this.ext) this.ext.vertexAttribDivisorANGLE(vPos, 0);
 
         // Interleaved: [x, y, w, h, u0, v0, u1, v1] = 8 floats = 32 bytes
-        this.setAttrPointer(this.textInstanceBuffer, this.locs.text.instancePosArea, 4, 32, 0);
-        this.setAttrPointer(this.textInstanceBuffer, this.locs.text.instanceUV, 4, 32, 16);
+        this.setAttrPointer(this.textInstanceBuffer, this.locs.text.instancePosArea, 4, 32, 0, 1);
+        this.setAttrPointer(this.textInstanceBuffer, this.locs.text.instanceUV, 4, 32, 16, 1);
 
         if (this.ext) {
             this.ext.drawArraysInstancedANGLE(this.gl.TRIANGLE_STRIP, 0, 4, this.charCount);
@@ -725,13 +791,13 @@ class WebGLRenderer {
         });
     }
 
-    setAttrPointer(buffer, loc, size, stride = 0, offset = 0) {
+    setAttrPointer(buffer, loc, size, stride = 0, offset = 0, divisor = 1) {
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, buffer);
         if (loc === -1) return;
         this.gl.enableVertexAttribArray(loc);
         this.gl.vertexAttribPointer(loc, size, this.gl.FLOAT, false, stride, offset);
         if (this.ext) {
-            this.ext.vertexAttribDivisorANGLE(loc, 1);
+            this.ext.vertexAttribDivisorANGLE(loc, divisor);
         }
     }
 

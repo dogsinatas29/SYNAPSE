@@ -3706,9 +3706,15 @@ class CanvasEngine {
             console.error('[SYNAPSE] loadProjectState error:', error);
         } finally {
             // 로딩 숨기기 (무조건 실행)
-            // 로딩 숨기기 (무조건 실행)
             const loadingEl = document.getElementById('loading');
             if (loadingEl) loadingEl.remove(); // Force remove to prevent blocking
+            
+            // [v0.2.24] 데이터 로드 후 강제 렌더링 및 WebGL 버퍼 갱신 플래그 설정
+            this.isDirty = true;
+            this.isGraphDataDirty = true;
+            this.isEdgeDirty = true;
+            this.isTextDirty = true;
+
             this.render();
         }
     }

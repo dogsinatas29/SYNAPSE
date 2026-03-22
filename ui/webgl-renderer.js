@@ -93,8 +93,10 @@ class WebGLRenderer {
             position: absolute;
             top: 0; left: 0;
             width: 100%; height: 100%;
-            pointer-events: none;
-            z-index: 0;
+            pointer-events: none !important;
+            z-index: 5;
+            background: transparent !important;
+            background-color: transparent !important;
         `;
         canvas2d.parentElement.insertBefore(this.glCanvas, canvas2d);
         if (canvas2d.parentElement.style.position === '') {
@@ -102,7 +104,13 @@ class WebGLRenderer {
         }
 
         this.canvas = this.glCanvas;
-        this.gl = this.glCanvas.getContext('webgl', { antialias: true, alpha: true, depth: false });
+        this.gl = this.glCanvas.getContext('webgl', { 
+            antialias: true, 
+            alpha: true, 
+            depth: false,
+            premultipliedAlpha: false,
+            preserveDrawingBuffer: true // [v0.2.25] Ensures nodes stay visible without dirty redraw
+        });
 
         if (!this.gl) {
             console.error('[SYNAPSE] WebGL not supported.');
@@ -345,6 +353,25 @@ class WebGLRenderer {
         this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(textVertices), this.gl.STATIC_DRAW);
 
         this.textInstanceBuffer = this.gl.createBuffer();
+        
+        // [v0.2.24-Final] Pre-allocate large buffers once to avoid gl.bufferData stalls
+        // 10k nodes, 20k edges, 50k characters
+        this._nodePosArr = new Float32Array(10000 * 2);
+        this._nodeColorArr = new Float32Array(10000 * 3);
+        this._nodeSizeArr = new Float32Array(10000);
+        this._edgeArr = new Float32Array(20000 * 4);
+        this._textArr = new Float32Array(50000 * 8);
+
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.posBuffer);
+        this.gl.bufferData(this.gl.ARRAY_BUFFER, this._nodePosArr.byteLength, this.gl.DYNAMIC_DRAW);
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.colorBuffer);
+        this.gl.bufferData(this.gl.ARRAY_BUFFER, this._nodeColorArr.byteLength, this.gl.DYNAMIC_DRAW);
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.sizeBuffer);
+        this.gl.bufferData(this.gl.ARRAY_BUFFER, this._nodeSizeArr.byteLength, this.gl.DYNAMIC_DRAW);
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.edgeInstanceBuffer);
+        this.gl.bufferData(this.gl.ARRAY_BUFFER, this._edgeArr.byteLength, this.gl.DYNAMIC_DRAW);
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.textInstanceBuffer);
+        this.gl.bufferData(this.gl.ARRAY_BUFFER, this._textArr.byteLength, this.gl.DYNAMIC_DRAW);
 
         // [v0.2.23] Full-screen quad for composite
         const quadPos = [-1, -1, 1, -1, -1, 1, 1, 1];
@@ -411,46 +438,44 @@ class WebGLRenderer {
     }
 
     updateNodeData(nodes) {
-        if (!this.gl || nodes.length === 0) return;
-        this.nodeCount = nodes.length;
-
-        // [Perf Check] Step 2 & 3: 로그 출력하여 매 프레임 불리는지 검증
-        console.warn("[Perf] webgl-renderer: build array & bufferData called");
-
-        let sizeChanged = false;
-        // 배열 재사용 로직 (GC 압박 완화 - Step 3 최적화 보완)
-        if (!this._positions || this._positions.length !== nodes.length * 2) {
-            this._positions = new Float32Array(nodes.length * 2);
-            this._colors = new Float32Array(nodes.length * 3);
-            this._sizes = new Float32Array(nodes.length);
-            sizeChanged = true;
+        if (!this.gl || !nodes || nodes.length === 0) {
+            this.nodeCount = 0;
+            return;
         }
 
-        const positions = this._positions;
-        const colors = this._colors;
-        const sizes = this._sizes;
+        this.nodeCount = nodes.length;
 
-        nodes.forEach((n, i) => {
-            positions[i * 2] = n.position.x + 60;
-            positions[i * 2 + 1] = n.position.y + 30;
-            const rgb = this.hexToRgb(n.data?.color || '#458588');
-            colors[i * 3] = rgb.r;
-            colors[i * 3 + 1] = rgb.g;
-            colors[i * 3 + 2] = rgb.b;
-            sizes[i] = 30; 
-        });
+        // Use pre-allocated buffers
+        const posArr = this._nodePosArr;
+        const colorArr = this._nodeColorArr;
+        const sizeArr = this._nodeSizeArr;
+
+        if (!posArr) return; // Should be initialized in initBuffers
+
+        for (let i = 0; i < nodes.length; i++) {
+            const n = nodes[i];
+            const p = n.position || { x: 0, y: 0 };
+            
+            // Adjust to match 2D layout centering
+            posArr[i * 2] = p.x + 60;
+            posArr[i * 2 + 1] = p.y + 30;
+
+            const c = this.hexToRgb(n.data?.color || '#458588');
+            colorArr[i * 3] = c.r;
+            colorArr[i * 3 + 1] = c.g;
+            colorArr[i * 3 + 2] = c.b;
+
+            sizeArr[i] = 30.0; // Radius
+        }
 
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.posBuffer);
-        if (sizeChanged) this.gl.bufferData(this.gl.ARRAY_BUFFER, positions, this.gl.DYNAMIC_DRAW);
-        else this.gl.bufferSubData(this.gl.ARRAY_BUFFER, 0, positions);
-        
+        this.gl.bufferSubData(this.gl.ARRAY_BUFFER, 0, posArr.subarray(0, this.nodeCount * 2));
+
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.colorBuffer);
-        if (sizeChanged) this.gl.bufferData(this.gl.ARRAY_BUFFER, colors, this.gl.DYNAMIC_DRAW);
-        else this.gl.bufferSubData(this.gl.ARRAY_BUFFER, 0, colors);
-        
+        this.gl.bufferSubData(this.gl.ARRAY_BUFFER, 0, colorArr.subarray(0, this.nodeCount * 3));
+
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.sizeBuffer);
-        if (sizeChanged) this.gl.bufferData(this.gl.ARRAY_BUFFER, sizes, this.gl.DYNAMIC_DRAW);
-        else this.gl.bufferSubData(this.gl.ARRAY_BUFFER, 0, sizes);
+        this.gl.bufferSubData(this.gl.ARRAY_BUFFER, 0, sizeArr.subarray(0, this.nodeCount));
     }
 
     updateEdgeData(edges, nodeMap) {
@@ -613,12 +638,17 @@ class WebGLRenderer {
 
     render(nodes, transform, isDataDirty = false, edges = null, nodeMap = null, isEdgeDirty = false, isTextDirty = false) {
         if (!this.gl) return;
-        this.drawCalls = 0;
+        
+        // [v0.2.25] Iron Isolation: Stop everything if not in graph mode
+        if (this.canvas2d.dataset.mode !== 'graph' && (!window.engine || window.engine.currentMode !== 'graph')) {
+            return;
+        }
 
-        // [v0.2.24] Buffer state setup
-        this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, null);
-        this.gl.clearColor(0, 0, 0, 0);
-        this.gl.clear(this.gl.COLOR_BUFFER_BIT);
+        // Entire buffer clear is now deferred to just before drawing to minimize flickering gap.
+        
+        // Ensure alpha blending is explicitly ENABLED for proper transparency
+        this.gl.enable(this.gl.BLEND);
+        this.gl.blendFunc(this.gl.ONE, this.gl.ONE_MINUS_SRC_ALPHA);
 
         const edgeLen = edges ? edges.length : 0;
         if (isDataDirty || this.nodeCount !== nodes.length) {
@@ -635,15 +665,35 @@ class WebGLRenderer {
             this.lastEdgeCount = edgeLen;
         }
 
-        if (isTextDirty) {
-            this.updateTextData(nodes);
+        const isSatellite = transform.zoom < 0.4;
+        
+        // [v0.2.24-perf] ONLY update text data if dirty OR zoom level crossed satellite threshold
+        const wasSatellite = (this._lastZoom === undefined) ? !isSatellite : (this._lastZoom < 0.4); // Initialize _lastZoom state
+        const zoomPhaseChanged = isSatellite !== wasSatellite;
+        
+        if (isTextDirty || zoomPhaseChanged) {
+            if (isSatellite) {
+                this.charCount = 0; // Disable text in satellite view
+            } else {
+                this.updateTextData(nodes);
+            }
         }
+        this._lastZoom = transform.zoom;
+
+        // Clear WebGL context
+        this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, null); // Ensure drawing to screen
+        this.gl.clearColor(0, 0, 0, 0); 
+        this.gl.clear(this.gl.COLOR_BUFFER_BIT);
 
         // Draw Sequence: Background (Stars) -> Edges -> Nodes -> Text
         this.drawStars(transform);
         if (this.edgeCount > 0) this.drawEdges(transform);
         this.drawNodes(transform);
-        if (this.charCount > 0) this.drawText(transform);
+        
+        // Satellite view에서는 텍스트 생략
+        if (!isSatellite && this.charCount > 0) {
+            this.drawText(transform);
+        }
 
         this._lastTransform = { ...transform };
 
@@ -682,12 +732,12 @@ class WebGLRenderer {
         if (!this.ext || this.edgeCount === 0) return;
         this.gl.useProgram(this.edgeProgram);
         
+        const dpr = window.devicePixelRatio || 1;
         const scaleX = 2 / this.canvas.width;
         const scaleY = -2 / this.canvas.height;
-        const dpr = window.devicePixelRatio || 1;
         const mat = [
-            transform.zoom * scaleX, 0, 0,
-            0, transform.zoom * scaleY, 0,
+            (transform.zoom * dpr) * scaleX, 0, 0,
+            0, (transform.zoom * dpr) * scaleY, 0,
             -1 + (transform.offsetX * dpr) * scaleX, 1 + (transform.offsetY * dpr) * scaleY, 1
         ];
         this.gl.uniformMatrix3fv(this.locs.edge.uProj, false, mat);
@@ -709,12 +759,12 @@ class WebGLRenderer {
     drawNodes(transform) {
         if (this.nodeCount === 0) return;
         this.gl.useProgram(this.nodeProgram);
+        const dpr = window.devicePixelRatio || 1;
         const scaleX = 2 / this.canvas.width;
         const scaleY = -2 / this.canvas.height;
-        const dpr = window.devicePixelRatio || 1;
         const mat = [
-            transform.zoom * scaleX, 0, 0,
-            0, transform.zoom * scaleY, 0,
+            (transform.zoom * dpr) * scaleX, 0, 0,
+            0, (transform.zoom * dpr) * scaleY, 0,
             -1 + (transform.offsetX * dpr) * scaleX, 1 + (transform.offsetY * dpr) * scaleY, 1
         ];
         this.gl.uniformMatrix3fv(this.locs.node.uProj, false, mat);

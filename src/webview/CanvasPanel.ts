@@ -2651,7 +2651,8 @@ export class CanvasPanel {
             const discoveredEdges: any[] = [];
             const IGNORE_GHOST_TARGETS = new Set([
                 'os', 'sys', 'sqlite3', 'math', 'pandas', 'numpy', 'rich', 'datetime', 'json', 'time', 're',
-                'unittest', 'path', 'fs', 'vscode', 'react', 'pathlib', 'dateutil', 'relativedelta', 'abc', 'typing'
+                'unittest', 'path', 'fs', 'vscode', 'react', 'pathlib', 'dateutil', 'relativedelta', 'abc', 'typing',
+                'glibmm', 'unistd.h', 'fcntl.h', 'thread', 'atomic', 'mutex', 'sigc++', 'giomm', 'gtkmm', 'fstream', 'iostream', 'cstdlib', 'ctime'
             ]);
 
             let ghostCount = 0;
@@ -2716,9 +2717,9 @@ export class CanvasPanel {
                         }
 
                         if (targetNodeId) {
-                            Logger.info(`[CanvasPanel] Edge Resolved: ${sourceNode.data?.file || sourceNode.id} -> ${targetName} (${targetNodeId}) via ${resolutionMethod}`);
+                            // Logger.info(`[CanvasPanel] Edge Resolved: ${sourceNode.data?.file || sourceNode.id} -> ${targetName} (${targetNodeId}) via ${resolutionMethod}`);
                         } else {
-                            Logger.warn(`[CanvasPanel] Edge Failed to Resolve: ${sourceNode.data?.file || sourceNode.id} -> ${targetName} (Ambiguous or Missing)`);
+                            // Logger.warn(`[CanvasPanel] Edge Failed to Resolve: ${sourceNode.data?.file || sourceNode.id} -> ${targetName} (Ambiguous or Missing)`);
                         }
 
                         // [v0.2.18] Smart Ghost Node Fallback
@@ -2727,7 +2728,7 @@ export class CanvasPanel {
                             // Check if we already created this ghost node for the current webview update
                             if (!stateForWebview.nodes.some((n: any) => n.id === ghostId)) {
                                 ghostCount++;
-                                Logger.info(`[CanvasPanel] Creating Ghost Node for missing import: ${targetName}`);
+                                // Logger.info(`[CanvasPanel] Creating Ghost Node for missing import: ${targetName}`);
 
                                 // Offset positioning (spiral-ish) to prevent overlap
                                 const angle = ghostCount * 0.5;

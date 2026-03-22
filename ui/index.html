@@ -1218,6 +1218,22 @@
     </div>
 
     <script>
+        // [v0.2.25] Global Message Buffer and SAFE VS Code API exposure
+        window._synapseMessageQueue = window._synapseMessageQueue || [];
+        if (typeof window.vscode === 'undefined') {
+            try { window.vscode = acquireVsCodeApi(); } catch(e) {}
+        }
+
+        // Listen for messages IMMEDIATELY and buffer them
+        window.addEventListener('message', event => {
+            const message = event.data;
+            if (window.engine && window.engine.handleMessage) {
+                window.engine.handleMessage(message);
+            } else {
+                window._synapseMessageQueue.push(message);
+            }
+        });
+
         // [v0.2.20 Fix] Dropdown menu stability: use click-toggle + .open class instead of CSS :hover
         // This prevents menus from closing when user moves mouse to click inner buttons
         document.addEventListener('DOMContentLoaded', () => {
@@ -1309,9 +1325,9 @@
             sidePanelTitle.textContent = filePath;
             fileContent.textContent = 'Loading Content...';
 
-            if (typeof vscode !== 'undefined') {
+            if (typeof window.vscode !== 'undefined') {
                 // Request file content from extension
-                vscode.postMessage({
+                window.vscode?.postMessage({
                     command: 'readFile',
                     filePath: filePath
                 });
@@ -1447,7 +1463,7 @@
 
             // 룰 확인 버튼
             document.getElementById('btn-rules')?.addEventListener('click', () => {
-                if (typeof vscode !== 'undefined') {
+                if (typeof window.vscode !== 'undefined') {
                     vscode.postMessage({ command: 'openRules' });
                 } else {
                     alert('Rules are defined in RULES.md in the project root.');
@@ -1456,7 +1472,7 @@
 
             // REC 버튼: CTRL+ALT+M 토글과 연동
             document.getElementById('btn-record')?.addEventListener('click', () => {
-                if (typeof vscode !== 'undefined') {
+                if (typeof window.vscode !== 'undefined') {
                     vscode.postMessage({ command: 'triggerLogPrompt' });
                 }
             });
@@ -1470,7 +1486,7 @@
 
             // 기준선 제거 버튼
             document.getElementById('btn-clear-baseline')?.addEventListener('click', () => {
-                if (typeof vscode !== 'undefined') {
+                if (typeof window.vscode !== 'undefined') {
                     vscode.postMessage({ command: 'clearBaseline' });
                 }
             });
@@ -1481,7 +1497,7 @@
             });
 
             // 브라우저 모드 체크
-            if (typeof vscode === 'undefined') {
+            if (typeof window.vscode === 'undefined') {
                 const indicator = document.getElementById('status-indicator');
                 indicator.textContent = 'BROWSER MODE';
                 indicator.classList.add('browser-mode');

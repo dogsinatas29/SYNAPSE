@@ -1133,6 +1133,7 @@ class CanvasEngine {
         }
 
         // [v0.2.19] Layer Visibility Toggles
+        const btnLayerBase = document.getElementById('btn-layer-base');
         if (btnLayerBase) {
             btnLayerBase.addEventListener('click', () => {
                 this.showBaseLayer = !this.showBaseLayer;
@@ -1560,11 +1561,12 @@ class CanvasEngine {
 
     wakeUp() {
         this.lastActivityTime = Date.now();
-        if (!this.isAnimating) {
-            this.isAnimating = true;
-            this.isDirty = true;
+        // [v0.2.25] Anti-Override: Do not force isAnimating=true here.
+        // Screen should still update but animation state remains as set by user.
+        if (typeof this.isRunning === 'undefined' || !this.isRunning) {
             this.startLoop();
         }
+        this.isDirty = true;
     }
 
     focusNodeInGraph(nodeId) {
@@ -1609,7 +1611,10 @@ class CanvasEngine {
                 const idleTime = now - (this.lastActivityTime || 0);
                 const hasActiveParticles = this.particles.length > 0 || this.promotionSites.length > 0;
                 
-                if (idleTime > 2000 && !hasActiveParticles && !this.isDragging && !this.isSelecting && !this.needsUpdate) {
+                // [v0.2.25] Eternal Loop: No Auto-Sleep if WebGL + Graph mode
+                const idleLimit = (this.webglEnabled && this.currentMode === 'graph') ? Infinity : 2000;
+                
+                if (idleTime > idleLimit && !hasActiveParticles && !this.isDragging && !this.isSelecting && !this.needsUpdate) {
                     if (this.isAnimating) {
                         this.log('[SYNAPSE] Eco-mode: Entering Sleep (IDLE > 2s)');
                         this.isAnimating = false;
@@ -1621,7 +1626,7 @@ class CanvasEngine {
                 }
 
                 // [v0.2.24] Demand-driven rendering: Only draw if needed
-                const shouldRender = this._isInteracting || this.isDragging || this.isSelecting || hasActiveParticles || this.needsUpdate || this.isAnimating;
+                const shouldRender = this.isDirty || this._isInteracting || this.isDragging || this.isSelecting || hasActiveParticles || this.needsUpdate || this.isAnimating;
 
                 if (shouldRender) {
                     this.render();
@@ -1881,13 +1886,27 @@ class CanvasEngine {
             if (e.button === 0) { // 왼쪽 버튼
                 this.wasDragging = false;
 
+                // -0.5 [Fix] Node check Priority Upgrade
+                // If we hit a node, don't trigger edge confirm/delete badges that might be overlapping.
+                const topClickedNode = this.getNodeAt(worldPos.x, worldPos.y);
+
+                // -1. 클러스터 헤더 버튼 체크 (최우선)
+                let clickedClusterHeader = this.getClusterHeaderAt(worldPos.x, worldPos.y);
+                if (clickedClusterHeader) {
+                    const b = clickedClusterHeader._headerBounds;
+                    if (b && worldPos.x >= b.x && worldPos.x <= b.x + 60) {
+                        this.toggleClusterCollapse(clickedClusterHeader.id);
+                        return;
+                    }
+                }
+
                 // [v0.2.17] Confirm badge click check (? or !)
-                // [v0.2.20] Allow click detection even when Edit Logic is OFF, to provide explicit feedback
-                if (this._confirmBadgeHits && this._confirmBadgeHits.length > 0) {
+                // [v0.2.20] Allow click detection even when Edit Logic is OFF, only IF NOT clicking a node
+                if (!topClickedNode && this._confirmBadgeHits && this._confirmBadgeHits.length > 0) {
                     const wx = worldPos.x, wy = worldPos.y;
                     for (const hit of this._confirmBadgeHits) {
                         const dist = Math.sqrt((wx - hit.x) ** 2 + (wy - hit.y) ** 2);
-                        if (dist <= hit.r * 2.5) { // [v0.2.18 Fix] Enlarge hit radius so clicks don't miss
+                        if (dist <= hit.r * 2.5) {
                             if (!this.isEditMode) {
                                 if (typeof vscode !== 'undefined') {
                                     vscode.postMessage({
@@ -1913,7 +1932,7 @@ class CanvasEngine {
                 }
 
                 // [v0.2.17] Handle quick delete edge badge hit
-                if (this._deleteBadgeHits && this._deleteBadgeHits.length > 0) {
+                if (!topClickedNode && this._deleteBadgeHits && this._deleteBadgeHits.length > 0) {
                     const wx = worldPos.x, wy = worldPos.y;
                     for (const hit of this._deleteBadgeHits) {
                         const dist = Math.sqrt((wx - hit.x) ** 2 + (wy - hit.y) ** 2);
@@ -1929,48 +1948,32 @@ class CanvasEngine {
                                 return;
                             }
                             if (typeof vscode !== 'undefined') {
-                                vscode.postMessage({
-                                    command: 'requestDeleteEdgeUI',
-                                    edgeId: hit.edge.id
-                                });
-                            } else {
-                                this.deleteEdge(hit.edge.id);
+                                vscode.postMessage({ comm                // 2. 엣지 클릭 (노드나 클러스터 헤더가 없을 때만 체크)
+                if (!topClickedNode && !clickedClusterHeader) {
+                    const clickedEdge = this.findEdgeAtPoint(worldPos.x, worldPos.y);
+
+                    // Fallback for edge hit detection
+                    let fallbackEdge = clickedEdge;
+                    if (!fallbackEdge) {
+                        for (const edge of this.edges) {
+                            if (this.isPointNearCurve(worldPos.x, worldPos.y, edge, 25)) {
+                                fallbackEdge = edge;
+                                break;
                             }
-                            // [New] 即時 Sync: 삭제 후 바로 FlowData 갱신
-                            if (this.flowRenderer) {
-                                this.flowData = this.flowRenderer.buildFlow(this.nodes) || { steps: [] };
-                            }
-                            e.stopPropagation();
-                            return;
                         }
                     }
-                }
 
-                // -1. 클러스터 헤더 버튼 체크 (최우선)
-                let clickedClusterHeader = this.getClusterHeaderAt(worldPos.x, worldPos.y);
-                if (clickedClusterHeader) {
-                    // 버튼 영역 체크 (왼쪽 끝 [+] 텍스트 영역)
-                    const b = clickedClusterHeader._headerBounds;
-                    if (b && worldPos.x >= b.x && worldPos.x <= b.x + 60) { // Check if _headerBounds exists and click is on left side
-                        this.toggleClusterCollapse(clickedClusterHeader.id);
+                    if (fallbackEdge && !e.altKey) {
+                        // 엣지 선택 (Single Click maintains structure view)
+                        this.selectedEdge = fallbackEdge;
+                        this.selectedNode = null;
+                        this.selectedNodes.clear();
+                        console.log('[SYNAPSE] Edge selected:', fallbackEdge.id, fallbackEdge.type);
+                        this.render();
+                        e.stopPropagation();
                         return;
                     }
-                }
-
-                // 0. 노드 추가 모드 (최우선)
-                if (this.isAddingNode) {
-                    this.pendingNodePos = worldPos;
-                    const nodeDialog = document.getElementById('node-dialog');
-                    if (nodeDialog) {
-                        nodeDialog.style.display = 'block';
-                        document.getElementById('node-label-input')?.focus();
-                    }
-                    return;
-                }
-
-
-
-                // 1. 연결 핸들 체크 (최우선) OR 연결 모드일 때 노드 클릭
+                }�� (최우선) OR 연결 모드일 때 노드 클릭
                 const handle = this.getConnectionHandleAt(worldPos.x, worldPos.y);
                 const clickedNodeForEdge = this.getNodeAt(worldPos.x, worldPos.y);
 
@@ -2043,13 +2046,16 @@ class CanvasEngine {
                             this.selectedNodes.clear();
                         }
                         clusterNodes.forEach(n => this.selectedNodes.add(n));
-                        this.isDragging = true;
+                        if (this.isEditMode) {
+                            this.isDragging = true;
+                            this.isGraphDataDirty = true;
+                        }
                         this.wasDragging = true; // 클러스터 선택 효과
                         console.log('[SYNAPSE] Dragged cluster header:', clickedClusterHeader.label);
                     }
                 } else {
                     // 4. 노드 클릭
-                    const clickedNode = this.getNodeAt(worldPos.x, worldPos.y);
+                    const clickedNode = topClickedNode;
                     if (clickedNode) {
                         // 엣지 선택 해제
                         this.selectedEdge = null;
@@ -2073,7 +2079,10 @@ class CanvasEngine {
                             this.selectedNode = clickedNode;
                             this._onNodeSelected(clickedNode); // [DTR] show node DTR in gauge
                         }
-                        this.isDragging = true;
+                        if (this.isEditMode || e.button === 0) { // Allow dragging even if not in explicit edit mode if left mouse is used
+                            this.isDragging = true;
+                            this.isGraphDataDirty = true;
+                        }
                     } else {
                         // 5. 빈 공간 클릭 -> 선택 영역 시작 & 엣지 선택 해제
                         this.selectedEdge = null;
@@ -2096,6 +2105,15 @@ class CanvasEngine {
                 }
                 this.isPanning = true;
                 this.canvas.style.cursor = 'grabbing';
+            }
+        });
+
+        this.canvas.addEventListener('dblclick', (e) => {
+            const worldPos = this.screenToWorld(e.offsetX, e.offsetY);
+            const node = this.getNodeAt(worldPos.x, worldPos.y);
+            if (node) {
+                console.log('[SYNAPSE] Double clicked node:', node.id);
+                this._onNodeDoubleClicked(node); // [v0.2.25] Open file in VS Code
             }
         });
 
@@ -2495,11 +2513,12 @@ class CanvasEngine {
             return item ? item.node : null;
         }
 
-        // Default Graph Mode hit testing
-        for (const node of this.nodes) {
+        // Default Graph Mode hit testing (REVERSE order to hit top nodes first)
+        for (let i = this.nodes.length - 1; i >= 0; i--) {
+            const node = this.nodes[i];
             const nodeWidth = node._width || 120;
             const nodeHeight = 60;
-            const HIT_PADDING = 30; // [v0.2.24] 클릭/선택 영역 확장 (12 -> 30)
+            const HIT_PADDING = 0; // [User Reqd] Limit hit area strictly to the visual box // [v0.2.25] Reduced padding to prevent overlap (30 -> 12)
 
             // Check if node is hidden (collapsed cluster)
             if (node.cluster_id) {
@@ -2507,7 +2526,6 @@ class CanvasEngine {
                 if (cluster && cluster.collapsed) continue;
             }
 
-            // [v0.2.23-fix] Match Top-Left origin used in renderNode
             const left = node.position.x - HIT_PADDING;
             const right = node.position.x + nodeWidth + HIT_PADDING;
             const top = node.position.y - HIT_PADDING;
@@ -3976,27 +3994,38 @@ class CanvasEngine {
             this.updateParticles();
         }
 
-        if (this.webglEnabled && this.webglRenderer) {
-            // [v0.2.24] Layer Filtering: Only pass nodes/edges that should be visible
-            const isUserLogic = (n) => 
-                (n.id && n.id.startsWith('node_manual_')) || 
-                (n.cluster_id && n.cluster_id.startsWith('sys_')) || 
-                (n.data?.cluster_id && n.data.cluster_id.startsWith('sys_'));
-            
-            const visibleNodes = this.nodes.filter(n => {
-                const isUser = isUserLogic(n);
-                if (isUser && !this.showUserLayer) return false;
-                if (!isUser && !this.showBaseLayer) return false;
-                return true;
-            });
+        // [v0.2.24] Move WebGL rendering to occur ONLY if something changed or is animating
+        // This ensures 0% CPU usage when the mouse is still.
+        if (this.webglEnabled && this.webglRenderer && (this.isDirty || this.isAnimating || this.needsUpdate)) {
+            // Optimization: Filter only when data is dirty to save CPU
+            if (this.isGraphDataDirty || !this._visibleNodesCache) {
+                const isUserLogic = (n) => 
+                    (n.id && n.id.startsWith('node_manual_')) || 
+                    (n.cluster_id && typeof n.cluster_id === 'string' && n.cluster_id.startsWith('sys_')) || 
+                    (n.data?.cluster_id && typeof n.data.cluster_id === 'string' && n.data.cluster_id.startsWith('sys_'));
+                
+                this._visibleNodesCache = this.nodes.filter(n => {
+                    const isUser = isUserLogic(n);
+                    if (isUser && !this.showUserLayer) return false;
+                    if (!isUser && !this.showBaseLayer) return false;
+                    return true;
+                });
 
-            // Filtering edges is slightly more complex — need to check both ends
-            const visibleNodeIds = new Set(visibleNodes.map(n => n.id));
-            const visibleEdges = this.edges.filter(e => visibleNodeIds.has(e.from) && visibleNodeIds.has(e.to));
+                const visibleNodeIds = new Set(this._visibleNodesCache.map(n => n.id));
+                this._visibleEdgesCache = this.edges.filter(e => visibleNodeIds.has(e.from) && visibleNodeIds.has(e.to));
+            }
 
-            this.webglRenderer.render(visibleNodes, this.transform, this.isGraphDataDirty, visibleEdges, this.nodeMap, this.isEdgeDirty, this.isTextDirty);
+            this.webglRenderer.render(
+                this._visibleNodesCache, 
+                this.transform, 
+                this.isGraphDataDirty, 
+                this._visibleEdgesCache, 
+                this.nodeMap, 
+                this.isEdgeDirty, 
+                this.isTextDirty
+            );
             
-            if (shouldLog) console.log(`after webgl (filtered: ${visibleNodes.length}/${this.nodes.length} nodes)`);
+            if (shouldLog) console.log(`after webgl (filtered: ${this._visibleNodesCache.length}/${this.nodes.length} nodes)`);
             this.isGraphDataDirty = false;
             this.isEdgeDirty = false;
             this.isTextDirty = false;
@@ -4016,6 +4045,7 @@ class CanvasEngine {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
         }
 
+        /* [v0.2.25 Fix] FPS 1 고정 현상 해결을 위해 과도한 절전 로직 우회
         if (!this.isDirty && !this.isAnimating) {
             const fpsEl = document.getElementById('fps-display');
             if (fpsEl && fpsEl.textContent !== 'IDLE') {
@@ -4024,6 +4054,7 @@ class CanvasEngine {
             }
             return; 
         }
+        */
         if (this.isRendering) return;
         this.isRendering = true;
         this.isDirty = false;
@@ -4066,16 +4097,60 @@ class CanvasEngine {
 
             } else {
                 // Graph 모드: 그리드 -> 클러스터 -> 엣지 -> 노드 순으로 렌더링
-                // [v0.2.24] WebGL 모드에서는 무거운 2D 렌더링 생략
-                if (!this.webglEnabled) {
-                    this.renderGrid();
-                    this.renderClusters();
-                }
+                // [v0.2.25] Forced 2D layer for clusters (Option 4)
+                this.renderGrid();
+                this.renderClusters();
                 this.renderScrollbars();
 
-                if (!this.debugDisableOverlay && (this._frameCounter % 2 === 0 || this.isDirty)) {
-                    if (!this.webglEnabled) {
-                        // 1️⃣ 2D 모드에서는 노드와 엣지를 직접 그림 (Fallback 복구)
+                // [v0.2.25] Accel Mode (WebGL) - Iron Shell Synergy Check
+                if (this.webglRenderer) {
+                    const glCanvas = this.webglRenderer.glCanvas;
+                    if (this.webglEnabled && this.currentMode === 'graph') {
+                        if (glCanvas) {
+                            glCanvas.style.display = 'block';
+                            glCanvas.style.pointerEvents = 'none';
+                            glCanvas.style.zIndex = '5';
+                            glCanvas.style.opacity = '1';
+                            glCanvas.style.background = 'transparent';
+                        }
+                    } else {
+                        // [v0.2.25] Physical Isolation: Hide immediately when mode changes
+                        if (glCanvas) {
+                            glCanvas.style.display = 'none';
+                            glCanvas.style.zIndex = '-9999'; // Far back!
+                            glCanvas.style.opacity = '0';
+                        }
+                        const gl = this.webglRenderer.gl;
+                        if (gl) {
+                            gl.clearColor(0, 0, 0, 0);
+                            gl.clear(gl.COLOR_BUFFER_BIT);
+                        }
+                    }
+                }
+
+                // [v0.2.25] Accel Mode (Accel: ON) Constant Rendering Fix
+                // Force isDirty to true when Accel is ON to prevent disappearing/flickering
+                if (this.webglEnabled && this.currentMode === 'graph') {
+                    this.isDirty = true;
+                }
+
+                if (!this.debugDisableOverlay && (this.webglEnabled || this.isAnimating || this.isDirty || this._frameCounter % 2 === 0)) {
+                    // [v0.2.25] Final Logic: Use WebGL only in Graph mode IF Accel is ON
+                    if (this.webglEnabled && this.webglRenderer && this.currentMode === 'graph') {
+                        this.webglRenderer.render(
+                            this.nodes,
+                            this.transform,
+                            this.isGraphDataDirty,
+                            this.edges,
+                            this.nodeMap,
+                            this.isEdgeDirty,
+                            this.isTextDirty
+                        );
+                        this.isGraphDataDirty = false;
+                        this.isEdgeDirty = false;
+                        this.isTextDirty = false;
+                    } else if (!this.webglEnabled || this.currentMode !== 'graph') {
+                        // [v0.2.25] Fallback: Draw Nodes/Edges in 2D if Accel is OFF OR Mode is not Graph
                         this.renderEdges2D();  
                         this.renderLabels2D(); 
                     }
@@ -6763,6 +6838,7 @@ function initCanvas() {
 
     // index.html의 <canvas id="canvas">와 일치해야 함
     engine = new CanvasEngine('canvas');
+    window.engine = engine; // [v0.2.25] Expose to global for button clicks
     console.log('[SYNAPSE] Engine initialized:', engine);
 
     // Failsafe: Remove loading overlay after 3 seconds no matter what
@@ -6788,25 +6864,23 @@ function initCanvas() {
         window.vscode = acquireVsCodeApi();
     }
 
-    // 메시지 리스너 등록
-    window.addEventListener('message', event => {
-        const message = event.data;
-        console.log('[SYNAPSE] Received message:', message.command);
+    // [v0.2.25] 메시지 처리 통합 및 핸들러 등록
+    engine.handleMessage = (message) => {
+        if (!message) return;
+        console.log('[SYNAPSE] Processing incoming message:', message.command);
 
         switch (message.command) {
-            case 'projectState':
-                if (this.engine && (this.engine.isDragging || this.engine._isInteracting)) {
-                    // console.log('[SYNAPSE] Deferring projectState update during interaction');
-                    this.engine._pendingState = message.data;
+            case 'projectState': {
+                if (engine.isDragging || engine._isInteracting) {
+                    engine._pendingState = message.data;
                     return;
                 }
-                console.log(`[SYNAPSE] Received projectState with ${message.data.nodes?.length || 0} nodes.`);
                 const preserve = engine.nodes && engine.nodes.length > 0;
                 engine.loadProjectState(message.data, preserve);
                 engine.isExpectingUpdate = false;
                 break;
+            }
             case 'resetCanvas': {
-                // Visual Reset: 모든 노드/엣지/클러스터 즉시 제거 및 캔버스 초기화
                 engine.nodes = [];
                 engine.edges = [];
                 engine.clusters = [];
@@ -6818,6 +6892,7 @@ function initCanvas() {
                 const edgeCountEl = document.getElementById('edge-count');
                 if (nodeCountEl) nodeCountEl.textContent = '0';
                 if (edgeCountEl) edgeCountEl.textContent = '0';
+                engine.isDirty = true;
                 engine.render();
                 console.log('[SYNAPSE] RESET_CANVAS received. Canvas cleared.');
                 break;
@@ -6834,26 +6909,22 @@ function initCanvas() {
                 engine.fitView();
                 break;
             case 'history':
-                console.log(`[SYNAPSE] Received history with ${message.data.length} snapshots.`);
                 engine.updateHistoryUI(message.data);
                 break;
-            // ... (other cases)
             case 'rollbackComplete':
-                console.log('[SYNAPSE] Rollback complete msg received. Fetching new state in 200ms...');
-                setTimeout(() => {
-                    engine.getProjectState();
-                }, 200);
+                setTimeout(() => engine.getProjectState(), 200);
                 break;
             case 'fitView':
                 engine.fitView();
                 break;
-            case 'edgeConfirmed':
-                const edgeToConfirm = engine.edges.find(e => e.id === message.edgeId);
-                if (edgeToConfirm) {
-                    edgeToConfirm.status = 'confirmed';
+            case 'edgeConfirmed': {
+                const edge = engine.edges.find(e => e.id === message.edgeId);
+                if (edge) {
+                    edge.status = 'confirmed';
                     engine.render();
                 }
                 break;
+            }
             case 'edgeDeletedSource':
                 if (message.success) {
                     const edgeIdx = engine.edges.findIndex(e => e.id === message.edgeId);
@@ -7064,9 +7135,15 @@ function initCanvas() {
                 engine.focusNodeInGraph(message.nodeId);
                 break;
         }
-    });
+    };
 
-    // Initial request
+    // [v0.2.25] 버퍼링된 메시지 즉시 처리 (Flush message queue)
+    if (window._synapseMessageQueue && window._synapseMessageQueue.length > 0) {
+        console.log(`[SYNAPSE] Draining ${window._synapseMessageQueue.length} buffered messages...`);
+        while (window._synapseMessageQueue.length > 0) {
+            engine.handleMessage(window._synapseMessageQueue.shift());
+        }
+    }
     engine.getProjectState();
 
     // Toolbar Event Listeners

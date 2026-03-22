@@ -1948,7 +1948,35 @@ class CanvasEngine {
                                 return;
                             }
                             if (typeof vscode !== 'undefined') {
-                                vscode.postMessage({ comm                // 2. 엣지 클릭 (노드나 클러스터 헤더가 없을 때만 체크)
+                                vscode.postMessage({
+                                    command: 'requestDeleteEdgeUI',
+                                    edgeId: hit.edge.id
+                                });
+                            } else {
+                                this.deleteEdge(hit.edge.id);
+                            }
+                            // [New] 即時 Sync: 삭제 후 바로 FlowData 갱신
+                            if (this.flowRenderer) {
+                                this.flowData = this.flowRenderer.buildFlow(this.nodes) || { steps: [] };
+                            }
+                            e.stopPropagation();
+                            return;
+                        }
+                    }
+                }
+
+                // -1. 클러스터 헤더 버튼 체크 (최우선)
+                let clickedClusterHeader = this.getClusterHeaderAt(worldPos.x, worldPos.y);
+                if (clickedClusterHeader) {
+                    // 버튼 영역 체크 (왼쪽 끝 [+] 텍스트 영역)
+                    const b = clickedClusterHeader._headerBounds;
+                    if (b && worldPos.x >= b.x && worldPos.x <= b.x + 60) {
+                        this.toggleClusterCollapse(clickedClusterHeader.id);
+                        return;
+                    }
+                }
+
+                // 2. 엣지 클릭 (노드나 클러스터 헤더가 없을 때만 체크)
                 if (!topClickedNode && !clickedClusterHeader) {
                     const clickedEdge = this.findEdgeAtPoint(worldPos.x, worldPos.y);
 
@@ -1973,7 +2001,20 @@ class CanvasEngine {
                         e.stopPropagation();
                         return;
                     }
-                }�� (최우선) OR 연결 모드일 때 노드 클릭
+                }
+
+                // 0. 노드 추가 모드 (최우선)
+                if (this.isAddingNode) {
+                    this.pendingNodePos = worldPos;
+                    const nodeDialog = document.getElementById('node-dialog');
+                    if (nodeDialog) {
+                        nodeDialog.style.display = 'block';
+                        document.getElementById('node-label-input')?.focus();
+                    }
+                    return;
+                }
+
+                // 1. 연결 핸들 체크 (최우선) OR 연결 모드일 때 노드 클릭
                 const handle = this.getConnectionHandleAt(worldPos.x, worldPos.y);
                 const clickedNodeForEdge = this.getNodeAt(worldPos.x, worldPos.y);
 
@@ -5267,6 +5308,13 @@ class CanvasEngine {
 
         // --- New v0.2.16 Node Types ---
         const v16TypeMap = {
+            'component': {
+                borderColor: '#b16286', // Component Style
+                bgColor: '#3c3836',
+                icon: '🧩',
+                lineWidth: 2.5,
+                typeLabel: 'Comp'
+            },
             'processor': {
                 borderColor: '#b16286', // Purple
                 bgColor: '#3c3836',
@@ -5412,6 +5460,29 @@ class CanvasEngine {
         let bgColor = style.bgColor;
         let dash = style.dash || [];
         let glowColor = null;
+
+        // [v0.2.22/v0.2.25] Node Status & High DTR Glow Override (Conventions)
+        if (node.status === 'active') {
+            borderColor = '#83a598'; // Active Blue
+        } else if (node.status === 'ghost') {
+            borderColor = '#928374'; // Ghost Gray
+            dash = [5, 5];           // Dashed line
+        } else if (node.status === 'deleted') {
+            borderColor = '#282828'; // Dark Gray
+            bgColor = 'rgba(40, 40, 40, 0.4)';
+        } else if (node.status === 'warning' || node.isError) {
+            borderColor = '#fb4934'; // Error Red
+            glowColor = '#fb4934';
+        } else if (node.status === 'error_necrosis' || node.status === 'error_tombstone') {
+            borderColor = '#1d2021';
+            bgColor = '#1d2021';
+        }
+        
+        // High DTR Logic Pulse (Overwrites status glow if significant)
+        const dtr = (node.intelligence && node.intelligence.dtr !== undefined) ? node.intelligence.dtr : this.currentDTR;
+        if (dtr >= 0.7) {
+            glowColor = '#8a2be2'; // Significant DTR Purple Glow
+        }
         // [v0.2.18.2] Promotion Awareness: node is currently in promotion animation
         const isPromoting = this.promotingNodeIds && this.promotingNodeIds.has(node.id);
 
@@ -5846,44 +5917,50 @@ class CanvasEngine {
 
         const styles = {
             'dependency': {
-                color: '#83a598',      // 파란색
-                dashPattern: [5, 5],   // 점선
-                lineWidth: 1.5,
-                arrowStyle: 'standard' // 표준 화살표
-            },
-            'call': {
-                color: '#b8bb26',      // 녹색
-                dashPattern: null,     // 실선
-                lineWidth: 1.5,
+                color: '#ebdbb2',      // Gruvbox Light
+                dashPattern: null,     // Solid
+                lineWidth: 2.0,
                 arrowStyle: 'standard'
             },
             'data_flow': {
-                color: '#fabd2f',      // 노란색
-                dashPattern: [10, 5],  // 긴 대시
-                lineWidth: 2.0,        // 약간 굵게
-                arrowStyle: 'thick'    // 굵은 화살표
+                color: '#83a598',      // Blue/Teal
+                dashPattern: null,     // Solid
+                lineWidth: 3.0,
+                arrowStyle: 'thick'
             },
-            'bidirectional': {
-                color: '#d3869b',      // 보라색
-                dashPattern: null,     // 실선
+            'event': {
+                color: '#fe8019',      // Orange
+                dashPattern: null,     // Solid
+                lineWidth: 2.0,
+                arrowStyle: 'standard'
+            },
+            'conditional': {
+                color: '#d3869b',      // Magenta/Purple
+                dashPattern: null,     // Solid 
+                lineWidth: 1.0,
+                arrowStyle: 'standard'
+            },
+            'origin': {
+                color: '#d65d0e',      // Dark Orange
+                dashPattern: null,     // Solid
                 lineWidth: 1.5,
-                arrowStyle: 'double'   // 양방향 화살표
+                arrowStyle: 'standard'
             },
             'api_call': {
                 color: '#8ec07c',      // Aqua
-                dashPattern: [4, 4],
+                dashPattern: [4, 4],   // Dashed
                 lineWidth: 2.0,
                 arrowStyle: 'standard'
             },
             'db_query': {
-                color: '#d3869b',      // Magenta (보라)
-                dashPattern: null,
-                lineWidth: 2.5,
+                color: '#d3869b',      // Magenta/Purple
+                dashPattern: null,     // Solid
+                lineWidth: 3.0,
                 arrowStyle: 'thick'
             },
             'loop_back': {
                 color: '#fe8019',      // Orange
-                dashPattern: [2, 2],
+                dashPattern: [2, 4],   // Dotted (Approx)
                 lineWidth: 2.0,
                 arrowStyle: 'standard'
             }

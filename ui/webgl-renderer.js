@@ -175,11 +175,21 @@ class WebGLRenderer {
             varying vec3 vColor;
             varying vec2 vCoord;
             void main() {
-                float dist = length(vCoord);
-                if (dist > 1.0) discard;
-                float alpha = 1.0 - smoothstep(0.8, 1.0, dist);
-                vec3 glow = vColor * (1.2 - dist * 0.5);
-                gl_FragColor = vec4(glow, alpha);
+                // [v0.2.25] Enhanced Box Shader with Emissive Bloom
+                float distMask = max(abs(vCoord.x), abs(vCoord.y));
+                if (distMask > 1.0) discard;
+                
+                // Node Body
+                float body = 1.0 - smoothstep(0.8, 0.82, distMask);
+                // Glow/Aura (Pulsing simulated by shader time or just heavy weight)
+                float aura = 1.0 - smoothstep(0.7, 1.0, distMask);
+                
+                vec3 nodeColor = vColor;
+                vec3 finalColor = nodeColor * body * 0.8; // darkened body
+                finalColor += nodeColor * aura * 1.8;      // strong emissive glow
+                
+                float finalAlpha = max(body * 0.9, aura * 0.6);
+                gl_FragColor = vec4(finalColor, finalAlpha);
             }
         `;
         this.nodeProgram = this.createProgram(vsSource, fsSource);
@@ -460,12 +470,21 @@ class WebGLRenderer {
             posArr[i * 2] = p.x + 60;
             posArr[i * 2 + 1] = p.y + 30;
 
-            const c = this.hexToRgb(n.data?.color || '#458588');
+            // [v0.2.22] Map Status and Type to WebGL Colors (Sync with Conventions)
+            let nColor = n.data?.color || '#ebdbb2';
+            if (n.status === 'active') nColor = '#83a598';
+            else if (n.status === 'warning' || n.isError) nColor = '#fb4934';
+            else if (n.status === 'ghost') nColor = '#928374';
+            else if (n.status === 'deleted') nColor = '#282828';
+            else if (n.status === 'error_necrosis' || n.status === 'error_tombstone') nColor = '#1d2021';
+            else if (n.intelligence?.dtr >= 0.7) nColor = '#8a2be2'; // DTR Purple
+
+            const c = this.hexToRgb(nColor);
             colorArr[i * 3] = c.r;
             colorArr[i * 3 + 1] = c.g;
             colorArr[i * 3 + 2] = c.b;
 
-            sizeArr[i] = 30.0; // Radius
+            sizeArr[i] = 45.0; // radius adapted for boxes
         }
 
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.posBuffer);

@@ -4004,6 +4004,26 @@ class CanvasEngine {
         }
     }
 
+    
+    /**
+     * [v0.2.26] GPU 및 WebGL 상태 강제 초기화 (Isolation Guard)
+     */
+    forceResetGLState() {
+        if (!this.webglEnabled || !this.webglRenderer) return;
+        const gl = this.webglRenderer.gl;
+        if (!gl) return;
+        
+        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+        gl.useProgram(null);
+        gl.disable(gl.DEPTH_TEST);
+        gl.disable(gl.BLEND);
+        gl.viewport(0, 0, this.canvas.width, this.canvas.height);
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+        
+        // 2D 캔버스 초기화 (Flicker 방지용)
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    }
+
     render() {
         this._frameCounter++;
         const shouldLog = this._frameCounter % 120 === 0;
@@ -4177,7 +4197,7 @@ class CanvasEngine {
 
                 if (!this.debugDisableOverlay && (this.webglEnabled || this.isAnimating || this.isDirty || this._frameCounter % 2 === 0)) {
                     // [v0.2.25] Final Logic: Use WebGL only in Graph mode IF Accel is ON
-                    if (this.webglEnabled && this.webglRenderer && this.currentMode === 'graph') {
+                                        if (this.webglEnabled && this.webglRenderer && this.currentMode === 'graph') {
                         this.webglRenderer.render(
                             this.nodes,
                             this.transform,
@@ -4190,11 +4210,13 @@ class CanvasEngine {
                         this.isGraphDataDirty = false;
                         this.isEdgeDirty = false;
                         this.isTextDirty = false;
-                    } else if (!this.webglEnabled || this.currentMode !== 'graph') {
-                        // [v0.2.25] Fallback: Draw Nodes/Edges in 2D if Accel is OFF OR Mode is not Graph
+                    } else {
+                        // [v0.2.26] Non-WebGL Mode or Mode Change: Clear and Draw 2D
+                        this.forceResetGLState();
                         this.renderEdges2D();  
                         this.renderLabels2D(); 
                     }
+
                     if (shouldLog) console.log("after edges/labels");
                     
                     this.renderGhostNodes(zoom);
@@ -5462,8 +5484,10 @@ class CanvasEngine {
         let glowColor = null;
 
         // [v0.2.22/v0.2.25] Node Status & High DTR Glow Override (Conventions)
+                // [v0.2.22/v0.2.26] Node Status & High DTR Glow Override
         if (node.status === 'active') {
-            borderColor = '#83a598'; // Active Blue
+            borderColor = '#83a598'; 
+            node.visual.opacity = 1.0; // Ensure full visibility
         } else if (node.status === 'ghost') {
             borderColor = '#928374'; // Ghost Gray
             dash = [5, 5];           // Dashed line

@@ -215,31 +215,21 @@ class WebGLRenderer {
         this.starProgram = this.createProgram(starVS, starFS);
 
         // Edge Instanced Shader
-        const vsEdge = `
+                const vsEdge = `
             attribute vec2 aVertexPosition;
-            attribute vec4 aInstanceEdge;
+            attribute vec3 aColor;
+            varying vec3 vColor;
             uniform mat3 uProjectionMatrix;
             void main() {
-                vec2 start = aInstanceEdge.xy;
-                vec2 end = aInstanceEdge.zw;
-                vec2 dir = end - start;
-                float len = length(dir);
-                if (len < 0.001) {
-                    gl_Position = vec4(0.0, 0.0, 0.0, 1.0);
-                    return;
-                }
-                vec2 norm = normalize(dir);
-                vec2 perp = vec2(-norm.y, norm.x);
-                float thickness = 2.0; 
-                vec2 pos = start + dir * aVertexPosition.x + perp * (aVertexPosition.y * thickness);
-                vec3 projected = uProjectionMatrix * vec3(pos, 1.0);
-                gl_Position = vec4(projected.xy, 0.0, 1.0);
+                vColor = aColor;
+                gl_Position = vec4((uProjectionMatrix * vec3(aVertexPosition, 1.0)).xy, 0.0, 1.0);
             }
-        `;
-        const fsEdge = `
+`;
+                const fsEdge = `
             precision mediump float;
+            varying vec3 vColor;
             void main() {
-                gl_FragColor = vec4(0.4, 0.36, 0.33, 0.6); // #665c54 with opacity
+                gl_FragColor = vec4(vColor, 0.8); 
             }
         `;
         this.edgeProgram = this.createProgram(vsEdge, fsEdge);
@@ -724,6 +714,9 @@ class WebGLRenderer {
         if (this.__perfCounter < 10 || this.__perfCounter % 60 === 0) {
             console.log(`[SYNAPSE WebGL] Frame #${this.__perfCounter} | DrawCalls: ${this.drawCalls} | Instancing: ${this.ext ? 'ON' : 'OFF'} | Nodes: ${nodes.length} | Edges: ${this.edgeCount}`);
         }
+        // [v0.2.26] Explicit Cleanup to avoid Context Contamination
+        this.gl.useProgram(null);
+        this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, null);
     }
 
     drawStars(transform) {

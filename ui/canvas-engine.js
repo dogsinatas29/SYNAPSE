@@ -990,6 +990,7 @@ class CanvasEngine {
         this.isGraphDataDirty = true;
         this.webglEnabled = false;
         this.webglRenderer = null;
+        this.bootstrapMode = false; // [v0.2.28] Deterministic Bootstrap Mode (Step 4)
 
         this.handleOpenFile = (filePath) => {
             if (!filePath) return;
@@ -1147,6 +1148,19 @@ class CanvasEngine {
         }
 
         const btnLayerUser = document.getElementById('btn-layer-user');
+
+        // [v0.2.28] Determinism Bootstrap Toggle
+        const btnDetBootstrap = document.getElementById('btn-debug-hash');
+        if (btnDetBootstrap) {
+            btnDetBootstrap.addEventListener('click', () => {
+                this.bootstrapMode = !this.bootstrapMode;
+                btnDetBootstrap.textContent = this.bootstrapMode ? '💎 Det Bootstrap: ON' : '💎 Det Bootstrap: OFF';
+                btnDetBootstrap.style.color = this.bootstrapMode ? '#b8bb26' : '#fe8019';
+                this.isGraphDataDirty = true;
+                this.render();
+            });
+        }
+
         if (btnLayerUser) {
             btnLayerUser.addEventListener('click', () => {
                 this.showUserLayer = !this.showUserLayer;
@@ -1626,7 +1640,7 @@ class CanvasEngine {
                 }
 
                 // [v0.2.24] Demand-driven rendering: Only draw if needed
-                const shouldRender = this.isDirty || this._isInteracting || this.isDragging || this.isSelecting || hasActiveParticles || this.needsUpdate || this.isAnimating;
+                const shouldRender = this.isDirty || this._isInteracting || this.isDragging || this.isSelecting || hasActiveParticles || this.needsUpdate || (this.isAnimating && this.particles.length > 0);
 
                 if (shouldRender) {
                     this.render();
@@ -1880,18 +1894,18 @@ class CanvasEngine {
             this.canvas.focus();
 
             const worldPos = this.screenToWorld(e.offsetX, e.offsetY);
+            this._debugLastWorldClick = worldPos; // [v0.2.26] Debug indicator
             this.dragStart = { x: e.offsetX, y: e.offsetY };
             this.dragStartAbsolute = { x: e.offsetX, y: e.offsetY }; // [v0.2.20 Fix] Added for jitter tracking
 
             if (e.button === 0) { // 왼쪽 버튼
                 this.wasDragging = false;
 
-                // -0.5 [Fix] Node check Priority Upgrade
-                // If we hit a node, don't trigger edge confirm/delete badges that might be overlapping.
+                // 1. [v0.2.33] Hit Detection Hierarchy
                 const topClickedNode = this.getNodeAt(worldPos.x, worldPos.y);
+                const clickedClusterHeader = this.getClusterHeaderAt(worldPos.x, worldPos.y);
 
-                // -1. 클러스터 헤더 버튼 체크 (최우선)
-                let clickedClusterHeader = this.getClusterHeaderAt(worldPos.x, worldPos.y);
+                // 1.1 Cluster Header Buttons (Toggle [+] / [-])
                 if (clickedClusterHeader) {
                     const b = clickedClusterHeader._headerBounds;
                     if (b && worldPos.x >= b.x && worldPos.x <= b.x + 60) {
@@ -1900,176 +1914,35 @@ class CanvasEngine {
                     }
                 }
 
-                // [v0.2.17] Confirm badge click check (? or !)
-                // [v0.2.20] Allow click detection even when Edit Logic is OFF, only IF NOT clicking a node
-                if (!topClickedNode && this._confirmBadgeHits && this._confirmBadgeHits.length > 0) {
-                    const wx = worldPos.x, wy = worldPos.y;
-                    for (const hit of this._confirmBadgeHits) {
-                        const dist = Math.sqrt((wx - hit.x) ** 2 + (wy - hit.y) ** 2);
-                        if (dist <= hit.r * 2.5) {
-                            if (!this.isEditMode) {
-                                if (typeof vscode !== 'undefined') {
-                                    vscode.postMessage({
-                                        command: 'showWarning',
-                                        message: 'Edit Logic 모드가 꺼져 있어 엣지를 승인/수정할 수 없습니다.'
-                                    });
-                                }
-                                e.stopPropagation();
-                                return;
-                            }
-                            if (hit.isPending && typeof vscode !== 'undefined') {
-                                vscode.postMessage({
-                                    command: 'requestConfirmEdge',
-                                    edgeId: hit.edge.id,
-                                    fromFile: hit.edge._fromFile || null,
-                                    toFile: hit.edge._toFile || null
-                                });
-                            }
-                            e.stopPropagation();
-                            return;
-                        }
-                    }
-                }
-
-                // [v0.2.17] Handle quick delete edge badge hit
-                if (!topClickedNode && this._deleteBadgeHits && this._deleteBadgeHits.length > 0) {
-                    const wx = worldPos.x, wy = worldPos.y;
-                    for (const hit of this._deleteBadgeHits) {
-                        const dist = Math.sqrt((wx - hit.x) ** 2 + (wy - hit.y) ** 2);
-                        if (dist <= hit.r * 1.5) {
-                            if (!this.isEditMode) {
-                                if (typeof vscode !== 'undefined') {
-                                    vscode.postMessage({
-                                        command: 'showWarning',
-                                        message: 'Edit Logic 모드가 꺼져 있어 엣지를 삭제할 수 없습니다.'
-                                    });
-                                }
-                                e.stopPropagation();
-                                return;
-                            }
-                            if (typeof vscode !== 'undefined') {
-                                vscode.postMessage({
-                                    command: 'requestDeleteEdgeUI',
-                                    edgeId: hit.edge.id
-                                });
-                            } else {
-                                this.deleteEdge(hit.edge.id);
-                            }
-                            // [New] 即時 Sync: 삭제 후 바로 FlowData 갱신
-                            if (this.flowRenderer) {
-                                this.flowData = this.flowRenderer.buildFlow(this.nodes) || { steps: [] };
-                            }
-                            e.stopPropagation();
-                            return;
-                        }
-                    }
-                }
-
-                // -1. 클러스터 헤더 버튼 체크 (최우선)
-                clickedClusterHeader = this.getClusterHeaderAt(worldPos.x, worldPos.y);
-                if (clickedClusterHeader) {
-                    // 버튼 영역 체크 (왼쪽 끝 [+] 텍스트 영역)
-                    const b = clickedClusterHeader._headerBounds;
-                    if (b && worldPos.x >= b.x && worldPos.x <= b.x + 60) {
-                        this.toggleClusterCollapse(clickedClusterHeader.id);
-                        return;
-                    }
-                }
-
-                // 2. 엣지 클릭 (노드나 클러스터 헤더가 없을 때만 체크)
-                if (!topClickedNode && !clickedClusterHeader) {
-                    const clickedEdge = this.findEdgeAtPoint(worldPos.x, worldPos.y);
-
-                    // Fallback for edge hit detection
-                    let fallbackEdge = clickedEdge;
-                    if (!fallbackEdge) {
-                        for (const edge of this.edges) {
-                            if (this.isPointNearCurve(worldPos.x, worldPos.y, edge, 25)) {
-                                fallbackEdge = edge;
-                                break;
-                            }
-                        }
-                    }
-
-                    if (fallbackEdge && !e.altKey) {
-                        // 엣지 선택 (Single Click maintains structure view)
-                        this.selectedEdge = fallbackEdge;
-                        this.selectedNode = null;
-                        this.selectedNodes.clear();
-                        console.log('[SYNAPSE] Edge selected:', fallbackEdge.id, fallbackEdge.type);
-                        this.render();
-                        e.stopPropagation();
-                        return;
-                    }
-                }
-
-                // 0. 노드 추가 모드 (최우선)
-                if (this.isAddingNode) {
-                    this.pendingNodePos = worldPos;
-                    const nodeDialog = document.getElementById('node-dialog');
-                    if (nodeDialog) {
-                        nodeDialog.style.display = 'block';
-                        document.getElementById('node-label-input')?.focus();
-                    }
-                    return;
-                }
-
-                // 1. 연결 핸들 체크 (최우선) OR 연결 모드일 때 노드 클릭
-                const handle = this.getConnectionHandleAt(worldPos.x, worldPos.y);
-                const clickedNodeForEdge = this.getNodeAt(worldPos.x, worldPos.y);
-
-                if ((handle && e.altKey) || (this.isCreatingEdge && (clickedNodeForEdge || handle))) {
-                    // Alt + 핸들 클릭 = 엣지 생성 모드
-                    // OR 'Connect' button is active and user clicked a node/handle
-
-                    // If manually toggled mode and click is on body, ignore (wait for node click)
-                    if (this.isCreatingEdge && !clickedNodeForEdge && !handle) {
-                        // Just deselect if clicking empty space? Or allow pan?
-                        // For now let it fall through to pan/select
-                    } else {
-                        // Start edge creation
-                        this.isCreatingEdge = true; // Ensure true
-                        this.edgeSource = handle || { type: 'node', id: clickedNodeForEdge.id };
-                        this.edgeCurrentPos = worldPos;
-                        console.log('[SYNAPSE] Edge creation started from:', this.edgeSource);
-                        return;
-                    }
-                }
-
-                // 2. 엣지 클릭 (노드보다 먼저 체크)
-
-                const clickedEdge = this.findEdgeAtPoint(worldPos.x, worldPos.y);
-
-                // Fallback for edge hit detection
-                let fallbackEdge = clickedEdge;
-                if (!fallbackEdge) {
-                    for (const edge of this.edges) {
-                        if (this.isPointNearCurve(worldPos.x, worldPos.y, edge, 25)) {
-                            fallbackEdge = edge;
-                            break;
-                        }
-                    }
-                }
-
-                if (fallbackEdge && !e.altKey) {
-                    // 엣지 선택 (Single Click maintains structure view)
-                    this.selectedEdge = fallbackEdge;
-                    this.selectedNode = null;
-                    this.selectedNodes.clear();
-                    console.log('[SYNAPSE] Edge selected:', fallbackEdge.id, fallbackEdge.type);
-                    this.render();
-                    e.stopPropagation();
-                    return;
-                }
-
-
-                // 3. 클러스터 타이틀 클릭 확인 (드래그 지원) - 노드보다 우선순위 높임 (헤더 클릭 시 클러스터 전체 이동)
-                clickedClusterHeader = typeof this.getClusterHeaderAt === 'function' ? this.getClusterHeaderAt(worldPos.x, worldPos.y) : null;
-                if (clickedClusterHeader) {
-                    // 엣지 선택 해제
+                // 1.2 [v0.2.33] Priority 1: Nodes
+                if (topClickedNode) {
                     this.selectedEdge = null;
+                    if (e.ctrlKey || e.metaKey || e.shiftKey) {
+                        if (this.selectedNodes.has(topClickedNode)) {
+                            this.selectedNodes.delete(topClickedNode);
+                        } else {
+                            this.selectedNodes.add(topClickedNode);
+                        }
+                        this.selectedNode = null;
+                    } else {
+                        if (!this.selectedNodes.has(topClickedNode)) {
+                            this.selectedNodes.clear();
+                            this.selectedNodes.add(topClickedNode);
+                        }
+                        this.selectedNode = topClickedNode;
+                        this._onNodeSelected(topClickedNode); // [DTR] Sync Slider
+                    }
+                    if (this.isEditMode || e.button === 0) {
+                        this.isDragging = true;
+                        this.isGraphDataDirty = true;
+                    }
+                    console.log('[SYNAPSE] Node selected/dragged:', topClickedNode.id);
+                    return;
+                }
 
-                    // 클러스터 내의 모든 노드 (자식 클러스터 포함) 재귀적 탐색
+                // 1.3 [v0.2.33] Priority 2: Cluster Header Body (Dragging)
+                if (clickedClusterHeader) {
+                    this.selectedEdge = null;
                     const getAllNodes = (clusterId) => {
                         let res = this.nodes.filter(n => n.cluster_id === clusterId || n.data?.cluster_id === clusterId);
                         if (this.clusters) {
@@ -2081,60 +1954,98 @@ class CanvasEngine {
                         return res;
                     };
                     const clusterNodes = getAllNodes(clickedClusterHeader.id);
-
                     if (clusterNodes.length > 0) {
                         if (!(e.ctrlKey || e.metaKey || e.shiftKey)) {
                             this.selectedNodes.clear();
                         }
                         clusterNodes.forEach(n => this.selectedNodes.add(n));
-                        if (this.isEditMode) {
+                        if (this.isEditMode || e.button === 0) {
                             this.isDragging = true;
                             this.isGraphDataDirty = true;
                         }
-                        this.wasDragging = true; // 클러스터 선택 효과
-                        console.log('[SYNAPSE] Dragged cluster header:', clickedClusterHeader.label);
+                        this.wasDragging = true;
+                        console.log('[SYNAPSE] Cluster header dragged:', clickedClusterHeader.label);
                     }
-                } else {
-                    // 4. 노드 클릭
-                    const clickedNode = topClickedNode;
-                    if (clickedNode) {
-                        // 엣지 선택 해제
-                        this.selectedEdge = null;
+                    return;
+                }
 
-                        // 노드 클릭 (기존 로직)
-                        if (e.ctrlKey || e.metaKey || e.shiftKey) {
-                            if (this.selectedNodes.has(clickedNode)) {
-                                this.selectedNodes.delete(clickedNode);
-                                console.log('[SYNAPSE] Node deselected (Multi). Total selected:', this.selectedNodes.size);
-                            } else {
-                                this.selectedNodes.add(clickedNode);
-                                console.log('[SYNAPSE] Node selected (Multi). Total selected:', this.selectedNodes.size);
+                // 1.4 Interactive Badges (Confirm/Delete) - only if no node/cluster clicked
+                if (this._confirmBadgeHits) {
+                    const wx = worldPos.x, wy = worldPos.y;
+                    for (const hit of this._confirmBadgeHits) {
+                        const dist = Math.sqrt((wx - hit.x) ** 2 + (wy - hit.y) ** 2);
+                        if (dist <= hit.r * 2.5) {
+                            if (!this.isEditMode) {
+                                if (typeof vscode !== 'undefined') vscode.postMessage({ command: 'showWarning', message: 'Edit Logic 모드가 꺼져 있습니다.' });
+                                return;
                             }
-                            this.selectedNode = null;
-                        } else {
-                            if (!this.selectedNodes.has(clickedNode)) {
-                                this.selectedNodes.clear();
-                                this.selectedNodes.add(clickedNode);
-                                console.log('[SYNAPSE] Node selected (Single). ID:', clickedNode.id);
+                            if (hit.isPending && typeof vscode !== 'undefined') {
+                                vscode.postMessage({ command: 'requestConfirmEdge', edgeId: hit.edge.id });
                             }
-                            this.selectedNode = clickedNode;
-                            this._onNodeSelected(clickedNode); // [DTR] show node DTR in gauge
+                            return;
                         }
-                        if (this.isEditMode || e.button === 0) { // Allow dragging even if not in explicit edit mode if left mouse is used
-                            this.isDragging = true;
-                            this.isGraphDataDirty = true;
+                    }
+                }
+                if (this._deleteBadgeHits) {
+                    const wx = worldPos.x, wy = worldPos.y;
+                    for (const hit of this._deleteBadgeHits) {
+                        const dist = Math.sqrt((wx - hit.x) ** 2 + (wy - hit.y) ** 2);
+                        if (dist <= hit.r * 1.5) {
+                            if (!this.isEditMode) return;
+                            if (typeof vscode !== 'undefined') vscode.postMessage({ command: 'requestDeleteEdgeUI', edgeId: hit.edge.id });
+                            else this.deleteEdge(hit.edge.id);
+                            return;
                         }
-                    } else {
-                        // 5. 빈 공간 클릭 -> 선택 영역 시작 & 엣지 선택 해제
-                        this.selectedEdge = null;
-                        this.isSelecting = true;
-                        this.selectionRect = { x: e.offsetX, y: e.offsetY, width: 0, height: 0 };
+                    }
+                }
 
-                        if (!(e.ctrlKey || e.metaKey || e.shiftKey)) {
-                            this.selectedNodes.clear();
-                            this.selectedNode = null;
-                            this._onNodeSelected(null); // [DTR] revert to global DTR
+                // 1.5 [v0.2.33] Priority 3: Edges
+                const clickedEdge = this.findEdgeAtPoint(worldPos.x, worldPos.y);
+                let edgeHit = clickedEdge;
+                if (!edgeHit) {
+                    for (const edge of this.edges) {
+                        if (this.isPointNearCurve(worldPos.x, worldPos.y, edge, 15)) {
+                            edgeHit = edge;
+                            break;
                         }
+                    }
+                }
+                if (edgeHit && !e.altKey) {
+                    this.selectedEdge = edgeHit;
+                    this.selectedNode = null;
+                    this.selectedNodes.clear();
+                    this._onNodeSelected(null);
+                    this.render();
+                    return;
+                }
+
+                // 1.6 Additional Interactive Modes (Add Node / Create Edge)
+                if (this.isAddingNode) {
+                    this.pendingNodePos = worldPos;
+                    const nodeDialog = document.getElementById('node-dialog');
+                    if (nodeDialog) {
+                        nodeDialog.style.display = 'block';
+                        document.getElementById('node-label-input')?.focus();
+                    }
+                    return;
+                }
+                const handle = this.getConnectionHandleAt(worldPos.x, worldPos.y);
+                if ((handle && e.altKey) || (this.isCreatingEdge && handle)) {
+                    this.isCreatingEdge = true;
+                    this.edgeSource = handle;
+                    this.edgeCurrentPos = worldPos;
+                    return;
+                }
+
+                // 1.7 [v0.2.33] Priority 4: Background (Box Selection/Pan)
+                this.selectedEdge = null;
+                this.selectedNode = null;
+                this._onNodeSelected(null);
+                if (e.button === 0) {
+                    this.isSelecting = true;
+                    this.selectionRect = { x: e.offsetX, y: e.offsetY, width: 0, height: 0 };
+                    if (!(e.ctrlKey || e.metaKey || e.shiftKey)) {
+                        this.selectedNodes.clear();
                     }
                 }
             } else if (e.button === 2) { // 오른쪽 버튼
@@ -2279,6 +2190,7 @@ class CanvasEngine {
                         this.selectedNodes.add(node);
                     }
                 }
+                this.render(); // [v0.2.34] Refresh 2D UI after box selection
                 
                 // [v0.2.20 Fix] Removed invalid saveState() call here.
                 // Saving state triggers a full JSON reload which overwrote Node objects with new ones.
@@ -2426,6 +2338,7 @@ class CanvasEngine {
             }
 
             const worldPosClick = this.screenToWorld(e.offsetX, e.offsetY);
+            this._debugLastWorldClick = worldPosClick; // [v0.2.26] Debug indicator
             const hasModifier = e.shiftKey || e.ctrlKey || e.metaKey;
 
             if (this.currentMode === 'tree') {
@@ -2490,15 +2403,16 @@ class CanvasEngine {
                     // Check for edge double click
                     const clickedEdge = this.findEdgeAtPoint(worldPosDbl.x, worldPosDbl.y);
                     if (clickedEdge) {
-                        // [v0.2.21] Edge Double Click: Open definition or reference point
-                        if (typeof vscode !== 'undefined') {
-                            vscode.postMessage({
-                                command: 'openEdgeDefinition',
-                                edgeId: clickedEdge.id,
-                                from: clickedEdge.from,
-                                to: clickedEdge.to
-                            });
+                        // [v0.2.26] Edge Double Click: Logic Confirmation
+                        if (clickedEdge.status === 'pending') {
+                            this.requestConfirmEdge(clickedEdge.id);
+                        } else {
+                            // If not pending, show context menu
+                            this.showEdgeContextMenu(e.clientX, e.clientY);
                         }
+                    } else {
+                        // Empty space dblclick -> Reset View
+                        this.fitView();
                     }
                 }
             }
@@ -2555,11 +2469,13 @@ class CanvasEngine {
         }
 
         // Default Graph Mode hit testing (REVERSE order to hit top nodes first)
-        for (let i = this.nodes.length - 1; i >= 0; i--) {
-            const node = this.nodes[i];
+        const nodes = (this.bootstrapMode && this.lastFrameState) ? this.lastFrameState.nodes : this.nodes;
+        for (let i = nodes.length - 1; i >= 0; i--) {
+            const node = nodes[i];
             const nodeWidth = node._width || 120;
             const nodeHeight = 60;
-            const HIT_PADDING = 0; // [User Reqd] Limit hit area strictly to the visual box // [v0.2.25] Reduced padding to prevent overlap (30 -> 12)
+            const isSelected = this.selectedNodes.has(node);
+            const HIT_PADDING = isSelected ? 15 : 0; // [v0.2.32] Extra 15px grab area for selected nodes
 
             // Check if node is hidden (collapsed cluster)
             if (node.cluster_id) {
@@ -3360,7 +3276,8 @@ class CanvasEngine {
                     data: {
                         nodes: this.nodes,
                         edges: this.edges,
-                        clusters: this.clusters
+                        clusters: this.clusters,
+                        transform: this.transform
                     }
                 }
             });
@@ -3544,6 +3461,27 @@ class CanvasEngine {
         createSysCluster('cluster_external', '⚙️ External Modules', 1500, 0, '#458588'); // Blue-ish
     }
 
+    // [v0.2.26] 🚀 Deterministic Fingerprinting (Precision: 2 decimal places)
+    getFingerprint(items) {
+        if (!items || !Array.isArray(items)) return "empty";
+        return items
+            .map(n => `${n.id}:${(n.position?.x || 0).toFixed(2)},${(n.position?.y || 0).toFixed(2)}:${n.status || 'none'}`)
+            .sort() // Essential for deterministic identity
+            .join('|');
+    }
+
+    // [v0.2.26] 🛡️ Normalization Pass (Isolation & Sort)
+    normalizeProjectState(state) {
+        if (!state) return null;
+        // 1. Sort Nodes & Edges to guarantee iteration order
+        if (state.nodes) state.nodes.sort((a, b) => a.id.localeCompare(b.id));
+        if (state.edges) state.edges.sort((a, b) => (a.id || "").localeCompare(b.id || "") || a.from.localeCompare(b.from));
+        if (state.clusters) state.clusters.sort((a, b) => a.id.localeCompare(b.id));
+        
+        // 2. Return a Deep Clone to prevent in-place mutation of incoming data
+        return JSON.parse(JSON.stringify(state));
+    }
+
     loadProjectState(projectState, preserveView = false) {
         // [v0.2.24] Throttling & Data Integrity Guard
         const now = Date.now();
@@ -3556,23 +3494,27 @@ class CanvasEngine {
         
         this._lastDataHash = dataHash;
         this._lastLoadTime = now;
-        
-        // [v0.2.24] Selection Preservation: Remember IDs before object replacement
+
+        // [v0.2.26] 🛡️ STEP 1: Normalize and Clone Input (Isolation)
+        const baseState = this.normalizeProjectState(projectState);
+        this.log(`[STATE-DETERMINISM] Hash Before: ${this.getFingerprint(baseState.nodes).substring(0, 60)}...`);
+
+        // [v0.2.24] Selection Preservation
         const selectedIds = new Set(Array.from(this.selectedNodes).map(n => n.id));
         const oldSelectedNodeId = this.selectedNode?.id;
 
-        this.log(`loadProjectState triggered. Nodes: ${projectState.nodes?.length}, Edges: ${projectState.edges?.length}`);
+        this.log(`loadProjectState triggered. Nodes: ${baseState.nodes?.length}, Edges: ${baseState.edges?.length}`);
         const promotedLabels = [];
 
         try {
-            if (!projectState.nodes || projectState.nodes.length === 0) {
+            if (!baseState.nodes || baseState.nodes.length === 0) {
                 console.warn('[SYNAPSE] loadProjectState: Received empty nodes list.');
             }
 
             // [Fix] Capture manual nodes before overriding this.nodes
             const oldManualNodes = (this.nodes || []).filter(n => n.id.startsWith('node_manual_'));
 
-            const rawNodes = projectState.nodes || [];
+            const rawNodes = baseState.nodes || [];
             this.contextVaultNodes = rawNodes.filter(n => n.id.startsWith('ctx_vault_node_') || n.cluster_id === 'context_vault' || n.data?.cluster_id === 'context_vault');
             this.docShelfNodes = rawNodes.filter(n => n.type === 'documentation' || n.cluster_id === 'doc_shelf' || n.data?.cluster_id === 'doc_shelf');
             this.nodes = rawNodes.filter(n => !this.contextVaultNodes.includes(n) && !this.docShelfNodes.includes(n));
@@ -3611,6 +3553,14 @@ class CanvasEngine {
 
             const rawClusters = projectState.clusters || [];
             this.clusters = rawClusters.filter(c => c.id !== 'context_vault' && c.id !== 'doc_shelf');
+
+            // [v0.2.36] Restore View (Camera) if available and not preserving
+            if (!preserveView && projectState.view) {
+                this.transform.zoom = projectState.view.zoom || this.transform.zoom;
+                this.transform.offsetX = projectState.view.offsetX ?? this.transform.offsetX;
+                this.transform.offsetY = projectState.view.offsetY ?? this.transform.offsetY;
+                this.updateZoomDisplay();
+            }
 
             // 외부 패널 UI 즉시 렌더링
             this.renderContextVaultList();
@@ -3709,10 +3659,17 @@ class CanvasEngine {
                 this.log(`Recovered selection for ${this.selectedNodes.size} nodes.`);
             }
 
-            // Fit view (only if not preserving)
+            // Fit view or Restore transform
             this.resizeCanvas(!preserveView); // [v0.2.24] Force immediate resize before fitView
             if (!preserveView) {
-                this.fitView();
+                if (projectState.transform) {
+                    this.transform = { ...projectState.transform };
+                    this.updateZoomDisplay();
+                    this.render();
+                    console.log('[SYNAPSE] View restored from snapshot:', this.transform);
+                } else {
+                    this.fitView();
+                }
             } else {
                 // 뷰를 유지하더라도 렌더링은 해야 함
                 this.render();
@@ -3892,39 +3849,48 @@ class CanvasEngine {
 
         const MIN_DISTANCE_X = 150;
         const MIN_DISTANCE_Y = 100;
-        const ITERATIONS = 3;
+        const ITERATIONS = 2; // Reduced for performance, deterministic with one pass mostly
 
+        // [v0.2.26] 🛡️ Deterministic Layout: Read from Snapshot, Write to Current
+        // This prevents "Chain Reaction" where order of nodes determines who moves first
         for (let iter = 0; iter < ITERATIONS; iter++) {
-            let moved = false;
+            let movedTotal = false;
+
+            // Take a position snapshot of all nodes at the START of this iteration
+            const posSnapshot = new Map();
+            this.nodes.forEach(n => {
+                if (n.position) posSnapshot.set(n.id, { x: n.position.x, y: n.position.y });
+            });
+
             for (let i = 0; i < this.nodes.length; i++) {
                 for (let j = i + 1; j < this.nodes.length; j++) {
                     const nodeA = this.nodes[i];
                     const nodeB = this.nodes[j];
 
-                    // Documentation Shelf나 Context Vault 등 접힌 클러스터 내부 노드는 무시
-                    if (nodeA.cluster_id) {
-                        const cA = this.clusters.find(c => c.id === nodeA.cluster_id);
-                        if (cA && cA.collapsed) continue;
-                    }
-                    if (nodeB.cluster_id) {
-                        const cB = this.clusters.find(c => c.id === nodeB.cluster_id);
-                        if (cB && cB.collapsed) continue;
-                    }
+                    // Read from STATIC snapshots for consistency
+                    const pA = posSnapshot.get(nodeA.id);
+                    const pB = posSnapshot.get(nodeB.id);
+                    if (!pA || !pB) continue;
 
-                    // position이 없는 노드(auto-discovered)는 건너뜀
-                    if (!nodeA.position || !nodeB.position) continue;
+                    // Visibility Guard (Skip collapsed)
+                    const isHidden = (n) => {
+                        if (!n.cluster_id) return false;
+                        const c = this.clusters?.find(cl => cl.id === n.cluster_id);
+                        return c && c.collapsed;
+                    };
+                    if (isHidden(nodeA) || isHidden(nodeB)) continue;
 
-                    const dx = nodeB.position.x - nodeA.position.x;
-                    const dy = nodeB.position.y - nodeA.position.y;
+                    const dx = pB.x - pA.x;
+                    const dy = pB.y - pA.y;
                     const adx = Math.abs(dx);
                     const ady = Math.abs(dy);
 
                     if (adx < MIN_DISTANCE_X && ady < MIN_DISTANCE_Y) {
-                        moved = true;
-                        // 충첩 해제 (단순 수평/수직 밀어내기)
+                        movedTotal = true;
                         const shiftX = (MIN_DISTANCE_X - adx) / 2;
                         const shiftY = (MIN_DISTANCE_Y - ady) / 2;
 
+                        // Mutate CURRENT node position based on STATIC snapshot relationship
                         if (dx >= 0) {
                             nodeA.position.x -= shiftX;
                             nodeB.position.x += shiftX;
@@ -3943,8 +3909,9 @@ class CanvasEngine {
                     }
                 }
             }
-            if (!moved) break;
+            if (!movedTotal) break;
         }
+        this.log(`[STATE-DETERMINISM] Hash After Layout: ${this.getFingerprint(this.nodes).substring(0, 60)}...`);
     }
 
     fitView() {
@@ -4023,11 +3990,237 @@ class CanvasEngine {
         // 2D 캔버스 초기화 (Flicker 방지용)
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     }
+    // [v0.2.26.5] Deeply freeze an object recursively to ensure immutability
+    deepFreeze(obj) {
+        if (!obj || typeof obj !== 'object') return obj;
+        Object.freeze(obj);
+        Object.values(obj).forEach(v => {
+            if (v && typeof v === 'object' && !Object.isFrozen(v)) {
+                this.deepFreeze(v);
+            }
+        });
+        return obj;
+    }
+
+    // [v0.2.26.5] Deterministic Hash based on rounded positions
+    generateStateFingerprint(nodes) {
+        // Must be sorted to be deterministic
+        const sorted = [...nodes].sort((a, b) => (a.id || '').localeCompare(b.id || ''));
+        return sorted.map(n => {
+            const x = Math.round((n.position?.x || 0) * 100) / 100;
+            const y = Math.round((n.position?.y || 0) * 100) / 100;
+            return `${n.id}:${x},${y}`;
+        }).join('|');
+    }
+
+    /**
+     * [v0.2.26.5] Pure Overlap Resolution with Spatial Hashing (Grid Optimization)
+     * O(N) average performance, perfectly deterministic.
+     */
+    pureResolveOverlaps(nodes) {
+        if (!nodes || nodes.length < 2) return nodes;
+
+        const ITERATIONS = 3; // 3 passes for convergence
+        const GRID_SIZE = 150; // Grid cell size
+        const MIN_DIST = 140; 
+        const MIN_DIST_SQ = MIN_DIST * MIN_DIST;
+        const round = v => Math.round(v * 1000) / 1000;
+
+        let currentNodes = nodes;
+
+        for (let step = 0; step < ITERATIONS; step++) {
+            // 1. Build Spatial Hash (Grid)
+            const grid = new Map();
+            currentNodes.forEach(n => {
+                const gx = Math.floor(n.position.x / GRID_SIZE);
+                const gy = Math.floor(n.position.y / GRID_SIZE);
+                const key = `${gx},${gy}`;
+                if (!grid.has(key)) grid.set(key, []);
+                grid.get(key).push(n);
+            });
+
+            // 2. Compute Shifts using the Grid
+            currentNodes = currentNodes.map(target => {
+                const p1 = target.position;
+                let dx = 0, dy = 0;
+                let collisions = 0;
+
+                const gx = Math.floor(p1.x / GRID_SIZE);
+                const gy = Math.floor(p1.y / GRID_SIZE);
+
+                // Check 3x3 neighbor cells
+                for (let ix = gx - 1; ix <= gx + 1; ix++) {
+                    for (let iy = gy - 1; iy <= gy + 1; iy++) {
+                        const cellNodes = grid.get(`${ix},${iy}`);
+                        if (!cellNodes) continue;
+
+                        for (const other of cellNodes) {
+                            if (target.id === other.id) continue;
+                            const p2 = other.position;
+                            const diffX = p1.x - p2.x;
+                            const diffY = p1.y - p2.y;
+                            const dSq = diffX * diffX + diffY * diffY;
+
+                            if (dSq < MIN_DIST_SQ && dSq > 0.01) {
+                                const dist = Math.sqrt(dSq);
+                                const force = (MIN_DIST - dist) / dist;
+                                dx += diffX * force * 0.5;
+                                dy += diffY * force * 0.5;
+                                collisions++;
+                            }
+                        }
+                    }
+                }
+
+                // 3. Return NEW Object for ALL nodes (Stability)
+                return {
+                    ...target,
+                    position: {
+                        x: round(p1.x + dx),
+                        y: round(p1.y + dy)
+                    }
+                };
+            });
+        }
+        return currentNodes;
+    }
+
+    /**
+     * [v0.2.26.5] Build a Deeply Isolated, Immutable Frame State
+     */
+    buildFrameState(context) {
+        // 1. Filter Nodes based on Context Layers
+        const filtered = this.nodes.filter(n => {
+            const isUser = (n.category === 'user') || 
+                           (n.id && n.id.startsWith('node_manual_')) || 
+                           (n.cluster_id && n.cluster_id.startsWith('sys_'));
+            
+            if (isUser && !context.showUserLayer) return false;
+            if (!isUser && !context.showBaseLayer) return false;
+            return true;
+        });
+
+        // 2. ISO/DEEP CLONE (Physical Reference Detachment)
+        // Manually clone fields to ensure nested stability
+        const isolatedNodes = filtered.map(n => ({
+            id: n.id,
+            category: n.category || 'base',
+            status: n.status,
+            data: n.data ? { ...n.data, meta: n.data.meta ? { ...n.data.meta } : undefined } : {},
+            position: { x: n.position?.x || 0, y: n.position?.y || 0 },
+            intelligence: n.intelligence ? { dtr: n.intelligence.dtr } : { dtr: 0.3 }
+        }));
+
+        // 3. Normalization (Deterministic Sorting)
+        isolatedNodes.sort((a, b) => a.id.localeCompare(b.id) || (a.category || '').localeCompare(b.category || ''));
+
+        // 4. Pure Computation (Layout)
+        const computedNodes = this.pureResolveOverlaps(isolatedNodes);
+
+        // 5. Deep Freezing (Securing the Pipeline)
+        const frozenNodes = this.deepFreeze(computedNodes);
+
+        // 6. Visible Edge Extraction
+        const visibleIds = new Set(frozenNodes.map(n => n.id));
+        const frozenEdges = this.deepFreeze(
+            this.edges
+                .filter(e => visibleIds.has(e.from) && visibleIds.has(e.to))
+                .map(e => ({ id: e.id, from: e.from, to: e.to, type: e.type, status: e.status }))
+        );
+
+        return {
+            nodes: frozenNodes,
+            edges: frozenEdges,
+            fingerprint: this.generateStateFingerprint(frozenNodes),
+            context
+        };
+    }
+
+
+    /**
+     * [v0.2.28] Bootstrap: Render from a deterministic frame state
+     * @param {Object} frameState 
+     */
+    renderFromState(frameState) {
+        if (!frameState || !this.ctx) return;
+        
+        const zoom = frameState.context.zoom;
+        const offsetX = frameState.context.offsetX;
+        const offsetY = frameState.context.offsetY;
+
+        // 1. Grid (Standard Canvas)
+        this.renderGrid();
+        
+        // [v0.2.28] Render Clusters first
+        this.renderClusters();
+
+        // 2. Transformation
+        this.ctx.save();
+        this.ctx.translate(offsetX, offsetY);
+        this.ctx.scale(zoom, zoom);
+
+        // 3. Edges
+        for (const edge of frameState.edges) {
+            this.renderEdge(edge);
+        }
+
+        // 4. Nodes
+        for (const node of frameState.nodes) {
+            this.renderNode(node, zoom);
+        }
+
+        this.ctx.restore();
+        const hash = calculateFrameHash(frameState);
+        console.log(`[SYNAPSE 2D] Frame Rendered. Hash: ${hash}`);
+    }
 
     render() {
+        // [v0.2.28] Bootstrap Bypass (Step 4/5/6)
+        // Use REAL data but in a pure, deterministic way.
+        if (this.bootstrapMode) {
+            const contextSnapshot = {
+                zoom: this.transform.zoom,
+                offsetX: this.transform.offsetX,
+                offsetY: this.transform.offsetY,
+                showBaseLayer: this.showBaseLayer,
+                showUserLayer: this.showUserLayer,
+                selectedNodeIds: new Set(Array.from(this.selectedNodes).map(n => n.id)),
+                selectedEdgeId: this.selectedEdge ? this.selectedEdge.id : null
+            };
+
+            const frameState = buildFrameState(this.nodes, this.edges, this.clusters, contextSnapshot);
+            this.lastFrameState = frameState; // Save for hit testing
+
+            
+            // 2D Redraw
+            this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+            this.renderFromState(frameState);
+            
+            // 3D Redraw (Atomic update)
+            if (this.webglRenderer && this.webglEnabled) {
+                this.webglRenderer.renderFromState(frameState);
+            }
+            return;
+        }
+
+
         this._frameCounter++;
         const shouldLog = this._frameCounter % 120 === 0;
+        
+        // [v0.2.28] Trace UI Interaction for Selection Updates
+        const currentSelectionHash = Array.from(this.selectedNodes).map(n=>n.id).sort().join(',') + (this.selectedEdge?.id || '');
+        if (this._lastSelectionHash !== currentSelectionHash) {
+            this.isEdgeDirty = true; // Force WebGL Buffer Refresh
+            this.isTextDirty = true;
+            this._lastSelectionHash = currentSelectionHash;
+        }
+
         if (shouldLog) console.log("frame start");
+        
+        // [v0.2.31] Explicit Rendering Boundary: Start
+        if (this.webglRenderer) {
+            this.webglRenderer.beginFrame();
+        }
 
         // [v0.2.24] Strategic Cache Invalidation (Validate Map & Edge Cache)
         if (this.isGraphDataDirty || this.nodeMap.size !== this.nodes.length) {
@@ -4055,41 +4248,14 @@ class CanvasEngine {
             this.updateParticles();
         }
 
-        // [v0.2.24] Move WebGL rendering to occur ONLY if something changed or is animating
-        // This ensures 0% CPU usage when the mouse is still.
-        if (this.webglEnabled && this.webglRenderer && (this.isDirty || this.isAnimating || this.needsUpdate)) {
-            // Optimization: Filter only when data is dirty to save CPU
-            if (this.isGraphDataDirty || !this._visibleNodesCache) {
-                const isUserLogic = (n) => 
-                    (n.id && n.id.startsWith('node_manual_')) || 
-                    (n.cluster_id && typeof n.cluster_id === 'string' && n.cluster_id.startsWith('sys_')) || 
-                    (n.data?.cluster_id && typeof n.data.cluster_id === 'string' && n.data.cluster_id.startsWith('sys_'));
-                
-                this._visibleNodesCache = this.nodes.filter(n => {
-                    const isUser = isUserLogic(n);
-                    if (isUser && !this.showUserLayer) return false;
-                    if (!isUser && !this.showBaseLayer) return false;
-                    return true;
-                });
+        // [v0.2.31] First Redundant WebGL Render block removed to prevent double-clearing and flicker.
+        // WebGL is now handled in the main view branch below.
 
-                const visibleNodeIds = new Set(this._visibleNodesCache.map(n => n.id));
-                this._visibleEdgesCache = this.edges.filter(e => visibleNodeIds.has(e.from) && visibleNodeIds.has(e.to));
-            }
 
-            this.webglRenderer.render(
-                this._visibleNodesCache, 
-                this.transform, 
-                this.isGraphDataDirty, 
-                this._visibleEdgesCache, 
-                this.nodeMap, 
-                this.isEdgeDirty, 
-                this.isTextDirty
-            );
-            
-            if (shouldLog) console.log(`after webgl (filtered: ${this._visibleNodesCache.length}/${this.nodes.length} nodes)`);
-            this.isGraphDataDirty = false;
-            this.isEdgeDirty = false;
-            this.isTextDirty = false;
+        // [v0.2.32] Power-Saving (Sleeping) Logic: Move ABOVE clear to prevent screen flickering/disappearance
+        // If not dirty and not animating, NO NEED to clear or redraw.
+        if (!this.isDirty && !this.isAnimating && !this._isInteracting && !this.isDragging) {
+            return;
         }
 
         if (!this.ctx) return;
@@ -4129,7 +4295,8 @@ class CanvasEngine {
             const fps = Math.round((this._fpsFrames.length - 1) / (elapsed / 1000));
             const fpsEl = document.getElementById('fps-display');
             if (fpsEl) {
-                fpsEl.textContent = fps;
+                const suffix = (this.webglEnabled && this.currentMode === 'graph') ? ' (3D)' : '';
+                fpsEl.textContent = fps + suffix;
                 fpsEl.style.color = fps >= 50 ? '#b8bb26' : fps >= 30 ? '#fabd2f' : '#fb4934';
             }
         }
@@ -4167,24 +4334,16 @@ class CanvasEngine {
                 if (this.webglRenderer) {
                     const glCanvas = this.webglRenderer.glCanvas;
                     if (this.webglEnabled && this.currentMode === 'graph') {
-                        if (glCanvas) {
+                        if (glCanvas && glCanvas.style.display !== 'block') {
                             glCanvas.style.display = 'block';
-                            glCanvas.style.pointerEvents = 'none';
                             glCanvas.style.zIndex = '5';
                             glCanvas.style.opacity = '1';
-                            glCanvas.style.background = 'transparent';
                         }
                     } else {
                         // [v0.2.25] Physical Isolation: Hide immediately when mode changes
-                        if (glCanvas) {
+                        if (glCanvas && glCanvas.style.display !== 'none') {
                             glCanvas.style.display = 'none';
-                            glCanvas.style.zIndex = '-9999'; // Far back!
-                            glCanvas.style.opacity = '0';
-                        }
-                        const gl = this.webglRenderer.gl;
-                        if (gl) {
-                            gl.clearColor(0, 0, 0, 0);
-                            gl.clear(gl.COLOR_BUFFER_BIT);
+                            glCanvas.style.zIndex = '-9999';
                         }
                     }
                 }
@@ -4197,22 +4356,63 @@ class CanvasEngine {
 
                 if (!this.debugDisableOverlay && (this.webglEnabled || this.isAnimating || this.isDirty || this._frameCounter % 2 === 0)) {
                     // [v0.2.25] Final Logic: Use WebGL only in Graph mode IF Accel is ON
-                                        if (this.webglEnabled && this.webglRenderer && this.currentMode === 'graph') {
+                    if (this.webglEnabled && this.webglRenderer && this.currentMode === 'graph') {
+                        // [v0.2.31] Final Consolidated WebGL Render call
+                        if (this.isGraphDataDirty || !this._visibleNodesCache) {
+                            const isUserLogic = (n) => {
+                                // [v0.2.26] Robust check: Manual node OR System cluster
+                                const idManual = n.id && typeof n.id === 'string' && n.id.startsWith('node_manual_');
+                                const clusterSys = (n.cluster_id && typeof n.cluster_id === 'string' && n.cluster_id.startsWith('sys_')) || 
+                                                  (n.data?.cluster_id && typeof n.data.cluster_id === 'string' && n.data.cluster_id.startsWith('sys_'));
+                                return idManual || clusterSys;
+                            };
+                            
+                            this._visibleNodesCache = this.nodes.filter(n => {
+                                const isUser = isUserLogic(n);
+                                // If base layer is hidden, and node is NOT user logic, skip.
+                                if (!isUser && !this.showBaseLayer) return false;
+                                // If user layer is hidden, and node IS user logic, skip.
+                                if (isUser && !this.showUserLayer) return false;
+                                
+                                // [v0.2.27] Sync: Skip nodes in collapsed clusters (matches 2D behavior)
+                                const clusterId = n.cluster_id || n.data?.cluster_id;
+                                if (clusterId) {
+                                    const cluster = this.clusters?.find(c => c.id === clusterId);
+                                    if (cluster && cluster.collapsed) return false;
+                                }
+                                return true;
+                            });
+
+                            const visibleNodeIds = new Set(this._visibleNodesCache.map(n => n.id));
+                            this._visibleEdgesCache = this.edges.filter(e => visibleNodeIds.has(e.from) && visibleNodeIds.has(e.to));
+                        }
+
+                        const selectedIds = new Set(Array.from(this.selectedNodes).map(n => n.id));
                         this.webglRenderer.render(
-                            this.nodes,
-                            this.transform,
-                            this.isGraphDataDirty,
-                            this.edges,
-                            this.nodeMap,
-                            this.isEdgeDirty,
-                            this.isTextDirty
+                            this._visibleNodesCache, 
+                            this.transform, 
+                            this.isGraphDataDirty, 
+                            this._visibleEdgesCache, 
+                            this.nodeMap, 
+                            this.isEdgeDirty, 
+                            this.isTextDirty,
+                            selectedIds
                         );
+
+                        // [v0.2.33] 🚀 Hybrid Rendering: Render badges and interactive markers on 2D ctx ON TOP of WebGL
+                        // This ensures information parity for Badges/Arrows/Glow that WebGL lacks.
+                        this.ctx.save();
+                        this.ctx.setTransform(this.transform.zoom, 0, 0, this.transform.zoom, this.transform.offsetX, this.transform.offsetY);
+                        for (const edge of this._visibleEdgesCache) {
+                            this.renderEdgeBadges(this.ctx, edge); // Only the numbers/badges
+                        }
+                        this.ctx.restore();
+
                         this.isGraphDataDirty = false;
                         this.isEdgeDirty = false;
                         this.isTextDirty = false;
                     } else {
-                        // [v0.2.26] Non-WebGL Mode or Mode Change: Clear and Draw 2D
-                        this.forceResetGLState();
+                        // [v0.2.26] Non-WebGL Mode or Mode Change
                         this.renderEdges2D();  
                         this.renderLabels2D(); 
                     }
@@ -4223,13 +4423,19 @@ class CanvasEngine {
                 }
 
                 // 드래그 선택 영역 표시 (Always on top of overlay)
+                // [v0.2.33] 드래그 선택 영역 표시 (Safe transformation handling)
                 if (this.isSelecting) {
-                    this.ctx.restore();
-                    this.ctx.fillStyle = 'rgba(69, 133, 136, 0.2)';
+                    this.ctx.save();
+                    const dpr = window.devicePixelRatio || 1;
+                    this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0); // Revert to Screen space (scaled by DPR)
+                    
+                    this.ctx.fillStyle = 'rgba(69, 133, 136, 0.25)';
                     this.ctx.strokeStyle = '#458588';
+                    this.ctx.lineWidth = 1;
                     this.ctx.fillRect(this.selectionRect.x, this.selectionRect.y, this.selectionRect.width, this.selectionRect.height);
                     this.ctx.strokeRect(this.selectionRect.x, this.selectionRect.y, this.selectionRect.width, this.selectionRect.height);
-                    this.ctx.save();
+                    
+                    this.ctx.restore();
                 }
 
                 this.renderConnectionHandles();
@@ -4261,10 +4467,23 @@ class CanvasEngine {
             // [v0.2.24] Real-time Diagnostic HUD (Performance Measuring)
             this._renderDiagnosticHUD();
 
-            // Debug Overlay
+            // Debug Overlay: Draw click point to verify world coordinates
+            if (this._debugLastWorldClick) {
+                this.ctx.fillStyle = '#fb4934';
+                this.ctx.beginPath();
+                this.ctx.arc(this._debugLastWorldClick.x, this._debugLastWorldClick.y, 5 / zoom, 0, Math.PI * 2);
+                this.ctx.fill();
+                this.ctx.strokeStyle = '#ffffff';
+                this.ctx.lineWidth = 1 / zoom;
+                this.ctx.stroke();
+            }
+
             this.renderDebugInfo();
 
         } finally {
+            if (this.webglRenderer) {
+                this.webglRenderer.endFrame();
+            }
             this.isRendering = false;
         }
     }
@@ -4296,7 +4515,10 @@ class CanvasEngine {
                 const srcVisible = !(srcNode.position.x + 120 < worldLeft || srcNode.position.x > worldRight || srcNode.position.y + 60 < worldTop || srcNode.position.y > worldBottom);
                 const tgtVisible = !(tgtNode.position.x + 120 < worldLeft || tgtNode.position.x > worldRight || tgtNode.position.y + 60 < worldTop || tgtNode.position.y > worldBottom);
                 
-                if (!srcVisible && !tgtVisible) continue; // BOTH out of screen
+                if (!srcVisible && !tgtVisible) {
+                    // [v0.2.26] Debug: if nothing is visible, maybe view is lost?
+                    continue; 
+                }
 
                 const isUserLogic = (n) => n.id.startsWith('node_manual_') || n.cluster_id?.startsWith('sys_') || n.data?.cluster_id?.startsWith('sys_');
                 if ((isUserLogic(srcNode) && !this.showUserLayer) || (!isUserLogic(srcNode) && !this.showBaseLayer)) continue;
@@ -4474,6 +4696,7 @@ class CanvasEngine {
         if (cluster) {
             cluster.collapsed = !cluster.collapsed;
             console.log(`[SYNAPSE] Toggled cluster ${cluster.label}: ${cluster.collapsed ? 'Collapsed' : 'Expanded'}`);
+            this.isGraphDataDirty = true; // [v0.2.27] Sync WebGL visibility
             this.render();
             this.saveState();
         }
@@ -4497,7 +4720,8 @@ class CanvasEngine {
             const projectState = {
                 nodes: this.nodes,
                 edges: this.edges,
-                clusters: this.clusters
+                clusters: this.clusters,
+                view: this.transform // [v0.2.36] Persist camera view
             };
             console.log('[SYNAPSE] Saving state to VS Code...');
             vscode.postMessage({
@@ -4804,11 +5028,21 @@ class CanvasEngine {
         if (costSpan) costSpan.textContent = value < 0.4 ? 'Low' : (value < 0.8 ? 'Mid' : 'High');
 
         if (nodeLabel !== undefined) {
-            if (nodeLabelEl) { nodeLabelEl.textContent = `📄 ${nodeLabel}`; nodeLabelEl.style.display = 'block'; }
-            if (slider) { slider.value = value; slider.style.display = 'block'; }
+            if (nodeLabelEl) { 
+                nodeLabelEl.textContent = `📄 ${nodeLabel}`; 
+                nodeLabelEl.style.display = 'block'; 
+            }
+            if (slider) { 
+                slider.value = value; 
+                slider.style.display = 'block';
+                slider.style.visibility = 'visible'; // Extra safety
+            }
         } else {
             if (nodeLabelEl) nodeLabelEl.style.display = 'none';
-            if (slider) slider.style.display = 'none';
+            if (slider) {
+                slider.style.display = 'none';
+                slider.style.visibility = 'hidden';
+            }
         }
     }
 
@@ -5196,68 +5430,18 @@ class CanvasEngine {
         };
 
         const typeMap = {
-            // Logic (Code)
-            'source': {
-                borderColor: '#a89984', // Bright Grey
-                bgColor: '#3c3836',
-                icon: 'f()',
-                lineWidth: 2,
-                typeLabel: 'Logic'
-            },
-            'logic': { // Alias
-                borderColor: '#a89984',
-                bgColor: '#3c3836',
-                icon: 'f()',
-                lineWidth: 2,
-                typeLabel: 'Logic'
-            },
-            // Data (Store)
-            'config': {
-                borderColor: '#83a598', // Blue
-                bgColor: '#076678', // Dark Blue
-                icon: '📋',
-                lineWidth: 4, // 두꺼운 테두리
-                typeLabel: 'Data'
-            },
-            'data': { // Alias
-                borderColor: '#83a598',
-                bgColor: '#076678',
-                icon: 'DB',
-                lineWidth: 4,
-                typeLabel: 'Data'
-            },
-            // Entry (Gate)
-            'entry': {
-                borderColor: '#fe8019', // Orange
-                bgColor: '#3c3836',
-                icon: '▶',
-                lineWidth: 2.5,
-                glow: true,
-                typeLabel: 'Entry'
-            },
-            // External
-            'external': {
-                borderColor: '#8ec07c', // Aqua
-                bgColor: 'rgba(40, 40, 40, 0.7)', // Translucent
-                icon: '☁',
-                lineWidth: 2,
-                dash: [5, 5],
-                typeLabel: 'External'
-            },
-            'documentation': {
-                borderColor: '#fabd2f',
-                bgColor: '#3c3836',
-                icon: '📄',
-                lineWidth: 2,
-                typeLabel: 'Doc'
-            },
-            'test': {
-                borderColor: '#fe8019',
-                bgColor: '#3c3836',
-                icon: '🧪',
-                lineWidth: 2,
-                typeLabel: 'Test'
-            }
+            // [v0.2.14] Standard Entities
+            'source': { borderColor: '#a89984', bgColor: node.data?.color || '#3c3836', icon: '📄', lineWidth: 2, typeLabel: 'File' },
+            'logic': { borderColor: '#a89984', bgColor: node.data?.color || '#3c3836', icon: '📄', lineWidth: 2, typeLabel: 'File' },
+            'config': { borderColor: '#83a598', bgColor: node.data?.color || '#076678', icon: '📄', lineWidth: 4, typeLabel: 'Data' },
+            'data': { borderColor: '#83a598', bgColor: node.data?.color || '#076678', icon: 'DB', lineWidth: 4, typeLabel: 'Data' },
+            'entry': { borderColor: '#fe8019', bgColor: node.data?.color || '#3c3836', icon: '⚡', lineWidth: 2.5, glow: true, typeLabel: 'Trigger' },
+            'trigger': { borderColor: '#fe8019', bgColor: node.data?.color || '#3c3836', icon: '⚡', lineWidth: 2.5, glow: true, typeLabel: 'Trigger' },
+            'external': { borderColor: '#8ec07c', bgColor: node.data?.color || 'rgba(40, 40, 40, 0.7)', icon: '☁', lineWidth: 2, dash: [5, 5], typeLabel: 'External' },
+            'documentation': { borderColor: '#fabd2f', bgColor: node.data?.color || '#3c3836', icon: '📄', lineWidth: 2, typeLabel: 'Doc' },
+            'test': { borderColor: '#fe8019', bgColor: node.data?.color || '#3c3836', icon: '🧪', lineWidth: 2, typeLabel: 'Test' },
+            'component': { borderColor: '#83a598', bgColor: node.data?.color || '#3c3836', icon: '🧩', lineWidth: 3, typeLabel: 'Component' },
+            'folder': { borderColor: '#d79921', bgColor: node.data?.color || '#3c3836', icon: '📁', lineWidth: 2, typeLabel: 'Folder' }
         };
 
         // 파일명이나 경로를 보고 Entry 포인트를 동적으로 판단 (Main gate)
@@ -5820,6 +6004,25 @@ class CanvasEngine {
                 this.ctx.fillText(desc.substring(0, 30) + (desc.length > 30 ? '...' : ''), x + 10, offsetY);
             }
         }
+
+        // 6. [v0.2.32] Corner Handles (꼭지점) for Easier Movement
+        if (isSelected && zoom > 0.6) {
+            this.ctx.fillStyle = '#fabd2f';
+            this.ctx.globalAlpha = 1.0;
+            const hSize = 8 / zoom; // Handle size
+            
+            // Draw a subtle border around the whole box
+            this.ctx.strokeStyle = '#fabd2f';
+            this.ctx.lineWidth = 1.5 / zoom;
+            this.ctx.strokeRect(0, 0, nodeWidth, nodeHeight);
+
+            // Handle Boxes at corners
+            this.ctx.fillRect(-hSize/2, -hSize/2, hSize, hSize); // TL
+            this.ctx.fillRect(nodeWidth - hSize/2, -hSize/2, hSize, hSize); // TR
+            this.ctx.fillRect(-hSize/2, nodeHeight - hSize/2, hSize, hSize); // BL
+            this.ctx.fillRect(nodeWidth - hSize/2, nodeHeight - hSize/2, hSize, hSize); // BR
+        }
+
         this.ctx.restore(); // [CRITICAL] Matches ctx.save() at the start of node rendering
     }
 
@@ -5940,54 +6143,14 @@ class CanvasEngine {
 
 
         const styles = {
-            'dependency': {
-                color: '#ebdbb2',      // Gruvbox Light
-                dashPattern: null,     // Solid
-                lineWidth: 2.0,
-                arrowStyle: 'standard'
-            },
-            'data_flow': {
-                color: '#83a598',      // Blue/Teal
-                dashPattern: null,     // Solid
-                lineWidth: 3.0,
-                arrowStyle: 'thick'
-            },
-            'event': {
-                color: '#fe8019',      // Orange
-                dashPattern: null,     // Solid
-                lineWidth: 2.0,
-                arrowStyle: 'standard'
-            },
-            'conditional': {
-                color: '#d3869b',      // Magenta/Purple
-                dashPattern: null,     // Solid 
-                lineWidth: 1.0,
-                arrowStyle: 'standard'
-            },
-            'origin': {
-                color: '#d65d0e',      // Dark Orange
-                dashPattern: null,     // Solid
-                lineWidth: 1.5,
-                arrowStyle: 'standard'
-            },
-            'api_call': {
-                color: '#8ec07c',      // Aqua
-                dashPattern: [4, 4],   // Dashed
-                lineWidth: 2.0,
-                arrowStyle: 'standard'
-            },
-            'db_query': {
-                color: '#d3869b',      // Magenta/Purple
-                dashPattern: null,     // Solid
-                lineWidth: 3.0,
-                arrowStyle: 'thick'
-            },
-            'loop_back': {
-                color: '#fe8019',      // Orange
-                dashPattern: [2, 4],   // Dotted (Approx)
-                lineWidth: 2.0,
-                arrowStyle: 'standard'
-            }
+            'dependency': { color: '#ebdbb2', dashPattern: null, lineWidth: 2.0, arrowStyle: 'standard' },
+            'data_flow': { color: '#83a598', dashPattern: null, lineWidth: 3.0, arrowStyle: 'thick' },
+            'event': { color: '#fe8019', dashPattern: null, lineWidth: 2.0, arrowStyle: 'standard' },
+            'conditional': { color: '#d3869b', dashPattern: null, lineWidth: 1.0, arrowStyle: 'standard' },
+            'origin': { color: '#d65d0e', dashPattern: null, lineWidth: 1.5, arrowStyle: 'standard' },
+            'api_call': { color: '#8ec07c', dashPattern: [4, 4], lineWidth: 2.0, arrowStyle: 'standard' },
+            'db_query': { color: '#d3869b', dashPattern: null, lineWidth: 3.0, arrowStyle: 'thick' },
+            'loop_back': { color: '#fe8019', dashPattern: [2, 4], lineWidth: 2.0, arrowStyle: 'standard' }
         };
 
         const style = { ... (styles[type] || styles['dependency']) };
@@ -6437,35 +6600,58 @@ class CanvasEngine {
             }
         }
 
+        this.renderEdgeBadges(this.ctx, edge);
+    }
+
+    /**
+     * [v0.2.33] Hybrid Badge Rendering
+     * 분리된 엣지 배지 렌더링 (2D/3D 공통 사용)
+     */
+    renderEdgeBadges(ctx, edge) {
+        const fromNode = edge.srcNode || this.nodeMap.get(edge.from);
+        const toNode = edge.tgtNode || this.nodeMap.get(edge.to);
+        if (!fromNode || !toNode) return;
+
+        const fromX = fromNode.position.x + 60;
+        const fromY = fromNode.position.y + 30;
+        const toX = toNode.position.x + 60;
+        const toY = toNode.position.y + 30;
+
+        const validation = this.edgeValidationCache.get(edge.id) || { valid: true };
+        const confirmStatus = edge.confirmStatus || (edge.status === 'pending' ? 'pending_confirm' : '');
+
         if (confirmStatus === 'pending_confirm' || confirmStatus === 'confirmed') {
             const bMidX = (fromX + toX) / 2;
             const bMidY = (fromY + toY) / 2 - 30;
             const isPending = confirmStatus === 'pending_confirm';
             const badgeChar = isPending ? '?' : '!';
-            const badgeColor = isPending ? '#504945' : '#83a598'; // [v0.2.20] '?' is dark gray, '!' is blue
-            const badgeSize = Math.max(30, 40 / this.transform.zoom); // [v0.2.19 Fix] Make badges much larger globally
+            const badgeColor = isPending ? '#504945' : '#83a598'; 
+            const badgeSize = Math.max(25, 35 / this.transform.zoom); 
 
-            this.ctx.save();
-            this.ctx.font = `bold ${badgeSize}px Inter, monospace`;
-            this.ctx.textAlign = 'center';
-            this.ctx.textBaseline = 'middle';
+            ctx.save();
+            ctx.font = `bold ${badgeSize}px Inter, monospace`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
 
-            this.ctx.beginPath();
-            this.ctx.arc(bMidX, bMidY, badgeSize * 0.75, 0, Math.PI * 2);
-            this.ctx.fillStyle = isPending ? 'rgba(80,73,69,0.8)' : 'rgba(131,165,152,0.8)';
-            this.ctx.fill();
-            this.ctx.strokeStyle = badgeColor;
-            this.ctx.lineWidth = 1.5 / this.transform.zoom;
-            this.ctx.stroke();
-            this.ctx.fillStyle = badgeColor;
-            this.ctx.fillText(badgeChar, bMidX, bMidY);
-            this.ctx.restore();
+            ctx.beginPath();
+            ctx.arc(bMidX, bMidY, badgeSize * 0.75, 0, Math.PI * 2);
+            ctx.fillStyle = isPending ? 'rgba(80,73,69,0.85)' : 'rgba(131,165,152,0.85)';
+            ctx.fill();
+            ctx.strokeStyle = badgeColor;
+            ctx.lineWidth = 2 / this.transform.zoom;
+            ctx.stroke();
+            ctx.fillStyle = badgeColor;
+            ctx.fillText(badgeChar, bMidX, bMidY);
+            ctx.restore();
 
-            if (!this._confirmBadgeHits) this._confirmBadgeHits = [];
-            this._confirmBadgeHits.push({
-                x: bMidX, y: bMidY, r: badgeSize * 0.75,
-                edge: edge, isPending
-            });
+            // Click detection hit tracking (only for primary 2D ctx)
+            if (ctx === this.ctx) {
+                if (!this._confirmBadgeHits) this._confirmBadgeHits = [];
+                this._confirmBadgeHits.push({
+                    x: bMidX, y: bMidY, r: badgeSize * 0.75,
+                    edge: edge, isPending
+                });
+            }
         }
     }
 

@@ -94,11 +94,12 @@ class WebGLRenderer {
             top: 0; left: 0;
             width: 100%; height: 100%;
             pointer-events: none !important;
-            z-index: 5;
+            z-index: 10;
             background: transparent !important;
             background-color: transparent !important;
         `;
-        canvas2d.parentElement.insertBefore(this.glCanvas, canvas2d);
+        // [v0.2.26] Swap order: Insert AFTER canvas2d to be on top
+        canvas2d.parentElement.appendChild(this.glCanvas);
         if (canvas2d.parentElement.style.position === '') {
             canvas2d.parentElement.style.position = 'relative';
         }
@@ -138,6 +139,9 @@ class WebGLRenderer {
         this.initStarfield();
         this.initLayerFBOs();
 
+        // [v0.2.26] State Tracking for Inversion correction
+        this._isYInverted = true;
+        
         console.log('[SYNAPSE WebGL] Renderer Initialized. Instancing:', !!this.ext);
         this.nodeCount = 0;
         this.edgeCount = 0;
@@ -155,16 +159,28 @@ class WebGLRenderer {
     initShaders() {
         // Node Instanced Shader
         const vsSource = `
-            attribute vec2 aVertexPosition;
+            attribute vec2 aVertexPosition; // Quad: [-1,-1] to [1,1]
             attribute vec2 aInstancePosition;
             attribute vec3 aInstanceColor;
-            attribute float aInstanceSize;
+            attribute vec2 aInstanceSize; // [w/2, h/2]
+            attribute float aIsSelected;
+            attribute float aInstanceAlpha;
+            attribute float aShapeType;
+            attribute float aIsFracture;
             uniform mat3 uProjectionMatrix;
             varying vec3 vColor;
             varying vec2 vCoord;
+            varying float vIsSelected;
+            varying float vAlpha;
+            varying float vShape;
+            varying float vIsFracture;
             void main() {
                 vColor = aInstanceColor;
                 vCoord = aVertexPosition;
+                vIsSelected = aIsSelected;
+                vAlpha = aInstanceAlpha;
+                vShape = aShapeType;
+                vIsFracture = aIsFracture;
                 vec2 worldPos = aInstancePosition + aVertexPosition * aInstanceSize;
                 vec3 projected = uProjectionMatrix * vec3(worldPos, 1.0);
                 gl_Position = vec4(projected.xy, 0.0, 1.0);
@@ -173,23 +189,56 @@ class WebGLRenderer {
         const fsSource = `
             precision mediump float;
             varying vec3 vColor;
-            varying vec2 vCoord;
+            varying vec2 vCoord; // -1 to 1
+            varying float vIsSelected;
+            varying float vAlpha;
+            varying float vShape; 
+            varying float vIsFracture;
+            
             void main() {
-                // [v0.2.25] Enhanced Box Shader with Emissive Bloom
-                float distMask = max(abs(vCoord.x), abs(vCoord.y));
-                if (distMask > 1.0) discard;
+                float dist;
+                // SDF for shapes
+                if (vShape > 0.5 && vShape < 1.5) {
+                    // Logic for Diamond (vShape == 1.0)
+                    dist = abs(vCoord.x) + abs(vCoord.y) - 1.0;
+                } else if (vShape > 1.5 && vShape < 2.5) {
+                    // Logic for Hexagon (vShape == 2.0)
+                    vec2 q = abs(vCoord);
+                    dist = max(q.x * 0.866025 + q.y * 0.5, q.y) - 0.9;
+                } else {
+                    // SDF Based Rounded Corners (vShape == 0.0)
+                    vec2 size = vec2(0.9, 0.85); 
+                    float radius = 0.15;
+                    vec2 d = abs(vCoord) - size + radius;
+                    dist = length(max(d, 0.0)) - radius;
+                }
                 
-                // Node Body
-                float body = 1.0 - smoothstep(0.8, 0.82, distMask);
-                // Glow/Aura (Pulsing simulated by shader time or just heavy weight)
-                float aura = 1.0 - smoothstep(0.7, 1.0, distMask);
+                if (dist > 0.0) discard;
                 
-                vec3 nodeColor = vColor;
-                vec3 finalColor = nodeColor * body * 0.8; // darkened body
-                finalColor += nodeColor * aura * 1.8;      // strong emissive glow
+                // [v0.2.33] Enhanced Border Mask for Glow paths
+                float borderThreshold = -0.06;
+                float borderMask = smoothstep(borderThreshold - 0.04, borderThreshold, dist);
                 
-                float finalAlpha = max(body * 0.9, aura * 0.6);
-                gl_FragColor = vec4(finalColor, finalAlpha);
+                vec3 borderColor = vec3(0.5, 0.5, 0.5); 
+                if (vIsSelected > 0.5) {
+                    borderColor = vec3(0.92, 0.74, 0.18); 
+                }
+                
+                vec3 nodeBaseColor = vColor;
+                // [v0.2.34] Selective Glow based on Status (Fracture Pink / DTR Purple)
+                if (vIsFracture > 0.5) {
+                    borderColor = vec3(0.82, 0.52, 0.61); // Pinkish #d3869b
+                }
+                
+                // Subtle Inner Glow
+                float innerGlow = smoothstep(-0.4, -0.0, dist);
+                nodeBaseColor = mix(nodeBaseColor, vec3(1.0), innerGlow * 0.1);
+
+                if (borderMask > 0.5) {
+                    nodeBaseColor = mix(nodeBaseColor, borderColor, borderMask);
+                }
+                
+                gl_FragColor = vec4(nodeBaseColor, vAlpha);
             }
         `;
         this.nodeProgram = this.createProgram(vsSource, fsSource);
@@ -214,22 +263,53 @@ class WebGLRenderer {
         `;
         this.starProgram = this.createProgram(starVS, starFS);
 
-        // Edge Instanced Shader
-                const vsEdge = `
-            attribute vec2 aVertexPosition;
-            attribute vec3 aColor;
+        // Edge Instanced Shader (Reconstructed Line Quad with Arrowhead)
+        const vsEdge = `
+            attribute vec2 aVertexPosition; // [0, -0.5] to [1, 0.5]
+            attribute vec4 aInstanceEdge;   // [x1, y1, x2, y2]
+            attribute vec3 aEdgeColor;
+            attribute float aThickness;
             varying vec3 vColor;
+            varying vec2 vTexCoord;
             uniform mat3 uProjectionMatrix;
             void main() {
-                vColor = aColor;
-                gl_Position = vec4((uProjectionMatrix * vec3(aVertexPosition, 1.0)).xy, 0.0, 1.0);
+                vec2 p1 = aInstanceEdge.xy;
+                vec2 p2 = aInstanceEdge.zw;
+                vec2 dir = p2 - p1;
+                float len = length(dir);
+                float headSize = 12.0;
+                
+                vec2 unitDir = (len > 0.1) ? dir / len : vec2(0.0);
+                vec2 norm = vec2(-unitDir.y, unitDir.x);
+                
+                // Expand width near the end for arrowhead
+                float lineWidth = aThickness;
+                float arrowWidth = (aVertexPosition.x > 0.9) ? (1.0 - aVertexPosition.x) * (lineWidth * 4.0) + 1.0 : lineWidth;
+                
+                vec2 worldPos = p1 + unitDir * (aVertexPosition.x * len) + norm * (aVertexPosition.y * arrowWidth);
+                vec3 projected = uProjectionMatrix * vec3(worldPos, 1.0);
+                gl_Position = vec4(projected.xy, 0.0, 1.0);
+                vColor = aEdgeColor;
+                vTexCoord = aVertexPosition;
             }
-`;
-                const fsEdge = `
+        `;
+        const fsEdge = `
             precision mediump float;
             varying vec3 vColor;
+            varying vec2 vTexCoord;
             void main() {
-                gl_FragColor = vec4(vColor, 0.8); 
+                float x = vTexCoord.x;
+                float y = abs(vTexCoord.y);
+                
+                if (x > 0.92) {
+                    float arrowZone = (1.0 - x) * 6.0; 
+                    if (y > arrowZone) discard;
+                } else if (y > 0.1) {
+                    // Solid line for the rest
+                    // discard; -> removed to allow variable thickness
+                }
+                
+                gl_FragColor = vec4(vColor, 1.0);
             }
         `;
         this.edgeProgram = this.createProgram(vsEdge, fsEdge);
@@ -285,6 +365,10 @@ class WebGLRenderer {
                 pos: this.gl.getAttribLocation(this.nodeProgram, 'aInstancePosition'),
                 color: this.gl.getAttribLocation(this.nodeProgram, 'aInstanceColor'),
                 size: this.gl.getAttribLocation(this.nodeProgram, 'aInstanceSize'),
+                selected: this.gl.getAttribLocation(this.nodeProgram, 'aIsSelected'),
+                alpha: this.gl.getAttribLocation(this.nodeProgram, 'aInstanceAlpha'),
+                shape: this.gl.getAttribLocation(this.nodeProgram, 'aShapeType'),
+                fracture: this.gl.getAttribLocation(this.nodeProgram, 'aIsFracture'),
                 vertex: this.gl.getAttribLocation(this.nodeProgram, 'aVertexPosition'),
                 uProj: this.gl.getUniformLocation(this.nodeProgram, 'uProjectionMatrix')
             },
@@ -295,6 +379,8 @@ class WebGLRenderer {
             edge: {
                 vertex: this.gl.getAttribLocation(this.edgeProgram, 'aVertexPosition'),
                 instanceEdge: this.gl.getAttribLocation(this.edgeProgram, 'aInstanceEdge'),
+                color: this.gl.getAttribLocation(this.edgeProgram, 'aEdgeColor'),
+                thickness: this.gl.getAttribLocation(this.edgeProgram, 'aThickness'),
                 uProj: this.gl.getUniformLocation(this.edgeProgram, 'uProjectionMatrix')
             },
             text: {
@@ -314,6 +400,11 @@ class WebGLRenderer {
         this.gl.attachShader(program, vertexShader);
         this.gl.attachShader(program, fragmentShader);
         this.gl.linkProgram(program);
+        
+        if (!this.gl.getProgramParameter(program, this.gl.LINK_STATUS)) {
+            console.error('[SYNAPSE WebGL] Link Error:', this.gl.getProgramInfoLog(program));
+            return null;
+        }
         return program;
     }
 
@@ -337,6 +428,7 @@ class WebGLRenderer {
         this.posBuffer = this.gl.createBuffer();
         this.colorBuffer = this.gl.createBuffer();
         this.sizeBuffer = this.gl.createBuffer();
+        this.selectBuffer = this.gl.createBuffer(); // [New] Selection Status Buffer
 
         // Edge Buffer setup
         const edgeVertices = [0, -0.5, 1, -0.5, 0, 0.5, 1, 0.5];
@@ -356,11 +448,16 @@ class WebGLRenderer {
         
         // [v0.2.24-Final] Pre-allocate large buffers once to avoid gl.bufferData stalls
         // 10k nodes, 20k edges, 50k characters
-        this._nodePosArr = new Float32Array(10000 * 2);
-        this._nodeColorArr = new Float32Array(10000 * 3);
-        this._nodeSizeArr = new Float32Array(10000);
-        this._edgeArr = new Float32Array(20000 * 4);
-        this._textArr = new Float32Array(50000 * 8);
+        const maxNodes = 10000;
+        const maxEdges = 20000;
+        const maxChars = 50000;
+
+        this._nodePosArr = new Float32Array(maxNodes * 2);
+        this._nodeColorArr = new Float32Array(maxNodes * 3);
+        this._nodeSizeArr = new Float32Array(maxNodes * 2);
+        this._nodeSelectArr = new Float32Array(maxNodes); // 1 float per node
+        this._edgeArr = new Float32Array(maxEdges * 4);
+        this._textArr = new Float32Array(maxChars * 8);
 
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.posBuffer);
         this.gl.bufferData(this.gl.ARRAY_BUFFER, this._nodePosArr.byteLength, this.gl.DYNAMIC_DRAW);
@@ -368,6 +465,34 @@ class WebGLRenderer {
         this.gl.bufferData(this.gl.ARRAY_BUFFER, this._nodeColorArr.byteLength, this.gl.DYNAMIC_DRAW);
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.sizeBuffer);
         this.gl.bufferData(this.gl.ARRAY_BUFFER, this._nodeSizeArr.byteLength, this.gl.DYNAMIC_DRAW);
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.selectBuffer);
+        this.gl.bufferData(this.gl.ARRAY_BUFFER, this._nodeSelectArr.byteLength, this.gl.DYNAMIC_DRAW);
+        
+        this._nodeAlphaArr = new Float32Array(maxNodes);
+        this.alphaBuffer = this.gl.createBuffer();
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.alphaBuffer);
+        this.gl.bufferData(this.gl.ARRAY_BUFFER, this._nodeAlphaArr.byteLength, this.gl.DYNAMIC_DRAW);
+
+        this._nodeShapeArr = new Float32Array(maxNodes);
+        this.nodeShapeBuffer = this.gl.createBuffer();
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.nodeShapeBuffer);
+        this.gl.bufferData(this.gl.ARRAY_BUFFER, this._nodeShapeArr.byteLength, this.gl.DYNAMIC_DRAW);
+
+        this._nodeFractureArr = new Float32Array(maxNodes);
+        this.nodeFractureBuffer = this.gl.createBuffer();
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.nodeFractureBuffer);
+        this.gl.bufferData(this.gl.ARRAY_BUFFER, this._nodeFractureArr.byteLength, this.gl.DYNAMIC_DRAW);
+
+        this._edgeColorArr = new Float32Array(maxEdges * 3);
+        this.edgeColorBuffer = this.gl.createBuffer();
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.edgeColorBuffer);
+        this.gl.bufferData(this.gl.ARRAY_BUFFER, this._edgeColorArr.byteLength, this.gl.DYNAMIC_DRAW);
+
+        this._edgeThickArr = new Float32Array(maxEdges);
+        this.edgeThickBuffer = this.gl.createBuffer();
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.edgeThickBuffer);
+        this.gl.bufferData(this.gl.ARRAY_BUFFER, this._edgeThickArr.byteLength, this.gl.DYNAMIC_DRAW);
+
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.edgeInstanceBuffer);
         this.gl.bufferData(this.gl.ARRAY_BUFFER, this._edgeArr.byteLength, this.gl.DYNAMIC_DRAW);
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.textInstanceBuffer);
@@ -437,7 +562,7 @@ class WebGLRenderer {
         });
     }
 
-    updateNodeData(nodes) {
+    updateNodeData(nodes, selectedNodeIds = new Set()) {
         if (!this.gl || !nodes || nodes.length === 0) {
             this.nodeCount = 0;
             return;
@@ -449,86 +574,161 @@ class WebGLRenderer {
         const posArr = this._nodePosArr;
         const colorArr = this._nodeColorArr;
         const sizeArr = this._nodeSizeArr;
+        const selectArr = this._nodeSelectArr;
+        const alphaArr = this._nodeAlphaArr;
+        const shapeArr = this._nodeShapeArr;
+        const fractureArr = this._nodeFractureArr;
 
-        if (!posArr) return; // Should be initialized in initBuffers
+        if (!posArr) return; 
 
         for (let i = 0; i < nodes.length; i++) {
             const n = nodes[i];
             const p = n.position || { x: 0, y: 0 };
+            const nodeWidth = 120;
+            const nodeHeight = 60;
             
             // Adjust to match 2D layout centering
-            posArr[i * 2] = p.x + 60;
-            posArr[i * 2 + 1] = p.y + 30;
+            posArr[i * 2] = p.x + (nodeWidth / 2);
+            posArr[i * 2 + 1] = p.y + (nodeHeight / 2);
 
-            // [v0.2.22] Map Status and Type to WebGL Colors (Sync with Conventions)
-            let nColor = n.data?.color || '#ebdbb2';
-            if (n.status === 'active') nColor = '#83a598';
-            else if (n.status === 'warning' || n.isError) nColor = '#fb4934';
-            else if (n.status === 'ghost') nColor = '#928374';
-            else if (n.status === 'deleted') nColor = '#282828';
+            // [v0.2.36] Sync Fill Color Logic with CanvasEngine.getNodeStyle
+            let nColor = n.data?.color;
+            if (!nColor) {
+                if (n.type === 'config' || n.type === 'data') nColor = '#076678';
+                else if (n.type === 'external') nColor = '#282828';
+                else nColor = '#3c3836'; // Default logic background
+            }
+
+            // Status overrides
+            if (n.status === 'deleted') nColor = '#282828';
             else if (n.status === 'error_necrosis' || n.status === 'error_tombstone') nColor = '#1d2021';
-            else if (n.intelligence?.dtr >= 0.7) nColor = '#8a2be2'; // DTR Purple
 
-            const c = this.hexToRgb(nColor);
-            colorArr[i * 3] = c.r;
-            colorArr[i * 3 + 1] = c.g;
-            colorArr[i * 3 + 2] = c.b;
+            // [v0.2.36] Recognition for Conditional/Fracture nodes (matches getNodeStyle in canvas-engine.js)
+            const fileName = (n.data?.file || '').toLowerCase();
+            const isDecisionNode = fileName.includes('valid_') || fileName.includes('validator') || 
+                                 fileName.includes('checker') || fileName.includes('router') || 
+                                 fileName.startsWith('is_');
 
-            sizeArr[i] = 45.0; // radius adapted for boxes
+            if (n.status === 'active') nColor = '#83a598'; 
+            else if (n.isDeterministicFracture) nColor = '#ebdbb2'; // Fracture violation: light bg (same as 2D)
+            else if (isDecisionNode) nColor = '#3c3836'; // Decision nodes: same dark bg as 2D (border is yellow)
+            else if (n.status === 'ghost' || (n.data && n.data.status === 'ghost')) nColor = '#928374';
+            else if (nColor === '#b8bb26' && n.visual?.opacity < 0.6) nColor = '#3c3836';
+
+            // Conditional nodes remain opaque to cover edges beneath
+            const alpha = (isDecisionNode || n.isDeterministicFracture) ? 1.0 : (n.visual?.opacity || 0.98);
+            
+            // Convert Hex to RGB
+            const r = parseInt(nColor.slice(1, 3), 16) / 255;
+            const g = parseInt(nColor.slice(3, 5), 16) / 255;
+            const b = parseInt(nColor.slice(5, 7), 16) / 255;
+
+            colorArr[i * 3] = r;
+            colorArr[i * 3 + 1] = g;
+            colorArr[i * 3 + 2] = b;
+
+            sizeArr[i * 2] = nodeWidth / 2;
+            sizeArr[i * 2 + 1] = nodeHeight / 2;
+
+            selectArr[i] = (selectedNodeIds && selectedNodeIds.has(n.id)) ? 1.0 : 0.0;
+            alphaArr[i] = alpha;
+
+            // [v0.2.36] Node Shape Sync
+            let shape = 0.0; // Box
+            if (isDecisionNode || n.isDeterministicFracture) {
+                shape = 1.0; // Diamond
+            } else if (fileName.includes('loop') || fileName.includes('iter')) {
+                shape = 2.0; // Hexagon
+            }
+            shapeArr[i] = shape;
+            fractureArr[i] = (isDecisionNode || n.isDeterministicFracture) ? 1.0 : 0.0;
         }
 
+        // Buffer upload
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.posBuffer);
-        this.gl.bufferSubData(this.gl.ARRAY_BUFFER, 0, posArr.subarray(0, this.nodeCount * 2));
+        this.gl.bufferSubData(this.gl.ARRAY_BUFFER, 0, posArr.subarray(0, nodes.length * 2));
 
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.colorBuffer);
-        this.gl.bufferSubData(this.gl.ARRAY_BUFFER, 0, colorArr.subarray(0, this.nodeCount * 3));
+        this.gl.bufferSubData(this.gl.ARRAY_BUFFER, 0, colorArr.subarray(0, nodes.length * 3));
 
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.sizeBuffer);
-        this.gl.bufferSubData(this.gl.ARRAY_BUFFER, 0, sizeArr.subarray(0, this.nodeCount));
+        this.gl.bufferSubData(this.gl.ARRAY_BUFFER, 0, sizeArr.subarray(0, nodes.length * 2));
+
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.selectBuffer);
+        this.gl.bufferSubData(this.gl.ARRAY_BUFFER, 0, selectArr.subarray(0, nodes.length));
+
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.alphaBuffer);
+        this.gl.bufferSubData(this.gl.ARRAY_BUFFER, 0, alphaArr.subarray(0, nodes.length));
+
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.nodeShapeBuffer);
+        this.gl.bufferSubData(this.gl.ARRAY_BUFFER, 0, shapeArr.subarray(0, nodes.length));
+
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.nodeFractureBuffer);
+        this.gl.bufferSubData(this.gl.ARRAY_BUFFER, 0, fractureArr.subarray(0, nodes.length));
     }
 
-    updateEdgeData(edges, nodeMap) {
-        if (!this.gl || !edges || edges.length === 0) {
-            this.edgeCount = 0;
-            return;
-        }
-
-        let sizeChanged = false;
-        if (!this._edgeData || this._edgeData.length !== edges.length * 4) {
-            this._edgeData = new Float32Array(edges.length * 4);
-            sizeChanged = true;
-        }
+    updateEdgeData(edges, nodeMap, selectedNodeIds) {
+        if (!this.gl || !edges) return;
         
-        const data = this._edgeData;
+        const data = this._edgeArr;
+        const colorData = this._edgeColorArr;
+        const thickData = this._edgeThickArr;
+        if (!data || !colorData || !thickData) return;
+        
         let cnt = 0;
-        for (const e of edges) {
-            // [v0.2.24] O(N) Map Lookup 제거: 한 번 찾으면 직접 참조
-            if (e.srcNode && e.tgtNode) {
-                data[cnt++] = e.srcNode.position.x + 60;
-                data[cnt++] = e.srcNode.position.y + 30;
-                data[cnt++] = e.tgtNode.position.x + 60;
-                data[cnt++] = e.tgtNode.position.y + 30;
-            } else {
-                const src = nodeMap.get(e.from);
-                const tgt = nodeMap.get(e.to);
-                if (src && tgt && src.position && tgt.position) {
-                    e.srcNode = src; // cache it!
-                    e.tgtNode = tgt;
-                    data[cnt++] = src.position.x + 60;
-                    data[cnt++] = src.position.y + 30;
-                    data[cnt++] = tgt.position.x + 60;
-                    data[cnt++] = tgt.position.y + 30;
+        let colorCnt = 0;
+        let thickCnt = 0;
+        
+        for (let i = 0; i < edges.length; i++) {
+            const e = edges[i];
+            const src = e.srcNode || (nodeMap ? nodeMap.get(e.from) : null);
+            const tgt = e.tgtNode || (nodeMap ? nodeMap.get(e.to) : null);
+            
+            if (src && tgt && src.position && tgt.position) {
+                const nodeWidth = 120;
+                const nodeHeight = 60;
+                data[cnt++] = src.position.x + (nodeWidth / 2);
+                data[cnt++] = src.position.y + (nodeHeight / 2);
+                data[cnt++] = tgt.position.x + (nodeWidth / 2);
+                data[cnt++] = tgt.position.y + (nodeHeight / 2);
+
+                // Path highlight logic match (Selection & Path)
+                const isPathSelected = e.isSelected || 
+                                     (selectedNodeIds && (selectedNodeIds.has(e.from) || selectedNodeIds.has(e.to)));
+
+                let color = '#a89984'; // Default
+                let thickness = 1.2;
+
+                if (isPathSelected) {
+                    color = '#fabd2f';
+                    thickness = 8.0; // Matching 2D +6px boost
+                } else {
+                    if (e.isDeterministicFracture) {
+                        color = '#d3869b'; // Pink/Magenta for fractures
+                        thickness = 3.5;
+                    } else if (e.status === 'confirmed') color = '#b8bb26';
+                    else if (e.status === 'pending') color = '#fabd2f';
+                    else if (e.isError || e.type === 'broken_fracture') color = '#fb4934';
                 }
+
+                const c = this.hexToRgb(color);
+                colorData[colorCnt++] = c.r;
+                colorData[colorCnt++] = c.g;
+                colorData[colorCnt++] = c.b;
+
+                thickData[thickCnt++] = thickness;
             }
         }
         this.edgeCount = cnt / 4;
 
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.edgeInstanceBuffer);
-        if (sizeChanged) {
-            this.gl.bufferData(this.gl.ARRAY_BUFFER, data.subarray(0, cnt), this.gl.DYNAMIC_DRAW);
-        } else {
-            this.gl.bufferSubData(this.gl.ARRAY_BUFFER, 0, data.subarray(0, cnt));
-        }
+        this.gl.bufferSubData(this.gl.ARRAY_BUFFER, 0, data.subarray(0, cnt));
+
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.edgeColorBuffer);
+        this.gl.bufferSubData(this.gl.ARRAY_BUFFER, 0, colorData.subarray(0, colorCnt));
+
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.edgeThickBuffer);
+        this.gl.bufferSubData(this.gl.ARRAY_BUFFER, 0, thickData.subarray(0, thickCnt));
     }
 
     updateTextData(nodes) {
@@ -554,7 +754,7 @@ class WebGLRenderer {
                 
                 // Rel centers (relative to node top-left)
                 let relXStart = 60 - totalW / 2;
-                let relY = 65; 
+                let relY = 35; // Moved inside (60 height) to match 2D logic
                 let curX = relXStart;
                 
                 for (const ch of label) {
@@ -628,6 +828,41 @@ class WebGLRenderer {
     }
 
     /**
+     * [v0.2.31] Explicit Frame Lifecycle: Begin
+     * Clears buffers and resets GL state to prevent contamination
+     */
+    beginFrame() {
+        if (!this.gl) return;
+        const gl = this.gl;
+        
+        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+        gl.viewport(0, 0, this.canvas.width, this.canvas.height);
+
+        gl.disable(gl.DEPTH_TEST);
+        gl.disable(gl.CULL_FACE);
+        gl.enable(gl.BLEND);
+        gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+
+        gl.clearColor(0, 0, 0, 0);
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+        
+        this.drawCalls = 0;
+    }
+
+    /**
+     * [v0.2.31] Explicit Frame Lifecycle: End
+     * Cleans up program and bindings
+     */
+    endFrame() {
+        if (!this.gl) return;
+        const gl = this.gl;
+        
+        gl.useProgram(null);
+        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+        gl.bindBuffer(gl.ARRAY_BUFFER, null);
+    }
+
+    /**
      * [v0.2.24] Direct Rendering Optimization — Bye bye FBO caching for now.
      * Everything is drawn directly to screen buffer in a single pass.
      */
@@ -645,7 +880,35 @@ class WebGLRenderer {
         }
     }
 
-    render(nodes, transform, isDataDirty = false, edges = null, nodeMap = null, isEdgeDirty = false, isTextDirty = false) {
+    /**
+     * [v0.2.28] Bootstrap: Render from a deterministic frame state
+     * @param {Object} frameState 
+     */
+    renderFromState(frameState) {
+        if (!frameState || !this.gl) return;
+
+        this.beginFrame();
+        
+        const selectedIds = new Set(frameState.selectedNodeIds || []);
+
+        // Update node data
+        this.updateNodeData(frameState.nodes, selectedIds);
+        
+        // Build map for edges (or use from state if available)
+        const nodeMap = new Map();
+        for (const n of frameState.nodes) nodeMap.set(n.id, n);
+        this.updateEdgeData(frameState.edges, nodeMap, selectedIds);
+
+        // Render Layers
+        this.drawNodes(frameState.context);
+        this.drawEdges(frameState.context);
+        
+        this.endFrame();
+        const hash = calculateFrameHash(frameState);
+        console.log(`[SYNAPSE 3D] Frame Rendered. Hash: ${hash}`);
+    }
+
+    render(nodes, transform, isDataDirty = false, edges = null, nodeMap = null, isEdgeDirty = false, isTextDirty = false, selectedNodeIds = null) {
         if (!this.gl) return;
         
         // [v0.2.25] Iron Isolation: Stop everything if not in graph mode
@@ -654,14 +917,12 @@ class WebGLRenderer {
         }
 
         // Entire buffer clear is now deferred to just before drawing to minimize flickering gap.
-        
-        // Ensure alpha blending is explicitly ENABLED for proper transparency
-        this.gl.enable(this.gl.BLEND);
-        this.gl.blendFunc(this.gl.ONE, this.gl.ONE_MINUS_SRC_ALPHA);
+        // [v0.2.31] Note: beginFrame() should have been called by the engine
+
 
         const edgeLen = edges ? edges.length : 0;
         if (isDataDirty || this.nodeCount !== nodes.length) {
-            this.updateNodeData(nodes);
+            this.updateNodeData(nodes, selectedNodeIds);
             // 만약 노드가 바뀌면 선 위치도 바뀌어야 하므로 edgeDirty 강제 처리
             isEdgeDirty = true; 
             isTextDirty = true;
@@ -669,7 +930,7 @@ class WebGLRenderer {
 
         if (isEdgeDirty || this.lastEdgeCount !== edgeLen) {
             if (edges && nodeMap) {
-                this.updateEdgeData(edges, nodeMap);
+                this.updateEdgeData(edges, nodeMap, selectedNodeIds);
             }
             this.lastEdgeCount = edgeLen;
         }
@@ -688,11 +949,6 @@ class WebGLRenderer {
             }
         }
         this._lastZoom = transform.zoom;
-
-        // Clear WebGL context
-        this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, null); // Ensure drawing to screen
-        this.gl.clearColor(0, 0, 0, 0); 
-        this.gl.clear(this.gl.COLOR_BUFFER_BIT);
 
         // Draw Sequence: Background (Stars) -> Edges -> Nodes -> Text
         this.drawStars(transform);
@@ -714,9 +970,7 @@ class WebGLRenderer {
         if (this.__perfCounter < 10 || this.__perfCounter % 60 === 0) {
             console.log(`[SYNAPSE WebGL] Frame #${this.__perfCounter} | DrawCalls: ${this.drawCalls} | Instancing: ${this.ext ? 'ON' : 'OFF'} | Nodes: ${nodes.length} | Edges: ${this.edgeCount}`);
         }
-        // [v0.2.26] Explicit Cleanup to avoid Context Contamination
-        this.gl.useProgram(null);
-        this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, null);
+        // [v0.2.31] State Cleanup moved to endFrame()
     }
 
     drawStars(transform) {
@@ -745,12 +999,14 @@ class WebGLRenderer {
         this.gl.useProgram(this.edgeProgram);
         
         const dpr = window.devicePixelRatio || 1;
-        const scaleX = 2 / this.canvas.width;
-        const scaleY = -2 / this.canvas.height;
+        const logicalW = this.canvas.width / dpr;
+        const logicalH = this.canvas.height / dpr;
+        const scaleX = 2 / logicalW;
+        const scaleY = -2 / logicalH;
         const mat = [
-            (transform.zoom * dpr) * scaleX, 0, 0,
-            0, (transform.zoom * dpr) * scaleY, 0,
-            -1 + (transform.offsetX * dpr) * scaleX, 1 + (transform.offsetY * dpr) * scaleY, 1
+            transform.zoom * scaleX, 0, 0,
+            0, transform.zoom * scaleY, 0,
+            -1 + transform.offsetX * scaleX, 1 + transform.offsetY * scaleY, 1
         ];
         this.gl.uniformMatrix3fv(this.locs.edge.uProj, false, mat);
 
@@ -761,6 +1017,8 @@ class WebGLRenderer {
         if (this.ext) this.ext.vertexAttribDivisorANGLE(vPos, 0);
 
         this.setAttrPointer(this.edgeInstanceBuffer, this.locs.edge.instanceEdge, 4, 0, 0, 1);
+        this.setAttrPointer(this.edgeColorBuffer, this.locs.edge.color, 3, 0, 0, 1);
+        this.setAttrPointer(this.edgeThickBuffer, this.locs.edge.thickness, 1, 0, 0, 1);
 
         if (this.ext) {
             this.ext.drawArraysInstancedANGLE(this.gl.TRIANGLE_STRIP, 0, 4, this.edgeCount);
@@ -772,12 +1030,14 @@ class WebGLRenderer {
         if (this.nodeCount === 0) return;
         this.gl.useProgram(this.nodeProgram);
         const dpr = window.devicePixelRatio || 1;
-        const scaleX = 2 / this.canvas.width;
-        const scaleY = -2 / this.canvas.height;
+        const logicalW = this.canvas.width / dpr;
+        const logicalH = this.canvas.height / dpr;
+        const scaleX = 2 / logicalW;
+        const scaleY = -2 / logicalH;
         const mat = [
-            (transform.zoom * dpr) * scaleX, 0, 0,
-            0, (transform.zoom * dpr) * scaleY, 0,
-            -1 + (transform.offsetX * dpr) * scaleX, 1 + (transform.offsetY * dpr) * scaleY, 1
+            transform.zoom * scaleX, 0, 0,
+            0, transform.zoom * scaleY, 0,
+            -1 + transform.offsetX * scaleX, 1 + transform.offsetY * scaleY, 1
         ];
         this.gl.uniformMatrix3fv(this.locs.node.uProj, false, mat);
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.rectBuffer);
@@ -788,7 +1048,11 @@ class WebGLRenderer {
 
         this.setAttrPointer(this.posBuffer, this.locs.node.pos, 2, 0, 0, 1);
         this.setAttrPointer(this.colorBuffer, this.locs.node.color, 3, 0, 0, 1);
-        this.setAttrPointer(this.sizeBuffer, this.locs.node.size, 1, 0, 0, 1);
+        this.setAttrPointer(this.sizeBuffer, this.locs.node.size, 2, 0, 0, 1);
+        this.setAttrPointer(this.selectBuffer, this.locs.node.selected, 1, 0, 0, 1);
+        this.setAttrPointer(this.alphaBuffer, this.locs.node.alpha, 1, 0, 0, 1);
+        this.setAttrPointer(this.nodeShapeBuffer, this.locs.node.shape, 1, 0, 0, 1);
+        this.setAttrPointer(this.nodeFractureBuffer, this.locs.node.fracture, 1, 0, 0, 1);
         if (this.ext) {
             this.ext.drawArraysInstancedANGLE(this.gl.TRIANGLE_STRIP, 0, 4, this.nodeCount);
             this.drawCalls++;
@@ -808,13 +1072,15 @@ class WebGLRenderer {
         this.gl.bindTexture(this.gl.TEXTURE_2D, this.textAtlas.texture);
         this.gl.uniform1i(this.locs.text.uTex, 0);
 
-        const scaleX = 2 / this.canvas.width;
-        const scaleY = -2 / this.canvas.height;
         const dpr = window.devicePixelRatio || 1;
+        const logicalW = this.canvas.width / dpr;
+        const logicalH = this.canvas.height / dpr;
+        const scaleX = 2 / logicalW;
+        const scaleY = -2 / logicalH;
         const mat = [
             transform.zoom * scaleX, 0, 0,
             0, transform.zoom * scaleY, 0,
-            -1 + (transform.offsetX * dpr) * scaleX, 1 + (transform.offsetY * dpr) * scaleY, 1
+            -1 + transform.offsetX * scaleX, 1 + transform.offsetY * scaleY, 1
         ];
         this.gl.uniformMatrix3fv(this.locs.text.uProj, false, mat);
 

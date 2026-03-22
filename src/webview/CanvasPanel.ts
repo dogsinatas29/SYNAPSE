@@ -533,11 +533,17 @@ export class CanvasPanel {
                 return;
             }
 
+            // [v0.2.36] Warn for extensionless files that may fail to open
+            const ext = path.extname(filePath);
+            if (!ext) {
+                vscode.window.showWarningMessage(`[SYNAPSE] '${path.basename(filePath)}' 파일은 확장자가 없습니다. 가상 노드이거나 열 수 없는 파일일 수 있습니다.`);
+            }
+
             const doc = await vscode.workspace.openTextDocument(fileUri);
             await vscode.window.showTextDocument(doc);
         } catch (error) {
             Logger.error(`Failed to open/create file: ${filePath}`, error);
-            vscode.window.showErrorMessage(`Failed to open file: ${filePath}`);
+            vscode.window.showErrorMessage(`[SYNAPSE] 파일 열기 실패: ${filePath} (${error instanceof Error ? error.message : 'Unknown error'})`);
         }
     }
 
@@ -2062,6 +2068,11 @@ export class CanvasPanel {
                 }
 
                 // Also handle edge deletions if UI sent fewer edges? (Optional - maybe too dangerous)
+            }
+
+            // [v0.2.36] Persist camera view
+            if (newState.view) {
+                currentState.view = newState.view;
             }
 
             // 3. 파일 저장 (정규화 적용)

@@ -1,8 +1,8 @@
-# <img src="./resources/synapse-icon.png" width="40" height="40" /> 🧠 SYNAPSE: Visual Architecture Engine (v0.2.21)
+# <img src="./resources/synapse-icon.png" width="40" height="40" /> 🧠 SYNAPSE: Visual Architecture Engine (v0.2.28)
 
 > **"What you see is the logic of LLM"** — *WYSIWYG Logic for AI*
 
-[![Version](https://img.shields.io/badge/version-v0.2.21-brightgreen.png)
+[![Version](https://img.shields.io/badge/version-v0.2.28-brightgreen.png)
 ![Status](https://img.shields.io/badge/status-War_Room_Ready-orange.png)
 [![Language](https://img.shields.io/badge/Language-TypeScript-blue?style=flat-square)](https://www.typescriptlang.org/)
 [![Platform](https://img.shields.io/badge/Platform-VS_Code-007ACC?style=flat-square)](https://code.visualstudio.com/)
@@ -115,7 +115,7 @@ Interactive badges appear on edges during **Edit Logic** mode to facilitate arch
 
 ### Project Topology
 Visualizes the physical connections between LLM reasoning logic and source files.
-![Topology View](./resources/screenshots/v0.2.21/topology_view.png)
+![Topology View](./resources/screenshots/v0.2.26/topology_view.png)
 
 ### Logical Flow
 Linear execution flow of specific events, reflecting both manual edits and code changes. Group-Aware Hierarchy and Orthogonal Edge Routing create clean, readable diagrams.
@@ -267,10 +267,18 @@ SYNAPSE v0.2.17 bridges the gap between drawing pictures and writing code.
 
 | Version | Date | Description (English) | Description (Korean) |
 | :--- | :--- | :--- | :--- |
+| **v0.2.28** | 2026-03-22 | Rendering Parity Patch: 2D/3D color sync, camera view persistence, extensionless file guard. | 렌더링 일치 패치: 2D/3D 색상 동기화, 카메라 뷰 영속성, 확장자 없는 파일 처리. |
+| **v0.2.26** | 2026-03-22 | WebGL Fix, Snapshot Restoration, Node Style Alignment. | WebGL 오류 수정, 스냅샷 뷰 복구, 노드 규격 동기화. |
 | **v0.2.21** | 2026-03-15 | WebGL Acceleration, External Doc Shelf, Fuzzy search (fzf), Selection UI refinement. | WebGL 가속, Documentation Shelf 패널화, 퍼지 검색(fzf), 선택 인터페이스 정밀화. |
 | **v0.2.20** | 2026-03-15 | Hybrid Guardrail & Promotion Awareness. | 하이브리드 가드레일 및 프로모션 인식. |
 
-### v0.2.21 (The Definitive Edition: GPU & UI Refinement)
+### v0.2.28 (Rendering Parity & Stability Patch)
+- **2D/3D Color Parity**: Conditional nodes (`valid_*`, `checker`, `router`, `is_*`) now render with identical dark background (`#3c3836`) in both 2D and 3D modes. Only true `isDeterministicFracture` violation nodes use a light background (`#ebdbb2`).
+- **Camera View Persistence**: The canvas camera position (zoom + pan offset) is now fully saved to `project_state.json` on every snapshot, and correctly restored on load.
+- **Extensionless File Guard**: Clicking a node with no file extension now shows a descriptive warning message instead of a silent "Failed to open file" error.
+- **Error Message Improvement**: File open errors now include the specific system error reason.
+
+### v0.2.26 (Final Stabilization: WebGL & UX)
 - **External Doc Shelf**: Moved the documentation list to an independent, draggable external panel.
 - **FZF-style Fuzzy Search**: Implemented fuzzy matching for Context Vault and Documentation Shelf searches.
 - **Selection UI Refined**: Separated Single Click (Navigation) from Double Click (Open File) and improved edge hitboxes.
@@ -350,6 +358,16 @@ SYNAPSE v0.2.17 bridges the gap between drawing pictures and writing code.
 
 ### v0.2.10
 - **🐛 Critical Fixes**: Resolved activation errors and improved multi-node deletion stability.
+
+---
+
+## ⚠️ Known Issues
+
+| Issue | Affected Version | Status | Planned Fix |
+| :--- | :---: | :---: | :--- |
+| **External Ghosts cluster nodes not saved in snapshots**: Nodes placed inside the "External Ghosts" cluster are not persisted when taking a snapshot. They will be missing after a rollback or project reload. | v0.2.28 | 🔧 Pending | v0.2.29 |
+| **2D drag-to-select no visual refresh**: The selection rectangle in 2D mode does not trigger a canvas repaint, making it impossible to see which nodes are selected until switching to 3D mode. | v0.2.28 | 🔧 Pending | v0.2.29 |
+| **DTR slider not appearing**: The DTR (Density of Thought Reasoning) slider UI does not appear after clicking a node in some states. | v0.2.28 | 🔧 Pending | v0.2.29 |
 
 ---
 

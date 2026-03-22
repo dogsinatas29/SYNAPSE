@@ -1,8 +1,8 @@
-# <img src="./resources/synapse-icon.png" width="40" height="40" /> 🧠 SYNAPSE: 비주얼 아키텍처 엔진 (v0.2.21)
+# <img src="./resources/synapse-icon.png" width="40" height="40" /> 🧠 SYNAPSE: 비주얼 아키텍처 엔진 (v0.2.28)
 
 > **"눈에 보이는 것이 곧 LLM의 논리입니다."** — *AI를 위한 WYSIWYG 논리 설계 도구*
 
-[![Version](https://img.shields.io/badge/version-v0.2.21-brightgreen.png)](https://github.com/dogsinatas29/SYNAPSE/releases)
+[![Version](https://img.shields.io/badge/version-v0.2.28-brightgreen.png)](https://github.com/dogsinatas29/SYNAPSE/releases)
 ![Status](https://img.shields.io/badge/status-War_Room_Ready-orange.png)
 [![Language](https://img.shields.io/badge/Language-TypeScript-blue?style=flat-square)](https://www.typescriptlang.org/)
 [![Platform](https://img.shields.io/badge/Platform-VS_Code-007ACC?style=flat-square)](https://code.visualstudio.com/)
@@ -162,7 +162,7 @@ SYNAPSE는 VS Code의 실시간 진단(Diagnostics) 정보를 아키텍처 맵�
 
 ### 프로젝트 토폴로지 (Project Topology)
 LLM 추론 논리와 소스 파일 간의 실제 연결 상태를 시각화합니다.
-![Topology View](./resources/screenshots/v0.2.21/topology_view.png)
+![Topology View](./resources/screenshots/v0.2.26/topology_view.png)
 
 ### 논리 흐름 (Logical Flow)
 코드 변경 사항과 수동 편집 사항이 모두 반영된 논리 실행 흐름도입니다. 그룹 기반 계층화와 직교 라우팅을 통해 깔끔하고 읽기 쉬운 다이어그램을 생성합니다.
@@ -301,6 +301,19 @@ SYNAPSE v0.2.17은 그림 그리기와 코드 작성 간의 간극을 메웁니�
 
 ## 🆕 버전 히스토리
 
+### v0.2.28 (렌더링 일치 및 안정성 패치)
+- **2D/3D 조건 노드 색상 동기화**: `valid_*`, `checker`, `router`, `is_*` 등 결정 노드가 2D와 3D 모두 동일한 어두운 배경(`#3c3836`)으로 렌더링됩니다. 실제 `isDeterministicFracture` 위반 노드만 `#ebdbb2` 밝은 배경을 유지합니다.
+- **카메라 뷰 영속성**: 캔버스 카메라 위치(줌 + 패닝 오프셋)가 매 스냅샷마다 `project_state.json`에 완전히 저장되고, 로드 시 정확히 복원됩니다.
+- **확장자 없는 파일 가드**: 확장자가 없는 파일 경로를 가진 노드 클릭 시 조용한 오류 대신 명확한 경고 메시지가 표시됩니다.
+- **오류 메시지 개선**: 파일 열기 오류 시 구체적인 시스템 오류 원인이 포함됩니다.
+
+### v0.2.26 (Final Stabilization: WebGL & UX)
+- **WebGL 쉐이더 오류 수정**: 3D 가속 기능이 작동하지 않던 컴파일 에러를 해결했습니다.
+- **스냅샷 뷰 복원**: 스냅샷 로드 시 사용자의 마지막 줌 배율과 화면 위치를 완벽하게 복구합니다.
+- **노드/엣지 규격 동기화**: 아키텍처 규격에 따른 모든 시각적 스타일(색상, 아이콘, 배지)을 전수 검증 및 일치시켰습니다.
+- **가속 상태 표시**: FPS 표시기에 (3D) 접미사를 추가하여 가속 여부를 명확히 표시합니다.
+
+
 ### v0.2.21 (결정판: GPU 가속 및 UI 정밀화)
 - **Documentation Shelf 외부 패널화**: 문서 리스트를 독립적이고 드래그 가능한 외부 패널로 분리하여 캔버스 공간을 확보했습니다.
 - **FZF 방식의 퍼지 검색**: Context Vault 및 Documentation Shelf 검색에 퍼지 매칭 알고리즘을 도입했습니다.
@@ -377,6 +390,16 @@ SYNAPSE v0.2.17은 그림 그리기와 코드 작성 간의 간극을 메웁니�
 
 ### v0.2.10
 - **🐛 Critical Fixes**: 활성화 에러 수정 및 다중 노드 삭제 안정성 개선.
+
+---
+
+## ⚠️ 알려진 버그 (Known Issues)
+
+| 문제 | 영향 버전 | 상태 | 예정 수정 |
+| :--- | :---: | :---: | :--- |
+| **External Ghosts 클러스터 노드가 스냅샷에 저장되지 않음**: "External Ghosts" 클러스터 내에 배치된 노드들이 스냅샷 저장 시 영속화되지 않습니다. 롤백 또는 프로젝트 재로드 후 노드가 사라집니다. | v0.2.28 | 🔧 수정 예정 | v0.2.29 |
+| **2D 드래그 선택 화면 갱신 안 됨**: 2D 모드에서 박스 선택 시 캔버스 재렌더링이 되지 않아 선택 여부를 확인할 수 없습니다. 3D 모드로 전환하면 선택된 것으로 표시됩니다. | v0.2.28 | 🔧 수정 예정 | v0.2.29 |
+| **DTR 조절바 미표시**: 일부 상태에서 노드 클릭 후 DTR 조절바 UI가 나타나지 않습니다. | v0.2.28 | 🔧 수정 예정 | v0.2.29 |
 
 ---
 

@@ -1966,7 +1966,7 @@ class CanvasEngine {
                 }
 
                 // -1. 클러스터 헤더 버튼 체크 (최우선)
-                let clickedClusterHeader = this.getClusterHeaderAt(worldPos.x, worldPos.y);
+                clickedClusterHeader = this.getClusterHeaderAt(worldPos.x, worldPos.y);
                 if (clickedClusterHeader) {
                     // 버튼 영역 체크 (왼쪽 끝 [+] 텍스트 영역)
                     const b = clickedClusterHeader._headerBounds;

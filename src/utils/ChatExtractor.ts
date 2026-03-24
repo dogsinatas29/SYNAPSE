@@ -62,7 +62,7 @@ export class StreamAdapter implements ChatAdapter {
 
     private loadConfig() {
         try {
-            // [v0.2.28.1 Golden Config Loader]
+            // [v0.2.30 Golden Config Loader]
             const configPath = path.join(process.cwd(), 'synapse.config.json');
             if (fs.existsSync(configPath)) {
                 const raw = fs.readFileSync(configPath, 'utf-8');
@@ -136,14 +136,14 @@ export class StreamAdapter implements ChatAdapter {
 
     private finalizeContextVault() {
         if (this.env === 'PROD') {
-            // [v0.2.28.1 PROD Guard]
+            // [v0.2.30 PROD Guard]
             this.disableAnalyzer = true; 
             console.log('[SYNAPSE][PROD] Tuning tools disabled (Read-only Config Mode)');
             return;
         }
 
         if (!this.disableAnalyzer) {
-            // [v0.2.28.1 DEV] 자동 분석 및 튜닝 파이프라인 호출 (가상)
+            // [v0.2.30 DEV] 자동 분석 및 튜닝 파이프라인 호출 (가상)
             console.log('[SYNAPSE][DEV] Normalization metrics updated.');
         }
     }

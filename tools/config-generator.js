@@ -1,4 +1,4 @@
-/* tools/config-generator.js [v0.2.28.1 Self-Stabilizing Control Layer] */
+/* tools/config-generator.js [v0.2.30 Self-Stabilizing Control Layer] */
 const fs = require('fs');
 const path = require('path');
 

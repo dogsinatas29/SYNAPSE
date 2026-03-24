@@ -1,4 +1,4 @@
-/* tools/log-analyzer.js [v0.2.28.1 Diagnostic Power Tool] */
+/* tools/log-analyzer.js [v0.2.30 Diagnostic Power Tool] */
 const fs = require('fs');
 const path = require('path');
 

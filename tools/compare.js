@@ -1,4 +1,4 @@
-/* tools/compare.js [v0.2.28.1 Stability Analyzer] */
+/* tools/compare.js [v0.2.30 Stability Analyzer] */
 const fs = require('fs');
 
 class StabilityAnalyzer {

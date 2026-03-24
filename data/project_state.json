@@ -14,7 +14,7 @@
   },
   "nodes": [
     {
-      "id": "node_GEMINI______md_1773595821614",
+      "id": "node_GEMINI______md_1774264406887",
       "type": "documentation",
       "position": {
         "x": -200,
@@ -35,7 +35,7 @@
       }
     },
     {
-      "id": "node_GEMINI___md_1773595821614",
+      "id": "node_GEMINI___md_1774264406887",
       "type": "documentation",
       "position": {
         "x": 0,
@@ -56,7 +56,7 @@
       }
     },
     {
-      "id": "node_GEMINI_md_1773595821614",
+      "id": "node_GEMINI_md_1774264406887",
       "type": "documentation",
       "position": {
         "x": 200,
@@ -77,7 +77,7 @@
       }
     },
     {
-      "id": "node_GEMINI_origin_md_1773595821614",
+      "id": "node_GEMINI_origin_md_1774264406887",
       "type": "documentation",
       "position": {
         "x": 400,
@@ -98,7 +98,7 @@
       }
     },
     {
-      "id": "node_GHOST_NODE_md_1773595821614",
+      "id": "node_GHOST_NODE_md_1774264406887",
       "type": "documentation",
       "position": {
         "x": -200,
@@ -119,7 +119,7 @@
       }
     },
     {
-      "id": "node_README_ko_md_1773595821614",
+      "id": "node_README_ko_md_1774264406887",
       "type": "documentation",
       "position": {
         "x": 0,
@@ -140,7 +140,7 @@
       }
     },
     {
-      "id": "node_README_md_1773595821614",
+      "id": "node_README_md_1774264406887",
       "type": "documentation",
       "position": {
         "x": 200,
@@ -161,7 +161,7 @@
       }
     },
     {
-      "id": "node_RULES_md_1773595821614",
+      "id": "node_RULES_md_1774264406887",
       "type": "documentation",
       "position": {
         "x": 400,
@@ -182,7 +182,7 @@
       }
     },
     {
-      "id": "node_architecture_md_1773595821614",
+      "id": "node_architecture_md_1774264406887",
       "type": "documentation",
       "position": {
         "x": -200,
@@ -203,7 +203,7 @@
       }
     },
     {
-      "id": "node_build_guard_js_1773595821614",
+      "id": "node_build_guard_js_1774264406887",
       "type": "source",
       "position": {
         "x": 230,
@@ -224,7 +224,7 @@
       }
     },
     {
-      "id": "node_core_synapse_md_1773595821614",
+      "id": "node_core_synapse_md_1774264406887",
       "type": "documentation",
       "position": {
         "x": 200,
@@ -245,7 +245,7 @@
       }
     },
     {
-      "id": "node_data_scheme_md_1773595821614",
+      "id": "node_data_scheme_md_1774264406887",
       "type": "documentation",
       "position": {
         "x": 400,
@@ -266,7 +266,7 @@
       }
     },
     {
-      "id": "node_fix_cluster_sh_1773595821614",
+      "id": "node_fix_cluster_sh_1774264406887",
       "type": "source",
       "position": {
         "x": 30,
@@ -287,10 +287,31 @@
       }
     },
     {
-      "id": "node_reporting_md_1773595821614",
+      "id": "node_gemini_performance_constraints_md_1774264406887",
       "type": "documentation",
       "position": {
         "x": 0,
+        "y": 1550
+      },
+      "status": "proposed",
+      "data": {
+        "label": "gemini_performance_constraints.md",
+        "file": "gemini_performance_constraints.md",
+        "description": "gemini_performance_constraints.md (Doc)",
+        "layer": 0,
+        "priority": 1,
+        "cluster_id": "doc_shelf",
+        "color": "#fabd2f"
+      },
+      "visual": {
+        "opacity": 0.5
+      }
+    },
+    {
+      "id": "node_reporting_md_1774264406887",
+      "type": "documentation",
+      "position": {
+        "x": 200,
         "y": 1550
       },
       "status": "proposed",
@@ -308,10 +329,10 @@
       }
     },
     {
-      "id": "node_visual_impact_md_1773595821614",
+      "id": "node_visual_impact_md_1774264406887",
       "type": "documentation",
       "position": {
-        "x": 200,
+        "x": 400,
         "y": 1550
       },
       "status": "proposed",
@@ -329,11 +350,11 @@
       }
     },
     {
-      "id": "node_walkthrough_md_1773595821614",
+      "id": "node_walkthrough_md_1774264406887",
       "type": "documentation",
       "position": {
-        "x": 400,
-        "y": 1550
+        "x": -200,
+        "y": 1700
       },
       "status": "proposed",
       "data": {
@@ -350,10 +371,10 @@
       }
     },
     {
-      "id": "node_____md_1773595821614",
+      "id": "node_____md_1774264406887",
       "type": "documentation",
       "position": {
-        "x": -200,
+        "x": 0,
         "y": 1700
       },
       "status": "proposed",
@@ -371,7 +392,7 @@
       }
     },
     {
-      "id": "node_backup_md_GEMINI_md_1773595821614",
+      "id": "node_backup_md_GEMINI_md_1774264406887",
       "type": "documentation",
       "position": {
         "x": -200,
@@ -392,7 +413,7 @@
       }
     },
     {
-      "id": "node_backup_md_RULES_md_1773595821614",
+      "id": "node_backup_md_RULES_md_1774264406887",
       "type": "documentation",
       "position": {
         "x": 0,
@@ -413,7 +434,7 @@
       }
     },
     {
-      "id": "node_src_bootstrap_BootstrapEngine_ts_1773595821614",
+      "id": "node_src_bootstrap_BootstrapEngine_ts_1774264406887",
       "type": "source",
       "position": {
         "x": 30,
@@ -434,7 +455,7 @@
       }
     },
     {
-      "id": "node_src_cli_ts_1773595821614",
+      "id": "node_src_cli_ts_1774264406887",
       "type": "source",
       "position": {
         "x": 1030,
@@ -455,7 +476,7 @@
       }
     },
     {
-      "id": "node_src_client_ts_1773595821614",
+      "id": "node_src_client_ts_1774264406887",
       "type": "source",
       "position": {
         "x": 1230,
@@ -476,7 +497,7 @@
       }
     },
     {
-      "id": "node_src_extension_ts_1773595821614",
+      "id": "node_src_extension_ts_1774264406887",
       "type": "source",
       "position": {
         "x": 1430,
@@ -497,7 +518,7 @@
       }
     },
     {
-      "id": "node_src_core_AiOrchestrator_ts_1773595821614",
+      "id": "node_src_core_AiOrchestrator_ts_1774264406887",
       "type": "source",
       "position": {
         "x": 30,
@@ -518,7 +539,7 @@
       }
     },
     {
-      "id": "node_src_core_ArchitectureDSL_ts_1773595821614",
+      "id": "node_src_core_ArchitectureDSL_ts_1774264406887",
       "type": "source",
       "position": {
         "x": 230,
@@ -539,7 +560,7 @@
       }
     },
     {
-      "id": "node_src_core_BillingManager_ts_1773595821614",
+      "id": "node_src_core_BillingManager_ts_1774264406887",
       "type": "source",
       "position": {
         "x": 430,
@@ -560,7 +581,7 @@
       }
     },
     {
-      "id": "node_src_core_DatabaseEngine_ts_1773595821614",
+      "id": "node_src_core_DatabaseEngine_ts_1774264406887",
       "type": "source",
       "position": {
         "x": 630,
@@ -581,7 +602,7 @@
       }
     },
     {
-      "id": "node_src_core_EdgeCodeRefactorer_ts_1773595821614",
+      "id": "node_src_core_EdgeCodeRefactorer_ts_1774264406887",
       "type": "source",
       "position": {
         "x": 30,
@@ -602,7 +623,7 @@
       }
     },
     {
-      "id": "node_src_core_FileScanner_ts_1773595821614",
+      "id": "node_src_core_FileScanner_ts_1774264406887",
       "type": "source",
       "position": {
         "x": 230,
@@ -623,7 +644,7 @@
       }
     },
     {
-      "id": "node_src_core_FlowScanner_ts_1773595821614",
+      "id": "node_src_core_FlowScanner_ts_1774264406887",
       "type": "source",
       "position": {
         "x": 430,
@@ -644,7 +665,7 @@
       }
     },
     {
-      "id": "node_src_core_FlowchartGenerator_ts_1773595821614",
+      "id": "node_src_core_FlowchartGenerator_ts_1774264406887",
       "type": "source",
       "position": {
         "x": 630,
@@ -665,7 +686,7 @@
       }
     },
     {
-      "id": "node_src_core_GeminiParser_ts_1773595821614",
+      "id": "node_src_core_GeminiParser_ts_1774264406887",
       "type": "source",
       "position": {
         "x": 30,
@@ -686,7 +707,7 @@
       }
     },
     {
-      "id": "node_src_core_LogicAnalyzer_ts_1773595821614",
+      "id": "node_src_core_LogicAnalyzer_ts_1774264406887",
       "type": "source",
       "position": {
         "x": 230,
@@ -707,7 +728,7 @@
       }
     },
     {
-      "id": "node_src_core_PromptLogger_ts_1773595821614",
+      "id": "node_src_core_PromptLogger_ts_1774264406887",
       "type": "source",
       "position": {
         "x": 430,
@@ -728,7 +749,7 @@
       }
     },
     {
-      "id": "node_src_core_ReportExporter_ts_1773595821614",
+      "id": "node_src_core_ReportExporter_ts_1774264406887",
       "type": "source",
       "position": {
         "x": 630,
@@ -749,7 +770,7 @@
       }
     },
     {
-      "id": "node_src_core_RuleEngine_ts_1773595821614",
+      "id": "node_src_core_RuleEngine_ts_1774264406887",
       "type": "source",
       "position": {
         "x": 30,
@@ -770,7 +791,7 @@
       }
     },
     {
-      "id": "node_src_core_VirtualDebugger_ts_1773595821614",
+      "id": "node_src_core_VirtualDebugger_ts_1774264406887",
       "type": "source",
       "position": {
         "x": 230,
@@ -791,7 +812,7 @@
       }
     },
     {
-      "id": "node_src_explorer_ArchitectureExplorer_ts_1773595821614",
+      "id": "node_src_explorer_ArchitectureExplorer_ts_1774264406887",
       "type": "source",
       "position": {
         "x": 1030,
@@ -812,7 +833,7 @@
       }
     },
     {
-      "id": "node_src_rust_checker_mod_rs_1773595821614",
+      "id": "node_src_rust_checker_mod_rs_1774264406887",
       "type": "source",
       "position": {
         "x": 30,
@@ -833,7 +854,7 @@
       }
     },
     {
-      "id": "node_src_rust_checker_reporter_rs_1773595821614",
+      "id": "node_src_rust_checker_reporter_rs_1774264406887",
       "type": "source",
       "position": {
         "x": 230,
@@ -854,7 +875,7 @@
       }
     },
     {
-      "id": "node_src_rust_checker_state_checker_rs_1773595821614",
+      "id": "node_src_rust_checker_state_checker_rs_1774264406887",
       "type": "source",
       "position": {
         "x": 430,
@@ -875,7 +896,7 @@
       }
     },
     {
-      "id": "node_src_server_server_ts_1773595821614",
+      "id": "node_src_server_server_ts_1774264406887",
       "type": "source",
       "position": {
         "x": 1030,
@@ -896,7 +917,7 @@
       }
     },
     {
-      "id": "node_src_server_standalone_ts_1773595821614",
+      "id": "node_src_server_standalone_ts_1774264406887",
       "type": "source",
       "position": {
         "x": 1230,
@@ -917,7 +938,7 @@
       }
     },
     {
-      "id": "node_src_test_ArchitectureDSL_test_ts_1773595821614",
+      "id": "node_src_test_ArchitectureDSL_test_ts_1774264406887",
       "type": "source",
       "position": {
         "x": 30,
@@ -938,7 +959,7 @@
       }
     },
     {
-      "id": "node_src_test_FileScanner_test_ts_1773595821614",
+      "id": "node_src_test_FileScanner_test_ts_1774264406887",
       "type": "source",
       "position": {
         "x": 230,
@@ -959,7 +980,7 @@
       }
     },
     {
-      "id": "node_src_test_FlowchartGenerator_test_ts_1773595821614",
+      "id": "node_src_test_FlowchartGenerator_test_ts_1774264406887",
       "type": "source",
       "position": {
         "x": 430,
@@ -980,7 +1001,7 @@
       }
     },
     {
-      "id": "node_src_test_GeminiParser_test_ts_1773595821614",
+      "id": "node_src_test_GeminiParser_test_ts_1774264406887",
       "type": "source",
       "position": {
         "x": 630,
@@ -1001,7 +1022,7 @@
       }
     },
     {
-      "id": "node_src_test_LogicAnalyzer_test_ts_1773595821614",
+      "id": "node_src_test_LogicAnalyzer_test_ts_1774264406887",
       "type": "source",
       "position": {
         "x": 30,
@@ -1022,7 +1043,7 @@
       }
     },
     {
-      "id": "node_src_test_SchemaValidation_test_ts_1773595821614",
+      "id": "node_src_test_SchemaValidation_test_ts_1774264406887",
       "type": "source",
       "position": {
         "x": 230,
@@ -1043,7 +1064,7 @@
       }
     },
     {
-      "id": "node_src_test_VirtualDebugger_test_ts_1773595821614",
+      "id": "node_src_test_VirtualDebugger_test_ts_1774264406887",
       "type": "source",
       "position": {
         "x": 430,
@@ -1064,7 +1085,7 @@
       }
     },
     {
-      "id": "node_src_test_manual_verify_iron_guard_ts_1773595821614",
+      "id": "node_src_test_manual_verify_iron_guard_ts_1774264406887",
       "type": "source",
       "position": {
         "x": 630,
@@ -1085,7 +1106,7 @@
       }
     },
     {
-      "id": "node_src_test_visualHints_test_ts_1773595821614",
+      "id": "node_src_test_visualHints_test_ts_1774264406887",
       "type": "source",
       "position": {
         "x": 30,
@@ -1106,7 +1127,7 @@
       }
     },
     {
-      "id": "node_src_types_schema_ts_1773595821614",
+      "id": "node_src_types_schema_ts_1774264406887",
       "type": "source",
       "position": {
         "x": 1030,
@@ -1127,7 +1148,7 @@
       }
     },
     {
-      "id": "node_src_utils_ChatExtractor_ts_1773595821614",
+      "id": "node_src_utils_ChatExtractor_ts_1774264406887",
       "type": "source",
       "position": {
         "x": 30,
@@ -1148,7 +1169,7 @@
       }
     },
     {
-      "id": "node_src_utils_Logger_ts_1773595821614",
+      "id": "node_src_utils_Logger_ts_1774264406887",
       "type": "source",
       "position": {
         "x": 230,
@@ -1169,7 +1190,7 @@
       }
     },
     {
-      "id": "node_src_utils_exclusionRules_ts_1773595821614",
+      "id": "node_src_utils_exclusionRules_ts_1774264406887",
       "type": "source",
       "position": {
         "x": 430,
@@ -1190,7 +1211,7 @@
       }
     },
     {
-      "id": "node_src_utils_visualHints_ts_1773595821614",
+      "id": "node_src_utils_visualHints_ts_1774264406887",
       "type": "source",
       "position": {
         "x": 630,
@@ -1211,7 +1232,7 @@
       }
     },
     {
-      "id": "node_src_webview_CanvasPanel_ts_1773595821614",
+      "id": "node_src_webview_CanvasPanel_ts_1774264406887",
       "type": "source",
       "position": {
         "x": 1030,
@@ -1245,9 +1266,9 @@
         "height": 0
       },
       "children": [
-        "node_src_cli_ts_1773595821614",
-        "node_src_client_ts_1773595821614",
-        "node_src_extension_ts_1773595821614"
+        "node_src_cli_ts_1774264406887",
+        "node_src_client_ts_1774264406887",
+        "node_src_extension_ts_1774264406887"
       ]
     },
     {
@@ -1261,7 +1282,7 @@
         "height": 0
       },
       "children": [
-        "node_src_bootstrap_BootstrapEngine_ts_1773595821614"
+        "node_src_bootstrap_BootstrapEngine_ts_1774264406887"
       ],
       "parent_id": "cluster_src"
     },
@@ -1276,20 +1297,20 @@
         "height": 0
       },
       "children": [
-        "node_src_core_AiOrchestrator_ts_1773595821614",
-        "node_src_core_ArchitectureDSL_ts_1773595821614",
-        "node_src_core_BillingManager_ts_1773595821614",
-        "node_src_core_DatabaseEngine_ts_1773595821614",
-        "node_src_core_EdgeCodeRefactorer_ts_1773595821614",
-        "node_src_core_FileScanner_ts_1773595821614",
-        "node_src_core_FlowScanner_ts_1773595821614",
-        "node_src_core_FlowchartGenerator_ts_1773595821614",
-        "node_src_core_GeminiParser_ts_1773595821614",
-        "node_src_core_LogicAnalyzer_ts_1773595821614",
-        "node_src_core_PromptLogger_ts_1773595821614",
-        "node_src_core_ReportExporter_ts_1773595821614",
-        "node_src_core_RuleEngine_ts_1773595821614",
-        "node_src_core_VirtualDebugger_ts_1773595821614"
+        "node_src_core_AiOrchestrator_ts_1774264406887",
+        "node_src_core_ArchitectureDSL_ts_1774264406887",
+        "node_src_core_BillingManager_ts_1774264406887",
+        "node_src_core_DatabaseEngine_ts_1774264406887",
+        "node_src_core_EdgeCodeRefactorer_ts_1774264406887",
+        "node_src_core_FileScanner_ts_1774264406887",
+        "node_src_core_FlowScanner_ts_1774264406887",
+        "node_src_core_FlowchartGenerator_ts_1774264406887",
+        "node_src_core_GeminiParser_ts_1774264406887",
+        "node_src_core_LogicAnalyzer_ts_1774264406887",
+        "node_src_core_PromptLogger_ts_1774264406887",
+        "node_src_core_ReportExporter_ts_1774264406887",
+        "node_src_core_RuleEngine_ts_1774264406887",
+        "node_src_core_VirtualDebugger_ts_1774264406887"
       ],
       "parent_id": "cluster_src"
     },
@@ -1304,7 +1325,7 @@
         "height": 0
       },
       "children": [
-        "node_src_explorer_ArchitectureExplorer_ts_1773595821614"
+        "node_src_explorer_ArchitectureExplorer_ts_1774264406887"
       ],
       "parent_id": "cluster_src"
     },
@@ -1319,9 +1340,9 @@
         "height": 0
       },
       "children": [
-        "node_src_rust_checker_mod_rs_1773595821614",
-        "node_src_rust_checker_reporter_rs_1773595821614",
-        "node_src_rust_checker_state_checker_rs_1773595821614"
+        "node_src_rust_checker_mod_rs_1774264406887",
+        "node_src_rust_checker_reporter_rs_1774264406887",
+        "node_src_rust_checker_state_checker_rs_1774264406887"
       ],
       "parent_id": "cluster_src"
     },
@@ -1336,8 +1357,8 @@
         "height": 0
       },
       "children": [
-        "node_src_server_server_ts_1773595821614",
-        "node_src_server_standalone_ts_1773595821614"
+        "node_src_server_server_ts_1774264406887",
+        "node_src_server_standalone_ts_1774264406887"
       ],
       "parent_id": "cluster_src"
     },
@@ -1352,15 +1373,15 @@
         "height": 0
       },
       "children": [
-        "node_src_test_ArchitectureDSL_test_ts_1773595821614",
-        "node_src_test_FileScanner_test_ts_1773595821614",
-        "node_src_test_FlowchartGenerator_test_ts_1773595821614",
-        "node_src_test_GeminiParser_test_ts_1773595821614",
-        "node_src_test_LogicAnalyzer_test_ts_1773595821614",
-        "node_src_test_SchemaValidation_test_ts_1773595821614",
-        "node_src_test_VirtualDebugger_test_ts_1773595821614",
-        "node_src_test_manual_verify_iron_guard_ts_1773595821614",
-        "node_src_test_visualHints_test_ts_1773595821614"
+        "node_src_test_ArchitectureDSL_test_ts_1774264406887",
+        "node_src_test_FileScanner_test_ts_1774264406887",
+        "node_src_test_FlowchartGenerator_test_ts_1774264406887",
+        "node_src_test_GeminiParser_test_ts_1774264406887",
+        "node_src_test_LogicAnalyzer_test_ts_1774264406887",
+        "node_src_test_SchemaValidation_test_ts_1774264406887",
+        "node_src_test_VirtualDebugger_test_ts_1774264406887",
+        "node_src_test_manual_verify_iron_guard_ts_1774264406887",
+        "node_src_test_visualHints_test_ts_1774264406887"
       ],
       "parent_id": "cluster_src"
     },
@@ -1375,7 +1396,7 @@
         "height": 0
       },
       "children": [
-        "node_src_types_schema_ts_1773595821614"
+        "node_src_types_schema_ts_1774264406887"
       ],
       "parent_id": "cluster_src"
     },
@@ -1390,10 +1411,10 @@
         "height": 0
       },
       "children": [
-        "node_src_utils_ChatExtractor_ts_1773595821614",
-        "node_src_utils_Logger_ts_1773595821614",
-        "node_src_utils_exclusionRules_ts_1773595821614",
-        "node_src_utils_visualHints_ts_1773595821614"
+        "node_src_utils_ChatExtractor_ts_1774264406887",
+        "node_src_utils_Logger_ts_1774264406887",
+        "node_src_utils_exclusionRules_ts_1774264406887",
+        "node_src_utils_visualHints_ts_1774264406887"
       ],
       "parent_id": "cluster_src"
     },
@@ -1408,7 +1429,7 @@
         "height": 0
       },
       "children": [
-        "node_src_webview_CanvasPanel_ts_1773595821614"
+        "node_src_webview_CanvasPanel_ts_1774264406887"
       ],
       "parent_id": "cluster_src"
     },
@@ -1435,8 +1456,8 @@
         "height": 0
       },
       "children": [
-        "node_build_guard_js_1773595821614",
-        "node_fix_cluster_sh_1773595821614"
+        "node_build_guard_js_1774264406887",
+        "node_fix_cluster_sh_1774264406887"
       ]
     },
     {
@@ -1450,23 +1471,24 @@
         "height": 600
       },
       "children": [
-        "node_GEMINI______md_1773595821614",
-        "node_GEMINI___md_1773595821614",
-        "node_GEMINI_md_1773595821614",
-        "node_GEMINI_origin_md_1773595821614",
-        "node_GHOST_NODE_md_1773595821614",
-        "node_README_ko_md_1773595821614",
-        "node_README_md_1773595821614",
-        "node_RULES_md_1773595821614",
-        "node_architecture_md_1773595821614",
-        "node_core_synapse_md_1773595821614",
-        "node_data_scheme_md_1773595821614",
-        "node_reporting_md_1773595821614",
-        "node_visual_impact_md_1773595821614",
-        "node_walkthrough_md_1773595821614",
-        "node_____md_1773595821614",
-        "node_backup_md_GEMINI_md_1773595821614",
-        "node_backup_md_RULES_md_1773595821614"
+        "node_GEMINI______md_1774264406887",
+        "node_GEMINI___md_1774264406887",
+        "node_GEMINI_md_1774264406887",
+        "node_GEMINI_origin_md_1774264406887",
+        "node_GHOST_NODE_md_1774264406887",
+        "node_README_ko_md_1774264406887",
+        "node_README_md_1774264406887",
+        "node_RULES_md_1774264406887",
+        "node_architecture_md_1774264406887",
+        "node_core_synapse_md_1774264406887",
+        "node_data_scheme_md_1774264406887",
+        "node_gemini_performance_constraints_md_1774264406887",
+        "node_reporting_md_1774264406887",
+        "node_visual_impact_md_1774264406887",
+        "node_walkthrough_md_1774264406887",
+        "node_____md_1774264406887",
+        "node_backup_md_GEMINI_md_1774264406887",
+        "node_backup_md_RULES_md_1774264406887"
       ]
     }
   ]

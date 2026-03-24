@@ -28,7 +28,7 @@ import { GeminiParser } from './core/GeminiParser';
 
 import { client, setClient } from './client';
 import { PromptLogger } from './core/PromptLogger';
-import { ChatExtractor } from './utils/ChatExtractor';
+import { ChatExtractor, StreamAdapter } from './utils/ChatExtractor';
 import { Logger } from './utils/Logger';
 import { BillingManager } from './core/BillingManager';
 import { ReportExporter } from './core/ReportExporter';
@@ -268,19 +268,33 @@ export async function activate(context: vscode.ExtensionContext) {
 
         context.subscriptions.push(
             vscode.commands.registerCommand('synapse.logPrompt', async (data: any) => {
-                const projectRoot = data?.workspacePath || vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
-                if (!projectRoot) return;
+                const adapter = ChatExtractor.getAdapter();
+                if (!(adapter instanceof StreamAdapter)) return;
 
-                if (!auditLogFilePath) {
+                const { sessionId, prompt, chunk, finish, workspacePath } = data;
+                
+                if (!sessionId && (chunk || finish)) {
+                    console.warn("[SYNAPSE] Missing sessionId in logPrompt call. Skipping stream data.");
+                    return;
+                }
+
+                const sid = sessionId || 'default';
+
+                const projectRoot = workspacePath || vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
+                if (projectRoot && !auditLogFilePath) {
                     auditLogFilePath = promptLogger.initializeSession(projectRoot);
                 }
 
-                if (auditLogFilePath && data?.prompt) {
-                    if (data.title) {
-                        promptLogger.appendUser(auditLogFilePath, `[${data.title}] ${data.prompt}`);
-                    } else {
-                        promptLogger.appendUser(auditLogFilePath, data.prompt);
-                    }
+                if (!auditLogFilePath) return;
+
+                if (prompt) {
+                    adapter.pushUser(sid, prompt);
+                }
+                if (chunk) {
+                    adapter.pushChunk(sid, chunk);
+                }
+                if (finish) {
+                    adapter.commitAssistant(sid);
                 }
             })
         );
@@ -304,84 +318,17 @@ export async function activate(context: vscode.ExtensionContext) {
             auditLogFilePath = promptLogger.initializeSession(projectRoot);
             console.log(`[SYNAPSE] Audit Log initialized: ${auditLogFilePath}`);
 
-            // Watch for Chat Events via Storage
-            const storagePath = ChatExtractor.getChatSessionsFolderPath(context);
-            if (storagePath && fs.existsSync(storagePath)) {
-                // 1. Initial Scan: Capture history that happened before activation
-                const files = fs.readdirSync(storagePath)
-                    .filter(f => f.endsWith('.jsonl'))
-                    .map(f => path.join(storagePath, f));
-                
-                if (files.length > 0) {
-                    const latestFile = files.reduce((latest, current) => {
-                        const latestStat = fs.statSync(latest);
-                        const currentStat = fs.statSync(current);
-                        return latestStat.mtimeMs > currentStat.mtimeMs ? latest : current;
-                    });
-                    console.log(`[SYNAPSE] Initial scan of chat history: ${latestFile}`);
-                    syncChatEvents(latestFile, projectRoot);
-                }
-
-                // 2. Real-time Watcher
-                fs.watch(storagePath, (event: string, filename: string | null) => {
-                    if (filename && filename.endsWith('.jsonl')) {
-                        const fullPath = path.join(storagePath, filename);
-                        syncChatEvents(fullPath, projectRoot);
+            // Initialize Adapter based collection
+            const adapter = ChatExtractor.initialize(context);
+            adapter.start((msg) => {
+                if (auditLogFilePath) {
+                    if (msg.role === 'user') {
+                        promptLogger.appendUser(auditLogFilePath, msg.content);
+                    } else {
+                        promptLogger.appendAssistant(auditLogFilePath, msg.content);
                     }
-                });
-            }
-        };
-
-        const syncChatEvents = (filePath: string, projectRoot: string) => {
-            try {
-                if (!auditLogFilePath || !fs.existsSync(filePath)) return;
-                const stats = fs.statSync(filePath);
-                
-                // If it's a new file or we haven't tracked it yet, reset pos
-                if (currentChatFile !== filePath) {
-                    currentChatFile = filePath;
-                    lastChatFilePos = 0;
                 }
-
-                if (stats.size > lastChatFilePos) {
-                    const fd = fs.openSync(filePath, 'r');
-                    const sizeToRead = stats.size - lastChatFilePos;
-                    const buffer = Buffer.alloc(sizeToRead);
-                    fs.readSync(fd, buffer, 0, sizeToRead, lastChatFilePos);
-                    fs.closeSync(fd);
-
-                    const newContent = buffer.toString('utf-8');
-                    const newLines = newContent.split('\n').filter(l => l.trim().length > 0);
-
-                    newLines.forEach(line => {
-                        try {
-                            const parsed = JSON.parse(line);
-                            // [v0.2.22] Enhanced Detection for multiple VS Code versions
-                            // User Prompt Event
-                            if ((parsed.kind === 2 || parsed.k?.[0] === 'requests') && Array.isArray(parsed.v)) {
-                                parsed.v.forEach((req: any) => {
-                                    if (req.message && req.message.text) {
-                                        promptLogger.appendUser(auditLogFilePath!, req.message.text);
-                                    }
-                                });
-                            }
-                            // Assistant Response Event
-                            if (parsed.k && Array.isArray(parsed.k) && parsed.k.includes('response')) {
-                                if (parsed.v && Array.isArray(parsed.v)) {
-                                    const text = parsed.v
-                                        .filter((r: any) => r.value && r.kind !== 'thinking' && !r.kind?.includes('mcp'))
-                                        .map((r: any) => r.value)
-                                        .join('');
-                                    if (text) promptLogger.appendAssistant(auditLogFilePath!, text);
-                                }
-                            }
-                        } catch(e) {}
-                    });
-                    lastChatFilePos = stats.size;
-                }
-            } catch(e) {
-                console.error(`[SYNAPSE] Chat sync error: ${e}`);
-            }
+            });
         };
 
         initAuditLog();

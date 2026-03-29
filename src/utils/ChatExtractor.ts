@@ -231,7 +231,7 @@ export class FileAdapter implements ChatAdapter {
     private watcher: fs.FSWatcher | null = null;
     private callback?: (msg: ChatMessage) => void;
 
-    isSupported() { return true; }
+    isSupported() { return false; /* Disabled in favor of ClipboardScraperAdapter (v0.2.32) */ }
 
     start(callback: (msg: ChatMessage) => void) {
         this.callback = callback;
@@ -334,9 +334,8 @@ export class ForensicAdapter implements ChatAdapter {
     private startTime = Date.now();
     private hashStorePath: string | null = null;
 
-    isSupported() { return true; }
+    isSupported() { return false; /* Disabled in favor of ClipboardScraperAdapter (v0.2.32) */ }
 
-    private pbFileStates = new Map<string, { lastSize: number }>();
 
     private getHash(role: string, content: string): string {
         // [v0.2.32] Content normalization for better deduplication
@@ -432,85 +431,8 @@ export class ForensicAdapter implements ChatAdapter {
         // 1. Initial Snapshot (Skip if too old or already processed)
         await scan('INIT');
 
-        // 2. Periodic SQLite Scanner (60s - slowed down in v0.2.32)
+        // 2. Periodic SQLite Scanner (60s)
         this.interval = setInterval(() => scan('SYNC'), 60000);
-
-        // 3. Antigravity .pb Watcher
-        const antigravityPath = ChatExtractor.getAntigravityConversationsPath();
-        if (antigravityPath && fs.existsSync(antigravityPath)) {
-            // [Refining Time-Based Filtering] Baseline at session start to prevent history bleed-in
-            const initializeBaselines = () => {
-                const pbFiles = fs.readdirSync(antigravityPath).filter(f => f.endsWith('.pb'));
-                for (const f of pbFiles) {
-                    const fullPath = path.join(antigravityPath, f);
-                    const stats = fs.statSync(fullPath);
-                    // Initialize baseline: any existing data is considered "past" and ignored
-                    this.pbFileStates.set(fullPath, { lastSize: stats.size });
-                }
-            };
-            
-            initializeBaselines();
-
-            const scanPb = () => {
-                const pbFiles = fs.readdirSync(antigravityPath)
-                    .filter(f => f.endsWith('.pb'))
-                    .map(f => ({ path: path.join(antigravityPath, f), stat: fs.statSync(path.join(antigravityPath, f)) }))
-                    .filter(f => f.stat.mtimeMs > this.startTime); // Time-Based Filtering: only modified after start
-                
-                if (pbFiles.length > 0) {
-                    const latest = pbFiles.reduce((a, b) => a.stat.mtimeMs > b.stat.mtimeMs ? a : b);
-                    this.syncPbEvents(latest.path);
-                }
-            };
-
-            // Use debounce for watcher to avoid volume explosion
-            let debounceTimer: NodeJS.Timeout | null = null;
-            this.pbWatcher = fs.watch(antigravityPath, (event, filename) => {
-                if (filename && filename.endsWith('.pb')) {
-                    if (debounceTimer) clearTimeout(debounceTimer);
-                    debounceTimer = setTimeout(() => {
-                        this.syncPbEvents(path.join(antigravityPath, filename));
-                    }, 500); // reduced debounce for quicker delta processing
-                }
-            });
-        }
-    }
-
-    private syncPbEvents(filePath: string) {
-        try {
-            // [v0.2.32] Size guard (Problem 2: 80k lines protection)
-            const stats = fs.statSync(filePath);
-            if (stats.size > 2 * 1024 * 1024) { // Tightened to 2MB for aggressive filtering
-                return; // Optionally, trigger log rotation here
-            }
-
-            // [Addressing Parsing Issues] Incremental Delta Parsing
-            let lastState = this.pbFileStates.get(filePath);
-            if (!lastState) {
-                // If a completely new file appeared during the session
-                lastState = { lastSize: 0 };
-            }
-
-            if (stats.size <= lastState.lastSize) {
-                return; // No new data
-            }
-
-            const { messages, newSize } = ChatExtractor.parsePbFileDelta(filePath, lastState.lastSize);
-            this.pbFileStates.set(filePath, { lastSize: newSize });
-
-            let newlyAdded = false;
-            messages.forEach(msg => {
-                const hash = this.getHash(msg.role, msg.content);
-                if (!this.seenHashes.has(hash)) {
-                    this.seenHashes.add(hash);
-                    newlyAdded = true;
-                    if ((ForensicAdapter as any).isLikelyHumanReadable(msg.content)) {
-                        this.callback?.(msg);
-                    }
-                }
-            });
-            if (newlyAdded) this.saveHashes();
-        } catch (e) {}
     }
 
     public dispose() {
@@ -670,88 +592,6 @@ export class ChatExtractor {
         return null;
     }
 
-    /**
-     * [v0.2.32] Raw Protobuf Decoding (Golden Path)
-     * Stream parsing using protobufjs/minimal for WireType 2 length-delimited extraction.
-     */
-    public static parsePbFileDelta(filePath: string, lastSize: number = 0): { messages: ChatMessage[], newSize: number } {
-        try {
-            if (!fs.existsSync(filePath)) return { messages: [], newSize: lastSize };
-            const stats = fs.statSync(filePath);
-            
-            if (stats.size <= lastSize) {
-                return { messages: [], newSize: stats.size };
-            }
-
-            // 1. Memory Efficiency: Read the full delta into a buffer
-            const fd = fs.openSync(filePath, 'r');
-            const sizeToRead = stats.size - lastSize;
-            let buffer = Buffer.alloc(sizeToRead);
-            fs.readSync(fd, buffer, 0, sizeToRead, lastSize);
-            fs.closeSync(fd);
-
-            // 2. Stream Reading (O(N)): Target WireType 2 fields
-            const pbjs = require('protobufjs/minimal');
-            const reader = pbjs.Reader.create(buffer);
-            const resultStrings: string[] = [];
-
-            while (reader.pos < reader.len) {
-                try {
-                    const tag = reader.uint32();
-                    const wireType = tag & 7;
-
-                    if (wireType === 2) {
-                        // Length-delimited string or embedded message
-                        const str = reader.string();
-                        // Basic sanity check to avoid binary garbage masquerading as UTF-8
-                        if (str && str.length > 5) {
-                            resultStrings.push(str.trim());
-                        }
-                    } else {
-                        // Skip other wire types (Varint, Fixed64, Fixed32, etc.)
-                        reader.skipType(wireType);
-                    }
-                } catch (e) {
-                    // Safe exit if we hit malformed bytes or EOF mid-parsing
-                    break;
-                }
-            }
-
-            // 3. Role Attribution Heuristic
-            const messages: ChatMessage[] = [];
-            const seen = new Set<string>();
-
-            resultStrings.forEach(content => {
-                const cleaned = content.replace(/\s+/g, ' ').substring(0, 4000); 
-                if (cleaned.length < 10 || seen.has(cleaned)) return;
-                seen.add(cleaned);
-
-                let role: 'user' | 'assistant' = 'assistant';
-
-                // Assistant markers
-                if (content.includes('```')) {
-                    role = 'assistant';
-                } 
-                // User markers (prompt characteristics)
-                else if (
-                    cleaned.includes('?') || 
-                    cleaned.startsWith('/') || 
-                    /(어떻게|왜|보여줘|해줘|알려줘|정리해|코드|fix|how|why|explain|지금|작업하고|뽑아내줘)/i.test(cleaned) ||
-                    (content.length < 200 && !/[a-zA-Z]/.test(content) && /[\uAC00-\uD7A3]/.test(content)) // Highly likely short Korean query 
-                ) {
-                    role = 'user';
-                }
-
-                messages.push({ role, content: cleaned });
-            });
-
-            return { messages, newSize: stats.size };
-        } catch (e) {
-            console.error(`[SYNAPSE] PB raw extraction failed: ${e}`);
-            return { messages: [], newSize: lastSize };
-        }
-    }
-    
     private static getWorkspaceStoragePath(context: vscode.ExtensionContext): string | null {
         if (context.storageUri) {
             const potentialPath = path.dirname(context.storageUri.fsPath);

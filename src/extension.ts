@@ -16,6 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import { PbSessionWatcher } from './core/PbSessionWatcher';
 import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
@@ -28,6 +29,7 @@ import { GeminiParser } from './core/GeminiParser';
 
 import { client, setClient } from './client';
 import { PromptLogger } from './core/PromptLogger';
+import { ClipboardScraperAdapter } from './core/ClipboardScraperAdapter';
 import { ChatExtractor, StreamAdapter } from './utils/ChatExtractor';
 import { Logger } from './utils/Logger';
 import { BillingManager } from './core/BillingManager';
@@ -312,25 +314,42 @@ export async function activate(context: vscode.ExtensionContext) {
 
         // [Pure Event Channel] Audit Log Initialization
         const initAuditLog = async () => {
-            if (auditLogFilePath) return; // [v0.2.29] Already initialized guard
+            if (auditLogFilePath) return;
 
             const projectRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
-            if (!projectRoot) return;
+            if (!projectRoot) {
+                console.warn('[SYNAPSE] Audit Log skip: No workspace folder found.');
+                return;
+            }
 
             auditLogFilePath = promptLogger.initializeSession(projectRoot);
             console.log(`[SYNAPSE] Audit Log initialized: ${auditLogFilePath}`);
 
-            // Initialize Adapter based collection (Forensic / Stream / File)
-            const adapter = ChatExtractor.initialize(context);
-            adapter.start((msg) => {
-                if (auditLogFilePath) {
-                    if (msg.role === 'user') {
-                        promptLogger.appendUser(auditLogFilePath, msg.content);
-                    } else {
-                        promptLogger.appendAssistant(auditLogFilePath, msg.content);
+            // [v0.2.34] PbSessionWatcher: Antigravity 실시간 대기 채널
+            // .pb 파일 변경 감지 시 즉시 UI 스크레이퍼를 구동하여 무결성 보장
+            const antigravityPath = ChatExtractor.getAntigravityConversationsPath();
+            console.log(`[SYNAPSE] Searching for Antigravity path: ${antigravityPath || 'NOT FOUND'}`);
+            
+            if (antigravityPath) {
+                promptLogger.appendAction(auditLogFilePath, 'system_msg', `Watching Antigravity: ${antigravityPath}`, projectRoot);
+                const pbWatcher = new PbSessionWatcher();
+                pbWatcher.start(antigravityPath, (sessionId: string, delta: number) => {
+                    if (auditLogFilePath) {
+                        // [v0.2.34-debug] 트리거 수신 확인용 로그
+                        promptLogger.appendAction(auditLogFilePath, 'system_msg', `PB Trigger Received: ${sessionId} (delta: ${delta})`, projectRoot);
+                        
+                        const delay = delta > 10000 ? 1500 : 800;
+                        setTimeout(() => {
+                            ClipboardScraperAdapter.scrapeActiveChat(auditLogFilePath!);
+                        }, delay);
                     }
-                }
-            });
+                });
+                context.subscriptions.push({ dispose: () => pbWatcher.dispose() });
+                console.log('[SYNAPSE] PbSessionWatcher armed (Hybrid Scraper Pipeline).');
+            } else {
+                promptLogger.appendAction(auditLogFilePath, 'system_msg', 'Antigravity path NOT FOUND', projectRoot);
+                console.warn('[SYNAPSE] PbSessionWatcher NOT armed: Antigravity conversation directory unavailable.');
+            }
         };
 
         initAuditLog();

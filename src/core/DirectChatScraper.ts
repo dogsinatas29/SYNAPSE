@@ -1,267 +1,195 @@
 import * as vscode from 'vscode';
 import * as crypto from 'crypto';
-import * as path from 'path';
-import * as os from 'os';
-import * as fs from 'fs';
 import { PromptLogger } from './PromptLogger';
-import { VscdbAdapter, TrajectoryEntry } from './VscdbAdapter';
-import { RawTextMiner } from './RawTextMiner';
-import { ChatExtractor } from '../utils/ChatExtractor';
 
 /**
- * [v0.2.37] DirectChatScraper (Senior's Intervention Edition)
- * Principle: API Sniffing & WAL Conquer - Bypassing all unreliable layers.
+ * [v0.2.40] DirectChatScraper - Restored State & Precision Fallback
+ *
+ * PB 트리거 수신 시 채팅 UI에서 하드카피(Clipboard)로 대화 내용을 직접 가져옵니다.
+ * - Copilot 포커스로 인한 빈 화면 복사 버그 해결
+ * - antigravity.toggleChatFocus / Gemini 우선 타격으로 변경
+ * - Blind Copy Fallback (Select All + Copy) 로직 포함
  */
 export class DirectChatScraper {
     private static isScraping = false;
+    private static lastScrapedHash = '';
     private static seenMessageHashes = new Set<string>();
 
-    /**
-     * Direct extraction sequence
-     * [v0.2.38] Precision Sniper: Supports sessionId for targeted PB scanning.
-     */
     public static async scrapeActiveChat(auditLogFilePath: string, sessionId?: string) {
         if (this.isScraping) return;
         this.isScraping = true;
 
         const promptLogger = PromptLogger.getInstance();
-        const projectRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath || "";
+        const projectRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath || '';
 
         try {
-            promptLogger.appendAction(auditLogFilePath, 'system_msg', 'Scraper: v0.2.37 Final Intervention sequence initiated...', projectRoot);
+            promptLogger.appendAction(auditLogFilePath, 'system_msg',
+                `Scraper: UI HardCopy initiated (session: ${sessionId || 'unknown'})`, projectRoot);
 
-            // [Action 1] API Sniffing (Memory-Direct Extraction)
-            // Senior's Choice: Attempting to access VS Code's internal chat session state
-            try {
-                const apiMessages = await this.sniffApiChat();
-                if (apiMessages.length > 0) {
-                    promptLogger.appendAction(auditLogFilePath, 'system_msg', 'Scraper: Successfully sniffed API responses directly.', projectRoot);
-                    await this.processMessages(apiMessages, auditLogFilePath, projectRoot);
-                    // Do not return yet, continue to DB scan as a sync measure
-                }
-            } catch (apiErr) {
-                console.warn('[SYNAPSE] API Sniffing failed:', apiErr);
+            // [Diagnostic Probe] 0. 관련 명령어 조사
+            const allCommands = await vscode.commands.getCommands(true);
+            const geminiCommands = allCommands.filter(cmd => /gemini/i.test(cmd)).sort();
+            if (geminiCommands.length > 0) {
+                 promptLogger.appendAction(auditLogFilePath, 'system_msg',
+                     `Diagnostic: Found gemini commands: [${geminiCommands.join(', ')}]`, projectRoot);
             }
 
-            // [Precision Focus] 1. UI Focus for rendering (Trigger DB Write)
+            // [Step 1] 채팅 패널 포커스 (비토글 방식 우선)
+            // 1순위: 제미나이 강제 활성화 (non-toggling)
+            // 주의: toggle 커맨드는 창이 열려있을 때 창을 닫아버리므로 제외/후순위 처리
             const focusCommands = [
-                'workbench.panel.chat.view.copilot.focus',
-                'antigravity.toggleChatFocus'
+                'workbench.view.extension.google-gemini',
+                'workbench.view.extension.gemini',
+                'gemini.focus',
+                'workbench.action.chat.focus',
+                'workbench.panel.chat.view.copilot.focus', // 최후의 보루
+                'workbench.action.focusChat',
             ];
 
-            let focused = false;
+            let focusedCmd = '';
             for (const cmd of focusCommands) {
                 try {
                     await vscode.commands.executeCommand(cmd);
-                    focused = true;
+                    focusedCmd = cmd;
+                    promptLogger.appendAction(auditLogFilePath, 'system_msg',
+                        `Scraper: Focused via ${cmd}`, projectRoot);
                     break;
                 } catch (e) {}
             }
 
-            if (!focused) {
-                promptLogger.appendAction(auditLogFilePath, 'system_msg', 'Scraper: Focus failed, attempting silent VSCDB scan.', projectRoot);
+            if (!focusedCmd) {
+                promptLogger.appendAction(auditLogFilePath, 'system_msg',
+                    'Scraper: Focus commands failed. Attempting blind fallback.', projectRoot);
             }
 
-            // [Action 2] Commit Latency Retry (Senior's 2s Wait)
-            // 브리지 어댑터 등에서 추가 지연이 있을 수 있으므로, 총합 2000ms를 넘지 않도록 조정
-            promptLogger.appendAction(auditLogFilePath, 'system_msg', 'Scraper: Ensuring WAL commit sync...', projectRoot);
-            await new Promise(resolve => setTimeout(resolve, 1200)); // Adjusted to account for extension.ts delay
+            // 포커스 후 UI 렌더링 / Linux X11 컨텍스트 딜레이 대기 (충분한 시간 확보)
+            await new Promise(resolve => setTimeout(resolve, 800));
 
-            // [Direct Reading] 2. VSCDB 기반 데이터 탈취
-            let capturedMessages: TrajectoryEntry[] = [];
-            
-            const vscdbPath = this.getVscdbPath();
-            if (vscdbPath && fs.existsSync(vscdbPath)) {
-                promptLogger.appendAction(auditLogFilePath, 'system_msg', `Scraper: Scanning VSCDB at ${vscdbPath}`, projectRoot);
-                const adapter = new VscdbAdapter();
-                const opened = await adapter.openReadOnly(vscdbPath);
-                if (opened) {
-                    const entries = await adapter.fetchTrajectorySummaries();
-                    capturedMessages = entries;
-                    adapter.close();
+            // [Step 2] 클립보드 백업
+            const backupText = (await vscode.env.clipboard.readText()) || '';
+            let copiedChat = '';
+            let retryCount = 0;
+            const MAX_RETRIES = 5;
+
+            // [Step 3] 채팅 전체 복사 명령 시도
+            const copyCommands = [
+                'antigravity.action.chat.copyAll',
+                'google.gemini.chat.copyAll',
+                'google-gemini.chat.copyAll',
+                'gemini.chat.copyAll',
+                'workbench.action.chat.copyAll',
+                'github.copilot.chat.copyAll',
+                'workbench.action.chat.export',
+                'BLIND_COPY_FALLBACK' // 'Select All' + 'Copy'
+            ];
+
+            while (retryCount < MAX_RETRIES) {
+                for (const cmd of copyCommands) {
+                    try {
+                        if (cmd === 'BLIND_COPY_FALLBACK') {
+                             // Blind Copy: 전체 선택 후 복사 액션 시뮬레이션
+                             await vscode.commands.executeCommand('editor.action.selectAll');
+                             await new Promise(resolve => setTimeout(resolve, 150));
+                             await vscode.commands.executeCommand('editor.action.clipboardCopyAction');
+                        } else {
+                             await vscode.commands.executeCommand(cmd);
+                        }
+
+                        // Linux 클립보드 동기화 딜레이 대기
+                        await new Promise(resolve => setTimeout(resolve, 700));
+                        const candidate = await vscode.env.clipboard.readText();
+
+                        if (candidate && candidate.trim().length > 0 && candidate.trim() !== backupText.trim()) {
+                            copiedChat = candidate;
+                            promptLogger.appendAction(auditLogFilePath, 'system_msg',
+                                `Scraper: Copy success via ${cmd} (len: ${copiedChat.length})`, projectRoot);
+                            break;
+                        }
+                    } catch (e) {}
                 }
+
+                if (copiedChat && copiedChat.trim() !== backupText.trim()) break;
+
+                retryCount++;
+                await new Promise(resolve => setTimeout(resolve, 400 * retryCount));
             }
 
-            // [Action 3] RawTextMiner Fallback (PB & Binary Sniffing)
-            if (capturedMessages.length === 0) {
-                promptLogger.appendAction(auditLogFilePath, 'system_msg', 'Scraper: All direct methods failed. Initiating RawTextMiner (Hangeul Scouter).', projectRoot);
-                const minedStrings = await this.runRawTextMiner(projectRoot, sessionId);
-                if (minedStrings.length > 0) {
-                    capturedMessages = minedStrings.map(s => ({ 
-                        role: this.detectRole(s), 
-                        content: s 
-                    }));
-                }
-            }
+            // [Step 4] 클립보드 원상 복구 (에디터 클립보드 파손 방지)
+            await vscode.env.clipboard.writeText(backupText);
 
-            if (capturedMessages.length === 0) {
-                promptLogger.appendAction(auditLogFilePath, 'system_msg', 'Scraper: v0.2.37 fail-safe also failed to capture new data.', projectRoot);
-                this.isScraping = false;
+            if (!copiedChat || copiedChat.trim().length === 0) {
+                promptLogger.appendAction(auditLogFilePath, 'system_msg',
+                    'Scraper: No text captured from UI clipboard.', projectRoot);
                 return;
             }
 
-            // [Deduplicate & Log] 4. 메시지 처리
-            await this.processMessages(capturedMessages, auditLogFilePath, projectRoot);
+            // [Step 5] 중복 체크
+            const currentHash = crypto.createHash('sha256').update(copiedChat).digest('hex');
+            if (currentHash === this.lastScrapedHash) {
+                promptLogger.appendAction(auditLogFilePath, 'system_msg',
+                    'Scraper: Content unchanged, skipping.', projectRoot);
+                return;
+            }
+            this.lastScrapedHash = currentHash;
+
+            const snippet = copiedChat.trim().substring(0, 80).replace(/\n/g, ' ');
+            promptLogger.appendAction(auditLogFilePath, 'system_msg',
+                `Scraper: Snippet: "${snippet}..."`, projectRoot);
+
+            // [Step 6] 화자 레이블 기반 파싱
+            await this.parseAndLog(copiedChat, auditLogFilePath, projectRoot);
 
         } catch (error: any) {
-            promptLogger.appendAction(auditLogFilePath, 'system_msg', `Scraper: v0.2.37 Error - ${error.message || error}`, projectRoot);
+            promptLogger.appendAction(auditLogFilePath, 'system_msg',
+                `Scraper: Error - ${error.message || error}`, projectRoot);
         } finally {
             this.isScraping = false;
         }
     }
 
-    /**
-     * Internal API Sniffing for Chat Sessions
-     */
-    private static async sniffApiChat(): Promise<TrajectoryEntry[]> {
-        const results: TrajectoryEntry[] = [];
-        
-        // Strategy A: Standard (Proposed) Chat API
-        const chatApi = (vscode as any).chat;
-        if (chatApi && typeof chatApi.listSessions === 'function') {
-            const sessions = await chatApi.listSessions();
-            for (const session of sessions) {
-                if (session.requests) {
-                    for (const req of session.requests) {
-                        if (req.prompt) results.push({ role: 'user', content: req.prompt });
-                        if (req.response && Array.isArray(req.response)) {
-                            const responseText = req.response
-                                .map((frag: any) => typeof frag === 'string' ? frag : (frag.value || ''))
-                                .join('');
-                            if (responseText) results.push({ role: 'assistant', content: responseText });
-                        }
-                    }
-                }
-            }
-        }
-
-        // Strategy B: Interactive Session API (Legacy/Alternative)
-        const interactive = (vscode as any).interactive;
-        if (interactive && interactive.sessions) {
-            // ... similar logic
-        }
-
-        return results;
-    }
-
-    /**
-     * PB 파일 및 VSCDB-WAL 파일에서 한글 문자열 스니핑
-     * [v0.2.38] Specific sessionId prioritization.
-     */
-    private static async runRawTextMiner(projectRoot: string, sessionId?: string): Promise<string[]> {
-        const vscdbPath = this.getVscdbPath();
-        const targets: (string | Buffer)[] = [];
-        
-        if (vscdbPath) {
-            const walPath = vscdbPath + '-wal';
-            if (fs.existsSync(walPath)) targets.push(walPath);
-            targets.push(vscdbPath);
-        }
-
-        const antigravityPath = ChatExtractor.getAntigravityConversationsPath();
-        if (antigravityPath && fs.existsSync(antigravityPath)) {
-            try {
-                // [v0.2.38] Prioritize the active session PB file
-                if (sessionId) {
-                    const targetPb = path.join(antigravityPath, `${sessionId}.pb`);
-                    if (fs.existsSync(targetPb)) {
-                        targets.unshift(targetPb); // Put at the front
-                    }
-                }
-
-                const pbFiles = fs.readdirSync(antigravityPath)
-                    .filter(f => f.endsWith('.pb') && f !== `${sessionId}.pb`)
-                    .map(f => path.join(antigravityPath, f));
-                
-                // Limit background PB files to 5 to avoid noise/OOM
-                targets.push(...pbFiles.slice(0, 5));
-            } catch (e) {}
-        }
-        
-        // Fallback: Check .pb in project root as well
-        const localPbDir = path.join(projectRoot, '.pb');
-        if (fs.existsSync(localPbDir)) {
-            try {
-                const localPbs = fs.readdirSync(localPbDir).filter(f => f.endsWith('.pb')).map(f => path.join(localPbDir, f));
-                targets.push(...localPbs);
-            } catch (e) {}
-        }
-
-        return RawTextMiner.mine(targets);
-    }
-
-    /**
-     * [v0.2.38] Enhanced Role Detection
-     */
-    private static detectRole(content: string): 'user' | 'assistant' {
-        const text = content.trim();
-        const userMarkers = ['?', '왜', '어떻게', '해줘', '보여줘', '코드', 'fix', 'how', 'why', 'explain'];
-        const hasUserMarker = userMarkers.some(m => text.toLowerCase().includes(m));
-        
-        // If it's a short question-like string, it's likely the user
-        if (hasUserMarker && text.length < 200) return 'user';
-        
-        // Default to assistant for long explanations
-        return 'assistant';
-    }
-
-    /**
-     * 공통 메시지 처리 로직
-     */
-    private static async processMessages(messages: TrajectoryEntry[], auditLogFilePath: string, projectRoot: string) {
+    private static async parseAndLog(text: string, auditLogFilePath: string, projectRoot: string) {
         const promptLogger = PromptLogger.getInstance();
+        const speakerPatternStr = '(?:User|You|Gemini|Assistant|Antigravity|Secretary|System|AI|Copilot|Github Copilot|Antigravity AI)';
+        const speakerRegex = new RegExp(`^[\\s\\*\\(\\[]*(${speakerPatternStr})[\\s\\*\\)\\]]*[:\\-\\s]*`, 'i');
+
+        const blocks = text.split(new RegExp(
+            `\\n(?=[\\s\\*\\(\\[]*${speakerPatternStr}[\\s\\*\\)\\]]*[:\\-\\s]|\\n[\\s\\*\\(\\[]*${speakerPatternStr})`, 'i'
+        ));
+
         let insertedCount = 0;
 
-        for (const entry of messages) {
-            const text = entry.content.trim();
-            const role = entry.role;
-            if (!text) continue;
+        for (const block of blocks) {
+            const content_raw = block.trim();
+            if (!content_raw) continue;
 
-            const msgHash = crypto.createHash('md5').update(`${role}:${text}`).digest('hex');
+            const speakerMatch = content_raw.match(speakerRegex);
+            if (!speakerMatch) continue;
+
+            const speakerName = speakerMatch[1];
+            const content = content_raw.substring(speakerMatch[0].length).trim();
+            if (!content) continue;
+
+            const msgHash = crypto.createHash('md5').update(`${speakerName}:${content}`).digest('hex');
             if (this.seenMessageHashes.has(msgHash)) continue;
 
             this.seenMessageHashes.add(msgHash);
             insertedCount++;
 
-            if (role === 'user') {
-                promptLogger.appendUser(auditLogFilePath, text);
+            if (/^(User|You)$/i.test(speakerName)) {
+                promptLogger.appendUser(auditLogFilePath, content);
+            } else if (/^System$/i.test(speakerName)) {
+                promptLogger.appendAction(auditLogFilePath, 'system_msg', content, projectRoot);
             } else {
-                promptLogger.appendAssistant(auditLogFilePath, text);
+                promptLogger.appendAssistant(auditLogFilePath, content);
             }
         }
 
         if (insertedCount > 0) {
-            promptLogger.appendAction(auditLogFilePath, 'system_msg', `Scraper: Successfully ingested ${insertedCount} new messages.`, projectRoot);
+            promptLogger.appendAction(auditLogFilePath, 'system_msg',
+                `Scraper: Ingested ${insertedCount} new messages.`, projectRoot);
+        } else {
+            promptLogger.appendAction(auditLogFilePath, 'system_msg',
+                'Scraper: No new parseable messages found.', projectRoot);
         }
-    }
-
-    /**
-     * 리눅스 환경 기준 state.vscdb 경로 탐색
-     */
-    private static getVscdbPath(): string | null {
-        // [v0.2.37] Leverage ChatExtractor's logic
-        const context = (ChatExtractor as any)._context;
-        if (context) {
-            const globalPath = ChatExtractor.getGlobalVscdbPath(context);
-            if (globalPath) return globalPath;
-        }
-
-        const home = os.homedir();
-        const linuxPaths = [
-            path.join(home, '.config', 'Antigravity', 'User', 'globalStorage', 'state.vscdb'),
-            path.join(home, '.config', 'Code', 'User', 'globalStorage', 'state.vscdb'),
-            path.join(home, '.config', 'Code - Insiders', 'User', 'globalStorage', 'state.vscdb'),
-            path.join(home, 'snap', 'code', 'common', '.config', 'Code', 'User', 'globalStorage', 'state.vscdb'),
-            path.join(home, '.var', 'app', 'com.visualstudio.code', 'config', 'Code', 'User', 'globalStorage', 'state.vscdb')
-        ];
-
-        for (const p of linuxPaths) {
-            if (fs.existsSync(p)) return p;
-        }
-        
-        const macPath = path.join(home, 'Library', 'Application Support', 'Code', 'User', 'globalStorage', 'state.vscdb');
-        if (fs.existsSync(macPath)) return macPath;
-
-        return null;
     }
 }

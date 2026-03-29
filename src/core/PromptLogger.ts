@@ -6,6 +6,9 @@ import * as vscode from 'vscode';
 export class PromptLogger {
     private static instance: PromptLogger;
     private lastAction: string = '';
+    private lastLogContent: string = '';
+    private currentSessionPath: string | null = null;
+    private currentProjectRoot: string | null = null;
 
     private constructor() { }
 
@@ -21,6 +24,11 @@ export class PromptLogger {
      * 파일 형식: session_YYYY-MM-DD_HH-mm.md
      */
     public initializeSession(projectRoot: string): string {
+        // [v0.2.29] Session Guard: 이미 활성화된 세션이 있다면 해당 경로 반환
+        if (this.currentSessionPath && fs.existsSync(this.currentSessionPath) && this.currentProjectRoot === projectRoot) {
+            return this.currentSessionPath;
+        }
+
         const contextDir = path.join(projectRoot, '.synapse_contexts');
         if (!fs.existsSync(contextDir)) {
             fs.mkdirSync(contextDir, { recursive: true });
@@ -30,24 +38,30 @@ export class PromptLogger {
         const datePart = now.toISOString().split('T')[0];
         const hours = String(now.getHours()).padStart(2, '0');
         const minutes = String(now.getMinutes()).padStart(2, '0');
-        const fileName = `session_${datePart}_${hours}-${minutes}.md`;
+        
+        // 초 단위까지 정밀하게 세션명 생성하여 충돌 방지
+        const seconds = String(now.getSeconds()).padStart(2, '0');
+        const fileName = `session_${datePart}_${hours}-${minutes}-${seconds}.md`;
         const filePath = path.join(contextDir, fileName);
 
-        const timestampStr = `${datePart} ${hours}:${minutes}`;
+        const timestampStr = `${datePart} ${hours}:${minutes}:${seconds}`;
 
-        // 이미 파일이 있으면 헤더를 새로 쓰지 않음
         if (!fs.existsSync(filePath)) {
-            const header = `# Session — ${timestampStr}\n\n*Pure Event Channel Audit Log Activated*\n\n---\n`;
+            const header = `# Session — ${timestampStr}\n\n*Pure Event Channel Audit Log Activated (v0.2.29 Stablized)*\n\n---\n`;
             fs.writeFileSync(filePath, header, 'utf-8');
             this.gitStageFile(projectRoot, filePath);
         }
         
+        this.currentSessionPath = filePath;
+        this.currentProjectRoot = projectRoot;
         return filePath;
     }
 
     public appendUser(filePath: string, content: string) {
         if (!content.trim()) return;
         const entry = `\n## User\n${content.trim()}\n`;
+        if (this.lastLogContent === entry) return;
+        this.lastLogContent = entry;
         this.write(filePath, entry);
     }
 
@@ -55,6 +69,8 @@ export class PromptLogger {
         if (!content.trim()) return;
         const cleaned = this.cleanAiResponse(content);
         const entry = `\n## Assistant\n${cleaned}\n`;
+        if (this.lastLogContent === entry) return;
+        this.lastLogContent = entry;
         this.write(filePath, entry);
     }
 

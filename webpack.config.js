@@ -19,6 +19,7 @@ module.exports = {
     devtool: 'source-map',
     externals: {
         vscode: 'commonjs vscode', // the vscode-module is created on-the-fly and must be excluded.
+        sqlite3: 'commonjs sqlite3',
     },
     resolve: {
         // support reading TypeScript and JavaScript files, 

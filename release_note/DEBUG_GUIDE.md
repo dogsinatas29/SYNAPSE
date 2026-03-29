@@ -58,8 +58,23 @@ Extension Development Host 창에서:
 
 ### 방법 3: 수동으로 workspace 확인
 Extension Development Host 창에서 터미널 열고:
-```bash
-pwd
-ls data/
-```
-현재 디렉토리와 data 폴더 확인
+## 대화 히스토리 복구 가이드 (Antigravity 전용)
+
+### 현상
+`.pb` 파일은 `~/.gemini/antigravity/conversations/`에 존재하지만, IDE UI(Sidebar)에서 대화 목록이 사라진 경우.
+
+### 해결 방법: 플랜 B (더미 세션 재주입 전략)
+이 방법은 데이터베이스(SQLite)를 직접 건드리지 않고 안전하게 대화를 복구하는 실전용 정공법입니다.
+
+1.  **과거 데이터 확인**: 복구하고 싶은 원본 파일(`Target_Old.pb`)을 안전한 곳에 복사해둡니다.
+2.  **새 세션 생성**: Antigravity IDE UI에서 'New Chat'을 눌러 아무 내용이나 입력하고 새 대화를 하나 만듭니다.
+3.  **새 파일 식별**: `~/.gemini/antigravity/conversations/` 디렉터리에서 방금 생성된 가장 최신의 `.pb` 파일 이름(`Dummy_New.pb`)을 확인합니다.
+4.  **IDE 종료**: Antigravity IDE를 완전히 종료합니다.
+5.  **파일 치환 (Overwrite)**:
+    *   생성된 `Dummy_New.pb`를 삭제하거나 이름을 바꿉니다.
+    *   복구할 원본 파일 `Target_Old.pb`의 이름을 `Dummy_New.pb`로 변경하여 그 위치에 넣습니다.
+6.  **IDE 재시작**: IDE를 다시 열면, Sidebar의 새 대화 목록 클릭 시 과거의 대화 내용이 로드됩니다.
+
+> [!TIP]
+> **SYNAPSE 감사 로그 확인**:
+> 위 방법이 번거롭다면, 프로젝트 루트의 `.synapse_contexts/` 폴더를 확인하세요. SYNAPSE는 이미 **LOB Sniffer**를 통해 해당 바이너리 대화를 텍스트로 추출하여 실시간으로 저장하고 있습니다.

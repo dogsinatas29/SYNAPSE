@@ -16,7 +16,7 @@ function runBuild() {
     try {
         // 2. 마일스톤-빌드 타겟 강제 동기화: 가장 최신 마일스톤 파일 찾기
         const files = fs.readdirSync(milestoneDir);
-        const milestoneFiles = files.filter(f => /^v\d/.test(f) && f.endsWith('.md')).sort().reverse();
+        const milestoneFiles = files.filter(f => /^v\d/.test(f) && f.endsWith('.md') && !f.includes('_implementation_plan')).sort().reverse();
 
         if (milestoneFiles.length === 0) {
             throw new Error('BM Policy Mismatch: No milestone documents found.');
@@ -51,7 +51,7 @@ function runBuild() {
         const vsixName = `synapse-visual-architecture-${currentVersion}.vsix`;
         console.log(`[Build Guard] Packaging into ${vsixName}...`);
 
-        const vsceResult = execSync(`npx vsce package --no-dependencies -o ${vsixName}`, {
+        const vsceResult = execSync(`npx vsce package -o ${vsixName}`, {
             stdio: 'pipe',
             cwd: projectRoot,
             encoding: 'utf8'

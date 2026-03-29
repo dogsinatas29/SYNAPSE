@@ -312,13 +312,15 @@ export async function activate(context: vscode.ExtensionContext) {
 
         // [Pure Event Channel] Audit Log Initialization
         const initAuditLog = async () => {
+            if (auditLogFilePath) return; // [v0.2.29] Already initialized guard
+
             const projectRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
             if (!projectRoot) return;
 
             auditLogFilePath = promptLogger.initializeSession(projectRoot);
             console.log(`[SYNAPSE] Audit Log initialized: ${auditLogFilePath}`);
 
-            // Initialize Adapter based collection
+            // Initialize Adapter based collection (Forensic / Stream / File)
             const adapter = ChatExtractor.initialize(context);
             adapter.start((msg) => {
                 if (auditLogFilePath) {

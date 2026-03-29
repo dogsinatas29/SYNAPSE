@@ -303,15 +303,106 @@ export class FileAdapter implements ChatAdapter {
     }
 }
 
+/**
+ * Tier 4: Forensic Adapter (v0.2.29)
+ * Scans SQLite trajectory summaries and Antigravity .pb logs.
+ */
+export class ForensicAdapter implements ChatAdapter {
+    id = 'forensic-sniffer';
+    private callback?: (msg: ChatMessage) => void;
+    private interval?: NodeJS.Timeout;
+    private pbWatcher?: fs.FSWatcher;
+    private jsonlWatcher?: fs.FSWatcher;
+
+    isSupported() { return true; }
+
+    async start(callback: (msg: ChatMessage) => void) {
+        this.callback = callback;
+        const context = (ChatExtractor as any)._context as vscode.ExtensionContext;
+        if (!context) return;
+
+        // 1. Initial SQLite Snapshot
+        const vscdbPaths = [
+            ChatExtractor.getVscdbPath(context),
+            ChatExtractor.getGlobalVscdbPath(context)
+        ].filter(p => !!p) as string[];
+
+        const VscdbAdapter = require('../core/VscdbAdapter').VscdbAdapter;
+        for (const vscdbPath of vscdbPaths) {
+            const adapter = new VscdbAdapter();
+            if (await adapter.openReadOnly(vscdbPath)) {
+                const trajectory = await adapter.fetchTrajectorySummaries();
+                trajectory.forEach((entry: any) => {
+                    const tag = vscdbPath.includes('globalStorage') ? '[GLOBAL]' : '[RESTORED]';
+                    this.callback?.({ role: entry.role, content: `${tag} ${entry.content}` });
+                });
+                adapter.close();
+            }
+        }
+
+        // 2. Periodic SQLite Scanner (30s)
+        this.interval = setInterval(async () => {
+            for (const vscdbPath of vscdbPaths) {
+                const sniffer = new VscdbAdapter();
+                if (await sniffer.openReadOnly(vscdbPath)) {
+                    const newTrajectory = await sniffer.fetchTrajectorySummaries();
+                    newTrajectory.forEach((entry: any) => {
+                        const tag = vscdbPath.includes('globalStorage') ? '[GLOBAL]' : '[SYNC]';
+                        this.callback?.({ role: entry.role, content: `${tag} ${entry.content}` });
+                    });
+                    sniffer.close();
+                }
+            }
+        }, 30000);
+
+        // 3. Antigravity .pb Watcher
+        const antigravityPath = ChatExtractor.getAntigravityConversationsPath();
+        if (antigravityPath && fs.existsSync(antigravityPath)) {
+            // Initial scan
+            const pbFiles = fs.readdirSync(antigravityPath)
+                .filter(f => f.endsWith('.pb'))
+                .map(f => path.join(antigravityPath, f));
+            
+            if (pbFiles.length > 0) {
+                const latestPb = pbFiles.reduce((latest, current) => {
+                    const latestStat = fs.statSync(latest);
+                    const currentStat = fs.statSync(current);
+                    return latestStat.mtimeMs > currentStat.mtimeMs ? latest : current;
+                });
+                this.syncPbEvents(latestPb);
+            }
+
+            this.pbWatcher = fs.watch(antigravityPath, (event, filename) => {
+                if (filename && filename.endsWith('.pb')) {
+                    this.syncPbEvents(path.join(antigravityPath, filename));
+                }
+            });
+        }
+    }
+
+    private syncPbEvents(filePath: string) {
+        const messages = ChatExtractor.parsePbFile(filePath);
+        messages.forEach(msg => this.callback?.(msg));
+    }
+
+    public dispose() {
+        if (this.interval) clearInterval(this.interval);
+        if (this.pbWatcher) this.pbWatcher.close();
+        if (this.jsonlWatcher) this.jsonlWatcher.close();
+    }
+}
+
 export class ChatExtractor {
     private static adapter: ChatAdapter;
+    private static _context: vscode.ExtensionContext;
 
     public static initialize(context: vscode.ExtensionContext): ChatAdapter {
-        // 우선순위: Stream > File
-        // (VSCodeAdapter는 향후 추가 가능)
+        this._context = context;
+        // 우선순위: Stream > File > Forensic
         const adapters: ChatAdapter[] = [
             new StreamAdapter(),
-            new FileAdapter()
+            new FileAdapter(),
+            new ForensicAdapter()
         ];
 
         for (const a of adapters) {
@@ -334,39 +425,228 @@ export class ChatExtractor {
         return this.adapter;
     }
 
-    // 기존 하위 호환성을 위한 경로 탐색 로직 (동일)
+    /**
+     * Extracts the full transcript of the most recent chat session.
+     */
+    public static async getFullChatHistory(context: vscode.ExtensionContext): Promise<ChatMessage[] | null> {
+        try {
+            const workspaceStoragePath = this.getWorkspaceStoragePath(context);
+            if (!workspaceStoragePath) return null;
+
+            const chatSessionsPath = path.join(workspaceStoragePath, 'chatSessions');
+            if (!fs.existsSync(chatSessionsPath)) {
+                console.warn(`[SYNAPSE] chatSessions path not found: ${chatSessionsPath}`);
+                return null;
+            }
+
+            const files = fs.readdirSync(chatSessionsPath)
+                .filter(f => f.endsWith('.jsonl'))
+                .map(f => path.join(chatSessionsPath, f));
+
+            if (files.length === 0) return null;
+
+            // Find the most recently modified session
+            const latestFile = files.reduce((latest, current) => {
+                const latestStat = fs.statSync(latest);
+                const currentStat = fs.statSync(current);
+                return latestStat.mtimeMs > currentStat.mtimeMs ? latest : current;
+            });
+
+            console.log(`[SYNAPSE] Extracting full history from: ${latestFile}`);
+            const content = fs.readFileSync(latestFile, 'utf-8');
+            const lines = content.split('\n').filter(l => l.trim() !== '');
+
+            const history: ChatMessage[] = [];
+            const requestMap = new Map<number, { user: string, assistant: string[] }>();
+
+            lines.forEach(line => {
+                try {
+                    const parsed = JSON.parse(line);
+
+                    // User Message (kind 2, v contains requests)
+                    if (parsed.kind === 2 && Array.isArray(parsed.v)) {
+                        parsed.v.forEach((req: any, index: number) => {
+                            if (req.message && req.message.text) {
+                                requestMap.set(index, { user: req.message.text, assistant: [] });
+                            }
+                        });
+                    }
+
+                    // Assistant Response (k starts with ['requests', index, 'response'])
+                    if (parsed.k && Array.isArray(parsed.k) && parsed.k[0] === 'requests' && parsed.k[2] === 'response') {
+                        const index = parsed.k[1];
+                        const entry = requestMap.get(index);
+                        if (entry && parsed.v && Array.isArray(parsed.v)) {
+                            const texts = parsed.v
+                                .filter((r: any) => r.value && r.kind !== 'thinking' && !r.kind?.includes('progressTask') && !r.kind?.includes('mcpServers'))
+                                .map((r: any) => r.value);
+                            if (texts.length > 0) {
+                                entry.assistant.push(texts.join(''));
+                            }
+                        }
+                    }
+                } catch { }
+            });
+
+            // Convert map to sorted history
+            const sortedIndices = Array.from(requestMap.keys()).sort((a, b) => a - b);
+            sortedIndices.forEach(idx => {
+                const entry = requestMap.get(idx)!;
+                history.push({ role: 'user', content: entry.user });
+                if (entry.assistant.length > 0) {
+                    history.push({ role: 'assistant', content: entry.assistant.join('\n') });
+                }
+            });
+
+            return history.length > 0 ? history : null;
+        } catch (e) {
+            console.error('[SYNAPSE] Chat extraction error:', e);
+            return null;
+        }
+    }
+
     public static getChatSessionsFolderPath(context: vscode.ExtensionContext): string | null {
         const wsPath = this.getWorkspaceStoragePath(context);
         return wsPath ? path.join(wsPath, 'chatSessions') : null;
+    }
+
+    public static getVscdbPath(context: vscode.ExtensionContext): string | null {
+        const wsPath = this.getWorkspaceStoragePath(context);
+        return wsPath ? path.join(wsPath, 'state.vscdb') : null;
+    }
+
+    public static getAntigravityConversationsPath(): string | null {
+        const homeDir = process.env.HOME || process.env.USERPROFILE;
+        if (!homeDir) return null;
+        const conversationsPath = path.join(homeDir, '.gemini', 'antigravity', 'conversations');
+        return fs.existsSync(conversationsPath) ? conversationsPath : null;
+    }
+
+    public static getGlobalVscdbPath(context: vscode.ExtensionContext): string | null {
+        const homeDir = process.env.HOME || process.env.USERPROFILE;
+        if (!homeDir) return null;
+        
+        // Priority to Antigravity Global Storage
+        const ideNames = ['Antigravity', 'Code', 'Code - Insiders'];
+        for (const ide of ideNames) {
+            const globalVscdb = path.join(homeDir, '.config', ide, 'User', 'globalStorage', 'state.vscdb');
+            if (fs.existsSync(globalVscdb)) return globalVscdb;
+        }
+        return null;
+    }
+
+    /**
+     * [v0.2.29] Enhanced [LOB Sniffer]: Brute-force decryption-less extraction from Protobuf (.pb).
+     */
+    public static parsePbFile(filePath: string): ChatMessage[] {
+        try {
+            if (!fs.existsSync(filePath)) return [];
+            let buffer = fs.readFileSync(filePath);
+            
+            // 1. Try Decompression (zlib/gzip wrapper might be present)
+            try {
+                const zlib = require('zlib');
+                for (let offset = 0; offset < Math.min(buffer.length, 32); offset++) {
+                    try {
+                        const inflated = zlib.inflateSync(buffer.slice(offset));
+                        buffer = inflated;
+                        console.log(`[SYNAPSE] Successful zlib inflation at offset ${offset}`);
+                        break;
+                    } catch (e) {}
+                    try {
+                        const gunzipped = zlib.gunzipSync(buffer.slice(offset));
+                        buffer = gunzipped;
+                        console.log(`[SYNAPSE] Successful gunzip at offset ${offset}`);
+                        break;
+                    } catch (e) {}
+                }
+            } catch (e) {}
+
+            // 2. [LOB Sniffer] Binary Scan Filter
+            const messages: ChatMessage[] = [];
+            let currentChunk: number[] = [];
+            const resultStrings: string[] = [];
+
+            for (let i = 0; i < buffer.length; i++) {
+                const b = buffer[i];
+                const isPrintable = (b >= 32 && b <= 126) || [9, 10, 13].includes(b);
+                const isMultibyte = (b >= 0x80);
+
+                if (isPrintable || isMultibyte) {
+                    currentChunk.push(b);
+                } else {
+                    if (currentChunk.length > 10) {
+                        try {
+                            const str = Buffer.from(currentChunk).toString('utf-8').trim();
+                            if (/[a-zA-Z가-힣]/.test(str) && str.length > 15) {
+                                resultStrings.push(str);
+                            }
+                        } catch (e) {}
+                    }
+                    currentChunk = [];
+                }
+            }
+            
+            if (currentChunk.length > 10) {
+                try {
+                    const str = Buffer.from(currentChunk).toString('utf-8').trim();
+                    if (/[a-zA-Z가-힣]/.test(str) && str.length > 15) {
+                        resultStrings.push(str);
+                    }
+                } catch (e) {}
+            }
+
+            // 3. Heuristic Role Mapping
+            resultStrings.forEach(content => {
+                if (content.includes('?') || content.startsWith('/') || /^(How|What|Please|Show|코드|이거|어떻게)/i.test(content)) {
+                    messages.push({ role: 'user', content });
+                } else {
+                    messages.push({ role: 'assistant', content });
+                }
+            });
+
+            return messages;
+        } catch (e) {
+            console.error(`[SYNAPSE] PB extraction failed: ${e}`);
+            return [];
+        }
     }
     
     private static getWorkspaceStoragePath(context: vscode.ExtensionContext): string | null {
         if (context.storageUri) {
             const potentialPath = path.dirname(context.storageUri.fsPath);
-            if (fs.existsSync(path.join(potentialPath, 'chatSessions'))) return potentialPath;
+            if (fs.existsSync(path.join(potentialPath, 'state.vscdb')) || fs.existsSync(path.join(potentialPath, 'chatSessions'))) {
+                return potentialPath;
+            }
         }
         
-        // Fallback: Linux Standard Path Search
+        // [v0.2.29] Cross-IDE Path Search (Antigravity & Code)
         const homeDir = process.env.HOME || process.env.USERPROFILE;
         if (homeDir) {
-            const wsStorageRoot = path.join(homeDir, '.config', 'Code', 'User', 'workspaceStorage');
-            if (fs.existsSync(wsStorageRoot)) {
-                try {
-                    const folders = fs.readdirSync(wsStorageRoot);
-                    for (const folder of folders) {
-                        const wsJsonPath = path.join(wsStorageRoot, folder, 'workspace.json');
-                        if (fs.existsSync(wsJsonPath)) {
-                            const content = fs.readFileSync(wsJsonPath, 'utf-8');
-                            const workspaceFolders = vscode.workspace.workspaceFolders;
-                            if (workspaceFolders && workspaceFolders.length > 0) {
-                                const currentWsPath = workspaceFolders[0].uri.toString();
-                                if (content.includes(currentWsPath)) {
-                                    return path.join(wsStorageRoot, folder);
+            const ideNames = ['Antigravity', 'Code', 'Code - Insiders'];
+            const workspaceFolders = vscode.workspace.workspaceFolders;
+            
+            for (const ide of ideNames) {
+                const wsStorageRoot = path.join(homeDir, '.config', ide, 'User', 'workspaceStorage');
+                if (fs.existsSync(wsStorageRoot)) {
+                    try {
+                        const folders = fs.readdirSync(wsStorageRoot);
+                        for (const folder of folders) {
+                            const wsJsonPath = path.join(wsStorageRoot, folder, 'workspace.json');
+                            if (fs.existsSync(wsJsonPath)) {
+                                const content = fs.readFileSync(wsJsonPath, 'utf-8');
+                                if (workspaceFolders && workspaceFolders.length > 0) {
+                                    const currentWsPath = workspaceFolders[0].uri.toString();
+                                    if (content.includes(currentWsPath)) {
+                                        return path.join(wsStorageRoot, folder);
+                                    }
                                 }
                             }
                         }
+                    } catch (e) {
+                        console.error(`[SYNAPSE] Failed to crawl ${ide} storage:`, e);
                     }
-                } catch (e) {}
+                }
             }
         }
         return null;

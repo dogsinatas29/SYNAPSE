@@ -14,6 +14,24 @@ export interface ChatAdapter extends vscode.Disposable {
 }
 
 /**
+ * [v0.2.31] MultiAdapter: 여러 소스의 대화 로그를 병합 수집
+ */
+export class MultiAdapter implements ChatAdapter {
+    id = 'multi-orchestrator';
+    constructor(private adapters: ChatAdapter[]) { }
+
+    isSupported() { return this.adapters.length > 0; }
+
+    start(callback: (msg: ChatMessage) => void) {
+        this.adapters.forEach(a => a.start(callback));
+    }
+
+    dispose() {
+        this.adapters.forEach(a => a.dispose());
+    }
+}
+
+/**
  * [v0.2.25 Ultimate] StreamAdapter: 세션 분리, 실시간 수집, 수명 주기 관리
  */
 export class StreamAdapter implements ChatAdapter {
@@ -412,16 +430,24 @@ export class ChatExtractor {
             new ForensicAdapter()
         ];
 
+        const activeAdapters: ChatAdapter[] = [];
         for (const a of adapters) {
             if (a.isSupported()) {
-                this.adapter = a;
+                activeAdapters.push(a);
                 if (context.subscriptions) {
-                    context.subscriptions.push(this.adapter); // 자동 Dispose 등록
+                    context.subscriptions.push(a); // 자동 Dispose 등록
                 }
-                console.log(`[SYNAPSE] ChatAdapter resolved & registered: ${this.adapter.id}`);
-                break;
+                console.log(`[SYNAPSE] ChatAdapter registered: ${a.id}`);
             }
         }
+
+        if (activeAdapters.length === 1) {
+            this.adapter = activeAdapters[0];
+        } else {
+            // [v0.2.31] MultiAdapter Orchestration: 다중 어댑터 동시 수집 지원
+            this.adapter = new MultiAdapter(activeAdapters);
+        }
+
         return this.adapter;
     }
 
@@ -550,17 +576,19 @@ export class ChatExtractor {
             if (!fs.existsSync(filePath)) return [];
             let buffer = fs.readFileSync(filePath);
             
-            // 1. Try Decompression (zlib/gzip wrapper might be present)
+            // 1. Try Decompression
             try {
                 const zlib = require('zlib');
-                for (let offset = 0; offset < Math.min(buffer.length, 32); offset++) {
+                for (let offset = 0; offset < Math.min(buffer.length, 64); offset++) {
                     try {
+                        // try inflate (zlib)
                         const inflated = zlib.inflateSync(buffer.slice(offset));
                         buffer = inflated;
                         console.log(`[SYNAPSE] Successful zlib inflation at offset ${offset}`);
                         break;
                     } catch (e) {}
                     try {
+                        // try gunzip
                         const gunzipped = zlib.gunzipSync(buffer.slice(offset));
                         buffer = gunzipped;
                         console.log(`[SYNAPSE] Successful gunzip at offset ${offset}`);
@@ -569,46 +597,47 @@ export class ChatExtractor {
                 }
             } catch (e) {}
 
-            // 2. [LOB Sniffer] Binary Scan Filter
-            const messages: ChatMessage[] = [];
-            let currentChunk: number[] = [];
-            const resultStrings: string[] = [];
-
-            for (let i = 0; i < buffer.length; i++) {
-                const b = buffer[i];
-                const isPrintable = (b >= 32 && b <= 126) || [9, 10, 13].includes(b);
-                const isMultibyte = (b >= 0x80);
-
-                if (isPrintable || isMultibyte) {
-                    currentChunk.push(b);
-                } else {
-                    if (currentChunk.length > 10) {
-                        try {
-                            const str = Buffer.from(currentChunk).toString('utf-8').trim();
-                            if (/[a-zA-Z가-힣]/.test(str) && str.length > 15) {
-                                resultStrings.push(str);
-                            }
-                        } catch (e) {}
-                    }
-                    currentChunk = [];
-                }
-            }
+            // 2. [LOB Sniffer] Strict Regular Expression Scan
+            // Protobuf logs contain many UTF-8 strings. We look for sequences of at least 20 chars
+            // including common punctuation and multi-byte (Hangeul) ranges.
+            const contentString = buffer.toString('utf-8');
             
-            if (currentChunk.length > 10) {
-                try {
-                    const str = Buffer.from(currentChunk).toString('utf-8').trim();
-                    if (/[a-zA-Z가-힣]/.test(str) && str.length > 15) {
-                        resultStrings.push(str);
+            // Regex explanation:
+            // Match sequences of 20+ characters that are:
+            // - Standard printable ASCII (32-126)
+            // - Common control chars (Tab, LF, CR)
+            // - Hangeul Syllables ([\uAC00-\uD7A3])
+            // - Hangeul Jamo ([\u1100-\u11FF], [\u3130-\u318F])
+            const textRegex = /[\t\n\r\u0020-\u007E\uAC00-\uD7A3\u1100-\u11FF\u3130-\u318F]{20,}/g;
+            const matches = contentString.match(textRegex) || [];
+            
+            const resultStrings: string[] = [];
+            matches.forEach(m => {
+                const trimmed = m.trim();
+                // 추가 필터링: 단순히 긴 공백이나 특수문자 나열인 경우 제외
+                // 최소 하나의 알파벳이나 한글이 포함되어야 하며, 바이너리 찌꺼기가 섞이지 않았는지 확인
+                if (/[a-zA-Z가-힣]/.test(trimmed) && !trimmed.includes('')) {
+                    // 중복 및 극단적으로 짧은 조각 방어
+                    if (trimmed.length > 25) {
+                        resultStrings.push(trimmed);
                     }
-                } catch (e) {}
-            }
+                }
+            });
 
-            // 3. Heuristic Role Mapping
+            // 3. Heuristic Role Mapping & De-duplication
+            const messages: ChatMessage[] = [];
+            const seen = new Set<string>();
+
             resultStrings.forEach(content => {
-                if (content.includes('?') || content.startsWith('/') || /^(How|What|Please|Show|코드|이거|어떻게)/i.test(content)) {
-                    messages.push({ role: 'user', content });
+                const cleaned = content.replace(/\s+/g, ' ').substring(0, 2000); // Normalize whitespace & cap
+                if (seen.has(cleaned)) return;
+                seen.add(cleaned);
+
+                // 간단한 질문 형태면 User로 추정, 그 외엔 Assistant
+                if (cleaned.includes('?') || cleaned.startsWith('/') || /^(어떻게|왜|해줘|보여줘|코드|fix|how|why|can you|explain)/i.test(cleaned)) {
+                    messages.push({ role: 'user', content: cleaned });
                 } else {
-                    messages.push({ role: 'assistant', content });
+                    messages.push({ role: 'assistant', content: cleaned });
                 }
             });
 

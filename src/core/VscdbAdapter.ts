@@ -73,12 +73,11 @@ export class VscdbAdapter {
     private heuristicExtract(blob: Buffer): TrajectoryEntry[] {
         if (!blob || blob.length === 0) return [];
         
-        // 1. Try Decompression (v0.2.29 Strategy)
+        // 1. Try Decompression
         let buffer = blob;
         try {
             const zlib = require('zlib');
-            // Brute force a few common offsets for zlib headers
-            for (let offset = 0; offset < Math.min(buffer.length, 32); offset++) {
+            for (let offset = 0; offset < Math.min(buffer.length, 64); offset++) {
                 try {
                     const inflated = zlib.inflateSync(buffer.slice(offset));
                     buffer = inflated;
@@ -88,32 +87,27 @@ export class VscdbAdapter {
         } catch (e) {}
 
         const result: TrajectoryEntry[] = [];
-        const resultStrings: string[] = [];
-        let currentChunk: number[] = [];
+        const contentString = buffer.toString('utf-8');
 
-        // 2. [LOB Sniffer] Binary Scan
-        for (let i = 0; i < buffer.length; i++) {
-            const b = buffer[i];
-            const isPrintable = (b >= 32 && b <= 126) || [9, 10, 13].includes(b);
-            const isMultibyte = (b >= 0x80);
-
-            if (isPrintable || isMultibyte) {
-                currentChunk.push(b);
-            } else {
-                if (currentChunk.length > 20) {
-                    try {
-                        const str = Buffer.from(currentChunk).toString('utf-8').trim();
-                        if (/[a-zA-Z가-힣]/.test(str) && str.length > 20) {
-                            resultStrings.push(str);
-                        }
-                    } catch (e) {}
+        // 2. [LOB Sniffer] Strict Regular Expression Scan
+        // Match sequences of 20+ characters including Hangeul
+        const textRegex = /[\t\n\r\u0020-\u007E\uAC00-\uD7A3\u1100-\u11FF\u3130-\u318F]{20,}/g;
+        const matches = contentString.match(textRegex) || [];
+        
+        const filteredStrings: string[] = [];
+        matches.forEach(m => {
+            const trimmed = m.trim();
+            // Filter out purely numeric/symbolic strings or rows with replacement chars
+            if (/[a-zA-Z가-힣]/.test(trimmed) && !trimmed.includes('')) {
+                if (trimmed.length > 30) {
+                    filteredStrings.push(trimmed);
                 }
-                currentChunk = [];
             }
-        }
+        });
 
-        // Final check for JSON structure within extracted chunks
-        resultStrings.forEach(text => {
+        // 3. Structured Data Detection & Fallback
+        filteredStrings.forEach(text => {
+            // Priority 1: JSON detection
             try {
                 const jsonMatch = text.match(/\{[\s\S]*\}/);
                 if (jsonMatch) {
@@ -124,16 +118,17 @@ export class VscdbAdapter {
                                 result.push({ role: msg.role, content: msg.content });
                             }
                         });
-                        return; // Successfully parsed as JSON, skip heuristic mapping
+                        return;
                     }
                 }
             } catch (e) {}
 
-            // Heuristic Fallback
-            if (text.includes('?') || /^(How|What|Please|Show|코드|이거|어떻게)/i.test(text)) {
-                result.push({ role: 'user', content: text });
+            // Priority 2: Heuristic mapping
+            const cleaned = text.replace(/\s+/g, ' ').substring(0, 1000);
+            if (cleaned.includes('?') || /^(어떻게|왜|해줘|보여줘|코드|fix|how|why|explain)/i.test(cleaned)) {
+                result.push({ role: 'user', content: cleaned });
             } else {
-                result.push({ role: 'assistant', content: text });
+                result.push({ role: 'assistant', content: cleaned });
             }
         });
 

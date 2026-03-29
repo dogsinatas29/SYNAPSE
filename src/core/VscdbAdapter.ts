@@ -11,6 +11,8 @@ export interface TrajectoryEntry {
 export class VscdbAdapter {
     private db: sqlite3.Database | null = null;
 
+    private tmpPath: string | null = null;
+
     /**
      * SQLite 데이터베이스 파일을 읽기 전용으로 엽니다.
      * 파일이 잠겨 있을 경우를 대비하여 임시 디렉토리에 복사하여 스캔합니다.
@@ -23,10 +25,10 @@ export class VscdbAdapter {
             }
 
             // DB 잠금 회피를 위해 임시 복사본 생성
-            const tmpPath = path.join(process.env.TMPDIR || '/tmp', `state_copy_${Date.now()}.vscdb`);
+            this.tmpPath = path.join(process.env.TMPDIR || '/tmp', `state_copy_${Date.now()}.vscdb`);
             try {
-                fs.copyFileSync(dbPath, tmpPath);
-                this.db = new sqlite3.Database(tmpPath, sqlite3.OPEN_READONLY, (err) => {
+                fs.copyFileSync(dbPath, this.tmpPath);
+                this.db = new sqlite3.Database(this.tmpPath, sqlite3.OPEN_READONLY, (err) => {
                     if (err) {
                         console.error('[SYNAPSE] Failed to connect to SQLite:', err);
                         resolve(false);
@@ -48,7 +50,7 @@ export class VscdbAdapter {
         return new Promise((resolve) => {
             if (!this.db) return resolve([]);
 
-            const query = "SELECT key, value FROM ItemTable WHERE key LIKE '%trajectorySummaries%' OR key LIKE '%jetski.chat.state%'";
+            const query = "SELECT key, value FROM ItemTable WHERE key LIKE '%trajectorySummaries%' OR key LIKE '%jetski.chat.state%' OR key LIKE '%antigravity%' OR key LIKE '%chat.workspaceState%' OR key LIKE '%history%'";
             this.db.all(query, (err, rows: any[]) => {
                 if (err) {
                     console.error('[SYNAPSE] Query failed:', err);
@@ -140,7 +142,13 @@ export class VscdbAdapter {
 
     public close() {
         if (this.db) {
-            this.db.close();
+            this.db.close((err) => {
+                if (!err && this.tmpPath && fs.existsSync(this.tmpPath)) {
+                    try {
+                        fs.unlinkSync(this.tmpPath);
+                    } catch (e) {}
+                }
+            });
         }
     }
 }

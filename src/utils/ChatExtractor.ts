@@ -312,48 +312,50 @@ export class ForensicAdapter implements ChatAdapter {
     private callback?: (msg: ChatMessage) => void;
     private interval?: NodeJS.Timeout;
     private pbWatcher?: fs.FSWatcher;
-    private jsonlWatcher?: fs.FSWatcher;
+    private seenHashes = new Set<string>();
 
     isSupported() { return true; }
+
+    private getHash(role: string, content: string): string {
+        return `${role}:${content.trim()}`;
+    }
 
     async start(callback: (msg: ChatMessage) => void) {
         this.callback = callback;
         const context = (ChatExtractor as any)._context as vscode.ExtensionContext;
         if (!context) return;
 
-        // 1. Initial SQLite Snapshot
+        // [v0.2.29] SQLite Forensic Ingestion
         const vscdbPaths = [
             ChatExtractor.getVscdbPath(context),
             ChatExtractor.getGlobalVscdbPath(context)
         ].filter(p => !!p) as string[];
 
         const VscdbAdapter = require('../core/VscdbAdapter').VscdbAdapter;
-        for (const vscdbPath of vscdbPaths) {
-            const adapter = new VscdbAdapter();
-            if (await adapter.openReadOnly(vscdbPath)) {
-                const trajectory = await adapter.fetchTrajectorySummaries();
-                trajectory.forEach((entry: any) => {
-                    const tag = vscdbPath.includes('globalStorage') ? '[GLOBAL]' : '[RESTORED]';
-                    this.callback?.({ role: entry.role, content: `${tag} ${entry.content}` });
-                });
-                adapter.close();
-            }
-        }
-
-        // 2. Periodic SQLite Scanner (30s)
-        this.interval = setInterval(async () => {
+        
+        const scan = async (tagSuffix: string) => {
             for (const vscdbPath of vscdbPaths) {
-                const sniffer = new VscdbAdapter();
-                if (await sniffer.openReadOnly(vscdbPath)) {
-                    const newTrajectory = await sniffer.fetchTrajectorySummaries();
-                    newTrajectory.forEach((entry: any) => {
-                        const tag = vscdbPath.includes('globalStorage') ? '[GLOBAL]' : '[SYNC]';
-                        this.callback?.({ role: entry.role, content: `${tag} ${entry.content}` });
+                const adapter = new VscdbAdapter();
+                if (await adapter.openReadOnly(vscdbPath)) {
+                    const trajectory = await adapter.fetchTrajectorySummaries();
+                    trajectory.forEach((entry: any) => {
+                        const hash = this.getHash(entry.role, entry.content);
+                        if (!this.seenHashes.has(hash)) {
+                            this.seenHashes.add(hash);
+                            const tag = vscdbPath.includes('globalStorage') ? `[GLOBAL:${tagSuffix}]` : `[RESTORED:${tagSuffix}]`;
+                            this.callback?.({ role: entry.role, content: `${tag} ${entry.content}` });
+                        }
                     });
-                    sniffer.close();
+                    adapter.close();
                 }
             }
-        }, 30000);
+        };
+
+        // 1. Initial Snapshot
+        await scan('INIT');
+
+        // 2. Periodic SQLite Scanner (30s)
+        this.interval = setInterval(() => scan('SYNC'), 30000);
 
         // 3. Antigravity .pb Watcher
         const antigravityPath = ChatExtractor.getAntigravityConversationsPath();
@@ -382,13 +384,18 @@ export class ForensicAdapter implements ChatAdapter {
 
     private syncPbEvents(filePath: string) {
         const messages = ChatExtractor.parsePbFile(filePath);
-        messages.forEach(msg => this.callback?.(msg));
+        messages.forEach(msg => {
+            const hash = this.getHash(msg.role, msg.content);
+            if (!this.seenHashes.has(hash)) {
+                this.seenHashes.add(hash);
+                this.callback?.(msg);
+            }
+        });
     }
 
     public dispose() {
         if (this.interval) clearInterval(this.interval);
         if (this.pbWatcher) this.pbWatcher.close();
-        if (this.jsonlWatcher) this.jsonlWatcher.close();
     }
 }
 

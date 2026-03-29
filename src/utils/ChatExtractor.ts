@@ -331,17 +331,74 @@ export class ForensicAdapter implements ChatAdapter {
     private interval?: NodeJS.Timeout;
     private pbWatcher?: fs.FSWatcher;
     private seenHashes = new Set<string>();
+    private startTime = Date.now();
+    private hashStorePath: string | null = null;
 
     isSupported() { return true; }
 
+    private pbFileStates = new Map<string, { lastSize: number }>();
+
     private getHash(role: string, content: string): string {
-        return `${role}:${content.trim()}`;
+        // [v0.2.32] Content normalization for better deduplication
+        return `${role}:${content.trim().substring(0, 100).replace(/\s+/g, ' ')}`;
+    }
+
+    private static isLikelyHumanReadable(text: string): boolean {
+        if (!text || text.length < 25) return false;
+        
+        // 1. Check for too many non-printable or replacement characters
+        const junkCount = (text.match(/[\uFFFD\u0000-\u0008\u000B\u000C\u000E-\u001F]/g) || []).length;
+        if (junkCount / text.length > 0.03) return false;
+
+        // 2. Alphanumeric/Hangeul Density: Human text should have letters/digits
+        const readableCount = (text.match(/[a-zA-Z0-9가-힣\s\.\,\?\!\-\_\(\)\[\]\{\}\:]/g) || []).length;
+        if (readableCount / text.length < 0.7) return false;
+
+        // 3. Repeat character sequences (common in binary junk like 'AAAAAAAA')
+        if (/(.)\1{10,}/.test(text)) return false;
+
+        // 4. Entropy: Too much variation with high non-ascii might be binary
+        const nonAscii = (text.match(/[^\u0000-\u007F]/g) || []).length;
+        if (nonAscii > text.length * 0.5 && !/[가-힣]/.test(text)) {
+            // High non-ascii without hangeul is suspicious (maybe emoji or encoding junk)
+            if (nonAscii > text.length * 0.8) return false;
+        }
+
+        return true;
+    }
+
+    private loadHashes() {
+        if (!this.hashStorePath || !fs.existsSync(this.hashStorePath)) return;
+        try {
+            const data = fs.readFileSync(this.hashStorePath, 'utf-8');
+            const hashes = JSON.parse(data);
+            if (Array.isArray(hashes)) {
+                hashes.forEach(h => this.seenHashes.add(h));
+                console.log(`[SYNAPSE] Loaded ${hashes.length} hashes for deduplication.`);
+            }
+        } catch (e) {}
+    }
+
+    private saveHashes() {
+        if (!this.hashStorePath) return;
+        try {
+            const hashes = Array.from(this.seenHashes);
+            // Limit to last 5000 hashes to prevent store bloat
+            const subset = hashes.slice(-5000);
+            fs.writeFileSync(this.hashStorePath, JSON.stringify(subset), 'utf-8');
+        } catch (e) {}
     }
 
     async start(callback: (msg: ChatMessage) => void) {
         this.callback = callback;
         const context = (ChatExtractor as any)._context as vscode.ExtensionContext;
         if (!context) return;
+
+        const projectRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
+        if (projectRoot) {
+            this.hashStorePath = path.join(projectRoot, '.synapse_contexts', '.seen_hashes.json');
+            this.loadHashes();
+        }
 
         // [v0.2.29] SQLite Forensic Ingestion
         const vscdbPaths = [
@@ -352,6 +409,7 @@ export class ForensicAdapter implements ChatAdapter {
         const VscdbAdapter = require('../core/VscdbAdapter').VscdbAdapter;
         
         const scan = async (tagSuffix: string) => {
+            let newlyAdded = false;
             for (const vscdbPath of vscdbPaths) {
                 const adapter = new VscdbAdapter();
                 if (await adapter.openReadOnly(vscdbPath)) {
@@ -360,6 +418,7 @@ export class ForensicAdapter implements ChatAdapter {
                         const hash = this.getHash(entry.role, entry.content);
                         if (!this.seenHashes.has(hash)) {
                             this.seenHashes.add(hash);
+                            newlyAdded = true;
                             const tag = vscdbPath.includes('globalStorage') ? `[GLOBAL:${tagSuffix}]` : `[RESTORED:${tagSuffix}]`;
                             this.callback?.({ role: entry.role, content: `${tag} ${entry.content}` });
                         }
@@ -367,48 +426,91 @@ export class ForensicAdapter implements ChatAdapter {
                     adapter.close();
                 }
             }
+            if (newlyAdded) this.saveHashes();
         };
 
-        // 1. Initial Snapshot
+        // 1. Initial Snapshot (Skip if too old or already processed)
         await scan('INIT');
 
-        // 2. Periodic SQLite Scanner (30s)
-        this.interval = setInterval(() => scan('SYNC'), 30000);
+        // 2. Periodic SQLite Scanner (60s - slowed down in v0.2.32)
+        this.interval = setInterval(() => scan('SYNC'), 60000);
 
         // 3. Antigravity .pb Watcher
         const antigravityPath = ChatExtractor.getAntigravityConversationsPath();
         if (antigravityPath && fs.existsSync(antigravityPath)) {
-            // Initial scan
-            const pbFiles = fs.readdirSync(antigravityPath)
-                .filter(f => f.endsWith('.pb'))
-                .map(f => path.join(antigravityPath, f));
+            // [Refining Time-Based Filtering] Baseline at session start to prevent history bleed-in
+            const initializeBaselines = () => {
+                const pbFiles = fs.readdirSync(antigravityPath).filter(f => f.endsWith('.pb'));
+                for (const f of pbFiles) {
+                    const fullPath = path.join(antigravityPath, f);
+                    const stats = fs.statSync(fullPath);
+                    // Initialize baseline: any existing data is considered "past" and ignored
+                    this.pbFileStates.set(fullPath, { lastSize: stats.size });
+                }
+            };
             
-            if (pbFiles.length > 0) {
-                const latestPb = pbFiles.reduce((latest, current) => {
-                    const latestStat = fs.statSync(latest);
-                    const currentStat = fs.statSync(current);
-                    return latestStat.mtimeMs > currentStat.mtimeMs ? latest : current;
-                });
-                this.syncPbEvents(latestPb);
-            }
+            initializeBaselines();
 
+            const scanPb = () => {
+                const pbFiles = fs.readdirSync(antigravityPath)
+                    .filter(f => f.endsWith('.pb'))
+                    .map(f => ({ path: path.join(antigravityPath, f), stat: fs.statSync(path.join(antigravityPath, f)) }))
+                    .filter(f => f.stat.mtimeMs > this.startTime); // Time-Based Filtering: only modified after start
+                
+                if (pbFiles.length > 0) {
+                    const latest = pbFiles.reduce((a, b) => a.stat.mtimeMs > b.stat.mtimeMs ? a : b);
+                    this.syncPbEvents(latest.path);
+                }
+            };
+
+            // Use debounce for watcher to avoid volume explosion
+            let debounceTimer: NodeJS.Timeout | null = null;
             this.pbWatcher = fs.watch(antigravityPath, (event, filename) => {
                 if (filename && filename.endsWith('.pb')) {
-                    this.syncPbEvents(path.join(antigravityPath, filename));
+                    if (debounceTimer) clearTimeout(debounceTimer);
+                    debounceTimer = setTimeout(() => {
+                        this.syncPbEvents(path.join(antigravityPath, filename));
+                    }, 500); // reduced debounce for quicker delta processing
                 }
             });
         }
     }
 
     private syncPbEvents(filePath: string) {
-        const messages = ChatExtractor.parsePbFile(filePath);
-        messages.forEach(msg => {
-            const hash = this.getHash(msg.role, msg.content);
-            if (!this.seenHashes.has(hash)) {
-                this.seenHashes.add(hash);
-                this.callback?.(msg);
+        try {
+            // [v0.2.32] Size guard (Problem 2: 80k lines protection)
+            const stats = fs.statSync(filePath);
+            if (stats.size > 2 * 1024 * 1024) { // Tightened to 2MB for aggressive filtering
+                return; // Optionally, trigger log rotation here
             }
-        });
+
+            // [Addressing Parsing Issues] Incremental Delta Parsing
+            let lastState = this.pbFileStates.get(filePath);
+            if (!lastState) {
+                // If a completely new file appeared during the session
+                lastState = { lastSize: 0 };
+            }
+
+            if (stats.size <= lastState.lastSize) {
+                return; // No new data
+            }
+
+            const { messages, newSize } = ChatExtractor.parsePbFileDelta(filePath, lastState.lastSize);
+            this.pbFileStates.set(filePath, { lastSize: newSize });
+
+            let newlyAdded = false;
+            messages.forEach(msg => {
+                const hash = this.getHash(msg.role, msg.content);
+                if (!this.seenHashes.has(hash)) {
+                    this.seenHashes.add(hash);
+                    newlyAdded = true;
+                    if ((ForensicAdapter as any).isLikelyHumanReadable(msg.content)) {
+                        this.callback?.(msg);
+                    }
+                }
+            });
+            if (newlyAdded) this.saveHashes();
+        } catch (e) {}
     }
 
     public dispose() {
@@ -569,82 +671,84 @@ export class ChatExtractor {
     }
 
     /**
-     * [v0.2.29] Enhanced [LOB Sniffer]: Brute-force decryption-less extraction from Protobuf (.pb).
+     * [v0.2.32] Raw Protobuf Decoding (Golden Path)
+     * Stream parsing using protobufjs/minimal for WireType 2 length-delimited extraction.
      */
-    public static parsePbFile(filePath: string): ChatMessage[] {
+    public static parsePbFileDelta(filePath: string, lastSize: number = 0): { messages: ChatMessage[], newSize: number } {
         try {
-            if (!fs.existsSync(filePath)) return [];
-            let buffer = fs.readFileSync(filePath);
+            if (!fs.existsSync(filePath)) return { messages: [], newSize: lastSize };
+            const stats = fs.statSync(filePath);
             
-            // 1. Try Decompression
-            try {
-                const zlib = require('zlib');
-                for (let offset = 0; offset < Math.min(buffer.length, 64); offset++) {
-                    try {
-                        // try inflate (zlib)
-                        const inflated = zlib.inflateSync(buffer.slice(offset));
-                        buffer = inflated;
-                        console.log(`[SYNAPSE] Successful zlib inflation at offset ${offset}`);
-                        break;
-                    } catch (e) {}
-                    try {
-                        // try gunzip
-                        const gunzipped = zlib.gunzipSync(buffer.slice(offset));
-                        buffer = gunzipped;
-                        console.log(`[SYNAPSE] Successful gunzip at offset ${offset}`);
-                        break;
-                    } catch (e) {}
-                }
-            } catch (e) {}
+            if (stats.size <= lastSize) {
+                return { messages: [], newSize: stats.size };
+            }
 
-            // 2. [LOB Sniffer] Strict Regular Expression Scan
-            // Protobuf logs contain many UTF-8 strings. We look for sequences of at least 20 chars
-            // including common punctuation and multi-byte (Hangeul) ranges.
-            const contentString = buffer.toString('utf-8');
-            
-            // Regex explanation:
-            // Match sequences of 20+ characters that are:
-            // - Standard printable ASCII (32-126)
-            // - Common control chars (Tab, LF, CR)
-            // - Hangeul Syllables ([\uAC00-\uD7A3])
-            // - Hangeul Jamo ([\u1100-\u11FF], [\u3130-\u318F])
-            const textRegex = /[\t\n\r\u0020-\u007E\uAC00-\uD7A3\u1100-\u11FF\u3130-\u318F]{20,}/g;
-            const matches = contentString.match(textRegex) || [];
-            
+            // 1. Memory Efficiency: Read the full delta into a buffer
+            const fd = fs.openSync(filePath, 'r');
+            const sizeToRead = stats.size - lastSize;
+            let buffer = Buffer.alloc(sizeToRead);
+            fs.readSync(fd, buffer, 0, sizeToRead, lastSize);
+            fs.closeSync(fd);
+
+            // 2. Stream Reading (O(N)): Target WireType 2 fields
+            const pbjs = require('protobufjs/minimal');
+            const reader = pbjs.Reader.create(buffer);
             const resultStrings: string[] = [];
-            matches.forEach(m => {
-                const trimmed = m.trim();
-                // 추가 필터링: 단순히 긴 공백이나 특수문자 나열인 경우 제외
-                // 최소 하나의 알파벳이나 한글이 포함되어야 하며, 바이너리 찌꺼기가 섞이지 않았는지 확인
-                if (/[a-zA-Z가-힣]/.test(trimmed) && !trimmed.includes('')) {
-                    // 중복 및 극단적으로 짧은 조각 방어
-                    if (trimmed.length > 25) {
-                        resultStrings.push(trimmed);
-                    }
-                }
-            });
 
-            // 3. Heuristic Role Mapping & De-duplication
+            while (reader.pos < reader.len) {
+                try {
+                    const tag = reader.uint32();
+                    const wireType = tag & 7;
+
+                    if (wireType === 2) {
+                        // Length-delimited string or embedded message
+                        const str = reader.string();
+                        // Basic sanity check to avoid binary garbage masquerading as UTF-8
+                        if (str && str.length > 5) {
+                            resultStrings.push(str.trim());
+                        }
+                    } else {
+                        // Skip other wire types (Varint, Fixed64, Fixed32, etc.)
+                        reader.skipType(wireType);
+                    }
+                } catch (e) {
+                    // Safe exit if we hit malformed bytes or EOF mid-parsing
+                    break;
+                }
+            }
+
+            // 3. Role Attribution Heuristic
             const messages: ChatMessage[] = [];
             const seen = new Set<string>();
 
             resultStrings.forEach(content => {
-                const cleaned = content.replace(/\s+/g, ' ').substring(0, 2000); // Normalize whitespace & cap
-                if (seen.has(cleaned)) return;
+                const cleaned = content.replace(/\s+/g, ' ').substring(0, 4000); 
+                if (cleaned.length < 10 || seen.has(cleaned)) return;
                 seen.add(cleaned);
 
-                // 간단한 질문 형태면 User로 추정, 그 외엔 Assistant
-                if (cleaned.includes('?') || cleaned.startsWith('/') || /^(어떻게|왜|해줘|보여줘|코드|fix|how|why|can you|explain)/i.test(cleaned)) {
-                    messages.push({ role: 'user', content: cleaned });
-                } else {
-                    messages.push({ role: 'assistant', content: cleaned });
+                let role: 'user' | 'assistant' = 'assistant';
+
+                // Assistant markers
+                if (content.includes('```')) {
+                    role = 'assistant';
+                } 
+                // User markers (prompt characteristics)
+                else if (
+                    cleaned.includes('?') || 
+                    cleaned.startsWith('/') || 
+                    /(어떻게|왜|보여줘|해줘|알려줘|정리해|코드|fix|how|why|explain|지금|작업하고|뽑아내줘)/i.test(cleaned) ||
+                    (content.length < 200 && !/[a-zA-Z]/.test(content) && /[\uAC00-\uD7A3]/.test(content)) // Highly likely short Korean query 
+                ) {
+                    role = 'user';
                 }
+
+                messages.push({ role, content: cleaned });
             });
 
-            return messages;
+            return { messages, newSize: stats.size };
         } catch (e) {
-            console.error(`[SYNAPSE] PB extraction failed: ${e}`);
-            return [];
+            console.error(`[SYNAPSE] PB raw extraction failed: ${e}`);
+            return { messages: [], newSize: lastSize };
         }
     }
     

@@ -44,6 +44,50 @@ export class VscdbAdapter {
     }
 
     /**
+     * [Option 1: Re-indexing Injection]
+     * 지정된 DB(state.vscdb)에 새로운 세션 ID와 .pb 파일 경로를 직접 맵핑합니다.
+     * IDE가 이를 읽고 화면에 대화를 부활시키게 됩니다.
+     */
+    public async injectPbMapping(dbPath: string, pbFilePath: string, sessionId: string): Promise<boolean> {
+        return new Promise((resolve) => {
+            if (!fs.existsSync(dbPath)) {
+                console.error(`[SYNAPSE] DB not found for injection: ${dbPath}`);
+                return resolve(false);
+            }
+
+            // IDE가 실행 중일 때 잠금 문제가 발생할 수 있으므로 조심스럽게 OPEN_READWRITE 시도
+            const writeDb = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err) => {
+                if (err) {
+                    console.error('[SYNAPSE] Failed to open DB in write mode:', err);
+                    return resolve(false);
+                }
+
+                // 맵핑 키 (Antigravity/Gemini 환경에 맞춘 휴리스틱 키 구조)
+                const key = `chat.session.${sessionId}`;
+                const valueObject = {
+                    sessionId: sessionId,
+                    pbPath: pbFilePath,
+                    injectedAt: Date.now(),
+                    isRecovered: true
+                };
+                const valueString = JSON.stringify(valueObject);
+
+                const query = "INSERT OR REPLACE INTO ItemTable (key, value) VALUES (?, ?)";
+                writeDb.run(query, [key, valueString], (insertErr) => {
+                    writeDb.close();
+                    if (insertErr) {
+                        console.error('[SYNAPSE] Failed to inject PB mapping:', insertErr);
+                        resolve(false);
+                    } else {
+                        console.log(`[SYNAPSE] Successfully injected ${pbFilePath} as ${key}`);
+                        resolve(true);
+                    }
+                });
+            });
+        });
+    }
+
+    /**
      * Trajectory Summaries를 추출하여 파싱합니다.
      */
     public async fetchTrajectorySummaries(): Promise<TrajectoryEntry[]> {

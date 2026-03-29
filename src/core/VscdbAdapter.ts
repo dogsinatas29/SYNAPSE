@@ -1,6 +1,21 @@
-import * as sqlite3 from 'sqlite3';
 import * as fs from 'fs';
 import * as path from 'path';
+
+/**
+ * Lazy-loaded sqlite3 for VS Code compatibility
+ */
+let sqlite3: any = null;
+function getSqlite3() {
+    if (!sqlite3) {
+        try {
+            sqlite3 = require('sqlite3');
+        } catch (e) {
+            console.error('[SYNAPSE] Failed to load sqlite3 native module:', e);
+            throw new Error('sqlite3 module not found or incompatible. Please ensure native dependencies are correctly built.');
+        }
+    }
+    return sqlite3;
+}
 
 export interface TrajectoryEntry {
     timestamp?: number;
@@ -9,7 +24,7 @@ export interface TrajectoryEntry {
 }
 
 export class VscdbAdapter {
-    private db: sqlite3.Database | null = null;
+    private db: any = null;
 
     private tmpPath: string | null = null;
 
@@ -25,10 +40,29 @@ export class VscdbAdapter {
             }
 
             // DB 잠금 회피를 위해 임시 복사본 생성
-            this.tmpPath = path.join(process.env.TMPDIR || '/tmp', `state_copy_${Date.now()}.vscdb`);
+            const timestamp = Date.now();
+            this.tmpPath = path.join(process.env.TMPDIR || '/tmp', `state_copy_${timestamp}.vscdb`);
             try {
                 fs.copyFileSync(dbPath, this.tmpPath);
-                this.db = new sqlite3.Database(this.tmpPath, sqlite3.OPEN_READONLY, (err) => {
+                
+                // WAL 파일들도 함께 복사 (커밋되지 않은 데이터 반영을 위해)
+                const walPath = dbPath + '-wal';
+                const shmPath = dbPath + '-shm';
+                try {
+                    if (fs.existsSync(walPath)) {
+                        fs.copyFileSync(walPath, this.tmpPath + '-wal');
+                        console.log('[SYNAPSE] WAL file copied for latest session data.');
+                    }
+                    if (fs.existsSync(shmPath)) {
+                        fs.copyFileSync(shmPath, this.tmpPath + '-shm');
+                        console.log('[SYNAPSE] SHM file copied for memory-resident data.');
+                    }
+                } catch (walErr) {
+                    console.warn('[SYNAPSE] WAL files copy failed (continuing anyway):', walErr);
+                }
+
+                const sqlite = getSqlite3();
+                this.db = new sqlite.Database(this.tmpPath, sqlite.OPEN_READONLY, (err: any) => {
                     if (err) {
                         console.error('[SYNAPSE] Failed to connect to SQLite:', err);
                         resolve(false);
@@ -56,7 +90,8 @@ export class VscdbAdapter {
             }
 
             // IDE가 실행 중일 때 잠금 문제가 발생할 수 있으므로 조심스럽게 OPEN_READWRITE 시도
-            const writeDb = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err) => {
+            const sqlite = getSqlite3();
+            const writeDb = new sqlite.Database(dbPath, sqlite.OPEN_READWRITE, (err: any) => {
                 if (err) {
                     console.error('[SYNAPSE] Failed to open DB in write mode:', err);
                     return resolve(false);
@@ -73,7 +108,7 @@ export class VscdbAdapter {
                 const valueString = JSON.stringify(valueObject);
 
                 const query = "INSERT OR REPLACE INTO ItemTable (key, value) VALUES (?, ?)";
-                writeDb.run(query, [key, valueString], (insertErr) => {
+                writeDb.run(query, [key, valueString], (insertErr: any) => {
                     writeDb.close();
                     if (insertErr) {
                         console.error('[SYNAPSE] Failed to inject PB mapping:', insertErr);
@@ -94,8 +129,8 @@ export class VscdbAdapter {
         return new Promise((resolve) => {
             if (!this.db) return resolve([]);
 
-            const query = "SELECT key, value FROM ItemTable WHERE key LIKE '%trajectorySummaries%' OR key LIKE '%jetski.chat.state%' OR key LIKE '%antigravity%' OR key LIKE '%chat.workspaceState%' OR key LIKE '%history%'";
-            this.db.all(query, (err, rows: any[]) => {
+            const query = "SELECT key, value FROM ItemTable WHERE key LIKE '%trajectorySummaries%' OR key LIKE '%jetski.chat.state%' OR key LIKE '%antigravity%' OR key LIKE '%chat.workspaceState%' OR key LIKE '%history%' OR key LIKE '%session%' OR key LIKE '%request%'";
+            this.db.all(query, (err: any, rows: any[]) => {
                 if (err) {
                     console.error('[SYNAPSE] Query failed:', err);
                     return resolve([]);
@@ -151,6 +186,10 @@ export class VscdbAdapter {
 
         // 3. Structured Data Detection & Fallback
         filteredStrings.forEach(text => {
+            // [v0.2.38] Metadata Filter
+            if (text.includes('workbench.') || text.includes('antigravity.') || text.includes('jetski.')) return;
+            if (text.includes('ItemTable')) return;
+
             // Priority 1: JSON detection
             try {
                 const jsonMatch = text.match(/\{[\s\S]*\}/);
@@ -169,10 +208,18 @@ export class VscdbAdapter {
 
             // Priority 2: Heuristic mapping
             const cleaned = text.replace(/\s+/g, ' ').substring(0, 1000);
-            if (cleaned.includes('?') || /^(어떻게|왜|해줘|보여줘|코드|fix|how|why|explain)/i.test(cleaned)) {
+            
+            // Refined User Detection
+            const userMarkers = ['?', '왜', '어떻게', '해줘', '보여줘', '코드', 'fix', 'how', 'why', 'explain'];
+            const isUser = userMarkers.some(m => cleaned.toLowerCase().includes(m)) && cleaned.length < 500;
+
+            if (isUser) {
                 result.push({ role: 'user', content: cleaned });
             } else {
-                result.push({ role: 'assistant', content: cleaned });
+                // Only push as assistant if it seems like a real sentence (contains space or hangeul)
+                if (cleaned.includes(' ') || /[\uAC00-\uD7A3]/.test(cleaned)) {
+                    result.push({ role: 'assistant', content: cleaned });
+                }
             }
         });
 
@@ -181,10 +228,12 @@ export class VscdbAdapter {
 
     public close() {
         if (this.db) {
-            this.db.close((err) => {
-                if (!err && this.tmpPath && fs.existsSync(this.tmpPath)) {
+            this.db.close((err: any) => {
+                if (!err && this.tmpPath) {
                     try {
-                        fs.unlinkSync(this.tmpPath);
+                        if (fs.existsSync(this.tmpPath)) fs.unlinkSync(this.tmpPath);
+                        if (fs.existsSync(this.tmpPath + '-wal')) fs.unlinkSync(this.tmpPath + '-wal');
+                        if (fs.existsSync(this.tmpPath + '-shm')) fs.unlinkSync(this.tmpPath + '-shm');
                     } catch (e) {}
                 }
             });

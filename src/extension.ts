@@ -29,7 +29,7 @@ import { GeminiParser } from './core/GeminiParser';
 
 import { client, setClient } from './client';
 import { PromptLogger } from './core/PromptLogger';
-import { ClipboardScraperAdapter } from './core/ClipboardScraperAdapter';
+import { DirectChatScraper } from './core/DirectChatScraper';
 import { ChatExtractor, StreamAdapter } from './utils/ChatExtractor';
 import { Logger } from './utils/Logger';
 import { BillingManager } from './core/BillingManager';
@@ -340,7 +340,7 @@ export async function activate(context: vscode.ExtensionContext) {
                         
                         const delay = delta > 10000 ? 1500 : 800;
                         setTimeout(() => {
-                            ClipboardScraperAdapter.scrapeActiveChat(auditLogFilePath!);
+                            DirectChatScraper.scrapeActiveChat(auditLogFilePath!, sessionId);
                         }, delay);
                     }
                 });

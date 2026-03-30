@@ -22,15 +22,15 @@ export class WebviewInterceptor {
     public activate(context: vscode.ExtensionContext) {
         if (this.isArmed) return;
         
-        console.log('[SYNAPSE] WebviewInterceptor: Arming message sniffer (VEIN PIERCER MODE)...');
+        console.log('[SYNAPSE][STEP1] WebviewInterceptor: ACTIVATION SEQUENCE START.');
         
         this.patchWebviewPanelCreation(context);
         this.patchWebviewPanelSerialization(context);
-        this.patchWebviewViewRegistration(context); // [v0.2.46] Add View Provider hooking
+        this.patchWebviewViewRegistration(context);
         
         this.isArmed = true;
+        console.log('[SYNAPSE][STEP1] WebviewInterceptor: ARMED & READY.');
         
-        // Status Bar Update for v0.2.47
         const webviewStatus = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 1003);
         webviewStatus.text = '$(eye) GHOST IN THE SHELL';
         webviewStatus.tooltip = 'SYNAPSE: DOM Spy (v0.2.47) Active';
@@ -120,7 +120,15 @@ export class WebviewInterceptor {
         panel.webview.onDidReceiveMessage((msg: any) => {
             const timestamp = new Date().toISOString();
             
+            // [STEP 4] PING RECEIVED
+            if (msg.command === 'synapse-ghost-pong') {
+                console.log(`[SYNAPSE][STEP4] PING RECEIVED from Webview [${viewType}]`);
+                fs.appendFileSync(interceptHits, `[${timestamp}] [PING] GHOST_PONG from ${viewType}\n`, 'utf-8');
+                return;
+            }
+
             if (msg.command === 'synapse-spy-hit' && msg.text) {
+                console.log(`[SYNAPSE][GHOST_HIT] Capture from [${viewType}]: ${msg.text.substring(0, 50)}...`);
                 const clean = msg.text.replace(/\n/g, ' ').substring(0, 1000);
                 // [v0.2.47] Mirror Loop Suppression for Ghost Hits
                 if (clean.includes('Boundary Violation') || clean.includes('LogicAnalyzer')) return;
@@ -299,12 +307,21 @@ export class WebviewInterceptor {
                 const reportHit = (text) => {
                     if (!text || text.length < 5 || !/[가-힣]/.test(text)) return;
                     if (vscodeApi) {
+                        console.log('[GhostSpy] Sending hit to SYNAPSE');
                         vscodeApi.postMessage({
                             command: 'synapse-spy-hit',
                             text: text.trim()
                         });
                     }
                 };
+
+                // [STEP 4] Connection Check
+                if (vscodeApi) {
+                    console.log('[SYNAPSE][STEP 3] Ghost Spy INJECTED & ARMED');
+                    vscodeApi.postMessage({ command: 'synapse-ghost-pong' });
+                } else {
+                    console.error('[SYNAPSE][ERROR] acquireVsCodeApi FAILED');
+                }
 
                 const observedNodes = new WeakSet();
                 const setupObserver = (root) => {

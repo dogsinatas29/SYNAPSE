@@ -11,6 +11,10 @@ export interface ChatAdapter extends vscode.Disposable {
     id: string;
     start(callback: (msg: ChatMessage) => void): void;
     isSupported(): boolean;
+    pushUser?(sessionId: string, text: string): void;
+    pushChunk?(sessionId: string, chunk: string): void;
+    pushAssistant?(sessionId: string, text: string): void; // [v0.2.44] Direct push support
+    commitAssistant?(sessionId: string): void;
 }
 
 /**
@@ -24,6 +28,31 @@ export class MultiAdapter implements ChatAdapter {
 
     start(callback: (msg: ChatMessage) => void) {
         this.adapters.forEach(a => a.start(callback));
+    }
+
+    public pushUser(sessionId: string, text: string) {
+        this.adapters.forEach(a => {
+            if (a.pushUser) a.pushUser(sessionId, text);
+        });
+    }
+
+    public pushChunk(sessionId: string, chunk: string) {
+        this.adapters.forEach(a => {
+            if (a.pushChunk) a.pushChunk(sessionId, chunk);
+        });
+    }
+
+    public pushAssistant(sessionId: string, text: string) {
+        this.adapters.forEach(a => {
+            if (a.pushAssistant) a.pushAssistant(sessionId, text);
+            else if (a.pushChunk) a.pushChunk(sessionId, text);
+        });
+    }
+
+    public commitAssistant(sessionId: string) {
+        this.adapters.forEach(a => {
+            if (a.commitAssistant) a.commitAssistant(sessionId);
+        });
     }
 
     dispose() {
@@ -61,8 +90,8 @@ export class StreamAdapter implements ChatAdapter {
     private interval: NodeJS.Timeout;
 
     isSupported() { 
-        // [Fixed] Tiered Selection을 위해 명시적 환경 변수 체크만 수행
-        return !!process.env.ANTIGRAVITY_AGENT || !!process.env.SYNAPSE_STREAM_ENABLED;
+        // [v0.2.44] Memory Hooking requires StreamAdapter to be always active
+        return true; 
     }
 
     constructor() {
@@ -116,6 +145,12 @@ export class StreamAdapter implements ChatAdapter {
         // sessionId가 있을 경우 로그 가독성을 위해 추가
         const formatted = sessionId && sessionId !== 'default' ? `[${sessionId}] ${text}` : text;
         this.callback?.({ role: 'user', content: formatted });
+    }
+
+    /** [v0.2.44] Direct assistant push */
+    public pushAssistant(sessionId: string, text: string) {
+        if (!text.trim()) return;
+        this.callback?.({ role: 'assistant', content: text.trim() });
     }
 
     public pushChunk(sessionId: string, chunk: string) {

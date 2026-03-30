@@ -207,8 +207,9 @@ This document defines the rules for how SYNAPSE discovers, parses, and visualize
         };
 
         let fileCount = 0;
-        const scanDir = (dir: string, relPath: string = '') => {
-            if (!fs.existsSync(dir)) return;
+        const MAX_SCAN_DEPTH = 5;
+        const scanDir = (dir: string, relPath: string = '', depth: number = 0) => {
+            if (!fs.existsSync(dir) || depth > MAX_SCAN_DEPTH) return;
             const files = fs.readdirSync(dir);
             for (const file of files) {
                 const fullPath = path.join(dir, file);
@@ -228,7 +229,7 @@ This document defines the rules for how SYNAPSE discovers, parses, and visualize
 
                 if (stat.isDirectory()) {
                     structure.folders.push(currentRelPath);
-                    scanDir(fullPath, currentRelPath);
+                    scanDir(fullPath, currentRelPath, depth + 1);
                 } else {
                     const ext = path.extname(file).toLowerCase();
 

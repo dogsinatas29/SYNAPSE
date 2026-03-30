@@ -2,7 +2,7 @@
     "name": "synapse-visual-architecture",
     "displayName": "SYNAPSE - Visual Architecture Engine",
     "description": "Visual architecture control engine for code outer-space visualization and design",
-    "version": "0.2.40",
+    "version": "0.2.47",
     "publisher": "synapse-team",
     "repository": {
         "type": "git",
@@ -49,6 +49,21 @@
                 "command": "synapse.exportReport",
                 "title": "SYNAPSE: Export Executive Summary PDF",
                 "icon": "$(file-pdf)"
+            },
+            {
+                "command": "synapse.manualPbScan",
+                "title": "SYNAPSE: Manual PB Scan",
+                "icon": "$(search)"
+            },
+            {
+                "command": "synapse.resetEngine",
+                "title": "SYNAPSE: Reset Engine & New Session",
+                "icon": "$(refresh)"
+            },
+            {
+                "command": "synapse.flushLogs",
+                "title": "SYNAPSE: Flush All Audit Logs",
+                "icon": "$(trash)"
             }
         ],
         "keybindings": [

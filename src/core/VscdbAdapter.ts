@@ -131,16 +131,35 @@ export class VscdbAdapter {
 
             const query = "SELECT key, value FROM ItemTable WHERE key LIKE '%trajectorySummaries%' OR key LIKE '%jetski.chat.state%' OR key LIKE '%antigravity%' OR key LIKE '%chat.workspaceState%' OR key LIKE '%history%' OR key LIKE '%session%' OR key LIKE '%request%'";
             this.db.all(query, (err: any, rows: any[]) => {
+                const entries: TrajectoryEntry[] = [];
+
                 if (err) {
                     console.error('[SYNAPSE] Query failed:', err);
-                    return resolve([]);
+                } else {
+                    rows.forEach(row => {
+                        const extracted = this.heuristicExtract(row.value);
+                        entries.push(...extracted);
+                    });
                 }
 
-                const entries: TrajectoryEntry[] = [];
-                rows.forEach(row => {
-                    const extracted = this.heuristicExtract(row.value);
-                    entries.push(...extracted);
+                // [v0.2.41] WAL Sniffer Fallback
+                // db query may miss uncheckpointed WAL. Parse WAL binary directly just in case.
+                let walEntries: TrajectoryEntry[] = [];
+                if (this.tmpPath && fs.existsSync(this.tmpPath + '-wal')) {
+                    try {
+                        const walBuffer = fs.readFileSync(this.tmpPath + '-wal');
+                        console.log(`[SYNAPSE] WAL Miner: Scraping ${walBuffer.length} bytes from WAL fallback.`);
+                        walEntries = this.heuristicExtract(walBuffer);
+                    } catch (we) {
+                        console.warn('[SYNAPSE] WAL Miner failed:', we);
+                    }
+                }
+                
+                // Merge wal Entries
+                walEntries.forEach(we => {
+                     entries.push(we);
                 });
+
                 resolve(entries);
             });
         });

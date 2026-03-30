@@ -28,19 +28,38 @@ export class DirectChatScraper {
 
             // [Diagnostic Probe] 0. 관련 명령어 조사
             const allCommands = await vscode.commands.getCommands(true);
-            const geminiCommands = allCommands.filter(cmd => /gemini/i.test(cmd)).sort();
-            if (geminiCommands.length > 0) {
+            const chatAiCommands = allCommands.filter(cmd => /gemini|chat|ai|cloudcode/i.test(cmd)).sort();
+            if (chatAiCommands.length > 0) {
                  promptLogger.appendAction(auditLogFilePath, 'system_msg',
-                     `Diagnostic: Found gemini commands: [${geminiCommands.join(', ')}]`, projectRoot);
+                     `Diagnostic: Found relevant commands: [${chatAiCommands.join(', ')}]`, projectRoot);
             }
+
+            // [Action 2] 로그 파일 보호 (Inception 방지)
+            const activeEditor = vscode.window.activeTextEditor;
+            if (activeEditor && activeEditor.document.uri.fsPath.includes('.synapse_contexts')) {
+                 promptLogger.appendAction(auditLogFilePath, 'system_msg',
+                     'Scraper: Active editor is a log file. Aborting copy to prevent inception.', projectRoot);
+                 return;
+            }
+
+            // [Action 3] 진짜 커맨드 재탐색: 강제 개문 (Force Open) 전략
+            promptLogger.appendAction(auditLogFilePath, 'system_msg',
+                'Scraper: Force opening chat panel...', projectRoot);
+            try {
+                await vscode.commands.executeCommand('workbench.action.chat.open');
+                await new Promise(resolve => setTimeout(resolve, 500));
+            } catch (e) {}
 
             // [Step 1] 채팅 패널 포커스 (비토글 방식 우선)
             // 1순위: 제미나이 강제 활성화 (non-toggling)
             // 주의: toggle 커맨드는 창이 열려있을 때 창을 닫아버리므로 제외/후순위 처리
             const focusCommands = [
+                'cloudcode.gemini.focus',
+                'cloudcode.chat.focus',
+                'gemini.focus',
                 'workbench.view.extension.google-gemini',
                 'workbench.view.extension.gemini',
-                'gemini.focus',
+                'workbench.action.chat.open',
                 'workbench.action.chat.focus',
                 'workbench.panel.chat.view.copilot.focus', // 최후의 보루
                 'workbench.action.focusChat',
@@ -79,27 +98,26 @@ export class DirectChatScraper {
                 'gemini.chat.copyAll',
                 'workbench.action.chat.copyAll',
                 'github.copilot.chat.copyAll',
-                'workbench.action.chat.export',
-                'BLIND_COPY_FALLBACK' // 'Select All' + 'Copy'
-            ];
+                'workbench.action.chat.export'
+            ]; // [Action 1] BLIND_COPY_FALLBACK 제거
 
             while (retryCount < MAX_RETRIES) {
                 for (const cmd of copyCommands) {
                     try {
-                        if (cmd === 'BLIND_COPY_FALLBACK') {
-                             // Blind Copy: 전체 선택 후 복사 액션 시뮬레이션
-                             await vscode.commands.executeCommand('editor.action.selectAll');
-                             await new Promise(resolve => setTimeout(resolve, 150));
-                             await vscode.commands.executeCommand('editor.action.clipboardCopyAction');
-                        } else {
-                             await vscode.commands.executeCommand(cmd);
-                        }
+                         await vscode.commands.executeCommand(cmd);
 
                         // Linux 클립보드 동기화 딜레이 대기
                         await new Promise(resolve => setTimeout(resolve, 700));
                         const candidate = await vscode.env.clipboard.readText();
 
                         if (candidate && candidate.trim().length > 0 && candidate.trim() !== backupText.trim()) {
+                            // Failsafe 2: 로그 데이터인 '# Session'을 직접 확인
+                            if (candidate.includes('# Session ') && candidate.includes('Pure Event Channel')) {
+                                promptLogger.appendAction(auditLogFilePath, 'system_msg',
+                                    `Scraper: Rejected candidate because it contains log inception data.`, projectRoot);
+                                continue;
+                            }
+
                             copiedChat = candidate;
                             promptLogger.appendAction(auditLogFilePath, 'system_msg',
                                 `Scraper: Copy success via ${cmd} (len: ${copiedChat.length})`, projectRoot);

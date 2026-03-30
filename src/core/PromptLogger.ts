@@ -47,7 +47,7 @@ export class PromptLogger {
         const timestampStr = `${datePart} ${hours}:${minutes}:${seconds}`;
 
         if (!fs.existsSync(filePath)) {
-            const header = `# Session — ${timestampStr}\n\n*Pure Event Channel Audit Log Activated (v0.2.29 Stablized)*\n\n---\n`;
+            const header = `# Session — ${timestampStr}\n\n*Pure Event Channel Audit Log Activated (v0.2.46 Interceptor Mode)*\n\n---\n`;
             fs.writeFileSync(filePath, header, 'utf-8');
             this.gitStageFile(projectRoot, filePath);
         }
@@ -59,9 +59,18 @@ export class PromptLogger {
 
     public appendUser(filePath: string, content: string) {
         if (!content.trim()) return;
-        const entry = `\n## User\n${content.trim()}\n`;
+        
+        let entry = '';
+        if (content.startsWith('[GHOST]')) {
+            const cleanContent = content.substring(7).trim();
+            entry = `\n### 👻 Ghost Spy (DOM Capture)\n${cleanContent}\n`;
+        } else {
+            entry = `\n## User\n${content.trim()}\n`;
+        }
+
         if (this.lastLogContent === entry) return;
         this.lastLogContent = entry;
+        console.log(`[SYNAPSE][PROMPT] Appending ${content.startsWith('[GHOST]') ? 'Ghost' : 'User'} content (${content.length} chars)`);
         this.write(filePath, entry);
     }
 
@@ -71,6 +80,7 @@ export class PromptLogger {
         const entry = `\n## Assistant\n${cleaned}\n`;
         if (this.lastLogContent === entry) return;
         this.lastLogContent = entry;
+        console.log(`[SYNAPSE][PROMPT] Appending Assistant content (${content.length} chars)`);
         this.write(filePath, entry);
     }
 
@@ -83,7 +93,11 @@ export class PromptLogger {
 
         // Actions 섹션이 이미 있는지 확인 후 처리
         let logContent = '';
-        try { logContent = fs.readFileSync(filePath, 'utf-8'); } catch(e) {}
+        try { 
+            if (fs.existsSync(filePath)) {
+                logContent = fs.readFileSync(filePath, 'utf-8'); 
+            }
+        } catch(e) {}
 
         let entry = '';
         if (!logContent.includes('\n## Actions\n')) {
@@ -92,12 +106,45 @@ export class PromptLogger {
             entry = `${actionStr}\n`;
         }
         
-        fs.appendFileSync(filePath, entry, 'utf-8');
+        this.write(filePath, entry);
+        console.log(`[SYNAPSE][PROMPT] Appending Action: ${type} ${file}`);
         this.gitStageFile(projectRoot, filePath);
+    }
+
+    public resetSession() {
+        console.log(`[SYNAPSE][PROMPT] Resetting session. Current was: ${this.currentSessionPath}`);
+        this.currentSessionPath = null;
+        this.lastAction = '';
+        this.lastLogContent = '';
+    }
+
+    public clearAllLogs(projectRoot: string) {
+        const contextDir = path.join(projectRoot, '.synapse_contexts');
+        if (fs.existsSync(contextDir)) {
+            const files = fs.readdirSync(contextDir);
+            files.forEach(f => {
+                const p = path.join(contextDir, f);
+                if (fs.statSync(p).isFile()) {
+                    fs.unlinkSync(p);
+                }
+            });
+            console.log(`[SYNAPSE][PROMPT] Purged all files in ${contextDir}`);
+        }
+        this.resetSession();
     }
 
     private write(filePath: string, content: string) {
         try {
+            // [v0.2.45.2] Isolation Filter: Block strings containing internal module names
+            const internalKeywords = ['LogicAnalyzer', 'PromptLogger', 'ChatExtractor', 'StreamAdapter', 'VscdbAdapter'];
+            const blockLog = internalKeywords.some(k => content.includes(k) && content.includes('Boundary Violation'));
+            
+            if (blockLog) {
+                console.log(`[SYNAPSE][PROMPT] Blocked boundary violation noise from log.`);
+                return;
+            }
+
+            console.log(`[SYNAPSE][PROMPT] Writing to: ${filePath}`);
             fs.appendFileSync(filePath, content, 'utf-8');
             // 새 대화가 시작되면 액션 중복 체크 초기화
             this.lastAction = ''; 

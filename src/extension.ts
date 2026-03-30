@@ -25,11 +25,15 @@ import { CanvasPanel } from './webview/CanvasPanel';
 import { BootstrapEngine } from './bootstrap/BootstrapEngine';
 import { LogicAnalyzer } from './core/LogicAnalyzer';
 import { GeminiParser } from './core/GeminiParser';
+import { CommandInterceptor } from './core/CommandInterceptor';
+import { WebviewInterceptor } from './core/WebviewInterceptor';
+
+
 
 
 import { client, setClient } from './client';
 import { PromptLogger } from './core/PromptLogger';
-import { DirectChatScraper } from './core/DirectChatScraper';
+import { DirectPbExtractor } from './core/DirectPbExtractor';
 import { ChatExtractor, StreamAdapter } from './utils/ChatExtractor';
 import { Logger } from './utils/Logger';
 import { BillingManager } from './core/BillingManager';
@@ -45,6 +49,97 @@ export async function activate(context: vscode.ExtensionContext) {
         console.log('[SYNAPSE] Starting activation sequence...');
         const version = context.extension.packageJSON.version;
         vscode.window.showInformationMessage(`SYNAPSE: Initializing (v${version})...`);
+
+        // [v0.2.44] Activation Hoisting: Initialize logging infrastructure FIRST
+        const projectRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
+        const promptLogger = PromptLogger.getInstance();
+        let auditLogFilePath: string | null = null;
+
+        if (projectRoot) {
+            auditLogFilePath = promptLogger.initializeSession(projectRoot);
+            console.log(`[SYNAPSE] Audit Log path secured: ${auditLogFilePath}`);
+        }
+
+        const chatAdapter = ChatExtractor.initialize(context);
+        chatAdapter.start((msg) => {
+            if (auditLogFilePath) {
+                if (msg.role === 'user') {
+                    promptLogger.appendUser(auditLogFilePath, msg.content);
+                } else if (msg.role === 'assistant') {
+                    promptLogger.appendAssistant(auditLogFilePath, msg.content);
+                }
+            }
+        });
+        console.log('[SYNAPSE] ChatExtractor (Memory) Pipeline Initialized.');
+
+        // [v0.2.44] Register synapse.logPrompt EARLY
+        context.subscriptions.push(
+            vscode.commands.registerCommand('synapse.logPrompt', async (data: any) => {
+                const adapter = ChatExtractor.getAdapter() as any;
+                if (!adapter) return;
+
+                const { sessionId, prompt, chunk, finish, workspacePath, isDiagnostic, source } = data;
+                const sid = sessionId || 'default';
+
+                const targetProjectRoot = workspacePath || vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
+                if (targetProjectRoot && !auditLogFilePath) {
+                    auditLogFilePath = promptLogger.initializeSession(targetProjectRoot);
+                }
+
+                if (!auditLogFilePath) return;
+
+                // [v0.2.44 Senior] Diagnostic logic (for interceptor feedback)
+                if (isDiagnostic && prompt && targetProjectRoot) {
+                    promptLogger.appendAction(auditLogFilePath, 'system_msg', prompt, targetProjectRoot);
+                    return;
+                }
+
+                if (prompt) {
+                    adapter.pushUser(sid, prompt);
+                }
+                if (chunk) {
+                    adapter.pushChunk(sid, chunk);
+                }
+                if (finish) {
+                    adapter.commitAssistant(sid);
+                }
+            })
+        );
+
+        // [v0.2.44] Activate Memory Interceptor (Highest Priority)
+        CommandInterceptor.getInstance().activate(context);
+
+        // [v0.2.46] Activate Webview Interceptor (The Vein Piercer)
+        WebviewInterceptor.getInstance().activate(context);
+
+        // [v0.2.45.2] Reset & Isolation Commands
+        context.subscriptions.push(
+            vscode.commands.registerCommand('synapse.resetEngine', async () => {
+                const projectRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
+                if (projectRoot) {
+                    promptLogger.resetSession();
+                    // Re-initialize session to start fresh log
+                    auditLogFilePath = promptLogger.initializeSession(projectRoot);
+                    vscode.window.showInformationMessage('SYNAPSE Engine Reset: Memory buffers flushed and new audit session started.');
+                }
+            }),
+            vscode.commands.registerCommand('synapse.flushLogs', async () => {
+                const projectRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
+                if (projectRoot) {
+                    const confirm = await vscode.window.showWarningMessage(
+                        'This will DELETE all session audit logs in .synapse_contexts/. Proceed?',
+                        { modal: true }, '💣 Delete All'
+                    );
+                    if (confirm === '💣 Delete All') {
+                        promptLogger.clearAllLogs(projectRoot);
+                        auditLogFilePath = null;
+                        vscode.window.showInformationMessage('All local audit logs have been purged.');
+                    }
+                }
+            })
+        );
+
+
 
         // [v0.2.20] Mandatory Principle Load
         const firstFolder = vscode.workspace.workspaceFolders?.[0];
@@ -268,47 +363,7 @@ export async function activate(context: vscode.ExtensionContext) {
             })
         );
 
-        context.subscriptions.push(
-            vscode.commands.registerCommand('synapse.logPrompt', async (data: any) => {
-                const adapter = ChatExtractor.getAdapter();
-                if (!(adapter instanceof StreamAdapter)) return;
 
-                const { sessionId, prompt, chunk, finish, workspacePath } = data;
-                
-                if (!sessionId && (chunk || finish)) {
-                    console.warn("[SYNAPSE] Missing sessionId in logPrompt call. Skipping stream data.");
-                    return;
-                }
-
-                const sid = sessionId || 'default';
-
-                const projectRoot = workspacePath || vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
-                if (projectRoot && !auditLogFilePath) {
-                    auditLogFilePath = promptLogger.initializeSession(projectRoot);
-                }
-
-                if (!auditLogFilePath) return;
-
-                if (prompt) {
-                    adapter.pushUser(sid, prompt);
-                }
-                if (chunk) {
-                    adapter.pushChunk(sid, chunk);
-                }
-                if (finish) {
-                    adapter.commitAssistant(sid);
-                }
-            })
-        );
-
-        // CTRL+ALT+M — 토글 레코딩 모드
-        // 1번째 누름: 레코딩 시작 (입력창 없음, 상태바 표시)
-        // 2번째 누름: 레코딩 종료 + git diff 자동 캡처 + .synapse_contexts/ 저장
-        console.log('[SYNAPSE] Initializing PromptLogger...');
-        const promptLogger = PromptLogger.getInstance();
-
-        // 레코딩 상태
-        let auditLogFilePath: string | null = null;
         let lastChatFilePos = 0;
         let currentChatFile: string | null = null;
 
@@ -325,48 +380,92 @@ export async function activate(context: vscode.ExtensionContext) {
             auditLogFilePath = promptLogger.initializeSession(projectRoot);
             console.log(`[SYNAPSE] Audit Log initialized: ${auditLogFilePath}`);
 
-            // [v0.2.34] PbSessionWatcher: Antigravity 실시간 대기 채널
-            // .pb 파일 변경 감지 시 즉시 UI 스크레이퍼를 구동하여 무결성 보장
-            const antigravityPath = ChatExtractor.getAntigravityConversationsPath();
-            console.log(`[SYNAPSE] Searching for Antigravity path: ${antigravityPath || 'NOT FOUND'}`);
-            
-            if (antigravityPath) {
-                promptLogger.appendAction(auditLogFilePath, 'system_msg', `Watching Antigravity: ${antigravityPath}`, projectRoot);
-                const pbWatcher = new PbSessionWatcher();
-                pbWatcher.start(antigravityPath, (sessionId: string, delta: number) => {
-                    if (auditLogFilePath) {
-                        // [v0.2.34-debug] 트리거 수신 확인용 로그
-                        promptLogger.appendAction(auditLogFilePath, 'system_msg', `PB Trigger Received: ${sessionId} (delta: ${delta})`, projectRoot);
-                        
-                        const delay = delta > 10000 ? 1500 : 800;
-                        setTimeout(() => {
-                            DirectChatScraper.scrapeActiveChat(auditLogFilePath!, sessionId);
-                        }, delay);
+            // [v0.2.44] Stream/Event Adapter Initialization
+            const chatAdapter = ChatExtractor.initialize(context);
+            chatAdapter.start((msg) => {
+                if (auditLogFilePath) {
+                    if (msg.role === 'user') {
+                        promptLogger.appendUser(auditLogFilePath, msg.content);
+                    } else if (msg.role === 'assistant') {
+                        promptLogger.appendAssistant(auditLogFilePath, msg.content);
                     }
-                });
-                context.subscriptions.push({ dispose: () => pbWatcher.dispose() });
-                console.log('[SYNAPSE] PbSessionWatcher armed (Hybrid Scraper Pipeline).');
-            } else {
-                promptLogger.appendAction(auditLogFilePath, 'system_msg', 'Antigravity path NOT FOUND', projectRoot);
-                console.warn('[SYNAPSE] PbSessionWatcher NOT armed: Antigravity conversation directory unavailable.');
+                }
+            });
+            console.log('[SYNAPSE] ChatExtractor (Memory) Pipeline Initialized.');
+
+            // [v0.2.44] PbSessionWatcher DISABLED in favor of CommandInterceptor
+            /*
+            if (antigravityPath) {
+                // ... (existing watcher logic)
             }
+            */
+            console.log('[SYNAPSE] PbSessionWatcher STANDBY (Interceptor Priority).');
+
+            // [v0.2.42_hotfix] Manual PB Scan Command
+            context.subscriptions.push(
+                vscode.commands.registerCommand('synapse.manualPbScan', async () => {
+                    const antigravityPath = ChatExtractor.getAntigravityConversationsPath();
+                    const projectRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
+                    
+                    if (!auditLogFilePath && projectRoot) {
+                        auditLogFilePath = promptLogger.initializeSession(projectRoot);
+                    }
+
+                    if (antigravityPath && auditLogFilePath && projectRoot) {
+                        vscode.window.showInformationMessage('PB Miner: Starting manual scan...');
+                        try {
+                            const files = fs.readdirSync(antigravityPath).filter(f => f.endsWith('.pb'));
+                            promptLogger.appendAction(auditLogFilePath, 'system_msg', `PB Miner: Manual scan started. Found ${files.length} sessions.`, projectRoot);
+                            
+                            for (const f of files) {
+                                const pbFilePath = path.join(antigravityPath, f);
+                                const sessionId = f.replace('.pb', '');
+                                await DirectPbExtractor.extractAndLog(auditLogFilePath, pbFilePath, sessionId, projectRoot);
+                            }
+                            vscode.window.showInformationMessage('PB Miner: Manual scan completed.');
+                        } catch (err: any) {
+                            vscode.window.showErrorMessage(`Manual scan failed: ${err.message}`);
+                        }
+                    } else {
+                        vscode.window.showErrorMessage('Antigravity path or Audit Log not initialized.');
+                    }
+                })
+            );
         };
 
-        initAuditLog();
+        // initAuditLog(); // [v0.2.44] Disabled in favor of hoisted initialization
+
+        // [v0.2.46] Isolation Filter: Internal project files should not be logged to audit session
+        const isInternalFile = (relPath: string) => {
+            return relPath.startsWith('.synapse_contexts') || 
+                   relPath.startsWith('src/') || 
+                   relPath.startsWith('core/') || 
+                   relPath.startsWith('mile_stone/') || 
+                   relPath.startsWith('release_note/') || 
+                   relPath.startsWith('dist/') || 
+                   relPath.startsWith('node_modules/') || 
+                   relPath.endsWith('project_state.json') || 
+                   relPath.endsWith('package.json') || 
+                   relPath.endsWith('tsconfig.json') ||
+                   relPath.endsWith('GEMINI.md');
+        };
 
         // [Pure Event Channel] Real-time File Action Tracking
         context.subscriptions.push(
             vscode.workspace.onDidOpenTextDocument(doc => {
                 if (auditLogFilePath && doc.uri.scheme === 'file') {
                     const relPath = vscode.workspace.asRelativePath(doc.uri);
-                    if (!relPath.startsWith('.synapse_contexts') && !relPath.includes('node_modules')) {
-                        promptLogger.appendAction(auditLogFilePath, 'read', relPath, vscode.workspace.asRelativePath(doc.uri));
+                    if (!isInternalFile(relPath)) {
+                        promptLogger.appendAction(auditLogFilePath, 'read', relPath, vscode.workspace.workspaceFolders![0].uri.fsPath);
                     }
                 }
             }),
             vscode.workspace.onDidSaveTextDocument(doc => {
                 if (auditLogFilePath && doc.uri.scheme === 'file') {
-                    promptLogger.appendAction(auditLogFilePath, 'modify', vscode.workspace.asRelativePath(doc.uri), vscode.workspace.workspaceFolders![0].uri.fsPath);
+                    const relPath = vscode.workspace.asRelativePath(doc.uri);
+                    if (isInternalFile(relPath)) return;
+                    
+                    promptLogger.appendAction(auditLogFilePath, 'modify', relPath, vscode.workspace.workspaceFolders![0].uri.fsPath);
                 }
             }),
             vscode.workspace.onDidCreateFiles(e => {
@@ -437,7 +536,7 @@ export async function activate(context: vscode.ExtensionContext) {
         // [v0.2.22] Final Audit Log Initialization - Force start after UI is ready
         setTimeout(() => {
             console.log('[SYNAPSE] Triggering final audit log sync sequence...');
-            initAuditLog();
+            // [v0.2.44] Redundant initAuditLog removed
         }, 2000);
 
         context.subscriptions.push(

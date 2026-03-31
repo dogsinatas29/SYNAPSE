@@ -2294,6 +2294,12 @@
         "style": "solid",
         "thickness": 2
       }
+    },
+    {
+      "from": "node_architecture_md_1774264406887",
+      "to": "node_reporting_md_1774264406887",
+      "type": "include",
+      "weight": 1
     }
   ],
   "gemini_md_path": "/home/dogsinatas/TypeScript_project/antigravity-extension-vis/GEMINI.md",
@@ -2499,8 +2505,8 @@
       },
       "id": "node_build_guard_js_1774264406887",
       "position": {
-        "x": 624.9463910634254,
-        "y": 3345.784643558521
+        "x": 1600,
+        "y": 2960
       },
       "status": "proposed",
       "type": "source",
@@ -2562,8 +2568,8 @@
       },
       "id": "node_fix_cluster_sh_1774264406887",
       "position": {
-        "x": 344.53977754448727,
-        "y": 3356.158443529642
+        "x": 1920,
+        "y": 2840
       },
       "status": "proposed",
       "type": "source",
@@ -2730,8 +2736,8 @@
       },
       "id": "node_src_bootstrap_BootstrapEngine_ts_1774264406887",
       "position": {
-        "x": 813.5791509813364,
-        "y": 2405.88877567491
+        "x": 2360,
+        "y": 2840
       },
       "status": "proposed",
       "type": "source",
@@ -2751,8 +2757,8 @@
       },
       "id": "node_src_cli_ts_1774264406887",
       "position": {
-        "x": 1149.6559528295334,
-        "y": 2000.6092764690547
+        "x": 2680,
+        "y": 1040
       },
       "status": "proposed",
       "type": "source",
@@ -2772,8 +2778,8 @@
       },
       "id": "node_src_client_ts_1774264406887",
       "position": {
-        "x": 390.07945550075584,
-        "y": 2285.88877567491
+        "x": 3000,
+        "y": 1040
       },
       "status": "proposed",
       "type": "source",
@@ -2793,8 +2799,8 @@
       },
       "id": "node_src_extension_ts_1774264406887",
       "position": {
-        "x": 1388.8620532771436,
-        "y": 1072.1541790536414
+        "x": 1720,
+        "y": 2960
       },
       "status": "proposed",
       "type": "source",
@@ -2814,8 +2820,8 @@
       },
       "id": "node_src_core_AiOrchestrator_ts_1774264406887",
       "position": {
-        "x": 144.469052843972,
-        "y": 803.136680136569
+        "x": 120,
+        "y": 1280
       },
       "status": "proposed",
       "type": "source",
@@ -2835,8 +2841,8 @@
       },
       "id": "node_src_core_ArchitectureDSL_ts_1774264406887",
       "position": {
-        "x": 344.4690528439725,
-        "y": 683.1366801365685
+        "x": 440,
+        "y": 1280
       },
       "status": "proposed",
       "type": "source",
@@ -2856,8 +2862,8 @@
       },
       "id": "node_src_core_BillingManager_ts_1774264406887",
       "position": {
-        "x": 544.4690528439725,
-        "y": 683.1366801365685
+        "x": 760,
+        "y": 1280
       },
       "status": "proposed",
       "type": "source",
@@ -2877,8 +2883,8 @@
       },
       "id": "node_src_core_DatabaseEngine_ts_1774264406887",
       "position": {
-        "x": 744.4690528439728,
-        "y": 683.1366801365685
+        "x": 1080,
+        "y": 1280
       },
       "status": "proposed",
       "type": "source",
@@ -2898,8 +2904,8 @@
       },
       "id": "node_src_core_EdgeCodeRefactorer_ts_1774264406887",
       "position": {
-        "x": 144.469052843972,
-        "y": 803.136680136569
+        "x": 1400,
+        "y": 1280
       },
       "status": "proposed",
       "type": "source",
@@ -2919,8 +2925,8 @@
       },
       "id": "node_src_core_FileScanner_ts_1774264406887",
       "position": {
-        "x": 344.4690528439725,
-        "y": 683.1366801365685
+        "x": 1720,
+        "y": 2360
       },
       "status": "proposed",
       "type": "source",
@@ -2940,8 +2946,8 @@
       },
       "id": "node_src_core_FlowScanner_ts_1774264406887",
       "position": {
-        "x": 544.4690528439725,
-        "y": 683.1366801365685
+        "x": 2360,
+        "y": 2480
       },
       "status": "proposed",
       "type": "source",
@@ -2961,8 +2967,8 @@
       },
       "id": "node_src_core_FlowchartGenerator_ts_1774264406887",
       "position": {
-        "x": 744.4690528439728,
-        "y": 683.1366801365685
+        "x": 2040,
+        "y": 2360
       },
       "status": "proposed",
       "type": "source",
@@ -2982,8 +2988,8 @@
       },
       "id": "node_src_core_GeminiParser_ts_1774264406887",
       "position": {
-        "x": 144.469052843972,
-        "y": 803.136680136569
+        "x": 2680,
+        "y": 2360
       },
       "status": "proposed",
       "type": "source",
@@ -3003,8 +3009,8 @@
       },
       "id": "node_src_core_LogicAnalyzer_ts_1774264406887",
       "position": {
-        "x": 344.4690528439725,
-        "y": 683.1366801365685
+        "x": 3000,
+        "y": 2360
       },
       "status": "proposed",
       "type": "source",
@@ -3024,8 +3030,8 @@
       },
       "id": "node_src_core_PromptLogger_ts_1774264406887",
       "position": {
-        "x": 544.4690528439725,
-        "y": 683.1366801365685
+        "x": 120,
+        "y": 1520
       },
       "status": "proposed",
       "type": "source",
@@ -3045,8 +3051,8 @@
       },
       "id": "node_src_core_ReportExporter_ts_1774264406887",
       "position": {
-        "x": 744.4690528439728,
-        "y": 683.1366801365685
+        "x": 440,
+        "y": 1520
       },
       "status": "proposed",
       "type": "source",
@@ -3066,8 +3072,8 @@
       },
       "id": "node_src_core_RuleEngine_ts_1774264406887",
       "position": {
-        "x": 144.469052843972,
-        "y": 803.136680136569
+        "x": 760,
+        "y": 1520
       },
       "status": "proposed",
       "type": "source",
@@ -3087,8 +3093,8 @@
       },
       "id": "node_src_core_VirtualDebugger_ts_1774264406887",
       "position": {
-        "x": 344.4690528439725,
-        "y": 683.1366801365685
+        "x": 1080,
+        "y": 1520
       },
       "status": "proposed",
       "type": "source",
@@ -3108,8 +3114,8 @@
       },
       "id": "node_src_explorer_ArchitectureExplorer_ts_1774264406887",
       "position": {
-        "x": 988.8620532771426,
-        "y": 2405.88877567491
+        "x": 1400,
+        "y": 2960
       },
       "status": "proposed",
       "type": "source",
@@ -3129,8 +3135,8 @@
       },
       "id": "node_src_rust_checker_mod_rs_1774264406887",
       "position": {
-        "x": 289.70225243967883,
-        "y": 1765.5183787937403
+        "x": 2040,
+        "y": 2840
       },
       "status": "proposed",
       "type": "source",
@@ -3150,8 +3156,8 @@
       },
       "id": "node_src_rust_checker_reporter_rs_1774264406887",
       "position": {
-        "x": 121.43235346485139,
-        "y": 2047.9926766712035
+        "x": 2360,
+        "y": 2840
       },
       "status": "proposed",
       "type": "source",
@@ -3171,8 +3177,8 @@
       },
       "id": "node_src_rust_checker_state_checker_rs_1774264406887",
       "position": {
-        "x": 181.38605385470507,
-        "y": 1897.5725770899348
+        "x": 2680,
+        "y": 2840
       },
       "status": "proposed",
       "type": "source",
@@ -3192,8 +3198,8 @@
       },
       "id": "node_src_server_server_ts_1774264406887",
       "position": {
-        "x": 278.25675525529135,
-        "y": 1047.6222797900323
+        "x": 3000,
+        "y": 2600
       },
       "status": "proposed",
       "type": "source",
@@ -3213,8 +3219,8 @@
       },
       "id": "node_src_server_standalone_ts_1774264406887",
       "position": {
-        "x": 509.3781551686576,
-        "y": 1332.2004786637906
+        "x": 120,
+        "y": 2600
       },
       "status": "proposed",
       "type": "source",
@@ -3234,8 +3240,8 @@
       },
       "id": "node_src_test_ArchitectureDSL_test_ts_1774264406887",
       "position": {
-        "x": 715.0280512556783,
-        "y": 1255.0982792124744
+        "x": 440,
+        "y": 2720
       },
       "status": "proposed",
       "type": "source",
@@ -3255,8 +3261,8 @@
       },
       "id": "node_src_test_FileScanner_test_ts_1774264406887",
       "position": {
-        "x": 915.028051255679,
-        "y": 1804.2083773498375
+        "x": 760,
+        "y": 2720
       },
       "status": "proposed",
       "type": "source",
@@ -3276,8 +3282,8 @@
       },
       "id": "node_src_test_FlowchartGenerator_test_ts_1774264406887",
       "position": {
-        "x": 1115.0280512556783,
-        "y": 1804.2083773498375
+        "x": 1080,
+        "y": 2720
       },
       "status": "proposed",
       "type": "source",
@@ -3297,8 +3303,8 @@
       },
       "id": "node_src_test_GeminiParser_test_ts_1774264406887",
       "position": {
-        "x": 1315.0280512556783,
-        "y": 1804.2083773498375
+        "x": 1400,
+        "y": 2720
       },
       "status": "proposed",
       "type": "source",
@@ -3318,8 +3324,8 @@
       },
       "id": "node_src_test_LogicAnalyzer_test_ts_1774264406887",
       "position": {
-        "x": 715.0280512556783,
-        "y": 1255.0982792124744
+        "x": 1720,
+        "y": 2720
       },
       "status": "proposed",
       "type": "source",
@@ -3339,8 +3345,8 @@
       },
       "id": "node_src_test_SchemaValidation_test_ts_1774264406887",
       "position": {
-        "x": 915.028051255679,
-        "y": 1804.2083773498375
+        "x": 2360,
+        "y": 2720
       },
       "status": "proposed",
       "type": "source",
@@ -3360,8 +3366,8 @@
       },
       "id": "node_src_test_VirtualDebugger_test_ts_1774264406887",
       "position": {
-        "x": 1115.0280512556783,
-        "y": 1804.2083773498375
+        "x": 2680,
+        "y": 2720
       },
       "status": "proposed",
       "type": "source",
@@ -3381,8 +3387,8 @@
       },
       "id": "node_src_test_manual_verify_iron_guard_ts_1774264406887",
       "position": {
-        "x": 1315.0280512556783,
-        "y": 1804.2083773498375
+        "x": 2040,
+        "y": 2720
       },
       "status": "proposed",
       "type": "source",
@@ -3402,8 +3408,8 @@
       },
       "id": "node_src_test_visualHints_test_ts_1774264406887",
       "position": {
-        "x": 715.0280512556783,
-        "y": 1255.0982792124744
+        "x": 3000,
+        "y": 2720
       },
       "status": "proposed",
       "type": "source",
@@ -3423,8 +3429,8 @@
       },
       "id": "node_src_types_schema_ts_1774264406887",
       "position": {
-        "x": 988.8620532771426,
-        "y": 2405.88877567491
+        "x": 120,
+        "y": 2720
       },
       "status": "proposed",
       "type": "source",
@@ -3444,8 +3450,8 @@
       },
       "id": "node_src_utils_ChatExtractor_ts_1774264406887",
       "position": {
-        "x": -0.764146751734863,
-        "y": 2606.3429699168496
+        "x": 440,
+        "y": 2840
       },
       "status": "proposed",
       "type": "source",
@@ -3465,8 +3471,8 @@
       },
       "id": "node_src_utils_Logger_ts_1774264406887",
       "position": {
-        "x": 199.23585324826576,
-        "y": 2606.3429699168496
+        "x": 1080,
+        "y": 2840
       },
       "status": "proposed",
       "type": "source",
@@ -3486,8 +3492,8 @@
       },
       "id": "node_src_utils_exclusionRules_ts_1774264406887",
       "position": {
-        "x": 399.23585324826536,
-        "y": 2606.3429699168496
+        "x": 760,
+        "y": 2840
       },
       "status": "proposed",
       "type": "source",
@@ -3507,8 +3513,8 @@
       },
       "id": "node_src_utils_visualHints_ts_1774264406887",
       "position": {
-        "x": 599.2358532482655,
-        "y": 2606.3429699168496
+        "x": 1400,
+        "y": 2840
       },
       "status": "proposed",
       "type": "source",
@@ -3528,8 +3534,8 @@
       },
       "id": "node_src_webview_CanvasPanel_ts_1774264406887",
       "position": {
-        "x": 1071.852453046118,
-        "y": 2751.5761695125534
+        "x": 1720,
+        "y": 2840
       },
       "status": "proposed",
       "type": "source",
@@ -3540,13 +3546,13 @@
   ],
   "project_name": "antigravity-extension-vis",
   "view": {
-    "offsetX": 694.3133754943607,
-    "offsetY": -49.80514343288934,
-    "zoom": 0.1927933838677729
+    "offsetX": 83.75079698079747,
+    "offsetY": -165.4146260721585,
+    "zoom": 0.6437557895204026
   },
   "_iron_guard": {
     "version": "0.2.18.1",
-    "byte_size": 63111,
+    "byte_size": 62124,
     "encoding": "UTF-8",
     "alignment": 8
   }

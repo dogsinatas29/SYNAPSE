@@ -1,14 +1,20 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
+import { Logger } from '../utils/Logger';
 import * as path from 'path';
+import { CDPManager } from './CDPManager';
 
 /**
- * [v0.2.46] WebviewInterceptor: The Vein Piercer
- * 웹뷰 통신(postMessage)을 직접 가로채어 '하수구'가 아닌 '전용 광케이블'을 도청함.
+ * [v0.2.53] WebviewInterceptor: Neuro-Link (Wall Penetrator)
+ * Webview 내부의 JS Realm까지 침투하여 Host <-> Webview 간의 모든 통신(Upstream/Downstream)을 요격함.
+ * Prototype Poisoning의 한계를 극복하기 위해 인스턴스 레벨의 속성 탈취(Hijacking)를 병행함.
  */
 export class WebviewInterceptor {
     private static instance: WebviewInterceptor;
     private isArmed = false;
+    private isPrototypePoisoned = false;
+    private originalHtmlSetter: ((val: string) => void) | undefined;
+    private originalHtmlGetter: (() => string) | undefined;
 
     private constructor() {}
 
@@ -20,21 +26,28 @@ export class WebviewInterceptor {
     }
 
     public activate(context: vscode.ExtensionContext) {
-        if (this.isArmed) return;
+        if (this.isArmed) {
+            Logger.info('[SYNAPSE][STEP1] WebviewInterceptor: ALREADY ARMED.');
+            return;
+        }
         
-        console.log('[SYNAPSE][STEP1] WebviewInterceptor: ACTIVATION SEQUENCE START.');
+        Logger.info('[SYNAPSE][STEP1] WebviewInterceptor: ACTIVATION SEQUENCE START (v0.2.53).');
         
-        this.patchWebviewPanelCreation(context);
-        this.patchWebviewPanelSerialization(context);
-        this.patchWebviewViewRegistration(context);
-        
-        this.isArmed = true;
-        console.log('[SYNAPSE][STEP1] WebviewInterceptor: ARMED & READY.');
+        try {
+            this.patchWebviewPanelCreation(context);
+            this.patchWebviewPanelSerialization(context);
+            this.patchWebviewViewRegistration(context);
+            
+            this.isArmed = true;
+            Logger.info('[SYNAPSE][STEP1] WebviewInterceptor: ARMED & READY (v0.2.53).');
+        } catch (e) {
+            Logger.error(`[SYNAPSE][STEP1] WebviewInterceptor activation failed: ${e}`);
+        }
         
         const webviewStatus = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 1003);
-        webviewStatus.text = '$(eye) GHOST IN THE SHELL';
-        webviewStatus.tooltip = 'SYNAPSE: DOM Spy (v0.2.47) Active';
-        webviewStatus.color = '#00FF00'; // Matrix Green
+        webviewStatus.text = '$(eye) NEURO-LINK SYNC';
+        webviewStatus.tooltip = 'SYNAPSE: Wall Penetrator (v0.2.53) Active';
+        webviewStatus.color = '#00FFFF'; // Cyan
         webviewStatus.show();
         context.subscriptions.push(webviewStatus);
     }
@@ -51,8 +64,11 @@ export class WebviewInterceptor {
         ): vscode.WebviewPanel {
             const panel = originalCreateWebviewPanel.apply(this, [viewType, title, showOptions, options]);
             
-            console.log(`[SYNAPSE][WEBVIEW] Panel Created: ${viewType} (${title})`);
-            self.hookWebview(panel, viewType);
+            Logger.info(`[SYNAPSE][WEBVIEW] Panel Created: ${viewType} (${title})`);
+            
+            // [v0.2.52] Rapid Prototype & Instance Capture
+            self.ensurePrototypePoisoned(panel.webview);
+            self.hookWebviewInstance(panel, viewType);
             
             return panel;
         };
@@ -69,8 +85,10 @@ export class WebviewInterceptor {
             const originalDeserialize = serializer.deserializeWebviewPanel;
             
             serializer.deserializeWebviewPanel = async (panel: vscode.WebviewPanel, state: any) => {
-                console.log(`[SYNAPSE][WEBVIEW] Panel Revived: ${viewType}`);
-                self.hookWebview(panel, viewType);
+                Logger.info(`[SYNAPSE][WEBVIEW] Panel Revived: ${viewType}`);
+                
+                self.ensurePrototypePoisoned(panel.webview);
+                self.hookWebviewInstance(panel, viewType);
                 return originalDeserialize.apply(serializer, [panel, state]);
             };
 
@@ -90,9 +108,10 @@ export class WebviewInterceptor {
             const originalResolve = provider.resolveWebviewView;
             
             provider.resolveWebviewView = async (webviewView: vscode.WebviewView, context: vscode.WebviewViewResolveContext, token: vscode.CancellationToken) => {
-                console.log(`[SYNAPSE][WEBVIEW] WebviewView Resolved: ${viewId}`);
-                // [v0.2.46] Hook the WebviewView's webview
-                self.hookWebview(webviewView as any, viewId);
+                Logger.info(`[SYNAPSE][WEBVIEW] WebviewView Resolved: ${viewId}`);
+                
+                self.ensurePrototypePoisoned(webviewView.webview);
+                self.hookWebviewInstance(webviewView as any, viewId);
                 return originalResolve.apply(provider, [webviewView, context, token]);
             };
 
@@ -100,229 +119,394 @@ export class WebviewInterceptor {
         };
     }
 
-    private hookWebview(panel: any, viewType: string) {
+    private ensurePrototypePoisoned(webview: vscode.Webview) {
+        if (this.isPrototypePoisoned) return;
+
+        try {
+            Logger.info('[SYNAPSE][NEURO_LINK] Attempting Global Prototype Poisoning...');
+            
+            let proto = webview;
+            let descriptor = null;
+            while (proto) {
+                descriptor = Object.getOwnPropertyDescriptor(proto, 'html');
+                if (descriptor && descriptor.set) break;
+                proto = Object.getPrototypeOf(proto);
+            }
+
+            if (proto && descriptor && descriptor.set) {
+                const self = this;
+                this.originalHtmlSet = descriptor.set;
+                this.originalHtmlGet = descriptor.get;
+
+                Logger.info(`[SYNAPSE][NEURO_LINK] Poisoning Webview Prototype: ${proto.constructor?.name || 'unknown'}`);
+
+                Object.defineProperty(proto, 'html', {
+                    get: function() { return self.originalHtmlGet?.call(this); },
+                    set: function(newHtml: string) {
+                        const viewType = (this as any).__synapse_view_type || 'unknown';
+                        
+                        // [v0.2.50] Minimal Guard: Only skip if already injected to prevent loop, 
+                        // but ALLOW initial injection for 'synapse' if it's the target.
+                        const spyTag = '<!-- [SYNAPSE GHOST SPY v0.2.52] -->';
+                        if (newHtml.includes(spyTag)) return self.originalHtmlSet?.call(this, newHtml);
+
+                        Logger.info(`[SYNAPSE][NEURO_LINK] Global HTML Hook Triggered for [${viewType}]`);
+                        const patchedHtml = self.patchHtml(newHtml, viewType);
+                        return self.originalHtmlSet?.call(this, patchedHtml);
+                    },
+                    configurable: true,
+                    enumerable: true
+                });
+
+                // postMessage (Host -> Webview) Hook
+                let msgProto = webview;
+                while (msgProto) {
+                    if (Object.prototype.hasOwnProperty.call(msgProto, 'postMessage')) break;
+                    msgProto = Object.getPrototypeOf(msgProto);
+                }
+                
+                if (msgProto && (msgProto as any).postMessage) {
+                    const originalPost = (msgProto as any).postMessage;
+                    (msgProto as any).postMessage = function(msg: any) {
+                        const viewType = (this as any).__synapse_view_type || 'unknown';
+                        // Intercept Downstream (Extension -> Webview)
+                        self.interceptOutgoingMessage(viewType, msg);
+                        return originalPost.call(this, msg);
+                    };
+                    Logger.info(`[SYNAPSE][NEURO_LINK] postMessage hooked on prototype (Downstream capture active).`);
+                }
+
+                this.isPrototypePoisoned = true;
+                Logger.info('[SYNAPSE][NEURO_LINK] Global Prototype Poisoning SUCCESSFUL.');
+            }
+        } catch (e) {
+            Logger.error(`[SYNAPSE][NEURO_LINK] Prototype poisoning failed: ${e}`);
+        }
+    }
+
+    private originalHtmlSet: ((val: string) => void) | undefined;
+    private originalHtmlGet: (() => string) | undefined;
+
+    private patchHtml(html: string, viewType: string): string {
+        const spyTag = '<!-- [SYNAPSE GHOST SPY v0.2.52] -->';
+        if (html.includes(spyTag)) return html;
+
+        const relaxedHtml = this.relaxCSP(html);
+        const spyScript = this.getSpyScript();
+        let patchedHtml = relaxedHtml;
+
+        if (relaxedHtml.toLowerCase().includes('<body')) {
+            patchedHtml = relaxedHtml.replace(/<body([^>]*)>/i, `<body$1>${spyScript}`);
+        } else if (relaxedHtml.toLowerCase().includes('<html>')) {
+            patchedHtml = relaxedHtml.replace('<html>', `<html><body>${spyScript}`);
+        } else {
+            patchedHtml = spyScript + relaxedHtml;
+        }
+        return patchedHtml;
+    }
+
+    private interceptOutgoingMessage(viewType: string, msg: any) {
+        const timestamp = new Date().toISOString();
+        const extracted = this.recursiveScan(msg);
+        const projectRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
+        if (!projectRoot) return;
+        const interceptHits = path.join(projectRoot, '.synapse_contexts', 'intercept_hits.log');
+
+        for (const content of extracted) {
+            if (this.hasHangeul(content) || (content.length > 50 && (viewType.includes('antigravity') || viewType.includes('synapse')))) {
+                if (content.includes('Boundary Violation') || content.includes('LogicAnalyzer')) continue;
+
+                const clean = content.replace(/\n/g, ' ').substring(0, 1000);
+                fs.appendFileSync(interceptHits, `[${timestamp}] [VEIN_HIT][HOST->WEBVIEW] [${viewType}] -> ${clean}\n`, 'utf-8');
+                
+                vscode.commands.executeCommand('synapse.logPrompt', {
+                    chunk: `[DOWNSTREAM] ${clean}`,
+                    finish: true, 
+                    source: `NeuroLink:Downstream:${viewType}`
+                });
+            }
+        }
+    }
+
+    private hookWebviewInstance(panel: any, viewType: string) {
         const projectRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
         if (!projectRoot) return;
 
-        // [v0.2.46] VEIN PIERCER: Mirror Loop Guard (자가 요격 방지)
-        if (viewType.includes('synapse')) {
-            console.log(`[SYNAPSE][WEBVIEW] Guard: Skipping self-interception for ${viewType}`);
-            return;
+        panel.webview.__synapse_view_type = viewType;
+
+        // [v0.2.50] Forced Instance-level Property Hijacking (Backup for Prototype failure)
+        try {
+            const webview = panel.webview;
+            const self = this;
+            if (!(webview as any).__synapse_hijacked) {
+                Logger.info(`[SYNAPSE][WEBVIEW] Hijacking Instance: ${viewType}`);
+                
+                // If it already has HTML, inject immediately
+                if (webview.html) {
+                    const currentHtml = webview.html;
+                    const spyTag = '<!-- [SYNAPSE GHOST SPY v0.2.52] -->';
+                    if (!currentHtml.includes(spyTag)) {
+                        Logger.info(`[SYNAPSE][FORCE] Manually injecting into existing ${viewType} content`);
+                        // Use original class setter if we have it, otherwise fallback to direct assignment
+                        if (this.originalHtmlSet) {
+                            this.originalHtmlSet.call(webview, self.patchHtml(currentHtml, viewType));
+                        } else {
+                            webview.html = self.patchHtml(currentHtml, viewType);
+                        }
+                    }
+                }
+                
+                // [v0.2.52 Phase 5] Ghost Protocol Trigger
+                this.triggerGhostProtocol(viewType);
+                
+                // Patch the .html property on this specific instance
+                Object.defineProperty(webview, 'html', {
+                    get: function() { return self.originalHtmlGet?.call(this); },
+                    set: function(val: string) {
+                        const patched = self.patchHtml(val, viewType);
+                        if (self.originalHtmlSet) {
+                            return self.originalHtmlSet.call(this, patched);
+                        } else {
+                            // Recursion guard if we have to set directly
+                            if ((this as any).__synapse_setting) return;
+                            (this as any).__synapse_setting = true;
+                            this.html = patched;
+                            delete (this as any).__synapse_setting;
+                        }
+                    },
+                    configurable: true,
+                    enumerable: true
+                });
+                (webview as any).__synapse_hijacked = true;
+            }
+        } catch (e) {
+            Logger.warn(`[SYNAPSE][WEBVIEW] Instance hijacking failed for ${viewType}: ${e}`);
         }
 
-        const isAntigravity = viewType.includes('antigravity') || viewType.includes('gemini');
         const interceptHits = path.join(projectRoot, '.synapse_contexts', 'intercept_hits.log');
-        const webviewDebug = path.join(projectRoot, '.synapse_contexts', 'webview_debug.log');
 
-        console.log(`[SYNAPSE][VEIN_PIERCER] Injecting Poison Needle into: ${viewType}`);
-
-        // [v0.2.47] GHOST HIT: 웹뷰 내부 스파이 스크립트로부터의 직접 보고 수신
+        // Instance-level message handler (Webview -> Host)
         panel.webview.onDidReceiveMessage((msg: any) => {
             const timestamp = new Date().toISOString();
             
-            // [STEP 4] PING RECEIVED
             if (msg.command === 'synapse-ghost-pong') {
-                console.log(`[SYNAPSE][STEP4] PING RECEIVED from Webview [${viewType}]`);
-                fs.appendFileSync(interceptHits, `[${timestamp}] [PING] GHOST_PONG from ${viewType}\n`, 'utf-8');
+                Logger.info(`[SYNAPSE][STEP4] Neuro-Link HANDSHAKE SUCCESS from [${viewType}]`);
+                fs.appendFileSync(interceptHits, `[${timestamp}] [PONG] Neuro-Link Sync ${viewType}\n`, 'utf-8');
                 return;
             }
 
-            if (msg.command === 'synapse-spy-hit' && msg.text) {
-                console.log(`[SYNAPSE][GHOST_HIT] Capture from [${viewType}]: ${msg.text.substring(0, 50)}...`);
-                const clean = msg.text.replace(/\n/g, ' ').substring(0, 1000);
-                // [v0.2.47] Mirror Loop Suppression for Ghost Hits
+            if (msg.command === 'synapse-spy-hit' && (msg.text || msg.data)) {
+                const text = msg.text || JSON.stringify(msg.data);
+                Logger.info(`[SYNAPSE][NEURO_HIT] [${msg.source || 'DOM'}] Capture from [${viewType}]: ${text.substring(0, 50)}...`);
+                
+                const clean = text.replace(/\n/g, ' ').substring(0, 1000);
                 if (clean.includes('Boundary Violation') || clean.includes('LogicAnalyzer')) return;
 
-                fs.appendFileSync(interceptHits, `[${timestamp}] [GHOST_HIT] [${viewType}] -> ${clean}\n`, 'utf-8');
+                fs.appendFileSync(interceptHits, `[${timestamp}] [NEURO_HIT] [${viewType}] -> ${clean}\n`, 'utf-8');
                 
                 vscode.commands.executeCommand('synapse.logPrompt', {
-                    prompt: `[GHOST] ${clean}`,
-                    source: `GhostInTheShell:${viewType}`
+                    prompt: `[NEURO] ${clean}`,
+                    source: `NeuroLink:Upstream:${viewType}`
                 });
                 return;
             }
 
+            // Fallback: Intercept Upstream (Webview -> Extension) if not caught by spy
             const extracted = this.recursiveScan(msg);
-            
             for (const content of extracted) {
-                if (this.hasHangeul(content)) {
-                    // [v0.2.46] Mirror Loop Suppression
+                if (this.hasHangeul(content) || (content.length > 50 && (viewType.includes('antigravity') || viewType.includes('synapse')))) {
                     if (content.includes('Boundary Violation') || content.includes('LogicAnalyzer')) continue;
 
                     const clean = content.replace(/\n/g, ' ').substring(0, 1000);
-                    fs.appendFileSync(interceptHits, `[${timestamp}] [VEIN_HIT][1] [${viewType}] -> ${clean}\n`, 'utf-8');
+                    fs.appendFileSync(interceptHits, `[${timestamp}] [VEIN_HIT][WEBVIEW->HOST] [${viewType}] -> ${clean}\n`, 'utf-8');
                     
                     vscode.commands.executeCommand('synapse.logPrompt', {
-                        prompt: clean,
-                        source: `VeinPiercer:1:${viewType}`
+                        prompt: `[UPSTREAM] ${clean}`,
+                        source: `VeinPiercer:Upstream:${viewType}`
                     });
                 }
             }
-            // Debug trace
-            fs.appendFileSync(webviewDebug, `[${timestamp}] IN [${viewType}] -> ${JSON.stringify(msg).substring(0, 300)}\n`, 'utf-8');
         });
+    }
 
-        // 7번 타격: 호스트 -> 웹뷰 (Assistant Output)
-        const originalPost = panel.webview.postMessage.bind(panel.webview);
-        panel.webview.postMessage = async (msg: any) => {
-            const timestamp = new Date().toISOString();
-            const extracted = this.recursiveScan(msg);
-            
-            for (const content of extracted) {
-                if (this.hasHangeul(content) || (isAntigravity && content.length > 50)) {
-                    // [v0.2.46] Mirror Loop Suppression
-                    if (content.includes('Boundary Violation') || content.includes('LogicAnalyzer')) continue;
-
-                    const clean = content.replace(/\n/g, ' ').substring(0, 1000);
-                    fs.appendFileSync(interceptHits, `[${timestamp}] [VEIN_HIT][7] [${viewType}] -> ${clean}\n`, 'utf-8');
-                    
-                    vscode.commands.executeCommand('synapse.logPrompt', {
-                        chunk: clean,
-                        finish: true, 
-                        source: `VeinPiercer:7:${viewType}`
-                    });
-                }
-            }
-            // Debug trace
-            fs.appendFileSync(webviewDebug, `[${timestamp}] OUT [${viewType}] -> ${JSON.stringify(msg).substring(0, 300)}\n`, 'utf-8');
-            return originalPost(msg);
-        };
-
-        // [v0.2.47] NUCLEAR OPTION: HTML Injection (GHOST IN THE SHELL)
-        // 놈들의 웹뷰 소스를 직접 수정하여 우리만의 스파이 스크립트를 주입함.
-        const self = this;
+    /**
+     * [v0.2.52 Phase 5] Ghost Protocol: CDP-based Injection Trigger
+     */
+    private async triggerGhostProtocol(viewType: string) {
+        Logger.info(`[SYNAPSE][GHOST] Triggering CDP Ghost Protocol for: ${viewType}`);
         
-        try {
-            const webviewProto = Object.getPrototypeOf(panel.webview);
-            console.log(`[SYNAPSE][GHOST] Attempting to hook ${viewType}. Proto: ${webviewProto.constructor.name}`);
-            
-            // [v0.2.47 Senior] Prototype-level Hooking
-            let descriptor = Object.getOwnPropertyDescriptor(webviewProto, 'html');
-            
-            // If not on immediate proto, check further up (though usually it's there)
-            if (!descriptor) {
-                console.log(`[SYNAPSE][GHOST] Descriptor 'html' not found on immediate prototype, checking instance...`);
-                descriptor = Object.getOwnPropertyDescriptor(panel.webview, 'html');
-            }
-
-            if (descriptor && descriptor.set) {
-                // Determine if we should patch prototype or instance
-                const target = Object.getOwnPropertyDescriptor(webviewProto, 'html') ? webviewProto : panel.webview;
-                const isProto = target === webviewProto;
-
-                if (!(target as any).__synapse_patched) {
-                    console.log(`[SYNAPSE][GHOST] Patching ${isProto ? 'Prototype' : 'Instance'} 'html' setter...`);
-                    const originalSet = descriptor.set;
-                    const originalGet = descriptor.get;
-
-                    Object.defineProperty(target, 'html', {
-                        get: function() { return originalGet?.call(this); },
-                        set: function(newHtml: string) {
-                            const instanceViewType = (this as any).__synapse_view_type || 'unknown';
-                            const isHooked = (this as any).__synapse_hooked;
-
-                            if (!isHooked || !newHtml) return originalSet.call(this, newHtml);
-
-                            // [v0.2.47] CSP 완화 및 스크립트 주입
-                            const spyTag = '<!-- [SYNAPSE GHOST SPY v0.2.47] -->';
-                            if (newHtml.includes(spyTag)) return originalSet.call(this, newHtml);
-
-                            console.log(`[SYNAPSE][GHOST] Injecting Spy into ${instanceViewType}`);
-                            const relaxedHtml = self.relaxCSP(newHtml);
-                            const spyScript = self.getSpyScript();
-                            let patchedHtml = relaxedHtml;
-
-                            if (relaxedHtml.toLowerCase().includes('<body')) {
-                                patchedHtml = relaxedHtml.replace(/<body([^>]*)>/i, `<body$1>${spyScript}`);
-                            } else if (relaxedHtml.toLowerCase().includes('<html>')) {
-                                patchedHtml = relaxedHtml.replace('<html>', `<html><body>${spyScript}`);
-                            } else {
-                                patchedHtml = spyScript + relaxedHtml;
-                            }
-                            return originalSet.call(this, patchedHtml);
-                        },
-                        configurable: true,
-                        enumerable: true
-                    });
-                    (target as any).__synapse_patched = true;
-                }
+        // Wait for Webview to initialize and Electron to register the target
+        setTimeout(async () => {
+            const target = await CDPManager.getInstance().findTarget(viewType);
+            if (target) {
+                Logger.info(`[SYNAPSE][CDP] Target identified: ${target.title} (Port: ${target._port})`);
+                const script = this.getGhostInjectionScript();
+                await CDPManager.getInstance().injectScript(target, script);
             } else {
-                console.error(`[SYNAPSE][GHOST] FAILED to find 'html' setter for ${viewType}!`);
+                Logger.warn(`[SYNAPSE][CDP] No debuggable target found for ${viewType}. Ensure --remote-debugging-port is active.`);
             }
-
-            // Flag this instance for interception
-            panel.webview.__synapse_hooked = true;
-            panel.webview.__synapse_view_type = viewType;
-
-            // 이미 HTML이 설정되어 있다면 즉시 재설정하여 스크립트 주입 트리거
-            if (panel.webview.html) {
-                panel.webview.html = panel.webview.html;
-            }
-        } catch (e) {
-            console.error(`[SYNAPSE][GHOST] Critical failure in Shell Piercing for ${viewType}:`, e);
-        }
+        }, 1500);
     }
 
     private relaxCSP(html: string): string {
-        // [v0.2.47] More aggressive CSP relaxation
         return html.replace(/<meta\s+http-equiv=["']Content-Security-Policy["'].*?>/gi, (match) => {
             let result = match;
-            // 1. script-src: Add unsafe-inline and unsafe-eval
             if (result.includes('script-src')) {
                 if (!result.includes("'unsafe-inline'")) {
                     result = result.replace("script-src", "script-src 'unsafe-inline' 'unsafe-eval'");
                 }
-            } else {
-                // If script-src is missing but default-src is present, add script-src
-                if (result.includes('default-src')) {
-                    result = result.replace("default-src", "script-src 'unsafe-inline' 'unsafe-eval' ; default-src");
-                }
+            } else if (result.includes('default-src')) {
+                result = result.replace("default-src", "script-src 'unsafe-inline' 'unsafe-eval' ; default-src");
             }
-            
-            // 2. connect-src: Ensure it doesn't block reporting if we were to use an external collector (optional)
-            
             return result;
         });
     }
 
+    private getGhostInjectionScript(): string {
+        // [v0.2.53] Enhanced bridge hijacking with debugging beacons
+        return `
+        (function() {
+            if (window.__synapse_ghost_active) return;
+            window.__synapse_ghost_active = true;
+            
+            console.log('[SYNAPSE][GHOST][DEBUG] Ghost Protocol Injected. Context: ' + (typeof acquireVsCodeApi !== 'undefined' ? 'MAIN' : 'ISOLATED'));
+            
+            const hookApi = (api) => {
+                if (!api || api.__synapse_hooked) return api;
+                const orig = api.postMessage;
+                api.postMessage = function(msg) {
+                    // Filter out our own signals to prevent loops
+                    if (msg && msg.command !== 'synapse-spy-hit' && msg.command !== 'synapse-ghost-pong') {
+                        console.log('[SYNAPSE][GHOST][UPSTREAM]', msg);
+                        try {
+                            orig.call(this, {
+                                command: 'synapse-spy-hit',
+                                data: msg,
+                                source: 'CDP:GhostHook'
+                            });
+                        } catch (e) {}
+                    }
+                    return orig.apply(this, arguments);
+                };
+                api.__synapse_hooked = true;
+                console.log('[SYNAPSE][GHOST] acquireVsCodeApi.postMessage successfully hooked.');
+                return api;
+            };
+
+            // 1. Hook existing global acquireVsCodeApi
+            const origAcquire = window.acquireVsCodeApi || (window.parent && window.parent.acquireVsCodeApi);
+            if (origAcquire) {
+                window.acquireVsCodeApi = function() {
+                    console.log('[SYNAPSE][GHOST] acquireVsCodeApi called by app.');
+                    return hookApi(origAcquire.apply(this, arguments));
+                };
+                
+                // 2. Pre-emptive hook if already initialized
+                try {
+                    const api = window.acquireVsCodeApi(); 
+                    if (api) {
+                        api.postMessage({ command: 'synapse-ghost-pong', version: 'v0.2.53' });
+                    }
+                } catch(e) {}
+            } else {
+                console.warn('[SYNAPSE][GHOST] acquireVsCodeApi not found in this context.');
+            }
+            
+            // 3. Mutation Observer as a safety net (Isolated World fallback)
+            // Even if we are in Isolated World, we can see the DOM changes.
+            const obs = new MutationObserver((m) => {
+                m.forEach(n => {
+                    if (n.type === 'childList') n.addedNodes.forEach(node => {
+                        const txt = node.innerText || node.textContent;
+                        if (txt && txt.length > 5 && /[가-힣]/.test(txt)) {
+                             try { 
+                                const api = acquireVsCodeApi();
+                                api.postMessage({ command: 'synapse-spy-hit', text: txt, source: 'CDP:Observer' }); 
+                             } catch(e) {}
+                        }
+                    });
+                });
+            });
+            if (document.body) obs.observe(document.body, { childList: true, subtree: true });
+        })();
+        `;
+    }
+
     private getSpyScript(): string {
         return `
-        <!-- [SYNAPSE GHOST SPY v0.2.47] -->
+        <!-- [SYNAPSE GHOST SPY v0.2.52] -->
         <script>
         (function() {
+            if (window.__synapse_renderer_spy_active) return;
+            window.__synapse_renderer_spy_active = true;
             let vscodeApi = null;
-            try {
-                // VS Code API bridge
-                if (window.__synapse_vscode) {
-                    vscodeApi = window.__synapse_vscode;
-                } else {
-                    try {
-                        vscodeApi = acquireVsCodeApi();
-                        window.__synapse_vscode = vscodeApi;
-                    } catch (e) {
-                        // Already acquired by another script
-                    }
-                }
-
-                const reportHit = (text) => {
-                    if (!text || text.length < 5 || !/[가-힣]/.test(text)) return;
+            
+            const reportHit = (text, source = 'observer') => {
+                if (!text || text.length < 5) return;
+                // Korean monitor OR large data (likely JSON/State)
+                if (/[가-힣]/.test(text) || text.length > 500) {
                     if (vscodeApi) {
-                        console.log('[GhostSpy] Sending hit to SYNAPSE');
                         vscodeApi.postMessage({
                             command: 'synapse-spy-hit',
-                            text: text.trim()
+                            text: text.trim(),
+                            source: source
                         });
+                    }
+                }
+            };
+
+            const hookVsCodeApi = (api) => {
+                if (!api || api.__synapse_hooked) return api;
+                console.log('[SYNAPSE][RENDERER] Hooking VsCodeApi (Wall Penetrator active)');
+                
+                const originalPost = api.postMessage;
+                api.postMessage = function(msg) {
+                    // Capture Upstream (Webview -> Host) explicitly
+                    if (msg && msg.command !== 'synapse-spy-hit' && msg.command !== 'synapse-ghost-pong') {
+                         console.log('[SYNAPSE][RENDERER][UPSTREAM] Data captured:', msg);
+                         // We report it back so host can log it as [NEURO]
+                         originalPost.call(this, {
+                            command: 'synapse-spy-hit',
+                            data: msg,
+                            source: 'UpstreamHook'
+                         });
+                    }
+                    return originalPost.apply(this, arguments);
+                };
+                api.__synapse_hooked = true;
+                return api;
+            };
+
+            try {
+                // [v0.2.50] Mandatory acquireVsCodeApi Hook
+                const originalAcquire = window.acquireVsCodeApi || (window.parent && window.parent.acquireVsCodeApi);
+                if (originalAcquire) {
+                    window.acquireVsCodeApi = function() {
+                        const api = originalAcquire.apply(this, arguments);
+                        vscodeApi = hookVsCodeApi(api);
+                        return vscodeApi;
+                    };
+                }
+
+                // Global postMessage Monitoring (Alternative channel)
+                window.addEventListener('message', (event) => {
+                    // Possible cross-iframe communication capture
+                });
+
+                // Handshake & Init
+                const initSpy = () => {
+                    if (!vscodeApi) {
+                        try { vscodeApi = acquireVsCodeApi(); } catch(e) {}
+                    }
+                    if (vscodeApi) {
+                        console.log('[SYNAPSE][STEP3] Neuro-Link SYNC established');
+                        vscodeApi.postMessage({ command: 'synapse-ghost-pong' });
                     }
                 };
 
-                // [STEP 4] Connection Check
-                if (vscodeApi) {
-                    console.log('[SYNAPSE][STEP 3] Ghost Spy INJECTED & ARMED');
-                    vscodeApi.postMessage({ command: 'synapse-ghost-pong' });
-                } else {
-                    console.error('[SYNAPSE][ERROR] acquireVsCodeApi FAILED');
-                }
+                setTimeout(initSpy, 500);
 
+                // DOM observer
                 const observedNodes = new WeakSet();
                 const setupObserver = (root) => {
                     if (!root || observedNodes.has(root)) return;
@@ -332,17 +516,11 @@ export class WebviewInterceptor {
                         for (const mutation of mutations) {
                             if (mutation.type === 'childList') {
                                 mutation.addedNodes.forEach(node => {
-                                    if (node.nodeType === 3) { // TEXT_NODE
-                                        reportHit(node.textContent);
-                                    } else if (node.nodeType === 1) { // ELEMENT_NODE
-                                        if (node.innerText || node.textContent) {
-                                            reportHit(node.innerText || node.textContent);
-                                        }
-                                        // Shadow DOM recursive scan
+                                    if (node.nodeType === 3) reportHit(node.textContent);
+                                    else if (node.nodeType === 1) {
+                                        reportHit(node.innerText || node.textContent);
                                         if (node.shadowRoot) setupObserver(node.shadowRoot);
-                                        node.querySelectorAll('*').forEach(el => {
-                                            if (el.shadowRoot) setupObserver(el.shadowRoot);
-                                        });
+                                        node.querySelectorAll?.('*').forEach(el => { if (el.shadowRoot) setupObserver(el.shadowRoot); });
                                     }
                                 });
                             } else if (mutation.type === 'characterData') {
@@ -351,21 +529,10 @@ export class WebviewInterceptor {
                         }
                     });
 
-                    observer.observe(root, {
-                        childList: true,
-                        subtree: true,
-                        characterData: true
-                    });
-                    
-                    // Initial Deep Scan
-                    if (root.querySelectorAll) {
-                        root.querySelectorAll('*').forEach(el => {
-                            if (el.shadowRoot) setupObserver(el.shadowRoot);
-                        });
-                    }
+                    observer.observe(root, { childList: true, subtree: true, characterData: true });
+                    root.querySelectorAll?.('*').forEach(el => { if (el.shadowRoot) setupObserver(el.shadowRoot); });
                 };
 
-                // Hook attachShadow to catch dynamically created components
                 const originalAttachShadow = Element.prototype.attachShadow;
                 if (originalAttachShadow) {
                     Element.prototype.attachShadow = function(options) {
@@ -375,16 +542,15 @@ export class WebviewInterceptor {
                     };
                 }
 
-                // Initial Arming
                 if (document.readyState === 'loading') {
                     document.addEventListener('DOMContentLoaded', () => setupObserver(document.body));
                 } else {
                     setupObserver(document.body);
                 }
-
-                console.log('[SYNAPSE][GHOST] Ghost Spy ARMED (Shadow DOM Recursive Scan active)');
+                
+                console.log('[SYNAPSE][GHOST] Wall Penetrator ARMED');
             } catch (err) {
-                console.error('[SYNAPSE][GHOST] initialization error:', err);
+                console.warn('[SYNAPSE][GHOST] Neuro-Link sync error:', err);
             }
         })();
         </script>

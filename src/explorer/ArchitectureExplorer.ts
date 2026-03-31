@@ -29,12 +29,6 @@ export class ArchitectureExplorerProvider implements vscode.TreeDataProvider<Exp
                     vscode.TreeItemCollapsibleState.Collapsed,
                     'shelf_root',
                     { iconName: 'library' }
-                ),
-                new ExplorerItem(
-                    '🧠 Context Vault',
-                    vscode.TreeItemCollapsibleState.Collapsed,
-                    'vault_root',
-                    { iconName: 'history' }
                 )
             ];
         }

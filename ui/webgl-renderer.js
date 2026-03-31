@@ -166,21 +166,27 @@ class WebGLRenderer {
             attribute float aIsSelected;
             attribute float aInstanceAlpha;
             attribute float aShapeType;
-            attribute float aIsFracture;
+            attribute float aDtrLevel;
+            attribute float aStatusType; // 0:Normal, 1:Active, 2:Ghost, 3:Deleted, 4:Warning, 5:Necrosis/Tombstone
             uniform mat3 uProjectionMatrix;
+            uniform float uTime;
             varying vec3 vColor;
             varying vec2 vCoord;
             varying float vIsSelected;
             varying float vAlpha;
             varying float vShape;
-            varying float vIsFracture;
+            varying float vDtr;
+            varying float vStatus;
+            varying float vTime;
             void main() {
                 vColor = aInstanceColor;
                 vCoord = aVertexPosition;
                 vIsSelected = aIsSelected;
                 vAlpha = aInstanceAlpha;
                 vShape = aShapeType;
-                vIsFracture = aIsFracture;
+                vDtr = aDtrLevel;
+                vStatus = aStatusType;
+                vTime = uTime;
                 vec2 worldPos = aInstancePosition + aVertexPosition * aInstanceSize;
                 vec3 projected = uProjectionMatrix * vec3(worldPos, 1.0);
                 gl_Position = vec4(projected.xy, 0.0, 1.0);
@@ -193,8 +199,14 @@ class WebGLRenderer {
             varying float vIsSelected;
             varying float vAlpha;
             varying float vShape; 
-            varying float vIsFracture;
-            
+            varying float vDtr;
+            varying float vStatus;
+            varying float vTime;
+
+            float random(vec2 st) {
+                return fract(sin(dot(st.xy, vec2(12.9898,78.233))) * 43758.5453123);
+            }
+
             void main() {
                 float dist;
                 // SDF for shapes
@@ -215,19 +227,38 @@ class WebGLRenderer {
                 
                 if (dist > 0.0) discard;
                 
-                // [v0.2.33] Enhanced Border Mask for Glow paths
+                // [v0.2.33] Enhanced Border Mask
                 float borderThreshold = -0.06;
                 float borderMask = smoothstep(borderThreshold - 0.04, borderThreshold, dist);
                 
                 vec3 borderColor = vec3(0.5, 0.5, 0.5); 
+                vec3 nodeBaseColor = vColor;
+
+                // [v0.3.1_zz] Status-based Border & Glow
+                if (vStatus > 0.5 && vStatus < 1.5) { // Active
+                    borderColor = vec3(0.51, 0.65, 0.60); // #83a598
+                } else if (vStatus > 1.5 && vStatus < 2.5) { // Ghost
+                    borderColor = vec3(0.57, 0.51, 0.45); // #928374
+                } else if (vStatus > 3.5 && vStatus < 4.5) { // Warning
+                    float pulse = 0.5 + 0.5 * sin(vTime * 5.0);
+                    borderColor = mix(vec3(0.98, 0.29, 0.20), vec3(1.0, 0.8, 0.8), pulse); // #fb4934 pulse
+                } else if (vStatus > 4.5) { // Necrosis/Tombstone
+                    borderColor = vec3(0.11, 0.13, 0.13); // #1d2021
+                    // Noise effect
+                    float n = random(vCoord * sin(vTime));
+                    if (n > 0.95) nodeBaseColor = vec3(0.92, 0.86, 0.70); // Noise dot
+                }
+
                 if (vIsSelected > 0.5) {
-                    borderColor = vec3(0.92, 0.74, 0.18); 
+                    borderColor = vec3(0.98, 0.74, 0.18); // #fabd2f
                 }
                 
-                vec3 nodeBaseColor = vColor;
-                // [v0.2.34] Selective Glow based on Status (Fracture Pink / DTR Purple)
-                if (vIsFracture > 0.5) {
-                    borderColor = vec3(0.82, 0.52, 0.61); // Pinkish #d3869b
+                // [v0.3.1_zz] High DTR Glow (Purple #8a2be2)
+                if (vDtr > 0.7) {
+                    float dtrPulse = 1.0 + 0.3 * sin(vTime * 3.0);
+                    float dtrMask = smoothstep(-0.3, 0.0, dist);
+                    vec3 purple = vec3(0.54, 0.17, 0.89); 
+                    nodeBaseColor = mix(nodeBaseColor, purple, dtrMask * 0.4 * dtrPulse);
                 }
                 
                 // Subtle Inner Glow
@@ -269,21 +300,34 @@ class WebGLRenderer {
             attribute vec4 aInstanceEdge;   // [x1, y1, x2, y2]
             attribute vec3 aEdgeColor;
             attribute float aThickness;
+            attribute vec2 aDashParams;     // [dashLen, gapLen] 0 means solid
+            attribute float aIsHigh;        // highlighted/pulse
             varying vec3 vColor;
             varying vec2 vTexCoord;
+            varying vec2 vDash; 
+            varying float vLen;
+            varying float vHigh;
+            varying float vTime;
             uniform mat3 uProjectionMatrix;
+            uniform float uTime;
             void main() {
                 vec2 p1 = aInstanceEdge.xy;
                 vec2 p2 = aInstanceEdge.zw;
                 vec2 dir = p2 - p1;
                 float len = length(dir);
-                float headSize = 12.0;
+                vLen = len;
+                vDash = aDashParams;
+                vHigh = aIsHigh;
+                vTime = uTime;
                 
                 vec2 unitDir = (len > 0.1) ? dir / len : vec2(0.0);
                 vec2 norm = vec2(-unitDir.y, unitDir.x);
                 
-                // Expand width near the end for arrowhead
                 float lineWidth = aThickness;
+                if (aIsHigh > 0.5) {
+                    lineWidth += 2.0 * sin(uTime * 4.0); // Pulse effect
+                }
+                
                 float arrowWidth = (aVertexPosition.x > 0.9) ? (1.0 - aVertexPosition.x) * (lineWidth * 4.0) + 1.0 : lineWidth;
                 
                 vec2 worldPos = p1 + unitDir * (aVertexPosition.x * len) + norm * (aVertexPosition.y * arrowWidth);
@@ -297,19 +341,35 @@ class WebGLRenderer {
             precision mediump float;
             varying vec3 vColor;
             varying vec2 vTexCoord;
+            varying vec2 vDash;
+            varying float vLen;
+            varying float vHigh;
+            varying float vTime;
             void main() {
                 float x = vTexCoord.x;
                 float y = abs(vTexCoord.y);
                 
+                // 1. Dash & Marching Ants Logic
+                if (vDash.x > 0.0) {
+                    float totalPeriod = vDash.x + vDash.y;
+                    float dist = x * vLen;
+                    // Apply movement for "marching ants"
+                    float move = vTime * 20.0;
+                    if (mod(dist + move, totalPeriod) > vDash.x) discard;
+                }
+
+                // 2. Arrowhead vs Body
                 if (x > 0.92) {
                     float arrowZone = (1.0 - x) * 6.0; 
                     if (y > arrowZone) discard;
-                } else if (y > 0.1) {
-                    // Solid line for the rest
-                    // discard; -> removed to allow variable thickness
                 }
                 
-                gl_FragColor = vec4(vColor, 1.0);
+                vec3 finalColor = vColor;
+                if (vHigh > 0.5) {
+                    finalColor = mix(vColor, vec3(1.0, 0.9, 0.0), 0.3 * sin(vTime * 6.0) + 0.3);
+                }
+
+                gl_FragColor = vec4(finalColor, 1.0);
             }
         `;
         this.edgeProgram = this.createProgram(vsEdge, fsEdge);
@@ -368,9 +428,11 @@ class WebGLRenderer {
                 selected: this.gl.getAttribLocation(this.nodeProgram, 'aIsSelected'),
                 alpha: this.gl.getAttribLocation(this.nodeProgram, 'aInstanceAlpha'),
                 shape: this.gl.getAttribLocation(this.nodeProgram, 'aShapeType'),
-                fracture: this.gl.getAttribLocation(this.nodeProgram, 'aIsFracture'),
+                dtr: this.gl.getAttribLocation(this.nodeProgram, 'aDtrLevel'),
+                statusType: this.gl.getAttribLocation(this.nodeProgram, 'aStatusType'),
                 vertex: this.gl.getAttribLocation(this.nodeProgram, 'aVertexPosition'),
-                uProj: this.gl.getUniformLocation(this.nodeProgram, 'uProjectionMatrix')
+                uProj: this.gl.getUniformLocation(this.nodeProgram, 'uProjectionMatrix'),
+                uTime: this.gl.getUniformLocation(this.nodeProgram, 'uTime')
             },
             star: {
                 pos: this.gl.getAttribLocation(this.starProgram, 'aPosition'),
@@ -381,7 +443,10 @@ class WebGLRenderer {
                 instanceEdge: this.gl.getAttribLocation(this.edgeProgram, 'aInstanceEdge'),
                 color: this.gl.getAttribLocation(this.edgeProgram, 'aEdgeColor'),
                 thickness: this.gl.getAttribLocation(this.edgeProgram, 'aThickness'),
-                uProj: this.gl.getUniformLocation(this.edgeProgram, 'uProjectionMatrix')
+                dash: this.gl.getAttribLocation(this.edgeProgram, 'aDashParams'),
+                high: this.gl.getAttribLocation(this.edgeProgram, 'aIsHigh'),
+                uProj: this.gl.getUniformLocation(this.edgeProgram, 'uProjectionMatrix'),
+                uTime: this.gl.getUniformLocation(this.edgeProgram, 'uTime')
             },
             text: {
                 vertex: this.gl.getAttribLocation(this.textProgram, 'aVertexPosition'),
@@ -478,10 +543,20 @@ class WebGLRenderer {
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.nodeShapeBuffer);
         this.gl.bufferData(this.gl.ARRAY_BUFFER, this._nodeShapeArr.byteLength, this.gl.DYNAMIC_DRAW);
 
-        this._nodeFractureArr = new Float32Array(maxNodes);
-        this.nodeFractureBuffer = this.gl.createBuffer();
-        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.nodeFractureBuffer);
-        this.gl.bufferData(this.gl.ARRAY_BUFFER, this._nodeFractureArr.byteLength, this.gl.DYNAMIC_DRAW);
+        this._nodeStatusArr = new Float32Array(maxNodes);
+        this.nodeStatusBuffer = this.gl.createBuffer();
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.nodeStatusBuffer);
+        this.gl.bufferData(this.gl.ARRAY_BUFFER, this._nodeStatusArr.byteLength, this.gl.DYNAMIC_DRAW);
+
+        this._nodeDtrArr = new Float32Array(maxNodes);
+        this.nodeDtrBuffer = this.gl.createBuffer();
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.nodeDtrBuffer);
+        this.gl.bufferData(this.gl.ARRAY_BUFFER, this._nodeDtrArr.byteLength, this.gl.DYNAMIC_DRAW);
+
+        this._edgeHighArr = new Float32Array(maxEdges);
+        this.edgeHighBuffer = this.gl.createBuffer();
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.edgeHighBuffer);
+        this.gl.bufferData(this.gl.ARRAY_BUFFER, this._edgeHighArr.byteLength, this.gl.DYNAMIC_DRAW);
 
         this._edgeColorArr = new Float32Array(maxEdges * 3);
         this.edgeColorBuffer = this.gl.createBuffer();
@@ -492,6 +567,11 @@ class WebGLRenderer {
         this.edgeThickBuffer = this.gl.createBuffer();
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.edgeThickBuffer);
         this.gl.bufferData(this.gl.ARRAY_BUFFER, this._edgeThickArr.byteLength, this.gl.DYNAMIC_DRAW);
+
+        this._edgeDashArr = new Float32Array(maxEdges * 2);
+        this.edgeDashBuffer = this.gl.createBuffer();
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.edgeDashBuffer);
+        this.gl.bufferData(this.gl.ARRAY_BUFFER, this._edgeDashArr.byteLength, this.gl.DYNAMIC_DRAW);
 
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.edgeInstanceBuffer);
         this.gl.bufferData(this.gl.ARRAY_BUFFER, this._edgeArr.byteLength, this.gl.DYNAMIC_DRAW);
@@ -577,7 +657,8 @@ class WebGLRenderer {
         const selectArr = this._nodeSelectArr;
         const alphaArr = this._nodeAlphaArr;
         const shapeArr = this._nodeShapeArr;
-        const fractureArr = this._nodeFractureArr;
+        const statusArr = this._nodeStatusArr;
+        const dtrArr = this._nodeDtrArr;
 
         if (!posArr) return; 
 
@@ -591,33 +672,37 @@ class WebGLRenderer {
             posArr[i * 2] = p.x + (nodeWidth / 2);
             posArr[i * 2 + 1] = p.y + (nodeHeight / 2);
 
-            // [v0.2.36] Sync Fill Color Logic with CanvasEngine.getNodeStyle
+            // [v0.3.1_zz] SYNC with Node Status Conventions
             let nColor = n.data?.color;
             if (!nColor) {
                 if (n.type === 'config' || n.type === 'data') nColor = '#076678';
                 else if (n.type === 'external') nColor = '#282828';
-                else nColor = '#3c3836'; // Default logic background
+                else nColor = '#3c3836';
             }
 
-            // Status overrides
-            if (n.status === 'deleted') nColor = '#282828';
-            else if (n.status === 'error_necrosis' || n.status === 'error_tombstone') nColor = '#1d2021';
+            let statusType = 0.0; // Normal
+            if (n.status === 'active') {
+                nColor = '#83a598';
+                statusType = 1.0;
+            } else if (n.status === 'ghost') {
+                nColor = '#928374';
+                statusType = 2.0;
+            } else if (n.status === 'deleted') {
+                nColor = '#282828';
+                statusType = 3.0;
+            } else if (n.status === 'warning' || n.isError) {
+                nColor = '#fb4934';
+                statusType = 4.0;
+            } else if (n.status === 'error_necrosis' || n.status === 'error_tombstone') {
+                nColor = '#1d2021';
+                statusType = 5.0;
+            }
 
-            // [v0.2.36] Recognition for Conditional/Fracture nodes (matches getNodeStyle in canvas-engine.js)
             const fileName = (n.data?.file || '').toLowerCase();
             const isDecisionNode = fileName.includes('valid_') || fileName.includes('validator') || 
                                  fileName.includes('checker') || fileName.includes('router') || 
                                  fileName.startsWith('is_');
 
-            if (n.status === 'active') nColor = '#83a598'; 
-            else if (n.isDeterministicFracture) nColor = '#ebdbb2'; // Fracture violation: light bg (same as 2D)
-            else if (isDecisionNode) nColor = '#3c3836'; // Decision nodes: same dark bg as 2D (border is yellow)
-            else if (n.status === 'ghost' || (n.data && n.data.status === 'ghost')) nColor = '#928374';
-            else if (nColor === '#b8bb26' && n.visual?.opacity < 0.6) nColor = '#3c3836';
-
-            // Conditional nodes remain opaque to cover edges beneath
-            const alpha = (isDecisionNode || n.isDeterministicFracture) ? 1.0 : (n.visual?.opacity || 0.98);
-            
             // Convert Hex to RGB
             const r = parseInt(nColor.slice(1, 3), 16) / 255;
             const g = parseInt(nColor.slice(3, 5), 16) / 255;
@@ -631,17 +716,15 @@ class WebGLRenderer {
             sizeArr[i * 2 + 1] = nodeHeight / 2;
 
             selectArr[i] = (selectedNodeIds && selectedNodeIds.has(n.id)) ? 1.0 : 0.0;
-            alphaArr[i] = alpha;
+            alphaArr[i] = (n.visual?.opacity || 0.98);
 
-            // [v0.2.36] Node Shape Sync
             let shape = 0.0; // Box
-            if (isDecisionNode || n.isDeterministicFracture) {
-                shape = 1.0; // Diamond
-            } else if (fileName.includes('loop') || fileName.includes('iter')) {
-                shape = 2.0; // Hexagon
-            }
+            if (isDecisionNode || n.isDeterministicFracture) shape = 1.0; // Diamond
+            else if (fileName.includes('loop') || fileName.includes('iter')) shape = 2.0; // Hexagon
             shapeArr[i] = shape;
-            fractureArr[i] = (isDecisionNode || n.isDeterministicFracture) ? 1.0 : 0.0;
+
+            statusArr[i] = statusType;
+            dtrArr[i] = (n.intelligence && n.intelligence.dtr !== undefined) ? n.intelligence.dtr : 0.3;
         }
 
         // Buffer upload
@@ -663,8 +746,11 @@ class WebGLRenderer {
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.nodeShapeBuffer);
         this.gl.bufferSubData(this.gl.ARRAY_BUFFER, 0, shapeArr.subarray(0, nodes.length));
 
-        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.nodeFractureBuffer);
-        this.gl.bufferSubData(this.gl.ARRAY_BUFFER, 0, fractureArr.subarray(0, nodes.length));
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.nodeStatusBuffer);
+        this.gl.bufferSubData(this.gl.ARRAY_BUFFER, 0, statusArr.subarray(0, nodes.length));
+
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.nodeDtrBuffer);
+        this.gl.bufferSubData(this.gl.ARRAY_BUFFER, 0, dtrArr.subarray(0, nodes.length));
     }
 
     updateEdgeData(edges, nodeMap, selectedNodeIds) {
@@ -673,11 +759,14 @@ class WebGLRenderer {
         const data = this._edgeArr;
         const colorData = this._edgeColorArr;
         const thickData = this._edgeThickArr;
-        if (!data || !colorData || !thickData) return;
+        const dashData = this._edgeDashArr;
+        if (!data || !colorData || !thickData || !dashData) return;
         
         let cnt = 0;
         let colorCnt = 0;
         let thickCnt = 0;
+        let dashCnt = 0;
+        let highCnt = 0;
         
         for (let i = 0; i < edges.length; i++) {
             const e = edges[i];
@@ -692,23 +781,34 @@ class WebGLRenderer {
                 data[cnt++] = tgt.position.x + (nodeWidth / 2);
                 data[cnt++] = tgt.position.y + (nodeHeight / 2);
 
-                // Path highlight logic match (Selection & Path)
+                // [v0.3.1_zz] SYNC with SYNAPSE Edge & Line Conventions
+                const styles = {
+                    'dependency': { color: '#ebdbb2', thickness: 2.0 },
+                    'data_flow': { color: '#83a598', thickness: 3.0 },
+                    'event': { color: '#fe8019', thickness: 2.0 },
+                    'conditional': { color: '#d3869b', thickness: 1.0 },
+                    'origin': { color: '#d65d0e', thickness: 1.5 },
+                    'api_call': { color: '#8ec07c', thickness: 2.0 },
+                    'db_query': { color: '#d3869b', thickness: 3.0 },
+                    'loop_back': { color: '#fe8019', thickness: 2.0 }
+                };
+
+                const edgeType = e.type || 'dependency';
+                const baseStyle = styles[edgeType] || styles['dependency'];
+                
+                let color = baseStyle.color;
+                let thickness = baseStyle.thickness;
+
                 const isPathSelected = e.isSelected || 
                                      (selectedNodeIds && (selectedNodeIds.has(e.from) || selectedNodeIds.has(e.to)));
 
-                let color = '#a89984'; // Default
-                let thickness = 1.2;
-
                 if (isPathSelected) {
                     color = '#fabd2f';
-                    thickness = 8.0; // Matching 2D +6px boost
-                } else {
-                    if (e.isDeterministicFracture) {
-                        color = '#d3869b'; // Pink/Magenta for fractures
-                        thickness = 3.5;
-                    } else if (e.status === 'confirmed') color = '#b8bb26';
-                    else if (e.status === 'pending') color = '#fabd2f';
-                    else if (e.isError || e.type === 'broken_fracture') color = '#fb4934';
+                    thickness = thickness + 5.0; // matching 2D bulge
+                } else if (e.status === 'confirmed') {
+                    color = '#b8bb26';
+                } else if (e.status === 'pending') {
+                    color = '#fabd2f';
                 }
 
                 const c = this.hexToRgb(color);
@@ -717,6 +817,13 @@ class WebGLRenderer {
                 colorData[colorCnt++] = c.b;
 
                 thickData[thickCnt++] = thickness;
+
+                const styleDash = (edgeType === 'api_call') ? [4, 4] : 
+                                 (edgeType === 'loop_back' || edgeType === 'loop') ? [2, 4] : [0, 0];
+                dashData[dashCnt++] = styleDash[0];
+                dashData[dashCnt++] = styleDash[1];
+
+                this._edgeHighArr[highCnt++] = isPathSelected ? 1.0 : 0.0;
             }
         }
         this.edgeCount = cnt / 4;
@@ -729,9 +836,15 @@ class WebGLRenderer {
 
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.edgeThickBuffer);
         this.gl.bufferSubData(this.gl.ARRAY_BUFFER, 0, thickData.subarray(0, thickCnt));
+
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.edgeDashBuffer);
+        this.gl.bufferSubData(this.gl.ARRAY_BUFFER, 0, dashData.subarray(0, dashCnt));
+
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.edgeHighBuffer);
+        this.gl.bufferSubData(this.gl.ARRAY_BUFFER, 0, this._edgeHighArr.subarray(0, highCnt));
     }
 
-    updateTextData(nodes) {
+    updateTextData(nodes, edges = []) {
         if (!this.gl || !this.textAtlas || !nodes || nodes.length === 0) {
             this.charCount = 0;
             return;
@@ -739,25 +852,29 @@ class WebGLRenderer {
 
         const t0 = performance.now();
 
-        // 1️⃣ Pre-bake Relative Layout per Node (O(N) only when label changes)
+        // 1️⃣ Node Labels & Status Icons (💀, 🪦)
         nodes.forEach(n => {
-            const label = n.data?.label || n.id || "";
-            // If label changed or layout missing, bake it
-            if (!n._textLayout || n._textLayoutLabel !== label) {
-                this.textAtlas.addText(label);
+            let label = n.data?.label || n.id || "";
+            let iconPrefix = "";
+            if (n.status === 'error_necrosis') iconPrefix = "💀 ";
+            else if (n.status === 'error_tombstone') iconPrefix = "🪦 ";
+            
+            const fullText = iconPrefix + label;
+            
+            if (!n._textLayout || n._textLayoutLabel !== fullText) {
+                this.textAtlas.addText(fullText);
                 const items = [];
                 let totalW = 0;
-                for (const ch of label) {
+                for (const ch of fullText) {
                     const g = this.textAtlas.glyphMap.get(ch);
                     if (g) totalW += g.w;
                 }
                 
-                // Rel centers (relative to node top-left)
                 let relXStart = 60 - totalW / 2;
-                let relY = 35; // Moved inside (60 height) to match 2D logic
+                let relY = 35; 
                 let curX = relXStart;
                 
-                for (const ch of label) {
+                for (const ch of fullText) {
                     const g = this.textAtlas.glyphMap.get(ch);
                     if (!g) continue;
                     items.push({
@@ -768,12 +885,53 @@ class WebGLRenderer {
                     curX += g.w;
                 }
                 n._textLayout = items;
-                n._textLayoutLabel = label;
+                n._textLayoutLabel = fullText;
             }
         });
 
-        // 2️⃣ Calculate Total Buffer Size
-        let totalChars = 0;
+        // 2️⃣ Edge Badges (❌, ❓, ❗️) - Only in Edit Logic mode or when pending
+        const badgeItems = [];
+        if (edges && edges.length > 0) {
+            const isEditMode = window.engine?.isEditMode;
+            edges.forEach(e => {
+                const src = e.srcNode || (this.nodeMap?.get(e.from));
+                const tgt = e.tgtNode || (this.nodeMap?.get(e.to));
+                if (!src?.position || !tgt?.position) return;
+
+                const midX = (src.position.x + tgt.position.x + 120) / 2;
+                const midY = (src.position.y + tgt.position.y + 0) / 2; // -30 from center (30+30-30)
+
+                const confirmStatus = e.confirmStatus || (e.status === 'pending' ? 'pending_confirm' : '');
+                if (confirmStatus === 'pending_confirm' || confirmStatus === 'confirmed') {
+                    const char = (confirmStatus === 'pending_confirm') ? '❓' : '❗️';
+                    this.textAtlas.addText(char);
+                    const g = this.textAtlas.glyphMap.get(char);
+                    if (g) {
+                        badgeItems.push({
+                            x: midX - g.w / 2, y: midY,
+                            w: g.w, h: g.h,
+                            u0: g.u0, v0: g.v0, u1: g.u1, v1: g.v1
+                        });
+                    }
+                }
+
+                if (isEditMode) {
+                    const char = '❌';
+                    this.textAtlas.addText(char);
+                    const g = this.textAtlas.glyphMap.get(char);
+                    if (g) {
+                        badgeItems.push({
+                            x: midX + 20, y: midY, // Offset from the center badge
+                            w: g.w, h: g.h,
+                            u0: g.u0, v0: g.v0, u1: g.u1, v1: g.v1
+                        });
+                    }
+                }
+            });
+        }
+
+        // 3️⃣ Calculate Total Buffer Size
+        let totalChars = badgeItems.length;
         for (const n of nodes) {
             if (n._textLayout) totalChars += n._textLayout.length;
         }
@@ -783,48 +941,42 @@ class WebGLRenderer {
             return;
         }
 
-        // 3️⃣ Reuse Float32Array (O(1) buffer allocation after first run)
         if (!this._textData || this._textData.length !== totalChars * 8) {
             this._textData = new Float32Array(totalChars * 8);
         }
         const data = this._textData;
 
-        // 4️⃣ Fast Fill (No string ops, pure math, zero GC)
+        // 4️⃣ Fast Fill
         let idx = 0;
+        // Nodes
         for (let i = 0; i < nodes.length; i++) {
             const n = nodes[i];
-            // Safety: Skip if node isn't fully ready
-            if (!n.position || typeof n.position.x !== 'number') continue;
-            
+            if (!n.position || !n._textLayout) continue;
             const px = n.position.x;
             const py = n.position.y;
             const layout = n._textLayout;
-            if (!layout) continue;
-            
             for (let j = 0; j < layout.length; j++) {
                 const l = layout[j];
                 data[idx++] = px + l.dx;
                 data[idx++] = py + l.dy;
-                data[idx++] = l.w;
-                data[idx++] = l.h;
-                data[idx++] = l.u0;
-                data[idx++] = l.v0;
-                data[idx++] = l.u1;
-                data[idx++] = l.v1;
+                data[idx++] = l.w; data[idx++] = l.h;
+                data[idx++] = l.u0; data[idx++] = l.v0;
+                data[idx++] = l.u1; data[idx++] = l.v1;
             }
+        }
+        // Edges
+        for (let i = 0; i < badgeItems.length; i++) {
+            const b = badgeItems[i];
+            data[idx++] = b.x; data[idx++] = b.y;
+            data[idx++] = b.w; data[idx++] = b.h;
+            data[idx++] = b.u0; data[idx++] = b.v0;
+            data[idx++] = b.u1; data[idx++] = b.v1;
         }
 
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.textInstanceBuffer);
         this.gl.bufferData(this.gl.ARRAY_BUFFER, data, this.gl.DYNAMIC_DRAW);
         this.charCount = totalChars;
-
-        // 5️⃣ Atlas Upload (Lazy - only if new glyphs were added)
         this.textAtlas.upload();
-
-        const dt = performance.now() - t0;
-        if (dt > 10) {
-            console.warn(`[SYNAPSE WebGL] Heavy Text Update: ${dt.toFixed(2)}ms for ${totalChars} chars`);
-        }
     }
 
     /**
@@ -898,6 +1050,7 @@ class WebGLRenderer {
         const nodeMap = new Map();
         for (const n of frameState.nodes) nodeMap.set(n.id, n);
         this.updateEdgeData(frameState.edges, nodeMap, selectedIds);
+        this.updateTextData(frameState.nodes, frameState.edges);
 
         // Render Layers
         this.drawNodes(frameState.context);
@@ -945,7 +1098,7 @@ class WebGLRenderer {
             if (isSatellite) {
                 this.charCount = 0; // Disable text in satellite view
             } else {
-                this.updateTextData(nodes);
+                this.updateTextData(nodes, edges);
             }
         }
         this._lastZoom = transform.zoom;
@@ -1009,6 +1162,7 @@ class WebGLRenderer {
             -1 + transform.offsetX * scaleX, 1 + transform.offsetY * scaleY, 1
         ];
         this.gl.uniformMatrix3fv(this.locs.edge.uProj, false, mat);
+        this.gl.uniform1f(this.locs.edge.uTime, (Date.now() % 1000000) / 1000);
 
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.edgeRectBuffer);
         const vPos = this.locs.edge.vertex;
@@ -1019,6 +1173,8 @@ class WebGLRenderer {
         this.setAttrPointer(this.edgeInstanceBuffer, this.locs.edge.instanceEdge, 4, 0, 0, 1);
         this.setAttrPointer(this.edgeColorBuffer, this.locs.edge.color, 3, 0, 0, 1);
         this.setAttrPointer(this.edgeThickBuffer, this.locs.edge.thickness, 1, 0, 0, 1);
+        this.setAttrPointer(this.edgeDashBuffer, this.locs.edge.dash, 2, 0, 0, 1);
+        this.setAttrPointer(this.edgeHighBuffer, this.locs.edge.high, 1, 0, 0, 1);
 
         if (this.ext) {
             this.ext.drawArraysInstancedANGLE(this.gl.TRIANGLE_STRIP, 0, 4, this.edgeCount);
@@ -1040,6 +1196,8 @@ class WebGLRenderer {
             -1 + transform.offsetX * scaleX, 1 + transform.offsetY * scaleY, 1
         ];
         this.gl.uniformMatrix3fv(this.locs.node.uProj, false, mat);
+        this.gl.uniform1f(this.locs.node.uTime, (Date.now() % 1000000) / 1000);
+
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.rectBuffer);
         const vPos = this.locs.node.vertex;
         this.gl.vertexAttribPointer(vPos, 2, this.gl.FLOAT, false, 0, 0);
@@ -1052,7 +1210,9 @@ class WebGLRenderer {
         this.setAttrPointer(this.selectBuffer, this.locs.node.selected, 1, 0, 0, 1);
         this.setAttrPointer(this.alphaBuffer, this.locs.node.alpha, 1, 0, 0, 1);
         this.setAttrPointer(this.nodeShapeBuffer, this.locs.node.shape, 1, 0, 0, 1);
-        this.setAttrPointer(this.nodeFractureBuffer, this.locs.node.fracture, 1, 0, 0, 1);
+        this.setAttrPointer(this.nodeStatusBuffer, this.locs.node.statusType, 1, 0, 0, 1);
+        this.setAttrPointer(this.nodeDtrBuffer, this.locs.node.dtr, 1, 0, 0, 1);
+
         if (this.ext) {
             this.ext.drawArraysInstancedANGLE(this.gl.TRIANGLE_STRIP, 0, 4, this.nodeCount);
             this.drawCalls++;

@@ -109,10 +109,16 @@ export async function activate(context: vscode.ExtensionContext) {
         // [v0.2.44] Activate Memory Interceptor (Highest Priority)
         CommandInterceptor.getInstance().activate(context);
 
+        // [v0.2.47] Lifecycle Monitoring
+        vscode.window.onDidChangeVisibleTextEditors(() => {
+            console.log("[SYNAPSE][LIFECYCLE] Editor changed");
+        });
+
         // [v0.2.46] Activate Webview Interceptor (The Vein Piercer)
         WebviewInterceptor.getInstance().activate(context);
 
         // [v0.2.45.2] Reset & Isolation Commands
+        /* [v0.3.1_zz] Command Inhibited due to Context Vault UI Blocking
         context.subscriptions.push(
             vscode.commands.registerCommand('synapse.resetEngine', async () => {
                 const projectRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
@@ -138,6 +144,7 @@ export async function activate(context: vscode.ExtensionContext) {
                 }
             })
         );
+        */
 
 
 
@@ -152,6 +159,7 @@ export async function activate(context: vscode.ExtensionContext) {
         // BillingManager.initialize(context);
         // BillingManager.getInstance().trackSessionStart();
 
+        /* [v0.3.1_zz] Context Vault Directory Auto-Creation Disabled
         console.log('[SYNAPSE] Initializing context vault directory...');
         // 시작 시 .synapse_contexts/ 디렉터리 자동 생성
         {
@@ -166,6 +174,7 @@ export async function activate(context: vscode.ExtensionContext) {
                 }
             }
         }
+        */
 
         console.log('[SYNAPSE] Registering WebviewPanelSerializer...');
         if (vscode.window.registerWebviewPanelSerializer) {
@@ -401,7 +410,7 @@ export async function activate(context: vscode.ExtensionContext) {
             */
             console.log('[SYNAPSE] PbSessionWatcher STANDBY (Interceptor Priority).');
 
-            // [v0.2.42_hotfix] Manual PB Scan Command
+            /* [v0.3.1_zz] PB Miner Command Inhibition
             context.subscriptions.push(
                 vscode.commands.registerCommand('synapse.manualPbScan', async () => {
                     const antigravityPath = ChatExtractor.getAntigravityConversationsPath();
@@ -431,6 +440,7 @@ export async function activate(context: vscode.ExtensionContext) {
                     }
                 })
             );
+            */
         };
 
         // initAuditLog(); // [v0.2.44] Disabled in favor of hoisted initialization

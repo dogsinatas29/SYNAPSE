@@ -800,6 +800,43 @@
             transition: width 0.5s ease;
         }
 
+        /* [v0.3.1] Phase Debug Overlay */
+        #phase-overlay {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(28, 28, 28, 0.85);
+            backdrop-filter: blur(8px);
+            border: 1px solid #3c3836;
+            border-radius: 8px;
+            padding: 12px;
+            z-index: 1000;
+            font-family: 'Fira Code', monospace;
+            font-size: 11px;
+            color: #ebdbb2;
+            pointer-events: auto; /* [v0.3.1_zz] Enabled for dragging */
+            cursor: move;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+            min-width: 180px;
+            user-select: none;
+            display: none; /* Hidden by default */
+        }
+        #phase-overlay:hover {
+            border-color: #fabd2f;
+            background: rgba(40, 40, 40, 0.95);
+        }
+        #phase-overlay.visible {
+            display: block;
+        }
+        .phase-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 4px;
+        }
+        .phase-label { color: #a89984; }
+        .phase-value { color: #b8bb26; font-weight: bold; }
+        .lock-active { color: #fb4934; font-weight: bold; }
+
         .dtr-stats {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -960,7 +997,7 @@
                 <button class="btn active" data-mode="graph">Graph View</button>
                 <button class="btn" data-mode="tree">Tree View</button>
                 <button class="btn" data-mode="flow">Flow View</button>
-                <button class="btn" id="btn-toggle-vault">📂 Context Vault Panel</button>
+                <button class="btn" id="btn-toggle-vault" style="display: none;">📂 Context Vault Panel</button>
                 <button class="btn" id="btn-toggle-docs">📚 Documentation Shelf</button>
             </div>
         </div>
@@ -1029,8 +1066,8 @@
             </div>
         </div>
 
-        <!-- Context Menu -->
-        <div class="dropdown">
+        <!-- Context Menu [Hidden as requested] -->
+        <div class="dropdown" style="display: none;">
             <div class="menu-label" id="btn-record-label">⏺ Context</div>
             <div class="dropdown-content">
                 <button class="btn" id="btn-record" title="Context 레코딩 토글 (CTRL+ALT+M)">REC Toggle</button>
@@ -1040,6 +1077,26 @@
     </div>
 
     <div id="main-container">
+        <!-- [v0.3.1] Phase Debug Overlay -->
+        <div id="phase-overlay">
+            <div class="phase-row">
+                <span class="phase-label">Status:</span>
+                <span id="debug-phase" class="phase-value">PHASE 0</span>
+            </div>
+            <div class="phase-row">
+                <span class="phase-label">System:</span>
+                <span id="debug-lock" class="phase-value">READY</span>
+            </div>
+            <div class="phase-row">
+                <span class="phase-label">Budget:</span>
+                <span id="debug-budget" class="phase-value">100%</span>
+            </div>
+            <div class="phase-row">
+                <span class="phase-label">Ticks:</span>
+                <span id="debug-ticks" class="phase-value">0</span>
+            </div>
+        </div>
+
         <div id="canvas-container">
             <canvas id="canvas" tabindex="0" style="outline: none;"></canvas>
 
@@ -1358,7 +1415,37 @@
                     fileContent.textContent = message.content;
                 }
             }
+
+            // [v0.3.1] Phase Debug Overlay Update
+            if (message.command === 'projectState' && message.renderer && message.renderer.budgetReport) {
+                updateDebugOverlay(message.renderer.budgetReport, message.debuggerState);
+            }
         });
+
+        // [v0.3.1] Phase Debug Overlay UI Helper
+        function updateDebugOverlay(budget, debuggerState) {
+            const overlay = document.getElementById('phase-overlay');
+            if (!overlay) return;
+
+            overlay.classList.add('visible');
+
+            if (debuggerState) {
+                document.getElementById('debug-phase').textContent = debuggerState.currentPhase;
+                const lockEl = document.getElementById('debug-lock');
+                lockEl.textContent = debuggerState.isLocked ? 'LOCKED' : 'READY';
+                lockEl.className = debuggerState.isLocked ? 'phase-value lock-active' : 'phase-value';
+                document.getElementById('debug-ticks').textContent = debuggerState.tickCount;
+            }
+
+            if (budget) {
+                const budgetVal = Math.round((budget.filteredEdges / budget.totalEdges) * 100) || 100;
+                document.getElementById('debug-budget').textContent = `${budgetVal}%`;
+                
+                // If filtered heavy, show warning color
+                const budgetEl = document.getElementById('debug-budget');
+                budgetEl.style.color = budget.threshold > 0.6 ? '#fb4934' : '#b8bb26';
+            }
+        }
 
         // 초기화 및 이벤트 바인딩
         document.addEventListener('DOMContentLoaded', () => {
@@ -1391,49 +1478,69 @@
             }
 
             // Draggable Panel Helper
+            // Draggable Panel Helper [v0.3.1_zz_Fixed]
             function makeDraggable(panelId, headerId) {
                 const panel = document.getElementById(panelId);
                 const header = document.getElementById(headerId);
                 if (!panel || !header) return;
 
                 let isDragging = false;
-                let startX, startY, initialLeft, initialTop;
+                let startX, startY;
+                let initialPanelX, initialPanelY;
 
+                header.style.cursor = 'move';
+                
                 header.addEventListener('mousedown', (e) => {
+                    // Check if clicking interactive children
+                    if (e.target.tagName === 'BUTTON' || e.target.tagName === 'INPUT' || e.target.tagName === 'A') {
+                        return;
+                    }
+                    
                     isDragging = true;
                     startX = e.clientX;
                     startY = e.clientY;
                     
-                    // Allow dragging regardless of CSS centering
+                    // Allow dragging regardless of CSS centering/relative parents
                     const rect = panel.getBoundingClientRect();
-                    // Set absolute px positions explicitly before drag starts
-                    panel.style.left = rect.left + 'px';
-                    panel.style.top = rect.top + 'px';
-                    panel.style.transform = 'none';
-
-                    initialLeft = rect.left;
-                    initialTop = rect.top;
+                    const parentRect = panel.offsetParent ? panel.offsetParent.getBoundingClientRect() : { left: 0, top: 0 };
                     
+                    initialPanelX = rect.left - parentRect.left;
+                    initialPanelY = rect.top - parentRect.top;
+
+                    // Set explicit pixel coordinates
+                    panel.style.left = initialPanelX + 'px';
+                    panel.style.top = initialPanelY + 'px';
+                    panel.style.right = 'auto';
+                    panel.style.bottom = 'auto';
+                    panel.style.transform = 'none'; // Clear any centering transforms
+
                     document.body.style.userSelect = 'none';
+                    
+                    e.stopPropagation();
                 });
 
                 document.addEventListener('mousemove', (e) => {
                     if (!isDragging) return;
                     const dx = e.clientX - startX;
                     const dy = e.clientY - startY;
-                    panel.style.left = (initialLeft + dx) + 'px';
-                    panel.style.top = (initialTop + dy) + 'px';
+                    panel.style.left = (initialPanelX + dx) + 'px';
+                    panel.style.top = (initialPanelY + dy) + 'px';
                 });
 
                 document.addEventListener('mouseup', () => {
-                    isDragging = false;
-                    document.body.style.userSelect = '';
+                    if (isDragging) {
+                        isDragging = false;
+                        document.body.style.userSelect = '';
+                    }
                 });
             }
 
             makeDraggable('history-panel', 'history-panel-header-drag');
             makeDraggable('context-vault-panel', 'context-vault-header-drag');
             makeDraggable('docs-shelf-panel', 'docs-shelf-header-drag');
+            makeDraggable('phase-overlay', 'phase-overlay'); // [v0.3.1_zz] Status window draggable
+            makeDraggable('dtr-controller', 'dtr-controller'); // [v0.3.1_zz] Inference window draggable too
+            makeDraggable('layer-controller', 'layer-controller-header'); // [v0.3.1_zz] Layer controller draggable
 
             // [v0.2.20 Fix] Explicit wheel scroll support for panels (VS Code webview workaround)
             // Without this, fixed panels may not receive native scroll events properly

@@ -11,6 +11,10 @@ import { FileScanner } from '../core/FileScanner'; // Import Scanner
 import { BootstrapResult, ProjectState, NodeType } from '../types/schema';
 import { isIgnoredFolder, isIgnoredFile } from '../utils/exclusionRules';
 import { RuleEngine } from '../core/RuleEngine';
+import { phaseManager, Phase } from '../core/PhaseManager';
+import { dataPipeline } from '../core/DataPipeline';
+import { graphModel } from '../core/GraphModel';
+import { snapshotSystem } from '../core/SnapshotSystem';
 
 export class BootstrapEngine {
     private parser: GeminiParser;
@@ -24,16 +28,23 @@ export class BootstrapEngine {
     }
 
     /**
-     * Bootstrap 프로세스 실행
+     * Bootstrap 프로세스 실행 (v0.3.1 Phase Enforcement)
      */
     public async bootstrap(
         geminiMdPath: string,
         projectRoot: string,
         autoApprove: boolean = false
     ): Promise<BootstrapResult> {
-        console.log('🚀 SYNAPSE Bootstrap 시작...');
+        console.log('🚀 SYNAPSE Bootstrap 시작 (Phase 0: DATA)...');
+        phaseManager.reset(); 
 
         try {
+            // [v0.3.1] Snapshot Storage Initialize
+            snapshotSystem.setStoragePath(projectRoot);
+
+            // 1. DATA 수집 시작 (Phase 0)
+            phaseManager.assertPhase(Phase.DATA);
+            
             // Ensure RULES.md exists and load it
             this.ensureRulesFile(projectRoot);
             RuleEngine.getInstance().loadRules(projectRoot);
@@ -53,9 +64,6 @@ export class BootstrapEngine {
                     description: n.data.description || ''
                 })).filter(f => f.path);
 
-                // 의존성 정보 매핑 (중요: autoDiscover에서 찾아낸 엣지들을 structure에 반영)
-                // Note: discoveredState.edges has {from, to, type}. structure.dependencies needs file paths.
-                // We need to map node IDs back to file paths.
                 const nodeMap = new Map<string, string>();
                 discoveredState.nodes.forEach(n => nodeMap.set(n.id, n.data.file || ''));
 
@@ -67,13 +75,20 @@ export class BootstrapEngine {
                 })).filter(d => d.from && d.to);
             }
 
-            // 3. 디렉토리 구조 생성
+            // 3. 디렉토리 구조 생성 (선택 사항)
             if (autoApprove) {
                 await this.parser.createStructure(projectRoot, structure);
             }
 
-            // 4. 초기 순서도 및 클러스터 생성
-            const { nodes, edges, clusters } = this.flowchartGen.generateInitialFlowchart(structure);
+            // 2. GRAPH 생성 (Phase 1)
+            // [v0.3.1] DataPipeline을 통해 수집 및 그래프 구축 통합 실행
+            const discoveredFiles = this.getDiscoverableFiles(projectRoot, structure.includePaths);
+            const nodes = dataPipeline.processFiles(discoveredFiles);
+            const edges = graphModel.createSnapshot().edges;
+
+            // 3. SNAPSHOT 생성 (Phase 2)
+            phaseManager.advancePhase(Phase.SNAPSHOT);
+            snapshotSystem.save();
 
             // 프로젝트 상태 저장
             const projectState: ProjectState = {
@@ -84,9 +99,9 @@ export class BootstrapEngine {
                     offset: { x: 0, y: 0 },
                     visible_layers: ['source', 'documentation']
                 },
-                nodes,
-                edges,
-                clusters
+                nodes: nodes as any,
+                edges: edges as any,
+                clusters: []
             };
 
             const statePath = path.join(projectRoot, 'data', 'project_state.json');
@@ -99,12 +114,13 @@ export class BootstrapEngine {
             return {
                 success: true,
                 structure,
-                initial_nodes: nodes,
-                initial_edges: edges
+                initial_nodes: nodes as any,
+                initial_edges: edges as any
             };
 
-        } catch (error) {
+        } catch (error: any) {
             console.error('\n❌ Bootstrap 실패:', error);
+            phaseManager.lockSystem(`PHASE FAILED: ${error.message}`);
             return {
                 success: false,
                 structure: { folders: [], files: [], dependencies: [] },
@@ -116,35 +132,56 @@ export class BootstrapEngine {
     }
 
     /**
-     * 프로젝트 자동 발견 및 초기화 (Lite Bootstrap)
+     * 프로젝트 자동 발견 및 초기화 (Lite Bootstrap - Phase 0 Integration)
      */
     public async liteBootstrap(projectRoot: string, onProgress?: (msg: string) => void): Promise<BootstrapResult> {
         console.log(`🔍 [SYNAPSE] Lite Bootstrapping project at: ${projectRoot}`);
-        if (onProgress) onProgress('Initializing rules...');
+        phaseManager.reset();
 
         try {
-            // Ensure RULES.md exists and load it
+            // [v0.3.1] Snapshot Storage Initialize
+            snapshotSystem.setStoragePath(projectRoot);
+
+            phaseManager.assertPhase(Phase.DATA);
             this.ensureRulesFile(projectRoot);
             RuleEngine.getInstance().loadRules(projectRoot);
 
-            const projectState = await this.autoDiscover(projectRoot, undefined, onProgress);
+            const discoveredFiles = this.getDiscoverableFiles(projectRoot);
+            const nodes = dataPipeline.processFiles(discoveredFiles);
+            const edges = graphModel.createSnapshot().edges;
+
+            phaseManager.advancePhase(Phase.SNAPSHOT);
+            snapshotSystem.save();
+
+            const projectState: ProjectState = {
+                project_name: path.basename(projectRoot),
+                gemini_md_path: path.join(projectRoot, 'GEMINI.md'),
+                canvas_state: {
+                    zoom_level: 1.0,
+                    offset: { x: 0, y: 0 },
+                    visible_layers: ['source', 'documentation']
+                },
+                nodes: nodes as any,
+                edges: edges as any,
+                clusters: []
+            };
 
             const statePath = path.join(projectRoot, 'data', 'project_state.json');
             const stateDir = path.dirname(statePath);
             if (!fs.existsSync(stateDir)) {
                 fs.mkdirSync(stateDir, { recursive: true });
             }
-            console.log(`💾 [SYNAPSE] Saving initial project state to: ${statePath}`);
             fs.writeFileSync(statePath, JSON.stringify(projectState, null, 2), 'utf-8');
 
             return {
                 success: true,
-                structure: { folders: [], files: [], dependencies: [] }, // Lite bootstrap doesn't use standard structure
-                initial_nodes: projectState.nodes,
-                initial_edges: projectState.edges
+                structure: { folders: [], files: [], dependencies: [] },
+                initial_nodes: nodes as any,
+                initial_edges: edges as any
             };
-        } catch (error) {
+        } catch (error: any) {
             console.error('\n❌ Lite Bootstrap 실패:', error);
+            phaseManager.lockSystem(`LITE BOOTSTRAP FAILED: ${error.message}`);
             return {
                 success: false,
                 structure: { folders: [], files: [], dependencies: [] },
@@ -155,238 +192,22 @@ export class BootstrapEngine {
         }
     }
 
-    /**
-     * Ensures that RULES.md exists in the project root.
-     * If not, creates it with default content.
-     */
     private ensureRulesFile(projectRoot: string): void {
         const rulesPath = path.join(projectRoot, 'RULES.md');
         if (!fs.existsSync(rulesPath)) {
-            console.log('📝 [SYNAPSE] RULES.md not found. Generating default rules file...');
-            const defaultRules = `# SYNAPSE Architecture & Discovery Rules (설계 및 발견 규칙)
-
-This document defines the rules for how SYNAPSE discovers, parses, and visualizes the project architecture.
-본 문서는 SYNAPSE가 프로젝트 아키텍처를 발견, 파싱 및 시각화하는 규칙을 정의합니다.
-
----
-
-## 1. Node Inclusion Rules (노드 포함 규칙)
-- **Real Path Priority (실제 경로 우선)**: Only files and folders that actually exist in the project root (e.g., \`src/\`, \`prompts/\`) are valid nodes.
-- **Icon Standards (아이콘 표준)**: 
-    - Folder nodes MUST be prefixed with the 📁 icon.
-    - File nodes MUST be prefixed with the 📄 icon.
-- **Core Components (중추 컴포넌트)**: Critical system logic must always be placed in the top-level cluster.
-
-## 2. Exclusion & Refinement Rules (제외 및 정제 규칙)
-- **Code Block Isolation (코드 블록 격리)**: Text inside multi-line code blocks is excluded from scanning.
-- **Inline Code Protection (인라인 코드 보호)**: Filenames wrapped in single backticks (\`...\`) do not trigger node creation.
-- **Comment Ignores (주석 무시)**: Text inside HTML comments \`<!-- ... -->\` is ignored.
-- **Node Diet (최적화)**: Non-architectural documents and build artifacts are excluded:
-    - \`README.md\`, \`README_KR.md\`, \`CHANGELOG.md\`, \`.vsix\`, \`.js.map\`
-    - \`node_modules\`, \`.git\`, \`dist\`, \`build\`, \`ui\`
-
-## 3. Edge & Flow Definitions (엣지 및 흐름 정의)
-- **Execution Flow Priority (실행 흐름 우선)**: Connections (\`-->\`) should represent actual **'Execution Flow'**.
-- **Layer Compliance (레이어 준수)**: Connections should follow: \`Discovery\` -> \`Reasoning\` -> \`Action\`.
-`;
+            const defaultRules = `# SYNAPSE Architecture & Discovery Rules\n\n- **Real Path Priority**: Only valid nodes.\n- **Exclusion**: node_modules, .git, etc.\n`;
             fs.writeFileSync(rulesPath, defaultRules, 'utf8');
         }
     }
 
     /**
-     * 프로젝트 자동 발견 (Headless Bootstrap)
+     * 프로젝트 자동 발견 (Headless - Phase 0 DATA Collection)
      */
     public async autoDiscover(projectRoot: string, includePaths?: string[], onProgress?: (msg: string) => void): Promise<ProjectState> {
         console.log(`🔍 [SYNAPSE] Auto-discovering source files in: ${projectRoot}`);
-        if (onProgress) onProgress('Discovering project files...');
-
-        const structure: any = {
-            folders: [],
-            files: [],
-            dependencies: []
-        };
-
-        let fileCount = 0;
-        const MAX_SCAN_DEPTH = 5;
-        const scanDir = (dir: string, relPath: string = '', depth: number = 0) => {
-            if (!fs.existsSync(dir) || depth > MAX_SCAN_DEPTH) return;
-            const files = fs.readdirSync(dir);
-            for (const file of files) {
-                const fullPath = path.join(dir, file);
-                const currentRelPath = path.join(relPath, file).replace(/\\/g, '/');
-
-                if (isIgnoredFolder(file)) continue;
-
-                if (includePaths && includePaths.length > 0 && relPath === '') {
-                    const isIncluded = includePaths.some(p => {
-                        const normalizedP = p.replace(/^\.\//, '').replace(/\/$/, '');
-                        return file === normalizedP || file.startsWith(normalizedP + '/');
-                    });
-                    if (!isIncluded) continue;
-                }
-
-                const stat = fs.statSync(fullPath);
-
-                if (stat.isDirectory()) {
-                    structure.folders.push(currentRelPath);
-                    scanDir(fullPath, currentRelPath, depth + 1);
-                } else {
-                    const ext = path.extname(file).toLowerCase();
-
-                    if (isIgnoredFile(currentRelPath)) {
-                        continue;
-                    }
-
-                    const scanExtensions = [
-                        '.ts', '.js', '.py', '.cpp', '.h', '.c', '.hpp', '.cc', '.rs', '.sh', '.sql', '.md'
-                    ];
-
-                    if (scanExtensions.includes(ext)) {
-                        fileCount++;
-                        if (fileCount % 50 === 0 && onProgress) {
-                            onProgress(`Discovering files (${fileCount} found)...`);
-                        }
-
-                        // [v0.2.25 Bugfix] Skip files that have been "safely deleted" by SYNAPSE
-                        try {
-                            // Read first 100 bytes to check for deletion marker
-                            const fd = fs.openSync(fullPath, 'r');
-                            const buffer = Buffer.alloc(100);
-                            fs.readSync(fd, buffer, 0, 100, 0);
-                            fs.closeSync(fd);
-                            const topContent = buffer.toString('utf8');
-
-                            if (topContent.includes('[SYNAPSE_DELETED]')) {
-                                continue;
-                            }
-                        } catch (e) {
-                            // Ignore read errors
-                        }
-
-                        let type: NodeType = 'source';
-                        if (ext === '.md') {
-                            const fileName = path.basename(currentRelPath).toLowerCase();
-                            // Always allow core SYNAPSE docs
-                            if (fileName === 'gemini.md' || fileName === 'rules.md' || fileName.includes('architecture_report')) {
-                                type = 'documentation';
-                            } else {
-                                const isRoot = !currentRelPath.includes('/') && !currentRelPath.includes('\\');
-                                const isDocFolder = currentRelPath.toLowerCase().startsWith('doc/') || currentRelPath.toLowerCase().startsWith('docs/');
-                                if (isRoot || isDocFolder) {
-                                    type = 'documentation';
-                                } else {
-                                    continue; // Filter out other .md files
-                                }
-                            }
-                        }
-
-                        const dtrData = this.scoutDTR(fullPath, type);
-
-                        structure.files.push({
-                            path: currentRelPath.replace(/\\/g, '/'),
-                            type,
-                            description: `${file} (${type === 'documentation' ? 'Doc' : 'Auto-detected'})`,
-                            intelligence: dtrData // This needs to be stored somewhere or passed to flowchartGen
-                        });
-
-                        // [v0.2.18.1 Opt] Deep Scanning decoupled from discovery walk to prevent hangs
-                        // Content summary will be populated separately during sendProjectState
-                    }
-                }
-            }
-        };
-
-        try {
-            scanDir(projectRoot);
-            if (onProgress) onProgress(`Finalizing structure for ${fileCount} files...`);
-
-            // Re-process dependencies to match actual file paths
-            const filePaths = new Set(structure.files.map((f: any) => f.path));
-            const validDependencies: any[] = [];
-
-            structure.dependencies.forEach((dep: any) => {
-                // 'ref' might be a module name or partial path. 
-                // Try to find a file that ends with this name (naive resolution)
-                // or exactly matches.
-
-                // 0. Handle relative imports (from .module import X)
-                if (dep.to.startsWith('.')) {
-                    const fromDir = path.dirname(dep.from);
-                    const cleanTo = dep.to.replace(/^\.+/, '');
-                    const resolvedPath = path.join(fromDir, cleanTo).replace(/\\/g, '/');
-
-                    // Try with extensions
-                    const extensions = ['.ts', '.js', '.py'];
-                    for (const ext of extensions) {
-                        if (filePaths.has(resolvedPath + ext)) {
-                            validDependencies.push({ ...dep, to: resolvedPath + ext });
-                            return;
-                        }
-                    }
-                    if (filePaths.has(resolvedPath)) {
-                        validDependencies.push({ ...dep, to: resolvedPath });
-                        return;
-                    }
-                }
-
-                // 1. Exact match
-                if (filePaths.has(dep.to)) {
-                    validDependencies.push(dep);
-                    return;
-                }
-
-                // 2. Fuzzy match (reference 'User' -> 'src/models/User.ts')
-                const match = structure.files.find((f: any) => {
-                    const fName = path.basename(f.path, path.extname(f.path));
-                    const extensions = ['.ts', '.js', '.py'];
-
-                    // Match by filename (e.g., 'calculator' matches 'calculator.py')
-                    if (fName === dep.to) return true;
-
-                    // Match by partial path (e.g., 'models/User' matches 'src/models/User.ts')
-                    for (const ext of extensions) {
-                        const target = dep.to + ext;
-                        if (f.path === target || f.path.endsWith('/' + target)) return true;
-                    }
-
-                    return false;
-                });
-
-                if (match) {
-                    console.log(`  - [Resolved] ${dep.to} -> ${match.path}`);
-                    validDependencies.push({
-                        ...dep,
-                        to: match.path
-                    });
-                } else {
-                    // 3. External Library Support (Not found in project, but keep it)
-                    // Skip common built-in modules or very short noise
-                    if (dep.to.length > 1 && !dep.to.startsWith('/') && !dep.to.includes('\\')) {
-                        console.log(`  - [External] ${dep.to} (Potential library)`);
-                        // Add to structure.files if not already there as an external node
-                        if (!structure.files.some((f: any) => f.path === dep.to && f.type === 'external')) {
-                            structure.files.push({
-                                path: dep.to,
-                                type: 'external',
-                                description: `External Library: ${dep.to}`
-                            });
-                        }
-                        validDependencies.push({
-                            ...dep,
-                            to: dep.to,
-                            type: 'dependency'
-                        });
-                    }
-                }
-            });
-
-            structure.dependencies = validDependencies;
-
-        } catch (e) {
-            console.error('[SYNAPSE] Scan error:', e);
-        }
-
-        const { nodes, edges, clusters } = this.flowchartGen.generateInitialFlowchart(structure);
+        const discoveredFiles = this.getDiscoverableFiles(projectRoot, includePaths);
+        const nodes = dataPipeline.processFiles(discoveredFiles);
+        const edges = graphModel.createSnapshot().edges;
 
         return {
             project_name: path.basename(projectRoot),
@@ -396,67 +217,53 @@ This document defines the rules for how SYNAPSE discovers, parses, and visualize
                 offset: { x: 0, y: 0 },
                 visible_layers: ['source', 'documentation']
             },
-            nodes,
-            edges,
-            clusters
+            nodes: nodes as any,
+            edges: edges as any,
+            clusters: []
         };
     }
 
-    private printStructurePreview(structure: any): void {
-        // Implementation remains same or simplified
+    /**
+     * 프로젝트 루트로부터 스캔 가능한 파일 경로 리스트 추출 (v0.3.1 Phase 0)
+     */
+    private getDiscoverableFiles(projectRoot: string, includePaths?: string[]): string[] {
+        const fileList: string[] = [];
+        const scanDir = (dir: string, relPath: string = '', depth: number = 0) => {
+            if (!fs.existsSync(dir) || depth > 5) return;
+            const files = fs.readdirSync(dir);
+            for (const file of files) {
+                const fullPath = path.join(dir, file);
+                const currentRelPath = path.join(relPath, file).replace(/\\/g, '/');
+                if (isIgnoredFolder(file)) continue;
+                if (includePaths && includePaths.length > 0 && relPath === '') {
+                    const isIncluded = includePaths.some(p => {
+                        const normalizedP = p.replace(/^\.\//, '').replace(/\/$/, '');
+                        return file === normalizedP || file.startsWith(normalizedP + '/');
+                    });
+                    if (!isIncluded) continue;
+                }
+                const stat = fs.statSync(fullPath);
+                if (stat.isDirectory()) {
+                    scanDir(fullPath, currentRelPath, depth + 1);
+                } else {
+                    const ext = path.extname(file).toLowerCase();
+                    if (isIgnoredFile(currentRelPath)) continue;
+                    const scanExtensions = ['.ts', '.js', '.py', '.cpp', '.h', '.c', '.hpp', '.cc', '.rs', '.sh', '.sql', '.md'];
+                    if (scanExtensions.includes(ext)) {
+                        fileList.push(fullPath);
+                    }
+                }
+            }
+        };
+        scanDir(projectRoot);
+        return fileList;
     }
 
-    /**
-     * ComplexityScouter: Heuristic DTR calculation
-     */
     private scoutDTR(filePath: string, type: NodeType): any {
-        if (type === 'documentation' || type === 'config' || type === 'external') {
-            return { dtr: 0.2, confidence: 0.9 };
-        }
-
-        try {
-            // [v0.2.18.1 Opt] Skip complexity analysis for large files (> 1MB)
-            const stats = fs.statSync(filePath);
-            if (stats.size > 1024 * 1024) {
-                return { dtr: 0.5, confidence: 0.7, note: 'large file' };
-            }
-
-            const content = fs.readFileSync(filePath, 'utf8');
-            const complexity = this.calculateComplexityHeuristic(content);
-
-            // DTR Logic based on RULES.md
-            let dtr = 0.3; // Default Mid-Low
-            if (complexity > 15) dtr = 0.85;      // High
-            else if (complexity > 8) dtr = 0.6;   // Mid
-            else if (complexity < 3) dtr = 0.2;   // Low
-
-            return {
-                dtr,
-                density_rho: Math.min(1, complexity / 20),
-                confidence: 0.9,
-                think_at_n: dtr > 0.7 ? 5 : 1
-            };
-        } catch (e) {
-            return { dtr: 0.3, confidence: 0.5 };
-        }
+        return { dtr: 0.3, confidence: 0.9 }; // Simplified for Phase 1
     }
 
     private calculateComplexityHeuristic(content: string): number {
-        // Naive Cyclomatic Complexity heuristic
-        const keywords = ['if', 'else', 'for', 'while', 'switch', 'case', 'catch', '&&', '||', '?', 'await'];
-        let score = 1;
-
-        const tokens = content.split(/\s+/);
-        tokens.forEach(t => {
-            if (keywords.includes(t.replace(/[^a-z&|?]/gi, ''))) {
-                score++;
-            }
-        });
-
-        // Scale by function density
-        const functionMatches = content.match(/function|=>|async\s+function/g);
-        if (functionMatches) score += functionMatches.length * 0.5;
-
-        return score;
+        return 1; // Simplified for Phase 1
     }
 }

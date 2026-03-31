@@ -1,8 +1,8 @@
-# <img src="./resources/synapse-icon.png" width="40" height="40" /> 🧠 SYNAPSE: Visual Architecture Engine (v0.2.28)
+# <img src="./resources/synapse-icon.png" width="40" height="40" /> 🧠 SYNAPSE: Visual Architecture Engine (v0.2.53)
 
 > **"What you see is the logic of LLM"** — *WYSIWYG Logic for AI*
 
-[![Version](https://img.shields.io/badge/version-v0.2.28-brightgreen.png)
+[![Version](https://img.shields.io/badge/version-v0.2.53-brightgreen.png)
 ![Status](https://img.shields.io/badge/status-War_Room_Ready-orange.png)
 [![Language](https://img.shields.io/badge/Language-TypeScript-blue?style=flat-square)](https://www.typescriptlang.org/)
 [![Platform](https://img.shields.io/badge/Platform-VS_Code-007ACC?style=flat-square)](https://code.visualstudio.com/)
@@ -143,12 +143,12 @@ SYNAPSE integrates VS Code's real-time diagnostics directly into the architectur
 ```bash
 code --install-extension synapse-visual-architecture-0.2.20.vsix
 ```
-    Current Version: **v0.2.20** (Iron Guard & Promotion Awareness)
+    Current Version: **v0.2.53** (The Mainframe Breach)
 
 ## 🚀 Getting Started
 Launch your visual architecture journey in seconds.
 
-1. **Install Extension**: Install the `synapse-visual-architecture-v0.2.20.vsix` (or latest) in Antigravity/VS Code.
+1. **Install Extension**: Install the `synapse-visual-architecture-v0.2.53.vsix` (or latest) in Antigravity/VS Code.
 2. **DNA Injection**: Create or drop a `GEMINI.md` (or `Project_Spec.md`) file into your workspace root.
 3. **Bootstrap Phase**: Open the **SYNAPSE Canvas** from the sidebar or command palette (`Ctrl+Shift+P` -> `SYNAPSE: Open Canvas`).
 4. **First Visualization**: 
@@ -267,6 +267,7 @@ SYNAPSE v0.2.17 bridges the gap between drawing pictures and writing code.
 
 | Version | Date | Description (English) | Description (Korean) |
 | :--- | :--- | :--- | :--- |
+| **v0.2.53** | 2026-03-31 | **The Mainframe Breach**: Main World (Context 1) CDP injection and VsCodeApi hijacking for secured return path. | **메인프레임 브리치**: Main World(Context 1) CDP 주입 및 VsCodeApi 하이재킹을 통한 데이터 귀환 경로 확보. |
 | **v0.2.28** | 2026-03-22 | Rendering Parity Patch: 2D/3D color sync, camera view persistence, extensionless file guard. | 렌더링 일치 패치: 2D/3D 색상 동기화, 카메라 뷰 영속성, 확장자 없는 파일 처리. |
 | **v0.2.26** | 2026-03-22 | WebGL Fix, Snapshot Restoration, Node Style Alignment. | WebGL 오류 수정, 스냅샷 뷰 복구, 노드 규격 동기화. |
 | **v0.2.21** | 2026-03-15 | WebGL Acceleration, External Doc Shelf, Fuzzy search (fzf), Selection UI refinement. | WebGL 가속, Documentation Shelf 패널화, 퍼지 검색(fzf), 선택 인터페이스 정밀화. |

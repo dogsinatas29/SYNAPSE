@@ -2,7 +2,7 @@
     "name": "synapse-visual-architecture",
     "displayName": "SYNAPSE - Visual Architecture Engine",
     "description": "Visual architecture control engine for code outer-space visualization and design",
-    "version": "0.2.47",
+    "version": "0.3.1",
     "publisher": "synapse-team",
     "repository": {
         "type": "git",
@@ -18,7 +18,7 @@
     ],
     "main": "./dist/extension.js",
     "activationEvents": [
-        "onStartupFinished"
+        "*"
     ],
     "contributes": {
         "commands": [

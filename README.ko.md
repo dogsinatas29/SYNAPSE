@@ -1,8 +1,8 @@
-# <img src="./resources/synapse-icon.png" width="40" height="40" /> 🧠 SYNAPSE: 비주얼 아키텍처 엔진 (v0.2.28)
+# <img src="./resources/synapse-icon.png" width="40" height="40" /> 🧠 SYNAPSE: 비주얼 아키텍처 엔진 (v0.2.53)
 
 > **"눈에 보이는 것이 곧 LLM의 논리입니다."** — *AI를 위한 WYSIWYG 논리 설계 도구*
 
-[![Version](https://img.shields.io/badge/version-v0.2.28-brightgreen.png)](https://github.com/dogsinatas29/SYNAPSE/releases)
+[![Version](https://img.shields.io/badge/version-v0.2.53-brightgreen.png)](https://github.com/dogsinatas29/SYNAPSE/releases)
 ![Status](https://img.shields.io/badge/status-War_Room_Ready-orange.png)
 [![Language](https://img.shields.io/badge/Language-TypeScript-blue?style=flat-square)](https://www.typescriptlang.org/)
 [![Platform](https://img.shields.io/badge/Platform-VS_Code-007ACC?style=flat-square)](https://code.visualstudio.com/)
@@ -182,12 +182,12 @@ LLM 추론 논리와 소스 파일 간의 실제 연결 상태를 시각화합�
 ```bash
 code --install-extension synapse-visual-architecture-0.2.20.vsix
 ```
-현재 버전: **v0.2.20** (Iron Guard & Promotion Awareness)
+현재 버전: **v0.2.53** (The Mainframe Breach)
 
 ## 🚀 시작하기 (Getting Started)
 시각적 아키텍처 설계를 즉시 시작하는 방법입니다.
 
-1. **확장 기능 설치**: Antigravity/VS Code에 `synapse-visual-architecture-v0.2.20.vsix` (또는 최신 버전) 파일을 설치합니다.
+1. **확장 기능 설치**: Antigravity/VS Code에 `synapse-visual-architecture-v0.2.53.vsix` (또는 최신 버전) 파일을 설치합니다.
 2. **DNA 주입**: 워크스페이스 루트에 `GEMINI.md` (또는 `Project_Spec.md`) 파일을 생성하거나 드롭합니다.
 3. **부트스트랩 단계**: 사이드바나 커맨드 팔레트(`Ctrl+Shift+P` -> `SYNAPSE: Open Canvas`)에서 **SYNAPSE Canvas**를 엽니다.
 4. **첫 시각화 (First Visualization)**: 
@@ -301,95 +301,10 @@ SYNAPSE v0.2.17은 그림 그리기와 코드 작성 간의 간극을 메웁니�
 
 ## 🆕 버전 히스토리
 
-### v0.2.28 (렌더링 일치 및 안정성 패치)
-- **2D/3D 조건 노드 색상 동기화**: `valid_*`, `checker`, `router`, `is_*` 등 결정 노드가 2D와 3D 모두 동일한 어두운 배경(`#3c3836`)으로 렌더링됩니다. 실제 `isDeterministicFracture` 위반 노드만 `#ebdbb2` 밝은 배경을 유지합니다.
-- **카메라 뷰 영속성**: 캔버스 카메라 위치(줌 + 패닝 오프셋)가 매 스냅샷마다 `project_state.json`에 완전히 저장되고, 로드 시 정확히 복원됩니다.
-- **확장자 없는 파일 가드**: 확장자가 없는 파일 경로를 가진 노드 클릭 시 조용한 오류 대신 명확한 경고 메시지가 표시됩니다.
-- **오류 메시지 개선**: 파일 열기 오류 시 구체적인 시스템 오류 원인이 포함됩니다.
-
-### v0.2.26 (Final Stabilization: WebGL & UX)
-- **WebGL 쉐이더 오류 수정**: 3D 가속 기능이 작동하지 않던 컴파일 에러를 해결했습니다.
-- **스냅샷 뷰 복원**: 스냅샷 로드 시 사용자의 마지막 줌 배율과 화면 위치를 완벽하게 복구합니다.
-- **노드/엣지 규격 동기화**: 아키텍처 규격에 따른 모든 시각적 스타일(색상, 아이콘, 배지)을 전수 검증 및 일치시켰습니다.
-- **가속 상태 표시**: FPS 표시기에 (3D) 접미사를 추가하여 가속 여부를 명확히 표시합니다.
-
-
-### v0.2.21 (결정판: GPU 가속 및 UI 정밀화)
-- **Documentation Shelf 외부 패널화**: 문서 리스트를 독립적이고 드래그 가능한 외부 패널로 분리하여 캔버스 공간을 확보했습니다.
-- **FZF 방식의 퍼지 검색**: Context Vault 및 Documentation Shelf 검색에 퍼지 매칭 알고리즘을 도입했습니다.
-- **선택 인터페이스 정교화**: 단일 클릭(탐색)과 더블 클릭(파일 열기)을 분리하고, 엣지 히트박스를 개선했습니다.
-- **GPU 가속 렌더링**: 수만 개의 노드를 실시간으로 핸들링하는 WebGL 기반 렌더러를 통합했습니다.
-- **가상 디버그 엔진 (Virtual Debug)**: LSP 진단 정보를 기반으로 노드 괴사 및 엣지 파손을 시각적으로 렌더링합니다.
-
-### v0.2.20 (Hybrid Guardrail & Promotion Awareness)
-- **Iron Guard Protocol (v0.3.0 Preview)**: `LogicAnalyzer.ts` 및 VS Code Diagnostics를 연동하여 실시간 엣지 위반(💀) 건을 시각적으로 도출.
-- **폭포수 규칙 (Layer Gravity)**: 단방향 참조 흐름(예: Frontend -> API -> DB)을 강제하여, 하위 계층이 상위를 호출하는 역류 현상을 즉시 차단(CRITICAL VIOLATION)합니다.
-- **Promotion Awareness System**: 노드가 고스트(Ghost)에서 활성(Active)으로 전환될 때 파티클 애니메이션(`PromotionParticle`) 및 컬러 모핑 연출 추가.
-- **Sovereign Principles Validation**: 캔버스 기동 시 `GEMINI.md`의 `# Principles`를 강제 검증하고, 위반 시 사용자 경고 알림. 조작 차단 방식을 해제하여 원칙이 없어도 접근은 가능하도록 UX 완화.
-- **UX & 안정성 확보**: 드래그 Jitter(5px 임계점 도입) 버그 및 다중 선택, 클러스터 제목 드래그 관련 참조 소실 버그 해결. 0 FPS(Idle) 상태에서 인터랙션 발생 시 즉시 60 FPS로 전환되는 Wake-up 구현.
-- **가상 디버그 엔진 (Virtual Debug)**: LSP 진단 정보의 노드 괴사(Necrosis), 엣지 파손, 시스템 레드아웃 시뮬레이션 적용.
-
-### v0.2.19 (Promotion & Side Panel Optimization)
-- **고스트 전이 시각화**: 캔버스 상에서 기능 실체가 등록될 때의 직관적인 변화(Morphing) 효과 제공.
-- **패널 분리 효율성**: Context Vault와 Snapshot History 창을 캔버스 메인 영역에서 분리된 플로팅/슬라이딩 UI 형태로 변경하여 작업 도메인을 확보.
-
-### v0.2.18.1 (Iron Guard Protocol & Modular Architecture)
-- **문서 모듈화 허브**: 거대한 `architecture.md`를 4개의 전문 스펙(`core_synapse`, `vega_agent`, `reporting`, `data_scheme`)으로 분리하고 마스터 허브 체계를 수립했습니다.
-- **경량 스키마 가드 (LOD)**: `project_state.json` 저장/로드 시 핵심 필드(ID, Type, Status) 무결성을 엄격히 검증합니다.
-- **Panic Isolation 기틀**: 이종 언어 간 예외를 에러 코드로 변환하여 격리하는 표준을 정립하여 에러 전염을 방지합니다.
-- **Ghost Node 워크플로우**: `Ghost` (제안) -> `Materialize` (승인) -> `Reserved` (대기) -> `Active` (코드) 전이 모델을 공식화했습니다.
-- **계층형 UI 최적화**: 툴바를 논리적 메뉴 그룹(`View`, `System`, `Protocol`, `Snap Shot`)으로 재구조화하여 작업 공간을 개선했습니다.
-- **컨텍스트 볼트 격리**: 비대한 컨텍스트 노드들을 전용 링크 버튼을 통해 외부 패널로 물리적으로 분리했습니다.
-- **고스트 노드 부활 방지**: `saveState` 시(`CanvasPanel.ts`) 명시적 검증 로직을 추가하여 UI에서 삭제된 노드가 캐시로 인해 부활하는 현상을 차단했습니다.
-- **엣지 배지 클릭 반경 확장**: 확정(`?`) 및 삭제(`trash`) 배지의 클릭 영역을 대폭 확장하여 접근성을 높였습니다.
-- **Buffer ➔ Reserved 자동화**: 버퍼 클러스터에서 이탈하는 드래그를 차단하고, `Reserved` 클러스터 할당 시 좌표를 `[-1500, 1000]`으로 자동 이동하도록 개선했습니다.
-- **엄격한 엣지 임포트 의미론 (A ➔ B)**: Node A에서 B로의 연결이 명시적으로 "A가 B를 임포트함"을 의미하도록 정의하고 상태바 알림을 추가했습니다.
-
-### v0.2.17 (DTR & WYSIWYG Logic Editing)
-- **DTR 시각화**: AI 추론 밀도가 보라색으로 빛나며, VS Code 상태바에서 인퍼런스 압력을 직접 제어할 수 있습니다.
-- **버퍼 클러스터 자동화**: 수동 생성된 노드가 `Buffer Cluster`로 자동 스폰되며 카메라가 포커스합니다.
-- **로직 편집 마스터 스위치**: 파괴적인 생성 도구(`Node`, `Connect`)들이 `Edit Logic` 스위치 활성화 시에만 노출됩니다.
-- **안전한 노드 삭제**: 데이터 손실 방지를 위해 물리 파일을 삭제 대신 주석 처리합니다.
-- **상태 변경 자동 스냅샷**: 노드/엣지 삭제나 위치 변경 등의 모든 캔버스 조작은 즉각적으로 스냅샷 히스토리에 기록됩니다.
-- **엣지 자동 임포트**: 엣지 확정 시 실제 `import` 구문을 소스에 주입합니다. 대기/확정 배지(`?`, `!`)의 크기를 대폭 키워 가시성을 확보했습니다.
-- **Reset State 프로토콜**: 4단계 전체 리셋 시스템 (디스크, 메모리, 캔버스, 프롬프트).
-- **데이터 위생**: JSON 버퍼 인코딩 손상 및 RangeError 이슈를 해결했습니다.
-
-### v0.2.16 (Strategic Execution Flow Update)
-- **Ready Handshake**: 웹뷰 준비 상태를 대기하도록 수정하여 초기화 레이스 컨디션을 해결했습니다.
-- **Stable Layout BFS**: 위상 정렬 기반의 안정적인 랭크 계산법 도입.
-- **NaN/Infinity 가드**: 복잡한 그래프에서의 엔진 프리징 방지.
-- **Throttled Communication**: UI 성능 향상을 위해 업데이트 빈도 조절 및 메시지 배치 처리.
-- **Recursion Safety**: 비정상적 재귀 차단을 위한 랭크 계산 깊이 제한 추가.
-
-### v0.2.15 (Performance & Visibility Release)
-
-### v0.2.14fix (The Clarity Update)
-- **Group-Aware Hierarchy**: Flow View에서 모듈 컨텍스트를 유지하기 위해 점선 박스(`[ MODULES ]`)와 `cluster_id`를 보존합니다.
-- **Orthogonal Edge Routing**: 90도 맨해튼 라우팅을 도입하여 대각선 스파게티 선을 제거했습니다.
-- **가상 버스 터미널**: 로직이 집중되는 `END` 지점 앞에 `Merge / Sync` 노드 추가하여 병렬 경로를 깔끔하게 통합합니다.
-- **Decision Node 리사이징**: 그리드 정렬 유지를 위해 다이아몬드 노드의 가로 크기를 조정했습니다.
-
-### v0.2.14
-- **💎 Flowchart Geometric Shapes**: 시맨틱 로직에 따라 표준 순서도 도형 지원 (조건: 다이아몬드, 루프: 육각형, 출력: 평행사변형).
-- **🛡️ War Room Implementation**: 순환 참조, 병목 지점, 데드엔드 등을 분석하는 기술적 감사 센터 기능을 구축했습니다.
-- **Pulse Animation**: 로직 도달 가능성 시각화를 위한 실시간 신호 애니메이션.
-- **Interactive Reports**: `리포트.md`의 결과 클릭 시 해당 노드를 자동 포커싱합니다.
-
-### v0.2.13
-- **🌟 Cluster UX 개편**: 클러스터 헤더 드래그 기능 및 다중 선택 박스 지원.
-- **Gruvbox Colors**: 전체 클러스터에 Gruvbox 테마 기반의 고유 해시 색상을 적용하여 가독성을 높였습니다.
-
-### v0.2.12
-- **🧠 지능형 컨텍스트 보관소**: VS Code Copilot 채팅 세션을 `context.md`로 팝업 없이 자동 추출합니다.
-- **무중단 작업 매핑**: `Ctrl+Alt+M`으로 AI 대화와 Git diff를 한 번에 캡처합니다.
-
-### v0.2.11
-- **✨ 다중 언어 지능**: Python, C/C++, Rust에 대한 정교한 스캐닝 지원.
-- **고급 해석 엔진**: 주요 언어들의 내부 경로 추적 및 로직 플로우 시각화 지원.
-
-### v0.2.10
-- **🐛 Critical Fixes**: 활성화 에러 수정 및 다중 노드 삭제 안정성 개선.
+| 버전 | 날짜 | 설명 (영문) | 설명 (한글) |
+| :--- | :--- | :--- | :--- |
+| **v0.2.53** | 2026-03-31 | **The Mainframe Breach**: Main World (Context 1) CDP injection and VsCodeApi hijacking for secured return path. | **메인프레임 브리치**: Main World(Context 1) CDP 주입 및 VsCodeApi 하이재킹을 통한 데이터 귀환 경로 확보. |
+| **v0.2.28** | 2026-03-22 | Rendering Parity Patch: 2D/3D color sync, camera view persistence, extensionless file guard. | 렌더링 일치 패치: 2D/3D 색상 동기화, 카메라 뷰 영속성, 확장자 없는 파일 처리. |
 
 ---
 

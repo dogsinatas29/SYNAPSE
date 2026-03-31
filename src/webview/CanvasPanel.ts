@@ -30,6 +30,15 @@ import { client } from '../client';
 import { Logger } from '../utils/Logger';
 import { VirtualDebugger } from '../core/VirtualDebugger';
 
+// [v0.3.1 Bootstrap Locked] Core Systems
+import { phaseManager, Phase } from '../core/PhaseManager';
+import { gridSystem } from '../core/GridSystem';
+import { rendererCore } from '../core/RendererCore';
+import { controlSystem } from '../core/ControlSystem';
+import { debuggerSystem } from '../core/DebuggerSystem';
+import { graphModel } from '../core/GraphModel';
+import { snapshotSystem } from '../core/SnapshotSystem';
+
 /**
  * SequentialTaskQueue - Asynchronous task serializer
  * Prevents race conditions by ensuring only one state-modifying task runs at a time.
@@ -153,6 +162,12 @@ export class CanvasPanel {
                 ];
 
                 if (stateModifyingCommands.includes(message.command)) {
+                    // [v0.3.1 Bootstrap Locked] Phase 3: CONTROL Interaction Check
+                    if (!controlSystem.verifyInteraction(message.command)) {
+                        vscode.window.showErrorMessage(`[SYNAPSE] 명령 거부: Phase ${phaseManager.getCurrentPhase()} 상태에서는 '${message.command}'이(가) 금지됩니다.`);
+                        return;
+                    }
+
                     // [v0.2.17 Patch 13.2] Strict Guard for confirm dialog
                     if (message.command === 'requestConfirmEdge' && this._isProcessingConfirm) {
                         Logger.warn('[CanvasPanel] Confirmation already in progress, ignoring duplicate request.');
@@ -2001,7 +2016,12 @@ export class CanvasPanel {
                 for (const uiNode of newState.nodes) {
                     const backendNode = currentState.nodes.find((n: any) => n.id === uiNode.id);
                     if (backendNode) {
-                        if (uiNode.position) backendNode.position = uiNode.position;
+                        if (uiNode.position) {
+                            // [v0.3.1] Phase 4: Snap-to-Grid (40px)
+                            const snapped = gridSystem.snapToGrid(uiNode.position.x, uiNode.position.y);
+                            backendNode.position = snapped;
+                        }
+                        
                         // Synchronize label updates from UI (like renaming new nodes)
                         if (uiNode.data?.label && backendNode.data) {
                             backendNode.data.label = uiNode.data.label;
@@ -2494,6 +2514,53 @@ export class CanvasPanel {
                 }
             }
 
+            // [v0.3.1 Bootstrap Locked] Core Systems Synchronization
+            // Phase-based enforcement requires sequential advancement.
+            try {
+                Logger.info(`[SYNAPSE] Initializing Core Systems (Phase 0 -> 2)...`);
+                phaseManager.reset(); 
+                
+                // 1. Sync GraphModel (Phase 1 Support)
+                graphModel.reset();
+                (projectState.nodes || []).forEach((n: any) => {
+                    graphModel.addNode({
+                        id: n.id,
+                        filePath: n.data?.file || n.data?.path || '',
+                        type: n.type as any,
+                        label: n.data?.label || '',
+                        degree: 0
+                    });
+                });
+                (projectState.edges || []).forEach((e: any) => {
+                    // Map weight based on type and DTR (High confidence = High weight)
+                    let weight = 1.0;
+                    if (e.type === 'dependency') weight = 1.0;
+                    else if (e.type === 'api_call') weight = 0.8;
+                    else if (e.intelligence?.dtr !== undefined) weight = 0.7 + (e.intelligence.dtr * 0.3); // High DTR = High Importance
+                    
+                    graphModel.addEdge({
+                        from: e.from,
+                        to: e.to,
+                        type: e.type as any,
+                        weight: weight
+                    });
+                });
+                
+                phaseManager.advancePhase(Phase.GRAPH);    // Data -> Graph (Phase 1)
+                
+                // 2. Sync SnapshotSystem (Phase 2 Support)
+                snapshotSystem.setStoragePath(workspaceFolder.uri.fsPath);
+                phaseManager.advancePhase(Phase.SNAPSHOT); // Graph -> Snapshot (Phase 2)
+                snapshotSystem.save();                     // Mandatory validation snapshot
+                
+                // 3. Start Control Loop (Phase 3)
+                controlSystem.runEventLoop();              // Snapshot -> Control (Phase 3)
+                Logger.info(`[SYNAPSE] Core Systems Active at Phase 3 (CONTROL).`);
+            } catch (e: any) {
+                Logger.error(`[SYNAPSE] Phase Initialization Failed: ${e.message}`);
+                // System might be locked, but we attempt to continue for discovery
+            }
+
             // 1. FileScanner 인스턴스 생성
             const scanner = new FileScanner();
 
@@ -2812,7 +2879,7 @@ export class CanvasPanel {
 
             console.log(`[SYNAPSE] Edge discovery complete. Found ${discoveredEdges.length} auto-edges.`);
 
-            // 5. Context Vault 클러스터 주입 (read-only, volatile — 저장하지 않음)
+            /* [v0.3.1_zz] Context Vault UI Disabled
             const contextVaultCluster = await this.buildContextVaultCluster(workspaceFolder.uri.fsPath);
             if (contextVaultCluster.nodes.length > 0) {
                 // 기존 context vault 노드/클러스터 제거 후 새로 주입
@@ -2826,6 +2893,7 @@ export class CanvasPanel {
                 stateForWebview.nodes.push(...contextVaultCluster.nodes);
                 stateForWebview.clusters = [...(stateForWebview.clusters || []), contextVaultCluster.cluster];
             }
+            */
 
             // [v0.2.17 Patch 3] Resilient Documentation Discovery
             // Check if doc_shelf already exists and has children. If not, perform emergency scan.
@@ -3007,10 +3075,70 @@ export class CanvasPanel {
                 principles: principles
             };
 
+            // [v0.3.1 Bootstrap Locked] Phase 4: GRID (Deterministic Layout)
+            try {
+                // Re-sync GraphModel with all discovered data (ghosts, auto-edges, etc.) 
+                // This ensures RendererCore has complete visibility in Phase 5.
+                graphModel.reset();
+                stateForWebview.nodes.forEach((n: any) => {
+                    graphModel.addNode({
+                        id: n.id,
+                        filePath: n.data?.file || n.data?.path || '',
+                        type: n.type as any,
+                        label: n.data?.label || '',
+                        degree: 0
+                    });
+                });
+                stateForWebview.edges.forEach((e: any) => {
+                    let weight = 1.0;
+                    if (e.type === 'dependency') weight = 1.0;
+                    else if (e.type === 'api_call') weight = 0.8;
+                    else if (e.data?.dtr !== undefined) weight = 0.7 + (e.data.dtr * 0.3); // High DTR = High Importance
+                    
+                    graphModel.addEdge({
+                        from: e.from,
+                        to: e.to,
+                        type: (e.type === 'dependency' ? 'include' : e.type) as any, // Map to GraphModel.EdgeType
+                        weight: weight
+                    });
+                });
+
+                const layoutMap = gridSystem.buildGrid(stateForWebview.nodes as any);
+                stateForWebview.nodes.forEach((node: any) => {
+                    const pos = layoutMap[node.id];
+                    if (pos) {
+                        node.position = pos;
+                    }
+                });
+                Logger.info(`[SYNAPSE] Phase 4: GRID Layout Applied (40px Snap).`);
+            } catch (e: any) {
+                Logger.warn(`[SYNAPSE] Phase 4 (GRID) non-fatal error: ${e.message}`);
+            }
+
+            // [v0.3.1 Bootstrap Locked] Phase 5: RENDER (Budget & Edge Filtering)
+            let budgetReport = null;
+            try {
+                const renderResult = rendererCore.prepareRender(stateForWebview.nodes as any, stateForWebview.edges as any);
+                stateForWebview.nodes = renderResult.nodes as any;
+                stateForWebview.edges = renderResult.edges as any;
+                budgetReport = renderResult.budgetReport;
+                
+                if (renderResult.isDegraded) {
+                    vscode.window.setStatusBarMessage('$(warning) SYNAPSE: Render Budget Exceeded (Filtered Mode)', 5000);
+                }
+                Logger.info(`[SYNAPSE] Phase 5: RENDER Budget Applied.`);
+            } catch (e: any) {
+                Logger.warn(`[SYNAPSE] Phase 5 (RENDER) non-fatal error: ${e.message}`);
+            }
+
             // 6. 웹뷰로 전송
             const payload = {
                 command: 'projectState',
-                data: stateForWebview
+                data: stateForWebview,
+                renderer: {
+                    budgetReport
+                },
+                debuggerState: debuggerSystem.getSnapshot()
             };
             const payloadSize = JSON.stringify(payload).length;
             Logger.info(`[CanvasPanel] sendProjectState: Sending projectState to webview (${stateForWebview.nodes.length} nodes, ${stateForWebview.edges.length} edges). Payload size: ${(payloadSize / 1024).toFixed(2)} KB`);

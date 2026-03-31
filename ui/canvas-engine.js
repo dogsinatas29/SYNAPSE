@@ -5859,8 +5859,17 @@ class CanvasEngine {
             this.ctx.restore();
             
             // Highlight the necrotic state further
-            borderColor = '#fb4934';
-            lineWidth = 3;
+            borderColor = '#1d2021';
+            lineWidth = 4;
+
+            // Draw Skull centerpiece
+            if (zoom > 0.8) {
+                this.ctx.fillStyle = '#fb4934';
+                this.ctx.font = 'bold 28px Inter, sans-serif';
+                this.ctx.textAlign = 'center';
+                this.ctx.textBaseline = 'middle';
+                this.ctx.fillText('💀', x + nodeWidth / 2, y + nodeHeight / 2 - 5);
+            }
         }
 
         this.ctx.strokeStyle = borderColor;
@@ -6150,7 +6159,7 @@ class CanvasEngine {
             'origin': { color: '#d65d0e', dashPattern: null, lineWidth: 1.5, arrowStyle: 'standard' },
             'api_call': { color: '#8ec07c', dashPattern: [4, 4], lineWidth: 2.0, arrowStyle: 'standard' },
             'db_query': { color: '#d3869b', dashPattern: null, lineWidth: 3.0, arrowStyle: 'thick' },
-            'loop_back': { color: '#fe8019', dashPattern: [2, 4], lineWidth: 2.0, arrowStyle: 'standard' }
+            'loop_back': { color: '#fe8019', dashPattern: [1, 3], lineWidth: 2.0, arrowStyle: 'standard' }
         };
 
         const style = { ... (styles[type] || styles['dependency']) };
@@ -6617,16 +6626,17 @@ class CanvasEngine {
         const toX = toNode.position.x + 60;
         const toY = toNode.position.y + 30;
 
-        const validation = this.edgeValidationCache.get(edge.id) || { valid: true };
+        const bMidX = (fromX + toX) / 2;
+        const bMidY = (fromY + toY) / 2 - 30;
+        const badgeSize = Math.max(25, 35 / this.transform.zoom);
+
+        // [v0.2.17] Confirmation badge: ? (pending_confirm) or ! (confirmed)
         const confirmStatus = edge.confirmStatus || (edge.status === 'pending' ? 'pending_confirm' : '');
 
         if (confirmStatus === 'pending_confirm' || confirmStatus === 'confirmed') {
-            const bMidX = (fromX + toX) / 2;
-            const bMidY = (fromY + toY) / 2 - 30;
             const isPending = confirmStatus === 'pending_confirm';
-            const badgeChar = isPending ? '?' : '!';
+            const badgeChar = isPending ? '❓' : '❗️';
             const badgeColor = isPending ? '#504945' : '#83a598'; 
-            const badgeSize = Math.max(25, 35 / this.transform.zoom); 
 
             ctx.save();
             ctx.font = `bold ${badgeSize}px Inter, monospace`;
@@ -6644,12 +6654,42 @@ class CanvasEngine {
             ctx.fillText(badgeChar, bMidX, bMidY);
             ctx.restore();
 
-            // Click detection hit tracking (only for primary 2D ctx)
+            // Click detection hit tracking
             if (ctx === this.ctx) {
                 if (!this._confirmBadgeHits) this._confirmBadgeHits = [];
                 this._confirmBadgeHits.push({
                     x: bMidX, y: bMidY, r: badgeSize * 0.75,
                     edge: edge, isPending
+                });
+            }
+        }
+
+        // [v0.2.17-patch6] ❌ Delete Badge (Visible in Edit Logic mode)
+        if (this.isEditMode) {
+            const deleteX = bMidX + badgeSize + 10;
+            const deleteY = bMidY;
+            const delSize = badgeSize * 0.8;
+
+            ctx.save();
+            ctx.font = `bold ${delSize}px Inter, monospace`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            
+            ctx.beginPath();
+            ctx.arc(deleteX, deleteY, delSize * 0.75, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(251, 73, 52, 0.9)'; // Red
+            ctx.fill();
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+            ctx.fillStyle = '#ffffff';
+            ctx.fillText('❌', deleteX, deleteY);
+            ctx.restore();
+
+            if (ctx === this.ctx) {
+                if (!this._deleteBadgeHits) this._deleteBadgeHits = [];
+                this._deleteBadgeHits.push({
+                    x: deleteX, y: deleteY, r: delSize * 0.75, edge: edge
                 });
             }
         }
@@ -7009,7 +7049,7 @@ class CanvasEngine {
         this.ctx.fillStyle = '#fb4934';
         this.ctx.font = 'bold 18px Inter, sans-serif';
         this.ctx.textAlign = 'center';
-        this.ctx.fillText('💀', width / 2, 38);
+        this.ctx.fillText('🪦', width / 2, 38);
         this.ctx.font = 'bold 9px Inter, sans-serif';
         this.ctx.fillText('DETERMINISTIC', width / 2, 52);
         this.ctx.fillText('FAILURE', width / 2, 63);

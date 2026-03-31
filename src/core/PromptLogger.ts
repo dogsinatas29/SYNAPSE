@@ -47,7 +47,7 @@ export class PromptLogger {
         const timestampStr = `${datePart} ${hours}:${minutes}:${seconds}`;
 
         if (!fs.existsSync(filePath)) {
-            const header = `# Session — ${timestampStr}\n\n*Pure Event Channel Audit Log Activated (v0.2.46 Interceptor Mode)*\n\n---\n`;
+            const header = `# Session — ${timestampStr}\n\n*Pure Event Channel Audit Log Activated (v0.2.53 Persistent Mode)*\n\n---\n`;
             fs.writeFileSync(filePath, header, 'utf-8');
             this.gitStageFile(projectRoot, filePath);
         }

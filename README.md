@@ -1,8 +1,8 @@
-# <img src="./resources/synapse-icon.png" width="40" height="40" /> 🧠 SYNAPSE: Visual Architecture Engine (v0.2.53)
+# <img src="./resources/synapse-icon.png" width="40" height="40" /> 🧠 SYNAPSE: Visual Architecture Engine (v0.3.1)
 
 > **"What you see is the logic of LLM"** — *WYSIWYG Logic for AI*
 
-[![Version](https://img.shields.io/badge/version-v0.2.53-brightgreen.png)
+[![Version](https://img.shields.io/badge/version-v0.3.1-brightgreen.png)
 ![Status](https://img.shields.io/badge/status-War_Room_Ready-orange.png)
 [![Language](https://img.shields.io/badge/Language-TypeScript-blue?style=flat-square)](https://www.typescriptlang.org/)
 [![Platform](https://img.shields.io/badge/Platform-VS_Code-007ACC?style=flat-square)](https://code.visualstudio.com/)
@@ -115,7 +115,7 @@ Interactive badges appear on edges during **Edit Logic** mode to facilitate arch
 
 ### Project Topology
 Visualizes the physical connections between LLM reasoning logic and source files.
-![Topology View](./resources/screenshots/v0.2.26/topology_view.png)
+![Topology View](./resources/screenshots/v0.3.1/topology_view.png)
 
 ### Logical Flow
 Linear execution flow of specific events, reflecting both manual edits and code changes. Group-Aware Hierarchy and Orthogonal Edge Routing create clean, readable diagrams.
@@ -143,12 +143,12 @@ SYNAPSE integrates VS Code's real-time diagnostics directly into the architectur
 ```bash
 code --install-extension synapse-visual-architecture-0.2.20.vsix
 ```
-    Current Version: **v0.2.53** (The Mainframe Breach)
+    Current Version: **v0.3.1** (Bootstrap Locked)
 
 ## 🚀 Getting Started
 Launch your visual architecture journey in seconds.
 
-1. **Install Extension**: Install the `synapse-visual-architecture-v0.2.53.vsix` (or latest) in Antigravity/VS Code.
+1. **Install Extension**: Install the `synapse-visual-architecture-v0.3.1.vsix` (or latest) in Antigravity/VS Code.
 2. **DNA Injection**: Create or drop a `GEMINI.md` (or `Project_Spec.md`) file into your workspace root.
 3. **Bootstrap Phase**: Open the **SYNAPSE Canvas** from the sidebar or command palette (`Ctrl+Shift+P` -> `SYNAPSE: Open Canvas`).
 4. **First Visualization**: 
@@ -256,7 +256,7 @@ The `Edit Logic` button in the toolbar empowers you to shape your workspace dire
 - **Resurrection**: If you delete a node by mistake, the automatic Snapshot & Rollback system allows you to revert to the previous state and revive the file.
 
 ### 3. 🔗 Edge Management & Auto-Imports
-SYNAPSE v0.2.17 bridges the gap between drawing pictures and writing code.
+SYNAPSE v0.3.1 bridges the gap between drawing pictures and writing code.
 - **Inline Trash (`X`)**: Hover over any edge to reveal a red `X` badge at its center. Click it to instantly sever the logical and visual connection.
 - **Confirmation Flow (`?` → `!`)**: When you manually connect two nodes in `Edit Logic` mode, the edge appears with a yellow **`?`** badge indicating a `pending_confirm` state.
 - **Auto-Injected Imports**: Click the **`?`** badge to confirm the architectural decision. SYNAPSE will analyze the target node, detect the file language (`.py`, `.ts`, `.js`), and **automatically inject the correct `import` or `require()` statement at the very top of the source file.** The badge then turns perfectly green (**`!`**).
@@ -267,6 +267,7 @@ SYNAPSE v0.2.17 bridges the gap between drawing pictures and writing code.
 
 | Version | Date | Description (English) | Description (Korean) |
 | :--- | :--- | :--- | :--- |
+| **v0.3.1** | 2026-03-31 | **Bootstrap Locked**: Full Phase-based initialization (Phases 0-7) and system lockout protocol. | **부트스트랩 락**: 전 단계(Phase 0-7) 순차 초기화 강제 및 시스템 잠금 프로토콜 도입. |
 | **v0.2.53** | 2026-03-31 | **The Mainframe Breach**: Main World (Context 1) CDP injection and VsCodeApi hijacking for secured return path. | **메인프레임 브리치**: Main World(Context 1) CDP 주입 및 VsCodeApi 하이재킹을 통한 데이터 귀환 경로 확보. |
 | **v0.2.28** | 2026-03-22 | Rendering Parity Patch: 2D/3D color sync, camera view persistence, extensionless file guard. | 렌더링 일치 패치: 2D/3D 색상 동기화, 카메라 뷰 영속성, 확장자 없는 파일 처리. |
 | **v0.2.26** | 2026-03-22 | WebGL Fix, Snapshot Restoration, Node Style Alignment. | WebGL 오류 수정, 스냅샷 뷰 복구, 노드 규격 동기화. |

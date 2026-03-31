@@ -1,8 +1,8 @@
-# <img src="./resources/synapse-icon.png" width="40" height="40" /> 🧠 SYNAPSE: 비주얼 아키텍처 엔진 (v0.2.53)
+# <img src="./resources/synapse-icon.png" width="40" height="40" /> 🧠 SYNAPSE: 비주얼 아키텍처 엔진 (v0.3.1)
 
 > **"눈에 보이는 것이 곧 LLM의 논리입니다."** — *AI를 위한 WYSIWYG 논리 설계 도구*
 
-[![Version](https://img.shields.io/badge/version-v0.2.53-brightgreen.png)](https://github.com/dogsinatas29/SYNAPSE/releases)
+[![Version](https://img.shields.io/badge/version-v0.3.1-brightgreen.png)](https://github.com/dogsinatas29/SYNAPSE/releases)
 ![Status](https://img.shields.io/badge/status-War_Room_Ready-orange.png)
 [![Language](https://img.shields.io/badge/Language-TypeScript-blue?style=flat-square)](https://www.typescriptlang.org/)
 [![Platform](https://img.shields.io/badge/Platform-VS_Code-007ACC?style=flat-square)](https://code.visualstudio.com/)
@@ -162,7 +162,7 @@ SYNAPSE는 VS Code의 실시간 진단(Diagnostics) 정보를 아키텍처 맵�
 
 ### 프로젝트 토폴로지 (Project Topology)
 LLM 추론 논리와 소스 파일 간의 실제 연결 상태를 시각화합니다.
-![Topology View](./resources/screenshots/v0.2.26/topology_view.png)
+![Topology View](./resources/screenshots/v0.3.1/topology_view.png)
 
 ### 논리 흐름 (Logical Flow)
 코드 변경 사항과 수동 편집 사항이 모두 반영된 논리 실행 흐름도입니다. 그룹 기반 계층화와 직교 라우팅을 통해 깔끔하고 읽기 쉬운 다이어그램을 생성합니다.
@@ -180,14 +180,14 @@ LLM 추론 논리와 소스 파일 간의 실제 연결 상태를 시각화합�
 2. 파일을 **VS Code** 창으로 드래그 앤 드롭합니다.
 ### 빠른 설치
 ```bash
-code --install-extension synapse-visual-architecture-0.2.20.vsix
+code --install-extension synapse-visual-architecture-0.3.1.vsix
 ```
-현재 버전: **v0.2.53** (The Mainframe Breach)
+현재 버전: **v0.3.1** (부트스트랩 락 - Bootstrap Locked)
 
 ## 🚀 시작하기 (Getting Started)
 시각적 아키텍처 설계를 즉시 시작하는 방법입니다.
 
-1. **확장 기능 설치**: Antigravity/VS Code에 `synapse-visual-architecture-v0.2.53.vsix` (또는 최신 버전) 파일을 설치합니다.
+1. **확장 기능 설치**: Antigravity/VS Code에 `synapse-visual-architecture-v0.3.1.vsix` (또는 최신 버전) 파일을 설치합니다.
 2. **DNA 주입**: 워크스페이스 루트에 `GEMINI.md` (또는 `Project_Spec.md`) 파일을 생성하거나 드롭합니다.
 3. **부트스트랩 단계**: 사이드바나 커맨드 팔레트(`Ctrl+Shift+P` -> `SYNAPSE: Open Canvas`)에서 **SYNAPSE Canvas**를 엽니다.
 4. **첫 시각화 (First Visualization)**: 
@@ -303,6 +303,7 @@ SYNAPSE v0.2.17은 그림 그리기와 코드 작성 간의 간극을 메웁니�
 
 | 버전 | 날짜 | 설명 (영문) | 설명 (한글) |
 | :--- | :--- | :--- | :--- |
+| **v0.3.1** | 2026-03-31 | **Bootstrap Locked**: Full Phase-based initialization (Phases 0-7) and system lockout protocol. | **부트스트랩 락**: 전 단계(Phase 0-7) 순차 초기화 강제 및 시스템 잠금 프로토콜 도입. |
 | **v0.2.53** | 2026-03-31 | **The Mainframe Breach**: Main World (Context 1) CDP injection and VsCodeApi hijacking for secured return path. | **메인프레임 브리치**: Main World(Context 1) CDP 주입 및 VsCodeApi 하이재킹을 통한 데이터 귀환 경로 확보. |
 | **v0.2.28** | 2026-03-22 | Rendering Parity Patch: 2D/3D color sync, camera view persistence, extensionless file guard. | 렌더링 일치 패치: 2D/3D 색상 동기화, 카메라 뷰 영속성, 확장자 없는 파일 처리. |
 

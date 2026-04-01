@@ -6593,10 +6593,9 @@ class CanvasEngine {
         // 🔍 검증 결과 표시 (에러/경고인 경우 라벨 추가)
         // [v0.3.3] Always show badge background if icons are enabled to prevent "floating arrow"
         if (showIcons || !validation.valid || validation.color === '#fabd2f' || validation.isAi) {
-            const bX = midX;
-            const bY = midY - 25 / this.transform.zoom; // Curve awareness offset
-            const midX = (fromX + toX) / 2;
-            const midY = (fromY + toY) / 2 - 35;
+            // midX/Y는 이미 위에서 정의됨 (Bezier edge center), 여기서는 배지 위치 조정을 위해 별도 변수 사용
+            const badgeMidX = (fromX + toX) / 2;
+            const badgeMidY = (fromY + toY) / 2 - 35;
 
             this.ctx.save();
             this.ctx.font = `${12 / this.transform.zoom}px Inter, sans-serif`;
@@ -6624,11 +6623,11 @@ class CanvasEngine {
             this.ctx.beginPath();
             const bw = metrics.width + padding * 2;
             const bh = 18 / this.transform.zoom;
-            this.ctx.roundRect(midX - bw / 2, midY - bh / 2, bw, bh, 4);
+            this.ctx.roundRect(badgeMidX - bw / 2, badgeMidY - bh / 2, bw, bh, 4);
             this.ctx.fill();
 
             this.ctx.fillStyle = validation.valid ? '#fabd2f' : '#fb4934';
-            this.ctx.fillText(text, midX, midY);
+            this.ctx.fillText(text, badgeMidX, badgeMidY);
             this.ctx.restore();
 
             // 💡 마우스 오버 시 AI 판단 이유 저장 (툴팁용)

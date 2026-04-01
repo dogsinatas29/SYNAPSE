@@ -1427,3 +1427,7 @@ class WebGLRenderer {
 }
 
 
+// [v0.3.09] Make WebGLRenderer available globally for inline toggle handlers.
+if (typeof window !== 'undefined') {
+    window.WebGLRenderer = WebGLRenderer;
+}

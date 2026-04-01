@@ -1291,6 +1291,14 @@ class CanvasEngine {
                 this.isAddingNode = false;
                 this.isCreatingEdge = false;
                 this.canvas.style.cursor = 'default';
+                
+                // [FIX v0.3.09] 2D 모드 전환 시 DOM 리플로우 강제 트리거
+                // 부모 컨테이너의 CSS 레이아웃이 재계산되도록 강제함
+                setTimeout(() => {
+                    const _ = this.canvas.parentElement.offsetHeight;  // Read to trigger reflow
+                    this.resizeCanvas(true);  // Immediate synchronous resize
+                    console.log('[SYNAPSE] 2D mode: forced DOM reflow and canvas resize');
+                }, 50);  // 50ms 대기 후 리플로우 (레이아웃 안정화 대기)
             }
         };
 
@@ -1465,7 +1473,15 @@ class CanvasEngine {
 
         const dpr = window.devicePixelRatio || 1;
         const width = container.clientWidth;
-        const height = container.clientHeight;
+        let height = container.clientHeight;
+        
+        // [FIX v0.3.09] clientHeight가 0이면 강제 최소값 설정
+        // Canvas height가 0이면 렌더링 공간이 없어 모든 노드가 표시 안됨
+        if (height === 0 || height < 100) {
+            height = 400;  // 기본 최소 높이
+            console.warn('[SYNAPSE] Canvas height was 0 or invalid, forcing minimum height: 400px');
+        }
+        
         const targetWidth = Math.floor(width * dpr);
         const targetHeight = Math.floor(height * dpr);
 
@@ -1628,7 +1644,14 @@ class CanvasEngine {
                 // [v0.2.25] Eternal Loop: No Auto-Sleep if WebGL + Graph mode
                 const idleLimit = (this.webglEnabled && this.currentMode === 'graph') ? Infinity : 2000;
                 
-                if (idleTime > idleLimit && !hasActiveParticles && !this.isDragging && !this.isSelecting && !this.needsUpdate) {
+                // [FIX v0.3.09] 렌더링 중에는 수면에 들지 않음
+                // isDirty 또는 필요한 업데이트가 있으면 렌더링이 진행되므로, 이 경우 수면 진입 금지
+                const isRenderingActive = this.isDirty || this._isInteracting || this.isDragging || 
+                                         this.isSelecting || hasActiveParticles || this.needsUpdate || 
+                                         (this.isAnimating && this.particles.length > 0);
+                
+                if (idleTime > idleLimit && !hasActiveParticles && !this.isDragging && !this.isSelecting && 
+                    !this.needsUpdate && !isRenderingActive) {
                     if (this.isAnimating) {
                         this.log('[SYNAPSE] Eco-mode: Entering Sleep (IDLE > 2s)');
                         this.isAnimating = false;
@@ -4264,12 +4287,18 @@ class CanvasEngine {
         const ctx = this.ctx;
         const canvas = this.canvas;
         ctx.setTransform(1, 0, 0, 1, 0, 0);
+        
+        // [FIX v0.3.09] Eco-mode 수면 중 업데이트 방지
+        // 렌더링이 시작되었다는 신호를 보내서 Eco-mode가 수면에 들지 않게 함
+        this.lastActivityTime = Date.now();
+        
+        // [v0.3.4 - Fix 2D Ghosting] ALWAYS clear the entire pixel buffer before drawing.
+        // Even in 2D mode, clearRect ensures no leftover alpha or pixels.
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
         if (!this.webglEnabled) {
             ctx.fillStyle = '#1e1e1e';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
-        } else {
-            // Important: Clear 2D layer so WebGL underneath is visible
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
         }
 
         /* [v0.2.25 Fix] FPS 1 고정 현상 해결을 위해 과도한 절전 로직 우회
@@ -4301,9 +4330,16 @@ class CanvasEngine {
             }
         }
 
+        // [v0.3.4 Fix] 🛡️ Rendering Safety: Reset critical context state before frame wipe.
+        // This prevents "Ghosting" artifacts caused by leaked Alpha or Composition state.
+        ctx.globalAlpha = 1.0;
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.shadowBlur = 0;
+        ctx.shadowColor = 'transparent';
+
         try {
             const dpr = window.devicePixelRatio || 1;
-            ctx.scale(dpr, dpr);
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0); // Ensure DPR scale for base logic
 
             ctx.save();
             ctx.translate(this.transform.offsetX, this.transform.offsetY);
@@ -4412,8 +4448,9 @@ class CanvasEngine {
                         this.isEdgeDirty = false;
                         this.isTextDirty = false;
                     } else {
-                        // [v0.2.26] Non-WebGL Mode or Mode Change
+                        // [v0.3.9] Fixed 2D Mode: Explicitly call Node rendering
                         this.renderEdges2D();  
+                        this.renderNodes2D(zoom);
                         this.renderLabels2D(); 
                     }
 
@@ -4528,29 +4565,34 @@ class CanvasEngine {
         }
     }
 
-    renderLabels2D() {
-        const zoom = this.transform.zoom;
-        const offsetX = this.transform.offsetX;
-        const offsetY = this.transform.offsetY;
-        const canvasWidth = this.canvas.width / (window.devicePixelRatio || 1);
-        const canvasHeight = this.canvas.height / (window.devicePixelRatio || 1);
+    // [v0.3.9] Dedicated 2D Node Rendering function to prevent blank screen
+    renderNodes2D(zoom) {
+        const dpr = window.devicePixelRatio || 1;
+        let canvasWidth = this.canvas.width / dpr;
+        let canvasHeight = this.canvas.height / dpr;
+        
+        // [FIX v0.3.09] Safety check: invalid canvas dimensions
+        // Canvas height가 0이면 이후 모든 계산이 0으로 고정되어 노드가 범위 밖으로 인식됨
+        if (canvasWidth === 0 || canvasHeight === 0) {
+            console.warn('[SYNAPSE] renderNodes2D: invalid canvas dimensions detected', 
+                         `${canvasWidth}x${canvasHeight}, forcing resize`);
+            this.resizeCanvas(true);  // Force immediate resize and retry next frame
+            return;  // Skip rendering this frame to avoid errors
+        }
+        
+        const worldLeft = -this.transform.offsetX / zoom;
+        const worldTop = -this.transform.offsetY / zoom;
+        const worldRight = (canvasWidth - this.transform.offsetX) / zoom;
+        const worldBottom = (canvasHeight - this.transform.offsetY) / zoom;
+        const margin = 200; // Increased safety margin for culling
 
-        // Pre-calculate viewport bounds in world coordinates for fast comparison
-        const worldLeft = -offsetX / zoom;
-        const worldTop = -offsetY / zoom;
-        const worldRight = (canvasWidth - offsetX) / zoom;
-        const worldBottom = (canvasHeight - offsetY) / zoom;
-        const nodeWidth = 120;
-        const nodeHeight = 60;
-
+        // [v0.4.0 Fix] Viewport culling disabled for absolute safety in v0.4.0
         for (const node of this.nodes) {
             if (!node.position) continue;
             
-            // [v0.2.24] Viewport Culling: Skip if node is entirely outside the screen
-            if (node.position.x + nodeWidth < worldLeft || node.position.x > worldRight ||
-                node.position.y + nodeHeight < worldTop || node.position.y > worldBottom) {
-                continue;
-            }
+            // Temporary Bypass of Culling to ensure all nodes (External Ghosts, etc) are visible
+            // if (node.position.x + 120 + margin < worldLeft || node.position.x - margin > worldRight || ...)
+
 
             const isUserCustom = (node.id && node.id.startsWith('node_manual_')) || node.cluster_id?.startsWith('sys_') || node.data?.cluster_id?.startsWith('sys_');
             if (isUserCustom && !this.showUserLayer) continue;
@@ -4562,6 +4604,10 @@ class CanvasEngine {
             }
             this.renderNode(node, zoom);
         }
+    }
+
+    renderLabels2D() {
+        const zoom = this.transform.zoom;
     }
 
 
@@ -5571,72 +5617,56 @@ class CanvasEngine {
             return;
         }
 
-        // [v0.2.18.3] Strict Hiding for Context Vault Nodes unless toggled ON
+        // 1.5. 클러스터 접힘 체크
         const clusterId = node.cluster_id || node.data?.cluster_id;
-        if ((clusterId === 'context_vault' || node.id.startsWith('ctx_vault_node_')) && !this.showContextVault) {
-            return;
-        }
-
-        // 1.5. 클러스터 접힘 체크 - 최상단으로 이동하여 렌더링 스킵
-        // Bugfix: node.data.cluster_id 확인, node.cluster_id는 ungroup 시 null이 되거나 혼용될 수 있음
         if (clusterId) {
             const cluster = this.clusters?.find(c => c.id === clusterId);
             if (cluster && cluster.collapsed) {
-                // [Refine] Documentation Shelf는 접혀있어도 가시성을 위해 최소한의 표시는 남김
-                if (clusterId !== 'doc_shelf') {
-                    return; // 완전히 숨김 (이전처럼 다시 나타나지 않는 문제 해결: collapsed 상태가 해제되면 렌더링 됨)
-                }
+                if (clusterId !== 'doc_shelf') return;
             }
         }
 
-        const nodeWidth = 120;
-        const nodeHeight = 60;
-        const x = 0; // translate(node.position.x, node.position.y) 이후이므로 0으로 설정
-        const y = 0;
-
-        // Level 1: Satellite View (줌이 매우 작을 때)
-        if (zoom < 0.4) {
-            this.ctx.fillStyle = node.data.color || '#458588';
-            this.ctx.beginPath();
-            this.ctx.arc(nodeWidth / 2, nodeHeight / 2, 10 / zoom, 0, Math.PI * 2);
-            this.ctx.fill();
-
-            // 선택 표시 (Satellite)
-            if (this.selectedNode === node || (this.selectedNodes && this.selectedNodes.has(node))) {
-                this.ctx.strokeStyle = '#fabd2f';
-                this.ctx.lineWidth = 4 / zoom;
-                this.ctx.stroke();
-            }
-            return;
-        }
-
-        // 🎨 노드 스타일 (v0.2.14 Identity)
-        const style = this.getNodeStyle(node);
-        const isSelected = this.selectedNodes.has(node);
-        const isHovered = this.hoveredNode === node;
-
-        // [v0.2.15] Path Highlighting
-        // 노드 자체가 선택/호버되었거나, 연결된 엣지가 선택/호버되었을 때 하이라이트
-        const isPartofActivePath = isSelected || isHovered || Array.from(this.selectedNodes).some(n => {
-            return this.edges.some(e => (e.from === n.id && e.to === node.id) || (e.from === node.id && e.to === n.id));
-        }) || (this.hoveredEdge && (this.hoveredEdge.from === node.id || this.hoveredEdge.to === node.id));
-
-        // 기본 투명도 (Dimmed by default)
-        let opacity = node.visual?.opacity || 0.4;
-        if (isPartofActivePath) {
-            opacity = 1.0;
-        }
-
+        // [v0.4.0 Critical Fix] Move Translate to TOP
+        // This ensures Satellite view (zoom < 0.4) uses the correct coordinates per node.
         this.ctx.save();
-        this.ctx.globalAlpha = opacity;
-
-        // [v0.2.21] Ghost Jitter (아키텍처 위반 노드 떨림 효과 — Tier 2 Warning)
+        
         let jitterX = 0, jitterY = 0;
         if (node.isArchViolation && this.isAnimating) {
             jitterX = (Math.random() - 0.5) * 2.5;
             jitterY = (Math.random() - 0.5) * 2.5;
         }
         this.ctx.translate(node.position.x + jitterX, node.position.y + jitterY);
+
+        const nodeWidth = 120;
+        const nodeHeight = 60;
+
+        // Level 1: Satellite View
+        if (zoom < 0.4) {
+            this.ctx.fillStyle = node.data.color || '#458588';
+            this.ctx.beginPath();
+            this.ctx.arc(nodeWidth / 2, nodeHeight / 2, 8 / zoom, 0, Math.PI * 2);
+            this.ctx.fill();
+
+            if (this.selectedNodes && this.selectedNodes.has(node)) {
+                this.ctx.strokeStyle = '#fabd2f';
+                this.ctx.lineWidth = 4 / zoom;
+                this.ctx.stroke();
+            }
+            this.ctx.restore();
+            return;
+        }
+
+        const style = this.getNodeStyle(node);
+        const isSelected = this.selectedNodes.has(node);
+        const isHovered = this.hoveredNode === node;
+
+        const isPartofActivePath = isSelected || isHovered || Array.from(this.selectedNodes).some(n => {
+            return this.edges.some(e => (e.from === n.id && e.to === node.id) || (e.from === node.id && e.to === n.id));
+        }) || (this.hoveredEdge && (this.hoveredEdge.from === node.id || this.hoveredEdge.to === node.id));
+
+        let opacity = node.visual?.opacity || 0.4;
+        if (isPartofActivePath) opacity = 1.0;
+        this.ctx.globalAlpha = opacity;
 
         // 🌟 하이라이트 글로우 효과 (최적화: 기본 OFF, 선택/호버 시만 활성)
         if ((isSelected || isHovered) && zoom > 0.5) {
@@ -6500,12 +6530,16 @@ class CanvasEngine {
 
         // 화살표 아이콘 결정 (Phase 3)
         // LOD 적용: 줌이 1.2 이상일 때만 아이콘 표시
-        const showIcons = this.transform.zoom > 1.2;
+        // LOD 적용: 줌이 0.3 이상일 때만 아이콘 표시 (사용자 요청 정보량 증대)
+        const showIcons = this.transform.zoom > 0.3;
         const iconMap = {
-            'dependency': 'D',
-            'call': 'C',
-            'data_flow': 'F',
-            'bidirectional': 'B'
+            'dependency': '🔗',
+            'call': '📡',
+            'data_flow': '📊',
+            'bidirectional': '🔄',
+            'db_query': '🛢️',
+            'origin': '📍',
+            'loop_back': '🔁'
         };
         const edgeIcon = (showIcons && iconMap[edge.type]) || '';
 
@@ -6539,10 +6573,10 @@ class CanvasEngine {
         // 1. 끝점 화살표 (노드 경계)
         this.renderArrow(arrowPoint.x, arrowPoint.y, angle, edgeColor, style.arrowStyle, edgeIcon);
 
-        // 2. 중앙 화살표 (엣지 중간) - 시각적 명확성 향상!
-        const midX = (fromX + toX) / 2;
-        const midY = (fromY + toY) / 2 - 30; // 곡선 중앙점
-        const midAngle = Math.atan2(toY - midY, toX - midX);
+        // 2. 중앙 화살표 (엣지 중간) - Bezier 곡선상의 정확한 중간점 계산
+        const midX = 0.25 * fromX + 0.5 * cpX + 0.25 * toX;
+        const midY = 0.25 * fromY + 0.5 * cpY + 0.25 * toY;
+        const midAngle = Math.atan2(toY - cpY, cpX - fromX); // Approximate tangent
         this.renderArrow(midX, midY, midAngle, edgeColor, style.arrowStyle, edgeIcon);
 
         // Bidirectional인 경우 반대 방향 화살표도 그리기
@@ -6552,12 +6586,15 @@ class CanvasEngine {
             this.renderArrow(startArrowPoint.x, startArrowPoint.y, startAngle, edgeColor, 'standard', edgeIcon);
 
             // 중앙 반대 방향 화살표
-            const midStartAngle = Math.atan2(fromY - midY, fromX - midX);
+            const midStartAngle = midAngle + Math.PI;
             this.renderArrow(midX, midY, midStartAngle, edgeColor, 'standard', edgeIcon);
         }
 
         // 🔍 검증 결과 표시 (에러/경고인 경우 라벨 추가)
-        if (!validation.valid || validation.color === '#fabd2f' || validation.isAi) {
+        // [v0.3.3] Always show badge background if icons are enabled to prevent "floating arrow"
+        if (showIcons || !validation.valid || validation.color === '#fabd2f' || validation.isAi) {
+            const bX = midX;
+            const bY = midY - 25 / this.transform.zoom; // Curve awareness offset
             const midX = (fromX + toX) / 2;
             const midY = (fromY + toY) / 2 - 35;
 
@@ -6746,10 +6783,8 @@ class CanvasEngine {
 
             this.ctx.translate(tx, ty);
 
-            // 텍스트 색상: 어두운 배경/색상에는 밝은색, 밝은 색상에는 어두운색
-            // 여기서는 고정적으로 어두운 Gruvbox 브라운 사용 (가장 잘 보임)
-            this.ctx.fillStyle = '#1d2021';
-
+            // 텍스트 색상: 완벽한 임포트 가시성을 위해 밝은색(#f9f5d7 - Gruvbox light) 사용
+            this.ctx.fillStyle = '#f9f5d7';
             this.ctx.font = `bold ${Math.max(10, arrowSize * 0.45)}px Inter, sans-serif`;
             this.ctx.textAlign = 'center';
             this.ctx.textBaseline = 'middle';

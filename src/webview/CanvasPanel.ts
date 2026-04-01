@@ -2858,6 +2858,7 @@ export class CanvasPanel {
                                     type: edgeType,
                                     is_approved: (ref as any).isApproved !== false, // [v0.2.18.1.1] Sync with scanner results
                                     label: edgeType === 'dependency' ? 'ref' : edgeType,
+                                    status: 'proposed', // [v0.3.3] Explicit status for parity
                                     data: {
                                         dtr: 0 // [v0.2.18] Auto-confirmed (Removes "?" badge)
                                     },

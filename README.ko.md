@@ -1,13 +1,30 @@
-# <img src="./resources/synapse-icon.png" width="40" height="40" /> 🧠 SYNAPSE: 비주얼 아키텍처 엔진 (v0.3.1)
+# <img src="./resources/synapse-icon.png" width="40" height="40" /> 🧠 SYNAPSE: 비주얼 아키텍처 엔진 (v0.3.9)
 
 > **"눈에 보이는 것이 곧 LLM의 논리입니다."** — *AI를 위한 WYSIWYG 논리 설계 도구*
 
-[![Version](https://img.shields.io/badge/version-v0.3.1-brightgreen.png)](https://github.com/dogsinatas29/SYNAPSE/releases)
-![Status](https://img.shields.io/badge/status-War_Room_Ready-orange.png)
+[![Version](https://img.shields.io/badge/version-v0.3.9-brightgreen.png)](https://github.com/dogsinatas29/SYNAPSE/releases)
+[![Latest Release](https://img.shields.io/badge/latest-v0.3.09%20Hotfix-orange.png)
+![Status](https://img.shields.io/badge/status-Production_Ready-brightgreen.png)
 [![Language](https://img.shields.io/badge/Language-TypeScript-blue?style=flat-square)](https://www.typescriptlang.org/)
 [![Platform](https://img.shields.io/badge/Platform-VS_Code-007ACC?style=flat-square)](https://code.visualstudio.com/)
 
 [🇰🇷 한국어 버전](README.ko.md) | [🇺🇸 English Version](README.md)
+
+---
+
+## 🔥 최신 릴리스: v0.3.09 핫픽스 (2026-04-01)
+
+### ✅ 크리티컬 버그 수정
+**v0.3.09**는 v0.3.9 배포 후 발견된 3가지 크리티컬 이슈를 해결합니다:
+
+| 이슈 | 증상 | 해결 방법 | 상태 |
+|------|------|---------|------|
+| **캔버스 높이 = 0** | 2D 모드: 노드 미표시 | 최소 높이 강제 + DOM 리플로우 트리거 | ✅ 해결됨 |
+| **이모지 폰트 미지원** | 3D 모드: 아이콘이 'D', 'B'로 표시 | Noto Color Emoji 폰트 스택 추가 | ✅ 해결됨 |
+| **에코모드 수면** | 렌더링 중 성능 저하 | 렌더링 상태 체크 + Idle 타이머 리셋 | ✅ 해결됨 |
+
+**다운로드**: [synapse-visual-architecture-v0.3.9-hotfix.vsix](./synapse-visual-architecture-v0.3.9-hotfix.vsix) (18 MB)  
+**상세 정보**: [mile_stone/v0.3.09.md](./mile_stone/v0.3.09.md) 문서를 참고하세요.
 
 ---
 
@@ -64,13 +81,17 @@ DTR은 단순한 시각 효과가 아닙니다. 이는 **결정론적 사고**�
 ## 🏗️ 노드 규격 (Node Conventions)
 SYNAPSE는 컴포넌트의 종류와 현재 추론 상태를 표현하기 위해 고유한 아이콘과 색상을 사용합니다.
 
-### 📄 엔티티 타입 (Entity Types)
-| 아이콘 | 타입 | 설명 |
-| :---: | :--- | :--- |
-| 📄 | **File** | 워크스페이스 내의 실제 소스 파일입니다. |
-| 📁 | **Folder** | 여러 노드나 클러스터를 포함하는 디렉토리입니다. |
-| 🧩 | **Component** | 논리적 그룹 또는 추상화된 모듈입니다. |
-| ⚡ | **Trigger** | 진입점 또는 이벤트 소스입니다. |
+### 🔡 엣지 타입 태그 (화살표 내 기호)
+엣지 화살표 내부에 표시되는 기호는 해당 연결의 기술적 성격을 나타냅니다.
+
+| 기호 | 의미 | 엣지 종류 | 설명 |
+| :---: | :--- | :--- | :--- |
+| **🔗** | **Dependency** | Dependency | 표준 파일 임포트 또는 모듈 참조. |
+| **🛢️** | **Data/Flow** | DB Query | 데이터베이스 수정 또는 양방향 데이터 교환. |
+| **📊** | **Flow** | Data Flow | 물리적 데이터 전달 및 페이로드 부하. |
+| **📡** | **Call** | API Call | 함수 호출 또는 원격 프로시저 호출. |
+| **🔁** | **Loop** | Loop Back | 재귀적 루프 또는 역방향 로직 흐름. |
+| **📍** | **Origin** | Origin | AI 프롬프트 추적 및 원본 논리 기원. |
 
 ### 🎨 노드 상태 및 발광 (Node Status & Glow)
 | 상태 | 시각적 힌트 | 색상 | 의미 |
@@ -178,16 +199,45 @@ LLM 추론 논리와 소스 파일 간의 실제 연결 상태를 시각화합�
 
 1. [Releases](https://github.com/dogsinatas29/SYNAPSE/releases) 페이지에서 최신 `.vsix` 파일을 다운로드합니다.
 2. 파일을 **VS Code** 창으로 드래그 앤 드롭합니다.
+
 ### 빠른 설치
 ```bash
-code --install-extension synapse-visual-architecture-0.3.1.vsix
+code --install-extension synapse-visual-architecture-v0.3.9-hotfix.vsix
 ```
-현재 버전: **v0.3.1** (부트스트랩 락 - Bootstrap Locked)
+현재 버전: **v0.3.09** (크리티컬 버그 수정 포함)
+
+---
+
+## 💾 시스템 요구사항
+
+### 폰트 스택 (아이콘 렌더링 필수)
+⚠️ **중요**: SYNAPSE는 3D 시각화에서 현대적인 이모지 아이콘(🔗, 🛢️, 📡, 📊, 📍, 🔁)을 사용합니다. 이들을 올바르게 표시하려면 이모지 폰트 지원이 필수입니다.
+
+**권장 폰트 스택** (우선순위 순서):
+```
+1. Noto Color Emoji        (Google의 포괄적 이모지 폰트)
+2. Apple Color Emoji        (macOS 기본 이모지 폰트)
+3. Segoe UI Emoji          (Windows 10+ 이모지 폰트)
+4. 시스템 이모지 폰트 (기본 폴백)
+```
+
+**운영체제별 설치**:
+
+| OS | 설치 방법 | 명령어 |
+|----|---------|--------|
+| **Linux (Ubuntu/Debian)** | Noto Color Emoji 설치 | `sudo apt-get install fonts-noto-color-emoji` |
+| **macOS** | 사전 설치됨 | 시스템 폰트에 기본 포함 |
+| **Windows 10+** | 사전 설치됨 | Segoe UI Emoji 기본 포함 |
+
+**이모지 폰트 누락 증상**: 엣지 아이콘이 이모지 심볼(🔗, 🛢️) 대신 알파벳 문자('D', 'B', 'F')로 표시됨. **해결: 위의 권장 폰트 중 하나를 설치하고 VS Code를 재로드하세요.**
+
+---
 
 ## 🚀 시작하기 (Getting Started)
 시각적 아키텍처 설계를 즉시 시작하는 방법입니다.
 
-1. **확장 기능 설치**: Antigravity/VS Code에 `synapse-visual-architecture-v0.3.1.vsix` (또는 최신 버전) 파일을 설치합니다.
+1. **확장 기능 설치**: Antigravity/VS Code에 `synapse-visual-architecture-v0.3.9-hotfix.vsix` (또는 최신 버전) 파일을 설치합니다.
+   - **폰트 설치**: 아이콘이 제대로 표시되려면 Noto Color Emoji 또는 호환 폰트가 필요합니다. ([시스템 요구사항](#-시스템-요구사항) 참고)
 2. **DNA 주입**: 워크스페이스 루트에 `GEMINI.md` (또는 `Project_Spec.md`) 파일을 생성하거나 드롭합니다.
 3. **부트스트랩 단계**: 사이드바나 커맨드 팔레트(`Ctrl+Shift+P` -> `SYNAPSE: Open Canvas`)에서 **SYNAPSE Canvas**를 엽니다.
 4. **첫 시각화 (First Visualization)**: 

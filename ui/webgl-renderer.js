@@ -39,11 +39,25 @@ class TextAtlas {
 
     _drawGlyph(ch) {
         const ctx = this.ctx;
-        ctx.font = '12px Inter, sans-serif'; // Default UI font
+        
+        // [FIX v0.3.09] Emoji detection and font selection
+        // Inter는 이모지를 지원하지 않으므로, 이모지인 경우 별도 폰트 사용
+        const isEmoji = /\p{Emoji}/u.test(ch);
+        if (isEmoji) {
+            // 이모지 지원 폰트 스택: Noto Color Emoji (가장 광범위) → Apple Color Emoji → Segoe UI Emoji
+            ctx.font = '14px "Noto Color Emoji", "Apple Color Emoji", "Segoe UI Emoji", sans-serif';
+        } else {
+            ctx.font = '12px Inter, sans-serif';  // Default UI font for ASCII/Latin
+        }
         
         const m = ctx.measureText(ch);
-        const w = Math.ceil(m.width) + 2;
-        const h = 16;
+        let w = Math.ceil(m.width) + 2;
+        let h = isEmoji ? 18 : 16;  // Emoji는 더 크게
+        
+        // [FIX v0.3.09] Emoji minimum size guarantee
+        // 이모지가 너무 작으면 안보이니 최소값 보증
+        if (isEmoji && w < 16) w = 18;
+        if (isEmoji && h < 16) h = 18;
         
         if (this.x + w > this.canvas.width) {
             this.x = 0;
@@ -66,7 +80,6 @@ class TextAtlas {
         this.x += w;
         this.rowHeight = Math.max(this.rowHeight, h);
         return glyph;
-    }
 
     upload() {
         if (!this.needsUpload) return;
@@ -328,9 +341,12 @@ class WebGLRenderer {
                     lineWidth += 2.0 * sin(uTime * 4.0); // Pulse effect
                 }
                 
-                float arrowWidth = (aVertexPosition.x > 0.9) ? (1.0 - aVertexPosition.x) * (lineWidth * 4.0) + 1.0 : lineWidth;
+                // [v0.3.2] Fixed Parity: Use constant flared width in VS to prevent interpolation-based tapering.
+                // The actual body width and arrowhead are carved out in the Fragment Shader.
+                float maxFlare = 3.5;
+                float flaredWidth = lineWidth * maxFlare;
                 
-                vec2 worldPos = p1 + unitDir * (aVertexPosition.x * len) + norm * (aVertexPosition.y * arrowWidth);
+                vec2 worldPos = p1 + unitDir * (aVertexPosition.x * len) + norm * (aVertexPosition.y * flaredWidth);
                 vec3 projected = uProjectionMatrix * vec3(worldPos, 1.0);
                 gl_Position = vec4(projected.xy, 0.0, 1.0);
                 vColor = aEdgeColor;
@@ -359,9 +375,15 @@ class WebGLRenderer {
                 }
 
                 // 2. Arrowhead vs Body
-                if (x > 0.92) {
-                    float arrowZone = (1.0 - x) * 6.0; 
-                    if (y > arrowZone) discard;
+                float arrowLen = 15.0;
+                float arrowZoneStart = (vLen > arrowLen) ? 1.0 - (arrowLen / vLen) : 0.0;
+                float maxFlare = 3.5;
+                if (x > arrowZoneStart) {
+                    float ratio = (vLen > arrowLen) ? (1.0 - x) / (1.0 - arrowZoneStart) : 0.0;
+                    if (y > ratio * 0.5) discard;
+                } else {
+                    // Constant body width: body is 1/maxFlare of the flared quad
+                    if (y > (0.5 / maxFlare)) discard;
                 }
                 
                 vec3 finalColor = vColor;
@@ -776,10 +798,41 @@ class WebGLRenderer {
             if (src && tgt && src.position && tgt.position) {
                 const nodeWidth = 120;
                 const nodeHeight = 60;
-                data[cnt++] = src.position.x + (nodeWidth / 2);
-                data[cnt++] = src.position.y + (nodeHeight / 2);
-                data[cnt++] = tgt.position.x + (nodeWidth / 2);
-                data[cnt++] = tgt.position.y + (nodeHeight / 2);
+                let x1 = src.position.x + (nodeWidth / 2);
+                let y1 = src.position.y + (nodeHeight / 2);
+                let x2 = tgt.position.x + (nodeWidth / 2);
+                let y2 = tgt.position.y + (nodeHeight / 2);
+
+                // [v0.3.2] Boundary Intersection: Stop edges at node borders
+                const dx = x2 - x1;
+                const dy = y2 - y1;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+
+                if (dist > 10.0) {
+                    const nx = dx / dist;
+                    const ny = dy / dist;
+                    
+                    // Intersection with Target Box (120x60)
+                    const tx = (nx !== 0) ? Math.abs(60 / nx) : Infinity;
+                    const ty = (ny !== 0) ? Math.abs(30 / ny) : Infinity;
+                    const t_tgt = Math.min(tx, ty);
+                    
+                    // Intersection with Source Box
+                    const sx = (nx !== 0) ? Math.abs(60 / nx) : Infinity;
+                    const sy = (ny !== 0) ? Math.abs(30 / ny) : Infinity;
+                    const t_src = Math.min(sx, sy);
+
+                    // Offset slightly to prevent clipping under nodes
+                    x1 += nx * t_src;
+                    y1 += ny * t_src;
+                    x2 -= nx * t_tgt;
+                    y2 -= ny * t_tgt;
+                }
+
+                data[cnt++] = x1;
+                data[cnt++] = y1;
+                data[cnt++] = x2;
+                data[cnt++] = y2;
 
                 // [v0.3.1_zz] SYNC with SYNAPSE Edge & Line Conventions
                 const styles = {
@@ -889,18 +942,91 @@ class WebGLRenderer {
             }
         });
 
-        // 2️⃣ Edge Badges (❌, ❓, ❗️) - Only in Edit Logic mode or when pending
+        // 2️⃣ Edge Badges (Type Icons, Validation Icons, Status Icons)
         const badgeItems = [];
         if (edges && edges.length > 0) {
             const isEditMode = window.engine?.isEditMode;
+            // [v0.3.3 Fix] Build nodeMap locally if not passed (to avoid undefined crash)
+            const map = new Map();
+            for (const n of nodes) map.set(n.id, n);
+
+            // [v0.4.0] Standard Edge Type Icons (Unicode Escapes for build stability)
+            const iconMap = {
+                'dependency': '\u{1F517}', // 🔗
+                'call': '\u{1F4E1}',       // 📡
+                'data_flow': '\u{1F4CA}',  // 📊
+                'bidirectional': '\u{1F504}', // 🔄
+                'db_query': '\u{1F6E2}',    // 🛢️ (Oil Drum/DB)
+                'origin': '\u{1F4CD}',     // 📍
+                'loop_back': '\u{1F501}'   // 🔁
+            };
+
             edges.forEach(e => {
-                const src = e.srcNode || (this.nodeMap?.get(e.from));
-                const tgt = e.tgtNode || (this.nodeMap?.get(e.to));
+                const src = e.srcNode || (map ? map.get(e.from) : null);
+                const tgt = e.tgtNode || (map ? map.get(e.to) : null);
                 if (!src?.position || !tgt?.position) return;
 
-                const midX = (src.position.x + tgt.position.x + 120) / 2;
-                const midY = (src.position.y + tgt.position.y + 0) / 2; // -30 from center (30+30-30)
+                const nodeWidth = 120;
+                const nodeHeight = 60;
+                const x1 = src.position.x + (nodeWidth / 2);
+                const y1 = src.position.y + (nodeHeight / 2);
+                const x2 = tgt.position.x + (nodeWidth / 2);
+                const y2 = tgt.position.y + (nodeHeight / 2);
+                
+                const midX = (x1 + x2) / 2;
+                const midY = (y1 + y2) / 2;
 
+                // 2.1 Mid-point Arrow Head (Standard Triangle) - Drawn as central anchor
+                const arrowChar = '▶'; // Directional arrow character
+                this.textAtlas.addText(arrowChar);
+                const gArrow = this.textAtlas.glyphMap.get(arrowChar);
+                if (gArrow) {
+                    badgeItems.push({
+                        x: midX - gArrow.w / 2, y: midY - 5,
+                        w: gArrow.w, h: gArrow.h,
+                        u0: gArrow.u0, v0: gArrow.v0, u1: gArrow.u1, v1: gArrow.v1
+                    });
+                }
+
+                // 2.2 Validation Icons (🤖, ⚠️, ❌) - Check edgeValidationCache if available (PRIMARY INFO)
+                const validation = window.engine?.edgeValidationCache?.get(e.id);
+                if (validation && (!validation.valid || validation.color === '#fabd2f' || validation.isAi)) {
+                    const valText = (validation.isAi ? '🤖' : '') + (validation.valid ? '⚠️' : '❌');
+                    for (const ch of valText) {
+                        this.textAtlas.addText(ch);
+                        const g = this.textAtlas.glyphMap.get(ch);
+                        if (g) {
+                            badgeItems.push({
+                                x: midX - 10, y: midY - 25, // Offset upwards like 2D
+                                w: g.w, h: g.h,
+                                u0: g.u0, v0: g.v0, u1: g.u1, v1: g.v1
+                            });
+                        }
+                    }
+                }
+
+                // 2.3 Internal Type Icon (Secondary - only if no primary validation badge is present)
+                if (!validation || validation.valid) {
+                    // [FIX v0.3.09] Guarantee valid icon, never undefined
+                    let typeIcon = 'D';  // Safe ASCII fallback (should never be used)
+                    if (e.type && iconMap[e.type]) {
+                        typeIcon = iconMap[e.type];  // Direct emoji match
+                    } else if (iconMap['dependency']) {
+                        typeIcon = iconMap['dependency'];  // Proper emoji fallback
+                    }
+                    // Now typeIcon is always a valid emoji, never undefined
+                    this.textAtlas.addText(typeIcon);
+                    const gType = this.textAtlas.glyphMap.get(typeIcon);
+                    if (gType) {
+                        badgeItems.push({
+                            x: midX - gType.w / 2, y: midY, // Centered inside arrow
+                            w: gType.w, h: gType.h,
+                            u0: gType.u0, v0: gType.v0, u1: gType.u1, v1: gType.v1
+                        });
+                    }
+                }
+
+                // 2.5 Interaction/Status Icons (❓, ❗️, ❌)
                 const confirmStatus = e.confirmStatus || (e.status === 'pending' ? 'pending_confirm' : '');
                 if (confirmStatus === 'pending_confirm' || confirmStatus === 'confirmed') {
                     const char = (confirmStatus === 'pending_confirm') ? '❓' : '❗️';
@@ -908,7 +1034,7 @@ class WebGLRenderer {
                     const g = this.textAtlas.glyphMap.get(char);
                     if (g) {
                         badgeItems.push({
-                            x: midX - g.w / 2, y: midY,
+                            x: midX + 15, y: midY,
                             w: g.w, h: g.h,
                             u0: g.u0, v0: g.v0, u1: g.u1, v1: g.v1
                         });
@@ -921,7 +1047,7 @@ class WebGLRenderer {
                     const g = this.textAtlas.glyphMap.get(char);
                     if (g) {
                         badgeItems.push({
-                            x: midX + 20, y: midY, // Offset from the center badge
+                            x: midX + 30, y: midY + 10,
                             w: g.w, h: g.h,
                             u0: g.u0, v0: g.v0, u1: g.u1, v1: g.v1
                         });

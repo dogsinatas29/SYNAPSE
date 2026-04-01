@@ -1,13 +1,30 @@
-# <img src="./resources/synapse-icon.png" width="40" height="40" /> 🧠 SYNAPSE: Visual Architecture Engine (v0.3.1)
+# <img src="./resources/synapse-icon.png" width="40" height="40" /> 🧠 SYNAPSE: Visual Architecture Engine (v0.3.9)
 
 > **"What you see is the logic of LLM"** — *WYSIWYG Logic for AI*
 
-[![Version](https://img.shields.io/badge/version-v0.3.1-brightgreen.png)
-![Status](https://img.shields.io/badge/status-War_Room_Ready-orange.png)
+[![Version](https://img.shields.io/badge/version-v0.3.9-brightgreen.png)
+[![Latest Release](https://img.shields.io/badge/latest-v0.3.09%20Hotfix-orange.png)
+![Status](https://img.shields.io/badge/status-Production_Ready-brightgreen.png)
 [![Language](https://img.shields.io/badge/Language-TypeScript-blue?style=flat-square)](https://www.typescriptlang.org/)
 [![Platform](https://img.shields.io/badge/Platform-VS_Code-007ACC?style=flat-square)](https://code.visualstudio.com/)
 
 [🇰🇷 Korean Version](README.ko.md) | [🇺🇸 English Version](README.md)
+
+---
+
+## 🔥 Latest Release: v0.3.09 Hotfix (2026-04-01)
+
+### ✅ Critical Bug Fixes
+**v0.3.09** addresses 3 critical issues reported after v0.3.9 deployment:
+
+| Issue | Symptom | Fix | Status |
+|-------|---------|-----|--------|
+| **Canvas Height = 0** | 2D mode: nodes invisible | Min height enforcement + DOM reflow trigger | ✅ Fixed |
+| **Emoji Font Missing** | 3D mode: icons show as 'D', 'B' (alphabet) | Noto Color Emoji font stack | ✅ Fixed |
+| **Eco-mode Sleep** | Performance degradation during rendering | Rendering state check + idle timer reset | ✅ Fixed |
+
+**Download**: [synapse-visual-architecture-v0.3.9-hotfix.vsix](./synapse-visual-architecture-v0.3.9-hotfix.vsix) (18 MB)  
+**Documentation**: See [mile_stone/v0.3.09.md](./mile_stone/v0.3.09.md) for complete details.
 
 ---
 
@@ -100,14 +117,28 @@ SYNAPSE uses distinct colors and styles to represent different types of logical 
 | **Loop / Back**| ![#fe8019](./resources/edge_styles/color_orange.png) | ![dotted 2px](./resources/edge_styles/style_dotted_2px.png) | Loop-backs (`while`/`for`) or reverse logic flow. |
 | **Highlighted**| ![#fabd2f](./resources/edge_styles/color_gold.png) | ![pulse 5px](./resources/edge_styles/style_pulse_5px.png) | Active execution path (Hovered/Selected). |
 
-### 🏷️ Edge Interactive Badges
-Interactive badges appear on edges during **Edit Logic** mode to facilitate architectural decisions.
+### 🔡 Edge Type Tags (Symbols inside Arrows)
+These symbols appear inside the edge arrows to represent the technical nature of the connection.
 
-| Badge | Action | Meaning |
+| Symbol | Meaning | Edge Type | Description |
+| :---: | :--- | :--- | :--- |
+| **🔗** | **Dependency** | Dependency | Standard file import or module reference. |
+| **🛢️** | **Data/Flow** | DB Query | Database mutation or Bi-directional data exchange. |
+| **📊** | **Flow** | Data Flow | Heavy data transfer or payload movement. |
+| **📡** | **Call** | API Call | Function invocation or remote procedural call. |
+| **🔁** | **Loop** | Loop Back | Recursive loop or backward logic flow. |
+| **📍** | **Origin** | Origin | AI prompt tracing and original logic source. |
+
+### 🏷️ Edge Interactive Badges
+Status and action badges appear on edges to indicate logic health or maintenance tasks.
+
+| Badge | Type | Meaning |
 | :---: | :--- | :--- |
-| ❌ | **Delete** | Clicking the red 'X' instantly removes the edge and its logical connection. |
-| ❓ | **Pending** | Indicates a manually created edge that is awaiting architectural confirmation. |
-| ❗️ | **Confirmed** | A confirmed edge. In supported languages, this triggers an **automatic import injection**. |
+| **⚠️** | **Warning** | **Status**: Logic ambiguity detected or minor architectural violation. |
+| **❌** | **Error** | **Status**: Fatal structural violation or broken dependency path. |
+| **🤖** | **AI Logic** | **Origin**: This edge was inferred by the LLM logic engine. |
+| **❓** | **Pending** | **Action**: Manually drawn edge awaiting confirmation. |
+| **❗️** | **Confirmed** | **Action**: Confirmed architectural choice; triggers import injection. |
 
 ---
 
@@ -139,16 +170,45 @@ SYNAPSE integrates VS Code's real-time diagnostics directly into the architectur
 
 1. Download the latest `.vsix` from the [Releases](https://github.com/dogsinatas29/SYNAPSE/releases) page.
 2. Drag and drop the file into **VS Code**.
+
 ### Quick Installation
 ```bash
-code --install-extension synapse-visual-architecture-0.2.20.vsix
+code --install-extension synapse-visual-architecture-v0.3.9-hotfix.vsix
 ```
-    Current Version: **v0.3.1** (Bootstrap Locked)
+Current Version: **v0.3.09** (With Critical Bug Fixes)
+
+---
+
+## 💾 System Requirements
+
+### Font Stack (Required for Icon Rendering)
+**Critical**: SYNAPSE uses modern emoji icons (🔗, 🛢️, 📡, 📊, 📍, 🔁) in 3D visualization. These require proper emoji font support.
+
+**Required Font Stack** (in order of preference):
+```
+1. Noto Color Emoji       (Google's comprehensive emoji font)
+2. Apple Color Emoji       (macOS default emoji font)
+3. Segoe UI Emoji          (Windows 10+ emoji font)
+4. System emoji fallback
+```
+
+**Installation by OS**:
+
+| OS | Installation | Command |
+|----|--------------|---------| 
+| **Linux (Ubuntu/Debian)** | Install Noto Color Emoji | `sudo apt-get install fonts-noto-color-emoji` |
+| **macOS** | Pre-installed | Already bundled in system fonts |
+| **Windows 10+** | Pre-installed | Segoe UI Emoji included by default |
+
+**Symptom of Missing Emoji Font**: Edge icons display as alphabet characters ('D', 'B', 'F') instead of emoji symbols (🔗, 🛢️). **Solution**: Install one of the recommended fonts and reload VS Code.
+
+---
 
 ## 🚀 Getting Started
 Launch your visual architecture journey in seconds.
 
-1. **Install Extension**: Install the `synapse-visual-architecture-v0.3.1.vsix` (or latest) in Antigravity/VS Code.
+1. **Install Extension**: Install the `synapse-visual-architecture-v0.3.9-hotfix.vsix` (or latest) in Antigravity/VS Code.
+   - **Font Installation**: Emoji icons require Noto Color Emoji or compatible font. ([System Requirements](#-system-requirements) details)
 2. **DNA Injection**: Create or drop a `GEMINI.md` (or `Project_Spec.md`) file into your workspace root.
 3. **Bootstrap Phase**: Open the **SYNAPSE Canvas** from the sidebar or command palette (`Ctrl+Shift+P` -> `SYNAPSE: Open Canvas`).
 4. **First Visualization**: 

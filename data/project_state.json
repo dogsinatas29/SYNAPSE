@@ -2505,8 +2505,8 @@
       },
       "id": "node_build_guard_js_1774264406887",
       "position": {
-        "x": 1600,
-        "y": 2960
+        "x": 280,
+        "y": 1880
       },
       "status": "proposed",
       "type": "source",
@@ -2568,8 +2568,8 @@
       },
       "id": "node_fix_cluster_sh_1774264406887",
       "position": {
-        "x": 1920,
-        "y": 2840
+        "x": 760,
+        "y": 1920
       },
       "status": "proposed",
       "type": "source",
@@ -2736,8 +2736,8 @@
       },
       "id": "node_src_bootstrap_BootstrapEngine_ts_1774264406887",
       "position": {
-        "x": 2360,
-        "y": 2840
+        "x": 1240,
+        "y": 3280
       },
       "status": "proposed",
       "type": "source",
@@ -2757,8 +2757,8 @@
       },
       "id": "node_src_cli_ts_1774264406887",
       "position": {
-        "x": 2680,
-        "y": 1040
+        "x": 2720,
+        "y": 3240
       },
       "status": "proposed",
       "type": "source",
@@ -2778,8 +2778,8 @@
       },
       "id": "node_src_client_ts_1774264406887",
       "position": {
-        "x": 3000,
-        "y": 1040
+        "x": 200,
+        "y": 3080
       },
       "status": "proposed",
       "type": "source",
@@ -2799,8 +2799,8 @@
       },
       "id": "node_src_extension_ts_1774264406887",
       "position": {
-        "x": 1720,
-        "y": 2960
+        "x": -560,
+        "y": 3320
       },
       "status": "proposed",
       "type": "source",
@@ -2820,8 +2820,8 @@
       },
       "id": "node_src_core_AiOrchestrator_ts_1774264406887",
       "position": {
-        "x": 120,
-        "y": 1280
+        "x": -200,
+        "y": 3920
       },
       "status": "proposed",
       "type": "source",
@@ -2841,8 +2841,8 @@
       },
       "id": "node_src_core_ArchitectureDSL_ts_1774264406887",
       "position": {
-        "x": 440,
-        "y": 1280
+        "x": 1400,
+        "y": 4120
       },
       "status": "proposed",
       "type": "source",
@@ -2862,8 +2862,8 @@
       },
       "id": "node_src_core_BillingManager_ts_1774264406887",
       "position": {
-        "x": 760,
-        "y": 1280
+        "x": -800,
+        "y": 3840
       },
       "status": "proposed",
       "type": "source",
@@ -2883,8 +2883,8 @@
       },
       "id": "node_src_core_DatabaseEngine_ts_1774264406887",
       "position": {
-        "x": 1080,
-        "y": 1280
+        "x": -800,
+        "y": 4040
       },
       "status": "proposed",
       "type": "source",
@@ -2904,8 +2904,8 @@
       },
       "id": "node_src_core_EdgeCodeRefactorer_ts_1774264406887",
       "position": {
-        "x": 1400,
-        "y": 1280
+        "x": -80,
+        "y": 3800
       },
       "status": "proposed",
       "type": "source",
@@ -2925,8 +2925,8 @@
       },
       "id": "node_src_core_FileScanner_ts_1774264406887",
       "position": {
-        "x": 1720,
-        "y": 2360
+        "x": 680,
+        "y": 4120
       },
       "status": "proposed",
       "type": "source",
@@ -2946,8 +2946,8 @@
       },
       "id": "node_src_core_FlowScanner_ts_1774264406887",
       "position": {
-        "x": 2360,
-        "y": 2480
+        "x": 1600,
+        "y": 3840
       },
       "status": "proposed",
       "type": "source",
@@ -2967,8 +2967,8 @@
       },
       "id": "node_src_core_FlowchartGenerator_ts_1774264406887",
       "position": {
-        "x": 2040,
-        "y": 2360
+        "x": 1000,
+        "y": 4120
       },
       "status": "proposed",
       "type": "source",
@@ -2988,8 +2988,8 @@
       },
       "id": "node_src_core_GeminiParser_ts_1774264406887",
       "position": {
-        "x": 2680,
-        "y": 2360
+        "x": 1840,
+        "y": 4040
       },
       "status": "proposed",
       "type": "source",
@@ -3009,8 +3009,8 @@
       },
       "id": "node_src_core_LogicAnalyzer_ts_1774264406887",
       "position": {
-        "x": 3000,
-        "y": 2360
+        "x": 2360,
+        "y": 3800
       },
       "status": "proposed",
       "type": "source",
@@ -3030,8 +3030,8 @@
       },
       "id": "node_src_core_PromptLogger_ts_1774264406887",
       "position": {
-        "x": 120,
-        "y": 1520
+        "x": -560,
+        "y": 3920
       },
       "status": "proposed",
       "type": "source",
@@ -3051,8 +3051,8 @@
       },
       "id": "node_src_core_ReportExporter_ts_1774264406887",
       "position": {
-        "x": 440,
-        "y": 1520
+        "x": -680,
+        "y": 3800
       },
       "status": "proposed",
       "type": "source",
@@ -3072,8 +3072,8 @@
       },
       "id": "node_src_core_RuleEngine_ts_1774264406887",
       "position": {
-        "x": 760,
-        "y": 1520
+        "x": 440,
+        "y": 4040
       },
       "status": "proposed",
       "type": "source",
@@ -3093,8 +3093,8 @@
       },
       "id": "node_src_core_VirtualDebugger_ts_1774264406887",
       "position": {
-        "x": 1080,
-        "y": 1520
+        "x": 40,
+        "y": 3920
       },
       "status": "proposed",
       "type": "source",
@@ -3114,8 +3114,8 @@
       },
       "id": "node_src_explorer_ArchitectureExplorer_ts_1774264406887",
       "position": {
-        "x": 1400,
-        "y": 2960
+        "x": -880,
+        "y": 3320
       },
       "status": "proposed",
       "type": "source",
@@ -3135,8 +3135,8 @@
       },
       "id": "node_src_rust_checker_mod_rs_1774264406887",
       "position": {
-        "x": 2040,
-        "y": 2840
+        "x": 2160,
+        "y": 3040
       },
       "status": "proposed",
       "type": "source",
@@ -3156,8 +3156,8 @@
       },
       "id": "node_src_rust_checker_reporter_rs_1774264406887",
       "position": {
-        "x": 2360,
-        "y": 2840
+        "x": 2440,
+        "y": 2920
       },
       "status": "proposed",
       "type": "source",
@@ -3177,8 +3177,8 @@
       },
       "id": "node_src_rust_checker_state_checker_rs_1774264406887",
       "position": {
-        "x": 2680,
-        "y": 2840
+        "x": 2280,
+        "y": 2920
       },
       "status": "proposed",
       "type": "source",
@@ -3198,8 +3198,8 @@
       },
       "id": "node_src_server_server_ts_1774264406887",
       "position": {
-        "x": 3000,
-        "y": 2600
+        "x": 1840,
+        "y": 3040
       },
       "status": "proposed",
       "type": "source",
@@ -3219,8 +3219,8 @@
       },
       "id": "node_src_server_standalone_ts_1774264406887",
       "position": {
-        "x": 120,
-        "y": 2600
+        "x": 1600,
+        "y": 3040
       },
       "status": "proposed",
       "type": "source",
@@ -3240,8 +3240,8 @@
       },
       "id": "node_src_test_ArchitectureDSL_test_ts_1774264406887",
       "position": {
-        "x": 440,
-        "y": 2720
+        "x": 1680,
+        "y": 4440
       },
       "status": "proposed",
       "type": "source",
@@ -3261,8 +3261,8 @@
       },
       "id": "node_src_test_FileScanner_test_ts_1774264406887",
       "position": {
-        "x": 760,
-        "y": 2720
+        "x": 1200,
+        "y": 4440
       },
       "status": "proposed",
       "type": "source",
@@ -3282,8 +3282,8 @@
       },
       "id": "node_src_test_FlowchartGenerator_test_ts_1774264406887",
       "position": {
-        "x": 1080,
-        "y": 2720
+        "x": 1440,
+        "y": 4440
       },
       "status": "proposed",
       "type": "source",
@@ -3303,8 +3303,8 @@
       },
       "id": "node_src_test_GeminiParser_test_ts_1774264406887",
       "position": {
-        "x": 1400,
-        "y": 2720
+        "x": 1960,
+        "y": 4440
       },
       "status": "proposed",
       "type": "source",
@@ -3324,8 +3324,8 @@
       },
       "id": "node_src_test_LogicAnalyzer_test_ts_1774264406887",
       "position": {
-        "x": 1720,
-        "y": 2720
+        "x": 2160,
+        "y": 4400
       },
       "status": "proposed",
       "type": "source",
@@ -3345,8 +3345,8 @@
       },
       "id": "node_src_test_SchemaValidation_test_ts_1774264406887",
       "position": {
-        "x": 2360,
-        "y": 2720
+        "x": 2520,
+        "y": 4360
       },
       "status": "proposed",
       "type": "source",
@@ -3366,8 +3366,8 @@
       },
       "id": "node_src_test_VirtualDebugger_test_ts_1774264406887",
       "position": {
-        "x": 2680,
-        "y": 2720
+        "x": 680,
+        "y": 4400
       },
       "status": "proposed",
       "type": "source",
@@ -3387,8 +3387,8 @@
       },
       "id": "node_src_test_manual_verify_iron_guard_ts_1774264406887",
       "position": {
-        "x": 2040,
-        "y": 2720
+        "x": 2400,
+        "y": 4480
       },
       "status": "proposed",
       "type": "source",
@@ -3408,8 +3408,8 @@
       },
       "id": "node_src_test_visualHints_test_ts_1774264406887",
       "position": {
-        "x": 3000,
-        "y": 2720
+        "x": 920,
+        "y": 4400
       },
       "status": "proposed",
       "type": "source",
@@ -3429,8 +3429,8 @@
       },
       "id": "node_src_types_schema_ts_1774264406887",
       "position": {
-        "x": 120,
-        "y": 2720
+        "x": 2040,
+        "y": 3400
       },
       "status": "proposed",
       "type": "source",
@@ -3450,8 +3450,8 @@
       },
       "id": "node_src_utils_ChatExtractor_ts_1774264406887",
       "position": {
-        "x": 440,
-        "y": 2840
+        "x": -400,
+        "y": 4440
       },
       "status": "proposed",
       "type": "source",
@@ -3471,8 +3471,8 @@
       },
       "id": "node_src_utils_Logger_ts_1774264406887",
       "position": {
-        "x": 1080,
-        "y": 2840
+        "x": -160,
+        "y": 4440
       },
       "status": "proposed",
       "type": "source",
@@ -3492,8 +3492,8 @@
       },
       "id": "node_src_utils_exclusionRules_ts_1774264406887",
       "position": {
-        "x": 760,
-        "y": 2840
+        "x": 240,
+        "y": 4320
       },
       "status": "proposed",
       "type": "source",
@@ -3513,8 +3513,8 @@
       },
       "id": "node_src_utils_visualHints_ts_1774264406887",
       "position": {
-        "x": 1400,
-        "y": 2840
+        "x": 200,
+        "y": 4480
       },
       "status": "proposed",
       "type": "source",
@@ -3534,8 +3534,8 @@
       },
       "id": "node_src_webview_CanvasPanel_ts_1774264406887",
       "position": {
-        "x": 1720,
-        "y": 2840
+        "x": 560,
+        "y": 3440
       },
       "status": "proposed",
       "type": "source",
@@ -3546,9 +3546,9 @@
   ],
   "project_name": "antigravity-extension-vis",
   "view": {
-    "offsetX": 83.75079698079747,
-    "offsetY": -165.4146260721585,
-    "zoom": 0.6437557895204026
+    "offsetX": 401.85826385281734,
+    "offsetY": -666.6587236636058,
+    "zoom": 0.3654130727049806
   },
   "_iron_guard": {
     "version": "0.2.18.1",

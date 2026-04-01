@@ -5637,6 +5637,8 @@ class CanvasEngine {
         }
         this.ctx.translate(node.position.x + jitterX, node.position.y + jitterY);
 
+        const x = 0;
+        const y = 0;
         const nodeWidth = 120;
         const nodeHeight = 60;
 

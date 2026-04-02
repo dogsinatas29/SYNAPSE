@@ -25,9 +25,6 @@
 | **Edge Rendering Sync** | ⚠️ badges spam in 2D, type icons disappear in 3D on validation | Fixed validation conditionals + guaranteed fallback symbol rendering | ✅ Fixed |
 | **Rendering Isolation** | View format transitions cause WebGL visual ghosting overhead | Rule 8 applied: Enforced WebGL framebuffer reset on view termination | ✅ Fixed |
 
-**Download**: [synapse-visual-architecture-v0.3.09.vsix](./synapse-visual-architecture-v0.3.09.vsix) (~18 MB)  
-**Documentation**: See [mile_stone/v0.3.09.md](./mile_stone/v0.3.09.md) for complete details.
-
 ---
 
 **SYNAPSE** is a next-generation visual control tower for **Google Antigravity** and **VS Code**. It bridges the gap between Large Language Model (LLM) reasoning and physical code architecture, transforming abstract logic into an interactive, high-performance node-edge network.

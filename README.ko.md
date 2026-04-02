@@ -25,9 +25,6 @@
 | **엣지 렌더링 동기화** | 2D 배지 스팸 현상, 3D 에러 시 아이콘 소멸 | 엣지 아이콘과 배지 렌더링 조건 분리 적용 | ✅ 해결됨 |
 | **뷰 렌더링 격리(Isolation)** | 탭 변경 시 3D 화면에 기존 렌더링 잔상 오버레이 | 엔진 전환 시 강제 WebGL 비디오버퍼 / 상태 리셋 (Rule 8) | ✅ 해결됨 |
 
-**다운로드**: [synapse-visual-architecture-v0.3.09.vsix](./synapse-visual-architecture-v0.3.09.vsix) (~18 MB)  
-**상세 정보**: [mile_stone/v0.3.09.md](./mile_stone/v0.3.09.md) 문서를 참고하세요.
-
 ---
 
 **SYNAPSE**는 **Google Antigravity**와 **VS Code**를 위한 차세대 시각적 제어 타워입니다. 대규모 언어 모델(LLM)의 추론 과정과 실제 코드 아키텍처 사이의 간극을 메워, 추상적인 논리를 상호작용 가능한 고성능 노드-에지 네트워크로 변환합니다.

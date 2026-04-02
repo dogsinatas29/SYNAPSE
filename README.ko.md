@@ -12,18 +12,20 @@
 
 ---
 
-## 🔥 최신 릴리스: v0.3.09 핫픽스 (2026-04-01)
+## 🔥 최신 릴리스: v0.3.09 핫픽스 (2026-04-02)
 
 ### ✅ 크리티컬 버그 수정
-**v0.3.09**는 v0.3.9 배포 후 발견된 3가지 크리티컬 이슈를 해결합니다:
+**v0.3.09**는 v0.3.9 배포 후 제보된 크리티컬 렌더링 이슈들을 해결합니다:
 
 | 이슈 | 증상 | 해결 방법 | 상태 |
 |------|------|---------|------|
 | **캔버스 높이 = 0** | 2D 모드: 노드 미표시 | 최소 높이 강제 + DOM 리플로우 트리거 | ✅ 해결됨 |
 | **이모지 폰트 미지원** | 3D 모드: 아이콘이 'D', 'B'로 표시 | Noto Color Emoji 폰트 스택 추가 | ✅ 해결됨 |
 | **에코모드 수면** | 렌더링 중 성능 저하 | 렌더링 상태 체크 + Idle 타이머 리셋 | ✅ 해결됨 |
+| **엣지 렌더링 동기화** | 2D 배지 스팸 현상, 3D 에러 시 아이콘 소멸 | 엣지 아이콘과 배지 렌더링 조건 분리 적용 | ✅ 해결됨 |
+| **뷰 렌더링 격리(Isolation)** | 탭 변경 시 3D 화면에 기존 렌더링 잔상 오버레이 | 엔진 전환 시 강제 WebGL 비디오버퍼 / 상태 리셋 (Rule 8) | ✅ 해결됨 |
 
-**다운로드**: [synapse-visual-architecture-v0.3.9-hotfix.vsix](./synapse-visual-architecture-v0.3.9-hotfix.vsix) (18 MB)  
+**다운로드**: [synapse-visual-architecture-v0.3.09.vsix](./synapse-visual-architecture-v0.3.09.vsix) (~18 MB)  
 **상세 정보**: [mile_stone/v0.3.09.md](./mile_stone/v0.3.09.md) 문서를 참고하세요.
 
 ---
@@ -202,9 +204,9 @@ LLM 추론 논리와 소스 파일 간의 실제 연결 상태를 시각화합�
 
 ### 빠른 설치
 ```bash
-code --install-extension synapse-visual-architecture-v0.3.9-hotfix.vsix
+code --install-extension synapse-visual-architecture-v0.3.09.vsix
 ```
-현재 버전: **v0.3.09** (크리티컬 버그 수정 포함)
+현재 버전: **v0.3.09** (크리티컬 버그 수정 및 시각 격리 패치 포함)
 
 ---
 
@@ -236,7 +238,7 @@ code --install-extension synapse-visual-architecture-v0.3.9-hotfix.vsix
 ## 🚀 시작하기 (Getting Started)
 시각적 아키텍처 설계를 즉시 시작하는 방법입니다.
 
-1. **확장 기능 설치**: Antigravity/VS Code에 `synapse-visual-architecture-v0.3.9-hotfix.vsix` (또는 최신 버전) 파일을 설치합니다.
+1. **확장 기능 설치**: Antigravity/VS Code에 `synapse-visual-architecture-v0.3.09.vsix` (또는 최신 버전) 파일을 설치합니다.
    - **폰트 설치**: 아이콘이 제대로 표시되려면 Noto Color Emoji 또는 호환 폰트가 필요합니다. ([시스템 요구사항](#-시스템-요구사항) 참고)
 2. **DNA 주입**: 워크스페이스 루트에 `GEMINI.md` (또는 `Project_Spec.md`) 파일을 생성하거나 드롭합니다.
 3. **부트스트랩 단계**: 사이드바나 커맨드 팔레트(`Ctrl+Shift+P` -> `SYNAPSE: Open Canvas`)에서 **SYNAPSE Canvas**를 엽니다.

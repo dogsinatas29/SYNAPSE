@@ -3188,8 +3188,16 @@ export class CanvasPanel {
             `src="${webglRendererUri}"`
         );
 
-        // Add CSP - relaxed for webview compatibility
+        // Inject actual webgl renderer URI for dynamic loader fallback
+        html = html.replace(
+            '__SYNAPSE_WEBGL_RENDERER_URI__',
+            `${webglRendererUri}`
+        );
+
+        // Add nonce first, before any inline script insertion
         const nonce = getNonce();
+
+        // Add CSP - relaxed for webview compatibility
         html = html.replace(
             '<head>',
             `<head>

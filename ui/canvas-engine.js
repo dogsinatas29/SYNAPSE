@@ -4533,7 +4533,9 @@ class CanvasEngine {
 
     renderEdges2D() {
         const zoom = this.transform.zoom;
-        if (zoom <= 0.3) return;
+        // [v0.4.1] Allow extreme zoom levels to still show edges with simplified rendering
+        // using a lower threshold. This avoids a blank-edges state where only validation icons appear.
+        if (zoom <= 0.15) return;
 
         const offsetX = this.transform.offsetX;
         const offsetY = this.transform.offsetY;
@@ -6438,8 +6440,10 @@ class CanvasEngine {
         const isPathSelected = isSelected || isHovered || Array.from(this.selectedNodes).some(n => n.id === edge.from || n.id === edge.to) ||
             (this.hoveredNode && (this.hoveredNode.id === edge.from || this.hoveredNode.id === edge.to));
 
-        // [v0.2.14] Dimmed State (마우스를 올리거나 선택하지 않은 노드/엣지는 흐리게)
-        const opacity = isPathSelected ? 1.0 : (edge.visual?.opacity || 0.25);
+        // [v0.4.1] Dimming disabled in 2D to match WebGL behavior
+        // Previously: const opacity = isPathSelected ? 1.0 : (edge.visual?.opacity || 0.25);
+        // This caused edges to appear nearly invisible when not selected.
+        const opacity = 1.0; // Always render edges fully visible in 2D
         this.ctx.globalAlpha = opacity;
 
         // Logic Analysis Highlights
@@ -6537,19 +6541,23 @@ class CanvasEngine {
         this.ctx.stroke();
 
         // 화살표 아이콘 결정 (Phase 3)
-        // LOD 적용: 줌이 1.2 이상일 때만 아이콘 표시
-        // LOD 적용: 줌이 0.3 이상일 때만 아이콘 표시 (사용자 요청 정보량 증대)
-        const showIcons = this.transform.zoom > 0.3;
+        // [v0.4.1] 2D LOD를 더 유연하게 조정합니다.
+        const showIcons = this.transform.zoom > 0.2;
         const iconMap = {
             'dependency': '🔗',
             'call': '📡',
             'data_flow': '📊',
+            'reference': '📝',
+            'event': '⚡',
+            'conditional': '❓',
             'bidirectional': '🔄',
+            'api_call': '🌐',
             'db_query': '🛢️',
             'origin': '📍',
-            'loop_back': '🔁'
+            'loop_back': '🔁',
+            'broken_fracture': '💥'
         };
-        const edgeIcon = (showIcons && iconMap[edge.type]) || '';
+        const edgeIcon = showIcons ? (iconMap[edge.type] || '➤') : '';
 
         // 🟢 펄스 애니메이션 (Edge Traversal)
         if (this.isTestingLogic) {
@@ -6599,8 +6607,9 @@ class CanvasEngine {
         }
 
         // 🔍 검증 결과 표시 (에러/경고인 경우 라벨 추가)
-        // [v0.3.3] Always show badge background if icons are enabled to prevent "floating arrow"
-        if (showIcons || !validation.valid || validation.color === '#fabd2f' || validation.isAi) {
+        // [v0.3.09] Only show validation badges when there is an actual validation issue to prevent ⚠️ spam on healthy edges
+        const hasValidationIssue = !validation.valid || validation.color === '#fabd2f' || validation.isAi;
+        if (hasValidationIssue) {
             // midX/Y는 이미 위에서 정의됨 (Bezier edge center), 여기서는 배지 위치 조정을 위해 별도 변수 사용
             const badgeMidX = (fromX + toX) / 2;
             const badgeMidY = (fromY + toY) / 2 - 35;
@@ -6619,8 +6628,13 @@ class CanvasEngine {
             this.ctx.textAlign = 'center';
             this.ctx.textBaseline = 'middle';
 
-            // 배경 박스
-            const text = (validation.isAi ? '🤖 ' : '') + (validation.valid ? '⚠️' : '❌');
+            // 배경 박스 및 텍스트 결정
+            let valIcon = '';
+            if (!validation.valid) valIcon = '❌';
+            else if (validation.color === '#fabd2f') valIcon = '⚠️';
+            
+            const aiIcon = validation.isAi ? '🤖' : '';
+            const text = (aiIcon && valIcon) ? `${aiIcon} ${valIcon}` : (aiIcon || valIcon);
             const metrics = this.ctx.measureText(text);
             const padding = 6 / this.transform.zoom;
 
@@ -7637,7 +7651,30 @@ function initCanvas() {
 
             // Switch Mode
             engine.currentMode = mode;
+            engine.canvas.dataset.mode = mode; // Ensure WebGL isolation condition checks match mode
             console.log('[SYNAPSE] Switched to mode:', mode);
+
+            // [v0.3.09] Rule 8. [Rendering Isolation] 강제 WebGL 초기화 (Force flush WebGL state during view transition)
+            if (engine.webglRenderer) {
+                try {
+                    engine.webglRenderer.drawCalls = 0;
+                    if (mode !== 'graph') {
+                        engine.webglRenderer.endFrame(); // Ensure clean state when switching away
+                        const gl = engine.webglRenderer.gl;
+                        if (gl) {
+                            gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+                            gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+                        }
+                    } else {
+                        // Switching back to graph mode, force full buffer rebuild
+                        engine.webglRenderer.charCount = 0; // Force text rebuild
+                        engine.webglRenderer.lastEdgeCount = -1; // Force edge rebuild
+                        engine.webglRenderer.isDataDirty = true;
+                    }
+                } catch (e) {
+                    console.error('[SYNAPSE] WebGL isolation reset failed:', e);
+                }
+            }
 
             // Rebuild tree if needed
             if (mode === 'tree') {

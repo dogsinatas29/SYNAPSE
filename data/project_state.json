@@ -126,29 +126,6 @@
         "y": 0
       },
       "children": [
-        "node_src_test_ArchitectureDSL_test_ts_1774264406887",
-        "node_src_test_FileScanner_test_ts_1774264406887",
-        "node_src_test_FlowchartGenerator_test_ts_1774264406887",
-        "node_src_test_GeminiParser_test_ts_1774264406887",
-        "node_src_test_LogicAnalyzer_test_ts_1774264406887",
-        "node_src_test_SchemaValidation_test_ts_1774264406887",
-        "node_src_test_VirtualDebugger_test_ts_1774264406887",
-        "node_src_test_manual_verify_iron_guard_ts_1774264406887",
-        "node_src_test_visualHints_test_ts_1774264406887"
-      ],
-      "collapsed": false,
-      "id": "cluster_src_test",
-      "label": "test",
-      "parent_id": "cluster_src"
-    },
-    {
-      "bounds": {
-        "height": 0,
-        "width": 0,
-        "x": 0,
-        "y": 0
-      },
-      "children": [
         "node_src_types_schema_ts_1774264406887"
       ],
       "collapsed": false,
@@ -188,18 +165,6 @@
       "id": "cluster_src_webview",
       "label": "webview",
       "parent_id": "cluster_src"
-    },
-    {
-      "bounds": {
-        "height": 400,
-        "width": 600,
-        "x": 0,
-        "y": -800
-      },
-      "children": [],
-      "collapsed": false,
-      "id": "cluster_ghosts",
-      "label": "👻 External Ghosts"
     },
     {
       "bounds": {
@@ -1451,36 +1416,6 @@
       "data": {
         "dtr": 0
       },
-      "from": "node_src_test_FileScanner_test_ts_1774264406887",
-      "id": "edge_auto_1774788474179_1131",
-      "isValid": true,
-      "is_approved": true,
-      "label": "ref",
-      "to": "node_src_core_FileScanner_ts_1774264406887",
-      "type": "dependency",
-      "validation": {
-        "color": "#b8bb26",
-        "confidence": 1,
-        "isAi": false,
-        "reason": "연결이 유효합니다. (LogicAnalyzer ✅)",
-        "valid": true,
-        "visual": {
-          "color": "#b8bb26",
-          "style": "solid",
-          "thickness": 2
-        }
-      },
-      "visual": {
-        "color": "#b8bb26",
-        "opacity": 0.8,
-        "style": "solid",
-        "thickness": 2
-      }
-    },
-    {
-      "data": {
-        "dtr": 0
-      },
       "from": "node_src_webview_CanvasPanel_ts_1774264406887",
       "id": "edge_auto_1774788474179_164703",
       "isValid": true,
@@ -1504,102 +1439,6 @@
         "color": "#b8bb26",
         "opacity": 0.8,
         "style": "solid",
-        "thickness": 2
-      }
-    },
-    {
-      "data": {
-        "dtr": 0
-      },
-      "from": "node_src_test_ArchitectureDSL_test_ts_1774264406887",
-      "id": "edge_auto_1774788474179_17030",
-      "isValid": true,
-      "is_approved": true,
-      "label": "ref",
-      "to": "node_src_core_ArchitectureDSL_ts_1774264406887",
-      "type": "dependency",
-      "validation": {
-        "color": "#fabd2f",
-        "confidence": 1,
-        "isAi": false,
-        "reason": "[Boundary Violation] 타 클러스터의 내부 구현체('ArchitectureDSL.ts')에 직접 연결되었습니다. Bridge/Facade를 사용하세요.",
-        "valid": true,
-        "visual": {
-          "color": "#fabd2f",
-          "dashArray": "5,5",
-          "style": "dashed",
-          "thickness": 2
-        }
-      },
-      "visual": {
-        "color": "#fabd2f",
-        "dashArray": "5,5",
-        "opacity": 0.8,
-        "style": "dashed",
-        "thickness": 2
-      }
-    },
-    {
-      "data": {
-        "dtr": 0
-      },
-      "from": "node_src_test_visualHints_test_ts_1774264406887",
-      "id": "edge_auto_1774788474179_174392",
-      "isValid": true,
-      "is_approved": true,
-      "label": "ref",
-      "to": "node_src_utils_visualHints_ts_1774264406887",
-      "type": "dependency",
-      "validation": {
-        "color": "#fabd2f",
-        "confidence": 1,
-        "isAi": false,
-        "reason": "[Boundary Violation] 타 클러스터의 내부 구현체('visualHints.ts')에 직접 연결되었습니다. Bridge/Facade를 사용하세요.",
-        "valid": true,
-        "visual": {
-          "color": "#fabd2f",
-          "dashArray": "5,5",
-          "style": "dashed",
-          "thickness": 2
-        }
-      },
-      "visual": {
-        "color": "#fabd2f",
-        "dashArray": "5,5",
-        "opacity": 0.8,
-        "style": "dashed",
-        "thickness": 2
-      }
-    },
-    {
-      "data": {
-        "dtr": 0
-      },
-      "from": "node_src_test_manual_verify_iron_guard_ts_1774264406887",
-      "id": "edge_auto_1774788474179_230174",
-      "isValid": true,
-      "is_approved": true,
-      "label": "ref",
-      "to": "node_src_core_LogicAnalyzer_ts_1774264406887",
-      "type": "dependency",
-      "validation": {
-        "color": "#fabd2f",
-        "confidence": 1,
-        "isAi": false,
-        "reason": "[Boundary Violation] 타 클러스터의 내부 구현체('LogicAnalyzer.ts')에 직접 연결되었습니다. Bridge/Facade를 사용하세요.",
-        "valid": true,
-        "visual": {
-          "color": "#fabd2f",
-          "dashArray": "5,5",
-          "style": "dashed",
-          "thickness": 2
-        }
-      },
-      "visual": {
-        "color": "#fabd2f",
-        "dashArray": "5,5",
-        "opacity": 0.8,
-        "style": "dashed",
         "thickness": 2
       }
     },
@@ -1671,38 +1510,6 @@
       "data": {
         "dtr": 0
       },
-      "from": "node_src_test_FlowchartGenerator_test_ts_1774264406887",
-      "id": "edge_auto_1774788474179_318320",
-      "isValid": true,
-      "is_approved": true,
-      "label": "ref",
-      "to": "node_src_types_schema_ts_1774264406887",
-      "type": "dependency",
-      "validation": {
-        "color": "#fabd2f",
-        "confidence": 1,
-        "isAi": false,
-        "reason": "[Boundary Violation] 타 클러스터의 내부 구현체('schema.ts')에 직접 연결되었습니다. Bridge/Facade를 사용하세요.",
-        "valid": true,
-        "visual": {
-          "color": "#fabd2f",
-          "dashArray": "5,5",
-          "style": "dashed",
-          "thickness": 2
-        }
-      },
-      "visual": {
-        "color": "#fabd2f",
-        "dashArray": "5,5",
-        "opacity": 0.8,
-        "style": "dashed",
-        "thickness": 2
-      }
-    },
-    {
-      "data": {
-        "dtr": 0
-      },
       "from": "node_src_webview_CanvasPanel_ts_1774264406887",
       "id": "edge_auto_1774788474179_331631",
       "isValid": true,
@@ -1747,100 +1554,6 @@
         "confidence": 1,
         "isAi": false,
         "reason": "[Boundary Violation] 타 클러스터의 내부 구현체('VirtualDebugger.ts')에 직접 연결되었습니다. Bridge/Facade를 사용하세요.",
-        "valid": true,
-        "visual": {
-          "color": "#fabd2f",
-          "dashArray": "5,5",
-          "style": "dashed",
-          "thickness": 2
-        }
-      },
-      "visual": {
-        "color": "#fabd2f",
-        "dashArray": "5,5",
-        "opacity": 0.8,
-        "style": "dashed",
-        "thickness": 2
-      }
-    },
-    {
-      "data": {
-        "dtr": 0
-      },
-      "from": "node_src_test_VirtualDebugger_test_ts_1774264406887",
-      "id": "edge_auto_1774788474179_382767",
-      "isValid": true,
-      "is_approved": true,
-      "label": "ref",
-      "to": "node_src_core_VirtualDebugger_ts_1774264406887",
-      "type": "dependency",
-      "validation": {
-        "color": "#fabd2f",
-        "confidence": 1,
-        "isAi": false,
-        "reason": "[Boundary Violation] 타 클러스터의 내부 구현체('VirtualDebugger.ts')에 직접 연결되었습니다. Bridge/Facade를 사용하세요.",
-        "valid": true,
-        "visual": {
-          "color": "#fabd2f",
-          "dashArray": "5,5",
-          "style": "dashed",
-          "thickness": 2
-        }
-      },
-      "visual": {
-        "color": "#fabd2f",
-        "dashArray": "5,5",
-        "opacity": 0.8,
-        "style": "dashed",
-        "thickness": 2
-      }
-    },
-    {
-      "data": {
-        "dtr": 0
-      },
-      "from": "node_src_test_GeminiParser_test_ts_1774264406887",
-      "id": "edge_auto_1774788474179_390838",
-      "isValid": true,
-      "is_approved": true,
-      "label": "ref",
-      "to": "node_src_core_GeminiParser_ts_1774264406887",
-      "type": "dependency",
-      "validation": {
-        "color": "#b8bb26",
-        "confidence": 1,
-        "isAi": false,
-        "reason": "연결이 유효합니다. (LogicAnalyzer ✅)",
-        "valid": true,
-        "visual": {
-          "color": "#b8bb26",
-          "style": "solid",
-          "thickness": 2
-        }
-      },
-      "visual": {
-        "color": "#b8bb26",
-        "opacity": 0.8,
-        "style": "solid",
-        "thickness": 2
-      }
-    },
-    {
-      "data": {
-        "dtr": 0
-      },
-      "from": "node_src_test_manual_verify_iron_guard_ts_1774264406887",
-      "id": "edge_auto_1774788474179_402945",
-      "isValid": true,
-      "is_approved": true,
-      "label": "ref",
-      "to": "node_src_types_schema_ts_1774264406887",
-      "type": "dependency",
-      "validation": {
-        "color": "#fabd2f",
-        "confidence": 1,
-        "isAi": false,
-        "reason": "[Boundary Violation] 타 클러스터의 내부 구현체('schema.ts')에 직접 연결되었습니다. Bridge/Facade를 사용하세요.",
         "valid": true,
         "visual": {
           "color": "#fabd2f",
@@ -2045,38 +1758,6 @@
       "data": {
         "dtr": 0
       },
-      "from": "node_src_test_FlowchartGenerator_test_ts_1774264406887",
-      "id": "edge_auto_1774788474179_723007",
-      "isValid": true,
-      "is_approved": true,
-      "label": "ref",
-      "to": "node_src_core_FlowchartGenerator_ts_1774264406887",
-      "type": "dependency",
-      "validation": {
-        "color": "#fabd2f",
-        "confidence": 1,
-        "isAi": false,
-        "reason": "[Boundary Violation] 타 클러스터의 내부 구현체('FlowchartGenerator.ts')에 직접 연결되었습니다. Bridge/Facade를 사용하세요.",
-        "valid": true,
-        "visual": {
-          "color": "#fabd2f",
-          "dashArray": "5,5",
-          "style": "dashed",
-          "thickness": 2
-        }
-      },
-      "visual": {
-        "color": "#fabd2f",
-        "dashArray": "5,5",
-        "opacity": 0.8,
-        "style": "dashed",
-        "thickness": 2
-      }
-    },
-    {
-      "data": {
-        "dtr": 0
-      },
       "from": "node_src_webview_CanvasPanel_ts_1774264406887",
       "id": "edge_auto_1774788474179_729429",
       "isValid": true,
@@ -2089,38 +1770,6 @@
         "confidence": 1,
         "isAi": false,
         "reason": "[Boundary Violation] 타 클러스터의 내부 구현체('BootstrapEngine.ts')에 직접 연결되었습니다. Bridge/Facade를 사용하세요.",
-        "valid": true,
-        "visual": {
-          "color": "#fabd2f",
-          "dashArray": "5,5",
-          "style": "dashed",
-          "thickness": 2
-        }
-      },
-      "visual": {
-        "color": "#fabd2f",
-        "dashArray": "5,5",
-        "opacity": 0.8,
-        "style": "dashed",
-        "thickness": 2
-      }
-    },
-    {
-      "data": {
-        "dtr": 0
-      },
-      "from": "node_src_test_LogicAnalyzer_test_ts_1774264406887",
-      "id": "edge_auto_1774788474179_756810",
-      "isValid": true,
-      "is_approved": true,
-      "label": "ref",
-      "to": "node_src_core_LogicAnalyzer_ts_1774264406887",
-      "type": "dependency",
-      "validation": {
-        "color": "#fabd2f",
-        "confidence": 1,
-        "isAi": false,
-        "reason": "[Boundary Violation] 타 클러스터의 내부 구현체('LogicAnalyzer.ts')에 직접 연결되었습니다. Bridge/Facade를 사용하세요.",
         "valid": true,
         "visual": {
           "color": "#fabd2f",
@@ -2185,38 +1834,6 @@
         "confidence": 1,
         "isAi": false,
         "reason": "[Boundary Violation] 타 클러스터의 내부 구현체('EdgeCodeRefactorer.ts')에 직접 연결되었습니다. Bridge/Facade를 사용하세요.",
-        "valid": true,
-        "visual": {
-          "color": "#fabd2f",
-          "dashArray": "5,5",
-          "style": "dashed",
-          "thickness": 2
-        }
-      },
-      "visual": {
-        "color": "#fabd2f",
-        "dashArray": "5,5",
-        "opacity": 0.8,
-        "style": "dashed",
-        "thickness": 2
-      }
-    },
-    {
-      "data": {
-        "dtr": 0
-      },
-      "from": "node_src_test_SchemaValidation_test_ts_1774264406887",
-      "id": "edge_auto_1774788474179_777138",
-      "isValid": true,
-      "is_approved": true,
-      "label": "ref",
-      "to": "node_src_webview_CanvasPanel_ts_1774264406887",
-      "type": "dependency",
-      "validation": {
-        "color": "#fabd2f",
-        "confidence": 1,
-        "isAi": false,
-        "reason": "[Boundary Violation] 타 클러스터의 내부 구현체('CanvasPanel.ts')에 직접 연결되었습니다. Bridge/Facade를 사용하세요.",
         "valid": true,
         "visual": {
           "color": "#fabd2f",
@@ -2505,8 +2122,8 @@
       },
       "id": "node_build_guard_js_1774264406887",
       "position": {
-        "x": 280,
-        "y": 1880
+        "x": 1920,
+        "y": 1200
       },
       "status": "proposed",
       "type": "source",
@@ -2568,8 +2185,8 @@
       },
       "id": "node_fix_cluster_sh_1774264406887",
       "position": {
-        "x": 760,
-        "y": 1920
+        "x": 2240,
+        "y": 1200
       },
       "status": "proposed",
       "type": "source",
@@ -2736,8 +2353,8 @@
       },
       "id": "node_src_bootstrap_BootstrapEngine_ts_1774264406887",
       "position": {
-        "x": 1240,
-        "y": 3440
+        "x": 2560,
+        "y": 2480
       },
       "status": "proposed",
       "type": "source",
@@ -2757,8 +2374,8 @@
       },
       "id": "node_src_cli_ts_1774264406887",
       "position": {
-        "x": 2720,
-        "y": 3240
+        "x": 2880,
+        "y": 1520
       },
       "status": "proposed",
       "type": "source",
@@ -2778,8 +2395,8 @@
       },
       "id": "node_src_client_ts_1774264406887",
       "position": {
-        "x": 160,
-        "y": 3160
+        "x": 0,
+        "y": 1760
       },
       "status": "proposed",
       "type": "source",
@@ -2799,8 +2416,8 @@
       },
       "id": "node_src_extension_ts_1774264406887",
       "position": {
-        "x": -560,
-        "y": 3320
+        "x": 1920,
+        "y": 2000
       },
       "status": "proposed",
       "type": "source",
@@ -2820,8 +2437,8 @@
       },
       "id": "node_src_core_AiOrchestrator_ts_1774264406887",
       "position": {
-        "x": -200,
-        "y": 3920
+        "x": 320,
+        "y": 2120
       },
       "status": "proposed",
       "type": "source",
@@ -2841,8 +2458,8 @@
       },
       "id": "node_src_core_ArchitectureDSL_ts_1774264406887",
       "position": {
-        "x": 1400,
-        "y": 4120
+        "x": 640,
+        "y": 2120
       },
       "status": "proposed",
       "type": "source",
@@ -2862,8 +2479,8 @@
       },
       "id": "node_src_core_BillingManager_ts_1774264406887",
       "position": {
-        "x": -800,
-        "y": 3840
+        "x": 960,
+        "y": 2120
       },
       "status": "proposed",
       "type": "source",
@@ -2883,8 +2500,8 @@
       },
       "id": "node_src_core_DatabaseEngine_ts_1774264406887",
       "position": {
-        "x": -800,
-        "y": 4040
+        "x": 1280,
+        "y": 2120
       },
       "status": "proposed",
       "type": "source",
@@ -2904,8 +2521,8 @@
       },
       "id": "node_src_core_EdgeCodeRefactorer_ts_1774264406887",
       "position": {
-        "x": -80,
-        "y": 3800
+        "x": 1600,
+        "y": 2120
       },
       "status": "proposed",
       "type": "source",
@@ -2925,8 +2542,8 @@
       },
       "id": "node_src_core_FileScanner_ts_1774264406887",
       "position": {
-        "x": 680,
-        "y": 4120
+        "x": 1920,
+        "y": 2120
       },
       "status": "proposed",
       "type": "source",
@@ -2946,8 +2563,8 @@
       },
       "id": "node_src_core_FlowScanner_ts_1774264406887",
       "position": {
-        "x": 1600,
-        "y": 3840
+        "x": 2560,
+        "y": 2240
       },
       "status": "proposed",
       "type": "source",
@@ -2967,8 +2584,8 @@
       },
       "id": "node_src_core_FlowchartGenerator_ts_1774264406887",
       "position": {
-        "x": 1000,
-        "y": 4120
+        "x": 2240,
+        "y": 2120
       },
       "status": "proposed",
       "type": "source",
@@ -2988,8 +2605,8 @@
       },
       "id": "node_src_core_GeminiParser_ts_1774264406887",
       "position": {
-        "x": 1840,
-        "y": 4040
+        "x": 2880,
+        "y": 2120
       },
       "status": "proposed",
       "type": "source",
@@ -3009,8 +2626,8 @@
       },
       "id": "node_src_core_LogicAnalyzer_ts_1774264406887",
       "position": {
-        "x": 2360,
-        "y": 3800
+        "x": 0,
+        "y": 2120
       },
       "status": "proposed",
       "type": "source",
@@ -3030,8 +2647,8 @@
       },
       "id": "node_src_core_PromptLogger_ts_1774264406887",
       "position": {
-        "x": -560,
-        "y": 3920
+        "x": 320,
+        "y": 2120
       },
       "status": "proposed",
       "type": "source",
@@ -3051,8 +2668,8 @@
       },
       "id": "node_src_core_ReportExporter_ts_1774264406887",
       "position": {
-        "x": -680,
-        "y": 3800
+        "x": 640,
+        "y": 2120
       },
       "status": "proposed",
       "type": "source",
@@ -3072,8 +2689,8 @@
       },
       "id": "node_src_core_RuleEngine_ts_1774264406887",
       "position": {
-        "x": 440,
-        "y": 4040
+        "x": 960,
+        "y": 2120
       },
       "status": "proposed",
       "type": "source",
@@ -3093,8 +2710,8 @@
       },
       "id": "node_src_core_VirtualDebugger_ts_1774264406887",
       "position": {
-        "x": 0,
-        "y": 3920
+        "x": 1280,
+        "y": 2120
       },
       "status": "proposed",
       "type": "source",
@@ -3114,8 +2731,8 @@
       },
       "id": "node_src_explorer_ArchitectureExplorer_ts_1774264406887",
       "position": {
-        "x": -880,
-        "y": 3320
+        "x": 1600,
+        "y": 2600
       },
       "status": "proposed",
       "type": "source",
@@ -3135,8 +2752,8 @@
       },
       "id": "node_src_rust_checker_mod_rs_1774264406887",
       "position": {
-        "x": 2160,
-        "y": 3040
+        "x": 2240,
+        "y": 2360
       },
       "status": "proposed",
       "type": "source",
@@ -3156,8 +2773,8 @@
       },
       "id": "node_src_rust_checker_reporter_rs_1774264406887",
       "position": {
-        "x": 2440,
-        "y": 2920
+        "x": 2560,
+        "y": 2360
       },
       "status": "proposed",
       "type": "source",
@@ -3177,8 +2794,8 @@
       },
       "id": "node_src_rust_checker_state_checker_rs_1774264406887",
       "position": {
-        "x": 2280,
-        "y": 2920
+        "x": 2880,
+        "y": 2360
       },
       "status": "proposed",
       "type": "source",
@@ -3198,8 +2815,8 @@
       },
       "id": "node_src_server_server_ts_1774264406887",
       "position": {
-        "x": 1840,
-        "y": 3040
+        "x": 0,
+        "y": 2360
       },
       "status": "proposed",
       "type": "source",
@@ -3219,197 +2836,8 @@
       },
       "id": "node_src_server_standalone_ts_1774264406887",
       "position": {
-        "x": 1600,
-        "y": 3040
-      },
-      "status": "proposed",
-      "type": "source",
-      "visual": {
-        "opacity": 0.5
-      }
-    },
-    {
-      "data": {
-        "cluster_id": "cluster_src_test",
-        "color": "#b8bb26",
-        "description": "ArchitectureDSL.test.ts (Auto-detected)",
-        "file": "src/test/ArchitectureDSL.test.ts",
-        "label": "ArchitectureDSL.test.ts",
-        "layer": 1,
-        "priority": 50
-      },
-      "id": "node_src_test_ArchitectureDSL_test_ts_1774264406887",
-      "position": {
-        "x": 1680,
-        "y": 4440
-      },
-      "status": "proposed",
-      "type": "source",
-      "visual": {
-        "opacity": 0.5
-      }
-    },
-    {
-      "data": {
-        "cluster_id": "cluster_src_test",
-        "color": "#b8bb26",
-        "description": "FileScanner.test.ts (Auto-detected)",
-        "file": "src/test/FileScanner.test.ts",
-        "label": "FileScanner.test.ts",
-        "layer": 0,
-        "priority": 8
-      },
-      "id": "node_src_test_FileScanner_test_ts_1774264406887",
-      "position": {
-        "x": 1200,
-        "y": 4440
-      },
-      "status": "proposed",
-      "type": "source",
-      "visual": {
-        "opacity": 0.5
-      }
-    },
-    {
-      "data": {
-        "cluster_id": "cluster_src_test",
-        "color": "#b8bb26",
-        "description": "FlowchartGenerator.test.ts (Auto-detected)",
-        "file": "src/test/FlowchartGenerator.test.ts",
-        "label": "FlowchartGenerator.test.ts",
-        "layer": 1,
-        "priority": 50
-      },
-      "id": "node_src_test_FlowchartGenerator_test_ts_1774264406887",
-      "position": {
-        "x": 1440,
-        "y": 4440
-      },
-      "status": "proposed",
-      "type": "source",
-      "visual": {
-        "opacity": 0.5
-      }
-    },
-    {
-      "data": {
-        "cluster_id": "cluster_src_test",
-        "color": "#b8bb26",
-        "description": "GeminiParser.test.ts (Auto-detected)",
-        "file": "src/test/GeminiParser.test.ts",
-        "label": "GeminiParser.test.ts",
-        "layer": 0,
-        "priority": 10
-      },
-      "id": "node_src_test_GeminiParser_test_ts_1774264406887",
-      "position": {
-        "x": 1960,
-        "y": 4440
-      },
-      "status": "proposed",
-      "type": "source",
-      "visual": {
-        "opacity": 0.5
-      }
-    },
-    {
-      "data": {
-        "cluster_id": "cluster_src_test",
-        "color": "#b8bb26",
-        "description": "LogicAnalyzer.test.ts (Auto-detected)",
-        "file": "src/test/LogicAnalyzer.test.ts",
-        "label": "LogicAnalyzer.test.ts",
-        "layer": 1,
-        "priority": 30
-      },
-      "id": "node_src_test_LogicAnalyzer_test_ts_1774264406887",
-      "position": {
-        "x": 2160,
-        "y": 4400
-      },
-      "status": "proposed",
-      "type": "source",
-      "visual": {
-        "opacity": 0.5
-      }
-    },
-    {
-      "data": {
-        "cluster_id": "cluster_src_test",
-        "color": "#b8bb26",
-        "description": "SchemaValidation.test.ts (Auto-detected)",
-        "file": "src/test/SchemaValidation.test.ts",
-        "label": "SchemaValidation.test.ts",
-        "layer": 1,
-        "priority": 50
-      },
-      "id": "node_src_test_SchemaValidation_test_ts_1774264406887",
-      "position": {
-        "x": 2520,
-        "y": 4360
-      },
-      "status": "proposed",
-      "type": "source",
-      "visual": {
-        "opacity": 0.5
-      }
-    },
-    {
-      "data": {
-        "cluster_id": "cluster_src_test",
-        "color": "#b8bb26",
-        "description": "VirtualDebugger.test.ts (Auto-detected)",
-        "file": "src/test/VirtualDebugger.test.ts",
-        "label": "VirtualDebugger.test.ts",
-        "layer": 1,
-        "priority": 50
-      },
-      "id": "node_src_test_VirtualDebugger_test_ts_1774264406887",
-      "position": {
-        "x": 680,
-        "y": 4400
-      },
-      "status": "proposed",
-      "type": "source",
-      "visual": {
-        "opacity": 0.5
-      }
-    },
-    {
-      "data": {
-        "cluster_id": "cluster_src_test",
-        "color": "#b8bb26",
-        "description": "manual_verify_iron_guard.ts (Auto-detected)",
-        "file": "src/test/manual_verify_iron_guard.ts",
-        "label": "manual_verify_iron_guard.ts",
-        "layer": 1,
-        "priority": 50
-      },
-      "id": "node_src_test_manual_verify_iron_guard_ts_1774264406887",
-      "position": {
-        "x": 2400,
-        "y": 4480
-      },
-      "status": "proposed",
-      "type": "source",
-      "visual": {
-        "opacity": 0.5
-      }
-    },
-    {
-      "data": {
-        "cluster_id": "cluster_src_test",
-        "color": "#b8bb26",
-        "description": "visualHints.test.ts (Auto-detected)",
-        "file": "src/test/visualHints.test.ts",
-        "label": "visualHints.test.ts",
-        "layer": 1,
-        "priority": 50
-      },
-      "id": "node_src_test_visualHints_test_ts_1774264406887",
-      "position": {
-        "x": 920,
-        "y": 4400
+        "x": 320,
+        "y": 2360
       },
       "status": "proposed",
       "type": "source",
@@ -3429,8 +2857,8 @@
       },
       "id": "node_src_types_schema_ts_1774264406887",
       "position": {
-        "x": 2040,
-        "y": 3400
+        "x": 640,
+        "y": 2360
       },
       "status": "proposed",
       "type": "source",
@@ -3450,8 +2878,8 @@
       },
       "id": "node_src_utils_ChatExtractor_ts_1774264406887",
       "position": {
-        "x": -400,
-        "y": 4440
+        "x": 960,
+        "y": 2360
       },
       "status": "proposed",
       "type": "source",
@@ -3471,8 +2899,8 @@
       },
       "id": "node_src_utils_Logger_ts_1774264406887",
       "position": {
-        "x": -160,
-        "y": 4440
+        "x": 1600,
+        "y": 2480
       },
       "status": "proposed",
       "type": "source",
@@ -3492,8 +2920,8 @@
       },
       "id": "node_src_utils_exclusionRules_ts_1774264406887",
       "position": {
-        "x": 240,
-        "y": 4320
+        "x": 1280,
+        "y": 2360
       },
       "status": "proposed",
       "type": "source",
@@ -3513,8 +2941,8 @@
       },
       "id": "node_src_utils_visualHints_ts_1774264406887",
       "position": {
-        "x": 200,
-        "y": 4480
+        "x": 1920,
+        "y": 2360
       },
       "status": "proposed",
       "type": "source",
@@ -3534,8 +2962,8 @@
       },
       "id": "node_src_webview_CanvasPanel_ts_1774264406887",
       "position": {
-        "x": 480,
-        "y": 3160
+        "x": 2240,
+        "y": 2480
       },
       "status": "proposed",
       "type": "source",
@@ -3546,13 +2974,13 @@
   ],
   "project_name": "antigravity-extension-vis",
   "view": {
-    "offsetX": 162.27359624841614,
-    "offsetY": -3153.9982741091417,
-    "zoom": 1.0008120615062215
+    "offsetX": 467.23569681837694,
+    "offsetY": 25.443846432744238,
+    "zoom": 0.4350354507462669
   },
   "_iron_guard": {
     "version": "0.2.18.1",
-    "byte_size": 62124,
+    "byte_size": 51337,
     "encoding": "UTF-8",
     "alignment": 8
   }

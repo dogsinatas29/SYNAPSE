@@ -12,18 +12,20 @@
 
 ---
 
-## 🔥 Latest Release: v0.3.09 Hotfix (2026-04-01)
+## 🔥 Latest Release: v0.3.09 Hotfix (2026-04-02)
 
 ### ✅ Critical Bug Fixes
-**v0.3.09** addresses 3 critical issues reported after v0.3.9 deployment:
+**v0.3.09** addresses critical rendering issues reported after v0.3.9 deployment:
 
 | Issue | Symptom | Fix | Status |
 |-------|---------|-----|--------|
 | **Canvas Height = 0** | 2D mode: nodes invisible | Min height enforcement + DOM reflow trigger | ✅ Fixed |
 | **Emoji Font Missing** | 3D mode: icons show as 'D', 'B' (alphabet) | Noto Color Emoji font stack | ✅ Fixed |
 | **Eco-mode Sleep** | Performance degradation during rendering | Rendering state check + idle timer reset | ✅ Fixed |
+| **Edge Rendering Sync** | ⚠️ badges spam in 2D, type icons disappear in 3D on validation | Fixed validation conditionals + guaranteed fallback symbol rendering | ✅ Fixed |
+| **Rendering Isolation** | View format transitions cause WebGL visual ghosting overhead | Rule 8 applied: Enforced WebGL framebuffer reset on view termination | ✅ Fixed |
 
-**Download**: [synapse-visual-architecture-v0.3.9-hotfix.vsix](./synapse-visual-architecture-v0.3.9-hotfix.vsix) (18 MB)  
+**Download**: [synapse-visual-architecture-v0.3.09.vsix](./synapse-visual-architecture-v0.3.09.vsix) (~18 MB)  
 **Documentation**: See [mile_stone/v0.3.09.md](./mile_stone/v0.3.09.md) for complete details.
 
 ---
@@ -173,9 +175,9 @@ SYNAPSE integrates VS Code's real-time diagnostics directly into the architectur
 
 ### Quick Installation
 ```bash
-code --install-extension synapse-visual-architecture-v0.3.9-hotfix.vsix
+code --install-extension synapse-visual-architecture-v0.3.09.vsix
 ```
-Current Version: **v0.3.09** (With Critical Bug Fixes)
+Current Version: **v0.3.09** (With Critical Bug Fixes & Rendering Isolation)
 
 ---
 
@@ -207,7 +209,7 @@ Current Version: **v0.3.09** (With Critical Bug Fixes)
 ## 🚀 Getting Started
 Launch your visual architecture journey in seconds.
 
-1. **Install Extension**: Install the `synapse-visual-architecture-v0.3.9-hotfix.vsix` (or latest) in Antigravity/VS Code.
+1. **Install Extension**: Install the `synapse-visual-architecture-v0.3.09.vsix` (or latest) in Antigravity/VS Code.
    - **Font Installation**: Emoji icons require Noto Color Emoji or compatible font. ([System Requirements](#-system-requirements) details)
 2. **DNA Injection**: Create or drop a `GEMINI.md` (or `Project_Spec.md`) file into your workspace root.
 3. **Bootstrap Phase**: Open the **SYNAPSE Canvas** from the sidebar or command palette (`Ctrl+Shift+P` -> `SYNAPSE: Open Canvas`).

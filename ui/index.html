@@ -1278,6 +1278,7 @@
     <script>
         // [v0.2.25] Global Message Buffer and SAFE VS Code API exposure
         window._synapseMessageQueue = window._synapseMessageQueue || [];
+        window.SYNAPSE_WEBGL_RENDERER_URI = '__SYNAPSE_WEBGL_RENDERER_URI__';
         if (typeof window.vscode === 'undefined') {
             try { window.vscode = acquireVsCodeApi(); } catch(e) {}
         }
@@ -1292,8 +1293,139 @@
             }
         });
 
-        // [v0.2.20 Fix] Dropdown menu stability: use click-toggle + .open class instead of CSS :hover
-        // This prevents menus from closing when user moves mouse to click inner buttons
+        // [v0.3.9-fix] Ensure WebGLRenderer class is loaded and available
+        function ensureWebGLRendererClass() {
+            if (window.WebGLRenderer) return window.WebGLRenderer;
+            if (typeof WebGLRenderer !== 'undefined') {
+                window.WebGLRenderer = WebGLRenderer;
+                return WebGLRenderer;
+            }
+
+            const listedUri = window.SYNAPSE_WEBGL_RENDERER_URI || null;
+            if (!listedUri) {
+                console.error('[SYNAPSE] No WebGLRenderer URI available for dynamic load');
+                return null;
+            }
+
+            const existingScript = document.querySelector('script[data-synapse-include="webgl-renderer"]');
+            if (existingScript && existingScript.dataset.loaded === 'true') {
+                console.warn('[SYNAPSE] webgl-renderer script is marked loaded but WebGLRenderer still missing');
+            }
+
+            const script = document.createElement('script');
+            script.src = listedUri;
+            script.dataset.synapseInclude = 'webgl-renderer';
+            script.onload = () => {
+                console.log('[SYNAPSE] webgl-renderer.js loaded dynamically from webview URI');
+                if (typeof WebGLRenderer !== 'undefined') {
+                    window.WebGLRenderer = WebGLRenderer;
+                }
+                script.dataset.loaded = 'true';
+            };
+            script.onerror = () => {
+                console.error('[SYNAPSE] Failed to load webgl-renderer.js from', listedUri);
+                script.dataset.loaded = 'error';
+            };
+            document.head.appendChild(script);
+
+            return null;
+        }
+
+        // [v0.3.9-fix] WebGL button registration - ensures single listener and stable toggle behavior
+        function registerWebglButton() {
+            if (window.__synapseWebglButtonRegistered) {
+                return;
+            }
+
+            const btnWebgl = document.getElementById('btn-webgl');
+            console.log('[SYNAPSE] registerWebglButton called, btnWebgl:', btnWebgl ? 'FOUND' : 'NOT FOUND', 'readyState:', document.readyState);
+
+            if (!btnWebgl) {
+                console.warn('[SYNAPSE] btn-webgl element not found!');
+                return;
+            }
+
+            btnWebgl.addEventListener('click', function(event) {
+                console.log('[SYNAPSE] btn-webgl CLICKED!', event);
+                const eng = window.engine;
+                console.log('[SYNAPSE] window.engine:', eng ? 'EXISTS' : 'NOT FOUND');
+                if (!eng) {
+                    console.error('[SYNAPSE] Engine not initialized');
+                    return;
+                }
+
+                console.log('[SYNAPSE] WebGL global status:', {
+                    windowWebGLRenderer: !!window.WebGLRenderer,
+                    globalThisWebGLRenderer: !!(typeof globalThis !== 'undefined' && globalThis.WebGLRenderer),
+                    typeofWebGLRenderer: typeof WebGLRenderer
+                });
+
+                const requestedState = !eng.webglEnabled;
+                if (requestedState) {
+                    let RendererClass = ensureWebGLRendererClass();
+                    if (!RendererClass) {
+                        RendererClass = window.WebGLRenderer || (typeof WebGLRenderer !== 'undefined' ? WebGLRenderer : null);
+                    }
+
+                    console.log('[SYNAPSE] RendererClass:', RendererClass ? 'FOUND' : 'NOT FOUND', RendererClass);
+                    if (!RendererClass) {
+                        console.error('[SYNAPSE] WebGLRenderer is not defined. Please ensure webgl-renderer.js is loaded.');
+                        eng.webglEnabled = false;
+                        btnWebgl.textContent = `🚀 Accel: OFF`;
+                        btnWebgl.classList.remove('active');
+                        // Requeue the loader in case it sometimes arrives slightly late
+                        ensureWebGLRendererClass();
+                        return;
+                    }
+
+                    if (!eng.webglRenderer) {
+                        try {
+                            eng.webglRenderer = new RendererClass(eng.canvas);
+                            console.log('[SYNAPSE] WebGLRenderer created successfully');
+                            eng.isGraphDataDirty = true;
+                        } catch (e) {
+                            console.error('[SYNAPSE] Failed to create WebGLRenderer:', e);
+                            eng.webglEnabled = false;
+                            btnWebgl.textContent = `🚀 Accel: OFF`;
+                            btnWebgl.classList.remove('active');
+                            return;
+                        }
+                    }
+
+                    const overlay = document.getElementById('webgl-overlay-canvas');
+                    if (overlay) overlay.style.display = 'block';
+                    eng.webglEnabled = true;
+                    eng.isGraphDataDirty = true;
+                    eng.wakeUp();
+                } else {
+                    const overlay = document.getElementById('webgl-overlay-canvas');
+                    if (overlay) overlay.style.display = 'none';
+                    eng.webglEnabled = false;
+                }
+
+                btnWebgl.textContent = `🚀 Accel: ${eng.webglEnabled ? 'ON' : 'OFF'}`;
+                btnWebgl.classList.toggle('active', eng.webglEnabled);
+                eng.render();
+            });
+
+            window.__synapseWebglButtonRegistered = true;
+            console.log('[SYNAPSE] btn-webgl listener registered successfully');
+        }
+
+        // 안전 등록: readyState 체크하고 실행
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', registerWebglButton);
+            console.log('[SYNAPSE] DOMContentLoaded listener registered');
+        } else {
+            console.log('[SYNAPSE] Document already loaded, registering immediately');
+            registerWebglButton();
+        }
+
+        // 추가 안전장치: load 이벤트와 지연 실행
+        window.addEventListener('load', registerWebglButton);
+        setTimeout(registerWebglButton, 100);
+        setTimeout(registerWebglButton, 500);
+
         document.addEventListener('DOMContentLoaded', () => {
             const allDropdowns = document.querySelectorAll('.dropdown');
             
@@ -1333,41 +1465,7 @@
                 allDropdowns.forEach(d => d.classList.remove('open'));
             });
 
-            // [v0.2.21-fix] WebGL Acceleration button
-            // overlay canvas는 최초 ON 시 한 번만 생성, 이후 show/hide로 토글
-            const btnWebgl = document.getElementById('btn-webgl');
-            if (btnWebgl) {
-                btnWebgl.addEventListener('click', () => {
-                    const eng = window.engine;
-                    if (!eng) return;
-
-                    eng.webglEnabled = !eng.webglEnabled;
-                    console.log('[SYNAPSE] WebGL toggled:', eng.webglEnabled);
-
-                    if (eng.webglEnabled) {
-                        // ON: 최초 1회만 renderer + overlay canvas 생성
-                        if (!eng.webglRenderer) {
-                            eng.webglRenderer = new WebGLRenderer(eng.canvas);
-                            eng.isGraphDataDirty = true;
-                        }
-                        // overlay canvas 표시 (이미 생성되어 있으면 그냥 보여줌)
-                        const overlay = document.getElementById('webgl-overlay-canvas');
-                        if (overlay) overlay.style.display = 'block';
-                        eng.isGraphDataDirty = true;
-                        eng.wakeUp();
-                    } else {
-                        // OFF: overlay canvas를 숨김만 (제거/null화 하지 않음)
-                        // → 다음 ON 시 재생성 비용 없음, GL context 유지
-                        const overlay = document.getElementById('webgl-overlay-canvas');
-                        if (overlay) overlay.style.display = 'none';
-                    }
-
-                    btnWebgl.textContent = `🚀 Accel: ${eng.webglEnabled ? 'ON' : 'OFF'}`;
-                    btnWebgl.classList.toggle('active', eng.webglEnabled);
-                    eng.render();
-                });
-                console.log('[SYNAPSE] btn-webgl listener registered');
-            }
+            // 끝. 추가 핸들러는 위 registerWebglButton에서만 사용합니다.
         });
 
         // 전역 파일 미리보기 함수

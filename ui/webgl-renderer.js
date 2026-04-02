@@ -80,6 +80,7 @@ class TextAtlas {
         this.x += w;
         this.rowHeight = Math.max(this.rowHeight, h);
         return glyph;
+    }
 
     upload() {
         if (!this.needsUpload) return;
@@ -860,9 +861,8 @@ class WebGLRenderer {
                     thickness = thickness + 5.0; // matching 2D bulge
                 } else if (e.status === 'confirmed') {
                     color = '#b8bb26';
-                } else if (e.status === 'pending') {
-                    color = '#fabd2f';
                 }
+                // v0.4.1: 기본 상태(pending 포함)는 타입별 색상을 유지합니다. 모든 엣지가 노란색으로 될 수 있는 부조리 제거.
 
                 const c = this.hexToRgb(color);
                 colorData[colorCnt++] = c.r;
@@ -991,22 +991,34 @@ class WebGLRenderer {
                 // 2.2 Validation Icons (🤖, ⚠️, ❌) - Check edgeValidationCache if available (PRIMARY INFO)
                 const validation = window.engine?.edgeValidationCache?.get(e.id);
                 if (validation && (!validation.valid || validation.color === '#fabd2f' || validation.isAi)) {
-                    const valText = (validation.isAi ? '🤖' : '') + (validation.valid ? '⚠️' : '❌');
+                    let valIcon = '';
+                    if (!validation.valid) valIcon = '❌';
+                    else if (validation.color === '#fabd2f') valIcon = '⚠️';
+                    
+                    const aiIcon = validation.isAi ? '🤖' : '';
+                    let valText = valIcon;
+                    if (aiIcon) {
+                        valText = valText ? `${aiIcon} ${valText}` : aiIcon;
+                    }
+                    
+                    let cx = midX - 10;
                     for (const ch of valText) {
+                        if (ch === ' ') { cx += 10; continue; } // Handle space between AI and valIcon
                         this.textAtlas.addText(ch);
                         const g = this.textAtlas.glyphMap.get(ch);
                         if (g) {
                             badgeItems.push({
-                                x: midX - 10, y: midY - 25, // Offset upwards like 2D
+                                x: cx, y: midY - 25, // Offset upwards like 2D
                                 w: g.w, h: g.h,
                                 u0: g.u0, v0: g.v0, u1: g.u1, v1: g.v1
                             });
+                            cx += (g.w + 2); // advance
                         }
                     }
                 }
 
-                // 2.3 Internal Type Icon (Secondary - only if no primary validation badge is present)
-                if (!validation || validation.valid) {
+                // 2.3 Internal Type Icon (Always show!)
+                {
                     // [FIX v0.3.09] Guarantee valid icon, never undefined
                     const fallbackIcon = iconMap['dependency'] || '🔗';
                     let typeIcon = (e.type && iconMap[e.type]) ? iconMap[e.type] : fallbackIcon;
@@ -1022,6 +1034,10 @@ class WebGLRenderer {
                         typeIcon = '📞';
                     } else if (e.type === 'bidirectional') {
                         typeIcon = '🔄';
+                    } else if (e.type === 'event') {
+                        typeIcon = '⚡';
+                    } else if (e.type === 'conditional') {
+                        typeIcon = '❓';
                     }
 
                     // Prevent fallback to plain Latin letters (B/D) in 3D mode
@@ -1444,4 +1460,7 @@ class WebGLRenderer {
 // [v0.3.09] Make WebGLRenderer available globally for inline toggle handlers.
 if (typeof window !== 'undefined') {
     window.WebGLRenderer = WebGLRenderer;
+}
+if (typeof globalThis !== 'undefined') {
+    globalThis.WebGLRenderer = globalThis.WebGLRenderer || WebGLRenderer;
 }

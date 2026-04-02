@@ -961,6 +961,7 @@ class CanvasEngine {
         this.isDragging = false;
         this.dragStart = { x: 0, y: 0 };
         this._isInteracting = false; // [v0.2.24] Interaction Guard
+        this._isRendering = false;   // [v0.3.9] Rendering Guard: Prevent sleep during render
         this._pendingState = null;   // [v0.2.24] Queued updates
         this.animationOffset = 0;
         this.isAnimating = true;
@@ -1648,7 +1649,7 @@ class CanvasEngine {
                 // isDirty 또는 필요한 업데이트가 있으면 렌더링이 진행되므로, 이 경우 수면 진입 금지
                 const isRenderingActive = this.isDirty || this._isInteracting || this.isDragging || 
                                          this.isSelecting || hasActiveParticles || this.needsUpdate || 
-                                         (this.isAnimating && this.particles.length > 0);
+                                         (this.isAnimating && this.particles.length > 0) || this._isRendering;
                 
                 if (idleTime > idleLimit && !hasActiveParticles && !this.isDragging && !this.isSelecting && 
                     !this.needsUpdate && !isRenderingActive) {
@@ -1666,8 +1667,13 @@ class CanvasEngine {
                 const shouldRender = this.isDirty || this._isInteracting || this.isDragging || this.isSelecting || hasActiveParticles || this.needsUpdate || (this.isAnimating && this.particles.length > 0);
 
                 if (shouldRender) {
-                    this.render();
-                    this.needsUpdate = false; // Reset after render
+                    this._isRendering = true;  // [FIX v0.3.09] Mark rendering start
+                    try {
+                        this.render();
+                        this.needsUpdate = false; // Reset after render
+                    } finally {
+                        this._isRendering = false;  // [FIX v0.3.09] Mark rendering end
+                    }
                 }
             } catch (e) {
                 console.error("[SYNAPSE] render crash", e);

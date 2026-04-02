@@ -2737,7 +2737,7 @@
       "id": "node_src_bootstrap_BootstrapEngine_ts_1774264406887",
       "position": {
         "x": 1240,
-        "y": 3280
+        "y": 3440
       },
       "status": "proposed",
       "type": "source",
@@ -2778,8 +2778,8 @@
       },
       "id": "node_src_client_ts_1774264406887",
       "position": {
-        "x": 200,
-        "y": 3080
+        "x": 160,
+        "y": 3160
       },
       "status": "proposed",
       "type": "source",
@@ -3093,7 +3093,7 @@
       },
       "id": "node_src_core_VirtualDebugger_ts_1774264406887",
       "position": {
-        "x": 40,
+        "x": 0,
         "y": 3920
       },
       "status": "proposed",
@@ -3534,8 +3534,8 @@
       },
       "id": "node_src_webview_CanvasPanel_ts_1774264406887",
       "position": {
-        "x": 560,
-        "y": 3440
+        "x": 480,
+        "y": 3160
       },
       "status": "proposed",
       "type": "source",
@@ -3546,9 +3546,9 @@
   ],
   "project_name": "antigravity-extension-vis",
   "view": {
-    "offsetX": 401.85826385281734,
-    "offsetY": -666.6587236636058,
-    "zoom": 0.3654130727049806
+    "offsetX": 162.27359624841614,
+    "offsetY": -3153.9982741091417,
+    "zoom": 1.0008120615062215
   },
   "_iron_guard": {
     "version": "0.2.18.1",

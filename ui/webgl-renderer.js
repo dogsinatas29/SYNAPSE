@@ -1008,13 +1008,27 @@ class WebGLRenderer {
                 // 2.3 Internal Type Icon (Secondary - only if no primary validation badge is present)
                 if (!validation || validation.valid) {
                     // [FIX v0.3.09] Guarantee valid icon, never undefined
-                    let typeIcon = 'D';  // Safe ASCII fallback (should never be used)
-                    if (e.type && iconMap[e.type]) {
-                        typeIcon = iconMap[e.type];  // Direct emoji match
-                    } else if (iconMap['dependency']) {
-                        typeIcon = iconMap['dependency'];  // Proper emoji fallback
+                    const fallbackIcon = iconMap['dependency'] || '🔗';
+                    let typeIcon = (e.type && iconMap[e.type]) ? iconMap[e.type] : fallbackIcon;
+
+                    // Handle extended edge type identifiers that may not (yet) be in iconMap
+                    if (e.type === 'broken_fracture') {
+                        typeIcon = '💥';
+                    } else if (e.type === 'loop' || e.type === 'loop_back') {
+                        typeIcon = '🔁';
+                    } else if (e.type === 'reference') {
+                        typeIcon = '📝';
+                    } else if (e.type === 'api_call') {
+                        typeIcon = '📞';
+                    } else if (e.type === 'bidirectional') {
+                        typeIcon = '🔄';
                     }
-                    // Now typeIcon is always a valid emoji, never undefined
+
+                    // Prevent fallback to plain Latin letters (B/D) in 3D mode
+                    if (typeof typeIcon !== 'string' || typeIcon.length === 0) {
+                        typeIcon = fallbackIcon;
+                    }
+
                     this.textAtlas.addText(typeIcon);
                     const gType = this.textAtlas.glyphMap.get(typeIcon);
                     if (gType) {

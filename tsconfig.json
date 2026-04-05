@@ -25,6 +25,7 @@
         "ui",
         "demo",
         "prompt-tracer",
-        "synapse-visual-architecture-0.1.7"
+        "synapse-visual-architecture-0.1.7",
+        "TEST.ts"
     ]
 }

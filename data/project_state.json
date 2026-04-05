@@ -2122,8 +2122,8 @@
       },
       "id": "node_build_guard_js_1774264406887",
       "position": {
-        "x": -880,
-        "y": 2560
+        "x": 1280,
+        "y": 1560
       },
       "status": "proposed",
       "type": "source",
@@ -2185,8 +2185,8 @@
       },
       "id": "node_fix_cluster_sh_1774264406887",
       "position": {
-        "x": -520,
-        "y": 2720
+        "x": 1600,
+        "y": 1560
       },
       "status": "proposed",
       "type": "source",
@@ -2353,8 +2353,8 @@
       },
       "id": "node_src_bootstrap_BootstrapEngine_ts_1774264406887",
       "position": {
-        "x": 200,
-        "y": 2840
+        "x": 2200,
+        "y": 1440
       },
       "status": "proposed",
       "type": "source",
@@ -2374,8 +2374,8 @@
       },
       "id": "node_src_cli_ts_1774264406887",
       "position": {
-        "x": -80,
-        "y": 3200
+        "x": 2520,
+        "y": 480
       },
       "status": "proposed",
       "type": "source",
@@ -2395,8 +2395,8 @@
       },
       "id": "node_src_client_ts_1774264406887",
       "position": {
-        "x": 3200,
-        "y": 3680
+        "x": 2840,
+        "y": 480
       },
       "status": "proposed",
       "type": "source",
@@ -2416,8 +2416,8 @@
       },
       "id": "node_src_extension_ts_1774264406887",
       "position": {
-        "x": 280,
-        "y": 2240
+        "x": 1560,
+        "y": 1560
       },
       "status": "proposed",
       "type": "source",
@@ -2437,8 +2437,8 @@
       },
       "id": "node_src_core_AiOrchestrator_ts_1774264406887",
       "position": {
-        "x": 1880,
-        "y": 3800
+        "x": -40,
+        "y": 720
       },
       "status": "proposed",
       "type": "source",
@@ -2458,8 +2458,8 @@
       },
       "id": "node_src_core_ArchitectureDSL_ts_1774264406887",
       "position": {
-        "x": 1160,
-        "y": 3800
+        "x": 280,
+        "y": 720
       },
       "status": "proposed",
       "type": "source",
@@ -2479,8 +2479,8 @@
       },
       "id": "node_src_core_BillingManager_ts_1774264406887",
       "position": {
-        "x": 2120,
-        "y": 3800
+        "x": 600,
+        "y": 720
       },
       "status": "proposed",
       "type": "source",
@@ -2500,8 +2500,8 @@
       },
       "id": "node_src_core_DatabaseEngine_ts_1774264406887",
       "position": {
-        "x": 2480,
-        "y": 3800
+        "x": 920,
+        "y": 720
       },
       "status": "proposed",
       "type": "source",
@@ -2521,8 +2521,8 @@
       },
       "id": "node_src_core_EdgeCodeRefactorer_ts_1774264406887",
       "position": {
-        "x": 1160,
-        "y": 3800
+        "x": 1240,
+        "y": 720
       },
       "status": "proposed",
       "type": "source",
@@ -2542,8 +2542,8 @@
       },
       "id": "node_src_core_FileScanner_ts_1774264406887",
       "position": {
-        "x": 1360,
-        "y": 3800
+        "x": 1560,
+        "y": 1080
       },
       "status": "proposed",
       "type": "source",
@@ -2563,8 +2563,8 @@
       },
       "id": "node_src_core_FlowScanner_ts_1774264406887",
       "position": {
-        "x": 2880,
-        "y": 3800
+        "x": 2200,
+        "y": 1200
       },
       "status": "proposed",
       "type": "source",
@@ -2584,8 +2584,8 @@
       },
       "id": "node_src_core_FlowchartGenerator_ts_1774264406887",
       "position": {
-        "x": 1920,
-        "y": 2040
+        "x": 1880,
+        "y": 1080
       },
       "status": "proposed",
       "type": "source",
@@ -2605,8 +2605,8 @@
       },
       "id": "node_src_core_GeminiParser_ts_1774264406887",
       "position": {
-        "x": 4040,
-        "y": 1640
+        "x": 2520,
+        "y": 1080
       },
       "status": "proposed",
       "type": "source",
@@ -2626,8 +2626,8 @@
       },
       "id": "node_src_core_LogicAnalyzer_ts_1774264406887",
       "position": {
-        "x": 2880,
-        "y": 2000
+        "x": 2840,
+        "y": 1080
       },
       "status": "proposed",
       "type": "source",
@@ -2647,8 +2647,8 @@
       },
       "id": "node_src_core_PromptLogger_ts_1774264406887",
       "position": {
-        "x": 1120,
-        "y": 3800
+        "x": -40,
+        "y": 960
       },
       "status": "proposed",
       "type": "source",
@@ -2668,8 +2668,8 @@
       },
       "id": "node_src_core_ReportExporter_ts_1774264406887",
       "position": {
-        "x": 1520,
-        "y": 3800
+        "x": 280,
+        "y": 960
       },
       "status": "proposed",
       "type": "source",
@@ -2689,8 +2689,8 @@
       },
       "id": "node_src_core_RuleEngine_ts_1774264406887",
       "position": {
-        "x": 1920,
-        "y": 3800
+        "x": 600,
+        "y": 960
       },
       "status": "proposed",
       "type": "source",
@@ -2710,8 +2710,8 @@
       },
       "id": "node_src_core_VirtualDebugger_ts_1774264406887",
       "position": {
-        "x": 2120,
-        "y": 3800
+        "x": 920,
+        "y": 960
       },
       "status": "proposed",
       "type": "source",
@@ -2731,8 +2731,8 @@
       },
       "id": "node_src_explorer_ArchitectureExplorer_ts_1774264406887",
       "position": {
-        "x": 0,
-        "y": 2200
+        "x": 1240,
+        "y": 1560
       },
       "status": "proposed",
       "type": "source",
@@ -2752,8 +2752,8 @@
       },
       "id": "node_src_rust_checker_mod_rs_1774264406887",
       "position": {
-        "x": 4720,
-        "y": 2880
+        "x": 1880,
+        "y": 1560
       },
       "status": "proposed",
       "type": "source",
@@ -2773,8 +2773,8 @@
       },
       "id": "node_src_rust_checker_reporter_rs_1774264406887",
       "position": {
-        "x": 4480,
-        "y": 2840
+        "x": 2200,
+        "y": 1440
       },
       "status": "proposed",
       "type": "source",
@@ -2794,8 +2794,8 @@
       },
       "id": "node_src_rust_checker_state_checker_rs_1774264406887",
       "position": {
-        "x": 4480,
-        "y": 3120
+        "x": 2520,
+        "y": 1440
       },
       "status": "proposed",
       "type": "source",
@@ -2815,8 +2815,8 @@
       },
       "id": "node_src_server_server_ts_1774264406887",
       "position": {
-        "x": 2640,
-        "y": 2640
+        "x": 2840,
+        "y": 1320
       },
       "status": "proposed",
       "type": "source",
@@ -2836,8 +2836,8 @@
       },
       "id": "node_src_server_standalone_ts_1774264406887",
       "position": {
-        "x": 2320,
-        "y": 2640
+        "x": -40,
+        "y": 1320
       },
       "status": "proposed",
       "type": "source",
@@ -2857,8 +2857,8 @@
       },
       "id": "node_src_types_schema_ts_1774264406887",
       "position": {
-        "x": 200,
-        "y": 3760
+        "x": 280,
+        "y": 1440
       },
       "status": "proposed",
       "type": "source",
@@ -2878,8 +2878,8 @@
       },
       "id": "node_src_utils_ChatExtractor_ts_1774264406887",
       "position": {
-        "x": 920,
-        "y": 1280
+        "x": 600,
+        "y": 1440
       },
       "status": "proposed",
       "type": "source",
@@ -2899,8 +2899,8 @@
       },
       "id": "node_src_utils_Logger_ts_1774264406887",
       "position": {
-        "x": 1560,
-        "y": 1280
+        "x": 1240,
+        "y": 1440
       },
       "status": "proposed",
       "type": "source",
@@ -2920,8 +2920,8 @@
       },
       "id": "node_src_utils_exclusionRules_ts_1774264406887",
       "position": {
-        "x": 1240,
-        "y": 1280
+        "x": 920,
+        "y": 1440
       },
       "status": "proposed",
       "type": "source",
@@ -2941,8 +2941,8 @@
       },
       "id": "node_src_utils_visualHints_ts_1774264406887",
       "position": {
-        "x": 1880,
-        "y": 1320
+        "x": 1560,
+        "y": 1440
       },
       "status": "proposed",
       "type": "source",
@@ -2962,8 +2962,8 @@
       },
       "id": "node_src_webview_CanvasPanel_ts_1774264406887",
       "position": {
-        "x": 4480,
-        "y": 2000
+        "x": 1880,
+        "y": 1440
       },
       "status": "proposed",
       "type": "source",
@@ -2982,8 +2982,8 @@
       },
       "id": "node_manual_1775312359965",
       "position": {
-        "x": 4560,
-        "y": 3480
+        "x": 1920,
+        "y": 1560
       },
       "status": "active",
       "type": "logic",
@@ -2994,13 +2994,13 @@
   ],
   "project_name": "antigravity-extension-vis",
   "view": {
-    "offsetX": 269.33817744347334,
-    "offsetY": -126.67714389260311,
-    "zoom": 0.2518483437637469
+    "offsetX": 139.80303030303037,
+    "offsetY": 50,
+    "zoom": 0.44646464646464645
   },
   "_iron_guard": {
     "version": "0.2.18.1",
-    "byte_size": 51660,
+    "byte_size": 51629,
     "encoding": "UTF-8",
     "alignment": 8
   }

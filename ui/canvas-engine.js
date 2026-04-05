@@ -1931,10 +1931,50 @@ class CanvasEngine {
                 this.wasDragging = false;
 
                 // 1. [v0.2.33] Hit Detection Hierarchy
+                // [v0.3.09_fix] Priority 0: Connection Handles (Must be checked before nodes to prevent interception)
+                const handle = this.getConnectionHandleAt(worldPos.x, worldPos.y);
+                if ((handle && e.altKey) || (this.isCreatingEdge && handle)) {
+                    this.isCreatingEdge = true;
+                    this.edgeSource = handle;
+                    this.edgeCurrentPos = worldPos;
+                    return;
+                }
+
+                // 1.1 [v0.3.09_fix] Priority 1: Interactive Badges (Confirm/Delete)
+                // Checked before nodes/clusters to prevent interception when badges are close/overlap.
+                if (this._confirmBadgeHits) {
+                    const wx = worldPos.x, wy = worldPos.y;
+                    for (const hit of this._confirmBadgeHits) {
+                        const dist = Math.sqrt((wx - hit.x) ** 2 + (wy - hit.y) ** 2);
+                        if (dist <= hit.r * 2.5) {
+                            if (!this.isEditMode) {
+                                if (typeof vscode !== 'undefined') vscode.postMessage({ command: 'showWarning', message: 'Edit Logic 모드가 꺼져 있습니다.' });
+                                return;
+                            }
+                            if (hit.isPending && typeof vscode !== 'undefined') {
+                                vscode.postMessage({ command: 'requestConfirmEdge', edgeId: hit.edge.id });
+                                return; // Handled hit
+                            }
+                        }
+                    }
+                }
+                if (this._deleteBadgeHits) {
+                    const wx = worldPos.x, wy = worldPos.y;
+                    for (const hit of this._deleteBadgeHits) {
+                        const dist = Math.sqrt((wx - hit.x) ** 2 + (wy - hit.y) ** 2);
+                        if (dist <= hit.r * 1.5) {
+                            if (!this.isEditMode) return;
+                            if (typeof vscode !== 'undefined') vscode.postMessage({ command: 'requestDeleteEdgeUI', edgeId: hit.edge.id });
+                            else this.deleteEdge(hit.edge.id);
+                            return;
+                        }
+                    }
+                }
+
                 const topClickedNode = this.getNodeAt(worldPos.x, worldPos.y);
                 const clickedClusterHeader = this.getClusterHeaderAt(worldPos.x, worldPos.y);
 
-                // 1.1 Cluster Header Buttons (Toggle [+] / [-])
+                // 1.2 Cluster Header Buttons (Toggle [+] / [-])
                 if (clickedClusterHeader) {
                     const b = clickedClusterHeader._headerBounds;
                     if (b && worldPos.x >= b.x && worldPos.x <= b.x + 60) {
@@ -1943,7 +1983,7 @@ class CanvasEngine {
                     }
                 }
 
-                // 1.2 [v0.2.33] Priority 1: Nodes
+                // 1.3 [v0.2.33] Priority 2: Nodes
                 if (topClickedNode) {
                     this.selectedEdge = null;
                     if (e.ctrlKey || e.metaKey || e.shiftKey) {
@@ -1969,7 +2009,7 @@ class CanvasEngine {
                     return;
                 }
 
-                // 1.3 [v0.2.33] Priority 2: Cluster Header Body (Dragging)
+                // 1.4 [v0.2.33] Priority 3: Cluster Header Body (Dragging)
                 if (clickedClusterHeader) {
                     this.selectedEdge = null;
                     const getAllNodes = (clusterId) => {
@@ -2058,13 +2098,6 @@ class CanvasEngine {
                     }
                     return;
                 }
-                const handle = this.getConnectionHandleAt(worldPos.x, worldPos.y);
-                if ((handle && e.altKey) || (this.isCreatingEdge && handle)) {
-                    this.isCreatingEdge = true;
-                    this.edgeSource = handle;
-                    this.edgeCurrentPos = worldPos;
-                    return;
-                }
 
                 // 1.7 [v0.2.33] Priority 4: Background (Box Selection/Pan)
                 this.selectedEdge = null;
@@ -2079,10 +2112,10 @@ class CanvasEngine {
                 }
             } else if (e.button === 2) { // 오른쪽 버튼
                 // 오른쪽 클릭 시 노드가 있으면 자동 선택 (이미 여러 개가 선택되어 있지 않을 때만)
-                if (clickedNode && !this.selectedNodes.has(clickedNode)) {
+                if (topClickedNode && !this.selectedNodes.has(topClickedNode)) {
                     this.selectedNodes.clear();
-                    this.selectedNodes.add(clickedNode);
-                    this.selectedNode = clickedNode;
+                    this.selectedNodes.add(topClickedNode);
+                    this.selectedNode = topClickedNode;
                 }
                 this.isPanning = true;
                 this.canvas.style.cursor = 'grabbing';
@@ -2094,7 +2127,13 @@ class CanvasEngine {
             const node = this.getNodeAt(worldPos.x, worldPos.y);
             if (node) {
                 console.log('[SYNAPSE] Double clicked node:', node.id);
-                this._onNodeDoubleClicked(node); // [v0.2.25] Open file in VS Code
+                // [v0.3.09_fix] Fix missing _onNodeDoubleClicked. Call openFile directly.
+                if (node.data && (node.data.file || node.data.path)) {
+                    const filePath = node.data.file || node.data.path;
+                    if (typeof vscode !== 'undefined') {
+                        vscode.postMessage({ command: 'openFile', filePath });
+                    }
+                }
             }
         });
 
@@ -2351,9 +2390,9 @@ class CanvasEngine {
             }
 
             // 아니면 노드 컨텍스트 메뉴
-            const clickedNode = this.getNodeAt(worldPos.x, worldPos.y);
+            const topClickedNode = this.getNodeAt(worldPos.x, worldPos.y);
 
-            this.showContextMenu(e.clientX, e.clientY, clickedNode);
+            this.showContextMenu(e.clientX, e.clientY, topClickedNode);
         });
         this.canvas.addEventListener('click', (e) => {
             if (this.wasDragging) {
@@ -2393,9 +2432,9 @@ class CanvasEngine {
                 }
             } else {
                 // Graph 모드
-                const clickedNode = this.getNodeAt(worldPosClick.x, worldPosClick.y);
+                const topClickedNode = this.getNodeAt(worldPosClick.x, worldPosClick.y);
 
-                if (!clickedNode && !hasModifier) {
+                if (!topClickedNode && !hasModifier) {
                     // 빈 공간 클릭 시 선택 해제
                     this.selectedNode = null;
                     this.selectedNodes.clear();
@@ -2420,9 +2459,9 @@ class CanvasEngine {
                     this.handleOpenFile(clickedStep.node.data.path || clickedStep.node.data.file);
                 }
             } else {
-                const clickedNode = this.getNodeAt(worldPosDbl.x, worldPosDbl.y);
-                if (clickedNode) {
-                    this.handleOpenFile(clickedNode.data.path || clickedNode.data.file);
+                const topClickedNode = this.getNodeAt(worldPosDbl.x, worldPosDbl.y);
+                if (topClickedNode) {
+                    this.handleOpenFile(topClickedNode.data.path || topClickedNode.data.file);
                 } else {
                     // Check for edge double click
                     const clickedEdge = this.findEdgeAtPoint(worldPosDbl.x, worldPosDbl.y);
@@ -2925,6 +2964,7 @@ class CanvasEngine {
     }
 
     showEdgeTypeSelector(x, y) {
+
         // 엣지 타입 선택 메뉴 생성
         const existingMenu = document.getElementById('edge-type-menu');
         if (existingMenu) existingMenu.remove();
@@ -3021,8 +3061,29 @@ class CanvasEngine {
         menu.style.color = '#ebdbb2';
         menu.style.boxShadow = '0 4px 12px rgba(0,0,0,0.5)';
 
-        // [v0.2.20 Fix] Only show edit options if Edit Logic is ON
+        // [v0.3.09_fix] Only show edit options if Edit Logic is ON
         if (this.isEditMode) {
+            // [v0.3.09_fix] 추가: 확정(Confirm) 옵션 (Pending 상태일 때만)
+            if (this.selectedEdge && (this.selectedEdge.status === 'pending' || this.selectedEdge.status === 'pending_confirm')) {
+                const confirmOption = document.createElement('div');
+                confirmOption.textContent = '✅ Confirm Connection';
+                confirmOption.style.padding = '6px 12px';
+                confirmOption.style.cursor = 'pointer';
+                confirmOption.style.borderRadius = '4px';
+                confirmOption.style.color = '#fabd2f';
+                confirmOption.style.fontWeight = 'bold';
+                confirmOption.style.transition = 'background 0.2s';
+                confirmOption.onmouseenter = () => confirmOption.style.background = '#504945';
+                confirmOption.onmouseleave = () => confirmOption.style.background = 'transparent';
+                confirmOption.onclick = () => {
+                    menu.remove();
+                    if (typeof vscode !== 'undefined') {
+                        vscode.postMessage({ command: 'requestConfirmEdge', edgeId: this.selectedEdge.id });
+                    }
+                };
+                menu.appendChild(confirmOption);
+            }
+
             // Change Type 옵션
             const changeType = document.createElement('div');
             changeType.textContent = '🔄 Change Type';
@@ -4240,8 +4301,6 @@ class CanvasEngine {
             this._lastSelectionHash = currentSelectionHash;
         }
 
-        if (shouldLog) console.log("frame start");
-
         // [v0.2.31] Explicit Rendering Boundary: Start
         if (this.webglRenderer) {
             this.webglRenderer.beginFrame();
@@ -4273,10 +4332,6 @@ class CanvasEngine {
             this.updateParticles();
         }
 
-        // [v0.2.31] First Redundant WebGL Render block removed to prevent double-clearing and flicker.
-        // WebGL is now handled in the main view branch below.
-
-
         // [v0.2.32] Power-Saving (Sleeping) Logic: Move ABOVE clear to prevent screen flickering/disappearance
         // If not dirty and not animating, NO NEED to clear or redraw.
         if (!this.isDirty && !this.isAnimating && !this._isInteracting && !this.isDragging) {
@@ -4303,16 +4358,6 @@ class CanvasEngine {
             ctx.fillRect(0, 0, canvas.width, canvas.height);
         }
 
-        /* [v0.2.25 Fix] FPS 1 고정 현상 해결을 위해 과도한 절전 로직 우회
-        if (!this.isDirty && !this.isAnimating) {
-            const fpsEl = document.getElementById('fps-display');
-            if (fpsEl && fpsEl.textContent !== 'IDLE') {
-                fpsEl.textContent = 'IDLE';
-                fpsEl.style.color = '#a89984'; 
-            }
-            return; 
-        }
-        */
         if (this.isRendering) return;
         this.isRendering = true;
         this.isDirty = false;
@@ -4474,8 +4519,6 @@ class CanvasEngine {
                         this.renderNodes2D(zoom);
                         this.renderLabels2D();
                     }
-
-                    if (shouldLog) console.log("after edges/labels");
 
                     this.renderGhostNodes(zoom);
                 }
@@ -4781,6 +4824,81 @@ class CanvasEngine {
                 this.saveState();
             }
         }
+    }
+
+    renameCluster(clusterId) {
+        const cluster = this.clusters.find(c => c.id === clusterId);
+        if (!cluster) return;
+
+        // [v0.3.09_fix] prompt() is BLOCKED in VS Code Sandbox. Use DOM dialog.
+        const overlay = document.createElement('div');
+        overlay.style.position = 'fixed';
+        overlay.style.top = '0'; overlay.style.left = '0';
+        overlay.style.width = '100%'; overlay.style.height = '100%';
+        overlay.style.backgroundColor = 'rgba(0,0,0,0.5)';
+        overlay.style.zIndex = '100000';
+        overlay.style.display = 'flex'; overlay.style.justifyContent = 'center'; overlay.style.alignItems = 'center';
+
+        const dialog = document.createElement('div');
+        dialog.style.background = '#282828';
+        dialog.style.padding = '20px';
+        dialog.style.borderRadius = '8px';
+        dialog.style.border = '1px solid #fabd2f';
+        dialog.style.width = '300px';
+
+        const label = document.createElement('div');
+        label.textContent = 'Rename Group:';
+        label.style.marginBottom = '10px';
+        label.style.color = '#ebdbb2';
+        dialog.appendChild(label);
+
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.value = cluster.label || '';
+        input.style.width = '100%';
+        input.style.background = '#1d2021';
+        input.style.color = '#ebdbb2';
+        input.style.border = '1px solid #504945';
+        input.style.padding = '8px';
+        input.style.boxSizing = 'border-box';
+        dialog.appendChild(input);
+
+        const btnRow = document.createElement('div');
+        btnRow.style.marginTop = '15px';
+        btnRow.style.display = 'flex';
+        btnRow.style.justifyContent = 'flex-end';
+        btnRow.style.gap = '10px';
+
+        const cancel = document.createElement('button');
+        cancel.textContent = 'Cancel';
+        cancel.onclick = () => overlay.remove();
+        btnRow.appendChild(cancel);
+
+        const save = document.createElement('button');
+        save.textContent = 'Save';
+        save.style.background = '#b8bb26';
+        save.style.color = '#282828';
+        save.style.fontWeight = 'bold';
+        save.onclick = () => {
+            const val = input.value.trim();
+            if (val) {
+                cluster.label = val;
+                this.render();
+                this.saveState();
+            }
+            overlay.remove();
+        };
+        btnRow.appendChild(save);
+
+        dialog.appendChild(btnRow);
+        overlay.appendChild(dialog);
+        document.body.appendChild(overlay);
+        input.focus();
+        input.select();
+        input.onkeydown = (e) => {
+            if (e.key === 'Enter') save.click();
+            if (e.key === 'Escape') cancel.click();
+        };
     }
 
     saveState() {
@@ -6703,8 +6821,8 @@ class CanvasEngine {
         const bMidY = (fromY + toY) / 2 - 30;
         const badgeSize = Math.max(25, 35 / this.transform.zoom);
 
-        // [v0.2.17] Confirmation badge: ? (pending_confirm) or ! (confirmed)
-        const confirmStatus = edge.confirmStatus || (edge.status === 'pending' ? 'pending_confirm' : '');
+        // [v0.3.09_fix] Corrected logic: 'pending_confirm' status must show the badge.
+        const confirmStatus = edge.confirmStatus || (edge.status === 'pending' || edge.status === 'pending_confirm' ? 'pending_confirm' : (edge.status === 'confirmed' ? 'confirmed' : ''));
 
         if (confirmStatus === 'pending_confirm' || confirmStatus === 'confirmed') {
             const isPending = confirmStatus === 'pending_confirm';

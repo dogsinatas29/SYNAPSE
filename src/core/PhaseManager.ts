@@ -55,9 +55,13 @@ class PhaseManager {
   public advancePhase(next: Phase) {
     if (this.locked) return;
 
-    if (next !== this.currentPhase + 1) {
-      this.lockSystem(`INVALID PHASE TRANSITION: from ${Phase[this.currentPhase]} to ${Phase[next]}`);
-      return;
+    // [v0.3.09_fix] Relaxed transition for recovery
+    if (next <= this.currentPhase && next !== Phase.DATA) {
+        return; 
+    }
+
+    if (next !== this.currentPhase + 1 && next !== Phase.DATA) {
+      console.warn(`[SYNAPSE] Non-sequential phase transition: from ${Phase[this.currentPhase]} to ${Phase[next]}`);
     }
 
     this.currentPhase = next;
@@ -65,6 +69,16 @@ class PhaseManager {
     if (this.onPhaseAdvance) {
       this.onPhaseAdvance(next);
     }
+  }
+
+  /**
+   * [v0.3.09_fix] 강제 Phase 설정 (복구용)
+   */
+  public setPhase(phase: Phase) {
+    this.currentPhase = phase;
+    this.locked = false;
+    this.lockReason = null;
+    console.log(`[SYNAPSE] Phase Force Set: ${Phase[phase]}`);
   }
 
   /**

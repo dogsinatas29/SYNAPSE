@@ -165,13 +165,15 @@ export class CanvasPanel {
                     'updateEdge', 'approveNode', 'rejectNode',
                     'requestDeleteEdgeSource', 'createManualNode',
                     'reBootstrap', 'requestConfirmEdge', 'setBaseline',
-                    'resetProjectState', 'virtualDebug'
+                    'resetProjectState', 'virtualDebug', 'updateNodeData'
                 ];
 
                 if (stateModifyingCommands.includes(message.command)) {
                     // [v0.3.1 Bootstrap Locked] Phase 3: CONTROL Interaction Check
-                    if (!controlSystem.verifyInteraction(message.command)) {
-                        vscode.window.showErrorMessage(`[SYNAPSE] 명령 거부: Phase ${phaseManager.getCurrentPhase()} 상태에서는 '${message.command}'이(가) 금지됩니다.`);
+                    // [v0.3.09_fix] Allow interaction in RENDER (Phase 5) and DEBUG (Phase 6) as well.
+                    const currentPhase = phaseManager.getCurrentPhase();
+                    if (!controlSystem.verifyInteraction(message.command) && currentPhase < Phase.RENDER) {
+                        vscode.window.showErrorMessage(`[SYNAPSE] 명령 거부: Phase ${currentPhase} 상태에서는 '${message.command}'이(가) 금지됩니다.`);
                         return;
                     }
 
@@ -341,6 +343,9 @@ export class CanvasPanel {
                 console.log('[SYNAPSE] WebView Ready signal received. Starting initial analysis...');
                 await this.sendProjectState();
                 return;
+            case 'updateNodeData':
+                await this.handleUpdateNodeData(message.node);
+                return;
             case 'log':
                 if (message.level === 'error') {
                     Logger.error(`[WebView] ${message.text}`, message.data);
@@ -418,6 +423,33 @@ export class CanvasPanel {
         } catch (error) {
             console.error('Failed to create manual node:', error);
             vscode.window.showErrorMessage(`Failed to create manual node: ${error}`);
+        }
+    }
+
+    private async handleUpdateNodeData(node: any) {
+        const workspaceFolder = this._workspaceFolder;
+        if (!workspaceFolder) return;
+
+        try {
+            const projectStateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'project_state.json');
+            const data = await vscode.workspace.fs.readFile(projectStateUri);
+            const projectState = JSON.parse(data.toString());
+
+            if (!projectState.nodes) projectState.nodes = [];
+            const nodeIdx = projectState.nodes.findIndex((n: any) => n.id === node.id);
+
+            if (nodeIdx !== -1) {
+                projectState.nodes[nodeIdx] = node;
+                console.log(`[SYNAPSE] Node ${node.id} data updated in backend.`);
+            } else {
+                projectState.nodes.push(node);
+                console.log(`[SYNAPSE] Node ${node.id} added to backend project_state.`);
+            }
+
+            const normalizedJson = this.normalizeProjectState(projectState);
+            await vscode.workspace.fs.writeFile(projectStateUri, Buffer.from(normalizedJson, 'utf8'));
+        } catch (error) {
+            console.error('[SYNAPSE] Failed to update node data:', error);
         }
     }
 
@@ -2528,6 +2560,9 @@ export class CanvasPanel {
                 if (phaseManager.isLocked() || phaseManager.getCurrentPhase() === Phase.DATA) {
                     Logger.info(`[SYNAPSE] Initializing Core Systems (Phase 0 -> 2)...`);
                     phaseManager.reset(); 
+                } else if (phaseManager.getCurrentPhase() >= Phase.RENDER) {
+                     // [v0.3.09_fix] Already in RENDER+, just sync model without reset
+                     Logger.info(`[SYNAPSE] Refreshing Core Systems in Phase: ${Phase[phaseManager.getCurrentPhase()]}`);
                 } else {
                     Logger.info(`[SYNAPSE] Synchronizing Core Systems (Current Phase: ${Phase[phaseManager.getCurrentPhase()]})`);
                 }

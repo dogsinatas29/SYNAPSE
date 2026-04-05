@@ -4392,7 +4392,7 @@ class CanvasEngine {
                     this.isDirty = true;
                 }
 
-                if (!this.debugDisableOverlay && (this.webglEnabled || this.isAnimating || this.isDirty || this._frameCounter % 2 === 0)) {
+                if (!this.debugDisableOverlay) {
                     // [v0.2.25] Final Logic: Use WebGL only in Graph mode IF Accel is ON
                     if (this.webglEnabled && this.webglRenderer && this.currentMode === 'graph') {
                         // [v0.2.31] Final Consolidated WebGL Render call

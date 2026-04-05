@@ -32,6 +32,17 @@ export class GridSystem {
       // Update nodes positions with Snapping
       for (const node of nodes) {
         if (!layout[node.id]) continue;
+        
+        // [v0.3.09_fix] Preserve existing snapshot coordinates
+        const existingPos = (node as any).position;
+        if (existingPos && typeof existingPos.x === 'number' && typeof existingPos.y === 'number') {
+          // Keep existing layout but snap to grid for consistency
+          const snapped = this.snapToGrid(existingPos.x, existingPos.y);
+          (node as any).position = snapped;
+          layout[node.id] = snapped; // Sync layout map
+          continue;
+        }
+
         const pos = layout[node.id];
         const snapped = this.snapToGrid(pos.x, pos.y);
         (node as any).position = snapped;

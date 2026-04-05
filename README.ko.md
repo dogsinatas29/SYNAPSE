@@ -1,8 +1,8 @@
-# <img src="./resources/synapse-icon.png" width="40" height="40" /> 🧠 SYNAPSE: 시각적 아키텍처 엔진 (v0.3.10)
+# <img src="./resources/synapse-icon.png" width="40" height="40" /> 🧠 SYNAPSE: 시각적 아키텍처 엔진 (v0.3.09_fix)
 
 > **"눈에 보이는 것이 LLM의 논리다"** — *AI를 위한 WYSIWYG 논리 엔진*
 
-[![Version](https://img.shields.io/badge/version-v0.3.10-brightgreen.png)](https://github.com/dogsinatas29/SYNAPSE)
+[![Version](https://img.shields.io/badge/version-v0.3.09__fix-brightgreen.png)](https://github.com/dogsinatas29/SYNAPSE)
 [![Latest Release](https://img.shields.io/badge/latest-v0.3.09%20Hotfix%20(Lock%20Fixed)-orange.png)](https://github.com/dogsinatas29/SYNAPSE/releases)
 ![Status](https://img.shields.io/badge/status-Production_Ready-brightgreen.png)
 [![Language](https://img.shields.io/badge/Language-TypeScript-blue?style=flat-square)](https://www.typescriptlang.org/)
@@ -90,7 +90,7 @@ SYNAPSE는 다양한 컴포넌트 타입과 추론 상태를 나타내기 위해
 
 ## 🚀 시작하기
 
-1. **확장 프로그램 설치**: Antigravity/VS Code에 `synapse-visual-architecture-v0.3.10.vsix`를 설치합니다.
+1. **확장 프로그램 설치**: Antigravity/VS Code에 `synapse-visual-architecture-v0.3.09_fix.vsix`를 설치합니다.
 2. **DNA 주입**: 프로젝트 루트에 `GEMINI.md` 파일을 생성하거나 등록합니다.
 3. **부트스트랩**: 사이드바 또는 명령 팔레트(`Ctrl+Shift+P` -> `SYNAPSE: Open Canvas`)에서 **SYNAPSE Canvas**를 엽니다.
 
@@ -100,7 +100,7 @@ SYNAPSE는 다양한 컴포넌트 타입과 추론 상태를 나타내기 위해
 
 | 버전 | 날짜 | 영어 설명 | 한국어 설명 |
 | :--- | :--- | :--- | :--- |
-| **v0.3.10** | 2026-04-05 | **Hotfix PhaseLock**: Resolved system-wide interaction lock in RENDER/DEBUG phases and improved atomicity. | **핫픽스 페이즈락**: RENDER/DEBUG 단계의 전역 인터렉션 락 해결 및 원자적 동기화 개선. |
+| **v0.3.09_fix** | 2026-04-05 | **Hotfix PhaseLock**: Resolved system-wide interaction lock in RENDER/DEBUG phases and improved atomicity. | **핫픽스 페이즈락**: RENDER/DEBUG 단계의 전역 인터렉션 락 해결 및 원자적 동기화 개선. |
 | **v0.3.1** | 2026-03-31 | **Bootstrap Locked**: Full Phase-based initialization (Phases 0-7) and system lockout protocol. | **부트스트랩 락**: 전 단계(Phase 0-7) 순차 초기화 강제 및 시스템 잠금 프로토콜 도입. |
 
 ---

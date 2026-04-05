@@ -1400,7 +1400,9 @@
                 } else {
                     const overlay = document.getElementById('webgl-overlay-canvas');
                     if (overlay) overlay.style.display = 'none';
+                    if (eng.webglRenderer) eng.webglRenderer.reset(); // [v0.3.2] Isolation
                     eng.webglEnabled = false;
+                    eng.wakeUp(); // [v0.3.9] Ensure 2D draws immediately
                 }
 
                 btnWebgl.textContent = `🚀 Accel: ${eng.webglEnabled ? 'ON' : 'OFF'}`;

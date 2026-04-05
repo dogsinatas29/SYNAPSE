@@ -28,6 +28,7 @@ export interface Node {
   type: NodeType;
   label?: string;
   degree: number; // For Hub Collapse logic
+  position?: { x: number; y: number }; // [v0.3.2] Persist manual/layout positions
 }
 
 export interface Edge {
@@ -88,7 +89,11 @@ export class GraphModel {
     return Array.from(this.nodes.values()).map(node => {
       if (node.degree > threshold) {
         // [TODO] Implement collapse logic (e.g. replacing with a summary icon)
-        return { ...node, label: `(HUB) ${node.label}` };
+        return { 
+          ...node, 
+          label: `(HUB) ${node.label}`,
+          position: node.position 
+        };
       }
       return node;
     });

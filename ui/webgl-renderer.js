@@ -232,18 +232,15 @@ class WebGLRenderer {
                     vec2 q = abs(vCoord);
                     dist = max(q.x * 0.866025 + q.y * 0.5, q.y) - 0.9;
                 } else {
-                    // SDF Based Rounded Corners (vShape == 0.0)
-                    vec2 size = vec2(0.9, 0.85); 
-                    float radius = 0.15;
-                    vec2 d = abs(vCoord) - size + radius;
-                    dist = length(max(d, 0.0)) - radius;
+                    // [v0.3.2] Sharp Rectangles (vShape == 0.0) - Matches 2D Default
+                    dist = max(abs(vCoord.x), abs(vCoord.y)) - 1.0;
                 }
                 
                 if (dist > 0.0) discard;
                 
-                // [v0.2.33] Enhanced Border Mask
-                float borderThreshold = -0.06;
-                float borderMask = smoothstep(borderThreshold - 0.04, borderThreshold, dist);
+                // [v0.3.3] Sharper Border Mask (matches 2D stroke)
+                float borderThreshold = -0.02;
+                float borderMask = smoothstep(borderThreshold - 0.01, borderThreshold, dist);
                 
                 vec3 borderColor = vec3(0.5, 0.5, 0.5); 
                 vec3 nodeBaseColor = vColor;
@@ -256,11 +253,12 @@ class WebGLRenderer {
                 } else if (vStatus > 3.5 && vStatus < 4.5) { // Warning
                     float pulse = 0.5 + 0.5 * sin(vTime * 5.0);
                     borderColor = mix(vec3(0.98, 0.29, 0.20), vec3(1.0, 0.8, 0.8), pulse); // #fb4934 pulse
-                } else if (vStatus > 4.5) { // Necrosis/Tombstone
+                } else if (vStatus > 4.5 && vStatus < 5.5) { // Necrosis/Tombstone
                     borderColor = vec3(0.11, 0.13, 0.13); // #1d2021
-                    // Noise effect
                     float n = random(vCoord * sin(vTime));
                     if (n > 0.95) nodeBaseColor = vec3(0.92, 0.86, 0.70); // Noise dot
+                } else if (vStatus > 5.5) { // External/Dashed
+                    borderColor = vec3(0.55, 0.75, 0.48); // #8ec07c
                 }
 
                 if (vIsSelected > 0.5) {
@@ -275,6 +273,12 @@ class WebGLRenderer {
                     nodeBaseColor = mix(nodeBaseColor, purple, dtrMask * 0.4 * dtrPulse);
                 }
                 
+                // [v0.3.5] Dashed Border for External Nodes (vStatus > 5.5)
+                if (vStatus > 5.5 && borderMask > 0.1) {
+                    float perimeter = (vCoord.x + 1.0) + (vCoord.y + 1.0); // Simple linear perimeter approx
+                    if (mod(perimeter * 12.0, 2.0) > 1.0) discard;
+                }
+                
                 // Subtle Inner Glow
                 float innerGlow = smoothstep(-0.4, -0.0, dist);
                 nodeBaseColor = mix(nodeBaseColor, vec3(1.0), innerGlow * 0.1);
@@ -283,7 +287,11 @@ class WebGLRenderer {
                     nodeBaseColor = mix(nodeBaseColor, borderColor, borderMask);
                 }
                 
-                gl_FragColor = vec4(nodeBaseColor, vAlpha);
+                // [v0.3.3] Background opacity adjustment for parity
+                float finalAlpha = vAlpha;
+                if (vIsSelected < 0.5) finalAlpha *= 0.85; 
+                
+                gl_FragColor = vec4(nodeBaseColor, finalAlpha);
             }
         `;
         this.nodeProgram = this.createProgram(vsSource, fsSource);
@@ -327,31 +335,35 @@ class WebGLRenderer {
             void main() {
                 vec2 p1 = aInstanceEdge.xy;
                 vec2 p2 = aInstanceEdge.zw;
-                vec2 dir = p2 - p1;
-                float len = length(dir);
-                vLen = len;
+                
+                // [v0.3.4] Curvature Reduction: -25 offset for better parity with 2D arch
+                float t = aVertexPosition.x;
+                vec2 cp = (p1 + p2) * 0.5 + vec2(0.0, -25.0);
+                
+                // Bezier Position (Quadratic)
+                vec2 pos = (1.0-t)*(1.0-t)*p1 + 2.0*(1.0-t)*t*cp + t*t*p2;
+                
+                // Bezier Tangent (for normal calculation)
+                vec2 tangent = 2.0*(1.0-t)*(cp - p1) + 2.0*t*(p2 - cp);
+                float tanLen = length(tangent);
+                vec2 norm = (tanLen > 0.01) ? vec2(-tangent.y, tangent.x) / tanLen : vec2(0.0, 1.0);
+                
+                vColor = aEdgeColor;
+                vTexCoord = aVertexPosition;
                 vDash = aDashParams;
                 vHigh = aIsHigh;
                 vTime = uTime;
-                
-                vec2 unitDir = (len > 0.1) ? dir / len : vec2(0.0);
-                vec2 norm = vec2(-unitDir.y, unitDir.x);
-                
+                vLen = distance(p1, p2); // Approximation for dashing
+
                 float lineWidth = aThickness;
-                if (aIsHigh > 0.5) {
-                    lineWidth += 2.0 * sin(uTime * 4.0); // Pulse effect
-                }
+                if (aIsHigh > 0.5) lineWidth += 2.0 * sin(uTime * 4.0);
                 
-                // [v0.3.2] Fixed Parity: Use constant flared width in VS to prevent interpolation-based tapering.
-                // The actual body width and arrowhead are carved out in the Fragment Shader.
                 float maxFlare = 3.5;
                 float flaredWidth = lineWidth * maxFlare;
-                
-                vec2 worldPos = p1 + unitDir * (aVertexPosition.x * len) + norm * (aVertexPosition.y * flaredWidth);
+
+                vec2 worldPos = pos + norm * (aVertexPosition.y * flaredWidth);
                 vec3 projected = uProjectionMatrix * vec3(worldPos, 1.0);
                 gl_Position = vec4(projected.xy, 0.0, 1.0);
-                vColor = aEdgeColor;
-                vTexCoord = aVertexPosition;
             }
         `;
         const fsEdge = `
@@ -518,11 +530,18 @@ class WebGLRenderer {
         this.sizeBuffer = this.gl.createBuffer();
         this.selectBuffer = this.gl.createBuffer(); // [New] Selection Status Buffer
 
-        // Edge Buffer setup
-        const edgeVertices = [0, -0.5, 1, -0.5, 0, 0.5, 1, 0.5];
+        // Edge Buffer setup (Smooth Quadratic Curve)
+        const segments = 32;
+        const curveVertices = [];
+        for (let i = 0; i <= segments; i++) {
+            const t = i / segments;
+            curveVertices.push(t, -0.5);
+            curveVertices.push(t, 0.5);
+        }
         this.edgeRectBuffer = this.gl.createBuffer();
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.edgeRectBuffer);
-        this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(edgeVertices), this.gl.STATIC_DRAW);
+        this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(curveVertices), this.gl.STATIC_DRAW);
+        this.edgeCurveSegments = segments;
 
         this.edgeInstanceBuffer = this.gl.createBuffer();
 
@@ -719,6 +738,9 @@ class WebGLRenderer {
             } else if (n.status === 'error_necrosis' || n.status === 'error_tombstone') {
                 nColor = '#1d2021';
                 statusType = 5.0;
+            } else if (n.type === 'external') {
+                nColor = 'rgba(40, 40, 40, 0.7)';
+                statusType = 6.0;
             }
 
             const fileName = (n.data?.file || '').toLowerCase();
@@ -905,40 +927,106 @@ class WebGLRenderer {
 
         const t0 = performance.now();
 
-        // 1️⃣ Node Labels & Status Icons (💀, 🪦)
+        // 1️⃣ Node Labels & Status Icons & LOD Details
+        const currentZoom = window.engine?.transform?.zoom || 1.0;
+        
         nodes.forEach(n => {
-            let label = n.data?.label || n.id || "";
-            let iconPrefix = "";
-            if (n.status === 'error_necrosis') iconPrefix = "💀 ";
-            else if (n.status === 'error_tombstone') iconPrefix = "🪦 ";
+            const label = n.data?.label || n.id || "";
+            const icon = n.data?.icon || (n.type === 'external' ? '☁' : '📄');
+            const summary = n.data?.summary || {};
+            const statusDetail = (n.status === 'proposed' || n.state === 'pending') ? "⚡ Awaiting Approval" : "";
             
-            const fullText = iconPrefix + label;
+            // Build key for layout caching (include zoom/LOD info)
+            const lodLevel = currentZoom > 1.5 ? 2 : (currentZoom > 0.8 ? 1 : 0);
+            const cacheKey = `${label}_${icon}_${statusDetail}_${JSON.stringify(summary)}_${lodLevel}`;
             
-            if (!n._textLayout || n._textLayoutLabel !== fullText) {
-                this.textAtlas.addText(fullText);
+            if (!n._textLayout || n._textLayoutKey !== cacheKey) {
                 const items = [];
-                let totalW = 0;
-                for (const ch of fullText) {
+                
+                // A. Type Icon (Top-Left: 5, 5) - Parity with 2D line 5978
+                if (currentZoom > 1.2) {
+                    this.textAtlas.addText(icon);
+                    const gIcon = this.textAtlas.glyphMap.get(icon);
+                    if (gIcon) {
+                        items.push({
+                            dx: 5, dy: 5,
+                            w: gIcon.w, h: gIcon.h,
+                            u0: gIcon.u0, v0: gIcon.v0, u1: gIcon.u1, v1: gIcon.v1
+                        });
+                    }
+                }
+
+                // B. Main Label (Centered)
+                this.textAtlas.addText(label);
+                let labelW = 0;
+                for (const ch of label) {
                     const g = this.textAtlas.glyphMap.get(ch);
-                    if (g) totalW += g.w;
+                    if (g) labelW += g.w;
                 }
                 
-                let relXStart = 60 - totalW / 2;
-                let relY = 35; 
-                let curX = relXStart;
+                let curX = 60 - labelW / 2;
+                let curY = (lodLevel === 2) ? 15 : 35; // Shift up if deep LOD shown
                 
-                for (const ch of fullText) {
+                for (const ch of label) {
                     const g = this.textAtlas.glyphMap.get(ch);
                     if (!g) continue;
                     items.push({
-                        dx: curX, dy: relY,
+                        dx: curX, dy: curY,
                         w: g.w, h: g.h,
                         u0: g.u0, v0: g.v0, u1: g.u1, v1: g.v1
                     });
                     curX += g.w;
                 }
+
+                // C. Status Detail (Awaiting Approval etc.)
+                if (statusDetail && currentZoom > 1.2) {
+                    this.textAtlas.addText(statusDetail);
+                    let sW = 0;
+                    for (const ch of statusDetail) {
+                        const g = this.textAtlas.glyphMap.get(ch);
+                        if (g) sW += g.w;
+                    }
+                    curX = 60 - sW / 2;
+                    let sY = 50; 
+                    for (const ch of statusDetail) {
+                        const g = this.textAtlas.glyphMap.get(ch);
+                        if (!g) continue;
+                        items.push({
+                            dx: curX, dy: sY,
+                            w: g.w, h: g.h,
+                            u0: g.u0, v0: g.v0, u1: g.u1, v1: g.v1
+                        });
+                        curX += g.w;
+                    }
+                }
+
+                // D. Deep LOD (Functions/Classes) - Parity with 2D lines 6031-6074
+                if (lodLevel === 2) {
+                    const detailLines = [];
+                    if (summary.classes) summary.classes.slice(0, 2).forEach(c => detailLines.push(`• ${c}`));
+                    if (summary.functions) summary.functions.slice(0, 2).forEach(f => detailLines.push(`• ${f}`));
+                    if (summary.tables) summary.tables.slice(0, 2).forEach(t => detailLines.push(`◆ ${t}`));
+                    
+                    let detailY = 35;
+                    detailLines.forEach(line => {
+                        this.textAtlas.addText(line);
+                        let detailX = 10;
+                        for (const ch of line) {
+                            const g = this.textAtlas.glyphMap.get(ch);
+                            if (!g) continue;
+                            items.push({
+                                dx: detailX, dy: detailY,
+                                w: g.w, h: g.h,
+                                u0: g.u0, v0: g.v0, u1: g.u1, v1: g.v1
+                            });
+                            detailX += g.w;
+                        }
+                        detailY += 10;
+                    });
+                }
+                
                 n._textLayout = items;
-                n._textLayoutLabel = fullText;
+                n._textLayoutKey = cacheKey;
             }
         });
 
@@ -1217,6 +1305,26 @@ class WebGLRenderer {
         console.log(`[SYNAPSE 3D] Frame Rendered. Hash: ${hash}`);
     }
 
+    /**
+     * [v0.3.2] Reset WebGL Context for View Isolation (Rule 08)
+     */
+    reset() {
+        if (!this.gl) return;
+        this.gl.clearColor(0, 0, 0, 0);
+        this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
+        
+        // Reset counts to block old data rendering
+        this.nodeCount = 0;
+        this.edgeCount = 0;
+        this.charCount = 0;
+        
+        if (this._nodePosArr) this._nodePosArr.fill(0);
+        if (this._edgePosArr) this._edgePosArr.fill(0);
+        if (this._textArr) this._textArr.fill(0);
+
+        console.log("[SYNAPSE] WebGL Pipeline Reset (Rule 08 Isolation)");
+    }
+
     render(nodes, transform, isDataDirty = false, edges = null, nodeMap = null, isEdgeDirty = false, isTextDirty = false, selectedNodeIds = null) {
         if (!this.gl) return;
         
@@ -1307,6 +1415,7 @@ class WebGLRenderer {
         if (!this.ext || this.edgeCount === 0) return;
         this.gl.useProgram(this.edgeProgram);
         
+        // [v0.3.2] Use client dimensions for logical coordinate mapping
         const dpr = window.devicePixelRatio || 1;
         const logicalW = this.canvas.width / dpr;
         const logicalH = this.canvas.height / dpr;
@@ -1333,7 +1442,7 @@ class WebGLRenderer {
         this.setAttrPointer(this.edgeHighBuffer, this.locs.edge.high, 1, 0, 0, 1);
 
         if (this.ext) {
-            this.ext.drawArraysInstancedANGLE(this.gl.TRIANGLE_STRIP, 0, 4, this.edgeCount);
+            this.ext.drawArraysInstancedANGLE(this.gl.TRIANGLE_STRIP, 0, (this.edgeCurveSegments + 1) * 2, this.edgeCount);
             this.drawCalls++;
         }
     }
@@ -1341,6 +1450,7 @@ class WebGLRenderer {
     drawNodes(transform) {
         if (this.nodeCount === 0) return;
         this.gl.useProgram(this.nodeProgram);
+        
         const dpr = window.devicePixelRatio || 1;
         const logicalW = this.canvas.width / dpr;
         const logicalH = this.canvas.height / dpr;

@@ -8,23 +8,34 @@ export interface CodeSummary {
 }
 
 export class FileScanner {
+    private static cache: Map<string, { summary: CodeSummary, mtime: number }> = new Map();
+
     /**
      * 파일 내용을 읽고 클래스와 함수 목록을 추출
+     * [v0.3.09_fix] Performance: mtime 기반 캐싱 구현
      */
     public scanFile(filePath: string): CodeSummary {
-        const summary: CodeSummary = {
-            classes: [],
-            functions: [],
-            references: []
-        };
-
         if (!fs.existsSync(filePath)) {
-            return summary;
+            return { classes: [], functions: [], references: [] };
         }
 
         try {
-            // [v0.2.18.1 Opt] Skip files larger than 1MB to prevent hangs
             const stats = fs.statSync(filePath);
+            const mtime = stats.mtimeMs;
+
+            // 캐시 확인
+            const cached = FileScanner.cache.get(filePath);
+            if (cached && cached.mtime === mtime) {
+                return cached.summary;
+            }
+
+            const summary: CodeSummary = {
+                classes: [],
+                functions: [],
+                references: []
+            };
+
+            // [v0.2.18.1 Opt] Skip files larger than 1MB to prevent hangs
             if (stats.size > 1024 * 1024) {
                 console.warn(`[SYNAPSE] Skipping large file: ${filePath} (${Math.round(stats.size / 1024)} KB)`);
                 return summary;
@@ -41,36 +52,31 @@ export class FileScanner {
             const ext = path.extname(filePath);
 
             if (ext === '.py') {
-                console.log(`[SYNAPSE] Parsing Python: ${filePath}`);
                 this.parsePython(content, summary);
             } else if (['.ts', '.js'].includes(ext)) {
-                console.log(`[SYNAPSE] Parsing JavaScript/TypeScript: ${filePath}`);
                 this.parseJavaScript(content, summary);
             } else if (['.cpp', '.h', '.c', '.hpp', '.cc'].includes(ext)) {
-                console.log(`[SYNAPSE] Parsing C/C++: ${filePath}`);
                 this.parseCpp(content, summary);
             } else if (ext === '.rs') {
-                console.log(`[SYNAPSE] Parsing Rust: ${filePath}`);
                 this.parseRust(content, summary);
             } else if (ext === '.sh') {
-                console.log(`[SYNAPSE] Parsing Shell Script: ${filePath}`);
                 this.parseShell(content, summary);
             } else if (ext === '.sql') {
-                console.log(`[SYNAPSE] Parsing SQL: ${filePath}`);
                 this.parseSql(content, summary);
             } else if (['.json', '.yaml', '.yml', '.toml'].includes(ext)) {
-                console.log(`[SYNAPSE] Parsing Configuration: ${filePath}`);
                 this.parseConfig(content, summary);
             } else if (ext === '.md') {
-                console.log(`[SYNAPSE] Parsing Markdown: ${filePath}`);
                 this.parseMarkdown(content, summary);
             }
-            // console.log(`[SYNAPSE] Finished parsing: ${path.basename(filePath)}`);
+
+            // 캐시 저장
+            FileScanner.cache.set(filePath, { summary, mtime });
+            return summary;
+
         } catch (error) {
             console.error(`[SYNAPSE] Failed to scan file ${filePath}:`, error);
+            return { classes: [], functions: [], references: [] };
         }
-
-        return summary;
     }
 
     private parsePython(content: string, summary: CodeSummary) {
@@ -127,7 +133,6 @@ export class FileScanner {
                         if (trimmed.startsWith('from ')) type = 'reference';
                         else if (line.includes(' # static')) type = 'static_unidirectional';
 
-                        console.log(`  [DEP] Added reference (from): ${rootMod} (ID: ${nodeId || 'none'}, Type: ${type}, Approved: ${!isPendingOrDeleted})`);
                         summary.references.push({ target: rootMod, type, nodeId, isApproved: !isPendingOrDeleted });
                     }
                     continue;
@@ -162,7 +167,6 @@ export class FileScanner {
                                 // [v0.2.17 Patch 13] Check for ID tag already extracted
                                 // const nodeId = nodeId;
 
-                                console.log(`  [DEP] Added reference (import): ${rootMod} (ID: ${nodeId || 'none'}, Type: ${type}, Approved: ${!isPendingOrDeleted})`);
                                 summary.references.push({ target: rootMod, type, nodeId, isApproved: !isPendingOrDeleted });
                             }
                         }
@@ -200,12 +204,10 @@ export class FileScanner {
             }
 
             // JS/TS 임포트 (references, import type 지원)
-            // [v0.2.18.2 Opt] Prevent matching inside template literals or dynamic requires with variables
             const importRegex = /(?:import|require)\s+(?:type\s+)?(?:.*from\s+)?['"]([^'"`${}]+)['"]|import\s*\(\s*['"]([^'"`${}]+)['"]\s*\)/g;
             while ((match = importRegex.exec(content)) !== null) {
                 const ref = match[1] || match[2];
                 if (ref) {
-                    // Ignore dynamic paths or very long non-file strings
                     if (ref.includes('${') || ref.length > 100) continue;
 
                     const cleanRef = ref.startsWith('.') ? path.basename(ref, path.extname(ref)) : ref.split('/')[0];
@@ -225,7 +227,6 @@ export class FileScanner {
 
     private parseCpp(content: string, summary: CodeSummary) {
         // C++ 클래스 및 구조체
-        // Namespace::ClassName 등 지원
         const classRegex = /(?:class|struct)\s+([a-zA-Z0-9_:]+)[\s{:]/gm;
         let match;
         while ((match = classRegex.exec(content)) !== null) {
@@ -235,12 +236,10 @@ export class FileScanner {
             }
         }
 
-        // C/C++ 함수 (정의 { 와 선언 ; 모두 지원, ReDoS 방지를 위해 단순화)
-        // 기본 구조: 반환타입 [공백] 함수명 (인자) [const] { 또는 ;
+        // C/C++ 함수
         const funcRegex = /^\s*(?:[\w\s:*&<>]+\s+)?([\w::]+)\s*\([^)]*\)\s*(?:const)?\s*(?={|;)/gm;
         while ((match = funcRegex.exec(content)) !== null) {
             const funcName = match[1];
-            // 키워드 제외
             if (funcName && !['if', 'while', 'for', 'switch', 'return', 'catch', 'template', 'using', 'static', 'explicit'].includes(funcName)) {
                 if (!summary.functions.includes(funcName)) {
                     summary.functions.push(funcName);
@@ -248,7 +247,7 @@ export class FileScanner {
             }
         }
 
-        // C/C++ 인클루드 (references) - 시스템 헤더와 로컬 헤더 구분 강화
+        // C/C++ 인클루드
         const lines = content.split('\n');
         for (const line of lines) {
             const trimmed = line.trim();
@@ -259,33 +258,24 @@ export class FileScanner {
             
             if (isCommented && !isPendingOrDeleted) continue;
 
-            // Search for include in both active and commented lines
             const includeMatch = trimmed.match(/(?:#\s*include|#include)\s+(["<])([^">]+)([">])/);
             if (includeMatch) {
-                const quoteType = includeMatch[1]; // " 또는 <
+                const quoteType = includeMatch[1];
                 const ref = includeMatch[2];
 
-                // 로컬 헤더("")는 프로젝트 내 의존성으로 처리
                 if (quoteType === '"') {
                     const cleanRef = path.basename(ref, path.extname(ref));
                     if (cleanRef && !summary.references.some(r => r.target === cleanRef)) {
                         let type = 'dependency';
-                        
-                        // [v0.2.18.1.2] Extract metadata from C++ comment line
                         const idMatch = line.match(/\[SYNAPSE(?:_PENDING|_DELETED)?:([^\]]+)\]/);
                         const nodeId = idMatch ? idMatch[1] : undefined;
-
-                        console.log(`  [DEP] Added C++ reference: ${cleanRef} (Approved: ${!isPendingOrDeleted})`);
                         summary.references.push({ target: cleanRef, type, nodeId, isApproved: !isPendingOrDeleted });
                     }
                 } else if (quoteType === '<') {
-                    // 표준 라이브러리나 외부 라이브러리 (시스템 헤더)
                     const systemLib = ref.split('/')[0];
-                    // 흔한 표준 라이브러리는 노이즈 방지를 위해 제외
                     const standardLibs = ['iostream', 'vector', 'string', 'map', 'set', 'algorithm', 'stdio.h', 'stdlib.h', 'stdint.h', 'stdbool.h', 'cmath', 'cstdio'];
                     if (!standardLibs.includes(systemLib)) {
                         if (!summary.references.some(r => r.target === systemLib)) {
-                            console.log(`  [DEP] Added C++ system/external reference: ${systemLib}`);
                             summary.references.push({ target: systemLib, type: 'api_call' });
                         }
                     }
@@ -295,7 +285,6 @@ export class FileScanner {
     }
 
     private parseRust(content: string, summary: CodeSummary) {
-        // Rust structs, enums, and traits
         const typeRegex = /^\s*(?:pub(?:\([^)]+\))?\s+)?(?:struct|enum|trait)\s+([a-zA-Z0-9_]+)/gm;
         let match;
         while ((match = typeRegex.exec(content)) !== null) {
@@ -305,18 +294,14 @@ export class FileScanner {
             }
         }
 
-        // Rust impl blocks (extract type name)
         const implRegex = /^\s*impl(?:\s+<[^>]+>)?\s+([a-zA-Z0-9_]+)(?:\s+for\s+([a-zA-Z0-9_]+))?/gm;
         while ((match = implRegex.exec(content)) !== null) {
-            const traitName = match[1];
-            const forType = match[2];
-            const target = forType || traitName;
+            const target = match[2] || match[1];
             if (target && !summary.classes.includes(target)) {
                 summary.classes.push(target);
             }
         }
 
-        // Rust functions
         const funcRegex = /^\s*(?:pub(?:\([^)]+\))?\s+)?(?:async\s+)?fn\s+([a-zA-Z0-9_]+)/gm;
         while ((match = funcRegex.exec(content)) !== null) {
             const funcName = match[1];
@@ -325,7 +310,6 @@ export class FileScanner {
             }
         }
 
-        // Rust use & mod statements (references) - 정밀 분석
         const lines = content.split('\n');
         for (const line of lines) {
             const trimmed = line.trim();
@@ -336,14 +320,12 @@ export class FileScanner {
 
             if (isCommented && !isPendingOrDeleted) continue;
 
-            // 1. Rust use statements
-            const useMatch = trimmed.match(/^(?:\/\/\s*)?(?:\[SYNAPSE(?:_PENDING|_DELETED)?:[^\]]+\]\s*)?use\s+([a-zA-Z0-9_:]+)/);
+            const useMatch = trimmed.match(/^(?:\/\/\s*)?(?:\[SYNAPSE(?:_PENDING|_DELETED)?:([^\]]+)\]\s*)?use\s+([a-zA-Z0-9_:]+)/);
             if (useMatch) {
-                const fullPath = useMatch[1];
+                const fullPath = useMatch[2];
                 const parts = fullPath.split('::');
                 const rootMod = parts[0];
 
-                // crate, self, super 등 내부 참조 처리
                 if (['crate', 'self', 'super'].includes(rootMod)) {
                     const targetMod = parts[1] || rootMod;
                     if (targetMod && !summary.references.some(r => r.target === targetMod)) {
@@ -351,19 +333,16 @@ export class FileScanner {
                         const nodeId = idMatch ? idMatch[1] : undefined;
                         summary.references.push({ target: targetMod, type: 'dependency', nodeId, isApproved: !isPendingOrDeleted });
                     }
-                } else if (rootMod) {
-                    if (!['std', 'core', 'alloc', 'prelude'].includes(rootMod)) {
-                        if (!summary.references.some(r => r.target === rootMod)) {
-                            const idMatch = line.match(/\[SYNAPSE(?:_PENDING|_DELETED)?:([^\]]+)\]/);
-                            const nodeId = idMatch ? idMatch[1] : undefined;
-                            summary.references.push({ target: rootMod, type: 'api_call', nodeId, isApproved: !isPendingOrDeleted });
-                        }
+                } else if (rootMod && !['std', 'core', 'alloc', 'prelude'].includes(rootMod)) {
+                    if (!summary.references.some(r => r.target === rootMod)) {
+                        const idMatch = line.match(/\[SYNAPSE(?:_PENDING|_DELETED)?:([^\]]+)\]/);
+                        const nodeId = idMatch ? idMatch[1] : undefined;
+                        summary.references.push({ target: rootMod, type: 'api_call', nodeId, isApproved: !isPendingOrDeleted });
                     }
                 }
             }
 
-            // 2. Rust mod statements
-            const modMatch = trimmed.match(/^(?:\/\/\s*)?(?:\[SYNAPSE(?:_PENDING|_DELETED)?:[^\]]+\]\s*)?mod\s+([a-zA-Z0-9_]+);/);
+            const modMatch = trimmed.match(/^(?:\/\/\s*)?(?:\[SYNAPSE(?:_PENDING|_DELETED)?:([^\]]+)\]\s*)?mod\s+([a-zA-Z0-9_]+);/);
             if (modMatch) {
                 const modName = modMatch[1];
                 if (modName && !summary.references.some(r => r.target === modName)) {
@@ -377,15 +356,12 @@ export class FileScanner {
 
     private parseShell(content: string, summary: CodeSummary) {
         try {
-            // Shell functions: function name() or name()
             const funcRegex = /^(?:function\s+)?([a-zA-Z0-9_-]+)\s*\(\s*\)/gm;
             let match;
             while ((match = funcRegex.exec(content)) !== null) {
                 summary.functions.push(match[1]);
             }
 
-            // References (scripts calling other scripts or bins)
-            // [v0.2.18.2 Opt] Ignore common shell keywords and prevent matching bash variables as files
             const refRegex = /(?:\.|\.\/|source\s+|bash\s+|sh\s+)([a-zA-Z0-9_-]+)(?:\.sh)?(?:\s|$)/g;
             const shellKeywords = ['then', 'else', 'done', 'fi', 'exit', 'true', 'false', 'echo', 'grep', 'sed', 'awk', 'cat'];
             
@@ -402,14 +378,12 @@ export class FileScanner {
 
     private parseSql(content: string, summary: CodeSummary) {
         try {
-            // SQL Tables
             const tableRegex = /CREATE\s+TABLE\s+(?:IF\s+NOT\s+EXISTS\s+)?([a-zA-Z0-9_."]+)/gi;
             let match;
             while ((match = tableRegex.exec(content)) !== null) {
                 summary.classes.push(match[1]);
             }
 
-            // SQL Views/Procedures
             const procRegex = /CREATE\s+(?:OR\s+REPLACE\s+)?(?:VIEW|PROCEDURE|FUNCTION)\s+([a-zA-Z0-9_."]+)/gi;
             while ((match = procRegex.exec(content)) !== null) {
                 summary.functions.push(match[1]);
@@ -420,13 +394,11 @@ export class FileScanner {
     }
 
     private parseConfig(content: string, summary: CodeSummary) {
-        // Config files (JSON/YAML/TOML) - look for key names that look like imports/extends
         const refRegex = /"(?:extends|import|using|include|source)"\s*:\s*"([^"]+)"|extends\s*:\s*([^\n]+)|import\s+([^\n]+)/gi;
         let match;
         while ((match = refRegex.exec(content)) !== null) {
             const ref = (match[1] || match[2] || match[3] || '').trim();
             if (ref && !summary.references.some(r => r.target === ref)) {
-                // Remove quotes if present
                 const cleanRefActual = ref.replace(/['"]/g, '');
                 summary.references.push({ target: cleanRefActual, type: 'dependency' });
             }
@@ -435,7 +407,6 @@ export class FileScanner {
 
     private parseMarkdown(content: string, summary: CodeSummary) {
         try {
-            // MD Headers (# Header) as classes/sections
             const headerRegex = /^(#{1,6})\s+(.+)$/gm;
             let match;
             let count = 0;
@@ -450,12 +421,10 @@ export class FileScanner {
                 count++;
             }
 
-            // MD Links ([label](path/to/file)) as references
             const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
             while ((match = linkRegex.exec(content)) !== null) {
                 const ref = match[2].trim();
                 if (ref && !ref.startsWith('http') && !ref.startsWith('#')) {
-                    // Clean path to file basename
                     const cleanRef = path.basename(ref, path.extname(ref));
                     if (cleanRef && !summary.references.some(r => r.target === cleanRef)) {
                         summary.references.push({ target: cleanRef, type: 'dependency' });

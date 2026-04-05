@@ -24,12 +24,13 @@ export interface RenderResult {
 }
 
 export class RendererCore {
-  private readonly SOFT_BUDGET_NODES = 200;
-  private readonly HARD_BUDGET_NODES = 500;
-  private readonly SOFT_BUDGET_EDGES = 500;
-  private readonly HARD_BUDGET_EDGES = 1000;
 
-  private threshold: number = 0.5; // Default Edge Weight Filter
+  private readonly SOFT_BUDGET_NODES = 4000;
+  private readonly HARD_BUDGET_NODES = 8000;
+  private readonly SOFT_BUDGET_EDGES = 6000;
+  private readonly HARD_BUDGET_EDGES = 12000;
+
+  private threshold: number = 0.1; // Default Edge Weight Filter lowered to 0.1
   private dirtyNodes: Set<string> = new Set(); // For Incremental Rendering
   public lastBudgetReport: any = null; // Phase 6 support
 
@@ -55,7 +56,7 @@ export class RendererCore {
       // 중요도가 낮은 Edge는 필터링하여 렌더링 부하 감소
       const filteredEdges = graphModel.getFilteredEdges(this.threshold);
       
-      const isDegraded = nodes.length > this.SOFT_BUDGET_NODES || this.threshold > 0.6;
+      const isDegraded = nodes.length > this.SOFT_BUDGET_NODES || this.threshold > 0.5;
 
       // 5. Incremental Rendering Check (Phase 5: 4번 전략)
       const renderResult = this.calculateIncrementalChanges(nodes, filteredEdges);
@@ -86,11 +87,11 @@ export class RendererCore {
    */
   private calculateDynamicThreshold(nodeCount: number, edgeCount: number) {
     if (nodeCount > this.HARD_BUDGET_NODES || edgeCount > this.HARD_BUDGET_EDGES) {
-      this.threshold = 0.9; // 극단적인 필터링 (최소 연결만 표시)
+      this.threshold = 0.5; // v0.3.09_fix: Significantly lowered to show more
     } else if (nodeCount > this.SOFT_BUDGET_NODES || edgeCount > this.SOFT_BUDGET_EDGES) {
-      this.threshold = 0.7; // 중간 단계 필터링
+      this.threshold = 0.3; // v0.3.09_fix: Relaxed
     } else {
-      this.threshold = 0.5; // 기본 필터링
+      this.threshold = 0.05; // v0.3.09_fix: Show almost everything including transitive
     }
   }
 

@@ -103,7 +103,7 @@ export class CanvasPanel {
             if (CanvasPanel.currentPanel._workspaceFolder.uri.fsPath !== workspaceFolder.uri.fsPath) {
                 console.log(`[SYNAPSE] Switching canvas context to: ${workspaceFolder.name}`);
                 CanvasPanel.currentPanel._workspaceFolder = workspaceFolder;
-                CanvasPanel.currentPanel.refreshState();
+                CanvasPanel.currentPanel._taskQueue.push(() => CanvasPanel.currentPanel!.refreshState());
             }
             CanvasPanel.currentPanel._panel.reveal(column);
             return;
@@ -441,7 +441,7 @@ export class CanvasPanel {
     }
 
     public async refreshState() {
-        await this.sendProjectState();
+        await this._taskQueue.push(() => this.sendProjectState());
     }
 
     /**
@@ -2514,11 +2514,16 @@ export class CanvasPanel {
                 }
             }
 
-            // [v0.3.1 Bootstrap Locked] Core Systems Synchronization
-            // Phase-based enforcement requires sequential advancement.
+            // [v0.3.09_fix] Atomicity: Core Systems Synchronization
+            // Only reset if system is locked or truly at the start.
+            // This prevents "flickering" where UI disappears every time a file is saved.
             try {
-                Logger.info(`[SYNAPSE] Initializing Core Systems (Phase 0 -> 2)...`);
-                phaseManager.reset(); 
+                if (phaseManager.isLocked() || phaseManager.getCurrentPhase() === Phase.DATA) {
+                    Logger.info(`[SYNAPSE] Initializing Core Systems (Phase 0 -> 2)...`);
+                    phaseManager.reset(); 
+                } else {
+                    Logger.info(`[SYNAPSE] Synchronizing Core Systems (Current Phase: ${Phase[phaseManager.getCurrentPhase()]})`);
+                }
                 
                 // 1. Sync GraphModel (Phase 1 Support)
                 graphModel.reset();

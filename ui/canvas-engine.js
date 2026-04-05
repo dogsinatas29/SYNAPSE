@@ -30,7 +30,7 @@ class PromotionParticle {
     render(ctx, transform) {
         const screenX = this.x * transform.zoom + transform.offsetX;
         const screenY = this.y * transform.zoom + transform.offsetY;
-        
+
         ctx.beginPath();
         ctx.arc(screenX, screenY, this.size * transform.zoom, 0, Math.PI * 2);
         ctx.fillStyle = `rgba(${this.rgb[0]}, ${this.rgb[1]}, ${this.rgb[2]}, ${this.life})`;
@@ -677,7 +677,7 @@ class TreeRenderer {
 
         for (const node of nodes) {
             if (!node.data) continue;
-            
+
             // [v0.2.19] Skip Ghost and Context nodes in Tree View
             if (node.status === 'ghost') continue;
             if (node.id.startsWith('ctx_vault_node_') || node.cluster_id === 'context_vault' || node.data?.cluster_id === 'context_vault') continue;
@@ -921,12 +921,12 @@ class CanvasEngine {
         this.contextVaultNodes = []; // [v0.3.0] 저장된 컨텍스트 전용 패널 리스트
         this.docShelfNodes = []; // [v0.3.1] 문서화 전용 패널 리스트
         this.isExpectingUpdate = false; // 데이터 업데이트 시 뷰 유지 여부 플래그
-        
+
         // [v0.2.20] Visual Impact State
         this.systemPressure = 0.0; // 0.0 to 1.0
         this.isRedOut = false;
         this.lastPressureUpdate = Date.now();
-        
+
         // [v0.2.19] Layer Visibility State
         this.showBaseLayer = true;
         this.showUserLayer = true;
@@ -1045,7 +1045,7 @@ class CanvasEngine {
         this.isTestingLogic = false;
         this.analysisIssues = [];
         this.pulses = []; // [{ edgeId: string, progress: number, speed: number }]
-        
+
         // [v0.2.18.2] Promotion Awareness System
         this.particles = [];
         this.promotionSites = []; // [{ x, y, startTime, label }]
@@ -1270,7 +1270,7 @@ class CanvasEngine {
         const btnEditLogicLabel = document.getElementById('btn-edit-logic-label');
         const _btnAddNode = document.getElementById('btn-add-node');
         const _btnConnect = document.getElementById('btn-connect');
-        
+
         const toggleEditLogic = () => {
             this.isEditMode = !this.isEditMode;
             if (btnEditLogicLabel) {
@@ -1280,7 +1280,7 @@ class CanvasEngine {
             if (btnEditLogic) {
                 btnEditLogic.textContent = `Turn ${this.isEditMode ? 'OFF' : 'ON'} Edit Mode`;
             }
-            
+
             if (this.isEditMode) {
                 this.canvas.style.boxShadow = 'inset 0 0 20px #fb4934';
                 if (_btnAddNode) _btnAddNode.style.display = 'block';
@@ -1292,7 +1292,7 @@ class CanvasEngine {
                 this.isAddingNode = false;
                 this.isCreatingEdge = false;
                 this.canvas.style.cursor = 'default';
-                
+
                 // [FIX v0.3.09] 2D 모드 전환 시 DOM 리플로우 강제 트리거
                 // 부모 컨테이너의 CSS 레이아웃이 재계산되도록 강제함
                 setTimeout(() => {
@@ -1475,14 +1475,14 @@ class CanvasEngine {
         const dpr = window.devicePixelRatio || 1;
         const width = container.clientWidth;
         let height = container.clientHeight;
-        
+
         // [FIX v0.3.09] clientHeight가 0이면 강제 최소값 설정
         // Canvas height가 0이면 렌더링 공간이 없어 모든 노드가 표시 안됨
         if (height === 0 || height < 100) {
             height = 400;  // 기본 최소 높이
             console.warn('[SYNAPSE] Canvas height was 0 or invalid, forcing minimum height: 400px');
         }
-        
+
         const targetWidth = Math.floor(width * dpr);
         const targetHeight = Math.floor(height * dpr);
 
@@ -1494,7 +1494,7 @@ class CanvasEngine {
                 this.canvas.height = targetHeight;
                 this.canvas.style.width = `${width}px`;
                 this.canvas.style.height = `${height}px`;
-                
+
                 if (this.webglEnabled && this.webglRenderer) {
                     this.webglRenderer.handleResize();
                 }
@@ -1641,23 +1641,23 @@ class CanvasEngine {
                 const now = Date.now();
                 const idleTime = now - (this.lastActivityTime || 0);
                 const hasActiveParticles = this.particles.length > 0 || this.promotionSites.length > 0;
-                
+
                 // [v0.2.25] Eternal Loop: No Auto-Sleep if WebGL + Graph mode
                 const idleLimit = (this.webglEnabled && this.currentMode === 'graph') ? Infinity : 2000;
-                
+
                 // [FIX v0.3.09] 렌더링 중에는 수면에 들지 않음
                 // isDirty 또는 필요한 업데이트가 있으면 렌더링이 진행되므로, 이 경우 수면 진입 금지
-                const isRenderingActive = this.isDirty || this._isInteracting || this.isDragging || 
-                                         this.isSelecting || hasActiveParticles || this.needsUpdate || 
-                                         (this.isAnimating && this.particles.length > 0) || this._isRendering;
-                
-                if (idleTime > idleLimit && !hasActiveParticles && !this.isDragging && !this.isSelecting && 
+                const isRenderingActive = this.isDirty || this._isInteracting || this.isDragging ||
+                    this.isSelecting || hasActiveParticles || this.needsUpdate ||
+                    (this.isAnimating && this.particles.length > 0) || this._isRendering;
+
+                if (idleTime > idleLimit && !hasActiveParticles && !this.isDragging && !this.isSelecting &&
                     !this.needsUpdate && !isRenderingActive) {
                     if (this.isAnimating) {
                         this.log('[SYNAPSE] Eco-mode: Entering Sleep (IDLE > 2s)');
                         this.isAnimating = false;
                         this.needsUpdate = true; // Final indicator draw
-                        this.render(); 
+                        this.render();
                     }
                     this._loopRunning = false; // Stop recursive RAF
                     return; // EXIT LOOP
@@ -1897,7 +1897,7 @@ class CanvasEngine {
         this.canvas.addEventListener('wheel', (e) => {
             this.wakeUp();
             this._isInteracting = true; // [v0.2.24] Lock during interaction
-            
+
             // Interaction Debounce: Reset lock after wheel activity pauses
             if (this._wheelTimeout) clearTimeout(this._wheelTimeout);
             this._wheelTimeout = setTimeout(() => {
@@ -2175,20 +2175,15 @@ class CanvasEngine {
         this.canvas.addEventListener('mouseup', (e) => {
             // 엣지 생성 완료
             if (this.isCreatingEdge) {
-                if (this.edgeTarget && this.edgeTarget.id !== this.edgeSource.id) {
-                    // 엣지 타입 선택 메뉴 표시
+                if (this.edgeSource && this.edgeTarget &&
+                    this.edgeTarget.id !== this.edgeSource.id) {
                     this.showEdgeTypeSelector(e.clientX, e.clientY);
                 } else {
-                    // 타겟이 없거나 자기 자신이면 취소
-                    this.isCreatingEdge = false;
                     this.edgeSource = null;
                     this.edgeTarget = null;
                 }
-                // 주의: edgeSource/edgeTarget은 createManualEdge에서 사용하므로 여기서 초기화하지 않음!
-                this.isCreatingEdge = false;
                 return;
             }
-
             if (this.isSelecting) {
                 this.isSelecting = false;
                 // 드래그 선택 영역에 포함된 노드 추가
@@ -2220,7 +2215,7 @@ class CanvasEngine {
                     }
                 }
                 this.render(); // [v0.2.34] Refresh 2D UI after box selection
-                
+
                 // [v0.2.20 Fix] Removed invalid saveState() call here.
                 // Saving state triggers a full JSON reload which overwrote Node objects with new ones.
                 // This caused 'selectedNodes' to contain dead references, breaking subsequent drag logic.
@@ -2242,7 +2237,7 @@ class CanvasEngine {
                         Math.pow(this.dragStartAbsolute.x - (this.dragStart?.x ?? 0), 2) +
                         Math.pow(this.dragStartAbsolute.y - (this.dragStart?.y ?? 0), 2)
                     );
-                    
+
                     if (absDragDist > 15 || movedByIntruder) {
                         this.saveState();
                         if (movedByIntruder) {
@@ -2413,7 +2408,7 @@ class CanvasEngine {
         // [v0.2.21] Double Click to Open File (Separation of Navigation and Editing)
         this.canvas.addEventListener('dblclick', (e) => {
             const worldPosDbl = this.screenToWorld(e.offsetX, e.offsetY);
-            
+
             if (this.currentMode === 'tree') {
                 const clickedItem = this.treeRenderer.getItemAt(this.treeData, worldPosDbl.x, worldPosDbl.y);
                 if (clickedItem && clickedItem.type === 'file' && clickedItem.node) {
@@ -3281,7 +3276,8 @@ class CanvasEngine {
             }
         }
 
-        this.saveState();
+        // [v0.3.09 Fix] Phase lock 이후로 지연하여 RENDER 단계 중 saveState 방지
+        setTimeout(() => this.saveState(), 100);
 
         // 엣지 생성 완료 후 상태 초기화
         this.edgeSource = null;
@@ -3376,12 +3372,12 @@ class CanvasEngine {
             edge.validation = result;
             edge._validationReason = result.reason;
             edge.isValid = result.valid;
-            
+
             if (result.visual) {
                 edge.visual = { ...edge.visual, ...result.visual };
                 result.color = result.visual.color; // renderEdge 호환성 브릿지
             }
-            
+
             // [v0.2.24] 캐시 직접 주입 (이후 renderEdge()가 캐시히트하여 빨간색 등 정상출력 가능)
             this.edgeValidationCache.set(edgeId, result);
 
@@ -3506,7 +3502,7 @@ class CanvasEngine {
         if (state.nodes) state.nodes.sort((a, b) => a.id.localeCompare(b.id));
         if (state.edges) state.edges.sort((a, b) => (a.id || "").localeCompare(b.id || "") || a.from.localeCompare(b.from));
         if (state.clusters) state.clusters.sort((a, b) => a.id.localeCompare(b.id));
-        
+
         // 2. Return a Deep Clone to prevent in-place mutation of incoming data
         return JSON.parse(JSON.stringify(state));
     }
@@ -3515,12 +3511,12 @@ class CanvasEngine {
         // [v0.2.24] Throttling & Data Integrity Guard
         const now = Date.now();
         const dataHash = `n${projectState.nodes?.length}e${projectState.edges?.length}c${projectState.clusters?.length}`;
-        
+
         if (this._lastDataHash === dataHash && (now - this._lastLoadTime < 1000) && preserveView) {
             // console.log('[SYNAPSE] Skipping redundant loadProjectState');
             return;
         }
-        
+
         this._lastDataHash = dataHash;
         this._lastLoadTime = now;
 
@@ -3547,7 +3543,7 @@ class CanvasEngine {
             this.contextVaultNodes = rawNodes.filter(n => n.id.startsWith('ctx_vault_node_') || n.cluster_id === 'context_vault' || n.data?.cluster_id === 'context_vault');
             this.docShelfNodes = rawNodes.filter(n => n.type === 'documentation' || n.cluster_id === 'doc_shelf' || n.data?.cluster_id === 'doc_shelf');
             this.nodes = rawNodes.filter(n => !this.contextVaultNodes.includes(n) && !this.docShelfNodes.includes(n));
-            
+
             const vaultIds = new Set(this.contextVaultNodes.map(n => n.id));
             const rawEdges = projectState.edges || [];
             this.edges = rawEdges.filter(e => !vaultIds.has(e.from) && !vaultIds.has(e.to));
@@ -3567,7 +3563,7 @@ class CanvasEngine {
                     });
                     this.promotingNodeIds.add(solidMatch.id);
                     promotedLabels.push(label);
-                    
+
                     // Trigger particles immediately
                     this.emitPromotionParticles(solidMatch.position.x + 60, solidMatch.position.y + 30);
                 }
@@ -3577,7 +3573,7 @@ class CanvasEngine {
                 // Show toast (Simple implementation for now)
                 this._showPromotionToast(promotedLabels);
             }
-            
+
             this._updateLayerCounts();
 
             const rawClusters = projectState.clusters || [];
@@ -3721,7 +3717,7 @@ class CanvasEngine {
 
                 if (edgesToValidate.length > 0) {
                     console.log(`[SYNAPSE] Requesting batched validation for ${edgesToValidate.length} edges...`);
-                    
+
                     // Group edges with their node context to save backend lookup time
                     const validationPayload = edgesToValidate.map(edge => {
                         const fromNode = this.nodeMap.get(edge.from);
@@ -3758,7 +3754,7 @@ class CanvasEngine {
             // 로딩 숨기기 (무조건 실행)
             const loadingEl = document.getElementById('loading');
             if (loadingEl) loadingEl.remove(); // Force remove to prevent blocking
-            
+
             // [v0.2.24] 데이터 로드 후 강제 렌더링 및 WebGL 버퍼 갱신 플래그 설정
             this.isDirty = true;
             this.isGraphDataDirty = true;
@@ -3788,10 +3784,10 @@ class CanvasEngine {
     renderContextVaultList(filterQuery = '') {
         const listEl = document.getElementById('context-vault-list');
         if (!listEl) return;
-        
+
         listEl.innerHTML = '';
         const search = filterQuery.toLowerCase();
-        
+
         const filtered = this.contextVaultNodes.filter(n => {
             if (!search) return true;
             const text = (n.data?.label || '') + ' ' + (n.data?.description || '') + ' ' + n.id;
@@ -3806,25 +3802,25 @@ class CanvasEngine {
         filtered.forEach(node => {
             const item = document.createElement('div');
             item.className = 'vault-item';
-            
+
             const title = document.createElement('div');
             title.className = 'vault-item-title';
             title.textContent = node.data?.label || node.id;
-            
+
             const preview = document.createElement('div');
             preview.className = 'vault-item-preview';
             preview.textContent = node.data?.description || 'No description available.';
-            
+
             item.appendChild(title);
             item.appendChild(preview);
-            
+
             // Allow opening this markdown in VSCode
             item.addEventListener('click', () => {
                 if (typeof vscode !== 'undefined' && node.data?.file) {
                     vscode.postMessage({ command: 'openFile', filePath: node.data.file });
                 }
             });
-            
+
             listEl.appendChild(item);
         });
     }
@@ -4000,7 +3996,7 @@ class CanvasEngine {
         }
     }
 
-    
+
     /**
      * [v0.2.26] GPU 및 WebGL 상태 강제 초기화 (Isolation Guard)
      */
@@ -4008,14 +4004,14 @@ class CanvasEngine {
         if (!this.webglEnabled || !this.webglRenderer) return;
         const gl = this.webglRenderer.gl;
         if (!gl) return;
-        
+
         gl.bindFramebuffer(gl.FRAMEBUFFER, null);
         gl.useProgram(null);
         gl.disable(gl.DEPTH_TEST);
         gl.disable(gl.BLEND);
         gl.viewport(0, 0, this.canvas.width, this.canvas.height);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-        
+
         // 2D 캔버스 초기화 (Flicker 방지용)
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     }
@@ -4051,7 +4047,7 @@ class CanvasEngine {
 
         const ITERATIONS = 3; // 3 passes for convergence
         const GRID_SIZE = 150; // Grid cell size
-        const MIN_DIST = 140; 
+        const MIN_DIST = 140;
         const MIN_DIST_SQ = MIN_DIST * MIN_DIST;
         const round = v => Math.round(v * 1000) / 1000;
 
@@ -4120,10 +4116,10 @@ class CanvasEngine {
     buildFrameState(context) {
         // 1. Filter Nodes based on Context Layers
         const filtered = this.nodes.filter(n => {
-            const isUser = (n.category === 'user') || 
-                           (n.id && n.id.startsWith('node_manual_')) || 
-                           (n.cluster_id && n.cluster_id.startsWith('sys_'));
-            
+            const isUser = (n.category === 'user') ||
+                (n.id && n.id.startsWith('node_manual_')) ||
+                (n.cluster_id && n.cluster_id.startsWith('sys_'));
+
             if (isUser && !context.showUserLayer) return false;
             if (!isUser && !context.showBaseLayer) return false;
             return true;
@@ -4172,14 +4168,14 @@ class CanvasEngine {
      */
     renderFromState(frameState) {
         if (!frameState || !this.ctx) return;
-        
+
         const zoom = frameState.context.zoom;
         const offsetX = frameState.context.offsetX;
         const offsetY = frameState.context.offsetY;
 
         // 1. Grid (Standard Canvas)
         this.renderGrid();
-        
+
         // [v0.2.28] Render Clusters first
         this.renderClusters();
 
@@ -4220,11 +4216,11 @@ class CanvasEngine {
             const frameState = buildFrameState(this.nodes, this.edges, this.clusters, contextSnapshot);
             this.lastFrameState = frameState; // Save for hit testing
 
-            
+
             // 2D Redraw
             this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
             this.renderFromState(frameState);
-            
+
             // 3D Redraw (Atomic update)
             if (this.webglRenderer && this.webglEnabled) {
                 this.webglRenderer.renderFromState(frameState);
@@ -4235,9 +4231,9 @@ class CanvasEngine {
 
         this._frameCounter++;
         const shouldLog = this._frameCounter % 120 === 0;
-        
+
         // [v0.2.28] Trace UI Interaction for Selection Updates
-        const currentSelectionHash = Array.from(this.selectedNodes).map(n=>n.id).sort().join(',') + (this.selectedEdge?.id || '');
+        const currentSelectionHash = Array.from(this.selectedNodes).map(n => n.id).sort().join(',') + (this.selectedEdge?.id || '');
         if (this._lastSelectionHash !== currentSelectionHash) {
             this.isEdgeDirty = true; // Force WebGL Buffer Refresh
             this.isTextDirty = true;
@@ -4245,7 +4241,7 @@ class CanvasEngine {
         }
 
         if (shouldLog) console.log("frame start");
-        
+
         // [v0.2.31] Explicit Rendering Boundary: Start
         if (this.webglRenderer) {
             this.webglRenderer.beginFrame();
@@ -4293,15 +4289,15 @@ class CanvasEngine {
         const ctx = this.ctx;
         const canvas = this.canvas;
         ctx.setTransform(1, 0, 0, 1, 0, 0);
-        
+
         // [FIX v0.3.09] Eco-mode 수면 중 업데이트 방지
         // 렌더링이 시작되었다는 신호를 보내서 Eco-mode가 수면에 들지 않게 함
         this.lastActivityTime = Date.now();
-        
+
         // [v0.3.4 - Fix 2D Ghosting] ALWAYS clear the entire pixel buffer before drawing.
         // Even in 2D mode, clearRect ensures no leftover alpha or pixels.
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        
+
         if (!this.webglEnabled) {
             ctx.fillStyle = '#1e1e1e';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -4404,18 +4400,18 @@ class CanvasEngine {
                             const isUserLogic = (n) => {
                                 // [v0.2.26] Robust check: Manual node OR System cluster
                                 const idManual = n.id && typeof n.id === 'string' && n.id.startsWith('node_manual_');
-                                const clusterSys = (n.cluster_id && typeof n.cluster_id === 'string' && n.cluster_id.startsWith('sys_')) || 
-                                                  (n.data?.cluster_id && typeof n.data.cluster_id === 'string' && n.data.cluster_id.startsWith('sys_'));
+                                const clusterSys = (n.cluster_id && typeof n.cluster_id === 'string' && n.cluster_id.startsWith('sys_')) ||
+                                    (n.data?.cluster_id && typeof n.data.cluster_id === 'string' && n.data.cluster_id.startsWith('sys_'));
                                 return idManual || clusterSys;
                             };
-                            
+
                             this._visibleNodesCache = this.nodes.filter(n => {
                                 const isUser = isUserLogic(n);
                                 // If base layer is hidden, and node is NOT user logic, skip.
                                 if (!isUser && !this.showBaseLayer) return false;
                                 // If user layer is hidden, and node IS user logic, skip.
                                 if (isUser && !this.showUserLayer) return false;
-                                
+
                                 // [v0.2.27] Sync: Skip nodes in collapsed clusters (matches 2D behavior)
                                 const clusterId = n.cluster_id || n.data?.cluster_id;
                                 if (clusterId) {
@@ -4430,13 +4426,21 @@ class CanvasEngine {
                         }
 
                         const selectedIds = new Set(Array.from(this.selectedNodes).map(n => n.id));
+
+                        // [v0.3.2] Ensure overlay is visible and active only in graph mode
+                        const overlay = document.getElementById('webgl-overlay-canvas');
+                        if (overlay && overlay.style.display === 'none') {
+                            overlay.style.display = 'block';
+                            this.isGraphDataDirty = true;
+                        }
+
                         this.webglRenderer.render(
-                            this._visibleNodesCache, 
-                            this.transform, 
-                            this.isGraphDataDirty, 
-                            this._visibleEdgesCache, 
-                            this.nodeMap, 
-                            this.isEdgeDirty, 
+                            this._visibleNodesCache,
+                            this.transform,
+                            this.isGraphDataDirty,
+                            this._visibleEdgesCache,
+                            this.nodeMap,
+                            this.isEdgeDirty,
                             this.isTextDirty,
                             selectedIds
                         );
@@ -4444,7 +4448,9 @@ class CanvasEngine {
                         // [v0.2.33] 🚀 Hybrid Rendering: Render badges and interactive markers on 2D ctx ON TOP of WebGL
                         // This ensures information parity for Badges/Arrows/Glow that WebGL lacks.
                         this.ctx.save();
-                        this.ctx.setTransform(this.transform.zoom, 0, 0, this.transform.zoom, this.transform.offsetX, this.transform.offsetY);
+                        // [v0.3.2] Align coordinates with DPR scaling (matches 2D background)
+                        const dpr = window.devicePixelRatio || 1;
+                        this.ctx.setTransform(this.transform.zoom * dpr, 0, 0, this.transform.zoom * dpr, this.transform.offsetX * dpr, this.transform.offsetY * dpr);
                         for (const edge of this._visibleEdgesCache) {
                             this.renderEdgeBadges(this.ctx, edge); // Only the numbers/badges
                         }
@@ -4454,14 +4460,23 @@ class CanvasEngine {
                         this.isEdgeDirty = false;
                         this.isTextDirty = false;
                     } else {
+                        // [v0.3.2] View Isolation (Rule 08): Hide WebGL overlay if not in graph mode or disabled
+                        if (this.webglRenderer) {
+                            const overlay = document.getElementById('webgl-overlay-canvas');
+                            if (overlay && overlay.style.display !== 'none') {
+                                overlay.style.display = 'none';
+                                this.webglRenderer.reset(); // Pure isolation
+                                console.log("[SYNAPSE] WebGL Overlay Hidden (View Isolation)");
+                            }
+                        }
                         // [v0.3.9] Fixed 2D Mode: Explicitly call Node rendering
-                        this.renderEdges2D();  
+                        this.renderEdges2D();
                         this.renderNodes2D(zoom);
-                        this.renderLabels2D(); 
+                        this.renderLabels2D();
                     }
 
                     if (shouldLog) console.log("after edges/labels");
-                    
+
                     this.renderGhostNodes(zoom);
                 }
 
@@ -4471,13 +4486,13 @@ class CanvasEngine {
                     this.ctx.save();
                     const dpr = window.devicePixelRatio || 1;
                     this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0); // Revert to Screen space (scaled by DPR)
-                    
+
                     this.ctx.fillStyle = 'rgba(69, 133, 136, 0.25)';
                     this.ctx.strokeStyle = '#458588';
                     this.ctx.lineWidth = 1;
                     this.ctx.fillRect(this.selectionRect.x, this.selectionRect.y, this.selectionRect.width, this.selectionRect.height);
                     this.ctx.strokeRect(this.selectionRect.x, this.selectionRect.y, this.selectionRect.width, this.selectionRect.height);
-                    
+
                     this.ctx.restore();
                 }
 
@@ -4559,10 +4574,10 @@ class CanvasEngine {
                 // [v0.2.24] Edge Culling: Skip if both nodes are entirely outside the screen
                 const srcVisible = !(srcNode.position.x + 120 < worldLeft || srcNode.position.x > worldRight || srcNode.position.y + 60 < worldTop || srcNode.position.y > worldBottom);
                 const tgtVisible = !(tgtNode.position.x + 120 < worldLeft || tgtNode.position.x > worldRight || tgtNode.position.y + 60 < worldTop || tgtNode.position.y > worldBottom);
-                
+
                 if (!srcVisible && !tgtVisible) {
                     // [v0.2.26] Debug: if nothing is visible, maybe view is lost?
-                    continue; 
+                    continue;
                 }
 
                 const isUserLogic = (n) => n.id.startsWith('node_manual_') || n.cluster_id?.startsWith('sys_') || n.data?.cluster_id?.startsWith('sys_');
@@ -4578,16 +4593,16 @@ class CanvasEngine {
         const dpr = window.devicePixelRatio || 1;
         let canvasWidth = this.canvas.width / dpr;
         let canvasHeight = this.canvas.height / dpr;
-        
+
         // [FIX v0.3.09] Safety check: invalid canvas dimensions
         // Canvas height가 0이면 이후 모든 계산이 0으로 고정되어 노드가 범위 밖으로 인식됨
         if (canvasWidth === 0 || canvasHeight === 0) {
-            console.warn('[SYNAPSE] renderNodes2D: invalid canvas dimensions detected', 
-                         `${canvasWidth}x${canvasHeight}, forcing resize`);
+            console.warn('[SYNAPSE] renderNodes2D: invalid canvas dimensions detected',
+                `${canvasWidth}x${canvasHeight}, forcing resize`);
             this.resizeCanvas(true);  // Force immediate resize and retry next frame
             return;  // Skip rendering this frame to avoid errors
         }
-        
+
         const worldLeft = -this.transform.offsetX / zoom;
         const worldTop = -this.transform.offsetY / zoom;
         const worldRight = (canvasWidth - this.transform.offsetX) / zoom;
@@ -4597,7 +4612,7 @@ class CanvasEngine {
         // [v0.4.0 Fix] Viewport culling disabled for absolute safety in v0.4.0
         for (const node of this.nodes) {
             if (!node.position) continue;
-            
+
             // Temporary Bypass of Culling to ensure all nodes (External Ghosts, etc) are visible
             // if (node.position.x + 120 + margin < worldLeft || node.position.x - margin > worldRight || ...)
 
@@ -5082,12 +5097,12 @@ class CanvasEngine {
         if (costSpan) costSpan.textContent = value < 0.4 ? 'Low' : (value < 0.8 ? 'Mid' : 'High');
 
         if (nodeLabel !== undefined) {
-            if (nodeLabelEl) { 
-                nodeLabelEl.textContent = `📄 ${nodeLabel}`; 
-                nodeLabelEl.style.display = 'block'; 
+            if (nodeLabelEl) {
+                nodeLabelEl.textContent = `📄 ${nodeLabel}`;
+                nodeLabelEl.style.display = 'block';
             }
-            if (slider) { 
-                slider.value = value; 
+            if (slider) {
+                slider.value = value;
                 slider.style.display = 'block';
                 slider.style.visibility = 'visible'; // Extra safety
             }
@@ -5308,10 +5323,10 @@ class CanvasEngine {
             if (isBaseCluster && !this.showBaseLayer) {
                 // However, Context Vault is base logic, but we handle its visibility separately.
                 if (cluster.id !== 'context_vault') {
-                    continue; 
+                    continue;
                 }
             }
-            
+
             const b = getClusterBounds(cluster);
             if (b.minX === Infinity) continue;
 
@@ -5637,7 +5652,7 @@ class CanvasEngine {
         // [v0.4.0 Critical Fix] Move Translate to TOP
         // This ensures Satellite view (zoom < 0.4) uses the correct coordinates per node.
         this.ctx.save();
-        
+
         let jitterX = 0, jitterY = 0;
         if (node.isArchViolation && this.isAnimating) {
             jitterX = (Math.random() - 0.5) * 2.5;
@@ -5686,7 +5701,7 @@ class CanvasEngine {
 
         // 1. 상태별 특수 효과 계산
         const isTombstone = node.status === 'error_tombstone' || (node.data?.issues?.some(i => i.includes('Tombstone')));
-        
+
         if ((node.status === 'error_necrosis' || isTombstone) && zoom > 0.4) {
             style.bgColor = '#1d2021'; // Dark Necrosis Base
             style.borderColor = '#fb4934'; // Red Border
@@ -5708,9 +5723,9 @@ class CanvasEngine {
         let glowColor = null;
 
         // [v0.2.22/v0.2.25] Node Status & High DTR Glow Override (Conventions)
-                // [v0.2.22/v0.2.26] Node Status & High DTR Glow Override
+        // [v0.2.22/v0.2.26] Node Status & High DTR Glow Override
         if (node.status === 'active') {
-            borderColor = '#83a598'; 
+            borderColor = '#83a598';
             node.visual.opacity = 1.0; // Ensure full visibility
         } else if (node.status === 'ghost') {
             borderColor = '#928374'; // Ghost Gray
@@ -5725,7 +5740,7 @@ class CanvasEngine {
             borderColor = '#1d2021';
             bgColor = '#1d2021';
         }
-        
+
         // High DTR Logic Pulse (Overwrites status glow if significant)
         const dtr = (node.intelligence && node.intelligence.dtr !== undefined) ? node.intelligence.dtr : this.currentDTR;
         if (dtr >= 0.7) {
@@ -5874,14 +5889,14 @@ class CanvasEngine {
             const centerX = x;
             const centerY = y;
             const radius = Math.min(nodeWidth, nodeHeight) * 0.45;
-            
+
             this.ctx.save();
             // 1. Necrotic Core (Radial Gradient: Black to Dark Purple/Red)
             const grad = this.ctx.createRadialGradient(centerX, centerY, 2, centerX, centerY, radius);
             grad.addColorStop(0, '#000000');
             grad.addColorStop(0.6, 'rgba(138, 43, 226, 0.4)'); // Purple necrosis
             grad.addColorStop(1, 'rgba(251, 73, 52, 0)'); // Fades out
-            
+
             this.ctx.fillStyle = grad;
             this.ctx.beginPath();
             this.ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
@@ -5897,7 +5912,7 @@ class CanvasEngine {
                 this.ctx.fillRect(rx, ry, rSize, rSize);
             }
             this.ctx.restore();
-            
+
             // Highlight the necrotic state further
             borderColor = '#1d2021';
             lineWidth = 4;
@@ -6059,17 +6074,17 @@ class CanvasEngine {
             this.ctx.fillStyle = '#fabd2f';
             this.ctx.globalAlpha = 1.0;
             const hSize = 8 / zoom; // Handle size
-            
+
             // Draw a subtle border around the whole box
             this.ctx.strokeStyle = '#fabd2f';
             this.ctx.lineWidth = 1.5 / zoom;
             this.ctx.strokeRect(0, 0, nodeWidth, nodeHeight);
 
             // Handle Boxes at corners
-            this.ctx.fillRect(-hSize/2, -hSize/2, hSize, hSize); // TL
-            this.ctx.fillRect(nodeWidth - hSize/2, -hSize/2, hSize, hSize); // TR
-            this.ctx.fillRect(-hSize/2, nodeHeight - hSize/2, hSize, hSize); // BL
-            this.ctx.fillRect(nodeWidth - hSize/2, nodeHeight - hSize/2, hSize, hSize); // BR
+            this.ctx.fillRect(-hSize / 2, -hSize / 2, hSize, hSize); // TL
+            this.ctx.fillRect(nodeWidth - hSize / 2, -hSize / 2, hSize, hSize); // TR
+            this.ctx.fillRect(-hSize / 2, nodeHeight - hSize / 2, hSize, hSize); // BL
+            this.ctx.fillRect(nodeWidth - hSize / 2, nodeHeight - hSize / 2, hSize, hSize); // BR
         }
 
         this.ctx.restore(); // [CRITICAL] Matches ctx.save() at the start of node rendering
@@ -6317,7 +6332,7 @@ class CanvasEngine {
         const maxX = Math.max(fromX, toX, cpX) + threshold + 50;
         const minY = Math.min(fromY, toY, cpY) - threshold - 50;
         const maxY = Math.max(fromY, toY, cpY) + threshold + 50;
-        
+
         if (px < minX || px > maxX || py < minY || py > maxY) {
             return false; // Point is outside bounding box, skip expensive O(Segments) Math
         }
@@ -6632,7 +6647,7 @@ class CanvasEngine {
             let valIcon = '';
             if (!validation.valid) valIcon = '❌';
             else if (validation.color === '#fabd2f') valIcon = '⚠️';
-            
+
             const aiIcon = validation.isAi ? '🤖' : '';
             const text = (aiIcon && valIcon) ? `${aiIcon} ${valIcon}` : (aiIcon || valIcon);
             const metrics = this.ctx.measureText(text);
@@ -6694,7 +6709,7 @@ class CanvasEngine {
         if (confirmStatus === 'pending_confirm' || confirmStatus === 'confirmed') {
             const isPending = confirmStatus === 'pending_confirm';
             const badgeChar = isPending ? '❓' : '❗️';
-            const badgeColor = isPending ? '#504945' : '#83a598'; 
+            const badgeColor = isPending ? '#504945' : '#83a598';
 
             ctx.save();
             ctx.font = `bold ${badgeSize}px Inter, monospace`;
@@ -6732,7 +6747,7 @@ class CanvasEngine {
             ctx.font = `bold ${delSize}px Inter, monospace`;
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            
+
             ctx.beginPath();
             ctx.arc(deleteX, deleteY, delSize * 0.75, 0, Math.PI * 2);
             ctx.fillStyle = 'rgba(251, 73, 52, 0.9)'; // Red
@@ -6890,7 +6905,7 @@ class CanvasEngine {
                     this.ctx.fillStyle = cluster.color || '#fabd2f';
                     this.ctx.strokeStyle = '#3c3836';
                     this.ctx.lineWidth = 2 / this.transform.zoom;
-                    
+
                     // 광택/발광 효과 (드래그 중 임시 차단)
                     if (this.isAnimating && !this.isDragging) {
                         this.ctx.shadowBlur = 10 / this.transform.zoom;
@@ -6991,20 +7006,20 @@ class CanvasEngine {
                 toY - arrowSize * Math.sin(angle + Math.PI / 6)
             );
             this.ctx.closePath();
-            
+
             // 타겟 중심부의 그림자/글로우 연산도 드래그 중 오프 처리
             if (!this.isDragging) {
                 this.ctx.shadowBlur = 15;
                 this.ctx.shadowColor = '#b8bb26';
             }
-            
+
             this.ctx.fillStyle = '#b8bb26';
             this.ctx.fill();
             this.ctx.shadowBlur = 0; // 리셋
         }
     }
 
-// [v0.2.20] Deleted duplicate resizeCanvas definition
+    // [v0.2.20] Deleted duplicate resizeCanvas definition
 
     /**
      * Send current context data to extension
@@ -7077,7 +7092,7 @@ class CanvasEngine {
     // [v0.2.21] Tombstone Visual (Sovereign Quality)
     renderTombstone(width, height, style) {
         this.ctx.save();
-        
+
         // Tombstone Shape
         this.ctx.beginPath();
         this.ctx.moveTo(10, height);
@@ -7719,14 +7734,14 @@ function initCanvas() {
         document.addEventListener('mousemove', (e) => {
             if (!isDraggingDtr) return;
             e.preventDefault();
-            
+
             // Constrain to window bounds
             let newX = e.clientX - dtrDragStartX;
             let newY = e.clientY - dtrDragStartY;
-            
+
             const maxX = window.innerWidth - dtrController.offsetWidth;
             const maxY = window.innerHeight - dtrController.offsetHeight;
-            
+
             newX = Math.max(0, Math.min(newX, maxX));
             newY = Math.max(0, Math.min(newY, maxY));
 
@@ -7740,7 +7755,7 @@ function initCanvas() {
                 dtrController.style.cursor = 'grab';
             }
         });
-        
+
         // Initial cursor style for the draggable area
         const dtrHeader = dtrController.querySelector('.dtr-header');
         if (dtrHeader) {

@@ -20,6 +20,7 @@ class PhaseManager {
   private currentPhase: Phase = Phase.DATA;
   private locked: boolean = false;
   private lockReason: string | null = null;
+  public onPhaseAdvance: ((phase: Phase) => void) | null = null;
 
   public getCurrentPhase(): Phase {
     return this.currentPhase;
@@ -61,6 +62,9 @@ class PhaseManager {
 
     this.currentPhase = next;
     console.log(`[SYNAPSE] Advancing to Phase: ${Phase[next]}`);
+    if (this.onPhaseAdvance) {
+      this.onPhaseAdvance(next);
+    }
   }
 
   /**

@@ -149,6 +149,13 @@ export class CanvasPanel {
         // Listen for when the panel is disposed
         this._panel.onDidDispose(() => this.dispose(), null, this._disposables);
 
+        // [v0.3.09_fix] Rendering Isolation - send clearCanvas when Phase changes
+        phaseManager.onPhaseAdvance = (phase: Phase) => {
+            if (this._panel && this._panel.webview) {
+                this._panel.webview.postMessage({ command: 'clearCanvas', phase });
+            }
+        };
+
         // Handle messages from the webview
         this._panel.webview.onDidReceiveMessage(
             async message => {

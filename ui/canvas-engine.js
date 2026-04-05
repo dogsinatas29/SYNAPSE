@@ -7295,6 +7295,17 @@ function initCanvas() {
                 console.log('[SYNAPSE] RESET_CANVAS received. Canvas cleared.');
                 break;
             }
+            case 'clearCanvas': {
+                // [v0.3.09_fix] Rendering Isolation - Wipe buffers on Phase transitions
+                if (engine.webglEnabled && engine.webglRenderer) {
+                    engine.webglRenderer.clear();
+                }
+                if (engine.ctx && engine.canvas) {
+                    engine.ctx.clearRect(0, 0, engine.canvas.width, engine.canvas.height);
+                }
+                console.log('[SYNAPSE] clearCanvas message received. WebGL/2D buffers safely wiped.');
+                break;
+            }
             case 'analysisProgress': {
                 const loadingText = document.querySelector('#loading div:not(.spinner)');
                 if (loadingText) {
@@ -7675,11 +7686,7 @@ function initCanvas() {
                     engine.webglRenderer.drawCalls = 0;
                     if (mode !== 'graph') {
                         engine.webglRenderer.endFrame(); // Ensure clean state when switching away
-                        const gl = engine.webglRenderer.gl;
-                        if (gl) {
-                            gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-                            gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-                        }
+                        engine.webglRenderer.clear(); // [v0.3.09_fix] Force wipe on view transition
                     } else {
                         // Switching back to graph mode, force full buffer rebuild
                         engine.webglRenderer.charCount = 0; // Force text rebuild

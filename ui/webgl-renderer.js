@@ -1249,6 +1249,25 @@ class WebGLRenderer {
      * [v0.2.31] Explicit Frame Lifecycle: End
      * Cleans up program and bindings
      */
+    clear() {
+        if (!this.gl) return;
+        // [v0.3.09_fix] Rendering Isolation: Force clear state & buffers
+        this.gl.clearColor(0, 0, 0, 0);
+        this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
+        
+        Object.values(this.layers).forEach(layer => {
+            if (layer.fbo) {
+                this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, layer.fbo);
+                this.gl.clearColor(0, 0, 0, 0);
+                this.gl.clear(this.gl.COLOR_BUFFER_BIT);
+                layer.isDirty = true;
+            }
+        });
+        
+        this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, null);
+        this.nodeCount = 0; // Prevent ghost rendering on leftover instances
+    }
+
     endFrame() {
         if (!this.gl) return;
         const gl = this.gl;

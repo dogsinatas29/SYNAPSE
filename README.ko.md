@@ -1,9 +1,9 @@
-# <img src="./resources/synapse-icon.png" width="40" height="40" /> 🧠 SYNAPSE: 시각적 아키텍처 엔진 (v0.3.9)
+# <img src="./resources/synapse-icon.png" width="40" height="40" /> 🧠 SYNAPSE: 시각적 아키텍처 엔진 (v0.3.10)
 
 > **"눈에 보이는 것이 LLM의 논리다"** — *AI를 위한 WYSIWYG 논리 엔진*
 
-[![Version](https://img.shields.io/badge/version-v0.3.9-brightgreen.png)](https://github.com/dogsinatas29/SYNAPSE)
-[![Latest Release](https://img.shields.io/badge/latest-v0.3.09%20Hotfix-orange.png)](https://github.com/dogsinatas29/SYNAPSE/releases)
+[![Version](https://img.shields.io/badge/version-v0.3.10-brightgreen.png)](https://github.com/dogsinatas29/SYNAPSE)
+[![Latest Release](https://img.shields.io/badge/latest-v0.3.09%20Hotfix%20(Lock%20Fixed)-orange.png)](https://github.com/dogsinatas29/SYNAPSE/releases)
 ![Status](https://img.shields.io/badge/status-Production_Ready-brightgreen.png)
 [![Language](https://img.shields.io/badge/Language-TypeScript-blue?style=flat-square)](https://www.typescriptlang.org/)
 [![Platform](https://img.shields.io/badge/Platform-VS_Code-007ACC?style=flat-square)](https://code.visualstudio.com/)
@@ -12,17 +12,18 @@
 
 ---
 
-## 🔥 최신 릴리즈: v0.3.09 핫픽스 (2026-04-05)
+## 🔥 최신 릴리즈: v0.3.09 핫픽스 - 페이즈 락 해결 (2026-04-05)
 
 ### ✅ 주요 버그 수정
-**v0.3.09** 버전은 v0.3.9 배포 후 보고된 치명적인 렌더링 및 시스템 락 이슈를 해결합니다:
+**v0.3.09_fix** 버전은 대규모 렌더링 사이클 중 발생하던 치명적인 전역 "LOCKED" 상태를 해결합니다:
 
 | 이슈 | 증상 | 수정 내용 | 상태 |
 |-------|---------|-----|--------|
-| **시스템 락 (Lock)** | Phase 5 이상에서 세이브/편집 불가 | Phase 전이 제약 완화 및 인터렉션 허용 범위 확장 | ✅ 수정됨 |
+| **시스템 락 (데드락)**| Phase 5/6에서 인터렉션 차단 | `PhaseManager` 전이 완화 + `ControlSystem` 인터렉션 범위 확장 | ✅ 수정됨 |
 | **Canvas 높이 0** | 2D 모드: 노드가 보이지 않음 | 최소 높이 강제 및 DOM 리플로우 트리거 | ✅ 수정됨 |
 | **이모지 폰트 누락** | 3D 모드: 아이콘이 'D', 'B'로 표시됨 | Noto Color Emoji 폰트 스택 적용 | ✅ 수정됨 |
 | **에코 모드 수면** | 렌더링 중 성능 저하 발생 | 렌더링 상태 체크 및 유휴 타이머 초기화 | ✅ 수정됨 |
+| **엣지 렌더링 동기화** | 검증 시 3D 아이콘 실종 등 | 검증 조건부 최적화 + 폴백 심볼 렌더링 보장 | ✅ 수정됨 |
 | **렌더링 격리** | 뷰 전환 시 WebGL 잔상 발생 | Rule 8 적용: 뷰 종료 시 WebGL 프레임버퍼 강제 리셋 | ✅ 수정됨 |
 
 ---
@@ -85,42 +86,22 @@ SYNAPSE는 다양한 컴포넌트 타입과 추론 상태를 나타내기 위해
 | 🧩 | **Component** | 논리적 그룹 또는 추상 모듈. |
 | ⚡ | **Trigger** | 진입점 또는 이벤트 소스. |
 
-### 🎨 노드 상태 및 발광 (Glow)
-| 상태 | 시각적 힌트 | 색상 | 의미 |
-| :--- | :---: | :---: | :--- |
-| **Active** | 실선 테두리 | 녹색계열 | 검증되었으며 현재 코드베이스에서 활성화됨. |
-| **High DTR** | 보라색 발광 | 보라색 | 높은 추론 밀도; 핵심 논리 지점. |
-| **Ghost** | 점선 테두리 | 회색 | 제안된 아키텍처 노드 (아직 파일로 생성되지 않음). |
-| **Deleted** | 흐릿함 | 어두운 회색 | 안전하게 주석 처리/폐기된 노드. |
-| **Warning** | 붉은색 펄스 | 붉은색 | 논리 오류, 순환 의존성 또는 막다른 경로 탐지. |
-
----
-
-## 🔗 엣지 및 라인 규약
-SYNAPSE는 노드 간의 다양한 논리적 연결과 데이터 흐름을 나타내기 위해 고유한 색상과 스타일을 사용합니다.
-
-| 엣지 타입 | 색상 | 스타일 및 두께 | 의미 |
-| :--- | :---: | :---: | :--- |
-| **Dependency** | 베이지 | 실선 2px | 표준 모듈 의존성 또는 임포트. |
-| **Data Flow** | 파랑 | 실선 3px | 대량 데이터 전송 또는 페이로드 이동. |
-| **API Call** | 아쿠아 | 점선 2px | 외부 API 또는 서비스 간 네트워크 호출. |
-| **Loop / Back**| 오렌지 | 점선(Dotted) 2px | 루프백(`while`/`for`) 또는 역방향 논리 흐름. |
-
 ---
 
 ## 🚀 시작하기
 
-1. **확장 프로그램 설치**: Antigravity/VS Code에 `synapse-visual-architecture-v0.3.09.vsix`를 설치합니다.
+1. **확장 프로그램 설치**: Antigravity/VS Code에 `synapse-visual-architecture-v0.3.10.vsix`를 설치합니다.
 2. **DNA 주입**: 프로젝트 루트에 `GEMINI.md` 파일을 생성하거나 등록합니다.
 3. **부트스트랩**: 사이드바 또는 명령 팔레트(`Ctrl+Shift+P` -> `SYNAPSE: Open Canvas`)에서 **SYNAPSE Canvas**를 엽니다.
-4. **첫 시각화**: 
-    - 엔진이 폴더를 스캔하고 **제안된 노드 (Proposed Nodes)**를 표시합니다.
-    - 팝업에서 **[Confirm]**을 클릭하여 이 노드들을 실제 파일 및 클러스터로 구체화합니다.
 
 ---
 
-## 🛠️ 성능 및 3D 가속
-SYNAPSE는 수천 개의 노드를 처리하기 위해 WebGL 기반의 고성능 렌더러를 지원합니다. 상단 툴바의 **Accel** 버튼을 통해 전환할 수 있습니다.
+## 🆕 개정 이력
+
+| 버전 | 날짜 | 영어 설명 | 한국어 설명 |
+| :--- | :--- | :--- | :--- |
+| **v0.3.10** | 2026-04-05 | **Hotfix PhaseLock**: Resolved system-wide interaction lock in RENDER/DEBUG phases and improved atomicity. | **핫픽스 페이즈락**: RENDER/DEBUG 단계의 전역 인터렉션 락 해결 및 원자적 동기화 개선. |
+| **v0.3.1** | 2026-03-31 | **Bootstrap Locked**: Full Phase-based initialization (Phases 0-7) and system lockout protocol. | **부트스트랩 락**: 전 단계(Phase 0-7) 순차 초기화 강제 및 시스템 잠금 프로토콜 도입. |
 
 ---
 

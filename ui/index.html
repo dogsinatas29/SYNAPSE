@@ -369,12 +369,14 @@
         }
 
         #history-list {
-            flex: 1 1 0;
-            overflow-y: scroll; /* [v0.2.20 Fix] Force always-visible scrollbar - 'auto' may be clipped */
+            flex: 1;
+            overflow-y: scroll !important;
             overflow-x: hidden;
             padding: 10px;
             scroll-behavior: smooth;
-            min-height: 0; /* [CRITICAL] Required for flex overflow in column layouts */
+            background: #1d2021;
+            min-height: 200px;
+            max-height: 500px;
         }
 
         /* [v0.2.17 Patch 9] Atomic High-Visibility Scrollbar */
@@ -473,109 +475,6 @@
             border-color: var(--accent);
         }
 
-        /* Context Vault Panel */
-        #context-vault-panel {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 600px;
-            height: 75vh;
-            background: var(--bg-panel);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            display: none;
-            flex-direction: column;
-            z-index: 5000;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
-            /* [v0.2.20 Fix] Crucial: overflow:hidden on panel prevents header/search from scrolling away */
-            overflow: hidden;
-        }
-
-        #context-vault-panel.visible {
-            display: flex;
-        }
-
-        #vault-search-container {
-            padding: 10px;
-            border-bottom: 1px solid var(--border);
-            background: #3c3836;
-            flex-shrink: 0; /* [v0.2.20 Fix] Prevent container from expanding and pushing list out */
-            box-sizing: border-box; /* [v0.2.20 Fix] Include padding in width calculation */
-        }
-
-        #vault-search-input {
-            width: 100%;
-            max-width: 100%; /* [v0.2.20 Fix] Prevent horizontal overflow */
-            box-sizing: border-box; /* [v0.2.20 Fix] Include padding in width calculation */
-            padding: 8px;
-            background: #1d2021;
-            border: 1px solid #504945;
-            color: var(--fg-main);
-            border-radius: 4px;
-            outline: none;
-        }
-
-        #vault-search-input:focus {
-            border-color: var(--accent);
-        }
-
-        #context-vault-list {
-            flex: 1 1 0;
-            overflow-y: scroll; /* [v0.2.20 Fix] Force always-visible scrollbar, not auto */
-            overflow-x: hidden;
-            padding: 10px;
-            min-height: 0;
-        }
-
-        #context-vault-list::-webkit-scrollbar {
-            width: 12px !important;
-            display: block !important;
-        }
-
-        #context-vault-list::-webkit-scrollbar-track {
-            background: #1d2021 !important;
-            border-radius: 6px;
-        }
-
-        #context-vault-list::-webkit-scrollbar-thumb {
-            background: var(--accent) !important;
-            border-radius: 6px;
-            border: 3px solid #1d2021;
-        }
-
-        .vault-item {
-            padding: 12px;
-            border-bottom: 1px solid var(--border);
-            cursor: pointer;
-            transition: background 0.2s;
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        .vault-item:hover {
-            background: #3c3836;
-        }
-
-        .vault-item-title {
-            font-weight: bold;
-            color: #b8bb26; /* distinct accent color for vaults */
-            font-size: 14px;
-            margin-bottom: 2px;
-        }
-
-        .vault-item-preview {
-            color: var(--fg-dim);
-            font-size: 12px;
-            line-height: 1.5;
-            display: -webkit-box;
-            line-clamp: 3;
-            -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
 
         .toolbar-divider {
             width: 1px;
@@ -654,11 +553,13 @@
         }
 
         #docs-shelf-list {
-            flex: 1 1 0;
-            overflow-y: scroll;
+            flex: 1;
+            overflow-y: scroll !important; /* Force scrollbar */
             overflow-x: hidden;
             padding: 10px;
-            min-height: 0;
+            background: #1d2021;
+            min-height: 200px;
+            max-height: 500px; /* Constrain height for better layout */
         }
 
         #docs-shelf-list::-webkit-scrollbar {
@@ -997,7 +898,6 @@
                 <button class="btn active" data-mode="graph">Graph View</button>
                 <button class="btn" data-mode="tree">Tree View</button>
                 <button class="btn" data-mode="flow">Flow View</button>
-                <button class="btn" id="btn-toggle-vault" style="display: none;">📂 Context Vault Panel</button>
                 <button class="btn" id="btn-toggle-docs">📚 Documentation Shelf</button>
             </div>
         </div>
@@ -1071,7 +971,6 @@
             <div class="menu-label" id="btn-record-label">⏺ Context</div>
             <div class="dropdown-content">
                 <button class="btn" id="btn-record" title="Context 레코딩 토글 (CTRL+ALT+M)">REC Toggle</button>
-                <button class="btn" id="btn-context-vault" title="Open Context Vault External Panel">Vault History</button>
             </div>
         </div>
     </div>
@@ -1168,18 +1067,6 @@
             </div>
         </div>
 
-        <div id="context-vault-panel">
-            <div class="panel-header" id="context-vault-header-drag">
-                <span style="font-weight: bold; font-size: 14px; color: var(--fg-main);">Context Vault</span>
-                <button id="context-vault-close" style="background:none; border:none; color:var(--fg-dim); cursor:pointer; font-size:16px;">&times;</button>
-            </div>
-            <div id="vault-search-container">
-                <input type="text" id="vault-search-input" placeholder="Search context (e.g., md, rule)...">
-            </div>
-            <div id="context-vault-list">
-                <!-- Context vault items will be dynamically injected here -->
-            </div>
-        </div>
         <div id="docs-shelf-panel">
             <div class="panel-header" id="docs-shelf-header-drag">
                 <span style="font-weight: bold; font-size: 14px; color: var(--fg-main);">Documentation Shelf</span>
@@ -1569,13 +1456,8 @@
                 }
             });
 
-            // Context Vault 패널 클로저 설정
-            const vaultCloseBtn = document.getElementById('context-vault-close');
-            if (vaultCloseBtn) {
-                vaultCloseBtn.addEventListener('click', () => {
-                    document.getElementById('context-vault-panel').classList.remove('visible');
-                });
-            }
+
+            // 배경 클릭 시 컨텍스트 메뉴 닫기
 
             // Draggable Panel Helper
             // Draggable Panel Helper [v0.3.1_zz_Fixed]

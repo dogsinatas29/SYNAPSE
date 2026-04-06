@@ -1,6 +1,7 @@
 import { phaseManager, Phase } from './PhaseManager';
 import { gridSystem } from './GridSystem';
 import { Node, Edge, graphModel, NodeType } from './GraphModel';
+import { RenderProtocol } from './canvas-engine/RenderProtocol';
 
 /**
  * 🎨 SYNAPSE Rendering Core (v0.3.1)
@@ -25,12 +26,7 @@ export interface RenderResult {
 
 export class RendererCore {
 
-  private readonly SOFT_BUDGET_NODES = 4000;
-  private readonly HARD_BUDGET_NODES = 8000;
-  private readonly SOFT_BUDGET_EDGES = 6000;
-  private readonly HARD_BUDGET_EDGES = 12000;
-
-  private threshold: number = 0.1; // Default Edge Weight Filter lowered to 0.1
+  private threshold: number = RenderProtocol.THRESHOLD.DEFAULT;
   private dirtyNodes: Set<string> = new Set(); // For Incremental Rendering
   public lastBudgetReport: any = null; // Phase 6 support
 
@@ -56,7 +52,7 @@ export class RendererCore {
       // 중요도가 낮은 Edge는 필터링하여 렌더링 부하 감소
       const filteredEdges = graphModel.getFilteredEdges(this.threshold);
       
-      const isDegraded = nodes.length > this.SOFT_BUDGET_NODES || this.threshold > 0.5;
+      const isDegraded = nodes.length > RenderProtocol.BUDGET.SOFT_NODES || this.threshold > RenderProtocol.THRESHOLD.HIGH;
 
       // 5. Incremental Rendering Check (Phase 5: 4번 전략)
       const renderResult = this.calculateIncrementalChanges(nodes, filteredEdges);
@@ -86,12 +82,12 @@ export class RendererCore {
    * 부하에 따른 동적 임계치 조절 (Iron Grid Refined)
    */
   private calculateDynamicThreshold(nodeCount: number, edgeCount: number) {
-    if (nodeCount > this.HARD_BUDGET_NODES || edgeCount > this.HARD_BUDGET_EDGES) {
-      this.threshold = 0.5; // v0.3.09_fix: Significantly lowered to show more
-    } else if (nodeCount > this.SOFT_BUDGET_NODES || edgeCount > this.SOFT_BUDGET_EDGES) {
-      this.threshold = 0.3; // v0.3.09_fix: Relaxed
+    if (nodeCount > RenderProtocol.BUDGET.HARD_NODES || edgeCount > RenderProtocol.BUDGET.HARD_EDGES) {
+      this.threshold = RenderProtocol.THRESHOLD.HIGH; 
+    } else if (nodeCount > RenderProtocol.BUDGET.SOFT_NODES || edgeCount > RenderProtocol.BUDGET.SOFT_EDGES) {
+      this.threshold = RenderProtocol.THRESHOLD.MEDIUM;
     } else {
-      this.threshold = 0.05; // v0.3.09_fix: Show almost everything including transitive
+      this.threshold = RenderProtocol.THRESHOLD.LOW;
     }
   }
 

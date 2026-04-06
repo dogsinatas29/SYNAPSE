@@ -25,28 +25,48 @@ export enum EdgeType {
 export interface Node {
   id: string;
   filePath: string;
-  type: NodeType;
+  type: NodeType | string;
   label?: string;
-  degree: number; // For Hub Collapse logic
-  position?: { x: number; y: number }; // [v0.3.2] Persist manual/layout positions
+  degree: number; 
+  position?: { x: number; y: number };
+  status?: string;
+  cluster_id?: string;
+  data?: any;
+  intelligence?: any;
+  visual?: any;
 }
 
 export interface Edge {
+  id?: string;
   from: string;
   to: string;
-  type: EdgeType;
-  weight: number; // 0.0 to 1.0 (Critical for rendering filtering)
+  type: EdgeType | string;
+  weight: number;
+  status?: string;
+  is_approved?: boolean;
+  data?: any;
+  visual?: any;
+}
+
+export interface Cluster {
+  id: string;
+  label: string;
+  type: string;
+  collapsed?: boolean;
+  data?: any;
 }
 
 export interface GraphSnapshot {
   nodes: Node[];
   edges: Edge[];
+  clusters: Cluster[];
   timestamp: number;
 }
 
 export class GraphModel {
   private nodes: Map<string, Node> = new Map();
   private edges: Edge[] = [];
+  private clusters: Cluster[] = [];
   
   // Weights (Constants from Iron Grid Refined)
   public static readonly WEIGHT_DIRECT_INCLUDE = 1.0;
@@ -59,12 +79,41 @@ export class GraphModel {
     this.nodes.set(node.id, node);
   }
 
+  public updateNode(id: string, updates: any) {
+    const node = this.nodes.get(id);
+    if (node) {
+      Object.assign(node, updates);
+    }
+  }
+
   public addEdge(edge: Edge) {
     // Basic deduplication
     const exists = this.edges.some(e => e.from === edge.from && e.to === edge.to && e.type === edge.type);
     if (!exists) {
       this.edges.push(edge);
       this.updateDegrees(edge);
+    }
+  }
+
+  public addCluster(cluster: Cluster) {
+    if (this.clusters.some(c => c.id === cluster.id)) return;
+    this.clusters.push(cluster);
+  }
+
+  public deleteNode(id: string) {
+    this.nodes.delete(id);
+    // Remove associated edges
+    this.edges = this.edges.filter(e => e.from !== id && e.to !== id);
+  }
+
+  public deleteEdge(from: string, to: string) {
+    this.edges = this.edges.filter(e => !(e.from === from && e.to === to));
+  }
+
+  public updateEdge(from: string, to: string, updates: any) {
+    const edge = this.edges.find(e => e.from === from && e.to === to);
+    if (edge) {
+      Object.assign(edge, updates);
     }
   }
 
@@ -103,6 +152,7 @@ export class GraphModel {
     return {
       nodes: [...this.nodes.values()],
       edges: [...this.edges],
+      clusters: [...this.clusters],
       timestamp: Date.now()
     };
   }
@@ -110,6 +160,7 @@ export class GraphModel {
   public reset() {
     this.nodes.clear();
     this.edges = [];
+    this.clusters = [];
   }
 
   /**
@@ -122,6 +173,22 @@ export class GraphModel {
     }
     for (const edge of snapshot.edges) {
       this.addEdge(edge);
+    }
+    if (snapshot.clusters) {
+      this.clusters = [...snapshot.clusters];
+    }
+  }
+
+  public loadFrom(state: any) {
+    this.reset();
+    if (state.nodes) {
+      state.nodes.forEach((n: any) => this.addNode(n));
+    }
+    if (state.edges) {
+      this.edges = [...state.edges];
+    }
+    if (state.clusters) {
+      this.clusters = [...state.clusters];
     }
   }
 }

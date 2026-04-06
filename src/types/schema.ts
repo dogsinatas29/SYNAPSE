@@ -75,16 +75,17 @@ export interface Edge {
 export interface Cluster {
     id: string;
     label: string;
-    collapsed: boolean;        // 접힘 상태
-    bounds: {
+    type?: string;             // [v0.3.10] Cluster type (system, user, folder)
+    collapsed?: boolean;       // 접힘 상태
+    bounds?: {                 // 시각적 경계
         x: number;
         y: number;
         width: number;
         height: number;
     };
     children: string[];        // 포함된 노드 ID 목록
-    parent_id?: string;        // 부모 클러스터 ID (계층 구조 지원)
-    representative_edge?: string; // 접혔을 때 표시할 대표 선
+    parent_id?: string;        // 부모 클러스터 ID
+    representative_edge?: string;
 }
 
 /**

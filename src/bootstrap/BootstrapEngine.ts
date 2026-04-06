@@ -101,7 +101,7 @@ export class BootstrapEngine {
                 },
                 nodes: nodes as any,
                 edges: edges as any,
-                clusters: []
+                clusters: graphModel.createSnapshot().clusters as any
             };
 
             const statePath = path.join(projectRoot, 'data', 'project_state.json');
@@ -163,7 +163,7 @@ export class BootstrapEngine {
                 },
                 nodes: nodes as any,
                 edges: edges as any,
-                clusters: []
+                clusters: graphModel.createSnapshot().clusters as any
             };
 
             const statePath = path.join(projectRoot, 'data', 'project_state.json');
@@ -172,6 +172,9 @@ export class BootstrapEngine {
                 fs.mkdirSync(stateDir, { recursive: true });
             }
             fs.writeFileSync(statePath, JSON.stringify(projectState, null, 2), 'utf-8');
+
+            // [v0.3.10] Final Phase Advance: Hand over control to USER
+            phaseManager.advancePhase(Phase.CONTROL);
 
             return {
                 success: true,
@@ -209,7 +212,7 @@ export class BootstrapEngine {
         const nodes = dataPipeline.processFiles(discoveredFiles);
         const edges = graphModel.createSnapshot().edges;
 
-        return {
+        const state: ProjectState = {
             project_name: path.basename(projectRoot),
             gemini_md_path: path.join(projectRoot, 'GEMINI.md'),
             canvas_state: {
@@ -219,8 +222,12 @@ export class BootstrapEngine {
             },
             nodes: nodes as any,
             edges: edges as any,
-            clusters: []
+            clusters: graphModel.createSnapshot().clusters as any
         };
+        
+        // [v0.3.10] Advance phase for interactive auto-discovery
+        phaseManager.advancePhase(Phase.CONTROL);
+        return state;
     }
 
     /**
@@ -235,6 +242,10 @@ export class BootstrapEngine {
                 const fullPath = path.join(dir, file);
                 const currentRelPath = path.join(relPath, file).replace(/\\/g, '/');
                 if (isIgnoredFolder(file)) continue;
+                
+                // [v0.3.10] Metadata folders are now discoverable but routed to the shelf
+                if (file.toLowerCase() === 'data') continue;
+                
                 if (includePaths && includePaths.length > 0 && relPath === '') {
                     const isIncluded = includePaths.some(p => {
                         const normalizedP = p.replace(/^\.\//, '').replace(/\/$/, '');
@@ -247,10 +258,15 @@ export class BootstrapEngine {
                     scanDir(fullPath, currentRelPath, depth + 1);
                 } else {
                     const ext = path.extname(file).toLowerCase();
+                    const fileName = file.toLowerCase();
+                    
+                    // [v0.3.10] All MD files are now discoverable
+                    const isProtocol = fileName === 'rules.md' || fileName === 'gemini.md' || fileName === 'architecture.md' || fileName.includes('report');
+                    
                     if (isIgnoredFile(currentRelPath)) continue;
                     const scanExtensions = ['.ts', '.js', '.py', '.cpp', '.h', '.c', '.hpp', '.cc', '.rs', '.sh', '.sql', '.md'];
                     if (scanExtensions.includes(ext)) {
-                        fileList.push(fullPath);
+                        fileList.push(currentRelPath);
                     }
                 }
             }

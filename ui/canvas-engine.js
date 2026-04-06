@@ -107,7 +107,7 @@ class FlowRenderer {
             const fileName = (n.data && n.data.file) ? n.data.file.toLowerCase() : '';
             const isDoc = fileName.endsWith('.md') || fileName.endsWith('.txt') || fileName.includes('license');
             const isGhost = n.status === 'ghost';
-            const isContext = n.id.startsWith('ctx_vault_node_') || n.cluster_id === 'context_vault' || n.data?.cluster_id === 'context_vault';
+            const isContext = false;
             return reachableIds.has(n.id) && n.type !== 'external' && !isDoc && !isGhost && !isContext;
         });
         const sortedNodes = [...filteredNodes].sort((a, b) => {
@@ -680,7 +680,7 @@ class TreeRenderer {
 
             // [v0.2.19] Skip Ghost and Context nodes in Tree View
             if (node.status === 'ghost') continue;
-            if (node.id.startsWith('ctx_vault_node_') || node.cluster_id === 'context_vault' || node.data?.cluster_id === 'context_vault') continue;
+            // Skip documentation/system nodes from direct layout calculation if needed
 
             // 파일 경로를 기반으로 트리 구축
             const pathStr = node.data.path || node.data.file || '';
@@ -918,7 +918,6 @@ class CanvasEngine {
         // [v0.2.17] DTR State
         this.currentDTR = 0.3;
         this.clusters = []; // 클러스터 데이터
-        this.contextVaultNodes = []; // [v0.3.0] 저장된 컨텍스트 전용 패널 리스트
         this.docShelfNodes = []; // [v0.3.1] 문서화 전용 패널 리스트
         this.isExpectingUpdate = false; // 데이터 업데이트 시 뷰 유지 여부 플래그
 
@@ -931,8 +930,6 @@ class CanvasEngine {
         this.showBaseLayer = true;
         this.showUserLayer = true;
 
-        // [v0.2.18.3] Context Vault visibility state
-        this.showContextVault = false;
         this.showDocShelf = false;
 
         // 모드 및 렌더러
@@ -1090,19 +1087,6 @@ class CanvasEngine {
             });
         }
 
-        // [v0.2.18.3] Context Vault Toggle
-        const btnToggleVault = document.getElementById('btn-toggle-vault');
-        if (btnToggleVault) {
-            btnToggleVault.addEventListener('click', () => {
-                const panel = document.getElementById('context-vault-panel');
-                if (panel) {
-                    panel.classList.toggle('visible');
-                    if (panel.classList.contains('visible')) {
-                        this.renderContextVaultList(document.getElementById('vault-search-input')?.value || '');
-                    }
-                }
-            });
-        }
 
         // [v0.2.21-fix] WebGL Acceleration Toggle is handled in index.html DOMContentLoaded
         // to guarantee DOM timing and avoid class initialization race conditions.
@@ -3569,12 +3553,71 @@ class CanvasEngine {
     }
 
     loadProjectState(projectState, preserveView = false) {
+        if (!projectState) return;
+
+        // [v0.3.10] Runtime Data Sanitization
+        const ghostBlacklist = [
+            'os', 'sys', 'math', 'json', 'datetime', 'sqlite3', 'pandas', 'rich', 'numpy',
+            'command', 'snap_', 'test_doc', 'untitled', 'request', 'urllib', 'dateutil', 're',
+            'analysis', 'report', 'logic'
+        ];
+
+        const rawNodes = projectState.nodes || [];
+        const rawEdges = projectState.edges || [];
+
+        // 1. Separate nodes into Canvas pool and Documentation/Blacklist pool
+        const canvasNodes = [];
+        const documentationNodes = [];
+
+        rawNodes.forEach(node => {
+            const lowerId = node.id.toLowerCase();
+            const isBlacklisted = ghostBlacklist.some(b => lowerId === b || lowerId.startsWith(b + ':') || lowerId.startsWith(b + '.'));
+            
+            // Skip blacklisted ghosts entirely
+            if ((node.status === 'ghost' || node.type === 'external') && isBlacklisted) return;
+            if (lowerId.includes('report') && (node.status === 'ghost' || node.type === 'external')) return;
+            if (lowerId.includes('untitled') || lowerId.includes('command:')) return;
+
+            // Mark or Move Documentation (Refined Pattern)
+            const type = (node.type || '').toString().toLowerCase();
+            const nodeId = (node.id || '').toLowerCase();
+            const filePath = (node.data?.file || '').toLowerCase();
+
+            const isDoc = type === 'documentation' || 
+                          filePath.endsWith('.md') || 
+                          nodeId.includes('report') || 
+                          node.data?.hiddenOnCanvas;
+
+            if (isDoc) {
+                documentationNodes.push(node);
+            } else {
+                canvasNodes.push(node);
+            }
+        });
+
+        // 2. Filter Edges to only connect visible nodes
+        const activeIds = new Set(canvasNodes.map(n => n.id));
+        const canvasEdges = rawEdges.filter(e => activeIds.has(e.from) && activeIds.has(e.to));
+
+        // Use CLEAN data for the rest of the method
+        const sanitizedProjectState = {
+            ...projectState,
+            nodes: canvasNodes,
+            edges: canvasEdges
+        };
+        this.docShelfNodes = documentationNodes;
+        this.renderDocShelfList('', documentationNodes);
+
+        // [v0.3.10] FORCE RE-RENDER on state update to prevent edge flickering
+        this.isGraphDataDirty = true;
+        this.isEdgeDirty = true;
+        this.isTextDirty = true;
+
         // [v0.2.24] Throttling & Data Integrity Guard
         const now = Date.now();
-        const dataHash = `n${projectState.nodes?.length}e${projectState.edges?.length}c${projectState.clusters?.length}`;
+        const dataHash = `n${canvasNodes.length}e${canvasEdges.length}c${projectState.clusters?.length}`;
 
         if (this._lastDataHash === dataHash && (now - this._lastLoadTime < 1000) && preserveView) {
-            // console.log('[SYNAPSE] Skipping redundant loadProjectState');
             return;
         }
 
@@ -3582,7 +3625,7 @@ class CanvasEngine {
         this._lastLoadTime = now;
 
         // [v0.2.26] 🛡️ STEP 1: Normalize and Clone Input (Isolation)
-        const baseState = this.normalizeProjectState(projectState);
+        const baseState = this.normalizeProjectState(sanitizedProjectState);
         this.log(`[STATE-DETERMINISM] Hash Before: ${this.getFingerprint(baseState.nodes).substring(0, 60)}...`);
 
         // [v0.2.24] Selection Preservation
@@ -3601,13 +3644,12 @@ class CanvasEngine {
             const oldManualNodes = (this.nodes || []).filter(n => n.id.startsWith('node_manual_'));
 
             const rawNodes = baseState.nodes || [];
-            this.contextVaultNodes = rawNodes.filter(n => n.id.startsWith('ctx_vault_node_') || n.cluster_id === 'context_vault' || n.data?.cluster_id === 'context_vault');
-            this.docShelfNodes = rawNodes.filter(n => n.type === 'documentation' || n.cluster_id === 'doc_shelf' || n.data?.cluster_id === 'doc_shelf');
-            this.nodes = rawNodes.filter(n => !this.contextVaultNodes.includes(n) && !this.docShelfNodes.includes(n));
+            this.docShelfNodes = rawNodes.filter(n => (n.type === 'documentation' || n.cluster_id === 'doc_shelf' || n.data?.cluster_id === 'doc_shelf'));
+            this.nodes = rawNodes.filter(n => !this.docShelfNodes.includes(n));
 
-            const vaultIds = new Set(this.contextVaultNodes.map(n => n.id));
+            const docIds = new Set(this.docShelfNodes.map(n => n.id));
             const rawEdges = projectState.edges || [];
-            this.edges = rawEdges.filter(e => !vaultIds.has(e.from) && !vaultIds.has(e.to));
+            this.edges = rawEdges.filter(e => !docIds.has(e.from) && !docIds.has(e.to));
 
             // [v0.2.18.2] Detect matches between old manual nodes and new solid nodes
             oldManualNodes.forEach(oldNode => {
@@ -3649,7 +3691,6 @@ class CanvasEngine {
             }
 
             // 외부 패널 UI 즉시 렌더링
-            this.renderContextVaultList();
             this.renderDocShelfList();
 
             // [v0.2.22] System Clusters initialization
@@ -3841,50 +3882,6 @@ class CanvasEngine {
         return queryIdx === query.length;
     }
 
-    // [v0.3.0] 컨텍스트 볼트를 외부 리스트 UI로 렌더링
-    renderContextVaultList(filterQuery = '') {
-        const listEl = document.getElementById('context-vault-list');
-        if (!listEl) return;
-
-        listEl.innerHTML = '';
-        const search = filterQuery.toLowerCase();
-
-        const filtered = this.contextVaultNodes.filter(n => {
-            if (!search) return true;
-            const text = (n.data?.label || '') + ' ' + (n.data?.description || '') + ' ' + n.id;
-            return this.fuzzyMatch(text, search);
-        });
-
-        if (filtered.length === 0) {
-            listEl.innerHTML = '<div style="color:var(--fg-dim); padding:10px;">No context matches found.</div>';
-            return;
-        }
-
-        filtered.forEach(node => {
-            const item = document.createElement('div');
-            item.className = 'vault-item';
-
-            const title = document.createElement('div');
-            title.className = 'vault-item-title';
-            title.textContent = node.data?.label || node.id;
-
-            const preview = document.createElement('div');
-            preview.className = 'vault-item-preview';
-            preview.textContent = node.data?.description || 'No description available.';
-
-            item.appendChild(title);
-            item.appendChild(preview);
-
-            // Allow opening this markdown in VSCode
-            item.addEventListener('click', () => {
-                if (typeof vscode !== 'undefined' && node.data?.file) {
-                    vscode.postMessage({ command: 'openFile', filePath: node.data.file });
-                }
-            });
-
-            listEl.appendChild(item);
-        });
-    }
 
     // [v0.3.1] 문서 노드들을 외부 패널 UI로 렌더링 (Documentation Shelf)
     renderDocShelfList(filterQuery = '') {
@@ -4049,6 +4046,8 @@ class CanvasEngine {
         });
 
         this.updateZoomDisplay();
+        this.isDirty = true;
+        this.requestRender();
     }
 
     updateZoomDisplay() {
@@ -5025,11 +5024,6 @@ class CanvasEngine {
     deleteSelectedNodes() {
         const nodesToDelete = Array.from(this.selectedNodes)
             .filter(n => {
-                // Context Vault 노드는 삭제 불가 (read-only)
-                if (n.id && n.id.startsWith('ctx_vault_node_')) {
-                    console.warn('[SYNAPSE] Cannot delete read-only Context Vault node:', n.id);
-                    return false;
-                }
                 if (n.data && n.data.readOnly) {
                     console.warn('[SYNAPSE] Cannot delete read-only node:', n.id);
                     return false;
@@ -7443,6 +7437,8 @@ function initCanvas() {
                 break;
             case 'fitView':
                 engine.fitView();
+                engine.isDirty = true;
+                engine.requestRender();
                 break;
             case 'edgeConfirmed': {
                 const edge = engine.edges.find(e => e.id === message.edgeId);
@@ -7681,7 +7677,8 @@ function initCanvas() {
     document.getElementById('btn-reset')?.addEventListener('click', () => {
         engine.transform = { zoom: 1.0, offsetX: 0, offsetY: 0 };
         engine.updateZoomDisplay();
-        engine.render();
+        engine.isDirty = true;
+        engine.requestRender();
     });
 
     document.getElementById('btn-rebootstrap')?.addEventListener('click', () => {
@@ -7756,21 +7753,6 @@ function initCanvas() {
         vscode?.postMessage({ command: 'openRules' });
     });
 
-    document.getElementById('btn-context-vault')?.addEventListener('click', () => {
-        const panel = document.getElementById('context-vault-panel');
-        if (panel) {
-            panel.classList.toggle('visible');
-            if (panel.classList.contains('visible') && engine) {
-                engine.renderContextVaultList(document.getElementById('vault-search-input')?.value || '');
-            }
-        }
-    });
-
-    document.getElementById('vault-search-input')?.addEventListener('input', (e) => {
-        if (engine && document.getElementById('context-vault-panel')?.classList.contains('visible')) {
-            engine.renderContextVaultList(e.target.value);
-        }
-    });
 
     document.getElementById('btn-record')?.addEventListener('click', () => {
         // Toggle recording state

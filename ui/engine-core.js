@@ -21,6 +21,9 @@ function buildFrameState(nodes, edges, clusters, context) {
 
     // 1. Visibility Filtering (Sync with 2D/3D requirements)
     const filteredNodes = nodes.filter(n => {
+        // [v0.3.10] Explicitly hidden from canvas (e.g., Documentation Shelf)
+        if (n.data?.hiddenOnCanvas) return false;
+
         // [v0.2.27] Cluster Collapse Check
         const clusterId = n.cluster_id || n.data?.cluster_id;
         if (clusterId) {

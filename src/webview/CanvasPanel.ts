@@ -768,9 +768,10 @@ export class CanvasPanel {
 
             let res: any = Array.isArray(obj) ? [] : {};
             for (const key in obj) {
-                // Ignore DOM nodes or internal VSCode specific heavy objects
                 // [v0.2.23] Allow _ungrouped for persistent manual state
-                if (key.startsWith('_') && key !== '_ungrouped') continue;
+                // [v0.3.10] Protect _fromFile/_toFile for edge confirmation context
+                const allowedLegacyKeys = ['_ungrouped', '_fromFile', '_toFile'];
+                if (key.startsWith('_') && !allowedLegacyKeys.includes(key)) continue;
                 res[key] = decycle(obj[key], stack);
             }
             stack.delete(obj);
@@ -914,8 +915,24 @@ export class CanvasPanel {
             } else {
                 // [v0.2.18.1.1] Force is_approved: false for manual edges to show "?" badge
                 edge.is_approved = false;
+                
+                // [v0.3.10] 🛡️ SYNC MEMORY ENGINE: Dispatch intent to update in-memory snapshot
+                const addEdgeResult = canvasEngine.dispatch('CONNECT_EDGE', {
+                    id: edge.id,
+                    from: edge.from,
+                    to: edge.to,
+                    type: edge.type,
+                    status: edge.status || 'pending_confirm',
+                    ...edge
+                });
+
+                if (!addEdgeResult.ok) {
+                    Logger.warn(`[CanvasPanel] ADD_EDGE intent blocked: ${addEdgeResult.verdict.reasons?.join(', ')}`);
+                    // Even if blocked by rules, we still push to projectState for manual persistence
+                }
+
                 projectState.edges.push(edge);
-                console.log(`[SYNAPSE] Pushed new manual edge (is_approved: false) to projectState. Current count: ${projectState.edges.length}`);
+                console.log(`[SYNAPSE] Pushed new manual edge and dispatched intent. Current count: ${projectState.edges.length}`);
             }
 
             // [v0.2.18] Move from Buffer to Reserved Cluster on Connection
@@ -1342,21 +1359,27 @@ export class CanvasPanel {
         if (!workspaceFolder) return;
 
         try {
-            // 1. project_state.json 로드
+            // [v0.3.10] SSOT Strategy: Use Engine snapshot directly
+            const engineState = canvasEngine.getFinalSnapshot();
             const stateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'project_state.json');
-            const stateData = await vscode.workspace.fs.readFile(stateUri);
-            const projectState = JSON.parse(Buffer.from(stateData).toString('utf-8'));
+            
+            // Convert Records to Arrays for search logic consistency with legacy code
+            const allEdges = Object.values(engineState.edges || {});
+            const allNodes = Object.values(engineState.nodes || {});
+
             // 1. First Attempt: Exact ID lookup
-            let edge = (projectState.edges || []).find((e: any) => e.id === edgeId);
+            let edge: any = allEdges.find((e: any) => e.id === edgeId);
             
             // 2. Second Attempt (v0.3.10): Fallback to Node-Pair lookup if ID changed
             if (!edge && fromFile && toFile) {
-                Logger.warn(`[CanvasPanel] ID Mismatch for Edge: ${edgeId}. Attempting path-based search...`);
-                edge = (projectState.edges || []).find((e: any) => {
-                    // Try to match by label or path which webview derived
-                    const fMatch = e.from === fromFile || e._fromFile === fromFile;
-                    const tMatch = e.to === toFile || e._toFile === toFile;
-                    return fMatch && tMatch && e.status === 'pending';
+                Logger.warn(`[CanvasPanel] ID Mismatch for Edge: ${edgeId}. Attempting fuzzy node-pair search...`);
+                const normFrom = fromFile.trim().toLowerCase();
+                const normTo = toFile.trim().toLowerCase();
+                
+                edge = allEdges.find((e: any) => {
+                    const eFrom = (e.from || '').trim().toLowerCase();
+                    const eTo = (e.to || '').trim().toLowerCase();
+                    return eFrom === normFrom && eTo === normTo;
                 });
             }
 
@@ -1367,9 +1390,9 @@ export class CanvasPanel {
                 return;
             }
 
-            // [v0.2.17 Patch 13.2] SSOT: Focus on Node IDs, derived names should match IDs
-            const fNode = (projectState.nodes || []).find((n: any) => n.id === edge?.from);
-            const tNode = (projectState.nodes || []).find((n: any) => n.id === edge?.to);
+            // [v0.2.17 Patch 13.2] SSOT: Focus on Node IDs
+            const fNode: any = allNodes.find((n: any) => n.id === edge?.from);
+            const tNode: any = allNodes.find((n: any) => n.id === edge?.to);
 
             let actualFromFile = fromFile;
             let actualToFile = toFile;
@@ -1408,8 +1431,12 @@ export class CanvasPanel {
 
                     // 강제 종료 및 임시 엣지 파기
                     if (edge) {
-                        projectState.edges = projectState.edges.filter((e: any) => e.id !== edgeId);
-                        await vscode.workspace.fs.writeFile(stateUri, Buffer.from(this.normalizeProjectState(projectState), 'utf8'));
+                        // Create a NEW snapshot for deletion to avoid mutating direct engine state
+                        const finalSnap = canvasEngine.getFinalSnapshot();
+                        const updatedEdges = Object.values(finalSnap.edges || {}).filter((e: any) => e.id !== edgeId);
+                        const newState = { ...finalSnap, edges: updatedEdges };
+                        
+                        await vscode.workspace.fs.writeFile(stateUri, Buffer.from(this.normalizeProjectState(newState), 'utf8'));
                         // UI에서도 삭제
                         this._panel.webview.postMessage({ command: 'deleteEdgeUI', edgeId: edgeId });
                     }

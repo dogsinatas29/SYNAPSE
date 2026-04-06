@@ -15,6 +15,7 @@ import { phaseManager, Phase } from '../core/PhaseManager';
 import { dataPipeline } from '../core/DataPipeline';
 import { graphModel } from '../core/GraphModel';
 import { snapshotSystem } from '../core/SnapshotSystem';
+import { Logger } from '../utils/Logger';
 
 export class BootstrapEngine {
     private parser: GeminiParser;
@@ -147,8 +148,29 @@ export class BootstrapEngine {
             RuleEngine.getInstance().loadRules(projectRoot);
 
             const discoveredFiles = this.getDiscoverableFiles(projectRoot);
-            const nodes = dataPipeline.processFiles(discoveredFiles);
-            const edges = graphModel.createSnapshot().edges;
+            let nodes = dataPipeline.processFiles(discoveredFiles);
+            let edges = graphModel.createSnapshot().edges;
+
+            // [v0.3.10] 🛡️ PRESERVE MANUAL STATE: Merge with existing manual nodes/edges
+            const existingStatePath = path.join(projectRoot, 'data', 'project_state.json');
+            if (fs.existsSync(existingStatePath)) {
+                try {
+                    const existingData = JSON.parse(fs.readFileSync(existingStatePath, 'utf8'));
+                    const manualNodes = (existingData.nodes || []).filter((n: any) => n.id.startsWith('node_manual_'));
+                    const manualEdges = (existingData.edges || []).filter((e: any) => 
+                        e.id.startsWith('edge_node_manual_') || 
+                        e.status === 'pending' || 
+                        e.status === 'pending_confirm' ||
+                        e.status === 'manual'
+                    );
+                    
+                    if (manualNodes.length > 0) nodes = [...nodes, ...manualNodes] as any;
+                    if (manualEdges.length > 0) edges = [...edges, ...manualEdges] as any;
+                    Logger.info(`[SYNAPSE] Merged ${manualNodes.length} manual nodes & ${manualEdges.length} manual edges from existing state.`);
+                } catch (e) {
+                    Logger.warn('[SYNAPSE] Failed to merge previous manual state', e);
+                }
+            }
 
             phaseManager.advancePhase(Phase.SNAPSHOT);
             snapshotSystem.save();

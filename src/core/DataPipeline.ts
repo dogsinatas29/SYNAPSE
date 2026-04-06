@@ -60,6 +60,10 @@ export class DataPipeline {
       const fileName = path.basename(item.filePath, path.extname(item.filePath));
       const relPath = path.dirname(item.filePath);
       
+      // [v0.3.10] STRIKE-OUT: Completely ignore context vault in data collection
+      const isContextVault = item.filePath.includes('.synapse_contexts') || fileName.startsWith('session_');
+      if (isContextVault) continue;
+
       // Determine Cluster ID based on Folder Structure
       let clusterId = 'cluster_root';
       const fName = fileName.toLowerCase();

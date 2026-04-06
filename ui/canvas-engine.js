@@ -1936,7 +1936,12 @@ class CanvasEngine {
                                 return;
                             }
                             if (hit.isPending && typeof vscode !== 'undefined') {
-                                vscode.postMessage({ command: 'requestConfirmEdge', edgeId: hit.edge.id });
+                                vscode.postMessage({ 
+                                    command: 'requestConfirmEdge', 
+                                    edgeId: hit.edge.id,
+                                    fromFile: hit.edge.from,
+                                    toFile: hit.edge.to
+                                });
                                 return; // Handled hit
                             }
                         }
@@ -2033,7 +2038,12 @@ class CanvasEngine {
                                 return;
                             }
                             if (hit.isPending && typeof vscode !== 'undefined') {
-                                vscode.postMessage({ command: 'requestConfirmEdge', edgeId: hit.edge.id });
+                                vscode.postMessage({ 
+                                    command: 'requestConfirmEdge', 
+                                    edgeId: hit.edge.id,
+                                    fromFile: hit.edge.from,
+                                    toFile: hit.edge.to
+                                });
                             }
                             return;
                         }
@@ -3062,7 +3072,12 @@ class CanvasEngine {
                 confirmOption.onclick = () => {
                     menu.remove();
                     if (typeof vscode !== 'undefined') {
-                        vscode.postMessage({ command: 'requestConfirmEdge', edgeId: this.selectedEdge.id });
+                        vscode.postMessage({ 
+                            command: 'requestConfirmEdge', 
+                            edgeId: this.selectedEdge.id,
+                            fromFile: this.selectedEdge.from,
+                            toFile: this.selectedEdge.to
+                        });
                     }
                 };
                 menu.appendChild(confirmOption);

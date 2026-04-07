@@ -681,7 +681,6 @@ class TreeRenderer {
     }
 
     buildTree(nodes, projectName = 'Project') {
-        process.stdout?.write(`[SYNAPSE] buildTree for ${projectName}\n`);
         const root = { name: projectName, type: 'folder', children: {}, fullPath: '', expanded: true };
 
         for (const node of nodes) {
@@ -697,11 +696,18 @@ class TreeRenderer {
                 wsRoot = wsRoot.replace(/\\/g, '/');
                 if (!wsRoot.endsWith('/')) wsRoot += '/';
                 
+                // Aggressive stripping of common Linux root patterns
                 if (normalizedPath.startsWith(wsRoot)) {
                     normalizedPath = normalizedPath.substring(wsRoot.length);
                 } else if (normalizedPath.includes(wsRoot)) {
-                    // Handle potential doubling or absolute paths buried in strings
                     normalizedPath = normalizedPath.split(wsRoot).pop();
+                } else if (normalizedPath.startsWith('/home/')) {
+                    // Fail-safe for Linux absolute paths when wsRoot mismatch
+                    const parts = normalizedPath.split('/');
+                    const wsNameMatchIdx = parts.lastIndexOf(projectName);
+                    if (wsNameMatchIdx !== -1) {
+                        normalizedPath = parts.slice(wsNameMatchIdx + 1).join('/');
+                    }
                 }
             }
             

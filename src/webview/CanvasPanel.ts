@@ -852,11 +852,12 @@ export class CanvasPanel {
         const prunedState = pruneDefaults(safeState, {});
         const sortedState = sortKeys(prunedState);
 
-        // 5. [v0.2.20] Edge Deduplication (Cleanup existing duplicates)
+        // 5. [v0.3.10] Aggressive Edge Deduplication
         if (sortedState && sortedState.edges && Array.isArray(sortedState.edges)) {
             const seen = new Set<string>();
             sortedState.edges = sortedState.edges.filter((e: any) => {
-                const key = `${e.from}|${e.to}|${e.type}|${e.fromCluster}|${e.toCluster}`;
+                // Ignore type and cluster metadata for primary identity to collapse duplicates
+                const key = `${e.from}|${e.to}`;
                 if (seen.has(key)) return false;
                 seen.add(key);
                 return true;

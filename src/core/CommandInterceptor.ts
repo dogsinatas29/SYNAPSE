@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
-import { PromptLogger } from './PromptLogger';
+// import { PromptLogger } from './PromptLogger';
 
 /**
  * [v0.2.45] CommandInterceptor: Wildcard Memory 요격 시스템
@@ -24,33 +24,7 @@ export class CommandInterceptor {
     }
 
     public activate(context: vscode.ExtensionContext) {
-        if (this.isArmed) return;
-        
-        console.log('[SYNAPSE] CommandInterceptor: Arming memory sniffer (WILDCARD MODE)...');
-        
-        /* [v0.3.10] Automatic debug log disabled
-        const projectRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
-        if (projectRoot) {
-            const debugLog = path.join(projectRoot, '.synapse_contexts', 'interceptor_debug.log');
-            fs.writeFileSync(debugLog, `[${new Date().toISOString()}] CommandInterceptor Activated (v0.2.45)\n`, 'utf-8');
-        }
-        */
-
-        this.patchExecuteCommand(context);
-        this.observeChatEvents(context);
-
-        this.registerDiagnosticDump();
-        
-        this.isArmed = true;
-        console.log('[SYNAPSE] CommandInterceptor: Memory sniffer ARMED (v0.2.45).');
-        
-        // [v0.2.45 Update] Status Bar Indicator
-        const interceptorStatus = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 1002);
-        interceptorStatus.text = '$(shield) WILDCARD';
-        interceptorStatus.tooltip = 'SYNAPSE: Wildcard Memory Interceptor Active (v0.2.45)';
-        interceptorStatus.color = '#FFD700'; // Gold for wildcard active
-        interceptorStatus.show();
-        context.subscriptions.push(interceptorStatus);
+        // [v0.3.10] Interceptor Deactivated
     }
 
     private async registerDiagnosticDump() {

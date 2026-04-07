@@ -2,7 +2,6 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import { Logger } from '../utils/Logger';
 import * as path from 'path';
-import { CDPManager } from './CDPManager';
 
 /**
  * [v0.2.53] WebviewInterceptor: Neuro-Link (Wall Penetrator)
@@ -261,8 +260,7 @@ export class WebviewInterceptor {
                     }
                 }
                 
-                // [v0.2.52 Phase 5] Ghost Protocol Trigger
-                this.triggerGhostProtocol(viewType);
+                // [v0.3.10] Ghost Protocol Trigger Removed
                 
                 // Patch the .html property on this specific instance
                 Object.defineProperty(webview, 'html', {
@@ -337,24 +335,7 @@ export class WebviewInterceptor {
         });
     }
 
-    /**
-     * [v0.2.52 Phase 5] Ghost Protocol: CDP-based Injection Trigger
-     */
-    private async triggerGhostProtocol(viewType: string) {
-        Logger.info(`[SYNAPSE][GHOST] Triggering CDP Ghost Protocol for: ${viewType}`);
-        
-        // Wait for Webview to initialize and Electron to register the target
-        setTimeout(async () => {
-            const target = await CDPManager.getInstance().findTarget(viewType);
-            if (target) {
-                Logger.info(`[SYNAPSE][CDP] Target identified: ${target.title} (Port: ${target._port})`);
-                const script = this.getGhostInjectionScript();
-                await CDPManager.getInstance().injectScript(target, script);
-            } else {
-                Logger.warn(`[SYNAPSE][CDP] No debuggable target found for ${viewType}. Ensure --remote-debugging-port is active.`);
-            }
-        }, 1500);
-    }
+    // [v0.3.10] Ghost Protocol trigger REMOVED
 
     private relaxCSP(html: string): string {
         return html.replace(/<meta\s+http-equiv=["']Content-Security-Policy["'].*?>/gi, (match) => {

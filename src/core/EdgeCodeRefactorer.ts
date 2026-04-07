@@ -48,8 +48,11 @@ export class EdgeCodeRefactorer {
         // Python Support
         if (ext === '.py') {
             const pyModule = path.basename(toFile, '.py');
+            // [v0.3.10] Precision Import: Use the module name but keep the full filename in the comment for clarity
             const pyImport = `import ${pyModule}`;
-            const fullImportLine = isCommented ? `# ${tag} ${pyImport}` : `${pyImport}  # ${tag} auto-imported`;
+            const fullImportLine = isCommented 
+                ? `# ${tag} ${pyImport}  # Reference to ${toFile}` 
+                : `${pyImport}  # ${tag} auto-imported from ${toFile}`;
 
             // 1. Check if truly active (not a comment)
             const isActive = (line: string) => {

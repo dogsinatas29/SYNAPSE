@@ -217,7 +217,8 @@ export class WebviewInterceptor {
                 if (content.includes('Boundary Violation') || content.includes('LogicAnalyzer')) continue;
 
                 const clean = content.replace(/\n/g, ' ').substring(0, 1000);
-                fs.appendFileSync(interceptHits, `[${timestamp}] [VEIN_HIT][HOST->WEBVIEW] [${viewType}] -> ${clean}\n`, 'utf-8');
+                // [v0.3.10] Intercept logging to file disabled
+                // fs.appendFileSync(interceptHits, `[${timestamp}] [VEIN_HIT][HOST->WEBVIEW] [${viewType}] -> ${clean}\n`, 'utf-8');
                 
                 vscode.commands.executeCommand('synapse.logPrompt', {
                     chunk: `[DOWNSTREAM] ${clean}`,
@@ -291,7 +292,8 @@ export class WebviewInterceptor {
             
             if (msg.command === 'synapse-ghost-pong') {
                 Logger.info(`[SYNAPSE][STEP4] Neuro-Link HANDSHAKE SUCCESS from [${viewType}]`);
-                fs.appendFileSync(interceptHits, `[${timestamp}] [PONG] Neuro-Link Sync ${viewType}\n`, 'utf-8');
+                // [v0.3.10] Handshake logging disabled
+                // fs.appendFileSync(interceptHits, `[${timestamp}] [PONG] Neuro-Link Sync ${viewType}\n`, 'utf-8');
                 return;
             }
 
@@ -302,7 +304,8 @@ export class WebviewInterceptor {
                 const clean = text.replace(/\n/g, ' ').substring(0, 1000);
                 if (clean.includes('Boundary Violation') || clean.includes('LogicAnalyzer')) return;
 
-                fs.appendFileSync(interceptHits, `[${timestamp}] [NEURO_HIT] [${viewType}] -> ${clean}\n`, 'utf-8');
+                // [v0.3.10] Spy hit logging disabled
+                // fs.appendFileSync(interceptHits, `[${timestamp}] [NEURO_HIT] [${viewType}] -> ${clean}\n`, 'utf-8');
                 
                 vscode.commands.executeCommand('synapse.logPrompt', {
                     prompt: `[NEURO] ${clean}`,
@@ -318,7 +321,8 @@ export class WebviewInterceptor {
                     if (content.includes('Boundary Violation') || content.includes('LogicAnalyzer')) continue;
 
                     const clean = content.replace(/\n/g, ' ').substring(0, 1000);
-                    fs.appendFileSync(interceptHits, `[${timestamp}] [VEIN_HIT][WEBVIEW->HOST] [${viewType}] -> ${clean}\n`, 'utf-8');
+                    // [v0.3.10] Upstream hit logging disabled
+                    // fs.appendFileSync(interceptHits, `[${timestamp}] [VEIN_HIT][WEBVIEW->HOST] [${viewType}] -> ${clean}\n`, 'utf-8');
                     
                     vscode.commands.executeCommand('synapse.logPrompt', {
                         prompt: `[UPSTREAM] ${clean}`,

@@ -59,10 +59,12 @@ export class StateManager {
 
   private mutateConnectEdge(payload: any): CanvasState {
     const newEdge: Edge = {
+      id: payload.id, // [v0.3.10] Protect manual ID
       from: payload.from,
       to: payload.to,
       type: payload.type || 'REFERENCE',
-      weight: payload.weight || GraphModel.WEIGHT_UTILITY
+      weight: payload.weight || GraphModel.WEIGHT_UTILITY,
+      ...payload // Preserve status and custom UI metadata
     };
 
     graphModel.addEdge(newEdge);

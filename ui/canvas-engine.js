@@ -108,6 +108,15 @@ class FlowRenderer {
             const isDoc = fileName.endsWith('.md') || fileName.endsWith('.txt') || fileName.includes('license');
             const isGhost = n.status === 'ghost';
             const isContext = false;
+            
+            // [v0.3.10] Layer Visibility Check for Flow
+            const isUser = (n.id && n.id.startsWith('node_manual_')) || 
+                           (n.cluster_id && n.cluster_id.startsWith('sys_')) || 
+                           (n.data?.cluster_id && n.data.cluster_id.startsWith('sys_'));
+            
+            if (!isUser && !this.engine.showBaseLayer) return false;
+            if (isUser && !this.engine.showUserLayer) return false;
+
             return reachableIds.has(n.id) && n.type !== 'external' && !isDoc && !isGhost && !isContext;
         });
         const sortedNodes = [...filteredNodes].sort((a, b) => {
@@ -661,7 +670,7 @@ console.log('[SYNAPSE] canvas-engine.js loaded');
 class TreeRenderer {
     constructor(engine) {
         this.engine = engine;
-        this.expandedFolders = new Set(['.', 'root', 'src']);
+        this.expandedFolders = new Set(['.', 'src']);
         this.initializeDefaultExpansion();
     }
 
@@ -671,9 +680,9 @@ class TreeRenderer {
         srcSubfolders.forEach(folder => this.expandedFolders.add(folder));
     }
 
-    buildTree(nodes) {
-        console.log(`[SYNAPSE] buildTree called with ${nodes.length} nodes`);
-        const root = { name: 'Root', type: 'folder', children: {}, fullPath: '', expanded: true };
+    buildTree(nodes, projectName = 'Project') {
+        process.stdout?.write(`[SYNAPSE] buildTree for ${projectName}\n`);
+        const root = { name: projectName, type: 'folder', children: {}, fullPath: '', expanded: true };
 
         for (const node of nodes) {
             if (!node.data) continue;
@@ -682,12 +691,23 @@ class TreeRenderer {
             if (node.status === 'ghost') continue;
             // Skip documentation/system nodes from direct layout calculation if needed
 
-            // 파일 경로를 기반으로 트리 구축
-            const pathStr = node.data.path || node.data.file || '';
-            if (!pathStr) continue;
+            // [v0.3.10 Fix Refinement] Robust Workspace Path Stripping
+            let wsRoot = (this.engine.workspaceFolder || '').replace(/\\/g, '/');
+            if (wsRoot && !wsRoot.endsWith('/')) wsRoot += '/';
+            
+            let pathStr = node.data.path || node.data.file || `/${node.data.label || node.id}`;
+            let normalizedPath = pathStr.replace(/\\/g, '/');
 
-            // Normalize slashes and split
-            const normalizedPath = pathStr.replace(/\\/g, '/');
+            // Strip Workspace Root if present
+            if (wsRoot && normalizedPath.startsWith(wsRoot)) {
+                normalizedPath = normalizedPath.substring(wsRoot.length);
+            }
+            
+            // Still absolute? Strip the leading slash to avoid '/root', '/home' folder pollution
+            // BUT preserve relative folder structure within the workspace
+            normalizedPath = normalizedPath.replace(/^[\\\/]/, '');
+            if (normalizedPath === '') normalizedPath = node.data.label || node.id;
+            
             const parts = normalizedPath.split('/').filter(p => p !== '' && p !== '.');
 
             let current = root;
@@ -777,8 +797,9 @@ class TreeRenderer {
         };
         collectVisible(treeData, 0);
 
-        // 컬럼 수 계산
-        const numColumns = Math.max(1, Math.floor((canvasWidth - padding) / columnWidth));
+        // 컬럼 수 계산 (최대 4개로 제한하여 광활한 화면에서의 가독성 확보)
+        const maxColumns = 4;
+        const numColumns = Math.max(1, Math.min(maxColumns, Math.floor((canvasWidth - padding) / columnWidth)));
         const itemsPerColumn = Math.ceil(visibleItems.length / numColumns);
 
         // 컬럼별로 렌더링
@@ -2116,20 +2137,7 @@ class CanvasEngine {
             }
         });
 
-        this.canvas.addEventListener('dblclick', (e) => {
-            const worldPos = this.screenToWorld(e.offsetX, e.offsetY);
-            const node = this.getNodeAt(worldPos.x, worldPos.y);
-            if (node) {
-                console.log('[SYNAPSE] Double clicked node:', node.id);
-                // [v0.3.09_fix] Fix missing _onNodeDoubleClicked. Call openFile directly.
-                if (node.data && (node.data.file || node.data.path)) {
-                    const filePath = node.data.file || node.data.path;
-                    if (typeof vscode !== 'undefined') {
-                        vscode.postMessage({ command: 'openFile', filePath });
-                    }
-                }
-            }
-        });
+        // [v0.3.10 Fix Planning] Redundant listener removed. Unified into dblclick below line 2442.
 
         this.canvas.addEventListener('mousemove', (e) => {
             this.lastActivityTime = Date.now(); // Frequent mousemove updates timer but doesn't force wakeUp unless needed
@@ -2406,7 +2414,7 @@ class CanvasEngine {
                 if (clickedItem) {
                     if (clickedItem.type === 'folder') {
                         this.treeRenderer.toggleFolder(clickedItem.fullPath);
-                        this.treeData = this.treeRenderer.buildTree(this.nodes);
+                        this.treeData = this.treeRenderer.buildTree(this.nodes, this.projectName || 'Project');
                     } else if (clickedItem.type === 'file' && clickedItem.node && !hasModifier) {
                         // Single click only selects in Tree mode as well to maintain consistency
                         this.selectedNodes.clear();
@@ -2438,7 +2446,7 @@ class CanvasEngine {
             this.render();
         });
 
-        // [v0.2.21] Double Click to Open File (Separation of Navigation and Editing)
+        // [v0.3.10 Fix] Master dblclick listener for all modes
         this.canvas.addEventListener('dblclick', (e) => {
             const worldPosDbl = this.screenToWorld(e.offsetX, e.offsetY);
 
@@ -2456,21 +2464,29 @@ class CanvasEngine {
                 const topClickedNode = this.getNodeAt(worldPosDbl.x, worldPosDbl.y);
                 if (topClickedNode) {
                     this.handleOpenFile(topClickedNode.data.path || topClickedNode.data.file);
-                } else {
-                    // Check for edge double click
-                    const clickedEdge = this.findEdgeAtPoint(worldPosDbl.x, worldPosDbl.y);
-                    if (clickedEdge) {
-                        // [v0.2.26] Edge Double Click: Logic Confirmation
-                        if (clickedEdge.status === 'pending') {
-                            this.requestConfirmEdge(clickedEdge.id);
-                        } else {
-                            // If not pending, show context menu
-                            this.showEdgeContextMenu(e.clientX, e.clientY);
-                        }
+                    return; // Prevent fall-through to cluster header
+                }
+
+                // [v0.3.10 Fix] Only rename cluster if specifically double-clicking the HEADER
+                const clickedClusterHeader = this.getClusterHeaderAt(worldPosDbl.x, worldPosDbl.y);
+                if (clickedClusterHeader) {
+                    this.renameCluster(clickedClusterHeader.id);
+                    return;
+                }
+
+                // Check for edge double click
+                const clickedEdge = this.findEdgeAtPoint(worldPosDbl.x, worldPosDbl.y);
+                if (clickedEdge) {
+                    // [v0.2.26] Edge Double Click: Logic Confirmation
+                    if (clickedEdge.status === 'pending') {
+                        this.requestConfirmEdge(clickedEdge.id);
                     } else {
-                        // Empty space dblclick -> Reset View
-                        this.fitView();
+                        // If not pending, show context menu
+                        this.showEdgeContextMenu(e.clientX, e.clientY);
                     }
+                } else {
+                    // Empty space dblclick -> Reset View
+                    this.fitView();
                 }
             }
         });
@@ -3747,7 +3763,7 @@ class CanvasEngine {
             // Tree 데이터 빌드
             try {
                 if (this.treeRenderer) {
-                    this.treeData = this.treeRenderer.buildTree(this.nodes) || [];
+                    this.treeData = this.treeRenderer.buildTree(this.nodes, this.projectName || 'Project') || [];
                 }
             } catch (treeErr) {
                 this.log('Tree build failed but continuing', 'error', treeErr.message);
@@ -6833,10 +6849,11 @@ class CanvasEngine {
         // [v0.3.09_fix] Corrected logic: 'pending_confirm' status must show the badge.
         const confirmStatus = edge.confirmStatus || (edge.status === 'pending' || edge.status === 'pending_confirm' ? 'pending_confirm' : (edge.status === 'confirmed' ? 'confirmed' : ''));
 
-        if (confirmStatus === 'pending_confirm' || confirmStatus === 'confirmed') {
-            const isPending = confirmStatus === 'pending_confirm';
-            const badgeChar = isPending ? '❓' : '❗️';
-            const badgeColor = isPending ? '#504945' : '#83a598';
+        // [v0.3.10 Fix] Immediately hide badge when confirmed to avoid visual confusion.
+        if (confirmStatus === 'pending_confirm') {
+            const isPending = true;
+            const badgeChar = '❓';
+            const badgeColor = '#504945';
 
             ctx.save();
             ctx.font = `bold ${badgeSize}px Inter, monospace`;
@@ -7396,6 +7413,13 @@ function initCanvas() {
 
         switch (message.command) {
             case 'projectState': {
+                if (message.data && message.data.project_name) {
+                    engine.projectName = message.data.project_name;
+                }
+                if (message.workspaceFolder) {
+                    engine.workspaceFolder = message.workspaceFolder;
+                    console.log(`[SYNAPSE] Workspace Context Root: ${engine.workspaceFolder}`);
+                }
                 if (engine.isDragging || engine._isInteracting) {
                     engine._pendingState = message.data;
                     return;
@@ -7825,14 +7849,7 @@ function initCanvas() {
         });
     });
 
-    // 0. dblclick listener for cluster renaming
-    engine.canvas.addEventListener('dblclick', (e) => {
-        const worldPos = engine.screenToWorld(e.offsetX, e.offsetY);
-        const clickedCluster = engine.getClusterAt(worldPos.x, worldPos.y);
-        if (clickedCluster) {
-            engine.renameCluster(clickedCluster.id);
-        }
-    });
+    // [v0.3.10 Fix] Redundant listener removed (merged into main loop at line 2442)
 
     // [v0.2.20] Make DTR Controller draggable
     const dtrController = document.getElementById('dtr-controller');

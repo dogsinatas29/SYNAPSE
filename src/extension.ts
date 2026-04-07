@@ -56,8 +56,9 @@ export async function activate(context: vscode.ExtensionContext) {
         let auditLogFilePath: string | null = null;
 
         if (projectRoot) {
-            auditLogFilePath = promptLogger.initializeSession(projectRoot);
-            console.log(`[SYNAPSE] Audit Log path secured: ${auditLogFilePath}`);
+            // [v0.3.10] Automatic session initialization disabled by user request to prevent file creation on startup
+            // auditLogFilePath = promptLogger.initializeSession(projectRoot);
+            // console.log(`[SYNAPSE] Audit Log path secured: ${auditLogFilePath}`);
         }
 
         const chatAdapter = ChatExtractor.initialize(context);
@@ -82,8 +83,9 @@ export async function activate(context: vscode.ExtensionContext) {
                 const sid = sessionId || 'default';
 
                 const targetProjectRoot = workspacePath || vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
-                if (targetProjectRoot && !auditLogFilePath) {
-                    auditLogFilePath = promptLogger.initializeSession(targetProjectRoot);
+                if (targetProjectRoot) {
+                    // [v0.3.10] Manual trigger only
+                    // auditLogFilePath = promptLogger.initializeSession(targetProjectRoot);
                 }
 
                 if (!auditLogFilePath) return;

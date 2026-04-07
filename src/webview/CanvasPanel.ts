@@ -563,9 +563,15 @@ export class CanvasPanel {
         const workspaceFolder = this._workspaceFolder;
         if (!workspaceFolder) return;
 
-        const fileUri = path.isAbsolute(filePath) 
-            ? vscode.Uri.file(filePath)
-            : vscode.Uri.joinPath(workspaceFolder.uri, filePath);
+        // [v0.3.10 Fix] Robust Path Handling: Check if absolute before joining with workspace
+        let fileUri: vscode.Uri;
+        if (filePath && path.isAbsolute(filePath)) {
+            fileUri = vscode.Uri.file(filePath);
+        } else {
+            // [v0.3.10 Fix] Normalize path to prevent double slash errors
+            let targetPath = filePath.replace(/^[\\\/]/, '').trim();
+            fileUri = vscode.Uri.joinPath(workspaceFolder.uri, targetPath);
+        }
         try {
             let stat;
             try {
@@ -593,9 +599,20 @@ export class CanvasPanel {
                 vscode.window.showWarningMessage(`[SYNAPSE] '${path.basename(filePath)}' 파일은 확장자가 없습니다. 가상 노드이거나 열 수 없는 파일일 수 있습니다.`);
             }
 
+            Logger.info(`[CanvasPanel] Opening file: ${fileUri.fsPath}`);
             const doc = await vscode.workspace.openTextDocument(fileUri);
             await vscode.window.showTextDocument(doc);
         } catch (error) {
+            if (createIfNotExists) {
+                 try {
+                    await vscode.workspace.fs.writeFile(fileUri, Buffer.from('', 'utf8'));
+                    const doc = await vscode.workspace.openTextDocument(fileUri);
+                    await vscode.window.showTextDocument(doc);
+                    return;
+                 } catch (e) {
+                    Logger.error(`Failed to create file: ${filePath}`, e);
+                 }
+            }
             Logger.error(`Failed to open/create file: ${filePath}`, error);
             vscode.window.showErrorMessage(`[SYNAPSE] 파일 열기 실패: ${filePath} (${error instanceof Error ? error.message : 'Unknown error'})`);
         }
@@ -887,12 +904,12 @@ export class CanvasPanel {
                 edge._toFile = toNode.data.file || toNode.data.label || null;
             }
 
-            // [v0.2.17 Patch 7] Strict Extension Validation (Pre-validation)
+            // [v0.3.10 Patch] Expanded Extension list for manual edges
             const filesToCheck = [edge._fromFile, edge._toFile];
             for (const file of filesToCheck) {
                 if (file) {
                     const ext = path.extname(file).toLowerCase();
-                    const supportedExts = ['.ts', '.js', '.tsx', '.jsx', '.py', '.c', '.h', '.cpp', '.hpp', '.rs'];
+                    const supportedExts = ['.ts', '.js', '.tsx', '.jsx', '.py', '.c', '.h', '.cpp', '.hpp', '.rs', '.csv', '.md', '.json', '.yml', '.yaml', '.txt', '.csv'];
                     if (!supportedExts.includes(ext) || ext === '') {
                         vscode.window.showWarningMessage(`[SYNAPSE] ⚠️ ${file}: 연결할 수 없는 파일 형식입니다. (확장자가 필요합니다)`);
                         return; // Block edge creation
@@ -931,20 +948,43 @@ export class CanvasPanel {
                     // Even if blocked by rules, we still push to projectState for manual persistence
                 }
 
+                // [v0.3.10 Fix] Move from Buffer to Reserved Cluster via ENGINE dispatch (SSOT)
+                const promoteToReserved = (nodeId: string) => {
+                    const snap = canvasEngine.getFinalSnapshot();
+                    const nodeObj = snap.nodes[nodeId];
+                    if (nodeObj && (nodeObj.cluster_id === 'sys_cluster_buffer' || nodeObj.data?.cluster_id === 'sys_cluster_buffer')) {
+                        // [v0.3.10 Fix] Update BOTH memory engine and local projectState object
+                        // Memory Engine update (for UI sync)
+                        canvasEngine.dispatch('UPDATE_NODE', {
+                            id: nodeId,
+                            updates: {
+                                cluster_id: 'sys_cluster_reserved',
+                                data: {
+                                    ...(nodeObj.data || {}),
+                                    cluster_id: 'sys_cluster_reserved',
+                                    priority_cluster: 'sys_cluster_reserved'
+                                }
+                            }
+                        });
+
+                        // Local state update (for File Persistence)
+                        const nodeInState = projectState.nodes.find((n: any) => n.id === nodeId);
+                        if (nodeInState) {
+                            nodeInState.cluster_id = 'sys_cluster_reserved';
+                            if (!nodeInState.data) nodeInState.data = {};
+                            nodeInState.data.cluster_id = 'sys_cluster_reserved';
+                            nodeInState.data.priority_cluster = 'sys_cluster_reserved';
+                        }
+                        
+                        Logger.info(`[CanvasPanel] Promoted node ${nodeId} to Reserved (Engine & File sync).`);
+                    }
+                };
+
+                if (edge.from) promoteToReserved(edge.from);
+                if (edge.to) promoteToReserved(edge.to);
+
                 projectState.edges.push(edge);
                 console.log(`[SYNAPSE] Pushed new manual edge and dispatched intent. Current count: ${projectState.edges.length}`);
-            }
-
-            // [v0.2.18] Move from Buffer to Reserved Cluster on Connection
-            if (fromNode && (fromNode.cluster_id === 'sys_cluster_buffer' || fromNode.data?.cluster_id === 'sys_cluster_buffer')) {
-                fromNode.cluster_id = 'sys_cluster_reserved';
-                if (fromNode.data) fromNode.data.cluster_id = 'sys_cluster_reserved';
-                fromNode.position = { x: -1500 + Math.random() * 200, y: 1000 + Math.random() * 200 };
-            }
-            if (toNode && (toNode.cluster_id === 'sys_cluster_buffer' || toNode.data?.cluster_id === 'sys_cluster_buffer')) {
-                toNode.cluster_id = 'sys_cluster_reserved';
-                if (toNode.data) toNode.data.cluster_id = 'sys_cluster_reserved';
-                toNode.position = { x: -1500 + Math.random() * 200, y: 1000 + Math.random() * 200 };
             }
 
             // [v0.2.17-patch4] Proactive commented import injection (Logic Edit Mode)
@@ -1404,7 +1444,7 @@ export class CanvasPanel {
                     Logger.warn(`[CanvasPanel] Source name mismatch overridden: Param '${fromFile}' vs Node '${fNode.data.file}'. Using Node data.`);
                 }
                 actualFromFile = fNode.data.file;
-            } else if (!actualFromFile) {
+            } else if (!actualFromFile || actualFromFile.startsWith('node_manual_') || actualFromFile.startsWith('sys_')) {
                 actualFromFile = fNode?.data?.path || fNode?.data?.label || edge?._fromFile;
             }
 
@@ -1413,7 +1453,7 @@ export class CanvasPanel {
                     Logger.warn(`[CanvasPanel] Target name mismatch overridden: Param '${toFile}' vs Node '${tNode.data.file}'. Using Node data.`);
                 }
                 actualToFile = tNode.data.file;
-            } else if (!actualToFile) {
+            } else if (!actualToFile || actualToFile.startsWith('node_manual_') || actualToFile.startsWith('sys_')) {
                 actualToFile = tNode?.data?.path || tNode?.data?.label || edge?._toFile;
             }
 
@@ -1426,7 +1466,8 @@ export class CanvasPanel {
                 const ext = path.extname(actualFromFile).toLowerCase();
                 const supportedExts = ['.ts', '.js', '.tsx', '.jsx', '.py', '.c', '.h', '.cpp', '.hpp', '.rs'];
 
-                if (!supportedExts.includes(ext) || ext === '') {
+                // [v0.3.10] Ignore ext check for manual proxy files if they don't have classical source extensions
+                if (actualFromFile.includes('.') && (!supportedExts.includes(ext) || ext === '')) {
                     vscode.window.showWarningMessage(`[SYNAPSE] ⚠️ ${actualFromFile}: 연결할 수 없는 노드 타입입니다. (확장자가 없는 파일은 소스 연결 지원 불가)`);
 
                     // 강제 종료 및 임시 엣지 파기
@@ -1434,7 +1475,12 @@ export class CanvasPanel {
                         // Create a NEW snapshot for deletion to avoid mutating direct engine state
                         const finalSnap = canvasEngine.getFinalSnapshot();
                         const updatedEdges = Object.values(finalSnap.edges || {}).filter((e: any) => e.id !== edgeId);
-                        const newState = { ...finalSnap, edges: updatedEdges };
+                        // [CRITICAL FIX] Must convert nodes Record to Array for UI-style saving!
+                        const newState = { 
+                            ...finalSnap, 
+                            nodes: Object.values(finalSnap.nodes || {}),
+                            edges: updatedEdges 
+                        };
                         
                         await vscode.workspace.fs.writeFile(stateUri, Buffer.from(this.normalizeProjectState(newState), 'utf8'));
                         // UI에서도 삭제
@@ -1484,9 +1530,23 @@ export class CanvasPanel {
                 promoteToBuffer(edge.to);
             }
 
-            // 3. Persistence
-            const finalState = canvasEngine.getFinalSnapshot();
-            await vscode.workspace.fs.writeFile(stateUri, Buffer.from(this.normalizeProjectState(finalState), 'utf8'));
+            // 3. Persistence (Normalized for UI compatibility)
+            const finalSnap = canvasEngine.getFinalSnapshot();
+            const projectStateArr = {
+                ...finalSnap,
+                nodes: Object.values(finalSnap.nodes || {}),
+                edges: Object.values(finalSnap.edges || {}),
+                clusters: finalSnap.clusters || []
+            };
+            await vscode.workspace.fs.writeFile(stateUri, Buffer.from(this.normalizeProjectState(projectStateArr), 'utf8'));
+
+            // [v0.3.10] 🛡️ UI TRIGGER: Inform Webview to remove the "?" badge immediately
+            this._panel.webview.postMessage({ 
+                command: 'edgeConfirmed', 
+                edgeId: edgeId,
+                from: edge.from,
+                to: edge.to 
+            });
 
             // 2. fromFile 최상단에 import 문 삽입
             if (actualFromFile && actualToFile) {
@@ -2057,12 +2117,27 @@ export class CanvasPanel {
                 }
             }
 
-            // 2. Persist the absolute state from CanvasEngine
+            // 2. [v0.3.10 Fix] Persistence: Convert objects to arrays for legacy format compatibility
             const finalCanvasState = canvasEngine.getFinalSnapshot();
-            const normalizedJson = this.normalizeProjectState(finalCanvasState);
+            const persistenceState = {
+                project_name: workspaceFolder.name,
+                canvas_state: {
+                    zoom_level: 1.0, 
+                    offset: { x: 0, y: 0 }
+                },
+                // Crucial: preserve cluster_id for promotion persistence
+                nodes: Object.values(finalCanvasState.nodes || {}).map((n: any) => ({
+                    ...n,
+                    cluster_id: n.cluster_id || n.data?.cluster_id || 'sys_cluster_buffer'
+                })),
+                edges: Object.values(finalCanvasState.edges || {}),
+                clusters: finalCanvasState.clusters || []
+            };
+
+            const normalizedJson = this.normalizeProjectState(persistenceState);
             await vscode.workspace.fs.writeFile(projectStateUri, Buffer.from(normalizedJson, 'utf8'));
 
-            console.log('[SYNAPSE] State synchronized and persisted via pipeline.');
+            console.log(`[SYNAPSE] State synchronized: ${persistenceState.nodes.length} nodes saved to disk.`);
         } catch (error) {
             console.error('[SYNAPSE] Failed to save state:', error);
         }
@@ -2411,7 +2486,9 @@ export class CanvasPanel {
 
             this._panel.webview.postMessage({
                 command: 'projectState',
-                data: projectState
+                data: projectState,
+                // [v0.3.10] Provide context for Tree View Rooting
+                workspaceFolder: workspaceFolder.uri.fsPath
             });
 
             // [v0.3.10] Auto-Advance Phase to CONTROL after successful state broadcast

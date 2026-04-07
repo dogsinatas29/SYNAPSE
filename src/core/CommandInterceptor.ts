@@ -28,12 +28,13 @@ export class CommandInterceptor {
         
         console.log('[SYNAPSE] CommandInterceptor: Arming memory sniffer (WILDCARD MODE)...');
         
-        // [Debug] Confirming File System Access
+        /* [v0.3.10] Automatic debug log disabled
         const projectRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
         if (projectRoot) {
             const debugLog = path.join(projectRoot, '.synapse_contexts', 'interceptor_debug.log');
             fs.writeFileSync(debugLog, `[${new Date().toISOString()}] CommandInterceptor Activated (v0.2.45)\n`, 'utf-8');
         }
+        */
 
         this.patchExecuteCommand(context);
         this.observeChatEvents(context);
@@ -67,8 +68,9 @@ export class CommandInterceptor {
             relevant: relevant,
             all: allCommands
         };
-        fs.writeFileSync(diagPath, JSON.stringify(data, null, 2), 'utf-8');
-        console.log(`[SYNAPSE][INTERCEPT] Diagnostic list updated for v0.2.45: ${diagPath}`);
+        // [v0.3.10] Diagnostic report generation disabled
+        // fs.writeFileSync(diagPath, JSON.stringify(data, null, 2), 'utf-8');
+        console.log(`[SYNAPSE][INTERCEPT] Diagnostic list calculated for v0.2.45 (Skip write)`);
     }
 
     private patchExecuteCommand(context: vscode.ExtensionContext) {
@@ -79,10 +81,13 @@ export class CommandInterceptor {
         (vscode.commands as any).executeCommand = async function(commandId: string, ...args: any[]) {
             const projectRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
             if (projectRoot) {
+                // [v0.3.10] Appending to debug log disabled
+                /*
                 const debugLog = path.join(projectRoot, '.synapse_contexts', 'interceptor_debug.log');
                 try {
                     fs.appendFileSync(debugLog, `[${new Date().toISOString()}] EXEC: ${commandId} (args: ${args.length})\n`, 'utf-8');
                 } catch (e) {}
+                */
             }
 
             const isRelevant = commandId.startsWith('antigravity.') || 

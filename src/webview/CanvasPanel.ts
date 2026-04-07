@@ -983,6 +983,22 @@ export class CanvasPanel {
                 if (edge.from) promoteToReserved(edge.from);
                 if (edge.to) promoteToReserved(edge.to);
 
+                // [v0.3.10 Fix] Immediately sync webview engine to prevent stale 'saveState' from reverting cluster status
+                this._panel.webview.postMessage({
+                    command: 'updateNode',
+                    data: {
+                        id: edge.from,
+                        updates: { cluster_id: 'sys_cluster_reserved' }
+                    }
+                });
+                this._panel.webview.postMessage({
+                    command: 'updateNode',
+                    data: {
+                        id: edge.to,
+                        updates: { cluster_id: 'sys_cluster_reserved' }
+                    }
+                });
+
                 projectState.edges.push(edge);
                 console.log(`[SYNAPSE] Pushed new manual edge and dispatched intent. Current count: ${projectState.edges.length}`);
             }
@@ -2117,21 +2133,23 @@ export class CanvasPanel {
                 }
             }
 
-            // 2. [v0.3.10 Fix] Persistence: Convert objects to arrays for legacy format compatibility
-            const finalCanvasState = canvasEngine.getFinalSnapshot();
+            // 2. [v0.3.10 Fix] Persistence: Use the latest engine state from the webview!
+            // We NO LONGER depend on the backend's stale canvasEngine here for persistence.
+            if (!newState || !newState.nodes) {
+                console.warn('[SYNAPSE] Save aborted: Missing nodes in state payload.');
+                return;
+            }
+
             const persistenceState = {
                 project_name: workspaceFolder.name,
                 canvas_state: {
-                    zoom_level: 1.0, 
-                    offset: { x: 0, y: 0 }
+                    zoom_level: newState.zoom || 1.0, 
+                    offset: newState.offset || { x: 0, y: 0 }
                 },
-                // Crucial: preserve cluster_id for promotion persistence
-                nodes: Object.values(finalCanvasState.nodes || {}).map((n: any) => ({
-                    ...n,
-                    cluster_id: n.cluster_id || n.data?.cluster_id || 'sys_cluster_buffer'
-                })),
-                edges: Object.values(finalCanvasState.edges || {}),
-                clusters: finalCanvasState.clusters || []
+                // Support both array and object formats for robustness
+                nodes: Array.isArray(newState.nodes) ? newState.nodes : Object.values(newState.nodes),
+                edges: Array.isArray(newState.edges) ? newState.edges : Object.values(newState.edges || {}),
+                clusters: newState.clusters || []
             };
 
             const normalizedJson = this.normalizeProjectState(persistenceState);

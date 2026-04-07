@@ -685,57 +685,52 @@ class TreeRenderer {
         const root = { name: projectName, type: 'folder', children: {}, fullPath: '', expanded: true };
 
         for (const node of nodes) {
-            if (!node.data) continue;
-
-            // [v0.2.19] Skip Ghost and Context nodes in Tree View
-            if (node.status === 'ghost') continue;
-            // Skip documentation/system nodes from direct layout calculation if needed
-
-            // [v0.3.10 Fix Refinement] Robust Workspace Path Stripping
-            let wsRoot = (this.engine.workspaceFolder || '').replace(/\\/g, '/');
-            if (wsRoot && !wsRoot.endsWith('/')) wsRoot += '/';
+            if (!node.data || !node.data.file) continue;
             
-            let pathStr = node.data.path || node.data.file || `/${node.data.label || node.id}`;
-            let normalizedPath = pathStr.replace(/\\/g, '/');
+            const file = node.data.file;
+            let wsRoot = this.engine.workspaceFolder;
+            let normalizedPath = file;
 
-            // Strip Workspace Root if present
-            if (wsRoot && normalizedPath.startsWith(wsRoot)) {
-                normalizedPath = normalizedPath.substring(wsRoot.length);
-            }
-            
-            // Still absolute? Strip the leading slash to avoid '/root', '/home' folder pollution
-            // BUT preserve relative folder structure within the workspace
-            normalizedPath = normalizedPath.replace(/^[\\\/]/, '');
-            if (normalizedPath === '') normalizedPath = node.data.label || node.id;
-            
-            const parts = normalizedPath.split('/').filter(p => p !== '' && p !== '.');
-
-            let current = root;
-            for (let i = 0; i < parts.length; i++) {
-                const part = parts[i];
-                const isFile = (i === parts.length - 1);
-                const currentPath = parts.slice(0, i + 1).join('/');
-
-                if (isFile) {
-                    current.children[part] = {
-                        name: part,
-                        type: 'file',
-                        path: normalizedPath,
-                        node: node
-                    };
-                } else {
-                    if (!current.children[part]) {
-                        current.children[part] = {
-                            name: part,
-                            type: 'folder',
-                            children: {},
-                            fullPath: currentPath,
-                            expanded: this.expandedFolders.has(currentPath)
-                        };
-                    }
-                    current = current.children[part];
+            // [v0.3.10 Fix] Cross-platform Path Normalized (Handle both / and \\)
+            normalizedPath = normalizedPath.replace(/\\/g, '/');
+            if (wsRoot) {
+                wsRoot = wsRoot.replace(/\\/g, '/');
+                if (!wsRoot.endsWith('/')) wsRoot += '/';
+                
+                if (normalizedPath.startsWith(wsRoot)) {
+                    normalizedPath = normalizedPath.substring(wsRoot.length);
+                } else if (normalizedPath.includes(wsRoot)) {
+                    // Handle potential doubling or absolute paths buried in strings
+                    normalizedPath = normalizedPath.split(wsRoot).pop();
                 }
             }
+            
+            // Further clean: Remove leading /
+            normalizedPath = normalizedPath.replace(/^\//, '');
+
+            const parts = normalizedPath.split('/');
+            let current = root;
+            let currentPath = '';
+
+            for (let i = 0; i < parts.length - 1; i++) {
+                const part = parts[i];
+                if (!part || part === 'root') continue; // Skip redundant root segments
+                
+                currentPath = currentPath ? `${currentPath}/${part}` : part;
+                if (!current.children[part]) {
+                    current.children[part] = { 
+                        name: part, 
+                        type: 'folder', 
+                        children: {}, 
+                        fullPath: currentPath,
+                        expanded: this.expandedFolders.has(currentPath)
+                    };
+                }
+                current = current.children[part];
+            }
+
+            const fileName = parts[parts.length - 1];
+            current.children[fileName] = { name: fileName, type: 'file', node: node, fullPath: normalizedPath };
         }
 
         // 객체를 배열로 변환하고 정렬
@@ -758,11 +753,10 @@ class TreeRenderer {
         };
 
         const treeArr = convertToArray(root.children);
-        console.log(`[SYNAPSE] buildTree finished. Root children count: ${treeArr.length}`);
+        console.log(`[SYNAPSE] buildTree finished for ${projectName}. Root children count: ${treeArr.length}`);
 
         return [{
             ...root,
-            name: 'root',
             children: treeArr
         }];
     }
@@ -778,84 +772,66 @@ class TreeRenderer {
     renderTree(ctx, treeData, transform) {
         if (!treeData || !Array.isArray(treeData)) return;
 
-        const canvasWidth = this.engine.canvas.width / (window.devicePixelRatio || 1);
-        const columnWidth = 350;
         const padding = 50;
         const startY = 100;
-        const lineHeight = 30;
-        const indentSize = 20;
-
-        // 보이는 모든 항목을 리스트로 수집 (평면화)
-        const visibleItems = [];
-        const collectVisible = (items, level) => {
-            for (const item of items) {
-                visibleItems.push({ ...item, level });
-                if (item.type === 'folder' && item.expanded && item.children) {
-                    collectVisible(item.children, level + 1);
-                }
-            }
-        };
-        collectVisible(treeData, 0);
-
-        // 컬럼 수 계산 (최대 4개로 제한하여 광활한 화면에서의 가독성 확보)
-        const maxColumns = 4;
-        const numColumns = Math.max(1, Math.min(maxColumns, Math.floor((canvasWidth - padding) / columnWidth)));
-        const itemsPerColumn = Math.ceil(visibleItems.length / numColumns);
-
-        // 컬럼별로 렌더링
-        for (let col = 0; col < numColumns; col++) {
-            const colStartX = padding + (col * columnWidth);
-            const startIdx = col * itemsPerColumn;
-            const endIdx = Math.min(startIdx + itemsPerColumn, visibleItems.length);
-
-            for (let i = startIdx; i < endIdx; i++) {
-                const item = visibleItems[i];
-                const y = startY + ((i - startIdx) * lineHeight);
-                this.renderTreeItem(ctx, item, colStartX, y, lineHeight, indentSize, item.level);
-            }
-        }
+        const canvasWidth = this.engine.canvas.width / (window.devicePixelRatio || 1);
+        
+        this.renderTreeList(ctx, treeData, padding, startY, canvasWidth - padding * 2);
     }
 
-    renderTreeItem(ctx, item, x, y, lineHeight, indent, level) {
-        const indentX = x + (level * indent);
+    renderTreeList(ctx, items, x, y, width) {
+        const itemHeight = 30;
+        let currentY = y;
+        
+        // Vertical List Only for better scannability (Single Column)
+        const colWidth = width - 40;
+        
+        for (const item of items) {
+            this.renderTreeItem(ctx, item, x, currentY, colWidth);
+            currentY += itemHeight;
+            
+            if (item.type === 'folder' && item.expanded && item.children) {
+                currentY = this.renderTreeList(ctx, item.children, x + 20, currentY, colWidth - 20);
+            }
+        }
+        return currentY;
+    }
 
+    renderTreeItem(ctx, item, x, y, width) {
         // 마우스 호버 효과를 위한 배경 (옵션)
         if (this.engine.lastMousePos) {
             const mx = this.engine.lastMousePos.x;
             const my = this.engine.lastMousePos.y;
-            if (mx >= indentX && mx <= indentX + 250 && my >= y - 20 && my <= y + 10) {
+            if (mx >= x && mx <= x + width && my >= y - 20 && my <= y + 10) {
                 ctx.fillStyle = 'rgba(255, 255, 255, 0.05)';
-                ctx.fillRect(x, y - 20, 300, lineHeight);
+                ctx.fillRect(x, y - 20, width, 30);
             }
         }
 
+        ctx.fillStyle = '#fabd2f';
+        ctx.font = '14px Inter, sans-serif';
+        
         if (item.type === 'folder') {
-            const icon = item.expanded ? '▼' : '▶';
-            ctx.fillStyle = '#fabd2f';
-            ctx.font = '12px monospace';
-            ctx.fillText(icon, indentX, y);
-
-            ctx.fillStyle = '#fabd2f';
-            ctx.font = 'bold 14px Inter, sans-serif';
-            ctx.fillText(`📁 /${item.name.replace(/^\//, '')}`, indentX + 20, y);
+            const isExpanded = this.expandedFolders.has(item.fullPath);
+            const icon = isExpanded ? '📂' : '📁';
+            ctx.fillText(`${icon} ${item.name}`, x, y);
 
             item._bounds = {
-                x: indentX,
+                x: x,
                 y: y - 20,
-                width: 250,
-                height: lineHeight,
+                width: width,
+                height: 30,
                 item: item
             };
         } else {
             ctx.fillStyle = '#ebdbb2';
-            ctx.font = '14px Inter, sans-serif';
-            ctx.fillText(`L 📄 ${item.name}`, indentX + 20, y);
+            ctx.fillText(`📄 ${item.name}`, x, y);
 
             item._bounds = {
-                x: indentX,
+                x: x,
                 y: y - 20,
-                width: 250,
-                height: lineHeight,
+                width: width,
+                height: 30,
                 item: item
             };
         }
@@ -7478,6 +7454,24 @@ function initCanvas() {
                 engine.fitView();
                 engine.isDirty = true;
                 engine.requestRender();
+                break;
+            case 'updateNode': {
+                const node = engine.nodes.find(n => n.id === message.data.id);
+                if (node) {
+                    Object.assign(node, message.data.updates);
+                    if (message.data.updates.data) {
+                       node.data = { ...node.data, ...message.data.updates.data };
+                    }
+                    console.log(`[SYNAPSE] UI Node updated: ${node.id}`, message.data.updates);
+                    engine.isDirty = true;
+                    engine.render();
+                }
+                break;
+            }
+            case 'focusNode':
+                if (engine.focusNodeInGraph) {
+                    engine.focusNodeInGraph(message.nodeId);
+                }
                 break;
             case 'edgeConfirmed': {
                 const edge = engine.edges.find(e => e.id === message.edgeId);

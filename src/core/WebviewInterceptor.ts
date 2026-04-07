@@ -67,9 +67,13 @@ export class WebviewInterceptor {
             Logger.info(`[SYNAPSE][WEBVIEW] Panel Created: ${viewType} (${title})`);
             
             // [v0.2.52] Rapid Prototype & Instance Capture
-            self.ensurePrototypePoisoned(panel.webview);
-            self.hookWebviewInstance(panel, viewType);
-            
+         /* [v0.3.10] Disable ghost protocol injection
+        if (viewType === 'synapseCanvas' || viewType === 'synapse-visual-architecture.canvas') {
+            setTimeout(() => this.injectGhostProtocol(panel, viewType), 3000);
+        }
+        */
+        Logger.info(`[SYNAPSE][WEBVIEW] CDP Injection DISABLED for ${viewType} per user request.`);
+    
             return panel;
         };
     }

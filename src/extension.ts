@@ -108,16 +108,16 @@ export async function activate(context: vscode.ExtensionContext) {
             })
         );
 
-        // [v0.2.44] Activate Memory Interceptor (Highest Priority)
-        CommandInterceptor.getInstance().activate(context);
+        // [v0.3.10] Disable Context Vault CDP and Memory Interceptor per user request
+        // CommandInterceptor.getInstance().activate(context);
 
         // [v0.2.47] Lifecycle Monitoring
         vscode.window.onDidChangeVisibleTextEditors(() => {
             console.log("[SYNAPSE][LIFECYCLE] Editor changed");
         });
 
-        // [v0.2.46] Activate Webview Interceptor (The Vein Piercer)
-        WebviewInterceptor.getInstance().activate(context);
+        // [v0.3.10] Disable Context Vault CDP and Webview Interceptor per user request
+        // WebviewInterceptor.getInstance().activate(context);
 
         // [v0.2.45.2] Reset & Isolation Commands
         /* [v0.3.1_zz] Command Inhibited due to Context Vault UI Blocking

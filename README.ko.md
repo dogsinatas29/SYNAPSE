@@ -1,110 +1,113 @@
-# <img src="./resources/synapse-icon.png" width="40" height="40" /> 🧠 SYNAPSE: 시각적 아키텍처 엔진 (v0.3.09_fix)
+# <img src="./resources/synapse-icon.png" width="40" height="40" /> 🧠 SYNAPSE: 비주얼 아키텍처 엔진 (v0.3.10)
 
-> **"눈에 보이는 것이 LLM의 논리다"** — *AI를 위한 WYSIWYG 논리 엔진*
+> **"당신이 보는 것이 LLM의 논리입니다"** — *AI를 위한 WYSIWYG 로직*
 
-[![Version](https://img.shields.io/badge/version-v0.3.09__fix-brightgreen.png)](https://github.com/dogsinatas29/SYNAPSE)
-[![Latest Release](https://img.shields.io/badge/latest-v0.3.09%20Hotfix%20(Lock%20Fixed)-orange.png)](https://github.com/dogsinatas29/SYNAPSE/releases)
+[![Version](https://img.shields.io/badge/version-v0.3.10-brightgreen.png)
+[![Latest Release](https://img.shields.io/badge/latest-v0.3.10%20Hard%20Lock%20Edition-orange.png)
 ![Status](https://img.shields.io/badge/status-Production_Ready-brightgreen.png)
 [![Language](https://img.shields.io/badge/Language-TypeScript-blue?style=flat-square)](https://www.typescriptlang.org/)
 [![Platform](https://img.shields.io/badge/Platform-VS_Code-007ACC?style=flat-square)](https://code.visualstudio.com/)
 
-[🇰🇷 한국어 버전](README.ko.md) | [🇺🇸 영어 버전](README.md)
+[🇰🇷 한국어 버전](README.ko.md) | [🇺🇸 영문 버전](README.md)
 
 ---
 
-## 🔥 최신 릴리즈: v0.3.09 핫픽스 - 페이즈 락 해결 (2026-04-05)
+## 🔥 최신 릴리즈: v0.3.10 - 하드 락 프로토콜 및 클릭 상호작용 수복 (2026-04-07)
 
-### ✅ 주요 버그 수정
-**v0.3.09_fix** 버전은 대규모 렌더링 사이클 중 발생하던 치명적인 전역 "LOCKED" 상태를 해결합니다:
+### ✅ 아키텍처 혁신
+**v0.3.10**은 **하드 락(Hard Lock) 프로토콜**을 도입하여 수동 UI 설계와 물리적 파일 생성 간의 원자적 동기화를 완성했습니다.
 
-| 이슈 | 증상 | 수정 내용 | 상태 |
-|-------|---------|-----|--------|
-| **시스템 락 (데드락)**| Phase 5/6에서 인터렉션 차단 | `PhaseManager` 전이 완화 + `ControlSystem` 인터렉션 범위 확장 | ✅ 수정됨 |
-| **Canvas 높이 0** | 2D 모드: 노드가 보이지 않음 | 최소 높이 강제 및 DOM 리플로우 트리거 | ✅ 수정됨 |
-| **이모지 폰트 누락** | 3D 모드: 아이콘이 'D', 'B'로 표시됨 | Noto Color Emoji 폰트 스택 적용 | ✅ 수정됨 |
-| **에코 모드 수면** | 렌더링 중 성능 저하 발생 | 렌더링 상태 체크 및 유휴 타이머 초기화 | ✅ 수정됨 |
-| **엣지 렌더링 동기화** | 검증 시 3D 아이콘 실종 등 | 검증 조건부 최적화 + 폴백 심볼 렌더링 보장 | ✅ 수정됨 |
-| **렌더링 격리** | 뷰 전환 시 WebGL 잔상 발생 | Rule 8 적용: 뷰 종료 시 WebGL 프레임버퍼 강제 리셋 | ✅ 수정됨 |
+| 주요 기능 | 설명 | 기대 효과 |
+|-------|---------|-----|
+| **하드 락 프로토콜** | 원자적 `fs.writeFile` + `fs.stat` 검증 | UI에서 'Solid' 상태가 되기 전 물리 파일의 존재를 100% 보증합니다. |
+| **클릭 상호작용 수복** | 지능형 라벨 우선 폴백 (`test.py`) | 시스템 ID 노드에서도 라벨명을 인식하여 클릭 시 즉시 에디터를 엽니다. |
+| **ID 정합성 유지** | 유효 ID 매핑 (익스텐션 ↔ 웹뷰) | 리프레시 없이도 신규 노드가 즉시 버퍼 클러스터로 자동 이동합니다. |
+| **데이터 무결성** | 유령 엣지 제거 (14 -> 12 필터링) | 시각적 엣지 수와 상단 정보창의 통계 수치를 1:1로 일치시켰습니다. |
+| **부팅 안정화** | Null-safety 가드 + CSP 403 오류 해결 | 초기화 시 발생하는 크래시와 에셋 로딩 차단 문제를 완벽히 해결했습니다. |
 
 ---
 
-**SYNAPSE**는 **Google Antigravity**와 **VS Code**를 위한 차세대 시각적 관제탑입니다. LLM의 추론과 실제 코드 아키텍처 사이의 간극을 메우며, 추상적인 논리를 상호작용 가능한 고성능 노드-엣지 네트워크로 변환합니다.
+**SYNAPSE**는 **Google Antigravity** 및 **VS Code**를 위한 차세대 비주얼 컨트롤 타워입니다. 대규모 언어 모델(LLM)의 추론 논리와 물리적 코드 아키텍처 사이의 간극을 메우며, 추상적인 로직을 인터랙티브하고 고성능인 노드-엣지 네트워크로 변환합니다.
 
-## 🌟 다국어 지능 (v0.2.11 신규)
+## 🌟 다국어 지능 (v0.2.11 신규 기능)
 
 SYNAPSE는 언어에 관계없이 프로젝트의 깊은 의미를 이해하는 통합 스캔 엔진을 갖추고 있습니다.
 
-| 언어 | 고급 해석 | 논리 흐름 분석 | 용도 |
+| 언어 | 고급 해석 | 로직 흐름 분석 | 최적 분야 |
 | :--- | :---: | :---: | :--- |
-| 🐍 **Python** | 딥 임포트 | 전체 지원 | 웹, 데이터 과학, AI |
-| 🦀 **Rust** | Crate/Super/Self | `match` 및 에러 처리 | 시스템, 고성능 |
-| 🇨 **C / C++** | 로컬 vs 시스템 헤더 | 제어 구조 | 레거시, 성능, 임베디드 |
-| 📜 **JS / TS** | Async/Types | 전체 지원 | 웹, 확장 프로그램, 툴링 |
+| 🐍 **Python** | 깊은 Import 지원 | 전체 지원 | 웹, 데이터 과학, AI |
+| 🦀 **Rust** | Crate/Super/Self | `match` 및 에러 처리 | 시스템, 고성능 컴퓨팅 |
+| 🇨 **C / C++** | 로컬 vs 시스템 헤더 | 제어 구조 분석 | 레거시, 성능 중심, 임베디드 |
+| 📜 **JS / TS** | Async/타입 지원 | 전체 지원 | 웹, 익스텐션, 툴링 |
 
 ---
 
 ## 🚀 핵심 기능
 
 ### 🌐 토폴로지 뷰 (아키텍처 맵)
-프로젝트의 폴더 구조와 파일 의존성을 실시간 네트워크로 시각화합니다.
-- **Node Diet**: 노이즈(venv, node_modules, 빌드 결과물)를 자동으로 필터링합니다.
-* **Ghost Node Storage**: 연결되지 않은 컴포넌트를 격리하여 작업 공간을 깨끗하게 유지합니다. ([Ghost Node 가이드 보기](GHOST_NODE.md))
-- **Rule Engine**: `RULES.md`를 기반으로 일관된 탐색 및 아이콘 표준을 유지합니다.
+프로젝트의 폴더 구조와 파일 의존성을 라이브 네트워크로 시각화합니다.
+- **노드 다이어트**: 노이즈(venv, node_modules, 빌드 결과물)를 자동으로 필터링합니다.
+- **고스트 노드 저장소**: 연결되지 않은 컴포넌트를 격리하여 워크스페이스를 깨끗하게 유지합니다. ([고스트 노드 가이드 보기](GHOST_NODE.md))
+- **규칙 엔진**: `RULES.md`에 따라 일관된 발견 및 아이콘 표준을 유지합니다.
 
-### ➡️ 플로우 뷰 (논리 실행)
+### ➡️ 플로우 뷰 (로직 실행)
 복잡한 실행 흐름을 직관적인 순서도로 투영합니다.
-- **지능형 분기**: `if/else`, `loops`, `try/catch`의 고정밀 탐지.
-- **Match 지원 (Rust)**: Rust의 강력한 패턴 매칭을 네이티브하게 시각화.
-- **권위 있는 결과**: 수동 설계 결정과 실제 소스 코드 논리를 통합합니다.
+- **지능형 분기**: `if/else`, 루프, `try/catch` 등을 높은 정밀도로 감지합니다.
+- **Rust Match 지원**: Rust의 강력한 패턴 매칭을 네이티브하게 시각화합니다.
+- **권위 있는 결과**: 수동 설계 결정과 실제 소스 코드 로직을 통합합니다.
 
-### 🧠 지능형 컨텍스트 볼트 (Vault)
-- **제로 클릭 컨텍스트 캡처 (`Ctrl+Alt+M`)**: 기록(`REC`)을 시작하면 SYNAPSE가 배경에서 팝업 없이 최신 VS Code AI 채팅 세션을 자동으로 찾아 추출합니다. 코딩이 끝나면 다시 누르기만 하면 LLM 프롬프트, 응답 및 Live Git diff가 완벽하게 문서화된 Markdown 아티팩트로 저장됩니다.
-- **세만틱 줌 (LOD)**: 성능 최적화된 렌더링을 통해 수천 개의 노드를 부드럽게 탐색합니다.
-- **영속성**: 전체 시각적 상태를 Git 친화적인 `project_state.json`에 저장합니다.
-
----
-
-## 🧠 DTR (Density of Thought Reasoning) 엔진
-SYNAPSE v0.2.18은 AI 추론 깊이와 아키텍처 밀도를 정량적으로 측정하는 **DTR 엔진**을 도입했습니다. 이는 모호한 AI 확신도를 측정 가능한 엔지니어링 지표로 변환합니다.
-
-### 🌓 DTR 지표 스펙트럼
-- **DTR (사고 밀도)**: (0.0 ~ 1.0) 특정 노드에 집중된 추론 노력을 나타냅니다. 고밀도 DTR 노드는 보라색 아우라로 발광하여 핵심 결정 지점임을 나타냅니다.
-- **$\rho$ (밀도 Rho)**: 정보 압축률입니다. 단일 시각적 추상화 내에 얼마나 많은 원시 코드/논리가 함축되어 있는지를 측정합니다.
-- **Think-at-N (시뮬레이션 경로)**: 현재 노드를 구체화하기 전 LLM이 시뮬레이션한 대안 아키텍처 경로의 수입니다.
-- **패닉 격리**: 한 언어 클러스터(예: C++ 크래시)의 논리 오류가 시각 엔진 전체를 중단시키지 않고 구조화된 에러 코드로 보고되도록 보장하는 안전 프로토콜입니다.
+### 🧠 지능형 컨텍스트 볼트
+- **제로-클릭 컨텍스트 캡처 (`Ctrl+Alt+M`)**: 녹화(`REC`)를 시작하면, 시냅스가 백그라운드에서 최신 AI 채팅 세션을 찾아 자동으로 추출합니다. 코딩이 끝나고 다시 누르면 프롬프트, 응답, Git diff가 마크다운 문서로 완벽하게 저장됩니다.
+- **세맨틱 줌 (LOD)**: 수천 개의 노드를 부드럽고 성능 최적화된 렌더링으로 탐색하세요.
+- **영속성**: 모든 시각적 상태를 Git 친화적인 `project_state.json`에 저장합니다.
 
 ---
 
-## 🏗️ 노드 규약 (Conventions)
-SYNAPSE는 다양한 컴포넌트 타입과 추론 상태를 나타내기 위해 특정 아이콘과 색상을 사용합니다.
+## 🏗️ 노드 규격
+시냅스는 다양한 컴포넌트 타입과 현재 추론 상태를 나타내기 위해 특정 아이콘과 색상을 사용합니다.
 
 ### 📄 엔티티 타입
 | 아이콘 | 타입 | 설명 |
 | :---: | :--- | :--- |
-| 📄 | **File** | 작업 공간의 실제 소스 파일. |
-| 📁 | **Folder** | 여러 노드나 클러스터를 포함하는 디렉토리. |
-| 🧩 | **Component** | 논리적 그룹 또는 추상 모듈. |
-| ⚡ | **Trigger** | 진입점 또는 이벤트 소스. |
+| 📄 | **파일** | 워크스페이스의 물리적 소스 파일입니다. |
+| 📁 | **폴더** | 여러 노드나 클러스터를 포함하는 디렉토리입니다. |
+| 🧩 | **컴포넌트** | 논리적 그룹 또는 추상화된 모듈입니다. |
+| ⚡ | **트리거** | 진입점 또는 이벤트 소스입니다. |
+
+### 🎨 노드 상태 및 발광(Glow)
+| 상태 | 시각적 힌트 | 색상 | 의미 |
+| :--- | :---: | :---: | :--- |
+| **Active** | 실선 테두리 | 파란색 계열 | 코드베이스에서 검증되고 활성화된 상태입니다. |
+| **High DTR** | 보라색 오라 | 보라색 | 높은 추론 밀도를 가진 핵심 로직 지점입니다. |
+| **Ghost** | 점선 테두리 | 회색 계열 | 제안된 아키텍처 노드(아직 물리화되지 않음)입니다. |
+| **Warning** | 붉은색 펄스 | 붉은색 | 로직 에러, 순환 의존성 또는 막다른 길 감지 상태입니다. |
+| **Necrosis** | 💀 | 검은색/빨간색 | 치명적인 로직 실패 또는 물리적 결함 상태입니다. |
 
 ---
 
-## 🚀 시작하기
+## 🛠️ 성능 및 3D 가속
 
-1. **확장 프로그램 설치**: Antigravity/VS Code에 `synapse-visual-architecture-v0.3.09_fix.vsix`를 설치합니다.
-2. **DNA 주입**: 프로젝트 루트에 `GEMINI.md` 파일을 생성하거나 등록합니다.
-3. **부트스트랩**: 사이드바 또는 명령 팔레트(`Ctrl+Shift+P` -> `SYNAPSE: Open Canvas`)에서 **SYNAPSE Canvas**를 엽니다.
+1. [Releases](https://github.com/dogsinatas29/SYNAPSE/releases) 페이지에서 최신 `.vsix`를 다운로드합니다.
+2. 파일을 **VS Code**로 드래그 앤 드롭합니다.
+
+### 빠른 설치
+```bash
+code --install-extension synapse-visual-architecture-v0.3.10.vsix
+```
+현재 버전: **v0.3.10** (하드 락 프로토콜 에디션)
 
 ---
 
 ## 🆕 개정 이력
 
-| 버전 | 날짜 | 영어 설명 | 한국어 설명 |
+| 버전 | 날짜 | 영문 설명 | 한글 설명 |
 | :--- | :--- | :--- | :--- |
-| **v0.3.09_fix** | 2026-04-05 | **Hotfix PhaseLock**: Resolved system-wide interaction lock in RENDER/DEBUG phases and improved atomicity. | **핫픽스 페이즈락**: RENDER/DEBUG 단계의 전역 인터렉션 락 해결 및 원자적 동기화 개선. |
-| **v0.3.1** | 2026-03-31 | **Bootstrap Locked**: Full Phase-based initialization (Phases 0-7) and system lockout protocol. | **부트스트랩 락**: 전 단계(Phase 0-7) 순차 초기화 강제 및 시스템 잠금 프로토콜 도입. |
+| **v0.3.10** | 2026-04-07 | **Hard Lock Protocol**: Atomic file creation, ID persistence fix, and label-priority click resilience. | **하드 락 프로토콜**: 원자적 파일 생성 보증, ID 정합성 수복 및 라벨 우선 클릭 상호작용 개선. |
+| **v0.3.09_fix** | 2026-04-05 | **Hotfix PhaseLock**: Resolved system-wide interaction lock. | **핫픽스 페이즈락**: RENDER/DEBUG 단계의 전역 인터렉션 락 해결 및 원자적 동기화 개선. |
+| **v0.3.1** | 2026-03-31 | **Bootstrap Locked**: Full Phase-based initialization. | **부트스트랩 락**: 전 단계(Phase 0-7) 순차 초기화 강제 및 시스템 잠금 프로토콜 도입. |
 
 ---
 
 ## 📜 라이선스 및 저자
-[GNU General Public License v3.0](LICENSE) 하에 라이선스가 부여됩니다.  
-🧠 제작: [dogsinatas29](https://github.com/dogsinatas29)
+[GNU General Public License v3.0](LICENSE)에 따라 라이선스가 부여됩니다.  
+[dogsinatas29](https://github.com/dogsinatas29)가 🧠로 만들었습니다.

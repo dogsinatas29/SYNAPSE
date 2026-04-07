@@ -81,10 +81,9 @@ export class BootstrapEngine {
                 await this.parser.createStructure(projectRoot, structure);
             }
 
-            // 2. GRAPH 생성 (Phase 1)
-            // [v0.3.1] DataPipeline을 통해 수집 및 그래프 구축 통합 실행
+            // [v0.3.10] Pass projectRoot for absolute path scanning
             const discoveredFiles = this.getDiscoverableFiles(projectRoot, structure.includePaths);
-            const nodes = dataPipeline.processFiles(discoveredFiles);
+            const nodes = dataPipeline.processFiles(discoveredFiles, projectRoot);
             const edges = graphModel.createSnapshot().edges;
 
             // 3. SNAPSHOT 생성 (Phase 2)
@@ -148,7 +147,7 @@ export class BootstrapEngine {
             RuleEngine.getInstance().loadRules(projectRoot);
 
             const discoveredFiles = this.getDiscoverableFiles(projectRoot);
-            let nodes = dataPipeline.processFiles(discoveredFiles);
+            let nodes = dataPipeline.processFiles(discoveredFiles, projectRoot);
             let edges = graphModel.createSnapshot().edges;
 
             // [v0.3.10] 🛡️ PRESERVE MANUAL STATE: Merge with existing manual nodes/edges
@@ -231,7 +230,7 @@ export class BootstrapEngine {
     public async autoDiscover(projectRoot: string, includePaths?: string[], onProgress?: (msg: string) => void): Promise<ProjectState> {
         console.log(`🔍 [SYNAPSE] Auto-discovering source files in: ${projectRoot}`);
         const discoveredFiles = this.getDiscoverableFiles(projectRoot, includePaths);
-        const nodes = dataPipeline.processFiles(discoveredFiles);
+        const nodes = dataPipeline.processFiles(discoveredFiles, projectRoot);
         const edges = graphModel.createSnapshot().edges;
 
         const state: ProjectState = {
@@ -286,8 +285,8 @@ export class BootstrapEngine {
                     const isProtocol = fileName === 'rules.md' || fileName === 'gemini.md' || fileName === 'architecture.md' || fileName.includes('report');
                     
                     if (isIgnoredFile(currentRelPath)) continue;
-                    const scanExtensions = ['.ts', '.js', '.py', '.cpp', '.h', '.c', '.hpp', '.cc', '.rs', '.sh', '.sql', '.md'];
-                    if (scanExtensions.includes(ext)) {
+                    const scanExtensions = ['.ts', '.js', '.tsx', '.jsx', '.py', '.c', '.h', '.cpp', '.hpp', '.cc', '.rs', '.sh', '.sql', '.md', '.csv', '.yaml', '.yml'];
+                    if (scanExtensions.includes(ext) || isProtocol) {
                         fileList.push(currentRelPath);
                     }
                 }

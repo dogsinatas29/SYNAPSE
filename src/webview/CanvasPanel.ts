@@ -283,7 +283,75 @@ export class CanvasPanel {
                 await this.handleAnalyzeGemini(message.filePath);
                 return;
             case 'createManualNode':
-                await this.handleCreateManualNode(message.node);
+                try {
+                    const workspaceFolder = this._workspaceFolder;
+                    if (!workspaceFolder) return;
+                    
+                    // [Phase 2: Intent Validation] - Direct hit on nested label structure
+                    const nodeFromMessage = message.node || message.data || message.payload || {};
+                    const nodeData = nodeFromMessage.data || {};
+                    const nodeLabel = nodeData.label || nodeFromMessage.label || message.label || (message.data && message.data.label);
+                    
+                    const nodeId = nodeFromMessage.id || message.nodeId || `node_manual_${Date.now()}`;
+                    
+                    if (!nodeLabel) {
+                        Logger.error(`[v0.3.10-LOCK] ERR: Label missing in intent. Raw: ${JSON.stringify(message)}`);
+                        return;
+                    }
+                    Logger.info(`[v0.3.10-LOCK] Validated Intent for Label: ${nodeLabel} (ID: ${nodeId})`);
+
+                    let fileName = nodeLabel;
+                    if (!fileName.includes('.')) fileName = `${nodeLabel}.py`;
+
+                    const fileUri = vscode.Uri.joinPath(workspaceFolder.uri, fileName);
+                    const filePath = fileUri.fsPath;
+
+                    // [Phase 6: Reality-First Write]
+                    try {
+                        const content = Buffer.from('# [SYNAPSE] Atomic Logic Entry\n', 'utf8');
+                        await vscode.workspace.fs.writeFile(fileUri, content);
+                        
+                        // [v0.3.10-LOCK] Reality Verification
+                        await vscode.workspace.fs.stat(fileUri);
+                        
+                        // [Phase 10: Host Pressure] Force VS Code to recognize the new reality
+                        await vscode.commands.executeCommand('workbench.action.files.saveAll');
+                        
+                        Logger.info(`[v0.3.10-LOCK] ID: ${nodeLabel}, Path: ${filePath}, Status: ACTIVE`);
+                    } catch (fsErr) {
+                        vscode.window.showErrorMessage(`[v0.3.10-LOCK] 물리 파일 생성 거부: ${fsErr}`);
+                        return;
+                    }
+
+                    // [Phase 3: Spatial Lock]
+                    const forcePosX = 100; 
+                    const forcePosY = 200; 
+                    
+                    // [v0.3.10-LOCK] Partial Confirmation Only: DO NOT RE-SEND FULL STATE
+                    this._panel.webview.postMessage({
+                        command: 'updateNode',
+                        data: { 
+                            id: nodeId,
+                            updates: {
+                                file: filePath, 
+                                status: 'solid', 
+                                cluster_id: 'sys_cluster_buffer',
+                                x: forcePosX,
+                                y: forcePosY,
+                                data: {
+                                    file: filePath, // [CRITICAL FIX] Align with webview data.file path
+                                    status: 'solid',
+                                    cluster_id: 'sys_cluster_buffer',
+                                    priority_cluster: 'sys_cluster_buffer'
+                                }
+                            }
+                        }
+                    });
+
+                    Logger.info(`[v0.3.10-LOCK] Confirmation dispatched for ID: ${nodeId} at (${forcePosX}, ${forcePosY})`);
+                } catch (e) {
+                    Logger.error(`[v0.3.10-LOCK] CRITICAL_FAIL: ${e}`);
+                }
                 return;
             case 'requestSnapshot':
                 const label = await vscode.window.showInputBox({
@@ -563,15 +631,19 @@ export class CanvasPanel {
         const workspaceFolder = this._workspaceFolder;
         if (!workspaceFolder) return;
 
-        // [v0.3.10 Fix] Robust Path Handling: Check if absolute before joining with workspace
+        // [v0.3.10-LOCK] Robust Path Handling: Absolute paths from webview can have leading slashes on Linux
         let fileUri: vscode.Uri;
-        if (filePath && path.isAbsolute(filePath)) {
-            fileUri = vscode.Uri.file(filePath);
+        const normalizedPath = filePath.trim();
+        
+        if (normalizedPath.startsWith('/') || (normalizedPath.length > 1 && normalizedPath[1] === ':')) {
+            fileUri = vscode.Uri.file(normalizedPath);
         } else {
-            // [v0.3.10 Fix] Normalize path to prevent double slash errors
-            let targetPath = filePath.replace(/^[\\\/]/, '').trim();
+            // Normalize path to prevent double slash errors for relative paths
+            let targetPath = normalizedPath.replace(/^[\\\/]/, '').trim();
             fileUri = vscode.Uri.joinPath(workspaceFolder.uri, targetPath);
         }
+
+        Logger.info(`[v0.3.10-LOCK] Attempting to open file: ${fileUri.fsPath}`);
         try {
             let stat;
             try {
@@ -905,7 +977,7 @@ export class CanvasPanel {
                 edge._toFile = toNode.data.file || toNode.data.label || null;
             }
 
-            // [v0.3.10 Patch] Expanded Extension list for manual edges
+            // [v0.3.10 Patch] Proactive extension check
             const filesToCheck = [edge._fromFile, edge._toFile];
             for (const file of filesToCheck) {
                 if (file) {
@@ -1520,31 +1592,31 @@ export class CanvasPanel {
                 updates: { status: 'confirmed' } 
             });
 
-            // 2. Promote Nodes to Buffer Cluster via Engine
-            const promoteToBuffer = (nodeId: string) => {
+            // 2. Promote Nodes to Reserved Cluster via Engine (Survival through restart)
+            const promoteToReserved = (nodeId: string) => {
                 const snap = canvasEngine.getFinalSnapshot();
                 const node = snap.nodes[nodeId];
-                if (node && (node.cluster_id === 'sys_cluster_reserved' || node.data?.cluster_id === 'sys_cluster_reserved')) {
+                if (node) {
                     canvasEngine.dispatch('UPDATE_NODE', {
                         id: nodeId,
                         updates: {
-                            cluster_id: 'sys_cluster_buffer',
+                            cluster_id: 'sys_cluster_reserved',
                             data: {
                                 ...(node.data || {}),
-                                cluster_id: 'sys_cluster_buffer',
-                                priority_cluster: 'sys_cluster_buffer'
+                                cluster_id: 'sys_cluster_reserved',
+                                priority_cluster: 'sys_cluster_reserved'
                             }
                         }
                     });
-                    Logger.info(`[CanvasPanel] Promoted node ${nodeId} via pipeline.`);
+                    Logger.info(`[CanvasPanel] Promoted node ${nodeId} to Reserved.`);
                 }
             };
             
             if (edge && edge.from) {
-                promoteToBuffer(edge.from);
+                promoteToReserved(edge.from);
             }
             if (edge && edge.to) {
-                promoteToBuffer(edge.to);
+                promoteToReserved(edge.to);
             }
 
             // 3. Persistence (Normalized for UI compatibility)
@@ -2540,6 +2612,9 @@ export class CanvasPanel {
         const scriptUri = webview.asWebviewUri(
             vscode.Uri.joinPath(this._extensionUri, 'ui', 'canvas-engine.js')
         );
+        const engineCoreUri = webview.asWebviewUri(
+            vscode.Uri.joinPath(this._extensionUri, 'ui', 'engine-core.js')
+        );
         const webglRendererUri = webview.asWebviewUri(
             vscode.Uri.joinPath(this._extensionUri, 'ui', 'webgl-renderer.js')
         );
@@ -2548,6 +2623,10 @@ export class CanvasPanel {
         html = html.replace(
             'src="canvas-engine.js"',
             `src="${scriptUri}"`
+        );
+        html = html.replace(
+            'src="engine-core.js"',
+            `src="${engineCoreUri}"`
         );
         html = html.replace(
             'src="webgl-renderer.js"',

@@ -18,15 +18,17 @@ export class DataPipeline {
    * 전체적인 데이터 처리 흐름 실행
    * @param files 분석할 파일 목록
    */
-  public processFiles(files: string[]): Node[] {
+  public processFiles(files: string[], projectRoot?: string): Node[] {
     try {
       // 1. DATA 수집 시작 (Phase 0)
       phaseManager.assertPhase(Phase.DATA);
-      console.log(`[SYNAPSE] Processing ${files.length} files...`);
+      console.log(`[SYNAPSE] Processing ${files.length} files... Root: ${projectRoot || 'CWD'}`);
 
       const summaries: { filePath: string; summary: CodeSummary }[] = [];
       for (const file of files) {
-        const summary = this.scanner.scanFile(file);
+        // [v0.3.10] Ensure Absolute Path for scanner to read file content correctly
+        const absolutePath = projectRoot ? (path.isAbsolute(file) ? file : path.join(projectRoot, file)) : file;
+        const summary = this.scanner.scanFile(absolutePath);
         summaries.push({ filePath: file, summary });
       }
 
@@ -161,7 +163,8 @@ export class DataPipeline {
           from: fileName,
           to: targetNodeId,
           type: this.mapEdgeType(ref.type),
-          weight: weight
+          weight: weight,
+          status: 'confirmed' // [v0.3.10] Internal scan matches are auto-confirmed
         };
 
         canvasEngine.dispatch('CONNECT_EDGE', newEdge);

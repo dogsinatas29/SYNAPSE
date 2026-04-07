@@ -681,7 +681,7 @@ class TreeRenderer {
     }
 
     buildTree(nodes, projectName = 'Project') {
-        const root = { name: projectName, type: 'folder', children: {}, fullPath: '', expanded: true };
+        const root = { name: projectName || 'Project', type: 'folder', children: {}, fullPath: '', expanded: true };
 
         for (const node of nodes) {
             if (!node.data || !node.data.file) continue;
@@ -700,11 +700,17 @@ class TreeRenderer {
                 if (normalizedPath.startsWith(wsRoot)) {
                     normalizedPath = normalizedPath.substring(wsRoot.length);
                 } else if (normalizedPath.includes(wsRoot)) {
-                    normalizedPath = normalizedPath.split(wsRoot).pop();
+                    // Pivot point stripping: Find the last occurrence of wsRoot name
+                    const pivot = wsRoot.split('/').filter(Boolean).pop();
+                    if (pivot && normalizedPath.includes(`/${pivot}/`)) {
+                        normalizedPath = normalizedPath.split(`/${pivot}/`).pop() || '';
+                    } else {
+                        normalizedPath = normalizedPath.split(wsRoot).pop() || '';
+                    }
                 } else if (normalizedPath.startsWith('/home/')) {
                     // Fail-safe for Linux absolute paths when wsRoot mismatch
                     const parts = normalizedPath.split('/');
-                    const wsNameMatchIdx = parts.lastIndexOf(projectName);
+                    const wsNameMatchIdx = parts.lastIndexOf(projectName || 'name');
                     if (wsNameMatchIdx !== -1) {
                         normalizedPath = parts.slice(wsNameMatchIdx + 1).join('/');
                     }
@@ -1053,12 +1059,19 @@ class CanvasEngine {
         this.analysisIssues = [];
         this.pulses = []; // [{ edgeId: string, progress: number, speed: number }]
 
-        // [v0.2.18.2] Promotion Awareness System
+        // [v0.3.10] Render Isolation: Ensure ALL base properties are initialized before any render trigger
+        this.nodes = this.nodes || [];
+        this.edges = this.edges || [];
+        this.clusters = this.clusters || [];
+        
+        // [v0.3.10 Fix] Restore vital properties for render loop
         this.particles = [];
         this.promotionSites = []; // [{ x, y, startTime, label }]
         this.promotingNodeIds = new Set(); // Currently animating nodes
 
-        // Request initial state
+        console.log('[SYNAPSE] CanvasEngine initialized. View Isolated.');
+        
+        // Request initial state - Start loop ONLY when data arrives or explicitly requested
         this.getProjectState();
 
         this.setupToolbarListeners();
@@ -1634,7 +1647,7 @@ class CanvasEngine {
                 // [v0.2.24] Auto-Sleep Logic: Idle for 2 seconds -> Set isAnimating to false
                 const now = Date.now();
                 const idleTime = now - (this.lastActivityTime || 0);
-                const hasActiveParticles = this.particles.length > 0 || this.promotionSites.length > 0;
+                const hasActiveParticles = (this.particles?.length || 0) > 0 || (this.promotionSites?.length || 0) > 0;
 
                 // [v0.2.25] Eternal Loop: No Auto-Sleep if WebGL + Graph mode
                 const idleLimit = (this.webglEnabled && this.currentMode === 'graph') ? Infinity : 2000;
@@ -1643,7 +1656,7 @@ class CanvasEngine {
                 // isDirty 또는 필요한 업데이트가 있으면 렌더링이 진행되므로, 이 경우 수면 진입 금지
                 const isRenderingActive = this.isDirty || this._isInteracting || this.isDragging ||
                     this.isSelecting || hasActiveParticles || this.needsUpdate ||
-                    (this.isAnimating && this.particles.length > 0) || this._isRendering;
+                    (this.isAnimating && (this.particles?.length || 0) > 0) || this._isRendering;
 
                 if (idleTime > idleLimit && !hasActiveParticles && !this.isDragging && !this.isSelecting &&
                     !this.needsUpdate && !isRenderingActive) {
@@ -1658,7 +1671,7 @@ class CanvasEngine {
                 }
 
                 // [v0.2.24] Demand-driven rendering: Only draw if needed
-                const shouldRender = this.isDirty || this._isInteracting || this.isDragging || this.isSelecting || hasActiveParticles || this.needsUpdate || (this.isAnimating && this.particles.length > 0);
+                const shouldRender = this.isDirty || this._isInteracting || this.isDragging || this.isSelecting || hasActiveParticles || this.needsUpdate || (this.isAnimating && (this.particles?.length || 0) > 0);
 
                 if (shouldRender) {
                     this._isRendering = true;  // [FIX v0.3.09] Mark rendering start
@@ -2452,7 +2465,14 @@ class CanvasEngine {
             } else {
                 const topClickedNode = this.getNodeAt(worldPosDbl.x, worldPosDbl.y);
                 if (topClickedNode) {
-                    this.handleOpenFile(topClickedNode.data.path || topClickedNode.data.file);
+                    // [v0.3.10-LOCK] Robust fallback for filePath: data.path -> data.file -> node.file -> data.label -> node.id
+                    const d = topClickedNode.data || {};
+                    const targetFile = d.path || d.file || topClickedNode.file || d.label || 
+                                      ((topClickedNode.type === 'file' || topClickedNode.type === 'logic') && !String(topClickedNode.id).startsWith('node_manual_') ? topClickedNode.id : null);
+                    
+                    if (targetFile) {
+                        this.handleOpenFile(targetFile);
+                    }
                     return; // Prevent fall-through to cluster header
                 }
 
@@ -4291,7 +4311,7 @@ class CanvasEngine {
                 selectedEdgeId: this.selectedEdge ? this.selectedEdge.id : null
             };
 
-            const frameState = buildFrameState(this.nodes, this.edges, this.clusters, contextSnapshot);
+            const frameState = this.buildFrameState(contextSnapshot);
             this.lastFrameState = frameState; // Save for hit testing
 
 
@@ -4324,24 +4344,29 @@ class CanvasEngine {
         }
 
         // [v0.2.24] Strategic Cache Invalidation (Validate Map & Edge Cache)
-        if (this.isGraphDataDirty || this.nodeMap.size !== this.nodes.length) {
+        const nodeCount = (this.nodes ? this.nodes.length : 0);
+        if (this.isGraphDataDirty || this.nodeMap.size !== nodeCount) {
             this.nodeMap.clear();
-            for (const n of this.nodes) this.nodeMap.set(n.id, n);
+            if (this.nodes) {
+                for (const n of this.nodes) this.nodeMap.set(n.id, n);
+            }
             this.edgeValidationCache.clear(); // Clear heavy validation results
         }
 
         // [v0.2.24] Unified Animation Updates (Eco-mode aware)
         if (this.isAnimating || this.isTestingLogic) {
-            const hasActivity = this._isInteracting || this.isDragging || this.particles.length > 0;
+            const hasActivity = this._isInteracting || this.isDragging || (this.particles?.length || 0) > 0;
             if (hasActivity || (this._frameCounter % 2 === 0)) { // Half-rate if idle
                 this.animationOffset = (this.animationOffset + 0.5) % 40;
             }
-            if (this.isTestingLogic && this.edges.length > 0) {
-                if (Math.random() < 0.05 && this.pulses.length < 20) {
-                    const randomEdge = this.edges[Math.floor(Math.random() * this.edges.length)];
-                    this.pulses.push({ edgeId: randomEdge.id, progress: 0, speed: 0.01 + Math.random() * 0.02 });
+            if (this.isTestingLogic && (this.edges?.length || 0) > 0) {
+                if (Math.random() < 0.05 && (this.pulses?.length || 0) < 20) {
+                    const randomEdge = this.edges[Math.floor(Math.random() * (this.edges?.length || 0))];
+                    if (randomEdge) {
+                        this.pulses.push({ edgeId: randomEdge.id, progress: 0, speed: 0.01 + Math.random() * 0.02 });
+                    }
                 }
-                this.pulses = this.pulses.filter(p => {
+                this.pulses = (this.pulses || []).filter(p => {
                     p.progress += p.speed;
                     return p.progress < 1;
                 });
@@ -7406,12 +7431,11 @@ function initCanvas() {
                 }
                 if (message.workspaceFolder) {
                     engine.workspaceFolder = message.workspaceFolder;
-                    console.log(`[SYNAPSE] Workspace Context Root: ${engine.workspaceFolder}`);
                 }
                 
-                // [v0.3.10] Ensure Tree is rebuilt if naming changed
-                if (engine.currentMode === 'tree') {
-                    engine.treeData = engine.treeRenderer.buildTree(engine.nodes, engine.projectName || 'Project');
+                // [v0.3.10] Build Tree using the freshly synced projectName
+                if (engine.currentMode === 'tree' || engine.nodes) {
+                    engine.treeData = engine.treeRenderer.buildTree(engine.nodes || [], engine.projectName);
                 }
 
                 if (engine.isDragging || engine._isInteracting) {
@@ -7421,6 +7445,14 @@ function initCanvas() {
                 const preserve = engine.nodes && engine.nodes.length > 0;
                 engine.loadProjectState(message.data, preserve);
                 engine.isExpectingUpdate = false;
+                
+                // [v0.3.10] Auto-Start Engine Loop upon first state arrival
+                if (!engine._loopRunning) {
+                    engine.startLoop();
+                }
+                // Dismiss loading overlay
+                const loader = document.getElementById('loading');
+                if (loader) loader.style.display = 'none';
                 break;
             }
             case 'resetCanvas': {
@@ -7478,9 +7510,25 @@ function initCanvas() {
                 if (node) {
                     Object.assign(node, message.data.updates);
                     if (message.data.updates.data) {
-                       node.data = { ...node.data, ...message.data.updates.data };
+                       node.data = { ...(node.data || {}), ...message.data.updates.data };
                     }
-                    console.log(`[SYNAPSE] UI Node updated: ${node.id}`, message.data.updates);
+                    // [v0.3.10-LOCK] Guarantee file availability for clicks
+                    if (message.data.updates.file) {
+                        node.file = message.data.updates.file;
+                        if (!node.data) node.data = {};
+                        node.data.file = message.data.updates.file;
+                    }
+                    
+                    // [v0.3.10] Auto-Cluster Migration: Jump to target cluster instantly
+                    const targetClusterId = message.data.updates.cluster_id || (node.data && node.data.cluster_id);
+                    if (targetClusterId) {
+                        node.cluster_id = targetClusterId;
+                        if (engine.addToCluster) {
+                            engine.addToCluster(node.id, targetClusterId);
+                        }
+                    }
+
+                    console.log(`[SYNAPSE] UI Node updated: ${node.id} -> ${targetClusterId}`, message.data.updates);
                     engine.isDirty = true;
                     engine.render();
                 }

@@ -714,6 +714,13 @@ class TreeRenderer {
             // Further clean: Remove leading /
             normalizedPath = normalizedPath.replace(/^\//, '');
 
+            // [v0.3.10] Hierarchy Preservation: If path looks like an absolute path leaked from the workspace root, fix it.
+            // If the first segment is the projectName itself, skip it to avoid root-in-root
+            const firstSegment = normalizedPath.split('/')[0];
+            if (firstSegment === projectName || firstSegment === 'root' || firstSegment === 'name') {
+                 normalizedPath = normalizedPath.substring(firstSegment.length + 1);
+            }
+
             const parts = normalizedPath.split('/');
             let current = root;
             let currentPath = '';
@@ -3175,8 +3182,6 @@ class CanvasEngine {
             item.textContent = t.label;
             item.style.padding = '6px 12px';
             item.style.cursor = 'pointer';
-            item.style.borderRadius = '4px';
-            item.style.transition = 'background 0.2s';
 
             // 현재 타입 강조
             if (this.selectedEdge && this.selectedEdge.type === t.type) {
@@ -7397,11 +7402,18 @@ function initCanvas() {
             case 'projectState': {
                 if (message.data && message.data.project_name) {
                     engine.projectName = message.data.project_name;
+                    console.log(`[SYNAPSE] Project Name Synchronized: ${engine.projectName}`);
                 }
                 if (message.workspaceFolder) {
                     engine.workspaceFolder = message.workspaceFolder;
                     console.log(`[SYNAPSE] Workspace Context Root: ${engine.workspaceFolder}`);
                 }
+                
+                // [v0.3.10] Ensure Tree is rebuilt if naming changed
+                if (engine.currentMode === 'tree') {
+                    engine.treeData = engine.treeRenderer.buildTree(engine.nodes, engine.projectName || 'Project');
+                }
+
                 if (engine.isDragging || engine._isInteracting) {
                     engine._pendingState = message.data;
                     return;

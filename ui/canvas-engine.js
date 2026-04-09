@@ -109,10 +109,13 @@ class FlowRenderer {
             const isGhost = n.status === 'ghost';
             const isContext = false;
             
-            // [v0.3.10] Layer Visibility Check for Flow
-            const isUser = (n.id && n.id.startsWith('node_manual_')) || 
-                           (n.cluster_id && n.cluster_id.startsWith('sys_')) || 
-                           (n.data?.cluster_id && n.data.cluster_id.startsWith('sys_'));
+            // [v0.3.11] 명시적 layer 속성 기반 레이어 감지
+            const isUser = n.layer === 'user' || 
+                           (n.data && n.data.layer === 'user') ||
+                           n.status === 'pending' ||
+                           (n.id && n.id.startsWith('node_manual_')) || 
+                           (n.cluster_id && (n.cluster_id.startsWith('sys_') || n.cluster_id === 'sys_cluster_buffer')) || 
+                           (n.data && n.data.cluster_id && n.data.cluster_id.startsWith('sys_'));
             
             if (!isUser && !this.engine.showBaseLayer) return false;
             if (isUser && !this.engine.showUserLayer) return false;
@@ -1148,7 +1151,6 @@ class CanvasEngine {
                 this.showBaseLayer = !this.showBaseLayer;
                 btnLayerBase.classList.toggle('active', this.showBaseLayer);
                 btnLayerBase.textContent = this.showBaseLayer ? 'ON' : 'OFF';
-                // [v0.2.24] WebGL 버퍼 갱신 강제 (레이어 필터링 적용)
                 this.isGraphDataDirty = true;
                 this.isEdgeDirty = true;
                 this.render();
@@ -1156,6 +1158,16 @@ class CanvasEngine {
         }
 
         const btnLayerUser = document.getElementById('btn-layer-user');
+        if (btnLayerUser) {
+            btnLayerUser.addEventListener('click', () => {
+                this.showUserLayer = !this.showUserLayer;
+                btnLayerUser.classList.toggle('active', this.showUserLayer);
+                btnLayerUser.textContent = this.showUserLayer ? 'ON' : 'OFF';
+                this.isGraphDataDirty = true;
+                this.isEdgeDirty = true;
+                this.render();
+            });
+        }
 
         // [v0.2.28] Determinism Bootstrap Toggle
         const btnDetBootstrap = document.getElementById('btn-debug-hash');
@@ -1169,17 +1181,7 @@ class CanvasEngine {
             });
         }
 
-        if (btnLayerUser) {
-            btnLayerUser.addEventListener('click', () => {
-                this.showUserLayer = !this.showUserLayer;
-                btnLayerUser.classList.toggle('active', this.showUserLayer);
-                btnLayerUser.textContent = this.showUserLayer ? 'ON' : 'OFF';
-                // [v0.2.24] WebGL 버퍼 갱신 강제 (레이어 필터링 적용)
-                this.isGraphDataDirty = true;
-                this.isEdgeDirty = true;
-                this.render();
-            });
-        }
+        // [v0.3.11 FIX] 중복 이벤트 리스너 제거 (두번 토글 → 항상 ON 고정 버그)
 
         // Draggable Layer Panel Logic
         const layerPanel = document.getElementById('layer-controller');
@@ -1812,8 +1814,14 @@ class CanvasEngine {
         const elUser = document.getElementById('layer-count-user');
         if (!elBase || !elUser) return;
 
-        const baseCount = this.nodes.filter(n => !((n.id && n.id.startsWith('node_manual_')) || n.cluster_id === 'sys_cluster_buffer' || n.cluster_id === 'sys_cluster_reserved' || n.data?.cluster_id === 'sys_cluster_buffer' || n.data?.cluster_id === 'sys_cluster_reserved')).length;
-        const userCount = this.nodes.length - baseCount;
+        // [v0.3.11] 명시적 layer 속성 기반으로 집계 (ID 접두어 방식 제거)
+        const userNodes = this.nodes.filter(n => 
+            n.layer === 'user' || 
+            (n.data && n.data.layer === 'user') || 
+            n.status === 'pending' ||
+            n.type === 'external'
+        );
+        const baseNodes = this.nodes.filter(n => !userNodes.some(un => un.id === n.id));
 
         const updateBadge = (el, newCount) => {
             const oldCount = parseInt(el.textContent);
@@ -1824,8 +1832,8 @@ class CanvasEngine {
             }
         };
 
-        updateBadge(elBase, baseCount);
-        updateBadge(elUser, userCount);
+        updateBadge(elBase, baseNodes.length);
+        updateBadge(elUser, userNodes.length);
     }
 
     setupEventListeners() {
@@ -2316,6 +2324,13 @@ class CanvasEngine {
 
         // Delete 키로 선택된 노드/엣지 삭제 및 방향키 내비게이션
         document.addEventListener('keydown', (e) => {
+            // [v0.3.11 Fix] Input Focus Protection
+            // Block canvas shortcuts if an input modal is open or an input is focused.
+            const isDialogVisible = document.getElementById('input-dialog')?.style.display === 'block';
+            if (isDialogVisible || e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+                return;
+            }
+
             if (e.key === 'Delete' || e.key === 'Backspace') {
                 console.log(`[SYNAPSE-FRONT] Keydown detected: ${e.key}. Selected nodes: ${this.selectedNodes.size}`);
                 if (this.selectedEdge) {
@@ -3718,7 +3733,16 @@ class CanvasEngine {
             this._updateLayerCounts();
 
             const rawClusters = projectState.clusters || [];
-            this.clusters = rawClusters.filter(c => c.id !== 'context_vault' && c.id !== 'doc_shelf');
+            // [v0.3.11] 레이어 속성 정규화: data.layer 또는 ID 패턴 기반으로 cluster.layer 설정
+            this.clusters = rawClusters
+                .filter(c => c.id !== 'context_vault' && c.id !== 'doc_shelf')
+                .map(c => {
+                    const isUser = c.layer === 'user' ||
+                                   (c.data && c.data.layer === 'user') ||
+                                   c.id.startsWith('sys_cluster_') ||
+                                   c.id.startsWith('cluster_manual_');
+                    return { ...c, layer: isUser ? 'user' : 'ai' };
+                });
 
             // [v0.2.36] Restore View (Camera) if available and not preserving
             if (!preserveView && projectState.view) {
@@ -3792,16 +3816,16 @@ class CanvasEngine {
                 this.log('Flow build failed but continuing', 'error', flowErr.message);
             }
 
-            // [v0.2.17 New Rule] Prevent node overlaps
-            // [v0.2.24] Skip overlap resolution during background sync to prevent jitter
-            if (!preserveView) {
+            // [v0.3.11] Prevent layout jitter: Skip overlap resolution if nodes already have valid positions
+            const hasValidPositions = this.nodes.every(n => n.position && Number.isFinite(n.position.x));
+            if (!preserveView && !hasValidPositions) {
                 try {
                     this.resolveOverlaps();
                 } catch (overlapErr) {
                     this.log('resolveOverlaps failed but continuing', 'error', overlapErr.message);
                 }
             } else {
-                this.log('Skipping overlap resolution for background sync to preserve user layout');
+                this.log(`Skipping overlap resolution (preserveView: ${preserveView}, hasValidPositions: ${hasValidPositions})`);
             }
 
             // UI 업데이트
@@ -4214,7 +4238,10 @@ class CanvasEngine {
     buildFrameState(context) {
         // 1. Filter Nodes based on Context Layers
         const filtered = this.nodes.filter(n => {
-            const isUser = (n.category === 'user') ||
+            // [v0.3.11] 명시적 layer 속성 기반
+            const isUser = n.layer === 'user' || 
+                (n.data && n.data.layer === 'user') ||
+                n.status === 'pending' ||
                 (n.id && n.id.startsWith('node_manual_')) ||
                 (n.cluster_id && n.cluster_id.startsWith('sys_'));
 
@@ -5418,8 +5445,16 @@ class CanvasEngine {
         const getClusterBounds = (cluster) => {
             if (computedBounds.has(cluster.id)) return computedBounds.get(cluster.id);
 
-            // 해당 클러스터의 직계 노드들
-            const directNodes = this.nodes.filter(n => (n.data?.cluster_id === cluster.id) || n.cluster_id === cluster.id);
+            // [v0.3.11] cluster_id 일치 + 빈 문자열 제외 + 현재 레이어 가시성도 반영
+            const directNodes = this.nodes.filter(n => {
+                const cid = n.cluster_id || (n.data && n.data.cluster_id) || '';
+                if (cid !== cluster.id || cid === '') return false;
+                // 레이어 가시성 체크: 현재 렌더링되지 않는 노드는 바운드 계산에서 제외
+                const isUserNode = n.layer === 'user' || (n.data && n.data.layer === 'user') || n.status === 'pending';
+                if (isUserNode && !this.showUserLayer) return false;
+                if (!isUserNode && !this.showBaseLayer) return false;
+                return true;
+            });
 
             let minX = Infinity, minY = Infinity;
             let maxX = -Infinity, maxY = -Infinity;
@@ -5445,6 +5480,11 @@ class CanvasEngine {
                 }
             }
 
+            // [v0.3.11] 시스템 루트 특별 예외: 수동 클러스터와 겹치는 경우 자동 수축
+            if (cluster.id === 'cluster_root' && minX !== Infinity) {
+                // 루트는 기본 파일 계층만 보여주고 대규모 중첩은 피함
+            }
+
             const bounds = { minX, minY, maxX, maxY };
             computedBounds.set(cluster.id, bounds);
             return bounds;
@@ -5467,16 +5507,13 @@ class CanvasEngine {
             // [v0.2.18.3] Isolate Context Vault unless toggled ON
             if (cluster.id === 'context_vault' && !this.showContextVault) continue;
 
-            // [v0.2.19] Layer Visibility - Hide User Clusters if User Layer is off
-            if ((cluster.id === 'sys_cluster_buffer' || cluster.id === 'sys_cluster_reserved' || cluster.id.startsWith('node_manual_')) && !this.showUserLayer) {
+            // [v0.3.11] Layer Visibility - Use EXPLICIT layer tag instead of ID prefixes
+            const clusterLayer = cluster.layer || (cluster.data && cluster.data.layer) || 'ai';
+            
+            if (clusterLayer === 'user' && !this.showUserLayer) {
                 continue;
             }
-
-            // [v0.2.19] Layer Visibility - Hide Base Clusters if Base Layer is off
-            // Base clusters are everything that isn't buffer, reserved, or manual
-            const isBaseCluster = !(cluster.id === 'sys_cluster_buffer' || cluster.id === 'sys_cluster_reserved' || cluster.id.startsWith('node_manual_'));
-            if (isBaseCluster && !this.showBaseLayer) {
-                // However, Context Vault is base logic, but we handle its visibility separately.
+            if (clusterLayer === 'ai' && !this.showBaseLayer) {
                 if (cluster.id !== 'context_vault') {
                     continue;
                 }
@@ -7442,7 +7479,7 @@ function initCanvas() {
                     engine._pendingState = message.data;
                     return;
                 }
-                const preserve = engine.nodes && engine.nodes.length > 0;
+                const preserve = !message.forceReset && engine.nodes && engine.nodes.length > 0;
                 engine.loadProjectState(message.data, preserve);
                 engine.isExpectingUpdate = false;
                 
@@ -7498,7 +7535,10 @@ function initCanvas() {
                 engine.updateHistoryUI(message.data);
                 break;
             case 'rollbackComplete':
-                setTimeout(() => engine.getProjectState(), 200);
+                // [v0.3.11 FIX] getProjectState() 재호출 제거
+                // 백엔드가 이미 forceReset:true로 롤백 데이터를 전송했으므로
+                // 여기서 재호출하면 현재 디스크 상태(롤백 전)로 덮어씌워짐
+                engine.requestRender();
                 break;
             case 'fitView':
                 engine.fitView();

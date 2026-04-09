@@ -1,7 +1,7 @@
 import * as path from 'path';
 import { FileScanner, CodeSummary } from './FileScanner';
 import { phaseManager, Phase } from './PhaseManager';
-import { graphModel, Node, Edge, NodeType, EdgeType, GraphModel } from './GraphModel';
+import { graphModel, Node, Edge, Cluster, NodeType, EdgeType, GraphModel } from './GraphModel';
 import { canvasEngine } from './canvas-engine/CanvasEngine';
 
 /**
@@ -11,14 +11,20 @@ import { canvasEngine } from './canvas-engine/CanvasEngine';
  * Phase 0 (DATA) 및 Phase 1 (GRAPH) 담당.
  */
 
+export interface PipelineResult {
+  nodes: Node[];
+  edges: Edge[];
+  clusters: Cluster[];
+}
+
 export class DataPipeline {
   private scanner = new FileScanner();
 
   /**
-   * 전체적인 데이터 처리 흐름 실행
+   * 전체적인 데이터 처리 흐름 실행 (v0.3.11: dispatch 제거, 순수 데이터 반환)
    * @param files 분석할 파일 목록
    */
-  public processFiles(files: string[], projectRoot?: string): Node[] {
+  public processFiles(files: string[], projectRoot?: string): PipelineResult {
     try {
       // 1. DATA 수집 시작 (Phase 0)
       phaseManager.assertPhase(Phase.DATA);
@@ -26,7 +32,6 @@ export class DataPipeline {
 
       const summaries: { filePath: string; summary: CodeSummary }[] = [];
       for (const file of files) {
-        // [v0.3.10] Ensure Absolute Path for scanner to read file content correctly
         const absolutePath = projectRoot ? (path.isAbsolute(file) ? file : path.join(projectRoot, file)) : file;
         const summary = this.scanner.scanFile(absolutePath);
         summaries.push({ filePath: file, summary });
@@ -35,38 +40,39 @@ export class DataPipeline {
       // DATA 수집 완료 -> Phase 전이
       phaseManager.advancePhase(Phase.GRAPH);
 
-      // 2. GRAPH 생성 시작 (Phase 1)
+      // 2. GRAPH 데이터 추출 (Phase 1)
       phaseManager.assertPhase(Phase.GRAPH);
-      graphModel.reset();
+      
+      const result = this.extractGraphElements(summaries);
 
-      this.constructGraph(summaries);
-
-      return Array.from(graphModel.createSnapshot().nodes);
+      return result;
     } catch (e: any) {
       phaseManager.lockSystem(`DATA_PIPELINE FAILURE: ${e.message}`);
       throw e;
     }
   }
 
-  private constructGraph(summaries: { filePath: string; summary: CodeSummary }[]) {
-    // 0. Initialize standard clusters
-    canvasEngine.dispatch('ADD_CLUSTER', { id: 'cluster_root', label: '🏠 Project Root', type: 'system' });
-    canvasEngine.dispatch('ADD_CLUSTER', { id: 'cluster_ghosts', label: '👻 External Ghosts', type: 'system' });
-    canvasEngine.dispatch('ADD_CLUSTER', { id: 'doc_shelf', label: '📚 Documentation Shelf', type: 'system', collapsed: true });
+  private extractGraphElements(summaries: { filePath: string; summary: CodeSummary }[]): PipelineResult {
+    const nodes: Node[] = [];
+    const edges: Edge[] = [];
+    const clusters: Cluster[] = [
+      { id: 'cluster_root', label: '🏠 Project Root', type: 'system' },
+      { id: 'cluster_ghosts', label: '👻 External Ghosts', type: 'system' },
+      { id: 'cluster_reserved', label: '📦 Reserved Nodes', type: 'system' },
+      { id: 'doc_shelf', label: '📚 Documentation Shelf', type: 'system', collapsed: false }
+    ];
+
+    const nodeIds = new Set<string>();
+    const clusterIds = new Set<string>(['cluster_root', 'cluster_ghosts', 'doc_shelf']);
 
     // 1. Create all primary nodes
-    const nodeIds = new Set<string>();
-    const clusterIds = new Set<string>();
-
     for (const item of summaries) {
       const fileName = path.basename(item.filePath, path.extname(item.filePath));
       const relPath = path.dirname(item.filePath);
       
-      // [v0.3.10] STRIKE-OUT: Completely ignore context vault in data collection
       const isContextVault = item.filePath.includes('.synapse_contexts') || fileName.startsWith('session_');
       if (isContextVault) continue;
 
-      // Determine Cluster ID based on Folder Structure
       let clusterId = 'cluster_root';
       const fName = fileName.toLowerCase();
       const isDoc = item.filePath.endsWith('.md') || fName.includes('report') || fName.startsWith('session_') || item.filePath.includes('.synapse_contexts');
@@ -74,7 +80,6 @@ export class DataPipeline {
       if (isDoc) {
         clusterId = 'doc_shelf';
       } else if (relPath && relPath !== '.' && relPath !== '/' && !path.isAbsolute(relPath)) {
-        // Deep Folder Support (Sanitized)
         const parts = relPath.split(/[\\/]/).filter(p => p && p !== '.' && p !== '..');
         
         if (parts.length > 0) {
@@ -83,7 +88,7 @@ export class DataPipeline {
                 currentPath = currentPath ? `${currentPath}/${part}` : part;
                 const currentSlug = `cluster_${currentPath.replace(/[^a-zA-Z0-9]/g, '_')}`;
                 if (!clusterIds.has(currentSlug)) {
-                    canvasEngine.dispatch('ADD_CLUSTER', { 
+                    clusters.push({ 
                         id: currentSlug, 
                         label: `📂 ${part}`, 
                         type: 'folder' 
@@ -106,12 +111,12 @@ export class DataPipeline {
             label: fileName, 
             file: item.filePath, 
             cluster_id: clusterId,
-            hiddenOnCanvas: isDoc // [v0.3.10] Mark for canvas exclusion
+            hiddenOnCanvas: isDoc 
         }
       };
       
+      nodes.push(newNode);
       nodeIds.add(fileName);
-      canvasEngine.dispatch('ADD_NODE', newNode);
     }
 
     // 2. Analyze references and create edges + ghosts
@@ -121,9 +126,7 @@ export class DataPipeline {
       for (const ref of item.summary.references) {
         const targetNodeId = ref.target;
         
-        // Ensure Target exists, if not, create a GHOST node
         if (!nodeIds.has(targetNodeId)) {
-          // [v0.3.10] Strict Ghost Filtering: Skip reports, commands, and common external libraries
           const lowerId = targetNodeId.toLowerCase();
           const ghostBlacklist = [
             'os', 'sys', 'math', 'json', 'datetime', 'sqlite3', 'pandas', 'rich', 'numpy',
@@ -150,11 +153,10 @@ export class DataPipeline {
             degree: 0,
             data: { label: ghostId, cluster_id: 'cluster_ghosts' }
           };
-          canvasEngine.dispatch('ADD_NODE', ghostNode);
+          nodes.push(ghostNode);
           nodeIds.add(ghostId);
         }
 
-        // Edge Weight
         let weight = GraphModel.WEIGHT_UTILITY;
         if (ref.type === 'dependency') weight = GraphModel.WEIGHT_DIRECT_INCLUDE;
         else if (ref.type === 'api_call') weight = GraphModel.WEIGHT_INTERNAL;
@@ -164,12 +166,14 @@ export class DataPipeline {
           to: targetNodeId,
           type: this.mapEdgeType(ref.type),
           weight: weight,
-          status: 'confirmed' // [v0.3.10] Internal scan matches are auto-confirmed
+          status: 'confirmed'
         };
 
-        canvasEngine.dispatch('CONNECT_EDGE', newEdge);
+        edges.push(newEdge);
       }
     }
+
+    return { nodes, edges, clusters };
   }
 
   private mapEdgeType(rawType: string): EdgeType {

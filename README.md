@@ -1,9 +1,9 @@
-# <img src="./resources/synapse-icon.png" width="40" height="40" /> 🧠 SYNAPSE: Visual Architecture Engine (v0.3.10)
+# <img src="./resources/synapse-icon.png" width="40" height="40" /> 🧠 SYNAPSE: Visual Architecture Engine (v0.3.11)
 
 > **"What you see is the logic of LLM"** — *WYSIWYG Logic for AI*
 
-[![Version](https://img.shields.io/badge/version-v0.3.10-brightgreen.png)
-[![Latest Release](https://img.shields.io/badge/latest-v0.3.10%20Hard%20Lock%20Edition-orange.png)
+[![Version](https://img.shields.io/badge/version-v0.3.11-brightgreen.png)
+[![Latest Release](https://img.shields.io/badge/latest-v0.3.11%20Core%20Freeze%20Edition-orange.png)
 ![Status](https://img.shields.io/badge/status-Production_Ready-brightgreen.png)
 [![Language](https://img.shields.io/badge/Language-TypeScript-blue?style=flat-square)](https://www.typescriptlang.org/)
 [![Platform](https://img.shields.io/badge/Platform-VS_Code-007ACC?style=flat-square)](https://code.visualstudio.com/)
@@ -12,18 +12,30 @@
 
 ---
 
-## 🔥 Latest Release: v0.3.10 - Hard Lock Protocol & Click Resilience (2026-04-07)
+## 🔥 Latest Release: v0.3.11 - Core Freeze & Transactional Pipeline (2026-04-07)
 
 ### ✅ Architectural Breakthroughs
-**v0.3.10** introduces the **Hard Lock Protocol**, bridging the gap between manual UI design and physical file atomicity:
+**v0.3.11** introduces the **Core Freeze Architecture**, transforming SYNAPSE into a deterministic, immutable state machine:
+
+| Feature | Description | Benefit |
+|-------|---------|-----|
+| **Core Freeze** | Immutable `GraphSnapshot` + `DeepFreeze` | Prevents unauthorized state mutation; read-only truth layer. |
+| **Commit Pipeline** | 5-Stage Verification (Validate ↔ Execute) | Zero-loss transaction with atomic rollback on FS failure. |
+| **Projection Layer** | Multi-Resolution (File/Function/Full) | Real-time view switching without altering underlying graph. |
+| **Scope Isolation** | Double-Click Overlay (Sub-Canvas) | Full context isolation for complex module analysis. |
+| **Physical Unlink** | Transactional Deletion Sync | Atomic synchronization between node removal and file deletion. |
+| **Self-Healing** | Auto-recovery of System Clusters | Ghosts, Reserved, and Docs clusters are restored on every load. |
+
+---
+
+## 🔥 v0.3.10 - Hard Lock Protocol & Click Resilience (Older)
+
+**v0.3.10** bridges the gap between manual UI design and physical file atomicity:
 
 | Feature | Description | Benefit |
 |-------|---------|-----|
 | **Hard Lock Protocol** | Atomic `fs.writeFile` + `fs.stat` verification | Guarantees physical file existence before UI 'Solid' state. |
 | **Click Resilience** | Intelligent Label-priority Fallback (`test.py`) | Fixes click failures for manual nodes with system IDs. |
-| **ID Persistence** | Unified ID mapping (Extension ↔ WebView) | Instant node migration to Buffer Cluster without refresh. |
-| **Data Integrity** | Ghost Edge Pruning (Filtering 14 -> 12) | 1:1 parity between visual edges and information statistics. |
-| **Boot Hardening** | Null-safety guards + CSP 403 Resolution | Elimination of initialization crashes and asset loading errors. |
 
 ---
 
@@ -141,9 +153,9 @@ A deep, organized overview of your project structure.
 
 ### Quick Installation
 ```bash
-code --install-extension synapse-visual-architecture-v0.3.10.vsix
+code --install-extension synapse-visual-architecture-v0.3.11.vsix
 ```
-Current Version: **v0.3.10** (Hard Lock Protocol Edition)
+Current Version: **v0.3.11** (Core Freeze Edition)
 
 ---
 
@@ -184,6 +196,7 @@ Launch your visual architecture journey in seconds.
 
 | Version | Date | Description (English) | Description (Korean) |
 | :--- | :--- | :--- | :--- |
+| **v0.3.11** | 2026-04-07 | **Core Freeze**: Immutable snapshots, 5-stage transactional pipeline, Projection layer, and Scope isolation. | **코어 프리즈**: 불변 스크랩샷, 5단계 트랜잭션 파이프라인, 투영 레이어 및 스코프 격리 지원. |
 | **v0.3.10** | 2026-04-07 | **Hard Lock Protocol**: Atomic file creation, ID persistence fix, and label-priority click resilience. | **하드 락 프로토콜**: 원자적 파일 생성 보증, ID 정합성 수복 및 라벨 우선 클릭 상호작용 개선. |
 | **v0.3.09_fix** | 2026-04-05 | **Hotfix PhaseLock**: Resolved system-wide interaction lock in RENDER/DEBUG phases. | **핫픽스 페이즈락**: RENDER/DEBUG 단계의 전역 인터렉션 락 해결 및 원자적 동기화 개선. |
 | **v0.3.1** | 2026-03-31 | **Bootstrap Locked**: Full Phase-based initialization (Phases 0-7). | **부트스트랩 락**: 전 단계(Phase 0-7) 순차 초기화 강제 및 시스템 잠금 프로토콜 도입. |

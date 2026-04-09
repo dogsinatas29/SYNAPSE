@@ -27,10 +27,13 @@ export interface Node {
   filePath: string;
   type: NodeType | string;
   label?: string;
+  name?: string;  // [v0.3.11] Unified label sync
+  text?: string;  // [v0.3.11] Unified label sync
   degree: number; 
   position?: { x: number; y: number };
   status?: string;
   cluster_id?: string;
+  layer?: string;  // [v0.3.11] Explicit layer tag ('ai' | 'user')
   data?: any;
   intelligence?: any;
   visual?: any;
@@ -52,6 +55,7 @@ export interface Cluster {
   id: string;
   label: string;
   type: string;
+  position?: { x: number; y: number }; // [v0.3.11] Added position for relative coordinate support
   collapsed?: boolean;
   data?: any;
 }
@@ -67,62 +71,21 @@ export class GraphModel {
   private nodes: Map<string, Node> = new Map();
   private edges: Edge[] = [];
   private clusters: Cluster[] = [];
+  private projectRoot: string = '';
+  
+  public setProjectRoot(root: string) {
+    this.projectRoot = root;
+  }
+
+  public getProjectRoot(): string {
+    return this.projectRoot;
+  }
   
   // Weights (Constants from Iron Grid Refined)
   public static readonly WEIGHT_DIRECT_INCLUDE = 1.0;
   public static readonly WEIGHT_INTERNAL = 0.7;
   public static readonly WEIGHT_UTILITY = 0.2;
   public static readonly WEIGHT_TRANSITIVE = 0.1;
-
-  public addNode(node: Node) {
-    if (this.nodes.has(node.id)) return;
-    this.nodes.set(node.id, node);
-  }
-
-  public updateNode(id: string, updates: any) {
-    const node = this.nodes.get(id);
-    if (node) {
-      Object.assign(node, updates);
-    }
-  }
-
-  public addEdge(edge: Edge) {
-    // Basic deduplication
-    const exists = this.edges.some(e => e.from === edge.from && e.to === edge.to && e.type === edge.type);
-    if (!exists) {
-      this.edges.push(edge);
-      this.updateDegrees(edge);
-    }
-  }
-
-  public addCluster(cluster: Cluster) {
-    if (this.clusters.some(c => c.id === cluster.id)) return;
-    this.clusters.push(cluster);
-  }
-
-  public deleteNode(id: string) {
-    this.nodes.delete(id);
-    // Remove associated edges
-    this.edges = this.edges.filter(e => e.from !== id && e.to !== id);
-  }
-
-  public deleteEdge(from: string, to: string) {
-    this.edges = this.edges.filter(e => !(e.from === from && e.to === to));
-  }
-
-  public updateEdge(from: string, to: string, updates: any) {
-    const edge = this.edges.find(e => e.from === from && e.to === to);
-    if (edge) {
-      Object.assign(edge, updates);
-    }
-  }
-
-  private updateDegrees(edge: Edge) {
-    const fromNode = this.nodes.get(edge.from);
-    const toNode = this.nodes.get(edge.to);
-    if (fromNode) fromNode.degree++;
-    if (toNode) toNode.degree++;
-  }
 
   /**
    * 렌더링을 위한 엣지 필터링 (Iron Grid Refined: 1번 전략)
@@ -137,7 +100,6 @@ export class GraphModel {
   public getCollapsedNodes(threshold: number): Node[] {
     return Array.from(this.nodes.values()).map(node => {
       if (node.degree > threshold) {
-        // [TODO] Implement collapse logic (e.g. replacing with a summary icon)
         return { 
           ...node, 
           label: `(HUB) ${node.label}`,
@@ -164,15 +126,15 @@ export class GraphModel {
   }
 
   /**
-   * 스냅샷으로부터 그래프 상태 복구 (Phase 2 지원)
+   * 스냅샷으로부터 그래프 상태 복구
    */
   public restoreSnapshot(snapshot: GraphSnapshot) {
     this.reset();
     for (const node of snapshot.nodes) {
-      this.addNode(node);
+      this.nodes.set(node.id, node);
     }
     for (const edge of snapshot.edges) {
-      this.addEdge(edge);
+      this.edges.push(edge);
     }
     if (snapshot.clusters) {
       this.clusters = [...snapshot.clusters];
@@ -181,15 +143,43 @@ export class GraphModel {
 
   public loadFrom(state: any) {
     this.reset();
+    
+    // [v0.3.11] 데이터 규격 호환성 강화: 배열(Array)과 객체(Map) 형태 모두 지원
     if (state.nodes) {
-      state.nodes.forEach((n: any) => this.addNode(n));
+      if (Array.isArray(state.nodes)) {
+        state.nodes.forEach((n: any) => this.nodes.set(n.id, n));
+      } else {
+        Object.values(state.nodes).forEach((n: any) => this.nodes.set(n.id, n));
+      }
     }
+
     if (state.edges) {
-      this.edges = [...state.edges];
+      if (Array.isArray(state.edges)) {
+        this.edges = [...state.edges];
+      } else {
+        this.edges = Object.values(state.edges);
+      }
     }
+    
     if (state.clusters) {
-      this.clusters = [...state.clusters];
+      this.clusters = Array.isArray(state.clusters) ? [...state.clusters] : Object.values(state.clusters);
     }
+
+    // [v0.3.11] 보정 로직: 필수 시스템 클러스터가 누락된 경우 자동 추가
+    const requiredClusters = [
+      { id: 'cluster_root', label: '🏠 Project Root', type: 'system', position: { x: 0, y: 0 } },
+      { id: 'cluster_ghosts', label: '👻 External Ghosts', type: 'system', position: { x: 800, y: 0 } },
+      { id: 'cluster_reserved', label: '📦 Reserved Nodes', type: 'system', position: { x: 0, y: 600 } },
+      { id: 'doc_shelf', label: '📚 Documentation Shelf', type: 'system', collapsed: true, position: { x: 800, y: 600 } }
+    ];
+
+    requiredClusters.forEach(required => {
+      const exists = this.clusters.some(c => c.id === required.id);
+      if (!exists) {
+        console.warn(`[SYNAPSE] Restoring missing system cluster: ${required.id}`);
+        this.clusters.push(required);
+      }
+    });
   }
 }
 

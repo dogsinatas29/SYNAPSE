@@ -68,8 +68,16 @@ export class CanvasEngine {
     return this.stateManager.getSnapshot();
   }
 
+  public getRawSnapshot(): CanvasState {
+    return this.stateManager.getRawSnapshot();
+  }
+
   public loadInitialState(state: any) {
     this.stateManager.load(state);
+  }
+
+  public mergeState(state: any) {
+    this.stateManager.mergeState(state);
   }
 }
 

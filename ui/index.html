@@ -1606,17 +1606,17 @@
     <!-- Layer Controller -->
     <div id="layer-controller" class="draggable-panel">
         <div id="layer-controller-header" class="panel-header">
-            <span class="panel-title">레이어</span>
-            <span class="panel-user">User</span>
+            <span class="panel-title">레이어 가시성</span>
+            <span class="panel-user">v0.3.11</span>
         </div>
-        <div class="panel-content">
-            <div class="layer-toggle-row">
-                <span class="layer-label">기본 로직 (AI)</span>
-                <button id="btn-layer-base" class="layer-btn active">ON <span id="layer-count-base" class="count-badge">0</span></button>
+        <div class="panel-content" style="padding: 12px;">
+            <div class="layer-toggle-row" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <span class="layer-label" style="font-size: 13px; color: var(--fg-main);">기본 로직 (AI) - <b id="layer-count-base" style="color: var(--accent);">0</b></span>
+                <button id="btn-layer-base" class="layer-btn active" style="min-width: 50px;">ON</button>
             </div>
-            <div class="layer-toggle-row">
-                <span class="layer-label">사용자 커스텀 (User)</span>
-                <button id="btn-layer-user" class="layer-btn active">ON <span id="layer-count-user" class="count-badge">0</span></button>
+            <div class="layer-toggle-row" style="display: flex; justify-content: space-between; align-items: center;">
+                <span class="layer-label" style="font-size: 13px; color: var(--fg-main);">사용자 커스텀 (User) - <b id="layer-count-user" style="color: #bc7ad9;">0</b></span>
+                <button id="btn-layer-user" class="layer-btn active" style="min-width: 50px;">ON</button>
             </div>
         </div>
     </div>

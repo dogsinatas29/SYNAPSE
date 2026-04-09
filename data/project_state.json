@@ -4,38 +4,4873 @@
       "x": 0,
       "y": 0
     },
-    "visible_layers": [
-      "source",
-      "documentation"
-    ],
     "zoom_level": 1
   },
-  "clusters": [],
-  "edges": [],
+  "clusters": [
+    {
+      "color": "#fe8019",
+      "id": "cluster_ghosts",
+      "label": "👻 External Ghosts",
+      "type": "system"
+    },
+    {
+      "color": "#ebdbb2",
+      "id": "cluster_root",
+      "label": "🏠 Project Root",
+      "type": "system"
+    },
+    {
+      "color": "#fe8019",
+      "id": "cluster_src",
+      "label": "📂 src",
+      "type": "folder"
+    },
+    {
+      "collapsed": false,
+      "color": "#b8bb26",
+      "id": "cluster_src_bootstrap",
+      "label": "📂 bootstrap",
+      "type": "folder"
+    },
+    {
+      "color": "#ebdbb2",
+      "id": "cluster_src_core",
+      "label": "📂 core",
+      "type": "folder"
+    },
+    {
+      "color": "#ebdbb2",
+      "id": "cluster_src_core_canvas_engine",
+      "label": "📂 canvas-engine",
+      "type": "folder"
+    },
+    {
+      "color": "#fe8019",
+      "id": "cluster_src_explorer",
+      "label": "📂 explorer",
+      "type": "folder"
+    },
+    {
+      "color": "#fb4934",
+      "id": "cluster_src_rust_checker",
+      "label": "📂 rust_checker",
+      "type": "folder"
+    },
+    {
+      "color": "#8ec07c",
+      "id": "cluster_src_server",
+      "label": "📂 server",
+      "type": "folder"
+    },
+    {
+      "collapsed": false,
+      "color": "#ebdbb2",
+      "id": "cluster_src_types",
+      "label": "📂 types",
+      "type": "folder"
+    },
+    {
+      "color": "#ebdbb2",
+      "id": "cluster_src_utils",
+      "label": "📂 utils",
+      "type": "folder"
+    },
+    {
+      "collapsed": false,
+      "color": "#fe8019",
+      "id": "cluster_src_webview",
+      "label": "📂 webview",
+      "type": "folder"
+    },
+    {
+      "color": "#fb4934",
+      "id": "cluster_tools",
+      "label": "📂 tools",
+      "type": "folder"
+    },
+    {
+      "collapsed": false,
+      "color": "#fabd2f",
+      "height": 200,
+      "id": "sys_cluster_reserved",
+      "isSystem": true,
+      "label": "🕒 Reserved Cluster",
+      "position": {
+        "x": -1500,
+        "y": 1000
+      },
+      "width": 300
+    },
+    {
+      "collapsed": false,
+      "color": "#83a598",
+      "height": 200,
+      "id": "sys_cluster_buffer",
+      "isSystem": true,
+      "label": "🛡️ Buffer Cluster",
+      "position": {
+        "x": -1100,
+        "y": 1000
+      },
+      "width": 300
+    },
+    {
+      "collapsed": false,
+      "color": "#458588",
+      "height": 200,
+      "id": "cluster_external",
+      "isSystem": true,
+      "label": "⚙️ External Modules",
+      "position": {
+        "x": 1500,
+        "y": 0
+      },
+      "width": 300
+    }
+  ],
+  "edges": [
+    {
+      "from": "GEMINI (사본)",
+      "isCircular": false,
+      "isValid": true,
+      "status": "confirmed",
+      "to": "architecture",
+      "type": "include",
+      "validation": {
+        "color": "#fabd2f",
+        "confidence": 1,
+        "isAi": false,
+        "reason": "[Boundary Violation] 타 클러스터의 내부 구현체('RenderProtocol')에 직접 연결되었습니다. Bridge/Facade를 사용하세요.",
+        "valid": true,
+        "visual": {
+          "color": "#fabd2f",
+          "dashArray": "5,5",
+          "style": "dashed",
+          "thickness": 2
+        }
+      },
+      "visual": {
+        "color": "#fabd2f",
+        "dashArray": "5,5",
+        "style": "dashed",
+        "thickness": 2
+      },
+      "weight": 1
+    },
+    {
+      "from": "GEMINI (사본)",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "synapse_topology_view",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "GEMINI--",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "architecture",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "GEMINI--",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "synapse_topology_view",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "GEMINI_origin",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "architecture",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "GEMINI_origin",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "synapse_topology_view",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README.ko",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "README",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README.ko",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "GHOST_NODE",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README.ko",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "LICENSE",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "README.ko",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "GHOST_NODE",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "hint_solid_border",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "node_active",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "hint_purple_glow",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "node_high_dtr",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "hint_dashed_border",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "node_ghost",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "hint_grayed_out",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "node_deleted",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "hint_red_pulse",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "node_warning",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "color_beige",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "style_solid_2px",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "color_blue",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "style_solid_3px",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "color_orange",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "color_pink",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "style_solid_1px",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "color_brown",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "style_solid_1.5px",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "color_aqua",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "style_dashed_2px",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "color_magenta",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "style_dotted_2px",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "color_gold",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "style_pulse_5px",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "topology_view",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "flow_view",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "synapse_tree_v0.2.16",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "LICENSE",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "architecture",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "core_synapse",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "architecture",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "visual_impact",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "architecture",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "reporting",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "architecture",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "data_scheme",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "architecture",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "RULES",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "GEMINI",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "architecture",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "GEMINI",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "synapse_topology_view",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README.ko",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "synapse_graph_v0.2.16",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README.ko",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "synapse_flow_v0.2.16",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README.ko",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "synapse_tree_v0.2.16",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "synapse_graph_v0.2.16",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "synapse_flow_v0.2.16",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "architecture",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "vega_agent",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "v0.2.16",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "v0.2.15",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "v0.2.17",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "v0.2.16_release_notes",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "v0.2.17",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "BootstrapEngine",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "v0.2.17",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "canvas-engine",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "v0.2.17",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "extension",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "v0.2.17",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "FileScanner",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "v0.2.17",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "GeminiParser",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "v0.2.17",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "CanvasPanel",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "v0.2.17",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "index",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "v0.2.17",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "RULES",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "v0.2.20",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "v0.2.19",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "v0.2.20",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "AiOrchestrator",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "v0.2.20",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "v0.2.20_release_notes",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "2026-02-17_keybinding_check",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "package",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "2026-02-17_origin_edge_verification",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "PromptLogger",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "2026-02-17_origin_edge_verification",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "BootstrapEngine",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "CHANGELOG",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "main",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "CHANGELOG",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "README.ko",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "CHANGELOG",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "README",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "EXTENSION_README",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "LICENSE",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "v0.1.6_release_notes",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "LICENSE",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "walkthrough",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "synapse-visual-architecture-v0.2.20",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "fix_cluster",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "cluster_id",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "fix_cluster",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "position",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "fix_cluster",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "ts",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "_v0.3.09",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "README",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "_v0.3.09_COMPREHENSIVE",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "README",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "_v0.3.10_implementation",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "v0.3.10_Bootstrap_Locked",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "_v0.3.2",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "v0.3.1_zz_Bootstrap_Locked",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "_v0.3.3",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "v0.3.2",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "_v0.3.4",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "synapse-visual-architecture-v0.3.5",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "_v0.3.4",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "v0.3.5_release_notes",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "_v0.3.8",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "synapse-visual-architecture-v0.3.8",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "_v0.3.8",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "v0.3.8_release_notes",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "v0.2.18.2",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "architecture",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "v0.2.18.2",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "v0.2.18.1",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "v0.2.18.2",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "v0.3.0",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "v0.2.19",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "architecture",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "v0.2.19",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "v0.2.18",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "v0.2.20",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "architecture",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "v0.2.20",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "v0.2.18.2",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "v0.2.21-fix",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "v0.2.21",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "v0.2.23",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "v0.2.21",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "v0.2.24",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "v0.2.23",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "v0.2.25",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "v0.2.24",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "v0.2.26",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "v0.2.25",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "v0.2.27",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "v0.2.26",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "v0.2.28",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "v0.2.27",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "v0.2.29",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "v0.2.28",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "v0.2.30",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "v0.2.29",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "v0.2.31",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "v0.2.30",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "v0.2.32",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "v0.2.31",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "v0.2.32",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "v0.2.32_release_notes",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "v0.2.33",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "v0.2.32",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "v0.2.34",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "v0.2.33",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "v0.2.34",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "v0.2.34_release_notes",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "v0.2.35",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "v0.2.34",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "v0.2.35",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "v0.2.35_release_notes",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "v0.2.36",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "v0.2.35",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "v0.2.37",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "v0.2.36",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "v0.2.37",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "DirectChatScraper",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "v0.2.37",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "RawTextMiner",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "v0.2.37",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "VscdbAdapter",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "v0.2.38",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "v0.2.37",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "v0.2.38",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "DirectChatScraper",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "v0.2.38",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "extension",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "v0.2.38",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "RawTextMiner",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "v0.2.38",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "VscdbAdapter",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "v0.2.43",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "v0.2.42_implementation_plan",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "v0.2.44",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "v0.2.43",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "v0.2.44",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "v0.2.44_release_notes",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "v0.2.45",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "v0.2.44",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "v0.2.46",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "v0.2.45",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "v0.2.47",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "v0.2.46",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "v0.2.48",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "v0.2.47",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "v0.2.50",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "v0.2.48",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "v0.2.51",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "v0.2.50",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "v0.2.52",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "v0.2.51",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "v0.2.53",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "v0.2.52",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "v0.2.29_release_notes",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "출력 가능한 ASCII",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "v0.2.34_hotfix_2_release_notes",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "v0.2.34",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "v0.3.09_RELEASE_NOTES",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "README",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "v0.3.09_RELEASE_NOTES_KO",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "README.ko",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "v0.3.09_release_notes_ko",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "README.ko",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "v0.3.3_release_notes",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "synapse-visual-architecture-v0.3.3",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "v0.3.9_release_notes",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "synapse-visual-architecture-v0.3.9",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "BootstrapEngine",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "GeminiParser",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "BootstrapEngine",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "FlowchartGenerator",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "BootstrapEngine",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "FileScanner",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "BootstrapEngine",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "schema",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "BootstrapEngine",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "exclusionRules",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "BootstrapEngine",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "RuleEngine",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "BootstrapEngine",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "PhaseManager",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "BootstrapEngine",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "DataPipeline",
+      "type": "call",
+      "weight": 0.7
+    },
+    {
+      "from": "BootstrapEngine",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "GraphModel",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "BootstrapEngine",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "SnapshotSystem",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "BootstrapEngine",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "Logger",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "cli",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "BootstrapEngine",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "client",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "vscode-languageclient",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "AiOrchestrator",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "Logger",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "ArchitectureDSL",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "schema",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "BillingManager",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "DatabaseEngine",
+      "type": "reference",
+      "weight": 0.2
+    },
+    {
+      "from": "CDPManager",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "http",
+      "type": "call",
+      "weight": 0.7
+    },
+    {
+      "from": "CDPManager",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "net",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "CDPManager",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "crypto",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "CDPManager",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "Logger",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "CommandInterceptor",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "PromptLogger",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "ControlSystem",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "PhaseManager",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "ControlSystem",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "SnapshotSystem",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "ControlSystem",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "GraphModel",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "DataPipeline",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "FileScanner",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "DataPipeline",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "PhaseManager",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "DataPipeline",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "GraphModel",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "DataPipeline",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "CanvasEngine",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "DebuggerSystem",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "PhaseManager",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "DebuggerSystem",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "ControlSystem",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "DebuggerSystem",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "RendererCore",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "DirectChatScraper",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "crypto",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "DirectChatScraper",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "PromptLogger",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "DirectPbExtractor",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "crypto",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "DirectPbExtractor",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "PromptLogger",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "EdgeCodeRefactorer",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": ") || trimmed.includes(",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "FlowchartGenerator",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "schema",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "FlowchartGenerator",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "visualHints",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "GeminiParser",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "schema",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "GeminiParser",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "exclusionRules",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "GeminiParser",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "RuleEngine",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "GridSystem",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "PhaseManager",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "GridSystem",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "ControlSystem",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "GridSystem",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "GraphModel",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "LogicAnalyzer",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "schema",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "RendererCore",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "PhaseManager",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "RendererCore",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "GridSystem",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "RendererCore",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "GraphModel",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "RendererCore",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "RenderProtocol",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "ReportExporter",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "DatabaseEngine",
+      "type": "reference",
+      "weight": 0.2
+    },
+    {
+      "from": "SnapshotSystem",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "PhaseManager",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "SnapshotSystem",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "GraphModel",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "VirtualDebugger",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "schema",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "VirtualDebugger",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "Logger",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "WebviewInterceptor",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "Logger",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "CanvasEngine",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "Intent",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "CanvasEngine",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "RuleEngine",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "CanvasEngine",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "StateManager",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "CanvasEngine",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "ValidationHarness",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "CanvasEngine",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "SpatialRuleBook",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "CanvasEngine",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "VisualRuleBook",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "CanvasEngine",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "PhaseGate",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "Intent",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "GraphModel",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "PhaseGate",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "Intent",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "PhaseGate",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "PhaseManager",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "RuleEngine",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "Intent",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "ScenarioRunner",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "CanvasEngine",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "ScenarioRunner",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "GraphModel",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "ScenarioRunner",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "Intent",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "SpatialRuleBook",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "Intent",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "SpatialRuleBook",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "RuleEngine",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "SpatialRuleBook",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "StateManager",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "SpatialRuleBook",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "RenderProtocol",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "StateManager",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "Intent",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "StateManager",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "GraphModel",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "ValidationHarness",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "Intent",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "ValidationHarness",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "RuleEngine",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "ValidationHarness",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "StateManager",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "VisualRuleBook",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "Intent",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "VisualRuleBook",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "RuleEngine",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "VisualRuleBook",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "StateManager",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "VisualRuleBook",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "RenderProtocol",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "extension",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "PbSessionWatcher",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "extension",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "vscode-languageclient",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "extension",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "CanvasPanel",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "extension",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "BootstrapEngine",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "extension",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "LogicAnalyzer",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "extension",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "GeminiParser",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "extension",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "client",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "extension",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "DirectPbExtractor",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "extension",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "ChatExtractor",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "extension",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "Logger",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "extension",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "BillingManager",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "extension",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "ReportExporter",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "extension",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "AiOrchestrator",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "extension",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "ArchitectureExplorer",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "server",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "vscode-languageserver-textdocument",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "server",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "GeminiParser",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "server",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "FlowScanner",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "standalone",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "express",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "standalone",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "cors",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "standalone",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "GeminiParser",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "standalone",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "FlowScanner",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "exclusionRules",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "RuleEngine",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "verify_v0.3.10",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "ScenarioRunner",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "verify_v0.3.10",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "PhaseManager",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "CanvasPanel",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "schema",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "CanvasPanel",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "FileScanner",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "CanvasPanel",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "LogicAnalyzer",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "CanvasPanel",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "EdgeCodeRefactorer",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "CanvasPanel",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "GeminiParser",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "CanvasPanel",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "FlowchartGenerator",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "CanvasPanel",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "BootstrapEngine",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "CanvasPanel",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "client",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "CanvasPanel",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "Logger",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "CanvasPanel",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "VirtualDebugger",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "CanvasPanel",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "PhaseManager",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "CanvasPanel",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "GridSystem",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "CanvasPanel",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "RendererCore",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "CanvasPanel",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "ControlSystem",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "CanvasPanel",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "DebuggerSystem",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "CanvasPanel",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "GraphModel",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "CanvasPanel",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "SnapshotSystem",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "CanvasPanel",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "CanvasEngine",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "CanvasPanel",
+      "isCircular": false,
+      "status": "confirmed",
+      "to": "RenderProtocol",
+      "type": "include",
+      "weight": 1
+    }
+  ],
   "nodes": [
     {
+      "cluster_id": "cluster_ghosts",
       "data": {
-        "color": "#b8bb26",
-        "description": "System Entry Point (Auto-generated template)",
-        "label": "Entrypoint (Template)"
+        "cluster_id": "cluster_ghosts",
+        "label": ") || trimmed.includes("
       },
-      "id": "node_entry",
+      "degree": 1,
+      "filePath": "external://) || trimmed.includes(",
+      "id": ") || trimmed.includes(",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": true,
+      "isIsolated": false,
+      "label": ") || trimmed.includes(",
       "position": {
-        "x": 400,
-        "y": 300
+        "x": -189.15578489747017,
+        "y": -407.8600391902493
       },
-      "status": "proposed",
-      "type": "source",
-      "visual": {
-        "dashArray": "5,5",
-        "opacity": 0.5
-      }
+      "status": "error_necrosis",
+      "type": "symbol"
+    },
+    {
+      "cluster_id": "cluster_ghosts",
+      "data": {
+        "cluster_id": "cluster_ghosts",
+        "label": "출력 가능한 ASCII"
+      },
+      "degree": 1,
+      "filePath": "external://출력 가능한 ASCII",
+      "id": "출력 가능한 ASCII",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": false,
+      "isIsolated": false,
+      "label": "출력 가능한 ASCII",
+      "position": {
+        "x": -457.74018078867107,
+        "y": -405.14093131786353
+      },
+      "type": "external"
+    },
+    {
+      "cluster_id": "cluster_src_core",
+      "data": {
+        "cluster_id": "cluster_src_core",
+        "file": "src/core/AiOrchestrator.ts",
+        "hiddenOnCanvas": false,
+        "label": "AiOrchestrator"
+      },
+      "degree": 3,
+      "filePath": "src/core/AiOrchestrator.ts",
+      "id": "AiOrchestrator",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": true,
+      "isIsolated": false,
+      "label": "AiOrchestrator",
+      "position": {
+        "x": 344.00344647101565,
+        "y": -240.2777158869537
+      },
+      "status": "error_necrosis",
+      "type": "file"
+    },
+    {
+      "cluster_id": "cluster_src_core",
+      "data": {
+        "cluster_id": "cluster_src_core",
+        "file": "src/core/ArchitectureDSL.ts",
+        "hiddenOnCanvas": false,
+        "label": "ArchitectureDSL"
+      },
+      "degree": 1,
+      "filePath": "src/core/ArchitectureDSL.ts",
+      "id": "ArchitectureDSL",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": true,
+      "isIsolated": false,
+      "label": "ArchitectureDSL",
+      "position": {
+        "x": 793.9759116863553,
+        "y": 151.59755027547595
+      },
+      "status": "error_necrosis",
+      "type": "file"
+    },
+    {
+      "cluster_id": "cluster_src_explorer",
+      "data": {
+        "cluster_id": "cluster_src_explorer",
+        "file": "src/explorer/ArchitectureExplorer.ts",
+        "hiddenOnCanvas": false,
+        "label": "ArchitectureExplorer"
+      },
+      "degree": 1,
+      "filePath": "src/explorer/ArchitectureExplorer.ts",
+      "id": "ArchitectureExplorer",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": true,
+      "isIsolated": false,
+      "label": "ArchitectureExplorer",
+      "position": {
+        "x": 2353.774178655479,
+        "y": -762.0071044319507
+      },
+      "status": "error_necrosis",
+      "type": "file"
+    },
+    {
+      "cluster_id": "cluster_src_core",
+      "data": {
+        "cluster_id": "cluster_src_core",
+        "file": "src/core/BillingManager.ts",
+        "hiddenOnCanvas": false,
+        "label": "BillingManager"
+      },
+      "degree": 2,
+      "filePath": "src/core/BillingManager.ts",
+      "id": "BillingManager",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": true,
+      "isIsolated": false,
+      "label": "BillingManager",
+      "position": {
+        "x": 230.72788553070984,
+        "y": -179.17567399554545
+      },
+      "status": "error_necrosis",
+      "type": "file"
+    },
+    {
+      "cluster_id": "cluster_src_bootstrap",
+      "data": {
+        "cluster_id": "cluster_src_bootstrap",
+        "file": "src/bootstrap/BootstrapEngine.ts",
+        "hiddenOnCanvas": false,
+        "label": "BootstrapEngine"
+      },
+      "degree": 16,
+      "filePath": "src/bootstrap/BootstrapEngine.ts",
+      "id": "BootstrapEngine",
+      "isBottleneck": true,
+      "isDeadEnd": false,
+      "isError": true,
+      "isIsolated": false,
+      "label": "BootstrapEngine",
+      "position": {
+        "x": 1570.1316234967485,
+        "y": -674.3195902310089
+      },
+      "status": "error_necrosis",
+      "type": "file"
+    },
+    {
+      "cluster_id": "cluster_root",
+      "data": {
+        "cluster_id": "cluster_root",
+        "file": "build-guard.js",
+        "hiddenOnCanvas": false,
+        "label": "build-guard"
+      },
+      "degree": 0,
+      "filePath": "build-guard.js",
+      "id": "build-guard",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": true,
+      "isIsolated": true,
+      "label": "build-guard",
+      "position": {
+        "x": -1290.1884055545127,
+        "y": -171.1652181073086
+      },
+      "status": "error_necrosis",
+      "type": "file"
+    },
+    {
+      "cluster_id": "cluster_ghosts",
+      "data": {
+        "cluster_id": "cluster_ghosts",
+        "label": "canvas-engine"
+      },
+      "degree": 1,
+      "filePath": "external://canvas-engine",
+      "id": "canvas-engine",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": false,
+      "isIsolated": false,
+      "label": "canvas-engine",
+      "position": {
+        "x": -824.8406592250656,
+        "y": -319.5332269214506
+      },
+      "type": "external"
+    },
+    {
+      "cluster_id": "cluster_src_core_canvas_engine",
+      "data": {
+        "cluster_id": "cluster_src_core_canvas_engine",
+        "file": "src/core/canvas-engine/CanvasEngine.ts",
+        "hiddenOnCanvas": false,
+        "label": "CanvasEngine"
+      },
+      "degree": 10,
+      "filePath": "src/core/canvas-engine/CanvasEngine.ts",
+      "id": "CanvasEngine",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": true,
+      "isIsolated": false,
+      "label": "CanvasEngine",
+      "position": {
+        "x": 191.66548942243313,
+        "y": 1364.1119131940989
+      },
+      "status": "error_necrosis",
+      "type": "file"
+    },
+    {
+      "cluster_id": "cluster_src_webview",
+      "data": {
+        "cluster_id": "cluster_src_webview",
+        "file": "src/webview/CanvasPanel.ts",
+        "hiddenOnCanvas": false,
+        "label": "CanvasPanel"
+      },
+      "degree": 21,
+      "filePath": "src/webview/CanvasPanel.ts",
+      "id": "CanvasPanel",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": true,
+      "isIsolated": false,
+      "label": "CanvasPanel",
+      "position": {
+        "x": 949.3392156903509,
+        "y": 520.4526957398269
+      },
+      "status": "error_necrosis",
+      "type": "file"
+    },
+    {
+      "cluster_id": "cluster_src_core",
+      "data": {
+        "cluster_id": "cluster_src_core",
+        "file": "src/core/CDPManager.ts",
+        "hiddenOnCanvas": false,
+        "label": "CDPManager"
+      },
+      "degree": 4,
+      "filePath": "src/core/CDPManager.ts",
+      "id": "CDPManager",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": true,
+      "isIsolated": false,
+      "label": "CDPManager",
+      "position": {
+        "x": 574.0760387994658,
+        "y": -229.58272937931565
+      },
+      "status": "error_necrosis",
+      "type": "file"
+    },
+    {
+      "cluster_id": "cluster_src_utils",
+      "data": {
+        "cluster_id": "cluster_src_utils",
+        "file": "src/utils/ChatExtractor.ts",
+        "hiddenOnCanvas": false,
+        "label": "ChatExtractor"
+      },
+      "degree": 1,
+      "filePath": "src/utils/ChatExtractor.ts",
+      "id": "ChatExtractor",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": true,
+      "isIsolated": false,
+      "label": "ChatExtractor",
+      "position": {
+        "x": 1719.5162733087586,
+        "y": 534.6898264191335
+      },
+      "status": "error_necrosis",
+      "type": "file"
+    },
+    {
+      "cluster_id": "cluster_src",
+      "data": {
+        "cluster_id": "cluster_src",
+        "file": "src/cli.ts",
+        "hiddenOnCanvas": false,
+        "label": "cli"
+      },
+      "degree": 1,
+      "filePath": "src/cli.ts",
+      "id": "cli",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": true,
+      "isIsolated": false,
+      "label": "cli",
+      "position": {
+        "x": 2446.363174426159,
+        "y": 61.180048758032406
+      },
+      "status": "error_necrosis",
+      "type": "file"
+    },
+    {
+      "cluster_id": "cluster_src",
+      "data": {
+        "cluster_id": "cluster_src",
+        "file": "src/client.ts",
+        "hiddenOnCanvas": false,
+        "label": "client"
+      },
+      "degree": 3,
+      "filePath": "src/client.ts",
+      "id": "client",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": true,
+      "isIsolated": false,
+      "label": "client",
+      "position": {
+        "x": 2131.376561407954,
+        "y": -78.70101905619391
+      },
+      "status": "error_necrosis",
+      "type": "file"
+    },
+    {
+      "cluster_id": "cluster_ghosts",
+      "data": {
+        "cluster_id": "cluster_ghosts",
+        "label": "cluster_id"
+      },
+      "degree": 1,
+      "filePath": "external://cluster_id",
+      "id": "cluster_id",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": false,
+      "isIsolated": false,
+      "label": "cluster_id",
+      "position": {
+        "x": -987.9665183118741,
+        "y": -315.3148898266095
+      },
+      "type": "external"
+    },
+    {
+      "cluster_id": "cluster_ghosts",
+      "data": {
+        "cluster_id": "cluster_ghosts",
+        "label": "color_aqua"
+      },
+      "degree": 1,
+      "filePath": "external://color_aqua",
+      "id": "color_aqua",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": false,
+      "isIsolated": false,
+      "label": "color_aqua",
+      "position": {
+        "x": -721.3006067209612,
+        "y": -244.7785564379571
+      },
+      "type": "external"
+    },
+    {
+      "cluster_id": "cluster_ghosts",
+      "data": {
+        "cluster_id": "cluster_ghosts",
+        "label": "color_beige"
+      },
+      "degree": 1,
+      "filePath": "external://color_beige",
+      "id": "color_beige",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": false,
+      "isIsolated": false,
+      "label": "color_beige",
+      "position": {
+        "x": -748.5752944054777,
+        "y": -585.1745034823098
+      },
+      "type": "external"
+    },
+    {
+      "cluster_id": "cluster_ghosts",
+      "data": {
+        "cluster_id": "cluster_ghosts",
+        "label": "color_blue"
+      },
+      "degree": 1,
+      "filePath": "external://color_blue",
+      "id": "color_blue",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": false,
+      "isIsolated": false,
+      "label": "color_blue",
+      "position": {
+        "x": -480.5965978334309,
+        "y": -286.1418362730888
+      },
+      "type": "external"
+    },
+    {
+      "cluster_id": "cluster_ghosts",
+      "data": {
+        "cluster_id": "cluster_ghosts",
+        "label": "color_brown"
+      },
+      "degree": 1,
+      "filePath": "external://color_brown",
+      "id": "color_brown",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": false,
+      "isIsolated": false,
+      "label": "color_brown",
+      "position": {
+        "x": -744.5727853686376,
+        "y": 46.48163987688
+      },
+      "type": "external"
+    },
+    {
+      "cluster_id": "cluster_ghosts",
+      "data": {
+        "cluster_id": "cluster_ghosts",
+        "label": "color_gold"
+      },
+      "degree": 1,
+      "filePath": "external://color_gold",
+      "id": "color_gold",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": false,
+      "isIsolated": false,
+      "label": "color_gold",
+      "position": {
+        "x": -811.8396241316768,
+        "y": 476.718990399202
+      },
+      "type": "external"
+    },
+    {
+      "cluster_id": "cluster_ghosts",
+      "data": {
+        "cluster_id": "cluster_ghosts",
+        "label": "color_magenta"
+      },
+      "degree": 1,
+      "filePath": "external://color_magenta",
+      "id": "color_magenta",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": false,
+      "isIsolated": false,
+      "label": "color_magenta",
+      "position": {
+        "x": -636.5965772957991,
+        "y": -451.8274160016427
+      },
+      "type": "external"
+    },
+    {
+      "cluster_id": "cluster_ghosts",
+      "data": {
+        "cluster_id": "cluster_ghosts",
+        "label": "color_orange"
+      },
+      "degree": 1,
+      "filePath": "external://color_orange",
+      "id": "color_orange",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": false,
+      "isIsolated": false,
+      "label": "color_orange",
+      "position": {
+        "x": -689.0307738440256,
+        "y": -468.2687302841362
+      },
+      "type": "external"
+    },
+    {
+      "cluster_id": "cluster_ghosts",
+      "data": {
+        "cluster_id": "cluster_ghosts",
+        "label": "color_pink"
+      },
+      "degree": 1,
+      "filePath": "external://color_pink",
+      "id": "color_pink",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": false,
+      "isIsolated": false,
+      "label": "color_pink",
+      "position": {
+        "x": -971.0608671628258,
+        "y": -556.6358696004365
+      },
+      "type": "external"
+    },
+    {
+      "cluster_id": "cluster_src_core",
+      "data": {
+        "cluster_id": "cluster_src_core",
+        "file": "src/core/CommandInterceptor.ts",
+        "hiddenOnCanvas": false,
+        "label": "CommandInterceptor"
+      },
+      "degree": 1,
+      "filePath": "src/core/CommandInterceptor.ts",
+      "id": "CommandInterceptor",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": true,
+      "isIsolated": false,
+      "label": "CommandInterceptor",
+      "position": {
+        "x": 114.69583128128565,
+        "y": -383.9870182667652
+      },
+      "status": "error_necrosis",
+      "type": "file"
+    },
+    {
+      "cluster_id": "cluster_tools",
+      "data": {
+        "cluster_id": "cluster_tools",
+        "file": "tools/compare.js",
+        "hiddenOnCanvas": false,
+        "label": "compare"
+      },
+      "degree": 0,
+      "filePath": "tools/compare.js",
+      "id": "compare",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": true,
+      "isIsolated": true,
+      "label": "compare",
+      "position": {
+        "x": 958.9888933722053,
+        "y": -825.3897592054883
+      },
+      "status": "error_necrosis",
+      "type": "file"
+    },
+    {
+      "cluster_id": "cluster_tools",
+      "data": {
+        "cluster_id": "cluster_tools",
+        "file": "tools/config-generator.js",
+        "hiddenOnCanvas": false,
+        "label": "config-generator"
+      },
+      "degree": 0,
+      "filePath": "tools/config-generator.js",
+      "id": "config-generator",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": true,
+      "isIsolated": true,
+      "label": "config-generator",
+      "position": {
+        "x": 1159.8471563683995,
+        "y": -829.5175410153024
+      },
+      "status": "error_necrosis",
+      "type": "file"
+    },
+    {
+      "cluster_id": "cluster_src_core",
+      "data": {
+        "cluster_id": "cluster_src_core",
+        "file": "src/core/ControlSystem.ts",
+        "hiddenOnCanvas": false,
+        "label": "ControlSystem"
+      },
+      "degree": 6,
+      "filePath": "src/core/ControlSystem.ts",
+      "id": "ControlSystem",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": true,
+      "isIsolated": false,
+      "label": "ControlSystem",
+      "position": {
+        "x": 389.9148877073508,
+        "y": -77.87600763799792
+      },
+      "status": "error_necrosis",
+      "type": "file"
+    },
+    {
+      "cluster_id": "cluster_ghosts",
+      "data": {
+        "cluster_id": "cluster_ghosts",
+        "label": "cors"
+      },
+      "degree": 1,
+      "filePath": "external://cors",
+      "id": "cors",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": false,
+      "isIsolated": false,
+      "label": "cors",
+      "position": {
+        "x": -251.77446339530366,
+        "y": -491.7477097894299
+      },
+      "type": "external"
+    },
+    {
+      "cluster_id": "cluster_ghosts",
+      "data": {
+        "cluster_id": "cluster_ghosts",
+        "label": "crypto"
+      },
+      "degree": 3,
+      "filePath": "external://crypto",
+      "id": "crypto",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": false,
+      "isIsolated": false,
+      "label": "crypto",
+      "position": {
+        "x": -217.09301262068425,
+        "y": -38.230137820854985
+      },
+      "type": "external"
+    },
+    {
+      "cluster_id": "cluster_src_core",
+      "data": {
+        "cluster_id": "cluster_src_core",
+        "file": "src/core/DatabaseEngine.ts",
+        "hiddenOnCanvas": false,
+        "label": "DatabaseEngine"
+      },
+      "degree": 2,
+      "filePath": "src/core/DatabaseEngine.ts",
+      "id": "DatabaseEngine",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": true,
+      "isIsolated": false,
+      "label": "DatabaseEngine",
+      "position": {
+        "x": 529.6215639838681,
+        "y": -137.78140137675692
+      },
+      "status": "error_necrosis",
+      "type": "file"
+    },
+    {
+      "cluster_id": "cluster_src_core",
+      "data": {
+        "cluster_id": "cluster_src_core",
+        "file": "src/core/DataPipeline.ts",
+        "hiddenOnCanvas": false,
+        "label": "DataPipeline"
+      },
+      "degree": 5,
+      "filePath": "src/core/DataPipeline.ts",
+      "id": "DataPipeline",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": true,
+      "isIsolated": false,
+      "label": "DataPipeline",
+      "position": {
+        "x": 796.1858789746547,
+        "y": -121.86969390351254
+      },
+      "status": "error_necrosis",
+      "type": "file"
+    },
+    {
+      "cluster_id": "cluster_src",
+      "data": {
+        "cluster_id": "cluster_src",
+        "file": "src/debug_namespaces.ts",
+        "hiddenOnCanvas": false,
+        "label": "debug_namespaces"
+      },
+      "degree": 0,
+      "filePath": "src/debug_namespaces.ts",
+      "id": "debug_namespaces",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": true,
+      "isIsolated": true,
+      "label": "debug_namespaces",
+      "position": {
+        "x": 2466.0160387686074,
+        "y": 148.55368202439678
+      },
+      "status": "error_necrosis",
+      "type": "file"
+    },
+    {
+      "cluster_id": "cluster_src_core",
+      "data": {
+        "cluster_id": "cluster_src_core",
+        "file": "src/core/DebuggerSystem.ts",
+        "hiddenOnCanvas": false,
+        "label": "DebuggerSystem"
+      },
+      "degree": 4,
+      "filePath": "src/core/DebuggerSystem.ts",
+      "id": "DebuggerSystem",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": true,
+      "isIsolated": false,
+      "label": "DebuggerSystem",
+      "position": {
+        "x": 345.9721031125316,
+        "y": 155.30757069901586
+      },
+      "status": "error_necrosis",
+      "type": "file"
+    },
+    {
+      "cluster_id": "cluster_src_core",
+      "data": {
+        "cluster_id": "cluster_src_core",
+        "file": "src/core/DirectChatScraper.ts",
+        "hiddenOnCanvas": false,
+        "label": "DirectChatScraper"
+      },
+      "degree": 4,
+      "filePath": "src/core/DirectChatScraper.ts",
+      "id": "DirectChatScraper",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": true,
+      "isIsolated": false,
+      "label": "DirectChatScraper",
+      "position": {
+        "x": 286.4212813938534,
+        "y": -125.86902266258285
+      },
+      "status": "error_necrosis",
+      "type": "file"
+    },
+    {
+      "cluster_id": "cluster_src_core",
+      "data": {
+        "cluster_id": "cluster_src_core",
+        "file": "src/core/DirectPbExtractor.ts",
+        "hiddenOnCanvas": false,
+        "label": "DirectPbExtractor"
+      },
+      "degree": 3,
+      "filePath": "src/core/DirectPbExtractor.ts",
+      "id": "DirectPbExtractor",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": true,
+      "isIsolated": false,
+      "label": "DirectPbExtractor",
+      "position": {
+        "x": 554.6553517503846,
+        "y": -67.45453845439309
+      },
+      "status": "error_necrosis",
+      "type": "file"
+    },
+    {
+      "cluster_id": "cluster_src",
+      "data": {
+        "cluster_id": "cluster_src",
+        "file": "src/dump_vscdb_raw.js",
+        "hiddenOnCanvas": false,
+        "label": "dump_vscdb_raw"
+      },
+      "degree": 0,
+      "filePath": "src/dump_vscdb_raw.js",
+      "id": "dump_vscdb_raw",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": true,
+      "isIsolated": true,
+      "label": "dump_vscdb_raw",
+      "position": {
+        "x": 2295.0374275519366,
+        "y": 157.93093040909378
+      },
+      "status": "error_necrosis",
+      "type": "file"
+    },
+    {
+      "cluster_id": "cluster_src_core",
+      "data": {
+        "cluster_id": "cluster_src_core",
+        "file": "src/core/EdgeCodeRefactorer.ts",
+        "hiddenOnCanvas": false,
+        "label": "EdgeCodeRefactorer"
+      },
+      "degree": 2,
+      "filePath": "src/core/EdgeCodeRefactorer.ts",
+      "id": "EdgeCodeRefactorer",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": true,
+      "isIsolated": false,
+      "label": "EdgeCodeRefactorer",
+      "position": {
+        "x": 140.4756757930301,
+        "y": 87.64989412479916
+      },
+      "status": "error_necrosis",
+      "type": "file"
+    },
+    {
+      "cluster_id": "cluster_src_utils",
+      "data": {
+        "cluster_id": "cluster_src_utils",
+        "file": "src/utils/exclusionRules.ts",
+        "hiddenOnCanvas": false,
+        "label": "exclusionRules"
+      },
+      "degree": 3,
+      "filePath": "src/utils/exclusionRules.ts",
+      "id": "exclusionRules",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": true,
+      "isIsolated": false,
+      "label": "exclusionRules",
+      "position": {
+        "x": 1528.3009090685402,
+        "y": 430.09763899619173
+      },
+      "status": "error_necrosis",
+      "type": "file"
+    },
+    {
+      "cluster_id": "cluster_ghosts",
+      "data": {
+        "cluster_id": "cluster_ghosts",
+        "label": "express"
+      },
+      "degree": 1,
+      "filePath": "external://express",
+      "id": "express",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": false,
+      "isIsolated": false,
+      "label": "express",
+      "position": {
+        "x": -252.45817705088285,
+        "y": -724.6931139794725
+      },
+      "type": "external"
+    },
+    {
+      "cluster_id": "cluster_src",
+      "data": {
+        "cluster_id": "cluster_src",
+        "file": "src/extension.ts",
+        "hiddenOnCanvas": false,
+        "label": "extension"
+      },
+      "degree": 16,
+      "filePath": "src/extension.ts",
+      "id": "extension",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": true,
+      "isIsolated": false,
+      "label": "extension",
+      "position": {
+        "x": 2127.030629902626,
+        "y": -442.9595987403335
+      },
+      "status": "error_necrosis",
+      "type": "file"
+    },
+    {
+      "cluster_id": "cluster_src_core",
+      "data": {
+        "cluster_id": "cluster_src_core",
+        "file": "src/core/FileScanner.ts",
+        "hiddenOnCanvas": false,
+        "label": "FileScanner"
+      },
+      "degree": 4,
+      "filePath": "src/core/FileScanner.ts",
+      "id": "FileScanner",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": true,
+      "isIsolated": false,
+      "label": "FileScanner",
+      "position": {
+        "x": 316.9233400946323,
+        "y": -272.28164136288666
+      },
+      "status": "error_necrosis",
+      "type": "file"
+    },
+    {
+      "cluster_id": "cluster_root",
+      "data": {
+        "cluster_id": "cluster_root",
+        "file": "fix_cluster.sh",
+        "hiddenOnCanvas": false,
+        "label": "fix_cluster"
+      },
+      "degree": 3,
+      "filePath": "fix_cluster.sh",
+      "id": "fix_cluster",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": true,
+      "isIsolated": false,
+      "label": "fix_cluster",
+      "position": {
+        "x": -1139.064914951081,
+        "y": -364.37473964461344
+      },
+      "status": "error_necrosis",
+      "type": "file"
+    },
+    {
+      "cluster_id": "cluster_ghosts",
+      "data": {
+        "cluster_id": "cluster_ghosts",
+        "label": "flow_view"
+      },
+      "degree": 1,
+      "filePath": "external://flow_view",
+      "id": "flow_view",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": false,
+      "isIsolated": false,
+      "label": "flow_view",
+      "position": {
+        "x": -764.6129644346274,
+        "y": -478.30402306158567
+      },
+      "type": "external"
+    },
+    {
+      "cluster_id": "cluster_src_core",
+      "data": {
+        "cluster_id": "cluster_src_core",
+        "file": "src/core/FlowchartGenerator.ts",
+        "hiddenOnCanvas": false,
+        "label": "FlowchartGenerator"
+      },
+      "degree": 4,
+      "filePath": "src/core/FlowchartGenerator.ts",
+      "id": "FlowchartGenerator",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": true,
+      "isIsolated": false,
+      "label": "FlowchartGenerator",
+      "position": {
+        "x": 310.82648530512915,
+        "y": -391.2793951455552
+      },
+      "status": "error_necrosis",
+      "type": "file"
+    },
+    {
+      "cluster_id": "cluster_src_core",
+      "data": {
+        "cluster_id": "cluster_src_core",
+        "file": "src/core/FlowScanner.ts",
+        "hiddenOnCanvas": false,
+        "label": "FlowScanner"
+      },
+      "degree": 2,
+      "filePath": "src/core/FlowScanner.ts",
+      "id": "FlowScanner",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": true,
+      "isIsolated": false,
+      "label": "FlowScanner",
+      "position": {
+        "x": 464.6678141038065,
+        "y": -514.8587638296178
+      },
+      "status": "error_necrosis",
+      "type": "file"
+    },
+    {
+      "cluster_id": "cluster_src_core",
+      "data": {
+        "cluster_id": "cluster_src_core",
+        "file": "src/core/GeminiParser.ts",
+        "hiddenOnCanvas": false,
+        "label": "GeminiParser"
+      },
+      "degree": 9,
+      "filePath": "src/core/GeminiParser.ts",
+      "id": "GeminiParser",
+      "isBottleneck": true,
+      "isDeadEnd": false,
+      "isError": true,
+      "isIsolated": false,
+      "label": "GeminiParser",
+      "position": {
+        "x": 1148.8892766917863,
+        "y": -213.43243057673772
+      },
+      "status": "error_necrosis",
+      "type": "file"
+    },
+    {
+      "cluster_id": "cluster_src_core",
+      "data": {
+        "cluster_id": "cluster_src_core",
+        "file": "src/core/GraphModel.ts",
+        "hiddenOnCanvas": false,
+        "label": "GraphModel"
+      },
+      "degree": 10,
+      "filePath": "src/core/GraphModel.ts",
+      "id": "GraphModel",
+      "isBottleneck": true,
+      "isDeadEnd": false,
+      "isError": true,
+      "isIsolated": false,
+      "label": "GraphModel",
+      "position": {
+        "x": 669.1596141739168,
+        "y": -497.4999223801325
+      },
+      "status": "error_necrosis",
+      "type": "file"
+    },
+    {
+      "cluster_id": "cluster_src_core",
+      "data": {
+        "cluster_id": "cluster_src_core",
+        "file": "src/core/GridSystem.ts",
+        "hiddenOnCanvas": false,
+        "label": "GridSystem"
+      },
+      "degree": 5,
+      "filePath": "src/core/GridSystem.ts",
+      "id": "GridSystem",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": true,
+      "isIsolated": false,
+      "label": "GridSystem",
+      "position": {
+        "x": 521.4890587902923,
+        "y": 156.09785238140842
+      },
+      "status": "error_necrosis",
+      "type": "file"
+    },
+    {
+      "cluster_id": "cluster_ghosts",
+      "data": {
+        "cluster_id": "cluster_ghosts",
+        "label": "hint_dashed_border"
+      },
+      "degree": 1,
+      "filePath": "external://hint_dashed_border",
+      "id": "hint_dashed_border",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": false,
+      "isIsolated": false,
+      "label": "hint_dashed_border",
+      "position": {
+        "x": -579.5784374298968,
+        "y": -434.67446708554326
+      },
+      "type": "external"
+    },
+    {
+      "cluster_id": "cluster_ghosts",
+      "data": {
+        "cluster_id": "cluster_ghosts",
+        "label": "hint_grayed_out"
+      },
+      "degree": 1,
+      "filePath": "external://hint_grayed_out",
+      "id": "hint_grayed_out",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": false,
+      "isIsolated": false,
+      "label": "hint_grayed_out",
+      "position": {
+        "x": -411.5051817854672,
+        "y": -177.28941287113753
+      },
+      "type": "external"
+    },
+    {
+      "cluster_id": "cluster_ghosts",
+      "data": {
+        "cluster_id": "cluster_ghosts",
+        "label": "hint_purple_glow"
+      },
+      "degree": 1,
+      "filePath": "external://hint_purple_glow",
+      "id": "hint_purple_glow",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": false,
+      "isIsolated": false,
+      "label": "hint_purple_glow",
+      "position": {
+        "x": -746.5305718050231,
+        "y": -484.53730664465337
+      },
+      "type": "external"
+    },
+    {
+      "cluster_id": "cluster_ghosts",
+      "data": {
+        "cluster_id": "cluster_ghosts",
+        "label": "hint_red_pulse"
+      },
+      "degree": 1,
+      "filePath": "external://hint_red_pulse",
+      "id": "hint_red_pulse",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": false,
+      "isIsolated": false,
+      "label": "hint_red_pulse",
+      "position": {
+        "x": -424.66619341025853,
+        "y": -164.95572295475128
+      },
+      "type": "external"
+    },
+    {
+      "cluster_id": "cluster_ghosts",
+      "data": {
+        "cluster_id": "cluster_ghosts",
+        "label": "hint_solid_border"
+      },
+      "degree": 1,
+      "filePath": "external://hint_solid_border",
+      "id": "hint_solid_border",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": false,
+      "isIsolated": false,
+      "label": "hint_solid_border",
+      "position": {
+        "x": -594.863002114658,
+        "y": 103.10273032261087
+      },
+      "type": "external"
+    },
+    {
+      "cluster_id": "cluster_ghosts",
+      "data": {
+        "cluster_id": "cluster_ghosts",
+        "label": "http"
+      },
+      "degree": 1,
+      "filePath": "external://http",
+      "id": "http",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": false,
+      "isIsolated": false,
+      "label": "http",
+      "position": {
+        "x": -277.19038139163155,
+        "y": -146.13661657714425
+      },
+      "type": "external"
+    },
+    {
+      "cluster_id": "cluster_ghosts",
+      "data": {
+        "cluster_id": "cluster_ghosts",
+        "label": "index"
+      },
+      "degree": 1,
+      "filePath": "external://index",
+      "id": "index",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": false,
+      "isIsolated": false,
+      "label": "index",
+      "position": {
+        "x": -969.8187191323092,
+        "y": -153.9406716418264
+      },
+      "type": "external"
+    },
+    {
+      "cluster_id": "cluster_src_core_canvas_engine",
+      "data": {
+        "cluster_id": "cluster_src_core_canvas_engine",
+        "file": "src/core/canvas-engine/Intent.ts",
+        "hiddenOnCanvas": false,
+        "label": "Intent"
+      },
+      "degree": 9,
+      "filePath": "src/core/canvas-engine/Intent.ts",
+      "id": "Intent",
+      "isBottleneck": true,
+      "isDeadEnd": false,
+      "isError": true,
+      "isIsolated": false,
+      "label": "Intent",
+      "position": {
+        "x": 631.2365349796443,
+        "y": 918.6822330295953
+      },
+      "status": "error_necrosis",
+      "type": "file"
+    },
+    {
+      "cluster_id": "cluster_ghosts",
+      "data": {
+        "cluster_id": "cluster_ghosts",
+        "label": "LICENSE"
+      },
+      "degree": 4,
+      "filePath": "external://LICENSE",
+      "id": "LICENSE",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": false,
+      "isIsolated": false,
+      "label": "LICENSE",
+      "position": {
+        "x": -333.98646382139384,
+        "y": -358.2117162821403
+      },
+      "type": "external"
+    },
+    {
+      "cluster_id": "cluster_tools",
+      "data": {
+        "cluster_id": "cluster_tools",
+        "file": "tools/log-analyzer.js",
+        "hiddenOnCanvas": false,
+        "label": "log-analyzer"
+      },
+      "degree": 0,
+      "filePath": "tools/log-analyzer.js",
+      "id": "log-analyzer",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": true,
+      "isIsolated": true,
+      "label": "log-analyzer",
+      "position": {
+        "x": 791.5254203114807,
+        "y": -836.2926578917721
+      },
+      "status": "error_necrosis",
+      "type": "file"
+    },
+    {
+      "cluster_id": "cluster_src_utils",
+      "data": {
+        "cluster_id": "cluster_src_utils",
+        "file": "src/utils/Logger.ts",
+        "hiddenOnCanvas": false,
+        "label": "Logger"
+      },
+      "degree": 7,
+      "filePath": "src/utils/Logger.ts",
+      "id": "Logger",
+      "isBottleneck": true,
+      "isDeadEnd": false,
+      "isError": true,
+      "isIsolated": false,
+      "label": "Logger",
+      "position": {
+        "x": 1369.8347428212064,
+        "y": 430.09763899619173
+      },
+      "status": "error_necrosis",
+      "type": "file"
+    },
+    {
+      "cluster_id": "cluster_src_core",
+      "data": {
+        "cluster_id": "cluster_src_core",
+        "file": "src/core/LogicAnalyzer.ts",
+        "hiddenOnCanvas": false,
+        "label": "LogicAnalyzer"
+      },
+      "degree": 3,
+      "filePath": "src/core/LogicAnalyzer.ts",
+      "id": "LogicAnalyzer",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": true,
+      "isIsolated": false,
+      "label": "LogicAnalyzer",
+      "position": {
+        "x": 1178.4243156437294,
+        "y": 25.993668346725872
+      },
+      "status": "error_necrosis",
+      "type": "file"
+    },
+    {
+      "cluster_id": "cluster_ghosts",
+      "data": {
+        "cluster_id": "cluster_ghosts",
+        "label": "main"
+      },
+      "degree": 1,
+      "filePath": "external://main",
+      "id": "main",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": false,
+      "isIsolated": false,
+      "label": "main",
+      "position": {
+        "x": -868.4811333289551,
+        "y": 38.5573296815417
+      },
+      "type": "external"
+    },
+    {
+      "cluster_id": "cluster_src_rust_checker",
+      "data": {
+        "cluster_id": "cluster_src_rust_checker",
+        "file": "src/rust_checker/mod.rs",
+        "hiddenOnCanvas": false,
+        "label": "mod"
+      },
+      "degree": 0,
+      "filePath": "src/rust_checker/mod.rs",
+      "id": "mod",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": true,
+      "isIsolated": true,
+      "label": "mod",
+      "position": {
+        "x": -582.3561582002449,
+        "y": 1030.9698790729324
+      },
+      "status": "error_necrosis",
+      "type": "file"
+    },
+    {
+      "cluster_id": "cluster_ghosts",
+      "data": {
+        "cluster_id": "cluster_ghosts",
+        "label": "net"
+      },
+      "degree": 1,
+      "filePath": "external://net",
+      "id": "net",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": false,
+      "isIsolated": false,
+      "label": "net",
+      "position": {
+        "x": -282.0830584666257,
+        "y": 221.76228764291022
+      },
+      "type": "external"
+    },
+    {
+      "cluster_id": "cluster_ghosts",
+      "data": {
+        "cluster_id": "cluster_ghosts",
+        "label": "node_active"
+      },
+      "degree": 1,
+      "filePath": "external://node_active",
+      "id": "node_active",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": false,
+      "isIsolated": false,
+      "label": "node_active",
+      "position": {
+        "x": -399.51164800728833,
+        "y": 562.8393763450796
+      },
+      "type": "external"
+    },
+    {
+      "cluster_id": "cluster_ghosts",
+      "data": {
+        "cluster_id": "cluster_ghosts",
+        "label": "node_deleted"
+      },
+      "degree": 1,
+      "filePath": "external://node_deleted",
+      "id": "node_deleted",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": false,
+      "isIsolated": false,
+      "label": "node_deleted",
+      "position": {
+        "x": -350.48325581229875,
+        "y": -341.8854431044332
+      },
+      "type": "external"
+    },
+    {
+      "cluster_id": "cluster_ghosts",
+      "data": {
+        "cluster_id": "cluster_ghosts",
+        "label": "node_ghost"
+      },
+      "degree": 1,
+      "filePath": "external://node_ghost",
+      "id": "node_ghost",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": false,
+      "isIsolated": false,
+      "label": "node_ghost",
+      "position": {
+        "x": -805.4825192938254,
+        "y": -337.0681069410689
+      },
+      "type": "external"
+    },
+    {
+      "cluster_id": "cluster_ghosts",
+      "data": {
+        "cluster_id": "cluster_ghosts",
+        "label": "node_high_dtr"
+      },
+      "degree": 1,
+      "filePath": "external://node_high_dtr",
+      "id": "node_high_dtr",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": false,
+      "isIsolated": false,
+      "label": "node_high_dtr",
+      "position": {
+        "x": -771.8030119980084,
+        "y": -653.2023880197304
+      },
+      "type": "external"
+    },
+    {
+      "cluster_id": "cluster_ghosts",
+      "data": {
+        "cluster_id": "cluster_ghosts",
+        "label": "node_warning"
+      },
+      "degree": 1,
+      "filePath": "external://node_warning",
+      "id": "node_warning",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": false,
+      "isIsolated": false,
+      "label": "node_warning",
+      "position": {
+        "x": -654.941969911613,
+        "y": 534.2796200276399
+      },
+      "type": "external"
+    },
+    {
+      "cluster_id": "cluster_ghosts",
+      "data": {
+        "cluster_id": "cluster_ghosts",
+        "label": "package"
+      },
+      "degree": 1,
+      "filePath": "external://package",
+      "id": "package",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": false,
+      "isIsolated": false,
+      "label": "package",
+      "position": {
+        "x": -768.5161049686458,
+        "y": -279.574213820802
+      },
+      "type": "external"
+    },
+    {
+      "cluster_id": "cluster_src_core",
+      "data": {
+        "cluster_id": "cluster_src_core",
+        "file": "src/core/PbSessionWatcher.ts",
+        "hiddenOnCanvas": false,
+        "label": "PbSessionWatcher"
+      },
+      "degree": 1,
+      "filePath": "src/core/PbSessionWatcher.ts",
+      "id": "PbSessionWatcher",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": true,
+      "isIsolated": false,
+      "label": "PbSessionWatcher",
+      "position": {
+        "x": 153.14477687127686,
+        "y": -223.42149311795418
+      },
+      "status": "error_necrosis",
+      "type": "file"
+    },
+    {
+      "cluster_id": "cluster_src_core_canvas_engine",
+      "data": {
+        "cluster_id": "cluster_src_core_canvas_engine",
+        "file": "src/core/canvas-engine/PhaseGate.ts",
+        "hiddenOnCanvas": false,
+        "label": "PhaseGate"
+      },
+      "degree": 3,
+      "filePath": "src/core/canvas-engine/PhaseGate.ts",
+      "id": "PhaseGate",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": true,
+      "isIsolated": false,
+      "label": "PhaseGate",
+      "position": {
+        "x": -31.98171900928005,
+        "y": 1141.0219850424048
+      },
+      "status": "error_necrosis",
+      "type": "file"
+    },
+    {
+      "cluster_id": "cluster_src_core",
+      "data": {
+        "cluster_id": "cluster_src_core",
+        "file": "src/core/PhaseManager.ts",
+        "hiddenOnCanvas": false,
+        "label": "PhaseManager"
+      },
+      "degree": 10,
+      "filePath": "src/core/PhaseManager.ts",
+      "id": "PhaseManager",
+      "isBottleneck": true,
+      "isDeadEnd": false,
+      "isError": true,
+      "isIsolated": false,
+      "label": "PhaseManager",
+      "position": {
+        "x": 245.54440304390243,
+        "y": -292.82374521929404
+      },
+      "status": "error_necrosis",
+      "type": "file"
+    },
+    {
+      "cluster_id": "cluster_ghosts",
+      "data": {
+        "cluster_id": "cluster_ghosts",
+        "label": "position"
+      },
+      "degree": 1,
+      "filePath": "external://position",
+      "id": "position",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": false,
+      "isIsolated": false,
+      "label": "position",
+      "position": {
+        "x": -962.9572042487587,
+        "y": -470.98732820666464
+      },
+      "type": "external"
+    },
+    {
+      "cluster_id": "cluster_src_core",
+      "data": {
+        "cluster_id": "cluster_src_core",
+        "file": "src/core/PromptLogger.ts",
+        "hiddenOnCanvas": false,
+        "label": "PromptLogger"
+      },
+      "degree": 4,
+      "filePath": "src/core/PromptLogger.ts",
+      "id": "PromptLogger",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": true,
+      "isIsolated": false,
+      "label": "PromptLogger",
+      "position": {
+        "x": 141.5004094165527,
+        "y": -533.9279417808367
+      },
+      "status": "error_necrosis",
+      "type": "file"
+    },
+    {
+      "cluster_id": "cluster_src_core",
+      "data": {
+        "cluster_id": "cluster_src_core",
+        "file": "src/core/RawTextMiner.ts",
+        "hiddenOnCanvas": false,
+        "label": "RawTextMiner"
+      },
+      "degree": 2,
+      "filePath": "src/core/RawTextMiner.ts",
+      "id": "RawTextMiner",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": true,
+      "isIsolated": false,
+      "label": "RawTextMiner",
+      "position": {
+        "x": 240.5881868952432,
+        "y": -285.92964733145044
+      },
+      "status": "error_necrosis",
+      "type": "file"
+    },
+    {
+      "cluster_id": "cluster_src_core",
+      "data": {
+        "cluster_id": "cluster_src_core",
+        "file": "src/core/RendererCore.ts",
+        "hiddenOnCanvas": false,
+        "label": "RendererCore"
+      },
+      "degree": 6,
+      "filePath": "src/core/RendererCore.ts",
+      "id": "RendererCore",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": true,
+      "isIsolated": false,
+      "label": "RendererCore",
+      "position": {
+        "x": 370.15755832328387,
+        "y": -92.2834124272548
+      },
+      "status": "error_necrosis",
+      "type": "file"
+    },
+    {
+      "cluster_id": "cluster_src_core_canvas_engine",
+      "data": {
+        "cluster_id": "cluster_src_core_canvas_engine",
+        "file": "src/core/canvas-engine/RenderProtocol.ts",
+        "hiddenOnCanvas": false,
+        "label": "RenderProtocol"
+      },
+      "degree": 4,
+      "filePath": "src/core/canvas-engine/RenderProtocol.ts",
+      "id": "RenderProtocol",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": true,
+      "isIsolated": false,
+      "label": "RenderProtocol",
+      "position": {
+        "x": 689.8758750407915,
+        "y": 1385.3327087274965
+      },
+      "status": "error_necrosis",
+      "type": "file"
+    },
+    {
+      "cluster_id": "cluster_src_core",
+      "data": {
+        "cluster_id": "cluster_src_core",
+        "file": "src/core/RuleEngine.ts",
+        "hiddenOnCanvas": false,
+        "label": "RuleEngine"
+      },
+      "degree": 8,
+      "filePath": "src/core/RuleEngine.ts",
+      "id": "RuleEngine",
+      "isBottleneck": true,
+      "isDeadEnd": false,
+      "isError": true,
+      "isIsolated": false,
+      "label": "RuleEngine",
+      "position": {
+        "x": 238.0245802468736,
+        "y": -500.4196814364323
+      },
+      "status": "error_necrosis",
+      "type": "file"
+    },
+    {
+      "cluster_id": "cluster_src_core_canvas_engine",
+      "data": {
+        "cluster_id": "cluster_src_core_canvas_engine",
+        "file": "src/core/canvas-engine/ScenarioRunner.ts",
+        "hiddenOnCanvas": false,
+        "label": "ScenarioRunner"
+      },
+      "degree": 4,
+      "filePath": "src/core/canvas-engine/ScenarioRunner.ts",
+      "id": "ScenarioRunner",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": true,
+      "isIsolated": false,
+      "label": "ScenarioRunner",
+      "position": {
+        "x": 803.8680969753012,
+        "y": 914.6901583779895
+      },
+      "status": "error_necrosis",
+      "type": "file"
+    },
+    {
+      "cluster_id": "cluster_src_types",
+      "data": {
+        "cluster_id": "cluster_src_types",
+        "file": "src/types/schema.ts",
+        "hiddenOnCanvas": false,
+        "label": "schema"
+      },
+      "degree": 7,
+      "filePath": "src/types/schema.ts",
+      "id": "schema",
+      "isBottleneck": true,
+      "isDeadEnd": false,
+      "isError": true,
+      "isIsolated": false,
+      "label": "schema",
+      "position": {
+        "x": 1040.0362630382754,
+        "y": -688.5132565188233
+      },
+      "status": "error_necrosis",
+      "type": "file"
+    },
+    {
+      "cluster_id": "cluster_src_server",
+      "data": {
+        "cluster_id": "cluster_src_server",
+        "file": "src/server/server.ts",
+        "hiddenOnCanvas": false,
+        "label": "server"
+      },
+      "degree": 3,
+      "filePath": "src/server/server.ts",
+      "id": "server",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": true,
+      "isIsolated": false,
+      "label": "server",
+      "position": {
+        "x": 41.11985268850803,
+        "y": -1003.6920970997336
+      },
+      "status": "error_necrosis",
+      "type": "file"
+    },
+    {
+      "cluster_id": "cluster_src_core",
+      "data": {
+        "cluster_id": "cluster_src_core",
+        "file": "src/core/SnapshotSystem.ts",
+        "hiddenOnCanvas": false,
+        "label": "SnapshotSystem"
+      },
+      "degree": 5,
+      "filePath": "src/core/SnapshotSystem.ts",
+      "id": "SnapshotSystem",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": true,
+      "isIsolated": false,
+      "label": "SnapshotSystem",
+      "position": {
+        "x": 990.321050897975,
+        "y": -208.96582327048478
+      },
+      "status": "error_necrosis",
+      "type": "file"
+    },
+    {
+      "cluster_id": "cluster_src_core_canvas_engine",
+      "data": {
+        "cluster_id": "cluster_src_core_canvas_engine",
+        "file": "src/core/canvas-engine/SpatialRuleBook.ts",
+        "hiddenOnCanvas": false,
+        "label": "SpatialRuleBook"
+      },
+      "degree": 5,
+      "filePath": "src/core/canvas-engine/SpatialRuleBook.ts",
+      "id": "SpatialRuleBook",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": true,
+      "isIsolated": false,
+      "label": "SpatialRuleBook",
+      "position": {
+        "x": 315.3741102763303,
+        "y": 1176.7087068772576
+      },
+      "status": "error_necrosis",
+      "type": "file"
+    },
+    {
+      "cluster_id": "cluster_src_server",
+      "data": {
+        "cluster_id": "cluster_src_server",
+        "file": "src/server/standalone.ts",
+        "hiddenOnCanvas": false,
+        "label": "standalone"
+      },
+      "degree": 4,
+      "filePath": "src/server/standalone.ts",
+      "id": "standalone",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": true,
+      "isIsolated": false,
+      "label": "standalone",
+      "position": {
+        "x": 369.90771433682124,
+        "y": -1026.6857073386918
+      },
+      "status": "error_necrosis",
+      "type": "file"
+    },
+    {
+      "cluster_id": "cluster_src_rust_checker",
+      "data": {
+        "cluster_id": "cluster_src_rust_checker",
+        "file": "src/rust_checker/state_checker.rs",
+        "hiddenOnCanvas": false,
+        "label": "state_checker"
+      },
+      "degree": 0,
+      "filePath": "src/rust_checker/state_checker.rs",
+      "id": "state_checker",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": true,
+      "isIsolated": true,
+      "label": "state_checker",
+      "position": {
+        "x": -750.1378942974424,
+        "y": 1018.5933157596344
+      },
+      "status": "error_necrosis",
+      "type": "file"
+    },
+    {
+      "cluster_id": "cluster_src_core_canvas_engine",
+      "data": {
+        "cluster_id": "cluster_src_core_canvas_engine",
+        "file": "src/core/canvas-engine/StateManager.ts",
+        "hiddenOnCanvas": false,
+        "label": "StateManager"
+      },
+      "degree": 6,
+      "filePath": "src/core/canvas-engine/StateManager.ts",
+      "id": "StateManager",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": true,
+      "isIsolated": false,
+      "label": "StateManager",
+      "position": {
+        "x": 52.241209002213054,
+        "y": 921.4605464475252
+      },
+      "status": "error_necrosis",
+      "type": "file"
+    },
+    {
+      "cluster_id": "cluster_ghosts",
+      "data": {
+        "cluster_id": "cluster_ghosts",
+        "label": "style_dashed_2px"
+      },
+      "degree": 1,
+      "filePath": "external://style_dashed_2px",
+      "id": "style_dashed_2px",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": false,
+      "isIsolated": false,
+      "label": "style_dashed_2px",
+      "position": {
+        "x": -625.9150513724187,
+        "y": -256.4084855076958
+      },
+      "type": "external"
+    },
+    {
+      "cluster_id": "cluster_ghosts",
+      "data": {
+        "cluster_id": "cluster_ghosts",
+        "label": "style_dotted_2px"
+      },
+      "degree": 1,
+      "filePath": "external://style_dotted_2px",
+      "id": "style_dotted_2px",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": false,
+      "isIsolated": false,
+      "label": "style_dotted_2px",
+      "position": {
+        "x": -400.26052198798385,
+        "y": 562.8393763450796
+      },
+      "type": "external"
+    },
+    {
+      "cluster_id": "cluster_ghosts",
+      "data": {
+        "cluster_id": "cluster_ghosts",
+        "label": "style_pulse_5px"
+      },
+      "degree": 1,
+      "filePath": "external://style_pulse_5px",
+      "id": "style_pulse_5px",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": false,
+      "isIsolated": false,
+      "label": "style_pulse_5px",
+      "position": {
+        "x": -802.1601949496867,
+        "y": -121.58171422049936
+      },
+      "type": "external"
+    },
+    {
+      "cluster_id": "cluster_ghosts",
+      "data": {
+        "cluster_id": "cluster_ghosts",
+        "label": "style_solid_1.5px"
+      },
+      "degree": 1,
+      "filePath": "external://style_solid_1.5px",
+      "id": "style_solid_1.5px",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": true,
+      "isIsolated": false,
+      "label": "style_solid_1.5px",
+      "position": {
+        "x": -588.247546864171,
+        "y": -244.81868125194575
+      },
+      "status": "error_necrosis",
+      "type": "symbol"
+    },
+    {
+      "cluster_id": "cluster_ghosts",
+      "data": {
+        "cluster_id": "cluster_ghosts",
+        "label": "style_solid_1px"
+      },
+      "degree": 1,
+      "filePath": "external://style_solid_1px",
+      "id": "style_solid_1px",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": false,
+      "isIsolated": false,
+      "label": "style_solid_1px",
+      "position": {
+        "x": -995.987391895807,
+        "y": 515.2245104802627
+      },
+      "type": "external"
+    },
+    {
+      "cluster_id": "cluster_ghosts",
+      "data": {
+        "cluster_id": "cluster_ghosts",
+        "label": "style_solid_2px"
+      },
+      "degree": 1,
+      "filePath": "external://style_solid_2px",
+      "id": "style_solid_2px",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": false,
+      "isIsolated": false,
+      "label": "style_solid_2px",
+      "position": {
+        "x": -785.4517823721235,
+        "y": -388.3891483878501
+      },
+      "type": "external"
+    },
+    {
+      "cluster_id": "cluster_ghosts",
+      "data": {
+        "cluster_id": "cluster_ghosts",
+        "label": "style_solid_3px"
+      },
+      "degree": 1,
+      "filePath": "external://style_solid_3px",
+      "id": "style_solid_3px",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": false,
+      "isIsolated": false,
+      "label": "style_solid_3px",
+      "position": {
+        "x": -959.3098771012079,
+        "y": -638.3310855830202
+      },
+      "type": "external"
+    },
+    {
+      "cluster_id": "cluster_ghosts",
+      "data": {
+        "cluster_id": "cluster_ghosts",
+        "label": "synapse_flow_v0.2.16"
+      },
+      "degree": 2,
+      "filePath": "external://synapse_flow_v0.2.16",
+      "id": "synapse_flow_v0.2.16",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": true,
+      "isIsolated": false,
+      "label": "synapse_flow_v0.2.16",
+      "position": {
+        "x": -580.0207311566656,
+        "y": -231.8784494316588
+      },
+      "status": "error_necrosis",
+      "type": "symbol"
+    },
+    {
+      "cluster_id": "cluster_ghosts",
+      "data": {
+        "cluster_id": "cluster_ghosts",
+        "label": "synapse_graph_v0.2.16"
+      },
+      "degree": 2,
+      "filePath": "external://synapse_graph_v0.2.16",
+      "id": "synapse_graph_v0.2.16",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": true,
+      "isIsolated": false,
+      "label": "synapse_graph_v0.2.16",
+      "position": {
+        "x": -994.7859760377667,
+        "y": -45.322787818439835
+      },
+      "status": "error_necrosis",
+      "type": "symbol"
+    },
+    {
+      "cluster_id": "cluster_ghosts",
+      "data": {
+        "cluster_id": "cluster_ghosts",
+        "label": "synapse_topology_view"
+      },
+      "degree": 4,
+      "filePath": "external://synapse_topology_view",
+      "id": "synapse_topology_view",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": false,
+      "isIsolated": false,
+      "label": "synapse_topology_view",
+      "position": {
+        "x": -801.5925568556672,
+        "y": -408.8600343334327
+      },
+      "type": "external"
+    },
+    {
+      "cluster_id": "cluster_ghosts",
+      "data": {
+        "cluster_id": "cluster_ghosts",
+        "label": "synapse_tree_v0.2.16"
+      },
+      "degree": 2,
+      "filePath": "external://synapse_tree_v0.2.16",
+      "id": "synapse_tree_v0.2.16",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": true,
+      "isIsolated": false,
+      "label": "synapse_tree_v0.2.16",
+      "position": {
+        "x": -788.6633699952347,
+        "y": -491.2955686566607
+      },
+      "status": "error_necrosis",
+      "type": "symbol"
+    },
+    {
+      "cluster_id": "cluster_ghosts",
+      "data": {
+        "cluster_id": "cluster_ghosts",
+        "label": "synapse-visual-architecture-v0.2.20"
+      },
+      "degree": 1,
+      "filePath": "external://synapse-visual-architecture-v0.2.20",
+      "id": "synapse-visual-architecture-v0.2.20",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": true,
+      "isIsolated": false,
+      "label": "synapse-visual-architecture-v0.2.20",
+      "position": {
+        "x": -670.8685046485332,
+        "y": -529.232912900058
+      },
+      "status": "error_necrosis",
+      "type": "symbol"
+    },
+    {
+      "cluster_id": "cluster_ghosts",
+      "data": {
+        "cluster_id": "cluster_ghosts",
+        "label": "synapse-visual-architecture-v0.3.3"
+      },
+      "degree": 1,
+      "filePath": "external://synapse-visual-architecture-v0.3.3",
+      "id": "synapse-visual-architecture-v0.3.3",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": true,
+      "isIsolated": false,
+      "label": "synapse-visual-architecture-v0.3.3",
+      "position": {
+        "x": -529.1835274228374,
+        "y": -389.9567576554628
+      },
+      "status": "error_necrosis",
+      "type": "symbol"
+    },
+    {
+      "cluster_id": "cluster_ghosts",
+      "data": {
+        "cluster_id": "cluster_ghosts",
+        "label": "synapse-visual-architecture-v0.3.5"
+      },
+      "degree": 1,
+      "filePath": "external://synapse-visual-architecture-v0.3.5",
+      "id": "synapse-visual-architecture-v0.3.5",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": true,
+      "isIsolated": false,
+      "label": "synapse-visual-architecture-v0.3.5",
+      "position": {
+        "x": -357.9420729020496,
+        "y": -362.42396859336947
+      },
+      "status": "error_necrosis",
+      "type": "symbol"
+    },
+    {
+      "cluster_id": "cluster_ghosts",
+      "data": {
+        "cluster_id": "cluster_ghosts",
+        "label": "synapse-visual-architecture-v0.3.8"
+      },
+      "degree": 1,
+      "filePath": "external://synapse-visual-architecture-v0.3.8",
+      "id": "synapse-visual-architecture-v0.3.8",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": true,
+      "isIsolated": false,
+      "label": "synapse-visual-architecture-v0.3.8",
+      "position": {
+        "x": -400.5212398165805,
+        "y": -298.57980894428147
+      },
+      "status": "error_necrosis",
+      "type": "symbol"
+    },
+    {
+      "cluster_id": "cluster_ghosts",
+      "data": {
+        "cluster_id": "cluster_ghosts",
+        "label": "synapse-visual-architecture-v0.3.9"
+      },
+      "degree": 1,
+      "filePath": "external://synapse-visual-architecture-v0.3.9",
+      "id": "synapse-visual-architecture-v0.3.9",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": true,
+      "isIsolated": false,
+      "label": "synapse-visual-architecture-v0.3.9",
+      "position": {
+        "x": -968.1159464720388,
+        "y": -718.7484711178219
+      },
+      "status": "error_necrosis",
+      "type": "symbol"
+    },
+    {
+      "cluster_id": "cluster_root",
+      "data": {
+        "cluster_id": "cluster_root",
+        "file": "TEST.ts",
+        "hiddenOnCanvas": false,
+        "label": "TEST"
+      },
+      "degree": 0,
+      "filePath": "TEST.ts",
+      "id": "TEST",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": true,
+      "isIsolated": true,
+      "label": "TEST",
+      "position": {
+        "x": -1374.605774153296,
+        "y": -217.63959307067515
+      },
+      "status": "error_necrosis",
+      "type": "file"
+    },
+    {
+      "cluster_id": "cluster_root",
+      "data": {
+        "cluster_id": "cluster_root",
+        "file": "test_new_session.js",
+        "hiddenOnCanvas": false,
+        "label": "test_new_session"
+      },
+      "degree": 0,
+      "filePath": "test_new_session.js",
+      "id": "test_new_session",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": true,
+      "isIsolated": true,
+      "label": "test_new_session",
+      "position": {
+        "x": -1603.5001350728512,
+        "y": -140.18643025032142
+      },
+      "status": "error_necrosis",
+      "type": "file"
+    },
+    {
+      "cluster_id": "cluster_ghosts",
+      "data": {
+        "cluster_id": "cluster_ghosts",
+        "label": "topology_view"
+      },
+      "degree": 1,
+      "filePath": "external://topology_view",
+      "id": "topology_view",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": false,
+      "isIsolated": false,
+      "label": "topology_view",
+      "position": {
+        "x": -373.4550276347239,
+        "y": -425.1078277071588
+      },
+      "type": "external"
+    },
+    {
+      "cluster_id": "cluster_ghosts",
+      "data": {
+        "cluster_id": "cluster_ghosts",
+        "label": "ts"
+      },
+      "degree": 1,
+      "filePath": "external://ts",
+      "id": "ts",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": false,
+      "isIsolated": false,
+      "label": "ts",
+      "position": {
+        "x": -970.6825822790572,
+        "y": -387.6860230348976
+      },
+      "type": "external"
+    },
+    {
+      "cluster_id": "cluster_ghosts",
+      "data": {
+        "cluster_id": "cluster_ghosts",
+        "label": "v0.3.0"
+      },
+      "degree": 1,
+      "filePath": "external://v0.3.0",
+      "id": "v0.3.0",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": true,
+      "isIsolated": false,
+      "label": "v0.3.0",
+      "position": {
+        "x": -906.9229836074455,
+        "y": -217.777381387118
+      },
+      "status": "error_necrosis",
+      "type": "symbol"
+    },
+    {
+      "cluster_id": "cluster_ghosts",
+      "data": {
+        "cluster_id": "cluster_ghosts",
+        "label": "v0.3.1_zz_Bootstrap_Locked"
+      },
+      "degree": 1,
+      "filePath": "external://v0.3.1_zz_Bootstrap_Locked",
+      "id": "v0.3.1_zz_Bootstrap_Locked",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": true,
+      "isIsolated": false,
+      "label": "v0.3.1_zz_Bootstrap_Locked",
+      "position": {
+        "x": -455.6403167540326,
+        "y": -535.1416030897465
+      },
+      "status": "error_necrosis",
+      "type": "symbol"
+    },
+    {
+      "cluster_id": "cluster_ghosts",
+      "data": {
+        "cluster_id": "cluster_ghosts",
+        "label": "v0.3.10_Bootstrap_Locked"
+      },
+      "degree": 1,
+      "filePath": "external://v0.3.10_Bootstrap_Locked",
+      "id": "v0.3.10_Bootstrap_Locked",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": true,
+      "isIsolated": false,
+      "label": "v0.3.10_Bootstrap_Locked",
+      "position": {
+        "x": -648.8839519127969,
+        "y": -109.12174052527116
+      },
+      "status": "error_necrosis",
+      "type": "symbol"
+    },
+    {
+      "cluster_id": "cluster_ghosts",
+      "data": {
+        "cluster_id": "cluster_ghosts",
+        "label": "v0.3.2"
+      },
+      "degree": 1,
+      "filePath": "external://v0.3.2",
+      "id": "v0.3.2",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": true,
+      "isIsolated": false,
+      "label": "v0.3.2",
+      "position": {
+        "x": -549.0531269253836,
+        "y": -594.1240334783865
+      },
+      "status": "error_necrosis",
+      "type": "symbol"
+    },
+    {
+      "cluster_id": "cluster_src_core_canvas_engine",
+      "data": {
+        "cluster_id": "cluster_src_core_canvas_engine",
+        "file": "src/core/canvas-engine/ValidationHarness.ts",
+        "hiddenOnCanvas": false,
+        "label": "ValidationHarness"
+      },
+      "degree": 4,
+      "filePath": "src/core/canvas-engine/ValidationHarness.ts",
+      "id": "ValidationHarness",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": true,
+      "isIsolated": false,
+      "label": "ValidationHarness",
+      "position": {
+        "x": 118.93289455732214,
+        "y": 1121.687118896734
+      },
+      "status": "error_necrosis",
+      "type": "file"
+    },
+    {
+      "cluster_id": "cluster_src",
+      "data": {
+        "cluster_id": "cluster_src",
+        "file": "src/verify_v0.3.10.ts",
+        "hiddenOnCanvas": false,
+        "label": "verify_v0.3.10"
+      },
+      "degree": 2,
+      "filePath": "src/verify_v0.3.10.ts",
+      "id": "verify_v0.3.10",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": true,
+      "isIsolated": false,
+      "label": "verify_v0.3.10",
+      "position": {
+        "x": 2108.101128494554,
+        "y": 100.13254942840719
+      },
+      "status": "error_necrosis",
+      "type": "file"
+    },
+    {
+      "cluster_id": "cluster_src_core",
+      "data": {
+        "cluster_id": "cluster_src_core",
+        "file": "src/core/VirtualDebugger.ts",
+        "hiddenOnCanvas": false,
+        "label": "VirtualDebugger"
+      },
+      "degree": 3,
+      "filePath": "src/core/VirtualDebugger.ts",
+      "id": "VirtualDebugger",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": true,
+      "isIsolated": false,
+      "label": "VirtualDebugger",
+      "position": {
+        "x": 940.2962095364626,
+        "y": 170.07058271079745
+      },
+      "status": "error_necrosis",
+      "type": "file"
+    },
+    {
+      "cluster_id": "cluster_src_utils",
+      "data": {
+        "cluster_id": "cluster_src_utils",
+        "file": "src/utils/visualHints.ts",
+        "hiddenOnCanvas": false,
+        "label": "visualHints"
+      },
+      "degree": 1,
+      "filePath": "src/utils/visualHints.ts",
+      "id": "visualHints",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": true,
+      "isIsolated": false,
+      "label": "visualHints",
+      "position": {
+        "x": 1234.4458936619835,
+        "y": 488.6561238390772
+      },
+      "status": "error_necrosis",
+      "type": "file"
+    },
+    {
+      "cluster_id": "cluster_src_core_canvas_engine",
+      "data": {
+        "cluster_id": "cluster_src_core_canvas_engine",
+        "file": "src/core/canvas-engine/VisualRuleBook.ts",
+        "hiddenOnCanvas": false,
+        "label": "VisualRuleBook"
+      },
+      "degree": 5,
+      "filePath": "src/core/canvas-engine/VisualRuleBook.ts",
+      "id": "VisualRuleBook",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": true,
+      "isIsolated": false,
+      "label": "VisualRuleBook",
+      "position": {
+        "x": 455.6707819323371,
+        "y": 1368.2881643399971
+      },
+      "status": "error_necrosis",
+      "type": "file"
+    },
+    {
+      "cluster_id": "cluster_src_core",
+      "data": {
+        "cluster_id": "cluster_src_core",
+        "file": "src/core/VscdbAdapter.ts",
+        "hiddenOnCanvas": false,
+        "label": "VscdbAdapter"
+      },
+      "degree": 2,
+      "filePath": "src/core/VscdbAdapter.ts",
+      "id": "VscdbAdapter",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": true,
+      "isIsolated": false,
+      "label": "VscdbAdapter",
+      "position": {
+        "x": 421.7229173800449,
+        "y": -283.4536021809497
+      },
+      "status": "error_necrosis",
+      "type": "file"
+    },
+    {
+      "cluster_id": "cluster_ghosts",
+      "data": {
+        "cluster_id": "cluster_ghosts",
+        "label": "vscode-languageclient"
+      },
+      "degree": 2,
+      "filePath": "external://vscode-languageclient",
+      "id": "vscode-languageclient",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": false,
+      "isIsolated": false,
+      "label": "vscode-languageclient",
+      "position": {
+        "x": -251.21394454814975,
+        "y": -632.717314566295
+      },
+      "type": "external"
+    },
+    {
+      "cluster_id": "cluster_ghosts",
+      "data": {
+        "cluster_id": "cluster_ghosts",
+        "label": "vscode-languageserver-textdocument"
+      },
+      "degree": 1,
+      "filePath": "external://vscode-languageserver-textdocument",
+      "id": "vscode-languageserver-textdocument",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": false,
+      "isIsolated": false,
+      "label": "vscode-languageserver-textdocument",
+      "position": {
+        "x": -437.03179411376163,
+        "y": -743.6829475209038
+      },
+      "type": "external"
+    },
+    {
+      "cluster_id": "cluster_src_core",
+      "data": {
+        "cluster_id": "cluster_src_core",
+        "file": "src/core/WebviewInterceptor.ts",
+        "hiddenOnCanvas": false,
+        "label": "WebviewInterceptor"
+      },
+      "degree": 1,
+      "filePath": "src/core/WebviewInterceptor.ts",
+      "id": "WebviewInterceptor",
+      "isBottleneck": false,
+      "isDeadEnd": false,
+      "isError": true,
+      "isIsolated": false,
+      "label": "WebviewInterceptor",
+      "position": {
+        "x": 554.0616405766393,
+        "y": -292.0424916097534
+      },
+      "status": "error_necrosis",
+      "type": "file"
     }
   ],
   "project_name": "antigravity-extension-vis",
   "_iron_guard": {
     "version": "0.2.18.1",
-    "byte_size": 426,
+    "byte_size": 78389,
     "encoding": "UTF-8",
     "alignment": 8
   }

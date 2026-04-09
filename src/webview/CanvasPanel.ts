@@ -86,6 +86,7 @@ export class CanvasPanel {
     private readonly _extensionUri: vscode.Uri;
     private readonly _context: vscode.ExtensionContext;
     private _workspaceFolder: vscode.WorkspaceFolder;
+    private _rollbackGuardUntil: number = 0; // [v0.3.11] 롤백 직후 getProjectState 차단 타임스탬프
     private _disposables: vscode.Disposable[] = [];
     private proposedNodes: any[] = [];
     private proposedEdges: any[] = [];
@@ -210,6 +211,11 @@ export class CanvasPanel {
                 await this.openFile(message.filePath, message.createIfNotExists);
                 return;
             case 'getProjectState':
+                // [v0.3.11] 롤백 직후 2초간 재요청 차단 (롤백 데이터 덮어쓰기 방지)
+                if (this._rollbackGuardUntil && Date.now() < this._rollbackGuardUntil) {
+                    Logger.info('[CanvasPanel] getProjectState blocked by rollback guard.');
+                    return;
+                }
                 await this.sendProjectState();
                 return;
             case 'saveState':
@@ -218,8 +224,11 @@ export class CanvasPanel {
             case 'readFile':
                 await this.handleReadFile(message.filePath);
                 return;
+            case 'group':
+                await this.handleGroupNodes(message.nodeIds, message.label);
+                return;
             case 'ungroup':
-                await this.handleUngroup(message.nodeIds);
+                await this.handleUngroupNodes(message.nodeIds);
                 return;
             case 'takeSnapshot':
                 await this.handleTakeSnapshot(message.data);
@@ -333,16 +342,23 @@ export class CanvasPanel {
                         data: { 
                             id: nodeId,
                             updates: {
+                                label: nodeLabel,
+                                name: nodeLabel, // [v0.3.11] 호환성 필드 추가
+                                text: nodeLabel, // [v0.3.11] 호환성 필드 추가
                                 file: filePath, 
                                 status: 'solid', 
                                 cluster_id: 'sys_cluster_buffer',
+                                layer: 'user', 
                                 x: forcePosX,
                                 y: forcePosY,
                                 data: {
-                                    file: filePath, // [CRITICAL FIX] Align with webview data.file path
+                                    label: nodeLabel,
+                                    name: nodeLabel,
+                                    file: filePath, 
                                     status: 'solid',
                                     cluster_id: 'sys_cluster_buffer',
-                                    priority_cluster: 'sys_cluster_buffer'
+                                    priority_cluster: 'sys_cluster_buffer',
+                                    layer: 'user'
                                 }
                             }
                         }
@@ -1276,60 +1292,21 @@ export class CanvasPanel {
         await this.handleDeleteNodes([nodeId]);
     }
 
-    private async handleUngroup(nodeIds: string[]) {
-        const workspaceFolder = this._workspaceFolder;
-        if (!workspaceFolder || !nodeIds || nodeIds.length === 0) return;
-
-        try {
-            const projectStateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'project_state.json');
-            const data = await vscode.workspace.fs.readFile(projectStateUri);
-            const projectState = JSON.parse(data.toString());
-
-            if (!projectState.nodes) return;
-
-            const nodeIdSet = new Set(nodeIds);
-            let updatedCount = 0;
-
-            // 1. Clear cluster_id for target nodes
-            projectState.nodes.forEach((n: any) => {
-                if (nodeIdSet.has(n.id)) {
-                    if (n.cluster_id) {
-                        n.cluster_id = null;
-                        updatedCount++;
-                    }
-                    if (n.data && n.data.cluster_id) {
-                        n.data.cluster_id = null;
-                    }
-                }
-            });
-
-            if (updatedCount === 0) {
-                console.log('[SYNAPSE] No nodes needed ungrouping.');
-                return;
-            }
-
-            // 2. Cleanup empty clusters
-            if (projectState.clusters) {
-                const activeClusterIds = new Set(projectState.nodes.map((n: any) => n.cluster_id || (n.data && n.data.cluster_id)).filter((id: string) => id));
-                const initialClusterCount = projectState.clusters.length;
-                projectState.clusters = projectState.clusters.filter((c: any) => activeClusterIds.has(c.id));
-                const removedClusters = initialClusterCount - projectState.clusters.length;
-                if (removedClusters > 0) {
-                    console.log(`[SYNAPSE] Cleaned up ${removedClusters} empty clusters (Ungroup)`);
-                }
-            }
-
-            // 3. Save state (Atomic)
-            const normalizedJson = this.normalizeProjectState(projectState);
-            await vscode.workspace.fs.writeFile(projectStateUri, Buffer.from(normalizedJson, 'utf8'));
-            console.log(`[SYNAPSE] Ungrouped ${updatedCount} nodes.`);
-
-            // 4. Broadcast update
+    private async handleGroupNodes(nodeIds: string[], label: string) {
+        if (!nodeIds || nodeIds.length === 0) return;
+        const result = canvasEngine.dispatch('GROUP', { nodeIds, label });
+        if (result.ok) {
+            console.log(`[SYNAPSE] nodes grouped into: ${label}`);
             await this.sendProjectState();
+        }
+    }
 
-        } catch (error) {
-            console.error('Failed to ungroup nodes:', error);
-            vscode.window.showErrorMessage(`Failed to ungroup nodes: ${error}`);
+    private async handleUngroupNodes(nodeIds: string[]) {
+        if (!nodeIds || nodeIds.length === 0) return;
+        const result = canvasEngine.dispatch('UNGROUP', { nodeIds });
+        if (result.ok) {
+            console.log(`[SYNAPSE] nodes ungrouped: ${nodeIds.length} items`);
+            await this.sendProjectState();
         }
     }
 
@@ -1499,16 +1476,26 @@ export class CanvasPanel {
             // 1. First Attempt: Exact ID lookup
             let edge: any = allEdges.find((e: any) => e.id === edgeId);
             
-            // 2. Second Attempt (v0.3.10): Fallback to Node-Pair lookup if ID changed
-            if (!edge && fromFile && toFile) {
-                Logger.warn(`[CanvasPanel] ID Mismatch for Edge: ${edgeId}. Attempting fuzzy node-pair search...`);
-                const normFrom = fromFile.trim().toLowerCase();
-                const normTo = toFile.trim().toLowerCase();
+            // 2. Second Attempt (v0.3.11): Deep Fuzzy Matching (Labels & IDs)
+            if (!edge && (fromFile || toFile)) {
+                Logger.warn(`[CanvasPanel] ID Mismatch for Edge: ${edgeId}. Performing deep identity search...`);
+                const normFrom = fromFile?.trim().toLowerCase();
+                const normTo = toFile?.trim().toLowerCase();
                 
                 edge = allEdges.find((e: any) => {
-                    const eFrom = (e.from || '').trim().toLowerCase();
-                    const eTo = (e.to || '').trim().toLowerCase();
-                    return eFrom === normFrom && eTo === normTo;
+                    const eFromNode: any = allNodes.find((n: any) => n.id === e.from);
+                    const eToNode: any = allNodes.find((n: any) => n.id === e.to);
+                    
+                    // Match by IDs OR Labels OR FilePaths
+                    const matchFrom = (e.from?.toLowerCase() === normFrom) || 
+                                     (eFromNode?.label?.toLowerCase() === normFrom) ||
+                                     (eFromNode?.data?.label?.toLowerCase() === normFrom);
+                                     
+                    const matchTo = (e.to?.toLowerCase() === normTo) || 
+                                   (eToNode?.label?.toLowerCase() === normTo) ||
+                                   (eToNode?.data?.label?.toLowerCase() === normTo);
+                                   
+                    return matchFrom && matchTo;
                 });
             }
 
@@ -1592,32 +1579,6 @@ export class CanvasPanel {
                 updates: { status: 'confirmed' } 
             });
 
-            // 2. Promote Nodes to Reserved Cluster via Engine (Survival through restart)
-            const promoteToReserved = (nodeId: string) => {
-                const snap = canvasEngine.getFinalSnapshot();
-                const node = snap.nodes[nodeId];
-                if (node) {
-                    canvasEngine.dispatch('UPDATE_NODE', {
-                        id: nodeId,
-                        updates: {
-                            cluster_id: 'sys_cluster_reserved',
-                            data: {
-                                ...(node.data || {}),
-                                cluster_id: 'sys_cluster_reserved',
-                                priority_cluster: 'sys_cluster_reserved'
-                            }
-                        }
-                    });
-                    Logger.info(`[CanvasPanel] Promoted node ${nodeId} to Reserved.`);
-                }
-            };
-            
-            if (edge && edge.from) {
-                promoteToReserved(edge.from);
-            }
-            if (edge && edge.to) {
-                promoteToReserved(edge.to);
-            }
 
             // 3. Persistence (Normalized for UI compatibility)
             const finalSnap = canvasEngine.getFinalSnapshot();
@@ -2194,35 +2155,58 @@ export class CanvasPanel {
         try {
             const projectStateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'project_state.json');
 
-            // 1. Dispatch MOVE_NODE for each node with a new position
+            // [v0.3.11] Anti-Wipe Safety: If UI sends empty state but engine/disk has data, block the save.
+            const engineSnap = canvasEngine.getFinalSnapshot();
+            const uiNodesCount = newState.nodes?.length || 0;
+            const engineNodesCount = Object.keys(engineSnap.nodes).length;
+
+            if (uiNodesCount === 0 && engineNodesCount > 0) {
+                Logger.warn(`[CanvasPanel] saveState BLOCKED: Attempted to save 0 nodes while engine has ${engineNodesCount}. Probable initialization race condition.`);
+                return;
+            }
+
+            // 1. Dispatch UPDATE_NODE for each node with a new position, cluster, and layer info
             if (newState.nodes && Array.isArray(newState.nodes)) {
                 for (const uiNode of newState.nodes) {
-                    if (uiNode.position) {
-                        canvasEngine.dispatch('MOVE_NODE', {
-                            nodeId: uiNode.id,
-                            target: { x: uiNode.position.x, y: uiNode.position.y }
-                        });
-                    }
+                    // [v0.3.11] layer 태그를 함께 보존하여 재로드 시 버퍼 복원 가능
+                    const uiLayer = uiNode.layer || (uiNode.data && uiNode.data.layer);
+                    canvasEngine.dispatch('UPDATE_NODE', {
+                        id: uiNode.id,
+                        updates: {
+                            position: uiNode.position,
+                            cluster_id: uiNode.cluster_id || (uiNode.data && uiNode.data.cluster_id),
+                            ...(uiLayer ? { layer: uiLayer, data: { ...uiNode.data, layer: uiLayer } } : {})
+                        }
+                    });
                 }
             }
 
-            // 2. [v0.3.10 Fix] Persistence: Use the latest engine state from the webview!
-            // We NO LONGER depend on the backend's stale canvasEngine here for persistence.
-            if (!newState || !newState.nodes) {
-                console.warn('[SYNAPSE] Save aborted: Missing nodes in state payload.');
-                return;
+            // 2. [v0.3.11 HARD SSOT] Clusters & Nodes Bridge
+            if (newState.clusters && Array.isArray(newState.clusters)) {
+                for (const uiCluster of newState.clusters) {
+                    // Sync cluster structure to engine if not already present
+                    canvasEngine.dispatch('ADD_CLUSTER', {
+                        id: uiCluster.id,
+                        label: uiCluster.label,
+                        type: uiCluster.type || 'folder',
+                        position: uiCluster.position, // [v0.3.11 Fix] Preserving cluster positions
+                        collapsed: uiCluster.collapsed,
+                        data: uiCluster.data || { layer: 'user' }
+                    });
+                }
             }
 
             const persistenceState = {
                 project_name: workspaceFolder.name,
                 canvas_state: {
-                    zoom_level: newState.zoom || 1.0, 
-                    offset: newState.offset || { x: 0, y: 0 }
+                    zoom_level: (newState.view ? newState.view.zoom : newState.zoom) || 1.0, 
+                    offset: (newState.view ? { x: newState.view.offsetX, y: newState.view.offsetY } : (newState.offset || { x: 0, y: 0 })),
+                    visible_layers: newState.visible_layers || (newState.data && newState.data.visible_layers) || ['source', 'documentation', 'user']
                 },
-                // Support both array and object formats for robustness
-                nodes: Array.isArray(newState.nodes) ? newState.nodes : Object.values(newState.nodes),
-                edges: Array.isArray(newState.edges) ? newState.edges : Object.values(newState.edges || {}),
-                clusters: newState.clusters || []
+                // [v0.3.11] Backend-First Merge: Protecet engine nodes from UI loss
+                nodes: Object.values(canvasEngine.getRawSnapshot().nodes),
+                edges: Object.values(canvasEngine.getRawSnapshot().edges),
+                clusters: canvasEngine.getRawSnapshot().clusters || []
             };
 
             const normalizedJson = this.normalizeProjectState(persistenceState);
@@ -2243,15 +2227,33 @@ export class CanvasPanel {
             const projectStateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'project_state.json');
             let currentProjectState = state.data;
 
-            // If state data is missing (e.g. called from requestSnapshot), read it from disk
+            // [v0.3.11 HARD SSOT] Priority: State in message -> Raw Engine Snapshot (merged with Disk metadata)
             if (!currentProjectState) {
+                const engineSnap = canvasEngine.getRawSnapshot(); // Use RAW snapshot to prevent data loss
+                // Also try to get camera/visibility state from current file if not in engine
+                let existingCanvasState = { 
+                    zoom_level: 1.0, 
+                    offset: { x: 0, y: 0 },
+                    visible_layers: ['source', 'documentation', 'user']
+                };
                 try {
                     const data = await vscode.workspace.fs.readFile(projectStateUri);
-                    currentProjectState = JSON.parse(Buffer.from(data).toString('utf-8'));
-                } catch (e) {
-                    vscode.window.showErrorMessage('Cannot take snapshot: Project state is empty or invalid.');
-                    return;
-                }
+                    const diskState = JSON.parse(Buffer.from(data).toString('utf-8'));
+                    if (diskState.canvas_state) {
+                        existingCanvasState = {
+                            ...existingCanvasState,
+                            ...diskState.canvas_state
+                        };
+                    }
+                } catch (e) {}
+
+                currentProjectState = {
+                    project_name: workspaceFolder.name,
+                    canvas_state: existingCanvasState,
+                    nodes: Object.values(engineSnap.nodes),
+                    edges: Object.values(engineSnap.edges),
+                    clusters: engineSnap.clusters || []
+                };
             }
 
             const historyUri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'synapse_history.json');
@@ -2437,12 +2439,17 @@ export class CanvasPanel {
 
             const newState = {
                 ...existingState,
+                canvas_state: snapshot.data.canvas_state || existingState.canvas_state || { zoom_level: 1.0, offset: { x: 0, y: 0 } },
                 nodes: snapshot.data.nodes,
                 edges: snapshot.data.edges,
                 clusters: snapshot.data.clusters
             };
 
             await vscode.workspace.fs.writeFile(projectStateUri, Buffer.from(JSON.stringify(newState, null, 2), 'utf8'));
+
+            // [v0.3.11 HARD SSOT] Sync BACKEND ENGINE immediately
+            // This prevents the engine from overwriting the disk with old state on next interaction
+            canvasEngine.loadInitialState(newState);
 
             // [v0.2.18] Restore File Backups physically to disk
             if (snapshot.fileBackups) {
@@ -2461,9 +2468,11 @@ export class CanvasPanel {
                 }
             }
 
-            // 3. Notify webview to reload
-            await this.sendProjectState();
-            await this.sendHistory(); // Update history list with backup
+            // 3. Notify webview to reload with Force Reset
+            // [v0.3.11] 롤백 후 2초간 getProjectState 차단
+            this._rollbackGuardUntil = Date.now() + 2000;
+            await this.sendProjectState(true);
+            await this.sendHistory();
 
             this._panel.webview.postMessage({ command: 'rollbackComplete' });
 
@@ -2491,19 +2500,14 @@ export class CanvasPanel {
         });
     }
 
-    public async sendProjectState() {
+    public async sendProjectState(forceReset: boolean = false) {
         if (!this._panel) return;
         const workspaceFolder = this._workspaceFolder;
-        if (!workspaceFolder) {
-            console.error('No workspace folder found');
-            return;
-        }
+        if (!workspaceFolder) return;
 
         try {
-            // [v0.3.10] Use Engine State as SSOT
+            // [v0.3.11] 1. Load Current SSOT (Engine Snapshot)
             const engineSnap = canvasEngine.getFinalSnapshot();
-            
-            // Convert to Legacy/UI format (Arrays)
             let projectState: any = {
                 project_name: workspaceFolder.name,
                 canvas_state: {
@@ -2516,82 +2520,76 @@ export class CanvasPanel {
                 clusters: engineSnap.clusters || []
             };
 
-            // If Engine is empty, try to load from file and sync to engine
-            if (projectState.nodes.length === 0) {
-                const projectStateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'project_state.json');
-                try {
-                    const data = await vscode.workspace.fs.readFile(projectStateUri);
-                    const fileState = JSON.parse(data.toString());
-                    if (fileState.nodes && fileState.nodes.length > 0) {
-                        canvasEngine.loadInitialState(fileState);
-                        const newSnap = canvasEngine.getFinalSnapshot();
-                        projectState.nodes = Object.values(newSnap.nodes);
-                        projectState.edges = Object.values(newSnap.edges);
-                        projectState.clusters = newSnap.clusters || [];
-                        Logger.info(`[CanvasPanel] Synced engine from file: ${projectState.nodes.length} nodes`);
-                    }
-                } catch (e) { /* file might not exist */ }
-            }
-
-            // 고도화: 노드가 전혀 없는 경우 (신규 프로젝트) 자동 발견 시도
-            if (projectState.nodes.length === 0) {
-                console.log('[SYNAPSE] Engine & File are empty, triggering auto-discovery...');
-                const engine = new BootstrapEngine();
-                const discoveredState = await engine.autoDiscover(
-                    workspaceFolder.uri.fsPath,
-                    undefined,
-                    (msg) => {
-                        this._panel.webview.postMessage({
-                            command: 'analysisProgress',
-                            message: msg
-                        });
-                    }
-                );
-
-                if (discoveredState.nodes.length > 0) {
-                    canvasEngine.loadInitialState(discoveredState);
-                    const finalSnap = canvasEngine.getFinalSnapshot();
-                    projectState.nodes = Object.values(finalSnap.nodes);
-                    projectState.edges = Object.values(finalSnap.edges);
-                    
-                    // 자동 발견된 상태 저장
-                    const projectStateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'project_state.json');
-                    const normalizedJson = this.normalizeProjectState(finalSnap);
-                    await vscode.workspace.fs.writeFile(projectStateUri, Buffer.from(normalizedJson, 'utf-8'));
-                }
-            }
-
-            // [v0.3.09_fix] Atomicity: Core Systems Synchronization
+            // [v0.3.11] 2. Boot-Sync: If Engine is new OR incomplete, load from persistence file
+            const projectStateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'project_state.json');
+            
+            // [v0.3.11 HARD SSOT] Reality check: If engine is empty OR significantly differs from disk, sync it.
             try {
-                if (phaseManager.isLocked() || phaseManager.getCurrentPhase() === Phase.DATA) {
-                    Logger.info(`[SYNAPSE] Initializing Core Systems (Phase 0 -> 2)...`);
-                    phaseManager.reset(); 
-                } else if (phaseManager.getCurrentPhase() >= Phase.RENDER) {
-                     Logger.info(`[SYNAPSE] Refreshing Core Systems in Phase: ${Phase[phaseManager.getCurrentPhase()]}`);
-                } else {
-                    Logger.info(`[SYNAPSE] Synchronizing Core Systems (Current Phase: ${Phase[phaseManager.getCurrentPhase()]})`);
+                const data = await vscode.workspace.fs.readFile(projectStateUri);
+                const fileState = JSON.parse(data.toString());
+                
+                // If engine has NO nodes, or we are doing a fresh ready signal, 
+                // we must adopt the disk state's positions and manual nodes.
+                if (projectState.nodes.length === 0 || projectState.nodes.length < (fileState.nodes || []).length) {
+                    Logger.info(`[CanvasPanel] Syncing backend engine from project_state.json (File: ${fileState.nodes?.length || 0} vs Engine: ${projectState.nodes.length})`);
+                    canvasEngine.loadInitialState(fileState);
+                    const refreshedSnap = canvasEngine.getFinalSnapshot();
+                    projectState.nodes = Object.values(refreshedSnap.nodes);
+                    projectState.edges = Object.values(refreshedSnap.edges);
+                    projectState.clusters = refreshedSnap.clusters || [];
                 }
             } catch (e) {
-                console.error('Failed to sync phaseManager:', e);
+                Logger.warn(`[CanvasPanel] Boot-Sync: No project_state.json found or failed to parse.`);
             }
+
+            // [v0.3.11] 3. 🛡️ Self-Healing: Background Reality-Check (Find roaming files)
+            try {
+                const engine = new BootstrapEngine();
+                const discoveredState = await engine.autoDiscover(workspaceFolder.uri.fsPath);
+                if (discoveredState.nodes.length > 0) {
+                    const currentEngineNodes = canvasEngine.getFinalSnapshot().nodes;
+                    const existingNodeIds = new Set(Object.keys(currentEngineNodes));
+                    
+                    // Filter for files existing on disk but NOT in graph (Roamers)
+                    const roamers = discoveredState.nodes.filter(n => !existingNodeIds.has(n.id));
+                    
+                    if (roamers.length > 0) {
+                        // [v0.3.11 HARD SSOT] Non-destructive merge
+                        canvasEngine.mergeState({
+                            nodes: roamers,
+                            edges: []
+                        });
+                        
+                        const finalSnap = canvasEngine.getFinalSnapshot();
+                        projectState.nodes = Object.values(finalSnap.nodes);
+                        projectState.edges = Object.values(finalSnap.edges);
+                        projectState.clusters = finalSnap.clusters || [];
+
+                        const normalizedJson = this.normalizeProjectState(finalSnap);
+                        await vscode.workspace.fs.writeFile(projectStateUri, Buffer.from(normalizedJson, 'utf-8'));
+                    }
+                }
+            } catch (err) {
+                console.error('[SYNAPSE] Self-healing sync failed:', err);
+            }
+
+            // [v0.3.11] 4. Phase & Broadcast
+            try {
+                if (phaseManager.isLocked() || phaseManager.getCurrentPhase() <= Phase.DATA) {
+                    phaseManager.reset(); 
+                    if (projectState.nodes.length > 0) phaseManager.advancePhase(Phase.CONTROL);
+                }
+            } catch (e) { /* ignore phase sync errors */ }
 
             this._panel.webview.postMessage({
                 command: 'projectState',
                 data: projectState,
-                // [v0.3.10] Provide context for Tree View Rooting
-                workspaceFolder: workspaceFolder.uri.fsPath
+                workspaceFolder: workspaceFolder.uri.fsPath,
+                forceReset: forceReset
             });
 
-            // [v0.3.10] Auto-Advance Phase to CONTROL after successful state broadcast
-            // This unlocks saveState, requestConfirmEdge, and other interaction intents
-            if (projectState.nodes.length > 0 && phaseManager.getCurrentPhase() < Phase.CONTROL) {
-                Logger.info(`[SYNAPSE] Advancing Phase: ${Phase[phaseManager.getCurrentPhase()]} -> CONTROL`);
-                phaseManager.advancePhase(Phase.CONTROL);
-            }
-
         } catch (error) {
-            console.error('Failed to send project state:', error);
-            vscode.window.showErrorMessage(`Failed to send project state: ${error}`);
+            console.error('[SYNAPSE] sendProjectState failed:', error);
         }
     }
 

@@ -12,8 +12,9 @@ import { BootstrapResult, ProjectState, NodeType } from '../types/schema';
 import { isIgnoredFolder, isIgnoredFile } from '../utils/exclusionRules';
 import { RuleEngine } from '../core/RuleEngine';
 import { phaseManager, Phase } from '../core/PhaseManager';
-import { dataPipeline } from '../core/DataPipeline';
+import { dataPipeline, PipelineResult } from '../core/DataPipeline';
 import { graphModel } from '../core/GraphModel';
+import { buildGraph } from '../core/graphBuilder';
 import { snapshotSystem } from '../core/SnapshotSystem';
 import { Logger } from '../utils/Logger';
 
@@ -83,8 +84,14 @@ export class BootstrapEngine {
 
             // [v0.3.10] Pass projectRoot for absolute path scanning
             const discoveredFiles = this.getDiscoverableFiles(projectRoot, structure.includePaths);
-            const nodes = dataPipeline.processFiles(discoveredFiles, projectRoot);
-            const edges = graphModel.createSnapshot().edges;
+            const pipelineResult = dataPipeline.processFiles(discoveredFiles, projectRoot);
+            
+            // [v0.3.11] Core Freeze: Build and freeze graph
+            const frozenGraph = buildGraph(pipelineResult.nodes, pipelineResult.edges, pipelineResult.clusters);
+            graphModel.restoreSnapshot(frozenGraph);
+
+            const nodes = frozenGraph.nodes;
+            const edges = frozenGraph.edges;
 
             // 3. SNAPSHOT 생성 (Phase 2)
             phaseManager.advancePhase(Phase.SNAPSHOT);
@@ -141,14 +148,21 @@ export class BootstrapEngine {
         try {
             // [v0.3.1] Snapshot Storage Initialize
             snapshotSystem.setStoragePath(projectRoot);
+            graphModel.setProjectRoot(projectRoot);
 
             phaseManager.assertPhase(Phase.DATA);
             this.ensureRulesFile(projectRoot);
             RuleEngine.getInstance().loadRules(projectRoot);
 
             const discoveredFiles = this.getDiscoverableFiles(projectRoot);
-            let nodes = dataPipeline.processFiles(discoveredFiles, projectRoot);
-            let edges = graphModel.createSnapshot().edges;
+            const pipelineResult = dataPipeline.processFiles(discoveredFiles, projectRoot);
+            
+            // [v0.3.11] Core Freeze
+            const frozenGraph = buildGraph(pipelineResult.nodes, pipelineResult.edges, pipelineResult.clusters);
+            graphModel.restoreSnapshot(frozenGraph);
+
+            let nodes = [...frozenGraph.nodes];
+            let edges = [...frozenGraph.edges];
 
             // [v0.3.10] 🛡️ PRESERVE MANUAL STATE: Merge with existing manual nodes/edges
             const existingStatePath = path.join(projectRoot, 'data', 'project_state.json');
@@ -230,8 +244,14 @@ export class BootstrapEngine {
     public async autoDiscover(projectRoot: string, includePaths?: string[], onProgress?: (msg: string) => void): Promise<ProjectState> {
         console.log(`🔍 [SYNAPSE] Auto-discovering source files in: ${projectRoot}`);
         const discoveredFiles = this.getDiscoverableFiles(projectRoot, includePaths);
-        const nodes = dataPipeline.processFiles(discoveredFiles, projectRoot);
-        const edges = graphModel.createSnapshot().edges;
+        const pipelineResult = dataPipeline.processFiles(discoveredFiles, projectRoot);
+        
+        // [v0.3.11] Core Freeze
+        const frozenGraph = buildGraph(pipelineResult.nodes, pipelineResult.edges, pipelineResult.clusters);
+        graphModel.restoreSnapshot(frozenGraph);
+
+        const nodes = frozenGraph.nodes;
+        const edges = frozenGraph.edges;
 
         const state: ProjectState = {
             project_name: path.basename(projectRoot),
@@ -267,14 +287,17 @@ export class BootstrapEngine {
                 // [v0.3.10] Metadata folders are now discoverable but routed to the shelf
                 if (file.toLowerCase() === 'data') continue;
                 
-                if (includePaths && includePaths.length > 0 && relPath === '') {
+                const stat = fs.statSync(fullPath);
+                
+                if (includePaths && includePaths.length > 0 && relPath === '' && !stat.isDirectory()) {
+                    // [v0.3.11] 🛡️ 루트 디렉토리의 파일은 includePaths 설정과 관계없이 항상 포함 시도
+                } else if (includePaths && includePaths.length > 0 && relPath === '' && stat.isDirectory()) {
                     const isIncluded = includePaths.some(p => {
                         const normalizedP = p.replace(/^\.\//, '').replace(/\/$/, '');
                         return file === normalizedP || file.startsWith(normalizedP + '/');
                     });
                     if (!isIncluded) continue;
                 }
-                const stat = fs.statSync(fullPath);
                 if (stat.isDirectory()) {
                     scanDir(fullPath, currentRelPath, depth + 1);
                 } else {

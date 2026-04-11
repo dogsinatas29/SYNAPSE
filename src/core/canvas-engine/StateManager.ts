@@ -354,20 +354,17 @@ export class StateManager {
     const nodesMap = new Map<string, Node>();
     const orphanMap = new Map<string, Node>();
 
-    // [v0.3.11] Authoritative Path Injection Helper
-    const ensurePath = (n: Node) => {
-        if (!n.filePath && n.data && n.data.file) n.filePath = n.data.file;
-        if (!n.filePath && n.data && n.data.filePath) n.filePath = n.data.filePath;
+    // [v0.3.11] Safe Path Extraction (No Mutation)
+    const getEffectivePath = (n: Node): string => {
+        return n.filePath || (n.data && (n.data.file || n.data.filePath)) || "";
     };
 
     // 1. [Truth-01] Buffer Nodes (User Authority)
     this.bufferNodes.forEach(bn => {
-        ensurePath(bn);
-        const resolvedPath = this.normalizePath(bn.filePath);
+        const path = getEffectivePath(bn);
+        const resolvedPath = this.normalizePath(path);
         if (resolvedPath) {
-            nodesMap.set(resolvedPath, {
-                ...bn
-            });
+            nodesMap.set(resolvedPath, bn);
         } else {
             orphanMap.set(bn.id, bn);
         }
@@ -375,30 +372,29 @@ export class StateManager {
 
     // 2. [Truth-02] Zombie Guard (Pruning by Path)
     const filteredCoreNodes = coreSnap.nodes.filter(cn => {
-        ensurePath(cn);
-        const p = this.normalizePath(cn.filePath);
+        const path = getEffectivePath(cn);
+        const p = this.normalizePath(path);
         return !this.deletedPathsBuffer.has(p);
     });
 
     // 3. [Truth-03] AI Discovery Merge (Merge Only, No Overwrite)
     filteredCoreNodes.forEach(cn => {
-        ensurePath(cn);
-        const resolvedPath = this.normalizePath(cn.filePath);
+        const path = getEffectivePath(cn);
+        const resolvedPath = this.normalizePath(path);
         
         if (resolvedPath) {
             const existingNode = nodesMap.get(resolvedPath);
             
             // 🛡️ Ultimate Layer Authority: ID 접두어를 최종 권위로 설정
-            // 1. ID가 'node_manual_'로 시작하면 사용자가 직접 생성한 순수 수동 노드 -> User
-            // 2. 그 외(파일 경로 등)는 AI 스캐너가 관리하는 영역 -> AI
-            const isManualNode = cn.id.startsWith('node_manual_') || (existingNode && existingNode.id.startsWith('node_manual_'));
+            const isManualNode = (existingNode && existingNode.id.startsWith('node_manual_')) || cn.id.startsWith('node_manual_') || (existingNode && existingNode.layer === 'user');
             const finalLayer = isManualNode ? 'user' : 'ai';
+            const finalId = isManualNode ? (existingNode?.id || cn.id) : cn.id;
 
             if (existingNode) {
                 nodesMap.set(resolvedPath, {
                     ...existingNode,
-                    id: cn.id, 
-                    layer: finalLayer, // 정체성 강제 복구
+                    id: finalId, // 🛡️ 수동 ID 주권 보호
+                    layer: finalLayer, 
                     cluster_id: existingNode.cluster_id || cn.cluster_id, 
                     degree: cn.degree || existingNode.degree
                 });
@@ -426,21 +422,11 @@ export class StateManager {
     // 4. Record Conversion & Layer Counting (Strict Deduplication by Path)
     const finalNodes: Record<string, Node> = {};
     const seenPaths = new Set<string>();
-    let userCount = 0;
-    let aiCount = 0;
-
-    // 3.5 [v0.3.11] Pre-calculate degrees for Auto-Clustering
-    const degrees: Record<string, number> = {};
-    const allEdges = [...coreSnap.edges, ...Array.from(this.bufferEdges.values())];
-    allEdges.forEach(e => {
-        degrees[e.from] = (degrees[e.from] || 0) + 1;
-        degrees[e.to] = (degrees[e.to] || 0) + 1;
-    });
-
-    // [v0.3.11] Priority Order: Manual/User Nodes first to act as SSoT for a given path
+    // 3.5 [v0.3.11] Pre-calculate Path-to-ID mapping (Prioritize Manual IDs for each path)
+    const pathToIdMap = new Map<string, string>(); 
     const allCandidates = [...Array.from(orphanMap.values()), ...Array.from(nodesMap.values())];
     
-    // Sort so node_manual_ IDs are processed first
+    // Sort to ensure manual IDs are assigned to paths in the map first
     allCandidates.sort((a, b) => {
         const aIsManual = a.id.startsWith('node_manual_');
         const bIsManual = b.id.startsWith('node_manual_');
@@ -448,60 +434,95 @@ export class StateManager {
     });
 
     allCandidates.forEach(n => {
-        const pathRef = n.filePath || n.id;
-        if (seenPaths.has(pathRef)) return; // If same file path already processed (as User), skip AI duplicate
-        seenPaths.add(pathRef);
+        const rawPath = n.filePath || n.id;
+        const pathRef = this.normalizePath(rawPath);
+        if (pathRef && !pathToIdMap.has(pathRef)) {
+            pathToIdMap.set(pathRef, n.id);
+        }
+    });
 
-        // [v0.3.11] Layer Authority: filePath가 있으면 AI, 없거나 매뉴얼ID면 User
-        const isExternal = n.filePath && n.filePath.startsWith('external://');
-        const isAiFile = n.filePath && !n.filePath.startsWith('external://') && !n.id.startsWith('node_manual_');
-        const finalLayer = (isAiFile || isExternal) ? 'ai' : 'user';
+    // 3.6 [v0.3.11] Pre-calculate degrees using resolved IDs
+    const degrees: Record<string, number> = {};
+    const allEdges = [...coreSnap.edges, ...Array.from(this.bufferEdges.values())];
+    allEdges.forEach(e => {
+        const fromPath = this.normalizePath(e.from);
+        const toPath = this.normalizePath(e.to);
+        const realFrom = pathToIdMap.get(fromPath || e.from) || e.from;
+        const realTo = pathToIdMap.get(toPath || e.to) || e.to;
+        
+        degrees[realFrom] = (degrees[realFrom] || 0) + 1;
+        degrees[realTo] = (degrees[realTo] || 0) + 1;
+    });
+
+    // 4. Record Conversion & Layer Counting (Strict Deduplication by Path)
+    let userCount = 0;
+    let aiCount = 0;
+
+    allCandidates.forEach(n => {
+        const rawPath = n.filePath || n.id;
+        const pathRef = this.normalizePath(rawPath);
+        
+        // [v0.3.11] Strict Deletion Guard & Deduplication
+        if (pathRef && (this.deletedPathsBuffer.has(pathRef) || seenPaths.has(pathRef))) return;
+        if (pathRef) seenPaths.add(pathRef);
+
         const nodeDegree = degrees[n.id] || 0;
+        const isExternal = n.filePath && n.filePath.startsWith('external://');
+        const isManual = n.id.startsWith('node_manual_') || n.layer === 'user' || (n.data && n.data.layer === 'user');
+        const isAiFile = n.filePath && !isExternal && !isManual;
+        const finalLayer = (isAiFile || isExternal) ? 'ai' : 'user';
 
         // [v0.3.11] Dynamic Cluster Assignment
         let finalClusterId = n.cluster_id;
-        
         if (finalLayer === 'user') {
-            // [Rule 3-1, 3-2] 사용자 노드만 연결성 기반 자동 승격/배치
             const hasManualGroup = n.cluster_id && n.cluster_id.startsWith('cluster_manual_');
             if (!hasManualGroup) {
-                // [v0.3.11] Corrected Label to Cluster
                 finalClusterId = (nodeDegree > 0) ? 'sys_cluster_reserved' : 'sys_cluster_buffer';
             }
         } else if (isExternal) {
             finalClusterId = 'cluster_ghosts';
         }
 
-        const finalNode = {
+        finalNodes[n.id] = {
             ...n,
             layer: finalLayer,
             cluster_id: finalClusterId,
-            position: n.position || { x: Math.random() * 800, y: Math.random() * 600 },
+            position: n.position || { x: 0, y: 0 },
             data: { ...n.data, layer: finalLayer }
         };
 
-        finalNodes[n.id] = finalNode;
         if (finalLayer === 'user') userCount++; else aiCount++;
     });
 
-    // 5. Edges Sync (Truth-First Merge)
+    // 5. Edges Sync (Dedup by From-To pair, prioritize Confirmed status)
     const finalEdges: Record<string, Edge> = {};
-    const edgeList = [...coreSnap.edges, ...Array.from(this.bufferEdges.values())];
-    
-    edgeList.forEach(e => {
-        if (!finalNodes[e.from] || !finalNodes[e.to]) return;
+    const edgePairMap = new Map<string, Edge>();
+
+    allEdges.forEach(e => {
+        const fromPath = this.normalizePath(e.from);
+        const toPath = this.normalizePath(e.to);
+        const realFrom = pathToIdMap.get(fromPath || e.from) || e.from;
+        const realTo = pathToIdMap.get(toPath || e.to) || e.to;
+
+        if (!finalNodes[realFrom] || !finalNodes[realTo]) return;
         
-        const id = e.id || `edge_${e.from}_${e.to}`;
-        const existing = finalEdges[id];
+        // Define a normalized pair key for deduplication
+        const pairKey = `${realFrom}->${realTo}`;
+        const existing = edgePairMap.get(pairKey);
         
-        // [v0.3.11] 병합 규칙: 둘 중 하나라도 확정(Confirmed)이면 확정 상태 유지
-        const isConfirmed = e.status === 'confirmed' || (existing && existing.status === 'confirmed');
-        
-        finalEdges[id] = { 
-            ...e, 
-            id,
-            status: isConfirmed ? 'confirmed' : e.status 
-        };
+        const isIncomingConfirmed = (e.status === 'confirmed' || (e.data && e.data.layer === 'user'));
+        const isExistingConfirmed = existing ? (existing.status === 'confirmed' || (existing.data && existing.data.layer === 'user')) : false;
+
+        if (!existing || (isIncomingConfirmed && !isExistingConfirmed)) {
+            // Priority: Incoming User/Confirmed edge wins
+            edgePairMap.set(pairKey, { ...e, from: realFrom, to: realTo });
+        }
+    });
+
+    // Populate finalEdges using the deduped pair map
+    edgePairMap.forEach((e, pairKey) => {
+        const id = e.id || `edge_${pairKey}`;
+        finalEdges[id] = e;
     });
 
     // 6. Cluster Logic & Essential Shield
@@ -555,9 +576,15 @@ export class StateManager {
     const resolution = this.activeScopeId ? ProjectionResolution.FUNCTION : ProjectionResolution.FILE;
     const viewSnap = projectionLayer.project(draftSnap, resolution);
 
-    // [v0.3.11] Result Mapping    // 4. Nodes Sync (Identity Unification based on Path)
+    // [v0.3.11] Result Mapping (Path-Based SSoT)
     const finalNodes: Record<string, Node> = {};
     const seenPaths = new Set<string>();
+
+    const degrees: Record<string, number> = {};
+    Object.values(merged.edges).forEach(e => {
+        degrees[e.from] = (degrees[e.from] || 0) + 1;
+        degrees[e.to] = (degrees[e.to] || 0) + 1;
+    });
 
     // [v0.3.11] User Nodes first to establish "Manual Authority"
     const allKnownNodes = Object.values(merged.nodes);
@@ -565,14 +592,20 @@ export class StateManager {
     const aiNodes = allKnownNodes.filter(n => !userNodes.includes(n));
 
     [...userNodes, ...aiNodes].forEach(n => {
-        const path = n.filePath || n.id;
-        if (seenPaths.has(path)) return; // Strict deduplication by path
-        seenPaths.add(path);
+        const rawPath = n.filePath || n.id;
+        const pathRef = this.normalizePath(rawPath);
+        if (pathRef && seenPaths.has(pathRef)) return; // Strict deduplication by normalized path
+        if (pathRef) seenPaths.add(pathRef);
 
         const id = n.id;
-        const isAi = (n.filePath && !n.id.startsWith('node_manual_')) || n.id.startsWith('external://');
-        const finalLayer = isAi ? 'ai' : 'user';
         
+        // [v0.3.11] Layer Authority: filePath가 있더라도 매뉴얼ID거나 이미 user면 User 주권 유지
+        const isExternal = n.filePath && n.filePath.startsWith('external://');
+        const isManual = n.id.startsWith('node_manual_') || n.layer === 'user' || (n.data && n.data.layer === 'user');
+        const isAiFile = n.filePath && !isExternal && !isManual;
+        const finalLayer = (isAiFile || isExternal) ? 'ai' : 'user';
+        
+        const nodeDegree = degrees[n.id] || 0;
         finalNodes[id] = { 
             ...n, 
             layer: finalLayer 
@@ -630,9 +663,9 @@ export class StateManager {
         if (this.deletedPathsBuffer.has(resolvedPath)) return;
 
         const hasUserLayer = (n.layer === 'user' || (n.data && n.data.layer === 'user'));
-        const isAiStatus = n.status === 'ghost' || n.status === 'error_necrosis' || n.status === 'confirmed';
         const isManualId = n.id && n.id.startsWith('node_manual_');
-        const isUserNode = isManualId || n.status === 'pending' || (hasUserLayer && !isAiStatus);
+        // AI 상태(confirmed 등)라 하더라도 매뉴얼 ID이거나 레이어 태그가 있으면 User로 복구
+        const isUserNode = isManualId || n.status === 'pending' || hasUserLayer;
         
         if (isUserNode) {
             // [v0.3.11] Unify filePath/file fields during load
@@ -699,28 +732,35 @@ export class StateManager {
       });
 
       const scanNodes = Array.isArray(scanState.nodes) ? scanState.nodes : Object.values(scanState.nodes);
-      scanNodes.forEach((sn: any) => {
-          if (!sn.filePath && sn.data && sn.data.file) sn.filePath = sn.data.file;
-          const snPath = this.normalizePath(sn.filePath);
-          const existingByPath = snPath ? pathMap.get(snPath) : null;
-          const target = existingByPath; 
+      
+      // [v0.3.11] Safe Merge: Create a new array and new object instances
+      let finalCoreNodes = [...mergedCoreNodes];
 
-          if (target) {
+      scanNodes.forEach((sn: any) => {
+          const snRawPath = sn.filePath || (sn.data && (sn.data.file || sn.data.filePath)) || "";
+          const snPath = this.normalizePath(snRawPath);
+          
+          const existingIdx = snPath ? finalCoreNodes.findIndex(n => this.normalizePath(n.filePath) === snPath) : -1;
+
+          if (existingIdx !== -1) {
+              const target = finalCoreNodes[existingIdx];
               // [v0.3.11] Authoritative User Shield
               if (target.layer === 'user' || (target.data && target.data.layer === 'user')) {
                   return; 
               }
 
-              Object.assign(target, { 
+              // Replace with merged copy
+              finalCoreNodes[existingIdx] = { 
+                  ...target,
                   ...sn, 
                   id: target.id,
-                  cluster_id: target.cluster_id, // ❗ 기존 클러스터 보호 (이동 방지)
-                  layer: target.layer === 'user' ? 'user' : 'ai' // ❗ 레이어 자격 보호
-              });
+                  cluster_id: target.cluster_id, 
+                  layer: target.layer === 'user' ? 'user' : 'ai'
+              };
           } else {
-              // ❗ snPath(경로) 기준으로 삭제 여부 판단 (ID가 달라도 필터링됨)
+              // snPath(경로) 기준으로 삭제 여부 판단
               if (snPath && !this.deletedPathsBuffer.has(snPath)) {
-                mergedCoreNodes.push({ ...sn, layer: 'ai' });
+                finalCoreNodes.push({ ...sn, filePath: snRawPath, layer: 'ai' });
               }
           }
       });
@@ -728,7 +768,7 @@ export class StateManager {
       // 최종 병합된 상태를 Core Graph로 환원
       graphModel.loadFrom({
           ...scanState,
-          nodes: mergedCoreNodes,
+          nodes: finalCoreNodes,
           clusters: coreSnap.clusters 
       });
 

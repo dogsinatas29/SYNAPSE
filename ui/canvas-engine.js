@@ -7496,6 +7496,14 @@ function initCanvas() {
                     engine.treeData = engine.treeRenderer.buildTree(engine.nodes || [], engine.projectName);
                 }
 
+                // [v0.3.11] Authoritative Sync: Direct user actions bypass interaction lock
+                if (message.isAuthoritative) {
+                    this.log('[SYNAPSE] Authoritative projectState received. Bypassing interaction lock.');
+                    engine.loadProjectState(message.data, true);
+                    engine._pendingState = null; // Clear any stale deferred updates
+                    return;
+                }
+
                 if (engine.isDragging || engine._isInteracting) {
                     engine._pendingState = message.data;
                     return;

@@ -175,10 +175,14 @@ export class GraphModel {
     ];
 
     requiredClusters.forEach(required => {
-      const exists = this.clusters.some(c => c.id === required.id);
-      if (!exists) {
+      const existing = this.clusters.find(c => c.id === required.id);
+      if (!existing) {
         console.warn(`[SYNAPSE] Restoring missing system cluster: ${required.id}`);
-        this.clusters.push(required);
+        this.clusters.push({ ...required, nodes: [] } as any);
+      } else {
+        // [v0.3.11] Force update label and type for naming consistency
+        existing.label = required.label;
+        existing.type = required.type;
       }
     });
   }

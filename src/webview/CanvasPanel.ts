@@ -451,43 +451,27 @@ export class CanvasPanel {
         try {
             const projectStateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'project_state.json');
 
-            // Read existing state for physical file creation check
-            let initialLoadState: any = { nodes: [], edges: [], clusters: [] };
-            try {
-                const data = await vscode.workspace.fs.readFile(projectStateUri);
-                initialLoadState = JSON.parse(Buffer.from(data).toString('utf-8'));
-                if (typeof initialLoadState === 'string') {
-                    initialLoadState = JSON.parse(initialLoadState);
-                }
-            } catch (e) {
-                // Create file if it doesn't exist
-            }
-
-            // Try to create physical file if requested
+            // 1. [v0.3.11] Sync Physical File if requested (Fast Check)
             if (node.createPhysicalFile && node.data?.label) {
+                const fileUri = vscode.Uri.joinPath(workspaceFolder.uri, node.data.label);
                 try {
-                    const fileUri = vscode.Uri.joinPath(workspaceFolder.uri, node.data.label);
                     await vscode.workspace.fs.stat(fileUri);
-                    // File exists, just link it
                     node.data.file = vscode.workspace.asRelativePath(fileUri);
                 } catch {
-                    // Create empty file
-                    const fileUri = vscode.Uri.joinPath(workspaceFolder.uri, node.data.label);
+                    // Create empty file (Background-ish)
                     await vscode.workspace.fs.writeFile(fileUri, Buffer.from('', 'utf8'));
                     Logger.info(`[CanvasPanel] Physical file auto-created: ${node.data.label}`);
                     node.data.file = vscode.workspace.asRelativePath(fileUri);
                 }
-                // Cleanup temp flag
                 delete node.createPhysicalFile;
             }
 
-            // Normalize filePath before dispatch
+            // 2. Dispatch to Engine
             const rawFile = node.data?.file || '';
             const normalizedFilePath = (rawFile && !rawFile.startsWith('http') && !rawFile.startsWith('external'))
                 ? vscode.workspace.asRelativePath(rawFile, false)
                 : rawFile;
 
-            // Add new node via CanvasEngine Intent Pipeline
             const nodeId = node.id || `node_manual_${Date.now()}`;
             const result = canvasEngine.dispatch('ADD_NODE', {
                 id: nodeId,
@@ -495,14 +479,14 @@ export class CanvasPanel {
                 type: node.type || 'file',
                 layer: 'user',
                 filePath: normalizedFilePath,
-                cluster_id: 'sys_cluster_buffer', // [v0.3.11] Initial Landing Zone
+                cluster_id: 'sys_cluster_buffer',
                 status: 'pending',
                 data: {
                     ...node.data,
                     label: node.data?.label || nodeId,
                     layer: 'user',
-                    filePath: normalizedFilePath, // Keep consistent
-                    file: normalizedFilePath,      // Legacy support unified
+                    filePath: normalizedFilePath,
+                    file: normalizedFilePath,
                     cluster_id: 'sys_cluster_buffer'
                 }
             });
@@ -513,16 +497,19 @@ export class CanvasPanel {
                 return;
             }
 
-            // Persistence (Save the entire state after successful intent)
+            // 🔥 [IMMEDIATE REACTION] 노드가 엔진에 추가되었으므로 즉시 화면 갱신
+            await this.sendProjectState(false, true);
+
+            // 3. Persistence (Background Save)
             const finalCanvasState = canvasEngine.getFinalSnapshot();
-            const normalizedJson = this.normalizeProjectState(finalCanvasState);
+            const normalizedJson = JSON.stringify(finalCanvasState, null, 2);
             await vscode.workspace.fs.writeFile(projectStateUri, Buffer.from(normalizedJson, 'utf8'));
 
             console.log('[SYNAPSE] Manual node created and saved through pipeline:', node.id);
             vscode.window.showInformationMessage(`Node created: ${node.data?.label || node.id}`);
 
             // Refresh view
-            await this.sendProjectState();
+            await this.sendProjectState(false, true);
 
         } catch (error) {
             console.error('Failed to create manual node:', error);
@@ -1134,7 +1121,7 @@ export class CanvasPanel {
             vscode.window.setStatusBarMessage(notificationMsg, 5000);
 
             // 캔버스 새로고침
-            await this.sendProjectState();
+            await this.sendProjectState(false, true);
         } catch (error) {
             console.error('[SYNAPSE] Failed to create manual edge:', error);
             vscode.window.showErrorMessage(`Failed to create edge: ${error}`);
@@ -1298,6 +1285,7 @@ export class CanvasPanel {
 
             vscode.window.setStatusBarMessage(`Edge deleted via pipeline`, 3000);
             await this.handleTakeSnapshot({ label: `Auto Backup (After Edge Deletion)` });
+            await this.sendProjectState(false, true);
 
         } catch (error) {
             console.error('Failed to delete edge:', error);
@@ -1403,61 +1391,46 @@ export class CanvasPanel {
                 if (result.ok) deletedCount++;
             }
 
+            // 🔥 [IMMEDIATE REACTION] 노드 삭제를 엔진에 반영한 직후 즉시 화면 갱신
+            await this.sendProjectState(false, true);
+
             // 2. Persistence
             const finalState = canvasEngine.getFinalSnapshot();
-            const finalNormalizedJson = this.normalizeProjectState(finalState);
+            const finalNormalizedJson = JSON.stringify(finalState, null, 2);
             await vscode.workspace.fs.writeFile(projectStateUri, Buffer.from(finalNormalizedJson, 'utf8'));
 
             // 3. Cascading Cleanup & Physical Deletion (Keep existing UI logic)
             if (deletedNodeLabels.length > 0) {
                 const pruneChoice = await vscode.window.showInformationMessage(
-                    `[SYNAPSE] 삭제된 노드(${deletedNodeLabels.length}개)를 참조하는 다른 파일의 import 문도 정리하시겠습니까?`,
-                    '🧹 소스 코드 정리 (Cascading Prune)', '아니오'
+                    `[SYNAPSE] 삭제된 노드(${deletedNodeLabels.length}개)에 대한 물리적 파일과 참조(Import)를 모두 정리하시겠습니까?`,
+                    '🧹 완전 정리 (File + References)', '아니오'
                 );
 
-                if (pruneChoice === '🧹 소스 코드 정리 (Cascading Prune)') {
+                if (pruneChoice === '🧹 완전 정리 (File + References)') {
+                    // Part A: Prune References
                     const refactorer = new EdgeCodeRefactorer();
                     let affectedTotal = 0;
                     for (const label of deletedNodeLabels) {
                         const { affectedFiles } = refactorer.pruneReferencesToNode(label, workspaceFolder.uri.fsPath);
                         affectedTotal += affectedFiles.length;
                     }
-                    if (affectedTotal > 0) {
-                        vscode.window.showInformationMessage(`[SYNAPSE] 총 ${affectedTotal}개의 파일에서 유령 임포트를 정리했습니다.`);
+
+                    // Part B: Physical Deletion (Atomic Transaction)
+                    if (filesToDelete.length > 0) {
+                        for (const relPath of filesToDelete) {
+                            try {
+                                const fileUri = vscode.Uri.joinPath(workspaceFolder.uri, relPath);
+                                // Move to trash instead of permanent delete for safety
+                                await vscode.workspace.fs.delete(fileUri, { useTrash: true });
+                                Logger.info(`[CanvasPanel] Physically deleted file: ${relPath}`);
+                            } catch (e) {
+                                Logger.error(`[CanvasPanel] Failed to delete file: ${relPath}`, e);
+                            }
+                        }
                     }
-                }
-            }
 
-            // [v0.2.18] Physical File Deletion (Logic Edit Mode)
-            const isPhysicalDelete = rawInput.deleteFiles === true;
-            if (isPhysicalDelete && filesToDelete.length > 0) {
-                const choice = await vscode.window.showWarningMessage(
-                    `[SYNAPSE] 진짜로 소스 파일을 삭제하시겠습니까?\n\n` +
-                    `${filesToDelete.length}개의 실제 파일이 물리적으로 삭제됩니다.\n` +
-                    `⚠️ 삭제 전 자동 스냅샷(백업)이 생성됩니다.`,
-                    { modal: true },
-                    '💣 삭제 (파괴적)', '❌ 취소'
-                );
-
-                if (choice !== '💣 삭제 (파괴적)') {
-                    return; // Abort entirely
-                }
-
-                // Create safety backup with current state (before node removal is saved)
-                try {
-                    await this.handleTakeSnapshot({ label: `Auto Backup (Before File Deletion)`, data: finalState });
-                } catch (e) {
-                    Logger.warn('[CanvasPanel] Failed to take pre-deletion snapshot', e);
-                }
-
-                // Delete physical files
-                for (const relPath of filesToDelete) {
-                    try {
-                        const fileUri = vscode.Uri.joinPath(workspaceFolder.uri, relPath);
-                        await vscode.workspace.fs.delete(fileUri, { useTrash: true });
-                        Logger.info(`[CanvasPanel] Physically deleted file: ${relPath}`);
-                    } catch (e) {
-                        Logger.error(`[CanvasPanel] Failed to delete file: ${relPath}`, e);
+                    if (affectedTotal > 0 || filesToDelete.length > 0) {
+                        vscode.window.showInformationMessage(`[SYNAPSE] ${filesToDelete.length}개의 파일을 삭제하고 ${affectedTotal}개의 참조를 정리했습니다.`);
                     }
                 }
             }
@@ -1652,6 +1625,10 @@ export class CanvasPanel {
 
             this._panel.webview.postMessage({ command: 'edgeConfirmed', edgeId });
             Logger.info(`[CanvasPanel] Edge ${edgeId} confirmed.`);
+            
+            // 🔥 [v0.3.11] FORCE SYNC: Ensure the UI has the latest 'confirmed' status
+            // Authoritative: true to bypass interaction lock
+            await this.sendProjectState(false, true);
         } catch (e) {
             vscode.window.showErrorMessage(`[SYNAPSE] 확정 실패: ${e}`);
         } finally {
@@ -2528,7 +2505,7 @@ export class CanvasPanel {
         });
     }
 
-    public async sendProjectState(forceReset: boolean = false) {
+    public async sendProjectState(forceReset: boolean = false, isAuthoritative: boolean = false) {
         if (!this._panel) return;
         const workspaceFolder = this._workspaceFolder;
         if (!workspaceFolder) return;
@@ -2613,7 +2590,8 @@ export class CanvasPanel {
                 command: 'projectState',
                 data: projectState,
                 workspaceFolder: workspaceFolder.uri.fsPath,
-                forceReset: forceReset
+                forceReset: forceReset,
+                isAuthoritative: isAuthoritative // 🔥 [v0.3.11] Interaction Bypass
             });
 
         } catch (error) {

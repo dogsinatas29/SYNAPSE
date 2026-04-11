@@ -1573,7 +1573,6 @@ export class CanvasPanel {
                 updates: { status: 'confirmed' } 
             });
 
-
             // 3. Persistence (Normalized for UI compatibility)
             const finalSnap = canvasEngine.getFinalSnapshot();
             const projectStateArr = {
@@ -1594,13 +1593,25 @@ export class CanvasPanel {
 
             // 2. fromFile 최상단에 import 문 삽입
             if (actualFromFile && actualToFile) {
-                // [v0.2.20 Fix] Proactive extension check
                 const ext = path.extname(actualFromFile).toLowerCase();
                 const supportedExts = ['.ts', '.js', '.tsx', '.jsx', '.py', '.c', '.h', '.cpp', '.hpp', '.rs'];
 
                 if (!supportedExts.includes(ext)) {
                     vscode.window.showErrorMessage(`[SYNAPSE] ⚠️ ${actualFromFile}: 확장자가 없는 파일(가상 노드)은 코드 주입을 지원하지 않습니다. (.py, .ts, .js 파일만 가능)`);
                     return;
+                }
+
+                // [v0.3.11] 🛡️ Pre-emptive File Creation: Ensure files exist before refactoring
+                const absFrom = path.isAbsolute(actualFromFile) ? actualFromFile : path.join(workspaceFolder.uri.fsPath, actualFromFile);
+                const absTo = path.isAbsolute(actualToFile) ? actualToFile : path.join(workspaceFolder.uri.fsPath, actualToFile);
+
+                if (!fs.existsSync(absFrom)) {
+                    Logger.info(`[CanvasPanel] Creating missing source file: ${absFrom}`);
+                    fs.writeFileSync(absFrom, `# SYNAPSE Generated Header for ${path.basename(absFrom)}\n`, 'utf8');
+                }
+                if (!fs.existsSync(absTo)) {
+                    Logger.info(`[CanvasPanel] Creating missing target file: ${absTo}`);
+                    fs.writeFileSync(absTo, `# SYNAPSE Generated Header for ${path.basename(absTo)}\n`, 'utf8');
                 }
 
                 const refactorer = new EdgeCodeRefactorer();

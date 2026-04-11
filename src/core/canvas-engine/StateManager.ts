@@ -478,7 +478,9 @@ export class StateManager {
 
         const nodeDegree = degrees[n.id] || 0;
         const isExternal = n.filePath && n.filePath.startsWith('external://');
-        const isManual = n.id.startsWith('node_manual_') || n.layer === 'user' || (n.data && n.data.layer === 'user');
+        const isFromBuffer = this.bufferNodes.has(n.id);
+        const isManual = n.id.startsWith('node_manual_') || n.layer === 'user' || (n.data && n.data.layer === 'user') || isFromBuffer;
+        
         const isAiFile = n.filePath && !isExternal && !isManual;
         const finalLayer = (isAiFile || isExternal) ? 'ai' : 'user';
 

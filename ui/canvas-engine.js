@@ -7498,7 +7498,7 @@ function initCanvas() {
 
                 // [v0.3.11] Authoritative Sync: Direct user actions bypass interaction lock
                 if (message.isAuthoritative) {
-                    this.log('[SYNAPSE] Authoritative projectState received. Bypassing interaction lock.');
+                    console.log('[SYNAPSE] Authoritative projectState received. Bypassing interaction lock.');
                     engine.loadProjectState(message.data, true);
                     engine._pendingState = null; // Clear any stale deferred updates
                     return;

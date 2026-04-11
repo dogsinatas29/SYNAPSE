@@ -454,17 +454,19 @@ export class StateManager {
         const pathRef = this.normalizePath(rawPath);
         const baseName = n.filePath ? path.basename(n.filePath) : (n.id.startsWith('node_manual_') ? n.label : n.id);
         const cleanBaseName = baseName?.replace(/^[📄📁]\s*/, '').trim();
+        const baseNameNoExt = cleanBaseName?.toLowerCase().split('.')[0];
 
         if (pathRef && !pathToIdMap.has(pathRef)) {
-            // [v0.3.11] Basename Fallback: 
-            // 만약 이미 동일 파일명으로 등록된 ID가 있고, 현재 노드가 수동 노드라면 병합 유도
-            if (cleanBaseName && basenameToIdMap.has(cleanBaseName)) {
-                const existingId = basenameToIdMap.get(cleanBaseName)!;
-                // 수동 노드일 경우 기존 ID(아마도 AI 절대경로)를 따라가도록 맵핑
+            // [v0.3.11] Advanced Fallback: Match by basename OR extension-less basename
+            const existingId = (cleanBaseName && basenameToIdMap.get(cleanBaseName)) || 
+                             (baseNameNoExt && basenameToIdMap.get(baseNameNoExt));
+
+            if (existingId) {
                 pathToIdMap.set(pathRef, existingId);
             } else {
                 pathToIdMap.set(pathRef, n.id);
                 if (cleanBaseName) basenameToIdMap.set(cleanBaseName, n.id);
+                if (baseNameNoExt) basenameToIdMap.set(baseNameNoExt, n.id);
             }
         }
     });

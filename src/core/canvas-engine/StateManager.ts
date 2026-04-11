@@ -516,23 +516,32 @@ export class StateManager {
         const isAiFile = n.filePath && !isExternal && !isManual;
         const finalLayer = (isAiFile || isExternal) ? 'ai' : 'user';
 
-        // [v0.3.11] Smart Cluster Assignment with Folder Awareness
+        // [v0.3.11] Smart Cluster Assignment (User-Driven Logic)
         let finalClusterId = n.cluster_id;
-        if (finalLayer === 'user') {
-            const hasManualGroup = n.cluster_id && n.cluster_id.startsWith('cluster_manual_');
-            if (!hasManualGroup) {
-                finalClusterId = (nodeDegree > 0) ? 'sys_cluster_reserved' : 'sys_cluster_buffer';
-            }
+        
+        // 1. Identify Parent Folder (Universal Winner)
+        const parentFolder = this.extractParentFolderName(n.filePath || n.id);
+
+        if (parentFolder) {
+            // Folder structure always wins for both AI and User nodes
+            finalClusterId = `folder_${parentFolder}`;
         } else if (isExternal) {
             finalClusterId = 'cluster_ghosts';
-        } else {
-            // Folder clustering for root/nested files
-            const folder = this.extractParentFolderName(n.filePath || n.id);
-            if (folder) {
-                finalClusterId = `folder_${folder}`;
-            } else if (nodeDegree > 0) {
-                finalClusterId = 'sys_cluster_reserved';
+        } else if (finalLayer === 'user') {
+            // Root-level User Nodes
+            const hasManualGroup = n.cluster_id && n.cluster_id.startsWith('cluster_manual_');
+            if (!hasManualGroup) {
+                if (nodeDegree === 0) {
+                    finalClusterId = 'sys_cluster_buffer';
+                } else {
+                    // Confirmed root user nodes: Let them float OR use Reserved Cluster if desired
+                    // User Rule: "Root nodes should just spread out without clusters"
+                    finalClusterId = undefined; 
+                }
             }
+        } else {
+            // Root-level AI Nodes (Float freely per user rule #2)
+            finalClusterId = undefined;
         }
 
         finalNodes[n.id] = {
@@ -546,50 +555,32 @@ export class StateManager {
         if (finalLayer === 'user') userCount++; else aiCount++;
     });
 
-    // 5. Edges Sync (Dedup by From-To pair, prioritize Confirmed status)
-    const finalEdges: Record<string, Edge> = {};
-    const edgePairMap = new Map<string, Edge>();
-
-    allEdges.forEach(e => {
-        const fromPath = this.normalizePath(e.from);
-        const toPath = this.normalizePath(e.to);
-        const realFrom = pathToIdMap.get(fromPath || e.from) || e.from;
-        const realTo = pathToIdMap.get(toPath || e.to) || e.to;
-
-        if (!finalNodes[realFrom] || !finalNodes[realTo]) return;
-        
-        // Define a normalized pair key for deduplication
-        const pairKey = `${realFrom}->${realTo}`;
-        const existing = edgePairMap.get(pairKey);
-        
-        const isIncomingConfirmed = (e.status === 'confirmed' || (e.data && e.data.layer === 'user'));
-        const isExistingConfirmed = existing ? (existing.status === 'confirmed' || (existing.data && existing.data.layer === 'user')) : false;
-
-        if (!existing || (isIncomingConfirmed && !isExistingConfirmed)) {
-            // Priority: Incoming User/Confirmed edge wins
-            edgePairMap.set(pairKey, { ...e, from: realFrom, to: realTo });
-        }
-    });
-
-    // Populate finalEdges using the deduped pair map
-    edgePairMap.forEach((e, pairKey) => {
-        const id = e.id || `edge_${pairKey}`;
-        finalEdges[id] = e;
-    });
-
     // 6. Cluster Logic & Essential Shield (v0.3.11: Hide empty system clusters)
     const clusterMap = new Map<string, Cluster>();
     coreSnap.clusters.forEach(c => clusterMap.set(c.id, c));
     this.bufferClusters.forEach(c => clusterMap.set(c.id, c));
 
+    // [v0.3.11] System Cluster Metadata Sync (Correct Labels AFTER map is ready)
+    const systemClusterMeta: Record<string, string> = {
+        'sys_cluster_buffer': 'Buffer Cluster',
+        'sys_cluster_reserved': 'Reserved Cluster',
+        'cluster_ghosts': 'External Ghosts'
+    };
+
+    clusterMap.forEach((c: Cluster) => {
+        if (systemClusterMeta[c.id]) {
+            c.label = systemClusterMeta[c.id];
+            c.type = 'system';
+        }
+    });
+
     const finalClusters = Array.from(clusterMap.values())
-        .filter(c => c.id !== 'sys_cluster_root') // [Rule 1] Root Abolition 유지
+        .filter(c => c.id !== 'sys_cluster_root') // [Rule 1] Root Abolition
         .filter(c => {
             // [v0.3.11] Empty System Cluster Auto-Hide
             const isSystemCluster = c.id.startsWith('sys_') || c.id === 'cluster_ghosts' || c.id === 'doc_shelf';
             if (isSystemCluster) {
                 const hasNodes = Object.values(finalNodes).some(n => n.cluster_id === c.id);
-                // doc_shelf는 수동 노드가 없더라도 시스템적으로 존재해야 하므로 일단 유지
                 if (c.id === 'doc_shelf') return true;
                 return hasNodes;
             }
@@ -597,16 +588,11 @@ export class StateManager {
         })
         .map((c: any) => {
             // [v0.3.11] Origin-based Layer Authority
-            const isDiscoveredByAi = coreSnap.clusters.some(cc => cc.id === c.id);
-            const isSystemCluster = c.id.startsWith('sys_') || c.id === 'doc_shelf';
-            const isUserManualGroup = c.id.startsWith('cluster_manual_');
-
-            // [Rule 2] Folder Clusters & External Ghosts are AI skeleton
-            // [Rule 3-3] Buffer, Reserved, Manual Groups are User
-            const isSystemAi = isSystemCluster && (c.id !== 'sys_cluster_buffer' && c.id !== 'sys_cluster_reserved');
-            const isAiCluster = (isDiscoveredByAi || c.id === 'cluster_ghosts' || isSystemAi) && 
-                                (c.id !== 'sys_cluster_buffer' && c.id !== 'sys_cluster_reserved');
-            const layer = isAiCluster ? 'ai' : 'user';
+            const isSystemCluster = c.id.startsWith('sys_') || c.id === 'doc_shelf' || c.id === 'cluster_ghosts';
+            
+            // [v0.3.11] Reserved & Buffer = User / Folders & Ghosts = AI
+            const isUserSystem = (c.id === 'sys_cluster_buffer' || c.id === 'sys_cluster_reserved' || c.id.startsWith('cluster_manual_'));
+            const layer = isUserSystem ? 'user' : 'ai';
             
             return {
                 ...c,
@@ -614,6 +600,35 @@ export class StateManager {
                 data: { ...c.data, layer }
             };
         });
+
+    // 5. Edges Sync (Dedup by From-To pair, prioritize Confirmed status)
+    const finalEdges: Record<string, Edge> = {};
+    const edgePairMap = new Map<string, Edge>();
+    // Reusing allEdges from previous declaration
+
+    allEdges.forEach(e => {
+        const fromPath = this.normalizePath(e.from);
+        const toPath = this.normalizePath(e.to);
+        const realFrom = pathToIdMap.get(fromPath || e.from.replace(/\\/g, '/')) || e.from;
+        const realTo = pathToIdMap.get(toPath || e.to.replace(/\\/g, '/')) || e.to;
+
+        if (!finalNodes[realFrom] || !finalNodes[realTo]) return;
+        
+        const pairKey = `${realFrom}->${realTo}`;
+        const existing = edgePairMap.get(pairKey);
+        
+        const isIncomingConfirmed = (e.status === 'confirmed' || (e.data && e.data.layer === 'user'));
+        const isExistingConfirmed = existing ? (existing.status === 'confirmed' || (existing.data && existing.data.layer === 'user')) : false;
+
+        if (!existing || (isIncomingConfirmed && !isExistingConfirmed)) {
+            edgePairMap.set(pairKey, { ...e, from: realFrom, to: realTo });
+        }
+    });
+
+    edgePairMap.forEach((e, pairKey) => {
+        const id = e.id || `edge_${pairKey}`;
+        finalEdges[id] = e;
+    });
 
     return {
         nodes: finalNodes,
@@ -694,8 +709,8 @@ export class StateManager {
         edges: merged.edges,
         clusters: merged.clusters,
         deletedNodeIds: merged.deletedNodeIds,
-        userCount: merged.userCount,
-        aiCount: merged.aiCount
+        userCount: merged.userCount || 0,
+        aiCount: merged.aiCount || 0
     };
   }
 

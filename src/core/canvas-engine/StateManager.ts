@@ -1,3 +1,4 @@
+import * as path from 'path';
 import { Intent, createIntent } from './Intent';
 import { Node, Edge, Cluster, graphModel, GraphModel, GraphSnapshot } from '../GraphModel';
 import { commitManager } from '../transaction/CommitManager';
@@ -32,13 +33,16 @@ export class StateManager {
     if (!p) return "";
     let normalized = p.replace(/\\/g, '/').trim();
     
-    // [v0.3.11] Heuristic Normalization: 절대 경로에서 프로젝트 상대 경로만 추출 시도
-    // 아주 긴 절대 경로(/home/...)와 짧은 상대 경로(src/...)를 일치시키기 위한 전략
-    const parts = normalized.split('/');
-    if (parts.length > 3) {
-        // 경로가 깊을 경우, 마지막 2-3개 세그먼트를 기준으로 매칭 (예: src/test.py)
-        // 이는 완벽하진 않으나 워크스페이스 내 중복 노드를 잡는데 매우 효과적임
+    // [v0.3.11] Ultra-Precision Normalization:
+    // 절대 경로든 상대 경로든 '파일명'과 '부모 폴더'만 남겨서 일치시킴
+    // ex) /home/user/project/src/test.py -> src/test.py
+    // ex) test.py -> test.py
+    const parts = normalized.split('/').filter(x => x.length > 0);
+    if (parts.length >= 2) {
+        // 끝에서 두 자리가 실질적인 '프로젝트 내 상대 경로'일 확률이 매우 높음
         return parts.slice(-2).join('/');
+    } else if (parts.length === 1) {
+        return parts[0];
     }
     return normalized;
   }
@@ -443,11 +447,25 @@ export class StateManager {
         return (aIsManual === bIsManual) ? 0 : (aIsManual ? -1 : 1);
     });
 
+    const basenameToIdMap = new Map<string, string>();
+
     allCandidates.forEach(n => {
         const rawPath = n.filePath || n.id;
         const pathRef = this.normalizePath(rawPath);
+        const baseName = n.filePath ? path.basename(n.filePath) : (n.id.startsWith('node_manual_') ? n.label : n.id);
+        const cleanBaseName = baseName?.replace(/^[📄📁]\s*/, '').trim();
+
         if (pathRef && !pathToIdMap.has(pathRef)) {
-            pathToIdMap.set(pathRef, n.id);
+            // [v0.3.11] Basename Fallback: 
+            // 만약 이미 동일 파일명으로 등록된 ID가 있고, 현재 노드가 수동 노드라면 병합 유도
+            if (cleanBaseName && basenameToIdMap.has(cleanBaseName)) {
+                const existingId = basenameToIdMap.get(cleanBaseName)!;
+                // 수동 노드일 경우 기존 ID(아마도 AI 절대경로)를 따라가도록 맵핑
+                pathToIdMap.set(pathRef, existingId);
+            } else {
+                pathToIdMap.set(pathRef, n.id);
+                if (cleanBaseName) basenameToIdMap.set(cleanBaseName, n.id);
+            }
         }
     });
 

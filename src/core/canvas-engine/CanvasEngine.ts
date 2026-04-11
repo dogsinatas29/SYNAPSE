@@ -76,8 +76,8 @@ export class CanvasEngine {
     this.stateManager.load(state);
   }
 
-  public mergeState(state: any) {
-    this.stateManager.mergeState(state);
+  public mergeFromScan(state: any) {
+    this.stateManager.mergeFromScan(state);
   }
 }
 

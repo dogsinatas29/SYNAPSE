@@ -352,7 +352,7 @@
             left: 50%;
             transform: translate(-50%, -50%);
             width: 450px;
-            height: 70vh;
+            max-height: 70vh; /* Fixed height to max-height */
             background: var(--bg-panel);
             border: 1px solid var(--border);
             border-radius: 8px;
@@ -360,7 +360,6 @@
             flex-direction: column;
             z-index: 5000;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            /* [v0.2.20 Fix] Crucial: overflow:hidden on panel prevents header from scrolling away */
             overflow: hidden;
         }
 
@@ -369,13 +368,12 @@
         }
 
         #history-list {
-            flex: 1;
-            overflow-y: scroll !important;
+            flex: 0 1 auto; /* Don't force stretch */
+            overflow-y: auto !important;
             overflow-x: hidden;
             padding: 10px;
             scroll-behavior: smooth;
             background: #1d2021;
-            min-height: 200px;
             max-height: 500px;
         }
 
@@ -513,7 +511,7 @@
             left: 50%;
             transform: translate(-50%, -50%);
             width: 500px;
-            height: 70vh;
+            max-height: 70vh; /* Fixed height to max-height */
             background: var(--bg-panel);
             border: 1px solid var(--border);
             border-radius: 8px;
@@ -553,13 +551,12 @@
         }
 
         #docs-shelf-list {
-            flex: 1;
-            overflow-y: scroll !important; /* Force scrollbar */
+            flex: 0 1 auto; /* Don't force stretch */
+            overflow-y: auto !important; 
             overflow-x: hidden;
             padding: 10px;
             background: #1d2021;
-            min-height: 200px;
-            max-height: 500px; /* Constrain height for better layout */
+            max-height: 500px;
         }
 
         #docs-shelf-list::-webkit-scrollbar {

@@ -56,14 +56,13 @@ export class DataPipeline {
     const nodes: Node[] = [];
     const edges: Edge[] = [];
     const clusters: Cluster[] = [
-      { id: 'cluster_root', label: '🏠 Project Root', type: 'system' },
       { id: 'cluster_ghosts', label: '👻 External Ghosts', type: 'system' },
-      { id: 'cluster_reserved', label: '📦 Reserved Nodes', type: 'system' },
+      { id: 'sys_cluster_reserved', label: '📦 Reserved Nodes', type: 'system' },
       { id: 'doc_shelf', label: '📚 Documentation Shelf', type: 'system', collapsed: false }
     ];
 
     const nodeIds = new Set<string>();
-    const clusterIds = new Set<string>(['cluster_root', 'cluster_ghosts', 'doc_shelf']);
+    const clusterIds = new Set<string>(['cluster_ghosts', 'sys_cluster_reserved', 'doc_shelf']);
 
     // 1. Create all primary nodes
     for (const item of summaries) {
@@ -73,7 +72,7 @@ export class DataPipeline {
       const isContextVault = item.filePath.includes('.synapse_contexts') || fileName.startsWith('session_');
       if (isContextVault) continue;
 
-      let clusterId = 'cluster_root';
+      let clusterId = ''; // Default: No cluster (flat)
       const fName = fileName.toLowerCase();
       const isDoc = item.filePath.endsWith('.md') || fName.includes('report') || fName.startsWith('session_') || item.filePath.includes('.synapse_contexts');
 
@@ -148,10 +147,10 @@ export class DataPipeline {
             filePath: `external://${ghostId}`,
             type: isExternal ? NodeType.EXTERNAL : NodeType.SYMBOL,
             label: ghostId,
-            cluster_id: 'cluster_ghosts',
+            cluster_id: '', // [v0.3.11] No longer wrapped in macro-container
             status: 'ghost' as any,
             degree: 0,
-            data: { label: ghostId, cluster_id: 'cluster_ghosts' }
+            data: { label: ghostId, cluster_id: '' }
           };
           nodes.push(ghostNode);
           nodeIds.add(ghostId);

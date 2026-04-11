@@ -59,6 +59,33 @@ export class LayerIsolationRule implements ProjectionRule {
     }
 }
 
+/**
+ * [Rule 03] Document Auto-Classification
+ * 특정 확장자를 가진 노드를 자동으로 'document' 타입으로 분류하고
+ * AI 레이어(기본 로직)로 고정하여 Documentation Shelf로 보냅니다.
+ */
+export class DocumentClassificationRule implements ProjectionRule {
+    name = "Document Classification";
+    apply(nodes: Node[], edges: Edge[]) {
+        const docExts = ['.md', '.txt', '.rules', '.json', '.yaml'];
+        const updatedNodes = nodes.map(n => {
+            const filePath = n.filePath ? n.filePath.toLowerCase() : '';
+            const isDoc = docExts.some(ext => filePath.endsWith(ext));
+            
+            if (isDoc) {
+                return {
+                    ...n,
+                    type: 'document',
+                    data: { ...n.data, layer: 'ai', type: 'document' }
+                };
+            }
+            return n;
+        });
+        return { nodes: updatedNodes, edges };
+    }
+}
+
 export const standardProjectionRules: ProjectionRule[] = [
-    new EdgeCompressionRule()
+    new EdgeCompressionRule(),
+    new DocumentClassificationRule()
 ];

@@ -20,11 +20,11 @@ export class EdgeCodeRefactorer {
             return { success: false, importLine: '', message: `지원하지 않는 파일 타입입니다: ${ext}` };
         }
 
-        const absFrom = path.join(projectRoot, fromFile);
-        const absTo = path.join(projectRoot, toFile);
+        const absFrom = path.isAbsolute(fromFile) ? fromFile : path.join(projectRoot, fromFile);
+        const absTo = path.isAbsolute(toFile) ? toFile : path.join(projectRoot, toFile);
 
         if (!fs.existsSync(absFrom)) {
-            return { success: false, importLine: '', message: `Source file not found: ${fromFile}` };
+            return { success: false, importLine: '', message: `Source file not found: ${absFrom}` };
         }
 
         const fromDir = path.dirname(absFrom);
@@ -182,11 +182,11 @@ export class EdgeCodeRefactorer {
             return { success: false, importLine: '', message: `지원하지 않는 파일 타입입니다: ${ext}` };
         }
 
-        const absFrom = path.join(projectRoot, fromFile);
-        const absTo = path.join(projectRoot, toFile);
+        const absFrom = path.isAbsolute(fromFile) ? fromFile : path.join(projectRoot, fromFile);
+        const absTo = path.isAbsolute(toFile) ? toFile : path.join(projectRoot, toFile);
 
         if (!fs.existsSync(absFrom)) {
-            return { success: false, importLine: '', message: `Source file not found: ${fromFile}` };
+            return { success: false, importLine: '', message: `Source file not found: ${absFrom}` };
         }
 
         const fromDir = path.dirname(absFrom);

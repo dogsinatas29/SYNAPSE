@@ -16,14 +16,22 @@ export interface CanvasState {
   nodes: Record<string, Node>;
   edges: Record<string, Edge>;
   clusters: any[];
+  deletedNodeIds?: string[]; // [v0.3.11] 영속적 삭제 추적
+  userCount?: number;        // [v0.3.11] 명시적 레이어 집계
+  aiCount?: number;          // [v0.3.11] 명시적 레이어 집계
 }
 
 export class StateManager {
   private bufferNodes: Map<string, Node> = new Map();
   private bufferEdges: Map<string, Edge> = new Map();
   private bufferClusters: Cluster[] = [];
-  private deletedNodesBuffer: Map<string, Node> = new Map(); // [v0.3.11] 삭제 대기 버퍼
+  private deletedPathsBuffer: Set<string> = new Set(); // [v0.3.11] 삭제된 경로 추적 (Anti-Resurrection)
   private activeScopeId: string | null = null; // [v0.3.11] Scope Isolation
+  
+  private normalizePath(p?: string): string {
+    if (!p) return "";
+    return p.replace(/\\/g, '/').trim();
+  }
 
   /**
    * 🧪 Intent를 실제 상태 변이(Mutation)로 변환 (v0.3.11: Buffer 중심)
@@ -107,26 +115,41 @@ export class StateManager {
 
 
   private mutateAddNode(payload: any): CanvasState {
-    const fileName = this.extractBasename(payload.filePath);
+    const filePath = payload.filePath || '';
+    const fileName = this.extractBasename(filePath);
     const finalLabel = payload.label || fileName || payload.id;
     
+    // [v0.3.11] 🛡️ Anti-Zombie Guard: 부활 허용 (normalizePath 활용)
+    const normalizedNewPath = this.normalizePath(filePath);
+    if (normalizedNewPath) this.deletedPathsBuffer.delete(normalizedNewPath);
+    
+    // [v0.3.11] Deduplication Check: 동일한 filePath를 가진 코어 노드가 있는지 확인
+    const coreSnap = graphModel.createSnapshot();
+    const existingCore = filePath ? coreSnap.nodes.find(cn => cn.filePath === filePath || (cn.data && cn.data.file === filePath)) : null;
+
+    const nodeId = existingCore ? existingCore.id : (payload.id || `node_manual_${Date.now()}`);
+
     const newNode: Node = {
       ...payload,
-      id: payload.id,
-      filePath: payload.filePath || '',
+      id: nodeId,
+      filePath: filePath,
       type: payload.type || 'file',
       label: finalLabel,
-      layer: 'user', // [v0.3.11] Root level tagging
-      position: payload.position || { x: Math.random() * 500, y: Math.random() * 500 },
-      degree: 0,
-      status: 'pending', // [v0.3.11] Draft State
+      layer: 'user',
+      cluster_id: payload.cluster_id || '',
+      status: 'pending',
       data: { 
         ...payload.data, 
         label: finalLabel,
-        layer: 'user' 
+        layer: 'user',
+        filePath: filePath,
+        file: filePath,
+        cluster_id: payload.cluster_id || ''
       }
     };
-    this.bufferNodes.set(newNode.id, newNode);
+    
+    this.bufferNodes.set(nodeId, newNode);
+    console.log(`[StateManager] Node ${nodeId} created/promoted to User layer.`);
     return this.getSnapshot();
   }
 
@@ -166,7 +189,7 @@ export class StateManager {
   }
 
   private mutateMoveNode(payload: any): CanvasState {
-    const node = this.bufferNodes.get(payload.nodeId) || this.deletedNodesBuffer.get(payload.nodeId);
+    const node = this.bufferNodes.get(payload.nodeId);
     if (node) {
       node.position = { x: payload.target.x, y: payload.target.y };
     }
@@ -174,18 +197,18 @@ export class StateManager {
   }
 
   private mutateDeleteNode(payload: { id: string, isPhysical?: boolean }): CanvasState {
-    const coreSnap = graphModel.createSnapshot();
-    const target = coreSnap.nodes.find(n => n.id === payload.id) || this.bufferNodes.get(payload.id);
+    const node = this.bufferNodes.get(payload.id) || graphModel.createSnapshot().nodes.find(n => n.id === payload.id);
+    const path = node ? this.normalizePath(node.filePath || (node.data && (node.data.filePath || node.data.file))) : "";
     
-    if (target) {
-        const deletionReady = { 
-            ...target, 
-            data: { ...target.data, __isPhysicalDelete: !!payload.isPhysical } 
-        };
-
-        this.deletedNodesBuffer.set(target.id, deletionReady);
-        this.bufferNodes.delete(target.id);
+    // 1. 버퍼에서 제거
+    this.bufferNodes.delete(payload.id);
+    
+    // 2. 경로 기반 삭제 레지스트리 등록 (Zombie Registry)
+    if (path) {
+        this.deletedPathsBuffer.add(path);
+        console.log(`[StateManager] Path ${path} marked as deleted.`);
     }
+    
     return this.getSnapshot();
   }
 
@@ -255,18 +278,25 @@ export class StateManager {
   private mutateUpdateNode(payload: any): CanvasState {
     let node = this.bufferNodes.get(payload.id);
     
+    // [v0.3.11] Anti-Zombie Guard: 삭제된 경로는 업데이트 거부
+    const coreSnapRef = graphModel.createSnapshot();
+    const coreNodeRef = coreSnapRef.nodes.find(n => n.id === payload.id);
+    const path = this.normalizePath(coreNodeRef?.filePath || (coreNodeRef?.data && (coreNodeRef.data.filePath || coreNodeRef.data.file)));
+    
+    if (!node && path && this.deletedPathsBuffer.has(path)) {
+        return this.getSnapshot();
+    }
+
     if (!node) {
         // Promote core node to buffer to allow manual modification (Core Freeze Compliance)
-        const coreSnap = graphModel.createSnapshot();
-        const coreNode = coreSnap.nodes.find(n => n.id === payload.id);
-        if (coreNode) {
-            node = { ...coreNode };
+        if (coreNodeRef) {
+            node = { ...coreNodeRef };
             this.bufferNodes.set(payload.id, node);
         }
     }
 
     if (node) {
-      // [v0.3.11] 업데이트 적용 (루트렬벨 필드)
+      // [v0.3.11] 업데이트 적용 (루트 레벨 필드)
       if (payload.updates.position !== undefined) node.position = payload.updates.position;
       if (payload.updates.cluster_id !== undefined) node.cluster_id = payload.updates.cluster_id;
       if (payload.updates.layer !== undefined) {
@@ -279,7 +309,7 @@ export class StateManager {
       if (payload.updates.data) {
           node.data = { ...node.data, ...payload.updates.data };
       }
-      // 기타 업데이트 파사드 (유첩성 보장)
+      // 기타 업데이트 파사드 (유연성 보장)
       const safeKeys = ['label', 'type', 'filePath', 'degree'] as const;
       for (const key of safeKeys) {
           if ((payload.updates as any)[key] !== undefined) (node as any)[key] = (payload.updates as any)[key];
@@ -288,8 +318,6 @@ export class StateManager {
     }
     return this.getSnapshot();
   }
-
-
   /**
    * [v0.3.11] Buffer -> Core (Transaction)
    */
@@ -311,246 +339,270 @@ export class StateManager {
       return this.getSnapshot();
   }
 
-  public getSnapshot(): CanvasState {
-    const coreSnap = graphModel.createSnapshot();
-    
-    // [v0.3.11] 영속성 복구 로직: Core에 포함되어 있지만 확정되지 않은 노드들을 Buffer로 재포섭
-    coreSnap.nodes.forEach(n => {
-        if (n.status === 'pending' && !this.bufferNodes.has(n.id)) {
-            this.bufferNodes.set(n.id, n);
-        }
-    });
-
-    // [v0.3.11] 삭제 예약된 노드들을 Core에서 필터링하여 제외 (시각적 삭제 완료)
-    // [v0.3.11] 🛡️ Reality Reconciliation: Merge by filePath to prevent duplicates
-    const pathMap = new Map<string, Node>();
-    this.bufferNodes.forEach(bn => {
-        if (bn.filePath) pathMap.set(bn.filePath, bn);
-    });
-
-    const filteredCoreNodes = coreSnap.nodes.filter(n => !this.deletedNodesBuffer.has(n.id));
-    
-    // Core 노드 중 Buffer에 동일 경로가 있는 경우 업데이트/병합
-    const reconciledCoreNodes = filteredCoreNodes.map(cn => {
-        const manualMatch = cn.filePath ? pathMap.get(cn.filePath) : null;
-        if (manualMatch) {
-            // 수동 노드가 이미 존재하므로, Core 노드를 Buffer 정보로 덮어씌움 (Promote)
-            pathMap.delete(cn.filePath!); // 중복 방지를 위해 맵에서 제거
-            return {
-                ...cn,
-                ...manualMatch,
-                id: cn.id, // ID는 안정성을 위해 Core ID 유지
-                status: 'confirmed' // 파일이 존재하므로 확정 상태로 변경
-            };
-        }
-        return cn;
-    });
-
-    // 남은 Buffer 노드(아직 물리적으로 매칭되지 않은 것들) 추가
-    const finalNodes = [...reconciledCoreNodes, ...Array.from(pathMap.values())];
-    const draftSnap: GraphSnapshot = {
-        nodes: finalNodes,
-        edges: [...coreSnap.edges, ...Array.from(this.bufferEdges.values())],
-        clusters: [...coreSnap.clusters, ...this.bufferClusters],
-        timestamp: Date.now()
-    };
-
-    // Projection 적용 (Scope 활성 시 FUNCTION, 아니면 FILE)
-    const resolution = this.activeScopeId ? ProjectionResolution.FUNCTION : ProjectionResolution.FILE;
-    const viewSnap = projectionLayer.project(draftSnap, resolution);
-
-    const nodesMap: Record<string, Node> = {};
-    const edgesMap: Record<string, Edge> = {};
-    
-    viewSnap.nodes.forEach(n => {
-        // [v0.3.11] Scope Isolation: Focus on activeScopeId and its immediate neighbors
-        if (this.activeScopeId) {
-            const isRelevant = n.id === this.activeScopeId || 
-                               viewSnap.edges.some(e => (e.from === this.activeScopeId && e.to === n.id) || (e.to === this.activeScopeId && e.from === n.id));
-            if (!isRelevant) return;
-        }
-
-        // [v0.3.11] 레이블 결정 로직: 모든 시각화 필드 전수 동기화 (undefined 원천 봉쇄)
-        // basename(filePath)를 최후의 수단으로 사용
-        const fileName = (n.filePath) ? this.extractBasename(n.filePath) : null;
-        const finalLabel = n.label || (n.data && n.data.label) || n.name || n.text || fileName || n.id || "Unknown Node";
-
-        // [v0.3.11] 저장 시 레이어 판정에서 bufferNodes.has() 제거 (오염 방지)
-        const isUserLayer = (n.status === 'pending' || 
-                             (n.data && n.data.layer === 'user') || 
-                             ((n as any).layer === 'user'));
-
-        const nodeObj: any = {
-            ...n,
-            position: n.position || { x: Math.random() * 500, y: Math.random() * 500 },
-            label: finalLabel,
-            layer: isUserLayer ? 'user' : 'ai',
-            name: finalLabel,
-            text: finalLabel,
-            data: {
-                ...n.data,
-                label: finalLabel,
-                name: finalLabel,
-                text: finalLabel,
-                file: n.filePath,
-                isScoped: n.id === this.activeScopeId,
-                layer: isUserLayer ? 'user' : 'ai'
-            }
-        };
-        nodesMap[n.id] = nodeObj;
-    });
-
-    // [v0.3.11] 엣지 보존 및 레이어 태깅
-    const finalEdgesMap: Record<string, Edge> = {};
-    viewSnap.edges.forEach(e => {
-        const edgeId = e.id || `${e.from}->${e.to}`;
-        finalEdgesMap[edgeId] = {
-            ...e,
-            id: edgeId,
-            data: { 
-                ...e.data, 
-                layer: (e.status === 'pending' || this.bufferEdges.has(edgeId) || (e.data && e.data.layer === 'user')) ? 'user' : 'ai' 
-            }
-        };
-    });
-
-    const clusterMap = new Map<string, Cluster>();
-    coreSnap.clusters.forEach(c => clusterMap.set(c.id, c));
-    this.bufferClusters.forEach(c => clusterMap.set(c.id, c));
-
-    // [v0.3.11] 🛡️ Layer Counting Logic Enhancement
-    const layerCounts: Record<string, number> = { ai: 0, user: 0 };
-    Object.values(nodesMap).forEach(n => {
-        const lyr = (n as any).layer || (n.data && n.data.layer) || 'ai';
-        if (layerCounts[lyr] !== undefined) layerCounts[lyr]++;
-    });
-    (this as any)._lastLayerCounts = layerCounts; 
-
-    // [v0.3.11] Cluster Isolation: Ensure system clusters don't claim manual nodes
-    const finalClusters = Array.from(clusterMap.values()).map((c: any) => {
-        const isUserCluster = c.id.startsWith('cluster_manual_') || 
-                            c.id === 'doc_shelf' ||
-                            this.bufferClusters.some(bc => bc.id === c.id) ||
-                            (c.data && (c.data.layer === 'user' || c.layer === 'user'));
-                            
-        return {
-            ...c,
-            layer: isUserCluster ? 'user' : 'ai',
-            data: { 
-                ...c.data, 
-                layer: isUserCluster ? 'user' : 'ai',
-                // root 클러스터인 경우 자손 범위를 제한하기 위해 별도 마킹 (UI 힌트)
-                isSystemRoot: c.id === 'cluster_root'
-            }
-        };
-    });
-
-    return {
-        nodes: nodesMap,
-        edges: finalEdgesMap,
-        clusters: finalClusters
-    };
-  }
-
   /**
-   * 🛡️ 영속성 보관용 원본 데이터 추출 (필터링/투영 없음)
-   * UI용 투영 모델이 아닌, 전체 버퍼와 코어를 병합한 프로젝트 마스터 상태를 반환합니다.
+   * [v0.3.11] 🧬 Unified SSoT State Generation
    */
-  public getRawSnapshot(): CanvasState {
+  private generateMergedState(options: { raw: boolean }): { 
+      nodes: Record<string, Node>, 
+      edges: Record<string, Edge>, 
+      clusters: any[], 
+      deletedNodeIds: string[],
+      userCount: number,
+      aiCount: number
+  } {
     const coreSnap = graphModel.createSnapshot();
-    const nodesMap = new Map<string, Node>(); // filePath 기반 유일성 보장
-    const orphanMap = new Map<string, Node>(); // 경로가 없는 수동 노드용
+    const nodesMap = new Map<string, Node>();
+    const orphanMap = new Map<string, Node>();
 
-    // 1. Buffer Nodes 우선순위 (수동 수정 사항 반영)
+    // [v0.3.11] Authoritative Path Injection Helper
+    const ensurePath = (n: Node) => {
+        if (!n.filePath && n.data && n.data.file) n.filePath = n.data.file;
+        if (!n.filePath && n.data && n.data.filePath) n.filePath = n.data.filePath;
+    };
+
+    // 1. [Truth-01] Buffer Nodes (User Authority)
     this.bufferNodes.forEach(bn => {
-        if (bn.filePath) {
-            nodesMap.set(bn.filePath, bn);
+        ensurePath(bn);
+        const resolvedPath = this.normalizePath(bn.filePath);
+        if (resolvedPath) {
+            nodesMap.set(resolvedPath, {
+                ...bn
+            });
         } else {
             orphanMap.set(bn.id, bn);
         }
     });
 
-    // 2. Core Nodes 병합 (Buffer에 없는 경로만 추가)
-    coreSnap.nodes.forEach(cn => {
-        if (this.deletedNodesBuffer.has(cn.id)) return;
+    // 2. [Truth-02] Zombie Guard (Pruning by Path)
+    const filteredCoreNodes = coreSnap.nodes.filter(cn => {
+        ensurePath(cn);
+        const p = this.normalizePath(cn.filePath);
+        return !this.deletedPathsBuffer.has(p);
+    });
+
+    // 3. [Truth-03] AI Discovery Merge (Merge Only, No Overwrite)
+    filteredCoreNodes.forEach(cn => {
+        ensurePath(cn);
+        const resolvedPath = this.normalizePath(cn.filePath);
         
-        if (cn.filePath) {
-            if (!nodesMap.has(cn.filePath)) {
-                nodesMap.set(cn.filePath, cn);
-            } else {
-                // 이미 존재하면 병합 (ID와 기본적인 데이터는 보존)
-                const existing = nodesMap.get(cn.filePath)!;
-                nodesMap.set(cn.filePath, { ...cn, ...existing, id: cn.id });
+        if (resolvedPath) {
+            const existingNode = nodesMap.get(resolvedPath);
+            
+            // 🛡️ Ultimate Layer Authority: ID 접두어를 최종 권위로 설정
+            // 1. ID가 'node_manual_'로 시작하면 사용자가 직접 생성한 순수 수동 노드 -> User
+            // 2. 그 외(파일 경로 등)는 AI 스캐너가 관리하는 영역 -> AI
+            const isManualNode = cn.id.startsWith('node_manual_') || (existingNode && existingNode.id.startsWith('node_manual_'));
+            const finalLayer = isManualNode ? 'user' : 'ai';
+
+            if (existingNode) {
+                nodesMap.set(resolvedPath, {
+                    ...existingNode,
+                    id: cn.id, 
+                    layer: finalLayer, // 정체성 강제 복구
+                    cluster_id: existingNode.cluster_id || cn.cluster_id, 
+                    degree: cn.degree || existingNode.degree
+                });
+                if (nodesMap.get(resolvedPath)?.data) {
+                    nodesMap.get(resolvedPath)!.data.layer = finalLayer;
+                }
+                return;
+            }
+
+            if (!nodesMap.has(resolvedPath)) {
+                nodesMap.set(resolvedPath, {
+                    ...cn,
+                    layer: finalLayer,
+                    data: { ...cn.data, layer: finalLayer }
+                });
             }
         } else if (!orphanMap.has(cn.id)) {
-            orphanMap.set(cn.id, cn);
+            // ID가 'node_manual_'로 시작하면 고립 노드여도 User로 보호
+            const isManual = cn.id.startsWith('node_manual_');
+            orphanMap.set(cn.id, { ...cn, layer: isManual ? 'user' : 'ai' });
         }
     });
 
-    // 3. 맵을 레코드로 변환 (최종 노드 리스트 구성)
-    // [v0.3.11] 명시적으로 user로 생성된 노드만 layer='user' 태그
-    // bufferNodes.has()는 saveState 시 위치 업데이트로 승격된 AI 노드도 포함하므로 사용 불가
-    const finalNodesMap: Record<string, Node> = {};
-    nodesMap.forEach(n => {
-        const isExplicitUser = n.layer === 'user' || 
-                               (n.data && n.data.layer === 'user') || 
-                               n.status === 'pending';
-        finalNodesMap[n.id] = isExplicitUser
-            ? { ...n, layer: 'user', data: { ...n.data, layer: 'user' } }
-            : { ...n, layer: (n as any).layer || 'ai' }; // AI 노드는 그대로 유지
-    });
-    orphanMap.forEach(n => {
-        // orphanMap = filePath가 없는 수동 노드 → 명시적 user 확인
-        const isExplicitUser = n.layer === 'user' || 
-                               (n.data && n.data.layer === 'user') || 
-                               n.status === 'pending';
-        finalNodesMap[n.id] = isExplicitUser
-            ? { ...n, layer: 'user', data: { ...n.data, layer: 'user' } }
-            : n;
+
+    // 4. Record Conversion & Layer Counting (Strict Deduplication by Path)
+    const finalNodes: Record<string, Node> = {};
+    const seenPaths = new Set<string>();
+    let userCount = 0;
+    let aiCount = 0;
+
+    // 3.5 [v0.3.11] Pre-calculate degrees for Auto-Clustering
+    const degrees: Record<string, number> = {};
+    const allEdges = [...coreSnap.edges, ...Array.from(this.bufferEdges.values())];
+    allEdges.forEach(e => {
+        degrees[e.from] = (degrees[e.from] || 0) + 1;
+        degrees[e.to] = (degrees[e.to] || 0) + 1;
     });
 
-    // 2. Edges
-    const finalEdgesMap: Record<string, Edge> = {};
-    coreSnap.edges.forEach(e => {
-        const id = e.id || `${e.from}->${e.to}`;
-        finalEdgesMap[id] = e;
-    });
-    this.bufferEdges.forEach((e, id) => {
-        finalEdgesMap[id] = e;
+    // [v0.3.11] Priority Order: Manual/User Nodes first to act as SSoT for a given path
+    const allCandidates = [...Array.from(orphanMap.values()), ...Array.from(nodesMap.values())];
+    
+    // Sort so node_manual_ IDs are processed first
+    allCandidates.sort((a, b) => {
+        const aIsManual = a.id.startsWith('node_manual_');
+        const bIsManual = b.id.startsWith('node_manual_');
+        return (aIsManual === bIsManual) ? 0 : (aIsManual ? -1 : 1);
     });
 
-    // 3. Clusters
-    // [v0.3.11] 버퍼 클러스터 + sys_cluster_ 접두어 클러스터에 layer='user' 강제 태그
+    allCandidates.forEach(n => {
+        const pathRef = n.filePath || n.id;
+        if (seenPaths.has(pathRef)) return; // If same file path already processed (as User), skip AI duplicate
+        seenPaths.add(pathRef);
+
+        // [v0.3.11] Layer Authority: filePath가 있으면 AI, 없거나 매뉴얼ID면 User
+        const isExternal = n.filePath && n.filePath.startsWith('external://');
+        const isAiFile = n.filePath && !n.filePath.startsWith('external://') && !n.id.startsWith('node_manual_');
+        const finalLayer = (isAiFile || isExternal) ? 'ai' : 'user';
+        const nodeDegree = degrees[n.id] || 0;
+
+        // [v0.3.11] Dynamic Cluster Assignment
+        let finalClusterId = n.cluster_id;
+        
+        if (finalLayer === 'user') {
+            // [Rule 3-1, 3-2] 사용자 노드만 연결성 기반 자동 승격/배치
+            const hasManualGroup = n.cluster_id && n.cluster_id.startsWith('cluster_manual_');
+            if (!hasManualGroup) {
+                // [v0.3.11] Corrected Label to Cluster
+                finalClusterId = (nodeDegree > 0) ? 'sys_cluster_reserved' : 'sys_cluster_buffer';
+            }
+        } else if (isExternal) {
+            finalClusterId = 'cluster_ghosts';
+        }
+
+        const finalNode = {
+            ...n,
+            layer: finalLayer,
+            cluster_id: finalClusterId,
+            position: n.position || { x: Math.random() * 800, y: Math.random() * 600 },
+            data: { ...n.data, layer: finalLayer }
+        };
+
+        finalNodes[n.id] = finalNode;
+        if (finalLayer === 'user') userCount++; else aiCount++;
+    });
+
+    // 5. Edges Sync (Truth-First Merge)
+    const finalEdges: Record<string, Edge> = {};
+    const edgeList = [...coreSnap.edges, ...Array.from(this.bufferEdges.values())];
+    
+    edgeList.forEach(e => {
+        if (!finalNodes[e.from] || !finalNodes[e.to]) return;
+        
+        const id = e.id || `edge_${e.from}_${e.to}`;
+        const existing = finalEdges[id];
+        
+        // [v0.3.11] 병합 규칙: 둘 중 하나라도 확정(Confirmed)이면 확정 상태 유지
+        const isConfirmed = e.status === 'confirmed' || (existing && existing.status === 'confirmed');
+        
+        finalEdges[id] = { 
+            ...e, 
+            id,
+            status: isConfirmed ? 'confirmed' : e.status 
+        };
+    });
+
+    // 6. Cluster Logic & Essential Shield
     const clusterMap = new Map<string, Cluster>();
     coreSnap.clusters.forEach(c => clusterMap.set(c.id, c));
-    this.bufferClusters.forEach(c => clusterMap.set(c.id, {
-        ...c,
-        layer: 'user',
-        data: { ...c.data, layer: 'user' }
-    } as any));
+    this.bufferClusters.forEach(c => clusterMap.set(c.id, c));
 
-    // coreSnap 클러스터 중 sys_cluster_* 또는 data.layer==='user' 인 것도 user 태그
-    // 단, AI 시스템 클러스터는 절대 user로 분류하지 않음 (오염 방지)
-    const AI_CLUSTER_IDS = new Set(['cluster_root', 'cluster_ghosts', 'cluster_reserved', 'context_vault']);
-    const finalClusters = Array.from(clusterMap.values()).map((c: any) => {
-        if (AI_CLUSTER_IDS.has(c.id)) {
-            return { ...c, layer: 'ai', data: { ...c.data, layer: 'ai' } };
-        }
-        const isUser = this.bufferClusters.some(bc => bc.id === c.id) ||
-                       c.id.startsWith('sys_cluster_') ||
-                       c.id.startsWith('cluster_manual_') ||
-                       c.layer === 'user' ||
-                       (c.data && c.data.layer === 'user');
-        return isUser
-            ? { ...c, layer: 'user', data: { ...c.data, layer: 'user' } }
-            : { ...c, layer: 'ai', data: { ...c.data, layer: 'ai' } }; // 명시적으로 ai 태그
+    const finalClusters = Array.from(clusterMap.values())
+        .filter(c => c.id !== 'sys_cluster_root') // [Rule 1] Root Abolition 유지
+        .map((c: any) => {
+            // [v0.3.11] Origin-based Layer Authority
+            const isDiscoveredByAi = coreSnap.clusters.some(cc => cc.id === c.id);
+            const isSystemCluster = c.id.startsWith('sys_') || c.id === 'doc_shelf';
+            const isUserManualGroup = c.id.startsWith('cluster_manual_');
+
+            // [Rule 2] Folder Clusters & External Ghosts are AI skeleton
+            // [Rule 3-3] Buffer, Reserved, Manual Groups are User
+            const isSystemAi = isSystemCluster && (c.id !== 'sys_cluster_buffer' && c.id !== 'sys_cluster_reserved');
+            const isAiCluster = (isDiscoveredByAi || c.id === 'cluster_ghosts' || isSystemAi) && 
+                                (c.id !== 'sys_cluster_buffer' && c.id !== 'sys_cluster_reserved');
+            const layer = isAiCluster ? 'ai' : 'user';
+            
+            return {
+                ...c,
+                layer,
+                data: { ...c.data, layer }
+            };
+        });
+
+    return {
+        nodes: finalNodes,
+        edges: finalEdges,
+        clusters: finalClusters,
+        deletedNodeIds: Array.from(this.deletedPathsBuffer),
+        userCount,
+        aiCount
+    };
+  }
+
+  public getSnapshot(): CanvasState {
+    const merged = this.generateMergedState({ raw: false });
+    
+    // UI 전 전처리 (Projection 등)
+    const draftSnap: GraphSnapshot = {
+        nodes: Object.values(merged.nodes),
+        edges: Object.values(merged.edges),
+        clusters: merged.clusters,
+        timestamp: Date.now()
+    };
+
+    const resolution = this.activeScopeId ? ProjectionResolution.FUNCTION : ProjectionResolution.FILE;
+    const viewSnap = projectionLayer.project(draftSnap, resolution);
+
+    // [v0.3.11] Result Mapping    // 4. Nodes Sync (Identity Unification based on Path)
+    const finalNodes: Record<string, Node> = {};
+    const seenPaths = new Set<string>();
+
+    // [v0.3.11] User Nodes first to establish "Manual Authority"
+    const allKnownNodes = Object.values(merged.nodes);
+    const userNodes = allKnownNodes.filter(n => (n.layer === 'user' || n.id.startsWith('node_manual_')));
+    const aiNodes = allKnownNodes.filter(n => !userNodes.includes(n));
+
+    [...userNodes, ...aiNodes].forEach(n => {
+        const path = n.filePath || n.id;
+        if (seenPaths.has(path)) return; // Strict deduplication by path
+        seenPaths.add(path);
+
+        const id = n.id;
+        const isAi = (n.filePath && !n.id.startsWith('node_manual_')) || n.id.startsWith('external://');
+        const finalLayer = isAi ? 'ai' : 'user';
+        
+        finalNodes[id] = { 
+            ...n, 
+            layer: finalLayer 
+        };
+    });
+
+    const nodesMapResult: Record<string, Node> = {};
+    Object.values(finalNodes).forEach(n => {
+        const fileName = (n.filePath) ? this.extractBasename(n.filePath) : null;
+        const finalLabel = n.label || (n.data && n.data.label) || fileName || n.id;
+        
+        nodesMapResult[n.id] = {
+            ...n,
+            label: finalLabel,
+            data: { ...n.data, label: finalLabel, isScoped: n.id === this.activeScopeId }
+        };
     });
 
     return {
-        nodes: finalNodesMap,
-        edges: finalEdgesMap,
-        clusters: finalClusters
+        nodes: nodesMapResult,
+        edges: merged.edges,
+        clusters: merged.clusters,
+        deletedNodeIds: merged.deletedNodeIds,
+        userCount: merged.userCount,
+        aiCount: merged.aiCount
     };
+  }
+
+  public getRawSnapshot(): CanvasState {
+    return this.generateMergedState({ raw: true });
   }
 
   public load(state: any) {
@@ -563,24 +615,48 @@ export class StateManager {
     this.bufferEdges.clear();
     this.bufferClusters = [];
 
+    // [v0.3.11] Restore Deleted Paths
+    this.deletedPathsBuffer.clear();
+    if (state.deletedNodeIds && Array.isArray(state.deletedNodeIds)) {
+        state.deletedNodeIds.forEach((p: string) => {
+            this.deletedPathsBuffer.add(this.normalizePath(p));
+        });
+    }
+
     const nodes = Array.isArray(state.nodes) ? state.nodes : Object.values(state.nodes || {});
     nodes.forEach((n: any) => {
-        // [v0.3.11] 진정한 user 노드 조건:
-        // 1. pending 상태 (파일 미생성)
-        // 2. layer='user'이고 ghost/error_necrosis AI 전용 상태가 아닌 것
-        // ⚠️ 'confirmed'는 파일 존재 확인 = user도 confirmed 될 수 있으므로 제외
+        // [v0.3.11] 진정한 user 노드 조건
+        const resolvedPath = this.normalizePath(n.filePath || (n.data && (n.data.filePath || n.data.file)));
+        if (this.deletedPathsBuffer.has(resolvedPath)) return;
+
         const hasUserLayer = (n.layer === 'user' || (n.data && n.data.layer === 'user'));
-        const isAiStatus = n.status === 'ghost' || n.status === 'error_necrosis';
-        const isUserNode = n.status === 'pending' || (hasUserLayer && !isAiStatus);
+        const isAiStatus = n.status === 'ghost' || n.status === 'error_necrosis' || n.status === 'confirmed';
+        const isManualId = n.id && n.id.startsWith('node_manual_');
+        const isUserNode = isManualId || n.status === 'pending' || (hasUserLayer && !isAiStatus);
+        
         if (isUserNode) {
-            this.bufferNodes.set(n.id, n);
-            n.layer = 'user';
-            n.data = { ...n.data, layer: 'user' };
+            // [v0.3.11] Unify filePath/file fields during load
+            const resolvedPath = n.filePath || (n.data && (n.data.filePath || n.data.file)) || "";
+            
+            const normalizedNode = {
+                ...n,
+                filePath: resolvedPath,
+                layer: 'user',
+                data: { 
+                    ...n.data, 
+                    filePath: resolvedPath, 
+                    file: resolvedPath,
+                    layer: 'user' 
+                }
+            };
+            this.bufferNodes.set(n.id, normalizedNode);
         }
     });
 
     const clusters = Array.isArray(state.clusters) ? state.clusters : Object.values(state.clusters || {});
     clusters.forEach((c: any) => {
+        if (c.id === 'sys_cluster_root') return; // [v0.3.11] Never restore Root macro-container
+        
         const isUserC = c.id.startsWith('cluster_manual_') || 
                         c.id === 'sys_cluster_buffer' || 
                         c.id === 'sys_cluster_reserved' || 
@@ -594,52 +670,68 @@ export class StateManager {
         }
     });
 
-    Logger.info(`[StateManager] Restored ${this.bufferNodes.size} nodes and ${this.bufferClusters.length} clusters to buffer.`);
+    const edges = Array.isArray(state.edges) ? state.edges : Object.values(state.edges || {});
+    edges.forEach((e: any) => {
+        const isUserEdge = e.status === 'pending' || (e.data && e.data.layer === 'user');
+        if (isUserEdge) {
+            const id = e.id || `edge_${e.from}_${e.to}`;
+            this.bufferEdges.set(id, { ...e, id });
+        }
+    });
+
+    Logger.info(`[StateManager] Restored ${this.bufferNodes.size} nodes, ${this.bufferEdges.size} edges, and ${this.bufferClusters.length} clusters to buffer.`);
   }
 
   /**
-   * [v0.3.11] Non-destructive State Merge (For Self-Healing)
+   * [v0.3.11] 🛡️ AI Scan Merge Logic (SSoT Master)
+   * AI가 발견한 새로운 노드들을 기존 상태에 병합하되, 유저 자산은 절대 건드리지 않습니다.
    */
-  public mergeState(state: any) {
-      if (!state || !state.nodes) return;
+  public mergeFromScan(scanState: any) {
+      if (!scanState || !scanState.nodes) return;
       
-      const newNodes = state.nodes || [];
       const coreSnap = graphModel.createSnapshot();
-      
-      // Preserve existing core nodes
       const mergedCoreNodes = [...coreSnap.nodes];
+      
+      // 경로(filePath) 기반 빠른 조회를 위한 맵 생성
       const pathMap = new Map<string, Node>();
       mergedCoreNodes.forEach(n => {
           if (n.filePath) pathMap.set(n.filePath, n);
       });
 
-      newNodes.forEach((nn: Node) => {
-          // [v0.3.11] 🛡️ ID 또는 경로 기반 매칭 시도
-          const existingById = mergedCoreNodes.find(cn => cn.id === nn.id);
-          const existingByPath = nn.filePath ? pathMap.get(nn.filePath) : null;
-          
-          if (existingById || existingByPath) {
-              // 이미 존재하면 병합 (기존 ID 유지하여 롤백 시 엉킴 방지)
-              const target = existingById || existingByPath!;
-              // nn(디스크 스캔 데이터)보다 target(현재 시각화 데이터)의 좌표와 클러스터 정보를 우선함
+      const scanNodes = Array.isArray(scanState.nodes) ? scanState.nodes : Object.values(scanState.nodes);
+      scanNodes.forEach((sn: any) => {
+          if (!sn.filePath && sn.data && sn.data.file) sn.filePath = sn.data.file;
+          const snPath = this.normalizePath(sn.filePath);
+          const existingByPath = snPath ? pathMap.get(snPath) : null;
+          const target = existingByPath; 
+
+          if (target) {
+              // [v0.3.11] Authoritative User Shield
+              if (target.layer === 'user' || (target.data && target.data.layer === 'user')) {
+                  return; 
+              }
+
               Object.assign(target, { 
-                  ...nn, 
-                  id: target.id, 
-                  position: target.position || nn.position,
-                  cluster_id: target.cluster_id || nn.cluster_id 
-              }); 
+                  ...sn, 
+                  id: target.id,
+                  cluster_id: target.cluster_id, // ❗ 기존 클러스터 보호 (이동 방지)
+                  layer: target.layer === 'user' ? 'user' : 'ai' // ❗ 레이어 자격 보호
+              });
           } else {
-              mergedCoreNodes.push(nn);
+              // ❗ snPath(경로) 기준으로 삭제 여부 판단 (ID가 달라도 필터링됨)
+              if (snPath && !this.deletedPathsBuffer.has(snPath)) {
+                mergedCoreNodes.push({ ...sn, layer: 'ai' });
+              }
           }
       });
 
-      // Update Core Graph
+      // 최종 병합된 상태를 Core Graph로 환원
       graphModel.loadFrom({
-          ...state,
+          ...scanState,
           nodes: mergedCoreNodes,
           clusters: coreSnap.clusters 
       });
 
-      Logger.info(`[StateManager] Non-destructive merge complete. Core Nodes: ${mergedCoreNodes.length}`);
+      Logger.info(`[StateManager] mergeFromScan complete. Core Nodes: ${mergedCoreNodes.length}`);
   }
 }

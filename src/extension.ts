@@ -168,9 +168,18 @@ export async function activate(context: vscode.ExtensionContext) {
                     vscode.window.showInformationMessage(
                         '💡 설계 규칙을 추가하면 더 정밀한 분석이 가능합니다.',
                         'GEMINI.md 열기'
-                    ).then(selection => {
+                    ).then(async selection => {
                         if (selection === 'GEMINI.md 열기') {
-                            vscode.commands.executeCommand('synapse.openRules');
+                            const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+                            if (workspaceFolder) {
+                                const geminiUri = vscode.Uri.joinPath(workspaceFolder.uri, 'GEMINI.md');
+                                try {
+                                    const doc = await vscode.workspace.openTextDocument(geminiUri);
+                                    await vscode.window.showTextDocument(doc);
+                                } catch {
+                                    vscode.window.showErrorMessage('GEMINI.md not found.');
+                                }
+                            }
                         }
                     });
                 }
@@ -198,13 +207,23 @@ export async function activate(context: vscode.ExtensionContext) {
             vscode.commands.registerCommand('synapse.openRules', async () => {
                 const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
                 if (workspaceFolder) {
+                    const geminiUri = vscode.Uri.joinPath(workspaceFolder.uri, 'GEMINI.md');
                     const rulesUri = vscode.Uri.joinPath(workspaceFolder.uri, 'RULES.md');
+                    
                     try {
-                        await vscode.workspace.fs.stat(rulesUri);
-                        const doc = await vscode.workspace.openTextDocument(rulesUri);
+                        // Priority: GEMINI.md > RULES.md
+                        let targetUri = geminiUri;
+                        try {
+                            await vscode.workspace.fs.stat(geminiUri);
+                        } catch {
+                            await vscode.workspace.fs.stat(rulesUri);
+                            targetUri = rulesUri;
+                        }
+                        
+                        const doc = await vscode.workspace.openTextDocument(targetUri);
                         await vscode.window.showTextDocument(doc);
                     } catch (e) {
-                        vscode.window.showErrorMessage('RULES.md not found in the project root.');
+                        vscode.window.showErrorMessage('Architecture documentation (GEMINI.md or RULES.md) not found.');
                     }
                 }
             })

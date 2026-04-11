@@ -481,13 +481,30 @@ export class CanvasPanel {
                 delete node.createPhysicalFile;
             }
 
+            // Normalize filePath before dispatch
+            const rawFile = node.data?.file || '';
+            const normalizedFilePath = (rawFile && !rawFile.startsWith('http') && !rawFile.startsWith('external'))
+                ? vscode.workspace.asRelativePath(rawFile, false)
+                : rawFile;
+
             // Add new node via CanvasEngine Intent Pipeline
+            const nodeId = node.id || `node_manual_${Date.now()}`;
             const result = canvasEngine.dispatch('ADD_NODE', {
-                id: node.id,
-                label: node.data?.label || node.id,
+                id: nodeId,
+                label: node.data?.label || nodeId,
                 type: node.type || 'file',
-                filePath: node.data?.file || '',
-                ...node.data
+                layer: 'user',
+                filePath: normalizedFilePath,
+                cluster_id: 'sys_cluster_buffer', // [v0.3.11] Initial Landing Zone
+                status: 'pending',
+                data: {
+                    ...node.data,
+                    label: node.data?.label || nodeId,
+                    layer: 'user',
+                    filePath: normalizedFilePath, // Keep consistent
+                    file: normalizedFilePath,      // Legacy support unified
+                    cluster_id: 'sys_cluster_buffer'
+                }
             });
 
             if (!result.ok) {
@@ -1489,11 +1506,15 @@ export class CanvasPanel {
                     // Match by IDs OR Labels OR FilePaths
                     const matchFrom = (e.from?.toLowerCase() === normFrom) || 
                                      (eFromNode?.label?.toLowerCase() === normFrom) ||
-                                     (eFromNode?.data?.label?.toLowerCase() === normFrom);
+                                     (eFromNode?.data?.label?.toLowerCase() === normFrom) ||
+                                     (eFromNode?.filePath?.toLowerCase() === normFrom) ||
+                                     (eFromNode?.data?.file?.toLowerCase() === normFrom);
                                      
                     const matchTo = (e.to?.toLowerCase() === normTo) || 
                                    (eToNode?.label?.toLowerCase() === normTo) ||
-                                   (eToNode?.data?.label?.toLowerCase() === normTo);
+                                   (eToNode?.data?.label?.toLowerCase() === normTo) ||
+                                   (eToNode?.filePath?.toLowerCase() === normTo) ||
+                                   (eToNode?.data?.file?.toLowerCase() === normTo);
                                    
                     return matchFrom && matchTo;
                 });
@@ -1876,7 +1897,12 @@ export class CanvasPanel {
                         filePath: pn.data.file,
                         type: pn.type,
                         label: pn.data.label,
-                        status: 'active'
+                        status: 'active',
+                        layer: 'user',
+                        data: {
+                            ...pn.data,
+                            layer: 'user'
+                        }
                     });
                     this.proposedNodes.splice(pIndex, 1);
                 } else {
@@ -2196,17 +2222,19 @@ export class CanvasPanel {
                 }
             }
 
-            const persistenceState = {
+            const rawSnap = canvasEngine.getRawSnapshot();
+            const persistenceState: any = {
                 project_name: workspaceFolder.name,
                 canvas_state: {
                     zoom_level: (newState.view ? newState.view.zoom : newState.zoom) || 1.0, 
                     offset: (newState.view ? { x: newState.view.offsetX, y: newState.view.offsetY } : (newState.offset || { x: 0, y: 0 })),
                     visible_layers: newState.visible_layers || (newState.data && newState.data.visible_layers) || ['source', 'documentation', 'user']
                 },
-                // [v0.3.11] Backend-First Merge: Protecet engine nodes from UI loss
-                nodes: Object.values(canvasEngine.getRawSnapshot().nodes),
-                edges: Object.values(canvasEngine.getRawSnapshot().edges),
-                clusters: canvasEngine.getRawSnapshot().clusters || []
+                // [v0.3.11] Backend Master Copy (SSoT)
+                nodes: Object.values(rawSnap.nodes),
+                edges: Object.values(rawSnap.edges),
+                clusters: rawSnap.clusters || [],
+                deletedNodeIds: rawSnap.deletedNodeIds || []
             };
 
             const normalizedJson = this.normalizeProjectState(persistenceState);
@@ -2555,7 +2583,7 @@ export class CanvasPanel {
                     
                     if (roamers.length > 0) {
                         // [v0.3.11 HARD SSOT] Non-destructive merge
-                        canvasEngine.mergeState({
+                        canvasEngine.mergeFromScan({
                             nodes: roamers,
                             edges: []
                         });

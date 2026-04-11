@@ -128,6 +128,33 @@ SYNAPSE uses distinct colors and styles to represent different types of logical 
 | **Loop / Back**| ![#fe8019](./resources/edge_styles/color_orange.png) | ![dotted 2px](./resources/edge_styles/style_dotted_2px.png) | Loop-backs (`while`/`for`) or reverse logic flow. |
 | **Highlighted**| ![#fabd2f](./resources/edge_styles/color_gold.png) | ![pulse 5px](./resources/edge_styles/style_pulse_5px.png) | Active execution path (Hovered/Selected). |
 
+### 🧠 Integrated Intelligence Badges (v0.3.11)
+SYNAPSE v0.3.11 introduces **High-Density Info-Badges** that combine logical typing and confirmation status into a single, unified capsule.
+
+| Badge Component | Icon | Meaning |
+| :--- | :---: | :--- |
+| **Type Icon** | `🔗`, `📡`, `📊` | The logical nature of the connection (Integrated). |
+| **Pending** | `❓` | Connection proposed by AI/Human, awaiting approval. |
+| **Confirmed** | `✅` | Human-approved or established logical connection. |
+| **AI Validated** | `🤖` | Connection automatically verified against source code. |
+| **Delete Action** | `❌` | (Red) Immediate physical termination of the edge. |
+
+### 🔍 Edge Icon Mapping
+The following icons are used within the center badge and arrowheads to define the semantic nature of the link:
+
+| Type | Icon | Detailed Meaning |
+| :--- | :---: | :--- |
+| **Dependency** | `🔗` | Module import, inheritance, or package usage. |
+| **Call** | `📡` | Synchronous function/method invocation. |
+| **Data Flow** | `📊` | High-bandwidth data/stream movement. |
+| **Reference** | `📝` | Pointer, variable reference, or documentation link. |
+| **Event** | `⚡` | Asynchronous trigger or callback signal. |
+| **Conditional** | `❓` | Decision branch (`if`, `match`, `switch`). |
+| **API Call** | `🌐` | Cross-service or external HTTP/RCP network call. |
+| **DB Query** | `🛢️` | SQL query, NoSQL mutation, or cache access. |
+| **Loop / Back** | `🔁` | Logical recursion or iteration wrap-around. |
+| **Fracture** | `💥` | Circular dependency or architectural breakdown. |
+
 ---
 
 ## 📸 visual Overview
@@ -196,7 +223,7 @@ Launch your visual architecture journey in seconds.
 
 | Version | Date | Description (English) | Description (Korean) |
 | :--- | :--- | :--- | :--- |
-| **v0.3.11** | 2026-04-07 | **Core Freeze**: Immutable snapshots, 5-stage transactional pipeline, Projection layer, and Scope isolation. | **코어 프리즈**: 불변 스크랩샷, 5단계 트랜잭션 파이프라인, 투영 레이어 및 스코프 격리 지원. |
+| **v0.3.11** | 2026-04-11 | **Core Freeze & Identity Stability**: Immutable snapshots, 5-stage transactions, ID-based layer authority, edge persistence hardening, and Integrated Info-Badges. | **코어 프리즈 및 ID 안정성**: 불변 스냅샷, 5단계 트랜잭션, ID 기반 레이어 권한 강제, 엣지 영속성 강화 및 통합 정보 배지 시스템 도입. |
 | **v0.3.10** | 2026-04-07 | **Hard Lock Protocol**: Atomic file creation, ID persistence fix, and label-priority click resilience. | **하드 락 프로토콜**: 원자적 파일 생성 보증, ID 정합성 수복 및 라벨 우선 클릭 상호작용 개선. |
 | **v0.3.09_fix** | 2026-04-05 | **Hotfix PhaseLock**: Resolved system-wide interaction lock in RENDER/DEBUG phases. | **핫픽스 페이즈락**: RENDER/DEBUG 단계의 전역 인터렉션 락 해결 및 원자적 동기화 개선. |
 | **v0.3.1** | 2026-03-31 | **Bootstrap Locked**: Full Phase-based initialization (Phases 0-7). | **부트스트랩 락**: 전 단계(Phase 0-7) 순차 초기화 강제 및 시스템 잠금 프로토콜 도입. |

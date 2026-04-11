@@ -57,6 +57,7 @@ export interface Cluster {
   type: string;
   position?: { x: number; y: number }; // [v0.3.11] Added position for relative coordinate support
   collapsed?: boolean;
+  layer?: string;  // [v0.3.11] Explicit layer tag ('ai' | 'user')
   data?: any;
 }
 
@@ -167,9 +168,9 @@ export class GraphModel {
 
     // [v0.3.11] 보정 로직: 필수 시스템 클러스터가 누락된 경우 자동 추가
     const requiredClusters = [
-      { id: 'cluster_root', label: '🏠 Project Root', type: 'system', position: { x: 0, y: 0 } },
       { id: 'cluster_ghosts', label: '👻 External Ghosts', type: 'system', position: { x: 800, y: 0 } },
-      { id: 'cluster_reserved', label: '📦 Reserved Nodes', type: 'system', position: { x: 0, y: 600 } },
+      { id: 'sys_cluster_reserved', label: 'Reserved Cluster', type: 'system', position: { x: 0, y: 600 } },
+      { id: 'sys_cluster_buffer', label: '🛡️ Buffer Cluster', type: 'system', position: { x: -400, y: 600 } },
       { id: 'doc_shelf', label: '📚 Documentation Shelf', type: 'system', collapsed: true, position: { x: 800, y: 600 } }
     ];
 

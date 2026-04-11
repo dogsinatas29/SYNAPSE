@@ -103,16 +103,7 @@ export class FlowchartGenerator {
         const clusterSpacingY = 1500;
         const clusterCols = Math.ceil(Math.sqrt(Math.max(clusters.filter(c => !c.parent_id).length, 1)));
 
-        // Ghost Node Clustering (Pre-pass) - [v0.2.17] Always initialize to avoid undefined
-        clusters.push({
-            id: 'cluster_ghosts',
-            label: '👻 External Ghosts',
-            collapsed: true,
-            bounds: { x: 0, y: -800, width: 600, height: 400 },
-            children: []
-        });
-
-        let topClusterIdx = 1;
+        let topClusterIdx = 0;
         const directoryGroups = new Map<string, typeof structure.files>();
         structure.files.forEach(file => {
             const dir = path.dirname(file.path).replace(/\\/g, '/');
@@ -121,28 +112,14 @@ export class FlowchartGenerator {
             directoryGroups.set(dir, group);
         });
 
-        // Handle Project Root
+        // Handle Project Root (No longer a cluster frame)
         const rootFiles = directoryGroups.get('.') || [];
-        const rootClusterId = 'cluster_root';
         if (rootFiles.length > 0) {
-            clusters.push({
-                id: rootClusterId,
-                label: '🏠 Project Root',
-                collapsed: false,
-                bounds: { x: 0, y: 1500, width: 0, height: 0 },
-                children: []
-            });
-
             rootFiles.forEach((file, idx) => {
                 const hints = getVisualHints(file.path);
-                if (file.type === 'documentation') {
-                    const node = this.createNode(file.path, file.type, file.description, -200 + (idx % 4) * 200, 1100 + Math.floor(idx / 4) * 150, hints.layer, hints.priority, 'doc_shelf', (file as any).intelligence);
-                    nodes.push(node);
-                } else {
-                    const node = this.createNode(file.path, file.type, file.description, (idx % 4) * 200 + 30, 1500 + Math.floor(idx / 4) * 150 + 100, hints.layer, hints.priority, rootClusterId, (file as any).intelligence);
-                    nodes.push(node);
-                    clusters.find(c => c.id === rootClusterId)?.children.push(node.id);
-                }
+                const clusterId = file.type === 'documentation' ? 'doc_shelf' : ''; // Flat
+                const node = this.createNode(file.path, file.type, file.description, -200 + (idx % 4) * 200, 1100 + Math.floor(idx / 4) * 150, hints.layer, hints.priority, clusterId, (file as any).intelligence);
+                nodes.push(node);
             });
             directoryGroups.delete('.');
         }

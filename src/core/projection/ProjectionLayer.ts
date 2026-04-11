@@ -156,8 +156,9 @@ function pathBasename(filePath: string): string {
     if (!filePath) return '';
     const parts = filePath.split(/[\\/]/);
     const last = parts[parts.length - 1];
-    // [v0.3.11] 확장자 제거 처리: DataPipeline과 ID 생성 규칙 통일
-    return last.replace(/\.[^/.]+$/, "") || last;
+    // [v0.3.11 FIX] 확장자를 지우지 않습니다. 
+    // 확장자를 지우면 'GEMINI.md'와 'GEMINI.py' 혹은 다른 파일들이 같은 ID로 충돌할 수 있습니다.
+    return last;
 }
 
 export const projectionLayer = new ProjectionLayer();

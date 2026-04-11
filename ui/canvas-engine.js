@@ -113,9 +113,7 @@ class FlowRenderer {
             const isUser = n.layer === 'user' || 
                            (n.data && n.data.layer === 'user') ||
                            n.status === 'pending' ||
-                           (n.id && n.id.startsWith('node_manual_')) || 
-                           (n.cluster_id && (n.cluster_id.startsWith('sys_') || n.cluster_id === 'sys_cluster_buffer')) || 
-                           (n.data && n.data.cluster_id && n.data.cluster_id.startsWith('sys_'));
+                           (n.id && n.id.startsWith('node_manual_'));
             
             if (!isUser && !this.engine.showBaseLayer) return false;
             if (isUser && !this.engine.showUserLayer) return false;
@@ -1809,31 +1807,39 @@ class CanvasEngine {
     /**
      * _updateLayerCounts: 레이어 패널의 노드 숫자 업데이트 및 애니메이션
      */
-    _updateLayerCounts() {
+    _updateLayerCounts(backendCounts = null) {
         const elBase = document.getElementById('layer-count-base');
         const elUser = document.getElementById('layer-count-user');
         if (!elBase || !elUser) return;
 
-        // [v0.3.11] 명시적 layer 속성 기반으로 집계 (ID 접두어 방식 제거)
-        const userNodes = this.nodes.filter(n => 
-            n.layer === 'user' || 
-            (n.data && n.data.layer === 'user') || 
-            n.status === 'pending' ||
-            n.type === 'external'
-        );
-        const baseNodes = this.nodes.filter(n => !userNodes.some(un => un.id === n.id));
+        let userCount, baseCount;
+        
+        if (backendCounts && (backendCounts.userCount !== undefined || backendCounts.user_count !== undefined)) {
+            // [v0.3.11] Use Authoritative Counts if provided
+            userCount = backendCounts.userCount ?? backendCounts.user_count;
+            baseCount = backendCounts.aiCount ?? backendCounts.ai_count;
+        } else {
+            // Fallback to local filtering
+            const userNodes = this.nodes.filter(n => 
+                n.layer === 'user' || 
+                (n.data && n.data.layer === 'user') ||
+                (n.id && n.id.startsWith('node_manual_'))
+            );
+            userCount = userNodes.length;
+            baseCount = this.nodes.length - userCount;
+        }
 
         const updateBadge = (el, newCount) => {
             const oldCount = parseInt(el.textContent);
-            if (oldCount !== newCount) {
+            if (isNaN(oldCount) || oldCount !== newCount) {
                 el.textContent = newCount;
                 el.classList.add('changed');
                 setTimeout(() => el.classList.remove('changed'), 600);
             }
         };
 
-        updateBadge(elBase, baseNodes.length);
-        updateBadge(elUser, userNodes.length);
+        updateBadge(elBase, baseCount);
+        updateBadge(elUser, userCount);
     }
 
     setupEventListeners() {
@@ -3580,8 +3586,6 @@ class CanvasEngine {
         // UI placement for System Clusters. We'll put them firmly on the left bottom side.
         createSysCluster('sys_cluster_reserved', '🕒 Reserved Cluster', -1500, 1000, '#fabd2f'); // Yellow-ish
         createSysCluster('sys_cluster_buffer', '🛡️ Buffer Cluster', -1100, 1000, '#83a598'); // Blue-ish
-        createSysCluster('cluster_ghosts', '👻 External Ghosts', 0, -800, '#928374'); // Gray-ish
-        createSysCluster('cluster_external', '⚙️ External Modules', 1500, 0, '#458588'); // Blue-ish
     }
 
     // [v0.2.26] 🚀 Deterministic Fingerprinting (Precision: 2 decimal places)
@@ -3689,6 +3693,7 @@ class CanvasEngine {
         const promotedLabels = [];
 
         try {
+            // [v0.3.11] 명시적 데이터 정제 제거 (백엔드 SSoT에서 처리됨)
             if (!baseState.nodes || baseState.nodes.length === 0) {
                 console.warn('[SYNAPSE] loadProjectState: Received empty nodes list.');
             }
@@ -3697,7 +3702,7 @@ class CanvasEngine {
             const oldManualNodes = (this.nodes || []).filter(n => n.id.startsWith('node_manual_'));
 
             const rawNodes = baseState.nodes || [];
-            this.docShelfNodes = rawNodes.filter(n => (n.type === 'documentation' || n.cluster_id === 'doc_shelf' || n.data?.cluster_id === 'doc_shelf'));
+            this.docShelfNodes = rawNodes.filter(n => (n.type === 'documentation' || n.type === 'document' || n.cluster_id === 'doc_shelf' || n.data?.cluster_id === 'doc_shelf'));
             this.nodes = rawNodes.filter(n => !this.docShelfNodes.includes(n));
 
             const docIds = new Set(this.docShelfNodes.map(n => n.id));
@@ -3730,18 +3735,15 @@ class CanvasEngine {
                 this._showPromotionToast(promotedLabels);
             }
 
-            this._updateLayerCounts();
+            this._updateLayerCounts(projectState);
 
             const rawClusters = projectState.clusters || [];
-            // [v0.3.11] 레이어 속성 정규화: data.layer 또는 ID 패턴 기반으로 cluster.layer 설정
+            // [v0.3.11] 레이어 속성 정규화 (백엔드 layer 속성 우선)
             this.clusters = rawClusters
                 .filter(c => c.id !== 'context_vault' && c.id !== 'doc_shelf')
                 .map(c => {
-                    const isUser = c.layer === 'user' ||
-                                   (c.data && c.data.layer === 'user') ||
-                                   c.id.startsWith('sys_cluster_') ||
-                                   c.id.startsWith('cluster_manual_');
-                    return { ...c, layer: isUser ? 'user' : 'ai' };
+                    const layer = c.layer || (c.data && c.data.layer) || (c.id.startsWith('sys_') ? 'ai' : 'user');
+                    return { ...c, layer };
                 });
 
             // [v0.2.36] Restore View (Camera) if available and not preserving
@@ -4511,13 +4513,10 @@ class CanvasEngine {
                     if (this.webglEnabled && this.webglRenderer && this.currentMode === 'graph') {
                         // [v0.2.31] Final Consolidated WebGL Render call
                         if (this.isGraphDataDirty || !this._visibleNodesCache) {
-                            const isUserLogic = (n) => {
-                                // [v0.2.26] Robust check: Manual node OR System cluster
-                                const idManual = n.id && typeof n.id === 'string' && n.id.startsWith('node_manual_');
-                                const clusterSys = (n.cluster_id && typeof n.cluster_id === 'string' && n.cluster_id.startsWith('sys_')) ||
-                                    (n.data?.cluster_id && typeof n.data.cluster_id === 'string' && n.data.cluster_id.startsWith('sys_'));
-                                return idManual || clusterSys;
-                            };
+                            const isUserLogic = (n) => 
+                                n.layer === 'user' || 
+                                (n.data && n.data.layer === 'user') || 
+                                (n.id && typeof n.id === 'string' && n.id.startsWith('node_manual_'));
 
                             this._visibleNodesCache = this.nodes.filter(n => {
                                 const isUser = isUserLogic(n);
@@ -4692,7 +4691,11 @@ class CanvasEngine {
                     continue;
                 }
 
-                const isUserLogic = (n) => n.id.startsWith('node_manual_') || n.cluster_id?.startsWith('sys_') || n.data?.cluster_id?.startsWith('sys_');
+                const isUserLogic = (n) => 
+                    n.layer === 'user' || 
+                    (n.data && n.data.layer === 'user') || 
+                    n.id.startsWith('node_manual_');
+
                 if ((isUserLogic(srcNode) && !this.showUserLayer) || (!isUserLogic(srcNode) && !this.showBaseLayer)) continue;
                 if ((isUserLogic(tgtNode) && !this.showUserLayer) || (!isUserLogic(tgtNode) && !this.showBaseLayer)) continue;
             }
@@ -4729,7 +4732,11 @@ class CanvasEngine {
             // if (node.position.x + 120 + margin < worldLeft || node.position.x - margin > worldRight || ...)
 
 
-            const isUserCustom = (node.id && node.id.startsWith('node_manual_')) || node.cluster_id?.startsWith('sys_') || node.data?.cluster_id?.startsWith('sys_');
+            const isUserCustom = 
+                node.layer === 'user' || 
+                (node.data && node.data.layer === 'user') || 
+                (node.id && node.id.startsWith('node_manual_'));
+
             if (isUserCustom && !this.showUserLayer) continue;
             if (!isUserCustom && !this.showBaseLayer) continue;
 
@@ -5507,13 +5514,15 @@ class CanvasEngine {
             // [v0.2.18.3] Isolate Context Vault unless toggled ON
             if (cluster.id === 'context_vault' && !this.showContextVault) continue;
 
-            // [v0.3.11] Layer Visibility - Use EXPLICIT layer tag instead of ID prefixes
+            // [v0.3.11] Layer Visibility - Use EXPLICIT layer tag from backend
             const clusterLayer = cluster.layer || (cluster.data && cluster.data.layer) || 'ai';
             
             if (clusterLayer === 'user' && !this.showUserLayer) {
                 continue;
             }
             if (clusterLayer === 'ai' && !this.showBaseLayer) {
+                // UI Filter: AI clusters hidden (Project Root, etc)
+                // [v0.3.11] context_vault exception should be explicit
                 if (cluster.id !== 'context_vault') {
                     continue;
                 }
@@ -6892,49 +6901,61 @@ class CanvasEngine {
         const toY = toNode.position.y + 30;
 
         const bMidX = (fromX + toX) / 2;
-        const bMidY = (fromY + toY) / 2 - 30;
-        const badgeSize = Math.max(25, 35 / this.transform.zoom);
+        const bMidY = (fromY + toY) / 2 - (this.transform.zoom > 1.0 ? 35 : 25);
+        const badgeSize = Math.max(16, 24 / this.transform.zoom);
 
-        // [v0.3.09_fix] Corrected logic: 'pending_confirm' status must show the badge.
+        // [v0.3.11] Integrated Info Badge: Type Icon + Status
+        const iconMap = {
+            'dependency': '🔗', 'call': '📡', 'data_flow': '📊', 'reference': '📝',
+            'event': '⚡', 'conditional': '❓', 'api_call': '🌐', 'db_query': '🛢️',
+            'origin': '📍', 'loop_back': '🔁'
+        };
+        const typeIcon = iconMap[edge.type] || '➤';
         const confirmStatus = edge.confirmStatus || (edge.status === 'pending' || edge.status === 'pending_confirm' ? 'pending_confirm' : (edge.status === 'confirmed' ? 'confirmed' : ''));
+        
+        const isPending = confirmStatus === 'pending_confirm' || edge.status === 'pending';
+        const statusChar = isPending ? '❓' : '✅';
+        const combinedText = `${typeIcon} ${statusChar}`;
 
-        // [v0.3.10 Fix] Immediately hide badge when confirmed to avoid visual confusion.
-        if (confirmStatus === 'pending_confirm') {
-            const isPending = true;
-            const badgeChar = '❓';
-            const badgeColor = '#504945';
-
+        // [v0.3.11] High-LOD Detail: Show badge always to prove logical existence
+        if (this.transform.zoom > 0.4) {
             ctx.save();
-            ctx.font = `bold ${badgeSize}px Inter, monospace`;
+            ctx.font = `bold ${badgeSize}px Inter, sans-serif`;
+            const metrics = ctx.measureText(combinedText);
+            const bw = metrics.width + 12 / this.transform.zoom;
+            const bh = badgeSize * 1.5;
+
+            // 1. Badge Background
+            ctx.beginPath();
+            ctx.roundRect(bMidX - bw/2, bMidY - bh/2, bw, bh, 6 / this.transform.zoom);
+            ctx.fillStyle = isPending ? 'rgba(40,40,40,0.9)' : 'rgba(60,60,60,0.6)';
+            ctx.fill();
+            ctx.strokeStyle = isPending ? '#fabd2f' : '#8ec07c';
+            ctx.lineWidth = 1.5 / this.transform.zoom;
+            ctx.stroke();
+
+            // 2. Text Rendering
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-
-            ctx.beginPath();
-            ctx.arc(bMidX, bMidY, badgeSize * 0.75, 0, Math.PI * 2);
-            ctx.fillStyle = isPending ? 'rgba(80,73,69,0.85)' : 'rgba(131,165,152,0.85)';
-            ctx.fill();
-            ctx.strokeStyle = badgeColor;
-            ctx.lineWidth = 2 / this.transform.zoom;
-            ctx.stroke();
-            ctx.fillStyle = badgeColor;
-            ctx.fillText(badgeChar, bMidX, bMidY);
+            ctx.fillStyle = '#ebdbb2';
+            ctx.fillText(combinedText, bMidX, bMidY);
             ctx.restore();
 
-            // Click detection hit tracking
-            if (ctx === this.ctx) {
+            // Hit tracking for interaction
+            if (ctx === this.ctx && isPending) {
                 if (!this._confirmBadgeHits) this._confirmBadgeHits = [];
                 this._confirmBadgeHits.push({
-                    x: bMidX, y: bMidY, r: badgeSize * 0.75,
-                    edge: edge, isPending
+                    x: bMidX, y: bMidY, r: bw / 2, edge: edge, isPending
                 });
             }
         }
 
-        // [v0.2.17-patch6] ❌ Delete Badge (Visible in Edit Logic mode)
+        // [v0.2.17-patch6] ❌ Delete Badge (Only in Edit Logic mode)
         if (this.isEditMode) {
-            const deleteX = bMidX + badgeSize + 10;
+            const deleteX = bMidX + 25 / this.transform.zoom + 10;
             const deleteY = bMidY;
             const delSize = badgeSize * 0.8;
+            // ... (rest of delete badge logic follows)
 
             ctx.save();
             ctx.font = `bold ${delSize}px Inter, monospace`;

@@ -30,7 +30,17 @@ export class StateManager {
   
   private normalizePath(p?: string): string {
     if (!p) return "";
-    return p.replace(/\\/g, '/').trim();
+    let normalized = p.replace(/\\/g, '/').trim();
+    
+    // [v0.3.11] Heuristic Normalization: 절대 경로에서 프로젝트 상대 경로만 추출 시도
+    // 아주 긴 절대 경로(/home/...)와 짧은 상대 경로(src/...)를 일치시키기 위한 전략
+    const parts = normalized.split('/');
+    if (parts.length > 3) {
+        // 경로가 깊을 경우, 마지막 2-3개 세그먼트를 기준으로 매칭 (예: src/test.py)
+        // 이는 완벽하진 않으나 워크스페이스 내 중복 노드를 잡는데 매우 효과적임
+        return parts.slice(-2).join('/');
+    }
+    return normalized;
   }
 
   /**
@@ -525,13 +535,24 @@ export class StateManager {
         finalEdges[id] = e;
     });
 
-    // 6. Cluster Logic & Essential Shield
+    // 6. Cluster Logic & Essential Shield (v0.3.11: Hide empty system clusters)
     const clusterMap = new Map<string, Cluster>();
     coreSnap.clusters.forEach(c => clusterMap.set(c.id, c));
     this.bufferClusters.forEach(c => clusterMap.set(c.id, c));
 
     const finalClusters = Array.from(clusterMap.values())
         .filter(c => c.id !== 'sys_cluster_root') // [Rule 1] Root Abolition 유지
+        .filter(c => {
+            // [v0.3.11] Empty System Cluster Auto-Hide
+            const isSystemCluster = c.id.startsWith('sys_') || c.id === 'cluster_ghosts' || c.id === 'doc_shelf';
+            if (isSystemCluster) {
+                const hasNodes = Object.values(finalNodes).some(n => n.cluster_id === c.id);
+                // doc_shelf는 수동 노드가 없더라도 시스템적으로 존재해야 하므로 일단 유지
+                if (c.id === 'doc_shelf') return true;
+                return hasNodes;
+            }
+            return true;
+        })
         .map((c: any) => {
             // [v0.3.11] Origin-based Layer Authority
             const isDiscoveredByAi = coreSnap.clusters.some(cc => cc.id === c.id);
@@ -594,7 +615,9 @@ export class StateManager {
     [...userNodes, ...aiNodes].forEach(n => {
         const rawPath = n.filePath || n.id;
         const pathRef = this.normalizePath(rawPath);
-        if (pathRef && seenPaths.has(pathRef)) return; // Strict deduplication by normalized path
+        
+        // [v0.3.11] 🛡️ Strict Double-Guard: Ensure no deleted paths pass through to UI
+        if (pathRef && (this.deletedPathsBuffer.has(pathRef) || seenPaths.has(pathRef))) return;
         if (pathRef) seenPaths.add(pathRef);
 
         const id = n.id;

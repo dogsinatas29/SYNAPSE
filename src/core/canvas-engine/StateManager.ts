@@ -449,6 +449,7 @@ export class StateManager {
     // 4. Record Conversion & Layer Counting (Strict Deduplication by Path)
     const finalNodes: Record<string, Node> = {};
     const seenPaths = new Set<string>();
+    
     // 3.5 [v0.3.11] Pre-calculate Path-to-ID mapping (Prioritize Manual IDs for each path)
     const pathToIdMap = new Map<string, string>(); 
     const allCandidates = [...Array.from(orphanMap.values()), ...Array.from(nodesMap.values())];
@@ -505,12 +506,15 @@ export class StateManager {
         const rawPath = (n.filePath || n.id).replace(/\\/g, '/');
         const pathRef = this.normalizePath(rawPath);
         
+        // [v0.3.11] 🛡️ Authoritative ID Unification
+        const resolvedId = (pathRef && pathToIdMap.get(pathRef)) || n.id;
+
         if (pathRef && (this.deletedPathsBuffer.has(pathRef) || seenPaths.has(pathRef))) return;
         if (pathRef) seenPaths.add(pathRef);
 
-        const nodeDegree = degrees[n.id] || 0;
+        const nodeDegree = degrees[resolvedId] || 0;
         const isExternal = n.filePath && n.filePath.startsWith('external://');
-        const isFromBuffer = this.bufferNodes.has(n.id);
+        const isFromBuffer = this.bufferNodes.has(n.id) || this.bufferNodes.has(resolvedId);
         const isManual = n.id.startsWith('node_manual_') || n.layer === 'user' || (n.data && n.data.layer === 'user') || isFromBuffer;
         
         const isAiFile = n.filePath && !isExternal && !isManual;
@@ -544,8 +548,9 @@ export class StateManager {
             finalClusterId = undefined;
         }
 
-        finalNodes[n.id] = {
+        finalNodes[resolvedId] = {
             ...n,
+            id: resolvedId, // [v0.3.11] 🧬 ID Unification Force
             layer: finalLayer,
             cluster_id: finalClusterId,
             position: n.position || { x: 0, y: 0 },

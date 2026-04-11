@@ -29,6 +29,19 @@ export class StateManager {
   private deletedPathsBuffer: Set<string> = new Set(); // [v0.3.11] 삭제된 경로 추적 (Anti-Resurrection)
   private activeScopeId: string | null = null; // [v0.3.11] Scope Isolation
   
+  /**
+   * Helper to extract parent folder name for clustering (v0.3.11 optimized)
+   */
+  private extractParentFolderName(p?: string): string | null {
+    if (!p) return null;
+    const normalized = p.replace(/\\/g, '/').replace(/^\/+/, '');
+    const parts = normalized.split('/').filter(x => x.length > 0);
+    if (parts.length >= 2) {
+      return parts[parts.length - 2];
+    }
+    return null;
+  }
+
   private normalizePath(p?: string): string {
     if (!p) return "";
     let normalized = p.replace(/\\/g, '/').trim();
@@ -416,7 +429,7 @@ export class StateManager {
                     nodesMap.get(resolvedPath)!.data.layer = finalLayer;
                 }
                 return;
-            }
+}
 
             if (!nodesMap.has(resolvedPath)) {
                 nodesMap.set(resolvedPath, {
@@ -450,14 +463,14 @@ export class StateManager {
     const basenameToIdMap = new Map<string, string>();
 
     allCandidates.forEach(n => {
-        const rawPath = n.filePath || n.id;
+        const rawPath = (n.filePath || n.id).replace(/\\/g, '/');
         const pathRef = this.normalizePath(rawPath);
         const baseName = n.filePath ? path.basename(n.filePath) : (n.id.startsWith('node_manual_') ? n.label : n.id);
         const cleanBaseName = baseName?.replace(/^[📄📁]\s*/, '').trim();
         const baseNameNoExt = cleanBaseName?.toLowerCase().split('.')[0];
 
         if (pathRef && !pathToIdMap.has(pathRef)) {
-            // [v0.3.11] Advanced Fallback: Match by basename OR extension-less basename
+            // [v0.3.11] Multi-Stage Unification: Match by path, basename, or extension-less basename
             const existingId = (cleanBaseName && basenameToIdMap.get(cleanBaseName)) || 
                              (baseNameNoExt && basenameToIdMap.get(baseNameNoExt));
 
@@ -477,8 +490,8 @@ export class StateManager {
     allEdges.forEach(e => {
         const fromPath = this.normalizePath(e.from);
         const toPath = this.normalizePath(e.to);
-        const realFrom = pathToIdMap.get(fromPath || e.from) || e.from;
-        const realTo = pathToIdMap.get(toPath || e.to) || e.to;
+        const realFrom = pathToIdMap.get(fromPath || e.from.replace(/\\/g, '/')) || e.from;
+        const realTo = pathToIdMap.get(toPath || e.to.replace(/\\/g, '/')) || e.to;
         
         degrees[realFrom] = (degrees[realFrom] || 0) + 1;
         degrees[realTo] = (degrees[realTo] || 0) + 1;
@@ -489,10 +502,9 @@ export class StateManager {
     let aiCount = 0;
 
     allCandidates.forEach(n => {
-        const rawPath = n.filePath || n.id;
+        const rawPath = (n.filePath || n.id).replace(/\\/g, '/');
         const pathRef = this.normalizePath(rawPath);
         
-        // [v0.3.11] Strict Deletion Guard & Deduplication
         if (pathRef && (this.deletedPathsBuffer.has(pathRef) || seenPaths.has(pathRef))) return;
         if (pathRef) seenPaths.add(pathRef);
 
@@ -504,7 +516,7 @@ export class StateManager {
         const isAiFile = n.filePath && !isExternal && !isManual;
         const finalLayer = (isAiFile || isExternal) ? 'ai' : 'user';
 
-        // [v0.3.11] Dynamic Cluster Assignment
+        // [v0.3.11] Smart Cluster Assignment with Folder Awareness
         let finalClusterId = n.cluster_id;
         if (finalLayer === 'user') {
             const hasManualGroup = n.cluster_id && n.cluster_id.startsWith('cluster_manual_');
@@ -513,6 +525,14 @@ export class StateManager {
             }
         } else if (isExternal) {
             finalClusterId = 'cluster_ghosts';
+        } else {
+            // Folder clustering for root/nested files
+            const folder = this.extractParentFolderName(n.filePath || n.id);
+            if (folder) {
+                finalClusterId = `folder_${folder}`;
+            } else if (nodeDegree > 0) {
+                finalClusterId = 'sys_cluster_reserved';
+            }
         }
 
         finalNodes[n.id] = {
@@ -709,8 +729,11 @@ export class StateManager {
 
         const hasUserLayer = (n.layer === 'user' || (n.data && n.data.layer === 'user'));
         const isManualId = n.id && n.id.startsWith('node_manual_');
-        // AI 상태(confirmed 등)라 하더라도 매뉴얼 ID이거나 레이어 태그가 있으면 User로 복구
-        const isUserNode = isManualId || n.status === 'pending' || hasUserLayer;
+        // [v0.3.11] Enhanced User Recovery: 
+        // 1. Manual IDs are always user.
+        // 2. Anything in 'pending' status.
+        // 3. Anything explicitly tagged as 'user' layer (even if confirmed).
+        const isUserNode = isManualId || n.status === 'pending' || n.status === 'confirmed' || hasUserLayer;
         
         if (isUserNode) {
             // [v0.3.11] Unify filePath/file fields during load

@@ -1,9 +1,9 @@
-# <img src="./resources/synapse-icon.png" width="40" height="40" /> 🧠 SYNAPSE: 시각적 아키텍처 엔진 (v0.3.11)
+# <img src="./resources/synapse-icon.png" width="40" height="40" /> 🧠 SYNAPSE: 시각적 아키텍처 엔진 (v0.3.12)
 
 > **"눈에 보이는 것이 LLM의 논리다"** — *AI를 위한 WYSIWYG 논리*
 
-[![Version](https://img.shields.io/badge/version-v0.3.11-brightgreen.png)
-[![Latest Release](https://img.shields.io/badge/latest-v0.3.11%20Core%20Freeze%20Edition-orange.png)
+[![Version](https://img.shields.io/badge/version-v0.3.12-brightgreen.png)
+[![Latest Release](https://img.shields.io/badge/latest-v0.3.12%20Zen%20Sovereignty%20Edition-orange.png)
 ![Status](https://img.shields.io/badge/status-Production_Ready-brightgreen.png)
 [![Language](https://img.shields.io/badge/Language-TypeScript-blue?style=flat-square)](https://www.typescriptlang.org/)
 [![Platform](https://img.shields.io/badge/Platform-VS_Code-007ACC?style=flat-square)](https://code.visualstudio.com/)
@@ -180,9 +180,9 @@ LLM 추론 논리와 소스 파일 간의 물리적 연결을 시각화합니다
 
 ### 빠른 설치
 ```bash
-code --install-extension synapse-visual-architecture-v0.3.11.vsix
+code --install-extension synapse-visual-architecture-v0.3.12.vsix
 ```
-현재 버전: **v0.3.11** (코어 프리즈 에디션)
+현재 버전: **v0.3.12** (Zen 주권 에디션)
 
 ---
 

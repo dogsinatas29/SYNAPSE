@@ -1,9 +1,9 @@
-# <img src="./resources/synapse-icon.png" width="40" height="40" /> 🧠 SYNAPSE: Visual Architecture Engine (v0.3.11)
+# <img src="./resources/synapse-icon.png" width="40" height="40" /> 🧠 SYNAPSE: Visual Architecture Engine (v0.3.12)
 
 > **"What you see is the logic of LLM"** — *WYSIWYG Logic for AI*
 
-[![Version](https://img.shields.io/badge/version-v0.3.11-brightgreen.png)
-[![Latest Release](https://img.shields.io/badge/latest-v0.3.11%20Core%20Freeze%20Edition-orange.png)
+[![Version](https://img.shields.io/badge/version-v0.3.12-brightgreen.png)
+[![Latest Release](https://img.shields.io/badge/latest-v0.3.12%20Zen%20Sovereignty%20Edition-orange.png)
 ![Status](https://img.shields.io/badge/status-Production_Ready-brightgreen.png)
 [![Language](https://img.shields.io/badge/Language-TypeScript-blue?style=flat-square)](https://www.typescriptlang.org/)
 [![Platform](https://img.shields.io/badge/Platform-VS_Code-007ACC?style=flat-square)](https://code.visualstudio.com/)
@@ -12,18 +12,30 @@
 
 ---
 
-## 🔥 Latest Release: v0.3.11 - Core Freeze & Transactional Pipeline (2026-04-07)
+## 🔥 Latest Release: v0.3.12 - Zen Sovereignty & Signature Authority (2026-04-12)
 
 ### ✅ Architectural Breakthroughs
-**v0.3.11** introduces the **Core Freeze Architecture**, transforming SYNAPSE into a deterministic, immutable state machine:
+**v0.3.12** introduces the **Zen Sovereignty Architecture**, a buffer-less, deterministic classification engine:
+
+| Feature | Description | Benefit |
+|-------|---------|-----|
+| **Zen Sovereignty** | Buffer-less Classification Engine | Eliminates heuristic merge conflicts; single-pass deterministic truth. |
+| **Signature Authority** | `# [SYNAPSE]` Marker Enforcement | Only physical code signatures provide absolute node sovereignty. |
+| **Documentation Anchor** | Immutable `doc_shelf` Persistence | Automatically preserves architectural docs (GEMINI.md, etc.) in system clusters. |
+| **Authoritative Movement** | Buffer-First Position Resolution | Prioritizes user session movement over disk snapshots (Fixes 0,0 reset). |
+| **Strict Base-Logic** | Folder-Exclusive AI Domain | Non-signature files are strictly siloed into folders to prevent layout "hijacking". |
+| **UI Polishing** | Minimalism Override | Decluttered visibility panel and removal of redundant versioning tags. |
+
+---
+
+## 🔥 v0.3.11 - Core Freeze & Transactional Pipeline (Older)
+
+**v0.3.11** introduced the **Core Freeze Architecture**, transforming SYNAPSE into a deterministic, immutable state machine:
 
 | Feature | Description | Benefit |
 |-------|---------|-----|
 | **Core Freeze** | Immutable `GraphSnapshot` + `DeepFreeze` | Prevents unauthorized state mutation; read-only truth layer. |
 | **Commit Pipeline** | 5-Stage Verification (Validate ↔ Execute) | Zero-loss transaction with atomic rollback on FS failure. |
-| **Projection Layer** | Multi-Resolution (File/Function/Full) | Real-time view switching without altering underlying graph. |
-| **Scope Isolation** | Double-Click Overlay (Sub-Canvas) | Full context isolation for complex module analysis. |
-| **Physical Unlink** | Transactional Deletion Sync | Atomic synchronization between node removal and file deletion. |
 | **Self-Healing** | Auto-recovery of System Clusters | Ghosts, Reserved, and Docs clusters are restored on every load. |
 
 ---
@@ -180,9 +192,9 @@ A deep, organized overview of your project structure.
 
 ### Quick Installation
 ```bash
-code --install-extension synapse-visual-architecture-v0.3.11.vsix
+code --install-extension synapse-visual-architecture-v0.3.12.vsix
 ```
-Current Version: **v0.3.11** (Core Freeze Edition)
+Current Version: **v0.3.12** (Zen Sovereignty Edition)
 
 ---
 
@@ -223,7 +235,8 @@ Launch your visual architecture journey in seconds.
 
 | Version | Date | Description (English) | Description (Korean) |
 | :--- | :--- | :--- | :--- |
-| **v0.3.11** | 2026-04-11 | **Core Freeze & Identity Stability**: Immutable snapshots, 5-stage transactions, ID-based layer authority, edge persistence hardening, and Integrated Info-Badges. | **코어 프리즈 및 ID 안정성**: 불변 스냅샷, 5단계 트랜잭션, ID 기반 레이어 권한 강제, 엣지 영속성 강화 및 통합 정보 배지 시스템 도입. |
+| **v0.3.12** | 2026-04-12 | **Zen Sovereignty & Signature Authority**: Buffer-less deterministic engine, signature-exclusive sovereignty, documentation anchors, and authoritative movement logic. | **Zen 주권 및 시그니처 권한**: 버퍼리스 결정론적 분류 엔진, 물리 시그니처 배타적 주권, 문서 보관함 고정 및 권위적 이동 로직 도입. |
+| **v0.3.11** | 2026-04-11 | **Core Freeze & Identity Stability**: Immutable snapshots, 5-stage transactions, ID-based layer authority, and edge persistence. | **코어 프리즈 및 ID 안정성**: 불변 스냅샷, 5단계 트랜잭션, ID 기반 레이어 권한 강제 및 엣지 영속성 강화. |
 | **v0.3.10** | 2026-04-07 | **Hard Lock Protocol**: Atomic file creation, ID persistence fix, and label-priority click resilience. | **하드 락 프로토콜**: 원자적 파일 생성 보증, ID 정합성 수복 및 라벨 우선 클릭 상호작용 개선. |
 | **v0.3.09_fix** | 2026-04-05 | **Hotfix PhaseLock**: Resolved system-wide interaction lock in RENDER/DEBUG phases. | **핫픽스 페이즈락**: RENDER/DEBUG 단계의 전역 인터렉션 락 해결 및 원자적 동기화 개선. |
 | **v0.3.1** | 2026-03-31 | **Bootstrap Locked**: Full Phase-based initialization (Phases 0-7). | **부트스트랩 락**: 전 단계(Phase 0-7) 순차 초기화 강제 및 시스템 잠금 프로토콜 도입. |

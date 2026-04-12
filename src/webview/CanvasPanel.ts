@@ -500,16 +500,20 @@ export class CanvasPanel {
             // 🔥 [IMMEDIATE REACTION] 노드가 엔진에 추가되었으므로 즉시 화면 갱신
             await this.sendProjectState(false, true);
 
-            // 3. Persistence (Background Save)
-            const finalCanvasState = canvasEngine.getFinalSnapshot();
-            const normalizedJson = JSON.stringify(finalCanvasState, null, 2);
-            await vscode.workspace.fs.writeFile(projectStateUri, Buffer.from(normalizedJson, 'utf8'));
+            // 3. Persistence & SSoT (v0.3.11: Atomic Save)
+            const finalState = canvasEngine.getFinalSnapshot();
+            
+            // Ensure the new node is definitely in the persistence block
+            if (!finalState.nodes[nodeId]) {
+                const rawEngineSnap = canvasEngine.getRawSnapshot();
+                finalState.nodes[nodeId] = rawEngineSnap.nodes[nodeId];
+            }
 
-            console.log('[SYNAPSE] Manual node created and saved through pipeline:', node.id);
+            // [v0.3.11] Use the hardened saveState pipeline for consistent normalization
+            await this.handleSaveState(finalState);
+
+            Logger.info(`[CanvasPanel] Manual node persisted and synced: ${nodeId}`);
             vscode.window.showInformationMessage(`Node created: ${node.data?.label || node.id}`);
-
-            // Refresh view
-            await this.sendProjectState(false, true);
 
         } catch (error) {
             console.error('Failed to create manual node:', error);
@@ -533,6 +537,9 @@ export class CanvasPanel {
                 const normalizedJson = this.normalizeProjectState(finalState);
                 await vscode.workspace.fs.writeFile(projectStateUri, Buffer.from(normalizedJson, 'utf8'));
                 console.log(`[SYNAPSE] Node ${node.id} data updated via pipeline.`);
+                
+                // 🔥 [v0.3.11] IMMEDIATE REACTION
+                await this.sendProjectState(false, true);
             }
         } catch (error) {
             console.error('[SYNAPSE] Failed to update node data:', error);
@@ -1375,7 +1382,9 @@ export class CanvasPanel {
             const currentNodesArr = Object.values(currentStateSnap.nodes);
             
             for (const id of targetIds) {
-                const node = currentNodesArr.find((n: any) => n.id === id);
+                // [v0.3.11] 🛡️ Multi-Identity Lookup: Find node by ID or Path to ensure we get the filePath
+                const node = currentNodesArr.find((n: any) => n.id === id || n.filePath === id);
+                
                 if (node) {
                     if (node.label) {
                         const cleanLabel = node.label.replace(/^[📄📁]\s*/, '');
@@ -2180,9 +2189,11 @@ export class CanvasPanel {
             }
 
             // 1. Dispatch UPDATE_NODE for each node with a new position, cluster, and layer info
-            if (newState.nodes && Array.isArray(newState.nodes)) {
-                for (const uiNode of newState.nodes) {
-                    // [v0.3.11] layer 태그를 함께 보존하여 재로드 시 버퍼 복원 가능
+            // [v0.3.11] 🛡️ Hybrid Support: Handle both Array (UI) and Object (Internal Snapshot)
+            const incomingNodes = Array.isArray(newState.nodes) ? newState.nodes : Object.values(newState.nodes || {});
+            
+            if (incomingNodes.length > 0) {
+                for (const uiNode of (incomingNodes as any[])) {
                     const uiLayer = uiNode.layer || (uiNode.data && uiNode.data.layer);
                     canvasEngine.dispatch('UPDATE_NODE', {
                         id: uiNode.id,
@@ -2211,6 +2222,12 @@ export class CanvasPanel {
             }
 
             const rawSnap = canvasEngine.getRawSnapshot();
+            
+            // [v0.3.11] 🛡️ Identity Protection: 
+            // If the UI sends a snapshot missing nodes that were JUST created in the buffer, 
+            // we must preserve them to prevent race-condition wipeouts.
+            const finalNodesList = Object.values(rawSnap.nodes);
+            
             const persistenceState: any = {
                 project_name: workspaceFolder.name,
                 canvas_state: {
@@ -2218,8 +2235,8 @@ export class CanvasPanel {
                     offset: (newState.view ? { x: newState.view.offsetX, y: newState.view.offsetY } : (newState.offset || { x: 0, y: 0 })),
                     visible_layers: newState.visible_layers || (newState.data && newState.data.visible_layers) || ['source', 'documentation', 'user']
                 },
-                // [v0.3.11] Backend Master Copy (SSoT)
-                nodes: Object.values(rawSnap.nodes),
+                // [v0.3.11] Backend Master Copy (SSoT) - Protects against incomplete UI payloads
+                nodes: finalNodesList,
                 edges: Object.values(rawSnap.edges),
                 clusters: rawSnap.clusters || [],
                 deletedNodeIds: rawSnap.deletedNodeIds || []
@@ -2229,6 +2246,9 @@ export class CanvasPanel {
             await vscode.workspace.fs.writeFile(projectStateUri, Buffer.from(normalizedJson, 'utf8'));
 
             console.log(`[SYNAPSE] State synchronized: ${persistenceState.nodes.length} nodes saved to disk.`);
+            
+            // 🔥 [v0.3.11] IMMEDIATE REACTION: Ensure UI reflects backend identity sorting (AI vs User)
+            await this.sendProjectState(false, true);
         } catch (error) {
             console.error('[SYNAPSE] Failed to save state:', error);
         }

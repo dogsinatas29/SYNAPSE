@@ -110,7 +110,9 @@ export class DataPipeline {
             label: fileName, 
             file: item.filePath, 
             cluster_id: clusterId,
-            hiddenOnCanvas: isDoc 
+            hiddenOnCanvas: isDoc,
+            hasAtomicSignature: !!item.summary.hasAtomicSignature,
+            hasImportSignature: !!item.summary.hasImportSignature
         }
       };
       

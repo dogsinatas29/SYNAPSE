@@ -4,7 +4,9 @@ import * as path from 'path';
 export interface CodeSummary {
     classes: string[];
     functions: string[];
-    references: { target: string, type: string, nodeId?: string, isApproved?: boolean }[]; // [v0.2.18.1.2] Keep track of approval state
+    references: { target: string, type: string, nodeId?: string, isApproved?: boolean }[]; 
+    hasAtomicSignature?: boolean; // 🧬 Pre-computed Sovereign Marker
+    hasImportSignature?: boolean; // 🧪 Pre-computed Connection Marker
 }
 
 export class FileScanner {
@@ -12,7 +14,7 @@ export class FileScanner {
 
     /**
      * 파일 내용을 읽고 클래스와 함수 목록을 추출
-     * [v0.3.09_fix] Performance: mtime 기반 캐싱 구현
+     * [v0.3.11] Intelligence: Sovereignty signature detection
      */
     public scanFile(filePath: string): CodeSummary {
         if (!fs.existsSync(filePath)) {
@@ -32,7 +34,9 @@ export class FileScanner {
             const summary: CodeSummary = {
                 classes: [],
                 functions: [],
-                references: []
+                references: [],
+                hasAtomicSignature: false,
+                hasImportSignature: false
             };
 
             // [v0.2.18.1 Opt] Skip files larger than 1MB to prevent hangs
@@ -42,6 +46,14 @@ export class FileScanner {
             }
 
             const content = fs.readFileSync(filePath, 'utf-8');
+
+            // 🧬 Rugged Signature Detection (Regex Based)
+            summary.hasAtomicSignature = /\[SYNAPSE\]\s+Atomic\s+Logic\s+Entry/i.test(content);
+            summary.hasImportSignature = /auto-imported\s+from/i.test(content);
+
+            if (summary.hasAtomicSignature) {
+                console.log(`[SYNAPSE] SIGNATURE FOUND (Atomic) in ${filePath}`);
+            }
 
             // Basic binary check (look for null chars)
             if (content.includes('\0')) {

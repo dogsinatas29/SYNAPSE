@@ -34,6 +34,7 @@ export interface Node {
   status?: string;
   cluster_id?: string;
   layer?: string;  // [v0.3.11] Explicit layer tag ('ai' | 'user')
+  pinned?: boolean; // [v0.3.11] Layout Sovereignty
   data?: any;
   intelligence?: any;
   visual?: any;

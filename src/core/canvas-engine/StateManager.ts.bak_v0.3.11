@@ -338,42 +338,54 @@ export class StateManager {
 
   private generateMergedState(options: { raw: boolean }): any {
     const coreSnap = graphModel.createSnapshot();
-    const deDupMap = new Map<string, Node>();
+    const nodesMap = new Map<string, Node>();
+    const orphanMap = new Map<string, Node>();
     const getEffectivePath = (n: Node): string => {
         return n.filePath || (n.data && (n.data.file || n.data.filePath)) || "";
     };
 
-    // 1. Collect all candidates
-    const allCandidates = [...coreSnap.nodes, ...Array.from(this.bufferNodes.values())];
-    
-    // 2. Build path-to-ID mapping for de-duplication and edge routing
-    const pathToIdMap = new Map<string, string>();
-    allCandidates.forEach(n => {
-        const path = this.normalizePath(getEffectivePath(n));
-        const isDraft = n.id.startsWith('node_manual_');
-        if (path) {
-            // Priority: Manual Drafts > Core Nodes (Physical truth)
-            if (isDraft || !pathToIdMap.has(path)) {
-                pathToIdMap.set(path, n.id);
+    this.bufferNodes.forEach(bn => {
+        const path = getEffectivePath(bn);
+        const resolvedPath = this.normalizePath(path);
+        if (resolvedPath) nodesMap.set(resolvedPath, bn);
+        else orphanMap.set(bn.id, bn);
+    });
+
+    coreSnap.nodes.forEach(cn => {
+        const path = getEffectivePath(cn);
+        const resolvedPath = this.normalizePath(path);
+        if (this.deletedPaths.has(resolvedPath)) return;
+
+        if (resolvedPath) {
+            const existingNode = nodesMap.get(resolvedPath);
+            const isUserIntent = (existingNode && (existingNode.id.startsWith('node_manual_') || existingNode.layer === 'user' || this.dirtyNodeIds.has(existingNode.id)));
+            const finalLayer = isUserIntent ? 'user' : 'ai';
+            const finalId = isUserIntent ? (existingNode?.id || cn.id) : cn.id;
+            
+            if (existingNode) {
+                nodesMap.set(resolvedPath, {
+                    ...existingNode, id: finalId, layer: finalLayer,
+                    cluster_id: existingNode.cluster_id || cn.cluster_id,
+                    degree: cn.degree || existingNode.degree
+                });
+            } else {
+                nodesMap.set(resolvedPath, { ...cn, layer: finalLayer, data: { ...cn.data, layer: finalLayer } });
             }
+        } else if (!orphanMap.has(cn.id)) {
+            orphanMap.set(cn.id, { ...cn, layer: 'ai' });
         }
     });
 
-    // 3. De-duplicate candidates (Authoritative: Buffer > Core)
-    // We process Buffer first so they occupy the Map, preventing stale Core data from overwriting them.
-    const sortedCandidates = [...Array.from(this.bufferNodes.values()), ...coreSnap.nodes];
-    sortedCandidates.forEach(n => {
-        const path = this.normalizePath(getEffectivePath(n));
-        const key = path || n.id;
-        if (!deDupMap.has(key)) {
-            deDupMap.set(key, n);
-        } else if (n.id.startsWith('node_manual_')) {
-            // Special Case: If a manual draft exists, it ALWAYS wins regardless of path collisions
-            deDupMap.set(key, n);
-        }
+    const finalNodes: Record<string, Node> = {};
+    const seenPaths = new Set<string>();
+    const pathToIdMap = new Map<string, string>(); 
+    const allCandidates = [...Array.from(orphanMap.values()), ...Array.from(nodesMap.values())];
+
+    allCandidates.forEach(n => {
+        const pathRef = this.normalizePath(getEffectivePath(n));
+        if (pathRef && !pathToIdMap.has(pathRef)) pathToIdMap.set(pathRef, n.id);
     });
 
-    // 4. Calculate Degrees
     const degrees: Record<string, number> = {};
     const allEdges = [...coreSnap.edges, ...Array.from(this.bufferEdges.values())];
     allEdges.forEach(e => {
@@ -383,52 +395,62 @@ export class StateManager {
         degrees[realTo] = (degrees[realTo] || 0) + 1;
     });
 
-    const finalNodes: Record<string, Node> = {};
     let userCount = 0; let aiCount = 0;
-
-    // 5. Zen Classification Loop
-    deDupMap.forEach((n, key) => {
+    allCandidates.forEach(n => {
         const pathRef = this.normalizePath(getEffectivePath(n));
         const resolvedId = (pathRef && pathToIdMap.get(pathRef)) || n.id;
+        const isUserDirty = this.dirtyNodeIds.has(n.id);
         
         if (this.deletedNodeIds.has(n.id) || (pathRef && this.deletedPaths.has(pathRef))) return;
         
-        // 🧬 Zen Sovereignty Engine (v0.3.12)
+        // Deduplication check: skip if this path has already been processed for non-user nodes
+        if (pathRef && pathRef.length > 0 && !isUserDirty && n.layer !== 'user') {
+            if (seenPaths.has(pathRef)) return;
+            seenPaths.add(pathRef);
+        }
+
         const isExternal = n.filePath && n.filePath.startsWith('external://');
-        const isDraft = n.id.startsWith('node_manual_');
-        const isDoc = n.type === 'documentation' || n.filePath?.endsWith('.md');
-        const hasAtomic = !!(n.data && n.data.hasAtomicSignature);
-        const hasImport = !!(n.data && n.data.hasImportSignature);
+        const isOnDisk = isExternal || coreSnap.nodes.some(cn => cn.filePath === (n.filePath || n.id) || cn.id === n.id);
         
-        // 🛡️ Strict Anchor: Only manual user-defined clusters act as anchors.
-        // System clusters (buffer, reserved) are destinations, not sources of sovereignty.
-        const isSystemCluster = n.cluster_id?.startsWith('sys_') || n.cluster_id === 'cluster_ghosts' || n.cluster_id === 'doc_shelf' || n.cluster_id === "";
-        const isInUserCluster = n.cluster_id && !n.cluster_id.startsWith('folder_') && !isSystemCluster;
-
+        // 📡 Signature-Exclusive Identification (THE ONLY TRUTH)
+        const hasAtomicSignature = !!(n.data && (n.data.hasAtomicSignature || (n.data.content && n.data.content.includes('[SYNAPSE] Atomic Logic Entry'))));
+        const hasImportSignature = !!(n.data && (n.data.hasImportSignature || (n.data.content && n.data.content.includes('auto-imported from'))));
+        
+        const isManual = n.id.startsWith('node_manual_');
+        const isInUserCluster = n.cluster_id && !n.cluster_id.startsWith('folder_') && n.cluster_id !== 'cluster_ghosts' && n.cluster_id !== "";
+        
+        // 🧬 Senior Sovereignty Hierarchy (Refined Exclusive)
+        // 1. Physical Signature is the ultimate truth.
+        // 2. Immediate Manual Creation (Draft) is protected.
+        // 3. Manual Assignment to a User Cluster (left/right) is an Anchor.
         let finalLayer: Layer = 'ai';
-        let finalStatus = n.status || 'active';
-        let finalClusterId = n.cluster_id || "";
-
-        // 🏛️ Master Pivot
-        if (hasAtomic || isDraft || isInUserCluster || isDoc) {
+        if (hasAtomicSignature || isManual || isInUserCluster) {
             finalLayer = 'user';
+        } else {
+            finalLayer = 'ai'; // Strict separation.
+        }
+
+        let finalStatus = n.status || 'active';
+        let finalClusterId = n.cluster_id;
+
+        // 🏹 Domain Assignment (Sovereignty Anchor Logic)
+        if (finalLayer === 'user') {
             finalStatus = 'active'; 
-            
-            if (isDoc) {
-                finalClusterId = 'doc_shelf';
-            } else if (hasAtomic && hasImport) {
+
+            if (hasAtomicSignature && hasImportSignature) {
+                // Case A: Confirmed Connection
                 finalClusterId = 'sys_cluster_reserved';
-            } else if (hasAtomic) {
+            } else if (hasAtomicSignature) {
+                // Case B: Confirmed Creation
                 finalClusterId = 'sys_cluster_buffer';
             } else {
-                finalClusterId = isInUserCluster ? (n.cluster_id || "") : 'sys_cluster_buffer';
+                // ⚓ Anchor: Keep the user's manual cluster choice (left/right) 
+                // until signatures provide definitive instruction.
+                finalClusterId = n.cluster_id || 'sys_cluster_buffer';
             }
         } else {
-            // AI / Base Logic Domain
-            finalLayer = 'ai';
-            const isOnDisk = isExternal || coreSnap.nodes.some(cn => cn.filePath === (n.filePath || n.id) || cn.id === n.id);
+            // AI Layer Domain Anchoring (Strict Isolation)
             const parentFolder = this.extractParentFolderName(n.filePath);
-
             if (isExternal) {
                 finalClusterId = 'cluster_ghosts';
             } else if (!isOnDisk) {
@@ -442,22 +464,34 @@ export class StateManager {
         }
 
         const degree = degrees[resolvedId] || 0;
+        const isUserFlag = (finalLayer === 'user');
+
+        // 🛡️ Final Senior Guard: Merge metadata
         const visualMeta = n.visual || { opacity: 1, scale: 1, visible: true };
         const dataMeta = { 
             ...n.data, 
-            layer: finalLayer, status: finalStatus, cluster_id: finalClusterId, 
-            degree, hasAtomicSignature: hasAtomic, hasImportSignature: hasImport,
+            layer: finalLayer, 
+            status: finalStatus, 
+            cluster_id: finalClusterId || "", 
+            degree: degree,
+            hasAtomicSignature,
+            hasImportSignature,
             isUserCreated: (finalLayer === 'user'),
-            opacity: visualMeta.opacity || 1, scale: visualMeta.scale || 1
+            opacity: visualMeta.opacity || 1,
+            scale: visualMeta.scale || 1
         };
 
-        const finalId = (finalLayer === 'user' && isDraft) ? n.id : resolvedId;
-        finalNodes[finalId] = {
-            ...n, id: finalId, cluster_id: finalClusterId, status: finalStatus as any,
-            layer: finalLayer, data: dataMeta, visual: visualMeta,
-            position: n.position || { x: 0, y: 0 }
-        };
+        // 🧬 COT Fix 2: Identity Anchor
+        // If a node was user-created, we prefer its original ID (resolvedId) 
+        // to prevent flickering in the frontend when it maps to a file path.
+        const finalId = (isUserFlag) ? n.id : resolvedId;
 
+        finalNodes[finalId] = { 
+            ...n, id: finalId, layer: finalLayer, status: finalStatus, cluster_id: finalClusterId || "",
+            position: n.position || { x: 0, y: 0 }, 
+            visual: visualMeta,
+            data: dataMeta
+        };
         if (finalLayer === 'user') userCount++; else aiCount++;
     });
 
@@ -478,11 +512,10 @@ export class StateManager {
     Object.values(finalNodes).forEach(n => {
         if (n.cluster_id && !clusterMap.has(n.cluster_id)) {
             const isFolder = n.cluster_id.startsWith('folder_');
-            const isGhostCluster = (n.cluster_id === 'cluster_ghosts');
-            if (isFolder || isGhostCluster) {
+            if (isFolder || n.cluster_id === 'cluster_ghosts') {
                 clusterMap.set(n.cluster_id, {
                     id: n.cluster_id,
-                    label: isGhostCluster ? '👻 External Ghosts' : `📂 ${n.cluster_id.replace('folder_', '')}`,
+                    label: n.cluster_id === 'cluster_ghosts' ? '👻 External Ghosts' : `📂 ${n.cluster_id.replace('folder_', '')}`,
                     type: 'folder', position: { x: 0, y: 0 }, data: { layer: 'ai' }
                 });
             }

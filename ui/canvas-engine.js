@@ -1948,6 +1948,44 @@ class CanvasEngine {
             this.dragStart = { x: e.offsetX, y: e.offsetY };
             this.dragStartAbsolute = { x: e.offsetX, y: e.offsetY }; // [v0.2.20 Fix] Added for jitter tracking
 
+            // 1.1 [v0.3.09_fix] Priority 1: Interactive Badges (Confirm/Delete)
+            // Checked before nodes/clusters to prevent interception when badges are close/overlap.
+            if (this._confirmBadgeHits) {
+                const wx = worldPos.x, wy = worldPos.y;
+                for (const hit of this._confirmBadgeHits) {
+                    const dist = Math.sqrt((wx - hit.x) ** 2 + (wy - hit.y) ** 2);
+                    if (dist <= hit.r * 2.5) {
+                        if (!this.isEditMode) {
+                            if (typeof vscode !== 'undefined') vscode.postMessage({ command: 'showWarning', message: 'Edit Logic 모드가 꺼져 있습니다.' });
+                            return;
+                        }
+                        if (hit.isPending && typeof vscode !== 'undefined') {
+                            vscode.postMessage({ 
+                                command: 'requestConfirmEdge', 
+                                edgeId: hit.edge.id,
+                                fromFile: hit.edge.from,
+                                toFile: hit.edge.to
+                            });
+                            return; // Handled hit
+                        }
+                    }
+                }
+            }
+            if (this._deleteBadgeHits) {
+                const wx = worldPos.x, wy = worldPos.y;
+                for (const hit of this._deleteBadgeHits) {
+                    const dist = Math.sqrt((wx - hit.x) ** 2 + (wy - hit.y) ** 2);
+                    if (dist <= hit.r * 1.5) {
+                        if (!this.isEditMode) return;
+                        if (typeof vscode !== 'undefined') vscode.postMessage({ command: 'requestDeleteEdgeUI', edgeId: hit.edge.id });
+                        else this.deleteEdge(hit.edge.id);
+                        return;
+                    }
+                }
+            }
+
+            const topClickedNode = this.getNodeAt(worldPos.x, worldPos.y);
+
             if (e.button === 0) { // 왼쪽 버튼
                 this.wasDragging = false;
 
@@ -1961,43 +1999,6 @@ class CanvasEngine {
                     return;
                 }
 
-                // 1.1 [v0.3.09_fix] Priority 1: Interactive Badges (Confirm/Delete)
-                // Checked before nodes/clusters to prevent interception when badges are close/overlap.
-                if (this._confirmBadgeHits) {
-                    const wx = worldPos.x, wy = worldPos.y;
-                    for (const hit of this._confirmBadgeHits) {
-                        const dist = Math.sqrt((wx - hit.x) ** 2 + (wy - hit.y) ** 2);
-                        if (dist <= hit.r * 2.5) {
-                            if (!this.isEditMode) {
-                                if (typeof vscode !== 'undefined') vscode.postMessage({ command: 'showWarning', message: 'Edit Logic 모드가 꺼져 있습니다.' });
-                                return;
-                            }
-                            if (hit.isPending && typeof vscode !== 'undefined') {
-                                vscode.postMessage({ 
-                                    command: 'requestConfirmEdge', 
-                                    edgeId: hit.edge.id,
-                                    fromFile: hit.edge.from,
-                                    toFile: hit.edge.to
-                                });
-                                return; // Handled hit
-                            }
-                        }
-                    }
-                }
-                if (this._deleteBadgeHits) {
-                    const wx = worldPos.x, wy = worldPos.y;
-                    for (const hit of this._deleteBadgeHits) {
-                        const dist = Math.sqrt((wx - hit.x) ** 2 + (wy - hit.y) ** 2);
-                        if (dist <= hit.r * 1.5) {
-                            if (!this.isEditMode) return;
-                            if (typeof vscode !== 'undefined') vscode.postMessage({ command: 'requestDeleteEdgeUI', edgeId: hit.edge.id });
-                            else this.deleteEdge(hit.edge.id);
-                            return;
-                        }
-                    }
-                }
-
-                const topClickedNode = this.getNodeAt(worldPos.x, worldPos.y);
                 const clickedClusterHeader = this.getClusterHeaderAt(worldPos.x, worldPos.y);
 
                 // 1.2 Cluster Header Buttons (Toggle [+] / [-])
@@ -2011,6 +2012,7 @@ class CanvasEngine {
 
                 // 1.3 [v0.2.33] Priority 2: Nodes
                 if (topClickedNode) {
+                    // [v0.3.11] Layer Filtering: Only select nodes if their layer is visible
                     this.selectedEdge = null;
                     if (e.ctrlKey || e.metaKey || e.shiftKey) {
                         if (this.selectedNodes.has(topClickedNode)) {
@@ -2062,41 +2064,6 @@ class CanvasEngine {
                         console.log('[SYNAPSE] Cluster header dragged:', clickedClusterHeader.label);
                     }
                     return;
-                }
-
-                // 1.4 Interactive Badges (Confirm/Delete) - only if no node/cluster clicked
-                if (this._confirmBadgeHits) {
-                    const wx = worldPos.x, wy = worldPos.y;
-                    for (const hit of this._confirmBadgeHits) {
-                        const dist = Math.sqrt((wx - hit.x) ** 2 + (wy - hit.y) ** 2);
-                        if (dist <= hit.r * 2.5) {
-                            if (!this.isEditMode) {
-                                if (typeof vscode !== 'undefined') vscode.postMessage({ command: 'showWarning', message: 'Edit Logic 모드가 꺼져 있습니다.' });
-                                return;
-                            }
-                            if (hit.isPending && typeof vscode !== 'undefined') {
-                                vscode.postMessage({ 
-                                    command: 'requestConfirmEdge', 
-                                    edgeId: hit.edge.id,
-                                    fromFile: hit.edge.from,
-                                    toFile: hit.edge.to
-                                });
-                            }
-                            return;
-                        }
-                    }
-                }
-                if (this._deleteBadgeHits) {
-                    const wx = worldPos.x, wy = worldPos.y;
-                    for (const hit of this._deleteBadgeHits) {
-                        const dist = Math.sqrt((wx - hit.x) ** 2 + (wy - hit.y) ** 2);
-                        if (dist <= hit.r * 1.5) {
-                            if (!this.isEditMode) return;
-                            if (typeof vscode !== 'undefined') vscode.postMessage({ command: 'requestDeleteEdgeUI', edgeId: hit.edge.id });
-                            else this.deleteEdge(hit.edge.id);
-                            return;
-                        }
-                    }
                 }
 
                 // 1.5 [v0.2.33] Priority 3: Edges

@@ -907,6 +907,7 @@ class CanvasEngine {
 
         // [v0.2.20] Loop guard initialization
         this.isAnimationLoopActive = false;
+        this.isAnimationLoopActive = false;
         this._loopRunning = false; // [v0.2.24] Robust loop protection
         this._frameCounter = 0; // [v0.2.24] Log throttling
         this.isGraphDataDirty = true;
@@ -4294,6 +4295,11 @@ class CanvasEngine {
     }
 
     render() {
+        // [v0.3.13] Automatic Overlap Resolution
+        if (this.isGraphDataDirty && this.nodes.length > 2 && this.nodes.length < 500) {
+            this.resolveOverlaps();
+        }
+
         // [v0.2.28] Bootstrap Bypass (Step 4/5/6)
         // Use REAL data but in a pure, deterministic way.
         if (this.bootstrapMode) {
@@ -6599,6 +6605,12 @@ class CanvasEngine {
         const toX = toNode.position.x + 60;
         const toY = toNode.position.y + 30;
 
+        // [v0.3.13] Pre-calculate midX/midY to prevent TDZ ReferenceError
+        const midX = (fromX + toX) / 2;
+        const midY = (fromY + toY) / 2 - 30;
+        const cpX = midX;
+        const cpY = midY;
+
         // 엣지 색상: 검증 에러가 있으면 검증 색상 우선, 없으면 타입별 색상
         let edgeColor = validation.valid ? style.color : validation.color;
 
@@ -6675,9 +6687,8 @@ class CanvasEngine {
             this.ctx.lineDashOffset = 0;
         }
 
-        // 곡선 제어점 계산
-        const cpX = (fromX + toX) / 2;
-        const cpY = (fromY + toY) / 2 - 30;
+        // 곡선 제어점 계산 - [v0.3.14 Fix] Redundant declaration removed (already defined at line 6611/6612)
+
 
         // [v0.2.20/v0.2.21 Fix] Fracture Rendering (Dramatic Structural Failure)
         // Handles both circular-dependency (broken_fracture) and deterministic violations (isDeterministicFracture)
@@ -6686,8 +6697,9 @@ class CanvasEngine {
             this.ctx.moveTo(fromX, fromY);
 
             // Generate sharp fractals/zig-zags towards target but with logic breakdown
-            const midX = (fromX + toX) / 2;
-            const midY = (fromY + toY) / 2;
+            // [v0.3.13] Fracture uses its own local midX/midY for zig-zag logic
+            const fMidX = (fromX + toX) / 2;
+            const fMidY = (fromY + toY) / 2;
 
             // First break point
             const b1x = fromX + (midX - fromX) * 0.4 + (Math.random() - 0.5) * 40;
@@ -6727,7 +6739,7 @@ class CanvasEngine {
         // [v0.4.1] 2D LOD를 더 유연하게 조정합니다.
         const showIcons = this.transform.zoom > 0.2;
         const iconMap = {
-            'dependency': '🔗',
+            'dependency': '🔗 D',
             'call': '📡',
             'data_flow': '📊',
             'reference': '📝',
@@ -6738,7 +6750,7 @@ class CanvasEngine {
             'db_query': '🛢️',
             'origin': '📍',
             'loop_back': '🔁',
-            'broken_fracture': '💥'
+            'broken_fracture': '💥 B'
         };
         const edgeIcon = showIcons ? (iconMap[edge.type] || '➤') : '';
 
@@ -6773,8 +6785,9 @@ class CanvasEngine {
         this.renderArrow(arrowPoint.x, arrowPoint.y, angle, edgeColor, style.arrowStyle, edgeIcon);
 
         // 2. 중앙 화살표 (엣지 중간) - Bezier 곡선상의 정확한 중간점 계산
-        const midX = 0.25 * fromX + 0.5 * cpX + 0.25 * toX;
-        const midY = 0.25 * fromY + 0.5 * cpY + 0.25 * toY;
+        // 2. 중앙 화살표 (엣지 중간)
+        const bMidX = 0.25 * fromX + 0.5 * cpX + 0.25 * toX;
+        const bMidY = 0.25 * fromY + 0.5 * cpY + 0.25 * toY;
         const midAngle = Math.atan2(toY - cpY, cpX - fromX); // Approximate tangent
         this.renderArrow(midX, midY, midAngle, edgeColor, style.arrowStyle, edgeIcon);
 
@@ -6906,6 +6919,23 @@ class CanvasEngine {
             ctx.textBaseline = 'middle';
             ctx.fillStyle = '#ebdbb2';
             ctx.fillText(combinedText, bMidX, bMidY);
+
+            // [v0.3.13] Legacy Icon Restoration: B and D badges
+            if (edge.type === 'dependency' || edge.isDeterministicFracture) {
+                const legacyChar = edge.isDeterministicFracture ? 'B' : 'D';
+                const lx = bMidX - bw / 2 - 10 / this.transform.zoom;
+                const ly = bMidY;
+                const ls = badgeSize * 0.7;
+                
+                ctx.beginPath();
+                ctx.arc(lx, ly, ls * 0.8, 0, Math.PI * 2);
+                ctx.fillStyle = edge.isDeterministicFracture ? '#fb4934' : '#fabd2f';
+                ctx.fill();
+                ctx.fillStyle = '#1d2021';
+                ctx.font = `bold ${ls}px Monospace`;
+                ctx.fillText(legacyChar, lx, ly);
+            }
+
             ctx.restore();
 
             // Hit tracking for interaction
@@ -7405,6 +7435,50 @@ class CanvasEngine {
                 setTimeout(() => panel.remove(), 500);
             }
         }, 7000);
+    }
+
+    /**
+     * [v0.3.13] Grid-based Overlap Resolution
+     * Efficiently nudges nodes apart when they overlap.
+     */
+    resolveOverlaps() {
+        if (!this.nodes || this.nodes.length < 2) return;
+        
+        const nodeRadius = 80; 
+        const iterations = 3;
+        const damping = 0.5;
+
+        for (let it = 0; it < iterations; it++) {
+            let moved = false;
+            for (let i = 0; i < this.nodes.length; i++) {
+                const a = this.nodes[i];
+                if (a.isDragging) continue;
+                
+                for (let j = i + 1; j < this.nodes.length; j++) {
+                    const b = this.nodes[j];
+                    if (b.isDragging) continue;
+
+                    const dx = a.position.x - b.position.x;
+                    const dy = a.position.y - b.position.y;
+                    const distSq = dx * dx + dy * dy;
+                    const minDistSq = nodeRadius * nodeRadius * 4; 
+
+                    if (distSq < minDistSq && distSq > 1) {
+                        const dist = Math.sqrt(distSq);
+                        const force = (nodeRadius * 2 - dist) / dist * damping;
+                        const nx = dx * force;
+                        const ny = dy * force;
+
+                        a.position.x += nx;
+                        a.position.y += ny;
+                        b.position.x -= nx;
+                        b.position.y -= ny;
+                        moved = true;
+                    }
+                }
+            }
+            if (!moved) break;
+        }
     }
 }
 

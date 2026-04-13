@@ -5,6 +5,7 @@ type Layer = 'ai' | 'user' | 'source' | 'documentation';
 import { commitManager } from '../transaction/CommitManager';
 import { projectionLayer, ProjectionResolution } from '../projection/ProjectionLayer';
 import { Logger } from '../../utils/Logger';
+import { RuleEngine } from '../RuleEngine';
 
 /**
  * 🧬 SYNAPSE State Manager (v0.3.11_Hardened)
@@ -51,7 +52,7 @@ export class StateManager {
   }
   
   private extractParentFolderName(p?: string): string | null {
-    if (!p) return null;
+    if (!p || p.includes('://')) return null; // [v0.3.14 Fix] Skip protocol-prefixed paths (ghost, external)
     const normalized = p.replace(/\\/g, '/').replace(/^\/+/, '');
     const parts = normalized.split('/').filter(x => x.length > 0);
     if (parts.length >= 2) {
@@ -391,12 +392,30 @@ export class StateManager {
         const pathRef = this.normalizePath(getEffectivePath(n));
         const resolvedId = (pathRef && pathToIdMap.get(pathRef)) || n.id;
         
+        // [v0.3.13 Emergency Purge] Clean up nodes from ignored paths (node_modules, dist, etc.)
+        const ruleEngine = RuleEngine.getInstance();
+        const fullRelPath = getEffectivePath(n);
+        if (fullRelPath) {
+            const pathParts = fullRelPath.split(/[\\/]/);
+            const isIgnored = ruleEngine.shouldIgnoreFile(fullRelPath) || 
+                              pathParts.some(part => ruleEngine.shouldIgnoreFolder(part));
+            
+            if (isIgnored) {
+                // If it was already in the buffer, we might want to also remove it from deleted tracking to be clean
+                return; 
+            }
+        }
+
         if (this.deletedNodeIds.has(n.id) || (pathRef && this.deletedPaths.has(pathRef))) return;
         
         // 🧬 Zen Sovereignty Engine (v0.3.12)
-        const isExternal = n.filePath && n.filePath.startsWith('external://');
+        const isExternal = n.filePath && (n.filePath.startsWith('external://') || n.filePath.startsWith('ghost://'));
         const isDraft = n.id.startsWith('node_manual_');
-        const isDoc = n.type === 'documentation' || n.filePath?.endsWith('.md');
+        const isDoc = n.type === 'documentation' || 
+                      n.filePath?.endsWith('.md') ||
+                      n.filePath?.toLowerCase().includes('mile_stone') ||
+                      n.filePath?.toLowerCase().includes('release_note') ||
+                      n.filePath?.toLowerCase().includes('milestone');
         const hasAtomic = !!(n.data && n.data.hasAtomicSignature);
         const hasImport = !!(n.data && n.data.hasImportSignature);
         
@@ -448,6 +467,7 @@ export class StateManager {
             layer: finalLayer, status: finalStatus, cluster_id: finalClusterId, 
             degree, hasAtomicSignature: hasAtomic, hasImportSignature: hasImport,
             isUserCreated: (finalLayer === 'user'),
+            hiddenOnCanvas: isDoc,
             opacity: visualMeta.opacity || 1, scale: visualMeta.scale || 1
         };
 

@@ -1,9 +1,9 @@
-# <img src="./resources/synapse-icon.png" width="40" height="40" /> 🧠 SYNAPSE: Visual Architecture Engine (v0.3.12)
+# <img src="./resources/synapse-icon.png" width="40" height="40" /> 🧠 SYNAPSE: Visual Architecture Engine (v0.3.14)
 
 > **"What you see is the logic of LLM"** — *WYSIWYG Logic for AI*
 
-[![Version](https://img.shields.io/badge/version-v0.3.12-brightgreen.png)
-[![Latest Release](https://img.shields.io/badge/latest-v0.3.12%20Zen%20Sovereignty%20Edition-orange.png)
+[![Version](https://img.shields.io/badge/version-v0.3.14-brightgreen.png)
+[![Latest Release](https://img.shields.io/badge/latest-v0.3.14%20Emergency%20Patch-orange.png)
 ![Status](https://img.shields.io/badge/status-Production_Ready-brightgreen.png)
 [![Language](https://img.shields.io/badge/Language-TypeScript-blue?style=flat-square)](https://www.typescriptlang.org/)
 [![Platform](https://img.shields.io/badge/Platform-VS_Code-007ACC?style=flat-square)](https://code.visualstudio.com/)
@@ -12,19 +12,33 @@
 
 ---
 
-## 🔥 Latest Release: v0.3.12 - Zen Sovereignty & Signature Authority (2026-04-12)
-
-### ✅ Architectural Breakthroughs
-**v0.3.12** introduces the **Zen Sovereignty Architecture**, a buffer-less, deterministic classification engine:
+## 🔥 Latest Release: v0.3.14 - Emergency Rendering & Sync Patch (2026-04-13)
 
 | Feature | Description | Benefit |
 |-------|---------|-----|
-| **Zen Sovereignty** | Buffer-less Classification Engine | Eliminates heuristic merge conflicts; single-pass deterministic truth. |
-| **Signature Authority** | `# [SYNAPSE]` Marker Enforcement | Only physical code signatures provide absolute node sovereignty. |
-| **Documentation Anchor** | Immutable `doc_shelf` Persistence | Automatically preserves architectural docs (GEMINI.md, etc.) in system clusters. |
-| **Authoritative Movement** | Buffer-First Position Resolution | Prioritizes user session movement over disk snapshots (Fixes 0,0 reset). |
-| **Strict Base-Logic** | Folder-Exclusive AI Domain | Non-signature files are strictly siloed into folders to prevent layout "hijacking". |
-| **UI Polishing** | Minimalism Override | Decluttered visibility panel and removal of redundant versioning tags. |
+| **Ghost Purification** | Documentation routing to `doc_shelf` | Cleans up and purifies "External Ghosts" by isolating non-code artifacts. |
+| **Visual Guide** | 9-category Marker Standardization | Immediate visual identification of node types (Active, Doc, External, etc.). |
+| **Intelligent Sync** | Extension-aware Node Resolution | Automatically links ghost references (e.g., `canvas-engine`) to active files (`.js`). |
+| **UI Recovery** | Fixed `cpX` SyntaxError in `renderEdge` | Restores the main rendering loop; eliminates "Blank Canvas" issues. |
+| **Purification** | Removed Deprecated Context Vault | Hardens data hygiene by removing `.synapse_contexts` and associated logging bloat. |
+| **Sync Hardening** | Immutable State Updates for Clusters | Prevents `TypeError` when modifying frozen system objects. |
+
+---
+
+## 🔥 v0.3.13 - Kinetic Stability (2026-04-12)
+
+**v0.3.13** focuses on anti-pollution logic and dynamic layout behavior.
+
+| Feature | Description | Benefit |
+|-------|---------|-----|
+| **Auto-Purge Pipeline** | Hardened `node_modules` Exclusion | Automatically cleans up node explosions (4,500+ nodes) caused by improper scanning. |
+| **Grid Overlap Resolver**| O(N) Anti-Overlap Logic | Dynamically nudges nodes apart in dense clusters (126+ nodes) to maintain visibility. |
+| **Legacy Badges** | Restored 'B' & 'D' Signature Markers | Restores classic architectural clarity with "Broken" and "Dependency" edge markers. |
+| **TDZ Protection** | Reference Order Optimization | Eliminates Temporal Dead Zone errors during high-frequency edge rendering. |
+
+---
+
+## 🔥 v0.3.12 - Zen Sovereignty & Signature Authority (Older)
 
 ---
 
@@ -80,8 +94,7 @@ Project complex execution flows into intuitive flowcharts.
 - **Match Support (Rust)**: Native visualization of Rust's powerful pattern matching.
 - **Authoritative Result**: Integrates manual design decisions with real source code logic.
 
-### 🧠 Intelligent Context Vault
-- **Zero-Click Context Capture (`Ctrl+Alt+M`)**: Start recording (`REC`), and SYNAPSE will automatically locate and extract your latest VS Code AI Chat session (e.g. GitHub Copilot) in the background without any popups. When you're done coding, press it again, and your LLM prompt, response, and live Git diffs are saved into a perfectly documented Markdown artifact.
+### 🧠 Persistence & State
 - **Semantic Zoom (LOD)**: Navigate thousands of nodes with smooth, performance-optimized rendering.
 - **Persistence**: Save your entire visual state to Git-friendly `project_state.json`.
 
@@ -105,12 +118,17 @@ DTR is not just a visual effect; it is the foundation for **Deterministic Thinki
 SYNAPSE uses specific icons and colors to represent different types of components and their current reasoning states.
 
 ### 📄 Entity Types
-| Icon | Type | Description |
-| :---: | :--- | :--- |
-| 📄 | **File** | A physical source file in the workspace. |
-| 📁 | **Folder** | A directory containing multiple nodes or clusters. |
-| 🧩 | **Component** | A logical grouping or abstract module. |
-| ⚡ | **Trigger** | An entry point or event source. |
+| Icon | Type | Meaning | Visual Style |
+| :---: | :--- | :--- | :--- |
+| **📄** | **Active Source** | A physical source file in the workspace. | Solid border, base color |
+| **⚡** | **Atomic Logic** | Core logic or Entry Point (contains `Atomic` signature). | Purple glow (DTR) |
+| **📚** | **Documentation** | Milestone, release note, architecture document. | Hidden by default on canvas |
+| **📁** | **Folder** | A directory structure cluster. | Folder cluster container |
+| **☁️** | **External API** | External library (os, fs) or API call dependency. | Cloud-like UI |
+| **👻** | **Ghost Source** | Referenced internal source missing physical file. | Dashed border |
+| **💀** | **Necrosis** | Architectural failure (circular dependency, etc.). | Dark background + noise |
+| **🪦** | **Tombstone** | Persistent deterministic violation record. | Tombstone marker |
+| **💣** | **Mine** | High-hazard point (breaking changes detected). | Red-out warning |
 
 ### 🎨 Node Status & Glow
 | Status | Visual Hint | Color | Meaning |
@@ -192,9 +210,9 @@ A deep, organized overview of your project structure.
 
 ### Quick Installation
 ```bash
-code --install-extension synapse-visual-architecture-v0.3.12.vsix
+code --install-extension synapse-visual-architecture-v0.3.14.vsix
 ```
-Current Version: **v0.3.12** (Zen Sovereignty Edition)
+Current Version: **v0.3.14** (Emergency Patch)
 
 ---
 
@@ -235,6 +253,8 @@ Launch your visual architecture journey in seconds.
 
 | Version | Date | Description (English) | Description (Korean) |
 | :--- | :--- | :--- | :--- |
+| **v0.3.14** | 2026-04-13 | **Purification & Emergency Restoration**: Removed deprecated Context Vault. Fixed SyntaxError in edge rendering and TypeError in frozen cluster synchronization. | **긴급 복구**: 엣지 렌더링 SyntaxError 및 Frozen 클러스터 동기화 TypeError 해결. |
+| **v0.3.13** | 2026-04-12 | **Kinetic Stability**: Auto-purge pipeline for `node_modules` pollution, grid-based overlap resolution, and legacy badge restoration. | **키네틱 안정성**: `node_modules` 오염 자동 정화, 격자 기반 겹침 해결 및 레거시 배지 복구. |
 | **v0.3.12** | 2026-04-12 | **Zen Sovereignty & Signature Authority**: Buffer-less deterministic engine, signature-exclusive sovereignty, documentation anchors, and authoritative movement logic. | **Zen 주권 및 시그니처 권한**: 버퍼리스 결정론적 분류 엔진, 물리 시그니처 배타적 주권, 문서 보관함 고정 및 권위적 이동 로직 도입. |
 | **v0.3.11** | 2026-04-11 | **Core Freeze & Identity Stability**: Immutable snapshots, 5-stage transactions, ID-based layer authority, and edge persistence. | **코어 프리즈 및 ID 안정성**: 불변 스냅샷, 5단계 트랜잭션, ID 기반 레이어 권한 강제 및 엣지 영속성 강화. |
 | **v0.3.10** | 2026-04-07 | **Hard Lock Protocol**: Atomic file creation, ID persistence fix, and label-priority click resilience. | **하드 락 프로토콜**: 원자적 파일 생성 보증, ID 정합성 수복 및 라벨 우선 클릭 상호작용 개선. |

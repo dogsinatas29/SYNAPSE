@@ -3,6 +3,7 @@ import { FileScanner, CodeSummary } from './FileScanner';
 import { phaseManager, Phase } from './PhaseManager';
 import { graphModel, Node, Edge, Cluster, NodeType, EdgeType, GraphModel } from './GraphModel';
 import { canvasEngine } from './canvas-engine/CanvasEngine';
+import { RuleEngine } from './RuleEngine';
 
 /**
  * 🌊 SYNAPSE Data Pipeline (v0.3.1)
@@ -56,8 +57,8 @@ export class DataPipeline {
     const nodes: Node[] = [];
     const edges: Edge[] = [];
     const clusters: Cluster[] = [
-      { id: 'cluster_ghosts', label: '👻 External Ghosts', type: 'system' },
-      { id: 'sys_cluster_reserved', label: '📦 Reserved Nodes', type: 'system' },
+      { id: 'cluster_ghosts', label: '☁️ External Ghosts', type: 'system' },
+      { id: 'sys_cluster_reserved', label: '🛡️ Reserved (Internal Pending)', type: 'system' },
       { id: 'doc_shelf', label: '📚 Documentation Shelf', type: 'system', collapsed: false }
     ];
 
@@ -74,7 +75,13 @@ export class DataPipeline {
 
       let clusterId = ''; // Default: No cluster (flat)
       const fName = fileName.toLowerCase();
-      const isDoc = item.filePath.endsWith('.md') || fName.includes('report') || fName.startsWith('session_') || item.filePath.includes('.synapse_contexts');
+      const isDoc = item.filePath.endsWith('.md') || 
+                    fName.includes('report') || 
+                    fName.startsWith('session_') || 
+                    item.filePath.includes('.synapse_contexts') ||
+                    item.filePath.toLowerCase().includes('mile_stone') ||
+                    item.filePath.toLowerCase().includes('release_note') ||
+                    item.filePath.toLowerCase().includes('milestone');
 
       if (isDoc) {
         clusterId = 'doc_shelf';
@@ -107,12 +114,13 @@ export class DataPipeline {
         cluster_id: clusterId,
         degree: 0,
         data: { 
-            label: fileName, 
-            file: item.filePath, 
-            cluster_id: clusterId,
-            hiddenOnCanvas: isDoc,
-            hasAtomicSignature: !!item.summary.hasAtomicSignature,
-            hasImportSignature: !!item.summary.hasImportSignature
+          label: fileName, 
+          file: item.filePath, 
+          cluster_id: clusterId,
+          icon: isDoc ? '📚' : (item.summary.hasAtomicSignature ? '⚡' : '📄'),
+          hiddenOnCanvas: isDoc,
+          hasAtomicSignature: !!item.summary.hasAtomicSignature,
+          hasImportSignature: !!item.summary.hasImportSignature
         }
       };
       
@@ -125,34 +133,73 @@ export class DataPipeline {
       const fileName = path.basename(item.filePath, path.extname(item.filePath));
       
       for (const ref of item.summary.references) {
-        const targetNodeId = ref.target;
+        let targetNodeId = ref.target;
         
+        // [v0.3.14] Intelligent Resolution: Try to link to active nodes with extensions if name matches
+        if (!nodeIds.has(targetNodeId)) {
+          const matchedId = Array.from(nodeIds).find(id => {
+            const stem = path.basename(id, path.extname(id));
+            return stem === targetNodeId && (id.endsWith('.ts') || id.endsWith('.js') || id.endsWith('.py') || id.endsWith('.tsx') || id.endsWith('.jsx'));
+          });
+          if (matchedId) {
+            targetNodeId = matchedId; // Re-route to existing active node
+          }
+        }
+
         if (!nodeIds.has(targetNodeId)) {
           const lowerId = targetNodeId.toLowerCase();
           const ghostBlacklist = [
             'os', 'sys', 'math', 'json', 'datetime', 'sqlite3', 'pandas', 'rich', 'numpy',
-            'command', 'snap_', 'test_doc', 'untitled', 'request', 'urllib'
+            'command', 'snap_', 'test_doc', 'untitled', 'request', 'urllib', 'vscode', 'path', 'fs', 'http', 'https'
           ];
           
           const isBlacklisted = ghostBlacklist.some(b => lowerId === b || lowerId.startsWith(b + ':') || lowerId.startsWith(b + '.'));
+          
+          // [v0.3.14 Fix] Check RuleEngine to prevent blacklisted/excluded files from becoming ghosts
+          const isRuleIgnored = RuleEngine.getInstance().shouldIgnoreFile(targetNodeId);
+
           const isInvalidGhost = isBlacklisted || 
+                                 isRuleIgnored ||
                                  targetNodeId.includes(':') ||
                                  targetNodeId.includes('/') ||
                                  targetNodeId.length < 2;
 
           if (isInvalidGhost) continue;
 
+          // [v0.3.14] Semantic Routing Logic
+          const isDocRef = targetNodeId.toLowerCase().endsWith('.md') || 
+                           targetNodeId.toLowerCase().includes('release_note') || 
+                           targetNodeId.toLowerCase().includes('mile_stone') ||
+                           targetNodeId.toLowerCase().includes('milestone') ||
+                           targetNodeId.toLowerCase().startsWith('v0.');
+          
+          // isExternal: No extension usually means a library or module
           const isExternal = ref.type === 'api_call' || !targetNodeId.includes('.');
+          
+          // Routing to specific clusters
+          let ghostClusterId = 'cluster_ghosts';
+          if (isDocRef) {
+            ghostClusterId = 'doc_shelf';
+          } else if (!isExternal) {
+            // Missing internal file with extension -> Isolated for cleanup
+            ghostClusterId = 'sys_cluster_reserved';
+          }
+          
           const ghostId = targetNodeId;
           const ghostNode: Node = {
             id: ghostId,
-            filePath: `external://${ghostId}`,
-            type: isExternal ? NodeType.EXTERNAL : NodeType.SYMBOL,
+            filePath: isExternal ? `external://${ghostId}` : `ghost://${ghostId}`,
+            type: isDocRef ? NodeType.DOCUMENTATION : (isExternal ? NodeType.EXTERNAL : NodeType.SYMBOL),
             label: ghostId,
-            cluster_id: '', // [v0.3.11] No longer wrapped in macro-container
+            cluster_id: ghostClusterId,
             status: 'ghost' as any,
             degree: 0,
-            data: { label: ghostId, cluster_id: '' }
+            data: { 
+              label: ghostId, 
+              cluster_id: ghostClusterId,
+              icon: isDocRef ? '📚' : (isExternal ? '☁️' : '👻'),
+              hiddenOnCanvas: isDocRef // [v0.3.14] Follow doc_shelf visibility rule
+            }
           };
           nodes.push(ghostNode);
           nodeIds.add(ghostId);

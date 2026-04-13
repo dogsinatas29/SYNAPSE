@@ -243,6 +243,8 @@ export class BootstrapEngine {
      */
     public async autoDiscover(projectRoot: string, includePaths?: string[], onProgress?: (msg: string) => void): Promise<ProjectState> {
         console.log(`🔍 [SYNAPSE] Auto-discovering source files in: ${projectRoot}`);
+        // [v0.3.13 Fix] Ensure exclusion rules are loaded before scan to prevent explosions
+        RuleEngine.getInstance().loadRules(projectRoot);
         const discoveredFiles = this.getDiscoverableFiles(projectRoot, includePaths);
         const pipelineResult = dataPipeline.processFiles(discoveredFiles, projectRoot);
         

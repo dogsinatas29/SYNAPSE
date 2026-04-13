@@ -12,7 +12,9 @@ export class RuleEngine {
     private binaryExcludes: Set<string> = new Set();
     private isLoaded: boolean = false;
 
-    private constructor() { }
+    private constructor() {
+        this.setDefaultRules();
+    }
 
     public static getInstance(): RuleEngine {
         if (!RuleEngine.instance) {
@@ -50,13 +52,12 @@ export class RuleEngine {
             'node_modules', '.git', 'build', 'dist', 'data', 'out',
             '.venv', 'venv', 'env', '__pycache__', '.pytest_cache',
             '.idea', '.vscode', '.github', 'target', 'vendor',
-            'bin', 'obj', 'ui', '.synapse_contexts'
+            'bin', 'obj', '.synapse_contexts'
         ]);
         this.blacklistFiles = new Set([
             'package-lock.json',
             'license',
             'v0.2.0_self_sync.js',
-            'canvas-engine.js',
             'test_exclusion.js',
             'webpack.config.js',
             'verify_rules.js',
@@ -109,6 +110,7 @@ export class RuleEngine {
     public shouldIgnoreFolder(folderName: string): boolean {
         return this.ignoreFolders.has(folderName.toLowerCase());
     }
+
 
     public shouldIgnoreFile(filePath: string): boolean {
         const fileName = path.basename(filePath).toLowerCase();

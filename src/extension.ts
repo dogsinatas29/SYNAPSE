@@ -30,7 +30,6 @@ import { GeminiParser } from './core/GeminiParser';
 
 
 import { client, setClient } from './client';
-import { DirectPbExtractor } from './core/DirectPbExtractor';
 import { ChatExtractor, StreamAdapter } from './utils/ChatExtractor';
 import { Logger } from './utils/Logger';
 import { BillingManager } from './core/BillingManager';

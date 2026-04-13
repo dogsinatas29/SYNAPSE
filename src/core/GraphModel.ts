@@ -176,14 +176,17 @@ export class GraphModel {
     ];
 
     requiredClusters.forEach(required => {
-      const existing = this.clusters.find(c => c.id === required.id);
-      if (!existing) {
+      const existingIdx = this.clusters.findIndex(c => c.id === required.id);
+      if (existingIdx === -1) {
         console.warn(`[SYNAPSE] Restoring missing system cluster: ${required.id}`);
         this.clusters.push({ ...required, nodes: [] } as any);
       } else {
-        // [v0.3.11] Force update label and type for naming consistency
-        existing.label = required.label;
-        existing.type = required.type;
+        // [v0.3.14 Fix] Avoid direct mutation of potentially read-only objects
+        this.clusters[existingIdx] = { 
+          ...this.clusters[existingIdx], 
+          label: required.label, 
+          type: required.type 
+        };
       }
     });
   }

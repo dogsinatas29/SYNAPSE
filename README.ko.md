@@ -1,9 +1,9 @@
-# <img src="./resources/synapse-icon.png" width="40" height="40" /> 🧠 SYNAPSE: 시각적 아키텍처 엔진 (v0.3.12)
+# <img src="./resources/synapse-icon.png" width="40" height="40" /> 🧠 SYNAPSE: 시각적 아키텍처 엔진 (v0.3.14)
 
 > **"눈에 보이는 것이 LLM의 논리다"** — *AI를 위한 WYSIWYG 논리*
 
-[![Version](https://img.shields.io/badge/version-v0.3.12-brightgreen.png)
-[![Latest Release](https://img.shields.io/badge/latest-v0.3.12%20Zen%20Sovereignty%20Edition-orange.png)
+[![Version](https://img.shields.io/badge/version-v0.3.14-brightgreen.png)
+[![Latest Release](https://img.shields.io/badge/latest-v0.3.14%20Emergency%20Patch-orange.png)
 ![Status](https://img.shields.io/badge/status-Production_Ready-brightgreen.png)
 [![Language](https://img.shields.io/badge/Language-TypeScript-blue?style=flat-square)](https://www.typescriptlang.org/)
 [![Platform](https://img.shields.io/badge/Platform-VS_Code-007ACC?style=flat-square)](https://code.visualstudio.com/)
@@ -12,19 +12,48 @@
 
 ---
 
-## 🔥 최신 릴리즈: v0.3.11 - 코어 프리즈 및 트랜잭션 파이프라인 (2026-04-07)
+## 🔥 최신 릴리즈: v0.3.14 - 긴급 렌더링 및 동기화 패치 (2026-04-13)
 
-### ✅ 아키텍처 혁신
-**v0.3.11**은 SYNAPSE를 결정론적이고 불변하는 상태 머신으로 변환하는 **코어 프리즈(Core Freeze) 아키텍처**를 도입했습니다:
+### ✅ 안정성 및 복구
+**v0.3.14**는 UI 블랙아웃 및 백그라운드 동기화 실패를 유발하던 치명적인 회귀 버그를 수정했습니다.
 
 | 기능 | 설명 | 혜택 |
 |-------|---------|-----|
-| **Core Freeze** | 불변 `GraphSnapshot` + `DeepFreeze` | 승인되지 않은 상태 수정을 방지하며 읽기 전용 진실 계층을 유지합니다. |
-| **Commit Pipeline** | 5단계 검증 (Validate ↔ Execute) | 파일 시스템 오류 발생 시 원자적 롤백이 가능한 무결점 트랜잭션을 보장합니다. |
-| **Projection Layer** | 다중 해상도 (File/Function/Full) | 하부 그래프를 변경하지 않고 실시간으로 뷰를 전환할 수 있습니다. |
-| **Scope Isolation** | 더블 클릭 오버레이 (Sub-Canvas) | 복잡한 모듈 분석을 위한 완전한 컨텍스트 격리를 지원합니다. |
-| **Physical Unlink** | 트랜잭션 삭제 동기화 | 노드 제거와 물리적 파일 삭제 간의 원자적 동기화를 보장합니다. |
-| **Self-Healing** | 시스템 클러스터 자동 복구 | Ghosts, Reserved, Docs 클러스터가 로드 시마다 자동으로 원상복구됩니다. |
+| **Ghost Purification** | 문서를 `doc_shelf`로 자동 라우팅 | 비코드 자산을 격리하여 "External Ghosts" 클러스터 정화. |
+| **Visual Guide** | 9개 카테고리 마커 규격화 | 노드 타입(Active, Doc, External 등)의 즉각적인 시각적 식별. |
+| **Intelligent Sync** | 확장자 인식 노드 해결 | `canvas-engine` 등 확장자가 생략된 참조를 실제 파일로 자동 연결. |
+| **UI Recovery** | `renderEdge` 내 `cpX` SyntaxError 수정 | 메인 렌더링 루프 복원; "빈 캔버스" 현상 제거. |
+| **Purification** | 레거시 컨텍스트 볼트 제거 | `.synapse_contexts` 및 불필요한 로깅 로직을 삭제하여 데이터 위생 강화. |
+| **Sync Hardening** | 클러스터 불변 상태 업데이트 | 셀프 힐링 중 Frozen된 시스템 객체 수정 시 발생하는 `TypeError` 방지. |
+
+---
+
+## 🔥 v0.3.13 - 키네틱 안정성 (2026-04-12)
+
+**v0.3.13**은 오염 방지 로직과 동적 레이아웃 거동에 집중했습니다.
+
+| 기능 | 설명 | 혜택 |
+|-------|---------|-----|
+| **Auto-Purge Pipeline** | 강화된 `node_modules` 제외 규칙 | 부적절한 스캔으로 인한 노드 폭주(4,500개 이상) 자동 정화. |
+| **Grid Overlap Resolver**| O(N) 반발 로직 | 밀집 구역(126개 이상)에서 노드를 동적으로 밀어내 가시성 유지. |
+| **Legacy Badges** | 'B' & 'D' 시그니처 마커 복구 | "Broken" 및 "Dependency" 엣지 마커로 고전적 아키텍처 명확성 복원. |
+| **TDZ Protection** | 참조 순서 최적화 | 고주파 엣지 렌더링 중 Temporal Dead Zone 에러 제거. |
+
+---
+
+## 🔥 v0.3.12 - Zen 주권 및 시그니처 권한 (2026-04-12)
+
+### ✅ 아키텍처 혁신
+**v0.3.12**는 버퍼리스 결정론적 분류 엔진인 **Zen 주권 아키텍처**를 도입했습니다:
+
+| 기능 | 설명 | 혜택 |
+|-------|---------|-----|
+| **Zen 주권** | 버퍼리스 분류 엔진 | 휴리스틱 머지 충돌 제거; 단일 패스 결정론적 진실성 보장. |
+| **시그니처 권한** | `# [SYNAPSE]` 마커 강제 | 물리적 코드 시그니처만이 절대적인 노드 주권을 부여합니다. |
+| **문서 보관함** | 불변 `doc_shelf` 영속성 | 시스템 클러스터에 아키텍처 문서(GEMINI.md 등)를 자동으로 보존합니다. |
+| **권위적 이동** | 버퍼 우선 위치 확인 | 디스크 스냅샷보다 사용자 세션의 이동을 우선시합니다 (0,0 리셋 해결). |
+| **엄격한 기반 로직**| 폴더 전용 AI 도메인 | 시그니처가 없는 파일은 폴더로 엄격히 격리하여 레이아웃 "하이재킹" 방지. |
+| **UI 폴리싱** | 미니멀리즘 강화 | 가시성 패널 정리 및 불필요한 버전 태그 제거. |
 
 ---
 
@@ -68,8 +97,7 @@ SYNAPSE는 언어에 상관없이 프로젝트의 깊은 의미를 이해하는 
 - **Match 지원 (Rust)**: Rust의 강력한 패턴 매칭을 기본적으로 시각화합니다.
 - **결정론적 결과**: 수동 설계 결정과 실제 소스 코드 로직을 통합합니다.
 
-### 🧠 지능형 컨텍스트 볼트 (Context Vault)
-- **제로 클릭 컨텍스트 캡처 (`Ctrl+Alt+M`)**: 녹화(`REC`)를 시작하면 SYNAPSE가 배경에서 팝업 없이 최신 AI 채팅 세션(예: GitHub Copilot)을 자동으로 찾아 추출합니다. 코딩이 끝나면 다시 눌러 LLM 프롬프트, 응답, 실시간 Git diff를 완벽한 Markdown 아티팩트로 저장합니다.
+### 🧠 영속성 및 상태
 - **시맨틱 줌 (LOD)**: 수천 개의 노드를 성능 최적화된 렌더링으로 부드럽게 탐색합니다.
 - **영속성**: 전체 시각적 상태를 Git 친화적인 `project_state.json`으로 저장합니다.
 
@@ -93,12 +121,22 @@ DTR은 단순한 시각 효과가 아니라 **결정론적 사고**의 기초입
 SYNAPSE는 컴포넌트의 유형과 추론 상태를 나타내기 위해 특정 아이콘과 색상을 사용합니다.
 
 ### 📄 엔티티 유형 (Entity Types)
-| 아이콘 | 유형 | 설명 |
-| :---: | :--- | :--- |
-| 📄 | **파일 (File)** | 워크스페이스 내의 물리적 소스 파일. |
-| 📁 | **폴더 (Folder)** | 여러 노드나 클러스터를 포함하는 디렉토리. |
-| 🧩 | **컴포넌트 (Component)** | 논리적 그룹 또는 추상화된 모듈. |
-| ⚡ | **트리거 (Trigger)** | 진입점 또는 이벤트 발생원. |
+| 아이콘 | 타입 | 의미 | 시각적 특징 |
+| :---: | :--- | :--- | :--- |
+| **📄** | **Active Source** | 워크스페이스 내에 존재하는 실제 소스 파일입니다. | 실선 테두리, 기본 색상 |
+| **⚡** | **Atomic Logic** | 핵심 로직이나 진입점임을 의미합니다 (`Atomic` 시그니처). | DTR 발광 효과(보라색) |
+| **📚** | **Documentation** | 마일스톤, 릴리즈 노트, 아키텍처 설계 문서입니다. | 캔버스에서 기본 숨김 처리 |
+| **📁** | **Folder** | 물리적인 디렉터리 구조를 나타내는 클러스터입니다. | 폴더 클러스터 컨테이너 |
+| **☁️** | **External API** | 외부 라이브러리(os, fs) 또는 외부 API 호출 의존성입니다. | 구름 형태 시각화 |
+| **👻** | **Ghost Source** | 참조는 되었으나 물리 파일이 없는 누락된 내부 소스입니다. | 점선 테두리 |
+| **💀** | **Necrosis** | 아키텍처 위반(순환 의존성 등)으로 인한 괴사 상태입니다. | 어두운 배경 + 노이즈 효과 |
+| **🪦** | **Tombstone** | 결정론적 위반 등이 기록된 영구적인 설계 결함입니다. | 묘비 마커 표시 |
+| **💣** | **Mine** | 수정 시 위험도가 매우 높은 잠재적 결함(지뢰) 지점입니다. | 레드아웃 경고 |
+
+#### 💀 & 🪦 & 💣 특수 경고 마커 상세
+- **💀 Necrosis (논리적 괴사)**: 순환 의존성이나 심각한 스키마 위반으로 인해 '작동 불능' 상태인 노드입니다. 시스템의 형상을 파괴할 수 있는 핵심 결함을 의미합니다.
+- **🪦 Tombstone (영구 결함)**: 결정론적 규칙 위반(예: C++에서의 virtual 오용, 무한 재귀 등)이 기록된 '죽은 설계'입니다. 과거의 프로젝트 유산 중 현재 규격에 맞지 않는 노드에 부여됩니다.
+- **💣 Mine (잠재적 지뢰)**: 직접적인 에러는 아니나, 수정 시 시스템 전체에 파급력이 크거나 아키텍처적으로 매우 위험한 "파괴적 변경"이 예상되는 지점에 배정됩니다.
 
 ### 🎨 노드 상태 및 글로우
 | 상태 | 시각적 힌트 | 색상 | 의미 |
@@ -180,9 +218,9 @@ LLM 추론 논리와 소스 파일 간의 물리적 연결을 시각화합니다
 
 ### 빠른 설치
 ```bash
-code --install-extension synapse-visual-architecture-v0.3.12.vsix
+code --install-extension synapse-visual-architecture-v0.3.14.vsix
 ```
-현재 버전: **v0.3.12** (Zen 주권 에디션)
+현재 버전: **v0.3.14** (긴급 패치)
 
 ---
 
@@ -223,6 +261,9 @@ code --install-extension synapse-visual-architecture-v0.3.12.vsix
 
 | 버전 | 날짜 | 설명 |
 | :--- | :--- | :--- |
+| **v0.3.14** | 2026-04-13 | **시스템 정화 및 긴급 복구**: 레거시 컨텍스트 볼트 제거. 엣지 렌더링 SyntaxError 및 Frozen 클러스터 동기화 TypeError 해결. |
+| **v0.3.13** | 2026-04-12 | **키네틱 안정성**: `node_modules` 오염 자동 정화, 격자 기반 겹침 해결 및 레거시 배지 복구. |
+| **v0.3.12** | 2026-04-12 | **Zen 주권 및 시그니처 권한**: 버퍼리스 결정론적 분류 엔진, 물리 시그니처 배타적 주권, 문서 보관함 고정 및 권위적 이동 로직 도입. |
 | **v0.3.11** | 2026-04-11 | **Core Freeze 및 ID 안정성**: 불변 스냅샷, 5단계 트랜잭션, ID 기반 레이어 권한 강제, 엣지 영속성 강화 및 통합 정보 배지 시스템 도입. |
 | **v0.3.10** | 2026-04-07 | **Hard Lock Protocol**: 원자적 파일 생성 보증, ID 정합성 수복 및 라벨 우선 클릭 상호작용 개선. |
 | **v0.3.09_fix** | 2026-04-05 | **Hotfix PhaseLock**: RENDER/DEBUG 단계의 전역 인터렉션 락 해결 및 원자적 동기화 개선. |

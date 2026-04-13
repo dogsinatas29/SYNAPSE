@@ -19,42 +19,13 @@ export class PromptLogger {
         return PromptLogger.instance;
     }
 
-    /**
-     * 세션 파일 초기화
-     * 파일 형식: session_YYYY-MM-DD_HH-mm.md
-     */
     public initializeSession(projectRoot: string): string {
-        // [v0.2.29] Session Guard: 이미 활성화된 세션이 있다면 해당 경로 반환
-        if (this.currentSessionPath && fs.existsSync(this.currentSessionPath) && this.currentProjectRoot === projectRoot) {
-            return this.currentSessionPath;
-        }
-
-        const contextDir = path.join(projectRoot, '.synapse_contexts');
-        if (!fs.existsSync(contextDir)) {
-            fs.mkdirSync(contextDir, { recursive: true });
-        }
-
-        const now = new Date();
-        const datePart = now.toISOString().split('T')[0];
-        const hours = String(now.getHours()).padStart(2, '0');
-        const minutes = String(now.getMinutes()).padStart(2, '0');
-        
-        // 초 단위까지 정밀하게 세션명 생성하여 충돌 방지
-        const seconds = String(now.getSeconds()).padStart(2, '0');
-        const fileName = `session_${datePart}_${hours}-${minutes}-${seconds}.md`;
-        const filePath = path.join(contextDir, fileName);
-
-        const timestampStr = `${datePart} ${hours}:${minutes}:${seconds}`;
-
-        if (!fs.existsSync(filePath)) {
-            const header = `# Session — ${timestampStr}\n\n*Pure Event Channel Audit Log Activated (v0.2.53 Persistent Mode)*\n\n---\n`;
-            fs.writeFileSync(filePath, header, 'utf-8');
-            this.gitStageFile(projectRoot, filePath);
-        }
-        
-        this.currentSessionPath = filePath;
+        // [v0.3.14 Lockdown] Context Vault is DEPRECATED and REMOVED.
+        // No more .synapse_contexts/ creation or persistent audit logging.
+        console.log('[SYNAPSE][PROMPT] Context Vault is removed. Persistent logging suppressed.');
+        this.currentSessionPath = null;
         this.currentProjectRoot = projectRoot;
-        return filePath;
+        return ''; 
     }
 
     public appendUser(filePath: string, content: string) {
@@ -134,6 +105,8 @@ export class PromptLogger {
     }
 
     private write(filePath: string, content: string) {
+        if (!filePath) return; // [v0.3.14] Guard for removed vault
+        
         try {
             // [v0.2.45.2] Isolation Filter: Block strings containing internal module names
             const internalKeywords = ['LogicAnalyzer', 'PromptLogger', 'ChatExtractor', 'StreamAdapter', 'VscdbAdapter'];
@@ -141,6 +114,11 @@ export class PromptLogger {
             
             if (blockLog) {
                 console.log(`[SYNAPSE][PROMPT] Blocked boundary violation noise from log.`);
+                return;
+            }
+
+            // [v0.3.14 Lockdown] Extra check to ensure we don't accidentally write to .synapse_contexts
+            if (filePath.includes('.synapse_contexts')) {
                 return;
             }
 
@@ -160,6 +138,7 @@ export class PromptLogger {
     }
 
     private gitStageFile(rootPath: string, filePath: string) {
+        if (!filePath) return; // [v0.3.14] No file to stage
         try {
             if (!fs.existsSync(path.join(rootPath, '.git'))) return;
             cp.exec(`git add "${filePath}"`, { cwd: rootPath });

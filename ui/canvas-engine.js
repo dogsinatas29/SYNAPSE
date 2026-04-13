@@ -1,6 +1,10 @@
 /**
  * SYNAPSE Canvas Engine
  * HTML5 Canvas 기반 노드 시각화 엔진
+ * 
+ * [License Notice]
+ * This software incorporates fzf-inspired fuzzy matching logic, which is licensed under the MIT License.
+ * fzf (C) 2013-2023 Junegunn Choi
  */
 
 /**
@@ -985,6 +989,7 @@ class CanvasEngine {
         this.wasDragging = false; // 드래그/선택 후 클릭 무시용 플래그
         this.needsUpdate = true;   // [v0.2.24] Passive rendering flag (High CPU fix)
         this._lastRenderTime = 0;
+        this.GRID_SNAP_SIZE = 40;  // [v0.3.15] Visual grid sovereignty
 
         // 전역 엔진 등록
         window.engine = this;
@@ -1140,6 +1145,14 @@ class CanvasEngine {
         if (docsSearchInput) {
             docsSearchInput.addEventListener('input', (e) => {
                 this.renderDocShelfList(e.target.value);
+            });
+            docsSearchInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    const firstItem = document.querySelector('#docs-shelf-list .doc-item');
+                    if (firstItem) firstItem.click();
+                    // Optional: Close panel after selecting? 
+                    // document.getElementById('docs-shelf-panel')?.classList.remove('visible');
+                }
             });
         }
 
@@ -2245,10 +2258,16 @@ class CanvasEngine {
                 // Saving state triggers a full JSON reload which overwrote Node objects with new ones.
                 // This caused 'selectedNodes' to contain dead references, breaking subsequent drag logic.
             } else if (this.isDragging) {
-                // [v0.2.20 Fix] Only trigger saveState if actual movement occurred (not just a click)
                 if (this.wasDragging) {
-                    // 클러스터 드래그 종료 시 침범한 노드 밀어내기
+                    // [v0.3.15] Apply Snap-to-Grid during interaction (Grid Sovereignty)
                     const draggedNodes = Array.from(this.selectedNodes);
+                    draggedNodes.forEach(node => {
+                        if (node.position) {
+                            node.position.x = Math.round(node.position.x / this.GRID_SNAP_SIZE) * this.GRID_SNAP_SIZE;
+                            node.position.y = Math.round(node.position.y / this.GRID_SNAP_SIZE) * this.GRID_SNAP_SIZE;
+                        }
+                    });
+
                     const clusterIds = new Set(draggedNodes.map(n => n.cluster_id).filter(id => id));
                     let movedByIntruder = false;
                     for (const cid of clusterIds) {
@@ -3669,9 +3688,8 @@ class CanvasEngine {
             // [Fix] Capture manual nodes before overriding this.nodes
             const oldManualNodes = (this.nodes || []).filter(n => n.id.startsWith('node_manual_'));
 
-            const rawNodes = baseState.nodes || [];
-            this.docShelfNodes = rawNodes.filter(n => (n.type === 'documentation' || n.type === 'document' || n.cluster_id === 'doc_shelf' || n.data?.cluster_id === 'doc_shelf'));
-            this.nodes = rawNodes.filter(n => !this.docShelfNodes.includes(n));
+            // [v0.3.16] docShelfNodes are already separated and set in step 1 (line 3652)
+            this.nodes = baseState.nodes || [];
 
             const docIds = new Set(this.docShelfNodes.map(n => n.id));
             const rawEdges = projectState.edges || [];
@@ -3901,6 +3919,30 @@ class CanvasEngine {
 
     // [v0.3.2] Fuzzy Match Helper (fzf-style)
     // Characters must appear in order, but not necessarily consecutively.
+    // [v0.3.15] Inspired by or using fzf logic (MIT)
+    // IMPORTANT: Do NOT remove this licensing notice.
+    /*
+     * fzf (C) 2013-2023 Junegunn Choi
+     * MIT License
+     *
+     * Permission is hereby granted, free of charge, to any person obtaining a copy
+     * of this software and associated documentation files (the "Software"), to deal
+     * in the Software without restriction, including without limitation the rights
+     * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+     * copies of the Software, and to permit persons to whom the Software is
+     * furnished to do so, subject to the following conditions:
+     *
+     * The above copyright notice and this permission notice shall be included in
+     * all copies or substantial portions of the Software.
+     *
+     * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+     * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+     * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+     * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+     * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+     * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+     * THE SOFTWARE.
+     */
     fuzzyMatch(text, query) {
         if (!query) return true;
         text = text.toLowerCase();
@@ -3925,7 +3967,7 @@ class CanvasEngine {
 
         const filtered = this.docShelfNodes.filter(n => {
             if (!search) return true;
-            const text = (n.data?.label || '') + ' ' + (n.data?.description || '') + ' ' + n.id;
+            const text = (n.data?.label || n.id || '') + ' ' + (n.data?.description || '') + ' ' + (n.data?.file || '');
             return this.fuzzyMatch(text, search);
         });
 
@@ -3944,12 +3986,28 @@ class CanvasEngine {
 
             const preview = document.createElement('div');
             preview.className = 'doc-item-preview';
-            preview.textContent = node.data?.description || 'Structural documentation file.';
+            preview.textContent = node.data?.file || 'Structural documentation file.';
 
             item.appendChild(title);
             item.appendChild(preview);
 
             item.addEventListener('click', () => {
+                // [v0.3.15] Center-on and Highlight
+                this.focusNodeInGraph(node.id);
+                
+                // Highlight pulse effect (using temporary state)
+                node.isHighlighted = true;
+                setTimeout(() => {
+                    node.isHighlighted = false;
+                    this.render();
+                }, 2000);
+
+                // Optional: Close search panel if desired, or keep open for multiple results
+                // document.getElementById('docs-shelf-panel').classList.remove('visible');
+            });
+
+            // Double click to open file
+            item.addEventListener('dblclick', () => {
                 if (typeof vscode !== 'undefined' && node.data?.file) {
                     vscode.postMessage({ command: 'openFile', filePath: node.data.file });
                 }
@@ -3962,9 +4020,9 @@ class CanvasEngine {
     resolveOverlaps() {
         if (!this.nodes || this.nodes.length < 2) return;
 
-        const MIN_DISTANCE_X = 150;
-        const MIN_DISTANCE_Y = 100;
-        const ITERATIONS = 2; // Reduced for performance, deterministic with one pass mostly
+        const MIN_DISTANCE_X = 160; // 40px grid multiple
+        const MIN_DISTANCE_Y = 80;  // 40px grid multiple (Tighter vertical spacing)
+        const ITERATIONS = 4; // Allow layout to spread gracefully before snapping
 
         // [v0.2.26] 🛡️ Deterministic Layout: Read from Snapshot, Write to Current
         // This prevents "Chain Reaction" where order of nodes determines who moves first
@@ -4026,6 +4084,15 @@ class CanvasEngine {
             }
             if (!movedTotal) break;
         }
+
+        // [v0.3.15] Re-snap to grid after overlap resolution to maintain Grid Sovereignty
+        this.nodes.forEach(node => {
+            if (node.position) {
+                node.position.x = Math.round(node.position.x / this.GRID_SNAP_SIZE) * this.GRID_SNAP_SIZE;
+                node.position.y = Math.round(node.position.y / this.GRID_SNAP_SIZE) * this.GRID_SNAP_SIZE;
+            }
+        });
+
         this.log(`[STATE-DETERMINISM] Hash After Layout: ${this.getFingerprint(this.nodes).substring(0, 60)}...`);
     }
 
@@ -4138,8 +4205,8 @@ class CanvasEngine {
         if (!nodes || nodes.length < 2) return nodes;
 
         const ITERATIONS = 3; // 3 passes for convergence
-        const GRID_SIZE = 150; // Grid cell size
-        const MIN_DIST = 140;
+        const GRID_SIZE = 160; // Grid cell size
+        const MIN_DIST = 160;
         const MIN_DIST_SQ = MIN_DIST * MIN_DIST;
         const round = v => Math.round(v * 1000) / 1000;
 
@@ -4199,7 +4266,16 @@ class CanvasEngine {
                 };
             });
         }
-        return currentNodes;
+
+        // [v0.3.15] Force Snap-to-Grid at the absolute end for Grid Sovereignty
+        const SNAP = this.GRID_SNAP_SIZE || 40;
+        return currentNodes.map(n => ({
+            ...n,
+            position: {
+                x: Math.round(n.position.x / SNAP) * SNAP,
+                y: Math.round(n.position.y / SNAP) * SNAP
+            }
+        }));
     }
 
     /**
@@ -5381,7 +5457,7 @@ class CanvasEngine {
     }
 
     renderGrid() {
-        const gridSize = 50;
+        const gridSize = this.GRID_SNAP_SIZE || 40;
         const zoom = this.transform.zoom;
         if (zoom < 0.2) return; // 너무 작으면 그리드 생략
 
@@ -6019,6 +6095,17 @@ class CanvasEngine {
 
         if (node.isIsolated || node.isDeadEnd) {
             this.ctx.globalAlpha *= 0.4;
+        }
+
+        // [v0.3.15] Shelf Search Highlight (fzf Center-on)
+        if (node.isHighlighted) {
+            const hPulse = 0.5 + 0.5 * Math.sin(Date.now() / 150);
+            this.ctx.shadowBlur = 40 + 20 * hPulse;
+            this.ctx.shadowColor = '#fabd2f';
+            borderColor = '#fabd2f';
+            lineWidth += 4;
+            opacity = 1.0;
+            this.ctx.globalAlpha = 1.0;
         }
 
         // 2. 배경 및 글로우 렌더링
@@ -7863,10 +7950,48 @@ function initCanvas() {
                 document.querySelector('[data-mode="flow"]')?.classList.add('active');
                 document.getElementById('current-mode').textContent = 'Flow';
                 break;
+            case 'toggleSearch':
+                this.toggleSearchShelf();
+                break;
             case 'focusNode':
                 engine.focusNodeInGraph(message.nodeId);
                 break;
         }
+    };
+
+    // [v0.3.15] Documentation Shelf Shortcut (fzf-style)
+    document.addEventListener('keydown', (e) => {
+        if (e.key === '/' && e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+            e.preventDefault();
+            engine.toggleSearchShelf();
+        }
+        if (e.key === 'Escape') {
+            const panel = document.getElementById('docs-shelf-panel');
+            if (panel && panel.classList.contains('visible')) {
+                panel.classList.remove('visible');
+                engine.render();
+            }
+        }
+    });
+
+    // [v0.3.15] Toggle Search Shelf Method
+    engine.toggleSearchShelf = () => {
+        const panel = document.getElementById('docs-shelf-panel');
+        if (!panel) return;
+        
+        const isVisible = panel.classList.contains('visible');
+        if (isVisible) {
+            panel.classList.remove('visible');
+        } else {
+            panel.classList.add('visible');
+            engine.renderDocShelfList(''); // Initial full list
+            const searchInput = document.getElementById('docs-search-input');
+            if (searchInput) {
+                searchInput.value = '';
+                setTimeout(() => searchInput.focus(), 100);
+            }
+        }
+        engine.render();
     };
 
     // [v0.2.25] 버퍼링된 메시지 즉시 처리 (Flush message queue)

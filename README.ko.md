@@ -1,14 +1,29 @@
-# <img src="./resources/synapse-icon.png" width="40" height="40" /> 🧠 SYNAPSE: 시각적 아키텍처 엔진 (v0.3.14)
+# <img src="./resources/synapse-icon.png" width="40" height="40" /> 🧠 SYNAPSE: 시각적 아키텍처 엔진 (v0.3.15)
 
 > **"눈에 보이는 것이 LLM의 논리다"** — *AI를 위한 WYSIWYG 논리*
 
-[![Version](https://img.shields.io/badge/version-v0.3.14-brightgreen.png)
-[![Latest Release](https://img.shields.io/badge/latest-v0.3.14%20Emergency%20Patch-orange.png)
+[![Version](https://img.shields.io/badge/version-v0.3.15-brightgreen.png)
+[![Latest Release](https://img.shields.io/badge/latest-v0.3.15%20Shelf%20fzf%20%26%20Grid-orange.png)
 ![Status](https://img.shields.io/badge/status-Production_Ready-brightgreen.png)
 [![Language](https://img.shields.io/badge/Language-TypeScript-blue?style=flat-square)](https://www.typescriptlang.org/)
 [![Platform](https://img.shields.io/badge/Platform-VS_Code-007ACC?style=flat-square)](https://code.visualstudio.com/)
 
 [🇺🇸 English Version](README.md) | [🇰🇷 Korean Version](README.ko.md)
+
+---
+
+## 🔥 최신 릴리즈: v0.3.15 - 쉘프 fzf 및 그리드 주권 (2026-04-13)
+
+### ✅ 탐색 및 질서
+**v0.3.15**는 방대한 문서 자산에 대한 고속 탐색 시스템과 캔버스 좌표의 규격화를 도입했습니다.
+
+| 기능 | 설명 | 혜택 |
+|-------|---------|-----|
+| **Shelf fzf** | 문서 전용 퍼지 검색 | `/` 단축키를 통해 어떤 화면에서든 원하는 문서로 즉시 이동합니다. |
+| **Grid Sovereignty** | 40px 좌표 규격화 | 모든 노드를 40px 격자에 강제 정렬하여 시각적 무질서(Entopy)를 제거합니다. |
+| **Gold Glow Highlight**| 2s 고가시성 하이라이트 | 검색 결과 선택 시 해당 노드에 금색 발광 효과를 주어 위치를 명확히 인지시킵니다. |
+| **Esc / Enter UX** | 키보드 기반 인터랙션 | 키보드만으로 검색창 열기, 선택(`Enter`), 닫기(`Escape`)가 가능합니다. |
+| **Kinetic Repulsion** | 스냅백 교착 해결 & 수직 압축 | 겹침 방지 밀어내기를 그리드 배수(X:160, Y:80)에 맞게 정렬하여 튕김 버그를 해결하고 세로 공간 효율을 33% 높였습니다. |
 
 ---
 
@@ -100,6 +115,14 @@ SYNAPSE는 언어에 상관없이 프로젝트의 깊은 의미를 이해하는 
 ### 🧠 영속성 및 상태
 - **시맨틱 줌 (LOD)**: 수천 개의 노드를 성능 최적화된 렌더링으로 부드럽게 탐색합니다.
 - **영속성**: 전체 시각적 상태를 Git 친화적인 `project_state.json`으로 저장합니다.
+- **그리드 주권**: 모든 노드의 위치가 40px 단위로 자동 보정되어 아키텍처의 정갈함을 유지합니다.
+
+### 🔍 문서 고속 탐색 (fzf 스타일)
+프로젝트 내의 방대한 문서 자산을 빠르게 탐색하고 이동할 수 있습니다.
+- **즉시 실행**: 캔버스 어디서든 `/` 키를 누르면 검색창이 나타납니다.
+- **퍼지 매칭**: 철자가 정확하지 않아도 키워드 조합(예: `gs` -> `GHOST_NODE.md`)으로 검색이 가능합니다.
+- **위치 이동 및 강조**: 결과 선택 시(클릭 또는 `Enter`) 해당 노드로 시점이 이동하며 2초간 금색 글로우 효과가 발생합니다.
+- **파일 열기**: 검색 결과를 더블 클릭하면 실제 `.md` 소스 파일을 VS Code 에디터에서 즉시 엽니다.
 
 ---
 
@@ -254,9 +277,9 @@ LLM 추론 논리와 소스 파일 간의 물리적 연결을 시각화합니다
 
 ### 빠른 설치
 ```bash
-code --install-extension synapse-visual-architecture-v0.3.14.vsix
+code --install-extension synapse-visual-architecture-v0.3.15.vsix
 ```
-현재 버전: **v0.3.14** (긴급 패치)
+현재 버전: **v0.3.15** (쉘프 fzf 및 그리드)
 
 ---
 
@@ -297,6 +320,7 @@ code --install-extension synapse-visual-architecture-v0.3.14.vsix
 
 | 버전 | 날짜 | 설명 |
 | :--- | :--- | :--- |
+| **v0.3.15** | 2026-04-13 | **쉘프 fzf 및 그리드 주권**: documentation 노드 대상 `/` 단축키 검색 기능, 40px 격자 스냅 및 강조 하이라이트 효과 도입. |
 | **v0.3.14** | 2026-04-13 | **시스템 정화 및 긴급 복구**: 레거시 컨텍스트 볼트 제거. 엣지 렌더링 SyntaxError 및 Frozen 클러스터 동기화 TypeError 해결. |
 | **v0.3.13** | 2026-04-12 | **키네틱 안정성**: `node_modules` 오염 자동 정화, 격자 기반 겹침 해결 및 레거시 배지 복구. |
 | **v0.3.12** | 2026-04-12 | **Zen 주권 및 시그니처 권한**: 버퍼리스 결정론적 분류 엔진, 물리 시그니처 배타적 주권, 문서 보관함 고정 및 권위적 이동 로직 도입. |
@@ -310,3 +334,7 @@ code --install-extension synapse-visual-architecture-v0.3.14.vsix
 ## 📜 라이선스 및 저작자
 [GNU General Public License v3.0](LICENSE)에 따라 라이선스가 부여됩니다.  
 🧠 [dogsinatas29](https://github.com/dogsinatas29)에 의해 제작되었습니다.
+
+---
+**This project uses fzf (MIT License)**  
+This software incorporates fzf, which is licensed under the MIT License.

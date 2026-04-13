@@ -1,9 +1,9 @@
-# <img src="./resources/synapse-icon.png" width="40" height="40" /> 🧠 SYNAPSE: Visual Architecture Engine (v0.3.14)
+# <img src="./resources/synapse-icon.png" width="40" height="40" /> 🧠 SYNAPSE: Visual Architecture Engine (v0.3.15)
 
 > **"What you see is the logic of LLM"** — *WYSIWYG Logic for AI*
 
-[![Version](https://img.shields.io/badge/version-v0.3.14-brightgreen.png)
-[![Latest Release](https://img.shields.io/badge/latest-v0.3.14%20Emergency%20Patch-orange.png)
+[![Version](https://img.shields.io/badge/version-v0.3.15-brightgreen.png)
+[![Latest Release](https://img.shields.io/badge/latest-v0.3.15%20Shelf%20fzf%20%26%20Grid-orange.png)
 ![Status](https://img.shields.io/badge/status-Production_Ready-brightgreen.png)
 [![Language](https://img.shields.io/badge/Language-TypeScript-blue?style=flat-square)](https://www.typescriptlang.org/)
 [![Platform](https://img.shields.io/badge/Platform-VS_Code-007ACC?style=flat-square)](https://code.visualstudio.com/)
@@ -12,7 +12,19 @@
 
 ---
 
-## 🔥 Latest Release: v0.3.14 - Emergency Rendering & Sync Patch (2026-04-13)
+## 🔥 Latest Release: v0.3.15 - Shelf fzf & Grid Sovereignty (2026-04-13)
+
+| Feature | Description | Benefit |
+|-------|---------|-----|
+| **Shelf fzf** | Fuzzy Search for Documentation | Rapidly locate and teleport to documentation nodes using the `/` shortcut. |
+| **Grid Sovereignty** | 40px Coordinate Normalization | Eliminates visual entropy by snapping all nodes to a strict 40px grid. |
+| **Gold Glow Highlight**| 2s High-Visibility Pulse | Provides immediate visual feedback when focusing nodes from search. |
+| **Esc / Enter UX** | Keyboard-Driven Navigation | Full keyboard control for the search interface (Escape to close, Enter to select). |
+| **Kinetic Repulsion** | Grid-Aligned Stalemates Fix | Prevents nodes from snapping back into each other by aligning repel distances (X:160, Y:80) with the grid, saving 33% vertical space. |
+
+---
+
+## 🔥 v0.3.14 - Emergency Rendering & Sync Patch (2026-04-13)
 
 | Feature | Description | Benefit |
 |-------|---------|-----|
@@ -97,6 +109,14 @@ Project complex execution flows into intuitive flowcharts.
 ### 🧠 Persistence & State
 - **Semantic Zoom (LOD)**: Navigate thousands of nodes with smooth, performance-optimized rendering.
 - **Persistence**: Save your entire visual state to Git-friendly `project_state.json`.
+- **Grid Sovereignty**: All node positions are normalized to a 40px grid to maintain architectural order and reduce visual clutter.
+
+### 🔍 Documentation Search (fzf-style)
+Rapidly navigate through your project's documentation assets.
+- **Instant Search**: Press `/` anywhere to open the Documentation Shelf search bar.
+- **Fuzzy Matching**: Type partial names or fuzzy characters (e.g., `gs` for `GHOST_NODE.md`).
+- **Teleport & Highlight**: Selecting a result (Click or `Enter`) centers the view on the node with a 2-second Gold Glow highlight.
+- **File Access**: Double-click a search result to open the physical `.md` file in the VS Code editor.
 
 ---
 
@@ -251,9 +271,9 @@ A deep, organized overview of your project structure.
 
 ### Quick Installation
 ```bash
-code --install-extension synapse-visual-architecture-v0.3.14.vsix
+code --install-extension synapse-visual-architecture-v0.3.15.vsix
 ```
-Current Version: **v0.3.14** (Emergency Patch)
+Current Version: **v0.3.15** (Shelf fzf & Grid)
 
 ---
 
@@ -294,6 +314,7 @@ Launch your visual architecture journey in seconds.
 
 | Version | Date | Description (English) | Description (Korean) |
 | :--- | :--- | :--- | :--- |
+| **v0.3.15** | 2026-04-13 | **Shelf fzf & Grid Sovereignty**: Added fuzzy search for documentation nodes with `/` shortcut, 40px grid snapping, and centering highlight effects. | **쉘프 fzf 및 그리드 주권**: documentation 노드 대상 `/` 단축키 검색 기능, 40px 격자 스냅 및 강조 하이라이트 효과 도입. |
 | **v0.3.14** | 2026-04-13 | **Purification & Emergency Restoration**: Removed deprecated Context Vault. Fixed SyntaxError in edge rendering and TypeError in frozen cluster synchronization. | **긴급 복구**: 엣지 렌더링 SyntaxError 및 Frozen 클러스터 동기화 TypeError 해결. |
 | **v0.3.13** | 2026-04-12 | **Kinetic Stability**: Auto-purge pipeline for `node_modules` pollution, grid-based overlap resolution, and legacy badge restoration. | **키네틱 안정성**: `node_modules` 오염 자동 정화, 격자 기반 겹침 해결 및 레거시 배지 복구. |
 | **v0.3.12** | 2026-04-12 | **Zen Sovereignty & Signature Authority**: Buffer-less deterministic engine, signature-exclusive sovereignty, documentation anchors, and authoritative movement logic. | **Zen 주권 및 시그니처 권한**: 버퍼리스 결정론적 분류 엔진, 물리 시그니처 배타적 주권, 문서 보관함 고정 및 권위적 이동 로직 도입. |
@@ -307,3 +328,7 @@ Launch your visual architecture journey in seconds.
 ## 📜 License & Author
 Licensed under the [GNU General Public License v3.0](LICENSE).  
 Created with 🧠 by [dogsinatas29](https://github.com/dogsinatas29)
+
+---
+**This project uses fzf (MIT License)**  
+This software incorporates fzf, which is licensed under the MIT License.

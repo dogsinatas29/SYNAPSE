@@ -117,20 +117,27 @@ DTR is not just a visual effect; it is the foundation for **Deterministic Thinki
 ## 🏗️ Node Conventions
 SYNAPSE uses specific icons and colors to represent different types of components and their current reasoning states.
 
-### 📄 Entity Types
+### 1. 📄 Entity Types (Identity Icons)
+Defines the physical nature or architectural role of the node.
+
 | Icon | Type | Meaning | Visual Style |
 | :---: | :--- | :--- | :--- |
-| **📄** | **Active Source** | A physical source file in the workspace. | Solid border, base color |
+| **📄** | **Active Source** | A physical source file (Logic, Config, etc.). | Solid border, base color |
 | **⚡** | **Atomic Logic** | Core logic or Entry Point (contains `Atomic` signature). | Purple glow (DTR) |
-| **📚** | **Documentation** | Milestone, release note, architecture document. | Hidden by default on canvas |
 | **📁** | **Folder** | A directory structure cluster. | Folder cluster container |
 | **☁️** | **External API** | External library (os, fs) or API call dependency. | Cloud-like UI |
+| **📚** | **Doc Shelf** | Milestone, release note, architecture document. | Hidden by default on canvas |
+| **🧪** | **Test Case** | Unit tests and validation scripts (`.test.ts`). | Orange border |
+| **🧩** | **Component** | Modular UI or logical component unit. | Blue-green border |
+| **⚙️** | **Processor** | Data transformation or computational engine. | Purple-grey border |
+| **🤝** | **Service** | Shared logic or infrastructure service layer. | Blue border |
+| **⛩️** | **Gate** | Security, authentication, or traffic controller. | Thick yellow border |
+| **📋** | **Data Record** | DB schema, JSON model, or pure data definition. | Thick border, dark background |
 | **👻** | **Ghost Source** | Referenced internal source missing physical file. | Dashed border |
-| **💀** | **Necrosis** | Architectural failure (circular dependency, etc.). | Dark background + noise |
-| **🪦** | **Tombstone** | Persistent deterministic violation record. | Tombstone marker |
-| **💣** | **Mine** | High-hazard point (breaking changes detected). | Red-out warning |
 
-### 🎨 Node Status & Glow
+### 2. 🎨 Node Status & Glow
+Defines the current reasoning state and visual prominence of the node.
+
 | Status | Visual Hint | Color | Meaning |
 | :--- | :---: | :---: | :--- |
 | **Active** | ![solid border](./resources/node_styles/hint_solid_border.png) | ![#83a598](./resources/node_styles/node_active.png) | Verified and currently active in the codebase. |
@@ -140,6 +147,40 @@ SYNAPSE uses specific icons and colors to represent different types of component
 | **Warning** | ![red pulse](./resources/node_styles/hint_red_pulse.png) | ![#fb4934](./resources/node_styles/node_warning.png) | Logic error, circular dependency, or dead-end detected. |
 | **Necrosis** | 💀 | ![#1d2021](./resources/node_styles/node_warning.png) | Fatal logic failure; broken build or severe physical defect. |
 | **Tombstone** | 🪦 | ![#1d2021](./resources/node_styles/node_warning.png) | Irrecoverable deterministic failure; recommended for deletion. |
+
+### 3. ➡️ Logic & Flow Markers
+Markers that occur on nodes or edges depending on the Zoom level (LOD).
+
+| Icon | Type | Meaning |
+| :---: | :--- | :--- |
+| **↻** | **Loop** | Iterative logic (`for`, `while`, `map`). |
+| **◈** | **Decision** | Branching logic (`if`, `switch`, `validation`). |
+| **🖨️** | **Output** | Terminal logging, printing, or side-effect output. |
+| **📡** | **Signal** | Network request or remote procedure call (RPC). |
+| **📊** | **Payload** | High-bandwidth data movement or stream. |
+| **🕒** | **Async** | Asynchronous processing or wait states. |
+
+### 4. ⚠️ Hazard & Purification Markers
+Visual indicators of system purity and architectural health.
+
+| Icon | Type | Meaning | Visual Style |
+| :---: | :--- | :--- | :--- |
+| **💀** | **Necrosis** | Architectural failure (circular dependency, etc.). | Dark background + noise |
+| **🪦** | **Tombstone** | Persistent deterministic violation record. | Tombstone marker |
+| **💣** | **Mine** | High-hazard point (breaking changes detected). | Red-out warning |
+| **⚠️** | **Logic Fault**| Specific code-level error or sync failure. | Red pulse / Warning icon |
+| **🔴** | **Dirty Dot** | Local changes that require synchronization/push. | Top-right red dot |
+
+### 5. ✅ Interaction & Approval Badges
+Intelligent badges representing synchronization and user command status.
+
+| Badge | Status | Meaning |
+| :---: | :--- | :--- |
+| **✅** | **Confirmed** | Manually approved by the Commander. |
+| **🤖** | **AI Validated**| Automatically verified against the codebase. |
+| **❓** | **Pending** | Proposed design awaiting verification (Draft). |
+| **❌** | **Purge** | Marked for physical removal or deletion. |
+| **🔒** | **Locked** | Immutable state; protected from modification. |
 
 ---
 

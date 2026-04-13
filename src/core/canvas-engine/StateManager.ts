@@ -415,7 +415,8 @@ export class StateManager {
                       n.filePath?.endsWith('.md') ||
                       n.filePath?.toLowerCase().includes('mile_stone') ||
                       n.filePath?.toLowerCase().includes('release_note') ||
-                      n.filePath?.toLowerCase().includes('milestone');
+                      n.filePath?.toLowerCase().includes('milestone') ||
+                      n.filePath?.toLowerCase().includes('v0.');
         const hasAtomic = !!(n.data && n.data.hasAtomicSignature);
         const hasImport = !!(n.data && n.data.hasImportSignature);
         

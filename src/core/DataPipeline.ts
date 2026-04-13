@@ -171,7 +171,7 @@ export class DataPipeline {
                            targetNodeId.toLowerCase().includes('release_note') || 
                            targetNodeId.toLowerCase().includes('mile_stone') ||
                            targetNodeId.toLowerCase().includes('milestone') ||
-                           targetNodeId.toLowerCase().startsWith('v0.');
+                           targetNodeId.toLowerCase().includes('v0.');
           
           // isExternal: No extension usually means a library or module
           const isExternal = ref.type === 'api_call' || !targetNodeId.includes('.');

@@ -1,9 +1,9 @@
-# <img src="./resources/synapse-icon.png" width="40" height="40" /> 🧠 SYNAPSE: Visual Architecture Engine (v0.3.16)
+# <img src="./resources/synapse-icon.png" width="40" height="40" /> 🧠 SYNAPSE: Visual Architecture Engine (v0.3.17)
 
 > **"What you see is the logic of LLM"** — *WYSIWYG Logic for AI*
 
-[![Version](https://img.shields.io/badge/version-v0.3.16-brightgreen.png)
-[![Latest Release](https://img.shields.io/badge/latest-v0.3.16%20Minimalist%20View-orange.png)
+[![Version](https://img.shields.io/badge/version-v0.3.17-brightgreen.png)
+[![Latest Release](https://img.shields.io/badge/latest-v0.3.17%20Node%20Summary-orange.png)
 ![Status](https://img.shields.io/badge/status-Production_Ready-brightgreen.png)
 [![Language](https://img.shields.io/badge/Language-TypeScript-blue?style=flat-square)](https://www.typescriptlang.org/)
 [![Platform](https://img.shields.io/badge/Platform-VS_Code-007ACC?style=flat-square)](https://code.visualstudio.com/)
@@ -12,7 +12,16 @@
 
 ---
 
-## 🔥 Latest Release: v0.3.16 - Minimalist Logic View (2026-04-14)
+## 🔥 Latest Release: v0.3.17 - Node Summary Feature (2026-04-14)
+
+| Feature | Description | Benefit |
+|-------|---------|-----|
+| **Node Summary** | Interactive Connectivity Metrics | Hovering over a node displays its unique connected nodes, IN degree, and OUT degree in a 4-line summary. |
+| **Performance Map** | O(E) Pre-calculated Stats | Uses a cached `nodeStatsMap` to provide instant O(1) hover feedback even in dense graphs. |
+
+---
+
+## 🔥 v0.3.16 - Minimalist Logic View (2026-04-14)
 
 | Feature | Description | Benefit |
 |-------|---------|-----|
@@ -257,6 +266,10 @@ The following icons are used within the center badge and arrowheads to define th
 Visualizes the physical connections between LLM reasoning logic and source files.
 ![Topology View](./resources/screenshots/v0.3.1/topology_view.png)
 
+### Node Information Output (v0.3.17)
+Hover over any node to see its structural metrics (Connections, IN, OUT) instantly. This allows for rapid identification of responsibility and dependency clusters.
+![Node Summary](./resources/screenshots/v0.3.17/node_summary.png)
+
 ### Minimalist Logic View (v0.3.16)
 Toggle edge and badge visibility to reduce clutter while maintaining logical connectivity for selected nodes.
 ![Minimalist View](./resources/screenshots/v0.3.16/minimalist_view.png)
@@ -278,9 +291,9 @@ A deep, organized overview of your project structure.
 
 ### Quick Installation
 ```bash
-code --install-extension synapse-visual-architecture-v0.3.16.vsix
+code --install-extension synapse-visual-architecture-v0.3.17.vsix
 ```
-Current Version: **v0.3.16** (Minimalist View)
+Current Version: **v0.3.17** (Node Summary)
 
 ---
 
@@ -321,6 +334,7 @@ Launch your visual architecture journey in seconds.
 
 | Version | Date | Description (English) | Description (Korean) |
 | :--- | :--- | :--- | :--- |
+| **v0.3.17** | 2026-04-14 | **Node Summary Feature**: Added interactive node summary tooltips showing unique connections and directional degrees. Optimized with O(E) pre-calculation. | **노드 요약 정보 출력**: 노드 호버 시 고유 연결 및 방향성 의존성을 보여주는 요약 툴팁 추가 및 O(E) 성능 최적화. |
 | **v0.3.16** | 2026-04-14 | **Minimalist Logic View**: Introduced toggle controls for edge and badge visibility. Implemented transparent edge persistence for selected nodes and O(1) rendering skips. | **미니멀리스트 로직 뷰**: 엣지 및 배지 가시성 토글 기능 도입. 선택된 노드의 엣지 반투명 노출 및 O(1) 렌더링 스킵 구현. |
 | **v0.3.15** | 2026-04-13 | **Shelf fzf & Grid Sovereignty**: Added fuzzy search for documentation nodes with `/` shortcut, 40px grid snapping, and centering highlight effects. | **쉘프 fzf 및 그리드 주권**: documentation 노드 대상 `/` 단축키 검색 기능, 40px 격자 스냅 및 강조 하이라이트 효과 도입. |
 | **v0.3.14** | 2026-04-13 | **Purification & Emergency Restoration**: Removed deprecated Context Vault. Fixed SyntaxError in edge rendering and TypeError in frozen cluster synchronization. | **긴급 복구**: 엣지 렌더링 SyntaxError 및 Frozen 클러스터 동기화 TypeError 해결. |

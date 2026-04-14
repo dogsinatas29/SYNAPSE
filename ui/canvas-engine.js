@@ -947,6 +947,7 @@ class CanvasEngine {
         this.systemPressure = 0.0; // 0.0 to 1.0
         this.isRedOut = false;
         this.lastPressureUpdate = Date.now();
+        this.nodeStatsMap = new Map(); // [v0.3.17] Degree & Connection Cache
 
         // [v0.2.19] Layer Visibility State
         this.showBaseLayer = true;
@@ -1055,6 +1056,24 @@ class CanvasEngine {
         this.tooltip.style.boxShadow = '0 4px 12px rgba(0,0,0,0.5)';
         this.tooltip.style.fontFamily = 'Inter, sans-serif';
         document.body.appendChild(this.tooltip);
+
+        // [v0.3.17] Node Summary Tooltip
+        this.nodeSummary = document.createElement('div');
+        this.nodeSummary.id = 'node-summary-tooltip';
+        this.nodeSummary.style.position = 'fixed';
+        this.nodeSummary.style.background = 'rgba(40, 40, 40, 0.95)';
+        this.nodeSummary.style.border = '1px solid #b8bb26';
+        this.nodeSummary.style.borderRadius = '4px';
+        this.nodeSummary.style.padding = '8px 12px';
+        this.nodeSummary.style.color = '#ebdbb2';
+        this.nodeSummary.style.fontSize = '12px';
+        this.nodeSummary.style.pointerEvents = 'none';
+        this.nodeSummary.style.display = 'none';
+        this.nodeSummary.style.zIndex = '10002';
+        this.nodeSummary.style.fontFamily = "'Fira Code', monospace";
+        this.nodeSummary.style.lineHeight = '1.6';
+        this.nodeSummary.style.boxShadow = '0 6px 16px rgba(0,0,0,0.6)';
+        document.body.appendChild(this.nodeSummary);
 
 
         // 이벤트 리스너 등록
@@ -2237,6 +2256,18 @@ class CanvasEngine {
 
                     this.hoveredEdge = edge;
                     this.hoveredNode = node;
+
+                    // [v0.3.17] Node Summary Logic
+                    if (node) {
+                        const stats = this.nodeStatsMap.get(node.id);
+                        if (stats) {
+                            this.showNodeSummary(e.clientX, e.clientY, node, stats);
+                        } else {
+                            this.hideNodeSummary();
+                        }
+                    } else {
+                        this.hideNodeSummary();
+                    }
 
                     if (edge && edge._validationReason) {
                         this.showTooltip(e.clientX, e.clientY, edge._validationReason);
@@ -3587,6 +3618,73 @@ class CanvasEngine {
         this.needsUpdate = true; // [v0.2.24] Ensure first draw after clear
     }
 
+    // [v0.3.17] Node Summary Implementation
+    updateNodeStats() {
+        this.nodeStatsMap.clear();
+        const nodes = this.nodes || [];
+        const edges = this.edges || [];
+
+        // Initialize Map in O(N)
+        for (const node of nodes) {
+            this.nodeStatsMap.set(node.id, {
+                in: 0,
+                out: 0,
+                connected: new Set()
+            });
+        }
+
+        // Single pass over edges O(E)
+        for (const e of edges) {
+            const srcStats = this.nodeStatsMap.get(e.from);
+            const tgtStats = this.nodeStatsMap.get(e.to);
+
+            if (srcStats) {
+                srcStats.out++;
+                srcStats.connected.add(e.to);
+            }
+            if (tgtStats) {
+                tgtStats.in++;
+                tgtStats.connected.add(e.from);
+            }
+        }
+
+        // Finalize stats (convert Set size)
+        for (const [id, stats] of this.nodeStatsMap) {
+            stats.connectedNodes = stats.connected.size;
+            // total is not used in the spec but kept for consistency if needed
+            stats.total = stats.in + stats.out;
+        }
+
+        console.log(`[SYNAPSE] Node stats updated for ${nodes.length} nodes using ${edges.length} edges.`);
+    }
+
+    showNodeSummary(x, y, node, stats) {
+        if (!this.nodeSummary) return;
+        
+        const nodeName = node.data?.label || node.id;
+        this.nodeSummary.innerHTML = `
+            <div style="color: #fabd2f; border-bottom: 1px solid #504945; margin-bottom: 6px; padding-bottom: 2px;">Node: ${nodeName}</div>
+            <div style="color: #b8bb26;">Connections: ${stats.connectedNodes}</div>
+            <div style="color: #83a598;">IN: ${stats.in}</div>
+            <div style="color: #fe8019;">OUT: ${stats.out}</div>
+        `;
+        this.nodeSummary.style.display = 'block';
+
+        const rect = this.nodeSummary.getBoundingClientRect();
+        let left = x + 20;
+        let top = y + 20;
+
+        if (left + rect.width > window.innerWidth) left = x - rect.width - 20;
+        if (top + rect.height > window.innerHeight) top = y - rect.height - 20;
+
+        this.nodeSummary.style.left = `${left}px`;
+        this.nodeSummary.style.top = `${top}px`;
+    }
+
+    hideNodeSummary() {
+        if (this.nodeSummary) this.nodeSummary.style.display = 'none';
+    }
+
     getOrCreateSystemClusters() {
         const createSysCluster = (id, label, x, y, color) => {
             let cluster = this.clusters.find(c => c.id === id);
@@ -3731,6 +3829,9 @@ class CanvasEngine {
             const docIds = new Set(this.docShelfNodes.map(n => n.id));
             const rawEdges = projectState.edges || [];
             this.edges = rawEdges.filter(e => !docIds.has(e.from) && !docIds.has(e.to));
+
+            // [v0.3.17] Update Node Stats Cache
+            this.updateNodeStats();
 
             // [v0.2.18.2] Detect matches between old manual nodes and new solid nodes
             oldManualNodes.forEach(oldNode => {

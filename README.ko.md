@@ -1,14 +1,26 @@
-# <img src="./resources/synapse-icon.png" width="40" height="40" /> 🧠 SYNAPSE: 시각적 아키텍처 엔진 (v0.3.16)
+# <img src="./resources/synapse-icon.png" width="40" height="40" /> 🧠 SYNAPSE: 시각적 아키텍처 엔진 (v0.3.17)
 
 > **"눈에 보이는 것이 LLM의 논리다"** — *AI를 위한 WYSIWYG 논리*
 
-[![Version](https://img.shields.io/badge/version-v0.3.16-brightgreen.png)
-[![Latest Release](https://img.shields.io/badge/latest-v0.3.16%20Minimalist%20View-orange.png)
+[![Version](https://img.shields.io/badge/version-v0.3.17-brightgreen.png)
+[![Latest Release](https://img.shields.io/badge/latest-v0.3.17%20Node%20Summary-orange.png)
 ![Status](https://img.shields.io/badge/status-Production_Ready-brightgreen.png)
 [![Language](https://img.shields.io/badge/Language-TypeScript-blue?style=flat-square)](https://www.typescriptlang.org/)
 [![Platform](https://img.shields.io/badge/Platform-VS_Code-007ACC?style=flat-square)](https://code.visualstudio.com/)
 
 [🇺🇸 English Version](README.md) | [🇰🇷 Korean Version](README.ko.md)
+
+---
+
+## 🔥 최신 릴리즈: v0.3.17 - 노드 요약 정보 출력 (2026-04-14)
+
+### ✅ 아키텍처 의존성 분석
+**v0.3.17**은 개별 노드의 구조적 역할을 즉각적으로 파악하기 위한 요약 정보 출력 기능을 도입했습니다.
+
+| 기능 | 설명 | 혜택 |
+|-------|---------|-----|
+| **Node Summary** | 상호작용형 연결 지표 | 노드 호버 시 고유 연결 노드 수, IN(입력 의존성), OUT(출력 책임) 지표를 4줄의 툴팁으로 즉시 출력합니다. |
+| **Performance Map** | O(E) 사전 계산 통계 | 캐싱된 `nodeStatsMap`을 사용하여 밀집된 그래프에서도 O(1) 성능으로 즉각적인 피드백을 제공합니다. |
 
 ---
 
@@ -263,6 +275,10 @@ SYNAPSE v0.3.11은 논리적 유형과 확정 상태를 하나의 캡슐 안에 
 LLM 추론 논리와 소스 파일 간의 물리적 연결을 시각화합니다.
 ![Topology View](./resources/screenshots/v0.3.1/topology_view.png)
 
+### 노드 요약 정보 출력 (v0.3.17)
+노드에 마우스를 올리면 연결된 노드 수 및 IN/OUT 의존성을 즉시 확인할 수 있습니다. 이를 통해 책임이 비대해진 노드나 의존성이 집중된 지점을 빠르게 식별할 수 있습니다.
+![Node Summary](./resources/screenshots/v0.3.17/node_summary.png)
+
 ### 미니멀리스트 로직 뷰 (v0.3.16)
 엣지와 배지의 가시성을 선택적으로 토글하여 복잡도를 낮추고, 선택된 노드에 대해서만 논리적 연결성을 유지할 수 있습니다.
 ![Minimalist View](./resources/screenshots/v0.3.16/minimalist_view.png)
@@ -284,9 +300,9 @@ LLM 추론 논리와 소스 파일 간의 물리적 연결을 시각화합니다
 
 ### 빠른 설치
 ```bash
-code --install-extension synapse-visual-architecture-v0.3.16.vsix
+code --install-extension synapse-visual-architecture-v0.3.17.vsix
 ```
-현재 버전: **v0.3.16** (미니멀리스트 뷰)
+현재 버전: **v0.3.17** (노드 요약 정보)
 
 ---
 
@@ -327,6 +343,7 @@ code --install-extension synapse-visual-architecture-v0.3.16.vsix
 
 | 버전 | 날짜 | 설명 |
 | :--- | :--- | :--- |
+| **v0.3.17** | 2026-04-14 | **노드 요약 정보 출력**: 노드 호버 시 고유 연결 및 방향성 의존성을 보여주는 요약 툴팁 추가 및 O(E) 성능 최적화. |
 | **v0.3.16** | 2026-04-14 | **미니멀리스트 로직 뷰**: 엣지 및 배지 가시성 토글 기능 도입. 선택된 노드의 엣지 반투명 노출 및 O(1) 렌더링 스킵 구현. |
 | **v0.3.15** | 2026-04-13 | **쉘프 fzf 및 그리드 주권**: documentation 노드 대상 `/` 단축키 검색 기능, 40px 격자 스냅 및 강조 하이라이트 효과 도입. |
 | **v0.3.14** | 2026-04-13 | **시스템 정화 및 긴급 복구**: 레거시 컨텍스트 볼트 제거. 엣지 렌더링 SyntaxError 및 Frozen 클러스터 동기화 TypeError 해결. |

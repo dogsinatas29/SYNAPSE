@@ -257,6 +257,10 @@ The following icons are used within the center badge and arrowheads to define th
 Visualizes the physical connections between LLM reasoning logic and source files.
 ![Topology View](./resources/screenshots/v0.3.1/topology_view.png)
 
+### Minimalist Logic View (v0.3.16)
+Toggle edge and badge visibility to reduce clutter while maintaining logical connectivity for selected nodes.
+![Minimalist View](./resources/screenshots/v0.3.16/minimalist_view.png)
+
 ### Logical Flow
 Linear execution flow of specific events, reflecting both manual edits and code changes. Group-Aware Hierarchy and Orthogonal Edge Routing create clean, readable diagrams.
 ![Flow View](./resources/screenshots/v0.2.21/flow_view.png)

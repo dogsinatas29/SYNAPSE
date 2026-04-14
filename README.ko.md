@@ -263,6 +263,10 @@ SYNAPSE v0.3.11은 논리적 유형과 확정 상태를 하나의 캡슐 안에 
 LLM 추론 논리와 소스 파일 간의 물리적 연결을 시각화합니다.
 ![Topology View](./resources/screenshots/v0.3.1/topology_view.png)
 
+### 미니멀리스트 로직 뷰 (v0.3.16)
+엣지와 배지의 가시성을 선택적으로 토글하여 복잡도를 낮추고, 선택된 노드에 대해서만 논리적 연결성을 유지할 수 있습니다.
+![Minimalist View](./resources/screenshots/v0.3.16/minimalist_view.png)
+
 ### 논리 흐름 (Logical Flow)
 수동 편집과 코드 변경을 모두 반영한 특정 이벤트의 선형 실행 흐름입니다. 그룹 기반 계층 구조와 직각 엣지 라우팅을 사용하여 깔끔하고 읽기 쉬운 도도를 생성합니다.
 ![Flow View](./resources/screenshots/v0.2.21/flow_view.png)

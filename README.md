@@ -1,9 +1,9 @@
-# <img src="./resources/synapse-icon.png" width="40" height="40" /> 🧠 SYNAPSE: Visual Architecture Engine (v0.3.15)
+# <img src="./resources/synapse-icon.png" width="40" height="40" /> 🧠 SYNAPSE: Visual Architecture Engine (v0.3.16)
 
 > **"What you see is the logic of LLM"** — *WYSIWYG Logic for AI*
 
-[![Version](https://img.shields.io/badge/version-v0.3.15-brightgreen.png)
-[![Latest Release](https://img.shields.io/badge/latest-v0.3.15%20Shelf%20fzf%20%26%20Grid-orange.png)
+[![Version](https://img.shields.io/badge/version-v0.3.16-brightgreen.png)
+[![Latest Release](https://img.shields.io/badge/latest-v0.3.16%20Minimalist%20View-orange.png)
 ![Status](https://img.shields.io/badge/status-Production_Ready-brightgreen.png)
 [![Language](https://img.shields.io/badge/Language-TypeScript-blue?style=flat-square)](https://www.typescriptlang.org/)
 [![Platform](https://img.shields.io/badge/Platform-VS_Code-007ACC?style=flat-square)](https://code.visualstudio.com/)
@@ -12,15 +12,18 @@
 
 ---
 
-## 🔥 Latest Release: v0.3.15 - Shelf fzf & Grid Sovereignty (2026-04-13)
+## 🔥 Latest Release: v0.3.16 - Minimalist Logic View (2026-04-14)
 
 | Feature | Description | Benefit |
 |-------|---------|-----|
-| **Shelf fzf** | Fuzzy Search for Documentation | Rapidly locate and teleport to documentation nodes using the `/` shortcut. |
-| **Grid Sovereignty** | 40px Coordinate Normalization | Eliminates visual entropy by snapping all nodes to a strict 40px grid. |
-| **Gold Glow Highlight**| 2s High-Visibility Pulse | Provides immediate visual feedback when focusing nodes from search. |
-| **Esc / Enter UX** | Keyboard-Driven Navigation | Full keyboard control for the search interface (Escape to close, Enter to select). |
-| **Kinetic Repulsion** | Grid-Aligned Stalemates Fix | Prevents nodes from snapping back into each other by aligning repel distances (X:160, Y:80) with the grid, saving 33% vertical space. |
+| **Edge Filtering** | Toggle Edge/Badge Visibility | Reduces visual clutter by hiding edges and badges while keeping logical connectivity. |
+| **Path Highlighting** | Transparent Edge Persistence | When edges are hidden, selecting/hovering a node reveals its connections with 0.3 alpha. |
+| **O(1) Rendering Skip** | Performance-Optimized Loop | Optimized WebGL / 2D Canvas loops skip hidden edges without array re-allocations. |
+| **Badge Unification** | Unified Edge Type & Status Badge | Consolidates multiple redundant icons into a single, high-density info capsule (`🔗 ✅`). |
+
+---
+
+## 🔥 v0.3.15 - Shelf fzf & Grid Sovereignty (2026-04-13)
 
 ---
 
@@ -271,9 +274,9 @@ A deep, organized overview of your project structure.
 
 ### Quick Installation
 ```bash
-code --install-extension synapse-visual-architecture-v0.3.15.vsix
+code --install-extension synapse-visual-architecture-v0.3.16.vsix
 ```
-Current Version: **v0.3.15** (Shelf fzf & Grid)
+Current Version: **v0.3.16** (Minimalist View)
 
 ---
 
@@ -314,6 +317,7 @@ Launch your visual architecture journey in seconds.
 
 | Version | Date | Description (English) | Description (Korean) |
 | :--- | :--- | :--- | :--- |
+| **v0.3.16** | 2026-04-14 | **Minimalist Logic View**: Introduced toggle controls for edge and badge visibility. Implemented transparent edge persistence for selected nodes and O(1) rendering skips. | **미니멀리스트 로직 뷰**: 엣지 및 배지 가시성 토글 기능 도입. 선택된 노드의 엣지 반투명 노출 및 O(1) 렌더링 스킵 구현. |
 | **v0.3.15** | 2026-04-13 | **Shelf fzf & Grid Sovereignty**: Added fuzzy search for documentation nodes with `/` shortcut, 40px grid snapping, and centering highlight effects. | **쉘프 fzf 및 그리드 주권**: documentation 노드 대상 `/` 단축키 검색 기능, 40px 격자 스냅 및 강조 하이라이트 효과 도입. |
 | **v0.3.14** | 2026-04-13 | **Purification & Emergency Restoration**: Removed deprecated Context Vault. Fixed SyntaxError in edge rendering and TypeError in frozen cluster synchronization. | **긴급 복구**: 엣지 렌더링 SyntaxError 및 Frozen 클러스터 동기화 TypeError 해결. |
 | **v0.3.13** | 2026-04-12 | **Kinetic Stability**: Auto-purge pipeline for `node_modules` pollution, grid-based overlap resolution, and legacy badge restoration. | **키네틱 안정성**: `node_modules` 오염 자동 정화, 격자 기반 겹침 해결 및 레거시 배지 복구. |

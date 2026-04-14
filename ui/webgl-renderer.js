@@ -400,11 +400,14 @@ class WebGLRenderer {
                 }
                 
                 vec3 finalColor = vColor;
-                if (vHigh > 0.5) {
+                float finalAlpha = 1.0;
+                if (vHigh > 1.5) {
+                    finalAlpha = 0.3;
+                } else if (vHigh > 0.5) {
                     finalColor = mix(vColor, vec3(1.0, 0.9, 0.0), 0.3 * sin(vTime * 6.0) + 0.3);
                 }
 
-                gl_FragColor = vec4(finalColor, 1.0);
+                gl_FragColor = vec4(finalColor, finalAlpha);
             }
         `;
         this.edgeProgram = this.createProgram(vsEdge, fsEdge);
@@ -815,6 +818,16 @@ class WebGLRenderer {
         
         for (let i = 0; i < edges.length; i++) {
             const e = edges[i];
+            
+            // [v0.3.16] Edge Visibility Control Early Return
+            const isPathSelected = e.isSelected || 
+                                 (selectedNodeIds && (selectedNodeIds.has(e.from) || selectedNodeIds.has(e.to)));
+            const isEdgeHidden = window.edgeVisibilityMode === 'NO_EDGES';
+
+            if (isEdgeHidden && !isPathSelected) {
+                continue; // Skip rendering completely for hidden edges to save GPU/CPU limits
+            }
+
             const src = e.srcNode || (nodeMap ? nodeMap.get(e.from) : null);
             const tgt = e.tgtNode || (nodeMap ? nodeMap.get(e.to) : null);
             
@@ -875,10 +888,7 @@ class WebGLRenderer {
                 let color = baseStyle.color;
                 let thickness = baseStyle.thickness;
 
-                const isPathSelected = e.isSelected || 
-                                     (selectedNodeIds && (selectedNodeIds.has(e.from) || selectedNodeIds.has(e.to)));
-
-                if (isPathSelected) {
+                if (isPathSelected && !isEdgeHidden) {
                     color = '#fabd2f';
                     thickness = thickness + 5.0; // matching 2D bulge
                 } else if (e.status === 'confirmed') {
@@ -898,7 +908,13 @@ class WebGLRenderer {
                 dashData[dashCnt++] = styleDash[0];
                 dashData[dashCnt++] = styleDash[1];
 
-                this._edgeHighArr[highCnt++] = isPathSelected ? 1.0 : 0.0;
+                let highVal = 0.0;
+                if (isEdgeHidden && isPathSelected) {
+                    highVal = 2.0; // Semi-transparent
+                } else if (isPathSelected) {
+                    highVal = 1.0; // Normal highlighted
+                }
+                this._edgeHighArr[highCnt++] = highVal;
             }
         }
         this.edgeCount = cnt / 4;
@@ -1032,7 +1048,12 @@ class WebGLRenderer {
 
         // 2️⃣ Edge Badges (Type Icons, Validation Icons, Status Icons)
         const badgeItems = [];
-        if (edges && edges.length > 0) {
+        const isBadgeHidden = window.edgeVisibilityMode === 'NO_BADGES' || window.edgeVisibilityMode === 'NO_EDGES';
+        // [v0.3.16] Hybrid Duplication Fix: 2D Overlay(renderEdgeBadges)가 더 정밀한 통합 배지를 그리므로, 
+        // 하이브리드 모드(Zoom > 0.4)에서는 WebGL 텍스트 레이어로 엣지 뱃지를 중복 생성하지 않음.
+        const skipGpuBadges = window.engine?.transform?.zoom > 0.4;
+
+        if (edges && edges.length > 0 && !isBadgeHidden && !skipGpuBadges) {
             const isEditMode = window.engine?.isEditMode;
             // [v0.3.3 Fix] Build nodeMap locally if not passed (to avoid undefined crash)
             const map = new Map();

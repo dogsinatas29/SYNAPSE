@@ -1181,6 +1181,43 @@ class CanvasEngine {
             });
         }
 
+        // [v0.3.16] Edge Visibility Control
+        window.edgeVisibilityMode = 'ALL'; // 'ALL' | 'NO_BADGES' | 'NO_EDGES'
+        const btnEdgeVisAll = document.getElementById('btn-edge-vis-all');
+        const btnEdgeVisHideBadge = document.getElementById('btn-edge-vis-hide-badge');
+        const btnEdgeVisHideEdges = document.getElementById('btn-edge-vis-hide-edges');
+
+        const updateEdgeVisButtons = (mode) => {
+            if (btnEdgeVisAll) btnEdgeVisAll.classList.toggle('active', mode === 'ALL');
+            if (btnEdgeVisHideBadge) btnEdgeVisHideBadge.classList.toggle('active', mode === 'NO_BADGES');
+            if (btnEdgeVisHideEdges) btnEdgeVisHideEdges.classList.toggle('active', mode === 'NO_EDGES');
+        };
+
+        if (btnEdgeVisAll) {
+            btnEdgeVisAll.addEventListener('click', () => {
+                window.edgeVisibilityMode = 'ALL';
+                updateEdgeVisButtons('ALL');
+                this.isEdgeDirty = true;
+                this.render();
+            });
+        }
+        if (btnEdgeVisHideBadge) {
+            btnEdgeVisHideBadge.addEventListener('click', () => {
+                window.edgeVisibilityMode = 'NO_BADGES';
+                updateEdgeVisButtons('NO_BADGES');
+                this.isEdgeDirty = true;
+                this.render();
+            });
+        }
+        if (btnEdgeVisHideEdges) {
+            btnEdgeVisHideEdges.addEventListener('click', () => {
+                window.edgeVisibilityMode = 'NO_EDGES';
+                updateEdgeVisButtons('NO_EDGES');
+                this.isEdgeDirty = true;
+                this.render();
+            });
+        }
+
         // [v0.2.28] Determinism Bootstrap Toggle
         const btnDetBootstrap = document.getElementById('btn-debug-hash');
         if (btnDetBootstrap) {
@@ -2276,11 +2313,11 @@ class CanvasEngine {
                         }
                     }
 
-                    // [v0.2.23 Fix] Reduced threshold to 15px for better UX (Allow small drag-save)
+                    // [v0.3.16 Fix] Scale drag dist by zoom so zooming out (for long edges) doesn't break drag-save
                     const absDragDist = Math.sqrt(
                         Math.pow(this.dragStartAbsolute.x - (this.dragStart?.x ?? 0), 2) +
                         Math.pow(this.dragStartAbsolute.y - (this.dragStart?.y ?? 0), 2)
-                    );
+                    ) / (this.transform.zoom || 1.0);
 
                     if (absDragDist > 15 || movedByIntruder) {
                         this.saveState();
@@ -4060,8 +4097,15 @@ class CanvasEngine {
 
                     if (adx < MIN_DISTANCE_X && ady < MIN_DISTANCE_Y) {
                         movedTotal = true;
-                        const shiftX = (MIN_DISTANCE_X - adx) / 2;
-                        const shiftY = (MIN_DISTANCE_Y - ady) / 2;
+                        
+                        // [v0.3.16] Grid Sovereignty (Snap-back Stalemate Fix)
+                        // 강제로 40px(SNAP) 배수 단위 이상으로 밀어내어 반올림에 의한 자리복귀 차단
+                        const SNAP = this.GRID_SNAP_SIZE || 40;
+                        let shiftX = (MIN_DISTANCE_X - adx) / 2;
+                        let shiftY = (MIN_DISTANCE_Y - ady) / 2;
+                        
+                        shiftX = Math.max(SNAP, Math.ceil(shiftX / SNAP) * SNAP);
+                        shiftY = Math.max(SNAP, Math.ceil(shiftY / SNAP) * SNAP);
 
                         // Mutate CURRENT node position based on STATIC snapshot relationship
                         if (dx >= 0) {
@@ -6676,6 +6720,17 @@ class CanvasEngine {
 
         if (!fromNode || !toNode) return;
 
+        // [v0.3.16] Edge Visibility early exit
+        const isSelected = this.selectedEdge && this.selectedEdge.id === edge.id;
+        const isHovered = this.hoveredEdge && this.hoveredEdge.id === edge.id;
+        const isPathSelected = isSelected || isHovered || Array.from(this.selectedNodes).some(n => n.id === edge.from || n.id === edge.to) ||
+            (this.hoveredNode && (this.hoveredNode.id === edge.from || this.hoveredNode.id === edge.to));
+
+        const isEdgeHidden = window.edgeVisibilityMode === 'NO_EDGES';
+        if (isEdgeHidden && !isPathSelected) {
+            return; // gpu/cpu skip
+        }
+
         // 🔍 엣지 검증 로직 적용
         // [v0.2.24] Validation Result Caching (A-1)
         let validation = this.edgeValidationCache.get(edge.id);
@@ -6714,18 +6769,16 @@ class CanvasEngine {
             lineWidth = 2;
         }
 
-        // 🌟 선택된 엣지 강조 효과
-        const isSelected = this.selectedEdge && this.selectedEdge.id === edge.id;
-        const isHovered = this.hoveredEdge && this.hoveredEdge.id === edge.id;
-
-        // [New] 연결된 노드가 선택/호버되었을 때의 강조 효과 (Path Highlighting)
-        const isPathSelected = isSelected || isHovered || Array.from(this.selectedNodes).some(n => n.id === edge.from || n.id === edge.to) ||
-            (this.hoveredNode && (this.hoveredNode.id === edge.from || this.hoveredNode.id === edge.to));
+        // 🌟 선택된 엣지 강조 효과 (이미 상단에서 선언됨)
+        // isSelected, isHovered, isPathSelected는 상단에서 초기화됨
 
         // [v0.4.1] Dimming disabled in 2D to match WebGL behavior
         // Previously: const opacity = isPathSelected ? 1.0 : (edge.visual?.opacity || 0.25);
-        // This caused edges to appear nearly invisible when not selected.
-        const opacity = 1.0; // Always render edges fully visible in 2D
+        // [v0.3.16] Edge Visibility Control: NO_EDGES 모드인데 선택되어 여기까지 온 경우 반투명
+        let opacity = 1.0; // Always render edges fully visible in 2D by default
+        if (isEdgeHidden && isPathSelected) {
+            opacity = 0.3;
+        }
         this.ctx.globalAlpha = opacity;
 
         // Logic Analysis Highlights
@@ -6822,34 +6875,29 @@ class CanvasEngine {
         this.ctx.quadraticCurveTo(cpX, cpY, toX, toY);
         this.ctx.stroke();
 
-        // 화살표 아이콘 결정 (Phase 3)
-        // [v0.4.1] 2D LOD를 더 유연하게 조정합니다.
-        const showIcons = this.transform.zoom > 0.2;
+        // [v0.3.16] Edge Visibility & Redundancy Control
+        const isBadgeHidden = window.edgeVisibilityMode === 'NO_BADGES' || window.edgeVisibilityMode === 'NO_EDGES';
+        // 통합 배지는 높은 줌(>0.4)에서만 표시
+        const showIntegratedBadge = this.transform.zoom > 0.4 && !isBadgeHidden;
+        
+        // 화살표 아이콘은 매우 낮은 줌에서 정보 유실 방지용 fallback으로만 사용
+        // 통합 배지가 나오거나 줌이 너무 낮거나 배지 숨김 모드이면 표시 안함
+        const showSmallIcons = !isBadgeHidden && !showIntegratedBadge && this.transform.zoom > 0.2;
+        
         const iconMap = {
-            'dependency': '🔗 D',
-            'call': '📡',
-            'data_flow': '📊',
-            'reference': '📝',
-            'event': '⚡',
-            'conditional': '❓',
-            'bidirectional': '🔄',
-            'api_call': '🌐',
-            'db_query': '🛢️',
-            'origin': '📍',
-            'loop_back': '🔁',
-            'broken_fracture': '💥 B'
+            'dependency': '🔗 D', 'call': '📡', 'data_flow': '📊', 'reference': '📝',
+            'event': '⚡', 'conditional': '❓', 'bidirectional': '🔄', 'api_call': '🌐',
+            'db_query': '🛢️', 'origin': '📍', 'loop_back': '🔁', 'broken_fracture': '💥 B'
         };
-        const edgeIcon = showIcons ? (iconMap[edge.type] || '➤') : '';
+        const edgeIcon = showSmallIcons ? (iconMap[edge.type] || '➤') : '';
 
         // 🟢 펄스 애니메이션 (Edge Traversal)
         if (this.isTestingLogic) {
             const activePulses = this.pulses.filter(p => p.edgeId === edge.id);
             activePulses.forEach(p => {
                 const t = p.progress;
-                // 곡선상의 위치 계산 (Quadratic Bezier)
                 const px = (1 - t) * (1 - t) * fromX + 2 * (1 - t) * t * cpX + t * t * toX;
                 const py = (1 - t) * (1 - t) * fromY + 2 * (1 - t) * t * cpY + t * t * toY;
-
                 this.ctx.fillStyle = '#fabd2f';
                 this.ctx.beginPath();
                 this.ctx.arc(px, py, 4, 0, Math.PI * 2);
@@ -6858,70 +6906,54 @@ class CanvasEngine {
         }
 
         this.ctx.setLineDash([]);
-        this.ctx.lineDashOffset = 0; // 리셋
-
-        // 글로우 효과 리셋
+        this.ctx.lineDashOffset = 0;
         this.ctx.shadowBlur = 0;
         this.ctx.shadowColor = 'transparent';
 
-        // 화살표 렌더링 (노드 외곽선 교점 + 엣지 중앙)
+        // 2단계: 화살표 렌더링
         const angle = Math.atan2(toY - cpY, toX - cpX);
         const arrowPoint = this.getNodeBoundaryPoint(toX, toY, angle + Math.PI);
 
-        // 1. 끝점 화살표 (노드 경계)
-        this.renderArrow(arrowPoint.x, arrowPoint.y, angle, edgeColor, style.arrowStyle, edgeIcon);
+        // [v0.3.16 Fix] 끝점 화살표는 항상 텍스트 없이 단순 방향 지시용으로만 사용
+        this.renderArrow(arrowPoint.x, arrowPoint.y, angle, edgeColor, style.arrowStyle, '');
 
-        // 2. 중앙 화살표 (엣지 중간) - Bezier 곡선상의 정확한 중간점 계산
-        // 2. 중앙 화살표 (엣지 중간)
+        // 중앙 화살표 (Bezier 곡선상의 정확한 중간점)
         const bMidX = 0.25 * fromX + 0.5 * cpX + 0.25 * toX;
         const bMidY = 0.25 * fromY + 0.5 * cpY + 0.25 * toY;
-        const midAngle = Math.atan2(toY - cpY, cpX - fromX); // Approximate tangent
-        this.renderArrow(midX, midY, midAngle, edgeColor, style.arrowStyle, edgeIcon);
+        const midAngle = Math.atan2(toY - cpY, cpX - fromX);
+        
+        // 중앙 화살표에만 조건부로 아이콘 노출 (Small Icon Fallback 모드일 때만)
+        this.renderArrow(bMidX, bMidY, midAngle, edgeColor, style.arrowStyle, edgeIcon);
 
-        // Bidirectional인 경우 반대 방향 화살표도 그리기
         if (style.arrowStyle === 'double') {
             const startAngle = Math.atan2(fromY - cpY, fromX - cpX);
             const startArrowPoint = this.getNodeBoundaryPoint(fromX, fromY, startAngle + Math.PI);
-            this.renderArrow(startArrowPoint.x, startArrowPoint.y, startAngle, edgeColor, 'standard', edgeIcon);
-
-            // 중앙 반대 방향 화살표
+            this.renderArrow(startArrowPoint.x, startArrowPoint.y, startAngle, edgeColor, 'standard', '');
             const midStartAngle = midAngle + Math.PI;
-            this.renderArrow(midX, midY, midStartAngle, edgeColor, 'standard', edgeIcon);
+            this.renderArrow(bMidX, bMidY, midStartAngle, edgeColor, 'standard', edgeIcon);
         }
 
-        // 🔍 검증 결과 표시 (에러/경고인 경우 라벨 추가)
-        // [v0.3.09] Only show validation badges when there is an actual validation issue to prevent ⚠️ spam on healthy edges
-        const hasValidationIssue = !validation.valid || validation.color === '#fabd2f' || validation.isAi;
+        // 3단계: 검증 결과 표시 (에러/경고) - 통합 배지가 보일 때는 생략하여 중복 방지
+        const hasValidationIssue = !isBadgeHidden && !showIntegratedBadge && 
+                                   (!validation.valid || validation.color === '#fabd2f' || validation.isAi);
+        
         if (hasValidationIssue) {
-            // midX/Y는 이미 위에서 정의됨 (Bezier edge center), 여기서는 배지 위치 조정을 위해 별도 변수 사용
             const badgeMidX = (fromX + toX) / 2;
             const badgeMidY = (fromY + toY) / 2 - 35;
-
             this.ctx.save();
             this.ctx.font = `${12 / this.transform.zoom}px Inter, sans-serif`;
-
-            // AI 검증인 경우 특수 효과 (Pulsing)
             let opacity = 1.0;
-            if (validation.isAi && this.isAnimating) {
-                opacity = 0.7 + 0.3 * Math.sin(Date.now() / 200);
-            }
-
+            if (validation.isAi && this.isAnimating) opacity = 0.7 + 0.3 * Math.sin(Date.now() / 200);
             this.ctx.globalAlpha = opacity;
             this.ctx.fillStyle = validation.valid ? '#fabd2f' : '#fb4934';
             this.ctx.textAlign = 'center';
             this.ctx.textBaseline = 'middle';
-
-            // 배경 박스 및 텍스트 결정
-            let valIcon = '';
-            if (!validation.valid) valIcon = '❌';
-            else if (validation.color === '#fabd2f') valIcon = '⚠️';
-
+            let valIcon = !validation.valid ? '❌' : (validation.color === '#fabd2f' ? '⚠️' : '');
             const aiIcon = validation.isAi ? '🤖' : '';
             const text = (aiIcon && valIcon) ? `${aiIcon} ${valIcon}` : (aiIcon || valIcon);
             const metrics = this.ctx.measureText(text);
             const padding = 6 / this.transform.zoom;
-
-            this.ctx.save(); // [v0.2.18 Fix] Prevent context popping!
+            this.ctx.save();
             this.ctx.fillStyle = '#282828';
             this.ctx.shadowBlur = 4;
             this.ctx.shadowColor = 'rgba(0,0,0,0.5)';
@@ -6930,27 +6962,16 @@ class CanvasEngine {
             const bh = 18 / this.transform.zoom;
             this.ctx.roundRect(badgeMidX - bw / 2, badgeMidY - bh / 2, bw, bh, 4);
             this.ctx.fill();
-
             this.ctx.fillStyle = validation.valid ? '#fabd2f' : '#fb4934';
             this.ctx.fillText(text, badgeMidX, badgeMidY);
             this.ctx.restore();
-
-            // 💡 마우스 오버 시 AI 판단 이유 저장 (툴팁용)
             edge._validationReason = validation.reason;
         }
 
-        // [v0.2.17] Confirmation badge: ? (pending_confirm) or ! (confirmed)
-        let confirmStatus = edge.status;
-
-        // [v0.2.18] 강제 가상 노드 배지 (Virtual Edge) 처리
-        if (toNode && toNode.data) {
-            const targetFile = toNode.data.file || toNode.data.label || '';
-            if (targetFile && !targetFile.includes('.')) {
-                confirmStatus = 'pending_confirm';
-            }
+        // [v0.3.16] 최종 통합 배지 전용 레이어 (배지 레이어가 꺼져있지 않고 줌이 높을 때만)
+        if (showIntegratedBadge) {
+            this.renderEdgeBadges(this.ctx, edge);
         }
-
-        this.renderEdgeBadges(this.ctx, edge);
     }
 
     /**
@@ -6958,6 +6979,10 @@ class CanvasEngine {
      * 분리된 엣지 배지 렌더링 (2D/3D 공통 사용)
      */
     renderEdgeBadges(ctx, edge) {
+        // [v0.3.16] Edge Visibility Control
+        const isBadgeHidden = window.edgeVisibilityMode === 'NO_BADGES' || window.edgeVisibilityMode === 'NO_EDGES';
+        if (isBadgeHidden) return;
+
         const fromNode = edge.srcNode || this.nodeMap.get(edge.from);
         const toNode = edge.tgtNode || this.nodeMap.get(edge.to);
         if (!fromNode || !toNode) return;

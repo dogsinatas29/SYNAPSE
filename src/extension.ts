@@ -343,6 +343,12 @@ export async function activate(context: vscode.ExtensionContext) {
                 CanvasPanel.currentPanel?.fitView();
             })
         );
+        
+        context.subscriptions.push(
+            vscode.commands.registerCommand('synapse.searchShelf', () => {
+                CanvasPanel.currentPanel?.toggleSearch();
+            })
+        );
 
 
         let lastChatFilePos = 0;

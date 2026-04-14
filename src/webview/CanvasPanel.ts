@@ -568,6 +568,10 @@ export class CanvasPanel {
         }
     }
 
+    public toggleSearch() {
+        this._panel.webview.postMessage({ command: 'toggleSearch' });
+    }
+
     public fitView() {
         this._panel.webview.postMessage({ command: 'fitView' });
     }
@@ -2195,10 +2199,17 @@ export class CanvasPanel {
             if (incomingNodes.length > 0) {
                 for (const uiNode of (incomingNodes as any[])) {
                     const uiLayer = uiNode.layer || (uiNode.data && uiNode.data.layer);
+                    
+                    // [v0.3.15] Apply Snap-to-Grid during save (Grid Sovereignty)
+                    let snappedPosition = uiNode.position;
+                    if (snappedPosition) {
+                        snappedPosition = gridSystem.snapToGrid(snappedPosition.x, snappedPosition.y);
+                    }
+
                     canvasEngine.dispatch('UPDATE_NODE', {
                         id: uiNode.id,
                         updates: {
-                            position: uiNode.position,
+                            position: snappedPosition,
                             cluster_id: uiNode.cluster_id || (uiNode.data && uiNode.data.cluster_id),
                             ...(uiLayer ? { layer: uiLayer, data: { ...uiNode.data, layer: uiLayer } } : {})
                         }
@@ -2519,7 +2530,7 @@ export class CanvasPanel {
         }
     }
 
-    /** 레코딩 상태를 캔버스 웹뷰로 전달 (REC 버튼 동기화) */
+    /** 특정 노드 포커스 요청 (그리드 스냅 반영) */
     public focusNode(nodeId: string) {
         if (!this._panel) return;
         this._panel.webview.postMessage({

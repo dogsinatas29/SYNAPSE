@@ -1,9 +1,9 @@
-# <img src="./resources/synapse-icon.png" width="40" height="40" /> 🧠 SYNAPSE: 시각적 아키텍처 엔진 (v0.3.15)
+# <img src="./resources/synapse-icon.png" width="40" height="40" /> 🧠 SYNAPSE: 시각적 아키텍처 엔진 (v0.3.16)
 
 > **"눈에 보이는 것이 LLM의 논리다"** — *AI를 위한 WYSIWYG 논리*
 
-[![Version](https://img.shields.io/badge/version-v0.3.15-brightgreen.png)
-[![Latest Release](https://img.shields.io/badge/latest-v0.3.15%20Shelf%20fzf%20%26%20Grid-orange.png)
+[![Version](https://img.shields.io/badge/version-v0.3.16-brightgreen.png)
+[![Latest Release](https://img.shields.io/badge/latest-v0.3.16%20Minimalist%20View-orange.png)
 ![Status](https://img.shields.io/badge/status-Production_Ready-brightgreen.png)
 [![Language](https://img.shields.io/badge/Language-TypeScript-blue?style=flat-square)](https://www.typescriptlang.org/)
 [![Platform](https://img.shields.io/badge/Platform-VS_Code-007ACC?style=flat-square)](https://code.visualstudio.com/)
@@ -12,18 +12,21 @@
 
 ---
 
-## 🔥 최신 릴리즈: v0.3.15 - 쉘프 fzf 및 그리드 주권 (2026-04-13)
+## 🔥 최신 릴리즈: v0.3.16 - 미니멀리스트 로직 뷰 (2026-04-14)
 
-### ✅ 탐색 및 질서
-**v0.3.15**는 방대한 문서 자산에 대한 고속 탐색 시스템과 캔버스 좌표의 규격화를 도입했습니다.
+### ✅ 시각적 정제
+**v0.3.16**은 복잡해진 캔버스를 정화하기 위해 사용자가 엣지와 배지의 노출 여부를 직접 제어할 수 있는 기능을 도입했습니다.
 
 | 기능 | 설명 | 혜택 |
 |-------|---------|-----|
-| **Shelf fzf** | 문서 전용 퍼지 검색 | `/` 단축키를 통해 어떤 화면에서든 원하는 문서로 즉시 이동합니다. |
-| **Grid Sovereignty** | 40px 좌표 규격화 | 모든 노드를 40px 격자에 강제 정렬하여 시각적 무질서(Entopy)를 제거합니다. |
-| **Gold Glow Highlight**| 2s 고가시성 하이라이트 | 검색 결과 선택 시 해당 노드에 금색 발광 효과를 주어 위치를 명확히 인지시킵니다. |
-| **Esc / Enter UX** | 키보드 기반 인터랙션 | 키보드만으로 검색창 열기, 선택(`Enter`), 닫기(`Escape`)가 가능합니다. |
-| **Kinetic Repulsion** | 스냅백 교착 해결 & 수직 압축 | 겹침 방지 밀어내기를 그리드 배수(X:160, Y:80)에 맞게 정렬하여 튕김 버그를 해결하고 세로 공간 효율을 33% 높였습니다. |
+| **Edge Filtering** | 엣지/배지 가시성 토글 | 논리적 연결은 유지하면서, 시각적 노이즈(엣지 및 배지)를 선택적으로 숨겨 핵심 구조에 집중합니다. |
+| **Path Highlighting** | 투명 엣지 영속성 유지 | 엣지가 숨겨진 상태에서도 특정 노드를 선택/호버링하면 해당 노드의 연결선만 0.3 투명하게 드러납니다. |
+| **O(1) Rendering Skip** | 성능 최적화 루프 | 가려진 엣지는 WebGL 및 2D Canvas의 렌더 루프에서 배열 재할당 없이 O(1) 모드로 즉시 스킵됩니다. |
+| **Badge Unification** | 통합형 정보 캡슐화 | 화살표 아이콘, 검증 상태, 동기화 여부를 하나의 고밀도 배지(`🔗 ✅`)로 통합하여 중복 출력을 제거했습니다. |
+
+---
+
+## 🔥 최신 릴리즈: v0.3.15 - 쉘프 fzf 및 그리드 주권 (2026-04-13)
 
 ---
 
@@ -277,9 +280,9 @@ LLM 추론 논리와 소스 파일 간의 물리적 연결을 시각화합니다
 
 ### 빠른 설치
 ```bash
-code --install-extension synapse-visual-architecture-v0.3.15.vsix
+code --install-extension synapse-visual-architecture-v0.3.16.vsix
 ```
-현재 버전: **v0.3.15** (쉘프 fzf 및 그리드)
+현재 버전: **v0.3.16** (미니멀리스트 뷰)
 
 ---
 
@@ -320,6 +323,7 @@ code --install-extension synapse-visual-architecture-v0.3.15.vsix
 
 | 버전 | 날짜 | 설명 |
 | :--- | :--- | :--- |
+| **v0.3.16** | 2026-04-14 | **미니멀리스트 로직 뷰**: 엣지 및 배지 가시성 토글 기능 도입. 선택된 노드의 엣지 반투명 노출 및 O(1) 렌더링 스킵 구현. |
 | **v0.3.15** | 2026-04-13 | **쉘프 fzf 및 그리드 주권**: documentation 노드 대상 `/` 단축키 검색 기능, 40px 격자 스냅 및 강조 하이라이트 효과 도입. |
 | **v0.3.14** | 2026-04-13 | **시스템 정화 및 긴급 복구**: 레거시 컨텍스트 볼트 제거. 엣지 렌더링 SyntaxError 및 Frozen 클러스터 동기화 TypeError 해결. |
 | **v0.3.13** | 2026-04-12 | **키네틱 안정성**: `node_modules` 오염 자동 정화, 격자 기반 겹침 해결 및 레거시 배지 복구. |

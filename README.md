@@ -1,9 +1,9 @@
-# <img src="./resources/synapse-icon.png" width="40" height="40" /> 🧠 SYNAPSE: Visual Architecture Engine (v0.3.19)
+# <img src="./resources/synapse-icon.png" width="40" height="40" /> 🧠 SYNAPSE: Visual Architecture Engine (v0.3.20)
 
 > **"What you see is the logic of LLM"** — *WYSIWYG Logic for AI*
 
-[![Version](https://img.shields.io/badge/version-v0.3.18-brightgreen.png)
-[![Latest Release](https://img.shields.io/badge/latest-v0.3.18%20Triple%20Expression-orange.png)
+[![Version](https://img.shields.io/badge/version-v0.3.20-brightgreen.png)
+[![Latest Release](https://img.shields.io/badge/latest-v0.3.20%20Semantic%20Order-orange.png)
 ![Status](https://img.shields.io/badge/status-Production_Ready-brightgreen.png)
 [![Language](https://img.shields.io/badge/Language-TypeScript-blue?style=flat-square)](https://www.typescriptlang.org/)
 [![Platform](https://img.shields.io/badge/Platform-VS_Code-007ACC?style=flat-square)](https://code.visualstudio.com/)
@@ -12,11 +12,14 @@
 
 ---
 
-## 🔥 Latest Release: v0.3.18 - Triple Expression & Node Taxonomy (2026-04-17)
+## 🔥 Latest Release: v0.3.20 - Semantic Order & Architectural Flow (2026-04-17)
 
 | Feature | Description | Benefit |
 |-------|---------|-----|
-| **Top-N Focus** | **Global Exploration** System | Automatically identifies top 10 core nodes and their 1-hop context to reduce cognitive load. |
+| **Semantic Hotspot** | **Functional Area** Mapping | Automatically groups related modules into visible "Hotspot" areas with soft colored backgrounds. |
+| **Spring Alignment** | **Strategic Drift** Engine | Nudges nodes toward architectural lanes [Input → Core → Output] while preserving logical structure. |
+| **Edge Bundling Lite**| **Flow Consolidation** | Merges overlapping visual paths into elegant "bundles" to reveal data flow patterns. |
+| **Top-N Focus** | **Global Exploration** System | Automatically highlights the top 10 core nodes and their 1-hop context. |
 | **Triple Expression** | **Color · Layer · Priority** System | Instant role recognition via colors, noise reduction via leaf filtering, and priority stars for refactoring focus. |
 | **Node Role Taxonomy** | Architectural Identity Classification | Identifies **Orchestrator, Controller, Hub, Leaf** with strict Single-Role principle. |
 | **Identity-Aware Tooltip** | Detailed Connection Breakdown | Displays star ratings (`★★★☆`) and specific file/library names to provide evidence-based insights. |
@@ -137,6 +140,14 @@ Visualize your project's folder structure and file dependencies as a live networ
   - 🟢 **Controller**: Inbound gateways or API Facades handling entry points.
   - 🔵 **Hub**: High-connectivity centers acting as key dependency junctions.
   - ⚪ **Leaf**: Terminal utility functions or standalone modules.
+- **Strategic Architecture Alignment (v0.3.20)**: 
+  - **Spring Bias Layout**: Nodes naturally drift toward their architectural lanes while maintaining their relative balance.
+  - **Grid-spread Lanes**: Organizes nodes into neat 3-column rows to prevent vertical stacking.
+- **Semantic Hotspot Mapping (v0.3.20)**:
+  - **Functional Grouping**: Identifies "Meaningful Chunks" and wraps them in role-colored dashed boxes.
+  - **Overlap Merging**: Automatically merges adjacent functional areas to reduce visual entropy.
+- **Edge Bundling Lite (v0.3.20)**:
+  - **Shared Path Flow**: Merges multiple edges from a single source into a unified "bundle" using shared control points.
 - **Triple Expression System**:
   - **Color (Perception)**: Role-specific border and glow colors for instant recognition.
   - **Layer (Focus)**: `Hide Leaf Nodes` toggle to eliminate structural noise and focus on the core.
@@ -368,6 +379,7 @@ Launch your visual architecture journey in seconds.
 
 | Version | Date | Description (English) | Description (Korean) |
 | :--- | :--- | :--- | :--- |
+| **v0.3.20** | 2026-04-17 | **Semantic Order & Bundling**: Introduced Semantic Hotspot Mapping, Spring Bias Strategic Alignment, and Lite Edge Bundling for pure architectural flow. | **시맨틱 오더 및 번들링**: 핫스팟 매핑, Spring Bias 정렬 및 엣지 번들링 도입으로 순수 아키텍처 흐름 가시화. |
 | **v0.3.19** | 2026-04-17 | **Top-N Focus View**: Automated identification of the 10 most critical core nodes with 1-hop context expansion for global exploration. | **Top-N 포커스 뷰**: 1-hop 맥락 확장을 포함한 상위 10개 핵심 노드 자동 식별 및 글로벌 탐색 모드 도입. |
 | **v0.3.18** | 2026-04-17 | **Diagnostic Hint Engine**: Real-time architectural analysis (R1-R5), Zero-Unknown semantic labeling, and detailed node identity list in tooltips. | **진단 힌트 엔진**: 실시간 아키텍처 분석(R1-R5), Zero-Unknown 시맨틱 라벨링 및 툴팁 내 상세 연결 노드 리스트 출력. |
 | **v0.3.17** | 2026-04-14 | **Node Summary Feature**: Added interactive node summary tooltips showing unique connections and directional degrees. Optimized with O(E) pre-calculation. | **노드 요약 정보 출력**: 노드 호버 시 고유 연결 및 방향성 의존성을 보여주는 요약 툴팁 추가 및 O(E) 성능 최적화. |

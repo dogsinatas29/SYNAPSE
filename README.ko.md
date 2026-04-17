@@ -1,9 +1,9 @@
-# <img src="./resources/synapse-icon.png" width="40" height="40" /> 🧠 SYNAPSE: 시각적 아키텍처 엔진 (v0.3.19)
+# <img src="./resources/synapse-icon.png" width="40" height="40" /> 🧠 SYNAPSE: 시각적 아키텍처 엔진 (v0.3.20)
 
 > **"눈에 보이는 것이 곧 LLM의 논리이다"** — *AI를 위한 WYSIWYG 논리*
 
-[![Version](https://img.shields.io/badge/version-v0.3.18-brightgreen.png)
-[![Latest Release](https://img.shields.io/badge/latest-v0.3.18%20Triple%20Expression-orange.png)
+[![Version](https://img.shields.io/badge/version-v0.3.20-brightgreen.png)
+[![Latest Release](https://img.shields.io/badge/latest-v0.3.20%20Semantic%20Order-orange.png)
 ![Status](https://img.shields.io/badge/status-Production_Ready-brightgreen.png)
 [![Language](https://img.shields.io/badge/Language-TypeScript-blue?style=flat-square)](https://www.typescriptlang.org/)
 [![Platform](https://img.shields.io/badge/Platform-VS_Code-007ACC?style=flat-square)](https://code.visualstudio.com/)
@@ -12,11 +12,14 @@
 
 ---
 
-## 🔥 최신 릴리스: v0.3.19 - Top-N Focus View & 글로벌 탐색 (2026-04-17)
+## 🔥 최신 릴리스: v0.3.20 - 시맨틱 질서 및 아키텍처 흐름 (2026-04-17)
 
 | 기능 | 설명 | 혜택 |
 |-------|---------|-----|
-| **Top-N Focus** | **Global Exploration** 시스템 | 상위 10개 핵심 노드와 그 1-hop 맥락을 자동 식별하여 인지 부하를 획기적으로 감소. |
+| **시맨틱 핫스팟** | **기능 영역(Area)** 매핑 | 관련 모듈을 자동으로 그룹화하여 부드러운 배경색의 "Hotspot" 영역으로 시각화. |
+| **Spring 정렬** | **전략적 표류** 엔진 | 논리적 구조를 보존하면서 노드를 아키텍처 레인[입력 → 핵심 → 출력]으로 부드럽게 유도. |
+| **엣지 번들링 Lite**| **흐름 통합 가동** | 중복되는 시각적 경로를 우아한 "번들"로 통합하여 데이터 흐름 패턴을 명확히 노출. |
+| **Top-N Focus** | **글로벌 탐색** 시스템 | 상위 10개 핵심 노드와 그 1-hop 맥락을 자동으로 강조하여 인지 부하 감소. |
 | **Triple Expression** | **색상 · 레이어 · 우선순위** 시스템 | 고유 색상을 통한 역할 인지, 리프 노드 필터링을 통한 노이즈 제거, 별점을 통한 리팩토링 시공성 판단. |
 | **노드 역할 체계** | 아키텍처적 정체성 분류 | 노드의 정체성을 **Orchestrator, Controller, Hub, Leaf**로 엄격히 분류(단일 역할 원칙). |
 | **정체 인식 툴팁** | 근거 중심의 인사이트 | 별점(`★★★☆`)과 함께 레이어별 상세 연결 노드명을 출력하여 판단의 근거 제공. |
@@ -111,6 +114,14 @@ SYNAPSE는 언어에 관계없이 프로젝트의 깊은 시맨틱을 이해하�
   - 🟢 **Controller**: 진입점 처리를 담당하는 서비스 게이트웨이 또는 API 파사드.
   - 🔵 **Hub**: 강력한 결합력을 가진 의존성 집중 노드.
   - ⚪ **Leaf**: 말단 유틸리티 기능 또는 단독 실행 모듈.
+- **전략적 아키텍처 정렬 (v0.3.20)**:
+  - **Spring Bias 레이아웃**: 노드가 논리적 균형을 유지하면서 아키텍처 레인으로 부드럽게 표류하듯 정착.
+  - **그리드 분산 레인**: 노드를 정갈한 3컬럼 행으로 조직화하여 수직 적체 현상 방지.
+- **시맨틱 핫스팟 매핑 (v0.3.20)**:
+  - **기능적 그룹화**: "의미 있는 덩어리"를 식별하여 역할별 색상의 점선 박스로 시각화.
+  - **중첩 병합**: 인접한 기능 영역을 자동으로 병합하여 시각적 엔트로피 감소.
+- **엣지 번들링 Lite (v0.3.20)**:
+  - **공유 경로 흐름**: 단일 소스에서 나가는 여러 엣지를 공유 제어점을 통해 하나의 "번들"로 통합.
 - **Triple Expression System (인지-집중-판단)**:
   - **색상 (Color)**: 역할별 고유 테두리와 글로우 색상을 통해 노드의 역할을 즉시 인지.
   - **레이어 (Layer)**: `Hide Leaf Nodes` 토글로 구조적 노이즈를 제거하고 핵심 아키텍처에 집중.
@@ -228,6 +239,7 @@ LLM 추론 논리와 실제 소스 파일 간의 물리적 연결을 시각화�
 
 | 버전 | 날짜 | 영문 설명 | 한글 설명 |
 | :--- | :--- | :--- | :--- |
+| **v0.3.20** | 2026-04-17 | **Semantic Order & Bundling**: Introduced Semantic Hotspot Mapping, Spring Bias Strategic Alignment, and Lite Edge Bundling for pure architectural flow. | **시맨틱 오더 및 번들링**: 핫스팟 매핑, Spring Bias 정렬 및 엣지 번들링 도입으로 순수 아키텍처 흐름 가시화. |
 | **v0.3.19** | 2026-04-17 | **Top-N Focus View**: Automated identification of the 10 most critical core nodes with 1-hop context expansion for global exploration. | **Top-N 포커스 뷰**: 1-hop 맥락 확장을 포함한 상위 10개 핵심 노드 자동 식별 및 글로벌 탐색 모드 도입. |
 | **v0.3.18** | 2026-04-17 | **Diagnostic Hint Engine**: Real-time architectural analysis (R1-R5), Zero-Unknown semantic labeling, and detailed node identity list in tooltips. | **진단 힌트 엔진**: 실시간 아키텍처 분석(R1-R5), Zero-Unknown 시맨틱 라벨링 및 툴팁 내 상세 연결 노드 리스트 출력. |
 | **v0.3.17** | 2026-04-14 | **Node Summary Feature**: Added interactive node summary tooltips showing unique connections and directional degrees. Optimized with O(E) pre-calculation. | **노드 요약 정보 출력**: 노드 호버 시 고유 연결 및 방향성 의존성을 보여주는 요약 툴팁 추가 및 O(E) 성능 최적화. |

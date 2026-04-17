@@ -1,15 +1,15 @@
 {
   "canvas_state": {
     "offset": {
-      "x": 1408.6648351648353,
-      "y": 333.95604395604397
+      "x": 1289.8671096345515,
+      "y": 359.36877076411963
     },
     "visible_layers": [
       "source",
       "documentation",
       "user"
     ],
-    "zoom_level": 0.17747252747252748
+    "zoom_level": 0.15498338870431894
   },
   "clusters": [
     {
@@ -28,6 +28,15 @@
       },
       "id": "cluster_src",
       "label": "📂 src",
+      "type": "folder"
+    },
+    {
+      "collapsed": false,
+      "data": {
+        "layer": "user"
+      },
+      "id": "cluster_src_analysis",
+      "label": "📂 analysis",
       "type": "folder"
     },
     {
@@ -1032,47 +1041,7 @@
     },
     {
       "from": "GEMINI (사본)",
-      "id": "GEMINI (사본)->architecture",
-      "status": "confirmed",
-      "to": "architecture",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "from": "GEMINI (사본)",
       "id": "GEMINI (사본)->synapse_topology_view",
-      "status": "confirmed",
-      "to": "synapse_topology_view",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "from": "GEMINI_origin",
-      "id": "GEMINI_origin->architecture",
-      "status": "confirmed",
-      "to": "architecture",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "from": "GEMINI_origin",
-      "id": "GEMINI_origin->synapse_topology_view",
-      "status": "confirmed",
-      "to": "synapse_topology_view",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "from": "GEMINI--",
-      "id": "GEMINI--->architecture",
-      "status": "confirmed",
-      "to": "architecture",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "from": "GEMINI--",
-      "id": "GEMINI--->synapse_topology_view",
       "status": "confirmed",
       "to": "synapse_topology_view",
       "type": "include",
@@ -1480,137 +1449,9 @@
     },
     {
       "from": "README.ko",
-      "id": "README.ko->color_aqua",
-      "status": "confirmed",
-      "to": "color_aqua",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "from": "README.ko",
-      "id": "README.ko->color_beige",
-      "status": "confirmed",
-      "to": "color_beige",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "from": "README.ko",
-      "id": "README.ko->color_blue",
-      "status": "confirmed",
-      "to": "color_blue",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "from": "README.ko",
-      "id": "README.ko->color_brown",
-      "status": "confirmed",
-      "to": "color_brown",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "from": "README.ko",
-      "id": "README.ko->color_gold",
-      "status": "confirmed",
-      "to": "color_gold",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "from": "README.ko",
-      "id": "README.ko->color_magenta",
-      "status": "confirmed",
-      "to": "color_magenta",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "from": "README.ko",
-      "id": "README.ko->color_orange",
-      "status": "confirmed",
-      "to": "color_orange",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "from": "README.ko",
-      "id": "README.ko->color_pink",
-      "status": "confirmed",
-      "to": "color_pink",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "from": "README.ko",
-      "id": "README.ko->flow_view",
-      "status": "confirmed",
-      "to": "flow_view",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "from": "README.ko",
-      "id": "README.ko->GHOST_NODE",
-      "status": "confirmed",
-      "to": "GHOST_NODE",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "from": "README.ko",
-      "id": "README.ko->minimalist_view",
-      "status": "confirmed",
-      "to": "minimalist_view",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "from": "README.ko",
-      "id": "README.ko->node_active",
-      "status": "confirmed",
-      "to": "node_active",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "from": "README.ko",
-      "id": "README.ko->node_deleted",
-      "status": "confirmed",
-      "to": "node_deleted",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "from": "README.ko",
-      "id": "README.ko->node_ghost",
-      "status": "confirmed",
-      "to": "node_ghost",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "from": "README.ko",
-      "id": "README.ko->node_high_dtr",
-      "status": "confirmed",
-      "to": "node_high_dtr",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "from": "README.ko",
       "id": "README.ko->node_summary",
       "status": "confirmed",
       "to": "node_summary",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "from": "README.ko",
-      "id": "README.ko->node_warning",
-      "status": "confirmed",
-      "to": "node_warning",
       "type": "include",
       "weight": 1
     },
@@ -2571,6 +2412,174 @@
       "id": "WebviewInterceptor->Logger",
       "status": "confirmed",
       "to": "Logger",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "GEMINI (사본)",
+      "id": "GEMINI (사본)->architecture",
+      "status": "confirmed",
+      "to": "architecture",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "GEMINI_origin",
+      "id": "GEMINI_origin->architecture",
+      "status": "confirmed",
+      "to": "architecture",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "GEMINI_origin",
+      "id": "GEMINI_origin->synapse_topology_view",
+      "status": "confirmed",
+      "to": "synapse_topology_view",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "GEMINI--",
+      "id": "GEMINI--->architecture",
+      "status": "confirmed",
+      "to": "architecture",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "GEMINI--",
+      "id": "GEMINI--->synapse_topology_view",
+      "status": "confirmed",
+      "to": "synapse_topology_view",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README.ko",
+      "id": "README.ko->color_aqua",
+      "status": "confirmed",
+      "to": "color_aqua",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README.ko",
+      "id": "README.ko->color_beige",
+      "status": "confirmed",
+      "to": "color_beige",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README.ko",
+      "id": "README.ko->color_blue",
+      "status": "confirmed",
+      "to": "color_blue",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README.ko",
+      "id": "README.ko->color_brown",
+      "status": "confirmed",
+      "to": "color_brown",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README.ko",
+      "id": "README.ko->color_gold",
+      "status": "confirmed",
+      "to": "color_gold",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README.ko",
+      "id": "README.ko->color_magenta",
+      "status": "confirmed",
+      "to": "color_magenta",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README.ko",
+      "id": "README.ko->color_orange",
+      "status": "confirmed",
+      "to": "color_orange",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README.ko",
+      "id": "README.ko->color_pink",
+      "status": "confirmed",
+      "to": "color_pink",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README.ko",
+      "id": "README.ko->flow_view",
+      "status": "confirmed",
+      "to": "flow_view",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README.ko",
+      "id": "README.ko->GHOST_NODE",
+      "status": "confirmed",
+      "to": "GHOST_NODE",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README.ko",
+      "id": "README.ko->minimalist_view",
+      "status": "confirmed",
+      "to": "minimalist_view",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README.ko",
+      "id": "README.ko->node_active",
+      "status": "confirmed",
+      "to": "node_active",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README.ko",
+      "id": "README.ko->node_deleted",
+      "status": "confirmed",
+      "to": "node_deleted",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README.ko",
+      "id": "README.ko->node_ghost",
+      "status": "confirmed",
+      "to": "node_ghost",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README.ko",
+      "id": "README.ko->node_high_dtr",
+      "status": "confirmed",
+      "to": "node_high_dtr",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README.ko",
+      "id": "README.ko->node_warning",
+      "status": "confirmed",
+      "to": "node_warning",
       "type": "include",
       "weight": 1
     }
@@ -4606,8 +4615,8 @@
       "label": ") || trimmed.includes(",
       "layer": "ai",
       "position": {
-        "x": -4000,
-        "y": 1160
+        "x": -4600,
+        "y": 520
       },
       "status": "ghost",
       "type": "symbol",
@@ -5151,8 +5160,8 @@
       "label": "출력 가능한 ASCII",
       "layer": "ai",
       "position": {
-        "x": -6000,
-        "y": 280
+        "x": -6640,
+        "y": -40
       },
       "status": "ghost",
       "type": "external",
@@ -5187,8 +5196,8 @@
       "label": "AiOrchestrator",
       "layer": "user",
       "position": {
-        "x": 0,
-        "y": 2480
+        "x": -1680,
+        "y": 1520
       },
       "status": "active",
       "type": "file",
@@ -5202,7 +5211,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 34,
+        "degree": 31,
         "file": "release_note/architecture.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -5257,8 +5266,8 @@
       "label": "ArchitectureDSL",
       "layer": "user",
       "position": {
-        "x": 640,
-        "y": 1280
+        "x": -760,
+        "y": 1560
       },
       "status": "active",
       "type": "file",
@@ -5329,8 +5338,8 @@
       "label": "BillingManager",
       "layer": "user",
       "position": {
-        "x": 400,
-        "y": 1760
+        "x": -1880,
+        "y": 1560
       },
       "status": "active",
       "type": "file",
@@ -5365,8 +5374,8 @@
       "label": "BootstrapEngine",
       "layer": "user",
       "position": {
-        "x": -3120,
-        "y": -1120
+        "x": 320,
+        "y": -800
       },
       "status": "active",
       "type": "file",
@@ -5401,8 +5410,8 @@
       "label": "build-guard",
       "layer": "ai",
       "position": {
-        "x": -760,
-        "y": 3520
+        "x": -600,
+        "y": 3640
       },
       "status": "active",
       "type": "file",
@@ -5437,8 +5446,8 @@
       "label": "canvas-engine",
       "layer": "user",
       "position": {
-        "x": -2960,
-        "y": 3280
+        "x": -5280,
+        "y": 1800
       },
       "status": "active",
       "type": "file",
@@ -5545,7 +5554,7 @@
       "label": "CDPManager",
       "layer": "user",
       "position": {
-        "x": 240,
+        "x": -1560,
         "y": 1680
       },
       "status": "active",
@@ -5722,8 +5731,8 @@
       "label": "cluster_id",
       "layer": "ai",
       "position": {
-        "x": -5040,
-        "y": 1400
+        "x": -5640,
+        "y": 720
       },
       "status": "ghost",
       "type": "external",
@@ -5737,7 +5746,7 @@
       "cluster_id": "cluster_ghosts",
       "data": {
         "cluster_id": "cluster_ghosts",
-        "degree": 4,
+        "degree": 3,
         "hasAtomicSignature": false,
         "hasImportSignature": false,
         "hiddenOnCanvas": false,
@@ -5757,8 +5766,8 @@
       "label": "color_aqua",
       "layer": "ai",
       "position": {
-        "x": -6280,
-        "y": 760
+        "x": -6920,
+        "y": 440
       },
       "status": "ghost",
       "type": "external",
@@ -5772,7 +5781,7 @@
       "cluster_id": "cluster_ghosts",
       "data": {
         "cluster_id": "cluster_ghosts",
-        "degree": 4,
+        "degree": 3,
         "hasAtomicSignature": false,
         "hasImportSignature": false,
         "hiddenOnCanvas": false,
@@ -5792,8 +5801,8 @@
       "label": "color_beige",
       "layer": "ai",
       "position": {
-        "x": -6000,
-        "y": -120
+        "x": -6640,
+        "y": -440
       },
       "status": "ghost",
       "type": "external",
@@ -5807,7 +5816,7 @@
       "cluster_id": "cluster_ghosts",
       "data": {
         "cluster_id": "cluster_ghosts",
-        "degree": 4,
+        "degree": 3,
         "hasAtomicSignature": false,
         "hasImportSignature": false,
         "hiddenOnCanvas": false,
@@ -5827,8 +5836,8 @@
       "label": "color_blue",
       "layer": "ai",
       "position": {
-        "x": -6160,
-        "y": 280
+        "x": -6800,
+        "y": 0
       },
       "status": "ghost",
       "type": "external",
@@ -5842,7 +5851,7 @@
       "cluster_id": "cluster_ghosts",
       "data": {
         "cluster_id": "cluster_ghosts",
-        "degree": 4,
+        "degree": 3,
         "hasAtomicSignature": false,
         "hasImportSignature": false,
         "hiddenOnCanvas": false,
@@ -5862,8 +5871,8 @@
       "label": "color_brown",
       "layer": "ai",
       "position": {
-        "x": -6440,
-        "y": 480
+        "x": -7080,
+        "y": 160
       },
       "status": "ghost",
       "type": "external",
@@ -5877,7 +5886,7 @@
       "cluster_id": "cluster_ghosts",
       "data": {
         "cluster_id": "cluster_ghosts",
-        "degree": 4,
+        "degree": 3,
         "hasAtomicSignature": false,
         "hasImportSignature": false,
         "hiddenOnCanvas": false,
@@ -5897,8 +5906,8 @@
       "label": "color_gold",
       "layer": "ai",
       "position": {
-        "x": -5720,
-        "y": 440
+        "x": -6360,
+        "y": 120
       },
       "status": "ghost",
       "type": "external",
@@ -5912,7 +5921,7 @@
       "cluster_id": "cluster_ghosts",
       "data": {
         "cluster_id": "cluster_ghosts",
-        "degree": 4,
+        "degree": 3,
         "hasAtomicSignature": false,
         "hasImportSignature": false,
         "hiddenOnCanvas": false,
@@ -5932,8 +5941,8 @@
       "label": "color_magenta",
       "layer": "ai",
       "position": {
-        "x": -6000,
-        "y": 40
+        "x": -6640,
+        "y": -280
       },
       "status": "ghost",
       "type": "external",
@@ -5947,7 +5956,7 @@
       "cluster_id": "cluster_ghosts",
       "data": {
         "cluster_id": "cluster_ghosts",
-        "degree": 4,
+        "degree": 3,
         "hasAtomicSignature": false,
         "hasImportSignature": false,
         "hiddenOnCanvas": false,
@@ -5967,8 +5976,8 @@
       "label": "color_orange",
       "layer": "ai",
       "position": {
-        "x": -6240,
-        "y": 920
+        "x": -6880,
+        "y": 600
       },
       "status": "ghost",
       "type": "external",
@@ -5982,7 +5991,7 @@
       "cluster_id": "cluster_ghosts",
       "data": {
         "cluster_id": "cluster_ghosts",
-        "degree": 4,
+        "degree": 3,
         "hasAtomicSignature": false,
         "hasImportSignature": false,
         "hiddenOnCanvas": false,
@@ -6002,8 +6011,8 @@
       "label": "color_pink",
       "layer": "ai",
       "position": {
-        "x": -6400,
-        "y": 880
+        "x": -7040,
+        "y": 560
       },
       "status": "ghost",
       "type": "external",
@@ -6038,8 +6047,8 @@
       "label": "CommandInterceptor",
       "layer": "user",
       "position": {
-        "x": -1320,
-        "y": 2600
+        "x": -3680,
+        "y": 1600
       },
       "status": "active",
       "type": "file",
@@ -6284,8 +6293,8 @@
       "label": "ControlSystem",
       "layer": "user",
       "position": {
-        "x": -600,
-        "y": 2560
+        "x": -2960,
+        "y": 1680
       },
       "status": "active",
       "type": "file",
@@ -6353,8 +6362,8 @@
       "label": "cors",
       "layer": "ai",
       "position": {
-        "x": -4560,
-        "y": 1400
+        "x": -5160,
+        "y": 720
       },
       "status": "ghost",
       "type": "external",
@@ -6388,8 +6397,8 @@
       "label": "crypto",
       "layer": "ai",
       "position": {
-        "x": -4040,
-        "y": 1400
+        "x": -4640,
+        "y": 720
       },
       "status": "ghost",
       "type": "external",
@@ -6458,8 +6467,8 @@
       "label": "DatabaseEngine",
       "layer": "user",
       "position": {
-        "x": -280,
-        "y": 2600
+        "x": -2560,
+        "y": 1560
       },
       "status": "active",
       "type": "file",
@@ -6494,8 +6503,8 @@
       "label": "DataPipeline",
       "layer": "user",
       "position": {
-        "x": -520,
-        "y": 2400
+        "x": -2800,
+        "y": 1560
       },
       "status": "active",
       "type": "file",
@@ -6564,8 +6573,8 @@
       "label": "DebuggerSystem",
       "layer": "user",
       "position": {
-        "x": -40,
-        "y": 1480
+        "x": -2440,
+        "y": 1680
       },
       "status": "active",
       "type": "file",
@@ -6600,8 +6609,8 @@
       "label": "DirectChatScraper",
       "layer": "user",
       "position": {
-        "x": -1520,
-        "y": 2280
+        "x": -4000,
+        "y": 1600
       },
       "status": "active",
       "type": "file",
@@ -6636,8 +6645,8 @@
       "label": "EdgeCodeRefactorer",
       "layer": "user",
       "position": {
-        "x": -1800,
-        "y": 1720
+        "x": -3880,
+        "y": -400
       },
       "status": "active",
       "type": "file",
@@ -6672,8 +6681,8 @@
       "label": "engine-core",
       "layer": "user",
       "position": {
-        "x": -2960,
-        "y": 2960
+        "x": -5280,
+        "y": 1480
       },
       "status": "active",
       "type": "file",
@@ -6779,8 +6788,8 @@
       "label": "express",
       "layer": "ai",
       "position": {
-        "x": -4200,
-        "y": 1400
+        "x": -4800,
+        "y": 720
       },
       "status": "ghost",
       "type": "external",
@@ -6885,8 +6894,8 @@
       "label": "FileScanner",
       "layer": "user",
       "position": {
-        "x": -320,
-        "y": 2440
+        "x": -2680,
+        "y": 1680
       },
       "status": "active",
       "type": "file",
@@ -6921,8 +6930,8 @@
       "label": "fix_cluster",
       "layer": "ai",
       "position": {
-        "x": -2880,
-        "y": 1640
+        "x": -6840,
+        "y": 1000
       },
       "status": "active",
       "type": "file",
@@ -6936,7 +6945,7 @@
       "cluster_id": "cluster_ghosts",
       "data": {
         "cluster_id": "cluster_ghosts",
-        "degree": 4,
+        "degree": 3,
         "hasAtomicSignature": false,
         "hasImportSignature": false,
         "hiddenOnCanvas": false,
@@ -6956,8 +6965,8 @@
       "label": "flow_view",
       "layer": "ai",
       "position": {
-        "x": -6360,
-        "y": 320
+        "x": -7000,
+        "y": 40
       },
       "status": "ghost",
       "type": "external",
@@ -6992,8 +7001,8 @@
       "label": "FlowchartGenerator",
       "layer": "user",
       "position": {
-        "x": -1160,
-        "y": 2640
+        "x": -3520,
+        "y": 1600
       },
       "status": "active",
       "type": "file",
@@ -7028,8 +7037,8 @@
       "label": "FlowScanner",
       "layer": "user",
       "position": {
-        "x": -1920,
-        "y": 3080
+        "x": -4000,
+        "y": 960
       },
       "status": "active",
       "type": "file",
@@ -7077,7 +7086,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 6,
+        "degree": 4,
         "file": "release_note/GEMINI (사본).md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -7111,7 +7120,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 4,
+        "degree": 2,
         "file": "GEMINI_origin.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -7179,7 +7188,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 4,
+        "degree": 2,
         "file": "GEMINI--.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -7234,8 +7243,8 @@
       "label": "GeminiParser",
       "layer": "user",
       "position": {
-        "x": -1920,
-        "y": 2520
+        "x": -3960,
+        "y": 400
       },
       "status": "active",
       "type": "file",
@@ -7249,7 +7258,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 5,
+        "degree": 4,
         "file": "backup_md/GHOST_NODE.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -7304,8 +7313,8 @@
       "label": "graphBuilder",
       "layer": "user",
       "position": {
-        "x": -1080,
-        "y": 2000
+        "x": -3360,
+        "y": 1560
       },
       "status": "active",
       "type": "file",
@@ -7340,8 +7349,8 @@
       "label": "GraphModel",
       "layer": "user",
       "position": {
-        "x": 720,
-        "y": 2400
+        "x": -720,
+        "y": 1760
       },
       "status": "active",
       "type": "file",
@@ -7376,8 +7385,8 @@
       "label": "GridSystem",
       "layer": "user",
       "position": {
-        "x": 40,
-        "y": -1000
+        "x": -2080,
+        "y": 1560
       },
       "status": "active",
       "type": "file",
@@ -7411,8 +7420,8 @@
       "label": "hint_dashed_border",
       "layer": "ai",
       "position": {
-        "x": -5440,
-        "y": 160
+        "x": -6080,
+        "y": -160
       },
       "status": "ghost",
       "type": "external",
@@ -7446,8 +7455,8 @@
       "label": "hint_grayed_out",
       "layer": "ai",
       "position": {
-        "x": -6200,
-        "y": -240
+        "x": -6840,
+        "y": -560
       },
       "status": "ghost",
       "type": "external",
@@ -7481,8 +7490,8 @@
       "label": "hint_purple_glow",
       "layer": "ai",
       "position": {
-        "x": -6000,
-        "y": 600
+        "x": -6640,
+        "y": 280
       },
       "status": "ghost",
       "type": "external",
@@ -7516,8 +7525,8 @@
       "label": "hint_red_pulse",
       "layer": "ai",
       "position": {
-        "x": -5960,
-        "y": -280
+        "x": -6600,
+        "y": -600
       },
       "status": "ghost",
       "type": "external",
@@ -7551,8 +7560,8 @@
       "label": "hint_solid_border",
       "layer": "ai",
       "position": {
-        "x": -6600,
-        "y": 480
+        "x": -7240,
+        "y": 160
       },
       "status": "ghost",
       "type": "external",
@@ -7586,8 +7595,8 @@
       "label": "index",
       "layer": "ai",
       "position": {
-        "x": -6240,
-        "y": 0
+        "x": -6880,
+        "y": -320
       },
       "status": "ghost",
       "type": "external",
@@ -7764,8 +7773,8 @@
       "label": "LogicAnalyzer",
       "layer": "user",
       "position": {
-        "x": 440,
-        "y": 1240
+        "x": -1120,
+        "y": 1560
       },
       "status": "active",
       "type": "file",
@@ -7799,8 +7808,8 @@
       "label": "main",
       "layer": "ai",
       "position": {
-        "x": -6440,
-        "y": 160
+        "x": -7080,
+        "y": -160
       },
       "status": "ghost",
       "type": "external",
@@ -7835,8 +7844,8 @@
       "label": "mod",
       "layer": "user",
       "position": {
-        "x": -3600,
-        "y": 3320
+        "x": -5920,
+        "y": 1840
       },
       "status": "active",
       "type": "file",
@@ -7870,8 +7879,8 @@
       "label": "net",
       "layer": "ai",
       "position": {
-        "x": -4040,
-        "y": 640
+        "x": -4720,
+        "y": 280
       },
       "status": "ghost",
       "type": "external",
@@ -7885,7 +7894,7 @@
       "cluster_id": "cluster_ghosts",
       "data": {
         "cluster_id": "cluster_ghosts",
-        "degree": 4,
+        "degree": 3,
         "hasAtomicSignature": false,
         "hasImportSignature": false,
         "hiddenOnCanvas": false,
@@ -7905,8 +7914,8 @@
       "label": "node_active",
       "layer": "ai",
       "position": {
-        "x": -6680,
-        "y": 800
+        "x": -7320,
+        "y": 480
       },
       "status": "ghost",
       "type": "external",
@@ -7920,7 +7929,7 @@
       "cluster_id": "cluster_ghosts",
       "data": {
         "cluster_id": "cluster_ghosts",
-        "degree": 4,
+        "degree": 3,
         "hasAtomicSignature": false,
         "hasImportSignature": false,
         "hiddenOnCanvas": false,
@@ -7940,8 +7949,8 @@
       "label": "node_deleted",
       "layer": "ai",
       "position": {
-        "x": -6440,
-        "y": 640
+        "x": -7080,
+        "y": 320
       },
       "status": "ghost",
       "type": "external",
@@ -7955,7 +7964,7 @@
       "cluster_id": "cluster_ghosts",
       "data": {
         "cluster_id": "cluster_ghosts",
-        "degree": 4,
+        "degree": 3,
         "hasAtomicSignature": false,
         "hasImportSignature": false,
         "hiddenOnCanvas": false,
@@ -7975,8 +7984,8 @@
       "label": "node_ghost",
       "layer": "ai",
       "position": {
-        "x": -5720,
-        "y": 160
+        "x": -6360,
+        "y": -160
       },
       "status": "ghost",
       "type": "external",
@@ -7990,7 +7999,7 @@
       "cluster_id": "cluster_ghosts",
       "data": {
         "cluster_id": "cluster_ghosts",
-        "degree": 4,
+        "degree": 3,
         "hasAtomicSignature": false,
         "hasImportSignature": false,
         "hiddenOnCanvas": false,
@@ -8010,8 +8019,8 @@
       "label": "node_high_dtr",
       "layer": "ai",
       "position": {
-        "x": -6240,
-        "y": 440
+        "x": -6880,
+        "y": 120
       },
       "status": "ghost",
       "type": "external",
@@ -8025,7 +8034,7 @@
       "cluster_id": "cluster_ghosts",
       "data": {
         "cluster_id": "cluster_ghosts",
-        "degree": 4,
+        "degree": 3,
         "hasAtomicSignature": false,
         "hasImportSignature": false,
         "hiddenOnCanvas": false,
@@ -8045,8 +8054,8 @@
       "label": "node_warning",
       "layer": "ai",
       "position": {
-        "x": -6400,
-        "y": 0
+        "x": -7040,
+        "y": -320
       },
       "status": "ghost",
       "type": "external",
@@ -8080,8 +8089,8 @@
       "label": "package",
       "layer": "ai",
       "position": {
-        "x": -6080,
-        "y": 760
+        "x": -6720,
+        "y": 440
       },
       "status": "ghost",
       "type": "external",
@@ -8116,8 +8125,8 @@
       "label": "PbSessionWatcher",
       "layer": "user",
       "position": {
-        "x": 200,
-        "y": 1440
+        "x": -1240,
+        "y": 1640
       },
       "status": "active",
       "type": "file",
@@ -8188,8 +8197,8 @@
       "label": "PhaseManager",
       "layer": "user",
       "position": {
-        "x": 400,
-        "y": 1440
+        "x": -1760,
+        "y": 1680
       },
       "status": "active",
       "type": "file",
@@ -8223,8 +8232,8 @@
       "label": "position",
       "layer": "ai",
       "position": {
-        "x": -4880,
-        "y": 1400
+        "x": -5480,
+        "y": 720
       },
       "status": "ghost",
       "type": "external",
@@ -8295,8 +8304,8 @@
       "label": "PromptLogger",
       "layer": "user",
       "position": {
-        "x": -1400,
-        "y": 2440
+        "x": -3840,
+        "y": 1600
       },
       "status": "active",
       "type": "file",
@@ -8330,8 +8339,8 @@
       "label": "RawTextMiner",
       "layer": "ai",
       "position": {
-        "x": -6520,
-        "y": 320
+        "x": -7160,
+        "y": 0
       },
       "status": "ghost",
       "type": "external",
@@ -8345,7 +8354,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 88,
+        "degree": 89,
         "file": "backup_md/README.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -8379,7 +8388,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 61,
+        "degree": 45,
         "file": "backup_md/README.ko.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -8536,8 +8545,8 @@
       "label": "RendererCore",
       "layer": "user",
       "position": {
-        "x": -640,
-        "y": 1000
+        "x": -3080,
+        "y": 1560
       },
       "status": "active",
       "type": "file",
@@ -8888,8 +8897,8 @@
       "label": "server",
       "layer": "user",
       "position": {
-        "x": -2160,
-        "y": 3760
+        "x": -240,
+        "y": 1160
       },
       "status": "active",
       "type": "file",
@@ -8924,8 +8933,8 @@
       "label": "SnapshotSystem",
       "layer": "user",
       "position": {
-        "x": -160,
-        "y": 2480
+        "x": -2000,
+        "y": 1720
       },
       "status": "active",
       "type": "file",
@@ -8996,8 +9005,8 @@
       "label": "standalone",
       "layer": "user",
       "position": {
-        "x": -1720,
-        "y": 3760
+        "x": 1160,
+        "y": 1360
       },
       "status": "active",
       "type": "file",
@@ -9032,8 +9041,8 @@
       "label": "state_checker",
       "layer": "user",
       "position": {
-        "x": -4000,
-        "y": 2680
+        "x": -6320,
+        "y": 1200
       },
       "status": "active",
       "type": "file",
@@ -9103,8 +9112,8 @@
       "label": "style_dashed_2px",
       "layer": "ai",
       "position": {
-        "x": -6520,
-        "y": 1000
+        "x": -7160,
+        "y": 680
       },
       "status": "ghost",
       "type": "external",
@@ -9138,8 +9147,8 @@
       "label": "style_dotted_2px",
       "layer": "ai",
       "position": {
-        "x": -6080,
-        "y": 440
+        "x": -6720,
+        "y": 120
       },
       "status": "ghost",
       "type": "external",
@@ -9173,8 +9182,8 @@
       "label": "style_pulse_5px",
       "layer": "ai",
       "position": {
-        "x": -5840,
-        "y": 320
+        "x": -6480,
+        "y": 0
       },
       "status": "ghost",
       "type": "external",
@@ -9208,8 +9217,8 @@
       "label": "style_solid_1.5px",
       "layer": "ai",
       "position": {
-        "x": -6320,
-        "y": -160
+        "x": -6960,
+        "y": -440
       },
       "status": "ghost",
       "type": "symbol",
@@ -9243,8 +9252,8 @@
       "label": "style_solid_1px",
       "layer": "ai",
       "position": {
-        "x": -6280,
-        "y": 600
+        "x": -6920,
+        "y": 280
       },
       "status": "ghost",
       "type": "external",
@@ -9278,8 +9287,8 @@
       "label": "style_solid_2px",
       "layer": "ai",
       "position": {
-        "x": -6520,
-        "y": 760
+        "x": -7160,
+        "y": 480
       },
       "status": "ghost",
       "type": "external",
@@ -9313,8 +9322,8 @@
       "label": "style_solid_3px",
       "layer": "ai",
       "position": {
-        "x": -6280,
-        "y": 200
+        "x": -6920,
+        "y": -120
       },
       "status": "ghost",
       "type": "external",
@@ -9398,7 +9407,7 @@
       "cluster_id": "cluster_ghosts",
       "data": {
         "cluster_id": "cluster_ghosts",
-        "degree": 10,
+        "degree": 7,
         "hasAtomicSignature": false,
         "hasImportSignature": false,
         "hiddenOnCanvas": false,
@@ -9418,8 +9427,8 @@
       "label": "synapse_topology_view",
       "layer": "ai",
       "position": {
-        "x": -5880,
-        "y": 160
+        "x": -6520,
+        "y": -160
       },
       "status": "ghost",
       "type": "external",
@@ -9433,7 +9442,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 6,
+        "degree": 5,
         "hasAtomicSignature": false,
         "hasImportSignature": false,
         "hiddenOnCanvas": true,
@@ -9664,8 +9673,8 @@
       "label": "test_new_session",
       "layer": "ai",
       "position": {
-        "x": -760,
-        "y": 3360
+        "x": -960,
+        "y": -1200
       },
       "status": "active",
       "type": "file",
@@ -9699,8 +9708,8 @@
       "label": "topology_view",
       "layer": "ai",
       "position": {
-        "x": -6320,
-        "y": -360
+        "x": -6960,
+        "y": -680
       },
       "status": "ghost",
       "type": "external",
@@ -9734,8 +9743,8 @@
       "label": "ts",
       "layer": "ai",
       "position": {
-        "x": -5240,
-        "y": 1400
+        "x": -5840,
+        "y": 720
       },
       "status": "ghost",
       "type": "external",
@@ -15042,8 +15051,8 @@
       "label": "VirtualDebugger",
       "layer": "user",
       "position": {
-        "x": -1640,
-        "y": 1280
+        "x": -4160,
+        "y": 1600
       },
       "status": "active",
       "type": "file",
@@ -15184,8 +15193,8 @@
       "label": "VscdbAdapter",
       "layer": "user",
       "position": {
-        "x": 160,
-        "y": -880
+        "x": -2240,
+        "y": 1640
       },
       "status": "active",
       "type": "file",
@@ -15219,8 +15228,8 @@
       "label": "vscode-languageclient",
       "layer": "ai",
       "position": {
-        "x": -4040,
-        "y": -240
+        "x": -4680,
+        "y": -560
       },
       "status": "ghost",
       "type": "external",
@@ -15254,8 +15263,8 @@
       "label": "vscode-languageserver-textdocument",
       "layer": "ai",
       "position": {
-        "x": -4360,
-        "y": 1400
+        "x": -4960,
+        "y": 720
       },
       "status": "ghost",
       "type": "external",
@@ -15324,8 +15333,8 @@
       "label": "webgl-renderer",
       "layer": "user",
       "position": {
-        "x": -2920,
-        "y": 2840
+        "x": -5240,
+        "y": 1320
       },
       "status": "active",
       "type": "file",
@@ -15360,8 +15369,8 @@
       "label": "WebviewInterceptor",
       "layer": "user",
       "position": {
-        "x": 160,
-        "y": 1840
+        "x": -1360,
+        "y": 1520
       },
       "status": "active",
       "type": "file",
@@ -15443,7 +15452,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 1,
+        "degree": 2,
         "file": "mile_stone/v0.3.16.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -15511,7 +15520,7 @@
       "cluster_id": "cluster_ghosts",
       "data": {
         "cluster_id": "cluster_ghosts",
-        "degree": 4,
+        "degree": 3,
         "hasAtomicSignature": false,
         "hasImportSignature": false,
         "hiddenOnCanvas": false,
@@ -15531,8 +15540,8 @@
       "label": "minimalist_view",
       "layer": "ai",
       "position": {
-        "x": -4000,
-        "y": 200
+        "x": -4640,
+        "y": -120
       },
       "status": "ghost",
       "type": "external",
@@ -15546,7 +15555,7 @@
       "cluster_id": "cluster_ghosts",
       "data": {
         "cluster_id": "cluster_ghosts",
-        "degree": 2,
+        "degree": 4,
         "hasAtomicSignature": false,
         "hasImportSignature": false,
         "hiddenOnCanvas": false,
@@ -15566,8 +15575,8 @@
       "label": "node_summary",
       "layer": "ai",
       "position": {
-        "x": -7360,
-        "y": 640
+        "x": -8000,
+        "y": 320
       },
       "status": "ghost",
       "type": "external",
@@ -15581,7 +15590,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 1,
+        "degree": 2,
         "file": "mile_stone/v0.3.17.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -15644,12 +15653,150 @@
         "scale": 1,
         "visible": true
       }
+    },
+    {
+      "cluster_id": "cluster_src_analysis",
+      "data": {
+        "cluster_id": "cluster_src_analysis",
+        "degree": 0,
+        "file": "src/analysis/hintEngine.ts",
+        "hasAtomicSignature": false,
+        "hasImportSignature": false,
+        "hiddenOnCanvas": false,
+        "icon": "📄",
+        "isScoped": false,
+        "isSovereign": true,
+        "isUserCreated": true,
+        "label": "hintEngine",
+        "layer": "user",
+        "opacity": 1,
+        "scale": 1,
+        "status": "active"
+      },
+      "degree": 0,
+      "filePath": "src/analysis/hintEngine.ts",
+      "id": "hintEngine",
+      "label": "hintEngine",
+      "layer": "user",
+      "position": {
+        "x": 0,
+        "y": 3680
+      },
+      "status": "active",
+      "type": "file",
+      "visual": {
+        "opacity": 1,
+        "scale": 1,
+        "visible": true
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "degree": 0,
+        "file": "mile_stone/v0.3.18.md",
+        "hasAtomicSignature": false,
+        "hasImportSignature": false,
+        "hiddenOnCanvas": true,
+        "icon": "📚",
+        "isUserCreated": true,
+        "label": "v0.3.18",
+        "layer": "user",
+        "opacity": 1,
+        "scale": 1,
+        "status": "active"
+      },
+      "degree": 0,
+      "filePath": "mile_stone/v0.3.18.md",
+      "id": "v0.3.18",
+      "label": "v0.3.18",
+      "layer": "user",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "status": "active",
+      "type": "documentation",
+      "visual": {
+        "opacity": 1,
+        "scale": 1,
+        "visible": true
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "degree": 0,
+        "file": "mile_stone/v0.3.18_implementation_plan.md",
+        "hasAtomicSignature": false,
+        "hasImportSignature": false,
+        "hiddenOnCanvas": true,
+        "icon": "📚",
+        "isUserCreated": true,
+        "label": "v0.3.18_implementation_plan",
+        "layer": "user",
+        "opacity": 1,
+        "scale": 1,
+        "status": "active"
+      },
+      "degree": 0,
+      "filePath": "mile_stone/v0.3.18_implementation_plan.md",
+      "id": "v0.3.18_implementation_plan",
+      "label": "v0.3.18_implementation_plan",
+      "layer": "user",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "status": "active",
+      "type": "documentation",
+      "visual": {
+        "opacity": 1,
+        "scale": 1,
+        "visible": true
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "degree": 0,
+        "file": "release_note/v0.3.18_release_notes.md",
+        "hasAtomicSignature": false,
+        "hasImportSignature": false,
+        "hiddenOnCanvas": true,
+        "icon": "📚",
+        "isUserCreated": true,
+        "label": "v0.3.18_release_notes",
+        "layer": "user",
+        "opacity": 1,
+        "scale": 1,
+        "status": "active"
+      },
+      "degree": 0,
+      "filePath": "release_note/v0.3.18_release_notes.md",
+      "id": "v0.3.18_release_notes",
+      "label": "v0.3.18_release_notes",
+      "layer": "user",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "status": "active",
+      "type": "documentation",
+      "visual": {
+        "opacity": 1,
+        "scale": 1,
+        "visible": true
+      }
     }
   ],
   "project_name": "antigravity-extension-vis",
   "_iron_guard": {
     "version": "0.2.18.1",
-    "byte_size": 249742,
+    "byte_size": 252101,
     "encoding": "UTF-8",
     "alignment": 8
   }

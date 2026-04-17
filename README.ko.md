@@ -3,7 +3,7 @@
 > **"눈에 보이는 것이 곧 LLM의 논리이다"** — *AI를 위한 WYSIWYG 논리*
 
 [![Version](https://img.shields.io/badge/version-v0.3.18-brightgreen.png)
-[![Latest Release](https://img.shields.io/badge/latest-v0.3.18%20Diagnostic%20Hint-orange.png)
+[![Latest Release](https://img.shields.io/badge/latest-v0.3.18%20Triple%20Expression-orange.png)
 ![Status](https://img.shields.io/badge/status-Production_Ready-brightgreen.png)
 [![Language](https://img.shields.io/badge/Language-TypeScript-blue?style=flat-square)](https://www.typescriptlang.org/)
 [![Platform](https://img.shields.io/badge/Platform-VS_Code-007ACC?style=flat-square)](https://code.visualstudio.com/)
@@ -12,18 +12,36 @@
 
 ---
 
-## 🔥 최신 릴리스: v0.3.18 - 문맥적 노드 인사이트 (2026-04-17)
+## 🔥 최신 릴리스: v0.3.18 - Triple Expression & 노드 역할 체계 (2026-04-17)
 
 | 기능 | 설명 | 혜택 |
 |-------|---------|-----|
-| **진단 힌트 엔진** | 자동화된 아키텍처 분석 | 노드 연결 패턴을 분석하여 실시간 리팩토링 힌트(R1-R5) 제공. |
-| **정체 인식 툴팁** | 상세 연결 내역 분해 | 요약창에 레이어 카테고리와 함께 구체적인 파일/라이브러리명(`└ axon_core`) 표시. |
+| **Triple Expression** | **색상 · 레이어 · 우선순위** 시스템 | 고유 색상을 통한 역할 인지, 리프 노드 필터링을 통한 노이즈 제거, 별점을 통한 리팩토링 시급성 판단. |
+| **노드 역할 체계** | 아키텍처적 정체성 분류 | 노드의 정체성을 **Orchestrator, Controller, Hub, Leaf**로 엄격히 분류(단일 역할 원칙). |
+| **정체 인식 툴팁** | 근거 중심의 인사이트 | 별점(`★★★☆`)과 함께 레이어별 상세 연결 노드명을 출력하여 판단의 근거 제공. |
 | **Zero-Unknown 원칙** | 시맨틱 노드 라벨링 | `unknown` 라벨을 제거하고 미배정 노드를 `External`, `Ghost`, `Unmapped`로 분류. |
-| **툴팁 간섭 방지** | 충돌 감지 및 제어 | 노드 요약창 활성화 시 AI 추론 툴팁을 자동으로 숨겨 시각적 겹침 방지. |
 
 ---
 
-## 🔍 아키텍처 진단 규칙 (R1-R5)
+## 🔍 노드 역할 체계 (Node Role Taxonomy)
+
+SYNAPSE v0.3.18은 모든 노드를 연결 프로필에 따라 특정 아키텍처 역할로 분류합니다:
+
+| 역할 (Role) | 식별 색상 | 의미 | 식별 기준 | 리팩토링 시급성 |
+|:---:|:---:|:---|:---|:---:|
+| **Orchestrator** | 🟠 주황 | 중앙 제어 노드 (팬아웃) | 출력 비율 ≥ 80% & 연결 수 ≥ 10 | 높음 |
+| **Controller** | 🟢 초록 | 진입점 / API 파사드 | 입력 비율 ≥ 80% & 연결 수 ≥ 10 | 보통 |
+| **Hub** | 🔵 파랑 | 고연결 중심점 | 총 연결 수 ≥ 20 | **매우 높음** |
+| **Leaf Node** | ⚪ 회색 | 유틸리티 / 말단 기능 | 총 연결 수 ≤ 2 | 낮음 |
+
+### 🛠️ Triple Expression System (인지-집중-판단)
+- **색상 (Color)**: 테두리 및 글로우 색상을 통해 노드의 역할을 즉시 인지.
+- **레이어 (Layer)**: `Hide Leaf Nodes` 토글로 구조적 노이즈를 제거하고 핵심 아키텍처에 집중.
+- **우선순위 (Priority)**: 별점(`★`) 시스템을 통해 개선이 가장 시급한 핵심 노드를 정량적으로 선별.
+
+---
+
+## 🔍 아키텍처 진단 규칙 (R1-R5 정밀화)
 
 SYNAPSE v0.3.18은 프로젝트의 아키텍처 건강 상태를 모니터링하는 규칙 기반 엔진을 도입했습니다. 노드(연결 수 5개 이상)에 마우스를 올리면 다음 진단이 수행됩니다:
 
@@ -74,7 +92,7 @@ LLM 추론 논리와 실제 소스 파일 간의 물리적 연결을 시각화�
 
 | 버전 | 날짜 | 영문 설명 | 한글 설명 |
 | :--- | :--- | :--- | :--- |
-| **v0.3.18** | 2026-04-17 | **Diagnostic Hint Engine**: Real-time architectural analysis (R1-R5), Zero-Unknown semantic labeling, and detailed node identity list in tooltips. | **진단 힌트 엔진**: 실시간 아키텍처 분석(R1-R5), Zero-Unknown 시맨틱 라벨링 및 툴팁 내 상세 연결 노드 리스트 출력. |
+| **v0.3.18** | 2026-04-17 | **Triple Expression System**: Integrated Role-based colors, Leaf node filtering, and Priority Star ratings (★★★☆) for enhanced architectural judgment. | **Triple Expression System**: 역할별 색상 매핑, 리프 노드 숨기기 토글, 우선순위 별점(★★★☆) UI를 통해 아키텍처 판단력 강화. |
 | **v0.3.17** | 2026-04-14 | **Node Summary Feature**: Added interactive node summary tooltips showing unique connections and directional degrees. Optimized with O(E) pre-calculation. | **노드 요약 정보 출력**: 노드 호버 시 고유 연결 및 방향성 의존성을 보여주는 요약 툴팁 추가 및 O(E) 성능 최적화. |
 | **v0.3.16** | 2026-04-14 | **Minimalist Logic View**: Introduced toggle controls for edge and badge visibility. Implemented transparent edge persistence for selected nodes and O(1) rendering skips. | **미니멀리스트 로직 뷰**: 엣지 및 배지 가시성 토글 기능 도입. 선택된 노드의 엣지 반투명 노출 및 O(1) 렌더링 스킵 구현. |
 

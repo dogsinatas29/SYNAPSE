@@ -948,6 +948,7 @@ class CanvasEngine {
         this.isRedOut = false;
         this.lastPressureUpdate = Date.now();
         this.nodeStatsMap = new Map(); // [v0.3.17] Degree & Connection Cache
+        this.hideLeafNodes = false; // [v0.3.19] Noise Control Toggle
 
         // [v0.2.19] Layer Visibility State
         this.showBaseLayer = true;
@@ -1157,6 +1158,18 @@ class CanvasEngine {
         if (docsCloseBtn) {
             docsCloseBtn.addEventListener('click', () => {
                 document.getElementById('docs-shelf-panel')?.classList.remove('visible');
+            });
+        }
+
+        // [v0.3.19] Hide Leaf Nodes Toggle
+        const btnToggleLeaf = document.getElementById('btn-toggle-leaf');
+        if (btnToggleLeaf) {
+            btnToggleLeaf.addEventListener('click', () => {
+                this.hideLeafNodes = !this.hideLeafNodes;
+                btnToggleLeaf.textContent = this.hideLeafNodes ? 'ON' : 'OFF';
+                btnToggleLeaf.classList.toggle('active', this.hideLeafNodes);
+                this.needsUpdate = true; // Trigger redraw
+                console.log('[SYNAPSE] Hide Leaf Mode:', this.hideLeafNodes);
             });
         }
 
@@ -3698,66 +3711,107 @@ class CanvasEngine {
             stats.connectedNodes = stats.connected.size;
             stats.total = stats.in + stats.out;
             
-            // Generate diagnostic hints
-            stats.hints = this.generateDiagnosticHints(stats);
+            // [v0.3.19] Role & Priority caching for performance
+            const diag = this.generateDiagnosticHints(stats);
+            stats.primaryRole = diag.roles[0] || null;
+            stats.priority = diag.priority;
         }
 
-        console.log(`[SYNAPSE] Node stats & hints updated for ${nodes.length} nodes using ${edges.length} edges.`);
+        console.log(`[SYNAPSE] Node stats & roles updated for ${nodes.length} nodes.`);
+        this.needsUpdate = true; // Refresh display
     }
 
     generateDiagnosticHints(stats) {
-        const hints = [];
         const { in: inCount, out, connectedNodes, distribution, total } = stats;
         const groups = Object.keys(distribution);
         const values = Object.values(distribution);
+        const outRatioVal = total > 0 ? out / total : 0;
+        const inRatioVal = total > 0 ? inCount / total : 0;
+        const maxVal = Math.max(...values, 0);
+        const maxRatio = total > 0 ? maxVal / total : 0;
 
-        // Thresholds (v0.3.18)
+        const roles = [];
+        const hints = [];
+
+        // --- Role Detection (Priority Order) ---
+        if (connectedNodes <= 2) {
+            roles.push("Leaf node");
+        } else if (outRatioVal >= 0.8 && connectedNodes >= 10) {
+            roles.push("Orchestrator (fan-out)");
+        } else if (inRatioVal >= 0.8 && connectedNodes >= 10) {
+            roles.push("Controller (fan-in)");
+        } else if (connectedNodes >= 20) {
+            roles.push("Hub (high connectivity)");
+        }
+
+        // --- Architectural Hints (Facts & Nuances) ---
         const SUPER_NODE_LIMIT = 30;
-        const CONCENTRATION_RATIO = 0.7;
+        const CONCENTRATION_STRONG = 0.8;
+        const CONCENTRATION_MODERATE = 0.6;
         const FAN_RATIO = 0.7;
         const MIN_CONNECTIONS = 5;
 
-        if (connectedNodes < MIN_CONNECTIONS) return hints;
+        if (connectedNodes >= MIN_CONNECTIONS) {
+            const getRatioText = (val) => Math.round((val / total) * 100);
 
-        // Rule 1: Multi-Domain (!! 주의)
-        if (groups.length >= 3) {
-            hints.push("!! 다중 도메인 감지. 책임 분리 검토 필요.");
+            // Rule 1: Multi-Domain (진짜 분산된 경우만 제안)
+            if (groups.length >= 3 && maxRatio < 0.6) {
+                hints.push(`!! 다중 도메인 분산 소통 (${groups.length}개 그룹). 책임 분리 검토 권장.`);
+            }
+
+            // Rule 2: Concentration (강도 세분화)
+            if (total > 0) {
+                const ratioVal = getRatioText(maxVal);
+                const dominant = groups[values.indexOf(maxVal)];
+                if (maxRatio >= CONCENTRATION_STRONG) {
+                    hints.push(`!! ${dominant} 레이어 집중 결합 (${ratioVal}%). 강력한 종속성 형성.`);
+                } else if (maxRatio >= CONCENTRATION_MODERATE) {
+                    hints.push(`! ${dominant} 레이어 중심 결합 (${ratioVal}%).`);
+                }
+
+                const otherCount = total - maxVal;
+                if (otherCount > 0 && maxRatio >= CONCENTRATION_MODERATE) {
+                    const otherRatio = getRatioText(otherCount);
+                    hints.push(`- 일부 타 레이어 연결 존재 (${otherCount}/total, ${otherRatio}%).`);
+                }
+            }
+
+            // Rule 3: High Outbound
+            if (total > 0 && outRatioVal >= FAN_RATIO) {
+                const ratio = getRatioText(out);
+                hints.push(`! 높은 출력 비율 (${ratio}%).`);
+            }
+
+            // Rule 4: High Inbound
+            if (total > 0 && inRatioVal >= FAN_RATIO) {
+                const ratio = getRatioText(inCount);
+                hints.push(`! 높은 입력 비율 (${ratio}%). 시스템 핫스팟 가능성.`);
+            }
+
+            // Rule 5: Super Node
+            if (connectedNodes >= SUPER_NODE_LIMIT) {
+                hints.push(`!!! 슈퍼 노드 감지 (${connectedNodes}/30). 로직 분해 권장.`);
+            }
         }
 
-        // Rule 2: Concentration (! 경고)
-        const maxVal = Math.max(...values, 0);
-        if (total > 0 && (maxVal / total >= CONCENTRATION_RATIO)) {
-            const dominant = groups[values.indexOf(maxVal)];
-            hints.push(`! ${dominant} 레이어에 강결합됨. 의존성 격리 권장.`);
-        }
+        // --- Priority Calculation (v0.3.19) ---
+        let priority = 0;
+        if (connectedNodes >= 20) priority += 2;
+        if (total > 0 && outRatioVal >= 0.8) priority += 1;
+        if (total > 0 && inRatioVal >= 0.8) priority += 1;
+        priority = Math.min(priority, 4);
 
-        // Rule 3: High Outbound (! 경고)
-        if (total > 0 && (out / total >= FAN_RATIO)) {
-            hints.push("! 출력 의존성 높음. 책임 과다 가능성.");
-        }
-
-        // Rule 4: High Inbound (! 경고)
-        if (total > 0 && (inCount / total >= FAN_RATIO)) {
-            hints.push("! 입력 의존성 높음. 인터페이스 추상화 검토.");
-        }
-
-        // Rule 5: Super Node (!!! 심각)
-        if (connectedNodes >= SUPER_NODE_LIMIT) {
-            hints.push("!!! 슈퍼 노드 감지. 로직 분해 시급.");
-        }
-
-        return hints;
+        return { roles, hints, priority };
     }
 
     showNodeSummary(x, y, node, stats) {
         if (!this.nodeSummary) return;
         
         const nodeName = node.data?.label || node.id;
-        
-        const groupDetails = {};
-        const nodeMap = new Map(this.nodes.map(n => [n.id, n]));
+        const nodes = this.nodes || [];
+        const clusters = this.clusters || [];
         const clusterLayerMap = new Map();
-        (this.clusters || []).forEach(c => {
+        clusters.forEach(c => {
             const layer = c.layer || (c.data && c.data.layer) || (c.id.startsWith('sys_') ? 'ai' : (c.id === 'doc_shelf' ? 'doc' : 'user'));
             clusterLayerMap.set(c.id, layer);
         });
@@ -3771,8 +3825,14 @@ class CanvasEngine {
             if (n.cluster_id === 'doc_shelf') return 'doc';
             if (n.type === 'external') return 'external';
             if (n.status === 'ghost') return 'ghost';
+            if (n.type === 'documentation') return 'doc';
+            const cluster = clusters.find(c => c.id === n.cluster_id);
+            if (cluster && cluster.label) return cluster.label.replace(/[📂☁️🛡️🕒]/g, '').trim().toLowerCase();
             return 'unmapped';
         };
+
+        const groupDetails = {};
+        const nodeMap = new Map(nodes.map(n => [n.id, n]));
 
         stats.connected.forEach(targetId => {
             const targetNode = nodeMap.get(targetId);
@@ -3786,6 +3846,18 @@ class CanvasEngine {
         const distributionEntries = Object.entries(stats.distribution)
             .sort((a, b) => b[1] - a[1])
             .slice(0, 3);
+
+        const diag = this.generateDiagnosticHints(stats);
+        const { roles, hints, priority } = diag;
+
+        const ROLE_COLOR = {
+            'Orchestrator (fan-out)': '#FF8C00',
+            'Controller (fan-in)':   '#4CAF50',
+            'Hub (high connectivity)': '#2196F3',
+            'Leaf node':         '#9E9E9E'
+        };
+
+        const stars = '★'.repeat(priority) + '☆'.repeat(4 - priority);
 
         const distHtml = distributionEntries.length > 0 ? `
             <div style="margin-top: 10px; border-top: 1px solid #504945; padding-top: 6px;">
@@ -3805,17 +3877,33 @@ class CanvasEngine {
                     `;
                 }).join('')}
             </div>
-        ` : '';
 
-        const hintHtml = stats.hints && stats.hints.length > 0 ? `
+            <div style="margin-top: 8px; border-top: 1px solid #504945; padding-top: 6px; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <div style="font-size: 10px; color: #928374; text-transform: uppercase; margin-bottom: 2px;">Role:</div>
+                    ${roles.map(role => `
+                        <div style="font-size: 11px; color: ${ROLE_COLOR[role] || '#b8bb26'}; font-weight: bold;">${role}</div>
+                    `).join('') || '<div style="font-size: 11px; color: #928374;">-</div>'}
+                </div>
+                <div style="text-align: right;">
+                    <div style="font-size: 10px; color: #928374; text-transform: uppercase; margin-bottom: 2px;">Priority:</div>
+                    <div style="font-size: 12px; color: #fabd2f; letter-spacing: 1px;">${stars}</div>
+                </div>
+            </div>
+
+            ${hints.length > 0 ? `
             <div style="margin-top: 8px; border-top: 1px solid #504945; padding-top: 6px;">
-                <div style="font-size: 10px; color: #fb4934; text-transform: uppercase; margin-bottom: 2px;">Architecture Hints:</div>
-                ${stats.hints.map(hint => {
-                    const color = hint.startsWith('!!!') ? '#fb4934' : (hint.startsWith('!!') ? '#fe8019' : '#fabd2f');
-                    return `<div style="color: ${color}; font-size: 10.5px; line-height: 1.4; margin-top: 1px;">${hint}</div>`;
+                <div style="font-size: 10px; color: #928374; text-transform: uppercase; margin-bottom: 4px;">Architectural Hints:</div>
+                ${hints.map(hint => {
+                    let color = '#d3869b'; 
+                    if (hint.startsWith('!!!')) color = '#fb4934'; 
+                    else if (hint.startsWith('!!')) color = '#fe8019'; 
+                    return `<div style="font-size: 11px; color: ${color}; line-height: 1.4; margin-bottom: 2px;">${hint}</div>`;
                 }).join('')}
             </div>
+            ` : ''}
         ` : '';
+
 
         this.nodeSummary.innerHTML = `
             <div style="color: #fabd2f; font-weight: bold; border-bottom: 1px solid #fabd2f; margin-bottom: 8px; padding-bottom: 4px; font-size: 13px;">${nodeName}</div>
@@ -3825,7 +3913,6 @@ class CanvasEngine {
                 <div style="color: #fe8019;">Out: <span style="color: #ebdbb2;">${stats.out}</span></div>
             </div>
             ${distHtml}
-            ${hintHtml}
         `;
         
         this.nodeSummary.style.display = 'block';
@@ -6054,6 +6141,25 @@ class CanvasEngine {
             typeLabel: 'Logic'
         };
 
+        // [v0.3.19] Role-based Border Overlays
+        const stats = this.nodeStatsMap.get(node.id);
+        if (stats && stats.primaryRole) {
+            const ROLE_COLOR = {
+                'Orchestrator (fan-out)': '#FF8C00',
+                'Controller (fan-in)':   '#4CAF50',
+                'Hub (high connectivity)': '#2196F3',
+                'Leaf node':         '#9E9E9E'
+            };
+            const roleColor = ROLE_COLOR[stats.primaryRole];
+            if (roleColor) {
+                defaultStyle.borderColor = roleColor;
+                if (stats.primaryRole !== 'Leaf node') {
+                    defaultStyle.glow = true;
+                    defaultStyle.lineWidth = 3.5;
+                }
+            }
+        }
+
         const typeMap = {
             // [v0.2.14] Standard Entities
             'source': { borderColor: '#a89984', bgColor: node.data?.color || '#3c3836', icon: '📄', lineWidth: 2, typeLabel: 'File' },
@@ -6194,6 +6300,12 @@ class CanvasEngine {
     renderNode(node, zoom) {
         if (!node || !node.position || typeof node.position.x !== 'number' || typeof node.position.y !== 'number') {
             return;
+        }
+
+        // [v0.3.19] Noise Control: Hide Leaf Nodes
+        if (this.hideLeafNodes) {
+            const stats = this.nodeStatsMap.get(node.id);
+            if (stats && stats.primaryRole === 'Leaf node') return;
         }
 
         // 1.5. 클러스터 접힘 체크
@@ -6981,6 +7093,14 @@ class CanvasEngine {
         const toNode = this.nodeMap.get(edge.to);
 
         if (!fromNode || !toNode) return;
+
+        // [v0.3.19] Hide Edges connected to filtered Leaf nodes
+        if (this.hideLeafNodes) {
+            const fromStats = this.nodeStatsMap.get(fromNode.id);
+            const toStats = this.nodeStatsMap.get(toNode.id);
+            if ((fromStats && fromStats.primaryRole === 'Leaf node') || 
+                (toStats && toStats.primaryRole === 'Leaf node')) return;
+        }
 
         // [v0.3.16] Edge Visibility early exit
         const isSelected = this.selectedEdge && this.selectedEdge.id === edge.id;

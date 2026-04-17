@@ -1,9 +1,9 @@
-# <img src="./resources/synapse-icon.png" width="40" height="40" /> 🧠 SYNAPSE: Visual Architecture Engine (v0.3.17)
+# <img src="./resources/synapse-icon.png" width="40" height="40" /> 🧠 SYNAPSE: Visual Architecture Engine (v0.3.18)
 
 > **"What you see is the logic of LLM"** — *WYSIWYG Logic for AI*
 
-[![Version](https://img.shields.io/badge/version-v0.3.17-brightgreen.png)
-[![Latest Release](https://img.shields.io/badge/latest-v0.3.17%20Node%20Summary-orange.png)
+[![Version](https://img.shields.io/badge/version-v0.3.18-brightgreen.png)
+[![Latest Release](https://img.shields.io/badge/latest-v0.3.18%20Triple%20Expression-orange.png)
 ![Status](https://img.shields.io/badge/status-Production_Ready-brightgreen.png)
 [![Language](https://img.shields.io/badge/Language-TypeScript-blue?style=flat-square)](https://www.typescriptlang.org/)
 [![Platform](https://img.shields.io/badge/Platform-VS_Code-007ACC?style=flat-square)](https://code.visualstudio.com/)
@@ -12,14 +12,36 @@
 
 ---
 
-## 🔥 Latest Release: v0.3.17 - Node Summary Feature (2026-04-14)
+## 🔥 Latest Release: v0.3.18 - Triple Expression & Node Taxonomy (2026-04-17)
 
 | Feature | Description | Benefit |
 |-------|---------|-----|
-| **Node Summary** | Interactive Connectivity Metrics | Hovering over a node displays its unique connected nodes, IN degree, and OUT degree in a 4-line summary. |
-| **Performance Map** | O(E) Pre-calculated Stats | Uses a cached `nodeStatsMap` to provide instant O(1) hover feedback even in dense graphs. |
+| **Triple Expression** | **Color · Layer · Priority** System | Instant role recognition via colors, noise reduction via leaf filtering, and priority stars for refactoring focus. |
+| **Node Role Taxonomy** | Architectural Identity Classification | Identifies **Orchestrator, Controller, Hub, Leaf** with strict Single-Role principle. |
+| **Identity-Aware Tooltip** | Detailed Connection Breakdown | Displays star ratings (`★★★☆`) and specific file/library names to provide evidence-based insights. |
+| **Zero-Unknown Principle** | Semantic Node Labeling | Eliminates `unknown` labels by classifying unmapped nodes as `External`, `Ghost`, or `Unmapped`. |
 
 ---
+
+## 🔍 Node Role Taxonomy
+
+SYNAPSE v0.3.18 classifies every node into a specific architectural role based on its connectivity profile:
+
+| Role | Action Color | Meaning | Identification Criteria | Refactoring Priority |
+|:---:|:---:|:---|:---|:---:|
+| **Orchestrator** | 🟠 Orange | Central Control Node | OutRatio ≥ 80% & Conn ≥ 10 | High |
+| **Controller** | 🟢 Green | Inbound Gateway / Facade | InRatio ≥ 80% & Conn ≥ 10 | Medium |
+| **Hub** | 🔵 Blue | High Connectivity Center | Total Connections ≥ 20 | Very High |
+| **Leaf Node** | ⚪ Gray | Utility / Terminal Function | Total Connections ≤ 2 | Low |
+
+### 🛠️ Triple Expression System
+- **Color (Perception)**: Instant Role recognition via border/glow colors.
+- **Layer (Focus)**: `Hide Leaf Nodes` toggle to eliminate structural noise.
+- **Priority (Judgment)**: Star rating (`★`) system indicating refactoring urgency.
+
+---
+
+## 🔍 Architecture Diagnostics (R1-R5 Refined)
 
 ## 🔥 v0.3.16 - Minimalist Logic View (2026-04-14)
 

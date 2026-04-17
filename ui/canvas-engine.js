@@ -950,7 +950,8 @@ class CanvasEngine {
         this.nodeStatsMap = new Map(); // [v0.3.17] Degree & Connection Cache
         this.hideLeafNodes = false; // [v0.3.19] Noise Control Toggle
         this.focusTopNodes = false; // [v0.3.19] Global Exploration Mode
-        this.focusNodeSet = new Set(); // Set of node IDs for focus view
+        this.focusCoreSet = new Set(); // Top-N Core node IDs
+        this.focusNodeSet = new Set(); // Core + 1-hop neighbor IDs
 
         // [v0.2.19] Layer Visibility State
         this.showBaseLayer = true;
@@ -3732,6 +3733,7 @@ class CanvasEngine {
 
         // [v0.3.19] Top-N Focus Analysis (Global Exploration)
         this.focusNodeSet.clear();
+        this.focusCoreSet.clear();
         if (nodes.length > 0) {
             // Sort by priority (4 -> 0), then by connectivity
             const sortedNodes = [...this.nodeStatsMap.entries()]
@@ -3740,12 +3742,15 @@ class CanvasEngine {
 
             // Pick Top 10 cores
             const topN = sortedNodes.slice(0, 10);
-            topN.forEach(id => this.focusNodeSet.add(id));
+            topN.forEach(id => {
+                this.focusCoreSet.add(id);
+                this.focusNodeSet.add(id);
+            });
 
             // Include 1-hop neighbors for context expansion
             for (const edge of edges) {
-                if (this.focusNodeSet.has(edge.from)) this.focusNodeSet.add(edge.to);
-                if (this.focusNodeSet.has(edge.to)) this.focusNodeSet.add(edge.from);
+                if (this.focusCoreSet.has(edge.from)) this.focusNodeSet.add(edge.to);
+                if (this.focusCoreSet.has(edge.to)) this.focusNodeSet.add(edge.from);
             }
             console.log(`[SYNAPSE] Focus Top-N calculated: ${topN.length} cores, ${this.focusNodeSet.size} total context nodes.`);
         }
@@ -6356,9 +6361,15 @@ class CanvasEngine {
             }
         }
 
-        // [v0.4.0 Critical Fix] Move Translate to TOP
-        // This ensures Satellite view (zoom < 0.4) uses the correct coordinates per node.
         this.ctx.save();
+
+        // Apply visual differentiation for Context nodes in Focus View
+        if (this.focusTopNodes) {
+            const isEssential = this.selectedNodes.has(node.id) || (this.hoveredNode && this.hoveredNode.id === node.id);
+            if (!this.focusCoreSet.has(node.id) && !isEssential) {
+                this.ctx.globalAlpha = 0.4;
+            }
+        }
 
         let jitterX = 0, jitterY = 0;
         if (node.isArchViolation && this.isAnimating) {
@@ -7207,6 +7218,15 @@ class CanvasEngine {
         if (isEdgeHidden && isPathSelected) {
             opacity = 0.3;
         }
+        
+        // [v0.3.19] Strategic Visibility: Top-N Focus View Alpha
+        if (this.focusTopNodes && !isPathSelected) {
+            // If either end is NOT a core node, dim it to show context relation
+            if (!this.focusCoreSet.has(fromNode.id) || !this.focusCoreSet.has(toNode.id)) {
+                opacity *= 0.2; // Context connections are very faint
+            }
+        }
+
         this.ctx.globalAlpha = opacity;
 
         // Logic Analysis Highlights

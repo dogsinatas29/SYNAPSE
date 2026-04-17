@@ -1,7 +1,7 @@
 {
   "canvas_state": {
     "offset": {
-      "x": 1245.39010989011,
+      "x": 1408.6648351648353,
       "y": 333.95604395604397
     },
     "visible_layers": [
@@ -1320,6 +1320,14 @@
     },
     {
       "from": "README",
+      "id": "README->minimalist_view",
+      "status": "confirmed",
+      "to": "minimalist_view",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README",
       "id": "README->node_active",
       "status": "confirmed",
       "to": "node_active",
@@ -1347,6 +1355,14 @@
       "id": "README->node_high_dtr",
       "status": "confirmed",
       "to": "node_high_dtr",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README",
+      "id": "README->node_summary",
+      "status": "confirmed",
+      "to": "node_summary",
       "type": "include",
       "weight": 1
     },
@@ -1544,6 +1560,14 @@
     },
     {
       "from": "README.ko",
+      "id": "README.ko->minimalist_view",
+      "status": "confirmed",
+      "to": "minimalist_view",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README.ko",
       "id": "README.ko->node_active",
       "status": "confirmed",
       "to": "node_active",
@@ -1571,6 +1595,14 @@
       "id": "README.ko->node_high_dtr",
       "status": "confirmed",
       "to": "node_high_dtr",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README.ko",
+      "id": "README.ko->node_summary",
+      "status": "confirmed",
+      "to": "node_summary",
       "type": "include",
       "weight": 1
     },
@@ -2411,6 +2443,14 @@
       "id": "v0.3.15->v0.3.14",
       "status": "confirmed",
       "to": "v0.3.14",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "v0.3.17",
+      "id": "v0.3.17->v0.3.16",
+      "status": "confirmed",
+      "to": "v0.3.16",
       "type": "include",
       "weight": 1
     },
@@ -4566,8 +4606,8 @@
       "label": ") || trimmed.includes(",
       "layer": "ai",
       "position": {
-        "x": -3920,
-        "y": 1040
+        "x": -4000,
+        "y": 1160
       },
       "status": "ghost",
       "type": "symbol",
@@ -5111,8 +5151,8 @@
       "label": "출력 가능한 ASCII",
       "layer": "ai",
       "position": {
-        "x": -5920,
-        "y": 160
+        "x": -6000,
+        "y": 280
       },
       "status": "ghost",
       "type": "external",
@@ -5682,8 +5722,8 @@
       "label": "cluster_id",
       "layer": "ai",
       "position": {
-        "x": -4960,
-        "y": 1280
+        "x": -5040,
+        "y": 1400
       },
       "status": "ghost",
       "type": "external",
@@ -5717,8 +5757,8 @@
       "label": "color_aqua",
       "layer": "ai",
       "position": {
-        "x": -6200,
-        "y": 640
+        "x": -6280,
+        "y": 760
       },
       "status": "ghost",
       "type": "external",
@@ -5752,8 +5792,8 @@
       "label": "color_beige",
       "layer": "ai",
       "position": {
-        "x": -5920,
-        "y": -240
+        "x": -6000,
+        "y": -120
       },
       "status": "ghost",
       "type": "external",
@@ -5787,8 +5827,8 @@
       "label": "color_blue",
       "layer": "ai",
       "position": {
-        "x": -6080,
-        "y": 160
+        "x": -6160,
+        "y": 280
       },
       "status": "ghost",
       "type": "external",
@@ -5822,8 +5862,8 @@
       "label": "color_brown",
       "layer": "ai",
       "position": {
-        "x": -6360,
-        "y": 360
+        "x": -6440,
+        "y": 480
       },
       "status": "ghost",
       "type": "external",
@@ -5857,8 +5897,8 @@
       "label": "color_gold",
       "layer": "ai",
       "position": {
-        "x": -5640,
-        "y": 320
+        "x": -5720,
+        "y": 440
       },
       "status": "ghost",
       "type": "external",
@@ -5892,8 +5932,8 @@
       "label": "color_magenta",
       "layer": "ai",
       "position": {
-        "x": -5920,
-        "y": -80
+        "x": -6000,
+        "y": 40
       },
       "status": "ghost",
       "type": "external",
@@ -5927,8 +5967,8 @@
       "label": "color_orange",
       "layer": "ai",
       "position": {
-        "x": -6160,
-        "y": 800
+        "x": -6240,
+        "y": 920
       },
       "status": "ghost",
       "type": "external",
@@ -5962,8 +6002,8 @@
       "label": "color_pink",
       "layer": "ai",
       "position": {
-        "x": -6320,
-        "y": 760
+        "x": -6400,
+        "y": 880
       },
       "status": "ghost",
       "type": "external",
@@ -6313,8 +6353,8 @@
       "label": "cors",
       "layer": "ai",
       "position": {
-        "x": -4480,
-        "y": 1280
+        "x": -4560,
+        "y": 1400
       },
       "status": "ghost",
       "type": "external",
@@ -6348,8 +6388,8 @@
       "label": "crypto",
       "layer": "ai",
       "position": {
-        "x": -3960,
-        "y": 1280
+        "x": -4040,
+        "y": 1400
       },
       "status": "ghost",
       "type": "external",
@@ -6739,8 +6779,8 @@
       "label": "express",
       "layer": "ai",
       "position": {
-        "x": -4120,
-        "y": 1280
+        "x": -4200,
+        "y": 1400
       },
       "status": "ghost",
       "type": "external",
@@ -6916,8 +6956,8 @@
       "label": "flow_view",
       "layer": "ai",
       "position": {
-        "x": -6280,
-        "y": 200
+        "x": -6360,
+        "y": 320
       },
       "status": "ghost",
       "type": "external",
@@ -7371,8 +7411,8 @@
       "label": "hint_dashed_border",
       "layer": "ai",
       "position": {
-        "x": -5360,
-        "y": 40
+        "x": -5440,
+        "y": 160
       },
       "status": "ghost",
       "type": "external",
@@ -7406,8 +7446,8 @@
       "label": "hint_grayed_out",
       "layer": "ai",
       "position": {
-        "x": -6120,
-        "y": -400
+        "x": -6200,
+        "y": -240
       },
       "status": "ghost",
       "type": "external",
@@ -7441,8 +7481,8 @@
       "label": "hint_purple_glow",
       "layer": "ai",
       "position": {
-        "x": -5960,
-        "y": 480
+        "x": -6000,
+        "y": 600
       },
       "status": "ghost",
       "type": "external",
@@ -7476,8 +7516,8 @@
       "label": "hint_red_pulse",
       "layer": "ai",
       "position": {
-        "x": -5880,
-        "y": -400
+        "x": -5960,
+        "y": -280
       },
       "status": "ghost",
       "type": "external",
@@ -7511,8 +7551,8 @@
       "label": "hint_solid_border",
       "layer": "ai",
       "position": {
-        "x": -6520,
-        "y": 360
+        "x": -6600,
+        "y": 480
       },
       "status": "ghost",
       "type": "external",
@@ -7546,8 +7586,8 @@
       "label": "index",
       "layer": "ai",
       "position": {
-        "x": -6160,
-        "y": -160
+        "x": -6240,
+        "y": 0
       },
       "status": "ghost",
       "type": "external",
@@ -7759,8 +7799,8 @@
       "label": "main",
       "layer": "ai",
       "position": {
-        "x": -6360,
-        "y": 40
+        "x": -6440,
+        "y": 160
       },
       "status": "ghost",
       "type": "external",
@@ -7830,8 +7870,8 @@
       "label": "net",
       "layer": "ai",
       "position": {
-        "x": -3960,
-        "y": 520
+        "x": -4040,
+        "y": 640
       },
       "status": "ghost",
       "type": "external",
@@ -7865,8 +7905,8 @@
       "label": "node_active",
       "layer": "ai",
       "position": {
-        "x": -6600,
-        "y": 640
+        "x": -6680,
+        "y": 800
       },
       "status": "ghost",
       "type": "external",
@@ -7900,8 +7940,8 @@
       "label": "node_deleted",
       "layer": "ai",
       "position": {
-        "x": -6320,
-        "y": 520
+        "x": -6440,
+        "y": 640
       },
       "status": "ghost",
       "type": "external",
@@ -7935,8 +7975,8 @@
       "label": "node_ghost",
       "layer": "ai",
       "position": {
-        "x": -5640,
-        "y": 40
+        "x": -5720,
+        "y": 160
       },
       "status": "ghost",
       "type": "external",
@@ -7970,8 +8010,8 @@
       "label": "node_high_dtr",
       "layer": "ai",
       "position": {
-        "x": -6160,
-        "y": 320
+        "x": -6240,
+        "y": 440
       },
       "status": "ghost",
       "type": "external",
@@ -8005,8 +8045,8 @@
       "label": "node_warning",
       "layer": "ai",
       "position": {
-        "x": -6320,
-        "y": -120
+        "x": -6400,
+        "y": 0
       },
       "status": "ghost",
       "type": "external",
@@ -8040,8 +8080,8 @@
       "label": "package",
       "layer": "ai",
       "position": {
-        "x": -6000,
-        "y": 640
+        "x": -6080,
+        "y": 760
       },
       "status": "ghost",
       "type": "external",
@@ -8183,8 +8223,8 @@
       "label": "position",
       "layer": "ai",
       "position": {
-        "x": -4800,
-        "y": 1280
+        "x": -4880,
+        "y": 1400
       },
       "status": "ghost",
       "type": "external",
@@ -8290,8 +8330,8 @@
       "label": "RawTextMiner",
       "layer": "ai",
       "position": {
-        "x": -6440,
-        "y": 200
+        "x": -6520,
+        "y": 320
       },
       "status": "ghost",
       "type": "external",
@@ -8305,7 +8345,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 85,
+        "degree": 88,
         "file": "backup_md/README.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -8339,7 +8379,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 58,
+        "degree": 61,
         "file": "backup_md/README.ko.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -9063,8 +9103,8 @@
       "label": "style_dashed_2px",
       "layer": "ai",
       "position": {
-        "x": -6440,
-        "y": 840
+        "x": -6520,
+        "y": 1000
       },
       "status": "ghost",
       "type": "external",
@@ -9098,8 +9138,8 @@
       "label": "style_dotted_2px",
       "layer": "ai",
       "position": {
-        "x": -6000,
-        "y": 320
+        "x": -6080,
+        "y": 440
       },
       "status": "ghost",
       "type": "external",
@@ -9133,8 +9173,8 @@
       "label": "style_pulse_5px",
       "layer": "ai",
       "position": {
-        "x": -5760,
-        "y": 200
+        "x": -5840,
+        "y": 320
       },
       "status": "ghost",
       "type": "external",
@@ -9168,8 +9208,8 @@
       "label": "style_solid_1.5px",
       "layer": "ai",
       "position": {
-        "x": -6240,
-        "y": -280
+        "x": -6320,
+        "y": -160
       },
       "status": "ghost",
       "type": "symbol",
@@ -9203,8 +9243,8 @@
       "label": "style_solid_1px",
       "layer": "ai",
       "position": {
-        "x": -6160,
-        "y": 480
+        "x": -6280,
+        "y": 600
       },
       "status": "ghost",
       "type": "external",
@@ -9238,8 +9278,8 @@
       "label": "style_solid_2px",
       "layer": "ai",
       "position": {
-        "x": -6440,
-        "y": 640
+        "x": -6520,
+        "y": 760
       },
       "status": "ghost",
       "type": "external",
@@ -9273,8 +9313,8 @@
       "label": "style_solid_3px",
       "layer": "ai",
       "position": {
-        "x": -6200,
-        "y": 80
+        "x": -6280,
+        "y": 200
       },
       "status": "ghost",
       "type": "external",
@@ -9378,8 +9418,8 @@
       "label": "synapse_topology_view",
       "layer": "ai",
       "position": {
-        "x": -5800,
-        "y": 40
+        "x": -5880,
+        "y": 160
       },
       "status": "ghost",
       "type": "external",
@@ -9659,8 +9699,8 @@
       "label": "topology_view",
       "layer": "ai",
       "position": {
-        "x": -6240,
-        "y": -480
+        "x": -6320,
+        "y": -360
       },
       "status": "ghost",
       "type": "external",
@@ -9694,8 +9734,8 @@
       "label": "ts",
       "layer": "ai",
       "position": {
-        "x": -5160,
-        "y": 1280
+        "x": -5240,
+        "y": 1400
       },
       "status": "ghost",
       "type": "external",
@@ -15179,8 +15219,8 @@
       "label": "vscode-languageclient",
       "layer": "ai",
       "position": {
-        "x": -3960,
-        "y": -360
+        "x": -4040,
+        "y": -240
       },
       "status": "ghost",
       "type": "external",
@@ -15214,8 +15254,8 @@
       "label": "vscode-languageserver-textdocument",
       "layer": "ai",
       "position": {
-        "x": -4280,
-        "y": 1280
+        "x": -4360,
+        "y": 1400
       },
       "status": "ghost",
       "type": "external",
@@ -15403,7 +15443,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 0,
+        "degree": 1,
         "file": "mile_stone/v0.3.16.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -15466,12 +15506,150 @@
         "scale": 1,
         "visible": true
       }
+    },
+    {
+      "cluster_id": "cluster_ghosts",
+      "data": {
+        "cluster_id": "cluster_ghosts",
+        "degree": 4,
+        "hasAtomicSignature": false,
+        "hasImportSignature": false,
+        "hiddenOnCanvas": false,
+        "icon": "☁️",
+        "isScoped": false,
+        "isSovereign": false,
+        "isUserCreated": false,
+        "label": "minimalist_view",
+        "layer": "ai",
+        "opacity": 1,
+        "scale": 1,
+        "status": "ghost"
+      },
+      "degree": 0,
+      "filePath": "external://minimalist_view",
+      "id": "minimalist_view",
+      "label": "minimalist_view",
+      "layer": "ai",
+      "position": {
+        "x": -4000,
+        "y": 200
+      },
+      "status": "ghost",
+      "type": "external",
+      "visual": {
+        "opacity": 1,
+        "scale": 1,
+        "visible": true
+      }
+    },
+    {
+      "cluster_id": "cluster_ghosts",
+      "data": {
+        "cluster_id": "cluster_ghosts",
+        "degree": 2,
+        "hasAtomicSignature": false,
+        "hasImportSignature": false,
+        "hiddenOnCanvas": false,
+        "icon": "☁️",
+        "isScoped": false,
+        "isSovereign": false,
+        "isUserCreated": false,
+        "label": "node_summary",
+        "layer": "ai",
+        "opacity": 1,
+        "scale": 1,
+        "status": "ghost"
+      },
+      "degree": 0,
+      "filePath": "external://node_summary",
+      "id": "node_summary",
+      "label": "node_summary",
+      "layer": "ai",
+      "position": {
+        "x": -7360,
+        "y": 640
+      },
+      "status": "ghost",
+      "type": "external",
+      "visual": {
+        "opacity": 1,
+        "scale": 1,
+        "visible": true
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "degree": 1,
+        "file": "mile_stone/v0.3.17.md",
+        "hasAtomicSignature": false,
+        "hasImportSignature": false,
+        "hiddenOnCanvas": true,
+        "icon": "📚",
+        "isUserCreated": true,
+        "label": "v0.3.17",
+        "layer": "user",
+        "opacity": 1,
+        "scale": 1,
+        "status": "active"
+      },
+      "degree": 0,
+      "filePath": "mile_stone/v0.3.17.md",
+      "id": "v0.3.17",
+      "label": "v0.3.17",
+      "layer": "user",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "status": "active",
+      "type": "documentation",
+      "visual": {
+        "opacity": 1,
+        "scale": 1,
+        "visible": true
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "degree": 0,
+        "file": "release_note/v0.3.17_release_notes.md",
+        "hasAtomicSignature": false,
+        "hasImportSignature": false,
+        "hiddenOnCanvas": true,
+        "icon": "📚",
+        "isUserCreated": true,
+        "label": "v0.3.17_release_notes",
+        "layer": "user",
+        "opacity": 1,
+        "scale": 1,
+        "status": "active"
+      },
+      "degree": 0,
+      "filePath": "release_note/v0.3.17_release_notes.md",
+      "id": "v0.3.17_release_notes",
+      "label": "v0.3.17_release_notes",
+      "layer": "user",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "status": "active",
+      "type": "documentation",
+      "visual": {
+        "opacity": 1,
+        "scale": 1,
+        "visible": true
+      }
     }
   ],
   "project_name": "antigravity-extension-vis",
   "_iron_guard": {
     "version": "0.2.18.1",
-    "byte_size": 247020,
+    "byte_size": 249742,
     "encoding": "UTF-8",
     "alignment": 8
   }

@@ -264,7 +264,7 @@ The following icons are used within the center badge and arrowheads to define th
 
 ### Project Topology
 Visualizes the physical connections between LLM reasoning logic and source files.
-![Topology View](./resources/screenshots/v0.3.1/topology_view.png)
+![Topology View](./resources/screenshots/v0.3.18/topology_view.png)
 
 ### Node Information Output (v0.3.17)
 Hover over any node to see its structural metrics (Connections, IN, OUT) instantly. This allows for rapid identification of responsibility and dependency clusters.
@@ -321,7 +321,7 @@ Current Version: **v0.3.17** (Node Summary)
 ## 🚀 Getting Started
 Launch your visual architecture journey in seconds.
 
-1. **Install Extension**: Install the `synapse-visual-architecture-v0.3.10.vsix` (or latest) in Antigravity/VS Code.
+1. **Install Extension**: Install the `synapse-visual-architecture-v0.3.18.vsix` (or latest) in Antigravity/VS Code.
 2. **DNA Injection**: Create or drop a `GEMINI.md` (or `Project_Spec.md`) file into your workspace root.
 3. **Bootstrap Phase**: Open the **SYNAPSE Canvas** from the sidebar or command palette (`Ctrl+Shift+P` -> `SYNAPSE: Open Canvas`).
 4. **First Visualization**: 
@@ -334,6 +334,7 @@ Launch your visual architecture journey in seconds.
 
 | Version | Date | Description (English) | Description (Korean) |
 | :--- | :--- | :--- | :--- |
+| **v0.3.18** | 2026-04-17 | **Diagnostic Hint Engine**: Real-time architectural analysis (R1-R5), Zero-Unknown semantic labeling, and detailed node identity list in tooltips. | **진단 힌트 엔진**: 실시간 아키텍처 분석(R1-R5), Zero-Unknown 시맨틱 라벨링 및 툴팁 내 상세 연결 노드 리스트 출력. |
 | **v0.3.17** | 2026-04-14 | **Node Summary Feature**: Added interactive node summary tooltips showing unique connections and directional degrees. Optimized with O(E) pre-calculation. | **노드 요약 정보 출력**: 노드 호버 시 고유 연결 및 방향성 의존성을 보여주는 요약 툴팁 추가 및 O(E) 성능 최적화. |
 | **v0.3.16** | 2026-04-14 | **Minimalist Logic View**: Introduced toggle controls for edge and badge visibility. Implemented transparent edge persistence for selected nodes and O(1) rendering skips. | **미니멀리스트 로직 뷰**: 엣지 및 배지 가시성 토글 기능 도입. 선택된 노드의 엣지 반투명 노출 및 O(1) 렌더링 스킵 구현. |
 | **v0.3.15** | 2026-04-13 | **Shelf fzf & Grid Sovereignty**: Added fuzzy search for documentation nodes with `/` shortcut, 40px grid snapping, and centering highlight effects. | **쉘프 fzf 및 그리드 주권**: documentation 노드 대상 `/` 단축키 검색 기능, 40px 격자 스냅 및 강조 하이라이트 효과 도입. |

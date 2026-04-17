@@ -3618,68 +3618,229 @@ class CanvasEngine {
         this.needsUpdate = true; // [v0.2.24] Ensure first draw after clear
     }
 
-    // [v0.3.17] Node Summary Implementation
+    // [v0.3.18] Node Summary Implementation: Distribution & Hints
     updateNodeStats() {
         this.nodeStatsMap.clear();
         const nodes = this.nodes || [];
         const edges = this.edges || [];
 
+        // Build cluster-to-layer map for fast lookup
+        const clusterLayerMap = new Map();
+        (this.clusters || []).forEach(c => {
+            const layer = c.layer || (c.data && c.data.layer) || (c.id.startsWith('sys_') ? 'ai' : (c.id === 'doc_shelf' ? 'doc' : 'user'));
+            clusterLayerMap.set(c.id, layer);
+        });
+
         // Initialize Map in O(N)
+        const nodeMap = new Map();
         for (const node of nodes) {
+            nodeMap.set(node.id, node);
             this.nodeStatsMap.set(node.id, {
                 in: 0,
                 out: 0,
-                connected: new Set()
+                connected: new Set(),
+                distribution: {}
             });
         }
+
+        // Helper to get semantic group label (Zero-Unknown Principle)
+        const getGroupLabel = (node) => {
+            if (!node) return 'unknown';
+            
+            // 1. Recognized layer from clusters
+            const layer = clusterLayerMap.get(node.cluster_id);
+            if (layer && layer !== 'user') return layer;
+
+            // 2. System clusters with specific logic
+            if (node.cluster_id === 'sys_cluster_buffer') return 'buffer';
+            if (node.cluster_id === 'sys_cluster_reserved') return 'reserved';
+            if (node.cluster_id === 'doc_shelf') return 'doc';
+
+            // 3. Identification by Node Type & Status
+            if (node.type === 'external') return 'external';
+            if (node.status === 'ghost') return 'ghost';
+            if (node.type === 'documentation') return 'doc';
+
+            // 4. Fallback to cluster label or unmapped
+            const cluster = this.clusters.find(c => c.id === node.cluster_id);
+            if (cluster) return cluster.label.replace(/[📂☁️🛡️🕒]/g, '').trim().toLowerCase();
+
+            return 'unmapped';
+        };
 
         // Single pass over edges O(E)
         for (const e of edges) {
             const srcStats = this.nodeStatsMap.get(e.from);
             const tgtStats = this.nodeStatsMap.get(e.to);
+            const srcNode = nodeMap.get(e.from);
+            const tgtNode = nodeMap.get(e.to);
 
-            if (srcStats) {
+            if (srcStats && tgtNode) {
                 srcStats.out++;
                 srcStats.connected.add(e.to);
+                
+                // Track semantic distribution
+                const tgtGroup = getGroupLabel(tgtNode);
+                srcStats.distribution[tgtGroup] = (srcStats.distribution[tgtGroup] || 0) + 1;
             }
-            if (tgtStats) {
+            if (tgtStats && srcNode) {
                 tgtStats.in++;
                 tgtStats.connected.add(e.from);
+
+                // Track semantic distribution
+                const srcGroup = getGroupLabel(srcNode);
+                tgtStats.distribution[srcGroup] = (tgtStats.distribution[srcGroup] || 0) + 1;
             }
         }
 
-        // Finalize stats (convert Set size)
+        // Finalize stats
         for (const [id, stats] of this.nodeStatsMap) {
             stats.connectedNodes = stats.connected.size;
-            // total is not used in the spec but kept for consistency if needed
             stats.total = stats.in + stats.out;
+            
+            // Generate diagnostic hints
+            stats.hints = this.generateDiagnosticHints(stats);
         }
 
-        console.log(`[SYNAPSE] Node stats updated for ${nodes.length} nodes using ${edges.length} edges.`);
+        console.log(`[SYNAPSE] Node stats & hints updated for ${nodes.length} nodes using ${edges.length} edges.`);
+    }
+
+    generateDiagnosticHints(stats) {
+        const hints = [];
+        const { in: inCount, out, connectedNodes, distribution, total } = stats;
+        const groups = Object.keys(distribution);
+        const values = Object.values(distribution);
+
+        // Thresholds (v0.3.18)
+        const SUPER_NODE_LIMIT = 30;
+        const CONCENTRATION_RATIO = 0.7;
+        const FAN_RATIO = 0.7;
+        const MIN_CONNECTIONS = 5;
+
+        if (connectedNodes < MIN_CONNECTIONS) return hints;
+
+        // Rule 1: Multi-Domain (!! 주의)
+        if (groups.length >= 3) {
+            hints.push("!! 다중 도메인 감지. 책임 분리 검토 필요.");
+        }
+
+        // Rule 2: Concentration (! 경고)
+        const maxVal = Math.max(...values, 0);
+        if (total > 0 && (maxVal / total >= CONCENTRATION_RATIO)) {
+            const dominant = groups[values.indexOf(maxVal)];
+            hints.push(`! ${dominant} 레이어에 강결합됨. 의존성 격리 권장.`);
+        }
+
+        // Rule 3: High Outbound (! 경고)
+        if (total > 0 && (out / total >= FAN_RATIO)) {
+            hints.push("! 출력 의존성 높음. 책임 과다 가능성.");
+        }
+
+        // Rule 4: High Inbound (! 경고)
+        if (total > 0 && (inCount / total >= FAN_RATIO)) {
+            hints.push("! 입력 의존성 높음. 인터페이스 추상화 검토.");
+        }
+
+        // Rule 5: Super Node (!!! 심각)
+        if (connectedNodes >= SUPER_NODE_LIMIT) {
+            hints.push("!!! 슈퍼 노드 감지. 로직 분해 시급.");
+        }
+
+        return hints;
     }
 
     showNodeSummary(x, y, node, stats) {
         if (!this.nodeSummary) return;
         
         const nodeName = node.data?.label || node.id;
+        
+        const groupDetails = {};
+        const nodeMap = new Map(this.nodes.map(n => [n.id, n]));
+        const clusterLayerMap = new Map();
+        (this.clusters || []).forEach(c => {
+            const layer = c.layer || (c.data && c.data.layer) || (c.id.startsWith('sys_') ? 'ai' : (c.id === 'doc_shelf' ? 'doc' : 'user'));
+            clusterLayerMap.set(c.id, layer);
+        });
+
+        const getGroupLabel = (n) => {
+            if (!n) return 'unknown';
+            const layer = clusterLayerMap.get(n.cluster_id);
+            if (layer && layer !== 'user') return layer;
+            if (n.cluster_id === 'sys_cluster_buffer') return 'buffer';
+            if (n.cluster_id === 'sys_cluster_reserved') return 'reserved';
+            if (n.cluster_id === 'doc_shelf') return 'doc';
+            if (n.type === 'external') return 'external';
+            if (n.status === 'ghost') return 'ghost';
+            return 'unmapped';
+        };
+
+        stats.connected.forEach(targetId => {
+            const targetNode = nodeMap.get(targetId);
+            if (targetNode) {
+                const group = getGroupLabel(targetNode);
+                if (!groupDetails[group]) groupDetails[group] = [];
+                groupDetails[group].push(targetNode.data?.label || targetNode.id);
+            }
+        });
+
+        const distributionEntries = Object.entries(stats.distribution)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 3);
+
+        const distHtml = distributionEntries.length > 0 ? `
+            <div style="margin-top: 10px; border-top: 1px solid #504945; padding-top: 6px;">
+                <div style="font-size: 10px; color: #928374; text-transform: uppercase; margin-bottom: 4px;">Top Connections:</div>
+                ${distributionEntries.map(([group, count]) => {
+                    const topNodes = groupDetails[group] ? groupDetails[group].slice(0, 3).join(', ') : '';
+                    const more = groupDetails[group] && groupDetails[group].length > 3 ? '...' : '';
+                    return `
+                        <div style="margin-bottom: 5px;">
+                            <div style="display: flex; justify-content: space-between; font-size: 11px;">
+                                <span style="color: #8ec07c; font-weight: bold;">${group} (${count})</span>
+                            </div>
+                            <div style="color: #ebdbb2; font-size: 10px; padding-left: 6px; opacity: 0.8; line-height: 1.3;">
+                                └ ${topNodes}${more}
+                            </div>
+                        </div>
+                    `;
+                }).join('')}
+            </div>
+        ` : '';
+
+        const hintHtml = stats.hints && stats.hints.length > 0 ? `
+            <div style="margin-top: 8px; border-top: 1px solid #504945; padding-top: 6px;">
+                <div style="font-size: 10px; color: #fb4934; text-transform: uppercase; margin-bottom: 2px;">Architecture Hints:</div>
+                ${stats.hints.map(hint => {
+                    const color = hint.startsWith('!!!') ? '#fb4934' : (hint.startsWith('!!') ? '#fe8019' : '#fabd2f');
+                    return `<div style="color: ${color}; font-size: 10.5px; line-height: 1.4; margin-top: 1px;">${hint}</div>`;
+                }).join('')}
+            </div>
+        ` : '';
+
         this.nodeSummary.innerHTML = `
-            <div style="color: #fabd2f; border-bottom: 1px solid #504945; margin-bottom: 6px; padding-bottom: 2px;">Node: ${nodeName}</div>
-            <div style="color: #b8bb26;">Connections: ${stats.connectedNodes}</div>
-            <div style="color: #83a598;">IN: ${stats.in}</div>
-            <div style="color: #fe8019;">OUT: ${stats.out}</div>
+            <div style="color: #fabd2f; font-weight: bold; border-bottom: 1px solid #fabd2f; margin-bottom: 8px; padding-bottom: 4px; font-size: 13px;">${nodeName}</div>
+            <div style="display: flex; gap: 15px; font-size: 11px; margin-bottom: 2px;">
+                <div style="color: #b8bb26;">Conn: <span style="color: #ebdbb2;">${stats.connectedNodes}</span></div>
+                <div style="color: #83a598;">In: <span style="color: #ebdbb2;">${stats.in}</span></div>
+                <div style="color: #fe8019;">Out: <span style="color: #ebdbb2;">${stats.out}</span></div>
+            </div>
+            ${distHtml}
+            ${hintHtml}
         `;
+        
         this.nodeSummary.style.display = 'block';
+        if (this.tooltip) this.tooltip.style.display = 'none';
 
         const rect = this.nodeSummary.getBoundingClientRect();
         let left = x + 20;
         let top = y + 20;
-
         if (left + rect.width > window.innerWidth) left = x - rect.width - 20;
         if (top + rect.height > window.innerHeight) top = y - rect.height - 20;
 
         this.nodeSummary.style.left = `${left}px`;
         this.nodeSummary.style.top = `${top}px`;
     }
+
 
     hideNodeSummary() {
         if (this.nodeSummary) this.nodeSummary.style.display = 'none';

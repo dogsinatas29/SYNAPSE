@@ -952,7 +952,7 @@ class CanvasEngine {
         this.focusCoreSet = new Set(); // Top-N Core node IDs
         this.focusNodeSet = new Set(); // Core + 1-hop neighbor IDs
         this.hotspots = []; // [v0.3.20] Cached hotspot area geometries
-        this.isAligning = false; // [v0.4.0] Strategic Alignment Animation state
+        this.isAligning = false; // [v0.3.20] Strategic Alignment Animation state
         this.alignTimer = 0;
 
         // [v0.2.19] Layer Visibility State
@@ -3798,7 +3798,7 @@ class CanvasEngine {
                 const neighbor = nodeMap.get(neighborId);
                 const nStats = this.nodeStatsMap.get(neighborId);
                 if (neighbor && nStats && nStats.primaryRole !== 'Leaf node') {
-                    // [v0.4.1] Check both horizontal and vertical distance for better cluster cohesion
+                    // [v0.3.20] Check both horizontal and vertical distance for better cluster cohesion
                     const xDist = Math.abs(neighbor.position.x - anchor.position.x);
                     const yDist = Math.abs(neighbor.position.y - anchor.position.y);
                     if (xDist < MAX_CLUSTERING_DISTANCE && yDist < 600) {
@@ -3924,7 +3924,7 @@ class CanvasEngine {
     }
 
     /**
-     * [v0.4.0] Strategic Architecture Alignment (Spring Bias Revision)
+     * [v0.3.20] Strategic Architecture Alignment (Spring Bias Revision)
      * Triggers a smooth simulation that drifts nodes into their lanes without destroying the graph structure.
      */
     applyRoleAlignment() {
@@ -5371,7 +5371,7 @@ class CanvasEngine {
 
     renderEdges2D() {
         const zoom = this.transform.zoom;
-        // [v0.4.1] Allow extreme zoom levels to still show edges with simplified rendering
+        // [v0.3.20] Allow extreme zoom levels to still show edges with simplified rendering
         // using a lower threshold. This avoids a blank-edges state where only validation icons appear.
         if (zoom <= 0.15) return;
 
@@ -5418,7 +5418,7 @@ class CanvasEngine {
             if (group.length < 4) continue; // Threshold for bundling
             
             const cluster = this.clusters.find(c => c.id === clusterId);
-            if (!cluster) continue;
+            if (!cluster || !cluster.position) continue;
 
             const clusterCenterX = cluster.position.x + cluster.width / 2;
             const clusterCenterY = cluster.position.y + cluster.height / 2;
@@ -5465,7 +5465,7 @@ class CanvasEngine {
         const worldBottom = (canvasHeight - this.transform.offsetY) / zoom;
         const margin = 200; // Increased safety margin for culling
 
-        // [v0.4.0 Fix] Viewport culling disabled for absolute safety in v0.4.0
+        // [v0.3.20 Fix] Viewport culling disabled for absolute safety in v0.3.20
         for (const node of this.nodes) {
             if (!node.position) continue;
 
@@ -7403,7 +7403,7 @@ class CanvasEngine {
         const midX = (fromX + toX) / 2;
         const midY = (fromY + toY) / 2;
 
-        // [v0.4.5] Lite Bundling Logic
+        // [v0.3.20] Lite Bundling Logic (Cluster-weighted Approach)
         const targetNodeInternal = this.nodeMap.get(edge.to);
         const targetClusterId = targetNodeInternal?.cluster_id || 'unmapped';
         const groupCPCenter = this.edgeGroupsCP?.get(targetClusterId);

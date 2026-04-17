@@ -3954,11 +3954,23 @@ class CanvasEngine {
 
         for (const [roleName, group] of Object.entries(roles)) {
             const targetX = targets[roleName];
+            
+            // [v0.3.20] Sort by label for predictable vertical order (Reduces edge crossing)
+            group.sort((a, b) => (a.label || '').localeCompare(b.label || ''));
+            
+            const ROW_HEIGHT = 180; // Vertical spacing between nodes
+
             group.forEach((node, i) => {
                 // Apply 3-column grid spread to avoid vertical stacking
                 const colIndex = i % 3;
+                const rowIndex = Math.floor(i / 3);
+                
                 const xOffset = (colIndex - 1) * COLUMN_WIDTH; // -120, 0, 120
                 node.position.x = targetX + xOffset;
+                
+                // [v0.4.0] Strategic Vertical Position: Centers the cluster in Y-axis
+                const yOffset = (rowIndex * ROW_HEIGHT) - (Math.ceil(group.length / 3) * ROW_HEIGHT / 2);
+                node.position.y = yOffset;
             });
         }
         

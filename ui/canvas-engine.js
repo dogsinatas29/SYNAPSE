@@ -7413,13 +7413,19 @@ class CanvasEngine {
         let isBundled = false;
 
         if (groupCPCenter) {
-            cpX = midX * 0.3 + groupCPCenter.x * 0.7;
-            cpY = midY * 0.3 + groupCPCenter.y * 0.7;
+            // Pull towards the shared cluster center to maintain bundling ensemble
+            cpX = midX * 0.4 + groupCPCenter.x * 0.6;
+            
+            // Aggressive arch logic: pull toward cluster Y but add a significant upward hump
+            cpY = (midY * 0.4 + groupCPCenter.y * 0.6) - 100;
+            
+            // Add vertical spread to prevent identity loss within the bundle
             const seed = (edge.id.charCodeAt(edge.id.length - 1) % 20) - 10;
             cpY += seed; 
             isBundled = true;
         } else {
-            cpY -= 50; 
+            // Strong vertical arch for isolated flows to preserve visual elegance
+            cpY -= 120; 
         }
 
         let edgeColor = validation.valid ? style.color : validation.color;

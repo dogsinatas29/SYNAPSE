@@ -5220,11 +5220,12 @@ class CanvasEngine {
                 }
 
                 if (!this.debugDisableOverlay) {
+                    const dpr = window.devicePixelRatio || 1;
+                    
                     if (this.webglEnabled && this.webglRenderer && this.currentMode === 'graph') {
                         // [v0.3.20] Render Hotspots (Background areas) as a transformed 2D overlay underneath WebGL nodes
                         // Since WebGL is on another canvas or layer, we need to ensure this matches exactly.
                         this.ctx.save();
-                        const dpr = window.devicePixelRatio || 1;
                         this.ctx.setTransform(this.transform.zoom * dpr, 0, 0, this.transform.zoom * dpr, this.transform.offsetX * dpr, this.transform.offsetY * dpr);
                         this.renderHotspots2D();
                         this.ctx.restore();
@@ -5280,7 +5281,6 @@ class CanvasEngine {
                         // This ensures information parity for Badges/Arrows/Glow that WebGL lacks.
                         this.ctx.save();
                         // [v0.3.2] Align coordinates with DPR scaling (matches 2D background)
-                        const dpr = window.devicePixelRatio || 1;
                         this.ctx.setTransform(this.transform.zoom * dpr, 0, 0, this.transform.zoom * dpr, this.transform.offsetX * dpr, this.transform.offsetY * dpr);
                         for (const edge of this._visibleEdgesCache) {
                             this.renderEdgeBadges(this.ctx, edge); // Only the numbers/badges
@@ -5304,7 +5304,6 @@ class CanvasEngine {
                         // [v0.3.20] Fix: Apply Camera Transform to 2D context before rendering
                         // This was missing, causing nodes/edges to disappear at high zoom/offset
                         this.ctx.save();
-                        const dpr = window.devicePixelRatio || 1;
                         this.ctx.setTransform(
                             this.transform.zoom * dpr, 0, 0, 
                             this.transform.zoom * dpr, 

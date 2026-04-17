@@ -911,7 +911,6 @@ class CanvasEngine {
 
         // [v0.2.20] Loop guard initialization
         this.isAnimationLoopActive = false;
-        this.isAnimationLoopActive = false;
         this._loopRunning = false; // [v0.2.24] Robust loop protection
         this._frameCounter = 0; // [v0.2.24] Log throttling
         this.isGraphDataDirty = true;
@@ -3799,9 +3798,10 @@ class CanvasEngine {
                 const neighbor = nodeMap.get(neighborId);
                 const nStats = this.nodeStatsMap.get(neighborId);
                 if (neighbor && nStats && nStats.primaryRole !== 'Leaf node') {
-                    // Check horizontal distance
+                    // [v0.4.1] Check both horizontal and vertical distance for better cluster cohesion
                     const xDist = Math.abs(neighbor.position.x - anchor.position.x);
-                    if (xDist < MAX_CLUSTERING_DISTANCE) {
+                    const yDist = Math.abs(neighbor.position.y - anchor.position.y);
+                    if (xDist < MAX_CLUSTERING_DISTANCE && yDist < 600) {
                         clusterNodes.push(neighbor);
                     }
                 }
@@ -3939,10 +3939,10 @@ class CanvasEngine {
      */
     updateAlignmentSimulation() {
         if (!this.nodes) return;
-        const ALIGN_STRENGTH = 0.04; // Very subtle spring
+        const ALIGN_STRENGTH = 0.05; // Slightly stronger for faster settling
         const FRICTION = 0.82;
-        const COLUMN_WIDTH = 120;
-        const ROW_HEIGHT = 180;
+        const COLUMN_WIDTH = 350; // Widened for horizontal aesthetics
+        const ROW_HEIGHT = 160;  // Slightly compressed vertically
         
         // Group by role to find sub-column indices
         const groups = { 'Leaf': [], 'Hub': [], 'Orchestrator': [], 'Controller': [] };
@@ -3987,7 +3987,8 @@ class CanvasEngine {
     }
 
     /**
-     * [v0.3.20] Semantic Hotspot Area Generation
+     * [v0.3.20] Semantic Hotspot Area Generation (A-1)
+     */
 
     generateDiagnosticHints(stats) {
         const { in: inCount, out, connectedNodes, distribution, total } = stats;
@@ -8302,7 +8303,6 @@ class CanvasEngine {
     }
 }
 
-// 초기화
 // 초기화
 let engine;
 

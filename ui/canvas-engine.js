@@ -952,6 +952,7 @@ class CanvasEngine {
         this.focusTopNodes = false; // [v0.3.19] Global Exploration Mode
         this.focusCoreSet = new Set(); // Top-N Core node IDs
         this.focusNodeSet = new Set(); // Core + 1-hop neighbor IDs
+        this.hotspots = []; // [v0.3.20] Cached hotspot area geometries
 
         // [v0.2.19] Layer Visibility State
         this.showBaseLayer = true;
@@ -3764,7 +3765,160 @@ class CanvasEngine {
         }
 
         console.log(`[SYNAPSE] Node stats & roles updated for ${nodes.length} nodes.`);
+        this.updateHotspots(); // [v0.3.20] Recompute functional areas
         this.needsUpdate = true; // Refresh display
+    }
+
+    /**
+     * [v0.3.20] Semantic Hotspot Area Generation
+     * Automatically identifies meaningful node clusters using top cores as anchors.
+     */
+    updateHotspots() {
+        if (!this.nodes || !this.focusCoreSet.size) {
+            this.hotspots = [];
+            return;
+        }
+
+        const PADDING = 60; 
+        const newHotspots = [];
+        const nodeMap = this.nodeMap;
+
+        // Step 1: Build Clusters around Cores (Anchors)
+        for (const anchorId of this.focusCoreSet) {
+            const anchor = nodeMap.get(anchorId);
+            const stats = this.nodeStatsMap.get(anchorId);
+            if (!anchor || !stats) continue;
+
+            // Anchor + Non-leaf neighbors (Filtered by horizontal distance to prevent lane-spanning boxes)
+            const clusterNodes = [anchor];
+            const MAX_CLUSTERING_DISTANCE = 800; // Do not include neighbors in distant lanes in the same box
+
+            for (const neighborId of stats.connected) {
+                const neighbor = nodeMap.get(neighborId);
+                const nStats = this.nodeStatsMap.get(neighborId);
+                if (neighbor && nStats && nStats.primaryRole !== 'Leaf node') {
+                    // Check horizontal distance
+                    const xDist = Math.abs(neighbor.position.x - anchor.position.x);
+                    if (xDist < MAX_CLUSTERING_DISTANCE) {
+                        clusterNodes.push(neighbor);
+                    }
+                }
+            }
+
+            // Step 2: Compute Bounding Box for the cluster
+            if (clusterNodes.length >= 2) {
+                const xs = clusterNodes.map(n => n.position.x);
+                const ys = clusterNodes.map(n => n.position.y);
+                const minX = Math.min(...xs);
+                const maxX = Math.max(...xs);
+                const minY = Math.min(...ys);
+                const maxY = Math.max(...ys);
+
+                newHotspots.push({
+                    id: `hs_${anchorId}`,
+                    coreId: anchorId,
+                    role: stats.primaryRole,
+                    x: minX - PADDING,
+                    y: minY - PADDING,
+                    width: (maxX - minX) + PADDING * 2,
+                    height: (maxY - minY) + PADDING * 2
+                });
+            }
+        }
+
+        // Step 3: Simple Overlap Merging (v0.3.20)
+        const combinedHotspots = [];
+        const usedIds = new Set();
+
+        for (let i = 0; i < newHotspots.length; i++) {
+            if (usedIds.has(newHotspots[i].id)) continue;
+            
+            let current = newHotspots[i];
+            usedIds.add(current.id);
+
+            for (let j = i + 1; j < newHotspots.length; j++) {
+                if (usedIds.has(newHotspots[j].id)) continue;
+                
+                const other = newHotspots[j];
+                
+                // Intersection check
+                const overlapX = Math.max(0, Math.min(current.x + current.width, other.x + other.width) - Math.max(current.x, other.x));
+                const overlapY = Math.max(0, Math.min(current.y + current.height, other.y + other.height) - Math.max(current.y, other.y));
+                
+                if (overlapX > 0 && overlapY > 0) {
+                    const areaA = current.width * current.height;
+                    const areaB = other.width * other.height;
+                    const overlapArea = overlapX * overlapY;
+                    
+                    // If swap/merge is needed (overlap > 50% of either)
+                    if (overlapArea > areaA * 0.5 || overlapArea > areaB * 0.5) {
+                        const minX = Math.min(current.x, other.x);
+                        const minY = Math.min(current.y, other.y);
+                        const maxX = Math.max(current.x + current.width, other.x + other.width);
+                        const maxY = Math.max(current.y + current.height, other.y + other.height);
+                        
+                        current = {
+                            ...current,
+                            x: minX,
+                            y: minY,
+                            width: maxX - minX,
+                            height: maxY - minY
+                        };
+                        usedIds.add(other.id);
+                        // Restart search with merged box
+                        j = i; 
+                    }
+                }
+            }
+            combinedHotspots.push(current);
+        }
+
+        this.hotspots = combinedHotspots;
+        console.log(`[SYNAPSE] Hotspots generated: ${this.hotspots.length} hotspots.`);
+    }
+
+    /**
+     * [v0.3.20] Render Semantic Hotspot Areas
+     * Draws soft backgrounds and dashed boundaries for node clusters.
+     */
+    renderHotspots2D() {
+        if (!this.hotspots || this.hotspots.length === 0) return;
+
+        this.ctx.save();
+        
+        for (const hs of this.hotspots) {
+            // Use anchor's role color for identity
+            const anchor = this.nodeMap.get(hs.coreId);
+            const baseColor = anchor?.visual?.color || '#fabd2f';
+            
+            // 1. Soft Fill (Area)
+            // Convert any format to semi-transparent rgba
+            this.ctx.fillStyle = baseColor.includes('rgba') ? baseColor.replace(/, [0-9.]+\)$/, ', 0.05)') : baseColor + '0d'; 
+            // Handle hex or named colors by a simpler way if needed, but here baseColor is usually #RRGGBB or rgba
+            if (baseColor.startsWith('#')) {
+                this.ctx.fillStyle = baseColor + '1a'; // ~0.1 opacity hex
+            }
+
+            this.ctx.fillRect(hs.x, hs.y, hs.width, hs.height);
+            
+            // 2. Dashed Boundary
+            this.ctx.setLineDash([12, 6]);
+            this.ctx.strokeStyle = baseColor.startsWith('#') ? baseColor + '4d' : baseColor; // ~0.3 opacity hex
+            this.ctx.lineWidth = 1.2;
+            this.ctx.strokeRect(hs.x, hs.y, hs.width, hs.height);
+            
+            // 3. Cluster Label (Only when zoomed in)
+            if (this.transform.zoom > 0.4) {
+                this.ctx.setLineDash([]); // Reset for text
+                this.ctx.fillStyle = baseColor;
+                this.ctx.font = 'bold 10px "JetBrains Mono", monospace';
+                this.ctx.globalAlpha = 0.6;
+                this.ctx.fillText(`[${hs.role.replace(' node', '').toUpperCase()}]`, hs.x + 8, hs.y + 18);
+                this.ctx.globalAlpha = 1.0;
+            }
+        }
+        
+        this.ctx.restore();
     }
 
     /**
@@ -3774,29 +3928,43 @@ class CanvasEngine {
     applyRoleAlignment() {
         if (!this.nodes) return;
         
-        console.log('[SYNAPSE] Applying Strategic Architecture Alignment (Role-based X-axis)...');
+        console.log('[SYNAPSE] Applying Strategic Architecture Alignment (Grid-spread Lane)...');
+        
+        // Group nodes by role to apply index-based spreading
+        const roles = {
+            'Leaf': [],
+            'Hub': [],
+            'Orchestrator': [],
+            'Controller': []
+        };
         
         for (const node of this.nodes) {
             const stats = this.nodeStatsMap.get(node.id);
             if (!stats || !stats.primaryRole) continue;
+            const pRole = stats.primaryRole;
             
-            // X-axis mapping based on architectural importance (Directional Compression)
-            // Left (Foundation/Utility) -> Center (Core Engine) -> Right (External/Interface)
-            const role = stats.primaryRole;
-            
-            if (role.startsWith('Leaf')) {
-                node.position.x = -1500;
-            } else if (role.startsWith('Hub')) {
-                node.position.x = -500;
-            } else if (role.startsWith('Orchestrator')) {
-                node.position.x = 500;
-            } else if (role.startsWith('Controller')) {
-                node.position.x = 1500;
-            }
+            if (pRole.startsWith('Leaf')) roles['Leaf'].push(node);
+            else if (pRole.startsWith('Hub')) roles['Hub'].push(node);
+            else if (pRole.startsWith('Orchestrator')) roles['Orchestrator'].push(node);
+            else if (pRole.startsWith('Controller')) roles['Controller'].push(node);
+        }
+
+        const targets = { 'Leaf': -1500, 'Hub': -500, 'Orchestrator': 500, 'Controller': 1500 };
+        const COLUMN_WIDTH = 120; // Width of each sub-column inside a lane
+
+        for (const [roleName, group] of Object.entries(roles)) {
+            const targetX = targets[roleName];
+            group.forEach((node, i) => {
+                // Apply 3-column grid spread to avoid vertical stacking
+                const colIndex = i % 3;
+                const xOffset = (colIndex - 1) * COLUMN_WIDTH; // -120, 0, 120
+                node.position.x = targetX + xOffset;
+            });
         }
         
+        this.updateHotspots(); // Re-calculate boxes for updated positions
         this.needsUpdate = true;
-        console.log('[SYNAPSE] Architecture Alignment complete.');
+        console.log('[SYNAPSE] Architecture Alignment with Grid Spread complete.');
     }
 
     generateDiagnosticHints(stats) {
@@ -5103,6 +5271,7 @@ class CanvasEngine {
                             }
                         }
                         // [v0.3.9] Fixed 2D Mode: Explicitly call Node rendering
+                        this.renderHotspots2D(); // [v0.3.20] Background functional areas
                         this.renderEdges2D();
                         this.renderNodes2D(zoom);
                         this.renderLabels2D();

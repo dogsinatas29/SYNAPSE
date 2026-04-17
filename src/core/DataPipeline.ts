@@ -107,7 +107,7 @@ export class DataPipeline {
       }
 
       const newNode: Node = {
-        id: fileName,
+        id: item.filePath,
         filePath: item.filePath,
         type: isDoc ? NodeType.DOCUMENTATION : NodeType.FILE,
         label: fileName,
@@ -125,7 +125,7 @@ export class DataPipeline {
       };
       
       nodes.push(newNode);
-      nodeIds.add(fileName);
+      nodeIds.add(item.filePath);
     }
 
     // 2. Analyze references and create edges + ghosts
@@ -139,7 +139,7 @@ export class DataPipeline {
         if (!nodeIds.has(targetNodeId)) {
           const matchedId = Array.from(nodeIds).find(id => {
             const stem = path.basename(id, path.extname(id));
-            return stem === targetNodeId && (id.endsWith('.ts') || id.endsWith('.js') || id.endsWith('.py') || id.endsWith('.tsx') || id.endsWith('.jsx'));
+            return stem === targetNodeId && (id.endsWith('.ts') || id.endsWith('.js') || id.endsWith('.py') || id.endsWith('.tsx') || id.endsWith('.jsx') || id.endsWith('.rs'));
           });
           if (matchedId) {
             targetNodeId = matchedId; // Re-route to existing active node
@@ -210,7 +210,7 @@ export class DataPipeline {
         else if (ref.type === 'api_call') weight = GraphModel.WEIGHT_INTERNAL;
         
         const newEdge: Edge = {
-          from: fileName,
+          from: item.filePath,
           to: targetNodeId,
           type: this.mapEdgeType(ref.type),
           weight: weight,

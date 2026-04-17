@@ -332,35 +332,39 @@ export class FileScanner {
 
             if (isCommented && !isPendingOrDeleted) continue;
 
-            const useMatch = trimmed.match(/^(?:\/\/\s*)?(?:\[SYNAPSE(?:_PENDING|_DELETED)?:([^\]]+)\]\s*)?use\s+([a-zA-Z0-9_:]+)/);
+            // [v0.3.21] Enhanced use matching to handle curly braces and nested paths
+            const useMatch = trimmed.match(/^(?:\/\/\s*)?(?:\[SYNAPSE(?:_PENDING|_DELETED)?:([^\]]+)\]\s*)?use\s+([^;]+);/);
             if (useMatch) {
-                const fullPath = useMatch[2];
-                const parts = fullPath.split('::');
+                const rawPath = useMatch[2].trim();
+                const idMatch = useMatch[1];
+                
+                // Handle curly braces: use a::b::{c, d}
+                const basePart = rawPath.split('{')[0].trim().replace(/::$/, '');
+                const parts = basePart.split('::');
                 const rootMod = parts[0];
 
-                if (['crate', 'self', 'super'].includes(rootMod)) {
-                    const targetMod = parts[1] || rootMod;
-                    if (targetMod && !summary.references.some(r => r.target === targetMod)) {
-                        const idMatch = line.match(/\[SYNAPSE(?:_PENDING|_DELETED)?:([^\]]+)\]/);
-                        const nodeId = idMatch ? idMatch[1] : undefined;
-                        summary.references.push({ target: targetMod, type: 'dependency', nodeId, isApproved: !isPendingOrDeleted });
+                const processRef = (target: string) => {
+                    if (['crate', 'self', 'super'].includes(target)) {
+                        const nextMod = parts[1] || target;
+                        if (nextMod && !summary.references.some(r => r.target === nextMod)) {
+                            summary.references.push({ target: nextMod, type: 'dependency', nodeId: idMatch, isApproved: !isPendingOrDeleted });
+                        }
+                    } else if (target && !['std', 'core', 'alloc', 'prelude'].includes(target)) {
+                        if (!summary.references.some(r => r.target === target)) {
+                            summary.references.push({ target, type: 'api_call', nodeId: idMatch, isApproved: !isPendingOrDeleted });
+                        }
                     }
-                } else if (rootMod && !['std', 'core', 'alloc', 'prelude'].includes(rootMod)) {
-                    if (!summary.references.some(r => r.target === rootMod)) {
-                        const idMatch = line.match(/\[SYNAPSE(?:_PENDING|_DELETED)?:([^\]]+)\]/);
-                        const nodeId = idMatch ? idMatch[1] : undefined;
-                        summary.references.push({ target: rootMod, type: 'api_call', nodeId, isApproved: !isPendingOrDeleted });
-                    }
-                }
+                };
+
+                processRef(rootMod);
             }
 
-            const modMatch = trimmed.match(/^(?:\/\/\s*)?(?:\[SYNAPSE(?:_PENDING|_DELETED)?:([^\]]+)\]\s*)?mod\s+([a-zA-Z0-9_]+);/);
+            const modMatch = trimmed.match(/^(?:\/\/\s*)?(?:\[SYNAPSE(?:_PENDING|_DELETED)?:([^\]]+)\]\s*)?(?:pub\s+)?mod\s+([a-zA-Z0-9_]+);/);
             if (modMatch) {
-                const modName = modMatch[1];
+                const idMatch = modMatch[1];
+                const modName = modMatch[2];
                 if (modName && !summary.references.some(r => r.target === modName)) {
-                    const idMatch = line.match(/\[SYNAPSE(?:_PENDING|_DELETED)?:([^\]]+)\]/);
-                    const nodeId = idMatch ? idMatch[1] : undefined;
-                    summary.references.push({ target: modName, type: 'dependency', nodeId, isApproved: !isPendingOrDeleted });
+                    summary.references.push({ target: modName, type: 'dependency', nodeId: idMatch, isApproved: !isPendingOrDeleted });
                 }
             }
         }

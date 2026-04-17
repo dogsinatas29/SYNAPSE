@@ -66,11 +66,12 @@ export class GeminiParser {
             const cleanContent = content.replace(/<!--[\s\S]*?-->/g, '');
 
             // 1. 헤더 레벨과 섹션을 정확하게 찾기 위한 정규식 (e.g., ## 1. 원칙, ## 핵심 설계 원칙, # Principles)
-            const headerPattern = /^([#]+).*(?:Principles|원칙|규약|Manifesto).*/mi;
+            // [v0.3.21] Enhanced regex to handle potential BOM or whitespace at start of line
+            const headerPattern = /^[ \t\uFEFF]*([#]+).*(?:Principles|원칙|규약|Manifesto).*/mi;
             const headerMatch = cleanContent.match(headerPattern);
             if (!headerMatch) {
                 // 헤더가 없는 경우 [Principles] 같은 대괄호 형태나 단순 텍스트 섹션 탐색 시도
-                const altHeaderPattern = /^(?:\[|\*\*|#)*\s*(?:Principles|원칙|규약|Manifesto).*/mi;
+                const altHeaderPattern = /^[ \t\uFEFF]*(?:\[|\*\*|#)*\s*(?:Principles|원칙|규약|Manifesto).*/mi;
                 const altMatch = cleanContent.match(altHeaderPattern);
                 if (!altMatch) return [];
                 

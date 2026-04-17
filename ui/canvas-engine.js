@@ -701,23 +701,18 @@ class TreeRenderer {
                 wsRoot = wsRoot.replace(/\\/g, '/');
                 if (!wsRoot.endsWith('/')) wsRoot += '/';
                 
-                // Aggressive stripping of common Linux root patterns
-                if (normalizedPath.startsWith(wsRoot)) {
-                    normalizedPath = normalizedPath.substring(wsRoot.length);
-                } else if (normalizedPath.includes(wsRoot)) {
-                    // Pivot point stripping: Find the last occurrence of wsRoot name
-                    const pivot = wsRoot.split('/').filter(Boolean).pop();
-                    if (pivot && normalizedPath.includes(`/${pivot}/`)) {
-                        normalizedPath = normalizedPath.split(`/${pivot}/`).pop() || '';
-                    } else {
-                        normalizedPath = normalizedPath.split(wsRoot).pop() || '';
-                    }
-                } else if (normalizedPath.startsWith('/home/')) {
-                    // Fail-safe for Linux absolute paths when wsRoot mismatch
-                    const parts = normalizedPath.split('/');
-                    const wsNameMatchIdx = parts.lastIndexOf(projectName || 'name');
-                    if (wsNameMatchIdx !== -1) {
-                        normalizedPath = parts.slice(wsNameMatchIdx + 1).join('/');
+            }
+            
+            // [v0.3.20.3] Robust Path Normalization: If we still have an absolute path, try to find the projectName segment
+            if (normalizedPath.startsWith('/') || normalizedPath.includes(':/')) {
+                const parts = normalizedPath.split(/[/\\]/);
+                const projectIdx = parts.lastIndexOf(projectName);
+                if (projectIdx !== -1) {
+                    normalizedPath = parts.slice(projectIdx + 1).join('/');
+                } else {
+                    // Fallback: use only the last 3 segments if it's too deep
+                    if (parts.length > 3) {
+                        normalizedPath = parts.slice(-3).join('/');
                     }
                 }
             }
@@ -778,6 +773,15 @@ class TreeRenderer {
 
         const treeArr = convertToArray(root.children);
         console.log(`[SYNAPSE] buildTree finished for ${projectName}. Root children count: ${treeArr.length}`);
+
+        // [v0.3.20.5] If root is empty, try to salvage by adding nodes directly to root
+        if (treeArr.length === 0 && nodes.length > 0) {
+            console.warn('[SYNAPSE] Tree empty after normalization, using flat fallback');
+            nodes.slice(0, 100).forEach(node => {
+                const label = node.data?.label || node.id.split('/').pop();
+                treeArr.push({ name: label, type: 'file', node: node, fullPath: node.id });
+            });
+        }
 
         return [{
             ...root,
@@ -1777,8 +1781,10 @@ class CanvasEngine {
                     return; // EXIT LOOP
                 }
 
-                // [v0.2.24] Demand-driven rendering: Only draw if needed
-                const shouldRender = this.isDirty || this._isInteracting || this.isDragging || this.isSelecting || hasActiveParticles || this.needsUpdate || (this.isAnimating && (this.particles?.length || 0) > 0);
+                // [v0.3.21] Align status should also trigger render
+                const shouldRender = this.isDirty || this._isInteracting || this.isDragging || this.isSelecting || 
+                                     hasActiveParticles || this.needsUpdate || this.isAligning || 
+                                     (this.isAnimating && (this.particles?.length || 0) > 0);
 
                 if (shouldRender) {
                     this._isRendering = true;  // [FIX v0.3.09] Mark rendering start
@@ -3582,6 +3588,29 @@ class CanvasEngine {
         }
     }
 
+    getSemanticGroup(node) {
+        if (!node) return 'unknown';
+        
+        // Use cluster layer if available
+        if (node.cluster_id) {
+            const cluster = (this.clusters || []).find(c => c.id === node.cluster_id);
+            const layer = cluster?.layer || (cluster?.data?.layer) || (node.cluster_id.startsWith('sys_') ? 'ai' : (node.cluster_id === 'doc_shelf' ? 'doc' : null));
+            if (layer && layer !== 'user') return layer;
+            
+            if (node.cluster_id === 'sys_cluster_buffer') return 'buffer';
+            if (node.cluster_id === 'sys_cluster_reserved') return 'reserved';
+            if (node.cluster_id === 'doc_shelf') return 'doc';
+            
+            if (cluster && cluster.label) return cluster.label.replace(/[📂☁️🛡️🕒]/g, '').trim().toLowerCase();
+        }
+
+        if (node.type === 'external') return 'external';
+        if (node.status === 'ghost') return 'ghost';
+        if (node.type === 'documentation') return 'doc';
+
+        return 'unmapped';
+    }
+
     updateHistoryUI(history) {
         const list = document.getElementById('history-list');
         list.innerHTML = '';
@@ -3680,30 +3709,6 @@ class CanvasEngine {
             });
         }
 
-        // Helper to get semantic group label (Zero-Unknown Principle)
-        const getGroupLabel = (node) => {
-            if (!node) return 'unknown';
-            
-            // 1. Recognized layer from clusters
-            const layer = clusterLayerMap.get(node.cluster_id);
-            if (layer && layer !== 'user') return layer;
-
-            // 2. System clusters with specific logic
-            if (node.cluster_id === 'sys_cluster_buffer') return 'buffer';
-            if (node.cluster_id === 'sys_cluster_reserved') return 'reserved';
-            if (node.cluster_id === 'doc_shelf') return 'doc';
-
-            // 3. Identification by Node Type & Status
-            if (node.type === 'external') return 'external';
-            if (node.status === 'ghost') return 'ghost';
-            if (node.type === 'documentation') return 'doc';
-
-            // 4. Fallback to cluster label or unmapped
-            const cluster = this.clusters.find(c => c.id === node.cluster_id);
-            if (cluster) return cluster.label.replace(/[📂☁️🛡️🕒]/g, '').trim().toLowerCase();
-
-            return 'unmapped';
-        };
 
         // Single pass over edges O(E)
         for (const e of edges) {
@@ -3717,7 +3722,7 @@ class CanvasEngine {
                 srcStats.connected.add(e.to);
                 
                 // Track semantic distribution
-                const tgtGroup = getGroupLabel(tgtNode);
+                const tgtGroup = this.getSemanticGroup(tgtNode);
                 srcStats.distribution[tgtGroup] = (srcStats.distribution[tgtGroup] || 0) + 1;
             }
             if (tgtStats && srcNode) {
@@ -3725,7 +3730,7 @@ class CanvasEngine {
                 tgtStats.connected.add(e.from);
 
                 // Track semantic distribution
-                const srcGroup = getGroupLabel(srcNode);
+                const srcGroup = this.getSemanticGroup(srcNode);
                 tgtStats.distribution[srcGroup] = (tgtStats.distribution[srcGroup] || 0) + 1;
             }
         }
@@ -3894,11 +3899,12 @@ class CanvasEngine {
             const baseColor = anchor?.visual?.color || '#fabd2f';
             
             // 1. Soft Fill (Area)
-            // Convert any format to semi-transparent rgba
-            this.ctx.fillStyle = baseColor.includes('rgba') ? baseColor.replace(/, [0-9.]+\)$/, ', 0.05)') : baseColor + '0d'; 
-            // Handle hex or named colors by a simpler way if needed, but here baseColor is usually #RRGGBB or rgba
-            if (baseColor.startsWith('#')) {
-                this.ctx.fillStyle = baseColor + '1a'; // ~0.1 opacity hex
+            // [v0.3.20] Standard fallback for invalid color strings
+            const safeColor = (typeof baseColor === 'string') ? baseColor : '#fabd2f';
+            this.ctx.fillStyle = safeColor.includes('rgba') ? safeColor.replace(/, [0-9.]+\)$/, ', 0.05)') : safeColor + '0d'; 
+            
+            if (safeColor.startsWith('#')) {
+                this.ctx.fillStyle = safeColor + '1a'; // ~0.1 opacity hex
             }
 
             this.ctx.fillRect(hs.x, hs.y, hs.width, hs.height);
@@ -3915,7 +3921,8 @@ class CanvasEngine {
                 this.ctx.fillStyle = baseColor;
                 this.ctx.font = 'bold 10px "JetBrains Mono", monospace';
                 this.ctx.globalAlpha = 0.6;
-                this.ctx.fillText(`[${hs.role.replace(' node', '').toUpperCase()}]`, hs.x + 8, hs.y + 18);
+                const roleLabel = (hs.role || 'Unmapped').replace(' node', '').toUpperCase();
+                this.ctx.fillText(`[${roleLabel}]`, hs.x + 8, hs.y + 18);
                 this.ctx.globalAlpha = 1.0;
             }
         }
@@ -3931,18 +3938,30 @@ class CanvasEngine {
         this.isAligning = true;
         this.alignTimer = 120; // Run simulation for ~2 seconds
         console.log('[SYNAPSE] Spring-based Alignment Triggered.');
-        this.needsUpdate = true;
+        this.requestRender();
     }
 
     /**
      * Physical update logic for soft alignment.
      */
     updateAlignmentSimulation() {
-        if (!this.nodes) return;
-        const ALIGN_STRENGTH = 0.05; // Slightly stronger for faster settling
-        const FRICTION = 0.82;
-        const COLUMN_WIDTH = 350; // Widened for horizontal aesthetics
-        const ROW_HEIGHT = 160;  // Slightly compressed vertically
+        if (!this.nodes || !this.isAligning) return;
+        
+        if (this.alignTimer > 0) {
+            this.alignTimer--;
+        } else {
+            this.isAligning = false;
+            console.log('[SYNAPSE] Alignment Simulation Settled.');
+            this.updateHotspots(); // Final precision update
+            return;
+        }
+
+        const ALIGN_STRENGTH = 0.02; // Reduced strength for stability
+        const DAMPING = 0.75;        // Stronger damping (lower friction value in this context)
+        const MAX_VELOCITY = 100;    // Absolute cap to prevent "exploding" nodes
+        
+        const COLUMN_WIDTH = 350; 
+        const ROW_HEIGHT = 160;  
         
         // Group by role to find sub-column indices
         const groups = { 'Leaf': [], 'Hub': [], 'Orchestrator': [], 'Controller': [] };
@@ -3969,21 +3988,35 @@ class CanvasEngine {
                 const targetX = baseX + (colIndex - 1) * COLUMN_WIDTH;
                 const targetY = (rowIndex * ROW_HEIGHT) - (Math.ceil(list.length / 3) * ROW_HEIGHT / 2);
 
-                // Apply Spring Forces to velocity
-                node.vx = (node.vx || 0) + (targetX - node.position.x) * ALIGN_STRENGTH;
-                node.vy = (node.vy || 0) + (targetY - node.position.y) * ALIGN_STRENGTH;
+                // Apply Smooth Damped Spring
+                const fx = (targetX - node.position.x) * ALIGN_STRENGTH;
+                const fy = (targetY - node.position.y) * ALIGN_STRENGTH;
+
+                node.vx = (node.vx || 0) + fx;
+                node.vy = (node.vy || 0) + fy;
                 
-                // Diminish velocity over time
-                node.vx *= FRICTION;
-                node.vy *= FRICTION;
+                // Apply Damping
+                node.vx *= DAMPING;
+                node.vy *= DAMPING;
                 
-                // Integrate velocity to position
+                // Velocity Clamp to prevent explosion
+                const speed = Math.sqrt(node.vx * node.vx + node.vy * node.vy);
+                if (speed > MAX_VELOCITY) {
+                    const ratio = MAX_VELOCITY / speed;
+                    node.vx *= ratio;
+                    node.vy *= ratio;
+                }
+                
+                // Integrate
                 node.position.x += node.vx;
                 node.position.y += node.vy;
             });
         }
         
-        this.updateHotspots();
+        // [v0.3.20.2] Throttle hotspot updates during animation to save CPU and reduce jitter
+        if (this.alignTimer % 5 === 0) {
+            this.updateHotspots();
+        }
     }
 
     /**
@@ -4003,14 +4036,16 @@ class CanvasEngine {
         const hints = [];
 
         // --- Role Detection (Priority Order) ---
-        if (connectedNodes <= 2) {
+        if (connectedNodes <= 3) {
             roles.push("Leaf node");
-        } else if (outRatioVal >= 0.8 && connectedNodes >= 10) {
+        } else if (outRatioVal >= 0.7 && connectedNodes >= 5) {
             roles.push("Orchestrator (fan-out)");
-        } else if (inRatioVal >= 0.8 && connectedNodes >= 10) {
+        } else if (inRatioVal >= 0.7 && connectedNodes >= 5) {
             roles.push("Controller (fan-in)");
-        } else if (connectedNodes >= 20) {
+        } else if (connectedNodes >= 15) {
             roles.push("Hub (high connectivity)");
+        } else if (connectedNodes > 0) {
+            roles.push("Standard component");
         }
 
         // --- Architectural Hints (Facts & Nuances) ---
@@ -4085,30 +4120,29 @@ class CanvasEngine {
             clusterLayerMap.set(c.id, layer);
         });
 
-        const getGroupLabel = (n) => {
-            if (!n) return 'unknown';
-            const layer = clusterLayerMap.get(n.cluster_id);
-            if (layer && layer !== 'user') return layer;
-            if (n.cluster_id === 'sys_cluster_buffer') return 'buffer';
-            if (n.cluster_id === 'sys_cluster_reserved') return 'reserved';
-            if (n.cluster_id === 'doc_shelf') return 'doc';
-            if (n.type === 'external') return 'external';
-            if (n.status === 'ghost') return 'ghost';
-            if (n.type === 'documentation') return 'doc';
-            const cluster = clusters.find(c => c.id === n.cluster_id);
-            if (cluster && cluster.label) return cluster.label.replace(/[📂☁️🛡️🕒]/g, '').trim().toLowerCase();
-            return 'unmapped';
-        };
-
         const groupDetails = {};
         const nodeMap = new Map(nodes.map(n => [n.id, n]));
+        
+        // Also build a stem-based map for ID matching resilience (v0.3.20.1)
+        const stemMap = new Map();
+        nodes.forEach(n => {
+            const stem = n.id.includes('/') ? n.id.split('/').pop().split('.')[0] : n.id.split('.')[0];
+            if (!stemMap.has(stem)) stemMap.set(stem, n);
+        });
 
         stats.connected.forEach(targetId => {
-            const targetNode = nodeMap.get(targetId);
+            // [v0.3.20.1] Resilient lookup: Primary ID -> Stem ID
+            let targetNode = nodeMap.get(targetId);
+            if (!targetNode && typeof targetId === 'string') {
+                const stem = targetId.includes('/') ? targetId.split('/').pop().split('.')[0] : targetId.split('.')[0];
+                targetNode = stemMap.get(stem);
+            }
+
             if (targetNode) {
-                const group = getGroupLabel(targetNode);
+                const group = this.getSemanticGroup(targetNode);
                 if (!groupDetails[group]) groupDetails[group] = [];
-                groupDetails[group].push(targetNode.data?.label || targetNode.id);
+                const label = targetNode.data?.label || targetNode.id.split('/').pop();
+                groupDetails[group].push(label);
             }
         });
 
@@ -4123,7 +4157,8 @@ class CanvasEngine {
             'Orchestrator (fan-out)': '#FF8C00',
             'Controller (fan-in)':   '#4CAF50',
             'Hub (high connectivity)': '#2196F3',
-            'Leaf node':         '#9E9E9E'
+            'Leaf node':         '#9E9E9E',
+            'Standard component': '#ebdbb2'
         };
 
         const stars = '★'.repeat(priority) + '☆'.repeat(4 - priority);
@@ -4250,6 +4285,7 @@ class CanvasEngine {
 
     loadProjectState(projectState, preserveView = false) {
         if (!projectState) return;
+        const loadingEl = document.getElementById('loading');
 
         // [v0.3.10] Runtime Data Sanitization
         const ghostBlacklist = [
@@ -4507,10 +4543,9 @@ class CanvasEngine {
                 this.render();
             }
 
-            // 로딩 오버레이 제거
-            const loadingEl = document.getElementById('loading');
+            // [v0.3.20.5] Aggressive Loading UI cleanup
             if (loadingEl) {
-                console.log('[SYNAPSE] Removing loading overlay after data load');
+                console.log('[SYNAPSE] Removing loading overlay');
                 loadingEl.remove();
             }
 
@@ -5094,7 +5129,7 @@ class CanvasEngine {
         }
 
         // [v0.2.24] Unified Animation Updates (Eco-mode aware)
-        if (this.isAnimating || this.isTestingLogic) {
+        if (this.isAnimating || this.isTestingLogic || this.isAligning) {
             const hasActivity = this._isInteracting || this.isDragging || (this.particles?.length || 0) > 0;
             if (hasActivity || (this._frameCounter % 2 === 0)) { // Half-rate if idle
                 this.animationOffset = (this.animationOffset + 0.5) % 40;
@@ -5112,6 +5147,11 @@ class CanvasEngine {
                 });
             }
             this.updateParticles();
+            
+            // [v0.3.21] Architecture Alignment Physical Step
+            if (this.isAligning) {
+                this.updateAlignmentSimulation();
+            }
         }
 
         // [v0.2.32] Power-Saving (Sleeping) Logic: Move ABOVE clear to prevent screen flickering/disappearance
@@ -6469,7 +6509,8 @@ class CanvasEngine {
                 'Orchestrator (fan-out)': '#FF8C00',
                 'Controller (fan-in)':   '#4CAF50',
                 'Hub (high connectivity)': '#2196F3',
-                'Leaf node':         '#9E9E9E'
+                'Leaf node':         '#9E9E9E',
+                'Standard component': '#ebdbb2'
             };
             const roleColor = ROLE_COLOR[stats.primaryRole];
             if (roleColor) {
@@ -8176,11 +8217,6 @@ function initCanvas() {
                     engine.workspaceFolder = message.workspaceFolder;
                 }
                 
-                // [v0.3.10] Build Tree using the freshly synced projectName
-                if (engine.currentMode === 'tree' || engine.nodes) {
-                    engine.treeData = engine.treeRenderer.buildTree(engine.nodes || [], engine.projectName);
-                }
-
                 // [v0.3.11] Authoritative Sync: Direct user actions bypass interaction lock
                 if (message.isAuthoritative) {
                     console.log('[SYNAPSE] Authoritative projectState received. Bypassing interaction lock.');

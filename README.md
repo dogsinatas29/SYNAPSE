@@ -12,18 +12,18 @@
 
 ---
 
-## 🔥 Latest Release: v0.3.20 - Semantic Order & Architectural Flow (2026-04-17)
+## 🔥 Latest Release: v0.3.20 - Rust Persistence & Engine Hardening (2026-04-17)
 
 | Feature | Description | Benefit |
 |-------|---------|-----|
+| **Rust Support**| **Path-based ID System** | Resolves naming conflicts (e.g. `mod.rs`) by using absolute paths for node identification. |
 | **Semantic Hotspot** | **Functional Area** Mapping | Automatically groups related modules into visible "Hotspot" areas with soft colored backgrounds. |
+| **Physics Hardening**| **Velocity Clamp & Damping**| Prevents nodes from exploding off-screen with explicit velocity limits and increased damping. |
 | **Spring Alignment** | **Strategic Drift** Engine | Nudges nodes toward architectural lanes [Input → Core → Output] while preserving logical structure. |
 | **Edge Bundling Lite**| **Flow Consolidation** | Merges overlapping visual paths into elegant "bundles" to reveal data flow patterns. |
 | **Top-N Focus** | **Global Exploration** System | Automatically highlights the top 10 core nodes and their 1-hop context. |
-| **Triple Expression** | **Color · Layer · Priority** System | Instant role recognition via colors, noise reduction via leaf filtering, and priority stars for refactoring focus. |
-| **Node Role Taxonomy** | Architectural Identity Classification | Identifies **Orchestrator, Controller, Hub, Leaf** with strict Single-Role principle. |
-| **Identity-Aware Tooltip** | Detailed Connection Breakdown | Displays star ratings (`★★★☆`) and specific file/library names to provide evidence-based insights. |
-| **Zero-Unknown Principle** | Semantic Node Labeling | Eliminates `unknown` labels by classifying unmapped nodes as `External`, `Ghost`, or `Unmapped`. |
+| **Node Role Taxonomy**| **Inclusive Identification** | Refined thresholds to identify Roles even in small-scale modules. Added Standard fallback. |
+| **Identity-Aware Tooltip**| **Stem-based Match** | Restored connection details by using stem-based matching for path-based IDs. |
 
 ---
 
@@ -309,7 +309,7 @@ The following icons are used within the center badge and arrowheads to define th
 
 ### Project Topology
 Visualizes the physical connections between LLM reasoning logic and source files.
-![Topology View](resources/screenshots/v0.3.18/topology_view.png)
+![Topology View](assets/v0.3.20/synapse_topology_v0.3.20.png)
 
 ### Node Information Output (v0.3.17)
 Hover over any node to see its structural metrics (Connections, IN, OUT) instantly. This allows for rapid identification of responsibility and dependency clusters.
@@ -379,7 +379,7 @@ Launch your visual architecture journey in seconds.
 
 | Version | Date | Description (English) | Description (Korean) |
 | :--- | :--- | :--- | :--- |
-| **v0.3.20** | 2026-04-17 | **Semantic Order & Bundling**: Introduced Semantic Hotspot Mapping, Spring Bias Strategic Alignment, and Lite Edge Bundling for pure architectural flow. | **시맨틱 오더 및 번들링**: 핫스팟 매핑, Spring Bias 정렬 및 엣지 번들링 도입으로 순수 아키텍처 흐름 가시화. |
+| **v0.3.20** | 2026-04-17 | **Rust Persistence & Engine Hardening**: Path-based IDs for Rust support, Velocity clamping for physics stability, and inclusive Role detection thresholds. | **Rust 지원 및 엔진 안정화**: Rust 대응을 위한 경로 기반 ID 도입, 물리 시뮬레이션 폭주 방지 및 로드 성능 가이드 강화. |
 | **v0.3.19** | 2026-04-17 | **Top-N Focus View**: Automated identification of the 10 most critical core nodes with 1-hop context expansion for global exploration. | **Top-N 포커스 뷰**: 1-hop 맥락 확장을 포함한 상위 10개 핵심 노드 자동 식별 및 글로벌 탐색 모드 도입. |
 | **v0.3.18** | 2026-04-17 | **Diagnostic Hint Engine**: Real-time architectural analysis (R1-R5), Zero-Unknown semantic labeling, and detailed node identity list in tooltips. | **진단 힌트 엔진**: 실시간 아키텍처 분석(R1-R5), Zero-Unknown 시맨틱 라벨링 및 툴팁 내 상세 연결 노드 리스트 출력. |
 | **v0.3.17** | 2026-04-14 | **Node Summary Feature**: Added interactive node summary tooltips showing unique connections and directional degrees. Optimized with O(E) pre-calculation. | **노드 요약 정보 출력**: 노드 호버 시 고유 연결 및 방향성 의존성을 보여주는 요약 툴팁 추가 및 O(E) 성능 최적화. |

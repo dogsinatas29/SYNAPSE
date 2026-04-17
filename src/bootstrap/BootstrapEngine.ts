@@ -279,7 +279,7 @@ export class BootstrapEngine {
     private getDiscoverableFiles(projectRoot: string, includePaths?: string[]): string[] {
         const fileList: string[] = [];
         const scanDir = (dir: string, relPath: string = '', depth: number = 0) => {
-            if (!fs.existsSync(dir) || depth > 5) return;
+            if (!fs.existsSync(dir) || depth > 10) return;
             const files = fs.readdirSync(dir);
             for (const file of files) {
                 const fullPath = path.join(dir, file);

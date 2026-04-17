@@ -949,6 +949,8 @@ class CanvasEngine {
         this.lastPressureUpdate = Date.now();
         this.nodeStatsMap = new Map(); // [v0.3.17] Degree & Connection Cache
         this.hideLeafNodes = false; // [v0.3.19] Noise Control Toggle
+        this.focusTopNodes = false; // [v0.3.19] Global Exploration Mode
+        this.focusNodeSet = new Set(); // Set of node IDs for focus view
 
         // [v0.2.19] Layer Visibility State
         this.showBaseLayer = true;
@@ -1168,8 +1170,19 @@ class CanvasEngine {
                 this.hideLeafNodes = !this.hideLeafNodes;
                 btnToggleLeaf.textContent = this.hideLeafNodes ? 'ON' : 'OFF';
                 btnToggleLeaf.classList.toggle('active', this.hideLeafNodes);
-                this.needsUpdate = true; // Trigger redraw
-                console.log('[SYNAPSE] Hide Leaf Mode:', this.hideLeafNodes);
+                this.needsUpdate = true;
+            });
+        }
+
+        // [v0.3.19] Focus Top Nodes (Top-N Focus View)
+        const btnToggleFocus = document.getElementById('btn-toggle-focus');
+        if (btnToggleFocus) {
+            btnToggleFocus.addEventListener('click', () => {
+                this.focusTopNodes = !this.focusTopNodes;
+                btnToggleFocus.textContent = this.focusTopNodes ? 'ON' : 'OFF';
+                btnToggleFocus.classList.toggle('active', this.focusTopNodes);
+                this.needsUpdate = true; 
+                console.log('[SYNAPSE] Focus Top Nodes Mode:', this.focusTopNodes);
             });
         }
 
@@ -3715,6 +3728,26 @@ class CanvasEngine {
             const diag = this.generateDiagnosticHints(stats);
             stats.primaryRole = diag.roles[0] || null;
             stats.priority = diag.priority;
+        }
+
+        // [v0.3.19] Top-N Focus Analysis (Global Exploration)
+        this.focusNodeSet.clear();
+        if (nodes.length > 0) {
+            // Sort by priority (4 -> 0), then by connectivity
+            const sortedNodes = [...this.nodeStatsMap.entries()]
+                .sort((a, b) => (b[1].priority - a[1].priority) || (b[1].connectedNodes - a[1].connectedNodes))
+                .map(entry => entry[0]);
+
+            // Pick Top 10 cores
+            const topN = sortedNodes.slice(0, 10);
+            topN.forEach(id => this.focusNodeSet.add(id));
+
+            // Include 1-hop neighbors for context expansion
+            for (const edge of edges) {
+                if (this.focusNodeSet.has(edge.from)) this.focusNodeSet.add(edge.to);
+                if (this.focusNodeSet.has(edge.to)) this.focusNodeSet.add(edge.from);
+            }
+            console.log(`[SYNAPSE] Focus Top-N calculated: ${topN.length} cores, ${this.focusNodeSet.size} total context nodes.`);
         }
 
         console.log(`[SYNAPSE] Node stats & roles updated for ${nodes.length} nodes.`);
@@ -6308,6 +6341,12 @@ class CanvasEngine {
             if (stats && stats.primaryRole === 'Leaf node') return;
         }
 
+        // [v0.3.19] Strategic Visibility: Top-N Focus View
+        if (this.focusTopNodes) {
+            const isEssential = this.selectedNodes.has(node.id) || (this.hoveredNode && this.hoveredNode.id === node.id);
+            if (!this.focusNodeSet.has(node.id) && !isEssential) return;
+        }
+
         // 1.5. 클러스터 접힘 체크
         const clusterId = node.cluster_id || node.data?.cluster_id;
         if (clusterId) {
@@ -7111,6 +7150,13 @@ class CanvasEngine {
         const isEdgeHidden = window.edgeVisibilityMode === 'NO_EDGES';
         if (isEdgeHidden && !isPathSelected) {
             return; // gpu/cpu skip
+        }
+
+        // [v0.3.19] Strategic Visibility: Top-N Focus View
+        if (this.focusTopNodes && !isPathSelected) {
+            if (!this.focusNodeSet.has(fromNode.id) || !this.focusNodeSet.has(toNode.id)) {
+                return;
+            }
         }
 
         // 🔍 엣지 검증 로직 적용

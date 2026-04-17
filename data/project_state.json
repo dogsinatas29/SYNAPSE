@@ -1,15 +1,15 @@
 {
   "canvas_state": {
     "offset": {
-      "x": 1289.8671096345515,
-      "y": 359.36877076411963
+      "x": 897.9956159295226,
+      "y": 537.0462723993273
     },
     "visible_layers": [
       "source",
       "documentation",
       "user"
     ],
-    "zoom_level": 0.15498338870431894
+    "zoom_level": 0.1079324804718031
   },
   "clusters": [
     {
@@ -1449,9 +1449,161 @@
     },
     {
       "from": "README.ko",
+      "id": "README.ko->color_aqua",
+      "status": "confirmed",
+      "to": "color_aqua",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README.ko",
+      "id": "README.ko->color_beige",
+      "status": "confirmed",
+      "to": "color_beige",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README.ko",
+      "id": "README.ko->color_blue",
+      "status": "confirmed",
+      "to": "color_blue",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README.ko",
+      "id": "README.ko->color_brown",
+      "status": "confirmed",
+      "to": "color_brown",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README.ko",
+      "id": "README.ko->color_magenta",
+      "status": "confirmed",
+      "to": "color_magenta",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README.ko",
+      "id": "README.ko->color_orange",
+      "status": "confirmed",
+      "to": "color_orange",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README.ko",
+      "id": "README.ko->color_pink",
+      "status": "confirmed",
+      "to": "color_pink",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README.ko",
+      "id": "README.ko->GHOST_NODE",
+      "status": "confirmed",
+      "to": "GHOST_NODE",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README.ko",
+      "id": "README.ko->hint_dashed_border",
+      "status": "confirmed",
+      "to": "hint_dashed_border",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README.ko",
+      "id": "README.ko->hint_grayed_out",
+      "status": "confirmed",
+      "to": "hint_grayed_out",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README.ko",
+      "id": "README.ko->hint_purple_glow",
+      "status": "confirmed",
+      "to": "hint_purple_glow",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README.ko",
+      "id": "README.ko->hint_red_pulse",
+      "status": "confirmed",
+      "to": "hint_red_pulse",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README.ko",
+      "id": "README.ko->hint_solid_border",
+      "status": "confirmed",
+      "to": "hint_solid_border",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README.ko",
+      "id": "README.ko->minimalist_view",
+      "status": "confirmed",
+      "to": "minimalist_view",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README.ko",
+      "id": "README.ko->node_active",
+      "status": "confirmed",
+      "to": "node_active",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README.ko",
+      "id": "README.ko->node_deleted",
+      "status": "confirmed",
+      "to": "node_deleted",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README.ko",
+      "id": "README.ko->node_ghost",
+      "status": "confirmed",
+      "to": "node_ghost",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README.ko",
+      "id": "README.ko->node_high_dtr",
+      "status": "confirmed",
+      "to": "node_high_dtr",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README.ko",
       "id": "README.ko->node_summary",
       "status": "confirmed",
       "to": "node_summary",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README.ko",
+      "id": "README.ko->node_warning",
+      "status": "confirmed",
+      "to": "node_warning",
       "type": "include",
       "weight": 1
     },
@@ -1468,6 +1620,54 @@
       "id": "README.ko->README.ko",
       "status": "confirmed",
       "to": "README.ko",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README.ko",
+      "id": "README.ko->style_dashed_2px",
+      "status": "confirmed",
+      "to": "style_dashed_2px",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README.ko",
+      "id": "README.ko->style_dotted_2px",
+      "status": "confirmed",
+      "to": "style_dotted_2px",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README.ko",
+      "id": "README.ko->style_solid_1.5px",
+      "status": "confirmed",
+      "to": "style_solid_1.5px",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README.ko",
+      "id": "README.ko->style_solid_1px",
+      "status": "confirmed",
+      "to": "style_solid_1px",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README.ko",
+      "id": "README.ko->style_solid_2px",
+      "status": "confirmed",
+      "to": "style_solid_2px",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "README.ko",
+      "id": "README.ko->style_solid_3px",
+      "status": "confirmed",
+      "to": "style_solid_3px",
       "type": "include",
       "weight": 1
     },
@@ -2296,6 +2496,22 @@
       "weight": 1
     },
     {
+      "from": "v0.3.18",
+      "id": "v0.3.18->v0.3.17",
+      "status": "confirmed",
+      "to": "v0.3.17",
+      "type": "include",
+      "weight": 1
+    },
+    {
+      "from": "v0.3.19",
+      "id": "v0.3.19->v0.3.18",
+      "status": "confirmed",
+      "to": "v0.3.18",
+      "type": "include",
+      "weight": 1
+    },
+    {
       "from": "v0.3.3_release_notes",
       "id": "v0.3.3_release_notes->synapse-visual-architecture-v0.3.3",
       "status": "confirmed",
@@ -2457,38 +2673,6 @@
     },
     {
       "from": "README.ko",
-      "id": "README.ko->color_aqua",
-      "status": "confirmed",
-      "to": "color_aqua",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "from": "README.ko",
-      "id": "README.ko->color_beige",
-      "status": "confirmed",
-      "to": "color_beige",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "from": "README.ko",
-      "id": "README.ko->color_blue",
-      "status": "confirmed",
-      "to": "color_blue",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "from": "README.ko",
-      "id": "README.ko->color_brown",
-      "status": "confirmed",
-      "to": "color_brown",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "from": "README.ko",
       "id": "README.ko->color_gold",
       "status": "confirmed",
       "to": "color_gold",
@@ -2497,89 +2681,9 @@
     },
     {
       "from": "README.ko",
-      "id": "README.ko->color_magenta",
-      "status": "confirmed",
-      "to": "color_magenta",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "from": "README.ko",
-      "id": "README.ko->color_orange",
-      "status": "confirmed",
-      "to": "color_orange",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "from": "README.ko",
-      "id": "README.ko->color_pink",
-      "status": "confirmed",
-      "to": "color_pink",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "from": "README.ko",
       "id": "README.ko->flow_view",
       "status": "confirmed",
       "to": "flow_view",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "from": "README.ko",
-      "id": "README.ko->GHOST_NODE",
-      "status": "confirmed",
-      "to": "GHOST_NODE",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "from": "README.ko",
-      "id": "README.ko->minimalist_view",
-      "status": "confirmed",
-      "to": "minimalist_view",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "from": "README.ko",
-      "id": "README.ko->node_active",
-      "status": "confirmed",
-      "to": "node_active",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "from": "README.ko",
-      "id": "README.ko->node_deleted",
-      "status": "confirmed",
-      "to": "node_deleted",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "from": "README.ko",
-      "id": "README.ko->node_ghost",
-      "status": "confirmed",
-      "to": "node_ghost",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "from": "README.ko",
-      "id": "README.ko->node_high_dtr",
-      "status": "confirmed",
-      "to": "node_high_dtr",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "from": "README.ko",
-      "id": "README.ko->node_warning",
-      "status": "confirmed",
-      "to": "node_warning",
       "type": "include",
       "weight": 1
     }
@@ -5196,8 +5300,8 @@
       "label": "AiOrchestrator",
       "layer": "user",
       "position": {
-        "x": -1680,
-        "y": 1520
+        "x": -1320,
+        "y": 680
       },
       "status": "active",
       "type": "file",
@@ -5266,8 +5370,8 @@
       "label": "ArchitectureDSL",
       "layer": "user",
       "position": {
-        "x": -760,
-        "y": 1560
+        "x": -440,
+        "y": 600
       },
       "status": "active",
       "type": "file",
@@ -5303,7 +5407,7 @@
       "layer": "user",
       "position": {
         "x": -2000,
-        "y": -1320
+        "y": -1040
       },
       "status": "active",
       "type": "file",
@@ -5338,8 +5442,8 @@
       "label": "BillingManager",
       "layer": "user",
       "position": {
-        "x": -1880,
-        "y": 1560
+        "x": -1560,
+        "y": 600
       },
       "status": "active",
       "type": "file",
@@ -5374,7 +5478,7 @@
       "label": "BootstrapEngine",
       "layer": "user",
       "position": {
-        "x": 320,
+        "x": -1160,
         "y": -800
       },
       "status": "active",
@@ -5410,8 +5514,8 @@
       "label": "build-guard",
       "layer": "ai",
       "position": {
-        "x": -600,
-        "y": 3640
+        "x": -480,
+        "y": 2560
       },
       "status": "active",
       "type": "file",
@@ -5482,7 +5586,7 @@
       "label": "CanvasEngine",
       "layer": "user",
       "position": {
-        "x": 3760,
+        "x": 2280,
         "y": 120
       },
       "status": "active",
@@ -5518,8 +5622,8 @@
       "label": "CanvasPanel",
       "layer": "user",
       "position": {
-        "x": -3800,
-        "y": -1160
+        "x": -3600,
+        "y": -2040
       },
       "status": "active",
       "type": "file",
@@ -5554,8 +5658,8 @@
       "label": "CDPManager",
       "layer": "user",
       "position": {
-        "x": -1560,
-        "y": 1680
+        "x": -1160,
+        "y": 760
       },
       "status": "active",
       "type": "file",
@@ -5624,8 +5728,8 @@
       "label": "ChatExtractor",
       "layer": "user",
       "position": {
-        "x": 2720,
-        "y": 1160
+        "x": 1200,
+        "y": 1320
       },
       "status": "active",
       "type": "file",
@@ -5660,8 +5764,8 @@
       "label": "cli",
       "layer": "user",
       "position": {
-        "x": 160,
-        "y": -1600
+        "x": 640,
+        "y": -920
       },
       "status": "active",
       "type": "file",
@@ -5696,8 +5800,8 @@
       "label": "client",
       "layer": "user",
       "position": {
-        "x": -360,
-        "y": -1440
+        "x": 120,
+        "y": -760
       },
       "status": "active",
       "type": "file",
@@ -5746,7 +5850,7 @@
       "cluster_id": "cluster_ghosts",
       "data": {
         "cluster_id": "cluster_ghosts",
-        "degree": 3,
+        "degree": 4,
         "hasAtomicSignature": false,
         "hasImportSignature": false,
         "hiddenOnCanvas": false,
@@ -5781,7 +5885,7 @@
       "cluster_id": "cluster_ghosts",
       "data": {
         "cluster_id": "cluster_ghosts",
-        "degree": 3,
+        "degree": 4,
         "hasAtomicSignature": false,
         "hasImportSignature": false,
         "hiddenOnCanvas": false,
@@ -5816,7 +5920,7 @@
       "cluster_id": "cluster_ghosts",
       "data": {
         "cluster_id": "cluster_ghosts",
-        "degree": 3,
+        "degree": 4,
         "hasAtomicSignature": false,
         "hasImportSignature": false,
         "hiddenOnCanvas": false,
@@ -5851,7 +5955,7 @@
       "cluster_id": "cluster_ghosts",
       "data": {
         "cluster_id": "cluster_ghosts",
-        "degree": 3,
+        "degree": 4,
         "hasAtomicSignature": false,
         "hasImportSignature": false,
         "hiddenOnCanvas": false,
@@ -5921,7 +6025,7 @@
       "cluster_id": "cluster_ghosts",
       "data": {
         "cluster_id": "cluster_ghosts",
-        "degree": 3,
+        "degree": 4,
         "hasAtomicSignature": false,
         "hasImportSignature": false,
         "hiddenOnCanvas": false,
@@ -5956,7 +6060,7 @@
       "cluster_id": "cluster_ghosts",
       "data": {
         "cluster_id": "cluster_ghosts",
-        "degree": 3,
+        "degree": 4,
         "hasAtomicSignature": false,
         "hasImportSignature": false,
         "hiddenOnCanvas": false,
@@ -5991,7 +6095,7 @@
       "cluster_id": "cluster_ghosts",
       "data": {
         "cluster_id": "cluster_ghosts",
-        "degree": 3,
+        "degree": 4,
         "hasAtomicSignature": false,
         "hasImportSignature": false,
         "hiddenOnCanvas": false,
@@ -6047,8 +6151,8 @@
       "label": "CommandInterceptor",
       "layer": "user",
       "position": {
-        "x": -3680,
-        "y": 1600
+        "x": -3360,
+        "y": 640
       },
       "status": "active",
       "type": "file",
@@ -6083,8 +6187,8 @@
       "label": "CommitManager",
       "layer": "user",
       "position": {
-        "x": 2760,
-        "y": 3800
+        "x": 200,
+        "y": 2600
       },
       "status": "active",
       "type": "file",
@@ -6293,8 +6397,8 @@
       "label": "ControlSystem",
       "layer": "user",
       "position": {
-        "x": -2960,
-        "y": 1680
+        "x": -2640,
+        "y": 720
       },
       "status": "active",
       "type": "file",
@@ -6467,8 +6571,8 @@
       "label": "DatabaseEngine",
       "layer": "user",
       "position": {
-        "x": -2560,
-        "y": 1560
+        "x": -2240,
+        "y": 600
       },
       "status": "active",
       "type": "file",
@@ -6503,8 +6607,8 @@
       "label": "DataPipeline",
       "layer": "user",
       "position": {
-        "x": -2800,
-        "y": 1560
+        "x": -2480,
+        "y": 600
       },
       "status": "active",
       "type": "file",
@@ -6573,8 +6677,8 @@
       "label": "DebuggerSystem",
       "layer": "user",
       "position": {
-        "x": -2440,
-        "y": 1680
+        "x": -2120,
+        "y": 720
       },
       "status": "active",
       "type": "file",
@@ -6609,8 +6713,8 @@
       "label": "DirectChatScraper",
       "layer": "user",
       "position": {
-        "x": -4000,
-        "y": 1600
+        "x": -3720,
+        "y": 1000
       },
       "status": "active",
       "type": "file",
@@ -6645,7 +6749,7 @@
       "label": "EdgeCodeRefactorer",
       "layer": "user",
       "position": {
-        "x": -3880,
+        "x": -3600,
         "y": -400
       },
       "status": "active",
@@ -6682,7 +6786,7 @@
       "layer": "user",
       "position": {
         "x": -5280,
-        "y": 1480
+        "y": 1520
       },
       "status": "active",
       "type": "file",
@@ -6717,8 +6821,8 @@
       "label": "exclusionRules",
       "layer": "user",
       "position": {
-        "x": 2240,
-        "y": 1160
+        "x": 720,
+        "y": 1320
       },
       "status": "active",
       "type": "file",
@@ -6753,8 +6857,8 @@
       "label": "ExecutionLayer",
       "layer": "user",
       "position": {
-        "x": 3480,
-        "y": 3440
+        "x": 960,
+        "y": 2560
       },
       "status": "active",
       "type": "file",
@@ -6824,8 +6928,8 @@
       "label": "extension",
       "layer": "user",
       "position": {
-        "x": -880,
-        "y": -1560
+        "x": -400,
+        "y": -880
       },
       "status": "active",
       "type": "file",
@@ -6894,8 +6998,8 @@
       "label": "FileScanner",
       "layer": "user",
       "position": {
-        "x": -2680,
-        "y": 1680
+        "x": -2360,
+        "y": 720
       },
       "status": "active",
       "type": "file",
@@ -6930,8 +7034,8 @@
       "label": "fix_cluster",
       "layer": "ai",
       "position": {
-        "x": -6840,
-        "y": 1000
+        "x": -5640,
+        "y": 1520
       },
       "status": "active",
       "type": "file",
@@ -7001,8 +7105,8 @@
       "label": "FlowchartGenerator",
       "layer": "user",
       "position": {
-        "x": -3520,
-        "y": 1600
+        "x": -3200,
+        "y": 640
       },
       "status": "active",
       "type": "file",
@@ -7037,8 +7141,8 @@
       "label": "FlowScanner",
       "layer": "user",
       "position": {
-        "x": -4000,
-        "y": 960
+        "x": -680,
+        "y": 760
       },
       "status": "active",
       "type": "file",
@@ -7243,8 +7347,8 @@
       "label": "GeminiParser",
       "layer": "user",
       "position": {
-        "x": -3960,
-        "y": 400
+        "x": -3720,
+        "y": 280
       },
       "status": "active",
       "type": "file",
@@ -7258,7 +7362,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 4,
+        "degree": 5,
         "file": "backup_md/GHOST_NODE.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -7313,8 +7417,8 @@
       "label": "graphBuilder",
       "layer": "user",
       "position": {
-        "x": -3360,
-        "y": 1560
+        "x": -3040,
+        "y": 600
       },
       "status": "active",
       "type": "file",
@@ -7349,8 +7453,8 @@
       "label": "GraphModel",
       "layer": "user",
       "position": {
-        "x": -720,
-        "y": 1760
+        "x": -400,
+        "y": 800
       },
       "status": "active",
       "type": "file",
@@ -7385,8 +7489,8 @@
       "label": "GridSystem",
       "layer": "user",
       "position": {
-        "x": -2080,
-        "y": 1560
+        "x": -1760,
+        "y": 600
       },
       "status": "active",
       "type": "file",
@@ -7400,7 +7504,7 @@
       "cluster_id": "cluster_ghosts",
       "data": {
         "cluster_id": "cluster_ghosts",
-        "degree": 2,
+        "degree": 4,
         "hasAtomicSignature": false,
         "hasImportSignature": false,
         "hiddenOnCanvas": false,
@@ -7435,7 +7539,7 @@
       "cluster_id": "cluster_ghosts",
       "data": {
         "cluster_id": "cluster_ghosts",
-        "degree": 2,
+        "degree": 4,
         "hasAtomicSignature": false,
         "hasImportSignature": false,
         "hiddenOnCanvas": false,
@@ -7470,7 +7574,7 @@
       "cluster_id": "cluster_ghosts",
       "data": {
         "cluster_id": "cluster_ghosts",
-        "degree": 2,
+        "degree": 4,
         "hasAtomicSignature": false,
         "hasImportSignature": false,
         "hiddenOnCanvas": false,
@@ -7505,7 +7609,7 @@
       "cluster_id": "cluster_ghosts",
       "data": {
         "cluster_id": "cluster_ghosts",
-        "degree": 2,
+        "degree": 4,
         "hasAtomicSignature": false,
         "hasImportSignature": false,
         "hiddenOnCanvas": false,
@@ -7540,7 +7644,7 @@
       "cluster_id": "cluster_ghosts",
       "data": {
         "cluster_id": "cluster_ghosts",
-        "degree": 2,
+        "degree": 4,
         "hasAtomicSignature": false,
         "hasImportSignature": false,
         "hiddenOnCanvas": false,
@@ -7631,7 +7735,7 @@
       "label": "Intent",
       "layer": "user",
       "position": {
-        "x": 3160,
+        "x": 1680,
         "y": -680
       },
       "status": "active",
@@ -7703,8 +7807,8 @@
       "label": "Logger",
       "layer": "user",
       "position": {
-        "x": 1800,
-        "y": 1440
+        "x": 1200,
+        "y": 1080
       },
       "status": "active",
       "type": "file",
@@ -7773,8 +7877,8 @@
       "label": "LogicAnalyzer",
       "layer": "user",
       "position": {
-        "x": -1120,
-        "y": 1560
+        "x": -800,
+        "y": 560
       },
       "status": "active",
       "type": "file",
@@ -7894,7 +7998,7 @@
       "cluster_id": "cluster_ghosts",
       "data": {
         "cluster_id": "cluster_ghosts",
-        "degree": 3,
+        "degree": 4,
         "hasAtomicSignature": false,
         "hasImportSignature": false,
         "hiddenOnCanvas": false,
@@ -7929,7 +8033,7 @@
       "cluster_id": "cluster_ghosts",
       "data": {
         "cluster_id": "cluster_ghosts",
-        "degree": 3,
+        "degree": 4,
         "hasAtomicSignature": false,
         "hasImportSignature": false,
         "hiddenOnCanvas": false,
@@ -7964,7 +8068,7 @@
       "cluster_id": "cluster_ghosts",
       "data": {
         "cluster_id": "cluster_ghosts",
-        "degree": 3,
+        "degree": 4,
         "hasAtomicSignature": false,
         "hasImportSignature": false,
         "hiddenOnCanvas": false,
@@ -7999,7 +8103,7 @@
       "cluster_id": "cluster_ghosts",
       "data": {
         "cluster_id": "cluster_ghosts",
-        "degree": 3,
+        "degree": 4,
         "hasAtomicSignature": false,
         "hasImportSignature": false,
         "hiddenOnCanvas": false,
@@ -8034,7 +8138,7 @@
       "cluster_id": "cluster_ghosts",
       "data": {
         "cluster_id": "cluster_ghosts",
-        "degree": 3,
+        "degree": 4,
         "hasAtomicSignature": false,
         "hasImportSignature": false,
         "hiddenOnCanvas": false,
@@ -8125,8 +8229,8 @@
       "label": "PbSessionWatcher",
       "layer": "user",
       "position": {
-        "x": -1240,
-        "y": 1640
+        "x": -880,
+        "y": 720
       },
       "status": "active",
       "type": "file",
@@ -8161,7 +8265,7 @@
       "label": "PhaseGate",
       "layer": "user",
       "position": {
-        "x": 2840,
+        "x": 1360,
         "y": -1000
       },
       "status": "active",
@@ -8197,8 +8301,8 @@
       "label": "PhaseManager",
       "layer": "user",
       "position": {
-        "x": -1760,
-        "y": 1680
+        "x": -1440,
+        "y": 720
       },
       "status": "active",
       "type": "file",
@@ -8304,8 +8408,8 @@
       "label": "PromptLogger",
       "layer": "user",
       "position": {
-        "x": -3840,
-        "y": 1600
+        "x": -3520,
+        "y": 680
       },
       "status": "active",
       "type": "file",
@@ -8388,7 +8492,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 45,
+        "degree": 81,
         "file": "backup_md/README.ko.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -8545,8 +8649,8 @@
       "label": "RendererCore",
       "layer": "user",
       "position": {
-        "x": -3080,
-        "y": 1560
+        "x": -2760,
+        "y": 600
       },
       "status": "active",
       "type": "file",
@@ -8825,7 +8929,7 @@
       "label": "ScenarioRunner",
       "layer": "user",
       "position": {
-        "x": 3760,
+        "x": 2280,
         "y": -600
       },
       "status": "active",
@@ -8862,7 +8966,7 @@
       "layer": "user",
       "position": {
         "x": -2600,
-        "y": -1320
+        "y": -1040
       },
       "status": "active",
       "type": "file",
@@ -8897,8 +9001,8 @@
       "label": "server",
       "layer": "user",
       "position": {
-        "x": -240,
-        "y": 1160
+        "x": -2440,
+        "y": 1960
       },
       "status": "active",
       "type": "file",
@@ -8933,8 +9037,8 @@
       "label": "SnapshotSystem",
       "layer": "user",
       "position": {
-        "x": -2000,
-        "y": 1720
+        "x": -1680,
+        "y": 760
       },
       "status": "active",
       "type": "file",
@@ -9005,8 +9109,8 @@
       "label": "standalone",
       "layer": "user",
       "position": {
-        "x": 1160,
-        "y": 1360
+        "x": -1880,
+        "y": 2200
       },
       "status": "active",
       "type": "file",
@@ -9077,7 +9181,7 @@
       "label": "StateManager",
       "layer": "user",
       "position": {
-        "x": 3480,
+        "x": 2000,
         "y": 400
       },
       "status": "active",
@@ -9092,7 +9196,7 @@
       "cluster_id": "cluster_ghosts",
       "data": {
         "cluster_id": "cluster_ghosts",
-        "degree": 2,
+        "degree": 4,
         "hasAtomicSignature": false,
         "hasImportSignature": false,
         "hiddenOnCanvas": false,
@@ -9127,7 +9231,7 @@
       "cluster_id": "cluster_ghosts",
       "data": {
         "cluster_id": "cluster_ghosts",
-        "degree": 2,
+        "degree": 4,
         "hasAtomicSignature": false,
         "hasImportSignature": false,
         "hiddenOnCanvas": false,
@@ -9197,7 +9301,7 @@
       "cluster_id": "cluster_ghosts",
       "data": {
         "cluster_id": "cluster_ghosts",
-        "degree": 2,
+        "degree": 4,
         "hasAtomicSignature": false,
         "hasImportSignature": false,
         "hiddenOnCanvas": false,
@@ -9232,7 +9336,7 @@
       "cluster_id": "cluster_ghosts",
       "data": {
         "cluster_id": "cluster_ghosts",
-        "degree": 2,
+        "degree": 4,
         "hasAtomicSignature": false,
         "hasImportSignature": false,
         "hiddenOnCanvas": false,
@@ -9267,7 +9371,7 @@
       "cluster_id": "cluster_ghosts",
       "data": {
         "cluster_id": "cluster_ghosts",
-        "degree": 2,
+        "degree": 4,
         "hasAtomicSignature": false,
         "hasImportSignature": false,
         "hiddenOnCanvas": false,
@@ -9302,7 +9406,7 @@
       "cluster_id": "cluster_ghosts",
       "data": {
         "cluster_id": "cluster_ghosts",
-        "degree": 2,
+        "degree": 4,
         "hasAtomicSignature": false,
         "hasImportSignature": false,
         "hiddenOnCanvas": false,
@@ -9649,9 +9753,9 @@
       }
     },
     {
-      "cluster_id": "",
+      "cluster_id": "sys_cluster_buffer",
       "data": {
-        "cluster_id": "",
+        "cluster_id": "sys_cluster_buffer",
         "degree": 0,
         "file": "test_new_session.js",
         "hasAtomicSignature": false,
@@ -9665,7 +9769,7 @@
         "layer": "ai",
         "opacity": 1,
         "scale": 1,
-        "status": "active"
+        "status": "ghost"
       },
       "degree": 0,
       "filePath": "test_new_session.js",
@@ -9673,10 +9777,10 @@
       "label": "test_new_session",
       "layer": "ai",
       "position": {
-        "x": -960,
-        "y": -1200
+        "x": -3280,
+        "y": -2120
       },
-      "status": "active",
+      "status": "ghost",
       "type": "file",
       "visual": {
         "opacity": 1,
@@ -14909,7 +15013,7 @@
       "label": "ValidationHarness",
       "layer": "user",
       "position": {
-        "x": 3920,
+        "x": 2440,
         "y": -1080
       },
       "status": "active",
@@ -14979,8 +15083,8 @@
       "label": "VerificationLayer",
       "layer": "user",
       "position": {
-        "x": 3200,
-        "y": 3400
+        "x": 680,
+        "y": 2520
       },
       "status": "active",
       "type": "file",
@@ -15051,8 +15155,8 @@
       "label": "VirtualDebugger",
       "layer": "user",
       "position": {
-        "x": -4160,
-        "y": 1600
+        "x": -3880,
+        "y": 640
       },
       "status": "active",
       "type": "file",
@@ -15121,8 +15225,8 @@
       "label": "visualHints",
       "layer": "user",
       "position": {
-        "x": 1920,
-        "y": 840
+        "x": 400,
+        "y": 1000
       },
       "status": "active",
       "type": "file",
@@ -15193,8 +15297,8 @@
       "label": "VscdbAdapter",
       "layer": "user",
       "position": {
-        "x": -2240,
-        "y": 1640
+        "x": -1920,
+        "y": 680
       },
       "status": "active",
       "type": "file",
@@ -15333,8 +15437,8 @@
       "label": "webgl-renderer",
       "layer": "user",
       "position": {
-        "x": -5240,
-        "y": 1320
+        "x": -5280,
+        "y": 1360
       },
       "status": "active",
       "type": "file",
@@ -15369,8 +15473,8 @@
       "label": "WebviewInterceptor",
       "layer": "user",
       "position": {
-        "x": -1360,
-        "y": 1520
+        "x": -1000,
+        "y": 560
       },
       "status": "active",
       "type": "file",
@@ -15520,7 +15624,7 @@
       "cluster_id": "cluster_ghosts",
       "data": {
         "cluster_id": "cluster_ghosts",
-        "degree": 3,
+        "degree": 4,
         "hasAtomicSignature": false,
         "hasImportSignature": false,
         "hiddenOnCanvas": false,
@@ -15575,8 +15679,8 @@
       "label": "node_summary",
       "layer": "ai",
       "position": {
-        "x": -8000,
-        "y": 320
+        "x": -7280,
+        "y": -560
       },
       "status": "ghost",
       "type": "external",
@@ -15590,7 +15694,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 2,
+        "degree": 4,
         "file": "mile_stone/v0.3.17.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -15679,8 +15783,8 @@
       "label": "hintEngine",
       "layer": "user",
       "position": {
-        "x": 0,
-        "y": 3680
+        "x": -800,
+        "y": 2520
       },
       "status": "active",
       "type": "file",
@@ -15694,7 +15798,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 0,
+        "degree": 4,
         "file": "mile_stone/v0.3.18.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -15791,12 +15895,80 @@
         "scale": 1,
         "visible": true
       }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "degree": 2,
+        "file": "mile_stone/v0.3.19.md",
+        "hasAtomicSignature": false,
+        "hasImportSignature": false,
+        "hiddenOnCanvas": true,
+        "icon": "📚",
+        "isUserCreated": true,
+        "label": "v0.3.19",
+        "layer": "user",
+        "opacity": 1,
+        "scale": 1,
+        "status": "active"
+      },
+      "degree": 0,
+      "filePath": "mile_stone/v0.3.19.md",
+      "id": "v0.3.19",
+      "label": "v0.3.19",
+      "layer": "user",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "status": "active",
+      "type": "documentation",
+      "visual": {
+        "opacity": 1,
+        "scale": 1,
+        "visible": true
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "degree": 0,
+        "file": "mile_stone/v0.3.19_implementation_plan.md",
+        "hasAtomicSignature": false,
+        "hasImportSignature": false,
+        "hiddenOnCanvas": true,
+        "icon": "📚",
+        "isUserCreated": true,
+        "label": "v0.3.19_implementation_plan",
+        "layer": "user",
+        "opacity": 1,
+        "scale": 1,
+        "status": "active"
+      },
+      "degree": 0,
+      "filePath": "mile_stone/v0.3.19_implementation_plan.md",
+      "id": "v0.3.19_implementation_plan",
+      "label": "v0.3.19_implementation_plan",
+      "layer": "user",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "status": "active",
+      "type": "documentation",
+      "visual": {
+        "opacity": 1,
+        "scale": 1,
+        "visible": true
+      }
     }
   ],
   "project_name": "antigravity-extension-vis",
   "_iron_guard": {
     "version": "0.2.18.1",
-    "byte_size": 252101,
+    "byte_size": 254826,
     "encoding": "UTF-8",
     "alignment": 8
   }

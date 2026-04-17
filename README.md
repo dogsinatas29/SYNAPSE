@@ -1,4 +1,4 @@
-# <img src="./resources/synapse-icon.png" width="40" height="40" /> 🧠 SYNAPSE: Visual Architecture Engine (v0.3.18)
+# <img src="./resources/synapse-icon.png" width="40" height="40" /> 🧠 SYNAPSE: Visual Architecture Engine (v0.3.19)
 
 > **"What you see is the logic of LLM"** — *WYSIWYG Logic for AI*
 
@@ -16,6 +16,7 @@
 
 | Feature | Description | Benefit |
 |-------|---------|-----|
+| **Top-N Focus** | **Global Exploration** System | Automatically identifies top 10 core nodes and their 1-hop context to reduce cognitive load. |
 | **Triple Expression** | **Color · Layer · Priority** System | Instant role recognition via colors, noise reduction via leaf filtering, and priority stars for refactoring focus. |
 | **Node Role Taxonomy** | Architectural Identity Classification | Identifies **Orchestrator, Controller, Hub, Leaf** with strict Single-Role principle. |
 | **Identity-Aware Tooltip** | Detailed Connection Breakdown | Displays star ratings (`★★★☆`) and specific file/library names to provide evidence-based insights. |
@@ -367,6 +368,7 @@ Launch your visual architecture journey in seconds.
 
 | Version | Date | Description (English) | Description (Korean) |
 | :--- | :--- | :--- | :--- |
+| **v0.3.19** | 2026-04-17 | **Top-N Focus View**: Automated identification of the 10 most critical core nodes with 1-hop context expansion for global exploration. | **Top-N 포커스 뷰**: 1-hop 맥락 확장을 포함한 상위 10개 핵심 노드 자동 식별 및 글로벌 탐색 모드 도입. |
 | **v0.3.18** | 2026-04-17 | **Diagnostic Hint Engine**: Real-time architectural analysis (R1-R5), Zero-Unknown semantic labeling, and detailed node identity list in tooltips. | **진단 힌트 엔진**: 실시간 아키텍처 분석(R1-R5), Zero-Unknown 시맨틱 라벨링 및 툴팁 내 상세 연결 노드 리스트 출력. |
 | **v0.3.17** | 2026-04-14 | **Node Summary Feature**: Added interactive node summary tooltips showing unique connections and directional degrees. Optimized with O(E) pre-calculation. | **노드 요약 정보 출력**: 노드 호버 시 고유 연결 및 방향성 의존성을 보여주는 요약 툴팁 추가 및 O(E) 성능 최적화. |
 | **v0.3.16** | 2026-04-14 | **Minimalist Logic View**: Introduced toggle controls for edge and badge visibility. Implemented transparent edge persistence for selected nodes and O(1) rendering skips. | **미니멀리스트 로직 뷰**: 엣지 및 배지 가시성 토글 기능 도입. 선택된 노드의 엣지 반투명 노출 및 O(1) 렌더링 스킵 구현. |

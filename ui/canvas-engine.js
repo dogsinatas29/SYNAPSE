@@ -1187,6 +1187,14 @@ class CanvasEngine {
             });
         }
 
+        // [v0.3.19] Auto-Align Architecture (Role-based)
+        const btnAlignRole = document.getElementById('btn-align-role');
+        if (btnAlignRole) {
+            btnAlignRole.addEventListener('click', () => {
+                this.applyRoleAlignment();
+            });
+        }
+
         const docsSearchInput = document.getElementById('docs-search-input');
         if (docsSearchInput) {
             docsSearchInput.addEventListener('input', (e) => {
@@ -3757,6 +3765,38 @@ class CanvasEngine {
 
         console.log(`[SYNAPSE] Node stats & roles updated for ${nodes.length} nodes.`);
         this.needsUpdate = true; // Refresh display
+    }
+
+    /**
+     * [v0.3.19] Strategic Architecture Alignment (Role-based X-axis)
+     * Groups nodes horizontally based on their architectural identity for better data flow visibility.
+     */
+    applyRoleAlignment() {
+        if (!this.nodes) return;
+        
+        console.log('[SYNAPSE] Applying Strategic Architecture Alignment (Role-based X-axis)...');
+        
+        for (const node of this.nodes) {
+            const stats = this.nodeStatsMap.get(node.id);
+            if (!stats || !stats.primaryRole) continue;
+            
+            // X-axis mapping based on architectural importance (Directional Compression)
+            // Left (Foundation/Utility) -> Center (Core Engine) -> Right (External/Interface)
+            const role = stats.primaryRole;
+            
+            if (role.startsWith('Leaf')) {
+                node.position.x = -1500;
+            } else if (role.startsWith('Hub')) {
+                node.position.x = -500;
+            } else if (role.startsWith('Orchestrator')) {
+                node.position.x = 500;
+            } else if (role.startsWith('Controller')) {
+                node.position.x = 1500;
+            }
+        }
+        
+        this.needsUpdate = true;
+        console.log('[SYNAPSE] Architecture Alignment complete.');
     }
 
     generateDiagnosticHints(stats) {

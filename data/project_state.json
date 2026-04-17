@@ -1,15 +1,15 @@
 {
   "canvas_state": {
     "offset": {
-      "x": 1071.6564041362576,
-      "y": -405.94987360052846
+      "x": 1348.6631947902379,
+      "y": 665.3935008516166
     },
     "visible_layers": [
       "source",
       "documentation",
       "user"
     ],
-    "zoom_level": 0.669876609527062
+    "zoom_level": 0.2641701392942387
   },
   "clusters": [
     {
@@ -4728,8 +4728,8 @@
       "label": ") || trimmed.includes(",
       "layer": "ai",
       "position": {
-        "x": -3520,
-        "y": -920
+        "x": -3560,
+        "y": -40
       },
       "status": "ghost",
       "type": "symbol",
@@ -5309,8 +5309,8 @@
       "label": "AiOrchestrator",
       "layer": "user",
       "position": {
-        "x": -1320,
-        "y": -120
+        "x": -1040,
+        "y": -680
       },
       "status": "active",
       "type": "file",
@@ -5379,8 +5379,8 @@
       "label": "ArchitectureDSL",
       "layer": "user",
       "position": {
-        "x": -360,
-        "y": -200
+        "x": -160,
+        "y": -600
       },
       "status": "active",
       "type": "file",
@@ -5451,8 +5451,8 @@
       "label": "BillingManager",
       "layer": "user",
       "position": {
-        "x": -1560,
-        "y": -80
+        "x": -1280,
+        "y": -720
       },
       "status": "active",
       "type": "file",
@@ -5487,8 +5487,8 @@
       "label": "BootstrapEngine",
       "layer": "user",
       "position": {
-        "x": -640,
-        "y": -1280
+        "x": -840,
+        "y": -1640
       },
       "status": "active",
       "type": "file",
@@ -5523,8 +5523,8 @@
       "label": "build-guard",
       "layer": "ai",
       "position": {
-        "x": -1760,
-        "y": 1520
+        "x": -2760,
+        "y": 1200
       },
       "status": "active",
       "type": "file",
@@ -5559,8 +5559,8 @@
       "label": "canvas-engine",
       "layer": "user",
       "position": {
-        "x": -3920,
-        "y": 640
+        "x": -4040,
+        "y": 760
       },
       "status": "active",
       "type": "file",
@@ -5631,8 +5631,8 @@
       "label": "CanvasPanel",
       "layer": "user",
       "position": {
-        "x": -1480,
-        "y": -1680
+        "x": -2840,
+        "y": -1640
       },
       "status": "active",
       "type": "file",
@@ -5667,8 +5667,8 @@
       "label": "CDPManager",
       "layer": "user",
       "position": {
-        "x": -1200,
-        "y": -200
+        "x": -920,
+        "y": -520
       },
       "status": "active",
       "type": "file",
@@ -5844,7 +5844,7 @@
       "label": "cluster_id",
       "layer": "ai",
       "position": {
-        "x": -4480,
+        "x": -4520,
         "y": 240
       },
       "status": "ghost",
@@ -6020,7 +6020,7 @@
       "layer": "ai",
       "position": {
         "x": -3920,
-        "y": -720
+        "y": -760
       },
       "status": "ghost",
       "type": "external",
@@ -6160,8 +6160,8 @@
       "label": "CommandInterceptor",
       "layer": "user",
       "position": {
-        "x": -2160,
-        "y": -840
+        "x": -1960,
+        "y": -720
       },
       "status": "active",
       "type": "file",
@@ -6196,8 +6196,8 @@
       "label": "CommitManager",
       "layer": "user",
       "position": {
-        "x": -560,
-        "y": 1400
+        "x": -1280,
+        "y": 800
       },
       "status": "active",
       "type": "file",
@@ -6406,8 +6406,8 @@
       "label": "ControlSystem",
       "layer": "user",
       "position": {
-        "x": -1680,
-        "y": -800
+        "x": -1560,
+        "y": -520
       },
       "status": "active",
       "type": "file",
@@ -6476,7 +6476,7 @@
       "layer": "ai",
       "position": {
         "x": -3480,
-        "y": 240
+        "y": 320
       },
       "status": "ghost",
       "type": "external",
@@ -6510,7 +6510,7 @@
       "label": "crypto",
       "layer": "ai",
       "position": {
-        "x": -3440,
+        "x": -3320,
         "y": 120
       },
       "status": "ghost",
@@ -6580,8 +6580,8 @@
       "label": "DatabaseEngine",
       "layer": "user",
       "position": {
-        "x": -2360,
-        "y": -240
+        "x": -2280,
+        "y": -560
       },
       "status": "active",
       "type": "file",
@@ -6616,8 +6616,8 @@
       "label": "DataPipeline",
       "layer": "user",
       "position": {
-        "x": -1560,
-        "y": 560
+        "x": -1400,
+        "y": -160
       },
       "status": "active",
       "type": "file",
@@ -6686,8 +6686,8 @@
       "label": "DebuggerSystem",
       "layer": "user",
       "position": {
-        "x": -2320,
-        "y": -80
+        "x": -1800,
+        "y": -720
       },
       "status": "active",
       "type": "file",
@@ -6722,8 +6722,8 @@
       "label": "DirectChatScraper",
       "layer": "user",
       "position": {
-        "x": -2840,
-        "y": 320
+        "x": -2600,
+        "y": -400
       },
       "status": "active",
       "type": "file",
@@ -6758,8 +6758,8 @@
       "label": "EdgeCodeRefactorer",
       "layer": "user",
       "position": {
-        "x": -2440,
-        "y": -840
+        "x": -2600,
+        "y": -600
       },
       "status": "active",
       "type": "file",
@@ -6794,8 +6794,8 @@
       "label": "engine-core",
       "layer": "user",
       "position": {
-        "x": -4000,
-        "y": 800
+        "x": -4120,
+        "y": 880
       },
       "status": "active",
       "type": "file",
@@ -6866,8 +6866,8 @@
       "label": "ExecutionLayer",
       "layer": "user",
       "position": {
-        "x": -240,
-        "y": 1560
+        "x": -960,
+        "y": 960
       },
       "status": "active",
       "type": "file",
@@ -7007,8 +7007,8 @@
       "label": "FileScanner",
       "layer": "user",
       "position": {
-        "x": -2480,
-        "y": -80
+        "x": -2440,
+        "y": -640
       },
       "status": "active",
       "type": "file",
@@ -7043,8 +7043,8 @@
       "label": "fix_cluster",
       "layer": "ai",
       "position": {
-        "x": -4560,
-        "y": 560
+        "x": -4440,
+        "y": 760
       },
       "status": "active",
       "type": "file",
@@ -7114,8 +7114,8 @@
       "label": "FlowchartGenerator",
       "layer": "user",
       "position": {
-        "x": -2080,
-        "y": -1040
+        "x": -2040,
+        "y": -560
       },
       "status": "active",
       "type": "file",
@@ -7150,8 +7150,8 @@
       "label": "FlowScanner",
       "layer": "user",
       "position": {
-        "x": -560,
-        "y": -160
+        "x": -320,
+        "y": -600
       },
       "status": "active",
       "type": "file",
@@ -7356,8 +7356,8 @@
       "label": "GeminiParser",
       "layer": "user",
       "position": {
-        "x": -2760,
-        "y": 760
+        "x": -2600,
+        "y": 40
       },
       "status": "active",
       "type": "file",
@@ -7426,8 +7426,8 @@
       "label": "graphBuilder",
       "layer": "user",
       "position": {
-        "x": -1800,
-        "y": -880
+        "x": -1640,
+        "y": -720
       },
       "status": "active",
       "type": "file",
@@ -7462,8 +7462,8 @@
       "label": "GraphModel",
       "layer": "user",
       "position": {
-        "x": -240,
-        "y": -80
+        "x": -80,
+        "y": -800
       },
       "status": "active",
       "type": "file",
@@ -7498,8 +7498,8 @@
       "label": "GridSystem",
       "layer": "user",
       "position": {
-        "x": -1800,
-        "y": -80
+        "x": -1360,
+        "y": -560
       },
       "status": "active",
       "type": "file",
@@ -7533,8 +7533,8 @@
       "label": "hint_dashed_border",
       "layer": "ai",
       "position": {
-        "x": -3680,
-        "y": -1000
+        "x": -3760,
+        "y": 120
       },
       "status": "ghost",
       "type": "external",
@@ -7886,8 +7886,8 @@
       "label": "LogicAnalyzer",
       "layer": "user",
       "position": {
-        "x": -680,
-        "y": -200
+        "x": -480,
+        "y": -680
       },
       "status": "active",
       "type": "file",
@@ -7957,8 +7957,8 @@
       "label": "mod",
       "layer": "user",
       "position": {
-        "x": -4440,
-        "y": 840
+        "x": -4480,
+        "y": 1000
       },
       "status": "active",
       "type": "file",
@@ -7992,8 +7992,8 @@
       "label": "net",
       "layer": "ai",
       "position": {
-        "x": -3520,
-        "y": -160
+        "x": -3600,
+        "y": 120
       },
       "status": "ghost",
       "type": "external",
@@ -8202,7 +8202,7 @@
       "label": "package",
       "layer": "ai",
       "position": {
-        "x": -4320,
+        "x": -4360,
         "y": -400
       },
       "status": "ghost",
@@ -8238,8 +8238,8 @@
       "label": "PbSessionWatcher",
       "layer": "user",
       "position": {
-        "x": -800,
-        "y": -80
+        "x": -520,
+        "y": -520
       },
       "status": "active",
       "type": "file",
@@ -8310,8 +8310,8 @@
       "label": "PhaseManager",
       "layer": "user",
       "position": {
-        "x": -1440,
-        "y": -200
+        "x": -1160,
+        "y": -560
       },
       "status": "active",
       "type": "file",
@@ -8345,8 +8345,8 @@
       "label": "position",
       "layer": "ai",
       "position": {
-        "x": -4280,
-        "y": 320
+        "x": -4240,
+        "y": 360
       },
       "status": "ghost",
       "type": "external",
@@ -8417,8 +8417,8 @@
       "label": "PromptLogger",
       "layer": "user",
       "position": {
-        "x": -2320,
-        "y": -960
+        "x": -2160,
+        "y": -680
       },
       "status": "active",
       "type": "file",
@@ -8658,8 +8658,8 @@
       "label": "RendererCore",
       "layer": "user",
       "position": {
-        "x": -1760,
-        "y": -1040
+        "x": -1880,
+        "y": -560
       },
       "status": "active",
       "type": "file",
@@ -8974,8 +8974,8 @@
       "label": "schema",
       "layer": "user",
       "position": {
-        "x": -2640,
-        "y": -1440
+        "x": -1920,
+        "y": -1920
       },
       "status": "active",
       "type": "file",
@@ -9010,8 +9010,8 @@
       "label": "server",
       "layer": "user",
       "position": {
-        "x": -3040,
-        "y": 1760
+        "x": -3280,
+        "y": 880
       },
       "status": "active",
       "type": "file",
@@ -9046,8 +9046,8 @@
       "label": "SnapshotSystem",
       "layer": "user",
       "position": {
-        "x": -1680,
-        "y": -200
+        "x": -1480,
+        "y": -680
       },
       "status": "active",
       "type": "file",
@@ -9118,8 +9118,8 @@
       "label": "standalone",
       "layer": "user",
       "position": {
-        "x": -2480,
-        "y": 1920
+        "x": -3040,
+        "y": 880
       },
       "status": "active",
       "type": "file",
@@ -9154,8 +9154,8 @@
       "label": "state_checker",
       "layer": "user",
       "position": {
-        "x": -4840,
-        "y": 840
+        "x": -4880,
+        "y": 920
       },
       "status": "active",
       "type": "file",
@@ -15056,8 +15056,8 @@
       "label": "VerificationLayer",
       "layer": "user",
       "position": {
-        "x": -560,
-        "y": 1560
+        "x": -1280,
+        "y": 960
       },
       "status": "active",
       "type": "file",
@@ -15128,8 +15128,8 @@
       "label": "VirtualDebugger",
       "layer": "user",
       "position": {
-        "x": -2800,
-        "y": -1000
+        "x": -2920,
+        "y": -600
       },
       "status": "active",
       "type": "file",
@@ -15270,8 +15270,8 @@
       "label": "VscdbAdapter",
       "layer": "user",
       "position": {
-        "x": -1920,
-        "y": -200
+        "x": -1720,
+        "y": -480
       },
       "status": "active",
       "type": "file",
@@ -15305,8 +15305,8 @@
       "label": "vscode-languageclient",
       "layer": "ai",
       "position": {
-        "x": -3560,
-        "y": -440
+        "x": -3440,
+        "y": 160
       },
       "status": "ghost",
       "type": "external",
@@ -15410,8 +15410,8 @@
       "label": "webgl-renderer",
       "layer": "user",
       "position": {
-        "x": -4040,
-        "y": 960
+        "x": -4160,
+        "y": 1040
       },
       "status": "active",
       "type": "file",
@@ -15446,8 +15446,8 @@
       "label": "WebviewInterceptor",
       "layer": "user",
       "position": {
-        "x": -920,
-        "y": -200
+        "x": -800,
+        "y": -640
       },
       "status": "active",
       "type": "file",
@@ -15996,7 +15996,7 @@
       "label": "purge_ghost",
       "layer": "user",
       "position": {
-        "x": -1400,
+        "x": -1480,
         "y": 1280
       },
       "status": "active",
@@ -16011,7 +16011,7 @@
   "project_name": "antigravity-extension-vis",
   "_iron_guard": {
     "version": "0.2.18.1",
-    "byte_size": 255533,
+    "byte_size": 255528,
     "encoding": "UTF-8",
     "alignment": 8
   }

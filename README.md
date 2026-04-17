@@ -286,11 +286,11 @@ The following icons are used within the center badge and arrowheads to define th
 
 ### Project Topology
 Visualizes the physical connections between LLM reasoning logic and source files.
-![Topology View](./resources/screenshots/v0.3.18/topology_view.png)
+![Topology View](resources/screenshots/v0.3.18/topology_view.png)
 
 ### Node Information Output (v0.3.17)
 Hover over any node to see its structural metrics (Connections, IN, OUT) instantly. This allows for rapid identification of responsibility and dependency clusters.
-![Node Summary](./resources/screenshots/v0.3.17/node_summary.png)
+![Node Summary](resources/screenshots/v0.3.17/node_summary.png)
 
 ### Minimalist Logic View (v0.3.16)
 Toggle edge and badge visibility to reduce clutter while maintaining logical connectivity for selected nodes.

@@ -80,11 +80,11 @@ SYNAPSE v0.3.18은 프로젝트의 아키텍처 건강 상태를 모니터링하
 
 ### 프로젝트 토폴로지 (Topology)
 LLM 추론 논리와 실제 소스 파일 간의 물리적 연결을 시각화합니다.
-![Topology View](./resources/screenshots/v0.3.18/topology_view.png)
+![Topology View](resources/screenshots/v0.3.18/topology_view.png)
 
 ### 노드 정보 요약 (v0.3.17)
 노드 위에 마우스를 올리면 구조적 지표(연결 수, IN, OUT)를 즉시 볼 수 있어 책임 범위와 의존성 클러스터를 빠르게 식별할 수 있습니다.
-![Node Summary](./resources/screenshots/v0.3.17/node_summary.png)
+![Node Summary](resources/screenshots/v0.3.17/node_summary.png)
 
 ---
 

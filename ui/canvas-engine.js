@@ -953,6 +953,8 @@ class CanvasEngine {
         this.focusCoreSet = new Set(); // Top-N Core node IDs
         this.focusNodeSet = new Set(); // Core + 1-hop neighbor IDs
         this.hotspots = []; // [v0.3.20] Cached hotspot area geometries
+        this.isAligning = false; // [v0.4.0] Strategic Alignment Animation state
+        this.alignTimer = 0;
 
         // [v0.2.19] Layer Visibility State
         this.showBaseLayer = true;
@@ -3922,62 +3924,70 @@ class CanvasEngine {
     }
 
     /**
-     * [v0.3.19] Strategic Architecture Alignment (Role-based X-axis)
-     * Groups nodes horizontally based on their architectural identity for better data flow visibility.
+     * [v0.4.0] Strategic Architecture Alignment (Spring Bias Revision)
+     * Triggers a smooth simulation that drifts nodes into their lanes without destroying the graph structure.
      */
     applyRoleAlignment() {
+        this.isAligning = true;
+        this.alignTimer = 120; // Run simulation for ~2 seconds
+        console.log('[SYNAPSE] Spring-based Alignment Triggered.');
+        this.needsUpdate = true;
+    }
+
+    /**
+     * Physical update logic for soft alignment.
+     */
+    updateAlignmentSimulation() {
         if (!this.nodes) return;
+        const ALIGN_STRENGTH = 0.04; // Very subtle spring
+        const FRICTION = 0.82;
+        const COLUMN_WIDTH = 120;
+        const ROW_HEIGHT = 180;
         
-        console.log('[SYNAPSE] Applying Strategic Architecture Alignment (Grid-spread Lane)...');
-        
-        // Group nodes by role to apply index-based spreading
-        const roles = {
-            'Leaf': [],
-            'Hub': [],
-            'Orchestrator': [],
-            'Controller': []
-        };
-        
+        // Group by role to find sub-column indices
+        const groups = { 'Leaf': [], 'Hub': [], 'Orchestrator': [], 'Controller': [] };
         for (const node of this.nodes) {
             const stats = this.nodeStatsMap.get(node.id);
             if (!stats || !stats.primaryRole) continue;
             const pRole = stats.primaryRole;
-            
-            if (pRole.startsWith('Leaf')) roles['Leaf'].push(node);
-            else if (pRole.startsWith('Hub')) roles['Hub'].push(node);
-            else if (pRole.startsWith('Orchestrator')) roles['Orchestrator'].push(node);
-            else if (pRole.startsWith('Controller')) roles['Controller'].push(node);
+            if (pRole.startsWith('Leaf')) groups['Leaf'].push(node);
+            else if (pRole.startsWith('Hub')) groups['Hub'].push(node);
+            else if (pRole.startsWith('Orchestrator')) groups['Orchestrator'].push(node);
+            else if (pRole.startsWith('Controller')) groups['Controller'].push(node);
         }
 
         const targets = { 'Leaf': -1500, 'Hub': -500, 'Orchestrator': 500, 'Controller': 1500 };
-        const COLUMN_WIDTH = 120; // Width of each sub-column inside a lane
 
-        for (const [roleName, group] of Object.entries(roles)) {
-            const targetX = targets[roleName];
+        for (const [roleName, list] of Object.entries(groups)) {
+            const baseX = targets[roleName];
+            list.sort((a, b) => (a.label || '').localeCompare(b.label || ''));
             
-            // [v0.3.20] Sort by label for predictable vertical order (Reduces edge crossing)
-            group.sort((a, b) => (a.label || '').localeCompare(b.label || ''));
-            
-            const ROW_HEIGHT = 180; // Vertical spacing between nodes
-
-            group.forEach((node, i) => {
-                // Apply 3-column grid spread to avoid vertical stacking
+            list.forEach((node, i) => {
                 const colIndex = i % 3;
                 const rowIndex = Math.floor(i / 3);
                 
-                const xOffset = (colIndex - 1) * COLUMN_WIDTH; // -120, 0, 120
-                node.position.x = targetX + xOffset;
+                const targetX = baseX + (colIndex - 1) * COLUMN_WIDTH;
+                const targetY = (rowIndex * ROW_HEIGHT) - (Math.ceil(list.length / 3) * ROW_HEIGHT / 2);
+
+                // Apply Spring Forces to velocity
+                node.vx = (node.vx || 0) + (targetX - node.position.x) * ALIGN_STRENGTH;
+                node.vy = (node.vy || 0) + (targetY - node.position.y) * ALIGN_STRENGTH;
                 
-                // [v0.4.0] Strategic Vertical Position: Centers the cluster in Y-axis
-                const yOffset = (rowIndex * ROW_HEIGHT) - (Math.ceil(group.length / 3) * ROW_HEIGHT / 2);
-                node.position.y = yOffset;
+                // Diminish velocity over time
+                node.vx *= FRICTION;
+                node.vy *= FRICTION;
+                
+                // Integrate velocity to position
+                node.position.x += node.vx;
+                node.position.y += node.vy;
             });
         }
         
-        this.updateHotspots(); // Re-calculate boxes for updated positions
-        this.needsUpdate = true;
-        console.log('[SYNAPSE] Architecture Alignment with Grid Spread complete.');
+        this.updateHotspots();
     }
+
+    /**
+     * [v0.3.20] Semantic Hotspot Area Generation
 
     generateDiagnosticHints(stats) {
         const { in: inCount, out, connectedNodes, distribution, total } = stats;
@@ -5378,28 +5388,53 @@ class CanvasEngine {
 
         this._confirmBadgeHits = [];
         this._deleteBadgeHits = [];
+        this._visibleEdgesCache = []; // Reset for this frame
+
+        // Step 1: Visible detection and Group building for Bundling
+        const bundles = new Map();
         for (const edge of this.edges) {
-            // [v0.2.24] Optimized Node Lookup via nodeMap
             const srcNode = this.nodeMap.get(edge.from);
             const tgtNode = this.nodeMap.get(edge.to);
             if (srcNode && tgtNode) {
-                // [v0.2.24] Edge Culling: Skip if both nodes are entirely outside the screen
                 const srcVisible = !(srcNode.position.x + 120 < worldLeft || srcNode.position.x > worldRight || srcNode.position.y + 60 < worldTop || srcNode.position.y > worldBottom);
                 const tgtVisible = !(tgtNode.position.x + 120 < worldLeft || tgtNode.position.x > worldRight || tgtNode.position.y + 60 < worldTop || tgtNode.position.y > worldBottom);
 
-                if (!srcVisible && !tgtVisible) {
-                    // [v0.2.26] Debug: if nothing is visible, maybe view is lost?
-                    continue;
-                }
+                if (!srcVisible && !tgtVisible) continue; // Culled
 
-                const isUserLogic = (n) => 
-                    n.layer === 'user' || 
-                    (n.data && n.data.layer === 'user') || 
-                    n.id.startsWith('node_manual_');
-
-                if ((isUserLogic(srcNode) && !this.showUserLayer) || (!isUserLogic(srcNode) && !this.showBaseLayer)) continue;
-                if ((isUserLogic(tgtNode) && !this.showUserLayer) || (!isUserLogic(tgtNode) && !this.showBaseLayer)) continue;
+                this._visibleEdgesCache.push(edge);
+                if (!bundles.has(edge.from)) bundles.set(edge.from, []);
+                bundles.get(edge.from).push(edge);
             }
+        }
+
+        // Step 2: Pre-calculate Shared CPs for groups with >= 3 edges
+        this.edgeGroupsCP = new Map();
+        for (const [srcId, group] of bundles.entries()) {
+            if (group.length < 3) continue;
+            let sumMidX = 0, sumMidY = 0;
+            group.forEach(e => {
+                const f = this.nodeMap.get(e.from);
+                const t = this.nodeMap.get(e.to);
+                sumMidX += (f.position.x + t.position.x) / 2;
+                sumMidY += (f.position.y + t.position.y) / 2;
+            });
+            this.edgeGroupsCP.set(srcId, { x: sumMidX / group.length, y: sumMidY / group.length });
+        }
+
+        // Step 3: Draw the edges
+        for (const edge of this._visibleEdgesCache) {
+            const srcNode = this.nodeMap.get(edge.from);
+            const tgtNode = this.nodeMap.get(edge.to);
+            if (!srcNode || !tgtNode) continue;
+
+            const isUserLogic = (n) => 
+                n.layer === 'user' || 
+                (n.data && n.data.layer === 'user') || 
+                n.id.startsWith('node_manual_');
+
+            if ((isUserLogic(srcNode) && !this.showUserLayer) || (!isUserLogic(srcNode) && !this.showBaseLayer)) continue;
+            if ((isUserLogic(tgtNode) && !this.showUserLayer) || (!isUserLogic(tgtNode) && !this.showBaseLayer)) continue;
+            
             this.renderEdge(edge);
         }
     }
@@ -7407,11 +7442,15 @@ class CanvasEngine {
         const toX = toNode.position.x + 60;
         const toY = toNode.position.y + 30;
 
-        // [v0.3.13] Pre-calculate midX/midY to prevent TDZ ReferenceError
+        // [v0.3.13] Pre-calculate midX/midY
         const midX = (fromX + toX) / 2;
-        const midY = (fromY + toY) / 2 - 30;
-        const cpX = midX;
-        const cpY = midY;
+        const midY = (fromY + toY) / 2;
+        
+        // [v0.4.0] Lite Bundling Support (Shared Control Point)
+        // If this edge belongs to a source-bundle (>=3 edges), use the shared cluster center as CP.
+        const sharedCP = this.edgeGroupsCP?.get(edge.from);
+        const cpX = sharedCP ? sharedCP.x : midX;
+        const cpY = sharedCP ? sharedCP.y : midY - 30; // Fallback to custom curve for solo edges
 
         // 엣지 색상: 검증 에러가 있으면 검증 색상 우선, 없으면 타입별 색상
         let edgeColor = validation.valid ? style.color : validation.color;

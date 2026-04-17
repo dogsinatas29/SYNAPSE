@@ -5391,35 +5391,39 @@ class CanvasEngine {
         this._deleteBadgeHits = [];
         this._visibleEdgesCache = []; // Reset for this frame
 
-        // Step 1: Visible detection and Group building for Bundling
+        // Step 1: Destination-based Bundling Grouping
         const bundles = new Map();
         for (const edge of this.edges) {
             const srcNode = this.nodeMap.get(edge.from);
             const tgtNode = this.nodeMap.get(edge.to);
             if (srcNode && tgtNode) {
+                // Culling Check
                 const srcVisible = !(srcNode.position.x + 120 < worldLeft || srcNode.position.x > worldRight || srcNode.position.y + 60 < worldTop || srcNode.position.y > worldBottom);
                 const tgtVisible = !(tgtNode.position.x + 120 < worldLeft || tgtNode.position.x > worldRight || tgtNode.position.y + 60 < worldTop || tgtNode.position.y > worldBottom);
-
-                if (!srcVisible && !tgtVisible) continue; // Culled
+                if (!srcVisible && !tgtVisible) continue;
 
                 this._visibleEdgesCache.push(edge);
-                if (!bundles.has(edge.from)) bundles.set(edge.from, []);
-                bundles.get(edge.from).push(edge);
+                
+                // Group by Target Cluster
+                const targetClusterId = tgtNode.cluster_id || 'unmapped';
+                if (!bundles.has(targetClusterId)) bundles.set(targetClusterId, []);
+                bundles.get(targetClusterId).push(edge);
             }
         }
 
-        // Step 2: Pre-calculate Shared CPs for groups with >= 3 edges
+        // Step 2: Pre-calculate Cluster-weighted Control Points
+        // We calculate one center point for each target cluster group
         this.edgeGroupsCP = new Map();
-        for (const [srcId, group] of bundles.entries()) {
-            if (group.length < 3) continue;
-            let sumMidX = 0, sumMidY = 0;
-            group.forEach(e => {
-                const f = this.nodeMap.get(e.from);
-                const t = this.nodeMap.get(e.to);
-                sumMidX += (f.position.x + t.position.x) / 2;
-                sumMidY += (f.position.y + t.position.y) / 2;
-            });
-            this.edgeGroupsCP.set(srcId, { x: sumMidX / group.length, y: sumMidY / group.length });
+        for (const [clusterId, group] of bundles.entries()) {
+            if (group.length < 4) continue; // Threshold for bundling
+            
+            const cluster = this.clusters.find(c => c.id === clusterId);
+            if (!cluster) continue;
+
+            const clusterCenterX = cluster.position.x + cluster.width / 2;
+            const clusterCenterY = cluster.position.y + cluster.height / 2;
+
+            this.edgeGroupsCP.set(clusterId, { x: clusterCenterX, y: clusterCenterY });
         }
 
         // Step 3: Draw the edges
@@ -7344,61 +7348,29 @@ class CanvasEngine {
      * @returns {Object|null} 찾은 엣지 또는 null
      */
     findEdgeAtPoint(px, py) {
-        // 1단계: 화살표 클릭 확인 (우선순위!)
         for (const edge of this.edges) {
             const fromNode = this.nodes.find(n => n.id === edge.from);
             const toNode = this.nodes.find(n => n.id === edge.to);
-
             if (!fromNode || !toNode) continue;
-
             const fromX = fromNode.position.x + 60;
             const fromY = fromNode.position.y + 30;
             const toX = toNode.position.x + 60;
             const toY = toNode.position.y + 30;
-            const cpX = (fromX + toX) / 2;
-            const cpY = (fromY + toY) / 2 - 30;
 
-            // 중앙 화살표 체크
             const midX = (fromX + toX) / 2;
             const midY = (fromY + toY) / 2 - 30;
-            if (this.isPointNearArrow(px, py, midX, midY, 20)) {
-                return edge;
-            }
-
-            // 끝점 화살표 체크
-            const angle = Math.atan2(toY - cpY, toX - cpX);
-            const arrowPoint = this.getNodeBoundaryPoint(toX, toY, angle + Math.PI);
-            if (this.isPointNearArrow(px, py, arrowPoint.x, arrowPoint.y, 20)) {
-                return edge;
-            }
-
-            // Bidirectional인 경우 시작점 화살표도 체크
-            const style = this.getEdgeStyle(edge);
-            if (style.arrowStyle === 'double') {
-                const startAngle = Math.atan2(fromY - cpY, fromX - cpX);
-                const startArrowPoint = this.getNodeBoundaryPoint(fromX, fromY, startAngle + Math.PI);
-                if (this.isPointNearArrow(px, py, startArrowPoint.x, startArrowPoint.y, 20)) {
-                    return edge;
-                }
-            }
+            if (this.isPointNearArrow(px, py, midX, midY, 20)) return edge;
         }
 
-        // 2단계: 곡선 클릭 확인 (대체 방법)
         for (const edge of this.edges) {
-            // [v0.2.21] Significantly expanded hitbox (15 -> 30) to facilitate easier tactical selection
-            if (this.isPointNearCurve(px, py, edge, 30)) {
-                return edge;
-            }
+            if (this.isPointNearCurve(px, py, edge, 30)) return edge;
         }
-
-
         return null;
     }
 
     renderEdge(edge) {
         const fromNode = this.nodeMap.get(edge.from);
         const toNode = this.nodeMap.get(edge.to);
-
         if (!fromNode || !toNode) return;
 
         // [v0.3.19] Hide Edges connected to filtered Leaf nodes
@@ -7409,199 +7381,73 @@ class CanvasEngine {
                 (toStats && toStats.primaryRole === 'Leaf node')) return;
         }
 
-        // [v0.3.16] Edge Visibility early exit
         const isSelected = this.selectedEdge && this.selectedEdge.id === edge.id;
         const isHovered = this.hoveredEdge && this.hoveredEdge.id === edge.id;
         const isPathSelected = isSelected || isHovered || Array.from(this.selectedNodes).some(n => n.id === edge.from || n.id === edge.to) ||
             (this.hoveredNode && (this.hoveredNode.id === edge.from || this.hoveredNode.id === edge.to));
 
         const isEdgeHidden = window.edgeVisibilityMode === 'NO_EDGES';
-        if (isEdgeHidden && !isPathSelected) {
-            return; // gpu/cpu skip
-        }
+        if (isEdgeHidden && !isPathSelected) return;
 
-        // [v0.3.19] Strategic Visibility: Top-N Focus View
         if (this.focusTopNodes && !isPathSelected) {
-            if (!this.focusNodeSet.has(fromNode.id) || !this.focusNodeSet.has(toNode.id)) {
-                return;
-            }
+            if (!this.focusNodeSet.has(fromNode.id) || !this.focusNodeSet.has(toNode.id)) return;
         }
 
-        // 🔍 엣지 검증 로직 적용
-        // [v0.2.24] Validation Result Caching (A-1)
-        let validation = this.edgeValidationCache.get(edge.id);
-        if (!validation) {
-            // [v0.2.24] Rendering Contract Strict Adherence: render 중 IPC 통신(validateEdge) 절대 금지
-            validation = { valid: true }; // Batch 검증 결과가 도착할 때까지 기본값 유지
-        }
-
-        // 🎨 엣지 타입별 스타일 가져오기
+        // --- 🎨 Style & Data Resolution ---
+        let validation = this.edgeValidationCache.get(edge.id) || { valid: true };
         const style = this.getEdgeStyle(edge);
-
         const fromX = fromNode.position.x + 60;
         const fromY = fromNode.position.y + 30;
         const toX = toNode.position.x + 60;
         const toY = toNode.position.y + 30;
-
-        // [v0.3.13] Pre-calculate midX/midY
         const midX = (fromX + toX) / 2;
         const midY = (fromY + toY) / 2;
-        
-        // [v0.4.0] Lite Bundling Support (Shared Control Point)
-        // If this edge belongs to a source-bundle (>=3 edges), use the shared cluster center as CP.
-        const sharedCP = this.edgeGroupsCP?.get(edge.from);
-        const cpX = sharedCP ? sharedCP.x : midX;
-        const cpY = sharedCP ? sharedCP.y : midY - 30; // Fallback to custom curve for solo edges
 
-        // 엣지 색상: 검증 에러가 있으면 검증 색상 우선, 없으면 타입별 색상
+        // [v0.4.5] Lite Bundling Logic
+        const targetNodeInternal = this.nodeMap.get(edge.to);
+        const targetClusterId = targetNodeInternal?.cluster_id || 'unmapped';
+        const groupCPCenter = this.edgeGroupsCP?.get(targetClusterId);
+        
+        let cpX = midX;
+        let cpY = midY;
+        let isBundled = false;
+
+        if (groupCPCenter) {
+            cpX = midX * 0.3 + groupCPCenter.x * 0.7;
+            cpY = midY * 0.3 + groupCPCenter.y * 0.7;
+            const seed = (edge.id.charCodeAt(edge.id.length - 1) % 20) - 10;
+            cpY += seed; 
+            isBundled = true;
+        } else {
+            cpY -= 50; 
+        }
+
         let edgeColor = validation.valid ? style.color : validation.color;
-
-        // 선 굵기: 검증 에러는 더 굵게, 아니면 타입(및 가중치)별 굵기
-        let lineWidth = validation.valid ? style.lineWidth : (style.lineWidth + 1.5);
-
-        // [v0.2.21 Fix] Deterministic Fracture: 결정론 위반 노드의 출력 엣지 → broken_fracture 시각 경로로 강제 전환
-        if (edge.isDeterministicFracture && edge.type !== 'broken_fracture') {
-            edge.type = 'broken_fracture'; // Promote to fracture path for zig-zag rendering
-        }
-        if (edge.isDeterministicFracture) {
-            const jitter = this.isAnimating ? (Math.random() - 0.5) * 4 : 0;
-            edgeColor = `hsla(${270 + jitter * 20}, 80%, 65%, 0.85)`; // Ghost Purple
-            lineWidth = 2;
-        }
-
-        // 🌟 선택된 엣지 강조 효과 (이미 상단에서 선언됨)
-        // isSelected, isHovered, isPathSelected는 상단에서 초기화됨
-
-        // [v0.4.1] Dimming disabled in 2D to match WebGL behavior
-        // Previously: const opacity = isPathSelected ? 1.0 : (edge.visual?.opacity || 0.25);
-        // [v0.3.16] Edge Visibility Control: NO_EDGES 모드인데 선택되어 여기까지 온 경우 반투명
-        let opacity = 1.0; // Always render edges fully visible in 2D by default
-        if (isEdgeHidden && isPathSelected) {
-            opacity = 0.3;
-        }
+        let lineWidth = isBundled ? 1.8 : style.lineWidth;
         
-        // [v0.3.19] Strategic Visibility: Top-N Focus View Alpha
-        if (this.focusTopNodes && !isPathSelected) {
-            // If either end is NOT a core node, dim it to show context relation
-            if (!this.focusCoreSet.has(fromNode.id) || !this.focusCoreSet.has(toNode.id)) {
-                opacity *= 0.2; // Context connections are very faint
-            }
-        }
-
-        this.ctx.globalAlpha = opacity;
-
-        // Logic Analysis Highlights
         if (edge.isCircular) {
             edgeColor = '#fb4934';
             lineWidth += 2;
-        } else if (edge.isBottleneck) {
-            edgeColor = '#fe8019';
-            lineWidth += 2;
         }
 
-        if (isSelected || isPathSelected || edge.isCircular || edge.isBottleneck) {
-            // [Fix] Ensure strikeStyle uses highlight color regardless of animation state
-            edgeColor = isPathSelected ? '#fabd2f' : edgeColor;
-
-            // 글로우 효과 (최적화: 기본 OFF, 선택/호버 시만 정밀 타격, [v0.2.24] 드래그 중엔 임시 해제 처리하여 FPS 폭락 방지)
-            if ((isSelected || isHovered) && !this.isDragging) {
-                this.ctx.shadowBlur = 15 + 8 * Math.sin(Date.now() / 200);
-                this.ctx.shadowColor = '#fabd2f';
-            }
-
-            // [v0.2.16] Significantly bolder lines (+2 -> +6)
-            if (isSelected || isPathSelected) lineWidth += 6;
-        }
-
-        this.ctx.strokeStyle = edgeColor;
-        this.ctx.lineWidth = lineWidth;
-
-        // 대시 패턴 적용
-        let currentDash = [];
-        if (!validation.valid) {
-            currentDash = [3, 3];
-        } else if (style.dashPattern) {
-            currentDash = style.dashPattern;
-        } else if (isPathSelected && this.isAnimating) {
-            currentDash = [10, 5];
-        }
-
-        this.ctx.setLineDash(currentDash);
-
-        // 펄스 애니메이션 적용 (Phase 3)
-        // [v0.2.15] 모든 점선 엣지에 'marching ants' 효과 적용
-        if (this.isAnimating && currentDash.length > 0) {
-            this.ctx.lineDashOffset = -this.animationOffset * (isPathSelected ? 2 : 1);
-        } else {
-            this.ctx.lineDashOffset = 0;
-        }
-
-        // 곡선 제어점 계산 - [v0.3.14 Fix] Redundant declaration removed (already defined at line 6611/6612)
-
-
-        // [v0.2.20/v0.2.21 Fix] Fracture Rendering (Dramatic Structural Failure)
-        // Handles both circular-dependency (broken_fracture) and deterministic violations (isDeterministicFracture)
-        if (edge.type === 'broken_fracture') {
-            this.ctx.beginPath();
-            this.ctx.moveTo(fromX, fromY);
-
-            // Generate sharp fractals/zig-zags towards target but with logic breakdown
-            // [v0.3.13] Fracture uses its own local midX/midY for zig-zag logic
-            const fMidX = (fromX + toX) / 2;
-            const fMidY = (fromY + toY) / 2;
-
-            // First break point
-            const b1x = fromX + (midX - fromX) * 0.4 + (Math.random() - 0.5) * 40;
-            const b1y = fromY + (midY - fromY) * 0.4 + (Math.random() - 0.5) * 40;
-
-            // Second break point (The "Fracture")
-            const b2x = midX + (Math.random() - 0.5) * 60;
-            const b2y = midY + 40; // Drop downwards (Gravity effect)
-
-            this.ctx.lineTo(b1x, b1y);
-            this.ctx.lineTo(b2x, b2y);
-
-            // Final scramble towards target or just hanging
-            if (this.isAnimating && Math.random() > 0.3) {
-                // Occasional "hanging" effect where it doesn't reach target
-                const b3x = b2x + (toX - b2x) * 0.5 + (Math.random() - 0.5) * 20;
-                const b3y = b2y + 20;
-                this.ctx.lineTo(b3x, b3y);
-            } else {
-                this.ctx.lineTo(toX, toY);
-            }
-
-            // [v0.2.21] Deterministic Fracture uses Ghost Purple; circular uses Necrosis Red
-            this.ctx.strokeStyle = edge.isDeterministicFracture ? edgeColor : '#fb4934';
-            this.ctx.lineWidth = lineWidth + 2;
-            this.ctx.stroke();
-            return; // Skip standard curve rendering
-        }
-
-        // 표준 곡선 그리기 (Standard Bezier Path)
+        // --- 1단계: 선 렌더링 ---
         this.ctx.beginPath();
+        this.ctx.lineWidth = isSelected || isHovered ? 2.5 : lineWidth;
+        let finalAlpha = isSelected || isHovered ? 1.0 : (isBundled ? 0.7 : (isPathSelected ? 0.5 : 0.3));
+        
+        if (isEdgeHidden && isPathSelected) finalAlpha = 0.3;
+        if (this.focusTopNodes && !isPathSelected) {
+            if (!this.focusCoreSet.has(fromNode.id) || !this.focusCoreSet.has(toNode.id)) finalAlpha *= 0.2;
+        }
+        
+        this.ctx.globalAlpha = finalAlpha;
+        this.ctx.strokeStyle = isSelected || isHovered ? '#fabd2f' : edgeColor;
         this.ctx.moveTo(fromX, fromY);
         this.ctx.quadraticCurveTo(cpX, cpY, toX, toY);
         this.ctx.stroke();
 
-        // [v0.3.16] Edge Visibility & Redundancy Control
-        const isBadgeHidden = window.edgeVisibilityMode === 'NO_BADGES' || window.edgeVisibilityMode === 'NO_EDGES';
-        // 통합 배지는 높은 줌(>0.4)에서만 표시
-        const showIntegratedBadge = this.transform.zoom > 0.4 && !isBadgeHidden;
-        
-        // 화살표 아이콘은 매우 낮은 줌에서 정보 유실 방지용 fallback으로만 사용
-        // 통합 배지가 나오거나 줌이 너무 낮거나 배지 숨김 모드이면 표시 안함
-        const showSmallIcons = !isBadgeHidden && !showIntegratedBadge && this.transform.zoom > 0.2;
-        
-        const iconMap = {
-            'dependency': '🔗 D', 'call': '📡', 'data_flow': '📊', 'reference': '📝',
-            'event': '⚡', 'conditional': '❓', 'bidirectional': '🔄', 'api_call': '🌐',
-            'db_query': '🛢️', 'origin': '📍', 'loop_back': '🔁', 'broken_fracture': '💥 B'
-        };
-        const edgeIcon = showSmallIcons ? (iconMap[edge.type] || '➤') : '';
-
-        // 🟢 펄스 애니메이션 (Edge Traversal)
-        if (this.isTestingLogic) {
+        // [v0.3.15] Pulse Animation
+        if (this.pulses && this.pulses.length > 0) {
             const activePulses = this.pulses.filter(p => p.edgeId === edge.id);
             activePulses.forEach(p => {
                 const t = p.progress;
@@ -7614,74 +7460,24 @@ class CanvasEngine {
             });
         }
 
-        this.ctx.setLineDash([]);
-        this.ctx.lineDashOffset = 0;
-        this.ctx.shadowBlur = 0;
-        this.ctx.shadowColor = 'transparent';
-
-        // 2단계: 화살표 렌더링
+        // --- 2단계: 화살표 렌더링 ---
         const angle = Math.atan2(toY - cpY, toX - cpX);
         const arrowPoint = this.getNodeBoundaryPoint(toX, toY, angle + Math.PI);
-
-        // [v0.3.16 Fix] 끝점 화살표는 항상 텍스트 없이 단순 방향 지시용으로만 사용
+        const edgeIcon = edge.visual?.icon || '';
         this.renderArrow(arrowPoint.x, arrowPoint.y, angle, edgeColor, style.arrowStyle, '');
 
-        // 중앙 화살표 (Bezier 곡선상의 정확한 중간점)
         const bMidX = 0.25 * fromX + 0.5 * cpX + 0.25 * toX;
         const bMidY = 0.25 * fromY + 0.5 * cpY + 0.25 * toY;
         const midAngle = Math.atan2(toY - cpY, cpX - fromX);
-        
-        // 중앙 화살표에만 조건부로 아이콘 노출 (Small Icon Fallback 모드일 때만)
         this.renderArrow(bMidX, bMidY, midAngle, edgeColor, style.arrowStyle, edgeIcon);
 
-        if (style.arrowStyle === 'double') {
-            const startAngle = Math.atan2(fromY - cpY, fromX - cpX);
-            const startArrowPoint = this.getNodeBoundaryPoint(fromX, fromY, startAngle + Math.PI);
-            this.renderArrow(startArrowPoint.x, startArrowPoint.y, startAngle, edgeColor, 'standard', '');
-            const midStartAngle = midAngle + Math.PI;
-            this.renderArrow(bMidX, bMidY, midStartAngle, edgeColor, 'standard', edgeIcon);
-        }
-
-        // 3단계: 검증 결과 표시 (에러/경고) - 통합 배지가 보일 때는 생략하여 중복 방지
-        const hasValidationIssue = !isBadgeHidden && !showIntegratedBadge && 
-                                   (!validation.valid || validation.color === '#fabd2f' || validation.isAi);
-        
-        if (hasValidationIssue) {
-            const badgeMidX = (fromX + toX) / 2;
-            const badgeMidY = (fromY + toY) / 2 - 35;
-            this.ctx.save();
-            this.ctx.font = `${12 / this.transform.zoom}px Inter, sans-serif`;
-            let opacity = 1.0;
-            if (validation.isAi && this.isAnimating) opacity = 0.7 + 0.3 * Math.sin(Date.now() / 200);
-            this.ctx.globalAlpha = opacity;
-            this.ctx.fillStyle = validation.valid ? '#fabd2f' : '#fb4934';
-            this.ctx.textAlign = 'center';
-            this.ctx.textBaseline = 'middle';
-            let valIcon = !validation.valid ? '❌' : (validation.color === '#fabd2f' ? '⚠️' : '');
-            const aiIcon = validation.isAi ? '🤖' : '';
-            const text = (aiIcon && valIcon) ? `${aiIcon} ${valIcon}` : (aiIcon || valIcon);
-            const metrics = this.ctx.measureText(text);
-            const padding = 6 / this.transform.zoom;
-            this.ctx.save();
-            this.ctx.fillStyle = '#282828';
-            this.ctx.shadowBlur = 4;
-            this.ctx.shadowColor = 'rgba(0,0,0,0.5)';
-            this.ctx.beginPath();
-            const bw = metrics.width + padding * 2;
-            const bh = 18 / this.transform.zoom;
-            this.ctx.roundRect(badgeMidX - bw / 2, badgeMidY - bh / 2, bw, bh, 4);
-            this.ctx.fill();
-            this.ctx.fillStyle = validation.valid ? '#fabd2f' : '#fb4934';
-            this.ctx.fillText(text, badgeMidX, badgeMidY);
-            this.ctx.restore();
-            edge._validationReason = validation.reason;
-        }
-
-        // [v0.3.16] 최종 통합 배지 전용 레이어 (배지 레이어가 꺼져있지 않고 줌이 높을 때만)
-        if (showIntegratedBadge) {
+        // --- 3단계: 배지 렌더링 ---
+        const isBadgeHidden = window.edgeVisibilityMode === 'NO_BADGES' || window.edgeVisibilityMode === 'NO_EDGES';
+        if (!isBadgeHidden && this.transform.zoom > 0.4) {
             this.renderEdgeBadges(this.ctx, edge);
         }
     }
+
 
     /**
      * [v0.2.33] Hybrid Badge Rendering

@@ -1,15 +1,15 @@
 {
   "canvas_state": {
     "offset": {
-      "x": 1196.6004989336516,
-      "y": -680.8516958031214
+      "x": 1071.6564041362576,
+      "y": -405.94987360052846
     },
     "visible_layers": [
       "source",
       "documentation",
       "user"
     ],
-    "zoom_level": 0.827008159909953
+    "zoom_level": 0.669876609527062
   },
   "clusters": [
     {
@@ -20,15 +20,6 @@
       "id": "cluster_ghosts",
       "label": "☁️ External Ghosts",
       "type": "system"
-    },
-    {
-      "collapsed": false,
-      "data": {
-        "layer": "user"
-      },
-      "id": "cluster_scratch",
-      "label": "📂 scratch",
-      "type": "folder"
     },
     {
       "collapsed": false,
@@ -170,6 +161,15 @@
       "id": "doc_shelf",
       "label": "📚 Documentation Shelf",
       "type": "system"
+    },
+    {
+      "collapsed": false,
+      "data": {
+        "layer": "user"
+      },
+      "id": "cluster_scratch",
+      "label": "📂 scratch",
+      "type": "folder"
     },
     {
       "collapsed": false,
@@ -6196,8 +6196,8 @@
       "label": "CommitManager",
       "layer": "user",
       "position": {
-        "x": -520,
-        "y": 1520
+        "x": -560,
+        "y": 1400
       },
       "status": "active",
       "type": "file",
@@ -6867,7 +6867,7 @@
       "layer": "user",
       "position": {
         "x": -240,
-        "y": 1520
+        "y": 1560
       },
       "status": "active",
       "type": "file",
@@ -15056,8 +15056,8 @@
       "label": "VerificationLayer",
       "layer": "user",
       "position": {
-        "x": -160,
-        "y": 1360
+        "x": -560,
+        "y": 1560
       },
       "status": "active",
       "type": "file",
@@ -16011,7 +16011,7 @@
   "project_name": "antigravity-extension-vis",
   "_iron_guard": {
     "version": "0.2.18.1",
-    "byte_size": 255532,
+    "byte_size": 255533,
     "encoding": "UTF-8",
     "alignment": 8
   }

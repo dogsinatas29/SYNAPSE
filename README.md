@@ -130,6 +130,17 @@ SYNAPSE now features a unified scanning engine that understands the deep semanti
 
 ### 🌐 Topology View (Architecture Map)
 Visualize your project's folder structure and file dependencies as a live network.
+
+- **Role-Based Identity (v0.3.18)**: Every node is automatically classified into an architectural role:
+  - 🟠 **Orchestrator**: High fan-out nodes controlling the execution flow.
+  - 🟢 **Controller**: Inbound gateways or API Facades handling entry points.
+  - 🔵 **Hub**: High-connectivity centers acting as key dependency junctions.
+  - ⚪ **Leaf**: Terminal utility functions or standalone modules.
+- **Triple Expression System**:
+  - **Color (Perception)**: Role-specific border and glow colors for instant recognition.
+  - **Layer (Focus)**: `Hide Leaf Nodes` toggle to eliminate structural noise and focus on the core.
+  - **Priority (Judgment)**: 4-star system (`★★★☆`) indicating the urgency of refactoring or abstraction.
+- **Diagnostic Intelligence**: Situational reporting (R1-R5) providing fact-based refactoring hints with numerical evidence.
 - **Node Diet**: Automatically filters noise (venv, node_modules, build artifacts).
 - **Ghost Node Storage**: Keeps your workspace clean by isolating disconnected components. ([View Ghost Node Guide](GHOST_NODE.md))
 - **Rule Engine**: Guided by `RULES.md` for consistent discovery and icon standards.

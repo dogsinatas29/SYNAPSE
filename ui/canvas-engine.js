@@ -5220,8 +5220,15 @@ class CanvasEngine {
                 }
 
                 if (!this.debugDisableOverlay) {
-                    // [v0.2.25] Final Logic: Use WebGL only in Graph mode IF Accel is ON
                     if (this.webglEnabled && this.webglRenderer && this.currentMode === 'graph') {
+                        // [v0.3.20] Render Hotspots (Background areas) as a transformed 2D overlay underneath WebGL nodes
+                        // Since WebGL is on another canvas or layer, we need to ensure this matches exactly.
+                        this.ctx.save();
+                        const dpr = window.devicePixelRatio || 1;
+                        this.ctx.setTransform(this.transform.zoom * dpr, 0, 0, this.transform.zoom * dpr, this.transform.offsetX * dpr, this.transform.offsetY * dpr);
+                        this.renderHotspots2D();
+                        this.ctx.restore();
+
                         // [v0.2.31] Final Consolidated WebGL Render call
                         if (this.isGraphDataDirty || !this._visibleNodesCache) {
                             const isUserLogic = (n) => 
@@ -5293,11 +5300,27 @@ class CanvasEngine {
                                 console.log("[SYNAPSE] WebGL Overlay Hidden (View Isolation)");
                             }
                         }
-                        // [v0.3.9] Fixed 2D Mode: Explicitly call Node rendering
-                        this.renderHotspots2D(); // [v0.3.20] Background functional areas
+
+                        // [v0.3.20] Fix: Apply Camera Transform to 2D context before rendering
+                        // This was missing, causing nodes/edges to disappear at high zoom/offset
+                        this.ctx.save();
+                        const dpr = window.devicePixelRatio || 1;
+                        this.ctx.setTransform(
+                            this.transform.zoom * dpr, 0, 0, 
+                            this.transform.zoom * dpr, 
+                            this.transform.offsetX * dpr, 
+                            this.transform.offsetY * dpr
+                        );
+
+                        // [v0.3.20] Background areas first
+                        this.renderHotspots2D();
+
+                        // [v0.3.9] Fixed 2D Mode: Render graph on transformed context
                         this.renderEdges2D();
                         this.renderNodes2D(zoom);
                         this.renderLabels2D();
+
+                        this.ctx.restore();
                     }
 
                     this.renderGhostNodes(zoom);

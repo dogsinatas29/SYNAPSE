@@ -5330,14 +5330,23 @@ class CanvasEngine {
                             selectedIds
                         );
 
-                        // [v0.2.33] 🚀 Hybrid Rendering: Render badges and interactive markers on 2D ctx ON TOP of WebGL
-                        // This ensures information parity for Badges/Arrows/Glow that WebGL lacks.
+                        // [v0.3.21] 🚀 Hybrid Rendering Upgrade: Render Node & Edge Badges on 2D ctx ON TOP of WebGL
                         this.ctx.save();
-                        // [v0.3.2] Align coordinates with DPR scaling (matches 2D background)
                         this.ctx.setTransform(this.transform.zoom * dpr, 0, 0, this.transform.zoom * dpr, this.transform.offsetX * dpr, this.transform.offsetY * dpr);
+                        
+                        // 1. Edge Badges (Types & Status)
                         for (const edge of this._visibleEdgesCache) {
-                            this.renderEdgeBadges(this.ctx, edge); // Only the numbers/badges
+                            this.renderEdgeBadges(this.ctx, edge, edge.lastCPX, edge.lastCPY);
                         }
+
+                        // 2. Node Badges (Approval, Locked, Hazard)
+                        // These are critical architectural markers that WebGL currently skips
+                        for (const node of this._visibleNodesCache) {
+                            if (node.position) {
+                                this.renderNodeBadges(node, node.position.x, node.position.y, this.transform.zoom);
+                            }
+                        }
+                        
                         this.ctx.restore();
 
                         this.isGraphDataDirty = false;
@@ -7103,63 +7112,8 @@ class CanvasEngine {
         this.ctx.setLineDash([]);
         this.ctx.globalAlpha = 1.0;
 
-        // 3. 우측 상단 'Dirty' 도트 & 'Locked' 뱃지
-        if (node.isLocked && zoom > 0.8) {
-            this.ctx.fillStyle = '#fabd2f';
-            this.ctx.font = '10px Inter, sans-serif';
-            this.ctx.fillText('🔒', x + nodeWidth - 14, y + 4);
-        } else if (node.state === 'dirty' || node.isDirty) {
-            this.ctx.fillStyle = '#fb4934'; // Red Dot
-            this.ctx.beginPath();
-            this.ctx.arc(x + nodeWidth - 5, y + 5, 4, 0, Math.PI * 2);
-            this.ctx.fill();
-            this.ctx.strokeStyle = '#ebdbb2';
-            this.ctx.lineWidth = 1;
-            this.ctx.stroke();
-        }
-
-        // [v0.3.21] 좌측 상단 상태 뱃지 (Approval/Interaction)
-        if (zoom > 0.6) {
-            let statusIcon = '';
-            if (node.status === 'confirmed' || node.data?.isApproved) statusIcon = '✅';
-            else if (node.status === 'proposed' || node.state === 'pending') statusIcon = '❓';
-            else if (node.status === 'active' || node.data?.isAIValidated) statusIcon = '🤖';
-            else if (node.status === 'purge' || node.state === 'purge') statusIcon = '❌';
-
-            if (statusIcon) {
-                this.ctx.fillStyle = '#ebdbb2';
-                this.ctx.font = '12px Inter, sans-serif';
-                this.ctx.textAlign = 'left';
-                this.ctx.textBaseline = 'top';
-                this.ctx.fillText(statusIcon, x + 4, y + 4);
-            }
-        }
-
-        // 4. 타입별 아이콘 (Identity) - LOD 연동 (약간 아래로 조정)
-        if (zoom > 1.2) {
-            this.ctx.fillStyle = borderColor;
-            this.ctx.font = 'bold 12px Inter, sans-serif';
-            this.ctx.textAlign = 'left';
-            this.ctx.textBaseline = 'top';
-            this.ctx.fillText(style.icon, x + 5, y + 18);
-        }
-
-        // 5. 중앙 에러/위험 아이콘 (Hazard & Purification)
-        if (zoom > 0.8) {
-            let hazardIcon = '';
-            if (node.status === 'error_necrosis') hazardIcon = '💀';
-            else if (node.status === 'error_tombstone') hazardIcon = '🪦';
-            else if (node.isHighHazard || node.data?.isMine) hazardIcon = '💣';
-            else if (node.state === 'error' || node.isLogicFault) hazardIcon = '⚠️';
-
-            if (hazardIcon) {
-                this.ctx.fillStyle = '#fb4934';
-                this.ctx.font = 'bold 24px Inter, sans-serif';
-                this.ctx.textAlign = 'center';
-                this.ctx.textBaseline = 'middle';
-                this.ctx.fillText(hazardIcon, x + nodeWidth / 2, y + nodeHeight / 2 - 5);
-            }
-        }
+        // [v0.3.21] Use Centralized Badge Rendering for Parity
+        this.renderNodeBadges(node, x, y, zoom);
 
         // Level 2: Normal View
         if (zoom >= 0.4 && zoom <= 1.5) {
@@ -7617,8 +7571,21 @@ class CanvasEngine {
         }
 
         let edgeColor = validation.valid ? style.color : validation.color;
-        let lineWidth = isBundled ? 1.8 : style.lineWidth;
+        let lineWidth = (isBundled ? 1.5 : style.lineWidth) * Math.min(1.5, 1.0 / this.transform.zoom);
         
+        // [v0.3.21] Apply Line Style Conventions (Dashed/Dotted)
+        if (edge.type === 'api_call') {
+            this.ctx.setLineDash([8, 4]);
+        } else if (edge.type === 'loop_back') {
+            this.ctx.setLineDash([2, 2]);
+        } else {
+            this.ctx.setLineDash([]);
+        }
+
+        // Store CP for badge rendering sync
+        edge.lastCPX = cpX;
+        edge.lastCPY = cpY;
+
         if (edge.isCircular) {
             edgeColor = '#fb4934';
             lineWidth += 2;
@@ -7667,8 +7634,8 @@ class CanvasEngine {
 
         // --- 3단계: 배지 렌더링 ---
         const isBadgeHidden = window.edgeVisibilityMode === 'NO_BADGES' || window.edgeVisibilityMode === 'NO_EDGES';
-        if (!isBadgeHidden && this.transform.zoom > 0.4) {
-            this.renderEdgeBadges(this.ctx, edge);
+        if (!isBadgeHidden && this.transform.zoom > 0.2) {
+            this.renderEdgeBadges(this.ctx, edge, cpX, cpY);
         }
     }
 
@@ -7677,7 +7644,7 @@ class CanvasEngine {
      * [v0.2.33] Hybrid Badge Rendering
      * 분리된 엣지 배지 렌더링 (2D/3D 공통 사용)
      */
-    renderEdgeBadges(ctx, edge) {
+    renderEdgeBadges(ctx, edge, cpX, cpY) {
         // [v0.3.16] Edge Visibility Control
         const isBadgeHidden = window.edgeVisibilityMode === 'NO_BADGES' || window.edgeVisibilityMode === 'NO_EDGES';
         if (isBadgeHidden) return;
@@ -7691,9 +7658,23 @@ class CanvasEngine {
         const toX = toNode.position.x + 60;
         const toY = toNode.position.y + 30;
 
-        const bMidX = (fromX + toX) / 2;
-        const bMidY = (fromY + toY) / 2 - (this.transform.zoom > 1.0 ? 35 : 25);
-        const badgeSize = Math.max(16, 24 / this.transform.zoom);
+        // [v0.3.21] Calculate position ON the quadratic Bezier curve for accurate bundling placement
+        // Formula: B(t=0.5) = 0.25*P0 + 0.5*CP + 0.25*P2
+        let bMidX, bMidY;
+        if (Number.isFinite(cpX) && Number.isFinite(cpY)) {
+            bMidX = 0.25 * fromX + 0.5 * cpX + 0.25 * toX;
+            bMidY = 0.25 * fromY + 0.5 * cpY + 0.25 * toY;
+        } else {
+            bMidX = (fromX + toX) / 2;
+            bMidY = (fromY + toY) / 2;
+        }
+
+        // Final safety check to prevent rendering crashes
+        if (!Number.isFinite(bMidX) || !Number.isFinite(bMidY)) return;
+
+        // Apply visual vertical offset
+        bMidY -= (this.transform.zoom > 1.0 ? 35 : 25);
+        const badgeSize = Math.max(14, 22 / this.transform.zoom);
 
         // [v0.3.11] Integrated Info Badge: Type Icon + Status
         const iconMap = {
@@ -7708,54 +7689,75 @@ class CanvasEngine {
         const statusChar = isPending ? '❓' : '✅';
         const combinedText = `${typeIcon} ${statusChar}`;
 
-        // [v0.3.11] High-LOD Detail: Show badge always to prove logical existence
-        if (this.transform.zoom > 0.4) {
-            ctx.save();
-            ctx.font = `bold ${badgeSize}px Inter, sans-serif`;
-            const metrics = ctx.measureText(combinedText);
-            const bw = metrics.width + 12 / this.transform.zoom;
-            const bh = badgeSize * 1.5;
+        // [v0.3.21] Defensive Rendering Block
+        try {
+            if (this.transform.zoom > 0.2) {
+                ctx.save();
+                // Use Emoji Font Stack from Conventions
+                ctx.font = `bold ${badgeSize}px "Inter", "Noto Color Emoji", "Apple Color Emoji", "Segoe UI Emoji", sans-serif`;
+                const metrics = ctx.measureText(combinedText);
+                const bw = metrics.width + 12 / this.transform.zoom;
+                const bh = badgeSize * 1.5;
 
-            // 1. Badge Background
-            ctx.beginPath();
-            ctx.roundRect(bMidX - bw/2, bMidY - bh/2, bw, bh, 6 / this.transform.zoom);
-            ctx.fillStyle = isPending ? 'rgba(40,40,40,0.9)' : 'rgba(60,60,60,0.6)';
-            ctx.fill();
-            ctx.strokeStyle = isPending ? '#fabd2f' : '#8ec07c';
-            ctx.lineWidth = 1.5 / this.transform.zoom;
-            ctx.stroke();
-
-            // 2. Text Rendering
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillStyle = '#ebdbb2';
-            ctx.fillText(combinedText, bMidX, bMidY);
-
-            // [v0.3.13] Legacy Icon Restoration: B and D badges
-            if (edge.type === 'dependency' || edge.isDeterministicFracture) {
-                const legacyChar = edge.isDeterministicFracture ? 'B' : 'D';
-                const lx = bMidX - bw / 2 - 10 / this.transform.zoom;
-                const ly = bMidY;
-                const ls = badgeSize * 0.7;
-                
+                // 1. Badge Background (Using Safe Fallback for roundRect)
                 ctx.beginPath();
-                ctx.arc(lx, ly, ls * 0.8, 0, Math.PI * 2);
-                ctx.fillStyle = edge.isDeterministicFracture ? '#fb4934' : '#fabd2f';
+                const rx = bMidX - bw/2;
+                const ry = bMidY - bh/2;
+                const radius = 6 / this.transform.zoom;
+                
+                // Safe Round Rect Path
+                ctx.moveTo(rx + radius, ry);
+                ctx.lineTo(rx + bw - radius, ry);
+                ctx.quadraticCurveTo(rx + bw, ry, rx + bw, ry + radius);
+                ctx.lineTo(rx + bw, ry + bh - radius);
+                ctx.quadraticCurveTo(rx + bw, ry + bh, rx + bw - radius, ry + bh);
+                ctx.lineTo(rx + radius, ry + bh);
+                ctx.quadraticCurveTo(rx, ry + bh, rx, ry + bh - radius);
+                ctx.lineTo(rx, ry + radius);
+                ctx.quadraticCurveTo(rx, ry, rx + radius, ry);
+                ctx.closePath();
+
+                ctx.fillStyle = isPending ? 'rgba(40,40,40,0.9)' : 'rgba(60,60,60,0.7)';
                 ctx.fill();
-                ctx.fillStyle = '#1d2021';
-                ctx.font = `bold ${ls}px Monospace`;
-                ctx.fillText(legacyChar, lx, ly);
-            }
+                ctx.strokeStyle = isPending ? '#fabd2f' : '#8ec07c';
+                ctx.lineWidth = 1.5 / this.transform.zoom;
+                ctx.stroke();
 
-            ctx.restore();
+                // 2. Text Rendering
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillStyle = '#ebdbb2';
+                ctx.fillText(combinedText, bMidX, bMidY);
 
-            // Hit tracking for interaction
-            if (ctx === this.ctx && isPending) {
-                if (!this._confirmBadgeHits) this._confirmBadgeHits = [];
-                this._confirmBadgeHits.push({
-                    x: bMidX, y: bMidY, r: bw / 2, edge: edge, isPending
-                });
+                // [v0.3.13] Legacy Icon Restoration: B and D badges
+                if (edge.type === 'dependency' || edge.isDeterministicFracture) {
+                    const legacyChar = edge.isDeterministicFracture ? 'B' : 'D';
+                    const lx = bMidX - bw / 2 - 10 / this.transform.zoom;
+                    const ly = bMidY;
+                    const ls = badgeSize * 0.7;
+                    
+                    ctx.beginPath();
+                    ctx.arc(lx, ly, ls * 0.8, 0, Math.PI * 2);
+                    ctx.fillStyle = edge.isDeterministicFracture ? '#fb4934' : '#fabd2f';
+                    ctx.fill();
+                    ctx.fillStyle = '#1d2021';
+                    ctx.font = `bold ${ls}px Monospace`;
+                    ctx.fillText(legacyChar, lx, ly);
+                }
+
+                ctx.restore();
+
+                // Hit tracking for interaction
+                if (ctx === this.ctx && isPending) {
+                    if (!this._confirmBadgeHits) this._confirmBadgeHits = [];
+                    this._confirmBadgeHits.push({
+                        x: bMidX, y: bMidY, r: bw / 2, edge: edge, isPending
+                    });
+                }
             }
+        } catch (e) {
+            // Fail silently to preserve the rest of the frame
+            console.error("[SYNAPSE] Badge Rendering Failed:", e);
         }
 
         // [v0.2.17-patch6] ❌ Delete Badge (Only in Edit Logic mode)

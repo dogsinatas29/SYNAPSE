@@ -1003,7 +1003,25 @@ class WebGLRenderer {
         
         nodes.forEach(n => {
             const label = n.data?.label || n.id || "";
-            const icon = n.data?.icon || (n.type === 'external' ? '☁' : '📄');
+            const type = (n.type || "").toLowerCase();
+            const lowLabel = label.toLowerCase();
+            
+            // [v0.3.21] Synchronized Semantic Icon Detection (Parity with 2D getNodeStyle)
+            let icon = n.data?.icon;
+            if (!icon) {
+                if (type === 'signal' || lowLabel.includes('emit') || lowLabel.includes('broadcast')) icon = '📡';
+                else if (type === 'payload' || lowLabel.includes('stream') || lowLabel.includes('buffer')) icon = '📊';
+                else if (type === 'async' || lowLabel.includes('async') || lowLabel.includes('promise')) icon = '🕒';
+                else if (type === 'component') icon = '🧩';
+                else if (type === 'processor') icon = '⚙️';
+                else if (type === 'service') icon = '🤝';
+                else if (type === 'gate') icon = '⛩️';
+                else if (type === 'trigger') icon = '⚡';
+                else if (type === 'data') icon = '📋';
+                else if (type === 'external' || n.cluster_id === 'sys_cluster_reserved') icon = '☁';
+                else icon = '📄';
+            }
+
             const summary = n.data?.summary || {};
             const statusDetail = (n.status === 'proposed' || n.state === 'pending') ? "⚡ Awaiting Approval" : "";
             

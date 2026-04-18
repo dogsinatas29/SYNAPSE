@@ -6691,17 +6691,28 @@ class CanvasEngine {
             };
         }
 
+        // [v0.3.21] Signal / Async / Payload Semantic
+        if (type === 'signal' || label.startsWith('signal') || label.includes('emit') || label.includes('broadcast')) {
+            return { borderColor: '#8ec07c', bgColor: '#3c3836', icon: '📡', lineWidth: 2, typeLabel: 'Signal' };
+        }
+        if (type === 'payload' || label.startsWith('payload') || label.includes('stream') || label.includes('buffer')) {
+            return { borderColor: '#83a598', bgColor: '#3c3836', icon: '📊', lineWidth: 3, typeLabel: 'Payload' };
+        }
+        if (type === 'async' || label.includes('async') || label.includes('await') || label.includes('promise') || label.includes('timeout')) {
+            return { borderColor: '#b16286', bgColor: '#3c3836', icon: '🕒', lineWidth: 2, typeLabel: 'Async' };
+        }
+
         // --- New v0.2.16 Node Types ---
         const v16TypeMap = {
             'component': {
-                borderColor: '#b16286', // Component Style
+                borderColor: '#8ec07c', // Aqua (Blue-green)
                 bgColor: '#3c3836',
                 icon: '🧩',
                 lineWidth: 2.5,
                 typeLabel: 'Comp'
             },
             'processor': {
-                borderColor: '#b16286', // Purple
+                borderColor: '#b16286', // Purple-grey
                 bgColor: '#3c3836',
                 icon: '⚙️',
                 lineWidth: 2.5,
@@ -6715,7 +6726,7 @@ class CanvasEngine {
                 typeLabel: 'Serv'
             },
             'gate': {
-                borderColor: '#d79921', // Yellow-ish
+                borderColor: '#d79921', // Yellow
                 bgColor: '#3c3836',
                 icon: '⛩️',
                 lineWidth: 3,
@@ -6730,10 +6741,10 @@ class CanvasEngine {
                 typeLabel: 'Trig'
             },
             'data': {
-                borderColor: '#83a598', // Blue
-                bgColor: '#076678', // Dark Blue
+                borderColor: '#83a598', // Blue-greenish
+                bgColor: '#076678', // Dark background
                 icon: '📋',
-                lineWidth: 4, // 두꺼운 테두리
+                lineWidth: 4, 
                 typeLabel: 'Data'
             }
         };
@@ -7092,34 +7103,62 @@ class CanvasEngine {
         this.ctx.setLineDash([]);
         this.ctx.globalAlpha = 1.0;
 
-        // 3. 우측 상단 'Dirty' 도트 (수정됨/싱크 필요)
-        if (node.state === 'dirty' || node.isDirty) {
+        // 3. 우측 상단 'Dirty' 도트 & 'Locked' 뱃지
+        if (node.isLocked && zoom > 0.8) {
+            this.ctx.fillStyle = '#fabd2f';
+            this.ctx.font = '10px Inter, sans-serif';
+            this.ctx.fillText('🔒', x + nodeWidth - 14, y + 4);
+        } else if (node.state === 'dirty' || node.isDirty) {
             this.ctx.fillStyle = '#fb4934'; // Red Dot
             this.ctx.beginPath();
             this.ctx.arc(x + nodeWidth - 5, y + 5, 4, 0, Math.PI * 2);
             this.ctx.fill();
-            // 도트 외곽선
             this.ctx.strokeStyle = '#ebdbb2';
             this.ctx.lineWidth = 1;
             this.ctx.stroke();
         }
 
-        // 4. 타입별 아이콘 (Identity) - LOD 연동
+        // [v0.3.21] 좌측 상단 상태 뱃지 (Approval/Interaction)
+        if (zoom > 0.6) {
+            let statusIcon = '';
+            if (node.status === 'confirmed' || node.data?.isApproved) statusIcon = '✅';
+            else if (node.status === 'proposed' || node.state === 'pending') statusIcon = '❓';
+            else if (node.status === 'active' || node.data?.isAIValidated) statusIcon = '🤖';
+            else if (node.status === 'purge' || node.state === 'purge') statusIcon = '❌';
+
+            if (statusIcon) {
+                this.ctx.fillStyle = '#ebdbb2';
+                this.ctx.font = '12px Inter, sans-serif';
+                this.ctx.textAlign = 'left';
+                this.ctx.textBaseline = 'top';
+                this.ctx.fillText(statusIcon, x + 4, y + 4);
+            }
+        }
+
+        // 4. 타입별 아이콘 (Identity) - LOD 연동 (약간 아래로 조정)
         if (zoom > 1.2) {
             this.ctx.fillStyle = borderColor;
             this.ctx.font = 'bold 12px Inter, sans-serif';
             this.ctx.textAlign = 'left';
             this.ctx.textBaseline = 'top';
-            this.ctx.fillText(style.icon, x + 5, y + 5);
+            this.ctx.fillText(style.icon, x + 5, y + 18);
         }
 
-        // 5. 중앙 에러 아이콘 (Error state)
-        if (node.state === 'error' && zoom > 0.8) {
-            this.ctx.fillStyle = '#fb4934';
-            this.ctx.font = 'bold 24px Inter, sans-serif';
-            this.ctx.textAlign = 'center';
-            this.ctx.textBaseline = 'middle';
-            this.ctx.fillText('⚠️', x + nodeWidth / 2, y + nodeHeight / 2 - 5);
+        // 5. 중앙 에러/위험 아이콘 (Hazard & Purification)
+        if (zoom > 0.8) {
+            let hazardIcon = '';
+            if (node.status === 'error_necrosis') hazardIcon = '💀';
+            else if (node.status === 'error_tombstone') hazardIcon = '🪦';
+            else if (node.isHighHazard || node.data?.isMine) hazardIcon = '💣';
+            else if (node.state === 'error' || node.isLogicFault) hazardIcon = '⚠️';
+
+            if (hazardIcon) {
+                this.ctx.fillStyle = '#fb4934';
+                this.ctx.font = 'bold 24px Inter, sans-serif';
+                this.ctx.textAlign = 'center';
+                this.ctx.textBaseline = 'middle';
+                this.ctx.fillText(hazardIcon, x + nodeWidth / 2, y + nodeHeight / 2 - 5);
+            }
         }
 
         // Level 2: Normal View

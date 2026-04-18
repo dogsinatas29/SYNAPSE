@@ -888,7 +888,9 @@ class WebGLRenderer {
                     'origin': { color: '#d65d0e', thickness: 1.5 },
                     'api_call': { color: '#8ec07c', thickness: 2.0 },
                     'db_query': { color: '#d3869b', thickness: 3.0 },
-                    'loop_back': { color: '#fe8019', thickness: 2.0 }
+                    'loop_back': { color: '#fe8019', thickness: 2.0 },
+                    'static': { color: '#ebdbb2', thickness: 1.5 },
+                    'reference': { color: '#ebdbb2', thickness: 2.0 }
                 };
 
                 const edgeType = e.type || 'dependency';
@@ -900,10 +902,9 @@ class WebGLRenderer {
                 if (isPathSelected && !isEdgeHidden) {
                     color = '#fabd2f';
                     thickness = thickness + 5.0; // matching 2D bulge
-                } else if (e.status === 'confirmed') {
-                    color = '#b8bb26';
                 }
-                // v0.4.1: 기본 상태(pending 포함)는 타입별 색상을 유지합니다. 모든 엣지가 노란색으로 될 수 있는 부조리 제거.
+                // v0.4.1: 기본 상태(pending, confirmed 포함)는 타입별 색상을 유지합니다.
+                // 모든 엣지가 특정 상태 색상으로 통일되는 시각적 둔감화 방지.
 
                 const c = this.hexToRgb(color);
                 colorData[colorCnt++] = c.r;

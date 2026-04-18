@@ -12,16 +12,16 @@
 
 ---
 
-## 🔥 Latest Release: v0.3.21 - Edge Bundling & Zero-Config UX (2026-04-18)
+## 🔥 Latest Release: v0.3.21 - Visual Consistency & Edge Bundling (2026-04-18)
 
 | Feature | Description | Benefit |
 |-------|---------|-----|
+| **Convention Sync** | **Full Visual Alignment** | Synchronized all 25+ node/edge icons and colors with the official SYNAPSE specification. |
 | **Edge Bundling Lite**| **Visual Convergence** | Merges overlapping visual paths into elegant "bundles" using quadratic Bezier curves. |
+| **Intelligent Badges**| **Status Visualization** | Real-time badges (✅, 🤖, 🔒, 💣) for immediate understanding of node governance and hazards. |
 | **Zero-Config UX** | **Auto-Discovery** | Instant architectural visualization without manual setup; available across all files. |
 | **Amnesia Guard** | **Snapshot Sovereignty**| Prevents state corruption and data loss during complex synchronization phases. |
-| **Emergency Fallback**| **Baseline Guardrails** | Injects 4 general architectural rules even if GEMINI.md is missing or empty. |
 | **Precision Parser** | **Multi-Lang Support** | Enhanced import resolution for Rust (use), Python (relative), and C++ (headers). |
-| **Rust Support**| **Path-based ID System** | Resolves naming conflicts (e.g. `mod.rs`) by using absolute paths for node identification. |
 
 ---
 
@@ -375,7 +375,7 @@ Launch your visual architecture journey in seconds.
 
 | Version | Date | Description (English) | Description (Korean) |
 | :--- | :--- | :--- | :--- |
-| **v0.3.21** | 2026-04-18 | **Edge Bundling & Zero-Config UX**: Implemented Bezier flow consolidation, auto-onboarding flow, and Amnesia Guard for snapshot integrity. | **엣지 번들링 및 제로-컨피그 UX**: 베지어 흐름 통합, 자동 온보딩 프로세스 및 스냅샷 무결성을 위한 Amnesia Guard 도입. |
+| **v0.3.21** | 2026-04-18 | **Visual Consistency & Edge Bundling**: Full convention synchronization, Bezier flow consolidation, and Amnesia Guard for snapshot integrity. | **시각적 일관성 및 엣지 번들링**: 전체 시각 규격 동기화, 베지어 흐름 통합 및 스냅샷 무결성을 위한 Amnesia Guard 도입. |
 | **v0.3.20** | 2026-04-17 | **Rust Persistence & Engine Hardening**: Path-based IDs for Rust support, Velocity clamping for physics stability. | **Rust 지원 및 엔진 안정화**: Rust 대응을 위한 경로 기반 ID 도입, 물리 시뮬레이션 폭주 방지. |
 | **v0.3.19** | 2026-04-17 | **Top-N Focus View**: Automated identification of the 10 most critical core nodes with 1-hop context expansion for global exploration. | **Top-N 포커스 뷰**: 1-hop 맥락 확장을 포함한 상위 10개 핵심 노드 자동 식별 및 글로벌 탐색 모드 도입. |
 | **v0.3.18** | 2026-04-17 | **Diagnostic Hint Engine**: Real-time architectural analysis (R1-R5), Zero-Unknown semantic labeling, and detailed node identity list in tooltips. | **진단 힌트 엔진**: 실시간 아키텍처 분석(R1-R5), Zero-Unknown 시맨틱 라벨링 및 툴팁 내 상세 연결 노드 리스트 출력. |

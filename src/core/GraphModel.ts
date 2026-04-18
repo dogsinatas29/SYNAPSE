@@ -16,8 +16,14 @@ export enum NodeType {
 }
 
 export enum EdgeType {
-  INCLUDE = 'include',
-  CALL = 'call',
+  INCLUDE = 'dependency',
+  CALL = 'api_call',
+  DATA_FLOW = 'data_flow',
+  EVENT = 'event',
+  CONDITIONAL = 'conditional',
+  ORIGIN = 'origin',
+  DB_QUERY = 'db_query',
+  LOOP_BACK = 'loop_back',
   REFERENCE = 'reference',
   STATIC = 'static'
 }

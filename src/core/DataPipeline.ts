@@ -230,6 +230,11 @@ export class DataPipeline {
     switch (rawType) {
       case 'dependency': return EdgeType.INCLUDE;
       case 'api_call': return EdgeType.CALL;
+      case 'db_query': return EdgeType.DB_QUERY;
+      case 'data_flow': return EdgeType.DATA_FLOW;
+      case 'event': return EdgeType.EVENT;
+      case 'conditional': return EdgeType.CONDITIONAL;
+      case 'loop_back': return EdgeType.LOOP_BACK;
       case 'static_unidirectional': return EdgeType.STATIC;
       default: return EdgeType.REFERENCE;
     }

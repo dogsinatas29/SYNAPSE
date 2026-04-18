@@ -156,49 +156,39 @@ export async function activate(context: vscode.ExtensionContext) {
         console.log('[SYNAPSE] Registering synapse.openCanvas command...');
         context.subscriptions.push(
             vscode.commands.registerCommand('synapse.openCanvas', async () => {
-                // [v0.2.20 Lockdown Check & Auto-Refresh]
                 let workspaceFolder: vscode.WorkspaceFolder | undefined = vscode.workspace.workspaceFolders?.[0];
-                if (workspaceFolder) {
-                    await loadSovereignPrinciples(context, workspaceFolder);
-                }
-
-                const principles = context.globalState.get<string[]>('synapse.sovereign_principles', []);
-                if (principles.length === 0) {
-                    vscode.window.showInformationMessage(
-                        '💡 설계 규칙을 추가하면 더 정밀한 분석이 가능합니다.',
-                        'GEMINI.md 열기'
-                    ).then(async selection => {
-                        if (selection === 'GEMINI.md 열기') {
-                            const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
-                            if (workspaceFolder) {
-                                const geminiUri = vscode.Uri.joinPath(workspaceFolder.uri, 'GEMINI.md');
-                                try {
-                                    const doc = await vscode.workspace.openTextDocument(geminiUri);
-                                    await vscode.window.showTextDocument(doc);
-                                } catch {
-                                    vscode.window.showErrorMessage('GEMINI.md not found.');
-                                }
-                            }
-                        }
-                    });
-                }
-
+                
                 if (vscode.window.activeTextEditor) {
                     const activeFolder = vscode.workspace.getWorkspaceFolder(vscode.window.activeTextEditor.document.uri);
-                    if (activeFolder) {
-                        workspaceFolder = activeFolder;
-                    }
+                    if (activeFolder) workspaceFolder = activeFolder;
                 }
 
                 if (!workspaceFolder) {
-                    workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+                    vscode.window.showErrorMessage('No workspace folder found to open SYNAPSE Canvas.');
+                    return;
                 }
 
-                if (workspaceFolder) {
-                    CanvasPanel.createOrShow(context, workspaceFolder);
-                } else {
-                    vscode.window.showErrorMessage('No workspace folder found to open SYNAPSE Canvas.');
+                // [v0.3.21.5] Zero-Config Auto-Onboarding
+                const projectStateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'project_state.json');
+                let stateExists = false;
+                try {
+                    await vscode.workspace.fs.stat(projectStateUri);
+                    stateExists = true;
+                } catch (e) {}
+
+                if (!stateExists) {
+                    const confirm = await vscode.window.showInformationMessage(
+                        `[SYNAPSE] '${workspaceFolder.name}'에 대한 아키텍처 데이터가 없습니다. 프로젝트 구성을 자동으로 분석하시겠습니까?`,
+                        '🔍 자동 분석 시작 (Lite Bootstrap)'
+                    );
+                    if (confirm === '🔍 자동 분석 시작 (Lite Bootstrap)') {
+                        await liteBootstrap(context, workspaceFolder);
+                    }
+                    return;
                 }
+
+                await loadSovereignPrinciples(context, workspaceFolder);
+                CanvasPanel.createOrShow(context, workspaceFolder);
             })
         );
 
@@ -576,8 +566,19 @@ async function loadSovereignPrinciples(context: vscode.ExtensionContext, folder:
         
         if (principles.length === 0) {
             Logger.warn('🏛️ Sovereign Principles Not Found: GEMINI.md must contain a # Principles section.');
-            await context.globalState.update('synapse.sovereign_principles', []);
-            return false;
+            
+            // [v0.3.21.4] Emergency Fallback: If no principles found, inject General Purpose principles
+            // to prevent the engine from entering a 'brain dead' state (Unbound Mode).
+            const fallbackPrinciples = [
+                "Maintain modular boundaries between functional domains.",
+                "Ensure all dependencies flow in a unidirectional, acyclic manner.",
+                "Isolate system-level side effects from core business logic.",
+                "Protect shared resources via controlled access patterns."
+            ];
+            Logger.info('🏛️ Emergency Fallback Grafted: 4 general rules injected.');
+            await context.globalState.update('synapse.sovereign_principles', fallbackPrinciples);
+            process.env.SYNAPSE_PRINCIPLES = JSON.stringify(fallbackPrinciples);
+            return true;
         }
         
         await context.globalState.update('synapse.sovereign_principles', principles);
@@ -614,33 +615,9 @@ async function checkProjectStatus(workspaceFolder: vscode.WorkspaceFolder, conte
         }
 
         if (!projectStateStat) {
-            if (geminiExists) {
-                // Case 1: GEMINI.md exists but no project_state.json
-                const config = vscode.workspace.getConfiguration('synapse');
-                const autoBootstrap = config.get<boolean>('autoBootstrap', false);
-
-                if (autoBootstrap) {
-                    console.log(`[SYNAPSE] Auto-bootstrapping project: ${workspaceFolder.name}`);
-                    await bootstrapFromGemini(geminiUri, context);
-                } else {
-                    const action = await vscode.window.showInformationMessage(
-                        `GEMINI.md detected in ${workspaceFolder.name}. Would you like to initialize the SYNAPSE canvas?`,
-                        'Initialize'
-                    );
-                    if (action === 'Initialize') {
-                        await bootstrapFromGemini(geminiUri, context);
-                    }
-                }
-            } else {
-                // Case 3: No GEMINI.md and no project_state.json -> Offer Lite Bootstrap
-                const action = await vscode.window.showInformationMessage(
-                    `No architecture state found for ${workspaceFolder.name}. Would you like to auto-discover project structure?`,
-                    'Lite Bootstrap'
-                );
-                if (action === 'Lite Bootstrap') {
-                    await liteBootstrap(context, workspaceFolder);
-                }
-            }
+            // [v0.3.21.5] No more intrusive popups on startup.
+            // Users will be prompted to bootstrap when they explicitly click 'Open Canvas'.
+            return;
         } else {
             // Case 2: project_state.json exists
             if (geminiExists) {

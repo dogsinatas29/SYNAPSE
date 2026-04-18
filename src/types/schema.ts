@@ -89,6 +89,15 @@ export interface Cluster {
 }
 
 /**
+ * [v0.3.21] 클러스터 간 흐름 데이터 (Heatmap용)
+ */
+export interface ClusterFlow {
+    from: string;
+    to: string;
+    count: number;
+}
+
+/**
  * 프로젝트 구조 (GEMINI.md 분석 결과)
  */
 export interface ProjectStructure {
@@ -124,6 +133,7 @@ export interface ProjectState {
     nodes: Node[];
     edges: Edge[];
     clusters: Cluster[];
+    cluster_flows?: ClusterFlow[]; // [v0.3.21] Heatmap Flow Data
     system_context?: {          // [v0.2.20] Sovereign Principles
         principles: string[];
     };

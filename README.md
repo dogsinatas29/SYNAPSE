@@ -1,9 +1,9 @@
-# <img src="./resources/synapse-icon.png" width="40" height="40" /> 🧠 SYNAPSE: Visual Architecture Engine (v0.3.20)
+# <img src="./resources/synapse-icon.png" width="40" height="40" /> 🧠 SYNAPSE: Visual Architecture Engine (v0.3.21)
 
 > **"What you see is the logic of LLM"** — *WYSIWYG Logic for AI*
 
-[![Version](https://img.shields.io/badge/version-v0.3.20-brightgreen.png)
-[![Latest Release](https://img.shields.io/badge/latest-v0.3.20%20Semantic%20Order-orange.png)
+[![Version](https://img.shields.io/badge/version-v0.3.21-brightgreen.png)](https://github.com/dogsinatas29/SYNAPSE)
+[![Latest Release](https://img.shields.io/badge/latest-v0.3.21%20Edge%20Bundling-orange.png)](https://github.com/dogsinatas29/SYNAPSE/releases)
 ![Status](https://img.shields.io/badge/status-Production_Ready-brightgreen.png)
 [![Language](https://img.shields.io/badge/Language-TypeScript-blue?style=flat-square)](https://www.typescriptlang.org/)
 [![Platform](https://img.shields.io/badge/Platform-VS_Code-007ACC?style=flat-square)](https://code.visualstudio.com/)
@@ -12,18 +12,16 @@
 
 ---
 
-## 🔥 Latest Release: v0.3.20 - Rust Persistence & Engine Hardening (2026-04-17)
+## 🔥 Latest Release: v0.3.21 - Edge Bundling & Zero-Config UX (2026-04-18)
 
 | Feature | Description | Benefit |
 |-------|---------|-----|
+| **Edge Bundling Lite**| **Visual Convergence** | Merges overlapping visual paths into elegant "bundles" using quadratic Bezier curves. |
+| **Zero-Config UX** | **Auto-Discovery** | Instant architectural visualization without manual setup; available across all files. |
+| **Amnesia Guard** | **Snapshot Sovereignty**| Prevents state corruption and data loss during complex synchronization phases. |
+| **Emergency Fallback**| **Baseline Guardrails** | Injects 4 general architectural rules even if GEMINI.md is missing or empty. |
+| **Precision Parser** | **Multi-Lang Support** | Enhanced import resolution for Rust (use), Python (relative), and C++ (headers). |
 | **Rust Support**| **Path-based ID System** | Resolves naming conflicts (e.g. `mod.rs`) by using absolute paths for node identification. |
-| **Semantic Hotspot** | **Functional Area** Mapping | Automatically groups related modules into visible "Hotspot" areas with soft colored backgrounds. |
-| **Physics Hardening**| **Velocity Clamp & Damping**| Prevents nodes from exploding off-screen with explicit velocity limits and increased damping. |
-| **Spring Alignment** | **Strategic Drift** Engine | Nudges nodes toward architectural lanes [Input → Core → Output] while preserving logical structure. |
-| **Edge Bundling Lite**| **Flow Consolidation** | Merges overlapping visual paths into elegant "bundles" to reveal data flow patterns. |
-| **Top-N Focus** | **Global Exploration** System | Automatically highlights the top 10 core nodes and their 1-hop context. |
-| **Node Role Taxonomy**| **Inclusive Identification** | Refined thresholds to identify Roles even in small-scale modules. Added Standard fallback. |
-| **Identity-Aware Tooltip**| **Stem-based Match** | Restored connection details by using stem-based matching for path-based IDs. |
 
 ---
 
@@ -146,8 +144,9 @@ Visualize your project's folder structure and file dependencies as a live networ
 - **Semantic Hotspot Mapping (v0.3.20)**:
   - **Functional Grouping**: Identifies "Meaningful Chunks" and wraps them in role-colored dashed boxes.
   - **Overlap Merging**: Automatically merges adjacent functional areas to reduce visual entropy.
-- **Edge Bundling Lite (v0.3.20)**:
-  - **Shared Path Flow**: Merges multiple edges from a single source into a unified "bundle" using shared control points.
+- **Edge Bundling Lite (v0.3.21)**:
+  - **Shared Path Flow**: Merges multiple edges from a single source into a unified "bundle" using quadratic Bezier convergence.
+  - **NaN Resilience**: Hardened math engine with `isFinite` safeguards to prevent edge evaporation.
 - **Triple Expression System**:
   - **Color (Perception)**: Role-specific border and glow colors for instant recognition.
   - **Layer (Focus)**: `Hide Leaf Nodes` toggle to eliminate structural noise and focus on the core.
@@ -309,7 +308,7 @@ The following icons are used within the center badge and arrowheads to define th
 
 ### Project Topology
 Visualizes the physical connections between LLM reasoning logic and source files.
-![Topology View](assets/v0.3.20/synapse_topology_v0.3.20.png)
+![Topology View](assets/v0.3.21/synapse_topology_v0.3.21.png)
 
 ### Node Information Output (v0.3.17)
 Hover over any node to see its structural metrics (Connections, IN, OUT) instantly. This allows for rapid identification of responsibility and dependency clusters.
@@ -336,9 +335,9 @@ A deep, organized overview of your project structure.
 
 ### Quick Installation
 ```bash
-code --install-extension synapse-visual-architecture-v0.3.17.vsix
+code --install-extension synapse-visual-architecture-v0.3.21.vsix
 ```
-Current Version: **v0.3.17** (Node Summary)
+Current Version: **v0.3.21** (Edge Bundling & Zero-Config)
 
 ---
 
@@ -366,12 +365,9 @@ Current Version: **v0.3.17** (Node Summary)
 ## 🚀 Getting Started
 Launch your visual architecture journey in seconds.
 
-1. **Install Extension**: Install the `synapse-visual-architecture-v0.3.18.vsix` (or latest) in Antigravity/VS Code.
-2. **DNA Injection**: Create or drop a `GEMINI.md` (or `Project_Spec.md`) file into your workspace root.
-3. **Bootstrap Phase**: Open the **SYNAPSE Canvas** from the sidebar or command palette (`Ctrl+Shift+P` -> `SYNAPSE: Open Canvas`).
-4. **First Visualization**: 
-    - The engine will scan your folder and display **Proposed Nodes**.
-    - **Click [Confirm]** in the proposal popup to materialize nodes.
+1. **Install Extension**: Install the `synapse-visual-architecture-v0.3.21.vsix` (or latest).
+2. **Launch Canvas**: Click the **🧠 Canvas icon** in the editor title bar or Sidebar.
+3. **Instant Analysis**: If no state exists, select **"Lite Bootstrap"** to automatically discover your project architecture.
 
 ---
 
@@ -379,7 +375,8 @@ Launch your visual architecture journey in seconds.
 
 | Version | Date | Description (English) | Description (Korean) |
 | :--- | :--- | :--- | :--- |
-| **v0.3.20** | 2026-04-17 | **Rust Persistence & Engine Hardening**: Path-based IDs for Rust support, Velocity clamping for physics stability, and inclusive Role detection thresholds. | **Rust 지원 및 엔진 안정화**: Rust 대응을 위한 경로 기반 ID 도입, 물리 시뮬레이션 폭주 방지 및 로드 성능 가이드 강화. |
+| **v0.3.21** | 2026-04-18 | **Edge Bundling & Zero-Config UX**: Implemented Bezier flow consolidation, auto-onboarding flow, and Amnesia Guard for snapshot integrity. | **엣지 번들링 및 제로-컨피그 UX**: 베지어 흐름 통합, 자동 온보딩 프로세스 및 스냅샷 무결성을 위한 Amnesia Guard 도입. |
+| **v0.3.20** | 2026-04-17 | **Rust Persistence & Engine Hardening**: Path-based IDs for Rust support, Velocity clamping for physics stability. | **Rust 지원 및 엔진 안정화**: Rust 대응을 위한 경로 기반 ID 도입, 물리 시뮬레이션 폭주 방지. |
 | **v0.3.19** | 2026-04-17 | **Top-N Focus View**: Automated identification of the 10 most critical core nodes with 1-hop context expansion for global exploration. | **Top-N 포커스 뷰**: 1-hop 맥락 확장을 포함한 상위 10개 핵심 노드 자동 식별 및 글로벌 탐색 모드 도입. |
 | **v0.3.18** | 2026-04-17 | **Diagnostic Hint Engine**: Real-time architectural analysis (R1-R5), Zero-Unknown semantic labeling, and detailed node identity list in tooltips. | **진단 힌트 엔진**: 실시간 아키텍처 분석(R1-R5), Zero-Unknown 시맨틱 라벨링 및 툴팁 내 상세 연결 노드 리스트 출력. |
 | **v0.3.17** | 2026-04-14 | **Node Summary Feature**: Added interactive node summary tooltips showing unique connections and directional degrees. Optimized with O(E) pre-calculation. | **노드 요약 정보 출력**: 노드 호버 시 고유 연결 및 방향성 의존성을 보여주는 요약 툴팁 추가 및 O(E) 성능 최적화. |

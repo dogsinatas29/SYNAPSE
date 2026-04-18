@@ -62,7 +62,10 @@ export class LogicAnalyzer {
         // 7. [v0.2.21] Deterministic C++ Rule 검증 (The Static Pillar)
         this.detectDeterministicViolations(nodes, edges, issues);
 
-        // 8. [v0.2.20] Sovereign Principles 검증 (Mandatory Principles)
+        // 8. [v0.3.21] Rule-based Hints (Edge Bundling Lite era)
+        this.detectV0321Hints(nodes, edges, issues);
+
+        // 9. [v0.2.20] Sovereign Principles 검증 (Mandatory Principles)
         if (state.system_context?.principles) {
             const principleIssues = this.validatePrinciples(state, state.system_context.principles);
             issues.push(...principleIssues);
@@ -246,6 +249,19 @@ export class LogicAnalyzer {
 
             content += `\n## 🚀 [Turbo Mode Feedback]\n`;
             content += `- 터보 모드(고밀도 추론) 분석을 통해 잠재적인 논리 병목 지점을 ${issues.length > 0 ? '확인' : '최적화'}했습니다.\n`;
+
+            // [v0.3.21] Architectural Hints section
+            const hints = issues.filter(i => i.message.includes('[Hint]'));
+            if (hints.length > 0) {
+                content += `\n## 💡 [Optimization Hint] Architectural Suggestions\n`;
+                hints.forEach(hint => {
+                    const links = hint.nodeIds.map(id => {
+                        const node = nodes.find(n => n.id === id);
+                        return `[\`${node?.data?.label || id}\`](command:synapse.focusNode?${encodeURIComponent(JSON.stringify(id))})`;
+                    });
+                    content += `- 🟡 **${hint.message.replace(/\[Hint\]\s*/, '')}**: ${links.join(', ')}\n`;
+                });
+            }
         }
 
         content += `\n---\n*이 리포트는 SYNAPSE Logic Analyzer v2.0(Visual Impact Engine)에 의해 자동 생성되었습니다.*`;
@@ -403,6 +419,73 @@ export class LogicAnalyzer {
                         nodeIds: [node.id]
                     });
                 }
+            }
+        });
+    }
+
+    private detectV0321Hints(nodes: Node[], edges: Edge[], issues: AnalysisIssue[]) {
+        nodes.forEach(node => {
+            const outgoing = edges.filter(e => e.from === node.id).length;
+            const incoming = edges.filter(e => e.to === node.id).length;
+            const connections = outgoing + incoming;
+
+            // 1. Super Node: connections > 10 (threshold)
+            if (connections > 10) {
+                issues.push({
+                    type: 'bottleneck',
+                    severity: 'medium',
+                    message: `[Hint] High coupling detected in '${node.data.label}'. Consider splitting responsibilities.`,
+                    nodeIds: [node.id]
+                });
+            }
+
+            // 2. Fan-out Overload: out > 7 and out > 3 * in
+            if (outgoing > 7 && outgoing > incoming * 3) {
+                issues.push({
+                    type: 'warning',
+                    severity: 'medium',
+                    message: `[Hint] High fan-out in '${node.data.label}'. Possible orchestrator overload.`,
+                    nodeIds: [node.id]
+                });
+            }
+
+            // 3. Fan-in Overload: in > 7 and in > 3 * out
+            if (incoming > 7 && incoming > outgoing * 3) {
+                issues.push({
+                    type: 'warning',
+                    severity: 'medium',
+                    message: `[Hint] High fan-in in '${node.data.label}'. Potential hidden dependency hub.`,
+                    nodeIds: [node.id]
+                });
+            }
+        });
+
+        // 4. Cluster Dependency Overload (Strong dependency between clusters)
+        const flowMap = new Map<string, number>();
+        const clusterOutCount = new Map<string, number>();
+
+        edges.forEach(edge => {
+            const src = nodes.find(n => n.id === edge.from);
+            const tgt = nodes.find(n => n.id === edge.to);
+            if (src && tgt && src.data.cluster_id && tgt.data.cluster_id && src.data.cluster_id !== tgt.data.cluster_id) {
+                const key = `${src.data.cluster_id}->${tgt.data.cluster_id}`;
+                flowMap.set(key, (flowMap.get(key) || 0) + 1);
+                clusterOutCount.set(src.data.cluster_id, (clusterOutCount.get(src.data.cluster_id) || 0) + 1);
+            }
+        });
+
+        flowMap.forEach((count, key) => {
+            const [srcId, tgtId] = key.split('->');
+            const totalOut = clusterOutCount.get(srcId) || 1;
+            const ratio = count / totalOut;
+
+            if (ratio > 0.6 && count > 5) {
+                issues.push({
+                    type: 'architecture-violation',
+                    severity: 'medium',
+                    message: `[Hint] Strong dependency between clusters (${srcId} -> ${tgtId}). Consider boundary extraction.`,
+                    nodeIds: nodes.filter(n => n.data.cluster_id === srcId).map(n => n.id)
+                });
             }
         });
     }

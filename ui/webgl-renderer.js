@@ -320,6 +320,7 @@ class WebGLRenderer {
         const vsEdge = `
             attribute vec2 aVertexPosition; // [0, -0.5] to [1, 0.5]
             attribute vec4 aInstanceEdge;   // [x1, y1, x2, y2]
+            attribute vec2 aControlPoint;   // [cx, cy] for Quadratic Bezier
             attribute vec3 aEdgeColor;
             attribute float aThickness;
             attribute vec2 aDashParams;     // [dashLen, gapLen] 0 means solid
@@ -336,9 +337,9 @@ class WebGLRenderer {
                 vec2 p1 = aInstanceEdge.xy;
                 vec2 p2 = aInstanceEdge.zw;
                 
-                // [v0.3.4] Curvature Reduction: -25 offset for better parity with 2D arch
+                // [v0.3.21] Edge Bundling Lite: Use dynamic control point
                 float t = aVertexPosition.x;
-                vec2 cp = (p1 + p2) * 0.5 + vec2(0.0, -25.0);
+                vec2 cp = aControlPoint;
                 
                 // Bezier Position (Quadratic)
                 vec2 pos = (1.0-t)*(1.0-t)*p1 + 2.0*(1.0-t)*t*cp + t*t*p2;
@@ -479,6 +480,7 @@ class WebGLRenderer {
             edge: {
                 vertex: this.gl.getAttribLocation(this.edgeProgram, 'aVertexPosition'),
                 instanceEdge: this.gl.getAttribLocation(this.edgeProgram, 'aInstanceEdge'),
+                controlPoint: this.gl.getAttribLocation(this.edgeProgram, 'aControlPoint'),
                 color: this.gl.getAttribLocation(this.edgeProgram, 'aEdgeColor'),
                 thickness: this.gl.getAttribLocation(this.edgeProgram, 'aThickness'),
                 dash: this.gl.getAttribLocation(this.edgeProgram, 'aDashParams'),
@@ -617,6 +619,11 @@ class WebGLRenderer {
         this.edgeDashBuffer = this.gl.createBuffer();
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.edgeDashBuffer);
         this.gl.bufferData(this.gl.ARRAY_BUFFER, this._edgeDashArr.byteLength, this.gl.DYNAMIC_DRAW);
+
+        this._edgeControlArr = new Float32Array(maxEdges * 2);
+        this.edgeControlBuffer = this.gl.createBuffer();
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.edgeControlBuffer);
+        this.gl.bufferData(this.gl.ARRAY_BUFFER, this._edgeControlArr.byteLength, this.gl.DYNAMIC_DRAW);
 
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.edgeInstanceBuffer);
         this.gl.bufferData(this.gl.ARRAY_BUFFER, this._edgeArr.byteLength, this.gl.DYNAMIC_DRAW);
@@ -808,13 +815,15 @@ class WebGLRenderer {
         const colorData = this._edgeColorArr;
         const thickData = this._edgeThickArr;
         const dashData = this._edgeDashArr;
-        if (!data || !colorData || !thickData || !dashData) return;
+        const controlData = this._edgeControlArr;
+        if (!data || !colorData || !thickData || !dashData || !controlData) return;
         
         let cnt = 0;
         let colorCnt = 0;
         let thickCnt = 0;
         let dashCnt = 0;
         let highCnt = 0;
+        let controlCnt = 0;
         
         for (let i = 0; i < edges.length; i++) {
             const e = edges[i];
@@ -915,6 +924,48 @@ class WebGLRenderer {
                     highVal = 1.0; // Normal highlighted
                 }
                 this._edgeHighArr[highCnt++] = highVal;
+
+                // [v0.3.21] Edge Bundling Lite Calculation
+                let cx = (x1 + x2) * 0.5;
+                let cy = (y1 + y2) * 0.5;
+
+                const isBundlingEnabled = window.enableEdgeBundling !== false && !window.forceStraightEdges;
+                const edgeCountThreshold = 20; // Lowered from 80 to prevent flickering during sync
+                const safeDist = Math.max(dist, 1.0); // Suspect 2: Divide by Zero protection
+                
+                // Normal vector for perpendicular offset
+                const nx = -dy / safeDist;
+                const ny = dx / safeDist;
+
+                if (isBundlingEnabled && edges.length >= edgeCountThreshold && dist > 50) {
+                    // 1. Base bundling strength
+                    const bundleStrength = Math.min(dist * 0.15, 40);
+                    
+                    // 2. Direction quantization (16 buckets) - Suspect 3: Quantization check
+                    const angle = Math.atan2(dy, dx);
+                    const bucket = Math.round(angle / (Math.PI / 8));
+                    const groupOffset = (bucket % 8) * 3; // Cyclic offset
+
+                    cx += nx * (bundleStrength + groupOffset);
+                    cy += ny * (bundleStrength + groupOffset);
+                } else {
+                    // Default arch: Use normal vector for consistency (instead of fixed cy += -10)
+                    const archStrength = (dist < 10) ? 0 : -5; 
+                    cx += nx * archStrength;
+                    cy += ny * archStrength;
+                }
+
+                // [v0.3.21.1] NaN/Infinity Resilience: Fallback to straight line if math fails
+                if (!isFinite(cx) || !isFinite(cy)) {
+                    if (window.debugBundling) {
+                        console.warn(`[WebGL] Bundling math failed for edge ${i/2}. dist: ${dist}, x1:${x1}, y1:${y1}, x2:${x2}, y2:${y2}. Falling back to straight line.`);
+                    }
+                    cx = (x1 + x2) * 0.5;
+                    cy = (y1 + y2) * 0.5;
+                }
+
+                controlData[controlCnt++] = cx;
+                controlData[controlCnt++] = cy;
             }
         }
         this.edgeCount = cnt / 4;
@@ -933,6 +984,9 @@ class WebGLRenderer {
 
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.edgeHighBuffer);
         this.gl.bufferSubData(this.gl.ARRAY_BUFFER, 0, this._edgeHighArr.subarray(0, highCnt));
+
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.edgeControlBuffer);
+        this.gl.bufferSubData(this.gl.ARRAY_BUFFER, 0, this._edgeControlArr.subarray(0, controlCnt));
     }
 
     updateTextData(nodes, edges = []) {
@@ -1480,6 +1534,7 @@ class WebGLRenderer {
         this.setAttrPointer(this.edgeThickBuffer, this.locs.edge.thickness, 1, 0, 0, 1);
         this.setAttrPointer(this.edgeDashBuffer, this.locs.edge.dash, 2, 0, 0, 1);
         this.setAttrPointer(this.edgeHighBuffer, this.locs.edge.high, 1, 0, 0, 1);
+        this.setAttrPointer(this.edgeControlBuffer, this.locs.edge.controlPoint, 2, 0, 0, 1);
 
         if (this.ext) {
             this.ext.drawArraysInstancedANGLE(this.gl.TRIANGLE_STRIP, 0, (this.edgeCurveSegments + 1) * 2, this.edgeCount);

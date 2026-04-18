@@ -137,9 +137,12 @@ export class DataPipeline {
         
         // [v0.3.14] Intelligent Resolution: Try to link to active nodes with extensions if name matches
         if (!nodeIds.has(targetNodeId)) {
+          const lowerTarget = targetNodeId.toLowerCase();
           const matchedId = Array.from(nodeIds).find(id => {
-            const stem = path.basename(id, path.extname(id));
-            return stem === targetNodeId && (id.endsWith('.ts') || id.endsWith('.js') || id.endsWith('.py') || id.endsWith('.tsx') || id.endsWith('.jsx') || id.endsWith('.rs'));
+            const nodeStem = path.basename(id, path.extname(id)).toLowerCase();
+            const targetStem = path.basename(targetNodeId, path.extname(targetNodeId)).toLowerCase();
+            const supportedExtensions = ['.ts', '.js', '.py', '.tsx', '.jsx', '.rs', '.cpp', '.h', '.c', '.hpp', '.cc'];
+            return nodeStem === targetStem && supportedExtensions.some(ext => id.toLowerCase().endsWith(ext));
           });
           if (matchedId) {
             targetNodeId = matchedId; // Re-route to existing active node
@@ -161,7 +164,6 @@ export class DataPipeline {
           const isInvalidGhost = isBlacklisted || 
                                  isRuleIgnored ||
                                  targetNodeId.includes(':') ||
-                                 targetNodeId.includes('/') ||
                                  targetNodeId.length < 2;
 
           if (isInvalidGhost) continue;

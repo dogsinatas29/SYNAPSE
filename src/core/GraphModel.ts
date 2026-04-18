@@ -62,10 +62,20 @@ export interface Cluster {
   data?: any;
 }
 
+/**
+ * [v0.3.21] Cluster Flow Data
+ */
+export interface ClusterFlow {
+  from: string;
+  to: string;
+  count: number;
+}
+
 export interface GraphSnapshot {
   nodes: Node[];
   edges: Edge[];
   clusters: Cluster[];
+  cluster_flows?: ClusterFlow[];
   timestamp: number;
 }
 
@@ -112,11 +122,39 @@ export class GraphModel {
     });
   }
 
+  /**
+   * [v0.3.21] 클러스터 간 흐름 집계 (Heatmap용)
+   */
+  public getClusterFlows(): ClusterFlow[] {
+    const flowMap = new Map<string, number>();
+    
+    for (const edge of this.edges) {
+      const srcNode = this.nodes.get(edge.from);
+      const tgtNode = this.nodes.get(edge.to);
+      
+      if (srcNode && tgtNode) {
+        const srcCluster = srcNode.cluster_id || 'root';
+        const tgtCluster = tgtNode.cluster_id || 'root';
+        
+        if (srcCluster !== tgtCluster) {
+          const key = `${srcCluster}->${tgtCluster}`;
+          flowMap.set(key, (flowMap.get(key) || 0) + 1);
+        }
+      }
+    }
+    
+    return Array.from(flowMap.entries()).map(([key, count]) => {
+      const [from, to] = key.split('->');
+      return { from, to, count };
+    });
+  }
+
   public createSnapshot(): GraphSnapshot {
     return {
       nodes: [...this.nodes.values()],
       edges: [...this.edges],
       clusters: [...this.clusters],
+      cluster_flows: this.getClusterFlows(),
       timestamp: Date.now()
     };
   }

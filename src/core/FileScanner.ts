@@ -122,15 +122,21 @@ export class FileScanner {
                 const fromMatch = trimmed.match(/^(?:#\s*)?(?:\[SYNAPSE(?:_PENDING|_DELETED)?:([^\]]+)\]\s*)?from\s+([a-zA-Z0-9_.]+)\s+import/);
                 if (fromMatch) {
                     const nodeId = fromMatch[1];
-                    const fromPart = fromMatch[2];
-                    if (!fromPart) continue; // Safety check
+                    let fromPart = fromMatch[2];
+                    if (!fromPart) continue;
+
+                    // [v0.3.21.4] Python Relative Import Fix: Strip leading dots
+                    fromPart = fromPart.replace(/^\.+/, '');
+                    if (!fromPart) continue;
+
                     // [v0.2.17 Patch 10] Recognize extensions for non-Python bridges (e.g., TEST.c)
                     const knownExts = ['.c', '.ts', '.js', '.rs', '.sql', '.cpp', '.h', '.hpp', '.cc'];
                     let rootMod = fromPart;
 
                     const hasKnownExt = knownExts.some(ext => fromPart.toLowerCase().endsWith(ext));
                     if (!hasKnownExt && !fromPart.startsWith('.')) {
-                        rootMod = fromPart.split('.')[0];
+                        const parts = fromPart.split('.');
+                        rootMod = parts[parts.length - 1] || fromPart;
                     }
 
                     if (rootMod && !summary.references.some(r => r.target === rootMod)) {
@@ -215,14 +221,15 @@ export class FileScanner {
                 }
             }
 
-            // JS/TS 임포트 (references, import type 지원)
-            const importRegex = /(?:import|require)\s+(?:type\s+)?(?:.*from\s+)?['"]([^'"`${}]+)['"]|import\s*\(\s*['"]([^'"`${}]+)['"]\s*\)/g;
+            // JS/TS 임포트 (references, import type 지원) - [v0.3.21] Support multiline imports
+            const importRegex = /(?:import|require)\s+(?:type\s+)?(?:[\s\S]*?from\s+)?['"]([^'"`${}]+)['"]|import\s*\(\s*['"]([^'"`${}]+)['"]\s*\)/g;
             while ((match = importRegex.exec(content)) !== null) {
                 const ref = match[1] || match[2];
                 if (ref) {
                     if (ref.includes('${') || ref.length > 100) continue;
 
-                    const cleanRef = ref.startsWith('.') ? path.basename(ref, path.extname(ref)) : ref.split('/')[0];
+                    // [v0.3.21] Robust path cleaning: extract filename stem for both relative and absolute-style imports
+                    const cleanRef = path.basename(ref, path.extname(ref));
                     if (cleanRef && !['react', 'vscode', 'path', 'fs', 'os', 'child_process'].includes(cleanRef) && !summary.references.some(r => r.target === cleanRef)) {
                         let type = 'dependency';
                         if (cleanRef.match(/api|http|fetch|axios/i)) type = 'api_call';
@@ -272,11 +279,14 @@ export class FileScanner {
 
             const includeMatch = trimmed.match(/(?:#\s*include|#include)\s+(["<])([^">]+)([">])/);
             if (includeMatch) {
+                summary.hasImportSignature = true;
                 const quoteType = includeMatch[1];
                 const ref = includeMatch[2];
 
+                // [v0.3.21] Normalize C/C++ includes: extract stem for both "" and <> to match project nodes
+                const cleanRef = path.basename(ref, path.extname(ref));
+                
                 if (quoteType === '"') {
-                    const cleanRef = path.basename(ref, path.extname(ref));
                     if (cleanRef && !summary.references.some(r => r.target === cleanRef)) {
                         let type = 'dependency';
                         const idMatch = line.match(/\[SYNAPSE(?:_PENDING|_DELETED)?:([^\]]+)\]/);
@@ -285,8 +295,15 @@ export class FileScanner {
                     }
                 } else if (quoteType === '<') {
                     const systemLib = ref.split('/')[0];
-                    const standardLibs = ['iostream', 'vector', 'string', 'map', 'set', 'algorithm', 'stdio.h', 'stdlib.h', 'stdint.h', 'stdbool.h', 'cmath', 'cstdio'];
+                    const standardLibs = ['iostream', 'vector', 'string', 'map', 'set', 'algorithm', 'stdio.h', 'stdlib.h', 'stdint.h', 'stdbool.h', 'cmath', 'cstdio', 'memory', 'thread', 'mutex', 'future', 'chrono'];
+                    
                     if (!standardLibs.includes(systemLib)) {
+                        // [v0.3.21] If not a standard lib, treat as a potential internal dependency (common in CMake)
+                        if (cleanRef && !summary.references.some(r => r.target === cleanRef)) {
+                            summary.references.push({ target: cleanRef, type: 'dependency' });
+                        }
+                    } else {
+                        // Standard library call
                         if (!summary.references.some(r => r.target === systemLib)) {
                             summary.references.push({ target: systemLib, type: 'api_call' });
                         }
@@ -322,6 +339,38 @@ export class FileScanner {
             }
         }
 
+        // [v0.3.21] Improved Rust 'use' parsing to handle nested items {A, B}
+        const useRegex = /(?:^|\n)\s*(?:\/\/.*)?(?:\[SYNAPSE(?:_PENDING|_DELETED)?:([^\]]+)\]\s*)?use\s+([^;]+);/g;
+        while ((match = useRegex.exec(content)) !== null) {
+            const idMatch = match[1];
+            const rawPath = match[2].trim();
+            
+            if (rawPath.includes('{')) {
+                const [base, items] = rawPath.split('{');
+                const basePart = base.trim().replace(/::$/, '');
+                const subItems = items.replace('}', '').split(',').map(i => i.trim());
+                
+                for (const item of subItems) {
+                    if (!item) continue;
+                    // Try both: the item itself and the full path if possible
+                    const target = item.split('::').pop() || item;
+                    if (target && !['std', 'core', 'alloc', 'prelude', 'self', 'super', 'crate'].includes(target.toLowerCase())) {
+                        if (!summary.references.some(r => r.target === target)) {
+                            summary.references.push({ target, type: 'dependency', nodeId: idMatch, isApproved: true });
+                        }
+                    }
+                }
+            } else {
+                const parts = rawPath.split('::').filter(p => p && !['crate', 'self', 'super'].includes(p));
+                const target = parts[parts.length - 1];
+                if (target && !['std', 'core', 'alloc', 'prelude'].includes(target.toLowerCase())) {
+                    if (!summary.references.some(r => r.target === target)) {
+                        summary.references.push({ target, type: 'dependency', nodeId: idMatch, isApproved: true });
+                    }
+                }
+            }
+        }
+
         const lines = content.split('\n');
         for (const line of lines) {
             const trimmed = line.trim();
@@ -331,33 +380,6 @@ export class FileScanner {
             const isPendingOrDeleted = /\[SYNAPSE_(?:PENDING|DELETED)/.test(line);
 
             if (isCommented && !isPendingOrDeleted) continue;
-
-            // [v0.3.21] Enhanced use matching to handle curly braces and nested paths
-            const useMatch = trimmed.match(/^(?:\/\/\s*)?(?:\[SYNAPSE(?:_PENDING|_DELETED)?:([^\]]+)\]\s*)?use\s+([^;]+);/);
-            if (useMatch) {
-                const rawPath = useMatch[2].trim();
-                const idMatch = useMatch[1];
-                
-                // Handle curly braces: use a::b::{c, d}
-                const basePart = rawPath.split('{')[0].trim().replace(/::$/, '');
-                const parts = basePart.split('::');
-                const rootMod = parts[0];
-
-                const processRef = (target: string) => {
-                    if (['crate', 'self', 'super'].includes(target)) {
-                        const nextMod = parts[1] || target;
-                        if (nextMod && !summary.references.some(r => r.target === nextMod)) {
-                            summary.references.push({ target: nextMod, type: 'dependency', nodeId: idMatch, isApproved: !isPendingOrDeleted });
-                        }
-                    } else if (target && !['std', 'core', 'alloc', 'prelude'].includes(target)) {
-                        if (!summary.references.some(r => r.target === target)) {
-                            summary.references.push({ target, type: 'api_call', nodeId: idMatch, isApproved: !isPendingOrDeleted });
-                        }
-                    }
-                };
-
-                processRef(rootMod);
-            }
 
             const modMatch = trimmed.match(/^(?:\/\/\s*)?(?:\[SYNAPSE(?:_PENDING|_DELETED)?:([^\]]+)\]\s*)?(?:pub\s+)?mod\s+([a-zA-Z0-9_]+);/);
             if (modMatch) {

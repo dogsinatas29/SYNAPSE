@@ -1,4 +1,4 @@
-import { Node, Edge, Cluster, GraphSnapshot } from '../GraphModel';
+import { Node, Edge, Cluster, ClusterFlow, GraphSnapshot } from '../GraphModel';
 import { standardProjectionRules, ProjectionRule } from './RuleStore';
 
 /**
@@ -18,6 +18,7 @@ export interface ViewSnapshot {
     nodes: Node[];
     edges: Edge[];
     clusters: Cluster[];
+    cluster_flows?: ClusterFlow[]; // [v0.3.21] Cluster connection density
     resolution: ProjectionResolution;
     timestamp: number;
 }
@@ -66,7 +67,7 @@ export class ProjectionLayer {
             edges = result.edges;
         }
 
-        return { ...view, nodes, edges };
+        return { ...view, nodes, edges, cluster_flows: graph.cluster_flows };
     }
 
     private projectToFileLevel(graph: GraphSnapshot): ViewSnapshot {
@@ -107,15 +108,16 @@ export class ProjectionLayer {
 
             if (!fromNode || !toNode) return;
 
-            // 부모 파일 찾기: 파일 노드면 본인 ID, 아니면 filePath에서 추출. External은 경로 정보 유지.
+            // [v0.3.21] Project to File Level: Keep full IDs for files and documentation
             let fromFileId = fromNode.id;
-            if (fromNode.type !== 'file' && fromNode.type !== 'external') {
-                fromFileId = pathBasename(fromNode.filePath) || fromNode.id;
+            if (fromNode.type !== 'file' && fromNode.type !== 'documentation' && fromNode.type !== 'external') {
+                // If it's a symbol/function, rewire to its parent file path if available
+                fromFileId = fromNode.filePath || fromNode.id;
             }
-
+            
             let toFileId = toNode.id;
-            if (toNode.type !== 'file' && toNode.type !== 'external') {
-                toFileId = pathBasename(toNode.filePath) || toNode.id;
+            if (toNode.type !== 'file' && toNode.type !== 'documentation' && toNode.type !== 'external') {
+                toFileId = toNode.filePath || toNode.id;
             }
 
             if (fromFileId && toFileId && fromFileId !== toFileId) {

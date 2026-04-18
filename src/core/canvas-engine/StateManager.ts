@@ -1,6 +1,6 @@
 import * as path from 'path';
 import { Intent, createIntent } from './Intent';
-import { Node, Edge, Cluster, graphModel, GraphModel, GraphSnapshot } from '../GraphModel';
+import { Node, Edge, Cluster, ClusterFlow, graphModel, GraphModel, GraphSnapshot } from '../GraphModel';
 type Layer = 'ai' | 'user' | 'source' | 'documentation';
 import { commitManager } from '../transaction/CommitManager';
 import { projectionLayer, ProjectionResolution } from '../projection/ProjectionLayer';
@@ -21,6 +21,7 @@ export interface CanvasState {
   deletedPaths?: string[];   
   userCount?: number;
   aiCount?: number;
+  cluster_flows?: ClusterFlow[]; // [v0.3.21] Heatmap data
 }
 
 export class StateManager {
@@ -350,12 +351,20 @@ export class StateManager {
     // 2. Build path-to-ID mapping for de-duplication and edge routing
     const pathToIdMap = new Map<string, string>();
     allCandidates.forEach(n => {
-        const path = this.normalizePath(getEffectivePath(n));
+        const fullPath = getEffectivePath(n);
+        const normalized = this.normalizePath(fullPath);
         const isDraft = n.id.startsWith('node_manual_');
-        if (path) {
+        
+        if (normalized) {
             // Priority: Manual Drafts > Core Nodes (Physical truth)
-            if (isDraft || !pathToIdMap.has(path)) {
-                pathToIdMap.set(path, n.id);
+            if (isDraft || !pathToIdMap.has(normalized)) {
+                pathToIdMap.set(normalized, n.id);
+            }
+            
+            // [v0.3.21] Heal Slugs: Also index by basename as a fallback for corrupted legacy states
+            const stem = path.basename(normalized, path.extname(normalized));
+            if (stem && !pathToIdMap.has(stem)) {
+                pathToIdMap.set(stem, n.id);
             }
         }
     });
@@ -520,13 +529,30 @@ export class StateManager {
     });
 
     const finalClusters = Array.from(clusterMap.values()).filter(c => {
-        if (c.id.startsWith('sys_') || c.id === 'cluster_ghosts') {
-            return Object.values(finalNodes).some(n => n.cluster_id === c.id);
+        // [v0.3.21.2] SSoT Preservation: System clusters (buffer, reserved, ghosts, doc_shelf)
+        // must ALWAYS be preserved to prevent flickering and bundling NaN errors,
+        // even if they are currently empty.
+        if (c.id.startsWith('sys_') || c.id === 'cluster_ghosts' || c.id === 'doc_shelf') {
+            return true;
         }
-        return true;
+        return true; // We also preserve folders for now to avoid layout jumps
     });
 
     return { nodes: finalNodes, edges: finalEdges, clusters: finalClusters, deletedNodeIds: Array.from(this.deletedNodeIds), deletedPaths: Array.from(this.deletedPaths), userCount, aiCount };
+  }
+
+  /**
+   * [v0.3.21] 원본 그래프 상태 반환 (투영 전)
+   * 디스크 저장이나 전체 데이터 전송에 사용
+   */
+  public getBaseSnapshot(): GraphSnapshot {
+    const merged = this.generateMergedState({ raw: false });
+    return {
+      nodes: Object.values(merged.nodes),
+      edges: Object.values(merged.edges),
+      clusters: merged.clusters,
+      timestamp: Date.now()
+    };
   }
 
   public getSnapshot(): CanvasState {
@@ -586,6 +612,7 @@ export class StateManager {
         nodes: finalNodes,
         edges: Object.fromEntries(viewSnap.edges.map(e => [e.id, e])),
         clusters: viewSnap.clusters,
+        cluster_flows: viewSnap.cluster_flows, // [v0.3.21] Heatmap Flow Data
         deletedNodeIds: Array.from(this.deletedNodeIds),
         deletedNodeReasons, // 📡 GC Signal Optimization
         deletedPaths: merged.deletedPaths,

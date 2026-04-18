@@ -2547,10 +2547,17 @@ export class CanvasPanel {
         });
     }
 
+    private _isSyncing: boolean = false;
+
     public async sendProjectState(forceReset: boolean = false, isAuthoritative: boolean = false) {
-        if (!this._panel) return;
+        if (!this._panel || this._isSyncing) return;
+        this._isSyncing = true;
+        
         const workspaceFolder = this._workspaceFolder;
-        if (!workspaceFolder) return;
+        if (!workspaceFolder) {
+            this._isSyncing = false;
+            return;
+        }
 
         try {
             // [v0.3.11] 1. Load Current SSOT (Engine Snapshot)
@@ -2575,11 +2582,17 @@ export class CanvasPanel {
                 const data = await vscode.workspace.fs.readFile(projectStateUri);
                 const fileState = JSON.parse(data.toString());
                 
-                // If engine has NO nodes, or we are doing a fresh ready signal, 
-                // we must adopt the disk state's positions and manual nodes.
-                if (projectState.nodes.length === 0 || projectState.nodes.length < (fileState.nodes || []).length) {
-                    Logger.info(`[CanvasPanel] Syncing backend engine from project_state.json (File: ${fileState.nodes?.length || 0} vs Engine: ${projectState.nodes.length})`);
+                // [v0.3.21 Fix] Use RAW snapshot for count comparison to avoid infinite loop from projected view merging
+                const rawEngineSnap = canvasEngine.getRawSnapshot();
+                const rawNodeCount = Object.keys(rawEngineSnap.nodes).length;
+
+                if (rawNodeCount === 0 || rawNodeCount < (fileState.nodes || []).length) {
+                    Logger.info(`[CanvasPanel] Syncing backend engine from project_state.json (File: ${fileState.nodes?.length || 0} vs Engine: ${rawNodeCount})`);
                     canvasEngine.loadInitialState(fileState);
+                    
+                    // [v0.3.21.5] Force authoritative reload on initial sync
+                    isAuthoritative = true; 
+                    
                     const refreshedSnap = canvasEngine.getFinalSnapshot();
                     projectState.nodes = Object.values(refreshedSnap.nodes);
                     projectState.edges = Object.values(refreshedSnap.edges);
@@ -2608,16 +2621,20 @@ export class CanvasPanel {
                         });
                         
                         const finalSnap = canvasEngine.getFinalSnapshot();
-                        projectState.nodes = Object.values(finalSnap.nodes);
-                        projectState.edges = Object.values(finalSnap.edges);
-                        projectState.clusters = finalSnap.clusters || [];
+                        
+                        // [v0.3.21.4 Amnesia Guard] NEVER overwrite if we somehow ended up with 0 nodes
+                        if (Object.keys(finalSnap.nodes).length > 0) {
+                            projectState.nodes = Object.values(finalSnap.nodes);
+                            projectState.edges = Object.values(finalSnap.edges);
+                            projectState.clusters = finalSnap.clusters || [];
 
-                        const normalizedJson = this.normalizeProjectState(finalSnap);
-                        await vscode.workspace.fs.writeFile(projectStateUri, Buffer.from(normalizedJson, 'utf-8'));
+                            const normalizedJson = this.normalizeProjectState(finalSnap);
+                            await vscode.workspace.fs.writeFile(projectStateUri, Buffer.from(normalizedJson, 'utf-8'));
+                        }
                     }
                 }
             } catch (err) {
-                console.error('[SYNAPSE] Self-healing sync failed:', err);
+                Logger.warn(`[CanvasPanel] Self-healing sync failed: ${err}`);
             }
 
             // [v0.3.11] 4. Phase & Broadcast
@@ -2628,6 +2645,15 @@ export class CanvasPanel {
                 }
             } catch (e) { /* ignore phase sync errors */ }
 
+            // [v0.3.21.4] Amnesia Guard: WebView filter
+            // If the state we are about to send is EMPTY, but we were NOT asked for a forceReset,
+            // we skip the broadcast to prevent the UI from clearing out valid existing data.
+            if (projectState.nodes.length === 0 && !forceReset) {
+                Logger.warn('[CanvasPanel] Aborting projectState broadcast: Nodes count is 0. Protecting UI state.');
+                this._isSyncing = false;
+                return;
+            }
+
             this._panel.webview.postMessage({
                 command: 'projectState',
                 data: projectState,
@@ -2637,7 +2663,9 @@ export class CanvasPanel {
             });
 
         } catch (error) {
-            console.error('[SYNAPSE] sendProjectState failed:', error);
+            Logger.error(`[CanvasPanel] sendProjectState failed: ${error}`);
+        } finally {
+            this._isSyncing = false;
         }
     }
 

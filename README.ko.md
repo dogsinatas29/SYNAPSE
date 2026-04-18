@@ -1,9 +1,9 @@
-# <img src="./resources/synapse-icon.png" width="40" height="40" /> 🧠 SYNAPSE: 비주얼 아키텍처 엔진 (v0.3.20)
+# <img src="./resources/synapse-icon.png" width="40" height="40" /> 🧠 SYNAPSE: 비주얼 아키텍처 엔진 (v0.3.21)
 
 > **"당신이 보는 것은 LLM의 논리입니다"** — *AI를 위한 WYSIWYG 논리 가시화*
 
-[![Version](https://img.shields.io/badge/version-v0.3.20-brightgreen.png)]
-[![Latest Release](https://img.shields.io/badge/latest-v0.3.20%20Persistence-orange.png)]
+[![Version](https://img.shields.io/badge/version-v0.3.21-brightgreen.png)](https://github.com/dogsinatas29/SYNAPSE)
+[![Latest Release](https://img.shields.io/badge/latest-v0.3.21%20Edge%20Bundling-orange.png)](https://github.com/dogsinatas29/SYNAPSE/releases)
 ![Status](https://img.shields.io/badge/status-Production_Ready-brightgreen.png)
 [![Language](https://img.shields.io/badge/Language-TypeScript-blue?style=flat-square)](https://www.typescriptlang.org/)
 [![Platform](https://img.shields.io/badge/Platform-VS_Code-007ACC?style=flat-square)](https://code.visualstudio.com/)
@@ -12,18 +12,16 @@
 
 ---
 
-## 🔥 최신 릴리즈: v0.3.20 - Rust Persistence & 엔진 안정화 (2026-04-17)
+## 🔥 최신 릴리즈: v0.3.21 - 엣지 번들링 & 제로-컨피그 UX (2026-04-18)
 
 | 기능 | 설명 | 이점 |
 |-------|---------|-----|
+| **엣지 번들링** | **시각적 수렴** | 중복되는 시각적 경로를 우아한 "번들"로 병합하여 데이터 흐름 패턴을 드러냅니다. |
+| **제로-컨피그 UX**| **자동 분석 온보딩** | 설정 파일 없이 단 한 번의 클릭으로 프로젝트 아키텍처를 즉시 시각화합니다. |
+| **Amnesia Guard** | **스냅샷 주권 보호** | 복잡한 동기화 과정에서 데이터 유실 및 상태 오염을 원천 차단합니다. |
+| **긴급 원칙 주입**| **기본 가드레일** | `GEMINI.md`가 없어도 4대 핵심 아키텍처 원칙을 자동 주입하여 진단 기능을 유지합니다. |
+| **정밀 파서 개선**| **다국어 임포트 최적화** | Rust(use), Python(relative), C++(header)의 의존성 추출 정확도를 대폭 향상했습니다. |
 | **Rust 지원** | **경로 기반 ID 체계** | 절대 경로 식별자를 사용하여 `mod.rs`와 같은 중복 파일명 충돌 문제를 해결합니다. |
-| **시맨틱 핫스팟** | **기능 영역** 매핑 | 관련 모듈을 부드러운 배경색의 "Hotspot" 영역으로 자동 그룹화합니다. |
-| **물리 엔진 강화** | **속도 제한 및 감쇄** | 명시적인 속도 제한과 감쇄 로직을 통해 노드가 화면 밖으로 튕겨나가는 것을 방지합니다. |
-| **Spring 정렬** | **전략적 표류** 엔진 | 논리적 구조를 유지하면서 노드들을 아키텍처 레이인 [Input → Core → Output]으로 유도합니다. |
-| **엣지 번들링** | **흐름 통합** | 중복되는 시각적 경로를 우아한 "번들"로 병합하여 데이터 흐름 패턴을 드러냅니다. |
-| **Top-N 포커스** | **글로벌 탐색** 시스템 | 상위 10개 핵심 노드와 그 1-hop 맥락을 자동으로 강조합니다. |
-| **노드 역할 분류** | **포괄적 식별** | 임계값 최적화를 통해 소규모 모듈에서도 역할을 식별하고 기본 폴백을 제공합니다. |
-| **지능형 툴팁** | **Stem 기반 매칭** | 경로 기반 ID 환경에서도 Stem 매칭을 통해 연결 상세 정보를 완벽하게 복구했습니다. |
 
 ---
 
@@ -45,7 +43,7 @@ SYNAPSE는 모든 노드를 연결 프로필에 따라 특정 아키텍처 역�
 
 ### 프로젝트 토폴로지 (Project Topology)
 LLM 추론 논리와 실제 소스 파일 간의 물리적 연결을 시각화합니다.
-![Topology View](assets/v0.3.20/synapse_topology_v0.3.20.png)
+![Topology View](assets/v0.3.21/synapse_topology_v0.3.21.png)
 
 ### 노드 정보 요약 (v0.3.17)
 노드 위에 마우스를 올리면 연결 수, IN/OUT 차수 등 구조적 지표를 즉시 확인하여 책임 영역과 의존성 클러스터를 빠르게 식별할 수 있습니다.
@@ -65,12 +63,9 @@ LLM 추론 논리와 실제 소스 파일 간의 물리적 연결을 시각화�
 
 순식간에 시각적 아키텍처 여정을 시작하세요.
 
-1. **확장 프로그램 설치**: Antigravity/VS Code에 `synapse-visual-architecture-v0.3.20.vsix`를 설치합니다.
-2. **DNA 주입**: 워크스테이스 루트에 `GEMINI.md` 또는 `Project_Spec.md` 파일을 생성하거나 배치합니다.
-3. **부트스트랩**: 사이드바 또는 명령 팔레트(`Ctrl+Shift+P` -> `SYNAPSE: Open Canvas`)에서 **SYNAPSE Canvas**를 엽니다.
-4. **첫 시각화**: 
-    - 엔진이 폴더를 스캔하고 **제안된 노드**를 표시합니다.
-    - 팝업에서 **[Confirm]**을 클릭하여 노드를 물리적으로 구체화합니다.
+1. **확장 프로그램 설치**: Antigravity/VS Code에 `synapse-visual-architecture-v0.3.21.vsix`를 설치합니다.
+2. **캔버스 열기**: 에디터 우측 상단 또는 사이드바의 **🧠 캔버스 아이콘**을 클릭합니다.
+3. **즉시 분석**: 데이터가 없는 경우 **"자동 분석 시작 (Lite Bootstrap)"**을 선택하여 즉시 아키텍처를 확인합니다.
 
 ---
 
@@ -78,6 +73,7 @@ LLM 추론 논리와 실제 소스 파일 간의 물리적 연결을 시각화�
 
 | 버전 | 날짜 | 설명 |
 | :--- | :--- | :--- |
+| **v0.3.21** | 2026-04-18 | **엣지 번들링 및 제로-컨피그 UX**: 베지어 흐름 통합, 자동 온보딩 프로세스 및 스냅샷 무결성을 위한 Amnesia Guard 도입. |
 | **v0.3.20** | 2026-04-17 | **Rust Persistence & 엔진 안정화**: Rust 지원을 위한 경로 기반 ID 도입, 물리 시뮬레이션 폭주 방지 및 로드 성능 가이드 강화. |
 | **v0.3.19** | 2026-04-17 | **Top-N 포커스 뷰**: 1-hop 맥락 확장을 포함한 상위 10개 핵심 노드 자동 식별 및 글로벌 탐색 모드 도입. |
 | **v0.3.18** | 2026-04-17 | **진단 힌트 엔진**: 실시간 아키텍처 분석(R1-R5), Zero-Unknown 시맨틱 라벨링 및 툴팁 내 상세 연결 노드 리스트 출력. |

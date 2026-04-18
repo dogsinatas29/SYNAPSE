@@ -105,14 +105,13 @@
             "editor/title": [
                 {
                     "command": "synapse.openCanvas",
-                    "when": "resourceExtname == .md && resourceFilename == GEMINI.md",
                     "group": "navigation"
                 }
             ],
             "explorer/context": [
                 {
                     "command": "synapse.bootstrap",
-                    "when": "resourceExtname == .md && resourceFilename == GEMINI.md"
+                    "when": "resourceExtname == .md"
                 }
             ]
         },

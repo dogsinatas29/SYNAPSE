@@ -8,6 +8,9 @@
 [![Latest Release](https://img.shields.io/badge/latest-v0.3.22.10%20Rendering%20Parity-orange.png)](https://github.com/dogsinatas29/SYNAPSE/releases)
 ![Status](https://img.shields.io/badge/status-Production_Ready-brightgreen.png)
 
+[🇺🇸 English Version](./README.md)
+
+
 ---
 
 ## 💡 SYNAPSE란 무엇인가요?

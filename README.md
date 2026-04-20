@@ -155,8 +155,7 @@ Select **"Lite Bootstrap"** to automatically discover your project architecture.
 
 Extract only the connections up to N steps from a specific node to focus on the **Local Context** in a complex global graph.
 
-![Focus View Demo](./resources/screenshots/v0.3.22/focus_view.png)
-*Focus View (N=1) isolating node C and its immediate neighbors.*
+
 
 ### Example
 

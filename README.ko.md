@@ -161,8 +161,7 @@ code --install-extension synapse-visual-architecture-v0.3.22.10.vsix
 
 특정 노드를 기준으로 N단계까지의 연결만 추출하여 복잡한 전체 그래프에서 **국소 구조(Local Context)**만 집중적으로 분석할 수 있습니다.
 
-![Focus View Demo](./resources/screenshots/v0.3.22/focus_view.png)
-*중심 노드 C와 직접 연결된 이웃들(N=1)만 고립시켜 분석하는 화면.*
+
 
 ### 예시 (Example)
 

@@ -151,10 +151,15 @@ Select **"Lite Bootstrap"** to automatically discover your project architecture.
 
 ---
 
-## 🔍 Focus View (N-hop)
+## 🔍 Semantic Analysis & Layer Visibility
 
-Extract only the connections up to N steps from a specific node to focus on the **Local Context** in a complex global graph.
+SYNAPSE provides powerful semantic filters to analyze massive graphs by controlling layer visibility and isolating critical logic paths.
 
+| 1. Default View | 2. Hide Lead (Noise Reduction) |
+| :---: | :---: |
+| ![Default View](assets/v0.3.22/synapse_default_view.png) | ![Hide Lead](assets/v0.3.22/synapse_hide_lead.png) |
+| **3. Focus Top Nodes (N-hop)** | **4. Traffic Heatmap (Beta)** |
+| ![Focus Top](assets/v0.3.22/synapse_focus_top.png) | ![Traffic Heatmap](assets/v0.3.22/synapse_traffic_heatmap.png) |
 
 
 ### Example

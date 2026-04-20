@@ -157,10 +157,15 @@ code --install-extension synapse-visual-architecture-v0.3.22.10.vsix
 
 ---
 
-## 🔍 포커스 뷰 (Focus View, N-hop)
+## 🔍 시맨틱 분석 및 레이어 가시성 (Semantic Analysis)
 
-특정 노드를 기준으로 N단계까지의 연결만 추출하여 복잡한 전체 그래프에서 **국소 구조(Local Context)**만 집중적으로 분석할 수 있습니다.
+SYNAPSE는 대규모 그래프를 효율적으로 분석하기 위해 레이어 가시성을 제어하고 핵심 로직 경로를 고립시키는 강력한 시맨틱 필터를 제공합니다.
 
+| 1. 기본 화면 | 2. Hide Lead (노이즈 제거) |
+| :---: | :---: |
+| ![기본 화면](assets/v0.3.22/synapse_default_view.png) | ![Hide Lead](assets/v0.3.22/synapse_hide_lead.png) |
+| **3. 포커스 탑 노드 (Focus Top-N)** | **4. 트래픽 히트맵 (Traffic Heatmap)** |
+| ![Focus Top](assets/v0.3.22/synapse_focus_top.png) | ![Traffic Heatmap](assets/v0.3.22/synapse_traffic_heatmap.png) |
 
 
 ### 예시 (Example)

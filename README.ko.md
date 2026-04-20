@@ -34,7 +34,7 @@ SYNAPSE는 실행 흐름과 구조를 인터랙티브 그래프로 투영하여,
 ![Interaction Demo](assets/synapse_feature_demo.webp)
 *줌 인/아웃, 레이어 가시성 제어, 트래픽 히트맵 시연 영상.*
 
-![Zoom Detail Demo](assets/synapse_zoom_detail.mp4)
+![Zoom Detail Demo](assets/synapse_zoom_detail.webp)
 *상세 줌 인 시연 (아이콘, 배지 및 툴팁 가시성).*
 
 ![Topology View](assets/v0.3.21/synapse_topology_v0.3.21.png)

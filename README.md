@@ -34,7 +34,7 @@ SYNAPSE transforms "reading code" into "seeing architecture" by projecting execu
 ![Interaction Demo](assets/synapse_feature_demo.webp)
 *Zoom, Layer Visibility, and Traffic Heatmap demonstration.*
 
-![Zoom Detail Demo](assets/synapse_zoom_detail.mp4)
+![Zoom Detail Demo](assets/synapse_zoom_detail.webp)
 *Deep Zoom detail showing icons, badges, and tooltips.*
 
 ![Topology View](assets/v0.3.21/synapse_topology_v0.3.21.png)

@@ -2693,7 +2693,15 @@ export class CanvasPanel {
             vscode.Uri.joinPath(this._extensionUri, 'ui', 'webgl-renderer.js')
         );
 
+        const themeUri = webview.asWebviewUri(
+            vscode.Uri.joinPath(this._extensionUri, 'ui', 'synapse-theme.js')
+        );
+
         // Replace script src with webview URI
+        html = html.replace(
+            'src="synapse-theme.js"',
+            `src="${themeUri}"`
+        );
         html = html.replace(
             'src="canvas-engine.js"',
             `src="${scriptUri}"`

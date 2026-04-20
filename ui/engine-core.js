@@ -172,9 +172,9 @@ function calculateFrameHash(frameState) {
 function getBootstrapTestData() {
     return {
         nodes: [
-            { id: 'node_1', position: { x: 100, y: 100 }, data: { label: 'Core A', type: 'source', color: '#83a598' } },
-            { id: 'node_2', position: { x: 300, y: 150 }, data: { label: 'Logic B', type: 'logic', color: '#fabd2f' } },
-            { id: 'node_3', position: { x: 200, y: 300 }, data: { label: 'Data C', type: 'data', color: '#8ec07c' } }
+            { id: 'node_1', position: { x: 100, y: 100 }, data: { label: 'Core A', type: 'source' } },
+            { id: 'node_2', position: { x: 300, y: 150 }, data: { label: 'Logic B', type: 'logic' } },
+            { id: 'node_3', position: { x: 200, y: 300 }, data: { label: 'Data C', type: 'data' } }
         ],
         edges: [
             { id: 'edge_1_2', from: 'node_1', to: 'node_2' },

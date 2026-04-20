@@ -392,8 +392,10 @@ class FlowRenderer {
 
                 // 여백 추가
                 const pad = 30;
-                ctx.fillStyle = 'rgba(250, 189, 47, 0.03)';
-                ctx.strokeStyle = 'rgba(250, 189, 47, 0.4)';
+                const theme = (typeof SYNAPSE_THEME !== 'undefined') ? SYNAPSE_THEME : null;
+
+                ctx.fillStyle = theme ? theme.FLOW.GROUP.bg : 'rgba(250, 189, 47, 0.03)';
+                ctx.strokeStyle = theme ? theme.FLOW.GROUP.border : 'rgba(250, 189, 47, 0.4)';
                 ctx.lineWidth = 1;
                 ctx.setLineDash([6, 4]);
 
@@ -408,7 +410,7 @@ class FlowRenderer {
                 ctx.setLineDash([]); // reset
 
                 // 그룹 라벨 타이틀
-                ctx.fillStyle = 'rgba(250, 189, 47, 0.8)';
+                ctx.fillStyle = theme ? theme.FLOW.GROUP.text : 'rgba(250, 189, 47, 0.8)';
                 ctx.font = 'bold 12px Inter, Monospace';
                 ctx.textAlign = 'left';
                 ctx.fillText(`[ ${prefix.toUpperCase()} GROUP ]`, minX - pad + 5, minY - pad - 8);
@@ -469,11 +471,12 @@ class FlowRenderer {
     }
 
     renderStep(ctx, step, x, y) {
+        const theme = (typeof SYNAPSE_THEME !== 'undefined') ? SYNAPSE_THEME : null;
         const width = 220;
         const height = 65;
 
         if (step.type === 'terminal') {
-            ctx.fillStyle = '#b8bb26';
+            ctx.fillStyle = theme.FLOW.TERMINAL.bg;
             ctx.beginPath();
             if (ctx.roundRect) {
                 ctx.roundRect(x - 80, y - 30, 160, 60, 30);
@@ -481,7 +484,7 @@ class FlowRenderer {
                 ctx.rect(x - 80, y - 30, 160, 60);
             }
             ctx.fill();
-            ctx.fillStyle = '#1d2021';
+            ctx.fillStyle = theme.FLOW.TERMINAL.text;
             ctx.font = 'bold 16px Monospace';
             ctx.textAlign = 'center';
             ctx.fillText(step.label, x, y + 6);
@@ -489,13 +492,13 @@ class FlowRenderer {
         }
 
         if (step.type === 'process') {
-            ctx.fillStyle = '#3c3836';
+            ctx.fillStyle = theme.FLOW.PROCESS.bg;
             ctx.fillRect(x - width / 2, y - height / 2, width, height);
-            ctx.strokeStyle = '#ebdbb2';
+            ctx.strokeStyle = theme.FLOW.PROCESS.border;
             ctx.lineWidth = 2;
             ctx.strokeRect(x - width / 2, y - height / 2, width, height);
         } else if (step.type === 'decision') {
-            ctx.fillStyle = '#1d2021'; // 다크 바디
+            ctx.fillStyle = theme.FLOW.DECISION.bg;
             ctx.beginPath();
             ctx.moveTo(x, y - height / 2 - 15);
             ctx.lineTo(x + width / 2 + 30, y);
@@ -504,17 +507,17 @@ class FlowRenderer {
             ctx.closePath();
             ctx.fill();
 
-            ctx.strokeStyle = '#fabd2f'; // Gold Border
+            ctx.strokeStyle = theme.FLOW.DECISION.border;
             ctx.lineWidth = 3;
             ctx.stroke();
 
             // 상단 작은 텍스트로 타입 표시
-            ctx.fillStyle = '#fabd2f';
+            ctx.fillStyle = theme.FLOW.DECISION.text;
             ctx.font = 'bold 10px Inter, sans-serif';
             ctx.fillText('DECISION', x, y - height / 2 - 2);
         }
 
-        ctx.fillStyle = '#ebdbb2';
+        ctx.fillStyle = theme.COLORS.TEXT;
         ctx.font = '14px Inter, sans-serif';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
@@ -536,31 +539,30 @@ class FlowRenderer {
     renderConnection(ctx, x1, y1, x2, y2, label, type, isHighlighted = false) {
         const isLoop = type === 'loop_back' || y2 < y1;
         const arrowSize = 10;
+        const theme = (typeof SYNAPSE_THEME !== 'undefined') ? SYNAPSE_THEME : (window.SYNAPSE_THEME || null);
 
-        // Semantic Colors
-        let strokeColor = '#665c54'; // Default
-        let lineWidth = isLoop ? 3 : 2;
-        let dash = [];
-
-        if (type === 'api_call') {
-            strokeColor = '#8ec07c'; // Aqua/Cyan
-            dash = [4, 4];
-        } else if (type === 'db_query') {
-            strokeColor = '#d3869b'; // Magenta
-            lineWidth = 3;
-        } else if (isLoop) {
-            strokeColor = '#fe8019'; // Orange
-        }
+        // [v0.3.22] Unified Edge Style Resolution (Delegated to Theme)
+        const edgeStyle = theme ? (theme.getEdgeStyle ? theme.getEdgeStyle(type) : { color: '#665c54', thickness: 2, dash: [] }) : { color: '#665c54', thickness: 2, dash: [] };
+        
+        let strokeColor = edgeStyle.color; 
+        let lineWidth = isLoop ? (edgeStyle.thickness + 1) : edgeStyle.thickness;
+        let dash = edgeStyle.dash || [];
 
         if (isHighlighted) {
-            strokeColor = '#fabd2f'; // Highlight color
-            lineWidth += 5; // [v0.2.16] Dramatically increased thickness (+2 -> +5)
+            strokeColor = (theme && theme.FLOW?.CONNECTION) ? theme.FLOW.CONNECTION.HIGHLIGHT : '#fabd2f';
+            lineWidth += 5; 
             // 펄스 애니메이션 적용
             if (this.engine.isAnimating) {
-                ctx.shadowBlur = 15 + 5 * Math.sin(Date.now() / 200);
-                ctx.shadowColor = strokeColor;
+                const theme = (typeof SYNAPSE_THEME !== 'undefined') ? SYNAPSE_THEME : null;
+                const baseBlur = theme ? theme.GLOW.BASE_BLUR : 15;
+                const pulseRange = theme ? theme.GLOW.PULSE_RANGE : 5;
+                const pulseSpeed = theme ? theme.GLOW.PULSE_SPEED : 200;
+                const multiplier = theme ? theme.ANIMATION.DASH_OFFSET_MULTIPLIER : 2.5;
+                
+                this.ctx.shadowBlur = baseBlur + pulseRange * Math.sin(Date.now() / pulseSpeed);
+                this.ctx.shadowColor = strokeColor;
                 dash = [12, 6];
-                ctx.lineDashOffset = -this.engine.animationOffset * 2.5;
+                ctx.lineDashOffset = -this.engine.animationOffset * multiplier;
             }
         }
 
@@ -628,7 +630,7 @@ class FlowRenderer {
             // 라벨 배치
             if (label) {
                 ctx.save();
-                ctx.fillStyle = label === 'YES' ? '#b8bb26' : (label === 'NO' ? '#fb4934' : '#fabd2f');
+                ctx.fillStyle = label === 'YES' ? theme.COLORS.SUCCESS : (label === 'NO' ? theme.COLORS.ERROR : theme.COLORS.HIGHLIGHT);
                 ctx.font = 'bold 12px Inter, sans-serif';
                 ctx.shadowBlur = 4;
                 ctx.shadowColor = 'rgba(0,0,0,0.5)';
@@ -836,7 +838,7 @@ class TreeRenderer {
             }
         }
 
-        ctx.fillStyle = '#fabd2f';
+        ctx.fillStyle = theme ? theme.COLORS.HIGHLIGHT : '#fabd2f';
         ctx.font = '14px Inter, sans-serif';
         
         if (item.type === 'folder') {
@@ -1071,19 +1073,25 @@ class CanvasEngine {
         // [v0.3.17] Node Summary Tooltip
         this.nodeSummary = document.createElement('div');
         this.nodeSummary.id = 'node-summary-tooltip';
-        this.nodeSummary.style.position = 'fixed';
-        this.nodeSummary.style.background = 'rgba(40, 40, 40, 0.95)';
-        this.nodeSummary.style.border = '1px solid #b8bb26';
-        this.nodeSummary.style.borderRadius = '4px';
-        this.nodeSummary.style.padding = '8px 12px';
-        this.nodeSummary.style.color = '#ebdbb2';
-        this.nodeSummary.style.fontSize = '12px';
-        this.nodeSummary.style.pointerEvents = 'none';
-        this.nodeSummary.style.display = 'none';
-        this.nodeSummary.style.zIndex = '10002';
-        this.nodeSummary.style.fontFamily = "'Fira Code', monospace";
-        this.nodeSummary.style.lineHeight = '1.6';
-        this.nodeSummary.style.boxShadow = '0 6px 16px rgba(0,0,0,0.6)';
+        this.nodeSummary.style.cssText = `
+            position: fixed;
+            background: rgba(40, 40, 40, 0.98);
+            border: 1px solid #fabd2f;
+            color: #ebdbb2;
+            padding: 12px;
+            border-radius: 4px;
+            font-family: 'Inter', sans-serif;
+            font-size: 11px;
+            pointer-events: none;
+            z-index: 30000;
+            display: none;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.6);
+            min-width: 180px;
+            max-width: 320px;
+            word-wrap: break-word;
+            white-space: normal;
+            line-height: 1.4;
+        `;
         document.body.appendChild(this.nodeSummary);
 
 
@@ -1178,7 +1186,9 @@ class CanvasEngine {
                 this.hideLeafNodes = !this.hideLeafNodes;
                 btnToggleLeaf.textContent = this.hideLeafNodes ? 'ON' : 'OFF';
                 btnToggleLeaf.classList.toggle('active', this.hideLeafNodes);
-                this.needsUpdate = true;
+                this.isGraphDataDirty = true; // [v0.3.22.2] Force cache refresh for WebGL parity
+                this.isDirty = true;
+                this.render();
             });
         }
 
@@ -1189,7 +1199,9 @@ class CanvasEngine {
                 this.focusTopNodes = !this.focusTopNodes;
                 btnToggleFocus.textContent = this.focusTopNodes ? 'ON' : 'OFF';
                 btnToggleFocus.classList.toggle('active', this.focusTopNodes);
-                this.needsUpdate = true; 
+                this.isGraphDataDirty = true; // [v0.3.22.2] Force cache refresh for WebGL parity
+                this.isDirty = true;
+                this.render();
                 console.log('[SYNAPSE] Focus Top Nodes Mode:', this.focusTopNodes);
             });
         }
@@ -1412,7 +1424,7 @@ class CanvasEngine {
             }
 
             if (this.isEditMode) {
-                this.canvas.style.boxShadow = 'inset 0 0 20px #fb4934';
+                this.canvas.style.boxShadow = `inset 0 0 20px ${theme.COLORS.ERROR}`;
                 if (_btnAddNode) _btnAddNode.style.display = 'block';
                 if (_btnConnect) _btnConnect.style.display = 'block';
             } else {
@@ -2316,8 +2328,16 @@ class CanvasEngine {
                     if (node) {
                         const stats = this.nodeStatsMap.get(node.id);
                         if (stats) {
-                            this.showNodeSummary(e.clientX, e.clientY, node, stats);
+                            // [v0.3.22.9] Senior's Prescription: 100ms Debounce to prevent 
+                            // race conditions with Batch Validation and Flow Data refresh.
+                            if (this._tooltipTimer) clearTimeout(this._tooltipTimer);
+                            this._tooltipTimer = setTimeout(() => {
+                                const screenX = e.clientX;
+                                const screenY = e.clientY;
+                                this.showNodeSummary(screenX, screenY, node, stats);
+                            }, 100);
                         } else {
+                            if (this._tooltipTimer) clearTimeout(this._tooltipTimer);
                             this.hideNodeSummary();
                         }
                     } else {
@@ -2957,12 +2977,14 @@ class CanvasEngine {
             deleteItem.style.display = 'block';
 
             // Context-aware label
+            const theme = (typeof SYNAPSE_THEME !== 'undefined') ? SYNAPSE_THEME : null;
+            const deleteIcon = theme ? theme.STATUS.DELETED.icon : '❌';
             if (this.selectedEdge) {
-                deleteItem.textContent = '❌ Delete Edge';
+                deleteItem.textContent = `${deleteIcon} Delete Edge`;
             } else if (this.selectedNodes.size > 1) {
-                deleteItem.textContent = `❌ Delete ${this.selectedNodes.size} Nodes`;
+                deleteItem.textContent = `${deleteIcon} Delete ${this.selectedNodes.size} Nodes`;
             } else {
-                deleteItem.textContent = '❌ Delete Node';
+                deleteItem.textContent = `${deleteIcon} Delete Node`;
             }
 
             deleteItem.onclick = () => {
@@ -2993,8 +3015,9 @@ class CanvasEngine {
      * @returns {Object} { valid: boolean, color: string, reason: string }
      */
     validateEdge(edge, sourceNode, targetNode) {
+        const theme = (typeof SYNAPSE_THEME !== 'undefined') ? SYNAPSE_THEME : null;
         if (!sourceNode || !targetNode) {
-            return { valid: true, color: edge.visual?.color || '#83a598', reason: 'Unknown nodes' };
+            return { valid: true, color: edge.visual?.color || (theme ? theme.EDGES.DEPENDENCY.color : '#83a598'), reason: 'Unknown nodes' };
         }
 
         // 파일 확장자 추출
@@ -3134,22 +3157,21 @@ class CanvasEngine {
         menu.style.color = '#ebdbb2';
         menu.style.boxShadow = '0 4px 12px rgba(0,0,0,0.5)';
 
-        const types = [
-            { label: '🔗 Dependency', type: 'dependency', color: '#83a598' },
-            { label: '📞 Call', type: 'call', color: '#b8bb26' },
-            { label: '📊 Data Flow', type: 'data_flow', color: '#fabd2f' },
-            { label: '📝 Reference', type: 'reference', color: '#b8bb26' },
-            { label: '↔️ Bidirectional', type: 'bidirectional', color: '#d3869b' }
+        const theme = (typeof SYNAPSE_THEME !== 'undefined') ? SYNAPSE_THEME : null;
+        const options = [
+            { label: `${theme ? theme.EDGES.DEPENDENCY.icon : '🔗'} Dependency`, type: 'dependency', color: theme ? theme.EDGES.DEPENDENCY.color : '#83a598' },
+            { label: `${theme ? theme.EDGES.DATA_FLOW.icon : '📊'} Data Flow`, type: 'data_flow', color: theme ? theme.EDGES.DATA_FLOW.color : '#fabd2f' },
+            { label: `${theme ? theme.EDGES.REFERENCE.icon : '📝'} Reference`, type: 'reference', color: theme ? theme.EDGES.REFERENCE.color : '#b8bb26' },
         ];
 
-        types.forEach(t => {
+        options.forEach(t => {
             const item = document.createElement('div');
             item.textContent = t.label;
             item.style.padding = '6px 12px';
             item.style.cursor = 'pointer';
             item.style.borderRadius = '4px';
             item.style.transition = 'background 0.2s';
-            item.onmouseenter = () => item.style.background = '#504945';
+            item.onmouseenter = () => item.style.background = theme.UI.MENU.hover;
             item.onmouseleave = () => item.style.background = 'transparent';
             item.onclick = () => {
                 this.createManualEdge(t.type, t.color);
@@ -3320,15 +3342,14 @@ class CanvasEngine {
         menu.style.color = '#ebdbb2';
         menu.style.boxShadow = '0 4px 12px rgba(0,0,0,0.5)';
 
-        const types = [
-            { label: '🔗 Dependency', type: 'dependency', color: '#83a598' },
-            { label: '📞 Call', type: 'call', color: '#b8bb26' },
-            { label: '📊 Data Flow', type: 'data_flow', color: '#fabd2f' },
-            { label: '📝 Reference', type: 'reference', color: '#b8bb26' },
-            { label: '↔️ Bidirectional', type: 'bidirectional', color: '#d3869b' }
+        const theme = (typeof SYNAPSE_THEME !== 'undefined') ? SYNAPSE_THEME : null;
+        const options = [
+            { label: `${theme ? theme.EDGES.DEPENDENCY.icon : '🔗'} Dependency`, type: 'dependency', color: theme ? theme.EDGES.DEPENDENCY.color : '#83a598' },
+            { label: `${theme ? theme.EDGES.DATA_FLOW.icon : '📊'} Data Flow`, type: 'data_flow', color: theme ? theme.EDGES.DATA_FLOW.color : '#fabd2f' },
+            { label: `${theme ? theme.EDGES.REFERENCE.icon : '📝'} Reference`, type: 'reference', color: theme ? theme.EDGES.REFERENCE.color : '#b8bb26' },
         ];
 
-        types.forEach(t => {
+        options.forEach(t => {
             const item = document.createElement('div');
             item.textContent = t.label;
             item.style.padding = '6px 12px';
@@ -4120,10 +4141,43 @@ class CanvasEngine {
         return { roles, hints, priority };
     }
 
+    getTheme() {
+        return (typeof SYNAPSE_THEME !== 'undefined') ? SYNAPSE_THEME : (window.SYNAPSE_THEME || null);
+    }
+
     showNodeSummary(x, y, node, stats) {
-        if (!this.nodeSummary) return;
+        // [v0.3.22.9] Diagnostic position trace
+        if (x < 50 && y < 50) {
+            console.warn(`[SYNAPSE] Tooltip Position Warning: (${x}, ${y}) - Attempting auto-correction`);
+        }
+        console.log(`[SYNAPSE] Tooltip Node=${node.id}, CalcPos=(${Math.round(x)}, ${Math.round(y)})`);
+        if (!node || !this.nodeSummary) return;
+
+        // [v0.3.22.9] Define nodeName for the tooltip header
+        const nodeName = node.data?.label || (node.id.includes('/') ? node.id.split('/').pop() : node.id);
+
+        const getStem = (id) => {
+            if (!id || typeof id !== 'string') return '';
+            const parts = id.includes('/') ? id.split('/') : [id];
+            const lastPart = parts[parts.length - 1];
+            return lastPart.split('.')[0].toLowerCase();
+        };
+
+        if (!stats) {
+            stats = this.nodeStatsMap.get(node.id);
+            if (!stats) {
+                const stem = getStem(node.id);
+                stats = Array.from(this.nodeStatsMap.values()).find(s => getStem(s.id) === stem);
+            }
+        }
+
+        // [v0.3.22.9] Emergency Fallback: Even without stats, show basic node identity
+        if (!stats) {
+            stats = { id: node.id, connectedNodes: 0, in: 0, out: 0, distribution: {} };
+        }
         
-        const nodeName = node.data?.label || node.id;
+        // Ensure tooltip is visible
+        this.nodeSummary.style.display = 'block';
         const nodes = this.nodes || [];
         const clusters = this.clusters || [];
         const clusterLayerMap = new Map();
@@ -4135,26 +4189,46 @@ class CanvasEngine {
         const groupDetails = {};
         const nodeMap = new Map(nodes.map(n => [n.id, n]));
         
-        // Also build a stem-based map for ID matching resilience (v0.3.20.1)
+        // [v0.3.22.9] Ultra-Resilient Stem-based ID Extraction helper
         const stemMap = new Map();
+
         nodes.forEach(n => {
-            const stem = n.id.includes('/') ? n.id.split('/').pop().split('.')[0] : n.id.split('.')[0];
-            if (!stemMap.has(stem)) stemMap.set(stem, n);
+            const stem = getStem(n.id);
+            if (stem && !stemMap.has(stem)) stemMap.set(stem, n);
         });
 
-        stats.connected.forEach(targetId => {
-            // [v0.3.20.1] Resilient lookup: Primary ID -> Stem ID
+        const myId = stats.id;
+        const myStem = getStem(myId);
+        
+        const nodeEdges = (this.edges || []).filter(e => {
+            if (!e.from || !e.to) return false;
+            // Robust match: Exact ID first, then Stem
+            const fromMatch = (e.from === myId || getStem(e.from) === myStem);
+            const toMatch = (e.to === myId || getStem(e.to) === myStem);
+            return fromMatch || toMatch;
+        });
+
+        nodeEdges.forEach(e => {
+            const isOut = (e.from === myId || getStem(e.from) === myStem);
+            const targetId = isOut ? e.to : e.from;
+            
+            // Try to find target node object for grouping
             let targetNode = nodeMap.get(targetId);
-            if (!targetNode && typeof targetId === 'string') {
-                const stem = targetId.includes('/') ? targetId.split('/').pop().split('.')[0] : targetId.split('.')[0];
-                targetNode = stemMap.get(stem);
+            if (!targetNode) {
+                const stem = getStem(targetId);
+                targetNode = Array.from(nodeMap.values()).find(n => getStem(n.id) === stem);
             }
 
-            if (targetNode) {
-                const group = this.getSemanticGroup(targetNode);
-                if (!groupDetails[group]) groupDetails[group] = [];
-                const label = targetNode.data?.label || targetNode.id.split('/').pop();
-                groupDetails[group].push(label);
+            const group = targetNode ? this.getSemanticGroup(targetNode) : 'unmapped';
+            if (!groupDetails[group]) groupDetails[group] = [];
+            
+            // [v0.3.22.9] Senior's Prescription: Bind Icon + Label
+            const icon = targetNode ? this.getTheme().getNodeIcon(targetNode.type, targetNode.data?.fileName || '') : '📄';
+            const name = targetNode ? (targetNode.data?.label || getStem(targetNode.id)) : getStem(targetId);
+            const label = `${icon} ${name}`;
+            
+            if (name) {
+                if (!groupDetails[group].includes(label)) groupDetails[group].push(label);
             }
         });
 
@@ -4175,12 +4249,27 @@ class CanvasEngine {
 
         const stars = '★'.repeat(priority) + '☆'.repeat(4 - priority);
 
-        const distHtml = distributionEntries.length > 0 ? `
+        // [v0.3.22.9] Senior's Prescription: LOD Guard
+        // Only show detailed lists if zoom level > 0.4 (Detail View)
+        const isDetailView = (this.transform?.zoom || 1.0) > 0.4;
+
+        const distHtml = (distributionEntries.length > 0 && isDetailView) ? `
             <div style="margin-top: 10px; border-top: 1px solid #504945; padding-top: 6px;">
-                <div style="font-size: 10px; color: #928374; text-transform: uppercase; margin-bottom: 4px;">Top Connections:</div>
+                <div style="font-size: 10px; color: #928374; text-transform: uppercase; margin-bottom: 4px; display: flex; justify-content: space-between;">
+                    <span>Top Connections:</span>
+                    ${window.engine?.isBatchValidating ? '<span style="color: #fe8019; font-style: italic; font-size: 9px;">📡 Validating...</span>' : ''}
+                </div>
                 ${distributionEntries.map(([group, count]) => {
-                    const topNodes = groupDetails[group] ? groupDetails[group].slice(0, 3).join(', ') : '';
-                    const more = groupDetails[group] && groupDetails[group].length > 3 ? '...' : '';
+                    let representatives = groupDetails[group] || [];
+                    
+                    // [v0.3.22.9] Senior's Prescription: ensureAggregation()
+                    // If count > 0 but representatives is empty, identity is lost. Fallback to indexing.
+                    if (representatives.length === 0 && count > 0) {
+                        representatives = [`(Unknown: ${count} nodes)`];
+                    }
+
+                    const topNodes = representatives.slice(0, 3).join(', ');
+                    const more = representatives.length > 3 ? '...' : '';
                     return `
                         <div style="margin-bottom: 5px;">
                             <div style="display: flex; justify-content: space-between; font-size: 11px;">
@@ -4231,15 +4320,30 @@ class CanvasEngine {
             ${distHtml}
         `;
         
+        // [v0.3.22.9] Forced display enforcement BEFORE positioning to ensure rect calculation is valid
         this.nodeSummary.style.display = 'block';
-        if (this.tooltip) this.tooltip.style.display = 'none';
+        this.nodeSummary.style.opacity = '1';
+        this.nodeSummary.style.visibility = 'visible';
 
         const rect = this.nodeSummary.getBoundingClientRect();
         let left = x + 20;
         let top = y + 20;
-        if (left + rect.width > window.innerWidth) left = x - rect.width - 20;
-        if (top + rect.height > window.innerHeight) top = y - rect.height - 20;
 
+        // Viewport clamping logic
+        if (left + rect.width > window.innerWidth) {
+            left = x - rect.width - 20;
+        }
+        if (top + rect.height > window.innerHeight) {
+            top = y - rect.height - 20;
+        }
+
+        // Safety clamp to prevent negative coordinates
+        left = Math.max(10, left);
+        top = Math.max(10, top);
+
+        // Ensure no external styles interfere with positioning
+        this.nodeSummary.style.margin = '0';
+        this.nodeSummary.style.transform = 'none';
         this.nodeSummary.style.left = `${left}px`;
         this.nodeSummary.style.top = `${top}px`;
     }
@@ -5144,7 +5248,9 @@ class CanvasEngine {
         if (this.isAnimating || this.isTestingLogic || this.isAligning) {
             const hasActivity = this._isInteracting || this.isDragging || (this.particles?.length || 0) > 0;
             if (hasActivity || (this._frameCounter % 2 === 0)) { // Half-rate if idle
-                this.animationOffset = (this.animationOffset + 0.5) % 40;
+                const theme = (typeof SYNAPSE_THEME !== 'undefined') ? SYNAPSE_THEME : null;
+                const speed = theme ? theme.ANIMATION.EDGE_FLOW_SPEED : 0.5;
+                this.animationOffset = (this.animationOffset + speed) % 40;
             }
             if (this.isTestingLogic && (this.edges?.length || 0) > 0) {
                 if (Math.random() < 0.05 && (this.pulses?.length || 0) < 20) {
@@ -5297,6 +5403,18 @@ class CanvasEngine {
                                 // If user layer is hidden, and node IS user logic, skip.
                                 if (isUser && !this.showUserLayer) return false;
 
+                                // [v0.3.22.2] Noise Control: Hide Leaf Nodes (WebGL Parity)
+                                if (this.hideLeafNodes) {
+                                    const stats = this.nodeStatsMap.get(n.id);
+                                    if (stats && stats.primaryRole === 'Leaf node') return false;
+                                }
+
+                                // [v0.3.22.2] Strategic Visibility: Top-N Focus View (WebGL Parity)
+                                if (this.focusTopNodes) {
+                                    const isEssential = this.selectedNodes.has(n.id) || (this.hoveredNode && this.hoveredNode.id === n.id);
+                                    if (!this.focusNodeSet.has(n.id) && !isEssential) return false;
+                                }
+
                                 // [v0.2.27] Sync: Skip nodes in collapsed clusters (matches 2D behavior)
                                 const clusterId = n.cluster_id || n.data?.cluster_id;
                                 if (clusterId) {
@@ -5330,24 +5448,43 @@ class CanvasEngine {
                             selectedIds
                         );
 
-                        // [v0.3.21] 🚀 Hybrid Rendering Upgrade: Render Node & Edge Badges on 2D ctx ON TOP of WebGL
-                        this.ctx.save();
-                        this.ctx.setTransform(this.transform.zoom * dpr, 0, 0, this.transform.zoom * dpr, this.transform.offsetX * dpr, this.transform.offsetY * dpr);
-                        
-                        // 1. Edge Badges (Types & Status)
-                        for (const edge of this._visibleEdgesCache) {
-                            this.renderEdgeBadges(this.ctx, edge, edge.lastCPX, edge.lastCPY);
-                        }
+                        // [v0.3.22] 🚀 Hybrid Rendering Upgrade: Render Node & Edge Badges on 2D Overlay
+                        const overlayCtx = overlay.getContext('2d');
+                        if (overlayCtx) {
+                            overlayCtx.clearRect(0, 0, overlay.width, overlay.height);
+                            const projectedPosMap = this.webglRenderer.getProjectedNodePositions(this._visibleNodesCache, this.transform);
+                            const dpr = window.devicePixelRatio || 1;
 
-                        // 2. Node Badges (Approval, Locked, Hazard)
-                        // These are critical architectural markers that WebGL currently skips
-                        for (const node of this._visibleNodesCache) {
-                            if (node.position) {
-                                this.renderNodeBadges(node, node.position.x, node.position.y, this.transform.zoom);
+                             for (const edge of this._visibleEdgesCache) {
+                                 try {
+                                     // [v0.3.22] Project edge midpoint for 3D alignment
+                                     const src = this.nodeMap.get(edge.from);
+                                     const tgt = this.nodeMap.get(edge.to);
+                                     if (src && tgt && src.position && tgt.position) {
+                                         const midX = (src.position.x + tgt.position.x) / 2;
+                                         const midY = (src.position.y + tgt.position.y) / 2;
+                                         const projectedMidX = midX * this.transform.zoom + this.transform.offsetX;
+                                         const projectedMidY = midY * this.transform.zoom + this.transform.offsetY;
+                                         
+                                         // Use screen space (overlayCtx without transform)
+                                         this.renderEdgeBadges(overlayCtx, edge, undefined, undefined, projectedMidX / dpr, projectedMidY / dpr);
+                                     }
+                                 } catch (e) {
+                                     console.error(`[SYNAPSE] Hybrid Edge Badge render error:`, e);
+                                 }
+                             }
+
+                            for (const node of this._visibleNodesCache) {
+                                const pos = projectedPosMap.get(node.id);
+                                if (pos) {
+                                    try {
+                                        this.renderNodeBadges(node, pos.x / dpr, pos.y / dpr, this.transform.zoom, overlayCtx);
+                                    } catch (e) {
+                                        console.error(`[SYNAPSE] Hybrid Node Badge render error:`, e);
+                                    }
+                                }
                             }
                         }
-                        
-                        this.ctx.restore();
 
                         this.isGraphDataDirty = false;
                         this.isEdgeDirty = false;
@@ -5455,9 +5592,8 @@ class CanvasEngine {
 
     renderEdges2D() {
         const zoom = this.transform.zoom;
-        // [v0.3.20] Allow extreme zoom levels to still show edges with simplified rendering
-        // using a lower threshold. This avoids a blank-edges state where only validation icons appear.
-        if (zoom <= 0.15) return;
+        // [v0.3.22] Synchronized Visibility Floor with WebGL (0.05)
+        if (zoom <= 0.05) return;
 
         const offsetX = this.transform.offsetX;
         const offsetY = this.transform.offsetY;
@@ -5712,18 +5848,6 @@ class CanvasEngine {
             this.isGraphDataDirty = true; // [v0.2.27] Sync WebGL visibility
             this.render();
             this.saveState();
-        }
-    }
-
-    renameCluster(clusterId) {
-        const cluster = this.clusters.find(c => c.id === clusterId);
-        if (cluster) {
-            const newName = prompt("Rename group:", cluster.label);
-            if (newName !== null && newName.trim() !== "") {
-                cluster.label = newName;
-                this.render();
-                this.saveState();
-            }
         }
     }
 
@@ -6238,7 +6362,9 @@ class CanvasEngine {
         if (zoom < 0.2) return; // 너무 작으면 그리드 생략
 
         this.ctx.beginPath();
-        this.ctx.strokeStyle = '#333333'; // Contrast increase
+        const theme = (typeof SYNAPSE_THEME !== 'undefined') ? SYNAPSE_THEME : null;
+        const gridColor = (theme && theme.COLORS && theme.COLORS.GRID) ? theme.COLORS.GRID : '#333333';
+        this.ctx.strokeStyle = gridColor;
         this.ctx.lineWidth = Math.max(1 / zoom, 0.5);
 
         // 화면 영역 계산 (CSS 픽셀 단위 기준)
@@ -6268,7 +6394,26 @@ class CanvasEngine {
      * Visualizes connection density between clusters using weighted arcs.
      */
     renderTrafficHeatmap() {
-        if (!this.showHeatmap || !this.clusterFlows || this.clusterFlows.length === 0) return;
+        if (!this.showHeatmap) return;
+
+        // [v0.3.22.2] Dynamic Heatmap Calculation (if project data is missing)
+        if (!this.clusterFlows || this.clusterFlows.length === 0) {
+            const flows = new Map();
+            this.edges.forEach(e => {
+                const srcNode = this.nodeMap.get(e.from);
+                const tgtNode = this.nodeMap.get(e.to);
+                if (srcNode && tgtNode && srcNode.cluster_id && tgtNode.cluster_id && srcNode.cluster_id !== tgtNode.cluster_id) {
+                    const key = `${srcNode.cluster_id}->${tgtNode.cluster_id}`;
+                    flows.set(key, (flows.get(key) || 0) + 1);
+                }
+            });
+            this.clusterFlows = Array.from(flows.entries()).map(([key, count]) => {
+                const [source, target] = key.split('->');
+                return { source, target, count };
+            });
+        }
+
+        if (this.clusterFlows.length === 0) return;
 
         const ctx = this.ctx;
         ctx.save();
@@ -6298,7 +6443,8 @@ class CanvasEngine {
 
                 // Heatmap logic: intensity based on count
                 const intensity = Math.min(flow.count / 20, 1.0);
-                const color = intensity > 0.7 ? '#fb4934' : (intensity > 0.3 ? '#fe8019' : '#fabd2f');
+                const theme = (typeof SYNAPSE_THEME !== 'undefined') ? SYNAPSE_THEME : null;
+                const color = intensity > 0.7 ? theme.STATUS.WARNING.border : (intensity > 0.3 ? theme.EDGES.EVENT.color : theme.STATUS.PROPOSED.border);
                 
                 ctx.beginPath();
                 ctx.strokeStyle = color;
@@ -6335,6 +6481,7 @@ class CanvasEngine {
 
     renderClusters() {
         if (!this.clusters || this.clusters.length === 0) return;
+        const theme = (typeof SYNAPSE_THEME !== 'undefined') ? SYNAPSE_THEME : (window.SYNAPSE_THEME || null);
 
         // 계층 구조에 따른 그리기 순서 결정 (부모를 먼저 그려서 자식이 위에 오게 함)
         // 하지만 실제로는 바운딩 박스를 자식 노드+자식 클러스터 기준으로 먼저 계산해야 함
@@ -6441,12 +6588,11 @@ class CanvasEngine {
             this.ctx.beginPath();
 
             if (cluster.collapsed) {
-                // Collapsed (Header only)
                 const headerHeight = 30;
-                this.ctx.fillStyle = cluster.color || '#458588';
+                this.ctx.fillStyle = cluster.color || (theme ? theme.COLORS.INFO : '#458588');
                 this.ctx.fillRect(minX - padding, minY - padding - headerHeight, (maxX - minX) + padding * 2, headerHeight);
 
-                this.ctx.fillStyle = '#282828';
+                this.ctx.fillStyle = (theme && theme.COLORS) ? theme.COLORS.BG_DARK : '#282828';
                 this.ctx.font = `bold ${14 / this.transform.zoom}px Inter, sans-serif`;
                 this.ctx.textAlign = 'left';
                 this.ctx.textBaseline = 'middle';
@@ -6455,21 +6601,23 @@ class CanvasEngine {
                 // Expanded
                 const headerHeight = 30;
 
+                const baseColor = cluster.color || (theme ? theme.COLORS.HIGHLIGHT : '#458588');
+
                 // Header
-                this.ctx.fillStyle = (cluster.color || '#458588');
+                this.ctx.fillStyle = baseColor;
                 this.ctx.fillRect(minX - padding, minY - padding - headerHeight, (maxX - minX) + padding * 2, headerHeight);
 
                 // Body background
-                this.ctx.fillStyle = (cluster.color || '#458588') + '10'; // 6% alpha
+                this.ctx.fillStyle = baseColor + '10'; // 6% alpha
                 this.ctx.fillRect(minX - padding, minY - padding, (maxX - minX) + padding * 2, (maxY - minY) + padding * 2);
 
                 // Border
-                this.ctx.strokeStyle = cluster.color || '#458588';
+                this.ctx.strokeStyle = baseColor;
                 this.ctx.lineWidth = 1.5 / this.transform.zoom;
                 this.ctx.strokeRect(minX - padding, minY - padding, (maxX - minX) + padding * 2, (maxY - minY) + padding * 2);
 
                 // Label
-                this.ctx.fillStyle = '#282828';
+                this.ctx.fillStyle = (theme && theme.COLORS) ? theme.COLORS.BG_DARK : '#282828';
                 this.ctx.font = `bold ${14 / this.transform.zoom}px Inter, sans-serif`;
                 this.ctx.textAlign = 'left';
                 this.ctx.textBaseline = 'middle';
@@ -6491,6 +6639,7 @@ class CanvasEngine {
 
     renderGhostNodes(zoom) {
         if (!this.baselineNodes) return;
+        const theme = (typeof SYNAPSE_THEME !== 'undefined') ? SYNAPSE_THEME : (window.SYNAPSE_THEME || null);
 
         this.ctx.save();
         this.ctx.globalAlpha = 0.3;
@@ -6538,16 +6687,16 @@ class CanvasEngine {
     /**
      * Draw specific shape based on typeLabel
      */
-    drawNodeShape(ctx, x, y, width, height, typeLabel) {
+    drawNodeShape(ctx, x, y, width, height, shape = 'box', typeLabel = 'source', node = null) {
         ctx.beginPath();
-        if (typeLabel === 'Decision') {
-            // Diamond
+        if (shape === 'diamond') {
+            // Decision Diamond
             ctx.moveTo(x + width / 2, y);
             ctx.lineTo(x + width, y + height / 2);
             ctx.lineTo(x + width / 2, y + height);
             ctx.lineTo(x, y + height / 2);
-        } else if (typeLabel === 'Loop') {
-            // Hexagon
+        } else if (shape === 'hexagon') {
+            // Hexagon (Loop)
             const offset = 20;
             ctx.moveTo(x + offset, y);
             ctx.lineTo(x + width - offset, y);
@@ -6555,8 +6704,8 @@ class CanvasEngine {
             ctx.lineTo(x + width - offset, y + height);
             ctx.lineTo(x + offset, y + height);
             ctx.lineTo(x, y + height / 2);
-        } else if (typeLabel === 'Print') {
-            // Parallelogram
+        } else if (shape === 'parallelogram') {
+            // Parallelogram (Output)
             const offset = 20;
             ctx.moveTo(x + offset, y);
             ctx.lineTo(x + width, y);
@@ -6579,7 +6728,7 @@ class CanvasEngine {
                 ctx.quadraticCurveTo(x, y, x + radius, y);
             }
         } else {
-            // Standard Rectangle
+            // Standard Box
             ctx.rect(x, y, width, height);
         }
         ctx.closePath();
@@ -6589,183 +6738,68 @@ class CanvasEngine {
      * 노드 타입별 스타일 가져오기 (Phase 3.5: Identity)
      */
     getNodeStyle(node) {
-        const defaultStyle = {
-            borderColor: '#a89984',
-            bgColor: '#3c3836',
-            icon: '{}',
-            lineWidth: 2,
-            typeLabel: 'Logic'
-        };
-
-        // [v0.3.19] Role-based Border Overlays
+        const theme = (typeof SYNAPSE_THEME !== 'undefined') ? SYNAPSE_THEME : (window.SYNAPSE_THEME || null);
         const stats = this.nodeStatsMap.get(node.id);
-        if (stats && stats.primaryRole) {
-            const ROLE_COLOR = {
-                'Orchestrator (fan-out)': '#FF8C00',
-                'Controller (fan-in)':   '#4CAF50',
-                'Hub (high connectivity)': '#2196F3',
-                'Leaf node':         '#9E9E9E',
-                'Standard component': '#ebdbb2'
-            };
-            const roleColor = ROLE_COLOR[stats.primaryRole];
-            if (roleColor) {
-                defaultStyle.borderColor = roleColor;
-                if (stats.primaryRole !== 'Leaf node') {
-                    defaultStyle.glow = true;
-                    defaultStyle.lineWidth = 3.5;
-                }
+        
+        if (theme && theme.getFullNodeStyle) {
+            return theme.getFullNodeStyle(node, stats);
+        }
+
+        // Legacy Fallback
+        return {
+            borderColor: '#a89984',
+            bgColor: node.data?.color || '#3c3836',
+            icon: '📄',
+            lineWidth: 2,
+            shape: 'box',
+            opacity: 0.98,
+            typeLabel: node.type || 'Logic'
+        };
+    }
+
+    /**
+     * [v0.3.22] Unified Node Badge Rendering
+     * Handles status indicators like Approval, Lock, Hazard, and Necrosis.
+     */
+    renderNodeBadges(node, x, y, zoom, ctx = null) {
+        const renderCtx = ctx || this.ctx;
+        // [v0.3.22] Enhanced Visibility: Show badges earlier during zoom-in
+        if (!node || zoom < 0.1) return;
+        
+        const theme = (typeof SYNAPSE_THEME !== 'undefined') ? SYNAPSE_THEME : null;
+        if (!theme) return;
+
+        const nodeWidth = 120;
+        const iconSize = 18;
+        
+        // 1. Proposed / Pending Approval (Bottom Right)
+        if (node.status === 'proposed' || node.state === 'pending') {
+            renderCtx.fillStyle = theme.STATUS.WARNING.border || '#fb4934';
+            renderCtx.font = `${iconSize}px Inter`;
+            renderCtx.fillText(theme.STATUS.PROPOSED.icon, x + nodeWidth - 15, y + 55);
+        }
+
+        // 2. Locked Architecture (Top Right)
+        if (node.data?.isLocked) {
+            renderCtx.fillStyle = theme.COLORS.TEXT;
+            renderCtx.font = `${iconSize}px Inter`;
+            renderCtx.fillText(theme.STATUS.LOCKED.icon, x + nodeWidth - 15, y + 15);
+        }
+
+        // 3. Necrosis / Tombstone (Center)
+        if (node.status === 'error_necrosis' || node.status === 'error_tombstone') {
+            if (zoom > 0.8) {
+                renderCtx.fillStyle = theme.STATUS.WARNING.border;
+                renderCtx.font = 'bold 28px Inter';
+                renderCtx.textAlign = 'center';
+                const statusIcon = node.status === 'error_tombstone' ? theme.STATUS.TOMBSTONE.icon : theme.STATUS.NECROSIS.icon;
+                renderCtx.fillText(statusIcon, x + nodeWidth / 2, y + 35);
             }
         }
-
-        const typeMap = {
-            // [v0.2.14] Standard Entities
-            'source': { borderColor: '#a89984', bgColor: node.data?.color || '#3c3836', icon: '📄', lineWidth: 2, typeLabel: 'File' },
-            'logic': { borderColor: '#a89984', bgColor: node.data?.color || '#3c3836', icon: '📄', lineWidth: 2, typeLabel: 'File' },
-            'config': { borderColor: '#83a598', bgColor: node.data?.color || '#076678', icon: '📄', lineWidth: 4, typeLabel: 'Data' },
-            'data': { borderColor: '#83a598', bgColor: node.data?.color || '#076678', icon: 'DB', lineWidth: 4, typeLabel: 'Data' },
-            'entry': { borderColor: '#fe8019', bgColor: node.data?.color || '#3c3836', icon: '⚡', lineWidth: 2.5, glow: true, typeLabel: 'Trigger' },
-            'trigger': { borderColor: '#fe8019', bgColor: node.data?.color || '#3c3836', icon: '⚡', lineWidth: 2.5, glow: true, typeLabel: 'Trigger' },
-            'external': { borderColor: '#8ec07c', bgColor: node.data?.color || 'rgba(40, 40, 40, 0.7)', icon: '☁', lineWidth: 2, dash: [5, 5], typeLabel: 'External' },
-            'documentation': { borderColor: '#fabd2f', bgColor: node.data?.color || '#3c3836', icon: '📄', lineWidth: 2, typeLabel: 'Doc' },
-            'test': { borderColor: '#fe8019', bgColor: node.data?.color || '#3c3836', icon: '🧪', lineWidth: 2, typeLabel: 'Test' },
-            'component': { borderColor: '#83a598', bgColor: node.data?.color || '#3c3836', icon: '🧩', lineWidth: 3, typeLabel: 'Component' },
-            'folder': { borderColor: '#d79921', bgColor: node.data?.color || '#3c3836', icon: '📁', lineWidth: 2, typeLabel: 'Folder' }
-        };
-
-        // 파일명이나 경로를 보고 Entry 포인트를 동적으로 판단 (Main gate)
-        const filePath = node.data?.file || '';
-        if (filePath.match(/(main|app|index|server)\.(ts|js|py)$/i)) {
-            return typeMap['entry'];
-        }
-
-        // --- New Logic: Identify If/For/While/Print based on Label and Type ---
-        const label = (node.data?.label || '').toLowerCase();
-        const type = node.type || '';
-
-        // Print 노드 감지
-        if (label.startsWith('print:') || label.startsWith('print ') || label.startsWith('console.log') || label === 'print' || label.startsWith('call: print') || label.startsWith('call: console.log')) {
-            return {
-                borderColor: '#b8bb26', // Green
-                bgColor: '#3c3836',
-                icon: '🖨️', // or '💬'
-                lineWidth: 2,
-                typeLabel: 'Print'
-            };
-        }
-
-        // Loop (For/While) 노드 감지
-        if (type === 'for' || type === 'while' || label.startsWith('for ') || label.startsWith('while ') || label === 'for' || label === 'while' || label === 'loop') {
-            return {
-                borderColor: '#fe8019', // Orange
-                bgColor: '#3c3836',
-                icon: '↻',
-                lineWidth: 2,
-                typeLabel: 'Loop'
-            };
-        }
-
-        // Decision (If/Switch/Decision) 감지
-        if (type === 'decision' || type === 'if' || type === 'switch' || label.startsWith('if ') || label.startsWith('switch ') || label === 'if' || label === 'switch') {
-            return {
-                borderColor: '#fabd2f', // Yellow
-                bgColor: '#3c3836',
-                icon: '◈',
-                lineWidth: 2,
-                typeLabel: 'Decision'
-            };
-        }
-
-        // --- Filename Semantics Fallback (Existing) ---
-        const fileName = (node.data?.file || '').toLowerCase();
-
-        // Loop/Iterator Semantic
-        if (fileName.includes('loop') || fileName.includes('iter')) {
-            return {
-                borderColor: '#fe8019',
-                bgColor: '#3c3836',
-                icon: '↻',
-                lineWidth: 2,
-                typeLabel: 'Loop'
-            };
-        }
-
-        // Decision/Validation Semantic
-        if (fileName.includes('valid_') || fileName.includes('validator') || fileName.includes('checker') || fileName.includes('router') || fileName.startsWith('is_')) {
-            return {
-                borderColor: '#fabd2f',
-                bgColor: '#3c3836',
-                icon: '◈',
-                lineWidth: 2,
-                typeLabel: 'Decision'
-            };
-        }
-
-        // [v0.3.21] Signal / Async / Payload Semantic
-        if (type === 'signal' || label.startsWith('signal') || label.includes('emit') || label.includes('broadcast')) {
-            return { borderColor: '#8ec07c', bgColor: '#3c3836', icon: '📡', lineWidth: 2, typeLabel: 'Signal' };
-        }
-        if (type === 'payload' || label.startsWith('payload') || label.includes('stream') || label.includes('buffer')) {
-            return { borderColor: '#83a598', bgColor: '#3c3836', icon: '📊', lineWidth: 3, typeLabel: 'Payload' };
-        }
-        if (type === 'async' || label.includes('async') || label.includes('await') || label.includes('promise') || label.includes('timeout')) {
-            return { borderColor: '#b16286', bgColor: '#3c3836', icon: '🕒', lineWidth: 2, typeLabel: 'Async' };
-        }
-
-        // --- New v0.2.16 Node Types ---
-        const v16TypeMap = {
-            'component': {
-                borderColor: '#8ec07c', // Aqua (Blue-green)
-                bgColor: '#3c3836',
-                icon: '🧩',
-                lineWidth: 2.5,
-                typeLabel: 'Comp'
-            },
-            'processor': {
-                borderColor: '#b16286', // Purple-grey
-                bgColor: '#3c3836',
-                icon: '⚙️',
-                lineWidth: 2.5,
-                typeLabel: 'Proc'
-            },
-            'service': {
-                borderColor: '#458588', // Blue
-                bgColor: '#3c3836',
-                icon: '🤝',
-                lineWidth: 2.5,
-                typeLabel: 'Serv'
-            },
-            'gate': {
-                borderColor: '#d79921', // Yellow
-                bgColor: '#3c3836',
-                icon: '⛩️',
-                lineWidth: 3,
-                typeLabel: 'Gate'
-            },
-            'trigger': {
-                borderColor: '#cc241d', // Red
-                bgColor: '#3c3836',
-                icon: '⚡',
-                lineWidth: 2,
-                glow: true,
-                typeLabel: 'Trig'
-            },
-            'data': {
-                borderColor: '#83a598', // Blue-greenish
-                bgColor: '#076678', // Dark background
-                icon: '📋',
-                lineWidth: 4, 
-                typeLabel: 'Data'
-            }
-        };
-
-        if (v16TypeMap[type]) {
-            return v16TypeMap[type];
-        }
-
-        return typeMap[type] || defaultStyle;
     }
 
     renderNode(node, zoom) {
+        const theme = (typeof SYNAPSE_THEME !== 'undefined') ? SYNAPSE_THEME : (window.SYNAPSE_THEME || null);
         if (!node || !node.position || typeof node.position.x !== 'number' || typeof node.position.y !== 'number') {
             return;
         }
@@ -6813,9 +6847,16 @@ class CanvasEngine {
         const nodeWidth = 120;
         const nodeHeight = 60;
 
-        // Level 1: Satellite View
-        if (zoom < 0.4) {
-            this.ctx.fillStyle = node.data.color || '#458588';
+        // Level 1: Satellite View (Lowered from 0.4 to 0.2 for shape persistence)
+        if (zoom < 0.2) {
+            let satColor = node.data.color || SYNAPSE_THEME.STATUS.ACTIVE.color;
+            if (node.status === 'ghost' || node.state === 'pending') {
+                satColor = SYNAPSE_THEME.STATUS.GHOST.color;
+            } else if (node.status === 'necrosis') {
+                satColor = SYNAPSE_THEME.STATUS.NECROSIS.color;
+            }
+            
+            this.ctx.fillStyle = satColor;
             this.ctx.beginPath();
             this.ctx.arc(nodeWidth / 2, nodeHeight / 2, 8 / zoom, 0, Math.PI * 2);
             this.ctx.fill();
@@ -6841,20 +6882,12 @@ class CanvasEngine {
         if (isPartofActivePath) opacity = 1.0;
         this.ctx.globalAlpha = opacity;
 
-        // 🌟 하이라이트 글로우 효과 (최적화: 기본 OFF, 선택/호버 시만 활성)
-        if ((isSelected || isHovered) && zoom > 0.5) {
-            this.ctx.shadowBlur = 15 + 5 * Math.sin(Date.now() / 200);
-            this.ctx.shadowColor = isSelected ? '#fabd2f' : style.borderColor;
-        }
-
         // 1. 상태별 특수 효과 계산
         const isTombstone = node.status === 'error_tombstone' || (node.data?.issues?.some(i => i.includes('Tombstone')));
 
         if ((node.status === 'error_necrosis' || isTombstone) && zoom > 0.4) {
             style.bgColor = '#1d2021'; // Dark Necrosis Base
             style.borderColor = '#fb4934'; // Red Border
-            this.ctx.shadowBlur = 20;
-            this.ctx.shadowColor = '#fb4934';
         }
 
         // [v0.2.21] Tombstone Rendering (묘비)
@@ -6870,29 +6903,39 @@ class CanvasEngine {
         let dash = style.dash || [];
         let glowColor = null;
 
-        // [v0.2.22/v0.2.25] Node Status & High DTR Glow Override (Conventions)
-        // [v0.2.22/v0.2.26] Node Status & High DTR Glow Override
-        if (node.status === 'active') {
-            borderColor = '#83a598';
-            node.visual.opacity = 1.0; // Ensure full visibility
-        } else if (node.status === 'ghost') {
-            borderColor = '#928374'; // Ghost Gray
-            dash = [5, 5];           // Dashed line
-        } else if (node.status === 'deleted') {
-            borderColor = '#282828'; // Dark Gray
-            bgColor = 'rgba(40, 40, 40, 0.4)';
-        } else if (node.status === 'warning' || node.isError) {
-            borderColor = '#fb4934'; // Error Red
-            glowColor = '#fb4934';
-        } else if (node.status === 'error_necrosis' || node.status === 'error_tombstone') {
-            borderColor = '#1d2021';
-            bgColor = '#1d2021';
-        }
+        const baseBlur = theme ? theme.GLOW.BASE_BLUR : 15;
+        const pulseRange = theme ? theme.GLOW.PULSE_RANGE : 5;
+        const pulseSpeed = theme ? theme.GLOW.PULSE_SPEED : 200;
+        const pulse = Math.abs(Math.sin(Date.now() / pulseSpeed));
 
-        // High DTR Logic Pulse (Overwrites status glow if significant)
-        const dtr = (node.intelligence && node.intelligence.dtr !== undefined) ? node.intelligence.dtr : this.currentDTR;
-        if (dtr >= 0.7) {
-            glowColor = '#8a2be2'; // Significant DTR Purple Glow
+        // [v0.3.22] Unified Node Status Style Resolution (Theme-Driven)
+        if (theme) {
+            if (node.status === 'active') {
+                borderColor = theme.STATUS.ACTIVE.border || theme.STATUS.ACTIVE.color;
+                if (node.visual) node.visual.opacity = 1.0;
+            } else if (node.status === 'ghost') {
+                borderColor = theme.STATUS.GHOST.border;
+                dash = theme.STATUS.GHOST.dash || [5, 5];
+            } else if (node.status === 'deleted') {
+                borderColor = theme.STATUS.DELETED.border;
+                bgColor = theme.STATUS.DELETED.color + '66'; // 0.4 alpha
+            } else if (node.status === 'warning' || node.isError) {
+                borderColor = theme.STATUS.WARNING.border;
+                glowColor = theme.STATUS.WARNING.glow;
+            } else if (node.status === 'error_necrosis' || node.status === 'error_tombstone') {
+                const ns = theme.STATUS.NECROSIS;
+                borderColor = ns.border;
+                bgColor = ns.color;
+            } else if (style.statusType >= 6.0) {
+                // [v0.3.22] External nodes parity: Dashed border
+                dash = [5, 5];
+            }
+
+            // High DTR Logic Pulse (Overwrites status glow if significant)
+            const dtr = (node.intelligence && node.intelligence.dtr !== undefined) ? node.intelligence.dtr : this.currentDTR;
+            if (dtr >= 0.7) {
+                glowColor = (theme.STATUS.HIGH_DTR && theme.STATUS.HIGH_DTR.glow) ? theme.STATUS.HIGH_DTR.glow : '#8a2be2';
+            }
         }
         // [v0.2.18.2] Promotion Awareness: node is currently in promotion animation
         const isPromoting = this.promotingNodeIds && this.promotingNodeIds.has(node.id);
@@ -6909,10 +6952,10 @@ class CanvasEngine {
             const promotionElapsed = Date.now() - (this.promotionSites.find(s => s.label === node.data?.label)?.startTime || 0);
             if (promotionElapsed < 3000) { // 3 seconds phase
                 const ratio = Math.min(1, promotionElapsed / 3000);
-                // Morph from Yellow (#fabd2f) to Green (#b8bb26)
-                bgColor = this._lerpColor('#fabd2f', '#b8bb26', ratio);
-                borderColor = '#b8bb26';
-                glowColor = '#8ec07c'; // Aqua glow
+                // Morph from Yellow to Green
+                bgColor = this._lerpColor(theme.SPECIAL.HIGHLIGHTED.border, theme.UI.TOAST.success, ratio);
+                borderColor = theme.UI.TOAST.success;
+                glowColor = theme.UI.FPS.webgl; // Aqua glow
                 if (!this.isDragging) {
                     this.ctx.shadowBlur = 20 * (1 - ratio) + 10;
                     this.ctx.shadowColor = glowColor;
@@ -6923,9 +6966,9 @@ class CanvasEngine {
         }
 
         if (node.state === 'error') {
-            borderColor = '#fb4934';
+            borderColor = theme.STATUS.WARNING.border;
             lineWidth += 1.5;
-            glowColor = '#fb4934';
+            glowColor = theme.STATUS.WARNING.border;
         } else if (node.state === 'pending' || node.status === 'proposed') {
             dash = [5, 5];
             const pulse = 0.4 + 0.6 * Math.sin(Date.now() / 400);
@@ -6934,7 +6977,7 @@ class CanvasEngine {
         } else if (node.status === 'ghost' || node.data?.status === 'ghost') {
             // [v0.2.19] Ghost Node style: dashed border, lower opacity, no glow
             dash = [4, 4];
-            borderColor = '#928374'; // Grayish
+            borderColor = theme.STATUS.GHOST.border;
             opacity *= 0.6; // Apply to the calculated opacity
         }
 
@@ -6949,7 +6992,7 @@ class CanvasEngine {
         if (node.intelligence && node.intelligence.dtr !== undefined && node.intelligence.dtr >= 0.7) {
             isDtrGlow = true;
             dtrPulse = 0.8 + 0.2 * Math.sin(Date.now() / 250);
-            glowColor = '#8A2BE2'; // Purple
+            glowColor = theme.SPECIAL.NECROSIS_GRADIENT.mid; // Reuse purple mid
         }
 
         if (isSelected) {
@@ -6957,53 +7000,46 @@ class CanvasEngine {
             lineWidth = 3;
             // Only set glow to yellow if it's not a DTR glowing node
             if (!isDtrGlow) {
-                glowColor = '#fabd2f';
+                glowColor = theme.STATUS.WARNING.border;
             }
         }
 
         // Logic Analysis Auras
-        if (node.isVirtualDebugError) {
-            // [v0.2.21 Fix B1] Virtual Debug Error → Cyan Scanner Aura
-            // Distinct from LogicAnalyzer errors (those are red/orange)
-            const scanPhase = Date.now() / 120;
-            borderColor = '#83a598'; // Gruvbox Teal/Cyan
-            lineWidth = 3;
-            glowColor = `rgba(131, 165, 152, ${0.5 + 0.4 * Math.abs(Math.sin(scanPhase))})`;
-            // Scanner line effect: oscillating shadow
-            this.ctx.shadowOffsetY = Math.sin(scanPhase) * 3;
-        } else if (node.isError) {
-            borderColor = '#fb4934';
-            lineWidth = 3;
-            glowColor = '#fb4934';
-        } else if (node.isBottleneck) {
-            borderColor = '#fe8019';
-            lineWidth = 3;
-            glowColor = '#fe8019';
-        } else if (node.isArchViolation) {
-            // [v0.2.21 Fix] Architecture Violation → Ghost Jitter (Yellow Warning Aura)
-            const jitterPhase = Date.now() / 180;
-            const jitter = Math.sin(jitterPhase) * 2;
-            borderColor = '#fabd2f'; // Gruvbox Yellow
-            lineWidth = 2;
-            glowColor = `rgba(250, 189, 47, ${0.4 + 0.3 * Math.abs(Math.sin(jitterPhase))})`;
-            // Ghost Jitter: apply subtle positional offset via shadow
-            this.ctx.shadowOffsetX = jitter;
-            this.ctx.shadowOffsetY = jitter * 0.5;
-        }
+        if (theme && theme.SPECIAL) {
+            if (node.isVirtualDebugError) {
+                const scanPhase = Date.now() / (theme.ANIMATION.SCAN_SPEED || 120);
+                borderColor = theme.SPECIAL.VIRTUAL_DEBUG.border;
+                lineWidth = 3;
+                glowColor = `rgba(131, 165, 152, ${0.5 + 0.4 * Math.abs(Math.sin(scanPhase))})`;
+                this.ctx.shadowOffsetY = Math.sin(scanPhase) * 3;
+            } else if (node.isError) {
+                borderColor = theme.STATUS.WARNING.border;
+                lineWidth = 3;
+                glowColor = theme.STATUS.WARNING.glow;
+            } else if (node.isBottleneck) {
+                borderColor = theme.SPECIAL.BOTTLENECK.border;
+                lineWidth = 3;
+                glowColor = theme.SPECIAL.BOTTLENECK.border;
+            } else if (node.isArchViolation) {
+                const jitterPhase = Date.now() / (theme.ANIMATION.JITTER_SPEED || 180);
+                const jitter = Math.sin(jitterPhase) * 2;
+                borderColor = theme.SPECIAL.ARCH_VIOLATION.border;
+                lineWidth = 2;
+                glowColor = `rgba(250, 189, 47, ${0.4 + 0.3 * Math.abs(Math.sin(jitterPhase))})`;
+                this.ctx.shadowOffsetX = jitter;
+                this.ctx.shadowOffsetY = jitter * 0.5;
+            }
 
-        if (node.isIsolated || node.isDeadEnd) {
-            this.ctx.globalAlpha *= 0.4;
-        }
-
-        // [v0.3.15] Shelf Search Highlight (fzf Center-on)
-        if (node.isHighlighted) {
-            const hPulse = 0.5 + 0.5 * Math.sin(Date.now() / 150);
-            this.ctx.shadowBlur = 40 + 20 * hPulse;
-            this.ctx.shadowColor = '#fabd2f';
-            borderColor = '#fabd2f';
-            lineWidth += 4;
-            opacity = 1.0;
-            this.ctx.globalAlpha = 1.0;
+            if (node.isHighlighted) {
+                const hPulse = 0.5 + 0.5 * Math.sin(Date.now() / 150);
+                const high = theme.SPECIAL.HIGHLIGHTED;
+                this.ctx.shadowBlur = 40 + 20 * hPulse;
+                this.ctx.shadowColor = high.border;
+                borderColor = high.border;
+                lineWidth += 4;
+                opacity = 1.0;
+                this.ctx.globalAlpha = 1.0;
+            }
         }
 
         // 2. 배경 및 글로우 렌더링
@@ -7015,32 +7051,31 @@ class CanvasEngine {
 
         // Apply Glow logic (priority order: DTR > VirtualDebug > Promoting > ArchViolation > Selected/Error)
         if (!this.isDragging) {
-            if (isDtrGlow && dtrPulse !== null) {
-                this.ctx.shadowBlur = 50 * dtrPulse * (node.visual?.glow_intensity || 1);
-                this.ctx.shadowColor = '#8A2BE2';
+            if (isDtrGlow) {
+                this.ctx.shadowBlur = (baseBlur * theme.GLOW.DTR_MULTIPLIER) + (pulseRange * 2) * pulse * (node.visual?.glow_intensity || 1);
+                this.ctx.shadowColor = glowColor;
             } else if (node.isVirtualDebugError && glowColor) {
                 // [v0.2.21 Fix B1] Virtual Debug: pulsing Cyan scanner beam
                 const scanPhase = Date.now() / 120;
-                this.ctx.shadowBlur = 18 + 8 * Math.abs(Math.sin(scanPhase));
+                this.ctx.shadowBlur = baseBlur + pulseRange * Math.abs(Math.sin(scanPhase));
                 this.ctx.shadowColor = glowColor;
                 this.ctx.shadowOffsetY = Math.sin(scanPhase) * 3;
             } else if (isPromoting) {
                 // Shadow already set in promotion block above
             } else if (node.isArchViolation && glowColor) {
-                // [v0.2.21 Fix] Ghost Jitter: animated shadow offset + pulsing glow for arch violations
                 const jitterPhase = Date.now() / 180;
-                this.ctx.shadowBlur = 12 + 6 * Math.abs(Math.sin(jitterPhase));
+                this.ctx.shadowBlur = baseBlur + pulseRange * Math.abs(Math.sin(jitterPhase));
                 this.ctx.shadowColor = glowColor;
                 this.ctx.shadowOffsetX = Math.sin(jitterPhase) * 2;
                 this.ctx.shadowOffsetY = Math.sin(jitterPhase * 0.7) * 1;
             } else if (glowColor && (isSelected || node.isError || node.isBottleneck || (isPartofActivePath && this.isAnimating))) {
-                this.ctx.shadowBlur = 10;
+                this.ctx.shadowBlur = baseBlur;
                 this.ctx.shadowColor = glowColor;
             }
         }
 
         this.ctx.fillStyle = bgColor;
-        this.drawNodeShape(this.ctx, x, y, nodeWidth, nodeHeight, style.typeLabel);
+        this.drawNodeShape(this.ctx, x, y, nodeWidth, nodeHeight, style.shape, style.typeLabel, node);
         this.ctx.fill();
 
         // 🎨 [v0.2.20] Necrosis Overlay (Necrotic Core & Static Noise)
@@ -7050,11 +7085,12 @@ class CanvasEngine {
             const radius = Math.min(nodeWidth, nodeHeight) * 0.45;
 
             this.ctx.save();
-            // 1. Necrotic Core (Radial Gradient: Black to Dark Purple/Red)
+            // 1. Necrotic Core (Radial Gradient)
+            const ng = theme.SPECIAL.NECROSIS_GRADIENT;
             const grad = this.ctx.createRadialGradient(centerX, centerY, 2, centerX, centerY, radius);
-            grad.addColorStop(0, '#000000');
-            grad.addColorStop(0.6, 'rgba(138, 43, 226, 0.4)'); // Purple necrosis
-            grad.addColorStop(1, 'rgba(251, 73, 52, 0)'); // Fades out
+            grad.addColorStop(0, ng.start);
+            grad.addColorStop(0.6, ng.mid);
+            grad.addColorStop(1, ng.end);
 
             this.ctx.fillStyle = grad;
             this.ctx.beginPath();
@@ -7063,7 +7099,7 @@ class CanvasEngine {
 
             // 2. High-intensity Static Noise (Digital Decay)
             this.ctx.globalAlpha = 0.3 * (0.8 + 0.2 * Math.sin(Date.now() / 50)); // Flickering noise
-            this.ctx.fillStyle = '#ebdbb2'; // Light noise
+            this.ctx.fillStyle = theme.SHADERS.NOISE || '#ebdbb2'; 
             for (let i = 0; i < 60; i++) {
                 const rx = x - nodeWidth / 2 + Math.random() * nodeWidth;
                 const ry = y - nodeHeight / 2 + Math.random() * nodeHeight;
@@ -7073,17 +7109,8 @@ class CanvasEngine {
             this.ctx.restore();
 
             // Highlight the necrotic state further
-            borderColor = '#1d2021';
+            borderColor = theme.STATUS.NECROSIS.border;
             lineWidth = 4;
-
-            // Draw Skull centerpiece
-            if (zoom > 0.8) {
-                this.ctx.fillStyle = '#fb4934';
-                this.ctx.font = 'bold 28px Inter, sans-serif';
-                this.ctx.textAlign = 'center';
-                this.ctx.textBaseline = 'middle';
-                this.ctx.fillText('💀', x + nodeWidth / 2, y + nodeHeight / 2 - 5);
-            }
         }
 
         this.ctx.strokeStyle = borderColor;
@@ -7091,7 +7118,7 @@ class CanvasEngine {
 
         // [New] Documentation Shelf 노드는 항상 은은한 노란색 아우라 부여
         if (node.cluster_id === 'doc_shelf' && !isSelected) {
-            glowColor = '#fabd2f';
+            glowColor = theme.SPECIAL.ARCH_VIOLATION.border;
             if (isPartofActivePath && this.isAnimating) {
                 this.ctx.shadowBlur = 10;
                 this.ctx.shadowColor = glowColor;
@@ -7106,7 +7133,7 @@ class CanvasEngine {
             }
         }
 
-        this.drawNodeShape(this.ctx, x, y, nodeWidth, nodeHeight, style.typeLabel);
+        this.drawNodeShape(this.ctx, x, y, nodeWidth, nodeHeight, style.shape, style.typeLabel, node);
         this.ctx.stroke();
         this.ctx.restore();
         this.ctx.setLineDash([]);
@@ -7114,6 +7141,18 @@ class CanvasEngine {
 
         // [v0.3.21] Use Centralized Badge Rendering for Parity
         this.renderNodeBadges(node, x, y, zoom);
+
+        // [v0.3.22] Draw Identity Icon (Top-Left)
+        if (zoom > 1.2 && style.icon) {
+            const theme = (typeof SYNAPSE_THEME !== 'undefined') ? SYNAPSE_THEME : (window.SYNAPSE_THEME || null);
+            const placement = (theme && theme.UI?.ICON_PLACEMENT) ? theme.UI.ICON_PLACEMENT : { x: 8, y: 8 };
+            
+            this.ctx.fillStyle = (theme && theme.COLORS) ? theme.COLORS.TEXT : '#ebdbb2';
+            this.ctx.font = '14px Inter, sans-serif';
+            this.ctx.textAlign = 'left';
+            this.ctx.textBaseline = 'top';
+            this.ctx.fillText(style.icon, x + placement.x, y + placement.y);
+        }
 
         // Level 2: Normal View
         if (zoom >= 0.4 && zoom <= 1.5) {
@@ -7130,21 +7169,19 @@ class CanvasEngine {
             if ((node.status === 'proposed' || node.state === 'pending') && zoom > 1.2) {
                 this.ctx.font = 'italic 9px Inter, sans-serif';
                 this.ctx.fillStyle = 'rgba(235, 219, 178, 0.7)';
-                this.ctx.fillText('Commander, approve?', x + nodeWidth / 2, y + nodeHeight - 8);
+                this.ctx.fillText(`${theme ? theme.STATUS.APPROVAL.icon : '⚡'} Awaiting Approval`, x + nodeWidth / 2, y + nodeHeight - 8);
             }
         }
 
         // Level 3: Detail View & Deep LOD
         if (zoom > 1.5) {
-            this.ctx.fillStyle = '#ebdbb2';
+            this.ctx.fillStyle = (theme && theme.COLORS) ? theme.COLORS.TEXT : '#ebdbb2';
             this.ctx.font = 'bold 11px Inter, sans-serif';
             this.ctx.textAlign = 'center';
             this.ctx.fillText(node.data.label, x + nodeWidth / 2, y + 15);
 
-
-
             // 구분선
-            this.ctx.strokeStyle = '#504945';
+            this.ctx.strokeStyle = theme.DETAILS.DIVIDER;
             this.ctx.lineWidth = 1;
             this.ctx.beginPath();
             this.ctx.moveTo(x + 10, y + 25);
@@ -7159,7 +7196,7 @@ class CanvasEngine {
             // 1. Logic Node: Functions/Classes
             if ((node.type === 'logic' || node.type === 'source') && node.data.summary) {
                 const { functions, classes } = node.data.summary;
-                this.ctx.fillStyle = '#fabd2f'; // Yellowish for logical items
+                this.ctx.fillStyle = (theme && theme.COLORS) ? theme.COLORS.ROLE.Logic : '#83a598';
                 const items = [...(classes || []), ...(functions || [])];
                 items.slice(0, 3).forEach(item => {
                     this.ctx.fillText(`• ${item}`, x + 10, offsetY);
@@ -7169,7 +7206,7 @@ class CanvasEngine {
             // 2. Data Node: Tables/Schema Keys
             else if ((node.type === 'data' || node.type === 'config') && node.data.summary) {
                 const { tables, keys } = node.data.summary;
-                this.ctx.fillStyle = '#83a598'; // Blue for data items
+                this.ctx.fillStyle = (theme && theme.COLORS) ? theme.COLORS.ROLE.Data : '#fabd2f';
                 const items = [...(tables || []), ...(keys || [])];
                 items.slice(0, 3).forEach(item => {
                     this.ctx.fillText(`◆ ${item}`, x + 10, offsetY);
@@ -7179,7 +7216,7 @@ class CanvasEngine {
             // 3. External Node: Status/Latency
             else if (node.type === 'external' && node.data.summary) {
                 const { status, latency } = node.data.summary;
-                this.ctx.fillStyle = '#fe8019';
+                this.ctx.fillStyle = (theme && theme.COLORS) ? theme.COLORS.ROLE.External : '#fe8019';
                 if (status) {
                     this.ctx.fillText(`Status: ${status}`, x + 10, offsetY);
                     offsetY += 10;
@@ -7189,13 +7226,13 @@ class CanvasEngine {
                     offsetY += 10;
                 }
             } else if (node.status === 'proposed' || node.state === 'pending') {
-                this.ctx.fillStyle = '#a89984';
+                this.ctx.fillStyle = (theme && theme.COLORS) ? theme.COLORS.BORDER : '#a89984';
                 this.ctx.fillText('⚡ Awaiting Approval', x + 10, offsetY);
                 offsetY += 12;
                 this.ctx.font = '8px Inter, sans-serif';
                 this.ctx.fillText('Click [V] to start deep scan', x + 10, offsetY);
             } else {
-                this.ctx.fillStyle = '#a89984';
+                this.ctx.fillStyle = (theme && theme.COLORS) ? theme.COLORS.BORDER : '#a89984';
                 const desc = node.data.description || 'No detailed analysis available.';
                 this.ctx.fillText(desc.substring(0, 30) + (desc.length > 30 ? '...' : ''), x + 10, offsetY);
             }
@@ -7333,46 +7370,36 @@ class CanvasEngine {
      * @returns {Object} { color, dashPattern, lineWidth, arrowStyle }
      */
     getEdgeStyle(edge) {
-        // [v0.2.16] Extract Weight and Type
+        // [v0.3.22.9] SSoT Integration: Use SYNAPSE_THEME for all styling decisions
         const type = edge.type || 'dependency';
-        const weight = typeof edge.weight === 'number' ? edge.weight : 0; // Default weight 0
+        const weight = typeof edge.weight === 'number' ? edge.weight : 0;
+        const theme = (typeof SYNAPSE_THEME !== 'undefined') ? SYNAPSE_THEME : null;
+        
+        if (theme && theme.getEdgeStyle) {
+            const themeStyle = theme.getEdgeStyle(type);
+            let lineWidth = themeStyle.thickness || 2;
+            if (weight > 0) lineWidth += (weight * 0.8);
+            
+            const dtr = (edge.intelligence && edge.intelligence.dtr !== undefined) ? edge.intelligence.dtr : 0.0;
+            if (dtr > 0) lineWidth += (dtr * 1.5);
 
+            const res = {
+                color: themeStyle.color || '#ebdbb2',
+                dashPattern: dtr > 0 ? [4, 2] : (themeStyle.dash || []),
+                lineWidth: lineWidth,
+                icon: themeStyle.icon || '➤',
+                arrowStyle: 'standard'
+            };
 
-        const styles = {
-            'dependency': { color: '#ebdbb2', dashPattern: null, lineWidth: 2.0, arrowStyle: 'standard' },
-            'data_flow': { color: '#83a598', dashPattern: null, lineWidth: 3.0, arrowStyle: 'thick' },
-            'event': { color: '#fe8019', dashPattern: null, lineWidth: 2.0, arrowStyle: 'standard' },
-            'conditional': { color: '#d3869b', dashPattern: null, lineWidth: 1.0, arrowStyle: 'standard' },
-            'origin': { color: '#d65d0e', dashPattern: null, lineWidth: 1.5, arrowStyle: 'standard' },
-            'api_call': { color: '#8ec07c', dashPattern: [4, 4], lineWidth: 2.0, arrowStyle: 'standard' },
-            'db_query': { color: '#d3869b', dashPattern: null, lineWidth: 3.0, arrowStyle: 'thick' },
-            'loop_back': { color: '#fe8019', dashPattern: [1, 3], lineWidth: 2.0, arrowStyle: 'standard' }
-        };
-
-        const style = { ... (styles[type] || styles['dependency']) };
-
-        // [v0.2.16] Apply Weight Dynamics (Thickness increases by 1 for every weight unit)
-        if (weight > 0) {
-            style.lineWidth += (weight * 0.8); // 0.8 pixel per weight unit increment
+            // [v0.3.22.9] Re-apply DTR Visual Tension (Violet Glow)
+            if (dtr >= 0.7) {
+                res.borderColor = '#8A2BE2'; // Violet for Deep Thinking
+                res.glow = true;
+                res.glowIntensity = (dtr - 0.7) * 2;
+            }
+            return res;
         }
-
-        // [v0.2.20] Apply DTR (Deep Thought Ratio) weighted visual tension
-        const dtr = (edge.intelligence && edge.intelligence.dtr !== undefined)
-            ? edge.intelligence.dtr
-            : this.currentDTR;
-
-        if (dtr >= 0.7) {
-            // High pressure (Inference Weight Expansion)
-            style.borderColor = '#8A2BE2'; // Violet for Deep Thinking
-            style.glow = true;
-            style.lineWidth += (dtr - 0.7) * 8; // Doubled weight scaling (+ρ)
-            style.glowIntensity = (dtr - 0.7) * 2;
-        } else if (dtr >= 0.4) {
-            // Balanced (Subtle Glow)
-            style.lineWidth += (dtr - 0.4) * 2;
-        }
-
-        return style;
+        return { color: '#ebdbb2', dashPattern: [], lineWidth: 2.0 + (weight * 0.8), icon: '➤' };
     }
 
     /**
@@ -7573,27 +7600,22 @@ class CanvasEngine {
         let edgeColor = validation.valid ? style.color : validation.color;
         let lineWidth = (isBundled ? 1.5 : style.lineWidth) * Math.min(1.5, 1.0 / this.transform.zoom);
         
-        // [v0.3.21] Apply Line Style Conventions (Dashed/Dotted)
-        if (edge.type === 'api_call') {
-            this.ctx.setLineDash([8, 4]);
-        } else if (edge.type === 'loop_back') {
-            this.ctx.setLineDash([2, 2]);
-        } else {
-            this.ctx.setLineDash([]);
-        }
+        // [v0.3.22.6] Synchronized Dash Access (matches SSoT pattern)
+        this.ctx.setLineDash(style.dashPattern || []);
 
         // Store CP for badge rendering sync
         edge.lastCPX = cpX;
         edge.lastCPY = cpY;
 
+        const theme = (typeof SYNAPSE_THEME !== 'undefined') ? SYNAPSE_THEME : null;
         if (edge.isCircular) {
-            edgeColor = '#fb4934';
+            edgeColor = theme ? theme.STATUS.WARNING.border : '#fb4934';
             lineWidth += 2;
         }
 
         // --- 1단계: 선 렌더링 ---
         this.ctx.beginPath();
-        this.ctx.lineWidth = isSelected || isHovered ? 2.5 : lineWidth;
+        this.ctx.lineWidth = isSelected || isHovered ? (style.lineWidth + 2.5) : style.lineWidth;
         let finalAlpha = isSelected || isHovered ? 1.0 : (isBundled ? 0.7 : (isPathSelected ? 0.5 : 0.3));
         
         if (isEdgeHidden && isPathSelected) finalAlpha = 0.3;
@@ -7602,7 +7624,7 @@ class CanvasEngine {
         }
         
         this.ctx.globalAlpha = finalAlpha;
-        this.ctx.strokeStyle = isSelected || isHovered ? '#fabd2f' : edgeColor;
+        this.ctx.strokeStyle = isSelected || isHovered ? (theme ? theme.STATUS.WARNING.border : '#fabd2f') : edgeColor;
         this.ctx.moveTo(fromX, fromY);
         this.ctx.quadraticCurveTo(cpX, cpY, toX, toY);
         this.ctx.stroke();
@@ -7614,7 +7636,7 @@ class CanvasEngine {
                 const t = p.progress;
                 const px = (1 - t) * (1 - t) * fromX + 2 * (1 - t) * t * cpX + t * t * toX;
                 const py = (1 - t) * (1 - t) * fromY + 2 * (1 - t) * t * cpY + t * t * toY;
-                this.ctx.fillStyle = '#fabd2f';
+                this.ctx.fillStyle = theme ? theme.STATUS.WARNING.border : '#fabd2f';
                 this.ctx.beginPath();
                 this.ctx.arc(px, py, 4, 0, Math.PI * 2);
                 this.ctx.fill();
@@ -7644,11 +7666,12 @@ class CanvasEngine {
      * [v0.2.33] Hybrid Badge Rendering
      * 분리된 엣지 배지 렌더링 (2D/3D 공통 사용)
      */
-    renderEdgeBadges(ctx, edge, cpX, cpY) {
+    renderEdgeBadges(ctx, edge, cpX, cpY, explicitX = null, explicitY = null) {
         // [v0.3.16] Edge Visibility Control
         const isBadgeHidden = window.edgeVisibilityMode === 'NO_BADGES' || window.edgeVisibilityMode === 'NO_EDGES';
         if (isBadgeHidden) return;
 
+        const theme = (typeof SYNAPSE_THEME !== 'undefined') ? SYNAPSE_THEME : (window.SYNAPSE_THEME || null);
         const fromNode = edge.srcNode || this.nodeMap.get(edge.from);
         const toNode = edge.tgtNode || this.nodeMap.get(edge.to);
         if (!fromNode || !toNode) return;
@@ -7661,7 +7684,10 @@ class CanvasEngine {
         // [v0.3.21] Calculate position ON the quadratic Bezier curve for accurate bundling placement
         // Formula: B(t=0.5) = 0.25*P0 + 0.5*CP + 0.25*P2
         let bMidX, bMidY;
-        if (Number.isFinite(cpX) && Number.isFinite(cpY)) {
+        if (explicitX !== null && explicitY !== null) {
+            bMidX = explicitX;
+            bMidY = explicitY;
+        } else if (Number.isFinite(cpX) && Number.isFinite(cpY)) {
             bMidX = 0.25 * fromX + 0.5 * cpX + 0.25 * toX;
             bMidY = 0.25 * fromY + 0.5 * cpY + 0.25 * toY;
         } else {
@@ -7676,18 +7702,11 @@ class CanvasEngine {
         bMidY -= (this.transform.zoom > 1.0 ? 35 : 25);
         const badgeSize = Math.max(14, 22 / this.transform.zoom);
 
-        // [v0.3.11] Integrated Info Badge: Type Icon + Status
-        const iconMap = {
-            'dependency': '🔗', 'call': '📡', 'data_flow': '📊', 'reference': '📝',
-            'event': '⚡', 'conditional': '❓', 'api_call': '🌐', 'db_query': '🛢️',
-            'origin': '📍', 'loop_back': '🔁'
-        };
-        const typeIcon = iconMap[edge.type] || '➤';
-        const confirmStatus = edge.confirmStatus || (edge.status === 'pending' || edge.status === 'pending_confirm' ? 'pending_confirm' : (edge.status === 'confirmed' ? 'confirmed' : ''));
+        // [v0.3.22] Unified Edge Badge Specification (Delegated to Theme)
+        const badgeStyle = theme ? (theme.getEdgeBadgeStyle ? theme.getEdgeBadgeStyle(edge) : { text: '➤ ✅', bgColor: 'rgba(40,40,40,0.9)', borderColor: '#83a598', textColor: '#ebdbb2' }) : { text: '➤ ✅', bgColor: 'rgba(40,40,40,0.9)', borderColor: '#83a598', textColor: '#ebdbb2' };
         
-        const isPending = confirmStatus === 'pending_confirm' || edge.status === 'pending';
-        const statusChar = isPending ? '❓' : '✅';
-        const combinedText = `${typeIcon} ${statusChar}`;
+        const combinedText = badgeStyle.text;
+        const isPending = badgeStyle.isPending;
 
         // [v0.3.21] Defensive Rendering Block
         try {
@@ -7717,16 +7736,17 @@ class CanvasEngine {
                 ctx.quadraticCurveTo(rx, ry, rx + radius, ry);
                 ctx.closePath();
 
-                ctx.fillStyle = isPending ? 'rgba(40,40,40,0.9)' : 'rgba(60,60,60,0.7)';
+                ctx.fillStyle = badgeStyle.bgColor;
                 ctx.fill();
-                ctx.strokeStyle = isPending ? '#fabd2f' : '#8ec07c';
+                ctx.strokeStyle = badgeStyle.borderColor;
+                
                 ctx.lineWidth = 1.5 / this.transform.zoom;
                 ctx.stroke();
 
                 // 2. Text Rendering
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
-                ctx.fillStyle = '#ebdbb2';
+                ctx.fillStyle = theme ? theme.COLORS.TEXT : '#ebdbb2';
                 ctx.fillText(combinedText, bMidX, bMidY);
 
                 // [v0.3.13] Legacy Icon Restoration: B and D badges
@@ -7738,9 +7758,9 @@ class CanvasEngine {
                     
                     ctx.beginPath();
                     ctx.arc(lx, ly, ls * 0.8, 0, Math.PI * 2);
-                    ctx.fillStyle = edge.isDeterministicFracture ? '#fb4934' : '#fabd2f';
+                    ctx.fillStyle = edge.isDeterministicFracture ? (theme ? theme.STATUS.ERROR.color : '#fb4934') : (theme ? theme.STATUS.WARNING.border : '#fabd2f');
                     ctx.fill();
-                    ctx.fillStyle = '#1d2021';
+                    ctx.fillStyle = theme ? theme.COLORS.BACKGROUND : '#1d2021';
                     ctx.font = `bold ${ls}px Monospace`;
                     ctx.fillText(legacyChar, lx, ly);
                 }
@@ -7765,8 +7785,7 @@ class CanvasEngine {
             const deleteX = bMidX + 25 / this.transform.zoom + 10;
             const deleteY = bMidY;
             const delSize = badgeSize * 0.8;
-            // ... (rest of delete badge logic follows)
-
+            
             ctx.save();
             ctx.font = `bold ${delSize}px Inter, monospace`;
             ctx.textAlign = 'center';
@@ -7806,8 +7825,6 @@ class CanvasEngine {
         const baseSize = style === 'thick' ? 24 : 18;
         const minSize = 14;
         const arrowSize = Math.max(minSize, baseSize / Math.sqrt(this.transform.zoom));
-
-        // console.log(`[DEBUG] renderArrow called: x=${x}, y=${y}, angle=${angle}, color=${color}, size=${arrowSize}`);
 
         // Canvas 상태 저장
         this.ctx.save();
@@ -7926,14 +7943,15 @@ class CanvasEngine {
                 ];
 
                 handles.forEach(h => {
-                    this.ctx.fillStyle = cluster.color || '#fabd2f';
-                    this.ctx.strokeStyle = '#3c3836';
+                    const theme = (typeof SYNAPSE_THEME !== 'undefined') ? SYNAPSE_THEME : null;
+                    this.ctx.fillStyle = cluster.color || (theme ? theme.COLORS.HIGHLIGHT : '#fabd2f');
+                    this.ctx.strokeStyle = theme ? theme.COLORS.BORDER : '#3c3836';
                     this.ctx.lineWidth = 2 / this.transform.zoom;
 
                     // 광택/발광 효과 (드래그 중 임시 차단)
                     if (this.isAnimating && !this.isDragging) {
                         this.ctx.shadowBlur = 10 / this.transform.zoom;
-                        this.ctx.shadowColor = '#fabd2f';
+                        this.ctx.shadowColor = theme ? theme.COLORS.HIGHLIGHT : '#fabd2f';
                     }
 
                     this.ctx.beginPath();
@@ -7999,7 +8017,8 @@ class CanvasEngine {
         }
 
         // 유령 엣지 그리기
-        this.ctx.strokeStyle = this.edgeTarget ? '#b8bb26' : '#928374';
+        const theme = (typeof SYNAPSE_THEME !== 'undefined') ? SYNAPSE_THEME : null;
+        this.ctx.strokeStyle = this.edgeTarget ? (theme ? theme.COLORS.SUCCESS : '#b8bb26') : (theme ? theme.COLORS.TEXT_MUTED : '#928374');
         this.ctx.lineWidth = 2;
         this.ctx.setLineDash([5, 5]);
 
@@ -8034,10 +8053,10 @@ class CanvasEngine {
             // 타겟 중심부의 그림자/글로우 연산도 드래그 중 오프 처리
             if (!this.isDragging) {
                 this.ctx.shadowBlur = 15;
-                this.ctx.shadowColor = '#b8bb26';
+                this.ctx.shadowColor = theme ? theme.COLORS.SUCCESS : '#b8bb26';
             }
 
-            this.ctx.fillStyle = '#b8bb26';
+            this.ctx.fillStyle = theme ? theme.COLORS.SUCCESS : '#b8bb26';
             this.ctx.fill();
             this.ctx.shadowBlur = 0; // 리셋
         }
@@ -8072,8 +8091,9 @@ class CanvasEngine {
         const ctx = this.ctx;
         ctx.save();
         ctx.setTransform(1, 0, 0, 1, 0, 0); // Reset transform for HUD
+        const theme = (typeof SYNAPSE_THEME !== 'undefined') ? SYNAPSE_THEME : null;
         ctx.font = '12px monospace';
-        ctx.fillStyle = 'lime';
+        ctx.fillStyle = theme ? theme.UI.FPS.high : 'lime';
         ctx.textAlign = 'left';
         ctx.textBaseline = 'top';
 
@@ -8100,6 +8120,7 @@ class CanvasEngine {
         const fpsEl = document.getElementById('fps-display');
         if (!fpsEl) return;
 
+        const theme = (typeof SYNAPSE_THEME !== 'undefined') ? SYNAPSE_THEME : null;
         const now = performance.now();
         if (!this._fpsHistory) this._fpsHistory = [];
         this._fpsHistory.push(now);
@@ -8108,14 +8129,23 @@ class CanvasEngine {
 
         const webglStatus = this.webglEnabled ? 'ACTIVE' : 'OFF';
         const cacheSize = this.edgeValidationCache ? this.edgeValidationCache.size : 0;
-        const color = fps > 55 ? '#b8bb26' : (fps > 30 ? '#fabd2f' : '#fb4934');
-
-        fpsEl.innerHTML = `<span style="color: ${color}">${fps} FPS</span> | <span style="color: #83a598">WebGL: ${webglStatus}</span> | <span style="color: #d3869b">Cache: ${cacheSize}</span>`;
+        
+        let color = '#fb4934';
+        if (theme) {
+            color = fps > 55 ? theme.UI.FPS.high : (fps > 30 ? theme.UI.FPS.mid : theme.UI.FPS.low);
+            const wColor = theme.UI.FPS.webgl;
+            const cColor = theme.UI.FPS.cache;
+            fpsEl.innerHTML = `<span style="color: ${color}">${fps} FPS</span> | <span style="color: ${wColor}">WebGL: ${webglStatus}</span> | <span style="color: ${cColor}">Cache: ${cacheSize}</span>`;
+        } else {
+            color = fps > 55 ? '#b8bb26' : (fps > 30 ? '#fabd2f' : '#fb4934');
+            fpsEl.innerHTML = `<span style="color: ${color}">${fps} FPS</span> | <span style="color: #83a598">WebGL: ${webglStatus}</span> | <span style="color: #d3869b">Cache: ${cacheSize}</span>`;
+        }
     }
 
     // [v0.2.21] Tombstone Visual (Sovereign Quality)
     renderTombstone(width, height, style) {
         this.ctx.save();
+        const theme = (typeof SYNAPSE_THEME !== 'undefined') ? SYNAPSE_THEME : null;
 
         // Tombstone Shape
         this.ctx.beginPath();
@@ -8125,14 +8155,14 @@ class CanvasEngine {
         this.ctx.lineTo(width - 10, height);
         this.ctx.closePath();
 
-        this.ctx.fillStyle = '#1d2021';
+        this.ctx.fillStyle = theme ? theme.STATUS.NECROSIS.color : '#1d2021';
         this.ctx.fill();
-        this.ctx.strokeStyle = '#fb4934';
+        this.ctx.strokeStyle = theme ? theme.STATUS.NECROSIS.border : '#fb4934';
         this.ctx.lineWidth = 3;
         this.ctx.stroke();
 
         // Cracks
-        this.ctx.strokeStyle = 'rgba(251, 73, 52, 0.3)';
+        this.ctx.strokeStyle = theme ? (theme.STATUS.NECROSIS.border + '4D') : 'rgba(251, 73, 52, 0.3)'; // 4D = 0.3 alpha
         this.ctx.lineWidth = 1;
         this.ctx.beginPath();
         this.ctx.moveTo(width / 2, 25);
@@ -8141,7 +8171,7 @@ class CanvasEngine {
         this.ctx.stroke();
 
         // Label
-        this.ctx.fillStyle = '#fb4934';
+        this.ctx.fillStyle = theme ? theme.STATUS.NECROSIS.border : '#fb4934';
         this.ctx.font = 'bold 18px Inter, sans-serif';
         this.ctx.textAlign = 'center';
         this.ctx.fillText('🪦', width / 2, 38);
@@ -8348,6 +8378,7 @@ function initCanvas() {
                 if (message.isAuthoritative) {
                     console.log('[SYNAPSE] Authoritative projectState received. Bypassing interaction lock.');
                     engine.loadProjectState(message.data, true);
+                    engine.updateNodeStats(); // [v0.3.22.9] Force stats update for tooltips
                     engine._pendingState = null; // Clear any stale deferred updates
                     return;
                 }
@@ -8358,6 +8389,7 @@ function initCanvas() {
                 }
                 const preserve = !message.forceReset && engine.nodes && engine.nodes.length > 0;
                 engine.loadProjectState(message.data, preserve);
+                engine.updateNodeStats(); // [v0.3.22.9] Force stats update for tooltips
                 engine.isExpectingUpdate = false;
                 
                 // [v0.3.10] Auto-Start Engine Loop upon first state arrival

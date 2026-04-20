@@ -1,5 +1,5 @@
 {
-  "aiCount": 58,
+  "aiCount": 60,
   "clusters": [
     {
       "collapsed": false,
@@ -161,12 +161,8 @@
       "type": "system"
     },
     {
-      "collapsed": false,
-      "data": {
-        "layer": "user"
-      },
       "id": "sys_cluster_reserved",
-      "label": "🛡️ Reserved (Internal Pending)",
+      "label": "Reserved Cluster",
       "type": "system"
     },
     {
@@ -195,7 +191,7 @@
       "from": "architecture.md",
       "id": "architecture.md->backup_md/core_synapse.md",
       "status": "confirmed",
-      "to": "backup_md/core_synapse.md",
+      "to": "core_synapse.md",
       "type": "include",
       "weight": 1
     },
@@ -207,7 +203,7 @@
       "from": "architecture.md",
       "id": "architecture.md->backup_md/data_scheme.md",
       "status": "confirmed",
-      "to": "backup_md/data_scheme.md",
+      "to": "data_scheme.md",
       "type": "include",
       "weight": 1
     },
@@ -219,7 +215,7 @@
       "from": "architecture.md",
       "id": "architecture.md->backup_md/reporting.md",
       "status": "confirmed",
-      "to": "backup_md/reporting.md",
+      "to": "reporting.md",
       "type": "include",
       "weight": 1
     },
@@ -231,7 +227,7 @@
       "from": "architecture.md",
       "id": "architecture.md->backup_md/RULES.md",
       "status": "confirmed",
-      "to": "backup_md/RULES.md",
+      "to": "RULES.md",
       "type": "include",
       "weight": 1
     },
@@ -252,67 +248,7 @@
         "originalType": "include",
         "projected": true
       },
-      "from": "backup_md/architecture.md",
-      "id": "backup_md/architecture.md->backup_md/core_synapse.md",
-      "status": "confirmed",
-      "to": "backup_md/core_synapse.md",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "backup_md/architecture.md",
-      "id": "backup_md/architecture.md->backup_md/data_scheme.md",
-      "status": "confirmed",
-      "to": "backup_md/data_scheme.md",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "backup_md/architecture.md",
-      "id": "backup_md/architecture.md->backup_md/reporting.md",
-      "status": "confirmed",
-      "to": "backup_md/reporting.md",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "backup_md/architecture.md",
-      "id": "backup_md/architecture.md->backup_md/RULES.md",
-      "status": "confirmed",
-      "to": "backup_md/RULES.md",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "backup_md/architecture.md",
-      "id": "backup_md/architecture.md->backup_md/vega_agent.md",
-      "status": "confirmed",
-      "to": "backup_md/vega_agent.md",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "backup_md/GEMINI.md",
+      "from": "GEMINI.md",
       "id": "backup_md/GEMINI.md->architecture",
       "status": "confirmed",
       "to": "architecture",
@@ -324,7 +260,7 @@
         "originalType": "include",
         "projected": true
       },
-      "from": "backup_md/GEMINI.md",
+      "from": "GEMINI.md",
       "id": "backup_md/GEMINI.md->synapse_topology_view",
       "status": "confirmed",
       "to": "synapse_topology_view",
@@ -336,202 +272,10 @@
         "originalType": "include",
         "projected": true
       },
-      "from": "backup_md/mile_stone/v0.2.16.md",
-      "id": "mile_stone/v0.2.16.md->mile_stone/v0.2.15.md",
-      "status": "confirmed",
-      "to": "backup_md/mile_stone/v0.2.15.md",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "backup_md/mile_stone/v0.2.17.md",
-      "id": "mile_stone/v0.2.17.md->index",
-      "status": "confirmed",
-      "to": "index",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "backup_md/mile_stone/v0.2.17.md",
-      "id": "mile_stone/v0.2.17.md->backup_md/RULES.md",
-      "status": "confirmed",
-      "to": "backup_md/RULES.md",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "backup_md/mile_stone/v0.2.17.md",
-      "id": "mile_stone/v0.2.17.md->src/bootstrap/BootstrapEngine.ts",
-      "status": "confirmed",
-      "to": "src/bootstrap/BootstrapEngine.ts",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "backup_md/mile_stone/v0.2.17.md",
-      "id": "mile_stone/v0.2.17.md->src/core/FileScanner.ts",
-      "status": "confirmed",
-      "to": "src/core/FileScanner.ts",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "backup_md/mile_stone/v0.2.17.md",
-      "id": "mile_stone/v0.2.17.md->src/core/GeminiParser.ts",
-      "status": "confirmed",
-      "to": "src/core/GeminiParser.ts",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "backup_md/mile_stone/v0.2.17.md",
-      "id": "mile_stone/v0.2.17.md->src/extension.ts",
-      "status": "confirmed",
-      "to": "src/extension.ts",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "backup_md/mile_stone/v0.2.17.md",
-      "id": "mile_stone/v0.2.17.md->src/webview/CanvasPanel.ts",
-      "status": "confirmed",
-      "to": "src/webview/CanvasPanel.ts",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "backup_md/mile_stone/v0.2.17.md",
-      "id": "mile_stone/v0.2.17.md->ui/canvas-engine.js",
-      "status": "confirmed",
-      "to": "ui/canvas-engine.js",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "backup_md/mile_stone/v0.2.17.md",
-      "id": "mile_stone/v0.2.17.md->release_note/v0.2.16_release_notes.md",
-      "status": "confirmed",
-      "to": "backup_md/release_note/v0.2.16_release_notes.md",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": ".backup/mile_stone/v0.2.20.md",
-      "id": "mile_stone/v0.2.20.md->src/core/AiOrchestrator.ts",
-      "status": "confirmed",
-      "to": "src/core/AiOrchestrator.ts",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": ".backup/mile_stone/v0.2.20.md",
-      "id": "mile_stone/v0.2.20.md->mile_stone/v0.2.19.md",
-      "status": "confirmed",
-      "to": ".backup/mile_stone/v0.2.19.md",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": ".backup/mile_stone/v0.2.20.md",
-      "id": "mile_stone/v0.2.20.md->release_note/v0.2.20_release_notes.md",
-      "status": "confirmed",
-      "to": "release_note/v0.2.20_release_notes.md",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "backup_md/prompts/2026-02-17_keybinding_check.md",
-      "id": "backup_md/prompts/2026-02-17_keybinding_check.md->package",
-      "status": "confirmed",
-      "to": "package",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "backup_md/prompts/2026-02-17_origin_edge_verification.md",
-      "id": "backup_md/prompts/2026-02-17_origin_edge_verification.md->src/bootstrap/BootstrapEngine.ts",
-      "status": "confirmed",
-      "to": "src/bootstrap/BootstrapEngine.ts",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "backup_md/prompts/2026-02-17_origin_edge_verification.md",
-      "id": "backup_md/prompts/2026-02-17_origin_edge_verification.md->src/core/PromptLogger.ts",
-      "status": "confirmed",
-      "to": "src/core/PromptLogger.ts",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "backup_md/README.ko.md",
+      "from": "README.ko.md",
       "id": "backup_md/README.ko.md->backup_md/README.md",
       "status": "confirmed",
-      "to": "backup_md/README.md",
+      "to": "README.md",
       "type": "include",
       "weight": 1
     },
@@ -540,7 +284,7 @@
         "originalType": "include",
         "projected": true
       },
-      "from": "backup_md/README.ko.md",
+      "from": "README.ko.md",
       "id": "backup_md/README.ko.md->synapse_flow_v0.2.16",
       "status": "confirmed",
       "to": "synapse_flow_v0.2.16",
@@ -552,7 +296,7 @@
         "originalType": "include",
         "projected": true
       },
-      "from": "backup_md/README.ko.md",
+      "from": "README.ko.md",
       "id": "backup_md/README.ko.md->synapse_graph_v0.2.16",
       "status": "confirmed",
       "to": "synapse_graph_v0.2.16",
@@ -564,7 +308,7 @@
         "originalType": "include",
         "projected": true
       },
-      "from": "backup_md/README.ko.md",
+      "from": "README.ko.md",
       "id": "backup_md/README.ko.md->synapse_tree_v0.2.16",
       "status": "confirmed",
       "to": "synapse_tree_v0.2.16",
@@ -576,10 +320,10 @@
         "originalType": "include",
         "projected": true
       },
-      "from": "backup_md/README.md",
+      "from": "README.md",
       "id": "backup_md/README.md->backup_md/GHOST_NODE.md",
       "status": "confirmed",
-      "to": "backup_md/GHOST_NODE.md",
+      "to": "GHOST_NODE.md",
       "type": "include",
       "weight": 1
     },
@@ -588,10 +332,10 @@
         "originalType": "include",
         "projected": true
       },
-      "from": "backup_md/README.md",
+      "from": "README.md",
       "id": "backup_md/README.md->backup_md/README.ko.md",
       "status": "confirmed",
-      "to": "backup_md/README.ko.md",
+      "to": "README.ko.md",
       "type": "include",
       "weight": 1
     },
@@ -600,7 +344,7 @@
         "originalType": "include",
         "projected": true
       },
-      "from": "backup_md/README.md",
+      "from": "README.md",
       "id": "backup_md/README.md->synapse_flow_v0.2.16",
       "status": "confirmed",
       "to": "synapse_flow_v0.2.16",
@@ -612,7 +356,7 @@
         "originalType": "include",
         "projected": true
       },
-      "from": "backup_md/README.md",
+      "from": "README.md",
       "id": "backup_md/README.md->synapse_graph_v0.2.16",
       "status": "confirmed",
       "to": "synapse_graph_v0.2.16",
@@ -624,7 +368,7 @@
         "originalType": "include",
         "projected": true
       },
-      "from": "backup_md/README.md",
+      "from": "README.md",
       "id": "backup_md/README.md->synapse_tree_v0.2.16",
       "status": "confirmed",
       "to": "synapse_tree_v0.2.16",
@@ -636,55 +380,7 @@
         "originalType": "include",
         "projected": true
       },
-      "from": "backup_md/release_note/CHANGELOG.md",
-      "id": "release_note/CHANGELOG.md->main",
-      "status": "confirmed",
-      "to": "main",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "backup_md/release_note/CHANGELOG.md",
-      "id": "release_note/CHANGELOG.md->backup_md/README.md",
-      "status": "confirmed",
-      "to": "backup_md/README.md",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "backup_md/release_note/CHANGELOG.md",
-      "id": "release_note/CHANGELOG.md->backup_md/README.ko.md",
-      "status": "confirmed",
-      "to": "backup_md/README.ko.md",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "backup_md/release_note/GEMINI (사본).md",
-      "id": "release_note/GEMINI (사본).md->synapse_topology_view",
-      "status": "confirmed",
-      "to": "synapse_topology_view",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "backup_md/walkthrough.md",
+      "from": "walkthrough.md",
       "id": "backup_md/walkthrough.md->synapse-visual-architecture-v0.2.20",
       "status": "confirmed",
       "to": "synapse-visual-architecture-v0.2.20",
@@ -732,894 +428,6 @@
         "originalType": "include",
         "projected": true
       },
-      "from": "mile_stone/_v0.3.09_COMPREHENSIVE.md",
-      "id": "mile_stone/_v0.3.09_COMPREHENSIVE.md->backup_md/README.md",
-      "status": "confirmed",
-      "to": "backup_md/README.md",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "mile_stone/_v0.3.09.md",
-      "id": "mile_stone/_v0.3.09.md->backup_md/README.md",
-      "status": "confirmed",
-      "to": "backup_md/README.md",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "mile_stone/_v0.3.10_implementation.md",
-      "id": "mile_stone/_v0.3.10_implementation.md->v0.3.10_Bootstrap_Locked",
-      "status": "confirmed",
-      "to": "v0.3.10_Bootstrap_Locked",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "mile_stone/_v0.3.2.md",
-      "id": "mile_stone/_v0.3.2.md->v0.3.1_zz_Bootstrap_Locked",
-      "status": "confirmed",
-      "to": "v0.3.1_zz_Bootstrap_Locked",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "mile_stone/_v0.3.3.md",
-      "id": "mile_stone/_v0.3.3.md->v0.3.2",
-      "status": "confirmed",
-      "to": "v0.3.2",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "mile_stone/_v0.3.4.md",
-      "id": "mile_stone/_v0.3.4.md->synapse-visual-architecture-v0.3.5",
-      "status": "confirmed",
-      "to": "synapse-visual-architecture-v0.3.5",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "mile_stone/_v0.3.4.md",
-      "id": "mile_stone/_v0.3.4.md->release_note/v0.3.5_release_notes.md",
-      "status": "confirmed",
-      "to": "release_note/v0.3.5_release_notes.md",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "mile_stone/_v0.3.8.md",
-      "id": "mile_stone/_v0.3.8.md->synapse-visual-architecture-v0.3.8",
-      "status": "confirmed",
-      "to": "synapse-visual-architecture-v0.3.8",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "mile_stone/_v0.3.8.md",
-      "id": "mile_stone/_v0.3.8.md->release_note/v0.3.8_release_notes.md",
-      "status": "confirmed",
-      "to": "release_note/v0.3.8_release_notes.md",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "mile_stone/구현안된목록/b/v0.2.19.md",
-      "id": "mile_stone/구현안된목록/b/v0.2.19.md->architecture",
-      "status": "confirmed",
-      "to": "architecture",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "mile_stone/구현안된목록/b/v0.2.19.md",
-      "id": "mile_stone/구현안된목록/b/v0.2.19.md->mile_stone/v0.2.18.md",
-      "status": "confirmed",
-      "to": ".backup/mile_stone/v0.2.18.md",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "mile_stone/구현안된목록/b/v0.2.20.md",
-      "id": "mile_stone/구현안된목록/b/v0.2.20.md->architecture",
-      "status": "confirmed",
-      "to": "architecture",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "mile_stone/구현안된목록/b/v0.2.20.md",
-      "id": "mile_stone/구현안된목록/b/v0.2.20.md->mile_stone/v0.2.18.2.md",
-      "status": "confirmed",
-      "to": "mile_stone/v0.2.18.2.md",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "mile_stone/구현안된목록/b/v0.2.20.md",
-      "id": "mile_stone/구현안된목록/b/v0.2.20.md->mile_stone/v0.2.19.md",
-      "status": "confirmed",
-      "to": ".backup/mile_stone/v0.2.19.md",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "mile_stone/구현안된목록/v0.2.19.md",
-      "id": "mile_stone/구현안된목록/v0.2.19.md->architecture",
-      "status": "confirmed",
-      "to": "architecture",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "mile_stone/구현안된목록/v0.2.19.md",
-      "id": "mile_stone/구현안된목록/v0.2.19.md->mile_stone/v0.2.18.md",
-      "status": "confirmed",
-      "to": ".backup/mile_stone/v0.2.18.md",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "mile_stone/구현안된목록/v0.2.20.md",
-      "id": "mile_stone/구현안된목록/v0.2.20.md->architecture",
-      "status": "confirmed",
-      "to": "architecture",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "mile_stone/구현안된목록/v0.2.20.md",
-      "id": "mile_stone/구현안된목록/v0.2.20.md->mile_stone/v0.2.18.2.md",
-      "status": "confirmed",
-      "to": "mile_stone/v0.2.18.2.md",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "mile_stone/구현안된목록/v0.2.20.md",
-      "id": "mile_stone/구현안된목록/v0.2.20.md->mile_stone/v0.2.19.md",
-      "status": "confirmed",
-      "to": ".backup/mile_stone/v0.2.19.md",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "mile_stone/v0.2.18.2.md",
-      "id": "mile_stone/v0.2.18.2.md->architecture",
-      "status": "confirmed",
-      "to": "architecture",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "mile_stone/v0.2.18.2.md",
-      "id": "mile_stone/v0.2.18.2.md->mile_stone/v0.2.18.1.md",
-      "status": "confirmed",
-      "to": "mile_stone/v0.2.18.1.md",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "mile_stone/v0.2.18.2.md",
-      "id": "mile_stone/v0.2.18.2.md->v0.3.0",
-      "status": "confirmed",
-      "to": "v0.3.0",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": ".backup/mile_stone/v0.2.19.md",
-      "id": "mile_stone/v0.2.19.md->architecture",
-      "status": "confirmed",
-      "to": "architecture",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": ".backup/mile_stone/v0.2.19.md",
-      "id": "mile_stone/v0.2.19.md->mile_stone/v0.2.18.md",
-      "status": "confirmed",
-      "to": ".backup/mile_stone/v0.2.18.md",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": ".backup/mile_stone/v0.2.20.md",
-      "id": "mile_stone/v0.2.20.md->architecture",
-      "status": "confirmed",
-      "to": "architecture",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": ".backup/mile_stone/v0.2.20.md",
-      "id": "mile_stone/v0.2.20.md->mile_stone/v0.2.18.2.md",
-      "status": "confirmed",
-      "to": "mile_stone/v0.2.18.2.md",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "mile_stone/v0.2.21-fix.md",
-      "id": "mile_stone/v0.2.21-fix.md->mile_stone/v0.2.21.md",
-      "status": "confirmed",
-      "to": ".backup/mile_stone/v0.2.21.md",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "mile_stone/v0.2.23.md",
-      "id": "mile_stone/v0.2.23.md->mile_stone/v0.2.21.md",
-      "status": "confirmed",
-      "to": ".backup/mile_stone/v0.2.21.md",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "mile_stone/v0.2.24.md",
-      "id": "mile_stone/v0.2.24.md->mile_stone/v0.2.23.md",
-      "status": "confirmed",
-      "to": "mile_stone/v0.2.23.md",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "mile_stone/v0.2.25.md",
-      "id": "mile_stone/v0.2.25.md->mile_stone/v0.2.24.md",
-      "status": "confirmed",
-      "to": "mile_stone/v0.2.24.md",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "mile_stone/v0.2.26.md",
-      "id": "mile_stone/v0.2.26.md->mile_stone/v0.2.25.md",
-      "status": "confirmed",
-      "to": "mile_stone/v0.2.25.md",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "mile_stone/v0.2.27.md",
-      "id": "mile_stone/v0.2.27.md->mile_stone/v0.2.26.md",
-      "status": "confirmed",
-      "to": "mile_stone/v0.2.26.md",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "mile_stone/v0.2.28.md",
-      "id": "mile_stone/v0.2.28.md->mile_stone/v0.2.27.md",
-      "status": "confirmed",
-      "to": "mile_stone/v0.2.27.md",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "mile_stone/v0.2.29.md",
-      "id": "mile_stone/v0.2.29.md->mile_stone/v0.2.28.md",
-      "status": "confirmed",
-      "to": "mile_stone/v0.2.28.md",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "mile_stone/v0.2.30.md",
-      "id": "mile_stone/v0.2.30.md->mile_stone/v0.2.29.md",
-      "status": "confirmed",
-      "to": "mile_stone/v0.2.29.md",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "mile_stone/v0.2.31.md",
-      "id": "mile_stone/v0.2.31.md->mile_stone/v0.2.30.md",
-      "status": "confirmed",
-      "to": "mile_stone/v0.2.30.md",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "mile_stone/v0.2.32.md",
-      "id": "mile_stone/v0.2.32.md->mile_stone/v0.2.31.md",
-      "status": "confirmed",
-      "to": "mile_stone/v0.2.31.md",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "mile_stone/v0.2.32.md",
-      "id": "mile_stone/v0.2.32.md->release_note/v0.2.32_release_notes.md",
-      "status": "confirmed",
-      "to": "release_note/v0.2.32_release_notes.md",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "mile_stone/v0.2.33.md",
-      "id": "mile_stone/v0.2.33.md->mile_stone/v0.2.32.md",
-      "status": "confirmed",
-      "to": "mile_stone/v0.2.32.md",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "mile_stone/v0.2.34.md",
-      "id": "mile_stone/v0.2.34.md->mile_stone/v0.2.33.md",
-      "status": "confirmed",
-      "to": "mile_stone/v0.2.33.md",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "mile_stone/v0.2.34.md",
-      "id": "mile_stone/v0.2.34.md->release_note/v0.2.34_release_notes.md",
-      "status": "confirmed",
-      "to": "release_note/v0.2.34_release_notes.md",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "mile_stone/v0.2.35.md",
-      "id": "mile_stone/v0.2.35.md->mile_stone/v0.2.34.md",
-      "status": "confirmed",
-      "to": "mile_stone/v0.2.34.md",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "mile_stone/v0.2.35.md",
-      "id": "mile_stone/v0.2.35.md->release_note/v0.2.35_release_notes.md",
-      "status": "confirmed",
-      "to": "release_note/v0.2.35_release_notes.md",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "mile_stone/v0.2.36.md",
-      "id": "mile_stone/v0.2.36.md->mile_stone/v0.2.35.md",
-      "status": "confirmed",
-      "to": "mile_stone/v0.2.35.md",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "mile_stone/v0.2.37.md",
-      "id": "mile_stone/v0.2.37.md->RawTextMiner",
-      "status": "confirmed",
-      "to": "RawTextMiner",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "mile_stone/v0.2.37.md",
-      "id": "mile_stone/v0.2.37.md->src/core/DirectChatScraper.ts",
-      "status": "confirmed",
-      "to": "src/core/DirectChatScraper.ts",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "mile_stone/v0.2.37.md",
-      "id": "mile_stone/v0.2.37.md->src/core/VscdbAdapter.ts",
-      "status": "confirmed",
-      "to": "src/core/VscdbAdapter.ts",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "mile_stone/v0.2.37.md",
-      "id": "mile_stone/v0.2.37.md->mile_stone/v0.2.36.md",
-      "status": "confirmed",
-      "to": "mile_stone/v0.2.36.md",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "mile_stone/v0.2.38.md",
-      "id": "mile_stone/v0.2.38.md->RawTextMiner",
-      "status": "confirmed",
-      "to": "RawTextMiner",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "mile_stone/v0.2.38.md",
-      "id": "mile_stone/v0.2.38.md->src/core/DirectChatScraper.ts",
-      "status": "confirmed",
-      "to": "src/core/DirectChatScraper.ts",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "mile_stone/v0.2.38.md",
-      "id": "mile_stone/v0.2.38.md->src/core/VscdbAdapter.ts",
-      "status": "confirmed",
-      "to": "src/core/VscdbAdapter.ts",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "mile_stone/v0.2.38.md",
-      "id": "mile_stone/v0.2.38.md->src/extension.ts",
-      "status": "confirmed",
-      "to": "src/extension.ts",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "mile_stone/v0.2.38.md",
-      "id": "mile_stone/v0.2.38.md->mile_stone/v0.2.37.md",
-      "status": "confirmed",
-      "to": "mile_stone/v0.2.37.md",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "mile_stone/v0.2.43.md",
-      "id": "mile_stone/v0.2.43.md->mile_stone/v0.2.42_implementation_plan.md",
-      "status": "confirmed",
-      "to": "mile_stone/v0.2.42_implementation_plan.md",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "mile_stone/v0.2.44.md",
-      "id": "mile_stone/v0.2.44.md->mile_stone/v0.2.43.md",
-      "status": "confirmed",
-      "to": "mile_stone/v0.2.43.md",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "mile_stone/v0.2.44.md",
-      "id": "mile_stone/v0.2.44.md->release_note/v0.2.44_release_notes.md",
-      "status": "confirmed",
-      "to": "release_note/v0.2.44_release_notes.md",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "mile_stone/v0.2.45.md",
-      "id": "mile_stone/v0.2.45.md->mile_stone/v0.2.44.md",
-      "status": "confirmed",
-      "to": "mile_stone/v0.2.44.md",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "mile_stone/v0.2.46.md",
-      "id": "mile_stone/v0.2.46.md->mile_stone/v0.2.45.md",
-      "status": "confirmed",
-      "to": "mile_stone/v0.2.45.md",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "mile_stone/v0.2.47.md",
-      "id": "mile_stone/v0.2.47.md->mile_stone/v0.2.46.md",
-      "status": "confirmed",
-      "to": "mile_stone/v0.2.46.md",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "mile_stone/v0.2.48.md",
-      "id": "mile_stone/v0.2.48.md->mile_stone/v0.2.47.md",
-      "status": "confirmed",
-      "to": "mile_stone/v0.2.47.md",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "mile_stone/v0.2.50.md",
-      "id": "mile_stone/v0.2.50.md->mile_stone/v0.2.48.md",
-      "status": "confirmed",
-      "to": "mile_stone/v0.2.48.md",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "mile_stone/v0.2.51.md",
-      "id": "mile_stone/v0.2.51.md->mile_stone/v0.2.50.md",
-      "status": "confirmed",
-      "to": "mile_stone/v0.2.50.md",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "mile_stone/v0.2.52.md",
-      "id": "mile_stone/v0.2.52.md->mile_stone/v0.2.51.md",
-      "status": "confirmed",
-      "to": "mile_stone/v0.2.51.md",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "mile_stone/v0.2.53.md",
-      "id": "mile_stone/v0.2.53.md->mile_stone/v0.2.52.md",
-      "status": "confirmed",
-      "to": "mile_stone/v0.2.52.md",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "mile_stone/v0.3.11.md",
-      "id": "mile_stone/v0.3.11.md->mile_stone/v0.3.10.md",
-      "status": "confirmed",
-      "to": "mile_stone/v0.3.10.md",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "mile_stone/v0.3.12.md",
-      "id": "mile_stone/v0.3.12.md->mile_stone/v0.3.11.md",
-      "status": "confirmed",
-      "to": "mile_stone/v0.3.11.md",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "mile_stone/v0.3.13.md",
-      "id": "mile_stone/v0.3.13.md->mile_stone/v0.3.12.md",
-      "status": "confirmed",
-      "to": "mile_stone/v0.3.12.md",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "mile_stone/v0.3.14.md",
-      "id": "mile_stone/v0.3.14.md->mile_stone/v0.3.13.md",
-      "status": "confirmed",
-      "to": "mile_stone/v0.3.13.md",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "mile_stone/v0.3.15.md",
-      "id": "mile_stone/v0.3.15.md->mile_stone/v0.3.14.md",
-      "status": "confirmed",
-      "to": "mile_stone/v0.3.14.md",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "mile_stone/v0.3.17.md",
-      "id": "mile_stone/v0.3.17.md->mile_stone/v0.3.16.md",
-      "status": "confirmed",
-      "to": "mile_stone/v0.3.16.md",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "mile_stone/v0.3.18.md",
-      "id": "mile_stone/v0.3.18.md->mile_stone/v0.3.17.md",
-      "status": "confirmed",
-      "to": "mile_stone/v0.3.17.md",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "mile_stone/v0.3.19.md",
-      "id": "mile_stone/v0.3.19.md->mile_stone/v0.3.18.md",
-      "status": "confirmed",
-      "to": "mile_stone/v0.3.18.md",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "mile_stone/v0.3.20.md",
-      "id": "mile_stone/v0.3.20.md->mile_stone/v0.3.19.md",
-      "status": "confirmed",
-      "to": "mile_stone/v0.3.19.md",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "mile_stone/v0.3.21.md",
-      "id": "mile_stone/v0.3.21.md->mile_stone/v0.3.20.md",
-      "status": "confirmed",
-      "to": "mile_stone/v0.3.20.md",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
       "from": "README.ko.md",
       "id": "README.ko.md->minimalist_view",
       "status": "confirmed",
@@ -1645,45 +453,9 @@
         "projected": true
       },
       "from": "README.ko.md",
-      "id": "README.ko.md->backup_md/README.md",
-      "status": "confirmed",
-      "to": "backup_md/README.md",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "README.ko.md",
-      "id": "README.ko.md->backup_md/README.ko.md",
-      "status": "confirmed",
-      "to": "backup_md/README.ko.md",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "README.ko.md",
       "id": "README.ko.md->synapse_topology_v0.3.20",
       "status": "confirmed",
       "to": "synapse_topology_v0.3.20",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "README.ko.md",
-      "id": "README.ko.md->synapse_tree_v0.2.16",
-      "status": "confirmed",
-      "to": "synapse_tree_v0.2.16",
       "type": "include",
       "weight": 1
     },
@@ -1792,18 +564,6 @@
       "id": "README.md->flow_view",
       "status": "confirmed",
       "to": "flow_view",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "README.md",
-      "id": "README.md->backup_md/GHOST_NODE.md",
-      "status": "confirmed",
-      "to": "backup_md/GHOST_NODE.md",
       "type": "include",
       "weight": 1
     },
@@ -1957,30 +717,6 @@
         "projected": true
       },
       "from": "README.md",
-      "id": "README.md->backup_md/README.md",
-      "status": "confirmed",
-      "to": "backup_md/README.md",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "README.md",
-      "id": "README.md->backup_md/README.ko.md",
-      "status": "confirmed",
-      "to": "backup_md/README.ko.md",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "README.md",
       "id": "README.md->style_dashed_2px",
       "status": "confirmed",
       "to": "style_dashed_2px",
@@ -2068,102 +804,6 @@
       "id": "README.md->synapse_topology_v0.3.20",
       "status": "confirmed",
       "to": "synapse_topology_v0.3.20",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "README.md",
-      "id": "README.md->synapse_tree_v0.2.16",
-      "status": "confirmed",
-      "to": "synapse_tree_v0.2.16",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "release_note/v0.2.29_release_notes.md",
-      "id": "release_note/v0.2.29_release_notes.md->출력 가능한 ASCII",
-      "status": "confirmed",
-      "to": "출력 가능한 ASCII",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "release_note/v0.2.34_hotfix_2_release_notes.md",
-      "id": "release_note/v0.2.34_hotfix_2_release_notes.md->mile_stone/v0.2.34.md",
-      "status": "confirmed",
-      "to": "mile_stone/v0.2.34.md",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "release_note/v0.3.09_release_notes_ko.md",
-      "id": "release_note/v0.3.09_release_notes_ko.md->backup_md/README.ko.md",
-      "status": "confirmed",
-      "to": "backup_md/README.ko.md",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "release_note/v0.3.09_RELEASE_NOTES_KO.md",
-      "id": "release_note/v0.3.09_RELEASE_NOTES_KO.md->backup_md/README.ko.md",
-      "status": "confirmed",
-      "to": "backup_md/README.ko.md",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "release_note/v0.3.09_RELEASE_NOTES.md",
-      "id": "release_note/v0.3.09_RELEASE_NOTES.md->backup_md/README.md",
-      "status": "confirmed",
-      "to": "backup_md/README.md",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "release_note/v0.3.3_release_notes.md",
-      "id": "release_note/v0.3.3_release_notes.md->synapse-visual-architecture-v0.3.3",
-      "status": "confirmed",
-      "to": "synapse-visual-architecture-v0.3.3",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "release_note/v0.3.9_release_notes.md",
-      "id": "release_note/v0.3.9_release_notes.md->synapse-visual-architecture-v0.3.9",
-      "status": "confirmed",
-      "to": "synapse-visual-architecture-v0.3.9",
       "type": "include",
       "weight": 1
     },
@@ -3177,18 +1817,6 @@
     },
     {
       "data": {
-        "originalType": "reference",
-        "projected": true
-      },
-      "from": "src/core/ReportExporter.ts",
-      "id": "src/core/ReportExporter.ts->src/core/DatabaseEngine.ts",
-      "status": "confirmed",
-      "to": "src/core/DatabaseEngine.ts",
-      "type": "reference",
-      "weight": 0.2
-    },
-    {
-      "data": {
         "originalType": "include",
         "projected": true
       },
@@ -3409,18 +2037,6 @@
         "projected": true
       },
       "from": "src/extension.ts",
-      "id": "src/extension.ts->src/core/ReportExporter.ts",
-      "status": "confirmed",
-      "to": "src/core/ReportExporter.ts",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "src/extension.ts",
       "id": "src/extension.ts->src/explorer/ArchitectureExplorer.ts",
       "status": "confirmed",
       "to": "src/explorer/ArchitectureExplorer.ts",
@@ -3484,18 +2100,6 @@
       "id": "src/rust_checker/state_checker.rs->project_state_json",
       "status": "confirmed",
       "to": "project_state_json",
-      "type": "include",
-      "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "src/rust_checker/state_checker.rs",
-      "id": "src/rust_checker/state_checker.rs->src/rust_checker/reporter.rs",
-      "status": "confirmed",
-      "to": "src/rust_checker/reporter.rs",
       "type": "include",
       "weight": 1
     },
@@ -3858,18 +2462,6 @@
       "to": "src/utils/Logger.ts",
       "type": "include",
       "weight": 1
-    },
-    {
-      "data": {
-        "originalType": "include",
-        "projected": true
-      },
-      "from": "walkthrough.md",
-      "id": "walkthrough.md->synapse-visual-architecture-v0.2.20",
-      "status": "confirmed",
-      "to": "synapse-visual-architecture-v0.2.20",
-      "type": "include",
-      "weight": 1
     }
   ],
   "nodes": [
@@ -3877,7 +2469,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 3,
+        "degree": 0,
         "file": ".backup/mile_stone/v0.2.18.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -3914,7 +2506,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 5,
+        "degree": 0,
         "file": ".backup/mile_stone/v0.2.19.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -3951,7 +2543,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 5,
+        "degree": 0,
         "file": ".backup/mile_stone/v0.2.20.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -3988,7 +2580,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 2,
+        "degree": 0,
         "file": ".backup/mile_stone/v0.2.21.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -4206,7 +2798,7 @@
       "cluster_id": "cluster_ghosts",
       "data": {
         "cluster_id": "cluster_ghosts",
-        "degree": 1,
+        "degree": 0,
         "hasAtomicSignature": false,
         "hasImportSignature": false,
         "hiddenOnCanvas": false,
@@ -4241,7 +2833,7 @@
       "cluster_id": "cluster_ghosts",
       "data": {
         "cluster_id": "cluster_ghosts",
-        "degree": 8,
+        "degree": 1,
         "hasAtomicSignature": false,
         "hasImportSignature": false,
         "hiddenOnCanvas": false,
@@ -4350,7 +2942,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 5,
+        "degree": 0,
         "file": "backup_md/architecture.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -4387,7 +2979,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 2,
+        "degree": 0,
         "file": "backup_md/core_synapse.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -4424,7 +3016,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 2,
+        "degree": 0,
         "file": "backup_md/data_scheme.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -4461,7 +3053,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 2,
+        "degree": 0,
         "file": "backup_md/GEMINI.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -4498,7 +3090,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 2,
+        "degree": 0,
         "file": "backup_md/GHOST_NODE.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -4572,7 +3164,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 1,
+        "degree": 0,
         "file": "backup_md/mile_stone/v0.2.15.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -4609,7 +3201,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 1,
+        "degree": 0,
         "file": "backup_md/mile_stone/v0.2.16.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -4646,7 +3238,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 9,
+        "degree": 0,
         "file": "backup_md/mile_stone/v0.2.17.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -4683,7 +3275,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 1,
+        "degree": 0,
         "file": "backup_md/prompts/2026-02-17_keybinding_check.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -4720,7 +3312,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 2,
+        "degree": 0,
         "file": "backup_md/prompts/2026-02-17_origin_edge_verification.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -5090,7 +3682,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 10,
+        "degree": 0,
         "file": "backup_md/README.ko.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -5127,7 +3719,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 12,
+        "degree": 0,
         "file": "backup_md/README.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -5201,7 +3793,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 3,
+        "degree": 0,
         "file": "backup_md/release_note/CHANGELOG.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -5312,7 +3904,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 1,
+        "degree": 0,
         "file": "backup_md/release_note/GEMINI (사본).md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -5941,7 +4533,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 1,
+        "degree": 0,
         "file": "backup_md/release_note/v0.2.16_release_notes.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -6237,7 +4829,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 2,
+        "degree": 0,
         "file": "backup_md/reporting.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -6274,7 +4866,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 3,
+        "degree": 0,
         "file": "backup_md/RULES.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -6311,7 +4903,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 1,
+        "degree": 0,
         "file": "backup_md/vega_agent.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -6348,7 +4940,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 1,
+        "degree": 0,
         "file": "backup_md/walkthrough.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -6406,8 +4998,8 @@
       "label": "build-guard",
       "layer": "ai",
       "position": {
-        "x": -1120,
-        "y": -2520
+        "x": -1080,
+        "y": 1960
       },
       "status": "active",
       "type": "file",
@@ -6771,7 +5363,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 0,
+        "degree": 1,
         "file": "core_synapse.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -6913,7 +5505,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 0,
+        "degree": 1,
         "file": "data_scheme.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -6970,8 +5562,8 @@
       "label": "express",
       "layer": "ai",
       "position": {
-        "x": -2040,
-        "y": -240
+        "x": -280,
+        "y": 400
       },
       "status": "ghost",
       "type": "external",
@@ -7041,8 +5633,8 @@
       "label": "flow_view",
       "layer": "ai",
       "position": {
-        "x": -2760,
-        "y": -600
+        "x": -2840,
+        "y": 320
       },
       "status": "ghost",
       "type": "external",
@@ -7093,7 +5685,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 0,
+        "degree": 2,
         "file": "GEMINI.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -7150,8 +5742,8 @@
       "label": "GHOST_NODE",
       "layer": "ai",
       "position": {
-        "x": -3080,
-        "y": -480
+        "x": -3320,
+        "y": 240
       },
       "status": "ghost",
       "type": "external",
@@ -7165,7 +5757,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 0,
+        "degree": 1,
         "file": "GHOST_NODE.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -7222,8 +5814,8 @@
       "label": "hint_dashed_border",
       "layer": "ai",
       "position": {
-        "x": -2400,
-        "y": -480
+        "x": -2440,
+        "y": 120
       },
       "status": "ghost",
       "type": "external",
@@ -7257,8 +5849,8 @@
       "label": "hint_grayed_out",
       "layer": "ai",
       "position": {
-        "x": -3080,
-        "y": -320
+        "x": -2920,
+        "y": 160
       },
       "status": "ghost",
       "type": "external",
@@ -7292,8 +5884,8 @@
       "label": "hint_purple_glow",
       "layer": "ai",
       "position": {
-        "x": -2680,
-        "y": -360
+        "x": -2640,
+        "y": 280
       },
       "status": "ghost",
       "type": "external",
@@ -7327,8 +5919,8 @@
       "label": "hint_red_pulse",
       "layer": "ai",
       "position": {
-        "x": -2360,
-        "y": -320
+        "x": -2280,
+        "y": 120
       },
       "status": "ghost",
       "type": "external",
@@ -7362,8 +5954,8 @@
       "label": "hint_solid_border",
       "layer": "ai",
       "position": {
-        "x": -3080,
-        "y": -160
+        "x": -3160,
+        "y": 200
       },
       "status": "ghost",
       "type": "external",
@@ -7377,7 +5969,7 @@
       "cluster_id": "cluster_ghosts",
       "data": {
         "cluster_id": "cluster_ghosts",
-        "degree": 1,
+        "degree": 0,
         "hasAtomicSignature": false,
         "hasImportSignature": false,
         "hiddenOnCanvas": false,
@@ -7397,8 +5989,8 @@
       "label": "index",
       "layer": "ai",
       "position": {
-        "x": -2280,
-        "y": -40
+        "x": -2160,
+        "y": 280
       },
       "status": "ghost",
       "type": "external",
@@ -7449,7 +6041,7 @@
       "cluster_id": "cluster_ghosts",
       "data": {
         "cluster_id": "cluster_ghosts",
-        "degree": 1,
+        "degree": 0,
         "hasAtomicSignature": false,
         "hasImportSignature": false,
         "hiddenOnCanvas": false,
@@ -7469,8 +6061,8 @@
       "label": "main",
       "layer": "ai",
       "position": {
-        "x": -2440,
-        "y": -120
+        "x": -2320,
+        "y": 280
       },
       "status": "ghost",
       "type": "external",
@@ -7521,7 +6113,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 1,
+        "degree": 0,
         "file": "mile_stone/_v0.3.09_COMPREHENSIVE.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -7632,7 +6224,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 1,
+        "degree": 0,
         "file": "mile_stone/_v0.3.09.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -8335,7 +6927,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 1,
+        "degree": 0,
         "file": "mile_stone/_v0.3.10_implementation.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -9445,7 +8037,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 1,
+        "degree": 0,
         "file": "mile_stone/_v0.3.2.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -9482,7 +8074,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 1,
+        "degree": 0,
         "file": "mile_stone/_v0.3.3.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -9519,7 +8111,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 2,
+        "degree": 0,
         "file": "mile_stone/_v0.3.4.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -9556,7 +8148,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 2,
+        "degree": 0,
         "file": "mile_stone/_v0.3.8.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -9778,7 +8370,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 2,
+        "degree": 0,
         "file": "mile_stone/구현안된목록/b/v0.2.19.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -9815,7 +8407,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 3,
+        "degree": 0,
         "file": "mile_stone/구현안된목록/b/v0.2.20.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -9889,7 +8481,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 2,
+        "degree": 0,
         "file": "mile_stone/구현안된목록/v0.2.19.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -9926,7 +8518,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 3,
+        "degree": 0,
         "file": "mile_stone/구현안된목록/v0.2.20.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -10074,7 +8666,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 1,
+        "degree": 0,
         "file": "mile_stone/v0.2.18.1.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -10111,7 +8703,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 6,
+        "degree": 0,
         "file": "mile_stone/v0.2.18.2.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -10148,7 +8740,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 1,
+        "degree": 0,
         "file": "mile_stone/v0.2.21-fix.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -10185,7 +8777,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 2,
+        "degree": 0,
         "file": "mile_stone/v0.2.23.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -10222,7 +8814,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 2,
+        "degree": 0,
         "file": "mile_stone/v0.2.24.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -10259,7 +8851,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 2,
+        "degree": 0,
         "file": "mile_stone/v0.2.25.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -10296,7 +8888,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 2,
+        "degree": 0,
         "file": "mile_stone/v0.2.26.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -10333,7 +8925,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 2,
+        "degree": 0,
         "file": "mile_stone/v0.2.27.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -10370,7 +8962,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 2,
+        "degree": 0,
         "file": "mile_stone/v0.2.28.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -10444,7 +9036,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 2,
+        "degree": 0,
         "file": "mile_stone/v0.2.29.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -10481,7 +9073,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 2,
+        "degree": 0,
         "file": "mile_stone/v0.2.30.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -10518,7 +9110,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 2,
+        "degree": 0,
         "file": "mile_stone/v0.2.31.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -10592,7 +9184,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 3,
+        "degree": 0,
         "file": "mile_stone/v0.2.32.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -10666,7 +9258,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 2,
+        "degree": 0,
         "file": "mile_stone/v0.2.33.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -10740,7 +9332,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 4,
+        "degree": 0,
         "file": "mile_stone/v0.2.34.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -10777,7 +9369,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 3,
+        "degree": 0,
         "file": "mile_stone/v0.2.35.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -10814,7 +9406,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 2,
+        "degree": 0,
         "file": "mile_stone/v0.2.36.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -10851,7 +9443,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 5,
+        "degree": 0,
         "file": "mile_stone/v0.2.37.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -10888,7 +9480,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 5,
+        "degree": 0,
         "file": "mile_stone/v0.2.38.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -10999,7 +9591,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 1,
+        "degree": 0,
         "file": "mile_stone/v0.2.42_implementation_plan.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -11073,7 +9665,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 2,
+        "degree": 0,
         "file": "mile_stone/v0.2.43.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -11147,7 +9739,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 3,
+        "degree": 0,
         "file": "mile_stone/v0.2.44.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -11221,7 +9813,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 2,
+        "degree": 0,
         "file": "mile_stone/v0.2.45.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -11258,7 +9850,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 2,
+        "degree": 0,
         "file": "mile_stone/v0.2.46.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -11332,7 +9924,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 2,
+        "degree": 0,
         "file": "mile_stone/v0.2.47.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -11369,7 +9961,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 2,
+        "degree": 0,
         "file": "mile_stone/v0.2.48.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -11443,7 +10035,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 2,
+        "degree": 0,
         "file": "mile_stone/v0.2.50.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -11480,7 +10072,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 2,
+        "degree": 0,
         "file": "mile_stone/v0.2.51.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -11517,7 +10109,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 2,
+        "degree": 0,
         "file": "mile_stone/v0.2.52.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -11554,7 +10146,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 1,
+        "degree": 0,
         "file": "mile_stone/v0.2.53.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -11665,7 +10257,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 1,
+        "degree": 0,
         "file": "mile_stone/v0.3.10.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -11702,7 +10294,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 2,
+        "degree": 0,
         "file": "mile_stone/v0.3.11.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -11739,7 +10331,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 2,
+        "degree": 0,
         "file": "mile_stone/v0.3.12.md",
         "hasAtomicSignature": true,
         "hasImportSignature": false,
@@ -11776,7 +10368,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 2,
+        "degree": 0,
         "file": "mile_stone/v0.3.13.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -11850,7 +10442,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 2,
+        "degree": 0,
         "file": "mile_stone/v0.3.14.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -11924,7 +10516,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 1,
+        "degree": 0,
         "file": "mile_stone/v0.3.15.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -11961,7 +10553,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 1,
+        "degree": 0,
         "file": "mile_stone/v0.3.16.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -11998,7 +10590,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 2,
+        "degree": 0,
         "file": "mile_stone/v0.3.17.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -12072,7 +10664,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 2,
+        "degree": 0,
         "file": "mile_stone/v0.3.18.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -12146,7 +10738,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 2,
+        "degree": 0,
         "file": "mile_stone/v0.3.19.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -12220,7 +10812,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 2,
+        "degree": 0,
         "file": "mile_stone/v0.3.20.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -12257,7 +10849,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 1,
+        "degree": 0,
         "file": "mile_stone/v0.3.21.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -12315,7 +10907,7 @@
       "layer": "ai",
       "position": {
         "x": -3040,
-        "y": 160
+        "y": 280
       },
       "status": "ghost",
       "type": "external",
@@ -12349,8 +10941,8 @@
       "label": "net",
       "layer": "ai",
       "position": {
-        "x": -2400,
-        "y": 160
+        "x": -2480,
+        "y": 280
       },
       "status": "ghost",
       "type": "external",
@@ -12384,8 +10976,8 @@
       "label": "node",
       "layer": "ai",
       "position": {
-        "x": -1920,
-        "y": -440
+        "x": -1840,
+        "y": 200
       },
       "status": "ghost",
       "type": "external",
@@ -12420,7 +11012,7 @@
       "layer": "ai",
       "position": {
         "x": -2760,
-        "y": 240
+        "y": 160
       },
       "status": "ghost",
       "type": "external",
@@ -12454,8 +11046,8 @@
       "label": "node_deleted",
       "layer": "ai",
       "position": {
-        "x": -2320,
-        "y": 320
+        "x": -2400,
+        "y": 440
       },
       "status": "ghost",
       "type": "external",
@@ -12559,8 +11151,8 @@
       "label": "node_summary",
       "layer": "ai",
       "position": {
-        "x": -2280,
-        "y": 440
+        "x": -2240,
+        "y": 480
       },
       "status": "ghost",
       "type": "external",
@@ -12609,7 +11201,7 @@
       "cluster_id": "cluster_ghosts",
       "data": {
         "cluster_id": "cluster_ghosts",
-        "degree": 1,
+        "degree": 0,
         "hasAtomicSignature": false,
         "hasImportSignature": false,
         "hiddenOnCanvas": false,
@@ -12714,7 +11306,7 @@
       "cluster_id": "cluster_ghosts",
       "data": {
         "cluster_id": "cluster_ghosts",
-        "degree": 2,
+        "degree": 0,
         "hasAtomicSignature": false,
         "hasImportSignature": false,
         "hiddenOnCanvas": false,
@@ -12819,7 +11411,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 6,
+        "degree": 8,
         "file": "README.ko.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -12856,7 +11448,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 33,
+        "degree": 35,
         "file": "README.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -13004,7 +11596,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 1,
+        "degree": 0,
         "file": "release_note/v0.2.20_release_notes.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -13448,7 +12040,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 1,
+        "degree": 0,
         "file": "release_note/v0.2.29_release_notes.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -13559,7 +12151,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 1,
+        "degree": 0,
         "file": "release_note/v0.2.32_release_notes.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -13633,7 +12225,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 1,
+        "degree": 0,
         "file": "release_note/v0.2.34_hotfix_2_release_notes.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -13707,7 +12299,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 1,
+        "degree": 0,
         "file": "release_note/v0.2.34_release_notes.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -13744,7 +12336,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 1,
+        "degree": 0,
         "file": "release_note/v0.2.35_release_notes.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -14040,7 +12632,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 1,
+        "degree": 0,
         "file": "release_note/v0.2.44_release_notes.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -14484,7 +13076,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 1,
+        "degree": 0,
         "file": "release_note/v0.3.09_release_notes_ko.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -14521,7 +13113,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 1,
+        "degree": 0,
         "file": "release_note/v0.3.09_RELEASE_NOTES_KO.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -14595,7 +13187,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 1,
+        "degree": 0,
         "file": "release_note/v0.3.09_RELEASE_NOTES.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -15261,7 +13853,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 1,
+        "degree": 0,
         "file": "release_note/v0.3.3_release_notes.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -15335,7 +13927,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 1,
+        "degree": 0,
         "file": "release_note/v0.3.5_release_notes.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -15446,7 +14038,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 1,
+        "degree": 0,
         "file": "release_note/v0.3.8_release_notes.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -15520,7 +14112,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 1,
+        "degree": 0,
         "file": "release_note/v0.3.9_release_notes.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -15592,7 +14184,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 0,
+        "degree": 1,
         "file": "reporting.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -15664,7 +14256,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 0,
+        "degree": 1,
         "file": "RULES.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -15759,7 +14351,7 @@
       "layer": "user",
       "position": {
         "x": -3640,
-        "y": 40
+        "y": 240
       },
       "status": "active",
       "type": "file",
@@ -15845,7 +14437,7 @@
       "cluster_id": "cluster_src_bootstrap",
       "data": {
         "cluster_id": "cluster_src_bootstrap",
-        "degree": 17,
+        "degree": 15,
         "file": "src/bootstrap/BootstrapEngine.ts",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -15866,8 +14458,8 @@
       "label": "BootstrapEngine",
       "layer": "user",
       "position": {
-        "x": 120,
-        "y": -2160
+        "x": -80,
+        "y": 2400
       },
       "status": "active",
       "type": "file",
@@ -15903,7 +14495,7 @@
       "layer": "user",
       "position": {
         "x": -1240,
-        "y": -1400
+        "y": 2200
       },
       "status": "active",
       "type": "file",
@@ -15938,8 +14530,8 @@
       "label": "client",
       "layer": "user",
       "position": {
-        "x": -920,
-        "y": -1400
+        "x": -880,
+        "y": 2200
       },
       "status": "active",
       "type": "file",
@@ -15953,7 +14545,7 @@
       "cluster_id": "cluster_src_core",
       "data": {
         "cluster_id": "cluster_src_core",
-        "degree": 3,
+        "degree": 2,
         "file": "src/core/AiOrchestrator.ts",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -16082,8 +14674,8 @@
       "label": "CanvasEngine",
       "layer": "user",
       "position": {
-        "x": 600,
-        "y": -240
+        "x": 7880,
+        "y": 1840
       },
       "status": "active",
       "type": "file",
@@ -16118,8 +14710,8 @@
       "label": "Intent",
       "layer": "user",
       "position": {
-        "x": 320,
-        "y": 760
+        "x": 8200,
+        "y": 1880
       },
       "status": "active",
       "type": "file",
@@ -16154,8 +14746,8 @@
       "label": "PhaseGate",
       "layer": "user",
       "position": {
-        "x": -760,
-        "y": 120
+        "x": 7040,
+        "y": -360
       },
       "status": "active",
       "type": "file",
@@ -16190,8 +14782,8 @@
       "label": "RenderProtocol",
       "layer": "user",
       "position": {
-        "x": 760,
-        "y": 160
+        "x": 8520,
+        "y": 1880
       },
       "status": "active",
       "type": "file",
@@ -16226,8 +14818,8 @@
       "label": "RuleEngine",
       "layer": "user",
       "position": {
-        "x": -920,
-        "y": 680
+        "x": 7120,
+        "y": 120
       },
       "status": "active",
       "type": "file",
@@ -16262,8 +14854,8 @@
       "label": "ScenarioRunner",
       "layer": "user",
       "position": {
-        "x": -1000,
-        "y": 840
+        "x": 6600,
+        "y": 480
       },
       "status": "active",
       "type": "file",
@@ -16298,8 +14890,8 @@
       "label": "SpatialRuleBook",
       "layer": "user",
       "position": {
-        "x": 360,
-        "y": 440
+        "x": 8040,
+        "y": 1880
       },
       "status": "active",
       "type": "file",
@@ -16334,8 +14926,8 @@
       "label": "StateManager",
       "layer": "user",
       "position": {
-        "x": 1120,
-        "y": 720
+        "x": 8920,
+        "y": 1840
       },
       "status": "active",
       "type": "file",
@@ -16370,8 +14962,8 @@
       "label": "ValidationHarness",
       "layer": "user",
       "position": {
-        "x": -800,
-        "y": 480
+        "x": 7000,
+        "y": -120
       },
       "status": "active",
       "type": "file",
@@ -16406,8 +14998,8 @@
       "label": "VisualRuleBook",
       "layer": "user",
       "position": {
-        "x": 640,
-        "y": 440
+        "x": 8360,
+        "y": 1880
       },
       "status": "active",
       "type": "file",
@@ -16529,7 +15121,7 @@
       "cluster_id": "cluster_src_core",
       "data": {
         "cluster_id": "cluster_src_core",
-        "degree": 2,
+        "degree": 1,
         "file": "src/core/DatabaseEngine.ts",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -16586,8 +15178,8 @@
       "label": "DataPipeline",
       "layer": "user",
       "position": {
-        "x": 5280,
-        "y": 720
+        "x": 5200,
+        "y": 1800
       },
       "status": "active",
       "type": "file",
@@ -16637,7 +15229,7 @@
       "cluster_id": "cluster_src_core",
       "data": {
         "cluster_id": "cluster_src_core",
-        "degree": 4,
+        "degree": 2,
         "file": "src/core/DirectChatScraper.ts",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -16709,7 +15301,7 @@
       "cluster_id": "cluster_src_core",
       "data": {
         "cluster_id": "cluster_src_core",
-        "degree": 5,
+        "degree": 4,
         "file": "src/core/FileScanner.ts",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -16766,8 +15358,8 @@
       "label": "FlowchartGenerator",
       "layer": "user",
       "position": {
-        "x": 2360,
-        "y": 120
+        "x": 2400,
+        "y": 2120
       },
       "status": "active",
       "type": "file",
@@ -16817,7 +15409,7 @@
       "cluster_id": "cluster_src_core",
       "data": {
         "cluster_id": "cluster_src_core",
-        "degree": 9,
+        "degree": 8,
         "file": "src/core/GeminiParser.ts",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -16910,8 +15502,8 @@
       "label": "GraphModel",
       "layer": "user",
       "position": {
-        "x": 5080,
-        "y": 1320
+        "x": 3760,
+        "y": 2040
       },
       "status": "active",
       "type": "file",
@@ -16982,8 +15574,8 @@
       "label": "LogicAnalyzer",
       "layer": "user",
       "position": {
-        "x": 2640,
-        "y": -520
+        "x": 2040,
+        "y": 2120
       },
       "status": "active",
       "type": "file",
@@ -17018,8 +15610,8 @@
       "label": "PbSessionWatcher",
       "layer": "user",
       "position": {
-        "x": 2760,
-        "y": 160
+        "x": 2840,
+        "y": 1920
       },
       "status": "active",
       "type": "file",
@@ -17090,8 +15682,8 @@
       "label": "ProjectionLayer",
       "layer": "user",
       "position": {
-        "x": 5800,
-        "y": 2280
+        "x": 5240,
+        "y": 2720
       },
       "status": "active",
       "type": "file",
@@ -17126,8 +15718,8 @@
       "label": "RuleStore",
       "layer": "user",
       "position": {
-        "x": 6080,
-        "y": 2280
+        "x": 5080,
+        "y": 2480
       },
       "status": "active",
       "type": "file",
@@ -17141,7 +15733,7 @@
       "cluster_id": "cluster_src_core",
       "data": {
         "cluster_id": "cluster_src_core",
-        "degree": 3,
+        "degree": 2,
         "file": "src/core/PromptLogger.ts",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -17162,8 +15754,8 @@
       "label": "PromptLogger",
       "layer": "user",
       "position": {
-        "x": 2600,
-        "y": 440
+        "x": 2680,
+        "y": 1880
       },
       "status": "active",
       "type": "file",
@@ -17213,7 +15805,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 2,
+        "degree": 0,
         "file": "src/core/ReportExporter.ts",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -17342,8 +15934,8 @@
       "label": "CommitManager",
       "layer": "user",
       "position": {
-        "x": -80,
-        "y": 1480
+        "x": 1160,
+        "y": 2480
       },
       "status": "active",
       "type": "file",
@@ -17378,8 +15970,8 @@
       "label": "ExecutionLayer",
       "layer": "user",
       "position": {
-        "x": 1200,
-        "y": 1360
+        "x": 1440,
+        "y": 2440
       },
       "status": "active",
       "type": "file",
@@ -17414,8 +16006,8 @@
       "label": "VerificationLayer",
       "layer": "user",
       "position": {
-        "x": 520,
-        "y": 1520
+        "x": 800,
+        "y": 2520
       },
       "status": "active",
       "type": "file",
@@ -17450,8 +16042,8 @@
       "label": "VirtualDebugger",
       "layer": "user",
       "position": {
-        "x": 2840,
-        "y": 1080
+        "x": 2040,
+        "y": 1960
       },
       "status": "active",
       "type": "file",
@@ -17465,7 +16057,7 @@
       "cluster_id": "cluster_src_core",
       "data": {
         "cluster_id": "cluster_src_core",
-        "degree": 2,
+        "degree": 0,
         "file": "src/core/VscdbAdapter.ts",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -17487,7 +16079,7 @@
       "layer": "user",
       "position": {
         "x": 2560,
-        "y": 1680
+        "y": 1960
       },
       "status": "active",
       "type": "file",
@@ -17558,8 +16150,8 @@
       "label": "ArchitectureExplorer",
       "layer": "user",
       "position": {
-        "x": 160,
-        "y": -920
+        "x": 80,
+        "y": 2400
       },
       "status": "active",
       "type": "file",
@@ -17573,7 +16165,7 @@
       "cluster_id": "cluster_src",
       "data": {
         "cluster_id": "cluster_src",
-        "degree": 15,
+        "degree": 12,
         "file": "src/extension.ts",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -17594,8 +16186,8 @@
       "label": "extension",
       "layer": "user",
       "position": {
-        "x": -680,
-        "y": -1320
+        "x": -640,
+        "y": 2200
       },
       "status": "active",
       "type": "file",
@@ -17645,7 +16237,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 1,
+        "degree": 0,
         "file": "src/rust_checker/reporter.rs",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -17681,7 +16273,7 @@
       "cluster_id": "cluster_src_rust_checker",
       "data": {
         "cluster_id": "cluster_src_rust_checker",
-        "degree": 3,
+        "degree": 2,
         "file": "src/rust_checker/state_checker.rs",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -17738,8 +16330,8 @@
       "label": "server",
       "layer": "user",
       "position": {
-        "x": -760,
-        "y": -520
+        "x": 840,
+        "y": 960
       },
       "status": "active",
       "type": "file",
@@ -17774,8 +16366,8 @@
       "label": "standalone",
       "layer": "user",
       "position": {
-        "x": -1080,
-        "y": -720
+        "x": 560,
+        "y": 760
       },
       "status": "active",
       "type": "file",
@@ -17810,8 +16402,8 @@
       "label": "schema",
       "layer": "user",
       "position": {
-        "x": 1520,
-        "y": 160
+        "x": 1680,
+        "y": -160
       },
       "status": "active",
       "type": "file",
@@ -18005,7 +16597,7 @@
       "cluster_id": "sys_cluster_buffer",
       "data": {
         "cluster_id": "sys_cluster_buffer",
-        "degree": 21,
+        "degree": 20,
         "file": "src/webview/CanvasPanel.ts",
         "hasAtomicSignature": true,
         "hasImportSignature": false,
@@ -18391,7 +16983,7 @@
       "cluster_id": "cluster_ghosts",
       "data": {
         "cluster_id": "cluster_ghosts",
-        "degree": 2,
+        "degree": 1,
         "hasAtomicSignature": false,
         "hasImportSignature": false,
         "hiddenOnCanvas": false,
@@ -18426,7 +17018,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 4,
+        "degree": 2,
         "hasAtomicSignature": false,
         "hasImportSignature": false,
         "hiddenOnCanvas": true,
@@ -18461,7 +17053,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 2,
+        "degree": 1,
         "hasAtomicSignature": false,
         "hasImportSignature": false,
         "hiddenOnCanvas": true,
@@ -18496,7 +17088,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 1,
+        "degree": 0,
         "hasAtomicSignature": false,
         "hasImportSignature": false,
         "hiddenOnCanvas": true,
@@ -18531,7 +17123,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 1,
+        "degree": 0,
         "hasAtomicSignature": false,
         "hasImportSignature": false,
         "hiddenOnCanvas": true,
@@ -18566,7 +17158,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 1,
+        "degree": 0,
         "hasAtomicSignature": false,
         "hasImportSignature": false,
         "hiddenOnCanvas": true,
@@ -18601,7 +17193,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 1,
+        "degree": 0,
         "hasAtomicSignature": false,
         "hasImportSignature": false,
         "hiddenOnCanvas": true,
@@ -18779,7 +17371,7 @@
       "cluster_id": "cluster_ui",
       "data": {
         "cluster_id": "cluster_ui",
-        "degree": 1,
+        "degree": 0,
         "file": "ui/canvas-engine.js",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -18800,8 +17392,8 @@
       "label": "canvas-engine",
       "layer": "user",
       "position": {
-        "x": -3920,
-        "y": -960
+        "x": -4440,
+        "y": -840
       },
       "status": "active",
       "type": "file",
@@ -18836,8 +17428,8 @@
       "label": "engine-core",
       "layer": "user",
       "position": {
-        "x": -3600,
-        "y": -960
+        "x": -4120,
+        "y": -840
       },
       "status": "active",
       "type": "file",
@@ -18872,8 +17464,8 @@
       "label": "webgl-renderer",
       "layer": "user",
       "position": {
-        "x": -4160,
-        "y": -240
+        "x": -4680,
+        "y": -120
       },
       "status": "active",
       "type": "file",
@@ -20182,7 +18774,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 1,
+        "degree": 0,
         "hasAtomicSignature": false,
         "hasImportSignature": false,
         "hiddenOnCanvas": true,
@@ -20217,7 +18809,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 1,
+        "degree": 0,
         "hasAtomicSignature": false,
         "hasImportSignature": false,
         "hiddenOnCanvas": true,
@@ -20287,7 +18879,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 1,
+        "degree": 0,
         "hasAtomicSignature": false,
         "hasImportSignature": false,
         "hiddenOnCanvas": true,
@@ -20602,7 +19194,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 1,
+        "degree": 0,
         "hasAtomicSignature": false,
         "hasImportSignature": false,
         "hiddenOnCanvas": true,
@@ -20870,7 +19462,7 @@
       "layer": "ai",
       "position": {
         "x": -1840,
-        "y": 480
+        "y": 520
       },
       "status": "ghost",
       "type": "external",
@@ -20951,12 +19543,373 @@
         "scale": 1,
         "visible": true
       }
+    },
+    {
+      "cluster_id": "cluster_ghosts",
+      "data": {
+        "cluster_id": "cluster_ghosts",
+        "degree": 0,
+        "hasAtomicSignature": false,
+        "hasImportSignature": false,
+        "hiddenOnCanvas": false,
+        "icon": "👻",
+        "isScoped": false,
+        "isSovereign": false,
+        "isUserCreated": false,
+        "label": ") || trimmed.includes(",
+        "layer": "ai",
+        "opacity": 1,
+        "scale": 1,
+        "status": "ghost"
+      },
+      "degree": 0,
+      "filePath": "ghost://) || trimmed.includes(",
+      "id": ") || trimmed.includes(",
+      "label": ") || trimmed.includes(",
+      "layer": "ai",
+      "position": {
+        "x": 160,
+        "y": 1000
+      },
+      "status": "ghost",
+      "type": "symbol",
+      "visual": {
+        "opacity": 1,
+        "scale": 1,
+        "visible": true
+      }
+    },
+    {
+      "cluster_id": "cluster_ghosts",
+      "data": {
+        "cluster_id": "cluster_ghosts",
+        "degree": 0,
+        "hasAtomicSignature": false,
+        "hasImportSignature": false,
+        "hiddenOnCanvas": false,
+        "icon": "☁️",
+        "isScoped": false,
+        "isSovereign": false,
+        "isUserCreated": false,
+        "label": "vscode-languageclient",
+        "layer": "ai",
+        "opacity": 1,
+        "scale": 1,
+        "status": "ghost"
+      },
+      "degree": 0,
+      "filePath": "external://vscode-languageclient",
+      "id": "vscode-languageclient",
+      "label": "vscode-languageclient",
+      "layer": "ai",
+      "position": {
+        "x": 0,
+        "y": 960
+      },
+      "status": "ghost",
+      "type": "external",
+      "visual": {
+        "opacity": 1,
+        "scale": 1,
+        "visible": true
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "degree": 0,
+        "file": "mile_stone/v0.3.21.9.md",
+        "hasAtomicSignature": false,
+        "hasImportSignature": false,
+        "hiddenOnCanvas": true,
+        "icon": "📚",
+        "isScoped": false,
+        "isSovereign": true,
+        "isUserCreated": true,
+        "label": "v0.3.21.9",
+        "layer": "user",
+        "opacity": 1,
+        "scale": 1,
+        "status": "active",
+        "type": "document"
+      },
+      "degree": 0,
+      "filePath": "mile_stone/v0.3.21.9.md",
+      "id": "mile_stone/v0.3.21.9.md",
+      "label": "v0.3.21.9",
+      "layer": "user",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "status": "active",
+      "type": "document",
+      "visual": {
+        "opacity": 1,
+        "scale": 1,
+        "visible": true
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "degree": 0,
+        "file": "release_note/v0.3.21.9_release_notes.md",
+        "hasAtomicSignature": false,
+        "hasImportSignature": false,
+        "hiddenOnCanvas": true,
+        "icon": "📚",
+        "isScoped": false,
+        "isSovereign": true,
+        "isUserCreated": true,
+        "label": "v0.3.21.9_release_notes",
+        "layer": "user",
+        "opacity": 1,
+        "scale": 1,
+        "status": "active",
+        "type": "document"
+      },
+      "degree": 0,
+      "filePath": "release_note/v0.3.21.9_release_notes.md",
+      "id": "release_note/v0.3.21.9_release_notes.md",
+      "label": "v0.3.21.9_release_notes",
+      "layer": "user",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "status": "active",
+      "type": "document",
+      "visual": {
+        "opacity": 1,
+        "scale": 1,
+        "visible": true
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "degree": 0,
+        "file": "mile_stone/v0.3.22.md",
+        "hasAtomicSignature": false,
+        "hasImportSignature": false,
+        "hiddenOnCanvas": true,
+        "icon": "📚",
+        "isScoped": false,
+        "isSovereign": true,
+        "isUserCreated": true,
+        "label": "v0.3.22",
+        "layer": "user",
+        "opacity": 1,
+        "scale": 1,
+        "status": "active",
+        "type": "document"
+      },
+      "degree": 0,
+      "filePath": "mile_stone/v0.3.22.md",
+      "id": "mile_stone/v0.3.22.md",
+      "label": "v0.3.22",
+      "layer": "user",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "status": "active",
+      "type": "document",
+      "visual": {
+        "opacity": 1,
+        "scale": 1,
+        "visible": true
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "degree": 0,
+        "hasAtomicSignature": false,
+        "hasImportSignature": false,
+        "hiddenOnCanvas": true,
+        "icon": "📚",
+        "isScoped": false,
+        "isSovereign": true,
+        "isUserCreated": true,
+        "label": "v0.3.21.9",
+        "layer": "user",
+        "opacity": 1,
+        "scale": 1,
+        "status": "active"
+      },
+      "degree": 0,
+      "filePath": "ghost://v0.3.21.9",
+      "id": "v0.3.21.9",
+      "label": "v0.3.21.9",
+      "layer": "user",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "status": "active",
+      "type": "documentation",
+      "visual": {
+        "opacity": 1,
+        "scale": 1,
+        "visible": true
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "degree": 0,
+        "file": "mile_stone/v0.3.22_implementation_plan.md",
+        "hasAtomicSignature": false,
+        "hasImportSignature": false,
+        "hiddenOnCanvas": true,
+        "icon": "📚",
+        "isScoped": false,
+        "isSovereign": true,
+        "isUserCreated": true,
+        "label": "v0.3.22_implementation_plan",
+        "layer": "user",
+        "opacity": 1,
+        "scale": 1,
+        "status": "active",
+        "type": "document"
+      },
+      "degree": 0,
+      "filePath": "mile_stone/v0.3.22_implementation_plan.md",
+      "id": "mile_stone/v0.3.22_implementation_plan.md",
+      "label": "v0.3.22_implementation_plan",
+      "layer": "user",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "status": "active",
+      "type": "document",
+      "visual": {
+        "opacity": 1,
+        "scale": 1,
+        "visible": true
+      }
+    },
+    {
+      "cluster_id": "cluster_ui",
+      "data": {
+        "cluster_id": "cluster_ui",
+        "degree": 0,
+        "file": "ui/synapse-theme.js",
+        "hasAtomicSignature": false,
+        "hasImportSignature": false,
+        "hiddenOnCanvas": false,
+        "icon": "📄",
+        "isScoped": false,
+        "isSovereign": true,
+        "isUserCreated": true,
+        "label": "synapse-theme",
+        "layer": "user",
+        "opacity": 1,
+        "scale": 1,
+        "status": "active"
+      },
+      "degree": 0,
+      "filePath": "ui/synapse-theme.js",
+      "id": "ui/synapse-theme.js",
+      "label": "synapse-theme",
+      "layer": "user",
+      "position": {
+        "x": -4120,
+        "y": -480
+      },
+      "status": "active",
+      "type": "file",
+      "visual": {
+        "opacity": 1,
+        "scale": 1,
+        "visible": true
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "degree": 0,
+        "file": "release_note/v0.3.22_release_notes.md",
+        "hasAtomicSignature": false,
+        "hasImportSignature": false,
+        "hiddenOnCanvas": true,
+        "icon": "📚",
+        "isScoped": false,
+        "isSovereign": true,
+        "isUserCreated": true,
+        "label": "v0.3.22_release_notes",
+        "layer": "user",
+        "opacity": 1,
+        "scale": 1,
+        "status": "active",
+        "type": "document"
+      },
+      "degree": 0,
+      "filePath": "release_note/v0.3.22_release_notes.md",
+      "id": "release_note/v0.3.22_release_notes.md",
+      "label": "v0.3.22_release_notes",
+      "layer": "user",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "status": "active",
+      "type": "document",
+      "visual": {
+        "opacity": 1,
+        "scale": 1,
+        "visible": true
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "degree": 0,
+        "hasAtomicSignature": false,
+        "hasImportSignature": false,
+        "hiddenOnCanvas": true,
+        "icon": "📚",
+        "isScoped": false,
+        "isSovereign": true,
+        "isUserCreated": true,
+        "label": "v0.3.21",
+        "layer": "user",
+        "opacity": 1,
+        "scale": 1,
+        "status": "active"
+      },
+      "degree": 0,
+      "filePath": "ghost://v0.3.21",
+      "id": "v0.3.21",
+      "label": "v0.3.21",
+      "layer": "user",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "status": "active",
+      "type": "documentation",
+      "visual": {
+        "opacity": 1,
+        "scale": 1,
+        "visible": true
+      }
     }
   ],
-  "userCount": 412,
+  "userCount": 420,
   "_iron_guard": {
     "version": "0.2.18.1",
-    "byte_size": 348390,
+    "byte_size": 327395,
     "encoding": "UTF-8",
     "alignment": 8
   }

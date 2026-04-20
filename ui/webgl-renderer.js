@@ -176,6 +176,7 @@ class WebGLRenderer {
             attribute vec2 aVertexPosition; // Quad: [-1,-1] to [1,1]
             attribute vec2 aInstancePosition;
             attribute vec3 aInstanceColor;
+            attribute vec3 aInstanceBorderColor;
             attribute vec2 aInstanceSize; // [w/2, h/2]
             attribute float aIsSelected;
             attribute float aInstanceAlpha;
@@ -185,6 +186,7 @@ class WebGLRenderer {
             uniform mat3 uProjectionMatrix;
             uniform float uTime;
             varying vec3 vColor;
+            varying vec3 vBorderColor;
             varying vec2 vCoord;
             varying float vIsSelected;
             varying float vAlpha;
@@ -194,6 +196,7 @@ class WebGLRenderer {
             varying float vTime;
             void main() {
                 vColor = aInstanceColor;
+                vBorderColor = aInstanceBorderColor;
                 vCoord = aVertexPosition;
                 vIsSelected = aIsSelected;
                 vAlpha = aInstanceAlpha;
@@ -209,6 +212,7 @@ class WebGLRenderer {
         const fsSource = `
             precision mediump float;
             varying vec3 vColor;
+            varying vec3 vBorderColor;
             varying vec2 vCoord; // -1 to 1
             varying float vIsSelected;
             varying float vAlpha;
@@ -216,6 +220,8 @@ class WebGLRenderer {
             varying float vDtr;
             varying float vStatus;
             varying float vTime;
+            uniform vec4 uSelectionColor;
+            uniform vec4 uDtrGlowColor;
 
             float random(vec2 st) {
                 return fract(sin(dot(st.xy, vec2(12.9898,78.233))) * 43758.5453123);
@@ -238,60 +244,52 @@ class WebGLRenderer {
                 
                 if (dist > 0.0) discard;
                 
-                // [v0.3.3] Sharper Border Mask (matches 2D stroke)
-                float borderThreshold = -0.02;
-                float borderMask = smoothstep(borderThreshold - 0.01, borderThreshold, dist);
+                // [v0.3.22.9] Sharper Border Mask (matches 2D stroke)
+                // Expanded to -0.04 to match 2D visual weight (approx 4.8px vs 2px stroke)
+                float borderThreshold = -0.04;
+                float borderMask = smoothstep(borderThreshold - 0.005, borderThreshold, dist);
                 
-                vec3 borderColor = vec3(0.5, 0.5, 0.5); 
+                vec3 borderColor = vBorderColor; 
                 vec3 nodeBaseColor = vColor;
 
-                // [v0.3.1_zz] Status-based Border & Glow
-                if (vStatus > 0.5 && vStatus < 1.5) { // Active
-                    borderColor = vec3(0.51, 0.65, 0.60); // #83a598
-                } else if (vStatus > 1.5 && vStatus < 2.5) { // Ghost
-                    borderColor = vec3(0.57, 0.51, 0.45); // #928374
-                } else if (vStatus > 3.5 && vStatus < 4.5) { // Warning
-                    float pulse = 0.5 + 0.5 * sin(vTime * 5.0);
-                    borderColor = mix(vec3(0.98, 0.29, 0.20), vec3(1.0, 0.8, 0.8), pulse); // #fb4934 pulse
-                } else if (vStatus > 4.5 && vStatus < 5.5) { // Necrosis/Tombstone
-                    borderColor = vec3(0.11, 0.13, 0.13); // #1d2021
-                    float n = random(vCoord * sin(vTime));
-                    if (n > 0.95) nodeBaseColor = vec3(0.92, 0.86, 0.70); // Noise dot
-                } else if (vStatus > 5.5) { // External/Dashed
-                    borderColor = vec3(0.55, 0.75, 0.48); // #8ec07c
+                // [v0.3.22] Attribute-First status effects (No hardcoded color overrides)
+                if (vStatus > 3.5 && vStatus < 4.5) { // Warning: Pulse
+                    float pulse = 0.5 + 0.5 * sin(vTime * 6.0);
+                    borderColor = mix(vBorderColor, vec3(1.0, 0.9, 0.9), pulse * 0.4);
+                } else if (vStatus > 4.5 && vStatus < 5.5) { // Necrosis: Static Noise
+                    float n = random(vCoord * sin(vTime * 0.1));
+                    if (n > 0.9) nodeBaseColor = mix(nodeBaseColor, vec3(0.5), n * 0.2);
                 }
 
                 if (vIsSelected > 0.5) {
-                    borderColor = vec3(0.98, 0.74, 0.18); // #fabd2f
+                    borderColor = uSelectionColor.rgb; 
                 }
                 
-                // [v0.3.1_zz] High DTR Glow (Purple #8a2be2)
+                // [v0.3.22] High DTR Glow (Purple #8a2be2) - High Priority parity
                 if (vDtr > 0.7) {
-                    float dtrPulse = 1.0 + 0.3 * sin(vTime * 3.0);
-                    float dtrMask = smoothstep(-0.3, 0.0, dist);
-                    vec3 purple = vec3(0.54, 0.17, 0.89); 
-                    nodeBaseColor = mix(nodeBaseColor, purple, dtrMask * 0.4 * dtrPulse);
+                    float dtrPulse = 1.0 + 0.2 * sin(vTime * 4.0);
+                    float glowIntensity = smoothstep(-0.5, 0.0, dist);
+                    nodeBaseColor = mix(nodeBaseColor, uDtrGlowColor.rgb, glowIntensity * 0.5 * dtrPulse);
                 }
                 
-                // [v0.3.5] Dashed Border for External Nodes (vStatus > 5.5)
-                if (vStatus > 5.5 && borderMask > 0.1) {
-                    float perimeter = (vCoord.x + 1.0) + (vCoord.y + 1.0); // Simple linear perimeter approx
-                    if (mod(perimeter * 12.0, 2.0) > 1.0) discard;
+                // [v0.3.22] Dashed Border for Ghost & External
+                if ((vStatus > 1.5 && vStatus < 2.5) || vStatus > 5.5) {
+                    if (borderMask > 0.1) {
+                        float perimeter = (vCoord.x + 1.0) + (vCoord.y + 1.0);
+                        if (mod(perimeter * 15.0, 2.0) > 1.0) discard;
+                    }
                 }
                 
-                // Subtle Inner Glow
-                float innerGlow = smoothstep(-0.4, -0.0, dist);
-                nodeBaseColor = mix(nodeBaseColor, vec3(1.0), innerGlow * 0.1);
-
-                if (borderMask > 0.5) {
-                    nodeBaseColor = mix(nodeBaseColor, borderColor, borderMask);
+                // Final Composition
+                vec3 finalColor = nodeBaseColor;
+                if (borderMask > 0.1) {
+                    finalColor = mix(nodeBaseColor, borderColor, borderMask);
                 }
                 
-                // [v0.3.3] Background opacity adjustment for parity
                 float finalAlpha = vAlpha;
-                if (vIsSelected < 0.5) finalAlpha *= 0.85; 
+                if (vIsSelected < 0.5) finalAlpha *= 0.95; 
                 
-                gl_FragColor = vec4(nodeBaseColor, finalAlpha);
+                gl_FragColor = vec4(finalColor, finalAlpha);
             }
         `;
         this.nodeProgram = this.createProgram(vsSource, fsSource);
@@ -463,6 +461,7 @@ class WebGLRenderer {
             node: {
                 pos: this.gl.getAttribLocation(this.nodeProgram, 'aInstancePosition'),
                 color: this.gl.getAttribLocation(this.nodeProgram, 'aInstanceColor'),
+                borderColor: this.gl.getAttribLocation(this.nodeProgram, 'aInstanceBorderColor'),
                 size: this.gl.getAttribLocation(this.nodeProgram, 'aInstanceSize'),
                 selected: this.gl.getAttribLocation(this.nodeProgram, 'aIsSelected'),
                 alpha: this.gl.getAttribLocation(this.nodeProgram, 'aInstanceAlpha'),
@@ -471,7 +470,9 @@ class WebGLRenderer {
                 statusType: this.gl.getAttribLocation(this.nodeProgram, 'aStatusType'),
                 vertex: this.gl.getAttribLocation(this.nodeProgram, 'aVertexPosition'),
                 uProj: this.gl.getUniformLocation(this.nodeProgram, 'uProjectionMatrix'),
-                uTime: this.gl.getUniformLocation(this.nodeProgram, 'uTime')
+                uTime: this.gl.getUniformLocation(this.nodeProgram, 'uTime'),
+                uSelectionColor: this.gl.getUniformLocation(this.nodeProgram, 'uSelectionColor'),
+                uDtrGlowColor: this.gl.getUniformLocation(this.nodeProgram, 'uDtrGlowColor')
             },
             star: {
                 pos: this.gl.getAttribLocation(this.starProgram, 'aPosition'),
@@ -532,6 +533,7 @@ class WebGLRenderer {
 
         this.posBuffer = this.gl.createBuffer();
         this.colorBuffer = this.gl.createBuffer();
+        this.borderColorBuffer = this.gl.createBuffer();
         this.sizeBuffer = this.gl.createBuffer();
         this.selectBuffer = this.gl.createBuffer(); // [New] Selection Status Buffer
 
@@ -566,6 +568,7 @@ class WebGLRenderer {
 
         this._nodePosArr = new Float32Array(maxNodes * 2);
         this._nodeColorArr = new Float32Array(maxNodes * 3);
+        this._nodeBorderColorArr = new Float32Array(maxNodes * 3);
         this._nodeSizeArr = new Float32Array(maxNodes * 2);
         this._nodeSelectArr = new Float32Array(maxNodes); // 1 float per node
         this._edgeArr = new Float32Array(maxEdges * 4);
@@ -575,6 +578,8 @@ class WebGLRenderer {
         this.gl.bufferData(this.gl.ARRAY_BUFFER, this._nodePosArr.byteLength, this.gl.DYNAMIC_DRAW);
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.colorBuffer);
         this.gl.bufferData(this.gl.ARRAY_BUFFER, this._nodeColorArr.byteLength, this.gl.DYNAMIC_DRAW);
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.borderColorBuffer);
+        this.gl.bufferData(this.gl.ARRAY_BUFFER, this._nodeBorderColorArr.byteLength, this.gl.DYNAMIC_DRAW);
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.sizeBuffer);
         this.gl.bufferData(this.gl.ARRAY_BUFFER, this._nodeSizeArr.byteLength, this.gl.DYNAMIC_DRAW);
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.selectBuffer);
@@ -705,6 +710,7 @@ class WebGLRenderer {
         // Use pre-allocated buffers
         const posArr = this._nodePosArr;
         const colorArr = this._nodeColorArr;
+        const borderArr = this._nodeBorderColorArr;
         const sizeArr = this._nodeSizeArr;
         const selectArr = this._nodeSelectArr;
         const alphaArr = this._nodeAlphaArr;
@@ -724,58 +730,39 @@ class WebGLRenderer {
             posArr[i * 2] = p.x + (nodeWidth / 2);
             posArr[i * 2 + 1] = p.y + (nodeHeight / 2);
 
-            // [v0.3.1_zz] SYNC with Node Status Conventions
-            let nColor = n.data?.color;
-            if (!nColor) {
-                if (n.type === 'config' || n.type === 'data') nColor = '#076678';
-                else if (n.type === 'external') nColor = '#282828';
-                else nColor = '#3c3836';
-            }
+            // [v0.3.22] Use Centralized Theme Logic (Defensive)
+            const theme = (typeof SYNAPSE_THEME !== 'undefined') ? SYNAPSE_THEME : (window.SYNAPSE_THEME || null);
+            const stats = window.engine?.nodeStatsMap?.get(n.id);
+            const style = theme ? (theme.getFullNodeStyle ? theme.getFullNodeStyle(n, stats) : null) : null;
 
-            let statusType = 0.0; // Normal
-            if (n.status === 'active') {
-                nColor = '#83a598';
-                statusType = 1.0;
-            } else if (n.status === 'ghost') {
-                nColor = '#928374';
-                statusType = 2.0;
-            } else if (n.status === 'deleted') {
-                nColor = '#282828';
-                statusType = 3.0;
-            } else if (n.status === 'warning' || n.isError) {
-                nColor = '#fb4934';
-                statusType = 4.0;
-            } else if (n.status === 'error_necrosis' || n.status === 'error_tombstone') {
-                nColor = '#1d2021';
-                statusType = 5.0;
-            } else if (n.type === 'external') {
-                nColor = 'rgba(40, 40, 40, 0.7)';
-                statusType = 6.0;
-            }
+            let nColor = style ? style.bgColor : '#3c3836';
+            let bColor = style ? style.borderColor : '#a89984';
+            let statusType = style ? style.statusType : 0.0;
+            let opacity = style ? style.opacity : 0.98;
+            let nodeShape = style ? style.shape : 'box';
 
-            const fileName = (n.data?.file || '').toLowerCase();
-            const isDecisionNode = fileName.includes('valid_') || fileName.includes('validator') || 
-                                 fileName.includes('checker') || fileName.includes('router') || 
-                                 fileName.startsWith('is_');
+            const cBg = this.hexToRgb(nColor);
+            const cBorder = this.hexToRgb(bColor);
 
-            // Convert Hex to RGB
-            const r = parseInt(nColor.slice(1, 3), 16) / 255;
-            const g = parseInt(nColor.slice(3, 5), 16) / 255;
-            const b = parseInt(nColor.slice(5, 7), 16) / 255;
+            colorArr[i * 3] = cBg.r;
+            colorArr[i * 3 + 1] = cBg.g;
+            colorArr[i * 3 + 2] = cBg.b;
 
-            colorArr[i * 3] = r;
-            colorArr[i * 3 + 1] = g;
-            colorArr[i * 3 + 2] = b;
+            borderArr[i * 3] = cBorder.r;
+            borderArr[i * 3 + 1] = cBorder.g;
+            borderArr[i * 3 + 2] = cBorder.b;
 
             sizeArr[i * 2] = nodeWidth / 2;
             sizeArr[i * 2 + 1] = nodeHeight / 2;
 
             selectArr[i] = (selectedNodeIds && selectedNodeIds.has(n.id)) ? 1.0 : 0.0;
-            alphaArr[i] = (n.visual?.opacity || 0.98);
+            alphaArr[i] = opacity;
 
+            // Shape Mapping
             let shape = 0.0; // Box
-            if (isDecisionNode || n.isDeterministicFracture) shape = 1.0; // Diamond
-            else if (fileName.includes('loop') || fileName.includes('iter')) shape = 2.0; // Hexagon
+            if (nodeShape === 'diamond') shape = 1.0;
+            else if (nodeShape === 'hexagon') shape = 2.0;
+            else if (nodeShape === 'parallelogram') shape = 3.0;
             shapeArr[i] = shape;
 
             statusArr[i] = statusType;
@@ -788,6 +775,9 @@ class WebGLRenderer {
 
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.colorBuffer);
         this.gl.bufferSubData(this.gl.ARRAY_BUFFER, 0, colorArr.subarray(0, nodes.length * 3));
+
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.borderColorBuffer);
+        this.gl.bufferSubData(this.gl.ARRAY_BUFFER, 0, borderArr.subarray(0, nodes.length * 3));
 
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.sizeBuffer);
         this.gl.bufferSubData(this.gl.ARRAY_BUFFER, 0, sizeArr.subarray(0, nodes.length * 2));
@@ -848,6 +838,8 @@ class WebGLRenderer {
                 let x2 = tgt.position.x + (nodeWidth / 2);
                 let y2 = tgt.position.y + (nodeHeight / 2);
 
+                // x1, y1, x2, y2 will be written after border intersection logic
+
                 // [v0.3.2] Boundary Intersection: Stop edges at node borders
                 const dx = x2 - x1;
                 const dy = y2 - y1;
@@ -874,33 +866,21 @@ class WebGLRenderer {
                     y2 -= ny * t_tgt;
                 }
 
+                // [v0.3.22.3] Write corrected coordinates to buffer
                 data[cnt++] = x1;
                 data[cnt++] = y1;
                 data[cnt++] = x2;
                 data[cnt++] = y2;
-
-                // [v0.3.1_zz] SYNC with SYNAPSE Edge & Line Conventions
-                const styles = {
-                    'dependency': { color: '#ebdbb2', thickness: 2.0 },
-                    'data_flow': { color: '#83a598', thickness: 3.0 },
-                    'event': { color: '#fe8019', thickness: 2.0 },
-                    'conditional': { color: '#d3869b', thickness: 1.0 },
-                    'origin': { color: '#d65d0e', thickness: 1.5 },
-                    'api_call': { color: '#8ec07c', thickness: 2.0 },
-                    'db_query': { color: '#d3869b', thickness: 3.0 },
-                    'loop_back': { color: '#fe8019', thickness: 2.0 },
-                    'static': { color: '#ebdbb2', thickness: 1.5 },
-                    'reference': { color: '#ebdbb2', thickness: 2.0 }
-                };
-
-                const edgeType = e.type || 'dependency';
-                const baseStyle = styles[edgeType] || styles['dependency'];
+                // [v0.3.22] Unified Edge Styles via SYNAPSE_THEME (with safety fallbacks)
+                const theme = (typeof SYNAPSE_THEME !== 'undefined') ? SYNAPSE_THEME : (window.SYNAPSE_THEME || null);
                 
-                let color = baseStyle.color;
-                let thickness = baseStyle.thickness;
+                const edgeStyle = theme ? (theme.getEdgeStyle ? theme.getEdgeStyle(e.type) : { color: '#665c54', thickness: 2, dash: [0, 0] }) : { color: '#665c54', thickness: 2, dash: [0, 0] };
+                
+                let color = edgeStyle.color;
+                let thickness = edgeStyle.thickness;
 
                 if (isPathSelected && !isEdgeHidden) {
-                    color = '#fabd2f';
+                    color = theme ? (theme.EDGES.HIGHLIGHTED?.color || '#fabd2f') : '#fabd2f';
                     thickness = thickness + 5.0; // matching 2D bulge
                 }
                 // v0.4.1: 기본 상태(pending, confirmed 포함)는 타입별 색상을 유지합니다.
@@ -913,8 +893,7 @@ class WebGLRenderer {
 
                 thickData[thickCnt++] = thickness;
 
-                const styleDash = (edgeType === 'api_call') ? [4, 4] : 
-                                 (edgeType === 'loop_back' || edgeType === 'loop') ? [2, 4] : [0, 0];
+                const styleDash = edgeStyle.dash || [0, 0];
                 dashData[dashCnt++] = styleDash[0];
                 dashData[dashCnt++] = styleDash[1];
 
@@ -1006,24 +985,16 @@ class WebGLRenderer {
             const type = (n.type || "").toLowerCase();
             const lowLabel = label.toLowerCase();
             
-            // [v0.3.21] Synchronized Semantic Icon Detection (Parity with 2D getNodeStyle)
-            let icon = n.data?.icon;
-            if (!icon) {
-                if (type === 'signal' || lowLabel.includes('emit') || lowLabel.includes('broadcast')) icon = '📡';
-                else if (type === 'payload' || lowLabel.includes('stream') || lowLabel.includes('buffer')) icon = '📊';
-                else if (type === 'async' || lowLabel.includes('async') || lowLabel.includes('promise')) icon = '🕒';
-                else if (type === 'component') icon = '🧩';
-                else if (type === 'processor') icon = '⚙️';
-                else if (type === 'service') icon = '🤝';
-                else if (type === 'gate') icon = '⛩️';
-                else if (type === 'trigger') icon = '⚡';
-                else if (type === 'data') icon = '📋';
-                else if (type === 'external' || n.cluster_id === 'sys_cluster_reserved') icon = '☁';
-                else icon = '📄';
-            }
+            // [v0.3.22] Synchronized Semantic Icon Detection (Parity with 2D getNodeStyle)
+            const theme = (typeof SYNAPSE_THEME !== 'undefined') ? SYNAPSE_THEME : (window.SYNAPSE_THEME || null);
+            const stats = window.engine?.nodeStatsMap?.get(n.id);
+            const style = theme ? (theme.getFullNodeStyle ? theme.getFullNodeStyle(n, stats) : null) : null;
+            
+            // [v0.3.22] Priority Fix: Use theme-calculated icon (style.icon) over raw data to ensure 2D/3D parity
+            let icon = (style && style.icon) ? style.icon : (n.data?.icon || '📄');
 
             const summary = n.data?.summary || {};
-            const statusDetail = (n.status === 'proposed' || n.state === 'pending') ? "⚡ Awaiting Approval" : "";
+            const statusDetail = (n.status === 'proposed' || n.state === 'pending') ? `${theme ? theme.STATUS.APPROVAL.icon : '⚡'} Awaiting Approval` : "";
             
             // Build key for layout caching (include zoom/LOD info)
             const lodLevel = currentZoom > 1.5 ? 2 : (currentZoom > 0.8 ? 1 : 0);
@@ -1089,6 +1060,29 @@ class WebGLRenderer {
                     }
                 }
 
+                // D. Deep LOD: Architectural Stats (Parity with 2D line 6970)
+                if (currentZoom > 1.5 && stats) {
+                    const statsText = `L: ${stats.logicCount || 0} E: ${stats.entryCount || 0} C: ${stats.connectionCount || 0}`;
+                    this.textAtlas.addText(statsText);
+                    let stW = 0;
+                    for (const ch of statsText) {
+                        const g = this.textAtlas.glyphMap.get(ch);
+                        if (g) stW += g.w;
+                    }
+                    curX = 60 - stW / 2;
+                    let stY = 65; 
+                    for (const ch of statsText) {
+                        const g = this.textAtlas.glyphMap.get(ch);
+                        if (!g) continue;
+                        items.push({
+                            dx: curX, dy: stY,
+                            w: g.w, h: g.h,
+                            u0: g.u0, v0: g.v0, u1: g.u1, v1: g.v1
+                        });
+                        curX += g.w;
+                    }
+                }
+
                 // D. Deep LOD (Functions/Classes) - Parity with 2D lines 6031-6074
                 if (lodLevel === 2) {
                     const detailLines = [];
@@ -1122,9 +1116,8 @@ class WebGLRenderer {
         // 2️⃣ Edge Badges (Type Icons, Validation Icons, Status Icons)
         const badgeItems = [];
         const isBadgeHidden = window.edgeVisibilityMode === 'NO_BADGES' || window.edgeVisibilityMode === 'NO_EDGES';
-        // [v0.3.16] Hybrid Duplication Fix: 2D Overlay(renderEdgeBadges)가 더 정밀한 통합 배지를 그리므로, 
-        // 하이브리드 모드(Zoom > 0.4)에서는 WebGL 텍스트 레이어로 엣지 뱃지를 중복 생성하지 않음.
-        const skipGpuBadges = window.engine?.transform?.zoom > 0.4;
+        // [v0.3.22.4] Always draw badges in WebGL for consistent parity across zoom levels
+        const skipGpuBadges = false; 
 
         if (edges && edges.length > 0 && !isBadgeHidden && !skipGpuBadges) {
             const isEditMode = window.engine?.isEditMode;
@@ -1133,15 +1126,8 @@ class WebGLRenderer {
             for (const n of nodes) map.set(n.id, n);
 
             // [v0.4.0] Standard Edge Type Icons (Unicode Escapes for build stability)
-            const iconMap = {
-                'dependency': '\u{1F517}', // 🔗
-                'call': '\u{1F4E1}',       // 📡
-                'data_flow': '\u{1F4CA}',  // 📊
-                'bidirectional': '\u{1F504}', // 🔄
-                'db_query': '\u{1F6E2}',    // 🛢️ (Oil Drum/DB)
-                'origin': '\u{1F4CD}',     // 📍
-                'loop_back': '\u{1F501}'   // 🔁
-            };
+            // [v0.3.22] Synchronized Edge Icons via Theme
+            const theme = (typeof SYNAPSE_THEME !== 'undefined') ? SYNAPSE_THEME : (window.SYNAPSE_THEME || null);
 
             edges.forEach(e => {
                 const src = e.srcNode || (map ? map.get(e.from) : null);
@@ -1158,100 +1144,31 @@ class WebGLRenderer {
                 const midX = (x1 + x2) / 2;
                 const midY = (y1 + y2) / 2;
 
-                // 2.1 Mid-point Arrow Head (Standard Triangle) - Drawn as central anchor
-                const arrowChar = '▶'; // Directional arrow character
-                this.textAtlas.addText(arrowChar);
-                const gArrow = this.textAtlas.glyphMap.get(arrowChar);
-                if (gArrow) {
-                    badgeItems.push({
-                        x: midX - gArrow.w / 2, y: midY - 5,
-                        w: gArrow.w, h: gArrow.h,
-                        u0: gArrow.u0, v0: gArrow.v0, u1: gArrow.u1, v1: gArrow.v1
-                    });
-                }
+                // [v0.3.22.8] Arrow is now drawn separately or omitted to match 2D parity and architecture specs
+                /* Arrow logic removed from badge capsule */
 
-                // 2.2 Validation Icons (🤖, ⚠️, ❌) - Check edgeValidationCache if available (PRIMARY INFO)
-                const validation = window.engine?.edgeValidationCache?.get(e.id);
-                if (validation && (!validation.valid || validation.color === '#fabd2f' || validation.isAi)) {
-                    let valIcon = '';
-                    if (!validation.valid) valIcon = '❌';
-                    else if (validation.color === '#fabd2f') valIcon = '⚠️';
-                    
-                    const aiIcon = validation.isAi ? '🤖' : '';
-                    let valText = valIcon;
-                    if (aiIcon) {
-                        valText = valText ? `${aiIcon} ${valText}` : aiIcon;
-                    }
-                    
-                    let cx = midX - 10;
-                    for (const ch of valText) {
-                        if (ch === ' ') { cx += 10; continue; } // Handle space between AI and valIcon
-                        this.textAtlas.addText(ch);
-                        const g = this.textAtlas.glyphMap.get(ch);
-                        if (g) {
-                            badgeItems.push({
-                                x: cx, y: midY - 25, // Offset upwards like 2D
-                                w: g.w, h: g.h,
-                                u0: g.u0, v0: g.v0, u1: g.u1, v1: g.v1
-                            });
-                            cx += (g.w + 2); // advance
+                // [v0.3.22] Synchronized High-Density Edge Badges via Theme (Full Parity)
+                const badgeStyle = theme ? (theme.getEdgeBadgeStyle ? theme.getEdgeBadgeStyle(e) : null) : null;
+                const valText = badgeStyle ? badgeStyle.text : "";
+
+                if (valText) {
+                        let cx = midX - 10;
+                        for (const ch of valText) {
+                            if (ch === ' ') { cx += 10; continue; } 
+                            this.textAtlas.addText(ch);
+                            const g = this.textAtlas.glyphMap.get(ch);
+                            if (g) {
+                                badgeItems.push({
+                                    x: cx, y: midY - 35, // [v0.3.22.7] Lifted slightly higher for better line clearance
+                                    w: g.w * 1.5, h: g.h * 1.5, // [v0.3.22.7] 1.5x Scaling for visibility
+                                    u0: g.u0, v0: g.v0, u1: g.u1, v1: g.v1
+                                });
+                                cx += (g.w * 1.5 + 4); 
+                            }
                         }
                     }
-                }
-
-                // 2.3 Internal Type Icon (Always show!)
-                {
-                    // [FIX v0.3.09] Guarantee valid icon, never undefined
-                    const fallbackIcon = iconMap['dependency'] || '🔗';
-                    let typeIcon = (e.type && iconMap[e.type]) ? iconMap[e.type] : fallbackIcon;
-
-                    // Handle extended edge type identifiers that may not (yet) be in iconMap
-                    if (e.type === 'broken_fracture') {
-                        typeIcon = '💥';
-                    } else if (e.type === 'loop' || e.type === 'loop_back') {
-                        typeIcon = '🔁';
-                    } else if (e.type === 'reference') {
-                        typeIcon = '📝';
-                    } else if (e.type === 'api_call') {
-                        typeIcon = '📞';
-                    } else if (e.type === 'bidirectional') {
-                        typeIcon = '🔄';
-                    } else if (e.type === 'event') {
-                        typeIcon = '⚡';
-                    } else if (e.type === 'conditional') {
-                        typeIcon = '❓';
-                    }
-
-                    // Prevent fallback to plain Latin letters (B/D) in 3D mode
-                    if (typeof typeIcon !== 'string' || typeIcon.length === 0) {
-                        typeIcon = fallbackIcon;
-                    }
-
-                    this.textAtlas.addText(typeIcon);
-                    const gType = this.textAtlas.glyphMap.get(typeIcon);
-                    if (gType) {
-                        badgeItems.push({
-                            x: midX - gType.w / 2, y: midY, // Centered inside arrow
-                            w: gType.w, h: gType.h,
-                            u0: gType.u0, v0: gType.v0, u1: gType.u1, v1: gType.v1
-                        });
-                    }
-                }
-
-                // 2.5 Interaction/Status Icons (❓, ❗️, ❌)
-                const confirmStatus = e.confirmStatus || (e.status === 'pending' ? 'pending_confirm' : '');
-                if (confirmStatus === 'pending_confirm' || confirmStatus === 'confirmed') {
-                    const char = (confirmStatus === 'pending_confirm') ? '❓' : '❗️';
-                    this.textAtlas.addText(char);
-                    const g = this.textAtlas.glyphMap.get(char);
-                    if (g) {
-                        badgeItems.push({
-                            x: midX + 15, y: midY,
-                            w: g.w, h: g.h,
-                            u0: g.u0, v0: g.v0, u1: g.u1, v1: g.v1
-                        });
-                    }
-                }
+                
+                // [v0.3.22] High-Density badges (including status) are now handled by the unified valText block above.
 
                 if (isEditMode) {
                     const char = '❌';
@@ -1465,10 +1382,10 @@ class WebGLRenderer {
             this.lastEdgeCount = edgeLen;
         }
 
-        const isSatellite = transform.zoom < 0.4;
+        const isSatellite = transform.zoom < 0.1; // [v0.3.22] Parity: Lowered from 0.4 to 0.1
         
         // [v0.2.24-perf] ONLY update text data if dirty OR zoom level crossed satellite threshold
-        const wasSatellite = (this._lastZoom === undefined) ? !isSatellite : (this._lastZoom < 0.4); // Initialize _lastZoom state
+        const wasSatellite = (this._lastZoom === undefined) ? !isSatellite : (this._lastZoom < 0.1);
         const zoomPhaseChanged = isSatellite !== wasSatellite;
         
         if (isTextDirty || zoomPhaseChanged) {
@@ -1539,6 +1456,15 @@ class WebGLRenderer {
             0, transform.zoom * scaleY, 0,
             -1 + transform.offsetX * scaleX, 1 + transform.offsetY * scaleY, 1
         ];
+        // [v0.3.22] Synchronized Glow Dynamics
+        const theme = (typeof SYNAPSE_THEME !== 'undefined') ? SYNAPSE_THEME : null;
+        const baseGlow = theme ? theme.GLOW.BASE_BLUR : 10.0;
+        const pulseRange = theme ? theme.GLOW.PULSE_RANGE : 5.0;
+        const pulseSpeed = theme ? theme.GLOW.PULSE_SPEED : 200;
+        
+        const pulse = Math.sin(Date.now() / pulseSpeed);
+        this.gl.uniform1f(this.uSelectionGlow, baseGlow + pulseRange * pulse);
+        this.gl.uniform1f(this.uDTRGlow, (baseGlow * 1.5) + (pulseRange * 2) * pulse);
         this.gl.uniformMatrix3fv(this.locs.edge.uProj, false, mat);
         this.gl.uniform1f(this.locs.edge.uTime, (Date.now() % 1000000) / 1000);
 
@@ -1578,6 +1504,13 @@ class WebGLRenderer {
         this.gl.uniformMatrix3fv(this.locs.node.uProj, false, mat);
         this.gl.uniform1f(this.locs.node.uTime, (Date.now() % 1000000) / 1000);
 
+        // [v0.3.22] Inject Theme Colors as Uniforms (SSOT)
+        const themeAvailable = typeof SYNAPSE_THEME !== 'undefined';
+        if (themeAvailable) {
+            this.gl.uniform4fv(this.locs.node.uSelectionColor, new Float32Array(SYNAPSE_THEME.SHADERS.SELECTION));
+            this.gl.uniform4fv(this.locs.node.uDtrGlowColor, new Float32Array(SYNAPSE_THEME.SHADERS.DTR_GLOW));
+        }
+
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.rectBuffer);
         const vPos = this.locs.node.vertex;
         this.gl.vertexAttribPointer(vPos, 2, this.gl.FLOAT, false, 0, 0);
@@ -1586,6 +1519,7 @@ class WebGLRenderer {
 
         this.setAttrPointer(this.posBuffer, this.locs.node.pos, 2, 0, 0, 1);
         this.setAttrPointer(this.colorBuffer, this.locs.node.color, 3, 0, 0, 1);
+        this.setAttrPointer(this.borderColorBuffer, this.locs.node.borderColor, 3, 0, 0, 1);
         this.setAttrPointer(this.sizeBuffer, this.locs.node.size, 2, 0, 0, 1);
         this.setAttrPointer(this.selectBuffer, this.locs.node.selected, 1, 0, 0, 1);
         this.setAttrPointer(this.alphaBuffer, this.locs.node.alpha, 1, 0, 0, 1);
@@ -1671,12 +1605,43 @@ class WebGLRenderer {
 
     hexToRgb(hex) {
         if (!hex || typeof hex !== 'string') return { r: 0.27, g: 0.52, b: 0.53 };
-        const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-        return result ? {
-            r: parseInt(result[1], 16) / 255,
-            g: parseInt(result[2], 16) / 255,
-            b: parseInt(result[3], 16) / 255
-        } : { r: 1, g: 1, b: 1 };
+        
+        let r = 0, g = 0, b = 0;
+        let h = hex.replace('#', '');
+        
+        if (h.length === 3) {
+            r = parseInt(h[0] + h[0], 16);
+            g = parseInt(h[1] + h[1], 16);
+            b = parseInt(h[2] + h[2], 16);
+        } else if (h.length === 6 || h.length === 8) {
+            r = parseInt(h.substring(0, 2), 16);
+            g = parseInt(h.substring(2, 4), 16);
+            b = parseInt(h.substring(4, 6), 16);
+        } else {
+            return { r: 1, g: 1, b: 1 };
+        }
+        
+        return { r: r / 255, g: g / 255, b: b / 255 };
+    }
+
+    /**
+     * [v0.3.22] Coordinate Back-propagation
+     * Calculates the screen position of all nodes for 2D Overlay synchronization.
+     */
+    getProjectedNodePositions(nodes, transform) {
+        const positions = new Map();
+        const zoom = transform.zoom;
+        const ox = transform.offsetX;
+        const oy = transform.offsetY;
+
+        for (const n of nodes) {
+            if (!n.position) continue;
+            // Map world to screen
+            const sx = n.position.x * zoom + ox;
+            const sy = n.position.y * zoom + oy;
+            positions.set(n.id, { x: sx, y: sy });
+        }
+        return positions;
     }
 }
 

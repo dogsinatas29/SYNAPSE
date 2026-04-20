@@ -4,8 +4,8 @@
 
 **코드를 읽지 말고, 아키텍처를 보십시오.**
 
-[![Version](https://img.shields.io/badge/version-v0.3.22-brightgreen.png)](https://github.com/dogsinatas29/SYNAPSE)
-[![Latest Release](https://img.shields.io/badge/latest-v0.3.22%20Rendering%20Parity-orange.png)](https://github.com/dogsinatas29/SYNAPSE/releases)
+[![Version](https://img.shields.io/badge/version-v0.3.22.10-brightgreen.png)](https://github.com/dogsinatas29/SYNAPSE)
+[![Latest Release](https://img.shields.io/badge/latest-v0.3.22.10%20Rendering%20Parity-orange.png)](https://github.com/dogsinatas29/SYNAPSE/releases)
 ![Status](https://img.shields.io/badge/status-Production_Ready-brightgreen.png)
 
 ---
@@ -133,7 +133,7 @@ SYNAPSE는 노드 간의 다양한 논리적 연결과 데이터 흐름을 표�
 ### 1. 확장 프로그램 설치
 [Releases](https://github.com/dogsinatas29/SYNAPSE/releases)에서 최신 `.vsix`를 다운로드하고 실행합니다:
 ```bash
-code --install-extension synapse-visual-architecture-v0.3.22.vsix
+code --install-extension synapse-visual-architecture-v0.3.22.10.vsix
 ```
 
 ### 2. 캔버스 실행
@@ -219,7 +219,7 @@ SYNAPSE는 코드 중심 개발의 한계를 극복하기 위해 만들어졌습
 
 | 버전 | 날짜 | 설명 |
 | :--- | :--- | :--- |
-| **v0.3.22** | 2026-04-20 | **렌더링 동기화 및 지능형 툴팁**: 2D/3D 시각적 완전 동기화, 정체성 바인딩이 적용된 데바운스 툴팁 도입. |
+| **v0.3.22.10** | 2026-04-20 | **렌더링 패리티 및 정체성 바인딩 (SSoT)**: 2D/3D 시각적 동기화 완료 및 SSoT 기반 툴팁 정체성 바인딩을 통한 100% 데이터 정합성 확보. |
 | **v0.3.21** | 2026-04-18 | **시각적 일관성 및 엣지 번들링**: 전체 시각 규격 동기화, 베지어 흐름 통합. |
 | **v0.3.20** | 2026-04-17 | **Rust 지원 및 엔진 안정화**: Rust 대응 ID 도입, 물리 시뮬레이션 폭주 방지. |
 

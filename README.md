@@ -4,8 +4,8 @@
 
 **Don't read the code. See the architecture.**
 
-[![Version](https://img.shields.io/badge/version-v0.3.22-brightgreen.png)](https://github.com/dogsinatas29/SYNAPSE)
-[![Latest Release](https://img.shields.io/badge/latest-v0.3.22%20Rendering%20Parity-orange.png)](https://github.com/dogsinatas29/SYNAPSE/releases)
+[![Version](https://img.shields.io/badge/version-v0.3.22.10-brightgreen.png)](https://github.com/dogsinatas29/SYNAPSE)
+[![Latest Release](https://img.shields.io/badge/latest-v0.3.22.10%20Rendering%20Parity-orange.png)](https://github.com/dogsinatas29/SYNAPSE/releases)
 ![Status](https://img.shields.io/badge/status-Production_Ready-brightgreen.png)
 
 ---
@@ -127,7 +127,7 @@ Launch your visual architecture journey in seconds.
 ### 1. Install Extension
 Download the latest `.vsix` from [Releases](https://github.com/dogsinatas29/SYNAPSE/releases) and run:
 ```bash
-code --install-extension synapse-visual-architecture-v0.3.22.vsix
+code --install-extension synapse-visual-architecture-v0.3.22.10.vsix
 ```
 
 ### 2. Launch Canvas
@@ -211,7 +211,7 @@ SYNAPSE was created to overcome the limitations of code-centric development. It 
 
 | Version | Date | Description |
 | :--- | :--- | :--- |
-| **v0.3.22** | 2026-04-20 | **Rendering Parity & Intelligent Tooltips**: Full 2D/3D visual synchronization, debounced tooltips with identity binding, and LOD-aware lists. |
+| **v0.3.22.10** | 2026-04-20 | **Rendering Parity & Identity Binding (SSoT)**: Full 2D/3D visual synchronization, and SSoT-based tooltip identity binding for 100% data consistency. |
 | **v0.3.21** | 2026-04-18 | **Visual Consistency & Edge Bundling**: Full convention synchronization, Bezier flow consolidation, and Amnesia Guard for snapshot integrity. |
 | **v0.3.20** | 2026-04-17 | **Rust Persistence & Engine Hardening**: Path-based IDs for Rust support, Velocity clamping for physics stability. |
 | **v0.3.18** | 2026-04-17 | **Diagnostic Hint Engine**: Real-time architectural analysis (R1-R5), Zero-Unknown semantic labeling. |

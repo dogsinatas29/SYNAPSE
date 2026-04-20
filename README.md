@@ -31,8 +31,94 @@ SYNAPSE transforms "reading code" into "seeing architecture" by projecting execu
 
 ## 📸 Demo
 
+![Interaction Demo](assets/synapse_feature_demo.webp)
+*Zoom, Layer Visibility, and Traffic Heatmap demonstration.*
+
+![Zoom Detail Demo](assets/synapse_zoom_detail.webp)
+*Deep Zoom detail showing icons, badges, and tooltips.*
+
 ![Topology View](assets/v0.3.21/synapse_topology_v0.3.21.png)
-*Actual view of SYNAPSE analyzing its own architecture.*
+SYNAPSE uses a rich visual vocabulary to communicate the nature and health of your architecture.
+
+### 1. 📄 Entity Types (Identity Icons)
+Defines the physical nature or architectural role of the node.
+
+| Icon | Type | Meaning | Visual Style |
+| :--- | :--- | :--- | :--- |
+| 📄 | Active Source | A physical source file (Logic, Config, etc.). | Solid border, base color |
+| ⚡ | Atomic Logic | Core logic or Entry Point (contains Atomic signature). | Purple glow (DTR) |
+| 📁 | Folder | A directory structure cluster. | Folder cluster container |
+| ☁️ | External API | External library (os, fs) or API call dependency. | Cloud-like UI |
+| 📚 | Doc Shelf | Milestone, release note, architecture document. | Hidden by default on canvas |
+| 🧪 | Test Case | Unit tests and validation scripts (.test.ts). | Orange border |
+| 🧩 | Component | Modular UI or logical component unit. | Blue-green border |
+| ⚙️ | Processor | Data transformation or computational engine. | Purple-grey border |
+| 🤝 | Service | Shared logic or infrastructure service layer. | Blue border |
+| ⛩️ | Gate | Security, authentication, or traffic controller. | Thick yellow border |
+| 📋 | Data Record | DB schema, JSON model, or pure data definition. | Thick border, dark background |
+| 👻 | Ghost Source | Referenced internal source missing physical file. | Dashed border |
+
+### 2. 🎨 Node Status & Glow
+Defines the current reasoning state and visual prominence of the node.
+
+| Status | Visual Hint | Color | Meaning |
+| :--- | :--- | :--- | :--- |
+| **Active** | solid border | `#83a598` | Verified and currently active in the codebase. |
+| **High DTR** | purple glow | `#8a2be2` | High reasoning density; critical logic point. |
+| **Ghost** | dashed border | `#928374` | Proposed architectural node (not yet materialized). |
+| **Deleted** | grayed out | `#282828` | Safely commented out/decommissioned node. |
+| **Warning** | red pulse | `#fb4934` | Logic error, circular dependency, or dead-end detected. |
+| **Necrosis** | 💀 | `#1d2021` | Fatal logic failure; broken build or severe physical defect. |
+| **Tombstone** | 🪦 | `#1d2021` | Irrecoverable deterministic failure; recommended for deletion. |
+
+### 3. ➡️ Logic & Flow Markers
+Markers that occur on nodes or edges depending on the Zoom level (LOD).
+
+| Icon | Type | Meaning |
+| :--- | :--- | :--- |
+| ↻ | Loop | Iterative logic (for, while, map). |
+| ◈ | Decision | Branching logic (if, switch, validation). |
+| 🖨️ | Output | Terminal logging, printing, or side-effect output. |
+| 📡 | Signal | Network request or remote procedure call (RPC). |
+| 📊 | Payload | High-bandwidth data movement or stream. |
+| 🕒 | Async | Asynchronous processing or wait states. |
+
+### 4. ⚠️ Hazard & Purification Markers
+Visual indicators of system purity and architectural health.
+
+| Icon | Type | Meaning | Visual Style |
+| :--- | :--- | :--- | :--- |
+| 💀 | Necrosis | Architectural failure (circular dependency, etc.). | Dark background + noise |
+| 🪦 | Tombstone | Persistent deterministic violation record. | Tombstone marker |
+| 💣 | Mine | High-hazard point (breaking changes detected). | Red-out warning |
+| ⚠️ | Logic Fault | Specific code-level error or sync failure. | Red pulse / Warning icon |
+| 🔴 | Dirty Dot | Local changes that require synchronization/push. | Top-right red dot |
+
+### 5. ✅ Interaction & Approval Badges
+Intelligent badges representing synchronization and user command status.
+
+| Badge | Status | Meaning |
+| :--- | :--- | :--- |
+| ✅ | Confirmed | Manually approved by the Commander. |
+| 🤖 | AI Validated | Automatically verified against the codebase. |
+| ❓ | Pending | Proposed design awaiting verification (Draft). |
+| ❌ | Purge | Marked for physical removal or deletion. |
+| 🔒 | Locked | Immutable state; protected from modification. |
+
+### 🔗 Edge & Line Conventions
+SYNAPSE uses distinct colors and styles to represent different types of logical connections and data flows between nodes.
+
+| Edge Type | Color | Style & Thickness | Meaning |
+| :--- | :--- | :--- | :--- |
+| **Dependency** | `#ebdbb2` | solid 2px | Standard module dependency or import. |
+| **Data Flow** | `#83a598` | solid 3px | Heavy data transfer or payload movement. |
+| **Event** | `#fe8019` | solid 2px | Event triggers or asynchronous callbacks. |
+| **Conditional** | `#d3869b` | solid 1px | Conditional branches like if/else or match. |
+| **Origin** | `#d65d0e` | solid 1.5px | Prompt origin links for AI logic tracking. |
+| **API Call** | `#8ec07c` | dashed 2px | External API or cross-service network calls. |
+| **DB Query** | `#d3869b` | solid 3px | Database queries, mutations, or transactions. |
+| **Loop / Back** | `#fe8019` | dotted 2px | Loop-backs (while/for) or reverse logic flow. |
+| **Highlighted** | `#fabd2f` | pulse 5px | Active execution path (Hovered/Selected). |
 
 ## 🚀 Quick Start
 

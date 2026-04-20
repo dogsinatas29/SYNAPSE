@@ -1,5 +1,5 @@
 {
-  "aiCount": 60,
+  "aiCount": 64,
   "clusters": [
     {
       "collapsed": false,
@@ -161,6 +161,10 @@
       "type": "system"
     },
     {
+      "collapsed": false,
+      "data": {
+        "layer": "user"
+      },
       "id": "sys_cluster_reserved",
       "label": "Reserved Cluster",
       "type": "system"
@@ -16150,8 +16154,8 @@
       "label": "ArchitectureExplorer",
       "layer": "user",
       "position": {
-        "x": 80,
-        "y": 2400
+        "x": 0,
+        "y": 2680
       },
       "status": "active",
       "type": "file",
@@ -19904,12 +19908,152 @@
         "scale": 1,
         "visible": true
       }
+    },
+    {
+      "cluster_id": "cluster_ghosts",
+      "data": {
+        "cluster_id": "cluster_ghosts",
+        "degree": 0,
+        "hasAtomicSignature": false,
+        "hasImportSignature": false,
+        "hiddenOnCanvas": false,
+        "icon": "☁️",
+        "isScoped": false,
+        "isSovereign": false,
+        "isUserCreated": false,
+        "label": "focus_view",
+        "layer": "ai",
+        "opacity": 1,
+        "scale": 1,
+        "status": "ghost"
+      },
+      "degree": 0,
+      "filePath": "external://focus_view",
+      "id": "focus_view",
+      "label": "focus_view",
+      "layer": "ai",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "status": "ghost",
+      "type": "external",
+      "visual": {
+        "opacity": 1,
+        "scale": 1,
+        "visible": true
+      }
+    },
+    {
+      "cluster_id": "cluster_ghosts",
+      "data": {
+        "cluster_id": "cluster_ghosts",
+        "degree": 0,
+        "hasAtomicSignature": false,
+        "hasImportSignature": false,
+        "hiddenOnCanvas": false,
+        "icon": "☁️",
+        "isScoped": false,
+        "isSovereign": false,
+        "isUserCreated": false,
+        "label": "REVISION_HISTORY",
+        "layer": "ai",
+        "opacity": 1,
+        "scale": 1,
+        "status": "ghost"
+      },
+      "degree": 0,
+      "filePath": "external://REVISION_HISTORY",
+      "id": "REVISION_HISTORY",
+      "label": "REVISION_HISTORY",
+      "layer": "ai",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "status": "ghost",
+      "type": "external",
+      "visual": {
+        "opacity": 1,
+        "scale": 1,
+        "visible": true
+      }
+    },
+    {
+      "cluster_id": "cluster_ghosts",
+      "data": {
+        "cluster_id": "cluster_ghosts",
+        "degree": 0,
+        "hasAtomicSignature": false,
+        "hasImportSignature": false,
+        "hiddenOnCanvas": false,
+        "icon": "☁️",
+        "isScoped": false,
+        "isSovereign": false,
+        "isUserCreated": false,
+        "label": "synapse_feature_demo",
+        "layer": "ai",
+        "opacity": 1,
+        "scale": 1,
+        "status": "ghost"
+      },
+      "degree": 0,
+      "filePath": "external://synapse_feature_demo",
+      "id": "synapse_feature_demo",
+      "label": "synapse_feature_demo",
+      "layer": "ai",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "status": "ghost",
+      "type": "external",
+      "visual": {
+        "opacity": 1,
+        "scale": 1,
+        "visible": true
+      }
+    },
+    {
+      "cluster_id": "cluster_ghosts",
+      "data": {
+        "cluster_id": "cluster_ghosts",
+        "degree": 0,
+        "hasAtomicSignature": false,
+        "hasImportSignature": false,
+        "hiddenOnCanvas": false,
+        "icon": "☁️",
+        "isScoped": false,
+        "isSovereign": false,
+        "isUserCreated": false,
+        "label": "synapse_zoom_detail",
+        "layer": "ai",
+        "opacity": 1,
+        "scale": 1,
+        "status": "ghost"
+      },
+      "degree": 0,
+      "filePath": "external://synapse_zoom_detail",
+      "id": "synapse_zoom_detail",
+      "label": "synapse_zoom_detail",
+      "layer": "ai",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "status": "ghost",
+      "type": "external",
+      "visual": {
+        "opacity": 1,
+        "scale": 1,
+        "visible": true
+      }
     }
   ],
   "userCount": 420,
   "_iron_guard": {
     "version": "0.2.18.1",
-    "byte_size": 327395,
+    "byte_size": 329588,
     "encoding": "UTF-8",
     "alignment": 8
   }

@@ -3624,15 +3624,16 @@ class CanvasEngine {
     getSemanticGroup(node) {
         if (!node) return 'unknown';
         
-        // Use cluster layer if available
-        if (node.cluster_id) {
-            const cluster = (this.clusters || []).find(c => c.id === node.cluster_id);
-            const layer = cluster?.layer || (cluster?.data?.layer) || (node.cluster_id.startsWith('sys_') ? 'ai' : (node.cluster_id === 'doc_shelf' ? 'doc' : null));
+        // Use cluster layer if available (v0.3.22.10: Data fallback for early-stats)
+        const clusterId = node.cluster_id || (node.data && node.data.cluster_id);
+        if (clusterId) {
+            const cluster = (this.clusters || []).find(c => c.id === clusterId);
+            const layer = cluster?.layer || (cluster?.data?.layer) || (clusterId.startsWith('sys_') ? 'ai' : (clusterId === 'doc_shelf' ? 'doc' : null));
             if (layer && layer !== 'user') return layer;
             
-            if (node.cluster_id === 'sys_cluster_buffer') return 'buffer';
-            if (node.cluster_id === 'sys_cluster_reserved') return 'reserved';
-            if (node.cluster_id === 'doc_shelf') return 'doc';
+            if (clusterId === 'sys_cluster_buffer') return 'buffer';
+            if (clusterId === 'sys_cluster_reserved') return 'reserved';
+            if (clusterId === 'doc_shelf') return 'doc';
             
             if (cluster && cluster.label) return cluster.label.replace(/[📂☁️🛡️🕒]/g, '').trim().toLowerCase();
         }
@@ -3735,10 +3736,12 @@ class CanvasEngine {
         for (const node of nodes) {
             nodeMap.set(node.id, node);
             this.nodeStatsMap.set(node.id, {
+                id: node.id, // [v0.3.22.12] Store ID for reverse lookup
                 in: 0,
                 out: 0,
                 connected: new Set(),
-                distribution: {}
+                distribution: {},
+                representatives: {} // [v0.3.22.12] Group -> Array of labels
             });
         }
 
@@ -3757,6 +3760,15 @@ class CanvasEngine {
                 // Track semantic distribution
                 const tgtGroup = this.getSemanticGroup(tgtNode);
                 srcStats.distribution[tgtGroup] = (srcStats.distribution[tgtGroup] || 0) + 1;
+                
+                // [v0.3.22.12] Bind identity sample immediately
+                if (!srcStats.representatives[tgtGroup]) srcStats.representatives[tgtGroup] = [];
+                if (srcStats.representatives[tgtGroup].length < 5) {
+                    const icon = this.getTheme()?.getNodeIcon(tgtNode.type, tgtNode.data?.file || '') || '📄';
+                    const name = tgtNode.data?.label || (tgtNode.id.includes('/') ? tgtNode.id.split('/').pop() : tgtNode.id);
+                    const label = `${icon} ${name}`;
+                    if (!srcStats.representatives[tgtGroup].includes(label)) srcStats.representatives[tgtGroup].push(label);
+                }
             }
             if (tgtStats && srcNode) {
                 tgtStats.in++;
@@ -3765,6 +3777,15 @@ class CanvasEngine {
                 // Track semantic distribution
                 const srcGroup = this.getSemanticGroup(srcNode);
                 tgtStats.distribution[srcGroup] = (tgtStats.distribution[srcGroup] || 0) + 1;
+
+                // [v0.3.22.12] Bind identity sample immediately
+                if (!tgtStats.representatives[srcGroup]) tgtStats.representatives[srcGroup] = [];
+                if (tgtStats.representatives[srcGroup].length < 5) {
+                    const icon = this.getTheme()?.getNodeIcon(srcNode.type, srcNode.data?.file || '') || '📄';
+                    const name = srcNode.data?.label || (srcNode.id.includes('/') ? srcNode.id.split('/').pop() : srcNode.id);
+                    const label = `${icon} ${name}`;
+                    if (!tgtStats.representatives[srcGroup].includes(label)) tgtStats.representatives[srcGroup].push(label);
+                }
             }
         }
 
@@ -4212,23 +4233,28 @@ class CanvasEngine {
             const isOut = (e.from === myId || getStem(e.from) === myStem);
             const targetId = isOut ? e.to : e.from;
             
-            // Try to find target node object for grouping
+            // [v0.3.22.11] Senior's Prescription: Ultra-Resilient Identity Binding
             let targetNode = nodeMap.get(targetId);
             if (!targetNode) {
-                const stem = getStem(targetId);
-                targetNode = Array.from(nodeMap.values()).find(n => getStem(n.id) === stem);
+                targetNode = stemMap.get(getStem(targetId));
             }
+
+            // Fallback for icons/names if node is missing from current pool (Ghost/Filtered)
+            const theme = this.getTheme() || window.SYNAPSE_THEME;
+            if (!theme) console.warn('[SYNAPSE] Theme Engine not detected in Tooltip loop');
 
             const group = targetNode ? this.getSemanticGroup(targetNode) : 'unmapped';
             if (!groupDetails[group]) groupDetails[group] = [];
             
-            // [v0.3.22.9] Senior's Prescription: Bind Icon + Label
-            const icon = targetNode ? this.getTheme().getNodeIcon(targetNode.type, targetNode.data?.fileName || '') : '📄';
+            const fileName = targetNode?.data?.file || (targetId.includes('.') ? targetId : '');
+            const type = targetNode?.type || (targetId.includes('/') ? 'source' : 'external');
+            
+            const icon = theme ? theme.getNodeIcon(type, fileName) : '📄';
             const name = targetNode ? (targetNode.data?.label || getStem(targetNode.id)) : getStem(targetId);
             const label = `${icon} ${name}`;
             
-            if (name) {
-                if (!groupDetails[group].includes(label)) groupDetails[group].push(label);
+            if (name && !groupDetails[group].includes(label)) {
+                groupDetails[group].push(label);
             }
         });
 
@@ -4260,12 +4286,17 @@ class CanvasEngine {
                     ${window.engine?.isBatchValidating ? '<span style="color: #fe8019; font-style: italic; font-size: 9px;">📡 Validating...</span>' : ''}
                 </div>
                 ${distributionEntries.map(([group, count]) => {
-                    let representatives = groupDetails[group] || [];
+                    // [v0.3.22.12] SSoT: Prioritize pre-calculated representatives from Stats
+                    let representatives = stats.representatives ? (stats.representatives[group] || []) : [];
                     
-                    // [v0.3.22.9] Senior's Prescription: ensureAggregation()
-                    // If count > 0 but representatives is empty, identity is lost. Fallback to indexing.
+                    // Fallback to dynamic loop results if stats are missing
+                    if (representatives.length === 0) {
+                        representatives = groupDetails[group] || [];
+                    }
+                    
+                    // Final safety for pending/ghost nodes
                     if (representatives.length === 0 && count > 0) {
-                        representatives = [`(Unknown: ${count} nodes)`];
+                        representatives = [`👻 (Pending Identity: ${count} nodes)`];
                     }
 
                     const topNodes = representatives.slice(0, 3).join(', ');
@@ -4496,9 +4527,6 @@ class CanvasEngine {
             this.nodes = baseState.nodes || [];
             this.edges = baseState.edges || [];
 
-            // [v0.3.17] Update Node Stats Cache
-            this.updateNodeStats();
-
             // [v0.2.18.2] Detect matches between old manual nodes and new solid nodes
             oldManualNodes.forEach(oldNode => {
                 const label = oldNode.data?.label || oldNode.id;
@@ -4645,6 +4673,10 @@ class CanvasEngine {
 
             // Fit view or Restore transform
             this.resizeCanvas(!preserveView); // [v0.2.24] Force immediate resize before fitView
+            
+            // [v0.3.22.10] Finalizing Node Stats AFTER all sync/normalization
+            this.updateNodeStats();
+
             if (!preserveView) {
                 if (projectState.transform) {
                     this.transform = { ...projectState.transform };

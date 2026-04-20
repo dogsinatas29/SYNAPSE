@@ -62,6 +62,49 @@ code --install-extension synapse-visual-architecture-v0.3.22.vsix
 
 ---
 
+## 🔍 포커스 뷰 (Focus View, N-hop)
+
+특정 노드를 기준으로 N단계까지의 연결만 추출하여 복잡한 전체 그래프에서 **국소 구조(Local Context)**만 집중적으로 분석할 수 있습니다.
+
+![Focus View Demo](./resources/screenshots/v0.3.22/focus_view.png)
+*중심 노드 C와 직접 연결된 이웃들(N=1)만 고립시켜 분석하는 화면.*
+
+### 예시 (Example)
+
+**전체 그래프 (Full Graph):**
+```text
+A ─ B ─ C ─ D ─ E  
+│   │  
+F   G ─ H ─ I  
+```
+
+---
+
+**포커스 뷰 (N = 1, 중심점 = C):**
+```text
+B ─ C ─ D  
+    │  
+    G  
+```
+
+---
+
+**포커스 뷰 (N = 2, 중심점 = C):**
+```text
+A ─ B ─ C ─ D ─ E  
+│       │  
+F       G ─ H  
+```
+
+### 왜 중요한가요?
+- **범위 즉시 축소**: 거대한 그래프에서 디버깅 범위를 즉시 좁힐 수 있습니다.
+- **실행 흐름 추적**: 특정 로직의 전후 맥락만 빠르게 추적합니다.
+- **국소 이상 탐지**: 특정 영역 내의 구조적 결함에 정밀하게 진단합니다.
+
+---
+
+---
+
 ## 🏗️ 아키텍처 (Architecture)
 
 SYNAPSE는 다음과 같은 레이어로 구성됩니다:

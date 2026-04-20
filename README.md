@@ -62,6 +62,47 @@ Select **"Lite Bootstrap"** to automatically discover your project architecture.
 
 ---
 
+## 🔍 Focus View (N-hop)
+
+Extract only the connections up to N steps from a specific node to focus on the **Local Context** in a complex global graph.
+
+![Focus View Demo](./resources/screenshots/v0.3.22/focus_view.png)
+*Focus View (N=1) isolating node C and its immediate neighbors.*
+
+### Example
+
+**Full Graph:**
+```text
+A ─ B ─ C ─ D ─ E  
+│   │  
+F   G ─ H ─ I  
+```
+
+---
+
+**Focus View (N = 1, Center = C):**
+```text
+B ─ C ─ D  
+    │  
+    G  
+```
+
+---
+
+**Focus View (N = 2, Center = C):**
+```text
+A ─ B ─ C ─ D ─ E  
+│       │  
+F       G ─ H  
+```
+
+### Why it matters
+- **Instant Scope Reduction**: Narrow down debugging range in massive graphs.
+- **Path Tracing**: Rapidly trace specific execution flows.
+- **Local Anomaly Detection**: Identify structural defects within a localized area.
+
+---
+
 ## 🏗️ Architecture
 
 SYNAPSE consists of the following layers:

@@ -133,9 +133,8 @@ export class StateManager {
     targetNodes.forEach(node => {
         const buffered = this.bufferNodes.get(node.id) || { ...node };
         buffered.cluster_id = clusterId;
-        if (buffered.position) {
-            buffered.position = { x: buffered.position.x - avgX, y: buffered.position.y - avgY };
-        }
+        // [v0.3.22.11] REMOVED relative coordinate conversion to prevent 'jumping to origin'
+        // Every node stays in its absolute world coordinates for SSoT integrity.
         this.bufferNodes.set(node.id, buffered);
         this.markDirty(node.id);
     });
@@ -155,8 +154,10 @@ export class StateManager {
             };
             existing.data = freshData;
             existing.filePath = n.filePath;
+            // ✅ Position is NOT updated here, preserving manual drag results in buffer
         } else {
-            this.bufferNodes.set(n.id, n);
+            // 📡 New node from disk: initial registration
+            this.bufferNodes.set(n.id, { ...n });
         }
     });
 
@@ -445,12 +446,16 @@ export class StateManager {
             
             if (isDoc) {
                 finalClusterId = 'doc_shelf';
+            } else if (isInUserCluster) {
+                // [v0.3.22.11] RESPECT EXISTING USER ASSIGNMENT
+                finalClusterId = n.cluster_id || "";
             } else if (hasAtomic && hasImport) {
                 finalClusterId = 'sys_cluster_reserved';
             } else if (hasAtomic) {
-                finalClusterId = 'sys_cluster_buffer';
+                // Only force to buffer if not already in a valid cluster
+                finalClusterId = (n.cluster_id && n.cluster_id !== "") ? n.cluster_id : 'sys_cluster_buffer';
             } else {
-                finalClusterId = isInUserCluster ? (n.cluster_id || "") : 'sys_cluster_buffer';
+                finalClusterId = n.cluster_id || 'sys_cluster_buffer';
             }
         } else {
             // AI / Base Logic Domain
@@ -663,8 +668,21 @@ export class StateManager {
       const snPath = this.normalizePath(sn.filePath || (sn.data && (sn.data.file || sn.data.filePath)) || "");
       const existingIdx = finalCoreNodes.findIndex(n => n.filePath && this.normalizePath(n.filePath) === snPath);
       if (existingIdx !== -1) {
-        if (finalCoreNodes[existingIdx].layer === 'user' || this.dirtyNodeIds.has(finalCoreNodes[existingIdx].id)) return;
-        finalCoreNodes[existingIdx] = { ...finalCoreNodes[existingIdx], ...sn, layer: 'ai' };
+        const existingNode = finalCoreNodes[existingIdx];
+        if (existingNode.layer === 'user' || this.dirtyNodeIds.has(existingNode.id)) {
+            // 🛡️ [v0.3.22.11] Position & Identity Protection
+            // If node is dirty (manually moved) or user-defined, protect its position from scan overwrites.
+            finalCoreNodes[existingIdx] = { 
+                ...existingNode, 
+                ...sn, 
+                layer: 'ai', // Reset layer if it matches scan, but protect coordinates
+                position: (this.dirtyNodeIds.has(existingNode.id) || existingNode.layer === 'user')
+                    ? existingNode.position
+                    : (sn.position || existingNode.position)
+            };
+            return;
+        }
+        finalCoreNodes[existingIdx] = { ...existingNode, ...sn, layer: 'ai' };
       } else if (snPath && !this.deletedPaths.has(snPath)) {
         finalCoreNodes.push({ ...sn, layer: 'ai' });
       }

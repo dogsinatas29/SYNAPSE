@@ -2287,9 +2287,9 @@ class CanvasEngine {
 
             if (this.isDragging || this.isSelecting || this.isPanning) {
                 // 실제 이동 거리가 짧으면 드래그로 간주하지 않음 (지터 방지)
-                const totalDx = Math.abs(e.offsetX - this.dragStartAbsolute.x);
-                const totalDy = Math.abs(e.offsetY - this.dragStartAbsolute.y);
-                if (totalDx > 1 || totalDy > 1) {
+                const totalDx = e.offsetX - this.dragStartAbsolute.x;
+                const totalDy = e.offsetY - this.dragStartAbsolute.y;
+                if (Math.abs(totalDx) > 5 || Math.abs(totalDy) > 5) {
                     this.wasDragging = true;
                 }
             }
@@ -2401,15 +2401,13 @@ class CanvasEngine {
                 // Saving state triggers a full JSON reload which overwrote Node objects with new ones.
                 // This caused 'selectedNodes' to contain dead references, breaking subsequent drag logic.
             } else if (this.isDragging) {
-                const didDrag = this.wasDragging;
-                if (didDrag) {
+                if (this.wasDragging) {
                     // [v0.3.15] Apply Snap-to-Grid during interaction (Grid Sovereignty)
-                    const GRID = this.GRID_SNAP_SIZE || 20;
                     const draggedNodes = Array.from(this.selectedNodes);
                     draggedNodes.forEach(node => {
                         if (node.position) {
-                            node.position.x = Math.round(node.position.x / GRID) * GRID;
-                            node.position.y = Math.round(node.position.y / GRID) * GRID;
+                            node.position.x = Math.round(node.position.x / this.GRID_SNAP_SIZE) * this.GRID_SNAP_SIZE;
+                            node.position.y = Math.round(node.position.y / this.GRID_SNAP_SIZE) * this.GRID_SNAP_SIZE;
                         }
                     });
 
@@ -2421,12 +2419,13 @@ class CanvasEngine {
                         }
                     }
 
-                    // [v0.3.16 Fix] Scale drag dist by zoom so zooming out doesn't break drag-save
-                    const totalDx = e.offsetX - this.dragStartAbsolute.x;
-                    const totalDy = e.offsetY - this.dragStartAbsolute.y;
-                    const absDragDist = Math.sqrt(totalDx * totalDx + totalDy * totalDy) / (this.transform.zoom || 1.0);
+                    // [v0.3.16 Fix] Scale drag dist by zoom so zooming out (for long edges) doesn't break drag-save
+                    const absDragDist = Math.sqrt(
+                        Math.pow(this.dragStartAbsolute.x - (this.dragStart?.x ?? 0), 2) +
+                        Math.pow(this.dragStartAbsolute.y - (this.dragStart?.y ?? 0), 2)
+                    ) / (this.transform.zoom || 1.0);
 
-                    if (absDragDist > 5 || movedByIntruder) {
+                    if (absDragDist > 15 || movedByIntruder) {
                         this.saveState();
                         if (movedByIntruder) {
                             this.takeSnapshot(`Auto Push (after drag)`);
@@ -2435,7 +2434,6 @@ class CanvasEngine {
                 }
                 this.isDragging = false;
                 this.wasDragging = false;
-                this._lastDragEndTime = Date.now();
                 this.activeNodeId = null;
                 this.dragTarget = null;
                 this.canvas.style.cursor = 'default';
@@ -2447,18 +2445,9 @@ class CanvasEngine {
             // [v0.2.24] End Interaction Lock and apply any deferred updates
             this._isInteracting = false;
             if (this._pendingState) {
-                // [v0.3.22.11] Protect manual position: 
-                // If we just finished a drag (didDrag=true) OR within 300ms of end, 
-                // discard pending state which is likely stale.
-                const withinDragGrace = (Date.now() - (this._lastDragEndTime || 0)) < 300;
-                if (didDrag || withinDragGrace) {
-                    this.log('[SYNAPSE] Discarding stale pendingState after drag to preserve manual positions');
-                    this._pendingState = null;
-                } else {
-                    this.log('[SYNAPSE] Applying deferred projectState after interaction end');
-                    this.loadProjectState(this._pendingState, true);
-                    this._pendingState = null;
-                }
+                this.log('[SYNAPSE] Applying deferred projectState after interaction end');
+                this.loadProjectState(this._pendingState, true);
+                this._pendingState = null;
             }
         });
 
@@ -4533,24 +4522,9 @@ class CanvasEngine {
 
             // [Fix] Capture manual nodes before overriding this.nodes
             const oldManualNodes = (this.nodes || []).filter(n => n.id.startsWith('node_manual_'));
-            const oldNodes = this.nodes || [];
 
             // [v0.3.16] docShelfNodes are already separated and set in step 1 (line 3652)
             this.nodes = baseState.nodes || [];
-
-            // [v0.3.22.11] Position Persistence Guard:
-            // When preserving view (e.g. incremental update or post-save sync), 
-            // prioritize existing UI coordinates over backend defaults to prevent jumping.
-            if (preserveView && oldNodes.length > 0) {
-                const oldPosMap = new Map(oldNodes.map(n => [n.id, n.position]));
-                this.nodes.forEach(n => {
-                    const oldPos = oldPosMap.get(n.id);
-                    if (oldPos && oldPos.x !== undefined && oldPos.y !== undefined) {
-                        n.position = { x: oldPos.x, y: oldPos.y };
-                    }
-                });
-            }
-
             this.edges = baseState.edges || [];
 
             // [v0.2.18.2] Detect matches between old manual nodes and new solid nodes
@@ -5985,7 +5959,6 @@ class CanvasEngine {
     }
 
     saveState() {
-        this._lastSaveTime = Date.now();
         // VS Code 환경이면 저장을 위해 익스텐션으로 메시지 전송
         if (typeof vscode !== 'undefined') {
             const projectState = {
@@ -8446,13 +8419,7 @@ function initCanvas() {
                     engine._pendingState = message.data;
                     return;
                 }
-                
-                // [v0.3.22.11] Race Condition Protection: 
-                // If a save happened very recently (within 500ms), we assume any incoming 
-                // non-authoritative state might be a stale result from a scan that started before the save.
-                const isFreshSaveResponse = (Date.now() - (engine._lastSaveTime || 0)) < 500;
-                const preserve = isFreshSaveResponse || (!message.forceReset && engine.nodes && engine.nodes.length > 0);
-                
+                const preserve = !message.forceReset && engine.nodes && engine.nodes.length > 0;
                 engine.loadProjectState(message.data, preserve);
                 engine.updateNodeStats(); // [v0.3.22.9] Force stats update for tooltips
                 engine.isExpectingUpdate = false;

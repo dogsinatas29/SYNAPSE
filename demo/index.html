@@ -1,0 +1,1647 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SYNAPSE - Visual Architecture Engine</title>
+    <style>
+        :root {
+            --bg-dark: #1d2021;
+            --bg-panel: #282828;
+            --bg-hover: #3c3836;
+            --fg-main: #ebdbb2;
+            --fg-dim: #a89984;
+            --accent: #b8bb26;
+            --border: #3c3836;
+            --dtr-violet: #8A2BE2;
+            --dtr-emerald: #50C878;
+            --dtr-skyblue: #87CEEB;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-dark);
+            color: var(--fg-main);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Custom Scrollbars */
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-dark);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #3c3836;
+            border-radius: 5px;
+            border: 2px solid var(--bg-dark);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #504945;
+        }
+
+        /* Header */
+        #header {
+            background: var(--bg-panel);
+            padding: 10px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-weight: bold;
+            font-size: 18px;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Toolbar */
+        #toolbar {
+            background: var(--bg-panel);
+            padding: 8px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .btn-group {
+            display: flex;
+            border-radius: 4px;
+            overflow: hidden;
+            border: 1px solid #504945;
+        }
+
+        .btn {
+            padding: 6px 14px;
+            background: #3c3836;
+            color: var(--fg-main);
+            border: none;
+            border-right: 1px solid #504945;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+
+        .btn:last-child {
+            border-right: none;
+        }
+
+        .btn:hover {
+            background: #504945;
+        }
+
+        .btn.active {
+            background: var(--accent);
+            color: #282828;
+            font-weight: bold;
+        }
+
+        /* [v0.2.19] Hierarchical Menu Styles */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background: var(--bg-panel);
+            min-width: 160px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.5);
+            z-index: 1000;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            top: 100%;
+            left: 0;
+            margin-top: 4px;
+        }
+
+        /* [v0.2.20 Fix] Dropdown is now controlled by JS .open class instead of CSS :hover
+           This prevents menus from closing when moving mouse to click inner buttons */
+        .dropdown.open .dropdown-content {
+            display: block;
+        }
+
+        .dropdown-content .btn {
+            width: 100%;
+            text-align: left;
+            border-right: none;
+            border-bottom: 1px solid var(--border);
+            border-radius: 0;
+            padding: 10px 16px;
+        }
+
+        .dropdown-content .btn:last-child {
+            border-bottom: none;
+        }
+
+        .dropdown-content .btn:hover {
+            background: var(--bg-hover);
+            color: var(--accent);
+        }
+
+        .menu-label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: bold;
+            color: var(--fg-main);
+            background: #3c3836;
+            border-radius: 4px;
+            border: 1px solid #504945;
+            transition: all 0.2s;
+        }
+
+        .menu-label:hover {
+            background: #504945;
+            border-color: var(--accent);
+        }
+
+        .dropdown.open .menu-label {
+            background: var(--accent);
+            color: #282828;
+            border-color: var(--accent);
+        }
+
+        /* Main Container */
+        #main-container {
+            flex: 1;
+            display: flex;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #canvas-container {
+            flex: 1;
+            position: relative;
+            background: #1e1e1e;
+        }
+
+        canvas {
+            display: block;
+            pointer-events: auto !important;
+        }
+
+        /* Side Panel */
+        #side-panel {
+            position: fixed;
+            right: 0;
+            top: 0;
+            width: 450px;
+            height: 100vh;
+            background: var(--bg-panel);
+            border-left: 1px solid var(--border);
+            display: none;
+            flex-direction: column;
+            box-shadow: -10px 0 25px rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+        }
+
+        #side-panel.visible {
+            display: flex;
+        }
+
+        #side-panel-header, .panel-header {
+            padding: 12px 16px;
+            background: #3c3836;
+            border-bottom: 1px solid #504945;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: move; /* Indicate it's draggable */
+        }
+
+        #side-panel-title {
+            color: var(--fg-main);
+            font-weight: bold;
+            font-size: 14px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* Status Indicator */
+        #status-indicator {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+            display: none;
+        }
+
+        #status-indicator.browser-mode {
+            display: inline-block;
+            background: #fe8019;
+            color: #282828;
+        }
+
+        #side-panel-close {
+            background: none;
+            border: none;
+            color: var(--fg-dim);
+            font-size: 20px;
+            cursor: pointer;
+            padding: 0 5px;
+        }
+
+        #side-panel-content {
+            flex: 1;
+            overflow: auto;
+            padding: 0;
+            background: #1d2021;
+        }
+
+        #file-content {
+            margin: 0;
+            padding: 20px;
+            font-family: 'Fira Code', 'Consolas', monospace;
+            font-size: 13px;
+            line-height: 1.5;
+            color: #ebdbb2;
+            white-space: pre;
+        }
+
+        /* Loading Overlay */
+        #loading {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(29, 32, 33, 0.8);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            align-items: center;
+            z-index: 1000;
+            pointer-events: none;
+            /* Ensure clicks pass through if opacity lingers */
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(184, 187, 38, 0.1);
+            border-left-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Context Menu */
+        #context-menu {
+            position: fixed;
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            padding: 5px 0;
+            z-index: 3000;
+            display: none;
+            min-width: 150px;
+        }
+
+        .menu-item {
+            padding: 8px 16px;
+            cursor: pointer;
+            font-size: 13px;
+            color: var(--fg-main);
+            transition: background 0.2s;
+        }
+
+        .menu-item:hover {
+            background: var(--bg-hover);
+            color: var(--accent);
+        }
+
+        .menu-divider {
+            height: 1px;
+            background: var(--border);
+            margin: 4px 0;
+        }
+
+        /* History Panel */
+        #history-panel {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 450px;
+            max-height: 70vh; /* Fixed height to max-height */
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            display: none;
+            flex-direction: column;
+            z-index: 5000;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+        }
+
+        #history-panel.visible {
+            display: flex;
+        }
+
+        #history-list {
+            flex: 0 1 auto; /* Don't force stretch */
+            overflow-y: auto !important;
+            overflow-x: hidden;
+            padding: 10px;
+            scroll-behavior: smooth;
+            background: #1d2021;
+            max-height: 500px;
+        }
+
+        /* [v0.2.17 Patch 9] Atomic High-Visibility Scrollbar */
+        #history-list::-webkit-scrollbar {
+            width: 12px !important;
+            display: block !important;
+        }
+
+        #history-list::-webkit-scrollbar-track {
+            background: #1d2021 !important;
+            border-radius: 6px;
+            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
+        }
+
+        #history-list::-webkit-scrollbar-thumb {
+            background: #b8bb26 !important;
+            /* Solid Accent color for max visibility */
+            border-radius: 6px;
+            border: 3px solid #1d2021;
+        }
+
+        #history-list::-webkit-scrollbar-thumb:hover {
+            background: #ebdbb2 !important;
+            cursor: pointer;
+        }
+
+        .history-item {
+            padding: 12px;
+            background: #282828;
+            border: 1px solid var(--border);
+            margin-bottom: 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .history-item:hover {
+            border-color: var(--accent);
+            background: var(--bg-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .history-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: var(--accent);
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .history-item:hover::before {
+            opacity: 1;
+        }
+
+        .history-info {
+            flex: 1;
+        }
+
+        .history-label {
+            font-size: 13px;
+            color: var(--fg-main);
+            margin-bottom: 4px;
+        }
+
+        .history-time {
+            font-size: 11px;
+            color: var(--fg-dim);
+        }
+
+        .history-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .history-actions button {
+            background: #3c3836;
+            border: 1px solid #504945;
+            color: var(--fg-main);
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+
+        .history-actions button:hover {
+            background: #504945;
+            color: var(--accent);
+            border-color: var(--accent);
+        }
+
+
+        .toolbar-divider {
+            width: 1px;
+            height: 20px;
+            background: var(--border);
+            margin: 0 5px;
+        }
+
+        /* REC 버튼 */
+        #btn-record {
+            background: #3c3836;
+            color: #a89984;
+            border: 1px solid #504945;
+            transition: all 0.2s;
+        }
+
+        #btn-record.recording {
+            background: #cc241d;
+            color: #fff;
+            border-color: #cc241d;
+            animation: rec-pulse 1.2s ease-in-out infinite;
+            font-weight: bold;
+        }
+
+        @keyframes rec-pulse {
+
+            50% {
+                opacity: 0.65;
+            }
+        }
+
+        /* Documentation Shelf Panel */
+        #docs-shelf-panel {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 500px;
+            max-height: 70vh; /* Fixed height to max-height */
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            display: none;
+            flex-direction: column;
+            z-index: 5000;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+            overflow: hidden;
+        }
+
+        #docs-shelf-panel.visible {
+            display: flex;
+        }
+
+        #docs-search-container {
+            padding: 10px;
+            border-bottom: 1px solid var(--border);
+            background: #3c3836;
+            flex-shrink: 0;
+            box-sizing: border-box;
+        }
+
+        #docs-search-input {
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+            padding: 8px;
+            background: #1d2021;
+            border: 1px solid #504945;
+            color: var(--fg-main);
+            border-radius: 4px;
+            outline: none;
+        }
+
+        #docs-search-input:focus {
+            border-color: var(--accent);
+        }
+
+        #docs-shelf-list {
+            flex: 0 1 auto; /* Don't force stretch */
+            overflow-y: auto !important; 
+            overflow-x: hidden;
+            padding: 10px;
+            background: #1d2021;
+            max-height: 500px;
+        }
+
+        #docs-shelf-list::-webkit-scrollbar {
+            width: 12px !important;
+            display: block !important;
+        }
+
+        #docs-shelf-list::-webkit-scrollbar-track {
+            background: #1d2021 !important;
+            border-radius: 6px;
+        }
+
+        #docs-shelf-list::-webkit-scrollbar-thumb {
+            background: #bc7ad9 !important; /* purple for docs */
+            border-radius: 6px;
+            border: 3px solid #1d2021;
+        }
+
+        .doc-item {
+            padding: 12px;
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+            transition: background 0.2s;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .doc-item:hover {
+            background: #3c3836;
+        }
+
+        .doc-item-title {
+            font-weight: bold;
+            color: #bc7ad9;
+            font-size: 14px;
+            margin-bottom: 2px;
+        }
+
+        .doc-item-preview {
+            color: var(--fg-dim);
+            font-size: 12px;
+            line-height: 1.5;
+            display: -webkit-box;
+            line-clamp: 2;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Promotion Awareness System CSS */
+        @keyframes toast-slide-up {
+            from { transform: translate(-50%, 40px); opacity: 0; }
+            to { transform: translate(-50%, 0); opacity: 1; }
+        }
+
+        @keyframes toast-fade-out {
+            from { transform: translate(-50%, 0); opacity: 1; }
+            to { transform: translate(-50%, -20px); opacity: 0; }
+        }
+
+        .count-badge {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 1px 6px;
+            border-radius: 10px;
+            font-size: 10px;
+            margin-left: 6px;
+            font-weight: bold;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .count-badge.changed {
+            transform: scale(1.4);
+            background: #b8bb26;
+            color: #282828;
+        }
+
+        .promotion-toast {
+            pointer-events: none;
+        }
+
+        /* DTR Floating Valve Controller */
+        #dtr-controller {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(40, 40, 40, 0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 15px;
+            width: 220px;
+            z-index: 100;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        #dtr-controller:hover {
+            transform: scale(1.02);
+            border-color: var(--dtr-violet);
+        }
+
+        .dtr-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .dtr-label {
+            font-size: 11px;
+            font-weight: bold;
+            color: var(--fg-dim);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .dtr-value {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--dtr-violet);
+            font-family: 'Fira Code', monospace;
+        }
+
+        .dtr-gauge-container {
+            height: 6px;
+            background: #3c3836;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+
+        #dtr-gauge-fill {
+            height: 100%;
+            width: 30%;
+            background: linear-gradient(90deg, var(--dtr-skyblue), var(--dtr-emerald), var(--dtr-violet));
+            background-size: 200% 100%;
+            transition: width 0.5s ease;
+        }
+
+        /* [v0.3.1] Phase Debug Overlay */
+        #phase-overlay {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(28, 28, 28, 0.85);
+            backdrop-filter: blur(8px);
+            border: 1px solid #3c3836;
+            border-radius: 8px;
+            padding: 12px;
+            z-index: 1000;
+            font-family: 'Fira Code', monospace;
+            font-size: 11px;
+            color: #ebdbb2;
+            pointer-events: auto; /* [v0.3.1_zz] Enabled for dragging */
+            cursor: move;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+            min-width: 180px;
+            user-select: none;
+            display: none; /* Hidden by default */
+        }
+        #phase-overlay:hover {
+            border-color: #fabd2f;
+            background: rgba(40, 40, 40, 0.95);
+        }
+        #phase-overlay.visible {
+            display: block;
+        }
+        .phase-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 4px;
+        }
+        .phase-label { color: #a89984; }
+        .phase-value { color: #b8bb26; font-weight: bold; }
+        .lock-active { color: #fb4934; font-weight: bold; }
+
+        .dtr-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            font-size: 10px;
+            color: var(--fg-dim);
+        }
+
+        .dtr-stat-val {
+            display: block;
+            color: var(--fg-main);
+            font-weight: bold;
+            font-size: 12px;
+            margin-top: 2px;
+        }
+
+        /* Canvas Scrollbars (Overlays) */
+        .canvas-scrollbar {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(2px);
+            z-index: 50;
+        }
+
+        .canvas-scrollbar:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        #scrollbar-v {
+            right: 0;
+            top: 0;
+            bottom: 0;
+            width: 12px;
+        }
+
+        /* Layer Controller (Draggable Panel) */
+        #layer-controller {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(40, 40, 40, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            z-index: 100;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+            display: flex;
+            flex-direction: column;
+            width: 250px;
+        }
+
+        #layer-controller-header {
+            padding: 8px 12px;
+            background: #3c3836;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+            border-bottom: 1px solid #504945;
+            cursor: grab;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+        }
+
+        #layer-controller-header:active {
+            cursor: grabbing;
+        }
+
+        .panel-title {
+            font-weight: bold;
+            font-size: 13px;
+            color: var(--fg-main);
+        }
+
+        .panel-user {
+            font-size: 11px;
+            color: var(--fg-dim);
+            background: #282828;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .panel-content {
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .layer-toggle-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .layer-label {
+            font-size: 12px;
+            color: #d5c4a1;
+        }
+
+        .layer-btn {
+            background: #3c3836;
+            color: var(--fg-dim);
+            border: 1px solid #504945;
+            border-radius: 4px;
+            padding: 4px 10px;
+            font-size: 11px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+            min-width: 45px;
+            text-align: center;
+        }
+
+        .layer-btn:hover {
+            background: #504945;
+            color: var(--fg-main);
+        }
+
+        .layer-btn.active {
+            background: var(--accent);
+            color: #282828;
+            border-color: var(--accent);
+        }
+
+        #scrollbar-h {
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 12px;
+        }
+
+        .scrollbar-thumb {
+            position: absolute;
+            background: rgba(235, 219, 178, 0.2);
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+
+        .scrollbar-thumb:hover {
+            background: rgba(235, 219, 178, 0.4);
+        }
+    </style>
+</head>
+
+<body>
+    <div id="header">
+        <div class="logo">🧠 SYNAPSE <span style="font-size: 10px; opacity: 0.6; margin-left: 5px;">v0.2.18.1</span></div>
+        <div id="status-indicator" style="font-size: 12px; color: #fabd2f; font-weight: bold;"></div>
+        <div id="project-path" style="font-size: 12px; color: var(--fg-dim);">Loading project...</div>
+    </div>
+
+    <div id="toolbar">
+        <!-- View Menu -->
+        <div class="dropdown">
+            <div class="menu-label">👁️ View</div>
+            <div class="dropdown-content">
+                <button class="btn active" data-mode="graph">Graph View</button>
+                <button class="btn" data-mode="tree">Tree View</button>
+                <button class="btn" data-mode="flow">Flow View</button>
+                <button class="btn" id="btn-toggle-docs">📚 Documentation Shelf</button>
+                <div class="menu-divider"></div>
+                <div style="padding: 5px 10px; font-size: 10px; color: var(--fg-dim); text-transform: uppercase; font-weight: bold;">Edge Visibility</div>
+                <button class="btn active" id="btn-edge-vis-all" title="Show all edges and badges">🟢 ALL VISIBLE</button>
+                <button class="btn" id="btn-edge-vis-hide-badge" title="Hide badges, show edges">🟡 BADGES HIDDEN</button>
+                <button class="btn" id="btn-edge-vis-hide-edges" title="Hide all edges">🔴 EDGES HIDDEN</button>
+            </div>
+        </div>
+
+        <button class="btn" id="btn-fit" title="Fit All Nodes in View">📷 Fit View</button>
+        <button class="btn" id="btn-reset" title="Reset Zoom/Offset">🔄 Reset View</button>
+        <button class="btn" id="btn-webgl" title="WebGL 3D GPU Acceleration (독립 버튼)">🚀 Accel: OFF</button>
+
+        <button class="btn" id="btn-group" title="Group Selected Nodes">Group</button>
+        <button class="btn" id="btn-ungroup" title="Ungroup Selected Cluster">Ungroup</button>
+        
+        <!-- Logic Edit Menu -->
+        <div class="dropdown">
+            <div class="menu-label" id="btn-edit-logic-label" style="color: #fb4934;">🔓 Edit Logic: OFF</div>
+            <div class="dropdown-content">
+                <button class="btn" id="btn-edit-logic" title="Toggle Destructive Source Editing" style="color: #fb4934; font-weight: bold;">Toggle Edit Mode</button>
+                <button class="btn" id="btn-add-node" title="Add New Node">➕ Node</button>
+                <button class="btn" id="btn-connect" title="Connect Nodes (Alt+Click)">🔗 Connect</button>
+                <button class="btn" id="btn-delete" title="Delete Selected Nodes/Edges" style="color: #fb4934;">🗑️ Delete</button>
+            </div>
+        </div>
+
+        <!-- Verify (Unified Diagnostic Center) -->
+        <div class="dropdown">
+            <div class="menu-label" style="color: #fabd2f;">🔍 Verify</div>
+            <div class="dropdown-content">
+                <button class="btn" id="btn-test-logic" title="Run AI-Driven Semantic Analysis" style="color: #fabd2f; font-weight: bold;">🤖 Scan Architecture (AI)</button>
+                <button class="btn" id="btn-virtual-debug" title="Runtime Simulation Debug" style="color: #83a598; font-weight: bold;">📡 Simulation Debug</button>
+                <div class="menu-divider"></div>
+                <div style="padding: 5px 10px; font-size: 10px; color: var(--fg-dim); text-transform: uppercase;">Simulate State</div>
+                <button class="btn" id="btn-sim-necrosis" title="Simulate Necrosis on Selection">💀 Simulate Necrosis</button>
+                <button class="btn" id="btn-sim-tombstone" title="Simulate Tombstone on Selection">🪦 Simulate Tombstone</button>
+                <button class="btn" id="btn-sim-clear" title="Clear Debug Visuals">🧹 Clear Debug</button>
+                <div class="menu-divider"></div>
+                <button class="btn" id="btn-debug-hash" title="v0.2.28: Determinism Bootstrap" style="color: #fe8019;">💎 Det Bootstrap</button>
+                <button class="btn" id="btn-rebootstrap" title="Deep Reset: Re-scan complete project" style="color: #fb4934;">🔄 Deep Re-Scan</button>
+            </div>
+        </div>
+
+        <!-- System Menu -->
+        <div class="dropdown">
+            <div class="menu-label">⚙️ System</div>
+            <div class="dropdown-content">
+                <button class="btn" id="btn-reset-state" title="project_state.json을 빈 상태로 초기화" style="color: #d3869b;">🔄 Reset State</button>
+                <button class="btn" id="btn-animate" title="Toggle Edge Animations">🎬 Animation: On</button>
+            </div>
+        </div>
+
+        <!-- Protocol Menu -->
+        <div class="dropdown">
+            <div class="menu-label">⚖️ Protocol</div>
+            <div class="dropdown-content">
+                <button class="btn" id="btn-rules" title="View Architecture Rules">Rules.md</button>
+                <button class="btn" id="btn-master-hub" title="Open Master Hub (Architecture.md)">Architecture.md</button>
+                <button class="btn" id="btn-modular-specs" title="Open Modular Specs">Modular Specs</button>
+            </div>
+        </div>
+
+        <div style="flex: 1"></div>
+
+        <!-- Snap Shot Menu -->
+        <div class="dropdown">
+            <div class="menu-label">📸 Snap Shot</div>
+            <div class="dropdown-content">
+                <button class="btn" id="btn-snapshot" title="Take Manual Snapshot">Save Now</button>
+                <button class="btn" id="btn-history">History View</button>
+            </div>
+        </div>
+
+        <!-- Context Menu [Hidden as requested] -->
+        <div class="dropdown" style="display: none;">
+            <div class="menu-label" id="btn-record-label">⏺ Context</div>
+            <div class="dropdown-content">
+                <button class="btn" id="btn-record" title="Context 레코딩 토글 (CTRL+ALT+M)">REC Toggle</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="main-container">
+        <!-- [v0.3.1] Phase Debug Overlay -->
+        <div id="phase-overlay">
+            <div class="phase-row">
+                <span class="phase-label">Status:</span>
+                <span id="debug-phase" class="phase-value">PHASE 0</span>
+            </div>
+            <div class="phase-row">
+                <span class="phase-label">System:</span>
+                <span id="debug-lock" class="phase-value">READY</span>
+            </div>
+            <div class="phase-row">
+                <span class="phase-label">Budget:</span>
+                <span id="debug-budget" class="phase-value">100%</span>
+            </div>
+            <div class="phase-row">
+                <span class="phase-label">Ticks:</span>
+                <span id="debug-ticks" class="phase-value">0</span>
+            </div>
+        </div>
+
+        <div id="canvas-container">
+            <canvas id="canvas" tabindex="0" style="outline: none;"></canvas>
+
+            <!-- v0.2.17 DTR Controller -->
+            <div id="dtr-controller">
+                <div class="dtr-header">
+                    <span class="dtr-label">Inference Pressure</span>
+                    <span id="dtr-value-display" class="dtr-value">0.30</span>
+                </div>
+                <div id="dtr-node-label"
+                    style="font-size:10px; color:var(--fg-dim,#aaa); margin-bottom:4px; text-overflow:ellipsis; overflow:hidden; white-space:nowrap; display:none;">
+                </div>
+                <div class="dtr-gauge-container">
+                    <div id="dtr-gauge-fill" style="width: 30%;"></div>
+                </div>
+                <!-- [v0.2.17] Node DTR slider: visible only when a single node is selected -->
+                <input id="dtr-slider" type="range" min="0" max="1" step="0.01" value="0.30"
+                    style="width:100%; margin:6px 0 2px; display:none; accent-color:#f28b82;"
+                    title="이 노드의 사고 밀도를 조정합니다">
+                <div class="dtr-stats">
+                    <div>
+                        THINK@N
+                        <span id="dtr-stat-n" class="dtr-stat-val">1</span>
+                    </div>
+                    <div>
+                        EST. COST
+                        <span id="dtr-stat-cost" class="dtr-stat-val">Low</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- v0.2.17 Canvas Scrollbars -->
+            <div id="scrollbar-v" class="canvas-scrollbar">
+                <div id="thumb-v" class="scrollbar-thumb" style="width:100%; height:20%; top:0;"></div>
+            </div>
+            <div id="scrollbar-h" class="canvas-scrollbar">
+                <div id="thumb-h" class="scrollbar-thumb" style="height:100%; width:20%; left:0;"></div>
+            </div>
+
+            <div id="loading">
+                <div class="spinner"></div>
+                <div>프로젝트 분석 중...</div>
+            </div>
+        </div>
+
+        <div id="side-panel">
+            <div id="side-panel-header">
+                <div id="side-panel-title">File Preview</div>
+                <button id="side-panel-close">×</button>
+            </div>
+            <div id="side-panel-content">
+                <pre id="file-content"></pre>
+            </div>
+        </div>
+
+        <div id="history-panel">
+            <div class="panel-header" id="history-panel-header-drag">
+                <span style="font-weight: bold; font-size: 14px; color: var(--fg-main);">Architecture History</span>
+                <div style="display: flex; gap: 8px;">
+                    <button id="btn-clear-baseline" title="Clear Comparison"
+                        style="background:none; border:none; color:var(--fg-dim); cursor:pointer; font-size:12px;">🚫
+                        Clear</button>
+                    <button id="history-panel-close"
+                        style="background:none; border:none; color:var(--fg-dim); cursor:pointer;">&times;</button>
+                </div>
+            </div>
+            <div id="history-list">
+                <!-- History items will be injected here -->
+            </div>
+        </div>
+
+        <div id="docs-shelf-panel">
+            <div class="panel-header" id="docs-shelf-header-drag">
+                <span style="font-weight: bold; font-size: 14px; color: var(--fg-main);">Documentation Shelf</span>
+                <button id="docs-shelf-close" style="background:none; border:none; color:var(--fg-dim); cursor:pointer;">&times;</button>
+            </div>
+            <div id="docs-search-container">
+                <input type="text" id="docs-search-input" placeholder="Search documentation...">
+            </div>
+            <div id="docs-shelf-list">
+                <!-- Doc items will be injected here -->
+            </div>
+        </div>
+
+        <div id="context-menu">
+            <div class="menu-item" id="menu-open">Open File</div>
+            <div class="menu-divider"></div>
+            <div class="menu-item" id="menu-copy-id" style="color: var(--accent);">Copy Node ID</div>
+            <div class="menu-item" id="menu-inspect-node">🔍 Inspect Node</div>
+            <div class="menu-item" id="menu-inspect-edge">🔍 Inspect Edge</div>
+            <div class="menu-divider"></div>
+            <div class="menu-item" id="menu-generate-flow">Generate Flow (AI)</div>
+            <div class="menu-divider"></div>
+            <div class="menu-item" id="menu-group">Group Selected</div>
+            <div class="menu-item" id="menu-ungroup">Ungroup</div>
+            <div class="menu-divider"></div>
+            <div class="menu-item" id="menu-delete-node" style="color: #fb4934;">Delete</div>
+            <div class="menu-divider"></div>
+            <div class="menu-item" id="menu-snapshot">Take Snapshot</div>
+        </div>
+    </div>
+
+    <div id="status-bar">
+        <div class="status-item">
+            <span>Nodes: <strong id="node-count">0</strong></span>
+            <span class="divider">|</span>
+            <span>Edges: <strong id="edge-count">0</strong></span>
+            <span class="divider">|</span>
+            <span>Selected: <strong id="selected-count">0</strong></span>
+        </div>
+        <div class="status-item">
+            <span>LOD: <strong id="lod-status">NORMAL</strong></span>
+            <span class="divider">|</span>
+            <span>Zoom: <strong id="zoom-level">100%</strong></span>
+            <span class="divider">|</span>
+            <span>Mode: <strong id="current-mode">Graph</strong></span>
+            <span class="divider">|</span>
+            <span>FPS: <strong id="fps-display" style="color:#b8bb26;">--</strong></span>
+        </div>
+    </div>
+
+    <!-- Node Creation Dialog -->
+    <div id="node-dialog"
+        style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:var(--bg-panel); border:1px solid var(--border); padding:20px; z-index:4000; box-shadow:0 10px 30px rgba(0,0,0,0.5); border-radius:8px; min-width:300px;">
+        <h3 style="margin-top:0; color:var(--accent);">Add New Node</h3>
+        <div style="margin-bottom:15px;">
+            <label style="display:block; margin-bottom:5px; color:var(--fg-dim); font-size:12px;">Label</label>
+            <input type="text" id="node-label-input"
+                style="width:100%; padding:8px; background:#1d2021; border:1px solid #504945; color:var(--fg-main); border-radius:4px;"
+                placeholder="Node Name">
+        </div>
+        <div style="margin-bottom:20px;">
+            <label style="display:block; margin-bottom:5px; color:var(--fg-dim); font-size:12px;">Type</label>
+            <select id="node-type-input"
+                style="width:100%; padding:8px; background:#1d2021; border:1px solid #504945; color:var(--fg-main); border-radius:4px;">
+                <option value="logic">Logic</option>
+                <option value="data">Data</option>
+                <option value="ui">UI</option>
+                <option value="service">Service</option>
+                <option value="config">Config</option>
+                <option value="documentation">Documentation</option>
+            </select>
+        </div>
+        <div style="display:flex; justify-content:flex-end; gap:10px;">
+            <button id="btn-cancel-node" class="btn">Cancel</button>
+            <button id="btn-confirm-node" class="btn"
+                style="background:var(--accent); color:#282828; font-weight:bold;">Add</button>
+        </div>
+    </div>
+
+    <!-- Generic Input Dialog -->
+    <div id="input-dialog"
+        style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:var(--bg-panel); border:1px solid var(--border); padding:20px; z-index:4000; box-shadow:0 10px 30px rgba(0,0,0,0.5); border-radius:8px; min-width:300px;">
+        <h3 id="input-dialog-title" style="margin-top:0; color:var(--accent);">Input</h3>
+        <div style="margin-bottom:15px;">
+            <input type="text" id="input-dialog-value"
+                style="width:100%; padding:8px; background:#1d2021; border:1px solid #504945; color:var(--fg-main); border-radius:4px;"
+                placeholder="">
+        </div>
+        <div style="display:flex; justify-content:flex-end; gap:10px;">
+            <button id="btn-cancel-input" class="btn">Cancel</button>
+            <button id="btn-confirm-input" class="btn"
+                style="background:var(--accent); color:#282828; font-weight:bold;">OK</button>
+        </div>
+    </div>
+
+    <script>
+        // [v0.2.25] Global Message Buffer and SAFE VS Code API exposure
+        window._synapseMessageQueue = window._synapseMessageQueue || [];
+        window.SYNAPSE_WEBGL_RENDERER_URI = '__SYNAPSE_WEBGL_RENDERER_URI__';
+        if (typeof window.vscode === 'undefined') {
+            try { window.vscode = acquireVsCodeApi(); } catch(e) {}
+        }
+
+        // Listen for messages IMMEDIATELY and buffer them
+        window.addEventListener('message', event => {
+            const message = event.data;
+            if (window.engine && window.engine.handleMessage) {
+                window.engine.handleMessage(message);
+            } else {
+                window._synapseMessageQueue.push(message);
+            }
+        });
+
+        // [v0.3.9-fix] Ensure WebGLRenderer class is loaded and available
+        function ensureWebGLRendererClass() {
+            if (window.WebGLRenderer) return window.WebGLRenderer;
+            if (typeof WebGLRenderer !== 'undefined') {
+                window.WebGLRenderer = WebGLRenderer;
+                return WebGLRenderer;
+            }
+
+            const listedUri = window.SYNAPSE_WEBGL_RENDERER_URI || null;
+            if (!listedUri) {
+                console.error('[SYNAPSE] No WebGLRenderer URI available for dynamic load');
+                return null;
+            }
+
+            const existingScript = document.querySelector('script[data-synapse-include="webgl-renderer"]');
+            if (existingScript && existingScript.dataset.loaded === 'true') {
+                console.warn('[SYNAPSE] webgl-renderer script is marked loaded but WebGLRenderer still missing');
+            }
+
+            const script = document.createElement('script');
+            script.src = listedUri;
+            script.dataset.synapseInclude = 'webgl-renderer';
+            script.onload = () => {
+                console.log('[SYNAPSE] webgl-renderer.js loaded dynamically from webview URI');
+                if (typeof WebGLRenderer !== 'undefined') {
+                    window.WebGLRenderer = WebGLRenderer;
+                }
+                script.dataset.loaded = 'true';
+            };
+            script.onerror = () => {
+                console.error('[SYNAPSE] Failed to load webgl-renderer.js from', listedUri);
+                script.dataset.loaded = 'error';
+            };
+            document.head.appendChild(script);
+
+            return null;
+        }
+
+        // [v0.3.9-fix] WebGL button registration - ensures single listener and stable toggle behavior
+        function registerWebglButton() {
+            if (window.__synapseWebglButtonRegistered) {
+                return;
+            }
+
+            const btnWebgl = document.getElementById('btn-webgl');
+            console.log('[SYNAPSE] registerWebglButton called, btnWebgl:', btnWebgl ? 'FOUND' : 'NOT FOUND', 'readyState:', document.readyState);
+
+            if (!btnWebgl) {
+                console.warn('[SYNAPSE] btn-webgl element not found!');
+                return;
+            }
+
+            btnWebgl.addEventListener('click', function(event) {
+                console.log('[SYNAPSE] btn-webgl CLICKED!', event);
+                const eng = window.engine;
+                console.log('[SYNAPSE] window.engine:', eng ? 'EXISTS' : 'NOT FOUND');
+                if (!eng) {
+                    console.error('[SYNAPSE] Engine not initialized');
+                    return;
+                }
+
+                console.log('[SYNAPSE] WebGL global status:', {
+                    windowWebGLRenderer: !!window.WebGLRenderer,
+                    globalThisWebGLRenderer: !!(typeof globalThis !== 'undefined' && globalThis.WebGLRenderer),
+                    typeofWebGLRenderer: typeof WebGLRenderer
+                });
+
+                const requestedState = !eng.webglEnabled;
+                if (requestedState) {
+                    let RendererClass = ensureWebGLRendererClass();
+                    if (!RendererClass) {
+                        RendererClass = window.WebGLRenderer || (typeof WebGLRenderer !== 'undefined' ? WebGLRenderer : null);
+                    }
+
+                    console.log('[SYNAPSE] RendererClass:', RendererClass ? 'FOUND' : 'NOT FOUND', RendererClass);
+                    if (!RendererClass) {
+                        console.error('[SYNAPSE] WebGLRenderer is not defined. Please ensure webgl-renderer.js is loaded.');
+                        eng.webglEnabled = false;
+                        btnWebgl.textContent = `🚀 Accel: OFF`;
+                        btnWebgl.classList.remove('active');
+                        // Requeue the loader in case it sometimes arrives slightly late
+                        ensureWebGLRendererClass();
+                        return;
+                    }
+
+                    if (!eng.webglRenderer) {
+                        try {
+                            eng.webglRenderer = new RendererClass(eng.canvas);
+                            console.log('[SYNAPSE] WebGLRenderer created successfully');
+                            eng.isGraphDataDirty = true;
+                        } catch (e) {
+                            console.error('[SYNAPSE] Failed to create WebGLRenderer:', e);
+                            eng.webglEnabled = false;
+                            btnWebgl.textContent = `🚀 Accel: OFF`;
+                            btnWebgl.classList.remove('active');
+                            return;
+                        }
+                    }
+
+                    const overlay = document.getElementById('webgl-overlay-canvas');
+                    if (overlay) overlay.style.display = 'block';
+                    eng.webglEnabled = true;
+                    eng.isGraphDataDirty = true;
+                    eng.wakeUp();
+                } else {
+                    const overlay = document.getElementById('webgl-overlay-canvas');
+                    if (overlay) overlay.style.display = 'none';
+                    if (eng.webglRenderer) eng.webglRenderer.reset(); // [v0.3.2] Isolation
+                    eng.webglEnabled = false;
+                    eng.wakeUp(); // [v0.3.9] Ensure 2D draws immediately
+                }
+
+                btnWebgl.textContent = `🚀 Accel: ${eng.webglEnabled ? 'ON' : 'OFF'}`;
+                btnWebgl.classList.toggle('active', eng.webglEnabled);
+                eng.render();
+            });
+
+            window.__synapseWebglButtonRegistered = true;
+            console.log('[SYNAPSE] btn-webgl listener registered successfully');
+        }
+
+        // 안전 등록: readyState 체크하고 실행
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', registerWebglButton);
+            console.log('[SYNAPSE] DOMContentLoaded listener registered');
+        } else {
+            console.log('[SYNAPSE] Document already loaded, registering immediately');
+            registerWebglButton();
+        }
+
+        // 추가 안전장치: load 이벤트와 지연 실행
+        window.addEventListener('load', registerWebglButton);
+        setTimeout(registerWebglButton, 100);
+        setTimeout(registerWebglButton, 500);
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const allDropdowns = document.querySelectorAll('.dropdown');
+            
+            allDropdowns.forEach(dropdown => {
+                const label = dropdown.querySelector('.menu-label');
+                if (!label) return;
+
+                let closeTimer = null;
+
+                // Click on label toggles the dropdown open/closed
+                label.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const isOpen = dropdown.classList.contains('open');
+                    // Close all dropdowns first
+                    allDropdowns.forEach(d => d.classList.remove('open'));
+                    // Toggle current
+                    if (!isOpen) dropdown.classList.add('open');
+                });
+
+                // Hover open: open immediately on mouseenter
+                dropdown.addEventListener('mouseenter', () => {
+                    if (closeTimer) { clearTimeout(closeTimer); closeTimer = null; }
+                    allDropdowns.forEach(d => { if (d !== dropdown) d.classList.remove('open'); });
+                    dropdown.classList.add('open');
+                });
+
+                // Hover close: delay so user has time to move cursor to inner buttons
+                dropdown.addEventListener('mouseleave', () => {
+                    closeTimer = setTimeout(() => {
+                        dropdown.classList.remove('open');
+                    }, 300); // 300ms grace period
+                });
+            });
+
+            // Click anywhere outside toolbar closes all dropdowns
+            document.addEventListener('click', () => {
+                allDropdowns.forEach(d => d.classList.remove('open'));
+            });
+
+            // 끝. 추가 핸들러는 위 registerWebglButton에서만 사용합니다.
+        });
+
+        // 전역 파일 미리보기 함수
+        window.showFilePreview = async function (filePath) {
+            console.log('[SYNAPSE] showFilePreview:', filePath);
+            const sidePanel = document.getElementById('side-panel');
+            const sidePanelTitle = document.getElementById('side-panel-title');
+            const fileContent = document.getElementById('file-content');
+
+            if (!sidePanel) return;
+
+            sidePanel.classList.add('visible');
+            sidePanelTitle.textContent = filePath;
+            fileContent.textContent = 'Loading Content...';
+
+            if (typeof window.vscode !== 'undefined') {
+                // Request file content from extension
+                window.vscode?.postMessage({
+                    command: 'readFile',
+                    filePath: filePath
+                });
+            } else {
+                // Browser mode fallback
+                try {
+                    const response = await fetch(`../src/${filePath}`);
+                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                    const text = await response.text();
+                    fileContent.textContent = text;
+                } catch (error) {
+                    fileContent.textContent = `Error: ${error.message}\n\n브라우저 환경에서는 파일이 ../src/ 폴더에 존재해야 합니다.`;
+                }
+            }
+        };
+
+        // Listen for messages from extension (for file content)
+        window.addEventListener('message', event => {
+            const message = event.data;
+            if (message.command === 'fileContent') {
+                const fileContent = document.getElementById('file-content');
+                const sidePanelTitle = document.getElementById('side-panel-title');
+
+                if (message.error) {
+                    fileContent.textContent = message.error;
+                } else {
+                    fileContent.textContent = message.content;
+                }
+            }
+
+            // [v0.3.1] Phase Debug Overlay Update
+            if (message.command === 'projectState' && message.renderer && message.renderer.budgetReport) {
+                updateDebugOverlay(message.renderer.budgetReport, message.debuggerState);
+            }
+        });
+
+        // [v0.3.1] Phase Debug Overlay UI Helper
+        function updateDebugOverlay(budget, debuggerState) {
+            const overlay = document.getElementById('phase-overlay');
+            if (!overlay) return;
+
+            overlay.classList.add('visible');
+
+            if (debuggerState) {
+                document.getElementById('debug-phase').textContent = debuggerState.currentPhase;
+                const lockEl = document.getElementById('debug-lock');
+                lockEl.textContent = debuggerState.isLocked ? 'LOCKED' : 'READY';
+                lockEl.className = debuggerState.isLocked ? 'phase-value lock-active' : 'phase-value';
+                document.getElementById('debug-ticks').textContent = debuggerState.tickCount;
+            }
+
+            if (budget) {
+                const budgetVal = Math.round((budget.filteredEdges / budget.totalEdges) * 100) || 100;
+                document.getElementById('debug-budget').textContent = `${budgetVal}%`;
+                
+                // If filtered heavy, show warning color
+                const budgetEl = document.getElementById('debug-budget');
+                budgetEl.style.color = budget.threshold > 0.6 ? '#fb4934' : '#b8bb26';
+            }
+        }
+
+        // 초기화 및 이벤트 바인딩
+        document.addEventListener('DOMContentLoaded', () => {
+            // 패널 닫기 버튼
+            document.getElementById('side-panel-close')?.addEventListener('click', () => {
+                document.getElementById('side-panel')?.classList.remove('visible');
+            });
+
+            document.getElementById('history-panel-close')?.addEventListener('click', () => {
+                document.getElementById('history-panel')?.classList.remove('visible');
+            });
+
+            // 히스토리 버튼
+            document.getElementById('btn-history').addEventListener('click', () => {
+                const panel = document.getElementById('history-panel');
+                panel.classList.toggle('visible');
+                if (panel.classList.contains('visible')) {
+                    if (window.engine) {
+                        window.engine.getHistory();
+                    }
+                }
+            });
+
+
+            // 배경 클릭 시 컨텍스트 메뉴 닫기
+
+            // Draggable Panel Helper
+            // Draggable Panel Helper [v0.3.1_zz_Fixed]
+            function makeDraggable(panelId, headerId) {
+                const panel = document.getElementById(panelId);
+                const header = document.getElementById(headerId);
+                if (!panel || !header) return;
+
+                let isDragging = false;
+                let startX, startY;
+                let initialPanelX, initialPanelY;
+
+                header.style.cursor = 'move';
+                
+                header.addEventListener('mousedown', (e) => {
+                    // Check if clicking interactive children
+                    if (e.target.tagName === 'BUTTON' || e.target.tagName === 'INPUT' || e.target.tagName === 'A') {
+                        return;
+                    }
+                    
+                    isDragging = true;
+                    startX = e.clientX;
+                    startY = e.clientY;
+                    
+                    // Allow dragging regardless of CSS centering/relative parents
+                    const rect = panel.getBoundingClientRect();
+                    const parentRect = panel.offsetParent ? panel.offsetParent.getBoundingClientRect() : { left: 0, top: 0 };
+                    
+                    initialPanelX = rect.left - parentRect.left;
+                    initialPanelY = rect.top - parentRect.top;
+
+                    // Set explicit pixel coordinates
+                    panel.style.left = initialPanelX + 'px';
+                    panel.style.top = initialPanelY + 'px';
+                    panel.style.right = 'auto';
+                    panel.style.bottom = 'auto';
+                    panel.style.transform = 'none'; // Clear any centering transforms
+
+                    document.body.style.userSelect = 'none';
+                    
+                    e.stopPropagation();
+                });
+
+                document.addEventListener('mousemove', (e) => {
+                    if (!isDragging) return;
+                    const dx = e.clientX - startX;
+                    const dy = e.clientY - startY;
+                    panel.style.left = (initialPanelX + dx) + 'px';
+                    panel.style.top = (initialPanelY + dy) + 'px';
+                });
+
+                document.addEventListener('mouseup', () => {
+                    if (isDragging) {
+                        isDragging = false;
+                        document.body.style.userSelect = '';
+                    }
+                });
+            }
+
+            makeDraggable('history-panel', 'history-panel-header-drag');
+            makeDraggable('context-vault-panel', 'context-vault-header-drag');
+            makeDraggable('docs-shelf-panel', 'docs-shelf-header-drag');
+            makeDraggable('phase-overlay', 'phase-overlay'); // [v0.3.1_zz] Status window draggable
+            makeDraggable('dtr-controller', 'dtr-controller'); // [v0.3.1_zz] Inference window draggable too
+            makeDraggable('layer-controller', 'layer-controller-header'); // [v0.3.1_zz] Layer controller draggable
+
+            // [v0.2.20 Fix] Explicit wheel scroll support for panels (VS Code webview workaround)
+            // Without this, fixed panels may not receive native scroll events properly
+            ['history-list', 'context-vault-list', 'docs-shelf-list'].forEach(listId => {
+                const listEl = document.getElementById(listId);
+                if (!listEl) return;
+                listEl.addEventListener('wheel', (e) => {
+                    e.stopPropagation(); // Prevent canvas from receiving this event
+                    listEl.scrollTop += e.deltaY;
+                }, { passive: true });
+            });
+
+            // 애니메이션 토글 버튼 (Phase 3)
+            document.getElementById('btn-animate')?.addEventListener('click', (e) => {
+                if (window.engine) {
+                    const isNowAnimating = window.engine.toggleAnimation();
+                    e.target.textContent = isNowAnimating ? '🎬 On' : '⏸️ Off';
+                    e.target.classList.toggle('active', isNowAnimating);
+                }
+            });
+
+            // 스냅샷 버튼
+            document.getElementById('btn-snapshot')?.addEventListener('click', () => {
+                if (window.engine) {
+                    window.engine.takeSnapshot('Manual Snapshot');
+                }
+            });
+
+            // 룰 확인 버튼
+            document.getElementById('btn-rules')?.addEventListener('click', () => {
+                if (typeof window.vscode !== 'undefined') {
+                    vscode.postMessage({ command: 'openRules' });
+                } else {
+                    alert('Rules are defined in RULES.md in the project root.');
+                }
+            });
+
+            // REC 버튼: CTRL+ALT+M 토글과 연동
+            document.getElementById('btn-record')?.addEventListener('click', () => {
+                if (typeof window.vscode !== 'undefined') {
+                    vscode.postMessage({ command: 'triggerLogPrompt' });
+                }
+            });
+
+            // 프롬프트 저장 버튼
+            document.getElementById('btn-save-prompt')?.addEventListener('click', () => {
+                if (window.engine) {
+                    window.engine.requestLogPrompt();
+                }
+            });
+
+            // 기준선 제거 버튼
+            document.getElementById('btn-clear-baseline')?.addEventListener('click', () => {
+                if (typeof window.vscode !== 'undefined') {
+                    vscode.postMessage({ command: 'clearBaseline' });
+                }
+            });
+
+            // 배경 클릭 시 컨텍스트 메뉴 닫기
+            document.addEventListener('click', () => {
+                document.getElementById('context-menu').style.display = 'none';
+            });
+
+            // 브라우저 모드 체크
+            if (typeof window.vscode === 'undefined') {
+                const indicator = document.getElementById('status-indicator');
+                indicator.textContent = 'BROWSER MODE';
+                indicator.classList.add('browser-mode');
+            }
+
+            // [v0.2.16 Safety] Force remove loading overlay after 15 seconds if it gets stuck
+            setTimeout(() => {
+                const loadingEl = document.getElementById('loading');
+                if (loadingEl) {
+                    console.warn('[SYNAPSE] Loading timeout reached. Force-closing overlay.');
+                    loadingEl.remove();
+                }
+            }, 15000);
+        });
+    </script>
+    <!-- Layer Controller -->
+    <div id="layer-controller" class="draggable-panel">
+        <div id="layer-controller-header" class="panel-header">
+            <span class="panel-title">레이어 가시성</span>
+        </div>
+        <div class="panel-content" style="padding: 12px;">
+            <div class="layer-toggle-row" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <span class="layer-label" style="font-size: 13px; color: var(--fg-main);">기본 로직 (AI) - <b id="layer-count-base" style="color: var(--accent);">0</b></span>
+                <button id="btn-layer-base" class="layer-btn active" style="min-width: 50px;">ON</button>
+            </div>
+            <div class="layer-toggle-row" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <span class="layer-label" style="font-size: 13px; color: var(--fg-main);">사용자 커스텀 (User) - <b id="layer-count-user" style="color: #bc7ad9;">0</b></span>
+                <button id="btn-layer-user" class="layer-btn active" style="min-width: 50px;">ON</button>
+            </div>
+            <div class="layer-toggle-row" style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; border-top: 1px solid #3c3836; padding-top: 10px;">
+                <span class="layer-label" style="font-size: 13px; color: #a89984;">Hide Leaf Nodes (noise)</span>
+                <button id="btn-toggle-leaf" class="layer-btn" style="min-width: 50px;">OFF</button>
+            </div>
+            <div class="layer-toggle-row" style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px;">
+                <span class="layer-label" style="font-size: 13px; color: #fabd2f; font-weight: bold;">Focus Top Nodes (Top-N)</span>
+                <button id="btn-toggle-focus" class="layer-btn" style="min-width: 50px;">OFF</button>
+            </div>
+            <div class="layer-toggle-row" style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px;">
+                <span class="layer-label" style="font-size: 13px; color: #fe8019; font-weight: bold;">Traffic Heatmap (Beta)</span>
+                <button id="btn-toggle-heatmap" class="layer-btn" style="min-width: 50px;">OFF</button>
+            </div>
+            <div class="layer-action-row" style="margin-top: 15px; border-top: 1px solid #3c3836; padding-top: 12px;">
+                <button id="btn-align-role" class="protocol-btn" style="width: 100%; font-size: 11px; background: #458588; color: #ebdbb2;">🎯 Align Architecture (Role-based)</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="synapse-theme.js"></script>
+    <script src="engine-core.js"></script>
+    <script src="webgl-renderer.js"></script>
+    <script src="canvas-engine.js"></script>
+</body>
+
+</html>

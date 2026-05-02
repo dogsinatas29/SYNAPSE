@@ -55,21 +55,21 @@ export class BootstrapEngine {
             let structure = await this.parser.parseGeminiMd(geminiMdPath);
 
             // 2. 스마트 폴백: GEMINI.md에 파일 정보가 전혀 없거나 자기 자신(GEMINI.md)만 있는 경우 autoDiscover 실행
-            if (structure.files.length === 0 || (structure.files.length === 1 && structure.files[0].path.toLowerCase().endsWith('gemini.md'))) {
+            if (!structure.files || structure.files.length === 0 || (structure.files.length === 1 && structure.files[0].path.toLowerCase().endsWith('gemini.md'))) {
                 console.log('⚠️ [SYNAPSE] GEMINI.md contains no file definitions. Falling back to Auto-Discovery...');
                 const discoveredState = await this.autoDiscover(projectRoot, structure.includePaths);
 
                 // 검색된 노드 정보를 structure 형식으로 변환 (createStructure 지원을 위해)
-                structure.files = discoveredState.nodes.map(n => ({
-                    path: n.data.file || '',
+                structure.files = discoveredState.nodes!.map(n => ({
+                    path: n.data!.file || '',
                     type: n.type as any,
-                    description: n.data.description || ''
+                    description: n.data!.description || ''
                 })).filter(f => f.path);
 
                 const nodeMap = new Map<string, string>();
-                discoveredState.nodes.forEach(n => nodeMap.set(n.id, n.data.file || ''));
+                discoveredState.nodes!.forEach(n => nodeMap.set(n.id, n.data!.file || ''));
 
-                structure.dependencies = discoveredState.edges.map(e => ({
+                structure.dependencies = discoveredState.edges!.map(e => ({
                     from: nodeMap.get(e.from) || '',
                     to: nodeMap.get(e.to) || '',
                     type: e.type,
@@ -101,6 +101,7 @@ export class BootstrapEngine {
             const projectState: ProjectState = {
                 project_name: path.basename(projectRoot),
                 gemini_md_path: geminiMdPath,
+                current_snapshot_id: '',
                 canvas_state: {
                     zoom_level: 1.0,
                     offset: { x: 0, y: 0 },
@@ -108,7 +109,9 @@ export class BootstrapEngine {
                 },
                 nodes: nodes as any,
                 edges: edges as any,
-                clusters: graphModel.createSnapshot().clusters as any
+                clusters: graphModel.createSnapshot().clusters as any,
+                cluster_flows: [],
+                system_context: {}
             };
 
             const statePath = path.join(projectRoot, 'data', 'project_state.json');
@@ -122,7 +125,8 @@ export class BootstrapEngine {
                 success: true,
                 structure,
                 initial_nodes: nodes as any,
-                initial_edges: edges as any
+                initial_edges: edges as any,
+                error: null
             };
 
         } catch (error: any) {
@@ -191,6 +195,7 @@ export class BootstrapEngine {
             const projectState: ProjectState = {
                 project_name: path.basename(projectRoot),
                 gemini_md_path: path.join(projectRoot, 'GEMINI.md'),
+                current_snapshot_id: '',
                 canvas_state: {
                     zoom_level: 1.0,
                     offset: { x: 0, y: 0 },
@@ -198,7 +203,9 @@ export class BootstrapEngine {
                 },
                 nodes: nodes as any,
                 edges: edges as any,
-                clusters: graphModel.createSnapshot().clusters as any
+                clusters: graphModel.createSnapshot().clusters as any,
+                cluster_flows: [],
+                system_context: {}
             };
 
             const statePath = path.join(projectRoot, 'data', 'project_state.json');
@@ -258,6 +265,7 @@ export class BootstrapEngine {
         const state: ProjectState = {
             project_name: path.basename(projectRoot),
             gemini_md_path: path.join(projectRoot, 'GEMINI.md'),
+            current_snapshot_id: '',
             canvas_state: {
                 zoom_level: 1.0,
                 offset: { x: 0, y: 0 },
@@ -265,7 +273,9 @@ export class BootstrapEngine {
             },
             nodes: nodes as any,
             edges: edges as any,
-            clusters: graphModel.createSnapshot().clusters as any
+            clusters: graphModel.createSnapshot().clusters as any,
+            cluster_flows: [],
+            system_context: {}
         };
         
         // [v0.3.10] Advance phase for interactive auto-discovery
@@ -284,7 +294,7 @@ export class BootstrapEngine {
             for (const file of files) {
                 const fullPath = path.join(dir, file);
                 const currentRelPath = path.join(relPath, file).replace(/\\/g, '/');
-                if (isIgnoredFolder(file)) continue;
+                if (isIgnoredFolder(currentRelPath)) continue;
                 
                 // [v0.3.10] Metadata folders are now discoverable but routed to the shelf
                 if (file.toLowerCase() === 'data') continue;

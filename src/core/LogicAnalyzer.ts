@@ -38,8 +38,8 @@ export class LogicAnalyzer {
             this.loadConfig();
         }
         const issues: AnalysisIssue[] = [];
-        const nodes = state.nodes;
-        const edges = state.edges;
+        const nodes = state.nodes!;
+        const edges = state.edges!;
 
         // 1. 고립된 노드 탐색 (Isolated Nodes)
         this.detectIsolatedNodes(nodes, edges, issues);
@@ -90,11 +90,11 @@ export class LogicAnalyzer {
     private detectIsolatedNodes(nodes: Node[], edges: Edge[], issues: AnalysisIssue[]) {
         nodes.forEach(node => {
             const hasEdge = edges.some(e => e.from === node.id || e.to === node.id);
-            if (!hasEdge && node.type !== 'cluster' && node.type !== 'documentation') {
+            if (!hasEdge && (node.type as any) !== 'cluster' && (node.type as any) !== 'documentation') {
                 issues.push({
                     type: 'isolated',
                     severity: 'medium',
-                    message: `고립된 노드: '${node.data.label}'이(가) 어떤 흐름과도 연결되어 있지 않습니다.`,
+                    message: `고립된 노드: '${node.data!.label}'이(가) 어떤 흐름과도 연결되어 있지 않습니다.`,
                     nodeIds: [node.id]
                 });
             }
@@ -105,11 +105,11 @@ export class LogicAnalyzer {
         const validNodeTypes = new Set(['component', 'entry', 'database', 'external', 'documentation', 'test', 'config', 'source', 'history', 'cluster', 'Data', 'Processor', 'Service', 'Gate', 'Trigger']);
 
         nodes.forEach(node => {
-            if (!validNodeTypes.has(node.type)) {
+            if (!validNodeTypes.has(node.type as any)) {
                 issues.push({
                     type: 'schema-violation',
                     severity: 'high',
-                    message: `스키마 위반: '${node.data.label}' 노드가 알 수 없는 타입('${node.type}')을 가지고 있습니다. LLM 환각(Hallucination)일 수 있습니다.`,
+                    message: `스키마 위반: '${node.data!.label}' 노드가 알 수 없는 타입('${node.type}')을 가지고 있습니다. LLM 환각(Hallucination)일 수 있습니다.`,
                     nodeIds: [node.id]
                 });
             }
@@ -161,7 +161,7 @@ export class LogicAnalyzer {
         });
 
         cycles.forEach(cycle => {
-            const labels = cycle.map(id => nodes.find(n => n.id === id)?.data.label || id);
+            const labels = cycle.map(id => nodes.find(n => n.id === id)?.data!.label || id);
             issues.push({
                 type: 'circular',
                 severity: 'critical',
@@ -179,13 +179,11 @@ export class LogicAnalyzer {
             const incoming = edges.filter(e => e.to === node.id);
 
             if (incoming.length > 0 && outgoing.length === 0) {
-                // 진입은 있는데 나가는 흐름이 없는 경우 (Terminal point가 아닌데도)
-                // 보통 source나 config는 그럴 수 있음. reasoning/action 레이어에서 체크
-                if (node.data.layer && node.data.layer > 0) {
+                if (node.data!.layer !== undefined && node.data!.layer > 0) {
                     issues.push({
                         type: 'dead-end',
                         severity: 'high',
-                        message: `로직 단절(Dead-end): '${node.data.label}'에서 더 이상 진행되는 흐름이 없습니다.`,
+                        message: `로직 단절(Dead-end): '${node.data!.label}'에서 더 이상 진행되는 흐름이 없습니다.`,
                         nodeIds: [node.id]
                     });
                 }
@@ -200,7 +198,7 @@ export class LogicAnalyzer {
                 issues.push({
                     type: 'bottleneck',
                     severity: 'medium',
-                    message: `병목 지점 의심: '${node.data.label}'에 ${incoming.length}개의 의존성이 집중되어 있습니다.`,
+                    message: `병목 지점 의심: '${node.data!.label}'에 ${incoming.length}개의 의존성이 집중되어 있습니다.`,
                     nodeIds: [node.id]
                 });
             }
@@ -226,7 +224,7 @@ export class LogicAnalyzer {
                 necrosis.forEach(issue => {
                     const links = issue.nodeIds.map(id => {
                         const node = nodes.find(n => n.id === id);
-                        return `[\`${node?.data?.label || id}\`](command:synapse.focusNode?${encodeURIComponent(JSON.stringify(id))})`;
+                        return `[\`${node?.data!.label || id}\`](command:synapse.focusNode?${encodeURIComponent(JSON.stringify(id))})`;
                     });
                     content += `- 🔴 **${issue.message}**: ${links.join(', ')}\n`;
                 });
@@ -257,7 +255,7 @@ export class LogicAnalyzer {
                 hints.forEach(hint => {
                     const links = hint.nodeIds.map(id => {
                         const node = nodes.find(n => n.id === id);
-                        return `[\`${node?.data?.label || id}\`](command:synapse.focusNode?${encodeURIComponent(JSON.stringify(id))})`;
+                        return `[\`${node?.data!.label || id}\`](command:synapse.focusNode?${encodeURIComponent(JSON.stringify(id))})`;
                     });
                     content += `- 🟡 **${hint.message.replace(/\[Hint\]\s*/, '')}**: ${links.join(', ')}\n`;
                 });
@@ -288,21 +286,21 @@ export class LogicAnalyzer {
             // AST 기반 우회 주석 확인 (간이 구현: 노드의 file 스니펫 확인 등)
             let isBypassed = false;
             // 만약 node.data.content 등에 해당 코드가 있다면 체크 가능. 현재는 확장성을 위해 열어둠.
-            if (sourceNode.data.content && bypassRegex.test(sourceNode.data.content)) {
+            if (sourceNode.data!.content && bypassRegex.test(sourceNode.data!.content)) {
                 isBypassed = true;
             }
 
-            const sourceLayer = sourceNode.data.layer !== undefined ? sourceNode.data.layer : 1; // Default Layer 1
-            const targetLayer = targetNode.data.layer !== undefined ? targetNode.data.layer : 1;
+            const sourceLayer = sourceNode.data!.layer !== undefined ? sourceNode.data!.layer : 1; // Default Layer 1
+            const targetLayer = targetNode.data!.layer !== undefined ? targetNode.data!.layer : 1;
 
-            const sourceCluster = sourceNode.data.cluster_id;
-            const targetCluster = targetNode.data.cluster_id;
+            const sourceCluster = sourceNode.data!.cluster_id;
+            const targetCluster = targetNode.data!.cluster_id;
 
             // Step 0: Supported Language Check
             if (guardrail.supported_languages && guardrail.supported_languages.length > 0) {
                 const getExt = (file?: string) => file ? path.extname(file).toLowerCase() : '';
-                const sourceExt = getExt(sourceNode.data.file);
-                const targetExt = getExt(targetNode.data.file);
+                const sourceExt = getExt(sourceNode.data!.file);
+                const targetExt = getExt(targetNode.data!.file);
 
                 const sourceSupported = !sourceExt || guardrail.supported_languages.includes(sourceExt);
                 const targetSupported = !targetExt || guardrail.supported_languages.includes(targetExt);
@@ -340,14 +338,14 @@ export class LogicAnalyzer {
                             issues.push({
                                 type: 'architecture-violation',
                                 severity: 'medium',
-                                message: `[Layer Gravity Bypassed] '${sourceNode.data.label}' -> '${targetNode.data.label}' (Layer ${sourceLayer} -> ${targetLayer})`,
+                                message: `[Layer Gravity Bypassed] '${sourceNode.data!.label}' -> '${targetNode.data!.label}' (Layer ${sourceLayer} -> ${targetLayer})`,
                                 nodeIds: [edge.from, edge.to]
                             });
                         } else {
                             issues.push({
                                 type: 'architecture-violation',
                                 severity: 'critical',
-                                message: `[Layer Gravity Violation] '${sourceNode.data.label}' -> '${targetNode.data.label}' (Layer ${sourceLayer} -> ${targetLayer}). 역행은 금지됩니다.`,
+                                message: `[Layer Gravity Violation] '${sourceNode.data!.label}' -> '${targetNode.data!.label}' (Layer ${sourceLayer} -> ${targetLayer}). 역행은 금지됩니다.`,
                                 nodeIds: [edge.from, edge.to]
                             });
                         }
@@ -359,11 +357,11 @@ export class LogicAnalyzer {
             if (policies.inter_cluster_rule.enabled && sourceCluster && targetCluster && sourceCluster !== targetCluster) {
                 if (policies.inter_cluster_rule.enforce_bridge) {
                     // target 노드가 Bridge 타입이 아니면 경고
-                    if (!targetNode.data.label.toLowerCase().includes('bridge') && !targetNode.data.label.toLowerCase().includes('facade')) {
+                    if (!targetNode.data!.label.toLowerCase().includes('bridge') && !targetNode.data!.label.toLowerCase().includes('facade')) {
                         issues.push({
                             type: 'architecture-violation',
                             severity: 'medium',
-                            message: `[Boundary Violation] 타 클러스터의 내부 구현체('${targetNode.data.label}')에 직접 연결되었습니다. Bridge/Facade를 사용하세요.`,
+                            message: `[Boundary Violation] 타 클러스터의 내부 구현체('${targetNode.data!.label}')에 직접 연결되었습니다. Bridge/Facade를 사용하세요.`,
                             nodeIds: [edge.from, edge.to]
                         });
                     }
@@ -375,7 +373,7 @@ export class LogicAnalyzer {
                 issues.push({
                     type: 'architecture-violation',
                     severity: 'medium',
-                    message: `[Same Layer Policy] '${sourceNode.data.label}' -> '${targetNode.data.label}'. 동일 레이어 간 직접 호출이 제한되었습니다.`,
+                    message: `[Same Layer Policy] '${sourceNode.data!.label}' -> '${targetNode.data!.label}'. 동일 레이어 간 직접 호출이 제한되었습니다.`,
                     nodeIds: [edge.from, edge.to]
                 });
             }
@@ -392,7 +390,7 @@ export class LogicAnalyzer {
         ];
 
         nodes.forEach(node => {
-            const content = node.data.content || '';
+            const content = node.data!.content || '';
             if (!content) return;
 
             rules.forEach(rule => {
@@ -407,7 +405,7 @@ export class LogicAnalyzer {
             });
 
             // Recursion check (Simple heuristic: function calling itself by name)
-            const nodeName = node.data.label;
+            const nodeName = node.data!.label;
             if (nodeName && content.includes(`${nodeName}(`)) {
                 // Check if it's a definition or a call
                 const occurrences = content.split(`${nodeName}(`).length - 1;
@@ -434,7 +432,7 @@ export class LogicAnalyzer {
                 issues.push({
                     type: 'bottleneck',
                     severity: 'medium',
-                    message: `[Hint] High coupling detected in '${node.data.label}'. Consider splitting responsibilities.`,
+                    message: `[Hint] High coupling detected in '${node.data!.label}'. Consider splitting responsibilities.`,
                     nodeIds: [node.id]
                 });
             }
@@ -444,7 +442,7 @@ export class LogicAnalyzer {
                 issues.push({
                     type: 'warning',
                     severity: 'medium',
-                    message: `[Hint] High fan-out in '${node.data.label}'. Possible orchestrator overload.`,
+                    message: `[Hint] High fan-out in '${node.data!.label}'. Possible orchestrator overload.`,
                     nodeIds: [node.id]
                 });
             }
@@ -454,7 +452,7 @@ export class LogicAnalyzer {
                 issues.push({
                     type: 'warning',
                     severity: 'medium',
-                    message: `[Hint] High fan-in in '${node.data.label}'. Potential hidden dependency hub.`,
+                    message: `[Hint] High fan-in in '${node.data!.label}'. Potential hidden dependency hub.`,
                     nodeIds: [node.id]
                 });
             }
@@ -467,10 +465,10 @@ export class LogicAnalyzer {
         edges.forEach(edge => {
             const src = nodes.find(n => n.id === edge.from);
             const tgt = nodes.find(n => n.id === edge.to);
-            if (src && tgt && src.data.cluster_id && tgt.data.cluster_id && src.data.cluster_id !== tgt.data.cluster_id) {
-                const key = `${src.data.cluster_id}->${tgt.data.cluster_id}`;
+            if (src && tgt && src.data!.cluster_id && tgt.data!.cluster_id && src.data!.cluster_id !== tgt.data!.cluster_id) {
+                const key = `${src.data!.cluster_id}->${tgt.data!.cluster_id}`;
                 flowMap.set(key, (flowMap.get(key) || 0) + 1);
-                clusterOutCount.set(src.data.cluster_id, (clusterOutCount.get(src.data.cluster_id) || 0) + 1);
+                clusterOutCount.set(src.data!.cluster_id, (clusterOutCount.get(src.data!.cluster_id) || 0) + 1);
             }
         });
 
@@ -495,8 +493,8 @@ export class LogicAnalyzer {
      */
     public validatePrinciples(state: ProjectState, principles: string[]): AnalysisIssue[] {
         const issues: AnalysisIssue[] = [];
-        const nodes = state.nodes;
-        const clusters = state.clusters;
+        const nodes = state.nodes!;
+        const clusters = state.clusters!;
 
         principles.forEach(principle => {
             const pLower = principle.toLowerCase();
@@ -505,12 +503,12 @@ export class LogicAnalyzer {
             if (pLower.includes('simplicity') || pLower.includes('단순성')) {
                 // 클러스터당 노드 수 체크 (예: 20개 초과 시 경고)
                 clusters.forEach(cluster => {
-                    if (cluster.children.length > 20) {
+                    if (cluster.children!.length > 20) {
                         issues.push({
                             type: 'warning',
                             severity: 'medium',
                             message: `[SYNS-RULE-01] Principle Violation: '${cluster.label}' 클러스터가 너무 비대합니다. (Limit: 20 nodes)`,
-                            nodeIds: cluster.children.slice(0, 5)
+                            nodeIds: cluster.children!.slice(0, 5)
                         });
                     }
                 });

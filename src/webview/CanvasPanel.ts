@@ -2606,12 +2606,12 @@ export class CanvasPanel {
             try {
                 const engine = new BootstrapEngine();
                 const discoveredState = await engine.autoDiscover(workspaceFolder.uri.fsPath);
-                if (discoveredState.nodes.length > 0) {
+                if (discoveredState.nodes!.length > 0) {
                     const currentEngineNodes = canvasEngine.getFinalSnapshot().nodes;
                     const existingNodeIds = new Set(Object.keys(currentEngineNodes));
                     
                     // Filter for files existing on disk but NOT in graph (Roamers)
-                    const roamers = discoveredState.nodes.filter(n => !existingNodeIds.has(n.id));
+                    const roamers = discoveredState.nodes!.filter(n => !existingNodeIds.has(n.id));
                     
                     if (roamers.length > 0) {
                         // [v0.3.11 HARD SSOT] Non-destructive merge

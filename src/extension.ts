@@ -37,9 +37,15 @@ import { ReportExporter } from './core/ReportExporter';
 import { AiOrchestrator } from './core/AiOrchestrator';
 import { ArchitectureExplorerProvider } from './explorer/ArchitectureExplorer';
 
+import { RuleEngine } from './core/RuleEngine';
+import { graphModel } from './core/GraphModel';
+import { BlacklistOrchestrator } from './core/BlacklistOrchestrator';
+import { snapshotSystem } from './core/SnapshotSystem';
+
 export async function activate(context: vscode.ExtensionContext) {
     Logger.initialize(context);
     Logger.info('Extension activation started');
+    const orchestrator = new BlacklistOrchestrator(graphModel);
 
     try {
         console.log('[SYNAPSE] Starting activation sequence...');
@@ -315,6 +321,68 @@ export async function activate(context: vscode.ExtensionContext) {
                     await liteBootstrap(context, targetFolder);
                 } else {
                     await bootstrapFromGemini(selected._uri, context);
+                }
+            })
+        );
+        context.subscriptions.push(
+            vscode.commands.registerCommand('synapse.addToBlacklist', async (uri: vscode.Uri | undefined) => {
+                const targetUri = uri || vscode.window.activeTextEditor?.document.uri;
+                if (!targetUri) return;
+
+                const workspaceFolder = vscode.workspace.getWorkspaceFolder(targetUri);
+                if (!workspaceFolder) return;
+
+                const projectRoot = workspaceFolder.uri.fsPath;
+                const relPath = path.relative(projectRoot, targetUri.fsPath).replace(/\\/g, '/');
+                
+                const stats = fs.statSync(targetUri.fsPath);
+                const isDir = stats.isDirectory();
+
+                const configPath = path.join(projectRoot, 'synapse.config.json');
+                if (!fs.existsSync(configPath)) {
+                    // [v0.3.23 UI Hardening] Auto-generate template if missing
+                    const template = {
+                        "project": "SYNAPSE",
+                        "version": "v0.3.0",
+                        "blacklist": {
+                            "folders": ["node_modules", ".git", "dist", "build"],
+                            "files": []
+                        },
+                        "architecture_guardrail": {
+                            "supported_languages": [".ts", ".js", ".py", ".md"]
+                        }
+                    };
+                    fs.writeFileSync(configPath, JSON.stringify(template, null, 2), 'utf8');
+                    vscode.window.showInformationMessage('✅ synapse.config.json created with default template.');
+                }
+
+                try {
+                    const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+                    if (!config.blacklist) config.blacklist = { folders: [], files: [] };
+                    
+                    if (isDir) {
+                        if (!config.blacklist.folders.includes(relPath)) {
+                            config.blacklist.folders.push(relPath);
+                        }
+                    } else {
+                        if (!config.blacklist.files.includes(relPath)) {
+                            config.blacklist.files.push(relPath);
+                        }
+                    }
+
+                    fs.writeFileSync(configPath, JSON.stringify(config, null, 2), 'utf8');
+                    
+                    // Apply via Orchestrator
+                    RuleEngine.getInstance().loadConfig(projectRoot);
+                    snapshotSystem.onBlacklistChanged(orchestrator);
+                    
+                    if (CanvasPanel.currentPanel) {
+                        await CanvasPanel.currentPanel.refreshState();
+                    }
+
+                    vscode.window.showInformationMessage(`🚫 SYNAPSE: Added to Blacklist and refreshed view: ${relPath}`);
+                } catch (e) {
+                    vscode.window.showErrorMessage(`Failed to update blacklist: ${e}`);
                 }
             })
         );
@@ -734,7 +802,7 @@ async function liteBootstrap(context: vscode.ExtensionContext, folder?: vscode.W
                     }
 
                     vscode.window.showInformationMessage(
-                        `✅ Lite Bootstrap complete! Discovered ${result.initial_nodes.length} nodes.`
+                        `✅ Lite Bootstrap complete! Discovered ${result.initial_nodes!.length} nodes.`
                     );
                 } else {
                     vscode.window.showErrorMessage(`❌ Lite Bootstrap failed: ${result.error}`);
@@ -780,7 +848,7 @@ async function bootstrapFromGemini(uri: vscode.Uri, context: vscode.ExtensionCon
                     }
 
                     vscode.window.showInformationMessage(
-                        `✅ Bootstrap complete! Created ${result.initial_nodes.length} nodes.`
+                        `✅ Bootstrap complete! Created ${result.initial_nodes!.length} nodes.`
                     );
                 } else {
                     vscode.window.showErrorMessage(`❌ Bootstrap failed: ${result.error}`);

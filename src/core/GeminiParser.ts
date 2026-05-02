@@ -43,9 +43,9 @@ export class GeminiParser {
             const structure = this.analyzeContent(content);
 
             console.log('✅ GEMINI.md 분석 완료');
-            console.log(`  - 폴더: ${structure.folders.length}개`);
-            console.log(`  - 파일: ${structure.files.length}개`);
-            console.log(`  - 의존성: ${structure.dependencies.length}개`);
+            console.log(`  - 폴더: ${structure.folders!.length}개`);
+            console.log(`  - 파일: ${structure.files!.length}개`);
+            console.log(`  - 의존성: ${structure.dependencies!.length}개`);
 
             return structure;
         } catch (error) {
@@ -127,7 +127,8 @@ export class GeminiParser {
             folders: [],
             files: [],
             dependencies: [],
-            includePaths: []
+            includePaths: [],
+            principles: []
         };
 
         // 스캔용 콘텐츠 정제 (필터링 순서 중요: 큰 단위부터 제거)
@@ -159,8 +160,8 @@ export class GeminiParser {
         while ((match = folderPattern.exec(contentForScanning)) !== null) {
             const folderName = match[1];
             if (isIgnoredFolder(folderName)) continue;
-            if (!structure.folders.includes(folderName)) {
-                structure.folders.push(folderName);
+            if (!structure.folders!.includes(folderName)) {
+                structure.folders!.push(folderName);
             }
         }
 
@@ -182,15 +183,15 @@ export class GeminiParser {
             }
 
             // [Node Diet] 블랙리스트 및 무시된 폴더 경로 필터링
-            if (isIgnoredFile(fileName) || fileName.split('/').some(isIgnoredFolder)) continue;
+            if (isIgnoredFile(fileName) || isIgnoredFolder(fileName)) continue;
 
             // 중복 체크
-            if (structure.files.find(f => f.path === fileName)) continue;
+            if (structure.files!.find(f => f.path === fileName)) continue;
 
             let type: NodeType = ext === 'md' ? 'documentation' : 'source';
             if (fileName.toLowerCase().includes('test')) type = 'test';
 
-            structure.files.push({
+            structure.files!.push({
                 path: fileName,
                 type,
                 description: type === 'documentation' ? `${fileName} (Doc)` : `${fileName} (Source)`
@@ -211,14 +212,14 @@ export class GeminiParser {
                     const description = nodeMatch[2].trim();
 
                     // [Node Diet] 블랙리스트 및 무시된 폴더 경로 필터링
-                    if (isIgnoredFile(filePath) || filePath.split('/').some(isIgnoredFolder)) return;
+                    if (isIgnoredFile(filePath) || isIgnoredFolder(filePath)) return;
 
-                    if (!structure.files.find(f => f.path === filePath)) {
+                    if (!structure.files!.find(f => f.path === filePath)) {
                         const ext = path.extname(filePath).slice(1).toLowerCase();
                         const whitelist = ['py', 'ts', 'js', 'cpp', 'h', 'hpp', 'cc', 'c', 'rs', 'sh', 'sql', 'json'];
 
                         if (whitelist.includes(ext)) {
-                            structure.files.push({
+                            structure.files!.push({
                                 path: filePath,
                                 type: 'source',
                                 description: description
@@ -238,10 +239,10 @@ export class GeminiParser {
             const label = match[3] || '';
 
             // 만약 파일 목록에 있으면 그 경로 그대로 사용, 없으면 추측
-            const fromFile = structure.files.find(f => f.path.includes(from))?.path || from;
-            const toFile = structure.files.find(f => f.path.includes(to))?.path || to;
+            const fromFile = structure.files!.find(f => f.path.includes(from))?.path || from;
+            const toFile = structure.files!.find(f => f.path.includes(to))?.path || to;
 
-            structure.dependencies.push({
+            structure.dependencies!.push({
                 from: fromFile,
                 to: toFile,
                 type: 'dependency',
@@ -264,7 +265,7 @@ export class GeminiParser {
         console.log('📁 프로젝트 구조 생성 중...');
 
         // 폴더 생성
-        for (const folder of structure.folders) {
+        for (const folder of structure.folders!) {
             const folderPath = path.join(projectRoot, folder);
             if (!fs.existsSync(folderPath)) {
                 fs.mkdirSync(folderPath, { recursive: true });
@@ -273,7 +274,7 @@ export class GeminiParser {
         }
 
         // 파일 생성 (빈 파일)
-        for (const file of structure.files) {
+        for (const file of structure.files!) {
             const filePath = path.join(projectRoot, file.path);
             const fileDir = path.dirname(filePath);
 

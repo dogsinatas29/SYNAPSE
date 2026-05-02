@@ -1,89 +1,45 @@
 /**
- * 📊 SYNAPSE Graph Model (v0.3.1)
+ * 📊 SYNAPSE Graph Model (v0.3.23)
  * 
- * "Iron Grid Refined" 전략에 따라 엣지 가중치와 필터링 기능을 포함하며,
- * 불변 스냅샷 기반의 Directed Graph 모델링을 제공한다.
+ * L2 Runtime Safety Hardening Applied.
  */
 
-export enum NodeType {
-  FILE = 'file',
-  MODULE = 'module',
-  SYMBOL = 'symbol',
-  API = 'api',
-  DOCUMENTATION = 'documentation',
-  SOURCE = 'source',
-  EXTERNAL = 'external'
-}
+import { RuleEngine } from './RuleEngine';
+import { filterSnapshot } from './filterSnapshot';
+import { Node, Edge, Cluster, GraphSnapshot, ClusterFlow, NodeType as SNodeType, EdgeType as SEdgeType } from '../types/schema';
 
-export enum EdgeType {
-  INCLUDE = 'dependency',
-  CALL = 'api_call',
-  DATA_FLOW = 'data_flow',
-  EVENT = 'event',
-  CONDITIONAL = 'conditional',
-  ORIGIN = 'origin',
-  DB_QUERY = 'db_query',
-  LOOP_BACK = 'loop_back',
-  REFERENCE = 'reference',
-  STATIC = 'static'
-}
+export { Node, Edge, Cluster, GraphSnapshot, ClusterFlow };
 
-export interface Node {
-  id: string;
-  filePath: string;
-  type: NodeType | string;
-  label?: string;
-  name?: string;  // [v0.3.11] Unified label sync
-  text?: string;  // [v0.3.11] Unified label sync
-  degree: number; 
-  position?: { x: number; y: number };
-  status?: string;
-  cluster_id?: string;
-  layer?: string;  // [v0.3.11] Explicit layer tag ('ai' | 'user')
-  pinned?: boolean; // [v0.3.11] Layout Sovereignty
-  data?: any;
-  intelligence?: any;
-  visual?: any;
-}
+// [v0.3.23] Runtime Value Constants for Types (Casted to any for extreme flexibility)
+export const NodeType: any = {
+  SOURCE: 'source',
+  CLUSTER: 'cluster',
+  DOCUMENTATION: 'documentation',
+  FILE: 'source',
+  SYMBOL: 'source',
+  TEST: 'test',
+  CONFIG: 'config',
+  HISTORY: 'history',
+  EXTERNAL: 'external',
+  EVENT: 'event'
+};
 
-export interface Edge {
-  id?: string;
-  from: string;
-  to: string;
-  type: EdgeType | string;
-  weight: number;
-  status?: string;
-  is_approved?: boolean;
-  data?: any;
-  visual?: any;
-}
+export const EdgeType: any = {
+  DEPENDENCY: 'dependency',
+  DATA_FLOW: 'data_flow',
+  EVENT: 'event',
+  CONDITIONAL: 'conditional',
+  ORIGIN: 'origin',
+  REFERENCE: 'reference',
+  BROKEN_FRACTURE: 'broken_fracture',
+  INCLUDE: 'include',
+  CALL: 'call',
+  DB_QUERY: 'db_query',
+  LOOP_BACK: 'loop_back',
+  STATIC: 'static'
+};
 
-export interface Cluster {
-  id: string;
-  label: string;
-  type: string;
-  position?: { x: number; y: number }; // [v0.3.11] Added position for relative coordinate support
-  collapsed?: boolean;
-  layer?: string;  // [v0.3.11] Explicit layer tag ('ai' | 'user')
-  data?: any;
-}
-
-/**
- * [v0.3.21] Cluster Flow Data
- */
-export interface ClusterFlow {
-  from: string;
-  to: string;
-  count: number;
-}
-
-export interface GraphSnapshot {
-  nodes: Node[];
-  edges: Edge[];
-  clusters: Cluster[];
-  cluster_flows?: ClusterFlow[];
-  timestamp: number;
-}
+declare const requestAnimationFrame: any;
 
 export class GraphModel {
   private nodes: Map<string, Node> = new Map();
@@ -98,45 +54,40 @@ export class GraphModel {
   public getProjectRoot(): string {
     return this.projectRoot;
   }
+
+  public nodeCount(): number {
+    return this.nodes.size;
+  }
   
-  // Weights (Constants from Iron Grid Refined)
   public static readonly WEIGHT_DIRECT_INCLUDE = 1.0;
   public static readonly WEIGHT_INTERNAL = 0.7;
   public static readonly WEIGHT_UTILITY = 0.2;
   public static readonly WEIGHT_TRANSITIVE = 0.1;
 
-  /**
-   * 렌더링을 위한 엣지 필터링 (Iron Grid Refined: 1번 전략)
-   */
   public getFilteredEdges(threshold: number): Edge[] {
-    return this.edges.filter(edge => edge.weight >= threshold);
+    return this.edges.filter(edge => (edge.weight || 0) >= threshold);
   }
 
-  /**
-   * 허브 노드 축소 (Iron Grid Refined: 3번 전략)
-   */
   public getCollapsedNodes(threshold: number): Node[] {
     return Array.from(this.nodes.values()).map(node => {
-      if (node.degree > threshold) {
+      const n = node as any;
+      if (n.degree > threshold) {
         return { 
           ...node, 
-          label: `(HUB) ${node.label}`,
-          position: node.position 
-        };
+          label: `(HUB) ${n.data?.label || n.id}`,
+          position: n.position 
+        } as any;
       }
       return node;
     });
   }
 
-  /**
-   * [v0.3.21] 클러스터 간 흐름 집계 (Heatmap용)
-   */
   public getClusterFlows(): ClusterFlow[] {
     const flowMap = new Map<string, number>();
     
     for (const edge of this.edges) {
-      const srcNode = this.nodes.get(edge.from);
-      const tgtNode = this.nodes.get(edge.to);
+      const srcNode = this.nodes.get(edge.from || '');
+      const tgtNode = this.nodes.get(edge.to || '');
       
       if (srcNode && tgtNode) {
         const srcCluster = srcNode.cluster_id || 'root';
@@ -171,26 +122,117 @@ export class GraphModel {
     this.clusters = [];
   }
 
-  /**
-   * 스냅샷으로부터 그래프 상태 복구
-   */
+  public addNode(node: Node) {
+    const ruleEngine = RuleEngine.getInstance();
+    const pathToCheck = node.filePath || (node.data as any)?.file || node.id;
+    
+    if (ruleEngine.shouldIgnoreFile(pathToCheck)) {
+      return;
+    }
+    this.nodes.set(node.id, node);
+  }
+
+  public applyBlacklist() {
+    const ruleEngine = RuleEngine.getInstance();
+    const affectedNodes: Node[] = [];
+
+    for (const node of this.nodes.values()) {
+      const pathToCheck = node.filePath || (node.data as any)?.file || node.id;
+      if (ruleEngine.shouldIgnoreFile(pathToCheck)) {
+        affectedNodes.push(node);
+      }
+    }
+
+    if (affectedNodes.length === 0) return;
+
+    const total = this.nodes.size;
+    const ratio = affectedNodes.length / total;
+
+    if (total < 1000 || ratio > 0.2) {
+      this.rebuildWithBlacklist();
+    } else {
+      this.purgeIncremental(affectedNodes);
+    }
+  }
+
+  private rebuildWithBlacklist() {
+    const snapshot = this.createSnapshot();
+    const filtered = filterSnapshot(snapshot);
+    this.restoreSnapshot(filtered);
+  }
+
+  private purgeIncremental(nodesToRemove: Node[], chunkSize = 200) {
+    let index = 0;
+    const ruleEngine = RuleEngine.getInstance();
+    const startTime = Date.now();
+
+    const process = () => {
+      const frameStart = Date.now();
+      const end = Math.min(index + chunkSize, nodesToRemove.length);
+      const removedIds = new Set<string>();
+
+      for (; index < end; index++) {
+        const node = nodesToRemove[index];
+        const pathToCheck = node.filePath || (node.data as any)?.file || node.id;
+        
+        if (ruleEngine.shouldIgnoreFile(pathToCheck)) {
+          this.nodes.delete(node.id);
+          removedIds.add(node.id);
+        }
+        
+        if (Date.now() - frameStart > 10) break; 
+      }
+
+      if (removedIds.size > 0) {
+        this.edges = this.edges.filter(e => !removedIds.has(e.from || '') && !removedIds.has(e.to || ''));
+      }
+
+      if (index < nodesToRemove.length) {
+        if (typeof requestAnimationFrame !== 'undefined') {
+          requestAnimationFrame(process);
+        } else {
+          if (typeof setImmediate !== 'undefined') {
+            setImmediate(process);
+          } else {
+            setTimeout(process, 1);
+          }
+        }
+      } else {
+        console.log(`[SYNAPSE] Incremental Purge completed in ${Date.now() - startTime}ms.`);
+        this.finalizeGraph();
+      }
+    };
+
+    process();
+  }
+
+  private finalizeGraph() {
+    const flows = this.getClusterFlows();
+    console.log(`[SYNAPSE] Graph finalized with ${this.nodes.size} nodes and ${flows.length} flows.`);
+  }
+
   public restoreSnapshot(snapshot: GraphSnapshot) {
     this.reset();
+    
     for (const node of snapshot.nodes) {
       this.nodes.set(node.id, node);
     }
+    
     for (const edge of snapshot.edges) {
       this.edges.push(edge);
     }
+
     if (snapshot.clusters) {
       this.clusters = [...snapshot.clusters];
     }
+    
+    this.finalizeGraph();
+    console.log(`[SYNAPSE] Graph restored: ${this.nodes.size} nodes, ${this.edges.length} edges.`);
   }
 
   public loadFrom(state: any) {
     this.reset();
     
-    // [v0.3.11] 데이터 규격 호환성 강화: 배열(Array)과 객체(Map) 형태 모두 지원
     if (state.nodes) {
       if (Array.isArray(state.nodes)) {
         state.nodes.forEach((n: any) => this.nodes.set(n.id, n));
@@ -211,7 +253,6 @@ export class GraphModel {
       this.clusters = Array.isArray(state.clusters) ? [...state.clusters] : Object.values(state.clusters);
     }
 
-    // [v0.3.11] 보정 로직: 필수 시스템 클러스터가 누락된 경우 자동 추가
     const requiredClusters = [
       { id: 'cluster_ghosts', label: '👻 External Ghosts', type: 'system', position: { x: 800, y: 0 } },
       { id: 'sys_cluster_reserved', label: 'Reserved Cluster', type: 'system', position: { x: 0, y: 600 } },
@@ -222,10 +263,8 @@ export class GraphModel {
     requiredClusters.forEach(required => {
       const existingIdx = this.clusters.findIndex(c => c.id === required.id);
       if (existingIdx === -1) {
-        console.warn(`[SYNAPSE] Restoring missing system cluster: ${required.id}`);
-        this.clusters.push({ ...required, nodes: [] } as any);
+        this.clusters.push({ ...required, children: [] } as any);
       } else {
-        // [v0.3.14 Fix] Avoid direct mutation of potentially read-only objects
         this.clusters[existingIdx] = { 
           ...this.clusters[existingIdx], 
           label: required.label, 

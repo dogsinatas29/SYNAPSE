@@ -1,151 +1,98 @@
 /**
  * SYNAPSE Core Data Schemas
- * 핵심 데이터 구조 정의
+ * 핵심 데이터 구조 정의 (v0.3.23 Extreme Flexibility)
  */
 
-// 노드 타입
-export type NodeType = 'source' | 'cluster' | 'documentation' | 'test' | 'config' | 'history' | 'external' | 'event';
+export type NodeType = any;
+export type NodeStatus = any;
+export type EdgeType = any;
+export type EdgeStyle = any;
 
-// 노드 상태
-export type NodeStatus = 'proposed' | 'active' | 'error' | 'completed' | 'warning' | 'error_necrosis';
-
-// 엣지 타입
-export type EdgeType = 'dependency' | 'data_flow' | 'event' | 'conditional' | 'origin' |
-    'api_call' | 'db_query' | 'loop_back' | 'error_path' |
-    'reference' | 'static_unidirectional' | 'control_bidirectional' | 'broken_fracture';
-
-// 엣지 스타일
-export type EdgeStyle = 'solid' | 'dashed' | 'dotted';
-
-/**
- * 노드 스키마
- */
 export interface Node {
     id: string;
-    type: NodeType;
-    status: NodeStatus;
-    position: { x: number; y: number };
-    data: {
-        file?: string;           // 연결된 파일 경로
-        label: string;           // 표시 이름
-        cluster_id?: string;     // 소속 클러스터
-        content?: string;        // 코드 스니펫 (확대 시)
-        color?: string;          // 상태 색상
-        description?: string;    // 설명
-        layer?: number;          // 계층 (0: Discovery, 1: Reasoning, 2: Action)
-        priority?: number;       // 실행 우선순위
-    };
-    intelligence?: {
-        dtr: number;             // 사고 밀도 (0.0 ~ 1.0)
-        density_rho?: number;    // 정보 함축률
-        think_at_n?: number;     // 시뮬레이션된 경로 수
-        confidence?: number;     // AI 확신도
-    };
-    visual: {
-        opacity: number;         // 0.5 = 제안 상태
-        dashArray?: string;      // 점선 패턴
-        glow_intensity?: number; // DTR에 따른 발광 강도
-    };
+    type?: any;
+    status?: any;
+    position?: { x: number; y: number };
+    filePath?: any;
+    cluster_id?: any;
+    degree?: any;
+    layer?: any;
+    label?: any;
+    data?: any;
+    intelligence?: any;
+    visual?: any;
+    [key: string]: any;
 }
 
-/**
- * 엣지 스키마
- */
 export interface Edge {
-    id: string;
-    from: string;              // 출발 노드 ID
-    to: string;                // 도착 노드 ID
-    type: EdgeType;
-    is_approved: boolean;      // 승인 여부
-    intelligence?: {
-        dtr: number;             // 해당 연결의 검증 밀도
-    };
-    visual: {
-        thickness: number;       // 선 굵기 (중요도/DTR 비례)
-        style: EdgeStyle;
-        color: string;           // 상태 색상
-        animated?: boolean;      // 입자 흐름 효과
-        dashArray?: string;      // [v0.2.24] 점선 패턴 지원
-    };
+    id?: any;
+    from?: any;
+    to?: any;
+    type?: any;
+    is_approved?: any;
+    weight?: any;
+    status?: any;
+    data?: any;
+    intelligence?: any;
+    visual?: any;
+    [key: string]: any;
 }
 
-/**
- * 클러스터 스키마
- */
 export interface Cluster {
     id: string;
-    label: string;
-    type?: string;             // [v0.3.10] Cluster type (system, user, folder)
-    collapsed?: boolean;       // 접힘 상태
-    bounds?: {                 // 시각적 경계
-        x: number;
-        y: number;
-        width: number;
-        height: number;
+    label?: any;
+    type?: any;
+    collapsed?: any;
+    position?: { x: number; y: number };
+    bounds?: {
+        x: number; y: number; width: number; height: number;
     };
-    children: string[];        // 포함된 노드 ID 목록
-    parent_id?: string;        // 부모 클러스터 ID
-    representative_edge?: string;
+    children?: string[];
+    parent_id?: any;
+    representative_edge?: any;
+    nodes?: any;
+    data?: any;
+    [key: string]: any;
 }
 
-/**
- * [v0.3.21] 클러스터 간 흐름 데이터 (Heatmap용)
- */
 export interface ClusterFlow {
     from: string;
     to: string;
     count: number;
 }
 
-/**
- * 프로젝트 구조 (GEMINI.md 분석 결과)
- */
 export interface ProjectStructure {
-    folders: string[];         // 생성할 폴더 목록
-    files: {
-        path: string;
-        type: NodeType;
-        description: string;
-    }[];
-    dependencies: {            // 파일 간 의존성
-        from: string;
-        to: string;
-        type: EdgeType;
-        label?: string;
-        isApproved?: boolean;   // [v0.2.18.1.2]
-    }[];
-    includePaths?: string[];   // 스캔 범위 제한
-    principles?: string[];     // [v0.2.20] Sovereign Principles
+    folders?: string[];
+    files?: any[];
+    dependencies?: any[];
+    includePaths?: string[];
+    principles?: string[];
 }
 
-/**
- * 프로젝트 상태
- */
 export interface ProjectState {
-    project_name: string;
-    gemini_md_path: string;    // GEMINI.md 경로
-    current_snapshot_id?: string;
-    canvas_state: {
-        zoom_level: number;
-        offset: { x: number; y: number };
-        visible_layers: string[];
-    };
+    project_name?: any;
+    gemini_md_path?: any;
+    current_snapshot_id?: any;
+    canvas_state?: any;
+    nodes?: Node[];
+    edges?: Edge[];
+    clusters?: Cluster[];
+    cluster_flows?: ClusterFlow[];
+    system_context?: any;
+}
+
+export interface GraphSnapshot {
     nodes: Node[];
     edges: Edge[];
     clusters: Cluster[];
-    cluster_flows?: ClusterFlow[]; // [v0.3.21] Heatmap Flow Data
-    system_context?: {          // [v0.2.20] Sovereign Principles
-        principles: string[];
-    };
+    cluster_flows?: ClusterFlow[];
+    timestamp: number;
 }
 
-/**
- * Bootstrap 결과
- */
 export interface BootstrapResult {
     success: boolean;
-    structure: ProjectStructure;
-    initial_nodes: Node[];
-    initial_edges: Edge[];
-    error?: string;
+    structure?: ProjectStructure;
+    initial_nodes?: Node[];
+    initial_edges?: Edge[];
+    error?: any;
 }

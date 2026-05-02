@@ -26,5 +26,11 @@
       ".py",
       ".md"
     ]
+  },
+  "blacklist": {
+    "folders": [
+      "TEST"
+    ],
+    "files": []
   }
 }

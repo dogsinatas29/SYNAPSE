@@ -20,10 +20,17 @@ export class ArchitectureDSL {
                 const [, fromType, fromId, toType, toId] = flowMatch;
                 this.ensureNode(nodes, fromId, fromType as NodeType);
                 this.ensureNode(nodes, toId, toType as NodeType);
+                const edgeId = `edge_${fromId}_${toId}_${Date.now()}`;
                 edges.push({
+                    id: edgeId,
                     from: fromId,
                     to: toId,
-                    type: 'control_bidirectional'
+                    type: 'control_bidirectional',
+                    status: 'proposed',
+                    is_approved: true,
+                    data: {},
+                    intelligence: {},
+                    visual: { color: '#d3869b', thickness: 2 }
                 });
                 continue;
             }
@@ -34,10 +41,17 @@ export class ArchitectureDSL {
                 const [, fromType, fromId, toType, toId] = useMatch;
                 this.ensureNode(nodes, fromId, fromType as NodeType);
                 this.ensureNode(nodes, toId, toType as NodeType);
+                const edgeId = `edge_${fromId}_${toId}_${Date.now()}`;
                 edges.push({
+                    id: edgeId,
                     from: fromId,
                     to: toId,
-                    type: 'data_flow'
+                    type: 'data_flow',
+                    status: 'proposed',
+                    is_approved: true,
+                    data: {},
+                    intelligence: {},
+                    visual: { color: '#4a9eff', thickness: 2 }
                 });
                 continue;
             }
@@ -48,10 +62,17 @@ export class ArchitectureDSL {
                 const [, fromType, fromId, toType, toId] = callMatch;
                 this.ensureNode(nodes, fromId, fromType as NodeType);
                 this.ensureNode(nodes, toId, toType as NodeType);
+                const edgeId = `edge_${fromId}_${toId}_${Date.now()}`;
                 edges.push({
+                    id: edgeId,
                     from: fromId,
                     to: toId,
-                    type: 'api_call'
+                    type: 'api_call',
+                    status: 'proposed',
+                    is_approved: true,
+                    data: {},
+                    intelligence: {},
+                    visual: { color: '#fabd2f', thickness: 2 }
                 });
                 continue;
             }
@@ -65,9 +86,12 @@ export class ArchitectureDSL {
             nodes.push({
                 id,
                 type: type === ('logic' as any) ? 'source' : (type === ('data' as any) ? 'source' : type),
+                filePath: `dsl://${id}`,
                 data: { label: id },
                 status: 'proposed',
-                visual: { opacity: 0.8 }
+                position: { x: 0, y: 0 },
+                visual: { opacity: 0.8 },
+                intelligence: {}
             });
         }
     }

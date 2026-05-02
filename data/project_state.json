@@ -20557,12 +20557,598 @@
         "scale": 1,
         "visible": true
       }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "degree": 0,
+        "file": "mile_stone/v0.3.22.11.md",
+        "hasAtomicSignature": false,
+        "hasImportSignature": false,
+        "hiddenOnCanvas": true,
+        "icon": "📚",
+        "isScoped": false,
+        "isSovereign": true,
+        "isUserCreated": true,
+        "label": "v0.3.22.11",
+        "layer": "user",
+        "opacity": 1,
+        "scale": 1,
+        "status": "active",
+        "type": "document"
+      },
+      "degree": 0,
+      "filePath": "mile_stone/v0.3.22.11.md",
+      "id": "mile_stone/v0.3.22.11.md",
+      "label": "v0.3.22.11",
+      "layer": "user",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "status": "active",
+      "type": "document",
+      "visual": {
+        "opacity": 1,
+        "scale": 1,
+        "visible": true
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "degree": 0,
+        "file": "release_note/v0.3.22.11_release_notes.md",
+        "hasAtomicSignature": false,
+        "hasImportSignature": false,
+        "hiddenOnCanvas": true,
+        "icon": "📚",
+        "isScoped": false,
+        "isSovereign": true,
+        "isUserCreated": true,
+        "label": "v0.3.22.11_release_notes",
+        "layer": "user",
+        "opacity": 1,
+        "scale": 1,
+        "status": "active",
+        "type": "document"
+      },
+      "degree": 0,
+      "filePath": "release_note/v0.3.22.11_release_notes.md",
+      "id": "release_note/v0.3.22.11_release_notes.md",
+      "label": "v0.3.22.11_release_notes",
+      "layer": "user",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "status": "active",
+      "type": "document",
+      "visual": {
+        "opacity": 1,
+        "scale": 1,
+        "visible": true
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "degree": 0,
+        "hasAtomicSignature": false,
+        "hasImportSignature": false,
+        "hiddenOnCanvas": true,
+        "icon": "📚",
+        "isScoped": false,
+        "isSovereign": true,
+        "isUserCreated": true,
+        "label": "v0.3.22.10",
+        "layer": "user",
+        "opacity": 1,
+        "scale": 1,
+        "status": "active"
+      },
+      "degree": 0,
+      "filePath": "ghost://v0.3.22.10",
+      "id": "v0.3.22.10",
+      "label": "v0.3.22.10",
+      "layer": "user",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "status": "active",
+      "type": "documentation",
+      "visual": {
+        "opacity": 1,
+        "scale": 1,
+        "visible": true
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "degree": 0,
+        "file": "mile_stone/_v0.3.23_blacklist_execution_protocol.md",
+        "hasAtomicSignature": false,
+        "hasImportSignature": false,
+        "hiddenOnCanvas": true,
+        "icon": "📚",
+        "isScoped": false,
+        "isSovereign": true,
+        "isUserCreated": true,
+        "label": "_v0.3.23_blacklist_execution_protocol",
+        "layer": "user",
+        "opacity": 1,
+        "scale": 1,
+        "status": "active",
+        "type": "document"
+      },
+      "degree": 0,
+      "filePath": "mile_stone/_v0.3.23_blacklist_execution_protocol.md",
+      "id": "mile_stone/_v0.3.23_blacklist_execution_protocol.md",
+      "label": "_v0.3.23_blacklist_execution_protocol",
+      "layer": "user",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "status": "active",
+      "type": "document",
+      "visual": {
+        "opacity": 1,
+        "scale": 1,
+        "visible": true
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "degree": 0,
+        "file": "mile_stone/_v0.3.23_blacklist_orchestrator_final.md",
+        "hasAtomicSignature": false,
+        "hasImportSignature": false,
+        "hiddenOnCanvas": true,
+        "icon": "📚",
+        "isScoped": false,
+        "isSovereign": true,
+        "isUserCreated": true,
+        "label": "_v0.3.23_blacklist_orchestrator_final",
+        "layer": "user",
+        "opacity": 1,
+        "scale": 1,
+        "status": "active",
+        "type": "document"
+      },
+      "degree": 0,
+      "filePath": "mile_stone/_v0.3.23_blacklist_orchestrator_final.md",
+      "id": "mile_stone/_v0.3.23_blacklist_orchestrator_final.md",
+      "label": "_v0.3.23_blacklist_orchestrator_final",
+      "layer": "user",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "status": "active",
+      "type": "document",
+      "visual": {
+        "opacity": 1,
+        "scale": 1,
+        "visible": true
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "degree": 0,
+        "file": "mile_stone/_v0.3.23_bootstrap_execution.md",
+        "hasAtomicSignature": false,
+        "hasImportSignature": false,
+        "hiddenOnCanvas": true,
+        "icon": "📚",
+        "isScoped": false,
+        "isSovereign": true,
+        "isUserCreated": true,
+        "label": "_v0.3.23_bootstrap_execution",
+        "layer": "user",
+        "opacity": 1,
+        "scale": 1,
+        "status": "active",
+        "type": "document"
+      },
+      "degree": 0,
+      "filePath": "mile_stone/_v0.3.23_bootstrap_execution.md",
+      "id": "mile_stone/_v0.3.23_bootstrap_execution.md",
+      "label": "_v0.3.23_bootstrap_execution",
+      "layer": "user",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "status": "active",
+      "type": "document",
+      "visual": {
+        "opacity": 1,
+        "scale": 1,
+        "visible": true
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "degree": 0,
+        "file": "mile_stone/_v0.3.23_diff_integration.md",
+        "hasAtomicSignature": false,
+        "hasImportSignature": false,
+        "hiddenOnCanvas": true,
+        "icon": "📚",
+        "isScoped": false,
+        "isSovereign": true,
+        "isUserCreated": true,
+        "label": "_v0.3.23_diff_integration",
+        "layer": "user",
+        "opacity": 1,
+        "scale": 1,
+        "status": "active",
+        "type": "document"
+      },
+      "degree": 0,
+      "filePath": "mile_stone/_v0.3.23_diff_integration.md",
+      "id": "mile_stone/_v0.3.23_diff_integration.md",
+      "label": "_v0.3.23_diff_integration",
+      "layer": "user",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "status": "active",
+      "type": "document",
+      "visual": {
+        "opacity": 1,
+        "scale": 1,
+        "visible": true
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "degree": 0,
+        "file": "mile_stone/_v0.3.23_hybrid_blacklist_strategy.md",
+        "hasAtomicSignature": false,
+        "hasImportSignature": false,
+        "hiddenOnCanvas": true,
+        "icon": "📚",
+        "isScoped": false,
+        "isSovereign": true,
+        "isUserCreated": true,
+        "label": "_v0.3.23_hybrid_blacklist_strategy",
+        "layer": "user",
+        "opacity": 1,
+        "scale": 1,
+        "status": "active",
+        "type": "document"
+      },
+      "degree": 0,
+      "filePath": "mile_stone/_v0.3.23_hybrid_blacklist_strategy.md",
+      "id": "mile_stone/_v0.3.23_hybrid_blacklist_strategy.md",
+      "label": "_v0.3.23_hybrid_blacklist_strategy",
+      "layer": "user",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "status": "active",
+      "type": "document",
+      "visual": {
+        "opacity": 1,
+        "scale": 1,
+        "visible": true
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "degree": 0,
+        "file": "mile_stone/_v0.3.23_runtime_integration_layer.md",
+        "hasAtomicSignature": false,
+        "hasImportSignature": false,
+        "hiddenOnCanvas": true,
+        "icon": "📚",
+        "isScoped": false,
+        "isSovereign": true,
+        "isUserCreated": true,
+        "label": "_v0.3.23_runtime_integration_layer",
+        "layer": "user",
+        "opacity": 1,
+        "scale": 1,
+        "status": "active",
+        "type": "document"
+      },
+      "degree": 0,
+      "filePath": "mile_stone/_v0.3.23_runtime_integration_layer.md",
+      "id": "mile_stone/_v0.3.23_runtime_integration_layer.md",
+      "label": "_v0.3.23_runtime_integration_layer",
+      "layer": "user",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "status": "active",
+      "type": "document",
+      "visual": {
+        "opacity": 1,
+        "scale": 1,
+        "visible": true
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "degree": 0,
+        "file": "mile_stone/_v0.3.23_runtime_safety_hardening_v2.md",
+        "hasAtomicSignature": false,
+        "hasImportSignature": false,
+        "hiddenOnCanvas": true,
+        "icon": "📚",
+        "isScoped": false,
+        "isSovereign": true,
+        "isUserCreated": true,
+        "label": "_v0.3.23_runtime_safety_hardening_v2",
+        "layer": "user",
+        "opacity": 1,
+        "scale": 1,
+        "status": "active",
+        "type": "document"
+      },
+      "degree": 0,
+      "filePath": "mile_stone/_v0.3.23_runtime_safety_hardening_v2.md",
+      "id": "mile_stone/_v0.3.23_runtime_safety_hardening_v2.md",
+      "label": "_v0.3.23_runtime_safety_hardening_v2",
+      "layer": "user",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "status": "active",
+      "type": "document",
+      "visual": {
+        "opacity": 1,
+        "scale": 1,
+        "visible": true
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "degree": 0,
+        "file": "mile_stone/_v0.3.23_runtime_safety_hardening.md",
+        "hasAtomicSignature": false,
+        "hasImportSignature": false,
+        "hiddenOnCanvas": true,
+        "icon": "📚",
+        "isScoped": false,
+        "isSovereign": true,
+        "isUserCreated": true,
+        "label": "_v0.3.23_runtime_safety_hardening",
+        "layer": "user",
+        "opacity": 1,
+        "scale": 1,
+        "status": "active",
+        "type": "document"
+      },
+      "degree": 0,
+      "filePath": "mile_stone/_v0.3.23_runtime_safety_hardening.md",
+      "id": "mile_stone/_v0.3.23_runtime_safety_hardening.md",
+      "label": "_v0.3.23_runtime_safety_hardening",
+      "layer": "user",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "status": "active",
+      "type": "document",
+      "visual": {
+        "opacity": 1,
+        "scale": 1,
+        "visible": true
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "degree": 0,
+        "file": "mile_stone/_v0.3.23_snapshot_rebuild.md",
+        "hasAtomicSignature": false,
+        "hasImportSignature": false,
+        "hiddenOnCanvas": true,
+        "icon": "📚",
+        "isScoped": false,
+        "isSovereign": true,
+        "isUserCreated": true,
+        "label": "_v0.3.23_snapshot_rebuild",
+        "layer": "user",
+        "opacity": 1,
+        "scale": 1,
+        "status": "active",
+        "type": "document"
+      },
+      "degree": 0,
+      "filePath": "mile_stone/_v0.3.23_snapshot_rebuild.md",
+      "id": "mile_stone/_v0.3.23_snapshot_rebuild.md",
+      "label": "_v0.3.23_snapshot_rebuild",
+      "layer": "user",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "status": "active",
+      "type": "document",
+      "visual": {
+        "opacity": 1,
+        "scale": 1,
+        "visible": true
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "degree": 0,
+        "file": "mile_stone/_v0.3.23_spec.md",
+        "hasAtomicSignature": false,
+        "hasImportSignature": false,
+        "hiddenOnCanvas": true,
+        "icon": "📚",
+        "isScoped": false,
+        "isSovereign": true,
+        "isUserCreated": true,
+        "label": "_v0.3.23_spec",
+        "layer": "user",
+        "opacity": 1,
+        "scale": 1,
+        "status": "active",
+        "type": "document"
+      },
+      "degree": 0,
+      "filePath": "mile_stone/_v0.3.23_spec.md",
+      "id": "mile_stone/_v0.3.23_spec.md",
+      "label": "_v0.3.23_spec",
+      "layer": "user",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "status": "active",
+      "type": "document",
+      "visual": {
+        "opacity": 1,
+        "scale": 1,
+        "visible": true
+      }
+    },
+    {
+      "cluster_id": "cluster_src_core",
+      "data": {
+        "cluster_id": "cluster_src_core",
+        "degree": 0,
+        "file": "src/core/BlacklistOrchestrator.ts",
+        "hasAtomicSignature": false,
+        "hasImportSignature": false,
+        "hiddenOnCanvas": false,
+        "icon": "📄",
+        "isScoped": false,
+        "isSovereign": true,
+        "isUserCreated": true,
+        "label": "BlacklistOrchestrator",
+        "layer": "user",
+        "opacity": 1,
+        "scale": 1,
+        "status": "active"
+      },
+      "degree": 0,
+      "filePath": "src/core/BlacklistOrchestrator.ts",
+      "id": "src/core/BlacklistOrchestrator.ts",
+      "label": "BlacklistOrchestrator",
+      "layer": "user",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "status": "active",
+      "type": "file",
+      "visual": {
+        "opacity": 1,
+        "scale": 1,
+        "visible": true
+      }
+    },
+    {
+      "cluster_id": "cluster_src_core",
+      "data": {
+        "cluster_id": "cluster_src_core",
+        "degree": 0,
+        "file": "src/core/filterSnapshot.ts",
+        "hasAtomicSignature": false,
+        "hasImportSignature": false,
+        "hiddenOnCanvas": false,
+        "icon": "📄",
+        "isScoped": false,
+        "isSovereign": true,
+        "isUserCreated": true,
+        "label": "filterSnapshot",
+        "layer": "user",
+        "opacity": 1,
+        "scale": 1,
+        "status": "active"
+      },
+      "degree": 0,
+      "filePath": "src/core/filterSnapshot.ts",
+      "id": "src/core/filterSnapshot.ts",
+      "label": "filterSnapshot",
+      "layer": "user",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "status": "active",
+      "type": "file",
+      "visual": {
+        "opacity": 1,
+        "scale": 1,
+        "visible": true
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "degree": 0,
+        "hasAtomicSignature": false,
+        "hasImportSignature": false,
+        "hiddenOnCanvas": true,
+        "icon": "📚",
+        "isScoped": false,
+        "isSovereign": true,
+        "isUserCreated": true,
+        "label": "v0.3.23_release_notes",
+        "layer": "user",
+        "opacity": 1,
+        "scale": 1,
+        "status": "active"
+      },
+      "degree": 0,
+      "filePath": "ghost://v0.3.23_release_notes",
+      "id": "v0.3.23_release_notes",
+      "label": "v0.3.23_release_notes",
+      "layer": "user",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "status": "active",
+      "type": "documentation",
+      "visual": {
+        "opacity": 1,
+        "scale": 1,
+        "visible": true
+      }
     }
   ],
-  "userCount": 430,
+  "userCount": 446,
   "_iron_guard": {
     "version": "0.2.18.1",
-    "byte_size": 337539,
+    "byte_size": 347752,
     "encoding": "UTF-8",
     "alignment": 8
   }

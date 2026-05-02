@@ -1615,33 +1615,29 @@ class CanvasEngine {
         if (!container) return;
 
         const dpr = window.devicePixelRatio || 1;
-        const width = container.clientWidth;
+        let width = container.clientWidth;
         let height = container.clientHeight;
 
-        // [FIX v0.3.09] clientHeight가 0이면 강제 최소값 설정
-        // Canvas height가 0이면 렌더링 공간이 없어 모든 노드가 표시 안됨
-        if (height === 0 || height < 100) {
-            height = 400;  // 기본 최소 높이
-            console.warn('[SYNAPSE] Canvas height was 0 or invalid, forcing minimum height: 400px');
-        }
+        // [v0.3.24 Fix] 레이아웃 붕괴 방지: clientHeight가 0인 초기 로딩 시 윈도우 크기 참조
+        if (width === 0) width = window.innerWidth;
+        if (height === 0) height = window.innerHeight - 100; // 헤더/툴바 여백 제외 대략값
 
         const targetWidth = Math.floor(width * dpr);
         const targetHeight = Math.floor(height * dpr);
 
         if (this.canvas.width !== targetWidth || this.canvas.height !== targetHeight) {
-            // [v0.2.24] Resize Debounce: Wait for resize to settle before heavy buffer reset
+            // [v0.2.24] Resize Debounce
             if (this._resizeTimeout) clearTimeout(this._resizeTimeout);
             const updateBuffer = () => {
+                // Resolution only, CSS handles display size (100%/100%)
                 this.canvas.width = targetWidth;
                 this.canvas.height = targetHeight;
-                this.canvas.style.width = `${width}px`;
-                this.canvas.style.height = `${height}px`;
 
                 if (this.webglEnabled && this.webglRenderer) {
                     this.webglRenderer.handleResize();
                 }
 
-                console.log(`[SYNAPSE] Canvas stabilized (${immediate ? 'Sync' : 'Async'}). Size: ${width}x${height}`);
+                console.log(`[SYNAPSE] Canvas resolution updated (${immediate ? 'Sync' : 'Async'}). Viewport: ${width}x${height}`);
                 this.render();
             };
 

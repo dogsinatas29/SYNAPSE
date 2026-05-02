@@ -57,9 +57,9 @@ export class DataPipeline {
     const nodes: Node[] = [];
     const edges: Edge[] = [];
     const clusters: Cluster[] = [
-      { id: 'cluster_ghosts', label: '☁️ External Ghosts', type: 'system' },
-      { id: 'sys_cluster_reserved', label: '🛡️ Reserved (Internal Pending)', type: 'system' },
-      { id: 'doc_shelf', label: '📚 Documentation Shelf', type: 'system', collapsed: false }
+      { id: 'cluster_ghosts', label: '☁️ External Ghosts', type: 'system', collapsed: false, position: { x: 0, y: 0 }, bounds: { x: 0, y: 0, width: 0, height: 0 }, children: [], nodes: [], data: {} },
+      { id: 'sys_cluster_reserved', label: '🛡️ Reserved (Internal Pending)', type: 'system', collapsed: false, position: { x: 0, y: 0 }, bounds: { x: 0, y: 0, width: 0, height: 0 }, children: [], nodes: [], data: {} },
+      { id: 'doc_shelf', label: '📚 Documentation Shelf', type: 'system', collapsed: false, position: { x: 0, y: 0 }, bounds: { x: 0, y: 0, width: 0, height: 0 }, children: [], nodes: [], data: {} }
     ];
 
     const nodeIds = new Set<string>();
@@ -97,7 +97,13 @@ export class DataPipeline {
                     clusters.push({ 
                         id: currentSlug, 
                         label: `📂 ${part}`, 
-                        type: 'folder' 
+                        type: 'folder',
+                        collapsed: false,
+                        position: { x: 0, y: 0 },
+                        bounds: { x: 0, y: 0, width: 0, height: 0 },
+                        children: [],
+                        nodes: [],
+                        data: {}
                     });
                     clusterIds.add(currentSlug);
                 }
@@ -105,13 +111,14 @@ export class DataPipeline {
             clusterId = `cluster_${currentPath.replace(/[^a-zA-Z0-9]/g, '_')}`;
         }
       }
-
       const newNode: Node = {
         id: item.filePath,
         filePath: item.filePath,
         type: isDoc ? NodeType.DOCUMENTATION : NodeType.FILE,
         label: fileName,
         cluster_id: clusterId,
+        status: 'confirmed' as any,
+        position: { x: 0, y: 0 },
         degree: 0,
         data: { 
           label: fileName, 
@@ -121,7 +128,9 @@ export class DataPipeline {
           hiddenOnCanvas: isDoc,
           hasAtomicSignature: !!item.summary.hasAtomicSignature,
           hasImportSignature: !!item.summary.hasImportSignature
-        }
+        },
+        intelligence: {},
+        visual: { opacity: 1.0 }
       };
       
       nodes.push(newNode);
@@ -130,62 +139,28 @@ export class DataPipeline {
 
     // 2. Analyze references and create edges + ghosts
     for (const item of summaries) {
-      const fileName = path.basename(item.filePath, path.extname(item.filePath));
-      
       for (const ref of item.summary.references) {
         let targetNodeId = ref.target;
         
-        // [v0.3.14] Intelligent Resolution: Try to link to active nodes with extensions if name matches
         if (!nodeIds.has(targetNodeId)) {
-          const lowerTarget = targetNodeId.toLowerCase();
           const matchedId = Array.from(nodeIds).find(id => {
             const nodeStem = path.basename(id, path.extname(id)).toLowerCase();
             const targetStem = path.basename(targetNodeId, path.extname(targetNodeId)).toLowerCase();
-            const supportedExtensions = ['.ts', '.js', '.py', '.tsx', '.jsx', '.rs', '.cpp', '.h', '.c', '.hpp', '.cc'];
-            return nodeStem === targetStem && supportedExtensions.some(ext => id.toLowerCase().endsWith(ext));
+            return nodeStem === targetStem;
           });
-          if (matchedId) {
-            targetNodeId = matchedId; // Re-route to existing active node
-          }
+          if (matchedId) targetNodeId = matchedId;
         }
 
         if (!nodeIds.has(targetNodeId)) {
           const lowerId = targetNodeId.toLowerCase();
-          const ghostBlacklist = [
-            'os', 'sys', 'math', 'json', 'datetime', 'sqlite3', 'pandas', 'rich', 'numpy',
-            'command', 'snap_', 'test_doc', 'untitled', 'request', 'urllib', 'vscode', 'path', 'fs', 'http', 'https'
-          ];
-          
-          const isBlacklisted = ghostBlacklist.some(b => lowerId === b || lowerId.startsWith(b + ':') || lowerId.startsWith(b + '.'));
-          
-          // [v0.3.14 Fix] Check RuleEngine to prevent blacklisted/excluded files from becoming ghosts
-          const isRuleIgnored = RuleEngine.getInstance().shouldIgnoreFile(targetNodeId);
+          const ghostBlacklist = ['os', 'sys', 'math', 'json', 'datetime', 'vscode', 'path', 'fs'];
+          const isBlacklisted = ghostBlacklist.some(b => lowerId === b || lowerId.startsWith(b + '.'));
+          if (isBlacklisted) continue;
 
-          const isInvalidGhost = isBlacklisted || 
-                                 isRuleIgnored ||
-                                 targetNodeId.includes(':') ||
-                                 targetNodeId.length < 2;
-
-          if (isInvalidGhost) continue;
-
-          // [v0.3.14] Semantic Routing Logic
-          const isDocRef = targetNodeId.toLowerCase().endsWith('.md') || 
-                           targetNodeId.toLowerCase().includes('release_note') || 
-                           targetNodeId.toLowerCase().includes('mile_stone') ||
-                           targetNodeId.toLowerCase().includes('milestone') ||
-                           targetNodeId.toLowerCase().includes('v0.');
-          
-          // isExternal: No extension usually means a library or module
+          const isDocRef = targetNodeId.toLowerCase().endsWith('.md');
           const isExternal = ref.type === 'api_call' || !targetNodeId.includes('.');
           
-          // Routing to specific clusters
-          let ghostClusterId = 'cluster_ghosts';
-          if (isDocRef) {
-            ghostClusterId = 'doc_shelf';
-          } else if (!isExternal) {
-            // Missing internal file with extension -> Isolated for cleanup
-            ghostClusterId = 'sys_cluster_reserved';
-          }
+          let ghostClusterId = isDocRef ? 'doc_shelf' : (isExternal ? 'cluster_ghosts' : 'sys_cluster_reserved');
           
           const ghostId = targetNodeId;
           const ghostNode: Node = {
@@ -195,30 +170,33 @@ export class DataPipeline {
             label: ghostId,
             cluster_id: ghostClusterId,
             status: 'ghost' as any,
+            position: { x: 0, y: 0 },
             degree: 0,
             data: { 
               label: ghostId, 
               cluster_id: ghostClusterId,
               icon: isDocRef ? '📚' : (isExternal ? '☁️' : '👻'),
-              hiddenOnCanvas: isDocRef // [v0.3.14] Follow doc_shelf visibility rule
-            }
+              hiddenOnCanvas: isDocRef
+            },
+            intelligence: {},
+            visual: { opacity: 0.5 }
           };
           nodes.push(ghostNode);
           nodeIds.add(ghostId);
         }
 
-        let weight = GraphModel.WEIGHT_UTILITY;
-        if (ref.type === 'dependency') weight = GraphModel.WEIGHT_DIRECT_INCLUDE;
-        else if (ref.type === 'api_call') weight = GraphModel.WEIGHT_INTERNAL;
-        
         const newEdge: Edge = {
+          id: `edge_${item.filePath}_${targetNodeId}_${Date.now()}`,
           from: item.filePath,
           to: targetNodeId,
           type: this.mapEdgeType(ref.type),
-          weight: weight,
-          status: 'confirmed'
+          weight: 1,
+          status: 'confirmed',
+          is_approved: true,
+          data: {},
+          intelligence: {},
+          visual: { color: '#888', thickness: 1 }
         };
-
         edges.push(newEdge);
       }
     }
@@ -226,17 +204,17 @@ export class DataPipeline {
     return { nodes, edges, clusters };
   }
 
-  private mapEdgeType(rawType: string): EdgeType {
+  private mapEdgeType(rawType: string): any {
     switch (rawType) {
-      case 'dependency': return EdgeType.INCLUDE;
-      case 'api_call': return EdgeType.CALL;
-      case 'db_query': return EdgeType.DB_QUERY;
-      case 'data_flow': return EdgeType.DATA_FLOW;
-      case 'event': return EdgeType.EVENT;
-      case 'conditional': return EdgeType.CONDITIONAL;
-      case 'loop_back': return EdgeType.LOOP_BACK;
-      case 'static_unidirectional': return EdgeType.STATIC;
-      default: return EdgeType.REFERENCE;
+      case 'dependency': return 'INCLUDE' as any;
+      case 'api_call': return 'CALL' as any;
+      case 'db_query': return 'DB_QUERY' as any;
+      case 'data_flow': return 'DATA_FLOW' as any;
+      case 'event': return 'EVENT' as any;
+      case 'conditional': return 'CONDITIONAL' as any;
+      case 'loop_back': return 'LOOP_BACK' as any;
+      case 'static_unidirectional': return 'STATIC' as any;
+      default: return 'REFERENCE' as any;
     }
   }
 }

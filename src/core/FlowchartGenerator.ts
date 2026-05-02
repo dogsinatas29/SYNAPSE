@@ -19,14 +19,14 @@ export class FlowchartGenerator {
         const clusterMap = new Map<string, Cluster>();
         const folders = new Set<string>();
 
-        structure.files.forEach(f => {
+        structure.files!.forEach(f => {
             let dir = path.dirname(f.path);
             while (dir !== '.' && dir !== '/' && dir !== '') {
                 folders.add(dir.replace(/\\/g, '/'));
                 dir = path.dirname(dir);
             }
         });
-        structure.folders.forEach(f => folders.add(f.replace(/\\/g, '/')));
+        structure.folders!.forEach(f => folders.add(f.replace(/\\/g, '/')));
 
         // 2. 클러스터 생성 (계층 구조 포함)
         const sortedFolders = Array.from(folders).sort((a, b) => a.split('/').length - b.split('/').length);
@@ -50,12 +50,12 @@ export class FlowchartGenerator {
         // 3. 의존성 기반 Rank 계산 (Topological Leveling)
         const inDegree = new Map<string, number>();
         const adj = new Map<string, string[]>();
-        structure.files.forEach(f => {
+        structure.files!.forEach(f => {
             inDegree.set(f.path, 0);
             adj.set(f.path, []);
         });
 
-        structure.dependencies.forEach(dep => {
+        structure.dependencies!.forEach(dep => {
             if (inDegree.has(dep.to)) {
                 inDegree.set(dep.to, (inDegree.get(dep.to) || 0) + 1);
             }
@@ -80,14 +80,14 @@ export class FlowchartGenerator {
             return maxRank;
         };
 
-        structure.files.forEach(f => {
+        structure.files!.forEach(f => {
             if (inDegree.get(f.path) === 0 && f.type !== 'documentation') {
                 calculateRank(f.path);
             }
         });
 
         let recursionLimit = 0;
-        structure.files.forEach(f => {
+        structure.files!.forEach(f => {
             if (!ranks.has(f.path) && f.type !== 'documentation') {
                 if (recursionLimit++ > 1000) return;
                 calculateRank(f.path);
@@ -105,7 +105,7 @@ export class FlowchartGenerator {
 
         let topClusterIdx = 0;
         const directoryGroups = new Map<string, typeof structure.files>();
-        structure.files.forEach(file => {
+        structure.files!.forEach(file => {
             const dir = path.dirname(file.path).replace(/\\/g, '/');
             const group = directoryGroups.get(dir) || [];
             group.push(file);
@@ -131,7 +131,7 @@ export class FlowchartGenerator {
             const clusterX = (topClusterIdx % clusterCols) * clusterSpacingX;
             const clusterY = Math.floor(topClusterIdx / clusterCols) * clusterSpacingY;
 
-            files.forEach((file, idx) => {
+            files!.forEach((file, idx) => {
                 const hints = getVisualHints(file.path);
                 if (file.type === 'documentation') {
                     const node = this.createNode(file.path, file.type, file.description, -200 + (idx % 4) * 200, 1100 + Math.floor(idx / 4) * 150, hints.layer, hints.priority, 'doc_shelf', (file as any).intelligence);
@@ -139,7 +139,7 @@ export class FlowchartGenerator {
                 } else {
                     const node = this.createNode(file.path, file.type, file.description, clusterX + (idx % 4) * 200 + 30, clusterY + Math.floor(idx / 4) * 150 + 100, hints.layer, hints.priority, clusterId, (file as any).intelligence);
                     nodes.push(node);
-                    if (cluster) cluster.children.push(node.id);
+                    if (cluster) cluster.children!.push(node.id);
                 }
             });
             topClusterIdx++;
@@ -151,20 +151,20 @@ export class FlowchartGenerator {
             label: '📚 Documentation Shelf',
             collapsed: true,
             bounds: { x: -200, y: 1100, width: 800, height: 600 },
-            children: nodes.filter(n => n.data.cluster_id === 'doc_shelf').map(n => n.id)
+            children: nodes.filter(n => n.data!.cluster_id === 'doc_shelf').map(n => n.id)
         });
 
         // 5. Edges
-        structure.dependencies.forEach(dep => {
-            const fromNode = nodes.find(n => n.data.file === dep.from);
-            const toNode = nodes.find(n => n.data.file === dep.to);
+        structure.dependencies!.forEach(dep => {
+            const fromNode = nodes.find(n => n.data!.file === dep.from);
+            const toNode = nodes.find(n => n.data!.file === dep.to);
             if (fromNode && toNode) {
                 const edge = this.createEdge(fromNode.id, toNode.id, dep.type, dep.isApproved !== false);
                 edges.push(edge);
             }
         });
 
-        return { nodes, edges, clusters: clusters.filter(c => c.children.length > 0 || c.id === 'doc_shelf' || c.id === 'cluster_ghosts') };
+        return { nodes, edges, clusters: clusters.filter(c => (c.children! || []).length > 0 || c.id === 'doc_shelf' || c.id === 'cluster_ghosts') };
     }
 
     private createNode(file: string, type: NodeType, description: string, x: number, y: number, layer: number, priority: number, clusterId: string, intelligence: any): Node {
@@ -221,9 +221,9 @@ export class FlowchartGenerator {
         if (clusters) {
             clusters.forEach(c => {
                 mermaid += `  subgraph ${c.id} ["${c.label}"]\n`;
-                const clusterNodes = nodes.filter(n => (n.data.cluster_id === c.id) || ((n as any).cluster_id === c.id));
+                const clusterNodes = nodes.filter(n => (n.data!.cluster_id === c.id) || ((n as any).cluster_id === c.id));
                 clusterNodes.forEach(n => {
-                    mermaid += `    ${n.id}[${n.data.label}]\n`;
+                    mermaid += `    ${n.id}[${n.data!.label}]\n`;
                     renderedNodeIds.add(n.id);
                 });
                 mermaid += '  end\n';
@@ -233,7 +233,7 @@ export class FlowchartGenerator {
         // Render remaining nodes that were not in any cluster
         nodes.forEach(n => {
             if (!renderedNodeIds.has(n.id)) {
-                mermaid += `  ${n.id}[${n.data.label}]\n`;
+                mermaid += `  ${n.id}[${n.data!.label}]\n`;
             }
         });
 

@@ -22,6 +22,7 @@ export function buildGraph(nodes: Node[], edges: Edge[], clusters: Cluster[]): G
         nodes: sortedNodes,
         edges: sortedEdges,
         clusters: sortedClusters,
+        cluster_flows: [],
         timestamp: Date.now()
     };
 

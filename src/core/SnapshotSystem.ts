@@ -2,6 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { phaseManager, Phase } from './PhaseManager';
 import { graphModel, GraphSnapshot } from './GraphModel';
+import { BlacklistOrchestrator } from './BlacklistOrchestrator';
 
 /**
  * 📸 SYNAPSE Snapshot System (v0.3.1)
@@ -13,6 +14,13 @@ import { graphModel, GraphSnapshot } from './GraphModel';
 export class SnapshotSystem {
   private lastSnapshot: GraphSnapshot | null = null;
   private historyPath: string | null = null;
+
+  /**
+   * [v0.3.23] Handle blacklist change via Orchestrator
+   */
+  public onBlacklistChanged(orchestrator: BlacklistOrchestrator) {
+    orchestrator.handleBlacklistChanged();
+  }
 
   public setStoragePath(projectRoot: string) {
     this.historyPath = path.join(projectRoot, 'data', 'synapse_history.json');

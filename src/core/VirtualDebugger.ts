@@ -28,8 +28,8 @@ export class VirtualDebugger {
         };
 
         const diagnostics = vscode.languages.getDiagnostics();
-        const nodes = state.nodes;
-        const edges = state.edges;
+        const nodes = state.nodes!;
+        const edges = state.edges!;
 
         // Map diagnostics to nodes
         for (const [uri, diagList] of diagnostics) {
@@ -76,28 +76,16 @@ export class VirtualDebugger {
      * Updates the project state with the debug impact.
      */
     public applyImpactToState(state: ProjectState, impact: DebugImpact): ProjectState {
-        // Reset statuses first (Optional: or keep existing and overlay?)
-        // Let's overlay but clear previous necrosis/fracture
-        
-        state.nodes.forEach(node => {
-            if (node.status === 'error_necrosis') {
-                node.status = 'active'; // Reset back to active if it was necrotic
-            }
-            if (impact.necrosisNodeIds.includes(node.id)) {
-                node.status = 'error_necrosis';
-            }
-        });
-
-        state.edges.forEach(edge => {
-            if (edge.type === 'broken_fracture') {
-                // How to restore original type? 
-                // For simplicity, we might need to store original type or just handle it in rendering.
-                // Let's assume 'broken_fracture' is a transient state in memory for the session.
-            }
-            // For now, we won't mutate the 'type' permanently in the file to avoid losing data,
-            // we will let the Canvas Engine handle the visual based on the impact list.
-        });
-
+        if (state.nodes!) {
+            state.nodes!.forEach(node => {
+                if (node.status === 'error_necrosis') {
+                    node.status = 'active' as any;
+                }
+                if (impact.necrosisNodeIds.includes(node.id)) {
+                    node.status = 'error_necrosis' as any;
+                }
+            });
+        }
         return state;
     }
 }

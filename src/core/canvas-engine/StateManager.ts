@@ -126,7 +126,16 @@ export class StateManager {
     const avgX = targetNodes.reduce((sum, n) => sum + (n.position?.x || 0), 0) / targetNodes.length;
     const avgY = targetNodes.reduce((sum, n) => sum + (n.position?.y || 0), 0) / targetNodes.length;
     const newCluster: Cluster = {
-        id: clusterId, label: payload.label, type: 'folder', position: { x: avgX, y: avgY }, collapsed: false, data: { layer: 'user' }
+        id: clusterId, 
+        label: payload.label, 
+        type: 'folder', 
+        position: { x: avgX, y: avgY }, 
+        collapsed: false, 
+        data: { layer: 'user' },
+        bounds: { x: 0, y: 0, width: 0, height: 0 },
+        children: [],
+        nodes: [],
+        representative_edge: undefined
     };
     this.bufferClusters.set(clusterId, newCluster);
     this.incrementTxn();
@@ -240,7 +249,10 @@ export class StateManager {
     const id = payload.id || `${payload.from}->${payload.to}`;
     const newEdge: Edge = {
       id, from: payload.from, to: payload.to, type: payload.type || 'REFERENCE', weight: payload.weight || 1, status: 'pending',
-      data: { ...payload.data, layer: 'user' }
+      data: { ...payload.data, layer: 'user' },
+      is_approved: true,
+      intelligence: {},
+      visual: { color: '#888', thickness: 1 }
     };
     this.bufferEdges.set(id, newEdge);
     this.incrementTxn();
@@ -518,7 +530,8 @@ export class StateManager {
                 clusterMap.set(n.cluster_id, {
                     id: n.cluster_id,
                     label: isGhostCluster ? '👻 External Ghosts' : `📂 ${n.cluster_id.replace('folder_', '')}`,
-                    type: 'folder', position: { x: 0, y: 0 }, data: { layer: 'ai' }
+                    type: 'folder', position: { x: 0, y: 0 }, data: { layer: 'ai' },
+                    collapsed: false, bounds: { x: 0, y: 0, width: 0, height: 0 }, children: [], nodes: []
                 });
             }
         }
@@ -529,7 +542,7 @@ export class StateManager {
     systemIds.forEach(id => {
         if (!clusterMap.has(id)) {
             const layer = (id === 'sys_cluster_buffer') ? 'user' : 'ai';
-            clusterMap.set(id, { id, label: systemLabels[id], type: 'system', position: { x: 0, y: 0 }, data: { layer } });
+            clusterMap.set(id, { id, label: systemLabels[id], type: 'system', position: { x: 0, y: 0 }, data: { layer }, collapsed: false, bounds: { x: 0, y: 0, width: 0, height: 0 }, children: [], nodes: [] });
         }
     });
 
@@ -556,6 +569,7 @@ export class StateManager {
       nodes: Object.values(merged.nodes),
       edges: Object.values(merged.edges),
       clusters: merged.clusters,
+      cluster_flows: [],
       timestamp: Date.now()
     };
   }
@@ -566,6 +580,7 @@ export class StateManager {
         nodes: Object.values(merged.nodes),
         edges: Object.values(merged.edges),
         clusters: merged.clusters,
+        cluster_flows: [],
         timestamp: Date.now()
     };
 

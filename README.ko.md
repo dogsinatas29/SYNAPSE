@@ -4,8 +4,8 @@
 
 **코드를 읽지 말고, 아키텍처를 보십시오.**
 
-[![Version](https://img.shields.io/badge/version-v0.3.22.11-brightgreen.png)](https://github.com/dogsinatas29/SYNAPSE)
-[![Latest Release](https://img.shields.io/badge/latest-v0.3.22.11%20Interaction%20Stability-orange.png)](https://github.com/dogsinatas29/SYNAPSE/releases)
+[![Version](https://img.shields.io/badge/version-v0.3.23-brightgreen.png)](https://github.com/dogsinatas29/SYNAPSE)
+[![Latest Release](https://img.shields.io/badge/latest-v0.3.23%20Hybrid%20Blacklist-orange.png)](https://github.com/dogsinatas29/SYNAPSE/releases)
 ![Status](https://img.shields.io/badge/status-Production_Ready-brightgreen.png)
 
 [🇺🇸 English Version](./README.md)
@@ -136,7 +136,7 @@ SYNAPSE는 노드 간의 다양한 논리적 연결과 데이터 흐름을 표�
 ### 1. 확장 프로그램 설치
 [Releases](https://github.com/dogsinatas29/SYNAPSE/releases)에서 최신 `.vsix`를 다운로드하고 실행합니다:
 ```bash
-code --install-extension synapse-visual-architecture-v0.3.22.11.vsix
+code --install-extension synapse-visual-architecture-v0.3.23.vsix
 ```
 
 ### 2. 캔버스 실행
@@ -150,6 +150,9 @@ code --install-extension synapse-visual-architecture-v0.3.22.11.vsix
 ## ✨ 핵심 기능 (Key Features)
 
 - **🧠 실시간 그래프 시각화**: 프로젝트의 라이브 네트워크 매핑.
+- **🚫 하이브리드 블랙리스트**: 지능형 노이즈 제거(node_modules, dist 등) 및 O(1) 경로 매칭.
+- **🖱️ 탐색기 우클릭 등록**: 제외하고 싶은 폴더/파일을 우클릭하여 즉시 블랙리스트에 추가하고 그래프 갱신.
+  ![Explorer Menu](assets/v0.3.23/synapse_explorer_menu.png)
 - **🔍 N-hop 포커스 뷰**: 핵심 노드 자동 식별 및 맥락 탐색.
 - **⚠️ 지능형 진단**: 실시간 아키텍처 건전성 분석 (R1-R5).
 - **🧩 AI 스캔 통합**: Python, Rust, C++, TS를 아우르는 통합 스캔 엔진.
@@ -226,6 +229,7 @@ SYNAPSE는 코드 중심 개발의 한계를 극복하기 위해 만들어졌습
 
 | 버전 | 날짜 | 설명 |
 | :--- | :--- | :--- |
+| **v0.3.23** | 2026-05-02 | **하이브리드 블랙리스트 및 지능형 온보딩**: O(1) 경로 매칭 블랙리스트 시스템 구현. 탐색기 우클릭 즉시 등록 기능 및 웹뷰 레이아웃 붕괴 수정 완료. |
 | **v0.3.22.11** | 2026-04-22 | **상호작용 안정성 및 좌표계 주권**: 타임스탬프 가드 및 위치 보존 로직을 통한 노드 드래그 튐 현상 해결. SSoT 레이어 전반의 절대 좌표계 통일. |
 | **v0.3.22.10** | 2026-04-20 | **렌더링 패리티 및 정체성 바인딩 (SSoT)**: 2D/3D 시각적 동기화 완료 및 SSoT 기반 툴팁 정체성 바인딩을 통한 100% 데이터 정합성 확보. |
 | **v0.3.21** | 2026-04-18 | **시각적 일관성 및 엣지 번들링**: 전체 시각 규격 동기화, 베지어 흐름 통합. |
@@ -235,7 +239,7 @@ SYNAPSE는 코드 중심 개발의 한계를 극복하기 위해 만들어졌습
 
 ## 📅 상태 및 로드맵
 
-- **현재 상태**: v0.3.22 – 핵심 기능 안정화 완료.
+- **현재 상태**: v0.3.23 – 블랙리스트 및 레이아웃 안정화 완료.
 - **향후 계획**:
     - 원격 분석을 위한 서버 / 클라이언트 분리.
     - 5만 개 이상의 노드를 위한 성능 최적화.

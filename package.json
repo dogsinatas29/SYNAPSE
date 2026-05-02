@@ -64,6 +64,16 @@
                 "command": "synapse.flushLogs",
                 "title": "SYNAPSE: Flush All Audit Logs",
                 "icon": "$(trash)"
+            },
+            {
+                "command": "synapse.addToBlacklist",
+                "title": "SYNAPSE: Add to Blacklist",
+                "icon": "$(circle-slash)"
+            },
+            {
+                "command": "synapse.openBlacklistConfig",
+                "title": "SYNAPSE: Configure Blacklist (SSOT)",
+                "icon": "$(gear)"
             }
         ],
         "keybindings": [
@@ -106,12 +116,20 @@
                 {
                     "command": "synapse.openCanvas",
                     "group": "navigation"
+                },
+                {
+                    "command": "synapse.openBlacklistConfig",
+                    "group": "navigation@10"
                 }
             ],
             "explorer/context": [
                 {
                     "command": "synapse.bootstrap",
                     "when": "resourceExtname == .md"
+                },
+                {
+                    "command": "synapse.addToBlacklist",
+                    "group": "synapse@1"
                 }
             ]
         },

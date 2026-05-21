@@ -21,3 +21,4 @@ backup_md/
 .synapse_contexts/
 prompts/
 .vscode/
+context/

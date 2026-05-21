@@ -39,3 +39,13 @@ The **Documentation Shelf** of the Synapse canvas is a sacred storage area for m
 - **Anti-Overlap:** During node loading or placement, physical overlaps are automatically detected and self-corrected (Resolve Overlaps) to maintain a minimum spacing of 150px (X) and 100px (Y).
 - **Data Hygiene:** During large-scale document parsing, only the top 20 headers are included in the summary to optimize payload size.
 - **Auto-Exclusion List:** `README.md`, `CHANGELOG.md`, etc., are excluded by default (Node Diet).
+
+## 6. 📌 강제 파일 투사 규칙 (Forced File Projection Rules)
+- **[트리거]:** 프롬프트 입력 및 파일 최종 Write 직전 예외 없이 수행.
+- **[수행 명령]:** 프로젝트 루트의 `context/` 폴더 내에 `yyyy.mm.dd.tt.synapse_gate.txt` 형태로 평문 파일을 생성하거나 Append(이어쓰기)하라.
+- **[필수 기록 데이터]:** 
+  1. 사용자 원본 프롬프트 내용 (Raw User Prompt)
+  2. 이번 프롬프트로 인해 수행한 추론 과정 요약 (Core CoT)
+  3. 수정 및 생성된 변경 파일 목록 (Affected Files Diff)
+- **[주의 사항]:** 구글 안티그래비티 내부 암호화 샌드박스에 갇히지 말고, 반드시 외부에서 인간 매니저와 AXON 데몬이 읽을 수 있는 평문(Plain Text)으로 출력할 것.
+

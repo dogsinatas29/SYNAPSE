@@ -222,6 +222,10 @@ SYNAPSE was created to overcome the limitations of code-centric development. It 
 | Version | Date | Description |
 | :--- | :--- | :--- |
 | **v0.3.28** | 2026-05-31 | **2D Canvas Rendering Overhaul & Parity Fix**: Completely eradicated 7 major rendering defects in Accel:OFF mode including O(N) bottlenecks, Sub-pixel fade-out, `NaN` bundle failures, and spaghetti-like downward distortion. Achieved 100% mathematical parity with WebGL using Perpendicular Normal Vector logic. |
+| **v0.3.27** | 2026-05-28 | **Data Sync Resilience & Layer Sovereignty**: Resolved critical data synchronization bugs causing phantom edge disappearances (`Edges: 0`). Ensured UI layer separation logic properly isolates scanned folders and custom groupings without structural damage. |
+| **v0.3.26** | 2026-05-26 | **2D Edge Validation Patch**: Fixed a bug where solid edges would silently fail to render in 2D mode due to invalid dash array fallback `[0, 0]` not supported by HTML5 Canvas API context. |
+| **v0.3.25** | 2026-05-25 | **Cluster-Aware Local Alignment**: Refactored the layout alignment physics so that nodes align cleanly relative to their specific cluster's gravity center, preventing global coordinate collapses when arranging architecture. |
+| **v0.3.24** | 2026-05-24 | **RULES.md Embedding & Bootstrap Hardening**: Embedded standard DTR (Dynamic Thought Routing) & Forced File Projection Rules deeply into the Bootstrap Engine, establishing security and design constraints by default upon initialization. |
 | **v0.3.23** | 2026-05-02 | **Hybrid Blacklist & Intelligent Onboarding**: Implemented O(1) path-matching blacklist system. Added Explorer context menu for instant exclusion. Fixed webview layout collapse issues. |
 | **v0.3.22.11** | 2026-04-22 | **Interaction Stability & Coordinate Sovereignty**: Resolved node dragging jitter via Timestamp Guards and Position Persistence. Unified absolute coordinate system across SSoT layers. |22.11** | 2026-04-22 | **Interaction Stability & Coordinate Sovereignty**: Resolved node dragging jitter via Timestamp Guards and Position Persistence. Unified absolute coordinate system across SSoT layers. |
 | **v0.3.22.10** | 2026-04-20 | **Rendering Parity & Identity Binding (SSoT)**: Full 2D/3D visual synchronization, and SSoT-based tooltip identity binding for 100% data consistency. |
@@ -235,7 +239,7 @@ SYNAPSE was created to overcome the limitations of code-centric development. It 
 
 ## 📅 Status & Roadmap
 
-- **Status**: v0.3.22 – Core features stabilized.
+- **Status**: v0.3.28 – Rendering Parity & Stability Achieved.
 - **Next**:
     - Server / Client separation for remote analysis.
     - Advanced Performance optimization for 50k+ nodes.

@@ -1,7 +1,7 @@
 import * as path from 'path';
 import { Intent, createIntent } from './Intent';
 import { Node, Edge, Cluster, ClusterFlow, graphModel, GraphModel, GraphSnapshot } from '../GraphModel';
-type Layer = 'ai' | 'user' | 'source' | 'documentation';
+type Layer = 'ai' | 'user' | 'source' | 'documentation' | 'external';
 import { commitManager } from '../transaction/CommitManager';
 import { projectionLayer, ProjectionResolution } from '../projection/ProjectionLayer';
 import { Logger } from '../../utils/Logger';
@@ -21,6 +21,7 @@ export interface CanvasState {
   deletedPaths?: string[];   
   userCount?: number;
   aiCount?: number;
+  externalCount?: number;
   cluster_flows?: ClusterFlow[]; // [v0.3.21] Heatmap data
 }
 
@@ -239,7 +240,7 @@ export class StateManager {
       label: payload.label || payload.id,
       type: payload.type || 'folder',
       collapsed: payload.collapsed || false,
-      data: { ...payload.data, layer: 'user' }
+      data: { ...payload.data, layer: payload.data?.layer || 'user' }
     });
     this.incrementTxn();
     return this.getSnapshot();
@@ -407,7 +408,7 @@ export class StateManager {
     });
 
     const finalNodes: Record<string, Node> = {};
-    let userCount = 0; let aiCount = 0;
+    let userCount = 0; let aiCount = 0; let externalCount = 0;
 
     // 5. Zen Classification Loop
     deDupMap.forEach((n, key) => {
@@ -445,7 +446,8 @@ export class StateManager {
         // 🛡️ Strict Anchor: Only manual user-defined clusters act as anchors.
         // System clusters (buffer, reserved) are destinations, not sources of sovereignty.
         const isSystemCluster = n.cluster_id?.startsWith('sys_') || n.cluster_id === 'cluster_ghosts' || n.cluster_id === 'doc_shelf' || n.cluster_id === "";
-        const isInUserCluster = n.cluster_id && !n.cluster_id.startsWith('folder_') && !isSystemCluster;
+        const isFolderCluster = n.cluster_id && (n.cluster_id.startsWith('folder_') || (n.cluster_id.startsWith('cluster_') && !/^\d+$/.test(n.cluster_id.replace('cluster_', ''))));
+        const isInUserCluster = n.cluster_id && !isFolderCluster && !isSystemCluster;
 
         let finalLayer: Layer = 'ai';
         let finalStatus = n.status || 'active';
@@ -476,6 +478,7 @@ export class StateManager {
             const parentFolder = this.extractParentFolderName(n.filePath);
 
             if (isExternal) {
+                finalLayer = 'external';
                 finalClusterId = 'cluster_ghosts';
             } else if (!isOnDisk) {
                 finalStatus = 'ghost';
@@ -505,7 +508,13 @@ export class StateManager {
             position: n.position || { x: 0, y: 0 }
         };
 
-        if (finalLayer === 'user') userCount++; else aiCount++;
+        if (finalLayer === 'user') {
+            userCount++;
+        } else if (finalLayer === 'external') {
+            externalCount++;
+        } else {
+            aiCount++;
+        }
     });
 
     const finalEdges: Record<string, Edge> = {};
@@ -530,7 +539,7 @@ export class StateManager {
                 clusterMap.set(n.cluster_id, {
                     id: n.cluster_id,
                     label: isGhostCluster ? '👻 External Ghosts' : `📂 ${n.cluster_id.replace('folder_', '')}`,
-                    type: 'folder', position: { x: 0, y: 0 }, data: { layer: 'ai' },
+                    type: 'folder', position: { x: 0, y: 0 }, data: { layer: isGhostCluster ? 'external' : 'ai' },
                     collapsed: false, bounds: { x: 0, y: 0, width: 0, height: 0 }, children: [], nodes: []
                 });
             }
@@ -541,7 +550,7 @@ export class StateManager {
     const systemLabels: Record<string, string> = { 'sys_cluster_buffer': 'Buffer Cluster', 'sys_cluster_reserved': 'Reserved Cluster', 'cluster_ghosts': '👻 External Ghosts' };
     systemIds.forEach(id => {
         if (!clusterMap.has(id)) {
-            const layer = (id === 'sys_cluster_buffer') ? 'user' : 'ai';
+            const layer = (id === 'sys_cluster_buffer') ? 'user' : (id === 'cluster_ghosts' ? 'external' : 'ai');
             clusterMap.set(id, { id, label: systemLabels[id], type: 'system', position: { x: 0, y: 0 }, data: { layer }, collapsed: false, bounds: { x: 0, y: 0, width: 0, height: 0 }, children: [], nodes: [] });
         }
     });
@@ -556,7 +565,7 @@ export class StateManager {
         return true; // We also preserve folders for now to avoid layout jumps
     });
 
-    return { nodes: finalNodes, edges: finalEdges, clusters: finalClusters, deletedNodeIds: Array.from(this.deletedNodeIds), deletedPaths: Array.from(this.deletedPaths), userCount, aiCount };
+    return { nodes: finalNodes, edges: finalEdges, clusters: finalClusters, deletedNodeIds: Array.from(this.deletedNodeIds), deletedPaths: Array.from(this.deletedPaths), userCount, aiCount, externalCount };
   }
 
   /**
@@ -598,6 +607,7 @@ export class StateManager {
 
     let realUserCount = 0;
     let realAiCount = 0;
+    let realExternalCount = 0;
 
     viewSnap.nodes.forEach(n => {
         const pathRef = this.normalizePath(n.filePath || n.id);
@@ -610,7 +620,13 @@ export class StateManager {
         }
         
         const layer = n.layer || (isUserFlag ? 'user' : 'ai');
-        if (layer === 'user') realUserCount++; else realAiCount++;
+        if (layer === 'user') {
+            realUserCount++;
+        } else if (layer === 'external') {
+            realExternalCount++;
+        } else {
+            realAiCount++;
+        }
 
         // 🛡️ Final Senior Guard: Ensure every projected node has vital visual props
         const finalVisual = n.visual || { opacity: 1, scale: 1, visible: true };
@@ -637,7 +653,8 @@ export class StateManager {
         deletedNodeReasons, // 📡 GC Signal Optimization
         deletedPaths: merged.deletedPaths,
         userCount: realUserCount,
-        aiCount: realAiCount
+        aiCount: realAiCount,
+        externalCount: realExternalCount
     };
   }
 
@@ -703,6 +720,11 @@ export class StateManager {
       }
     });
 
-    graphModel.loadFrom({ ...scanState, nodes: finalCoreNodes, clusters: coreSnap.clusters });
+    // 🛡️ [v0.3.27] Prevent edge data loss during dynamic scanner merging
+    const mergedEdges = (scanState.edges && scanState.edges.length > 0)
+        ? scanState.edges
+        : coreSnap.edges;
+
+    graphModel.loadFrom({ ...scanState, nodes: finalCoreNodes, edges: mergedEdges, clusters: coreSnap.clusters });
   }
 }

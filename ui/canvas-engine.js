@@ -965,6 +965,7 @@ class CanvasEngine {
         // [v0.2.19] Layer Visibility State
         this.showBaseLayer = true;
         this.showUserLayer = true;
+        this.showExternalLayer = true;
 
         this.showDocShelf = false;
 
@@ -1259,6 +1260,18 @@ class CanvasEngine {
                 this.showUserLayer = !this.showUserLayer;
                 btnLayerUser.classList.toggle('active', this.showUserLayer);
                 btnLayerUser.textContent = this.showUserLayer ? 'ON' : 'OFF';
+                this.isGraphDataDirty = true;
+                this.isEdgeDirty = true;
+                this.render();
+            });
+        }
+
+        const btnLayerExternal = document.getElementById('btn-layer-external');
+        if (btnLayerExternal) {
+            btnLayerExternal.addEventListener('click', () => {
+                this.showExternalLayer = !this.showExternalLayer;
+                btnLayerExternal.classList.toggle('active', this.showExternalLayer);
+                btnLayerExternal.textContent = this.showExternalLayer ? 'ON' : 'OFF';
                 this.isGraphDataDirty = true;
                 this.isEdgeDirty = true;
                 this.render();
@@ -1943,14 +1956,16 @@ class CanvasEngine {
     _updateLayerCounts(backendCounts = null) {
         const elBase = document.getElementById('layer-count-base');
         const elUser = document.getElementById('layer-count-user');
+        const elExternal = document.getElementById('layer-count-external');
         if (!elBase || !elUser) return;
 
-        let userCount, baseCount;
+        let userCount, baseCount, externalCount;
         
         if (backendCounts && (backendCounts.userCount !== undefined || backendCounts.user_count !== undefined)) {
             // [v0.3.11] Use Authoritative Counts if provided
             userCount = backendCounts.userCount ?? backendCounts.user_count;
             baseCount = backendCounts.aiCount ?? backendCounts.ai_count;
+            externalCount = backendCounts.externalCount ?? backendCounts.external_count ?? 0;
         } else {
             // Fallback to local filtering
             const userNodes = this.nodes.filter(n => 
@@ -1958,11 +1973,20 @@ class CanvasEngine {
                 (n.data && n.data.layer === 'user') ||
                 (n.id && n.id.startsWith('node_manual_'))
             );
+            const externalNodes = this.nodes.filter(n =>
+                n.layer === 'external' ||
+                (n.data && n.data.layer === 'external') ||
+                n.type === 'external' ||
+                n.status === 'ghost' ||
+                (n.cluster_id && n.cluster_id === 'cluster_ghosts')
+            );
             userCount = userNodes.length;
-            baseCount = this.nodes.length - userCount;
+            externalCount = externalNodes.length;
+            baseCount = this.nodes.length - userCount - externalCount;
         }
 
         const updateBadge = (el, newCount) => {
+            if (!el) return;
             const oldCount = parseInt(el.textContent);
             if (isNaN(oldCount) || oldCount !== newCount) {
                 el.textContent = newCount;
@@ -1973,6 +1997,7 @@ class CanvasEngine {
 
         updateBadge(elBase, baseCount);
         updateBadge(elUser, userCount);
+        if (elExternal) updateBadge(elExternal, externalCount);
     }
 
     setupEventListeners() {
@@ -4024,54 +4049,82 @@ class CanvasEngine {
         const COLUMN_WIDTH = 350; 
         const ROW_HEIGHT = 160;  
         
-        // Group by role to find sub-column indices
-        const groups = { 'Leaf': [], 'Hub': [], 'Orchestrator': [], 'Controller': [] };
+        // 1. Calculate Cluster Centers (to preserve overall cluster positions)
+        const clusterCenters = {};
         for (const node of this.nodes) {
-            const stats = this.nodeStatsMap.get(node.id);
-            if (!stats || !stats.primaryRole) continue;
-            const pRole = stats.primaryRole;
-            if (pRole.startsWith('Leaf')) groups['Leaf'].push(node);
-            else if (pRole.startsWith('Hub')) groups['Hub'].push(node);
-            else if (pRole.startsWith('Orchestrator')) groups['Orchestrator'].push(node);
-            else if (pRole.startsWith('Controller')) groups['Controller'].push(node);
+            const cid = node.cluster_id || 'unclustered';
+            if (!clusterCenters[cid]) clusterCenters[cid] = { x: 0, y: 0, count: 0 };
+            clusterCenters[cid].x += node.position.x;
+            clusterCenters[cid].y += node.position.y;
+            clusterCenters[cid].count++;
+        }
+        for (const cid in clusterCenters) {
+            clusterCenters[cid].x /= clusterCenters[cid].count;
+            clusterCenters[cid].y /= clusterCenters[cid].count;
         }
 
-        const targets = { 'Leaf': -1500, 'Hub': -500, 'Orchestrator': 500, 'Controller': 1500 };
+        // 2. Group nodes by Cluster, then by Role
+        const groups = {}; // { clusterId: { Leaf: [], Hub: [], Orchestrator: [], Controller: [] } }
+        for (const node of this.nodes) {
+            const cid = node.cluster_id || 'unclustered';
+            if (!groups[cid]) {
+                groups[cid] = { 'Leaf': [], 'Hub': [], 'Orchestrator': [], 'Controller': [] };
+            }
 
-        for (const [roleName, list] of Object.entries(groups)) {
-            const baseX = targets[roleName];
-            list.sort((a, b) => (a.label || '').localeCompare(b.label || ''));
+            const stats = this.nodeStatsMap.get(node.id);
+            if (!stats || !stats.primaryRole) continue;
             
-            list.forEach((node, i) => {
-                const colIndex = i % 3;
-                const rowIndex = Math.floor(i / 3);
-                
-                const targetX = baseX + (colIndex - 1) * COLUMN_WIDTH;
-                const targetY = (rowIndex * ROW_HEIGHT) - (Math.ceil(list.length / 3) * ROW_HEIGHT / 2);
+            const pRole = stats.primaryRole;
+            if (pRole.startsWith('Leaf')) groups[cid]['Leaf'].push(node);
+            else if (pRole.startsWith('Hub')) groups[cid]['Hub'].push(node);
+            else if (pRole.startsWith('Orchestrator')) groups[cid]['Orchestrator'].push(node);
+            else if (pRole.startsWith('Controller')) groups[cid]['Controller'].push(node);
+        }
 
-                // Apply Smooth Damped Spring
-                const fx = (targetX - node.position.x) * ALIGN_STRENGTH;
-                const fy = (targetY - node.position.y) * ALIGN_STRENGTH;
+        // Relative offsets within a cluster
+        const roleOffsets = { 'Leaf': -600, 'Hub': -200, 'Orchestrator': 200, 'Controller': 600 };
 
-                node.vx = (node.vx || 0) + fx;
-                node.vy = (node.vy || 0) + fy;
+        // 3. Apply Local Spring Forces
+        for (const [cid, clusterRoles] of Object.entries(groups)) {
+            const center = clusterCenters[cid];
+            
+            for (const [roleName, list] of Object.entries(clusterRoles)) {
+                // targetX is cluster's center X + role's offset
+                const baseX = center.x + roleOffsets[roleName];
                 
-                // Apply Damping
-                node.vx *= DAMPING;
-                node.vy *= DAMPING;
+                list.sort((a, b) => (a.label || '').localeCompare(b.label || ''));
                 
-                // Velocity Clamp to prevent explosion
-                const speed = Math.sqrt(node.vx * node.vx + node.vy * node.vy);
-                if (speed > MAX_VELOCITY) {
-                    const ratio = MAX_VELOCITY / speed;
-                    node.vx *= ratio;
-                    node.vy *= ratio;
-                }
-                
-                // Integrate
-                node.position.x += node.vx;
-                node.position.y += node.vy;
-            });
+                list.forEach((node, i) => {
+                    const colIndex = i % 3;
+                    const rowIndex = Math.floor(i / 3);
+                    
+                    const targetX = baseX + (colIndex - 1) * COLUMN_WIDTH;
+                    const targetY = center.y + (rowIndex * ROW_HEIGHT) - (Math.ceil(list.length / 3) * ROW_HEIGHT / 2);
+
+                    // Apply Smooth Damped Spring
+                    const fx = (targetX - node.position.x) * ALIGN_STRENGTH;
+                    const fy = (targetY - node.position.y) * ALIGN_STRENGTH;
+
+                    node.vx = (node.vx || 0) + fx;
+                    node.vy = (node.vy || 0) + fy;
+                    
+                    // Apply Damping
+                    node.vx *= DAMPING;
+                    node.vy *= DAMPING;
+                    
+                    // Velocity Clamp to prevent explosion
+                    const speed = Math.sqrt(node.vx * node.vx + node.vy * node.vy);
+                    if (speed > MAX_VELOCITY) {
+                        const ratio = MAX_VELOCITY / speed;
+                        node.vx *= ratio;
+                        node.vy *= ratio;
+                    }
+                    
+                    // Integrate
+                    node.position.x += node.vx;
+                    node.position.y += node.vy;
+                });
+            }
         }
         
         // [v0.3.20.2] Throttle hotspot updates during animation to save CPU and reduce jitter
@@ -5151,15 +5204,21 @@ class CanvasEngine {
     buildFrameState(context) {
         // 1. Filter Nodes based on Context Layers
         const filtered = this.nodes.filter(n => {
-            // [v0.3.11] 명시적 layer 속성 기반
             const isUser = n.layer === 'user' || 
                 (n.data && n.data.layer === 'user') ||
                 n.status === 'pending' ||
                 (n.id && n.id.startsWith('node_manual_')) ||
-                (n.cluster_id && n.cluster_id.startsWith('sys_'));
+                (n.cluster_id && n.cluster_id.startsWith('sys_') && n.cluster_id !== 'sys_cluster_reserved');
 
+            const isExternal = n.layer === 'external' ||
+                (n.data && n.data.layer === 'external') ||
+                n.type === 'external' ||
+                n.status === 'ghost' ||
+                (n.cluster_id && n.cluster_id === 'cluster_ghosts');
+
+            if (isExternal && !context.showExternalLayer) return false;
             if (isUser && !context.showUserLayer) return false;
-            if (!isUser && !context.showBaseLayer) return false;
+            if (!isUser && !isExternal && !context.showBaseLayer) return false;
             return true;
         });
 
@@ -5252,6 +5311,7 @@ class CanvasEngine {
                 offsetY: this.transform.offsetY,
                 showBaseLayer: this.showBaseLayer,
                 showUserLayer: this.showUserLayer,
+                showExternalLayer: this.showExternalLayer,
                 selectedNodeIds: new Set(Array.from(this.selectedNodes).map(n => n.id)),
                 selectedEdgeId: this.selectedEdge ? this.selectedEdge.id : null
             };
@@ -5402,6 +5462,57 @@ class CanvasEngine {
 
             } else {
                 // Graph 모드: 그리드 -> 클러스터 -> 엣지 -> 노드 순으로 렌더링
+                // [v0.3.27-edge-fix] Unify Node and Edge Visibility Filtering and Cache
+                if (this.isGraphDataDirty || !this._visibleNodesCache) {
+                    const isUserLogic = (n) => 
+                        n.layer === 'user' || 
+                        (n.data && n.data.layer === 'user') || 
+                        (n.id && typeof n.id === 'string' && n.id.startsWith('node_manual_')) ||
+                        (n.cluster_id && typeof n.cluster_id === 'string' && n.cluster_id.startsWith('sys_') && n.cluster_id !== 'sys_cluster_reserved');
+
+                    const isExternalLogic = (n) =>
+                        n.layer === 'external' ||
+                        (n.data && n.data.layer === 'external') ||
+                        n.type === 'external' ||
+                        n.status === 'ghost' ||
+                        (n.cluster_id && n.cluster_id === 'cluster_ghosts');
+
+                    this._visibleNodesCache = this.nodes.filter(n => {
+                        const isUser = isUserLogic(n);
+                        const isExternal = isExternalLogic(n);
+
+                        if (isExternal && !this.showExternalLayer) return false;
+                        if (isUser && !this.showUserLayer) return false;
+                        if (!isUser && !isExternal && !this.showBaseLayer) return false;
+
+                        // [v0.3.22.2] Noise Control: Hide Leaf Nodes (WebGL Parity)
+                        if (this.hideLeafNodes) {
+                            const stats = this.nodeStatsMap.get(n.id);
+                            if (stats && stats.primaryRole === 'Leaf node') return false;
+                        }
+
+                        // [v0.3.22.2] Strategic Visibility: Top-N Focus View (WebGL Parity)
+                        if (this.focusTopNodes) {
+                            const isEssential = this.selectedNodes.has(n.id) || (this.hoveredNode && this.hoveredNode.id === n.id);
+                            if (!this.focusNodeSet.has(n.id) && !isEssential) return false;
+                        }
+
+                        // [v0.2.27] Sync: Skip nodes in collapsed clusters (matches 2D behavior)
+                        const clusterId = n.cluster_id || n.data?.cluster_id;
+                        if (clusterId) {
+                            const cluster = this.clusters?.find(c => c.id === clusterId);
+                            if (cluster && cluster.collapsed) return false;
+                        }
+                        return true;
+                    });
+
+                    const visibleNodeIds = new Set(this._visibleNodesCache.map(n => n.id));
+                    this._visibleEdgesCache = this.edges.filter(e => visibleNodeIds.has(e.from) && visibleNodeIds.has(e.to));
+                }
+
+                // [v0.3.28-fix] Cache selectedNodeIds as Set<string> ONCE per frame for O(1) lookup in renderEdge()
+                this._selectedNodeIds = new Set(Array.from(this.selectedNodes).map(n => n.id));
+
                 // [v0.2.25] Forced 2D layer for clusters (Option 4)
                 this.renderGrid();
                 this.renderClusters();
@@ -5443,44 +5554,7 @@ class CanvasEngine {
                         this.renderHotspots2D();
                         this.ctx.restore();
 
-                        // [v0.2.31] Final Consolidated WebGL Render call
-                        if (this.isGraphDataDirty || !this._visibleNodesCache) {
-                            const isUserLogic = (n) => 
-                                n.layer === 'user' || 
-                                (n.data && n.data.layer === 'user') || 
-                                (n.id && typeof n.id === 'string' && n.id.startsWith('node_manual_'));
-
-                            this._visibleNodesCache = this.nodes.filter(n => {
-                                const isUser = isUserLogic(n);
-                                // If base layer is hidden, and node is NOT user logic, skip.
-                                if (!isUser && !this.showBaseLayer) return false;
-                                // If user layer is hidden, and node IS user logic, skip.
-                                if (isUser && !this.showUserLayer) return false;
-
-                                // [v0.3.22.2] Noise Control: Hide Leaf Nodes (WebGL Parity)
-                                if (this.hideLeafNodes) {
-                                    const stats = this.nodeStatsMap.get(n.id);
-                                    if (stats && stats.primaryRole === 'Leaf node') return false;
-                                }
-
-                                // [v0.3.22.2] Strategic Visibility: Top-N Focus View (WebGL Parity)
-                                if (this.focusTopNodes) {
-                                    const isEssential = this.selectedNodes.has(n.id) || (this.hoveredNode && this.hoveredNode.id === n.id);
-                                    if (!this.focusNodeSet.has(n.id) && !isEssential) return false;
-                                }
-
-                                // [v0.2.27] Sync: Skip nodes in collapsed clusters (matches 2D behavior)
-                                const clusterId = n.cluster_id || n.data?.cluster_id;
-                                if (clusterId) {
-                                    const cluster = this.clusters?.find(c => c.id === clusterId);
-                                    if (cluster && cluster.collapsed) return false;
-                                }
-                                return true;
-                            });
-
-                            const visibleNodeIds = new Set(this._visibleNodesCache.map(n => n.id));
-                            this._visibleEdgesCache = this.edges.filter(e => visibleNodeIds.has(e.from) && visibleNodeIds.has(e.to));
-                        }
+                        // [v0.2.31] Final Consolidated WebGL Render call (Unified cache is precomputed)
 
                         const selectedIds = new Set(Array.from(this.selectedNodes).map(n => n.id));
 
@@ -5573,6 +5647,11 @@ class CanvasEngine {
                         this.renderLabels2D();
 
                         this.ctx.restore();
+
+                        // [v0.3.28-fix] Reset dirty flags in 2D path — mirrors WebGL path at L5614
+                        this.isGraphDataDirty = false;
+                        this.isEdgeDirty = false;
+                        this.isTextDirty = false;
                     }
 
                     this.renderGhostNodes(zoom);
@@ -5649,71 +5728,11 @@ class CanvasEngine {
         // [v0.3.22] Synchronized Visibility Floor with WebGL (0.05)
         if (zoom <= 0.05) return;
 
-        const offsetX = this.transform.offsetX;
-        const offsetY = this.transform.offsetY;
-        const canvasWidth = this.canvas.width / (window.devicePixelRatio || 1);
-        const canvasHeight = this.canvas.height / (window.devicePixelRatio || 1);
-
-        // Pre-calculate viewport bounds in world coordinates
-        const worldLeft = -offsetX / zoom;
-        const worldTop = -offsetY / zoom;
-        const worldRight = (canvasWidth - offsetX) / zoom;
-        const worldBottom = (canvasHeight - offsetY) / zoom;
-        const nodeSizePadding = 150; // Use a bit of padding for safety
-
         this._confirmBadgeHits = [];
         this._deleteBadgeHits = [];
-        this._visibleEdgesCache = []; // Reset for this frame
-
-        // Step 1: Destination-based Bundling Grouping
-        const bundles = new Map();
-        for (const edge of this.edges) {
-            const srcNode = this.nodeMap.get(edge.from);
-            const tgtNode = this.nodeMap.get(edge.to);
-            if (srcNode && tgtNode) {
-                // Culling Check
-                const srcVisible = !(srcNode.position.x + 120 < worldLeft || srcNode.position.x > worldRight || srcNode.position.y + 60 < worldTop || srcNode.position.y > worldBottom);
-                const tgtVisible = !(tgtNode.position.x + 120 < worldLeft || tgtNode.position.x > worldRight || tgtNode.position.y + 60 < worldTop || tgtNode.position.y > worldBottom);
-                if (!srcVisible && !tgtVisible) continue;
-
-                this._visibleEdgesCache.push(edge);
-                
-                // Group by Target Cluster
-                const targetClusterId = tgtNode.cluster_id || 'unmapped';
-                if (!bundles.has(targetClusterId)) bundles.set(targetClusterId, []);
-                bundles.get(targetClusterId).push(edge);
-            }
-        }
-
-        // Step 2: Pre-calculate Cluster-weighted Control Points
-        // We calculate one center point for each target cluster group
-        this.edgeGroupsCP = new Map();
-        for (const [clusterId, group] of bundles.entries()) {
-            if (group.length < 4) continue; // Threshold for bundling
-            
-            const cluster = this.clusters.find(c => c.id === clusterId);
-            if (!cluster || !cluster.position) continue;
-
-            const clusterCenterX = cluster.position.x + cluster.width / 2;
-            const clusterCenterY = cluster.position.y + cluster.height / 2;
-
-            this.edgeGroupsCP.set(clusterId, { x: clusterCenterX, y: clusterCenterY });
-        }
 
         // Step 3: Draw the edges
         for (const edge of this._visibleEdgesCache) {
-            const srcNode = this.nodeMap.get(edge.from);
-            const tgtNode = this.nodeMap.get(edge.to);
-            if (!srcNode || !tgtNode) continue;
-
-            const isUserLogic = (n) => 
-                n.layer === 'user' || 
-                (n.data && n.data.layer === 'user') || 
-                n.id.startsWith('node_manual_');
-
-            if ((isUserLogic(srcNode) && !this.showUserLayer) || (!isUserLogic(srcNode) && !this.showBaseLayer)) continue;
-            if ((isUserLogic(tgtNode) && !this.showUserLayer) || (!isUserLogic(tgtNode) && !this.showBaseLayer)) continue;
-            
             this.renderEdge(edge);
         }
     }
@@ -5725,7 +5744,6 @@ class CanvasEngine {
         let canvasHeight = this.canvas.height / dpr;
 
         // [FIX v0.3.09] Safety check: invalid canvas dimensions
-        // Canvas height가 0이면 이후 모든 계산이 0으로 고정되어 노드가 범위 밖으로 인식됨
         if (canvasWidth === 0 || canvasHeight === 0) {
             console.warn('[SYNAPSE] renderNodes2D: invalid canvas dimensions detected',
                 `${canvasWidth}x${canvasHeight}, forcing resize`);
@@ -5733,32 +5751,7 @@ class CanvasEngine {
             return;  // Skip rendering this frame to avoid errors
         }
 
-        const worldLeft = -this.transform.offsetX / zoom;
-        const worldTop = -this.transform.offsetY / zoom;
-        const worldRight = (canvasWidth - this.transform.offsetX) / zoom;
-        const worldBottom = (canvasHeight - this.transform.offsetY) / zoom;
-        const margin = 200; // Increased safety margin for culling
-
-        // [v0.3.20 Fix] Viewport culling disabled for absolute safety in v0.3.20
-        for (const node of this.nodes) {
-            if (!node.position) continue;
-
-            // Temporary Bypass of Culling to ensure all nodes (External Ghosts, etc) are visible
-            // if (node.position.x + 120 + margin < worldLeft || node.position.x - margin > worldRight || ...)
-
-
-            const isUserCustom = 
-                node.layer === 'user' || 
-                (node.data && node.data.layer === 'user') || 
-                (node.id && node.id.startsWith('node_manual_'));
-
-            if (isUserCustom && !this.showUserLayer) continue;
-            if (!isUserCustom && !this.showBaseLayer) continue;
-
-            if (node.cluster_id) {
-                const cluster = this.clusters.find(c => c.id === node.cluster_id);
-                if (cluster && cluster.collapsed) continue;
-            }
+        for (const node of this._visibleNodesCache) {
             this.renderNode(node, zoom);
         }
     }
@@ -6615,6 +6608,9 @@ class CanvasEngine {
             const clusterLayer = cluster.layer || (cluster.data && cluster.data.layer) || 'ai';
             
             if (clusterLayer === 'user' && !this.showUserLayer) {
+                continue;
+            }
+            if (clusterLayer === 'external' && !this.showExternalLayer) {
                 continue;
             }
             if (clusterLayer === 'ai' && !this.showBaseLayer) {
@@ -7597,6 +7593,13 @@ class CanvasEngine {
         const toNode = this.nodeMap.get(edge.to);
         if (!fromNode || !toNode) return;
 
+        // [v0.0.37.1] Check node visibility based on showUserLayer, showBaseLayer & showExternalLayer
+        const isUserNode = (n) => n.layer === 'user' || (n.data && n.data.layer === 'user') || n.status === 'pending';
+        const isExternalNode = (n) => n.layer === 'external' || (n.data && n.data.layer === 'external') || n.type === 'external' || n.status === 'ghost' || (n.cluster_id && n.cluster_id === 'cluster_ghosts');
+        const isFromVisible = isUserNode(fromNode) ? this.showUserLayer : (isExternalNode(fromNode) ? this.showExternalLayer : this.showBaseLayer);
+        const isToVisible = isUserNode(toNode) ? this.showUserLayer : (isExternalNode(toNode) ? this.showExternalLayer : this.showBaseLayer);
+        if (!isFromVisible || !isToVisible) return;
+
         // [v0.3.19] Hide Edges connected to filtered Leaf nodes
         if (this.hideLeafNodes) {
             const fromStats = this.nodeStatsMap.get(fromNode.id);
@@ -7607,7 +7610,10 @@ class CanvasEngine {
 
         const isSelected = this.selectedEdge && this.selectedEdge.id === edge.id;
         const isHovered = this.hoveredEdge && this.hoveredEdge.id === edge.id;
-        const isPathSelected = isSelected || isHovered || Array.from(this.selectedNodes).some(n => n.id === edge.from || n.id === edge.to) ||
+        // [v0.3.28-fix] O(1) lookup — _selectedNodeIds is pre-cached once per frame in render()
+        const selectedIds = this._selectedNodeIds || new Set();
+        const isPathSelected = isSelected || isHovered ||
+            selectedIds.has(edge.from) || selectedIds.has(edge.to) ||
             (this.hoveredNode && (this.hoveredNode.id === edge.from || this.hoveredNode.id === edge.to));
 
         const isEdgeHidden = window.edgeVisibilityMode === 'NO_EDGES';
@@ -7627,35 +7633,54 @@ class CanvasEngine {
         const midX = (fromX + toX) / 2;
         const midY = (fromY + toY) / 2;
 
-        // [v0.3.20] Lite Bundling Logic (Cluster-weighted Approach)
-        const targetNodeInternal = this.nodeMap.get(edge.to);
-        const targetClusterId = targetNodeInternal?.cluster_id || 'unmapped';
-        const groupCPCenter = this.edgeGroupsCP?.get(targetClusterId);
-        
+        const dx = toX - fromX;
+        const dy = toY - fromY;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+
         let cpX = midX;
         let cpY = midY;
         let isBundled = false;
 
-        if (groupCPCenter) {
-            // Pull towards the shared cluster center to maintain bundling ensemble
-            cpX = midX * 0.4 + groupCPCenter.x * 0.6;
+        // [v0.3.29] Mathematical Parity with WebGL Bundling (Perpendicular Normal Vector)
+        const isBundlingEnabled = window.enableEdgeBundling !== false && !window.forceStraightEdges;
+        const edgeCountThreshold = 20; 
+        const safeDist = Math.max(dist, 1.0); 
+        
+        // Normal vector for perpendicular offset
+        const nx = -dy / safeDist;
+        const ny = dx / safeDist;
+
+        if (isBundlingEnabled && this._visibleEdgesCache && this._visibleEdgesCache.length >= edgeCountThreshold && dist > 50) {
+            const bundleStrength = Math.min(dist * 0.15, 40);
             
-            // Aggressive arch logic: pull toward cluster Y but add a significant upward hump
-            cpY = (midY * 0.4 + groupCPCenter.y * 0.6) - 100;
-            
-            // Add vertical spread to prevent identity loss within the bundle
-            const seed = (edge.id.charCodeAt(edge.id.length - 1) % 20) - 10;
-            cpY += seed; 
+            // Direction quantization (16 buckets)
+            const angle = Math.atan2(dy, dx);
+            const bucket = Math.round(angle / (Math.PI / 8));
+            const groupOffset = (bucket % 8) * 3; 
+
+            cpX += nx * (bundleStrength + groupOffset);
+            cpY += ny * (bundleStrength + groupOffset);
             isBundled = true;
         } else {
-            // Strong vertical arch for isolated flows to preserve visual elegance
-            cpY -= 120; 
+            // Default arch: Use normal vector for consistency (Perfect WebGL parity)
+            const archStrength = (dist < 10) ? 0 : -5; 
+            cpX += nx * archStrength;
+            cpY += ny * archStrength;
+        }
+
+        // [v0.3.21.1] NaN/Infinity Resilience
+        if (!isFinite(cpX) || !isFinite(cpY)) {
+            cpX = midX;
+            cpY = midY;
         }
 
         let edgeColor = validation.valid ? style.color : validation.color;
-        let lineWidth = (isBundled ? 1.5 : style.lineWidth) * Math.min(1.5, 1.0 / this.transform.zoom);
         
-        // [v0.3.22.6] Synchronized Dash Access (matches SSoT pattern)
+        // [v0.3.28-fix] Enforce Minimum Screen-Space Thickness to prevent edges from becoming invisible when zooming out (Zoom < 1.0)
+        let baseLineWidth = (isBundled ? 1.5 : style.lineWidth);
+        let minWorldWidth = 2.0 / Math.max(0.01, this.transform.zoom); // Requires 2.0 pixel equivalent in screen space to survive anti-aliasing
+        let calculatedLineWidth = Math.max(baseLineWidth, minWorldWidth);
+
         this.ctx.setLineDash(style.dashPattern || []);
 
         // Store CP for badge rendering sync
@@ -7665,13 +7690,17 @@ class CanvasEngine {
         const theme = (typeof SYNAPSE_THEME !== 'undefined') ? SYNAPSE_THEME : null;
         if (edge.isCircular) {
             edgeColor = theme ? theme.STATUS.WARNING.border : '#fb4934';
-            lineWidth += 2;
+            calculatedLineWidth += 2;
         }
 
         // --- 1단계: 선 렌더링 ---
         this.ctx.beginPath();
-        this.ctx.lineWidth = isSelected || isHovered ? (style.lineWidth + 2.5) : style.lineWidth;
-        let finalAlpha = isSelected || isHovered ? 1.0 : (isBundled ? 0.7 : (isPathSelected ? 0.5 : 0.3));
+        // [v0.3.28-fix] Corrected: Use calculatedLineWidth instead of raw style.lineWidth, which was causing visual loss!
+        this.ctx.lineWidth = isSelected || isHovered ? (calculatedLineWidth + 2.5) : calculatedLineWidth;
+        // [v0.3.28-fix] Aggressive alpha boost. Anti-aliasing reduces perceived opacity significantly.
+        // Base WebGL alpha is 0.5, but WebGL doesn't AA. In Canvas2D we need at least 0.85 to see it clearly against dark bg.
+        let baseAlpha = this.transform.zoom < 0.8 ? 0.95 : 0.75;
+        let finalAlpha = isSelected || isHovered ? 1.0 : (isBundled ? Math.max(0.4, baseAlpha - 0.2) : (isPathSelected ? Math.min(1.0, baseAlpha + 0.1) : baseAlpha));
         
         if (isEdgeHidden && isPathSelected) finalAlpha = 0.3;
         if (this.focusTopNodes && !isPathSelected) {
@@ -7696,6 +7725,8 @@ class CanvasEngine {
                 this.ctx.arc(px, py, 4, 0, Math.PI * 2);
                 this.ctx.fill();
             });
+            // [v0.3.28-fix] Restore globalAlpha after pulse draw to prevent alpha leak into renderNode()
+            this.ctx.globalAlpha = 1.0;
         }
 
         // --- 2단계: 화살표 렌더링 ---

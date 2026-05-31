@@ -4,8 +4,8 @@
 
 **Don't read the code. See the architecture.**
 
-[![Version](https://img.shields.io/badge/version-v0.3.23-brightgreen.png)](https://github.com/dogsinatas29/SYNAPSE)
-[![Latest Release](https://img.shields.io/badge/latest-v0.3.23%20Hybrid%20Blacklist-orange.png)](https://github.com/dogsinatas29/SYNAPSE/releases)
+[![Version](https://img.shields.io/badge/version-v0.3.28-brightgreen.png)](https://github.com/dogsinatas29/SYNAPSE)
+[![Latest Release](https://img.shields.io/badge/latest-v0.3.28%202D%20Rendering%20Overhaul-orange.png)](https://github.com/dogsinatas29/SYNAPSE/releases)
 ![Status](https://img.shields.io/badge/status-Production_Ready-brightgreen.png)
 
 [🇰🇷 한국어 버전](./README.ko.md)
@@ -130,7 +130,7 @@ Launch your visual architecture journey in seconds.
 ### 1. Install Extension
 Download the latest `.vsix` from [Releases](https://github.com/dogsinatas29/SYNAPSE/releases) and run:
 ```bash
-code --install-extension synapse-visual-architecture-v0.3.23.vsix
+code --install-extension synapse-visual-architecture-v0.3.28.vsix
 ```
 
 ### 2. Launch Canvas
@@ -221,6 +221,7 @@ SYNAPSE was created to overcome the limitations of code-centric development. It 
 
 | Version | Date | Description |
 | :--- | :--- | :--- |
+| **v0.3.28** | 2026-05-31 | **2D Canvas Rendering Overhaul & Parity Fix**: Completely eradicated 7 major rendering defects in Accel:OFF mode including O(N) bottlenecks, Sub-pixel fade-out, `NaN` bundle failures, and spaghetti-like downward distortion. Achieved 100% mathematical parity with WebGL using Perpendicular Normal Vector logic. |
 | **v0.3.23** | 2026-05-02 | **Hybrid Blacklist & Intelligent Onboarding**: Implemented O(1) path-matching blacklist system. Added Explorer context menu for instant exclusion. Fixed webview layout collapse issues. |
 | **v0.3.22.11** | 2026-04-22 | **Interaction Stability & Coordinate Sovereignty**: Resolved node dragging jitter via Timestamp Guards and Position Persistence. Unified absolute coordinate system across SSoT layers. |22.11** | 2026-04-22 | **Interaction Stability & Coordinate Sovereignty**: Resolved node dragging jitter via Timestamp Guards and Position Persistence. Unified absolute coordinate system across SSoT layers. |
 | **v0.3.22.10** | 2026-04-20 | **Rendering Parity & Identity Binding (SSoT)**: Full 2D/3D visual synchronization, and SSoT-based tooltip identity binding for 100% data consistency. |

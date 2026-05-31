@@ -97,16 +97,16 @@ const SYNAPSE_THEME = {
 
     // Edge Styles
     EDGES: {
-        DEPENDENCY: { color: '#ebdbb2', thickness: 2, icon: '🔗', dash: [0, 0] },
+        DEPENDENCY: { color: '#ebdbb2', thickness: 2, icon: '🔗', dash: [] },
         REFERENCE: { color: '#928374', thickness: 1.5, icon: '🔗', dash: [4, 4] },
-        DATA_FLOW: { color: '#83a598', thickness: 3, icon: '📊', dash: [0, 0] },
-        EVENT: { color: '#fe8019', thickness: 2, icon: '⚡', dash: [0, 0] },
-        CONDITIONAL: { color: '#d3869b', thickness: 1, icon: '❓', dash: [0, 0] },
+        DATA_FLOW: { color: '#83a598', thickness: 3, icon: '📊', dash: [] },
+        EVENT: { color: '#fe8019', thickness: 2, icon: '⚡', dash: [] },
+        CONDITIONAL: { color: '#d3869b', thickness: 1, icon: '❓', dash: [] },
         ORIGIN: { color: '#d65d0e', thickness: 1.5, icon: '📍' },
         API_CALL: { color: '#8ec07c', thickness: 2, icon: '🌐', dash: [4, 4] },
-        DB_QUERY: { color: '#d3869b', thickness: 3, icon: '🛢️', dash: [0, 0] },
+        DB_QUERY: { color: '#d3869b', thickness: 3, icon: '🛢️', dash: [] },
         LOOP: { color: '#fe8019', thickness: 2, icon: '🔁', dash: [2, 4] },
-        HIGHLIGHTED: { color: '#fabd2f', thickness: 5, icon: '➤', dash: [0, 0] }
+        HIGHLIGHTED: { color: '#fabd2f', thickness: 5, icon: '➤', dash: [] }
     },
 
     // Color Palette
@@ -328,7 +328,7 @@ const SYNAPSE_THEME = {
         return {
             color: style.color || '#ebdbb2',
             thickness: style.thickness || 2,
-            dash: style.dash || [0, 0],
+            dash: style.dash || [],
             icon: style.icon || '➤'
         };
     },

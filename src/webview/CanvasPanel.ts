@@ -2192,6 +2192,30 @@ export class CanvasPanel {
                 return;
             }
 
+            // 2. [v0.3.11] Clusters & Nodes Bridge
+            if (newState.clusters && Array.isArray(newState.clusters)) {
+                for (const uiCluster of newState.clusters) {
+                    // [v0.3.27] Dynamically resolve cluster layer: scanned folders and system clusters are 'ai', others are 'user'
+                    const isScanFolder = uiCluster.id.startsWith('cluster_') && !/^\d+$/.test(uiCluster.id.replace('cluster_', ''));
+                    const isSystemAI = uiCluster.id === 'sys_cluster_reserved' || uiCluster.id === 'doc_shelf';
+                    const isExternal = uiCluster.id === 'cluster_ghosts';
+                    const defaultLayer = isExternal ? 'external' : ((isScanFolder || isSystemAI) ? 'ai' : 'user');
+
+                    // Sync cluster structure to engine if not already present
+                    canvasEngine.dispatch('ADD_CLUSTER', {
+                        id: uiCluster.id,
+                        label: uiCluster.label,
+                        type: uiCluster.type || 'folder',
+                        position: uiCluster.position, // [v0.3.11 Fix] Preserving cluster positions
+                        collapsed: uiCluster.collapsed,
+                        data: {
+                            ...(uiCluster.data || {}),
+                            layer: (uiCluster.data && uiCluster.data.layer) || defaultLayer
+                        }
+                    });
+                }
+            }
+
             // 1. Dispatch UPDATE_NODE for each node with a new position, cluster, and layer info
             // [v0.3.11] 🛡️ Hybrid Support: Handle both Array (UI) and Object (Internal Snapshot)
             const incomingNodes = Array.isArray(newState.nodes) ? newState.nodes : Object.values(newState.nodes || {});
@@ -2217,20 +2241,7 @@ export class CanvasPanel {
                 }
             }
 
-            // 2. [v0.3.11 HARD SSOT] Clusters & Nodes Bridge
-            if (newState.clusters && Array.isArray(newState.clusters)) {
-                for (const uiCluster of newState.clusters) {
-                    // Sync cluster structure to engine if not already present
-                    canvasEngine.dispatch('ADD_CLUSTER', {
-                        id: uiCluster.id,
-                        label: uiCluster.label,
-                        type: uiCluster.type || 'folder',
-                        position: uiCluster.position, // [v0.3.11 Fix] Preserving cluster positions
-                        collapsed: uiCluster.collapsed,
-                        data: uiCluster.data || { layer: 'user' }
-                    });
-                }
-            }
+
 
             const rawSnap = canvasEngine.getRawSnapshot();
             
@@ -2571,7 +2582,10 @@ export class CanvasPanel {
                 },
                 nodes: Object.values(engineSnap.nodes),
                 edges: Object.values(engineSnap.edges),
-                clusters: engineSnap.clusters || []
+                clusters: engineSnap.clusters || [],
+                userCount: engineSnap.userCount,
+                aiCount: engineSnap.aiCount,
+                externalCount: engineSnap.externalCount
             };
 
             // [v0.3.11] 2. Boot-Sync: If Engine is new OR incomplete, load from persistence file
@@ -2597,6 +2611,9 @@ export class CanvasPanel {
                     projectState.nodes = Object.values(refreshedSnap.nodes);
                     projectState.edges = Object.values(refreshedSnap.edges);
                     projectState.clusters = refreshedSnap.clusters || [];
+                    projectState.userCount = refreshedSnap.userCount;
+                    projectState.aiCount = refreshedSnap.aiCount;
+                    projectState.externalCount = refreshedSnap.externalCount;
                 }
             } catch (e) {
                 Logger.warn(`[CanvasPanel] Boot-Sync: No project_state.json found or failed to parse.`);

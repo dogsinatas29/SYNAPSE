@@ -893,9 +893,9 @@ class WebGLRenderer {
 
                 thickData[thickCnt++] = thickness;
 
-                const styleDash = edgeStyle.dash || [0, 0];
-                dashData[dashCnt++] = styleDash[0];
-                dashData[dashCnt++] = styleDash[1];
+                const styleDash = edgeStyle.dash && edgeStyle.dash.length > 0 ? edgeStyle.dash : [0, 0];
+                dashData[dashCnt++] = styleDash[0] !== undefined ? styleDash[0] : 0.0;
+                dashData[dashCnt++] = styleDash[1] !== undefined ? styleDash[1] : 0.0;
 
                 let highVal = 0.0;
                 if (isEdgeHidden && isPathSelected) {

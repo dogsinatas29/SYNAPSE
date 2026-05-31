@@ -22,11 +22,17 @@ function runBuild() {
             throw new Error('BM Policy Mismatch: No milestone documents found.');
         }
 
-        const currentMilestoneFile = milestoneFiles[0];
-        const currentVersion = currentMilestoneFile.replace('.md', ''); // e.g. "v0.2.17"
+        const bmSyncVer = process.env.BM_SYNC_VER;
+        let currentVersion;
+        
+        if (bmSyncVer && milestoneFiles.includes(`${bmSyncVer}.md`)) {
+            currentVersion = bmSyncVer;
+        } else {
+            const currentMilestoneFile = milestoneFiles[0];
+            currentVersion = currentMilestoneFile.replace('.md', ''); // e.g. "v0.2.17"
+        }
 
         // 1. 환경 변수 기반 빌드 트리거
-        const bmSyncVer = process.env.BM_SYNC_VER;
         if (bmSyncVer !== currentVersion) {
             throw new Error(`BM Policy Mismatch: Build Aborted. Expected BM_SYNC_VER '${currentVersion}' but got '${bmSyncVer}'.`);
         }

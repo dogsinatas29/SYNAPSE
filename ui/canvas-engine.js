@@ -3759,7 +3759,7 @@ class CanvasEngine {
         // Build cluster-to-layer map for fast lookup
         const clusterLayerMap = new Map();
         (this.clusters || []).forEach(c => {
-            const layer = c.layer || (c.data && c.data.layer) || (c.id.startsWith('sys_') ? 'ai' : (c.id === 'doc_shelf' ? 'doc' : 'user'));
+            const layer = c.layer || (c.data && c.data.layer) || (c.id === 'cluster_ghosts' ? 'external' : c.id.startsWith('sys_') ? 'ai' : (c.id === 'doc_shelf' ? 'doc' : 'user'));
             clusterLayerMap.set(c.id, layer);
         });
 
@@ -4038,6 +4038,7 @@ class CanvasEngine {
         } else {
             this.isAligning = false;
             console.log('[SYNAPSE] Alignment Simulation Settled.');
+            this.resolveClusterOverlaps(); // [v0.3.29] Push apart overlapping clusters after alignment
             this.updateHotspots(); // Final precision update
             return;
         }
@@ -4082,7 +4083,7 @@ class CanvasEngine {
         }
 
         // Relative offsets within a cluster
-        const roleOffsets = { 'Leaf': -600, 'Hub': -200, 'Orchestrator': 200, 'Controller': 600 };
+        const roleOffsets = { 'Leaf': -300, 'Hub': -100, 'Orchestrator': 100, 'Controller': 300 };
 
         // 3. Apply Local Spring Forces
         for (const [cid, clusterRoles] of Object.entries(groups)) {
@@ -4263,7 +4264,7 @@ class CanvasEngine {
         const clusters = this.clusters || [];
         const clusterLayerMap = new Map();
         clusters.forEach(c => {
-            const layer = c.layer || (c.data && c.data.layer) || (c.id.startsWith('sys_') ? 'ai' : (c.id === 'doc_shelf' ? 'doc' : 'user'));
+            const layer = c.layer || (c.data && c.data.layer) || (c.id === 'cluster_ghosts' ? 'external' : c.id.startsWith('sys_') ? 'ai' : (c.id === 'doc_shelf' ? 'doc' : 'user'));
             clusterLayerMap.set(c.id, layer);
         });
 
@@ -4635,7 +4636,7 @@ class CanvasEngine {
             this.clusters = rawClusters
                 .filter(c => c.id !== 'context_vault' && c.id !== 'doc_shelf')
                 .map(c => {
-                    const layer = c.layer || (c.data && c.data.layer) || (c.id.startsWith('sys_') ? 'ai' : 'user');
+                    const layer = c.layer || (c.data && c.data.layer) || (c.id === 'cluster_ghosts' ? 'external' : c.id.startsWith('sys_') ? 'ai' : 'user');
                     return { ...c, layer };
                 });
 
@@ -4655,6 +4656,15 @@ class CanvasEngine {
 
             // [v0.2.22] System Clusters initialization
             this.getOrCreateSystemClusters();
+
+            // [v0.3.29] Cluster-level push-apart (runs after system clusters are placed, before node overlap resolution)
+            if (!preserveView) {
+                try {
+                    this.resolveClusterOverlaps();
+                } catch (clusterErr) {
+                    this.log('resolveClusterOverlaps failed but continuing', 'error', clusterErr.message);
+                }
+            }
 
             // [v0.2.24 New Rule] Documentation Shelf is collapsed by default
             this.clusters.forEach(cluster => {
@@ -6548,8 +6558,10 @@ class CanvasEngine {
                 if (cid !== cluster.id || cid === '') return false;
                 // 레이어 가시성 체크: 현재 렌더링되지 않는 노드는 바운드 계산에서 제외
                 const isUserNode = n.layer === 'user' || (n.data && n.data.layer === 'user') || n.status === 'pending';
+                const isExternalNode = n.layer === 'external' || (n.data && n.data.layer === 'external') || n.type === 'external' || n.status === 'ghost';
                 if (isUserNode && !this.showUserLayer) return false;
-                if (!isUserNode && !this.showBaseLayer) return false;
+                if (isExternalNode && !this.showExternalLayer) return false;
+                if (!isUserNode && !isExternalNode && !this.showBaseLayer) return false;
                 return true;
             });
 
@@ -8404,6 +8416,112 @@ class CanvasEngine {
                         b.position.y -= ny;
                         moved = true;
                     }
+                }
+            }
+            if (!moved) break;
+        }
+    }
+
+    // [v0.3.29] Cluster-level overlap resolution (Push-Apart with Mass weighting)
+    resolveClusterOverlaps() {
+        if (!this.clusters || this.clusters.length < 2) return;
+        const PADDING = 40;
+        const ITERATIONS = 3;
+
+        // [v0.3.29 hotfix] Debug: log cluster bounds before resolution
+        const boundsPreview = this.clusters.map(c => {
+            const nodes = this.nodes.filter(n => n.cluster_id === c.id);
+            if (nodes.length === 0) return null;
+            let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+            for (const n of nodes) {
+                minX = Math.min(minX, n.position.x);
+                minY = Math.min(minY, n.position.y);
+                maxX = Math.max(maxX, n.position.x + 120);
+                maxY = Math.max(maxY, n.position.y + 60);
+            }
+            return { id: c.id, label: c.label, bounds: [minX, minY, maxX, maxY], mass: nodes.length };
+        }).filter(Boolean);
+        console.log('[SYNAPSE][resolveClusterOverlaps] Cluster bounds pre:', JSON.stringify(boundsPreview));
+
+        for (let iter = 0; iter < ITERATIONS; iter++) {
+            const bounds = new Map();
+            const centroids = new Map();
+            for (const cluster of this.clusters) {
+                const nodes = this.nodes.filter(n => n.cluster_id === cluster.id);
+                if (nodes.length === 0) continue;
+                let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+                let cx = 0, cy = 0;
+                for (const node of nodes) {
+                    const px = node.position.x;
+                    const py = node.position.y;
+                    minX = Math.min(minX, px);
+                    minY = Math.min(minY, py);
+                    maxX = Math.max(maxX, px + 120);
+                    maxY = Math.max(maxY, py + 60);
+                    cx += px;
+                    cy += py;
+                }
+                bounds.set(cluster.id, {
+                    minX: minX - PADDING, minY: minY - PADDING,
+                    maxX: maxX + PADDING, maxY: maxY + PADDING,
+                    mass: nodes.length + 1
+                });
+                centroids.set(cluster.id, { x: cx / nodes.length, y: cy / nodes.length });
+            }
+
+            const ids = this.clusters.map(c => c.id).filter(id => bounds.has(id));
+            let moved = false;
+
+            for (let i = 0; i < ids.length; i++) {
+                for (let j = i + 1; j < ids.length; j++) {
+                    const idA = ids[i], idB = ids[j];
+                    const bA = bounds.get(idA), bB = bounds.get(idB);
+                    if (!bA || !bB) continue;
+
+                    const overlapX = Math.min(bA.maxX, bB.maxX) - Math.max(bA.minX, bB.minX);
+                    const overlapY = Math.min(bA.maxY, bB.maxY) - Math.max(bA.minY, bB.minY);
+                    if (overlapX <= 0 || overlapY <= 0) continue;
+
+                    moved = true;
+
+                    // Sign Guard: direction from centroid delta
+                    const cA = centroids.get(idA), cB = centroids.get(idB);
+                    let dx = cB.x - cA.x, dy = cB.y - cA.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+
+                    // Zero-Divide Guard: identical centroids → force X-axis
+                    if (dist < 0.001) { dx = 1; dy = 0; }
+
+                    const totalMass = bA.mass + bB.mass;
+                    const pushA = bB.mass / totalMass; // lighter = pushed more
+                    const pushB = bA.mass / totalMass;
+
+                    let pushX = 0, pushY = 0;
+                    if (overlapX < overlapY) { pushX = overlapX + 4; }
+                    else { pushY = overlapY + 4; }
+
+                    const sX = dx >= 0 ? 1 : -1;
+                    const sY = dy >= 0 ? 1 : -1;
+
+                    const aNodes = this.nodes.filter(n => n.cluster_id === idA);
+                    const bNodes = this.nodes.filter(n => n.cluster_id === idB);
+
+                    for (const node of aNodes) {
+                        node.position.x -= pushX * pushA * sX;
+                        node.position.y -= pushY * pushA * sY;
+                    }
+                    for (const node of bNodes) {
+                        node.position.x += pushX * pushB * sX;
+                        node.position.y += pushY * pushB * sY;
+                    }
+
+                    // Shift Guard: update bounds in-place for next pair checks
+                    const saX = pushX * pushA * sX, saY = pushY * pushA * sY;
+                    const sbX = pushX * pushB * sX, sbY = pushY * pushB * sY;
+                    bA.minX -= saX; bA.maxX -= saX;
+                    bA.minY -= saY; bA.maxY -= saY;
+                    bB.minX += sbX; bB.maxX += sbX;
+                    bB.minY += sbY; bB.maxY += sbY;
                 }
             }
             if (!moved) break;

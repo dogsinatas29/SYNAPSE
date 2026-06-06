@@ -221,7 +221,7 @@ SYNAPSE was created to overcome the limitations of code-centric development. It 
 
 | Version | Date | Description |
 | :--- | :--- | :--- |
-| **v0.3.28** | 2026-05-31 | **2D Canvas Rendering Overhaul & Parity Fix**: Completely eradicated 7 major rendering defects in Accel:OFF mode including O(N) bottlenecks, Sub-pixel fade-out, `NaN` bundle failures, and spaghetti-like downward distortion. Achieved 100% mathematical parity with WebGL using Perpendicular Normal Vector logic. |
+| **v0.3.29** | 2026-06-06 | **클러스터 겹침 해소 및 External 레이어 수정**: FNV-1a 해시 기반 원형 배치(Initial Spread) + Mass 기반 Cluster Push-Apart 엔진 도입으로 클러스터/노드 겹침 해결. External 레이어 ON 시 External Ghosts 클러스터 박스가 보이지 않는 버그 수정. Align Architecture 시 클러스터 팽창 50% 감소(roleOffsets 절반 축소). |
 | **v0.3.27** | 2026-05-28 | **Data Sync Resilience & Layer Sovereignty**: Resolved critical data synchronization bugs causing phantom edge disappearances (`Edges: 0`). Ensured UI layer separation logic properly isolates scanned folders and custom groupings without structural damage. |
 | **v0.3.26** | 2026-05-26 | **2D Edge Validation Patch**: Fixed a bug where solid edges would silently fail to render in 2D mode due to invalid dash array fallback `[0, 0]` not supported by HTML5 Canvas API context. |
 | **v0.3.25** | 2026-05-25 | **Cluster-Aware Local Alignment**: Refactored the layout alignment physics so that nodes align cleanly relative to their specific cluster's gravity center, preventing global coordinate collapses when arranging architecture. |
@@ -239,7 +239,7 @@ SYNAPSE was created to overcome the limitations of code-centric development. It 
 
 ## 📅 Status & Roadmap
 
-- **Status**: v0.3.28 – Rendering Parity & Stability Achieved.
+- **Status**: v0.3.29 – 클러스터 겹침 해소 및 External 레이어 수정.
 - **Next**:
     - Server / Client separation for remote analysis.
     - Advanced Performance optimization for 50k+ nodes.

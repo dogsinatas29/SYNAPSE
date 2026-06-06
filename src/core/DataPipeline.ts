@@ -57,7 +57,7 @@ export class DataPipeline {
     const nodes: Node[] = [];
     const edges: Edge[] = [];
     const clusters: Cluster[] = [
-      { id: 'cluster_ghosts', label: '☁️ External Ghosts', type: 'system', collapsed: false, position: { x: 0, y: 0 }, bounds: { x: 0, y: 0, width: 0, height: 0 }, children: [], nodes: [], data: {} },
+      { id: 'cluster_ghosts', label: '☁️ External Ghosts', type: 'system', collapsed: false, position: { x: 0, y: 0 }, bounds: { x: 0, y: 0, width: 0, height: 0 }, children: [], nodes: [], data: { layer: 'external' } },
       { id: 'sys_cluster_reserved', label: '🛡️ Reserved (Internal Pending)', type: 'system', collapsed: false, position: { x: 0, y: 0 }, bounds: { x: 0, y: 0, width: 0, height: 0 }, children: [], nodes: [], data: {} },
       { id: 'doc_shelf', label: '📚 Documentation Shelf', type: 'system', collapsed: false, position: { x: 0, y: 0 }, bounds: { x: 0, y: 0, width: 0, height: 0 }, children: [], nodes: [], data: {} }
     ];
@@ -135,6 +135,53 @@ export class DataPipeline {
       
       nodes.push(newNode);
       nodeIds.add(item.filePath);
+    }
+
+    // === [v0.3.29] Initial Spread: Deterministic position assignment ===
+    // System clusters: fixed far positions (UI getOrCreateSystemClusters may override)
+    for (const sc of clusters) {
+      if (sc.position) {
+        if (sc.id === 'cluster_ghosts') { sc.position.x = -3000; sc.position.y = -3000; }
+        else if (sc.id === 'sys_cluster_reserved') { sc.position.x = -2000; sc.position.y = -3000; }
+        else if (sc.id === 'doc_shelf') { sc.position.x = 8000; sc.position.y = -3000; }
+      }
+    }
+    // Folder clusters: circular spread with FNV-1a deterministic hash
+    const folderClusters = clusters.filter((c): c is Cluster & { position: NonNullable<Cluster['position']> } => c.type === 'folder' && !!c.position);
+    if (folderClusters.length > 0) {
+      const BASE_RADIUS = Math.max(800, folderClusters.length * 200);
+      for (let i = 0; i < folderClusters.length; i++) {
+        const c = folderClusters[i];
+        let hash = 0x811c9dc5;
+        for (let k = 0; k < c.id.length; k++) { hash ^= c.id.charCodeAt(k); hash = Math.imul(hash, 0x01000193); }
+        const baseAngle = ((hash >>> 0) % 1000) / 1000 * 2 * Math.PI;
+        const angle = baseAngle + i * 2 * Math.PI / folderClusters.length;
+        c.position.x = Math.cos(angle) * BASE_RADIUS;
+        c.position.y = Math.sin(angle) * BASE_RADIUS;
+      }
+    }
+    // Nodes: grid offset relative to their cluster center
+    const clusterNodeCounts = new Map<string, number>();
+    const clusterNodeIdx = new Map<string, number>();
+    for (const n of nodes) {
+      const cid = n.cluster_id || '__unclustered__';
+      clusterNodeCounts.set(cid, (clusterNodeCounts.get(cid) || 0) + 1);
+    }
+    for (const n of nodes) {
+      if (!n.position) continue;
+      const cid = n.cluster_id || '__unclustered__';
+      const cluster = clusters.find(c => c.id === n.cluster_id);
+      const idx = clusterNodeIdx.get(cid) || 0;
+      clusterNodeIdx.set(cid, idx + 1);
+      const centerX = cluster?.position ? cluster.position.x : 0;
+      const centerY = cluster?.position ? cluster.position.y : 0;
+      const total = clusterNodeCounts.get(cid) || 1;
+      const cols = Math.min(3, total);
+      const col = idx % cols;
+      const row = Math.floor(idx / cols);
+      const rows = Math.ceil(total / cols);
+      n.position.x = centerX + (col - (cols - 1) / 2) * 80;
+      n.position.y = centerY + (row - rows / 2) * 50;
     }
 
     // 2. Analyze references and create edges + ghosts

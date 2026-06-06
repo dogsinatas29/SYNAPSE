@@ -157,7 +157,7 @@ Path: ~/언어_프로젝트/프로젝트명/mile_stone/v[버전명].md
 ## 📝 Post-Work Log (작업 후 기록) - *작업 중 추가된 요소 및 릴리즈 노트 기반의 최종 결과물 기록*
 
 ## ROOT Structure
-성능 최적화 이전의 프로젝트 주요 디렉터리 구조 및 수정 대상 소스코드의 원본 상태 기록입니다. (마일스톤, 릴리즈 노트, context 폴더 제외)
+프로젝트 주요 디렉터리 구조 및 소스코드 현황입니다. (Active/Orphaned/Legacy 상태 포함, 마일스톤/릴리즈 노트 제외)
 
 ### 📂 Directory Tree
 ```text
@@ -166,47 +166,98 @@ Path: ~/언어_프로젝트/프로젝트명/mile_stone/v[버전명].md
 ├── webpack.config.js
 ├── tsconfig.json
 ├── build-guard.js
-├── synapse.config.json (추가됨)
+├── RULES.md
+├── synapse.config.json
 ├── ui/
 │   ├── index.html
-│   ├── synapse-theme.js (최적화 완료)
-│   ├── canvas-engine.js (2D 병목 및 버그 7종 최적화 완료)
-│   ├── webgl-renderer.js (3D 렌더링 최적화 완료)
-│   └── engine-core.js (추가됨)
+│   ├── synapse-theme.js
+│   ├── canvas-engine.js
+│   ├── webgl-renderer.js
+│   └── engine-core.js
 ├── demo/
 │   ├── index.html
 │   ├── synapse-theme.js
-│   ├── canvas-engine.js (ui와 동기화 완료)
-│   └── webgl-renderer.js (ui와 동기화 완료)
+│   ├── canvas-engine.js
+│   └── webgl-renderer.js
 ├── src/
 │   ├── extension.ts
-│   ├── cli.ts (추가됨)
-│   ├── client.ts (추가됨)
+│   ├── cli.ts
+│   ├── client.ts
+│   ├── verify_v0.3.10.ts
 │   ├── types/
-│   │   └── schema.ts (추가됨)
-│   ├── core/ (구조 대폭 확장)
-│   │   ├── RendererCore.ts
-│   │   ├── RuleEngine.ts
-│   │   ├── GraphModel.ts (추가됨)
-│   │   ├── BlacklistOrchestrator.ts (추가됨)
-│   │   ├── WebviewInterceptor.ts (추가됨)
-│   │   ├── FileScanner.ts / FlowScanner.ts (추가됨)
-│   │   ├── transaction/ (CommitManager, ExecutionLayer 등 추가됨)
-│   │   ├── projection/ (ProjectionLayer, RuleStore 추가됨)
-│   │   └── canvas-engine/ (Intent, PhaseGate, StateManager, VisualRuleBook 등 추가됨)
+│   │   └── schema.ts
+│   ├── core/
+│   │   ├── canvas-engine/
+│   │   │   ├── CanvasEngine.ts
+│   │   │   ├── Intent.ts
+│   │   │   ├── PhaseGate.ts
+│   │   │   ├── RenderProtocol.ts
+│   │   │   ├── RuleEngine.ts
+│   │   │   ├── ScenarioRunner.ts
+│   │   │   ├── SpatialRuleBook.ts
+│   │   │   ├── StateManager.ts
+│   │   │   ├── ValidationHarness.ts
+│   │   │   └── VisualRuleBook.ts
+│   │   ├── transaction/
+│   │   │   ├── CommitManager.ts
+│   │   │   ├── ExecutionLayer.ts
+│   │   │   └── VerificationLayer.ts
+│   │   ├── projection/
+│   │   │   ├── ProjectionLayer.ts
+│   │   │   └── RuleStore.ts
+│   │   ├── (Active) DataPipeline.ts
+│   │   ├── (Active) RendererCore.ts
+│   │   ├── (Active) RuleEngine.ts
+│   │   ├── (Active) GraphModel.ts
+│   │   ├── (Active) BlacklistOrchestrator.ts
+│   │   ├── (Active) FileScanner.ts
+│   │   ├── (Active) FlowScanner.ts
+│   │   ├── (Active) FlowchartGenerator.ts
+│   │   ├── (Active) LogicAnalyzer.ts
+│   │   ├── (Active) GeminiParser.ts
+│   │   ├── (Active) graphBuilder.ts
+│   │   ├── (Active) DatabaseEngine.ts
+│   │   ├── (Active) PromptLogger.ts
+│   │   ├── (Active) GhostNodeManager.ts
+│   │   ├── (Active) ContextVault.ts
+│   │   ├── (Active) DebuggerSystem.ts
+│   │   ├── (Active) ControlSystem.ts
+│   │   ├── (Active) AiOrchestrator.ts
+│   │   ├── (Active) PhaseManager.ts
+│   │   ├── (Active) SnapshotSystem.ts
+│   │   ├── (Active) GridSystem.ts
+│   │   ├── (Active) VirtualDebugger.ts
+│   │   ├── (Active) EdgeCodeRefactorer.ts
+│   │   ├── (Active) PbSessionWatcher.ts
+│   │   ├── (Active) filterSnapshot.ts
+│   │   ├── (Legacy) BillingManager.ts
+│   │   ├── (Orphaned) WebviewInterceptor.ts
+│   │   ├── (Orphaned) CommandInterceptor.ts
+│   │   ├── (Orphaned) CDPManager.ts
+│   │   ├── (Orphaned) DirectChatScraper.ts
+│   │   └── (Orphaned) ArchitectureDSL.ts
 │   ├── analysis/
-│   │   └── hintEngine.ts (추가됨)
+│   │   └── hintEngine.ts
 │   ├── bootstrap/
-│   │   └── BootstrapEngine.ts (추가됨)
-│   ├── rust_checker/ (Rust 스캐닝용 폴더 추가됨)
+│   │   └── BootstrapEngine.ts
+│   ├── rust_checker/
 │   ├── explorer/
 │   │   └── ArchitectureExplorer.ts
 │   ├── server/
 │   │   ├── server.ts
 │   │   └── standalone.ts
-│   ├── utils/ (ChatExtractor, Logger, exclusionRules 등 추가됨)
+│   ├── utils/
+│   │   ├── ChatExtractor.ts
+│   │   ├── Logger.ts
+│   │   ├── exclusionRules.ts
+│   │   └── visualHints.ts
 │   └── webview/
 │       └── CanvasPanel.ts
+├── mile_stone/
+│   ├── v0.2.xx.md ~ v0.3.29.md (버전별 마일스톤 문서 모음)
+│   └── ... (작업 기록 및 설계 문서)
+├── release_note/
+│   └── v*_release_notes.md
 └── tools/
     ├── compare.js
     ├── config-generator.js
@@ -219,25 +270,64 @@ Path: ~/언어_프로젝트/프로젝트명/mile_stone/v[버전명].md
 
 | 파일/폴더 경로 | 상태 | 주요 역할 및 기능 설명 |
 | :--- | :--- | :--- |
-| `package.json` | 유지 | VS Code 확장 프로그램의 메타데이터(기여 지점, 명령어 바인딩 등) 정의 및 패키지 관리 |
-| `build-guard.js` | 유지 | 마일스톤 및 릴리즈 노트의 유효성(`Verified by Commander`)을 자동 검증하는 배포 통제 스크립트 |
-| `synapse.config.json` | **신규** | 시냅스 아키텍처 규칙 및 설정 보관 파일 |
-| `ui/canvas-engine.js` | **최적화** | O(N) 순회 병목 제거, sub-pixel 안티앨리어싱 보정, NaN 예외 처리, WebGL 수학적 패리티 동기화가 적용된 고성능 2D 엔진 |
-| `ui/webgl-renderer.js` | **최적화** | 대규모 노드 그래프의 실시간 60FPS 유지를 위한 GPU 파이프라인 가속 렌더러 |
-| `ui/engine-core.js` | **신규** | 캔버스 엔진과 WebGL 렌더러 간의 공통 코어 로직 및 상태 브릿지 역할 수행 |
-| `src/extension.ts` | 변경 | VS Code Extension의 진입점, 확장 기능 활성화 및 이벤트 최초 등록 |
-| `src/cli.ts` / `client.ts` | **신규** | 터미널 기반 CLI 제어 및 외부 클라이언트 시스템 연동 인터페이스 |
-| `src/core/canvas-engine/` | **확장** | 캔버스 상태(StateManager), 렌더 프로토콜(RenderProtocol), 시각 룰북(VisualRuleBook) 등 캔버스 구동 도메인 물리 분리 |
-| `src/core/transaction/` | **신규** | 엣지 생성, 삭제 등 아키텍처 상태 변경을 트랜잭션 단위로 묶어 무결성을 검증하고 커밋(CommitManager) |
-| `src/core/projection/` | **신규** | 추상화된 설계 룰을 시각적 레이어에 투영하는 규칙 저장소 및 투영 엔진 |
-| `src/core/BlacklistOrchestrator.ts` | **신규** | 노이즈 폴더(`dist`, `node_modules` 등)를 O(1) 매칭으로 필터링하는 하이브리드 블랙리스트 엔진 |
-| `src/core/WebviewInterceptor.ts` | **신규** | VS Code 웹뷰와 코어 엔진 간의 메시징 및 UI 액션(드래그, 클릭 등) 이벤트 가로채기 핸들러 |
-| `src/analysis/hintEngine.ts` | **신규** | 실시간 아키텍처 분석 및 진단 힌트(R1~R5 경고)를 캔버스에 제공하는 엔진 |
-| `src/bootstrap/BootstrapEngine.ts` | **신규** | 초기 프로젝트 로드 시 디렉터리를 스캔하여 아키텍처 그래프를 자동 구성하는 부트스트랩 모듈 |
-| `src/rust_checker/` | **신규** | Rust 언어 프로젝트의 소스 구조 분석 및 종속성 추출 모듈 |
-| `src/utils/` | **신규** | 로거, 시각 힌트 유틸리티, 제외 규칙 정규식 관리 등 시스템 전역 공통 유틸리티 |
-| `src/types/schema.ts` | **신규** | 노드, 엣지, 클러스터의 타입스크립트 인터페이스 및 데이터 스키마 정의 |
-| `tools/*` | 유지 | 성능 벤치마킹, 규격 파일 생성, 진단 로그 분석용 보조 스크립트 모음 |
+| `package.json` | 유지 | VS Code 확장 프로그램 메타데이터(기여 지점, 명령어 바인딩) 정의 및 패키지 관리 |
+| `build-guard.js` | 유지 | 마일스톤 및 릴리즈 노트 유효성 자동 검증 배포 통제 스크립트 |
+| `RULES.md` | 유지 | 프로젝트 코딩 규칙 및 아키텍처 제약 문서 |
+| `synapse.config.json` | 유지 | 시냅스 아키텍처 규칙 및 설정 보관 파일 |
+| `ui/canvas-engine.js` | 유지 | O(N) 순회 병목 제거, sub-pixel 안티앨리어싱, NaN 방지, WebGL 수학적 패리티 동기화 적용 2D 엔진 |
+| `ui/webgl-renderer.js` | 유지 | 대규모 노드 그래프 실시간 60FPS GPU 파이프라인 가속 렌더러 |
+| `ui/engine-core.js` | 유지 | 캔버스 엔진 + WebGL 렌더러 간 공통 코어 로직 및 상태 브릿지 |
+| `src/extension.ts` | 유지 | VS Code Extension 진입점, 확장 활성화 및 이벤트 최초 등록 |
+| `src/cli.ts` | 유지 | 터미널 기반 CLI 제어 인터페이스 |
+| `src/client.ts` | 유지 | 외부 클라이언트 시스템 연동 인터페이스 |
+| `src/verify_v0.3.10.ts` | Standalone | v0.3.10 규격 검증용 독립 실행 스크립트 |
+| `src/types/schema.ts` | 유지 | 노드, 엣지, 클러스터 타입스크립트 인터페이스 및 데이터 스키마 정의 |
+| `src/core/canvas-engine/` | Active | CanvasEngine, Intent, PhaseGate, StateManager, RuleEngine, VisualRuleBook, SpatialRuleBook, ValidationHarness, ScenarioRunner, RenderProtocol — 캔버스 구동 도메인 물리 분리 (10개 파일) |
+| `src/core/transaction/` | Active | CommitManager, ExecutionLayer, VerificationLayer — 아키텍처 상태 변경 트랜잭션 무결성 검증 및 커밋 |
+| `src/core/projection/` | Active | ProjectionLayer, RuleStore — 추상화된 설계 룰을 시각적 레이어에 투영 |
+| `src/core/DataPipeline.ts` | Active | 물리 파일 시스템 스캔 → 노드/엣지/클러스터 추출 및 초기 원형 분산(Initial Spread) 배치 |
+| `src/core/RendererCore.ts` | Active | 렌더러 생명주기 관리 및 WebGL/Canvas 2D 전환 브릿지 |
+| `src/core/RuleEngine.ts` | Active | 핵심 규칙 검증 엔진 (Phase/Rule/Mutation pipeline) |
+| `src/core/GraphModel.ts` | Active | 그래프 데이터 모델 (노드/엣지 CRUD, 직렬화) |
+| `src/core/BlacklistOrchestrator.ts` | Active | 노이즈 폴더(`dist`, `node_modules` 등) O(1) 하이브리드 블랙리스트 필터 |
+| `src/core/FileScanner.ts` | Active | 단일 파일 단위 소스 분석 및 의존성 추출 |
+| `src/core/FlowScanner.ts` | Active | 파일 간 데이터 흐름(Flow) 분석 엔진 |
+| `src/core/FlowchartGenerator.ts` | Active | 분석 결과 → 계층형 레이아웃 플로우차트 생성 (DFS Rank 할당, Logic Inversion) |
+| `src/core/LogicAnalyzer.ts` | Active | 스키마 무결성 검증 및 아키텍처 논리 분석 (detectSchemaViolations) |
+| `src/core/GeminiParser.ts` | Active | Gemini/Copilot 대화 데이터 파싱 전담 |
+| `src/core/graphBuilder.ts` | Active | 스캔된 소스 → 그래프 구조화 빌더 |
+| `src/core/DatabaseEngine.ts` | Active | VS Code globalState 기반 KV 스토리지 (billing_meta, managed_nodes) |
+| `src/core/PromptLogger.ts` | Active | 세션/대화 로그 기록 엔진 (audit + session.md) |
+| `src/core/GhostNodeManager.ts` | Active | 고스트 노드 생성 및 레이어 가시성 제어 |
+| `src/core/ContextVault.ts` | Active | 컨텍스트 볼트 관리 (격리, Poison Test) |
+| `src/core/DebuggerSystem.ts` | Active | 디버깅 트리거 아키텍처 및 진단 로그 |
+| `src/core/ControlSystem.ts` | Active | 시스템 제어 명령어 및 피드백 루프 |
+| `src/core/AiOrchestrator.ts` | Active | AI 에이전트 오케스트레이션 (PhaseGate/Mutation) |
+| `src/core/PhaseManager.ts` | Active | Phase 상태 관리 및 전이 |
+| `src/core/SnapshotSystem.ts` | Active | 프로젝트 상태 스냅샷 저장/복원 |
+| `src/core/GridSystem.ts` | Active | 캔버스 그리드 시스템 및 스냅 정렬 |
+| `src/core/VirtualDebugger.ts` | Active | 가상 디버거 (런타임 상태 모니터링) |
+| `src/core/EdgeCodeRefactorer.ts` | Active | 엣지 코드 리팩터링 검증 도구 |
+| `src/core/PbSessionWatcher.ts` | Active | Protobuf 세션 파일 감시 및 추출 트리거 |
+| `src/core/filterSnapshot.ts` | Active | 스냅샷 레이어/타입 기반 필터링 |
+| `src/core/BillingManager.ts` | **Legacy** | 상용화 과금 뼈대. Free node/session limit + Pro mode. 모든 과금 UX 주석 Lock. Dev 강제 Pro |
+| `src/core/WebviewInterceptor.ts` | **Orphaned** | (Ghost Protocol) Point 1&7 웹뷰 입출력 요격. HTML setter 후킹 + CDP Fallback. 857라인 완전 구현, v0.3.10+ 미사용 |
+| `src/core/CommandInterceptor.ts` | **Orphaned** | (Wildcard) `antigravity.*`/`gemini.*` 전수 요격 + 재귀 인자 스캐너. v0.3.10에서 `activate()` 비활성화 |
+| `src/core/CDPManager.ts` | **Orphaned** | (Ghost Protocol) Chrome DevTools Protocol 브릿지. Runtime.evaluate JS 주입 + acquireVsCodeApi 후킹. 350+라인 완전 구현 |
+| `src/core/DirectChatScraper.ts` | **Orphaned** | 채팅 UI 하드카피 스크래퍼. 포커스 9단계 Fallback + 클립보드 백업/화자파싱. v0.2.41 PbExtractor로 교체 |
+| `src/core/ArchitectureDSL.ts` | **Orphaned** | YAML 5-Line DSL → 그래프 변환 파서. v0.2.18.1 완성, 파일 스캐닝 방식으로 대체 |
+| `src/analysis/hintEngine.ts` | Active | 실시간 아키텍처 분석 및 진단 힌트(R1~R5 경고) 캔버스 제공 |
+| `src/bootstrap/BootstrapEngine.ts` | Active | 초기 로드 시 디렉터리 스캔 → 아키텍처 그래프 자동 구성 |
+| `src/rust_checker/` | Active | Rust 프로젝트 소스 구조 분석 및 종속성 추출 |
+| `src/explorer/ArchitectureExplorer.ts` | Active | 아키텍처 탐색기 (트리/그래프 뷰 전환) |
+| `src/server/server.ts` | Active | LSP 서버 메인 프로세스 |
+| `src/server/standalone.ts` | Active | LSP 독립 실행 모드 |
+| `src/utils/ChatExtractor.ts` | Active | 채팅 데이터 추출 유틸리티 |
+| `src/utils/Logger.ts` | Active | 시스템 전역 로깅 유틸리티 |
+| `src/utils/exclusionRules.ts` | Active | 제외 규칙 정규식 관리 |
+| `src/utils/visualHints.ts` | Active | 시각 힌트(배지, 컬러) 유틸리티 |
+| `src/webview/CanvasPanel.ts` | Active | 웹뷰 캔버스 패널 (HTML/CSS/JS 로드 및 생명주기) |
+| `tools/*` | 유지 | 성능 벤치마킹, 규격 파일 생성, 진단 로그 분석용 보조 스크립트 |
 
 ### 📄 소스파일 성능 최적화 이전 원본 상태 (Pre-Optimization Sources)
 

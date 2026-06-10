@@ -2,7 +2,7 @@
     "name": "synapse-visual-architecture",
     "displayName": "SYNAPSE - Visual Architecture Engine",
     "description": "Visual architecture control engine for code outer-space visualization and design",
-    "version": "0.3.29",
+    "version": "0.3.30",
     "publisher": "synapse-team",
     "repository": {
         "type": "git",
@@ -176,7 +176,10 @@
         "testEnvironment": "node",
         "testMatch": [
             "**/src/test/**/*.test.ts"
-        ]
+        ],
+        "moduleNameMapper": {
+            "vscode": "<rootDir>/src/test/__mocks__/vscode.ts"
+        }
     },
     "devDependencies": {
         "@types/jest": "^30.0.0",

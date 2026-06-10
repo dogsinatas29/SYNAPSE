@@ -41,6 +41,9 @@ import { RuleEngine } from './core/RuleEngine';
 import { graphModel } from './core/GraphModel';
 import { BlacklistOrchestrator } from './core/BlacklistOrchestrator';
 import { snapshotSystem } from './core/SnapshotSystem';
+import { ProjectMetadata } from './core/ProjectMetadata';
+import { SymbolIndex } from './core/SymbolIndex';
+import { RuntimeInitializer } from './core/collaboration/RuntimeInitializer';
 
 export async function activate(context: vscode.ExtensionContext) {
     Logger.initialize(context);
@@ -54,6 +57,20 @@ export async function activate(context: vscode.ExtensionContext) {
 
         // [v0.2.44] Activation Hoisting: Initialize logging infrastructure FIRST
         const projectRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
+
+        // [v0.3.30] Phase 1: Initialize ProjectMetadata and SymbolIndex
+        const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+        if (workspaceFolder) {
+            const meta = ProjectMetadata.getInstance();
+            meta.initialize(workspaceFolder.uri.fsPath, workspaceFolder.name);
+            const metaSchema = meta.loadSync();
+            Logger.info(`[v0.3.30] Project boundary established: ${metaSchema.projectName} (${metaSchema.projectUUID})`);
+            SymbolIndex.getInstance().initialize(workspaceFolder.name, workspaceFolder.uri.fsPath);
+            Logger.info(`[v0.3.30] SymbolIndex initialized for: ${workspaceFolder.name}`);
+            RuntimeInitializer.getInstance().initialize(workspaceFolder.uri.fsPath, workspaceFolder.name)
+                .then(state => Logger.info(`[v0.3.30] Runtime state: ${state}`))
+                .catch(e => Logger.error(`[v0.3.30] Runtime init failed: ${e}`));
+        }
 
         const chatAdapter = ChatExtractor.initialize(context);
         chatAdapter.start((msg) => {

@@ -1377,9 +1377,10 @@ class CanvasEngine {
                 if (labelInput && typeInput) {
                     const label = labelInput.value;
                     const type = typeInput.value;
+                    const pathInput = document.getElementById('node-path-input');
 
                     if (label) {
-                        this.createManualNode(label, type, this.pendingNodePos.x, this.pendingNodePos.y);
+                        this.createManualNode(label, type, this.pendingNodePos.x, this.pendingNodePos.y, pathInput?.value || '');
 
                         // Reset and hide
                         labelInput.value = '';
@@ -1543,7 +1544,7 @@ class CanvasEngine {
         }
     }
 
-    createManualNode(label, type, x, y) {
+    createManualNode(label, type, x, y, path = '') {
         // [v0.2.20 Fix] Place manual nodes securely in the Buffer Cluster physical area
         const bufferBaseX = -1100;
         const bufferBaseY = 1000;
@@ -1559,18 +1560,18 @@ class CanvasEngine {
         const newNode = {
             id: `node_manual_${Date.now()}`,
             type: type,
-            status: 'active', // Manually added nodes are already approved
+            status: 'active',
             position: { x: targetX, y: targetY },
             data: {
                 label: label,
                 description: 'Manually created node',
-                cluster_id: 'sys_cluster_buffer', // Assign to Buffer Cluster
-                priority_cluster: 'sys_cluster_buffer' // [v0.2.19] Lock prevent unassignment if dragged out
+                cluster_id: 'sys_cluster_buffer',
+                priority_cluster: 'sys_cluster_buffer'
             },
-            cluster_id: 'sys_cluster_buffer', // Backend compat
-
+            cluster_id: 'sys_cluster_buffer',
+            filePath: path,
             visual: {
-                opacity: 1 // Make it fully visible immediately
+                opacity: 1
             }
         };
         if (this.isEditMode) {
@@ -1589,7 +1590,8 @@ class CanvasEngine {
         if (typeof vscode !== 'undefined') {
             vscode.postMessage({
                 command: 'createManualNode',
-                node: newNode
+                node: newNode,
+                filePath: path
             });
         }
 
@@ -1633,7 +1635,8 @@ class CanvasEngine {
 
         // [v0.3.24 Fix] 레이아웃 붕괴 방지: clientHeight가 0인 초기 로딩 시 윈도우 크기 참조
         if (width === 0) width = window.innerWidth;
-        if (height === 0) height = window.innerHeight - 100; // 헤더/툴바 여백 제외 대략값
+        if (height === 0) height = window.innerHeight - 100;
+        height = Math.max(height, 400);
 
         const targetWidth = Math.floor(width * dpr);
         const targetHeight = Math.floor(height * dpr);
@@ -1642,9 +1645,10 @@ class CanvasEngine {
             // [v0.2.24] Resize Debounce
             if (this._resizeTimeout) clearTimeout(this._resizeTimeout);
             const updateBuffer = () => {
-                // Resolution only, CSS handles display size (100%/100%)
                 this.canvas.width = targetWidth;
                 this.canvas.height = targetHeight;
+                this.canvas.style.width = `${width}px`;
+                this.canvas.style.height = `${height}px`;
 
                 if (this.webglEnabled && this.webglRenderer) {
                     this.webglRenderer.handleResize();

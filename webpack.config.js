@@ -2,27 +2,17 @@ const path = require('path');
 const webpack = require('webpack');
 const { LimitChunkCountPlugin } = require('webpack').optimize;
 
-module.exports = {
-    mode: 'production', // "production" | "development" | "none"
-    target: 'node', // extensions run in a node context
-    entry: {
-        extension: './src/extension.ts',
-        'server/server': './src/server/server.ts'
-    },
+const common = {
+    mode: 'production',
+    target: 'node',
     output: {
-        // the bundle is stored in the 'dist' folder (check package.json), 
         path: path.resolve(__dirname, 'dist'),
         filename: '[name].js',
         libraryTarget: 'commonjs',
         devtoolModuleFilenameTemplate: '../[resource-path]'
     },
     devtool: 'source-map',
-    externals: {
-        vscode: 'commonjs vscode', // the vscode-module is created on-the-fly and must be excluded.
-        sqlite3: 'commonjs sqlite3',
-    },
     resolve: {
-        // support reading TypeScript and JavaScript files, 
         extensions: ['.ts', '.js']
     },
     module: {
@@ -30,17 +20,43 @@ module.exports = {
             {
                 test: /\.ts$/,
                 exclude: /node_modules/,
-                use: [
-                    {
-                        loader: 'ts-loader'
-                    }
-                ]
+                use: [{ loader: 'ts-loader' }]
             }
         ]
     },
-    plugins: [
-        new LimitChunkCountPlugin({
-            maxChunks: 1, // disable code splitting
-        }),
-    ]
 };
+
+module.exports = [
+    {
+        ...common,
+        entry: {
+            extension: './src/extension.ts',
+            'server/server': './src/server/server.ts'
+        },
+        externals: {
+            vscode: 'commonjs vscode',
+            sqlite3: 'commonjs sqlite3',
+        },
+        plugins: [
+            new LimitChunkCountPlugin({ maxChunks: 1 }),
+        ]
+    },
+    {
+        ...common,
+        entry: {
+            'server/standalone': './src/server/standalone.ts'
+        },
+        externals: {
+            sqlite3: 'commonjs sqlite3',
+        },
+        resolve: {
+            ...common.resolve,
+            alias: {
+                vscode: path.resolve(__dirname, 'src/server/vscode.ts')
+            }
+        },
+        plugins: [
+            new LimitChunkCountPlugin({ maxChunks: 1 }),
+        ]
+    }
+];

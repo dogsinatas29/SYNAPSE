@@ -1130,7 +1130,7 @@
                 style="width:100%; padding:8px; background:#1d2021; border:1px solid #504945; color:var(--fg-main); border-radius:4px;"
                 placeholder="Node Name">
         </div>
-        <div style="margin-bottom:20px;">
+        <div style="margin-bottom:15px;">
             <label style="display:block; margin-bottom:5px; color:var(--fg-dim); font-size:12px;">Type</label>
             <select id="node-type-input"
                 style="width:100%; padding:8px; background:#1d2021; border:1px solid #504945; color:var(--fg-main); border-radius:4px;">
@@ -1141,6 +1141,12 @@
                 <option value="config">Config</option>
                 <option value="documentation">Documentation</option>
             </select>
+        </div>
+        <div style="margin-bottom:20px;">
+            <label style="display:block; margin-bottom:5px; color:var(--fg-dim); font-size:12px;">Path (optional)</label>
+            <input type="text" id="node-path-input"
+                style="width:100%; padding:8px; background:#1d2021; border:1px solid #504945; color:var(--fg-main); border-radius:4px; font-family:monospace;"
+                placeholder="src/utils/">
         </div>
         <div style="display:flex; justify-content:flex-end; gap:10px;">
             <button id="btn-cancel-node" class="btn">Cancel</button>

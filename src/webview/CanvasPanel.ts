@@ -19,6 +19,8 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
+import * as cp from 'child_process';
+import * as http from 'http';
 import { Node, Edge, ProjectState, EdgeType, NodeType } from '../types/schema';
 import { FileScanner } from '../core/FileScanner';
 import { LogicAnalyzer } from '../core/LogicAnalyzer';
@@ -93,6 +95,14 @@ export class CanvasPanel {
     private _contextRequestCallback: ((data: any) => void) | undefined;
     private _isProcessingConfirm: boolean = false; // [v0.2.17 Patch 13.2] Prevent duplicate dialogs
     private _taskQueue = new SequentialTaskQueue();
+
+    // [v0.3.30] Collaboration Server Process
+    private _serverProcess: cp.ChildProcess | null = null;
+    private _externalServer: boolean = false;
+
+    // [v0.3.30] Connection info for account management
+    private _connHost: string = 'localhost';
+    private _connPort: number = 3000;
 
 
     public static createOrShow(context: vscode.ExtensionContext, workspaceFolder: vscode.WorkspaceFolder) {
@@ -295,66 +305,69 @@ export class CanvasPanel {
                 try {
                     const workspaceFolder = this._workspaceFolder;
                     if (!workspaceFolder) return;
-                    
-                    // [Phase 2: Intent Validation] - Direct hit on nested label structure
+
                     const nodeFromMessage = message.node || message.data || message.payload || {};
                     const nodeData = nodeFromMessage.data || {};
                     const nodeLabel = nodeData.label || nodeFromMessage.label || message.label || (message.data && message.data.label);
-                    
+                    const manualPath = message.filePath || nodeFromMessage.filePath || '';
+
                     const nodeId = nodeFromMessage.id || message.nodeId || `node_manual_${Date.now()}`;
-                    
+
                     if (!nodeLabel) {
-                        Logger.error(`[v0.3.10-LOCK] ERR: Label missing in intent. Raw: ${JSON.stringify(message)}`);
+                        Logger.error(`[v0.3.29] ERR: Label missing in intent. Raw: ${JSON.stringify(message)}`);
                         return;
                     }
-                    Logger.info(`[v0.3.10-LOCK] Validated Intent for Label: ${nodeLabel} (ID: ${nodeId})`);
+                    Logger.info(`[v0.3.29] Validated Intent for Label: ${nodeLabel} (ID: ${nodeId})`);
 
                     let fileName = nodeLabel;
                     if (!fileName.includes('.')) fileName = `${nodeLabel}.py`;
 
-                    const fileUri = vscode.Uri.joinPath(workspaceFolder.uri, fileName);
+                    let fileUri: vscode.Uri;
+                    if (manualPath) {
+                        const relPath = path.posix.join(manualPath.replace(/\\/g, '/'), fileName);
+                        fileUri = vscode.Uri.joinPath(workspaceFolder.uri, relPath);
+
+                        // 🛡️ Security: reject paths escaping workspace root
+                        const root = path.resolve(workspaceFolder.uri.fsPath);
+                        const resolved = path.resolve(fileUri.fsPath);
+                        if (!resolved.startsWith(root + path.sep) && resolved !== root) {
+                            throw new Error(`Path escapes workspace root: ${manualPath}`);
+                        }
+
+                        const dirUri = vscode.Uri.joinPath(fileUri, '..');
+                        await vscode.workspace.fs.createDirectory(dirUri);
+                    } else {
+                        fileUri = vscode.Uri.joinPath(workspaceFolder.uri, fileName);
+                    }
                     const filePath = fileUri.fsPath;
 
-                    // [Phase 6: Reality-First Write]
-                    try {
-                        const content = Buffer.from('# [SYNAPSE] Atomic Logic Entry\n', 'utf8');
-                        await vscode.workspace.fs.writeFile(fileUri, content);
-                        
-                        // [v0.3.10-LOCK] Reality Verification
-                        await vscode.workspace.fs.stat(fileUri);
-                        
-                        // [Phase 10: Host Pressure] Force VS Code to recognize the new reality
-                        await vscode.commands.executeCommand('workbench.action.files.saveAll');
-                        
-                        Logger.info(`[v0.3.10-LOCK] ID: ${nodeLabel}, Path: ${filePath}, Status: ACTIVE`);
-                    } catch (fsErr) {
-                        vscode.window.showErrorMessage(`[v0.3.10-LOCK] 물리 파일 생성 거부: ${fsErr}`);
-                        return;
-                    }
+                    const content = Buffer.from('# [SYNAPSE] Atomic Logic Entry\n', 'utf8');
+                    await vscode.workspace.fs.writeFile(fileUri, content);
+                    await vscode.workspace.fs.stat(fileUri);
+                    await vscode.commands.executeCommand('workbench.action.files.saveAll');
 
-                    // [Phase 3: Spatial Lock]
-                    const forcePosX = 100; 
-                    const forcePosY = 200; 
-                    
-                    // [v0.3.10-LOCK] Partial Confirmation Only: DO NOT RE-SEND FULL STATE
+                    Logger.info(`[v0.3.29] ID: ${nodeLabel}, Path: ${filePath}, Status: ACTIVE`);
+
+                    const relFilePath = vscode.workspace.asRelativePath(fileUri, false);
+
                     this._panel.webview.postMessage({
                         command: 'updateNode',
-                        data: { 
+                        data: {
                             id: nodeId,
                             updates: {
                                 label: nodeLabel,
-                                name: nodeLabel, // [v0.3.11] 호환성 필드 추가
-                                text: nodeLabel, // [v0.3.11] 호환성 필드 추가
-                                file: filePath, 
-                                status: 'solid', 
+                                name: nodeLabel,
+                                text: nodeLabel,
+                                file: relFilePath,
+                                status: 'solid',
                                 cluster_id: 'sys_cluster_buffer',
-                                layer: 'user', 
-                                x: forcePosX,
-                                y: forcePosY,
+                                layer: 'user',
+                                x: 100,
+                                y: 200,
                                 data: {
                                     label: nodeLabel,
                                     name: nodeLabel,
-                                    file: filePath, 
+                                    file: relFilePath,
                                     status: 'solid',
                                     cluster_id: 'sys_cluster_buffer',
                                     priority_cluster: 'sys_cluster_buffer',
@@ -364,9 +377,10 @@ export class CanvasPanel {
                         }
                     });
 
-                    Logger.info(`[v0.3.10-LOCK] Confirmation dispatched for ID: ${nodeId} at (${forcePosX}, ${forcePosY})`);
-                } catch (e) {
-                    Logger.error(`[v0.3.10-LOCK] CRITICAL_FAIL: ${e}`);
+                    Logger.info(`[v0.3.29] Confirmation dispatched for ID: ${nodeId} at (100, 200)`);
+                } catch (e: any) {
+                    vscode.window.showErrorMessage(`[v0.3.29] Node creation failed: ${e.message || e}`);
+                    Logger.error(`[v0.3.29] CRITICAL_FAIL: ${e}`);
                 }
                 return;
             case 'requestSnapshot':
@@ -440,6 +454,46 @@ export class CanvasPanel {
                 } else {
                     Logger.info(`[WebView] ${message.text}`);
                 }
+                return;
+            case 'startServer':
+                this.handleStartServer();
+                return;
+            case 'stopServer':
+                this.handleStopServer();
+                return;
+            case 'login':
+                this.handleLogin(message.host, message.port, message.username, message.password);
+                return;
+            case 'harvest':
+                this.handleHarvest(message.submissionId, message.projectUUID, message.filePaths);
+                return;
+            case 'createAccount':
+                if (message.host && message.port) {
+                    this._connHost = message.host;
+                    this._connPort = parseInt(message.port, 10);
+                }
+                this.handleCreateAccount(message.username, message.password);
+                return;
+            case 'deleteAccount':
+                if (message.host && message.port) {
+                    this._connHost = message.host;
+                    this._connPort = parseInt(message.port, 10);
+                }
+                this.handleDeleteAccount(message.username);
+                return;
+            case 'loadAccounts':
+                if (message.host && message.port) {
+                    this._connHost = message.host;
+                    this._connPort = parseInt(message.port, 10);
+                }
+                this.handleLoadAccounts();
+                return;
+            case 'changePassword':
+                if (message.host && message.port) {
+                    this._connHost = message.host;
+                    this._connPort = parseInt(message.port, 10);
+                }
+                this.handleChangePassword(message.username, message.newPassword);
                 return;
         }
     }
@@ -745,8 +799,400 @@ export class CanvasPanel {
         }
     }
 
+    // [v0.3.30] Collaboration Server
+    private handleStartServer(): void {
+        if (this._serverProcess && !this._serverProcess.killed) {
+            this._panel.webview.postMessage({ command: 'serverStarted' });
+            return;
+        }
+
+        // 먼저 이미 실행 중인 서버가 있는지 확인
+        const healthCheck = http.get('http://localhost:3000/health', (res) => {
+            let body = '';
+            res.on('data', (chunk) => { body += chunk; });
+            res.on('end', () => {
+                try {
+                    const data = JSON.parse(body);
+                    if (data.status === 'ok') {
+                        Logger.info('[Collaboration Server] Already running on port 3000');
+                        this._externalServer = true;
+                        this._panel.webview.postMessage({ command: 'serverStarted' });
+                        return;
+                    }
+                } catch {}
+                this._startServerProcess();
+            });
+        });
+        healthCheck.on('error', () => {
+            this._startServerProcess();
+        });
+        healthCheck.setTimeout(2000, () => {
+            healthCheck.destroy();
+            this._startServerProcess();
+        });
+    }
+
+    private _startServerProcess(): void {
+        this._externalServer = false;
+        const serverPath = path.join(
+            this._extensionUri.fsPath,
+            'dist',
+            'server',
+            'standalone.js'
+        );
+
+        if (!fs.existsSync(serverPath)) {
+            vscode.window.showErrorMessage(`[SYNAPSE] Server not found: ${serverPath}`);
+            this._panel.webview.postMessage({ command: 'serverError', error: `Server not found: ${serverPath}` });
+            return;
+        }
+
+        this._serverProcess = cp.spawn('node', [serverPath], {
+            cwd: this._extensionUri.fsPath,
+            stdio: ['ignore', 'pipe', 'pipe'],
+        });
+
+        this._serverProcess.stdout?.on('data', (data: Buffer) => {
+            Logger.info(`[Collaboration Server] ${data.toString().trim()}`);
+        });
+
+        this._serverProcess.stderr?.on('data', (data: Buffer) => {
+            const msg = data.toString().trim();
+            Logger.warn(`[Collaboration Server] ${msg}`);
+            if (msg.includes('EADDRINUSE') || msg.includes('already in use') || msg.includes('listen')) {
+                this._panel.webview.postMessage({ command: 'serverError', error: `포트 3000이 이미 사용 중입니다. 기존 서버를 먼저 중지해주세요.` });
+            }
+        });
+
+        this._serverProcess.on('error', (err: Error) => {
+            Logger.error(`[Collaboration Server] Failed to start: ${err.message}`);
+            this._serverProcess = null;
+            this._panel.webview.postMessage({ command: 'serverError', error: err.message });
+        });
+
+        this._serverProcess.on('exit', (code: number | null) => {
+            Logger.info(`[Collaboration Server] exited with code ${code}`);
+            this._serverProcess = null;
+            if (code !== 0 && code !== null) {
+                this._panel.webview.postMessage({ command: 'serverError', error: `서버가 비정상 종료되었습니다 (exit code: ${code})` });
+            } else {
+                this._panel.webview.postMessage({ command: 'serverStopped' });
+            }
+        });
+
+        this._panel.webview.postMessage({ command: 'serverStarted' });
+    }
+
+    private handleStopServer(): void {
+        if (this._serverProcess && !this._serverProcess.killed) {
+            this._serverProcess.kill('SIGTERM');
+            return;
+        }
+        if (this._externalServer) {
+            this._externalServer = false;
+            cp.exec('pkill -f "standalone.js"', (err) => {
+                if (err) {
+                    Logger.warn(`[Collaboration Server] pkill failed: ${err.message}`);
+                }
+                // 서버가 실제로 중지될 때까지 폴링
+                let attempts = 0;
+                const poll = setInterval(() => {
+                    attempts++;
+                    const req = http.get('http://localhost:3000/health', (res) => {
+                        res.resume();
+                        if (attempts >= 10) {
+                            clearInterval(poll);
+                            this._panel.webview.postMessage({ command: 'serverStopped' });
+                        }
+                    });
+                    req.on('error', () => {
+                        clearInterval(poll);
+                        this._panel.webview.postMessage({ command: 'serverStopped' });
+                    });
+                    req.setTimeout(1000, () => {
+                        req.destroy();
+                        if (attempts >= 10) {
+                            clearInterval(poll);
+                            this._panel.webview.postMessage({ command: 'serverStopped' });
+                        }
+                    });
+                }, 500);
+            });
+        }
+    }
+
+    private handleLogin(host: string, port: string, username: string, password: string): void {
+        const data = JSON.stringify({ username, password });
+        const options: http.RequestOptions = {
+            hostname: host,
+            port: parseInt(port, 10),
+            path: '/api/auth/login',
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Content-Length': Buffer.byteLength(data),
+            },
+            timeout: 5000,
+        };
+
+        const req = http.request(options, (res) => {
+            let body = '';
+            res.on('data', (chunk) => { body += chunk; });
+            res.on('end', () => {
+                try {
+                    const result = JSON.parse(body);
+                    if (result.success && result.user) {
+                        this._connHost = host;
+                        this._connPort = parseInt(port, 10);
+                        this._panel.webview.postMessage({ command: 'loginResult', success: true, user: result.user });
+                    } else {
+                        this._panel.webview.postMessage({ command: 'loginResult', success: false, error: result.error || 'Login failed' });
+                    }
+                } catch {
+                    this._panel.webview.postMessage({ command: 'loginResult', success: false, error: 'Invalid response from server' });
+                }
+            });
+        });
+
+        req.on('error', (err) => {
+            this._panel.webview.postMessage({ command: 'loginResult', success: false, error: err.message });
+        });
+
+        req.on('timeout', () => {
+            req.destroy();
+            this._panel.webview.postMessage({ command: 'loginResult', success: false, error: 'Connection timeout' });
+        });
+
+        req.write(data);
+        req.end();
+    }
+
+    private handleHarvest(submissionId: string, projectUUID: string, filePaths: string[]): void {
+        const data = JSON.stringify({ submissionId, projectUUID, filePaths });
+        const options: http.RequestOptions = {
+            hostname: this._connHost,
+            port: this._connPort,
+            path: '/api/collab/harvest',
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Content-Length': Buffer.byteLength(data),
+            },
+            timeout: 30000,
+        };
+
+        const req = http.request(options, (res) => {
+            let body = '';
+            res.on('data', (chunk) => { body += chunk; });
+            res.on('end', () => {
+                try {
+                    const result = JSON.parse(body);
+                    this._panel.webview.postMessage({
+                        command: 'harvestResult',
+                        success: result.success,
+                        result: result.result,
+                        error: result.error,
+                    });
+                } catch {
+                    this._panel.webview.postMessage({
+                        command: 'harvestResult',
+                        success: false,
+                        error: 'Invalid response from server',
+                    });
+                }
+            });
+        });
+
+        req.on('error', (err) => {
+            this._panel.webview.postMessage({ command: 'harvestResult', success: false, error: err.message });
+        });
+
+        req.on('timeout', () => {
+            req.destroy();
+            this._panel.webview.postMessage({ command: 'harvestResult', success: false, error: 'Connection timeout' });
+        });
+
+        req.write(data);
+        req.end();
+    }
+
+    private handleCreateAccount(username: string, password: string): void {
+        const data = JSON.stringify({ username, password });
+        const options: http.RequestOptions = {
+            hostname: this._connHost,
+            port: this._connPort,
+            path: '/api/admin/create-account',
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Content-Length': Buffer.byteLength(data),
+            },
+            timeout: 5000,
+        };
+
+        const req = http.request(options, (res) => {
+            let body = '';
+            res.on('data', (chunk) => { body += chunk; });
+            res.on('end', () => {
+                try {
+                    const result = JSON.parse(body);
+                    this._panel.webview.postMessage({
+                        command: 'createAccountResult',
+                        success: result.success,
+                        username,
+                        error: result.error,
+                    });
+                } catch {
+                    this._panel.webview.postMessage({ command: 'createAccountResult', success: false, username, error: 'Invalid response' });
+                }
+            });
+        });
+
+        req.on('error', (err) => {
+            this._panel.webview.postMessage({ command: 'createAccountResult', success: false, username, error: err.message });
+        });
+
+        req.on('timeout', () => {
+            req.destroy();
+            this._panel.webview.postMessage({ command: 'createAccountResult', success: false, username, error: 'Connection timeout' });
+        });
+
+        req.write(data);
+        req.end();
+    }
+
+    private handleDeleteAccount(username: string): void {
+        const data = JSON.stringify({ username });
+        const options: http.RequestOptions = {
+            hostname: this._connHost,
+            port: this._connPort,
+            path: '/api/admin/delete-account',
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Content-Length': Buffer.byteLength(data),
+            },
+            timeout: 5000,
+        };
+
+        const req = http.request(options, (res) => {
+            let body = '';
+            res.on('data', (chunk) => { body += chunk; });
+            res.on('end', () => {
+                try {
+                    const result = JSON.parse(body);
+                    this._panel.webview.postMessage({
+                        command: 'deleteAccountResult',
+                        success: result.success,
+                        username,
+                        error: result.error,
+                    });
+                } catch {
+                    this._panel.webview.postMessage({ command: 'deleteAccountResult', success: false, username, error: 'Invalid response' });
+                }
+            });
+        });
+
+        req.on('error', (err) => {
+            this._panel.webview.postMessage({ command: 'deleteAccountResult', success: false, username, error: err.message });
+        });
+
+        req.on('timeout', () => {
+            req.destroy();
+            this._panel.webview.postMessage({ command: 'deleteAccountResult', success: false, username, error: 'Connection timeout' });
+        });
+
+        req.write(data);
+        req.end();
+    }
+
+    private handleLoadAccounts(): void {
+        const options: http.RequestOptions = {
+            hostname: this._connHost,
+            port: this._connPort,
+            path: '/api/admin/accounts',
+            method: 'GET',
+            timeout: 5000,
+        };
+
+        const req = http.request(options, (res) => {
+            let body = '';
+            res.on('data', (chunk) => { body += chunk; });
+            res.on('end', () => {
+                try {
+                    const result = JSON.parse(body);
+                    this._panel.webview.postMessage({
+                        command: 'accountListResult',
+                        success: result.success,
+                        accounts: result.accounts || [],
+                    });
+                } catch {
+                    this._panel.webview.postMessage({ command: 'accountListResult', success: false, accounts: [] });
+                }
+            });
+        });
+
+        req.on('error', () => {
+            this._panel.webview.postMessage({ command: 'accountListResult', success: false, accounts: [] });
+        });
+
+        req.end();
+    }
+
+    private handleChangePassword(username: string, newPassword: string): void {
+        const data = JSON.stringify({ username, newPassword });
+        const options: http.RequestOptions = {
+            hostname: this._connHost,
+            port: this._connPort,
+            path: '/api/admin/change-password',
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Content-Length': Buffer.byteLength(data),
+            },
+            timeout: 5000,
+        };
+
+        const req = http.request(options, (res) => {
+            let body = '';
+            res.on('data', (chunk) => { body += chunk; });
+            res.on('end', () => {
+                try {
+                    const result = JSON.parse(body);
+                    this._panel.webview.postMessage({
+                        command: 'changePasswordResult',
+                        success: result.success,
+                        username,
+                        error: result.error,
+                    });
+                } catch {
+                    this._panel.webview.postMessage({ command: 'changePasswordResult', success: false, username, error: 'Invalid response' });
+                }
+            });
+        });
+
+        req.on('error', (err) => {
+            this._panel.webview.postMessage({ command: 'changePasswordResult', success: false, username, error: err.message });
+        });
+
+        req.on('timeout', () => {
+            req.destroy();
+            this._panel.webview.postMessage({ command: 'changePasswordResult', success: false, username, error: 'Connection timeout' });
+        });
+
+        req.write(data);
+        req.end();
+    }
+
     public dispose() {
         CanvasPanel.currentPanel = undefined;
+
+        if (this._serverProcess && !this._serverProcess.killed) {
+            this._serverProcess.kill('SIGTERM');
+            this._serverProcess = null;
+        } else if (this._externalServer) {
+            cp.exec('pkill -f "standalone.js"');
+        }
 
         this._panel.dispose();
 

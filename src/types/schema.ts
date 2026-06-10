@@ -81,12 +81,37 @@ export interface ProjectState {
     system_context?: any;
 }
 
+export interface ProjectMetadata {
+    projectUUID: string;
+    projectName: string;
+    version: string;
+    createdAt: number;
+    updatedAt: number;
+    snapshotCount: number;
+    metadataVersion: number;
+}
+
+export interface SymbolIndexData {
+    projectName: string;
+    projectRoot: string;
+    folderTree: any;
+    fileRegistry: any[];
+    functionCatalog: any[];
+}
+
 export interface GraphSnapshot {
     nodes: Node[];
     edges: Edge[];
     clusters: Cluster[];
     cluster_flows?: ClusterFlow[];
     timestamp: number;
+    snapshotVersion?: number;
+    metadata?: {
+        projectUUID: string;
+        projectName: string;
+        snapshotCount: number;
+    };
+    checksum?: string;
 }
 
 export interface BootstrapResult {
@@ -95,4 +120,39 @@ export interface BootstrapResult {
     initial_nodes?: Node[];
     initial_edges?: Edge[];
     error?: any;
+}
+
+export interface SubmissionFile {
+    filePath: string;
+    content: string;
+    encoding?: string;
+}
+
+export interface SubmissionSnapshot {
+    id: string;
+    projectUUID: string;
+    sessionId: string;
+    clientId: string;
+    files: SubmissionFile[];
+    timestamp: number;
+    immutable: boolean;
+}
+
+export type ReviewStateType = 'pending' | 'review' | 'approved' | 'rejected';
+
+export interface ReviewState {
+    submissionId: string;
+    state: ReviewStateType;
+    leadId: string;
+    reviewedAt: number | null;
+    notes: string;
+    corrections: SubmissionFile[];
+}
+
+export interface RemoteEditAction {
+    filePath: string;
+    originalContent: string;
+    newContent: string;
+    editedBy: string;
+    editedAt: number;
 }

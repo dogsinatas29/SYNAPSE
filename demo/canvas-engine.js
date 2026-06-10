@@ -1377,9 +1377,10 @@ class CanvasEngine {
                 if (labelInput && typeInput) {
                     const label = labelInput.value;
                     const type = typeInput.value;
+                    const pathInput = document.getElementById('node-path-input');
 
                     if (label) {
-                        this.createManualNode(label, type, this.pendingNodePos.x, this.pendingNodePos.y);
+                        this.createManualNode(label, type, this.pendingNodePos.x, this.pendingNodePos.y, pathInput?.value || '');
 
                         // Reset and hide
                         labelInput.value = '';
@@ -1543,7 +1544,7 @@ class CanvasEngine {
         }
     }
 
-    createManualNode(label, type, x, y) {
+    createManualNode(label, type, x, y, path = '') {
         // [v0.2.20 Fix] Place manual nodes securely in the Buffer Cluster physical area
         const bufferBaseX = -1100;
         const bufferBaseY = 1000;
@@ -1559,18 +1560,18 @@ class CanvasEngine {
         const newNode = {
             id: `node_manual_${Date.now()}`,
             type: type,
-            status: 'active', // Manually added nodes are already approved
+            status: 'active',
             position: { x: targetX, y: targetY },
             data: {
                 label: label,
                 description: 'Manually created node',
-                cluster_id: 'sys_cluster_buffer', // Assign to Buffer Cluster
-                priority_cluster: 'sys_cluster_buffer' // [v0.2.19] Lock prevent unassignment if dragged out
+                cluster_id: 'sys_cluster_buffer',
+                priority_cluster: 'sys_cluster_buffer'
             },
-            cluster_id: 'sys_cluster_buffer', // Backend compat
-
+            cluster_id: 'sys_cluster_buffer',
+            filePath: path,
             visual: {
-                opacity: 1 // Make it fully visible immediately
+                opacity: 1
             }
         };
         if (this.isEditMode) {
@@ -1589,7 +1590,8 @@ class CanvasEngine {
         if (typeof vscode !== 'undefined') {
             vscode.postMessage({
                 command: 'createManualNode',
-                node: newNode
+                node: newNode,
+                filePath: path
             });
         }
 
@@ -1628,21 +1630,19 @@ class CanvasEngine {
         if (!container) return;
 
         const dpr = window.devicePixelRatio || 1;
-        const width = container.clientWidth;
+        let width = container.clientWidth;
         let height = container.clientHeight;
 
-        // [FIX v0.3.09] clientHeight가 0이면 강제 최소값 설정
-        // Canvas height가 0이면 렌더링 공간이 없어 모든 노드가 표시 안됨
-        if (height === 0 || height < 100) {
-            height = 400;  // 기본 최소 높이
-            console.warn('[SYNAPSE] Canvas height was 0 or invalid, forcing minimum height: 400px');
-        }
+        // [v0.3.24 Fix] 레이아웃 붕괴 방지: clientHeight가 0인 초기 로딩 시 윈도우 크기 참조
+        if (width === 0) width = window.innerWidth;
+        if (height === 0) height = window.innerHeight - 100;
+        height = Math.max(height, 400);
 
         const targetWidth = Math.floor(width * dpr);
         const targetHeight = Math.floor(height * dpr);
 
         if (this.canvas.width !== targetWidth || this.canvas.height !== targetHeight) {
-            // [v0.2.24] Resize Debounce: Wait for resize to settle before heavy buffer reset
+            // [v0.2.24] Resize Debounce
             if (this._resizeTimeout) clearTimeout(this._resizeTimeout);
             const updateBuffer = () => {
                 this.canvas.width = targetWidth;
@@ -1654,7 +1654,7 @@ class CanvasEngine {
                     this.webglRenderer.handleResize();
                 }
 
-                console.log(`[SYNAPSE] Canvas stabilized (${immediate ? 'Sync' : 'Async'}). Size: ${width}x${height}`);
+                console.log(`[SYNAPSE] Canvas resolution updated (${immediate ? 'Sync' : 'Async'}). Viewport: ${width}x${height}`);
                 this.render();
             };
 
@@ -2312,9 +2312,9 @@ class CanvasEngine {
 
             if (this.isDragging || this.isSelecting || this.isPanning) {
                 // 실제 이동 거리가 짧으면 드래그로 간주하지 않음 (지터 방지)
-                const totalDx = e.offsetX - this.dragStartAbsolute.x;
-                const totalDy = e.offsetY - this.dragStartAbsolute.y;
-                if (Math.abs(totalDx) > 5 || Math.abs(totalDy) > 5) {
+                const totalDx = Math.abs(e.offsetX - this.dragStartAbsolute.x);
+                const totalDy = Math.abs(e.offsetY - this.dragStartAbsolute.y);
+                if (totalDx > 1 || totalDy > 1) {
                     this.wasDragging = true;
                 }
             }
@@ -2426,13 +2426,15 @@ class CanvasEngine {
                 // Saving state triggers a full JSON reload which overwrote Node objects with new ones.
                 // This caused 'selectedNodes' to contain dead references, breaking subsequent drag logic.
             } else if (this.isDragging) {
-                if (this.wasDragging) {
+                const didDrag = this.wasDragging;
+                if (didDrag) {
                     // [v0.3.15] Apply Snap-to-Grid during interaction (Grid Sovereignty)
+                    const GRID = this.GRID_SNAP_SIZE || 20;
                     const draggedNodes = Array.from(this.selectedNodes);
                     draggedNodes.forEach(node => {
                         if (node.position) {
-                            node.position.x = Math.round(node.position.x / this.GRID_SNAP_SIZE) * this.GRID_SNAP_SIZE;
-                            node.position.y = Math.round(node.position.y / this.GRID_SNAP_SIZE) * this.GRID_SNAP_SIZE;
+                            node.position.x = Math.round(node.position.x / GRID) * GRID;
+                            node.position.y = Math.round(node.position.y / GRID) * GRID;
                         }
                     });
 
@@ -2444,13 +2446,12 @@ class CanvasEngine {
                         }
                     }
 
-                    // [v0.3.16 Fix] Scale drag dist by zoom so zooming out (for long edges) doesn't break drag-save
-                    const absDragDist = Math.sqrt(
-                        Math.pow(this.dragStartAbsolute.x - (this.dragStart?.x ?? 0), 2) +
-                        Math.pow(this.dragStartAbsolute.y - (this.dragStart?.y ?? 0), 2)
-                    ) / (this.transform.zoom || 1.0);
+                    // [v0.3.16 Fix] Scale drag dist by zoom so zooming out doesn't break drag-save
+                    const totalDx = e.offsetX - this.dragStartAbsolute.x;
+                    const totalDy = e.offsetY - this.dragStartAbsolute.y;
+                    const absDragDist = Math.sqrt(totalDx * totalDx + totalDy * totalDy) / (this.transform.zoom || 1.0);
 
-                    if (absDragDist > 15 || movedByIntruder) {
+                    if (absDragDist > 5 || movedByIntruder) {
                         this.saveState();
                         if (movedByIntruder) {
                             this.takeSnapshot(`Auto Push (after drag)`);
@@ -2459,6 +2460,7 @@ class CanvasEngine {
                 }
                 this.isDragging = false;
                 this.wasDragging = false;
+                this._lastDragEndTime = Date.now();
                 this.activeNodeId = null;
                 this.dragTarget = null;
                 this.canvas.style.cursor = 'default';
@@ -2470,9 +2472,18 @@ class CanvasEngine {
             // [v0.2.24] End Interaction Lock and apply any deferred updates
             this._isInteracting = false;
             if (this._pendingState) {
-                this.log('[SYNAPSE] Applying deferred projectState after interaction end');
-                this.loadProjectState(this._pendingState, true);
-                this._pendingState = null;
+                // [v0.3.22.11] Protect manual position: 
+                // If we just finished a drag (didDrag=true) OR within 300ms of end, 
+                // discard pending state which is likely stale.
+                const withinDragGrace = (Date.now() - (this._lastDragEndTime || 0)) < 300;
+                if (didDrag || withinDragGrace) {
+                    this.log('[SYNAPSE] Discarding stale pendingState after drag to preserve manual positions');
+                    this._pendingState = null;
+                } else {
+                    this.log('[SYNAPSE] Applying deferred projectState after interaction end');
+                    this.loadProjectState(this._pendingState, true);
+                    this._pendingState = null;
+                }
             }
         });
 
@@ -3752,7 +3763,7 @@ class CanvasEngine {
         // Build cluster-to-layer map for fast lookup
         const clusterLayerMap = new Map();
         (this.clusters || []).forEach(c => {
-            const layer = c.layer || (c.data && c.data.layer) || (c.id.startsWith('sys_') ? 'ai' : (c.id === 'doc_shelf' ? 'doc' : 'user'));
+            const layer = c.layer || (c.data && c.data.layer) || (c.id === 'cluster_ghosts' ? 'external' : c.id.startsWith('sys_') ? 'ai' : (c.id === 'doc_shelf' ? 'doc' : 'user'));
             clusterLayerMap.set(c.id, layer);
         });
 
@@ -4031,6 +4042,7 @@ class CanvasEngine {
         } else {
             this.isAligning = false;
             console.log('[SYNAPSE] Alignment Simulation Settled.');
+            this.resolveClusterOverlaps(); // [v0.3.29] Push apart overlapping clusters after alignment
             this.updateHotspots(); // Final precision update
             return;
         }
@@ -4075,7 +4087,7 @@ class CanvasEngine {
         }
 
         // Relative offsets within a cluster
-        const roleOffsets = { 'Leaf': -600, 'Hub': -200, 'Orchestrator': 200, 'Controller': 600 };
+        const roleOffsets = { 'Leaf': -300, 'Hub': -100, 'Orchestrator': 100, 'Controller': 300 };
 
         // 3. Apply Local Spring Forces
         for (const [cid, clusterRoles] of Object.entries(groups)) {
@@ -4256,7 +4268,7 @@ class CanvasEngine {
         const clusters = this.clusters || [];
         const clusterLayerMap = new Map();
         clusters.forEach(c => {
-            const layer = c.layer || (c.data && c.data.layer) || (c.id.startsWith('sys_') ? 'ai' : (c.id === 'doc_shelf' ? 'doc' : 'user'));
+            const layer = c.layer || (c.data && c.data.layer) || (c.id === 'cluster_ghosts' ? 'external' : c.id.startsWith('sys_') ? 'ai' : (c.id === 'doc_shelf' ? 'doc' : 'user'));
             clusterLayerMap.set(c.id, layer);
         });
 
@@ -4575,9 +4587,24 @@ class CanvasEngine {
 
             // [Fix] Capture manual nodes before overriding this.nodes
             const oldManualNodes = (this.nodes || []).filter(n => n.id.startsWith('node_manual_'));
+            const oldNodes = this.nodes || [];
 
             // [v0.3.16] docShelfNodes are already separated and set in step 1 (line 3652)
             this.nodes = baseState.nodes || [];
+
+            // [v0.3.22.11] Position Persistence Guard:
+            // When preserving view (e.g. incremental update or post-save sync), 
+            // prioritize existing UI coordinates over backend defaults to prevent jumping.
+            if (preserveView && oldNodes.length > 0) {
+                const oldPosMap = new Map(oldNodes.map(n => [n.id, n.position]));
+                this.nodes.forEach(n => {
+                    const oldPos = oldPosMap.get(n.id);
+                    if (oldPos && oldPos.x !== undefined && oldPos.y !== undefined) {
+                        n.position = { x: oldPos.x, y: oldPos.y };
+                    }
+                });
+            }
+
             this.edges = baseState.edges || [];
 
             // [v0.2.18.2] Detect matches between old manual nodes and new solid nodes
@@ -4613,7 +4640,7 @@ class CanvasEngine {
             this.clusters = rawClusters
                 .filter(c => c.id !== 'context_vault' && c.id !== 'doc_shelf')
                 .map(c => {
-                    const layer = c.layer || (c.data && c.data.layer) || (c.id.startsWith('sys_') ? 'ai' : 'user');
+                    const layer = c.layer || (c.data && c.data.layer) || (c.id === 'cluster_ghosts' ? 'external' : c.id.startsWith('sys_') ? 'ai' : 'user');
                     return { ...c, layer };
                 });
 
@@ -4633,6 +4660,15 @@ class CanvasEngine {
 
             // [v0.2.22] System Clusters initialization
             this.getOrCreateSystemClusters();
+
+            // [v0.3.29] Cluster-level push-apart (runs after system clusters are placed, before node overlap resolution)
+            if (!preserveView) {
+                try {
+                    this.resolveClusterOverlaps();
+                } catch (clusterErr) {
+                    this.log('resolveClusterOverlaps failed but continuing', 'error', clusterErr.message);
+                }
+            }
 
             // [v0.2.24 New Rule] Documentation Shelf is collapsed by default
             this.clusters.forEach(cluster => {
@@ -5626,7 +5662,7 @@ class CanvasEngine {
 
                         this.ctx.restore();
 
-                        // [v0.3.28-fix] Reset dirty flags in 2D path — mirrors WebGL path
+                        // [v0.3.28-fix] Reset dirty flags in 2D path — mirrors WebGL path at L5614
                         this.isGraphDataDirty = false;
                         this.isEdgeDirty = false;
                         this.isTextDirty = false;
@@ -5952,6 +5988,7 @@ class CanvasEngine {
     }
 
     saveState() {
+        this._lastSaveTime = Date.now();
         // VS Code 환경이면 저장을 위해 익스텐션으로 메시지 전송
         if (typeof vscode !== 'undefined') {
             const projectState = {
@@ -6525,8 +6562,10 @@ class CanvasEngine {
                 if (cid !== cluster.id || cid === '') return false;
                 // 레이어 가시성 체크: 현재 렌더링되지 않는 노드는 바운드 계산에서 제외
                 const isUserNode = n.layer === 'user' || (n.data && n.data.layer === 'user') || n.status === 'pending';
+                const isExternalNode = n.layer === 'external' || (n.data && n.data.layer === 'external') || n.type === 'external' || n.status === 'ghost';
                 if (isUserNode && !this.showUserLayer) return false;
-                if (!isUserNode && !this.showBaseLayer) return false;
+                if (isExternalNode && !this.showExternalLayer) return false;
+                if (!isUserNode && !isExternalNode && !this.showBaseLayer) return false;
                 return true;
             });
 
@@ -8386,6 +8425,112 @@ class CanvasEngine {
             if (!moved) break;
         }
     }
+
+    // [v0.3.29] Cluster-level overlap resolution (Push-Apart with Mass weighting)
+    resolveClusterOverlaps() {
+        if (!this.clusters || this.clusters.length < 2) return;
+        const PADDING = 40;
+        const ITERATIONS = 3;
+
+        // [v0.3.29 hotfix] Debug: log cluster bounds before resolution
+        const boundsPreview = this.clusters.map(c => {
+            const nodes = this.nodes.filter(n => n.cluster_id === c.id);
+            if (nodes.length === 0) return null;
+            let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+            for (const n of nodes) {
+                minX = Math.min(minX, n.position.x);
+                minY = Math.min(minY, n.position.y);
+                maxX = Math.max(maxX, n.position.x + 120);
+                maxY = Math.max(maxY, n.position.y + 60);
+            }
+            return { id: c.id, label: c.label, bounds: [minX, minY, maxX, maxY], mass: nodes.length };
+        }).filter(Boolean);
+        console.log('[SYNAPSE][resolveClusterOverlaps] Cluster bounds pre:', JSON.stringify(boundsPreview));
+
+        for (let iter = 0; iter < ITERATIONS; iter++) {
+            const bounds = new Map();
+            const centroids = new Map();
+            for (const cluster of this.clusters) {
+                const nodes = this.nodes.filter(n => n.cluster_id === cluster.id);
+                if (nodes.length === 0) continue;
+                let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+                let cx = 0, cy = 0;
+                for (const node of nodes) {
+                    const px = node.position.x;
+                    const py = node.position.y;
+                    minX = Math.min(minX, px);
+                    minY = Math.min(minY, py);
+                    maxX = Math.max(maxX, px + 120);
+                    maxY = Math.max(maxY, py + 60);
+                    cx += px;
+                    cy += py;
+                }
+                bounds.set(cluster.id, {
+                    minX: minX - PADDING, minY: minY - PADDING,
+                    maxX: maxX + PADDING, maxY: maxY + PADDING,
+                    mass: nodes.length + 1
+                });
+                centroids.set(cluster.id, { x: cx / nodes.length, y: cy / nodes.length });
+            }
+
+            const ids = this.clusters.map(c => c.id).filter(id => bounds.has(id));
+            let moved = false;
+
+            for (let i = 0; i < ids.length; i++) {
+                for (let j = i + 1; j < ids.length; j++) {
+                    const idA = ids[i], idB = ids[j];
+                    const bA = bounds.get(idA), bB = bounds.get(idB);
+                    if (!bA || !bB) continue;
+
+                    const overlapX = Math.min(bA.maxX, bB.maxX) - Math.max(bA.minX, bB.minX);
+                    const overlapY = Math.min(bA.maxY, bB.maxY) - Math.max(bA.minY, bB.minY);
+                    if (overlapX <= 0 || overlapY <= 0) continue;
+
+                    moved = true;
+
+                    // Sign Guard: direction from centroid delta
+                    const cA = centroids.get(idA), cB = centroids.get(idB);
+                    let dx = cB.x - cA.x, dy = cB.y - cA.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+
+                    // Zero-Divide Guard: identical centroids → force X-axis
+                    if (dist < 0.001) { dx = 1; dy = 0; }
+
+                    const totalMass = bA.mass + bB.mass;
+                    const pushA = bB.mass / totalMass; // lighter = pushed more
+                    const pushB = bA.mass / totalMass;
+
+                    let pushX = 0, pushY = 0;
+                    if (overlapX < overlapY) { pushX = overlapX + 4; }
+                    else { pushY = overlapY + 4; }
+
+                    const sX = dx >= 0 ? 1 : -1;
+                    const sY = dy >= 0 ? 1 : -1;
+
+                    const aNodes = this.nodes.filter(n => n.cluster_id === idA);
+                    const bNodes = this.nodes.filter(n => n.cluster_id === idB);
+
+                    for (const node of aNodes) {
+                        node.position.x -= pushX * pushA * sX;
+                        node.position.y -= pushY * pushA * sY;
+                    }
+                    for (const node of bNodes) {
+                        node.position.x += pushX * pushB * sX;
+                        node.position.y += pushY * pushB * sY;
+                    }
+
+                    // Shift Guard: update bounds in-place for next pair checks
+                    const saX = pushX * pushA * sX, saY = pushY * pushA * sY;
+                    const sbX = pushX * pushB * sX, sbY = pushY * pushB * sY;
+                    bA.minX -= saX; bA.maxX -= saX;
+                    bA.minY -= saY; bA.maxY -= saY;
+                    bB.minX += sbX; bB.maxX += sbX;
+                    bB.minY += sbY; bB.maxY += sbY;
+                }
+            }
+            if (!moved) break;
+        }
+    }
 }
 
 // 초기화
@@ -8450,7 +8595,13 @@ function initCanvas() {
                     engine._pendingState = message.data;
                     return;
                 }
-                const preserve = !message.forceReset && engine.nodes && engine.nodes.length > 0;
+                
+                // [v0.3.22.11] Race Condition Protection: 
+                // If a save happened very recently (within 500ms), we assume any incoming 
+                // non-authoritative state might be a stale result from a scan that started before the save.
+                const isFreshSaveResponse = (Date.now() - (engine._lastSaveTime || 0)) < 500;
+                const preserve = isFreshSaveResponse || (!message.forceReset && engine.nodes && engine.nodes.length > 0);
+                
                 engine.loadProjectState(message.data, preserve);
                 engine.updateNodeStats(); // [v0.3.22.9] Force stats update for tooltips
                 engine.isExpectingUpdate = false;

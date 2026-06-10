@@ -50,6 +50,12 @@ function runBuild() {
 
         console.log(`[Build Guard] Policy checks passed for ${currentVersion}. Starting compilation...`);
 
+        // Canvas Engine 동기화: ui/ → demo/
+        const srcCanvas = path.join(projectRoot, 'ui', 'canvas-engine.js');
+        const dstCanvas = path.join(projectRoot, 'demo', 'canvas-engine.js');
+        fs.copyFileSync(srcCanvas, dstCanvas);
+        console.log(`[Build Guard] Synced canvas-engine.js: ui/ → demo/`);
+
         // Compile
         execSync('npm run compile', { stdio: 'inherit', cwd: projectRoot });
 

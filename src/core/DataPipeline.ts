@@ -4,12 +4,16 @@ import { phaseManager, Phase } from './PhaseManager';
 import { graphModel, Node, Edge, Cluster, NodeType, EdgeType, GraphModel } from './GraphModel';
 import { canvasEngine } from './canvas-engine/CanvasEngine';
 import { RuleEngine } from './RuleEngine';
+import { SymbolIndex } from './SymbolIndex';
+import { ProjectMetadata } from './ProjectMetadata';
 
 /**
- * 🌊 SYNAPSE Data Pipeline (v0.3.1)
+ * 🌊 SYNAPSE Data Pipeline (v0.3.30)
  * 
  * 코드 또는 CDP 데이터를 그래프 형태의 Node와 Edge로 변환한다.
  * Phase 0 (DATA) 및 Phase 1 (GRAPH) 담당.
+ * 
+ * [v0.3.30] SymbolIndex population integrated. Security boundary enforced via ProjectMetadata.
  */
 
 export interface PipelineResult {
@@ -27,6 +31,17 @@ export class DataPipeline {
    */
   public processFiles(files: string[], projectRoot?: string): PipelineResult {
     try {
+      // [v0.3.30] Security: validate all files are within project boundary
+      if (projectRoot) {
+        const meta = ProjectMetadata.getInstance();
+        for (const file of files) {
+          const absPath = path.isAbsolute(file) ? file : path.join(projectRoot, file);
+          if (!meta.validatePath(absPath)) {
+            throw new Error(`[v0.3.30] Security: File outside project boundary: ${file}`);
+          }
+        }
+      }
+
       // 1. DATA 수집 시작 (Phase 0)
       phaseManager.assertPhase(Phase.DATA);
       console.log(`[SYNAPSE] Processing ${files.length} files... Root: ${projectRoot || 'CWD'}`);
@@ -36,6 +51,22 @@ export class DataPipeline {
         const absolutePath = projectRoot ? (path.isAbsolute(file) ? file : path.join(projectRoot, file)) : file;
         const summary = this.scanner.scanFile(absolutePath);
         summaries.push({ filePath: file, summary });
+      }
+
+      // [v0.3.30] Populate SymbolIndex
+      if (projectRoot) {
+        const symbolIndex = SymbolIndex.getInstance();
+        try { symbolIndex.initialize(path.basename(projectRoot), projectRoot); } catch {}
+        const absoluteFiles = files.map(f => projectRoot ? (path.isAbsolute(f) ? f : path.join(projectRoot, f)) : f);
+        symbolIndex.rebuildFromFiles(absoluteFiles);
+        for (const item of summaries) {
+          for (const fn of item.summary.functions) {
+            const fnName = typeof fn === 'string' ? fn : (fn as any).name || '';
+            const clsName = typeof fn === 'string' ? null : ((fn as any).className || null);
+            const line = typeof fn === 'string' ? 0 : ((fn as any).line || 0);
+            if (fnName) symbolIndex.addFunction(item.filePath, fnName, clsName, line);
+          }
+        }
       }
 
       // DATA 수집 완료 -> Phase 전이

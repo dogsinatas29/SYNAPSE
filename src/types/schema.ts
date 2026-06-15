@@ -21,6 +21,7 @@ export interface Node {
     data?: any;
     intelligence?: any;
     visual?: any;
+    clientLayer?: string;
     [key: string]: any;
 }
 
@@ -52,6 +53,7 @@ export interface Cluster {
     representative_edge?: any;
     nodes?: any;
     data?: any;
+    clientLayer?: string;
     [key: string]: any;
 }
 
@@ -133,6 +135,7 @@ export interface SubmissionSnapshot {
     projectUUID: string;
     sessionId: string;
     clientId: string;
+    clientUsername?: string;
     files: SubmissionFile[];
     timestamp: number;
     immutable: boolean;

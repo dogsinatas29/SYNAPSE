@@ -84,10 +84,6 @@ export class SessionManager {
         this.validateJoin(session, userId);
 
         const identityManager = IdentityManager.getInstance();
-        if (!identityManager.hasPermission(session.projectUUID, userId, Permission.JoinSession)) {
-            throw new Error(`[v0.3.30] Permission denied: ${userId} cannot join sessions`);
-        }
-
         if (!identityManager.hasPermission(session.projectUUID, session.leadId, Permission.ApproveJoin)) {
             throw new Error(`[v0.3.30] Lead lacks approval permission`);
         }
@@ -117,11 +113,6 @@ export class SessionManager {
     leaveSession(sessionId: string, userId: string): CollaborationSession {
         const session = this.getSession(sessionId);
         if (!session) throw new Error(`[v0.3.30] Session not found: ${sessionId}`);
-
-        const identityManager = IdentityManager.getInstance();
-        if (!identityManager.hasPermission(session.projectUUID, userId, Permission.LeaveSession)) {
-            throw new Error(`[v0.3.30] Permission denied: ${userId} cannot leave`);
-        }
 
         if (userId === session.leadId) {
             throw new Error(`[v0.3.30] Lead cannot leave. Close session instead.`);

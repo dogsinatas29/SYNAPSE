@@ -156,6 +156,138 @@ Path: ~/언어_프로젝트/프로젝트명/mile_stone/v[버전명].md
 - 성능 병목 예상 지점 및 디버깅 포인트 
 ## 📝 Post-Work Log (작업 후 기록) - *작업 중 추가된 요소 및 릴리즈 노트 기반의 최종 결과물 기록*
 
+
+# Persistence Philosophy
+
+## File System First
+
+SYNAPSE는 Database 중심 시스템이 아니다.
+
+SYNAPSE의 Source Of Truth는 파일 시스템이다.
+
+예:
+
+Master Layer
+
+Submission Snapshot
+
+Harvest Report
+
+Project Files
+
+모두 파일로 존재한다.
+
+---
+
+## Database Free Principle
+
+v0.3.x 기준으로 DB는 도입하지 않는다.
+
+사용하지 않는 대상:
+
+* SQLite
+* PostgreSQL
+* MySQL
+* MongoDB
+* Redis
+
+---
+
+## Persistence Strategy
+
+모든 상태는 파일로 저장한다.
+
+예:
+
+.synapse/
+
+├── submissions/
+├── reports/
+├── snapshots/
+└── accounts/
+
+---
+
+## Graph Model
+
+SYNAPSE의 실질적인 데이터 모델은 DB가 아니라 그래프이다.
+
+예:
+
+Node
+
+* Task
+* Layer
+* File
+* Submission
+
+Edge
+
+* DependsOn
+* Owns
+* Modifies
+* Harvests
+
+---
+
+## Canvas First
+
+SYNAPSE의 주 UI는 VSCode Canvas이다.
+
+상태 조회는 DB Query가 아니라 그래프 탐색으로 수행한다.
+
+---
+
+## Scale Assumption
+
+목표:
+
+10명 이하
+
+권장 최대:
+
+20명 이하
+
+---
+
+## Node Scale
+
+SYNAPSE는 사용자 수보다 그래프 규모를 우선 고려한다.
+
+예상:
+
+1,000 Nodes
+
+5,000 Nodes
+
+10,000 Nodes
+
+규모는 충분히 허용 가능하다.
+
+---
+
+## Non Goal
+
+수백 명 동시 접속
+
+수천 명 동시 접속
+
+분산 DB
+
+샤딩
+
+클러스터링
+
+은 목표가 아니다.
+
+---
+
+## Final Definition
+
+SYNAPSE는 Database 기반 협업 시스템이 아니다.
+
+SYNAPSE는 파일 시스템과 그래프를 Source Of Truth로 사용하는 협업 시스템이다.
+
 ## ROOT Structure
 프로젝트 주요 디렉터리 구조 및 소스코드 현황입니다. (Active/Orphaned/Legacy 상태 포함, 마일스톤/릴리즈 노트 제외)
 
@@ -168,6 +300,13 @@ Path: ~/언어_프로젝트/프로젝트명/mile_stone/v[버전명].md
 ├── build-guard.js
 ├── RULES.md
 ├── synapse.config.json
+├── .synapseignore
+├── .vscodeignore
+├── .github/
+├── .vscode/
+├── .backup/
+├── scripts/
+│   └── create-account.js
 ├── ui/
 │   ├── index.html
 │   ├── synapse-theme.js
@@ -178,7 +317,9 @@ Path: ~/언어_프로젝트/프로젝트명/mile_stone/v[버전명].md
 │   ├── index.html
 │   ├── synapse-theme.js
 │   ├── canvas-engine.js
-│   └── webgl-renderer.js
+│   ├── webgl-renderer.js
+│   ├── engine-core.js
+│   └── data/
 ├── assets/
 ├── backup_md/
 ├── context/
@@ -213,7 +354,7 @@ Path: ~/언어_프로젝트/프로젝트명/mile_stone/v[버전명].md
 │   │   ├── projection/
 │   │   │   ├── ProjectionLayer.ts
 │   │   │   └── RuleStore.ts
-│   │   ├── collaboration/          ← v0.3.30 신규
+│   │   ├── collaboration/          ← 🔵 Active (v0.3.30+)
 │   │   │   ├── IdentityManager.ts
 │   │   │   ├── SessionManager.ts
 │   │   │   ├── RuntimeInitializer.ts
@@ -222,7 +363,11 @@ Path: ~/언어_프로젝트/프로젝트명/mile_stone/v[버전명].md
 │   │   │   ├── ArchitectureIndexBuilder.ts
 │   │   │   ├── ReferenceVerifier.ts
 │   │   │   ├── HarvestEngine.ts
-│   │   │   └── BoundaryGuard.ts
+│   │   │   ├── BoundaryGuard.ts
+│   │   │   ├── MountManager.ts
+│   │   │   ├── AccountManager.ts
+│   │   │   ├── CollaborationTransport.ts
+│   │   │   └── RestCollaborationTransport.ts
 │   │   ├── (Active) ProjectMetadata.ts
 │   │   ├── (Active) SymbolIndex.ts
 │   │   ├── (Active) DataPipeline.ts
@@ -250,6 +395,7 @@ Path: ~/언어_프로젝트/프로젝트명/mile_stone/v[버전명].md
 │   │   ├── (Active) filterSnapshot.ts
 │   │   ├── (Active) ReportExporter.ts
 │   │   ├── (Active) VscdbAdapter.ts
+│   │   ├── (Active) SynapseIgnore.ts
 │   │   ├── (Legacy) BillingManager.ts
 │   │   ├── (Orphaned) WebviewInterceptor.ts
 │   │   ├── (Orphaned) CommandInterceptor.ts
@@ -258,7 +404,7 @@ Path: ~/언어_프로젝트/프로젝트명/mile_stone/v[버전명].md
 │   │   ├── (Orphaned) ArchitectureDSL.ts
 │   │   ├── (Deleted) GhostNodeManager.ts     ← 디스크에 없음
 │   │   └── (Deleted) ContextVault.ts          ← 디스크에 없음
-│   ├── test/                                  ← v0.3.30 신규
+│   ├── test/                                  ← 🔵 Active (v0.3.30+)
 │   │   ├── __mocks__/
 │   │   │   └── vscode.ts
 │   │   ├── phase1_validation.test.ts
@@ -269,7 +415,8 @@ Path: ~/언어_프로젝트/프로젝트명/mile_stone/v[버전명].md
 │   │   ├── phase6_validation.test.ts
 │   │   ├── phase7_validation.test.ts
 │   │   ├── phase8_validation.test.ts
-│   │   └── phase9_acceptance.test.ts
+│   │   ├── phase9_acceptance.test.ts
+│   │   └── transport_validation.test.ts
 │   ├── analysis/
 │   │   └── hintEngine.ts
 │   ├── bootstrap/
@@ -282,7 +429,9 @@ Path: ~/언어_프로젝트/프로젝트명/mile_stone/v[버전명].md
 │   │   └── ArchitectureExplorer.ts
 │   ├── server/
 │   │   ├── server.ts
-│   │   └── standalone.ts
+│   │   ├── standalone.ts
+│   │   ├── vscode.ts
+│   │   └── register-vscode-mock.ts
 │   ├── utils/
 │   │   ├── ChatExtractor.ts
 │   │   ├── Logger.ts
@@ -312,19 +461,20 @@ Path: ~/언어_프로젝트/프로젝트명/mile_stone/v[버전명].md
 | `build-guard.js` | 유지 | 마일스톤 및 릴리즈 노트 유효성 자동 검증 배포 통제 스크립트 |
 | `RULES.md` | 유지 | 프로젝트 코딩 규칙 및 아키텍처 제약 문서 |
 | `synapse.config.json` | 유지 | 시냅스 아키텍처 규칙 및 설정 보관 파일 |
-| `ui/canvas-engine.js` | 유지 | O(N) 순회 병목 제거, sub-pixel 안티앨리어싱, NaN 방지, WebGL 수학적 패리티 동기화 적용 2D 엔진 |
+| `.synapseignore` | 유지 | Gitignore-style 제외 패턴; 프로젝트 스캔/분석/시각화에서 파일 필터링 |
+| `ui/canvas-engine.js` | 유지 | O(N) 순회 병목 제거, sub-pixel 안티앨리어싱, NaN 방지, WebGL 수학적 패리티 동기화 적용 2D 엔진 + v0.3.30 Client Layer System (register/sync/visibility toggle UI) |
 | `ui/webgl-renderer.js` | 유지 | 대규모 노드 그래프 실시간 60FPS GPU 파이프라인 가속 렌더러 |
 | `ui/engine-core.js` | 유지 | 캔버스 엔진 + WebGL 렌더러 간 공통 코어 로직 및 상태 브릿지 |
 | `src/extension.ts` | 유지 | VS Code Extension 진입점, 확장 활성화 및 이벤트 최초 등록 |
 | `src/cli.ts` | 유지 | 터미널 기반 CLI 제어 인터페이스 |
 | `src/client.ts` | 유지 | 외부 클라이언트 시스템 연동 인터페이스 |
 | `src/verify_v0.3.10.ts` | Standalone | v0.3.10 규격 검증용 독립 실행 스크립트 |
-| `src/types/schema.ts` | 수정 | 노드, 엣지, 클러스터 타입스크립트 인터페이스 + SubmissionSnapshot/ReviewState/RemoteEditAction (v0.3.30) |
+| `src/types/schema.ts` | 수정 | 노드, 엣지, 클러스터 타입스크립트 인터페이스 + SubmissionSnapshot/ReviewState/RemoteEditAction + Node/Cluster.clientLayer + SubmissionSnapshot.clientUsername (v0.3.30) |
 | `src/core/canvas-engine/` | Active | CanvasEngine, Intent, PhaseGate, StateManager, RuleEngine, VisualRuleBook, SpatialRuleBook, ValidationHarness, ScenarioRunner, RenderProtocol — 캔버스 구동 도메인 물리 분리 (10개 파일) |
 | `src/core/transaction/` | Active | CommitManager, ExecutionLayer, VerificationLayer — 아키텍처 상태 변경 트랜잭션 무결성 검증 및 커밋 |
 | `src/core/projection/` | Active | ProjectionLayer, RuleStore — 추상화된 설계 룰을 시각적 레이어에 투영 |
-| `src/core/ProjectMetadata.ts` | Active | **v0.3.30 신규** — Server-owned project boundary manager (싱글톤, UUID, 경로 검증) |
-| `src/core/SymbolIndex.ts` | Active | **v0.3.30 신규** — Cross-file registry (FolderTree + FileRegistry + FunctionCatalog) |
+| `src/core/ProjectMetadata.ts` | Active | Server-owned project boundary manager (싱글톤, UUID, 경로 검증, SymbolIndex 통합) |
+| `src/core/SymbolIndex.ts` | Active | Cross-file registry (FolderTree + FileRegistry + FunctionCatalog, .synapseignore 필터링 + setIgnore() 연동) |
 | `src/core/DataPipeline.ts` | Active | 물리 파일 시스템 스캔 → 노드/엣지/클러스터 추출 및 초기 원형 분산(Initial Spread) 배치 |
 | `src/core/RendererCore.ts` | Active | 렌더러 생명주기 관리 및 WebGL/Canvas 2D 전환 브릿지 |
 | `src/core/RuleEngine.ts` | Active | 핵심 규칙 검증 엔진 (Phase/Rule/Mutation pipeline) |
@@ -350,45 +500,53 @@ Path: ~/언어_프로젝트/프로젝트명/mile_stone/v[버전명].md
 | `src/core/filterSnapshot.ts` | Active | 스냅샷 레이어/타입 기반 필터링 |
 | `src/core/ReportExporter.ts` | Active | 리포트 내보내기 |
 | `src/core/VscdbAdapter.ts` | Active | VS Code DB 어댑터 |
+| `src/core/SynapseIgnore.ts` | Active | Gitignore-style 패턴 파서; `.synapseignore` 로드/매칭/통합 |
 | `src/core/BillingManager.ts` | **Legacy** | 상용화 과금 뼈대. Free node/session limit + Pro mode. 모든 과금 UX 주석 Lock. Dev 강제 Pro |
 | `src/core/WebviewInterceptor.ts` | **Orphaned** | (Ghost Protocol) Point 1&7 웹뷰 입출력 요격. HTML setter 후킹 + CDP Fallback. 857라인 완전 구현, v0.3.10+ 미사용 |
 | `src/core/CommandInterceptor.ts` | **Orphaned** | (Wildcard) `antigravity.*`/`gemini.*` 전수 요격 + 재귀 인자 스캐너. v0.3.10에서 `activate()` 비활성화 |
 | `src/core/CDPManager.ts` | **Orphaned** | (Ghost Protocol) Chrome DevTools Protocol 브릿지. Runtime.evaluate JS 주입 + acquireVsCodeApi 후킹. 350+라인 완전 구현 |
 | `src/core/DirectChatScraper.ts` | **Orphaned** | 채팅 UI 하드카피 스크래퍼. 포커스 9단계 Fallback + 클립보드 백업/화자파싱. v0.2.41 PbExtractor로 교체 |
 | `src/core/ArchitectureDSL.ts` | **Orphaned** | YAML 5-Line DSL → 그래프 변환 파서. v0.2.18.1 완성, 파일 스캐닝 방식으로 대체 |
-| `src/core/collaboration/IdentityManager.ts` | **v0.3.30** | Identity + Role + Permission 체계 (enum Permission, ProjectRole, ROLE_PERMISSIONS) |
-| `src/core/collaboration/SessionManager.ts` | **v0.3.30** | CollaborationSession 생명주기 (created → open → active → closing → closed) |
-| `src/core/collaboration/RuntimeInitializer.ts` | **v0.3.30** | 4단계 Runtime startup (ProjectMetadata → SymbolIndex → Identity → Session) → ready |
-| `src/core/collaboration/SubmissionManager.ts` | **v0.3.30** | SubmissionSnapshot 생성 + ReviewState + RemoteEditAction + MemberFrozen |
-| `src/core/collaboration/RemoteLayerProjector.ts` | **v0.3.30** | Stateless projector: SubmissionSnapshot → ProjectionResult (Node/Cluster Layer 분류, Visibility) |
-| `src/core/collaboration/ArchitectureIndexBuilder.ts` | **v0.3.30** | SubmissionSnapshot → ArchitectureIndex (ProjectTree + FolderTree + SourceFileRegistry + FunctionCatalog) |
-| `src/core/collaboration/ReferenceVerifier.ts` | **v0.3.30** | ArchitectureIndex → ReferenceGraph + VerificationReport (참조 분석, Ghost Projection, Edge 생성) |
-| `src/core/collaboration/HarvestEngine.ts` | **v0.3.30** | Approved Workspace → Master Layer 물리적 Materialization |
-| `src/core/collaboration/BoundaryGuard.ts` | **v0.3.30** | 중앙 경계 보안 (Project/Session/Submission/RemoteEdit/Harvest Isolation, Cache Cleanup) |
+| `src/core/collaboration/IdentityManager.ts` | Active | Identity + Role + Permission 체계 (enum Permission, ProjectRole, ROLE_PERMISSIONS) — member role permissions → empty (JoinSession/LeaveSession etc. 제거) |
+| `src/core/collaboration/SessionManager.ts` | Active | CollaborationSession 생명주기 (created → open → active → closing → closed) — joinSession/leaveSession에서 IdentityManager.hasPermission() 검증 제거 |
+| `src/core/collaboration/RuntimeInitializer.ts` | Active | 4단계 Runtime startup (ProjectMetadata → SymbolIndex → Identity → Session) → ready |
+| `src/core/collaboration/SubmissionManager.ts` | Active | SubmissionSnapshot 생성 + ReviewState + RemoteEditAction + MemberFrozen + clientUsername 파라미터 + getApprovedSubmissionsByClient() |
+| `src/core/collaboration/RemoteLayerProjector.ts` | Active | Stateless projector: SubmissionSnapshot → ProjectionResult (Node/Cluster Layer 분류, Visibility) + clientLayer/clientUsername/sessionId 태깅 |
+| `src/core/collaboration/ArchitectureIndexBuilder.ts` | Active | SubmissionSnapshot → ArchitectureIndex (ProjectTree + FolderTree + SourceFileRegistry + FunctionCatalog) |
+| `src/core/collaboration/ReferenceVerifier.ts` | Active | ArchitectureIndex → ReferenceGraph + VerificationReport (참조 분석, Ghost Projection, Edge 생성) |
+| `src/core/collaboration/HarvestEngine.ts` | Active | Approved Workspace → Master Layer 물리적 Materialization + LayerHarvestInput + harvest path traversal 방어 (resolvedTarget.startsWith) |
+| `src/core/collaboration/BoundaryGuard.ts` | Active | 중앙 경계 보안 (Project/Session/Submission/RemoteEdit/Harvest Isolation, Cache Cleanup) |
+| `src/core/collaboration/MountManager.ts` | Active | SSH 기반 클라이언트 프로젝트 폴더 마운트 관리 (mount/unmount/scan, validateMountPath) — v0.3.30 신규 |
+| `src/core/collaboration/AccountManager.ts` | Active | 계정 CRUD, 비밀번호 해싱, getAllAccounts/getUsernameByUserId + SSH mount 필드 (sshHost/sshPort/sshMountPath/sshKey) |
+| `src/core/collaboration/CollaborationTransport.ts` | Active | 추상 전송 계층 (WebSocket/REST 공통 인터페이스) |
+| `src/core/collaboration/RestCollaborationTransport.ts` | Active | REST 전송 구현체 + clientUsername passthrough (createSubmission) |
 | `src/analysis/hintEngine.ts` | Active | 실시간 아키텍처 분석 및 진단 힌트(R1~R5 경고) 캔버스 제공 |
 | `src/bootstrap/BootstrapEngine.ts` | Active | 초기 로드 시 디렉터리 스캔 → 아키텍처 그래프 자동 구성 |
 | `src/rust_checker/` | Active | Rust 프로젝트 소스 구조 분석 및 종속성 추출 (mod.rs + reporter.rs + state_checker.rs) |
 | `src/explorer/ArchitectureExplorer.ts` | Active | 아키텍처 탐색기 (트리/그래프 뷰 전환) |
 | `src/server/server.ts` | Active | LSP 서버 메인 프로세스 |
-| `src/server/standalone.ts` | Active | LSP 독립 실행 모드 |
+| `src/server/standalone.ts` | Active | 독립 실행 모드 (`--root`/`--port` CLI, auth 미들웨어, 세션/토큰 관리, MountManager+SSH 마운트, per-client state, `/api/state` 병합, BoundaryGuard/SynapseIgnore 통합, 다수 신규 API 엔드포인트) |
+| `src/server/vscode.ts` | Active | VS Code API mock 미니멀 구현체 |
+| `src/server/register-vscode-mock.ts` | Active | vscode 모듈 전역 등록 (standalone 부트 전) |
 | `src/utils/ChatExtractor.ts` | Active | 채팅 데이터 추출 유틸리티 |
-| `src/utils/Logger.ts` | Active | 시스템 전역 로깅 유틸리티 |
+| `src/utils/Logger.ts` | Active | 시스템 전역 로깅 유틸리티 — standalone 모드 지원 (try/catch vscode require, console.log 폴백) |
 | `src/utils/exclusionRules.ts` | Active | 제외 규칙 정규식 관리 |
 | `src/utils/visualHints.ts` | Active | 시각 힌트(배지, 컬러) 유틸리티 |
-| `src/webview/CanvasPanel.ts` | Active | 웹뷰 캔버스 패널 (HTML/CSS/JS 로드 및 생명주기) |
-| `src/test/__mocks__/vscode.ts` | **v0.3.30** | VS Code API Mock (테스트 환경) |
-| `src/test/phase1_validation.test.ts` | **v0.3.30** | Phase 1 검증 (ProjectBoundary + SymbolIndex) — 10 tests |
-| `src/test/phase2_validation.test.ts` | **v0.3.30** | Phase 2 검증 (Identity + Session + Runtime) — 14 tests |
-| `src/test/phase3_validation.test.ts` | **v0.3.30** | Phase 3 검증 (SubmissionManager) — 12 tests |
-| `src/test/phase4_validation.test.ts` | **v0.3.30** | Phase 4 검증 (RemoteLayerProjector) — 14 tests |
-| `src/test/phase5_validation.test.ts` | **v0.3.30** | Phase 5 검증 (ArchitectureIndexBuilder) — 14 tests |
-| `src/test/phase6_validation.test.ts` | **v0.3.30** | Phase 6 검증 (ReferenceVerifier) — 14 tests |
-| `src/test/phase7_validation.test.ts` | **v0.3.30** | Phase 7 검증 (HarvestEngine) — 10 tests |
-| `src/test/phase8_validation.test.ts` | **v0.3.30** | Phase 8 검증 (BoundaryGuard) — 8 tests |
-| `src/test/phase9_acceptance.test.ts` | **v0.3.30** | Phase 9 End-to-End Acceptance — 10 scenarios, 106 total |
+| `src/webview/CanvasPanel.ts` | Active | 웹뷰 캔버스 패널 (서버 기동/연결 관리, admin auto-login via .server_info, clientLayer/clientUsername 노드 태깅, 명령어 핸들러: serverInfo/logout/getConnectedClients/refreshServerState, 계정 관리 async 리팩터) |
+| `src/test/__mocks__/vscode.ts` | Active | VS Code API Mock (테스트 환경) |
+| `src/test/phase1_validation.test.ts` | Active | Phase 1 검증 (ProjectBoundary + SymbolIndex) — 10 tests |
+| `src/test/phase2_validation.test.ts` | Active | Phase 2 검증 (Identity + Session + Runtime) — 14 tests |
+| `src/test/phase3_validation.test.ts` | Active | Phase 3 검증 (SubmissionManager) — 12 tests |
+| `src/test/phase4_validation.test.ts` | Active | Phase 4 검증 (RemoteLayerProjector + Gate CL Client Layer tests) — 24 tests |
+| `src/test/phase5_validation.test.ts` | Active | Phase 5 검증 (ArchitectureIndexBuilder) — 14 tests |
+| `src/test/phase6_validation.test.ts` | Active | Phase 6 검증 (ReferenceVerifier) — 14 tests |
+| `src/test/phase7_validation.test.ts` | Active | Phase 7 검증 (HarvestEngine) — 10 tests |
+| `src/test/phase8_validation.test.ts` | Active | Phase 8 검증 (BoundaryGuard) — 8 tests |
+| `src/test/phase9_acceptance.test.ts` | Active | Phase 9 End-to-End Acceptance — 10 scenarios, 106 total |
+| `src/test/transport_validation.test.ts` | Active | CollaborationTransport/RestCollaborationTransport 단위 검증 |
 | `tools/*` | 유지 | 성능 벤치마킹, 규격 파일 생성, 진단 로그 분석용 보조 스크립트 |
 
-> **삭제된 파일**: `src/core/GhostNodeManager.ts`, `src/core/ContextVault.ts` — 이전 ROOT Structure에 Active로 기재되어 있었으나 현재 디스크에 존재하지 않습니다. (v0.3.30 이전 리팩토링 과정에서 제거된 것으로 추정)
+> **삭제된 파일**: `src/core/GhostNodeManager.ts`, `src/core/ContextVault.ts` — 이전 ROOT Structure에 Active로 기재되어 있었으나 현재 디스크에 존재하지 않습니다. (v0.3.30 이전 리팩토링 과정에서 제거)
 
 ### 📄 소스파일 성능 최적화 이전 원본 상태 (Pre-Optimization Sources)
 

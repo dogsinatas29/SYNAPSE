@@ -74,14 +74,13 @@ describe('Phase 2 — Identity & Session Foundation', () => {
         const member = im.createIdentity('Member');
         im.assignRole(testProjectUUID, member.userId, 'member');
 
-        expect(im.hasPermission(testProjectUUID, member.userId, Permission.JoinSession)).toBe(true);
-        expect(im.hasPermission(testProjectUUID, member.userId, Permission.LeaveSession)).toBe(true);
-        expect(im.hasPermission(testProjectUUID, member.userId, Permission.SubmitChanges)).toBe(true);
-        expect(im.hasPermission(testProjectUUID, member.userId, Permission.ReceiveCommands)).toBe(true);
-
         expect(im.hasPermission(testProjectUUID, member.userId, Permission.CreateSession)).toBe(false);
         expect(im.hasPermission(testProjectUUID, member.userId, Permission.CloseSession)).toBe(false);
         expect(im.hasPermission(testProjectUUID, member.userId, Permission.Harvest)).toBe(false);
+        expect(im.hasPermission(testProjectUUID, member.userId, Permission.JoinSession)).toBe(false);
+        expect(im.hasPermission(testProjectUUID, member.userId, Permission.LeaveSession)).toBe(false);
+        expect(im.hasPermission(testProjectUUID, member.userId, Permission.SubmitChanges)).toBe(false);
+        expect(im.hasPermission(testProjectUUID, member.userId, Permission.ReceiveCommands)).toBe(false);
     });
 
     test('6. Runtime Startup Flow', async () => {
@@ -160,18 +159,18 @@ describe('Phase 2 — Identity & Session Foundation', () => {
         expect(() => sm.joinSession(session.sessionId, member.userId)).toThrow();
     });
 
-    test('12. Role 없는 사용자 참가 실패', () => {
+    test('12. Role 없는 사용자도 세션 참가 가능 (zero-permission model)', () => {
         const im = IdentityManager.getInstance();
         const lead = im.createIdentity('Lead');
         const stranger = im.createIdentity('Stranger');
         im.assignRole(testProjectUUID, lead.userId, 'lead');
-        // stranger has no role
+        // stranger has no role — zero-permission model allows join
 
         const sm = SessionManager.getInstance();
         const session = sm.createSession(testProjectUUID, lead.userId);
         sm.openSession(session.sessionId, lead.userId);
 
-        expect(() => sm.joinSession(session.sessionId, stranger.userId)).toThrow();
+        expect(() => sm.joinSession(session.sessionId, stranger.userId)).not.toThrow();
     });
 
     test('13. ProjectMembers 조회', () => {

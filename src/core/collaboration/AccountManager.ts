@@ -3,18 +3,29 @@ import * as path from 'path';
 import { createHash } from 'crypto';
 import { Logger } from '../../utils/Logger';
 import { IdentityManager } from './IdentityManager';
+import { validateMountPath } from './MountManager';
 
 export interface UserAccount {
     userId: string;
     username: string;
     passwordHash: string;
     createdAt: number;
+    sshHost?: string;
+    sshPort?: number;
+    sshUser?: string;
+    sshMountPath?: string;
+    sshKey?: string;
 }
 
 export interface AuthenticatedUser {
     userId: string;
     username: string;
     createdAt: number;
+    sshHost?: string;
+    sshPort?: number;
+    sshUser?: string;
+    sshMountPath?: string;
+    sshKey?: string;
 }
 
 interface AccountsStore {
@@ -42,9 +53,12 @@ export class AccountManager {
         this.loadSync();
     }
 
-    createAccount(username: string, password: string): UserAccount {
+    createAccount(username: string, password: string, sshConfig?: { sshHost?: string; sshPort?: number; sshUser?: string; sshMountPath?: string; sshKey?: string }): UserAccount {
         if (this.accounts.has(username)) {
             throw new Error(`[v0.3.30] Account already exists: ${username}`);
+        }
+        if (sshConfig?.sshMountPath && !validateMountPath(sshConfig.sshMountPath)) {
+            throw new Error(`[v0.3.30] Invalid sshMountPath: "${sshConfig.sshMountPath}". Must be an absolute project path (not "/", no "../", no "~").`);
         }
 
         const identityManager = IdentityManager.getInstance();
@@ -56,6 +70,7 @@ export class AccountManager {
             username,
             passwordHash,
             createdAt: Date.now(),
+            ...sshConfig,
         };
 
         this.accounts.set(username, account);
@@ -75,6 +90,11 @@ export class AccountManager {
             userId: account.userId,
             username: account.username,
             createdAt: account.createdAt,
+            sshHost: account.sshHost,
+            sshPort: account.sshPort,
+            sshUser: account.sshUser,
+            sshMountPath: account.sshMountPath,
+            sshKey: account.sshKey,
         };
     }
 
@@ -96,16 +116,41 @@ export class AccountManager {
         return true;
     }
 
-    getAllAccounts(): { username: string; userId: string; createdAt: number }[] {
+    updateSSHInfo(username: string, sshConfig: { sshHost?: string; sshPort?: number; sshUser?: string; sshMountPath?: string; sshKey?: string }): boolean {
+        const account = this.accounts.get(username);
+        if (!account) return false;
+        if (sshConfig.sshMountPath && !validateMountPath(sshConfig.sshMountPath)) {
+            throw new Error(`[v0.3.30] Invalid sshMountPath: "${sshConfig.sshMountPath}". Must be an absolute project path (not "/", no "../", no "~").`);
+        }
+        if (sshConfig.sshHost !== undefined) account.sshHost = sshConfig.sshHost || undefined;
+        if (sshConfig.sshPort !== undefined) account.sshPort = sshConfig.sshPort || undefined;
+        if (sshConfig.sshUser !== undefined) account.sshUser = sshConfig.sshUser || undefined;
+        if (sshConfig.sshMountPath !== undefined) account.sshMountPath = sshConfig.sshMountPath || undefined;
+        if (sshConfig.sshKey !== undefined) account.sshKey = sshConfig.sshKey || undefined;
+        this.saveSync();
+        Logger.info(`[v0.3.30] SSH info updated for: ${username}`);
+        return true;
+    }
+
+    getAllAccounts(): { username: string; userId: string; createdAt: number; sshHost?: string; sshMountPath?: string }[] {
         return Array.from(this.accounts.values()).map(a => ({
             username: a.username,
             userId: a.userId,
             createdAt: a.createdAt,
+            sshHost: a.sshHost,
+            sshMountPath: a.sshMountPath,
         }));
     }
 
     getAccount(username: string): UserAccount | undefined {
         return this.accounts.get(username);
+    }
+
+    getUsernameByUserId(userId: string): string | undefined {
+        for (const acc of this.accounts.values()) {
+            if (acc.userId === userId) return acc.username;
+        }
+        return undefined;
     }
 
     hasAccount(username: string): boolean {

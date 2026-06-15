@@ -812,8 +812,7 @@
         }
 
         #connection-panel,
-        #server-panel,
-        #account-panel {
+        #server-panel {
             position: absolute;
             bottom: 20px;
             left: 20px;
@@ -826,6 +825,21 @@
             display: none;
             flex-direction: column;
             width: 320px;
+        }
+
+        #account-panel {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(40, 40, 40, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            z-index: 100;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+            display: none;
+            flex-direction: column;
+            width: 380px;
         }
 
         #connection-panel.visible,
@@ -957,6 +971,16 @@
             display: block;
         }
 
+        .conn-section-divider {
+            font-size: 11px;
+            color: var(--fg-dim);
+            padding: 8px 0 4px 0;
+            margin: 4px 0;
+            border-top: 1px solid #3c3836;
+            text-align: center;
+            letter-spacing: 0.5px;
+        }
+
         .conn-info {
             font-size: 11px;
             color: var(--fg-dim);
@@ -1030,6 +1054,81 @@
 
         .scrollbar-thumb:hover {
             background: rgba(235, 219, 178, 0.4);
+        }
+
+        #account-msg {
+            font-size: 11px;
+            color: var(--fg-dim);
+            margin-top: 4px;
+            min-height: 16px;
+        }
+        #account-msg.error {
+            color: #fb4934;
+        }
+        #account-msg.success {
+            color: #b8bb26;
+        }
+        .account-list {
+            max-height: 260px;
+            overflow-y: auto;
+            margin-bottom: 8px;
+            border: 1px solid #3c3836;
+            border-radius: 4px;
+            background: #1d2021;
+        }
+        .account-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 4px 8px;
+            border-bottom: 1px solid #3c3836;
+            font-size: 12px;
+        }
+        .account-row:last-child {
+            border-bottom: none;
+        }
+        .account-row .btn-del {
+            background: none;
+            border: 1px solid #cc241d;
+            color: #cc241d;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 11px;
+            padding: 1px 6px;
+        }
+        .account-row .btn-del:hover {
+            background: #cc241d;
+            color: #fff;
+        }
+        .account-section-title {
+            font-size: 12px;
+            font-weight: bold;
+            color: var(--fg-dim);
+            margin: 6px 0 4px 0;
+        }
+        .account-form-row {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 4px;
+        }
+        .account-form-row input {
+            flex: 1;
+            padding: 4px 8px;
+            border: 1px solid #3c3836;
+            background: #1d2021;
+            color: var(--fg-main);
+            border-radius: 3px;
+            font-size: 12px;
+        }
+        .account-form-row button {
+            padding: 4px 10px;
+            border: 1px solid var(--accent);
+            background: var(--accent);
+            color: #282828;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
         }
     </style>
 </head>
@@ -1117,8 +1216,8 @@
             <div class="menu-label">🔌 SSH</div>
             <div class="dropdown-content">
                 <button class="btn" id="btn-ssh-start-server">서버 시작</button>
-                <button class="btn" id="btn-ssh-manage-accounts">계정 관리</button>
                 <button class="btn" id="btn-ssh-connect">서버 접속</button>
+                <button class="btn" id="btn-ssh-manage-accounts">계정 관리</button>
             </div>
         </div>
 
@@ -1370,7 +1469,10 @@
             if (!dot || !status) return;
             if (user) {
                 dot.className = 'dot connected';
-                status.textContent = 'Connected — ' + user.username + '@' + user.host + ':' + user.port;
+                const serverLabel = user.serverName
+                    ? user.username + ' → ' + user.serverName + ' (port ' + user.port + ')'
+                    : user.username + '@' + user.host + ':' + user.port;
+                status.textContent = 'Connected — ' + serverLabel;
                 window.connectedUser = user;
             } else {
                 dot.className = 'dot disconnected';
@@ -1382,21 +1484,40 @@
         window.loadConnState = function() {
             try {
                 const raw = localStorage.getItem('synapse-connection');
-                if (raw) {
-                    const state = JSON.parse(raw);
-                    if (state.host && window.connHost) window.connHost.value = state.host;
-                    if (state.port && window.connPort) window.connPort.value = state.port;
-                    if (state.userId && state.username) {
-                        window.updateConnStatus(state);
-                    }
-                }
+                if (!raw) return;
+                const state = JSON.parse(raw);
+                if (state.host && window.connHost) window.connHost.value = state.host;
+                if (state.port && window.connPort) window.connPort.value = state.port;
+                if (state.savedUser && window.connUser) window.connUser.value = state.savedUser;
+                if (!state.userId || !state.username) return;
+                // 브라우저 모드에서만 서버 health 확인 후 "Connected" 표시
+                if (typeof window.vscode !== 'undefined') return;
+                const host = state.host || 'localhost';
+                const port = state.port || '3000';
+                const controller = new AbortController();
+                setTimeout(() => controller.abort(), 2000);
+                fetch('http://' + host + ':' + port + '/health', { method: 'GET', signal: controller.signal })
+                    .then(r => r.json())
+                    .then(data => {
+                        if (data.status === 'ok') {
+                            window.updateConnStatus({
+                                host: state.host,
+                                port: state.port,
+                                userId: state.userId,
+                                username: state.username,
+                                serverName: state.server?.serverName
+                            });
+                        }
+                    })
+                    .catch(() => {});
             } catch (e) {
                 console.warn('[SYNAPSE] Failed to load connection state:', e);
             }
         };
 
-        window.saveConnState = function(host, port, userId, username) {
-            const state = { host, port, userId, username };
+        window.saveConnState = function(host, port, userId, username, server) {
+            const savedUser = window.connUser ? window.connUser.value : '';
+            const state = { host, port, userId, username, server, savedUser };
             localStorage.setItem('synapse-connection', JSON.stringify(state));
         };
 
@@ -1637,7 +1758,9 @@
             if (message.command === 'serverStarted') {
                 const dot = document.getElementById('srv-dot');
                 const text = document.getElementById('srv-status-text');
+                const portEl = document.getElementById('srv-port');
                 if (dot && text) { dot.className = 'dot connected'; text.textContent = '실행 중'; }
+                if (portEl && message.port) { portEl.value = String(message.port); }
             }
             if (message.command === 'serverStopped') {
                 const dot = document.getElementById('srv-dot');
@@ -1661,13 +1784,26 @@
                 const cHost = document.getElementById('conn-host');
                 const cPort = document.getElementById('conn-port');
                 if (message.success) {
-                    window.saveConnState(cHost.value, cPort.value, message.user.userId, message.user.username);
-                    window.updateConnStatus({ host: cHost.value, port: cPort.value, ...message.user });
+                    const loginHost = message.host || cHost.value;
+                    const loginPort = message.port || cPort.value;
+                    window.saveConnState(loginHost, loginPort, message.user.userId, message.user.username, message.server);
+                    window.updateConnStatus({ host: loginHost, port: loginPort, ...message.user, serverName: message.server?.serverName });
                     if (cPanel) cPanel.classList.remove('visible');
                 } else {
                     if (cErr) { cErr.textContent = message.error || '로그인 실패'; cErr.classList.add('visible'); }
                     if (cDot) cDot.className = 'dot disconnected';
                     if (cText) cText.textContent = '연결되지 않음';
+                }
+            }
+            if (message.command === 'serverInfoResult') {
+                const resultEl = document.getElementById('conn-server-info-result');
+                if (!resultEl) return;
+                if (message.success && message.data) {
+                    displayServerInfoResult(message.data);
+                } else {
+                    resultEl.textContent = '⚠️ ' + (message.error || '서버에 연결할 수 없습니다');
+                    resultEl.style.display = 'block';
+                    resultEl.style.color = '#fb4934';
                 }
             }
         });
@@ -1871,6 +2007,9 @@
             window.connPort = document.getElementById('conn-port');
             window.connUser = document.getElementById('conn-username');
             window.connPass = document.getElementById('conn-password');
+            window.connSshHost = document.getElementById('conn-ssh-host');
+            window.connSshUser = document.getElementById('conn-ssh-user');
+            window.connSshMount = document.getElementById('conn-ssh-mount');
             window.connError = document.getElementById('conn-error');
             window.connStatus = document.getElementById('conn-status-text');
             window.connDot = document.querySelector('#conn-status .dot');
@@ -1895,6 +2034,9 @@
                 const port = window.connPort.value.trim();
                 const username = window.connUser.value.trim();
                 const password = window.connPass.value;
+                const sshHost = window.connSshHost.value.trim() || undefined;
+                const sshUser = window.connSshUser.value.trim() || undefined;
+                const sshMountPath = window.connSshMount.value.trim() || undefined;
 
                 if (!host || !port || !username || !password) {
                     window.connError.textContent = '모든 필드를 입력해주세요.';
@@ -1907,22 +2049,31 @@
 
                 if (typeof window.vscode !== 'undefined') {
                     // VSCode WebView: extension host가 HTTP 요청 프록시
-                    vscode.postMessage({ command: 'login', host, port, username, password });
+                    vscode.postMessage({ command: 'login', host, port, username, password, sshHost, sshUser, sshMountPath });
                 } else {
                     // Browser: 직접 fetch
                     try {
                         const url = 'http://' + host + ':' + port + '/api/auth/login';
+                        const body = { username, password };
+                        if (sshHost) body.sshHost = sshHost;
+                        if (sshUser) body.sshUser = sshUser;
+                        if (sshMountPath) body.sshMountPath = sshMountPath;
                         const res = await fetch(url, {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ username, password }),
+                            body: JSON.stringify(body),
                         });
 
                         const data = await res.json();
 
                         if (data.success && data.user) {
-                            window.saveConnState(host, port, data.user.userId, data.user.username);
-                            window.updateConnStatus({ host, port, ...data.user });
+                            window._synapseToken = data.token || null;
+                            window.saveConnState(host, port, data.user.userId, data.user.username, data.server);
+                            window.updateConnStatus({ host, port, ...data.user, serverName: data.server?.serverName });
+                            if (window.engine) {
+                                window.engine.refreshClientLayersFromAccounts();
+                            }
+                            loadConnectedClients();
                             window.connPanel.classList.remove('visible');
                         } else {
                             window.connError.textContent = data.error || '로그인 실패';
@@ -1939,14 +2090,56 @@
                 }
             });
 
+            // 서버 정보 버튼
+            function displayServerInfoResult(data) {
+                const resultEl = document.getElementById('conn-server-info-result');
+                if (!resultEl) return;
+                if (data && data.serverName) {
+                    resultEl.textContent = '📂 ' + data.serverName + ' / UUID: ' + (data.projectUUID || '—');
+                    resultEl.style.display = 'block';
+                    resultEl.style.color = 'var(--fg-main)';
+                } else {
+                    resultEl.textContent = '⚠️ 서버 응답 오류';
+                    resultEl.style.display = 'block';
+                    resultEl.style.color = '#fb4934';
+                }
+            }
+            document.getElementById('btn-conn-server-info')?.addEventListener('click', () => {
+                const host = window.connHost?.value?.trim() || 'localhost';
+                const port = window.connPort?.value?.trim() || '3000';
+                const resultEl = document.getElementById('conn-server-info-result');
+                if (!resultEl) return;
+                resultEl.textContent = '확인 중...';
+                resultEl.style.display = 'block';
+                resultEl.style.color = 'var(--fg-dim)';
+                if (typeof window.vscode !== 'undefined') {
+                    vscode.postMessage({ command: 'serverInfo', host, port });
+                } else {
+                    const headers = window._synapseToken ? { 'Authorization': 'Bearer ' + window._synapseToken } : {};
+                    fetch('http://' + host + ':' + port + '/api/server/info', { headers })
+                        .then(r => r.json())
+                        .then(data => displayServerInfoResult(data))
+                        .catch(() => {
+                            resultEl.textContent = '⚠️ 서버에 연결할 수 없습니다';
+                            resultEl.style.display = 'block';
+                            resultEl.style.color = '#fb4934';
+                        });
+                }
+            });
+
             // 초기화 버튼
             document.getElementById('btn-conn-reset')?.addEventListener('click', () => {
                 window.connUser.value = '';
                 window.connPass.value = '';
                 window.connHost.value = '';
                 window.connPort.value = '3000';
+                window.connSshHost.value = '';
+                window.connSshUser.value = '';
+                window.connSshMount.value = '';
                 window.connError.classList.remove('visible');
                 window.clearConnState();
+                document.getElementById('conn-server-info-result').textContent = '';
+                document.getElementById('conn-server-info-result').style.display = 'none';
             });
 
             // Host 필드는 사용자가 직접 입력 (VSCode WebView hostname은 내부 식별자라 무의미)
@@ -1972,19 +2165,6 @@
             }
 
             const isWebView = typeof window.vscode !== 'undefined';
-
-            // SSH "계정 관리" → account panel toggle
-            const accountPanel = document.getElementById('account-panel');
-            document.getElementById('btn-ssh-manage-accounts')?.addEventListener('click', (e) => {
-                e.stopPropagation();
-                accountPanel.classList.toggle('visible');
-                if (accountPanel.classList.contains('visible')) loadAccounts();
-            });
-
-            // account panel close
-            document.getElementById('account-panel-close')?.addEventListener('click', () => {
-                accountPanel.classList.remove('visible');
-            });
 
             // SSH "서버 시작" → 패널 토글
             document.getElementById('btn-ssh-start-server')?.addEventListener('click', (e) => {
@@ -2032,7 +2212,16 @@
                 btnSrvStart.addEventListener('click', () => {
                     srvError.classList.remove('visible');
                     setSrvStatus('connecting', '시작 중...');
-                    vscode.postMessage({ command: 'startServer' });
+                    // 저장된 credentials가 있으면 함께 전송 (auto-login)
+                    const user = window.connUser?.value?.trim();
+                    const pass = window.connPass?.value?.trim();
+                    const port = parseInt(document.getElementById('srv-port').value, 10) || 3000;
+                    vscode.postMessage({
+                        command: 'startServer',
+                        port: port,
+                        username: user || undefined,
+                        password: pass || undefined
+                    });
                 });
 
                 btnSrvStop.addEventListener('click', () => {
@@ -2041,285 +2230,323 @@
                 });
             }
 
-            // === Harvest Button ===
-            const btnHarvest = document.getElementById('btn-harvest');
-            const harvestResultEl = document.getElementById('srv-harvest-result');
+            // server panel draggable
+            makeDraggable('server-panel', 'server-panel-header');
 
-            function collectVisibleFilePaths() {
-                const engine = window.engine;
-                if (!engine || !engine.nodes) return [];
-                const isUserLogic = (n) =>
-                    n.layer === 'user' ||
-                    (n.data && n.data.layer === 'user') ||
-                    (n.id && typeof n.id === 'string' && n.id.startsWith('node_manual_'));
-                const isExternalLogic = (n) =>
-                    n.layer === 'external' ||
-                    (n.data && n.data.layer === 'external') ||
-                    n.type === 'external' ||
-                    n.status === 'ghost';
-                return engine.nodes
-                    .filter(n => {
-                        const isUser = isUserLogic(n);
-                        const isExternal = isExternalLogic(n);
-                        if (isExternal && !engine.showExternalLayer) return false;
-                        if (isUser && !engine.showUserLayer) return false;
-                        if (!isUser && !isExternal && !engine.showBaseLayer) return false;
-                        return true;
-                    })
-                    .map(n => n.filePath || (n.data && n.data.filePath))
-                    .filter(Boolean);
-            }
+            // === Account Panel ===
+            const accountPanel = document.getElementById('account-panel');
+            const accountMsg = document.getElementById('srv-account-msg');
+            const accountList = document.getElementById('srv-account-list');
 
-            btnHarvest.addEventListener('click', async () => {
-                const filePaths = collectVisibleFilePaths();
-                if (filePaths.length === 0) {
-                    harvestResultEl.textContent = '수확할 파일이 없습니다 (보이는 레이어에 파일 노드가 없습니다).';
+            // 열기
+            document.getElementById('btn-ssh-manage-accounts')?.addEventListener('click', (e) => {
+                e.stopPropagation();
+                accountPanel.classList.toggle('visible');
+                if (accountPanel.classList.contains('visible')) {
+                    loadAccountsUI();
+                }
+            });
+
+            // 닫기
+            document.getElementById('account-panel-close')?.addEventListener('click', () => {
+                accountPanel.classList.remove('visible');
+            });
+
+            // 연결 끊기
+            document.getElementById('btn-logout')?.addEventListener('click', () => {
+                if (typeof window.vscode !== 'undefined') {
+                    vscode.postMessage({ command: 'logout' });
+                } else {
+                    window._synapseToken = null;
+                    window.connectedUser = null;
+                    window.updateConnStatus({ status: 'disconnected' });
+                    window.clearConnState();
+                    accountList.innerHTML = '';
+                    window.connPanel.classList.remove('visible');
+                }
+            });
+
+            // 계정 새로고침
+            document.getElementById('btn-refresh-accounts')?.addEventListener('click', () => {
+                loadAccountsUI();
+            });
+
+            // 계정 생성
+            document.getElementById('btn-srv-create-account')?.addEventListener('click', () => {
+                const user = document.getElementById('srv-new-user').value.trim();
+                const pass = document.getElementById('srv-new-pass').value;
+                if (!user || !pass) {
+                    accountMsg.textContent = '사용자명과 비밀번호를 입력하세요.';
+                    accountMsg.className = 'error';
                     return;
                 }
-
-                const projectUUID = window.engine && window.engine.projectUUID || 'proj_harvest_ui';
-                const submissionId = 'harvest_' + Date.now();
-                harvestResultEl.textContent = '수확 중... (' + filePaths.length + '개 파일)';
-
-                if (isWebView) {
-                    vscode.postMessage({ command: 'harvest', submissionId, projectUUID, filePaths });
+                if (typeof window.vscode !== 'undefined') {
+                    vscode.postMessage({ command: 'createAccount', username: user, password: pass });
                 } else {
-                    try {
-                        const host = document.getElementById('conn-host').value || 'localhost';
-                        const port = document.getElementById('conn-port').value || '3000';
-                        const res = await fetch('http://' + host + ':' + port + '/api/collab/harvest', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ submissionId, projectUUID, filePaths }),
-                        });
-                        const data = await res.json();
-                        if (data.success) {
-                            harvestResultEl.textContent = '수확 완료: ' + data.result.filesHarvested + '개 파일';
-                        } else {
-                            harvestResultEl.textContent = '수확 실패: ' + (data.error || '알 수 없는 오류');
-                        }
-                    } catch (err) {
-                        harvestResultEl.textContent = '수확 오류: ' + err.message;
-                    }
-                }
-            });
-
-            window.addEventListener('message', (event) => {
-                const msg = event.data;
-                if (msg.command === 'harvestResult') {
-                    if (msg.success) {
-                        harvestResultEl.textContent = '수확 완료: ' + (msg.result && msg.result.filesHarvested) + '개 파일';
-                    } else {
-                        harvestResultEl.textContent = '수확 실패: ' + (msg.error || '알 수 없는 오류');
-                    }
-                }
-            });
-
-            // Show harvest button when connected
-            function updateHarvestButtonVisibility() {
-                btnHarvest.style.display = window.connectedUser ? 'block' : 'none';
-            }
-            updateHarvestButtonVisibility();
-            const origUpdateConnStatus = window.updateConnStatus;
-            window.updateConnStatus = function(user) {
-                origUpdateConnStatus && origUpdateConnStatus(user);
-                updateHarvestButtonVisibility();
-            };
-
-            // === Account Management ===
-            const srvAccountList = document.getElementById('srv-account-list');
-            const srvNewUser = document.getElementById('srv-new-user');
-            const srvNewPass = document.getElementById('srv-new-pass');
-            const srvAccountMsg = document.getElementById('srv-account-msg');
-
-            function getServerUrl() {
-                const host = document.getElementById('conn-host').value || 'localhost';
-                const port = document.getElementById('conn-port').value || '3000';
-                return 'http://' + host + ':' + port;
-            }
-
-            function getConnHostPort() {
-                const host = document.getElementById('conn-host').value.trim();
-                const port = document.getElementById('conn-port').value.trim();
-                return { host, port };
-            }
-
-            function loadAccounts() {
-                if (isWebView) {
-                    const { host, port } = getConnHostPort();
-                    vscode.postMessage({ command: 'loadAccounts', host, port });
-                } else {
-                    fetch(getServerUrl() + '/api/admin/accounts')
+                    const port = getServerPort();
+                    const token = window._synapseToken;
+                    fetch('http://localhost:' + port + '/api/admin/create-account', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', ...(token ? { 'Authorization': 'Bearer ' + token } : {}) },
+                        body: JSON.stringify({ username: user, password: pass }),
+                    })
                         .then(r => r.json())
                         .then(data => {
-                            if (data.success) renderAccountList(data.accounts);
+                            if (data.success) {
+                                accountMsg.textContent = '계정 생성 성공!';
+                                accountMsg.className = 'success';
+                                document.getElementById('srv-new-user').value = '';
+                                document.getElementById('srv-new-pass').value = '';
+                                loadAccountsUI();
+                                if (window.engine) window.engine.refreshClientLayersFromAccounts();
+                            } else {
+                                accountMsg.textContent = data.error || '생성 실패';
+                                accountMsg.className = 'error';
+                            }
+                        })
+                        .catch(err => {
+                            accountMsg.textContent = '오류: ' + err.message;
+                            accountMsg.className = 'error';
+                        });
+                }
+            });
+
+            // Enter 키로 생성
+            document.getElementById('srv-new-pass')?.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    document.getElementById('btn-srv-create-account').click();
+                }
+            });
+
+            function getServerPort() {
+                const el = document.getElementById('srv-port');
+                return el ? (parseInt(el.value, 10) || 3000) : 3000;
+            }
+
+            function loadConnectedClients() {
+                if (typeof window.vscode !== 'undefined') {
+                    vscode.postMessage({ command: 'getConnectedClients' });
+                } else {
+                    const token = window._synapseToken;
+                    if (!token) return;
+                    const port = getServerPort();
+                    fetch('http://localhost:' + port + '/api/admin/connected-clients', { headers: { 'Authorization': 'Bearer ' + token } })
+                        .then(r => r.json())
+                        .then(data => {
+                            if (data.success && data.clients) {
+                                window._connectedUserIds = new Set(data.clients.map(c => c.userId));
+                                loadAccountsUI();
+                                if (window.engine) window.engine._updateClientLayerUI();
+                            }
                         })
                         .catch(() => {});
                 }
             }
 
+            let _lastAccounts = null;
+
+            function loadAccountsUI() {
+                const port = getServerPort();
+                if (typeof window.vscode !== 'undefined') {
+                    vscode.postMessage({
+                        command: 'loadAccounts',
+                        host: 'localhost',
+                        port: port
+                    });
+                    vscode.postMessage({ command: 'getConnectedClients' });
+                } else {
+                    const host = 'localhost';
+                    const token = window._synapseToken;
+                    const hdrs = token ? { 'Authorization': 'Bearer ' + token } : {};
+                    Promise.all([
+                        fetch('http://' + host + ':' + port + '/api/admin/accounts', { headers: hdrs }).then(r => r.json()),
+                        token
+                            ? fetch('http://' + host + ':' + port + '/api/admin/connected-clients', { headers: { 'Authorization': 'Bearer ' + token } }).then(r => r.json())
+                            : Promise.resolve({ success: false })
+                    ]).then(([accData, connData]) => {
+                        if (accData.success && accData.accounts) {
+                            _lastAccounts = accData.accounts;
+                            const connectedIds = new Set(
+                                connData.success && connData.clients
+                                    ? connData.clients.map(c => c.userId)
+                                    : []
+                            );
+                            window._connectedUserIds = connectedIds;
+                            renderAccountList(accData.accounts);
+                            if (window.engine) {
+                                for (const acc of accData.accounts) {
+                                    if (acc.username === 'server') continue;
+                                    if (connectedIds.has(acc.userId)) {
+                                        window.engine.registerClientLayer(acc.userId, acc.username);
+                                    }
+                                }
+                            }
+                        } else {
+                            accountList.innerHTML = '<div class="account-row">계정이 없습니다</div>';
+                        }
+                    }).catch(err => {
+                        accountList.innerHTML = '<div class="account-row">오류: ' + err.message + '</div>';
+                    });
+                }
+            }
+
             function renderAccountList(accounts) {
-                if (!srvAccountList) return;
+                accountList.innerHTML = '';
                 if (!accounts || accounts.length === 0) {
-                    srvAccountList.innerHTML = '<div style="color:#a89984;">등록된 계정이 없습니다.</div>';
+                    accountList.innerHTML = '<div class="account-row" style="color:var(--fg-dim);">계정 없음</div>';
                     return;
                 }
-                let html = '<table style="width:100%; border-collapse:collapse; font-size:11px;">';
+                const connected = window._connectedUserIds || new Set();
                 accounts.forEach(acc => {
-                    html += `<tr style="border-bottom:1px solid #3c3836;">`;
-                    html += `<td style="padding:3px 4px; color:#ebdbb2; white-space:nowrap;">${acc.username}</td>`;
-                    html += `<td style="padding:3px 4px; color:#a89984; font-size:10px;">${acc.userId.slice(0, 12)}…</td>`;
-                    html += `<td style="padding:3px 4px;"><input type="password" class="change-pass-input" data-username="${acc.username}" placeholder="새 PW" style="width:70px; background:#1d2021; border:1px solid #504945; color:#ebdbb2; padding:2px 4px; font-size:10px; border-radius:3px;"></td>`;
-                    html += `<td style="padding:3px 4px; text-align:right; white-space:nowrap;">
-                        <button class="btn-pass-change" data-username="${acc.username}" style="background:#458588; color:#fff; border:none; padding:2px 6px; font-size:10px; border-radius:3px; cursor:pointer;">PW</button>
-                        <button class="btn-account-delete" data-username="${acc.username}" style="background:#cc241d; color:#fff; border:none; padding:2px 6px; font-size:10px; border-radius:3px; cursor:pointer;">삭제</button>
-                    </td>`;
-                    html += '</tr>';
+                    const row = document.createElement('div');
+                    row.className = 'account-row';
+                    row.dataset.userId = acc.userId;
+                    const isConnected = connected.has(acc.userId);
+                    const created = acc.createdAt ? new Date(acc.createdAt).toLocaleDateString() : '';
+                    const dotColor = isConnected ? '#8ec07c' : '#504945';
+                    const dotTitle = isConnected ? '접속 중' : '미접속';
+                    let html = '<span><span class="conn-dot" style="display:inline-block;width:8px;height:8px;border-radius:50%;background:' + dotColor + ';margin-right:6px;" title="' + dotTitle + '"></span><b>' + escapeHtml(acc.username) + '</b>';
+                    if (created) html += ' <span style="color:var(--fg-dim);font-size:10px;">' + created + '</span>';
+                    html += '</span>';
+                    html += '<button class="btn-del" data-user="' + escapeHtml(acc.username) + '">삭제</button>';
+                    row.innerHTML = html;
+                    row.querySelector('.btn-del').addEventListener('click', () => {
+                        deleteAccountUI(acc.username);
+                    });
+                    accountList.appendChild(row);
                 });
-                html += '</table>';
-                srvAccountList.innerHTML = html;
+            }
 
-                document.querySelectorAll('.btn-account-delete').forEach(btn => {
-                    btn.addEventListener('click', () => {
-                        const username = btn.getAttribute('data-username');
-                        if (confirm(`"${username}" 계정을 삭제하시겠습니까?`)) {
-                            deleteAccount(username);
+            function deleteAccountUI(username) {
+                if (!confirm('"' + username + '" 계정을 삭제하시겠습니까?')) return;
+                if (typeof window.vscode !== 'undefined') {
+                    vscode.postMessage({ command: 'deleteAccount', username: username });
+                } else {
+                    const port = getServerPort();
+                    const token = window._synapseToken;
+                    fetch('http://localhost:' + port + '/api/admin/delete-account', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', ...(token ? { 'Authorization': 'Bearer ' + token } : {}) },
+                        body: JSON.stringify({ username: username }),
+                    })
+                        .then(r => r.json())
+                        .then(data => {
+                            if (data.success) {
+                                accountMsg.textContent = '삭제 성공';
+                                accountMsg.className = 'success';
+                                loadAccountsUI();
+                                if (window.engine) window.engine.refreshClientLayersFromAccounts();
+                            } else {
+                                accountMsg.textContent = data.error || '삭제 실패';
+                                accountMsg.className = 'error';
+                            }
+                        })
+                        .catch(err => {
+                            accountMsg.textContent = '오류: ' + err.message;
+                            accountMsg.className = 'error';
+                        });
+                }
+            }
+
+            function updateAccountDots() {
+                const connected = window._connectedUserIds || new Set();
+                document.querySelectorAll('#srv-account-list .account-row').forEach(row => {
+                    const dot = row.querySelector('.conn-dot');
+                    if (!dot) return;
+                    const userId = row.dataset.userId;
+                    const isConnected = connected.has(userId);
+                    dot.style.background = isConnected ? '#8ec07c' : '#504945';
+                    dot.title = isConnected ? '접속 중' : '미접속';
+                });
+            }
+
+            function escapeHtml(str) {
+                const div = document.createElement('div');
+                div.textContent = str;
+                return div.innerHTML || str;
+            }
+
+            // vscode 메시지 핸들러 (existing)
+            window.addEventListener('message', event => {
+                const msg = event.data;
+                switch (msg.command) {
+                    case 'createAccountResult':
+                        if (msg.success) {
+                            accountMsg.textContent = '계정 생성 성공!';
+                            accountMsg.className = 'success';
+                            document.getElementById('srv-new-user').value = '';
+                            document.getElementById('srv-new-pass').value = '';
+                            loadAccountsUI();
+                            if (window.engine) window.engine.refreshClientLayersFromAccounts();
+                        } else {
+                            accountMsg.textContent = msg.error || '생성 실패';
+                            accountMsg.className = 'error';
                         }
-                    });
-                });
-                document.querySelectorAll('.btn-pass-change').forEach(btn => {
-                    btn.addEventListener('click', () => {
-                        const username = btn.getAttribute('data-username');
-                        const input = document.querySelector(`.change-pass-input[data-username="${username}"]`);
-                        if (!input || !input.value) { srvAccountMsg.textContent = '새 비밀번호를 입력하세요.'; return; }
-                        changePassword(username, input.value);
-                    });
-                });
-            }
-
-            function createAccount(username, password) {
-                if (!username || !password) { srvAccountMsg.textContent = 'username과 password를 입력하세요.'; return; }
-                srvAccountMsg.textContent = '생성 중...';
-                if (isWebView) {
-                    const { host, port } = getConnHostPort();
-                    vscode.postMessage({ command: 'createAccount', host, port, username, password });
-                } else {
-                    fetch(getServerUrl() + '/api/admin/create-account', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ username, password }),
-                    })
-                        .then(r => r.json())
-                        .then(data => {
-                            if (data.success) {
-                                srvAccountMsg.textContent = `✅ ${username} 계정 생성됨`;
-                                srvNewUser.value = '';
-                                srvNewPass.value = '';
-                                loadAccounts();
-                            } else {
-                                srvAccountMsg.textContent = '❌ ' + (data.error || '생성 실패');
+                        break;
+                    case 'deleteAccountResult':
+                        if (msg.success) {
+                            accountMsg.textContent = '삭제 성공';
+                            accountMsg.className = 'success';
+                            loadAccountsUI();
+                            if (window.engine) window.engine.refreshClientLayersFromAccounts();
+                        } else {
+                            accountMsg.textContent = msg.error || '삭제 실패';
+                            accountMsg.className = 'error';
+                        }
+                        break;
+                    case 'accountListResult':
+                        if (msg.success && msg.accounts) {
+                            renderAccountList(msg.accounts);
+                            const connectedIds = window._connectedUserIds || new Set();
+                            if (window.engine) {
+                                for (const acc of msg.accounts) {
+                                    if (acc.username === 'server') continue;
+                                    if (connectedIds.has(acc.userId)) {
+                                        window.engine.registerClientLayer(acc.userId, acc.username);
+                                    }
+                                }
                             }
-                        })
-                        .catch(err => { srvAccountMsg.textContent = '❌ ' + err.message; });
-                }
-            }
-
-            function deleteAccount(username) {
-                srvAccountMsg.textContent = '삭제 중...';
-                if (isWebView) {
-                    const { host, port } = getConnHostPort();
-                    vscode.postMessage({ command: 'deleteAccount', host, port, username });
-                } else {
-                    fetch(getServerUrl() + '/api/admin/delete-account', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ username }),
-                    })
-                        .then(r => r.json())
-                        .then(data => {
-                            if (data.success) {
-                                srvAccountMsg.textContent = `🗑️ ${username} 삭제됨`;
-                                loadAccounts();
-                            } else {
-                                srvAccountMsg.textContent = '❌ ' + (data.error || '삭제 실패');
+                        } else {
+                            accountList.innerHTML = '<div class="account-row">계정이 없습니다</div>';
+                        }
+                        break;
+                    case 'changePasswordResult':
+                        if (msg.success) {
+                            accountMsg.textContent = '비밀번호 변경 성공';
+                            accountMsg.className = 'success';
+                        } else {
+                            accountMsg.textContent = msg.error || '변경 실패';
+                            accountMsg.className = 'error';
+                        }
+                        break;
+                    case 'connectedClientsResult':
+                        if (msg.clients) {
+                            const connectedIds = new Set(msg.clients.map(c => c.userId));
+                            window._connectedUserIds = connectedIds;
+                            updateAccountDots();
+                            if (window.engine) {
+                                window.engine.removeDisconnectedClientLayers(connectedIds);
+                                for (const client of msg.clients) {
+                                    if (client.userId === '_server_admin_') continue;
+                                    window.engine.registerClientLayer(client.userId, client.username);
+                                }
+                                window.engine._updateClientLayerUI();
                             }
-                        })
-                        .catch(err => { srvAccountMsg.textContent = '❌ ' + err.message; });
+                        }
+                        break;
+                    case 'logoutResult':
+                        if (msg.success) {
+                            window._synapseToken = null;
+                            window.connectedUser = null;
+                            window.updateConnStatus({ status: 'disconnected' });
+                            window.clearConnState();
+                            accountList.innerHTML = '';
+                            window.connPanel.classList.remove('visible');
+                        }
+                        break;
                 }
-            }
-
-            function changePassword(username, newPassword) {
-                srvAccountMsg.textContent = '변경 중...';
-                if (isWebView) {
-                    const { host, port } = getConnHostPort();
-                    vscode.postMessage({ command: 'changePassword', host, port, username, newPassword });
-                } else {
-                    fetch(getServerUrl() + '/api/admin/change-password', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ username, newPassword }),
-                    })
-                        .then(r => r.json())
-                        .then(data => {
-                            if (data.success) {
-                                srvAccountMsg.textContent = `🔑 ${username} 비밀번호 변경됨`;
-                            } else {
-                                srvAccountMsg.textContent = '❌ ' + (data.error || '변경 실패');
-                            }
-                        })
-                        .catch(err => { srvAccountMsg.textContent = '❌ ' + err.message; });
-                }
-            }
-
-            document.getElementById('btn-srv-create-account')?.addEventListener('click', () => {
-                createAccount(srvNewUser.value.trim(), srvNewPass.value);
             });
 
-            // WebView message handlers for account management results
-            if (isWebView) {
-                window.addEventListener('message', event => {
-                    const msg = event.data;
-                    if (msg.command === 'createAccountResult') {
-                        if (msg.success) {
-                            srvAccountMsg.textContent = `✅ ${msg.username} 계정 생성됨`;
-                            srvNewUser.value = '';
-                            srvNewPass.value = '';
-                            loadAccounts();
-                        } else {
-                            srvAccountMsg.textContent = '❌ ' + (msg.error || '생성 실패');
-                        }
-                    }
-                    if (msg.command === 'deleteAccountResult') {
-                        if (msg.success) {
-                            srvAccountMsg.textContent = `🗑️ ${msg.username} 삭제됨`;
-                            loadAccounts();
-                        } else {
-                            srvAccountMsg.textContent = '❌ ' + (msg.error || '삭제 실패');
-                        }
-                    }
-                    if (msg.command === 'changePasswordResult') {
-                        if (msg.success) {
-                            srvAccountMsg.textContent = `🔑 ${msg.username} 비밀번호 변경됨`;
-                        } else {
-                            srvAccountMsg.textContent = '❌ ' + (msg.error || '변경 실패');
-                        }
-                    }
-                    if (msg.command === 'accountListResult') {
-                        if (msg.success) renderAccountList(msg.accounts);
-                    }
-                });
-            }
-
-            // Load accounts when account panel becomes visible
-            const accPanelObserver = new MutationObserver(() => {
-                if (accountPanel.classList.contains('visible')) {
-                    loadAccounts();
-                }
-            });
-            accPanelObserver.observe(accountPanel, { attributes: true, attributeFilter: ['class'] });
-
-            // server panel draggable
-            makeDraggable('server-panel', 'server-panel-header');
             // account panel draggable
             makeDraggable('account-panel', 'account-panel-header');
         });
@@ -2342,6 +2569,7 @@
                 <span class="layer-label" style="font-size: 13px; color: var(--fg-main);">외부 참조 (External) - <b id="layer-count-external" style="color: #a89984;">0</b></span>
                 <button id="btn-layer-external" class="layer-btn active" style="min-width: 50px;">ON</button>
             </div>
+            <div id="client-layer-rows"></div>
             <div class="layer-toggle-row" style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; border-top: 1px solid #3c3836; padding-top: 10px;">
                 <span class="layer-label" style="font-size: 13px; color: #a89984;">Hide Leaf Nodes (noise)</span>
                 <button id="btn-toggle-leaf" class="layer-btn" style="min-width: 50px;">OFF</button>
@@ -2369,11 +2597,14 @@
         <div class="panel-content" style="padding: 12px;">
             <div class="conn-row">
                 <label>Host</label>
-                <input type="text" id="conn-host" placeholder="192.168.0.240 또는 localhost">
+                <input type="text" id="conn-host" placeholder="192.168.0.240 또는 localhost" value="192.168.0.240">
             </div>
-            <div class="conn-row">
+            <div class="conn-row" style="display:flex; align-items:center; gap:6px;">
                 <label>Port</label>
-                <input type="text" id="conn-port" placeholder="3000" value="3000">
+                <input type="text" id="conn-port" placeholder="3000" value="3000" style="flex:1;">
+                <button id="btn-conn-server-info" style="font-size:11px; padding:3px 8px; white-space:nowrap;">정보보기</button>
+            </div>
+            <div id="conn-server-info-result" style="font-size:12px; color:var(--fg-dim); margin:4px 0 8px 12px; display:none;">
             </div>
             <div class="conn-row">
                 <label>Username</label>
@@ -2382,6 +2613,19 @@
             <div class="conn-row">
                 <label>Password</label>
                 <input type="password" id="conn-password" placeholder="password">
+            </div>
+            <div class="conn-section-divider">원격 마운트 (선택)</div>
+            <div class="conn-row">
+                <label>SSH Host</label>
+                <input type="text" id="conn-ssh-host" placeholder="원격 서버 주소">
+            </div>
+            <div class="conn-row">
+                <label>SSH User</label>
+                <input type="text" id="conn-ssh-user" placeholder="기본값: Username">
+            </div>
+            <div class="conn-row">
+                <label>Mount Path</label>
+                <input type="text" id="conn-ssh-mount" placeholder="/home/user/project">
             </div>
             <div id="conn-error" class="conn-error"></div>
             <div class="conn-actions">
@@ -2412,32 +2656,39 @@
             </div>
             <div class="conn-row">
                 <label>Port</label>
-                <span id="srv-port" style="font-size:13px; color:var(--fg-main);">3000</span>
+                <input type="number" id="srv-port" value="3000" min="1024" max="65535" style="flex:1; background:#1d2021; border:1px solid #504945; color:#ebdbb2; padding:2px 6px; font-size:13px; border-radius:3px;">
             </div>
             <div id="srv-error" class="conn-error"></div>
             <div class="conn-actions">
                 <button id="btn-srv-start" class="primary">서버 시작</button>
                 <button id="btn-srv-stop" style="background:#cc241d; color:#fff; border-color:#cc241d;">서버 중지</button>
             </div>
-            <button id="btn-harvest" style="display:none; margin-top:8px; width:100%; padding:6px 12px; background:#689d6a; color:#fff; border:none; border-radius:4px; cursor:pointer; font-size:12px;">수확 실행</button>
-            <div id="srv-harvest-result" style="font-size:11px; margin-top:6px; color:var(--fg-dim);"></div>
+            <div id="srv-harvest-result" style="font-size:11px; margin-top:6px; color:var(--fg-dim); display:none;"></div>
         </div>
     </div>
 
     <!-- Account Panel -->
     <div id="account-panel" class="draggable-panel">
         <div id="account-panel-header" class="panel-header">
-            <span class="panel-title">계정 관리</span>
+            <span class="panel-title">👤 계정 관리</span>
             <button id="account-panel-close" style="background:none; border:none; color:var(--fg-dim); cursor:pointer; font-size:18px;">&times;</button>
         </div>
         <div class="panel-content" style="padding: 12px;">
-            <div id="srv-account-list" style="font-size:11px; margin-bottom:8px; max-height:150px; overflow-y:auto;"></div>
-            <div style="display:flex; gap:4px; margin-bottom:6px;">
-                <input type="text" id="srv-new-user" placeholder="새 username" style="flex:1; background:#1d2021; border:1px solid #504945; color:#ebdbb2; padding:4px 6px; font-size:11px; border-radius:3px;">
-                <input type="password" id="srv-new-pass" placeholder="password" style="flex:1; background:#1d2021; border:1px solid #504945; color:#ebdbb2; padding:4px 6px; font-size:11px; border-radius:3px;">
-                <button id="btn-srv-create-account" style="background:#458588; color:#fff; border:none; padding:4px 8px; font-size:11px; border-radius:3px; cursor:pointer;">생성</button>
+            <div class="account-section-title">계정 목록</div>
+            <div id="srv-account-list" class="account-list"></div>
+            <div style="margin-top:8px; display:flex; gap:4px;">
+                <button id="btn-refresh-accounts" style="flex:1; padding:4px 8px; font-size:11px;">새로고침</button>
+                <button id="btn-logout" style="flex:1; padding:4px 8px; font-size:11px; color:#fb4934;">연결 끊기</button>
             </div>
-            <div id="srv-account-msg" style="font-size:11px; color:#a89984;"></div>
+            <div class="account-section-title">새 계정 생성</div>
+            <div class="account-form-row">
+                <input type="text" id="srv-new-user" placeholder="username">
+                <input type="password" id="srv-new-pass" placeholder="password">
+            </div>
+            <div class="account-form-row">
+                <button id="btn-srv-create-account" style="width:100%; padding:6px 10px;">생성</button>
+            </div>
+            <div id="srv-account-msg"></div>
         </div>
     </div>
 

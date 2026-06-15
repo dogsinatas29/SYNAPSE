@@ -17,6 +17,9 @@ export interface ClassifiedNode {
     isExternal: boolean;
     isGhost: boolean;
     hasAtomicSignature: boolean;
+    clientLayer?: string;
+    clientUsername?: string;
+    sessionId?: string;
 }
 
 export interface ClassifiedCluster {
@@ -24,6 +27,9 @@ export interface ClassifiedCluster {
     label: string;
     layer: LayerType;
     memberCount: number;
+    clientLayer?: string;
+    clientUsername?: string;
+    sessionId?: string;
 }
 
 export interface ProjectionResult {
@@ -37,6 +43,7 @@ export interface ProjectionResult {
         showBaseLayer: boolean;
         showUserLayer: boolean;
         showExternalLayer: boolean;
+        clientLayers: Record<string, boolean>;
     };
     graphSnapshot: GraphSnapshot;
 }
@@ -93,6 +100,7 @@ export class RemoteLayerProjector {
         const docExtensions = new Set(['.md', '.mdx', '.rst', '.txt']);
 
         for (const file of snapshot.files) {
+            if (file.filePath.startsWith('external://') || file.filePath.startsWith('ghost://')) continue;
             const ext = path.extname(file.filePath).toLowerCase();
             const fileName = path.basename(file.filePath);
             const isDoc = docExtensions.has(ext);
@@ -120,6 +128,9 @@ export class RemoteLayerProjector {
                 isExternal: false,
                 isGhost: false,
                 hasAtomicSignature: false,
+                clientLayer: snapshot.clientId,
+                clientUsername: snapshot.clientUsername,
+                sessionId: snapshot.sessionId,
             };
 
             node.layer = classifyNodeLayer(node);
@@ -136,15 +147,18 @@ export class RemoteLayerProjector {
                         label: `📂 ${path.basename(dir)}`,
                         layer,
                         memberCount: 1,
+                        clientLayer: snapshot.clientId,
+                        clientUsername: snapshot.clientUsername,
+                        sessionId: snapshot.sessionId,
                     });
                 }
             }
         }
 
-        const systemClusters = [
-            { id: 'cluster_ghosts', label: '☁️ External Ghosts', layer: 'external' as LayerType, memberCount: 0 },
-            { id: 'sys_cluster_reserved', label: '🛡️ Reserved (Internal Pending)', layer: 'ai' as LayerType, memberCount: 0 },
-            { id: 'doc_shelf', label: '📚 Documentation Shelf', layer: 'user' as LayerType, memberCount: 0 },
+        const systemClusters: ClassifiedCluster[] = [
+            { id: 'cluster_ghosts', label: '☁️ External Ghosts', layer: 'external', memberCount: 0 },
+            { id: 'sys_cluster_reserved', label: '🛡️ Reserved (Internal Pending)', layer: 'ai', memberCount: 0 },
+            { id: 'doc_shelf', label: '📚 Documentation Shelf', layer: 'user', memberCount: 0 },
         ];
 
         for (const sc of systemClusters) {
@@ -170,7 +184,9 @@ export class RemoteLayerProjector {
             classifiedNodes.push(ghostNode);
 
             const ghostCluster = classifiedClustersMap.get('cluster_ghosts');
-            if (ghostCluster) ghostCluster.memberCount++;
+            if (ghostCluster) {
+                ghostCluster.memberCount++;
+            }
         }
 
         const classifiedClusters = Array.from(classifiedClustersMap.values());
@@ -183,11 +199,14 @@ export class RemoteLayerProjector {
                 label: n.label,
                 cluster_id: n.clusterId,
                 layer: n.layer,
+                clientLayer: n.clientLayer,
                 data: {
                     label: n.label,
                     file: n.filePath,
                     cluster_id: n.clusterId,
                     layer: n.layer,
+                    clientLayer: n.clientLayer,
+                    clientUsername: n.clientUsername,
                     icon: n.isDocumentation ? '📚' : (n.isExternal ? '☁️' : (n.hasAtomicSignature ? '⚡' : '📄')),
                     hiddenOnCanvas: n.isDocumentation,
                     hasAtomicSignature: n.hasAtomicSignature,
@@ -202,7 +221,8 @@ export class RemoteLayerProjector {
                 label: c.label,
                 type: 'folder',
                 layer: c.layer,
-                data: { layer: c.layer },
+                clientLayer: c.clientLayer,
+                data: { layer: c.layer, clientLayer: c.clientLayer, clientUsername: c.clientUsername },
                 position: { x: 0, y: 0 },
                 bounds: { x: 0, y: 0, width: 0, height: 0 },
                 children: [],
@@ -211,6 +231,9 @@ export class RemoteLayerProjector {
             timestamp: Date.now(),
             snapshotVersion: 1,
         };
+
+        const clientLayers: Record<string, boolean> = {};
+        clientLayers[snapshot.clientId] = true;
 
         const result: ProjectionResult = {
             submissionId: snapshot.id,
@@ -223,6 +246,7 @@ export class RemoteLayerProjector {
                 showBaseLayer: true,
                 showUserLayer: true,
                 showExternalLayer: true,
+                clientLayers,
             },
             graphSnapshot,
         };

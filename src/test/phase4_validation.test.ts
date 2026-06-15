@@ -166,4 +166,123 @@ describe('Phase 4 — Remote Layer Visualization', () => {
         expect(engineNode).toBeTruthy();
         expect(engineNode!.layer).toBe('ai'); // Default for source files without atomic marker
     });
+
+    // ─── Gate CL: Client Layer Tests ───
+
+    test('CL-1: clientLayer assigned to all user-submitted nodes', () => {
+        const projector = RemoteLayerProjector.getInstance();
+        const snapshot = makeSnapshot({ clientId: 'usr_member_001' });
+        const result = projector.project(snapshot);
+
+        const userFiles = result.nodes.filter(n => !n.filePath.startsWith('external://') && !n.filePath.startsWith('ghost://'));
+        for (const node of userFiles) {
+            expect(node.clientLayer).toBe('usr_member_001');
+        }
+    });
+
+    test('CL-1b: System/ghost nodes have no clientLayer', () => {
+        const projector = RemoteLayerProjector.getInstance();
+        const snapshot = makeSnapshot({ clientId: 'usr_member_001' });
+        const result = projector.project(snapshot);
+
+        const ghostNodes = result.nodes.filter(n => n.filePath.startsWith('external://') || n.filePath.startsWith('ghost://'));
+        for (const node of ghostNodes) {
+            expect(node.clientLayer).toBeUndefined();
+        }
+
+        // System clusters have no clientLayer
+        const systemCluster = result.clusters.find(c => c.id === 'cluster_ghosts');
+        expect(systemCluster).toBeTruthy();
+        expect(systemCluster!.clientLayer).toBeUndefined();
+    });
+
+    test('CL-1c: Folder clusters from user files carry clientLayer', () => {
+        const projector = RemoteLayerProjector.getInstance();
+        const snapshot = makeSnapshot({ clientId: 'usr_member_002' });
+        const result = projector.project(snapshot);
+
+        const folderClusters = result.clusters.filter(c => c.id.startsWith('folder_'));
+        for (const fc of folderClusters) {
+            expect(fc.clientLayer).toBe('usr_member_002');
+        }
+    });
+
+    test('CL-1d: Multiple submissions from same client produce same clientLayer', () => {
+        const projector = RemoteLayerProjector.getInstance();
+        const snap1 = makeSnapshot({ clientId: 'usr_member_dup', files: [{ filePath: 'a.ts', content: '', encoding: 'utf8' }] });
+        const snap2 = makeSnapshot({ clientId: 'usr_member_dup', files: [{ filePath: 'b.ts', content: '', encoding: 'utf8' }] });
+
+        const r1 = projector.project(snap1);
+        const r2 = projector.project(snap2);
+
+        expect(r1.nodes[0].clientLayer).toBe('usr_member_dup');
+        expect(r2.nodes[0].clientLayer).toBe('usr_member_dup');
+        // CL-1 Gate: same clientId → same clientLayer value (dedup at engine level via registerClientLayer)
+        expect(r1.clientId).toBe(r2.clientId);
+    });
+
+    test('CL-2: Different clients produce different clientLayers', () => {
+        const projector = RemoteLayerProjector.getInstance();
+        const snapA = makeSnapshot({ clientId: 'usr_client_a', files: [{ filePath: 'a.ts', content: '', encoding: 'utf8' }] });
+        const snapB = makeSnapshot({ clientId: 'usr_client_b', files: [{ filePath: 'b.ts', content: '', encoding: 'utf8' }] });
+
+        const rA = projector.project(snapA);
+        const rB = projector.project(snapB);
+
+        expect(rA.nodes[0].clientLayer).toBe('usr_client_a');
+        expect(rB.nodes[0].clientLayer).toBe('usr_client_b');
+        expect(rA.nodes[0].clientLayer).not.toBe(rB.nodes[0].clientLayer);
+        // CL-2 Gate: two distinct clientIds → two distinct clientLayer values
+    });
+
+    test('CL-3: SessionId preserved in classified node metadata', () => {
+        const projector = RemoteLayerProjector.getInstance();
+        const snapshot = makeSnapshot({ sessionId: 'ses_test_001', clientId: 'usr_001' });
+        const result = projector.project(snapshot);
+
+        const userNode = result.nodes.find(n => n.filePath === 'src/main.ts');
+        expect(userNode).toBeTruthy();
+        expect(userNode!.sessionId).toBe('ses_test_001');
+    });
+
+    test('CL-4: Visibility model includes clientLayers', () => {
+        const projector = RemoteLayerProjector.getInstance();
+        const snapshot = makeSnapshot({ clientId: 'usr_test_vis' });
+        const result = projector.project(snapshot);
+
+        expect(result.visibility.clientLayers).toBeDefined();
+        expect(result.visibility.clientLayers['usr_test_vis']).toBe(true);
+    });
+
+    test('CL-5: GraphSnapshot nodes carry clientLayer', () => {
+        const projector = RemoteLayerProjector.getInstance();
+        const snapshot = makeSnapshot({ clientId: 'usr_graph_test' });
+        const result = projector.project(snapshot);
+
+        const gsNode = result.graphSnapshot.nodes.find(n => n.filePath === 'src/main.ts');
+        expect(gsNode).toBeTruthy();
+        expect(gsNode!.clientLayer).toBe('usr_graph_test');
+        expect(gsNode!.data.clientLayer).toBe('usr_graph_test');
+    });
+
+    test('CL-5b: GraphSnapshot nodes carry clientUsername', () => {
+        const projector = RemoteLayerProjector.getInstance();
+        const snapshot = makeSnapshot({ clientId: 'usr_name_test', clientUsername: 'TestUser' });
+        const result = projector.project(snapshot);
+
+        const gsNode = result.graphSnapshot.nodes.find(n => n.filePath === 'src/main.ts');
+        expect(gsNode).toBeTruthy();
+        expect(gsNode!.data.clientUsername).toBe('TestUser');
+    });
+
+    test('CL-6: GraphSnapshot clusters carry clientLayer', () => {
+        const projector = RemoteLayerProjector.getInstance();
+        const snapshot = makeSnapshot({ clientId: 'usr_cluster_test' });
+        const result = projector.project(snapshot);
+
+        const gsCluster = result.graphSnapshot.clusters.find(c => c.id.startsWith('folder_'));
+        expect(gsCluster).toBeTruthy();
+        expect(gsCluster!.clientLayer).toBe('usr_cluster_test');
+        expect(gsCluster!.data.clientLayer).toBe('usr_cluster_test');
+    });
 });

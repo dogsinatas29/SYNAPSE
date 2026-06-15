@@ -22,9 +22,10 @@ export class RestCollaborationTransport implements CollaborationTransport {
         projectUUID: string,
         sessionId: string,
         clientId: string,
-        filePaths: string[]
+        filePaths: string[],
+        clientUsername?: string
     ): Promise<SubmissionSnapshot> {
-        return SubmissionManager.getInstance().createSubmission(projectUUID, sessionId, clientId, filePaths);
+        return SubmissionManager.getInstance().createSubmission(projectUUID, sessionId, clientId, filePaths, clientUsername);
     }
 
     async getReviewState(submissionId: string): Promise<ReviewState | null> {

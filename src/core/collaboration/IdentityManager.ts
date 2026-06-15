@@ -43,13 +43,7 @@ const ROLE_PERMISSIONS: Record<RoleType, Permission[]> = {
         Permission.ReadLayer,
         Permission.WriteLayer,
     ],
-    member: [
-        Permission.JoinSession,
-        Permission.LeaveSession,
-        Permission.SubmitChanges,
-        Permission.ReceiveCommands,
-        Permission.ReadLayer,
-    ],
+    member: [],
 };
 
 export class IdentityManager {

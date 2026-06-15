@@ -4,6 +4,7 @@ import { Logger } from '../../utils/Logger';
 import { ProjectMetadata } from '../ProjectMetadata';
 import { SubmissionSnapshot, SubmissionFile } from '../../types/schema';
 import { VerificationReport } from './ReferenceVerifier';
+import { SubmissionManager } from './SubmissionManager';
 
 export interface HarvestInput {
     submissionId: string;
@@ -11,6 +12,13 @@ export interface HarvestInput {
     approvedFiles: SubmissionFile[];
     originalSnapshot: SubmissionSnapshot;
     verificationReport: VerificationReport;
+}
+
+export interface LayerHarvestInput {
+    projectUUID: string;
+    sessionId: string;
+    clientLayerIds: string[];
+    username?: string;
 }
 
 export interface HarvestedFile {
@@ -56,18 +64,23 @@ export class HarvestEngine {
         for (const file of input.approvedFiles) {
             if (file.filePath.startsWith('external://') || file.filePath.startsWith('ghost://')) continue;
 
-            const targetFilePath = path.join(masterLayerPath, file.filePath);
-            const targetDir = path.dirname(targetFilePath);
+            const resolvedTarget = path.resolve(masterLayerPath, file.filePath);
+            if (!resolvedTarget.startsWith(masterLayerPath + path.sep) && resolvedTarget !== masterLayerPath) {
+                Logger.warn(`[v0.3.30] Harvest path traversal denied: ${file.filePath}`);
+                continue;
+            }
+
+            const targetDir = path.dirname(resolvedTarget);
 
             if (!fs.existsSync(targetDir)) {
                 fs.mkdirSync(targetDir, { recursive: true });
                 createdFolders.add(targetDir);
             }
 
-            fs.writeFileSync(targetFilePath, file.content, (file.encoding || 'utf8') as BufferEncoding);
+            fs.writeFileSync(resolvedTarget, file.content, (file.encoding || 'utf8') as BufferEncoding);
             harvestedFiles.push({
                 filePath: file.filePath,
-                targetPath: targetFilePath,
+                targetPath: resolvedTarget,
                 size: file.content.length,
             });
         }
@@ -95,5 +108,40 @@ export class HarvestEngine {
 
         Logger.info(`[v0.3.30] Harvest complete: ${result.filesHarvested} files, ${result.foldersCreated} folders`);
         return result;
+    }
+
+    harvestLayers(input: LayerHarvestInput): HarvestResult[] {
+        const sm = SubmissionManager.getInstance();
+        const results: HarvestResult[] = [];
+        let totalFiles = 0;
+
+        for (const clientId of input.clientLayerIds) {
+            const approvedSubs = sm.getApprovedSubmissionsByClient(input.projectUUID, input.sessionId, clientId);
+            if (approvedSubs.length === 0) continue;
+
+            const approvedFiles: SubmissionFile[] = [];
+            for (const sub of approvedSubs) {
+                for (const f of sub.files) {
+                    if (!approvedFiles.some(af => af.filePath === f.filePath)) {
+                        approvedFiles.push(f);
+                    }
+                }
+            }
+
+            const combinedInput: HarvestInput = {
+                submissionId: `layer_${clientId}_${Date.now()}`,
+                projectUUID: input.projectUUID,
+                approvedFiles,
+                originalSnapshot: approvedSubs[approvedSubs.length - 1],
+                verificationReport: { generatedAt: Date.now(), graph: { fileNodes: [], ghostNodes: [], edges: [], clusters: [] }, findings: [], stats: { totalFiles: 0, totalEdges: 0, totalGhosts: 0, resolvedReferences: 0, unresolvedReferences: 0, disconnectedFiles: 0 } },
+            };
+
+            const result = this.harvest(combinedInput);
+            results.push(result);
+            totalFiles += result.filesHarvested;
+        }
+
+        Logger.info(`[v0.3.30] Layer harvest complete: ${input.clientLayerIds.length} layers, ${totalFiles} files`);
+        return results;
     }
 }

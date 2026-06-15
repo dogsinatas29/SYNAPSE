@@ -99,10 +99,14 @@ export class CanvasPanel {
     // [v0.3.30] Collaboration Server Process
     private _serverProcess: cp.ChildProcess | null = null;
     private _externalServer: boolean = false;
+    private _isServerOwner: boolean = false;
 
     // [v0.3.30] Connection info for account management
     private _connHost: string = 'localhost';
     private _connPort: number = 3000;
+    private _connUserId: string = '';
+    private _connUsername: string = '';
+    private _sessionToken: string | null = null;
 
 
     public static createOrShow(context: vscode.ExtensionContext, workspaceFolder: vscode.WorkspaceFolder) {
@@ -362,6 +366,8 @@ export class CanvasPanel {
                                 status: 'solid',
                                 cluster_id: 'sys_cluster_buffer',
                                 layer: 'user',
+                                clientLayer: this._isServerOwner ? undefined : this._connUserId,
+                                clientUsername: this._isServerOwner ? undefined : this._connUsername,
                                 x: 100,
                                 y: 200,
                                 data: {
@@ -371,7 +377,9 @@ export class CanvasPanel {
                                     status: 'solid',
                                     cluster_id: 'sys_cluster_buffer',
                                     priority_cluster: 'sys_cluster_buffer',
-                                    layer: 'user'
+                                    layer: 'user',
+                                    clientLayer: this._isServerOwner ? undefined : this._connUserId,
+                                    clientUsername: this._isServerOwner ? undefined : this._connUsername
                                 }
                             }
                         }
@@ -456,46 +464,228 @@ export class CanvasPanel {
                 }
                 return;
             case 'startServer':
-                this.handleStartServer();
+                this.handleStartServer(message.port, message.username, message.password);
                 return;
             case 'stopServer':
                 this.handleStopServer();
                 return;
             case 'login':
-                this.handleLogin(message.host, message.port, message.username, message.password);
-                return;
-            case 'harvest':
-                this.handleHarvest(message.submissionId, message.projectUUID, message.filePaths);
+                this.handleLogin(message.host, message.port, message.username, message.password, message.sshHost, message.sshUser, message.sshMountPath);
                 return;
             case 'createAccount':
-                if (message.host && message.port) {
-                    this._connHost = message.host;
-                    this._connPort = parseInt(message.port, 10);
-                }
-                this.handleCreateAccount(message.username, message.password);
+                await this.handleCreateAccount(message);
                 return;
             case 'deleteAccount':
-                if (message.host && message.port) {
-                    this._connHost = message.host;
-                    this._connPort = parseInt(message.port, 10);
-                }
-                this.handleDeleteAccount(message.username);
+                await this.handleDeleteAccount(message);
                 return;
             case 'loadAccounts':
-                if (message.host && message.port) {
-                    this._connHost = message.host;
-                    this._connPort = parseInt(message.port, 10);
-                }
-                this.handleLoadAccounts();
+                await this.handleLoadAccounts(message);
                 return;
             case 'changePassword':
-                if (message.host && message.port) {
-                    this._connHost = message.host;
-                    this._connPort = parseInt(message.port, 10);
-                }
-                this.handleChangePassword(message.username, message.newPassword);
+                await this.handleChangePassword(message);
+                return;
+            case 'serverInfo':
+                this.handleServerInfo(message.host, message.port);
+                return;
+            case 'logout':
+                await this.handleLogout();
+                return;
+            case 'getConnectedClients':
+                await this.handleGetConnectedClients();
+                return;
+            case 'getSessions':
+                await this.handleGetSessions();
+                return;
+            case 'refreshServerState':
+                this._fetchServerState(this._connHost || 'localhost', String(this._connPort || 3000));
+                return;
+            case 'submit':
+                await this.handleSubmit(message.projectUUID, message.sessionId, message.filePaths);
+                return;
+            case 'getSubmissions':
+                await this.handleGetSubmissions(message.projectUUID);
+                return;
+            case 'startReview':
+                await this.handleStartReview(message.submissionId, message.leadId);
+                return;
+            case 'approveSubmission':
+                await this.handleApproveSubmission(message.submissionId, message.leadId, message.notes);
+                return;
+            case 'rejectSubmission':
+                await this.handleRejectSubmission(message.submissionId, message.leadId, message.reason);
+                return;
+            case 'buildIndex':
+                await this.handleBuildIndex(message.submissionId);
+                return;
+            case 'verify':
+                await this.handleVerify(message.submissionId);
                 return;
         }
+    }
+
+    private async handleSubmit(projectUUID: string, sessionId: string, filePaths: string[]): Promise<void> {
+        const host = this._connHost || 'localhost';
+        const port = this._connPort || 3000;
+        const data = JSON.stringify({ projectUUID, sessionId, clientId: this._connUserId, filePaths, clientUsername: this._connUsername });
+        const opts: http.RequestOptions = {
+            hostname: host, port, path: '/api/collab/submission', method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(data), ...this._getAuthHeaders() },
+            timeout: 30000,
+        };
+        const req = http.request(opts, (res) => {
+            let body = '';
+            res.on('data', (c) => { body += c; });
+            res.on('end', () => {
+                try {
+                    const result = JSON.parse(body);
+                    this._panel.webview.postMessage({ command: 'submitResult', ...result });
+                } catch { this._panel.webview.postMessage({ command: 'submitResult', success: false, error: 'Invalid response' }); }
+            });
+        });
+        req.on('error', (e) => this._panel.webview.postMessage({ command: 'submitResult', success: false, error: e.message }));
+        req.write(data);
+        req.end();
+    }
+
+    private async handleGetSubmissions(projectUUID: string): Promise<void> {
+        const host = this._connHost || 'localhost';
+        const port = this._connPort || 3000;
+        const opts: http.RequestOptions = {
+            hostname: host, port, path: `/api/collab/submissions?projectUUID=${encodeURIComponent(projectUUID)}`, method: 'GET',
+            headers: { ...this._getAuthHeaders() }, timeout: 10000,
+        };
+        const req = http.request(opts, (res) => {
+            let body = '';
+            res.on('data', (c) => { body += c; });
+            res.on('end', () => {
+                try {
+                    const result = JSON.parse(body);
+                    this._panel.webview.postMessage({ command: 'submissionsResult', ...result });
+                } catch { this._panel.webview.postMessage({ command: 'submissionsResult', success: false, error: 'Invalid response' }); }
+            });
+        });
+        req.on('error', (e) => this._panel.webview.postMessage({ command: 'submissionsResult', success: false, error: e.message }));
+        req.end();
+    }
+
+    private async handleStartReview(submissionId: string, leadId: string): Promise<void> {
+        const host = this._connHost || 'localhost';
+        const port = this._connPort || 3000;
+        const data = JSON.stringify({ submissionId, leadId });
+        const opts: http.RequestOptions = {
+            hostname: host, port, path: '/api/collab/review', method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(data), ...this._getAuthHeaders() },
+            timeout: 10000,
+        };
+        const req = http.request(opts, (res) => {
+            let body = '';
+            res.on('data', (c) => { body += c; });
+            res.on('end', () => {
+                try {
+                    const result = JSON.parse(body);
+                    this._panel.webview.postMessage({ command: 'reviewResult', ...result });
+                } catch { this._panel.webview.postMessage({ command: 'reviewResult', success: false, error: 'Invalid response' }); }
+            });
+        });
+        req.on('error', (e) => this._panel.webview.postMessage({ command: 'reviewResult', success: false, error: e.message }));
+        req.write(data);
+        req.end();
+    }
+
+    private async handleApproveSubmission(submissionId: string, leadId: string, notes?: string): Promise<void> {
+        const host = this._connHost || 'localhost';
+        const port = this._connPort || 3000;
+        const data = JSON.stringify({ submissionId, leadId, notes });
+        const opts: http.RequestOptions = {
+            hostname: host, port, path: '/api/collab/approve', method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(data), ...this._getAuthHeaders() },
+            timeout: 10000,
+        };
+        const req = http.request(opts, (res) => {
+            let body = '';
+            res.on('data', (c) => { body += c; });
+            res.on('end', () => {
+                try {
+                    const result = JSON.parse(body);
+                    this._panel.webview.postMessage({ command: 'approveResult', ...result });
+                } catch { this._panel.webview.postMessage({ command: 'approveResult', success: false, error: 'Invalid response' }); }
+            });
+        });
+        req.on('error', (e) => this._panel.webview.postMessage({ command: 'approveResult', success: false, error: e.message }));
+        req.write(data);
+        req.end();
+    }
+
+    private async handleRejectSubmission(submissionId: string, leadId: string, reason: string): Promise<void> {
+        const host = this._connHost || 'localhost';
+        const port = this._connPort || 3000;
+        const data = JSON.stringify({ submissionId, leadId, reason });
+        const opts: http.RequestOptions = {
+            hostname: host, port, path: '/api/collab/reject', method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(data), ...this._getAuthHeaders() },
+            timeout: 10000,
+        };
+        const req = http.request(opts, (res) => {
+            let body = '';
+            res.on('data', (c) => { body += c; });
+            res.on('end', () => {
+                try {
+                    const result = JSON.parse(body);
+                    this._panel.webview.postMessage({ command: 'rejectResult', ...result });
+                } catch { this._panel.webview.postMessage({ command: 'rejectResult', success: false, error: 'Invalid response' }); }
+            });
+        });
+        req.on('error', (e) => this._panel.webview.postMessage({ command: 'rejectResult', success: false, error: e.message }));
+        req.write(data);
+        req.end();
+    }
+
+    private async handleBuildIndex(submissionId: string): Promise<void> {
+        const host = this._connHost || 'localhost';
+        const port = this._connPort || 3000;
+        const data = JSON.stringify({ submissionId });
+        const opts: http.RequestOptions = {
+            hostname: host, port, path: '/api/collab/index', method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(data), ...this._getAuthHeaders() },
+            timeout: 30000,
+        };
+        const req = http.request(opts, (res) => {
+            let body = '';
+            res.on('data', (c) => { body += c; });
+            res.on('end', () => {
+                try {
+                    const result = JSON.parse(body);
+                    this._panel.webview.postMessage({ command: 'indexResult', ...result });
+                } catch { this._panel.webview.postMessage({ command: 'indexResult', success: false, error: 'Invalid response' }); }
+            });
+        });
+        req.on('error', (e) => this._panel.webview.postMessage({ command: 'indexResult', success: false, error: e.message }));
+        req.write(data);
+        req.end();
+    }
+
+    private async handleVerify(submissionId: string): Promise<void> {
+        const host = this._connHost || 'localhost';
+        const port = this._connPort || 3000;
+        const data = JSON.stringify({ submissionId });
+        const opts: http.RequestOptions = {
+            hostname: host, port, path: '/api/collab/verify', method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(data), ...this._getAuthHeaders() },
+            timeout: 60000,
+        };
+        const req = http.request(opts, (res) => {
+            let body = '';
+            res.on('data', (c) => { body += c; });
+            res.on('end', () => {
+                try {
+                    const result = JSON.parse(body);
+                    this._panel.webview.postMessage({ command: 'verifyResult', ...result });
+                } catch { this._panel.webview.postMessage({ command: 'verifyResult', success: false, error: 'Invalid response' }); }
+            });
+        });
+        req.on('error', (e) => this._panel.webview.postMessage({ command: 'verifyResult', success: false, error: e.message }));
+        req.write(data);
+        req.end();
     }
 
     private async handleCreateManualNode(node: any) {
@@ -532,6 +722,8 @@ export class CanvasPanel {
                 label: node.data?.label || nodeId,
                 type: node.type || 'file',
                 layer: 'user',
+                clientLayer: this._isServerOwner ? undefined : this._connUserId,
+                clientUsername: this._isServerOwner ? undefined : this._connUsername,
                 filePath: normalizedFilePath,
                 cluster_id: 'sys_cluster_buffer',
                 status: 'pending',
@@ -539,6 +731,8 @@ export class CanvasPanel {
                     ...node.data,
                     label: node.data?.label || nodeId,
                     layer: 'user',
+                    clientLayer: this._isServerOwner ? undefined : this._connUserId,
+                    clientUsername: this._isServerOwner ? undefined : this._connUsername,
                     filePath: normalizedFilePath,
                     file: normalizedFilePath,
                     cluster_id: 'sys_cluster_buffer'
@@ -800,23 +994,41 @@ export class CanvasPanel {
     }
 
     // [v0.3.30] Collaboration Server
-    private handleStartServer(): void {
+    private _serverPort: number = parseInt(process.env.SYNAPSE_PORT || '3000', 10);
+    private _pendingUsername: string = '';
+    private _pendingPassword: string = '';
+
+    private handleStartServer(port?: number, username?: string, password?: string): void {
+        if (port && port >= 1024 && port <= 65535) {
+            this._serverPort = port;
+        }
+        this._pendingUsername = username || '';
+        this._pendingPassword = password || '';
+
         if (this._serverProcess && !this._serverProcess.killed) {
-            this._panel.webview.postMessage({ command: 'serverStarted' });
+            this._onServerReady();
             return;
         }
 
         // 먼저 이미 실행 중인 서버가 있는지 확인
-        const healthCheck = http.get('http://localhost:3000/health', (res) => {
+        const healthCheck = http.get(`http://localhost:${this._serverPort}/health`, (res) => {
             let body = '';
             res.on('data', (chunk) => { body += chunk; });
-            res.on('end', () => {
+            res.on('end', async () => {
                 try {
                     const data = JSON.parse(body);
                     if (data.status === 'ok') {
-                        Logger.info('[Collaboration Server] Already running on port 3000');
+                        Logger.info(`[Collaboration Server] Already running on port ${this._serverPort}`);
                         this._externalServer = true;
-                        this._panel.webview.postMessage({ command: 'serverStarted' });
+                        // .server_info 확인하여 adminToken 유무 체크
+                        const serverInfo = await this._readServerInfo();
+                        if (serverInfo && serverInfo.adminToken) {
+                            this._onServerReady();
+                        } else {
+                            // 구버전 서버 (adminToken 없음) → 강제 재시작
+                            Logger.info(`[Collaboration Server] Old server without adminToken, restarting...`);
+                            this._restartServerProcess();
+                        }
                         return;
                     }
                 } catch {}
@@ -832,8 +1044,17 @@ export class CanvasPanel {
         });
     }
 
+    private _restartServerProcess(): void {
+        this._externalServer = false;
+        this._panel.webview.postMessage({ command: 'serverStatus', text: '🔄 구버전 서버를 새 버전으로 재시작 중...' });
+        cp.exec('pkill -f "standalone.js"', () => {
+            setTimeout(() => this._startServerProcess(), 1500);
+        });
+    }
+
     private _startServerProcess(): void {
         this._externalServer = false;
+        this._isServerOwner = true;
         const serverPath = path.join(
             this._extensionUri.fsPath,
             'dist',
@@ -847,8 +1068,9 @@ export class CanvasPanel {
             return;
         }
 
-        this._serverProcess = cp.spawn('node', [serverPath], {
-            cwd: this._extensionUri.fsPath,
+        const workspaceRoot = this._workspaceFolder ? this._workspaceFolder.uri.fsPath : this._extensionUri.fsPath;
+        this._serverProcess = cp.spawn('node', [serverPath, '--root', workspaceRoot, '--port', String(this._serverPort)], {
+            cwd: workspaceRoot,
             stdio: ['ignore', 'pipe', 'pipe'],
         });
 
@@ -860,7 +1082,7 @@ export class CanvasPanel {
             const msg = data.toString().trim();
             Logger.warn(`[Collaboration Server] ${msg}`);
             if (msg.includes('EADDRINUSE') || msg.includes('already in use') || msg.includes('listen')) {
-                this._panel.webview.postMessage({ command: 'serverError', error: `포트 3000이 이미 사용 중입니다. 기존 서버를 먼저 중지해주세요.` });
+                this._panel.webview.postMessage({ command: 'serverError', error: `포트 ${this._serverPort}가 이미 사용 중입니다. 기존 서버를 먼저 중지해주세요.` });
             }
         });
 
@@ -880,7 +1102,85 @@ export class CanvasPanel {
             }
         });
 
-        this._panel.webview.postMessage({ command: 'serverStarted' });
+        // 서버가 준비될 때까지 health 폴링
+        this._waitForServerReady();
+    }
+
+    private _waitForServerReady(): void {
+        let attempts = 0;
+        const poll = setInterval(() => {
+            attempts++;
+            const req = http.get(`http://localhost:${this._serverPort}/health`, (res) => {
+                let body = '';
+                res.on('data', (c) => { body += c; });
+                res.on('end', () => {
+                    try {
+                        const data = JSON.parse(body);
+                        if (data.status === 'ok') {
+                            clearInterval(poll);
+                            this._onServerReady();
+                            return;
+                        }
+                    } catch {}
+                    if (attempts >= 30) {
+                        clearInterval(poll);
+                        this._panel.webview.postMessage({ command: 'serverError', error: '서버가 시작되지 않았습니다.' });
+                    }
+                });
+            });
+            req.on('error', () => {
+                if (attempts >= 30) {
+                    clearInterval(poll);
+                    this._panel.webview.postMessage({ command: 'serverError', error: '서버가 시작되지 않았습니다.' });
+                }
+            });
+            req.setTimeout(1000, () => { req.destroy(); });
+        }, 500);
+    }
+
+    private _onServerReady(): void {
+        this._readServerInfo().then(async serverInfo => {
+            if (serverInfo && serverInfo.port) {
+                this._serverPort = serverInfo.port;
+                Logger.info(`[Collaboration Server] Using port ${this._serverPort} from .server_info`);
+            }
+            if (serverInfo && serverInfo.adminToken) {
+                // [v0.3.30] Admin auto-login: .server_info의 adminToken으로 직접 인증
+                this._sessionToken = serverInfo.adminToken;
+                this._connHost = 'localhost';
+                this._connPort = this._serverPort;
+                this._connUserId = '_server_admin_';
+                this._connUsername = 'Server Admin';
+                this._isServerOwner = true;
+                Logger.info(`[Collaboration Server] Admin auto-login`);
+                this._panel.webview.postMessage({
+                    command: 'loginResult',
+                    success: true,
+                    user: { userId: '_server_admin_', username: 'Server Admin' },
+                    server: { serverName: (serverInfo && serverInfo.serverName) || '' },
+                    host: 'localhost',
+                    port: String(this._serverPort)
+                });
+                // 서버 자신의 물리적 상태를 VSCode가 직접 파일 읽어서 다이렉트 주입 (HTTP 0회)
+                // = 게임 배경 맵을 로컬 메모리에서 바로 로드하는 것과 동일
+                await this.sendProjectState(false, true);
+                this.handleGetConnectedClients();
+                // 마운트된 클라이언트 레이어 정보를 HTTP 1회 조회 (가벼운 메타데이터만)
+                this._fetchClientLayers('localhost', String(this._serverPort));
+            }
+            this._panel.webview.postMessage({ command: 'serverStarted', port: this._serverPort });
+        });
+    }
+
+    private async _readServerInfo(): Promise<{port: number; projectUUID: string; serverName: string; adminToken?: string} | null> {
+        try {
+            const workspaceRoot = this._workspaceFolder ? this._workspaceFolder.uri.fsPath : this._extensionUri.fsPath;
+            const filePath = path.join(workspaceRoot, 'data', '.server_info');
+            if (fs.existsSync(filePath)) {
+                return JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+            }
+        } catch {}
+        return null;
     }
 
     private handleStopServer(): void {
@@ -898,7 +1198,7 @@ export class CanvasPanel {
                 let attempts = 0;
                 const poll = setInterval(() => {
                     attempts++;
-                    const req = http.get('http://localhost:3000/health', (res) => {
+                    const req = http.get(`http://localhost:${this._serverPort}/health`, (res) => {
                         res.resume();
                         if (attempts >= 10) {
                             clearInterval(poll);
@@ -921,8 +1221,12 @@ export class CanvasPanel {
         }
     }
 
-    private handleLogin(host: string, port: string, username: string, password: string): void {
-        const data = JSON.stringify({ username, password });
+    private handleLogin(host: string, port: string, username: string, password: string, sshHost?: string, sshUser?: string, sshMountPath?: string): void {
+        const body: any = { username, password };
+        if (sshHost) body.sshHost = sshHost;
+        if (sshUser) body.sshUser = sshUser;
+        if (sshMountPath) body.sshMountPath = sshMountPath;
+        const data = JSON.stringify(body);
         const options: http.RequestOptions = {
             hostname: host,
             port: parseInt(port, 10),
@@ -944,7 +1248,22 @@ export class CanvasPanel {
                     if (result.success && result.user) {
                         this._connHost = host;
                         this._connPort = parseInt(port, 10);
-                        this._panel.webview.postMessage({ command: 'loginResult', success: true, user: result.user });
+                        this._connUserId = result.user.userId || '';
+                        this._connUsername = result.user.username || '';
+                        this._sessionToken = result.token || null;
+                        this._fetchAccountsForLayer(); // fire & forget: layer 등록
+                        this._panel.webview.postMessage({
+                            command: 'loginResult',
+                            success: true,
+                            user: result.user,
+                            server: result.server
+                        });
+                        // 로그인 성공 후 접속자 현황
+                        this.handleGetConnectedClients();
+                        if (this._isServerOwner) {
+                            // 서버 소유자: 서버 state fetch (마운트된 클라이언트 노드 포함)
+                            this._fetchServerState(host, port);
+                        }
                     } else {
                         this._panel.webview.postMessage({ command: 'loginResult', success: false, error: result.error || 'Login failed' });
                     }
@@ -967,220 +1286,324 @@ export class CanvasPanel {
         req.end();
     }
 
-    private handleHarvest(submissionId: string, projectUUID: string, filePaths: string[]): void {
-        const data = JSON.stringify({ submissionId, projectUUID, filePaths });
-        const options: http.RequestOptions = {
-            hostname: this._connHost,
-            port: this._connPort,
-            path: '/api/collab/harvest',
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Content-Length': Buffer.byteLength(data),
-            },
-            timeout: 30000,
-        };
-
-        const req = http.request(options, (res) => {
-            let body = '';
-            res.on('data', (chunk) => { body += chunk; });
-            res.on('end', () => {
-                try {
-                    const result = JSON.parse(body);
-                    this._panel.webview.postMessage({
-                        command: 'harvestResult',
-                        success: result.success,
-                        result: result.result,
-                        error: result.error,
-                    });
-                } catch {
-                    this._panel.webview.postMessage({
-                        command: 'harvestResult',
-                        success: false,
-                        error: 'Invalid response from server',
-                    });
-                }
-            });
-        });
-
-        req.on('error', (err) => {
-            this._panel.webview.postMessage({ command: 'harvestResult', success: false, error: err.message });
-        });
-
-        req.on('timeout', () => {
-            req.destroy();
-            this._panel.webview.postMessage({ command: 'harvestResult', success: false, error: 'Connection timeout' });
-        });
-
-        req.write(data);
-        req.end();
+    // [v0.3.30] 로그인 후 client layer 등록을 위해 계정 목록 fetch
+    private _fetchAccountsForLayer(): void {
+        this.handleLoadAccounts();
     }
 
-    private handleCreateAccount(username: string, password: string): void {
-        const data = JSON.stringify({ username, password });
-        const options: http.RequestOptions = {
-            hostname: this._connHost,
-            port: this._connPort,
-            path: '/api/admin/create-account',
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Content-Length': Buffer.byteLength(data),
-            },
-            timeout: 5000,
-        };
-
-        const req = http.request(options, (res) => {
-            let body = '';
-            res.on('data', (chunk) => { body += chunk; });
-            res.on('end', () => {
-                try {
-                    const result = JSON.parse(body);
-                    this._panel.webview.postMessage({
-                        command: 'createAccountResult',
-                        success: result.success,
-                        username,
-                        error: result.error,
-                    });
-                } catch {
-                    this._panel.webview.postMessage({ command: 'createAccountResult', success: false, username, error: 'Invalid response' });
-                }
-            });
-        });
-
-        req.on('error', (err) => {
-            this._panel.webview.postMessage({ command: 'createAccountResult', success: false, username, error: err.message });
-        });
-
-        req.on('timeout', () => {
-            req.destroy();
-            this._panel.webview.postMessage({ command: 'createAccountResult', success: false, username, error: 'Connection timeout' });
-        });
-
-        req.write(data);
-        req.end();
+    // 로그인 후 서버 state를 fetch하여 webview에 전송
+    private _getAuthHeaders(): Record<string, string> {
+        return this._sessionToken ? { Authorization: `Bearer ${this._sessionToken}` } : {};
     }
 
-    private handleDeleteAccount(username: string): void {
-        const data = JSON.stringify({ username });
-        const options: http.RequestOptions = {
-            hostname: this._connHost,
-            port: this._connPort,
-            path: '/api/admin/delete-account',
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Content-Length': Buffer.byteLength(data),
-            },
-            timeout: 5000,
-        };
-
-        const req = http.request(options, (res) => {
-            let body = '';
-            res.on('data', (chunk) => { body += chunk; });
-            res.on('end', () => {
-                try {
-                    const result = JSON.parse(body);
-                    this._panel.webview.postMessage({
-                        command: 'deleteAccountResult',
-                        success: result.success,
-                        username,
-                        error: result.error,
-                    });
-                } catch {
-                    this._panel.webview.postMessage({ command: 'deleteAccountResult', success: false, username, error: 'Invalid response' });
-                }
-            });
-        });
-
-        req.on('error', (err) => {
-            this._panel.webview.postMessage({ command: 'deleteAccountResult', success: false, username, error: err.message });
-        });
-
-        req.on('timeout', () => {
-            req.destroy();
-            this._panel.webview.postMessage({ command: 'deleteAccountResult', success: false, username, error: 'Connection timeout' });
-        });
-
-        req.write(data);
-        req.end();
-    }
-
-    private handleLoadAccounts(): void {
-        const options: http.RequestOptions = {
-            hostname: this._connHost,
-            port: this._connPort,
-            path: '/api/admin/accounts',
+    private _fetchServerState(host: string, port: string, forceReset: boolean = true): void {
+        const opts: http.RequestOptions = {
+            hostname: host,
+            port: parseInt(port, 10),
+            path: '/api/state',
             method: 'GET',
+            headers: { ...this._getAuthHeaders() },
             timeout: 5000,
         };
-
-        const req = http.request(options, (res) => {
+        const req = http.request(opts, (res) => {
             let body = '';
-            res.on('data', (chunk) => { body += chunk; });
+            res.on('data', (c) => { body += c; });
             res.on('end', () => {
                 try {
                     const result = JSON.parse(body);
-                    this._panel.webview.postMessage({
-                        command: 'accountListResult',
-                        success: result.success,
-                        accounts: result.accounts || [],
-                    });
-                } catch {
-                    this._panel.webview.postMessage({ command: 'accountListResult', success: false, accounts: [] });
-                }
+                    if (result.success && result.state) {
+                        this._panel.webview.postMessage({
+                            command: 'projectState',
+                            data: result.state,
+                            forceReset: forceReset
+                        });
+                    }
+                } catch {}
             });
         });
-
-        req.on('error', () => {
-            this._panel.webview.postMessage({ command: 'accountListResult', success: false, accounts: [] });
-        });
-
+        req.on('error', () => {});
+        req.on('timeout', () => { req.destroy(); });
         req.end();
     }
 
-    private handleChangePassword(username: string, newPassword: string): void {
-        const data = JSON.stringify({ username, newPassword });
-        const options: http.RequestOptions = {
-            hostname: this._connHost,
-            port: this._connPort,
-            path: '/api/admin/change-password',
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Content-Length': Buffer.byteLength(data),
-            },
+    private _fetchClientLayers(host: string, port: string): void {
+        const opts: http.RequestOptions = {
+            hostname: host,
+            port: parseInt(port, 10),
+            path: '/api/state',
+            method: 'GET',
+            headers: { ...this._getAuthHeaders() },
             timeout: 5000,
         };
-
-        const req = http.request(options, (res) => {
+        const req = http.request(opts, (res) => {
             let body = '';
-            res.on('data', (chunk) => { body += chunk; });
+            res.on('data', (c) => { body += c; });
             res.on('end', () => {
                 try {
                     const result = JSON.parse(body);
-                    this._panel.webview.postMessage({
-                        command: 'changePasswordResult',
-                        success: result.success,
-                        username,
-                        error: result.error,
-                    });
+                    if (result.success && result.state) {
+                        const layers: { clientId: string; username: string }[] = [];
+                        const seen = new Set<string>();
+                        const addLayer = (clientId: string, username?: string) => {
+                            if (!clientId || seen.has(clientId)) return;
+                            if (clientId === '_server_admin_') return;
+                            seen.add(clientId);
+                            layers.push({ clientId, username: username || '' });
+                        };
+                        for (const n of (result.state.nodes || [])) {
+                            const cl = n.clientLayer || (n.data && n.data.clientLayer);
+                            if (cl) addLayer(cl, n.clientUsername || (n.data && n.data.clientUsername));
+                        }
+                        for (const c of (result.state.clusters || [])) {
+                            const cl = c.clientLayer || (c.data && c.clientLayer);
+                            if (cl) addLayer(cl, c.clientUsername || (c.data && c.data.clientUsername));
+                        }
+                        if (layers.length > 0) {
+                            this._panel.webview.postMessage({
+                                command: 'clientLayerUpdate',
+                                layers
+                            });
+                        }
+                    }
+                } catch {}
+            });
+        });
+        req.on('error', () => {});
+        req.on('timeout', () => { req.destroy(); });
+        req.end();
+    }
+
+    private async handleCreateAccount(message: any): Promise<void> {
+        const { username, password } = message;
+        if (!username || !password) {
+            this._panel.webview.postMessage({ command: 'createAccountResult', success: false, error: 'Username and password required' });
+            return;
+        }
+        const host = this._connHost || 'localhost' || 'localhost';
+        const port = this._connPort || 3000 || 3000;
+        const data = JSON.stringify({ username, password });
+        const opts: http.RequestOptions = {
+            hostname: host, port, path: '/api/admin/create-account', method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(data), ...this._getAuthHeaders() },
+            timeout: 5000,
+        };
+        const req = http.request(opts, (res) => {
+            let body = '';
+            res.on('data', (c) => { body += c; });
+            res.on('end', () => {
+                try {
+                    const r = JSON.parse(body);
+                    this._panel.webview.postMessage({ command: 'createAccountResult', success: r.success, error: r.error, user: r.user });
                 } catch {
-                    this._panel.webview.postMessage({ command: 'changePasswordResult', success: false, username, error: 'Invalid response' });
+                    this._panel.webview.postMessage({ command: 'createAccountResult', success: false, error: 'Invalid response' });
                 }
             });
         });
-
-        req.on('error', (err) => {
-            this._panel.webview.postMessage({ command: 'changePasswordResult', success: false, username, error: err.message });
-        });
-
-        req.on('timeout', () => {
-            req.destroy();
-            this._panel.webview.postMessage({ command: 'changePasswordResult', success: false, username, error: 'Connection timeout' });
-        });
-
+        req.on('error', (e) => this._panel.webview.postMessage({ command: 'createAccountResult', success: false, error: e.message }));
+        req.on('timeout', () => { req.destroy(); this._panel.webview.postMessage({ command: 'createAccountResult', success: false, error: 'Timeout' }); });
         req.write(data);
+        req.end();
+    }
+
+    private async handleDeleteAccount(message: any): Promise<void> {
+        const { username } = message;
+        if (!username) {
+            this._panel.webview.postMessage({ command: 'deleteAccountResult', success: false, error: 'Username required' });
+            return;
+        }
+        const host = this._connHost || 'localhost' || 'localhost';
+        const port = this._connPort || 3000 || 3000;
+        const data = JSON.stringify({ username });
+        const opts: http.RequestOptions = {
+            hostname: host, port, path: '/api/admin/delete-account', method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(data), ...this._getAuthHeaders() },
+            timeout: 5000,
+        };
+        const req = http.request(opts, (res) => {
+            let body = '';
+            res.on('data', (c) => { body += c; });
+            res.on('end', () => {
+                try {
+                    const r = JSON.parse(body);
+                    this._panel.webview.postMessage({ command: 'deleteAccountResult', success: r.success, error: r.error });
+                } catch {
+                    this._panel.webview.postMessage({ command: 'deleteAccountResult', success: false, error: 'Invalid response' });
+                }
+            });
+        });
+        req.on('error', (e) => this._panel.webview.postMessage({ command: 'deleteAccountResult', success: false, error: e.message }));
+        req.on('timeout', () => { req.destroy(); this._panel.webview.postMessage({ command: 'deleteAccountResult', success: false, error: 'Timeout' }); });
+        req.write(data);
+        req.end();
+    }
+
+    private async handleLoadAccounts(message?: any): Promise<void> {
+        const host = message?.host || this._connHost || 'localhost';
+        const port = parseInt(message?.port, 10) || this._connPort || 3000;
+        const opts: http.RequestOptions = {
+            hostname: host, port, path: '/api/admin/accounts', method: 'GET',
+            headers: { ...this._getAuthHeaders() }, timeout: 5000,
+        };
+        const req = http.request(opts, (res) => {
+            let body = '';
+            res.on('data', (c) => { body += c; });
+            res.on('end', () => {
+                try {
+                    const r = JSON.parse(body);
+                    this._panel.webview.postMessage({ command: 'accountListResult', success: r.success, accounts: r.accounts, error: r.error });
+                } catch {
+                    this._panel.webview.postMessage({ command: 'accountListResult', success: false, error: 'Invalid response' });
+                }
+            });
+        });
+        req.on('error', (e) => this._panel.webview.postMessage({ command: 'accountListResult', success: false, error: e.message }));
+        req.on('timeout', () => { req.destroy(); this._panel.webview.postMessage({ command: 'accountListResult', success: false, error: 'Timeout' }); });
+        req.end();
+    }
+
+    private async handleChangePassword(message: any): Promise<void> {
+        const { username, newPassword } = message;
+        if (!username || !newPassword) {
+            this._panel.webview.postMessage({ command: 'changePasswordResult', success: false, error: 'Username and newPassword required' });
+            return;
+        }
+        const host = this._connHost || 'localhost' || 'localhost';
+        const port = this._connPort || 3000 || 3000;
+        const data = JSON.stringify({ username, newPassword });
+        const opts: http.RequestOptions = {
+            hostname: host, port, path: '/api/admin/change-password', method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(data), ...this._getAuthHeaders() },
+            timeout: 5000,
+        };
+        const req = http.request(opts, (res) => {
+            let body = '';
+            res.on('data', (c) => { body += c; });
+            res.on('end', () => {
+                try {
+                    const r = JSON.parse(body);
+                    this._panel.webview.postMessage({ command: 'changePasswordResult', success: r.success, error: r.error });
+                } catch {
+                    this._panel.webview.postMessage({ command: 'changePasswordResult', success: false, error: 'Invalid response' });
+                }
+            });
+        });
+        req.on('error', (e) => this._panel.webview.postMessage({ command: 'changePasswordResult', success: false, error: e.message }));
+        req.on('timeout', () => { req.destroy(); this._panel.webview.postMessage({ command: 'changePasswordResult', success: false, error: 'Timeout' }); });
+        req.write(data);
+        req.end();
+    }
+
+    private handleServerInfo(host: string, port: string): void {
+        const opts: http.RequestOptions = {
+            hostname: host,
+            port: parseInt(port, 10),
+            path: '/api/server/info',
+            method: 'GET',
+            headers: { ...this._getAuthHeaders() },
+            timeout: 5000,
+        };
+        const req = http.request(opts, (res) => {
+            let body = '';
+            res.on('data', (c) => { body += c; });
+            res.on('end', () => {
+                try {
+                    const data = JSON.parse(body);
+                    if (data.serverName) {
+                        this._panel.webview.postMessage({ command: 'serverInfoResult', success: true, data });
+                    } else {
+                        this._panel.webview.postMessage({ command: 'serverInfoResult', success: false, error: 'Invalid server response' });
+                    }
+                } catch {
+                    this._panel.webview.postMessage({ command: 'serverInfoResult', success: false, error: 'Invalid response' });
+                }
+            });
+        });
+        req.on('error', (e) => this._panel.webview.postMessage({ command: 'serverInfoResult', success: false, error: e.message }));
+        req.on('timeout', () => { req.destroy(); this._panel.webview.postMessage({ command: 'serverInfoResult', success: false, error: 'Timeout' }); });
+        req.end();
+    }
+
+    private async handleLogout(): Promise<void> {
+        if (!this._sessionToken || !this._connHost) {
+            this._panel.webview.postMessage({ command: 'logoutResult', success: true });
+            return;
+        }
+        const opts: http.RequestOptions = {
+            hostname: this._connHost,
+            port: this._connPort,
+            path: '/api/auth/logout',
+            method: 'POST',
+            headers: { ...this._getAuthHeaders() },
+            timeout: 5000,
+        };
+        const req = http.request(opts, (res) => {
+            let body = '';
+            res.on('data', (c) => { body += c; });
+            res.on('end', () => {
+                this._sessionToken = null;
+                this._connUserId = '';
+                this._connUsername = '';
+                this._panel.webview.postMessage({ command: 'logoutResult', success: true });
+            });
+        });
+        req.on('error', () => {
+            this._sessionToken = null;
+            this._connUserId = '';
+            this._connUsername = '';
+            this._panel.webview.postMessage({ command: 'logoutResult', success: true });
+        });
+        req.on('timeout', () => { req.destroy(); });
+        req.end();
+    }
+
+    private async handleGetConnectedClients(): Promise<void> {
+        if (!this._sessionToken) return;
+        const opts: http.RequestOptions = {
+            hostname: this._connHost || 'localhost',
+            port: this._connPort || 3000,
+            path: '/api/admin/connected-clients',
+            method: 'GET',
+            headers: { ...this._getAuthHeaders() },
+            timeout: 5000,
+        };
+        const req = http.request(opts, (res) => {
+            let body = '';
+            res.on('data', (c) => { body += c; });
+            res.on('end', () => {
+                try {
+                    const r = JSON.parse(body);
+                    if (r.success && r.clients) {
+                        this._panel.webview.postMessage({ command: 'connectedClientsResult', clients: r.clients });
+                    }
+                } catch {}
+            });
+        });
+        req.on('error', () => {});
+        req.on('timeout', () => { req.destroy(); });
+        req.end();
+    }
+
+    private async handleGetSessions(): Promise<void> {
+        const opts: http.RequestOptions = {
+            hostname: this._connHost || 'localhost',
+            port: this._connPort || 3000,
+            path: '/api/collab/sessions',
+            method: 'GET',
+            headers: { ...this._getAuthHeaders() },
+            timeout: 5000,
+        };
+        const req = http.request(opts, (res) => {
+            let body = '';
+            res.on('data', (c) => { body += c; });
+            res.on('end', () => {
+                try {
+                    const r = JSON.parse(body);
+                    this._panel.webview.postMessage({ command: 'sessionsResult', ...r });
+                } catch {}
+            });
+        });
+        req.on('error', () => {});
+        req.on('timeout', () => { req.destroy(); });
         req.end();
     }
 
@@ -2346,9 +2769,13 @@ export class CanvasPanel {
                         label: pn.data.label,
                         status: 'active',
                         layer: 'user',
+                        clientLayer: this._isServerOwner ? undefined : this._connUserId,
+                        clientUsername: this._isServerOwner ? undefined : this._connUsername,
                         data: {
                             ...pn.data,
-                            layer: 'user'
+                            layer: 'user',
+                            clientLayer: this._isServerOwner ? undefined : this._connUserId,
+                            clientUsername: this._isServerOwner ? undefined : this._connUsername
                         }
                     });
                     this.proposedNodes.splice(pIndex, 1);

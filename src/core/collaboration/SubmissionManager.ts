@@ -24,7 +24,8 @@ export class SubmissionManager {
         projectUUID: string,
         sessionId: string,
         clientId: string,
-        filePaths: string[]
+        filePaths: string[],
+        clientUsername?: string
     ): SubmissionSnapshot {
         const identityManager = IdentityManager.getInstance();
         const role = identityManager.getRole(projectUUID, clientId);
@@ -56,6 +57,7 @@ export class SubmissionManager {
             projectUUID,
             sessionId,
             clientId,
+            clientUsername,
             files,
             timestamp: Date.now(),
             immutable: true,
@@ -198,6 +200,18 @@ export class SubmissionManager {
         const result: SubmissionSnapshot[] = [];
         for (const sub of this.submissions.values()) {
             if (sub.projectUUID === projectUUID && sub.clientId === clientId) {
+                result.push(sub);
+            }
+        }
+        return result;
+    }
+
+    getApprovedSubmissionsByClient(projectUUID: string, sessionId: string, clientId: string): SubmissionSnapshot[] {
+        const result: SubmissionSnapshot[] = [];
+        for (const sub of this.submissions.values()) {
+            if (sub.projectUUID !== projectUUID || sub.clientId !== clientId || sub.sessionId !== sessionId) continue;
+            const review = this.reviewStates.get(sub.id);
+            if (review && review.state === 'approved') {
                 result.push(sub);
             }
         }

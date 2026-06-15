@@ -1,11 +1,18 @@
-import * as vscode from 'vscode';
+let vscode: any = undefined;
+try {
+    vscode = require('vscode');
+} catch { /* standalone mode — no vscode module */ }
 
 export class Logger {
-    private static _outputChannel: vscode.OutputChannel;
+    private static _outputChannel: any = null;
 
-    public static initialize(context: vscode.ExtensionContext) {
+    public static initialize(context?: any) {
+        if (!vscode) {
+            console.log('[SYNAPSE] Logger initialized (standalone mode)');
+            return;
+        }
         this._outputChannel = vscode.window.createOutputChannel('Synapse');
-        context.subscriptions.push(this._outputChannel);
+        if (context) context.subscriptions.push(this._outputChannel);
         this.info('Logger initialized');
     }
 
@@ -28,8 +35,6 @@ export class Logger {
     }
 
     private static _log(level: string, message: string, args: any[]) {
-        if (!this._outputChannel) return;
-
         const timestamp = new Date().toLocaleTimeString();
         let formattedMessage = `[${timestamp}] [${level}] ${message}`;
 
@@ -39,9 +44,10 @@ export class Logger {
             ).join(' ');
         }
 
-        this._outputChannel.appendLine(formattedMessage);
+        if (this._outputChannel) {
+            this._outputChannel.appendLine(formattedMessage);
+        }
 
-        // Also log to console for development/debugging
         console.log(`[SYNAPSE] ${formattedMessage}`);
     }
 }

@@ -1,5 +1,7 @@
+import * as fs from 'fs';
 import * as path from 'path';
 import { Logger } from '../utils/Logger';
+import { SynapseIgnore } from './SynapseIgnore';
 
 export interface FolderTree {
     path: string;
@@ -45,12 +47,17 @@ function generateFunctionId(name: string, filePath: string, className: string | 
 export class SymbolIndex {
     private static instance: SymbolIndex;
     private index: SymbolIndexSchema | null = null;
+    private ignore: SynapseIgnore | null = null;
 
     static getInstance(): SymbolIndex {
         if (!SymbolIndex.instance) {
             SymbolIndex.instance = new SymbolIndex();
         }
         return SymbolIndex.instance;
+    }
+
+    setIgnore(ignore: SynapseIgnore): void {
+        this.ignore = ignore;
     }
 
     initialize(projectName: string, projectRoot: string): void {
@@ -76,6 +83,7 @@ export class SymbolIndex {
         for (const file of files) {
             const ext = path.extname(file).toLowerCase();
             const relPath = path.relative(root, file).replace(/\\/g, '/');
+            if (this.ignore && this.ignore.isIgnored(relPath)) continue;
             const fileName = path.basename(file);
             let fileSize = 0;
             let lastModified = 0;

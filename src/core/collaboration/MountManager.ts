@@ -2,6 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { execSync, exec } from 'child_process';
 import { Logger } from '../../utils/Logger';
+import { SynapseIgnore } from '../SynapseIgnore';
 
 export interface MountConfig {
     username: string;
@@ -27,6 +28,7 @@ export interface ScanResult {
 
 // sshMountPath 검증: 클라이언트 프로젝트 폴더 경로만 허용
 // 루트("/") 또는 path traversal("../") 차단
+// 시스템 중요 디렉토리 정확히 차단 (하위 디렉토리는 허용)
 export function validateMountPath(remotePath: string): boolean {
     if (!remotePath || typeof remotePath !== 'string') return false;
     if (remotePath === '/') return false;
@@ -34,6 +36,12 @@ export function validateMountPath(remotePath: string): boolean {
     if (remotePath.includes('..')) return false;
     if (remotePath.includes('~')) return false;
     if (remotePath.includes('*') || remotePath.includes('?')) return false;
+
+    // 시스템 루트 디렉토리만 차단 (정확히 일치)
+    const normalized = remotePath.replace(/\/+$/, ''); // trailing slash 제거
+    const forbiddenRoots = ['/home', '/etc', '/root', '/var', '/usr', '/bin', '/sbin', '/opt', '/tmp', '/proc', '/sys', '/dev', '/boot', '/lib', '/lib64', '/snap'];
+    if (forbiddenRoots.includes(normalized)) return false;
+
     return true;
 }
 
@@ -42,12 +50,17 @@ export class MountManager {
     private mounts: Map<string, ActiveMount> = new Map();
     private mountRoot: string = '';
     private initialized: boolean = false;
+    private ignore: SynapseIgnore | null = null;
 
     static getInstance(): MountManager {
         if (!MountManager.instance) {
             MountManager.instance = new MountManager();
         }
         return MountManager.instance;
+    }
+
+    setIgnore(ignore: SynapseIgnore): void {
+        this.ignore = ignore;
     }
 
     initialize(projectRoot: string): void {
@@ -90,7 +103,7 @@ export class MountManager {
         }
 
         const sshKeyArg = config.sshKey ? `-o IdentityFile=${config.sshKey}` : '';
-        const cmd = `sshfs -o allow_other,default_permissions${sshKeyArg ? ' ' + sshKeyArg : ''} -p ${config.sshPort} ${config.sshUser}@${config.sshHost}:${config.remotePath} ${mountPoint}`;
+        const cmd = `sshfs -o default_permissions${sshKeyArg ? ' ' + sshKeyArg : ''} -p ${config.sshPort} ${config.sshUser}@${config.sshHost}:${config.remotePath} ${mountPoint}`;
 
         return new Promise((resolve, reject) => {
             exec(cmd, { timeout: 10000 }, (error, stdout, stderr) => {
@@ -135,6 +148,11 @@ export class MountManager {
         return mount ? mount.mountPoint : null;
     }
 
+    getMountConfig(username: string): MountConfig | null {
+        const mount = this.mounts.get(username);
+        return mount ? mount.config : null;
+    }
+
     getAllMounts(): { username: string; mountPoint: string; mountedAt: number }[] {
         return Array.from(this.mounts.entries()).map(([username, m]) => ({
             username,
@@ -156,6 +174,7 @@ export class MountManager {
         const edges: any[] = [];
         const clusters: any[] = [];
         const sourceExtensions = new Set(['.py', '.ts', '.js', '.rs', '.cpp', '.c', '.go', '.java', '.kt', '.swift', '.tsx', '.jsx']);
+        const ignore = this.ignore;
 
         function walk(dir: string) {
             let entries: fs.Dirent[];
@@ -170,6 +189,7 @@ export class MountManager {
                 if (entry.name.startsWith('.') && entry.name !== '.') continue;
                 if (entry.isDirectory()) {
                     if (entry.name === 'node_modules' || entry.name === 'target' || entry.name === '.git') continue;
+                    if (ignore && ignore.isIgnored(relPath)) continue;
                     const clusterId = `client_${clientLabel}_folder_${relPath.replace(/[\/\\]/g, '_')}`;
                     clusters.push({
                         id: clusterId,
@@ -181,6 +201,7 @@ export class MountManager {
                 } else if (entry.isFile()) {
                     const ext = path.extname(entry.name).toLowerCase();
                     const isSource = sourceExtensions.has(ext);
+                    if (ignore && ignore.isIgnored(relPath)) continue;
                     nodes.push({
                         id: `client_${clientLabel}_${relPath}`,
                         label: entry.name,
@@ -202,9 +223,9 @@ export class MountManager {
         return { nodes, edges, clusters };
     }
 
-    unmountAll(): void {
+    async unmountAll(): Promise<void> {
         for (const username of Array.from(this.mounts.keys())) {
-            this.unmount(username);
+            await this.unmount(username);
         }
     }
 }

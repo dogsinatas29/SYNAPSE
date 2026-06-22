@@ -2,7 +2,6 @@ import { Logger } from '../../utils/Logger';
 import { ProjectMetadata } from '../ProjectMetadata';
 import { IdentityManager, Permission } from './IdentityManager';
 import { SessionManager } from './SessionManager';
-import { SubmissionManager } from './SubmissionManager';
 import { HarvestEngine } from './HarvestEngine';
 import * as path from 'path';
 
@@ -65,49 +64,7 @@ export class BoundaryGuard {
         Logger.info(`[v0.3.30][Boundary] Workspace path valid: ${filePath}`);
     }
 
-    assertSubmissionAccess(submissionId: string, projectUUID: string, clientId: string): void {
-        this.assertProjectAccess(projectUUID, clientId);
-        const submissionManager = SubmissionManager.getInstance();
-        const submission = submissionManager.getSubmission(submissionId);
-        if (!submission) {
-            throw new BoundaryError(`Submission not found: ${submissionId}`);
-        }
-        if (submission.projectUUID !== projectUUID) {
-            throw new BoundaryError(`Submission ${submissionId} not in project ${projectUUID}`);
-        }
-        const identityManager = IdentityManager.getInstance();
-        const role = identityManager.getRole(projectUUID, clientId);
-        if (!role) {
-            throw new BoundaryError(`Client ${clientId} has no role in project ${projectUUID}`);
-        }
-        if (role.role === 'member' && submission.clientId !== clientId) {
-            throw new BoundaryError(`Member ${clientId} cannot access another member's submission`);
-        }
-        Logger.info(`[v0.3.30][Boundary] Submission access granted: ${clientId} → ${submissionId}`);
-    }
 
-    assertRemoteEditAuth(projectUUID: string, clientId: string, submissionId: string, filePath: string): void {
-        this.assertProjectAccess(projectUUID, clientId);
-        const identityManager = IdentityManager.getInstance();
-        if (!identityManager.hasPermission(projectUUID, clientId, Permission.RemoteEdit)) {
-            throw new BoundaryError(`Client ${clientId} lacks RemoteEdit permission`);
-        }
-        const submissionManager = SubmissionManager.getInstance();
-        const submission = submissionManager.getSubmission(submissionId);
-        if (!submission) {
-            throw new BoundaryError(`Submission not found: ${submissionId}`);
-        }
-        if (submission.projectUUID !== projectUUID) {
-            throw new BoundaryError(`Submission ${submissionId} not in project ${projectUUID}`);
-        }
-        if (filePath) {
-            const fileExists = submission.files.some(f => f.filePath === filePath);
-            if (!fileExists) {
-                throw new BoundaryError(`File ${filePath} not in submission ${submissionId}`);
-            }
-        }
-        Logger.info(`[v0.3.30][Boundary] RemoteEdit authorized: ${clientId} → ${submissionId}/${filePath}`);
-    }
 
     assertHarvestAuth(projectUUID: string, clientId: string): void {
         this.assertProjectAccess(projectUUID, clientId);
@@ -139,14 +96,8 @@ export class BoundaryGuard {
             return;
         }
         const projectUUID = session.projectUUID;
-        const submissionManager = SubmissionManager.getInstance();
-        const submissions = submissionManager.getSubmissionsByProject(projectUUID);
-        for (const sub of submissions) {
-            if (sub.sessionId === sessionId) {
-                submissionManager.clearProject(projectUUID);
-                break;
-            }
-        }
+        // Submission cleanup removed as SubmissionManager is obsolete
+
         Logger.info(`[v0.3.30][Boundary] Cache cleaned for session: ${sessionId}`);
     }
 }

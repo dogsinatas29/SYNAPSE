@@ -173,12 +173,23 @@ export class BootstrapEngine {
             if (fs.existsSync(existingStatePath)) {
                 try {
                     const existingData = JSON.parse(fs.readFileSync(existingStatePath, 'utf8'));
-                    const manualNodes = (existingData.nodes || []).filter((n: any) => n.id.startsWith('node_manual_'));
+                    // [v0.3.30 Fix] Preserve ALL user-created nodes, not just node_manual_ prefix.
+                    // When a file already exists on disk, mutateAddNode previously used the
+                    // scan node's ID instead of node_manual_*, causing those nodes to be lost here.
+                    // Now we also check isUserCreated flag and layer === 'user' as fallback.
+                    const manualNodes = (existingData.nodes || []).filter((n: any) => 
+                        n.id.startsWith('node_manual_') ||
+                        n.data?.isUserCreated === true ||
+                        (n.layer === 'user' && n.status === 'pending')
+                    );
+                    const manualNodeIds = new Set(manualNodes.map((n: any) => n.id));
                     const manualEdges = (existingData.edges || []).filter((e: any) => 
                         e.id.startsWith('edge_node_manual_') || 
                         e.status === 'pending' || 
                         e.status === 'pending_confirm' ||
-                        e.status === 'manual'
+                        e.status === 'manual' ||
+                        manualNodeIds.has(e.from) ||
+                        manualNodeIds.has(e.to)
                     );
                     
                     if (manualNodes.length > 0) nodes = [...nodes, ...manualNodes] as any;

@@ -358,7 +358,9 @@ SYNAPSE는 파일 시스템과 그래프를 Source Of Truth로 사용하는 협�
 │   │   │   ├── IdentityManager.ts
 │   │   │   ├── SessionManager.ts
 │   │   │   ├── RuntimeInitializer.ts
-│   │   │   ├── SubmissionManager.ts
+│   │   │   ├── (Deleted) SubmissionManager.ts
+│   │   │   ├── CompareEngine.ts
+│   │   │   ├── HarvestSessionManager.ts
 │   │   │   ├── RemoteLayerProjector.ts
 │   │   │   ├── ArchitectureIndexBuilder.ts
 │   │   │   ├── ReferenceVerifier.ts
@@ -409,14 +411,7 @@ SYNAPSE는 파일 시스템과 그래프를 Source Of Truth로 사용하는 협�
 │   │   │   └── vscode.ts
 │   │   ├── phase1_validation.test.ts
 │   │   ├── phase2_validation.test.ts
-│   │   ├── phase3_validation.test.ts
-│   │   ├── phase4_validation.test.ts
-│   │   ├── phase5_validation.test.ts
-│   │   ├── phase6_validation.test.ts
-│   │   ├── phase7_validation.test.ts
-│   │   ├── phase8_validation.test.ts
-│   │   ├── phase9_acceptance.test.ts
-│   │   └── transport_validation.test.ts
+│   │   ├── (Deleted) phase3_validation.test.ts ~ transport_validation.test.ts
 │   ├── analysis/
 │   │   └── hintEngine.ts
 │   ├── bootstrap/
@@ -510,16 +505,18 @@ SYNAPSE는 파일 시스템과 그래프를 Source Of Truth로 사용하는 협�
 | `src/core/collaboration/IdentityManager.ts` | Active | Identity + Role + Permission 체계 (enum Permission, ProjectRole, ROLE_PERMISSIONS) — member role permissions → empty (JoinSession/LeaveSession etc. 제거) |
 | `src/core/collaboration/SessionManager.ts` | Active | CollaborationSession 생명주기 (created → open → active → closing → closed) — joinSession/leaveSession에서 IdentityManager.hasPermission() 검증 제거 |
 | `src/core/collaboration/RuntimeInitializer.ts` | Active | 4단계 Runtime startup (ProjectMetadata → SymbolIndex → Identity → Session) → ready |
-| `src/core/collaboration/SubmissionManager.ts` | Active | SubmissionSnapshot 생성 + ReviewState + RemoteEditAction + MemberFrozen + clientUsername 파라미터 + getApprovedSubmissionsByClient() |
-| `src/core/collaboration/RemoteLayerProjector.ts` | Active | Stateless projector: SubmissionSnapshot → ProjectionResult (Node/Cluster Layer 분류, Visibility) + clientLayer/clientUsername/sessionId 태깅 |
-| `src/core/collaboration/ArchitectureIndexBuilder.ts` | Active | SubmissionSnapshot → ArchitectureIndex (ProjectTree + FolderTree + SourceFileRegistry + FunctionCatalog) |
+| `src/core/collaboration/SubmissionManager.ts` | **Deleted** | 기존 SubmissionSnapshot 구조 폐기로 완전 삭제 |
+| `src/core/collaboration/CompareEngine.ts` | Active | Harvest 세션 비교 엔진 (SHA256 해시 검증 및 Layer 가시성 필터링) |
+| `src/core/collaboration/HarvestSessionManager.ts` | Active | Harvest 세션 및 접속 클라이언트들의 파일 시스템 락(Lock) 전역 상태 관리 |
+| `src/core/collaboration/RemoteLayerProjector.ts` | Active | Stateless projector: 파일 집합 → ProjectionResult (Node/Cluster Layer 분류, Visibility) + clientLayer 태깅 |
+| `src/core/collaboration/ArchitectureIndexBuilder.ts` | Active | 파일 집합 → ArchitectureIndex (ProjectTree + FolderTree + SourceFileRegistry + FunctionCatalog) |
 | `src/core/collaboration/ReferenceVerifier.ts` | Active | ArchitectureIndex → ReferenceGraph + VerificationReport (참조 분석, Ghost Projection, Edge 생성) |
 | `src/core/collaboration/HarvestEngine.ts` | Active | Approved Workspace → Master Layer 물리적 Materialization + LayerHarvestInput + harvest path traversal 방어 (resolvedTarget.startsWith) |
-| `src/core/collaboration/BoundaryGuard.ts` | Active | 중앙 경계 보안 (Project/Session/Submission/RemoteEdit/Harvest Isolation, Cache Cleanup) |
+| `src/core/collaboration/BoundaryGuard.ts` | Active | 중앙 경계 보안 (Project/Session/Harvest Isolation, Cache Cleanup) |
 | `src/core/collaboration/MountManager.ts` | Active | SSH 기반 클라이언트 프로젝트 폴더 마운트 관리 (mount/unmount/scan, validateMountPath) — v0.3.30 신규 |
 | `src/core/collaboration/AccountManager.ts` | Active | 계정 CRUD, 비밀번호 해싱, getAllAccounts/getUsernameByUserId + SSH mount 필드 (sshHost/sshPort/sshMountPath/sshKey) |
 | `src/core/collaboration/CollaborationTransport.ts` | Active | 추상 전송 계층 (WebSocket/REST 공통 인터페이스) |
-| `src/core/collaboration/RestCollaborationTransport.ts` | Active | REST 전송 구현체 + clientUsername passthrough (createSubmission) |
+| `src/core/collaboration/RestCollaborationTransport.ts` | Active | REST 전송 구현체 |
 | `src/analysis/hintEngine.ts` | Active | 실시간 아키텍처 분석 및 진단 힌트(R1~R5 경고) 캔버스 제공 |
 | `src/bootstrap/BootstrapEngine.ts` | Active | 초기 로드 시 디렉터리 스캔 → 아키텍처 그래프 자동 구성 |
 | `src/rust_checker/` | Active | Rust 프로젝트 소스 구조 분석 및 종속성 추출 (mod.rs + reporter.rs + state_checker.rs) |

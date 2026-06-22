@@ -1,34 +1,4 @@
 {
-  "accounts": [
-    {
-      "userId": "usr_1780987204744_amk5mp",
-      "username": "member1",
-      "passwordHash": "44d2f618b28451c78921b81dc70fe3ff128e933a4499a95c0682bb89cc57c5c6",
-      "createdAt": 1780987204744,
-      "sshHost": "",
-      "sshPort": 22,
-      "sshUser": "",
-      "sshMountPath": ""
-    },
-    {
-      "userId": "usr_1780995092466_mzigit",
-      "username": "test1",
-      "passwordHash": "1b4f0e9851971998e732078544c96b36c3d01cedf7caa332359d6f1d83567014",
-      "createdAt": 1780995092467,
-      "sshHost": "",
-      "sshPort": 22,
-      "sshUser": "",
-      "sshMountPath": ""
-    },
-    {
-      "userId": "usr_1781360273573_9d9c1i",
-      "username": "server",
-      "passwordHash": "b3eacd33433b31b5252351032c9b3e7a2e7aa7738d5decdf0dd6c62680853c06",
-      "createdAt": 1781360273573,
-      "sshHost": "",
-      "sshPort": 22,
-      "sshUser": "",
-      "sshMountPath": ""
-    }
-  ]
+  "schemaVersion": 2,
+  "accounts": []
 }

@@ -909,6 +909,24 @@ class CanvasEngine {
         this.resizeCanvas();
         window.addEventListener('resize', () => this.resizeCanvas());
 
+        // [v0.3.30] VS Code WebView Tab Restore Fix
+        // When user opens a file and returns to the canvas, VS Code hides the WebView
+        // (document.hidden = true) and restores it on tab switch back.
+        // window.resize does NOT always fire on restore, leaving the canvas half-blank.
+        // Force an immediate resize + full redraw when the WebView becomes visible again.
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden) {
+                // Small delay to let VS Code finish layout before we measure dimensions
+                setTimeout(() => {
+                    this.resizeCanvas(true); // immediate = true: skip debounce
+                    this.isGraphDataDirty = true;
+                    this.isEdgeDirty = true;
+                    this.lastActivityTime = Date.now(); // Reset idle timer
+                    this.requestRender(); // Restart eco-mode loop if sleeping
+                }, 50);
+            }
+        });
+
         // 변환 상태 (줌/팬)
         this.transform = {
             zoom: 1.0,
@@ -1030,17 +1048,18 @@ class CanvasEngine {
         this.webglRenderer = null;
         this.bootstrapMode = false; // [v0.2.28] Deterministic Bootstrap Mode (Step 4)
 
-        this.handleOpenFile = (filePath) => {
+        this.handleOpenFile = (filePath, clientUsername = null) => {
             if (!filePath) return;
-            console.log('[SYNAPSE] handleOpenFile:', filePath);
+            console.log('[SYNAPSE] handleOpenFile:', filePath, clientUsername);
             if (typeof vscode !== 'undefined') {
                 vscode.postMessage({
                     command: 'openFile',
                     filePath,
+                    clientUsername,
                     createIfNotExists: this.isEditMode
                 });
             } else if (typeof window.showFilePreview === 'function') {
-                window.showFilePreview(filePath);
+                window.showFilePreview(filePath, clientUsername);
             }
         };
         this.lastMousePos = { x: 0, y: 0 };
@@ -2057,6 +2076,7 @@ class CanvasEngine {
                     ? connData.clients.map(function(c) { return c.userId; })
                     : []
             );
+            window._connectedUserIds = connectedIds;
             this.removeDisconnectedClientLayers(connectedIds);
             for (const acc of accData.accounts) {
                 if (acc.username === 'server') continue;
@@ -2084,31 +2104,7 @@ class CanvasEngine {
     }
 
     syncClientLayersFromNodes() {
-        const now = Date.now();
-        for (const n of this.nodes) {
-            const cl = n.clientLayer || (n.data && n.data.clientLayer);
-            if (!cl || cl === '_server_admin_' || cl === 'server') continue;
-            const un = n.clientUsername || (n.data && n.data.clientUsername);
-            if (this.clientLayers[cl]) {
-                if (un) this.clientLayers[cl].username = un;
-                this.clientLayers[cl].lastActive = now;
-            } else {
-                const order = Object.keys(this.clientLayers).length;
-                this.clientLayers[cl] = { visible: true, order, username: un || '', lastActive: now };
-            }
-        }
-        for (const c of this.clusters) {
-            const cl = c.clientLayer || (c.data && c.clientLayer);
-            if (!cl || cl === '_server_admin_' || cl === 'server') continue;
-            const un = c.clientUsername || (c.data && c.data.clientUsername);
-            if (this.clientLayers[cl]) {
-                if (un) this.clientLayers[cl].username = un;
-                this.clientLayers[cl].lastActive = now;
-            } else {
-                const order = Object.keys(this.clientLayers).length;
-                this.clientLayers[cl] = { visible: true, order, username: un || '', lastActive: now };
-            }
-        }
+        // deprecated: layers are session-driven, not node-driven
     }
 
     getClientLayerOffset(clientId) {
@@ -2128,19 +2124,25 @@ class CanvasEngine {
         return entry.visible;
     }
 
+    getVisibleClientLayerIds() {
+        return Object.keys(this.clientLayers).filter(id => this.clientLayers[id].visible);
+    }
+
     _updateClientLayerUI() {
         const container = document.getElementById('client-layer-rows');
         if (!container) return;
         container.innerHTML = '';
         const clientIds = Object.keys(this.clientLayers);
         if (clientIds.length === 0) return;
+        const isServerAdmin = window.connectedUser && window.connectedUser.userId === '_server_admin_';
         const connectedIds = (typeof window !== 'undefined' && window._connectedUserIds) ? window._connectedUserIds : new Set();
         for (const clientId of clientIds) {
             const entry = this.clientLayers[clientId];
+            const isConnected = isServerAdmin || connectedIds.has(clientId);
+            if (!isConnected) continue;
             const displayName = entry.username || (clientId.length > 20 ? clientId.slice(0, 17) + '...' : clientId);
-            const isConnected = connectedIds.has(clientId);
-            const dotColor = isConnected ? '#8ec07c' : '#504945';
-            const dotTitle = isConnected ? '접속 중' : '미접속';
+            const dotColor = '#8ec07c';
+            const dotTitle = '접속 중';
             const row = document.createElement('div');
             row.className = 'layer-toggle-row';
             row.style.cssText = 'display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;';
@@ -2152,7 +2154,7 @@ class CanvasEngine {
             left.appendChild(dot);
             const nameEl = document.createElement('span');
             nameEl.style.cssText = 'font-size: 13px; color: #83a598; font-weight: 600;';
-            nameEl.textContent = '👤 ' + displayName;
+            nameEl.textContent = ' ' + displayName;
             left.appendChild(nameEl);
             row.appendChild(left);
             const btn = document.createElement('button');
@@ -2273,6 +2275,7 @@ class CanvasEngine {
 
         // 마우스 드래그 (팬, 노드 드래그, 선택, 엣지 생성)
         this.canvas.addEventListener('mousedown', (e) => {
+            if (window._harvestLocked) return;
             this.wakeUp();
             this._isInteracting = true; // [v0.2.24] Lock during interaction
             // [Fix] Ensure canvas receives keyboard focus for keydown events
@@ -2669,6 +2672,8 @@ class CanvasEngine {
 
         // Delete 키로 선택된 노드/엣지 삭제 및 방향키 내비게이션
         document.addEventListener('keydown', (e) => {
+            if (window._harvestLocked) return;
+
             // [v0.3.11 Fix] Input Focus Protection
             // Block canvas shortcuts if an input modal is open or an input is focused.
             const isDialogVisible = document.getElementById('input-dialog')?.style.display === 'block';
@@ -2815,12 +2820,12 @@ class CanvasEngine {
             if (this.currentMode === 'tree') {
                 const clickedItem = this.treeRenderer.getItemAt(this.treeData, worldPosDbl.x, worldPosDbl.y);
                 if (clickedItem && clickedItem.type === 'file' && clickedItem.node) {
-                    this.handleOpenFile(clickedItem.node.data.path || clickedItem.node.data.file);
+                    this.handleOpenFile(clickedItem.node.data.path || clickedItem.node.data.file, clickedItem.node.data.clientUsername);
                 }
             } else if (this.currentMode === 'flow') {
                 const clickedStep = this.flowRenderer.getStepAt(this.flowData, worldPosDbl.x, worldPosDbl.y);
                 if (clickedStep && clickedStep.node) {
-                    this.handleOpenFile(clickedStep.node.data.path || clickedStep.node.data.file);
+                    this.handleOpenFile(clickedStep.node.data.path || clickedStep.node.data.file, clickedStep.node.data.clientUsername);
                 }
             } else {
                 const topClickedNode = this.getNodeAt(worldPosDbl.x, worldPosDbl.y);
@@ -2831,7 +2836,7 @@ class CanvasEngine {
                                       ((topClickedNode.type === 'file' || topClickedNode.type === 'logic') && !String(topClickedNode.id).startsWith('node_manual_') ? topClickedNode.id : null);
                     
                     if (targetFile) {
-                        this.handleOpenFile(targetFile);
+                        this.handleOpenFile(targetFile, d.clientUsername);
                     }
                     return; // Prevent fall-through to cluster header
                 }
@@ -2925,10 +2930,13 @@ class CanvasEngine {
                 if (cluster && cluster.collapsed) continue;
             }
 
+            if (!node.position) continue;
+
+            const nodeRenderY = this._getNodeRenderY ? this._getNodeRenderY(node) : node.position.y;
             const left = node.position.x - HIT_PADDING;
             const right = node.position.x + nodeWidth + HIT_PADDING;
-            const top = node.position.y - HIT_PADDING;
-            const bottom = node.position.y + nodeHeight + HIT_PADDING;
+            const top = nodeRenderY - HIT_PADDING;
+            const bottom = nodeRenderY + nodeHeight + HIT_PADDING;
 
             if (worldX >= left && worldX <= right && worldY >= top && worldY <= bottom) {
                 return node;
@@ -2997,13 +3005,15 @@ class CanvasEngine {
     getConnectionHandleAt(worldX, worldY) {
         // 노드 핸들 체크
         for (const node of this.nodes) {
+            if (!node.position) continue;
+            const nodeRenderY = this._getNodeRenderY ? this._getNodeRenderY(node) : node.position.y;
             const centerX = node.position.x + 60;
-            const centerY = node.position.y + 30;
+            const centerY = nodeRenderY + 30;
 
             // 4방향 핸들 (상, 하, 좌, 우)
             const handles = [
-                { x: centerX, y: node.position.y, type: 'node', id: node.id }, // 상
-                { x: centerX, y: node.position.y + 60, type: 'node', id: node.id }, // 하
+                { x: centerX, y: nodeRenderY, type: 'node', id: node.id }, // 상
+                { x: centerX, y: nodeRenderY + 60, type: 'node', id: node.id }, // 하
                 { x: node.position.x, y: centerY, type: 'node', id: node.id }, // 좌
                 { x: node.position.x + 120, y: centerY, type: 'node', id: node.id } // 우
             ];
@@ -4764,8 +4774,6 @@ class CanvasEngine {
 
             // [v0.3.16] docShelfNodes are already separated and set in step 1 (line 3652)
             this.nodes = baseState.nodes || [];
-            this.syncClientLayersFromNodes();
-            this._updateClientLayerUI();
 
             // [v0.3.22.11] Position Persistence Guard:
             // When preserving view (e.g. incremental update or post-save sync), 
@@ -4881,6 +4889,8 @@ class CanvasEngine {
                 if (cl) {
                     node.clientLayer = cl;
                     if (node.data) node.data.clientLayer = cl;
+                    const username = node.clientUsername || (node.data && node.data.clientUsername);
+                    this.registerClientLayer(cl, username);
                 }
             });
 
@@ -5004,7 +5014,11 @@ class CanvasEngine {
 
             // Critical check for positions
             const validPositions = this.nodes.filter(n => n.position && typeof n.position.x === 'number' && typeof n.position.y === 'number').length;
+            const invalidPositions = this.nodes.length - validPositions;
             console.log(`[SYNAPSE] Valid positions: ${validPositions} / ${this.nodes.length}`);
+            if (invalidPositions > 0) {
+                console.warn(`[SYNAPSE] Invalid positions: ${invalidPositions} nodes missing position data`);
+            }
 
             console.log('[SYNAPSE] Tree data:', this.treeData);
             console.log('[SYNAPSE] Flow data:', this.flowData);
@@ -5412,11 +5426,14 @@ class CanvasEngine {
                 n.status === 'ghost' ||
                 (n.cluster_id && n.cluster_id === 'cluster_ghosts');
 
-            if (isExternal && !context.showExternalLayer) return false;
-            if (isUser && !context.showUserLayer) return false;
-            if (!isUser && !isExternal && !context.showBaseLayer) return false;
             const cl = n.clientLayer || (n.data && n.data.clientLayer);
-            if (cl && context.clientLayers && context.clientLayers[cl] !== undefined && !context.clientLayers[cl].visible) return false;
+            if (cl) {
+                if (context.clientLayers && context.clientLayers[cl] !== undefined && !context.clientLayers[cl].visible) return false;
+            } else {
+                if (isExternal && !context.showExternalLayer) return false;
+                if (isUser && !context.showUserLayer) return false;
+                if (!isUser && !isExternal && !context.showBaseLayer) return false;
+            }
             return true;
         });
 
@@ -5427,7 +5444,7 @@ class CanvasEngine {
             category: n.category || 'base',
             status: n.status,
             data: n.data ? { ...n.data, meta: n.data.meta ? { ...n.data.meta } : undefined } : {},
-            position: { x: n.position?.x || 0, y: n.position?.y || 0 },
+            position: { x: n.position?.x || 0, y: (n.position?.y || 0) + this.getClientLayerOffset(n.clientLayer || (n.data && n.data.clientLayer)) },
             intelligence: n.intelligence ? { dtr: n.intelligence.dtr } : { dtr: 0.3 }
         }));
 
@@ -5680,10 +5697,14 @@ class CanvasEngine {
                         const isUser = isUserLogic(n);
                         const isExternal = isExternalLogic(n);
 
-                        if (isExternal && !this.showExternalLayer) return false;
-                        if (isUser && !this.showUserLayer) return false;
-                        if (!isUser && !isExternal && !this.showBaseLayer) return false;
-                        if (!this._isClientLayerVisible(n)) return false;
+                        const cl = n.clientLayer || (n.data && n.data.clientLayer);
+                        if (cl) {
+                            if (!this._isClientLayerVisible(n)) return false;
+                        } else {
+                            if (isExternal && !this.showExternalLayer) return false;
+                            if (isUser && !this.showUserLayer) return false;
+                            if (!isUser && !isExternal && !this.showBaseLayer) return false;
+                        }
 
                         // [v0.3.22.2] Noise Control: Hide Leaf Nodes (WebGL Parity)
                         if (this.hideLeafNodes) {
@@ -5708,6 +5729,17 @@ class CanvasEngine {
 
                     const visibleNodeIds = new Set(this._visibleNodesCache.map(n => n.id));
                     this._visibleEdgesCache = this.edges.filter(e => visibleNodeIds.has(e.from) && visibleNodeIds.has(e.to));
+
+                    // [v0.3.30-webgl-fix] Build WebGL-ready cache: bake clientLayerOffset into position.y
+                    // so WebGL renderer sees the same absolute Y as the 2D canvas path.
+                    // Host nodes pass through by reference (no allocation).
+                    this._webglVisibleNodesCache = this._visibleNodesCache.map(n => {
+                        const cl = n.clientLayer || (n.data && n.data.clientLayer);
+                        if (!cl) return n; // Host node — no offset needed
+                        const offsetY = this.getClientLayerOffset(cl);
+                        if (!offsetY) return n;
+                        return { ...n, position: { x: n.position?.x || 0, y: (n.position?.y || 0) + offsetY } };
+                    });
                 }
 
                 // [v0.3.28-fix] Cache selectedNodeIds as Set<string> ONCE per frame for O(1) lookup in renderEdge()
@@ -5765,8 +5797,10 @@ class CanvasEngine {
                             this.isGraphDataDirty = true;
                         }
 
+                        // [v0.3.30-webgl-fix] Use offset-corrected cache for client node Y parity
+                        const webglNodes = this._webglVisibleNodesCache || this._visibleNodesCache;
                         this.webglRenderer.render(
-                            this._visibleNodesCache,
+                            webglNodes,
                             this.transform,
                             this.isGraphDataDirty,
                             this._visibleEdgesCache,
@@ -5780,7 +5814,9 @@ class CanvasEngine {
                         const overlayCtx = overlay.getContext('2d');
                         if (overlayCtx) {
                             overlayCtx.clearRect(0, 0, overlay.width, overlay.height);
-                            const projectedPosMap = this.webglRenderer.getProjectedNodePositions(this._visibleNodesCache, this.transform);
+                            // [v0.3.30-webgl-fix] Badge overlay must use same offset-corrected positions as WebGL
+                            const webglNodes = this._webglVisibleNodesCache || this._visibleNodesCache;
+                            const projectedPosMap = this.webglRenderer.getProjectedNodePositions(webglNodes, this.transform);
                             const dpr = window.devicePixelRatio || 1;
 
                              for (const edge of this._visibleEdgesCache) {
@@ -6551,7 +6587,8 @@ class CanvasEngine {
             // Estimate content height based on max Y of nodes, or a large multiple of viewHeight
             let maxY = 0;
             if (this.nodes.length > 0) {
-                maxY = Math.max(...this.nodes.map(n => n.position.y + 60));
+                const positionedNodes = this.nodes.filter(n => n.position && typeof n.position.y === 'number');
+                maxY = positionedNodes.length > 0 ? Math.max(...positionedNodes.map(n => n.position.y + 60)) : 0;
             }
             const contentHeight = Math.max(viewHeight * 2, maxY * zoom); // At least 2x viewHeight, or based on content
 
@@ -6585,7 +6622,8 @@ class CanvasEngine {
             // Estimate content width
             let maxX = 0;
             if (this.nodes.length > 0) {
-                maxX = Math.max(...this.nodes.map(n => n.position.x + 120));
+                const positionedNodes = this.nodes.filter(n => n.position && typeof n.position.x === 'number');
+                maxX = positionedNodes.length > 0 ? Math.max(...positionedNodes.map(n => n.position.x + 120)) : 0;
             }
             const contentWidth = Math.max(viewWidth * 2, maxX * zoom);
 
@@ -6749,10 +6787,14 @@ class CanvasEngine {
                 // 레이어 가시성 체크: 현재 렌더링되지 않는 노드는 바운드 계산에서 제외
                 const isUserNode = n.layer === 'user' || (n.data && n.data.layer === 'user') || n.status === 'pending';
                 const isExternalNode = n.layer === 'external' || (n.data && n.data.layer === 'external') || n.type === 'external' || n.status === 'ghost';
-                if (isUserNode && !this.showUserLayer) return false;
-                if (isExternalNode && !this.showExternalLayer) return false;
-                if (!isUserNode && !isExternalNode && !this.showBaseLayer) return false;
-                if (!this._isClientLayerVisible(n)) return false;
+                const cl = n.clientLayer || (n.data && n.data.clientLayer);
+                if (cl) {
+                    if (!this._isClientLayerVisible(n)) return false;
+                } else {
+                    if (isUserNode && !this.showUserLayer) return false;
+                    if (isExternalNode && !this.showExternalLayer) return false;
+                    if (!isUserNode && !isExternalNode && !this.showBaseLayer) return false;
+                }
                 return true;
             });
 
@@ -6811,17 +6853,18 @@ class CanvasEngine {
             // [v0.3.11] Layer Visibility - Use EXPLICIT layer tag from backend
             const clusterLayer = cluster.layer || (cluster.data && cluster.data.layer) || 'ai';
             
-            if (clusterLayer === 'user' && !this.showUserLayer) {
-                continue;
-            }
-            if (clusterLayer === 'external' && !this.showExternalLayer) {
-                continue;
-            }
-            if (clusterLayer === 'ai' && !this.showBaseLayer) {
-                // UI Filter: AI clusters hidden (Project Root, etc)
-                // [v0.3.11] context_vault exception should be explicit
-                if (cluster.id !== 'context_vault') {
-                    continue;
+            const cl = cluster.clientLayer || (cluster.data && cluster.data.clientLayer);
+            if (cl) {
+                // Client cluster visibility is already checked by `_isClientLayerVisible(cluster)` above.
+            } else {
+                if (clusterLayer === 'user' && !this.showUserLayer) continue;
+                if (clusterLayer === 'external' && !this.showExternalLayer) continue;
+                if (clusterLayer === 'ai' && !this.showBaseLayer) {
+                    // UI Filter: AI clusters hidden (Project Root, etc)
+                    // [v0.3.11] context_vault exception should be explicit
+                    if (cluster.id !== 'context_vault') {
+                        continue;
+                    }
                 }
             }
             if (!this._isClientLayerVisible(cluster)) continue;
@@ -7810,10 +7853,13 @@ class CanvasEngine {
         // [v0.0.37.1] Check node visibility based on showUserLayer, showBaseLayer & showExternalLayer
         const isUserNode = (n) => n.layer === 'user' || (n.data && n.data.layer === 'user') || n.status === 'pending';
         const isExternalNode = (n) => n.layer === 'external' || (n.data && n.data.layer === 'external') || n.type === 'external' || n.status === 'ghost' || (n.cluster_id && n.cluster_id === 'cluster_ghosts');
-        const isFromVisible = isUserNode(fromNode) ? this.showUserLayer : (isExternalNode(fromNode) ? this.showExternalLayer : this.showBaseLayer);
-        const isToVisible = isUserNode(toNode) ? this.showUserLayer : (isExternalNode(toNode) ? this.showExternalLayer : this.showBaseLayer);
+        const isFromClient = fromNode.clientLayer || (fromNode.data && fromNode.data.clientLayer);
+        const isToClient = toNode.clientLayer || (toNode.data && toNode.data.clientLayer);
+
+        const isFromVisible = isFromClient ? this._isClientLayerVisible(fromNode) : (isUserNode(fromNode) ? this.showUserLayer : (isExternalNode(fromNode) ? this.showExternalLayer : this.showBaseLayer));
+        const isToVisible = isToClient ? this._isClientLayerVisible(toNode) : (isUserNode(toNode) ? this.showUserLayer : (isExternalNode(toNode) ? this.showExternalLayer : this.showBaseLayer));
+        
         if (!isFromVisible || !isToVisible) return;
-        if (!this._isClientLayerVisible(fromNode) || !this._isClientLayerVisible(toNode)) return;
 
         // [v0.3.19] Hide Edges connected to filtered Leaf nodes
         if (this.hideLeafNodes) {
@@ -8775,7 +8821,11 @@ function initCanvas() {
         console.log('[SYNAPSE] Processing incoming message:', message.command);
 
         switch (message.command) {
+            case 'projectStateData':
             case 'projectState': {
+                if (message.state) {
+                    message.data = message.state; // normalize for logic below
+                }
                 if (message.data && message.data.project_name) {
                     engine.projectName = message.data.project_name;
                     console.log(`[SYNAPSE] Project Name Synchronized: ${engine.projectName}`);
@@ -8820,7 +8870,12 @@ function initCanvas() {
             case 'clientLayerUpdate': {
                 if (message.layers && message.layers.length > 0) {
                     const now = Date.now();
+                    // _connectedUserIds 자동 생성/갱신
+                    if (!window._connectedUserIds) {
+                        window._connectedUserIds = new Set();
+                    }
                     for (const layer of message.layers) {
+                        window._connectedUserIds.add(layer.clientId);
                         if (!engine.clientLayers[layer.clientId]) {
                             const order = Object.keys(engine.clientLayers).length;
                             engine.clientLayers[layer.clientId] = { visible: true, order, username: layer.username || '', lastActive: now };
@@ -8832,6 +8887,18 @@ function initCanvas() {
                     engine._updateClientLayerUI();
                     engine.isDirty = true;
                     engine.requestRender();
+                }
+                break;
+            }
+            case 'connectedClientsResult': {
+                if (message.clients) {
+                    window._connectedUserIds = new Set(
+                        message.clients.map(function(c) { return c.userId; })
+                    );
+                    message.clients.forEach(c => {
+                        engine.registerClientLayer(c.userId, c.username);
+                    });
+                    engine._updateClientLayerUI();
                 }
                 break;
             }

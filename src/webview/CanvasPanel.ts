@@ -31,7 +31,8 @@ import { BootstrapEngine } from '../bootstrap/BootstrapEngine';
 import { client } from '../client';
 import { Logger } from '../utils/Logger';
 import { VirtualDebugger } from '../core/VirtualDebugger';
-
+import { SynapseIgnore } from '../core/SynapseIgnore';
+import { RuleEngine } from '../core/RuleEngine';
 // [v0.3.1 Bootstrap Locked] Core Systems
 import { phaseManager, Phase } from '../core/PhaseManager';
 import { gridSystem } from '../core/GridSystem';
@@ -108,6 +109,22 @@ export class CanvasPanel {
     private _connUsername: string = '';
     private _sessionToken: string | null = null;
 
+    // [v0.3.30] Client Push Watcher
+    private _pushWatcher: vscode.FileSystemWatcher | null = null;
+    private _pushDebounceTimer: NodeJS.Timeout | null = null;
+    private _pushInFlight: boolean = false;
+    private _synapseIgnore: SynapseIgnore | null = null;
+
+    // 관리자 version polling (클라이언트 접속 감지용)
+    private _versionPollTimer: NodeJS.Timeout | null = null;
+    private _lastStateVersion: number = 0;
+
+    // [Phase 1/2] Connection Lock & Remote Save
+    private _isLocked: boolean = false;
+    private _cachePathMap: Map<string, { clientUsername: string, originalFilePath: string }> = new Map();
+    private _saveListenerDisposable: vscode.Disposable | null = null;
+    private _isSessionLocked: boolean = false; // [v0.3.30] Harvest Session Lock
+
 
     public static createOrShow(context: vscode.ExtensionContext, workspaceFolder: vscode.WorkspaceFolder) {
         const extensionUri = context.extensionUri;
@@ -166,6 +183,9 @@ export class CanvasPanel {
         // Listen for when the panel is disposed
         this._panel.onDidDispose(() => this.dispose(), null, this._disposables);
 
+        // Remote Save Listener
+        this._saveListenerDisposable = vscode.workspace.onDidSaveTextDocument(this._handleDocumentSave.bind(this));
+
         // [v0.3.09_fix] Rendering Isolation - send clearCanvas when Phase changes
         phaseManager.onPhaseAdvance = (phase: Phase) => {
             if (this._panel && this._panel.webview) {
@@ -199,9 +219,21 @@ export class CanvasPanel {
                         Logger.warn('[CanvasPanel] Confirmation already in progress, ignoring duplicate request.');
                         return;
                     }
-                    await this._taskQueue.push(() => this._handleMessage(message));
+                    await this._taskQueue.push(async () => {
+                        try {
+                            await this._handleMessage(message);
+                        } catch (e: any) {
+                            console.error('[SYNAPSE-DEBUG] Unhandled error in _handleMessage task:', e);
+                            vscode.window.showErrorMessage(`[SYNAPSE] 메시지 처리 중 치명적 에러: ${e.message}`);
+                        }
+                    });
                 } else {
-                    await this._handleMessage(message);
+                    try {
+                        await this._handleMessage(message);
+                    } catch (e: any) {
+                        console.error('[SYNAPSE-DEBUG] Unhandled error in _handleMessage (direct):', e);
+                        vscode.window.showErrorMessage(`[SYNAPSE] 메시지 직접 처리 중 치명적 에러: ${e.message}`);
+                    }
                 }
             },
             null,
@@ -222,7 +254,7 @@ export class CanvasPanel {
                 this.handleNodeSelected(message.node);
                 return;
             case 'openFile':
-                await this.openFile(message.filePath, message.createIfNotExists);
+                await this.openFile(message.filePath, message.createIfNotExists, message.clientUsername);
                 return;
             case 'getProjectState':
                 // [v0.3.11] 롤백 직후 2초간 재요청 차단 (롤백 데이터 덮어쓰기 방지)
@@ -236,7 +268,7 @@ export class CanvasPanel {
                 await this.handleSaveState(message.data || message.state);
                 return;
             case 'readFile':
-                await this.handleReadFile(message.filePath);
+                await this.handleReadFile(message.filePath, message.clientUsername);
                 return;
             case 'group':
                 await this.handleGroupNodes(message.nodeIds, message.label);
@@ -328,7 +360,17 @@ export class CanvasPanel {
 
                     let fileUri: vscode.Uri;
                     if (manualPath) {
-                        const relPath = path.posix.join(manualPath.replace(/\\/g, '/'), fileName);
+                        let safeManualPath = manualPath.replace(/\\/g, '/');
+                        // [Security] Auto-strip workspace absolute path if user mistakenly pastes it
+                        const wsPathUnix = workspaceFolder.uri.fsPath.replace(/\\/g, '/');
+                        if (safeManualPath.startsWith(wsPathUnix)) {
+                            safeManualPath = safeManualPath.substring(wsPathUnix.length).replace(/^\/+/, '');
+                        } else if (safeManualPath.startsWith('/') || safeManualPath.match(/^[a-zA-Z]:\//)) {
+                            // If it's still an absolute path not matching workspace root, treat as relative to prevent escaping
+                            safeManualPath = safeManualPath.replace(/^([a-zA-Z]:)?\/+/, '');
+                        }
+
+                        const relPath = path.posix.join(safeManualPath, fileName);
                         fileUri = vscode.Uri.joinPath(workspaceFolder.uri, relPath);
 
                         // 🛡️ Security: reject paths escaping workspace root
@@ -470,10 +512,27 @@ export class CanvasPanel {
                 this.handleStopServer();
                 return;
             case 'login':
-                this.handleLogin(message.host, message.port, message.username, message.password, message.sshHost, message.sshUser, message.sshMountPath);
+                const projectRoot = this._workspaceFolder ? this._workspaceFolder.uri.fsPath : this._extensionUri.fsPath;
+                this.handleLogin(message.host, message.port, message.username, message.password, projectRoot);
                 return;
             case 'createAccount':
                 await this.handleCreateAccount(message);
+                return;
+            case 'harvestStart':
+                await this.handleHarvestStart(message);
+                return;
+            case 'harvestCompare':
+                await this.handleHarvestCompare(message);
+                return;
+            case 'harvestExecute':
+                await this.handleHarvestExecute(message);
+                return;
+            case 'openHarvestFolder':
+                vscode.window.showInformationMessage(`수확이 완료되었습니다. 클라이언트별 수확 폴더를 여시겠습니까?`, '폴더 열기').then(selection => {
+                    if (selection === '폴더 열기' && message.path) {
+                        vscode.env.openExternal(vscode.Uri.file(message.path));
+                    }
+                });
                 return;
             case 'deleteAccount':
                 await this.handleDeleteAccount(message);
@@ -711,7 +770,17 @@ export class CanvasPanel {
             }
 
             // 2. Dispatch to Engine
-            const rawFile = node.data?.file || '';
+            let rawFile = node.data?.file || '';
+            if (rawFile) {
+                const wsPathUnix = workspaceFolder.uri.fsPath.replace(/\\/g, '/');
+                let safeFile = rawFile.replace(/\\/g, '/');
+                if (safeFile.startsWith(wsPathUnix)) {
+                    safeFile = safeFile.substring(wsPathUnix.length).replace(/^\/+/, '');
+                } else if (safeFile.startsWith('/') || safeFile.match(/^[a-zA-Z]:\//)) {
+                    safeFile = safeFile.replace(/^([a-zA-Z]:)?\/+/, '');
+                }
+                rawFile = safeFile;
+            }
             const normalizedFilePath = (rawFile && !rawFile.startsWith('http') && !rawFile.startsWith('external'))
                 ? vscode.workspace.asRelativePath(rawFile, false)
                 : rawFile;
@@ -746,7 +815,7 @@ export class CanvasPanel {
             }
 
             // 🔥 [IMMEDIATE REACTION] 노드가 엔진에 추가되었으므로 즉시 화면 갱신
-            await this.sendProjectState(false, true);
+            // await this.sendProjectState(false, true); // [v0.3.30] Prevent UI overwrite that deletes client nodes
 
             // 3. Persistence & SSoT (v0.3.11: Atomic Save)
             const finalState = canvasEngine.getFinalSnapshot();
@@ -787,7 +856,7 @@ export class CanvasPanel {
                 console.log(`[SYNAPSE] Node ${node.id} data updated via pipeline.`);
                 
                 // 🔥 [v0.3.11] IMMEDIATE REACTION
-                await this.sendProjectState(false, true);
+                // await this.sendProjectState(false, true); // [v0.3.30] Prevent UI overwrite that deletes client nodes
             }
         } catch (error) {
             console.error('[SYNAPSE] Failed to update node data:', error);
@@ -906,22 +975,113 @@ export class CanvasPanel {
         }
     }
 
-    private async openFile(filePath: string, createIfNotExists: boolean = false) {
-        const workspaceFolder = this._workspaceFolder;
-        if (!workspaceFolder) return;
-
-        // [v0.3.10-LOCK] Robust Path Handling: Absolute paths from webview can have leading slashes on Linux
-        let fileUri: vscode.Uri;
+    private _resolveFileUri(workspaceFolderUri: vscode.Uri, filePath: string, clientUsername?: string): vscode.Uri | null {
         const normalizedPath = filePath.trim();
+        let targetPath = normalizedPath.replace(/^[\\\/]+/, '').trim();
         
-        if (normalizedPath.startsWith('/') || (normalizedPath.length > 1 && normalizedPath[1] === ':')) {
-            fileUri = vscode.Uri.file(normalizedPath);
+        if (clientUsername && clientUsername !== this._connUsername) {
+            // [Cross-Client Remote File Open] Route to mounted path securely
+            const MountManager = require('../core/collaboration/MountManager').MountManager;
+            const mountConfig = MountManager.getInstance().getMountConfig(clientUsername);
+            
+            if (mountConfig && mountConfig.remotePath) {
+                // Rule 1: Strip absolute path securely based on segment boundaries
+                let normalizedTarget = path.posix.normalize(normalizedPath.replace(/\\/g, '/'));
+                let normalizedRoot = path.posix.normalize(mountConfig.remotePath.replace(/\\/g, '/'));
+                
+                // Ensure both have leading slashes for absolute path comparison
+                if (!normalizedTarget.startsWith('/')) normalizedTarget = '/' + normalizedTarget;
+                if (!normalizedRoot.startsWith('/')) normalizedRoot = '/' + normalizedRoot;
+                
+                if (normalizedTarget === normalizedRoot) {
+                    targetPath = '';
+                } else if (normalizedTarget.startsWith(normalizedRoot + '/')) {
+                    targetPath = normalizedTarget.substring(normalizedRoot.length).replace(/^[\\\/]+/, '');
+                }
+            }
+
+            // Rule 2: Path Traversal Protection
+            if (targetPath.includes('../') || targetPath.includes('..\\') || targetPath === '..') {
+                vscode.window.showErrorMessage(`[SYNAPSE] 보안 에러: 경로 이탈(Path Traversal) 공격 의심 (${targetPath})`);
+                return null;
+            }
+
+            const fileUri = vscode.Uri.joinPath(workspaceFolderUri, '.synapse', 'mnt', clientUsername, targetPath);
+            
+            // Rule 3: Verify the resolved path is strictly inside the mount root
+            const mountRoot = path.resolve(workspaceFolderUri.fsPath, '.synapse', 'mnt', clientUsername);
+            const resolvedPath = path.resolve(fileUri.fsPath);
+            if (resolvedPath !== mountRoot && !resolvedPath.startsWith(mountRoot + path.sep)) {
+                vscode.window.showErrorMessage(`[SYNAPSE] 보안 에러: 마운트 범위를 이탈했습니다 (${targetPath})`);
+                return null;
+            }
+
+            Logger.info(`[CanvasPanel] Cross-Client File Open: routing to mount path ${fileUri.fsPath}`);
+            return fileUri;
         } else {
+            if (normalizedPath.startsWith('/') || (normalizedPath.length > 1 && normalizedPath[1] === ':')) {
+                return vscode.Uri.file(normalizedPath);
+            }
             // Normalize path to prevent double slash errors for relative paths
-            let targetPath = normalizedPath.replace(/^[\\\/]/, '').trim();
-            fileUri = vscode.Uri.joinPath(workspaceFolder.uri, targetPath);
+            targetPath = normalizedPath.replace(/^[\\\/]+/, '').trim();
+            return vscode.Uri.joinPath(workspaceFolderUri, targetPath);
+        }
+    }
+
+    private async openFile(filePath: string, createIfNotExists: boolean = false, clientUsername?: string) {
+        console.log(`[SYNAPSE-DEBUG] Extension Host received openFile for: ${filePath}, create=${createIfNotExists}, client=${clientUsername}`);
+        const workspaceFolder = this._workspaceFolder;
+        if (!workspaceFolder) {
+            console.log(`[SYNAPSE-DEBUG] _workspaceFolder is undefined!`);
+            return;
         }
 
+        // [v0.3.30] SSE On-demand File Fetch
+        if (clientUsername && clientUsername !== this._connUsername && this._connHost) {
+            try {
+                Logger.info(`[CanvasPanel] Requesting file '${filePath}' from client '${clientUsername}' via SSE...`);
+                vscode.window.showInformationMessage(`[SYNAPSE] 파일 전송을 요청 중입니다... (${clientUsername})`);
+                
+                const content = await this._requestFileViaSSE(clientUsername, filePath);
+                if (content !== null) {
+                    Logger.info(`[CanvasPanel] Received file content via SSE: ${filePath}`);
+                    
+                    const cacheDir = vscode.Uri.joinPath(workspaceFolder.uri, '.synapse', 'cache', clientUsername);
+                    try {
+                        await vscode.workspace.fs.createDirectory(cacheDir);
+                    } catch (e) { /* ignore */ }
+                    
+                    // Replace slashes with underscores to preserve unique paths and prevent basename collisions
+                    const safeName = filePath.replace(/[/\\]/g, '_');
+                    const tempFileUri = vscode.Uri.joinPath(cacheDir, safeName);
+                    
+                    // Register the path in the map for Remote Save
+                    this._cachePathMap.set(tempFileUri.fsPath, { clientUsername, originalFilePath: filePath });
+                    
+                    await vscode.workspace.fs.writeFile(tempFileUri, Buffer.from(content, 'utf8'));
+                    
+                    const doc = await vscode.workspace.openTextDocument(tempFileUri);
+                    await vscode.window.showTextDocument(doc);
+                    return;
+                }
+            } catch (e: any) {
+                Logger.error(`[CanvasPanel] SSE Fetch failed: ${e.message}`, e);
+                vscode.window.showErrorMessage(`[SYNAPSE] 타 클라이언트 파일 요청 실패: ${e.message}`);
+                return; // Do not fallback to MountManager for cross-client files
+            }
+        }
+
+        let fileUri: vscode.Uri | null = null;
+        try {
+            fileUri = this._resolveFileUri(workspaceFolder.uri, filePath, clientUsername);
+        } catch (resolveError: any) {
+            console.error(`[SYNAPSE-DEBUG] _resolveFileUri threw an error:`, resolveError);
+            vscode.window.showErrorMessage(`[SYNAPSE] 경로 분석 중 치명적 에러: ${resolveError.message}`);
+            return;
+        }
+        if (!fileUri) return; // Security check failed
+
+        console.log(`[SYNAPSE-DEBUG] Resolved fileUri: ${fileUri.fsPath}`);
         Logger.info(`[v0.3.10-LOCK] Attempting to open file: ${fileUri.fsPath}`);
         try {
             let stat;
@@ -969,13 +1129,106 @@ export class CanvasPanel {
         }
     }
 
-    private async handleReadFile(filePath: string) {
+    private async _handleDocumentSave(document: vscode.TextDocument) {
+        if (this._isSessionLocked) {
+            vscode.window.showWarningMessage(`Workspace is LOCKED due to an active Harvest Session. Edit is ignored.`);
+            return;
+        }
+        if (!document.uri.fsPath.includes('.synapse')) return;
+        const cacheInfo = this._cachePathMap.get(document.uri.fsPath);
+        if (cacheInfo) {
+            const { clientUsername, originalFilePath } = cacheInfo;
+            await this._pushFileSaveViaSSE(clientUsername, originalFilePath, document.getText());
+        }
+    }
+
+    private _pushFileSaveViaSSE(clientUsername: string, originalFilePath: string, content: string): Promise<void> {
+        return new Promise((resolve) => {
+            const postData = JSON.stringify({
+                targetUserId: clientUsername,
+                filePath: originalFilePath,
+                content
+            });
+
+            const opts: http.RequestOptions = {
+                hostname: this._connHost,
+                port: this._connPort,
+                path: '/api/collab/save-file',
+                method: 'POST',
+                headers: {
+                    ...this._getAuthHeaders(),
+                    'Content-Type': 'application/json',
+                    'Content-Length': Buffer.byteLength(postData)
+                }
+            };
+
+            const req = http.request(opts, (res) => {
+                let body = '';
+                res.on('data', d => body += d);
+                res.on('end', () => {
+                    try {
+                        const parsed = JSON.parse(body);
+                        if (parsed.success) {
+                            vscode.window.showInformationMessage(`[SYNAPSE] 원격 저장 성공: ${originalFilePath}`);
+                        } else {
+                            vscode.window.showErrorMessage(`[SYNAPSE] 원격 저장 실패: ${parsed.error}`);
+                        }
+                    } catch (e) {
+                        vscode.window.showErrorMessage(`[SYNAPSE] 원격 저장 응답 파싱 실패`);
+                    }
+                    resolve();
+                });
+            });
+
+            req.on('error', (err) => {
+                vscode.window.showErrorMessage(`[SYNAPSE] 원격 저장 요청 실패: ${err.message}`);
+                resolve();
+            });
+
+            req.write(postData);
+            req.end();
+        });
+    }
+
+    private async handleReadFile(filePath: string, clientUsername?: string) {
         const workspaceFolder = this._workspaceFolder;
         if (!workspaceFolder) return;
 
-        const fileUri = path.isAbsolute(filePath) 
-            ? vscode.Uri.file(filePath)
-            : vscode.Uri.joinPath(workspaceFolder.uri, filePath);
+        // [v0.3.30] SSE On-demand File Fetch
+        if (clientUsername && clientUsername !== this._connUsername && this._connHost) {
+            try {
+                Logger.info(`[CanvasPanel] Requesting file content '${filePath}' from client '${clientUsername}' via SSE...`);
+                
+                const content = await this._requestFileViaSSE(clientUsername, filePath);
+                if (content !== null) {
+                    this._panel.webview.postMessage({
+                        command: 'fileContent',
+                        filePath: filePath,
+                        content: content
+                    });
+                    return;
+                }
+            } catch (e: any) {
+                Logger.error(`[CanvasPanel] SSE Read Fetch failed: ${e.message}`, e);
+                this._panel.webview.postMessage({
+                    command: 'fileContent',
+                    filePath: filePath,
+                    error: `Failed to fetch file from client: ${e.message}`
+                });
+                return; // Do not fallback to MountManager for cross-client files
+            }
+        }
+
+        const fileUri = this._resolveFileUri(workspaceFolder.uri, filePath, clientUsername);
+        if (!fileUri) {
+            this._panel.webview.postMessage({
+                command: 'fileContent',
+                filePath: filePath,
+                error: `Security error: Path access denied.`
+            });
+            return;
+        }
+
         try {
             const data = await vscode.workspace.fs.readFile(fileUri);
             this._panel.webview.postMessage({
@@ -998,7 +1251,7 @@ export class CanvasPanel {
     private _pendingUsername: string = '';
     private _pendingPassword: string = '';
 
-    private handleStartServer(port?: number, username?: string, password?: string): void {
+    private async handleStartServer(port?: number, username?: string, password?: string): Promise<void> {
         if (port && port >= 1024 && port <= 65535) {
             this._serverPort = port;
         }
@@ -1006,42 +1259,12 @@ export class CanvasPanel {
         this._pendingPassword = password || '';
 
         if (this._serverProcess && !this._serverProcess.killed) {
-            this._onServerReady();
+            await this._onServerReady();
             return;
         }
 
-        // 먼저 이미 실행 중인 서버가 있는지 확인
-        const healthCheck = http.get(`http://localhost:${this._serverPort}/health`, (res) => {
-            let body = '';
-            res.on('data', (chunk) => { body += chunk; });
-            res.on('end', async () => {
-                try {
-                    const data = JSON.parse(body);
-                    if (data.status === 'ok') {
-                        Logger.info(`[Collaboration Server] Already running on port ${this._serverPort}`);
-                        this._externalServer = true;
-                        // .server_info 확인하여 adminToken 유무 체크
-                        const serverInfo = await this._readServerInfo();
-                        if (serverInfo && serverInfo.adminToken) {
-                            this._onServerReady();
-                        } else {
-                            // 구버전 서버 (adminToken 없음) → 강제 재시작
-                            Logger.info(`[Collaboration Server] Old server without adminToken, restarting...`);
-                            this._restartServerProcess();
-                        }
-                        return;
-                    }
-                } catch {}
-                this._startServerProcess();
-            });
-        });
-        healthCheck.on('error', () => {
-            this._startServerProcess();
-        });
-        healthCheck.setTimeout(2000, () => {
-            healthCheck.destroy();
-            this._startServerProcess();
-        });
+        // _startServerProcess()가 4단계 탐색 (attach → attach → kill → spawn) 수행
+        await this._startServerProcess();
     }
 
     private _restartServerProcess(): void {
@@ -1052,9 +1275,146 @@ export class CanvasPanel {
         });
     }
 
-    private _startServerProcess(): void {
+    private async _startServerProcess(): Promise<void> {
         this._externalServer = false;
         this._isServerOwner = true;
+
+        // ① _serverPort(3000) 직접 탐색
+        const serverInfo = await this._readServerInfo();
+        if (await this._discoverExistingServer(this._serverPort, serverInfo?.adminSecret)) {
+            Logger.info(`[Collaboration Server] Reusing server on port ${this._serverPort}`);
+            this._panel.webview.postMessage({ command: 'serverStarted', port: this._serverPort });
+            await this._onServerReady();
+            return;
+        }
+
+        // ② .server_info의 다른 포트 탐색
+        if (serverInfo?.port && serverInfo.port !== this._serverPort) {
+            const attachedPort = serverInfo.port;
+            if (await this._discoverExistingServer(attachedPort, serverInfo.adminSecret)) {
+                Logger.info(`[Collaboration Server] Reusing server on port ${attachedPort}`);
+                this._panel.webview.postMessage({ command: 'serverStarted', port: attachedPort });
+                await this._onServerReady();
+                return;
+            }
+        }
+
+        // ③ .server_info 기반 kill
+        await this._killServerFromServerInfo();
+
+        // ④ 새 서버 생성
+        await this._spawnNewServer();
+    }
+
+    // ping + admin auth로 기존 서버 탐색 (attach)
+    private async _discoverExistingServer(port: number, adminSecret?: string): Promise<boolean> {
+        try {
+            const pingResult = await this._pingServer(port);
+            if (!pingResult.ok) return false;
+
+            const serverInfo = await this._readServerInfo();
+            if (serverInfo?.projectUUID && pingResult.projectUUID !== serverInfo.projectUUID) {
+                Logger.warn(`[Collaboration Server] UUID mismatch on port ${port}: expected ${serverInfo.projectUUID}, got ${pingResult.projectUUID}`);
+            }
+
+            const secret = adminSecret || serverInfo?.adminSecret || '';
+            const token = await this._authenticateAdmin(port, secret);
+            if (!token) return false;
+
+            this._sessionToken = token;
+            this._serverPort = port;
+            this._connHost = 'localhost';
+            this._connPort = port;
+            this._connUserId = '_server_admin_';
+            this._connUsername = 'Server Admin';
+            this._isServerOwner = true;
+            return true;
+        } catch {
+            return false;
+        }
+    }
+
+    // .server_info 기반 다른 포트의 서버 kill
+    private async _killServerFromServerInfo(): Promise<void> {
+        const serverInfo = await this._readServerInfo();
+        if (!serverInfo?.pid || !serverInfo?.port) return;
+        if (serverInfo.port === this._serverPort) return;
+
+        const targetPort = serverInfo.port;
+        const targetUUID = serverInfo.projectUUID;
+
+        let serverAlive = false;
+        try {
+            const pingResult = await this._pingServer(targetPort);
+            if (pingResult.ok && pingResult.projectUUID === targetUUID) serverAlive = true;
+        } catch {}
+
+        if (!serverAlive) return;
+
+        Logger.info(`[Collaboration Server] Killing server PID=${serverInfo.pid} port=${targetPort} uuid=${targetUUID}`);
+        try { process.kill(serverInfo.pid, 'SIGTERM'); } catch {}
+
+        await this._waitForProcessExit(serverInfo.pid);
+        try {
+            process.kill(serverInfo.pid, 0);
+            process.kill(serverInfo.pid, 'SIGKILL');
+            Logger.warn(`[Collaboration Server] SIGKILL sent to PID ${serverInfo.pid}`);
+            await new Promise(r => setTimeout(r, 500));
+        } catch {}
+
+        const freed = await this._waitForPortFree(targetPort);
+        if (!freed) {
+            Logger.warn(`[Collaboration Server] Port ${targetPort} not freed after kill, spawn may fallback`);
+        }
+    }
+
+    // 프로세스 종료 대기 (최대 3초)
+    private _waitForProcessExit(pid: number): Promise<void> {
+        return new Promise((resolve) => {
+            let elapsed = 0;
+            const check = () => {
+                try { process.kill(pid, 0); } catch { resolve(); return; }
+                elapsed += 500;
+                if (elapsed >= 3000) { resolve(); return; }
+                setTimeout(check, 500);
+            };
+            setTimeout(check, 500);
+        });
+    }
+
+    // 포트 해제 대기 (최대 5초, boolean 반환)
+    private _waitForPortFree(port: number): Promise<boolean> {
+        const net = require('net');
+        const deadline = Date.now() + 5000;
+        return new Promise((resolve) => {
+            const attempt = () => {
+                if (Date.now() > deadline) {
+                    Logger.warn(`[Collaboration Server] Port ${port} still occupied after 5s`);
+                    resolve(false);
+                    return;
+                }
+                const tester = net.createServer();
+                tester.once('error', () => {
+                    try { tester.close(); } catch {}
+                    setTimeout(attempt, 500);
+                });
+                tester.once('listening', () => {
+                    tester.close(() => resolve(true));
+                });
+                tester.listen(port, '127.0.0.1');
+            };
+            attempt();
+        });
+    }
+
+    private async _spawnNewServer(): Promise<void> {
+        // 모든 기존 SYNAPSE 서버 프로세스 정리 (고아 프로세스 방지)
+        const workspaceRoot = this._workspaceFolder ? this._workspaceFolder.uri.fsPath : this._extensionUri.fsPath;
+        await new Promise<void>((resolve) => {
+            cp.exec(`pkill -f "standalone.js.*--root.*${workspaceRoot.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}"`, { timeout: 3000 }, () => resolve());
+        });
+        await new Promise(r => setTimeout(r, 500));
+
         const serverPath = path.join(
             this._extensionUri.fsPath,
             'dist',
@@ -1068,7 +1428,6 @@ export class CanvasPanel {
             return;
         }
 
-        const workspaceRoot = this._workspaceFolder ? this._workspaceFolder.uri.fsPath : this._extensionUri.fsPath;
         this._serverProcess = cp.spawn('node', [serverPath, '--root', workspaceRoot, '--port', String(this._serverPort)], {
             cwd: workspaceRoot,
             stdio: ['ignore', 'pipe', 'pipe'],
@@ -1108,17 +1467,30 @@ export class CanvasPanel {
 
     private _waitForServerReady(): void {
         let attempts = 0;
-        const poll = setInterval(() => {
+        const poll = setInterval(async () => {
             attempts++;
-            const req = http.get(`http://localhost:${this._serverPort}/health`, (res) => {
+            const req = http.get(`http://localhost:${this._serverPort}/health`, async (res) => {
                 let body = '';
                 res.on('data', (c) => { body += c; });
-                res.on('end', () => {
+                res.on('end', async () => {
                     try {
                         const data = JSON.parse(body);
                         if (data.status === 'ok') {
                             clearInterval(poll);
-                            this._onServerReady();
+                            // 새 서버 시작 시 admin auth로 토큰 획득
+                            const serverInfo = await this._readServerInfo();
+                            if (serverInfo?.adminSecret) {
+                                const token = await this._authenticateAdmin(this._serverPort, serverInfo.adminSecret);
+                                if (token) {
+                                    this._sessionToken = token;
+                                    this._connHost = 'localhost';
+                                    this._connPort = this._serverPort;
+                                    this._connUserId = '_server_admin_';
+                                    this._connUsername = 'Server Admin';
+                                    this._isServerOwner = true;
+                                }
+                            }
+                            await this._onServerReady();
                             return;
                         }
                     } catch {}
@@ -1138,41 +1510,33 @@ export class CanvasPanel {
         }, 500);
     }
 
-    private _onServerReady(): void {
-        this._readServerInfo().then(async serverInfo => {
-            if (serverInfo && serverInfo.port) {
-                this._serverPort = serverInfo.port;
-                Logger.info(`[Collaboration Server] Using port ${this._serverPort} from .server_info`);
-            }
-            if (serverInfo && serverInfo.adminToken) {
-                // [v0.3.30] Admin auto-login: .server_info의 adminToken으로 직접 인증
-                this._sessionToken = serverInfo.adminToken;
-                this._connHost = 'localhost';
-                this._connPort = this._serverPort;
-                this._connUserId = '_server_admin_';
-                this._connUsername = 'Server Admin';
-                this._isServerOwner = true;
-                Logger.info(`[Collaboration Server] Admin auto-login`);
-                this._panel.webview.postMessage({
-                    command: 'loginResult',
-                    success: true,
-                    user: { userId: '_server_admin_', username: 'Server Admin' },
-                    server: { serverName: (serverInfo && serverInfo.serverName) || '' },
-                    host: 'localhost',
-                    port: String(this._serverPort)
-                });
-                // 서버 자신의 물리적 상태를 VSCode가 직접 파일 읽어서 다이렉트 주입 (HTTP 0회)
-                // = 게임 배경 맵을 로컬 메모리에서 바로 로드하는 것과 동일
-                await this.sendProjectState(false, true);
-                this.handleGetConnectedClients();
-                // 마운트된 클라이언트 레이어 정보를 HTTP 1회 조회 (가벼운 메타데이터만)
-                this._fetchClientLayers('localhost', String(this._serverPort));
-            }
-            this._panel.webview.postMessage({ command: 'serverStarted', port: this._serverPort });
+    private async _onServerReady(): Promise<void> {
+        // _sessionToken은 _discoverExistingServer() 또는 _waitForServerReady()에서 이미 설정됨
+        this._panel.webview.postMessage({
+            command: 'loginResult',
+            success: true,
+            user: { userId: '_server_admin_', username: 'Server Admin' },
+            server: { serverName: '' },
+            host: 'localhost',
+            port: String(this._serverPort)
         });
+        // 서버 자신의 물리적 상태를 VSCode가 직접 파일 읽어서 다이렉트 주입
+        // await this.sendProjectState(false, true); // [v0.3.30] Prevent UI overwrite that deletes client nodes
+        this.handleGetConnectedClients();
+        this._fetchClientLayers('localhost', String(this._serverPort));
+        this._panel.webview.postMessage({ command: 'serverStarted', port: this._serverPort });
+
+        // 관리자 호스트용 실시간 폴링 활성화 (Phase 1A Fix)
+        this._startSSEChannel();
+        this._startVersionPolling();
+        // 클라이언트 접속/레이어 상태도 주기적으로 갱신 (10초 간격)
+        setInterval(() => {
+            this.handleGetConnectedClients();
+            this._fetchClientLayers('localhost', String(this._serverPort));
+        }, 10000);
     }
 
-    private async _readServerInfo(): Promise<{port: number; projectUUID: string; serverName: string; adminToken?: string} | null> {
+    private async _readServerInfo(): Promise<{port: number; pid: number; projectUUID: string; serverName: string; adminSecret?: string} | null> {
         try {
             const workspaceRoot = this._workspaceFolder ? this._workspaceFolder.uri.fsPath : this._extensionUri.fsPath;
             const filePath = path.join(workspaceRoot, 'data', '.server_info');
@@ -1183,7 +1547,48 @@ export class CanvasPanel {
         return null;
     }
 
+    private _pingServer(port: number): Promise<{ok: boolean; projectUUID: string; serverName: string; version: string}> {
+        return new Promise((resolve, reject) => {
+            const req = http.get(`http://localhost:${port}/api/ping`, { timeout: 3000 }, (res) => {
+                let data = '';
+                res.on('data', (c) => { data += c; });
+                res.on('end', () => {
+                    try { resolve(JSON.parse(data)); } catch { reject(new Error('Invalid ping response')); }
+                });
+            });
+            req.on('error', () => reject(new Error('Server not reachable')));
+            req.on('timeout', () => { req.destroy(); reject(new Error('Ping timeout')); });
+        });
+    }
+
+    private _authenticateAdmin(port: number, adminSecret: string): Promise<string | null> {
+        return new Promise((resolve) => {
+            const body = JSON.stringify({ adminSecret });
+            const opts: http.RequestOptions = {
+                hostname: 'localhost', port, path: '/api/admin/auth', method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(body) },
+                timeout: 5000,
+            };
+            const req = http.request(opts, (res) => {
+                let data = '';
+                res.on('data', (c) => { data += c; });
+                res.on('end', () => {
+                    try {
+                        const r = JSON.parse(data);
+                        resolve(r.success ? r.token : null);
+                    } catch { resolve(null); }
+                });
+            });
+            req.on('error', () => resolve(null));
+            req.on('timeout', () => { req.destroy(); resolve(null); });
+            req.write(body);
+            req.end();
+        });
+    }
+
     private handleStopServer(): void {
+        this._stopPushWatcher();
+        this._stopVersionPolling();
         if (this._serverProcess && !this._serverProcess.killed) {
             this._serverProcess.kill('SIGTERM');
             return;
@@ -1221,11 +1626,9 @@ export class CanvasPanel {
         }
     }
 
-    private handleLogin(host: string, port: string, username: string, password: string, sshHost?: string, sshUser?: string, sshMountPath?: string): void {
+    private handleLogin(host: string, port: string, username: string, password: string, projectRoot?: string): void {
         const body: any = { username, password };
-        if (sshHost) body.sshHost = sshHost;
-        if (sshUser) body.sshUser = sshUser;
-        if (sshMountPath) body.sshMountPath = sshMountPath;
+        if (projectRoot) body.clientProjectRoot = projectRoot;
         const data = JSON.stringify(body);
         const options: http.RequestOptions = {
             hostname: host,
@@ -1245,24 +1648,44 @@ export class CanvasPanel {
             res.on('end', () => {
                 try {
                     const result = JSON.parse(body);
-                    if (result.success && result.user) {
+                    if (result.success && result.user && result.token) {
                         this._connHost = host;
                         this._connPort = parseInt(port, 10);
                         this._connUserId = result.user.userId || '';
                         this._connUsername = result.user.username || '';
                         this._sessionToken = result.token || null;
+                        if (!result.mountSuccess) {
+                            Logger.warn(`[Login] SSH mount failed: ${result.mountError || 'unknown'}`);
+                        }
                         this._fetchAccountsForLayer(); // fire & forget: layer 등록
                         this._panel.webview.postMessage({
                             command: 'loginResult',
                             success: true,
+                            mountSuccess: result.mountSuccess,
+                            mountError: result.mountError,
                             user: result.user,
                             server: result.server
                         });
                         // 로그인 성공 후 접속자 현황
                         this.handleGetConnectedClients();
+                        // 클라이언트 workspaceFolder 스캔 → 서버에 푸시
+                        this._pushClientState(host, parseInt(port, 10));
+                        // 자동 재푸시 watcher 시작
+                        this._startPushWatcher();
+                        this._fetchServerState(host, port);
+                        
+                        // 모든 접속자는 SSE 채널을 개방해야 함
+                        this._startSSEChannel();
+
+                        // 관리자: 클라이언트 접속 감지용 version polling
                         if (this._isServerOwner) {
-                            // 서버 소유자: 서버 state fetch (마운트된 클라이언트 노드 포함)
-                            this._fetchServerState(host, port);
+                            this._startVersionPolling();
+                        } else {
+                            // 클라이언트도 주기적으로 접속자 현황과 레이어 가시성 정보를 갱신 (10초 간격)
+                            setInterval(() => {
+                                this.handleGetConnectedClients();
+                                this._fetchClientLayers(host, String(port));
+                            }, 10000);
                         }
                     } else {
                         this._panel.webview.postMessage({ command: 'loginResult', success: false, error: result.error || 'Login failed' });
@@ -1312,17 +1735,64 @@ export class CanvasPanel {
                 try {
                     const result = JSON.parse(body);
                     if (result.success && result.state) {
+                        Logger.info(`[StateApply] nodes=${result.state.nodes?.length || 0}, edges=${result.state.edges?.length || 0}, clusters=${result.state.clusters?.length || 0}`);
+
+                        const clientNodes = (result.state.nodes || []).filter((n: any) => n.id && n.id.startsWith("client::"));
+                        console.log(`[Diagnostic] Total client:: nodes received by _fetchServerState: ${clientNodes.length}`);
+                        if (clientNodes.length > 0) {
+                            console.log(`[Diagnostic] First client node:`, JSON.stringify(clientNodes[0], null, 2));
+                        }
+                        
+                        // Perspective Swap: 각자는 자신의 노드를 메인(user)으로, 남의 노드는 고스트(external)로 본다
+                        if (this._connUserId) {
+                            const myUserId = this._connUserId;
+                            const isAdmin = myUserId === '_server_admin_';
+
+                            for (const n of result.state.nodes || []) {
+                                const ownerId = n.data?.clientLayer;
+                                const isMyNode = isAdmin ? !ownerId : ownerId === myUserId;
+                                
+                                if (isMyNode) {
+                                    n.layer = 'user';
+                                } else if (ownerId && ownerId !== myUserId) {
+                                    // Other client's node -> External (Ghost)
+                                    n.layer = 'external';
+                                    n.status = 'ghost';
+                                    n.data = n.data || {};
+                                    n.data.layer = 'external';
+                                } else {
+                                    // Server base node (!ownerId) -> Keep original layer (usually 'ai' or 'base')
+                                    // Do not force it to 'external' so that the Base toggle controls it, not External.
+                                }
+                            }
+                            
+                            for (const c of result.state.clusters || []) {
+                                const ownerId = c.data?.clientLayer;
+                                const isMyCluster = isAdmin ? !ownerId : ownerId === myUserId;
+                                
+                                if (isMyCluster) {
+                                    c.layer = 'user';
+                                } else if (ownerId && ownerId !== myUserId) {
+                                    c.layer = 'external';
+                                }
+                            }
+                        }
+
                         this._panel.webview.postMessage({
                             command: 'projectState',
                             data: result.state,
                             forceReset: forceReset
                         });
+                    } else {
+                        Logger.warn(`[FetchState] Error: Success is false or state is missing`);
                     }
-                } catch {}
+                } catch (e: any) {
+                    Logger.warn(`[FetchState] Error parsing JSON: ${e.message}`);
+                }
             });
         });
-        req.on('error', () => {});
-        req.on('timeout', () => { req.destroy(); });
+        req.on('error', (e) => { Logger.warn(`[FetchState] Request error: ${e.message}`); });
+        req.on('timeout', () => { Logger.warn(`[FetchState] Timeout`); req.destroy(); });
         req.end();
     }
 
@@ -1330,7 +1800,7 @@ export class CanvasPanel {
         const opts: http.RequestOptions = {
             hostname: host,
             port: parseInt(port, 10),
-            path: '/api/state',
+            path: '/api/admin/connected-clients',
             method: 'GET',
             headers: { ...this._getAuthHeaders() },
             timeout: 5000,
@@ -1341,23 +1811,11 @@ export class CanvasPanel {
             res.on('end', () => {
                 try {
                     const result = JSON.parse(body);
-                    if (result.success && result.state) {
-                        const layers: { clientId: string; username: string }[] = [];
-                        const seen = new Set<string>();
-                        const addLayer = (clientId: string, username?: string) => {
-                            if (!clientId || seen.has(clientId)) return;
-                            if (clientId === '_server_admin_') return;
-                            seen.add(clientId);
-                            layers.push({ clientId, username: username || '' });
-                        };
-                        for (const n of (result.state.nodes || [])) {
-                            const cl = n.clientLayer || (n.data && n.data.clientLayer);
-                            if (cl) addLayer(cl, n.clientUsername || (n.data && n.data.clientUsername));
-                        }
-                        for (const c of (result.state.clusters || [])) {
-                            const cl = c.clientLayer || (c.data && c.clientLayer);
-                            if (cl) addLayer(cl, c.clientUsername || (c.data && c.data.clientUsername));
-                        }
+                    if (result.success && result.clients) {
+                        const layers = result.clients.map((c: any) => ({
+                            clientId: c.userId,
+                            username: c.username
+                        }));
                         if (layers.length > 0) {
                             this._panel.webview.postMessage({
                                 command: 'clientLayerUpdate',
@@ -1373,36 +1831,629 @@ export class CanvasPanel {
         req.end();
     }
 
+    // 클라이언트 workspaceFolder 스캔 → 서버에 푸시 (HTTP push 방식)
+    private async _pushClientState(host: string, port: number): Promise<void> {
+        const workspaceFolder = this._workspaceFolder;
+        if (!workspaceFolder) return;
+
+        try {
+            const rootPath = workspaceFolder.uri.fsPath;
+            const sourceExtensions = new Set(['.py', '.ts', '.js', '.rs', '.cpp', '.c', '.go', '.java', '.kt', '.swift', '.tsx', '.jsx']);
+            const userId = this._connUserId || 'unknown';
+            const username = this._connUsername || 'unknown';
+            const nodes: any[] = [];
+            const edges: any[] = [];
+            const clusters: any[] = [];
+
+            // SynapseIgnore 로드 (최초 1회)
+            if (!this._synapseIgnore) {
+                this._synapseIgnore = new SynapseIgnore();
+                this._synapseIgnore.load(rootPath);
+            }
+
+            const scanner = new FileScanner();
+            const summaries: { fullPath: string; normPath: string; summary: any }[] = [];
+            const clientNodeIds = new Set<string>();
+
+            const walk = (dir: string) => {
+                let entries: fs.Dirent[];
+                try {
+                    entries = fs.readdirSync(dir, { withFileTypes: true });
+                } catch { return; }
+                for (const entry of entries) {
+                    const fullPath = path.join(dir, entry.name);
+                    const relPath = path.relative(rootPath, fullPath);
+                    const normPath = relPath.replace(/[\/\\]/g, '/');
+                    if (entry.name.startsWith('.') && entry.name !== '.') continue;
+                    if (entry.isDirectory()) {
+                        if (['node_modules', 'target', '.git', '.synapse', 'data'].includes(entry.name)) continue;
+                        if (this._synapseIgnore?.isIgnored(normPath + '/')) continue;
+                        clusters.push({
+                            id: `client::${userId}::folder::${normPath}`,
+                            label: entry.name,
+                            path: normPath,
+                            data: { label: entry.name, clientLayer: userId, clientUsername: username }
+                        });
+                        walk(fullPath);
+                    } else if (entry.isFile()) {
+                        if (this._synapseIgnore?.isIgnored(normPath)) continue;
+                        const ext = path.extname(entry.name).toLowerCase();
+                        const isSource = sourceExtensions.has(ext);
+                        const parentDir = path.dirname(normPath);
+                        const clusterId = parentDir === '.' ? '' : `client::${userId}::folder::${parentDir}`;
+                        const nodeId = `client::${userId}::${normPath}`;
+                        clientNodeIds.add(nodeId);
+
+                        let summary: any = { classes: [], functions: [], references: [] };
+                        if (isSource) {
+                            summary = scanner.scanFile(fullPath);
+                        }
+                        summaries.push({ fullPath, normPath, summary });
+
+                        nodes.push({
+                            id: nodeId,
+                            label: entry.name,
+                            type: isSource ? 'file' : 'doc',
+                            layer: 'user',
+                            cluster_id: clusterId,
+                            position: { x: 0, y: 0 }, // Assigned later deterministically
+                            data: { 
+                                label: entry.name, 
+                                file: normPath, 
+                                path: normPath, 
+                                extension: ext, 
+                                clientLayer: userId, 
+                                clientUsername: username,
+                                hasAtomicSignature: !!summary.hasAtomicSignature,
+                                hasImportSignature: !!summary.hasImportSignature,
+                                icon: isSource ? (summary.hasAtomicSignature ? '⚡' : '📄') : '📚'
+                            }
+                        });
+                    }
+                }
+            };
+
+            walk(rootPath);
+
+            // [v0.3.30] 추가: project_state.json에서 manual node 가져와서 포함
+            try {
+                const uri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'project_state.json');
+                const data = await vscode.workspace.fs.readFile(uri);
+                let projectState: any = JSON.parse(Buffer.from(data).toString('utf-8'));
+                if (typeof projectState === 'string') projectState = JSON.parse(projectState);
+
+                if (projectState && projectState.nodes) {
+                    projectState.nodes.forEach((n: any) => {
+                        if (n.id && n.id.startsWith('node_manual_')) {
+                            // 클라이언트 레이어 정보 주입
+                            const manualNode = { ...n, clientLayer: userId, data: { ...n.data, clientLayer: userId, clientUsername: username } };
+                            nodes.push(manualNode);
+                            clientNodeIds.add(n.id);
+                        }
+                    });
+                }
+            } catch (e) {
+                Logger.warn(`[ClientPush] Failed to append manual nodes: ${e}`);
+            }
+
+            if (nodes.length === 0) return;
+
+            // Deterministic position layout for nodes
+            const clusterNodeCounts = new Map<string, number>();
+            const clusterNodeIdx = new Map<string, number>();
+            for (const n of nodes) {
+                const cid = n.cluster_id || '__unclustered__';
+                clusterNodeCounts.set(cid, (clusterNodeCounts.get(cid) || 0) + 1);
+            }
+            
+            for (const n of nodes) {
+                const cid = n.cluster_id || '__unclustered__';
+                const cluster = clusters.find(c => c.id === n.cluster_id);
+                const idx = clusterNodeIdx.get(cid) || 0;
+                clusterNodeIdx.set(cid, idx + 1);
+                
+                // For client clusters, we don't have predefined positions here, so we generate a hash-based center
+                let centerX = 0;
+                let centerY = 0;
+                if (cluster) {
+                    let hash = 0x811c9dc5;
+                    for (let k = 0; k < cluster.id.length; k++) { hash ^= cluster.id.charCodeAt(k); hash = Math.imul(hash, 0x01000193); }
+                    const angle = ((hash >>> 0) % 1000) / 1000 * 2 * Math.PI;
+                    const radius = 500 + (((hash >>> 16) % 500));
+                    centerX = Math.cos(angle) * radius;
+                    centerY = Math.sin(angle) * radius;
+                    cluster.position = { x: centerX, y: centerY };
+                }
+
+                const total = clusterNodeCounts.get(cid) || 1;
+                const cols = Math.min(3, total);
+                const col = idx % cols;
+                const row = Math.floor(idx / cols);
+                const rows = Math.ceil(total / cols);
+                n.position = {
+                    x: centerX + (col - (cols - 1) / 2) * 80,
+                    y: centerY + (row - rows / 2) * 50
+                };
+            }
+
+            // Reference processing and Edge extraction
+            for (const item of summaries) {
+                const sourceId = `client::${userId}::${item.normPath}`;
+                for (const ref of item.summary.references) {
+                    let targetNodeId = ref.target;
+
+                    // Attempt to resolve targetNodeId to an existing client node
+                    if (!clientNodeIds.has(targetNodeId)) {
+                        const matchedId = Array.from(clientNodeIds).find(id => {
+                            const nodeStem = path.basename(id, path.extname(id)).toLowerCase();
+                            const targetStem = path.basename(targetNodeId, path.extname(targetNodeId)).toLowerCase();
+                            return nodeStem === targetStem;
+                        });
+                        if (matchedId) targetNodeId = matchedId;
+                    }
+
+                    // If still unresolved, create a ghost node
+                    if (!clientNodeIds.has(targetNodeId)) {
+                        const lowerId = targetNodeId.toLowerCase();
+                        const ghostBlacklist = ['os', 'sys', 'math', 'json', 'datetime', 'vscode', 'path', 'fs'];
+                        const isBlacklisted = ghostBlacklist.some(b => lowerId === b || lowerId.startsWith(b + '.'));
+                        if (isBlacklisted) continue;
+
+                        const isDocRef = targetNodeId.toLowerCase().endsWith('.md');
+                        const isExternal = ref.type === 'api_call' || !targetNodeId.includes('.');
+                        const ghostClusterId = isDocRef ? 'doc_shelf' : (isExternal ? 'cluster_ghosts' : 'sys_cluster_reserved');
+                        const ghostId = `client::${userId}::ghost::${targetNodeId}`;
+
+                        const ghostNode = {
+                            id: ghostId,
+                            label: targetNodeId,
+                            type: isDocRef ? 'doc' : (isExternal ? 'external' : 'symbol'),
+                            layer: 'external',
+                            cluster_id: ghostClusterId,
+                            status: 'ghost',
+                            position: { x: isDocRef ? 2000 : -2000, y: (Math.random() - 0.5) * 1000 },
+                            data: {
+                                label: targetNodeId,
+                                clientLayer: userId,
+                                clientUsername: username,
+                                icon: isDocRef ? '📚' : (isExternal ? '☁️' : '👻')
+                            }
+                        };
+                        nodes.push(ghostNode);
+                        clientNodeIds.add(ghostId);
+                        targetNodeId = ghostId;
+                    }
+
+                    edges.push({
+                        id: `edge_${sourceId}_${targetNodeId}_${Date.now()}_${Math.random().toString(36).substring(7)}`,
+                        from: sourceId,
+                        to: targetNodeId,
+                        type: ref.type,
+                        weight: 1,
+                        status: 'confirmed',
+                        is_approved: true,
+                        data: { clientLayer: userId, clientUsername: username }
+                    });
+                }
+            }
+
+            if (nodes.length === 0) return;
+
+            const body = JSON.stringify({ nodes, edges, clusters });
+            const opts: http.RequestOptions = {
+                hostname: host,
+                port,
+                path: '/api/client/push',
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Content-Length': Buffer.byteLength(body),
+                    ...this._getAuthHeaders()
+                },
+                timeout: 10000,
+            };
+            const req = http.request(opts, (res) => {
+                let data = '';
+                res.on('data', (c) => { data += c; });
+                res.on('end', () => {
+                    try {
+                        const r = JSON.parse(data);
+                        if (r.success) {
+                            Logger.info(`[ClientPush] Pushed ${r.nodeCount} nodes from ${username} (${userId})`);
+                        }
+                    } catch {}
+                });
+            });
+            req.on('error', (err) => { Logger.warn(`[ClientPush] Failed: ${err.message}`); });
+            req.on('timeout', () => { req.destroy(); });
+            req.write(body);
+            req.end();
+        } catch (err: any) {
+            Logger.warn(`[ClientPush] Scan failed: ${err.message}`);
+        }
+    }
+
+    // FileSystemWatcher 시작 (자동 재푸시)
+    private _startPushWatcher(): void {
+        if (!this._workspaceFolder || this._pushWatcher) return;
+
+        const pattern = new vscode.RelativePattern(this._workspaceFolder, '**/*');
+        this._pushWatcher = vscode.workspace.createFileSystemWatcher(pattern);
+
+        const scheduleRepush = (uri: vscode.Uri) => {
+            const relPath = path.relative(this._workspaceFolder!.uri.fsPath, uri.fsPath);
+            const normalized = relPath.replace(/[\/\\]/g, '/');
+
+            // 무한 루프 방지
+            if (normalized.startsWith('data/') || normalized.startsWith('.synapse/')) return;
+            if (this._synapseIgnore?.isIgnored(normalized)) return;
+
+            if (this._pushDebounceTimer) clearTimeout(this._pushDebounceTimer);
+            this._pushDebounceTimer = setTimeout(() => {
+                this._pushClientStateSafe();
+            }, 3000);
+        };
+
+        this._pushWatcher.onDidCreate(scheduleRepush);
+        this._pushWatcher.onDidChange(scheduleRepush);
+        this._pushWatcher.onDidDelete(scheduleRepush);
+        Logger.info('[ClientPush] File watcher started');
+    }
+
+    // 중복 push 방지 래퍼
+    private _pushClientStateSafe(): void {
+        if (this._pushInFlight) return;
+        if (!this._connHost || !this._connPort) return;
+        this._pushInFlight = true;
+        try {
+            this._pushClientState(this._connHost, this._connPort);
+        } finally {
+            // push는 비동기이므로 즉시 해제하지 않고 약간의 딜레이 후 해제
+            setTimeout(() => { this._pushInFlight = false; }, 1000);
+        }
+    }
+
+    // FileSystemWatcher 정리
+    private _stopPushWatcher(): void {
+        if (this._pushWatcher) {
+            this._pushWatcher.dispose();
+            this._pushWatcher = null;
+        }
+        if (this._pushDebounceTimer) {
+            clearTimeout(this._pushDebounceTimer);
+            this._pushDebounceTimer = null;
+        }
+        this._synapseIgnore = null;
+        Logger.info('[ClientPush] File watcher stopped');
+    }
+
+    // 관리자 version polling (60초 간격)
+    private _startVersionPolling(): void {
+        if (this._versionPollTimer) return;
+        this._versionPollTimer = setInterval(async () => {
+            if (!this._sessionToken || !this._connHost) return;
+            try {
+                Logger.info(`[VersionPoll] Tick: session=${!!this._sessionToken}, host=${this._connHost}`);
+                const version = await this._fetchStateVersion();
+                if (version > 0 && version !== this._lastStateVersion) {
+                    this._lastStateVersion = version;
+                    this._fetchServerState(this._connHost, String(this._connPort), false);
+                }
+            } catch (e: any) {
+                Logger.warn(`[VersionPoll] Tick error: ${e.message}`);
+            }
+        }, 10000); // 10초 간격 (임시 — 추후 이벤트 기반으로 전환)
+        Logger.info('[VersionPoll] Started (10s interval)');
+    }
+
+    private _stopVersionPolling(): void {
+        if (this._versionPollTimer) {
+            clearInterval(this._versionPollTimer);
+            this._versionPollTimer = null;
+            this._lastStateVersion = 0;
+            this._stopSSEChannel();
+        }
+    }
+
+    private _sseReq: http.ClientRequest | null = null;
+
+    private _startSSEChannel(): void {
+        if (this._sseReq) return;
+        if (!this._connHost) return;
+
+        const opts: http.RequestOptions = {
+            hostname: this._connHost,
+            port: this._connPort,
+            path: '/api/collab/stream',
+            method: 'GET',
+            headers: { ...this._getAuthHeaders() }
+        };
+
+        this._sseReq = http.request(opts, (res) => {
+            this._isLocked = true;
+            this._panel.webview.postMessage({ command: 'lockStateChanged', locked: true });
+
+            let buffer = '';
+            res.on('data', async (chunk) => {
+                buffer += chunk.toString();
+                const parts = buffer.split('\n\n');
+                buffer = parts.pop() || '';
+
+                for (const part of parts) {
+                    if (part.startsWith('data: ')) {
+                        try {
+                            const data = JSON.parse(part.substring(6));
+                            if (data.command === 'send_file_content' && data.filePath && data.ticketId) {
+                                await this._handleFileContentRequest(data.filePath, data.ticketId);
+                            } else if (data.command === 'save_file_content' && data.filePath && data.content !== undefined) {
+                                if (!this._isLocked) {
+                                    Logger.warn(`[SSE] Rejected save_file_content for ${data.filePath} because client is unlocked`);
+                                    return;
+                                }
+                                const absPath = vscode.Uri.joinPath(this._workspaceFolder.uri, data.filePath);
+                                await vscode.workspace.fs.writeFile(absPath, Buffer.from(data.content, 'utf8'));
+                                Logger.info(`[SSE] Remotely saved file: ${data.filePath}`);
+                            } else if (data.command === 'request_hashes' && data.ticketId) {
+                                this._handleHashesRequest(data.ticketId);
+                            } else if (data.command === 'session_locked') {
+                                this._isSessionLocked = data.locked;
+                                this._panel.webview.postMessage({ command: 'harvestLockStateChanged', locked: data.locked });
+                                if (data.locked) {
+                                    vscode.window.showWarningMessage('Harvest Session is ACTIVE. Your workspace is currently LOCKED. File changes will not be synced.');
+                                } else {
+                                    vscode.window.showInformationMessage('Harvest Session ended. Workspace UNLOCKED.');
+                                }
+                            }
+                        } catch (e) {
+                            Logger.warn(`[SSE] Failed to parse message: ${e}`);
+                        }
+                    }
+                }
+            });
+
+            res.on('end', () => {
+                Logger.info('[SSE] Stream ended');
+                this._sseReq = null;
+                this._isLocked = false;
+                this._panel.webview.postMessage({ command: 'lockStateChanged', locked: false });
+            });
+        });
+
+        this._sseReq.on('error', (err) => {
+            Logger.warn(`[SSE] Error: ${err.message}`);
+            this._sseReq = null;
+            this._isLocked = false;
+            this._panel.webview.postMessage({ command: 'lockStateChanged', locked: false });
+        });
+
+        this._sseReq.end();
+        Logger.info('[SSE] Channel opened');
+    }
+
+    private _stopSSEChannel(): void {
+        if (this._sseReq) {
+            this._sseReq.destroy();
+            this._sseReq = null;
+            Logger.info('[SSE] Channel closed');
+        }
+        this._isLocked = false;
+        this._panel.webview.postMessage({ command: 'lockStateChanged', locked: false });
+    }
+
+    private async _handleHashesRequest(ticketId: string): Promise<void> {
+        try {
+            if (!this._workspaceFolder) throw new Error('Workspace folder not set');
+            
+            const crypto = require('crypto');
+            const ruleEngine = RuleEngine.getInstance();
+            ruleEngine.loadRules(this._workspaceFolder.uri.fsPath);
+
+            const uris = await vscode.workspace.findFiles('**/*');
+            const hashes: {filePath: string, hash: string}[] = [];
+
+            for (const uri of uris) {
+                const fsPath = uri.fsPath;
+                if (ruleEngine.shouldIgnoreFile(fsPath)) {
+                    continue;
+                }
+
+                let ignore = false;
+                const parts = fsPath.split(path.sep);
+                for (let i = 0; i < parts.length; i++) {
+                    const currentFolder = parts.slice(0, i + 1).join(path.sep);
+                    if (ruleEngine.shouldIgnoreFolder(currentFolder)) {
+                        ignore = true;
+                        break;
+                    }
+                }
+                if (ignore) continue;
+
+                try {
+                    const content = fs.readFileSync(fsPath);
+                    const hash = crypto.createHash('sha256').update(content).digest('hex');
+                    const relPath = path.relative(this._workspaceFolder.uri.fsPath, fsPath).replace(/\\/g, '/');
+                    hashes.push({ filePath: relPath, hash });
+                } catch (e) {
+                    // Ignore unreadable files
+                }
+            }
+
+            await this._sendSSEResponse(ticketId, JSON.stringify(hashes), null);
+        } catch (error: any) {
+            await this._sendSSEResponse(ticketId, null, error.message);
+        }
+    }
+
+    private async _handleFileContentRequest(filePath: string, ticketId: string): Promise<void> {
+        try {
+            if (!this._workspaceFolder) throw new Error('Workspace folder not set');
+            const fullPath = path.join(this._workspaceFolder.uri.fsPath, filePath);
+            if (!fs.existsSync(fullPath)) throw new Error('File not found locally');
+            
+            const content = fs.readFileSync(fullPath, 'utf-8');
+            await this._sendSSEResponse(ticketId, content, null);
+        } catch (error: any) {
+            await this._sendSSEResponse(ticketId, null, error.message);
+        }
+    }
+
+    private _sendSSEResponse(ticketId: string, content: string | null, error: string | null): Promise<void> {
+        return new Promise((resolve) => {
+            const body = JSON.stringify({ ticketId, content, error });
+            const opts: http.RequestOptions = {
+                hostname: this._connHost,
+                port: this._connPort,
+                path: '/api/collab/response',
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Content-Length': Buffer.byteLength(body),
+                    ...this._getAuthHeaders()
+                }
+            };
+            const req = http.request(opts, (res) => {
+                res.on('data', () => {});
+                res.on('end', () => resolve());
+            });
+            req.on('error', (err) => {
+                Logger.warn(`[SSE] Failed to send response: ${err.message}`);
+                resolve();
+            });
+            req.write(body);
+            req.end();
+        });
+    }
+
+    private _requestFileViaSSE(targetUserId: string, filePath: string): Promise<string> {
+        return new Promise((resolve, reject) => {
+            const body = JSON.stringify({ targetUserId, filePath });
+            const opts: http.RequestOptions = {
+                hostname: this._connHost,
+                port: this._connPort,
+                path: '/api/collab/request-file',
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Content-Length': Buffer.byteLength(body),
+                    ...this._getAuthHeaders()
+                }
+            };
+            const req = http.request(opts, (res) => {
+                let data = '';
+                res.on('data', (c) => { data += c; });
+                res.on('end', () => {
+                    if (res.statusCode !== 200) {
+                        try {
+                            const err = JSON.parse(data);
+                            reject(new Error(err.error || 'Server error'));
+                        } catch {
+                            reject(new Error(`Server error: ${res.statusCode}`));
+                        }
+                    } else {
+                        try {
+                            const result = JSON.parse(data);
+                            if (result.success) {
+                                resolve(result.content);
+                            } else {
+                                reject(new Error(result.error));
+                            }
+                        } catch {
+                            reject(new Error('Failed to parse response'));
+                        }
+                    }
+                });
+            });
+            req.on('error', (err) => reject(err));
+            req.write(body);
+            req.end();
+        });
+    }
+
+    private _fetchStateVersion(): Promise<number> {
+        return new Promise((resolve) => {
+            const opts: http.RequestOptions = {
+                hostname: this._connHost,
+                port: this._connPort,
+                path: '/api/version',
+                method: 'GET',
+                headers: { ...this._getAuthHeaders() },
+                timeout: 3000,
+            };
+            const req = http.request(opts, (res) => {
+                let data = '';
+                res.on('data', (c) => { data += c; });
+                res.on('end', () => {
+                    try {
+                        const r = JSON.parse(data);
+                        Logger.info(`[FetchVersion] version=${r.version}, success=${r.success}`);
+                        resolve(r.success ? r.version : 0);
+                    } catch (e: any) {
+                        Logger.warn(`[FetchVersion] JSON parse error: ${e.message}`);
+                        resolve(0);
+                    }
+                });
+            });
+            req.on('error', (e) => {
+                Logger.warn(`[FetchVersion] Request error: ${e.message}`);
+                resolve(0);
+            });
+            req.on('timeout', () => {
+                Logger.warn(`[FetchVersion] Timeout`);
+                req.destroy();
+                resolve(0);
+            });
+            req.end();
+        });
+    }
+
     private async handleCreateAccount(message: any): Promise<void> {
         const { username, password } = message;
         if (!username || !password) {
             this._panel.webview.postMessage({ command: 'createAccountResult', success: false, error: 'Username and password required' });
             return;
         }
-        const host = this._connHost || 'localhost' || 'localhost';
-        const port = this._connPort || 3000 || 3000;
-        const data = JSON.stringify({ username, password });
+        if (!await this._ensureServerReady('createAccountResult')) return;
+        const body = JSON.stringify({ username, password });
         const opts: http.RequestOptions = {
-            hostname: host, port, path: '/api/admin/create-account', method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(data), ...this._getAuthHeaders() },
+            hostname: 'localhost', port: this._serverPort, path: '/api/admin/create-account', method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(body), ...this._getAuthHeaders() },
             timeout: 5000,
         };
-        const req = http.request(opts, (res) => {
-            let body = '';
-            res.on('data', (c) => { body += c; });
-            res.on('end', () => {
-                try {
-                    const r = JSON.parse(body);
-                    this._panel.webview.postMessage({ command: 'createAccountResult', success: r.success, error: r.error, user: r.user });
-                } catch {
-                    this._panel.webview.postMessage({ command: 'createAccountResult', success: false, error: 'Invalid response' });
-                }
-            });
-        });
-        req.on('error', (e) => this._panel.webview.postMessage({ command: 'createAccountResult', success: false, error: e.message }));
-        req.on('timeout', () => { req.destroy(); this._panel.webview.postMessage({ command: 'createAccountResult', success: false, error: 'Timeout' }); });
-        req.write(data);
-        req.end();
+        this._httpRequest(opts, body, 'createAccountResult');
+    }
+
+    private async handleHarvestStart(message: any): Promise<void> {
+        if (!await this._ensureServerReady('harvestResult')) return;
+        const body = JSON.stringify({ visibleClientIds: message.visibleClientIds });
+        const opts: http.RequestOptions = {
+            hostname: 'localhost', port: this._serverPort, path: '/api/harvest/start', method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(body), ...this._getAuthHeaders() },
+            timeout: 5000,
+        };
+        this._httpRequest(opts, body, 'harvestStartResult');
+    }
+
+    private async handleHarvestCompare(message: any): Promise<void> {
+        if (!await this._ensureServerReady('harvestResult')) return;
+        const body = JSON.stringify({ visibleClientIds: message.visibleClientIds });
+        const opts: http.RequestOptions = {
+            hostname: 'localhost', port: this._serverPort, path: '/api/harvest/compare', method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(body), ...this._getAuthHeaders() },
+            timeout: 10000,
+        };
+        this._httpRequest(opts, body, 'harvestCompareResult');
+    }
+
+    private async handleHarvestExecute(message: any): Promise<void> {
+        if (!await this._ensureServerReady('harvestResult')) return;
+        const candidates = message.candidates || [];
+        const body = JSON.stringify({ candidates }); 
+        const opts: http.RequestOptions = {
+            hostname: 'localhost', port: this._serverPort, path: '/api/harvest/execute', method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(body), ...this._getAuthHeaders() },
+            timeout: 15000,
+        };
+        this._httpRequest(opts, body, 'harvestExecuteResult');
     }
 
     private async handleDeleteAccount(message: any): Promise<void> {
@@ -1411,54 +2462,23 @@ export class CanvasPanel {
             this._panel.webview.postMessage({ command: 'deleteAccountResult', success: false, error: 'Username required' });
             return;
         }
-        const host = this._connHost || 'localhost' || 'localhost';
-        const port = this._connPort || 3000 || 3000;
-        const data = JSON.stringify({ username });
+        if (!await this._ensureServerReady('deleteAccountResult')) return;
+        const body = JSON.stringify({ username });
         const opts: http.RequestOptions = {
-            hostname: host, port, path: '/api/admin/delete-account', method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(data), ...this._getAuthHeaders() },
+            hostname: 'localhost', port: this._serverPort, path: '/api/admin/delete-account', method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(body), ...this._getAuthHeaders() },
             timeout: 5000,
         };
-        const req = http.request(opts, (res) => {
-            let body = '';
-            res.on('data', (c) => { body += c; });
-            res.on('end', () => {
-                try {
-                    const r = JSON.parse(body);
-                    this._panel.webview.postMessage({ command: 'deleteAccountResult', success: r.success, error: r.error });
-                } catch {
-                    this._panel.webview.postMessage({ command: 'deleteAccountResult', success: false, error: 'Invalid response' });
-                }
-            });
-        });
-        req.on('error', (e) => this._panel.webview.postMessage({ command: 'deleteAccountResult', success: false, error: e.message }));
-        req.on('timeout', () => { req.destroy(); this._panel.webview.postMessage({ command: 'deleteAccountResult', success: false, error: 'Timeout' }); });
-        req.write(data);
-        req.end();
+        this._httpRequest(opts, body, 'deleteAccountResult');
     }
 
-    private async handleLoadAccounts(message?: any): Promise<void> {
-        const host = message?.host || this._connHost || 'localhost';
-        const port = parseInt(message?.port, 10) || this._connPort || 3000;
+    private async handleLoadAccounts(_message?: any): Promise<void> {
+        if (!await this._ensureServerReady('accountListResult')) return;
         const opts: http.RequestOptions = {
-            hostname: host, port, path: '/api/admin/accounts', method: 'GET',
+            hostname: 'localhost', port: this._serverPort, path: '/api/admin/accounts', method: 'GET',
             headers: { ...this._getAuthHeaders() }, timeout: 5000,
         };
-        const req = http.request(opts, (res) => {
-            let body = '';
-            res.on('data', (c) => { body += c; });
-            res.on('end', () => {
-                try {
-                    const r = JSON.parse(body);
-                    this._panel.webview.postMessage({ command: 'accountListResult', success: r.success, accounts: r.accounts, error: r.error });
-                } catch {
-                    this._panel.webview.postMessage({ command: 'accountListResult', success: false, error: 'Invalid response' });
-                }
-            });
-        });
-        req.on('error', (e) => this._panel.webview.postMessage({ command: 'accountListResult', success: false, error: e.message }));
-        req.on('timeout', () => { req.destroy(); this._panel.webview.postMessage({ command: 'accountListResult', success: false, error: 'Timeout' }); });
-        req.end();
+        this._httpRequest(opts, undefined, 'accountListResult');
     }
 
     private async handleChangePassword(message: any): Promise<void> {
@@ -1467,29 +2487,57 @@ export class CanvasPanel {
             this._panel.webview.postMessage({ command: 'changePasswordResult', success: false, error: 'Username and newPassword required' });
             return;
         }
-        const host = this._connHost || 'localhost' || 'localhost';
-        const port = this._connPort || 3000 || 3000;
-        const data = JSON.stringify({ username, newPassword });
+        if (!await this._ensureServerReady('changePasswordResult')) return;
+        const body = JSON.stringify({ username, newPassword });
         const opts: http.RequestOptions = {
-            hostname: host, port, path: '/api/admin/change-password', method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(data), ...this._getAuthHeaders() },
+            hostname: 'localhost', port: this._serverPort, path: '/api/admin/change-password', method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(body), ...this._getAuthHeaders() },
             timeout: 5000,
         };
+        this._httpRequest(opts, body, 'changePasswordResult');
+    }
+
+    private async _ensureServerReady(resultCommand: string): Promise<boolean> {
+        // health check로 서버 생존 확인 (프로세스 참조와 무관)
+        try {
+            await this._healthCheck();
+            return true;
+        } catch {
+            // health check 실패 시 프로세스 참조도 초기화
+            this._serverProcess = null;
+            this._panel.webview.postMessage({ command: resultCommand, success: false, error: '서버가 실행 중이 아닙니다. 먼저 서버를 시작하세요.' });
+            return false;
+        }
+    }
+
+    private _healthCheck(): Promise<void> {
+        return new Promise((resolve, reject) => {
+            const req = http.get(`http://localhost:${this._serverPort}/health`, { timeout: 3000 }, (res) => {
+                res.resume();
+                if (res.statusCode === 200) resolve();
+                else reject(new Error('Health check failed'));
+            });
+            req.on('error', () => reject(new Error('Server not reachable')));
+            req.on('timeout', () => { req.destroy(); reject(new Error('Health check timeout')); });
+        });
+    }
+
+    private _httpRequest(opts: http.RequestOptions, body: string | undefined, resultCommand: string): void {
         const req = http.request(opts, (res) => {
-            let body = '';
-            res.on('data', (c) => { body += c; });
+            let data = '';
+            res.on('data', (c) => { data += c; });
             res.on('end', () => {
                 try {
-                    const r = JSON.parse(body);
-                    this._panel.webview.postMessage({ command: 'changePasswordResult', success: r.success, error: r.error });
+                    const r = JSON.parse(data);
+                    this._panel.webview.postMessage({ command: resultCommand, ...r });
                 } catch {
-                    this._panel.webview.postMessage({ command: 'changePasswordResult', success: false, error: 'Invalid response' });
+                    this._panel.webview.postMessage({ command: resultCommand, success: false, error: 'Invalid response' });
                 }
             });
         });
-        req.on('error', (e) => this._panel.webview.postMessage({ command: 'changePasswordResult', success: false, error: e.message }));
-        req.on('timeout', () => { req.destroy(); this._panel.webview.postMessage({ command: 'changePasswordResult', success: false, error: 'Timeout' }); });
-        req.write(data);
+        req.on('error', (e) => this._panel.webview.postMessage({ command: resultCommand, success: false, error: e.message }));
+        req.on('timeout', () => { req.destroy(); this._panel.webview.postMessage({ command: resultCommand, success: false, error: 'Timeout' }); });
+        if (body) req.write(body);
         req.end();
     }
 
@@ -1543,6 +2591,8 @@ export class CanvasPanel {
                 this._sessionToken = null;
                 this._connUserId = '';
                 this._connUsername = '';
+                this._stopPushWatcher();
+                this._stopVersionPolling();
                 this._panel.webview.postMessage({ command: 'logoutResult', success: true });
             });
         });
@@ -1550,6 +2600,8 @@ export class CanvasPanel {
             this._sessionToken = null;
             this._connUserId = '';
             this._connUsername = '';
+            this._stopPushWatcher();
+            this._stopVersionPolling();
             this._panel.webview.postMessage({ command: 'logoutResult', success: true });
         });
         req.on('timeout', () => { req.destroy(); });
@@ -1608,6 +2660,10 @@ export class CanvasPanel {
     }
 
     public dispose() {
+        if (this._saveListenerDisposable) {
+            this._saveListenerDisposable.dispose();
+            this._saveListenerDisposable = null;
+        }
         CanvasPanel.currentPanel = undefined;
 
         if (this._serverProcess && !this._serverProcess.killed) {
@@ -2001,7 +3057,7 @@ export class CanvasPanel {
             vscode.window.setStatusBarMessage(notificationMsg, 5000);
 
             // 캔버스 새로고침
-            await this.sendProjectState(false, true);
+            // await this.sendProjectState(false, true); // [v0.3.30] Prevent UI overwrite that deletes client nodes
         } catch (error) {
             console.error('[SYNAPSE] Failed to create manual edge:', error);
             vscode.window.showErrorMessage(`Failed to create edge: ${error}`);
@@ -2165,7 +3221,7 @@ export class CanvasPanel {
 
             vscode.window.setStatusBarMessage(`Edge deleted via pipeline`, 3000);
             await this.handleTakeSnapshot({ label: `Auto Backup (After Edge Deletion)` });
-            await this.sendProjectState(false, true);
+            // await this.sendProjectState(false, true); // [v0.3.30] Prevent UI overwrite that deletes client nodes
 
         } catch (error) {
             console.error('Failed to delete edge:', error);
@@ -2274,7 +3330,7 @@ export class CanvasPanel {
             }
 
             // 🔥 [IMMEDIATE REACTION] 노드 삭제를 엔진에 반영한 직후 즉시 화면 갱신
-            await this.sendProjectState(false, true);
+            // await this.sendProjectState(false, true); // [v0.3.30] Prevent UI overwrite that deletes client nodes
 
             // 2. Persistence
             const finalState = canvasEngine.getFinalSnapshot();
@@ -2521,7 +3577,7 @@ export class CanvasPanel {
             
             // 🔥 [v0.3.11] FORCE SYNC: Ensure the UI has the latest 'confirmed' status
             // Authoritative: true to bypass interaction lock
-            await this.sendProjectState(false, true);
+            // await this.sendProjectState(false, true); // [v0.3.30] Prevent UI overwrite that deletes client nodes
         } catch (e) {
             vscode.window.showErrorMessage(`[SYNAPSE] 확정 실패: ${e}`);
         } finally {
@@ -3048,6 +4104,40 @@ export class CanvasPanel {
         }
     }
 
+    private _sendClientPositionUpdates(updates: any[]) {
+        if (!this._connHost || !this._serverPort) return;
+        
+        const payload = JSON.stringify({ updates });
+        const opts = {
+            hostname: this._connHost,
+            port: this._serverPort,
+            path: '/api/client/position',
+            method: 'POST',
+            headers: {
+                ...this._getAuthHeaders(),
+                'Content-Type': 'application/json',
+                'Content-Length': Buffer.byteLength(payload)
+            },
+            timeout: 5000,
+        };
+
+        const req = http.request(opts, (res) => {
+            let body = '';
+            res.on('data', (c) => { body += c; });
+            res.on('end', () => {
+                if (res.statusCode === 200) {
+                    Logger.info(`[CanvasPanel] Sent ${updates.length} client position updates.`);
+                } else {
+                    Logger.warn(`[CanvasPanel] Failed to send position updates: HTTP ${res.statusCode}`);
+                }
+            });
+        });
+
+        req.on('error', (e) => Logger.error(`[CanvasPanel] HTTP Error sending position updates`, e));
+        req.write(payload);
+        req.end();
+    }
+
     private async handleSaveState(newState: any) {
         const workspaceFolder = this._workspaceFolder;
         if (!workspaceFolder) return;
@@ -3093,6 +4183,9 @@ export class CanvasPanel {
             // [v0.3.11] 🛡️ Hybrid Support: Handle both Array (UI) and Object (Internal Snapshot)
             const incomingNodes = Array.isArray(newState.nodes) ? newState.nodes : Object.values(newState.nodes || {});
             
+            const positionUpdates: any[] = [];
+            const now = Date.now();
+
             if (incomingNodes.length > 0) {
                 for (const uiNode of (incomingNodes as any[])) {
                     const uiLayer = uiNode.layer || (uiNode.data && uiNode.data.layer);
@@ -3101,6 +4194,17 @@ export class CanvasPanel {
                     let snappedPosition = uiNode.position;
                     if (snappedPosition) {
                         snappedPosition = gridSystem.snapToGrid(snappedPosition.x, snappedPosition.y);
+                    }
+
+                    // Phase 1B.3B: 클라이언트 노드 이동 감지 및 업데이트 큐 추가
+                    const cl = uiNode.clientLayer || (uiNode.data && uiNode.data.clientLayer);
+                    if (cl && snappedPosition) {
+                        positionUpdates.push({
+                            id: uiNode.id,
+                            clientLayer: cl,
+                            position: snappedPosition,
+                            updatedAt: now
+                        });
                     }
 
                     canvasEngine.dispatch('UPDATE_NODE', {
@@ -3112,6 +4216,10 @@ export class CanvasPanel {
                         }
                     });
                 }
+            }
+
+            if (positionUpdates.length > 0) {
+                this._sendClientPositionUpdates(positionUpdates);
             }
 
 
@@ -3131,9 +4239,9 @@ export class CanvasPanel {
                     visible_layers: newState.visible_layers || (newState.data && newState.data.visible_layers) || ['source', 'documentation', 'user']
                 },
                 // [v0.3.11] Backend Master Copy (SSoT) - Protects against incomplete UI payloads
-                nodes: finalNodesList,
-                edges: Object.values(rawSnap.edges),
-                clusters: rawSnap.clusters || [],
+                nodes: finalNodesList.filter((n: any) => !n.id.startsWith('client::')),
+                edges: Object.values(rawSnap.edges).filter((e: any) => !(e.id.startsWith('edge_client::') || e.from.startsWith('client::') || e.to.startsWith('client::'))),
+                clusters: (rawSnap.clusters || []).filter((c: any) => !c.id.startsWith('client::')),
                 deletedNodeIds: rawSnap.deletedNodeIds || []
             };
 
@@ -3143,7 +4251,7 @@ export class CanvasPanel {
             console.log(`[SYNAPSE] State synchronized: ${persistenceState.nodes.length} nodes saved to disk.`);
             
             // 🔥 [v0.3.11] IMMEDIATE REACTION: Ensure UI reflects backend identity sorting (AI vs User)
-            await this.sendProjectState(false, true);
+            // await this.sendProjectState(false, true); // [v0.3.30] Prevent UI overwrite that deletes client nodes
         } catch (error) {
             console.error('[SYNAPSE] Failed to save state:', error);
         }

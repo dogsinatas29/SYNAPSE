@@ -124,6 +124,38 @@ export interface BootstrapResult {
     error?: any;
 }
 
+export type HarvestSessionState = 'Inactive' | 'Locked' | 'Comparing' | 'Approving' | 'Harvesting' | 'Unlocked';
+
+export type CompareResultType = 'UNCHANGED' | 'MODIFIED' | 'ADDED';
+
+export interface CompareResult {
+    filePath: string;
+    state: CompareResultType;
+    clientUsername: string;
+    userId: string;
+}
+
+export interface HarvestCandidate {
+    filePath: string;
+    clientUsername: string;
+    userId: string;
+    targetPath: string; // Master layer path
+    sourcePath: string; // Client layer path
+}
+
+export type HarvestFailureReason = 'SSE_TIMEOUT' | 'WRITE_ERROR' | 'PATH_TRAVERSAL' | 'UNKNOWN';
+
+export interface HarvestFailure {
+    candidate: HarvestCandidate;
+    reason: HarvestFailureReason;
+    detail: string;
+}
+
+export interface ClientFileHash {
+    filePath: string;
+    hash: string;
+}
+
 export interface SubmissionFile {
     filePath: string;
     content: string;
@@ -133,29 +165,13 @@ export interface SubmissionFile {
 export interface SubmissionSnapshot {
     id: string;
     projectUUID: string;
-    sessionId: string;
     clientId: string;
     clientUsername?: string;
-    files: SubmissionFile[];
+    sessionId?: string;
+    files: { filePath: string; content: string; encoding?: string }[];
     timestamp: number;
-    immutable: boolean;
 }
 
-export type ReviewStateType = 'pending' | 'review' | 'approved' | 'rejected';
-
-export interface ReviewState {
-    submissionId: string;
-    state: ReviewStateType;
-    leadId: string;
-    reviewedAt: number | null;
-    notes: string;
-    corrections: SubmissionFile[];
-}
-
-export interface RemoteEditAction {
-    filePath: string;
-    originalContent: string;
-    newContent: string;
-    editedBy: string;
-    editedAt: number;
-}
+export type ReviewState = any;
+export type HarvestInput = any;
+export type HarvestedFile = any;

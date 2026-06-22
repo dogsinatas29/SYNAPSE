@@ -1,5 +1,7 @@
 {
-  "port": 4570,
+  "port": 3000,
+  "pid": 132954,
   "projectUUID": "proj_1781250499404_3tskth",
-  "serverName": "antigravity-extension-vis"
+  "serverName": "antigravity-extension-vis",
+  "adminSecret": "25187491948f2c6d588ba3613723f65b36aa233ee410ec7d4d3a55fb57761fd6"
 }

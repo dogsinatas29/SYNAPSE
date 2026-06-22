@@ -1,6 +1,6 @@
 import * as path from 'path';
 import { Logger } from '../../utils/Logger';
-import { SubmissionSnapshot, SubmissionFile } from '../../types/schema';
+import { SubmissionFile } from '../../types/schema';
 
 export type SourceLanguage = 'python' | 'typescript' | 'javascript' | 'rust' | 'cpp' | 'c' | 'go' | 'java' | 'kotlin' | 'swift' | 'unknown';
 
@@ -145,13 +145,13 @@ export class ArchitectureIndexBuilder {
         return ArchitectureIndexBuilder.instance;
     }
 
-    build(snapshot: SubmissionSnapshot, projectName: string = 'project'): ArchitectureIndex {
-        Logger.info(`[v0.3.30] Building ArchitectureIndex for submission: ${snapshot.id}`);
+    build(files: {filePath: string, content: string}[], projectUUID: string, submissionId: string, projectName: string = 'project'): ArchitectureIndex {
+        Logger.info(`[v0.3.30] Building ArchitectureIndex for submission: ${submissionId}`);
 
         const sourceFiles: SourceFileEntry[] = [];
         const functionCatalog: FunctionEntry[] = [];
 
-        for (const file of snapshot.files) {
+        for (const file of files) {
             const ext = path.extname(file.filePath).toLowerCase();
             const fileName = path.basename(file.filePath);
 
@@ -190,11 +190,11 @@ export class ArchitectureIndexBuilder {
         const folderTree = this.buildFolderTree(sourceFiles.map(f => f.filePath), projectName);
 
         const index: ArchitectureIndex = {
-            submissionId: snapshot.id,
-            projectUUID: snapshot.projectUUID,
+            submissionId: submissionId,
+            projectUUID: projectUUID,
             generatedAt: Date.now(),
             projectTree: {
-                id: `proj_${snapshot.projectUUID}`,
+                id: `proj_${projectUUID}`,
                 name: projectName,
                 type: 'project',
             },

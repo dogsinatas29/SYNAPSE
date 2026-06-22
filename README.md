@@ -199,6 +199,115 @@ F       G ─ H
 
 ---
 
+## 🌾 Harvest
+
+Harvest is a snapshot-based collection system where the Architect (Server) safely collects the work results of collaboration participants.
+
+https://youtu.be/ctQZHE7ZZ3A
+
+Harvest does not aim for general bi-directional synchronization. The traditional Client ↔ Server ↔ Client architecture can cause ownership conflicts and state inconsistencies, leading to undefined behaviors.
+
+To prevent this, Harvest adopts an **Architect-centric uni-directional collection model**.
+
+```text
+Client → Snapshot → Server → Archive
+```
+
+The goal of Harvest is not code integration, but **safe collection and preservation**.
+
+### How It Works
+
+#### Visibility-Based Harvest
+
+Harvest does not collect the entire project indiscriminately.
+
+The Architect selectively collects only from client layers with active visibility on the canvas, and can manually select files to copy via the UI.
+
+This minimizes unnecessary data influx and repository pollution.
+
+#### Client Isolation
+
+Collected files are not merged into a single shared folder.
+
+Each client is assigned an independent User Root, and their harvest results are kept in isolated user-specific Harvest spaces.
+
+```text
+.synapse/
+└─ clients/
+   ├─ userA/
+   │  └─ harvest/
+   └─ userB/
+      └─ harvest/
+```
+
+This structure guarantees:
+
+* Traceable ownership
+* Safe diffing
+* Independent deletion
+* Prevention of overwrite collisions
+
+#### Harvest Lock
+
+While Harvest is in progress, a LOCK state is applied to the target clients.
+
+A warning overlay appears on the clients' screens indicating that Harvest is underway, minimizing potential state changes during the collection.
+
+Harvest Lock is a safeguard to support data integrity, aiming to maintain a deterministic state during the collection process.
+
+### Directory Layout
+
+```text
+.synapse/
+└─ clients/
+   ├─ {username}/
+   │  ├─ harvest/
+   │  ├─ metadata.json
+   │  ├─ snapshots/
+   │  └─ cache/
+   └─ ...
+```
+
+#### harvest/
+
+Stores the actually collected source code while maintaining its original structure.
+
+#### metadata.json
+
+Stores session information, client identifiers, and collaboration metadata.
+
+#### snapshots/
+
+A history and backup layer intended for future versions.
+
+#### cache/
+
+Buffer space for remote file viewing and temporary data processing.
+
+### Safety Guarantees
+
+#### File Collision Protection
+
+Even if files share the same name, they will not conflict or overwrite each other because each user's storage space is isolated.
+
+#### Path Traversal Protection
+
+Attempts to escape paths, such as parent directory access (`../`), are blocked on the server side.
+
+#### Type-Safe Result Processing
+
+Harvest result data is processed through explicit type structures, preventing data loss caused by runtime key mismatches.
+
+### Harvest Is Not Sync
+
+Harvest is a feature for collecting and preserving data.
+
+It does not perform auto-merging, auto-overwriting, or conflict resolution.
+
+Code integration is executed manually through the Architect's review and judgment; automated synchronization is beyond the scope of Harvest.
+
+---
+
 ## 🏗️ Architecture
 
 SYNAPSE consists of the following layers:

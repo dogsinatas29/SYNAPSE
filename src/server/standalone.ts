@@ -10,10 +10,11 @@ import { SymbolIndex } from '../core/SymbolIndex';
 import { RuntimeInitializer } from '../core/collaboration/RuntimeInitializer';
 import { AccountManager } from '../core/collaboration/AccountManager';
 import { RestCollaborationTransport } from '../core/collaboration/RestCollaborationTransport';
-import { SubmissionManager } from '../core/collaboration/SubmissionManager';
 import { IdentityManager } from '../core/collaboration/IdentityManager';
 import { SessionManager } from '../core/collaboration/SessionManager';
-import { HarvestEngine, HarvestInput, LayerHarvestInput } from '../core/collaboration/HarvestEngine';
+import { HarvestEngine } from '../core/collaboration/HarvestEngine';
+import { HarvestSessionManager } from '../core/collaboration/HarvestSessionManager';
+import { CompareEngine } from '../core/collaboration/CompareEngine';
 import { ArchitectureIndexBuilder } from '../core/collaboration/ArchitectureIndexBuilder';
 import { ReferenceVerifier } from '../core/collaboration/ReferenceVerifier';
 import { SynapseIgnore } from '../core/SynapseIgnore';
@@ -28,7 +29,7 @@ app.use(express.json({ limit: '50mb' }));
 
 // Auth middleware: 모든 /api/* 요청에 대해 bearer token 검증 (단, /api/auth/login 제외)
 app.use('/api', (req, res, next) => {
-    if (req.path === '/auth/login') return next();
+    if (req.path === '/auth/login' || req.path === '/admin/auth') return next();
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
         res.status(401).json({ success: false, error: 'Authentication required' });
@@ -67,8 +68,11 @@ if (isNaN(port) || port < 1024 || port > 65535) {
 
 const serverName = path.basename(projectRoot);
 let actualPort: number = port;
+let httpServer: any = null;
 const uiRoot = path.resolve(__dirname, '../../ui');
 const stateFilePath = path.join(projectRoot, 'data', 'project_state.json');
+const ADMIN_SECRET = crypto.randomBytes(32).toString('hex');
+const SERVER_VERSION = '0.3.30';
 
 // Collaboration Transport 초기화
 const dataDir = path.join(projectRoot, 'data');
@@ -87,10 +91,55 @@ RuntimeInitializer.getInstance().initialize(projectRoot, 'synapse-demo').catch(e
 });
 AccountManager.getInstance().initialize(projectRoot);
 MountManager.getInstance().initialize(projectRoot);
+MountManager.getInstance().setIgnore(ignore);
 const transport = new RestCollaborationTransport();
 
 // Session token store: token → user info
 const sessions = new Map<string, { userId: string; username: string; connectedSince: number }>();
+// Client-pushed data store: userId → { nodes, edges, clusters }
+const clientPushData = new Map<string, { nodes: any[]; edges: any[]; clusters: any[]; pushedAt: number }>();
+
+// SSE Client stream store: userId -> express.Response
+const sseClients = new Map<string, any>();
+const lockedClients = new Map<string, { lockedAt: number, lockedBy: 'server' }>();
+function isLocked(userId: string): boolean {
+    return lockedClients.has(userId);
+}
+// Pending File Requests: ticketId -> { resolve: function, reject: function, timeout: NodeJS.Timeout }
+const pendingRequests = new Map<string, { resolve: (val: any) => void, reject: (err: any) => void, timeout: NodeJS.Timeout }>();
+
+// Node 정규화: position 등 필수 필드 보장
+function normalizeNode(node: any): any {
+    return {
+        ...node,
+        position: node.position ?? { x: 0, y: 0 }
+    };
+}
+
+// clientPushData 영속화
+const clientPushDir = path.join(projectRoot, 'data', 'client_push');
+if (!fs.existsSync(clientPushDir)) fs.mkdirSync(clientPushDir, { recursive: true });
+const PUSH_TTL_MS = 24 * 60 * 60 * 1000;
+for (const file of fs.readdirSync(clientPushDir)) {
+    if (!file.endsWith('.json')) continue;
+    const filePath = path.join(clientPushDir, file);
+    try {
+        const data = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+        if (Date.now() - data.pushedAt > PUSH_TTL_MS) {
+            fs.unlinkSync(filePath);
+            Logger.info(`[ClientPush] Removed stale cache: ${file}`);
+            continue;
+        }
+        const userId = file.replace('.json', '');
+        data.nodes = data.nodes.map(normalizeNode);
+        clientPushData.set(userId, data);
+    } catch {}
+}
+Logger.info(`[ClientPush] Restored ${clientPushData.size} client push cache(s)`);
+
+// State version tracking (경량 갱신 감지용)
+let stateVersion = 1;
+const getStateVersion = () => stateVersion;
 console.log('🚀 SYNAPSE Standalone Dev Server starting...');
 console.log(`📂 Root: ${projectRoot}`);
 console.log(`🏷️  Server: ${serverName}`);
@@ -104,7 +153,107 @@ function isNodeFileIgnored(node: any): boolean {
     return ignore.isIgnored(fp);
 }
 
-// State API (static file + mounted client directories)
+// Client push: 클라이언트가 자신의 파일 데이터를 서버에 전송
+app.post('/api/client/push', (req, res) => {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        res.status(401).json({ success: false, error: 'Unauthorized' }); return;
+    }
+    const token = authHeader.slice(7);
+    const session = sessions.get(token);
+    if (!session) {
+        res.status(401).json({ success: false, error: 'Invalid session' }); return;
+    }
+    const { nodes, edges, clusters } = req.body;
+    if (!Array.isArray(nodes)) {
+        res.status(400).json({ success: false, error: 'nodes array required' }); return;
+    }
+    const userId = session.userId;
+    const username = session.username;
+    const pushData = {
+        nodes: nodes.map((n: any) => ({ ...n, clientLayer: userId, data: { ...n.data, clientLayer: userId, clientUsername: username } })),
+        edges: edges || [],
+        clusters: (clusters || []).map((c: any) => ({ ...c, clientLayer: userId, data: { ...c.data, clientLayer: userId, clientUsername: username } })),
+        pushedAt: Date.now()
+    };
+    clientPushData.set(userId, pushData);
+
+    // 영속화
+    try {
+        fs.writeFileSync(path.join(clientPushDir, `${userId}.json`), JSON.stringify(pushData, null, 2));
+    } catch {}
+
+    stateVersion++;
+
+    Logger.info(`[ClientPush] Received ${nodes.length} nodes from ${username} (${userId}), stateVersion=${stateVersion}`);
+    res.json({ success: true, userId, username, nodeCount: nodes.length });
+});
+
+// Phase 1B.3B: 클라이언트 노드 실시간 위치 영속화 (LWW 방식)
+app.post('/api/client/position', (req, res) => {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        res.status(401).json({ success: false, error: 'Unauthorized' }); return;
+    }
+    const token = authHeader.slice(7);
+    const session = sessions.get(token);
+    if (!session) {
+        res.status(401).json({ success: false, error: 'Invalid session' }); return;
+    }
+    const { updates } = req.body;
+    if (!Array.isArray(updates)) {
+        res.status(400).json({ success: false, error: 'updates array required' }); return;
+    }
+    
+    let updatedCount = 0;
+    const dirtyUsers = new Set<string>();
+
+    for (const update of updates) {
+        const { id, clientLayer, position, updatedAt } = update;
+        if (!id || !clientLayer || !position || !updatedAt) continue;
+        
+        const pushData = clientPushData.get(clientLayer);
+        if (!pushData) continue;
+        
+        const node = pushData.nodes.find((n: any) => n.id === id);
+        if (!node) continue;
+        
+        if (!node.data) node.data = {};
+        const existingState = node.data.positionState;
+        
+        // LWW (Last-Write-Wins) 충돌 해결
+        if (!existingState || updatedAt > existingState.updatedAt) {
+            node.position = position;
+            node.data.positionState = {
+                x: position.x,
+                y: position.y,
+                updatedAt: updatedAt,
+                updatedBy: session.userId
+            };
+            updatedCount++;
+            dirtyUsers.add(clientLayer);
+        }
+    }
+
+    for (const userId of dirtyUsers) {
+        const pushData = clientPushData.get(userId);
+        if (pushData) {
+            try {
+                fs.writeFileSync(path.join(clientPushDir, `${userId}.json`), JSON.stringify(pushData, null, 2));
+            } catch (e) {
+                Logger.error(`Failed to save client push data for ${userId}`, e as Error);
+            }
+        }
+    }
+
+    if (updatedCount > 0) {
+        stateVersion++;
+    }
+
+    res.json({ success: true, updatedCount });
+});
+
+// State API (static file + client-pushed data)
 app.get('/api/state', (req, res) => {
     if (fs.existsSync(stateFilePath)) {
         try {
@@ -113,20 +262,27 @@ app.get('/api/state', (req, res) => {
             if (!state.edges) state.edges = [];
             if (!state.clusters) state.clusters = [];
             state.nodes = state.nodes.filter((n: any) => !isNodeFileIgnored(n));
-            // Mounted client directories: scan and merge
-            for (const m of MountManager.getInstance().getAllMounts()) {
-                const scanned = MountManager.getInstance().scanMount(m.username);
-                if (scanned.nodes.length > 0) {
-                    for (const n of scanned.nodes) {
-                        state.nodes.push({ ...n, clientLayer: m.username, data: { ...n.data, clientLayer: m.username } });
-                    }
-                    for (const e of scanned.edges) state.edges.push(e);
-                    for (const c of scanned.clusters) {
-                        state.clusters.push({ ...c, clientLayer: m.username, data: { ...c.data, clientLayer: m.username } });
-                    }
-                    Logger.info(`[MountManager] Scanned ${scanned.nodes.length} nodes from mounted client: ${m.username}`);
-                }
+            // Client-pushed data: Map 기반 병합 (ID 중복 시 클라이언트 데이터로 덮어쓰기)
+            const nodeMap = new Map<string, any>();
+            for (const n of state.nodes) nodeMap.set(n.id, n);
+            const edgeMap = new Map<string, any>();
+            for (const e of state.edges) edgeMap.set(e.id, e);
+            const clusterMap = new Map<string, any>();
+            for (const c of state.clusters) clusterMap.set(c.id, c);
+
+            // Phase 1B.3: 오직 '현재 접속 중'인 클라이언트의 노드만 병합
+            const activeUserIds = new Set(sseClients.keys());
+
+            for (const [userId, clientData] of clientPushData.entries()) {
+                if (!activeUserIds.has(userId)) continue;
+                for (const n of clientData.nodes) nodeMap.set(n.id, n);
+                for (const e of clientData.edges) edgeMap.set(e.id, e);
+                for (const c of clientData.clusters) clusterMap.set(c.id, c);
+                Logger.info(`[ClientPush] Merged ${clientData.nodes.length} nodes from ${userId}`);
             }
+            state.nodes = Array.from(nodeMap.values()).map(normalizeNode);
+            state.edges = Array.from(edgeMap.values());
+            state.clusters = Array.from(clusterMap.values());
             res.json({ success: true, state });
         } catch (e: any) {
             res.status(500).json({ success: false, error: 'Failed to parse state file: ' + e.message });
@@ -134,6 +290,11 @@ app.get('/api/state', (req, res) => {
     } else {
         res.status(404).json({ success: false, error: 'State file not found' });
     }
+});
+
+// State version 엔드포인트 (경량 갱신 감지)
+app.get('/api/version', (_req, res) => {
+    res.json({ success: true, version: getStateVersion() });
 });
 
 // 1. 노드 승인 및 분석 (V 버튼)
@@ -305,6 +466,12 @@ app.get('/health', (_req, res) => {
     res.json({ status: 'ok', timestamp: Date.now() });
 });
 
+// Ping (인증 불필요, 서버 식별용)
+app.get('/api/ping', (_req, res) => {
+    const schema = ProjectMetadata.getInstance().get();
+    res.json({ ok: true, projectUUID: schema.projectUUID, serverName, version: SERVER_VERSION });
+});
+
 // Server Info (서버 식별 정보)
 app.get('/api/server/info', (_req, res) => {
     const schema = ProjectMetadata.getInstance().get();
@@ -316,53 +483,71 @@ app.get('/api/server/info', (_req, res) => {
     });
 });
 
+// Admin Auth (adminSecret → session token)
+app.post('/api/admin/auth', (req, res) => {
+    const { adminSecret } = req.body;
+    if (!adminSecret || adminSecret !== ADMIN_SECRET) {
+        res.status(401).json({ success: false, error: 'Invalid admin secret' });
+        return;
+    }
+    const token = crypto.randomUUID();
+    sessions.set(token, { userId: '_server_admin_', username: 'Server Admin', connectedSince: Date.now() });
+    res.json({ success: true, token });
+});
+
 // 7. Authentication
 app.post('/api/auth/login', async (req, res) => {
     try {
-        const { username, password, sshHost, sshPort, sshUser, sshMountPath, sshKey } = req.body;
+        const { username, password, clientProjectRoot } = req.body;
         if (!username || !password) { res.status(400).json({ success: false, error: 'username and password required' }); return; }
+
+        // 1. 인증
         const user = await transport.login(username, password);
         if (!user) { res.status(401).json({ success: false, error: 'Invalid credentials' }); return; }
-        const schema = ProjectMetadata.getInstance().get();
+
+        // 2. 세션 생성 (항상 — 마운트와 독립)
         const token = crypto.randomUUID();
         sessions.set(token, { userId: user.userId || '', username: user.username || '', connectedSince: Date.now() });
-        // 로그인 시 SSH 정보가 함께 전달되면 계정에 저장
-        if (sshHost || sshMountPath) {
-            try {
-                AccountManager.getInstance().updateSSHInfo(username, { sshHost, sshPort, sshUser, sshMountPath, sshKey });
-                // 계정에 저장된 SSH 정보로 user 객체 갱신
-                const updated = AccountManager.getInstance().login(username, password);
-                if (updated) {
-                    user.sshHost = updated.sshHost;
-                    user.sshPort = updated.sshPort;
-                    user.sshUser = updated.sshUser;
-                    user.sshMountPath = updated.sshMountPath;
-                    user.sshKey = updated.sshKey;
-                }
-            } catch (err: any) {
-                Logger.warn(`[Auth] Failed to update SSH info for ${username}: ${err.message}`);
-            }
-        }
-        // SSH 마운트 정보가 있으면 자동 마운트 (백그라운드, 실패해도 로그인은 성공)
-        if (user.sshHost && user.sshMountPath) {
+
+        const schema = ProjectMetadata.getInstance().get();
+
+        // 3. 마운트 시도 (선택적 후처리)
+        const clientIp = (req as any).ip || req.socket?.remoteAddress || (req as any).connection?.remoteAddress || '127.0.0.1';
+        const cleanedIp = clientIp.replace(/^::ffff:/, '');
+
+        let mountSuccess = false;
+        let mountError: string | undefined;
+
+        if (clientProjectRoot && validateMountPath(clientProjectRoot)) {
             const mountConfig: MountConfig = {
                 username: user.username,
-                sshHost: user.sshHost,
-                sshPort: user.sshPort || 22,
-                sshUser: user.sshUser || user.username,
-                remotePath: user.sshMountPath,
-                sshKey: user.sshKey,
+                sshHost: cleanedIp,
+                sshPort: 22,
+                sshUser: user.username,
+                remotePath: clientProjectRoot,
             };
-            MountManager.getInstance().mount(mountConfig).then(() => {
-                Logger.info(`[Auth] Mounted client workspace: ${user.username} → ${user.sshHost}:${user.sshMountPath}`);
-            }).catch((err: Error) => {
-                Logger.warn(`[Auth] Mount failed for ${user.username}: ${err.message}`);
-            });
+            // [v0.3.30] HARVEST ENGINE: SSHFS 마운트는 HTTP Push로 대체되었으므로 생략 (레거시 에러 방지)
+            // try {
+            //     await MountManager.getInstance().mount(mountConfig);
+            //     mountSuccess = true;
+            //     Logger.info(`[Auth] Mounted client workspace: ${user.username}@${cleanedIp}:${clientProjectRoot}`);
+            // } catch (err: any) {
+            //     mountError = err.message;
+            //     Logger.warn(`[Auth] Mount failed for ${user.username}: ${err.message}`);
+            // }
+            mountSuccess = true;
+            Logger.info(`[Auth] Client workspace registered (SSHFS Disabled): ${user.username}@${cleanedIp}:${clientProjectRoot}`);
+        } else if (clientProjectRoot) {
+            mountError = `Invalid project root: "${clientProjectRoot}"`;
         }
+
+        // 4. 응답
         res.json({
             success: true,
             user,
             token,
+            mountSuccess,
+            mountError,
             server: {
                 serverName,
                 projectUUID: schema.projectUUID,
@@ -402,13 +587,9 @@ app.post('/api/admin/assign-role', async (req, res) => {
 
 app.post('/api/admin/create-account', async (req, res) => {
     try {
-        const { username, password, sshHost, sshPort, sshUser, sshMountPath, sshKey } = req.body;
+        const { username, password } = req.body;
         if (!username || !password) { res.status(400).json({ success: false, error: 'username and password required' }); return; }
-        if (sshMountPath && !validateMountPath(sshMountPath)) {
-            res.status(400).json({ success: false, error: `Invalid sshMountPath: "${sshMountPath}". Must be an absolute project path (not "/", no "../", no "~").` });
-            return;
-        }
-        const account = AccountManager.getInstance().createAccount(username, password, { sshHost, sshPort, sshUser, sshMountPath, sshKey });
+        const account = AccountManager.getInstance().createAccount(username, password);
         res.json({ success: true, user: { userId: account.userId, username: account.username, createdAt: account.createdAt } });
     } catch (error: any) {
         res.status(400).json({ success: false, error: error.message });
@@ -449,11 +630,13 @@ app.get('/api/admin/accounts', async (_req, res) => {
 });
 
 app.get('/api/admin/connected-clients', (_req, res) => {
-    const clients = Array.from(sessions.values()).map(s => ({
-        userId: s.userId,
-        username: s.username,
-        connectedSince: s.connectedSince
-    }));
+    const clients = Array.from(sessions.values())
+        .filter(s => s.userId !== '_server_admin_')
+        .map(s => ({
+            userId: s.userId,
+            username: s.username,
+            connectedSince: s.connectedSince
+        }));
     res.json({ success: true, clients });
 });
 
@@ -543,242 +726,294 @@ app.post('/api/collab/session/leave', async (req, res) => {
     }
 });
 
-app.post('/api/collab/submission', async (req, res) => {
-    try {
-        const { projectUUID, sessionId, clientId, filePaths, clientUsername } = req.body;
-        if (!projectUUID || !sessionId || !clientId || !filePaths) {
-            res.status(400).json({ success: false, error: 'projectUUID, sessionId, clientId, filePaths required' }); return;
-        }
-        const username = clientUsername || AccountManager.getInstance().getUsernameByUserId(clientId) || clientId;
-        const snapshot = await transport.createSubmission(projectUUID, sessionId, clientId, filePaths, username);
-        res.json({ success: true, submission: snapshot });
-    } catch (error: any) {
-        res.status(400).json({ success: false, error: error.message });
+// 8b. SSE On-demand File Fetch Routes
+app.get('/api/collab/stream', (req, res) => {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        res.status(401).json({ success: false, error: 'Unauthorized' }); return;
     }
-});
-
-app.get('/api/collab/submission/:id', async (req, res) => {
-    try {
-        const reviewState = await transport.getReviewState(req.params.id);
-        if (!reviewState) { res.status(404).json({ success: false, error: 'Submission not found' }); return; }
-        res.json({ success: true, reviewState });
-    } catch (error: any) {
-        res.status(400).json({ success: false, error: error.message });
+    const token = authHeader.slice(7);
+    const session = sessions.get(token);
+    if (!session) {
+        res.status(401).json({ success: false, error: 'Invalid session' }); return;
     }
-});
-
-app.get('/api/collab/submissions', async (req, res) => {
-    try {
-        const { projectUUID } = req.query;
-        if (!projectUUID) { res.status(400).json({ success: false, error: 'projectUUID required' }); return; }
-        const submissions = SubmissionManager.getInstance().getSubmissionsByProject(projectUUID as string);
-        const result = submissions.map(s => ({
-            ...s,
-            reviewState: SubmissionManager.getInstance().getReviewState(s.id),
-        }));
-        res.json({ success: true, submissions: result });
-    } catch (error: any) {
-        res.status(400).json({ success: false, error: error.message });
-    }
-});
-
-app.post('/api/collab/review', async (req, res) => {
-    try {
-        const { submissionId, leadId } = req.body;
-        if (!submissionId || !leadId) { res.status(400).json({ success: false, error: 'submissionId and leadId required' }); return; }
-        const reviewState = SubmissionManager.getInstance().startReview(submissionId, leadId);
-        res.json({ success: true, reviewState });
-    } catch (error: any) {
-        res.status(400).json({ success: false, error: error.message });
-    }
-});
-
-app.post('/api/collab/approve', async (req, res) => {
-    try {
-        const { submissionId, leadId, notes } = req.body;
-        if (!submissionId || !leadId) { res.status(400).json({ success: false, error: 'submissionId and leadId required' }); return; }
-        const reviewState = SubmissionManager.getInstance().approveSubmission(submissionId, leadId, notes);
-        res.json({ success: true, reviewState });
-    } catch (error: any) {
-        res.status(400).json({ success: false, error: error.message });
-    }
-});
-
-app.post('/api/collab/reject', async (req, res) => {
-    try {
-        const { submissionId, leadId, reason } = req.body;
-        if (!submissionId || !leadId) { res.status(400).json({ success: false, error: 'submissionId and leadId required' }); return; }
-        if (!reason) { res.status(400).json({ success: false, error: 'reason required' }); return; }
-        const reviewState = SubmissionManager.getInstance().rejectSubmission(submissionId, leadId, reason);
-        res.json({ success: true, reviewState });
-    } catch (error: any) {
-        res.status(400).json({ success: false, error: error.message });
-    }
-});
-
-app.post('/api/collab/index', async (req, res) => {
-    try {
-        const { submissionId } = req.body;
-        if (!submissionId) { res.status(400).json({ success: false, error: 'submissionId required' }); return; }
-        const snapshot = SubmissionManager.getInstance().getSubmission(submissionId);
-        if (!snapshot) { res.status(404).json({ success: false, error: 'Submission not found' }); return; }
-        const index = ArchitectureIndexBuilder.getInstance().build(snapshot, 'synapse-demo');
-        res.json({ success: true, index });
-    } catch (error: any) {
-        res.status(400).json({ success: false, error: error.message });
-    }
-});
-
-app.post('/api/collab/verify', async (req, res) => {
-    try {
-        const { submissionId } = req.body;
-        if (!submissionId) { res.status(400).json({ success: false, error: 'submissionId required' }); return; }
-        const snapshot = SubmissionManager.getInstance().getSubmission(submissionId);
-        if (!snapshot) { res.status(404).json({ success: false, error: 'Submission not found' }); return; }
-        const index = ArchitectureIndexBuilder.getInstance().build(snapshot, 'synapse-demo');
-        const report = ReferenceVerifier.getInstance().verify(index, snapshot);
-        const candidates = ReferenceVerifier.getInstance().generateCandidates(report, 'prepare_harvest', submissionId, snapshot.projectUUID);
-        res.json({ success: true, report, candidates });
-    } catch (error: any) {
-        res.status(400).json({ success: false, error: error.message });
-    }
-});
-
-app.post('/api/collab/harvest', async (req, res) => {
-    try {
-        const { submissionId, projectUUID, approvedFiles, filePaths, clientId } = req.body;
-        if (!submissionId || !projectUUID) {
-            res.status(400).json({ success: false, error: 'submissionId and projectUUID required' });
-            return;
-        }
-
-        // BoundaryGuard: Harvest 권한 확인 (clientId가 제공된 경우에만)
-        if (clientId) {
-            try {
-                BoundaryGuard.getInstance().assertHarvestAuth(projectUUID, clientId);
-            } catch (e) {
-                res.status(403).json({ success: false, error: e instanceof BoundaryError ? e.message : 'Harvest authorization denied' });
-                return;
+    
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
+    res.flushHeaders();
+    
+    const userId = session.userId;
+    sseClients.set(userId, res);
+    lockedClients.set(userId, { lockedAt: Date.now(), lockedBy: 'server' });
+    Logger.info(`[SSE] Client ${session.username} connected and locked`);
+    
+    req.on('close', () => {
+        if (sseClients.get(userId) === res) {
+            sseClients.delete(userId);
+            lockedClients.delete(userId);
+            Logger.info(`[SSE] Client ${session.username} disconnected and unlocked`);
+            // [v0.3.30] Force state refresh for all clients so ghost nodes disappear
+            if (typeof (global as any).stateVersion !== 'undefined') {
+                (global as any).stateVersion++;
+            } else {
+                // If it's a file-scoped variable, increment it directly. Let's see how it's defined.
+                // Assuming stateVersion is in the same file scope:
+                stateVersion++;
             }
         }
+    });
+});
 
-        let files: { filePath: string; content: string; encoding?: string }[];
+app.post('/api/collab/request-file', (req, res) => {
+    const { targetUserId, filePath } = req.body;
+    if (!targetUserId || !filePath) { res.status(400).json({ success: false, error: 'targetUserId and filePath required' }); return; }
+    
+    const account = AccountManager.getInstance().getAccount(targetUserId);
+    const resolvedUserId = account ? account.userId : targetUserId;
+    
+    const targetSse = sseClients.get(resolvedUserId);
+    if (!targetSse) { res.status(404).json({ success: false, error: 'Target client is not connected' }); return; }
+    
+    const ticketId = crypto.randomUUID();
+    
+    const timeout = setTimeout(() => {
+        if (pendingRequests.has(ticketId)) {
+            pendingRequests.delete(ticketId);
+            res.status(504).json({ success: false, error: 'File request timed out' });
+        }
+    }, 15000);
+    
+    pendingRequests.set(ticketId, {
+        resolve: (content: string) => {
+            clearTimeout(timeout);
+            pendingRequests.delete(ticketId);
+            res.json({ success: true, content });
+        },
+        reject: (error: string) => {
+            clearTimeout(timeout);
+            pendingRequests.delete(ticketId);
+            res.status(500).json({ success: false, error });
+        },
+        timeout
+    });
+    
+    targetSse.write(`data: ${JSON.stringify({ command: 'send_file_content', filePath, ticketId })}\n\n`);
+});
 
-        // 우선: SubmissionManager에서 승인된 submission 조회
-        const snapshot = SubmissionManager.getInstance().getSubmission(submissionId);
-        if (snapshot) {
-            console.log(`[HARVEST] Using submission snapshot: ${submissionId}`);
-            files = snapshot.files.map(f => ({ filePath: f.filePath, content: f.content, encoding: f.encoding }));
-        } else if (approvedFiles && Array.isArray(approvedFiles)) {
-            console.warn(`[HARVEST_DEPRECATED] approvedFiles input will be removed in v0.3.32. Use submissionId-based harvest instead.`);
-            files = approvedFiles;
-            for (const f of files) {
-                if (!f.filePath || f.content === undefined) {
-                    res.status(400).json({ success: false, error: 'Each approvedFile must have filePath and content' });
-                    return;
-                }
-            }
-        } else if (filePaths && Array.isArray(filePaths)) {
-            console.warn(`[HARVEST_DEPRECATED] filePaths input will be removed in v0.3.32. Use submissionId-based harvest instead.`);
-            files = filePaths.map(fp => {
-                const resolvedPath = path.resolve(projectRoot, fp);
-                if (!ProjectMetadata.getInstance().validatePath(resolvedPath)) {
-                    throw new Error(`File outside project boundary: ${fp}`);
-                }
-                return {
-                    filePath: fp,
-                    content: fs.readFileSync(resolvedPath, 'utf8'),
-                    encoding: 'utf8',
-                };
-            });
+app.post('/api/collab/save-file', (req, res) => {
+    const { targetUserId, filePath, content } = req.body;
+    if (!targetUserId || !filePath || content === undefined) { 
+        res.status(400).json({ success: false, error: 'targetUserId, filePath, and content required' }); 
+        return; 
+    }
+    
+    const account = AccountManager.getInstance().getAccount(targetUserId);
+    const resolvedUserId = account ? account.userId : targetUserId;
+    
+    if (!isLocked(resolvedUserId)) {
+        res.status(403).json({ success: false, error: 'Client not locked — write rejected' });
+        return;
+    }
+    
+    const targetSse = sseClients.get(resolvedUserId);
+    if (!targetSse) { 
+        res.status(409).json({ success: false, error: 'Client connection lost' }); 
+        return; 
+    }
+    
+    targetSse.write(`data: ${JSON.stringify({ command: 'save_file_content', filePath, content })}\n\n`);
+    res.json({ success: true });
+});
+
+app.post('/api/collab/response', (req, res) => {
+    const { ticketId, content, error } = req.body;
+    if (!ticketId) { res.status(400).json({ success: false, error: 'ticketId required' }); return; }
+    
+    const pending = pendingRequests.get(ticketId);
+    if (pending) {
+        if (error) {
+            pending.reject(error);
         } else {
-            res.status(400).json({ success: false, error: 'No files found for submissionId' });
+            pending.resolve(content);
+        }
+        res.json({ success: true });
+    } else {
+        res.status(404).json({ success: false, error: 'Ticket not found or expired' });
+    }
+});
+
+
+
+app.post('/api/harvest/start', async (req, res) => {
+    try {
+        const { visibleClientIds } = req.body;
+        const projectUUID = ProjectMetadata.getInstance().get().projectUUID;
+        if (!visibleClientIds || !Array.isArray(visibleClientIds)) {
+            res.status(400).json({ success: false, error: 'visibleClientIds[] required' });
             return;
         }
 
-        if (files.length === 0) {
-            res.status(400).json({ success: false, error: 'No matching files found for harvest' });
+        const hsm = HarvestSessionManager.getInstance();
+        const success = hsm.startSession(projectUUID, visibleClientIds);
+        
+        if (!success) {
+            res.status(400).json({ success: false, error: 'Session already active or invalid state' });
             return;
         }
 
-        const input: HarvestInput = {
-            submissionId,
-            projectUUID,
-            approvedFiles: files,
-            originalSnapshot: snapshot || {
-                id: submissionId,
-                projectUUID,
-                sessionId: req.body.sessionId || 'harvest',
-                clientId: 'server',
-                files,
-                timestamp: Date.now(),
-                immutable: true,
-            },
-            verificationReport: {
-                generatedAt: Date.now(),
-                graph: { fileNodes: [], ghostNodes: [], edges: [], clusters: [] },
-                findings: [],
-                stats: {
-                    totalFiles: files.length,
-                    totalEdges: 0,
-                    totalGhosts: 0,
-                    resolvedReferences: 0,
-                    unresolvedReferences: 0,
-                    disconnectedFiles: 0,
-                },
-            },
-        };
-
-        const result = HarvestEngine.getInstance().harvest(input);
-        res.json({ success: true, result });
+        // [v0.3.30] Broadcast Lock UI to clients
+        visibleClientIds.forEach((userId: string) => {
+            const targetSse = sseClients.get(userId);
+            if (targetSse) {
+                targetSse.write(`data: ${JSON.stringify({ command: 'session_locked', locked: true })}\n\n`);
+            }
+        });
+        
+        res.json({ success: true, state: hsm.getState() });
     } catch (error: any) {
         res.status(500).json({ success: false, error: error.message });
     }
 });
 
-app.post('/api/collab/harvest-layers', async (req, res) => {
+app.post('/api/harvest/compare', async (req, res) => {
     try {
-        const { projectUUID, sessionId, clientLayerIds, username } = req.body;
-        if (!projectUUID || !sessionId || !clientLayerIds || !Array.isArray(clientLayerIds) || clientLayerIds.length === 0) {
-            res.status(400).json({ success: false, error: 'projectUUID, sessionId, and clientLayerIds[] are required' });
+        const { visibleClientIds } = req.body;
+        if (!visibleClientIds) {
+            res.status(400).json({ success: false, error: 'Missing visibleClientIds' });
             return;
         }
 
-        const input: LayerHarvestInput = { projectUUID, sessionId, clientLayerIds, username };
-        const results = HarvestEngine.getInstance().harvestLayers(input);
+        const hsm = HarvestSessionManager.getInstance();
+        if (hsm.getState() !== 'Locked' && hsm.getState() !== 'Comparing') {
+            res.status(400).json({ success: false, error: 'Session must be Locked first' });
+            return;
+        }
+        hsm.setState('Comparing');
+
+        const requestClientHashes = (userId: string): Promise<any[]> => {
+            return new Promise((resolve, reject) => {
+                const targetSse = sseClients.get(userId);
+                if (!targetSse) { reject('Client is not connected'); return; }
+                
+                const ticketId = crypto.randomUUID();
+                const timeout = setTimeout(() => {
+                    if (pendingRequests.has(ticketId)) {
+                        pendingRequests.delete(ticketId);
+                        reject('Hash request timed out (30s)');
+                    }
+                }, 30000);
+                
+                pendingRequests.set(ticketId, {
+                    resolve: (data: any) => {
+                        clearTimeout(timeout);
+                        pendingRequests.delete(ticketId);
+                        try {
+                            const parsed = typeof data === 'string' ? JSON.parse(data) : data;
+                            resolve(parsed);
+                        } catch (e) {
+                            reject('Invalid hash data received');
+                        }
+                    },
+                    reject: (err: string) => {
+                        clearTimeout(timeout);
+                        pendingRequests.delete(ticketId);
+                        reject(err);
+                    },
+                    timeout
+                });
+                
+                targetSse.write(`data: ${JSON.stringify({ command: 'request_hashes', ticketId })}\n\n`);
+            });
+        };
+
+        const results = await CompareEngine.getInstance().compare(visibleClientIds, requestClientHashes);
+        
+        hsm.setState('Approving');
         res.json({ success: true, results });
     } catch (error: any) {
         res.status(500).json({ success: false, error: error.message });
     }
 });
 
+app.post('/api/harvest/execute', async (req, res) => {
+    try {
+        const { candidates } = req.body;
+        const projectUUID = ProjectMetadata.getInstance().get().projectUUID;
+        if (!candidates || !Array.isArray(candidates)) {
+            res.status(400).json({ success: false, error: 'Missing candidates' });
+            return;
+        }
+
+        const hsm = HarvestSessionManager.getInstance();
+        if (hsm.getState() !== 'Approving') {
+            res.status(400).json({ success: false, error: 'Session must be in Approving state' });
+            return;
+        }
+
+        hsm.setState('Harvesting');
+
+        const requestClientFile = (userId: string, filePath: string): Promise<string> => {
+            return new Promise((resolve, reject) => {
+                const targetSse = sseClients.get(userId);
+                if (!targetSse) { reject('Client is not connected'); return; }
+                
+                const ticketId = crypto.randomUUID();
+                const timeout = setTimeout(() => {
+                    if (pendingRequests.has(ticketId)) {
+                        pendingRequests.delete(ticketId);
+                        reject('File request timed out (15s)');
+                    }
+                }, 15000);
+                
+                pendingRequests.set(ticketId, {
+                    resolve: (data: any) => {
+                        clearTimeout(timeout);
+                        pendingRequests.delete(ticketId);
+                        resolve(data);
+                    },
+                    reject: (err: string) => {
+                        clearTimeout(timeout);
+                        pendingRequests.delete(ticketId);
+                        reject(err);
+                    },
+                    timeout
+                });
+                
+                targetSse.write(`data: ${JSON.stringify({ command: 'send_file_content', filePath, ticketId })}\n\n`);
+            });
+        };
+
+        let result;
+        try {
+            result = await HarvestEngine.getInstance().harvest(candidates, requestClientFile);
+            res.json({ success: true, result });
+        } finally {
+            // [v0.3.30] Broadcast Unlock UI to clients before clearing them
+            const lockedClients = hsm.getLockedClients();
+            lockedClients.forEach((userId: string) => {
+                const targetSse = sseClients.get(userId);
+                if (targetSse) {
+                    targetSse.write(`data: ${JSON.stringify({ command: 'session_locked', locked: false })}\n\n`);
+                }
+            });
+
+            hsm.unlockSession();
+        }
+    } catch (error: any) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+
 // Mount management
 app.get('/api/admin/mounts', (_req, res) => {
     res.json({ success: true, mounts: MountManager.getInstance().getAllMounts() });
 });
 
-app.post('/api/admin/mount', async (req, res) => {
-    try {
-        const { username } = req.body;
-        if (!username) { res.status(400).json({ success: false, error: 'username required' }); return; }
-        const account = AccountManager.getInstance().getAccount(username);
-        if (!account || !account.sshHost || !account.sshMountPath) {
-            res.status(400).json({ success: false, error: `Account ${username} has no SSH mount configuration` });
-            return;
-        }
-        const mountConfig: MountConfig = {
-            username: account.username,
-            sshHost: account.sshHost,
-            sshPort: account.sshPort || 22,
-            sshUser: account.sshUser || account.username,
-            remotePath: account.sshMountPath,
-            sshKey: account.sshKey,
-        };
-        const mountPoint = await MountManager.getInstance().mount(mountConfig);
-        res.json({ success: true, mountPoint, username });
-    } catch (error: any) {
-        res.status(500).json({ success: false, error: error.message });
-    }
+// @deprecated — 로그인 시 자동 마운트. 수동 마운트가 필요하면 로그아웃 후 재로그인.
+app.post('/api/admin/mount', async (_req, res) => {
+    res.status(410).json({ success: false, error: 'Deprecated. Login triggers auto-mount.' });
 });
 
 app.post('/api/admin/unmount', async (req, res) => {
@@ -818,7 +1053,10 @@ app.get('{*path}', (_req, res) => {
 function tryListen(port: number, maxAttempts: number = 10): Promise<number> {
     return new Promise((resolve, reject) => {
         const server = app.listen(port, '0.0.0.0');
-        server.on('listening', () => resolve(port));
+        server.on('listening', () => {
+            httpServer = server;
+            resolve(port);
+        });
         server.on('error', (err: NodeJS.ErrnoException) => {
             if (err.code === 'EADDRINUSE' && maxAttempts > 0) {
                 server.close(() => {
@@ -836,20 +1074,40 @@ function tryListen(port: number, maxAttempts: number = 10): Promise<number> {
         actualPort = await tryListen(port);
         const serverInfoPath = path.join(projectRoot, 'data', '.server_info');
         const schema = ProjectMetadata.getInstance().get();
-        const adminToken = crypto.randomUUID();
-        sessions.set(adminToken, {
-            userId: '_server_admin_',
-            username: 'Server Admin',
-            connectedSince: Date.now()
-        });
         fs.writeFileSync(serverInfoPath, JSON.stringify({
             port: actualPort,
+            pid: process.pid,
             projectUUID: schema.projectUUID,
             serverName,
-            adminToken
+            adminSecret: ADMIN_SECRET  // TODO: security risk — plaintext on disk. Replace with challenge-response auth.
         }, null, 2));
         console.log(`\n✅ Standalone API server running at http://0.0.0.0:${actualPort}`);
         console.log(`ℹ️  API only — no browser UI served.`);
+
+        // Graceful Shutdown
+        let shuttingDown = false;
+        const gracefulShutdown = async (signal: string) => {
+            if (shuttingDown) return;
+            shuttingDown = true;
+            console.log(`\n🛑 [SYNAPSE] Received ${signal}. Shutting down gracefully...`);
+
+            try { await MountManager.getInstance().unmountAll(); } catch {}
+
+            if (httpServer) {
+                const watchdog = setTimeout(() => process.exit(1), 3000);
+                httpServer.closeAllConnections?.();
+                httpServer.close(() => {
+                    clearTimeout(watchdog);
+                    console.log('[SYNAPSE] HTTP server closed.');
+                    process.exit(0);
+                });
+            } else {
+                process.exit(0);
+            }
+        };
+
+        process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+        process.on('SIGINT', () => gracefulShutdown('SIGINT'));
     } catch (err: any) {
         console.error(`❌ Failed to start server: ${err.message}`);
         process.exit(1);

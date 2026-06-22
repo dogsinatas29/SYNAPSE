@@ -2,40 +2,17 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { Logger } from '../../utils/Logger';
 import { ProjectMetadata } from '../ProjectMetadata';
-import { SubmissionSnapshot, SubmissionFile } from '../../types/schema';
-import { VerificationReport } from './ReferenceVerifier';
-import { SubmissionManager } from './SubmissionManager';
-
-export interface HarvestInput {
-    submissionId: string;
-    projectUUID: string;
-    approvedFiles: SubmissionFile[];
-    originalSnapshot: SubmissionSnapshot;
-    verificationReport: VerificationReport;
-}
-
-export interface LayerHarvestInput {
-    projectUUID: string;
-    sessionId: string;
-    clientLayerIds: string[];
-    username?: string;
-}
-
-export interface HarvestedFile {
-    filePath: string;
-    targetPath: string;
-    size: number;
-}
+import { HarvestCandidate, HarvestFailure, HarvestFailureReason } from '../../types/schema';
 
 export interface HarvestResult {
-    submissionId: string;
     projectUUID: string;
     harvestedAt: number;
-    masterLayerPath: string;
+    clientsPath: string;
+    harvestedClients: string[];
     filesHarvested: number;
     foldersCreated: number;
-    harvestedFiles: HarvestedFile[];
-    originalSnapshotPreserved: boolean;
+    harvestedFiles: string[];
+    failedFiles: HarvestFailure[];
 }
 
 export class HarvestEngine {
@@ -48,25 +25,38 @@ export class HarvestEngine {
         return HarvestEngine.instance;
     }
 
-    harvest(input: HarvestInput): HarvestResult {
+    async harvest(candidates: HarvestCandidate[], getFileContentCallback: (userId: string, filePath: string) => Promise<string>): Promise<HarvestResult> {
         const projectRoot = ProjectMetadata.getInstance().getProjectRoot();
-        const masterLayerPath = path.join(projectRoot, '.synapse', 'master');
+        const clientsPath = path.join(projectRoot, '.synapse', 'clients');
 
-        Logger.info(`[v0.3.30] Harvest starting: ${input.submissionId} → ${masterLayerPath}`);
+        Logger.info(`[v0.3.30] Harvest starting: Processing ${candidates.length} approved files`);
 
-        if (!fs.existsSync(masterLayerPath)) {
-            fs.mkdirSync(masterLayerPath, { recursive: true });
+        if (!fs.existsSync(clientsPath)) {
+            fs.mkdirSync(clientsPath, { recursive: true });
         }
 
-        const harvestedFiles: HarvestedFile[] = [];
+        const harvestedFiles: string[] = [];
+        const failedFiles: HarvestFailure[] = [];
         const createdFolders = new Set<string>();
+        const harvestedClients = new Set<string>();
 
-        for (const file of input.approvedFiles) {
-            if (file.filePath.startsWith('external://') || file.filePath.startsWith('ghost://')) continue;
+        for (const candidate of candidates) {
+            const clientRoot = path.join(clientsPath, candidate.clientUsername);
+            const clientHarvestDir = path.join(clientRoot, 'harvest');
+            
+            // User Root Structure
+            if (!fs.existsSync(clientRoot)) {
+                fs.mkdirSync(path.join(clientRoot, 'harvest'), { recursive: true });
+                fs.mkdirSync(path.join(clientRoot, 'snapshots'), { recursive: true });
+                fs.mkdirSync(path.join(clientRoot, 'cache'), { recursive: true });
+                fs.writeFileSync(path.join(clientRoot, 'metadata.json'), JSON.stringify({ createdAt: Date.now(), username: candidate.clientUsername }), 'utf8');
+                createdFolders.add(clientRoot);
+            }
 
-            const resolvedTarget = path.resolve(masterLayerPath, file.filePath);
-            if (!resolvedTarget.startsWith(masterLayerPath + path.sep) && resolvedTarget !== masterLayerPath) {
-                Logger.warn(`[v0.3.30] Harvest path traversal denied: ${file.filePath}`);
+            const resolvedTarget = path.resolve(clientHarvestDir, candidate.targetPath);
+            if (!resolvedTarget.startsWith(clientHarvestDir + path.sep) && resolvedTarget !== clientHarvestDir) {
+                Logger.warn(`[v0.3.30] Harvest path traversal denied: ${candidate.targetPath}`);
+                failedFiles.push({ candidate, reason: 'PATH_TRAVERSAL', detail: 'Target path escapes client harvest layer' });
                 continue;
             }
 
@@ -77,71 +67,74 @@ export class HarvestEngine {
                 createdFolders.add(targetDir);
             }
 
-            fs.writeFileSync(resolvedTarget, file.content, (file.encoding || 'utf8') as BufferEncoding);
-            harvestedFiles.push({
-                filePath: file.filePath,
-                targetPath: resolvedTarget,
-                size: file.content.length,
-            });
-        }
-
-        const originalSnapshotDir = path.join(projectRoot, '.synapse', 'snapshots', input.submissionId);
-        if (!fs.existsSync(originalSnapshotDir)) {
-            fs.mkdirSync(originalSnapshotDir, { recursive: true });
-            fs.writeFileSync(
-                path.join(originalSnapshotDir, 'snapshot.json'),
-                JSON.stringify(input.originalSnapshot, null, 2),
-                'utf8'
-            );
+            try {
+                const content = await getFileContentCallback(candidate.userId, candidate.sourcePath);
+                fs.writeFileSync(resolvedTarget, content);
+                harvestedFiles.push(candidate.targetPath);
+                harvestedClients.add(candidate.clientUsername);
+            } catch (err: any) {
+                const errorStr = String(err);
+                let reason: HarvestFailureReason = 'UNKNOWN';
+                if (errorStr.includes('Timeout') || errorStr.includes('timeout')) {
+                    reason = 'SSE_TIMEOUT';
+                } else if (errorStr.includes('EACCES') || errorStr.includes('ENOENT')) {
+                    reason = 'WRITE_ERROR';
+                }
+                failedFiles.push({ candidate, reason, detail: errorStr });
+                Logger.warn(`[v0.3.30] Harvest source file missing or fetch failed: ${candidate.sourcePath} - ${err}`);
+            }
         }
 
         const result: HarvestResult = {
-            submissionId: input.submissionId,
-            projectUUID: input.projectUUID,
+            projectUUID: ProjectMetadata.getInstance().get().projectUUID,
             harvestedAt: Date.now(),
-            masterLayerPath,
+            clientsPath,
+            harvestedClients: Array.from(harvestedClients),
             filesHarvested: harvestedFiles.length,
             foldersCreated: createdFolders.size,
             harvestedFiles,
-            originalSnapshotPreserved: true,
+            failedFiles
         };
+
+        // B9: Report Generation
+        const reportDir = path.join(projectRoot, '.synapse', 'reports');
+        if (!fs.existsSync(reportDir)) {
+            fs.mkdirSync(reportDir, { recursive: true });
+        }
+
+        const ts = result.harvestedAt;
+        const jsonPath = path.join(reportDir, `harvest_${ts}.json`);
+        const mdPath = path.join(reportDir, `harvest_${ts}.md`);
+
+        fs.writeFileSync(jsonPath, JSON.stringify(result, null, 2), 'utf8');
+
+        let md = `# SYNAPSE Harvest Report\n`;
+        md += `- **Harvest ID:** ${ts}\n`;
+        md += `- **Timestamp:** ${new Date(ts).toISOString()}\n`;
+        md += `- **Project UUID:** ${result.projectUUID}\n\n`;
+        md += `## Summary\n`;
+        md += `- **Requested Files:** ${candidates.length}\n`;
+        md += `- **Harvested Files:** ${result.filesHarvested}\n`;
+        md += `- **Failed Files:** ${failedFiles.length}\n`;
+        md += `- **Harvested Clients:** ${result.harvestedClients.length > 0 ? result.harvestedClients.join(', ') : 'None'}\n\n`;
+        md += `## Harvested Files\n`;
+        if (harvestedFiles.length === 0) {
+            md += `*None*\n`;
+        } else {
+            harvestedFiles.forEach(f => md += `- \`${f}\`\n`);
+        }
+        md += `\n## Failed Files\n`;
+        if (failedFiles.length === 0) {
+            md += `*None*\n`;
+        } else {
+            failedFiles.forEach(f => {
+                md += `- \`${f.candidate.filePath}\` [${f.candidate.clientUsername}] - **${f.reason}**: ${f.detail}\n`;
+            });
+        }
+        
+        fs.writeFileSync(mdPath, md, 'utf8');
 
         Logger.info(`[v0.3.30] Harvest complete: ${result.filesHarvested} files, ${result.foldersCreated} folders`);
         return result;
-    }
-
-    harvestLayers(input: LayerHarvestInput): HarvestResult[] {
-        const sm = SubmissionManager.getInstance();
-        const results: HarvestResult[] = [];
-        let totalFiles = 0;
-
-        for (const clientId of input.clientLayerIds) {
-            const approvedSubs = sm.getApprovedSubmissionsByClient(input.projectUUID, input.sessionId, clientId);
-            if (approvedSubs.length === 0) continue;
-
-            const approvedFiles: SubmissionFile[] = [];
-            for (const sub of approvedSubs) {
-                for (const f of sub.files) {
-                    if (!approvedFiles.some(af => af.filePath === f.filePath)) {
-                        approvedFiles.push(f);
-                    }
-                }
-            }
-
-            const combinedInput: HarvestInput = {
-                submissionId: `layer_${clientId}_${Date.now()}`,
-                projectUUID: input.projectUUID,
-                approvedFiles,
-                originalSnapshot: approvedSubs[approvedSubs.length - 1],
-                verificationReport: { generatedAt: Date.now(), graph: { fileNodes: [], ghostNodes: [], edges: [], clusters: [] }, findings: [], stats: { totalFiles: 0, totalEdges: 0, totalGhosts: 0, resolvedReferences: 0, unresolvedReferences: 0, disconnectedFiles: 0 } },
-            };
-
-            const result = this.harvest(combinedInput);
-            results.push(result);
-            totalFiles += result.filesHarvested;
-        }
-
-        Logger.info(`[v0.3.30] Layer harvest complete: ${input.clientLayerIds.length} layers, ${totalFiles} files`);
-        return results;
     }
 }

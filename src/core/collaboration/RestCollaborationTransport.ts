@@ -1,8 +1,7 @@
 import { CollaborationTransport } from './CollaborationTransport';
 import { AuthenticatedUser, AccountManager } from './AccountManager';
 import { CollaborationSession, SessionManager } from './SessionManager';
-import { SubmissionManager } from './SubmissionManager';
-import { SubmissionSnapshot, ReviewState } from '../../types/schema';
+
 
 export class RestCollaborationTransport implements CollaborationTransport {
     async login(username: string, password: string): Promise<AuthenticatedUser | null> {
@@ -16,19 +15,5 @@ export class RestCollaborationTransport implements CollaborationTransport {
 
     async joinSession(sessionId: string, userId: string): Promise<CollaborationSession> {
         return SessionManager.getInstance().serverJoinSession(sessionId, userId);
-    }
-
-    async createSubmission(
-        projectUUID: string,
-        sessionId: string,
-        clientId: string,
-        filePaths: string[],
-        clientUsername?: string
-    ): Promise<SubmissionSnapshot> {
-        return SubmissionManager.getInstance().createSubmission(projectUUID, sessionId, clientId, filePaths, clientUsername);
-    }
-
-    async getReviewState(submissionId: string): Promise<ReviewState | null> {
-        return SubmissionManager.getInstance().getReviewState(submissionId) || null;
     }
 }

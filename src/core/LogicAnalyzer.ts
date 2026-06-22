@@ -272,8 +272,8 @@ export class LogicAnalyzer {
         if (!this.config || !this.config.architecture_guardrail) return;
 
         const guardrail = this.config.architecture_guardrail;
-        const policies = guardrail.policies;
-        const exceptions = guardrail.exceptions;
+        const policies = guardrail.policies || { gravity_rule: { enabled: false }, inter_cluster_rule: { enabled: false }, same_layer_communication: { allow: true } };
+        const exceptions = guardrail.exceptions || { bypass_keyword: '@synapse-bypass', allowed_cross_layer_paths: [] };
 
         const bypassRegex = new RegExp(`//\\s*${exceptions.bypass_keyword}`);
 

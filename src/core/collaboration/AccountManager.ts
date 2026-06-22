@@ -3,29 +3,19 @@ import * as path from 'path';
 import { createHash } from 'crypto';
 import { Logger } from '../../utils/Logger';
 import { IdentityManager } from './IdentityManager';
-import { validateMountPath } from './MountManager';
 
 export interface UserAccount {
     userId: string;
     username: string;
     passwordHash: string;
     createdAt: number;
-    sshHost?: string;
-    sshPort?: number;
-    sshUser?: string;
-    sshMountPath?: string;
-    sshKey?: string;
+    schemaVersion?: number;
 }
 
 export interface AuthenticatedUser {
     userId: string;
     username: string;
     createdAt: number;
-    sshHost?: string;
-    sshPort?: number;
-    sshUser?: string;
-    sshMountPath?: string;
-    sshKey?: string;
 }
 
 interface AccountsStore {
@@ -53,12 +43,9 @@ export class AccountManager {
         this.loadSync();
     }
 
-    createAccount(username: string, password: string, sshConfig?: { sshHost?: string; sshPort?: number; sshUser?: string; sshMountPath?: string; sshKey?: string }): UserAccount {
+    createAccount(username: string, password: string): UserAccount {
         if (this.accounts.has(username)) {
             throw new Error(`[v0.3.30] Account already exists: ${username}`);
-        }
-        if (sshConfig?.sshMountPath && !validateMountPath(sshConfig.sshMountPath)) {
-            throw new Error(`[v0.3.30] Invalid sshMountPath: "${sshConfig.sshMountPath}". Must be an absolute project path (not "/", no "../", no "~").`);
         }
 
         const identityManager = IdentityManager.getInstance();
@@ -70,7 +57,7 @@ export class AccountManager {
             username,
             passwordHash,
             createdAt: Date.now(),
-            ...sshConfig,
+            schemaVersion: 2,
         };
 
         this.accounts.set(username, account);
@@ -90,11 +77,6 @@ export class AccountManager {
             userId: account.userId,
             username: account.username,
             createdAt: account.createdAt,
-            sshHost: account.sshHost,
-            sshPort: account.sshPort,
-            sshUser: account.sshUser,
-            sshMountPath: account.sshMountPath,
-            sshKey: account.sshKey,
         };
     }
 
@@ -116,29 +98,11 @@ export class AccountManager {
         return true;
     }
 
-    updateSSHInfo(username: string, sshConfig: { sshHost?: string; sshPort?: number; sshUser?: string; sshMountPath?: string; sshKey?: string }): boolean {
-        const account = this.accounts.get(username);
-        if (!account) return false;
-        if (sshConfig.sshMountPath && !validateMountPath(sshConfig.sshMountPath)) {
-            throw new Error(`[v0.3.30] Invalid sshMountPath: "${sshConfig.sshMountPath}". Must be an absolute project path (not "/", no "../", no "~").`);
-        }
-        if (sshConfig.sshHost !== undefined) account.sshHost = sshConfig.sshHost || undefined;
-        if (sshConfig.sshPort !== undefined) account.sshPort = sshConfig.sshPort || undefined;
-        if (sshConfig.sshUser !== undefined) account.sshUser = sshConfig.sshUser || undefined;
-        if (sshConfig.sshMountPath !== undefined) account.sshMountPath = sshConfig.sshMountPath || undefined;
-        if (sshConfig.sshKey !== undefined) account.sshKey = sshConfig.sshKey || undefined;
-        this.saveSync();
-        Logger.info(`[v0.3.30] SSH info updated for: ${username}`);
-        return true;
-    }
-
-    getAllAccounts(): { username: string; userId: string; createdAt: number; sshHost?: string; sshMountPath?: string }[] {
+    getAllAccounts(): { username: string; userId: string; createdAt: number }[] {
         return Array.from(this.accounts.values()).map(a => ({
             username: a.username,
             userId: a.userId,
             createdAt: a.createdAt,
-            sshHost: a.sshHost,
-            sshMountPath: a.sshMountPath,
         }));
     }
 
@@ -168,12 +132,20 @@ export class AccountManager {
             this.accounts.clear();
             const identityManager = IdentityManager.getInstance();
             for (const acc of store.accounts) {
-                this.accounts.set(acc.username, acc);
+                // schemaVersion 1 → 2 마이그레이션: SSH 필드 제거
+                const migrated: UserAccount = {
+                    userId: acc.userId,
+                    username: acc.username,
+                    passwordHash: acc.passwordHash,
+                    createdAt: acc.createdAt,
+                    schemaVersion: 2,
+                };
+                this.accounts.set(acc.username, migrated);
                 if (!identityManager.getIdentity(acc.userId)) {
                     identityManager.createIdentityWithId(acc.userId, acc.username);
                 }
             }
-            Logger.info(`[v0.3.30] Accounts loaded: ${this.accounts.size}`);
+            Logger.info(`[v0.3.30] Accounts loaded: ${this.accounts.size} (schema v2)`);
         } catch {
             Logger.warn('[v0.3.30] Failed to load accounts, starting fresh');
             this.accounts.clear();
@@ -184,6 +156,8 @@ export class AccountManager {
         const store: AccountsStore = {
             accounts: Array.from(this.accounts.values()),
         };
-        fs.writeFileSync(this.storePath, JSON.stringify(store, null, 2), 'utf8');
+        const tmpPath = this.storePath + '.tmp';
+        fs.writeFileSync(tmpPath, JSON.stringify(store, null, 2), 'utf8');
+        fs.renameSync(tmpPath, this.storePath);
     }
 }

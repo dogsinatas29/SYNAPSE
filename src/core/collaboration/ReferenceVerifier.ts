@@ -1,6 +1,6 @@
 import * as path from 'path';
 import { Logger } from '../../utils/Logger';
-import { SubmissionSnapshot, SubmissionFile } from '../../types/schema';
+import { SubmissionFile } from '../../types/schema';
 import { SourceFileEntry, FunctionEntry, FolderTreeNode, ArchitectureIndex } from './ArchitectureIndexBuilder';
 
 export type EdgeCategory = 'INCLUDE' | 'REFERENCE' | 'CALL' | 'DB_QUERY' | 'DATA_FLOW' | 'EVENT' | 'CONDITIONAL' | 'LOOP_BACK';
@@ -235,15 +235,15 @@ export class ReferenceVerifier {
         return ReferenceVerifier.instance;
     }
 
-    verify(index: ArchitectureIndex, snapshot: SubmissionSnapshot): VerificationReport {
-        Logger.info(`[v0.3.30] Verifying submission: ${snapshot.id}`);
+    verify(index: ArchitectureIndex, files: {filePath: string, content: string}[], submissionId: string): VerificationReport {
+        Logger.info(`[v0.3.30] Verifying submission: ${submissionId}`);
 
         const edges: ReferenceEdge[] = [];
         const ghostMap = new Map<string, GhostNode>();
         const fileContentMap = new Map<string, string>();
         const sourcePaths = new Set(index.sourceFileRegistry.map(f => f.filePath));
 
-        for (const file of snapshot.files) {
+        for (const file of files) {
             fileContentMap.set(file.filePath, file.content);
         }
 

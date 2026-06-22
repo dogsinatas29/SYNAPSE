@@ -186,9 +186,11 @@ export class StateManager {
     const filePath = payload.filePath || '';
     const fileName = this.extractBasename(filePath);
     const finalLabel = payload.label || fileName || payload.id;
-    const coreSnap = graphModel.createSnapshot();
-    const existingCore = filePath ? coreSnap.nodes.find(cn => cn.filePath === filePath || (cn.data && cn.data.file === filePath)) : null;
-    const nodeId = existingCore ? existingCore.id : (payload.id || `node_manual_${Date.now()}`);
+    // [v0.3.30 Fix] Always use node_manual_ ID for user-created nodes.
+    // Previously, if a file existed on disk (via autoDiscover), mutateAddNode would
+    // reuse the scan node's ID (e.g. 'src/foo.ts'). This caused the node to be
+    // excluded from liteBootstrap's manualNodes filter on reload, making it disappear.
+    const nodeId = payload.id?.startsWith('node_manual_') ? payload.id : `node_manual_${Date.now()}`;
 
     const normalizedNewPath = this.normalizePath(filePath);
     if (normalizedNewPath) {
@@ -701,14 +703,23 @@ export class StateManager {
       const existingIdx = finalCoreNodes.findIndex(n => n.filePath && this.normalizePath(n.filePath) === snPath);
       if (existingIdx !== -1) {
         const existingNode = finalCoreNodes[existingIdx];
-        if (existingNode.layer === 'user' || this.dirtyNodeIds.has(existingNode.id)) {
-            // 🛡️ [v0.3.22.11] Position & Identity Protection
-            // If node is dirty (manually moved) or user-defined, protect its position from scan overwrites.
+        const isUserOwned = existingNode.layer === 'user' || existingNode.data?.isUserCreated === true;
+        if (isUserOwned || this.dirtyNodeIds.has(existingNode.id)) {
+            // 🛡️ [v0.3.30 Fix] Position & Layer Identity Protection
+            // User-created nodes must retain their 'user' layer even when the same
+            // file is found by autoDiscover. Previously, layer was always reset to 'ai'
+            // even for user-owned nodes, causing them to lose sovereign status.
             finalCoreNodes[existingIdx] = { 
                 ...existingNode, 
                 ...sn, 
-                layer: 'ai', // Reset layer if it matches scan, but protect coordinates
-                position: (this.dirtyNodeIds.has(existingNode.id) || existingNode.layer === 'user')
+                layer: isUserOwned ? 'user' : 'ai', // Preserve user layer
+                data: {
+                    ...sn.data,
+                    ...existingNode.data,    // user data wins on conflict
+                    layer: isUserOwned ? 'user' : 'ai',
+                    isUserCreated: existingNode.data?.isUserCreated
+                },
+                position: (this.dirtyNodeIds.has(existingNode.id) || isUserOwned)
                     ? existingNode.position
                     : (sn.position || existingNode.position)
             };

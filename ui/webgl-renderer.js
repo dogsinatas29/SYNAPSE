@@ -728,7 +728,9 @@ class WebGLRenderer {
             
             // Adjust to match 2D layout centering
             posArr[i * 2] = p.x + (nodeWidth / 2);
-            posArr[i * 2 + 1] = p.y + (nodeHeight / 2);
+            let clientLayer = n.clientLayer || (n.data && n.data.clientLayer) || null;
+            let yOffset = clientLayer && window.engine ? window.engine.getClientLayerOffset(clientLayer).y : 0;
+            posArr[i * 2 + 1] = p.y + yOffset + (nodeHeight / 2);
 
             // [v0.3.22] Use Centralized Theme Logic (Defensive)
             const theme = (typeof SYNAPSE_THEME !== 'undefined') ? SYNAPSE_THEME : (window.SYNAPSE_THEME || null);
@@ -833,10 +835,15 @@ class WebGLRenderer {
             if (src && tgt && src.position && tgt.position) {
                 const nodeWidth = 120;
                 const nodeHeight = 60;
+                let srcClientLayer = src.clientLayer || (src.data && src.data.clientLayer) || null;
+                let srcYOffset = srcClientLayer && window.engine ? window.engine.getClientLayerOffset(srcClientLayer).y : 0;
+                let tgtClientLayer = tgt.clientLayer || (tgt.data && tgt.data.clientLayer) || null;
+                let tgtYOffset = tgtClientLayer && window.engine ? window.engine.getClientLayerOffset(tgtClientLayer).y : 0;
+
                 let x1 = src.position.x + (nodeWidth / 2);
-                let y1 = src.position.y + (nodeHeight / 2);
+                let y1 = src.position.y + srcYOffset + (nodeHeight / 2);
                 let x2 = tgt.position.x + (nodeWidth / 2);
-                let y2 = tgt.position.y + (nodeHeight / 2);
+                let y2 = tgt.position.y + tgtYOffset + (nodeHeight / 2);
 
                 // x1, y1, x2, y2 will be written after border intersection logic
 
@@ -1136,10 +1143,15 @@ class WebGLRenderer {
 
                 const nodeWidth = 120;
                 const nodeHeight = 60;
+                let srcClientLayer = src.clientLayer || (src.data && src.data.clientLayer) || null;
+                let srcYOffset = srcClientLayer && window.engine ? window.engine.getClientLayerOffset(srcClientLayer).y : 0;
+                let tgtClientLayer = tgt.clientLayer || (tgt.data && tgt.data.clientLayer) || null;
+                let tgtYOffset = tgtClientLayer && window.engine ? window.engine.getClientLayerOffset(tgtClientLayer).y : 0;
+
                 const x1 = src.position.x + (nodeWidth / 2);
-                const y1 = src.position.y + (nodeHeight / 2);
+                const y1 = src.position.y + srcYOffset + (nodeHeight / 2);
                 const x2 = tgt.position.x + (nodeWidth / 2);
-                const y2 = tgt.position.y + (nodeHeight / 2);
+                const y2 = tgt.position.y + tgtYOffset + (nodeHeight / 2);
                 
                 const midX = (x1 + x2) / 2;
                 const midY = (y1 + y2) / 2;

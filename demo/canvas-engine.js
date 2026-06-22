@@ -2019,6 +2019,18 @@ class CanvasEngine {
         if (elExternal) updateBadge(elExternal, externalCount);
     }
 
+    removeDisconnectedClientLayers(connectedUserIds) {
+        const connected = connectedUserIds || new Set();
+        let changed = false;
+        for (const clientId of Object.keys(this.clientLayers)) {
+            if (clientId.startsWith('usr_') && !connected.has(clientId)) {
+                delete this.clientLayers[clientId];
+                changed = true;
+            }
+        }
+        if (changed) this._updateClientLayerUI();
+    }
+
     registerClientLayer(clientId, username) {
         if (!clientId) return;
         if (this.clientLayers[clientId]) {
@@ -2033,15 +2045,26 @@ class CanvasEngine {
 
     refreshClientLayersFromAccounts() {
         if (typeof window.vscode !== 'undefined') return;
-        fetch('/api/admin/accounts')
-            .then(r => r.json())
-            .then(data => {
-                if (!data.success || !data.accounts) return;
-                for (const acc of data.accounts) {
+        const token = window._synapseToken;
+        const hdrs = token ? { 'Authorization': 'Bearer ' + token } : {};
+        Promise.all([
+            fetch('/api/admin/accounts', { headers: hdrs }).then(r => r.json()),
+            fetch('/api/admin/connected-clients', { headers: hdrs }).then(r => r.json()).catch(() => ({ success: false }))
+        ]).then(([accData, connData]) => {
+            if (!accData.success || !accData.accounts) return;
+            const connectedIds = new Set(
+                connData.success && connData.clients
+                    ? connData.clients.map(function(c) { return c.userId; })
+                    : []
+            );
+            this.removeDisconnectedClientLayers(connectedIds);
+            for (const acc of accData.accounts) {
+                if (acc.username === 'server') continue;
+                if (connectedIds.has(acc.userId)) {
                     this.registerClientLayer(acc.userId, acc.username);
                 }
-            })
-            .catch(() => {});
+            }
+        }).catch(() => {});
     }
 
     setClientLayerVisibility(clientId, visible) {
@@ -2060,32 +2083,9 @@ class CanvasEngine {
         this.render();
     }
 
+    // deprecated: layers are session-driven, not node-driven
     syncClientLayersFromNodes() {
-        const now = Date.now();
-        for (const n of this.nodes) {
-            const cl = n.clientLayer || (n.data && n.data.clientLayer);
-            if (!cl) continue;
-            const un = n.clientUsername || (n.data && n.data.clientUsername);
-            if (this.clientLayers[cl]) {
-                if (un) this.clientLayers[cl].username = un;
-                this.clientLayers[cl].lastActive = now;
-            } else {
-                const order = Object.keys(this.clientLayers).length;
-                this.clientLayers[cl] = { visible: true, order, username: un || '', lastActive: now };
-            }
-        }
-        for (const c of this.clusters) {
-            const cl = c.clientLayer || (c.data && c.clientLayer);
-            if (!cl) continue;
-            const un = c.clientUsername || (c.data && c.data.clientUsername);
-            if (this.clientLayers[cl]) {
-                if (un) this.clientLayers[cl].username = un;
-                this.clientLayers[cl].lastActive = now;
-            } else {
-                const order = Object.keys(this.clientLayers).length;
-                this.clientLayers[cl] = { visible: true, order, username: un || '', lastActive: now };
-            }
-        }
+        // no-op: layers are registered via registerClientLayer() from server messages
     }
 
     getClientLayerOffset(clientId) {
@@ -2111,33 +2111,27 @@ class CanvasEngine {
         container.innerHTML = '';
         const clientIds = Object.keys(this.clientLayers);
         if (clientIds.length === 0) return;
-        const now = Date.now();
+        const connectedIds = (typeof window !== 'undefined' && window._connectedUserIds) ? window._connectedUserIds : new Set();
         for (const clientId of clientIds) {
             const entry = this.clientLayers[clientId];
-            const layerNodes = this.nodes.filter(n => (n.clientLayer || (n.data && n.data.clientLayer)) === clientId);
-            const nodeCount = layerNodes.length;
-            const fileSet = new Set();
-            for (const n of layerNodes) {
-                const fp = n.filePath || (n.data && n.data.filePath);
-                if (fp) fileSet.add(fp);
-            }
-            const fileCount = fileSet.size;
             const displayName = entry.username || (clientId.length > 20 ? clientId.slice(0, 17) + '...' : clientId);
-            const lastActive = entry.lastActive ? this._formatTimeAgo(entry.lastActive, now) : '';
+            const isConnected = connectedIds.has(clientId);
+            const dotColor = isConnected ? '#8ec07c' : '#504945';
+            const dotTitle = isConnected ? '접속 중' : '미접속';
             const row = document.createElement('div');
             row.className = 'layer-toggle-row';
             row.style.cssText = 'display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;';
-            const info = document.createElement('div');
-            info.style.cssText = 'display: flex; flex-direction: column; flex: 1; min-width: 0;';
+            const left = document.createElement('div');
+            left.style.cssText = 'display: flex; align-items: center; flex: 1; min-width: 0;';
+            const dot = document.createElement('span');
+            dot.style.cssText = 'display:inline-block;width:8px;height:8px;border-radius:50%;background:' + dotColor + ';margin-right:6px;flex-shrink:0;';
+            dot.title = dotTitle;
+            left.appendChild(dot);
             const nameEl = document.createElement('span');
             nameEl.style.cssText = 'font-size: 13px; color: #83a598; font-weight: 600;';
             nameEl.textContent = '👤 ' + displayName;
-            info.appendChild(nameEl);
-            const statsEl = document.createElement('span');
-            statsEl.style.cssText = 'font-size: 10px; color: #a89984; margin-top: 1px;';
-            statsEl.textContent = nodeCount + ' nodes, ' + fileCount + ' files' + (lastActive ? ' · ' + lastActive : '');
-            info.appendChild(statsEl);
-            row.appendChild(info);
+            left.appendChild(nameEl);
+            row.appendChild(left);
             const btn = document.createElement('button');
             btn.className = 'layer-btn' + (entry.visible ? ' active' : '');
             btn.style.cssText = 'min-width: 50px; margin-left: 8px; flex-shrink: 0;';
@@ -8798,6 +8792,38 @@ function initCanvas() {
                 // Dismiss loading overlay
                 const loader = document.getElementById('loading');
                 if (loader) loader.style.display = 'none';
+                break;
+            }
+            case 'clientLayerUpdate': {
+                if (message.layers && message.layers.length > 0) {
+                    const now = Date.now();
+                    // _connectedUserIds 자동 생성/갱신
+                    if (!window._connectedUserIds) {
+                        window._connectedUserIds = new Set();
+                    }
+                    for (const layer of message.layers) {
+                        window._connectedUserIds.add(layer.clientId);
+                        if (!engine.clientLayers[layer.clientId]) {
+                            const order = Object.keys(engine.clientLayers).length;
+                            engine.clientLayers[layer.clientId] = { visible: true, order, username: layer.username || '', lastActive: now };
+                        } else {
+                            if (layer.username) engine.clientLayers[layer.clientId].username = layer.username;
+                            engine.clientLayers[layer.clientId].lastActive = now;
+                        }
+                    }
+                    engine._updateClientLayerUI();
+                    engine.isDirty = true;
+                    engine.requestRender();
+                }
+                break;
+            }
+            case 'connectedClientsResult': {
+                if (message.clients) {
+                    window._connectedUserIds = new Set(
+                        message.clients.map(function(c) { return c.userId; })
+                    );
+                    engine._updateClientLayerUI();
+                }
                 break;
             }
             case 'resetCanvas': {

@@ -13,24 +13,58 @@
 
 ---
 
-## 💡 What is SYNAPSE?
+# Why SYNAPSE?
 
-SYNAPSE is a high-performance engine that visualizes the internal structure of LLM-based systems into a real-time graph.
+Modern software is no longer written by one person.
 
-- **Trace Execution Flow**: Visualize logic paths instantly.
-- **Analyze Dependency Graphs**: Map complex module relationships.
-- **Detect Architecture Drift**: Identify deviations between code and design.
+The problem is not writing code.
 
-## ⚠️ Problem
+The problem is understanding how thousands of files,
+multiple developers,
+and distributed systems interact as a whole.
 
-LLM-based systems face these critical structural challenges:
-- **Invisible Flow**: Internal logic paths are hidden behind abstractions.
-- **Dependency Explosion**: Relationships become complex and unmanageable.
-- **Impossible Debugging**: Debugging the overall structure is fundamentally difficult.
+SYNAPSE turns source code into a visual architecture map.
 
-## ✅ Solution
+It allows architects and senior engineers to:
 
-SYNAPSE transforms "reading code" into "seeing architecture" by projecting execution flows and structures into an interactive graph.
+* Identify architectural bottlenecks
+* Trace dependency chains
+* Visualize project-wide logic structures
+* Collect remote team outputs through Harvest
+* Review large codebases without manually traversing files
+
+SYNAPSE focuses on visibility first.
+
+Not synchronization.
+Not issue tracking.
+Not source control.
+
+Visibility.
+
+---
+
+# Who Is It For?
+
+### Architecture Review
+* Tech Leads
+* Staff Engineers
+* CTOs
+
+For those who need to grasp the structure of massive projects and trace dependencies.
+
+### Distributed Development Teams
+* Remote work teams
+* VM-based development environments
+* Multi-OS environments
+
+For teams that need to visualize outputs created by multiple people in one unified space.
+
+### Legacy & Brownfield Projects
+* Old codebases
+* Undocumented projects
+* Systems with hard-to-understand structures
+
+For those who want to see the architecture before reading the code.
 
 ## 📸 Demo
 
@@ -206,6 +240,7 @@ SYNAPSE automatically generates a logical flowchart based on the underlying arch
 - Accessible via the `View -> Flow View` menu in the top navigation bar.
 
 ![Flow View Screenshot](assets/flowview.png)
+![Flow View Screenshot 2](assets/flowview2.png)
 
 ---
 

@@ -47,6 +47,21 @@ SYNAPSE는 **가시성(Visibility)**에 최우선적으로 집중합니다.
 
 오로지 **가시성(Visibility)**입니다.
 
+## 시냅스가 시스템의 구조를 어떻게 이해하는가?
+
+| 1. 전체 의존성 맵 | 2. 외부 의존성 제거 |
+| :---: | :---: |
+| ![전체 의존성 맵](assets/v0.3.22/synapse_default_view.png) | ![외부 의존성 제거](assets/v0.3.22/synapse_hide_lead.png) |
+| *"실제 프로젝트는 이렇게 생긴다"* | *"노이즈를 제거한다"* |
+| **3. 핵심 노드 집중** | **4. 트래픽 히트맵** |
+| ![핵심 노드 집중](assets/v0.3.22/synapse_focus_top.png) | ![트래픽 히트맵](assets/v0.3.22/synapse_traffic_heatmap.png) |
+| *"어디를 봐야 하는지 알려준다"* | *"어디가 가장 중요한지 보여준다"* |
+
+SYNAPSE helps you understand systems.
+
+From hundreds of files and thousands of dependencies,
+to the handful of nodes that actually matter.
+
 ---
 
 # 누구를 위한 것인가? (Who Is It For?)

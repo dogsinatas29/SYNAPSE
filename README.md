@@ -49,6 +49,11 @@ Not source control.
 
 Visibility.
 
+SYNAPSE helps you understand systems.
+
+From hundreds of files and thousands of dependencies,
+to the handful of nodes that actually matter.
+
 ## How SYNAPSE Understands System Architecture
 
 | 1. Global Dependency Map | 2. Filter Noise |
@@ -58,11 +63,6 @@ Visibility.
 | **3. Focus on Core Nodes** | **4. Traffic Heatmap** |
 | ![Focus on Core Nodes](assets/v0.3.22/synapse_focus_top.png) | ![Traffic Heatmap](assets/v0.3.22/synapse_traffic_heatmap.png) |
 | *"Tells you where to look"* | *"Shows you what matters most"* |
-
-SYNAPSE helps you understand systems.
-
-From hundreds of files and thousands of dependencies,
-to the handful of nodes that actually matter.
 
 ---
 

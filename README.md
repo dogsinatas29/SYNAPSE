@@ -30,10 +30,10 @@ to the handful of nodes that actually matter.
 
 | 1. Global Dependency Map | 2. Filter Noise |
 | :---: | :---: |
-| ![Global Dependency Map](assets/v0.3.22/synapse_default_view.png) | ![Filter Noise](assets/v0.3.22/synapse_hide_lead.png) |
+| ![Global Dependency Map](assets/1.png) | ![Filter Noise](assets/2.png) |
 | *"This is what real projects look like"* | *"Removes the noise"* |
 | **3. Focus on Core Nodes** | **4. Traffic Heatmap** |
-| ![Focus on Core Nodes](assets/v0.3.22/synapse_focus_top.png) | ![Traffic Heatmap](assets/v0.3.22/synapse_traffic_heatmap.png) |
+| ![Focus on Core Nodes](assets/3.png) | ![Traffic Heatmap](assets/4.png) |
 | *"Tells you where to look"* | *"Shows you what matters most"* |
 
 ---

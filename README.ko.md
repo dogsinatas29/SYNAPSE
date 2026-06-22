@@ -30,10 +30,10 @@ SYNAPSE가 어떻게 시스템을 이해하도록 도와주는가?
 
 | 1. 전체 의존성 맵 | 2. 외부 의존성 제거 |
 | :---: | :---: |
-| ![전체 의존성 맵](assets/v0.3.22/synapse_default_view.png) | ![외부 의존성 제거](assets/v0.3.22/synapse_hide_lead.png) |
+| ![전체 의존성 맵](assets/1.png) | ![외부 의존성 제거](assets/2.png) |
 | *"실제 프로젝트는 이렇게 생겼습니다."* | *"노이즈를 제거합니다"* |
 | **3. 핵심 노드 집중** | **4. 트래픽 히트맵** |
-| ![핵심 노드 집중](assets/v0.3.22/synapse_focus_top.png) | ![트래픽 히트맵](assets/v0.3.22/synapse_traffic_heatmap.png) |
+| ![핵심 노드 집중](assets/3.png) | ![트래픽 히트맵](assets/4.png) |
 | *"어디를 봐야 하는지 알려줍니다"* | *"어디가 가장 중요한지 보여줍니다"* |
 
 ---

@@ -213,7 +213,7 @@ SYNAPSE automatically generates a logical flowchart based on the underlying arch
 
 Harvest is a snapshot-based collection system where the Architect (Server) safely collects the work results of collaboration participants.
 
-<video src="assets/harvest.mp4" controls="controls" width="100%"></video>
+https://github.com/dogsinatas29/SYNAPSE/raw/main/assets/harvest.mp4
 
 Harvest does not aim for general bi-directional synchronization. The traditional Client ↔ Server ↔ Client architecture can cause ownership conflicts and state inconsistencies, leading to undefined behaviors.
 

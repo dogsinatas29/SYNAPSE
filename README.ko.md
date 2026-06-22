@@ -213,7 +213,7 @@ SYNAPSE는 아키텍처 구조를 기반으로 논리적 흐름을 보여주는 
 
 Harvest는 협업 참여자의 작업 결과를 아키텍트(서버)가 안전하게 수집하는 스냅샷 기반 수집 시스템입니다.
 
-<video src="assets/harvest.mp4" controls="controls" width="100%"></video>
+https://github.com/dogsinatas29/SYNAPSE/raw/main/assets/harvest.mp4
 
 Harvest는 일반적인 양방향 동기화(Synchronization)를 목표로 하지 않습니다. 기존의 Client ↔ Server ↔ Client 구조는 소유권 충돌과 상태 불일치(State Conflict)를 유발할 수 있으며, 이는 예측 불가능한 동작(Undefined Behavior)의 원인이 됩니다.
 

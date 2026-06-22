@@ -1,15 +1,15 @@
 {
   "canvas_state": {
     "offset": {
-      "x": 2280.4269082287346,
-      "y": 1001.4309037827517
+      "x": 1741.2899120724855,
+      "y": 903.8992425095946
     },
     "visible_layers": [
       "source",
       "documentation",
       "user"
     ],
-    "zoom_level": 0.2048457183284535
+    "zoom_level": 0.15774669323843468
   },
   "clusters": [
     {
@@ -609,7 +609,7 @@
     {
       "data": {},
       "from": "리포트.md",
-      "id": "edge_리포트.md_command:synapse.focusNode?%22%EB%A6%AC%ED%8F%AC%ED%8A%B8_1782131578586",
+      "id": "edge_리포트.md_command:synapse.focusNode?%22%EB%A6%AC%ED%8F%AC%ED%8A%B8_1782132832499",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -624,7 +624,7 @@
     {
       "data": {},
       "from": "architecture.md",
-      "id": "edge_architecture.md_backup_md/core_synapse.md_1782131578563",
+      "id": "edge_architecture.md_backup_md/core_synapse.md_1782132832477",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -639,7 +639,7 @@
     {
       "data": {},
       "from": "architecture.md",
-      "id": "edge_architecture.md_backup_md/data_scheme.md_1782131578564",
+      "id": "edge_architecture.md_backup_md/data_scheme.md_1782132832477",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -654,7 +654,7 @@
     {
       "data": {},
       "from": "architecture.md",
-      "id": "edge_architecture.md_backup_md/reporting.md_1782131578564",
+      "id": "edge_architecture.md_backup_md/reporting.md_1782132832477",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -669,7 +669,7 @@
     {
       "data": {},
       "from": "architecture.md",
-      "id": "edge_architecture.md_RULES.md_1782131578564",
+      "id": "edge_architecture.md_RULES.md_1782132832477",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -684,7 +684,7 @@
     {
       "data": {},
       "from": "architecture.md",
-      "id": "edge_architecture.md_visual_impact.md_1782131578564",
+      "id": "edge_architecture.md_visual_impact.md_1782132832477",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -699,7 +699,7 @@
     {
       "data": {},
       "from": "backup_md/리포트.md",
-      "id": "edge_backup_md/리포트.md_command:synapse.focusNode?%22%EB%A6%AC%ED%8F%AC%ED%8A%B8_1782131578565",
+      "id": "edge_backup_md/리포트.md_command:synapse.focusNode?%22%EB%A6%AC%ED%8F%AC%ED%8A%B8_1782132832478",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -714,7 +714,7 @@
     {
       "data": {},
       "from": "backup_md/architecture.md",
-      "id": "edge_backup_md/architecture.md_backup_md/core_synapse.md_1782131578564",
+      "id": "edge_backup_md/architecture.md_backup_md/core_synapse.md_1782132832477",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -729,7 +729,7 @@
     {
       "data": {},
       "from": "backup_md/architecture.md",
-      "id": "edge_backup_md/architecture.md_backup_md/data_scheme.md_1782131578564",
+      "id": "edge_backup_md/architecture.md_backup_md/data_scheme.md_1782132832477",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -744,7 +744,7 @@
     {
       "data": {},
       "from": "backup_md/architecture.md",
-      "id": "edge_backup_md/architecture.md_backup_md/reporting.md_1782131578564",
+      "id": "edge_backup_md/architecture.md_backup_md/reporting.md_1782132832477",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -759,7 +759,7 @@
     {
       "data": {},
       "from": "backup_md/architecture.md",
-      "id": "edge_backup_md/architecture.md_backup_md/vega_agent.md_1782131578564",
+      "id": "edge_backup_md/architecture.md_backup_md/vega_agent.md_1782132832477",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -774,7 +774,7 @@
     {
       "data": {},
       "from": "backup_md/architecture.md",
-      "id": "edge_backup_md/architecture.md_RULES.md_1782131578564",
+      "id": "edge_backup_md/architecture.md_RULES.md_1782132832477",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -789,7 +789,7 @@
     {
       "data": {},
       "from": "backup_md/GEMINI.md",
-      "id": "edge_backup_md/GEMINI.md_architecture.md_1782131578564",
+      "id": "edge_backup_md/GEMINI.md_architecture.md_1782132832477",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -804,7 +804,7 @@
     {
       "data": {},
       "from": "backup_md/GEMINI.md",
-      "id": "edge_backup_md/GEMINI.md_synapse_topology_view_1782131578564",
+      "id": "edge_backup_md/GEMINI.md_synapse_topology_view_1782132832477",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -819,7 +819,7 @@
     {
       "data": {},
       "from": "mile_stone/v0.2.16.md",
-      "id": "edge_backup_md/mile_stone/v0.2.16.md_v0.2.15_1782131578564",
+      "id": "edge_backup_md/mile_stone/v0.2.16.md_v0.2.15_1782132832477",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -834,7 +834,7 @@
     {
       "data": {},
       "from": "mile_stone/v0.2.17.md",
-      "id": "edge_backup_md/mile_stone/v0.2.17.md_demo/canvas-engine.js_1782131578564",
+      "id": "edge_backup_md/mile_stone/v0.2.17.md_demo/canvas-engine.js_1782132832477",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -849,7 +849,7 @@
     {
       "data": {},
       "from": "mile_stone/v0.2.17.md",
-      "id": "edge_backup_md/mile_stone/v0.2.17.md_index_1782131578565",
+      "id": "edge_backup_md/mile_stone/v0.2.17.md_index_1782132832478",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -864,7 +864,7 @@
     {
       "data": {},
       "from": "mile_stone/v0.2.17.md",
-      "id": "edge_backup_md/mile_stone/v0.2.17.md_RULES.md_1782131578565",
+      "id": "edge_backup_md/mile_stone/v0.2.17.md_RULES.md_1782132832478",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -879,7 +879,7 @@
     {
       "data": {},
       "from": "mile_stone/v0.2.17.md",
-      "id": "edge_backup_md/mile_stone/v0.2.17.md_src/bootstrap/BootstrapEngine.ts_1782131578564",
+      "id": "edge_backup_md/mile_stone/v0.2.17.md_src/bootstrap/BootstrapEngine.ts_1782132832477",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -894,7 +894,7 @@
     {
       "data": {},
       "from": "mile_stone/v0.2.17.md",
-      "id": "edge_backup_md/mile_stone/v0.2.17.md_src/core/FileScanner.ts_1782131578564",
+      "id": "edge_backup_md/mile_stone/v0.2.17.md_src/core/FileScanner.ts_1782132832478",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -909,7 +909,7 @@
     {
       "data": {},
       "from": "mile_stone/v0.2.17.md",
-      "id": "edge_backup_md/mile_stone/v0.2.17.md_src/core/GeminiParser.ts_1782131578564",
+      "id": "edge_backup_md/mile_stone/v0.2.17.md_src/core/GeminiParser.ts_1782132832478",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -924,7 +924,7 @@
     {
       "data": {},
       "from": "mile_stone/v0.2.17.md",
-      "id": "edge_backup_md/mile_stone/v0.2.17.md_src/extension.ts_1782131578564",
+      "id": "edge_backup_md/mile_stone/v0.2.17.md_src/extension.ts_1782132832478",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -939,7 +939,7 @@
     {
       "data": {},
       "from": "mile_stone/v0.2.17.md",
-      "id": "edge_backup_md/mile_stone/v0.2.17.md_src/webview/CanvasPanel.ts_1782131578564",
+      "id": "edge_backup_md/mile_stone/v0.2.17.md_src/webview/CanvasPanel.ts_1782132832478",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -954,7 +954,7 @@
     {
       "data": {},
       "from": "mile_stone/v0.2.17.md",
-      "id": "edge_backup_md/mile_stone/v0.2.17.md_v0.2.15_1782131578564",
+      "id": "edge_backup_md/mile_stone/v0.2.17.md_v0.2.15_1782132832477",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -969,7 +969,7 @@
     {
       "data": {},
       "from": "mile_stone/v0.2.18.md",
-      "id": "edge_backup_md/mile_stone/v0.2.18.md_v0.2.15_1782131578565",
+      "id": "edge_backup_md/mile_stone/v0.2.18.md_v0.2.15_1782132832478",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -984,7 +984,7 @@
     {
       "data": {},
       "from": "mile_stone/v0.2.20.md",
-      "id": "edge_backup_md/mile_stone/v0.2.20.md_src/core/AiOrchestrator.ts_1782131578565",
+      "id": "edge_backup_md/mile_stone/v0.2.20.md_src/core/AiOrchestrator.ts_1782132832478",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -999,7 +999,7 @@
     {
       "data": {},
       "from": "mile_stone/v0.2.20.md",
-      "id": "edge_backup_md/mile_stone/v0.2.20.md_v0.2.15_1782131578565",
+      "id": "edge_backup_md/mile_stone/v0.2.20.md_v0.2.15_1782132832478",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1014,7 +1014,7 @@
     {
       "data": {},
       "from": "backup_md/prompts/2026-02-17_keybinding_check.md",
-      "id": "edge_backup_md/prompts/2026-02-17_keybinding_check.md_package_1782131578565",
+      "id": "edge_backup_md/prompts/2026-02-17_keybinding_check.md_package_1782132832478",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1029,7 +1029,7 @@
     {
       "data": {},
       "from": "backup_md/prompts/2026-02-17_origin_edge_verification.md",
-      "id": "edge_backup_md/prompts/2026-02-17_origin_edge_verification.md_src/bootstrap/BootstrapEngine.ts_1782131578565",
+      "id": "edge_backup_md/prompts/2026-02-17_origin_edge_verification.md_src/bootstrap/BootstrapEngine.ts_1782132832478",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1044,7 +1044,7 @@
     {
       "data": {},
       "from": "backup_md/prompts/2026-02-17_origin_edge_verification.md",
-      "id": "edge_backup_md/prompts/2026-02-17_origin_edge_verification.md_src/core/PromptLogger.ts_1782131578565",
+      "id": "edge_backup_md/prompts/2026-02-17_origin_edge_verification.md_src/core/PromptLogger.ts_1782132832478",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1059,7 +1059,7 @@
     {
       "data": {},
       "from": "backup_md/README.ko.md",
-      "id": "edge_backup_md/README.ko.md_README.md_1782131578564",
+      "id": "edge_backup_md/README.ko.md_README.md_1782132832477",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1074,7 +1074,7 @@
     {
       "data": {},
       "from": "backup_md/README.ko.md",
-      "id": "edge_backup_md/README.ko.md_synapse_flow_v0.2.16_1782131578564",
+      "id": "edge_backup_md/README.ko.md_synapse_flow_v0.2.16_1782132832477",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1089,7 +1089,7 @@
     {
       "data": {},
       "from": "backup_md/README.ko.md",
-      "id": "edge_backup_md/README.ko.md_synapse_graph_v0.2.16_1782131578564",
+      "id": "edge_backup_md/README.ko.md_synapse_graph_v0.2.16_1782132832477",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1104,7 +1104,7 @@
     {
       "data": {},
       "from": "backup_md/README.ko.md",
-      "id": "edge_backup_md/README.ko.md_synapse_tree_v0.2.16_1782131578564",
+      "id": "edge_backup_md/README.ko.md_synapse_tree_v0.2.16_1782132832477",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1119,7 +1119,7 @@
     {
       "data": {},
       "from": "backup_md/README.md",
-      "id": "edge_backup_md/README.md_GHOST_NODE.md_1782131578564",
+      "id": "edge_backup_md/README.md_GHOST_NODE.md_1782132832477",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1134,7 +1134,7 @@
     {
       "data": {},
       "from": "backup_md/README.md",
-      "id": "edge_backup_md/README.md_README.md_1782131578564",
+      "id": "edge_backup_md/README.md_README.md_1782132832477",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1149,7 +1149,7 @@
     {
       "data": {},
       "from": "backup_md/README.md",
-      "id": "edge_backup_md/README.md_synapse_flow_v0.2.16_1782131578564",
+      "id": "edge_backup_md/README.md_synapse_flow_v0.2.16_1782132832477",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1164,7 +1164,7 @@
     {
       "data": {},
       "from": "backup_md/README.md",
-      "id": "edge_backup_md/README.md_synapse_graph_v0.2.16_1782131578564",
+      "id": "edge_backup_md/README.md_synapse_graph_v0.2.16_1782132832477",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1179,7 +1179,7 @@
     {
       "data": {},
       "from": "backup_md/README.md",
-      "id": "edge_backup_md/README.md_synapse_tree_v0.2.16_1782131578564",
+      "id": "edge_backup_md/README.md_synapse_tree_v0.2.16_1782132832477",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1194,7 +1194,7 @@
     {
       "data": {},
       "from": "release_note/CHANGELOG.md",
-      "id": "edge_backup_md/release_note/CHANGELOG.md_main_1782131578565",
+      "id": "edge_backup_md/release_note/CHANGELOG.md_main_1782132832478",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1209,7 +1209,7 @@
     {
       "data": {},
       "from": "release_note/CHANGELOG.md",
-      "id": "edge_backup_md/release_note/CHANGELOG.md_README.md_1782131578565",
+      "id": "edge_backup_md/release_note/CHANGELOG.md_README.md_1782132832478",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1224,7 +1224,7 @@
     {
       "data": {},
       "from": "release_note/GEMINI (사본).md",
-      "id": "edge_backup_md/release_note/GEMINI (사본).md_synapse_topology_view_1782131578565",
+      "id": "edge_backup_md/release_note/GEMINI (사본).md_synapse_topology_view_1782132832478",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1239,7 +1239,7 @@
     {
       "data": {},
       "from": "backup_md/walkthrough.md",
-      "id": "edge_backup_md/walkthrough.md_synapse-visual-architecture-v0.2.20_1782131578565",
+      "id": "edge_backup_md/walkthrough.md_synapse-visual-architecture-v0.2.20_1782132832478",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1254,7 +1254,7 @@
     {
       "data": {},
       "from": "fix_cluster.sh",
-      "id": "edge_fix_cluster.sh_cluster_id_1782131578565",
+      "id": "edge_fix_cluster.sh_cluster_id_1782132832479",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1269,7 +1269,7 @@
     {
       "data": {},
       "from": "fix_cluster.sh",
-      "id": "edge_fix_cluster.sh_position_1782131578565",
+      "id": "edge_fix_cluster.sh_position_1782132832479",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1284,7 +1284,7 @@
     {
       "data": {},
       "from": "fix_cluster.sh",
-      "id": "edge_fix_cluster.sh_ts_1782131578565",
+      "id": "edge_fix_cluster.sh_ts_1782132832479",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1299,7 +1299,7 @@
     {
       "data": {},
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22%EB%A6%AC%ED%8F%AC%ED%8A%B8_1782131578501",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22%EB%A6%AC%ED%8F%AC%ED%8A%B8_1782132832415",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1314,7 +1314,7 @@
     {
       "data": {},
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22backup_md%2FREADME.ko_1782131578505",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22backup_md%2FREADME.ko_1782132832419",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1329,7 +1329,7 @@
     {
       "data": {},
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22command%3Asynapse.focusNode%3F%2522mile_stone%252F_v0.3_1782131578555",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22command%3Asynapse.focusNode%3F%2522mile_stone%252F_v0.3_1782132832469",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1344,7 +1344,7 @@
     {
       "data": {},
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22command%3Asynapse.focusNode%3F%2522mile_stone%252F%25EA%25B5%25AC%25ED%2598%2584%25EC%2595%2588%25EB%2590%259C%25EB%25AA%25A9%25EB%25A1%259D%252Fb%252Fv0.2_1782131578556",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22command%3Asynapse.focusNode%3F%2522mile_stone%252F%25EA%25B5%25AC%25ED%2598%2584%25EC%2595%2588%25EB%2590%259C%25EB%25AA%25A9%25EB%25A1%259D%252Fb%252Fv0.2_1782132832469",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1359,7 +1359,7 @@
     {
       "data": {},
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22command%3Asynapse.focusNode%3F%2522mile_stone%252F%25EA%25B5%25AC%25ED%2598%2584%25EC%2595%2588%25EB%2590%259C%25EB%25AA%25A9%25EB%25A1%259D%252Fb%252Fv1_1782131578556",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22command%3Asynapse.focusNode%3F%2522mile_stone%252F%25EA%25B5%25AC%25ED%2598%2584%25EC%2595%2588%25EB%2590%259C%25EB%25AA%25A9%25EB%25A1%259D%252Fb%252Fv1_1782132832469",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1374,7 +1374,7 @@
     {
       "data": {},
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22command%3Asynapse.focusNode%3F%2522mile_stone%252F%25EA%25B5%25AC%25ED%2598%2584%25EC%2595%2588%25EB%2590%259C%25EB%25AA%25A9%25EB%25A1%259D%252Fv0.2_1782131578556",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22command%3Asynapse.focusNode%3F%2522mile_stone%252F%25EA%25B5%25AC%25ED%2598%2584%25EC%2595%2588%25EB%2590%259C%25EB%25AA%25A9%25EB%25A1%259D%252Fv0.2_1782132832470",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1389,7 +1389,7 @@
     {
       "data": {},
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22command%3Asynapse.focusNode%3F%2522mile_stone%252Fv0.2_1782131578556",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22command%3Asynapse.focusNode%3F%2522mile_stone%252Fv0.2_1782132832470",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1404,7 +1404,7 @@
     {
       "data": {},
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22command%3Asynapse.focusNode%3F%2522mile_stone%252Fv0.3.21_1782131578557",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22command%3Asynapse.focusNode%3F%2522mile_stone%252Fv0.3.21_1782132832470",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1419,7 +1419,7 @@
     {
       "data": {},
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22command%3Asynapse.focusNode%3F%2522release_note%252Frelease_notes_0.2_1782131578557",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22command%3Asynapse.focusNode%3F%2522release_note%252Frelease_notes_0.2_1782132832470",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1434,7 +1434,7 @@
     {
       "data": {},
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22command%3Asynapse.focusNode%3F%2522release_note%252FRELEASES_v0.2_1782131578557",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22command%3Asynapse.focusNode%3F%2522release_note%252FRELEASES_v0.2_1782132832471",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1449,7 +1449,7 @@
     {
       "data": {},
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22command%3Asynapse.focusNode%3F%2522release_note%252Fv0.1_1782131578557",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22command%3Asynapse.focusNode%3F%2522release_note%252Fv0.1_1782132832471",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1464,7 +1464,7 @@
     {
       "data": {},
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22command%3Asynapse.focusNode%3F%2522release_note%252Fv0.2.18_1782131578558",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22command%3Asynapse.focusNode%3F%2522release_note%252Fv0.2.18_1782132832471",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1479,7 +1479,7 @@
     {
       "data": {},
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22command%3Asynapse.focusNode%3F%2522release_note%252Fv0.3.21_1782131578558",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22command%3Asynapse.focusNode%3F%2522release_note%252Fv0.3.21_1782132832471",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1494,7 +1494,7 @@
     {
       "data": {},
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22command%3Asynapse.focusNode%3F%2522src%252Fverify_v0.3_1782131578558",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22command%3Asynapse.focusNode%3F%2522src%252Fverify_v0.3_1782132832472",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1509,7 +1509,7 @@
     {
       "data": {},
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22command%3Asynapse.focusNode%3F%2522v0.2_1782131578560",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22command%3Asynapse.focusNode%3F%2522v0.2_1782132832473",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1524,7 +1524,7 @@
     {
       "data": {},
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22mile_stone%2F_v0.3.0_1782131578511",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22mile_stone%2F_v0.3.0_1782132832425",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1539,7 +1539,7 @@
     {
       "data": {},
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22mile_stone%2F%EA%B5%AC%ED%98%84%EC%95%88%EB%90%9C%EB%AA%A9%EB%A1%9D%2Fb%2Fv0.2.19_1782131578523",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22mile_stone%2F%EA%B5%AC%ED%98%84%EC%95%88%EB%90%9C%EB%AA%A9%EB%A1%9D%2Fb%2Fv0.2.19_1782132832437",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1554,7 +1554,7 @@
     {
       "data": {},
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22mile_stone%2F%EA%B5%AC%ED%98%84%EC%95%88%EB%90%9C%EB%AA%A9%EB%A1%9D%2Fb%2Fv1.0_1782131578523",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22mile_stone%2F%EA%B5%AC%ED%98%84%EC%95%88%EB%90%9C%EB%AA%A9%EB%A1%9D%2Fb%2Fv1.0_1782132832437",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1569,7 +1569,7 @@
     {
       "data": {},
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22mile_stone%2F%EA%B5%AC%ED%98%84%EC%95%88%EB%90%9C%EB%AA%A9%EB%A1%9D%2Fv0.2.19_1782131578523",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22mile_stone%2F%EA%B5%AC%ED%98%84%EC%95%88%EB%90%9C%EB%AA%A9%EB%A1%9D%2Fv0.2.19_1782132832437",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1584,7 +1584,7 @@
     {
       "data": {},
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22mile_stone%2FSYNAPSE_v0.3.30_BOOTSTRAP_SPECIFICATION_1782131578524",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22mile_stone%2FSYNAPSE_v0.3.30_BOOTSTRAP_SPECIFICATION_1782132832438",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1599,7 +1599,7 @@
     {
       "data": {},
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22mile_stone%2Fv0.2.18_1782131578500",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22mile_stone%2Fv0.2.18_1782132832414",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1614,7 +1614,7 @@
     {
       "data": {},
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22mile_stone%2Fv0.3.10_hotfix_plan_1782131578530",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22mile_stone%2Fv0.3.10_hotfix_plan_1782132832444",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1629,7 +1629,7 @@
     {
       "data": {},
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22mile_stone%2Fv0.3.21.9_1782131578533",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22mile_stone%2Fv0.3.21.9_1782132832446",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1644,7 +1644,7 @@
     {
       "data": {},
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22mile_stone%2Fv0.3.22.10_1782131578533",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22mile_stone%2Fv0.3.22.10_1782132832446",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1659,7 +1659,7 @@
     {
       "data": {},
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22README.ko_1782131578536",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22README.ko_1782132832450",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1674,7 +1674,7 @@
     {
       "data": {},
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22release_note%2Frelease_notes_0.2.12_1782131578506",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22release_note%2Frelease_notes_0.2.12_1782132832420",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1689,7 +1689,7 @@
     {
       "data": {},
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22release_note%2FRELEASES_v0.2.7_1782131578506",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22release_note%2FRELEASES_v0.2.7_1782132832421",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1704,7 +1704,7 @@
     {
       "data": {},
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22release_note%2Fv0.1.6_release_notes_1782131578506",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22release_note%2Fv0.1.6_release_notes_1782132832421",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1719,7 +1719,7 @@
     {
       "data": {},
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22release_note%2Fv0.2.18_release_notes_1782131578501",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22release_note%2Fv0.2.18_release_notes_1782132832415",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1734,7 +1734,7 @@
     {
       "data": {},
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22release_note%2Fv0.2.18.1_release_notes_1782131578539",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22release_note%2Fv0.2.18.1_release_notes_1782132832450",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1749,7 +1749,7 @@
     {
       "data": {},
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22release_note%2Fv0.3.09_fix_release_notes_1782131578545",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22release_note%2Fv0.3.09_fix_release_notes_1782132832459",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1764,7 +1764,7 @@
     {
       "data": {},
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22release_note%2Fv0.3.21.9_release_notes_1782131578549",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22release_note%2Fv0.3.21.9_release_notes_1782132832462",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1779,7 +1779,7 @@
     {
       "data": {},
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22release_note%2Fv0.3.22.10_release_notes_1782131578549",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22release_note%2Fv0.3.22.10_release_notes_1782132832462",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1794,7 +1794,7 @@
     {
       "data": {},
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22src%2Ftest%2Fphase9_acceptance.test_1782131578555",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22src%2Ftest%2Fphase9_acceptance.test_1782132832468",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1809,7 +1809,7 @@
     {
       "data": {},
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22src%2Ftest%2Ftransport_validation.test_1782131578555",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22src%2Ftest%2Ftransport_validation.test_1782132832468",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1824,7 +1824,7 @@
     {
       "data": {},
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22src%2Fverify_v0.3.10_1782131578560",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22src%2Fverify_v0.3.10_1782132832473",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1839,7 +1839,7 @@
     {
       "data": {},
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22synapse_flow_v0.2_1782131578560",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22synapse_flow_v0.2_1782132832473",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1854,7 +1854,7 @@
     {
       "data": {},
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22synapse_graph_v0.2_1782131578560",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22synapse_graph_v0.2_1782132832474",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1869,7 +1869,7 @@
     {
       "data": {},
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22synapse_topology_v0.3_1782131578560",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22synapse_topology_v0.3_1782132832474",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1884,7 +1884,7 @@
     {
       "data": {},
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22synapse_tree_v0.2_1782131578561",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22synapse_tree_v0.2_1782132832474",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1899,7 +1899,7 @@
     {
       "data": {},
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22synapse-visual-architecture-v0.2_1782131578561",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22synapse-visual-architecture-v0.2_1782132832474",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1914,7 +1914,7 @@
     {
       "data": {},
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22v0.2_1782131578561",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22v0.2_1782132832474",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1929,7 +1929,7 @@
     {
       "data": {},
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22v0.3.22_1782131578561",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22v0.3.22_1782132832474",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1944,7 +1944,7 @@
     {
       "data": {},
       "from": "mile_stone/_v0.3.09_COMPREHENSIVE.md",
-      "id": "edge_mile_stone/_v0.3.09_COMPREHENSIVE.md_README.md_1782131578565",
+      "id": "edge_mile_stone/_v0.3.09_COMPREHENSIVE.md_README.md_1782132832479",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1959,7 +1959,7 @@
     {
       "data": {},
       "from": "mile_stone/_v0.3.09.md",
-      "id": "edge_mile_stone/_v0.3.09.md_README.md_1782131578565",
+      "id": "edge_mile_stone/_v0.3.09.md_README.md_1782132832479",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1974,7 +1974,7 @@
     {
       "data": {},
       "from": "mile_stone/_v0.3.10_implementation.md",
-      "id": "edge_mile_stone/_v0.3.10_implementation.md_v0.3.10_Bootstrap_Locked_1782131578566",
+      "id": "edge_mile_stone/_v0.3.10_implementation.md_v0.3.10_Bootstrap_Locked_1782132832479",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1989,7 +1989,7 @@
     {
       "data": {},
       "from": "mile_stone/_v0.3.2.md",
-      "id": "edge_mile_stone/_v0.3.2.md_v0.3.10_Bootstrap_Locked_1782131578566",
+      "id": "edge_mile_stone/_v0.3.2.md_v0.3.10_Bootstrap_Locked_1782132832479",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2004,7 +2004,7 @@
     {
       "data": {},
       "from": "mile_stone/_v0.3.3.md",
-      "id": "edge_mile_stone/_v0.3.3.md_v0.3.10_Bootstrap_Locked_1782131578566",
+      "id": "edge_mile_stone/_v0.3.3.md_v0.3.10_Bootstrap_Locked_1782132832479",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2019,7 +2019,7 @@
     {
       "data": {},
       "from": "mile_stone/_v0.3.4.md",
-      "id": "edge_mile_stone/_v0.3.4.md_synapse-visual-architecture-v0.3.5_1782131578566",
+      "id": "edge_mile_stone/_v0.3.4.md_synapse-visual-architecture-v0.3.5_1782132832479",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2034,7 +2034,7 @@
     {
       "data": {},
       "from": "mile_stone/_v0.3.4.md",
-      "id": "edge_mile_stone/_v0.3.4.md_v0.3.10_Bootstrap_Locked_1782131578566",
+      "id": "edge_mile_stone/_v0.3.4.md_v0.3.10_Bootstrap_Locked_1782132832479",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2049,7 +2049,7 @@
     {
       "data": {},
       "from": "mile_stone/_v0.3.8.md",
-      "id": "edge_mile_stone/_v0.3.8.md_synapse-visual-architecture-v0.3.5_1782131578566",
+      "id": "edge_mile_stone/_v0.3.8.md_synapse-visual-architecture-v0.3.5_1782132832479",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2064,7 +2064,7 @@
     {
       "data": {},
       "from": "mile_stone/_v0.3.8.md",
-      "id": "edge_mile_stone/_v0.3.8.md_v0.3.10_Bootstrap_Locked_1782131578566",
+      "id": "edge_mile_stone/_v0.3.8.md_v0.3.10_Bootstrap_Locked_1782132832479",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2079,7 +2079,7 @@
     {
       "data": {},
       "from": "mile_stone/구현안된목록/b/v0.2.19.md",
-      "id": "edge_mile_stone/구현안된목록/b/v0.2.19.md_architecture.md_1782131578572",
+      "id": "edge_mile_stone/구현안된목록/b/v0.2.19.md_architecture.md_1782132832485",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2094,7 +2094,7 @@
     {
       "data": {},
       "from": "mile_stone/구현안된목록/b/v0.2.19.md",
-      "id": "edge_mile_stone/구현안된목록/b/v0.2.19.md_v0.2.15_1782131578572",
+      "id": "edge_mile_stone/구현안된목록/b/v0.2.19.md_v0.2.15_1782132832485",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2109,7 +2109,7 @@
     {
       "data": {},
       "from": "mile_stone/구현안된목록/b/v0.2.20.md",
-      "id": "edge_mile_stone/구현안된목록/b/v0.2.20.md_.backup/mile_stone/v0.2.18.md_1782131578572",
+      "id": "edge_mile_stone/구현안된목록/b/v0.2.20.md_.backup/mile_stone/v0.2.18.md_1782132832485",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2124,7 +2124,7 @@
     {
       "data": {},
       "from": "mile_stone/구현안된목록/b/v0.2.20.md",
-      "id": "edge_mile_stone/구현안된목록/b/v0.2.20.md_architecture.md_1782131578572",
+      "id": "edge_mile_stone/구현안된목록/b/v0.2.20.md_architecture.md_1782132832485",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2139,7 +2139,7 @@
     {
       "data": {},
       "from": "mile_stone/구현안된목록/b/v0.2.20.md",
-      "id": "edge_mile_stone/구현안된목록/b/v0.2.20.md_v0.2.15_1782131578572",
+      "id": "edge_mile_stone/구현안된목록/b/v0.2.20.md_v0.2.15_1782132832485",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2154,7 +2154,7 @@
     {
       "data": {},
       "from": "mile_stone/구현안된목록/v0.2.19.md",
-      "id": "edge_mile_stone/구현안된목록/v0.2.19.md_architecture.md_1782131578572",
+      "id": "edge_mile_stone/구현안된목록/v0.2.19.md_architecture.md_1782132832485",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2169,7 +2169,7 @@
     {
       "data": {},
       "from": "mile_stone/구현안된목록/v0.2.19.md",
-      "id": "edge_mile_stone/구현안된목록/v0.2.19.md_v0.2.15_1782131578572",
+      "id": "edge_mile_stone/구현안된목록/v0.2.19.md_v0.2.15_1782132832485",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2184,7 +2184,7 @@
     {
       "data": {},
       "from": "mile_stone/구현안된목록/v0.2.20.md",
-      "id": "edge_mile_stone/구현안된목록/v0.2.20.md_.backup/mile_stone/v0.2.18.md_1782131578572",
+      "id": "edge_mile_stone/구현안된목록/v0.2.20.md_.backup/mile_stone/v0.2.18.md_1782132832485",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2199,7 +2199,7 @@
     {
       "data": {},
       "from": "mile_stone/구현안된목록/v0.2.20.md",
-      "id": "edge_mile_stone/구현안된목록/v0.2.20.md_architecture.md_1782131578572",
+      "id": "edge_mile_stone/구현안된목록/v0.2.20.md_architecture.md_1782132832485",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2214,7 +2214,7 @@
     {
       "data": {},
       "from": "mile_stone/구현안된목록/v0.2.20.md",
-      "id": "edge_mile_stone/구현안된목록/v0.2.20.md_v0.2.15_1782131578572",
+      "id": "edge_mile_stone/구현안된목록/v0.2.20.md_v0.2.15_1782132832485",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2229,7 +2229,7 @@
     {
       "data": {},
       "from": "mile_stone/v0.2.18.2.md",
-      "id": "edge_mile_stone/v0.2.18.2.md_.backup/mile_stone/v0.2.18.md_1782131578567",
+      "id": "edge_mile_stone/v0.2.18.2.md_.backup/mile_stone/v0.2.18.md_1782132832480",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2244,7 +2244,7 @@
     {
       "data": {},
       "from": "mile_stone/v0.2.18.2.md",
-      "id": "edge_mile_stone/v0.2.18.2.md_architecture.md_1782131578567",
+      "id": "edge_mile_stone/v0.2.18.2.md_architecture.md_1782132832480",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2259,7 +2259,7 @@
     {
       "data": {},
       "from": "mile_stone/v0.2.18.2.md",
-      "id": "edge_mile_stone/v0.2.18.2.md_v0.3.10_Bootstrap_Locked_1782131578567",
+      "id": "edge_mile_stone/v0.2.18.2.md_v0.3.10_Bootstrap_Locked_1782132832480",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2274,7 +2274,7 @@
     {
       "data": {},
       "from": "mile_stone/v0.2.19.md",
-      "id": "edge_mile_stone/v0.2.19.md_architecture.md_1782131578567",
+      "id": "edge_mile_stone/v0.2.19.md_architecture.md_1782132832480",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2289,7 +2289,7 @@
     {
       "data": {},
       "from": "mile_stone/v0.2.19.md",
-      "id": "edge_mile_stone/v0.2.19.md_v0.2.15_1782131578567",
+      "id": "edge_mile_stone/v0.2.19.md_v0.2.15_1782132832480",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2304,7 +2304,7 @@
     {
       "data": {},
       "from": "mile_stone/v0.2.20.md",
-      "id": "edge_mile_stone/v0.2.20.md_.backup/mile_stone/v0.2.18.md_1782131578567",
+      "id": "edge_mile_stone/v0.2.20.md_.backup/mile_stone/v0.2.18.md_1782132832480",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2319,7 +2319,7 @@
     {
       "data": {},
       "from": "mile_stone/v0.2.20.md",
-      "id": "edge_mile_stone/v0.2.20.md_architecture.md_1782131578567",
+      "id": "edge_mile_stone/v0.2.20.md_architecture.md_1782132832480",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2334,7 +2334,7 @@
     {
       "data": {},
       "from": "mile_stone/v0.2.21-fix.md",
-      "id": "edge_mile_stone/v0.2.21-fix.md_v0.2.15_1782131578567",
+      "id": "edge_mile_stone/v0.2.21-fix.md_v0.2.15_1782132832480",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2349,7 +2349,7 @@
     {
       "data": {},
       "from": "mile_stone/v0.2.23.md",
-      "id": "edge_mile_stone/v0.2.23.md_v0.2.15_1782131578567",
+      "id": "edge_mile_stone/v0.2.23.md_v0.2.15_1782132832480",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2364,7 +2364,7 @@
     {
       "data": {},
       "from": "mile_stone/v0.2.24.md",
-      "id": "edge_mile_stone/v0.2.24.md_v0.2.15_1782131578567",
+      "id": "edge_mile_stone/v0.2.24.md_v0.2.15_1782132832480",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2379,7 +2379,7 @@
     {
       "data": {},
       "from": "mile_stone/v0.2.25.md",
-      "id": "edge_mile_stone/v0.2.25.md_v0.2.15_1782131578567",
+      "id": "edge_mile_stone/v0.2.25.md_v0.2.15_1782132832480",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2394,7 +2394,7 @@
     {
       "data": {},
       "from": "mile_stone/v0.2.26.md",
-      "id": "edge_mile_stone/v0.2.26.md_v0.2.15_1782131578567",
+      "id": "edge_mile_stone/v0.2.26.md_v0.2.15_1782132832480",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2409,7 +2409,7 @@
     {
       "data": {},
       "from": "mile_stone/v0.2.27.md",
-      "id": "edge_mile_stone/v0.2.27.md_v0.2.15_1782131578567",
+      "id": "edge_mile_stone/v0.2.27.md_v0.2.15_1782132832481",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2424,7 +2424,7 @@
     {
       "data": {},
       "from": "mile_stone/v0.2.28.md",
-      "id": "edge_mile_stone/v0.2.28.md_v0.2.15_1782131578567",
+      "id": "edge_mile_stone/v0.2.28.md_v0.2.15_1782132832481",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2439,7 +2439,7 @@
     {
       "data": {},
       "from": "mile_stone/v0.2.29.md",
-      "id": "edge_mile_stone/v0.2.29.md_v0.2.15_1782131578567",
+      "id": "edge_mile_stone/v0.2.29.md_v0.2.15_1782132832481",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2454,7 +2454,7 @@
     {
       "data": {},
       "from": "mile_stone/v0.2.30.md",
-      "id": "edge_mile_stone/v0.2.30.md_v0.2.15_1782131578568",
+      "id": "edge_mile_stone/v0.2.30.md_v0.2.15_1782132832481",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2469,7 +2469,7 @@
     {
       "data": {},
       "from": "mile_stone/v0.2.31.md",
-      "id": "edge_mile_stone/v0.2.31.md_v0.2.15_1782131578568",
+      "id": "edge_mile_stone/v0.2.31.md_v0.2.15_1782132832481",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2484,7 +2484,7 @@
     {
       "data": {},
       "from": "mile_stone/v0.2.32.md",
-      "id": "edge_mile_stone/v0.2.32.md_v0.2.15_1782131578568",
+      "id": "edge_mile_stone/v0.2.32.md_v0.2.15_1782132832481",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2499,7 +2499,7 @@
     {
       "data": {},
       "from": "mile_stone/v0.2.33.md",
-      "id": "edge_mile_stone/v0.2.33.md_v0.2.15_1782131578568",
+      "id": "edge_mile_stone/v0.2.33.md_v0.2.15_1782132832481",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2514,7 +2514,7 @@
     {
       "data": {},
       "from": "mile_stone/v0.2.34.md",
-      "id": "edge_mile_stone/v0.2.34.md_v0.2.15_1782131578568",
+      "id": "edge_mile_stone/v0.2.34.md_v0.2.15_1782132832481",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2529,7 +2529,7 @@
     {
       "data": {},
       "from": "mile_stone/v0.2.35.md",
-      "id": "edge_mile_stone/v0.2.35.md_v0.2.15_1782131578568",
+      "id": "edge_mile_stone/v0.2.35.md_v0.2.15_1782132832481",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2544,7 +2544,7 @@
     {
       "data": {},
       "from": "mile_stone/v0.2.36.md",
-      "id": "edge_mile_stone/v0.2.36.md_v0.2.15_1782131578568",
+      "id": "edge_mile_stone/v0.2.36.md_v0.2.15_1782132832482",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2559,7 +2559,7 @@
     {
       "data": {},
       "from": "mile_stone/v0.2.37.md",
-      "id": "edge_mile_stone/v0.2.37.md_RawTextMiner_1782131578568",
+      "id": "edge_mile_stone/v0.2.37.md_RawTextMiner_1782132832482",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2574,7 +2574,7 @@
     {
       "data": {},
       "from": "mile_stone/v0.2.37.md",
-      "id": "edge_mile_stone/v0.2.37.md_src/core/DirectChatScraper.ts_1782131578568",
+      "id": "edge_mile_stone/v0.2.37.md_src/core/DirectChatScraper.ts_1782132832482",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2589,7 +2589,7 @@
     {
       "data": {},
       "from": "mile_stone/v0.2.37.md",
-      "id": "edge_mile_stone/v0.2.37.md_src/core/VscdbAdapter.ts_1782131578569",
+      "id": "edge_mile_stone/v0.2.37.md_src/core/VscdbAdapter.ts_1782132832482",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2604,7 +2604,7 @@
     {
       "data": {},
       "from": "mile_stone/v0.2.37.md",
-      "id": "edge_mile_stone/v0.2.37.md_v0.2.15_1782131578568",
+      "id": "edge_mile_stone/v0.2.37.md_v0.2.15_1782132832482",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2619,7 +2619,7 @@
     {
       "data": {},
       "from": "mile_stone/v0.2.38.md",
-      "id": "edge_mile_stone/v0.2.38.md_RawTextMiner_1782131578569",
+      "id": "edge_mile_stone/v0.2.38.md_RawTextMiner_1782132832482",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2634,7 +2634,7 @@
     {
       "data": {},
       "from": "mile_stone/v0.2.38.md",
-      "id": "edge_mile_stone/v0.2.38.md_src/core/DirectChatScraper.ts_1782131578569",
+      "id": "edge_mile_stone/v0.2.38.md_src/core/DirectChatScraper.ts_1782132832482",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2649,7 +2649,7 @@
     {
       "data": {},
       "from": "mile_stone/v0.2.38.md",
-      "id": "edge_mile_stone/v0.2.38.md_src/core/VscdbAdapter.ts_1782131578569",
+      "id": "edge_mile_stone/v0.2.38.md_src/core/VscdbAdapter.ts_1782132832482",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2664,7 +2664,7 @@
     {
       "data": {},
       "from": "mile_stone/v0.2.38.md",
-      "id": "edge_mile_stone/v0.2.38.md_src/extension.ts_1782131578569",
+      "id": "edge_mile_stone/v0.2.38.md_src/extension.ts_1782132832482",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2679,7 +2679,7 @@
     {
       "data": {},
       "from": "mile_stone/v0.2.38.md",
-      "id": "edge_mile_stone/v0.2.38.md_v0.2.15_1782131578569",
+      "id": "edge_mile_stone/v0.2.38.md_v0.2.15_1782132832482",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2694,7 +2694,7 @@
     {
       "data": {},
       "from": "mile_stone/v0.2.43.md",
-      "id": "edge_mile_stone/v0.2.43.md_v0.2.15_1782131578569",
+      "id": "edge_mile_stone/v0.2.43.md_v0.2.15_1782132832482",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2709,7 +2709,7 @@
     {
       "data": {},
       "from": "mile_stone/v0.2.44.md",
-      "id": "edge_mile_stone/v0.2.44.md_v0.2.15_1782131578569",
+      "id": "edge_mile_stone/v0.2.44.md_v0.2.15_1782132832482",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2724,7 +2724,7 @@
     {
       "data": {},
       "from": "mile_stone/v0.2.45.md",
-      "id": "edge_mile_stone/v0.2.45.md_v0.2.15_1782131578569",
+      "id": "edge_mile_stone/v0.2.45.md_v0.2.15_1782132832482",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2739,7 +2739,7 @@
     {
       "data": {},
       "from": "mile_stone/v0.2.46.md",
-      "id": "edge_mile_stone/v0.2.46.md_v0.2.15_1782131578569",
+      "id": "edge_mile_stone/v0.2.46.md_v0.2.15_1782132832482",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2754,7 +2754,7 @@
     {
       "data": {},
       "from": "mile_stone/v0.2.47.md",
-      "id": "edge_mile_stone/v0.2.47.md_v0.2.15_1782131578569",
+      "id": "edge_mile_stone/v0.2.47.md_v0.2.15_1782132832483",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2769,7 +2769,7 @@
     {
       "data": {},
       "from": "mile_stone/v0.2.48.md",
-      "id": "edge_mile_stone/v0.2.48.md_v0.2.15_1782131578569",
+      "id": "edge_mile_stone/v0.2.48.md_v0.2.15_1782132832483",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2784,7 +2784,7 @@
     {
       "data": {},
       "from": "mile_stone/v0.2.50.md",
-      "id": "edge_mile_stone/v0.2.50.md_v0.2.15_1782131578569",
+      "id": "edge_mile_stone/v0.2.50.md_v0.2.15_1782132832483",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2799,7 +2799,7 @@
     {
       "data": {},
       "from": "mile_stone/v0.2.51.md",
-      "id": "edge_mile_stone/v0.2.51.md_v0.2.15_1782131578569",
+      "id": "edge_mile_stone/v0.2.51.md_v0.2.15_1782132832483",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2814,7 +2814,7 @@
     {
       "data": {},
       "from": "mile_stone/v0.2.52.md",
-      "id": "edge_mile_stone/v0.2.52.md_v0.2.15_1782131578570",
+      "id": "edge_mile_stone/v0.2.52.md_v0.2.15_1782132832483",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2829,7 +2829,7 @@
     {
       "data": {},
       "from": "mile_stone/v0.2.53.md",
-      "id": "edge_mile_stone/v0.2.53.md_v0.2.15_1782131578570",
+      "id": "edge_mile_stone/v0.2.53.md_v0.2.15_1782132832483",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2844,7 +2844,7 @@
     {
       "data": {},
       "from": "mile_stone/v0.3.11.md",
-      "id": "edge_mile_stone/v0.3.11.md_v0.3.10_Bootstrap_Locked_1782131578570",
+      "id": "edge_mile_stone/v0.3.11.md_v0.3.10_Bootstrap_Locked_1782132832483",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2859,7 +2859,7 @@
     {
       "data": {},
       "from": "mile_stone/v0.3.12.md",
-      "id": "edge_mile_stone/v0.3.12.md_v0.3.10_Bootstrap_Locked_1782131578570",
+      "id": "edge_mile_stone/v0.3.12.md_v0.3.10_Bootstrap_Locked_1782132832483",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2874,7 +2874,7 @@
     {
       "data": {},
       "from": "mile_stone/v0.3.13.md",
-      "id": "edge_mile_stone/v0.3.13.md_v0.3.10_Bootstrap_Locked_1782131578570",
+      "id": "edge_mile_stone/v0.3.13.md_v0.3.10_Bootstrap_Locked_1782132832483",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2889,7 +2889,7 @@
     {
       "data": {},
       "from": "mile_stone/v0.3.14.md",
-      "id": "edge_mile_stone/v0.3.14.md_v0.3.10_Bootstrap_Locked_1782131578570",
+      "id": "edge_mile_stone/v0.3.14.md_v0.3.10_Bootstrap_Locked_1782132832483",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2904,7 +2904,7 @@
     {
       "data": {},
       "from": "mile_stone/v0.3.15.md",
-      "id": "edge_mile_stone/v0.3.15.md_v0.3.10_Bootstrap_Locked_1782131578570",
+      "id": "edge_mile_stone/v0.3.15.md_v0.3.10_Bootstrap_Locked_1782132832483",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2919,7 +2919,7 @@
     {
       "data": {},
       "from": "mile_stone/v0.3.17.md",
-      "id": "edge_mile_stone/v0.3.17.md_v0.3.10_Bootstrap_Locked_1782131578570",
+      "id": "edge_mile_stone/v0.3.17.md_v0.3.10_Bootstrap_Locked_1782132832483",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2934,7 +2934,7 @@
     {
       "data": {},
       "from": "mile_stone/v0.3.18.md",
-      "id": "edge_mile_stone/v0.3.18.md_v0.3.10_Bootstrap_Locked_1782131578570",
+      "id": "edge_mile_stone/v0.3.18.md_v0.3.10_Bootstrap_Locked_1782132832483",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2949,7 +2949,7 @@
     {
       "data": {},
       "from": "mile_stone/v0.3.19.md",
-      "id": "edge_mile_stone/v0.3.19.md_v0.3.10_Bootstrap_Locked_1782131578570",
+      "id": "edge_mile_stone/v0.3.19.md_v0.3.10_Bootstrap_Locked_1782132832483",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2964,7 +2964,7 @@
     {
       "data": {},
       "from": "mile_stone/v0.3.20.md",
-      "id": "edge_mile_stone/v0.3.20.md_v0.3.10_Bootstrap_Locked_1782131578570",
+      "id": "edge_mile_stone/v0.3.20.md_v0.3.10_Bootstrap_Locked_1782132832484",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2979,7 +2979,7 @@
     {
       "data": {},
       "from": "mile_stone/v0.3.21.md",
-      "id": "edge_mile_stone/v0.3.21.md_v0.3.10_Bootstrap_Locked_1782131578570",
+      "id": "edge_mile_stone/v0.3.21.md_v0.3.10_Bootstrap_Locked_1782132832484",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2994,7 +2994,7 @@
     {
       "data": {},
       "from": "mile_stone/v0.3.22.10.md",
-      "id": "edge_mile_stone/v0.3.22.10.md_v0.3.10_Bootstrap_Locked_1782131578570",
+      "id": "edge_mile_stone/v0.3.22.10.md_v0.3.10_Bootstrap_Locked_1782132832484",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3009,7 +3009,7 @@
     {
       "data": {},
       "from": "mile_stone/v0.3.22.11.md",
-      "id": "edge_mile_stone/v0.3.22.11.md_v0.3.22.10_1782131578571",
+      "id": "edge_mile_stone/v0.3.22.11.md_v0.3.22.10_1782132832484",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3024,7 +3024,7 @@
     {
       "data": {},
       "from": "mile_stone/v0.3.23.md",
-      "id": "edge_mile_stone/v0.3.23.md_demo/canvas-engine.js_1782131578571",
+      "id": "edge_mile_stone/v0.3.23.md_demo/canvas-engine.js_1782132832484",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3039,7 +3039,7 @@
     {
       "data": {},
       "from": "mile_stone/v0.3.23.md",
-      "id": "edge_mile_stone/v0.3.23.md_index_1782131578571",
+      "id": "edge_mile_stone/v0.3.23.md_index_1782132832484",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3054,7 +3054,7 @@
     {
       "data": {},
       "from": "mile_stone/v0.3.23.md",
-      "id": "edge_mile_stone/v0.3.23.md_src/extension.ts_1782131578571",
+      "id": "edge_mile_stone/v0.3.23.md_src/extension.ts_1782132832484",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3069,7 +3069,7 @@
     {
       "data": {},
       "from": "mile_stone/v0.3.23.md",
-      "id": "edge_mile_stone/v0.3.23.md_v0.3.10_Bootstrap_Locked_1782131578571",
+      "id": "edge_mile_stone/v0.3.23.md_v0.3.10_Bootstrap_Locked_1782132832484",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3084,7 +3084,7 @@
     {
       "data": {},
       "from": "mile_stone/v0.3.24.md",
-      "id": "edge_mile_stone/v0.3.24.md_v0.3.10_Bootstrap_Locked_1782131578571",
+      "id": "edge_mile_stone/v0.3.24.md_v0.3.10_Bootstrap_Locked_1782132832484",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3099,7 +3099,7 @@
     {
       "data": {},
       "from": "mile_stone/v0.3.26.md",
-      "id": "edge_mile_stone/v0.3.26.md_demo/canvas-engine.js_1782131578571",
+      "id": "edge_mile_stone/v0.3.26.md_demo/canvas-engine.js_1782132832484",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3114,7 +3114,7 @@
     {
       "data": {},
       "from": "mile_stone/v0.3.26.md",
-      "id": "edge_mile_stone/v0.3.26.md_package_1782131578571",
+      "id": "edge_mile_stone/v0.3.26.md_package_1782132832484",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3129,7 +3129,7 @@
     {
       "data": {},
       "from": "mile_stone/v0.3.26.md",
-      "id": "edge_mile_stone/v0.3.26.md_v0.3.10_Bootstrap_Locked_1782131578571",
+      "id": "edge_mile_stone/v0.3.26.md_v0.3.10_Bootstrap_Locked_1782132832484",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3144,7 +3144,7 @@
     {
       "data": {},
       "from": "mile_stone/v0.3.27.md",
-      "id": "edge_mile_stone/v0.3.27.md_v0.3.10_Bootstrap_Locked_1782131578571",
+      "id": "edge_mile_stone/v0.3.27.md_v0.3.10_Bootstrap_Locked_1782132832484",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3159,7 +3159,7 @@
     {
       "data": {},
       "from": "mile_stone/v0.3.28.md",
-      "id": "edge_mile_stone/v0.3.28.md_v0.3.10_Bootstrap_Locked_1782131578571",
+      "id": "edge_mile_stone/v0.3.28.md_v0.3.10_Bootstrap_Locked_1782132832485",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3174,7 +3174,7 @@
     {
       "data": {},
       "from": "mile_stone/v0.3.29.md",
-      "id": "edge_mile_stone/v0.3.29.md_v0.3.10_Bootstrap_Locked_1782131578572",
+      "id": "edge_mile_stone/v0.3.29.md_v0.3.10_Bootstrap_Locked_1782132832485",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3189,7 +3189,7 @@
     {
       "data": {},
       "from": "mile_stone/v0.3.30.1.md",
-      "id": "edge_mile_stone/v0.3.30.1.md_demo/canvas-engine.js_1782131578572",
+      "id": "edge_mile_stone/v0.3.30.1.md_demo/canvas-engine.js_1782132832485",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3204,7 +3204,7 @@
     {
       "data": {},
       "from": "mile_stone/v0.3.30.1.md",
-      "id": "edge_mile_stone/v0.3.30.1.md_index_1782131578572",
+      "id": "edge_mile_stone/v0.3.30.1.md_index_1782132832485",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3219,7 +3219,7 @@
     {
       "data": {},
       "from": "mile_stone/v0.3.30.1.md",
-      "id": "edge_mile_stone/v0.3.30.1.md_v0.3.10_Bootstrap_Locked_1782131578572",
+      "id": "edge_mile_stone/v0.3.30.1.md_v0.3.10_Bootstrap_Locked_1782132832485",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3234,7 +3234,22 @@
     {
       "data": {},
       "from": "README.ko.md",
-      "id": "edge_README.ko.md_README.md_1782131578563",
+      "id": "edge_README.ko.md_flowview_1782132832477",
+      "intelligence": {},
+      "is_approved": true,
+      "status": "confirmed",
+      "to": "flowview",
+      "type": "INCLUDE",
+      "visual": {
+        "color": "#888",
+        "thickness": 1
+      },
+      "weight": 1
+    },
+    {
+      "data": {},
+      "from": "README.ko.md",
+      "id": "edge_README.ko.md_README.md_1782132832476",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3249,7 +3264,7 @@
     {
       "data": {},
       "from": "README.ko.md",
-      "id": "edge_README.ko.md_REVISION_HISTORY.md_1782131578563",
+      "id": "edge_README.ko.md_REVISION_HISTORY.md_1782132832477",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3264,7 +3279,7 @@
     {
       "data": {},
       "from": "README.ko.md",
-      "id": "edge_README.ko.md_synapse_default_view_1782131578563",
+      "id": "edge_README.ko.md_synapse_default_view_1782132832476",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3279,7 +3294,7 @@
     {
       "data": {},
       "from": "README.ko.md",
-      "id": "edge_README.ko.md_synapse_explorer_menu_1782131578563",
+      "id": "edge_README.ko.md_synapse_explorer_menu_1782132832476",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3294,7 +3309,7 @@
     {
       "data": {},
       "from": "README.ko.md",
-      "id": "edge_README.ko.md_synapse_feature_demo_1782131578563",
+      "id": "edge_README.ko.md_synapse_feature_demo_1782132832476",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3309,7 +3324,7 @@
     {
       "data": {},
       "from": "README.ko.md",
-      "id": "edge_README.ko.md_synapse_focus_top_1782131578563",
+      "id": "edge_README.ko.md_synapse_focus_top_1782132832477",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3324,7 +3339,7 @@
     {
       "data": {},
       "from": "README.ko.md",
-      "id": "edge_README.ko.md_synapse_hide_lead_1782131578563",
+      "id": "edge_README.ko.md_synapse_hide_lead_1782132832476",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3339,7 +3354,7 @@
     {
       "data": {},
       "from": "README.ko.md",
-      "id": "edge_README.ko.md_synapse_topology_v0.3.21_1782131578563",
+      "id": "edge_README.ko.md_synapse_topology_v0.3.21_1782132832476",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3354,7 +3369,7 @@
     {
       "data": {},
       "from": "README.ko.md",
-      "id": "edge_README.ko.md_synapse_traffic_heatmap_1782131578563",
+      "id": "edge_README.ko.md_synapse_traffic_heatmap_1782132832477",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3369,7 +3384,7 @@
     {
       "data": {},
       "from": "README.ko.md",
-      "id": "edge_README.ko.md_synapse_zoom_detail_1782131578563",
+      "id": "edge_README.ko.md_synapse_zoom_detail_1782132832476",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3384,7 +3399,22 @@
     {
       "data": {},
       "from": "README.md",
-      "id": "edge_README.md_README.md_1782131578563",
+      "id": "edge_README.md_flowview_1782132832477",
+      "intelligence": {},
+      "is_approved": true,
+      "status": "confirmed",
+      "to": "flowview",
+      "type": "INCLUDE",
+      "visual": {
+        "color": "#888",
+        "thickness": 1
+      },
+      "weight": 1
+    },
+    {
+      "data": {},
+      "from": "README.md",
+      "id": "edge_README.md_README.md_1782132832477",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3399,7 +3429,7 @@
     {
       "data": {},
       "from": "README.md",
-      "id": "edge_README.md_REVISION_HISTORY.md_1782131578563",
+      "id": "edge_README.md_REVISION_HISTORY.md_1782132832477",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3414,7 +3444,7 @@
     {
       "data": {},
       "from": "README.md",
-      "id": "edge_README.md_synapse_default_view_1782131578563",
+      "id": "edge_README.md_synapse_default_view_1782132832477",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3429,7 +3459,7 @@
     {
       "data": {},
       "from": "README.md",
-      "id": "edge_README.md_synapse_explorer_menu_1782131578563",
+      "id": "edge_README.md_synapse_explorer_menu_1782132832477",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3444,7 +3474,7 @@
     {
       "data": {},
       "from": "README.md",
-      "id": "edge_README.md_synapse_feature_demo_1782131578563",
+      "id": "edge_README.md_synapse_feature_demo_1782132832477",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3459,7 +3489,7 @@
     {
       "data": {},
       "from": "README.md",
-      "id": "edge_README.md_synapse_focus_top_1782131578563",
+      "id": "edge_README.md_synapse_focus_top_1782132832477",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3474,7 +3504,7 @@
     {
       "data": {},
       "from": "README.md",
-      "id": "edge_README.md_synapse_hide_lead_1782131578563",
+      "id": "edge_README.md_synapse_hide_lead_1782132832477",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3489,7 +3519,7 @@
     {
       "data": {},
       "from": "README.md",
-      "id": "edge_README.md_synapse_topology_v0.3.21_1782131578563",
+      "id": "edge_README.md_synapse_topology_v0.3.21_1782132832477",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3504,7 +3534,7 @@
     {
       "data": {},
       "from": "README.md",
-      "id": "edge_README.md_synapse_traffic_heatmap_1782131578563",
+      "id": "edge_README.md_synapse_traffic_heatmap_1782132832477",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3519,7 +3549,7 @@
     {
       "data": {},
       "from": "README.md",
-      "id": "edge_README.md_synapse_zoom_detail_1782131578563",
+      "id": "edge_README.md_synapse_zoom_detail_1782132832477",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3534,7 +3564,7 @@
     {
       "data": {},
       "from": "release_note/v0.2.29_release_notes.md",
-      "id": "edge_release_note/v0.2.29_release_notes.md_출력 가능한 ASCII_1782131578572",
+      "id": "edge_release_note/v0.2.29_release_notes.md_출력 가능한 ASCII_1782132832485",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3549,7 +3579,7 @@
     {
       "data": {},
       "from": "release_note/v0.2.34_hotfix_2_release_notes.md",
-      "id": "edge_release_note/v0.2.34_hotfix_2_release_notes.md_v0.2.15_1782131578572",
+      "id": "edge_release_note/v0.2.34_hotfix_2_release_notes.md_v0.2.15_1782132832485",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3564,7 +3594,7 @@
     {
       "data": {},
       "from": "release_note/v0.3.09_release_notes_ko.md",
-      "id": "edge_release_note/v0.3.09_release_notes_ko.md_README.md_1782131578572",
+      "id": "edge_release_note/v0.3.09_release_notes_ko.md_README.md_1782132832485",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3579,7 +3609,7 @@
     {
       "data": {},
       "from": "release_note/v0.3.09_RELEASE_NOTES_KO.md",
-      "id": "edge_release_note/v0.3.09_RELEASE_NOTES_KO.md_README.md_1782131578572",
+      "id": "edge_release_note/v0.3.09_RELEASE_NOTES_KO.md_README.md_1782132832485",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3594,7 +3624,7 @@
     {
       "data": {},
       "from": "release_note/v0.3.09_RELEASE_NOTES.md",
-      "id": "edge_release_note/v0.3.09_RELEASE_NOTES.md_README.md_1782131578572",
+      "id": "edge_release_note/v0.3.09_RELEASE_NOTES.md_README.md_1782132832485",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3609,7 +3639,7 @@
     {
       "data": {},
       "from": "release_note/v0.3.3_release_notes.md",
-      "id": "edge_release_note/v0.3.3_release_notes.md_synapse-visual-architecture-v0.3.5_1782131578572",
+      "id": "edge_release_note/v0.3.3_release_notes.md_synapse-visual-architecture-v0.3.5_1782132832485",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3624,7 +3654,7 @@
     {
       "data": {},
       "from": "release_note/v0.3.9_release_notes.md",
-      "id": "edge_release_note/v0.3.9_release_notes.md_synapse-visual-architecture-v0.3.5_1782131578572",
+      "id": "edge_release_note/v0.3.9_release_notes.md_synapse-visual-architecture-v0.3.5_1782132832486",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3639,7 +3669,7 @@
     {
       "data": {},
       "from": "src/bootstrap/BootstrapEngine.ts",
-      "id": "edge_src/bootstrap/BootstrapEngine.ts_src/core/DataPipeline.ts_1782131578573",
+      "id": "edge_src/bootstrap/BootstrapEngine.ts_src/core/DataPipeline.ts_1782132832486",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3654,7 +3684,7 @@
     {
       "data": {},
       "from": "src/bootstrap/BootstrapEngine.ts",
-      "id": "edge_src/bootstrap/BootstrapEngine.ts_src/core/FileScanner.ts_1782131578573",
+      "id": "edge_src/bootstrap/BootstrapEngine.ts_src/core/FileScanner.ts_1782132832486",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3669,7 +3699,7 @@
     {
       "data": {},
       "from": "src/bootstrap/BootstrapEngine.ts",
-      "id": "edge_src/bootstrap/BootstrapEngine.ts_src/core/FlowchartGenerator.ts_1782131578573",
+      "id": "edge_src/bootstrap/BootstrapEngine.ts_src/core/FlowchartGenerator.ts_1782132832486",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3684,7 +3714,7 @@
     {
       "data": {},
       "from": "src/bootstrap/BootstrapEngine.ts",
-      "id": "edge_src/bootstrap/BootstrapEngine.ts_src/core/GeminiParser.ts_1782131578572",
+      "id": "edge_src/bootstrap/BootstrapEngine.ts_src/core/GeminiParser.ts_1782132832486",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3699,7 +3729,7 @@
     {
       "data": {},
       "from": "src/bootstrap/BootstrapEngine.ts",
-      "id": "edge_src/bootstrap/BootstrapEngine.ts_src/core/graphBuilder.ts_1782131578573",
+      "id": "edge_src/bootstrap/BootstrapEngine.ts_src/core/graphBuilder.ts_1782132832486",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3714,7 +3744,7 @@
     {
       "data": {},
       "from": "src/bootstrap/BootstrapEngine.ts",
-      "id": "edge_src/bootstrap/BootstrapEngine.ts_src/core/GraphModel.ts_1782131578573",
+      "id": "edge_src/bootstrap/BootstrapEngine.ts_src/core/GraphModel.ts_1782132832486",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3729,7 +3759,7 @@
     {
       "data": {},
       "from": "src/bootstrap/BootstrapEngine.ts",
-      "id": "edge_src/bootstrap/BootstrapEngine.ts_src/core/PhaseManager.ts_1782131578573",
+      "id": "edge_src/bootstrap/BootstrapEngine.ts_src/core/PhaseManager.ts_1782132832486",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3744,7 +3774,7 @@
     {
       "data": {},
       "from": "src/bootstrap/BootstrapEngine.ts",
-      "id": "edge_src/bootstrap/BootstrapEngine.ts_src/core/RuleEngine.ts_1782131578573",
+      "id": "edge_src/bootstrap/BootstrapEngine.ts_src/core/RuleEngine.ts_1782132832486",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3759,7 +3789,7 @@
     {
       "data": {},
       "from": "src/bootstrap/BootstrapEngine.ts",
-      "id": "edge_src/bootstrap/BootstrapEngine.ts_src/core/SnapshotSystem.ts_1782131578573",
+      "id": "edge_src/bootstrap/BootstrapEngine.ts_src/core/SnapshotSystem.ts_1782132832486",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3774,7 +3804,7 @@
     {
       "data": {},
       "from": "src/bootstrap/BootstrapEngine.ts",
-      "id": "edge_src/bootstrap/BootstrapEngine.ts_src/types/schema.ts_1782131578573",
+      "id": "edge_src/bootstrap/BootstrapEngine.ts_src/types/schema.ts_1782132832486",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3789,7 +3819,7 @@
     {
       "data": {},
       "from": "src/bootstrap/BootstrapEngine.ts",
-      "id": "edge_src/bootstrap/BootstrapEngine.ts_src/utils/exclusionRules.ts_1782131578573",
+      "id": "edge_src/bootstrap/BootstrapEngine.ts_src/utils/exclusionRules.ts_1782132832486",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3804,7 +3834,7 @@
     {
       "data": {},
       "from": "src/bootstrap/BootstrapEngine.ts",
-      "id": "edge_src/bootstrap/BootstrapEngine.ts_src/utils/Logger.ts_1782131578573",
+      "id": "edge_src/bootstrap/BootstrapEngine.ts_src/utils/Logger.ts_1782132832486",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3819,7 +3849,7 @@
     {
       "data": {},
       "from": "src/cli.ts",
-      "id": "edge_src/cli.ts_src/bootstrap/BootstrapEngine.ts_1782131578573",
+      "id": "edge_src/cli.ts_src/bootstrap/BootstrapEngine.ts_1782132832486",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3834,7 +3864,7 @@
     {
       "data": {},
       "from": "src/client.ts",
-      "id": "edge_src/client.ts_node_1782131578573",
+      "id": "edge_src/client.ts_node_1782132832486",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3849,7 +3879,7 @@
     {
       "data": {},
       "from": "src/core/AiOrchestrator.ts",
-      "id": "edge_src/core/AiOrchestrator.ts_src/utils/Logger.ts_1782131578573",
+      "id": "edge_src/core/AiOrchestrator.ts_src/utils/Logger.ts_1782132832486",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3864,7 +3894,7 @@
     {
       "data": {},
       "from": "src/core/ArchitectureDSL.ts",
-      "id": "edge_src/core/ArchitectureDSL.ts_src/types/schema.ts_1782131578573",
+      "id": "edge_src/core/ArchitectureDSL.ts_src/types/schema.ts_1782132832486",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3879,7 +3909,7 @@
     {
       "data": {},
       "from": "src/core/BillingManager.ts",
-      "id": "edge_src/core/BillingManager.ts_src/core/DatabaseEngine.ts_1782131578573",
+      "id": "edge_src/core/BillingManager.ts_src/core/DatabaseEngine.ts_1782132832487",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3894,7 +3924,7 @@
     {
       "data": {},
       "from": "src/core/BlacklistOrchestrator.ts",
-      "id": "edge_src/core/BlacklistOrchestrator.ts_src/core/filterSnapshot.ts_1782131578573",
+      "id": "edge_src/core/BlacklistOrchestrator.ts_src/core/filterSnapshot.ts_1782132832487",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3909,7 +3939,7 @@
     {
       "data": {},
       "from": "src/core/BlacklistOrchestrator.ts",
-      "id": "edge_src/core/BlacklistOrchestrator.ts_src/core/GraphModel.ts_1782131578573",
+      "id": "edge_src/core/BlacklistOrchestrator.ts_src/core/GraphModel.ts_1782132832487",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3924,7 +3954,7 @@
     {
       "data": {},
       "from": "src/core/BlacklistOrchestrator.ts",
-      "id": "edge_src/core/BlacklistOrchestrator.ts_src/core/RuleEngine.ts_1782131578574",
+      "id": "edge_src/core/BlacklistOrchestrator.ts_src/core/RuleEngine.ts_1782132832487",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3939,7 +3969,7 @@
     {
       "data": {},
       "from": "src/core/BlacklistOrchestrator.ts",
-      "id": "edge_src/core/BlacklistOrchestrator.ts_src/types/schema.ts_1782131578574",
+      "id": "edge_src/core/BlacklistOrchestrator.ts_src/types/schema.ts_1782132832487",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3954,7 +3984,7 @@
     {
       "data": {},
       "from": "src/core/canvas-engine/CanvasEngine.ts",
-      "id": "edge_src/core/canvas-engine/CanvasEngine.ts_src/core/canvas-engine/Intent.ts_1782131578576",
+      "id": "edge_src/core/canvas-engine/CanvasEngine.ts_src/core/canvas-engine/Intent.ts_1782132832489",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3969,7 +3999,7 @@
     {
       "data": {},
       "from": "src/core/canvas-engine/CanvasEngine.ts",
-      "id": "edge_src/core/canvas-engine/CanvasEngine.ts_src/core/canvas-engine/PhaseGate.ts_1782131578577",
+      "id": "edge_src/core/canvas-engine/CanvasEngine.ts_src/core/canvas-engine/PhaseGate.ts_1782132832490",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3984,7 +4014,7 @@
     {
       "data": {},
       "from": "src/core/canvas-engine/CanvasEngine.ts",
-      "id": "edge_src/core/canvas-engine/CanvasEngine.ts_src/core/canvas-engine/SpatialRuleBook.ts_1782131578577",
+      "id": "edge_src/core/canvas-engine/CanvasEngine.ts_src/core/canvas-engine/SpatialRuleBook.ts_1782132832490",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3999,7 +4029,7 @@
     {
       "data": {},
       "from": "src/core/canvas-engine/CanvasEngine.ts",
-      "id": "edge_src/core/canvas-engine/CanvasEngine.ts_src/core/canvas-engine/StateManager.ts_1782131578576",
+      "id": "edge_src/core/canvas-engine/CanvasEngine.ts_src/core/canvas-engine/StateManager.ts_1782132832490",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4014,7 +4044,7 @@
     {
       "data": {},
       "from": "src/core/canvas-engine/CanvasEngine.ts",
-      "id": "edge_src/core/canvas-engine/CanvasEngine.ts_src/core/canvas-engine/ValidationHarness.ts_1782131578576",
+      "id": "edge_src/core/canvas-engine/CanvasEngine.ts_src/core/canvas-engine/ValidationHarness.ts_1782132832490",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4029,7 +4059,7 @@
     {
       "data": {},
       "from": "src/core/canvas-engine/CanvasEngine.ts",
-      "id": "edge_src/core/canvas-engine/CanvasEngine.ts_src/core/canvas-engine/VisualRuleBook.ts_1782131578577",
+      "id": "edge_src/core/canvas-engine/CanvasEngine.ts_src/core/canvas-engine/VisualRuleBook.ts_1782132832490",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4044,7 +4074,7 @@
     {
       "data": {},
       "from": "src/core/canvas-engine/CanvasEngine.ts",
-      "id": "edge_src/core/canvas-engine/CanvasEngine.ts_src/core/RuleEngine.ts_1782131578576",
+      "id": "edge_src/core/canvas-engine/CanvasEngine.ts_src/core/RuleEngine.ts_1782132832490",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4059,7 +4089,7 @@
     {
       "data": {},
       "from": "src/core/canvas-engine/Intent.ts",
-      "id": "edge_src/core/canvas-engine/Intent.ts_src/core/GraphModel.ts_1782131578577",
+      "id": "edge_src/core/canvas-engine/Intent.ts_src/core/GraphModel.ts_1782132832490",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4074,7 +4104,7 @@
     {
       "data": {},
       "from": "src/core/canvas-engine/PhaseGate.ts",
-      "id": "edge_src/core/canvas-engine/PhaseGate.ts_src/core/canvas-engine/Intent.ts_1782131578577",
+      "id": "edge_src/core/canvas-engine/PhaseGate.ts_src/core/canvas-engine/Intent.ts_1782132832490",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4089,7 +4119,7 @@
     {
       "data": {},
       "from": "src/core/canvas-engine/PhaseGate.ts",
-      "id": "edge_src/core/canvas-engine/PhaseGate.ts_src/core/PhaseManager.ts_1782131578577",
+      "id": "edge_src/core/canvas-engine/PhaseGate.ts_src/core/PhaseManager.ts_1782132832490",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4104,7 +4134,7 @@
     {
       "data": {},
       "from": "src/core/canvas-engine/RuleEngine.ts",
-      "id": "edge_src/core/canvas-engine/RuleEngine.ts_src/core/canvas-engine/Intent.ts_1782131578577",
+      "id": "edge_src/core/canvas-engine/RuleEngine.ts_src/core/canvas-engine/Intent.ts_1782132832490",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4119,7 +4149,7 @@
     {
       "data": {},
       "from": "src/core/canvas-engine/ScenarioRunner.ts",
-      "id": "edge_src/core/canvas-engine/ScenarioRunner.ts_src/core/canvas-engine/CanvasEngine.ts_1782131578577",
+      "id": "edge_src/core/canvas-engine/ScenarioRunner.ts_src/core/canvas-engine/CanvasEngine.ts_1782132832490",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4134,7 +4164,7 @@
     {
       "data": {},
       "from": "src/core/canvas-engine/ScenarioRunner.ts",
-      "id": "edge_src/core/canvas-engine/ScenarioRunner.ts_src/core/canvas-engine/Intent.ts_1782131578577",
+      "id": "edge_src/core/canvas-engine/ScenarioRunner.ts_src/core/canvas-engine/Intent.ts_1782132832490",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4149,7 +4179,7 @@
     {
       "data": {},
       "from": "src/core/canvas-engine/ScenarioRunner.ts",
-      "id": "edge_src/core/canvas-engine/ScenarioRunner.ts_src/core/GraphModel.ts_1782131578577",
+      "id": "edge_src/core/canvas-engine/ScenarioRunner.ts_src/core/GraphModel.ts_1782132832490",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4164,7 +4194,7 @@
     {
       "data": {},
       "from": "src/core/canvas-engine/SpatialRuleBook.ts",
-      "id": "edge_src/core/canvas-engine/SpatialRuleBook.ts_src/core/canvas-engine/Intent.ts_1782131578577",
+      "id": "edge_src/core/canvas-engine/SpatialRuleBook.ts_src/core/canvas-engine/Intent.ts_1782132832490",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4179,7 +4209,7 @@
     {
       "data": {},
       "from": "src/core/canvas-engine/SpatialRuleBook.ts",
-      "id": "edge_src/core/canvas-engine/SpatialRuleBook.ts_src/core/canvas-engine/RenderProtocol.ts_1782131578577",
+      "id": "edge_src/core/canvas-engine/SpatialRuleBook.ts_src/core/canvas-engine/RenderProtocol.ts_1782132832490",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4194,7 +4224,7 @@
     {
       "data": {},
       "from": "src/core/canvas-engine/SpatialRuleBook.ts",
-      "id": "edge_src/core/canvas-engine/SpatialRuleBook.ts_src/core/canvas-engine/StateManager.ts_1782131578577",
+      "id": "edge_src/core/canvas-engine/SpatialRuleBook.ts_src/core/canvas-engine/StateManager.ts_1782132832490",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4209,7 +4239,7 @@
     {
       "data": {},
       "from": "src/core/canvas-engine/SpatialRuleBook.ts",
-      "id": "edge_src/core/canvas-engine/SpatialRuleBook.ts_src/core/RuleEngine.ts_1782131578577",
+      "id": "edge_src/core/canvas-engine/SpatialRuleBook.ts_src/core/RuleEngine.ts_1782132832490",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4224,7 +4254,7 @@
     {
       "data": {},
       "from": "src/core/canvas-engine/StateManager.ts",
-      "id": "edge_src/core/canvas-engine/StateManager.ts_src/core/canvas-engine/Intent.ts_1782131578577",
+      "id": "edge_src/core/canvas-engine/StateManager.ts_src/core/canvas-engine/Intent.ts_1782132832490",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4239,7 +4269,7 @@
     {
       "data": {},
       "from": "src/core/canvas-engine/StateManager.ts",
-      "id": "edge_src/core/canvas-engine/StateManager.ts_src/core/GraphModel.ts_1782131578577",
+      "id": "edge_src/core/canvas-engine/StateManager.ts_src/core/GraphModel.ts_1782132832490",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4254,7 +4284,7 @@
     {
       "data": {},
       "from": "src/core/canvas-engine/StateManager.ts",
-      "id": "edge_src/core/canvas-engine/StateManager.ts_src/core/projection/ProjectionLayer.ts_1782131578577",
+      "id": "edge_src/core/canvas-engine/StateManager.ts_src/core/projection/ProjectionLayer.ts_1782132832491",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4269,7 +4299,7 @@
     {
       "data": {},
       "from": "src/core/canvas-engine/StateManager.ts",
-      "id": "edge_src/core/canvas-engine/StateManager.ts_src/core/RuleEngine.ts_1782131578577",
+      "id": "edge_src/core/canvas-engine/StateManager.ts_src/core/RuleEngine.ts_1782132832491",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4284,7 +4314,7 @@
     {
       "data": {},
       "from": "src/core/canvas-engine/StateManager.ts",
-      "id": "edge_src/core/canvas-engine/StateManager.ts_src/core/transaction/CommitManager.ts_1782131578577",
+      "id": "edge_src/core/canvas-engine/StateManager.ts_src/core/transaction/CommitManager.ts_1782132832491",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4299,7 +4329,7 @@
     {
       "data": {},
       "from": "src/core/canvas-engine/StateManager.ts",
-      "id": "edge_src/core/canvas-engine/StateManager.ts_src/utils/Logger.ts_1782131578577",
+      "id": "edge_src/core/canvas-engine/StateManager.ts_src/utils/Logger.ts_1782132832491",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4314,7 +4344,7 @@
     {
       "data": {},
       "from": "src/core/canvas-engine/ValidationHarness.ts",
-      "id": "edge_src/core/canvas-engine/ValidationHarness.ts_src/core/canvas-engine/Intent.ts_1782131578578",
+      "id": "edge_src/core/canvas-engine/ValidationHarness.ts_src/core/canvas-engine/Intent.ts_1782132832491",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4329,7 +4359,7 @@
     {
       "data": {},
       "from": "src/core/canvas-engine/ValidationHarness.ts",
-      "id": "edge_src/core/canvas-engine/ValidationHarness.ts_src/core/canvas-engine/StateManager.ts_1782131578578",
+      "id": "edge_src/core/canvas-engine/ValidationHarness.ts_src/core/canvas-engine/StateManager.ts_1782132832491",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4344,7 +4374,7 @@
     {
       "data": {},
       "from": "src/core/canvas-engine/ValidationHarness.ts",
-      "id": "edge_src/core/canvas-engine/ValidationHarness.ts_src/core/RuleEngine.ts_1782131578578",
+      "id": "edge_src/core/canvas-engine/ValidationHarness.ts_src/core/RuleEngine.ts_1782132832491",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4359,7 +4389,7 @@
     {
       "data": {},
       "from": "src/core/canvas-engine/VisualRuleBook.ts",
-      "id": "edge_src/core/canvas-engine/VisualRuleBook.ts_src/core/canvas-engine/Intent.ts_1782131578578",
+      "id": "edge_src/core/canvas-engine/VisualRuleBook.ts_src/core/canvas-engine/Intent.ts_1782132832491",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4374,7 +4404,7 @@
     {
       "data": {},
       "from": "src/core/canvas-engine/VisualRuleBook.ts",
-      "id": "edge_src/core/canvas-engine/VisualRuleBook.ts_src/core/canvas-engine/RenderProtocol.ts_1782131578578",
+      "id": "edge_src/core/canvas-engine/VisualRuleBook.ts_src/core/canvas-engine/RenderProtocol.ts_1782132832491",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4389,7 +4419,7 @@
     {
       "data": {},
       "from": "src/core/canvas-engine/VisualRuleBook.ts",
-      "id": "edge_src/core/canvas-engine/VisualRuleBook.ts_src/core/canvas-engine/StateManager.ts_1782131578578",
+      "id": "edge_src/core/canvas-engine/VisualRuleBook.ts_src/core/canvas-engine/StateManager.ts_1782132832491",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4404,7 +4434,7 @@
     {
       "data": {},
       "from": "src/core/canvas-engine/VisualRuleBook.ts",
-      "id": "edge_src/core/canvas-engine/VisualRuleBook.ts_src/core/RuleEngine.ts_1782131578578",
+      "id": "edge_src/core/canvas-engine/VisualRuleBook.ts_src/core/RuleEngine.ts_1782132832491",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4419,7 +4449,7 @@
     {
       "data": {},
       "from": "src/core/CDPManager.ts",
-      "id": "edge_src/core/CDPManager.ts_crypto_1782131578574",
+      "id": "edge_src/core/CDPManager.ts_crypto_1782132832487",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4434,7 +4464,7 @@
     {
       "data": {},
       "from": "src/core/CDPManager.ts",
-      "id": "edge_src/core/CDPManager.ts_http_1782131578574",
+      "id": "edge_src/core/CDPManager.ts_http_1782132832487",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4449,7 +4479,7 @@
     {
       "data": {},
       "from": "src/core/CDPManager.ts",
-      "id": "edge_src/core/CDPManager.ts_net_1782131578574",
+      "id": "edge_src/core/CDPManager.ts_net_1782132832487",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4464,7 +4494,7 @@
     {
       "data": {},
       "from": "src/core/CDPManager.ts",
-      "id": "edge_src/core/CDPManager.ts_src/utils/Logger.ts_1782131578574",
+      "id": "edge_src/core/CDPManager.ts_src/utils/Logger.ts_1782132832487",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4479,7 +4509,7 @@
     {
       "data": {},
       "from": "src/core/collaboration/AccountManager.ts",
-      "id": "edge_src/core/collaboration/AccountManager.ts_crypto_1782131578578",
+      "id": "edge_src/core/collaboration/AccountManager.ts_crypto_1782132832491",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4494,7 +4524,7 @@
     {
       "data": {},
       "from": "src/core/collaboration/AccountManager.ts",
-      "id": "edge_src/core/collaboration/AccountManager.ts_src/core/collaboration/IdentityManager.ts_1782131578578",
+      "id": "edge_src/core/collaboration/AccountManager.ts_src/core/collaboration/IdentityManager.ts_1782132832491",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4509,7 +4539,7 @@
     {
       "data": {},
       "from": "src/core/collaboration/AccountManager.ts",
-      "id": "edge_src/core/collaboration/AccountManager.ts_src/utils/Logger.ts_1782131578578",
+      "id": "edge_src/core/collaboration/AccountManager.ts_src/utils/Logger.ts_1782132832491",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4524,7 +4554,7 @@
     {
       "data": {},
       "from": "src/core/collaboration/ArchitectureIndexBuilder.ts",
-      "id": "edge_src/core/collaboration/ArchitectureIndexBuilder.ts_src/types/schema.ts_1782131578578",
+      "id": "edge_src/core/collaboration/ArchitectureIndexBuilder.ts_src/types/schema.ts_1782132832491",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4539,7 +4569,7 @@
     {
       "data": {},
       "from": "src/core/collaboration/ArchitectureIndexBuilder.ts",
-      "id": "edge_src/core/collaboration/ArchitectureIndexBuilder.ts_src/utils/Logger.ts_1782131578578",
+      "id": "edge_src/core/collaboration/ArchitectureIndexBuilder.ts_src/utils/Logger.ts_1782132832491",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4554,7 +4584,7 @@
     {
       "data": {},
       "from": "src/core/collaboration/BoundaryGuard.ts",
-      "id": "edge_src/core/collaboration/BoundaryGuard.ts_src/core/collaboration/HarvestEngine.ts_1782131578578",
+      "id": "edge_src/core/collaboration/BoundaryGuard.ts_src/core/collaboration/HarvestEngine.ts_1782132832492",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4569,7 +4599,7 @@
     {
       "data": {},
       "from": "src/core/collaboration/BoundaryGuard.ts",
-      "id": "edge_src/core/collaboration/BoundaryGuard.ts_src/core/collaboration/IdentityManager.ts_1782131578578",
+      "id": "edge_src/core/collaboration/BoundaryGuard.ts_src/core/collaboration/IdentityManager.ts_1782132832491",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4584,7 +4614,7 @@
     {
       "data": {},
       "from": "src/core/collaboration/BoundaryGuard.ts",
-      "id": "edge_src/core/collaboration/BoundaryGuard.ts_src/core/collaboration/SessionManager.ts_1782131578578",
+      "id": "edge_src/core/collaboration/BoundaryGuard.ts_src/core/collaboration/SessionManager.ts_1782132832492",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4599,7 +4629,7 @@
     {
       "data": {},
       "from": "src/core/collaboration/BoundaryGuard.ts",
-      "id": "edge_src/core/collaboration/BoundaryGuard.ts_src/core/ProjectMetadata.ts_1782131578578",
+      "id": "edge_src/core/collaboration/BoundaryGuard.ts_src/core/ProjectMetadata.ts_1782132832491",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4614,7 +4644,7 @@
     {
       "data": {},
       "from": "src/core/collaboration/BoundaryGuard.ts",
-      "id": "edge_src/core/collaboration/BoundaryGuard.ts_src/utils/Logger.ts_1782131578578",
+      "id": "edge_src/core/collaboration/BoundaryGuard.ts_src/utils/Logger.ts_1782132832491",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4629,7 +4659,7 @@
     {
       "data": {},
       "from": "src/core/collaboration/CollaborationTransport.ts",
-      "id": "edge_src/core/collaboration/CollaborationTransport.ts_src/core/collaboration/AccountManager.ts_1782131578578",
+      "id": "edge_src/core/collaboration/CollaborationTransport.ts_src/core/collaboration/AccountManager.ts_1782132832492",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4644,7 +4674,7 @@
     {
       "data": {},
       "from": "src/core/collaboration/CollaborationTransport.ts",
-      "id": "edge_src/core/collaboration/CollaborationTransport.ts_src/core/collaboration/SessionManager.ts_1782131578578",
+      "id": "edge_src/core/collaboration/CollaborationTransport.ts_src/core/collaboration/SessionManager.ts_1782132832492",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4659,7 +4689,7 @@
     {
       "data": {},
       "from": "src/core/collaboration/CompareEngine.ts",
-      "id": "edge_src/core/collaboration/CompareEngine.ts_crypto_1782131578578",
+      "id": "edge_src/core/collaboration/CompareEngine.ts_crypto_1782132832492",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4674,7 +4704,7 @@
     {
       "data": {},
       "from": "src/core/collaboration/CompareEngine.ts",
-      "id": "edge_src/core/collaboration/CompareEngine.ts_src/core/collaboration/AccountManager.ts_1782131578579",
+      "id": "edge_src/core/collaboration/CompareEngine.ts_src/core/collaboration/AccountManager.ts_1782132832492",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4689,7 +4719,7 @@
     {
       "data": {},
       "from": "src/core/collaboration/CompareEngine.ts",
-      "id": "edge_src/core/collaboration/CompareEngine.ts_src/core/ProjectMetadata.ts_1782131578579",
+      "id": "edge_src/core/collaboration/CompareEngine.ts_src/core/ProjectMetadata.ts_1782132832492",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4704,7 +4734,7 @@
     {
       "data": {},
       "from": "src/core/collaboration/CompareEngine.ts",
-      "id": "edge_src/core/collaboration/CompareEngine.ts_src/types/schema.ts_1782131578579",
+      "id": "edge_src/core/collaboration/CompareEngine.ts_src/types/schema.ts_1782132832492",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4719,7 +4749,7 @@
     {
       "data": {},
       "from": "src/core/collaboration/CompareEngine.ts",
-      "id": "edge_src/core/collaboration/CompareEngine.ts_src/utils/Logger.ts_1782131578579",
+      "id": "edge_src/core/collaboration/CompareEngine.ts_src/utils/Logger.ts_1782132832492",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4734,7 +4764,7 @@
     {
       "data": {},
       "from": "src/core/collaboration/HarvestEngine.ts",
-      "id": "edge_src/core/collaboration/HarvestEngine.ts_src/core/ProjectMetadata.ts_1782131578579",
+      "id": "edge_src/core/collaboration/HarvestEngine.ts_src/core/ProjectMetadata.ts_1782132832492",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4749,7 +4779,7 @@
     {
       "data": {},
       "from": "src/core/collaboration/HarvestEngine.ts",
-      "id": "edge_src/core/collaboration/HarvestEngine.ts_src/types/schema.ts_1782131578579",
+      "id": "edge_src/core/collaboration/HarvestEngine.ts_src/types/schema.ts_1782132832492",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4764,7 +4794,7 @@
     {
       "data": {},
       "from": "src/core/collaboration/HarvestEngine.ts",
-      "id": "edge_src/core/collaboration/HarvestEngine.ts_src/utils/Logger.ts_1782131578579",
+      "id": "edge_src/core/collaboration/HarvestEngine.ts_src/utils/Logger.ts_1782132832492",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4779,7 +4809,7 @@
     {
       "data": {},
       "from": "src/core/collaboration/HarvestSessionManager.ts",
-      "id": "edge_src/core/collaboration/HarvestSessionManager.ts_src/types/schema.ts_1782131578579",
+      "id": "edge_src/core/collaboration/HarvestSessionManager.ts_src/types/schema.ts_1782132832492",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4794,7 +4824,7 @@
     {
       "data": {},
       "from": "src/core/collaboration/HarvestSessionManager.ts",
-      "id": "edge_src/core/collaboration/HarvestSessionManager.ts_src/utils/Logger.ts_1782131578579",
+      "id": "edge_src/core/collaboration/HarvestSessionManager.ts_src/utils/Logger.ts_1782132832492",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4809,7 +4839,7 @@
     {
       "data": {},
       "from": "src/core/collaboration/IdentityManager.ts",
-      "id": "edge_src/core/collaboration/IdentityManager.ts_src/utils/Logger.ts_1782131578579",
+      "id": "edge_src/core/collaboration/IdentityManager.ts_src/utils/Logger.ts_1782132832492",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4824,7 +4854,7 @@
     {
       "data": {},
       "from": "src/core/collaboration/MountManager.ts",
-      "id": "edge_src/core/collaboration/MountManager.ts_src/core/SynapseIgnore.ts_1782131578579",
+      "id": "edge_src/core/collaboration/MountManager.ts_src/core/SynapseIgnore.ts_1782132832492",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4839,7 +4869,7 @@
     {
       "data": {},
       "from": "src/core/collaboration/MountManager.ts",
-      "id": "edge_src/core/collaboration/MountManager.ts_src/utils/Logger.ts_1782131578579",
+      "id": "edge_src/core/collaboration/MountManager.ts_src/utils/Logger.ts_1782132832492",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4854,7 +4884,7 @@
     {
       "data": {},
       "from": "src/core/collaboration/ReferenceVerifier.ts",
-      "id": "edge_src/core/collaboration/ReferenceVerifier.ts_src/core/collaboration/ArchitectureIndexBuilder.ts_1782131578579",
+      "id": "edge_src/core/collaboration/ReferenceVerifier.ts_src/core/collaboration/ArchitectureIndexBuilder.ts_1782132832492",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4869,7 +4899,7 @@
     {
       "data": {},
       "from": "src/core/collaboration/ReferenceVerifier.ts",
-      "id": "edge_src/core/collaboration/ReferenceVerifier.ts_src/types/schema.ts_1782131578579",
+      "id": "edge_src/core/collaboration/ReferenceVerifier.ts_src/types/schema.ts_1782132832492",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4884,7 +4914,7 @@
     {
       "data": {},
       "from": "src/core/collaboration/ReferenceVerifier.ts",
-      "id": "edge_src/core/collaboration/ReferenceVerifier.ts_src/utils/Logger.ts_1782131578579",
+      "id": "edge_src/core/collaboration/ReferenceVerifier.ts_src/utils/Logger.ts_1782132832492",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4899,7 +4929,7 @@
     {
       "data": {},
       "from": "src/core/collaboration/RemoteLayerProjector.ts",
-      "id": "edge_src/core/collaboration/RemoteLayerProjector.ts_src/core/ProjectMetadata.ts_1782131578579",
+      "id": "edge_src/core/collaboration/RemoteLayerProjector.ts_src/core/ProjectMetadata.ts_1782132832493",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4914,7 +4944,7 @@
     {
       "data": {},
       "from": "src/core/collaboration/RemoteLayerProjector.ts",
-      "id": "edge_src/core/collaboration/RemoteLayerProjector.ts_src/types/schema.ts_1782131578579",
+      "id": "edge_src/core/collaboration/RemoteLayerProjector.ts_src/types/schema.ts_1782132832493",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4929,7 +4959,7 @@
     {
       "data": {},
       "from": "src/core/collaboration/RemoteLayerProjector.ts",
-      "id": "edge_src/core/collaboration/RemoteLayerProjector.ts_src/utils/Logger.ts_1782131578579",
+      "id": "edge_src/core/collaboration/RemoteLayerProjector.ts_src/utils/Logger.ts_1782132832493",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4944,7 +4974,7 @@
     {
       "data": {},
       "from": "src/core/collaboration/RestCollaborationTransport.ts",
-      "id": "edge_src/core/collaboration/RestCollaborationTransport.ts_src/core/collaboration/AccountManager.ts_1782131578580",
+      "id": "edge_src/core/collaboration/RestCollaborationTransport.ts_src/core/collaboration/AccountManager.ts_1782132832493",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4959,7 +4989,7 @@
     {
       "data": {},
       "from": "src/core/collaboration/RestCollaborationTransport.ts",
-      "id": "edge_src/core/collaboration/RestCollaborationTransport.ts_src/core/collaboration/CollaborationTransport.ts_1782131578580",
+      "id": "edge_src/core/collaboration/RestCollaborationTransport.ts_src/core/collaboration/CollaborationTransport.ts_1782132832493",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4974,7 +5004,7 @@
     {
       "data": {},
       "from": "src/core/collaboration/RestCollaborationTransport.ts",
-      "id": "edge_src/core/collaboration/RestCollaborationTransport.ts_src/core/collaboration/SessionManager.ts_1782131578580",
+      "id": "edge_src/core/collaboration/RestCollaborationTransport.ts_src/core/collaboration/SessionManager.ts_1782132832493",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4989,7 +5019,7 @@
     {
       "data": {},
       "from": "src/core/collaboration/RuntimeInitializer.ts",
-      "id": "edge_src/core/collaboration/RuntimeInitializer.ts_src/core/collaboration/IdentityManager.ts_1782131578580",
+      "id": "edge_src/core/collaboration/RuntimeInitializer.ts_src/core/collaboration/IdentityManager.ts_1782132832493",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5004,7 +5034,7 @@
     {
       "data": {},
       "from": "src/core/collaboration/RuntimeInitializer.ts",
-      "id": "edge_src/core/collaboration/RuntimeInitializer.ts_src/core/collaboration/SessionManager.ts_1782131578580",
+      "id": "edge_src/core/collaboration/RuntimeInitializer.ts_src/core/collaboration/SessionManager.ts_1782132832493",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5019,7 +5049,7 @@
     {
       "data": {},
       "from": "src/core/collaboration/RuntimeInitializer.ts",
-      "id": "edge_src/core/collaboration/RuntimeInitializer.ts_src/core/ProjectMetadata.ts_1782131578580",
+      "id": "edge_src/core/collaboration/RuntimeInitializer.ts_src/core/ProjectMetadata.ts_1782132832493",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5034,7 +5064,7 @@
     {
       "data": {},
       "from": "src/core/collaboration/RuntimeInitializer.ts",
-      "id": "edge_src/core/collaboration/RuntimeInitializer.ts_src/core/SymbolIndex.ts_1782131578580",
+      "id": "edge_src/core/collaboration/RuntimeInitializer.ts_src/core/SymbolIndex.ts_1782132832493",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5049,7 +5079,7 @@
     {
       "data": {},
       "from": "src/core/collaboration/RuntimeInitializer.ts",
-      "id": "edge_src/core/collaboration/RuntimeInitializer.ts_src/utils/Logger.ts_1782131578580",
+      "id": "edge_src/core/collaboration/RuntimeInitializer.ts_src/utils/Logger.ts_1782132832493",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5064,7 +5094,7 @@
     {
       "data": {},
       "from": "src/core/collaboration/SessionManager.ts",
-      "id": "edge_src/core/collaboration/SessionManager.ts_src/core/collaboration/IdentityManager.ts_1782131578580",
+      "id": "edge_src/core/collaboration/SessionManager.ts_src/core/collaboration/IdentityManager.ts_1782132832493",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5079,7 +5109,7 @@
     {
       "data": {},
       "from": "src/core/collaboration/SessionManager.ts",
-      "id": "edge_src/core/collaboration/SessionManager.ts_src/core/ProjectMetadata.ts_1782131578580",
+      "id": "edge_src/core/collaboration/SessionManager.ts_src/core/ProjectMetadata.ts_1782132832493",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5094,7 +5124,7 @@
     {
       "data": {},
       "from": "src/core/collaboration/SessionManager.ts",
-      "id": "edge_src/core/collaboration/SessionManager.ts_src/utils/Logger.ts_1782131578580",
+      "id": "edge_src/core/collaboration/SessionManager.ts_src/utils/Logger.ts_1782132832493",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5109,7 +5139,7 @@
     {
       "data": {},
       "from": "src/core/CommandInterceptor.ts",
-      "id": "edge_src/core/CommandInterceptor.ts_src/core/PromptLogger.ts_1782131578574",
+      "id": "edge_src/core/CommandInterceptor.ts_src/core/PromptLogger.ts_1782132832487",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5124,7 +5154,7 @@
     {
       "data": {},
       "from": "src/core/ControlSystem.ts",
-      "id": "edge_src/core/ControlSystem.ts_src/core/GraphModel.ts_1782131578574",
+      "id": "edge_src/core/ControlSystem.ts_src/core/GraphModel.ts_1782132832487",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5139,7 +5169,7 @@
     {
       "data": {},
       "from": "src/core/ControlSystem.ts",
-      "id": "edge_src/core/ControlSystem.ts_src/core/PhaseManager.ts_1782131578574",
+      "id": "edge_src/core/ControlSystem.ts_src/core/PhaseManager.ts_1782132832487",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5154,7 +5184,7 @@
     {
       "data": {},
       "from": "src/core/ControlSystem.ts",
-      "id": "edge_src/core/ControlSystem.ts_src/core/SnapshotSystem.ts_1782131578574",
+      "id": "edge_src/core/ControlSystem.ts_src/core/SnapshotSystem.ts_1782132832487",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5169,7 +5199,7 @@
     {
       "data": {},
       "from": "src/core/DataPipeline.ts",
-      "id": "edge_src/core/DataPipeline.ts_src/core/canvas-engine/CanvasEngine.ts_1782131578574",
+      "id": "edge_src/core/DataPipeline.ts_src/core/canvas-engine/CanvasEngine.ts_1782132832487",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5184,7 +5214,7 @@
     {
       "data": {},
       "from": "src/core/DataPipeline.ts",
-      "id": "edge_src/core/DataPipeline.ts_src/core/FileScanner.ts_1782131578574",
+      "id": "edge_src/core/DataPipeline.ts_src/core/FileScanner.ts_1782132832487",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5199,7 +5229,7 @@
     {
       "data": {},
       "from": "src/core/DataPipeline.ts",
-      "id": "edge_src/core/DataPipeline.ts_src/core/GraphModel.ts_1782131578574",
+      "id": "edge_src/core/DataPipeline.ts_src/core/GraphModel.ts_1782132832487",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5214,7 +5244,7 @@
     {
       "data": {},
       "from": "src/core/DataPipeline.ts",
-      "id": "edge_src/core/DataPipeline.ts_src/core/PhaseManager.ts_1782131578574",
+      "id": "edge_src/core/DataPipeline.ts_src/core/PhaseManager.ts_1782132832487",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5229,7 +5259,7 @@
     {
       "data": {},
       "from": "src/core/DataPipeline.ts",
-      "id": "edge_src/core/DataPipeline.ts_src/core/ProjectMetadata.ts_1782131578574",
+      "id": "edge_src/core/DataPipeline.ts_src/core/ProjectMetadata.ts_1782132832488",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5244,7 +5274,7 @@
     {
       "data": {},
       "from": "src/core/DataPipeline.ts",
-      "id": "edge_src/core/DataPipeline.ts_src/core/RuleEngine.ts_1782131578574",
+      "id": "edge_src/core/DataPipeline.ts_src/core/RuleEngine.ts_1782132832487",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5259,7 +5289,7 @@
     {
       "data": {},
       "from": "src/core/DataPipeline.ts",
-      "id": "edge_src/core/DataPipeline.ts_src/core/SymbolIndex.ts_1782131578574",
+      "id": "edge_src/core/DataPipeline.ts_src/core/SymbolIndex.ts_1782132832488",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5274,7 +5304,7 @@
     {
       "data": {},
       "from": "src/core/DebuggerSystem.ts",
-      "id": "edge_src/core/DebuggerSystem.ts_src/core/ControlSystem.ts_1782131578574",
+      "id": "edge_src/core/DebuggerSystem.ts_src/core/ControlSystem.ts_1782132832488",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5289,7 +5319,7 @@
     {
       "data": {},
       "from": "src/core/DebuggerSystem.ts",
-      "id": "edge_src/core/DebuggerSystem.ts_src/core/PhaseManager.ts_1782131578574",
+      "id": "edge_src/core/DebuggerSystem.ts_src/core/PhaseManager.ts_1782132832488",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5304,7 +5334,7 @@
     {
       "data": {},
       "from": "src/core/DebuggerSystem.ts",
-      "id": "edge_src/core/DebuggerSystem.ts_src/core/RendererCore.ts_1782131578575",
+      "id": "edge_src/core/DebuggerSystem.ts_src/core/RendererCore.ts_1782132832488",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5319,7 +5349,7 @@
     {
       "data": {},
       "from": "src/core/DirectChatScraper.ts",
-      "id": "edge_src/core/DirectChatScraper.ts_crypto_1782131578575",
+      "id": "edge_src/core/DirectChatScraper.ts_crypto_1782132832488",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5334,7 +5364,7 @@
     {
       "data": {},
       "from": "src/core/DirectChatScraper.ts",
-      "id": "edge_src/core/DirectChatScraper.ts_src/core/PromptLogger.ts_1782131578575",
+      "id": "edge_src/core/DirectChatScraper.ts_src/core/PromptLogger.ts_1782132832488",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5349,7 +5379,7 @@
     {
       "data": {},
       "from": "src/core/EdgeCodeRefactorer.ts",
-      "id": "edge_src/core/EdgeCodeRefactorer.ts_) || trimmed_1782131578575",
+      "id": "edge_src/core/EdgeCodeRefactorer.ts_) || trimmed_1782132832488",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5364,7 +5394,7 @@
     {
       "data": {},
       "from": "src/core/FileScanner.ts",
-      "id": "edge_src/core/FileScanner.ts_)) type = _1782131578575",
+      "id": "edge_src/core/FileScanner.ts_)) type = _1782132832488",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5379,7 +5409,7 @@
     {
       "data": {},
       "from": "src/core/filterSnapshot.ts",
-      "id": "edge_src/core/filterSnapshot.ts_src/core/RuleEngine.ts_1782131578580",
+      "id": "edge_src/core/filterSnapshot.ts_src/core/RuleEngine.ts_1782132832493",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5394,7 +5424,7 @@
     {
       "data": {},
       "from": "src/core/filterSnapshot.ts",
-      "id": "edge_src/core/filterSnapshot.ts_src/types/schema.ts_1782131578580",
+      "id": "edge_src/core/filterSnapshot.ts_src/types/schema.ts_1782132832493",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5409,7 +5439,7 @@
     {
       "data": {},
       "from": "src/core/FlowchartGenerator.ts",
-      "id": "edge_src/core/FlowchartGenerator.ts_src/types/schema.ts_1782131578575",
+      "id": "edge_src/core/FlowchartGenerator.ts_src/types/schema.ts_1782132832488",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5424,7 +5454,7 @@
     {
       "data": {},
       "from": "src/core/FlowchartGenerator.ts",
-      "id": "edge_src/core/FlowchartGenerator.ts_src/utils/visualHints.ts_1782131578575",
+      "id": "edge_src/core/FlowchartGenerator.ts_src/utils/visualHints.ts_1782132832488",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5439,7 +5469,7 @@
     {
       "data": {},
       "from": "src/core/GeminiParser.ts",
-      "id": "edge_src/core/GeminiParser.ts_src/core/RuleEngine.ts_1782131578575",
+      "id": "edge_src/core/GeminiParser.ts_src/core/RuleEngine.ts_1782132832488",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5454,7 +5484,7 @@
     {
       "data": {},
       "from": "src/core/GeminiParser.ts",
-      "id": "edge_src/core/GeminiParser.ts_src/types/schema.ts_1782131578575",
+      "id": "edge_src/core/GeminiParser.ts_src/types/schema.ts_1782132832488",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5469,7 +5499,7 @@
     {
       "data": {},
       "from": "src/core/GeminiParser.ts",
-      "id": "edge_src/core/GeminiParser.ts_src/utils/exclusionRules.ts_1782131578575",
+      "id": "edge_src/core/GeminiParser.ts_src/utils/exclusionRules.ts_1782132832488",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5484,7 +5514,7 @@
     {
       "data": {},
       "from": "src/core/graphBuilder.ts",
-      "id": "edge_src/core/graphBuilder.ts_src/core/GraphModel.ts_1782131578580",
+      "id": "edge_src/core/graphBuilder.ts_src/core/GraphModel.ts_1782132832493",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5499,7 +5529,7 @@
     {
       "data": {},
       "from": "src/core/GraphModel.ts",
-      "id": "edge_src/core/GraphModel.ts_src/core/filterSnapshot.ts_1782131578575",
+      "id": "edge_src/core/GraphModel.ts_src/core/filterSnapshot.ts_1782132832488",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5514,7 +5544,7 @@
     {
       "data": {},
       "from": "src/core/GraphModel.ts",
-      "id": "edge_src/core/GraphModel.ts_src/core/RuleEngine.ts_1782131578575",
+      "id": "edge_src/core/GraphModel.ts_src/core/RuleEngine.ts_1782132832488",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5529,7 +5559,7 @@
     {
       "data": {},
       "from": "src/core/GraphModel.ts",
-      "id": "edge_src/core/GraphModel.ts_src/types/schema.ts_1782131578575",
+      "id": "edge_src/core/GraphModel.ts_src/types/schema.ts_1782132832488",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5544,7 +5574,7 @@
     {
       "data": {},
       "from": "src/core/GridSystem.ts",
-      "id": "edge_src/core/GridSystem.ts_src/core/ControlSystem.ts_1782131578575",
+      "id": "edge_src/core/GridSystem.ts_src/core/ControlSystem.ts_1782132832489",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5559,7 +5589,7 @@
     {
       "data": {},
       "from": "src/core/GridSystem.ts",
-      "id": "edge_src/core/GridSystem.ts_src/core/GraphModel.ts_1782131578575",
+      "id": "edge_src/core/GridSystem.ts_src/core/GraphModel.ts_1782132832489",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5574,7 +5604,7 @@
     {
       "data": {},
       "from": "src/core/GridSystem.ts",
-      "id": "edge_src/core/GridSystem.ts_src/core/PhaseManager.ts_1782131578575",
+      "id": "edge_src/core/GridSystem.ts_src/core/PhaseManager.ts_1782132832488",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5589,7 +5619,7 @@
     {
       "data": {},
       "from": "src/core/LogicAnalyzer.ts",
-      "id": "edge_src/core/LogicAnalyzer.ts_src/types/schema.ts_1782131578575",
+      "id": "edge_src/core/LogicAnalyzer.ts_src/types/schema.ts_1782132832489",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5604,7 +5634,7 @@
     {
       "data": {},
       "from": "src/core/projection/ProjectionLayer.ts",
-      "id": "edge_src/core/projection/ProjectionLayer.ts_src/core/GraphModel.ts_1782131578580",
+      "id": "edge_src/core/projection/ProjectionLayer.ts_src/core/GraphModel.ts_1782132832493",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5619,7 +5649,7 @@
     {
       "data": {},
       "from": "src/core/projection/ProjectionLayer.ts",
-      "id": "edge_src/core/projection/ProjectionLayer.ts_src/core/projection/RuleStore.ts_1782131578580",
+      "id": "edge_src/core/projection/ProjectionLayer.ts_src/core/projection/RuleStore.ts_1782132832494",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5634,7 +5664,7 @@
     {
       "data": {},
       "from": "src/core/projection/RuleStore.ts",
-      "id": "edge_src/core/projection/RuleStore.ts_src/core/GraphModel.ts_1782131578580",
+      "id": "edge_src/core/projection/RuleStore.ts_src/core/GraphModel.ts_1782132832494",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5649,7 +5679,7 @@
     {
       "data": {},
       "from": "src/core/ProjectMetadata.ts",
-      "id": "edge_src/core/ProjectMetadata.ts_src/utils/Logger.ts_1782131578575",
+      "id": "edge_src/core/ProjectMetadata.ts_src/utils/Logger.ts_1782132832489",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5664,7 +5694,7 @@
     {
       "data": {},
       "from": "src/core/RendererCore.ts",
-      "id": "edge_src/core/RendererCore.ts_src/core/canvas-engine/RenderProtocol.ts_1782131578576",
+      "id": "edge_src/core/RendererCore.ts_src/core/canvas-engine/RenderProtocol.ts_1782132832489",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5679,7 +5709,7 @@
     {
       "data": {},
       "from": "src/core/RendererCore.ts",
-      "id": "edge_src/core/RendererCore.ts_src/core/GraphModel.ts_1782131578576",
+      "id": "edge_src/core/RendererCore.ts_src/core/GraphModel.ts_1782132832489",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5694,7 +5724,7 @@
     {
       "data": {},
       "from": "src/core/RendererCore.ts",
-      "id": "edge_src/core/RendererCore.ts_src/core/GridSystem.ts_1782131578576",
+      "id": "edge_src/core/RendererCore.ts_src/core/GridSystem.ts_1782132832489",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5709,7 +5739,7 @@
     {
       "data": {},
       "from": "src/core/RendererCore.ts",
-      "id": "edge_src/core/RendererCore.ts_src/core/PhaseManager.ts_1782131578575",
+      "id": "edge_src/core/RendererCore.ts_src/core/PhaseManager.ts_1782132832489",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5724,7 +5754,7 @@
     {
       "data": {},
       "from": "src/core/ReportExporter.ts",
-      "id": "edge_src/core/ReportExporter.ts_src/core/DatabaseEngine.ts_1782131578576",
+      "id": "edge_src/core/ReportExporter.ts_src/core/DatabaseEngine.ts_1782132832489",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5739,7 +5769,7 @@
     {
       "data": {},
       "from": "src/core/SnapshotSystem.ts",
-      "id": "edge_src/core/SnapshotSystem.ts_crypto_1782131578576",
+      "id": "edge_src/core/SnapshotSystem.ts_crypto_1782132832489",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5754,7 +5784,7 @@
     {
       "data": {},
       "from": "src/core/SnapshotSystem.ts",
-      "id": "edge_src/core/SnapshotSystem.ts_src/core/BlacklistOrchestrator.ts_1782131578576",
+      "id": "edge_src/core/SnapshotSystem.ts_src/core/BlacklistOrchestrator.ts_1782132832489",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5769,7 +5799,7 @@
     {
       "data": {},
       "from": "src/core/SnapshotSystem.ts",
-      "id": "edge_src/core/SnapshotSystem.ts_src/core/GraphModel.ts_1782131578576",
+      "id": "edge_src/core/SnapshotSystem.ts_src/core/GraphModel.ts_1782132832489",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5784,7 +5814,7 @@
     {
       "data": {},
       "from": "src/core/SnapshotSystem.ts",
-      "id": "edge_src/core/SnapshotSystem.ts_src/core/PhaseManager.ts_1782131578576",
+      "id": "edge_src/core/SnapshotSystem.ts_src/core/PhaseManager.ts_1782132832489",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5799,7 +5829,7 @@
     {
       "data": {},
       "from": "src/core/SnapshotSystem.ts",
-      "id": "edge_src/core/SnapshotSystem.ts_src/core/ProjectMetadata.ts_1782131578576",
+      "id": "edge_src/core/SnapshotSystem.ts_src/core/ProjectMetadata.ts_1782132832489",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5814,7 +5844,7 @@
     {
       "data": {},
       "from": "src/core/SymbolIndex.ts",
-      "id": "edge_src/core/SymbolIndex.ts_src/core/SynapseIgnore.ts_1782131578576",
+      "id": "edge_src/core/SymbolIndex.ts_src/core/SynapseIgnore.ts_1782132832489",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5829,7 +5859,7 @@
     {
       "data": {},
       "from": "src/core/SymbolIndex.ts",
-      "id": "edge_src/core/SymbolIndex.ts_src/utils/Logger.ts_1782131578576",
+      "id": "edge_src/core/SymbolIndex.ts_src/utils/Logger.ts_1782132832489",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5844,7 +5874,7 @@
     {
       "data": {},
       "from": "src/core/SynapseIgnore.ts",
-      "id": "edge_src/core/SynapseIgnore.ts_src/utils/Logger.ts_1782131578576",
+      "id": "edge_src/core/SynapseIgnore.ts_src/utils/Logger.ts_1782132832489",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5859,7 +5889,7 @@
     {
       "data": {},
       "from": "src/core/transaction/CommitManager.ts",
-      "id": "edge_src/core/transaction/CommitManager.ts_src/core/graphBuilder.ts_1782131578580",
+      "id": "edge_src/core/transaction/CommitManager.ts_src/core/graphBuilder.ts_1782132832494",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5874,7 +5904,7 @@
     {
       "data": {},
       "from": "src/core/transaction/CommitManager.ts",
-      "id": "edge_src/core/transaction/CommitManager.ts_src/core/GraphModel.ts_1782131578580",
+      "id": "edge_src/core/transaction/CommitManager.ts_src/core/GraphModel.ts_1782132832494",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5889,7 +5919,7 @@
     {
       "data": {},
       "from": "src/core/transaction/CommitManager.ts",
-      "id": "edge_src/core/transaction/CommitManager.ts_src/core/transaction/ExecutionLayer.ts_1782131578581",
+      "id": "edge_src/core/transaction/CommitManager.ts_src/core/transaction/ExecutionLayer.ts_1782132832494",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5904,7 +5934,7 @@
     {
       "data": {},
       "from": "src/core/transaction/CommitManager.ts",
-      "id": "edge_src/core/transaction/CommitManager.ts_src/core/transaction/VerificationLayer.ts_1782131578581",
+      "id": "edge_src/core/transaction/CommitManager.ts_src/core/transaction/VerificationLayer.ts_1782132832494",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5919,7 +5949,7 @@
     {
       "data": {},
       "from": "src/core/transaction/ExecutionLayer.ts",
-      "id": "edge_src/core/transaction/ExecutionLayer.ts_src/core/GraphModel.ts_1782131578581",
+      "id": "edge_src/core/transaction/ExecutionLayer.ts_src/core/GraphModel.ts_1782132832494",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5934,7 +5964,7 @@
     {
       "data": {},
       "from": "src/core/VirtualDebugger.ts",
-      "id": "edge_src/core/VirtualDebugger.ts_src/types/schema.ts_1782131578576",
+      "id": "edge_src/core/VirtualDebugger.ts_src/types/schema.ts_1782132832489",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5949,7 +5979,7 @@
     {
       "data": {},
       "from": "src/core/VirtualDebugger.ts",
-      "id": "edge_src/core/VirtualDebugger.ts_src/utils/Logger.ts_1782131578576",
+      "id": "edge_src/core/VirtualDebugger.ts_src/utils/Logger.ts_1782132832489",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5964,7 +5994,7 @@
     {
       "data": {},
       "from": "src/core/WebviewInterceptor.ts",
-      "id": "edge_src/core/WebviewInterceptor.ts_src/utils/Logger.ts_1782131578576",
+      "id": "edge_src/core/WebviewInterceptor.ts_src/utils/Logger.ts_1782132832489",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5979,7 +6009,7 @@
     {
       "data": {},
       "from": "src/extension.ts",
-      "id": "edge_src/extension.ts_node_1782131578581",
+      "id": "edge_src/extension.ts_node_1782132832494",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5994,7 +6024,7 @@
     {
       "data": {},
       "from": "src/extension.ts",
-      "id": "edge_src/extension.ts_src/bootstrap/BootstrapEngine.ts_1782131578581",
+      "id": "edge_src/extension.ts_src/bootstrap/BootstrapEngine.ts_1782132832494",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6009,7 +6039,7 @@
     {
       "data": {},
       "from": "src/extension.ts",
-      "id": "edge_src/extension.ts_src/client.ts_1782131578581",
+      "id": "edge_src/extension.ts_src/client.ts_1782132832494",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6024,7 +6054,7 @@
     {
       "data": {},
       "from": "src/extension.ts",
-      "id": "edge_src/extension.ts_src/core/AiOrchestrator.ts_1782131578581",
+      "id": "edge_src/extension.ts_src/core/AiOrchestrator.ts_1782132832494",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6039,7 +6069,7 @@
     {
       "data": {},
       "from": "src/extension.ts",
-      "id": "edge_src/extension.ts_src/core/BillingManager.ts_1782131578581",
+      "id": "edge_src/extension.ts_src/core/BillingManager.ts_1782132832494",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6054,7 +6084,7 @@
     {
       "data": {},
       "from": "src/extension.ts",
-      "id": "edge_src/extension.ts_src/core/BlacklistOrchestrator.ts_1782131578582",
+      "id": "edge_src/extension.ts_src/core/BlacklistOrchestrator.ts_1782132832495",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6069,7 +6099,7 @@
     {
       "data": {},
       "from": "src/extension.ts",
-      "id": "edge_src/extension.ts_src/core/collaboration/RuntimeInitializer.ts_1782131578582",
+      "id": "edge_src/extension.ts_src/core/collaboration/RuntimeInitializer.ts_1782132832495",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6084,7 +6114,7 @@
     {
       "data": {},
       "from": "src/extension.ts",
-      "id": "edge_src/extension.ts_src/core/GeminiParser.ts_1782131578581",
+      "id": "edge_src/extension.ts_src/core/GeminiParser.ts_1782132832494",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6099,7 +6129,7 @@
     {
       "data": {},
       "from": "src/extension.ts",
-      "id": "edge_src/extension.ts_src/core/GraphModel.ts_1782131578581",
+      "id": "edge_src/extension.ts_src/core/GraphModel.ts_1782132832495",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6114,7 +6144,7 @@
     {
       "data": {},
       "from": "src/extension.ts",
-      "id": "edge_src/extension.ts_src/core/LogicAnalyzer.ts_1782131578581",
+      "id": "edge_src/extension.ts_src/core/LogicAnalyzer.ts_1782132832494",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6129,7 +6159,7 @@
     {
       "data": {},
       "from": "src/extension.ts",
-      "id": "edge_src/extension.ts_src/core/PbSessionWatcher.ts_1782131578581",
+      "id": "edge_src/extension.ts_src/core/PbSessionWatcher.ts_1782132832494",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6144,7 +6174,7 @@
     {
       "data": {},
       "from": "src/extension.ts",
-      "id": "edge_src/extension.ts_src/core/ProjectMetadata.ts_1782131578582",
+      "id": "edge_src/extension.ts_src/core/ProjectMetadata.ts_1782132832495",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6159,7 +6189,7 @@
     {
       "data": {},
       "from": "src/extension.ts",
-      "id": "edge_src/extension.ts_src/core/ReportExporter.ts_1782131578581",
+      "id": "edge_src/extension.ts_src/core/ReportExporter.ts_1782132832494",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6174,7 +6204,7 @@
     {
       "data": {},
       "from": "src/extension.ts",
-      "id": "edge_src/extension.ts_src/core/RuleEngine.ts_1782131578581",
+      "id": "edge_src/extension.ts_src/core/RuleEngine.ts_1782132832495",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6189,7 +6219,7 @@
     {
       "data": {},
       "from": "src/extension.ts",
-      "id": "edge_src/extension.ts_src/core/SnapshotSystem.ts_1782131578582",
+      "id": "edge_src/extension.ts_src/core/SnapshotSystem.ts_1782132832495",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6204,7 +6234,7 @@
     {
       "data": {},
       "from": "src/extension.ts",
-      "id": "edge_src/extension.ts_src/core/SymbolIndex.ts_1782131578582",
+      "id": "edge_src/extension.ts_src/core/SymbolIndex.ts_1782132832495",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6219,7 +6249,7 @@
     {
       "data": {},
       "from": "src/extension.ts",
-      "id": "edge_src/extension.ts_src/explorer/ArchitectureExplorer.ts_1782131578581",
+      "id": "edge_src/extension.ts_src/explorer/ArchitectureExplorer.ts_1782132832495",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6234,7 +6264,7 @@
     {
       "data": {},
       "from": "src/extension.ts",
-      "id": "edge_src/extension.ts_src/utils/ChatExtractor.ts_1782131578581",
+      "id": "edge_src/extension.ts_src/utils/ChatExtractor.ts_1782132832494",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6249,7 +6279,7 @@
     {
       "data": {},
       "from": "src/extension.ts",
-      "id": "edge_src/extension.ts_src/utils/Logger.ts_1782131578581",
+      "id": "edge_src/extension.ts_src/utils/Logger.ts_1782132832494",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6264,7 +6294,7 @@
     {
       "data": {},
       "from": "src/extension.ts",
-      "id": "edge_src/extension.ts_src/webview/CanvasPanel.ts_1782131578581",
+      "id": "edge_src/extension.ts_src/webview/CanvasPanel.ts_1782132832494",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6279,7 +6309,7 @@
     {
       "data": {},
       "from": "src/rust_checker/mod.rs",
-      "id": "edge_src/rust_checker/mod.rs_src/rust_checker/state_checker.rs_1782131578582",
+      "id": "edge_src/rust_checker/mod.rs_src/rust_checker/state_checker.rs_1782132832495",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6294,7 +6324,7 @@
     {
       "data": {},
       "from": "src/rust_checker/state_checker.rs",
-      "id": "edge_src/rust_checker/state_checker.rs_project_state_json_1782131578582",
+      "id": "edge_src/rust_checker/state_checker.rs_project_state_json_1782132832495",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6309,7 +6339,7 @@
     {
       "data": {},
       "from": "src/rust_checker/state_checker.rs",
-      "id": "edge_src/rust_checker/state_checker.rs_src/rust_checker/reporter.rs_1782131578582",
+      "id": "edge_src/rust_checker/state_checker.rs_src/rust_checker/reporter.rs_1782132832495",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6324,7 +6354,7 @@
     {
       "data": {},
       "from": "src/server/server.ts",
-      "id": "edge_src/server/server.ts_node_1782131578582",
+      "id": "edge_src/server/server.ts_node_1782132832495",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6339,7 +6369,7 @@
     {
       "data": {},
       "from": "src/server/server.ts",
-      "id": "edge_src/server/server.ts_src/core/FlowScanner.ts_1782131578582",
+      "id": "edge_src/server/server.ts_src/core/FlowScanner.ts_1782132832495",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6354,7 +6384,7 @@
     {
       "data": {},
       "from": "src/server/server.ts",
-      "id": "edge_src/server/server.ts_src/core/GeminiParser.ts_1782131578582",
+      "id": "edge_src/server/server.ts_src/core/GeminiParser.ts_1782132832495",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6369,7 +6399,7 @@
     {
       "data": {},
       "from": "src/server/server.ts",
-      "id": "edge_src/server/server.ts_vscode-languageserver-textdocument_1782131578582",
+      "id": "edge_src/server/server.ts_vscode-languageserver-textdocument_1782132832495",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6384,7 +6414,7 @@
     {
       "data": {},
       "from": "src/server/standalone.ts",
-      "id": "edge_src/server/standalone.ts_cors_1782131578582",
+      "id": "edge_src/server/standalone.ts_cors_1782132832495",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6399,7 +6429,7 @@
     {
       "data": {},
       "from": "src/server/standalone.ts",
-      "id": "edge_src/server/standalone.ts_crypto_1782131578582",
+      "id": "edge_src/server/standalone.ts_crypto_1782132832495",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6414,7 +6444,7 @@
     {
       "data": {},
       "from": "src/server/standalone.ts",
-      "id": "edge_src/server/standalone.ts_express_1782131578582",
+      "id": "edge_src/server/standalone.ts_express_1782132832495",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6429,7 +6459,7 @@
     {
       "data": {},
       "from": "src/server/standalone.ts",
-      "id": "edge_src/server/standalone.ts_src/core/collaboration/AccountManager.ts_1782131578583",
+      "id": "edge_src/server/standalone.ts_src/core/collaboration/AccountManager.ts_1782132832496",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6444,7 +6474,7 @@
     {
       "data": {},
       "from": "src/server/standalone.ts",
-      "id": "edge_src/server/standalone.ts_src/core/collaboration/ArchitectureIndexBuilder.ts_1782131578583",
+      "id": "edge_src/server/standalone.ts_src/core/collaboration/ArchitectureIndexBuilder.ts_1782132832496",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6459,7 +6489,7 @@
     {
       "data": {},
       "from": "src/server/standalone.ts",
-      "id": "edge_src/server/standalone.ts_src/core/collaboration/BoundaryGuard.ts_1782131578583",
+      "id": "edge_src/server/standalone.ts_src/core/collaboration/BoundaryGuard.ts_1782132832496",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6474,7 +6504,7 @@
     {
       "data": {},
       "from": "src/server/standalone.ts",
-      "id": "edge_src/server/standalone.ts_src/core/collaboration/CompareEngine.ts_1782131578583",
+      "id": "edge_src/server/standalone.ts_src/core/collaboration/CompareEngine.ts_1782132832496",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6489,7 +6519,7 @@
     {
       "data": {},
       "from": "src/server/standalone.ts",
-      "id": "edge_src/server/standalone.ts_src/core/collaboration/HarvestEngine.ts_1782131578583",
+      "id": "edge_src/server/standalone.ts_src/core/collaboration/HarvestEngine.ts_1782132832496",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6504,7 +6534,7 @@
     {
       "data": {},
       "from": "src/server/standalone.ts",
-      "id": "edge_src/server/standalone.ts_src/core/collaboration/HarvestSessionManager.ts_1782131578583",
+      "id": "edge_src/server/standalone.ts_src/core/collaboration/HarvestSessionManager.ts_1782132832496",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6519,7 +6549,7 @@
     {
       "data": {},
       "from": "src/server/standalone.ts",
-      "id": "edge_src/server/standalone.ts_src/core/collaboration/IdentityManager.ts_1782131578583",
+      "id": "edge_src/server/standalone.ts_src/core/collaboration/IdentityManager.ts_1782132832496",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6534,7 +6564,7 @@
     {
       "data": {},
       "from": "src/server/standalone.ts",
-      "id": "edge_src/server/standalone.ts_src/core/collaboration/MountManager.ts_1782131578583",
+      "id": "edge_src/server/standalone.ts_src/core/collaboration/MountManager.ts_1782132832496",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6549,7 +6579,7 @@
     {
       "data": {},
       "from": "src/server/standalone.ts",
-      "id": "edge_src/server/standalone.ts_src/core/collaboration/ReferenceVerifier.ts_1782131578583",
+      "id": "edge_src/server/standalone.ts_src/core/collaboration/ReferenceVerifier.ts_1782132832496",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6564,7 +6594,7 @@
     {
       "data": {},
       "from": "src/server/standalone.ts",
-      "id": "edge_src/server/standalone.ts_src/core/collaboration/RestCollaborationTransport.ts_1782131578583",
+      "id": "edge_src/server/standalone.ts_src/core/collaboration/RestCollaborationTransport.ts_1782132832496",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6579,7 +6609,7 @@
     {
       "data": {},
       "from": "src/server/standalone.ts",
-      "id": "edge_src/server/standalone.ts_src/core/collaboration/RuntimeInitializer.ts_1782131578583",
+      "id": "edge_src/server/standalone.ts_src/core/collaboration/RuntimeInitializer.ts_1782132832496",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6594,7 +6624,7 @@
     {
       "data": {},
       "from": "src/server/standalone.ts",
-      "id": "edge_src/server/standalone.ts_src/core/collaboration/SessionManager.ts_1782131578583",
+      "id": "edge_src/server/standalone.ts_src/core/collaboration/SessionManager.ts_1782132832496",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6609,7 +6639,7 @@
     {
       "data": {},
       "from": "src/server/standalone.ts",
-      "id": "edge_src/server/standalone.ts_src/core/FlowScanner.ts_1782131578582",
+      "id": "edge_src/server/standalone.ts_src/core/FlowScanner.ts_1782132832496",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6624,7 +6654,7 @@
     {
       "data": {},
       "from": "src/server/standalone.ts",
-      "id": "edge_src/server/standalone.ts_src/core/GeminiParser.ts_1782131578582",
+      "id": "edge_src/server/standalone.ts_src/core/GeminiParser.ts_1782132832496",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6639,7 +6669,7 @@
     {
       "data": {},
       "from": "src/server/standalone.ts",
-      "id": "edge_src/server/standalone.ts_src/core/ProjectMetadata.ts_1782131578582",
+      "id": "edge_src/server/standalone.ts_src/core/ProjectMetadata.ts_1782132832496",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6654,7 +6684,7 @@
     {
       "data": {},
       "from": "src/server/standalone.ts",
-      "id": "edge_src/server/standalone.ts_src/core/SymbolIndex.ts_1782131578582",
+      "id": "edge_src/server/standalone.ts_src/core/SymbolIndex.ts_1782132832496",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6669,7 +6699,7 @@
     {
       "data": {},
       "from": "src/server/standalone.ts",
-      "id": "edge_src/server/standalone.ts_src/core/SynapseIgnore.ts_1782131578583",
+      "id": "edge_src/server/standalone.ts_src/core/SynapseIgnore.ts_1782132832496",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6684,7 +6714,7 @@
     {
       "data": {},
       "from": "src/server/standalone.ts",
-      "id": "edge_src/server/standalone.ts_src/utils/Logger.ts_1782131578583",
+      "id": "edge_src/server/standalone.ts_src/utils/Logger.ts_1782132832497",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6699,7 +6729,7 @@
     {
       "data": {},
       "from": "src/test/phase1_validation.test.ts",
-      "id": "edge_src/test/phase1_validation.test.ts_src/core/ProjectMetadata.ts_1782131578583",
+      "id": "edge_src/test/phase1_validation.test.ts_src/core/ProjectMetadata.ts_1782132832497",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6714,7 +6744,7 @@
     {
       "data": {},
       "from": "src/test/phase1_validation.test.ts",
-      "id": "edge_src/test/phase1_validation.test.ts_src/core/SymbolIndex.ts_1782131578583",
+      "id": "edge_src/test/phase1_validation.test.ts_src/core/SymbolIndex.ts_1782132832497",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6729,7 +6759,7 @@
     {
       "data": {},
       "from": "src/test/phase2_validation.test.ts",
-      "id": "edge_src/test/phase2_validation.test.ts_src/core/collaboration/IdentityManager.ts_1782131578584",
+      "id": "edge_src/test/phase2_validation.test.ts_src/core/collaboration/IdentityManager.ts_1782132832497",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6744,7 +6774,7 @@
     {
       "data": {},
       "from": "src/test/phase2_validation.test.ts",
-      "id": "edge_src/test/phase2_validation.test.ts_src/core/collaboration/RuntimeInitializer.ts_1782131578584",
+      "id": "edge_src/test/phase2_validation.test.ts_src/core/collaboration/RuntimeInitializer.ts_1782132832497",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6759,7 +6789,7 @@
     {
       "data": {},
       "from": "src/test/phase2_validation.test.ts",
-      "id": "edge_src/test/phase2_validation.test.ts_src/core/collaboration/SessionManager.ts_1782131578584",
+      "id": "edge_src/test/phase2_validation.test.ts_src/core/collaboration/SessionManager.ts_1782132832497",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6774,7 +6804,7 @@
     {
       "data": {},
       "from": "src/test/phase2_validation.test.ts",
-      "id": "edge_src/test/phase2_validation.test.ts_src/core/ProjectMetadata.ts_1782131578584",
+      "id": "edge_src/test/phase2_validation.test.ts_src/core/ProjectMetadata.ts_1782132832497",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6789,7 +6819,7 @@
     {
       "data": {},
       "from": "src/test/phase2_validation.test.ts",
-      "id": "edge_src/test/phase2_validation.test.ts_src/core/SymbolIndex.ts_1782131578584",
+      "id": "edge_src/test/phase2_validation.test.ts_src/core/SymbolIndex.ts_1782132832497",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6804,7 +6834,7 @@
     {
       "data": {},
       "from": "src/utils/exclusionRules.ts",
-      "id": "edge_src/utils/exclusionRules.ts_src/core/RuleEngine.ts_1782131578584",
+      "id": "edge_src/utils/exclusionRules.ts_src/core/RuleEngine.ts_1782132832497",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6819,7 +6849,7 @@
     {
       "data": {},
       "from": "src/verify_v0.3.10.ts",
-      "id": "edge_src/verify_v0.3.10.ts_src/core/canvas-engine/ScenarioRunner.ts_1782131578584",
+      "id": "edge_src/verify_v0.3.10.ts_src/core/canvas-engine/ScenarioRunner.ts_1782132832497",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6834,7 +6864,7 @@
     {
       "data": {},
       "from": "src/verify_v0.3.10.ts",
-      "id": "edge_src/verify_v0.3.10.ts_src/core/PhaseManager.ts_1782131578584",
+      "id": "edge_src/verify_v0.3.10.ts_src/core/PhaseManager.ts_1782132832497",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6849,7 +6879,7 @@
     {
       "data": {},
       "from": "src/webview/CanvasPanel.ts",
-      "id": "edge_src/webview/CanvasPanel.ts_http_1782131578584",
+      "id": "edge_src/webview/CanvasPanel.ts_http_1782132832497",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6864,7 +6894,7 @@
     {
       "data": {},
       "from": "src/webview/CanvasPanel.ts",
-      "id": "edge_src/webview/CanvasPanel.ts_src/bootstrap/BootstrapEngine.ts_1782131578584",
+      "id": "edge_src/webview/CanvasPanel.ts_src/bootstrap/BootstrapEngine.ts_1782132832498",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6879,7 +6909,7 @@
     {
       "data": {},
       "from": "src/webview/CanvasPanel.ts",
-      "id": "edge_src/webview/CanvasPanel.ts_src/client.ts_1782131578584",
+      "id": "edge_src/webview/CanvasPanel.ts_src/client.ts_1782132832498",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6894,7 +6924,7 @@
     {
       "data": {},
       "from": "src/webview/CanvasPanel.ts",
-      "id": "edge_src/webview/CanvasPanel.ts_src/core/canvas-engine/CanvasEngine.ts_1782131578586",
+      "id": "edge_src/webview/CanvasPanel.ts_src/core/canvas-engine/CanvasEngine.ts_1782132832499",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6909,7 +6939,7 @@
     {
       "data": {},
       "from": "src/webview/CanvasPanel.ts",
-      "id": "edge_src/webview/CanvasPanel.ts_src/core/canvas-engine/RenderProtocol.ts_1782131578586",
+      "id": "edge_src/webview/CanvasPanel.ts_src/core/canvas-engine/RenderProtocol.ts_1782132832499",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6924,7 +6954,7 @@
     {
       "data": {},
       "from": "src/webview/CanvasPanel.ts",
-      "id": "edge_src/webview/CanvasPanel.ts_src/core/ControlSystem.ts_1782131578585",
+      "id": "edge_src/webview/CanvasPanel.ts_src/core/ControlSystem.ts_1782132832499",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6939,7 +6969,7 @@
     {
       "data": {},
       "from": "src/webview/CanvasPanel.ts",
-      "id": "edge_src/webview/CanvasPanel.ts_src/core/DebuggerSystem.ts_1782131578585",
+      "id": "edge_src/webview/CanvasPanel.ts_src/core/DebuggerSystem.ts_1782132832499",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6954,7 +6984,7 @@
     {
       "data": {},
       "from": "src/webview/CanvasPanel.ts",
-      "id": "edge_src/webview/CanvasPanel.ts_src/core/EdgeCodeRefactorer.ts_1782131578584",
+      "id": "edge_src/webview/CanvasPanel.ts_src/core/EdgeCodeRefactorer.ts_1782132832497",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6969,7 +6999,7 @@
     {
       "data": {},
       "from": "src/webview/CanvasPanel.ts",
-      "id": "edge_src/webview/CanvasPanel.ts_src/core/FileScanner.ts_1782131578584",
+      "id": "edge_src/webview/CanvasPanel.ts_src/core/FileScanner.ts_1782132832497",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6984,7 +7014,7 @@
     {
       "data": {},
       "from": "src/webview/CanvasPanel.ts",
-      "id": "edge_src/webview/CanvasPanel.ts_src/core/FlowchartGenerator.ts_1782131578584",
+      "id": "edge_src/webview/CanvasPanel.ts_src/core/FlowchartGenerator.ts_1782132832497",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6999,7 +7029,7 @@
     {
       "data": {},
       "from": "src/webview/CanvasPanel.ts",
-      "id": "edge_src/webview/CanvasPanel.ts_src/core/GeminiParser.ts_1782131578584",
+      "id": "edge_src/webview/CanvasPanel.ts_src/core/GeminiParser.ts_1782132832497",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -7014,7 +7044,7 @@
     {
       "data": {},
       "from": "src/webview/CanvasPanel.ts",
-      "id": "edge_src/webview/CanvasPanel.ts_src/core/GraphModel.ts_1782131578585",
+      "id": "edge_src/webview/CanvasPanel.ts_src/core/GraphModel.ts_1782132832499",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -7029,7 +7059,7 @@
     {
       "data": {},
       "from": "src/webview/CanvasPanel.ts",
-      "id": "edge_src/webview/CanvasPanel.ts_src/core/GridSystem.ts_1782131578585",
+      "id": "edge_src/webview/CanvasPanel.ts_src/core/GridSystem.ts_1782132832498",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -7044,7 +7074,7 @@
     {
       "data": {},
       "from": "src/webview/CanvasPanel.ts",
-      "id": "edge_src/webview/CanvasPanel.ts_src/core/LogicAnalyzer.ts_1782131578584",
+      "id": "edge_src/webview/CanvasPanel.ts_src/core/LogicAnalyzer.ts_1782132832497",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -7059,7 +7089,7 @@
     {
       "data": {},
       "from": "src/webview/CanvasPanel.ts",
-      "id": "edge_src/webview/CanvasPanel.ts_src/core/PhaseManager.ts_1782131578585",
+      "id": "edge_src/webview/CanvasPanel.ts_src/core/PhaseManager.ts_1782132832498",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -7074,7 +7104,7 @@
     {
       "data": {},
       "from": "src/webview/CanvasPanel.ts",
-      "id": "edge_src/webview/CanvasPanel.ts_src/core/RendererCore.ts_1782131578585",
+      "id": "edge_src/webview/CanvasPanel.ts_src/core/RendererCore.ts_1782132832498",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -7089,7 +7119,7 @@
     {
       "data": {},
       "from": "src/webview/CanvasPanel.ts",
-      "id": "edge_src/webview/CanvasPanel.ts_src/core/RuleEngine.ts_1782131578585",
+      "id": "edge_src/webview/CanvasPanel.ts_src/core/RuleEngine.ts_1782132832498",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -7104,7 +7134,7 @@
     {
       "data": {},
       "from": "src/webview/CanvasPanel.ts",
-      "id": "edge_src/webview/CanvasPanel.ts_src/core/SnapshotSystem.ts_1782131578585",
+      "id": "edge_src/webview/CanvasPanel.ts_src/core/SnapshotSystem.ts_1782132832499",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -7119,7 +7149,7 @@
     {
       "data": {},
       "from": "src/webview/CanvasPanel.ts",
-      "id": "edge_src/webview/CanvasPanel.ts_src/core/SynapseIgnore.ts_1782131578585",
+      "id": "edge_src/webview/CanvasPanel.ts_src/core/SynapseIgnore.ts_1782132832498",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -7134,7 +7164,7 @@
     {
       "data": {},
       "from": "src/webview/CanvasPanel.ts",
-      "id": "edge_src/webview/CanvasPanel.ts_src/core/VirtualDebugger.ts_1782131578584",
+      "id": "edge_src/webview/CanvasPanel.ts_src/core/VirtualDebugger.ts_1782132832498",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -7149,7 +7179,7 @@
     {
       "data": {},
       "from": "src/webview/CanvasPanel.ts",
-      "id": "edge_src/webview/CanvasPanel.ts_src/types/schema.ts_1782131578584",
+      "id": "edge_src/webview/CanvasPanel.ts_src/types/schema.ts_1782132832497",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -7164,7 +7194,7 @@
     {
       "data": {},
       "from": "src/webview/CanvasPanel.ts",
-      "id": "edge_src/webview/CanvasPanel.ts_src/utils/Logger.ts_1782131578584",
+      "id": "edge_src/webview/CanvasPanel.ts_src/utils/Logger.ts_1782132832498",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -7179,7 +7209,7 @@
     {
       "data": {},
       "from": "walkthrough.md",
-      "id": "edge_walkthrough.md_synapse-visual-architecture-v0.2.20_1782131578586",
+      "id": "edge_walkthrough.md_synapse-visual-architecture-v0.2.20_1782132832499",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -8568,8 +8598,8 @@
       "label": ") || trimmed",
       "layer": "external",
       "position": {
-        "x": -6840,
-        "y": -3680
+        "x": -8440,
+        "y": -4160
       },
       "status": "ghost",
       "type": "external",
@@ -8602,8 +8632,8 @@
       "label": ")) type = ",
       "layer": "external",
       "position": {
-        "x": -6480,
-        "y": -3680
+        "x": -8080,
+        "y": -4160
       },
       "status": "ghost",
       "type": "external",
@@ -8672,8 +8702,8 @@
       "label": "출력 가능한 ASCII",
       "layer": "external",
       "position": {
-        "x": -6160,
-        "y": -3680
+        "x": -7720,
+        "y": -4160
       },
       "status": "ghost",
       "type": "external",
@@ -8742,8 +8772,8 @@
       "label": "axios",
       "layer": "external",
       "position": {
-        "x": -6840,
-        "y": -3520
+        "x": -8440,
+        "y": -4000
       },
       "status": "ghost",
       "type": "external",
@@ -10793,8 +10823,8 @@
       "label": "build-guard",
       "layer": "ai",
       "position": {
-        "x": -6960,
-        "y": -720
+        "x": -6160,
+        "y": -1000
       },
       "status": "confirmed",
       "type": "source",
@@ -10827,8 +10857,8 @@
       "label": "cluster_id",
       "layer": "external",
       "position": {
-        "x": -6480,
-        "y": -3520
+        "x": -8080,
+        "y": -4000
       },
       "status": "ghost",
       "type": "external",
@@ -11815,8 +11845,8 @@
       "label": "cors",
       "layer": "external",
       "position": {
-        "x": -6120,
-        "y": -3520
+        "x": -7720,
+        "y": -4000
       },
       "status": "ghost",
       "type": "external",
@@ -11849,8 +11879,8 @@
       "label": "crypto",
       "layer": "external",
       "position": {
-        "x": -6280,
-        "y": -3040
+        "x": -7840,
+        "y": -3440
       },
       "status": "ghost",
       "type": "external",
@@ -11898,7 +11928,7 @@
       "cluster_id": "folder_demo",
       "data": {
         "cluster_id": "folder_demo",
-        "degree": 8,
+        "degree": 9,
         "file": "demo/canvas-engine.js",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -11920,8 +11950,8 @@
       "label": "canvas-engine",
       "layer": "ai",
       "position": {
-        "x": -4080,
-        "y": -320
+        "x": -6800,
+        "y": -1120
       },
       "status": "confirmed",
       "type": "source",
@@ -11955,8 +11985,8 @@
       "label": "engine-core",
       "layer": "ai",
       "position": {
-        "x": -3720,
-        "y": -320
+        "x": -6440,
+        "y": -1120
       },
       "status": "confirmed",
       "type": "source",
@@ -11990,8 +12020,8 @@
       "label": "synapse-theme",
       "layer": "ai",
       "position": {
-        "x": -3360,
-        "y": -320
+        "x": -6080,
+        "y": -1120
       },
       "status": "confirmed",
       "type": "source",
@@ -12025,8 +12055,8 @@
       "label": "webgl-renderer",
       "layer": "ai",
       "position": {
-        "x": -4080,
-        "y": -160
+        "x": -6800,
+        "y": -960
       },
       "status": "confirmed",
       "type": "source",
@@ -12059,8 +12089,8 @@
       "label": "express",
       "layer": "external",
       "position": {
-        "x": -6840,
-        "y": -3360
+        "x": -8440,
+        "y": -3840
       },
       "status": "ghost",
       "type": "external",
@@ -12094,8 +12124,8 @@
       "label": "fix_cluster",
       "layer": "ai",
       "position": {
-        "x": -6600,
-        "y": -720
+        "x": -5440,
+        "y": -1000
       },
       "status": "confirmed",
       "type": "source",
@@ -12128,8 +12158,8 @@
       "label": "fmt",
       "layer": "external",
       "position": {
-        "x": -6480,
-        "y": -3360
+        "x": -7720,
+        "y": -3840
       },
       "status": "ghost",
       "type": "external",
@@ -12270,8 +12300,8 @@
       "label": "helper",
       "layer": "external",
       "position": {
-        "x": -6160,
-        "y": -3360
+        "x": -8440,
+        "y": -3680
       },
       "status": "ghost",
       "type": "external",
@@ -12304,8 +12334,8 @@
       "label": "http",
       "layer": "external",
       "position": {
-        "x": -6920,
-        "y": -3160
+        "x": -8080,
+        "y": -3680
       },
       "status": "ghost",
       "type": "external",
@@ -12317,7 +12347,7 @@
       "cluster_id": "cluster_ghosts",
       "data": {
         "cluster_id": "cluster_ghosts",
-        "degree": 6,
+        "degree": 7,
         "hasAtomicSignature": false,
         "hasImportSignature": false,
         "hiddenOnCanvas": false,
@@ -12338,8 +12368,8 @@
       "label": "index",
       "layer": "external",
       "position": {
-        "x": -6600,
-        "y": -3280
+        "x": -7720,
+        "y": -3680
       },
       "status": "ghost",
       "type": "external",
@@ -12408,8 +12438,8 @@
       "label": "main",
       "layer": "external",
       "position": {
-        "x": -6080,
-        "y": -3240
+        "x": -8440,
+        "y": -3520
       },
       "status": "ghost",
       "type": "external",
@@ -18382,8 +18412,8 @@
       "label": "net",
       "layer": "external",
       "position": {
-        "x": -6840,
-        "y": -3040
+        "x": -8080,
+        "y": -3520
       },
       "status": "ghost",
       "type": "external",
@@ -18416,8 +18446,8 @@
       "label": "node",
       "layer": "external",
       "position": {
-        "x": -6480,
-        "y": -3120
+        "x": -7720,
+        "y": -3520
       },
       "status": "ghost",
       "type": "external",
@@ -18450,8 +18480,8 @@
       "label": "package",
       "layer": "external",
       "position": {
-        "x": -6080,
-        "y": -3080
+        "x": -8440,
+        "y": -3360
       },
       "status": "ghost",
       "type": "external",
@@ -18484,8 +18514,8 @@
       "label": "position",
       "layer": "external",
       "position": {
-        "x": -6840,
-        "y": -2880
+        "x": -8080,
+        "y": -3360
       },
       "status": "ghost",
       "type": "external",
@@ -18518,8 +18548,8 @@
       "label": "project_state_json",
       "layer": "external",
       "position": {
-        "x": -6560,
-        "y": -2840
+        "x": -7720,
+        "y": -3360
       },
       "status": "ghost",
       "type": "external",
@@ -18552,8 +18582,8 @@
       "label": "RawTextMiner",
       "layer": "external",
       "position": {
-        "x": -6200,
-        "y": -2800
+        "x": -8440,
+        "y": -3200
       },
       "status": "ghost",
       "type": "external",
@@ -18565,7 +18595,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 21,
+        "degree": 22,
         "file": "README.ko.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -18601,7 +18631,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 44,
+        "degree": 47,
         "file": "README.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -21719,8 +21749,8 @@
       "label": "debug_match",
       "layer": "ai",
       "position": {
-        "x": -5360,
-        "y": 2200
+        "x": -6080,
+        "y": -400
       },
       "status": "confirmed",
       "type": "source",
@@ -21754,8 +21784,8 @@
       "label": "debug_scanner",
       "layer": "ai",
       "position": {
-        "x": -5000,
-        "y": 2200
+        "x": -5760,
+        "y": -400
       },
       "status": "confirmed",
       "type": "source",
@@ -21789,8 +21819,8 @@
       "label": "test_cpp_regex",
       "layer": "ai",
       "position": {
-        "x": -4680,
-        "y": 2200
+        "x": -6080,
+        "y": -240
       },
       "status": "confirmed",
       "type": "source",
@@ -21824,8 +21854,8 @@
       "label": "create-account",
       "layer": "ai",
       "position": {
-        "x": -12520,
-        "y": -5680
+        "x": -17080,
+        "y": -6240
       },
       "status": "confirmed",
       "type": "source",
@@ -21859,8 +21889,8 @@
       "label": "hintEngine",
       "layer": "ai",
       "position": {
-        "x": -11520,
-        "y": -2080
+        "x": -16080,
+        "y": -2640
       },
       "status": "confirmed",
       "type": "source",
@@ -21894,8 +21924,8 @@
       "label": "BootstrapEngine",
       "layer": "ai",
       "position": {
-        "x": -5680,
-        "y": -2600
+        "x": -7440,
+        "y": -3160
       },
       "status": "confirmed",
       "type": "source",
@@ -21929,8 +21959,8 @@
       "label": "cli",
       "layer": "ai",
       "position": {
-        "x": -5040,
-        "y": -1720
+        "x": -7640,
+        "y": -2240
       },
       "status": "confirmed",
       "type": "source",
@@ -21964,8 +21994,8 @@
       "label": "client",
       "layer": "ai",
       "position": {
-        "x": -4480,
-        "y": -1880
+        "x": -7360,
+        "y": -2240
       },
       "status": "confirmed",
       "type": "source",
@@ -21999,8 +22029,8 @@
       "label": "AiOrchestrator",
       "layer": "ai",
       "position": {
-        "x": -2080,
-        "y": -3720
+        "x": -2880,
+        "y": -5000
       },
       "status": "confirmed",
       "type": "source",
@@ -22034,8 +22064,8 @@
       "label": "ArchitectureDSL",
       "layer": "ai",
       "position": {
-        "x": -2400,
-        "y": -5040
+        "x": -2520,
+        "y": -5000
       },
       "status": "confirmed",
       "type": "source",
@@ -22069,8 +22099,8 @@
       "label": "BillingManager",
       "layer": "ai",
       "position": {
-        "x": -2040,
-        "y": -5040
+        "x": -2160,
+        "y": -5000
       },
       "status": "confirmed",
       "type": "source",
@@ -22104,7 +22134,7 @@
       "label": "BlacklistOrchestrator",
       "layer": "ai",
       "position": {
-        "x": -2240,
+        "x": -2320,
         "y": -4400
       },
       "status": "confirmed",
@@ -22139,8 +22169,8 @@
       "label": "CanvasEngine",
       "layer": "ai",
       "position": {
-        "x": -1640,
-        "y": -600
+        "x": -2640,
+        "y": -1680
       },
       "status": "confirmed",
       "type": "source",
@@ -22174,7 +22204,7 @@
       "label": "Intent",
       "layer": "ai",
       "position": {
-        "x": -2240,
+        "x": -2520,
         "y": -1720
       },
       "status": "confirmed",
@@ -22209,8 +22239,8 @@
       "label": "PhaseGate",
       "layer": "ai",
       "position": {
-        "x": -2720,
-        "y": -1960
+        "x": -3040,
+        "y": -1680
       },
       "status": "confirmed",
       "type": "source",
@@ -22244,8 +22274,8 @@
       "label": "RenderProtocol",
       "layer": "ai",
       "position": {
-        "x": -1920,
-        "y": -1600
+        "x": -1880,
+        "y": -1760
       },
       "status": "confirmed",
       "type": "source",
@@ -22279,8 +22309,8 @@
       "label": "RuleEngine",
       "layer": "ai",
       "position": {
-        "x": -2560,
-        "y": -1960
+        "x": -2800,
+        "y": -1680
       },
       "status": "confirmed",
       "type": "source",
@@ -22314,8 +22344,8 @@
       "label": "ScenarioRunner",
       "layer": "ai",
       "position": {
-        "x": -2000,
-        "y": -1920
+        "x": -2400,
+        "y": -1600
       },
       "status": "confirmed",
       "type": "source",
@@ -22349,8 +22379,8 @@
       "label": "SpatialRuleBook",
       "layer": "ai",
       "position": {
-        "x": -1840,
-        "y": -1920
+        "x": -2200,
+        "y": -1680
       },
       "status": "confirmed",
       "type": "source",
@@ -22385,7 +22415,7 @@
       "layer": "ai",
       "position": {
         "x": -2400,
-        "y": -640
+        "y": -800
       },
       "status": "confirmed",
       "type": "source",
@@ -22419,8 +22449,8 @@
       "label": "ValidationHarness",
       "layer": "ai",
       "position": {
-        "x": -2400,
-        "y": -1560
+        "x": -2320,
+        "y": -1760
       },
       "status": "confirmed",
       "type": "source",
@@ -22454,8 +22484,8 @@
       "label": "VisualRuleBook",
       "layer": "ai",
       "position": {
-        "x": -1560,
-        "y": -2000
+        "x": -2000,
+        "y": -1640
       },
       "status": "confirmed",
       "type": "source",
@@ -22489,7 +22519,7 @@
       "label": "CDPManager",
       "layer": "ai",
       "position": {
-        "x": -1640,
+        "x": -1680,
         "y": -4720
       },
       "status": "confirmed",
@@ -22525,7 +22555,7 @@
       "layer": "ai",
       "position": {
         "x": 1920,
-        "y": -4040
+        "y": -3440
       },
       "status": "confirmed",
       "type": "source",
@@ -22559,8 +22589,8 @@
       "label": "ArchitectureIndexBuilder",
       "layer": "ai",
       "position": {
-        "x": 2120,
-        "y": -3880
+        "x": 2040,
+        "y": -3320
       },
       "status": "confirmed",
       "type": "source",
@@ -22595,7 +22625,7 @@
       "layer": "ai",
       "position": {
         "x": 2400,
-        "y": -4040
+        "y": -3440
       },
       "status": "confirmed",
       "type": "source",
@@ -22630,7 +22660,7 @@
       "layer": "ai",
       "position": {
         "x": 1880,
-        "y": -3600
+        "y": -2960
       },
       "status": "confirmed",
       "type": "source",
@@ -22665,7 +22695,7 @@
       "layer": "ai",
       "position": {
         "x": 2200,
-        "y": -4000
+        "y": -3440
       },
       "status": "confirmed",
       "type": "source",
@@ -22700,7 +22730,7 @@
       "layer": "ai",
       "position": {
         "x": 2480,
-        "y": -3880
+        "y": -3280
       },
       "status": "confirmed",
       "type": "source",
@@ -22735,7 +22765,7 @@
       "layer": "ai",
       "position": {
         "x": 1840,
-        "y": -3760
+        "y": -3120
       },
       "status": "confirmed",
       "type": "source",
@@ -22770,7 +22800,7 @@
       "layer": "ai",
       "position": {
         "x": 2120,
-        "y": -3480
+        "y": -2840
       },
       "status": "confirmed",
       "type": "source",
@@ -22804,8 +22834,8 @@
       "label": "RemoteLayerProjector",
       "layer": "ai",
       "position": {
-        "x": 2320,
-        "y": -3880
+        "x": 2360,
+        "y": -3200
       },
       "status": "confirmed",
       "type": "source",
@@ -22839,8 +22869,8 @@
       "label": "RestCollaborationTransport",
       "layer": "ai",
       "position": {
-        "x": 1960,
-        "y": -3880
+        "x": 2200,
+        "y": -3280
       },
       "status": "confirmed",
       "type": "source",
@@ -22875,7 +22905,7 @@
       "layer": "ai",
       "position": {
         "x": 2160,
-        "y": -3640
+        "y": -3000
       },
       "status": "confirmed",
       "type": "source",
@@ -22909,8 +22939,8 @@
       "label": "SessionManager",
       "layer": "ai",
       "position": {
-        "x": 2840,
-        "y": -3920
+        "x": 2760,
+        "y": -3320
       },
       "status": "confirmed",
       "type": "source",
@@ -22945,7 +22975,7 @@
       "layer": "ai",
       "position": {
         "x": 2320,
-        "y": -2600
+        "y": -3560
       },
       "status": "ghost",
       "type": "source",
@@ -22979,8 +23009,8 @@
       "label": "CommandInterceptor",
       "layer": "ai",
       "position": {
-        "x": -2720,
-        "y": -4880
+        "x": -2880,
+        "y": -4840
       },
       "status": "confirmed",
       "type": "source",
@@ -23014,8 +23044,8 @@
       "label": "ControlSystem",
       "layer": "ai",
       "position": {
-        "x": -2160,
-        "y": -4680
+        "x": -2080,
+        "y": -4720
       },
       "status": "confirmed",
       "type": "source",
@@ -23049,8 +23079,8 @@
       "label": "DatabaseEngine",
       "layer": "ai",
       "position": {
-        "x": -2440,
-        "y": -4880
+        "x": -2520,
+        "y": -4840
       },
       "status": "confirmed",
       "type": "source",
@@ -23084,8 +23114,8 @@
       "label": "DataPipeline",
       "layer": "ai",
       "position": {
-        "x": -2320,
-        "y": -4600
+        "x": -2440,
+        "y": -4680
       },
       "status": "confirmed",
       "type": "source",
@@ -23154,8 +23184,8 @@
       "label": "DirectChatScraper",
       "layer": "ai",
       "position": {
-        "x": -2000,
-        "y": -4880
+        "x": -2160,
+        "y": -4840
       },
       "status": "confirmed",
       "type": "source",
@@ -23189,8 +23219,8 @@
       "label": "EdgeCodeRefactorer",
       "layer": "ai",
       "position": {
-        "x": -2720,
-        "y": -4720
+        "x": -2880,
+        "y": -4680
       },
       "status": "confirmed",
       "type": "source",
@@ -23224,7 +23254,7 @@
       "label": "FileScanner",
       "layer": "ai",
       "position": {
-        "x": -2080,
+        "x": -2040,
         "y": -4400
       },
       "status": "confirmed",
@@ -23294,7 +23324,7 @@
       "label": "FlowchartGenerator",
       "layer": "ai",
       "position": {
-        "x": -1520,
+        "x": -1480,
         "y": -4640
       },
       "status": "confirmed",
@@ -23329,8 +23359,8 @@
       "label": "FlowScanner",
       "layer": "ai",
       "position": {
-        "x": -2520,
-        "y": -4760
+        "x": -2600,
+        "y": -4680
       },
       "status": "confirmed",
       "type": "source",
@@ -23364,8 +23394,8 @@
       "label": "GeminiParser",
       "layer": "ai",
       "position": {
-        "x": -2080,
-        "y": -4240
+        "x": -2040,
+        "y": -4200
       },
       "status": "confirmed",
       "type": "source",
@@ -23399,8 +23429,8 @@
       "label": "graphBuilder",
       "layer": "ai",
       "position": {
-        "x": -1960,
-        "y": -4720
+        "x": -2200,
+        "y": -4680
       },
       "status": "confirmed",
       "type": "source",
@@ -23434,8 +23464,8 @@
       "label": "GraphModel",
       "layer": "ai",
       "position": {
-        "x": -2640,
-        "y": -3760
+        "x": -2320,
+        "y": -4800
       },
       "status": "confirmed",
       "type": "source",
@@ -23470,7 +23500,7 @@
       "layer": "ai",
       "position": {
         "x": -1560,
-        "y": -4320
+        "y": -4280
       },
       "status": "confirmed",
       "type": "source",
@@ -23504,8 +23534,8 @@
       "label": "LogicAnalyzer",
       "layer": "ai",
       "position": {
-        "x": -2720,
-        "y": -4560
+        "x": -2880,
+        "y": -4520
       },
       "status": "confirmed",
       "type": "source",
@@ -23539,8 +23569,8 @@
       "label": "PbSessionWatcher",
       "layer": "ai",
       "position": {
-        "x": -3320,
-        "y": -3800
+        "x": -2520,
+        "y": -4520
       },
       "status": "confirmed",
       "type": "source",
@@ -23574,7 +23604,7 @@
       "label": "PhaseManager",
       "layer": "ai",
       "position": {
-        "x": -1800,
+        "x": -1920,
         "y": -4760
       },
       "status": "confirmed",
@@ -23609,8 +23639,8 @@
       "label": "ProjectionLayer",
       "layer": "ai",
       "position": {
-        "x": -3160,
-        "y": -640
+        "x": -7120,
+        "y": -1240
       },
       "status": "confirmed",
       "type": "source",
@@ -23644,8 +23674,8 @@
       "label": "RuleStore",
       "layer": "ai",
       "position": {
-        "x": -4080,
-        "y": -560
+        "x": -6760,
+        "y": -1280
       },
       "status": "confirmed",
       "type": "source",
@@ -23679,7 +23709,7 @@
       "label": "ProjectMetadata",
       "layer": "ai",
       "position": {
-        "x": -1440,
+        "x": -1560,
         "y": -4800
       },
       "status": "confirmed",
@@ -23714,8 +23744,8 @@
       "label": "PromptLogger",
       "layer": "ai",
       "position": {
-        "x": -1920,
-        "y": -4560
+        "x": -2160,
+        "y": -4520
       },
       "status": "confirmed",
       "type": "source",
@@ -23749,8 +23779,8 @@
       "label": "RendererCore",
       "layer": "ai",
       "position": {
-        "x": -1560,
-        "y": -4480
+        "x": -1520,
+        "y": -4440
       },
       "status": "confirmed",
       "type": "source",
@@ -23819,7 +23849,7 @@
       "label": "RuleEngine",
       "layer": "ai",
       "position": {
-        "x": -2080,
+        "x": -2320,
         "y": -4560
       },
       "status": "confirmed",
@@ -23889,7 +23919,7 @@
       "label": "SymbolIndex",
       "layer": "ai",
       "position": {
-        "x": -1760,
+        "x": -1920,
         "y": -4600
       },
       "status": "confirmed",
@@ -23924,7 +23954,7 @@
       "label": "SynapseIgnore",
       "layer": "ai",
       "position": {
-        "x": -1360,
+        "x": -1640,
         "y": -4600
       },
       "status": "confirmed",
@@ -23959,8 +23989,8 @@
       "label": "CommitManager",
       "layer": "ai",
       "position": {
-        "x": -1080,
-        "y": -2760
+        "x": -3800,
+        "y": -3600
       },
       "status": "confirmed",
       "type": "source",
@@ -23994,8 +24024,8 @@
       "label": "ExecutionLayer",
       "layer": "ai",
       "position": {
-        "x": -1480,
-        "y": -3280
+        "x": -4240,
+        "y": -3600
       },
       "status": "confirmed",
       "type": "source",
@@ -24029,8 +24059,8 @@
       "label": "VerificationLayer",
       "layer": "ai",
       "position": {
-        "x": -1000,
-        "y": -3120
+        "x": -3960,
+        "y": -3600
       },
       "status": "confirmed",
       "type": "source",
@@ -24064,8 +24094,8 @@
       "label": "VirtualDebugger",
       "layer": "ai",
       "position": {
-        "x": -2760,
-        "y": -4400
+        "x": -2880,
+        "y": -4360
       },
       "status": "confirmed",
       "type": "source",
@@ -24099,7 +24129,7 @@
       "label": "VscdbAdapter",
       "layer": "ai",
       "position": {
-        "x": -2400,
+        "x": -2520,
         "y": -4360
       },
       "status": "confirmed",
@@ -24134,7 +24164,7 @@
       "label": "WebviewInterceptor",
       "layer": "ai",
       "position": {
-        "x": -1960,
+        "x": -2160,
         "y": -4320
       },
       "status": "confirmed",
@@ -24169,8 +24199,8 @@
       "label": "ArchitectureExplorer",
       "layer": "ai",
       "position": {
-        "x": -4760,
-        "y": -760
+        "x": -9320,
+        "y": -1320
       },
       "status": "confirmed",
       "type": "source",
@@ -24204,8 +24234,8 @@
       "label": "extension",
       "layer": "ai",
       "position": {
-        "x": -4240,
-        "y": -1440
+        "x": -7200,
+        "y": -2240
       },
       "status": "confirmed",
       "type": "source",
@@ -24239,8 +24269,8 @@
       "label": "mod",
       "layer": "ai",
       "position": {
-        "x": -5880,
-        "y": -4960
+        "x": -9240,
+        "y": -5520
       },
       "status": "confirmed",
       "type": "source",
@@ -24309,8 +24339,8 @@
       "label": "state_checker",
       "layer": "ai",
       "position": {
-        "x": -5560,
-        "y": -4960
+        "x": -8880,
+        "y": -5520
       },
       "status": "confirmed",
       "type": "source",
@@ -24344,8 +24374,8 @@
       "label": "register-vscode-mock",
       "layer": "ai",
       "position": {
-        "x": 1040,
-        "y": -1360
+        "x": -560,
+        "y": -1800
       },
       "status": "confirmed",
       "type": "source",
@@ -24414,8 +24444,8 @@
       "label": "standalone",
       "layer": "ai",
       "position": {
-        "x": 2280,
-        "y": -1240
+        "x": -80,
+        "y": -1800
       },
       "status": "confirmed",
       "type": "source",
@@ -24449,8 +24479,8 @@
       "label": "vscode",
       "layer": "ai",
       "position": {
-        "x": 1240,
-        "y": -1400
+        "x": -240,
+        "y": -1800
       },
       "status": "confirmed",
       "type": "source",
@@ -24484,8 +24514,8 @@
       "label": "vscode",
       "layer": "ai",
       "position": {
-        "x": -11560,
-        "y": -1840
+        "x": -16120,
+        "y": -2400
       },
       "status": "confirmed",
       "type": "source",
@@ -24519,8 +24549,8 @@
       "label": "phase1_validation.test",
       "layer": "ai",
       "position": {
-        "x": 1960,
-        "y": -5280
+        "x": -1200,
+        "y": -5920
       },
       "status": "confirmed",
       "type": "source",
@@ -24554,8 +24584,8 @@
       "label": "phase2_validation.test",
       "layer": "ai",
       "position": {
-        "x": 2360,
-        "y": -5440
+        "x": -800,
+        "y": -5920
       },
       "status": "confirmed",
       "type": "source",
@@ -24589,8 +24619,8 @@
       "label": "phase3_validation.test",
       "layer": "ai",
       "position": {
-        "x": 2680,
-        "y": -5440
+        "x": 2040,
+        "y": -5280
       },
       "status": "ghost",
       "type": "source",
@@ -24624,8 +24654,8 @@
       "label": "phase4_validation.test",
       "layer": "ai",
       "position": {
-        "x": 2240,
-        "y": -5280
+        "x": 1640,
+        "y": -5160
       },
       "status": "ghost",
       "type": "source",
@@ -24659,8 +24689,8 @@
       "label": "phase5_validation.test",
       "layer": "ai",
       "position": {
-        "x": 2600,
-        "y": -5280
+        "x": 1960,
+        "y": -5160
       },
       "status": "ghost",
       "type": "source",
@@ -24694,8 +24724,8 @@
       "label": "phase6_validation.test",
       "layer": "ai",
       "position": {
-        "x": 3040,
-        "y": -5440
+        "x": 2400,
+        "y": -5240
       },
       "status": "ghost",
       "type": "source",
@@ -24729,8 +24759,8 @@
       "label": "phase7_validation.test",
       "layer": "ai",
       "position": {
-        "x": 2400,
-        "y": -5280
+        "x": 2760,
+        "y": -5240
       },
       "status": "ghost",
       "type": "source",
@@ -24764,8 +24794,8 @@
       "label": "phase8_validation.test",
       "layer": "ai",
       "position": {
-        "x": 2760,
-        "y": -5280
+        "x": 2080,
+        "y": -5040
       },
       "status": "ghost",
       "type": "source",
@@ -24799,8 +24829,8 @@
       "label": "phase9_acceptance.test",
       "layer": "ai",
       "position": {
-        "x": 3040,
-        "y": -5280
+        "x": 2400,
+        "y": -5080
       },
       "status": "ghost",
       "type": "source",
@@ -24834,8 +24864,8 @@
       "label": "transport_validation.test",
       "layer": "ai",
       "position": {
-        "x": 2360,
-        "y": -5120
+        "x": 2760,
+        "y": -5080
       },
       "status": "ghost",
       "type": "source",
@@ -24869,8 +24899,8 @@
       "label": "schema",
       "layer": "ai",
       "position": {
-        "x": -3920,
-        "y": -5280
+        "x": -4280,
+        "y": -5840
       },
       "status": "confirmed",
       "type": "source",
@@ -24904,8 +24934,8 @@
       "label": "ChatExtractor",
       "layer": "ai",
       "position": {
-        "x": -1080,
-        "y": -440
+        "x": -2760,
+        "y": -720
       },
       "status": "confirmed",
       "type": "source",
@@ -24939,8 +24969,8 @@
       "label": "exclusionRules",
       "layer": "ai",
       "position": {
-        "x": -720,
-        "y": -440
+        "x": -2400,
+        "y": -640
       },
       "status": "confirmed",
       "type": "source",
@@ -24974,8 +25004,8 @@
       "label": "Logger",
       "layer": "ai",
       "position": {
-        "x": -520,
-        "y": -440
+        "x": -2160,
+        "y": -720
       },
       "status": "confirmed",
       "type": "source",
@@ -25009,8 +25039,8 @@
       "label": "visualHints",
       "layer": "ai",
       "position": {
-        "x": -360,
-        "y": -440
+        "x": -2000,
+        "y": -720
       },
       "status": "confirmed",
       "type": "source",
@@ -25079,8 +25109,8 @@
       "label": "CanvasPanel",
       "layer": "user",
       "position": {
-        "x": -4640,
-        "y": -4960
+        "x": -6400,
+        "y": -5520
       },
       "status": "active",
       "type": "source",
@@ -25113,8 +25143,8 @@
       "label": "synapse_default_view",
       "layer": "external",
       "position": {
-        "x": -6840,
-        "y": -2720
+        "x": -8080,
+        "y": -3200
       },
       "status": "ghost",
       "type": "external",
@@ -25147,8 +25177,8 @@
       "label": "synapse_explorer_menu",
       "layer": "external",
       "position": {
-        "x": -6480,
-        "y": -2680
+        "x": -7720,
+        "y": -3200
       },
       "status": "ghost",
       "type": "external",
@@ -25181,8 +25211,8 @@
       "label": "synapse_feature_demo",
       "layer": "external",
       "position": {
-        "x": -6120,
-        "y": -2680
+        "x": -8440,
+        "y": -3040
       },
       "status": "ghost",
       "type": "external",
@@ -25249,8 +25279,8 @@
       "label": "synapse_focus_top",
       "layer": "external",
       "position": {
-        "x": -6840,
-        "y": -2560
+        "x": -8080,
+        "y": -3040
       },
       "status": "ghost",
       "type": "external",
@@ -25317,8 +25347,8 @@
       "label": "synapse_hide_lead",
       "layer": "external",
       "position": {
-        "x": -6480,
-        "y": -2520
+        "x": -7720,
+        "y": -3040
       },
       "status": "ghost",
       "type": "external",
@@ -25385,8 +25415,8 @@
       "label": "synapse_topology_view",
       "layer": "external",
       "position": {
-        "x": -6160,
-        "y": -2520
+        "x": -8440,
+        "y": -2880
       },
       "status": "ghost",
       "type": "external",
@@ -25419,8 +25449,8 @@
       "label": "synapse_traffic_heatmap",
       "layer": "external",
       "position": {
-        "x": -6840,
-        "y": -2400
+        "x": -8080,
+        "y": -2880
       },
       "status": "ghost",
       "type": "external",
@@ -25487,8 +25517,8 @@
       "label": "synapse_zoom_detail",
       "layer": "external",
       "position": {
-        "x": -6480,
-        "y": -2360
+        "x": -7720,
+        "y": -2880
       },
       "status": "ghost",
       "type": "external",
@@ -25590,8 +25620,8 @@
       "label": "compare",
       "layer": "ai",
       "position": {
-        "x": -3760,
-        "y": 1160
+        "x": -5840,
+        "y": 600
       },
       "status": "confirmed",
       "type": "source",
@@ -25625,8 +25655,8 @@
       "label": "config-generator",
       "layer": "ai",
       "position": {
-        "x": -3400,
-        "y": 1160
+        "x": -5520,
+        "y": 600
       },
       "status": "confirmed",
       "type": "source",
@@ -25660,8 +25690,8 @@
       "label": "log-analyzer",
       "layer": "ai",
       "position": {
-        "x": -3040,
-        "y": 1160
+        "x": -5160,
+        "y": 600
       },
       "status": "confirmed",
       "type": "source",
@@ -25694,8 +25724,8 @@
       "label": "ts",
       "layer": "external",
       "position": {
-        "x": -6160,
-        "y": -2360
+        "x": -8440,
+        "y": -2720
       },
       "status": "ghost",
       "type": "external",
@@ -25729,8 +25759,8 @@
       "label": "canvas-engine",
       "layer": "ai",
       "position": {
-        "x": -12760,
-        "y": -2120
+        "x": -15480,
+        "y": -2960
       },
       "status": "confirmed",
       "type": "source",
@@ -25764,8 +25794,8 @@
       "label": "engine-core",
       "layer": "ai",
       "position": {
-        "x": -12400,
-        "y": -2120
+        "x": -15120,
+        "y": -2960
       },
       "status": "confirmed",
       "type": "source",
@@ -25799,8 +25829,8 @@
       "label": "synapse-theme",
       "layer": "ai",
       "position": {
-        "x": -12040,
-        "y": -2120
+        "x": -14760,
+        "y": -2960
       },
       "status": "confirmed",
       "type": "source",
@@ -25834,8 +25864,8 @@
       "label": "webgl-renderer",
       "layer": "ai",
       "position": {
-        "x": -12760,
-        "y": -1960
+        "x": -15480,
+        "y": -2800
       },
       "status": "confirmed",
       "type": "source",
@@ -25881,7 +25911,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 52,
+        "degree": 53,
         "hasAtomicSignature": false,
         "hasImportSignature": false,
         "hiddenOnCanvas": true,
@@ -26006,8 +26036,8 @@
       "label": "vscode-languageserver-textdocument",
       "layer": "external",
       "position": {
-        "x": -6840,
-        "y": -2240
+        "x": -8080,
+        "y": -2720
       },
       "status": "ghost",
       "type": "external",
@@ -26077,8 +26107,8 @@
       "label": "debug_nodes",
       "layer": "ai",
       "position": {
-        "x": 0,
-        "y": -80
+        "x": -5800,
+        "y": -1000
       },
       "status": "confirmed",
       "type": "source",
@@ -26112,8 +26142,8 @@
       "label": "check_state",
       "layer": "ai",
       "position": {
-        "x": -2120,
-        "y": 2080
+        "x": -6440,
+        "y": -400
       },
       "status": "confirmed",
       "type": "source",
@@ -26147,8 +26177,8 @@
       "label": "test_api_state",
       "layer": "ai",
       "position": {
-        "x": -2120,
-        "y": 2240
+        "x": -6440,
+        "y": -240
       },
       "status": "confirmed",
       "type": "source",
@@ -26290,8 +26320,8 @@
       "label": "CompareEngine",
       "layer": "ai",
       "position": {
-        "x": 3000,
-        "y": -2720
+        "x": 1880,
+        "y": -3280
       },
       "status": "confirmed",
       "type": "source",
@@ -26325,8 +26355,8 @@
       "label": "HarvestSessionManager",
       "layer": "ai",
       "position": {
-        "x": 3160,
-        "y": -2720
+        "x": 1480,
+        "y": -3320
       },
       "status": "confirmed",
       "type": "source",
@@ -27052,7 +27082,7 @@
       "cluster_id": "doc_shelf",
       "data": {
         "cluster_id": "doc_shelf",
-        "degree": 3,
+        "degree": 6,
         "file": "mile_stone/v0.3.30.1.md",
         "hasAtomicSignature": false,
         "hasImportSignature": false,
@@ -27080,12 +27110,79 @@
       "visual": {
         "opacity": 1
       }
+    },
+    {
+      "cluster_id": "cluster_ghosts",
+      "data": {
+        "cluster_id": "cluster_ghosts",
+        "degree": 2,
+        "hasAtomicSignature": false,
+        "hasImportSignature": false,
+        "hiddenOnCanvas": false,
+        "icon": "☁️",
+        "isScoped": false,
+        "isSovereign": false,
+        "isUserCreated": false,
+        "label": "flowview",
+        "layer": "external",
+        "opacity": 0.5,
+        "scale": 1,
+        "status": "ghost"
+      },
+      "degree": 0,
+      "filePath": "external://flowview",
+      "id": "flowview",
+      "intelligence": {},
+      "label": "flowview",
+      "layer": "external",
+      "position": {
+        "x": -8080,
+        "y": -3840
+      },
+      "status": "ghost",
+      "type": "external",
+      "visual": {
+        "opacity": 0.5
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "degree": 0,
+        "file": "release_note/v0.3.30.1_release_notes.md",
+        "hasAtomicSignature": false,
+        "hasImportSignature": false,
+        "hiddenOnCanvas": true,
+        "icon": "📚",
+        "isUserCreated": true,
+        "label": "v0.3.30.1_release_notes",
+        "layer": "user",
+        "opacity": 1,
+        "scale": 1,
+        "status": "active"
+      },
+      "degree": 0,
+      "filePath": "release_note/v0.3.30.1_release_notes.md",
+      "id": "release_note/v0.3.30.1_release_notes.md",
+      "intelligence": {},
+      "label": "v0.3.30.1_release_notes",
+      "layer": "user",
+      "position": {
+        "x": 8080,
+        "y": -150
+      },
+      "status": "active",
+      "type": "documentation",
+      "visual": {
+        "opacity": 1
+      }
     }
   ],
   "project_name": "antigravity-extension-vis",
   "_iron_guard": {
     "version": "0.2.18.1",
-    "byte_size": 660779,
+    "byte_size": 643941,
     "encoding": "UTF-8",
     "alignment": 8
   }

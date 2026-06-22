@@ -4,8 +4,16 @@
 
 **Don't read the code. See the architecture.**
 
-[![Version](https://img.shields.io/badge/version-v0.3.28-brightgreen.png)](https://github.com/dogsinatas29/SYNAPSE)
-[![Latest Release](https://img.shields.io/badge/latest-v0.3.28%202D%20Rendering%20Overhaul-orange.png)](https://github.com/dogsinatas29/SYNAPSE/releases)
+Software is not hard because of code.
+
+Software is hard because of invisible relationships.
+
+SYNAPSE transforms source code into an explorable architecture map,
+allowing engineers to visualize dependencies, execution flow,
+bottlenecks, and system-wide interactions across large software systems.
+
+[![Version](https://img.shields.io/badge/version-v0.3.30.1-brightgreen.png)](https://github.com/dogsinatas29/SYNAPSE)
+[![Latest Release](https://img.shields.io/badge/latest-v0.3.30.1%20UI%2FUX%20Refinement-orange.png)](https://github.com/dogsinatas29/SYNAPSE/releases)
 ![Status](https://img.shields.io/badge/status-Production_Ready-brightgreen.png)
 
 [🇰🇷 한국어 버전](./README.ko.md)
@@ -395,7 +403,7 @@ SYNAPSE was created to overcome the limitations of code-centric development. It 
 
 ## 📅 Status & Roadmap
 
-- **Status**: v0.3.29 – Cluster Overlap Resolution & External Layer Fix.
+- **Status**: v0.3.30.1 – UI/UX Refinement & Feature Cleanup.
 - **Next**:
     - Server / Client separation for remote analysis.
     - Advanced Performance optimization for 50k+ nodes.

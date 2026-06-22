@@ -4,8 +4,16 @@
 
 **코드를 읽지 마세요. 아키텍처를 보세요.**
 
-[![Version](https://img.shields.io/badge/version-v0.3.28-brightgreen.png)](https://github.com/dogsinatas29/SYNAPSE)
-[![Latest Release](https://img.shields.io/badge/latest-v0.3.28%202D%20Rendering%20Overhaul-orange.png)](https://github.com/dogsinatas29/SYNAPSE/releases)
+소프트웨어가 어려운 이유는 코드 때문이 아닙니다.
+
+소프트웨어가 어려운 이유는 보이지 않는 관계성(relationships) 때문입니다.
+
+SYNAPSE는 소스 코드를 탐색 가능한 아키텍처 맵으로 변환하여,
+엔지니어가 대규모 소프트웨어 시스템 전반의 의존성, 실행 흐름,
+병목 현상, 그리고 시스템 전체의 상호작용을 시각화할 수 있게 해줍니다.
+
+[![Version](https://img.shields.io/badge/version-v0.3.30.1-brightgreen.png)](https://github.com/dogsinatas29/SYNAPSE)
+[![Latest Release](https://img.shields.io/badge/latest-v0.3.30.1%20UI%2FUX%20Refinement-orange.png)](https://github.com/dogsinatas29/SYNAPSE/releases)
 ![Status](https://img.shields.io/badge/status-Production_Ready-brightgreen.png)
 
 [🇺🇸 English Version](./README.md)
@@ -393,7 +401,7 @@ SYNAPSE는 코드 중심 개발의 한계를 극복하기 위해 만들어졌습
 
 ## 📅 상태 및 로드맵
 
-- **현재 상태**: v0.3.30 – 하비스트 기반 협업 모델 적용.
+- **현재 상태**: v0.3.30.1 – UI/UX 개선 및 Tree View 비활성화.
 - **다음 계획 (Next)**:
     - 원격 분석을 위한 서버/클라이언트 완전 분리.
     - 50,000개 이상의 노드를 위한 고급 성능 최적화.

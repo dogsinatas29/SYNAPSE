@@ -2505,24 +2505,24 @@ class CanvasEngine {
                         if (stats) {
                             // [v0.3.22.9] Senior's Prescription: 100ms Debounce to prevent 
                             // race conditions with Batch Validation and Flow Data refresh.
-                            if (this._tooltipTimer) clearTimeout(this._tooltipTimer);
                             this._tooltipTimer = setTimeout(() => {
                                 const screenX = e.clientX;
                                 const screenY = e.clientY;
-                                this.showNodeSummary(screenX, screenY, node, stats);
+                                const edgeReason = (edge && edge._validationReason) ? edge._validationReason : null;
+                                this.showNodeSummary(screenX, screenY, node, stats, edgeReason);
                             }, 100);
                         } else {
                             if (this._tooltipTimer) clearTimeout(this._tooltipTimer);
                             this.hideNodeSummary();
                         }
+                        this.hideTooltip(); // Hide edge tooltip when node is hovered
                     } else {
                         this.hideNodeSummary();
-                    }
-
-                    if (edge && edge._validationReason) {
-                        this.showTooltip(e.clientX, e.clientY, edge._validationReason);
-                    } else {
-                        this.hideTooltip();
+                        if (edge && edge._validationReason) {
+                            this.showTooltip(e.clientX, e.clientY, edge._validationReason);
+                        } else {
+                            this.hideTooltip();
+                        }
                     }
                 }
             }
@@ -4381,7 +4381,7 @@ class CanvasEngine {
         return (typeof SYNAPSE_THEME !== 'undefined') ? SYNAPSE_THEME : (window.SYNAPSE_THEME || null);
     }
 
-    showNodeSummary(x, y, node, stats) {
+    showNodeSummary(x, y, node, stats, edgeReason) {
         // [v0.3.22.9] Diagnostic position trace
         if (x < 50 && y < 50) {
             console.warn(`[SYNAPSE] Tooltip Position Warning: (${x}, ${y}) - Attempting auto-correction`);
@@ -4564,6 +4564,12 @@ class CanvasEngine {
                 <div style="color: #fe8019;">Out: <span style="color: #ebdbb2;">${stats.out}</span></div>
             </div>
             ${distHtml}
+            ${edgeReason ? `
+            <div style="margin-top: 8px; border-top: 1px dashed #fabd2f; padding-top: 6px;">
+                <div style="font-size: 10px; color: #fabd2f; text-transform: uppercase; margin-bottom: 4px;">[Edge] Validation:</div>
+                <div style="font-size: 11px; color: #ebdbb2; line-height: 1.4; white-space: pre-wrap;">${edgeReason}</div>
+            </div>
+            ` : ''}
         `;
         
         // [v0.3.22.9] Forced display enforcement BEFORE positioning to ensure rect calculation is valid

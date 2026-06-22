@@ -197,6 +197,16 @@ F       G ─ H
 - **Path Tracing**: Rapidly trace specific execution flows.
 - **Local Anomaly Detection**: Identify structural defects within a localized area.
 
+### 🔀 Auto-Generated Flow View
+SYNAPSE automatically generates a logical flowchart based on the underlying architecture.
+
+**Generation Conditions:**
+- The graph must contain valid logical or data flow edges (e.g., `Flow`, `Calls`, `Depends`).
+- Nodes must be properly connected; standalone, scattered nodes without connections will not form a meaningful flowchart.
+- Accessible via the `View -> Flow View` menu in the top navigation bar.
+
+![Flow View Screenshot](assets/flowview.png)
+
 ---
 
 ## 🌾 Harvest
@@ -330,6 +340,8 @@ SYNAPSE was created to overcome the limitations of code-centric development. It 
 
 | Version | Date | Description |
 | :--- | :--- | :--- |
+| **v0.3.30.1** | 2026-06-22 | **UI/UX Refinement & Feature Cleanup**: Implemented Tooltip Merge Logic to resolve Z-Index bleeding when hovering overlapping nodes and edges. Disabled problematic Tree View mode to align with graph-centric architecture. |
+| **v0.3.30** | 2026-06-22 | **Harvest-Based Collaboration Model**: Major architecture upgrade introducing session management, secure SSH transport, and remote projection layers. Full integration of Harvest Engine and Identity permissions. |
 | **v0.3.29** | 2026-06-06 | **Cluster Overlap Resolution & External Layer Fix**: Implemented Initial Spread (circular layout via FNV-1a hash) + Cluster Push-Apart engine (Mass-weighted AABB push-apart) to resolve cluster/node overlapping. Fixed External Ghosts cluster box not showing when External layer is ON. Reduced Align Architecture cluster expansion by 50% (roleOffsets halved). |
 | **v0.3.27** | 2026-05-28 | **Data Sync Resilience & Layer Sovereignty**: Resolved critical data synchronization bugs causing phantom edge disappearances (`Edges: 0`). Ensured UI layer separation logic properly isolates scanned folders and custom groupings without structural damage. |
 | **v0.3.26** | 2026-05-26 | **2D Edge Validation Patch**: Fixed a bug where solid edges would silently fail to render in 2D mode due to invalid dash array fallback `[0, 0]` not supported by HTML5 Canvas API context. |

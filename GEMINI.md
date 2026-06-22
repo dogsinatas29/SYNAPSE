@@ -358,7 +358,6 @@ SYNAPSE는 파일 시스템과 그래프를 Source Of Truth로 사용하는 협�
 │   │   │   ├── IdentityManager.ts
 │   │   │   ├── SessionManager.ts
 │   │   │   ├── RuntimeInitializer.ts
-│   │   │   ├── (Deleted) SubmissionManager.ts
 │   │   │   ├── CompareEngine.ts
 │   │   │   ├── HarvestSessionManager.ts
 │   │   │   ├── RemoteLayerProjector.ts
@@ -410,8 +409,7 @@ SYNAPSE는 파일 시스템과 그래프를 Source Of Truth로 사용하는 협�
 │   │   ├── __mocks__/
 │   │   │   └── vscode.ts
 │   │   ├── phase1_validation.test.ts
-│   │   ├── phase2_validation.test.ts
-│   │   ├── (Deleted) phase3_validation.test.ts ~ transport_validation.test.ts
+│   │   └── phase2_validation.test.ts
 │   ├── analysis/
 │   │   └── hintEngine.ts
 │   ├── bootstrap/
@@ -533,14 +531,7 @@ SYNAPSE는 파일 시스템과 그래프를 Source Of Truth로 사용하는 협�
 | `src/test/__mocks__/vscode.ts` | Active | VS Code API Mock (테스트 환경) |
 | `src/test/phase1_validation.test.ts` | Active | Phase 1 검증 (ProjectBoundary + SymbolIndex) — 10 tests |
 | `src/test/phase2_validation.test.ts` | Active | Phase 2 검증 (Identity + Session + Runtime) — 14 tests |
-| `src/test/phase3_validation.test.ts` | Active | Phase 3 검증 (SubmissionManager) — 12 tests |
-| `src/test/phase4_validation.test.ts` | Active | Phase 4 검증 (RemoteLayerProjector + Gate CL Client Layer tests) — 24 tests |
-| `src/test/phase5_validation.test.ts` | Active | Phase 5 검증 (ArchitectureIndexBuilder) — 14 tests |
-| `src/test/phase6_validation.test.ts` | Active | Phase 6 검증 (ReferenceVerifier) — 14 tests |
-| `src/test/phase7_validation.test.ts` | Active | Phase 7 검증 (HarvestEngine) — 10 tests |
-| `src/test/phase8_validation.test.ts` | Active | Phase 8 검증 (BoundaryGuard) — 8 tests |
-| `src/test/phase9_acceptance.test.ts` | Active | Phase 9 End-to-End Acceptance — 10 scenarios, 106 total |
-| `src/test/transport_validation.test.ts` | Active | CollaborationTransport/RestCollaborationTransport 단위 검증 |
+| `src/test/phase3_validation.test.ts` ~ `transport_validation.test.ts` | **Deleted** | 기존 Submission 기반 비동기식 테스트 영구 삭제 (v0.3.30 Harvest 통합) |
 | `tools/*` | 유지 | 성능 벤치마킹, 규격 파일 생성, 진단 로그 분석용 보조 스크립트 |
 
 > **삭제된 파일**: `src/core/GhostNodeManager.ts`, `src/core/ContextVault.ts` — 이전 ROOT Structure에 Active로 기재되어 있었으나 현재 디스크에 존재하지 않습니다. (v0.3.30 이전 리팩토링 과정에서 제거)

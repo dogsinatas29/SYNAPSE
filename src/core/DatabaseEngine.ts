@@ -89,20 +89,38 @@ export class DatabaseEngine {
     public generateExecutiveSummary(currentProjectName: string, activeNodesCount: number, activeEdgesCount: number): string {
         const meta = this.getBillingMeta();
         const managed = this.getManagedNodes();
+        const isKo = vscode.env.language.startsWith('ko');
 
-        let report = `### 🏢 SYNAPSE Executive Summary - ${currentProjectName}\n\n`;
-        report += `- **Report Generated:** ${new Date().toLocaleString()}\n`;
-        report += `- **Project Complexity:** ${activeNodesCount} Active Nodes / ${activeEdgesCount} Connections\n`;
-        report += `- **Total Managed Entities (All Time):** ${managed.length}\n`;
-        report += `- **License Status:** ${meta.isPro ? 'PRO (Unlimited)' : 'FREE'}\n`;
-        report += `- **Today's Session Usage:** ${meta.dailySessions}\n\n`;
+        let report = isKo 
+            ? `### 🏢 SYNAPSE 경영진 요약 보고서 - ${currentProjectName}\n\n`
+            : `### 🏢 SYNAPSE Executive Summary - ${currentProjectName}\n\n`;
 
-        report += `#### Traceability Highlights\n`;
+        report += isKo 
+            ? `- **보고서 생성일시:** ${new Date().toLocaleString()}\n`
+            : `- **Report Generated:** ${new Date().toLocaleString()}\n`;
+
+        report += isKo 
+            ? `- **프로젝트 복잡도:** 활성 노드 ${activeNodesCount}개 / 연결선 ${activeEdgesCount}개\n`
+            : `- **Project Complexity:** ${activeNodesCount} Active Nodes / ${activeEdgesCount} Connections\n`;
+
+        report += isKo 
+            ? `- **총 관리 대상 노드 (누적):** ${managed.length}개\n`
+            : `- **Total Managed Entities (All Time):** ${managed.length}\n`;
+
+        report += isKo 
+            ? `- **라이선스 상태:** ${meta.isPro ? 'PRO (무제한)' : 'FREE'}\n`
+            : `- **License Status:** ${meta.isPro ? 'PRO (Unlimited)' : 'FREE'}\n`;
+
+        report += isKo 
+            ? `- **오늘 세션 사용량:** ${meta.dailySessions}회\n\n`
+            : `- **Today's Session Usage:** ${meta.dailySessions}\n\n`;
+
+        report += isKo ? `#### 추적 가능성 요약 (Traceability)\n` : `#### Traceability Highlights\n`;
         const traces = this.getTraceabilityReport();
         const recentTraces = traces.slice(-5).reverse();
 
         if (recentTraces.length === 0) {
-            report += `No recent data flow traced.\n`;
+            report += isKo ? `최근 추적된 데이터 흐름이 없습니다.\n` : `No recent data flow traced.\n`;
         } else {
             recentTraces.forEach((t: any) => {
                 report += `- [${t.timestamp}] \`${t.fromId}\` -> \`${t.toId}\` (${t.payloadType})\n`;

@@ -409,7 +409,9 @@ SYNAPSE는 파일 시스템과 그래프를 Source Of Truth로 사용하는 협�
 │   │   ├── __mocks__/
 │   │   │   └── vscode.ts
 │   │   ├── phase1_validation.test.ts
-│   │   └── phase2_validation.test.ts
+│   │   ├── phase2_validation.test.ts
+│   │   ├── security_integration.test.ts
+│   │   └── security_regression.test.ts
 │   ├── analysis/
 │   │   └── hintEngine.ts
 │   ├── bootstrap/
@@ -428,6 +430,7 @@ SYNAPSE는 파일 시스템과 그래프를 Source Of Truth로 사용하는 협�
 │   ├── utils/
 │   │   ├── ChatExtractor.ts
 │   │   ├── Logger.ts
+│   │   ├── SensitiveInfoMasker.ts
 │   │   ├── exclusionRules.ts
 │   │   └── visualHints.ts
 │   └── webview/
@@ -531,7 +534,10 @@ SYNAPSE는 파일 시스템과 그래프를 Source Of Truth로 사용하는 협�
 | `src/test/__mocks__/vscode.ts` | Active | VS Code API Mock (테스트 환경) |
 | `src/test/phase1_validation.test.ts` | Active | Phase 1 검증 (ProjectBoundary + SymbolIndex) — 10 tests |
 | `src/test/phase2_validation.test.ts` | Active | Phase 2 검증 (Identity + Session + Runtime) — 14 tests |
+| `src/test/security_integration.test.ts` | Active | 보안 검증 (Path Traversal, 권한 우회, SSE 오염 등) |
+| `src/test/security_regression.test.ts` | Active | 보안 및 역호환성 회귀 검증 (계정 포맷 및 포트 충돌 방어) |
 | `src/test/phase3_validation.test.ts` ~ `transport_validation.test.ts` | **Deleted** | 기존 Submission 기반 비동기식 테스트 영구 삭제 (v0.3.30 Harvest 통합) |
+| `src/utils/SensitiveInfoMasker.ts` | Active | 로그 내 민감 정보(Secret, Token, Password 등) 자동 마스킹 유틸리티 |
 | `tools/*` | 유지 | 성능 벤치마킹, 규격 파일 생성, 진단 로그 분석용 보조 스크립트 |
 
 > **삭제된 파일**: `src/core/GhostNodeManager.ts`, `src/core/ContextVault.ts` — 이전 ROOT Structure에 Active로 기재되어 있었으나 현재 디스크에 존재하지 않습니다. (v0.3.30 이전 리팩토링 과정에서 제거)

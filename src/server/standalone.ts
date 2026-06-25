@@ -210,9 +210,20 @@ const sessions = new Map<string, { userId: string; username: string; connectedSi
 // Client-pushed data store: userId → { nodes, edges, clusters }
 const clientPushData = new Map<string, { nodes: any[]; edges: any[]; clusters: any[]; pushedAt: number }>();
 
+export interface DiagnosticsSnapshot {
+    timestamp: number;
+    hash: string;
+    diagnostics: any[];
+}
+// Client diagnostics snapshot store: userId -> DiagnosticsSnapshot
+const clientDiagnostics = new Map<string, DiagnosticsSnapshot>();
+
 // SSE Client stream store: userId -> express.Response
 const sseClients = new Map<string, any>();
 const lockedClients = new Map<string, { lockedAt: number, lockedBy: 'server' }>();
+// [v0.3.31] Soft Disconnect: track disconnected time, purge after 15min
+const SOFT_DISCONNECT_TTL_MS = 15 * 60 * 1000;
+const softDisconnected = new Map<string, NodeJS.Timeout>();
 function isLocked(userId: string): boolean {
     return lockedClients.has(userId);
 }
@@ -410,6 +421,53 @@ app.post('/api/client/position', (req, res) => {
     }
 
     res.json({ success: true, updatedCount });
+});
+
+// Phase A: Client Diagnostics Upload
+app.post('/api/client/diagnostics', (req, res) => {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        res.status(401).json({ success: false, error: 'Unauthorized' }); return;
+    }
+    const token = authHeader.slice(7);
+    const session = sessions.get(token);
+    if (!session) {
+        res.status(401).json({ success: false, error: 'Invalid session' }); return;
+    }
+    const { hash, diagnostics } = req.body;
+    if (!hash || !Array.isArray(diagnostics)) {
+        res.status(400).json({ success: false, error: 'hash and diagnostics array required' }); return;
+    }
+    
+    const userId = session.userId;
+    const existing = clientDiagnostics.get(userId);
+    
+    // Hash 비교
+    if (existing && existing.hash === hash) {
+        // 내용은 같아도 timestamp는 갱신하여 Stale 처리 방지
+        existing.timestamp = Date.now();
+        res.json({ success: true, updated: false });
+        return;
+    }
+
+    clientDiagnostics.set(userId, {
+        timestamp: Date.now(),
+        hash,
+        diagnostics
+    });
+
+    Logger.info(`[Diagnostics] Received ${diagnostics.length} diagnostics from ${session.username}`);
+    res.json({ success: true, updated: true });
+});
+
+// Phase B: Get Client Diagnostics
+app.get('/api/client/diagnostics', requireLead, (req, res) => {
+    // Lead(Architect)만 조회 가능
+    const result: Record<string, DiagnosticsSnapshot> = {};
+    for (const [userId, snapshot] of clientDiagnostics.entries()) {
+        result[userId] = snapshot;
+    }
+    res.json({ success: true, diagnostics: result });
 });
 
 // State API (static file + client-pushed data)
@@ -1013,12 +1071,24 @@ app.get('/api/collab/stream', (req, res) => {
     const cleanup = () => {
         if (cleanedUp) return;
         cleanedUp = true;
-        
+
         if (sseClients.get(userId) === res) {
             sseClients.delete(userId);
             lockedClients.delete(userId);
-            Logger.info(`[SSE] Client ${session.username} disconnected and unlocked`);
+            Logger.info(`[SSE] Client ${session.username} soft-disconnected. Retaining cache for 15min.`);
             stateVersion++;
+
+            // [v0.3.31] Soft Disconnect: schedule hard purge after 15 minutes
+            const existingTimer = softDisconnected.get(userId);
+            if (existingTimer) clearTimeout(existingTimer);
+            const purgeTimer = setTimeout(() => {
+                clientPushData.delete(userId);
+                clientDiagnostics.delete(userId);
+                softDisconnected.delete(userId);
+                Logger.info(`[SSE] Client ${session.username} hard-purged after 15min offline.`);
+                stateVersion++;
+            }, SOFT_DISCONNECT_TTL_MS);
+            softDisconnected.set(userId, purgeTimer);
         }
     };
     

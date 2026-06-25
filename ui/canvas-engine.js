@@ -4208,36 +4208,16 @@ class CanvasEngine {
      * Triggers a smooth simulation that drifts nodes into their lanes without destroying the graph structure.
      */
     applyRoleAlignment() {
+        if (!this.nodes || this.nodes.length === 0) return;
         this.isAligning = true;
         this.alignTimer = 120; // Run simulation for ~2 seconds
         console.log('[SYNAPSE] Spring-based Alignment Triggered.');
-        this.requestRender();
-    }
-
-    /**
-     * Physical update logic for soft alignment.
-     */
-    updateAlignmentSimulation() {
-        if (!this.nodes || !this.isAligning) return;
         
-        if (this.alignTimer > 0) {
-            this.alignTimer--;
-        } else {
-            this.isAligning = false;
-            console.log('[SYNAPSE] Alignment Simulation Settled.');
-            this.resolveClusterOverlaps(); // [v0.3.29] Push apart overlapping clusters after alignment
-            this.updateHotspots(); // Final precision update
-            return;
-        }
-
-        const ALIGN_STRENGTH = 0.02; // Reduced strength for stability
-        const DAMPING = 0.75;        // Stronger damping (lower friction value in this context)
-        const MAX_VELOCITY = 100;    // Absolute cap to prevent "exploding" nodes
+        // [v0.3.31] Reduce spacing to make the architecture fit nicely on screen
+        const COLUMN_WIDTH = 150; // 노드 너비(120) + 여백(30)
+        const ROW_HEIGHT = 70;  // 노드 높이(60) + 여백(10)
         
-        const COLUMN_WIDTH = 350; 
-        const ROW_HEIGHT = 160;  
-        
-        // 1. Calculate Cluster Centers (to preserve overall cluster positions)
+        // 1. Calculate Cluster Centers (ONCE)
         const clusterCenters = {};
         for (const node of this.nodes) {
             const cid = node.cluster_id || 'unclustered';
@@ -4252,67 +4232,145 @@ class CanvasEngine {
         }
 
         // 2. Group nodes by Cluster, then by Role
-        const groups = {}; // { clusterId: { Leaf: [], Hub: [], Orchestrator: [], Controller: [] } }
+        const groups = {};
         for (const node of this.nodes) {
             const cid = node.cluster_id || 'unclustered';
             if (!groups[cid]) {
-                groups[cid] = { 'Leaf': [], 'Hub': [], 'Orchestrator': [], 'Controller': [] };
+                groups[cid] = { 'Leaf': [], 'Hub': [], 'Orchestrator': [], 'Controller': [], 'Other': [] };
             }
+            
+            node.targetX = undefined;
+            node.targetY = undefined;
 
             const stats = this.nodeStatsMap.get(node.id);
-            if (!stats || !stats.primaryRole) continue;
+            if (!stats || !stats.primaryRole) {
+                groups[cid]['Other'].push(node);
+                continue;
+            }
             
             const pRole = stats.primaryRole;
             if (pRole.startsWith('Leaf')) groups[cid]['Leaf'].push(node);
             else if (pRole.startsWith('Hub')) groups[cid]['Hub'].push(node);
             else if (pRole.startsWith('Orchestrator')) groups[cid]['Orchestrator'].push(node);
             else if (pRole.startsWith('Controller')) groups[cid]['Controller'].push(node);
+            else groups[cid]['Other'].push(node);
         }
 
-        // Relative offsets within a cluster
-        const roleOffsets = { 'Leaf': -300, 'Hub': -100, 'Orchestrator': 100, 'Controller': 300 };
+        // 3. Compute Fixed Targets to prevent overlapping and oscillation
+        // [v0.3.31.2] Apply Boundary Constraints (Max Width Wrapper)
+        const MAX_CLUSTER_WIDTH = 1200; // 최대 너비 제한 (화면 축소 한계 고려)
 
-        // 3. Apply Local Spring Forces
         for (const [cid, clusterRoles] of Object.entries(groups)) {
             const center = clusterCenters[cid];
             
+            let curX = 0;
+            let curY = 0;
+            let maxRowHeightInBlock = 0;
+            let currentLineWidth = 0;
+            
+            const nodeTargets = [];
+            
             for (const [roleName, list] of Object.entries(clusterRoles)) {
-                // targetX is cluster's center X + role's offset
-                const baseX = center.x + roleOffsets[roleName];
-                
+                if (list.length === 0) continue;
                 list.sort((a, b) => (a.label || '').localeCompare(b.label || ''));
                 
+                const maxCols = Math.max(1, Math.floor(MAX_CLUSTER_WIDTH / COLUMN_WIDTH));
+                const cols = Math.min(maxCols, Math.max(1, Math.ceil(Math.sqrt(list.length))));
+                const rows = Math.ceil(list.length / cols);
+                const roleBlockWidth = cols * COLUMN_WIDTH;
+                const roleBlockHeight = rows * ROW_HEIGHT;
+                
+                if (currentLineWidth > 0 && currentLineWidth + roleBlockWidth > MAX_CLUSTER_WIDTH) {
+                    curX = 0;
+                    curY += maxRowHeightInBlock + (ROW_HEIGHT / 2);
+                    currentLineWidth = 0;
+                    maxRowHeightInBlock = 0;
+                }
+                
                 list.forEach((node, i) => {
-                    const colIndex = i % 3;
-                    const rowIndex = Math.floor(i / 3);
-                    
-                    const targetX = baseX + (colIndex - 1) * COLUMN_WIDTH;
-                    const targetY = center.y + (rowIndex * ROW_HEIGHT) - (Math.ceil(list.length / 3) * ROW_HEIGHT / 2);
-
-                    // Apply Smooth Damped Spring
-                    const fx = (targetX - node.position.x) * ALIGN_STRENGTH;
-                    const fy = (targetY - node.position.y) * ALIGN_STRENGTH;
-
-                    node.vx = (node.vx || 0) + fx;
-                    node.vy = (node.vy || 0) + fy;
-                    
-                    // Apply Damping
-                    node.vx *= DAMPING;
-                    node.vy *= DAMPING;
-                    
-                    // Velocity Clamp to prevent explosion
-                    const speed = Math.sqrt(node.vx * node.vx + node.vy * node.vy);
-                    if (speed > MAX_VELOCITY) {
-                        const ratio = MAX_VELOCITY / speed;
-                        node.vx *= ratio;
-                        node.vy *= ratio;
-                    }
-                    
-                    // Integrate
-                    node.position.x += node.vx;
-                    node.position.y += node.vy;
+                    const colIndex = i % cols;
+                    const rowIndex = Math.floor(i / cols);
+                    nodeTargets.push({
+                        node: node,
+                        tx: curX + colIndex * COLUMN_WIDTH,
+                        ty: curY + rowIndex * ROW_HEIGHT
+                    });
                 });
+                
+                curX += roleBlockWidth + (COLUMN_WIDTH / 2);
+                currentLineWidth += roleBlockWidth + (COLUMN_WIDTH / 2);
+                maxRowHeightInBlock = Math.max(maxRowHeightInBlock, roleBlockHeight);
             }
+            
+            if (nodeTargets.length === 0) continue;
+            
+            let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+            for (const item of nodeTargets) {
+                minX = Math.min(minX, item.tx);
+                minY = Math.min(minY, item.ty);
+                maxX = Math.max(maxX, item.tx);
+                maxY = Math.max(maxY, item.ty);
+            }
+            
+            const blockCenterX = (minX + maxX) / 2;
+            const blockCenterY = (minY + maxY) / 2;
+            
+            const offsetX = center.x - blockCenterX;
+            const offsetY = center.y - blockCenterY;
+            
+            for (const item of nodeTargets) {
+                item.node.targetX = item.tx + offsetX;
+                item.node.targetY = item.ty + offsetY;
+            }
+        }
+        
+        this.requestRender();
+    }
+
+    /**
+     * Physical update logic for soft alignment.
+     * Complies with Performance Rule 1: No dynamic allocations, sorting, or complex grouping in frame path.
+     */
+    updateAlignmentSimulation() {
+        if (!this.nodes || !this.isAligning) return;
+        
+        if (this.alignTimer > 0) {
+            this.alignTimer--;
+        } else {
+            this.isAligning = false;
+            console.log('[SYNAPSE] Alignment Simulation Settled.');
+            this.resolveClusterOverlaps(); // [v0.3.29] Push apart overlapping clusters after alignment
+            this.updateHotspots(); // Final precision update
+            return;
+        }
+
+        const ALIGN_STRENGTH = 0.05; // Slightly stronger to reach targets faster
+        const DAMPING = 0.75;
+        const MAX_VELOCITY = 100;
+        
+        // Simple O(N) integration loop
+        for (let i = 0; i < this.nodes.length; i++) {
+            const node = this.nodes[i];
+            if (node.targetX === undefined || node.targetY === undefined) continue;
+            
+            const fx = (node.targetX - node.position.x) * ALIGN_STRENGTH;
+            const fy = (node.targetY - node.position.y) * ALIGN_STRENGTH;
+
+            node.vx = (node.vx || 0) + fx;
+            node.vy = (node.vy || 0) + fy;
+            
+            node.vx *= DAMPING;
+            node.vy *= DAMPING;
+            
+            const speed = Math.sqrt(node.vx * node.vx + node.vy * node.vy);
+            if (speed > MAX_VELOCITY) {
+                const ratio = MAX_VELOCITY / speed;
+                node.vx *= ratio;
+                node.vy *= ratio;
+            }
+            
+            node.position.x += node.vx;
+            node.position.y += node.vy;
         }
         
         // [v0.3.20.2] Throttle hotspot updates during animation to save CPU and reduce jitter
@@ -4589,8 +4647,22 @@ class CanvasEngine {
         ` : '';
 
 
+        const clientTimestamp = node.clientTimestamp || node.data?.clientTimestamp;
+        let updateInfoHtml = '';
+        if (clientTimestamp) {
+            const diffMs = Date.now() - clientTimestamp;
+            const diffMins = Math.floor(diffMs / 60000);
+            const user = node.clientUsername || node.data?.clientUsername || node.clientLayer || node.data?.clientLayer || 'User';
+            updateInfoHtml = `
+            <div style="font-size: 10px; color: #a89984; font-style: italic; margin-bottom: 4px;">
+                👤 ${user} <span style="margin-left: 4px; color: #928374;">Updated ${diffMins}m ago</span>
+            </div>
+            `;
+        }
+
         this.nodeSummary.innerHTML = `
-            <div style="color: #fabd2f; font-weight: bold; border-bottom: 1px solid #fabd2f; margin-bottom: 8px; padding-bottom: 4px; font-size: 13px;">${nodeName}</div>
+            <div style="color: #fabd2f; font-weight: bold; border-bottom: 1px solid #fabd2f; margin-bottom: ${updateInfoHtml ? '4px' : '8px'}; padding-bottom: 4px; font-size: 13px;">${nodeName}</div>
+            ${updateInfoHtml}
             <div style="display: flex; gap: 15px; font-size: 11px; margin-bottom: 2px;">
                 <div style="color: #b8bb26;">Conn: <span style="color: #ebdbb2;">${stats.connectedNodes}</span></div>
                 <div style="color: #83a598;">In: <span style="color: #ebdbb2;">${stats.in}</span></div>
@@ -5494,13 +5566,13 @@ class CanvasEngine {
         // 1. Grid (Standard Canvas)
         this.renderGrid();
 
-        // [v0.2.28] Render Clusters first
-        this.renderClusters();
-
         // 2. Transformation
         this.ctx.save();
         this.ctx.translate(offsetX, offsetY);
         this.ctx.scale(zoom, zoom);
+
+        // [v0.2.28] Render Clusters first (inside transform so it scales correctly)
+        this.renderClusters();
 
         // 3. Edges
         for (const edge of frameState.edges) {
@@ -7191,6 +7263,20 @@ class CanvasEngine {
         }) || (this.hoveredEdge && (this.hoveredEdge.from === node.id || this.hoveredEdge.to === node.id));
 
         let opacity = node.visual?.opacity || 0.4;
+
+        // [v0.3.31] Time-based Stale Diagnostics
+        const clientTimestamp = node.clientTimestamp || node.data?.clientTimestamp;
+        if (clientTimestamp) {
+            const diffMins = (Date.now() - clientTimestamp) / 60000;
+            if (diffMins <= 5) {
+                opacity = 1.0; // Active
+            } else if (diffMins <= 15) {
+                opacity = 0.7; // Stale
+            } else {
+                opacity = 0.4; // Offline Candidate
+            }
+        }
+
         if (isPartofActivePath) opacity = 1.0;
         this.ctx.globalAlpha = opacity;
 
@@ -8683,7 +8769,7 @@ class CanvasEngine {
     // [v0.3.29] Cluster-level overlap resolution (Push-Apart with Mass weighting)
     resolveClusterOverlaps() {
         if (!this.clusters || this.clusters.length < 2) return;
-        const PADDING = 40;
+        const PADDING = 20; // [v0.3.31] 클러스터간 마진 대폭 축소 (기존 40)
         const ITERATIONS = 3;
 
         // [v0.3.29 hotfix] Debug: log cluster bounds before resolution

@@ -99,8 +99,8 @@ export class FlowchartGenerator {
         ranks.forEach((rank, nodeId) => ranks.set(nodeId, maxOverallRank - rank));
 
         // 4. 노드 생성 및 클러스터 할당
-        const clusterSpacingX = 1000;
-        const clusterSpacingY = 1500;
+        const clusterSpacingX = 400;
+        const clusterSpacingY = 400;
         const clusterCols = Math.ceil(Math.sqrt(Math.max(clusters.filter(c => !c.parent_id).length, 1)));
 
         let topClusterIdx = 0;
@@ -131,13 +131,16 @@ export class FlowchartGenerator {
             const clusterX = (topClusterIdx % clusterCols) * clusterSpacingX;
             const clusterY = Math.floor(topClusterIdx / clusterCols) * clusterSpacingY;
 
+            const numFiles = files!.length;
+            const cols = Math.max(1, Math.ceil(Math.sqrt(numFiles)));
+
             files!.forEach((file, idx) => {
                 const hints = getVisualHints(file.path);
                 if (file.type === 'documentation') {
-                    const node = this.createNode(file.path, file.type, file.description, -200 + (idx % 4) * 200, 1100 + Math.floor(idx / 4) * 150, hints.layer, hints.priority, 'doc_shelf', (file as any).intelligence);
+                    const node = this.createNode(file.path, file.type, file.description, -200 + (idx % 4) * 160, 1100 + Math.floor(idx / 4) * 80, hints.layer, hints.priority, 'doc_shelf', (file as any).intelligence);
                     nodes.push(node);
                 } else {
-                    const node = this.createNode(file.path, file.type, file.description, clusterX + (idx % 4) * 200 + 30, clusterY + Math.floor(idx / 4) * 150 + 100, hints.layer, hints.priority, clusterId, (file as any).intelligence);
+                    const node = this.createNode(file.path, file.type, file.description, clusterX + (idx % cols) * 160 + 30, clusterY + Math.floor(idx / cols) * 80 + 80, hints.layer, hints.priority, clusterId, (file as any).intelligence);
                     nodes.push(node);
                     if (cluster) cluster.children!.push(node.id);
                 }

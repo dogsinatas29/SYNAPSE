@@ -22,6 +22,7 @@ export interface Node {
     intelligence?: any;
     visual?: any;
     clientLayer?: string;
+    clientTimestamp?: number;
     [key: string]: any;
 }
 

@@ -30,7 +30,7 @@ import { FlowchartGenerator } from '../core/FlowchartGenerator';
 import { BootstrapEngine } from '../bootstrap/BootstrapEngine';
 import { client } from '../client';
 import { Logger } from '../utils/Logger';
-import { VirtualDebugger } from '../core/VirtualDebugger';
+import { VirtualDebugger, DiagnosticsStore } from '../core/VirtualDebugger';
 import { SynapseIgnore } from '../core/SynapseIgnore';
 import { RuleEngine } from '../core/RuleEngine';
 // [v0.3.1 Bootstrap Locked] Core Systems
@@ -126,6 +126,10 @@ export class CanvasPanel {
     private _saveListenerDisposable: vscode.Disposable | null = null;
     private _isSessionLocked: boolean = false; // [v0.3.30] Harvest Session Lock
 
+    // [v0.3.31] Network-Aware Virtual Debugger
+    private _diagnosticDebounceTimer: NodeJS.Timeout | null = null;
+    private _lastDiagnosticHash: string = '';
+
 
     public static createOrShow(context: vscode.ExtensionContext, workspaceFolder: vscode.WorkspaceFolder) {
         const extensionUri = context.extensionUri;
@@ -186,6 +190,15 @@ export class CanvasPanel {
 
         // Remote Save Listener
         this._saveListenerDisposable = vscode.workspace.onDidSaveTextDocument(this._handleDocumentSave.bind(this));
+
+        // [v0.3.31] Diagnostics Exporter
+        this._disposables.push(vscode.languages.onDidChangeDiagnostics(() => {
+            if (!this._sessionToken) return; // Not connected
+            if (this._diagnosticDebounceTimer) clearTimeout(this._diagnosticDebounceTimer);
+            this._diagnosticDebounceTimer = setTimeout(() => {
+                this._pushDiagnostics();
+            }, 2000);
+        }));
 
         // [v0.3.09_fix] Rendering Isolation - send clearCanvas when Phase changes
         phaseManager.onPhaseAdvance = (phase: Phase) => {
@@ -2113,9 +2126,75 @@ export class CanvasPanel {
             req.on('timeout', () => { req.destroy(); });
             req.write(body);
             req.end();
+            if (!this._pushInFlight) {
+                this._pushClientState(this._connHost, this._connPort);
+            }
         } catch (err: any) {
             Logger.warn(`[ClientPush] Scan failed: ${err.message}`);
         }
+    }
+
+    private async _pushDiagnostics() {
+        if (!this._sessionToken || !this._connHost) return;
+
+        const allDiags = vscode.languages.getDiagnostics();
+        const diagnostics: any[] = [];
+        const workspacePath = this._workspaceFolder.uri.fsPath;
+
+        for (const [uri, diags] of allDiags) {
+            // Only care about files in this workspace
+            if (uri.fsPath.startsWith(workspacePath)) {
+                let relativePath = vscode.workspace.asRelativePath(uri, false);
+                relativePath = relativePath.replace(/\\/g, '/');
+                for (const diag of diags) {
+                    diagnostics.push({
+                        relativePath,
+                        severity: diag.severity,
+                        message: diag.message,
+                        line: diag.range.start.line,
+                        source: diag.source
+                    });
+                }
+            }
+        }
+
+        const hashPayload = JSON.stringify(diagnostics);
+        const hash = require('crypto').createHash('sha256').update(hashPayload).digest('hex');
+
+        if (hash === this._lastDiagnosticHash) {
+            return; // No changes
+        }
+
+        const data = JSON.stringify({ hash, diagnostics });
+        const opts: http.RequestOptions = {
+            hostname: this._connHost,
+            port: this._connPort || 3000,
+            path: '/api/client/diagnostics',
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Content-Length': Buffer.byteLength(data),
+                ...this._getAuthHeaders()
+            },
+            timeout: 5000,
+        };
+
+        const req = http.request(opts, (res) => {
+            let body = '';
+            res.on('data', c => body += c);
+            res.on('end', () => {
+                try {
+                    const result = JSON.parse(body);
+                    if (result.success && result.updated) {
+                        this._lastDiagnosticHash = hash;
+                        Logger.info(`[Diagnostics] Pushed ${diagnostics.length} diagnostics successfully.`);
+                    }
+                } catch {}
+            });
+        });
+        req.on('error', (e) => Logger.warn(`[Diagnostics] Push failed: ${e.message}`));
+        req.write(data);
+        req.end();
     }
 
     // FileSystemWatcher 시작 (자동 재푸시)
@@ -2184,11 +2263,48 @@ export class CanvasPanel {
                     this._lastStateVersion = version;
                     this._fetchServerState(this._connHost, String(this._connPort), false);
                 }
+
+                if (this._isServerOwner) {
+                    await this._fetchRemoteDiagnostics();
+                }
             } catch (e: any) {
                 Logger.warn(`[VersionPoll] Tick error: ${e.message}`);
             }
         }, 10000); // 10초 간격 (임시 — 추후 이벤트 기반으로 전환)
         Logger.info('[VersionPoll] Started (10s interval)');
+    }
+
+    private async _fetchRemoteDiagnostics() {
+        if (!this._connHost) return;
+        return new Promise<void>((resolve) => {
+            const opts: http.RequestOptions = {
+                hostname: this._connHost,
+                port: this._connPort || 3000,
+                path: '/api/client/diagnostics',
+                method: 'GET',
+                headers: { ...this._getAuthHeaders() },
+                timeout: 5000,
+            };
+            const req = http.request(opts, (res) => {
+                let body = '';
+                res.on('data', c => body += c);
+                res.on('end', () => {
+                    try {
+                        const result = JSON.parse(body);
+                        if (result.success && result.diagnostics) {
+                            const store = DiagnosticsStore.getInstance();
+                            for (const [userId, snap] of Object.entries(result.diagnostics)) {
+                                const snapshot = snap as any;
+                                store.updateSnapshot(userId, snapshot.timestamp, snapshot.diagnostics);
+                            }
+                        }
+                    } catch {}
+                    resolve();
+                });
+            });
+            req.on('error', () => resolve());
+            req.end();
+        });
     }
 
     private _stopVersionPolling(): void {
@@ -2733,14 +2849,51 @@ export class CanvasPanel {
      * - 기본값과 동일한 속성 제거 (Pruning)
      * - JSON 키를 알파벳 순으로 정렬하여 Git Diff 최소화
      */
+    private async _getMergedState(workspaceFolder: vscode.WorkspaceFolder): Promise<any> {
+        if (this._connHost) {
+            return new Promise<any>((resolve) => {
+                const opts = {
+                    hostname: this._connHost,
+                    port: this._connPort || 3000,
+                    path: '/api/state',
+                    method: 'GET',
+                    headers: { ...this._getAuthHeaders() },
+                    timeout: 5000
+                };
+                const req = http.request(opts, res => {
+                    let body = '';
+                    res.on('data', c => body += c);
+                    res.on('end', () => {
+                        try {
+                            const result = JSON.parse(body);
+                            if (result.success && result.state) {
+                                resolve(result.state);
+                            } else {
+                                resolve(null);
+                            }
+                        } catch { resolve(null); }
+                    });
+                });
+                req.on('error', () => resolve(null));
+                req.end();
+            }).then(async (netState) => {
+                if (netState) return netState;
+                const uri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'project_state.json');
+                const data = await vscode.workspace.fs.readFile(uri);
+                return JSON.parse(data.toString());
+            });
+        }
+        const uri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'project_state.json');
+        const data = await vscode.workspace.fs.readFile(uri);
+        return JSON.parse(data.toString());
+    }
+
     private async handleTestLogic() {
         const workspaceFolder = this._workspaceFolder;
         if (!workspaceFolder) return;
 
         try {
-            const projectStateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'project_state.json');
-            const data = await vscode.workspace.fs.readFile(projectStateUri);
-            const state = JSON.parse(data.toString());
+            const state = await this._getMergedState(workspaceFolder);
 
             const analyzer = new LogicAnalyzer();
             const issues = analyzer.analyze(state);
@@ -2752,6 +2905,15 @@ export class CanvasPanel {
             });
 
             vscode.window.showInformationMessage(`[SYNAPSE] Logic analysis complete. 'LOGIC_REPORT.md' generated.`);
+            
+            // Auto-open LOGIC_REPORT.md
+            const reportUri = vscode.Uri.joinPath(workspaceFolder.uri, 'LOGIC_REPORT.md');
+            try {
+                const doc = await vscode.workspace.openTextDocument(reportUri);
+                await vscode.window.showTextDocument(doc, { viewColumn: vscode.ViewColumn.Beside, preview: true });
+            } catch (e) {
+                Logger.warn(`[SYNAPSE] Failed to open LOGIC_REPORT.md: ${e}`);
+            }
         } catch (error) {
             console.error('[SYNAPSE] Logic Analysis failed:', error);
             vscode.window.showErrorMessage(`Logic Analysis failed: ${error}`);
@@ -2766,10 +2928,8 @@ export class CanvasPanel {
         if (!workspaceFolder) return;
 
         try {
-            // 1. Get current project state
-            const projectStateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'project_state.json');
-            const data = await vscode.workspace.fs.readFile(projectStateUri);
-            const state = JSON.parse(data.toString());
+            // 1. Get current project state (Network Merged if connected)
+            const state = await this._getMergedState(workspaceFolder);
 
             // 2. Perform Virtual Debug scan
             const vDebugger = new VirtualDebugger();
@@ -2788,6 +2948,50 @@ export class CanvasPanel {
             if (impact.reports.length > 0) {
                 const errorCount = impact.reports.filter(r => r.severity === vscode.DiagnosticSeverity.Error).length;
                 vscode.window.showWarningMessage(`[SYNAPSE] Virtual Debugging found ${errorCount} Errors and ${impact.reports.length - errorCount} Warnings.`);
+
+                // [v0.3.31] Generate and open markdown report
+                const reportContent = [
+                    '# SYNAPSE Virtual Debug Report',
+                    '',
+                    `**Generated At:** ${new Date().toLocaleString()}`,
+                    `**Total Errors:** ${errorCount}`,
+                    `**Total Warnings:** ${impact.reports.length - errorCount}`,
+                    '',
+                    '## Details',
+                    ''
+                ];
+
+                const reportsByFile = new Map<string, any[]>();
+                impact.reports.forEach(r => {
+                    const node = state.nodes.find((n: any) => n.id === r.nodeId);
+                    const file = node?.data?.file || 'Unknown File';
+                    if (!reportsByFile.has(file)) reportsByFile.set(file, []);
+                    reportsByFile.get(file)!.push(r);
+                });
+
+                for (const [file, reports] of reportsByFile.entries()) {
+                    reportContent.push(`### ${file}`);
+                    reports.forEach(r => {
+                        const sevType = r.severity === vscode.DiagnosticSeverity.Error ? '❌ Error' : '⚠️ Warning';
+                        reportContent.push(`- **${sevType}** (Line ${r.line + 1}): ${r.message}`);
+                    });
+                    reportContent.push('');
+                }
+
+                const synapseDir = vscode.Uri.joinPath(workspaceFolder.uri, '.synapse');
+                try {
+                    await vscode.workspace.fs.stat(synapseDir);
+                } catch {
+                    await vscode.workspace.fs.createDirectory(synapseDir);
+                }
+
+                const reportUri = vscode.Uri.joinPath(synapseDir, 'virtual_debug_report.md');
+                await vscode.workspace.fs.writeFile(reportUri, Buffer.from(reportContent.join('\n'), 'utf8'));
+
+                // Open in split view
+                const doc = await vscode.workspace.openTextDocument(reportUri);
+                await vscode.window.showTextDocument(doc, { viewColumn: vscode.ViewColumn.Beside, preview: true });
+
             } else {
                 vscode.window.showInformationMessage(`[SYNAPSE] Virtual Debugging complete: No physical errors found.`);
             }
@@ -4739,6 +4943,59 @@ export class CanvasPanel {
         const themeUri = webview.asWebviewUri(
             vscode.Uri.joinPath(this._extensionUri, 'ui', 'synapse-theme.js')
         );
+
+        // [v0.3.31] HTML Tooltip Localization
+        const isKo = vscode.env.language.startsWith('ko');
+        
+        const translationsKo: Record<string, string> = {
+            'Show all edges and badges': '모든 엣지와 뱃지 표시',
+            'Hide badges, show edges': '뱃지 숨기기, 엣지만 표시',
+            'Hide all edges': '모든 엣지 숨기기',
+            'Fit All Nodes in View': '화면에 모든 노드 맞추기',
+            'Reset Zoom/Offset': '확대/이동 상태 초기화',
+            'Group Selected Nodes': '선택된 노드 그룹화',
+            'Ungroup Selected Cluster': '선택된 클러스터 그룹 해제',
+            'Toggle Destructive Source Editing': '파괴적 소스 편집 모드 토글',
+            'Add New Node': '새 노드 추가',
+            'Connect Nodes (Alt+Click)': '노드 연결 (Alt+클릭)',
+            'Delete Selected Nodes/Edges': '선택된 노드/엣지 삭제',
+            'Run AI-Driven Semantic Analysis': 'AI 기반 시맨틱 분석 실행',
+            'Runtime Simulation Debug': '런타임 시뮬레이션 디버그',
+            'Simulate Necrosis on Selection': '선택 영역 괴사 시뮬레이션',
+            'Simulate Tombstone on Selection': '선택 영역 툼스톤 시뮬레이션',
+            'Clear Debug Visuals': '디버그 시각 효과 초기화',
+            'v0.2.28: Determinism Bootstrap': 'v0.2.28: 결정론적 부트스트랩',
+            'Deep Reset: Re-scan complete project': '심층 리셋: 프로젝트 전체 재검사',
+            'Toggle Edge Animations': '엣지 애니메이션 토글',
+            'View Architecture Rules': '아키텍처 규칙 보기',
+            'Open Master Hub (Architecture.md)': '마스터 허브 열기 (Architecture.md)',
+            'Open Modular Specs': '모듈 스펙 열기',
+            'Take Manual Snapshot': '수동 스냅샷 생성'
+        };
+
+        const translationsEn: Record<string, string> = {
+            '서버 관리 패널을 열어 마스터 서버를 시작하거나 종료합니다.': 'Open the server management panel to start or stop the Master Server.',
+            '원격 서버 관리 패널을 열어 다른 마스터 서버에 접속합니다.': 'Open the remote server management panel to connect to another Master Server.',
+            '계정 관리 패널을 열어 새로운 사용자를 생성하거나 관리합니다.': 'Open the account management panel to create or manage users.',
+            '로컬 머신에 시냅스 마스터 서버를 구동하여 다른 클라이언트들이 접속할 수 있도록 합니다.': 'Run the SYNAPSE Master Server on the local machine to allow clients to connect.',
+            '실행 중인 마스터 서버를 강제로 종료하고 모든 클라이언트의 연결을 끊습니다.': 'Force stop the running Master Server and disconnect all clients.',
+            '[수확 1단계] 현재 접속 중인 모든 클라이언트의 에디터를 락(Lock) 걸어 수정을 차단하고 수확 세션을 시작합니다.': '[Harvest Phase 1] Lock all connected clients editors to prevent modifications and start the harvest session.',
+            '[수확 2단계] 레이어가 켜져 있는(가시성 ON) 클라이언트들의 로컬 파일 상태를 분석하여 마스터(서버) 레이어와의 변경점을 비교합니다.': '[Harvest Phase 2] Compare local file changes of clients with visible layers against the master server.',
+            '[수확 3단계] 비교를 통해 발견된 변경된 파일들을 실제 마스터(서버) 레이어로 복사(동기화)하고 락을 해제합니다.': '[Harvest Phase 3] Sync detected changes to the master server layer and unlock editors.',
+            'Context 레코딩 토글 (CTRL+ALT+M)': 'Toggle Context Recording (CTRL+ALT+M)',
+            'project_state.json을 빈 상태로 초기화': 'Reset project_state.json to an empty state',
+            '0.0.0.0으로 설정 시 외부망 접속이 허용됩니다 (Public Mode)': 'Setting to 0.0.0.0 allows external network access (Public Mode)'
+        };
+
+        if (isKo) {
+            for (const [en, ko] of Object.entries(translationsKo)) {
+                html = html.replace(`title="${en}"`, `title="${ko}"`);
+            }
+        } else {
+            for (const [ko, en] of Object.entries(translationsEn)) {
+                html = html.replace(`title="${ko}"`, `title="${en}"`);
+            }
+        }
 
         // Replace script src with webview URI
         html = html.replace(

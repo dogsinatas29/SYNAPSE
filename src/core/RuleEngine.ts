@@ -118,7 +118,7 @@ export class RuleEngine {
             'node_modules', '.git', 'build', 'dist', 'data', 'out',
             '.venv', 'venv', 'env', '__pycache__', '.pytest_cache',
             '.idea', '.vscode', '.github', 'target', 'vendor',
-            'bin', 'obj', '.synapse_contexts'
+            'bin', 'obj', '.synapse_contexts', '.synapse'
         ]);
         this.blacklistFiles = new Set([
             'package-lock.json',

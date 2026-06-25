@@ -20,6 +20,7 @@ export interface ClassifiedNode {
     clientLayer?: string;
     clientUsername?: string;
     sessionId?: string;
+    clientTimestamp?: number;
 }
 
 export interface ClassifiedCluster {
@@ -131,6 +132,7 @@ export class RemoteLayerProjector {
                 clientLayer: snapshot.clientId,
                 clientUsername: snapshot.clientUsername,
                 sessionId: snapshot.sessionId,
+                clientTimestamp: snapshot.timestamp,
             };
 
             node.layer = classifyNodeLayer(node);
@@ -200,6 +202,7 @@ export class RemoteLayerProjector {
                 cluster_id: n.clusterId,
                 layer: n.layer,
                 clientLayer: n.clientLayer,
+                clientTimestamp: n.clientTimestamp,
                 data: {
                     label: n.label,
                     file: n.filePath,
@@ -207,6 +210,8 @@ export class RemoteLayerProjector {
                     layer: n.layer,
                     clientLayer: n.clientLayer,
                     clientUsername: n.clientUsername,
+                    sessionId: n.sessionId,
+                    clientTimestamp: n.clientTimestamp,
                     icon: n.isDocumentation ? '📚' : (n.isExternal ? '☁️' : (n.hasAtomicSignature ? '⚡' : '📄')),
                     hiddenOnCanvas: n.isDocumentation,
                     hasAtomicSignature: n.hasAtomicSignature,

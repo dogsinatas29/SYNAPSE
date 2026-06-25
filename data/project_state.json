@@ -604,7 +604,7 @@
         "projected": true
       },
       "from": "리포트.md",
-      "id": "edge_리포트.md_command:synapse.focusNode?%22%EB%A6%AC%ED%8F%AC%ED%8A%B8_1782360972523",
+      "id": "edge_리포트.md_command:synapse.focusNode?%22%EB%A6%AC%ED%8F%AC%ED%8A%B8_1782374291543",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -622,7 +622,7 @@
         "projected": true
       },
       "from": "architecture.md",
-      "id": "edge_architecture.md_backup_md/core_synapse.md_1782360972500",
+      "id": "edge_architecture.md_backup_md/core_synapse.md_1782374291519",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -640,7 +640,7 @@
         "projected": true
       },
       "from": "architecture.md",
-      "id": "edge_architecture.md_backup_md/data_scheme.md_1782360972500",
+      "id": "edge_architecture.md_backup_md/data_scheme.md_1782374291519",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -658,7 +658,7 @@
         "projected": true
       },
       "from": "architecture.md",
-      "id": "edge_architecture.md_backup_md/reporting.md_1782360972500",
+      "id": "edge_architecture.md_backup_md/reporting.md_1782374291519",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -676,7 +676,7 @@
         "projected": true
       },
       "from": "architecture.md",
-      "id": "edge_architecture.md_RULES.md_1782360972500",
+      "id": "edge_architecture.md_RULES.md_1782374291519",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -694,7 +694,7 @@
         "projected": true
       },
       "from": "architecture.md",
-      "id": "edge_architecture.md_visual_impact.md_1782360972500",
+      "id": "edge_architecture.md_visual_impact.md_1782374291519",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -712,7 +712,7 @@
         "projected": true
       },
       "from": "backup_md/리포트.md",
-      "id": "edge_backup_md/리포트.md_command:synapse.focusNode?%22%EB%A6%AC%ED%8F%AC%ED%8A%B8_1782360972502",
+      "id": "edge_backup_md/리포트.md_command:synapse.focusNode?%22%EB%A6%AC%ED%8F%AC%ED%8A%B8_1782374291521",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -730,7 +730,7 @@
         "projected": true
       },
       "from": "backup_md/architecture.md",
-      "id": "edge_backup_md/architecture.md_backup_md/core_synapse.md_1782360972500",
+      "id": "edge_backup_md/architecture.md_backup_md/core_synapse.md_1782374291520",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -748,7 +748,7 @@
         "projected": true
       },
       "from": "backup_md/architecture.md",
-      "id": "edge_backup_md/architecture.md_backup_md/data_scheme.md_1782360972500",
+      "id": "edge_backup_md/architecture.md_backup_md/data_scheme.md_1782374291520",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -766,7 +766,7 @@
         "projected": true
       },
       "from": "backup_md/architecture.md",
-      "id": "edge_backup_md/architecture.md_backup_md/reporting.md_1782360972500",
+      "id": "edge_backup_md/architecture.md_backup_md/reporting.md_1782374291520",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -784,7 +784,7 @@
         "projected": true
       },
       "from": "backup_md/architecture.md",
-      "id": "edge_backup_md/architecture.md_backup_md/vega_agent.md_1782360972500",
+      "id": "edge_backup_md/architecture.md_backup_md/vega_agent.md_1782374291520",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -802,7 +802,7 @@
         "projected": true
       },
       "from": "backup_md/architecture.md",
-      "id": "edge_backup_md/architecture.md_RULES.md_1782360972500",
+      "id": "edge_backup_md/architecture.md_RULES.md_1782374291520",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -820,7 +820,7 @@
         "projected": true
       },
       "from": "backup_md/GEMINI.md",
-      "id": "edge_backup_md/GEMINI.md_architecture.md_1782360972500",
+      "id": "edge_backup_md/GEMINI.md_architecture.md_1782374291519",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -838,7 +838,7 @@
         "projected": true
       },
       "from": "backup_md/GEMINI.md",
-      "id": "edge_backup_md/GEMINI.md_synapse_topology_view_1782360972500",
+      "id": "edge_backup_md/GEMINI.md_synapse_topology_view_1782374291519",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -856,7 +856,7 @@
         "projected": true
       },
       "from": "mile_stone/v0.2.16.md",
-      "id": "edge_backup_md/mile_stone/v0.2.16.md_v0.2.15_1782360972500",
+      "id": "edge_backup_md/mile_stone/v0.2.16.md_v0.2.15_1782374291520",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -874,7 +874,7 @@
         "projected": true
       },
       "from": "mile_stone/v0.2.17.md",
-      "id": "edge_backup_md/mile_stone/v0.2.17.md_demo/canvas-engine.js_1782360972501",
+      "id": "edge_backup_md/mile_stone/v0.2.17.md_demo/canvas-engine.js_1782374291520",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -892,7 +892,7 @@
         "projected": true
       },
       "from": "mile_stone/v0.2.17.md",
-      "id": "edge_backup_md/mile_stone/v0.2.17.md_index_1782360972501",
+      "id": "edge_backup_md/mile_stone/v0.2.17.md_index_1782374291520",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -910,7 +910,7 @@
         "projected": true
       },
       "from": "mile_stone/v0.2.17.md",
-      "id": "edge_backup_md/mile_stone/v0.2.17.md_RULES.md_1782360972501",
+      "id": "edge_backup_md/mile_stone/v0.2.17.md_RULES.md_1782374291520",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -928,7 +928,7 @@
         "projected": true
       },
       "from": "mile_stone/v0.2.17.md",
-      "id": "edge_backup_md/mile_stone/v0.2.17.md_src/bootstrap/BootstrapEngine.ts_1782360972501",
+      "id": "edge_backup_md/mile_stone/v0.2.17.md_src/bootstrap/BootstrapEngine.ts_1782374291520",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -946,7 +946,7 @@
         "projected": true
       },
       "from": "mile_stone/v0.2.17.md",
-      "id": "edge_backup_md/mile_stone/v0.2.17.md_src/core/FileScanner.ts_1782360972501",
+      "id": "edge_backup_md/mile_stone/v0.2.17.md_src/core/FileScanner.ts_1782374291520",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -964,7 +964,7 @@
         "projected": true
       },
       "from": "mile_stone/v0.2.17.md",
-      "id": "edge_backup_md/mile_stone/v0.2.17.md_src/core/GeminiParser.ts_1782360972501",
+      "id": "edge_backup_md/mile_stone/v0.2.17.md_src/core/GeminiParser.ts_1782374291520",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -982,7 +982,7 @@
         "projected": true
       },
       "from": "mile_stone/v0.2.17.md",
-      "id": "edge_backup_md/mile_stone/v0.2.17.md_src/extension.ts_1782360972501",
+      "id": "edge_backup_md/mile_stone/v0.2.17.md_src/extension.ts_1782374291520",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1000,7 +1000,7 @@
         "projected": true
       },
       "from": "mile_stone/v0.2.17.md",
-      "id": "edge_backup_md/mile_stone/v0.2.17.md_src/webview/CanvasPanel.ts_1782360972501",
+      "id": "edge_backup_md/mile_stone/v0.2.17.md_src/webview/CanvasPanel.ts_1782374291520",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1018,7 +1018,7 @@
         "projected": true
       },
       "from": "mile_stone/v0.2.17.md",
-      "id": "edge_backup_md/mile_stone/v0.2.17.md_v0.2.15_1782360972500",
+      "id": "edge_backup_md/mile_stone/v0.2.17.md_v0.2.15_1782374291520",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1036,7 +1036,7 @@
         "projected": true
       },
       "from": "mile_stone/v0.2.18.md",
-      "id": "edge_backup_md/mile_stone/v0.2.18.md_v0.2.15_1782360972501",
+      "id": "edge_backup_md/mile_stone/v0.2.18.md_v0.2.15_1782374291520",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1054,7 +1054,7 @@
         "projected": true
       },
       "from": "mile_stone/v0.2.20.md",
-      "id": "edge_backup_md/mile_stone/v0.2.20.md_src/core/AiOrchestrator.ts_1782360972501",
+      "id": "edge_backup_md/mile_stone/v0.2.20.md_src/core/AiOrchestrator.ts_1782374291520",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1072,7 +1072,7 @@
         "projected": true
       },
       "from": "mile_stone/v0.2.20.md",
-      "id": "edge_backup_md/mile_stone/v0.2.20.md_v0.2.15_1782360972501",
+      "id": "edge_backup_md/mile_stone/v0.2.20.md_v0.2.15_1782374291520",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1090,7 +1090,7 @@
         "projected": true
       },
       "from": "backup_md/prompts/2026-02-17_keybinding_check.md",
-      "id": "edge_backup_md/prompts/2026-02-17_keybinding_check.md_package_1782360972501",
+      "id": "edge_backup_md/prompts/2026-02-17_keybinding_check.md_package_1782374291521",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1108,7 +1108,7 @@
         "projected": true
       },
       "from": "backup_md/prompts/2026-02-17_origin_edge_verification.md",
-      "id": "edge_backup_md/prompts/2026-02-17_origin_edge_verification.md_src/bootstrap/BootstrapEngine.ts_1782360972501",
+      "id": "edge_backup_md/prompts/2026-02-17_origin_edge_verification.md_src/bootstrap/BootstrapEngine.ts_1782374291521",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1126,7 +1126,7 @@
         "projected": true
       },
       "from": "backup_md/prompts/2026-02-17_origin_edge_verification.md",
-      "id": "edge_backup_md/prompts/2026-02-17_origin_edge_verification.md_src/core/PromptLogger.ts_1782360972501",
+      "id": "edge_backup_md/prompts/2026-02-17_origin_edge_verification.md_src/core/PromptLogger.ts_1782374291521",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1144,7 +1144,7 @@
         "projected": true
       },
       "from": "backup_md/README.ko.md",
-      "id": "edge_backup_md/README.ko.md_README.md_1782360972500",
+      "id": "edge_backup_md/README.ko.md_README.md_1782374291519",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1162,7 +1162,7 @@
         "projected": true
       },
       "from": "backup_md/README.ko.md",
-      "id": "edge_backup_md/README.ko.md_synapse_flow_v0.2.16_1782360972500",
+      "id": "edge_backup_md/README.ko.md_synapse_flow_v0.2.16_1782374291520",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1180,7 +1180,7 @@
         "projected": true
       },
       "from": "backup_md/README.ko.md",
-      "id": "edge_backup_md/README.ko.md_synapse_graph_v0.2.16_1782360972500",
+      "id": "edge_backup_md/README.ko.md_synapse_graph_v0.2.16_1782374291519",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1198,7 +1198,7 @@
         "projected": true
       },
       "from": "backup_md/README.ko.md",
-      "id": "edge_backup_md/README.ko.md_synapse_tree_v0.2.16_1782360972500",
+      "id": "edge_backup_md/README.ko.md_synapse_tree_v0.2.16_1782374291520",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1216,7 +1216,7 @@
         "projected": true
       },
       "from": "backup_md/README.md",
-      "id": "edge_backup_md/README.md_GHOST_NODE.md_1782360972500",
+      "id": "edge_backup_md/README.md_GHOST_NODE.md_1782374291520",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1234,7 +1234,7 @@
         "projected": true
       },
       "from": "backup_md/README.md",
-      "id": "edge_backup_md/README.md_README.md_1782360972500",
+      "id": "edge_backup_md/README.md_README.md_1782374291520",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1252,7 +1252,7 @@
         "projected": true
       },
       "from": "backup_md/README.md",
-      "id": "edge_backup_md/README.md_synapse_flow_v0.2.16_1782360972500",
+      "id": "edge_backup_md/README.md_synapse_flow_v0.2.16_1782374291520",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1270,7 +1270,7 @@
         "projected": true
       },
       "from": "backup_md/README.md",
-      "id": "edge_backup_md/README.md_synapse_graph_v0.2.16_1782360972500",
+      "id": "edge_backup_md/README.md_synapse_graph_v0.2.16_1782374291520",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1288,7 +1288,7 @@
         "projected": true
       },
       "from": "backup_md/README.md",
-      "id": "edge_backup_md/README.md_synapse_tree_v0.2.16_1782360972500",
+      "id": "edge_backup_md/README.md_synapse_tree_v0.2.16_1782374291520",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1306,7 +1306,7 @@
         "projected": true
       },
       "from": "release_note/CHANGELOG.md",
-      "id": "edge_backup_md/release_note/CHANGELOG.md_main_1782360972501",
+      "id": "edge_backup_md/release_note/CHANGELOG.md_main_1782374291521",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1324,7 +1324,7 @@
         "projected": true
       },
       "from": "release_note/CHANGELOG.md",
-      "id": "edge_backup_md/release_note/CHANGELOG.md_README.md_1782360972501",
+      "id": "edge_backup_md/release_note/CHANGELOG.md_README.md_1782374291521",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1342,7 +1342,7 @@
         "projected": true
       },
       "from": "release_note/GEMINI (사본).md",
-      "id": "edge_backup_md/release_note/GEMINI (사본).md_synapse_topology_view_1782360972501",
+      "id": "edge_backup_md/release_note/GEMINI (사본).md_synapse_topology_view_1782374291521",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1360,7 +1360,7 @@
         "projected": true
       },
       "from": "backup_md/walkthrough.md",
-      "id": "edge_backup_md/walkthrough.md_synapse-visual-architecture-v0.2.20_1782360972502",
+      "id": "edge_backup_md/walkthrough.md_synapse-visual-architecture-v0.2.20_1782374291521",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1378,7 +1378,7 @@
         "projected": true
       },
       "from": "fix_cluster.sh",
-      "id": "edge_fix_cluster.sh_cluster_id_1782360972502",
+      "id": "edge_fix_cluster.sh_cluster_id_1782374291521",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1396,7 +1396,7 @@
         "projected": true
       },
       "from": "fix_cluster.sh",
-      "id": "edge_fix_cluster.sh_position_1782360972502",
+      "id": "edge_fix_cluster.sh_position_1782374291521",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1414,7 +1414,7 @@
         "projected": true
       },
       "from": "fix_cluster.sh",
-      "id": "edge_fix_cluster.sh_ts_1782360972502",
+      "id": "edge_fix_cluster.sh_ts_1782374291521",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1432,7 +1432,7 @@
         "projected": true
       },
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22%EB%A6%AC%ED%8F%AC%ED%8A%B8_1782360972431",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22%EB%A6%AC%ED%8F%AC%ED%8A%B8_1782374291443",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1450,7 +1450,7 @@
         "projected": true
       },
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22backup_md%2FREADME.ko_1782360972435",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22backup_md%2FREADME.ko_1782374291448",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1468,7 +1468,7 @@
         "projected": true
       },
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22command%3Asynapse.focusNode%3F%2522mile_stone%252F_v0.3_1782360972491",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22command%3Asynapse.focusNode%3F%2522mile_stone%252F_v0.3_1782374291510",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1486,7 +1486,7 @@
         "projected": true
       },
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22command%3Asynapse.focusNode%3F%2522mile_stone%252F%25EA%25B5%25AC%25ED%2598%2584%25EC%2595%2588%25EB%2590%259C%25EB%25AA%25A9%25EB%25A1%259D%252Fb%252Fv0.2_1782360972491",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22command%3Asynapse.focusNode%3F%2522mile_stone%252F%25EA%25B5%25AC%25ED%2598%2584%25EC%2595%2588%25EB%2590%259C%25EB%25AA%25A9%25EB%25A1%259D%252Fb%252Fv0.2_1782374291510",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1504,7 +1504,7 @@
         "projected": true
       },
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22command%3Asynapse.focusNode%3F%2522mile_stone%252F%25EA%25B5%25AC%25ED%2598%2584%25EC%2595%2588%25EB%2590%259C%25EB%25AA%25A9%25EB%25A1%259D%252Fb%252Fv1_1782360972491",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22command%3Asynapse.focusNode%3F%2522mile_stone%252F%25EA%25B5%25AC%25ED%2598%2584%25EC%2595%2588%25EB%2590%259C%25EB%25AA%25A9%25EB%25A1%259D%252Fb%252Fv1_1782374291511",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1522,7 +1522,7 @@
         "projected": true
       },
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22command%3Asynapse.focusNode%3F%2522mile_stone%252F%25EA%25B5%25AC%25ED%2598%2584%25EC%2595%2588%25EB%2590%259C%25EB%25AA%25A9%25EB%25A1%259D%252Fv0.2_1782360972492",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22command%3Asynapse.focusNode%3F%2522mile_stone%252F%25EA%25B5%25AC%25ED%2598%2584%25EC%2595%2588%25EB%2590%259C%25EB%25AA%25A9%25EB%25A1%259D%252Fv0.2_1782374291511",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1540,7 +1540,7 @@
         "projected": true
       },
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22command%3Asynapse.focusNode%3F%2522mile_stone%252Fv0.2_1782360972492",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22command%3Asynapse.focusNode%3F%2522mile_stone%252Fv0.2_1782374291511",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1558,7 +1558,7 @@
         "projected": true
       },
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22command%3Asynapse.focusNode%3F%2522mile_stone%252Fv0.3.21_1782360972492",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22command%3Asynapse.focusNode%3F%2522mile_stone%252Fv0.3.21_1782374291512",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1576,7 +1576,7 @@
         "projected": true
       },
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22command%3Asynapse.focusNode%3F%2522release_note%252Frelease_notes_0.2_1782360972493",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22command%3Asynapse.focusNode%3F%2522release_note%252Frelease_notes_0.2_1782374291512",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1594,7 +1594,7 @@
         "projected": true
       },
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22command%3Asynapse.focusNode%3F%2522release_note%252FRELEASES_v0.2_1782360972493",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22command%3Asynapse.focusNode%3F%2522release_note%252FRELEASES_v0.2_1782374291512",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1612,7 +1612,7 @@
         "projected": true
       },
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22command%3Asynapse.focusNode%3F%2522release_note%252Fv0.1_1782360972493",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22command%3Asynapse.focusNode%3F%2522release_note%252Fv0.1_1782374291512",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1630,7 +1630,7 @@
         "projected": true
       },
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22command%3Asynapse.focusNode%3F%2522release_note%252Fv0.2.18_1782360972493",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22command%3Asynapse.focusNode%3F%2522release_note%252Fv0.2.18_1782374291513",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1648,7 +1648,7 @@
         "projected": true
       },
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22command%3Asynapse.focusNode%3F%2522release_note%252Fv0.3.21_1782360972494",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22command%3Asynapse.focusNode%3F%2522release_note%252Fv0.3.21_1782374291513",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1666,7 +1666,7 @@
         "projected": true
       },
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22command%3Asynapse.focusNode%3F%2522src%252Fverify_v0.3_1782360972494",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22command%3Asynapse.focusNode%3F%2522src%252Fverify_v0.3_1782374291513",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1684,7 +1684,7 @@
         "projected": true
       },
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22command%3Asynapse.focusNode%3F%2522v0.2_1782360972495",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22command%3Asynapse.focusNode%3F%2522v0.2_1782374291514",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1702,7 +1702,7 @@
         "projected": true
       },
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22mile_stone%2F_v0.3.0_1782360972442",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22mile_stone%2F_v0.3.0_1782374291465",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1720,7 +1720,7 @@
         "projected": true
       },
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22mile_stone%2F%EA%B5%AC%ED%98%84%EC%95%88%EB%90%9C%EB%AA%A9%EB%A1%9D%2Fb%2Fv0.2.19_1782360972456",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22mile_stone%2F%EA%B5%AC%ED%98%84%EC%95%88%EB%90%9C%EB%AA%A9%EB%A1%9D%2Fb%2Fv0.2.19_1782374291477",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1738,7 +1738,7 @@
         "projected": true
       },
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22mile_stone%2F%EA%B5%AC%ED%98%84%EC%95%88%EB%90%9C%EB%AA%A9%EB%A1%9D%2Fb%2Fv1.0_1782360972457",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22mile_stone%2F%EA%B5%AC%ED%98%84%EC%95%88%EB%90%9C%EB%AA%A9%EB%A1%9D%2Fb%2Fv1.0_1782374291478",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1756,7 +1756,7 @@
         "projected": true
       },
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22mile_stone%2F%EA%B5%AC%ED%98%84%EC%95%88%EB%90%9C%EB%AA%A9%EB%A1%9D%2Fv0.2.19_1782360972457",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22mile_stone%2F%EA%B5%AC%ED%98%84%EC%95%88%EB%90%9C%EB%AA%A9%EB%A1%9D%2Fv0.2.19_1782374291478",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1774,7 +1774,7 @@
         "projected": true
       },
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22mile_stone%2FSYNAPSE_v0.3.30_BOOTSTRAP_SPECIFICATION_1782360972458",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22mile_stone%2FSYNAPSE_v0.3.30_BOOTSTRAP_SPECIFICATION_1782374291479",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1792,7 +1792,7 @@
         "projected": true
       },
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22mile_stone%2Fv0.2.18_1782360972430",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22mile_stone%2Fv0.2.18_1782374291442",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1810,7 +1810,7 @@
         "projected": true
       },
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22mile_stone%2Fv0.3.10_hotfix_plan_1782360972464",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22mile_stone%2Fv0.3.10_hotfix_plan_1782374291485",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1828,7 +1828,7 @@
         "projected": true
       },
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22mile_stone%2Fv0.3.21.9_1782360972467",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22mile_stone%2Fv0.3.21.9_1782374291488",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1846,7 +1846,7 @@
         "projected": true
       },
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22mile_stone%2Fv0.3.22.10_1782360972468",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22mile_stone%2Fv0.3.22.10_1782374291488",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1864,7 +1864,7 @@
         "projected": true
       },
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22README.ko_1782360972472",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22README.ko_1782374291492",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1882,7 +1882,7 @@
         "projected": true
       },
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22release_note%2Frelease_notes_0.2.12_1782360972436",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22release_note%2Frelease_notes_0.2.12_1782374291449",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1900,7 +1900,7 @@
         "projected": true
       },
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22release_note%2FRELEASES_v0.2.7_1782360972436",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22release_note%2FRELEASES_v0.2.7_1782374291450",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1918,7 +1918,7 @@
         "projected": true
       },
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22release_note%2Fv0.1.6_release_notes_1782360972436",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22release_note%2Fv0.1.6_release_notes_1782374291450",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1936,7 +1936,7 @@
         "projected": true
       },
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22release_note%2Fv0.2.18_release_notes_1782360972430",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22release_note%2Fv0.2.18_release_notes_1782374291443",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1954,7 +1954,7 @@
         "projected": true
       },
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22release_note%2Fv0.2.18.1_release_notes_1782360972472",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22release_note%2Fv0.2.18.1_release_notes_1782374291492",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1972,7 +1972,7 @@
         "projected": true
       },
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22release_note%2Fv0.3.09_fix_release_notes_1782360972480",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22release_note%2Fv0.3.09_fix_release_notes_1782374291499",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -1990,7 +1990,7 @@
         "projected": true
       },
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22release_note%2Fv0.3.21.9_release_notes_1782360972484",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22release_note%2Fv0.3.21.9_release_notes_1782374291503",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2008,7 +2008,7 @@
         "projected": true
       },
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22release_note%2Fv0.3.22.10_release_notes_1782360972484",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22release_note%2Fv0.3.22.10_release_notes_1782374291503",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2026,7 +2026,7 @@
         "projected": true
       },
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22src%2Ftest%2Fphase9_acceptance.test_1782360972490",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22src%2Ftest%2Fphase9_acceptance.test_1782374291509",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2044,7 +2044,7 @@
         "projected": true
       },
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22src%2Ftest%2Ftransport_validation.test_1782360972490",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22src%2Ftest%2Ftransport_validation.test_1782374291510",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2062,7 +2062,7 @@
         "projected": true
       },
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22src%2Fverify_v0.3.10_1782360972496",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22src%2Fverify_v0.3.10_1782374291515",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2080,7 +2080,7 @@
         "projected": true
       },
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22synapse_flow_v0.2_1782360972496",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22synapse_flow_v0.2_1782374291515",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2098,7 +2098,7 @@
         "projected": true
       },
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22synapse_graph_v0.2_1782360972496",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22synapse_graph_v0.2_1782374291515",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2116,7 +2116,7 @@
         "projected": true
       },
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22synapse_topology_v0.3_1782360972496",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22synapse_topology_v0.3_1782374291515",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2134,7 +2134,7 @@
         "projected": true
       },
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22synapse_tree_v0.2_1782360972496",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22synapse_tree_v0.2_1782374291516",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2152,7 +2152,7 @@
         "projected": true
       },
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22synapse-visual-architecture-v0.2_1782360972496",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22synapse-visual-architecture-v0.2_1782374291516",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2170,7 +2170,7 @@
         "projected": true
       },
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22v0.2_1782360972497",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22v0.2_1782374291516",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2188,7 +2188,7 @@
         "projected": true
       },
       "from": "LOGIC_REPORT.md",
-      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22v0.3.22_1782360972497",
+      "id": "edge_LOGIC_REPORT.md_command:synapse.focusNode?%22v0.3.22_1782374291516",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2206,7 +2206,7 @@
         "projected": true
       },
       "from": "mile_stone/_v0.3.09_COMPREHENSIVE.md",
-      "id": "edge_mile_stone/_v0.3.09_COMPREHENSIVE.md_README.md_1782360972502",
+      "id": "edge_mile_stone/_v0.3.09_COMPREHENSIVE.md_README.md_1782374291521",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2224,7 +2224,7 @@
         "projected": true
       },
       "from": "mile_stone/_v0.3.09.md",
-      "id": "edge_mile_stone/_v0.3.09.md_README.md_1782360972502",
+      "id": "edge_mile_stone/_v0.3.09.md_README.md_1782374291521",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2242,7 +2242,7 @@
         "projected": true
       },
       "from": "mile_stone/_v0.3.10_implementation.md",
-      "id": "edge_mile_stone/_v0.3.10_implementation.md_v0.3.10_Bootstrap_Locked_1782360972502",
+      "id": "edge_mile_stone/_v0.3.10_implementation.md_v0.3.10_Bootstrap_Locked_1782374291521",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2260,7 +2260,7 @@
         "projected": true
       },
       "from": "mile_stone/_v0.3.2.md",
-      "id": "edge_mile_stone/_v0.3.2.md_v0.3.10_Bootstrap_Locked_1782360972502",
+      "id": "edge_mile_stone/_v0.3.2.md_v0.3.10_Bootstrap_Locked_1782374291522",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2278,7 +2278,7 @@
         "projected": true
       },
       "from": "mile_stone/_v0.3.3.md",
-      "id": "edge_mile_stone/_v0.3.3.md_v0.3.10_Bootstrap_Locked_1782360972502",
+      "id": "edge_mile_stone/_v0.3.3.md_v0.3.10_Bootstrap_Locked_1782374291522",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2296,7 +2296,7 @@
         "projected": true
       },
       "from": "mile_stone/_v0.3.4.md",
-      "id": "edge_mile_stone/_v0.3.4.md_synapse-visual-architecture-v0.3.5_1782360972502",
+      "id": "edge_mile_stone/_v0.3.4.md_synapse-visual-architecture-v0.3.5_1782374291522",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2314,7 +2314,7 @@
         "projected": true
       },
       "from": "mile_stone/_v0.3.4.md",
-      "id": "edge_mile_stone/_v0.3.4.md_v0.3.10_Bootstrap_Locked_1782360972502",
+      "id": "edge_mile_stone/_v0.3.4.md_v0.3.10_Bootstrap_Locked_1782374291522",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2332,7 +2332,7 @@
         "projected": true
       },
       "from": "mile_stone/_v0.3.8.md",
-      "id": "edge_mile_stone/_v0.3.8.md_synapse-visual-architecture-v0.3.5_1782360972503",
+      "id": "edge_mile_stone/_v0.3.8.md_synapse-visual-architecture-v0.3.5_1782374291522",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2350,7 +2350,7 @@
         "projected": true
       },
       "from": "mile_stone/_v0.3.8.md",
-      "id": "edge_mile_stone/_v0.3.8.md_v0.3.10_Bootstrap_Locked_1782360972503",
+      "id": "edge_mile_stone/_v0.3.8.md_v0.3.10_Bootstrap_Locked_1782374291522",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2368,7 +2368,7 @@
         "projected": true
       },
       "from": "mile_stone/구현안된목록/b/v0.2.19.md",
-      "id": "edge_mile_stone/구현안된목록/b/v0.2.19.md_architecture.md_1782360972509",
+      "id": "edge_mile_stone/구현안된목록/b/v0.2.19.md_architecture.md_1782374291528",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2386,7 +2386,7 @@
         "projected": true
       },
       "from": "mile_stone/구현안된목록/b/v0.2.19.md",
-      "id": "edge_mile_stone/구현안된목록/b/v0.2.19.md_v0.2.15_1782360972509",
+      "id": "edge_mile_stone/구현안된목록/b/v0.2.19.md_v0.2.15_1782374291528",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2404,7 +2404,7 @@
         "projected": true
       },
       "from": "mile_stone/구현안된목록/b/v0.2.20.md",
-      "id": "edge_mile_stone/구현안된목록/b/v0.2.20.md_.backup/mile_stone/v0.2.18.md_1782360972509",
+      "id": "edge_mile_stone/구현안된목록/b/v0.2.20.md_.backup/mile_stone/v0.2.18.md_1782374291528",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2422,7 +2422,7 @@
         "projected": true
       },
       "from": "mile_stone/구현안된목록/b/v0.2.20.md",
-      "id": "edge_mile_stone/구현안된목록/b/v0.2.20.md_architecture.md_1782360972509",
+      "id": "edge_mile_stone/구현안된목록/b/v0.2.20.md_architecture.md_1782374291528",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2440,7 +2440,7 @@
         "projected": true
       },
       "from": "mile_stone/구현안된목록/b/v0.2.20.md",
-      "id": "edge_mile_stone/구현안된목록/b/v0.2.20.md_v0.2.15_1782360972509",
+      "id": "edge_mile_stone/구현안된목록/b/v0.2.20.md_v0.2.15_1782374291528",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2458,7 +2458,7 @@
         "projected": true
       },
       "from": "mile_stone/구현안된목록/v0.2.19.md",
-      "id": "edge_mile_stone/구현안된목록/v0.2.19.md_architecture.md_1782360972509",
+      "id": "edge_mile_stone/구현안된목록/v0.2.19.md_architecture.md_1782374291528",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2476,7 +2476,7 @@
         "projected": true
       },
       "from": "mile_stone/구현안된목록/v0.2.19.md",
-      "id": "edge_mile_stone/구현안된목록/v0.2.19.md_v0.2.15_1782360972509",
+      "id": "edge_mile_stone/구현안된목록/v0.2.19.md_v0.2.15_1782374291529",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2494,7 +2494,7 @@
         "projected": true
       },
       "from": "mile_stone/구현안된목록/v0.2.20.md",
-      "id": "edge_mile_stone/구현안된목록/v0.2.20.md_.backup/mile_stone/v0.2.18.md_1782360972509",
+      "id": "edge_mile_stone/구현안된목록/v0.2.20.md_.backup/mile_stone/v0.2.18.md_1782374291529",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2512,7 +2512,7 @@
         "projected": true
       },
       "from": "mile_stone/구현안된목록/v0.2.20.md",
-      "id": "edge_mile_stone/구현안된목록/v0.2.20.md_architecture.md_1782360972509",
+      "id": "edge_mile_stone/구현안된목록/v0.2.20.md_architecture.md_1782374291529",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2530,7 +2530,7 @@
         "projected": true
       },
       "from": "mile_stone/구현안된목록/v0.2.20.md",
-      "id": "edge_mile_stone/구현안된목록/v0.2.20.md_v0.2.15_1782360972509",
+      "id": "edge_mile_stone/구현안된목록/v0.2.20.md_v0.2.15_1782374291529",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2548,7 +2548,7 @@
         "projected": true
       },
       "from": "mile_stone/v0.2.18.2.md",
-      "id": "edge_mile_stone/v0.2.18.2.md_.backup/mile_stone/v0.2.18.md_1782360972503",
+      "id": "edge_mile_stone/v0.2.18.2.md_.backup/mile_stone/v0.2.18.md_1782374291522",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2566,7 +2566,7 @@
         "projected": true
       },
       "from": "mile_stone/v0.2.18.2.md",
-      "id": "edge_mile_stone/v0.2.18.2.md_architecture.md_1782360972503",
+      "id": "edge_mile_stone/v0.2.18.2.md_architecture.md_1782374291522",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2584,7 +2584,7 @@
         "projected": true
       },
       "from": "mile_stone/v0.2.18.2.md",
-      "id": "edge_mile_stone/v0.2.18.2.md_v0.3.10_Bootstrap_Locked_1782360972503",
+      "id": "edge_mile_stone/v0.2.18.2.md_v0.3.10_Bootstrap_Locked_1782374291523",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2602,7 +2602,7 @@
         "projected": true
       },
       "from": "mile_stone/v0.2.19.md",
-      "id": "edge_mile_stone/v0.2.19.md_architecture.md_1782360972503",
+      "id": "edge_mile_stone/v0.2.19.md_architecture.md_1782374291523",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2620,7 +2620,7 @@
         "projected": true
       },
       "from": "mile_stone/v0.2.19.md",
-      "id": "edge_mile_stone/v0.2.19.md_v0.2.15_1782360972504",
+      "id": "edge_mile_stone/v0.2.19.md_v0.2.15_1782374291523",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2638,7 +2638,7 @@
         "projected": true
       },
       "from": "mile_stone/v0.2.20.md",
-      "id": "edge_mile_stone/v0.2.20.md_.backup/mile_stone/v0.2.18.md_1782360972504",
+      "id": "edge_mile_stone/v0.2.20.md_.backup/mile_stone/v0.2.18.md_1782374291523",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2656,7 +2656,7 @@
         "projected": true
       },
       "from": "mile_stone/v0.2.20.md",
-      "id": "edge_mile_stone/v0.2.20.md_architecture.md_1782360972504",
+      "id": "edge_mile_stone/v0.2.20.md_architecture.md_1782374291523",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2674,7 +2674,7 @@
         "projected": true
       },
       "from": "mile_stone/v0.2.21-fix.md",
-      "id": "edge_mile_stone/v0.2.21-fix.md_v0.2.15_1782360972504",
+      "id": "edge_mile_stone/v0.2.21-fix.md_v0.2.15_1782374291523",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2692,7 +2692,7 @@
         "projected": true
       },
       "from": "mile_stone/v0.2.23.md",
-      "id": "edge_mile_stone/v0.2.23.md_v0.2.15_1782360972504",
+      "id": "edge_mile_stone/v0.2.23.md_v0.2.15_1782374291523",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2710,7 +2710,7 @@
         "projected": true
       },
       "from": "mile_stone/v0.2.24.md",
-      "id": "edge_mile_stone/v0.2.24.md_v0.2.15_1782360972504",
+      "id": "edge_mile_stone/v0.2.24.md_v0.2.15_1782374291523",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2728,7 +2728,7 @@
         "projected": true
       },
       "from": "mile_stone/v0.2.25.md",
-      "id": "edge_mile_stone/v0.2.25.md_v0.2.15_1782360972504",
+      "id": "edge_mile_stone/v0.2.25.md_v0.2.15_1782374291523",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2746,7 +2746,7 @@
         "projected": true
       },
       "from": "mile_stone/v0.2.26.md",
-      "id": "edge_mile_stone/v0.2.26.md_v0.2.15_1782360972504",
+      "id": "edge_mile_stone/v0.2.26.md_v0.2.15_1782374291523",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2764,7 +2764,7 @@
         "projected": true
       },
       "from": "mile_stone/v0.2.27.md",
-      "id": "edge_mile_stone/v0.2.27.md_v0.2.15_1782360972504",
+      "id": "edge_mile_stone/v0.2.27.md_v0.2.15_1782374291523",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2782,7 +2782,7 @@
         "projected": true
       },
       "from": "mile_stone/v0.2.28.md",
-      "id": "edge_mile_stone/v0.2.28.md_v0.2.15_1782360972504",
+      "id": "edge_mile_stone/v0.2.28.md_v0.2.15_1782374291523",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2800,7 +2800,7 @@
         "projected": true
       },
       "from": "mile_stone/v0.2.29.md",
-      "id": "edge_mile_stone/v0.2.29.md_v0.2.15_1782360972504",
+      "id": "edge_mile_stone/v0.2.29.md_v0.2.15_1782374291523",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2818,7 +2818,7 @@
         "projected": true
       },
       "from": "mile_stone/v0.2.30.md",
-      "id": "edge_mile_stone/v0.2.30.md_v0.2.15_1782360972504",
+      "id": "edge_mile_stone/v0.2.30.md_v0.2.15_1782374291523",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2836,7 +2836,7 @@
         "projected": true
       },
       "from": "mile_stone/v0.2.31.md",
-      "id": "edge_mile_stone/v0.2.31.md_v0.2.15_1782360972504",
+      "id": "edge_mile_stone/v0.2.31.md_v0.2.15_1782374291524",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2854,7 +2854,7 @@
         "projected": true
       },
       "from": "mile_stone/v0.2.32.md",
-      "id": "edge_mile_stone/v0.2.32.md_v0.2.15_1782360972504",
+      "id": "edge_mile_stone/v0.2.32.md_v0.2.15_1782374291524",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2872,7 +2872,7 @@
         "projected": true
       },
       "from": "mile_stone/v0.2.33.md",
-      "id": "edge_mile_stone/v0.2.33.md_v0.2.15_1782360972505",
+      "id": "edge_mile_stone/v0.2.33.md_v0.2.15_1782374291524",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2890,7 +2890,7 @@
         "projected": true
       },
       "from": "mile_stone/v0.2.34.md",
-      "id": "edge_mile_stone/v0.2.34.md_v0.2.15_1782360972505",
+      "id": "edge_mile_stone/v0.2.34.md_v0.2.15_1782374291524",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2908,7 +2908,7 @@
         "projected": true
       },
       "from": "mile_stone/v0.2.35.md",
-      "id": "edge_mile_stone/v0.2.35.md_v0.2.15_1782360972505",
+      "id": "edge_mile_stone/v0.2.35.md_v0.2.15_1782374291524",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2926,7 +2926,7 @@
         "projected": true
       },
       "from": "mile_stone/v0.2.36.md",
-      "id": "edge_mile_stone/v0.2.36.md_v0.2.15_1782360972505",
+      "id": "edge_mile_stone/v0.2.36.md_v0.2.15_1782374291524",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2944,7 +2944,7 @@
         "projected": true
       },
       "from": "mile_stone/v0.2.37.md",
-      "id": "edge_mile_stone/v0.2.37.md_RawTextMiner_1782360972505",
+      "id": "edge_mile_stone/v0.2.37.md_RawTextMiner_1782374291524",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2962,7 +2962,7 @@
         "projected": true
       },
       "from": "mile_stone/v0.2.37.md",
-      "id": "edge_mile_stone/v0.2.37.md_src/core/DirectChatScraper.ts_1782360972505",
+      "id": "edge_mile_stone/v0.2.37.md_src/core/DirectChatScraper.ts_1782374291524",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2980,7 +2980,7 @@
         "projected": true
       },
       "from": "mile_stone/v0.2.37.md",
-      "id": "edge_mile_stone/v0.2.37.md_src/core/VscdbAdapter.ts_1782360972505",
+      "id": "edge_mile_stone/v0.2.37.md_src/core/VscdbAdapter.ts_1782374291525",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -2998,7 +2998,7 @@
         "projected": true
       },
       "from": "mile_stone/v0.2.37.md",
-      "id": "edge_mile_stone/v0.2.37.md_v0.2.15_1782360972505",
+      "id": "edge_mile_stone/v0.2.37.md_v0.2.15_1782374291524",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3016,7 +3016,7 @@
         "projected": true
       },
       "from": "mile_stone/v0.2.38.md",
-      "id": "edge_mile_stone/v0.2.38.md_RawTextMiner_1782360972506",
+      "id": "edge_mile_stone/v0.2.38.md_RawTextMiner_1782374291525",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3034,7 +3034,7 @@
         "projected": true
       },
       "from": "mile_stone/v0.2.38.md",
-      "id": "edge_mile_stone/v0.2.38.md_src/core/DirectChatScraper.ts_1782360972505",
+      "id": "edge_mile_stone/v0.2.38.md_src/core/DirectChatScraper.ts_1782374291525",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3052,7 +3052,7 @@
         "projected": true
       },
       "from": "mile_stone/v0.2.38.md",
-      "id": "edge_mile_stone/v0.2.38.md_src/core/VscdbAdapter.ts_1782360972506",
+      "id": "edge_mile_stone/v0.2.38.md_src/core/VscdbAdapter.ts_1782374291525",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3070,7 +3070,7 @@
         "projected": true
       },
       "from": "mile_stone/v0.2.38.md",
-      "id": "edge_mile_stone/v0.2.38.md_src/extension.ts_1782360972506",
+      "id": "edge_mile_stone/v0.2.38.md_src/extension.ts_1782374291525",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3088,7 +3088,7 @@
         "projected": true
       },
       "from": "mile_stone/v0.2.38.md",
-      "id": "edge_mile_stone/v0.2.38.md_v0.2.15_1782360972505",
+      "id": "edge_mile_stone/v0.2.38.md_v0.2.15_1782374291525",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3106,7 +3106,7 @@
         "projected": true
       },
       "from": "mile_stone/v0.2.43.md",
-      "id": "edge_mile_stone/v0.2.43.md_v0.2.15_1782360972506",
+      "id": "edge_mile_stone/v0.2.43.md_v0.2.15_1782374291525",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3124,7 +3124,7 @@
         "projected": true
       },
       "from": "mile_stone/v0.2.44.md",
-      "id": "edge_mile_stone/v0.2.44.md_v0.2.15_1782360972506",
+      "id": "edge_mile_stone/v0.2.44.md_v0.2.15_1782374291525",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3142,7 +3142,7 @@
         "projected": true
       },
       "from": "mile_stone/v0.2.45.md",
-      "id": "edge_mile_stone/v0.2.45.md_v0.2.15_1782360972506",
+      "id": "edge_mile_stone/v0.2.45.md_v0.2.15_1782374291525",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3160,7 +3160,7 @@
         "projected": true
       },
       "from": "mile_stone/v0.2.46.md",
-      "id": "edge_mile_stone/v0.2.46.md_v0.2.15_1782360972506",
+      "id": "edge_mile_stone/v0.2.46.md_v0.2.15_1782374291525",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3178,7 +3178,7 @@
         "projected": true
       },
       "from": "mile_stone/v0.2.47.md",
-      "id": "edge_mile_stone/v0.2.47.md_v0.2.15_1782360972506",
+      "id": "edge_mile_stone/v0.2.47.md_v0.2.15_1782374291525",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3196,7 +3196,7 @@
         "projected": true
       },
       "from": "mile_stone/v0.2.48.md",
-      "id": "edge_mile_stone/v0.2.48.md_v0.2.15_1782360972506",
+      "id": "edge_mile_stone/v0.2.48.md_v0.2.15_1782374291525",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3214,7 +3214,7 @@
         "projected": true
       },
       "from": "mile_stone/v0.2.50.md",
-      "id": "edge_mile_stone/v0.2.50.md_v0.2.15_1782360972506",
+      "id": "edge_mile_stone/v0.2.50.md_v0.2.15_1782374291525",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3232,7 +3232,7 @@
         "projected": true
       },
       "from": "mile_stone/v0.2.51.md",
-      "id": "edge_mile_stone/v0.2.51.md_v0.2.15_1782360972506",
+      "id": "edge_mile_stone/v0.2.51.md_v0.2.15_1782374291526",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3250,7 +3250,7 @@
         "projected": true
       },
       "from": "mile_stone/v0.2.52.md",
-      "id": "edge_mile_stone/v0.2.52.md_v0.2.15_1782360972506",
+      "id": "edge_mile_stone/v0.2.52.md_v0.2.15_1782374291526",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3268,7 +3268,7 @@
         "projected": true
       },
       "from": "mile_stone/v0.2.53.md",
-      "id": "edge_mile_stone/v0.2.53.md_v0.2.15_1782360972507",
+      "id": "edge_mile_stone/v0.2.53.md_v0.2.15_1782374291526",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3286,7 +3286,7 @@
         "projected": true
       },
       "from": "mile_stone/v0.3.11.md",
-      "id": "edge_mile_stone/v0.3.11.md_v0.3.10_Bootstrap_Locked_1782360972507",
+      "id": "edge_mile_stone/v0.3.11.md_v0.3.10_Bootstrap_Locked_1782374291526",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3304,7 +3304,7 @@
         "projected": true
       },
       "from": "mile_stone/v0.3.12.md",
-      "id": "edge_mile_stone/v0.3.12.md_v0.3.10_Bootstrap_Locked_1782360972507",
+      "id": "edge_mile_stone/v0.3.12.md_v0.3.10_Bootstrap_Locked_1782374291526",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3322,7 +3322,7 @@
         "projected": true
       },
       "from": "mile_stone/v0.3.13.md",
-      "id": "edge_mile_stone/v0.3.13.md_v0.3.10_Bootstrap_Locked_1782360972507",
+      "id": "edge_mile_stone/v0.3.13.md_v0.3.10_Bootstrap_Locked_1782374291526",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3340,7 +3340,7 @@
         "projected": true
       },
       "from": "mile_stone/v0.3.14.md",
-      "id": "edge_mile_stone/v0.3.14.md_v0.3.10_Bootstrap_Locked_1782360972507",
+      "id": "edge_mile_stone/v0.3.14.md_v0.3.10_Bootstrap_Locked_1782374291526",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3358,7 +3358,7 @@
         "projected": true
       },
       "from": "mile_stone/v0.3.15.md",
-      "id": "edge_mile_stone/v0.3.15.md_v0.3.10_Bootstrap_Locked_1782360972507",
+      "id": "edge_mile_stone/v0.3.15.md_v0.3.10_Bootstrap_Locked_1782374291526",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3376,7 +3376,7 @@
         "projected": true
       },
       "from": "mile_stone/v0.3.17.md",
-      "id": "edge_mile_stone/v0.3.17.md_v0.3.10_Bootstrap_Locked_1782360972507",
+      "id": "edge_mile_stone/v0.3.17.md_v0.3.10_Bootstrap_Locked_1782374291526",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3394,7 +3394,7 @@
         "projected": true
       },
       "from": "mile_stone/v0.3.18.md",
-      "id": "edge_mile_stone/v0.3.18.md_v0.3.10_Bootstrap_Locked_1782360972507",
+      "id": "edge_mile_stone/v0.3.18.md_v0.3.10_Bootstrap_Locked_1782374291526",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3412,7 +3412,7 @@
         "projected": true
       },
       "from": "mile_stone/v0.3.19.md",
-      "id": "edge_mile_stone/v0.3.19.md_v0.3.10_Bootstrap_Locked_1782360972507",
+      "id": "edge_mile_stone/v0.3.19.md_v0.3.10_Bootstrap_Locked_1782374291526",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3430,7 +3430,7 @@
         "projected": true
       },
       "from": "mile_stone/v0.3.20.md",
-      "id": "edge_mile_stone/v0.3.20.md_v0.3.10_Bootstrap_Locked_1782360972507",
+      "id": "edge_mile_stone/v0.3.20.md_v0.3.10_Bootstrap_Locked_1782374291526",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3448,7 +3448,7 @@
         "projected": true
       },
       "from": "mile_stone/v0.3.21.md",
-      "id": "edge_mile_stone/v0.3.21.md_v0.3.10_Bootstrap_Locked_1782360972507",
+      "id": "edge_mile_stone/v0.3.21.md_v0.3.10_Bootstrap_Locked_1782374291526",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3466,7 +3466,7 @@
         "projected": true
       },
       "from": "mile_stone/v0.3.22.10.md",
-      "id": "edge_mile_stone/v0.3.22.10.md_v0.3.10_Bootstrap_Locked_1782360972507",
+      "id": "edge_mile_stone/v0.3.22.10.md_v0.3.10_Bootstrap_Locked_1782374291527",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3484,7 +3484,7 @@
         "projected": true
       },
       "from": "mile_stone/v0.3.22.11.md",
-      "id": "edge_mile_stone/v0.3.22.11.md_v0.3.22.10_1782360972507",
+      "id": "edge_mile_stone/v0.3.22.11.md_v0.3.22.10_1782374291527",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3502,7 +3502,7 @@
         "projected": true
       },
       "from": "mile_stone/v0.3.23.md",
-      "id": "edge_mile_stone/v0.3.23.md_demo/canvas-engine.js_1782360972508",
+      "id": "edge_mile_stone/v0.3.23.md_demo/canvas-engine.js_1782374291527",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3520,7 +3520,7 @@
         "projected": true
       },
       "from": "mile_stone/v0.3.23.md",
-      "id": "edge_mile_stone/v0.3.23.md_index_1782360972508",
+      "id": "edge_mile_stone/v0.3.23.md_index_1782374291527",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3538,7 +3538,7 @@
         "projected": true
       },
       "from": "mile_stone/v0.3.23.md",
-      "id": "edge_mile_stone/v0.3.23.md_src/extension.ts_1782360972508",
+      "id": "edge_mile_stone/v0.3.23.md_src/extension.ts_1782374291527",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3556,7 +3556,7 @@
         "projected": true
       },
       "from": "mile_stone/v0.3.23.md",
-      "id": "edge_mile_stone/v0.3.23.md_v0.3.10_Bootstrap_Locked_1782360972508",
+      "id": "edge_mile_stone/v0.3.23.md_v0.3.10_Bootstrap_Locked_1782374291527",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3574,7 +3574,7 @@
         "projected": true
       },
       "from": "mile_stone/v0.3.24.md",
-      "id": "edge_mile_stone/v0.3.24.md_v0.3.10_Bootstrap_Locked_1782360972508",
+      "id": "edge_mile_stone/v0.3.24.md_v0.3.10_Bootstrap_Locked_1782374291527",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3592,7 +3592,7 @@
         "projected": true
       },
       "from": "mile_stone/v0.3.26.md",
-      "id": "edge_mile_stone/v0.3.26.md_demo/canvas-engine.js_1782360972508",
+      "id": "edge_mile_stone/v0.3.26.md_demo/canvas-engine.js_1782374291528",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3610,7 +3610,7 @@
         "projected": true
       },
       "from": "mile_stone/v0.3.26.md",
-      "id": "edge_mile_stone/v0.3.26.md_package_1782360972508",
+      "id": "edge_mile_stone/v0.3.26.md_package_1782374291528",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3628,7 +3628,7 @@
         "projected": true
       },
       "from": "mile_stone/v0.3.26.md",
-      "id": "edge_mile_stone/v0.3.26.md_v0.3.10_Bootstrap_Locked_1782360972508",
+      "id": "edge_mile_stone/v0.3.26.md_v0.3.10_Bootstrap_Locked_1782374291528",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3646,7 +3646,7 @@
         "projected": true
       },
       "from": "mile_stone/v0.3.27.md",
-      "id": "edge_mile_stone/v0.3.27.md_v0.3.10_Bootstrap_Locked_1782360972508",
+      "id": "edge_mile_stone/v0.3.27.md_v0.3.10_Bootstrap_Locked_1782374291528",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3664,7 +3664,7 @@
         "projected": true
       },
       "from": "mile_stone/v0.3.28.md",
-      "id": "edge_mile_stone/v0.3.28.md_v0.3.10_Bootstrap_Locked_1782360972508",
+      "id": "edge_mile_stone/v0.3.28.md_v0.3.10_Bootstrap_Locked_1782374291528",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3682,7 +3682,7 @@
         "projected": true
       },
       "from": "mile_stone/v0.3.29.md",
-      "id": "edge_mile_stone/v0.3.29.md_v0.3.10_Bootstrap_Locked_1782360972509",
+      "id": "edge_mile_stone/v0.3.29.md_v0.3.10_Bootstrap_Locked_1782374291528",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3700,7 +3700,7 @@
         "projected": true
       },
       "from": "mile_stone/v0.3.30.1.md",
-      "id": "edge_mile_stone/v0.3.30.1.md_demo/canvas-engine.js_1782360972509",
+      "id": "edge_mile_stone/v0.3.30.1.md_demo/canvas-engine.js_1782374291528",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3718,7 +3718,7 @@
         "projected": true
       },
       "from": "mile_stone/v0.3.30.1.md",
-      "id": "edge_mile_stone/v0.3.30.1.md_index_1782360972509",
+      "id": "edge_mile_stone/v0.3.30.1.md_index_1782374291528",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3736,7 +3736,7 @@
         "projected": true
       },
       "from": "mile_stone/v0.3.30.1.md",
-      "id": "edge_mile_stone/v0.3.30.1.md_v0.3.10_Bootstrap_Locked_1782360972509",
+      "id": "edge_mile_stone/v0.3.30.1.md_v0.3.10_Bootstrap_Locked_1782374291528",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3754,7 +3754,7 @@
         "projected": true
       },
       "from": "mile_stone/v0.3.30.2.md",
-      "id": "edge_mile_stone/v0.3.30.2.md_v0.3.10_Bootstrap_Locked_1782360972509",
+      "id": "edge_mile_stone/v0.3.30.2.md_v0.3.10_Bootstrap_Locked_1782374291528",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3772,7 +3772,7 @@
         "projected": true
       },
       "from": "README.ko.md",
-      "id": "edge_README.ko.md_1_1782360972499",
+      "id": "edge_README.ko.md_1_1782374291518",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3790,7 +3790,7 @@
         "projected": true
       },
       "from": "README.ko.md",
-      "id": "edge_README.ko.md_2_1782360972499",
+      "id": "edge_README.ko.md_2_1782374291518",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3808,7 +3808,7 @@
         "projected": true
       },
       "from": "README.ko.md",
-      "id": "edge_README.ko.md_3_1782360972499",
+      "id": "edge_README.ko.md_3_1782374291518",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3826,7 +3826,7 @@
         "projected": true
       },
       "from": "README.ko.md",
-      "id": "edge_README.ko.md_4_1782360972499",
+      "id": "edge_README.ko.md_4_1782374291518",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3844,7 +3844,7 @@
         "projected": true
       },
       "from": "README.ko.md",
-      "id": "edge_README.ko.md_flowview_1782360972500",
+      "id": "edge_README.ko.md_flowview_1782374291519",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3862,7 +3862,7 @@
         "projected": true
       },
       "from": "README.ko.md",
-      "id": "edge_README.ko.md_flowview2_1782360972500",
+      "id": "edge_README.ko.md_flowview2_1782374291519",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3880,7 +3880,7 @@
         "projected": true
       },
       "from": "README.ko.md",
-      "id": "edge_README.ko.md_README.md_1782360972499",
+      "id": "edge_README.ko.md_README.md_1782374291518",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3898,7 +3898,7 @@
         "projected": true
       },
       "from": "README.ko.md",
-      "id": "edge_README.ko.md_REVISION_HISTORY.md_1782360972500",
+      "id": "edge_README.ko.md_REVISION_HISTORY.md_1782374291519",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3916,7 +3916,7 @@
         "projected": true
       },
       "from": "README.ko.md",
-      "id": "edge_README.ko.md_synapse_default_view_1782360972499",
+      "id": "edge_README.ko.md_synapse_default_view_1782374291519",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3934,7 +3934,7 @@
         "projected": true
       },
       "from": "README.ko.md",
-      "id": "edge_README.ko.md_synapse_explorer_menu_1782360972499",
+      "id": "edge_README.ko.md_synapse_explorer_menu_1782374291519",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3952,7 +3952,7 @@
         "projected": true
       },
       "from": "README.ko.md",
-      "id": "edge_README.ko.md_synapse_feature_demo_1782360972499",
+      "id": "edge_README.ko.md_synapse_feature_demo_1782374291518",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3970,7 +3970,7 @@
         "projected": true
       },
       "from": "README.ko.md",
-      "id": "edge_README.ko.md_synapse_focus_top_1782360972499",
+      "id": "edge_README.ko.md_synapse_focus_top_1782374291519",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -3988,7 +3988,7 @@
         "projected": true
       },
       "from": "README.ko.md",
-      "id": "edge_README.ko.md_synapse_hide_lead_1782360972499",
+      "id": "edge_README.ko.md_synapse_hide_lead_1782374291519",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4006,7 +4006,7 @@
         "projected": true
       },
       "from": "README.ko.md",
-      "id": "edge_README.ko.md_synapse_topology_v0.3.21_1782360972499",
+      "id": "edge_README.ko.md_synapse_topology_v0.3.21_1782374291518",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4024,7 +4024,7 @@
         "projected": true
       },
       "from": "README.ko.md",
-      "id": "edge_README.ko.md_synapse_traffic_heatmap_1782360972499",
+      "id": "edge_README.ko.md_synapse_traffic_heatmap_1782374291519",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4042,7 +4042,7 @@
         "projected": true
       },
       "from": "README.ko.md",
-      "id": "edge_README.ko.md_synapse_zoom_detail_1782360972499",
+      "id": "edge_README.ko.md_synapse_zoom_detail_1782374291518",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4060,7 +4060,7 @@
         "projected": true
       },
       "from": "README.md",
-      "id": "edge_README.md_1_1782360972500",
+      "id": "edge_README.md_1_1782374291519",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4078,7 +4078,7 @@
         "projected": true
       },
       "from": "README.md",
-      "id": "edge_README.md_2_1782360972500",
+      "id": "edge_README.md_2_1782374291519",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4096,7 +4096,7 @@
         "projected": true
       },
       "from": "README.md",
-      "id": "edge_README.md_3_1782360972500",
+      "id": "edge_README.md_3_1782374291519",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4114,7 +4114,7 @@
         "projected": true
       },
       "from": "README.md",
-      "id": "edge_README.md_4_1782360972500",
+      "id": "edge_README.md_4_1782374291519",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4132,7 +4132,7 @@
         "projected": true
       },
       "from": "README.md",
-      "id": "edge_README.md_flowview_1782360972500",
+      "id": "edge_README.md_flowview_1782374291519",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4150,7 +4150,7 @@
         "projected": true
       },
       "from": "README.md",
-      "id": "edge_README.md_flowview2_1782360972500",
+      "id": "edge_README.md_flowview2_1782374291519",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4168,7 +4168,7 @@
         "projected": true
       },
       "from": "README.md",
-      "id": "edge_README.md_REVISION_HISTORY.md_1782360972500",
+      "id": "edge_README.md_REVISION_HISTORY.md_1782374291519",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4186,7 +4186,7 @@
         "projected": true
       },
       "from": "README.md",
-      "id": "edge_README.md_synapse_default_view_1782360972500",
+      "id": "edge_README.md_synapse_default_view_1782374291519",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4204,7 +4204,7 @@
         "projected": true
       },
       "from": "README.md",
-      "id": "edge_README.md_synapse_explorer_menu_1782360972500",
+      "id": "edge_README.md_synapse_explorer_menu_1782374291519",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4222,7 +4222,7 @@
         "projected": true
       },
       "from": "README.md",
-      "id": "edge_README.md_synapse_feature_demo_1782360972500",
+      "id": "edge_README.md_synapse_feature_demo_1782374291519",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4240,7 +4240,7 @@
         "projected": true
       },
       "from": "README.md",
-      "id": "edge_README.md_synapse_focus_top_1782360972500",
+      "id": "edge_README.md_synapse_focus_top_1782374291519",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4258,7 +4258,7 @@
         "projected": true
       },
       "from": "README.md",
-      "id": "edge_README.md_synapse_hide_lead_1782360972500",
+      "id": "edge_README.md_synapse_hide_lead_1782374291519",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4276,7 +4276,7 @@
         "projected": true
       },
       "from": "README.md",
-      "id": "edge_README.md_synapse_topology_v0.3.21_1782360972500",
+      "id": "edge_README.md_synapse_topology_v0.3.21_1782374291519",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4294,7 +4294,7 @@
         "projected": true
       },
       "from": "README.md",
-      "id": "edge_README.md_synapse_traffic_heatmap_1782360972500",
+      "id": "edge_README.md_synapse_traffic_heatmap_1782374291519",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4312,7 +4312,7 @@
         "projected": true
       },
       "from": "README.md",
-      "id": "edge_README.md_synapse_zoom_detail_1782360972500",
+      "id": "edge_README.md_synapse_zoom_detail_1782374291519",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4330,7 +4330,7 @@
         "projected": true
       },
       "from": "release_note/v0.2.29_release_notes.md",
-      "id": "edge_release_note/v0.2.29_release_notes.md_출력 가능한 ASCII_1782360972509",
+      "id": "edge_release_note/v0.2.29_release_notes.md_출력 가능한 ASCII_1782374291529",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4348,7 +4348,7 @@
         "projected": true
       },
       "from": "release_note/v0.2.34_hotfix_2_release_notes.md",
-      "id": "edge_release_note/v0.2.34_hotfix_2_release_notes.md_v0.2.15_1782360972509",
+      "id": "edge_release_note/v0.2.34_hotfix_2_release_notes.md_v0.2.15_1782374291529",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4366,7 +4366,7 @@
         "projected": true
       },
       "from": "release_note/v0.3.09_release_notes_ko.md",
-      "id": "edge_release_note/v0.3.09_release_notes_ko.md_README.md_1782360972509",
+      "id": "edge_release_note/v0.3.09_release_notes_ko.md_README.md_1782374291529",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4384,7 +4384,7 @@
         "projected": true
       },
       "from": "release_note/v0.3.09_RELEASE_NOTES_KO.md",
-      "id": "edge_release_note/v0.3.09_RELEASE_NOTES_KO.md_README.md_1782360972509",
+      "id": "edge_release_note/v0.3.09_RELEASE_NOTES_KO.md_README.md_1782374291529",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4402,7 +4402,7 @@
         "projected": true
       },
       "from": "release_note/v0.3.09_RELEASE_NOTES.md",
-      "id": "edge_release_note/v0.3.09_RELEASE_NOTES.md_README.md_1782360972509",
+      "id": "edge_release_note/v0.3.09_RELEASE_NOTES.md_README.md_1782374291529",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4420,7 +4420,7 @@
         "projected": true
       },
       "from": "release_note/v0.3.3_release_notes.md",
-      "id": "edge_release_note/v0.3.3_release_notes.md_synapse-visual-architecture-v0.3.5_1782360972509",
+      "id": "edge_release_note/v0.3.3_release_notes.md_synapse-visual-architecture-v0.3.5_1782374291529",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4438,7 +4438,7 @@
         "projected": true
       },
       "from": "release_note/v0.3.9_release_notes.md",
-      "id": "edge_release_note/v0.3.9_release_notes.md_synapse-visual-architecture-v0.3.5_1782360972510",
+      "id": "edge_release_note/v0.3.9_release_notes.md_synapse-visual-architecture-v0.3.5_1782374291529",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4456,7 +4456,7 @@
         "projected": true
       },
       "from": "scratch/tier_b5_soak.ts",
-      "id": "edge_scratch/tier_b5_soak.ts_http_1782360972510",
+      "id": "edge_scratch/tier_b5_soak.ts_http_1782374291529",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4474,7 +4474,7 @@
         "projected": true
       },
       "from": "src/bootstrap/BootstrapEngine.ts",
-      "id": "edge_src/bootstrap/BootstrapEngine.ts_src/core/DataPipeline.ts_1782360972510",
+      "id": "edge_src/bootstrap/BootstrapEngine.ts_src/core/DataPipeline.ts_1782374291530",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4492,7 +4492,7 @@
         "projected": true
       },
       "from": "src/bootstrap/BootstrapEngine.ts",
-      "id": "edge_src/bootstrap/BootstrapEngine.ts_src/core/FileScanner.ts_1782360972510",
+      "id": "edge_src/bootstrap/BootstrapEngine.ts_src/core/FileScanner.ts_1782374291529",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4510,7 +4510,7 @@
         "projected": true
       },
       "from": "src/bootstrap/BootstrapEngine.ts",
-      "id": "edge_src/bootstrap/BootstrapEngine.ts_src/core/FlowchartGenerator.ts_1782360972510",
+      "id": "edge_src/bootstrap/BootstrapEngine.ts_src/core/FlowchartGenerator.ts_1782374291529",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4528,7 +4528,7 @@
         "projected": true
       },
       "from": "src/bootstrap/BootstrapEngine.ts",
-      "id": "edge_src/bootstrap/BootstrapEngine.ts_src/core/GeminiParser.ts_1782360972510",
+      "id": "edge_src/bootstrap/BootstrapEngine.ts_src/core/GeminiParser.ts_1782374291529",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4546,7 +4546,7 @@
         "projected": true
       },
       "from": "src/bootstrap/BootstrapEngine.ts",
-      "id": "edge_src/bootstrap/BootstrapEngine.ts_src/core/graphBuilder.ts_1782360972510",
+      "id": "edge_src/bootstrap/BootstrapEngine.ts_src/core/graphBuilder.ts_1782374291530",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4564,7 +4564,7 @@
         "projected": true
       },
       "from": "src/bootstrap/BootstrapEngine.ts",
-      "id": "edge_src/bootstrap/BootstrapEngine.ts_src/core/GraphModel.ts_1782360972510",
+      "id": "edge_src/bootstrap/BootstrapEngine.ts_src/core/GraphModel.ts_1782374291530",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4582,7 +4582,7 @@
         "projected": true
       },
       "from": "src/bootstrap/BootstrapEngine.ts",
-      "id": "edge_src/bootstrap/BootstrapEngine.ts_src/core/PhaseManager.ts_1782360972510",
+      "id": "edge_src/bootstrap/BootstrapEngine.ts_src/core/PhaseManager.ts_1782374291530",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4600,7 +4600,7 @@
         "projected": true
       },
       "from": "src/bootstrap/BootstrapEngine.ts",
-      "id": "edge_src/bootstrap/BootstrapEngine.ts_src/core/RuleEngine.ts_1782360972510",
+      "id": "edge_src/bootstrap/BootstrapEngine.ts_src/core/RuleEngine.ts_1782374291530",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4618,7 +4618,7 @@
         "projected": true
       },
       "from": "src/bootstrap/BootstrapEngine.ts",
-      "id": "edge_src/bootstrap/BootstrapEngine.ts_src/core/SnapshotSystem.ts_1782360972510",
+      "id": "edge_src/bootstrap/BootstrapEngine.ts_src/core/SnapshotSystem.ts_1782374291530",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4636,7 +4636,7 @@
         "projected": true
       },
       "from": "src/bootstrap/BootstrapEngine.ts",
-      "id": "edge_src/bootstrap/BootstrapEngine.ts_src/types/schema.ts_1782360972510",
+      "id": "edge_src/bootstrap/BootstrapEngine.ts_src/types/schema.ts_1782374291529",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4654,7 +4654,7 @@
         "projected": true
       },
       "from": "src/bootstrap/BootstrapEngine.ts",
-      "id": "edge_src/bootstrap/BootstrapEngine.ts_src/utils/exclusionRules.ts_1782360972510",
+      "id": "edge_src/bootstrap/BootstrapEngine.ts_src/utils/exclusionRules.ts_1782374291529",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4672,7 +4672,7 @@
         "projected": true
       },
       "from": "src/bootstrap/BootstrapEngine.ts",
-      "id": "edge_src/bootstrap/BootstrapEngine.ts_src/utils/Logger.ts_1782360972510",
+      "id": "edge_src/bootstrap/BootstrapEngine.ts_src/utils/Logger.ts_1782374291530",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4690,7 +4690,7 @@
         "projected": true
       },
       "from": "src/cli.ts",
-      "id": "edge_src/cli.ts_src/bootstrap/BootstrapEngine.ts_1782360972510",
+      "id": "edge_src/cli.ts_src/bootstrap/BootstrapEngine.ts_1782374291530",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4708,7 +4708,7 @@
         "projected": true
       },
       "from": "src/client.ts",
-      "id": "edge_src/client.ts_node_1782360972510",
+      "id": "edge_src/client.ts_node_1782374291530",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4726,7 +4726,7 @@
         "projected": true
       },
       "from": "src/core/AiOrchestrator.ts",
-      "id": "edge_src/core/AiOrchestrator.ts_src/utils/Logger.ts_1782360972510",
+      "id": "edge_src/core/AiOrchestrator.ts_src/utils/Logger.ts_1782374291530",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4744,7 +4744,7 @@
         "projected": true
       },
       "from": "src/core/ArchitectureDSL.ts",
-      "id": "edge_src/core/ArchitectureDSL.ts_src/types/schema.ts_1782360972510",
+      "id": "edge_src/core/ArchitectureDSL.ts_src/types/schema.ts_1782374291530",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4762,7 +4762,7 @@
         "projected": true
       },
       "from": "src/core/BillingManager.ts",
-      "id": "edge_src/core/BillingManager.ts_src/core/DatabaseEngine.ts_1782360972511",
+      "id": "edge_src/core/BillingManager.ts_src/core/DatabaseEngine.ts_1782374291530",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4780,7 +4780,7 @@
         "projected": true
       },
       "from": "src/core/BlacklistOrchestrator.ts",
-      "id": "edge_src/core/BlacklistOrchestrator.ts_src/core/filterSnapshot.ts_1782360972511",
+      "id": "edge_src/core/BlacklistOrchestrator.ts_src/core/filterSnapshot.ts_1782374291530",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4798,7 +4798,7 @@
         "projected": true
       },
       "from": "src/core/BlacklistOrchestrator.ts",
-      "id": "edge_src/core/BlacklistOrchestrator.ts_src/core/GraphModel.ts_1782360972511",
+      "id": "edge_src/core/BlacklistOrchestrator.ts_src/core/GraphModel.ts_1782374291530",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4816,7 +4816,7 @@
         "projected": true
       },
       "from": "src/core/BlacklistOrchestrator.ts",
-      "id": "edge_src/core/BlacklistOrchestrator.ts_src/core/RuleEngine.ts_1782360972511",
+      "id": "edge_src/core/BlacklistOrchestrator.ts_src/core/RuleEngine.ts_1782374291530",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4834,7 +4834,7 @@
         "projected": true
       },
       "from": "src/core/BlacklistOrchestrator.ts",
-      "id": "edge_src/core/BlacklistOrchestrator.ts_src/types/schema.ts_1782360972511",
+      "id": "edge_src/core/BlacklistOrchestrator.ts_src/types/schema.ts_1782374291530",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4852,7 +4852,7 @@
         "projected": true
       },
       "from": "src/core/canvas-engine/CanvasEngine.ts",
-      "id": "edge_src/core/canvas-engine/CanvasEngine.ts_src/core/canvas-engine/Intent.ts_1782360972514",
+      "id": "edge_src/core/canvas-engine/CanvasEngine.ts_src/core/canvas-engine/Intent.ts_1782374291533",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4870,7 +4870,7 @@
         "projected": true
       },
       "from": "src/core/canvas-engine/CanvasEngine.ts",
-      "id": "edge_src/core/canvas-engine/CanvasEngine.ts_src/core/canvas-engine/PhaseGate.ts_1782360972514",
+      "id": "edge_src/core/canvas-engine/CanvasEngine.ts_src/core/canvas-engine/PhaseGate.ts_1782374291534",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4888,7 +4888,7 @@
         "projected": true
       },
       "from": "src/core/canvas-engine/CanvasEngine.ts",
-      "id": "edge_src/core/canvas-engine/CanvasEngine.ts_src/core/canvas-engine/SpatialRuleBook.ts_1782360972514",
+      "id": "edge_src/core/canvas-engine/CanvasEngine.ts_src/core/canvas-engine/SpatialRuleBook.ts_1782374291534",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4906,7 +4906,7 @@
         "projected": true
       },
       "from": "src/core/canvas-engine/CanvasEngine.ts",
-      "id": "edge_src/core/canvas-engine/CanvasEngine.ts_src/core/canvas-engine/StateManager.ts_1782360972514",
+      "id": "edge_src/core/canvas-engine/CanvasEngine.ts_src/core/canvas-engine/StateManager.ts_1782374291533",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4924,7 +4924,7 @@
         "projected": true
       },
       "from": "src/core/canvas-engine/CanvasEngine.ts",
-      "id": "edge_src/core/canvas-engine/CanvasEngine.ts_src/core/canvas-engine/ValidationHarness.ts_1782360972514",
+      "id": "edge_src/core/canvas-engine/CanvasEngine.ts_src/core/canvas-engine/ValidationHarness.ts_1782374291533",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4942,7 +4942,7 @@
         "projected": true
       },
       "from": "src/core/canvas-engine/CanvasEngine.ts",
-      "id": "edge_src/core/canvas-engine/CanvasEngine.ts_src/core/canvas-engine/VisualRuleBook.ts_1782360972514",
+      "id": "edge_src/core/canvas-engine/CanvasEngine.ts_src/core/canvas-engine/VisualRuleBook.ts_1782374291534",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4960,7 +4960,7 @@
         "projected": true
       },
       "from": "src/core/canvas-engine/CanvasEngine.ts",
-      "id": "edge_src/core/canvas-engine/CanvasEngine.ts_src/core/RuleEngine.ts_1782360972514",
+      "id": "edge_src/core/canvas-engine/CanvasEngine.ts_src/core/RuleEngine.ts_1782374291533",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4978,7 +4978,7 @@
         "projected": true
       },
       "from": "src/core/canvas-engine/Intent.ts",
-      "id": "edge_src/core/canvas-engine/Intent.ts_src/core/GraphModel.ts_1782360972514",
+      "id": "edge_src/core/canvas-engine/Intent.ts_src/core/GraphModel.ts_1782374291534",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -4996,7 +4996,7 @@
         "projected": true
       },
       "from": "src/core/canvas-engine/PhaseGate.ts",
-      "id": "edge_src/core/canvas-engine/PhaseGate.ts_src/core/canvas-engine/Intent.ts_1782360972514",
+      "id": "edge_src/core/canvas-engine/PhaseGate.ts_src/core/canvas-engine/Intent.ts_1782374291534",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5014,7 +5014,7 @@
         "projected": true
       },
       "from": "src/core/canvas-engine/PhaseGate.ts",
-      "id": "edge_src/core/canvas-engine/PhaseGate.ts_src/core/PhaseManager.ts_1782360972514",
+      "id": "edge_src/core/canvas-engine/PhaseGate.ts_src/core/PhaseManager.ts_1782374291534",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5032,7 +5032,7 @@
         "projected": true
       },
       "from": "src/core/canvas-engine/RuleEngine.ts",
-      "id": "edge_src/core/canvas-engine/RuleEngine.ts_src/core/canvas-engine/Intent.ts_1782360972514",
+      "id": "edge_src/core/canvas-engine/RuleEngine.ts_src/core/canvas-engine/Intent.ts_1782374291534",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5050,7 +5050,7 @@
         "projected": true
       },
       "from": "src/core/canvas-engine/ScenarioRunner.ts",
-      "id": "edge_src/core/canvas-engine/ScenarioRunner.ts_src/core/canvas-engine/CanvasEngine.ts_1782360972514",
+      "id": "edge_src/core/canvas-engine/ScenarioRunner.ts_src/core/canvas-engine/CanvasEngine.ts_1782374291534",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5068,7 +5068,7 @@
         "projected": true
       },
       "from": "src/core/canvas-engine/ScenarioRunner.ts",
-      "id": "edge_src/core/canvas-engine/ScenarioRunner.ts_src/core/canvas-engine/Intent.ts_1782360972514",
+      "id": "edge_src/core/canvas-engine/ScenarioRunner.ts_src/core/canvas-engine/Intent.ts_1782374291534",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5086,7 +5086,7 @@
         "projected": true
       },
       "from": "src/core/canvas-engine/ScenarioRunner.ts",
-      "id": "edge_src/core/canvas-engine/ScenarioRunner.ts_src/core/GraphModel.ts_1782360972514",
+      "id": "edge_src/core/canvas-engine/ScenarioRunner.ts_src/core/GraphModel.ts_1782374291534",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5104,7 +5104,7 @@
         "projected": true
       },
       "from": "src/core/canvas-engine/SpatialRuleBook.ts",
-      "id": "edge_src/core/canvas-engine/SpatialRuleBook.ts_src/core/canvas-engine/Intent.ts_1782360972514",
+      "id": "edge_src/core/canvas-engine/SpatialRuleBook.ts_src/core/canvas-engine/Intent.ts_1782374291534",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5122,7 +5122,7 @@
         "projected": true
       },
       "from": "src/core/canvas-engine/SpatialRuleBook.ts",
-      "id": "edge_src/core/canvas-engine/SpatialRuleBook.ts_src/core/canvas-engine/RenderProtocol.ts_1782360972515",
+      "id": "edge_src/core/canvas-engine/SpatialRuleBook.ts_src/core/canvas-engine/RenderProtocol.ts_1782374291534",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5140,7 +5140,7 @@
         "projected": true
       },
       "from": "src/core/canvas-engine/SpatialRuleBook.ts",
-      "id": "edge_src/core/canvas-engine/SpatialRuleBook.ts_src/core/canvas-engine/StateManager.ts_1782360972515",
+      "id": "edge_src/core/canvas-engine/SpatialRuleBook.ts_src/core/canvas-engine/StateManager.ts_1782374291534",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5158,7 +5158,7 @@
         "projected": true
       },
       "from": "src/core/canvas-engine/SpatialRuleBook.ts",
-      "id": "edge_src/core/canvas-engine/SpatialRuleBook.ts_src/core/RuleEngine.ts_1782360972515",
+      "id": "edge_src/core/canvas-engine/SpatialRuleBook.ts_src/core/RuleEngine.ts_1782374291534",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5176,7 +5176,7 @@
         "projected": true
       },
       "from": "src/core/canvas-engine/StateManager.ts",
-      "id": "edge_src/core/canvas-engine/StateManager.ts_crypto_1782360972515",
+      "id": "edge_src/core/canvas-engine/StateManager.ts_crypto_1782374291534",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5194,7 +5194,7 @@
         "projected": true
       },
       "from": "src/core/canvas-engine/StateManager.ts",
-      "id": "edge_src/core/canvas-engine/StateManager.ts_src/core/canvas-engine/Intent.ts_1782360972515",
+      "id": "edge_src/core/canvas-engine/StateManager.ts_src/core/canvas-engine/Intent.ts_1782374291534",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5212,7 +5212,7 @@
         "projected": true
       },
       "from": "src/core/canvas-engine/StateManager.ts",
-      "id": "edge_src/core/canvas-engine/StateManager.ts_src/core/GraphModel.ts_1782360972515",
+      "id": "edge_src/core/canvas-engine/StateManager.ts_src/core/GraphModel.ts_1782374291534",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5230,7 +5230,7 @@
         "projected": true
       },
       "from": "src/core/canvas-engine/StateManager.ts",
-      "id": "edge_src/core/canvas-engine/StateManager.ts_src/core/projection/ProjectionLayer.ts_1782360972515",
+      "id": "edge_src/core/canvas-engine/StateManager.ts_src/core/projection/ProjectionLayer.ts_1782374291534",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5248,7 +5248,7 @@
         "projected": true
       },
       "from": "src/core/canvas-engine/StateManager.ts",
-      "id": "edge_src/core/canvas-engine/StateManager.ts_src/core/RuleEngine.ts_1782360972515",
+      "id": "edge_src/core/canvas-engine/StateManager.ts_src/core/RuleEngine.ts_1782374291535",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5266,7 +5266,7 @@
         "projected": true
       },
       "from": "src/core/canvas-engine/StateManager.ts",
-      "id": "edge_src/core/canvas-engine/StateManager.ts_src/core/transaction/CommitManager.ts_1782360972515",
+      "id": "edge_src/core/canvas-engine/StateManager.ts_src/core/transaction/CommitManager.ts_1782374291534",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5284,7 +5284,7 @@
         "projected": true
       },
       "from": "src/core/canvas-engine/StateManager.ts",
-      "id": "edge_src/core/canvas-engine/StateManager.ts_src/utils/Logger.ts_1782360972515",
+      "id": "edge_src/core/canvas-engine/StateManager.ts_src/utils/Logger.ts_1782374291535",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5302,7 +5302,7 @@
         "projected": true
       },
       "from": "src/core/canvas-engine/ValidationHarness.ts",
-      "id": "edge_src/core/canvas-engine/ValidationHarness.ts_src/core/canvas-engine/Intent.ts_1782360972515",
+      "id": "edge_src/core/canvas-engine/ValidationHarness.ts_src/core/canvas-engine/Intent.ts_1782374291535",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5320,7 +5320,7 @@
         "projected": true
       },
       "from": "src/core/canvas-engine/ValidationHarness.ts",
-      "id": "edge_src/core/canvas-engine/ValidationHarness.ts_src/core/canvas-engine/StateManager.ts_1782360972515",
+      "id": "edge_src/core/canvas-engine/ValidationHarness.ts_src/core/canvas-engine/StateManager.ts_1782374291535",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5338,7 +5338,7 @@
         "projected": true
       },
       "from": "src/core/canvas-engine/ValidationHarness.ts",
-      "id": "edge_src/core/canvas-engine/ValidationHarness.ts_src/core/RuleEngine.ts_1782360972515",
+      "id": "edge_src/core/canvas-engine/ValidationHarness.ts_src/core/RuleEngine.ts_1782374291535",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5356,7 +5356,7 @@
         "projected": true
       },
       "from": "src/core/canvas-engine/VisualRuleBook.ts",
-      "id": "edge_src/core/canvas-engine/VisualRuleBook.ts_src/core/canvas-engine/Intent.ts_1782360972515",
+      "id": "edge_src/core/canvas-engine/VisualRuleBook.ts_src/core/canvas-engine/Intent.ts_1782374291535",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5374,7 +5374,7 @@
         "projected": true
       },
       "from": "src/core/canvas-engine/VisualRuleBook.ts",
-      "id": "edge_src/core/canvas-engine/VisualRuleBook.ts_src/core/canvas-engine/RenderProtocol.ts_1782360972515",
+      "id": "edge_src/core/canvas-engine/VisualRuleBook.ts_src/core/canvas-engine/RenderProtocol.ts_1782374291535",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5392,7 +5392,7 @@
         "projected": true
       },
       "from": "src/core/canvas-engine/VisualRuleBook.ts",
-      "id": "edge_src/core/canvas-engine/VisualRuleBook.ts_src/core/canvas-engine/StateManager.ts_1782360972515",
+      "id": "edge_src/core/canvas-engine/VisualRuleBook.ts_src/core/canvas-engine/StateManager.ts_1782374291535",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5410,7 +5410,7 @@
         "projected": true
       },
       "from": "src/core/canvas-engine/VisualRuleBook.ts",
-      "id": "edge_src/core/canvas-engine/VisualRuleBook.ts_src/core/RuleEngine.ts_1782360972515",
+      "id": "edge_src/core/canvas-engine/VisualRuleBook.ts_src/core/RuleEngine.ts_1782374291535",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5428,7 +5428,7 @@
         "projected": true
       },
       "from": "src/core/CDPManager.ts",
-      "id": "edge_src/core/CDPManager.ts_crypto_1782360972511",
+      "id": "edge_src/core/CDPManager.ts_crypto_1782374291531",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5446,7 +5446,7 @@
         "projected": true
       },
       "from": "src/core/CDPManager.ts",
-      "id": "edge_src/core/CDPManager.ts_http_1782360972511",
+      "id": "edge_src/core/CDPManager.ts_http_1782374291530",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5464,7 +5464,7 @@
         "projected": true
       },
       "from": "src/core/CDPManager.ts",
-      "id": "edge_src/core/CDPManager.ts_net_1782360972511",
+      "id": "edge_src/core/CDPManager.ts_net_1782374291530",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5482,7 +5482,7 @@
         "projected": true
       },
       "from": "src/core/CDPManager.ts",
-      "id": "edge_src/core/CDPManager.ts_src/utils/Logger.ts_1782360972511",
+      "id": "edge_src/core/CDPManager.ts_src/utils/Logger.ts_1782374291531",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5500,7 +5500,7 @@
         "projected": true
       },
       "from": "src/core/collaboration/AccountManager.ts",
-      "id": "edge_src/core/collaboration/AccountManager.ts_crypto_1782360972515",
+      "id": "edge_src/core/collaboration/AccountManager.ts_crypto_1782374291535",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5518,7 +5518,7 @@
         "projected": true
       },
       "from": "src/core/collaboration/AccountManager.ts",
-      "id": "edge_src/core/collaboration/AccountManager.ts_src/core/collaboration/IdentityManager.ts_1782360972515",
+      "id": "edge_src/core/collaboration/AccountManager.ts_src/core/collaboration/IdentityManager.ts_1782374291535",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5536,7 +5536,7 @@
         "projected": true
       },
       "from": "src/core/collaboration/AccountManager.ts",
-      "id": "edge_src/core/collaboration/AccountManager.ts_src/utils/Logger.ts_1782360972515",
+      "id": "edge_src/core/collaboration/AccountManager.ts_src/utils/Logger.ts_1782374291535",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5554,7 +5554,7 @@
         "projected": true
       },
       "from": "src/core/collaboration/ArchitectureIndexBuilder.ts",
-      "id": "edge_src/core/collaboration/ArchitectureIndexBuilder.ts_src/types/schema.ts_1782360972516",
+      "id": "edge_src/core/collaboration/ArchitectureIndexBuilder.ts_src/types/schema.ts_1782374291535",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5572,7 +5572,7 @@
         "projected": true
       },
       "from": "src/core/collaboration/ArchitectureIndexBuilder.ts",
-      "id": "edge_src/core/collaboration/ArchitectureIndexBuilder.ts_src/utils/Logger.ts_1782360972516",
+      "id": "edge_src/core/collaboration/ArchitectureIndexBuilder.ts_src/utils/Logger.ts_1782374291535",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5590,7 +5590,7 @@
         "projected": true
       },
       "from": "src/core/collaboration/BoundaryGuard.ts",
-      "id": "edge_src/core/collaboration/BoundaryGuard.ts_src/core/collaboration/HarvestEngine.ts_1782360972516",
+      "id": "edge_src/core/collaboration/BoundaryGuard.ts_src/core/collaboration/HarvestEngine.ts_1782374291535",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5608,7 +5608,7 @@
         "projected": true
       },
       "from": "src/core/collaboration/BoundaryGuard.ts",
-      "id": "edge_src/core/collaboration/BoundaryGuard.ts_src/core/collaboration/IdentityManager.ts_1782360972516",
+      "id": "edge_src/core/collaboration/BoundaryGuard.ts_src/core/collaboration/IdentityManager.ts_1782374291535",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5626,7 +5626,7 @@
         "projected": true
       },
       "from": "src/core/collaboration/BoundaryGuard.ts",
-      "id": "edge_src/core/collaboration/BoundaryGuard.ts_src/core/collaboration/SessionManager.ts_1782360972516",
+      "id": "edge_src/core/collaboration/BoundaryGuard.ts_src/core/collaboration/SessionManager.ts_1782374291535",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5644,7 +5644,7 @@
         "projected": true
       },
       "from": "src/core/collaboration/BoundaryGuard.ts",
-      "id": "edge_src/core/collaboration/BoundaryGuard.ts_src/core/ProjectMetadata.ts_1782360972516",
+      "id": "edge_src/core/collaboration/BoundaryGuard.ts_src/core/ProjectMetadata.ts_1782374291535",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5662,7 +5662,7 @@
         "projected": true
       },
       "from": "src/core/collaboration/BoundaryGuard.ts",
-      "id": "edge_src/core/collaboration/BoundaryGuard.ts_src/utils/Logger.ts_1782360972516",
+      "id": "edge_src/core/collaboration/BoundaryGuard.ts_src/utils/Logger.ts_1782374291535",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5680,7 +5680,7 @@
         "projected": true
       },
       "from": "src/core/collaboration/CollaborationTransport.ts",
-      "id": "edge_src/core/collaboration/CollaborationTransport.ts_src/core/collaboration/AccountManager.ts_1782360972516",
+      "id": "edge_src/core/collaboration/CollaborationTransport.ts_src/core/collaboration/AccountManager.ts_1782374291536",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5698,7 +5698,7 @@
         "projected": true
       },
       "from": "src/core/collaboration/CollaborationTransport.ts",
-      "id": "edge_src/core/collaboration/CollaborationTransport.ts_src/core/collaboration/SessionManager.ts_1782360972516",
+      "id": "edge_src/core/collaboration/CollaborationTransport.ts_src/core/collaboration/SessionManager.ts_1782374291536",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5716,7 +5716,7 @@
         "projected": true
       },
       "from": "src/core/collaboration/CompareEngine.ts",
-      "id": "edge_src/core/collaboration/CompareEngine.ts_crypto_1782360972516",
+      "id": "edge_src/core/collaboration/CompareEngine.ts_crypto_1782374291536",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5734,7 +5734,7 @@
         "projected": true
       },
       "from": "src/core/collaboration/CompareEngine.ts",
-      "id": "edge_src/core/collaboration/CompareEngine.ts_src/core/collaboration/AccountManager.ts_1782360972516",
+      "id": "edge_src/core/collaboration/CompareEngine.ts_src/core/collaboration/AccountManager.ts_1782374291536",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5752,7 +5752,7 @@
         "projected": true
       },
       "from": "src/core/collaboration/CompareEngine.ts",
-      "id": "edge_src/core/collaboration/CompareEngine.ts_src/core/ProjectMetadata.ts_1782360972516",
+      "id": "edge_src/core/collaboration/CompareEngine.ts_src/core/ProjectMetadata.ts_1782374291536",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5770,7 +5770,7 @@
         "projected": true
       },
       "from": "src/core/collaboration/CompareEngine.ts",
-      "id": "edge_src/core/collaboration/CompareEngine.ts_src/types/schema.ts_1782360972516",
+      "id": "edge_src/core/collaboration/CompareEngine.ts_src/types/schema.ts_1782374291536",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5788,7 +5788,7 @@
         "projected": true
       },
       "from": "src/core/collaboration/CompareEngine.ts",
-      "id": "edge_src/core/collaboration/CompareEngine.ts_src/utils/Logger.ts_1782360972516",
+      "id": "edge_src/core/collaboration/CompareEngine.ts_src/utils/Logger.ts_1782374291536",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5806,7 +5806,7 @@
         "projected": true
       },
       "from": "src/core/collaboration/HarvestEngine.ts",
-      "id": "edge_src/core/collaboration/HarvestEngine.ts_src/core/ProjectMetadata.ts_1782360972516",
+      "id": "edge_src/core/collaboration/HarvestEngine.ts_src/core/ProjectMetadata.ts_1782374291536",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5824,7 +5824,7 @@
         "projected": true
       },
       "from": "src/core/collaboration/HarvestEngine.ts",
-      "id": "edge_src/core/collaboration/HarvestEngine.ts_src/types/schema.ts_1782360972516",
+      "id": "edge_src/core/collaboration/HarvestEngine.ts_src/types/schema.ts_1782374291536",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5842,7 +5842,7 @@
         "projected": true
       },
       "from": "src/core/collaboration/HarvestEngine.ts",
-      "id": "edge_src/core/collaboration/HarvestEngine.ts_src/utils/Logger.ts_1782360972516",
+      "id": "edge_src/core/collaboration/HarvestEngine.ts_src/utils/Logger.ts_1782374291536",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5860,7 +5860,7 @@
         "projected": true
       },
       "from": "src/core/collaboration/HarvestSessionManager.ts",
-      "id": "edge_src/core/collaboration/HarvestSessionManager.ts_src/types/schema.ts_1782360972517",
+      "id": "edge_src/core/collaboration/HarvestSessionManager.ts_src/types/schema.ts_1782374291536",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5878,7 +5878,7 @@
         "projected": true
       },
       "from": "src/core/collaboration/HarvestSessionManager.ts",
-      "id": "edge_src/core/collaboration/HarvestSessionManager.ts_src/utils/Logger.ts_1782360972517",
+      "id": "edge_src/core/collaboration/HarvestSessionManager.ts_src/utils/Logger.ts_1782374291536",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5896,7 +5896,7 @@
         "projected": true
       },
       "from": "src/core/collaboration/IdentityManager.ts",
-      "id": "edge_src/core/collaboration/IdentityManager.ts_src/utils/Logger.ts_1782360972517",
+      "id": "edge_src/core/collaboration/IdentityManager.ts_src/utils/Logger.ts_1782374291536",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5914,7 +5914,7 @@
         "projected": true
       },
       "from": "src/core/collaboration/MountManager.ts",
-      "id": "edge_src/core/collaboration/MountManager.ts_net_1782360972517",
+      "id": "edge_src/core/collaboration/MountManager.ts_net_1782374291536",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5932,7 +5932,7 @@
         "projected": true
       },
       "from": "src/core/collaboration/MountManager.ts",
-      "id": "edge_src/core/collaboration/MountManager.ts_src/core/SynapseIgnore.ts_1782360972517",
+      "id": "edge_src/core/collaboration/MountManager.ts_src/core/SynapseIgnore.ts_1782374291536",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5950,7 +5950,7 @@
         "projected": true
       },
       "from": "src/core/collaboration/MountManager.ts",
-      "id": "edge_src/core/collaboration/MountManager.ts_src/utils/Logger.ts_1782360972517",
+      "id": "edge_src/core/collaboration/MountManager.ts_src/utils/Logger.ts_1782374291536",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5968,7 +5968,7 @@
         "projected": true
       },
       "from": "src/core/collaboration/ReferenceVerifier.ts",
-      "id": "edge_src/core/collaboration/ReferenceVerifier.ts_src/core/collaboration/ArchitectureIndexBuilder.ts_1782360972517",
+      "id": "edge_src/core/collaboration/ReferenceVerifier.ts_src/core/collaboration/ArchitectureIndexBuilder.ts_1782374291536",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -5986,7 +5986,7 @@
         "projected": true
       },
       "from": "src/core/collaboration/ReferenceVerifier.ts",
-      "id": "edge_src/core/collaboration/ReferenceVerifier.ts_src/types/schema.ts_1782360972517",
+      "id": "edge_src/core/collaboration/ReferenceVerifier.ts_src/types/schema.ts_1782374291536",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6004,7 +6004,7 @@
         "projected": true
       },
       "from": "src/core/collaboration/ReferenceVerifier.ts",
-      "id": "edge_src/core/collaboration/ReferenceVerifier.ts_src/utils/Logger.ts_1782360972517",
+      "id": "edge_src/core/collaboration/ReferenceVerifier.ts_src/utils/Logger.ts_1782374291536",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6022,7 +6022,7 @@
         "projected": true
       },
       "from": "src/core/collaboration/RemoteLayerProjector.ts",
-      "id": "edge_src/core/collaboration/RemoteLayerProjector.ts_src/core/ProjectMetadata.ts_1782360972517",
+      "id": "edge_src/core/collaboration/RemoteLayerProjector.ts_src/core/ProjectMetadata.ts_1782374291537",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6040,7 +6040,7 @@
         "projected": true
       },
       "from": "src/core/collaboration/RemoteLayerProjector.ts",
-      "id": "edge_src/core/collaboration/RemoteLayerProjector.ts_src/types/schema.ts_1782360972517",
+      "id": "edge_src/core/collaboration/RemoteLayerProjector.ts_src/types/schema.ts_1782374291537",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6058,7 +6058,7 @@
         "projected": true
       },
       "from": "src/core/collaboration/RemoteLayerProjector.ts",
-      "id": "edge_src/core/collaboration/RemoteLayerProjector.ts_src/utils/Logger.ts_1782360972517",
+      "id": "edge_src/core/collaboration/RemoteLayerProjector.ts_src/utils/Logger.ts_1782374291537",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6076,7 +6076,7 @@
         "projected": true
       },
       "from": "src/core/collaboration/RestCollaborationTransport.ts",
-      "id": "edge_src/core/collaboration/RestCollaborationTransport.ts_src/core/collaboration/AccountManager.ts_1782360972517",
+      "id": "edge_src/core/collaboration/RestCollaborationTransport.ts_src/core/collaboration/AccountManager.ts_1782374291537",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6094,7 +6094,7 @@
         "projected": true
       },
       "from": "src/core/collaboration/RestCollaborationTransport.ts",
-      "id": "edge_src/core/collaboration/RestCollaborationTransport.ts_src/core/collaboration/CollaborationTransport.ts_1782360972517",
+      "id": "edge_src/core/collaboration/RestCollaborationTransport.ts_src/core/collaboration/CollaborationTransport.ts_1782374291537",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6112,7 +6112,7 @@
         "projected": true
       },
       "from": "src/core/collaboration/RestCollaborationTransport.ts",
-      "id": "edge_src/core/collaboration/RestCollaborationTransport.ts_src/core/collaboration/SessionManager.ts_1782360972517",
+      "id": "edge_src/core/collaboration/RestCollaborationTransport.ts_src/core/collaboration/SessionManager.ts_1782374291537",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6130,7 +6130,7 @@
         "projected": true
       },
       "from": "src/core/collaboration/RuntimeInitializer.ts",
-      "id": "edge_src/core/collaboration/RuntimeInitializer.ts_src/core/collaboration/IdentityManager.ts_1782360972518",
+      "id": "edge_src/core/collaboration/RuntimeInitializer.ts_src/core/collaboration/IdentityManager.ts_1782374291537",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6148,7 +6148,7 @@
         "projected": true
       },
       "from": "src/core/collaboration/RuntimeInitializer.ts",
-      "id": "edge_src/core/collaboration/RuntimeInitializer.ts_src/core/collaboration/SessionManager.ts_1782360972518",
+      "id": "edge_src/core/collaboration/RuntimeInitializer.ts_src/core/collaboration/SessionManager.ts_1782374291537",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6166,7 +6166,7 @@
         "projected": true
       },
       "from": "src/core/collaboration/RuntimeInitializer.ts",
-      "id": "edge_src/core/collaboration/RuntimeInitializer.ts_src/core/ProjectMetadata.ts_1782360972517",
+      "id": "edge_src/core/collaboration/RuntimeInitializer.ts_src/core/ProjectMetadata.ts_1782374291537",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6184,7 +6184,7 @@
         "projected": true
       },
       "from": "src/core/collaboration/RuntimeInitializer.ts",
-      "id": "edge_src/core/collaboration/RuntimeInitializer.ts_src/core/SymbolIndex.ts_1782360972517",
+      "id": "edge_src/core/collaboration/RuntimeInitializer.ts_src/core/SymbolIndex.ts_1782374291537",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6202,7 +6202,7 @@
         "projected": true
       },
       "from": "src/core/collaboration/RuntimeInitializer.ts",
-      "id": "edge_src/core/collaboration/RuntimeInitializer.ts_src/utils/Logger.ts_1782360972517",
+      "id": "edge_src/core/collaboration/RuntimeInitializer.ts_src/utils/Logger.ts_1782374291537",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6220,7 +6220,7 @@
         "projected": true
       },
       "from": "src/core/collaboration/SessionManager.ts",
-      "id": "edge_src/core/collaboration/SessionManager.ts_crypto_1782360972518",
+      "id": "edge_src/core/collaboration/SessionManager.ts_crypto_1782374291537",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6238,7 +6238,7 @@
         "projected": true
       },
       "from": "src/core/collaboration/SessionManager.ts",
-      "id": "edge_src/core/collaboration/SessionManager.ts_src/core/collaboration/IdentityManager.ts_1782360972518",
+      "id": "edge_src/core/collaboration/SessionManager.ts_src/core/collaboration/IdentityManager.ts_1782374291537",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6256,7 +6256,7 @@
         "projected": true
       },
       "from": "src/core/collaboration/SessionManager.ts",
-      "id": "edge_src/core/collaboration/SessionManager.ts_src/core/ProjectMetadata.ts_1782360972518",
+      "id": "edge_src/core/collaboration/SessionManager.ts_src/core/ProjectMetadata.ts_1782374291537",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6274,7 +6274,7 @@
         "projected": true
       },
       "from": "src/core/collaboration/SessionManager.ts",
-      "id": "edge_src/core/collaboration/SessionManager.ts_src/utils/Logger.ts_1782360972518",
+      "id": "edge_src/core/collaboration/SessionManager.ts_src/utils/Logger.ts_1782374291537",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6292,7 +6292,7 @@
         "projected": true
       },
       "from": "src/core/CommandInterceptor.ts",
-      "id": "edge_src/core/CommandInterceptor.ts_src/core/PromptLogger.ts_1782360972511",
+      "id": "edge_src/core/CommandInterceptor.ts_src/core/PromptLogger.ts_1782374291531",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6310,7 +6310,7 @@
         "projected": true
       },
       "from": "src/core/ControlSystem.ts",
-      "id": "edge_src/core/ControlSystem.ts_src/core/GraphModel.ts_1782360972511",
+      "id": "edge_src/core/ControlSystem.ts_src/core/GraphModel.ts_1782374291531",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6328,7 +6328,7 @@
         "projected": true
       },
       "from": "src/core/ControlSystem.ts",
-      "id": "edge_src/core/ControlSystem.ts_src/core/PhaseManager.ts_1782360972511",
+      "id": "edge_src/core/ControlSystem.ts_src/core/PhaseManager.ts_1782374291531",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6346,7 +6346,7 @@
         "projected": true
       },
       "from": "src/core/ControlSystem.ts",
-      "id": "edge_src/core/ControlSystem.ts_src/core/SnapshotSystem.ts_1782360972511",
+      "id": "edge_src/core/ControlSystem.ts_src/core/SnapshotSystem.ts_1782374291531",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6364,7 +6364,7 @@
         "projected": true
       },
       "from": "src/core/DataPipeline.ts",
-      "id": "edge_src/core/DataPipeline.ts_crypto_1782360972511",
+      "id": "edge_src/core/DataPipeline.ts_crypto_1782374291531",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6382,7 +6382,7 @@
         "projected": true
       },
       "from": "src/core/DataPipeline.ts",
-      "id": "edge_src/core/DataPipeline.ts_src/core/canvas-engine/CanvasEngine.ts_1782360972511",
+      "id": "edge_src/core/DataPipeline.ts_src/core/canvas-engine/CanvasEngine.ts_1782374291531",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6400,7 +6400,7 @@
         "projected": true
       },
       "from": "src/core/DataPipeline.ts",
-      "id": "edge_src/core/DataPipeline.ts_src/core/FileScanner.ts_1782360972511",
+      "id": "edge_src/core/DataPipeline.ts_src/core/FileScanner.ts_1782374291531",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6418,7 +6418,7 @@
         "projected": true
       },
       "from": "src/core/DataPipeline.ts",
-      "id": "edge_src/core/DataPipeline.ts_src/core/GraphModel.ts_1782360972511",
+      "id": "edge_src/core/DataPipeline.ts_src/core/GraphModel.ts_1782374291531",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6436,7 +6436,7 @@
         "projected": true
       },
       "from": "src/core/DataPipeline.ts",
-      "id": "edge_src/core/DataPipeline.ts_src/core/PhaseManager.ts_1782360972511",
+      "id": "edge_src/core/DataPipeline.ts_src/core/PhaseManager.ts_1782374291531",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6454,7 +6454,7 @@
         "projected": true
       },
       "from": "src/core/DataPipeline.ts",
-      "id": "edge_src/core/DataPipeline.ts_src/core/ProjectMetadata.ts_1782360972512",
+      "id": "edge_src/core/DataPipeline.ts_src/core/ProjectMetadata.ts_1782374291531",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6472,7 +6472,7 @@
         "projected": true
       },
       "from": "src/core/DataPipeline.ts",
-      "id": "edge_src/core/DataPipeline.ts_src/core/RuleEngine.ts_1782360972511",
+      "id": "edge_src/core/DataPipeline.ts_src/core/RuleEngine.ts_1782374291531",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6490,7 +6490,7 @@
         "projected": true
       },
       "from": "src/core/DataPipeline.ts",
-      "id": "edge_src/core/DataPipeline.ts_src/core/SymbolIndex.ts_1782360972512",
+      "id": "edge_src/core/DataPipeline.ts_src/core/SymbolIndex.ts_1782374291531",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6508,7 +6508,7 @@
         "projected": true
       },
       "from": "src/core/DebuggerSystem.ts",
-      "id": "edge_src/core/DebuggerSystem.ts_src/core/ControlSystem.ts_1782360972512",
+      "id": "edge_src/core/DebuggerSystem.ts_src/core/ControlSystem.ts_1782374291531",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6526,7 +6526,7 @@
         "projected": true
       },
       "from": "src/core/DebuggerSystem.ts",
-      "id": "edge_src/core/DebuggerSystem.ts_src/core/PhaseManager.ts_1782360972512",
+      "id": "edge_src/core/DebuggerSystem.ts_src/core/PhaseManager.ts_1782374291531",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6544,7 +6544,7 @@
         "projected": true
       },
       "from": "src/core/DebuggerSystem.ts",
-      "id": "edge_src/core/DebuggerSystem.ts_src/core/RendererCore.ts_1782360972512",
+      "id": "edge_src/core/DebuggerSystem.ts_src/core/RendererCore.ts_1782374291531",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6562,7 +6562,7 @@
         "projected": true
       },
       "from": "src/core/DirectChatScraper.ts",
-      "id": "edge_src/core/DirectChatScraper.ts_crypto_1782360972512",
+      "id": "edge_src/core/DirectChatScraper.ts_crypto_1782374291531",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6580,7 +6580,7 @@
         "projected": true
       },
       "from": "src/core/DirectChatScraper.ts",
-      "id": "edge_src/core/DirectChatScraper.ts_src/core/PromptLogger.ts_1782360972512",
+      "id": "edge_src/core/DirectChatScraper.ts_src/core/PromptLogger.ts_1782374291531",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6598,7 +6598,7 @@
         "projected": true
       },
       "from": "src/core/EdgeCodeRefactorer.ts",
-      "id": "edge_src/core/EdgeCodeRefactorer.ts_) || trimmed_1782360972512",
+      "id": "edge_src/core/EdgeCodeRefactorer.ts_) || trimmed_1782374291532",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6616,7 +6616,7 @@
         "projected": true
       },
       "from": "src/core/FileScanner.ts",
-      "id": "edge_src/core/FileScanner.ts_)) type = _1782360972512",
+      "id": "edge_src/core/FileScanner.ts_)) type = _1782374291532",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6634,7 +6634,7 @@
         "projected": true
       },
       "from": "src/core/filterSnapshot.ts",
-      "id": "edge_src/core/filterSnapshot.ts_src/core/RuleEngine.ts_1782360972518",
+      "id": "edge_src/core/filterSnapshot.ts_src/core/RuleEngine.ts_1782374291537",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6652,7 +6652,7 @@
         "projected": true
       },
       "from": "src/core/filterSnapshot.ts",
-      "id": "edge_src/core/filterSnapshot.ts_src/types/schema.ts_1782360972518",
+      "id": "edge_src/core/filterSnapshot.ts_src/types/schema.ts_1782374291537",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6670,7 +6670,7 @@
         "projected": true
       },
       "from": "src/core/FlowchartGenerator.ts",
-      "id": "edge_src/core/FlowchartGenerator.ts_src/types/schema.ts_1782360972512",
+      "id": "edge_src/core/FlowchartGenerator.ts_src/types/schema.ts_1782374291532",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6688,7 +6688,7 @@
         "projected": true
       },
       "from": "src/core/FlowchartGenerator.ts",
-      "id": "edge_src/core/FlowchartGenerator.ts_src/utils/visualHints.ts_1782360972512",
+      "id": "edge_src/core/FlowchartGenerator.ts_src/utils/visualHints.ts_1782374291532",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6706,7 +6706,7 @@
         "projected": true
       },
       "from": "src/core/GeminiParser.ts",
-      "id": "edge_src/core/GeminiParser.ts_src/core/RuleEngine.ts_1782360972512",
+      "id": "edge_src/core/GeminiParser.ts_src/core/RuleEngine.ts_1782374291532",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6724,7 +6724,7 @@
         "projected": true
       },
       "from": "src/core/GeminiParser.ts",
-      "id": "edge_src/core/GeminiParser.ts_src/types/schema.ts_1782360972512",
+      "id": "edge_src/core/GeminiParser.ts_src/types/schema.ts_1782374291532",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6742,7 +6742,7 @@
         "projected": true
       },
       "from": "src/core/GeminiParser.ts",
-      "id": "edge_src/core/GeminiParser.ts_src/utils/exclusionRules.ts_1782360972512",
+      "id": "edge_src/core/GeminiParser.ts_src/utils/exclusionRules.ts_1782374291532",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6760,7 +6760,7 @@
         "projected": true
       },
       "from": "src/core/graphBuilder.ts",
-      "id": "edge_src/core/graphBuilder.ts_src/core/GraphModel.ts_1782360972518",
+      "id": "edge_src/core/graphBuilder.ts_src/core/GraphModel.ts_1782374291538",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6778,7 +6778,7 @@
         "projected": true
       },
       "from": "src/core/GraphModel.ts",
-      "id": "edge_src/core/GraphModel.ts_src/core/filterSnapshot.ts_1782360972512",
+      "id": "edge_src/core/GraphModel.ts_src/core/filterSnapshot.ts_1782374291532",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6796,7 +6796,7 @@
         "projected": true
       },
       "from": "src/core/GraphModel.ts",
-      "id": "edge_src/core/GraphModel.ts_src/core/RuleEngine.ts_1782360972512",
+      "id": "edge_src/core/GraphModel.ts_src/core/RuleEngine.ts_1782374291532",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6814,7 +6814,7 @@
         "projected": true
       },
       "from": "src/core/GraphModel.ts",
-      "id": "edge_src/core/GraphModel.ts_src/types/schema.ts_1782360972512",
+      "id": "edge_src/core/GraphModel.ts_src/types/schema.ts_1782374291532",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6832,7 +6832,7 @@
         "projected": true
       },
       "from": "src/core/GridSystem.ts",
-      "id": "edge_src/core/GridSystem.ts_src/core/ControlSystem.ts_1782360972513",
+      "id": "edge_src/core/GridSystem.ts_src/core/ControlSystem.ts_1782374291532",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6850,7 +6850,7 @@
         "projected": true
       },
       "from": "src/core/GridSystem.ts",
-      "id": "edge_src/core/GridSystem.ts_src/core/GraphModel.ts_1782360972513",
+      "id": "edge_src/core/GridSystem.ts_src/core/GraphModel.ts_1782374291532",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6868,7 +6868,7 @@
         "projected": true
       },
       "from": "src/core/GridSystem.ts",
-      "id": "edge_src/core/GridSystem.ts_src/core/PhaseManager.ts_1782360972512",
+      "id": "edge_src/core/GridSystem.ts_src/core/PhaseManager.ts_1782374291532",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6886,7 +6886,7 @@
         "projected": true
       },
       "from": "src/core/LogicAnalyzer.ts",
-      "id": "edge_src/core/LogicAnalyzer.ts_src/types/schema.ts_1782360972513",
+      "id": "edge_src/core/LogicAnalyzer.ts_src/types/schema.ts_1782374291532",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6904,7 +6904,7 @@
         "projected": true
       },
       "from": "src/core/projection/ProjectionLayer.ts",
-      "id": "edge_src/core/projection/ProjectionLayer.ts_src/core/GraphModel.ts_1782360972518",
+      "id": "edge_src/core/projection/ProjectionLayer.ts_src/core/GraphModel.ts_1782374291538",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6922,7 +6922,7 @@
         "projected": true
       },
       "from": "src/core/projection/ProjectionLayer.ts",
-      "id": "edge_src/core/projection/ProjectionLayer.ts_src/core/projection/RuleStore.ts_1782360972518",
+      "id": "edge_src/core/projection/ProjectionLayer.ts_src/core/projection/RuleStore.ts_1782374291538",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6940,7 +6940,7 @@
         "projected": true
       },
       "from": "src/core/projection/RuleStore.ts",
-      "id": "edge_src/core/projection/RuleStore.ts_src/core/GraphModel.ts_1782360972518",
+      "id": "edge_src/core/projection/RuleStore.ts_src/core/GraphModel.ts_1782374291538",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6958,7 +6958,7 @@
         "projected": true
       },
       "from": "src/core/ProjectMetadata.ts",
-      "id": "edge_src/core/ProjectMetadata.ts_crypto_1782360972513",
+      "id": "edge_src/core/ProjectMetadata.ts_crypto_1782374291532",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6976,7 +6976,7 @@
         "projected": true
       },
       "from": "src/core/ProjectMetadata.ts",
-      "id": "edge_src/core/ProjectMetadata.ts_src/utils/Logger.ts_1782360972513",
+      "id": "edge_src/core/ProjectMetadata.ts_src/utils/Logger.ts_1782374291532",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -6994,7 +6994,7 @@
         "projected": true
       },
       "from": "src/core/PromptLogger.ts",
-      "id": "edge_src/core/PromptLogger.ts_src/utils/SensitiveInfoMasker.ts_1782360972513",
+      "id": "edge_src/core/PromptLogger.ts_src/utils/SensitiveInfoMasker.ts_1782374291532",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -7012,7 +7012,7 @@
         "projected": true
       },
       "from": "src/core/RendererCore.ts",
-      "id": "edge_src/core/RendererCore.ts_src/core/canvas-engine/RenderProtocol.ts_1782360972513",
+      "id": "edge_src/core/RendererCore.ts_src/core/canvas-engine/RenderProtocol.ts_1782374291533",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -7030,7 +7030,7 @@
         "projected": true
       },
       "from": "src/core/RendererCore.ts",
-      "id": "edge_src/core/RendererCore.ts_src/core/GraphModel.ts_1782360972513",
+      "id": "edge_src/core/RendererCore.ts_src/core/GraphModel.ts_1782374291533",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -7048,7 +7048,7 @@
         "projected": true
       },
       "from": "src/core/RendererCore.ts",
-      "id": "edge_src/core/RendererCore.ts_src/core/GridSystem.ts_1782360972513",
+      "id": "edge_src/core/RendererCore.ts_src/core/GridSystem.ts_1782374291533",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -7066,7 +7066,7 @@
         "projected": true
       },
       "from": "src/core/RendererCore.ts",
-      "id": "edge_src/core/RendererCore.ts_src/core/PhaseManager.ts_1782360972513",
+      "id": "edge_src/core/RendererCore.ts_src/core/PhaseManager.ts_1782374291532",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -7084,7 +7084,7 @@
         "projected": true
       },
       "from": "src/core/ReportExporter.ts",
-      "id": "edge_src/core/ReportExporter.ts_src/core/DatabaseEngine.ts_1782360972513",
+      "id": "edge_src/core/ReportExporter.ts_src/core/DatabaseEngine.ts_1782374291533",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -7102,7 +7102,7 @@
         "projected": true
       },
       "from": "src/core/SnapshotSystem.ts",
-      "id": "edge_src/core/SnapshotSystem.ts_crypto_1782360972513",
+      "id": "edge_src/core/SnapshotSystem.ts_crypto_1782374291533",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -7120,7 +7120,7 @@
         "projected": true
       },
       "from": "src/core/SnapshotSystem.ts",
-      "id": "edge_src/core/SnapshotSystem.ts_src/core/BlacklistOrchestrator.ts_1782360972513",
+      "id": "edge_src/core/SnapshotSystem.ts_src/core/BlacklistOrchestrator.ts_1782374291533",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -7138,7 +7138,7 @@
         "projected": true
       },
       "from": "src/core/SnapshotSystem.ts",
-      "id": "edge_src/core/SnapshotSystem.ts_src/core/GraphModel.ts_1782360972513",
+      "id": "edge_src/core/SnapshotSystem.ts_src/core/GraphModel.ts_1782374291533",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -7156,7 +7156,7 @@
         "projected": true
       },
       "from": "src/core/SnapshotSystem.ts",
-      "id": "edge_src/core/SnapshotSystem.ts_src/core/PhaseManager.ts_1782360972513",
+      "id": "edge_src/core/SnapshotSystem.ts_src/core/PhaseManager.ts_1782374291533",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -7174,7 +7174,7 @@
         "projected": true
       },
       "from": "src/core/SnapshotSystem.ts",
-      "id": "edge_src/core/SnapshotSystem.ts_src/core/ProjectMetadata.ts_1782360972513",
+      "id": "edge_src/core/SnapshotSystem.ts_src/core/ProjectMetadata.ts_1782374291533",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -7192,7 +7192,7 @@
         "projected": true
       },
       "from": "src/core/SymbolIndex.ts",
-      "id": "edge_src/core/SymbolIndex.ts_src/core/SynapseIgnore.ts_1782360972513",
+      "id": "edge_src/core/SymbolIndex.ts_src/core/SynapseIgnore.ts_1782374291533",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -7210,7 +7210,7 @@
         "projected": true
       },
       "from": "src/core/SymbolIndex.ts",
-      "id": "edge_src/core/SymbolIndex.ts_src/utils/Logger.ts_1782360972513",
+      "id": "edge_src/core/SymbolIndex.ts_src/utils/Logger.ts_1782374291533",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -7228,7 +7228,7 @@
         "projected": true
       },
       "from": "src/core/SynapseIgnore.ts",
-      "id": "edge_src/core/SynapseIgnore.ts_src/utils/Logger.ts_1782360972513",
+      "id": "edge_src/core/SynapseIgnore.ts_src/utils/Logger.ts_1782374291533",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -7246,7 +7246,7 @@
         "projected": true
       },
       "from": "src/core/transaction/CommitManager.ts",
-      "id": "edge_src/core/transaction/CommitManager.ts_src/core/graphBuilder.ts_1782360972518",
+      "id": "edge_src/core/transaction/CommitManager.ts_src/core/graphBuilder.ts_1782374291538",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -7264,7 +7264,7 @@
         "projected": true
       },
       "from": "src/core/transaction/CommitManager.ts",
-      "id": "edge_src/core/transaction/CommitManager.ts_src/core/GraphModel.ts_1782360972518",
+      "id": "edge_src/core/transaction/CommitManager.ts_src/core/GraphModel.ts_1782374291538",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -7282,7 +7282,7 @@
         "projected": true
       },
       "from": "src/core/transaction/CommitManager.ts",
-      "id": "edge_src/core/transaction/CommitManager.ts_src/core/transaction/ExecutionLayer.ts_1782360972518",
+      "id": "edge_src/core/transaction/CommitManager.ts_src/core/transaction/ExecutionLayer.ts_1782374291538",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -7300,7 +7300,7 @@
         "projected": true
       },
       "from": "src/core/transaction/CommitManager.ts",
-      "id": "edge_src/core/transaction/CommitManager.ts_src/core/transaction/VerificationLayer.ts_1782360972518",
+      "id": "edge_src/core/transaction/CommitManager.ts_src/core/transaction/VerificationLayer.ts_1782374291538",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -7318,7 +7318,7 @@
         "projected": true
       },
       "from": "src/core/transaction/ExecutionLayer.ts",
-      "id": "edge_src/core/transaction/ExecutionLayer.ts_src/core/GraphModel.ts_1782360972518",
+      "id": "edge_src/core/transaction/ExecutionLayer.ts_src/core/GraphModel.ts_1782374291538",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -7336,7 +7336,7 @@
         "projected": true
       },
       "from": "src/core/VirtualDebugger.ts",
-      "id": "edge_src/core/VirtualDebugger.ts_src/types/schema.ts_1782360972514",
+      "id": "edge_src/core/VirtualDebugger.ts_src/types/schema.ts_1782374291533",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -7354,7 +7354,7 @@
         "projected": true
       },
       "from": "src/core/VirtualDebugger.ts",
-      "id": "edge_src/core/VirtualDebugger.ts_src/utils/Logger.ts_1782360972514",
+      "id": "edge_src/core/VirtualDebugger.ts_src/utils/Logger.ts_1782374291533",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -7372,7 +7372,7 @@
         "projected": true
       },
       "from": "src/core/WebviewInterceptor.ts",
-      "id": "edge_src/core/WebviewInterceptor.ts_src/utils/Logger.ts_1782360972514",
+      "id": "edge_src/core/WebviewInterceptor.ts_src/utils/Logger.ts_1782374291533",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -7390,7 +7390,7 @@
         "projected": true
       },
       "from": "src/extension.ts",
-      "id": "edge_src/extension.ts_node_1782360972518",
+      "id": "edge_src/extension.ts_node_1782374291538",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -7408,7 +7408,7 @@
         "projected": true
       },
       "from": "src/extension.ts",
-      "id": "edge_src/extension.ts_src/bootstrap/BootstrapEngine.ts_1782360972519",
+      "id": "edge_src/extension.ts_src/bootstrap/BootstrapEngine.ts_1782374291538",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -7426,7 +7426,7 @@
         "projected": true
       },
       "from": "src/extension.ts",
-      "id": "edge_src/extension.ts_src/client.ts_1782360972519",
+      "id": "edge_src/extension.ts_src/client.ts_1782374291539",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -7444,7 +7444,7 @@
         "projected": true
       },
       "from": "src/extension.ts",
-      "id": "edge_src/extension.ts_src/core/AiOrchestrator.ts_1782360972519",
+      "id": "edge_src/extension.ts_src/core/AiOrchestrator.ts_1782374291539",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -7462,7 +7462,7 @@
         "projected": true
       },
       "from": "src/extension.ts",
-      "id": "edge_src/extension.ts_src/core/BillingManager.ts_1782360972519",
+      "id": "edge_src/extension.ts_src/core/BillingManager.ts_1782374291539",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -7480,7 +7480,7 @@
         "projected": true
       },
       "from": "src/extension.ts",
-      "id": "edge_src/extension.ts_src/core/BlacklistOrchestrator.ts_1782360972519",
+      "id": "edge_src/extension.ts_src/core/BlacklistOrchestrator.ts_1782374291539",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -7498,7 +7498,7 @@
         "projected": true
       },
       "from": "src/extension.ts",
-      "id": "edge_src/extension.ts_src/core/collaboration/RuntimeInitializer.ts_1782360972520",
+      "id": "edge_src/extension.ts_src/core/collaboration/RuntimeInitializer.ts_1782374291539",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -7516,7 +7516,7 @@
         "projected": true
       },
       "from": "src/extension.ts",
-      "id": "edge_src/extension.ts_src/core/GeminiParser.ts_1782360972519",
+      "id": "edge_src/extension.ts_src/core/GeminiParser.ts_1782374291539",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -7534,7 +7534,7 @@
         "projected": true
       },
       "from": "src/extension.ts",
-      "id": "edge_src/extension.ts_src/core/GraphModel.ts_1782360972519",
+      "id": "edge_src/extension.ts_src/core/GraphModel.ts_1782374291539",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -7552,7 +7552,7 @@
         "projected": true
       },
       "from": "src/extension.ts",
-      "id": "edge_src/extension.ts_src/core/LogicAnalyzer.ts_1782360972519",
+      "id": "edge_src/extension.ts_src/core/LogicAnalyzer.ts_1782374291538",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -7570,7 +7570,7 @@
         "projected": true
       },
       "from": "src/extension.ts",
-      "id": "edge_src/extension.ts_src/core/PbSessionWatcher.ts_1782360972518",
+      "id": "edge_src/extension.ts_src/core/PbSessionWatcher.ts_1782374291538",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -7588,7 +7588,7 @@
         "projected": true
       },
       "from": "src/extension.ts",
-      "id": "edge_src/extension.ts_src/core/ProjectMetadata.ts_1782360972519",
+      "id": "edge_src/extension.ts_src/core/ProjectMetadata.ts_1782374291539",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -7606,7 +7606,7 @@
         "projected": true
       },
       "from": "src/extension.ts",
-      "id": "edge_src/extension.ts_src/core/ReportExporter.ts_1782360972519",
+      "id": "edge_src/extension.ts_src/core/ReportExporter.ts_1782374291539",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -7624,7 +7624,7 @@
         "projected": true
       },
       "from": "src/extension.ts",
-      "id": "edge_src/extension.ts_src/core/RuleEngine.ts_1782360972519",
+      "id": "edge_src/extension.ts_src/core/RuleEngine.ts_1782374291539",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -7642,7 +7642,7 @@
         "projected": true
       },
       "from": "src/extension.ts",
-      "id": "edge_src/extension.ts_src/core/SnapshotSystem.ts_1782360972519",
+      "id": "edge_src/extension.ts_src/core/SnapshotSystem.ts_1782374291539",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -7660,7 +7660,7 @@
         "projected": true
       },
       "from": "src/extension.ts",
-      "id": "edge_src/extension.ts_src/core/SymbolIndex.ts_1782360972519",
+      "id": "edge_src/extension.ts_src/core/SymbolIndex.ts_1782374291539",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -7678,7 +7678,7 @@
         "projected": true
       },
       "from": "src/extension.ts",
-      "id": "edge_src/extension.ts_src/explorer/ArchitectureExplorer.ts_1782360972519",
+      "id": "edge_src/extension.ts_src/explorer/ArchitectureExplorer.ts_1782374291539",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -7696,7 +7696,7 @@
         "projected": true
       },
       "from": "src/extension.ts",
-      "id": "edge_src/extension.ts_src/utils/ChatExtractor.ts_1782360972519",
+      "id": "edge_src/extension.ts_src/utils/ChatExtractor.ts_1782374291539",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -7714,7 +7714,7 @@
         "projected": true
       },
       "from": "src/extension.ts",
-      "id": "edge_src/extension.ts_src/utils/Logger.ts_1782360972519",
+      "id": "edge_src/extension.ts_src/utils/Logger.ts_1782374291539",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -7732,7 +7732,7 @@
         "projected": true
       },
       "from": "src/extension.ts",
-      "id": "edge_src/extension.ts_src/webview/CanvasPanel.ts_1782360972519",
+      "id": "edge_src/extension.ts_src/webview/CanvasPanel.ts_1782374291538",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -7750,7 +7750,7 @@
         "projected": true
       },
       "from": "src/rust_checker/mod.rs",
-      "id": "edge_src/rust_checker/mod.rs_src/rust_checker/state_checker.rs_1782360972520",
+      "id": "edge_src/rust_checker/mod.rs_src/rust_checker/state_checker.rs_1782374291539",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -7768,7 +7768,7 @@
         "projected": true
       },
       "from": "src/rust_checker/state_checker.rs",
-      "id": "edge_src/rust_checker/state_checker.rs_project_state_json_1782360972520",
+      "id": "edge_src/rust_checker/state_checker.rs_project_state_json_1782374291540",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -7786,7 +7786,7 @@
         "projected": true
       },
       "from": "src/rust_checker/state_checker.rs",
-      "id": "edge_src/rust_checker/state_checker.rs_src/rust_checker/reporter.rs_1782360972520",
+      "id": "edge_src/rust_checker/state_checker.rs_src/rust_checker/reporter.rs_1782374291539",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -7804,7 +7804,7 @@
         "projected": true
       },
       "from": "src/server/server.ts",
-      "id": "edge_src/server/server.ts_node_1782360972520",
+      "id": "edge_src/server/server.ts_node_1782374291540",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -7822,7 +7822,7 @@
         "projected": true
       },
       "from": "src/server/server.ts",
-      "id": "edge_src/server/server.ts_src/core/FlowScanner.ts_1782360972520",
+      "id": "edge_src/server/server.ts_src/core/FlowScanner.ts_1782374291540",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -7840,7 +7840,7 @@
         "projected": true
       },
       "from": "src/server/server.ts",
-      "id": "edge_src/server/server.ts_src/core/GeminiParser.ts_1782360972520",
+      "id": "edge_src/server/server.ts_src/core/GeminiParser.ts_1782374291540",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -7858,7 +7858,7 @@
         "projected": true
       },
       "from": "src/server/server.ts",
-      "id": "edge_src/server/server.ts_vscode-languageserver-textdocument_1782360972520",
+      "id": "edge_src/server/server.ts_vscode-languageserver-textdocument_1782374291540",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -7876,7 +7876,7 @@
         "projected": true
       },
       "from": "src/server/standalone.ts",
-      "id": "edge_src/server/standalone.ts_cors_1782360972520",
+      "id": "edge_src/server/standalone.ts_cors_1782374291540",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -7894,7 +7894,7 @@
         "projected": true
       },
       "from": "src/server/standalone.ts",
-      "id": "edge_src/server/standalone.ts_crypto_1782360972520",
+      "id": "edge_src/server/standalone.ts_crypto_1782374291540",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -7912,7 +7912,7 @@
         "projected": true
       },
       "from": "src/server/standalone.ts",
-      "id": "edge_src/server/standalone.ts_express_1782360972520",
+      "id": "edge_src/server/standalone.ts_express_1782374291540",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -7930,7 +7930,7 @@
         "projected": true
       },
       "from": "src/server/standalone.ts",
-      "id": "edge_src/server/standalone.ts_src/core/collaboration/AccountManager.ts_1782360972520",
+      "id": "edge_src/server/standalone.ts_src/core/collaboration/AccountManager.ts_1782374291540",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -7948,7 +7948,7 @@
         "projected": true
       },
       "from": "src/server/standalone.ts",
-      "id": "edge_src/server/standalone.ts_src/core/collaboration/ArchitectureIndexBuilder.ts_1782360972521",
+      "id": "edge_src/server/standalone.ts_src/core/collaboration/ArchitectureIndexBuilder.ts_1782374291541",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -7966,7 +7966,7 @@
         "projected": true
       },
       "from": "src/server/standalone.ts",
-      "id": "edge_src/server/standalone.ts_src/core/collaboration/BoundaryGuard.ts_1782360972521",
+      "id": "edge_src/server/standalone.ts_src/core/collaboration/BoundaryGuard.ts_1782374291541",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -7984,7 +7984,7 @@
         "projected": true
       },
       "from": "src/server/standalone.ts",
-      "id": "edge_src/server/standalone.ts_src/core/collaboration/CompareEngine.ts_1782360972521",
+      "id": "edge_src/server/standalone.ts_src/core/collaboration/CompareEngine.ts_1782374291541",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -8002,7 +8002,7 @@
         "projected": true
       },
       "from": "src/server/standalone.ts",
-      "id": "edge_src/server/standalone.ts_src/core/collaboration/HarvestEngine.ts_1782360972521",
+      "id": "edge_src/server/standalone.ts_src/core/collaboration/HarvestEngine.ts_1782374291541",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -8020,7 +8020,7 @@
         "projected": true
       },
       "from": "src/server/standalone.ts",
-      "id": "edge_src/server/standalone.ts_src/core/collaboration/HarvestSessionManager.ts_1782360972521",
+      "id": "edge_src/server/standalone.ts_src/core/collaboration/HarvestSessionManager.ts_1782374291541",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -8038,7 +8038,7 @@
         "projected": true
       },
       "from": "src/server/standalone.ts",
-      "id": "edge_src/server/standalone.ts_src/core/collaboration/IdentityManager.ts_1782360972521",
+      "id": "edge_src/server/standalone.ts_src/core/collaboration/IdentityManager.ts_1782374291540",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -8056,7 +8056,7 @@
         "projected": true
       },
       "from": "src/server/standalone.ts",
-      "id": "edge_src/server/standalone.ts_src/core/collaboration/MountManager.ts_1782360972521",
+      "id": "edge_src/server/standalone.ts_src/core/collaboration/MountManager.ts_1782374291541",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -8074,7 +8074,7 @@
         "projected": true
       },
       "from": "src/server/standalone.ts",
-      "id": "edge_src/server/standalone.ts_src/core/collaboration/ReferenceVerifier.ts_1782360972521",
+      "id": "edge_src/server/standalone.ts_src/core/collaboration/ReferenceVerifier.ts_1782374291541",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -8092,7 +8092,7 @@
         "projected": true
       },
       "from": "src/server/standalone.ts",
-      "id": "edge_src/server/standalone.ts_src/core/collaboration/RestCollaborationTransport.ts_1782360972521",
+      "id": "edge_src/server/standalone.ts_src/core/collaboration/RestCollaborationTransport.ts_1782374291540",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -8110,7 +8110,7 @@
         "projected": true
       },
       "from": "src/server/standalone.ts",
-      "id": "edge_src/server/standalone.ts_src/core/collaboration/RuntimeInitializer.ts_1782360972520",
+      "id": "edge_src/server/standalone.ts_src/core/collaboration/RuntimeInitializer.ts_1782374291540",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -8128,7 +8128,7 @@
         "projected": true
       },
       "from": "src/server/standalone.ts",
-      "id": "edge_src/server/standalone.ts_src/core/collaboration/SessionManager.ts_1782360972521",
+      "id": "edge_src/server/standalone.ts_src/core/collaboration/SessionManager.ts_1782374291541",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -8146,7 +8146,7 @@
         "projected": true
       },
       "from": "src/server/standalone.ts",
-      "id": "edge_src/server/standalone.ts_src/core/FlowScanner.ts_1782360972520",
+      "id": "edge_src/server/standalone.ts_src/core/FlowScanner.ts_1782374291540",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -8164,7 +8164,7 @@
         "projected": true
       },
       "from": "src/server/standalone.ts",
-      "id": "edge_src/server/standalone.ts_src/core/GeminiParser.ts_1782360972520",
+      "id": "edge_src/server/standalone.ts_src/core/GeminiParser.ts_1782374291540",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -8182,7 +8182,7 @@
         "projected": true
       },
       "from": "src/server/standalone.ts",
-      "id": "edge_src/server/standalone.ts_src/core/ProjectMetadata.ts_1782360972520",
+      "id": "edge_src/server/standalone.ts_src/core/ProjectMetadata.ts_1782374291540",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -8200,7 +8200,7 @@
         "projected": true
       },
       "from": "src/server/standalone.ts",
-      "id": "edge_src/server/standalone.ts_src/core/SymbolIndex.ts_1782360972520",
+      "id": "edge_src/server/standalone.ts_src/core/SymbolIndex.ts_1782374291540",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -8218,7 +8218,7 @@
         "projected": true
       },
       "from": "src/server/standalone.ts",
-      "id": "edge_src/server/standalone.ts_src/core/SynapseIgnore.ts_1782360972521",
+      "id": "edge_src/server/standalone.ts_src/core/SynapseIgnore.ts_1782374291541",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -8236,7 +8236,7 @@
         "projected": true
       },
       "from": "src/server/standalone.ts",
-      "id": "edge_src/server/standalone.ts_src/utils/Logger.ts_1782360972521",
+      "id": "edge_src/server/standalone.ts_src/utils/Logger.ts_1782374291541",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -8254,7 +8254,7 @@
         "projected": true
       },
       "from": "src/test/phase1_validation.test.ts",
-      "id": "edge_src/test/phase1_validation.test.ts_src/core/ProjectMetadata.ts_1782360972521",
+      "id": "edge_src/test/phase1_validation.test.ts_src/core/ProjectMetadata.ts_1782374291541",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -8272,7 +8272,7 @@
         "projected": true
       },
       "from": "src/test/phase1_validation.test.ts",
-      "id": "edge_src/test/phase1_validation.test.ts_src/core/SymbolIndex.ts_1782360972521",
+      "id": "edge_src/test/phase1_validation.test.ts_src/core/SymbolIndex.ts_1782374291541",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -8290,7 +8290,7 @@
         "projected": true
       },
       "from": "src/test/phase2_validation.test.ts",
-      "id": "edge_src/test/phase2_validation.test.ts_src/core/collaboration/IdentityManager.ts_1782360972521",
+      "id": "edge_src/test/phase2_validation.test.ts_src/core/collaboration/IdentityManager.ts_1782374291541",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -8308,7 +8308,7 @@
         "projected": true
       },
       "from": "src/test/phase2_validation.test.ts",
-      "id": "edge_src/test/phase2_validation.test.ts_src/core/collaboration/RuntimeInitializer.ts_1782360972522",
+      "id": "edge_src/test/phase2_validation.test.ts_src/core/collaboration/RuntimeInitializer.ts_1782374291541",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -8326,7 +8326,7 @@
         "projected": true
       },
       "from": "src/test/phase2_validation.test.ts",
-      "id": "edge_src/test/phase2_validation.test.ts_src/core/collaboration/SessionManager.ts_1782360972521",
+      "id": "edge_src/test/phase2_validation.test.ts_src/core/collaboration/SessionManager.ts_1782374291541",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -8344,7 +8344,7 @@
         "projected": true
       },
       "from": "src/test/phase2_validation.test.ts",
-      "id": "edge_src/test/phase2_validation.test.ts_src/core/ProjectMetadata.ts_1782360972522",
+      "id": "edge_src/test/phase2_validation.test.ts_src/core/ProjectMetadata.ts_1782374291542",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -8362,7 +8362,7 @@
         "projected": true
       },
       "from": "src/test/phase2_validation.test.ts",
-      "id": "edge_src/test/phase2_validation.test.ts_src/core/SymbolIndex.ts_1782360972522",
+      "id": "edge_src/test/phase2_validation.test.ts_src/core/SymbolIndex.ts_1782374291542",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -8380,7 +8380,7 @@
         "projected": true
       },
       "from": "src/test/security_integration.test.ts",
-      "id": "edge_src/test/security_integration.test.ts_crypto_1782360972522",
+      "id": "edge_src/test/security_integration.test.ts_crypto_1782374291542",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -8398,7 +8398,7 @@
         "projected": true
       },
       "from": "src/test/security_regression.test.ts",
-      "id": "edge_src/test/security_regression.test.ts_src/core/collaboration/HarvestEngine.ts_1782360972522",
+      "id": "edge_src/test/security_regression.test.ts_src/core/collaboration/HarvestEngine.ts_1782374291542",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -8416,7 +8416,7 @@
         "projected": true
       },
       "from": "src/test/security_regression.test.ts",
-      "id": "edge_src/test/security_regression.test.ts_src/core/collaboration/MountManager.ts_1782360972522",
+      "id": "edge_src/test/security_regression.test.ts_src/core/collaboration/MountManager.ts_1782374291542",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -8434,7 +8434,7 @@
         "projected": true
       },
       "from": "src/test/security_regression.test.ts",
-      "id": "edge_src/test/security_regression.test.ts_src/core/ProjectMetadata.ts_1782360972522",
+      "id": "edge_src/test/security_regression.test.ts_src/core/ProjectMetadata.ts_1782374291542",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -8452,7 +8452,7 @@
         "projected": true
       },
       "from": "src/test/security_regression.test.ts",
-      "id": "edge_src/test/security_regression.test.ts_src/core/PromptLogger.ts_1782360972522",
+      "id": "edge_src/test/security_regression.test.ts_src/core/PromptLogger.ts_1782374291542",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -8470,7 +8470,7 @@
         "projected": true
       },
       "from": "src/test/security_regression.test.ts",
-      "id": "edge_src/test/security_regression.test.ts_src/webview/CanvasPanel.ts_1782360972522",
+      "id": "edge_src/test/security_regression.test.ts_src/webview/CanvasPanel.ts_1782374291542",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -8488,7 +8488,7 @@
         "projected": true
       },
       "from": "src/utils/exclusionRules.ts",
-      "id": "edge_src/utils/exclusionRules.ts_src/core/RuleEngine.ts_1782360972522",
+      "id": "edge_src/utils/exclusionRules.ts_src/core/RuleEngine.ts_1782374291542",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -8506,7 +8506,7 @@
         "projected": true
       },
       "from": "src/verify_v0.3.10.ts",
-      "id": "edge_src/verify_v0.3.10.ts_src/core/canvas-engine/ScenarioRunner.ts_1782360972522",
+      "id": "edge_src/verify_v0.3.10.ts_src/core/canvas-engine/ScenarioRunner.ts_1782374291542",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -8524,7 +8524,7 @@
         "projected": true
       },
       "from": "src/verify_v0.3.10.ts",
-      "id": "edge_src/verify_v0.3.10.ts_src/core/PhaseManager.ts_1782360972522",
+      "id": "edge_src/verify_v0.3.10.ts_src/core/PhaseManager.ts_1782374291542",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -8542,7 +8542,7 @@
         "projected": true
       },
       "from": "src/webview/CanvasPanel.ts",
-      "id": "edge_src/webview/CanvasPanel.ts_http_1782360972522",
+      "id": "edge_src/webview/CanvasPanel.ts_http_1782374291542",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -8560,7 +8560,7 @@
         "projected": true
       },
       "from": "src/webview/CanvasPanel.ts",
-      "id": "edge_src/webview/CanvasPanel.ts_src/bootstrap/BootstrapEngine.ts_1782360972523",
+      "id": "edge_src/webview/CanvasPanel.ts_src/bootstrap/BootstrapEngine.ts_1782374291542",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -8578,7 +8578,7 @@
         "projected": true
       },
       "from": "src/webview/CanvasPanel.ts",
-      "id": "edge_src/webview/CanvasPanel.ts_src/client.ts_1782360972523",
+      "id": "edge_src/webview/CanvasPanel.ts_src/client.ts_1782374291543",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -8596,7 +8596,7 @@
         "projected": true
       },
       "from": "src/webview/CanvasPanel.ts",
-      "id": "edge_src/webview/CanvasPanel.ts_src/core/canvas-engine/CanvasEngine.ts_1782360972523",
+      "id": "edge_src/webview/CanvasPanel.ts_src/core/canvas-engine/CanvasEngine.ts_1782374291543",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -8614,7 +8614,7 @@
         "projected": true
       },
       "from": "src/webview/CanvasPanel.ts",
-      "id": "edge_src/webview/CanvasPanel.ts_src/core/canvas-engine/RenderProtocol.ts_1782360972523",
+      "id": "edge_src/webview/CanvasPanel.ts_src/core/canvas-engine/RenderProtocol.ts_1782374291543",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -8632,7 +8632,7 @@
         "projected": true
       },
       "from": "src/webview/CanvasPanel.ts",
-      "id": "edge_src/webview/CanvasPanel.ts_src/core/ControlSystem.ts_1782360972523",
+      "id": "edge_src/webview/CanvasPanel.ts_src/core/ControlSystem.ts_1782374291543",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -8650,7 +8650,7 @@
         "projected": true
       },
       "from": "src/webview/CanvasPanel.ts",
-      "id": "edge_src/webview/CanvasPanel.ts_src/core/DebuggerSystem.ts_1782360972523",
+      "id": "edge_src/webview/CanvasPanel.ts_src/core/DebuggerSystem.ts_1782374291543",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -8668,7 +8668,7 @@
         "projected": true
       },
       "from": "src/webview/CanvasPanel.ts",
-      "id": "edge_src/webview/CanvasPanel.ts_src/core/EdgeCodeRefactorer.ts_1782360972522",
+      "id": "edge_src/webview/CanvasPanel.ts_src/core/EdgeCodeRefactorer.ts_1782374291542",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -8686,7 +8686,7 @@
         "projected": true
       },
       "from": "src/webview/CanvasPanel.ts",
-      "id": "edge_src/webview/CanvasPanel.ts_src/core/FileScanner.ts_1782360972522",
+      "id": "edge_src/webview/CanvasPanel.ts_src/core/FileScanner.ts_1782374291542",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -8704,7 +8704,7 @@
         "projected": true
       },
       "from": "src/webview/CanvasPanel.ts",
-      "id": "edge_src/webview/CanvasPanel.ts_src/core/FlowchartGenerator.ts_1782360972523",
+      "id": "edge_src/webview/CanvasPanel.ts_src/core/FlowchartGenerator.ts_1782374291542",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -8722,7 +8722,7 @@
         "projected": true
       },
       "from": "src/webview/CanvasPanel.ts",
-      "id": "edge_src/webview/CanvasPanel.ts_src/core/GeminiParser.ts_1782360972522",
+      "id": "edge_src/webview/CanvasPanel.ts_src/core/GeminiParser.ts_1782374291542",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -8740,7 +8740,7 @@
         "projected": true
       },
       "from": "src/webview/CanvasPanel.ts",
-      "id": "edge_src/webview/CanvasPanel.ts_src/core/GraphModel.ts_1782360972523",
+      "id": "edge_src/webview/CanvasPanel.ts_src/core/GraphModel.ts_1782374291543",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -8758,7 +8758,7 @@
         "projected": true
       },
       "from": "src/webview/CanvasPanel.ts",
-      "id": "edge_src/webview/CanvasPanel.ts_src/core/GridSystem.ts_1782360972523",
+      "id": "edge_src/webview/CanvasPanel.ts_src/core/GridSystem.ts_1782374291543",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -8776,7 +8776,7 @@
         "projected": true
       },
       "from": "src/webview/CanvasPanel.ts",
-      "id": "edge_src/webview/CanvasPanel.ts_src/core/LogicAnalyzer.ts_1782360972522",
+      "id": "edge_src/webview/CanvasPanel.ts_src/core/LogicAnalyzer.ts_1782374291542",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -8794,7 +8794,7 @@
         "projected": true
       },
       "from": "src/webview/CanvasPanel.ts",
-      "id": "edge_src/webview/CanvasPanel.ts_src/core/PhaseManager.ts_1782360972523",
+      "id": "edge_src/webview/CanvasPanel.ts_src/core/PhaseManager.ts_1782374291543",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -8812,7 +8812,7 @@
         "projected": true
       },
       "from": "src/webview/CanvasPanel.ts",
-      "id": "edge_src/webview/CanvasPanel.ts_src/core/RendererCore.ts_1782360972523",
+      "id": "edge_src/webview/CanvasPanel.ts_src/core/RendererCore.ts_1782374291543",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -8830,7 +8830,7 @@
         "projected": true
       },
       "from": "src/webview/CanvasPanel.ts",
-      "id": "edge_src/webview/CanvasPanel.ts_src/core/RuleEngine.ts_1782360972523",
+      "id": "edge_src/webview/CanvasPanel.ts_src/core/RuleEngine.ts_1782374291543",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -8848,7 +8848,7 @@
         "projected": true
       },
       "from": "src/webview/CanvasPanel.ts",
-      "id": "edge_src/webview/CanvasPanel.ts_src/core/SnapshotSystem.ts_1782360972523",
+      "id": "edge_src/webview/CanvasPanel.ts_src/core/SnapshotSystem.ts_1782374291543",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -8866,7 +8866,7 @@
         "projected": true
       },
       "from": "src/webview/CanvasPanel.ts",
-      "id": "edge_src/webview/CanvasPanel.ts_src/core/SynapseIgnore.ts_1782360972523",
+      "id": "edge_src/webview/CanvasPanel.ts_src/core/SynapseIgnore.ts_1782374291543",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -8884,7 +8884,7 @@
         "projected": true
       },
       "from": "src/webview/CanvasPanel.ts",
-      "id": "edge_src/webview/CanvasPanel.ts_src/core/VirtualDebugger.ts_1782360972523",
+      "id": "edge_src/webview/CanvasPanel.ts_src/core/VirtualDebugger.ts_1782374291543",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -8902,7 +8902,7 @@
         "projected": true
       },
       "from": "src/webview/CanvasPanel.ts",
-      "id": "edge_src/webview/CanvasPanel.ts_src/types/schema.ts_1782360972522",
+      "id": "edge_src/webview/CanvasPanel.ts_src/types/schema.ts_1782374291542",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -8920,7 +8920,7 @@
         "projected": true
       },
       "from": "src/webview/CanvasPanel.ts",
-      "id": "edge_src/webview/CanvasPanel.ts_src/utils/Logger.ts_1782360972523",
+      "id": "edge_src/webview/CanvasPanel.ts_src/utils/Logger.ts_1782374291543",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -8938,7 +8938,7 @@
         "projected": true
       },
       "from": "walkthrough.md",
-      "id": "edge_walkthrough.md_synapse-visual-architecture-v0.2.20_1782360972523",
+      "id": "edge_walkthrough.md_synapse-visual-architecture-v0.2.20_1782374291543",
       "intelligence": {},
       "is_approved": true,
       "status": "confirmed",
@@ -79729,12 +79729,120 @@
       "visual": {
         "opacity": 1
       }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "degree": 0,
+        "file": "mile_stone/v0.3.31.md",
+        "hasAtomicSignature": false,
+        "hasImportSignature": false,
+        "hiddenOnCanvas": true,
+        "icon": "📚",
+        "isScoped": false,
+        "isSovereign": true,
+        "isUserCreated": true,
+        "label": "v0.3.31",
+        "layer": "user",
+        "opacity": 1,
+        "scale": 1,
+        "status": "active",
+        "type": "document"
+      },
+      "degree": 0,
+      "filePath": "mile_stone/v0.3.31.md",
+      "id": "mile_stone/v0.3.31.md",
+      "intelligence": {},
+      "label": "v0.3.31",
+      "layer": "user",
+      "position": {
+        "x": 7920,
+        "y": -2025
+      },
+      "status": "active",
+      "type": "document",
+      "visual": {
+        "opacity": 1
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "degree": 0,
+        "file": "release_note/v0.3.30.2_release_notes.md",
+        "hasAtomicSignature": false,
+        "hasImportSignature": false,
+        "hiddenOnCanvas": true,
+        "icon": "📚",
+        "isScoped": false,
+        "isSovereign": true,
+        "isUserCreated": true,
+        "label": "v0.3.30.2_release_notes",
+        "layer": "user",
+        "opacity": 1,
+        "scale": 1,
+        "status": "active",
+        "type": "document"
+      },
+      "degree": 0,
+      "filePath": "release_note/v0.3.30.2_release_notes.md",
+      "id": "release_note/v0.3.30.2_release_notes.md",
+      "intelligence": {},
+      "label": "v0.3.30.2_release_notes",
+      "layer": "user",
+      "position": {
+        "x": 8000,
+        "y": -25
+      },
+      "status": "active",
+      "type": "document",
+      "visual": {
+        "opacity": 1
+      }
+    },
+    {
+      "cluster_id": "doc_shelf",
+      "data": {
+        "cluster_id": "doc_shelf",
+        "degree": 0,
+        "file": "release_note/v0.3.31_release_notes.md",
+        "hasAtomicSignature": false,
+        "hasImportSignature": false,
+        "hiddenOnCanvas": true,
+        "icon": "📚",
+        "isScoped": false,
+        "isSovereign": true,
+        "isUserCreated": true,
+        "label": "v0.3.31_release_notes",
+        "layer": "user",
+        "opacity": 1,
+        "scale": 1,
+        "status": "active",
+        "type": "document"
+      },
+      "degree": 0,
+      "filePath": "release_note/v0.3.31_release_notes.md",
+      "id": "release_note/v0.3.31_release_notes.md",
+      "intelligence": {},
+      "label": "v0.3.31_release_notes",
+      "layer": "user",
+      "position": {
+        "x": 7920,
+        "y": 25
+      },
+      "status": "active",
+      "type": "document",
+      "visual": {
+        "opacity": 1
+      }
     }
   ],
-  "userCount": 1826,
+  "userCount": 1829,
   "_iron_guard": {
     "version": "0.2.18.1",
-    "byte_size": 1420615,
+    "byte_size": 1422446,
     "encoding": "UTF-8",
     "alignment": 8
   }

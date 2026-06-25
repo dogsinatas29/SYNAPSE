@@ -378,6 +378,58 @@ Code integration is executed manually through the Architect's review and judgmen
 
 ---
 
+## 🔍 Verify (Architecture Logic Report)
+
+Verify is the Architect's real-time diagnostic system for inspecting the health of the architecture graph — including **all currently connected remote clients**.
+
+> ⚠️ **Scope**: Verify analyzes not only the Architect's local project graph, but also the architecture graphs pushed by connected collaboration clients. Any client whose layer is visible on the canvas is included in the diagnostic scope.
+
+### Verify Menu Items
+
+#### 🔬 Scan Architecture (AI)
+Runs a full AI-driven semantic analysis on the current architecture graph. Scans all nodes and edges, detects schema violations, dead-end nodes, broken edges, and coupling anomalies. Generates a `LOGIC_REPORT.md` with detailed findings.
+
+- Includes remote client nodes (connected via SSE) in the analysis scope.
+- Reports are output in the OS display language (Korean / English auto-detected via `vscode.env.language`).
+
+#### 🧪 Simulation Debug
+Activates the Virtual Debugger mode. Simulates runtime behavior across the architecture graph, applying diagnosis states (Necrosis, Tombstone) to nodes that fail logical validation.
+
+- Diagnoses include all connected clients' architecture layers, not just the local project.
+- Allows the Architect to observe which remote nodes have failed or are stale without requiring a Harvest.
+
+#### 💀 Simulate Necrosis
+Manually applies the **Necrosis** state to selected nodes. Used to mark a node as logically dead — indicating it has broken dependencies, missing references, or has been flagged by the AI analysis.
+
+Necrosis nodes appear with a red border and darkened background. Connected edges are marked as fractured.
+
+#### 🪦 Simulate Tombstone
+Manually applies the **Tombstone** state to selected nodes. A tombstone represents a node that has been fully deprecated or removed from the active architecture. Rendered as a gravestone visual marker on the canvas.
+
+#### 🧹 Clear Debug
+Removes all debug visual states (Necrosis, Tombstone) from the canvas and resets nodes to their default rendering state. Does not affect actual graph data.
+
+#### 💎 Det Bootstrap (`v0.2.28: Determinism Bootstrap`)
+Runs the Determinism Bootstrap sequence. Resets internal state checksums and re-establishes a deterministic baseline for the current architecture snapshot. Used to eliminate accumulated non-determinism from repeated edits.
+
+#### 🔄 Deep Re-Scan
+Performs a complete re-scan of the entire project directory from scratch. All previously cached graph data is discarded, and the full file-to-node pipeline is re-executed. Use when the graph has drifted from the actual file system state.
+
+### Inference Pressure
+
+The Verify system reports **Inference Pressure** — a normalized measure of architectural health:
+
+| Pressure | Status | Meaning |
+|---|---|---|
+| 0–10% | 🟢 Stable | Architecture is healthy |
+| 10–30% | 🟡 Caution | Minor issues detected |
+| 30–60% | 🟠 Warning | Significant problems present |
+| 60%+ | 🔥 Critical | Immediate action required |
+
+Pressure = `criticalIssues / totalAnalyzedNodes × 100`. Scale-invariant — valid for both small (50-node) and large (5000-node) projects.
+
+---
+
 ## 🏗️ Architecture
 
 SYNAPSE consists of the following layers:
@@ -400,6 +452,7 @@ SYNAPSE was created to overcome the limitations of code-centric development. It 
 
 | Version | Date | Description |
 | :--- | :--- | :--- |
+| **v0.3.31** | 2026-06-25 | **Diagnostics Stabilization & Observability**: Fixed false-positive Necrosis from `doc`/`file`/`folder` nodes. Normalized Pressure calculation to `criticalIssues / totalNodes`. Excluded Ghost Cluster (`cluster_ghosts`, `doc_shelf`) from dependency hints. Added `clientTimestamp`-based Stale opacity visualization (Active/Stale/Offline). Tooltip now shows `"[username] Updated Xm ago"`. Soft Disconnect with 15-minute cache retention for post-crash debugging. |
 | **v0.3.30.2** | 2026-06-25 | **Security Hardening & Harvest Stabilization**: Verified 6 critical attack vectors (Path Traversal, Auth Bypass, SSE Contamination, Lock Bypass, Sandbox Escape, Client Spoofing). Fixed port binding conflict & 403 Auth error on Admin UI. Implemented backward compatibility for legacy array-formatted `accounts.json` and `synapse_history.json` to prevent `unshift` crash during Harvest. |
 | **v0.3.30.1** | 2026-06-22 | **UI/UX Refinement & Feature Cleanup**: Implemented Tooltip Merge Logic to resolve Z-Index bleeding when hovering overlapping nodes and edges. Disabled problematic Tree View mode to align with graph-centric architecture. |
 | **v0.3.30** | 2026-06-22 | **Harvest-Based Collaboration Model**: Major architecture upgrade introducing session management, secure SSH transport, and remote projection layers. Full integration of Harvest Engine and Identity permissions. |

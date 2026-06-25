@@ -1,3 +1,4 @@
+import * as crypto from 'crypto';
 import * as path from 'path';
 import { Intent, createIntent } from './Intent';
 import { Node, Edge, Cluster, ClusterFlow, graphModel, GraphModel, GraphSnapshot } from '../GraphModel';
@@ -117,7 +118,7 @@ export class StateManager {
   }
 
   private mutateGroupCluster(payload: { nodeIds: string[], label: string }): CanvasState {
-    const clusterId = `cluster_${Date.now()}`;
+    const clusterId = crypto.randomUUID();
     const targetNodes: Node[] = [];
     payload.nodeIds.forEach(id => {
        const node = this.findNode(id);
@@ -190,7 +191,7 @@ export class StateManager {
     // Previously, if a file existed on disk (via autoDiscover), mutateAddNode would
     // reuse the scan node's ID (e.g. 'src/foo.ts'). This caused the node to be
     // excluded from liteBootstrap's manualNodes filter on reload, making it disappear.
-    const nodeId = payload.id?.startsWith('node_manual_') ? payload.id : `node_manual_${Date.now()}`;
+    const nodeId = payload.id?.startsWith('node_manual_') ? payload.id : crypto.randomUUID();
 
     const normalizedNewPath = this.normalizePath(filePath);
     if (normalizedNewPath) {

@@ -1,3 +1,4 @@
+import * as crypto from 'crypto';
 import { Logger } from '../../utils/Logger';
 import { IdentityManager, Permission } from './IdentityManager';
 import { ProjectMetadata } from '../ProjectMetadata';
@@ -33,7 +34,7 @@ export class SessionManager {
             throw new Error(`[v0.3.30] Permission denied: ${leadId} cannot create sessions`);
         }
 
-        const sessionId = `ses_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+        const sessionId = crypto.randomUUID();
         const session: CollaborationSession = {
             sessionId,
             projectUUID,
@@ -50,7 +51,7 @@ export class SessionManager {
     }
 
     createServerSession(projectUUID: string): CollaborationSession {
-        const sessionId = `ses_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+        const sessionId = crypto.randomUUID();
         const session: CollaborationSession = {
             sessionId,
             projectUUID,

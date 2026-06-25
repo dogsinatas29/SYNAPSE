@@ -128,10 +128,19 @@ export class AccountManager {
         }
         try {
             const raw = fs.readFileSync(this.storePath, 'utf8');
-            const store: AccountsStore = JSON.parse(raw);
+            const parsed = JSON.parse(raw);
+            
+            // Handle legacy array format
+            let storeAccounts = [];
+            if (Array.isArray(parsed)) {
+                storeAccounts = parsed;
+            } else if (parsed && Array.isArray(parsed.accounts)) {
+                storeAccounts = parsed.accounts;
+            }
+
             this.accounts.clear();
             const identityManager = IdentityManager.getInstance();
-            for (const acc of store.accounts) {
+            for (const acc of storeAccounts) {
                 // schemaVersion 1 → 2 마이그레이션: SSH 필드 제거
                 const migrated: UserAccount = {
                     userId: acc.userId,

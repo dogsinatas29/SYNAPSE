@@ -18,9 +18,18 @@ export class HarvestSessionManager {
         return this.state;
     }
 
-    setState(newState: HarvestSessionState) {
+    private setState(newState: HarvestSessionState) {
         Logger.info(`[v0.3.30] HarvestSession state change: ${this.state} -> ${newState}`);
         this.state = newState;
+    }
+
+    transitionState(expectedState: HarvestSessionState, newState: HarvestSessionState): boolean {
+        if (this.state !== expectedState) {
+            Logger.warn(`[v0.3.30] HarvestSession transition failed: expected ${expectedState}, current is ${this.state}`);
+            return false;
+        }
+        this.setState(newState);
+        return true;
     }
 
     startSession(projectUUID: string, clientIds: string[]): boolean {

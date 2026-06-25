@@ -41,6 +41,21 @@ export class HarvestEngine {
         const harvestedClients = new Set<string>();
 
         for (const candidate of candidates) {
+            // [SYN-SEC-013] Prevent Arbitrary File Write via malicious clientUsername
+            if (!candidate.clientUsername || !/^[a-zA-Z0-9_-]{1,64}$/.test(candidate.clientUsername)) {
+                Logger.warn(`[v0.3.30] Harvest rejected: Invalid clientUsername format '${candidate.clientUsername}'`);
+                failedFiles.push({ candidate, reason: 'PATH_TRAVERSAL', detail: 'Invalid clientUsername' });
+                continue;
+            }
+            
+            // [SYN-SEC-010] Prevent Path Traversal in paths
+            if (candidate.targetPath.includes('../') || candidate.targetPath.includes('..\\') ||
+                candidate.sourcePath.includes('../') || candidate.sourcePath.includes('..\\')) {
+                Logger.warn(`[v0.3.30] Harvest rejected: Path Traversal attempt`);
+                failedFiles.push({ candidate, reason: 'PATH_TRAVERSAL', detail: 'Path contains directory traversal characters' });
+                continue;
+            }
+
             const clientRoot = path.join(clientsPath, candidate.clientUsername);
             const clientHarvestDir = path.join(clientRoot, 'harvest');
             
@@ -53,7 +68,7 @@ export class HarvestEngine {
                 createdFolders.add(clientRoot);
             }
 
-            const resolvedTarget = path.resolve(clientHarvestDir, candidate.targetPath);
+            let resolvedTarget = path.resolve(clientHarvestDir, candidate.targetPath);
             if (!resolvedTarget.startsWith(clientHarvestDir + path.sep) && resolvedTarget !== clientHarvestDir) {
                 Logger.warn(`[v0.3.30] Harvest path traversal denied: ${candidate.targetPath}`);
                 failedFiles.push({ candidate, reason: 'PATH_TRAVERSAL', detail: 'Target path escapes client harvest layer' });
@@ -66,6 +81,22 @@ export class HarvestEngine {
                 fs.mkdirSync(targetDir, { recursive: true });
                 createdFolders.add(targetDir);
             }
+
+            // [SYN-SEC-011] Symlink Escape Defense
+            try {
+                const realDir = fs.realpathSync(targetDir);
+                const realHarvestDir = fs.realpathSync(clientHarvestDir);
+                if (!realDir.startsWith(realHarvestDir)) {
+                    throw new Error('Symlink escape detected');
+                }
+                resolvedTarget = path.join(realDir, path.basename(resolvedTarget));
+            } catch (e: any) {
+                Logger.warn(`[v0.3.30] Harvest symlink escape denied: ${candidate.targetPath}`);
+                failedFiles.push({ candidate, reason: 'PATH_TRAVERSAL', detail: 'Symlink escape detected' });
+                continue;
+            }
+
+
 
             try {
                 const content = await getFileContentCallback(candidate.userId, candidate.sourcePath);

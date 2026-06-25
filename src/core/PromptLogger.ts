@@ -2,9 +2,11 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as cp from 'child_process';
 import * as vscode from 'vscode';
+import { SensitiveInfoMasker } from '../utils/SensitiveInfoMasker';
 
 export class PromptLogger {
     private static instance: PromptLogger;
+    private masker = new SensitiveInfoMasker();
     private lastAction: string = '';
     private lastLogContent: string = '';
     private currentSessionPath: string | null = null;
@@ -32,16 +34,18 @@ export class PromptLogger {
         if (!content.trim()) return;
         
         let entry = '';
-        if (content.startsWith('[GHOST]')) {
-            const cleanContent = content.substring(7).trim();
+        const maskedContent = this.masker.mask(content);
+        
+        if (maskedContent.startsWith('[GHOST]')) {
+            const cleanContent = maskedContent.substring(7).trim();
             entry = `\n### 👻 Ghost Spy (DOM Capture)\n${cleanContent}\n`;
         } else {
-            entry = `\n## User\n${content.trim()}\n`;
+            entry = `\n## User\n${maskedContent.trim()}\n`;
         }
 
         if (this.lastLogContent === entry) return;
         this.lastLogContent = entry;
-        console.log(`[SYNAPSE][PROMPT] Appending ${content.startsWith('[GHOST]') ? 'Ghost' : 'User'} content (${content.length} chars)`);
+        console.log(`[SYNAPSE][PROMPT] Appending ${content.startsWith('[GHOST]') ? 'Ghost' : 'User'} content (${maskedContent.length} chars)`);
         this.write(filePath, entry);
     }
 
@@ -134,14 +138,15 @@ export class PromptLogger {
     private cleanAiResponse(text: string): string {
         if (!text) return '';
         // [v0.2.22] Full Content Preservation - Do not exclude code blocks
-        return text.trim();
+        // [SYN-SEC-051] Mask Sensitive Info
+        return this.masker.mask(text.trim());
     }
 
     private gitStageFile(rootPath: string, filePath: string) {
         if (!filePath) return; // [v0.3.14] No file to stage
         try {
             if (!fs.existsSync(path.join(rootPath, '.git'))) return;
-            cp.exec(`git add "${filePath}"`, { cwd: rootPath });
+            cp.execFile('git', ['add', filePath], { cwd: rootPath });
         } catch (e) {}
     }
 }

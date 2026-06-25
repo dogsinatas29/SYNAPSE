@@ -69,7 +69,7 @@ export class SnapshotSystem {
           }
         }
         history.push({
-          id: `snap_${Date.now()}`,
+          id: crypto.randomUUID(),
           timestamp: Date.now(),
           version: this.snapshotVersion,
           checksum: snapshot.checksum,

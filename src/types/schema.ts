@@ -124,7 +124,7 @@ export interface BootstrapResult {
     error?: any;
 }
 
-export type HarvestSessionState = 'Inactive' | 'Locked' | 'Comparing' | 'Approving' | 'Harvesting' | 'Unlocked';
+export type HarvestSessionState = 'Inactive' | 'Locked' | 'Comparing' | 'Approving' | 'Executing' | 'Harvesting' | 'Unlocked';
 
 export type CompareResultType = 'UNCHANGED' | 'MODIFIED' | 'ADDED';
 

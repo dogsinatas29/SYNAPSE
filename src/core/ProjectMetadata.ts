@@ -1,3 +1,4 @@
+import * as crypto from 'crypto';
 import * as fs from 'fs';
 import * as path from 'path';
 import { Logger } from '../utils/Logger';
@@ -103,7 +104,7 @@ export class ProjectMetadata {
 
     private createDefault(projectName: string): ProjectMetadataSchema {
         return {
-            projectUUID: `proj_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+            projectUUID: crypto.randomUUID(),
             projectName,
             version: 'v0.3.30',
             createdAt: Date.now(),

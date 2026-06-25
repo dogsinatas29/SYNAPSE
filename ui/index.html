@@ -2194,8 +2194,7 @@ Please wait until harvesting completes.</p>
                 document.getElementById('conn-server-info-result').style.display = 'none';
             });
 
-            // Host 필드는 사용자가 직접 입력 (VSCode WebView hostname은 내부 식별자라 무의미)
-            document.getElementById('srv-host').textContent = window.connHost.value || '입력 필요';
+            // Host 필드는 사용자가 직접 입력 (Public Mode 기본값: 0.0.0.0)
 
             // 저장된 연결 복원
             window.loadConnState();
@@ -2268,8 +2267,10 @@ Please wait until harvesting completes.</p>
                     const user = window.connUser?.value?.trim();
                     const pass = window.connPass?.value?.trim();
                     const port = parseInt(document.getElementById('srv-port').value, 10) || 3000;
+                    const host = document.getElementById('srv-bind-host')?.value?.trim() || '0.0.0.0';
                     vscode.postMessage({
                         command: 'startServer',
+                        host: host,
                         port: port,
                         username: user || undefined,
                         password: pass || undefined
@@ -2652,6 +2653,12 @@ Please wait until harvesting completes.</p>
                             accountMsg.className = 'error';
                         }
                         break;
+                    case 'serverPortUpdated':
+                        if (msg.port) {
+                            const portInput = document.getElementById('srv-port');
+                            if (portInput) portInput.value = msg.port;
+                        }
+                        break;
                     case 'accountListResult':
                         if (msg.success && msg.accounts) {
                             renderAccountList(msg.accounts);
@@ -2795,9 +2802,9 @@ Please wait until harvesting completes.</p>
                 <span class="dot disconnected" id="srv-dot"></span>
                 <span id="srv-status-text" style="font-size:13px;">중지됨</span>
             </div>
-            <div class="conn-row">
-                <label>Host</label>
-                <span id="srv-host" style="font-size:13px; color:var(--fg-main);"></span>
+            <div class="conn-row" title="0.0.0.0으로 설정 시 외부망 접속이 허용됩니다 (Public Mode)">
+                <label>Bind Host</label>
+                <input type="text" id="srv-bind-host" value="0.0.0.0" style="flex:1; background:#1d2021; border:1px solid #504945; color:#ebdbb2; padding:2px 6px; font-size:13px; border-radius:3px;">
             </div>
             <div class="conn-row">
                 <label>Port</label>

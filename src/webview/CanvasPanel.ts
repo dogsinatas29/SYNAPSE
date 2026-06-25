@@ -101,6 +101,7 @@ export class CanvasPanel {
     private _serverProcess: cp.ChildProcess | null = null;
     private _externalServer: boolean = false;
     private _isServerOwner: boolean = false;
+    private _adminSecret?: string;
 
     // [v0.3.30] Connection info for account management
     private _connHost: string = 'localhost';
@@ -347,7 +348,7 @@ export class CanvasPanel {
                     const nodeLabel = nodeData.label || nodeFromMessage.label || message.label || (message.data && message.data.label);
                     const manualPath = message.filePath || nodeFromMessage.filePath || '';
 
-                    const nodeId = nodeFromMessage.id || message.nodeId || `node_manual_${Date.now()}`;
+                    const nodeId = nodeFromMessage.id || message.nodeId || crypto.randomUUID();
 
                     if (!nodeLabel) {
                         Logger.error(`[v0.3.29] ERR: Label missing in intent. Raw: ${JSON.stringify(message)}`);
@@ -506,7 +507,7 @@ export class CanvasPanel {
                 }
                 return;
             case 'startServer':
-                this.handleStartServer(message.port, message.username, message.password);
+                this.handleStartServer(message.host, message.port, message.username, message.password);
                 return;
             case 'stopServer':
                 this.handleStopServer();
@@ -785,7 +786,7 @@ export class CanvasPanel {
                 ? vscode.workspace.asRelativePath(rawFile, false)
                 : rawFile;
 
-            const nodeId = node.id || `node_manual_${Date.now()}`;
+            const nodeId = node.id || crypto.randomUUID();
             const result = canvasEngine.dispatch('ADD_NODE', {
                 id: nodeId,
                 label: node.data?.label || nodeId,
@@ -1248,10 +1249,15 @@ export class CanvasPanel {
 
     // [v0.3.30] Collaboration Server
     private _serverPort: number = parseInt(process.env.SYNAPSE_PORT || '3000', 10);
+    private _serverBindHost: string = '0.0.0.0';
+    private get _internalApiHost(): string { return this._serverBindHost === '0.0.0.0' ? '127.0.0.1' : this._serverBindHost; }
     private _pendingUsername: string = '';
     private _pendingPassword: string = '';
 
-    private async handleStartServer(port?: number, username?: string, password?: string): Promise<void> {
+    private async handleStartServer(host?: string, port?: number, username?: string, password?: string): Promise<void> {
+        if (host) {
+            this._serverBindHost = host;
+        }
         if (port && port >= 1024 && port <= 65535) {
             this._serverPort = port;
         }
@@ -1270,7 +1276,7 @@ export class CanvasPanel {
     private _restartServerProcess(): void {
         this._externalServer = false;
         this._panel.webview.postMessage({ command: 'serverStatus', text: '🔄 구버전 서버를 새 버전으로 재시작 중...' });
-        cp.exec('pkill -f "standalone.js"', () => {
+        cp.execFile('pkill', ['-f', 'standalone.js'], () => {
             setTimeout(() => this._startServerProcess(), 1500);
         });
     }
@@ -1322,6 +1328,7 @@ export class CanvasPanel {
             if (!token) return false;
 
             this._sessionToken = token;
+            this._adminSecret = secret;
             this._serverPort = port;
             this._connHost = 'localhost';
             this._connPort = port;
@@ -1408,11 +1415,26 @@ export class CanvasPanel {
     }
 
     private async _spawnNewServer(): Promise<void> {
-        // 모든 기존 SYNAPSE 서버 프로세스 정리 (고아 프로세스 방지)
         const workspaceRoot = this._workspaceFolder ? this._workspaceFolder.uri.fsPath : this._extensionUri.fsPath;
-        await new Promise<void>((resolve) => {
-            cp.exec(`pkill -f "standalone.js.*--root.*${workspaceRoot.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}"`, { timeout: 3000 }, () => resolve());
-        });
+        // [SYN-SEC-040] 안전한 프로세스 종료 (pkill 정규식 범위 축소 및 PID 기반 종료)
+        const serverInfoPath = path.join(workspaceRoot, 'data', '.server_info');
+        if (fs.existsSync(serverInfoPath)) {
+            try {
+                const info = JSON.parse(fs.readFileSync(serverInfoPath, 'utf-8'));
+                if (info && info.pid) {
+                    process.kill(info.pid, 'SIGTERM');
+                }
+            } catch (e) {
+                // Fallback: strict pkill
+                await new Promise<void>((resolve) => {
+                    cp.execFile('pkill', ['-f', `node.*standalone\\.js.*--port ${this._serverPort}`], { timeout: 3000 }, () => resolve());
+                });
+            }
+        } else {
+            await new Promise<void>((resolve) => {
+                cp.execFile('pkill', ['-f', `node.*standalone\\.js.*--port ${this._serverPort}`], { timeout: 3000 }, () => resolve());
+            });
+        }
         await new Promise(r => setTimeout(r, 500));
 
         const serverPath = path.join(
@@ -1428,9 +1450,22 @@ export class CanvasPanel {
             return;
         }
 
-        this._serverProcess = cp.spawn('node', [serverPath, '--root', workspaceRoot, '--port', String(this._serverPort)], {
+        const crypto = require('crypto');
+        this._adminSecret = crypto.randomBytes(32).toString('hex');
+
+        this._serverProcess = cp.spawn('node', [serverPath, '--root', workspaceRoot, '--port', String(this._serverPort), '--host', this._serverBindHost], {
             cwd: workspaceRoot,
-            stdio: ['ignore', 'pipe', 'pipe'],
+            stdio: ['ignore', 'pipe', 'pipe', 'ipc'],
+        });
+
+        this._serverProcess.on('message', (msg: any) => {
+            if (msg && msg.type === 'READY') {
+                if (msg.port) {
+                    this._serverPort = msg.port;
+                    this._panel.webview.postMessage({ command: 'serverPortUpdated', port: msg.port });
+                }
+                this._serverProcess?.send({ type: 'ADMIN_SECRET', secret: this._adminSecret });
+            }
         });
 
         this._serverProcess.stdout?.on('data', (data: Buffer) => {
@@ -1469,7 +1504,7 @@ export class CanvasPanel {
         let attempts = 0;
         const poll = setInterval(async () => {
             attempts++;
-            const req = http.get(`http://localhost:${this._serverPort}/health`, async (res) => {
+            const req = http.get(`http://${this._internalApiHost}:${this._serverPort}/health`, async (res) => {
                 let body = '';
                 res.on('data', (c) => { body += c; });
                 res.on('end', async () => {
@@ -1541,7 +1576,11 @@ export class CanvasPanel {
             const workspaceRoot = this._workspaceFolder ? this._workspaceFolder.uri.fsPath : this._extensionUri.fsPath;
             const filePath = path.join(workspaceRoot, 'data', '.server_info');
             if (fs.existsSync(filePath)) {
-                return JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+                const info = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+                if (this._adminSecret) {
+                    info.adminSecret = this._adminSecret; // Inject memory secret
+                }
+                return info;
             }
         } catch {}
         return null;
@@ -1549,7 +1588,7 @@ export class CanvasPanel {
 
     private _pingServer(port: number): Promise<{ok: boolean; projectUUID: string; serverName: string; version: string}> {
         return new Promise((resolve, reject) => {
-            const req = http.get(`http://localhost:${port}/api/ping`, { timeout: 3000 }, (res) => {
+            const req = http.get(`http://127.0.0.1:${port}/api/ping`, { timeout: 3000 }, (res) => {
                 let data = '';
                 res.on('data', (c) => { data += c; });
                 res.on('end', () => {
@@ -1565,7 +1604,7 @@ export class CanvasPanel {
         return new Promise((resolve) => {
             const body = JSON.stringify({ adminSecret });
             const opts: http.RequestOptions = {
-                hostname: 'localhost', port, path: '/api/admin/auth', method: 'POST',
+                hostname: '127.0.0.1', port, path: '/api/admin/auth', method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(body) },
                 timeout: 5000,
             };
@@ -1595,7 +1634,7 @@ export class CanvasPanel {
         }
         if (this._externalServer) {
             this._externalServer = false;
-            cp.exec('pkill -f "standalone.js"', (err) => {
+            cp.execFile('pkill', ['-f', 'standalone.js'], (err) => {
                 if (err) {
                     Logger.warn(`[Collaboration Server] pkill failed: ${err.message}`);
                 }
@@ -1603,7 +1642,7 @@ export class CanvasPanel {
                 let attempts = 0;
                 const poll = setInterval(() => {
                     attempts++;
-                    const req = http.get(`http://localhost:${this._serverPort}/health`, (res) => {
+                    const req = http.get(`http://${this._internalApiHost}:${this._serverPort}/health`, (res) => {
                         res.resume();
                         if (attempts >= 10) {
                             clearInterval(poll);
@@ -1716,7 +1755,13 @@ export class CanvasPanel {
 
     // 로그인 후 서버 state를 fetch하여 webview에 전송
     private _getAuthHeaders(): Record<string, string> {
-        return this._sessionToken ? { Authorization: `Bearer ${this._sessionToken}` } : {};
+        const headers: Record<string, string> = {
+            'x-admin-secret': this._adminSecret || ''
+        };
+        if (this._sessionToken) {
+            headers['Authorization'] = `Bearer ${this._sessionToken}`;
+        }
+        return headers;
     }
 
     private _fetchServerState(host: string, port: string, forceReset: boolean = true): void {
@@ -2025,7 +2070,7 @@ export class CanvasPanel {
                     }
 
                     edges.push({
-                        id: `edge_${sourceId}_${targetNodeId}_${Date.now()}_${Math.random().toString(36).substring(7)}`,
+                        id: crypto.randomUUID(),
                         from: sourceId,
                         to: targetNodeId,
                         type: ref.type,
@@ -2415,7 +2460,7 @@ export class CanvasPanel {
         if (!await this._ensureServerReady('createAccountResult')) return;
         const body = JSON.stringify({ username, password });
         const opts: http.RequestOptions = {
-            hostname: 'localhost', port: this._serverPort, path: '/api/admin/create-account', method: 'POST',
+            hostname: this._internalApiHost, port: this._serverPort, path: '/api/admin/create-account', method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(body), ...this._getAuthHeaders() },
             timeout: 5000,
         };
@@ -2426,7 +2471,7 @@ export class CanvasPanel {
         if (!await this._ensureServerReady('harvestResult')) return;
         const body = JSON.stringify({ visibleClientIds: message.visibleClientIds });
         const opts: http.RequestOptions = {
-            hostname: 'localhost', port: this._serverPort, path: '/api/harvest/start', method: 'POST',
+            hostname: this._internalApiHost, port: this._serverPort, path: '/api/harvest/start', method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(body), ...this._getAuthHeaders() },
             timeout: 5000,
         };
@@ -2437,7 +2482,7 @@ export class CanvasPanel {
         if (!await this._ensureServerReady('harvestResult')) return;
         const body = JSON.stringify({ visibleClientIds: message.visibleClientIds });
         const opts: http.RequestOptions = {
-            hostname: 'localhost', port: this._serverPort, path: '/api/harvest/compare', method: 'POST',
+            hostname: this._internalApiHost, port: this._serverPort, path: '/api/harvest/compare', method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(body), ...this._getAuthHeaders() },
             timeout: 10000,
         };
@@ -2449,7 +2494,7 @@ export class CanvasPanel {
         const candidates = message.candidates || [];
         const body = JSON.stringify({ candidates }); 
         const opts: http.RequestOptions = {
-            hostname: 'localhost', port: this._serverPort, path: '/api/harvest/execute', method: 'POST',
+            hostname: this._internalApiHost, port: this._serverPort, path: '/api/harvest/execute', method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(body), ...this._getAuthHeaders() },
             timeout: 15000,
         };
@@ -2465,7 +2510,7 @@ export class CanvasPanel {
         if (!await this._ensureServerReady('deleteAccountResult')) return;
         const body = JSON.stringify({ username });
         const opts: http.RequestOptions = {
-            hostname: 'localhost', port: this._serverPort, path: '/api/admin/delete-account', method: 'POST',
+            hostname: this._internalApiHost, port: this._serverPort, path: '/api/admin/delete-account', method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(body), ...this._getAuthHeaders() },
             timeout: 5000,
         };
@@ -2475,7 +2520,7 @@ export class CanvasPanel {
     private async handleLoadAccounts(_message?: any): Promise<void> {
         if (!await this._ensureServerReady('accountListResult')) return;
         const opts: http.RequestOptions = {
-            hostname: 'localhost', port: this._serverPort, path: '/api/admin/accounts', method: 'GET',
+            hostname: this._internalApiHost, port: this._serverPort, path: '/api/admin/accounts', method: 'GET',
             headers: { ...this._getAuthHeaders() }, timeout: 5000,
         };
         this._httpRequest(opts, undefined, 'accountListResult');
@@ -2490,7 +2535,7 @@ export class CanvasPanel {
         if (!await this._ensureServerReady('changePasswordResult')) return;
         const body = JSON.stringify({ username, newPassword });
         const opts: http.RequestOptions = {
-            hostname: 'localhost', port: this._serverPort, path: '/api/admin/change-password', method: 'POST',
+            hostname: this._internalApiHost, port: this._serverPort, path: '/api/admin/change-password', method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(body), ...this._getAuthHeaders() },
             timeout: 5000,
         };
@@ -2512,7 +2557,7 @@ export class CanvasPanel {
 
     private _healthCheck(): Promise<void> {
         return new Promise((resolve, reject) => {
-            const req = http.get(`http://localhost:${this._serverPort}/health`, { timeout: 3000 }, (res) => {
+            const req = http.get(`http://${this._internalApiHost}:${this._serverPort}/health`, { timeout: 3000 }, (res) => {
                 res.resume();
                 if (res.statusCode === 200) resolve();
                 else reject(new Error('Health check failed'));
@@ -2670,7 +2715,7 @@ export class CanvasPanel {
             this._serverProcess.kill('SIGTERM');
             this._serverProcess = null;
         } else if (this._externalServer) {
-            cp.exec('pkill -f "standalone.js"');
+            cp.execFile('pkill', ['-f', 'standalone.js']);
         }
 
         this._panel.dispose();
@@ -4325,7 +4370,7 @@ export class CanvasPanel {
             const fileBackups = {}; // Emergency fallback
 
             const snapshot = {
-                id: `snap_${Date.now()}`,
+                id: crypto.randomUUID(),
                 timestamp: Date.now(),
                 label: state.label || `Snapshot ${history.length + 1}`,
                 data: currentProjectState, // nodes, edges, clusters
@@ -4453,7 +4498,7 @@ export class CanvasPanel {
                 const currentState = JSON.parse(currentData.toString());
 
                 const backupSnapshot = {
-                    id: `snap_pre_rollback_${Date.now()}`,
+                    id: crypto.randomUUID(),
                     timestamp: Date.now(),
                     label: `Auto Backup (Before Rollback)`,
                     data: {

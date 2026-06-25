@@ -396,10 +396,11 @@ SYNAPSE was created to overcome the limitations of code-centric development. It 
 
 ---
 
-## 🆕 Revision History (v0.3.x)
+## 🆕 Revision History
 
 | Version | Date | Description |
 | :--- | :--- | :--- |
+| **v0.3.30.2** | 2026-06-25 | **Security Hardening & Harvest Stabilization**: Verified 6 critical attack vectors (Path Traversal, Auth Bypass, SSE Contamination, Lock Bypass, Sandbox Escape, Client Spoofing). Fixed port binding conflict & 403 Auth error on Admin UI. Implemented backward compatibility for legacy array-formatted `accounts.json` and `synapse_history.json` to prevent `unshift` crash during Harvest. |
 | **v0.3.30.1** | 2026-06-22 | **UI/UX Refinement & Feature Cleanup**: Implemented Tooltip Merge Logic to resolve Z-Index bleeding when hovering overlapping nodes and edges. Disabled problematic Tree View mode to align with graph-centric architecture. |
 | **v0.3.30** | 2026-06-22 | **Harvest-Based Collaboration Model**: Major architecture upgrade introducing session management, secure SSH transport, and remote projection layers. Full integration of Harvest Engine and Identity permissions. |
 | **v0.3.29** | 2026-06-06 | **Cluster Overlap Resolution & External Layer Fix**: Implemented Initial Spread (circular layout via FNV-1a hash) + Cluster Push-Apart engine (Mass-weighted AABB push-apart) to resolve cluster/node overlapping. Fixed External Ghosts cluster box not showing when External layer is ON. Reduced Align Architecture cluster expansion by 50% (roleOffsets halved). |

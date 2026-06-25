@@ -1,3 +1,4 @@
+import * as crypto from 'crypto';
 import * as path from 'path';
 import { FileScanner, CodeSummary } from './FileScanner';
 import { phaseManager, Phase } from './PhaseManager';
@@ -264,7 +265,7 @@ export class DataPipeline {
         }
 
         const newEdge: Edge = {
-          id: `edge_${item.filePath}_${targetNodeId}_${Date.now()}`,
+          id: crypto.randomUUID(),
           from: item.filePath,
           to: targetNodeId,
           type: this.mapEdgeType(ref.type),

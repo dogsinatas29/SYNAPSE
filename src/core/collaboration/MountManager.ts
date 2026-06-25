@@ -1,8 +1,9 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { execSync, exec } from 'child_process';
+import { execSync, execFile } from 'child_process';
 import { Logger } from '../../utils/Logger';
 import { SynapseIgnore } from '../SynapseIgnore';
+import * as net from 'net';
 
 export interface MountConfig {
     username: string;
@@ -31,18 +32,38 @@ export interface ScanResult {
 // 시스템 중요 디렉토리 정확히 차단 (하위 디렉토리는 허용)
 export function validateMountPath(remotePath: string): boolean {
     if (!remotePath || typeof remotePath !== 'string') return false;
+    if (remotePath.length >= 4096) return false;
     if (remotePath === '/') return false;
-    if (!remotePath.startsWith('/')) return false;
+    if (!remotePath.startsWith('/') && !remotePath.startsWith('~/')) return false;
     if (remotePath.includes('..')) return false;
-    if (remotePath.includes('~')) return false;
     if (remotePath.includes('*') || remotePath.includes('?')) return false;
 
-    // 시스템 루트 디렉토리만 차단 (정확히 일치)
+    // 시스템 루트 디렉토리 자체만 차단 (ex: /home 은 막지만 /home/user/project 는 통과됨)
     const normalized = remotePath.replace(/\/+$/, ''); // trailing slash 제거
     const forbiddenRoots = ['/home', '/etc', '/root', '/var', '/usr', '/bin', '/sbin', '/opt', '/tmp', '/proc', '/sys', '/dev', '/boot', '/lib', '/lib64', '/snap'];
     if (forbiddenRoots.includes(normalized)) return false;
 
     return true;
+}
+
+export function validateSSHUser(username: string): boolean {
+    if (!username || typeof username !== 'string') return false;
+    if (username.length > 64) return false;
+    // Allow alphanumeric, underscore, hyphen
+    return /^[a-zA-Z0-9_-]+$/.test(username);
+}
+
+export function validateSSHHost(host: string): boolean {
+    if (!host || typeof host !== 'string') return false;
+    if (host.length > 255) return false;
+    if (net.isIP(host)) return true;
+    // IPv6 처리 후 콜론(:) 제거하여 영문/숫자/점/하이픈만 허용 (dev-server, nas01 등 사내망 호스트명 포함)
+    return /^[a-zA-Z0-9.-]+$/.test(host);
+}
+
+export function validateSSHPort(port: any): boolean {
+    const p = Number(port);
+    return Number.isInteger(p) && p >= 1 && p <= 65535;
 }
 
 export class MountManager {
@@ -91,6 +112,15 @@ export class MountManager {
         if (!validateMountPath(config.remotePath)) {
             throw new Error(`[MountManager] Invalid remotePath: "${config.remotePath}". Must be an absolute project path (not "/", no "../", no "~").`);
         }
+        if (!validateSSHUser(config.sshUser)) {
+            throw new Error(`[MountManager] Invalid SSH User: "${config.sshUser}". Contains illegal characters.`);
+        }
+        if (!validateSSHHost(config.sshHost)) {
+            throw new Error(`[MountManager] Invalid SSH Host: "${config.sshHost}". Contains illegal characters.`);
+        }
+        if (!validateSSHPort(config.sshPort)) {
+            throw new Error(`[MountManager] Invalid SSH Port: "${config.sshPort}". Must be an integer between 1 and 65535.`);
+        }
         if (this.mounts.has(config.username)) {
             const existing = this.mounts.get(config.username)!;
             Logger.info(`[MountManager] Already mounted: ${config.username} at ${existing.mountPoint}`);
@@ -102,11 +132,23 @@ export class MountManager {
             fs.mkdirSync(mountPoint, { recursive: true });
         }
 
-        const sshKeyArg = config.sshKey ? `-o IdentityFile=${config.sshKey}` : '';
-        const cmd = `sshfs -o default_permissions${sshKeyArg ? ' ' + sshKeyArg : ''} -p ${config.sshPort} ${config.sshUser}@${config.sshHost}:${config.remotePath} ${mountPoint}`;
+        let resolvedSshKey: string | undefined;
+        if (config.sshKey) {
+            resolvedSshKey = path.resolve(config.sshKey);
+            if (!fs.existsSync(resolvedSshKey) || !fs.statSync(resolvedSshKey).isFile()) {
+                throw new Error(`[MountManager] Invalid sshKey: File not found or is a directory (${resolvedSshKey})`);
+            }
+        }
+
+        const args = ['-o', 'default_permissions', '-p', String(config.sshPort)];
+        if (resolvedSshKey) {
+            args.push('-o', `IdentityFile=${resolvedSshKey}`);
+        }
+        args.push(`${config.sshUser}@${config.sshHost}:${config.remotePath}`);
+        args.push(mountPoint);
 
         return new Promise((resolve, reject) => {
-            exec(cmd, { timeout: 10000 }, (error, stdout, stderr) => {
+            execFile('sshfs', args, { timeout: 10000 }, (error, stdout, stderr) => {
                 if (error) {
                     Logger.error(`[MountManager] Mount failed for ${config.username}: ${stderr || error.message}`);
                     reject(new Error(`Mount failed: ${stderr || error.message}`));
@@ -131,10 +173,20 @@ export class MountManager {
         }
 
         return new Promise((resolve) => {
-            exec(`fusermount3 -u ${mount.mountPoint} 2>/dev/null || fusermount -u ${mount.mountPoint} 2>/dev/null || umount -l ${mount.mountPoint} 2>/dev/null`, { timeout: 5000 }, () => {
+            const finish = () => {
                 this.mounts.delete(username);
                 Logger.info(`[MountManager] Unmounted: ${username}`);
                 resolve();
+            };
+
+            execFile('fusermount3', ['-u', mount.mountPoint], { timeout: 5000 }, (err1) => {
+                if (!err1) return finish();
+                execFile('fusermount', ['-u', mount.mountPoint], { timeout: 5000 }, (err2) => {
+                    if (!err2) return finish();
+                    execFile('umount', ['-l', mount.mountPoint], { timeout: 5000 }, () => {
+                        finish();
+                    });
+                });
             });
         });
     }

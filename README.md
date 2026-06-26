@@ -12,8 +12,8 @@ SYNAPSE transforms source code into an explorable architecture map,
 allowing engineers to visualize dependencies, execution flow,
 bottlenecks, and system-wide interactions across large software systems.
 
-[![Version](https://img.shields.io/badge/version-v0.3.30.1-brightgreen.png)](https://github.com/dogsinatas29/SYNAPSE)
-[![Latest Release](https://img.shields.io/badge/latest-v0.3.30.1%20UI%2FUX%20Refinement-orange.png)](https://github.com/dogsinatas29/SYNAPSE/releases)
+[![Version](https://img.shields.io/badge/version-v0.3.32-brightgreen.png)](https://github.com/dogsinatas29/SYNAPSE)
+[![Latest Release](https://img.shields.io/badge/latest-v0.3.32%20Collaboration%20Flow%20Visibility-orange.png)](https://github.com/dogsinatas29/SYNAPSE/releases)
 ![Status](https://img.shields.io/badge/status-Production_Ready-brightgreen.png)
 
 [🇰🇷 한국어 버전](./README.ko.md)
@@ -452,6 +452,8 @@ SYNAPSE was created to overcome the limitations of code-centric development. It 
 
 | Version | Date | Description |
 | :--- | :--- | :--- |
+| **v0.3.32** | 2026-06-26 | **Collaboration Flow Visibility**: Fixed ghost filter collision that made 100% of client-contributed nodes invisible in Flow View. Client nodes now bypass `!isGhost` filter, controlled by `_isClientLayerVisible()` toggle. Fixed `reasons` ReferenceError that silently crashed `buildFlow()` when client nodes were present. Unified client node detection filters across debug/survival/flow logic. Contribution Entity Graph Phase 0 validated: `(filePath, userId)` confirmed as canonical identity. |
+| **v0.3.32** | 2026-06-26 | **Collaboration Flow Visibility**: Fixed ghost filter collision that made 100% of client-contributed nodes invisible in Flow View. Client nodes now bypass `!isGhost` filter, controlled by `_isClientLayerVisible()` toggle. Fixed `reasons` ReferenceError that silently crashed `buildFlow()` when client nodes were present. Unified client node detection filters across debug/survival/flow logic. Contribution Entity Graph Phase 0 validated: `(filePath, userId)` confirmed as canonical identity. |
 | **v0.3.31** | 2026-06-25 | **Diagnostics Stabilization & Observability**: Fixed false-positive Necrosis from `doc`/`file`/`folder` nodes. Normalized Pressure calculation to `criticalIssues / totalNodes`. Excluded Ghost Cluster (`cluster_ghosts`, `doc_shelf`) from dependency hints. Added `clientTimestamp`-based Stale opacity visualization (Active/Stale/Offline). Tooltip now shows `"[username] Updated Xm ago"`. Soft Disconnect with 15-minute cache retention for post-crash debugging. |
 | **v0.3.30.2** | 2026-06-25 | **Security Hardening & Harvest Stabilization**: Verified 6 critical attack vectors (Path Traversal, Auth Bypass, SSE Contamination, Lock Bypass, Sandbox Escape, Client Spoofing). Fixed port binding conflict & 403 Auth error on Admin UI. Implemented backward compatibility for legacy array-formatted `accounts.json` and `synapse_history.json` to prevent `unshift` crash during Harvest. |
 | **v0.3.30.1** | 2026-06-22 | **UI/UX Refinement & Feature Cleanup**: Implemented Tooltip Merge Logic to resolve Z-Index bleeding when hovering overlapping nodes and edges. Disabled problematic Tree View mode to align with graph-centric architecture. |

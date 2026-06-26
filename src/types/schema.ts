@@ -176,3 +176,21 @@ export interface SubmissionSnapshot {
 export type ReviewState = any;
 export type HarvestInput = any;
 export type HarvestedFile = any;
+
+// v0.3.32 Contribution Entity Types
+export type ContributionNodeKind = 'compared' | 'harvested';
+export type ContributionEdgeRelation = 'derived_from';
+
+export interface ContributionNode {
+    id: string; // hash(filePath, userId)
+    kind: ContributionNodeKind;
+    filePath: string;
+    userId: string;
+}
+
+export interface ContributionEdge {
+    id: string;
+    from: string; // ContributionNode.id
+    to: string;   // ContributionNode.id
+    relation: ContributionEdgeRelation;
+}

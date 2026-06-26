@@ -52,6 +52,33 @@ class FlowRenderer {
     }
 
     buildFlow(nodes) {
+        console.log("[FLOW_DEBUG] buildFlow input", nodes.length);
+        console.log("[FLOW_DEBUG] node types", nodes.reduce((acc, n) => {
+            const t = n.type || "undefined";
+            acc[t] = (acc[t] || 0) + 1;
+            return acc;
+        }, {}));
+        
+        const clientNodes = nodes.filter(n => n.clientLayer || n.layer === "client" || (n.data && n.data.clientLayer));
+        console.log("[FLOW_DEBUG] client nodes count", clientNodes.length);
+        console.table(clientNodes.map(n => ({
+            id: n.id,
+            label: n.label,
+            type: n.type,
+            layer: n.layer,
+            clientLayer: n.clientLayer,
+            status: n.status
+        })));
+        console.log("[FLOW_DEBUG] client node ids", clientNodes.map(n => n.id));
+        console.log("[FLOW_DEBUG] client node labels", clientNodes.map(n => n.label));
+        console.log("[FLOW_DEBUG] client node detail", JSON.stringify(clientNodes.map(n => ({
+            id: n.id,
+            label: n.label,
+            type: n.type,
+            clientLayer: n.clientLayer,
+            layer: n.layer,
+            status: n.status
+        })), null, 2));
         const edges = this.engine.edges || [];
 
         // 1. 진짜 실행 루트 탐색 (실제 그래프 상의 Root: In-degree가 0인 노드들)
@@ -107,6 +134,25 @@ class FlowRenderer {
         // 3. 도달 가능한 노드 필터링 및 정렬
         // [Refine] Flow 뷰에서는 '순수 로직'만 표현하기 위해 문서(.md) 파일은 다시 제외
         // 문서 파일은 Graph 뷰의 'Documentation Shelf'에서 탐색 가능함
+        
+        const debugClientNodes = nodes.filter(n => n.clientLayer || n.layer === "client" || (n.data && n.data.clientLayer));
+        console.log("[FLOW_DEBUG] debugClientNodes raw", debugClientNodes.length, debugClientNodes);
+        for (const node of debugClientNodes) {
+            const fileName = (node.data && node.data.file) ? node.data.file.toLowerCase() : '';
+            const isDoc = fileName.endsWith('.md') || fileName.endsWith('.txt') || fileName.includes('license');
+            const isGhost = node.status === 'ghost';
+            const isUser = node.layer === 'user' || 
+                           (node.data && node.data.layer === 'user') ||
+                           node.status === 'pending' ||
+                           (node.id && node.id.startsWith('node_manual_'));
+            const reachable = reachableIds.has(node.id);
+            const baseVisible = isUser || this.engine.showBaseLayer;
+            const userVisible = !isUser || this.engine.showUserLayer;
+            const clientVisible = !this.engine._isClientLayerVisible || this.engine._isClientLayerVisible(node);
+            
+            console.log("[FLOW_DEBUG] client filter reasons", node.label, {reachable, isGhost, baseVisible, userVisible, clientVisible});
+        }
+        
         const filteredNodes = nodes.filter(n => {
             const fileName = (n.data && n.data.file) ? n.data.file.toLowerCase() : '';
             const isDoc = fileName.endsWith('.md') || fileName.endsWith('.txt') || fileName.includes('license');
@@ -123,8 +169,54 @@ class FlowRenderer {
             if (isUser && !this.engine.showUserLayer) return false;
             if (this.engine._isClientLayerVisible && !this.engine._isClientLayerVisible(n)) return false;
 
+            const isClientNode = !!n.clientLayer || n.layer === "client" || !!(n.data && n.data.clientLayer);
+            if (isClientNode) {
+                return reachableIds.has(n.id) && !isDoc && !isContext;
+            }
+
             return reachableIds.has(n.id) && n.type !== 'external' && !isDoc && !isGhost && !isContext;
         });
+        
+        console.log("[FLOW_DEBUG] filteredNodes count", filteredNodes.length);
+        
+        console.log("[FLOW_DEBUG] client reachability", debugClientNodes.map(n => ({
+            label: n.label,
+            id: n.id,
+            reachable: reachableIds.has(n.id),
+            ghost: n.status === 'ghost',
+            isDoc: ((n.data && n.data.file) || '').toLowerCase().endsWith('.md')
+        })));
+        
+        const survivingClientNodes = filteredNodes.filter(n => n.clientLayer || n.layer === "client" || (n.data && n.data.clientLayer));
+        console.log("[FLOW_DEBUG] surviving client nodes", JSON.stringify(survivingClientNodes.map(n => ({
+            id: n.id,
+            label: n.label,
+            type: n.type
+        })), null, 2));
+        console.log("[FLOW_DEBUG] dropped client nodes", debugClientNodes.filter(n => !filteredNodes.some(f => f.id === n.id)).map(n => ({
+            label: n.label,
+            id: n.id
+        })));
+        const dropped = nodes.filter(n => !filteredNodes.includes(n));
+        console.log("[FLOW_DEBUG] dropped nodes", dropped.map(n => ({
+            id: n.id,
+            type: n.type,
+            label: n.label,
+            layer: n.layer,
+            status: n.status,
+            clientLayer: n.clientLayer
+        })));
+        
+        const droppedSourceNodes = dropped.filter(n => n.type === "source");
+        console.log("[FLOW_DEBUG] dropped source nodes", droppedSourceNodes.length);
+        console.table(droppedSourceNodes.map(n => ({
+            id: n.id,
+            label: n.label,
+            type: n.type,
+            layer: n.layer,
+            clientLayer: n.clientLayer,
+            status: n.status
+        })));
         const sortedNodes = [...filteredNodes].sort((a, b) => {
             const layerA = a.data.layer || 0;
             const layerB = b.data.layer || 0;
@@ -201,6 +293,8 @@ class FlowRenderer {
             }
         });
 
+        console.log("[FLOW_DEBUG] buildFlow output", steps.length);
+        console.log("[FLOW_DEBUG] step labels sample", steps.slice(0, 10).map(s => s.label));
         return {
             id: 'flow_main',
             type: 'global', // [New] Distinguish from 'internal' flow
@@ -492,14 +586,16 @@ class FlowRenderer {
             return;
         }
 
+        const isClientNode = step.node && (step.node.clientLayer || (step.node.data && step.node.data.clientLayer));
+
         if (step.type === 'process') {
-            ctx.fillStyle = theme.FLOW.PROCESS.bg;
+            ctx.fillStyle = isClientNode ? '#3c0040' : theme.FLOW.PROCESS.bg;
             ctx.fillRect(x - width / 2, y - height / 2, width, height);
-            ctx.strokeStyle = theme.FLOW.PROCESS.border;
-            ctx.lineWidth = 2;
+            ctx.strokeStyle = isClientNode ? '#ff00ff' : theme.FLOW.PROCESS.border;
+            ctx.lineWidth = isClientNode ? 3 : 2;
             ctx.strokeRect(x - width / 2, y - height / 2, width, height);
         } else if (step.type === 'decision') {
-            ctx.fillStyle = theme.FLOW.DECISION.bg;
+            ctx.fillStyle = isClientNode ? '#3c0040' : theme.FLOW.DECISION.bg;
             ctx.beginPath();
             ctx.moveTo(x, y - height / 2 - 15);
             ctx.lineTo(x + width / 2 + 30, y);
@@ -508,12 +604,12 @@ class FlowRenderer {
             ctx.closePath();
             ctx.fill();
 
-            ctx.strokeStyle = theme.FLOW.DECISION.border;
+            ctx.strokeStyle = isClientNode ? '#ff00ff' : theme.FLOW.DECISION.border;
             ctx.lineWidth = 3;
             ctx.stroke();
 
             // 상단 작은 텍스트로 타입 표시
-            ctx.fillStyle = theme.FLOW.DECISION.text;
+            ctx.fillStyle = isClientNode ? '#ff88ff' : theme.FLOW.DECISION.text;
             ctx.font = 'bold 10px Inter, sans-serif';
             ctx.fillText('DECISION', x, y - height / 2 - 2);
         }
@@ -668,6 +764,112 @@ class FlowRenderer {
             }
         }
         return null;
+    }
+
+    // v0.3.32: Contribution Entity Relationship Flow
+    buildContributionFlow(contributionNodes, contributionEdges) {
+        if (!contributionNodes || contributionNodes.length === 0) {
+            return { id: 'flow_contribution', type: 'contribution', name: 'Contribution Flow', steps: [] };
+        }
+
+        const steps = [];
+        const nodeMap = new Map();
+        contributionNodes.forEach(n => nodeMap.set(n.id, n));
+
+        // START terminal
+        steps.push({
+            id: 'step_contrib_start',
+            type: 'terminal',
+            label: 'CONTRIBUTION',
+            file: 'system',
+            next: null
+        });
+
+        // Group by userId for better layout
+        const userGroups = new Map();
+        contributionNodes.forEach(n => {
+            if (!userGroups.has(n.userId)) userGroups.set(n.userId, []);
+            userGroups.get(n.userId).push(n);
+        });
+
+        let prevStepId = 'step_contrib_start';
+        const processedPairs = new Set();
+
+        for (const [userId, nodes] of userGroups) {
+            const comparedNodes = nodes.filter(n => n.kind === 'compared');
+            const harvestedNodes = nodes.filter(n => n.kind === 'harvested');
+
+            for (const compared of comparedNodes) {
+                const stepId = `step_contrib_${compared.id}`;
+                steps.push({
+                    id: stepId,
+                    type: 'process',
+                    label: `${compared.filePath}`,
+                    file: compared.filePath,
+                    node: compared,
+                    next: null,
+                    layer: 'contribution',
+                    metadata: { userId, kind: 'compared' }
+                });
+
+                // Link previous step
+                const prevStep = steps.find(s => s.id === prevStepId);
+                if (prevStep && !prevStep.next) {
+                    prevStep.next = stepId;
+                }
+                prevStepId = stepId;
+
+                // Find matching harvested node via edge
+                const edge = contributionEdges.find(e => e.from === compared.id);
+                if (edge) {
+                    const harvested = nodeMap.get(edge.to);
+                    if (harvested) {
+                        const harvestStepId = `step_contrib_${harvested.id}`;
+                        steps.push({
+                            id: harvestStepId,
+                            type: 'process',
+                            label: `✓ ${harvested.filePath}`,
+                            file: harvested.filePath,
+                            node: harvested,
+                            next: null,
+                            layer: 'contribution',
+                            metadata: { userId, kind: 'harvested' }
+                        });
+
+                        // Connect compared to harvested
+                        const currentStep = steps.find(s => s.id === stepId);
+                        if (currentStep) {
+                            currentStep.next = harvestStepId;
+                            currentStep.allNexts = [harvestStepId];
+                        }
+                        prevStepId = harvestStepId;
+                        processedPairs.add(edge.id);
+                    }
+                }
+            }
+        }
+
+        // END terminal
+        steps.push({
+            id: 'step_contrib_end',
+            type: 'terminal',
+            label: 'END',
+            file: 'system'
+        });
+
+        // Connect last step to END
+        steps.forEach(step => {
+            if (step.id !== 'step_contrib_end' && !step.next) {
+                step.next = 'step_contrib_end';
+            }
+        });
+
+        return {
+            id: 'flow_contribution',
+            type: 'contribution',
+            name: 'Contribution Entity Flow',
+            steps: steps
+        };
     }
 }
 

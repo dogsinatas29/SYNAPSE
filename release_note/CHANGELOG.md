@@ -1,3 +1,63 @@
+# Release Notes - v0.3.32
+
+> **"See the Invisible"**
+
+Version 0.3.32 makes **collaboration nodes visible in Flow View**. Previously, client-contributed nodes were silently filtered out by the ghost status system, rendering them invisible in the execution flow. This release fixes the filter chain and introduces client-layer-aware rendering for multi-user collaboration.
+
+## 🔍 Client Node Visibility in Flow View
+- **Ghost Filter Bypass**: Client nodes (`n.clientLayer || n.data?.clientLayer`) now bypass the `!isGhost` and `n.type !== 'external'` checks in the Flow View filter, controlled instead by `_isClientLayerVisible()`.
+- **Magenta Debug Rendering**: Collaboration nodes render with magenta (#ff00ff) border for visual distinction from base/user nodes.
+
+## 🐛 Bug Fixes
+- **`reasons` ReferenceError in buildFlow**: Fixed an undefined variable crash that silently killed `buildFlow()` when client nodes were present, masking all diagnostic logs.
+- **Client Node Detection Filter Inconsistency**: Unified `debugClientNodes`, `survivingClientNodes`, and `isClientNode` filters to use the same 3-condition check (`n.clientLayer || n.layer === "client" || n.data?.clientLayer`).
+
+## 📋 Contribution Entity Graph
+- Phase 0 identity validation passed: `(filePath, userId)` confirmed as canonical unique key.
+- `ContributionNode` and `ContributionEdge` type definitions added to `schema.ts`.
+
+---
+
+# Release Notes - v0.3.32
+
+> **"See the Invisible"**
+
+Version 0.3.32 makes **collaboration nodes visible in Flow View**. Previously, client-contributed nodes were silently filtered out by the ghost status system, rendering them invisible in the execution flow. This release fixes the filter chain and introduces client-layer-aware rendering for multi-user collaboration.
+
+## 🔍 Client Node Visibility in Flow View
+- **Ghost Filter Bypass**: Client nodes (`n.clientLayer || n.data?.clientLayer`) now bypass the `!isGhost` and `n.type !== 'external'` checks in the Flow View filter, controlled instead by `_isClientLayerVisible()`.
+- **Magenta Debug Rendering**: Collaboration nodes render with magenta (#ff00ff) border for visual distinction from base/user nodes.
+
+## 🐛 Bug Fixes
+- **`reasons` ReferenceError in buildFlow**: Fixed an undefined variable crash that silently killed `buildFlow()` when client nodes were present, masking all diagnostic logs.
+- **Client Node Detection Filter Inconsistency**: Unified `debugClientNodes`, `survivingClientNodes`, and `isClientNode` filters to use the same 3-condition check (`n.clientLayer || n.layer === "client" || n.data?.clientLayer`).
+
+## 📋 Contribution Entity Graph
+- Phase 0 identity validation passed: `(filePath, userId)` confirmed as canonical unique key.
+- `ContributionNode` and `ContributionEdge` type definitions added to `schema.ts`.
+
+---
+
+# Release Notes - v0.3.32
+
+> **"See the Invisible"**
+
+Version 0.3.32 makes **collaboration nodes visible in Flow View**. Previously, client-contributed nodes were silently filtered out by the ghost status system, rendering them invisible in the execution flow. This release fixes the filter chain and introduces client-layer-aware rendering for multi-user collaboration.
+
+## 🔍 Client Node Visibility in Flow View
+- **Ghost Filter Bypass**: Client nodes (`n.clientLayer || n.data?.clientLayer`) now bypass the `!isGhost` and `n.type !== 'external'` checks in the Flow View filter, controlled instead by `_isClientLayerVisible()`.
+- **Magenta Debug Rendering**: Collaboration nodes render with magenta (#ff00ff) border for visual distinction from base/user nodes.
+
+## 🐛 Bug Fixes
+- **`reasons` ReferenceError in buildFlow**: Fixed an undefined variable crash that silently killed `buildFlow()` when client nodes were present, masking all diagnostic logs.
+- **Client Node Detection Filter Inconsistency**: Unified `debugClientNodes`, `survivingClientNodes`, and `isClientNode` filters to use the same 3-condition check (`n.clientLayer || n.layer === "client" || n.data?.clientLayer`).
+
+## 📋 Contribution Entity Graph
+- Phase 0 identity validation passed: `(filePath, userId)` confirmed as canonical unique key.
+- `ContributionNode` and `ContributionEdge` type definitions added to `schema.ts`.
+
+---
+
 # Release Notes - v0.2.9
 
 > **"Ghostbusters"**

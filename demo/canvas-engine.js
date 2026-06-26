@@ -123,6 +123,11 @@ class FlowRenderer {
             if (isUser && !this.engine.showUserLayer) return false;
             if (this.engine._isClientLayerVisible && !this.engine._isClientLayerVisible(n)) return false;
 
+            const isClientNode = !!n.clientLayer || !!(n.data && n.data.clientLayer);
+            if (isClientNode) {
+                return reachableIds.has(n.id) && !isDoc && !isContext;
+            }
+
             return reachableIds.has(n.id) && n.type !== 'external' && !isDoc && !isGhost && !isContext;
         });
         const sortedNodes = [...filteredNodes].sort((a, b) => {

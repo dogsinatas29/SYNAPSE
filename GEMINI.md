@@ -320,6 +320,11 @@ SYNAPSE는 파일 시스템과 그래프를 Source Of Truth로 사용하는 협�
 │   ├── webgl-renderer.js
 │   ├── engine-core.js
 │   └── data/
+│       ├── accounts.json
+│       ├── project_metadata.json
+│       ├── project_state.json
+│       ├── synapse_history.json
+│       └── .server_info            ← 🟢 Added
 ├── assets/
 ├── backup_md/
 ├── context/
@@ -359,7 +364,10 @@ SYNAPSE는 파일 시스템과 그래프를 Source Of Truth로 사용하는 협�
 │   │   │   ├── SessionManager.ts
 │   │   │   ├── RuntimeInitializer.ts
 │   │   │   ├── CompareEngine.ts
+│   │   │   ├── CompareProjection.ts    ← 🟢 Added
+│   │   │   ├── EdgeGenerator.ts        ← 🟢 Added
 │   │   │   ├── HarvestSessionManager.ts
+│   │   │   ├── HarvestProjection.ts    ← 🟢 Added
 │   │   │   ├── RemoteLayerProjector.ts
 │   │   │   ├── ArchitectureIndexBuilder.ts
 │   │   │   ├── ReferenceVerifier.ts

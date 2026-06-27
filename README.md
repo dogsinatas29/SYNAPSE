@@ -264,8 +264,14 @@ SYNAPSE automatically generates a logical flowchart based on the underlying arch
 - Nodes must be properly connected; standalone, scattered nodes without connections will not form a meaningful flowchart.
 - Accessible via the `View -> Flow View` menu in the top navigation bar.
 
-![Flow View Screenshot](assets/flowview.png)
-![Flow View Screenshot 2](assets/flowview2.png)
+![Flow View Screenshot](assets/network/flowview.png)
+Flow view image
+
+![Flow View Screenshot 2](assets/network/flow2.png)
+Information for specific nodes can also be verified within the flow view
+
+![Network Attached Flow View](assets/network/network_attached_flowview.png)
+The logic of clients connected to the network is also included in the flow view.
 
 ---
 
@@ -282,6 +288,12 @@ To prevent this, Harvest adopts an **Architect-centric uni-directional collectio
 ```text
 Client → Snapshot → Server → Archive
 ```
+
+![Network Attached File](assets/network/network_attached_file.png)
+Files from clients connected to the network are displayed directly on the Synapse screen, enabling logic verification.
+
+![Harvest](assets/network/harvest.png)
+Among the files from connected clients, only verified files can be "harvested" and saved to the server.
 
 The goal of Harvest is not code integration, but **safe collection and preservation**.
 
@@ -452,7 +464,7 @@ SYNAPSE was created to overcome the limitations of code-centric development. It 
 
 | Version | Date | Description |
 | :--- | :--- | :--- |
-| **v0.3.32** | 2026-06-26 | **Collaboration Flow Visibility**: Fixed ghost filter collision that made 100% of client-contributed nodes invisible in Flow View. Client nodes now bypass `!isGhost` filter, controlled by `_isClientLayerVisible()` toggle. Fixed `reasons` ReferenceError that silently crashed `buildFlow()` when client nodes were present. Unified client node detection filters across debug/survival/flow logic. Contribution Entity Graph Phase 0 validated: `(filePath, userId)` confirmed as canonical identity. |
+| **v0.3.32.1** | 2026-06-27 | **Cross-Project Trace & Semantic Flow Layout**: Upgraded Flow View to Semantic Flow Layout with single-pass Barycenter Ordering, drastically reducing edge crossings. Visualized back-edges in red dashed lines. Introduced `[SYNAPSE_NETWORK_LINK]` for universal language-agnostic cross-network dependency parsing. Fixed client node mirroring (IFF logic) to distinguish local vs remote client nodes. Proved distributed architecture collaboration via Harvest DAG merge within Flow View. |
 | **v0.3.32** | 2026-06-26 | **Collaboration Flow Visibility**: Fixed ghost filter collision that made 100% of client-contributed nodes invisible in Flow View. Client nodes now bypass `!isGhost` filter, controlled by `_isClientLayerVisible()` toggle. Fixed `reasons` ReferenceError that silently crashed `buildFlow()` when client nodes were present. Unified client node detection filters across debug/survival/flow logic. Contribution Entity Graph Phase 0 validated: `(filePath, userId)` confirmed as canonical identity. |
 | **v0.3.31** | 2026-06-25 | **Diagnostics Stabilization & Observability**: Fixed false-positive Necrosis from `doc`/`file`/`folder` nodes. Normalized Pressure calculation to `criticalIssues / totalNodes`. Excluded Ghost Cluster (`cluster_ghosts`, `doc_shelf`) from dependency hints. Added `clientTimestamp`-based Stale opacity visualization (Active/Stale/Offline). Tooltip now shows `"[username] Updated Xm ago"`. Soft Disconnect with 15-minute cache retention for post-crash debugging. |
 | **v0.3.30.2** | 2026-06-25 | **Security Hardening & Harvest Stabilization**: Verified 6 critical attack vectors (Path Traversal, Auth Bypass, SSE Contamination, Lock Bypass, Sandbox Escape, Client Spoofing). Fixed port binding conflict & 403 Auth error on Admin UI. Implemented backward compatibility for legacy array-formatted `accounts.json` and `synapse_history.json` to prevent `unshift` crash during Harvest. |

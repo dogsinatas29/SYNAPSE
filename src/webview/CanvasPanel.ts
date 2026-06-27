@@ -4901,6 +4901,8 @@ export class CanvasPanel {
                 return;
             }
 
+            console.log(`[FLOW_DEBUG] webview payload nodes ${projectState.nodes.length} edges ${projectState.edges.length}`);
+
             this._panel.webview.postMessage({
                 command: 'projectState',
                 data: projectState,
@@ -4932,17 +4934,17 @@ export class CanvasPanel {
 
         const scriptUri = webview.asWebviewUri(
             vscode.Uri.joinPath(this._extensionUri, 'ui', 'canvas-engine.js')
-        );
+        ).toString() + `?t=${Date.now()}`;
         const engineCoreUri = webview.asWebviewUri(
             vscode.Uri.joinPath(this._extensionUri, 'ui', 'engine-core.js')
-        );
+        ).toString() + `?t=${Date.now()}`;
         const webglRendererUri = webview.asWebviewUri(
             vscode.Uri.joinPath(this._extensionUri, 'ui', 'webgl-renderer.js')
-        );
+        ).toString() + `?t=${Date.now()}`;
 
         const themeUri = webview.asWebviewUri(
             vscode.Uri.joinPath(this._extensionUri, 'ui', 'synapse-theme.js')
-        );
+        ).toString() + `?t=${Date.now()}`;
 
         // [v0.3.31] HTML Tooltip Localization
         const isKo = vscode.env.language.startsWith('ko');

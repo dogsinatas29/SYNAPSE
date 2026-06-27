@@ -62,31 +62,62 @@ class FlowRenderer {
             inDegrees[e.to] = (inDegrees[e.to] || 0) + 1;
         });
 
-        // [Fix] Root 우선순위 부여: main, app, index 등이 최상단에 오도록 하며, helper/util 등은 후순위
-        const roots = nodes.filter(n => !inDegrees[n.id] && n.type !== 'external');
+        // [v0.3.32.1] Root Investigation Logs
+        const _allRoots = nodes.filter(n => !inDegrees[n.id]);
+        console.log("[FLOW_DEBUG] root count", _allRoots.length);
+        console.log("[FLOW_DEBUG] top indegree roots", _allRoots.slice(0, 100).map(n => n.data?.file || n.id));
+        console.log("[FLOW_DEBUG] root sample", _allRoots.slice(0, 20).map(n => ({
+            file: n.data?.file,
+            type: n.type
+        })));
 
-        // Root 정렬: main을 가장 앞으로, validators/helpers 등은 뒤로
-        roots.sort((a, b) => {
-            const fileNameA = (a.data && a.data.file) ? a.data.file.toLowerCase() : '';
-            const fileNameB = (b.data && b.data.file) ? b.data.file.toLowerCase() : '';
+        // [v0.3.32.1] Entry Point Resolver (TypeScript + Rust)
+        const entryPoint = nodes.find(n => {
+            const file = n.data?.file?.toLowerCase() || '';
+            return file.match(/extension\.[tj]s$/);
+        }) || nodes.find(n => {
+            const file = n.data?.file?.toLowerCase() || '';
+            return file.match(/main\.[tj]s$/) || file.match(/main\.rs$/);
+        }) || nodes.find(n => {
+            const file = n.data?.file?.toLowerCase() || '';
+            return file.match(/lib\.rs$/);
+        }) || nodes.find(n => {
+            const file = n.data?.file?.toLowerCase() || '';
+            return file.match(/index\.[tj]s$/);
+        }) || nodes.find(n => {
+            const file = n.data?.file?.toLowerCase() || '';
+            return file.match(/mod\.rs$/);
+        }) || null;
 
-            const isPriority = (name) => name.includes('main.') || name.includes('app.') || name.includes('index.');
-            const isHelper = (name) => name.includes('validator') || name.includes('helper') || name.includes('util');
-
-            if (isPriority(fileNameA) && !isPriority(fileNameB)) return -1;
-            if (!isPriority(fileNameA) && isPriority(fileNameB)) return 1;
-            if (isHelper(fileNameA) && !isHelper(fileNameB)) return 1;
-            if (!isHelper(fileNameA) && isHelper(fileNameB)) return -1;
-            return 0;
-        });
-
-        if (roots.length === 0 && nodes.length > 0) {
-            const priorityNode = nodes.find(n => {
-                const name = (n.data && n.data.file) ? n.data.file.toLowerCase() : '';
-                return name.includes('main.') || name.includes('app.') || name.includes('index.');
-            }) || (nodes.find(n => n.type !== 'external') || nodes[0]);
-            roots.push(priorityNode);
+        let roots;
+        if (entryPoint) {
+            roots = [entryPoint];
+        } else {
+            // Fallback: in-degree=0 + 정렬
+            roots = nodes.filter(n => !inDegrees[n.id] && n.type !== 'external');
+            roots.sort((a, b) => {
+                const fileNameA = (a.data && a.data.file) ? a.data.file.toLowerCase() : '';
+                const fileNameB = (b.data && b.data.file) ? b.data.file.toLowerCase() : '';
+                const isPriority = (name) => name.includes('main.') || name.includes('app.') || name.includes('index.');
+                const isHelper = (name) => name.includes('validator') || name.includes('helper') || name.includes('util');
+                if (isPriority(fileNameA) && !isPriority(fileNameB)) return -1;
+                if (!isPriority(fileNameA) && isPriority(fileNameB)) return 1;
+                if (isHelper(fileNameA) && !isHelper(fileNameB)) return 1;
+                if (!isHelper(fileNameA) && isHelper(fileNameB)) return -1;
+                return 0;
+            });
+            if (roots.length === 0 && nodes.length > 0) {
+                const priorityNode = nodes.find(n => {
+                    const name = (n.data && n.data.file) ? n.data.file.toLowerCase() : '';
+                    return name.includes('main.') || name.includes('app.') || name.includes('index.');
+                }) || (nodes.find(n => n.type !== 'external') || nodes[0]);
+                roots.push(priorityNode);
+            }
         }
+
+        console.log("[FLOW_DEBUG] entryPoint", entryPoint?.data?.file || "null");
+        console.log("[FLOW_DEBUG] roots count", roots.length);
+        console.log("[FLOW_DEBUG] roots files", roots.slice(0, 10).map(r => r.data?.file || r.id));
 
         // 2. 의존성 트레이싱 (Reachability)
         const reachableIds = new Set();
@@ -103,6 +134,17 @@ class FlowRenderer {
                 }
             }
         }
+
+        // [v0.3.32.1] Reachability Investigation Logs
+        console.log("[FLOW_DEBUG] reachable count", reachableIds.size);
+        console.log("[FLOW_DEBUG] reachable sample", Array.from(reachableIds).slice(0, 50).map(id => {
+            const n = nodes.find(x => x.id === id);
+            return n ? (n.data?.file || n.label || n.id) : id;
+        }));
+        console.log("[FLOW_DEBUG] reachable files count", Array.from(reachableIds).filter(id => {
+            const n = nodes.find(x => x.id === id);
+            return n && n.type === 'source';
+        }).length);
 
         // 3. 도달 가능한 노드 필터링 및 정렬
         // [Refine] Flow 뷰에서는 '순수 로직'만 표현하기 위해 문서(.md) 파일은 다시 제외

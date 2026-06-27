@@ -6,6 +6,7 @@
  * This software incorporates fzf-inspired fuzzy matching logic, which is licensed under the MIT License.
  * fzf (C) 2013-2023 Junegunn Choi
  */
+console.log("[FLOW_DEBUG] BUILD_ID_20260627_B canvas-engine.js LOADED");
 
 /**
  * PromotionParticle - 설계 승격 효과를 위한 파티클 클래스
@@ -81,38 +82,117 @@ class FlowRenderer {
         })), null, 2));
         const edges = this.engine.edges || [];
 
-        // 1. 진짜 실행 루트 탐색 (실제 그래프 상의 Root: In-degree가 0인 노드들)
-        // [Fix] External 노드는 루트에서 제외 (로직의 시작점이 될 수 없음)
+        // 1. Entry Point 탐색 & Root 결정
         const inDegrees = {};
         edges.forEach(e => {
             if (!e || !e.to) return;
             inDegrees[e.to] = (inDegrees[e.to] || 0) + 1;
         });
 
-        // [Fix] Root 우선순위 부여: main, app, index 등이 최상단에 오도록 하며, helper/util 등은 후순위
-        const roots = nodes.filter(n => !inDegrees[n.id] && n.type !== 'external');
+        // [v0.3.32.1] Root Investigation Logs
+        const _allRoots = nodes.filter(n => !inDegrees[n.id]);
+        console.log("[FLOW_DEBUG] root count", _allRoots.length);
+        console.log("[FLOW_DEBUG] top indegree roots", _allRoots.slice(0, 100).map(n => n.data?.file || n.id));
+        console.log("[FLOW_DEBUG] root sample", _allRoots.slice(0, 20).map(n => ({
+            file: n.data?.file,
+            type: n.type
+        })));
 
-        // Root 정렬: main을 가장 앞으로, validators/helpers 등은 뒤로
-        roots.sort((a, b) => {
-            const fileNameA = (a.data && a.data.file) ? a.data.file.toLowerCase() : '';
-            const fileNameB = (b.data && b.data.file) ? b.data.file.toLowerCase() : '';
+        // [v0.3.32.1] Entry Point Resolver (TypeScript + Rust)
+        const entryPoint = nodes.find(n => {
+            const file = n.data?.file?.toLowerCase() || '';
+            return file.match(/extension\.[tj]s$/);
+        }) || nodes.find(n => {
+            const file = n.data?.file?.toLowerCase() || '';
+            return file.match(/main\.[tj]s$/) || file.match(/main\.rs$/);
+        }) || nodes.find(n => {
+            const file = n.data?.file?.toLowerCase() || '';
+            return file.match(/lib\.rs$/);
+        }) || nodes.find(n => {
+            const file = n.data?.file?.toLowerCase() || '';
+            return file.match(/index\.[tj]s$/);
+        }) || nodes.find(n => {
+            const file = n.data?.file?.toLowerCase() || '';
+            return file.match(/mod\.rs$/);
+        }) || null;
 
-            const isPriority = (name) => name.includes('main.') || name.includes('app.') || name.includes('index.');
-            const isHelper = (name) => name.includes('validator') || name.includes('helper') || name.includes('util');
+        let roots;
+        if (entryPoint) {
+            roots = [entryPoint];
+        } else {
+            roots = nodes.filter(n => !inDegrees[n.id] && n.type !== 'external');
+            roots.sort((a, b) => {
+                const fileNameA = (a.data && a.data.file) ? a.data.file.toLowerCase() : '';
+                const fileNameB = (b.data && b.data.file) ? b.data.file.toLowerCase() : '';
+                const isPriority = (name) => name.includes('main.') || name.includes('app.') || name.includes('index.');
+                const isHelper = (name) => name.includes('validator') || name.includes('helper') || name.includes('util');
+                if (isPriority(fileNameA) && !isPriority(fileNameB)) return -1;
+                if (!isPriority(fileNameA) && isPriority(fileNameB)) return 1;
+                if (isHelper(fileNameA) && !isHelper(fileNameB)) return 1;
+                if (!isHelper(fileNameA) && isHelper(fileNameB)) return -1;
+                return 0;
+            });
+            if (roots.length === 0 && nodes.length > 0) {
+                const priorityNode = nodes.find(n => {
+                    const name = (n.data && n.data.file) ? n.data.file.toLowerCase() : '';
+                    return name.includes('main.') || name.includes('app.') || name.includes('index.');
+                }) || (nodes.find(n => n.type !== 'external') || nodes[0]);
+                roots.push(priorityNode);
+            }
+        }
 
-            if (isPriority(fileNameA) && !isPriority(fileNameB)) return -1;
-            if (!isPriority(fileNameA) && isPriority(fileNameB)) return 1;
-            if (isHelper(fileNameA) && !isHelper(fileNameB)) return 1;
-            if (!isHelper(fileNameA) && isHelper(fileNameB)) return -1;
-            return 0;
+        // [Fix] Client nodes MUST be treated as roots (entry points) so they are reachable and connected to START
+        const clientRoots = nodes.filter(n => n.clientLayer || n.layer === "client" || (n.data && n.data.clientLayer));
+        clientRoots.forEach(cn => {
+            if (!roots.some(r => r.id === cn.id)) {
+                roots.push(cn);
+            }
         });
 
-        if (roots.length === 0 && nodes.length > 0) {
-            const priorityNode = nodes.find(n => {
-                const name = (n.data && n.data.file) ? n.data.file.toLowerCase() : '';
-                return name.includes('main.') || name.includes('app.') || name.includes('index.');
-            }) || (nodes.find(n => n.type !== 'external') || nodes[0]);
-            roots.push(priorityNode);
+        console.log("[FLOW_DEBUG] entryPoint", entryPoint?.data?.file || "null");
+        console.log("[FLOW_DEBUG] roots count", roots.length);
+        console.log("[FLOW_DEBUG] roots files", roots.slice(0, 10).map(r => r.data?.file || r.id));
+
+        // [Checkpoint A 진단] entry candidates 목록
+        const _entryCandidates = nodes
+            .map(n => n.data?.file)
+            .filter(Boolean)
+            .filter(file => {
+                const f = file.toLowerCase();
+                return (
+                    /extension\.[tj]s$/.test(f) ||
+                    /main\.[tj]s$/.test(f) ||
+                    /activate\.[tj]s$/.test(f) ||
+                    /server\.[tj]s$/.test(f) ||
+                    /daemon\.[tj]s$/.test(f) ||
+                    /index\.[tj]s$/.test(f)
+                );
+            });
+        console.log("[FLOW_DEBUG] entry candidates", _entryCandidates);
+
+        // [Checkpoint A 진단] edge 방향 확인
+        console.log("[FLOW_DEBUG] edge sample", edges.slice(0, 30).map(e => ({
+            from: nodes.find(n => n.id === e.from)?.data?.file || e.from,
+            to: nodes.find(n => n.id === e.to)?.data?.file || e.to
+        })));
+
+        // [Checkpoint A 진단] index 노드 incoming/outgoing
+        const _diagIndex = nodes.find(n => n.data?.file?.match(/index\.[tj]s$/));
+        if (_diagIndex) {
+            const _outgoing = edges.filter(e => e.from === _diagIndex.id);
+            const _incoming = edges.filter(e => e.to === _diagIndex.id);
+            console.log("[FLOW_DEBUG] index outgoing", _outgoing.length, _outgoing.slice(0, 5).map(e => nodes.find(n => n.id === e.to)?.data?.file || e.to));
+            console.log("[FLOW_DEBUG] index incoming", _incoming.length, _incoming.slice(0, 5).map(e => nodes.find(n => n.id === e.from)?.data?.file || e.from));
+        }
+
+        // [Checkpoint A 진단] root outgoing
+        const _rootId = roots[0]?.id;
+        if (_rootId) {
+            const _rootOut = edges.filter(e => e.from === _rootId).slice(0, 10);
+            console.log("[FLOW_DEBUG] root outgoing", _rootOut.map(e => ({
+                from: nodes.find(n => n.id === e.from)?.data?.file,
+                to: nodes.find(n => n.id === e.to)?.data?.file
+            })));
         }
 
         // 2. 의존성 트레이싱 (Reachability)
@@ -130,6 +210,17 @@ class FlowRenderer {
                 }
             }
         }
+
+        // [v0.3.32.1] Reachability Investigation Logs
+        console.log("[FLOW_DEBUG] reachable count", reachableIds.size);
+        console.log("[FLOW_DEBUG] reachable sample", Array.from(reachableIds).slice(0, 50).map(id => {
+            const n = nodes.find(x => x.id === id);
+            return n ? (n.data?.file || n.label || n.id) : id;
+        }));
+        console.log("[FLOW_DEBUG] reachable files count", Array.from(reachableIds).filter(id => {
+            const n = nodes.find(x => x.id === id);
+            return n && n.type === 'source';
+        }).length);
 
         // 3. 도달 가능한 노드 필터링 및 정렬
         // [Refine] Flow 뷰에서는 '순수 로직'만 표현하기 위해 문서(.md) 파일은 다시 제외
@@ -295,6 +386,54 @@ class FlowRenderer {
 
         console.log("[FLOW_DEBUG] buildFlow output", steps.length);
         console.log("[FLOW_DEBUG] step labels sample", steps.slice(0, 10).map(s => s.label));
+
+        // [Checkpoint A] START → Entry Point 흐름 검증
+        const startStep = steps.find(s => s.id === 'step_start');
+        const startNextLabels = (startStep?.allNexts || []).map(id => {
+            const s = steps.find(x => x.id === id);
+            return s ? s.label : id;
+        });
+        console.log("[FLOW_DEBUG] CHECKPOINT_A START.next", startNextLabels);
+        // START에서 3단계까지 추적
+        let traceId = startStep?.next;
+        const trace = ['START'];
+        for (let i = 0; i < 5 && traceId; i++) {
+            const s = steps.find(x => x.id === traceId);
+            if (!s) break;
+            trace.push(s.label);
+            traceId = s.next;
+        }
+        console.log("[FLOW_DEBUG] CHECKPOINT_A trace", trace.join(' → '));
+
+        // [v0.3.32.1] Graph structure verification — topHub detail
+        const topHub = steps
+            .map(s => ({
+                step: s,
+                out: (s.allNexts?.length || 0) + (s.next ? 1 : 0)
+            }))
+            .sort((a, b) => b.out - a.out)[0];
+        console.log("[FLOW_DEBUG] topHub detail", JSON.stringify({
+            id: topHub.step.id,
+            label: topHub.step.label,
+            next: topHub.step.next,
+            allNexts: topHub.step.allNexts
+        }, null, 2));
+
+        console.log("[FLOW_DEBUG] top hubs",
+            steps
+                .map(s => ({
+                    id: s.id,
+                    label: s.label,
+                    next: s.next,
+                    allNexts: s.allNexts?.length || 0
+                }))
+                .sort((a, b) =>
+                    ((b.allNexts) + (b.next ? 1 : 0)) -
+                    ((a.allNexts) + (a.next ? 1 : 0))
+                )
+                .slice(0, 20)
+        );
+
         return {
             id: 'flow_main',
             type: 'global', // [New] Distinguish from 'internal' flow
@@ -320,7 +459,44 @@ class FlowRenderer {
             adj[step.id] = [];
         });
 
-        // Build edges
+        // [v0.3.32.1 Fix] Detect and break cycles using DFS back-edge detection
+        const visited = new Set();
+        const recStack = new Set();
+        const backEdges = new Set();
+        
+        // Helper map for fast lookup
+        const stepMap = {};
+        flow.steps.forEach(s => { stepMap[s.id] = s; });
+
+        const detectCycle = (u) => {
+            visited.add(u);
+            recStack.add(u);
+            const step = stepMap[u];
+            if (step) {
+                const nIds = [...new Set([
+                    ...(step.next ? [step.next] : []),
+                    ...(step.alternateNext ? [step.alternateNext] : []),
+                    ...(step.allNexts || []),
+                    ...(step.roots || [])
+                ])];
+                nIds.forEach(v => {
+                    if (!visited.has(v)) detectCycle(v);
+                    else if (recStack.has(v)) backEdges.add(`${u}->${v}`);
+                });
+            }
+            recStack.delete(u);
+        };
+        
+        // Ensure all components are visited (prefer starting from 'step_start' if exists)
+        if (stepMap['step_start']) detectCycle('step_start');
+        flow.steps.forEach(s => {
+            if (!visited.has(s.id)) detectCycle(s.id);
+        });
+        
+        console.log("[FLOW_DEBUG] Detected back-edges (cycles):", Array.from(backEdges));
+        this.backEdges = backEdges;
+
+        // Build edges (ignoring back-edges to maintain DAG property for Kahn's)
         flow.steps.forEach(step => {
             const nextIdsRaw = step.allNexts || [];
             const nextIds = [...new Set([
@@ -331,38 +507,76 @@ class FlowRenderer {
             ])];
 
             nextIds.forEach(nextId => {
-                if (inDegree[nextId] !== undefined) {
+                if (inDegree[nextId] !== undefined && !backEdges.has(`${step.id}->${nextId}`)) {
                     inDegree[nextId]++;
                     adj[step.id].push(nextId);
                 }
             });
         });
 
-        // 2. Assign Levels (Topological-based Longest Path)
-        // [Opt] Initial queue: nodes with in-degree 0
-        const queue = [];
-        flow.steps.forEach(step => {
-            if (inDegree[step.id] === 0) {
-                queue.push(step.id);
-                levels[step.id] = 0;
-            }
+        // [v0.3.32.1] Build parentsMap (reverse adjacency) for L3 validation
+        const parentsMap = {};
+        flow.steps.forEach(step => { parentsMap[step.id] = []; });
+        Object.entries(adj).forEach(([parentId, childIds]) => {
+            childIds.forEach(childId => {
+                if (parentsMap[childId]) parentsMap[childId].push(parentId);
+            });
         });
 
-        // Use a simple BFS but WITHOUT re-evaluating visited nodes to prevent cycles from hanging
-        // Cycles are handled by the rank comparison (currentLevel + 1 > existingLevel)
+        // [v0.3.32.1] Adjacency structure diagnostics
+        console.log("[FLOW_DEBUG] adjacency sample",
+            Object.entries(adj).slice(0, 20).map(([k, v]) => ({
+                node: k,
+                outDegree: v.length
+            }))
+        );
+        console.log("[FLOW_DEBUG] max out degree",
+            Math.max(...Object.values(adj).map(v => v.length)));
+        console.log("[FLOW_DEBUG] zero out degree",
+            Object.values(adj).filter(v => v.length === 0).length);
+        console.log("[FLOW_DEBUG] highest out degree nodes",
+            Object.entries(adj)
+                .map(([k, v]) => ({ node: k, outDegree: v.length }))
+                .sort((a, b) => b.outDegree - a.outDegree)
+                .slice(0, 10)
+        );
+        console.log("[FLOW_DEBUG] END inDegree", inDegree['step_end']);
+        console.log("[FLOW_DEBUG] END adj out", adj['step_end']?.length);
+        console.log("[FLOW_DEBUG] END incoming",
+            flow.steps
+                .filter(s => s.next === "step_end" || s.allNexts?.includes("step_end"))
+                .map(s => s.label)
+        );
+
+        // 2. Assign Levels (Longest-path DAG layering via Kahn's algorithm)
+        flow.steps.forEach(step => { levels[step.id] = 0; });
+
+        const inDeg = {};
+        flow.steps.forEach(step => { inDeg[step.id] = inDegree[step.id]; });
+
+        const topoQueue = [];
+        flow.steps.forEach(step => {
+            if (inDeg[step.id] === 0) topoQueue.push(step.id);
+        });
+
+        // [v0.3.32.1] Kahn initial roots
+        const _stepMapForLevel = {};
+        flow.steps.forEach(s => { _stepMapForLevel[s.id] = s; });
+        console.log("[FLOW_DEBUG] initial roots (inDeg=0)",
+            Object.keys(inDeg).filter(id => inDeg[id] === 0).map(id => _stepMapForLevel[id]?.label || id)
+        );
+
         let processedCount = 0;
-        while (queue.length > 0) {
-            const current = queue.shift();
+        while (topoQueue.length > 0) {
+            const current = topoQueue.shift();
             processedCount++;
             const currentLevel = levels[current] || 0;
 
             const neighbors = adj[current] || [];
             neighbors.forEach(neighbor => {
-                const existingLevel = levels[neighbor];
-                if (existingLevel === undefined || currentLevel + 1 > existingLevel) {
-                    levels[neighbor] = currentLevel + 1;
-                    queue.push(neighbor);
-                }
+                levels[neighbor] = Math.max(levels[neighbor], currentLevel + 1);
+                inDeg[neighbor]--;
+                if (inDeg[neighbor] === 0) topoQueue.push(neighbor);
             });
 
             if (processedCount > 5000) {
@@ -371,7 +585,144 @@ class FlowRenderer {
             }
         }
 
-        // 3. X-Axis Balancing (Group by level)
+        // Cycle detection: report unprocessed nodes
+        const unprocessed = flow.steps
+            .filter(step => inDeg[step.id] > 0)
+            .map(step => ({
+                id: step.id,
+                label: step.label,
+                remainingInDegree: inDeg[step.id]
+            }));
+
+        if (processedCount !== flow.steps.length) {
+            console.warn("[FLOW_DEBUG] cycle detected", {
+                processed: processedCount,
+                total: flow.steps.length,
+                unprocessed
+            });
+        }
+
+        // [v0.3.32.1] Blocked nodes diagnostic — which nodes have inDeg > 0?
+        const blocked = Object.entries(inDeg)
+            .filter(([_, deg]) => deg > 0)
+            .map(([id, deg]) => ({
+                id,
+                deg,
+                label: _stepMapForLevel[id]?.label || id
+            }));
+        console.log("[FLOW_DEBUG] blocked nodes (inDeg > 0)", blocked.slice(0, 30));
+        // [v0.3.32.1] User Requested Diagnostics
+        console.log("[FLOW_DEBUG] step_57", stepMap["step_57"]);
+        console.log("[FLOW_DEBUG] step_16", stepMap["step_16"]);
+        console.log("[FLOW_DEBUG] cycle node indegree (step_57)", inDeg["step_57"]);
+        console.log("[FLOW_DEBUG] cycle node outgoing (step_57)", adj["step_57"]);
+        console.log("[FLOW_DEBUG] END level after longest-path", levels["step_end"]);
+
+        // [v0.3.32.1] Verify longest-path actually computed correct levels
+        // _stepMapForLevel is already declared above
+
+        console.log("[FLOW_DEBUG] deepest nodes after longest-path",
+            Object.entries(levels)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 20)
+        );
+
+        console.log("[FLOW_DEBUG] END parents current levels",
+            (parentsMap["step_end"] || []).map(id => ({
+                id,
+                label: _stepMapForLevel[id]?.label || id,
+                level: levels[id]
+            }))
+        );
+
+        console.log("[FLOW_DEBUG] processedCount", processedCount, "/", flow.steps.length);
+
+        // [v0.3.32.1] Level diagnostics
+        console.log("[FLOW_DEBUG] highest level nodes",
+            Object.entries(levels)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 20)
+        );
+        console.log("[FLOW_DEBUG] lowest level nodes",
+            Object.entries(levels)
+                .sort((a, b) => a[1] - b[1])
+                .slice(0, 20)
+        );
+        console.log("[FLOW_DEBUG] node degree top20",
+            Object.entries(adj)
+                .map(([k, v]) => ({ node: k, out: v.length }))
+                .sort((a, b) => b.out - a.out)
+                .slice(0, 20)
+        );
+
+        // [FLOW_DEBUG] Connected Component Detection
+        const _dbgUndirected = {};
+        flow.steps.forEach(s => { _dbgUndirected[s.id] = new Set(); });
+        flow.steps.forEach(step => {
+            const nextIds = [...new Set([
+                ...(step.next ? [step.next] : []),
+                ...(step.alternateNext ? [step.alternateNext] : []),
+                ...(step.allNexts || []),
+                ...(step.roots || [])
+            ])];
+            nextIds.forEach(nid => {
+                if (_dbgUndirected[nid]) {
+                    _dbgUndirected[step.id].add(nid);
+                    _dbgUndirected[nid].add(step.id);
+                }
+            });
+        });
+
+        const _dbgVisited = new Set();
+        const _dbgComponents = [];
+        flow.steps.forEach(step => {
+            if (_dbgVisited.has(step.id)) return;
+            const comp = [];
+            const q = [step.id];
+            while (q.length > 0) {
+                const id = q.shift();
+                if (_dbgVisited.has(id)) continue;
+                _dbgVisited.add(id);
+                comp.push(id);
+                _dbgUndirected[id].forEach(n => { if (!_dbgVisited.has(n)) q.push(n); });
+            }
+            _dbgComponents.push(comp);
+        });
+
+        const _stepMap = {};
+        flow.steps.forEach(s => { _stepMap[s.id] = s; });
+        _dbgComponents.forEach((comp, i) => {
+            const hasStart = comp.includes('step_start');
+            const hasEnd = comp.includes('step_end');
+            const labels = comp.map(id => _stepMap[id]?.label || id);
+            console.log(`[FLOW_DEBUG] Component #${i} start=${hasStart} end=${hasEnd}`, labels);
+        });
+        console.log("[FLOW_DEBUG] component summary", _dbgComponents.map((comp, idx) => ({
+            idx,
+            size: comp.length,
+            hasStart: comp.includes("step_start"),
+            hasClient: comp.some(id => id.startsWith("client::"))
+        })));
+
+        // [v0.3.32.1 Fix] Level remapping: compress sparse levels to contiguous range
+        // Without this, levels like {0,1,2,172,173,174,175} cause Y coordinates to span 31000px+
+        try {
+            const uniqueLevels = [...new Set(Object.values(levels))].sort((a, b) => a - b);
+            console.log("[FLOW_DEBUG] uniqueLevels raw", uniqueLevels);
+            const levelRemap = {};
+            uniqueLevels.forEach((origLevel, newIndex) => { levelRemap[origLevel] = newIndex; });
+            flow.steps.forEach(step => { levels[step.id] = levelRemap[levels[step.id]] || 0; });
+            console.log("[FLOW_DEBUG] level remap OK", uniqueLevels.length, "unique -> compact 0.." + (uniqueLevels.length - 1));
+        } catch(e) {
+            console.error("[FLOW_DEBUG] level remap CRASH", e);
+        }
+
+        // [v0.3.32.1] END level diagnostics AFTER remap
+        console.log("[FLOW_DEBUG] END level AFTER remap", levels["step_end"]);
+
+        // [v0.3.32.1] Simplified Layout: Pure level-based grid
+        // Removed: parentsMap, parentOffsetSum, offsets, occupied, spiral search, root centering
+        // Goal: Predictable hierarchical layout for DAG validation
         const nodesByLevel = {};
         flow.steps.forEach(step => {
             const lvl = levels[step.id] || 0;
@@ -379,76 +730,102 @@ class FlowRenderer {
             nodesByLevel[lvl].push(step.id);
         });
 
-        const offsets = {};
+        // [v0.3.32.1] nodesByLevel structure dump
+        console.log("[FLOW_DEBUG] nodesByLevel",
+            Object.fromEntries(
+                Object.entries(nodesByLevel).map(([lvl, nodes]) => [
+                    `L${lvl}`,
+                    nodes.map(n => ({
+                        id: n,
+                        label: flow.steps.find(s => s.id === n)?.label
+                    }))
+                ])
+            )
+        );
+        console.log("[FLOW_DEBUG] nodesByLevel counts",
+            Object.fromEntries(
+                Object.entries(nodesByLevel).map(([lvl, nodes]) => [`L${lvl}`, nodes.length])
+            )
+        );
 
-        // [Opt] Build reverse-adjacency map (children -> parents) for O(1) parent lookup
-        const parentsMap = {};
-        Object.entries(adj).forEach(([parentId, childIds]) => {
-            childIds.forEach(childId => {
-                if (!parentsMap[childId]) parentsMap[childId] = [];
-                parentsMap[childId].push(parentId);
-            });
-        });
+        // [v0.3.32.1] L3 parents dump — verify parent relationships before Barycenter
+        // stepMap is already declared above
+        const level3Nodes = nodesByLevel["3"] || nodesByLevel[3] || [];
+        console.log("[FLOW_DEBUG] L3 parents",
+            level3Nodes.map(id => ({
+                id,
+                label: stepMap[id]?.label,
+                parents: (parentsMap[id] || []).map(p => stepMap[p]?.label || p)
+            }))
+        );
 
-        // Root nodes center
-        const rootsInLevel0 = nodesByLevel[0] || [];
-        rootsInLevel0.forEach((rootId, idx) => {
-            const shift = (idx % 2 === 0 ? 1 : -1) * Math.ceil(idx / 2);
-            offsets[rootId] = shift;
-        });
+        // [v0.3.32.1] END parents level check — verify END is at correct level
+        const endParents = parentsMap['step_end'] || [];
+        console.log("[FLOW_DEBUG] END parents",
+            endParents.map(id => ({
+                id,
+                label: stepMap[id]?.label,
+                level: levels[id]
+            }))
+        );
 
-        // Flow downwards, place children near parents
-        Object.keys(nodesByLevel).sort((a, b) => a - b).forEach(lvl => {
-            const levelNum = parseInt(lvl);
-            if (levelNum === 0) return;
+        // [v0.3.32.1] Barycenter Ordering Phase 1 (Single Pass: Top -> Bottom)
+        // Removes arbitrary MAX_COLS grid and applies centered layer positioning.
+        const sortedNodesByLevel = {};
+        const levelKeys = Object.keys(nodesByLevel).map(Number).sort((a, b) => a - b);
+        
+        levelKeys.forEach(levelNum => {
+            const nodesInLevel = nodesByLevel[levelNum];
+            
+            if (levelNum === 0 || !sortedNodesByLevel[levelNum - 1]) {
+                sortedNodesByLevel[levelNum] = [...nodesInLevel];
+            } else {
+                const prevLevelNodes = sortedNodesByLevel[levelNum - 1];
+                const prevIndexMap = new Map();
+                prevLevelNodes.forEach((id, idx) => prevIndexMap.set(id, idx));
 
-            const nodesInLevel = nodesByLevel[lvl];
-            const occupied = new Set();
-
-            nodesInLevel.forEach(nodeId => {
-                // Find parent(s) to align X coordinate - [Opt] using parentsMap instead of iterating all keys
-                let parentOffsetSum = 0;
-                let parentCount = 0;
-
-                const parents = parentsMap[nodeId] || [];
-                parents.forEach(parentId => {
-                    if (offsets[parentId] !== undefined) {
-                        parentOffsetSum += offsets[parentId];
-                        parentCount++;
+                const withBarycenter = nodesInLevel.map((nodeId, originalIdx) => {
+                    // Filter parents to only those in the immediate previous level
+                    const parents = (parentsMap[nodeId] || []).filter(p => prevIndexMap.has(p));
+                    if (parents.length === 0) {
+                        return { nodeId, barycenter: originalIdx, hasParents: false };
                     }
+                    const sum = parents.reduce((acc, p) => acc + prevIndexMap.get(p), 0);
+                    return { nodeId, barycenter: sum / parents.length, hasParents: true };
                 });
 
-                let idealOffset = parentCount > 0 ? Math.round(parentOffsetSum / parentCount) : 0;
+                // Stable sort by barycenter
+                withBarycenter.sort((a, b) => {
+                    if (a.barycenter === b.barycenter) return 0;
+                    return a.barycenter - b.barycenter;
+                });
+                sortedNodesByLevel[levelNum] = withBarycenter.map(item => item.nodeId);
+            }
+            
+            // X Centering logic
+            const sortedNodes = sortedNodesByLevel[levelNum];
+            const rowWidth = (sortedNodes.length - 1) * stepWidth;
+            const startXCentered = startX - (rowWidth / 2);
 
-                // Spiral out to find empty slot
-                let actualOffset = idealOffset;
-                let shift = 0;
-                while (occupied.has(actualOffset)) {
-                    shift = (shift <= 0) ? -shift + 1 : -shift;
-                    actualOffset = idealOffset + shift;
-                }
-
-                occupied.add(actualOffset);
-                offsets[nodeId] = actualOffset;
+            sortedNodes.forEach((nodeId, idx) => {
+                const x = startXCentered + (idx * stepWidth);
+                const y = startY + (levelNum * stepHeight * 1.5); // Add slightly more vertical padding for readability
+                positions[nodeId] = { x, y };
             });
         });
 
-        // 4. Final Position Assignment
-        flow.steps.forEach(step => {
-            const level = levels[step.id] || 0;
-            const offset = offsets[step.id] || 0;
-
-            const x = startX + (offset * stepWidth);
-            const y = startY + (level * stepHeight);
-
-            // [v0.2.16 Safety] Guard against NaN/Infinity to prevent UI freeze
-            if (Number.isFinite(x) && Number.isFinite(y)) {
-                positions[step.id] = { x, y };
-            } else {
-                console.error(`[SYNAPSE] Invalid coordinates for node ${step.id}: (${x}, ${y})`);
-                positions[step.id] = { x: startX, y: startY + (level * stepHeight) }; // Fallback
-            }
-        });
+        // [v0.3.32.1] Position diagnostics
+        console.log("[FLOW_DEBUG] START pos", positions["step_start"]);
+        console.log("[FLOW_DEBUG] END pos", positions["step_end"]);
+        console.table(
+            flow.steps.map(s => ({
+                id: s.id,
+                label: s.label,
+                level: levels[s.id],
+                x: positions[s.id]?.x,
+                y: positions[s.id]?.y
+            }))
+        );
 
         return positions;
     }
@@ -456,6 +833,23 @@ class FlowRenderer {
     renderFlow(ctx, flow) {
         if (!flow || !flow.steps) return;
         const positions = this.layoutFlow(flow);
+
+        // [v0.3.32.1] Render diagnostics
+        const renderedCount = flow.steps.filter(s => !s.hidden && positions[s.id]).length;
+        const posValues = Object.values(positions);
+        const yValues = posValues.map(p => p.y);
+        const minY = Math.min(...yValues);
+        const maxY = Math.max(...yValues);
+        const xValues = posValues.map(p => p.x);
+        const minX = Math.min(...xValues);
+        const maxX = Math.max(...xValues);
+        console.log("[FLOW_DEBUG] renderFlow total", flow.steps.length, "rendered", renderedCount, "hidden", flow.steps.filter(s => s.hidden).length);
+        console.log("[FLOW_DEBUG] renderFlow bounds", {minX, maxX, minY, maxY, spanX: maxX-minX, spanY: maxY-minY});
+        console.log("[FLOW_DEBUG] renderFlow level distribution", Object.entries(positions).reduce((acc, [id, p]) => {
+            const level = Math.round((p.y - 100) / 180);
+            acc[level] = (acc[level] || 0) + 1;
+            return acc;
+        }, {}));
 
         // [New] 노드 논리적 그룹화 (Grouping)
         // 이름의 첫 단어(prefix)가 같은 노드들을 묶어 시각적 클러스터 박스를 렌더링
@@ -549,8 +943,15 @@ class FlowRenderer {
                 const isToHovered = targetNode && this.engine.hoveredNode && this.engine.hoveredNode.id === targetNode.id;
 
                 const isPathHighlighted = isFromSelected || isToSelected || isFromHovered || isToHovered;
+                const isCycle = this.backEdges && this.backEdges.has(`${step.id}->${nextId}`);
 
-                this.renderConnection(ctx, pos.x, pos.y, nextPos.x, nextPos.y, label, edgeType, isPathHighlighted);
+                // [Fix] Client Node Edge Coloring (Magenta)
+                const localClientId = (typeof window !== 'undefined' && window.connectedUser?.userId) || '';
+                const fromCl = step.node && (step.node.clientLayer || (step.node.data && step.node.data.clientLayer));
+                const toCl = targetNode && (targetNode.clientLayer || (targetNode.data && targetNode.data.clientLayer));
+                const isClientEdge = (fromCl && fromCl !== localClientId) || (toCl && toCl !== localClientId);
+
+                this.renderConnection(ctx, pos.x, pos.y, nextPos.x, nextPos.y, label, edgeType, isPathHighlighted, isCycle, isClientEdge);
             });
 
             // [New] START에서 여러 루트로 가는 멀티 연결선 지원
@@ -558,7 +959,12 @@ class FlowRenderer {
                 step.roots.forEach(rootId => {
                     const rootPos = positions[rootId];
                     if (rootPos) {
-                        this.renderConnection(ctx, pos.x, pos.y, rootPos.x, rootPos.y);
+                        const targetNode = flow.steps.find(s => s.id === rootId)?.node;
+                        const toCl = targetNode && (targetNode.clientLayer || (targetNode.data && targetNode.data.clientLayer));
+                        const localClientId = (typeof window !== 'undefined' && window.connectedUser?.userId) || '';
+                        const isClientEdge = toCl && toCl !== localClientId;
+                        const isCycle = this.backEdges && this.backEdges.has(`step_start->${rootId}`);
+                        this.renderConnection(ctx, pos.x, pos.y, rootPos.x, rootPos.y, null, null, false, isCycle, isClientEdge);
                     }
                 });
             }
@@ -586,7 +992,9 @@ class FlowRenderer {
             return;
         }
 
-        const isClientNode = step.node && (step.node.clientLayer || (step.node.data && step.node.data.clientLayer));
+        const cl = step.node && (step.node.clientLayer || (step.node.data && step.node.data.clientLayer));
+        const localClientId = (typeof window !== 'undefined' && window.connectedUser?.userId) || '';
+        const isClientNode = cl && cl !== localClientId;
 
         if (step.type === 'process') {
             ctx.fillStyle = isClientNode ? '#3c0040' : theme.FLOW.PROCESS.bg;
@@ -633,7 +1041,7 @@ class FlowRenderer {
         };
     }
 
-    renderConnection(ctx, x1, y1, x2, y2, label, type, isHighlighted = false) {
+    renderConnection(ctx, x1, y1, x2, y2, label, type, isHighlighted = false, isCycle = false, isClientEdge = false) {
         const isLoop = type === 'loop_back' || y2 < y1;
         const arrowSize = 10;
         const theme = (typeof SYNAPSE_THEME !== 'undefined') ? SYNAPSE_THEME : (window.SYNAPSE_THEME || null);
@@ -644,6 +1052,17 @@ class FlowRenderer {
         let strokeColor = edgeStyle.color; 
         let lineWidth = isLoop ? (edgeStyle.thickness + 1) : edgeStyle.thickness;
         let dash = edgeStyle.dash || [];
+
+        if (isClientEdge) {
+            strokeColor = '#ff00ff'; // Magenta for client nodes
+            lineWidth = isLoop ? 3 : 2;
+        }
+
+        if (isCycle) {
+            strokeColor = '#fb4934'; // Bright red for cycle edges
+            lineWidth += 1;
+            dash = [8, 4]; // Distinct dash pattern for cycles
+        }
 
         if (isHighlighted) {
             strokeColor = (theme && theme.FLOW?.CONNECTION) ? theme.FLOW.CONNECTION.HIGHLIGHT : '#fabd2f';
@@ -656,8 +1075,8 @@ class FlowRenderer {
                 const pulseSpeed = theme ? theme.GLOW.PULSE_SPEED : 200;
                 const multiplier = theme ? theme.ANIMATION.DASH_OFFSET_MULTIPLIER : 2.5;
                 
-                this.ctx.shadowBlur = baseBlur + pulseRange * Math.sin(Date.now() / pulseSpeed);
-                this.ctx.shadowColor = strokeColor;
+                ctx.shadowBlur = baseBlur + pulseRange * Math.sin(Date.now() / pulseSpeed);
+                ctx.shadowColor = strokeColor;
                 dash = [12, 6];
                 ctx.lineDashOffset = -this.engine.animationOffset * multiplier;
             }
@@ -4972,6 +5391,8 @@ class CanvasEngine {
         const rawNodes = projectState.nodes || [];
         const rawEdges = projectState.edges || [];
 
+        console.log("[FLOW_DEBUG] loadProjectState raw nodes", rawNodes.length, "raw edges", rawEdges.length);
+
         // 1. Separate nodes into Canvas pool and Documentation/Blacklist pool
         const canvasNodes = [];
         const documentationNodes = [];
@@ -5001,6 +5422,8 @@ class CanvasEngine {
                 canvasNodes.push(node);
             }
         });
+
+        console.log("[FLOW_DEBUG] loadProjectState canvasNodes", canvasNodes.length, "docNodes", documentationNodes.length);
 
         // 2. Filter Edges to only connect visible or documentation nodes
         const activeIds = new Set([...canvasNodes, ...documentationNodes].map(n => n.id));

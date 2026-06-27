@@ -37,6 +37,7 @@ export interface SymbolIndexSchema {
     folderTree: FolderTree | null;
     fileRegistry: Map<string, FileEntry>;
     functionCatalog: FunctionEntry[];
+    symbolCatalog: Map<string, string>;
 }
 
 function generateFunctionId(name: string, filePath: string, className: string | null): string {
@@ -67,7 +68,8 @@ export class SymbolIndex {
             createdAt: Date.now(),
             folderTree: null,
             fileRegistry: new Map(),
-            functionCatalog: []
+            functionCatalog: [],
+            symbolCatalog: new Map()
         };
     }
 
@@ -130,6 +132,18 @@ export class SymbolIndex {
             if (className) entry.classCount++;
             else entry.functionCount++;
         }
+    }
+
+    addSymbol(filePath: string, symbolName: string): void {
+        if (!this.index || !symbolName) return;
+        if (!this.index.symbolCatalog.has(symbolName)) {
+            this.index.symbolCatalog.set(symbolName, filePath);
+        }
+    }
+
+    lookupSymbol(symbolName: string): string | undefined {
+        if (!this.index) return undefined;
+        return this.index.symbolCatalog.get(symbolName);
     }
 
     getFileRegistry(): Map<string, FileEntry> {

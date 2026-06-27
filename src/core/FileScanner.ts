@@ -61,6 +61,19 @@ export class FileScanner {
                 return summary;
             }
 
+            // [v0.3.32.2] Universal Cross-Project / Network Link Parser
+            const networkLinkRegex = /\[SYNAPSE_NETWORK_LINK\][\s\S]*?Target:\s*([^\r\n]+)/gi;
+            let netMatch;
+            while ((netMatch = networkLinkRegex.exec(content)) !== null) {
+                const rawPath = netMatch[1].trim();
+                if (rawPath) {
+                    const cleanRef = path.basename(rawPath, path.extname(rawPath));
+                    if (cleanRef && !summary.references.some(r => r.target === cleanRef)) {
+                        summary.references.push({ target: cleanRef, type: 'network_link' });
+                    }
+                }
+            }
+
             const ext = path.extname(filePath);
 
             if (ext === '.py') {
@@ -366,6 +379,7 @@ export class FileScanner {
                 if (target && !['std', 'core', 'alloc', 'prelude'].includes(target.toLowerCase())) {
                     if (!summary.references.some(r => r.target === target)) {
                         summary.references.push({ target, type: 'dependency', nodeId: idMatch, isApproved: true });
+                        console.log(`[FLOW_DEBUG] RUST_USE parsed: ${target} from ${rawPath}`);
                     }
                 }
             }
@@ -387,6 +401,7 @@ export class FileScanner {
                 const modName = modMatch[2];
                 if (modName && !summary.references.some(r => r.target === modName)) {
                     summary.references.push({ target: modName, type: 'dependency', nodeId: idMatch, isApproved: !isPendingOrDeleted });
+                    console.log(`[FLOW_DEBUG] RUST_MOD parsed: ${modName} from line: ${trimmed.substring(0, 50)}`);
                 }
             }
         }

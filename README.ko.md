@@ -262,8 +262,14 @@ SYNAPSE는 아키텍처 구조를 기반으로 논리적 흐름을 보여주는 
 - 흩어져 있는 단독 노드들이 아닌 서로 연결된 논리적 맥락을 가진 노드들이 존재해야 합니다.
 - UI 상단의 `View -> Flow View` 메뉴를 클릭하여 확인할 수 있습니다.
 
-![Flow View Screenshot](assets/flowview.png)
-![Flow View Screenshot 2](assets/flowview2.png)
+![Flow View Screenshot](assets/network/flowview.png)
+순서도 이미지
+
+![Flow View Screenshot 2](assets/network/flow2.png)
+순서도에서도 특정 노드의 정보 확인이 가능하다
+
+![Network Attached Flow View](assets/network/network_attached_flowview.png)
+네트워크에 접속한 클라이언트의 로직 역시 순서도에 포함된다.
 
 ---
 
@@ -281,7 +287,13 @@ Harvest는 일반적인 양방향 동기화(Synchronization)를 목표로 하지
 Client → Snapshot → Server → Archive
 ```
 
-Harvest의 목적은 코드 통합이 아니라 **안전한 수집과 보존**입니다.
+![Network Attached File](assets/network/network_attached_file.png)
+네트워크에 접속한 클라이언트의 파일이 시냅스 화면에 직접 표시되어 로직 검증 가능.
+
+![Harvest](assets/network/harvest.png)
+네트워크에 접속한 클라이언트의 파일들 중 검증된 파일들만 수확하듯 서버에 저장할 수 있다.
+
+Harvest의 목적은 코드의 통합이 아니라, **안전한 수집 및 보존**입니다.
 
 ### How It Works
 
@@ -450,6 +462,8 @@ SYNAPSE는 코드 중심 개발의 한계를 극복하기 위해 만들어졌습
 
 | 버전 | 날짜 | 설명 |
 | :--- | :--- | :--- |
+| **v0.3.32.1** | 2026-06-27 | **크로스-네트워크 추적 및 시맨틱 순서도 도입**: 순서도의 렌더링 품질을 크게 개선했습니다(단일 패스 Barycenter 정렬로 엣지 교차 최소화, 붉은 점선 백엣지 시각화). `[SYNAPSE_NETWORK_LINK]` 매크로를 도입하여 언어의 문법 한계를 넘은 명시적 크로스-프로젝트 의존성 파서를 구현했습니다. 로컬 노드와 원격 클라이언트 노드를 정확히 식별(IFF 로직)하여 렌더링 오류를 수정하고, Harvest를 통한 분산 아키텍처 DAG 병합을 순서도 뷰에서 완벽하게 증명했습니다. |
+| **v0.3.32** | 2026-06-26 | **협업 노드 가시성 복구**: 클라이언트 노드 전체가 `!isGhost` 필터에 걸려 순서도에서 증발하던 버그를 100% 수정했습니다. `debug`/`survival`/`flow` 단계 전반에 걸쳐 분열되었던 클라이언트 식별 필터를 하나로 통일했습니다. 클라이언트 연결 시 `buildFlow()` 엔진이 무음 크래시를 일으키던 `reasons` 참조 오류를 패치했습니다. 기여 엔티티 그래프 Phase 0 (파일경로 + 유저ID 고유성 보장) 검증 완료. |
 | **v0.3.31** | 2026-06-25 | **진단 안정화 및 관찰 가능성 강화**: `doc`/`file`/`folder` 타입 노드의 허위 Necrosis 경고 수정. Pressure 계산식을 `criticalIssues / totalNodes` 비율 기반으로 정규화. Ghost Cluster(`cluster_ghosts`, `doc_shelf`)를 의존성 힌트 대상에서 제외. `clientTimestamp` 기반 Stale 불투명도 시각화(Active/Stale/Offline) 추가. 툴팁에 `"[username] Updated Xm ago"` 표시. 클라이언트 크래시 후 디버깅 단서 보존을 위한 15분 Soft Disconnect 캐시 보존 구현. |
 | **v0.3.30.2** | 2026-06-25 | **보안 검증 및 수확(Harvest) 안정화**: 6대 크리티컬 보안 위협(Path Traversal, 권한 우회, SSE 오염, 락 우회 등) 전면 차단 확인. 어드민 UI 포트 충돌 및 403 인증 오류 수정. 수확 실행 시 발생하던 `unshift` 에러를 방어하기 위해 레거시 배열 포맷의 `accounts.json` 및 `synapse_history.json` 파싱 역호환성 추가. |
 | **v0.3.30.1** | 2026-06-22 | **UI/UX 개선 및 기능 정리**: 노드와 엣지 중첩 호버 시 발생하는 Z-Index 겹침 현상을 해결하기 위한 툴팁 병합 로직(Merge) 도입. 시각적 구조와 맞지 않고 오류가 잦던 Tree View 모드 UI 완전 비활성화. |

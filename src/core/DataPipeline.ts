@@ -68,6 +68,11 @@ export class DataPipeline {
             if (fnName) symbolIndex.addFunction(item.filePath, fnName, clsName, line);
           }
         }
+        for (const item of summaries) {
+          for (const cls of item.summary.classes) {
+            if (cls) symbolIndex.addSymbol(item.filePath, cls);
+          }
+        }
       }
 
       // DATA 수집 완료 -> Phase 전이
@@ -217,9 +222,15 @@ export class DataPipeline {
     }
 
     // 2. Analyze references and create edges + ghosts
+    let symbolResolvedCount = 0;
+    let unresolvedCount = 0;
     for (const item of summaries) {
       for (const ref of item.summary.references) {
         let targetNodeId = ref.target;
+        
+        // [v0.3.32.1] Resolution Debug
+        const _origTarget = targetNodeId;
+        const _inNodeIds = nodeIds.has(targetNodeId);
         
         if (!nodeIds.has(targetNodeId)) {
           const matchedId = Array.from(nodeIds).find(id => {
@@ -227,10 +238,25 @@ export class DataPipeline {
             const targetStem = path.basename(targetNodeId, path.extname(targetNodeId)).toLowerCase();
             return nodeStem === targetStem;
           });
-          if (matchedId) targetNodeId = matchedId;
+          if (matchedId) {
+            targetNodeId = matchedId;
+          } else {
+            const symbolIndex = SymbolIndex.getInstance();
+            const resolvedPath = symbolIndex.lookupSymbol(targetNodeId);
+            if (resolvedPath) {
+              targetNodeId = resolvedPath;
+              symbolResolvedCount++;
+            }
+          }
+        }
+
+        // [v0.3.32.1] Resolution Result Debug
+        if (item.filePath.includes('main.rs')) {
+          console.log(`[FLOW_DEBUG] RESOLVE ${item.filePath} -> ref:${_origTarget} type:${ref.type} direct:${_inNodeIds} resolved:${targetNodeId} isNode:${nodeIds.has(targetNodeId)}`);
         }
 
         if (!nodeIds.has(targetNodeId)) {
+          unresolvedCount++;
           const lowerId = targetNodeId.toLowerCase();
           const ghostBlacklist = ['os', 'sys', 'math', 'json', 'datetime', 'vscode', 'path', 'fs'];
           const isBlacklisted = ghostBlacklist.some(b => lowerId === b || lowerId.startsWith(b + '.'));
@@ -279,6 +305,9 @@ export class DataPipeline {
         edges.push(newEdge);
       }
     }
+
+    console.log(`[FLOW_DEBUG] symbol resolved ${symbolResolvedCount} unresolved ${unresolvedCount}`);
+    console.log(`[FLOW_DEBUG] pipeline exit nodes ${nodes.length} edges ${edges.length}`);
 
     return { nodes, edges, clusters };
   }

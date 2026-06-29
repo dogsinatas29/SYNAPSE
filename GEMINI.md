@@ -635,4 +635,28 @@ dashData[dashCnt++] = styleDash[0] !== undefined ? styleDash[0] : 0.0;
 dashData[dashCnt++] = styleDash[1] !== undefined ? styleDash[1] : 0.0;
 ```
 
+## 🏗️ Node & Cluster Lifecycle Rules (버퍼 → 리저브드 → 마스터)
 
+SYNAPSE에서 수동으로 생성되는 노드와 클러스터의 상태 전이 규칙은 아키텍처의 무결성과 물리 엔진 레이아웃(겹침 방지)을 유지하기 위해 엄격하게 관리됩니다.
+
+### 1. 🟢 버퍼 노드 생성 (Buffer State)
+- **트리거**: 사용자가 UI 캔버스에서 더블클릭 혹은 메뉴를 통해 수동으로 제네릭 노드(파일)를 생성할 때.
+- **처리 위치**: `src/webview/CanvasPanel.ts` 내 `handleCreateManualNode` 함수
+- **규칙 명세**:
+  - 생성된 노드는 물리적 파일 시스템에 아직 온전히 코드로 반영되지 않은 "고립된 아이디어"로 간주되어, 기본적으로 **`sys_cluster_buffer`** (버퍼 클러스터)에 할당됩니다.
+  - 사용자가 확장자를 생략했을 경우, 프로젝트 내 가장 빈번한 확장자(예: TypeScript 프로젝트면 `.ts`)를 동적으로 추론하여 자동 할당합니다.
+
+### 2. 🟡 리저브드 승격 (Reserved Promotion)
+- **트리거**: 고립되어 있던 버퍼 상태의 노드가 다른 노드와 **엣지(Edge)로 연결**되는 순간.
+- **처리 위치**: `src/webview/CanvasPanel.ts` 내 웹뷰로부터 `pushEdge` 메시지를 수신하는 블록의 `promoteToReserved` 함수
+- **규칙 명세**:
+  - 시스템은 엣지가 연결되는 즉시 해당 노드가 단순한 메모장 수준을 넘어 실제 아키텍처 흐름에 개입(참여)했다고 판단합니다.
+  - 노드의 소속을 `sys_cluster_buffer`에서 **`sys_cluster_reserved`** (내부 보류/대기 상태)로 즉시 승격(Promote)시킵니다.
+  - 이 변경 사항은 인메모리 엔진(`canvasEngine.dispatch`)과 물리적 상태(`project_state.json`) 양쪽(SSoT)에 동시 반영되어 정합성을 유지합니다.
+
+### 3. 🔵 마스터 팩킹 및 특수 클러스터 분류 (Master Packing & Remote Ghost)
+- **트리거**: 소스 코드가 작성되어 스캐너(`FileScanner`)가 파일을 읽어들인 뒤, 그래프 파이프라인(`DataPipeline`)을 거쳐 월드 맵에 배치될 때.
+- **처리 위치**: `src/core/DataPipeline.ts` 클러스터링 및 레이아웃 물리 배정 파트
+- **규칙 명세**:
+  - **📁 Root 클러스터 동적 생성**: 폴더 경로가 없어 소속 클러스터를 배정받지 못한 최상위 루트 파일(`__unclustered__`)들은 과거 레이아웃 계산 단계에서 제외되어 좌표 `(0,0)`에 무한히 겹쳐 쌓이는 치명적 버그를 유발했습니다. 파이프라인은 이를 방어하기 위해 런타임에 동적으로 **`📁 Root`** 클러스터를 생성하여 무소속 노드들을 강제 편입시키고 정상적인 물리 팩킹(World Packing) 궤도에 올려놓습니다.
+  - **🌐 Remote Ghost 클러스터 격리**: `[SYNAPSE_NETWORK_LINK]` 매크로 등으로 식별된 외부 워크스페이스 의존성(원격 파일) 노드들은 일반 에러 노드로 섞이지 않도록 **`cluster_ghost_network_remote`**라는 전용 특수 클러스터 공간에 격리 할당되어 시각적 명확성을 보장합니다.

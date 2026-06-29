@@ -1,6 +1,7 @@
 import { ProjectStructure, Node, Edge, Cluster, NodeType, EdgeType } from '../types/schema';
 import * as path from 'path';
 import { getVisualHints } from '../utils/visualHints';
+import { Logger } from '../utils/Logger';
 
 export class FlowchartGenerator {
     /**
@@ -166,6 +167,11 @@ export class FlowchartGenerator {
                 edges.push(edge);
             }
         });
+
+        // [v0.3.32.2] Diagnostic: FlowGenerator Edge Tracking
+        Logger.info(`[FLOW_DEBUG] FlowchartGenerator Phase D diagnostic`);
+        Logger.info(`[FLOW_DEBUG] inputNodes=${structure.files!.length} | inputEdges=${structure.dependencies!.length}`);
+        Logger.info(`[FLOW_DEBUG] generatedFlowNodes=${nodes.length} | generatedFlowEdges=${edges.length}`);
 
         return { nodes, edges, clusters: clusters.filter(c => (c.children! || []).length > 0 || c.id === 'doc_shelf' || c.id === 'cluster_ghosts') };
     }

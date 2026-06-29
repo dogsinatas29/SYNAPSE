@@ -97,7 +97,7 @@ export class RemoteLayerProjector {
 
         const classifiedNodes: ClassifiedNode[] = [];
         const classifiedClustersMap = new Map<string, ClassifiedCluster>();
-        const sourceExtensions = new Set(['.py', '.ts', '.js', '.rs', '.cpp', '.c', '.go', '.java', '.kt', '.swift']);
+        const sourceExtensions = new Set(['.py', '.ts', '.js', '.rs', '.cpp', '.c', '.go', '.java', '.kt', '.kts', '.swift']);
         const docExtensions = new Set(['.md', '.mdx', '.rst', '.txt']);
 
         for (const file of snapshot.files) {

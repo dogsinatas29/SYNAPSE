@@ -469,10 +469,11 @@ export class StateManager {
             } else if (hasAtomic && hasImport) {
                 finalClusterId = 'sys_cluster_reserved';
             } else if (hasAtomic) {
-                // Only force to buffer if not already in a valid cluster
-                finalClusterId = (n.cluster_id && n.cluster_id !== "") ? n.cluster_id : 'sys_cluster_buffer';
+                // [v0.3.33 Fix] Don't force nodes into buffer if they are intentionally in the project root ("").
+                // If cluster_id is defined (even as ""), respect it unless it's undefined.
+                finalClusterId = n.cluster_id !== undefined ? n.cluster_id : 'sys_cluster_buffer';
             } else {
-                finalClusterId = n.cluster_id || 'sys_cluster_buffer';
+                finalClusterId = n.cluster_id !== undefined ? n.cluster_id : 'sys_cluster_buffer';
             }
         } else {
             // AI / Base Logic Domain
@@ -486,6 +487,9 @@ export class StateManager {
             } else if (!isOnDisk) {
                 finalStatus = 'ghost';
                 finalClusterId = 'sys_cluster_buffer';
+            } else if (n.cluster_id) {
+                // [v0.3.32.2] Respect the backend's (DataPipeline) hierarchical cluster_id!
+                finalClusterId = n.cluster_id;
             } else if (parentFolder) {
                 finalClusterId = `folder_${parentFolder}`;
             } else {

@@ -79,7 +79,7 @@ export class SymbolIndex {
         const fileRegistry = new Map<string, FileEntry>();
         const functionCatalog: FunctionEntry[] = [];
 
-        const sourceExtensions = new Set(['.py', '.ts', '.js', '.rs', '.cpp', '.c', '.go', '.java', '.kt', '.swift']);
+        const sourceExtensions = new Set(['.py', '.ts', '.js', '.rs', '.cpp', '.c', '.go', '.java', '.kt', '.kts', '.swift']);
         const docExtensions = new Set(['.md', '.mdx', '.rst', '.txt']);
 
         for (const file of files) {
@@ -115,6 +115,13 @@ export class SymbolIndex {
         this.index.createdAt = Date.now();
 
         Logger.info(`[v0.3.30] SymbolIndex rebuilt: ${fileRegistry.size} files`);
+
+        // [v0.3.32.2] Diagnostic: Targeted SymbolIndex Verification
+        const targets = ['FeedItem', 'feeditem', 'FEEDITEM', 'DownloadRequester', 'PlaybackService', 'Episode'];
+        for (const t of targets) {
+            const found = this.lookupSymbol(t) ? 'FOUND' : 'NOT FOUND';
+            Logger.info(`[SYMBOL_INDEX_LOOKUP] ${t} -> ${found}`);
+        }
     }
 
     addFunction(filePath: string, functionName: string, className: string | null, lineNumber: number): void {

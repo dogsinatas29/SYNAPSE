@@ -400,7 +400,9 @@ class WebGLRenderer {
                 
                 vec3 finalColor = vColor;
                 float finalAlpha = 1.0;
-                if (vHigh > 1.5) {
+                if (vHigh > 2.5) {
+                    finalAlpha = 0.15; // External edge stratification
+                } else if (vHigh > 1.5) {
                     finalAlpha = 0.3;
                 } else if (vHigh > 0.5) {
                     finalColor = mix(vColor, vec3(1.0, 0.9, 0.0), 0.3 * sin(vTime * 6.0) + 0.3);
@@ -909,6 +911,8 @@ class WebGLRenderer {
                     highVal = 2.0; // Semi-transparent
                 } else if (isPathSelected) {
                     highVal = 1.0; // Normal highlighted
+                } else if (src && tgt && src.cluster_id && tgt.cluster_id && src.cluster_id !== tgt.cluster_id) {
+                    highVal = 3.0; // Stratification: External Edge
                 }
                 this._edgeHighArr[highCnt++] = highVal;
 

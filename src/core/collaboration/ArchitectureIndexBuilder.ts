@@ -45,7 +45,7 @@ export interface ArchitectureIndex {
     functionCatalog: FunctionEntry[];
 }
 
-const SOURCE_EXTENSIONS = new Set(['.py', '.ts', '.js', '.rs', '.cpp', '.c', '.go', '.java', '.kt', '.swift']);
+const SOURCE_EXTENSIONS = new Set(['.py', '.ts', '.js', '.rs', '.cpp', '.c', '.go', '.java', '.kt', '.kts', '.swift']);
 
 const EXCLUDED_EXTENSIONS = new Set(['.md', '.mdx', '.rst', '.txt', '.log', '.report']);
 
@@ -59,6 +59,7 @@ const EXTENSION_LANGUAGE_MAP: Record<string, SourceLanguage> = {
     '.go': 'go',
     '.java': 'java',
     '.kt': 'kotlin',
+    '.kts': 'kotlin',
     '.swift': 'swift',
 };
 

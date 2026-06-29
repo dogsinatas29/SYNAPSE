@@ -6,7 +6,7 @@
  * This software incorporates fzf-inspired fuzzy matching logic, which is licensed under the MIT License.
  * fzf (C) 2013-2023 Junegunn Choi
  */
-console.log("[FLOW_DEBUG] BUILD_ID_20260627_B canvas-engine.js LOADED");
+console.log("[FLOW_DEBUG] BUILD_ID_20260628_A canvas-engine.js LOADED");
 
 /**
  * PromotionParticle - 설계 승격 효과를 위한 파티클 클래스
@@ -1544,9 +1544,21 @@ class CanvasEngine {
                     this.isEdgeDirty = true;
                     this.lastActivityTime = Date.now(); // Reset idle timer
                     this.requestRender(); // Restart eco-mode loop if sleeping
-                }, 50);
+                }, 100); // Increased delay slightly
             }
         });
+
+        // [v0.3.33] Add ResizeObserver for bulletproof container tracking
+        if (typeof ResizeObserver !== 'undefined' && this.canvas.parentElement) {
+            const ro = new ResizeObserver(() => {
+                this.resizeCanvas(true);
+                this.isGraphDataDirty = true;
+                this.isEdgeDirty = true;
+                this.lastActivityTime = Date.now();
+                this.requestRender();
+            });
+            ro.observe(this.canvas.parentElement);
+        }
 
         // 변환 상태 (줌/팬)
         this.transform = {
@@ -1594,7 +1606,7 @@ class CanvasEngine {
         this.lastPressureUpdate = Date.now();
         this.nodeStatsMap = new Map(); // [v0.3.17] Degree & Connection Cache
         this.hideLeafNodes = false; // [v0.3.19] Noise Control Toggle
-        this.focusTopNodes = false; // [v0.3.19] Global Exploration Mode
+        this.focusTopNodes = 0; // [v0.3.19] Global Exploration Mode (0: OFF, 50, 100, 200)
         this.focusCoreSet = new Set(); // Top-N Core node IDs
         this.focusNodeSet = new Set(); // Core + 1-hop neighbor IDs
         this.hotspots = []; // [v0.3.20] Cached hotspot area geometries
@@ -1605,7 +1617,7 @@ class CanvasEngine {
         // [v0.2.19] Layer Visibility State
         this.showBaseLayer = true;
         this.showUserLayer = true;
-        this.showExternalLayer = true;
+        this.showExternalLayer = false;
         this.clientLayers = {}; // { [clientId]: { visible: boolean, order: number } }
 
         this.showDocShelf = false;
@@ -1835,15 +1847,22 @@ class CanvasEngine {
             });
         }
 
-        // [v0.3.19] Focus Top Nodes (Top-N Focus View)
+        // [v0.3.19] Focus Top Nodes (Top-N Focus View) Cycle
         const btnToggleFocus = document.getElementById('btn-toggle-focus');
         if (btnToggleFocus) {
             btnToggleFocus.addEventListener('click', () => {
-                this.focusTopNodes = !this.focusTopNodes;
-                btnToggleFocus.textContent = this.focusTopNodes ? 'ON' : 'OFF';
-                btnToggleFocus.classList.toggle('active', this.focusTopNodes);
+                if (this.focusTopNodes === 0) this.focusTopNodes = 50;
+                else if (this.focusTopNodes === 50) this.focusTopNodes = 100;
+                else if (this.focusTopNodes === 100) this.focusTopNodes = 200;
+                else this.focusTopNodes = 0;
+                
+                btnToggleFocus.textContent = this.focusTopNodes === 0 ? 'OFF' : `Top ${this.focusTopNodes}`;
+                btnToggleFocus.classList.toggle('active', this.focusTopNodes > 0);
                 this.isGraphDataDirty = true; // [v0.3.22.2] Force cache refresh for WebGL parity
                 this.isDirty = true;
+                
+                // Re-run the node calculation for focus
+                this.calculateNodeStats(this.nodes, this.edges);
                 this.render();
                 console.log('[SYNAPSE] Focus Top Nodes Mode:', this.focusTopNodes);
             });
@@ -3250,9 +3269,9 @@ class CanvasEngine {
 
                     if (absDragDist > 5 || movedByIntruder) {
                         this.saveState();
-                        if (movedByIntruder) {
-                            this.takeSnapshot(`Auto Push (after drag)`);
-                        }
+                        // Mark nodes as user-positioned
+                        draggedNodes.forEach(n => n.positionSource = 'user');
+                        this.saveWorkspace();
                     }
                 }
                 this.isDragging = false;
@@ -3312,6 +3331,39 @@ class CanvasEngine {
                 if (this.selectedNodes.size > 0) {
                     console.log(`[SYNAPSE] Deleting ${this.selectedNodes.size} selected nodes`);
                     this.deleteSelectedNodes();
+                    return;
+                }
+            }
+
+            // [v0.3.32.2] Debug Visibility Hotkeys
+            if (e.shiftKey) {
+                if (e.key === 'E' || e.key === 'e') {
+                    window.edgeVisibilityMode = (window.edgeVisibilityMode === 'NO_EDGES') ? 'NORMAL' : 'NO_EDGES';
+                    this.isGraphDataDirty = true;
+                    this.log(`[DEBUG] Edge Visibility: ${window.edgeVisibilityMode}`);
+                    return;
+                }
+                if (e.key === 'C' || e.key === 'c') {
+                    this.debugClusterColorMode = !this.debugClusterColorMode;
+                    this.isGraphDataDirty = true;
+                    this.log(`[DEBUG] Cluster Color Mode: ${this.debugClusterColorMode}`);
+                    return;
+                }
+                if (e.key === 'S' || e.key === 's') {
+                    const uniqueX = new Set();
+                    const uniqueY = new Set();
+                    let atOrigin = 0;
+                    this.nodes.forEach(n => {
+                        if (n.position) {
+                            if (n.position.x === 0 && n.position.y === 0) atOrigin++;
+                            uniqueX.add(n.position.x);
+                            uniqueY.add(n.position.y);
+                        }
+                    });
+                    const clusters = new Set(this.nodes.map(n => n.cluster_id).filter(Boolean));
+                    const statsMsg = `[LAYOUT STATS] Nodes: ${this.nodes.length}, Edges: ${this.edges.length}, UniqueX: ${uniqueX.size}, UniqueY: ${uniqueY.size}, Origin: ${atOrigin}, Clusters: ${clusters.size}`;
+                    this.log(statsMsg, 'info');
+                    alert(statsMsg);
                     return;
                 }
             }
@@ -4367,6 +4419,62 @@ class CanvasEngine {
 
 
 
+    saveWorkspace() {
+        if (this._saveWorkspaceTimeout) {
+            clearTimeout(this._saveWorkspaceTimeout);
+        }
+        this._saveWorkspaceTimeout = setTimeout(() => {
+            const layout_state = {
+                version: 1,
+                nodePositions: {},
+                clusterPositions: {},
+                layerAssignments: {},
+                layers: [] // TODO: Semantic Layers
+            };
+            this.nodes.forEach(n => {
+                layout_state.nodePositions[n.id] = {
+                    x: n.position ? n.position.x : 0,
+                    y: n.position ? n.position.y : 0,
+                    confidence: n.confidence || (n.positionSource === 'user' ? 1.0 : 0.2),
+                    source: n.positionSource || 'auto'
+                };
+            });
+            this.clusters.forEach(c => {
+                layout_state.clusterPositions[c.id] = {
+                    x: c.position ? c.position.x : 0,
+                    y: c.position ? c.position.y : 0,
+                    confidence: c.confidence || (c.positionSource === 'user' ? 1.0 : 0.2),
+                    source: c.positionSource || 'auto'
+                };
+            });
+            
+            const workspace_state = {
+                version: 1,
+                camera: { 
+                    zoom: this.transform.zoom, 
+                    x: this.transform.offsetX, 
+                    y: this.transform.offsetY 
+                },
+                visibility: { 
+                    visibleLayers: this.visibleLayers ? Array.from(this.visibleLayers) : [], 
+                    hiddenClusters: [] // TODO
+                },
+                filters: {},
+                bookmarks: {}
+            };
+
+            if (typeof vscode !== 'undefined') {
+                vscode.postMessage({
+                    command: 'saveWorkspace',
+                    data: {
+                        layout_state,
+                        workspace_state
+                    }
+                });
+            }
+        }, 500);
+    }
+
     takeSnapshot(label) {
         if (typeof vscode !== 'undefined') {
             vscode.postMessage({
@@ -4649,8 +4757,9 @@ class CanvasEngine {
                 .sort((a, b) => (b[1].priority - a[1].priority) || (b[1].connectedNodes - a[1].connectedNodes))
                 .map(entry => entry[0]);
 
-            // Pick Top 10 cores
-            const topN = sortedNodes.slice(0, 10);
+            // Pick Top N cores
+            const limit = this.focusTopNodes > 0 ? this.focusTopNodes : 10; // default 10
+            const topN = sortedNodes.slice(0, limit);
             topN.forEach(id => {
                 this.focusCoreSet.add(id);
                 this.focusNodeSet.add(id);
@@ -5150,21 +5259,18 @@ class CanvasEngine {
         
         const nodeEdges = (this.edges || []).filter(e => {
             if (!e.from || !e.to) return false;
-            // Robust match: Exact ID first, then Stem
-            const fromMatch = (e.from === myId || getStem(e.from) === myStem);
-            const toMatch = (e.to === myId || getStem(e.to) === myStem);
+            // Robust match: Exact ID only
+            const fromMatch = (e.from === myId);
+            const toMatch = (e.to === myId);
             return fromMatch || toMatch;
         });
 
         nodeEdges.forEach(e => {
-            const isOut = (e.from === myId || getStem(e.from) === myStem);
+            const isOut = (e.from === myId);
             const targetId = isOut ? e.to : e.from;
             
-            // [v0.3.22.11] Senior's Prescription: Ultra-Resilient Identity Binding
+            // [v0.3.33] Strict Identity Binding (Removed Stem fallback)
             let targetNode = nodeMap.get(targetId);
-            if (!targetNode) {
-                targetNode = stemMap.get(getStem(targetId));
-            }
 
             // Fallback for icons/names if node is missing from current pool (Ghost/Filtered)
             const theme = this.getTheme() || window.SYNAPSE_THEME;
@@ -5177,7 +5283,7 @@ class CanvasEngine {
             const type = targetNode?.type || (targetId.includes('/') ? 'source' : 'external');
             
             const icon = theme ? theme.getNodeIcon(type, fileName) : '📄';
-            const name = targetNode ? (targetNode.data?.label || getStem(targetNode.id)) : getStem(targetId);
+            const name = targetNode ? (targetNode.data?.label || targetNode.id.split('/').pop()) : targetId.split('/').pop();
             const label = `${icon} ${name}`;
             
             if (name && !groupDetails[group].includes(label)) {
@@ -5463,6 +5569,7 @@ class CanvasEngine {
         const oldSelectedNodeId = this.selectedNode?.id;
 
         this.log(`loadProjectState triggered. Nodes: ${baseState.nodes?.length}, Edges: ${baseState.edges?.length}`);
+        this.log(`[DEBUG_NODES] Nodes survived normalizeProjectState: ${baseState.nodes?.map(n => n.id).join(', ')}`);
         const promotedLabels = [];
 
         try {
@@ -5477,6 +5584,31 @@ class CanvasEngine {
 
             // [v0.3.16] docShelfNodes are already separated and set in step 1 (line 3652)
             this.nodes = baseState.nodes || [];
+
+            // [Phase 2C] Apply Workspace Layout
+            if (projectState.synapse_workspace && projectState.synapse_workspace.layout_state) {
+                const layout = projectState.synapse_workspace.layout_state;
+                this.nodes.forEach(n => {
+                    const pos = layout.nodePositions[n.id];
+                    if (pos) {
+                        n.position = { x: pos.x, y: pos.y };
+                        n.positionSource = pos.source || 'auto';
+                        n.confidence = pos.confidence || 0.2;
+                    } else {
+                        if (!n.position) n.position = { x: 0, y: 0 };
+                        n.positionSource = 'auto';
+                        n.confidence = 0.2;
+                    }
+                });
+            } else {
+                this.nodes.forEach(n => {
+                    if (!n.position) n.position = { x: 0, y: 0 };
+                    if (!n.positionSource) {
+                        n.positionSource = 'auto';
+                        n.confidence = 0.2;
+                    }
+                });
+            }
 
             // [v0.3.22.11] Position Persistence Guard:
             // When preserving view (e.g. incremental update or post-save sync), 
@@ -5531,14 +5663,45 @@ class CanvasEngine {
                     return { ...c, layer, clientLayer };
                 });
 
+            // [Phase 2C] Apply Workspace Cluster Positions
+            if (projectState.synapse_workspace && projectState.synapse_workspace.layout_state) {
+                const layout = projectState.synapse_workspace.layout_state;
+                this.clusters.forEach(c => {
+                    const pos = layout.clusterPositions[c.id];
+                    if (pos) {
+                        c.position = { x: pos.x, y: pos.y }; // Use position for clusters in Phase 2C
+                        c.positionSource = pos.source || 'auto';
+                        c.confidence = pos.confidence || 0.2;
+                        // For backwards compatibility where cluster expects x,y directly
+                        c.x = pos.x;
+                        c.y = pos.y;
+                    } else {
+                        c.positionSource = 'auto';
+                        c.confidence = 0.2;
+                    }
+                });
+            }
+
             // [v0.3.21] Heatmap Data Sync
             this.clusterFlows = projectState.cluster_flows || [];
+            
+            // [Phase 2B.13] Edge Bundle Data Sync
+            this.metaEdges = projectState.metaEdges || [];
 
             // [v0.2.36] Restore View (Camera) if available and not preserving
-            if (!preserveView && projectState.view) {
-                this.transform.zoom = projectState.view.zoom || this.transform.zoom;
-                this.transform.offsetX = projectState.view.offsetX ?? this.transform.offsetX;
-                this.transform.offsetY = projectState.view.offsetY ?? this.transform.offsetY;
+            if (!preserveView) {
+                if (projectState.synapse_workspace && projectState.synapse_workspace.workspace_state) {
+                    const wsState = projectState.synapse_workspace.workspace_state;
+                    if (wsState.camera) {
+                        this.transform.zoom = wsState.camera.zoom || this.transform.zoom;
+                        this.transform.offsetX = wsState.camera.x ?? this.transform.offsetX;
+                        this.transform.offsetY = wsState.camera.y ?? this.transform.offsetY;
+                    }
+                } else if (projectState.view) {
+                    this.transform.zoom = projectState.view.zoom || this.transform.zoom;
+                    this.transform.offsetX = projectState.view.offsetX ?? this.transform.offsetX;
+                    this.transform.offsetY = projectState.view.offsetY ?? this.transform.offsetY;
+                }
                 this.updateZoomDisplay();
             }
 
@@ -5623,9 +5786,11 @@ class CanvasEngine {
                 this.log('Flow build failed but continuing', 'error', flowErr.message);
             }
 
-            // [v0.3.11] Prevent layout jitter: Skip overlap resolution if nodes already have valid positions
-            const hasValidPositions = this.nodes.every(n => n.position && Number.isFinite(n.position.x));
-            if (!preserveView && !hasValidPositions) {
+            // [v0.3.32.3] Fix: MUST resolve overlaps if positions are missing or all nodes are at (0,0), regardless of preserveView
+            const hasValidPositions = this.nodes.length > 0 && this.nodes.every(n => n.position && Number.isFinite(n.position.x));
+            const allAtOrigin = this.nodes.length > 1 && this.nodes.every(n => n.position && n.position.x === 0 && n.position.y === 0);
+            
+            if (!preserveView || !hasValidPositions || allAtOrigin) {
                 try {
                     this.resolveOverlaps();
                 } catch (overlapErr) {
@@ -5843,19 +6008,97 @@ class CanvasEngine {
         });
     }
 
-    resolveOverlaps() {
-        if (!this.nodes || this.nodes.length < 2) return;
+    updateClusterLayout() {
+        if (!this.clusters || this.clusters.length === 0) return;
+        const ITERATIONS = 3;
+        const CONSTANT = 180; // Base spacing multiplier
+        
+        for (let iter = 0; iter < ITERATIONS; iter++) {
+            const clusterStats = new Map();
+            for (const cluster of this.clusters) {
+                const nodesInCluster = this.nodes.filter(n => n.cluster_id === cluster.id);
+                if (nodesInCluster.length === 0) continue;
+                
+                let cx = 0, cy = 0;
+                let validCount = 0;
+                for (const n of nodesInCluster) {
+                    if (n.position) {
+                        cx += n.position.x;
+                        cy += n.position.y;
+                        validCount++;
+                    }
+                }
+                if (validCount > 0) {
+                    cx /= validCount;
+                    cy /= validCount;
+                }
+                
+                // clusterRadius = sqrt(nodeCount) * constant
+                const radius = Math.sqrt(nodesInCluster.length) * CONSTANT;
+                clusterStats.set(cluster.id, { cx, cy, radius, nodes: nodesInCluster });
+            }
 
-        const MIN_DISTANCE_X = 160; // 40px grid multiple
-        const MIN_DISTANCE_Y = 80;  // 40px grid multiple (Tighter vertical spacing)
-        const ITERATIONS = 4; // Allow layout to spread gracefully before snapping
+            let moved = false;
+            const clusterIds = Array.from(clusterStats.keys());
+            for (let i = 0; i < clusterIds.length; i++) {
+                for (let j = i + 1; j < clusterIds.length; j++) {
+                    const cA = clusterStats.get(clusterIds[i]);
+                    const cB = clusterStats.get(clusterIds[j]);
+                    
+                    let dx = cB.cx - cA.cx;
+                    let dy = cB.cy - cA.cy;
+                    let dist = Math.sqrt(dx*dx + dy*dy);
+                    const minDist = cA.radius + cB.radius;
+                    
+                    if (dist < 0.01) {
+                        dx = Math.random() * 2 - 1;
+                        dy = Math.random() * 2 - 1;
+                        dist = Math.sqrt(dx*dx + dy*dy);
+                    }
 
-        // [v0.2.26] 🛡️ Deterministic Layout: Read from Snapshot, Write to Current
-        // This prevents "Chain Reaction" where order of nodes determines who moves first
+                    if (dist < minDist) {
+                        moved = true;
+                        const force = (minDist - dist) / 2;
+                        const cA_weight = cA.confidence || (cA.source === 'user' ? 1.0 : 0.2);
+                        const cB_weight = cB.confidence || (cB.source === 'user' ? 1.0 : 0.2);
+                        const total_weight = cA_weight + cB_weight;
+                        
+                        // Push based on inverse weight (heavier moves less)
+                        const shiftA = force * (cB_weight / total_weight);
+                        const shiftB = force * (cA_weight / total_weight);
+                        
+                        const fxA = (dx / dist) * shiftA;
+                        const fyA = (dy / dist) * shiftA;
+                        const fxB = (dx / dist) * shiftB;
+                        const fyB = (dy / dist) * shiftB;
+                        
+                        for (const n of cA.nodes) {
+                            if (n.positionSource !== 'user') {
+                                n.position.x -= fxA;
+                                n.position.y -= fyA;
+                            }
+                        }
+                        for (const n of cB.nodes) {
+                            if (n.positionSource !== 'user') {
+                                n.position.x += fxB;
+                                n.position.y += fyB;
+                            }
+                        }
+                    }
+                }
+            }
+            if (!moved) break;
+        }
+    }
+
+    updateLocalLayout() {
+        const MIN_DISTANCE_X = 160; 
+        const MIN_DISTANCE_Y = 80;  
+        const ITERATIONS = 4;
+
         for (let iter = 0; iter < ITERATIONS; iter++) {
             let movedTotal = false;
 
-            // Take a position snapshot of all nodes at the START of this iteration
             const posSnapshot = new Map();
             this.nodes.forEach(n => {
                 if (n.position) posSnapshot.set(n.id, { x: n.position.x, y: n.position.y });
@@ -5866,12 +6109,13 @@ class CanvasEngine {
                     const nodeA = this.nodes[i];
                     const nodeB = this.nodes[j];
 
-                    // Read from STATIC snapshots for consistency
+                    // [Phase A] Local force only within the same cluster
+                    if (nodeA.cluster_id !== nodeB.cluster_id) continue;
+
                     const pA = posSnapshot.get(nodeA.id);
                     const pB = posSnapshot.get(nodeB.id);
                     if (!pA || !pB) continue;
 
-                    // Visibility Guard (Skip collapsed)
                     const isHidden = (n) => {
                         if (!n.cluster_id) return false;
                         const c = this.clusters?.find(cl => cl.id === n.cluster_id);
@@ -5887,8 +6131,6 @@ class CanvasEngine {
                     if (adx < MIN_DISTANCE_X && ady < MIN_DISTANCE_Y) {
                         movedTotal = true;
                         
-                        // [v0.3.16] Grid Sovereignty (Snap-back Stalemate Fix)
-                        // 강제로 40px(SNAP) 배수 단위 이상으로 밀어내어 반올림에 의한 자리복귀 차단
                         const SNAP = this.GRID_SNAP_SIZE || 40;
                         let shiftX = (MIN_DISTANCE_X - adx) / 2;
                         let shiftY = (MIN_DISTANCE_Y - ady) / 2;
@@ -5896,27 +6138,43 @@ class CanvasEngine {
                         shiftX = Math.max(SNAP, Math.ceil(shiftX / SNAP) * SNAP);
                         shiftY = Math.max(SNAP, Math.ceil(shiftY / SNAP) * SNAP);
 
-                        // Mutate CURRENT node position based on STATIC snapshot relationship
+                        const wA = nodeA.confidence || (nodeA.positionSource === 'user' ? 1.0 : 0.2);
+                        const wB = nodeB.confidence || (nodeB.positionSource === 'user' ? 1.0 : 0.2);
+                        const totalW = wA + wB;
+                        
+                        const shiftXA = shiftX * 2 * (wB / totalW);
+                        const shiftXB = shiftX * 2 * (wA / totalW);
+                        const shiftYA = shiftY * 2 * (wB / totalW);
+                        const shiftYB = shiftY * 2 * (wA / totalW);
+
                         if (dx >= 0) {
-                            nodeA.position.x -= shiftX;
-                            nodeB.position.x += shiftX;
+                            nodeA.position.x -= shiftXA;
+                            nodeB.position.x += shiftXB;
                         } else {
-                            nodeA.position.x += shiftX;
-                            nodeB.position.x -= shiftX;
+                            nodeA.position.x += shiftXA;
+                            nodeB.position.x -= shiftXB;
                         }
 
                         if (dy >= 0) {
-                            nodeA.position.y -= shiftY;
-                            nodeB.position.y += shiftY;
+                            nodeA.position.y -= shiftYA;
+                            nodeB.position.y += shiftYB;
                         } else {
-                            nodeA.position.y += shiftY;
-                            nodeB.position.y -= shiftY;
+                            nodeA.position.y += shiftYA;
+                            nodeB.position.y -= shiftYB;
                         }
                     }
                 }
             }
             if (!movedTotal) break;
         }
+    }
+
+    resolveOverlaps() {
+        if (!this.nodes || this.nodes.length < 2) return;
+
+        // [v0.3.32.2 Phase A] Two-Tier Layout implementation
+        this.updateClusterLayout();
+        this.updateLocalLayout();
 
         // [v0.3.15] Re-snap to grid after overlap resolution to maintain Grid Sovereignty
         this.nodes.forEach(node => {
@@ -5927,6 +6185,13 @@ class CanvasEngine {
         });
 
         this.log(`[STATE-DETERMINISM] Hash After Layout: ${this.getFingerprint(this.nodes).substring(0, 60)}...`);
+
+        // [LAYOUT_DEBUG] Output coordinates range to detect physics explosion
+        const xs = this.nodes.map(n => n.position?.x).filter(x => typeof x === 'number');
+        const ys = this.nodes.map(n => n.position?.y).filter(y => typeof y === 'number');
+        if (xs.length > 0 && ys.length > 0) {
+            console.log(`[LAYOUT_DEBUG] xRange: ${Math.min(...xs)} to ${Math.max(...xs)}, yRange: ${Math.min(...ys)} to ${Math.max(...ys)}`);
+        }
     }
 
     fitView() {
@@ -5941,10 +6206,20 @@ class CanvasEngine {
 
         for (const node of this.nodes) {
             if (!node.position || typeof node.position.x !== 'number' || typeof node.position.y !== 'number') continue;
+            // Also skip if node position is NaN
+            if (Number.isNaN(node.position.x) || Number.isNaN(node.position.y)) continue;
             minX = Math.min(minX, node.position.x);
             minY = Math.min(minY, node.position.y);
             maxX = Math.max(maxX, node.position.x + 120);
             maxY = Math.max(maxY, node.position.y + 60);
+        }
+
+        // [v0.3.32.3] Safety check: If no nodes have valid positions, fallback to 0,0
+        if (minX === Infinity || minY === Infinity) {
+            minX = 0;
+            minY = 0;
+            maxX = 100;
+            maxY = 100;
         }
 
         const width = maxX - minX;
@@ -6168,6 +6443,14 @@ class CanvasEngine {
                 .map(e => ({ id: e.id, from: e.from, to: e.to, type: e.type, status: e.status }))
         );
 
+        this.log(`[DEBUG_RENDER_NODES] Final visible nodes: ${JSON.stringify(frozenNodes.map(n => ({
+            id: n.id,
+            label: n.data?.label || n.id,
+            cluster: n.cluster_id,
+            x: n.position?.x,
+            y: n.position?.y
+        })))}`);
+
         return {
             nodes: frozenNodes,
             edges: frozenEdges,
@@ -6216,7 +6499,7 @@ class CanvasEngine {
 
     render() {
         // [v0.3.13] Automatic Overlap Resolution
-        if (this.isGraphDataDirty && this.nodes.length > 2 && this.nodes.length < 500) {
+        if (this.isGraphDataDirty && this.nodes.length > 2) {
             this.resolveOverlaps();
         }
 
@@ -6234,6 +6517,17 @@ class CanvasEngine {
                 selectedNodeIds: new Set(Array.from(this.selectedNodes).map(n => n.id)),
                 selectedEdgeId: this.selectedEdge ? this.selectedEdge.id : null
             };
+
+            // [v0.3.32.3] Safety check: NaN corruption guard
+            if (Number.isNaN(this.transform.zoom) || !Number.isFinite(this.transform.zoom) || 
+                Number.isNaN(this.transform.offsetX) || Number.isNaN(this.transform.offsetY)) {
+                console.error("[SYNAPSE 2D] CAMERA CORRUPTED", this.transform);
+                // Recover to safe defaults
+                this.transform.zoom = 1.0;
+                this.transform.offsetX = 0;
+                this.transform.offsetY = 0;
+                this.updateZoomDisplay();
+            }
 
             const frameState = this.buildFrameState(contextSnapshot);
             this.lastFrameState = frameState; // Save for hit testing
@@ -6362,6 +6656,16 @@ class CanvasEngine {
             ctx.setTransform(dpr, 0, 0, dpr, 0, 0); // Ensure DPR scale for base logic
 
             ctx.save();
+            // [v0.3.32.3] Safety check: NaN corruption guard
+            if (Number.isNaN(this.transform.zoom) || !Number.isFinite(this.transform.zoom) || 
+                Number.isNaN(this.transform.offsetX) || Number.isNaN(this.transform.offsetY)) {
+                console.error("[SYNAPSE 2D] CAMERA CORRUPTED in main render", this.transform);
+                this.transform.zoom = 1.0;
+                this.transform.offsetX = 0;
+                this.transform.offsetY = 0;
+                this.updateZoomDisplay();
+            }
+
             ctx.translate(this.transform.offsetX, this.transform.offsetY);
             ctx.scale(this.transform.zoom, this.transform.zoom);
 
@@ -6412,7 +6716,7 @@ class CanvasEngine {
                         // [v0.3.22.2] Noise Control: Hide Leaf Nodes (WebGL Parity)
                         if (this.hideLeafNodes) {
                             const stats = this.nodeStatsMap.get(n.id);
-                            if (stats && stats.primaryRole === 'Leaf node') return false;
+                            if (stats && stats.connectedNodes < 3) return false;
                         }
 
                         // [v0.3.22.2] Strategic Visibility: Top-N Focus View (WebGL Parity)
@@ -6432,6 +6736,14 @@ class CanvasEngine {
 
                     const visibleNodeIds = new Set(this._visibleNodesCache.map(n => n.id));
                     this._visibleEdgesCache = this.edges.filter(e => visibleNodeIds.has(e.from) && visibleNodeIds.has(e.to));
+
+                    this.log(`[DEBUG_RENDER_NODES] Final visible nodes: ${JSON.stringify(this._visibleNodesCache.map(n => ({
+                        id: n.id,
+                        label: n.data?.label || n.id,
+                        cluster: n.cluster_id,
+                        x: Math.round(n.position?.x),
+                        y: Math.round(n.position?.y)
+                    })))}`);
 
                     // [v0.3.30-webgl-fix] Build WebGL-ready cache: bake clientLayerOffset into position.y
                     // so WebGL renderer sees the same absolute Y as the 2D canvas path.
@@ -6670,10 +6982,98 @@ class CanvasEngine {
         this._confirmBadgeHits = [];
         this._deleteBadgeHits = [];
 
+        // [Phase 2B.13] Edge Bundling LOD
+        const hasMetaEdges = this.metaEdges && this.metaEdges.length > 0;
+        console.log(`[LOD_DEBUG] zoom=${zoom.toFixed(3)}, edges=${this._visibleEdgesCache.length}, metaEdges=${this.metaEdges ? this.metaEdges.length : 0}, lod_active=${zoom <= 0.35 && hasMetaEdges}`);
+
+        if (zoom <= 0.35 && hasMetaEdges) {
+            console.log('[LOD_DEBUG] render meta edges');
+            this.renderEdgeBundles(zoom);
+            return; // Skip rendering individual edges
+        }
+
+        console.log('[LOD_DEBUG] render physical edges');
         // Step 3: Draw the edges
         for (const edge of this._visibleEdgesCache) {
             this.renderEdge(edge);
         }
+    }
+
+    // [Phase 2B.13] Render Edge Bundles (Meta Edges)
+    renderEdgeBundles(zoom) {
+        if (!this.metaEdges || this.metaEdges.length === 0) return;
+
+        const ctx = this.ctx;
+        ctx.save();
+
+        this.metaEdges.forEach(flow => {
+            const srcCluster = this.clusters.find(c => c.id === flow.source);
+            const tgtCluster = this.clusters.find(c => c.id === flow.target);
+
+            if (srcCluster && tgtCluster && srcCluster.id !== tgtCluster.id) {
+                const getCenter = (cluster) => {
+                    const b = this._lastComputedBounds?.get(cluster.id);
+                    if (b) {
+                        return { x: (b.minX + b.maxX) / 2, y: (b.minY + b.maxY) / 2 };
+                    }
+                    return cluster.position || { x: 0, y: 0 };
+                };
+
+                const p1 = getCenter(srcCluster);
+                const p2 = getCenter(tgtCluster);
+
+                const dx = p2.x - p1.x;
+                const dy = p2.y - p1.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+
+                if (dist < 10) return;
+
+                const intensity = Math.min(flow.weight / 50, 1.0);
+                const theme = (typeof SYNAPSE_THEME !== 'undefined') ? SYNAPSE_THEME : (window.SYNAPSE_THEME || null);
+                const color = theme ? theme.EDGES.REFERENCE.color : 'rgba(200, 200, 200, 0.5)';
+                
+                ctx.beginPath();
+                ctx.strokeStyle = color;
+                // Base opacity + dynamic opacity based on weight
+                ctx.globalAlpha = 0.2 + (intensity * 0.6); 
+                // Bundled lines are thicker
+                ctx.lineWidth = 2 + (Math.sqrt(flow.weight) * 1.5) / zoom;
+                ctx.lineCap = 'round';
+
+                // Quadratic curve for bundled feel
+                const cx = (p1.x + p2.x) / 2 - dy * 0.15;
+                const cy = (p1.y + p2.y) / 2 + dx * 0.15;
+
+                ctx.moveTo(p1.x, p1.y);
+                ctx.quadraticCurveTo(cx, cy, p2.x, p2.y);
+                ctx.stroke();
+
+                // Draw traffic count badge
+                if (flow.weight > 3 && zoom > 0.15) {
+                    const midX = (p1.x + 2 * cx + p2.x) / 4;
+                    const midY = (p1.y + 2 * cy + p2.y) / 4;
+
+                    ctx.fillStyle = theme ? theme.SURFACE.DEEP : '#1a1a1a';
+                    ctx.globalAlpha = 0.8;
+                    const badgeW = 24 + (flow.weight.toString().length * 6);
+                    const badgeH = 16;
+                    ctx.fillRect(midX - badgeW/2, midY - badgeH/2, badgeW, badgeH);
+                    
+                    ctx.strokeStyle = color;
+                    ctx.lineWidth = 1 / zoom;
+                    ctx.strokeRect(midX - badgeW/2, midY - badgeH/2, badgeW, badgeH);
+
+                    ctx.fillStyle = '#ffffff';
+                    ctx.globalAlpha = 1.0;
+                    ctx.font = '10px "Geist Mono", monospace';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(flow.weight.toString(), midX, midY);
+                }
+            }
+        });
+
+        ctx.restore();
     }
 
     // [v0.3.9] Dedicated 2D Node Rendering function to prevent blank screen
@@ -7747,10 +8147,21 @@ class CanvasEngine {
             return theme.getFullNodeStyle(node, stats);
         }
 
+        let bgColor = node.data?.color || '#3c3836';
+        if (this.debugClusterColorMode && node.cluster_id) {
+            // Simple string hash to color
+            let hash = 0;
+            for (let i = 0; i < node.cluster_id.length; i++) {
+                hash = node.cluster_id.charCodeAt(i) + ((hash << 5) - hash);
+            }
+            const c = (hash & 0x00FFFFFF).toString(16).toUpperCase();
+            bgColor = '#' + '00000'.substring(0, 6 - c.length) + c;
+        }
+
         // Legacy Fallback
         return {
             borderColor: '#a89984',
-            bgColor: node.data?.color || '#3c3836',
+            bgColor: bgColor,
             icon: '📄',
             lineWidth: 2,
             shape: 'box',
@@ -7820,7 +8231,7 @@ class CanvasEngine {
         }
 
         // [v0.3.19] Strategic Visibility: Top-N Focus View
-        if (this.focusTopNodes) {
+        if (this.focusTopNodes > 0) {
             const isEssential = this.selectedNodes.has(node.id) || (this.hoveredNode && this.hoveredNode.id === node.id);
             if (!this.focusNodeSet.has(node.id) && !isEssential) return;
         }
@@ -7837,7 +8248,7 @@ class CanvasEngine {
         this.ctx.save();
 
         // Apply visual differentiation for Context nodes in Focus View
-        if (this.focusTopNodes) {
+        if (this.focusTopNodes > 0) {
             const isEssential = this.selectedNodes.has(node.id) || (this.hoveredNode && this.hoveredNode.id === node.id);
             if (!this.focusCoreSet.has(node.id) && !isEssential) {
                 this.ctx.globalAlpha = 0.4;
@@ -8597,7 +9008,7 @@ class CanvasEngine {
         const isEdgeHidden = window.edgeVisibilityMode === 'NO_EDGES';
         if (isEdgeHidden && !isPathSelected) return;
 
-        if (this.focusTopNodes && !isPathSelected) {
+        if (this.focusTopNodes > 0 && !isPathSelected) {
             if (!this.focusNodeSet.has(fromNode.id) || !this.focusNodeSet.has(toNode.id)) return;
         }
 
@@ -8682,6 +9093,11 @@ class CanvasEngine {
         let baseAlpha = this.transform.zoom < 0.8 ? 0.95 : 0.75;
         let finalAlpha = isSelected || isHovered ? 1.0 : (isBundled ? Math.max(0.4, baseAlpha - 0.2) : (isPathSelected ? Math.min(1.0, baseAlpha + 0.1) : baseAlpha));
         
+        // [v0.3.32.2 Phase B] External Edge Stratification
+        if (fromNode.cluster_id && toNode.cluster_id && fromNode.cluster_id !== toNode.cluster_id) {
+            finalAlpha = (isSelected || isHovered || isPathSelected) ? 1.0 : 0.15;
+        }
+
         if (isEdgeHidden && isPathSelected) finalAlpha = 0.3;
         if (this.focusTopNodes && !isPathSelected) {
             if (!this.focusCoreSet.has(fromNode.id) || !this.focusCoreSet.has(toNode.id)) finalAlpha *= 0.2;
@@ -9367,6 +9783,8 @@ class CanvasEngine {
                 for (let j = i + 1; j < this.nodes.length; j++) {
                     const b = this.nodes[j];
                     if (b.isDragging) continue;
+                    
+                    if (!a.position || !b.position) continue;
 
                     const dx = a.position.x - b.position.x;
                     const dy = a.position.y - b.position.y;
@@ -9403,6 +9821,7 @@ class CanvasEngine {
             if (nodes.length === 0) return null;
             let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
             for (const n of nodes) {
+                if (!n.position) continue;
                 minX = Math.min(minX, n.position.x);
                 minY = Math.min(minY, n.position.y);
                 maxX = Math.max(maxX, n.position.x + 120);
@@ -9421,6 +9840,7 @@ class CanvasEngine {
                 let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
                 let cx = 0, cy = 0;
                 for (const node of nodes) {
+                    if (!node.position) continue;
                     const px = node.position.x;
                     const py = node.position.y;
                     minX = Math.min(minX, px);
@@ -9992,12 +10412,7 @@ function initCanvas() {
 
     document.getElementById('btn-rebootstrap')?.addEventListener('click', () => {
         if (typeof vscode !== 'undefined') {
-            const confirmed = window.confirm(
-                'Deep Reset을 실행하시겠습니까?\n\n이 작업은 프로젝트를 전체 재스캔하며, 현재까지 편집한 노드 위치, 커스텀 연결, 클러스터링 등의 모든 캔버스 수정 사항이 초기화됩니다.\n계속하시겠습니까?'
-            );
-            if (confirmed) {
-                vscode.postMessage({ command: 'reBootstrap' });
-            }
+            vscode.postMessage({ command: 'reBootstrap' });
         } else {
             alert('Deep Reset is only available in VS Code mode.');
         }
@@ -10005,12 +10420,7 @@ function initCanvas() {
 
     document.getElementById('btn-reset-state')?.addEventListener('click', () => {
         if (typeof vscode !== 'undefined') {
-            const confirmed = window.confirm(
-                '🔄 project_state.json을 빈 상태로 초기화하시겠습니까?\n\n노드, 엣지, 클러스터 등 저장된 모든 캔버스 상태가 삭제됩니다.\n(소스 코드는 변경되지 않습니다.)'
-            );
-            if (confirmed) {
-                vscode.postMessage({ command: 'resetProjectState' });
-            }
+            vscode.postMessage({ command: 'resetProjectState' });
         }
     });
 

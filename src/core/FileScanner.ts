@@ -4,10 +4,13 @@ import * as path from 'path';
 export interface CodeSummary {
     classes: string[];
     functions: string[];
-    references: { target: string, type: string, nodeId?: string, isApproved?: boolean }[]; 
+    references: { target: string, type: string, nodeId?: string, isApproved?: boolean, fullPath?: string }[]; 
+    package?: string;
     hasAtomicSignature?: boolean; // 🧬 Pre-computed Sovereign Marker
     hasImportSignature?: boolean; // 🧪 Pre-computed Connection Marker
 }
+
+import { Logger } from '../utils/Logger';
 
 export class FileScanner {
     private static cache: Map<string, { summary: CodeSummary, mtime: number }> = new Map();
@@ -67,7 +70,8 @@ export class FileScanner {
             while ((netMatch = networkLinkRegex.exec(content)) !== null) {
                 const rawPath = netMatch[1].trim();
                 if (rawPath) {
-                    const cleanRef = path.basename(rawPath, path.extname(rawPath));
+                    // [v0.3.33 Fix] Keep the extension and path so ReferenceVerifier can actually find the real file
+                    const cleanRef = rawPath.replace(/\\/g, '/');
                     if (cleanRef && !summary.references.some(r => r.target === cleanRef)) {
                         summary.references.push({ target: cleanRef, type: 'network_link' });
                     }
@@ -92,6 +96,16 @@ export class FileScanner {
                 this.parseConfig(content, summary);
             } else if (ext === '.md') {
                 this.parseMarkdown(content, summary);
+            } else if (ext === '.java') {
+                this.parseJava(content, summary);
+            } else if (['.kt', '.kts'].includes(ext)) {
+                this.parseKotlin(content, summary);
+            }
+
+            // [v0.3.32.2] Diagnostic: Import extraction proof
+            if (ext === '.java' || ext === '.kt' || ext === '.kts') {
+                const targetRefs = summary.references.map(r => r.target);
+                Logger.info(`[IMPORT_DEBUG] lang=${ext.replace('.', '')} | file=${path.basename(filePath)} | references=[${targetRefs.join(', ')}] | count=${targetRefs.length}`);
             }
 
             // 캐시 저장
@@ -101,6 +115,85 @@ export class FileScanner {
         } catch (error) {
             console.error(`[SYNAPSE] Failed to scan file ${filePath}:`, error);
             return { classes: [], functions: [], references: [] };
+        }
+    }
+
+    private parseJava(content: string, summary: CodeSummary) {
+        // Java package
+        const pkgMatch = content.match(/^\s*package\s+([a-zA-Z0-9_.]+)\s*;/m);
+        if (pkgMatch && pkgMatch[1]) {
+            summary.package = pkgMatch[1];
+        }
+
+        // Java imports
+        const importRegex = /^\s*import\s+(?:static\s+)?([a-zA-Z0-9_.]+)\s*;/gm;
+        let match;
+        while ((match = importRegex.exec(content)) !== null) {
+            const importPath = match[1];
+            if (importPath) {
+                // e.g. "java.util.List", we might want the last part "List", 
+                // but for package resolving we keep the full path or class name
+                const parts = importPath.split('.');
+                const className = parts[parts.length - 1];
+                if (className !== '*') {
+                    if (!summary.references.some(r => r.target === className)) {
+                        // Store the full path in a property if possible, but the schema uses `target` as basename mostly.
+                        // However, SymbolIndex might need the full path. Let's just push className for now.
+                        summary.references.push({ target: className, type: 'dependency', fullPath: importPath });
+                    }
+                }
+            }
+        }
+
+        // Java classes & interfaces
+        const classRegex = /(?:public\s+|private\s+|protected\s+|abstract\s+|final\s+)*(?:class|interface|enum|record)\s+([a-zA-Z0-9_]+)/g;
+        while ((match = classRegex.exec(content)) !== null) {
+            const name = match[1];
+            if (name && !summary.classes.includes(name)) {
+                summary.classes.push(name);
+            }
+        }
+    }
+
+    private parseKotlin(content: string, summary: CodeSummary) {
+        // Kotlin package
+        const pkgMatch = content.match(/^\s*package\s+([a-zA-Z0-9_.]+)/m);
+        if (pkgMatch && pkgMatch[1]) {
+            summary.package = pkgMatch[1];
+        }
+
+        // Kotlin imports
+        const importRegex = /^\s*import\s+([a-zA-Z0-9_.]+)/gm;
+        let match;
+        while ((match = importRegex.exec(content)) !== null) {
+            const importPath = match[1];
+            if (importPath) {
+                const parts = importPath.split('.');
+                const className = parts[parts.length - 1];
+                if (className !== '*') {
+                    if (!summary.references.some(r => r.target === className)) {
+                        summary.references.push({ target: className, type: 'dependency', fullPath: importPath });
+                    }
+                }
+            }
+        }
+
+        // Kotlin classes, objects, interfaces
+        const classRegex = /(?:public\s+|private\s+|protected\s+|internal\s+|abstract\s+|final\s+|sealed\s+|data\s+|value\s+)*(?:class|interface|object|enum class)\s+([a-zA-Z0-9_]+)/g;
+        while ((match = classRegex.exec(content)) !== null) {
+            const name = match[1];
+            if (name && !summary.classes.includes(name)) {
+                summary.classes.push(name);
+            }
+        }
+        
+        // Kotlin top-level functions (basic extraction)
+        const funRegex = /^\s*(?:public\s+|private\s+|protected\s+|internal\s+|inline\s+|suspend\s+)*fun\s+(?:<[^>]+>\s+)?([a-zA-Z0-9_]+)/gm;
+        while ((match = funRegex.exec(content)) !== null) {
+            const name = match[1];
+            if (name && !summary.functions.includes(name)) {
+                summary.functions.push(name);
+            }
         }
     }
 
@@ -478,7 +571,12 @@ export class FileScanner {
             while ((match = linkRegex.exec(content)) !== null) {
                 const ref = match[2].trim();
                 if (ref && !ref.startsWith('http') && !ref.startsWith('#')) {
-                    const cleanRef = path.basename(ref, path.extname(ref));
+                    // [v0.3.33 Fix] Keep the extension for markdown links so ReferenceVerifier can find the file
+                    let cleanRef = ref.replace(/^file:\/\//, '').replace(/\\/g, '/');
+                    // Remove url hash like #L123 if present
+                    if (cleanRef.includes('#')) {
+                        cleanRef = cleanRef.split('#')[0];
+                    }
                     if (cleanRef && !summary.references.some(r => r.target === cleanRef)) {
                         summary.references.push({ target: cleanRef, type: 'dependency' });
                     }

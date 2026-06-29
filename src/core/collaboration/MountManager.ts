@@ -225,7 +225,7 @@ export class MountManager {
         const nodes: any[] = [];
         const edges: any[] = [];
         const clusters: any[] = [];
-        const sourceExtensions = new Set(['.py', '.ts', '.js', '.rs', '.cpp', '.c', '.go', '.java', '.kt', '.swift', '.tsx', '.jsx']);
+        const sourceExtensions = new Set(['.py', '.ts', '.js', '.rs', '.cpp', '.c', '.go', '.java', '.kt', '.kts', '.swift', '.tsx', '.jsx']);
         const ignore = this.ignore;
 
         function walk(dir: string) {

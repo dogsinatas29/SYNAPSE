@@ -492,10 +492,41 @@ app.get('/api/state', (req, res) => {
 
             for (const [userId, clientData] of clientPushData.entries()) {
                 if (!activeUserIds.has(userId)) continue;
-                for (const n of clientData.nodes) nodeMap.set(n.id, n);
-                for (const e of clientData.edges) edgeMap.set(e.id, e);
+                
+                // [v0.3.33 Fix] Map client ghost nodes to server real nodes if they exist
+                const idMap = new Map<string, string>();
+                
+                for (const n of clientData.nodes) {
+                    let finalId = n.id;
+                    const ghostMatch = n.id.match(/::ghost::(.*)$/);
+                    if (ghostMatch) {
+                        const realId = ghostMatch[1];
+                        if (nodeMap.has(realId)) {
+                            // Server has the real node, so map it and skip adding the ghost
+                            idMap.set(n.id, realId);
+                            console.log(`[ID_MAP]\n${n.id}\n ->\n${realId}`);
+                            continue;
+                        }
+                    }
+                    nodeMap.set(finalId, n);
+                }
+                
+                for (const e of clientData.edges) {
+                    let remapped = false;
+                    const origFrom = e.from;
+                    const origTo = e.to;
+                    
+                    if (idMap.has(e.from)) { e.from = idMap.get(e.from)!; remapped = true; }
+                    if (idMap.has(e.to)) { e.to = idMap.get(e.to)!; remapped = true; }
+                    
+                    if (remapped) {
+                        console.log(`[EDGE_REMAP]\n${origFrom} -> ${origTo}\n =======>\n${e.from} -> ${e.to}`);
+                    }
+                    
+                    edgeMap.set(e.id, e);
+                }
                 for (const c of clientData.clusters) clusterMap.set(c.id, c);
-                Logger.info(`[ClientPush] Merged ${clientData.nodes.length} nodes from ${userId}`);
+                Logger.info(`[ClientPush] Merged ${clientData.nodes.length} nodes from ${userId} (Mapped ${idMap.size} ghosts)`);
             }
             state.nodes = Array.from(nodeMap.values()).map(normalizeNode);
             state.edges = Array.from(edgeMap.values());

@@ -72,16 +72,62 @@ export interface ProjectStructure {
     principles?: string[];
 }
 
+export type PositionSource = 'user' | 'auto';
+
+export interface LayoutNodePosition {
+    x: number;
+    y: number;
+    confidence: number;
+    source: PositionSource;
+}
+
+export interface NamedLayer {
+    id: string;
+    name: string;
+}
+
+export interface LayoutState {
+    version: number;
+    nodePositions: Record<string, LayoutNodePosition>;
+    clusterPositions: Record<string, LayoutNodePosition>;
+    layerAssignments: Record<string, string>; // clusterId -> layerId
+    layers: NamedLayer[];
+}
+
+export interface WorkspaceState {
+    version: number;
+    camera: { zoom: number, x: number, y: number };
+    visibility: { visibleLayers: string[], hiddenClusters: string[] };
+    filters?: any;
+}
+
+export interface BookmarkState {
+    version: number;
+    bookmarks: any[];
+}
+
+export interface SynapseWorkspace {
+    version: number;
+    graphFingerprint: string;
+    layout_state: LayoutState;
+    workspace_state: WorkspaceState;
+    bookmark_state: BookmarkState;
+}
+
 export interface ProjectState {
+    version?: number;
     project_name?: any;
     gemini_md_path?: any;
     current_snapshot_id?: any;
-    canvas_state?: any;
+    canvas_state?: any; // Deprecated, migrating to SynapseWorkspace
     nodes?: Node[];
     edges?: Edge[];
     clusters?: Cluster[];
     cluster_flows?: ClusterFlow[];
+    metaEdges?: any[];
     system_context?: any;
+    deletedNodeIds?: string[];
+    deletedPaths?: string[];
 }
 
 export interface ProjectMetadata {
@@ -119,9 +165,10 @@ export interface GraphSnapshot {
 
 export interface BootstrapResult {
     success: boolean;
-    structure?: ProjectStructure;
-    initial_nodes?: Node[];
-    initial_edges?: Edge[];
+    structure: ProjectStructure;
+    initial_nodes: any[];
+    initial_edges: any[];
+    metaEdges?: any[];
     error?: any;
 }
 

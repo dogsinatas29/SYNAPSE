@@ -132,7 +132,7 @@ export class RuleEngine {
         ]);
         this.binaryExcludes = new Set([
             '.vsix', '.zip', '.tar.gz', '.exe', '.dll', '.so', '.bin', '.js.map',
-            '.png', '.jpg', '.jpeg', '.gif', '.svg', '.pdf'
+            '.png', '.jpg', '.jpeg', '.gif', '.svg', '.pdf', '.txt', '.log', '.csv'
         ]);
         // Reset dynamic blacklists
         this.blacklistPaths = new Set();

@@ -97,6 +97,10 @@ export class CanvasPanel {
     private _isProcessingConfirm: boolean = false; // [v0.2.17 Patch 13.2] Prevent duplicate dialogs
     private _taskQueue = new SequentialTaskQueue();
 
+    public pushTask(task: () => Promise<void>) {
+        return this._taskQueue.push(task);
+    }
+
     // [v0.3.30] Collaboration Server Process
     private _serverProcess: cp.ChildProcess | null = null;
     private _externalServer: boolean = false;
@@ -276,10 +280,10 @@ export class CanvasPanel {
                     Logger.info('[CanvasPanel] getProjectState blocked by rollback guard.');
                     return;
                 }
-                await this.sendProjectState();
+                await this._taskQueue.push(() => this.sendProjectState());
                 return;
             case 'saveState':
-                await this.handleSaveState(message.data || message.state);
+                await this._taskQueue.push(() => this.handleSaveState(message.data || message.state));
                 return;
             case 'readFile':
                 await this.handleReadFile(message.filePath, message.clientUsername);
@@ -292,6 +296,9 @@ export class CanvasPanel {
                 return;
             case 'takeSnapshot':
                 await this.handleTakeSnapshot(message.data);
+                return;
+            case 'saveWorkspace':
+                await this.handleSaveWorkspace(message.data);
                 return;
             case 'getHistory':
                 await this.sendHistory();
@@ -309,16 +316,16 @@ export class CanvasPanel {
                 await this.handleCreateManualEdge(message.edge);
                 return;
             case 'deleteEdge':
-                await this.handleDeleteEdge(message.edgeId);
+                await this._taskQueue.push(() => this.handleDeleteEdge(message.edgeId));
                 return;
             case 'deleteNodes':
-                await this.handleDeleteNodes(message);
+                await this._taskQueue.push(() => this.handleDeleteNodes(message));
                 return;
             case 'updateEdge':
-                await this.handleUpdateEdge(message.edgeId, message.updates);
+                await this._taskQueue.push(() => this.handleUpdateEdge(message.edgeId, message.updates));
                 return;
             case 'approveNode':
-                await this.handleApproveNode(message.nodeId);
+                await this._taskQueue.push(() => this.handleApproveNode(message.nodeId));
                 return;
             case 'rejectNode':
                 await this.handleRejectNode(message.nodeId);
@@ -468,13 +475,13 @@ export class CanvasPanel {
                 }
                 return;
             case 'reBootstrap':
-                await this.handleReBootstrap();
+                await this._taskQueue.push(() => this.handleReBootstrap());
                 return;
             case 'requestConfirmEdge':
-                await this.handleRequestConfirmEdge(message.edgeId, message.fromFile, message.toFile);
+                await this._taskQueue.push(() => this.handleRequestConfirmEdge(message.edgeId, message.fromFile, message.toFile));
                 return;
             case 'resetProjectState':
-                await this.handleResetProjectState();
+                await this._taskQueue.push(() => this.handleResetProjectState());
                 return;
             case 'logPrompt':
                 await this.handleLogPrompt(message.prompt, message.title);
@@ -770,21 +777,34 @@ export class CanvasPanel {
 
             // 1. [v0.3.11] Sync Physical File if requested (Fast Check)
             if (node.createPhysicalFile && node.data?.label) {
-                const fileUri = vscode.Uri.joinPath(workspaceFolder.uri, node.data.label);
+                let targetFileName = node.data.label;
+                if (!targetFileName.includes('.')) {
+                    // [v0.3.32.3] Prompt user for extension instead of auto-inferring
+                    const extSelection = await vscode.window.showQuickPick(
+                        ['.ts', '.js', '.py', '.rs', '.cpp', '.java', '.go', '.md', 'No Extension'],
+                        { placeHolder: `Select extension for new node: ${targetFileName}` }
+                    );
+                    
+                    if (extSelection && extSelection !== 'No Extension') {
+                        targetFileName += extSelection;
+                    }
+                }
+                const fileUri = vscode.Uri.joinPath(workspaceFolder.uri, targetFileName);
                 try {
                     await vscode.workspace.fs.stat(fileUri);
                     node.data.file = vscode.workspace.asRelativePath(fileUri);
                 } catch {
                     // Create empty file (Background-ish)
                     await vscode.workspace.fs.writeFile(fileUri, Buffer.from('', 'utf8'));
-                    Logger.info(`[CanvasPanel] Physical file auto-created: ${node.data.label}`);
+                    Logger.info(`[CanvasPanel] Physical file auto-created: ${targetFileName}`);
                     node.data.file = vscode.workspace.asRelativePath(fileUri);
                 }
+                node.filePath = node.data.file; // Sync top-level filePath
                 delete node.createPhysicalFile;
             }
 
             // 2. Dispatch to Engine
-            let rawFile = node.data?.file || '';
+            let rawFile = node.filePath || node.data?.file || '';
             if (rawFile) {
                 const wsPathUnix = workspaceFolder.uri.fsPath.replace(/\\/g, '/');
                 let safeFile = rawFile.replace(/\\/g, '/');
@@ -800,9 +820,12 @@ export class CanvasPanel {
                 : rawFile;
 
             const nodeId = node.id || crypto.randomUUID();
+            // If we appended .py in step 1, use that as the display label to match reality
+            const finalLabel = node.filePath ? path.basename(node.filePath) : (node.data?.label || nodeId);
+
             const result = canvasEngine.dispatch('ADD_NODE', {
                 id: nodeId,
-                label: node.data?.label || nodeId,
+                label: finalLabel,
                 type: node.type || 'file',
                 layer: 'user',
                 clientLayer: this._isServerOwner ? undefined : this._connUserId,
@@ -812,7 +835,7 @@ export class CanvasPanel {
                 status: 'pending',
                 data: {
                     ...node.data,
-                    label: node.data?.label || nodeId,
+                    label: finalLabel,
                     layer: 'user',
                     clientLayer: this._isServerOwner ? undefined : this._connUserId,
                     clientUsername: this._isServerOwner ? undefined : this._connUsername,
@@ -835,9 +858,18 @@ export class CanvasPanel {
             const finalState = canvasEngine.getFinalSnapshot();
             
             // Ensure the new node is definitely in the persistence block
-            if (!finalState.nodes[nodeId]) {
+            const finalStateNodes = Array.isArray(finalState.nodes) ? finalState.nodes : Object.values(finalState.nodes || {});
+            const existingNode = finalStateNodes.find((n: any) => n.id === nodeId);
+            if (!existingNode) {
                 const rawEngineSnap = canvasEngine.getRawSnapshot();
-                finalState.nodes[nodeId] = rawEngineSnap.nodes[nodeId];
+                const rawNode = Object.values(rawEngineSnap.nodes).find((n: any) => n.id === nodeId);
+                if (rawNode) {
+                    if (Array.isArray(finalState.nodes)) {
+                        finalState.nodes.push(rawNode);
+                    } else {
+                        finalState.nodes[nodeId] = rawNode;
+                    }
+                }
             }
 
             // [v0.3.11] Use the hardened saveState pipeline for consistent normalization
@@ -1896,7 +1928,7 @@ export class CanvasPanel {
 
         try {
             const rootPath = workspaceFolder.uri.fsPath;
-            const sourceExtensions = new Set(['.py', '.ts', '.js', '.rs', '.cpp', '.c', '.go', '.java', '.kt', '.swift', '.tsx', '.jsx']);
+            const sourceExtensions = new Set(['.py', '.ts', '.js', '.rs', '.cpp', '.c', '.go', '.java', '.kt', '.kts', '.swift', '.tsx', '.jsx']);
             const userId = this._connUserId || 'unknown';
             const username = this._connUsername || 'unknown';
             const nodes: any[] = [];
@@ -3009,6 +3041,11 @@ export class CanvasPanel {
     private validateProjectState(state: any): boolean {
         if (!state || typeof state !== 'object') return false;
 
+        // [v0.3.32.4] False Positive Fix: Skip graph array checks if it is a Workspace State object
+        if (state.workspace_state && !state.nodes) {
+            return true;
+        }
+
         // Essential keys check
         const essentialKeys = ['nodes', 'edges', 'clusters'];
         for (const key of essentialKeys) {
@@ -3564,12 +3601,14 @@ export class CanvasPanel {
                 const node = currentNodesArr.find((n: any) => n.id === id || n.filePath === id);
                 
                 if (node) {
-                    if (node.label) {
-                        const cleanLabel = node.label.replace(/^[📄📁]\s*/, '');
+                    const nodeLabel = node.label || (node.data && node.data.label);
+                    if (nodeLabel) {
+                        const cleanLabel = nodeLabel.replace(/^[📄📁]\s*/, '');
                         deletedNodeLabels.push(cleanLabel);
                     }
-                    if (node.filePath) {
-                        filesToDelete.push(node.filePath);
+                    const effectivePath = node.filePath || (node.data && (node.data.file || node.data.filePath));
+                    if (effectivePath) {
+                        filesToDelete.push(effectivePath);
                     }
                 }
                 
@@ -3582,8 +3621,14 @@ export class CanvasPanel {
             // await this.sendProjectState(false, true); // [v0.3.30] Prevent UI overwrite that deletes client nodes
 
             // 2. Persistence
-            const finalState = canvasEngine.getFinalSnapshot();
-            const finalNormalizedJson = JSON.stringify(finalState, null, 2);
+            const rawSnap = canvasEngine.getRawSnapshot();
+            projectState.nodes = Object.values(rawSnap.nodes).filter((n: any) => !n.id.startsWith('client::'));
+            projectState.edges = Object.values(rawSnap.edges).filter((e: any) => !(e.id.startsWith('edge_client::') || e.from.startsWith('client::') || e.to.startsWith('client::')));
+            projectState.clusters = (rawSnap.clusters || []).filter((c: any) => !c.id.startsWith('client::'));
+            projectState.deletedNodeIds = rawSnap.deletedNodeIds || [];
+            projectState.deletedPaths = rawSnap.deletedPaths || [];
+            
+            const finalNormalizedJson = JSON.stringify(projectState, null, 2);
             await vscode.workspace.fs.writeFile(projectStateUri, Buffer.from(finalNormalizedJson, 'utf8'));
 
             // 3. Cascading Cleanup & Physical Deletion (Keep existing UI logic)
@@ -3606,7 +3651,7 @@ export class CanvasPanel {
                     if (filesToDelete.length > 0) {
                         for (const relPath of filesToDelete) {
                             try {
-                                const fileUri = vscode.Uri.joinPath(workspaceFolder.uri, relPath);
+                                const fileUri = path.isAbsolute(relPath) ? vscode.Uri.file(relPath) : vscode.Uri.joinPath(workspaceFolder.uri, relPath);
                                 // Move to trash instead of permanent delete for safety
                                 await vscode.workspace.fs.delete(fileUri, { useTrash: true });
                                 Logger.info(`[CanvasPanel] Physically deleted file: ${relPath}`);
@@ -3838,6 +3883,16 @@ export class CanvasPanel {
     private async handleResetProjectState() {
         const workspaceFolder = this._workspaceFolder;
         if (!workspaceFolder) return;
+
+        const confirm = await vscode.window.showWarningMessage(
+            '🔄 project_state.json을 빈 상태로 초기화하시겠습니까?\n\n노드, 엣지, 클러스터 등 저장된 모든 캔버스 상태가 삭제됩니다.\n(소스 코드는 변경되지 않습니다.)',
+            { modal: true },
+            '초기화'
+        );
+
+        if (confirm !== '초기화') {
+            return;
+        }
 
         // STEP 1: Disk Purge - project_state.json 물리적 초기화
         const emptyState = { nodes: [], edges: [], clusters: [] };
@@ -4491,11 +4546,19 @@ export class CanvasPanel {
                 nodes: finalNodesList.filter((n: any) => !n.id.startsWith('client::')),
                 edges: Object.values(rawSnap.edges).filter((e: any) => !(e.id.startsWith('edge_client::') || e.from.startsWith('client::') || e.to.startsWith('client::'))),
                 clusters: (rawSnap.clusters || []).filter((c: any) => !c.id.startsWith('client::')),
-                deletedNodeIds: rawSnap.deletedNodeIds || []
+                deletedNodeIds: rawSnap.deletedNodeIds || [],
+                deletedPaths: rawSnap.deletedPaths || []
             };
 
             const normalizedJson = this.normalizeProjectState(persistenceState);
-            await vscode.workspace.fs.writeFile(projectStateUri, Buffer.from(normalizedJson, 'utf8'));
+            try {
+                console.log(`[STATE_SAVE_START] Output path: ${projectStateUri.fsPath} (handleSaveState)`);
+                console.log(`[STATE_SAVE] Nodes: ${persistenceState.nodes.length}, Edges: ${persistenceState.edges.length}`);
+                await vscode.workspace.fs.writeFile(projectStateUri, Buffer.from(normalizedJson, 'utf8'));
+                console.log(`[STATE_SAVE_COMPLETE] project_state.json successfully written.`);
+            } catch (err) {
+                console.error(`[STATE_SAVE_ERROR] Failed to write project_state.json in handleSaveState:`, err);
+            }
 
             console.log(`[SYNAPSE] State synchronized: ${persistenceState.nodes.length} nodes saved to disk.`);
             
@@ -4503,6 +4566,58 @@ export class CanvasPanel {
             // await this.sendProjectState(false, true); // [v0.3.30] Prevent UI overwrite that deletes client nodes
         } catch (error) {
             console.error('[SYNAPSE] Failed to save state:', error);
+        }
+    }
+    private async handleSaveWorkspace(workspaceData: any) {
+        const workspaceFolder = this._workspaceFolder;
+        if (!workspaceFolder) return;
+
+        try {
+            const workspaceUri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'synapse_workspace.json');
+            
+            // Try to load existing to preserve things like graphFingerprint if only updating a subset
+            let existingWorkspace: any = {
+                version: 1,
+                graphFingerprint: workspaceData.graphFingerprint || '',
+                layout_state: {
+                    version: 1,
+                    nodePositions: {},
+                    clusterPositions: {},
+                    layerAssignments: {},
+                    layers: []
+                },
+                workspace_state: {
+                    version: 1,
+                    camera: { zoom: 1.0, x: 0, y: 0 },
+                    visibility: { visibleLayers: [], hiddenClusters: [] },
+                    filters: {},
+                    bookmarks: {}
+                },
+                bookmark_state: {
+                    version: 1,
+                    bookmarks: []
+                }
+            };
+
+            try {
+                const data = await vscode.workspace.fs.readFile(workspaceUri);
+                const parsed = JSON.parse(Buffer.from(data).toString('utf-8'));
+                existingWorkspace = { ...existingWorkspace, ...parsed };
+            } catch (e) {}
+
+            // Merge new data
+            if (workspaceData.layout_state) {
+                existingWorkspace.layout_state = { ...existingWorkspace.layout_state, ...workspaceData.layout_state };
+            }
+            if (workspaceData.workspace_state) {
+                existingWorkspace.workspace_state = { ...existingWorkspace.workspace_state, ...workspaceData.workspace_state };
+            }
+
+            const normalizedJson = this.normalizeProjectState(existingWorkspace);
+            await vscode.workspace.fs.writeFile(workspaceUri, Buffer.from(normalizedJson, 'utf-8'));
+            // console.log(`[SYNAPSE] Workspace state synchronized to disk.`);
+        } catch (error) {
+            console.error('[SYNAPSE] Failed to save workspace state:', error);
         }
     }
 
@@ -4804,12 +4919,8 @@ export class CanvasPanel {
             // [v0.3.11] 1. Load Current SSOT (Engine Snapshot)
             const engineSnap = canvasEngine.getFinalSnapshot();
             let projectState: any = {
+                version: 1,
                 project_name: workspaceFolder.name,
-                canvas_state: {
-                    zoom_level: 1.0,
-                    offset: { x: 0, y: 0 },
-                    visible_layers: ['source', 'documentation']
-                },
                 nodes: Object.values(engineSnap.nodes),
                 edges: Object.values(engineSnap.edges),
                 clusters: engineSnap.clusters || [],
@@ -4817,6 +4928,25 @@ export class CanvasPanel {
                 aiCount: engineSnap.aiCount,
                 externalCount: engineSnap.externalCount
             };
+
+            // Load Workspace / Layout State
+            const workspaceUri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'synapse_workspace.json');
+            let synapseWorkspace: any = null;
+            try {
+                const wsData = await vscode.workspace.fs.readFile(workspaceUri);
+                synapseWorkspace = JSON.parse(wsData.toString());
+                
+                // Fingerprint Verification
+                const currentNodeIds = projectState.nodes.map((n:any) => n.id).sort().join(',');
+                const currentFingerprint = require('crypto').createHash('sha256').update(currentNodeIds).digest('hex');
+                
+                if (synapseWorkspace.graphFingerprint && synapseWorkspace.graphFingerprint !== currentFingerprint) {
+                    Logger.warn(`[CanvasPanel] Workspace fingerprint mismatch! Proceeding with caution.`);
+                    // Send warning to UI?
+                }
+            } catch(e) {}
+            
+            projectState.synapse_workspace = synapseWorkspace;
 
             // [v0.3.11] 2. Boot-Sync: If Engine is new OR incomplete, load from persistence file
             const projectStateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'project_state.json');
@@ -4830,7 +4960,10 @@ export class CanvasPanel {
                 const rawEngineSnap = canvasEngine.getRawSnapshot();
                 const rawNodeCount = Object.keys(rawEngineSnap.nodes).length;
 
-                if (rawNodeCount === 0 || rawNodeCount < (fileState.nodes || []).length) {
+                // [v0.3.32.2 FIX] If forceReset is true (e.g. after a fresh Bootstrap scan), we MUST reload from disk!
+                if (forceReset || rawNodeCount === 0 || rawNodeCount < (fileState.nodes || []).length) {
+                    Logger.info(`\n[CACHE] loaded_from_cache=true`);
+                    Logger.info(`[CACHE] nodes=${fileState.nodes?.length || 0} edges=${fileState.edges?.length || 0}`);
                     Logger.info(`[CanvasPanel] Syncing backend engine from project_state.json (File: ${fileState.nodes?.length || 0} vs Engine: ${rawNodeCount})`);
                     canvasEngine.loadInitialState(fileState);
                     
@@ -4846,6 +4979,7 @@ export class CanvasPanel {
                     projectState.externalCount = refreshedSnap.externalCount;
                 }
             } catch (e) {
+                Logger.info(`\n[CACHE] loaded_from_cache=false`);
                 Logger.warn(`[CanvasPanel] Boot-Sync: No project_state.json found or failed to parse.`);
             }
 
@@ -4875,8 +5009,15 @@ export class CanvasPanel {
                             projectState.edges = Object.values(finalSnap.edges);
                             projectState.clusters = finalSnap.clusters || [];
 
-                            const normalizedJson = this.normalizeProjectState(finalSnap);
-                            await vscode.workspace.fs.writeFile(projectStateUri, Buffer.from(normalizedJson, 'utf-8'));
+                            try {
+                                const normalizedJson = this.normalizeProjectState(finalSnap);
+                                console.log(`[STATE_SAVE_START] Output path: ${projectStateUri.fsPath} (autoDiscover)`);
+                                console.log(`[STATE_SAVE] Nodes: ${projectState.nodes.length}, Edges: ${projectState.edges.length}`);
+                                await vscode.workspace.fs.writeFile(projectStateUri, Buffer.from(normalizedJson, 'utf-8'));
+                                console.log(`[STATE_SAVE_COMPLETE] project_state.json successfully written.`);
+                            } catch (writeErr) {
+                                console.error(`[STATE_SAVE_ERROR] Failed to write project_state.json in autoDiscover:`, writeErr);
+                            }
                         }
                     }
                 }
@@ -4934,17 +5075,17 @@ export class CanvasPanel {
 
         const scriptUri = webview.asWebviewUri(
             vscode.Uri.joinPath(this._extensionUri, 'ui', 'canvas-engine.js')
-        ).toString() + `?t=${Date.now()}`;
+        ).toString();
         const engineCoreUri = webview.asWebviewUri(
             vscode.Uri.joinPath(this._extensionUri, 'ui', 'engine-core.js')
-        ).toString() + `?t=${Date.now()}`;
+        ).toString();
         const webglRendererUri = webview.asWebviewUri(
             vscode.Uri.joinPath(this._extensionUri, 'ui', 'webgl-renderer.js')
-        ).toString() + `?t=${Date.now()}`;
+        ).toString();
 
         const themeUri = webview.asWebviewUri(
             vscode.Uri.joinPath(this._extensionUri, 'ui', 'synapse-theme.js')
-        ).toString() + `?t=${Date.now()}`;
+        ).toString();
 
         // [v0.3.31] HTML Tooltip Localization
         const isKo = vscode.env.language.startsWith('ko');

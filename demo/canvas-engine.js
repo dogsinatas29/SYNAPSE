@@ -6,6 +6,7 @@
  * This software incorporates fzf-inspired fuzzy matching logic, which is licensed under the MIT License.
  * fzf (C) 2013-2023 Junegunn Choi
  */
+console.log("[FLOW_DEBUG] BUILD_ID_20260628_A canvas-engine.js LOADED");
 
 /**
  * PromotionParticle - 설계 승격 효과를 위한 파티클 클래스
@@ -52,10 +53,36 @@ class FlowRenderer {
     }
 
     buildFlow(nodes) {
+        console.log("[FLOW_DEBUG] buildFlow input", nodes.length);
+        console.log("[FLOW_DEBUG] node types", nodes.reduce((acc, n) => {
+            const t = n.type || "undefined";
+            acc[t] = (acc[t] || 0) + 1;
+            return acc;
+        }, {}));
+        
+        const clientNodes = nodes.filter(n => n.clientLayer || n.layer === "client" || (n.data && n.data.clientLayer));
+        console.log("[FLOW_DEBUG] client nodes count", clientNodes.length);
+        console.table(clientNodes.map(n => ({
+            id: n.id,
+            label: n.label,
+            type: n.type,
+            layer: n.layer,
+            clientLayer: n.clientLayer,
+            status: n.status
+        })));
+        console.log("[FLOW_DEBUG] client node ids", clientNodes.map(n => n.id));
+        console.log("[FLOW_DEBUG] client node labels", clientNodes.map(n => n.label));
+        console.log("[FLOW_DEBUG] client node detail", JSON.stringify(clientNodes.map(n => ({
+            id: n.id,
+            label: n.label,
+            type: n.type,
+            clientLayer: n.clientLayer,
+            layer: n.layer,
+            status: n.status
+        })), null, 2));
         const edges = this.engine.edges || [];
 
-        // 1. 진짜 실행 루트 탐색 (실제 그래프 상의 Root: In-degree가 0인 노드들)
-        // [Fix] External 노드는 루트에서 제외 (로직의 시작점이 될 수 없음)
+        // 1. Entry Point 탐색 & Root 결정
         const inDegrees = {};
         edges.forEach(e => {
             if (!e || !e.to) return;
@@ -93,7 +120,6 @@ class FlowRenderer {
         if (entryPoint) {
             roots = [entryPoint];
         } else {
-            // Fallback: in-degree=0 + 정렬
             roots = nodes.filter(n => !inDegrees[n.id] && n.type !== 'external');
             roots.sort((a, b) => {
                 const fileNameA = (a.data && a.data.file) ? a.data.file.toLowerCase() : '';
@@ -115,9 +141,59 @@ class FlowRenderer {
             }
         }
 
+        // [Fix] Client nodes MUST be treated as roots (entry points) so they are reachable and connected to START
+        const clientRoots = nodes.filter(n => n.clientLayer || n.layer === "client" || (n.data && n.data.clientLayer));
+        clientRoots.forEach(cn => {
+            if (!roots.some(r => r.id === cn.id)) {
+                roots.push(cn);
+            }
+        });
+
         console.log("[FLOW_DEBUG] entryPoint", entryPoint?.data?.file || "null");
         console.log("[FLOW_DEBUG] roots count", roots.length);
         console.log("[FLOW_DEBUG] roots files", roots.slice(0, 10).map(r => r.data?.file || r.id));
+
+        // [Checkpoint A 진단] entry candidates 목록
+        const _entryCandidates = nodes
+            .map(n => n.data?.file)
+            .filter(Boolean)
+            .filter(file => {
+                const f = file.toLowerCase();
+                return (
+                    /extension\.[tj]s$/.test(f) ||
+                    /main\.[tj]s$/.test(f) ||
+                    /activate\.[tj]s$/.test(f) ||
+                    /server\.[tj]s$/.test(f) ||
+                    /daemon\.[tj]s$/.test(f) ||
+                    /index\.[tj]s$/.test(f)
+                );
+            });
+        console.log("[FLOW_DEBUG] entry candidates", _entryCandidates);
+
+        // [Checkpoint A 진단] edge 방향 확인
+        console.log("[FLOW_DEBUG] edge sample", edges.slice(0, 30).map(e => ({
+            from: nodes.find(n => n.id === e.from)?.data?.file || e.from,
+            to: nodes.find(n => n.id === e.to)?.data?.file || e.to
+        })));
+
+        // [Checkpoint A 진단] index 노드 incoming/outgoing
+        const _diagIndex = nodes.find(n => n.data?.file?.match(/index\.[tj]s$/));
+        if (_diagIndex) {
+            const _outgoing = edges.filter(e => e.from === _diagIndex.id);
+            const _incoming = edges.filter(e => e.to === _diagIndex.id);
+            console.log("[FLOW_DEBUG] index outgoing", _outgoing.length, _outgoing.slice(0, 5).map(e => nodes.find(n => n.id === e.to)?.data?.file || e.to));
+            console.log("[FLOW_DEBUG] index incoming", _incoming.length, _incoming.slice(0, 5).map(e => nodes.find(n => n.id === e.from)?.data?.file || e.from));
+        }
+
+        // [Checkpoint A 진단] root outgoing
+        const _rootId = roots[0]?.id;
+        if (_rootId) {
+            const _rootOut = edges.filter(e => e.from === _rootId).slice(0, 10);
+            console.log("[FLOW_DEBUG] root outgoing", _rootOut.map(e => ({
+                from: nodes.find(n => n.id === e.from)?.data?.file,
+                to: nodes.find(n => n.id === e.to)?.data?.file
+            })));
+        }
 
         // 2. 의존성 트레이싱 (Reachability)
         const reachableIds = new Set();
@@ -149,6 +225,25 @@ class FlowRenderer {
         // 3. 도달 가능한 노드 필터링 및 정렬
         // [Refine] Flow 뷰에서는 '순수 로직'만 표현하기 위해 문서(.md) 파일은 다시 제외
         // 문서 파일은 Graph 뷰의 'Documentation Shelf'에서 탐색 가능함
+        
+        const debugClientNodes = nodes.filter(n => n.clientLayer || n.layer === "client" || (n.data && n.data.clientLayer));
+        console.log("[FLOW_DEBUG] debugClientNodes raw", debugClientNodes.length, debugClientNodes);
+        for (const node of debugClientNodes) {
+            const fileName = (node.data && node.data.file) ? node.data.file.toLowerCase() : '';
+            const isDoc = fileName.endsWith('.md') || fileName.endsWith('.txt') || fileName.includes('license');
+            const isGhost = node.status === 'ghost';
+            const isUser = node.layer === 'user' || 
+                           (node.data && node.data.layer === 'user') ||
+                           node.status === 'pending' ||
+                           (node.id && node.id.startsWith('node_manual_'));
+            const reachable = reachableIds.has(node.id);
+            const baseVisible = isUser || this.engine.showBaseLayer;
+            const userVisible = !isUser || this.engine.showUserLayer;
+            const clientVisible = !this.engine._isClientLayerVisible || this.engine._isClientLayerVisible(node);
+            
+            console.log("[FLOW_DEBUG] client filter reasons", node.label, {reachable, isGhost, baseVisible, userVisible, clientVisible});
+        }
+        
         const filteredNodes = nodes.filter(n => {
             const fileName = (n.data && n.data.file) ? n.data.file.toLowerCase() : '';
             const isDoc = fileName.endsWith('.md') || fileName.endsWith('.txt') || fileName.includes('license');
@@ -165,13 +260,54 @@ class FlowRenderer {
             if (isUser && !this.engine.showUserLayer) return false;
             if (this.engine._isClientLayerVisible && !this.engine._isClientLayerVisible(n)) return false;
 
-            const isClientNode = !!n.clientLayer || !!(n.data && n.data.clientLayer);
+            const isClientNode = !!n.clientLayer || n.layer === "client" || !!(n.data && n.data.clientLayer);
             if (isClientNode) {
                 return reachableIds.has(n.id) && !isDoc && !isContext;
             }
 
             return reachableIds.has(n.id) && n.type !== 'external' && !isDoc && !isGhost && !isContext;
         });
+        
+        console.log("[FLOW_DEBUG] filteredNodes count", filteredNodes.length);
+        
+        console.log("[FLOW_DEBUG] client reachability", debugClientNodes.map(n => ({
+            label: n.label,
+            id: n.id,
+            reachable: reachableIds.has(n.id),
+            ghost: n.status === 'ghost',
+            isDoc: ((n.data && n.data.file) || '').toLowerCase().endsWith('.md')
+        })));
+        
+        const survivingClientNodes = filteredNodes.filter(n => n.clientLayer || n.layer === "client" || (n.data && n.data.clientLayer));
+        console.log("[FLOW_DEBUG] surviving client nodes", JSON.stringify(survivingClientNodes.map(n => ({
+            id: n.id,
+            label: n.label,
+            type: n.type
+        })), null, 2));
+        console.log("[FLOW_DEBUG] dropped client nodes", debugClientNodes.filter(n => !filteredNodes.some(f => f.id === n.id)).map(n => ({
+            label: n.label,
+            id: n.id
+        })));
+        const dropped = nodes.filter(n => !filteredNodes.includes(n));
+        console.log("[FLOW_DEBUG] dropped nodes", dropped.map(n => ({
+            id: n.id,
+            type: n.type,
+            label: n.label,
+            layer: n.layer,
+            status: n.status,
+            clientLayer: n.clientLayer
+        })));
+        
+        const droppedSourceNodes = dropped.filter(n => n.type === "source");
+        console.log("[FLOW_DEBUG] dropped source nodes", droppedSourceNodes.length);
+        console.table(droppedSourceNodes.map(n => ({
+            id: n.id,
+            label: n.label,
+            type: n.type,
+            layer: n.layer,
+            clientLayer: n.clientLayer,
+            status: n.status
+        })));
         const sortedNodes = [...filteredNodes].sort((a, b) => {
             const layerA = a.data.layer || 0;
             const layerB = b.data.layer || 0;
@@ -248,6 +384,56 @@ class FlowRenderer {
             }
         });
 
+        console.log("[FLOW_DEBUG] buildFlow output", steps.length);
+        console.log("[FLOW_DEBUG] step labels sample", steps.slice(0, 10).map(s => s.label));
+
+        // [Checkpoint A] START → Entry Point 흐름 검증
+        const startStep = steps.find(s => s.id === 'step_start');
+        const startNextLabels = (startStep?.allNexts || []).map(id => {
+            const s = steps.find(x => x.id === id);
+            return s ? s.label : id;
+        });
+        console.log("[FLOW_DEBUG] CHECKPOINT_A START.next", startNextLabels);
+        // START에서 3단계까지 추적
+        let traceId = startStep?.next;
+        const trace = ['START'];
+        for (let i = 0; i < 5 && traceId; i++) {
+            const s = steps.find(x => x.id === traceId);
+            if (!s) break;
+            trace.push(s.label);
+            traceId = s.next;
+        }
+        console.log("[FLOW_DEBUG] CHECKPOINT_A trace", trace.join(' → '));
+
+        // [v0.3.32.1] Graph structure verification — topHub detail
+        const topHub = steps
+            .map(s => ({
+                step: s,
+                out: (s.allNexts?.length || 0) + (s.next ? 1 : 0)
+            }))
+            .sort((a, b) => b.out - a.out)[0];
+        console.log("[FLOW_DEBUG] topHub detail", JSON.stringify({
+            id: topHub.step.id,
+            label: topHub.step.label,
+            next: topHub.step.next,
+            allNexts: topHub.step.allNexts
+        }, null, 2));
+
+        console.log("[FLOW_DEBUG] top hubs",
+            steps
+                .map(s => ({
+                    id: s.id,
+                    label: s.label,
+                    next: s.next,
+                    allNexts: s.allNexts?.length || 0
+                }))
+                .sort((a, b) =>
+                    ((b.allNexts) + (b.next ? 1 : 0)) -
+                    ((a.allNexts) + (a.next ? 1 : 0))
+                )
+                .slice(0, 20)
+        );
+
         return {
             id: 'flow_main',
             type: 'global', // [New] Distinguish from 'internal' flow
@@ -273,7 +459,44 @@ class FlowRenderer {
             adj[step.id] = [];
         });
 
-        // Build edges
+        // [v0.3.32.1 Fix] Detect and break cycles using DFS back-edge detection
+        const visited = new Set();
+        const recStack = new Set();
+        const backEdges = new Set();
+        
+        // Helper map for fast lookup
+        const stepMap = {};
+        flow.steps.forEach(s => { stepMap[s.id] = s; });
+
+        const detectCycle = (u) => {
+            visited.add(u);
+            recStack.add(u);
+            const step = stepMap[u];
+            if (step) {
+                const nIds = [...new Set([
+                    ...(step.next ? [step.next] : []),
+                    ...(step.alternateNext ? [step.alternateNext] : []),
+                    ...(step.allNexts || []),
+                    ...(step.roots || [])
+                ])];
+                nIds.forEach(v => {
+                    if (!visited.has(v)) detectCycle(v);
+                    else if (recStack.has(v)) backEdges.add(`${u}->${v}`);
+                });
+            }
+            recStack.delete(u);
+        };
+        
+        // Ensure all components are visited (prefer starting from 'step_start' if exists)
+        if (stepMap['step_start']) detectCycle('step_start');
+        flow.steps.forEach(s => {
+            if (!visited.has(s.id)) detectCycle(s.id);
+        });
+        
+        console.log("[FLOW_DEBUG] Detected back-edges (cycles):", Array.from(backEdges));
+        this.backEdges = backEdges;
+
+        // Build edges (ignoring back-edges to maintain DAG property for Kahn's)
         flow.steps.forEach(step => {
             const nextIdsRaw = step.allNexts || [];
             const nextIds = [...new Set([
@@ -284,38 +507,76 @@ class FlowRenderer {
             ])];
 
             nextIds.forEach(nextId => {
-                if (inDegree[nextId] !== undefined) {
+                if (inDegree[nextId] !== undefined && !backEdges.has(`${step.id}->${nextId}`)) {
                     inDegree[nextId]++;
                     adj[step.id].push(nextId);
                 }
             });
         });
 
-        // 2. Assign Levels (Topological-based Longest Path)
-        // [Opt] Initial queue: nodes with in-degree 0
-        const queue = [];
-        flow.steps.forEach(step => {
-            if (inDegree[step.id] === 0) {
-                queue.push(step.id);
-                levels[step.id] = 0;
-            }
+        // [v0.3.32.1] Build parentsMap (reverse adjacency) for L3 validation
+        const parentsMap = {};
+        flow.steps.forEach(step => { parentsMap[step.id] = []; });
+        Object.entries(adj).forEach(([parentId, childIds]) => {
+            childIds.forEach(childId => {
+                if (parentsMap[childId]) parentsMap[childId].push(parentId);
+            });
         });
 
-        // Use a simple BFS but WITHOUT re-evaluating visited nodes to prevent cycles from hanging
-        // Cycles are handled by the rank comparison (currentLevel + 1 > existingLevel)
+        // [v0.3.32.1] Adjacency structure diagnostics
+        console.log("[FLOW_DEBUG] adjacency sample",
+            Object.entries(adj).slice(0, 20).map(([k, v]) => ({
+                node: k,
+                outDegree: v.length
+            }))
+        );
+        console.log("[FLOW_DEBUG] max out degree",
+            Math.max(...Object.values(adj).map(v => v.length)));
+        console.log("[FLOW_DEBUG] zero out degree",
+            Object.values(adj).filter(v => v.length === 0).length);
+        console.log("[FLOW_DEBUG] highest out degree nodes",
+            Object.entries(adj)
+                .map(([k, v]) => ({ node: k, outDegree: v.length }))
+                .sort((a, b) => b.outDegree - a.outDegree)
+                .slice(0, 10)
+        );
+        console.log("[FLOW_DEBUG] END inDegree", inDegree['step_end']);
+        console.log("[FLOW_DEBUG] END adj out", adj['step_end']?.length);
+        console.log("[FLOW_DEBUG] END incoming",
+            flow.steps
+                .filter(s => s.next === "step_end" || s.allNexts?.includes("step_end"))
+                .map(s => s.label)
+        );
+
+        // 2. Assign Levels (Longest-path DAG layering via Kahn's algorithm)
+        flow.steps.forEach(step => { levels[step.id] = 0; });
+
+        const inDeg = {};
+        flow.steps.forEach(step => { inDeg[step.id] = inDegree[step.id]; });
+
+        const topoQueue = [];
+        flow.steps.forEach(step => {
+            if (inDeg[step.id] === 0) topoQueue.push(step.id);
+        });
+
+        // [v0.3.32.1] Kahn initial roots
+        const _stepMapForLevel = {};
+        flow.steps.forEach(s => { _stepMapForLevel[s.id] = s; });
+        console.log("[FLOW_DEBUG] initial roots (inDeg=0)",
+            Object.keys(inDeg).filter(id => inDeg[id] === 0).map(id => _stepMapForLevel[id]?.label || id)
+        );
+
         let processedCount = 0;
-        while (queue.length > 0) {
-            const current = queue.shift();
+        while (topoQueue.length > 0) {
+            const current = topoQueue.shift();
             processedCount++;
             const currentLevel = levels[current] || 0;
 
             const neighbors = adj[current] || [];
             neighbors.forEach(neighbor => {
-                const existingLevel = levels[neighbor];
-                if (existingLevel === undefined || currentLevel + 1 > existingLevel) {
-                    levels[neighbor] = currentLevel + 1;
-                    queue.push(neighbor);
-                }
+                levels[neighbor] = Math.max(levels[neighbor], currentLevel + 1);
+                inDeg[neighbor]--;
+                if (inDeg[neighbor] === 0) topoQueue.push(neighbor);
             });
 
             if (processedCount > 5000) {
@@ -324,7 +585,144 @@ class FlowRenderer {
             }
         }
 
-        // 3. X-Axis Balancing (Group by level)
+        // Cycle detection: report unprocessed nodes
+        const unprocessed = flow.steps
+            .filter(step => inDeg[step.id] > 0)
+            .map(step => ({
+                id: step.id,
+                label: step.label,
+                remainingInDegree: inDeg[step.id]
+            }));
+
+        if (processedCount !== flow.steps.length) {
+            console.warn("[FLOW_DEBUG] cycle detected", {
+                processed: processedCount,
+                total: flow.steps.length,
+                unprocessed
+            });
+        }
+
+        // [v0.3.32.1] Blocked nodes diagnostic — which nodes have inDeg > 0?
+        const blocked = Object.entries(inDeg)
+            .filter(([_, deg]) => deg > 0)
+            .map(([id, deg]) => ({
+                id,
+                deg,
+                label: _stepMapForLevel[id]?.label || id
+            }));
+        console.log("[FLOW_DEBUG] blocked nodes (inDeg > 0)", blocked.slice(0, 30));
+        // [v0.3.32.1] User Requested Diagnostics
+        console.log("[FLOW_DEBUG] step_57", stepMap["step_57"]);
+        console.log("[FLOW_DEBUG] step_16", stepMap["step_16"]);
+        console.log("[FLOW_DEBUG] cycle node indegree (step_57)", inDeg["step_57"]);
+        console.log("[FLOW_DEBUG] cycle node outgoing (step_57)", adj["step_57"]);
+        console.log("[FLOW_DEBUG] END level after longest-path", levels["step_end"]);
+
+        // [v0.3.32.1] Verify longest-path actually computed correct levels
+        // _stepMapForLevel is already declared above
+
+        console.log("[FLOW_DEBUG] deepest nodes after longest-path",
+            Object.entries(levels)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 20)
+        );
+
+        console.log("[FLOW_DEBUG] END parents current levels",
+            (parentsMap["step_end"] || []).map(id => ({
+                id,
+                label: _stepMapForLevel[id]?.label || id,
+                level: levels[id]
+            }))
+        );
+
+        console.log("[FLOW_DEBUG] processedCount", processedCount, "/", flow.steps.length);
+
+        // [v0.3.32.1] Level diagnostics
+        console.log("[FLOW_DEBUG] highest level nodes",
+            Object.entries(levels)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 20)
+        );
+        console.log("[FLOW_DEBUG] lowest level nodes",
+            Object.entries(levels)
+                .sort((a, b) => a[1] - b[1])
+                .slice(0, 20)
+        );
+        console.log("[FLOW_DEBUG] node degree top20",
+            Object.entries(adj)
+                .map(([k, v]) => ({ node: k, out: v.length }))
+                .sort((a, b) => b.out - a.out)
+                .slice(0, 20)
+        );
+
+        // [FLOW_DEBUG] Connected Component Detection
+        const _dbgUndirected = {};
+        flow.steps.forEach(s => { _dbgUndirected[s.id] = new Set(); });
+        flow.steps.forEach(step => {
+            const nextIds = [...new Set([
+                ...(step.next ? [step.next] : []),
+                ...(step.alternateNext ? [step.alternateNext] : []),
+                ...(step.allNexts || []),
+                ...(step.roots || [])
+            ])];
+            nextIds.forEach(nid => {
+                if (_dbgUndirected[nid]) {
+                    _dbgUndirected[step.id].add(nid);
+                    _dbgUndirected[nid].add(step.id);
+                }
+            });
+        });
+
+        const _dbgVisited = new Set();
+        const _dbgComponents = [];
+        flow.steps.forEach(step => {
+            if (_dbgVisited.has(step.id)) return;
+            const comp = [];
+            const q = [step.id];
+            while (q.length > 0) {
+                const id = q.shift();
+                if (_dbgVisited.has(id)) continue;
+                _dbgVisited.add(id);
+                comp.push(id);
+                _dbgUndirected[id].forEach(n => { if (!_dbgVisited.has(n)) q.push(n); });
+            }
+            _dbgComponents.push(comp);
+        });
+
+        const _stepMap = {};
+        flow.steps.forEach(s => { _stepMap[s.id] = s; });
+        _dbgComponents.forEach((comp, i) => {
+            const hasStart = comp.includes('step_start');
+            const hasEnd = comp.includes('step_end');
+            const labels = comp.map(id => _stepMap[id]?.label || id);
+            console.log(`[FLOW_DEBUG] Component #${i} start=${hasStart} end=${hasEnd}`, labels);
+        });
+        console.log("[FLOW_DEBUG] component summary", _dbgComponents.map((comp, idx) => ({
+            idx,
+            size: comp.length,
+            hasStart: comp.includes("step_start"),
+            hasClient: comp.some(id => id.startsWith("client::"))
+        })));
+
+        // [v0.3.32.1 Fix] Level remapping: compress sparse levels to contiguous range
+        // Without this, levels like {0,1,2,172,173,174,175} cause Y coordinates to span 31000px+
+        try {
+            const uniqueLevels = [...new Set(Object.values(levels))].sort((a, b) => a - b);
+            console.log("[FLOW_DEBUG] uniqueLevels raw", uniqueLevels);
+            const levelRemap = {};
+            uniqueLevels.forEach((origLevel, newIndex) => { levelRemap[origLevel] = newIndex; });
+            flow.steps.forEach(step => { levels[step.id] = levelRemap[levels[step.id]] || 0; });
+            console.log("[FLOW_DEBUG] level remap OK", uniqueLevels.length, "unique -> compact 0.." + (uniqueLevels.length - 1));
+        } catch(e) {
+            console.error("[FLOW_DEBUG] level remap CRASH", e);
+        }
+
+        // [v0.3.32.1] END level diagnostics AFTER remap
+        console.log("[FLOW_DEBUG] END level AFTER remap", levels["step_end"]);
+
+        // [v0.3.32.1] Simplified Layout: Pure level-based grid
+        // Removed: parentsMap, parentOffsetSum, offsets, occupied, spiral search, root centering
+        // Goal: Predictable hierarchical layout for DAG validation
         const nodesByLevel = {};
         flow.steps.forEach(step => {
             const lvl = levels[step.id] || 0;
@@ -332,76 +730,102 @@ class FlowRenderer {
             nodesByLevel[lvl].push(step.id);
         });
 
-        const offsets = {};
+        // [v0.3.32.1] nodesByLevel structure dump
+        console.log("[FLOW_DEBUG] nodesByLevel",
+            Object.fromEntries(
+                Object.entries(nodesByLevel).map(([lvl, nodes]) => [
+                    `L${lvl}`,
+                    nodes.map(n => ({
+                        id: n,
+                        label: flow.steps.find(s => s.id === n)?.label
+                    }))
+                ])
+            )
+        );
+        console.log("[FLOW_DEBUG] nodesByLevel counts",
+            Object.fromEntries(
+                Object.entries(nodesByLevel).map(([lvl, nodes]) => [`L${lvl}`, nodes.length])
+            )
+        );
 
-        // [Opt] Build reverse-adjacency map (children -> parents) for O(1) parent lookup
-        const parentsMap = {};
-        Object.entries(adj).forEach(([parentId, childIds]) => {
-            childIds.forEach(childId => {
-                if (!parentsMap[childId]) parentsMap[childId] = [];
-                parentsMap[childId].push(parentId);
-            });
-        });
+        // [v0.3.32.1] L3 parents dump — verify parent relationships before Barycenter
+        // stepMap is already declared above
+        const level3Nodes = nodesByLevel["3"] || nodesByLevel[3] || [];
+        console.log("[FLOW_DEBUG] L3 parents",
+            level3Nodes.map(id => ({
+                id,
+                label: stepMap[id]?.label,
+                parents: (parentsMap[id] || []).map(p => stepMap[p]?.label || p)
+            }))
+        );
 
-        // Root nodes center
-        const rootsInLevel0 = nodesByLevel[0] || [];
-        rootsInLevel0.forEach((rootId, idx) => {
-            const shift = (idx % 2 === 0 ? 1 : -1) * Math.ceil(idx / 2);
-            offsets[rootId] = shift;
-        });
+        // [v0.3.32.1] END parents level check — verify END is at correct level
+        const endParents = parentsMap['step_end'] || [];
+        console.log("[FLOW_DEBUG] END parents",
+            endParents.map(id => ({
+                id,
+                label: stepMap[id]?.label,
+                level: levels[id]
+            }))
+        );
 
-        // Flow downwards, place children near parents
-        Object.keys(nodesByLevel).sort((a, b) => a - b).forEach(lvl => {
-            const levelNum = parseInt(lvl);
-            if (levelNum === 0) return;
+        // [v0.3.32.1] Barycenter Ordering Phase 1 (Single Pass: Top -> Bottom)
+        // Removes arbitrary MAX_COLS grid and applies centered layer positioning.
+        const sortedNodesByLevel = {};
+        const levelKeys = Object.keys(nodesByLevel).map(Number).sort((a, b) => a - b);
+        
+        levelKeys.forEach(levelNum => {
+            const nodesInLevel = nodesByLevel[levelNum];
+            
+            if (levelNum === 0 || !sortedNodesByLevel[levelNum - 1]) {
+                sortedNodesByLevel[levelNum] = [...nodesInLevel];
+            } else {
+                const prevLevelNodes = sortedNodesByLevel[levelNum - 1];
+                const prevIndexMap = new Map();
+                prevLevelNodes.forEach((id, idx) => prevIndexMap.set(id, idx));
 
-            const nodesInLevel = nodesByLevel[lvl];
-            const occupied = new Set();
-
-            nodesInLevel.forEach(nodeId => {
-                // Find parent(s) to align X coordinate - [Opt] using parentsMap instead of iterating all keys
-                let parentOffsetSum = 0;
-                let parentCount = 0;
-
-                const parents = parentsMap[nodeId] || [];
-                parents.forEach(parentId => {
-                    if (offsets[parentId] !== undefined) {
-                        parentOffsetSum += offsets[parentId];
-                        parentCount++;
+                const withBarycenter = nodesInLevel.map((nodeId, originalIdx) => {
+                    // Filter parents to only those in the immediate previous level
+                    const parents = (parentsMap[nodeId] || []).filter(p => prevIndexMap.has(p));
+                    if (parents.length === 0) {
+                        return { nodeId, barycenter: originalIdx, hasParents: false };
                     }
+                    const sum = parents.reduce((acc, p) => acc + prevIndexMap.get(p), 0);
+                    return { nodeId, barycenter: sum / parents.length, hasParents: true };
                 });
 
-                let idealOffset = parentCount > 0 ? Math.round(parentOffsetSum / parentCount) : 0;
+                // Stable sort by barycenter
+                withBarycenter.sort((a, b) => {
+                    if (a.barycenter === b.barycenter) return 0;
+                    return a.barycenter - b.barycenter;
+                });
+                sortedNodesByLevel[levelNum] = withBarycenter.map(item => item.nodeId);
+            }
+            
+            // X Centering logic
+            const sortedNodes = sortedNodesByLevel[levelNum];
+            const rowWidth = (sortedNodes.length - 1) * stepWidth;
+            const startXCentered = startX - (rowWidth / 2);
 
-                // Spiral out to find empty slot
-                let actualOffset = idealOffset;
-                let shift = 0;
-                while (occupied.has(actualOffset)) {
-                    shift = (shift <= 0) ? -shift + 1 : -shift;
-                    actualOffset = idealOffset + shift;
-                }
-
-                occupied.add(actualOffset);
-                offsets[nodeId] = actualOffset;
+            sortedNodes.forEach((nodeId, idx) => {
+                const x = startXCentered + (idx * stepWidth);
+                const y = startY + (levelNum * stepHeight * 1.5); // Add slightly more vertical padding for readability
+                positions[nodeId] = { x, y };
             });
         });
 
-        // 4. Final Position Assignment
-        flow.steps.forEach(step => {
-            const level = levels[step.id] || 0;
-            const offset = offsets[step.id] || 0;
-
-            const x = startX + (offset * stepWidth);
-            const y = startY + (level * stepHeight);
-
-            // [v0.2.16 Safety] Guard against NaN/Infinity to prevent UI freeze
-            if (Number.isFinite(x) && Number.isFinite(y)) {
-                positions[step.id] = { x, y };
-            } else {
-                console.error(`[SYNAPSE] Invalid coordinates for node ${step.id}: (${x}, ${y})`);
-                positions[step.id] = { x: startX, y: startY + (level * stepHeight) }; // Fallback
-            }
-        });
+        // [v0.3.32.1] Position diagnostics
+        console.log("[FLOW_DEBUG] START pos", positions["step_start"]);
+        console.log("[FLOW_DEBUG] END pos", positions["step_end"]);
+        console.table(
+            flow.steps.map(s => ({
+                id: s.id,
+                label: s.label,
+                level: levels[s.id],
+                x: positions[s.id]?.x,
+                y: positions[s.id]?.y
+            }))
+        );
 
         return positions;
     }
@@ -409,6 +833,23 @@ class FlowRenderer {
     renderFlow(ctx, flow) {
         if (!flow || !flow.steps) return;
         const positions = this.layoutFlow(flow);
+
+        // [v0.3.32.1] Render diagnostics
+        const renderedCount = flow.steps.filter(s => !s.hidden && positions[s.id]).length;
+        const posValues = Object.values(positions);
+        const yValues = posValues.map(p => p.y);
+        const minY = Math.min(...yValues);
+        const maxY = Math.max(...yValues);
+        const xValues = posValues.map(p => p.x);
+        const minX = Math.min(...xValues);
+        const maxX = Math.max(...xValues);
+        console.log("[FLOW_DEBUG] renderFlow total", flow.steps.length, "rendered", renderedCount, "hidden", flow.steps.filter(s => s.hidden).length);
+        console.log("[FLOW_DEBUG] renderFlow bounds", {minX, maxX, minY, maxY, spanX: maxX-minX, spanY: maxY-minY});
+        console.log("[FLOW_DEBUG] renderFlow level distribution", Object.entries(positions).reduce((acc, [id, p]) => {
+            const level = Math.round((p.y - 100) / 180);
+            acc[level] = (acc[level] || 0) + 1;
+            return acc;
+        }, {}));
 
         // [New] 노드 논리적 그룹화 (Grouping)
         // 이름의 첫 단어(prefix)가 같은 노드들을 묶어 시각적 클러스터 박스를 렌더링
@@ -502,8 +943,15 @@ class FlowRenderer {
                 const isToHovered = targetNode && this.engine.hoveredNode && this.engine.hoveredNode.id === targetNode.id;
 
                 const isPathHighlighted = isFromSelected || isToSelected || isFromHovered || isToHovered;
+                const isCycle = this.backEdges && this.backEdges.has(`${step.id}->${nextId}`);
 
-                this.renderConnection(ctx, pos.x, pos.y, nextPos.x, nextPos.y, label, edgeType, isPathHighlighted);
+                // [Fix] Client Node Edge Coloring (Magenta)
+                const localClientId = (typeof window !== 'undefined' && window.connectedUser?.userId) || '';
+                const fromCl = step.node && (step.node.clientLayer || (step.node.data && step.node.data.clientLayer));
+                const toCl = targetNode && (targetNode.clientLayer || (targetNode.data && targetNode.data.clientLayer));
+                const isClientEdge = (fromCl && fromCl !== localClientId) || (toCl && toCl !== localClientId);
+
+                this.renderConnection(ctx, pos.x, pos.y, nextPos.x, nextPos.y, label, edgeType, isPathHighlighted, isCycle, isClientEdge);
             });
 
             // [New] START에서 여러 루트로 가는 멀티 연결선 지원
@@ -511,7 +959,12 @@ class FlowRenderer {
                 step.roots.forEach(rootId => {
                     const rootPos = positions[rootId];
                     if (rootPos) {
-                        this.renderConnection(ctx, pos.x, pos.y, rootPos.x, rootPos.y);
+                        const targetNode = flow.steps.find(s => s.id === rootId)?.node;
+                        const toCl = targetNode && (targetNode.clientLayer || (targetNode.data && targetNode.data.clientLayer));
+                        const localClientId = (typeof window !== 'undefined' && window.connectedUser?.userId) || '';
+                        const isClientEdge = toCl && toCl !== localClientId;
+                        const isCycle = this.backEdges && this.backEdges.has(`step_start->${rootId}`);
+                        this.renderConnection(ctx, pos.x, pos.y, rootPos.x, rootPos.y, null, null, false, isCycle, isClientEdge);
                     }
                 });
             }
@@ -539,14 +992,18 @@ class FlowRenderer {
             return;
         }
 
+        const cl = step.node && (step.node.clientLayer || (step.node.data && step.node.data.clientLayer));
+        const localClientId = (typeof window !== 'undefined' && window.connectedUser?.userId) || '';
+        const isClientNode = cl && cl !== localClientId;
+
         if (step.type === 'process') {
-            ctx.fillStyle = theme.FLOW.PROCESS.bg;
+            ctx.fillStyle = isClientNode ? '#3c0040' : theme.FLOW.PROCESS.bg;
             ctx.fillRect(x - width / 2, y - height / 2, width, height);
-            ctx.strokeStyle = theme.FLOW.PROCESS.border;
-            ctx.lineWidth = 2;
+            ctx.strokeStyle = isClientNode ? '#ff00ff' : theme.FLOW.PROCESS.border;
+            ctx.lineWidth = isClientNode ? 3 : 2;
             ctx.strokeRect(x - width / 2, y - height / 2, width, height);
         } else if (step.type === 'decision') {
-            ctx.fillStyle = theme.FLOW.DECISION.bg;
+            ctx.fillStyle = isClientNode ? '#3c0040' : theme.FLOW.DECISION.bg;
             ctx.beginPath();
             ctx.moveTo(x, y - height / 2 - 15);
             ctx.lineTo(x + width / 2 + 30, y);
@@ -555,12 +1012,12 @@ class FlowRenderer {
             ctx.closePath();
             ctx.fill();
 
-            ctx.strokeStyle = theme.FLOW.DECISION.border;
+            ctx.strokeStyle = isClientNode ? '#ff00ff' : theme.FLOW.DECISION.border;
             ctx.lineWidth = 3;
             ctx.stroke();
 
             // 상단 작은 텍스트로 타입 표시
-            ctx.fillStyle = theme.FLOW.DECISION.text;
+            ctx.fillStyle = isClientNode ? '#ff88ff' : theme.FLOW.DECISION.text;
             ctx.font = 'bold 10px Inter, sans-serif';
             ctx.fillText('DECISION', x, y - height / 2 - 2);
         }
@@ -584,7 +1041,7 @@ class FlowRenderer {
         };
     }
 
-    renderConnection(ctx, x1, y1, x2, y2, label, type, isHighlighted = false) {
+    renderConnection(ctx, x1, y1, x2, y2, label, type, isHighlighted = false, isCycle = false, isClientEdge = false) {
         const isLoop = type === 'loop_back' || y2 < y1;
         const arrowSize = 10;
         const theme = (typeof SYNAPSE_THEME !== 'undefined') ? SYNAPSE_THEME : (window.SYNAPSE_THEME || null);
@@ -595,6 +1052,17 @@ class FlowRenderer {
         let strokeColor = edgeStyle.color; 
         let lineWidth = isLoop ? (edgeStyle.thickness + 1) : edgeStyle.thickness;
         let dash = edgeStyle.dash || [];
+
+        if (isClientEdge) {
+            strokeColor = '#ff00ff'; // Magenta for client nodes
+            lineWidth = isLoop ? 3 : 2;
+        }
+
+        if (isCycle) {
+            strokeColor = '#fb4934'; // Bright red for cycle edges
+            lineWidth += 1;
+            dash = [8, 4]; // Distinct dash pattern for cycles
+        }
 
         if (isHighlighted) {
             strokeColor = (theme && theme.FLOW?.CONNECTION) ? theme.FLOW.CONNECTION.HIGHLIGHT : '#fabd2f';
@@ -607,8 +1075,8 @@ class FlowRenderer {
                 const pulseSpeed = theme ? theme.GLOW.PULSE_SPEED : 200;
                 const multiplier = theme ? theme.ANIMATION.DASH_OFFSET_MULTIPLIER : 2.5;
                 
-                this.ctx.shadowBlur = baseBlur + pulseRange * Math.sin(Date.now() / pulseSpeed);
-                this.ctx.shadowColor = strokeColor;
+                ctx.shadowBlur = baseBlur + pulseRange * Math.sin(Date.now() / pulseSpeed);
+                ctx.shadowColor = strokeColor;
                 dash = [12, 6];
                 ctx.lineDashOffset = -this.engine.animationOffset * multiplier;
             }
@@ -715,6 +1183,112 @@ class FlowRenderer {
             }
         }
         return null;
+    }
+
+    // v0.3.32: Contribution Entity Relationship Flow
+    buildContributionFlow(contributionNodes, contributionEdges) {
+        if (!contributionNodes || contributionNodes.length === 0) {
+            return { id: 'flow_contribution', type: 'contribution', name: 'Contribution Flow', steps: [] };
+        }
+
+        const steps = [];
+        const nodeMap = new Map();
+        contributionNodes.forEach(n => nodeMap.set(n.id, n));
+
+        // START terminal
+        steps.push({
+            id: 'step_contrib_start',
+            type: 'terminal',
+            label: 'CONTRIBUTION',
+            file: 'system',
+            next: null
+        });
+
+        // Group by userId for better layout
+        const userGroups = new Map();
+        contributionNodes.forEach(n => {
+            if (!userGroups.has(n.userId)) userGroups.set(n.userId, []);
+            userGroups.get(n.userId).push(n);
+        });
+
+        let prevStepId = 'step_contrib_start';
+        const processedPairs = new Set();
+
+        for (const [userId, nodes] of userGroups) {
+            const comparedNodes = nodes.filter(n => n.kind === 'compared');
+            const harvestedNodes = nodes.filter(n => n.kind === 'harvested');
+
+            for (const compared of comparedNodes) {
+                const stepId = `step_contrib_${compared.id}`;
+                steps.push({
+                    id: stepId,
+                    type: 'process',
+                    label: `${compared.filePath}`,
+                    file: compared.filePath,
+                    node: compared,
+                    next: null,
+                    layer: 'contribution',
+                    metadata: { userId, kind: 'compared' }
+                });
+
+                // Link previous step
+                const prevStep = steps.find(s => s.id === prevStepId);
+                if (prevStep && !prevStep.next) {
+                    prevStep.next = stepId;
+                }
+                prevStepId = stepId;
+
+                // Find matching harvested node via edge
+                const edge = contributionEdges.find(e => e.from === compared.id);
+                if (edge) {
+                    const harvested = nodeMap.get(edge.to);
+                    if (harvested) {
+                        const harvestStepId = `step_contrib_${harvested.id}`;
+                        steps.push({
+                            id: harvestStepId,
+                            type: 'process',
+                            label: `✓ ${harvested.filePath}`,
+                            file: harvested.filePath,
+                            node: harvested,
+                            next: null,
+                            layer: 'contribution',
+                            metadata: { userId, kind: 'harvested' }
+                        });
+
+                        // Connect compared to harvested
+                        const currentStep = steps.find(s => s.id === stepId);
+                        if (currentStep) {
+                            currentStep.next = harvestStepId;
+                            currentStep.allNexts = [harvestStepId];
+                        }
+                        prevStepId = harvestStepId;
+                        processedPairs.add(edge.id);
+                    }
+                }
+            }
+        }
+
+        // END terminal
+        steps.push({
+            id: 'step_contrib_end',
+            type: 'terminal',
+            label: 'END',
+            file: 'system'
+        });
+
+        // Connect last step to END
+        steps.forEach(step => {
+            if (step.id !== 'step_contrib_end' && !step.next) {
+                step.next = 'step_contrib_end';
+            }
+        });
+
+        return {
+            id: 'flow_contribution',
+            type: 'contribution',
+            name: 'Contribution Entity Flow',
+            steps: steps
+        };
     }
 }
 
@@ -956,6 +1530,36 @@ class CanvasEngine {
         this.resizeCanvas();
         window.addEventListener('resize', () => this.resizeCanvas());
 
+        // [v0.3.30] VS Code WebView Tab Restore Fix
+        // When user opens a file and returns to the canvas, VS Code hides the WebView
+        // (document.hidden = true) and restores it on tab switch back.
+        // window.resize does NOT always fire on restore, leaving the canvas half-blank.
+        // Force an immediate resize + full redraw when the WebView becomes visible again.
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden) {
+                // Small delay to let VS Code finish layout before we measure dimensions
+                setTimeout(() => {
+                    this.resizeCanvas(true); // immediate = true: skip debounce
+                    this.isGraphDataDirty = true;
+                    this.isEdgeDirty = true;
+                    this.lastActivityTime = Date.now(); // Reset idle timer
+                    this.requestRender(); // Restart eco-mode loop if sleeping
+                }, 100); // Increased delay slightly
+            }
+        });
+
+        // [v0.3.33] Add ResizeObserver for bulletproof container tracking
+        if (typeof ResizeObserver !== 'undefined' && this.canvas.parentElement) {
+            const ro = new ResizeObserver(() => {
+                this.resizeCanvas(true);
+                this.isGraphDataDirty = true;
+                this.isEdgeDirty = true;
+                this.lastActivityTime = Date.now();
+                this.requestRender();
+            });
+            ro.observe(this.canvas.parentElement);
+        }
+
         // 변환 상태 (줌/팬)
         this.transform = {
             zoom: 1.0,
@@ -1002,7 +1606,7 @@ class CanvasEngine {
         this.lastPressureUpdate = Date.now();
         this.nodeStatsMap = new Map(); // [v0.3.17] Degree & Connection Cache
         this.hideLeafNodes = false; // [v0.3.19] Noise Control Toggle
-        this.focusTopNodes = false; // [v0.3.19] Global Exploration Mode
+        this.focusTopNodes = 0; // [v0.3.19] Global Exploration Mode (0: OFF, 50, 100, 200)
         this.focusCoreSet = new Set(); // Top-N Core node IDs
         this.focusNodeSet = new Set(); // Core + 1-hop neighbor IDs
         this.hotspots = []; // [v0.3.20] Cached hotspot area geometries
@@ -1013,7 +1617,7 @@ class CanvasEngine {
         // [v0.2.19] Layer Visibility State
         this.showBaseLayer = true;
         this.showUserLayer = true;
-        this.showExternalLayer = true;
+        this.showExternalLayer = false;
         this.clientLayers = {}; // { [clientId]: { visible: boolean, order: number } }
 
         this.showDocShelf = false;
@@ -1077,17 +1681,18 @@ class CanvasEngine {
         this.webglRenderer = null;
         this.bootstrapMode = false; // [v0.2.28] Deterministic Bootstrap Mode (Step 4)
 
-        this.handleOpenFile = (filePath) => {
+        this.handleOpenFile = (filePath, clientUsername = null) => {
             if (!filePath) return;
-            console.log('[SYNAPSE] handleOpenFile:', filePath);
+            console.log('[SYNAPSE] handleOpenFile:', filePath, clientUsername);
             if (typeof vscode !== 'undefined') {
                 vscode.postMessage({
                     command: 'openFile',
                     filePath,
+                    clientUsername,
                     createIfNotExists: this.isEditMode
                 });
             } else if (typeof window.showFilePreview === 'function') {
-                window.showFilePreview(filePath);
+                window.showFilePreview(filePath, clientUsername);
             }
         };
         this.lastMousePos = { x: 0, y: 0 };
@@ -1242,15 +1847,22 @@ class CanvasEngine {
             });
         }
 
-        // [v0.3.19] Focus Top Nodes (Top-N Focus View)
+        // [v0.3.19] Focus Top Nodes (Top-N Focus View) Cycle
         const btnToggleFocus = document.getElementById('btn-toggle-focus');
         if (btnToggleFocus) {
             btnToggleFocus.addEventListener('click', () => {
-                this.focusTopNodes = !this.focusTopNodes;
-                btnToggleFocus.textContent = this.focusTopNodes ? 'ON' : 'OFF';
-                btnToggleFocus.classList.toggle('active', this.focusTopNodes);
+                if (this.focusTopNodes === 0) this.focusTopNodes = 50;
+                else if (this.focusTopNodes === 50) this.focusTopNodes = 100;
+                else if (this.focusTopNodes === 100) this.focusTopNodes = 200;
+                else this.focusTopNodes = 0;
+                
+                btnToggleFocus.textContent = this.focusTopNodes === 0 ? 'OFF' : `Top ${this.focusTopNodes}`;
+                btnToggleFocus.classList.toggle('active', this.focusTopNodes > 0);
                 this.isGraphDataDirty = true; // [v0.3.22.2] Force cache refresh for WebGL parity
                 this.isDirty = true;
+                
+                // Re-run the node calculation for focus
+                this.calculateNodeStats(this.nodes, this.edges);
                 this.render();
                 console.log('[SYNAPSE] Focus Top Nodes Mode:', this.focusTopNodes);
             });
@@ -2104,6 +2716,7 @@ class CanvasEngine {
                     ? connData.clients.map(function(c) { return c.userId; })
                     : []
             );
+            window._connectedUserIds = connectedIds;
             this.removeDisconnectedClientLayers(connectedIds);
             for (const acc of accData.accounts) {
                 if (acc.username === 'server') continue;
@@ -2130,9 +2743,8 @@ class CanvasEngine {
         this.render();
     }
 
-    // deprecated: layers are session-driven, not node-driven
     syncClientLayersFromNodes() {
-        // no-op: layers are registered via registerClientLayer() from server messages
+        // deprecated: layers are session-driven, not node-driven
     }
 
     getClientLayerOffset(clientId) {
@@ -2152,19 +2764,25 @@ class CanvasEngine {
         return entry.visible;
     }
 
+    getVisibleClientLayerIds() {
+        return Object.keys(this.clientLayers).filter(id => this.clientLayers[id].visible);
+    }
+
     _updateClientLayerUI() {
         const container = document.getElementById('client-layer-rows');
         if (!container) return;
         container.innerHTML = '';
         const clientIds = Object.keys(this.clientLayers);
         if (clientIds.length === 0) return;
+        const isServerAdmin = window.connectedUser && window.connectedUser.userId === '_server_admin_';
         const connectedIds = (typeof window !== 'undefined' && window._connectedUserIds) ? window._connectedUserIds : new Set();
         for (const clientId of clientIds) {
             const entry = this.clientLayers[clientId];
+            const isConnected = isServerAdmin || connectedIds.has(clientId);
+            if (!isConnected) continue;
             const displayName = entry.username || (clientId.length > 20 ? clientId.slice(0, 17) + '...' : clientId);
-            const isConnected = connectedIds.has(clientId);
-            const dotColor = isConnected ? '#8ec07c' : '#504945';
-            const dotTitle = isConnected ? '접속 중' : '미접속';
+            const dotColor = '#8ec07c';
+            const dotTitle = '접속 중';
             const row = document.createElement('div');
             row.className = 'layer-toggle-row';
             row.style.cssText = 'display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;';
@@ -2176,7 +2794,7 @@ class CanvasEngine {
             left.appendChild(dot);
             const nameEl = document.createElement('span');
             nameEl.style.cssText = 'font-size: 13px; color: #83a598; font-weight: 600;';
-            nameEl.textContent = '👤 ' + displayName;
+            nameEl.textContent = ' ' + displayName;
             left.appendChild(nameEl);
             row.appendChild(left);
             const btn = document.createElement('button');
@@ -2297,6 +2915,7 @@ class CanvasEngine {
 
         // 마우스 드래그 (팬, 노드 드래그, 선택, 엣지 생성)
         this.canvas.addEventListener('mousedown', (e) => {
+            if (window._harvestLocked) return;
             this.wakeUp();
             this._isInteracting = true; // [v0.2.24] Lock during interaction
             // [Fix] Ensure canvas receives keyboard focus for keydown events
@@ -2650,9 +3269,9 @@ class CanvasEngine {
 
                     if (absDragDist > 5 || movedByIntruder) {
                         this.saveState();
-                        if (movedByIntruder) {
-                            this.takeSnapshot(`Auto Push (after drag)`);
-                        }
+                        // Mark nodes as user-positioned
+                        draggedNodes.forEach(n => n.positionSource = 'user');
+                        this.saveWorkspace();
                     }
                 }
                 this.isDragging = false;
@@ -2693,6 +3312,8 @@ class CanvasEngine {
 
         // Delete 키로 선택된 노드/엣지 삭제 및 방향키 내비게이션
         document.addEventListener('keydown', (e) => {
+            if (window._harvestLocked) return;
+
             // [v0.3.11 Fix] Input Focus Protection
             // Block canvas shortcuts if an input modal is open or an input is focused.
             const isDialogVisible = document.getElementById('input-dialog')?.style.display === 'block';
@@ -2710,6 +3331,39 @@ class CanvasEngine {
                 if (this.selectedNodes.size > 0) {
                     console.log(`[SYNAPSE] Deleting ${this.selectedNodes.size} selected nodes`);
                     this.deleteSelectedNodes();
+                    return;
+                }
+            }
+
+            // [v0.3.32.2] Debug Visibility Hotkeys
+            if (e.shiftKey) {
+                if (e.key === 'E' || e.key === 'e') {
+                    window.edgeVisibilityMode = (window.edgeVisibilityMode === 'NO_EDGES') ? 'NORMAL' : 'NO_EDGES';
+                    this.isGraphDataDirty = true;
+                    this.log(`[DEBUG] Edge Visibility: ${window.edgeVisibilityMode}`);
+                    return;
+                }
+                if (e.key === 'C' || e.key === 'c') {
+                    this.debugClusterColorMode = !this.debugClusterColorMode;
+                    this.isGraphDataDirty = true;
+                    this.log(`[DEBUG] Cluster Color Mode: ${this.debugClusterColorMode}`);
+                    return;
+                }
+                if (e.key === 'S' || e.key === 's') {
+                    const uniqueX = new Set();
+                    const uniqueY = new Set();
+                    let atOrigin = 0;
+                    this.nodes.forEach(n => {
+                        if (n.position) {
+                            if (n.position.x === 0 && n.position.y === 0) atOrigin++;
+                            uniqueX.add(n.position.x);
+                            uniqueY.add(n.position.y);
+                        }
+                    });
+                    const clusters = new Set(this.nodes.map(n => n.cluster_id).filter(Boolean));
+                    const statsMsg = `[LAYOUT STATS] Nodes: ${this.nodes.length}, Edges: ${this.edges.length}, UniqueX: ${uniqueX.size}, UniqueY: ${uniqueY.size}, Origin: ${atOrigin}, Clusters: ${clusters.size}`;
+                    this.log(statsMsg, 'info');
+                    alert(statsMsg);
                     return;
                 }
             }
@@ -2839,12 +3493,12 @@ class CanvasEngine {
             if (this.currentMode === 'tree') {
                 const clickedItem = this.treeRenderer.getItemAt(this.treeData, worldPosDbl.x, worldPosDbl.y);
                 if (clickedItem && clickedItem.type === 'file' && clickedItem.node) {
-                    this.handleOpenFile(clickedItem.node.data.path || clickedItem.node.data.file);
+                    this.handleOpenFile(clickedItem.node.data.path || clickedItem.node.data.file, clickedItem.node.data.clientUsername);
                 }
             } else if (this.currentMode === 'flow') {
                 const clickedStep = this.flowRenderer.getStepAt(this.flowData, worldPosDbl.x, worldPosDbl.y);
                 if (clickedStep && clickedStep.node) {
-                    this.handleOpenFile(clickedStep.node.data.path || clickedStep.node.data.file);
+                    this.handleOpenFile(clickedStep.node.data.path || clickedStep.node.data.file, clickedStep.node.data.clientUsername);
                 }
             } else {
                 const topClickedNode = this.getNodeAt(worldPosDbl.x, worldPosDbl.y);
@@ -2855,7 +3509,7 @@ class CanvasEngine {
                                       ((topClickedNode.type === 'file' || topClickedNode.type === 'logic') && !String(topClickedNode.id).startsWith('node_manual_') ? topClickedNode.id : null);
                     
                     if (targetFile) {
-                        this.handleOpenFile(targetFile);
+                        this.handleOpenFile(targetFile, d.clientUsername);
                     }
                     return; // Prevent fall-through to cluster header
                 }
@@ -2949,10 +3603,13 @@ class CanvasEngine {
                 if (cluster && cluster.collapsed) continue;
             }
 
+            if (!node.position) continue;
+
+            const nodeRenderY = this._getNodeRenderY ? this._getNodeRenderY(node) : node.position.y;
             const left = node.position.x - HIT_PADDING;
             const right = node.position.x + nodeWidth + HIT_PADDING;
-            const top = node.position.y - HIT_PADDING;
-            const bottom = node.position.y + nodeHeight + HIT_PADDING;
+            const top = nodeRenderY - HIT_PADDING;
+            const bottom = nodeRenderY + nodeHeight + HIT_PADDING;
 
             if (worldX >= left && worldX <= right && worldY >= top && worldY <= bottom) {
                 return node;
@@ -3021,13 +3678,15 @@ class CanvasEngine {
     getConnectionHandleAt(worldX, worldY) {
         // 노드 핸들 체크
         for (const node of this.nodes) {
+            if (!node.position) continue;
+            const nodeRenderY = this._getNodeRenderY ? this._getNodeRenderY(node) : node.position.y;
             const centerX = node.position.x + 60;
-            const centerY = node.position.y + 30;
+            const centerY = nodeRenderY + 30;
 
             // 4방향 핸들 (상, 하, 좌, 우)
             const handles = [
-                { x: centerX, y: node.position.y, type: 'node', id: node.id }, // 상
-                { x: centerX, y: node.position.y + 60, type: 'node', id: node.id }, // 하
+                { x: centerX, y: nodeRenderY, type: 'node', id: node.id }, // 상
+                { x: centerX, y: nodeRenderY + 60, type: 'node', id: node.id }, // 하
                 { x: node.position.x, y: centerY, type: 'node', id: node.id }, // 좌
                 { x: node.position.x + 120, y: centerY, type: 'node', id: node.id } // 우
             ];
@@ -3760,6 +4419,62 @@ class CanvasEngine {
 
 
 
+    saveWorkspace() {
+        if (this._saveWorkspaceTimeout) {
+            clearTimeout(this._saveWorkspaceTimeout);
+        }
+        this._saveWorkspaceTimeout = setTimeout(() => {
+            const layout_state = {
+                version: 1,
+                nodePositions: {},
+                clusterPositions: {},
+                layerAssignments: {},
+                layers: [] // TODO: Semantic Layers
+            };
+            this.nodes.forEach(n => {
+                layout_state.nodePositions[n.id] = {
+                    x: n.position ? n.position.x : 0,
+                    y: n.position ? n.position.y : 0,
+                    confidence: n.confidence || (n.positionSource === 'user' ? 1.0 : 0.2),
+                    source: n.positionSource || 'auto'
+                };
+            });
+            this.clusters.forEach(c => {
+                layout_state.clusterPositions[c.id] = {
+                    x: c.position ? c.position.x : 0,
+                    y: c.position ? c.position.y : 0,
+                    confidence: c.confidence || (c.positionSource === 'user' ? 1.0 : 0.2),
+                    source: c.positionSource || 'auto'
+                };
+            });
+            
+            const workspace_state = {
+                version: 1,
+                camera: { 
+                    zoom: this.transform.zoom, 
+                    x: this.transform.offsetX, 
+                    y: this.transform.offsetY 
+                },
+                visibility: { 
+                    visibleLayers: this.visibleLayers ? Array.from(this.visibleLayers) : [], 
+                    hiddenClusters: [] // TODO
+                },
+                filters: {},
+                bookmarks: {}
+            };
+
+            if (typeof vscode !== 'undefined') {
+                vscode.postMessage({
+                    command: 'saveWorkspace',
+                    data: {
+                        layout_state,
+                        workspace_state
+                    }
+                });
+            }
+        }, 500);
+    }
+
     takeSnapshot(label) {
         if (typeof vscode !== 'undefined') {
             vscode.postMessage({
@@ -4042,8 +4757,9 @@ class CanvasEngine {
                 .sort((a, b) => (b[1].priority - a[1].priority) || (b[1].connectedNodes - a[1].connectedNodes))
                 .map(entry => entry[0]);
 
-            // Pick Top 10 cores
-            const topN = sortedNodes.slice(0, 10);
+            // Pick Top N cores
+            const limit = this.focusTopNodes > 0 ? this.focusTopNodes : 10; // default 10
+            const topN = sortedNodes.slice(0, limit);
             topN.forEach(id => {
                 this.focusCoreSet.add(id);
                 this.focusNodeSet.add(id);
@@ -4222,36 +4938,16 @@ class CanvasEngine {
      * Triggers a smooth simulation that drifts nodes into their lanes without destroying the graph structure.
      */
     applyRoleAlignment() {
+        if (!this.nodes || this.nodes.length === 0) return;
         this.isAligning = true;
         this.alignTimer = 120; // Run simulation for ~2 seconds
         console.log('[SYNAPSE] Spring-based Alignment Triggered.');
-        this.requestRender();
-    }
-
-    /**
-     * Physical update logic for soft alignment.
-     */
-    updateAlignmentSimulation() {
-        if (!this.nodes || !this.isAligning) return;
         
-        if (this.alignTimer > 0) {
-            this.alignTimer--;
-        } else {
-            this.isAligning = false;
-            console.log('[SYNAPSE] Alignment Simulation Settled.');
-            this.resolveClusterOverlaps(); // [v0.3.29] Push apart overlapping clusters after alignment
-            this.updateHotspots(); // Final precision update
-            return;
-        }
-
-        const ALIGN_STRENGTH = 0.02; // Reduced strength for stability
-        const DAMPING = 0.75;        // Stronger damping (lower friction value in this context)
-        const MAX_VELOCITY = 100;    // Absolute cap to prevent "exploding" nodes
+        // [v0.3.31] Reduce spacing to make the architecture fit nicely on screen
+        const COLUMN_WIDTH = 150; // 노드 너비(120) + 여백(30)
+        const ROW_HEIGHT = 70;  // 노드 높이(60) + 여백(10)
         
-        const COLUMN_WIDTH = 350; 
-        const ROW_HEIGHT = 160;  
-        
-        // 1. Calculate Cluster Centers (to preserve overall cluster positions)
+        // 1. Calculate Cluster Centers (ONCE)
         const clusterCenters = {};
         for (const node of this.nodes) {
             const cid = node.cluster_id || 'unclustered';
@@ -4266,67 +4962,145 @@ class CanvasEngine {
         }
 
         // 2. Group nodes by Cluster, then by Role
-        const groups = {}; // { clusterId: { Leaf: [], Hub: [], Orchestrator: [], Controller: [] } }
+        const groups = {};
         for (const node of this.nodes) {
             const cid = node.cluster_id || 'unclustered';
             if (!groups[cid]) {
-                groups[cid] = { 'Leaf': [], 'Hub': [], 'Orchestrator': [], 'Controller': [] };
+                groups[cid] = { 'Leaf': [], 'Hub': [], 'Orchestrator': [], 'Controller': [], 'Other': [] };
             }
+            
+            node.targetX = undefined;
+            node.targetY = undefined;
 
             const stats = this.nodeStatsMap.get(node.id);
-            if (!stats || !stats.primaryRole) continue;
+            if (!stats || !stats.primaryRole) {
+                groups[cid]['Other'].push(node);
+                continue;
+            }
             
             const pRole = stats.primaryRole;
             if (pRole.startsWith('Leaf')) groups[cid]['Leaf'].push(node);
             else if (pRole.startsWith('Hub')) groups[cid]['Hub'].push(node);
             else if (pRole.startsWith('Orchestrator')) groups[cid]['Orchestrator'].push(node);
             else if (pRole.startsWith('Controller')) groups[cid]['Controller'].push(node);
+            else groups[cid]['Other'].push(node);
         }
 
-        // Relative offsets within a cluster
-        const roleOffsets = { 'Leaf': -300, 'Hub': -100, 'Orchestrator': 100, 'Controller': 300 };
+        // 3. Compute Fixed Targets to prevent overlapping and oscillation
+        // [v0.3.31.2] Apply Boundary Constraints (Max Width Wrapper)
+        const MAX_CLUSTER_WIDTH = 1200; // 최대 너비 제한 (화면 축소 한계 고려)
 
-        // 3. Apply Local Spring Forces
         for (const [cid, clusterRoles] of Object.entries(groups)) {
             const center = clusterCenters[cid];
             
+            let curX = 0;
+            let curY = 0;
+            let maxRowHeightInBlock = 0;
+            let currentLineWidth = 0;
+            
+            const nodeTargets = [];
+            
             for (const [roleName, list] of Object.entries(clusterRoles)) {
-                // targetX is cluster's center X + role's offset
-                const baseX = center.x + roleOffsets[roleName];
-                
+                if (list.length === 0) continue;
                 list.sort((a, b) => (a.label || '').localeCompare(b.label || ''));
                 
+                const maxCols = Math.max(1, Math.floor(MAX_CLUSTER_WIDTH / COLUMN_WIDTH));
+                const cols = Math.min(maxCols, Math.max(1, Math.ceil(Math.sqrt(list.length))));
+                const rows = Math.ceil(list.length / cols);
+                const roleBlockWidth = cols * COLUMN_WIDTH;
+                const roleBlockHeight = rows * ROW_HEIGHT;
+                
+                if (currentLineWidth > 0 && currentLineWidth + roleBlockWidth > MAX_CLUSTER_WIDTH) {
+                    curX = 0;
+                    curY += maxRowHeightInBlock + (ROW_HEIGHT / 2);
+                    currentLineWidth = 0;
+                    maxRowHeightInBlock = 0;
+                }
+                
                 list.forEach((node, i) => {
-                    const colIndex = i % 3;
-                    const rowIndex = Math.floor(i / 3);
-                    
-                    const targetX = baseX + (colIndex - 1) * COLUMN_WIDTH;
-                    const targetY = center.y + (rowIndex * ROW_HEIGHT) - (Math.ceil(list.length / 3) * ROW_HEIGHT / 2);
-
-                    // Apply Smooth Damped Spring
-                    const fx = (targetX - node.position.x) * ALIGN_STRENGTH;
-                    const fy = (targetY - node.position.y) * ALIGN_STRENGTH;
-
-                    node.vx = (node.vx || 0) + fx;
-                    node.vy = (node.vy || 0) + fy;
-                    
-                    // Apply Damping
-                    node.vx *= DAMPING;
-                    node.vy *= DAMPING;
-                    
-                    // Velocity Clamp to prevent explosion
-                    const speed = Math.sqrt(node.vx * node.vx + node.vy * node.vy);
-                    if (speed > MAX_VELOCITY) {
-                        const ratio = MAX_VELOCITY / speed;
-                        node.vx *= ratio;
-                        node.vy *= ratio;
-                    }
-                    
-                    // Integrate
-                    node.position.x += node.vx;
-                    node.position.y += node.vy;
+                    const colIndex = i % cols;
+                    const rowIndex = Math.floor(i / cols);
+                    nodeTargets.push({
+                        node: node,
+                        tx: curX + colIndex * COLUMN_WIDTH,
+                        ty: curY + rowIndex * ROW_HEIGHT
+                    });
                 });
+                
+                curX += roleBlockWidth + (COLUMN_WIDTH / 2);
+                currentLineWidth += roleBlockWidth + (COLUMN_WIDTH / 2);
+                maxRowHeightInBlock = Math.max(maxRowHeightInBlock, roleBlockHeight);
             }
+            
+            if (nodeTargets.length === 0) continue;
+            
+            let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+            for (const item of nodeTargets) {
+                minX = Math.min(minX, item.tx);
+                minY = Math.min(minY, item.ty);
+                maxX = Math.max(maxX, item.tx);
+                maxY = Math.max(maxY, item.ty);
+            }
+            
+            const blockCenterX = (minX + maxX) / 2;
+            const blockCenterY = (minY + maxY) / 2;
+            
+            const offsetX = center.x - blockCenterX;
+            const offsetY = center.y - blockCenterY;
+            
+            for (const item of nodeTargets) {
+                item.node.targetX = item.tx + offsetX;
+                item.node.targetY = item.ty + offsetY;
+            }
+        }
+        
+        this.requestRender();
+    }
+
+    /**
+     * Physical update logic for soft alignment.
+     * Complies with Performance Rule 1: No dynamic allocations, sorting, or complex grouping in frame path.
+     */
+    updateAlignmentSimulation() {
+        if (!this.nodes || !this.isAligning) return;
+        
+        if (this.alignTimer > 0) {
+            this.alignTimer--;
+        } else {
+            this.isAligning = false;
+            console.log('[SYNAPSE] Alignment Simulation Settled.');
+            this.resolveClusterOverlaps(); // [v0.3.29] Push apart overlapping clusters after alignment
+            this.updateHotspots(); // Final precision update
+            return;
+        }
+
+        const ALIGN_STRENGTH = 0.05; // Slightly stronger to reach targets faster
+        const DAMPING = 0.75;
+        const MAX_VELOCITY = 100;
+        
+        // Simple O(N) integration loop
+        for (let i = 0; i < this.nodes.length; i++) {
+            const node = this.nodes[i];
+            if (node.targetX === undefined || node.targetY === undefined) continue;
+            
+            const fx = (node.targetX - node.position.x) * ALIGN_STRENGTH;
+            const fy = (node.targetY - node.position.y) * ALIGN_STRENGTH;
+
+            node.vx = (node.vx || 0) + fx;
+            node.vy = (node.vy || 0) + fy;
+            
+            node.vx *= DAMPING;
+            node.vy *= DAMPING;
+            
+            const speed = Math.sqrt(node.vx * node.vx + node.vy * node.vy);
+            if (speed > MAX_VELOCITY) {
+                const ratio = MAX_VELOCITY / speed;
+                node.vx *= ratio;
+                node.vy *= ratio;
+            }
+            
+            node.position.x += node.vx;
+            node.position.y += node.vy;
         }
         
         // [v0.3.20.2] Throttle hotspot updates during animation to save CPU and reduce jitter
@@ -4603,8 +5377,22 @@ class CanvasEngine {
         ` : '';
 
 
+        const clientTimestamp = node.clientTimestamp || node.data?.clientTimestamp;
+        let updateInfoHtml = '';
+        if (clientTimestamp) {
+            const diffMs = Date.now() - clientTimestamp;
+            const diffMins = Math.floor(diffMs / 60000);
+            const user = node.clientUsername || node.data?.clientUsername || node.clientLayer || node.data?.clientLayer || 'User';
+            updateInfoHtml = `
+            <div style="font-size: 10px; color: #a89984; font-style: italic; margin-bottom: 4px;">
+                👤 ${user} <span style="margin-left: 4px; color: #928374;">Updated ${diffMins}m ago</span>
+            </div>
+            `;
+        }
+
         this.nodeSummary.innerHTML = `
-            <div style="color: #fabd2f; font-weight: bold; border-bottom: 1px solid #fabd2f; margin-bottom: 8px; padding-bottom: 4px; font-size: 13px;">${nodeName}</div>
+            <div style="color: #fabd2f; font-weight: bold; border-bottom: 1px solid #fabd2f; margin-bottom: ${updateInfoHtml ? '4px' : '8px'}; padding-bottom: 4px; font-size: 13px;">${nodeName}</div>
+            ${updateInfoHtml}
             <div style="display: flex; gap: 15px; font-size: 11px; margin-bottom: 2px;">
                 <div style="color: #b8bb26;">Conn: <span style="color: #ebdbb2;">${stats.connectedNodes}</span></div>
                 <div style="color: #83a598;">In: <span style="color: #ebdbb2;">${stats.in}</span></div>
@@ -4712,6 +5500,8 @@ class CanvasEngine {
         const rawNodes = projectState.nodes || [];
         const rawEdges = projectState.edges || [];
 
+        console.log("[FLOW_DEBUG] loadProjectState raw nodes", rawNodes.length, "raw edges", rawEdges.length);
+
         // 1. Separate nodes into Canvas pool and Documentation/Blacklist pool
         const canvasNodes = [];
         const documentationNodes = [];
@@ -4741,6 +5531,8 @@ class CanvasEngine {
                 canvasNodes.push(node);
             }
         });
+
+        console.log("[FLOW_DEBUG] loadProjectState canvasNodes", canvasNodes.length, "docNodes", documentationNodes.length);
 
         // 2. Filter Edges to only connect visible or documentation nodes
         const activeIds = new Set([...canvasNodes, ...documentationNodes].map(n => n.id));
@@ -4794,8 +5586,31 @@ class CanvasEngine {
 
             // [v0.3.16] docShelfNodes are already separated and set in step 1 (line 3652)
             this.nodes = baseState.nodes || [];
-            this.syncClientLayersFromNodes();
-            this._updateClientLayerUI();
+
+            // [Phase 2C] Apply Workspace Layout
+            if (projectState.synapse_workspace && projectState.synapse_workspace.layout_state) {
+                const layout = projectState.synapse_workspace.layout_state;
+                this.nodes.forEach(n => {
+                    const pos = layout.nodePositions[n.id];
+                    if (pos) {
+                        n.position = { x: pos.x, y: pos.y };
+                        n.positionSource = pos.source || 'auto';
+                        n.confidence = pos.confidence || 0.2;
+                    } else {
+                        if (!n.position) n.position = { x: 0, y: 0 };
+                        n.positionSource = 'auto';
+                        n.confidence = 0.2;
+                    }
+                });
+            } else {
+                this.nodes.forEach(n => {
+                    if (!n.position) n.position = { x: 0, y: 0 };
+                    if (!n.positionSource) {
+                        n.positionSource = 'auto';
+                        n.confidence = 0.2;
+                    }
+                });
+            }
 
             // [v0.3.22.11] Position Persistence Guard:
             // When preserving view (e.g. incremental update or post-save sync), 
@@ -4850,14 +5665,45 @@ class CanvasEngine {
                     return { ...c, layer, clientLayer };
                 });
 
+            // [Phase 2C] Apply Workspace Cluster Positions
+            if (projectState.synapse_workspace && projectState.synapse_workspace.layout_state) {
+                const layout = projectState.synapse_workspace.layout_state;
+                this.clusters.forEach(c => {
+                    const pos = layout.clusterPositions[c.id];
+                    if (pos) {
+                        c.position = { x: pos.x, y: pos.y }; // Use position for clusters in Phase 2C
+                        c.positionSource = pos.source || 'auto';
+                        c.confidence = pos.confidence || 0.2;
+                        // For backwards compatibility where cluster expects x,y directly
+                        c.x = pos.x;
+                        c.y = pos.y;
+                    } else {
+                        c.positionSource = 'auto';
+                        c.confidence = 0.2;
+                    }
+                });
+            }
+
             // [v0.3.21] Heatmap Data Sync
             this.clusterFlows = projectState.cluster_flows || [];
+            
+            // [Phase 2B.13] Edge Bundle Data Sync
+            this.metaEdges = projectState.metaEdges || [];
 
             // [v0.2.36] Restore View (Camera) if available and not preserving
-            if (!preserveView && projectState.view) {
-                this.transform.zoom = projectState.view.zoom || this.transform.zoom;
-                this.transform.offsetX = projectState.view.offsetX ?? this.transform.offsetX;
-                this.transform.offsetY = projectState.view.offsetY ?? this.transform.offsetY;
+            if (!preserveView) {
+                if (projectState.synapse_workspace && projectState.synapse_workspace.workspace_state) {
+                    const wsState = projectState.synapse_workspace.workspace_state;
+                    if (wsState.camera) {
+                        this.transform.zoom = wsState.camera.zoom || this.transform.zoom;
+                        this.transform.offsetX = wsState.camera.x ?? this.transform.offsetX;
+                        this.transform.offsetY = wsState.camera.y ?? this.transform.offsetY;
+                    }
+                } else if (projectState.view) {
+                    this.transform.zoom = projectState.view.zoom || this.transform.zoom;
+                    this.transform.offsetX = projectState.view.offsetX ?? this.transform.offsetX;
+                    this.transform.offsetY = projectState.view.offsetY ?? this.transform.offsetY;
+                }
                 this.updateZoomDisplay();
             }
 
@@ -4911,6 +5757,8 @@ class CanvasEngine {
                 if (cl) {
                     node.clientLayer = cl;
                     if (node.data) node.data.clientLayer = cl;
+                    const username = node.clientUsername || (node.data && node.data.clientUsername);
+                    this.registerClientLayer(cl, username);
                 }
             });
 
@@ -5034,7 +5882,11 @@ class CanvasEngine {
 
             // Critical check for positions
             const validPositions = this.nodes.filter(n => n.position && typeof n.position.x === 'number' && typeof n.position.y === 'number').length;
+            const invalidPositions = this.nodes.length - validPositions;
             console.log(`[SYNAPSE] Valid positions: ${validPositions} / ${this.nodes.length}`);
+            if (invalidPositions > 0) {
+                console.warn(`[SYNAPSE] Invalid positions: ${invalidPositions} nodes missing position data`);
+            }
 
             console.log('[SYNAPSE] Tree data:', this.treeData);
             console.log('[SYNAPSE] Flow data:', this.flowData);
@@ -5156,19 +6008,97 @@ class CanvasEngine {
         });
     }
 
-    resolveOverlaps() {
-        if (!this.nodes || this.nodes.length < 2) return;
+    updateClusterLayout() {
+        if (!this.clusters || this.clusters.length === 0) return;
+        const ITERATIONS = 3;
+        const CONSTANT = 180; // Base spacing multiplier
+        
+        for (let iter = 0; iter < ITERATIONS; iter++) {
+            const clusterStats = new Map();
+            for (const cluster of this.clusters) {
+                const nodesInCluster = this.nodes.filter(n => n.cluster_id === cluster.id);
+                if (nodesInCluster.length === 0) continue;
+                
+                let cx = 0, cy = 0;
+                let validCount = 0;
+                for (const n of nodesInCluster) {
+                    if (n.position) {
+                        cx += n.position.x;
+                        cy += n.position.y;
+                        validCount++;
+                    }
+                }
+                if (validCount > 0) {
+                    cx /= validCount;
+                    cy /= validCount;
+                }
+                
+                // clusterRadius = sqrt(nodeCount) * constant
+                const radius = Math.sqrt(nodesInCluster.length) * CONSTANT;
+                clusterStats.set(cluster.id, { cx, cy, radius, nodes: nodesInCluster });
+            }
 
-        const MIN_DISTANCE_X = 160; // 40px grid multiple
-        const MIN_DISTANCE_Y = 80;  // 40px grid multiple (Tighter vertical spacing)
-        const ITERATIONS = 4; // Allow layout to spread gracefully before snapping
+            let moved = false;
+            const clusterIds = Array.from(clusterStats.keys());
+            for (let i = 0; i < clusterIds.length; i++) {
+                for (let j = i + 1; j < clusterIds.length; j++) {
+                    const cA = clusterStats.get(clusterIds[i]);
+                    const cB = clusterStats.get(clusterIds[j]);
+                    
+                    let dx = cB.cx - cA.cx;
+                    let dy = cB.cy - cA.cy;
+                    let dist = Math.sqrt(dx*dx + dy*dy);
+                    const minDist = cA.radius + cB.radius;
+                    
+                    if (dist < 0.01) {
+                        dx = Math.random() * 2 - 1;
+                        dy = Math.random() * 2 - 1;
+                        dist = Math.sqrt(dx*dx + dy*dy);
+                    }
 
-        // [v0.2.26] 🛡️ Deterministic Layout: Read from Snapshot, Write to Current
-        // This prevents "Chain Reaction" where order of nodes determines who moves first
+                    if (dist < minDist) {
+                        moved = true;
+                        const force = (minDist - dist) / 2;
+                        const cA_weight = cA.confidence || (cA.source === 'user' ? 1.0 : 0.2);
+                        const cB_weight = cB.confidence || (cB.source === 'user' ? 1.0 : 0.2);
+                        const total_weight = cA_weight + cB_weight;
+                        
+                        // Push based on inverse weight (heavier moves less)
+                        const shiftA = force * (cB_weight / total_weight);
+                        const shiftB = force * (cA_weight / total_weight);
+                        
+                        const fxA = (dx / dist) * shiftA;
+                        const fyA = (dy / dist) * shiftA;
+                        const fxB = (dx / dist) * shiftB;
+                        const fyB = (dy / dist) * shiftB;
+                        
+                        for (const n of cA.nodes) {
+                            if (n.positionSource !== 'user') {
+                                n.position.x -= fxA;
+                                n.position.y -= fyA;
+                            }
+                        }
+                        for (const n of cB.nodes) {
+                            if (n.positionSource !== 'user') {
+                                n.position.x += fxB;
+                                n.position.y += fyB;
+                            }
+                        }
+                    }
+                }
+            }
+            if (!moved) break;
+        }
+    }
+
+    updateLocalLayout() {
+        const MIN_DISTANCE_X = 160; 
+        const MIN_DISTANCE_Y = 80;  
+        const ITERATIONS = 4;
+
         for (let iter = 0; iter < ITERATIONS; iter++) {
             let movedTotal = false;
 
-            // Take a position snapshot of all nodes at the START of this iteration
             const posSnapshot = new Map();
             this.nodes.forEach(n => {
                 if (n.position) posSnapshot.set(n.id, { x: n.position.x, y: n.position.y });
@@ -5179,12 +6109,13 @@ class CanvasEngine {
                     const nodeA = this.nodes[i];
                     const nodeB = this.nodes[j];
 
-                    // Read from STATIC snapshots for consistency
+                    // [Phase A] Local force only within the same cluster
+                    if (nodeA.cluster_id !== nodeB.cluster_id) continue;
+
                     const pA = posSnapshot.get(nodeA.id);
                     const pB = posSnapshot.get(nodeB.id);
                     if (!pA || !pB) continue;
 
-                    // Visibility Guard (Skip collapsed)
                     const isHidden = (n) => {
                         if (!n.cluster_id) return false;
                         const c = this.clusters?.find(cl => cl.id === n.cluster_id);
@@ -5200,8 +6131,6 @@ class CanvasEngine {
                     if (adx < MIN_DISTANCE_X && ady < MIN_DISTANCE_Y) {
                         movedTotal = true;
                         
-                        // [v0.3.16] Grid Sovereignty (Snap-back Stalemate Fix)
-                        // 강제로 40px(SNAP) 배수 단위 이상으로 밀어내어 반올림에 의한 자리복귀 차단
                         const SNAP = this.GRID_SNAP_SIZE || 40;
                         let shiftX = (MIN_DISTANCE_X - adx) / 2;
                         let shiftY = (MIN_DISTANCE_Y - ady) / 2;
@@ -5209,27 +6138,43 @@ class CanvasEngine {
                         shiftX = Math.max(SNAP, Math.ceil(shiftX / SNAP) * SNAP);
                         shiftY = Math.max(SNAP, Math.ceil(shiftY / SNAP) * SNAP);
 
-                        // Mutate CURRENT node position based on STATIC snapshot relationship
+                        const wA = nodeA.confidence || (nodeA.positionSource === 'user' ? 1.0 : 0.2);
+                        const wB = nodeB.confidence || (nodeB.positionSource === 'user' ? 1.0 : 0.2);
+                        const totalW = wA + wB;
+                        
+                        const shiftXA = shiftX * 2 * (wB / totalW);
+                        const shiftXB = shiftX * 2 * (wA / totalW);
+                        const shiftYA = shiftY * 2 * (wB / totalW);
+                        const shiftYB = shiftY * 2 * (wA / totalW);
+
                         if (dx >= 0) {
-                            nodeA.position.x -= shiftX;
-                            nodeB.position.x += shiftX;
+                            nodeA.position.x -= shiftXA;
+                            nodeB.position.x += shiftXB;
                         } else {
-                            nodeA.position.x += shiftX;
-                            nodeB.position.x -= shiftX;
+                            nodeA.position.x += shiftXA;
+                            nodeB.position.x -= shiftXB;
                         }
 
                         if (dy >= 0) {
-                            nodeA.position.y -= shiftY;
-                            nodeB.position.y += shiftY;
+                            nodeA.position.y -= shiftYA;
+                            nodeB.position.y += shiftYB;
                         } else {
-                            nodeA.position.y += shiftY;
-                            nodeB.position.y -= shiftY;
+                            nodeA.position.y += shiftYA;
+                            nodeB.position.y -= shiftYB;
                         }
                     }
                 }
             }
             if (!movedTotal) break;
         }
+    }
+
+    resolveOverlaps() {
+        if (!this.nodes || this.nodes.length < 2) return;
+
+        // [v0.3.32.2 Phase A] Two-Tier Layout implementation
+        this.updateClusterLayout();
+        this.updateLocalLayout();
 
         // [v0.3.15] Re-snap to grid after overlap resolution to maintain Grid Sovereignty
         this.nodes.forEach(node => {
@@ -5240,6 +6185,13 @@ class CanvasEngine {
         });
 
         this.log(`[STATE-DETERMINISM] Hash After Layout: ${this.getFingerprint(this.nodes).substring(0, 60)}...`);
+
+        // [LAYOUT_DEBUG] Output coordinates range to detect physics explosion
+        const xs = this.nodes.map(n => n.position?.x).filter(x => typeof x === 'number');
+        const ys = this.nodes.map(n => n.position?.y).filter(y => typeof y === 'number');
+        if (xs.length > 0 && ys.length > 0) {
+            console.log(`[LAYOUT_DEBUG] xRange: ${Math.min(...xs)} to ${Math.max(...xs)}, yRange: ${Math.min(...ys)} to ${Math.max(...ys)}`);
+        }
     }
 
     fitView() {
@@ -5442,11 +6394,14 @@ class CanvasEngine {
                 n.status === 'ghost' ||
                 (n.cluster_id && n.cluster_id === 'cluster_ghosts');
 
-            if (isExternal && !context.showExternalLayer) return false;
-            if (isUser && !context.showUserLayer) return false;
-            if (!isUser && !isExternal && !context.showBaseLayer) return false;
             const cl = n.clientLayer || (n.data && n.data.clientLayer);
-            if (cl && context.clientLayers && context.clientLayers[cl] !== undefined && !context.clientLayers[cl].visible) return false;
+            if (cl) {
+                if (context.clientLayers && context.clientLayers[cl] !== undefined && !context.clientLayers[cl].visible) return false;
+            } else {
+                if (isExternal && !context.showExternalLayer) return false;
+                if (isUser && !context.showUserLayer) return false;
+                if (!isUser && !isExternal && !context.showBaseLayer) return false;
+            }
             return true;
         });
 
@@ -5457,7 +6412,7 @@ class CanvasEngine {
             category: n.category || 'base',
             status: n.status,
             data: n.data ? { ...n.data, meta: n.data.meta ? { ...n.data.meta } : undefined } : {},
-            position: { x: n.position?.x || 0, y: n.position?.y || 0 },
+            position: { x: n.position?.x || 0, y: (n.position?.y || 0) + this.getClientLayerOffset(n.clientLayer || (n.data && n.data.clientLayer)) },
             intelligence: n.intelligence ? { dtr: n.intelligence.dtr } : { dtr: 0.3 }
         }));
 
@@ -5501,13 +6456,13 @@ class CanvasEngine {
         // 1. Grid (Standard Canvas)
         this.renderGrid();
 
-        // [v0.2.28] Render Clusters first
-        this.renderClusters();
-
         // 2. Transformation
         this.ctx.save();
         this.ctx.translate(offsetX, offsetY);
         this.ctx.scale(zoom, zoom);
+
+        // [v0.2.28] Render Clusters first (inside transform so it scales correctly)
+        this.renderClusters();
 
         // 3. Edges
         for (const edge of frameState.edges) {
@@ -5526,7 +6481,7 @@ class CanvasEngine {
 
     render() {
         // [v0.3.13] Automatic Overlap Resolution
-        if (this.isGraphDataDirty && this.nodes.length > 2 && this.nodes.length < 500) {
+        if (this.isGraphDataDirty && this.nodes.length > 2) {
             this.resolveOverlaps();
         }
 
@@ -5710,15 +6665,19 @@ class CanvasEngine {
                         const isUser = isUserLogic(n);
                         const isExternal = isExternalLogic(n);
 
-                        if (isExternal && !this.showExternalLayer) return false;
-                        if (isUser && !this.showUserLayer) return false;
-                        if (!isUser && !isExternal && !this.showBaseLayer) return false;
-                        if (!this._isClientLayerVisible(n)) return false;
+                        const cl = n.clientLayer || (n.data && n.data.clientLayer);
+                        if (cl) {
+                            if (!this._isClientLayerVisible(n)) return false;
+                        } else {
+                            if (isExternal && !this.showExternalLayer) return false;
+                            if (isUser && !this.showUserLayer) return false;
+                            if (!isUser && !isExternal && !this.showBaseLayer) return false;
+                        }
 
                         // [v0.3.22.2] Noise Control: Hide Leaf Nodes (WebGL Parity)
                         if (this.hideLeafNodes) {
                             const stats = this.nodeStatsMap.get(n.id);
-                            if (stats && stats.primaryRole === 'Leaf node') return false;
+                            if (stats && stats.connectedNodes < 3) return false;
                         }
 
                         // [v0.3.22.2] Strategic Visibility: Top-N Focus View (WebGL Parity)
@@ -5738,6 +6697,17 @@ class CanvasEngine {
 
                     const visibleNodeIds = new Set(this._visibleNodesCache.map(n => n.id));
                     this._visibleEdgesCache = this.edges.filter(e => visibleNodeIds.has(e.from) && visibleNodeIds.has(e.to));
+
+                    // [v0.3.30-webgl-fix] Build WebGL-ready cache: bake clientLayerOffset into position.y
+                    // so WebGL renderer sees the same absolute Y as the 2D canvas path.
+                    // Host nodes pass through by reference (no allocation).
+                    this._webglVisibleNodesCache = this._visibleNodesCache.map(n => {
+                        const cl = n.clientLayer || (n.data && n.data.clientLayer);
+                        if (!cl) return n; // Host node — no offset needed
+                        const offsetY = this.getClientLayerOffset(cl);
+                        if (!offsetY) return n;
+                        return { ...n, position: { x: n.position?.x || 0, y: (n.position?.y || 0) + offsetY } };
+                    });
                 }
 
                 // [v0.3.28-fix] Cache selectedNodeIds as Set<string> ONCE per frame for O(1) lookup in renderEdge()
@@ -5795,8 +6765,10 @@ class CanvasEngine {
                             this.isGraphDataDirty = true;
                         }
 
+                        // [v0.3.30-webgl-fix] Use offset-corrected cache for client node Y parity
+                        const webglNodes = this._webglVisibleNodesCache || this._visibleNodesCache;
                         this.webglRenderer.render(
-                            this._visibleNodesCache,
+                            webglNodes,
                             this.transform,
                             this.isGraphDataDirty,
                             this._visibleEdgesCache,
@@ -5810,7 +6782,9 @@ class CanvasEngine {
                         const overlayCtx = overlay.getContext('2d');
                         if (overlayCtx) {
                             overlayCtx.clearRect(0, 0, overlay.width, overlay.height);
-                            const projectedPosMap = this.webglRenderer.getProjectedNodePositions(this._visibleNodesCache, this.transform);
+                            // [v0.3.30-webgl-fix] Badge overlay must use same offset-corrected positions as WebGL
+                            const webglNodes = this._webglVisibleNodesCache || this._visibleNodesCache;
+                            const projectedPosMap = this.webglRenderer.getProjectedNodePositions(webglNodes, this.transform);
                             const dpr = window.devicePixelRatio || 1;
 
                              for (const edge of this._visibleEdgesCache) {
@@ -5961,10 +6935,98 @@ class CanvasEngine {
         this._confirmBadgeHits = [];
         this._deleteBadgeHits = [];
 
+        // [Phase 2B.13] Edge Bundling LOD
+        const hasMetaEdges = this.metaEdges && this.metaEdges.length > 0;
+        console.log(`[LOD_DEBUG] zoom=${zoom.toFixed(3)}, edges=${this._visibleEdgesCache.length}, metaEdges=${this.metaEdges ? this.metaEdges.length : 0}, lod_active=${zoom <= 0.35 && hasMetaEdges}`);
+
+        if (zoom <= 0.35 && hasMetaEdges) {
+            console.log('[LOD_DEBUG] render meta edges');
+            this.renderEdgeBundles(zoom);
+            return; // Skip rendering individual edges
+        }
+
+        console.log('[LOD_DEBUG] render physical edges');
         // Step 3: Draw the edges
         for (const edge of this._visibleEdgesCache) {
             this.renderEdge(edge);
         }
+    }
+
+    // [Phase 2B.13] Render Edge Bundles (Meta Edges)
+    renderEdgeBundles(zoom) {
+        if (!this.metaEdges || this.metaEdges.length === 0) return;
+
+        const ctx = this.ctx;
+        ctx.save();
+
+        this.metaEdges.forEach(flow => {
+            const srcCluster = this.clusters.find(c => c.id === flow.source);
+            const tgtCluster = this.clusters.find(c => c.id === flow.target);
+
+            if (srcCluster && tgtCluster && srcCluster.id !== tgtCluster.id) {
+                const getCenter = (cluster) => {
+                    const b = this._lastComputedBounds?.get(cluster.id);
+                    if (b) {
+                        return { x: (b.minX + b.maxX) / 2, y: (b.minY + b.maxY) / 2 };
+                    }
+                    return cluster.position || { x: 0, y: 0 };
+                };
+
+                const p1 = getCenter(srcCluster);
+                const p2 = getCenter(tgtCluster);
+
+                const dx = p2.x - p1.x;
+                const dy = p2.y - p1.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+
+                if (dist < 10) return;
+
+                const intensity = Math.min(flow.weight / 50, 1.0);
+                const theme = (typeof SYNAPSE_THEME !== 'undefined') ? SYNAPSE_THEME : (window.SYNAPSE_THEME || null);
+                const color = theme ? theme.EDGES.REFERENCE.color : 'rgba(200, 200, 200, 0.5)';
+                
+                ctx.beginPath();
+                ctx.strokeStyle = color;
+                // Base opacity + dynamic opacity based on weight
+                ctx.globalAlpha = 0.2 + (intensity * 0.6); 
+                // Bundled lines are thicker
+                ctx.lineWidth = 2 + (Math.sqrt(flow.weight) * 1.5) / zoom;
+                ctx.lineCap = 'round';
+
+                // Quadratic curve for bundled feel
+                const cx = (p1.x + p2.x) / 2 - dy * 0.15;
+                const cy = (p1.y + p2.y) / 2 + dx * 0.15;
+
+                ctx.moveTo(p1.x, p1.y);
+                ctx.quadraticCurveTo(cx, cy, p2.x, p2.y);
+                ctx.stroke();
+
+                // Draw traffic count badge
+                if (flow.weight > 3 && zoom > 0.15) {
+                    const midX = (p1.x + 2 * cx + p2.x) / 4;
+                    const midY = (p1.y + 2 * cy + p2.y) / 4;
+
+                    ctx.fillStyle = theme ? theme.SURFACE.DEEP : '#1a1a1a';
+                    ctx.globalAlpha = 0.8;
+                    const badgeW = 24 + (flow.weight.toString().length * 6);
+                    const badgeH = 16;
+                    ctx.fillRect(midX - badgeW/2, midY - badgeH/2, badgeW, badgeH);
+                    
+                    ctx.strokeStyle = color;
+                    ctx.lineWidth = 1 / zoom;
+                    ctx.strokeRect(midX - badgeW/2, midY - badgeH/2, badgeW, badgeH);
+
+                    ctx.fillStyle = '#ffffff';
+                    ctx.globalAlpha = 1.0;
+                    ctx.font = '10px "Geist Mono", monospace';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(flow.weight.toString(), midX, midY);
+                }
+            }
+        });
+
+        ctx.restore();
     }
 
     // [v0.3.9] Dedicated 2D Node Rendering function to prevent blank screen
@@ -6581,7 +7643,8 @@ class CanvasEngine {
             // Estimate content height based on max Y of nodes, or a large multiple of viewHeight
             let maxY = 0;
             if (this.nodes.length > 0) {
-                maxY = Math.max(...this.nodes.map(n => n.position.y + 60));
+                const positionedNodes = this.nodes.filter(n => n.position && typeof n.position.y === 'number');
+                maxY = positionedNodes.length > 0 ? Math.max(...positionedNodes.map(n => n.position.y + 60)) : 0;
             }
             const contentHeight = Math.max(viewHeight * 2, maxY * zoom); // At least 2x viewHeight, or based on content
 
@@ -6615,7 +7678,8 @@ class CanvasEngine {
             // Estimate content width
             let maxX = 0;
             if (this.nodes.length > 0) {
-                maxX = Math.max(...this.nodes.map(n => n.position.x + 120));
+                const positionedNodes = this.nodes.filter(n => n.position && typeof n.position.x === 'number');
+                maxX = positionedNodes.length > 0 ? Math.max(...positionedNodes.map(n => n.position.x + 120)) : 0;
             }
             const contentWidth = Math.max(viewWidth * 2, maxX * zoom);
 
@@ -6779,10 +7843,14 @@ class CanvasEngine {
                 // 레이어 가시성 체크: 현재 렌더링되지 않는 노드는 바운드 계산에서 제외
                 const isUserNode = n.layer === 'user' || (n.data && n.data.layer === 'user') || n.status === 'pending';
                 const isExternalNode = n.layer === 'external' || (n.data && n.data.layer === 'external') || n.type === 'external' || n.status === 'ghost';
-                if (isUserNode && !this.showUserLayer) return false;
-                if (isExternalNode && !this.showExternalLayer) return false;
-                if (!isUserNode && !isExternalNode && !this.showBaseLayer) return false;
-                if (!this._isClientLayerVisible(n)) return false;
+                const cl = n.clientLayer || (n.data && n.data.clientLayer);
+                if (cl) {
+                    if (!this._isClientLayerVisible(n)) return false;
+                } else {
+                    if (isUserNode && !this.showUserLayer) return false;
+                    if (isExternalNode && !this.showExternalLayer) return false;
+                    if (!isUserNode && !isExternalNode && !this.showBaseLayer) return false;
+                }
                 return true;
             });
 
@@ -6841,17 +7909,18 @@ class CanvasEngine {
             // [v0.3.11] Layer Visibility - Use EXPLICIT layer tag from backend
             const clusterLayer = cluster.layer || (cluster.data && cluster.data.layer) || 'ai';
             
-            if (clusterLayer === 'user' && !this.showUserLayer) {
-                continue;
-            }
-            if (clusterLayer === 'external' && !this.showExternalLayer) {
-                continue;
-            }
-            if (clusterLayer === 'ai' && !this.showBaseLayer) {
-                // UI Filter: AI clusters hidden (Project Root, etc)
-                // [v0.3.11] context_vault exception should be explicit
-                if (cluster.id !== 'context_vault') {
-                    continue;
+            const cl = cluster.clientLayer || (cluster.data && cluster.data.clientLayer);
+            if (cl) {
+                // Client cluster visibility is already checked by `_isClientLayerVisible(cluster)` above.
+            } else {
+                if (clusterLayer === 'user' && !this.showUserLayer) continue;
+                if (clusterLayer === 'external' && !this.showExternalLayer) continue;
+                if (clusterLayer === 'ai' && !this.showBaseLayer) {
+                    // UI Filter: AI clusters hidden (Project Root, etc)
+                    // [v0.3.11] context_vault exception should be explicit
+                    if (cluster.id !== 'context_vault') {
+                        continue;
+                    }
                 }
             }
             if (!this._isClientLayerVisible(cluster)) continue;
@@ -7031,10 +8100,21 @@ class CanvasEngine {
             return theme.getFullNodeStyle(node, stats);
         }
 
+        let bgColor = node.data?.color || '#3c3836';
+        if (this.debugClusterColorMode && node.cluster_id) {
+            // Simple string hash to color
+            let hash = 0;
+            for (let i = 0; i < node.cluster_id.length; i++) {
+                hash = node.cluster_id.charCodeAt(i) + ((hash << 5) - hash);
+            }
+            const c = (hash & 0x00FFFFFF).toString(16).toUpperCase();
+            bgColor = '#' + '00000'.substring(0, 6 - c.length) + c;
+        }
+
         // Legacy Fallback
         return {
             borderColor: '#a89984',
-            bgColor: node.data?.color || '#3c3836',
+            bgColor: bgColor,
             icon: '📄',
             lineWidth: 2,
             shape: 'box',
@@ -7104,7 +8184,7 @@ class CanvasEngine {
         }
 
         // [v0.3.19] Strategic Visibility: Top-N Focus View
-        if (this.focusTopNodes) {
+        if (this.focusTopNodes > 0) {
             const isEssential = this.selectedNodes.has(node.id) || (this.hoveredNode && this.hoveredNode.id === node.id);
             if (!this.focusNodeSet.has(node.id) && !isEssential) return;
         }
@@ -7121,7 +8201,7 @@ class CanvasEngine {
         this.ctx.save();
 
         // Apply visual differentiation for Context nodes in Focus View
-        if (this.focusTopNodes) {
+        if (this.focusTopNodes > 0) {
             const isEssential = this.selectedNodes.has(node.id) || (this.hoveredNode && this.hoveredNode.id === node.id);
             if (!this.focusCoreSet.has(node.id) && !isEssential) {
                 this.ctx.globalAlpha = 0.4;
@@ -7172,6 +8252,20 @@ class CanvasEngine {
         }) || (this.hoveredEdge && (this.hoveredEdge.from === node.id || this.hoveredEdge.to === node.id));
 
         let opacity = node.visual?.opacity || 0.4;
+
+        // [v0.3.31] Time-based Stale Diagnostics
+        const clientTimestamp = node.clientTimestamp || node.data?.clientTimestamp;
+        if (clientTimestamp) {
+            const diffMins = (Date.now() - clientTimestamp) / 60000;
+            if (diffMins <= 5) {
+                opacity = 1.0; // Active
+            } else if (diffMins <= 15) {
+                opacity = 0.7; // Stale
+            } else {
+                opacity = 0.4; // Offline Candidate
+            }
+        }
+
         if (isPartofActivePath) opacity = 1.0;
         this.ctx.globalAlpha = opacity;
 
@@ -7840,10 +8934,13 @@ class CanvasEngine {
         // [v0.0.37.1] Check node visibility based on showUserLayer, showBaseLayer & showExternalLayer
         const isUserNode = (n) => n.layer === 'user' || (n.data && n.data.layer === 'user') || n.status === 'pending';
         const isExternalNode = (n) => n.layer === 'external' || (n.data && n.data.layer === 'external') || n.type === 'external' || n.status === 'ghost' || (n.cluster_id && n.cluster_id === 'cluster_ghosts');
-        const isFromVisible = isUserNode(fromNode) ? this.showUserLayer : (isExternalNode(fromNode) ? this.showExternalLayer : this.showBaseLayer);
-        const isToVisible = isUserNode(toNode) ? this.showUserLayer : (isExternalNode(toNode) ? this.showExternalLayer : this.showBaseLayer);
+        const isFromClient = fromNode.clientLayer || (fromNode.data && fromNode.data.clientLayer);
+        const isToClient = toNode.clientLayer || (toNode.data && toNode.data.clientLayer);
+
+        const isFromVisible = isFromClient ? this._isClientLayerVisible(fromNode) : (isUserNode(fromNode) ? this.showUserLayer : (isExternalNode(fromNode) ? this.showExternalLayer : this.showBaseLayer));
+        const isToVisible = isToClient ? this._isClientLayerVisible(toNode) : (isUserNode(toNode) ? this.showUserLayer : (isExternalNode(toNode) ? this.showExternalLayer : this.showBaseLayer));
+        
         if (!isFromVisible || !isToVisible) return;
-        if (!this._isClientLayerVisible(fromNode) || !this._isClientLayerVisible(toNode)) return;
 
         // [v0.3.19] Hide Edges connected to filtered Leaf nodes
         if (this.hideLeafNodes) {
@@ -7864,7 +8961,7 @@ class CanvasEngine {
         const isEdgeHidden = window.edgeVisibilityMode === 'NO_EDGES';
         if (isEdgeHidden && !isPathSelected) return;
 
-        if (this.focusTopNodes && !isPathSelected) {
+        if (this.focusTopNodes > 0 && !isPathSelected) {
             if (!this.focusNodeSet.has(fromNode.id) || !this.focusNodeSet.has(toNode.id)) return;
         }
 
@@ -7949,6 +9046,11 @@ class CanvasEngine {
         let baseAlpha = this.transform.zoom < 0.8 ? 0.95 : 0.75;
         let finalAlpha = isSelected || isHovered ? 1.0 : (isBundled ? Math.max(0.4, baseAlpha - 0.2) : (isPathSelected ? Math.min(1.0, baseAlpha + 0.1) : baseAlpha));
         
+        // [v0.3.32.2 Phase B] External Edge Stratification
+        if (fromNode.cluster_id && toNode.cluster_id && fromNode.cluster_id !== toNode.cluster_id) {
+            finalAlpha = (isSelected || isHovered || isPathSelected) ? 1.0 : 0.15;
+        }
+
         if (isEdgeHidden && isPathSelected) finalAlpha = 0.3;
         if (this.focusTopNodes && !isPathSelected) {
             if (!this.focusCoreSet.has(fromNode.id) || !this.focusCoreSet.has(toNode.id)) finalAlpha *= 0.2;
@@ -8634,6 +9736,8 @@ class CanvasEngine {
                 for (let j = i + 1; j < this.nodes.length; j++) {
                     const b = this.nodes[j];
                     if (b.isDragging) continue;
+                    
+                    if (!a.position || !b.position) continue;
 
                     const dx = a.position.x - b.position.x;
                     const dy = a.position.y - b.position.y;
@@ -8661,7 +9765,7 @@ class CanvasEngine {
     // [v0.3.29] Cluster-level overlap resolution (Push-Apart with Mass weighting)
     resolveClusterOverlaps() {
         if (!this.clusters || this.clusters.length < 2) return;
-        const PADDING = 40;
+        const PADDING = 20; // [v0.3.31] 클러스터간 마진 대폭 축소 (기존 40)
         const ITERATIONS = 3;
 
         // [v0.3.29 hotfix] Debug: log cluster bounds before resolution
@@ -8670,6 +9774,7 @@ class CanvasEngine {
             if (nodes.length === 0) return null;
             let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
             for (const n of nodes) {
+                if (!n.position) continue;
                 minX = Math.min(minX, n.position.x);
                 minY = Math.min(minY, n.position.y);
                 maxX = Math.max(maxX, n.position.x + 120);
@@ -8688,6 +9793,7 @@ class CanvasEngine {
                 let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
                 let cx = 0, cy = 0;
                 for (const node of nodes) {
+                    if (!node.position) continue;
                     const px = node.position.x;
                     const py = node.position.y;
                     minX = Math.min(minX, px);
@@ -8805,7 +9911,11 @@ function initCanvas() {
         console.log('[SYNAPSE] Processing incoming message:', message.command);
 
         switch (message.command) {
+            case 'projectStateData':
             case 'projectState': {
+                if (message.state) {
+                    message.data = message.state; // normalize for logic below
+                }
                 if (message.data && message.data.project_name) {
                     engine.projectName = message.data.project_name;
                     console.log(`[SYNAPSE] Project Name Synchronized: ${engine.projectName}`);
@@ -8875,6 +9985,9 @@ function initCanvas() {
                     window._connectedUserIds = new Set(
                         message.clients.map(function(c) { return c.userId; })
                     );
+                    message.clients.forEach(c => {
+                        engine.registerClientLayer(c.userId, c.username);
+                    });
                     engine._updateClientLayerUI();
                 }
                 break;

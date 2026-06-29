@@ -72,20 +72,41 @@ export interface HarvestCandidateSet {
 }
 
 const EXTERNAL_PACKAGES = new Set([
-    'axios', 'express', 'lodash', 'react', 'vue', 'angular', 'jquery',
-    'requests', 'flask', 'django', 'numpy', 'pandas', 'pytest',
-    'serde', 'tokio', 'actix', 'rocket', 'clap',
-    'gin', 'echo', 'fiber', 'cobra', 'viper',
-    'junit', 'mockito', 'spring', 'hibernate', 'log4j',
-    'swiftui', 'alamofire', 'kingfisher',
-    'std', 'core', 'alloc',
+    // JS/TS & Node.js
+    'axios', 'express', 'lodash', 'react', 'vue', 'angular', 'jquery', 'next', 'nuxt', 'jest', 'mocha',
+    'chai', 'rxjs', 'redux', 'mobx', 'zustand', 'tailwindcss', 'vite', 'webpack', 'rollup', 'fs',
+    'path', 'os', 'events', 'crypto', 'http', 'https', 'child_process', 'util', 'stream', 'buffer',
+    
+    // Python
+    'requests', 'flask', 'django', 'numpy', 'pandas', 'pytest', 'fastapi', 'sqlalchemy', 'pydantic',
+    'os', 'sys', 'math', 'datetime', 'json', 're', 'pathlib', 'typing', 'collections', 'itertools',
+    'asyncio', 'logging', 'subprocess', 'random', 'time', 'urllib', 'multiprocessing', 'threading',
+    
+    // Rust
+    'serde', 'tokio', 'actix', 'rocket', 'clap', 'std', 'core', 'alloc', 'serde_json', 'reqwest',
+    'anyhow', 'thiserror', 'actix_web', 'axum', 'sqlx', 'diesel', 'log', 'env_logger', 'chrono',
+    
+    // Go
+    'gin', 'echo', 'fiber', 'cobra', 'viper', 'fmt', 'net', 'strings', 'strconv', 'time',
+    'encoding', 'io', 'bufio', 'context', 'sync', 'gorilla', 'log', 'math', 'sort', 'regexp',
+    
+    // Java & Kotlin
+    'junit', 'mockito', 'spring', 'hibernate', 'log4j', 'java', 'javax', 'org', 'com', 'lombok',
+    'slf4j', 'jackson', 'gson', 'guava', 'apache',
+    
+    // Swift / iOS
+    'swiftui', 'alamofire', 'kingfisher', 'foundation', 'uikit', 'combine',
+    
+    // C++
+    'iostream', 'vector', 'string', 'map', 'set', 'algorithm', 'memory', 'functional', 'thread', 'mutex',
+    'chrono', 'fstream', 'sstream', 'cmath', 'cstdint', 'cassert'
 ]);
 
 function detectLanguage(ext: string): string {
     const map: Record<string, string> = {
         '.py': 'python', '.ts': 'typescript', '.js': 'javascript',
         '.rs': 'rust', '.cpp': 'cpp', '.c': 'c',
-        '.go': 'go', '.java': 'java', '.kt': 'kotlin', '.swift': 'swift',
+        '.go': 'go', '.java': 'java', '.kt': 'kotlin', '.kts': 'kotlin', '.swift': 'swift',
     };
     return map[ext.toLowerCase()] || 'unknown';
 }
@@ -184,6 +205,7 @@ function resolveReference(target: string, sourceFileRegistry: SourceFileEntry[],
         f.filePath === `${target}.go` ||
         f.filePath === `${target}.java` ||
         f.filePath === `${target}.kt` ||
+        f.filePath === `${target}.kts` ||
         f.filePath === `${target}.swift` ||
         f.filePath === `${target}.cpp` ||
         f.filePath === `${target}.c`

@@ -861,7 +861,7 @@ async function bootstrapFromGemini(uri: vscode.Uri, context: vscode.ExtensionCon
 
                     // Force refresh the canvas to load the new state
                     if (CanvasPanel.currentPanel) {
-                        await CanvasPanel.currentPanel.sendProjectState();
+                        await CanvasPanel.currentPanel.pushTask(() => CanvasPanel.currentPanel!.sendProjectState(true));
                     }
 
                     vscode.window.showInformationMessage(

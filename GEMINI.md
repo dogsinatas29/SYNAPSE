@@ -199,12 +199,13 @@ v0.3.x 기준으로 DB는 도입하지 않는다.
 
 예:
 
-.synapse/
+.synapse/ (또는 data/ 및 VSCode Global Storage)
 
-├── submissions/
-├── reports/
-├── snapshots/
-└── accounts/
+├── accounts.json
+├── project_metadata.json
+├── project_state.json
+├── synapse_history.json
+└── .server_info
 
 ---
 
@@ -219,7 +220,7 @@ Node
 * Task
 * Layer
 * File
-* Submission
+* Remote Client (사용자)
 
 Edge
 
@@ -298,6 +299,7 @@ SYNAPSE는 파일 시스템과 그래프를 Source Of Truth로 사용하는 협�
 ├── webpack.config.js
 ├── tsconfig.json
 ├── build-guard.js
+├── test_scan.ts
 ├── RULES.md
 ├── synapse.config.json
 ├── .synapseignore
@@ -402,6 +404,7 @@ SYNAPSE는 파일 시스템과 그래프를 Source Of Truth로 사용하는 협�
 │   │   ├── (Active) EdgeCodeRefactorer.ts
 │   │   ├── (Active) PbSessionWatcher.ts
 │   │   ├── (Active) filterSnapshot.ts
+│   │   ├── (Active) JVMAuditor.ts
 │   │   ├── (Active) ReportExporter.ts
 │   │   ├── (Active) VscdbAdapter.ts
 │   │   ├── (Active) SynapseIgnore.ts
@@ -479,12 +482,12 @@ SYNAPSE는 파일 시스템과 그래프를 Source Of Truth로 사용하는 협�
 | `src/core/projection/` | Active | ProjectionLayer, RuleStore — 추상화된 설계 룰을 시각적 레이어에 투영 |
 | `src/core/ProjectMetadata.ts` | Active | Server-owned project boundary manager (싱글톤, UUID, 경로 검증, SymbolIndex 통합) |
 | `src/core/SymbolIndex.ts` | Active | Cross-file registry (FolderTree + FileRegistry + FunctionCatalog, .synapseignore 필터링 + setIgnore() 연동) |
-| `src/core/DataPipeline.ts` | Active | 물리 파일 시스템 스캔 → 노드/엣지/클러스터 추출 및 초기 원형 분산(Initial Spread) 배치 |
+| `src/core/DataPipeline.ts` | Active | 물리 파일 시스템 스캔 → 노드/엣지/클러스터 추출, 📁 Root 클러스터를 통한 무소속 노드 물리 배정 및 초기 원형 분산 배치 |
 | `src/core/RendererCore.ts` | Active | 렌더러 생명주기 관리 및 WebGL/Canvas 2D 전환 브릿지 |
 | `src/core/RuleEngine.ts` | Active | 핵심 규칙 검증 엔진 (Phase/Rule/Mutation pipeline) |
 | `src/core/GraphModel.ts` | Active | 그래프 데이터 모델 (노드/엣지 CRUD, 직렬화) |
 | `src/core/BlacklistOrchestrator.ts` | Active | 노이즈 폴더(`dist`, `node_modules` 등) O(1) 하이브리드 블랙리스트 필터 |
-| `src/core/FileScanner.ts` | Active | 단일 파일 단위 소스 분석 및 의존성 추출 |
+| `src/core/FileScanner.ts` | Active | 단일 파일 단위 소스 분석 및 의존성 추출 (크로스-워크스페이스 [SYNAPSE_NETWORK_LINK] 정규식 파싱 포함) |
 | `src/core/FlowScanner.ts` | Active | 파일 간 데이터 흐름(Flow) 분석 엔진 |
 | `src/core/FlowchartGenerator.ts` | Active | 분석 결과 → 계층형 레이아웃 플로우차트 생성 (DFS Rank 할당, Logic Inversion) |
 | `src/core/LogicAnalyzer.ts` | Active | 스키마 무결성 검증 및 아키텍처 논리 분석 (detectSchemaViolations) |
@@ -502,6 +505,7 @@ SYNAPSE는 파일 시스템과 그래프를 Source Of Truth로 사용하는 협�
 | `src/core/EdgeCodeRefactorer.ts` | Active | 엣지 코드 리팩터링 검증 도구 |
 | `src/core/PbSessionWatcher.ts` | Active | Protobuf 세션 파일 감시 및 추출 트리거 |
 | `src/core/filterSnapshot.ts` | Active | 스냅샷 레이어/타입 기반 필터링 |
+| `src/core/JVMAuditor.ts` | Active | Java 및 Kotlin 소스의 심층 구조적 무결성 분석 및 클래스 기반 로직 오디팅 |
 | `src/core/ReportExporter.ts` | Active | 리포트 내보내기 |
 | `src/core/VscdbAdapter.ts` | Active | VS Code DB 어댑터 |
 | `src/core/SynapseIgnore.ts` | Active | Gitignore-style 패턴 파서; `.synapseignore` 로드/매칭/통합 |
@@ -519,7 +523,7 @@ SYNAPSE는 파일 시스템과 그래프를 Source Of Truth로 사용하는 협�
 | `src/core/collaboration/HarvestSessionManager.ts` | Active | Harvest 세션 및 접속 클라이언트들의 파일 시스템 락(Lock) 전역 상태 관리 |
 | `src/core/collaboration/RemoteLayerProjector.ts` | Active | Stateless projector: 파일 집합 → ProjectionResult (Node/Cluster Layer 분류, Visibility) + clientLayer 태깅 |
 | `src/core/collaboration/ArchitectureIndexBuilder.ts` | Active | 파일 집합 → ArchitectureIndex (ProjectTree + FolderTree + SourceFileRegistry + FunctionCatalog) |
-| `src/core/collaboration/ReferenceVerifier.ts` | Active | ArchitectureIndex → ReferenceGraph + VerificationReport (참조 분석, Ghost Projection, Edge 생성) |
+| `src/core/collaboration/ReferenceVerifier.ts` | Active | ArchitectureIndex → ReferenceGraph + VerificationReport (참조 분석, 100+ 다국어 외부 라이브러리 화이트리스트 검증, Ghost Projection) |
 | `src/core/collaboration/HarvestEngine.ts` | Active | Approved Workspace → Master Layer 물리적 Materialization + LayerHarvestInput + harvest path traversal 방어 (resolvedTarget.startsWith) |
 | `src/core/collaboration/BoundaryGuard.ts` | Active | 중앙 경계 보안 (Project/Session/Harvest Isolation, Cache Cleanup) |
 | `src/core/collaboration/MountManager.ts` | Active | SSH 기반 클라이언트 프로젝트 폴더 마운트 관리 (mount/unmount/scan, validateMountPath) — v0.3.30 신규 |
@@ -538,7 +542,8 @@ SYNAPSE는 파일 시스템과 그래프를 Source Of Truth로 사용하는 협�
 | `src/utils/Logger.ts` | Active | 시스템 전역 로깅 유틸리티 — standalone 모드 지원 (try/catch vscode require, console.log 폴백) |
 | `src/utils/exclusionRules.ts` | Active | 제외 규칙 정규식 관리 |
 | `src/utils/visualHints.ts` | Active | 시각 힌트(배지, 컬러) 유틸리티 |
-| `src/webview/CanvasPanel.ts` | Active | 웹뷰 캔버스 패널 (서버 기동/연결 관리, admin auto-login via .server_info, clientLayer/clientUsername 노드 태깅, 명령어 핸들러: serverInfo/logout/getConnectedClients/refreshServerState, 계정 관리 async 리팩터) |
+| `src/webview/CanvasPanel.ts` | Active | 웹뷰 캔버스 패널 (수동 노드 확장자 동적 추론, 스키마 검증 False Positive 회피, 삭제 경로 보정, 서버/계정 관리 상태 동기화) |
+| `test_scan.ts` | Active | 파일 스캔 및 분석 파이프라인의 로컬 테스트 독립 실행 스크립트 |
 | `src/test/__mocks__/vscode.ts` | Active | VS Code API Mock (테스트 환경) |
 | `src/test/phase1_validation.test.ts` | Active | Phase 1 검증 (ProjectBoundary + SymbolIndex) — 10 tests |
 | `src/test/phase2_validation.test.ts` | Active | Phase 2 검증 (Identity + Session + Runtime) — 14 tests |

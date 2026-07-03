@@ -6986,15 +6986,52 @@ class CanvasEngine {
         const hasMetaEdges = this.metaEdges && this.metaEdges.length > 0;
         console.log(`[LOD_DEBUG] zoom=${zoom.toFixed(3)}, edges=${this._visibleEdgesCache.length}, metaEdges=${this.metaEdges ? this.metaEdges.length : 0}, lod_active=${zoom <= 0.35 && hasMetaEdges}`);
 
-        if (zoom <= 0.35 && hasMetaEdges) {
-            console.log('[LOD_DEBUG] render meta edges');
-            this.renderEdgeBundles(zoom);
-            return; // Skip rendering individual edges
+        if (zoom <= 0.35) {
+            if (hasMetaEdges) {
+                console.log('[LOD_DEBUG] render meta edges');
+                this.renderEdgeBundles(zoom);
+                return; // Skip rendering individual edges
+            } else if (this._visibleEdgesCache.length > 2000) {
+                // Fallback LOD: if too many edges and zoomed out, don't draw them to save performance
+                console.log('[LOD_DEBUG] Skip physical edges due to high count at low zoom');
+                return;
+            }
         }
 
         console.log('[LOD_DEBUG] render physical edges');
+        
+        // [v0.3.33] Viewport Culling for Edges
+        const dpr = window.devicePixelRatio || 1;
+        const viewWidth = this.canvas.width / dpr;
+        const viewHeight = this.canvas.height / dpr;
+        const minX = -this.transform.offsetX / zoom;
+        const minY = -this.transform.offsetY / zoom;
+        const maxX = minX + viewWidth / zoom;
+        const maxY = minY + viewHeight / zoom;
+        
+        // Edge buffer needs to be large enough to catch long edges that cross the screen
+        const buffer = 1000;
+        const cMinX = minX - buffer;
+        const cMinY = minY - buffer;
+        const cMaxX = maxX + buffer;
+        const cMaxY = maxY + buffer;
+
         // Step 3: Draw the edges
         for (const edge of this._visibleEdgesCache) {
+            const srcNode = this.nodeMap.get(edge.from);
+            const tgtNode = this.nodeMap.get(edge.to);
+            if (!srcNode || !tgtNode || !srcNode.position || !tgtNode.position) continue;
+            
+            // Fast bounding box culling
+            const minEx = Math.min(srcNode.position.x, tgtNode.position.x);
+            const maxEx = Math.max(srcNode.position.x, tgtNode.position.x);
+            const minEy = Math.min(srcNode.position.y, tgtNode.position.y);
+            const maxEy = Math.max(srcNode.position.y, tgtNode.position.y);
+            
+            if (maxEx < cMinX || minEx > cMaxX || maxEy < cMinY || minEy > cMaxY) {
+                continue; // Entire edge is outside the viewport
+            }
+
             this.renderEdge(edge);
         }
     }
@@ -7090,7 +7127,27 @@ class CanvasEngine {
             return;  // Skip rendering this frame to avoid errors
         }
 
+        // [v0.3.33] Viewport Culling for Nodes
+        const minX = -this.transform.offsetX / zoom;
+        const minY = -this.transform.offsetY / zoom;
+        const maxX = minX + canvasWidth / zoom;
+        const maxY = minY + canvasHeight / zoom;
+        const bufferX = 200; // Node width is ~120
+        const bufferY = 100; // Node height is ~60
+        const cMinX = minX - bufferX;
+        const cMinY = minY - bufferY;
+        const cMaxX = maxX + bufferX;
+        const cMaxY = maxY + bufferY;
+
         for (const node of this._visibleNodesCache) {
+            if (!node.position) continue;
+            const px = node.position.x;
+            const py = node.position.y;
+            
+            if (px < cMinX || px > cMaxX || py < cMinY || py > cMaxY) {
+                continue; // Node is outside the viewport
+            }
+
             this.renderNode(node, zoom);
         }
     }
@@ -7948,6 +8005,21 @@ class CanvasEngine {
         };
 
         const sortedClusters = [...this.clusters].sort((a, b) => getDepth(a) - getDepth(b));
+        
+        // [v0.3.33] Viewport Culling for Clusters
+        const dpr = window.devicePixelRatio || 1;
+        const zoom = this.transform.zoom;
+        const viewWidth = this.canvas.width / dpr;
+        const viewHeight = this.canvas.height / dpr;
+        const minX = -this.transform.offsetX / zoom;
+        const minY = -this.transform.offsetY / zoom;
+        const maxX = minX + viewWidth / zoom;
+        const maxY = minY + viewHeight / zoom;
+        const buffer = 200;
+        const cMinX = minX - buffer;
+        const cMinY = minY - buffer;
+        const cMaxX = maxX + buffer;
+        const cMaxY = maxY + buffer;
 
         for (const cluster of sortedClusters) {
             // [v0.2.18.3] Isolate Context Vault unless toggled ON
@@ -7974,6 +8046,11 @@ class CanvasEngine {
 
             const b = getClusterBounds(cluster);
             if (b.minX === Infinity) continue;
+            
+            // Fast bounding box culling for cluster
+            if (b.maxX < cMinX || b.minX > cMaxX || b.maxY < cMinY || b.minY > cMaxY) {
+                continue; // Cluster is entirely outside the viewport
+            }
 
             // Generate a consistent color based on cluster ID
             let hash = 0;
@@ -8056,7 +8133,28 @@ class CanvasEngine {
             return;
         }
 
+        // [v0.3.33] Viewport Culling for Ghost Nodes
+        const dpr = window.devicePixelRatio || 1;
+        const viewWidth = this.canvas.width / dpr;
+        const viewHeight = this.canvas.height / dpr;
+        const minX = -this.transform.offsetX / zoom;
+        const minY = -this.transform.offsetY / zoom;
+        const maxX = minX + viewWidth / zoom;
+        const maxY = minY + viewHeight / zoom;
+        const buffer = 200;
+        const cMinX = minX - buffer;
+        const cMinY = minY - buffer;
+        const cMaxX = maxX + buffer;
+        const cMaxY = maxY + buffer;
+
         for (const ghost of this.baselineNodes) {
+            // Culling for ghosts
+            const px = ghost.position.x;
+            const py = ghost.position.y;
+            if (px < cMinX || px > cMaxX || py < cMinY || py > cMaxY) {
+                continue; // Ghost node is outside the viewport
+            }
+
             const currentNode = this.nodes.find(n => n.id === ghost.id);
 
             // 1. 사라진 노드 (Ghost) - [v0.2.17] Disabled as it adds visual clutter for explicitly deleted nodes

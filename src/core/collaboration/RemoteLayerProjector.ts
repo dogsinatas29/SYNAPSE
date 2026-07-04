@@ -31,6 +31,7 @@ export interface ClassifiedCluster {
     clientLayer?: string;
     clientUsername?: string;
     sessionId?: string;
+    parent_id?: string;
 }
 
 export interface ProjectionResult {
@@ -139,20 +140,42 @@ export class RemoteLayerProjector {
             classifiedNodes.push(node);
 
             if (clusterId) {
-                const existing = classifiedClustersMap.get(clusterId);
-                if (existing) {
-                    existing.memberCount++;
-                } else {
-                    const layer = classifyClusterLayer(clusterId);
-                    classifiedClustersMap.set(clusterId, {
-                        id: clusterId,
-                        label: `📂 ${path.basename(dir)}`,
-                        layer,
-                        memberCount: 1,
-                        clientLayer: snapshot.clientId,
-                        clientUsername: snapshot.clientUsername,
-                        sessionId: snapshot.sessionId,
-                    });
+                let currentPath = path.dirname(file.filePath).replace(/\\/g, '/');
+                let currentClusterId = clusterId;
+                
+                while (currentPath !== '.' && currentPath.length > 0) {
+                    const parentPath = path.posix.dirname(currentPath);
+                    let parentClusterId: string | undefined = undefined;
+                    
+                    if (parentPath && parentPath !== '.') {
+                        parentClusterId = `folder_${parentPath.replace(/[^a-zA-Z0-9]/g, '_')}`;
+                    }
+
+                    let existing = classifiedClustersMap.get(currentClusterId);
+                    if (!existing) {
+                        const layer = classifyClusterLayer(currentClusterId);
+                        existing = {
+                            id: currentClusterId,
+                            label: `📂 ${path.basename(currentPath)}`,
+                            layer,
+                            memberCount: 0,
+                            clientLayer: snapshot.clientId,
+                            clientUsername: snapshot.clientUsername,
+                            sessionId: snapshot.sessionId,
+                            parent_id: parentClusterId
+                        };
+                        classifiedClustersMap.set(currentClusterId, existing);
+                    } else if (parentClusterId && !existing.parent_id) {
+                        existing.parent_id = parentClusterId;
+                    }
+                    
+                    if (currentClusterId === clusterId) {
+                        existing.memberCount++;
+                    }
+
+                    if (!parentClusterId) break;
+                    currentPath = parentPath;
+                    currentClusterId = parentClusterId;
                 }
             }
         }
@@ -224,7 +247,7 @@ export class RemoteLayerProjector {
             clusters: classifiedClusters.map(c => ({
                 id: c.id,
                 label: c.label,
-                type: 'folder',
+                type: c.id === 'cluster_ghosts' ? 'external' : (c.id.startsWith('sys_') || c.id.includes('Buffer') || c.id.includes('Reserved') ? 'system' : 'folder'),
                 layer: c.layer,
                 clientLayer: c.clientLayer,
                 data: { layer: c.layer, clientLayer: c.clientLayer, clientUsername: c.clientUsername },
@@ -232,6 +255,7 @@ export class RemoteLayerProjector {
                 bounds: { x: 0, y: 0, width: 0, height: 0 },
                 children: [],
                 nodes: [],
+                parent_id: c.parent_id,
             })),
             timestamp: Date.now(),
             snapshotVersion: 1,

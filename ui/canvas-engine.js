@@ -7414,18 +7414,35 @@ class CanvasEngine {
             row.style.paddingLeft = (8 + depth * 16) + 'px';
             row.dataset.clusterId = cluster.id;
 
-            // Depth indicator
-            const indent = document.createElement('span');
-            indent.style.cssText = 'color:#504945;font-size:10px;flex-shrink:0;margin-right:2px;';
-            indent.textContent = depth > 0 ? '└ ' : '';
+            const children = childMap.get(cluster.id) || [];
+            const hasChildren = children.length > 0;
+
+            if (cluster.uiCollapsed === undefined) cluster.uiCollapsed = false;
+
+            // Toggle button for expand/collapse
+            const toggleBtn = document.createElement('span');
+            toggleBtn.style.cssText = 'width:12px; height:12px; display:inline-flex; align-items:center; justify-content:center; cursor:pointer; font-size:10px; color:#a89984; flex-shrink:0; margin-right:4px;';
+            if (hasChildren) {
+                toggleBtn.textContent = cluster.uiCollapsed ? '▶' : '▼';
+                toggleBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    cluster.uiCollapsed = !cluster.uiCollapsed;
+                    const searchEl = document.getElementById('cluster-vis-search');
+                    self.renderClusterVisibilityPanel(searchEl ? searchEl.value : '');
+                });
+            } else {
+                toggleBtn.innerHTML = '&nbsp;'; // spacing for leaf nodes
+            }
 
             const cb = document.createElement('input');
             cb.type = 'checkbox'; cb.className = 'cv-checkbox'; cb.checked = isOn;
             cb.addEventListener('change', function() { self._clusterVisToggle(cluster.id, cb.checked); });
+            cb.addEventListener('click', function(e) { e.stopPropagation(); });
 
             const lbl = document.createElement('span');
             lbl.className = 'cv-label';
             lbl.textContent = label; lbl.title = label;
+            lbl.style.cursor = 'pointer';
             if (!isMatch && q) lbl.style.opacity = '0.45';
 
             const cnt = document.createElement('span');
@@ -7435,13 +7452,16 @@ class CanvasEngine {
             const reveal = document.createElement('button');
             reveal.className = 'cv-reveal'; reveal.textContent = '→'; reveal.title = 'Reveal in canvas';
             reveal.addEventListener('click', function(e) { e.stopPropagation(); self._clusterVisReveal(cluster.id); });
-            row.addEventListener('dblclick', function() { self._clusterVisReveal(cluster.id); });
+            
+            // Click on row to reveal
+            row.addEventListener('click', function() { self._clusterVisReveal(cluster.id); });
 
-            if (depth > 0) row.appendChild(indent);
-            row.appendChild(cb); row.appendChild(lbl); row.appendChild(cnt); row.appendChild(reveal);
+            row.appendChild(toggleBtn); row.appendChild(cb); row.appendChild(lbl); row.appendChild(cnt); row.appendChild(reveal);
             tree.appendChild(row);
 
-            (childMap.get(cluster.id) || []).forEach(function(ch) { appendRow(ch, depth + 1); });
+            if (hasChildren && !cluster.uiCollapsed) {
+                children.forEach(function(ch) { appendRow(ch, depth + 1); });
+            }
         }
 
         roots.forEach(function(r) { appendRow(r, 0); });
@@ -7453,11 +7473,7 @@ class CanvasEngine {
         const cluster = this.clusters.find(function(c) { return c.id === clusterId; });
         if (!cluster) return;
         cluster.collapsed = !visible;
-        if (!visible) {
-            const self = this;
-            const cascade = function(pid) { self.clusters.filter(function(c) { return c.parent_id === pid; }).forEach(function(ch) { ch.collapsed = true; cascade(ch.id); }); };
-            cascade(clusterId);
-        }
+        // Removed cascade logic to preserve child states (State-preserving visibility)
         this.isGraphDataDirty = true;
         this.render();
         this.saveState();

@@ -1517,6 +1517,15 @@ class TreeRenderer {
     }
 }
 
+// [v0.3.33 Phase 1] ViewStrategy Foundation
+// View와 Calculation을 분리하기 위한 전략 열거형.
+// 현재는 상태만 보관. 동작 분기는 Phase 3~5에서 구현.
+const ViewStrategy = Object.freeze({
+    Density:   'density',   // Node만 로드, Edge 생략 (대규모 초기 뷰)
+    Focus:     'focus',     // 선택 노드 Neighborhood만 표시
+    FullGraph: 'fullgraph'  // 전체 그래프 (현재 동작과 동일)
+});
+
 class CanvasEngine {
     constructor(canvasId) {
         this.canvas = document.getElementById(canvasId);
@@ -1624,6 +1633,10 @@ class CanvasEngine {
 
         // 모드 및 렌더러
         this.currentMode = 'graph'; // 'graph' | 'tree' | 'flow'
+
+        // [v0.3.33 Phase 1] ViewStrategy — 현재는 FullGraph 고정. Phase 3에서 분기 구현.
+        this.viewStrategy = ViewStrategy.FullGraph;
+
         this.treeRenderer = new TreeRenderer(this);
         this.treeData = [];
         this.flowRenderer = new FlowRenderer(this);
@@ -3222,10 +3235,19 @@ class CanvasEngine {
                 }
 
                 for (const node of this.nodes) {
-                    // Check if node is hidden by a collapsed cluster
+                    // Check if node is hidden by a collapsed cluster or ancestor [v0.3.32.4]
                     if (node.cluster_id) {
                         const cluster = this.clusters.find(c => c.id === node.cluster_id);
                         if (cluster && cluster.collapsed) continue;
+                        if (cluster && cluster.parent_id) {
+                            let cur = cluster; let skip = false;
+                            while (cur && cur.parent_id) {
+                                const par = this.clusters.find(x => x.id === cur.parent_id);
+                                if (par && par.collapsed) { skip = true; break; }
+                                cur = par;
+                            }
+                            if (skip) continue;
+                        }
                     }
 
                     const nodeWidth = 120;
@@ -3597,10 +3619,21 @@ class CanvasEngine {
             const isSelected = this.selectedNodes.has(node);
             const HIT_PADDING = isSelected ? 15 : 0; // [v0.2.32] Extra 15px grab area for selected nodes
 
-            // Check if node is hidden (collapsed cluster)
+            // Check if node is hidden (collapsed cluster or ancestor collapsed) [v0.3.32.4]
             if (node.cluster_id) {
                 const cluster = this.clusters?.find(c => c.id === node.cluster_id);
                 if (cluster && cluster.collapsed) continue;
+                // Check ancestor collapsed
+                if (cluster && cluster.parent_id) {
+                    let cur = cluster;
+                    let hiddenByAncestor = false;
+                    while (cur && cur.parent_id) {
+                        const par = this.clusters.find(x => x.id === cur.parent_id);
+                        if (par && par.collapsed) { hiddenByAncestor = true; break; }
+                        cur = par;
+                    }
+                    if (hiddenByAncestor) continue;
+                }
             }
 
             if (!node.position) continue;
@@ -4569,21 +4602,29 @@ class CanvasEngine {
         }
     }
 
-    getSemanticGroup(node) {
+    // [v0.3.33 Phase 0 fix] clusterLayerMap 선택 사용 시 O(1), 미제공 시 clusters.find() O(C)
+    getSemanticGroup(node, clusterLayerMap) {
         if (!node) return 'unknown';
         
-        // Use cluster layer if available (v0.3.22.10: Data fallback for early-stats)
         const clusterId = node.cluster_id || (node.data && node.data.cluster_id);
         if (clusterId) {
-            const cluster = (this.clusters || []).find(c => c.id === clusterId);
-            const layer = cluster?.layer || (cluster?.data?.layer) || (clusterId.startsWith('sys_') ? 'ai' : (clusterId === 'doc_shelf' ? 'doc' : null));
+            // O(1) if map provided, O(C) fallback
+            const layer = clusterLayerMap
+                ? clusterLayerMap.get(clusterId)
+                : (() => {
+                    const cluster = (this.clusters || []).find(c => c.id === clusterId);
+                    return cluster?.layer || (cluster?.data?.layer) || (clusterId.startsWith('sys_') ? 'ai' : (clusterId === 'doc_shelf' ? 'doc' : null));
+                })();
             if (layer && layer !== 'user') return layer;
             
             if (clusterId === 'sys_cluster_buffer') return 'buffer';
             if (clusterId === 'sys_cluster_reserved') return 'reserved';
             if (clusterId === 'doc_shelf') return 'doc';
             
-            if (cluster && cluster.label) return cluster.label.replace(/[📂☁️🛡️🕒]/g, '').trim().toLowerCase();
+            if (!clusterLayerMap) {
+                const cluster = (this.clusters || []).find(c => c.id === clusterId);
+                if (cluster && cluster.label) return cluster.label.replace(/[📂☁️🛡️🕒]/g, '').trim().toLowerCase();
+            }
         }
 
         if (node.type === 'external') return 'external';
@@ -4705,8 +4746,8 @@ class CanvasEngine {
                 srcStats.out++;
                 srcStats.connected.add(e.to);
                 
-                // Track semantic distribution
-                const tgtGroup = this.getSemanticGroup(tgtNode);
+                // O(1) via clusterLayerMap
+                const tgtGroup = this.getSemanticGroup(tgtNode, clusterLayerMap);
                 srcStats.distribution[tgtGroup] = (srcStats.distribution[tgtGroup] || 0) + 1;
                 
                 // [v0.3.22.12] Bind identity sample immediately
@@ -4722,8 +4763,8 @@ class CanvasEngine {
                 tgtStats.in++;
                 tgtStats.connected.add(e.from);
 
-                // Track semantic distribution
-                const srcGroup = this.getSemanticGroup(srcNode);
+                // O(1) via clusterLayerMap
+                const srcGroup = this.getSemanticGroup(srcNode, clusterLayerMap);
                 tgtStats.distribution[srcGroup] = (tgtStats.distribution[srcGroup] || 0) + 1;
 
                 // [v0.3.22.12] Bind identity sample immediately
@@ -5572,6 +5613,17 @@ class CanvasEngine {
         this.log(`[DEBUG_NODES] Nodes survived normalizeProjectState: ${baseState.nodes?.map(n => n.id).join(', ')}`);
         const promotedLabels = [];
 
+        // [v0.3.33 Phase 0] Baseline Measurement
+        const _perf = {
+            t0: performance.now(),
+            t0wall: Date.now(),
+            ipcTimestamp: projectState._ipcTimestamp || null
+        };
+        if (projectState._msgReceiveT != null) {
+            // TransferTime: IPC message receive → loadProjectState entry (same process, reliable)
+            console.log(`[PERF] TransferTime (IPC→entry): ${(_perf.t0 - projectState._msgReceiveT).toFixed(2)}ms`);
+        }
+
         try {
             // [v0.3.11] 명시적 데이터 정제 제거 (백엔드 SSoT에서 처리됨)
             if (!baseState.nodes || baseState.nodes.length === 0) {
@@ -5824,7 +5876,9 @@ class CanvasEngine {
             this.resizeCanvas(!preserveView); // [v0.2.24] Force immediate resize before fitView
             
             // [v0.3.22.10] Finalizing Node Stats AFTER all sync/normalization
+            const _tNodeCache = performance.now();
             this.updateNodeStats();
+            console.log(`[PERF] NodeCacheTime: ${(performance.now() - _tNodeCache).toFixed(1)}ms (nodes=${this.nodes.length}, edges=${this.edges.length})`);
 
             if (!preserveView) {
                 if (projectState.transform) {
@@ -5844,6 +5898,10 @@ class CanvasEngine {
             if (loadingEl) {
                 console.log('[SYNAPSE] Removing loading overlay');
                 loadingEl.remove();
+                // [v0.3.33 Phase 0] FirstInteractive = time from IPC arrival to UI ready
+                const _tFirstInteractive = performance.now() - _perf.t0;
+                console.log(`[PERF] FirstInteractive: ${_tFirstInteractive.toFixed(1)}ms`);
+                console.log(`[PERF] GraphBuildTime (total loadProjectState): ${_tFirstInteractive.toFixed(1)}ms`);
             }
 
             // [v0.2.24] IPC Optimization: Batched Architecture Validation (O(1) Message count)
@@ -5870,10 +5928,12 @@ class CanvasEngine {
                     }).filter(Boolean);
 
                     if (validationPayload.length > 0) {
+                        const _tEdgeCache = performance.now();
                         vscode.postMessage({
                             command: 'validateEdgesBatch', // [v0.2.24] New Batched Command
                             batch: validationPayload
                         });
+                        console.log(`[PERF] EdgeCacheTime (validateEdgesBatch prep): ${(performance.now() - _tEdgeCache).toFixed(1)}ms (edges=${validationPayload.length})`);
                     }
                 }
             }
@@ -7294,6 +7354,145 @@ class CanvasEngine {
         }
     }
 
+    // [v0.3.32.4 improved] Cluster Visibility Panel
+    // - Hierarchy: depth-based indentation (16px per level)
+    // - parent_id 없는 경우 id 경로 패턴으로 추론
+    // - 검색 시 첫 매칭 클러스터로 자동 카메라 이동
+    renderClusterVisibilityPanel(filterText) {
+        filterText = filterText || '';
+        const tree = document.getElementById('cluster-vis-tree');
+        if (!tree || !this.clusters) return;
+        const q = filterText.trim().toLowerCase();
+
+        // Node count per cluster
+        const nodeCountMap = new Map();
+        (this.nodes || []).forEach(function(n) {
+            const cid = n.cluster_id || (n.data && n.data.cluster_id);
+            if (cid) nodeCountMap.set(cid, (nodeCountMap.get(cid) || 0) + 1);
+        });
+
+        // Build idMap for fast lookup
+        const idMap = new Map();
+        this.clusters.forEach(function(c) { idMap.set(c.id, c); });
+
+        // Build childMap from parent_id
+        const childMap = new Map();
+        this.clusters.forEach(function(c) {
+            if (c.parent_id && idMap.has(c.parent_id)) {
+                if (!childMap.has(c.parent_id)) childMap.set(c.parent_id, []);
+                childMap.get(c.parent_id).push(c);
+            }
+        });
+
+        // Roots = clusters with no parent_id (or parent not in idMap)
+        const roots = this.clusters.filter(function(c) {
+            return !c.parent_id || !idMap.has(c.parent_id);
+        });
+
+        const self = this;
+        function matches(c) {
+            if (!q) return true;
+            const nq = q.replace(/[-_]/g, '');
+            const nl = (c.label || c.id).toLowerCase().replace(/[-_]/g, '');
+            return nl.indexOf(nq) !== -1;
+        }
+        function subtreeHasMatch(c) { return matches(c) || (childMap.get(c.id) || []).some(subtreeHasMatch); }
+
+        tree.innerHTML = '';
+        let firstMatchId = null;
+
+        function appendRow(cluster, depth) {
+            if (!subtreeHasMatch(cluster)) return;
+            const isOn = !cluster.collapsed;
+            const count = nodeCountMap.get(cluster.id) || 0;
+            const label = cluster.label || cluster.id;
+            const isMatch = matches(cluster);
+            if (q && isMatch && !firstMatchId) firstMatchId = cluster.id;
+
+            const row = document.createElement('div');
+            row.className = 'cv-item';
+            row.style.paddingLeft = (8 + depth * 16) + 'px';
+            row.dataset.clusterId = cluster.id;
+
+            // Depth indicator
+            const indent = document.createElement('span');
+            indent.style.cssText = 'color:#504945;font-size:10px;flex-shrink:0;margin-right:2px;';
+            indent.textContent = depth > 0 ? '└ ' : '';
+
+            const cb = document.createElement('input');
+            cb.type = 'checkbox'; cb.className = 'cv-checkbox'; cb.checked = isOn;
+            cb.addEventListener('change', function() { self._clusterVisToggle(cluster.id, cb.checked); });
+
+            const lbl = document.createElement('span');
+            lbl.className = 'cv-label';
+            lbl.textContent = label; lbl.title = label;
+            if (!isMatch && q) lbl.style.opacity = '0.45';
+
+            const cnt = document.createElement('span');
+            cnt.className = 'cv-count';
+            if (count > 0) cnt.textContent = '(' + count + ')';
+
+            const reveal = document.createElement('button');
+            reveal.className = 'cv-reveal'; reveal.textContent = '→'; reveal.title = 'Reveal in canvas';
+            reveal.addEventListener('click', function(e) { e.stopPropagation(); self._clusterVisReveal(cluster.id); });
+            row.addEventListener('dblclick', function() { self._clusterVisReveal(cluster.id); });
+
+            if (depth > 0) row.appendChild(indent);
+            row.appendChild(cb); row.appendChild(lbl); row.appendChild(cnt); row.appendChild(reveal);
+            tree.appendChild(row);
+
+            (childMap.get(cluster.id) || []).forEach(function(ch) { appendRow(ch, depth + 1); });
+        }
+
+        roots.forEach(function(r) { appendRow(r, 0); });
+
+        // [개선3] 검색 시 첫 매칭 클러스터로 자동 카메라 이동
+        if (q && firstMatchId) self._clusterVisReveal(firstMatchId);
+    }
+    _clusterVisToggle(clusterId, visible) {
+        const cluster = this.clusters.find(function(c) { return c.id === clusterId; });
+        if (!cluster) return;
+        cluster.collapsed = !visible;
+        if (!visible) {
+            const self = this;
+            const cascade = function(pid) { self.clusters.filter(function(c) { return c.parent_id === pid; }).forEach(function(ch) { ch.collapsed = true; cascade(ch.id); }); };
+            cascade(clusterId);
+        }
+        this.isGraphDataDirty = true;
+        this.render();
+        this.saveState();
+        const searchEl = document.getElementById('cluster-vis-search');
+        this.renderClusterVisibilityPanel(searchEl ? searchEl.value : '');
+    }
+    // [v0.3.32.4 fix2] Reveal — clientWidth 기준, requestRender() 사용 (fitView 공식 동일)
+    _clusterVisReveal(clusterId) {
+        const nodes = (this.nodes || []).filter(function(n) {
+            const cid = n.cluster_id || (n.data && n.data.cluster_id);
+            return cid === clusterId;
+        });
+        if (!nodes.length) {
+            console.log('[CV Reveal] no nodes for', clusterId);
+            return;
+        }
+        let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+        nodes.forEach(function(n) {
+            const px = (n.position && n.position.x) != null ? n.position.x : (n.x || 0);
+            const py = (n.position && n.position.y) != null ? n.position.y : (n.y || 0);
+            minX = Math.min(minX, px);
+            minY = Math.min(minY, py);
+            maxX = Math.max(maxX, px + 120);
+            maxY = Math.max(maxY, py + 60);
+        });
+        const w = maxX - minX;
+        const h = maxY - minY;
+        const zoom = this.transform.zoom;
+        // 중앙 정렬 (fitView 공식과 동일)
+        this.transform.offsetX = (this.canvas.clientWidth  - w * zoom) / 2 - minX * zoom;
+        this.transform.offsetY = (this.canvas.clientHeight - h * zoom) / 2 - minY * zoom;
+        this.isDirty = true;
+        this.requestRender();
+    }
+
     renameCluster(clusterId) {
         const cluster = this.clusters.find(c => c.id === clusterId);
         if (!cluster) return;
@@ -8021,7 +8220,22 @@ class CanvasEngine {
         const cMaxX = maxX + buffer;
         const cMaxY = maxY + buffer;
 
+        // [v0.3.32.4] Build parent-collapsed lookup for fast skip
+        const _collapsedParents = new Set();
+        this.clusters.forEach(c => { if (c.collapsed) _collapsedParents.add(c.id); });
+        const _isAncestorCollapsed = (c) => {
+            let cur = c;
+            while (cur && cur.parent_id) {
+                if (_collapsedParents.has(cur.parent_id)) return true;
+                cur = this.clusters.find(x => x.id === cur.parent_id);
+            }
+            return false;
+        };
+
         for (const cluster of sortedClusters) {
+            // [v0.3.32.4] Skip if any ancestor cluster is collapsed
+            if (_isAncestorCollapsed(cluster)) continue;
+
             // [v0.2.18.3] Isolate Context Vault unless toggled ON
             if (cluster.id === 'context_vault' && !this.showContextVault) continue;
 
@@ -10072,9 +10286,12 @@ function initCanvas() {
                 // [v0.3.11] Authoritative Sync: Direct user actions bypass interaction lock
                 if (message.isAuthoritative) {
                     console.log('[SYNAPSE] Authoritative projectState received. Bypassing interaction lock.');
+                    if (message.data) message.data._msgReceiveT = performance.now(); // [v0.3.33 Phase 0]
                     engine.loadProjectState(message.data, true);
                     engine.updateNodeStats(); // [v0.3.22.9] Force stats update for tooltips
-                    engine._pendingState = null; // Clear any stale deferred updates
+                    engine._pendingState = null;
+                    // [v0.3.32.4] Refresh cluster visibility panel if open
+                    if (document.getElementById('cluster-visibility-panel')?.classList.contains('visible')) engine.renderClusterVisibilityPanel(''); // Clear any stale deferred updates
                     return;
                 }
 
@@ -10089,9 +10306,12 @@ function initCanvas() {
                 const isFreshSaveResponse = (Date.now() - (engine._lastSaveTime || 0)) < 500;
                 const preserve = isFreshSaveResponse || (!message.forceReset && engine.nodes && engine.nodes.length > 0);
                 
+                if (message.data) message.data._msgReceiveT = performance.now(); // [v0.3.33 Phase 0]
                 engine.loadProjectState(message.data, preserve);
                 engine.updateNodeStats(); // [v0.3.22.9] Force stats update for tooltips
                 engine.isExpectingUpdate = false;
+                // [v0.3.32.4] Refresh cluster visibility panel if open
+                if (document.getElementById('cluster-visibility-panel')?.classList.contains('visible')) engine.renderClusterVisibilityPanel('');
                 
                 // [v0.3.10] Auto-Start Engine Loop upon first state arrival
                 if (!engine._loopRunning) {
@@ -10528,6 +10748,20 @@ function initCanvas() {
 
     document.getElementById('btn-ungroup')?.addEventListener('click', () => {
         engine.ungroupSelection();
+    });
+
+    // [v0.3.32.4] Cluster Visibility Panel events
+    document.getElementById('btn-cluster-vis')?.addEventListener('click', () => {
+        const panel = document.getElementById('cluster-visibility-panel');
+        if (!panel) return;
+        const isVisible = panel.classList.toggle('visible');
+        if (isVisible) engine.renderClusterVisibilityPanel('');
+    });
+    document.getElementById('cluster-vis-close')?.addEventListener('click', () => {
+        document.getElementById('cluster-visibility-panel')?.classList.remove('visible');
+    });
+    document.getElementById('cluster-vis-search')?.addEventListener('input', (e) => {
+        engine.renderClusterVisibilityPanel(e.target.value);
     });
 
     document.getElementById('btn-snapshot')?.addEventListener('click', () => {

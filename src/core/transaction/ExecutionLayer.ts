@@ -1,6 +1,7 @@
 import * as path from 'path';
 import * as fs from 'fs';
 import { Node, Edge } from '../GraphModel';
+import { EdgeCodeRefactorer } from '../EdgeCodeRefactorer';
 
 /**
  * 🛠️ SYNAPSE Execution Layer (v0.3.11)
@@ -111,6 +112,57 @@ export class ExecutionLayer {
         
         // UTF-8 No BOM (GEMINI.md 규격)
         fs.writeFileSync(filePath, content, 'utf8');
+    }
+
+    /**
+     * [v0.3.32] 트랜잭션 기반 엣지 물리 소스 연결
+     * @returns 성공 여부 및 생성된 물리 파일 변경 사항 정보
+     */
+    public connectEdge(edge: Edge, projectRoot: string, isEditLogicMode: boolean): { success: boolean, message?: string } {
+        if (!isEditLogicMode) {
+            return { success: true, message: 'Edit Logic Mode disabled, skipped physical modification.' };
+        }
+        
+        // _fromFile, _toFile이 존재하지 않으면 GraphModel에서 동적으로 확인하는 로직이 필요할 수 있지만, 
+        // 의도(Intent) 발생 시점 또는 RuleEngine에서 이미 확인하여 edge에 포함시켰다고 가정합니다.
+        const fromFile = (edge as any)._fromFile;
+        const toFile = (edge as any)._toFile;
+        
+        if (!fromFile || !toFile) {
+            return { success: false, message: 'Missing _fromFile or _toFile properties on Edge.' };
+        }
+
+        const refactorer = new EdgeCodeRefactorer();
+        const result = refactorer.applyEdgeToSource(fromFile, toFile, projectRoot, { commented: true });
+        
+        return {
+            success: result.success,
+            message: result.message
+        };
+    }
+
+    /**
+     * [v0.3.32] 트랜잭션 기반 엣지 물리 소스 주석 처리 (삭제)
+     * @returns 성공 여부 및 결과 메시지
+     */
+    public disconnectEdge(fromFile: string | null, toFile: string | null, projectRoot: string, isEditLogicMode: boolean, toNodeId?: string): { success: boolean, message?: string, importLine?: string } {
+        if (!isEditLogicMode) {
+            return { success: true, message: 'Edit Logic Mode disabled, skipped physical modification.' };
+        }
+
+        if (!fromFile || !toFile) {
+            // 소스 파일을 특정할 수 없다면, SSoT 관점에서는 물리 변경 없이 논리 삭제만 수행해도 무방함.
+            return { success: true, message: 'No physical files mapped, skipping source modification.' };
+        }
+
+        const refactorer = new EdgeCodeRefactorer();
+        const result = refactorer.removeEdgeFromSource(fromFile, toFile, projectRoot, toNodeId);
+        
+        return {
+            success: result.success,
+            message: result.message,
+            importLine: result.importLine
+        };
     }
 }
 

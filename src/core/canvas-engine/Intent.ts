@@ -21,7 +21,7 @@ export interface AddNodeIntent extends BaseIntent {
 
 export interface ConnectEdgeIntent extends BaseIntent {
   readonly type: 'CONNECT_EDGE';
-  readonly payload: { from: string; to: string; type?: string };
+  readonly payload: { from: string; to: string; type?: string; [key: string]: any };
 }
 
 export interface MoveNodeIntent extends BaseIntent {
@@ -36,7 +36,7 @@ export interface DeleteNodeIntent extends BaseIntent {
 
 export interface DeleteEdgeIntent extends BaseIntent {
   readonly type: 'DELETE_EDGE';
-  readonly payload: { from: string; to: string };
+  readonly payload: { from: string; to: string; [key: string]: any };
 }
 
 export interface UpdateEdgeIntent extends BaseIntent {

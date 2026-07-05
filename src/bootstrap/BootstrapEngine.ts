@@ -8,7 +8,18 @@ import * as fs from 'fs';
 import { JVMAuditor } from '../core/JVMAuditor';
 import { GeminiParser } from '../core/GeminiParser';
 import { FlowchartGenerator } from '../core/FlowchartGenerator';
-import { FileScanner } from '../core/FileScanner'; // Import Scanner
+import { FileScanner } from '../core/FileScanner';
+import { ScannerRegistry } from '../core/ScannerRegistry';
+import { JsTsScanner } from '../core/JsTsScanner';
+import { PythonScanner } from '../core/PythonScanner';
+import { ShellScanner } from '../core/ShellScanner';
+import { MarkdownScanner } from '../core/MarkdownScanner';
+import { JavaScanner } from '../core/JavaScanner';
+import { KotlinScanner } from '../core/KotlinScanner';
+import { CppScanner } from '../core/CppScanner';
+import { RustScanner } from '../core/RustScanner';
+import { SqlScanner } from '../core/SqlScanner';
+import { ConfigScanner } from '../core/ConfigScanner';
 import { BootstrapResult, ProjectState, NodeType } from '../types/schema';
 import { isIgnoredFolder, isIgnoredFile } from '../utils/exclusionRules';
 import { RuleEngine } from '../core/RuleEngine';
@@ -22,12 +33,29 @@ import { Logger } from '../utils/Logger';
 export class BootstrapEngine {
     private parser: GeminiParser;
     private flowchartGen: FlowchartGenerator;
-    private fileScanner: FileScanner; // Add Scanner
+    private fileScanner: FileScanner;
 
     constructor() {
         this.parser = new GeminiParser();
         this.flowchartGen = new FlowchartGenerator();
-        this.fileScanner = new FileScanner(); // Initialize
+        this.fileScanner = new FileScanner();
+        this.registerScanners();
+    }
+
+    private registerScanners(): void {
+        const registry = ScannerRegistry.getInstance();
+        if (registry.isInitialized()) return;
+        registry.register(new JsTsScanner());
+        registry.register(new PythonScanner());
+        registry.register(new ShellScanner());
+        registry.register(new MarkdownScanner());
+        registry.register(new JavaScanner());
+        registry.register(new KotlinScanner());
+        registry.register(new CppScanner());
+        registry.register(new RustScanner());
+        registry.register(new SqlScanner());
+        registry.register(new ConfigScanner());
+        registry.markInitialized();
     }
 
     /**

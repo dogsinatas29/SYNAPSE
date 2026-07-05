@@ -28,6 +28,11 @@
                 "icon": "$(graph)"
             },
             {
+                "command": "synapse.runBenchmark",
+                "title": "SYNAPSE: Run Benchmark Suite",
+                "icon": "$(dashboard)"
+            },
+            {
                 "command": "synapse.bootstrap",
                 "title": "SYNAPSE: Bootstrap from MD…"
             },
@@ -67,7 +72,7 @@
             },
             {
                 "command": "synapse.addToBlacklist",
-                "title": "SYNAPSE: Add to Blacklist",
+                "title": "SYNAPSE: Toggle Blacklist",
                 "icon": "$(circle-slash)"
             },
             {
@@ -155,6 +160,11 @@
                     "type": "boolean",
                     "default": false,
                     "description": "Automatically save prompts with a timestamp filename without asking for a title."
+                },
+                "synapse.editLogicMode": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Enable or disable logic editing mode (node insertion, string modification, etc.)"
                 }
             }
         }

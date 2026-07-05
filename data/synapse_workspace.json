@@ -1,0 +1,1453 @@
+{
+  "bookmark_state": {
+    "bookmarks": [],
+    "version": 1
+  },
+  "graphFingerprint": "",
+  "layout_state": {
+    "clusterPositions": {
+      "cluster_core": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": 758.8196851868685,
+        "y": 393.2825270078651
+      },
+      "cluster_core_benchmark": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": 1476.3765353130657,
+        "y": 100
+      },
+      "cluster_ghosts": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": -3000,
+        "y": -3000
+      },
+      "cluster_src_webview": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": -2313.767322098832,
+        "y": -3505.2076656294703
+      },
+      "folder___mocks__": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": 0,
+        "y": 0
+      },
+      "folder_analysis": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": 0,
+        "y": 0
+      },
+      "folder_bootstrap": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": 0,
+        "y": 0
+      },
+      "folder_canvas-engine": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": 0,
+        "y": 0
+      },
+      "folder_collaboration": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": 0,
+        "y": 0
+      },
+      "folder_core": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": 0,
+        "y": 0
+      },
+      "folder_demo": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": 0,
+        "y": 0
+      },
+      "folder_explorer": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": 0,
+        "y": 0
+      },
+      "folder_projection": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": 0,
+        "y": 0
+      },
+      "folder_rust_checker": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": 0,
+        "y": 0
+      },
+      "folder_scratch": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": 0,
+        "y": 0
+      },
+      "folder_scripts": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": 0,
+        "y": 0
+      },
+      "folder_server": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": 0,
+        "y": 0
+      },
+      "folder_src": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": 0,
+        "y": 0
+      },
+      "folder_src_core": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": 6087.659441164707,
+        "y": 5452.223418724284
+      },
+      "folder_src_test": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": 6217.651847114461,
+        "y": 6079.709824598664
+      },
+      "folder_test": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": 0,
+        "y": 0
+      },
+      "folder_tools": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": 0,
+        "y": 0
+      },
+      "folder_transaction": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": 0,
+        "y": 0
+      },
+      "folder_types": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": 0,
+        "y": 0
+      },
+      "folder_ui": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": 0,
+        "y": 0
+      },
+      "folder_utils": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": 0,
+        "y": 0
+      },
+      "sys_cluster_buffer": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": -400,
+        "y": 600
+      },
+      "sys_cluster_reserved": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": -2000,
+        "y": -3000
+      }
+    },
+    "layerAssignments": {},
+    "layers": [],
+    "nodePositions": {
+      "1": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": 7162.163622752823,
+        "y": -521.1342286490138
+      },
+      "2": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": 6710.602544262765,
+        "y": -401.54248146856656
+      },
+      "3": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": 6760,
+        "y": -1120
+      },
+      "4": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": 7040,
+        "y": -1560
+      },
+      ") || trimmed": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": 6920,
+        "y": -1080
+      },
+      ")) type = ": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": 6840,
+        "y": -1600
+      },
+      "/absolute/path`)를 정확히 감지해내도록 파이프라인 수정.": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": 7280,
+        "y": -120
+      },
+      "/home/dogsinatas/TypeScript_project/antigravity-extension-vis/demo/index.html": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": 7080,
+        "y": 1040
+      },
+      "/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/RawTextMiner.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": 6720,
+        "y": 0
+      },
+      "/home/dogsinatas/TypeScript_project/antigravity-extension-vis/ui/index.html": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": 7040,
+        "y": 1200
+      },
+      "RawTextMiner": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": 7020.57795365794,
+        "y": -446.6124311200074
+      },
+      "Y": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": 2711.6873049301994,
+        "y": 6476.115665154472
+      },
+      "assert": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": 7320,
+        "y": 1920
+      },
+      "assets/synapse_feature_demo.webp": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": 7680,
+        "y": -720
+      },
+      "assets/synapse_zoom_detail.webp": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": 5680,
+        "y": 520
+      },
+      "baseline_capture.ts": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": 2773.3298030488677,
+        "y": 62.70617165343378
+      },
+      "build-guard.js": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": -448.8510655495493,
+        "y": 559.3520037607776
+      },
+      "cluster_id": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": 7120,
+        "y": -880
+      },
+      "cors": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": 6573.307087290509,
+        "y": -1328.1862291656296
+      },
+      "crypto": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": 6870.299035383067,
+        "y": -391.69206402241764
+      },
+      "debug_nodes.js": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": -289.90491006999235,
+        "y": 577.685570196922
+      },
+      "demo/canvas-engine.js": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": 4040,
+        "y": 840
+      },
+      "demo/engine-core.js": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": 4200,
+        "y": 800
+      },
+      "demo/synapse-theme.js": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": 4360,
+        "y": 840
+      },
+      "demo/webgl-renderer.js": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": 4160,
+        "y": 960
+      },
+      "express": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": 6421.686661401119,
+        "y": -1273.8837172350093
+      },
+      "fix_cluster.sh": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": 486.9444336116699,
+        "y": 784.4645418655289
+      },
+      "flow2": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": 6601.576459338911,
+        "y": -1013.123194043025
+      },
+      "flowview": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": 6433.376238188586,
+        "y": -1075.2149185435107
+      },
+      "flowview2": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": 6680,
+        "y": -1760
+      },
+      "foo": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": 7160,
+        "y": 1920
+      },
+      "graph_diff_audit.ts": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": 3355.5458511510496,
+        "y": -99.0726941828889
+      },
+      "harvest": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": 6920,
+        "y": -1400
+      },
+      "http": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": 6646.622937190146,
+        "y": -859.5952980983525
+      },
+      "index": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": 7320,
+        "y": -920
+      },
+      "main": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": 6160,
+        "y": -480
+      },
+      "net": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": 7040,
+        "y": -1920
+      },
+      "network_attached_file": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": 6800,
+        "y": -920
+      },
+      "network_attached_flowview": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": 6880.73661130131,
+        "y": -1239.8172801286732
+      },
+      "node": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": 6760,
+        "y": -1440
+      },
+      "package": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": 6840,
+        "y": -1760
+      },
+      "position": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": 6563.371724017241,
+        "y": -1168.4950003625793
+      },
+      "project_state_json": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": 6559.300472270544,
+        "y": -1487.571971111647
+      },
+      "scratch/check_state.js": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": 1365.298221281347,
+        "y": 3624.105336155959
+      },
+      "scratch/debug_match.js": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": 1514.68338105084,
+        "y": 3552.0485308010457
+      },
+      "scratch/debug_scanner.js": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": 1759.7209752862586,
+        "y": 3637.3710663262414
+      },
+      "scratch/test_api_state.js": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": 1360,
+        "y": 3960
+      },
+      "scratch/test_cpp_regex.js": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": 1780.1518523992493,
+        "y": 3796.061265331706
+      },
+      "scratch/tier_b5_soak.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": 1726.521462104074,
+        "y": 3967.9544098030005
+      },
+      "scratch/tier_c1_history_size.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": 1314.701778718653,
+        "y": 3775.894663844041
+      },
+      "scratch/tier_c2_harvest_storm.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": 1604.877364973605,
+        "y": 3684.2039138323094
+      },
+      "scratch/tier_c3_animator_payload.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": 1560,
+        "y": 4000
+      },
+      "scratch/tier_c4_rollback_stress.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": 1467.0362752936542,
+        "y": 3839.694903046956
+      },
+      "scratch/tier_c5_snapshot_volume.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": 1627.008688892319,
+        "y": 3842.665910858741
+      },
+      "scripts/create-account.js": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": 2000,
+        "y": -4040
+      },
+      "src/analysis/hintEngine.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": 3720,
+        "y": 2320
+      },
+      "src/bootstrap/BootstrapEngine.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": -2760,
+        "y": -3200
+      },
+      "src/cli.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": -3680,
+        "y": 1920
+      },
+      "src/client.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": -3520,
+        "y": 1920
+      },
+      "src/core/AiOrchestrator.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": -1565.7614444531878,
+        "y": -4377.177186223018
+      },
+      "src/core/ArchitectureDSL.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": -1288.601633013639,
+        "y": -4493.305589400558
+      },
+      "src/core/BillingManager.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": -912.9695917351041,
+        "y": -4322.007828750786
+      },
+      "src/core/BlacklistOrchestrator.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": -1763.032706537402,
+        "y": -3920.7392114171143
+      },
+      "src/core/CDPManager.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": -1206.1152060110737,
+        "y": -4197.5904664438
+      },
+      "src/core/ClusterBuilder.ts": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": 740.1780862255627,
+        "y": 268.4783821341086
+      },
+      "src/core/CommandInterceptor.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": -917.2744860041198,
+        "y": -4160.830432272742
+      },
+      "src/core/CommunityDetector.ts": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": 967.4450041096565,
+        "y": 27.15898662484147
+      },
+      "src/core/ConfigScanner.ts": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": 503.33845976779816,
+        "y": 289.6629298334515
+      },
+      "src/core/ControlSystem.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": -1687.3193145017747,
+        "y": -4170.731214220862
+      },
+      "src/core/CppScanner.ts": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": 665.6670996586416,
+        "y": 110.76702497315439
+      },
+      "src/core/DataPipeline.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": -924.5909282957956,
+        "y": -3843.6908752094546
+      },
+      "src/core/DatabaseEngine.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": -1066.2190496145352,
+        "y": -4276.02300886791
+      },
+      "src/core/DebuggerSystem.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": -1405.7728491323257,
+        "y": -4379.08751793701
+      },
+      "src/core/DirectChatScraper.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": -834.3580656936683,
+        "y": -3711.5620346536334
+      },
+      "src/core/DirectoryTreeBuilder.ts": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": 1200.7222340923931,
+        "y": 369.54310046468106
+      },
+      "src/core/EdgeBuilder.ts": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": 350.59727444389745,
+        "y": 337.3867700568102
+      },
+      "src/core/EdgeCodeRefactorer.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": -1203.883394214503,
+        "y": -4357.574900111906
+      },
+      "src/core/FileScanner.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": -1593.5085282141097,
+        "y": -4041.118188733105
+      },
+      "src/core/FlowScanner.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": -1523.792141031374,
+        "y": -4222.779720018783
+      },
+      "src/core/FlowchartGenerator.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": -1070.0739631494955,
+        "y": -4113.371820998287
+      },
+      "src/core/GeminiParser.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": -1680,
+        "y": -3720
+      },
+      "src/core/GhostExpander.ts": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": 947.95456650039,
+        "y": 202.45092567845725
+      },
+      "src/core/GhostPolicy.ts": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": 1196.7290608713054,
+        "y": 209.59293770256826
+      },
+      "src/core/GraphAnalyzer.ts": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": 397.8157569966473,
+        "y": 490.2606229729176
+      },
+      "src/core/GraphModel.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": -956.7453132255275,
+        "y": -4000.4266258529838
+      },
+      "src/core/GridSystem.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": -1084.433465803005,
+        "y": -3805.5934814639154
+      },
+      "src/core/JVMAuditor.ts": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": 822.5270474845304,
+        "y": 481.9779430755178
+      },
+      "src/core/JavaScanner.ts": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": 652.0889946404626,
+        "y": 402.0460127326628
+      },
+      "src/core/JsTsScanner.ts": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": 927.379072017212,
+        "y": 361.12243864399466
+      },
+      "src/core/KotlinScanner.ts": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": 919.0077606076363,
+        "y": 629.6093478295578
+      },
+      "src/core/LayoutEngine.ts": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": 1101.5447418381239,
+        "y": 495.0971726015669
+      },
+      "src/core/LogicAnalyzer.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": -1440,
+        "y": -3920
+      },
+      "src/core/MarkdownScanner.ts": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": 553.3202014720093,
+        "y": 527.9218463785509
+      },
+      "src/core/NodeBuilder.ts": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": 759.009658447654,
+        "y": 628.83004993796
+      },
+      "src/core/PbSessionWatcher.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": -995.1924366091022,
+        "y": -3672.7927333168777
+      },
+      "src/core/PhaseManager.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": -1363.8035457105123,
+        "y": -4224.690051732776
+      },
+      "src/core/ProjectMetadata.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": -1517.796831239659,
+        "y": -3749.512982678215
+      },
+      "src/core/PromptLogger.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": -1400.821274290777,
+        "y": -3596.9964637564003
+      },
+      "src/core/PythonScanner.ts": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": 1077.2527631027547,
+        "y": 653.2423583301257
+      },
+      "src/core/ReferenceResolver.ts": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": 399.1922006881859,
+        "y": 650.2547022470083
+      },
+      "src/core/RendererCore.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": -1120.412486303031,
+        "y": -3961.4957267455616
+      },
+      "src/core/RuleEngine.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": -1438.4100887052662,
+        "y": -4080.417985958048
+      },
+      "src/core/RustScanner.ts": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": 606.967011323396,
+        "y": 678.660095647836
+      },
+      "src/core/ScannerRegistry.ts": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": 770.5715447532859,
+        "y": 788.4117618759376
+      },
+      "src/core/ShellScanner.ts": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": 930.5693560878008,
+        "y": 789.2486418942307
+      },
+      "src/core/SnapshotSystem.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": -1200,
+        "y": -3680
+      },
+      "src/core/SqlScanner.ts": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": 1245.0611796465369,
+        "y": 649.6481013637201
+      },
+      "src/core/SymbolIndex.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": -1280.2142683549837,
+        "y": -4045.940671831842
+      },
+      "src/core/SynapseIgnore.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": -1607.8527652633813,
+        "y": -3881.7624769952627
+      },
+      "src/core/VirtualDebugger.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": -1271.9996633813664,
+        "y": -3886.151685149006
+      },
+      "src/core/VscdbAdapter.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": -1357.804756271494,
+        "y": -3751.105448496086
+      },
+      "src/core/WebviewInterceptor.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": -1561.2398032397862,
+        "y": -3595.523670764056
+      },
+      "src/core/benchmark/BenchmarkGraphGenerator.ts": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": 1541.6438566428808,
+        "y": 272.1803649274685
+      },
+      "src/core/benchmark/BenchmarkHarness.ts": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": 1694.7511026908007,
+        "y": 208.91652719872485
+      },
+      "src/core/canvas-engine/CanvasEngine.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": -3927.2250403118887,
+        "y": -1957.5989148980211
+      },
+      "src/core/canvas-engine/Intent.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": -3793.358674192026,
+        "y": -2045.2333603054224
+      },
+      "src/core/canvas-engine/PhaseGate.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": -3480,
+        "y": -1920
+      },
+      "src/core/canvas-engine/RenderProtocol.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": -3880,
+        "y": -1640
+      },
+      "src/core/canvas-engine/RuleEngine.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": -3680.4013583778897,
+        "y": -1931.9167913313065
+      },
+      "src/core/canvas-engine/ScenarioRunner.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": -3520,
+        "y": -1640
+      },
+      "src/core/canvas-engine/SpatialRuleBook.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": -3921.6754945527105,
+        "y": -1797.6951859175288
+      },
+      "src/core/canvas-engine/StateManager.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": -3680,
+        "y": -1640
+      },
+      "src/core/canvas-engine/ValidationHarness.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": -3595.6239843019816,
+        "y": -1793.4359764529725
+      },
+      "src/core/canvas-engine/VisualRuleBook.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": -3761.7154482635037,
+        "y": -1794.1197710947488
+      },
+      "src/core/collaboration/AccountManager.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": -1807.2047125300737,
+        "y": 3395.206810161355
+      },
+      "src/core/collaboration/ArchitectureIndexBuilder.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": -1640,
+        "y": 3320
+      },
+      "src/core/collaboration/BoundaryGuard.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": -1193.4359764529725,
+        "y": 3484.3760156980184
+      },
+      "src/core/collaboration/CollaborationTransport.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": -1880,
+        "y": 3840
+      },
+      "src/core/collaboration/CompareEngine.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": -1519.4850602575486,
+        "y": 3437.921392297764
+      },
+      "src/core/collaboration/CompareProjection.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": -1363.3438627286719,
+        "y": 3530.3779054308875
+      },
+      "src/core/collaboration/EdgeGenerator.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": -1680.0584210343166,
+        "y": 3642.3863122834873
+      },
+      "src/core/collaboration/HarvestEngine.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": -1240,
+        "y": 3760
+      },
+      "src/core/collaboration/HarvestProjection.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": -1525.713551030946,
+        "y": 3597.9021700076987
+      },
+      "src/core/collaboration/HarvestSessionManager.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": -1840.0406166041823,
+        "y": 3639.999452286502
+      },
+      "src/core/collaboration/IdentityManager.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": -1560,
+        "y": 3960
+      },
+      "src/core/collaboration/MountManager.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": -1321.2824833463233,
+        "y": 3376.0054973896376
+      },
+      "src/core/collaboration/ReferenceVerifier.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": -1673.1390111353364,
+        "y": 3482.536001784415
+      },
+      "src/core/collaboration/RemoteLayerProjector.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": -1400,
+        "y": 3880
+      },
+      "src/core/collaboration/RestCollaborationTransport.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": -1387.8311424147835,
+        "y": 3688.492968386869
+      },
+      "src/core/collaboration/RuntimeInitializer.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": -1720,
+        "y": 3800
+      },
+      "src/core/collaboration/SessionManager.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": -1528.4651624648452,
+        "y": 3764.795474273365
+      },
+      "src/core/filterSnapshot.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": -1600,
+        "y": -3360
+      },
+      "src/core/graphBuilder.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": -1200,
+        "y": -3320
+      },
+      "src/core/projection/ProjectionLayer.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": -3880,
+        "y": -3440
+      },
+      "src/core/projection/RuleStore.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": -3720,
+        "y": -3400
+      },
+      "src/core/transaction/CommitManager.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": -2440,
+        "y": 3240
+      },
+      "src/core/transaction/ExecutionLayer.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": -2280,
+        "y": 3200
+      },
+      "src/core/transaction/VerificationLayer.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": -2120,
+        "y": 3200
+      },
+      "src/explorer/ArchitectureExplorer.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": -2200,
+        "y": 3360
+      },
+      "src/extension.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": -3360,
+        "y": 1920
+      },
+      "src/main.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": 7160,
+        "y": 1600
+      },
+      "src/rust_checker/mod.rs": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": 1304.1053361559589,
+        "y": -4194.701778718653
+      },
+      "src/rust_checker/state_checker.rs": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": 1455.8946638440411,
+        "y": -4245.298221281347
+      },
+      "src/server/register-vscode-mock.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": 3680,
+        "y": -2240
+      },
+      "src/server/server.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": 3840,
+        "y": -2240
+      },
+      "src/server/standalone.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": 4000,
+        "y": -2200
+      },
+      "src/server/vscode.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": 3800,
+        "y": -2080
+      },
+      "src/test/__mocks__/vscode.ts": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": 4000,
+        "y": -1280
+      },
+      "src/test/phase1_validation.test.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": 2480,
+        "y": -3600
+      },
+      "src/test/phase2_validation.test.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": 2640,
+        "y": -3640
+      },
+      "src/test/security_integration.test.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": 2800,
+        "y": -3560
+      },
+      "src/test/security_regression.test.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": 2600,
+        "y": -3480
+      },
+      "src/types/schema.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": -2960,
+        "y": -3000
+      },
+      "src/utils/ChatExtractor.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": 3515.6239843019816,
+        "y": 1913.4359764529725
+      },
+      "src/utils/Logger.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": 3604.3760156980184,
+        "y": 2046.5640235470275
+      },
+      "src/utils/SensitiveInfoMasker.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": 3886.5640235470273,
+        "y": 2035.6239843019816
+      },
+      "src/utils/exclusionRules.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": 3520,
+        "y": 2200
+      },
+      "src/utils/visualHints.ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": 3753.4359764529727,
+        "y": 2124.3760156980184
+      },
+      "src/webview/CanvasPanel.ts": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": -1678.4547347777307,
+        "y": -3200
+      },
+      "step4_verify.ts": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": 2967.798221467243,
+        "y": -60.04392919916112
+      },
+      "synapse_default_view": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": 6280,
+        "y": -1720
+      },
+      "synapse_explorer_menu": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": 6320,
+        "y": -960
+      },
+      "synapse_feature_demo": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": 6800,
+        "y": -1920
+      },
+      "synapse_focus_top": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": 6725.437884688236,
+        "y": -1278.3180010616352
+      },
+      "synapse_hide_lead": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": 6440,
+        "y": -1680
+      },
+      "synapse_topology_view": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": 6474.583924313397,
+        "y": -915.7943902499368
+      },
+      "synapse_traffic_heatmap": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": 7200,
+        "y": -1840
+      },
+      "synapse_zoom_detail": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": 6840,
+        "y": -760
+      },
+      "test_pipeline.js": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": 3182.651210046082,
+        "y": -104.9303078768012
+      },
+      "test_scan.js": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": 3342.6631219128426,
+        "y": 597.9852639229656
+      },
+      "test_scan.ts": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": 3514.002874495678,
+        "y": -76.90578748033198
+      },
+      "tools/compare.js": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": 3040,
+        "y": 2720
+      },
+      "tools/config-generator.js": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": 3200,
+        "y": 2720
+      },
+      "tools/log-analyzer.js": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": 3360,
+        "y": 2720
+      },
+      "ts": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": 7040,
+        "y": -1280
+      },
+      "ui/canvas-engine.js": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": -4160,
+        "y": 280
+      },
+      "ui/engine-core.js": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": -4000,
+        "y": 280
+      },
+      "ui/synapse-theme.js": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": -3840,
+        "y": 320
+      },
+      "ui/webgl-renderer.js": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": -4080,
+        "y": 440
+      },
+      "verify_architecture.ts": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": 3679.1530991603245,
+        "y": 82.21046191022975
+      },
+      "verify_bootstrap_integration.ts": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": 2623.6375826181843,
+        "y": 119.2060755695617
+      },
+      "verify_cluster_builder.ts": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": 2695.334921067514,
+        "y": 586.1597983466191
+      },
+      "verify_node_builder.ts": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": 3029.002231634104,
+        "y": 737.4235622419579
+      },
+      "verify_registry_runtime.ts": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": 3098.0897002680344,
+        "y": 41.692612894290626
+      },
+      "verify_step2c.ts": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": 3264.775707155361,
+        "y": 32.68762214567107
+      },
+      "verify_step2e.ts": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": 3745.3349092039984,
+        "y": 494.41874543291806
+      },
+      "verify_step2f.ts": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": 2883.8124729072297,
+        "y": 542.2993514108239
+      },
+      "verify_step2g4_regression.ts": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": 2929.9507273322456,
+        "y": 95.41528470500522
+      },
+      "verify_step2g5_regression.ts": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": 3481.0686995512506,
+        "y": 323.26000793056926
+      },
+      "verify_step2g_determinism.ts": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": 3195.4086695023198,
+        "y": 699.2845309668165
+      },
+      "verify_step2g_regression.ts": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": 3513.8947015066146,
+        "y": 83.09417595280267
+      },
+      "verify_step2h_regression.ts": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": 3490.7241447621086,
+        "y": 537.33929527847
+      },
+      "verify_step2i2_regression.ts": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": 2824.7844324338807,
+        "y": 691.0128021739498
+      },
+      "verify_step2i3_regression.ts": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": 3031.1157197840816,
+        "y": 219.37352082596635
+      },
+      "verify_step2i4_regression.ts": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": 3039.826590098141,
+        "y": 577.7901282005829
+      },
+      "verify_step2i5_regression.ts": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": 3194.6184112439146,
+        "y": 537.2994859930963
+      },
+      "vscode-languageserver-textdocument": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": 6556.356843943404,
+        "y": -359.0187947399945
+      },
+      "출력 가능한 ASCII": {
+        "confidence": 0.2,
+        "source": "user",
+        "x": 7200,
+        "y": -1320
+      }
+    },
+    "version": 1
+  },
+  "version": 1,
+  "workspace_state": {
+    "bookmarks": {},
+    "camera": {
+      "x": 283.4192098291346,
+      "y": 1995.3000701122796,
+      "zoom": 0.3972521445077279
+    },
+    "filters": {},
+    "version": 1,
+    "visibility": {
+      "hiddenClusters": [],
+      "visibleLayers": []
+    }
+  },
+  "_iron_guard": {
+    "version": "0.2.18.1",
+    "byte_size": 22879,
+    "encoding": "UTF-8",
+    "alignment": 8
+  }
+}

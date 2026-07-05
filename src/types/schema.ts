@@ -237,7 +237,21 @@ export interface ContributionNode {
 
 export interface ContributionEdge {
     id: string;
-    from: string; // ContributionNode.id
-    to: string;   // ContributionNode.id
+    from: string;
+    to: string;
     relation: ContributionEdgeRelation;
+}
+
+export interface CodeSummary {
+    classes: string[];
+    functions: string[];
+    references: { target: string, type: string, nodeId?: string, isApproved?: boolean, fullPath?: string }[];
+    package?: string;
+    hasAtomicSignature?: boolean;
+    hasImportSignature?: boolean;
+}
+
+export interface LanguageScanner {
+    supportsExtension(ext: string): boolean;
+    parse(content: string, summary: CodeSummary): void;
 }

@@ -73,6 +73,17 @@ export function applyLayout(input: LayoutInput): LayoutResult {
     }
 
     const activeClusterIds = new Set(clusterNodes.keys());
+    
+    // Ensure all ancestors of active clusters are also active
+    const clusterMap = new Map(clusters.map(c => [c.id, c]));
+    for (const cid of Array.from(activeClusterIds)) {
+        let curr = clusterMap.get(cid);
+        while (curr && curr.parent_id) {
+            activeClusterIds.add(curr.parent_id);
+            curr = clusterMap.get(curr.parent_id);
+        }
+    }
+
     const activeClusters = clusters.filter(c => activeClusterIds.has(c.id));
 
     // Fix: Unclustered nodes are skipped by layout because '__unclustered__' is not in clusters list

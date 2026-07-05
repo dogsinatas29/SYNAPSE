@@ -28,6 +28,18 @@
         "synapse-visual-architecture-0.1.7",
         "TEST.ts",
         "scratch",
-        "test_scan.ts"
+        "test_scan.ts",
+        "baseline_capture.ts",
+        "graph_diff_audit.ts",
+        "step4_verify.ts",
+        "verify_registry_runtime.ts",
+        "verify_bootstrap_integration.ts",
+        "verify_node_builder.ts",
+        "verify_cluster_builder.ts",
+        "verify_architecture.ts",
+        "verify_step2c.ts",
+        "verify_step2e.ts",
+        "verify_step2f.ts",
+        "verify_*.ts"
     ]
 }

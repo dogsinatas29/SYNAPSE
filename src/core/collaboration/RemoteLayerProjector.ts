@@ -110,13 +110,17 @@ export class RemoteLayerProjector {
 
             let clusterId = '';
             const dir = path.dirname(file.filePath);
+            const clientPrefix = snapshot.clientUsername ? `client_${snapshot.clientUsername}_` : '';
             if (dir && dir !== '.') {
                 const normalizedDir = dir.replace(/\\/g, '/');
-                clusterId = `folder_${normalizedDir.replace(/[^a-zA-Z0-9]/g, '_')}`;
+                clusterId = `${clientPrefix}folder_${normalizedDir.replace(/[^a-zA-Z0-9]/g, '_')}`;
+            } else if (snapshot.clientUsername) {
+                // Root level files for client
+                clusterId = `client_${snapshot.clientUsername}`;
             }
 
             if (isDoc) {
-                clusterId = 'doc_shelf';
+                clusterId = `${clientPrefix}doc_shelf`;
             }
 
             const node: ClassifiedNode = {
@@ -142,13 +146,27 @@ export class RemoteLayerProjector {
             if (clusterId) {
                 let currentPath = path.dirname(file.filePath).replace(/\\/g, '/');
                 let currentClusterId = clusterId;
+                const clientRootId = snapshot.clientUsername ? `client_${snapshot.clientUsername}` : undefined;
+                
+                // Ensure client root cluster exists
+                if (clientRootId && !classifiedClustersMap.has(clientRootId)) {
+                    classifiedClustersMap.set(clientRootId, {
+                        id: clientRootId,
+                        label: `👤 ${snapshot.clientUsername}`,
+                        layer: 'user',
+                        memberCount: 0,
+                        clientLayer: snapshot.clientId,
+                        clientUsername: snapshot.clientUsername,
+                        sessionId: snapshot.sessionId
+                    });
+                }
                 
                 while (currentPath !== '.' && currentPath.length > 0) {
                     const parentPath = path.posix.dirname(currentPath);
-                    let parentClusterId: string | undefined = undefined;
+                    let parentClusterId: string | undefined = clientRootId; // default to client root if no parent folder
                     
                     if (parentPath && parentPath !== '.') {
-                        parentClusterId = `folder_${parentPath.replace(/[^a-zA-Z0-9]/g, '_')}`;
+                        parentClusterId = `${clientPrefix}folder_${parentPath.replace(/[^a-zA-Z0-9]/g, '_')}`;
                     }
 
                     let existing = classifiedClustersMap.get(currentClusterId);
@@ -156,7 +174,7 @@ export class RemoteLayerProjector {
                         const layer = classifyClusterLayer(currentClusterId);
                         existing = {
                             id: currentClusterId,
-                            label: `📂 ${path.basename(currentPath)}`,
+                            label: `📂 [${snapshot.clientUsername}] ${path.basename(currentPath)}`,
                             layer,
                             memberCount: 0,
                             clientLayer: snapshot.clientId,
@@ -173,9 +191,9 @@ export class RemoteLayerProjector {
                         existing.memberCount++;
                     }
 
-                    if (!parentClusterId) break;
+                    if (!parentPath || parentPath === '.') break;
                     currentPath = parentPath;
-                    currentClusterId = parentClusterId;
+                    currentClusterId = parentClusterId || '';
                 }
             }
         }

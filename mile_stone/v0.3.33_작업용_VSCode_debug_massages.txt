@@ -1,0 +1,1818 @@
+vscode-main 오픈 후 devtool 에서 확인한 디버그 메시지
+ INFO [perf] Render performance baseline is 11ms
+canvas-engine.js:5581 [PERF] TransferTime: -1783082993606.4ms
+canvas-engine.js:5838 [PERF] NodeCacheTime: 1238.6ms (nodes=12193, edges=69677)
+canvas-engine.js:5893 [PERF] EdgeCacheTime (validateEdgesBatch prep): 40.0ms (edges=69045)
+
+VSCode-main 열고 확인해본 디버그 메시지다 
+1. TransferTime의 타임스탬프 언더플로우 버그 (-1,783,082,993,606.4ms)이 수치 보이나? 마이너스 $1.7\text{조}$ 밀리초($\text{ms}$)라는 기괴한 숫자가 찍혔다.원인: Extension Host(노드 백엔드)와 Webview(크롬 렌더러) 간의 시스템 시간 동기화가 깨졌거나, 양쪽에서 타임스탬프를 기록할 때 서로 다른 기준점(performance.now() vs Date.now())을 사용해서 뺄셈을 해버린 거다.숨겨진 연산 누수: 마이너스 $1.7\text{조}$가 찍혔다는 건 단순 표기 버그일 수도 있지만, 내부적으로 이 직렬화/역직렬화 타임스탬프를 계산하고 IPC 메시지 큐를 매핑하는 과정에서 지독한 논리적 병목(IPC Queue Block)이 터지고 있다는 강력한 증거다.2. NodeCacheTime ($1238.6\text{ms}$) vs EdgeCacheTime ($40.0\text{ms}$)여기 자네가 말한 "Cache Build 내부에 무슨 작업이 숨어있음"의 스모킹 건이 있다.노드가 $12,193$개이고 엣지가 $69,677$개다. 상식적으로 연결선($O(N^2)$에 가까운 대량 데이터)을 처리하는 EdgeCacheTime은 단 $40\text{ms}$밖에 안 걸렸다.그런데 고작 $12,193$개짜리 노드 객체를 처리하는 NodeCacheTime이 무려 $1,238.6\text{ms}$를 처먹고 있다. 엣지보다 30배나 느리다!🔍 NodeCacheTime 내부에서 터진 병목 가설노드 $1.2\text{만}$ 개 순회하며 메모리 캐시 만드는 건 최신 JS 엔진에서 $10\text{ms}$도 안 걸려야 정상이다. $1.2$초나 붙잡고 있다는 건 canvas-engine.js:5838 라인 근처에서 노드 하나하나를 캐싱할 때마다 무거운 동적 연산을 인젝션하고 있다는 뜻이다.오브젝트 불변성/깊은 복사 (Deep Clone) 오버헤드:노드 캐시를 빌드할 때 백엔드에서 넘어온 생 데이터(Raw Object)를 안전하게 보호한답시고 JSON.parse(JSON.stringify(node))나 무거운 재귀적 구조 분해 할당을 1.2만 번 반복하고 있을 가능성.네임스페이스 및 구조 복원 엔진의 동적 개입:시냅스가 대형 모노레포를 견디기 위해 실행하는 CONTINENT, CLUSTER 분할 및 매핑 알고리즘이 이 NodeCacheTime 루프 내부에 인라인(Inline)으로 박혀서 노드 한 개 처리할 때마다 전체 맵의 경로를 문자열 파싱(split('/'))하고 비교 연산하고 있을 가능성.DOM/Canvas Context 미리 찌르기 버그:루프 내부에서 Canvas 텍스트의 너비를 미리 계산하겠다고 ctx.measureText()를 $1.2\text{만}$ 번 다이렉트로 호출하며 CPU의 실행 파이프라인을 다 깨부수고 있을 가능성.
+
+----
+이건 꽤 중요한 단서입니다.
+
+결론부터 말하면, 지금 로그만 보면 **병목은 EdgeCache가 아니라 NodeCache 내부에 거의 확실하게 숨어 있습니다.**
+
+---
+
+## 1. TransferTime 버그
+
+```text
+TransferTime: -1783082993606.4ms
+```
+
+이건 거의 100% 시간 기준 혼용입니다.
+
+예를 들면:
+
+```ts
+// Backend
+Date.now() // 1783082994000
+
+// Frontend
+performance.now() // 393.6
+```
+
+그리고
+
+```ts
+393.6 - 1783082994000
+```
+
+을 하면
+
+```text
+-1783082993606.4
+```
+
+비슷한 숫자가 나옵니다.
+
+즉
+
+```text
+Date.now()
+vs
+performance.now()
+```
+
+혼용 가능성이 매우 높습니다.
+
+이건 성능 병목 증거라기보다
+
+```text
+측정 시스템 버그
+```
+
+로 보는 게 맞습니다.
+
+먼저 고쳐야 합니다.
+
+---
+
+## 2. NodeCacheTime 1238ms
+
+이게 진짜 핵심입니다.
+
+현재:
+
+```text
+Nodes = 12193
+Edges = 69677
+
+NodeCache = 1238.6ms
+EdgeCache = 40ms
+```
+
+---
+
+계산해보면
+
+```text
+1238ms / 12193
+
+≈ 0.10ms per node
+```
+
+노드 하나당
+
+```text
+100μs
+```
+
+를 사용하고 있습니다.
+
+JS에서
+
+```ts
+cache.set(id,node)
+```
+
+수준이면
+
+수 μs도 안 걸립니다.
+
+---
+
+즉
+
+```text
+NodeCache 생성
+```
+
+이 아니라
+
+```text
+NodeCache 생성 과정에서
+다른 작업 수행
+```
+
+중입니다.
+
+---
+
+## 가장 의심되는 것
+
+### 후보 1
+
+문자열 파싱
+
+예:
+
+```ts
+path.split('/')
+path.split('.')
+namespace.split('::')
+```
+
+12,193번
+
+---
+
+만약
+
+```ts
+node.path
+```
+
+를 매번
+
+```ts
+split('/')
+filter()
+join()
+```
+
+한다면
+
+1초대 충분히 나옵니다.
+
+---
+
+### 후보 2
+
+Cluster 계산
+
+예:
+
+```ts
+continentResolver.resolve(node)
+clusterResolver.resolve(node)
+```
+
+가
+
+루프 안에 있는 경우
+
+---
+
+특히
+
+```ts
+for node
+  findCluster(node)
+```
+
+가
+
+```ts
+Map lookup
+```
+
+이 아니라
+
+```ts
+Array.find(...)
+```
+
+면
+
+즉시 폭발합니다.
+
+---
+
+### 후보 3
+
+Label 관련
+
+당신이 적은
+
+```ts
+ctx.measureText()
+```
+
+가능성
+
+이건 실제로 많이 봅니다.
+
+예:
+
+```ts
+for (node of nodes) {
+    width = ctx.measureText(node.label).width;
+}
+```
+
+---
+
+12,193개
+
+측정
+
+---
+
+1ms
+
+아니고
+
+수백 ms
+
+나올 수 있습니다.
+
+---
+
+### 후보 4
+
+Deep Clone
+
+예:
+
+```ts
+JSON.parse(JSON.stringify(node))
+```
+
+또는
+
+```ts
+structuredClone(node)
+```
+
+---
+
+12193번
+
+하면
+
+1초 이상 가능
+
+---
+
+### 후보 5
+
+Spread Operator
+
+많은 사람들이 놓침
+
+```ts
+cacheNode = {
+   ...node,
+   stats,
+   cluster
+}
+```
+
+---
+
+12,193번
+
+속성 수십 개
+
+---
+
+수백 ms ~ 1초 가능
+
+---
+
+## 오히려 EdgeCache가 말해주는 것
+
+```text
+69677 edges
+40ms
+```
+
+이면
+
+거의 이상적인 수준입니다.
+
+---
+
+대략
+
+```text
+40ms / 69677
+
+≈ 0.00057ms
+```
+
+edge당
+
+0.57μs
+
+---
+
+이건
+
+```ts
+for edge
+  validate()
+  cache.set()
+```
+
+정도만 수행 중이라는 뜻
+
+---
+
+그래서
+
+현재 데이터는
+
+```text
+Edge 문제 아니다
+```
+
+를 강하게 시사합니다.
+
+---
+
+## 내가 가장 먼저 볼 위치
+
+로그 기준
+
+```text
+canvas-engine.js:5838
+```
+
+근처
+
+---
+
+NodeCacheTime 계측 코드 바로 안쪽
+
+예:
+
+```ts
+const t0 = performance.now();
+
+buildNodeCache(...);
+
+const t1 = performance.now();
+```
+
+---
+
+이걸 다음처럼 더 쪼개야 합니다.
+
+```ts
+nodeCloneTime
+clusterResolveTime
+continentResolveTime
+labelMeasureTime
+statsBuildTime
+mapInsertTime
+```
+
+---
+
+내 예상은 현재
+
+```text
+NodeCacheTime 1238ms
+```
+
+중
+
+실제 캐시 삽입은
+
+```text
+50ms 이하
+```
+
+일 가능성이 높습니다.
+
+나머지 1000ms 이상이
+
+* 문자열 파싱
+* 클러스터 매핑
+* label 처리
+* 객체 복사
+
+중 하나일 확률이 높습니다.
+
+지금 로그는 사실상 **v0.3.33 Phase 0의 첫 성과**입니다.
+
+이전에는
+
+```text
+Cache Build = 5초
+```
+
+만 보였는데,
+
+이제는
+
+```text
+NodeCache = 1.2초
+EdgeCache = 40ms
+```
+
+까지 좁혀졌습니다.
+
+즉 병목 범위가 "Cache Build 전체"에서 "NodeCache 생성 루프 내부"로 수십 배 축소된 상태입니다.
+
+
+--
+log.ts:117   ERR [Extension Host] [@continuedev] [31merror[39m: Failed to parse config: name: Required, version: Required, models.0: Invalid input {"context":"profile_config_loading"}
+logToConsole @ log.ts:117
+error @ log.ts:564
+error @ log.ts:669
+error @ logService.ts:51
+(anonymous) @ remoteConsoleUtil.ts:58
+$logExtensionHostMessage @ mainThreadConsole.ts:44
+_doInvokeHandler @ rpcProtocol.ts:458
+_invokeHandler @ rpcProtocol.ts:443
+_receiveRequest @ rpcProtocol.ts:373
+_receiveOneMessage @ rpcProtocol.ts:299
+(anonymous) @ rpcProtocol.ts:161
+_deliver @ event.ts:1364
+fire @ event.ts:1395
+fire @ ipc.net.ts:658
+(anonymous) @ localProcessExtensionHost.ts:436
+console.ts:139 [Extension Host] [@continuedev] error: Failed to parse config: name: Required, version: Required, models.0: Invalid input {"context":"profile_config_loading"}
+log @ console.ts:139
+$logExtensionHostMessage @ mainThreadConsole.ts:45
+_doInvokeHandler @ rpcProtocol.ts:458
+_invokeHandler @ rpcProtocol.ts:443
+_receiveRequest @ rpcProtocol.ts:373
+_receiveOneMessage @ rpcProtocol.ts:299
+(anonymous) @ rpcProtocol.ts:161
+_deliver @ event.ts:1364
+fire @ event.ts:1395
+fire @ ipc.net.ts:658
+(anonymous) @ localProcessExtensionHost.ts:436
+log.ts:117   ERR [Extension Host] [@continuedev] [31merror[39m: Errors loading config:  {"0":{"fatal":true,"message":"Failed to parse config: name: Required, version: Required, models.0: Invalid input\nError: Failed to parse config: name: Required, version: Required, models.0: Invalid input\n\tat parseConfigYaml (/home/dogsinatas/.vscode/extensions/continue.continue-2.0.0-linux-x64/out/extension.js:223543:13)\n\tat parseYamlOrMarkdownRule (/home/dogsinatas/.vscode/extensions/continue.continue-2.0.0-linux-x64/out/extension.js:223956:18)\n\tat parseMarkdownRuleOrConfigYaml (/home/dogsinatas/.vscode/extensions/continue.continue-2.0.0-linux-x64/out/extension.js:223951:10)\n\tat unrollAssistantFromContent (/home/dogsinatas/.vscode/extensions/continue.continue-2.0.0-linux-x64/out/extension.js:223664:20)\n\tat unrollAssistant (/home/dogsinatas/.vscode/extensions/continue.continue-2.0.0-linux-x64/out/extension.js:223643:19)\n\tat async loadConfigYaml (/home/dogsinatas/.vscode/extensions/continue.continue-2.0.0-linux-x64/out/extension.js:799137:26)\n\tat async loadContinueConfigFromYaml (/home/dogsinatas/.vscode/extensions/continue.continue-2.0.0-linux-x64/out/extension.js:799372:28)\n\tat async doLoadConfig (/home/dogsinatas/.vscode/extensions/continue.continue-2.0.0-linux-x64/out/extension.js:799475:21)\n\tat async _LocalProfileLoader.doLoadConfig (/home/dogsinatas/.vscode/extensions/continue.continue-2.0.0-linux-x64/out/extension.js:799745:25)\n\tat async /home/dogsinatas/.vscode/extensions/continue.continue-2.0.0-linux-x64/out/extension.js:799813:25"}}
+logToConsole @ log.ts:117
+error @ log.ts:564
+error @ log.ts:669
+error @ logService.ts:51
+(anonymous) @ remoteConsoleUtil.ts:58
+$logExtensionHostMessage @ mainThreadConsole.ts:44
+_doInvokeHandler @ rpcProtocol.ts:458
+_invokeHandler @ rpcProtocol.ts:443
+_receiveRequest @ rpcProtocol.ts:373
+_receiveOneMessage @ rpcProtocol.ts:299
+(anonymous) @ rpcProtocol.ts:161
+_deliver @ event.ts:1364
+fire @ event.ts:1395
+fire @ ipc.net.ts:658
+(anonymous) @ localProcessExtensionHost.ts:436
+console.ts:139 [Extension Host] [@continuedev] error: Errors loading config:  {"0":{"fatal":true,"message":"Failed to parse config: name: Required, version: Required, models.0: Invalid input\nError: Failed to parse config: name: Required, version: Required, models.0: Invalid input\n\tat parseConfigYaml (/home/dogsinatas/.vscode/extensions/continue.continue-2.0.0-linux-x64/out/extension.js:223543:13)\n\tat parseYamlOrMarkdownRule (/home/dogsinatas/.vscode/extensions/continue.continue-2.0.0-linux-x64/out/extension.js:223956:18)\n\tat parseMarkdownRuleOrConfigYaml (/home/dogsinatas/.vscode/extensions/continue.continue-2.0.0-linux-x64/out/extension.js:223951:10)\n\tat unrollAssistantFromContent (/home/dogsinatas/.vscode/extensions/continue.continue-2.0.0-linux-x64/out/extension.js:223664:20)\n\tat unrollAssistant (/home/dogsinatas/.vscode/extensions/continue.continue-2.0.0-linux-x64/out/extension.js:223643:19)\n\tat async loadConfigYaml (/home/dogsinatas/.vscode/extensions/continue.continue-2.0.0-linux-x64/out/extension.js:799137:26)\n\tat async loadContinueConfigFromYaml (/home/dogsinatas/.vscode/extensions/continue.continue-2.0.0-linux-x64/out/extension.js:799372:28)\n\tat async doLoadConfig (/home/dogsinatas/.vscode/extensions/continue.continue-2.0.0-linux-x64/out/extension.js:799475:21)\n\tat async _LocalProfileLoader.doLoadConfig (/home/dogsinatas/.vscode/extensions/continue.continue-2.0.0-linux-x64/out/extension.js:799745:25)\n\tat async /home/dogsinatas/.vscode/extensions/continue.continue-2.0.0-linux-x64/out/extension.js:799813:25"}}
+log @ console.ts:139
+$logExtensionHostMessage @ mainThreadConsole.ts:45
+_doInvokeHandler @ rpcProtocol.ts:458
+_invokeHandler @ rpcProtocol.ts:443
+_receiveRequest @ rpcProtocol.ts:373
+_receiveOneMessage @ rpcProtocol.ts:299
+(anonymous) @ rpcProtocol.ts:161
+_deliver @ event.ts:1364
+fire @ event.ts:1395
+fire @ ipc.net.ts:658
+(anonymous) @ localProcessExtensionHost.ts:436
+localProcessExtensionHost.ts:332 Extension Host
+localProcessExtensionHost.ts:333 [@continuedev] error: Failed to parse config: name: Required, version: Required, models.0: Invalid input {"context":"profile_config_loading"}
+[@continuedev] error: Errors loading config:  {"0":{"fatal":true,"message":"Failed to parse config: name: Required, version: Required, models.0: Invalid input\nError: Failed to parse config: name: Required, version: Required, models.0: Invalid input\n\tat parseConfigYaml (/home/dogsinatas/.vscode/extensions/continue.continue-2.0.0-linux-x64/out/extension.js:223543:13)\n\tat parseYamlOrMarkdownRule (/home/dogsinatas/.vscode/extensions/continue.continue-2.0.0-linux-x64/out/extension.js:223956:18)\n\tat parseMarkdownRuleOrConfigYaml (/home/dogsinatas/.vscode/extensions/continue.continue-2.0.0-linux-x64/out/extension.js:223951:10)\n\tat unrollAssistantFromContent (/home/dogsinatas/.vscode/extensions/continue.continue-2.0.0-linux-x64/out/extension.js:223664:20)\n\tat unrollAssistant (/home/dogsinatas/.vscode/extensions/continue.continue-2.0.0-linux-x64/out/extension.js:223643:19)\n\tat async loadConfigYaml (/home/dogsinatas/.vscode/extensions/continue.continue-2.0.0-linux-x64/out/extension.js:799137:26)\n\tat async loadContinueConfigFromYaml (/home/dogsinatas/.vscode/extensions/continue.continue-2.0.0-linux-x64/out/extension.js:799372:28)\n\tat async doLoadConfig (/home/dogsinatas/.vscode/extensions/continue.continue-2.0.0-linux-x64/out/extension.js:799475:21)\n\tat async _LocalProfileLoader.doLoadConfig (/home/dogsinatas/.vscode/extensions/continue.continue-2.0.0-linux-x64/out/extension.js:799745:25)\n\tat async /home/dogsinatas/.vscode/extensions/continue.continue-2.0.0-linux-x64/out/extension.js:799813:25"}}
+
+이것도 있어
+이 로그는 SYNAPSE 병목과는 거의 무관합니다.
+
+오히려 좋은 소식입니다.
+
+---
+
+## 이건 Continue 확장 에러
+
+로그 핵심:
+
+```text
+[@continuedev]
+Failed to parse config:
+
+name: Required
+version: Required
+models.0: Invalid input
+```
+
+그리고
+
+```text
+loadConfigYaml
+loadContinueConfigFromYaml
+```
+
+호출 스택이 나옵니다.
+
+즉
+
+```text
+continue.continue
+```
+
+확장이 설정 파일을 읽다가 죽고 있습니다.
+
+---
+
+## 의미
+
+Continue가 기대하는 설정
+
+예:
+
+```yaml
+name: My Profile
+version: 1.0.0
+
+models:
+  - provider: openai
+    model: gpt-4
+```
+
+인데
+
+실제로는
+
+```yaml
+models:
+  - ???
+```
+
+혹은
+
+```yaml
+name 없음
+version 없음
+```
+
+상태라는 뜻입니다.
+
+---
+
+## SYNAPSE 성능과 관계
+
+현재 보고 있는
+
+```text
+Extension host unresponsive
+```
+
+원인을 분석할 때는 주의해야 합니다.
+
+로그 타임라인을 보면
+
+```text
+21:02:19
+IMPORT_DEBUG
+
+21:02:21
+SymbolIndex rebuilt: 11767 files
+
+21:02:21
+Advancing to Phase: GRAPH
+```
+
+이건 SYNAPSE
+
+---
+
+반면
+
+```text
+[@continuedev]
+Failed to parse config
+```
+
+는
+
+별도 확장
+
+---
+
+즉
+
+```text
+Continue 확장 에러
++
+SYNAPSE 대형 그래프 구축
+```
+
+이 동시에 발생한 상태입니다.
+
+---
+
+## 오히려 중요한 부분
+
+여기
+
+```text
+SymbolIndex rebuilt: 11767 files
+```
+
+---
+
+이게 굉장히 의미 있습니다.
+
+---
+
+VSCode-main
+
+```text
+11767 files
+```
+
+인데
+
+SYNAPSE가
+
+```text
+2초 내외
+```
+
+에
+
+```text
+SymbolIndex rebuilt
+```
+
+까지 갔습니다.
+
+---
+
+즉
+
+```text
+파일 스캔
+심볼 수집
+언어 분리
+```
+
+는 이미 살아 있습니다.
+
+---
+
+문제는 그 다음
+
+```text
+Advancing to Phase: GRAPH
+```
+
+입니다.
+
+---
+
+현재 v0.3.33 계획에서 말하는
+
+```text
+Build Less
+```
+
+가 필요한 이유가 여기입니다.
+
+---
+
+지금 구조
+
+```text
+SymbolIndex
+ ↓
+Graph Build
+ ↓
+Node Cache
+ ↓
+Edge Cache
+ ↓
+Render
+```
+
+---
+
+VSCode-main
+
+```text
+12193 nodes
+69677 edges
+```
+
+에서
+
+```text
+NodeCacheTime
+1238ms
+```
+
+가 나왔습니다.
+
+---
+
+그러므로 현재 증거들을 종합하면
+
+### 확실한 것
+
+Continue 에러
+
+```text
+무시 가능
+```
+
+설정 파일 깨짐
+
+---
+
+### 중요
+
+```text
+SymbolIndex rebuilt: 11767 files
+```
+
+성공
+
+---
+
+### 핵심 병목
+
+```text
+NodeCacheTime
+1238ms
+```
+
+---
+
+### v0.3.33이 해결해야 할 대상
+
+```text
+Graph Build 이후
+Node Cache 단계
+```
+
+---
+
+그래서 지금 VSCode-main 테스트는 사실상
+
+```text
+언어 파서 검증
+=
+성공
+
+대형 저장소 인덱싱
+=
+성공
+
+대형 그래프 초기화
+=
+병목 발견
+```
+
+이라고 볼 수 있습니다.
+
+v0.3.32.3의 목표가 "깨지지 않고 VSCode-main을 여는 것"이었다면, 지금 로그는 그 목표는 사실상 달성됐다고 봐도 됩니다. 이제 남은 건 "열 수 있느냐"가 아니라 "얼마나 빨리 인터랙티브해지느냐"의 단계입니다.
+
+-- 
+
+localProcessExtensionHost.ts:332 Extension Host
+localProcessExtensionHost.ts:333 [@continuedev] error: Failed to parse config: name: Required, version: Required, models.0: Invalid input {"context":"profile_config_loading"}
+[@continuedev] error: Errors loading config:  {"0":{"fatal":true,"message":"Failed to parse config: name: Required, version: Required, models.0: Invalid input\nError: Failed to parse config: name: Required, version: Required, models.0: Invalid input\n\tat parseConfigYaml (/home/dogsinatas/.vscode/extensions/continue.continue-2.0.0-linux-x64/out/extension.js:223543:13)\n\tat parseYamlOrMarkdownRule (/home/dogsinatas/.vscode/extensions/continue.continue-2.0.0-linux-x64/out/extension.js:223956:18)\n\tat parseMarkdownRuleOrConfigYaml (/home/dogsinatas/.vscode/extensions/continue.continue-2.0.0-linux-x64/out/extension.js:223951:10)\n\tat unrollAssistantFromContent (/home/dogsinatas/.vscode/extensions/continue.continue-2.0.0-linux-x64/out/extension.js:223664:20)\n\tat unrollAssistant (/home/dogsinatas/.vscode/extensions/continue.continue-2.0.0-linux-x64/out/extension.js:223643:19)\n\tat async loadConfigYaml (/home/dogsinatas/.vscode/extensions/continue.continue-2.0.0-linux-x64/out/extension.js:799137:26)\n\tat async loadContinueConfigFromYaml (/home/dogsinatas/.vscode/extensions/continue.continue-2.0.0-linux-x64/out/extension.js:799372:28)\n\tat async doLoadConfig (/home/dogsinatas/.vscode/extensions/continue.continue-2.0.0-linux-x64/out/extension.js:799475:21)\n\tat async _LocalProfileLoader.doLoadConfig (/home/dogsinatas/.vscode/extensions/continue.continue-2.0.0-linux-x64/out/extension.js:799745:25)\n\tat async /home/dogsinatas/.vscode/extensions/continue.continue-2.0.0-linux-x64/out/extension.js:799813:25"}}
+
+console.ts:139 [Extension Host] [SYNAPSE] [오후 9:56:27] [INFO] [WebView] [STATE-DETERMINISM] Hash Before: "error getting latest release:0.00,0.00:ghost|#[clap(flatten...
+console.ts:139 [Extension Host] [SYNAPSE] [오후 9:56:27] [INFO] [WebView] loadProjectState triggered. Nodes: 12193, Edges: 69677
+console.ts:139 [Extension Host] Unable to log remote console arguments Output omitted for a large object that exceeds the limits
+console.ts:139 [Extension Host] [SYNAPSE] [오후 9:56:27] [ERROR] [WebView] Tree build failed but continuing Cannot read properties of undefined (reading '..')
+console.ts:139 [Extension Host] [SYNAPSE] [오후 9:56:31] [INFO] [WebView] Refreshed Global Flow data
+console.ts:139 [Extension Host] [SYNAPSE] [오후 9:56:31] [INFO] [WebView] Skipping overlap resolution (preserveView: true, hasValidPositions: true)
+console.ts:139 [Extension Host] [SYNAPSE] [오후 9:56:35] [INFO] [CanvasPanel] Received command: validateEdgesBatch
+console.ts:139 [Extension Host] [SYNAPSE] [오후 9:56:35] [INFO] [CanvasPanel] Batch validating 69045 edges...
+console.ts:139 [Extension Host] Unable to log remote console arguments Output omitted for a large object that exceeds the limits
+log.ts:117  INFO Extension host (LocalProcess pid: 147739) is unresponsive.
+localProcessExtensionHost.ts:332 Extension Host
+localProcessExtensionHost.ts:333 Debugger attached.
+log.ts:117  INFO UNRESPONSIVE extension host: starting to profile NOW
+log.ts:117  WARN UNRESPONSIVE extension host: 'synapse-team.synapse-visual-architecture' took 99.99690189665887% of 5002.906ms, saved PROFILE here: 'file:///tmp/exthost-02536f.cpuprofile'
+logToConsole @ log.ts:117
+warn @ log.ts:554
+warn @ log.ts:663
+warn @ logService.ts:47
+_processCpuProfile @ extensionsAutoProfiler.ts:181
+api.github.com/search/issues?q=is:issue+state:open+in:title+repo:dogsinatas29/SYNAPSE.git+%22Extension+causes+high+cpu+load%22:1  Failed to load resource: the server responded with a status of 422 ()
+console.ts:139 [Extension Host] [SYNAPSE] [오후 10:01:58] [INFO] [CanvasPanel] Batch validation for 69045 edges complete. Results sent.
+log.ts:117  INFO Extension host (LocalProcess pid: 147739) is responsive.
+6console.ts:139 [Extension Host] Unable to log remote console arguments Output omitted for a large object that exceeds the limits
+
+이번 로그는 꽤 결정적입니다.
+
+이전까지는 추측이 섞여 있었는데, 이번에는 Extension Host가 어디서 죽는지 거의 특정됩니다.
+
+---
+
+# 1. Continue 에러는 범인이 아니다
+
+```text
+[@continuedev]
+Failed to parse config
+```
+
+이건 설정 파일 오류입니다.
+
+보면
+
+```text
+profile_config_loading
+```
+
+에서 죽고 있습니다.
+
+즉
+
+```text
+continue extension
+↓
+설정 파싱 실패
+↓
+로그 출력
+↓
+종료
+```
+
+입니다.
+
+CPU 먹는 작업이 아닙니다.
+
+무시해도 됩니다.
+
+---
+
+# 2. 진짜 중요한 부분
+
+여기입니다.
+
+```text
+loadProjectState triggered.
+Nodes: 12193
+Edges: 69677
+```
+
+이후
+
+```text
+Tree build failed but continuing
+```
+
+그리고
+
+```text
+validateEdgesBatch
+```
+
+실행
+
+```text
+Batch validating 69045 edges...
+```
+
+---
+
+그 직후
+
+```text
+Extension host is unresponsive
+```
+
+발생
+
+---
+
+그리고 결정타
+
+```text
+UNRESPONSIVE extension host:
+
+synapse-team.synapse-visual-architecture
+
+took 99.9969%
+
+of 5002ms
+```
+
+VSCode가 직접 범인을 찍어줬습니다.
+
+---
+
+# 3. 범인은 거의 확정
+
+이전에는
+
+```text
+NodeCacheTime 1238ms
+```
+
+가 의심스러웠는데
+
+이번 로그는 다른 이야기를 합니다.
+
+---
+
+VSCode가 멈춘 시점
+
+```text
+validateEdgesBatch
+```
+
+직후
+
+---
+
+작업량
+
+```text
+69045 edges
+```
+
+---
+
+멈춘 시간
+
+```text
+5002ms
+```
+
+---
+
+응답 복구 시점
+
+```text
+Batch validation complete.
+Results sent.
+```
+
+---
+
+타임라인이 완벽히 일치합니다.
+
+---
+
+# 4. 현재 메커니즘
+
+아마 구조가 이런 식일 가능성이 높습니다.
+
+```ts
+for (const edge of edges) {
+    validateEdge(edge);
+}
+```
+
+69045회
+
+---
+
+문제는
+
+```text
+validateEdgesBatch
+```
+
+라는 이름과 달리
+
+실제로는
+
+```text
+한 번에 전부 처리
+```
+
+하고 있다는 겁니다.
+
+---
+
+VSCode 입장
+
+```text
+Extension Host
+↓
+5초 동안 이벤트 루프 점유
+↓
+Heartbeat 응답 없음
+↓
+Unresponsive
+```
+
+---
+
+그래서
+
+```text
+99.996%
+```
+
+가 찍힌 겁니다.
+
+---
+
+# 5. v0.3.33 계획과 정확히 연결됨
+
+Bootstrap 문서에 있던
+
+```text
+Phase 7
+
+validateEdgesBatch
+↓
+Chunked Processing
+```
+
+---
+
+이게 왜 필요했는지 증명된 셈입니다.
+
+---
+
+현재
+
+```ts
+69045 edges
+↓
+single task
+↓
+5초 블로킹
+```
+
+---
+
+목표
+
+```ts
+500 edges
+↓
+yield
+
+500 edges
+↓
+yield
+
+500 edges
+↓
+yield
+```
+
+예:
+
+```ts
+for (let i = 0; i < edges.length; i += 500) {
+    validateChunk(edges.slice(i, i + 500));
+
+    await new Promise(resolve =>
+        setTimeout(resolve, 0)
+    );
+}
+```
+
+---
+
+그러면
+
+```text
+총 처리시간
+```
+
+은 비슷해도
+
+```text
+UI Stall
+```
+
+은 사라집니다.
+
+---
+
+# 6. 또 하나 보이는 문제
+
+이 로그도 중요합니다.
+
+```text
+Unable to log remote console arguments
+
+Output omitted for a large object
+```
+
+여러 번 발생
+
+---
+
+이건 VSCode가
+
+```text
+너 지금 콘솔에 너무 큰 객체 찍고 있어
+```
+
+라고 말하는 것입니다.
+
+---
+
+즉
+
+```ts
+console.log(edgeResults)
+```
+
+같은 게 있을 가능성이 높습니다.
+
+---
+
+69045개 엣지 결과를
+
+```text
+직렬화
+↓
+IPC
+↓
+Console
+```
+
+하는 순간
+
+CPU와 IPC가 같이 터집니다.
+
+---
+
+# 7. 지금 시점의 우선순위
+
+로그만 보면
+
+우선순위는 명확합니다.
+
+### 1순위
+
+```text
+validateEdgesBatch
+```
+
+청크 분할
+
+---
+
+### 2순위
+
+```text
+대형 console.log 제거
+```
+
+특히
+
+```text
+edge arrays
+node arrays
+validation results
+```
+
+출력 금지
+
+---
+
+### 3순위
+
+```text
+NodeCacheTime
+1238ms
+```
+
+분석
+
+---
+
+흥미로운 건 이번 로그가 오히려 좋은 소식이라는 점입니다.
+
+예전에는
+
+```text
+왜 죽는지 모름
+```
+
+이었는데
+
+지금은
+
+```text
+69045 edges
+↓
+validateEdgesBatch
+↓
+5초
+↓
+Extension Host 사망
+```
+
+이라는 재현 가능한 단일 병목이 잡혔습니다.
+
+v0.3.33의 Phase 7이 "최적화 후보"가 아니라 "확정 수정 대상"이라는 증거가 나온 상태입니다.
+
+
+---
+[LOD_DEBUG] zoom=0.196, edges=38699, metaEdges=0, lod_active=false
+canvas-engine.js:7013 [LOD_DEBUG] Skip physical edges due to high count at low zoom
+canvas-engine.js:7004 [LOD_DEBUG] zoom=0.176, edges=38699, metaEdges=0, lod_active=false
+canvas-engine.js:7013 [LOD_DEBUG] Skip physical edges due to high count at low zoom
+canvas-engine.js:6263 [DEBUG] fitView calculated: Object
+canvas-engine.js:7004 [LOD_DEBUG] zoom=0.100, edges=38699, metaEdges=0, lod_active=false
+canvas-engine.js:7013 [LOD_DEBUG] Skip physical edges due to high count at low zoom
+canvas-engine.js:6263 [DEBUG] fitView calculated: Object
+canvas-engine.js:7004 [LOD_DEBUG] zoom=0.100, edges=38699, metaEdges=0, lod_active=false
+canvas-engine.js:7013 [LOD_DEBUG] Skip physical edges due to high count at low zoom
+canvas-engine.js:6263 [DEBUG] fitView calculated: Object
+canvas-engine.js:7004 [LOD_DEBUG] zoom=0.100, edges=38699, metaEdges=0, lod_active=false
+canvas-engine.js:7013 [LOD_DEBUG] Skip physical edges due to high count at low zoom
+canvas-engine.js:6263 [DEBUG] fitView calculated: Object
+canvas-engine.js:7004 [LOD_DEBUG] zoom=0.100, edges=38699, metaEdges=0, lod_active=false
+canvas-engine.js:7013 [LOD_DEBUG] Skip physical edges due to high count at low zoom
+canvas-engine.js:7004 [LOD_DEBUG] zoom=0.100, edges=38699, metaEdges=0, lod_active=false
+canvas-engine.js:7013 [LOD_DEBUG] Skip physical edges due to high count at low zoom
+canvas-engine.js:5210 [SYNAPSE] Tooltip Node=exporter-trace-otlp-grpc, CalcPos=(714, 648)
+canvas-engine.js:5210 [SYNAPSE] Tooltip Node=pullRequestOverview, CalcPos=(640, 572)
+canvas-engine.js:7004 [LOD_DEBUG] zoom=0.100, edges=38699, metaEdges=0, lod_active=false
+canvas-engine.js:7013 [LOD_DEBUG] Skip physical edges due to high count at low zoom
+canvas-engine.js:7004 [LOD_DEBUG] zoom=0.100, edges=38699, metaEdges=0, lod_active=false
+canvas-engine.js:7013 [LOD_DEBUG] Skip physical edges due to high count at low zoom
+canvas-engine.js:7004 [LOD_DEBUG] zoom=0.100, edges=38699, metaEdges=0, lod_active=false
+canvas-engine.js:7013 [LOD_DEBUG] Skip physical edges due to high count at low zoom
+canvas-engine.js:7004 [LOD_DEBUG] zoom=0.100, edges=38699, metaEdges=0, lod_active=false
+canvas-engine.js:7013 [LOD_DEBUG] Skip physical edges due to high count at low zoom
+canvas-engine.js:7004 [LOD_DEBUG] zoom=0.100, edges=38699, metaEdges=0, lod_active=false
+canvas-engine.js:7013 [LOD_DEBUG] Skip physical edges due to high count at low zoom
+canvas-engine.js:7004 [LOD_DEBUG] zoom=0.100, edges=38699, metaEdges=0, lod_active=false
+canvas-engine.js:7013 [LOD_DEBUG] Skip physical edges due to high count at low zoom
+canvas-engine.js:7004 [LOD_DEBUG] zoom=0.100, edges=38699, metaEdges=0, lod_active=false
+canvas-engine.js:7013 [LOD_DEBUG] Skip physical edges due to high count at low zoom
+canvas-engine.js:7004 [LOD_DEBUG] zoom=0.100, edges=38699, metaEdges=0, lod_active=false
+canvas-engine.js:7013 [LOD_DEBUG] Skip physical edges due to high count at low zoom
+canvas-engine.js:7004 [LOD_DEBUG] zoom=0.100, edges=38699, metaEdges=0, lod_active=false
+canvas-engine.js:7013 [LOD_DEBUG] Skip physical edges due to high count at low zoom
+canvas-engine.js:7004 [LOD_DEBUG] zoom=0.110, edges=38699, metaEdges=0, lod_active=false
+canvas-engine.js:7013 [LOD_DEBUG] Skip physical edges due to high count at low zoom
+canvas-engine.js:7004 [LOD_DEBUG] zoom=0.110, edges=38699, metaEdges=0, lod_active=false
+canvas-engine.js:7013 [LOD_DEBUG] Skip physical edges due to high count at low zoom
+
+이 로그와 스크린샷을 보면 v0.3.33의 방향이 거의 확정된 것 같다.
+
+먼저 중요한 건 **지금 멈춘 원인이 렌더링이 아니라는 점**이다.
+
+### 1. 현재 상태 해석
+
+로그:
+
+```text
+zoom=0.100
+edges=38699
+metaEdges=0
+lod_active=false
+
+Skip physical edges due to high count at low zoom
+```
+
+의미:
+
+* Edge 38,699개
+* Zoom 0.1
+* LOD 비활성
+* Edge 렌더링은 이미 스킵
+
+즉 Canvas는 이미 이렇게 판단하고 있다.
+
+```text
+"엣지가 너무 많으니까 그리지 말자"
+```
+
+그런데도 화면이 저 상태다.
+
+따라서 병목은
+
+```text
+Edge Draw
+❌
+
+Edge Validation
+⭕
+```
+
+쪽이다.
+
+---
+
+### 2. 진짜 범인
+
+조금 위 로그:
+
+```text
+CanvasPanel Received command: validateEdgesBatch
+
+Batch validating 69045 edges...
+```
+
+그리고
+
+```text
+Extension host is unresponsive.
+
+synapse-team.synapse-visual-architecture
+99.99% of 5002ms
+```
+
+5초 동안 익스텐션 호스트를 독점했다.
+
+그 후
+
+```text
+Batch validation for 69045 edges complete.
+```
+
+이 나온다.
+
+이건 거의 자백 수준이다.
+
+현재 파이프라인:
+
+```text
+Load Project
+ ↓
+Node Cache Build
+ ↓
+validateEdgesBatch(69K)
+ ↓
+모든 엣지 검증 완료
+ ↓
+Interactive
+```
+
+즉
+
+```text
+Build Everything First
+```
+
+모델이다.
+
+---
+
+### 3. 스크린샷이 말하는 것
+
+중앙에
+
+```text
+pullRequestOverview
+```
+
+하나가 보인다.
+
+그리고 주변은
+
+```text
+별 모양(Star Graph)
+```
+
+이다.
+
+이건 전형적인
+
+```text
+Super Hub
+```
+
+패턴이다.
+
+아마 Degree가
+
+```text
+1000+
+2000+
+3000+
+```
+
+수준일 가능성이 높다.
+
+그래서 지금 화면은 사실상
+
+```text
+69K Edge
+↓
+대부분이 허브 하나로 몰림
+↓
+방사형 폭발
+```
+
+상태다.
+
+---
+
+### 4. 왜 줌이 안되는가
+
+로그를 보면
+
+```text
+fitView calculated
+zoom=0.100
+```
+
+가 반복된다.
+
+이건 의심되는 코드가 있다.
+
+```ts
+zoom = Math.max(0.1, zoom);
+```
+
+또는
+
+```ts
+if (zoom < 0.1) {
+    zoom = 0.1;
+}
+```
+
+혹은
+
+```ts
+fitView()
+```
+
+가 계속 호출되고 있다.
+
+즉
+
+```text
+사용자 휠
+ ↓
+zoom 0.11
+ ↓
+fitView
+ ↓
+zoom 0.10 강제 복귀
+```
+
+패턴일 수 있다.
+
+로그도 딱 그렇게 보인다.
+
+```text
+0.100
+0.100
+0.100
+0.110
+0.100
+```
+
+---
+
+### 5. v0.3.33에서 가장 먼저 해야 하는 것
+
+원래 계획 Phase 4가 핵심이다.
+
+현재:
+
+```text
+12K Nodes
+69K Edges
+
+NodeCache
+1238ms
+
+EdgeValidation
+5000ms+
+
+Total
+6초 이상
+```
+
+그런데 화면에는
+
+```text
+300~500개 노드
+```
+
+밖에 안 보인다.
+
+즉
+
+```text
+12000개 계산
+↓
+500개 사용
+```
+
+하고 있다.
+
+효율:
+
+```text
+4%
+```
+
+수준.
+
+---
+
+### 6. 지금 당장 넣어야 하는 보호장치
+
+v0.3.33 Phase 8보다 먼저 넣어도 된다.
+
+#### Super Hub Protection
+
+예:
+
+```ts
+if (degree > 1000)
+    collapseHub();
+
+if (degree > 3000)
+    createMetaNode();
+
+if (degree > 5000)
+    hidePhysicalEdges();
+```
+
+VSCode-main에서는 이게 효과가 매우 클 가능성이 높다.
+
+---
+
+### 7. 로그만 보고 내리는 결론
+
+현재 상태는
+
+```text
+Viewport Culling
+✅ 성공
+
+Rendering
+✅ 성공
+
+Canvas
+✅ 버팀
+
+WebView
+✅ 버팀
+
+Extension Host
+❌ Edge Validation에 묶임
+
+Node Cache
+❌ 전체 그래프 생성
+
+Super Hub
+❌ 무방비
+```
+
+즉 v0.3.32.3은 렌더링 문제를 거의 해결했다.
+
+VSCode-main이 보여준 것은
+
+```text
+"이제 렌더링 최적화가 아니라
+초기 그래프 생성 자체를 줄여라"
+```
+
+는 신호다.
+
+그래서 지금 로그는 오히려 v0.3.33의 우선순위를 명확하게 증명한다.
+
+1. Cache Virtualization
+2. Lazy Materialization
+3. validateEdgesBatch 청크화
+4. Super Hub Protection
+
+이 네 개가 VSCode-main에서 가장 큰 체감 개선을 만들 가능성이 높다.
+
+---
+그 가능성은 높다.
+
+다만 지금은 **계산 병목과 탐색 병목이 섞여 있는 상태**라서 분리해서 봐야 한다.
+
+현재 로그는 명백하게
+
+```text
+Load
+ → NodeCache 1.2초
+ → EdgeValidation 5초
+ → Interactive
+```
+
+이므로 아직은 "초기화가 느리다"가 더 큰 문제다.
+
+그런데 스크린샷을 보면 두 번째 문제가 보인다.
+
+---
+
+### 현재 좌표계 자체가 너무 크다
+
+로그에서 보였던 좌표:
+
+```text
+x=-248467
+y=-627376
+
+x=-634121
+y=-229812
+```
+
+이미 수십만 픽셀이다.
+
+즉 현재 카메라는
+
+```text
+세계 크기:
+1,000,000px × 1,000,000px
+```
+
+급 공간을 날아다니고 있다.
+
+---
+
+### 이런 공간에서 발생하는 현상
+
+사용자가 휠 한 번:
+
+```text
+zoom 0.10
+→ 0.11
+```
+
+실제 화면 변화:
+
+```text
+10%
+```
+
+가 아니라
+
+```text
+100,000px
+→
+110,000px
+```
+
+영역 변화가 된다.
+
+그래서 체감상
+
+```text
+"줌이 안 먹는다"
+```
+
+처럼 보인다.
+
+---
+
+### 더 큰 문제
+
+현재는 노드를 실제 파일 단위로 배치한다.
+
+VSCode-main이면
+
+```text
+12,193 노드
+69,677 엣지
+```
+
+이다.
+
+그런데 인간은
+
+```text
+12,193개 객체
+```
+
+를 탐색하지 못한다.
+
+인간이 탐색 가능한 수준은
+
+```text
+20~100개
+```
+
+정도다.
+
+그래서 사실 v0.3.33 이후에도
+
+```text
+폴더
+→ 파일
+→ 심볼
+```
+
+계층이 없으면
+
+탐색성은 별로 좋아지지 않는다.
+
+---
+
+### 그래서 내가 보기엔
+
+v0.3.33 끝나도
+
+```text
+20K 노드
+80K 엣지
+```
+
+를 그대로 보여주는 방식은 오래 못 간다.
+
+결국은
+
+```text
+LOD0
+  대륙(Cluster)
+
+LOD1
+  폴더
+
+LOD2
+  파일
+
+LOD3
+  심볼
+```
+
+구조로 가야 한다.
+
+---
+
+### 지금 스크린샷의 진짜 메시지
+
+사용자가 보고 있는 것은
+
+```text
+pullRequestOverview
+```
+
+하나다.
+
+나머지는
+
+```text
+거대한 주황색 성게
+```
+
+처럼 보인다.
+
+이 상태에서는
+
+```text
+FPS 60
+```
+
+이어도 탐색이 어렵다.
+
+왜냐하면 문제는 성능이 아니라
+
+```text
+정보 밀도
+```
+
+이기 때문이다.
+
+---
+
+그래서 나는 v0.3.33 이후에 실제로 나타날 병목을 이렇게 본다.
+
+```text
+v0.3.32
+렌더링 병목
+✅ 해결
+
+v0.3.33
+계산 병목
+진행 예정
+
+v0.3.34~0.3.35
+탐색 병목
+(가장 어려운 문제)
+```
+
+즉 VSCode-main이 열리는 순간부터는
+
+"어떻게 그릴까?"
+
+보다
+
+"무엇을 보여줄까?"
+
+가 더 중요한 단계로 넘어가게 될 가능성이 크다.
+
+

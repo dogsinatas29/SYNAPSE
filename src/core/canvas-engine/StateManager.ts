@@ -564,12 +564,19 @@ export class StateManager {
 
     const finalClusters = Array.from(clusterMap.values()).filter(c => {
         // [v0.3.21.2] SSoT Preservation: System clusters (buffer, reserved, ghosts, doc_shelf)
-        // must ALWAYS be preserved to prevent flickering and bundling NaN errors,
-        // even if they are currently empty.
         if (c.id.startsWith('sys_') || c.id === 'cluster_ghosts' || c.id === 'doc_shelf') {
             return true;
         }
-        return true; // We also preserve folders for now to avoid layout jumps
+        
+        // Prune empty folder clusters
+        const hasNodes = Object.values(finalNodes).some(n => n.cluster_id === c.id || (n.data && n.data.cluster_id === c.id));
+        if (hasNodes) return true;
+        
+        // Check if it's a parent of any other kept cluster
+        const isParent = Array.from(clusterMap.values()).some(otherC => otherC.parent_id === c.id);
+        if (isParent) return true;
+        
+        return false; // Remove empty clusters to prevent ghost UI boxes
     });
 
     return { nodes: finalNodes, edges: finalEdges, clusters: finalClusters, deletedNodeIds: Array.from(this.deletedNodeIds), deletedPaths: Array.from(this.deletedPaths), userCount, aiCount, externalCount };

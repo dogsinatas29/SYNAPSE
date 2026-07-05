@@ -1,0 +1,1314 @@
+
+=== BRANCH COMPRESSION ===
+(moved to NodeBuilder)
+
+=== CLUSTER SUMMARY ===
+doc_shelf                 nodes=445
+cluster_ghost_command:synapse nodes=400
+cluster_core              nodes=55
+cluster_ghosts            nodes=19
+cluster_core_collaboration nodes=17
+cluster_scratch           nodes=11
+cluster_core_canvas_engine nodes=10
+cluster_ghost_assets/v0   nodes=6
+cluster_utils             nodes=5
+cluster_ghost_            nodes=5
+cluster_demo              nodes=4
+cluster_server            nodes=4
+cluster_ui                nodes=4
+cluster_core_transaction  nodes=3
+cluster_tools             nodes=3
+cluster_ghost_/home/dogsinatas/TypeScript_project/antigravity-extension-vis/synapse-visual-architecture-v0 nodes=3
+cluster_core_benchmark    nodes=2
+cluster_core_projection   nodes=2
+cluster_rust_checker      nodes=2
+cluster_ghost_synapse-visual-architecture-v0 nodes=2
+cluster_scripts           nodes=1
+cluster_analysis          nodes=1
+cluster_bootstrap         nodes=1
+cluster_explorer          nodes=1
+cluster___mocks__         nodes=1
+cluster_types             nodes=1
+cluster_webview           nodes=1
+cluster_ghost_assets/1    nodes=1
+cluster_ghost_assets/2    nodes=1
+cluster_ghost_assets/3    nodes=1
+cluster_ghost_assets/4    nodes=1
+cluster_ghost_assets/synapse_feature_demo nodes=1
+cluster_ghost_assets/synapse_zoom_detail nodes=1
+cluster_ghost_assets/network/flowview nodes=1
+cluster_ghost_assets/network/flow2 nodes=1
+cluster_ghost_assets/network/network_attached_flowview nodes=1
+cluster_ghost_assets/cluster_visibility nodes=1
+cluster_ghost_assets/cluster_fold nodes=1
+cluster_ghost_assets/network/network_attached_file nodes=1
+cluster_ghost_assets/network/harvest nodes=1
+cluster_ghost_/home/dogsinatas/TypeScript_project/antigravity-extension-vis/ui/index nodes=1
+cluster_ghost_package     nodes=1
+cluster_ghost_src/main    nodes=1
+cluster_ghost_/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/RawTextMiner nodes=1
+cluster_ghost_/home/dogsinatas/TypeScript_project/antigravity-extension-vis/package nodes=1
+cluster_ghost_/home/dogsinatas/TypeScript_project/antigravity-extension-vis/demo/index nodes=1
+cluster_ghost_network_remote nodes=1
+sys_cluster_reserved      nodes=0
+TOTAL_CLUSTERS=48
+
+=== EDGE SUMMARY ===
+Internal Edges: 514
+External/Ghost Edges: 535
+
+======================================================
+[PIPELINE] Nodes=1063 Edges=1049
+[FILTER] package_removed=0 exact_removed=9
+======================================================
+=== EDGE BREAKDOWN ===
+  - INCLUDE: 1039
+  - CALL: 5
+  - REFERENCE: 1
+  - DB_QUERY: 4
+======================================================
+
+=== CLUSTER SIZE DISTRIBUTION ===
+1 node   : 27 clusters
+2-5 nodes: 12 clusters
+6-10     : 2 clusters
+11-20    : 3 clusters
+20+      : 3 clusters
+======================================================
+
+=== TOP HUB FILES ===
+rank=1
+id=LOGIC_REPORT.md
+cluster=doc_shelf
+role=none
+external=false
+degree=390 (in=0, out=390)
+
+rank=2
+id=src/core/GraphModel.ts
+cluster=cluster_core
+role=none
+external=false
+degree=39 (in=36, out=3)
+
+rank=3
+id=src/types/schema.ts
+cluster=cluster_types
+role=none
+external=false
+degree=35 (in=35, out=0)
+
+rank=4
+id=src/bootstrap/BootstrapEngine.ts
+cluster=cluster_bootstrap
+role=none
+external=false
+degree=33 (in=9, out=24)
+
+rank=5
+id=README.md
+cluster=doc_shelf
+role=none
+external=false
+degree=30 (in=8, out=22)
+
+rank=6
+id=README.ko.md
+cluster=doc_shelf
+role=none
+external=false
+degree=29 (in=7, out=22)
+
+rank=7
+id=src/utils/Logger.ts
+cluster=cluster_utils
+role=none
+external=false
+degree=28 (in=28, out=0)
+
+rank=8
+id=src/webview/CanvasPanel.ts
+cluster=cluster_webview
+role=none
+external=false
+degree=27 (in=5, out=22)
+
+rank=9
+id=src/extension.ts
+cluster=
+role=none
+external=false
+degree=25 (in=4, out=21)
+
+rank=10
+id=src/core/DataPipeline.ts
+cluster=cluster_core
+role=none
+external=false
+degree=24 (in=2, out=22)
+
+rank=11
+id=src/core/FileScanner.ts
+cluster=cluster_core
+role=none
+external=false
+degree=21 (in=16, out=5)
+
+rank=12
+id=src/server/standalone.ts
+cluster=cluster_server
+role=none
+external=false
+degree=21 (in=0, out=21)
+
+rank=13
+id=src/core/ProjectMetadata.ts
+cluster=cluster_core
+role=none
+external=false
+degree=16 (in=14, out=2)
+
+rank=14
+id=crypto
+cluster=cluster_ghosts
+role=none
+external=true
+degree=16 (in=16, out=0)
+
+rank=15
+id=architecture.md
+cluster=doc_shelf
+role=none
+external=false
+degree=15 (in=10, out=5)
+
+rank=16
+id=src/core/RuleEngine.ts
+cluster=cluster_core
+role=none
+external=false
+degree=15 (in=15, out=0)
+
+rank=17
+id=src/core/benchmark/BenchmarkHarness.ts
+cluster=cluster_core_benchmark
+role=none
+external=false
+degree=12 (in=1, out=11)
+
+rank=18
+id=step4_verify.ts
+cluster=
+role=none
+external=false
+degree=12 (in=0, out=12)
+
+rank=19
+id=src/core/SymbolIndex.ts
+cluster=cluster_core
+role=none
+external=false
+degree=11 (in=9, out=2)
+
+rank=20
+id=src/core/GeminiParser.ts
+cluster=cluster_core
+role=none
+external=false
+degree=10 (in=7, out=3)
+
+========================
+
+=== CLUSTER DISTRIBUTION ===
+doc_shelf
+  nodes: 445
+  internal_edges: 122
+  external_edges: 527
+
+cluster_core
+  nodes: 55
+  internal_edges: 60
+  external_edges: 227
+
+cluster_core_collaboration
+  nodes: 17
+  internal_edges: 14
+  external_edges: 54
+
+cluster_scratch
+  nodes: 11
+  internal_edges: 0
+  external_edges: 1
+
+cluster_core_canvas_engine
+  nodes: 10
+  internal_edges: 11
+  external_edges: 19
+
+cluster_utils
+  nodes: 5
+  internal_edges: 0
+  external_edges: 35
+
+cluster_demo
+  nodes: 4
+  internal_edges: 0
+  external_edges: 8
+
+cluster_server
+  nodes: 4
+  internal_edges: 0
+  external_edges: 25
+
+cluster_ui
+  nodes: 4
+  internal_edges: 0
+  external_edges: 0
+
+cluster_core_transaction
+  nodes: 3
+  internal_edges: 2
+  external_edges: 6
+
+cluster_tools
+  nodes: 3
+  internal_edges: 0
+  external_edges: 0
+
+cluster_core_benchmark
+  nodes: 2
+  internal_edges: 1
+  external_edges: 13
+
+cluster_core_projection
+  nodes: 2
+  internal_edges: 1
+  external_edges: 3
+
+cluster_rust_checker
+  nodes: 2
+  internal_edges: 1
+  external_edges: 2
+
+cluster_scripts
+  nodes: 1
+  internal_edges: 0
+  external_edges: 0
+
+=== HUB RANKING ===
+doc_shelf
+  traffic: 649
+  degree: 527
+  nodes: 445
+
+cluster_core
+  traffic: 287
+  degree: 227
+  nodes: 55
+
+cluster_core_collaboration
+  traffic: 68
+  degree: 54
+  nodes: 17
+
+cluster_types
+  traffic: 35
+  degree: 35
+  nodes: 1
+
+cluster_utils
+  traffic: 35
+  degree: 35
+  nodes: 5
+
+cluster_bootstrap
+  traffic: 33
+  degree: 33
+  nodes: 1
+
+cluster_core_canvas_engine
+  traffic: 30
+  degree: 19
+  nodes: 10
+
+cluster_webview
+  traffic: 27
+  degree: 27
+  nodes: 1
+
+cluster_server
+  traffic: 25
+  degree: 25
+  nodes: 4
+
+cluster_core_benchmark
+  traffic: 14
+  degree: 13
+  nodes: 2
+
+cluster_demo
+  traffic: 8
+  degree: 8
+  nodes: 4
+
+cluster_core_transaction
+  traffic: 8
+  degree: 6
+  nodes: 3
+
+cluster_core_projection
+  traffic: 4
+  degree: 3
+  nodes: 2
+
+cluster_rust_checker
+  traffic: 3
+  degree: 2
+  nodes: 2
+
+cluster_scratch
+  traffic: 1
+  degree: 1
+  nodes: 11
+
+=== CLUSTER MATRIX ===
+                    doc_shelf  cluster_c  cluster_c  cluster_t  cluster_u  cluster_b  cluster_c  cluster_w  cluster_s  cluster_c 
+doc_shelf           -         20        0         0         0         3         0         2         0         0         
+cluster_core        20        -         8         22        15        21        11        15        7         10        
+cluster_core_collaboration 0         8         -         9         12        0         0         0         12        0         
+cluster_types       0         22        9         -         0         1         0         1         0         0         
+cluster_utils       0         15        12        0         -         2         1         1         1         0         
+cluster_bootstrap   3         21        0         1         2         -         0         1         0         0         
+cluster_core_canvas_engine 0         11        0         0         1         0         -         2         0         0         
+cluster_webview     2         15        0         1         1         1         2         -         0         1         
+cluster_server      0         7         12        0         1         0         0         0         -         0         
+cluster_core_benchmark 0         10        0         0         0         0         0         1         0         -         
+
+=== CLUSTER EDGE LIST ===
+cluster_core         ──(80)── unknown
+cluster_core         ──(22)── cluster_types
+cluster_bootstrap    ──(21)── cluster_core
+cluster_core         ──(20)── doc_shelf
+cluster_core         ──(15)── cluster_utils
+cluster_core         ──(15)── cluster_webview
+cluster_core_collaboration ──(12)── cluster_utils
+cluster_core_collaboration ──(12)── cluster_server
+cluster_core         ──(11)── cluster_core_canvas_engine
+cluster_core         ──(10)── cluster_core_benchmark
+cluster_core_collaboration ──(9)── cluster_types
+cluster_demo         ──(8)── doc_shelf
+doc_shelf            ──(8)── unknown
+cluster_core         ──(8)── cluster_core_collaboration
+cluster_core         ──(7)── cluster_server
+cluster_core_collaboration ──(6)── unknown
+cluster_bootstrap    ──(5)── unknown
+cluster_core         ──(4)── cluster_core_transaction
+cluster_bootstrap    ──(3)── doc_shelf
+cluster_utils        ──(3)── unknown
+cluster_webview      ──(3)── unknown
+cluster_webview      ──(2)── doc_shelf
+cluster_bootstrap    ──(2)── cluster_utils
+cluster_core_canvas_engine ──(2)── cluster_core_transaction
+cluster_core         ──(2)── cluster_core_projection
+cluster_core_canvas_engine ──(2)── cluster_webview
+cluster_types        ──(2)── unknown
+cluster_bootstrap    ──(1)── cluster_types
+cluster_core_benchmark ──(1)── cluster_webview
+cluster_core_canvas_engine ──(1)── cluster_core_projection
+
+=== GHOST IMPACT MATRIX ===
+cluster_ghost_command:synapse -> doc_shelf                           = 410
+cluster_ghosts            -> unknown                             = 16
+cluster_ghost_assets/v0   -> doc_shelf                           = 12
+cluster_ghosts            -> cluster_core                        = 12
+cluster_ghosts            -> doc_shelf                           = 10
+cluster_ghost_            -> doc_shelf                           = 10
+cluster_ghosts            -> cluster_core_collaboration          = 7
+cluster_ghosts            -> cluster_server                      = 5
+cluster_ghost_/home/dogsinatas/TypeScript_project/antigravity-extension-vis/synapse-visual-architecture-v0 -> doc_shelf                           = 4
+cluster_ghost_/home/dogsinatas/TypeScript_project/antigravity-extension-vis/ui/index -> doc_shelf                           = 3
+cluster_ghost_assets/1    -> doc_shelf                           = 2
+cluster_ghost_assets/2    -> doc_shelf                           = 2
+cluster_ghost_assets/3    -> doc_shelf                           = 2
+cluster_ghost_assets/4    -> doc_shelf                           = 2
+cluster_ghost_assets/synapse_feature_demo -> doc_shelf                           = 2
+cluster_ghost_assets/synapse_zoom_detail -> doc_shelf                           = 2
+cluster_ghost_assets/network/flowview -> doc_shelf                           = 2
+cluster_ghost_assets/network/flow2 -> doc_shelf                           = 2
+cluster_ghost_assets/network/network_attached_flowview -> doc_shelf                           = 2
+cluster_ghost_assets/cluster_visibility -> doc_shelf                           = 2
+
+=== GHOST TRAFFIC ===
+ghost_nodes=455
+ghost_edges=530
+ghost_ratio=50.5%
+
+=== INTERNAL CONTINENTS ===
+doc             nodes=445 clusters=1
+core            nodes=89 clusters=6
+root            nodes=34 clusters=0
+scratch         nodes=11 clusters=1
+utils           nodes=5 clusters=1
+demo            nodes=4 clusters=1
+server          nodes=4 clusters=1
+ui              nodes=4 clusters=1
+tools           nodes=3 clusters=1
+rust_checker    nodes=2 clusters=1
+scripts         nodes=1 clusters=1
+analysis        nodes=1 clusters=1
+bootstrap       nodes=1 clusters=1
+explorer        nodes=1 clusters=1
+__mocks__       nodes=1 clusters=1
+types           nodes=1 clusters=1
+webview         nodes=1 clusters=1
+
+=== EXTERNAL CONTINENTS ===
+command:synapse nodes=400 clusters=1
+cluster_ghosts  nodes=19 clusters=1
+assets/v0       nodes=6 clusters=1
+unknown         nodes=5 clusters=1
+/home/dogsinatas/TypeScript_project/antigravity-extension-vis/synapse-visual-architecture-v0 nodes=3 clusters=1
+synapse-visual-architecture-v0 nodes=2 clusters=1
+assets/1        nodes=1 clusters=1
+assets/2        nodes=1 clusters=1
+assets/3        nodes=1 clusters=1
+assets/4        nodes=1 clusters=1
+assets/synapse_feature_demo nodes=1 clusters=1
+assets/synapse_zoom_detail nodes=1 clusters=1
+assets/network/flowview nodes=1 clusters=1
+assets/network/flow2 nodes=1 clusters=1
+assets/network/network_attached_flowview nodes=1 clusters=1
+assets/cluster_visibility nodes=1 clusters=1
+assets/cluster_fold nodes=1 clusters=1
+assets/network/network_attached_file nodes=1 clusters=1
+assets/network/harvest nodes=1 clusters=1
+/home/dogsinatas/TypeScript_project/antigravity-extension-vis/ui/index nodes=1 clusters=1
+package         nodes=1 clusters=1
+src/main        nodes=1 clusters=1
+/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/RawTextMiner nodes=1 clusters=1
+/home/dogsinatas/TypeScript_project/antigravity-extension-vis/package nodes=1 clusters=1
+/home/dogsinatas/TypeScript_project/antigravity-extension-vis/demo/index nodes=1 clusters=1
+network_remote  nodes=1 clusters=1
+
+=== TOP CONTINENT PAIRS ===
+command:synapse <-> doc        410
+core <-> root                  88
+core <-> types                 31
+core <-> utils                 28
+bootstrap <-> core             21
+cluster_ghosts <-> core        21
+core <-> doc                   20
+core <-> server                19
+core <-> webview               18
+cluster_ghosts <-> root        16
+assets/v0 <-> doc              12
+cluster_ghosts <-> doc         10
+doc <-> unknown                10
+demo <-> doc                   8
+doc <-> root                   8
+
+=== CONTINENT MATRIX ===
+            doc        core       root       scratch    utils      demo       server     ui        
+doc         -         20        8         0         0         8         0         0         
+core        20        -         88        0         28        0         19        0         
+root        8         88        -         0         3         0         0         0         
+scratch     0         0         0         -         0         0         0         0         
+utils       0         28        3         0         -         0         1         0         
+demo        8         0         0         0         0         -         0         0         
+server      0         19        0         0         1         0         -         0         
+ui          0         0         0         0         0         0         0         -         
+
+=== CONTINENT GRAPH (Top 20 Edges) ===
+command:synapse ──(410)── doc
+core ──(88)── root
+core ──(31)── types
+core ──(28)── utils
+bootstrap ──(21)── core
+cluster_ghosts ──(21)── core
+core ──(20)── doc
+core ──(19)── server
+core ──(18)── webview
+cluster_ghosts ──(16)── root
+assets/v0 ──(12)── doc
+cluster_ghosts ──(10)── doc
+doc ──(10)── unknown
+demo ──(8)── doc
+doc ──(8)── root
+bootstrap ──(5)── root
+cluster_ghosts ──(5)── server
+/home/dogsinatas/TypeScript_project/antigravity-extension-vis/synapse-visual-architecture-v0 ──(4)── doc
+bootstrap ──(3)── doc
+/home/dogsinatas/TypeScript_project/antigravity-extension-vis/ui/index ──(3)── doc
+
+=== CONTINENT LAYOUT ===
+core
+  clusters: 6
+  nodes: 89
+  weight: 249.7
+  bbox: 2720x2272
+  center: (1360, 1136)
+
+root
+  clusters: 1
+  nodes: 34
+  weight: 98.8
+  bbox: 1630x1450
+  center: (3535, 725)
+
+utils
+  clusters: 1
+  nodes: 5
+  weight: 26.0
+  bbox: 1390x1250
+  center: (5045, 625)
+
+types
+  clusters: 1
+  nodes: 1
+  weight: 24.8
+  bbox: 1270x1200
+  center: (6375, 600)
+
+bootstrap
+  clusters: 1
+  nodes: 1
+  weight: 23.4
+  bbox: 1330x1200
+  center: (7675, 600)
+
+webview
+  clusters: 1
+  nodes: 1
+  weight: 19.2
+  bbox: 1300x1200
+  center: (8990, 600)
+
+server
+  clusters: 1
+  nodes: 4
+  weight: 18.7
+  bbox: 1310x1250
+  center: (10295, 625)
+
+unknown
+  clusters: 27
+  nodes: 5
+  weight: 8.5
+  bbox: 7516x9390
+  center: (3758, 6967)
+
+demo
+  clusters: 1
+  nodes: 4
+  weight: 6.8
+  bbox: 1310x1250
+  center: (8171, 2897)
+
+scratch
+  clusters: 1
+  nodes: 11
+  weight: 4.0
+  bbox: 1470x1300
+  center: (9561, 2922)
+
+rust_checker
+  clusters: 1
+  nodes: 2
+  weight: 2.4
+  bbox: 1375x1200
+  center: (10984, 2872)
+
+ui
+  clusters: 1
+  nodes: 4
+  weight: 1.2
+  bbox: 1310x1250
+  center: (655, 12287)
+
+explorer
+  clusters: 1
+  nodes: 1
+  weight: 1.0
+  bbox: 1315x1200
+  center: (1968, 12262)
+
+tools
+  clusters: 1
+  nodes: 3
+  weight: 0.9
+  bbox: 1310x1250
+  center: (3280, 12287)
+
+scripts
+  clusters: 1
+  nodes: 1
+  weight: 0.3
+  bbox: 1300x1200
+  center: (4585, 12262)
+
+analysis
+  clusters: 1
+  nodes: 1
+  weight: 0.3
+  bbox: 1315x1200
+  center: (5893, 12262)
+
+__mocks__
+  clusters: 1
+  nodes: 1
+  weight: 0.3
+  bbox: 1330x1200
+  center: (7215, 12262)
+
+
+=== CONTINENT DISTANCE ===
+types <-> bootstrap = 1300
+webview <-> server = 1305
+tools <-> scripts = 1305
+scripts <-> analysis = 1308
+ui <-> explorer = 1313
+explorer <-> tools = 1313
+bootstrap <-> webview = 1315
+analysis <-> __mocks__ = 1323
+utils <-> types = 1330
+demo <-> scratch = 1390
+scratch <-> rust_checker = 1423
+root <-> utils = 1513
+core <-> root = 2213
+bootstrap <-> demo = 2350
+server <-> rust_checker = 2351
+webview <-> scratch = 2392
+server <-> scratch = 2412
+webview <-> demo = 2439
+tools <-> analysis = 2613
+types <-> webview = 2615
+
+=== CLUSTER CENTROIDS ===
+cluster_core
+bbox_center=(696, 440)
+node_center=(691, 437)
+node_count=55
+
+__unclustered__
+bbox_center=(3035, 225)
+node_center=(3025, 218)
+node_count=34
+
+cluster_core_collaboration
+bbox_center=(1445, 719)
+node_center=(1430, 706)
+node_count=17
+
+cluster_scratch
+bbox_center=(9061, 2422)
+node_center=(9050, 2418)
+node_count=11
+
+cluster_core_canvas_engine
+bbox_center=(235, 790)
+node_center=(219, 780)
+node_count=10
+
+cluster_utils
+bbox_center=(4545, 125)
+node_center=(4529, 120)
+node_count=5
+
+cluster_demo
+bbox_center=(7671, 2397)
+node_center=(7671, 2397)
+node_count=4
+
+cluster_server
+bbox_center=(9795, 125)
+node_center=(9795, 125)
+node_count=4
+
+cluster_ui
+bbox_center=(155, 11787)
+node_center=(155, 11787)
+node_count=4
+
+cluster_core_transaction
+bbox_center=(893, 977)
+node_center=(879, 968)
+node_count=3
+
+cluster_tools
+bbox_center=(2780, 11787)
+node_center=(2767, 11779)
+node_count=3
+
+cluster_core_benchmark
+bbox_center=(1397, 100)
+node_center=(1397, 100)
+node_count=2
+
+cluster_core_projection
+bbox_center=(553, 1172)
+node_center=(553, 1172)
+node_count=2
+
+cluster_rust_checker
+bbox_center=(10484, 2372)
+node_center=(10484, 2372)
+node_count=2
+
+cluster_scripts
+bbox_center=(4085, 11762)
+node_center=(4085, 11762)
+node_count=1
+
+=== [DIAGNOSTIC] CLUSTER BOUNDS ===
+
+=== [CLUSTER] ===
+id=cluster_core
+nodes=55
+estimated_w=790
+estimated_h=500
+actual_w=760
+actual_h=500
+center=(696,440)
+density=0.000145
+[OVERLAP] cluster_core ↔ cluster_core_canvas_engine area=6965
+
+=== [CLUSTER] ===
+id=cluster_core_benchmark
+nodes=2
+estimated_w=330
+estimated_h=200
+actual_w=280
+actual_h=200
+center=(1397,100)
+density=0.000036
+
+=== [CLUSTER] ===
+id=cluster_core_canvas_engine
+nodes=10
+estimated_w=470
+estimated_h=300
+actual_w=440
+actual_h=300
+center=(235,790)
+density=0.000076
+
+=== [CLUSTER] ===
+id=cluster_core_collaboration
+nodes=17
+estimated_w=550
+estimated_h=350
+actual_w=520
+actual_h=350
+center=(1445,719)
+density=0.000093
+
+=== [CLUSTER] ===
+id=cluster_core_projection
+nodes=2
+estimated_w=345
+estimated_h=200
+actual_w=280
+actual_h=200
+center=(553,1172)
+density=0.000036
+
+=== [CLUSTER] ===
+id=cluster_core_transaction
+nodes=3
+estimated_w=360
+estimated_h=250
+actual_w=280
+actual_h=250
+center=(893,977)
+density=0.000043
+
+=== [CLUSTER] ===
+id=__unclustered__
+nodes=34
+estimated_w=630
+estimated_h=450
+actual_w=600
+actual_h=450
+center=(3035,225)
+density=0.000126
+
+=== [CLUSTER] ===
+id=cluster_utils
+nodes=5
+estimated_w=390
+estimated_h=250
+actual_w=360
+actual_h=250
+center=(4545,125)
+density=0.000056
+
+=== [CLUSTER] ===
+id=cluster_types
+nodes=1
+estimated_w=270
+estimated_h=200
+actual_w=200
+actual_h=200
+center=(5875,100)
+density=0.000025
+
+=== [CLUSTER] ===
+id=cluster_bootstrap
+nodes=1
+estimated_w=330
+estimated_h=200
+actual_w=200
+actual_h=200
+center=(7175,100)
+density=0.000025
+
+=== [CLUSTER] ===
+id=cluster_webview
+nodes=1
+estimated_w=300
+estimated_h=200
+actual_w=200
+actual_h=200
+center=(8490,100)
+density=0.000025
+
+=== [CLUSTER] ===
+id=cluster_server
+nodes=4
+estimated_w=310
+estimated_h=250
+actual_w=280
+actual_h=250
+center=(9795,125)
+density=0.000057
+
+=== [CLUSTER] ===
+id=doc_shelf
+nodes=445
+estimated_w=1910
+estimated_h=1200
+actual_w=1880
+actual_h=1200
+center=(1723,2872)
+density=0.000197
+
+=== [CLUSTER] ===
+id=cluster_ghost_command:synapse
+nodes=400
+estimated_w=1750
+estimated_h=1150
+actual_w=1720
+actual_h=1150
+center=(4514,2858)
+density=0.000202
+
+=== [CLUSTER] ===
+id=cluster_ghost_/home/dogsinatas/TypeScript_project/antigravity-extension-vis/synapse-visual-architecture-v0
+nodes=3
+estimated_w=1740
+estimated_h=250
+actual_w=280
+actual_h=250
+center=(2331,4725)
+density=0.000043
+
+=== [CLUSTER] ===
+id=cluster_ghost_/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/RawTextMiner
+nodes=1
+estimated_w=1605
+estimated_h=200
+actual_w=200
+actual_h=200
+center=(4959,4623)
+density=0.000025
+
+=== [CLUSTER] ===
+id=cluster_ghost_/home/dogsinatas/TypeScript_project/antigravity-extension-vis/demo/index
+nodes=1
+estimated_w=1440
+estimated_h=200
+actual_w=200
+actual_h=200
+center=(720,5487)
+density=0.000025
+
+=== [CLUSTER] ===
+id=cluster_ghost_/home/dogsinatas/TypeScript_project/antigravity-extension-vis/ui/index
+nodes=1
+estimated_w=1410
+estimated_h=200
+actual_w=200
+actual_h=200
+center=(3766,5781)
+density=0.000025
+
+=== [CLUSTER] ===
+id=cluster_ghost_/home/dogsinatas/TypeScript_project/antigravity-extension-vis/package
+nodes=1
+estimated_w=1395
+estimated_h=200
+actual_w=200
+actual_h=200
+center=(1709,6676)
+density=0.000025
+
+=== [CLUSTER] ===
+id=cluster_ghosts
+nodes=19
+estimated_w=550
+estimated_h=350
+actual_w=520
+actual_h=350
+center=(2775,6398)
+density=0.000104
+
+=== [CLUSTER] ===
+id=cluster_ghost_assets/network/network_attached_flowview
+nodes=1
+estimated_w=960
+estimated_h=200
+actual_w=200
+actual_h=200
+center=(4929,6404)
+density=0.000025
+
+=== [CLUSTER] ===
+id=cluster_ghost_assets/network/network_attached_file
+nodes=1
+estimated_w=900
+estimated_h=200
+actual_w=200
+actual_h=200
+center=(529,7332)
+density=0.000025
+
+=== [CLUSTER] ===
+id=cluster_ghost_synapse-visual-architecture-v0
+nodes=2
+estimated_w=810
+estimated_h=200
+actual_w=280
+actual_h=200
+center=(3088,7165)
+density=0.000036
+
+=== [CLUSTER] ===
+id=cluster_ghost_assets/synapse_feature_demo
+nodes=1
+estimated_w=765
+estimated_h=200
+actual_w=200
+actual_h=200
+center=(4043,7023)
+density=0.000025
+
+=== [CLUSTER] ===
+id=cluster_ghost_assets/synapse_zoom_detail
+nodes=1
+estimated_w=750
+estimated_h=200
+actual_w=200
+actual_h=200
+center=(1406,7874)
+density=0.000025
+
+=== [CLUSTER] ===
+id=cluster_ghost_assets/cluster_visibility
+nodes=1
+estimated_w=735
+estimated_h=200
+actual_w=200
+actual_h=200
+center=(2411,7757)
+density=0.000025
+
+=== [CLUSTER] ===
+id=cluster_ghost_assets/network/flowview
+nodes=1
+estimated_w=705
+estimated_h=200
+actual_w=200
+actual_h=200
+center=(3704,7833)
+density=0.000025
+
+=== [CLUSTER] ===
+id=cluster_ghost_assets/network/harvest
+nodes=1
+estimated_w=690
+estimated_h=200
+actual_w=200
+actual_h=200
+center=(4841,7596)
+density=0.000025
+
+=== [CLUSTER] ===
+id=cluster_ghost_network_remote
+nodes=1
+estimated_w=675
+estimated_h=200
+actual_w=200
+actual_h=200
+center=(1231,8711)
+density=0.000025
+
+=== [CLUSTER] ===
+id=cluster_ghost_assets/network/flow2
+nodes=1
+estimated_w=660
+estimated_h=200
+actual_w=200
+actual_h=200
+center=(2362,8598)
+density=0.000025
+
+=== [CLUSTER] ===
+id=cluster_ghost_assets/cluster_fold
+nodes=1
+estimated_w=645
+estimated_h=200
+actual_w=200
+actual_h=200
+center=(3377,8559)
+density=0.000025
+
+=== [CLUSTER] ===
+id=cluster_ghost_assets/v0
+nodes=6
+estimated_w=495
+estimated_h=250
+actual_w=360
+actual_h=250
+center=(4512,8288)
+density=0.000067
+
+=== [CLUSTER] ===
+id=cluster_ghost_
+nodes=5
+estimated_w=390
+estimated_h=250
+actual_w=360
+actual_h=250
+center=(821,9267)
+density=0.000056
+
+=== [CLUSTER] ===
+id=cluster_ghost_assets/1
+nodes=1
+estimated_w=480
+estimated_h=200
+actual_w=200
+actual_h=200
+center=(1864,9112)
+density=0.000025
+
+=== [CLUSTER] ===
+id=cluster_ghost_assets/2
+nodes=1
+estimated_w=480
+estimated_h=200
+actual_w=200
+actual_h=200
+center=(2904,9154)
+density=0.000025
+
+=== [CLUSTER] ===
+id=cluster_ghost_assets/3
+nodes=1
+estimated_w=480
+estimated_h=200
+actual_w=200
+actual_h=200
+center=(3918,9058)
+density=0.000025
+
+=== [CLUSTER] ===
+id=cluster_ghost_assets/4
+nodes=1
+estimated_w=480
+estimated_h=200
+actual_w=200
+actual_h=200
+center=(4811,8993)
+density=0.000025
+
+=== [CLUSTER] ===
+id=cluster_ghost_src/main
+nodes=1
+estimated_w=480
+estimated_h=200
+actual_w=200
+actual_h=200
+center=(1156,9807)
+density=0.000025
+
+=== [CLUSTER] ===
+id=cluster_ghost_package
+nodes=1
+estimated_w=465
+estimated_h=200
+actual_w=200
+actual_h=200
+center=(2100,9754)
+density=0.000025
+
+=== [CLUSTER] ===
+id=cluster_demo
+nodes=4
+estimated_w=310
+estimated_h=250
+actual_w=280
+actual_h=250
+center=(7671,2397)
+density=0.000057
+
+=== [CLUSTER] ===
+id=cluster_scratch
+nodes=11
+estimated_w=470
+estimated_h=300
+actual_w=440
+actual_h=300
+center=(9061,2422)
+density=0.000083
+
+=== [CLUSTER] ===
+id=cluster_rust_checker
+nodes=2
+estimated_w=375
+estimated_h=200
+actual_w=280
+actual_h=200
+center=(10484,2372)
+density=0.000036
+
+=== [CLUSTER] ===
+id=cluster_ui
+nodes=4
+estimated_w=310
+estimated_h=250
+actual_w=280
+actual_h=250
+center=(155,11787)
+density=0.000057
+
+=== [CLUSTER] ===
+id=cluster_explorer
+nodes=1
+estimated_w=315
+estimated_h=200
+actual_w=200
+actual_h=200
+center=(1468,11762)
+density=0.000025
+
+=== [CLUSTER] ===
+id=cluster_tools
+nodes=3
+estimated_w=310
+estimated_h=250
+actual_w=280
+actual_h=250
+center=(2780,11787)
+density=0.000043
+
+=== [CLUSTER] ===
+id=cluster_scripts
+nodes=1
+estimated_w=300
+estimated_h=200
+actual_w=200
+actual_h=200
+center=(4085,11762)
+density=0.000025
+
+=== [CLUSTER] ===
+id=cluster_analysis
+nodes=1
+estimated_w=315
+estimated_h=200
+actual_w=200
+actual_h=200
+center=(5393,11762)
+density=0.000025
+
+=== [CLUSTER] ===
+id=cluster___mocks__
+nodes=1
+estimated_w=330
+estimated_h=200
+actual_w=200
+actual_h=200
+center=(6715,11762)
+density=0.000025
+
+=== [LAYOUT] ===
+[LAYOUT] cluster_count=48
+[LAYOUT] overlap_pairs=0.5
+[LAYOUT] world_bounds=min(115, 100) max(10524, 11812)
+[LAYOUT] world_width=10409
+[LAYOUT] world_height=11712
+================
+
+=== [RENDER DIAGNOSTIC] NODE DUMP ===
+NODE .backup/mile_stone/v0.2.18.md | cluster=doc_shelf | comm=none | role=none
+NODE .backup/mile_stone/v0.2.19.md | cluster=doc_shelf | comm=none | role=none
+NODE .backup/mile_stone/v0.2.20.md | cluster=doc_shelf | comm=none | role=none
+NODE .backup/mile_stone/v0.2.21.md | cluster=doc_shelf | comm=none | role=none
+NODE .backup/release_note/v0.2.18_release_notes.md | cluster=doc_shelf | comm=none | role=none
+NODE .backup/release_note/v0.2.21_release_notes.md | cluster=doc_shelf | comm=none | role=none
+NODE AGENTS.md | cluster=doc_shelf | comm=none | role=none
+NODE GEMINI.md | cluster=doc_shelf | comm=none | role=none
+NODE GHOST_NODE.md | cluster=doc_shelf | comm=none | role=none
+NODE LOGIC_REPORT.md | cluster=doc_shelf | comm=none | role=none
+
+=== [RENDER DIAGNOSTIC] CLUSTER DUMP ===
+CLUSTER id=cluster_ghosts type=system nodes=0 (computed count=19)
+CLUSTER id=doc_shelf type=system nodes=0 (computed count=445)
+CLUSTER id=cluster_demo type=folder nodes=0 (computed count=4)
+CLUSTER id=cluster_scratch type=folder nodes=0 (computed count=11)
+CLUSTER id=cluster_scripts type=folder nodes=0 (computed count=1)
+CLUSTER id=cluster_analysis type=folder nodes=0 (computed count=1)
+CLUSTER id=cluster_bootstrap type=folder nodes=0 (computed count=1)
+CLUSTER id=cluster_core type=folder nodes=0 (computed count=55)
+CLUSTER id=cluster_core_benchmark type=folder nodes=0 (computed count=2)
+CLUSTER id=cluster_core_canvas_engine type=folder nodes=0 (computed count=10)
+CLUSTER id=cluster_core_collaboration type=folder nodes=0 (computed count=17)
+CLUSTER id=cluster_core_projection type=folder nodes=0 (computed count=2)
+CLUSTER id=cluster_core_transaction type=folder nodes=0 (computed count=3)
+CLUSTER id=cluster_explorer type=folder nodes=0 (computed count=1)
+CLUSTER id=cluster_rust_checker type=folder nodes=0 (computed count=2)
+CLUSTER id=cluster_server type=folder nodes=0 (computed count=4)
+CLUSTER id=cluster___mocks__ type=folder nodes=0 (computed count=1)
+CLUSTER id=cluster_types type=folder nodes=0 (computed count=1)
+CLUSTER id=cluster_utils type=folder nodes=0 (computed count=5)
+CLUSTER id=cluster_webview type=folder nodes=0 (computed count=1)
+CLUSTER id=cluster_tools type=folder nodes=0 (computed count=3)
+CLUSTER id=cluster_ui type=folder nodes=0 (computed count=4)
+CLUSTER id=cluster_ghost_command:synapse type=system nodes=0 (computed count=400)
+CLUSTER id=cluster_ghost_assets/1 type=system nodes=0 (computed count=1)
+CLUSTER id=cluster_ghost_assets/2 type=system nodes=0 (computed count=1)
+CLUSTER id=cluster_ghost_assets/3 type=system nodes=0 (computed count=1)
+CLUSTER id=cluster_ghost_assets/4 type=system nodes=0 (computed count=1)
+CLUSTER id=cluster_ghost_assets/synapse_feature_demo type=system nodes=0 (computed count=1)
+CLUSTER id=cluster_ghost_assets/synapse_zoom_detail type=system nodes=0 (computed count=1)
+CLUSTER id=cluster_ghost_assets/v0 type=system nodes=0 (computed count=6)
+CLUSTER id=cluster_ghost_assets/network/flowview type=system nodes=0 (computed count=1)
+CLUSTER id=cluster_ghost_assets/network/flow2 type=system nodes=0 (computed count=1)
+CLUSTER id=cluster_ghost_assets/network/network_attached_flowview type=system nodes=0 (computed count=1)
+CLUSTER id=cluster_ghost_assets/cluster_visibility type=system nodes=0 (computed count=1)
+CLUSTER id=cluster_ghost_assets/cluster_fold type=system nodes=0 (computed count=1)
+CLUSTER id=cluster_ghost_assets/network/network_attached_file type=system nodes=0 (computed count=1)
+CLUSTER id=cluster_ghost_assets/network/harvest type=system nodes=0 (computed count=1)
+CLUSTER id=cluster_ghost_ type=system nodes=0 (computed count=5)
+CLUSTER id=cluster_ghost_/home/dogsinatas/TypeScript_project/antigravity-extension-vis/ui/index type=system nodes=0 (computed count=1)
+CLUSTER id=cluster_ghost_package type=system nodes=0 (computed count=1)
+CLUSTER id=cluster_ghost_src/main type=system nodes=0 (computed count=1)
+CLUSTER id=cluster_ghost_/home/dogsinatas/TypeScript_project/antigravity-extension-vis/synapse-visual-architecture-v0 type=system nodes=0 (computed count=3)
+CLUSTER id=cluster_ghost_synapse-visual-architecture-v0 type=system nodes=0 (computed count=2)
+CLUSTER id=cluster_ghost_/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/RawTextMiner type=system nodes=0 (computed count=1)
+CLUSTER id=cluster_ghost_/home/dogsinatas/TypeScript_project/antigravity-extension-vis/package type=system nodes=0 (computed count=1)
+CLUSTER id=cluster_ghost_/home/dogsinatas/TypeScript_project/antigravity-extension-vis/demo/index type=system nodes=0 (computed count=1)
+CLUSTER id=cluster_ghost_network_remote type=system nodes=0 (computed count=1)
+CLUSTER id=__unclustered__ type=folder nodes=0 (computed count=34)
+=========================================

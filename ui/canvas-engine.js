@@ -2110,6 +2110,12 @@ class CanvasEngine {
             if (btnEditLogic) {
                 btnEditLogic.textContent = `Turn ${this.isEditMode ? 'OFF' : 'ON'} Edit Mode`;
             }
+            if (typeof window.vscode !== 'undefined') {
+                vscode.postMessage({
+                    command: 'setEditLogicMode',
+                    enabled: this.isEditMode
+                });
+            }
 
             if (this.isEditMode) {
                 this.canvas.style.boxShadow = `inset 0 0 20px ${theme.COLORS.ERROR}`;
@@ -3122,19 +3128,20 @@ class CanvasEngine {
             // 엣지 생성 모드
             if (this.isCreatingEdge) {
                 this.edgeCurrentPos = worldPos;
-                // 타겟 감지
-                const targetHandle = this.getConnectionHandleAt(worldPos.x, worldPos.y);
-                const targetNode = this.getNodeAt(worldPos.x, worldPos.y);
-                const targetCluster = this.getClusterAt(worldPos.x, worldPos.y);
+                if (!this.isEdgeMenuOpen) {
+                    const targetHandle = this.getConnectionHandleAt(worldPos.x, worldPos.y);
+                    const targetNode = this.getNodeAt(worldPos.x, worldPos.y);
+                    const targetCluster = this.getClusterAt(worldPos.x, worldPos.y);
 
-                if (targetHandle) {
-                    this.edgeTarget = targetHandle;
-                } else if (targetNode) {
-                    this.edgeTarget = { type: 'node', id: targetNode.id };
-                } else if (targetCluster) {
-                    this.edgeTarget = { type: 'cluster', id: targetCluster.id };
-                } else {
-                    this.edgeTarget = null;
+                    if (targetHandle) {
+                        this.edgeTarget = targetHandle;
+                    } else if (targetNode) {
+                        this.edgeTarget = { type: 'node', id: targetNode.id };
+                    } else if (targetCluster) {
+                        this.edgeTarget = { type: 'cluster', id: targetCluster.id };
+                    } else {
+                        this.edgeTarget = null;
+                    }
                 }
                 return;
             }
@@ -3214,6 +3221,7 @@ class CanvasEngine {
                     this.edgeTarget.id !== this.edgeSource.id) {
                     this.showEdgeTypeSelector(e.clientX, e.clientY);
                 } else {
+                    this.isCreatingEdge = false;
                     this.edgeSource = null;
                     this.edgeTarget = null;
                 }
@@ -4062,6 +4070,7 @@ class CanvasEngine {
     }
 
     showEdgeTypeSelector(x, y) {
+        this.isEdgeMenuOpen = true;
 
         // 엣지 타입 선택 메뉴 생성
         const existingMenu = document.getElementById('edge-type-menu');
@@ -4099,6 +4108,7 @@ class CanvasEngine {
             item.onmouseenter = () => item.style.background = theme.UI.MENU.hover;
             item.onmouseleave = () => item.style.background = 'transparent';
             item.onclick = () => {
+                this.isEdgeMenuOpen = false;
                 this.createManualEdge(t.type, t.color);
                 menu.remove();
             };
@@ -4116,7 +4126,14 @@ class CanvasEngine {
         cancel.style.borderRadius = '4px';
         cancel.onmouseenter = () => cancel.style.background = '#504945';
         cancel.onmouseleave = () => cancel.style.background = 'transparent';
-        cancel.onclick = () => menu.remove();
+        cancel.onclick = () => {
+            this.isEdgeMenuOpen = false;
+            this.edgeSource = null;
+            this.edgeTarget = null;
+            this.isCreatingEdge = false;
+            this.render();
+            menu.remove();
+        };
         menu.appendChild(cancel);
 
         document.body.appendChild(menu);
@@ -4125,6 +4142,11 @@ class CanvasEngine {
         setTimeout(() => {
             const closeMenu = (e) => {
                 if (!menu.contains(e.target)) {
+                    this.isEdgeMenuOpen = false;
+                    this.edgeSource = null;
+                    this.edgeTarget = null;
+                    this.isCreatingEdge = false;
+                    this.render();
                     menu.remove();
                     document.removeEventListener('click', closeMenu);
                 }
@@ -4391,60 +4413,23 @@ class CanvasEngine {
             }
         };
 
-        this.edges.push(newEdge);
-        console.log('[SYNAPSE] Manual edge created:', newEdge);
-        if (this.flowRenderer) {
-            this.flowData = this.flowRenderer.buildFlow(this.nodes) || { steps: [] };
-        }
+        // [v0.3.32 SSoT Refactoring] 낙관적 업데이트(this.edges.push 등) 및 로컬 상태 변경 완전히 제거
+        // 오직 백엔드에 의도(Intent)만 전달하고, 백엔드의 성공 브로드캐스트를 기다립니다.
+        console.log('[SYNAPSE] Dispatching manual edge creation to backend:', newEdge);
 
-        // 백엔드에 저장
         if (typeof vscode !== 'undefined') {
             vscode.postMessage({
                 command: 'createManualEdge',
                 edge: newEdge
             });
-
-            // 🔍 즉시 아키텍처 검증 요청 (Phase 4)
-            const fromNode = this.nodes.find(n => n.id === newEdge.from);
-            const toNode = this.nodes.find(n => n.id === newEdge.to);
-            if (fromNode && toNode) {
-                vscode.postMessage({
-                    command: 'validateEdge',
-                    edge: newEdge,
-                    sourceStr: JSON.stringify(fromNode),
-                    targetStr: JSON.stringify(toNode)
-                });
-            }
-
-            // Move from Buffer to Reserved if applicable
-            if (fromNode && (fromNode.cluster_id === 'sys_cluster_buffer' || fromNode.data?.cluster_id === 'sys_cluster_buffer')) {
-                fromNode.cluster_id = 'sys_cluster_reserved';
-                if (fromNode.data) fromNode.data.cluster_id = 'sys_cluster_reserved';
-                // Send node update to backend if necessary
-                vscode.postMessage({
-                    command: 'updateNodeData',
-                    node: fromNode
-                });
-            }
-            if (toNode && (toNode.cluster_id === 'sys_cluster_buffer' || toNode.data?.cluster_id === 'sys_cluster_buffer')) {
-                toNode.cluster_id = 'sys_cluster_reserved';
-                if (toNode.data) toNode.data.cluster_id = 'sys_cluster_reserved';
-                vscode.postMessage({
-                    command: 'updateNodeData',
-                    node: toNode
-                });
-            }
         }
-
-        // [v0.3.09 Fix] Phase lock 이후로 지연하여 RENDER 단계 중 saveState 방지
-        setTimeout(() => this.saveState(), 100);
 
         // 엣지 생성 완료 후 상태 초기화
         this.edgeSource = null;
         // Persistent connect mode: don't clear target so we can connect from target to next? Actually, user wants continuous connect mode, so we keep mode active but reset source/target
         this.edgeTarget = null;
-
-        // Remove: this.isCreatingEdge = false; 
+        this.isCreatingEdge = false;
+        
         // Remove: document.getElementById('btn-connect')?.classList.remove('active');
         this.render();
     }
@@ -6788,8 +6773,11 @@ class CanvasEngine {
                         // [v0.2.27] Sync: Skip nodes in collapsed clusters (matches 2D behavior)
                         const clusterId = n.cluster_id || n.data?.cluster_id;
                         if (clusterId) {
-                            const cluster = this.clusters?.find(c => c.id === clusterId);
-                            if (cluster && cluster.collapsed) return false;
+                            let cur = this.clusters?.find(c => c.id === clusterId);
+                            while (cur) {
+                                if (cur.collapsed) return false;
+                                cur = cur.parent_id ? this.clusters?.find(c => c.id === cur.parent_id) : null;
+                            }
                         }
                         return true;
                     });
@@ -7347,6 +7335,17 @@ class CanvasEngine {
         const cluster = this.clusters.find(c => c.id === clusterId);
         if (cluster) {
             cluster.collapsed = !cluster.collapsed;
+            
+            // Cascade collapse to all children
+            const getDescendants = (parentId) => {
+                const children = this.clusters.filter(c => c.parent_id === parentId);
+                let all = [...children];
+                children.forEach(c => all = all.concat(getDescendants(c.id)));
+                return all;
+            };
+            const descendants = getDescendants(cluster.id);
+            descendants.forEach(d => d.collapsed = cluster.collapsed);
+            
             console.log(`[SYNAPSE] Toggled cluster ${cluster.label}: ${cluster.collapsed ? 'Collapsed' : 'Expanded'}`);
             this.isGraphDataDirty = true; // [v0.2.27] Sync WebGL visibility
             this.render();
@@ -7378,7 +7377,7 @@ class CanvasEngine {
         // Build childMap from parent_id
         const childMap = new Map();
         this.clusters.forEach(function(c) {
-            if (c.parent_id && idMap.has(c.parent_id)) {
+            if (c.parent_id && c.parent_id !== c.id && idMap.has(c.parent_id)) {
                 if (!childMap.has(c.parent_id)) childMap.set(c.parent_id, []);
                 childMap.get(c.parent_id).push(c);
             }
@@ -7386,8 +7385,21 @@ class CanvasEngine {
 
         // Roots = clusters with no parent_id (or parent not in idMap)
         const roots = this.clusters.filter(function(c) {
-            return !c.parent_id || !idMap.has(c.parent_id);
+            return (!c.parent_id || c.parent_id === c.id || !idMap.has(c.parent_id)) && c.id !== '__unclustered__';
         });
+
+        const totalNodeCountMap = new Map(nodeCountMap);
+        const visited = new Set();
+        const accumulate = (clusterId) => {
+            if (visited.has(clusterId)) return totalNodeCountMap.get(clusterId) || 0;
+            visited.add(clusterId);
+            const children = childMap.get(clusterId) || [];
+            let total = nodeCountMap.get(clusterId) || 0;
+            children.forEach(c => total += accumulate(c.id));
+            totalNodeCountMap.set(clusterId, total);
+            return total;
+        };
+        roots.forEach(r => accumulate(r.id));
 
         const self = this;
         function matches(c) {
@@ -7396,16 +7408,32 @@ class CanvasEngine {
             const nl = (c.label || c.id).toLowerCase().replace(/[-_]/g, '');
             return nl.indexOf(nq) !== -1;
         }
-        function subtreeHasMatch(c) { return matches(c) || (childMap.get(c.id) || []).some(subtreeHasMatch); }
+
+        const subtreeVisited = new Set();
+        function subtreeHasMatch(c) { 
+            if (subtreeVisited.has(c.id)) return false;
+            subtreeVisited.add(c.id);
+            const res = matches(c) || (childMap.get(c.id) || []).some(subtreeHasMatch); 
+            subtreeVisited.delete(c.id);
+            return res;
+        }
 
         tree.innerHTML = '';
         let firstMatchId = null;
 
+        const appendVisited = new Set();
         function appendRow(cluster, depth) {
+            if (appendVisited.has(cluster.id)) return;
+            appendVisited.add(cluster.id);
+
             if (!subtreeHasMatch(cluster)) return;
             const isOn = !cluster.collapsed;
-            const count = nodeCountMap.get(cluster.id) || 0;
-            const label = cluster.label || cluster.id;
+            const totalCount = totalNodeCountMap.get(cluster.id) || 0;
+            let label = cluster.label || cluster.id;
+            const username = cluster.clientUsername || (cluster.data && cluster.data.clientUsername);
+            if (username && !label.includes(`[${username}]`)) {
+                label = `[${username}] ${label}`;
+            }
             const isMatch = matches(cluster);
             if (q && isMatch && !firstMatchId) firstMatchId = cluster.id;
 
@@ -7447,7 +7475,7 @@ class CanvasEngine {
 
             const cnt = document.createElement('span');
             cnt.className = 'cv-count';
-            if (count > 0) cnt.textContent = '(' + count + ')';
+            if (totalCount > 0) cnt.textContent = '(' + totalCount + ')';
 
             const reveal = document.createElement('button');
             reveal.className = 'cv-reveal'; reveal.textContent = '→'; reveal.title = 'Reveal in canvas';
@@ -7473,7 +7501,20 @@ class CanvasEngine {
         const cluster = this.clusters.find(function(c) { return c.id === clusterId; });
         if (!cluster) return;
         cluster.collapsed = !visible;
-        // Removed cascade logic to preserve child states (State-preserving visibility)
+        
+        // Cascade to children
+        const toggleVisited = new Set();
+        const getDescendants = (parentId) => {
+            if (toggleVisited.has(parentId)) return [];
+            toggleVisited.add(parentId);
+            const children = this.clusters.filter(c => c.parent_id === parentId);
+            let all = [...children];
+            children.forEach(c => all = all.concat(getDescendants(c.id)));
+            return all;
+        };
+        const descendants = getDescendants(cluster.id);
+        descendants.forEach(d => d.collapsed = !visible);
+        
         this.isGraphDataDirty = true;
         this.render();
         this.saveState();
@@ -7482,9 +7523,18 @@ class CanvasEngine {
     }
     // [v0.3.32.4 fix2] Reveal — clientWidth 기준, requestRender() 사용 (fitView 공식 동일)
     _clusterVisReveal(clusterId) {
+        // Get all descendant cluster IDs to reveal nodes in subfolders too
+        const getDescendantIds = (targetId) => {
+            const subClusters = (this.clusters || []).filter(c => c.parent_id === targetId);
+            let all = [targetId];
+            subClusters.forEach(c => all = all.concat(getDescendantIds(c.id)));
+            return all;
+        };
+        const targetClusterIds = new Set(getDescendantIds(clusterId));
+
         const nodes = (this.nodes || []).filter(function(n) {
             const cid = n.cluster_id || (n.data && n.data.cluster_id);
-            return cid === clusterId;
+            return targetClusterIds.has(cid);
         });
         if (!nodes.length) {
             console.log('[CV Reveal] no nodes for', clusterId);
@@ -7492,8 +7542,8 @@ class CanvasEngine {
         }
         let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
         nodes.forEach(function(n) {
-            const px = (n.position && n.position.x) != null ? n.position.x : (n.x || 0);
-            const py = (n.position && n.position.y) != null ? n.position.y : (n.y || 0);
+            const px = n.x != null ? n.x : ((n.position && n.position.x) || 0);
+            const py = n.y != null ? n.y : ((n.position && n.position.y) || 0);
             minX = Math.min(minX, px);
             minY = Math.min(minY, py);
             maxX = Math.max(maxX, px + 120);
@@ -7632,7 +7682,7 @@ class CanvasEngine {
      * @param {string} edgeId - 삭제할 엣지 ID
      */
     deleteEdge(edgeId) {
-        // 로컬 상태에서 엣지 객체 찾기
+        // [v0.3.32 SSoT Refactoring] 낙관적 업데이트 완전 제거
         const edgeIndex = this.edges.findIndex(e => e.id === edgeId);
         if (edgeIndex === -1) {
             console.warn('[SYNAPSE] Edge not found:', edgeId);
@@ -7652,24 +7702,17 @@ class CanvasEngine {
                 toFile: edge._toFile,
                 fromLabel, toLabel
             });
-            return; // Only delete locally if the backend says so later
+            return;
         }
 
-        // Normal View mode: safe visual-only delete
-        this.edges.splice(edgeIndex, 1);
-        this.selectedEdge = null;
-
-        // 백엔드에 삭제 메시지 전송
+        // Normal View mode: safe visual-only delete (의도 전달만 수행)
+        console.log('[SYNAPSE] Dispatching logical edge deletion to backend:', edgeId);
         if (typeof vscode !== 'undefined') {
             vscode.postMessage({
                 command: 'deleteEdge',
                 edgeId: edgeId
             });
         }
-
-        console.log('[SYNAPSE] Edge deleted:', edgeId);
-        this.saveState(); // [v0.2.18] Ensure state is saved after deletion so it doesn't revert
-        this.render();
     }
 
     deleteNode(nodeId) {

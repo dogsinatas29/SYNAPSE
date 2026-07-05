@@ -788,6 +788,84 @@
             width: 250px;
         }
 
+        /* [v0.3.32.4] Cluster Visibility Panel */
+        #cluster-visibility-panel {
+            position: absolute;
+            top: 60px;
+            left: 20px;
+            background: rgba(40, 40, 40, 0.97);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            z-index: 100;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+            display: none;
+            flex-direction: column;
+            width: 260px;
+            max-height: 520px;
+        }
+        #cluster-visibility-panel.visible { display: flex; }
+        #cluster-vis-header {
+            padding: 8px 12px;
+            background: #3c3836;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+            border-bottom: 1px solid #504945;
+            cursor: grab;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+        }
+        #cluster-vis-header:active { cursor: grabbing; }
+        #cluster-vis-search {
+            margin: 8px;
+            padding: 5px 8px;
+            background: #1d2021;
+            border: 1px solid #504945;
+            border-radius: 4px;
+            color: #ebdbb2;
+            font-size: 12px;
+            width: calc(100% - 16px);
+            box-sizing: border-box;
+        }
+        #cluster-vis-search:focus { outline: none; border-color: #fabd2f; }
+        #cluster-vis-tree {
+            overflow-y: auto;
+            flex: 1;
+            padding: 4px 8px 8px;
+        }
+        .cv-item {
+            display: flex;
+            align-items: center;
+            padding: 3px 4px;
+            border-radius: 4px;
+            cursor: pointer;
+            gap: 6px;
+            font-size: 12px;
+            color: #ebdbb2;
+            user-select: none;
+        }
+        .cv-item:hover { background: rgba(255,255,255,0.06); }
+        .cv-item.cv-child { padding-left: 20px; }
+        .cv-item.cv-grandchild { padding-left: 36px; }
+        .cv-checkbox {
+            width: 14px; height: 14px;
+            accent-color: #fabd2f;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+        .cv-label { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .cv-count { color: #928374; font-size: 11px; flex-shrink: 0; }
+        .cv-reveal {
+            font-size: 10px; padding: 1px 5px;
+            background: #458588; border: none;
+            border-radius: 3px; color: #ebdbb2;
+            cursor: pointer; flex-shrink: 0;
+            display: none;
+        }
+        .cv-item:hover .cv-reveal { display: block; }
+
         #layer-controller-header {
             padding: 8px 12px;
             background: #3c3836;
@@ -1198,6 +1276,7 @@ Please wait until harvesting completes.</p>
 
         <button class="btn" id="btn-group" title="Group Selected Nodes">Group</button>
         <button class="btn" id="btn-ungroup" title="Ungroup Selected Cluster">Ungroup</button>
+        <button class="btn" id="btn-cluster-vis" title="Cluster Visibility Panel">🗂 Clusters</button>
         
         <!-- Logic Edit Menu -->
         <div class="dropdown">
@@ -1972,6 +2051,7 @@ Please wait until harvesting completes.</p>
             makeDraggable('phase-overlay', 'phase-overlay'); // [v0.3.1_zz] Status window draggable
             makeDraggable('dtr-controller', 'dtr-controller'); // [v0.3.1_zz] Inference window draggable too
             makeDraggable('layer-controller', 'layer-controller-header'); // [v0.3.1_zz] Layer controller draggable
+            makeDraggable('cluster-visibility-panel', 'cluster-vis-header'); // [v0.3.32.4] Cluster visibility draggable
 
             // [v0.2.20 Fix] Explicit wheel scroll support for panels (VS Code webview workaround)
             // Without this, fixed panels may not receive native scroll events properly
@@ -1988,7 +2068,7 @@ Please wait until harvesting completes.</p>
             document.getElementById('btn-animate')?.addEventListener('click', (e) => {
                 if (window.engine) {
                     const isNowAnimating = window.engine.toggleAnimation();
-                    e.target.textContent = isNowAnimating ? '🎬 On' : '⏸️ Off';
+                    e.target.textContent = isNowAnimating ? '🎬 Animation: On' : '⏸️ Animation: Off';
                     e.target.classList.toggle('active', isNowAnimating);
                 }
             });
@@ -2716,6 +2796,16 @@ Please wait until harvesting completes.</p>
             makeDraggable('account-panel', 'account-panel-header');
         });
     </script>
+    <!-- [v0.3.32.4] Cluster Visibility Panel -->
+    <div id="cluster-visibility-panel" class="draggable-panel">
+        <div id="cluster-vis-header">
+            <span class="panel-title">🗂 Cluster Visibility</span>
+            <button id="cluster-vis-close" style="background:none;border:none;color:#928374;cursor:pointer;font-size:16px;">&times;</button>
+        </div>
+        <input type="text" id="cluster-vis-search" placeholder="Search clusters...">
+        <div id="cluster-vis-tree"></div>
+    </div>
+
     <!-- Layer Controller -->
     <div id="layer-controller" class="draggable-panel">
         <div id="layer-controller-header" class="panel-header">

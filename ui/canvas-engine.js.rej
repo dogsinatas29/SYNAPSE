@@ -1,0 +1,14 @@
+--- canvas-engine.js
++++ canvas-engine.js
+@@ -7112,8 +7112,9 @@
+ 
+         // [v0.3.32.4] Viewport Culling for Edges
+-        const viewWidth = this.canvas.clientWidth;
+-        const viewHeight = this.canvas.clientHeight;
++        const dpr = window.devicePixelRatio || 1;
++        const viewWidth = this.canvas.width / dpr;
++        const viewHeight = this.canvas.height / dpr;
+         const minX = -this.transform.offsetX / zoom;
+         const minY = -this.transform.offsetY / zoom;
+         const maxX = minX + viewWidth / zoom;
+         const maxY = minY + viewHeight / zoom;

@@ -259,14 +259,40 @@ export class CanvasPanel {
         );
     }
 
+    public async runWebviewBenchmark(phase: string): Promise<any> {
+        return new Promise((resolve, reject) => {
+            const timeout = setTimeout(() => reject(new Error('Benchmark Webview Timeout')), 10000);
+            (this as any)._benchmarkCallback = (result: any) => {
+                clearTimeout(timeout);
+                delete (this as any)._benchmarkCallback;
+                resolve(result);
+            };
+            this._panel.webview.postMessage({ command: 'startBenchmark', phase });
+        });
+    }
+
     private async _handleMessage(message: any) {
         if (message.command !== 'contextData' && message.command !== 'log') {
             Logger.info(`[CanvasPanel] Received command: ${message.command}`);
         }
 
         switch (message.command) {
+            case 'setEditLogicMode':
+                (this as any)._isEditLogicMode = message.enabled;
+                try {
+                    await vscode.workspace.getConfiguration('synapse').update('editLogicMode', message.enabled, vscode.ConfigurationTarget.Global);
+                } catch (e: any) {
+                    Logger.warn(`[CanvasPanel] Failed to save editLogicMode to settings: ${e.message}`);
+                }
+                Logger.info(`[CanvasPanel] Updated editLogicMode configuration to: ${message.enabled}`);
+                return;
             case 'alert':
                 vscode.window.showInformationMessage(message.text);
+                return;
+            case 'benchmarkResult':
+                if ((this as any)._benchmarkCallback) {
+                    (this as any)._benchmarkCallback(message.result);
+                }
                 return;
             case 'nodeSelected':
                 this.handleNodeSelected(message.node);
@@ -334,13 +360,11 @@ export class CanvasPanel {
                 await this.handleGenerateFlow(message.nodeId, message.filePath);
                 return;
             case 'updateNodeDTR':
-                await this.handleUpdateNodeDTR(message.nodeId, message.dtr);
+                canvasEngine.dispatch('UPDATE_NODE', { id: message.nodeId, updates: { dtr: message.dtr }});
+                await this.sendProjectState();
                 return;
             case 'requestDeleteEdgeSource':
                 await this.handleRequestDeleteEdgeSource(message.edgeId, message.fromFile, message.toFile);
-                return;
-            case 'requestDeleteEdgeUI':
-                await this.handleRequestDeleteEdgeUI(message.edgeId);
                 return;
             case 'showMessage':
                 vscode.window.showInformationMessage(`[SYNAPSE] ${message.text}`);
@@ -362,98 +386,17 @@ export class CanvasPanel {
                 try {
                     const workspaceFolder = this._workspaceFolder;
                     if (!workspaceFolder) return;
-
+                    
                     const nodeFromMessage = message.node || message.data || message.payload || {};
-                    const nodeData = nodeFromMessage.data || {};
-                    const nodeLabel = nodeData.label || nodeFromMessage.label || message.label || (message.data && message.data.label);
-                    const manualPath = message.filePath || nodeFromMessage.filePath || '';
-
-                    const nodeId = nodeFromMessage.id || message.nodeId || crypto.randomUUID();
-
-                    if (!nodeLabel) {
-                        Logger.error(`[v0.3.29] ERR: Label missing in intent. Raw: ${JSON.stringify(message)}`);
-                        return;
+                    if (message.filePath) {
+                        nodeFromMessage.filePath = message.filePath;
                     }
-                    Logger.info(`[v0.3.29] Validated Intent for Label: ${nodeLabel} (ID: ${nodeId})`);
-
-                    let fileName = nodeLabel;
-                    if (!fileName.includes('.')) fileName = `${nodeLabel}.py`;
-
-                    let fileUri: vscode.Uri;
-                    if (manualPath) {
-                        let safeManualPath = manualPath.replace(/\\/g, '/');
-                        // [Security] Auto-strip workspace absolute path if user mistakenly pastes it
-                        const wsPathUnix = workspaceFolder.uri.fsPath.replace(/\\/g, '/');
-                        if (safeManualPath.startsWith(wsPathUnix)) {
-                            safeManualPath = safeManualPath.substring(wsPathUnix.length).replace(/^\/+/, '');
-                        } else if (safeManualPath.startsWith('/') || safeManualPath.match(/^[a-zA-Z]:\//)) {
-                            // If it's still an absolute path not matching workspace root, treat as relative to prevent escaping
-                            safeManualPath = safeManualPath.replace(/^([a-zA-Z]:)?\/+/, '');
-                        }
-
-                        const relPath = path.posix.join(safeManualPath, fileName);
-                        fileUri = vscode.Uri.joinPath(workspaceFolder.uri, relPath);
-
-                        // 🛡️ Security: reject paths escaping workspace root
-                        const root = path.resolve(workspaceFolder.uri.fsPath);
-                        const resolved = path.resolve(fileUri.fsPath);
-                        if (!resolved.startsWith(root + path.sep) && resolved !== root) {
-                            throw new Error(`Path escapes workspace root: ${manualPath}`);
-                        }
-
-                        const dirUri = vscode.Uri.joinPath(fileUri, '..');
-                        await vscode.workspace.fs.createDirectory(dirUri);
-                    } else {
-                        fileUri = vscode.Uri.joinPath(workspaceFolder.uri, fileName);
-                    }
-                    const filePath = fileUri.fsPath;
-
-                    const content = Buffer.from('# [SYNAPSE] Atomic Logic Entry\n', 'utf8');
-                    await vscode.workspace.fs.writeFile(fileUri, content);
-                    await vscode.workspace.fs.stat(fileUri);
-                    await vscode.commands.executeCommand('workbench.action.files.saveAll');
-
-                    Logger.info(`[v0.3.29] ID: ${nodeLabel}, Path: ${filePath}, Status: ACTIVE`);
-
-                    const relFilePath = vscode.workspace.asRelativePath(fileUri, false);
-
-                    this._panel.webview.postMessage({
-                        command: 'updateNode',
-                        data: {
-                            id: nodeId,
-                            updates: {
-                                label: nodeLabel,
-                                name: nodeLabel,
-                                text: nodeLabel,
-                                file: relFilePath,
-                                status: 'solid',
-                                cluster_id: 'sys_cluster_buffer',
-                                layer: 'user',
-                                clientLayer: this._isServerOwner ? undefined : this._connUserId,
-                                clientUsername: this._isServerOwner ? undefined : this._connUsername,
-                                x: 100,
-                                y: 200,
-                                data: {
-                                    label: nodeLabel,
-                                    name: nodeLabel,
-                                    file: relFilePath,
-                                    status: 'solid',
-                                    cluster_id: 'sys_cluster_buffer',
-                                    priority_cluster: 'sys_cluster_buffer',
-                                    layer: 'user',
-                                    clientLayer: this._isServerOwner ? undefined : this._connUserId,
-                                    clientUsername: this._isServerOwner ? undefined : this._connUsername
-                                }
-                            }
-                        }
-                    });
-
-                    Logger.info(`[v0.3.29] Confirmation dispatched for ID: ${nodeId} at (100, 200)`);
+                    
+                    await this.handleCreateManualNode(nodeFromMessage);
                 } catch (e: any) {
                     vscode.window.showErrorMessage(`[v0.3.29] Node creation failed: ${e.message || e}`);
                     Logger.error(`[v0.3.29] CRITICAL_FAIL: ${e}`);
                 }
-                return;
             case 'requestSnapshot':
                 const label = await vscode.window.showInputBox({
                     placeHolder: 'Enter snapshot label',
@@ -789,13 +732,44 @@ export class CanvasPanel {
                         targetFileName += extSelection;
                     }
                 }
-                const fileUri = vscode.Uri.joinPath(workspaceFolder.uri, targetFileName);
+                let fileUri: vscode.Uri;
+                let manualPath = node.filePath || '';
+                if (manualPath) {
+                    let safeManualPath = manualPath.replace(/\\/g, '/');
+                    const wsPathUnix = workspaceFolder.uri.fsPath.replace(/\\/g, '/');
+                    if (safeManualPath.startsWith(wsPathUnix)) {
+                        safeManualPath = safeManualPath.substring(wsPathUnix.length).replace(/^[\\/]+/g, '');
+                    } else if (safeManualPath.startsWith('/') || safeManualPath.match(/^[a-zA-Z]:[\\/]/)) {
+                        safeManualPath = safeManualPath.replace(/^([a-zA-Z]:)?[\\/]+/g, '');
+                    }
+                    const relPath = path.posix.join(safeManualPath, targetFileName);
+                    fileUri = vscode.Uri.joinPath(workspaceFolder.uri, relPath);
+                } else {
+                    fileUri = vscode.Uri.joinPath(workspaceFolder.uri, targetFileName);
+                }
+
                 try {
                     await vscode.workspace.fs.stat(fileUri);
                     node.data.file = vscode.workspace.asRelativePath(fileUri);
                 } catch {
                     // Create empty file (Background-ish)
-                    await vscode.workspace.fs.writeFile(fileUri, Buffer.from('', 'utf8'));
+                    const dirUri = vscode.Uri.joinPath(fileUri, '..');
+                    await vscode.workspace.fs.createDirectory(dirUri);
+                    const ext = path.extname(targetFileName).toLowerCase();
+                    let commentPrefix = '//';
+                    if (['.py', '.rb', '.sh', '.yaml', '.yml'].includes(ext)) {
+                        commentPrefix = '#';
+                    } else if (['.html', '.xml'].includes(ext)) {
+                        commentPrefix = '<!--';
+                    } else if (ext === '.sql') {
+                        commentPrefix = '--';
+                    }
+                    const contentStr = `${commentPrefix} [SYNAPSE] Atomic Logic Entry\n`;
+                    if (commentPrefix === '<!--') {
+                        await vscode.workspace.fs.writeFile(fileUri, Buffer.from(`${contentStr} -->\n`, 'utf8'));
+                    } else {
+                        await vscode.workspace.fs.writeFile(fileUri, Buffer.from(contentStr, 'utf8'));
+                    }
                     Logger.info(`[CanvasPanel] Physical file auto-created: ${targetFileName}`);
                     node.data.file = vscode.workspace.asRelativePath(fileUri);
                 }
@@ -877,6 +851,28 @@ export class CanvasPanel {
 
             Logger.info(`[CanvasPanel] Manual node persisted and synced: ${nodeId}`);
             vscode.window.showInformationMessage(`Node created: ${node.data?.label || node.id}`);
+
+            // Update UI immediately without waiting for full sync
+            this._panel.webview.postMessage({
+                command: 'updateNode',
+                data: {
+                    id: nodeId,
+                    updates: {
+                        label: finalLabel,
+                        file: normalizedFilePath,
+                        status: 'solid',
+                        cluster_id: 'sys_cluster_buffer',
+                        layer: 'user',
+                        data: {
+                            label: finalLabel,
+                            file: normalizedFilePath,
+                            status: 'solid',
+                            cluster_id: 'sys_cluster_buffer',
+                            layer: 'user'
+                        }
+                    }
+                }
+            });
 
         } catch (error) {
             console.error('Failed to create manual node:', error);
@@ -3196,196 +3192,63 @@ export class CanvasPanel {
         const workspaceFolder = this._workspaceFolder;
         if (!workspaceFolder) return;
 
-        console.log('[SYNAPSE] handleCreateManualEdge received:', JSON.stringify(edge, null, 2));
+        console.log('[SYNAPSE] handleCreateManualEdge received (routing to Engine):', JSON.stringify(edge, null, 2));
 
         try {
-            const projectStateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'project_state.json');
-            const data = await vscode.workspace.fs.readFile(projectStateUri);
-            const projectState = JSON.parse(data.toString());
+            // 1. 필요한 메타데이터(프로젝트 경로, 모드)를 인텐트 페이로드에 주입
+            const isEditLogicMode = (this as any)._isEditLogicMode || vscode.workspace.getConfiguration('synapse').get('editLogicMode', false);
+            
+            // [v0.3.32] SSoT 의도 기반 처리
+            const addEdgeResult = canvasEngine.dispatch('CONNECT_EDGE', {
+                ...edge,
+                id: edge.id || `${edge.from}->${edge.to}`,
+                status: edge.status || 'pending_confirm',
+                is_approved: false, // 수동 엣지는 일단 pending 상태 유지
+                projectRoot: workspaceFolder.uri.fsPath,
+                isEditLogicMode: isEditLogicMode
+            });
 
-            console.log(`[SYNAPSE] Current project_state has ${projectState.nodes?.length} nodes and ${projectState.edges?.length} edges.`);
-
-            // Resolve missing file paths dynamically before saving
-            const fromNode = (projectState.nodes || []).find((n: any) => n.id === edge.from);
-            const toNode = (projectState.nodes || []).find((n: any) => n.id === edge.to);
-
-            if (!fromNode) console.warn(`[SYNAPSE] Source node NOT found in project_state: ${edge.from}`);
-            if (!toNode) console.warn(`[SYNAPSE] Target node NOT found in project_state: ${edge.to}`);
-
-            if (!edge._fromFile && fromNode?.data) {
-                edge._fromFile = fromNode.data.file || fromNode.data.label || null;
+            if (!addEdgeResult.ok) {
+                Logger.warn(`[CanvasPanel] CONNECT_EDGE intent blocked: ${addEdgeResult.verdict.reasons?.join(', ')}`);
+                vscode.window.showErrorMessage(`[SYNAPSE] 연결 실패: ${addEdgeResult.verdict.reasons?.join(', ')}`);
+                return;
             }
-            if (!edge._toFile && toNode?.data) {
-                edge._toFile = toNode.data.file || toNode.data.label || null;
-            }
 
-            // [v0.3.10 Patch] Proactive extension check
-            const filesToCheck = [edge._fromFile, edge._toFile];
-            for (const file of filesToCheck) {
-                if (file) {
-                    const ext = path.extname(file).toLowerCase();
-                    const supportedExts = ['.ts', '.js', '.tsx', '.jsx', '.py', '.c', '.h', '.cpp', '.hpp', '.rs', '.csv', '.md', '.json', '.yml', '.yaml', '.txt', '.csv'];
-                    if (!supportedExts.includes(ext) || ext === '') {
-                        vscode.window.showWarningMessage(`[SYNAPSE] ⚠️ ${file}: 연결할 수 없는 파일 형식입니다. (확장자가 필요합니다)`);
-                        return; // Block edge creation
-                    }
+            // 2. 확정된 최종 상태(Snapshot)를 로컬 디스크에 저장 (Persistence)
+            const finalState = canvasEngine.getFinalSnapshot();
+            await this.handleSaveState(finalState);
+            console.log('[SYNAPSE] Manual edge persisted successfully via StateManager.');
+
+            // 3. RenderProtocol (단일 Edge 및 관련된 갱신만 UI로 브로드캐스트)
+            // (낙관적 UI 업데이트가 제거되었으므로 여기서만 UI 렌더링 지시)
+            this._panel.webview.postMessage({
+                command: 'updateEdge',
+                data: {
+                    id: edge.id || `${edge.from}->${edge.to}`,
+                    updates: edge
                 }
-            }
+            });
+            // Buffer에서 Reserved로 이동한 노드에 대한 브로드캐스트
+            this._panel.webview.postMessage({ command: 'updateNode', data: { id: edge.from, updates: { cluster_id: 'sys_cluster_reserved' } }});
+            this._panel.webview.postMessage({ command: 'updateNode', data: { id: edge.to, updates: { cluster_id: 'sys_cluster_reserved' } }});
 
-            // [v0.2.20 Fix] Ensure we don't duplicate edges or add edges with non-existent nodes in state
-            if (!projectState.edges) projectState.edges = [];
-
-            // Check if this exact edge ID already exists OR if a logically identical edge exists
-            const duplicate = projectState.edges.find((e: any) =>
-                e.id === edge.id ||
-                (e.from === edge.from && e.to === edge.to && e.type === edge.type && e.fromCluster === edge.fromCluster && e.toCluster === edge.toCluster)
-            );
-
-            if (duplicate) {
-                console.log(`[SYNAPSE] Logically identical edge already exists (ID: ${duplicate.id}), skipping push.`);
-                // If the new edge has more info (e.g. coordinates or metadata), we could merge, but for now just skip to prevent "10-20 times delete" issue
-            } else {
-                // [v0.2.18.1.1] Force is_approved: false for manual edges to show "?" badge
-                edge.is_approved = false;
-                
-                // [v0.3.10] 🛡️ SYNC MEMORY ENGINE: Dispatch intent to update in-memory snapshot
-                const addEdgeResult = canvasEngine.dispatch('CONNECT_EDGE', {
-                    id: edge.id,
-                    from: edge.from,
-                    to: edge.to,
-                    type: edge.type,
-                    status: edge.status || 'pending_confirm',
-                    ...edge
-                });
-
-                if (!addEdgeResult.ok) {
-                    Logger.warn(`[CanvasPanel] ADD_EDGE intent blocked: ${addEdgeResult.verdict.reasons?.join(', ')}`);
-                    // Even if blocked by rules, we still push to projectState for manual persistence
-                }
-
-                // [v0.3.10 Fix] Move from Buffer to Reserved Cluster via ENGINE dispatch (SSOT)
-                const promoteToReserved = (nodeId: string) => {
-                    const snap = canvasEngine.getFinalSnapshot();
-                    const nodeObj = snap.nodes[nodeId];
-                    if (nodeObj && (nodeObj.cluster_id === 'sys_cluster_buffer' || nodeObj.data?.cluster_id === 'sys_cluster_buffer')) {
-                        // [v0.3.10 Fix] Update BOTH memory engine and local projectState object
-                        // Memory Engine update (for UI sync)
-                        canvasEngine.dispatch('UPDATE_NODE', {
-                            id: nodeId,
-                            updates: {
-                                cluster_id: 'sys_cluster_reserved',
-                                data: {
-                                    ...(nodeObj.data || {}),
-                                    cluster_id: 'sys_cluster_reserved',
-                                    priority_cluster: 'sys_cluster_reserved'
-                                }
-                            }
-                        });
-
-                        // Local state update (for File Persistence)
-                        const nodeInState = projectState.nodes.find((n: any) => n.id === nodeId);
-                        if (nodeInState) {
-                            nodeInState.cluster_id = 'sys_cluster_reserved';
-                            if (!nodeInState.data) nodeInState.data = {};
-                            nodeInState.data.cluster_id = 'sys_cluster_reserved';
-                            nodeInState.data.priority_cluster = 'sys_cluster_reserved';
-                        }
-                        
-                        Logger.info(`[CanvasPanel] Promoted node ${nodeId} to Reserved (Engine & File sync).`);
-                    }
-                };
-
-                if (edge.from) promoteToReserved(edge.from);
-                if (edge.to) promoteToReserved(edge.to);
-
-                // [v0.3.10 Fix] Immediately sync webview engine to prevent stale 'saveState' from reverting cluster status
-                this._panel.webview.postMessage({
-                    command: 'updateNode',
-                    data: {
-                        id: edge.from,
-                        updates: { cluster_id: 'sys_cluster_reserved' }
-                    }
-                });
-                this._panel.webview.postMessage({
-                    command: 'updateNode',
-                    data: {
-                        id: edge.to,
-                        updates: { cluster_id: 'sys_cluster_reserved' }
-                    }
-                });
-
-                projectState.edges.push(edge);
-                console.log(`[SYNAPSE] Pushed new manual edge and dispatched intent. Current count: ${projectState.edges.length}`);
-            }
-
-            // [v0.2.17-patch4] Proactive commented import injection (Logic Edit Mode)
-            const isEditLogicMode = vscode.workspace.getConfiguration('synapse').get('editLogicMode', false);
-            if (isEditLogicMode && edge._fromFile && edge._toFile) {
-                const refactorer = new EdgeCodeRefactorer();
-                const result = refactorer.applyEdgeToSource(edge._fromFile, edge._toFile, workspaceFolder.uri.fsPath, { commented: true });
-                if (result.success) {
-                    Logger.info(`[CanvasPanel] Manual edge created with PENDING import: ${result.message}`);
-                }
-            }
-
-            // 저장 (정규화 적용)
-            const normalizedJson = this.normalizeProjectState(projectState);
-            await vscode.workspace.fs.writeFile(projectStateUri, Buffer.from(normalizedJson, 'utf8'));
-            console.log('[SYNAPSE] Manual edge persisted successfully.');
-
-            // [v0.2.18] Explicit Edge Direction Notification
-            let notificationMsg = `Edge created: ${edge.type} (Pending Confirmation)`;
-            if (edge._fromFile && edge._toFile) {
-                const bFrom = edge._fromFile.split(/[\\/]/).pop();
-                const bTo = edge._toFile.split(/[\\/]/).pop();
-                notificationMsg = `Edge ${bFrom} ➔ ${bTo} connected: Injecting pending import.`;
+            let notificationMsg = `Edge connected: ${edge.type}`;
+            if (isEditLogicMode) {
+                notificationMsg += ` (Import code updated)`;
             }
             vscode.window.setStatusBarMessage(notificationMsg, 5000);
 
-            // 캔버스 새로고침
-            // await this.sendProjectState(false, true); // [v0.3.30] Prevent UI overwrite that deletes client nodes
         } catch (error) {
-            console.error('[SYNAPSE] Failed to create manual edge:', error);
-            vscode.window.showErrorMessage(`Failed to create edge: ${error}`);
+            console.error('[SYNAPSE] Failed to execute manual edge transaction:', error);
+            vscode.window.showErrorMessage(`Failed to connect edge: ${error}`);
         }
     }
 
     // [v0.2.17] Handle edge confirmation request: show warning dialog, apply import to source
-    // [v0.2.17] Handle edge source deletion (Logic Edit Mode)
     private async handleRequestDeleteEdgeSource(edgeId: string, fromFile: string | null, toFile: string | null) {
-        const workspaceFolder = this._workspaceFolder;
-        if (!workspaceFolder) return;
-
-        // Dynamic File Resolution Check
-        const uri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'project_state.json');
-        let projectState: any = { nodes: [], edges: [] };
-        try {
-            const data = await vscode.workspace.fs.readFile(uri);
-            projectState = JSON.parse(Buffer.from(data).toString('utf-8'));
-            if (typeof projectState === 'string') projectState = JSON.parse(projectState);
-        } catch (e) { }
-
-        const edge = (projectState.edges || []).find((e: any) => e.id === edgeId);
-        let actualFromFile = fromFile || edge?._fromFile;
-        let actualToFile = toFile || edge?._toFile;
-
-        if (!actualFromFile || !actualToFile) {
-            const fromNode = (projectState.nodes || []).find((n: any) => n.id === edge?.from);
-            const toNode = (projectState.nodes || []).find((n: any) => n.id === edge?.to);
-            if (!actualFromFile && fromNode?.data?.file) actualFromFile = fromNode.data.file;
-            if (!actualToFile && toNode?.data?.file) actualToFile = toNode.data.file;
-        }
-
-        if (!actualFromFile || !actualToFile) {
-            // No source files available to edit physically, so tell UI and backend to just visibly delete it
-            await this.handleDeleteEdge(edgeId);
-            this._panel.webview.postMessage({ command: 'edgeDeletedSource', edgeId, success: true });
-            return;
-        }
-
         const choice = await vscode.window.showWarningMessage(
             `[SYNAPSE] 진짜로 소스 코드에서 연결을 끊으시겠습니까?\n\n` +
-            `"${actualFromFile}" 파일에 있는 "${actualToFile}" 의 import 구문이 완전히 삭제됩니다.\n` +
+            `소스의 import 구문이 완전히 삭제(주석 처리)됩니다.\n` +
             `⚠️ 이 작업은 되돌릴 수 없습니다.`,
             { modal: true },
             '💣 삭제 (파괴적)', '❌ 취소'
@@ -3396,83 +3259,14 @@ export class CanvasPanel {
             return;
         }
 
-        try {
-            const projectRoot = workspaceFolder.uri.fsPath;
-            const refactorer = new EdgeCodeRefactorer();
-            
-            // [v0.2.18.1.1] Pass toNodeId for precise tagging
-            const toNodeId = edge?.to;
-            const result = refactorer.removeEdgeFromSource(actualFromFile, actualToFile, projectRoot, toNodeId);
-
-            if (!result.success) {
-                Logger.warn(`[SYNAPSE] Source removal unsuccessful: ${result.message} (File: ${actualFromFile})`);
-                // Even if source removal fails, we might want to continue deleting logically if the user insists
-                // But for now, let's keep the existing hotfix behavior
-                vscode.window.showWarningMessage(`[SYNAPSE] 소스 내 import 검색 실패 (캔버스 연결만 끊습니다): ${result.message}`);
-            }
-
-            // Remove from project_state and UI regardless of source file success
-            await this.handleDeleteEdge(edgeId);
-
-            this._panel.webview.postMessage({ command: 'edgeDeletedSource', edgeId, success: true });
-
-            if (result.success) {
-                vscode.window.showInformationMessage(`[SYNAPSE] ✅ 소스 코드 주석처리 완료: ${result.importLine}`);
-            }
-        } catch (e) {
-            vscode.window.showErrorMessage(`[SYNAPSE] 엣지 삭제 중 오류 발생: ${e}`);
-            this._panel.webview.postMessage({ command: 'edgeDeletedSource', edgeId, success: false });
-        }
+        await this.handleDeleteEdge(edgeId, fromFile, toFile);
     }
 
-    // [v0.2.17] Handle edge deletion initiated by the trash badge on the UI
-    private async handleRequestDeleteEdgeUI(edgeId: string) {
-        const choice = await vscode.window.showWarningMessage(
-            `[SYNAPSE] 이 엣지를 휴지통으로 지우시겠습니까? \n\n` +
-            `(로직 편집 모드가 활성화되어 있다면 소스 코드 참조도 함께 주석 처리됩니다.)`,
-            { modal: true },
-            '💣 삭제', '❌ 취소'
-        );
-
-        if (choice === '💣 삭제') {
-            const isEditLogicMode = this._workspaceFolder && vscode.workspace.getConfiguration('synapse').get('editLogicMode', false);
-            // We just let the backend decide whether to prune source based on the mode or just blindly remove it from state
-            // since we don't have fromFile/toFile passed directly, we'll try to resolve it dynamically from handleRequestDeleteEdgeSource if needed
-            // Actually, handleRequestDeleteEdgeSource will resolve it dynamically from project_state.
-            await this.handleRequestDeleteEdgeSource(edgeId, null, null);
-            // It will call edgeDeletedSource, from there we should trigger actual edge state removal if it wasn't aborted
-        }
-    }
-
-    // [v0.2.17] Persist per-node DTR change from the canvas slider
-    private async handleUpdateNodeDTR(nodeId: string, dtr: number) {
-        const workspaceFolder = this._workspaceFolder;
-        if (!workspaceFolder) return;
-        try {
-            const uri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'project_state.json');
-            const data = await vscode.workspace.fs.readFile(uri);
-            const projectState = JSON.parse(data.toString());
-            const node = (projectState.nodes || []).find((n: any) => n.id === nodeId);
-            if (!node) return;
-            if (!node.intelligence) node.intelligence = {};
-            node.intelligence.dtr = dtr;
-            if (!node.data) node.data = {};
-            if (!node.data.intelligence) node.data.intelligence = {};
-            node.data.intelligence.dtr = dtr;
-            const normalized = this.normalizeProjectState(projectState);
-            await vscode.workspace.fs.writeFile(uri, Buffer.from(normalized, 'utf8'));
-        } catch (e) {
-            console.error('[SYNAPSE] Failed to update node DTR:', e);
-        }
-    }
-
-    private async handleDeleteEdge(edgeId: string) {
+    private async handleDeleteEdge(edgeId: string, fromFile: string | null = null, toFile: string | null = null) {
         const workspaceFolder = this._workspaceFolder;
         if (!workspaceFolder) return;
 
         try {
-            const projectStateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'project_state.json');
-            
             // 1. Dispatch DELETE_EDGE Intent
             const parts = edgeId.split('->');
             if (parts.length !== 2) {
@@ -3482,36 +3276,39 @@ export class CanvasPanel {
 
             const from = parts[0];
             const to = parts[1];
+            const isEditLogicMode = (this as any)._isEditLogicMode || vscode.workspace.getConfiguration('synapse').get('editLogicMode', false);
 
-            const result = canvasEngine.dispatch('DELETE_EDGE', { from, to });
+            const result = canvasEngine.dispatch('DELETE_EDGE', { 
+                id: edgeId,
+                from, 
+                to,
+                fromFile,
+                toFile,
+                projectRoot: workspaceFolder.uri.fsPath,
+                isEditLogicMode: isEditLogicMode
+            });
+
             if (!result.ok) {
                 vscode.window.showErrorMessage(`[SYNAPSE] Edge deletion blocked: ${result.verdict.reasons?.join(', ')}`);
+                this._panel.webview.postMessage({ command: 'edgeDeletedSource', edgeId, success: false });
                 return;
             }
 
             // 2. Persistence
             const finalState = canvasEngine.getFinalSnapshot();
-            const normalizedJson = this.normalizeProjectState(finalState);
-            await vscode.workspace.fs.writeFile(projectStateUri, Buffer.from(normalizedJson, 'utf8'));
+            await this.handleSaveState(finalState);
 
-            // 3. 소스 코드 동기화 (Hibernate 로직)
-            const refactorer = new EdgeCodeRefactorer();
-            const nodesArr = Object.values(finalState.nodes);
-            const fromNode = nodesArr.find((n: any) => n.id === from);
-            const toNode = nodesArr.find((n: any) => n.id === to);
+            // 3. UI 갱신 브로드캐스트
+            this._panel.webview.postMessage({ command: 'edgeDeletedSource', edgeId, success: true });
+            this._panel.webview.postMessage({ command: 'deleteEdge', id: edgeId });
             
-            if (fromNode?.filePath && toNode?.filePath) {
-                const refactorResult = refactorer.removeEdgeFromSource(fromNode.filePath, toNode.filePath, workspaceFolder.uri.fsPath, toNode.id);
-                console.log(`[SYNAPSE] Source refactor result:`, refactorResult.message);
-            }
-
             vscode.window.setStatusBarMessage(`Edge deleted via pipeline`, 3000);
             await this.handleTakeSnapshot({ label: `Auto Backup (After Edge Deletion)` });
-            // await this.sendProjectState(false, true); // [v0.3.30] Prevent UI overwrite that deletes client nodes
 
         } catch (error) {
-            console.error('Failed to delete edge:', error);
+            console.error('Failed to execute edge deletion transaction:', error);
             vscode.window.showErrorMessage(`Failed to delete edge: ${error}`);
+            this._panel.webview.postMessage({ command: 'edgeDeletedSource', edgeId, success: false });
         }
     }
 
@@ -3907,8 +3704,8 @@ export class CanvasPanel {
         }
 
         // STEP 2: Memory Flush - 익스텐션 호스트 내 상태 변수 초기화
-        // (sendProjectState는 파일을 다시 읽으므로 별도 초기화 불필요, 파일이 이미 비어있음)
-        Logger.info('[CanvasPanel] STEP 2: Memory Flush complete (state will be re-read from empty file).');
+        canvasEngine.loadInitialState(emptyState);
+        Logger.info('[CanvasPanel] STEP 2: Memory Flush complete.');
 
         // STEP 3: Visual Reset - 웹뷰에 RESET_CANVAS 신호 전송
         this._panel.webview.postMessage({ command: 'resetCanvas' });
@@ -5046,7 +4843,7 @@ export class CanvasPanel {
 
             this._panel.webview.postMessage({
                 command: 'projectState',
-                data: projectState,
+                data: { ...projectState, _ipcTimestamp: Date.now() }, // [v0.3.33 Phase 0] Baseline: IPC send timestamp
                 workspaceFolder: workspaceFolder.uri.fsPath,
                 forceReset: forceReset,
                 isAuthoritative: isAuthoritative // 🔥 [v0.3.11] Interaction Bypass

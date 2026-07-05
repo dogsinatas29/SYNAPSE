@@ -25,6 +25,7 @@ import { CanvasPanel } from './webview/CanvasPanel';
 import { BootstrapEngine } from './bootstrap/BootstrapEngine';
 import { LogicAnalyzer } from './core/LogicAnalyzer';
 import { GeminiParser } from './core/GeminiParser';
+import { BenchmarkHarness } from './core/benchmark/BenchmarkHarness';
 
 
 
@@ -216,6 +217,29 @@ export async function activate(context: vscode.ExtensionContext) {
         );
 
         context.subscriptions.push(
+            vscode.commands.registerCommand('synapse.runBenchmark', async () => {
+                const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+                if (!workspaceFolder) {
+                    vscode.window.showErrorMessage('Please open a workspace folder to run benchmark.');
+                    return;
+                }
+                
+                // Ensure Canvas is open
+                CanvasPanel.createOrShow(context, workspaceFolder);
+                const panel = CanvasPanel.currentPanel;
+                if (!panel) return;
+                
+                vscode.window.showInformationMessage('Starting SYNAPSE Performance Benchmark Suite... Please do not interact with the Canvas.');
+                try {
+                    await BenchmarkHarness.runSuite(panel, workspaceFolder.uri.fsPath);
+                    vscode.window.showInformationMessage('SYNAPSE Benchmark Suite Completed! See benchmark/latest.md');
+                } catch (e: any) {
+                    vscode.window.showErrorMessage(`Benchmark Failed: ${e.message}`);
+                }
+            })
+        );
+
+        context.subscriptions.push(
             vscode.commands.registerCommand('synapse.openRules', async () => {
                 const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
                 if (workspaceFolder) {
@@ -377,13 +401,22 @@ export async function activate(context: vscode.ExtensionContext) {
                     const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
                     if (!config.blacklist) config.blacklist = { folders: [], files: [] };
                     
+                    let isAdded = false;
                     if (isDir) {
-                        if (!config.blacklist.folders.includes(relPath)) {
+                        const idx = config.blacklist.folders.indexOf(relPath);
+                        if (idx !== -1) {
+                            config.blacklist.folders.splice(idx, 1);
+                        } else {
                             config.blacklist.folders.push(relPath);
+                            isAdded = true;
                         }
                     } else {
-                        if (!config.blacklist.files.includes(relPath)) {
+                        const idx = config.blacklist.files.indexOf(relPath);
+                        if (idx !== -1) {
+                            config.blacklist.files.splice(idx, 1);
+                        } else {
                             config.blacklist.files.push(relPath);
+                            isAdded = true;
                         }
                     }
 
@@ -397,7 +430,11 @@ export async function activate(context: vscode.ExtensionContext) {
                         await CanvasPanel.currentPanel.refreshState();
                     }
 
-                    vscode.window.showInformationMessage(`🚫 SYNAPSE: Added to Blacklist and refreshed view: ${relPath}`);
+                    if (isAdded) {
+                        vscode.window.showInformationMessage(`🚫 SYNAPSE: Added to Blacklist and refreshed view: ${relPath}`);
+                    } else {
+                        vscode.window.showInformationMessage(`✅ SYNAPSE: Removed from Blacklist and refreshed view: ${relPath}`);
+                    }
                 } catch (e) {
                     vscode.window.showErrorMessage(`Failed to update blacklist: ${e}`);
                 }

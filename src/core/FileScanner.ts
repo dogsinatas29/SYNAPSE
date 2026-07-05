@@ -1,16 +1,10 @@
 import * as fs from 'fs';
 import * as path from 'path';
-
-export interface CodeSummary {
-    classes: string[];
-    functions: string[];
-    references: { target: string, type: string, nodeId?: string, isApproved?: boolean, fullPath?: string }[]; 
-    package?: string;
-    hasAtomicSignature?: boolean; // 🧬 Pre-computed Sovereign Marker
-    hasImportSignature?: boolean; // 🧪 Pre-computed Connection Marker
-}
-
 import { Logger } from '../utils/Logger';
+import { ScannerRegistry } from './ScannerRegistry';
+import { CodeSummary } from '../types/schema';
+
+export { CodeSummary };
 
 export class FileScanner {
     private static cache: Map<string, { summary: CodeSummary, mtime: number }> = new Map();
@@ -80,26 +74,32 @@ export class FileScanner {
 
             const ext = path.extname(filePath);
 
-            if (ext === '.py') {
-                this.parsePython(content, summary);
-            } else if (['.ts', '.js'].includes(ext)) {
-                this.parseJavaScript(content, summary);
-            } else if (['.cpp', '.h', '.c', '.hpp', '.cc'].includes(ext)) {
-                this.parseCpp(content, summary);
-            } else if (ext === '.rs') {
-                this.parseRust(content, summary);
-            } else if (ext === '.sh') {
-                this.parseShell(content, summary);
-            } else if (ext === '.sql') {
-                this.parseSql(content, summary);
-            } else if (['.json', '.yaml', '.yml', '.toml'].includes(ext)) {
-                this.parseConfig(content, summary);
-            } else if (ext === '.md') {
-                this.parseMarkdown(content, summary);
-            } else if (ext === '.java') {
-                this.parseJava(content, summary);
-            } else if (['.kt', '.kts'].includes(ext)) {
-                this.parseKotlin(content, summary);
+            // [v0.3.32.4] Delegate to ScannerRegistry for language-specific parsing
+            const delegated = ScannerRegistry.getInstance().scan(ext, content, summary);
+            
+            // Fallback to built-in parsers if no scanner handled it
+            if (!delegated) {
+                if (ext === '.py') {
+                    this.parsePython(content, summary);
+                } else if (['.ts', '.js'].includes(ext)) {
+                    this.parseJavaScript(content, summary);
+                } else if (['.cpp', '.h', '.c', '.hpp', '.cc'].includes(ext)) {
+                    this.parseCpp(content, summary);
+                } else if (ext === '.rs') {
+                    this.parseRust(content, summary);
+                } else if (ext === '.sh') {
+                    this.parseShell(content, summary);
+                } else if (ext === '.sql') {
+                    this.parseSql(content, summary);
+                } else if (['.json', '.yaml', '.yml', '.toml'].includes(ext)) {
+                    this.parseConfig(content, summary);
+                } else if (ext === '.md') {
+                    this.parseMarkdown(content, summary);
+                } else if (ext === '.java') {
+                    this.parseJava(content, summary);
+                } else if (['.kt', '.kts'].includes(ext)) {
+                    this.parseKotlin(content, summary);
+                }
             }
 
             // [v0.3.32.2] Diagnostic: Import extraction proof
@@ -327,21 +327,33 @@ export class FileScanner {
                 }
             }
 
-            // JS/TS 임포트 (references, import type 지원) - [v0.3.21] Support multiline imports
-            const importRegex = /(?:import|require)\s+(?:type\s+)?(?:[\s\S]*?from\s+)?['"]([^'"`${}]+)['"]|import\s*\(\s*['"]([^'"`${}]+)['"]\s*\)/g;
-            while ((match = importRegex.exec(content)) !== null) {
-                const ref = match[1] || match[2];
-                if (ref) {
-                    if (ref.includes('${') || ref.length > 100) continue;
+            // JS/TS 임포트 (references, import type 지원) - 줄 단위 파싱
+            const lines = content.split('\n');
+            for (const line of lines) {
+                const trimmed = line.trim();
+                if (!trimmed) continue;
 
-                    // [v0.3.21] Robust path cleaning: extract filename stem for both relative and absolute-style imports
-                    const cleanRef = path.basename(ref, path.extname(ref));
-                    if (cleanRef && !['react', 'vscode', 'path', 'fs', 'os', 'child_process'].includes(cleanRef) && !summary.references.some(r => r.target === cleanRef)) {
-                        let type = 'dependency';
-                        if (cleanRef.match(/api|http|fetch|axios/i)) type = 'api_call';
-                        else if (cleanRef.match(/db|sql|database|query/i)) type = 'db_query';
+                const isCommented = trimmed.startsWith('//') || trimmed.startsWith('/*');
+                const isPendingOrDeleted = /\[SYNAPSE_(?:PENDING|DELETED)/.test(line);
 
-                        summary.references.push({ target: cleanRef, type });
+                if (isCommented && !isPendingOrDeleted) continue;
+
+                // import * as X from 'Y', import { X } from 'Y', require('Y')
+                const importMatch = trimmed.match(/(?:(?:#|\/\/|\/\*)\s*)?(?:\[SYNAPSE(?:_PENDING|_DELETED)?:?([^\]]*)\]\s*)?(?:import\s+(?:type\s+)?[^'"`]+from\s+['"]([^'"`${}]+)['"]|import\s*\(\s*['"]([^'"`${}]+)['"]\s*\)|require\s*\(\s*['"]([^'"`${}]+)['"]\s*\))/);
+                
+                if (importMatch) {
+                    const nodeId = importMatch[1] || undefined;
+                    const ref = importMatch[2] || importMatch[3] || importMatch[4];
+                    
+                    if (ref && !ref.includes('${') && ref.length <= 100) {
+                        const cleanRef = path.basename(ref, path.extname(ref));
+                        if (cleanRef && !['react', 'vscode', 'path', 'fs', 'os', 'child_process'].includes(cleanRef) && !summary.references.some(r => r.target === cleanRef)) {
+                            let type = 'dependency';
+                            if (cleanRef.match(/api|http|fetch|axios/i)) type = 'api_call';
+                            else if (cleanRef.match(/db|sql|database|query/i)) type = 'db_query';
+
+                            summary.references.push({ target: cleanRef, type, nodeId, isApproved: !isPendingOrDeleted });
+                        }
                     }
                 }
             }

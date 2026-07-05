@@ -275,6 +275,30 @@ The logic of clients connected to the network is also included in the flow view.
 
 ---
 
+## 📂 Cluster Visibility
+
+SYNAPSE provides a **Cluster Visibility Panel** to effectively manage massive architectures. It offers a file-explorer-like hierarchical view to grasp and control complex folder (cluster) structures at a glance.
+
+![Cluster Visibility](assets/cluster_visibility.png)
+
+### 1. Intuitive Hierarchy & Recursive Counting
+The visibility panel reflects your project's actual folder structure. The number next to a folder indicates the **accumulated total of all nodes (files)** contained within it and all its subfolders. You can instantly know how many components are inside a module just by looking at the top-level folder.
+
+![Cluster Fold](assets/cluster_fold.png)
+
+### 2. Cascade Visibility Toggling
+You can toggle the visibility of specific folders using the checkboxes. When you toggle a parent folder, **the visibility state automatically cascades to all its descendant folders**. This allows you to hide or reveal massive modules containing hundreds of nodes with a single click.
+
+### 3. Real-time REVEAL Navigation
+Clicking the `→` (REVEAL) button next to a folder smoothly navigates the canvas camera directly to where its nodes are clustered. Even if you have manually dragged nodes around, it **tracks the real-time physics coordinates** and centers them perfectly on your screen.
+
+### 4. Network Attached Client Identification
+Clusters created by clients connected to the network are clearly distinguished in the visibility panel. The system automatically prepends the client's account name (e.g., `[username]`) to their cluster names, keeping remote namespaces perfectly isolated and easily identifiable.
+
+![Network Attached Cluster](assets/network_attached_cluster.png)
+
+---
+
 ## 🌾 Harvest
 
 Harvest is a snapshot-based collection system where the Architect (Server) safely collects the work results of collaboration participants.
@@ -460,17 +484,17 @@ SYNAPSE was created to overcome the limitations of code-centric development. It 
 
 ---
 
-## 🆕 Revision History
+## 📜 Revision History
 
-| Version | Date | Description |
-| :--- | :--- | :--- |
-| **v0.3.32.3** | 2026-07-03 | **Viewport Culling & LOD Optimization**: Introduced O(1) viewport culling across all major canvas draw paths (`renderNodes2D`, `renderEdges2D`, `renderClusters`, `renderGhostNodes`). Off-screen elements are now skipped before any Canvas API call, reducing render CPU time by ~90% under large graph loads. Added Fallback LOD: when zoom ≤ 0.35 and edge count exceeds 2,000 with no bundle edges, physical edge rendering is skipped to prevent frame drops. Improved Satellite View (zoom < 0.2) to render nodes as colored dots instead of grey rectangles. **Benchmark validation (138s profiling):** Main Thread Active Time: 4.37s / CPU Utilization: 3.2%. FPS: 80–100 at 500–3,000 nodes; ~55 FPS at 5,000 nodes / 20,000 edges. |
+| Version | Release Date | Description |
+| :---: | :---: | :--- |
+| **v0.3.32.4** | 2026-07-05 | **UX & Visibility Improvements**: Added recursive node counting and cascade toggling to the Cluster Visibility panel. Fixed real-time coordinate tracking for the REVEAL feature, completely isolated remote client namespaces with `👤 [username]` labels, and patched a major memory leak during State Reset. |
+| **v0.3.32.1** | 2026-06-27 | **Cross-Network Trace & Semantic Flowchart**: Improved flowchart rendering quality (single-pass Barycenter ordering, red dotted back-edges). Implemented `[SYNAPSE_NETWORK_LINK]` macro for cross-project dependency parsing bypassing language syntax limits. Fixed IFF logic for remote client nodes and proved distributed DAG merging via Harvest. |
 | **v0.3.32.2** | 2026-06-29 | **File Deletion Sync & Architecture Physics Fixes**: Fixed manual node deletion sync bug, safely handling absolute vs relative paths. Expanded `EXTERNAL_PACKAGES` to recognize 100+ standard frameworks across 7 languages, eliminating false ghost nodes. Enhanced regex to properly resolve `[SYNAPSE_NETWORK_LINK]` cross-workspace dependencies and cluster remote ghosts into `cluster_ghost_network_remote`. Fixed root-level files infinite layout collapse by injecting a dynamic `📁 Root` cluster to force global physics packing. Resolved false-positive JSON serialization errors for workspace states. |
 | **v0.3.32.1** | 2026-06-27 | **Cross-Project Trace & Semantic Flow Layout**: Upgraded Flow View to Semantic Flow Layout with single-pass Barycenter Ordering, drastically reducing edge crossings. Visualized back-edges in red dashed lines. Introduced `[SYNAPSE_NETWORK_LINK]` for universal language-agnostic cross-network dependency parsing. Fixed client node mirroring (IFF logic) to distinguish local vs remote client nodes. Proved distributed architecture collaboration via Harvest DAG merge within Flow View. |
 | **v0.3.32** | 2026-06-26 | **Collaboration Flow Visibility**: Fixed ghost filter collision that made 100% of client-contributed nodes invisible in Flow View. Client nodes now bypass `!isGhost` filter, controlled by `_isClientLayerVisible()` toggle. Fixed `reasons` ReferenceError that silently crashed `buildFlow()` when client nodes were present. Unified client node detection filters across debug/survival/flow logic. Contribution Entity Graph Phase 0 validated: `(filePath, userId)` confirmed as canonical identity. |
 | **v0.3.31** | 2026-06-25 | **Diagnostics Stabilization & Observability**: Fixed false-positive Necrosis from `doc`/`file`/`folder` nodes. Normalized Pressure calculation to `criticalIssues / totalNodes`. Excluded Ghost Cluster (`cluster_ghosts`, `doc_shelf`) from dependency hints. Added `clientTimestamp`-based Stale opacity visualization (Active/Stale/Offline). Tooltip now shows `"[username] Updated Xm ago"`. Soft Disconnect with 15-minute cache retention for post-crash debugging. |
 | **v0.3.30.2** | 2026-06-25 | **Security Hardening & Harvest Stabilization**: Verified 6 critical attack vectors (Path Traversal, Auth Bypass, SSE Contamination, Lock Bypass, Sandbox Escape, Client Spoofing). Fixed port binding conflict & 403 Auth error on Admin UI. Implemented backward compatibility for legacy array-formatted `accounts.json` and `synapse_history.json` to prevent `unshift` crash during Harvest. |
-| **v0.3.30.1** | 2026-06-22 | **UI/UX Refinement & Feature Cleanup**: Implemented Tooltip Merge Logic to resolve Z-Index bleeding when hovering overlapping nodes and edges. Disabled problematic Tree View mode to align with graph-centric architecture. |
 | **v0.3.30** | 2026-06-22 | **Harvest-Based Collaboration Model**: Major architecture upgrade introducing session management, secure SSH transport, and remote projection layers. Full integration of Harvest Engine and Identity permissions. |
 | **v0.3.29** | 2026-06-06 | **Cluster Overlap Resolution & External Layer Fix**: Implemented Initial Spread (circular layout via FNV-1a hash) + Cluster Push-Apart engine (Mass-weighted AABB push-apart) to resolve cluster/node overlapping. Fixed External Ghosts cluster box not showing when External layer is ON. Reduced Align Architecture cluster expansion by 50% (roleOffsets halved). |
 | **v0.3.27** | 2026-05-28 | **Data Sync Resilience & Layer Sovereignty**: Resolved critical data synchronization bugs causing phantom edge disappearances (`Edges: 0`). Ensured UI layer separation logic properly isolates scanned folders and custom groupings without structural damage. |

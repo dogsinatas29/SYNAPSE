@@ -94,8 +94,14 @@ export class LogicAnalyzer {
     }
 
     private detectIsolatedNodes(nodes: Node[], edges: Edge[], issues: AnalysisIssue[]) {
+        const connectedIds = new Set<string>();
+        for (const edge of edges) {
+            connectedIds.add(edge.from);
+            connectedIds.add(edge.to);
+        }
+
         nodes.forEach(node => {
-            const hasEdge = edges.some(e => e.from === node.id || e.to === node.id);
+            const hasEdge = connectedIds.has(node.id);
             if (!hasEdge && (node.type as any) !== 'cluster' && (node.type as any) !== 'documentation') {
                 issues.push({
                     type: 'isolated',
@@ -169,8 +175,11 @@ export class LogicAnalyzer {
             if (!visited.has(n.id)) findCycles(n.id, []);
         });
 
+        const nodeMap = new Map<string, Node>();
+        nodes.forEach(n => nodeMap.set(n.id, n));
+
         cycles.forEach(cycle => {
-            const labels = cycle.map(id => nodes.find(n => n.id === id)?.data!.label || id);
+            const labels = cycle.map(id => nodeMap.get(id)?.data!.label || id);
             issues.push({
                 type: 'circular',
                 severity: 'critical',
@@ -181,18 +190,24 @@ export class LogicAnalyzer {
     }
 
     private detectDeadEnds(nodes: Node[], edges: Edge[], issues: AnalysisIssue[]) {
+        const incomingSet = new Set<string>();
+        const outgoingSet = new Set<string>();
+        
+        edges.forEach(e => {
+            incomingSet.add(e.to);
+            outgoingSet.add(e.from);
+        });
+
         nodes.forEach(node => {
-            if (node.type === 'cluster' || node.type === 'external' || node.type === 'documentation') return;
+            const hasIncoming = incomingSet.has(node.id);
+            const hasOutgoing = outgoingSet.has(node.id);
 
-            const outgoing = edges.filter(e => e.from === node.id);
-            const incoming = edges.filter(e => e.to === node.id);
-
-            if (incoming.length > 0 && outgoing.length === 0) {
+            if (hasIncoming && !hasOutgoing) {
                 if (node.data!.layer !== undefined && node.data!.layer > 0) {
                     issues.push({
                         type: 'dead-end',
-                        severity: 'high',
-                        message: `로직 단절(Dead-end): '${node.data!.label}'에서 더 이상 진행되는 흐름이 없습니다.`,
+                        severity: 'medium',
+                        message: `노드 ${node.data!.label || node.id}에서 나가는 흐름이 끊겼습니다. (Dead end)`,
                         nodeIds: [node.id]
                     });
                 }
@@ -201,18 +216,23 @@ export class LogicAnalyzer {
     }
 
     private detectBottlenecks(nodes: Node[], edges: Edge[], issues: AnalysisIssue[]) {
-    nodes.forEach(node => {
-        const incoming = edges.filter(e => e.to === node.id);
-        if (incoming.length >= 5) {
-            issues.push({
-                type: 'bottleneck',
-                severity: 'medium',
-                message: `병목 지점 의심: '${node.data!.label}'에 ${incoming.length}개의 의존성이 집중되어 있습니다.`,
-                nodeIds: [node.id]
-            });
-        }
-    });
-}
+        const incomingCount = new Map<string, number>();
+        edges.forEach(e => {
+            incomingCount.set(e.to, (incomingCount.get(e.to) || 0) + 1);
+        });
+
+        nodes.forEach(node => {
+            const count = incomingCount.get(node.id) || 0;
+            if (count >= 5) {
+                issues.push({
+                    type: 'bottleneck',
+                    severity: 'medium',
+                    message: `병목 지점 의심: '${node.data!.label || node.id}'에 ${count}개의 의존성이 집중되어 있습니다.`,
+                    nodeIds: [node.id]
+                });
+            }
+        });
+    }
 
     /**
      * 분석 결과를 바탕으로 리포트 생성
@@ -315,9 +335,12 @@ export class LogicAnalyzer {
 
     const bypassRegex = new RegExp(`//\\s*${exceptions.bypass_keyword}`);
 
+    const nodeMap = new Map<string, Node>();
+    nodes.forEach(n => nodeMap.set(n.id, n));
+
     edges.forEach(edge => {
-        const sourceNode = nodes.find(n => n.id === edge.from);
-        const targetNode = nodes.find(n => n.id === edge.to);
+        const sourceNode = nodeMap.get(edge.from);
+        const targetNode = nodeMap.get(edge.to);
 
         if (!sourceNode || !targetNode) return;
 
@@ -460,9 +483,17 @@ export class LogicAnalyzer {
 }
 
     private detectV0321Hints(nodes: Node[], edges: Edge[], issues: AnalysisIssue[]) {
+        const incomingCount = new Map<string, number>();
+        const outgoingCount = new Map<string, number>();
+
+        edges.forEach(e => {
+            incomingCount.set(e.to, (incomingCount.get(e.to) || 0) + 1);
+            outgoingCount.set(e.from, (outgoingCount.get(e.from) || 0) + 1);
+        });
+
     nodes.forEach(node => {
-        const outgoing = edges.filter(e => e.from === node.id).length;
-        const incoming = edges.filter(e => e.to === node.id).length;
+        const outgoing = outgoingCount.get(node.id) || 0;
+        const incoming = incomingCount.get(node.id) || 0;
         const connections = outgoing + incoming;
 
         // 1. Super Node: connections > 10 (threshold)
@@ -496,17 +527,19 @@ export class LogicAnalyzer {
         }
     });
 
-    // 4. Cluster Dependency Overload (Strong dependency between clusters)
     const flowMap = new Map<string, number>();
     const clusterOutCount = new Map<string, number>();
 
+    const nodeMap = new Map<string, Node>();
+    nodes.forEach(n => nodeMap.set(n.id, n));
+
     edges.forEach(edge => {
-        const src = nodes.find(n => n.id === edge.from);
-        const tgt = nodes.find(n => n.id === edge.to);
+        const src = nodeMap.get(edge.from);
+        const tgt = nodeMap.get(edge.to);
         if (src && tgt && src.data!.cluster_id && tgt.data!.cluster_id && src.data!.cluster_id !== tgt.data!.cluster_id) {
             const key = `${src.data!.cluster_id}->${tgt.data!.cluster_id}`;
-            flowMap.set(key, (flowMap.get(key) || 0) + 1);
             clusterOutCount.set(src.data!.cluster_id, (clusterOutCount.get(src.data!.cluster_id) || 0) + 1);
+            flowMap.set(key, (flowMap.get(key) || 0) + 1);
         }
     });
 

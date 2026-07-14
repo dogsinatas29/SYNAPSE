@@ -212,6 +212,7 @@
         "cors": "^2.8.6",
         "express": "^5.2.1",
         "protobufjs": "^8.0.0",
+        "rbush": "^4.0.1",
         "sqlite3": "^5.1.7",
         "vscode-languageclient": "^9.0.1",
         "vscode-languageserver": "^9.0.1",

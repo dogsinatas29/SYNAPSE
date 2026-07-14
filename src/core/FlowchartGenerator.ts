@@ -102,7 +102,6 @@ export class FlowchartGenerator {
         // 4. 노드 생성 및 클러스터 할당
         const clusterSpacingX = 400;
         const clusterSpacingY = 400;
-        const clusterCols = Math.ceil(Math.sqrt(Math.max(clusters.filter(c => !c.parent_id).length, 1)));
 
         let topClusterIdx = 0;
         const directoryGroups = new Map<string, typeof structure.files>();
@@ -112,6 +111,8 @@ export class FlowchartGenerator {
             group.push(file);
             directoryGroups.set(dir, group);
         });
+
+        const clusterCols = Math.ceil(Math.sqrt(Math.max(directoryGroups.size, 1)));
 
         // Handle Project Root (No longer a cluster frame)
         const rootFiles = directoryGroups.get('.') || [];
@@ -132,16 +133,23 @@ export class FlowchartGenerator {
             const clusterX = (topClusterIdx % clusterCols) * clusterSpacingX;
             const clusterY = Math.floor(topClusterIdx / clusterCols) * clusterSpacingY;
 
-            const numFiles = files!.length;
-            const cols = Math.max(1, Math.ceil(Math.sqrt(numFiles)));
-
             files!.forEach((file, idx) => {
                 const hints = getVisualHints(file.path);
                 if (file.type === 'documentation') {
                     const node = this.createNode(file.path, file.type, file.description, -200 + (idx % 4) * 160, 1100 + Math.floor(idx / 4) * 80, hints.layer, hints.priority, 'doc_shelf', (file as any).intelligence);
                     nodes.push(node);
                 } else {
-                    const node = this.createNode(file.path, file.type, file.description, clusterX + (idx % cols) * 160 + 30, clusterY + Math.floor(idx / cols) * 80 + 80, hints.layer, hints.priority, clusterId, (file as any).intelligence);
+                    const level = ranks.get(file.path) || 1;
+                    const nodesAtLevel = files!.filter(f => (ranks.get(f.path) || 1) === level).length;
+                    const indexInLevel = files!.filter(f => (ranks.get(f.path) || 1) === level).indexOf(file);
+                    const MAX_COLUMNS = 10;
+                    const row = Math.floor(indexInLevel / MAX_COLUMNS);
+                    const col = indexInLevel % MAX_COLUMNS;
+                    
+                    const x = clusterX + (level - 1) * 300 + col * 200;
+                    const y = clusterY + row * 100 - (Math.floor(nodesAtLevel / MAX_COLUMNS) * 50);
+
+                    const node = this.createNode(file.path, file.type, file.description, x, y, hints.layer, hints.priority, clusterId, (file as any).intelligence);
                     nodes.push(node);
                     if (cluster) cluster.children!.push(node.id);
                 }
@@ -167,6 +175,9 @@ export class FlowchartGenerator {
                 edges.push(edge);
             }
         });
+
+        // [v0.3.33 Phase B] Coordinate Provenance
+        { let mnX=Infinity,mxX=-Infinity,mnY=Infinity,mxY=-Infinity; for(const n of nodes){const p=n.position;if(p){if(p.x<mnX)mnX=p.x;if(p.x>mxX)mxX=p.x;if(p.y<mnY)mnY=p.y;if(p.y>mxY)mxY=p.y}} Logger.info(`[BACKEND_LAYOUT] nodes=${nodes.length} minX=${mnX} maxX=${mxX} minY=${mnY} maxY=${mxY}`); if(mxY>100000){const big=[];for(const n of nodes){if(n.position&&n.position.y>100000){big.push({id:n.id,label:n.data?.label,y:n.position.y});if(big.length>=20)break}} Logger.info(`[BACKEND_LAYOUT] topHighY=${JSON.stringify(big)}`)} }
 
         // [v0.3.32.2] Diagnostic: FlowGenerator Edge Tracking
         Logger.info(`[FLOW_DEBUG] FlowchartGenerator Phase D diagnostic`);

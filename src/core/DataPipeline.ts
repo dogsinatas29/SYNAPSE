@@ -187,6 +187,9 @@ export class DataPipeline {
     const continentMap = layoutResult.continentMap;
     const clusterNodes = new Map<string, Node[]>(Array.from(layoutResult.clusterNodes.entries()).map(([k, v]) => [k, [...v]]));
     const activeClusters = layoutResult.activeClusters;
+
+    // [v0.3.33 Phase B] Backend coordinate provenance
+    { let mnY=Infinity,mxY=-Infinity; for(const n of nodes){const y=n.position?.y;if(typeof y==='number'&&Number.isFinite(y)){if(y<mnY)mnY=y;if(y>mxY)mxY=y}} const maxY=mxY; Logger.info(`[BACKEND_LAYOUT] nodeCount=${nodes.length} minY=${mnY} maxY=${maxY}`); if(maxY>100000){const offenders=[];for(const n of nodes){if(n.position&&typeof n.position.y==='number'&&n.position.y>100000){offenders.push({id:n.id?.substring(0,40),label:n.data?.label,y:Math.round(n.position.y)});if(offenders.length>=20)break}} Logger.info(`[BACKEND_LAYOUT_OFFENDERS] ${JSON.stringify(offenders)}`)} }
     
     Logger.info(`[FLOW_DEBUG] symbol resolved ${symbolResolvedCount} unresolved ${unresolvedCount}`);
     Logger.info(`[FLOW_DEBUG] pipeline exit nodes ${nodes.length} edges ${edges.length}`);

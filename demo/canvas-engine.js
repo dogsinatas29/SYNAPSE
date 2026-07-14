@@ -452,6 +452,10 @@ class FlowRenderer {
         const levels = {}; // stepId -> level
 
         // 1. Calculate In-degree and Adjacency List
+        // [PERF] Adjacency receives edges from step connections (derived from global edges).
+        // For accurate tracking against Phase 2, we log the engine's edge count that drove this flow.
+        console.log(`[PERF] AdjacencyInputEdges: ${this.edges ? this.edges.length : 0}`);
+
         const inDegree = {};
         const adj = {};
         flow.steps.forEach(step => {
@@ -1517,6 +1521,41 @@ class TreeRenderer {
     }
 }
 
+// [v0.3.33 Phase 1] ViewStrategy Foundation
+// View와 Calculation을 분리하기 위한 전략 열거형.
+// 현재는 상태만 보관. 동작 분기는 Phase 3~5에서 구현.
+const ViewStrategy = Object.freeze({
+    Density:   'density',   // Node만 로드, Edge 생략 (대규모 초기 뷰)
+    Focus:     'focus',     // 선택 노드 Neighborhood만 표시
+    FullGraph: 'fullgraph'  // 전체 그래프 (현재 동작과 동일)
+});
+
+// [v0.3.33 Phase 2] MaterializationPolicy
+class MaterializationPolicy {
+    shouldMaterializeNode(node) { return true; }
+    shouldMaterializeEdge(edge) { return true; }
+}
+
+class DensityPolicy extends MaterializationPolicy {
+    shouldMaterializeEdge(edge) { return false; }
+}
+
+class FocusPolicy extends MaterializationPolicy {
+    // Focus skips nodes not in neighborhood (placeholder for now)
+}
+
+class FullGraphPolicy extends MaterializationPolicy {}
+
+class PolicyFactory {
+    static create(strategy) {
+        switch(strategy) {
+            case ViewStrategy.Density: return new DensityPolicy();
+            case ViewStrategy.Focus: return new FocusPolicy();
+            default: return new FullGraphPolicy();
+        }
+    }
+}
+
 class CanvasEngine {
     constructor(canvasId) {
         this.canvas = document.getElementById(canvasId);
@@ -1624,6 +1663,10 @@ class CanvasEngine {
 
         // 모드 및 렌더러
         this.currentMode = 'graph'; // 'graph' | 'tree' | 'flow'
+
+        // [v0.3.33 Phase 1] ViewStrategy — 현재는 FullGraph 고정. Phase 3에서 분기 구현.
+        this.viewStrategy = ViewStrategy.FullGraph;
+
         this.treeRenderer = new TreeRenderer(this);
         this.treeData = [];
         this.flowRenderer = new FlowRenderer(this);
@@ -1661,6 +1704,10 @@ class CanvasEngine {
 
         // 전역 엔진 등록
         window.engine = this;
+        self.engine = this;
+        globalThis.engine = this;
+        console.log('[perf_engine]', 'expose', typeof window, typeof globalThis, typeof self);
+        console.log('[perf_engine]', 'engine_exposed', !!window.engine, !!globalThis.engine);
 
         // [Remote Logging Bridge]
         this.log = (text, level = 'info', data = null) => {
@@ -2096,6 +2143,12 @@ class CanvasEngine {
             }
             if (btnEditLogic) {
                 btnEditLogic.textContent = `Turn ${this.isEditMode ? 'OFF' : 'ON'} Edit Mode`;
+            }
+            if (typeof window.vscode !== 'undefined') {
+                vscode.postMessage({
+                    command: 'setEditLogicMode',
+                    enabled: this.isEditMode
+                });
             }
 
             if (this.isEditMode) {
@@ -3109,19 +3162,20 @@ class CanvasEngine {
             // 엣지 생성 모드
             if (this.isCreatingEdge) {
                 this.edgeCurrentPos = worldPos;
-                // 타겟 감지
-                const targetHandle = this.getConnectionHandleAt(worldPos.x, worldPos.y);
-                const targetNode = this.getNodeAt(worldPos.x, worldPos.y);
-                const targetCluster = this.getClusterAt(worldPos.x, worldPos.y);
+                if (!this.isEdgeMenuOpen) {
+                    const targetHandle = this.getConnectionHandleAt(worldPos.x, worldPos.y);
+                    const targetNode = this.getNodeAt(worldPos.x, worldPos.y);
+                    const targetCluster = this.getClusterAt(worldPos.x, worldPos.y);
 
-                if (targetHandle) {
-                    this.edgeTarget = targetHandle;
-                } else if (targetNode) {
-                    this.edgeTarget = { type: 'node', id: targetNode.id };
-                } else if (targetCluster) {
-                    this.edgeTarget = { type: 'cluster', id: targetCluster.id };
-                } else {
-                    this.edgeTarget = null;
+                    if (targetHandle) {
+                        this.edgeTarget = targetHandle;
+                    } else if (targetNode) {
+                        this.edgeTarget = { type: 'node', id: targetNode.id };
+                    } else if (targetCluster) {
+                        this.edgeTarget = { type: 'cluster', id: targetCluster.id };
+                    } else {
+                        this.edgeTarget = null;
+                    }
                 }
                 return;
             }
@@ -3201,6 +3255,7 @@ class CanvasEngine {
                     this.edgeTarget.id !== this.edgeSource.id) {
                     this.showEdgeTypeSelector(e.clientX, e.clientY);
                 } else {
+                    this.isCreatingEdge = false;
                     this.edgeSource = null;
                     this.edgeTarget = null;
                 }
@@ -3222,10 +3277,19 @@ class CanvasEngine {
                 }
 
                 for (const node of this.nodes) {
-                    // Check if node is hidden by a collapsed cluster
+                    // Check if node is hidden by a collapsed cluster or ancestor [v0.3.32.4]
                     if (node.cluster_id) {
                         const cluster = this.clusters.find(c => c.id === node.cluster_id);
                         if (cluster && cluster.collapsed) continue;
+                        if (cluster && cluster.parent_id) {
+                            let cur = cluster; let skip = false;
+                            while (cur && cur.parent_id) {
+                                const par = this.clusters.find(x => x.id === cur.parent_id);
+                                if (par && par.collapsed) { skip = true; break; }
+                                cur = par;
+                            }
+                            if (skip) continue;
+                        }
                     }
 
                     const nodeWidth = 120;
@@ -3597,10 +3661,21 @@ class CanvasEngine {
             const isSelected = this.selectedNodes.has(node);
             const HIT_PADDING = isSelected ? 15 : 0; // [v0.2.32] Extra 15px grab area for selected nodes
 
-            // Check if node is hidden (collapsed cluster)
+            // Check if node is hidden (collapsed cluster or ancestor collapsed) [v0.3.32.4]
             if (node.cluster_id) {
                 const cluster = this.clusters?.find(c => c.id === node.cluster_id);
                 if (cluster && cluster.collapsed) continue;
+                // Check ancestor collapsed
+                if (cluster && cluster.parent_id) {
+                    let cur = cluster;
+                    let hiddenByAncestor = false;
+                    while (cur && cur.parent_id) {
+                        const par = this.clusters.find(x => x.id === cur.parent_id);
+                        if (par && par.collapsed) { hiddenByAncestor = true; break; }
+                        cur = par;
+                    }
+                    if (hiddenByAncestor) continue;
+                }
             }
 
             if (!node.position) continue;
@@ -4029,6 +4104,7 @@ class CanvasEngine {
     }
 
     showEdgeTypeSelector(x, y) {
+        this.isEdgeMenuOpen = true;
 
         // 엣지 타입 선택 메뉴 생성
         const existingMenu = document.getElementById('edge-type-menu');
@@ -4066,6 +4142,7 @@ class CanvasEngine {
             item.onmouseenter = () => item.style.background = theme.UI.MENU.hover;
             item.onmouseleave = () => item.style.background = 'transparent';
             item.onclick = () => {
+                this.isEdgeMenuOpen = false;
                 this.createManualEdge(t.type, t.color);
                 menu.remove();
             };
@@ -4083,7 +4160,14 @@ class CanvasEngine {
         cancel.style.borderRadius = '4px';
         cancel.onmouseenter = () => cancel.style.background = '#504945';
         cancel.onmouseleave = () => cancel.style.background = 'transparent';
-        cancel.onclick = () => menu.remove();
+        cancel.onclick = () => {
+            this.isEdgeMenuOpen = false;
+            this.edgeSource = null;
+            this.edgeTarget = null;
+            this.isCreatingEdge = false;
+            this.render();
+            menu.remove();
+        };
         menu.appendChild(cancel);
 
         document.body.appendChild(menu);
@@ -4092,6 +4176,11 @@ class CanvasEngine {
         setTimeout(() => {
             const closeMenu = (e) => {
                 if (!menu.contains(e.target)) {
+                    this.isEdgeMenuOpen = false;
+                    this.edgeSource = null;
+                    this.edgeTarget = null;
+                    this.isCreatingEdge = false;
+                    this.render();
                     menu.remove();
                     document.removeEventListener('click', closeMenu);
                 }
@@ -4358,60 +4447,23 @@ class CanvasEngine {
             }
         };
 
-        this.edges.push(newEdge);
-        console.log('[SYNAPSE] Manual edge created:', newEdge);
-        if (this.flowRenderer) {
-            this.flowData = this.flowRenderer.buildFlow(this.nodes) || { steps: [] };
-        }
+        // [v0.3.32 SSoT Refactoring] 낙관적 업데이트(this.edges.push 등) 및 로컬 상태 변경 완전히 제거
+        // 오직 백엔드에 의도(Intent)만 전달하고, 백엔드의 성공 브로드캐스트를 기다립니다.
+        console.log('[SYNAPSE] Dispatching manual edge creation to backend:', newEdge);
 
-        // 백엔드에 저장
         if (typeof vscode !== 'undefined') {
             vscode.postMessage({
                 command: 'createManualEdge',
                 edge: newEdge
             });
-
-            // 🔍 즉시 아키텍처 검증 요청 (Phase 4)
-            const fromNode = this.nodes.find(n => n.id === newEdge.from);
-            const toNode = this.nodes.find(n => n.id === newEdge.to);
-            if (fromNode && toNode) {
-                vscode.postMessage({
-                    command: 'validateEdge',
-                    edge: newEdge,
-                    sourceStr: JSON.stringify(fromNode),
-                    targetStr: JSON.stringify(toNode)
-                });
-            }
-
-            // Move from Buffer to Reserved if applicable
-            if (fromNode && (fromNode.cluster_id === 'sys_cluster_buffer' || fromNode.data?.cluster_id === 'sys_cluster_buffer')) {
-                fromNode.cluster_id = 'sys_cluster_reserved';
-                if (fromNode.data) fromNode.data.cluster_id = 'sys_cluster_reserved';
-                // Send node update to backend if necessary
-                vscode.postMessage({
-                    command: 'updateNodeData',
-                    node: fromNode
-                });
-            }
-            if (toNode && (toNode.cluster_id === 'sys_cluster_buffer' || toNode.data?.cluster_id === 'sys_cluster_buffer')) {
-                toNode.cluster_id = 'sys_cluster_reserved';
-                if (toNode.data) toNode.data.cluster_id = 'sys_cluster_reserved';
-                vscode.postMessage({
-                    command: 'updateNodeData',
-                    node: toNode
-                });
-            }
         }
-
-        // [v0.3.09 Fix] Phase lock 이후로 지연하여 RENDER 단계 중 saveState 방지
-        setTimeout(() => this.saveState(), 100);
 
         // 엣지 생성 완료 후 상태 초기화
         this.edgeSource = null;
         // Persistent connect mode: don't clear target so we can connect from target to next? Actually, user wants continuous connect mode, so we keep mode active but reset source/target
         this.edgeTarget = null;
-
-        // Remove: this.isCreatingEdge = false; 
+        this.isCreatingEdge = false;
+        
         // Remove: document.getElementById('btn-connect')?.classList.remove('active');
         this.render();
     }
@@ -4569,21 +4621,29 @@ class CanvasEngine {
         }
     }
 
-    getSemanticGroup(node) {
+    // [v0.3.33 Phase 0 fix] clusterLayerMap 선택 사용 시 O(1), 미제공 시 clusters.find() O(C)
+    getSemanticGroup(node, clusterLayerMap) {
         if (!node) return 'unknown';
         
-        // Use cluster layer if available (v0.3.22.10: Data fallback for early-stats)
         const clusterId = node.cluster_id || (node.data && node.data.cluster_id);
         if (clusterId) {
-            const cluster = (this.clusters || []).find(c => c.id === clusterId);
-            const layer = cluster?.layer || (cluster?.data?.layer) || (clusterId.startsWith('sys_') ? 'ai' : (clusterId === 'doc_shelf' ? 'doc' : null));
+            // O(1) if map provided, O(C) fallback
+            const layer = clusterLayerMap
+                ? clusterLayerMap.get(clusterId)
+                : (() => {
+                    const cluster = (this.clusters || []).find(c => c.id === clusterId);
+                    return cluster?.layer || (cluster?.data?.layer) || (clusterId.startsWith('sys_') ? 'ai' : (clusterId === 'doc_shelf' ? 'doc' : null));
+                })();
             if (layer && layer !== 'user') return layer;
             
             if (clusterId === 'sys_cluster_buffer') return 'buffer';
             if (clusterId === 'sys_cluster_reserved') return 'reserved';
             if (clusterId === 'doc_shelf') return 'doc';
             
-            if (cluster && cluster.label) return cluster.label.replace(/[📂☁️🛡️🕒]/g, '').trim().toLowerCase();
+            if (!clusterLayerMap) {
+                const cluster = (this.clusters || []).find(c => c.id === clusterId);
+                if (cluster && cluster.label) return cluster.label.replace(/[📂☁️🛡️🕒]/g, '').trim().toLowerCase();
+            }
         }
 
         if (node.type === 'external') return 'external';
@@ -4672,6 +4732,8 @@ class CanvasEngine {
         const nodes = this.nodes || [];
         const edges = this.edges || [];
 
+        console.log(`[PERF] UpdateNodeStatsInputEdges: ${edges.length}`);
+
         // Build cluster-to-layer map for fast lookup
         const clusterLayerMap = new Map();
         (this.clusters || []).forEach(c => {
@@ -4705,8 +4767,8 @@ class CanvasEngine {
                 srcStats.out++;
                 srcStats.connected.add(e.to);
                 
-                // Track semantic distribution
-                const tgtGroup = this.getSemanticGroup(tgtNode);
+                // O(1) via clusterLayerMap
+                const tgtGroup = this.getSemanticGroup(tgtNode, clusterLayerMap);
                 srcStats.distribution[tgtGroup] = (srcStats.distribution[tgtGroup] || 0) + 1;
                 
                 // [v0.3.22.12] Bind identity sample immediately
@@ -4722,8 +4784,8 @@ class CanvasEngine {
                 tgtStats.in++;
                 tgtStats.connected.add(e.from);
 
-                // Track semantic distribution
-                const srcGroup = this.getSemanticGroup(srcNode);
+                // O(1) via clusterLayerMap
+                const srcGroup = this.getSemanticGroup(srcNode, clusterLayerMap);
                 tgtStats.distribution[srcGroup] = (tgtStats.distribution[srcGroup] || 0) + 1;
 
                 // [v0.3.22.12] Bind identity sample immediately
@@ -5259,21 +5321,18 @@ class CanvasEngine {
         
         const nodeEdges = (this.edges || []).filter(e => {
             if (!e.from || !e.to) return false;
-            // Robust match: Exact ID first, then Stem
-            const fromMatch = (e.from === myId || getStem(e.from) === myStem);
-            const toMatch = (e.to === myId || getStem(e.to) === myStem);
+            // Robust match: Exact ID only
+            const fromMatch = (e.from === myId);
+            const toMatch = (e.to === myId);
             return fromMatch || toMatch;
         });
 
         nodeEdges.forEach(e => {
-            const isOut = (e.from === myId || getStem(e.from) === myStem);
+            const isOut = (e.from === myId);
             const targetId = isOut ? e.to : e.from;
             
-            // [v0.3.22.11] Senior's Prescription: Ultra-Resilient Identity Binding
+            // [v0.3.33] Strict Identity Binding (Removed Stem fallback)
             let targetNode = nodeMap.get(targetId);
-            if (!targetNode) {
-                targetNode = stemMap.get(getStem(targetId));
-            }
 
             // Fallback for icons/names if node is missing from current pool (Ghost/Filtered)
             const theme = this.getTheme() || window.SYNAPSE_THEME;
@@ -5286,7 +5345,7 @@ class CanvasEngine {
             const type = targetNode?.type || (targetId.includes('/') ? 'source' : 'external');
             
             const icon = theme ? theme.getNodeIcon(type, fileName) : '📄';
-            const name = targetNode ? (targetNode.data?.label || getStem(targetNode.id)) : getStem(targetId);
+            const name = targetNode ? (targetNode.data?.label || targetNode.id.split('/').pop()) : targetId.split('/').pop();
             const label = `${icon} ${name}`;
             
             if (name && !groupDetails[group].includes(label)) {
@@ -5534,9 +5593,20 @@ class CanvasEngine {
 
         console.log("[FLOW_DEBUG] loadProjectState canvasNodes", canvasNodes.length, "docNodes", documentationNodes.length);
 
-        // 2. Filter Edges to only connect visible or documentation nodes
+        // [v0.3.33 Phase 2] Apply Materialization Policy at the very beginning of the pipeline
+        const policy = PolicyFactory.create(this.viewStrategy);
+
+        // 2. Filter Edges to only connect visible or documentation nodes, AND apply policy
         const activeIds = new Set([...canvasNodes, ...documentationNodes].map(n => n.id));
-        const canvasEdges = rawEdges.filter(e => activeIds.has(e.from) && activeIds.has(e.to));
+        const canvasEdges = rawEdges.filter(e => 
+            activeIds.has(e.from) && 
+            activeIds.has(e.to) && 
+            policy.shouldMaterializeEdge(e)
+        );
+
+        // 1. 파이프라인 초입 필터링 직후 로깅
+        console.log(`[PERF] RawEdgeCount: ${rawEdges.length}`);
+        console.log(`[PERF] MaterializedEdgeCount: ${canvasEdges.length}`);
 
         // Use CLEAN data for the rest of the method
         const sanitizedProjectState = {
@@ -5572,7 +5642,19 @@ class CanvasEngine {
         const oldSelectedNodeId = this.selectedNode?.id;
 
         this.log(`loadProjectState triggered. Nodes: ${baseState.nodes?.length}, Edges: ${baseState.edges?.length}`);
+        this.log(`[DEBUG_NODES] Nodes survived normalizeProjectState: ${baseState.nodes?.map(n => n.id).join(', ')}`);
         const promotedLabels = [];
+
+        // [v0.3.33 Phase 0] Baseline Measurement
+        const _perf = {
+            t0: performance.now(),
+            t0wall: Date.now(),
+            ipcTimestamp: projectState._ipcTimestamp || null
+        };
+        if (projectState._msgReceiveT != null) {
+            // TransferTime: IPC message receive → loadProjectState entry (same process, reliable)
+            console.log(`[PERF] TransferTime (IPC→entry): ${(_perf.t0 - projectState._msgReceiveT).toFixed(2)}ms`);
+        }
 
         try {
             // [v0.3.11] 명시적 데이터 정제 제거 (백엔드 SSoT에서 처리됨)
@@ -5788,9 +5870,11 @@ class CanvasEngine {
                 this.log('Flow build failed but continuing', 'error', flowErr.message);
             }
 
-            // [v0.3.11] Prevent layout jitter: Skip overlap resolution if nodes already have valid positions
-            const hasValidPositions = this.nodes.every(n => n.position && Number.isFinite(n.position.x));
-            if (!preserveView && !hasValidPositions) {
+            // [v0.3.32.3] Fix: MUST resolve overlaps if positions are missing or all nodes are at (0,0), regardless of preserveView
+            const hasValidPositions = this.nodes.length > 0 && this.nodes.every(n => n.position && Number.isFinite(n.position.x));
+            const allAtOrigin = this.nodes.length > 1 && this.nodes.every(n => n.position && n.position.x === 0 && n.position.y === 0);
+            
+            if (!preserveView || !hasValidPositions || allAtOrigin) {
                 try {
                     this.resolveOverlaps();
                 } catch (overlapErr) {
@@ -5824,7 +5908,9 @@ class CanvasEngine {
             this.resizeCanvas(!preserveView); // [v0.2.24] Force immediate resize before fitView
             
             // [v0.3.22.10] Finalizing Node Stats AFTER all sync/normalization
+            const _tNodeCache = performance.now();
             this.updateNodeStats();
+            console.log(`[PERF] NodeCacheTime: ${(performance.now() - _tNodeCache).toFixed(1)}ms (nodes=${this.nodes.length}, edges=${this.edges.length})`);
 
             if (!preserveView) {
                 if (projectState.transform) {
@@ -5844,15 +5930,22 @@ class CanvasEngine {
             if (loadingEl) {
                 console.log('[SYNAPSE] Removing loading overlay');
                 loadingEl.remove();
+                // [v0.3.33 Phase 0] FirstInteractive = time from IPC arrival to UI ready
+                const _tFirstInteractive = performance.now() - _perf.t0;
+                console.log(`[PERF] FirstInteractive: ${_tFirstInteractive.toFixed(1)}ms`);
+                console.log(`[PERF] GraphBuildTimeMs: ${_tFirstInteractive.toFixed(1)}`);
             }
 
             // [v0.2.24] IPC Optimization: Batched Architecture Validation (O(1) Message count)
-            if (typeof vscode !== 'undefined' && this.edges.length > 0) {
+            // [v0.3.33 Phase 2 Fix] Disable background validation for large graphs to prevent 10-minute IPC freeze
+            if (typeof vscode !== 'undefined' && this.edges.length > 0 && this.edges.length < 5000) {
                 const edgesToValidate = this.edges.filter(edge => {
                     if (!edge || !edge.from || !edge.to) return false;
                     // Skip if already has AI validation or logic validation is unchanged
                     return !edge.validation;
                 });
+
+                console.log('[PERF] ValidationInputEdges:', edgesToValidate.length);
 
                 if (edgesToValidate.length > 0) {
                     console.log(`[SYNAPSE] Requesting batched validation for ${edgesToValidate.length} edges...`);
@@ -5870,10 +5963,12 @@ class CanvasEngine {
                     }).filter(Boolean);
 
                     if (validationPayload.length > 0) {
+                        const _tEdgeCache = performance.now();
                         vscode.postMessage({
                             command: 'validateEdgesBatch', // [v0.2.24] New Batched Command
                             batch: validationPayload
                         });
+                        console.log(`[PERF] EdgeCacheTime (validateEdgesBatch prep): ${(performance.now() - _tEdgeCache).toFixed(1)}ms (edges=${validationPayload.length})`);
                     }
                 }
             }
@@ -6206,10 +6301,20 @@ class CanvasEngine {
 
         for (const node of this.nodes) {
             if (!node.position || typeof node.position.x !== 'number' || typeof node.position.y !== 'number') continue;
+            // Also skip if node position is NaN
+            if (Number.isNaN(node.position.x) || Number.isNaN(node.position.y)) continue;
             minX = Math.min(minX, node.position.x);
             minY = Math.min(minY, node.position.y);
             maxX = Math.max(maxX, node.position.x + 120);
             maxY = Math.max(maxY, node.position.y + 60);
+        }
+
+        // [v0.3.32.3] Safety check: If no nodes have valid positions, fallback to 0,0
+        if (minX === Infinity || minY === Infinity) {
+            minX = 0;
+            minY = 0;
+            maxX = 100;
+            maxY = 100;
         }
 
         const width = maxX - minX;
@@ -6433,6 +6538,14 @@ class CanvasEngine {
                 .map(e => ({ id: e.id, from: e.from, to: e.to, type: e.type, status: e.status }))
         );
 
+        this.log(`[DEBUG_RENDER_NODES] Final visible nodes: ${JSON.stringify(frozenNodes.map(n => ({
+            id: n.id,
+            label: n.data?.label || n.id,
+            cluster: n.cluster_id,
+            x: n.position?.x,
+            y: n.position?.y
+        })))}`);
+
         return {
             nodes: frozenNodes,
             edges: frozenEdges,
@@ -6499,6 +6612,17 @@ class CanvasEngine {
                 selectedNodeIds: new Set(Array.from(this.selectedNodes).map(n => n.id)),
                 selectedEdgeId: this.selectedEdge ? this.selectedEdge.id : null
             };
+
+            // [v0.3.32.3] Safety check: NaN corruption guard
+            if (Number.isNaN(this.transform.zoom) || !Number.isFinite(this.transform.zoom) || 
+                Number.isNaN(this.transform.offsetX) || Number.isNaN(this.transform.offsetY)) {
+                console.error("[SYNAPSE 2D] CAMERA CORRUPTED", this.transform);
+                // Recover to safe defaults
+                this.transform.zoom = 1.0;
+                this.transform.offsetX = 0;
+                this.transform.offsetY = 0;
+                this.updateZoomDisplay();
+            }
 
             const frameState = this.buildFrameState(contextSnapshot);
             this.lastFrameState = frameState; // Save for hit testing
@@ -6627,6 +6751,16 @@ class CanvasEngine {
             ctx.setTransform(dpr, 0, 0, dpr, 0, 0); // Ensure DPR scale for base logic
 
             ctx.save();
+            // [v0.3.32.3] Safety check: NaN corruption guard
+            if (Number.isNaN(this.transform.zoom) || !Number.isFinite(this.transform.zoom) || 
+                Number.isNaN(this.transform.offsetX) || Number.isNaN(this.transform.offsetY)) {
+                console.error("[SYNAPSE 2D] CAMERA CORRUPTED in main render", this.transform);
+                this.transform.zoom = 1.0;
+                this.transform.offsetX = 0;
+                this.transform.offsetY = 0;
+                this.updateZoomDisplay();
+            }
+
             ctx.translate(this.transform.offsetX, this.transform.offsetY);
             ctx.scale(this.transform.zoom, this.transform.zoom);
 
@@ -6689,14 +6823,25 @@ class CanvasEngine {
                         // [v0.2.27] Sync: Skip nodes in collapsed clusters (matches 2D behavior)
                         const clusterId = n.cluster_id || n.data?.cluster_id;
                         if (clusterId) {
-                            const cluster = this.clusters?.find(c => c.id === clusterId);
-                            if (cluster && cluster.collapsed) return false;
+                            let cur = this.clusters?.find(c => c.id === clusterId);
+                            while (cur) {
+                                if (cur.collapsed) return false;
+                                cur = cur.parent_id ? this.clusters?.find(c => c.id === cur.parent_id) : null;
+                            }
                         }
                         return true;
                     });
 
                     const visibleNodeIds = new Set(this._visibleNodesCache.map(n => n.id));
                     this._visibleEdgesCache = this.edges.filter(e => visibleNodeIds.has(e.from) && visibleNodeIds.has(e.to));
+
+                    this.log(`[DEBUG_RENDER_NODES] Final visible nodes: ${JSON.stringify(this._visibleNodesCache.map(n => ({
+                        id: n.id,
+                        label: n.data?.label || n.id,
+                        cluster: n.cluster_id,
+                        x: Math.round(n.position?.x),
+                        y: Math.round(n.position?.y)
+                    })))}`);
 
                     // [v0.3.30-webgl-fix] Build WebGL-ready cache: bake clientLayerOffset into position.y
                     // so WebGL renderer sees the same absolute Y as the 2D canvas path.
@@ -6786,8 +6931,10 @@ class CanvasEngine {
                             const webglNodes = this._webglVisibleNodesCache || this._visibleNodesCache;
                             const projectedPosMap = this.webglRenderer.getProjectedNodePositions(webglNodes, this.transform);
                             const dpr = window.devicePixelRatio || 1;
-
-                             for (const edge of this._visibleEdgesCache) {
+                            // [v0.3.33 Phase 2 Fix] Optimize Edge Badge Loop (Avoid O(E) per frame)
+                            // We only iterate over edges that ACTUALLY have badges. 
+                            const badgeEdges = this._badgeEdgesCache || [];
+                             for (const edge of badgeEdges) {
                                  try {
                                      // [v0.3.22] Project edge midpoint for 3D alignment
                                      const src = this.nodeMap.get(edge.from);
@@ -6939,15 +7086,52 @@ class CanvasEngine {
         const hasMetaEdges = this.metaEdges && this.metaEdges.length > 0;
         console.log(`[LOD_DEBUG] zoom=${zoom.toFixed(3)}, edges=${this._visibleEdgesCache.length}, metaEdges=${this.metaEdges ? this.metaEdges.length : 0}, lod_active=${zoom <= 0.35 && hasMetaEdges}`);
 
-        if (zoom <= 0.35 && hasMetaEdges) {
-            console.log('[LOD_DEBUG] render meta edges');
-            this.renderEdgeBundles(zoom);
-            return; // Skip rendering individual edges
+        if (zoom <= 0.35) {
+            if (hasMetaEdges) {
+                console.log('[LOD_DEBUG] render meta edges');
+                this.renderEdgeBundles(zoom);
+                return; // Skip rendering individual edges
+            } else if (this._visibleEdgesCache.length > 2000) {
+                // Fallback LOD: if too many edges and zoomed out, don't draw them to save performance
+                console.log('[LOD_DEBUG] Skip physical edges due to high count at low zoom');
+                return;
+            }
         }
 
         console.log('[LOD_DEBUG] render physical edges');
+        
+        // [v0.3.33] Viewport Culling for Edges
+        const dpr = window.devicePixelRatio || 1;
+        const viewWidth = this.canvas.width / dpr;
+        const viewHeight = this.canvas.height / dpr;
+        const minX = -this.transform.offsetX / zoom;
+        const minY = -this.transform.offsetY / zoom;
+        const maxX = minX + viewWidth / zoom;
+        const maxY = minY + viewHeight / zoom;
+        
+        // Edge buffer needs to be large enough to catch long edges that cross the screen
+        const buffer = 1000;
+        const cMinX = minX - buffer;
+        const cMinY = minY - buffer;
+        const cMaxX = maxX + buffer;
+        const cMaxY = maxY + buffer;
+
         // Step 3: Draw the edges
         for (const edge of this._visibleEdgesCache) {
+            const srcNode = this.nodeMap.get(edge.from);
+            const tgtNode = this.nodeMap.get(edge.to);
+            if (!srcNode || !tgtNode || !srcNode.position || !tgtNode.position) continue;
+            
+            // Fast bounding box culling
+            const minEx = Math.min(srcNode.position.x, tgtNode.position.x);
+            const maxEx = Math.max(srcNode.position.x, tgtNode.position.x);
+            const minEy = Math.min(srcNode.position.y, tgtNode.position.y);
+            const maxEy = Math.max(srcNode.position.y, tgtNode.position.y);
+            
+            if (maxEx < cMinX || minEx > cMaxX || maxEy < cMinY || minEy > cMaxY) {
+                continue; // Entire edge is outside the viewport
+            }
+
             this.renderEdge(edge);
         }
     }
@@ -7043,7 +7227,27 @@ class CanvasEngine {
             return;  // Skip rendering this frame to avoid errors
         }
 
+        // [v0.3.33] Viewport Culling for Nodes
+        const minX = -this.transform.offsetX / zoom;
+        const minY = -this.transform.offsetY / zoom;
+        const maxX = minX + canvasWidth / zoom;
+        const maxY = minY + canvasHeight / zoom;
+        const bufferX = 200; // Node width is ~120
+        const bufferY = 100; // Node height is ~60
+        const cMinX = minX - bufferX;
+        const cMinY = minY - bufferY;
+        const cMaxX = maxX + bufferX;
+        const cMaxY = maxY + bufferY;
+
         for (const node of this._visibleNodesCache) {
+            if (!node.position) continue;
+            const px = node.position.x;
+            const py = node.position.y;
+            
+            if (px < cMinX || px > cMaxX || py < cMinY || py > cMaxY) {
+                continue; // Node is outside the viewport
+            }
+
             this.renderNode(node, zoom);
         }
     }
@@ -7183,11 +7387,228 @@ class CanvasEngine {
         const cluster = this.clusters.find(c => c.id === clusterId);
         if (cluster) {
             cluster.collapsed = !cluster.collapsed;
+            
+            // Cascade collapse to all children
+            const getDescendants = (parentId) => {
+                const children = this.clusters.filter(c => c.parent_id === parentId);
+                let all = [...children];
+                children.forEach(c => all = all.concat(getDescendants(c.id)));
+                return all;
+            };
+            const descendants = getDescendants(cluster.id);
+            descendants.forEach(d => d.collapsed = cluster.collapsed);
+            
             console.log(`[SYNAPSE] Toggled cluster ${cluster.label}: ${cluster.collapsed ? 'Collapsed' : 'Expanded'}`);
             this.isGraphDataDirty = true; // [v0.2.27] Sync WebGL visibility
             this.render();
             this.saveState();
         }
+    }
+
+    // [v0.3.32.4 improved] Cluster Visibility Panel
+    // - Hierarchy: depth-based indentation (16px per level)
+    // - parent_id 없는 경우 id 경로 패턴으로 추론
+    // - 검색 시 첫 매칭 클러스터로 자동 카메라 이동
+    renderClusterVisibilityPanel(filterText) {
+        filterText = filterText || '';
+        const tree = document.getElementById('cluster-vis-tree');
+        if (!tree || !this.clusters) return;
+        const q = filterText.trim().toLowerCase();
+
+        // Node count per cluster
+        const nodeCountMap = new Map();
+        (this.nodes || []).forEach(function(n) {
+            const cid = n.cluster_id || (n.data && n.data.cluster_id);
+            if (cid) nodeCountMap.set(cid, (nodeCountMap.get(cid) || 0) + 1);
+        });
+
+        // Build idMap for fast lookup
+        const idMap = new Map();
+        this.clusters.forEach(function(c) { idMap.set(c.id, c); });
+
+        // Build childMap from parent_id
+        const childMap = new Map();
+        this.clusters.forEach(function(c) {
+            if (c.parent_id && c.parent_id !== c.id && idMap.has(c.parent_id)) {
+                if (!childMap.has(c.parent_id)) childMap.set(c.parent_id, []);
+                childMap.get(c.parent_id).push(c);
+            }
+        });
+
+        // Roots = clusters with no parent_id (or parent not in idMap)
+        const roots = this.clusters.filter(function(c) {
+            return (!c.parent_id || c.parent_id === c.id || !idMap.has(c.parent_id)) && c.id !== '__unclustered__';
+        });
+
+        const totalNodeCountMap = new Map(nodeCountMap);
+        const visited = new Set();
+        const accumulate = (clusterId) => {
+            if (visited.has(clusterId)) return totalNodeCountMap.get(clusterId) || 0;
+            visited.add(clusterId);
+            const children = childMap.get(clusterId) || [];
+            let total = nodeCountMap.get(clusterId) || 0;
+            children.forEach(c => total += accumulate(c.id));
+            totalNodeCountMap.set(clusterId, total);
+            return total;
+        };
+        roots.forEach(r => accumulate(r.id));
+
+        const self = this;
+        function matches(c) {
+            if (!q) return true;
+            const nq = q.replace(/[-_]/g, '');
+            const nl = (c.label || c.id).toLowerCase().replace(/[-_]/g, '');
+            return nl.indexOf(nq) !== -1;
+        }
+
+        const subtreeVisited = new Set();
+        function subtreeHasMatch(c) { 
+            if (subtreeVisited.has(c.id)) return false;
+            subtreeVisited.add(c.id);
+            const res = matches(c) || (childMap.get(c.id) || []).some(subtreeHasMatch); 
+            subtreeVisited.delete(c.id);
+            return res;
+        }
+
+        tree.innerHTML = '';
+        let firstMatchId = null;
+
+        const appendVisited = new Set();
+        function appendRow(cluster, depth) {
+            if (appendVisited.has(cluster.id)) return;
+            appendVisited.add(cluster.id);
+
+            if (!subtreeHasMatch(cluster)) return;
+            const isOn = !cluster.collapsed;
+            const totalCount = totalNodeCountMap.get(cluster.id) || 0;
+            let label = cluster.label || cluster.id;
+            const username = cluster.clientUsername || (cluster.data && cluster.data.clientUsername);
+            if (username && !label.includes(`[${username}]`)) {
+                label = `[${username}] ${label}`;
+            }
+            const isMatch = matches(cluster);
+            if (q && isMatch && !firstMatchId) firstMatchId = cluster.id;
+
+            const row = document.createElement('div');
+            row.className = 'cv-item';
+            row.style.paddingLeft = (8 + depth * 16) + 'px';
+            row.dataset.clusterId = cluster.id;
+
+            const children = childMap.get(cluster.id) || [];
+            const hasChildren = children.length > 0;
+
+            if (cluster.uiCollapsed === undefined) cluster.uiCollapsed = false;
+
+            // Toggle button for expand/collapse
+            const toggleBtn = document.createElement('span');
+            toggleBtn.style.cssText = 'width:12px; height:12px; display:inline-flex; align-items:center; justify-content:center; cursor:pointer; font-size:10px; color:#a89984; flex-shrink:0; margin-right:4px;';
+            if (hasChildren) {
+                toggleBtn.textContent = cluster.uiCollapsed ? '▶' : '▼';
+                toggleBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    cluster.uiCollapsed = !cluster.uiCollapsed;
+                    const searchEl = document.getElementById('cluster-vis-search');
+                    self.renderClusterVisibilityPanel(searchEl ? searchEl.value : '');
+                });
+            } else {
+                toggleBtn.innerHTML = '&nbsp;'; // spacing for leaf nodes
+            }
+
+            const cb = document.createElement('input');
+            cb.type = 'checkbox'; cb.className = 'cv-checkbox'; cb.checked = isOn;
+            cb.addEventListener('change', function() { self._clusterVisToggle(cluster.id, cb.checked); });
+            cb.addEventListener('click', function(e) { e.stopPropagation(); });
+
+            const lbl = document.createElement('span');
+            lbl.className = 'cv-label';
+            lbl.textContent = label; lbl.title = label;
+            lbl.style.cursor = 'pointer';
+            if (!isMatch && q) lbl.style.opacity = '0.45';
+
+            const cnt = document.createElement('span');
+            cnt.className = 'cv-count';
+            if (totalCount > 0) cnt.textContent = '(' + totalCount + ')';
+
+            const reveal = document.createElement('button');
+            reveal.className = 'cv-reveal'; reveal.textContent = '→'; reveal.title = 'Reveal in canvas';
+            reveal.addEventListener('click', function(e) { e.stopPropagation(); self._clusterVisReveal(cluster.id); });
+            
+            // Click on row to reveal
+            row.addEventListener('click', function() { self._clusterVisReveal(cluster.id); });
+
+            row.appendChild(toggleBtn); row.appendChild(cb); row.appendChild(lbl); row.appendChild(cnt); row.appendChild(reveal);
+            tree.appendChild(row);
+
+            if (hasChildren && !cluster.uiCollapsed) {
+                children.forEach(function(ch) { appendRow(ch, depth + 1); });
+            }
+        }
+
+        roots.forEach(function(r) { appendRow(r, 0); });
+
+        // [개선3] 검색 시 첫 매칭 클러스터로 자동 카메라 이동
+        if (q && firstMatchId) self._clusterVisReveal(firstMatchId);
+    }
+    _clusterVisToggle(clusterId, visible) {
+        const cluster = this.clusters.find(function(c) { return c.id === clusterId; });
+        if (!cluster) return;
+        cluster.collapsed = !visible;
+        
+        // Cascade to children
+        const toggleVisited = new Set();
+        const getDescendants = (parentId) => {
+            if (toggleVisited.has(parentId)) return [];
+            toggleVisited.add(parentId);
+            const children = this.clusters.filter(c => c.parent_id === parentId);
+            let all = [...children];
+            children.forEach(c => all = all.concat(getDescendants(c.id)));
+            return all;
+        };
+        const descendants = getDescendants(cluster.id);
+        descendants.forEach(d => d.collapsed = !visible);
+        
+        this.isGraphDataDirty = true;
+        this.render();
+        this.saveState();
+        const searchEl = document.getElementById('cluster-vis-search');
+        this.renderClusterVisibilityPanel(searchEl ? searchEl.value : '');
+    }
+    // [v0.3.32.4 fix2] Reveal — clientWidth 기준, requestRender() 사용 (fitView 공식 동일)
+    _clusterVisReveal(clusterId) {
+        // Get all descendant cluster IDs to reveal nodes in subfolders too
+        const getDescendantIds = (targetId) => {
+            const subClusters = (this.clusters || []).filter(c => c.parent_id === targetId);
+            let all = [targetId];
+            subClusters.forEach(c => all = all.concat(getDescendantIds(c.id)));
+            return all;
+        };
+        const targetClusterIds = new Set(getDescendantIds(clusterId));
+
+        const nodes = (this.nodes || []).filter(function(n) {
+            const cid = n.cluster_id || (n.data && n.data.cluster_id);
+            return targetClusterIds.has(cid);
+        });
+        if (!nodes.length) {
+            console.log('[CV Reveal] no nodes for', clusterId);
+            return;
+        }
+        let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+        nodes.forEach(function(n) {
+            const px = n.x != null ? n.x : ((n.position && n.position.x) || 0);
+            const py = n.y != null ? n.y : ((n.position && n.position.y) || 0);
+            minX = Math.min(minX, px);
+            minY = Math.min(minY, py);
+            maxX = Math.max(maxX, px + 120);
+            maxY = Math.max(maxY, py + 60);
+        });
+        const w = maxX - minX;
+        const h = maxY - minY;
+        const zoom = this.transform.zoom;
+        // 중앙 정렬 (fitView 공식과 동일)
+        this.transform.offsetX = (this.canvas.clientWidth  - w * zoom) / 2 - minX * zoom;
+        this.transform.offsetY = (this.canvas.clientHeight - h * zoom) / 2 - minY * zoom;
+        this.isDirty = true;
+        this.requestRender();
     }
 
     renameCluster(clusterId) {
@@ -7313,7 +7734,7 @@ class CanvasEngine {
      * @param {string} edgeId - 삭제할 엣지 ID
      */
     deleteEdge(edgeId) {
-        // 로컬 상태에서 엣지 객체 찾기
+        // [v0.3.32 SSoT Refactoring] 낙관적 업데이트 완전 제거
         const edgeIndex = this.edges.findIndex(e => e.id === edgeId);
         if (edgeIndex === -1) {
             console.warn('[SYNAPSE] Edge not found:', edgeId);
@@ -7333,24 +7754,17 @@ class CanvasEngine {
                 toFile: edge._toFile,
                 fromLabel, toLabel
             });
-            return; // Only delete locally if the backend says so later
+            return;
         }
 
-        // Normal View mode: safe visual-only delete
-        this.edges.splice(edgeIndex, 1);
-        this.selectedEdge = null;
-
-        // 백엔드에 삭제 메시지 전송
+        // Normal View mode: safe visual-only delete (의도 전달만 수행)
+        console.log('[SYNAPSE] Dispatching logical edge deletion to backend:', edgeId);
         if (typeof vscode !== 'undefined') {
             vscode.postMessage({
                 command: 'deleteEdge',
                 edgeId: edgeId
             });
         }
-
-        console.log('[SYNAPSE] Edge deleted:', edgeId);
-        this.saveState(); // [v0.2.18] Ensure state is saved after deletion so it doesn't revert
-        this.render();
     }
 
     deleteNode(nodeId) {
@@ -7901,8 +8315,38 @@ class CanvasEngine {
         };
 
         const sortedClusters = [...this.clusters].sort((a, b) => getDepth(a) - getDepth(b));
+        
+        // [v0.3.33] Viewport Culling for Clusters
+        const dpr = window.devicePixelRatio || 1;
+        const zoom = this.transform.zoom;
+        const viewWidth = this.canvas.width / dpr;
+        const viewHeight = this.canvas.height / dpr;
+        const minX = -this.transform.offsetX / zoom;
+        const minY = -this.transform.offsetY / zoom;
+        const maxX = minX + viewWidth / zoom;
+        const maxY = minY + viewHeight / zoom;
+        const buffer = 200;
+        const cMinX = minX - buffer;
+        const cMinY = minY - buffer;
+        const cMaxX = maxX + buffer;
+        const cMaxY = maxY + buffer;
+
+        // [v0.3.32.4] Build parent-collapsed lookup for fast skip
+        const _collapsedParents = new Set();
+        this.clusters.forEach(c => { if (c.collapsed) _collapsedParents.add(c.id); });
+        const _isAncestorCollapsed = (c) => {
+            let cur = c;
+            while (cur && cur.parent_id) {
+                if (_collapsedParents.has(cur.parent_id)) return true;
+                cur = this.clusters.find(x => x.id === cur.parent_id);
+            }
+            return false;
+        };
 
         for (const cluster of sortedClusters) {
+            // [v0.3.32.4] Skip if any ancestor cluster is collapsed
+            if (_isAncestorCollapsed(cluster)) continue;
+
             // [v0.2.18.3] Isolate Context Vault unless toggled ON
             if (cluster.id === 'context_vault' && !this.showContextVault) continue;
 
@@ -7927,6 +8371,11 @@ class CanvasEngine {
 
             const b = getClusterBounds(cluster);
             if (b.minX === Infinity) continue;
+            
+            // Fast bounding box culling for cluster
+            if (b.maxX < cMinX || b.minX > cMaxX || b.maxY < cMinY || b.minY > cMaxY) {
+                continue; // Cluster is entirely outside the viewport
+            }
 
             // Generate a consistent color based on cluster ID
             let hash = 0;
@@ -8009,7 +8458,28 @@ class CanvasEngine {
             return;
         }
 
+        // [v0.3.33] Viewport Culling for Ghost Nodes
+        const dpr = window.devicePixelRatio || 1;
+        const viewWidth = this.canvas.width / dpr;
+        const viewHeight = this.canvas.height / dpr;
+        const minX = -this.transform.offsetX / zoom;
+        const minY = -this.transform.offsetY / zoom;
+        const maxX = minX + viewWidth / zoom;
+        const maxY = minY + viewHeight / zoom;
+        const buffer = 200;
+        const cMinX = minX - buffer;
+        const cMinY = minY - buffer;
+        const cMaxX = maxX + buffer;
+        const cMaxY = maxY + buffer;
+
         for (const ghost of this.baselineNodes) {
+            // Culling for ghosts
+            const px = ghost.position.x;
+            const py = ghost.position.y;
+            if (px < cMinX || px > cMaxX || py < cMinY || py > cMaxY) {
+                continue; // Ghost node is outside the viewport
+            }
+
             const currentNode = this.nodes.find(n => n.id === ghost.id);
 
             // 1. 사라진 노드 (Ghost) - [v0.2.17] Disabled as it adds visual clutter for explicitly deleted nodes
@@ -9722,6 +10192,8 @@ class CanvasEngine {
      */
     resolveOverlaps() {
         if (!this.nodes || this.nodes.length < 2) return;
+        // [v0.3.33 Phase 2 Fix] Disable O(N^2) physics for FullGraph scale to prevent 10-minute freezes
+        if (this.nodes.length > 1000) return;
         
         const nodeRadius = 80; 
         const iterations = 3;
@@ -9872,7 +10344,7 @@ class CanvasEngine {
 }
 
 // 초기화
-let engine;
+var engine;
 
 function initCanvas() {
     if (engine) return;
@@ -9880,6 +10352,8 @@ function initCanvas() {
     // index.html의 <canvas id="canvas">와 일치해야 함
     engine = new CanvasEngine('canvas');
     window.engine = engine; // [v0.2.25] Expose to global for button clicks
+    self.engine = engine;
+    globalThis.engine = engine;
     console.log('[SYNAPSE] Engine initialized:', engine);
 
     // Failsafe: Remove loading overlay after 3 seconds no matter what
@@ -9916,6 +10390,22 @@ function initCanvas() {
                 if (message.state) {
                     message.data = message.state; // normalize for logic below
                 }
+                // [v0.3.33 Phase 2 Fix] Parse stringified arrays to bypass IPC limits
+                if (message.data) {
+                    const pt0 = performance.now();
+                    if (message.data.nodesStr) {
+                        try { message.data.nodes = JSON.parse(message.data.nodesStr); } catch (e) { console.error('Failed to parse nodesStr', e); }
+                    }
+                    if (message.data.edgesStr) {
+                        try { message.data.edges = JSON.parse(message.data.edgesStr); } catch (e) { console.error('Failed to parse edgesStr', e); }
+                    }
+                    const pt1 = performance.now();
+                    console.log(`[PERF] ParseTimeMs: ${(pt1 - pt0).toFixed(2)}ms`);
+                    if (message.data._ipcTimestamp) {
+                        const transferTime = Date.now() - message.data._ipcTimestamp;
+                        console.log(`[PERF] IPCTransferTimeMs: ${transferTime}ms`);
+                    }
+                }
                 if (message.data && message.data.project_name) {
                     engine.projectName = message.data.project_name;
                     console.log(`[SYNAPSE] Project Name Synchronized: ${engine.projectName}`);
@@ -9927,9 +10417,12 @@ function initCanvas() {
                 // [v0.3.11] Authoritative Sync: Direct user actions bypass interaction lock
                 if (message.isAuthoritative) {
                     console.log('[SYNAPSE] Authoritative projectState received. Bypassing interaction lock.');
+                    if (message.data) message.data._msgReceiveT = performance.now(); // [v0.3.33 Phase 0]
                     engine.loadProjectState(message.data, true);
                     engine.updateNodeStats(); // [v0.3.22.9] Force stats update for tooltips
-                    engine._pendingState = null; // Clear any stale deferred updates
+                    engine._pendingState = null;
+                    // [v0.3.32.4] Refresh cluster visibility panel if open
+                    if (document.getElementById('cluster-visibility-panel')?.classList.contains('visible')) engine.renderClusterVisibilityPanel(''); // Clear any stale deferred updates
                     return;
                 }
 
@@ -9944,9 +10437,12 @@ function initCanvas() {
                 const isFreshSaveResponse = (Date.now() - (engine._lastSaveTime || 0)) < 500;
                 const preserve = isFreshSaveResponse || (!message.forceReset && engine.nodes && engine.nodes.length > 0);
                 
+                if (message.data) message.data._msgReceiveT = performance.now(); // [v0.3.33 Phase 0]
                 engine.loadProjectState(message.data, preserve);
                 engine.updateNodeStats(); // [v0.3.22.9] Force stats update for tooltips
                 engine.isExpectingUpdate = false;
+                // [v0.3.32.4] Refresh cluster visibility panel if open
+                if (document.getElementById('cluster-visibility-panel')?.classList.contains('visible')) engine.renderClusterVisibilityPanel('');
                 
                 // [v0.3.10] Auto-Start Engine Loop upon first state arrival
                 if (!engine._loopRunning) {
@@ -10365,12 +10861,7 @@ function initCanvas() {
 
     document.getElementById('btn-rebootstrap')?.addEventListener('click', () => {
         if (typeof vscode !== 'undefined') {
-            const confirmed = window.confirm(
-                'Deep Reset을 실행하시겠습니까?\n\n이 작업은 프로젝트를 전체 재스캔하며, 현재까지 편집한 노드 위치, 커스텀 연결, 클러스터링 등의 모든 캔버스 수정 사항이 초기화됩니다.\n계속하시겠습니까?'
-            );
-            if (confirmed) {
-                vscode.postMessage({ command: 'reBootstrap' });
-            }
+            vscode.postMessage({ command: 'reBootstrap' });
         } else {
             alert('Deep Reset is only available in VS Code mode.');
         }
@@ -10378,12 +10869,7 @@ function initCanvas() {
 
     document.getElementById('btn-reset-state')?.addEventListener('click', () => {
         if (typeof vscode !== 'undefined') {
-            const confirmed = window.confirm(
-                '🔄 project_state.json을 빈 상태로 초기화하시겠습니까?\n\n노드, 엣지, 클러스터 등 저장된 모든 캔버스 상태가 삭제됩니다.\n(소스 코드는 변경되지 않습니다.)'
-            );
-            if (confirmed) {
-                vscode.postMessage({ command: 'resetProjectState' });
-            }
+            vscode.postMessage({ command: 'resetProjectState' });
         }
     });
 
@@ -10393,6 +10879,20 @@ function initCanvas() {
 
     document.getElementById('btn-ungroup')?.addEventListener('click', () => {
         engine.ungroupSelection();
+    });
+
+    // [v0.3.32.4] Cluster Visibility Panel events
+    document.getElementById('btn-cluster-vis')?.addEventListener('click', () => {
+        const panel = document.getElementById('cluster-visibility-panel');
+        if (!panel) return;
+        const isVisible = panel.classList.toggle('visible');
+        if (isVisible) engine.renderClusterVisibilityPanel('');
+    });
+    document.getElementById('cluster-vis-close')?.addEventListener('click', () => {
+        document.getElementById('cluster-visibility-panel')?.classList.remove('visible');
+    });
+    document.getElementById('cluster-vis-search')?.addEventListener('input', (e) => {
+        engine.renderClusterVisibilityPanel(e.target.value);
     });
 
     document.getElementById('btn-snapshot')?.addEventListener('click', () => {

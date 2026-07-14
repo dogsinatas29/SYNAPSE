@@ -119,8 +119,21 @@ export class BootstrapEngine {
             
             const pipelineResult = dataPipeline.processFiles(discoveredFiles, projectRoot);
             
-            console.log(`[SCAN_DEBUG] Pipeline produced Nodes: ${pipelineResult.nodes.length}, Edges: ${pipelineResult.edges.length}`);
+            // [P1.5] Bounds logger helper
+            const getBounds = (nodes: any[]) => {
+                let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+                for (const n of nodes) {
+                    if (n.position?.x < minX) minX = n.position.x;
+                    if (n.position?.x > maxX) maxX = n.position.x;
+                    if (n.position?.y < minY) minY = n.position.y;
+                    if (n.position?.y > maxY) maxY = n.position.y;
+                }
+                return { minX, maxX, minY, maxY };
+            };
+            console.log("[LAYOUT_STAGE]", "DataPipeline", getBounds(pipelineResult.nodes));
+            console.log("[LAYOUT_STAGE]", "FlowchartGenerator", getBounds(pipelineResult.nodes));
             
+            console.log(`[SCAN_DEBUG] Pipeline produced Nodes: ${pipelineResult.nodes.length}, Edges: ${pipelineResult.edges.length}`);
             // [v0.3.11] Core Freeze: Build and freeze graph
             const frozenGraph = buildGraph(pipelineResult.nodes, pipelineResult.edges, pipelineResult.clusters);
             

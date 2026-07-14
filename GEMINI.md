@@ -115,6 +115,32 @@ LLM must assume:
 - GPU is available
 - repetition is dangerous
 - state is the only trigger
+
+---
+
+## 8. Language Rule (i18n)
+
+### 8.1. 지원 언어 (Supported Languages)
+- **`en` (영어)**: 글로벌 사용자를 위한 기본값 (Default)
+- **`ko` (한국어)**: 한국 사용자 전용
+
+*주의: 일본어(`ja`), 중국어(`zh-CN` 등), 유럽어 등 기타 언어는 관리 비용 증가를 이유로 현재 단계에서 추가하지 않는다.*
+
+### 8.2. 언어 감지 우선순위 (Language Detection Priority)
+1. **`vscode.env.language`**: VSCode가 인식하고 있는 에디터 언어를 최우선으로 사용한다. (예: `window.VSCODE_LANGUAGE`로 웹뷰에 주입)
+2. **`navigator.language`**: 브라우저 환경 등에서 VSCode 언어 값을 알 수 없을 때 사용한다.
+3. **`'en'` (Fallback)**: 위 두 가지에서 `ko` 계열을 감지하지 못한 경우 모두 영어로 처리한다.
+
+### 8.3. 적용 범위 (Scope of Localization)
+- **Phase 1 (정적 UI 우선)**:
+  - `<button>`, `<label>`, `<h3>`, `<span>` 등 정적 마크업에 존재하는 메뉴 텍스트, 버튼, 패널 제목만 번역 대상으로 삼는다.
+  - HTML 속성(`data-i18n`)을 활용하여 텍스트를 외부 분리(예: `i18n.js`의 `t(key)` 함수)한다.
+- **제외 대상 (당분간 하드코딩 유지)**:
+  - `alert()`, `confirm()`, `toast`, `notification` 등 브라우저 네이티브 알림 메시지
+  - Runtime 메시지 (예: "Loading...", "Project Analyzing...")
+  - Error 메시지 (예: "File not found", "Network error")
+*이유: 모든 문자열을 한 번에 번역하면 회귀 버그(Regression) 위험과 리팩토링 비용이 너무 커지므로, 정적 UI부터 점진적으로 국제화 기반을 구축한다.*
+
 🚀 [시냅스 작업 원칙]
 1. 마일스톤별 md파일로 버전별 개발 구조로 작업방법을 확정. 
  - 마일스톤 문서를 읽어들이면 즉시 해당 버전에 대한 작업 계획(Implementation Plan)과 TODO 리스트를 작성할 것. 
@@ -314,6 +340,8 @@ SYNAPSE는 파일 시스템과 그래프를 Source Of Truth로 사용하는 협�
 │   ├── synapse-theme.js
 │   ├── canvas-engine.js
 │   ├── webgl-renderer.js
+│   ├── cluster-hierarchy.js        ← 🟢 Added
+│   ├── rbush.js                    ← 🟢 Added (v0.3.33)
 │   └── engine-core.js
 ├── demo/
 │   ├── index.html
@@ -385,6 +413,7 @@ SYNAPSE는 파일 시스템과 그래프를 Source Of Truth로 사용하는 협�
 │   │   ├── (Active) RendererCore.ts
 │   │   ├── (Active) RuleEngine.ts
 │   │   ├── (Active) GraphModel.ts
+│   │   ├── (Active) LayoutEngine.ts        ← 🟡 Modified (v0.3.33 수정됨)
 │   │   ├── (Active) BlacklistOrchestrator.ts
 │   │   ├── (Active) FileScanner.ts
 │   │   ├── (Active) FlowScanner.ts
@@ -408,6 +437,30 @@ SYNAPSE는 파일 시스템과 그래프를 Source Of Truth로 사용하는 협�
 │   │   ├── (Active) ReportExporter.ts
 │   │   ├── (Active) VscdbAdapter.ts
 │   │   ├── (Active) SynapseIgnore.ts
+│   │   ├── (Active) ClusterBuilder.ts        ← 🟢 Added
+│   │   ├── (Active) ClusterHierarchy.ts      ← 🟢 Added
+│   │   ├── (Active) NodeBuilder.ts           ← 🟢 Added
+│   │   ├── (Active) EdgeBuilder.ts           ← 🟢 Added
+│   │   ├── (Active) GraphAnalyzer.ts         ← 🟢 Added
+│   │   ├── (Active) CommunityDetector.ts     ← 🟢 Added
+│   │   ├── (Active) DirectoryTreeBuilder.ts  ← 🟢 Added
+│   │   ├── (Active) ReferenceResolver.ts     ← 🟢 Added
+│   │   ├── (Active) VisibleGraphResolver.ts  ← 🟢 Added
+│   │   ├── (Active) GhostExpander.ts         ← 🟢 Added
+│   │   ├── (Active) GhostPolicy.ts           ← 🟢 Added
+│   │   ├── (Active) ScannerRegistry.ts       ← 🟢 Added
+│   │   ├── (Active) CppScanner.ts            ← 🟢 Added
+│   │   ├── (Active) JavaScanner.ts           ← 🟢 Added
+│   │   ├── (Active) KotlinScanner.ts         ← 🟢 Added
+│   │   ├── (Active) PythonScanner.ts         ← 🟢 Added
+│   │   ├── (Active) RustScanner.ts           ← 🟢 Added
+│   │   ├── (Active) MarkdownScanner.ts       ← 🟢 Added
+│   │   ├── (Active) ShellScanner.ts          ← 🟢 Added
+│   │   ├── (Active) SqlScanner.ts            ← 🟢 Added
+│   │   ├── (Active) ConfigScanner.ts         ← 🟢 Added
+│   │   ├── (Active) DiagnosticReporter.ts       ← 🟢 Added
+│   │   ├── (Active) BoundsDiagnosticReporter.ts ← 🟢 Added
+│   │   ├── (Active) LayoutDiagnosticReporter.ts ← 🟢 Added
 │   │   ├── (Legacy) BillingManager.ts
 │   │   ├── (Orphaned) WebviewInterceptor.ts
 │   │   ├── (Orphaned) CommandInterceptor.ts
@@ -416,6 +469,8 @@ SYNAPSE는 파일 시스템과 그래프를 Source Of Truth로 사용하는 협�
 │   │   ├── (Orphaned) ArchitectureDSL.ts
 │   │   ├── (Deleted) GhostNodeManager.ts     ← 디스크에 없음
 │   │   └── (Deleted) ContextVault.ts          ← 디스크에 없음
+│   ├── core/benchmark/                        ← 🟢 Added
+│   │   └── BenchmarkHarness.ts
 │   ├── test/                                  ← 🔵 Active (v0.3.30+)
 │   │   ├── __mocks__/
 │   │   │   └── vscode.ts
@@ -447,9 +502,10 @@ SYNAPSE는 파일 시스템과 그래프를 Source Of Truth로 사용하는 협�
 │   └── webview/
 │       └── CanvasPanel.ts
 ├── mile_stone/
-│   ├── v0.2.xx.md ~ v0.3.29.md (버전별 마일스톤 문서 모음)
-│   ├── v0.3.30.md (현행) + phase 1-9 상세 명세
-│   └── ... (작업 기록 및 설계 문서)
+│   ├── v0.2.xx.md ~ v0.3.32.md (버전별 마일스톤 문서 모음)
+│   ├── v0.3.33.md (현행) + RBush & Layout 엔진 최적화
+│   ├── v0.3.33_log.md (작업 기록)
+│   └── ... (기타 설계 문서)
 ├── release_note/
 │   └── v*_release_notes.md
 └── tools/
@@ -469,7 +525,8 @@ SYNAPSE는 파일 시스템과 그래프를 Source Of Truth로 사용하는 협�
 | `RULES.md` | 유지 | 프로젝트 코딩 규칙 및 아키텍처 제약 문서 |
 | `synapse.config.json` | 유지 | 시냅스 아키텍처 규칙 및 설정 보관 파일 |
 | `.synapseignore` | 유지 | Gitignore-style 제외 패턴; 프로젝트 스캔/분석/시각화에서 파일 필터링 |
-| `ui/canvas-engine.js` | 유지 | O(N) 순회 병목 제거, sub-pixel 안티앨리어싱, NaN 방지, WebGL 수학적 패리티 동기화 적용 2D 엔진 + v0.3.30 Client Layer System (register/sync/visibility toggle UI) |
+| `ui/canvas-engine.js` | 변경됨 | O(N) 순회 병목 제거, sub-pixel 안티앨리어싱, NaN 방지, WebGL 수학적 패리티 동기화 적용 2D 엔진 + ViewStrategy 등 렌더링 파이프라인/공간 인덱스(RBush) 최적화 |
+| `ui/cluster-hierarchy.js` | 추가됨 | 클러스터 계층 및 바운딩 연산 분리 로직 |
 | `ui/webgl-renderer.js` | 유지 | 대규모 노드 그래프 실시간 60FPS GPU 파이프라인 가속 렌더러 |
 | `ui/engine-core.js` | 유지 | 캔버스 엔진 + WebGL 렌더러 간 공통 코어 로직 및 상태 브릿지 |
 | `src/extension.ts` | 유지 | VS Code Extension 진입점, 확장 활성화 및 이벤트 최초 등록 |

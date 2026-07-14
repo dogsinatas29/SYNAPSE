@@ -91,6 +91,9 @@ export class ProjectionLayer {
         const projectedEdges: Edge[] = [];
         const edgeKeys = new Set<string>();
 
+        // [v0.3.33 Phase 2.1] Optimization: Create Node Map for O(1) lookup to prevent O(N * E) bottleneck
+        const nodeMap = new Map(graph.nodes.map(n => [n.id, n]));
+
         graph.edges.forEach(edge => {
             // [v0.3.11] 수동 생성 엣지 및 사용자 레이어 엣지 보존
             if (edge.status === 'pending' || 
@@ -103,8 +106,8 @@ export class ProjectionLayer {
                 return;
             }
 
-            const fromNode = graph.nodes.find(n => n.id === edge.from);
-            const toNode = graph.nodes.find(n => n.id === edge.to);
+            const fromNode = nodeMap.get(edge.from);
+            const toNode = nodeMap.get(edge.to);
 
             if (!fromNode || !toNode) return;
 

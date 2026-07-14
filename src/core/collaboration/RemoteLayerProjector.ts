@@ -64,7 +64,15 @@ function classifyNodeLayer(node: {
     if (label.startsWith('node_manual_') || fp.startsWith('external://')) return 'external';
     if (fp.startsWith('ghost://')) return 'external';
     if (node.isDocumentation) return 'user';
-    if (node.clusterId && node.clusterId !== 'cluster_ghosts' && !node.clusterId.startsWith('folder_')) return 'user';
+    
+    // Do not mark nodes in system clusters as 'user' automatically
+    if (node.clusterId && 
+        node.clusterId !== 'cluster_ghosts' && 
+        !node.clusterId.startsWith('folder_') &&
+        !node.clusterId.startsWith('sys_') &&
+        node.clusterId !== 'doc_shelf') {
+        return 'user';
+    }
 
     return 'ai';
 }

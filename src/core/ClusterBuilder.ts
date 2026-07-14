@@ -1,12 +1,14 @@
 import { Cluster, Node } from '../types/schema';
 
 const SYSTEM_CLUSTERS: Cluster[] = [
-    { id: 'cluster_ghosts', label: '☁️ External Ghosts', type: 'system', collapsed: false, position: { x: 0, y: 0 }, bounds: { x: 0, y: 0, width: 0, height: 0 }, children: [], nodes: [], data: { layer: 'external' } },
-    { id: 'sys_cluster_reserved', label: '🛡️ Reserved (Internal Pending)', type: 'system', collapsed: false, position: { x: 0, y: 0 }, bounds: { x: 0, y: 0, width: 0, height: 0 }, children: [], nodes: [], data: {} },
-    { id: 'doc_shelf', label: '📚 Documentation Shelf', type: 'system', collapsed: false, position: { x: 0, y: 0 }, bounds: { x: 0, y: 0, width: 0, height: 0 }, children: [], nodes: [], data: {} }
+    { id: 'cluster_ghosts', label: '☁️ External Ghosts', type: 'system', position: { x: 0, y: 0 }, bounds: { x: 0, y: 0, width: 0, height: 0 }, children: [], nodes: [], data: { layer: 'external' } },
+    { id: 'sys_cluster_reserved', label: '🛡️ Reserved (Internal Pending)', type: 'system', position: { x: 0, y: 0 }, bounds: { x: 0, y: 0, width: 0, height: 0 }, children: [], nodes: [], data: {} },
+    { id: 'doc_shelf', label: '📚 Documentation Shelf', type: 'system', position: { x: 0, y: 0 }, bounds: { x: 0, y: 0, width: 0, height: 0 }, children: [], nodes: [], data: {} }
 ];
 
 const SYSTEM_CLUSTER_IDS = new Set(['cluster_ghosts', 'sys_cluster_reserved', 'doc_shelf']);
+
+const BOILERPLATE = new Set(['src', 'main', 'test', 'java', 'kotlin', 'androidTest', 'resources', 'assets']);
 
 export interface ClusterBuildResult {
     clusters: Cluster[];
@@ -20,6 +22,15 @@ export function buildClusters(nodes: Node[]): ClusterBuildResult {
     const clusterIds = new Set<string>(SYSTEM_CLUSTER_IDS);
     const clusterMap = new Map<string, Cluster>();
     clusters.forEach(c => clusterMap.set(c.id, c));
+
+    const dirNodeCount = new Map<string, number>();
+    for (const node of nodes) {
+        if (!node.cluster_id || SYSTEM_CLUSTER_IDS.has(node.cluster_id)) continue;
+        const dir = path.posix.dirname(node.filePath.replace(/\\/g, '/'));
+        if (dir && dir !== '.' && dir !== '/') {
+            dirNodeCount.set(dir, (dirNodeCount.get(dir) || 0) + 1);
+        }
+    }
 
     for (const node of nodes) {
         if (!node.cluster_id || SYSTEM_CLUSTER_IDS.has(node.cluster_id)) continue;
@@ -47,18 +58,27 @@ export function buildClusters(nodes: Node[]): ClusterBuildResult {
                     label = `📂 [${username}] ${path.posix.basename(currentPath)}`;
                 }
 
+                const rawParts = currentPath.split('/').filter(p => p && p !== '.' && p !== '..');
+                const parts = rawParts.filter(p => !BOILERPLATE.has(p));
+                const continent = parts[0] || 'root';
+                const subcontinent = parts.slice(0, 2).join('/') || continent;
+
                 const newCluster: Cluster = {
                     id: currentClusterId,
                     label: label,
                     type: 'folder',
-                    collapsed: false,
                     position: { x: 0, y: 0 },
                     bounds: { x: 0, y: 0, width: 0, height: 0 },
                     children: [],
                     nodes: [],
-                    data: { layer: 'ai' },
+                    data: { layer: 'ai', continent, subcontinent },
                     parent_id: parentClusterId
                 };
+                const directCount = dirNodeCount.get(currentPath) || 0;
+                console.log('[CLUSTER_CREATED]', newCluster.id,
+                    'directNodes:', directCount,
+                    'parent:', parentClusterId || 'none',
+                    'path:', currentPath);
                 clusterMap.set(currentClusterId, newCluster);
                 clusters.push(newCluster);
                 clusterIds.add(currentClusterId);

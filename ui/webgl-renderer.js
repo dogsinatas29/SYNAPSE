@@ -803,11 +803,6 @@ class WebGLRenderer {
     }
 
     updateEdgeData(edges, nodeMap, selectedNodeIds) {
-        if (!this.gl || !edges) return;
-        
-        const data = this._edgeArr;
-        const colorData = this._edgeColorArr;
-        const thickData = this._edgeThickArr;
         const dashData = this._edgeDashArr;
         const controlData = this._edgeControlArr;
         if (!data || !colorData || !thickData || !dashData || !controlData) return;

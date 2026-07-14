@@ -112,6 +112,7 @@ export class GhostExpander {
                         label: targetNodeId.split('/').pop() || targetNodeId,
                         cluster_id: ghostClusterId,
                         status: 'ghost' as any,
+                        layer: isExternal ? 'external' : 'ai',
                         position: { x: 0, y: 0 },
                         degree: 0,
                         data: {
@@ -122,7 +123,8 @@ export class GhostExpander {
                             hiddenOnCanvas: isDocRef,
                             continent: ghostContinent,
                             subcontinent: ghostContinent,
-                            continent_type: 'EXTERNAL'
+                            continent_type: 'EXTERNAL',
+                            layer: isExternal ? 'external' : 'ai'
                         },
                         intelligence: {},
                         visual: { opacity: isExternal ? 0.6 : 1.0 }

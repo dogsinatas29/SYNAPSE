@@ -162,7 +162,8 @@ export class CanvasPanel {
                 retainContextWhenHidden: true,
                 localResourceRoots: [
                     vscode.Uri.joinPath(extensionUri, 'ui'),
-                    vscode.Uri.joinPath(extensionUri, 'data')
+                    vscode.Uri.joinPath(extensionUri, 'data'),
+                    vscode.Uri.joinPath(extensionUri, 'node_modules')
                 ]
             }
         );
@@ -4005,6 +4006,10 @@ export class CanvasPanel {
         }
     }
 
+    private async yieldToEventLoop(): Promise<void> {
+        await new Promise(resolve => setImmediate(resolve));
+    }
+
     /**
      * [v0.2.24] Batched Edge Validation
      * Optimized to read project_state once for multiple edges, preventing I/O flood.
@@ -4028,67 +4033,107 @@ export class CanvasPanel {
             const tempNodes = [...(baseState.nodes || [])];
             const tempEdges = [...(baseState.edges || [])];
             
-            for (const item of batch) {
-                const { edgeId, fromNode, toNode, type } = item;
-                // Ensure nodes exist in state
-                if (!tempNodes.find(n => n.id === fromNode.id)) tempNodes.push(fromNode);
-                if (!tempNodes.find(n => n.id === toNode.id)) tempNodes.push(toNode);
+            const CHUNK_SIZE = 500;
+            const existingNodeIds = new Set(tempNodes.map(n => n.id));
+            
+            for (let i = 0; i < batch.length; i += CHUNK_SIZE) {
+                const chunk = batch.slice(i, i + CHUNK_SIZE);
+                for (const item of chunk) {
+                    const { edgeId, fromNode, toNode, type } = item;
+                    if (!existingNodeIds.has(fromNode.id)) {
+                        tempNodes.push(fromNode);
+                        existingNodeIds.add(fromNode.id);
+                    }
+                    if (!existingNodeIds.has(toNode.id)) {
+                        tempNodes.push(toNode);
+                        existingNodeIds.add(toNode.id);
+                    }
+                    
+                    tempEdges.push({
+                        id: edgeId,
+                        from: fromNode.id,
+                        to: toNode.id,
+                        type: type as any,
+                        is_approved: false
+                    });
+                }
                 
-                // Add proposed edge
-                tempEdges.push({
-                    id: edgeId,
-                    from: fromNode.id,
-                    to: toNode.id,
-                    type: type as any,
-                    is_approved: false
+                // Progress (Edges chunk phase) - up to 30%
+                this._panel.webview.postMessage({
+                    command: 'validationProgress',
+                    progress: Math.floor(((i + chunk.length) / batch.length) * 30)
                 });
+                await this.yieldToEventLoop();
             }
 
-            const tempNodesNormalized = tempNodes.map(n => ({
-                ...n,
-                data: n.data || { label: n.label || n.id, file: n.filePath }
-            }));
+            const tempNodesNormalized = [];
+            for (let i = 0; i < tempNodes.length; i += CHUNK_SIZE) {
+                const chunk = tempNodes.slice(i, i + CHUNK_SIZE);
+                tempNodesNormalized.push(...chunk.map(n => ({
+                    ...n,
+                    data: n.data || { label: n.label || n.id, file: n.filePath }
+                })));
+                
+                // Progress (Nodes norm phase) - 30% to 50%
+                this._panel.webview.postMessage({
+                    command: 'validationProgress',
+                    progress: 30 + Math.floor(((i + chunk.length) / tempNodes.length) * 20)
+                });
+                await this.yieldToEventLoop();
+            }
+
             const tempState = { ...baseState, nodes: tempNodesNormalized, edges: tempEdges };
             
             // 3. RUN ANALYSIS ONCE
+            await this.yieldToEventLoop();
             const issues = analyzer.analyze(tempState as any, this._workspaceFolder.uri.fsPath);
 
             const resultsBatch: any[] = [];
-            for (const item of batch) {
-                const { edgeId, fromNode, toNode } = item;
-                const relevantIssues = issues.filter(issue =>
-                    issue.nodeIds.includes(fromNode.id) && issue.nodeIds.includes(toNode.id)
-                );
+            for (let i = 0; i < batch.length; i += CHUNK_SIZE) {
+                const chunk = batch.slice(i, i + CHUNK_SIZE);
+                for (const item of chunk) {
+                    const { edgeId, fromNode, toNode } = item;
+                    const relevantIssues = issues.filter(issue =>
+                        issue.nodeIds.includes(fromNode.id) && issue.nodeIds.includes(toNode.id)
+                    );
 
-                let isValid = true;
-                let validationMessage = '연결이 유효합니다. (LogicAnalyzer ✅)';
-                let visualStyle: any = { color: '#b8bb26', style: 'solid', thickness: 2 }; // Pass
+                    let isValid = true;
+                    let validationMessage = '연결이 유효합니다. (LogicAnalyzer ✅)';
+                    let visualStyle: any = { color: '#b8bb26', style: 'solid', thickness: 2 }; // Pass
 
-                if (relevantIssues.length > 0) {
-                    const critical = relevantIssues.find(i => i.severity === 'critical');
-                    const warning = relevantIssues.find(i => i.severity === 'high' || i.severity === 'medium' || i.severity === 'low');
+                    if (relevantIssues.length > 0) {
+                        const critical = relevantIssues.find(i => i.severity === 'critical');
+                        const warning = relevantIssues.find(i => i.severity === 'high' || i.severity === 'medium' || i.severity === 'low');
 
-                    if (critical) {
-                        isValid = false;
-                        validationMessage = critical.message;
-                        visualStyle = { color: '#fb4934', style: 'solid', thickness: 3 }; // Fail
-                    } else if (warning) {
-                        isValid = true;
-                        validationMessage = warning.message;
-                        visualStyle = { color: '#fabd2f', style: 'dashed', thickness: 2, dashArray: '5,5' }; // Warning
+                        if (critical) {
+                            isValid = false;
+                            validationMessage = critical.message;
+                            visualStyle = { color: '#fb4934', style: 'solid', thickness: 3 }; // Fail
+                        } else if (warning) {
+                            isValid = true;
+                            validationMessage = warning.message;
+                            visualStyle = { color: '#fabd2f', style: 'dashed', thickness: 2, dashArray: '5,5' }; // Warning
+                        }
                     }
+
+                    resultsBatch.push({
+                        edgeId: edgeId,
+                        result: {
+                            valid: isValid,
+                            reason: validationMessage,
+                            confidence: 1.0,
+                            visual: visualStyle,
+                            isAi: false
+                        }
+                    });
                 }
-
-                resultsBatch.push({
-                    edgeId: edgeId,
-                    result: {
-                        valid: isValid,
-                        reason: validationMessage,
-                        confidence: 1.0,
-                        visual: visualStyle,
-                        isAi: false
-                    }
+                
+                // Progress (Results mapping phase) - 50% to 100%
+                this._panel.webview.postMessage({
+                    command: 'validationProgress',
+                    progress: 50 + Math.floor(((i + chunk.length) / batch.length) * 50)
                 });
+                await this.yieldToEventLoop();
             }
 
             this._panel.webview.postMessage({
@@ -4715,6 +4760,43 @@ export class CanvasPanel {
         try {
             // [v0.3.11] 1. Load Current SSOT (Engine Snapshot)
             const engineSnap = canvasEngine.getFinalSnapshot();
+
+            // [v0.3.33] Cluster Forensics: empty/duplicate cluster detection
+            {
+                const _cl = (engineSnap.clusters as any[]) || [];
+                const _empty = _cl.filter((c: any) => !c.nodes || c.nodes.length === 0);
+                const _totalIds = _cl.length;
+                const _uniqueIds = new Set(_cl.map((c: any) => c.id)).size;
+                const duplicateIds = _totalIds - _uniqueIds;
+
+                const byLabel = new Map<string, { count: number; ids: string[] }>();
+                for (const c of _cl) {
+                    const key = c.label || '';
+                    if (!byLabel.has(key)) byLabel.set(key, { count: 0, ids: [] });
+                    const entry = byLabel.get(key)!;
+                    entry.count++;
+                    entry.ids.push(c.id);
+                }
+                const duplicatePaths = Array.from(byLabel.values()).filter(e => e.count > 1).length;
+                const collidedCount = Array.from(byLabel.values()).reduce((s, e) => s + (e.count > 1 ? e.count - 1 : 0), 0);
+
+                console.log('[CLUSTER_STATS]',
+                    `total=${_totalIds}`,
+                    `empty=${_empty.length}`,
+                    `uniqueIds=${_uniqueIds}`,
+                    `duplicateIds=${duplicateIds}`,
+                    `dupLabels=${duplicatePaths}`,
+                    `collided=${collidedCount}`);
+
+                for (const [label, entry] of byLabel) {
+                    if (entry.count > 1)
+                        console.log('[CLUSTER_ID_COLLISION]', `"${label}"`, entry.ids.join(', '));
+                }
+
+                _empty.slice(0, 30).forEach((c: any) =>
+                    console.log('[EMPTY_CLUSTER]', `id="${c.id}"`, `label="${c.label || ''}"`, `parent="${c.parent_id || ''}"`));
+            }
+
             let projectState: any = {
                 version: 1,
                 project_name: workspaceFolder.name,
@@ -4781,46 +4863,79 @@ export class CanvasPanel {
             }
 
             // [v0.3.11] 3. 🛡️ Self-Healing: Background Reality-Check (Find roaming files)
-            try {
-                const engine = new BootstrapEngine();
-                const discoveredState = await engine.autoDiscover(workspaceFolder.uri.fsPath);
-                if (discoveredState.nodes!.length > 0) {
-                    const currentEngineNodes = canvasEngine.getFinalSnapshot().nodes;
-                    const existingNodeIds = new Set(Object.keys(currentEngineNodes));
-                    
-                    // Filter for files existing on disk but NOT in graph (Roamers)
-                    const roamers = discoveredState.nodes!.filter(n => !existingNodeIds.has(n.id));
-                    
-                    if (roamers.length > 0) {
-                        // [v0.3.11 HARD SSOT] Non-destructive merge
-                        canvasEngine.mergeFromScan({
-                            nodes: roamers,
-                            edges: []
-                        });
-                        
-                        const finalSnap = canvasEngine.getFinalSnapshot();
-                        
-                        // [v0.3.21.4 Amnesia Guard] NEVER overwrite if we somehow ended up with 0 nodes
-                        if (Object.keys(finalSnap.nodes).length > 0) {
-                            projectState.nodes = Object.values(finalSnap.nodes);
-                            projectState.edges = Object.values(finalSnap.edges);
-                            projectState.clusters = finalSnap.clusters || [];
+            // [v0.3.33 Phase 2.1 Fix] Do NOT block the initial render. Run autoDiscover asynchronously if not forceReset.
+            const runAutoDiscover = async () => {
+                try {
+                    // [v0.3.33 Phase 2 Fix] Yield to the event loop so IPC payload can be flushed to the Webview BEFORE we block the thread with heavy scanning!
+                    await new Promise(resolve => setTimeout(resolve, 100));
 
-                            try {
-                                const normalizedJson = this.normalizeProjectState(finalSnap);
-                                console.log(`[STATE_SAVE_START] Output path: ${projectStateUri.fsPath} (autoDiscover)`);
-                                console.log(`[STATE_SAVE] Nodes: ${projectState.nodes.length}, Edges: ${projectState.edges.length}`);
-                                await vscode.workspace.fs.writeFile(projectStateUri, Buffer.from(normalizedJson, 'utf-8'));
-                                console.log(`[STATE_SAVE_COMPLETE] project_state.json successfully written.`);
-                            } catch (writeErr) {
-                                console.error(`[STATE_SAVE_ERROR] Failed to write project_state.json in autoDiscover:`, writeErr);
+                    const engine = new BootstrapEngine();
+                    const discoveredState = await engine.autoDiscover(workspaceFolder.uri.fsPath);
+                    if (discoveredState.nodes!.length > 0) {
+                        const currentEngineNodes = canvasEngine.getFinalSnapshot().nodes;
+                        const existingNodeIds = new Set(Object.keys(currentEngineNodes));
+                        
+                        // Filter for files existing on disk but NOT in graph (Roamers)
+                        const roamers = discoveredState.nodes!.filter(n => !existingNodeIds.has(n.id));
+                        
+                        if (roamers.length > 0) {
+                            // [v0.3.11 HARD SSOT] Non-destructive merge
+                            canvasEngine.mergeFromScan({
+                                nodes: roamers,
+                                edges: []
+                            });
+
+                        
+                            const finalSnap = canvasEngine.getFinalSnapshot();
+                            
+                            // [v0.3.21.4 Amnesia Guard] NEVER overwrite if we somehow ended up with 0 nodes
+                            if (Object.keys(finalSnap.nodes).length > 0) {
+                                projectState.nodes = Object.values(finalSnap.nodes);
+                                projectState.edges = Object.values(finalSnap.edges);
+                                projectState.clusters = finalSnap.clusters || [];
+
+                                try {
+                                    const normalizedJson = this.normalizeProjectState(finalSnap);
+                                    console.log(`[STATE_SAVE_START] Output path: ${projectStateUri.fsPath} (autoDiscover)`);
+                                    console.log(`[STATE_SAVE] Nodes: ${projectState.nodes.length}, Edges: ${projectState.edges.length}`);
+                                    await vscode.workspace.fs.writeFile(projectStateUri, Buffer.from(normalizedJson, 'utf-8'));
+                                    console.log(`[STATE_SAVE_COMPLETE] project_state.json successfully written.`);
+                                } catch (writeErr) {
+                                    console.error(`[STATE_SAVE_ERROR] Failed to write project_state.json in autoDiscover:`, writeErr);
+                                }
+                            }
+                            
+                            // [v0.3.34] Robust Chunking
+                            if (!this._isSyncing && this._panel) {
+                                const CHUNK_SIZE = 5000;
+                                this._panel.webview.postMessage({ command: 'projectStateChunkStart' });
+                                for (let i = 0; i < projectState.nodes.length; i += CHUNK_SIZE) {
+                                    this._panel.webview.postMessage({ command: 'projectStateNodesChunk', data: projectState.nodes.slice(i, i + CHUNK_SIZE) });
+                                }
+                                for (let i = 0; i < projectState.edges.length; i += CHUNK_SIZE) {
+                                    this._panel.webview.postMessage({ command: 'projectStateEdgesChunk', data: projectState.edges.slice(i, i + CHUNK_SIZE) });
+                                }
+                                const finalPayloadAsync: any = { ...projectState, _ipcTimestamp: Date.now() };
+                                delete finalPayloadAsync.nodes;
+                                delete finalPayloadAsync.edges;
+
+                                this._panel.webview.postMessage({
+                                    command: 'projectStateChunkEnd',
+                                    data: finalPayloadAsync,
+                                    workspaceFolder: workspaceFolder.uri.fsPath,
+                                    forceReset: false,
+                                    isAuthoritative: false
+                                });
                             }
                         }
                     }
+                } catch (err) {
+                    Logger.warn(`[CanvasPanel] Self-healing sync failed: ${err}`);
                 }
-            } catch (err) {
-                Logger.warn(`[CanvasPanel] Self-healing sync failed: ${err}`);
-            }
+            };
+
+            // [v0.3.33 핫픽스] forceReset일 때도 일단 화면부터 띄우고 백그라운드에서 스캔하도록 변경 (await 제거)
+            runAutoDiscover(); // Non-blocking
 
             // [v0.3.11] 4. Phase & Broadcast
             try {
@@ -4841,9 +4956,30 @@ export class CanvasPanel {
 
             console.log(`[FLOW_DEBUG] webview payload nodes ${projectState.nodes.length} edges ${projectState.edges.length}`);
 
+            // [v0.3.34] Robust Chunking to bypass VS Code IPC size limits
+            const CHUNK_SIZE = 5000;
+            this._panel.webview.postMessage({ command: 'projectStateChunkStart' });
+            
+            for (let i = 0; i < projectState.nodes.length; i += CHUNK_SIZE) {
+                this._panel.webview.postMessage({ 
+                    command: 'projectStateNodesChunk', 
+                    data: projectState.nodes.slice(i, i + CHUNK_SIZE) 
+                });
+            }
+            for (let i = 0; i < projectState.edges.length; i += CHUNK_SIZE) {
+                this._panel.webview.postMessage({ 
+                    command: 'projectStateEdgesChunk', 
+                    data: projectState.edges.slice(i, i + CHUNK_SIZE) 
+                });
+            }
+            
+            const finalPayload: any = { ...projectState, _ipcTimestamp: Date.now() };
+            delete finalPayload.nodes;
+            delete finalPayload.edges;
+
             this._panel.webview.postMessage({
-                command: 'projectState',
-                data: { ...projectState, _ipcTimestamp: Date.now() }, // [v0.3.33 Phase 0] Baseline: IPC send timestamp
+                command: 'projectStateChunkEnd',
+                data: finalPayload, // [v0.3.33 Phase 0] Baseline: IPC send timestamp
                 workspaceFolder: workspaceFolder.uri.fsPath,
                 forceReset: forceReset,
                 isAuthoritative: isAuthoritative // 🔥 [v0.3.11] Interaction Bypass
@@ -4937,22 +5073,95 @@ export class CanvasPanel {
             }
         }
 
-        // Replace script src with webview URI
+        // [v0.3.33 Phase 2 Fix] Inline scripts to bypass VS Code ServiceWorker InvalidStateError
+        const themeScript = fs.readFileSync(vscode.Uri.joinPath(this._extensionUri, 'ui', 'synapse-theme.js').fsPath, 'utf8');
+        const engineCoreScript = fs.readFileSync(vscode.Uri.joinPath(this._extensionUri, 'ui', 'engine-core.js').fsPath, 'utf8');
+        const webglRendererScript = fs.readFileSync(vscode.Uri.joinPath(this._extensionUri, 'ui', 'webgl-renderer.js').fsPath, 'utf8');
+        const canvasEngineScript = fs.readFileSync(vscode.Uri.joinPath(this._extensionUri, 'ui', 'canvas-engine.js').fsPath, 'utf8');
+
+        // Add nonce first
+        const nonce = getNonce();
+
+        // [v0.3.34 Phase 1] Inject VSCODE_LANGUAGE and i18n
+        try {
+            const i18nScript = fs.readFileSync(vscode.Uri.joinPath(this._extensionUri, 'ui', 'i18n.js').fsPath, 'utf8');
+            html = html.replace(
+                '<head>',
+                `<head>\n    <script nonce="${nonce}">\n        window.VSCODE_LANGUAGE = '${vscode.env.language}';\n${i18nScript}\n    </script>`
+            );
+        } catch (e) {
+            Logger.warn(`[CanvasPanel] Failed to inject i18n.js: ${e}`);
+        }
+
         html = html.replace(
-            'src="synapse-theme.js"',
-            `src="${themeUri}"`
+            '<script src="synapse-theme.js"></script>',
+            `<script nonce="${nonce}">\n${themeScript}\n</script>`
         );
         html = html.replace(
-            'src="canvas-engine.js"',
-            `src="${scriptUri}"`
+            '<script src="engine-core.js"></script>',
+            `<script nonce="${nonce}">\n${engineCoreScript}\n</script>`
         );
         html = html.replace(
-            'src="engine-core.js"',
-            `src="${engineCoreUri}"`
+            '<script src="webgl-renderer.js"></script>',
+            `<script nonce="${nonce}">\n${webglRendererScript}\n</script>`
         );
+        
+        let rbushScript = '';
+        try {
+            rbushScript = fs.readFileSync(vscode.Uri.joinPath(this._extensionUri, 'ui', 'rbush.js').fsPath, 'utf8');
+        } catch (e) {
+            console.error('[SYNAPSE] Failed to load rbush.js from ui/', e);
+        }
+        
+        if (rbushScript) {
+            html = html.replace(
+                '<script src="rbush.js"></script>',
+                `<script nonce="${nonce}">
+console.log('[RBUSH_INJECT] wrapper start');
+console.log('[RBUSH_INJECT] rbushScript length:', ${rbushScript.length});
+try {
+    var _rbush_module = { exports: {} };
+    var _rbush_exports = _rbush_module.exports;
+    (function(module, exports) {
+${rbushScript}
+    })(_rbush_module, _rbush_exports);
+    console.log('[RBUSH_INJECT] exports type:', typeof _rbush_module.exports);
+    window.RBush = _rbush_module.exports || window.RBush;
+    if (window.RBush && window.RBush.default) window.RBush = window.RBush.default;
+    console.log('[RBUSH_INJECT] mounted:', typeof window.RBush, !!window.RBush);
+    console.log('[RBUSH_INJECT] RBush constructor name:', window.RBush ? window.RBush.name : 'N/A');
+} catch (e) {
+    console.error('[RBUSH_INJECT] failed', e);
+}
+</script>`
+            );
+        } else {
+            html = html.replace('<script src="rbush.js"></script>', '');
+        }
+        
+        // [v0.3.33 Phase 2] Cluster Hierarchy injection
+        let clusterHierarchyScript = '';
+        try {
+            clusterHierarchyScript = fs.readFileSync(vscode.Uri.joinPath(this._extensionUri, 'ui', 'cluster-hierarchy.js').fsPath, 'utf8');
+        } catch (e) {
+            console.error('[SYNAPSE] Failed to load cluster-hierarchy.js from ui/', e);
+        }
+        if (clusterHierarchyScript) {
+            html = html.replace(
+                '<script src="cluster-hierarchy.js"></script>',
+                `<script nonce="${nonce}">
+${clusterHierarchyScript}
+</script>`
+            );
+        } else {
+            html = html.replace('<script src="cluster-hierarchy.js"></script>', '');
+        }
+
         html = html.replace(
-            'src="webgl-renderer.js"',
-            `src="${webglRendererUri}"`
+            '<script src="canvas-engine.js"></script>',
+            `<script nonce="${nonce}">
+${canvasEngineScript}
+</script>`
         );
 
         // Inject actual webgl renderer URI for dynamic loader fallback
@@ -4961,20 +5170,20 @@ export class CanvasPanel {
             `${webglRendererUri}`
         );
 
-        // Add nonce first, before any inline script insertion
-        const nonce = getNonce();
+        // (Nonce was already created above)
 
         // Add CSP - relaxed for webview compatibility
+        // [v0.3.33 Debug] Removed CSP to see if it fixes InvalidStateError
         html = html.replace(
             '<head>',
-            `<head>
-            <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource} 'unsafe-inline'; script-src ${webview.cspSource} 'nonce-${nonce}' 'unsafe-inline' 'unsafe-eval'; img-src ${webview.cspSource} https:; connect-src ${webview.cspSource} https:; worker-src ${webview.cspSource} blob:;">
-            `
+            `<head>`
         );
 
-        // Add nonce to all script tags
+        // Do not blanket replace all scripts with nonce since we already injected nonces for the inlined scripts.
+        // The inline scripts above are already nonced.
+        // We only need to nonce any remaining <script> tags if they exist.
         html = html.replace(
-            /<script/g,
+            /<script(?! nonce)/g,
             `<script nonce="${nonce}"`
         );
 

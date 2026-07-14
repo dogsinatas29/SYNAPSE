@@ -1248,12 +1248,22 @@ Please wait until harvesting completes.</p>
     </div>
 
     <div id="header">
-        <div class="logo">🧠 SYNAPSE <span style="font-size: 10px; opacity: 0.6; margin-left: 5px;">v0.2.18.1</span></div>
+        <div class="logo">🧠 SYNAPSE</div>
         <div id="status-indicator" style="font-size: 12px; color: #fabd2f; font-weight: bold;"></div>
         <div id="project-path" style="font-size: 12px; color: var(--fg-dim);">Loading project...</div>
     </div>
 
     <div id="toolbar">
+        <!-- Strategy Menu -->
+        <div class="dropdown">
+            <div class="menu-label">⚙️ Strategy</div>
+            <div class="dropdown-content" id="strategy-menu">
+                <button class="btn active" data-strategy="fullgraph">Full Graph</button>
+                <button class="btn" data-strategy="density">Density (Nodes Only)</button>
+                <button class="btn" data-strategy="focus">Focus (Neighbors)</button>
+            </div>
+        </div>
+
         <!-- View Menu -->
         <div class="dropdown">
             <div class="menu-label">👁️ View</div>
@@ -1276,7 +1286,7 @@ Please wait until harvesting completes.</p>
 
         <button class="btn" id="btn-group" title="Group Selected Nodes">Group</button>
         <button class="btn" id="btn-ungroup" title="Ungroup Selected Cluster">Ungroup</button>
-        <button class="btn" id="btn-cluster-vis" title="Cluster Visibility Panel">🗂 Clusters</button>
+        <button class="btn" id="btn-cluster-vis" title="Cluster Visibility Panel" data-i18n="btn.clusters">🗂 Clusters</button>
         
         <!-- Logic Edit Menu -->
         <div class="dropdown">
@@ -1310,7 +1320,7 @@ Please wait until harvesting completes.</p>
         <div class="dropdown">
             <div class="menu-label">⚙️ System</div>
             <div class="dropdown-content">
-                <button class="btn" id="btn-reset-state" title="project_state.json을 빈 상태로 초기화" style="color: #d3869b;">🔄 Reset State</button>
+                <button class="btn" id="btn-reset-state" title="project_state.json을 빈 상태로 초기화" style="color: #d3869b;" data-i18n="menu.reset_state">🔄 Reset State</button>
                 <button class="btn" id="btn-animate" title="Toggle Edge Animations">🎬 Animation: On</button>
             </div>
         </div>
@@ -1329,9 +1339,9 @@ Please wait until harvesting completes.</p>
         <div class="dropdown">
             <div class="menu-label">🔌 SSH</div>
             <div class="dropdown-content">
-                <button class="btn" id="btn-ssh-start-server" title="서버 관리 패널을 열어 마스터 서버를 시작하거나 종료합니다.">서버 시작</button>
-                <button class="btn" id="btn-ssh-connect" title="원격 서버 관리 패널을 열어 다른 마스터 서버에 접속합니다.">서버 접속</button>
-                <button class="btn" id="btn-ssh-manage-accounts" title="계정 관리 패널을 열어 새로운 사용자를 생성하거나 관리합니다.">계정 관리</button>
+                <button class="btn" id="btn-ssh-start-server" title="서버 관리 패널을 열어 마스터 서버를 시작하거나 종료합니다." data-i18n="menu.server_start">서버 시작</button>
+                <button class="btn" id="btn-ssh-connect" title="원격 서버 관리 패널을 열어 다른 마스터 서버에 접속합니다." data-i18n="menu.server_connect">서버 접속</button>
+                <button class="btn" id="btn-ssh-manage-accounts" title="계정 관리 패널을 열어 새로운 사용자를 생성하거나 관리합니다." data-i18n="menu.account_manage">계정 관리</button>
             </div>
         </div>
 
@@ -1417,7 +1427,7 @@ Please wait until harvesting completes.</p>
 
             <div id="loading">
                 <div class="spinner"></div>
-                <div>프로젝트 분석 중...</div>
+                <div id="loading-text">프로젝트 분석 중...</div>
             </div>
         </div>
 
@@ -2799,8 +2809,13 @@ Please wait until harvesting completes.</p>
     <!-- [v0.3.32.4] Cluster Visibility Panel -->
     <div id="cluster-visibility-panel" class="draggable-panel">
         <div id="cluster-vis-header">
-            <span class="panel-title">🗂 Cluster Visibility</span>
+            <span class="panel-title" data-i18n="panel.cluster_vis">🗂 Cluster Visibility</span>
             <button id="cluster-vis-close" style="background:none;border:none;color:#928374;cursor:pointer;font-size:16px;">&times;</button>
+        </div>
+        <div id="cluster-vis-actions" style="display: flex; gap: 4px; padding: 6px 8px; background: #282828; border-bottom: 1px solid #504945;">
+            <button id="btn-cluster-collapse-all" style="flex: 1; padding: 4px; background: #3c3836; border: 1px solid #504945; color: #ebdbb2; border-radius: 3px; cursor: pointer; font-size: 11px; transition: background 0.2s;" onmouseover="this.style.background='#504945'" onmouseout="this.style.background='#3c3836'" data-i18n="cluster.collapse_all">모든 클러스터 -</button>
+            <button id="btn-cluster-expand-roots" style="flex: 1; padding: 4px; background: #3c3836; border: 1px solid #504945; color: #ebdbb2; border-radius: 3px; cursor: pointer; font-size: 11px; transition: background 0.2s;" onmouseover="this.style.background='#504945'" onmouseout="this.style.background='#3c3836'" data-i18n="cluster.expand_roots">루트만 보기</button>
+            <button id="btn-cluster-expand-all" style="flex: 1; padding: 4px; background: #3c3836; border: 1px solid #504945; color: #ebdbb2; border-radius: 3px; cursor: pointer; font-size: 11px; transition: background 0.2s;" onmouseover="this.style.background='#504945'" onmouseout="this.style.background='#3c3836'" data-i18n="cluster.expand_all">모든 클러스터 +</button>
         </div>
         <input type="text" id="cluster-vis-search" placeholder="Search clusters...">
         <div id="cluster-vis-tree"></div>
@@ -2809,20 +2824,20 @@ Please wait until harvesting completes.</p>
     <!-- Layer Controller -->
     <div id="layer-controller" class="draggable-panel">
         <div id="layer-controller-header" class="panel-header">
-            <span class="panel-title">레이어 가시성</span>
+            <span class="panel-title" data-i18n="layer.title">레이어 가시성</span>
         </div>
         <div class="panel-content" style="padding: 12px;">
             <div class="layer-toggle-row" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                <span class="layer-label" style="font-size: 13px; color: var(--fg-main);">기본 로직 (AI) - <b id="layer-count-base" style="color: var(--accent);">0</b></span>
+                <span class="layer-label" style="font-size: 13px; color: var(--fg-main);" data-i18n="layer.base">기본 로직 (AI) - <b id="layer-count-base" style="color: var(--accent);">0</b></span>
                 <button id="btn-layer-base" class="layer-btn active" style="min-width: 50px;">ON</button>
             </div>
             <div class="layer-toggle-row" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                <span class="layer-label" style="font-size: 13px; color: var(--fg-main);">사용자 커스텀 (User) - <b id="layer-count-user" style="color: #bc7ad9;">0</b></span>
+                <span class="layer-label" style="font-size: 13px; color: var(--fg-main);" data-i18n="layer.user">사용자 커스텀 (User) - <b id="layer-count-user" style="color: #bc7ad9;">0</b></span>
                 <button id="btn-layer-user" class="layer-btn active" style="min-width: 50px;">ON</button>
             </div>
             <div class="layer-toggle-row" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                <span class="layer-label" style="font-size: 13px; color: var(--fg-main);">외부 참조 (External) - <b id="layer-count-external" style="color: #a89984;">0</b></span>
-                <button id="btn-layer-external" class="layer-btn" style="min-width: 50px;">OFF</button>
+                <span class="layer-label" style="font-size: 13px; color: var(--fg-main);" data-i18n="layer.external">외부 참조 (External) - <b id="layer-count-external" style="color: #a89984;">0</b></span>
+                <button id="btn-layer-external" class="layer-btn active" style="min-width: 50px;">ON</button>
             </div>
             <div id="client-layer-rows"></div>
             <div class="layer-toggle-row" style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; border-top: 1px solid #3c3836; padding-top: 10px;">
@@ -2835,7 +2850,7 @@ Please wait until harvesting completes.</p>
             </div>
             <div class="layer-toggle-row" style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px;">
                 <span class="layer-label" style="font-size: 13px; color: #fe8019; font-weight: bold;">Traffic Heatmap (Beta)</span>
-                <button id="btn-toggle-heatmap" class="layer-btn" style="min-width: 50px;">OFF</button>
+                <button id="btn-toggle-heatmap" class="layer-btn active" style="min-width: 50px;">ON</button>
             </div>
             <div class="layer-action-row" style="margin-top: 15px; border-top: 1px solid #3c3836; padding-top: 12px;">
                 <button id="btn-align-role" class="protocol-btn" style="width: 100%; font-size: 11px; background: #458588; color: #ebdbb2;">🎯 Align Architecture (Role-based)</button>
@@ -2939,9 +2954,11 @@ Please wait until harvesting completes.</p>
         </div>
     </div>
 
+    <script src="rbush.js"></script>
     <script src="synapse-theme.js"></script>
     <script src="engine-core.js"></script>
     <script src="webgl-renderer.js"></script>
+    <script src="cluster-hierarchy.js"></script>
     <script src="canvas-engine.js"></script>
 </body>
 

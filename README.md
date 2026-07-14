@@ -279,7 +279,12 @@ The logic of clients connected to the network is also included in the flow view.
 
 SYNAPSE provides a **Cluster Visibility Panel** to effectively manage massive architectures. It offers a file-explorer-like hierarchical view to grasp and control complex folder (cluster) structures at a glance.
 
-![Cluster Visibility](assets/cluster_visibility.png)
+![Cluster Visibility](assets/cluster_visibility2.png)
+
+### Quick Actions
+- **모든 클러스터 - (Collapse All)**: Collapses all clusters in the tree, showing only the highest-level groupings.
+- **루트만 보기 (Roots Only)**: Expands only the root clusters while keeping deeper levels collapsed.
+- **모든 클러스터 + (Expand All)**: Expands all clusters in the tree to show their full contents.
 
 ### 1. Intuitive Hierarchy & Recursive Counting
 The visibility panel reflects your project's actual folder structure. The number next to a folder indicates the **accumulated total of all nodes (files)** contained within it and all its subfolders. You can instantly know how many components are inside a module just by looking at the top-level folder.
@@ -488,6 +493,7 @@ SYNAPSE was created to overcome the limitations of code-centric development. It 
 
 | Version | Release Date | Description |
 | :---: | :---: | :--- |
+| **v0.3.33** | 2026-07-14 | **Cluster Hierarchy & Dragging Overhaul**: Completely refactored cluster interactions and visibility control. Replaced isolated node-dragging with a unified cluster-dragging model that recursively moves all child clusters and their nodes. Upgraded Cluster Visibility panel with 3 new quick-action buttons (`Collapse All`, `Roots Only`, `Expand All`) for rapid LOD management. Implemented depth-based priority for hit detection (`getClusterHeaderAt`) to ensure reliable parent cluster selection, even in deeply nested paths. |
 | **v0.3.32.4** | 2026-07-05 | **UX & Visibility Improvements**: Added recursive node counting and cascade toggling to the Cluster Visibility panel. Fixed real-time coordinate tracking for the REVEAL feature, completely isolated remote client namespaces with `👤 [username]` labels, and patched a major memory leak during State Reset. |
 | **v0.3.32.1** | 2026-06-27 | **Cross-Network Trace & Semantic Flowchart**: Improved flowchart rendering quality (single-pass Barycenter ordering, red dotted back-edges). Implemented `[SYNAPSE_NETWORK_LINK]` macro for cross-project dependency parsing bypassing language syntax limits. Fixed IFF logic for remote client nodes and proved distributed DAG merging via Harvest. |
 | **v0.3.32.2** | 2026-06-29 | **File Deletion Sync & Architecture Physics Fixes**: Fixed manual node deletion sync bug, safely handling absolute vs relative paths. Expanded `EXTERNAL_PACKAGES` to recognize 100+ standard frameworks across 7 languages, eliminating false ghost nodes. Enhanced regex to properly resolve `[SYNAPSE_NETWORK_LINK]` cross-workspace dependencies and cluster remote ghosts into `cluster_ghost_network_remote`. Fixed root-level files infinite layout collapse by injecting a dynamic `📁 Root` cluster to force global physics packing. Resolved false-positive JSON serialization errors for workspace states. |

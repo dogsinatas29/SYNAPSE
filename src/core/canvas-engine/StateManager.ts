@@ -357,6 +357,11 @@ export class StateManager {
 
   private generateMergedState(options: { raw: boolean }): any {
     const coreSnap = graphModel.createSnapshot();
+    // Guard: skip merge if graphModel is not yet populated (prevents ghost contamination from empty snapshot)
+    if (coreSnap.nodes.length === 0 && this.bufferNodes.size === 0) {
+        console.warn('[STATE_SKIP] graphModel not ready, skipping merge');
+        return { nodes: {}, edges: {}, clusters: [], deletedNodeIds: [], deletedPaths: [], userCount: 0, aiCount: 0, externalCount: 0 };
+    }
     const deDupMap = new Map<string, Node>();
     const getEffectivePath = (n: Node): string => {
         return n.filePath || (n.data && (n.data.file || n.data.filePath)) || "";
@@ -453,7 +458,10 @@ export class StateManager {
         const isInUserCluster = n.cluster_id && !isFolderCluster && !isSystemCluster;
 
         let finalLayer: Layer = 'ai';
-        let finalStatus = n.status || 'active';
+        let finalStatus: string = 'active';
+        if (n.status && n.status !== 'ghost') {
+            finalStatus = n.status;
+        }
         let finalClusterId = n.cluster_id || "";
 
         // 🏛️ Master Pivot
@@ -478,15 +486,31 @@ export class StateManager {
         } else {
             // AI / Base Logic Domain
             finalLayer = 'ai';
-            const isOnDisk = isExternal || coreSnap.nodes.some(cn => cn.filePath === (n.filePath || n.id) || cn.id === n.id);
-            const parentFolder = this.extractParentFolderName(n.filePath);
+            const coreNode = coreSnap.nodes.find(cn => cn.id === resolvedId || cn.filePath === resolvedId || cn.id === n.id);
+            const isOnDisk = isExternal || !!coreNode;
+            const parentFolder = this.extractParentFolderName(n.filePath || resolvedId);
+
 
             if (isExternal) {
                 finalLayer = 'external';
                 finalClusterId = 'cluster_ghosts';
             } else if (!isOnDisk) {
                 finalStatus = 'ghost';
-                finalClusterId = 'sys_cluster_buffer';
+                // [v0.3.33.6 Fix] For ghost nodes, if their cached cluster is a system cluster (like sys_cluster_buffer),
+                // it's likely poisoned. Fallback to extracting the folder from the path, or put in cluster_ghosts.
+                if (n.cluster_id && !isSystemCluster) {
+                    finalClusterId = n.cluster_id;
+                } else if (parentFolder) {
+                    finalClusterId = `folder_${parentFolder}`;
+                } else {
+                    finalClusterId = 'cluster_ghosts';
+                }
+            } else if (coreNode && coreNode.cluster_id !== undefined) {
+                // [v0.3.33.5 Fix] State Cache Poisoning Fix!
+                // Previously, if a node was once forced into sys_cluster_buffer, it was saved to project_state.json.
+                // Upon reload, `n.cluster_id` would be "sys_cluster_buffer", bypassing DataPipeline's fresh logic.
+                // We MUST trust the physical cluster_id from coreSnap (DataPipeline) for active nodes.
+                finalClusterId = coreNode.cluster_id;
             } else if (n.cluster_id) {
                 // [v0.3.32.2] Respect the backend's (DataPipeline) hierarchical cluster_id!
                 finalClusterId = n.cluster_id;
@@ -547,7 +571,7 @@ export class StateManager {
                     id: n.cluster_id,
                     label: isGhostCluster ? '👻 External Ghosts' : `📂 ${n.cluster_id.replace('folder_', '')}`,
                     type: 'folder', position: { x: 0, y: 0 }, data: { layer: isGhostCluster ? 'external' : 'ai' },
-                    collapsed: false, bounds: { x: 0, y: 0, width: 0, height: 0 }, children: [], nodes: []
+                    bounds: { x: 0, y: 0, width: 0, height: 0 }, children: [], nodes: []
                 });
             }
         }
@@ -557,9 +581,30 @@ export class StateManager {
     const systemLabels: Record<string, string> = { 'sys_cluster_buffer': 'Buffer Cluster', 'sys_cluster_reserved': 'Reserved Cluster', 'cluster_ghosts': '👻 External Ghosts' };
     systemIds.forEach(id => {
         if (!clusterMap.has(id)) {
-            const layer = (id === 'sys_cluster_buffer') ? 'user' : (id === 'cluster_ghosts' ? 'external' : 'ai');
+            const layer = (id === 'cluster_ghosts') ? 'external' : 'ai'; // sys_cluster_buffer and sys_cluster_reserved are internal/AI
             clusterMap.set(id, { id, label: systemLabels[id], type: 'system', position: { x: 0, y: 0 }, data: { layer }, collapsed: false, bounds: { x: 0, y: 0, width: 0, height: 0 }, children: [], nodes: [] });
         }
+    });
+
+    // [v0.3.33 Phase 2 Fix] Optimize Cluster Pruning (O(N) instead of O(N*C))
+    const nodesWithClusters = new Set<string>();
+    Object.values(finalNodes).forEach(n => {
+        if (n.cluster_id) nodesWithClusters.add(n.cluster_id);
+        if (n.data && n.data.cluster_id) nodesWithClusters.add(n.data.cluster_id);
+    });
+
+    const subtreeHasNodes = new Set<string>(nodesWithClusters);
+    for (const cid of Array.from(subtreeHasNodes)) {
+        let curr = clusterMap.get(cid);
+        while (curr && curr.parent_id) {
+            subtreeHasNodes.add(curr.parent_id);
+            curr = clusterMap.get(curr.parent_id);
+        }
+    }
+
+    const parentClusters = new Set<string>();
+    clusterMap.forEach(c => {
+        if (c.parent_id) parentClusters.add(c.parent_id);
     });
 
     const finalClusters = Array.from(clusterMap.values()).filter(c => {
@@ -568,13 +613,20 @@ export class StateManager {
             return true;
         }
         
-        // Prune empty folder clusters
-        const hasNodes = Object.values(finalNodes).some(n => n.cluster_id === c.id || (n.data && n.data.cluster_id === c.id));
-        if (hasNodes) return true;
-        
-        // Check if it's a parent of any other kept cluster
-        const isParent = Array.from(clusterMap.values()).some(otherC => otherC.parent_id === c.id);
-        if (isParent) return true;
+        // PROBE: survival path for empty ancestor chain
+        if (
+            c.id.includes('folder_app_src_main_java_de_danoeh') ||
+            c.id.includes('folder_app_src_main_java_de')
+        ) {
+            console.log('[KEEP_CLUSTER]', c.id, {
+                directNodes: nodesWithClusters.has(c.id),
+                parentCluster: parentClusters.has(c.id),
+                subtreeHasNodes: subtreeHasNodes.has(c.id)
+            });
+        }
+
+        // Prune empty folder clusters — keep if cluster (or any descendant) has direct nodes
+        if (subtreeHasNodes.has(c.id)) return true;
         
         return false; // Remove empty clusters to prevent ghost UI boxes
     });

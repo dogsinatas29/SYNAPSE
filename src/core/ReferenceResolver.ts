@@ -20,7 +20,15 @@ export class ReferenceResolver {
         symbolIndex: SymbolIndex
     ): ResolvedReference[] {
         const result: ResolvedReference[] = [];
-        const existingNodeIdsArray = Array.from(existingNodeIds);
+        
+        // [v0.3.34] Optimize O(N*M) basename lookups to prevent Extension Host freezing
+        const stemMap = new Map<string, string>();
+        for (const id of existingNodeIds) {
+            const nodeStem = path.basename(id, path.extname(id)).toLowerCase();
+            if (!stemMap.has(nodeStem)) {
+                stemMap.set(nodeStem, id);
+            }
+        }
 
         for (const { sourceFilePath, ref } of validReferences) {
             let targetNodeId = ref.target;
@@ -29,11 +37,8 @@ export class ReferenceResolver {
 
             if (!existingNodeIds.has(targetNodeId)) {
                 // Try basename fallback
-                const matchedId = existingNodeIdsArray.find(id => {
-                    const nodeStem = path.basename(id, path.extname(id)).toLowerCase();
-                    const targetStem = path.basename(targetNodeId, path.extname(targetNodeId)).toLowerCase();
-                    return nodeStem === targetStem;
-                });
+                const targetStem = path.basename(targetNodeId, path.extname(targetNodeId)).toLowerCase();
+                const matchedId = stemMap.get(targetStem);
 
                 if (matchedId) {
                     targetNodeId = matchedId;

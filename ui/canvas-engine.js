@@ -6974,13 +6974,25 @@ class CanvasEngine {
         let minX = Infinity, minY = Infinity;
         let maxX = -Infinity, maxY = -Infinity;
 
-        for (const node of this.nodes) {
+        const nodesToMeasure = this._visibleNodesCache || this.nodes;
+        for (const node of nodesToMeasure) {
             if (!node.position || typeof node.position.x !== 'number' || typeof node.position.y !== 'number') continue;
             if (Number.isNaN(node.position.x) || Number.isNaN(node.position.y)) continue;
             minX = Math.min(minX, node.position.x);
             minY = Math.min(minY, node.position.y);
             maxX = Math.max(maxX, node.position.x + 120);
             maxY = Math.max(maxY, node.position.y + 60);
+        }
+
+        // [v0.3.33.2 Fix] Include visible clusters in world bounds so collapsed clusters don't get cut off in FIT view
+        const clustersToMeasure = this._visibleGraphClusters || this.clusters || [];
+        for (const cluster of clustersToMeasure) {
+            if (cluster.bounds && cluster.bounds.minX !== Infinity) {
+                minX = Math.min(minX, cluster.bounds.minX);
+                minY = Math.min(minY, cluster.bounds.minY);
+                maxX = Math.max(maxX, cluster.bounds.maxX);
+                maxY = Math.max(maxY, cluster.bounds.maxY);
+            }
         }
 
         if (minX === Infinity || minY === Infinity) {
@@ -11690,19 +11702,23 @@ class CanvasEngine {
             const children = childrenMap.get(cluster.id);
             const directNodes = nodesByCluster.get(cluster.id) || [];
             
+            // 1. Calculate directNodes bounds
+            let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+            for (const n of directNodes) {
+                if (n.position) {
+                    if (n.position.x < minX) minX = n.position.x;
+                    if (n.position.y < minY) minY = n.position.y;
+                    if (n.position.x > maxX) maxX = n.position.x;
+                    if (n.position.y > maxY) maxY = n.position.y;
+                }
+            }
+            const wNodes = minX === Infinity ? 0 : (maxX - minX) + 100; // Reduced padding
+            const hNodes = minY === Infinity ? 0 : (maxY - minY) + 100;
+
             // Base Case: Leaf Cluster (No child clusters)
             if (!children || children.length === 0) {
-                let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
-                for (const n of directNodes) {
-                    if (n.position) {
-                        if (n.position.x < minX) minX = n.position.x;
-                        if (n.position.y < minY) minY = n.position.y;
-                        if (n.position.x > maxX) maxX = n.position.x;
-                        if (n.position.y > maxY) maxY = n.position.y;
-                    }
-                }
-                const w = minX === Infinity ? 400 : (maxX - minX) + 400; // 400 padding for nodes
-                const h = minY === Infinity ? 400 : (maxY - minY) + 400;
+                const w = wNodes === 0 ? 200 : wNodes;
+                const h = hNodes === 0 ? 200 : hNodes;
                 clusterBounds.set(cluster.id, { width: w, height: h });
                 return { width: w, height: h };
             }
@@ -11732,7 +11748,7 @@ class CanvasEngine {
                 if (size.height > rowHeights[row]) rowHeights[row] = size.height;
             }
             
-            const padding = 600; // Dynamic padding between cells
+            const padding = 150; // Dynamic padding between cells (reduced from 600)
             for (let c = 0; c < cols; c++) colWidths[c] += padding;
             for (let r = 0; r < rows; r++) rowHeights[r] += padding;
             
@@ -11742,9 +11758,26 @@ class CanvasEngine {
             let totalGridH = 0;
             for (let r = 0; r < rows; r++) totalGridH += rowHeights[r];
             
+            // [v0.3.33.2 Fix] If ancestor has directNodes, stack them ABOVE the child clusters
+            if (hNodes > 0) {
+                totalGridH += hNodes + padding;
+                if (wNodes > totalGridW) totalGridW = wNodes;
+                
+                // Shift directNodes to the top area
+                const currentNodesCX = (minX + maxX) / 2;
+                const currentNodesCY = (minY + maxY) / 2;
+                const targetNodesCX = 0;
+                const targetNodesCY = -totalGridH / 2 + hNodes / 2;
+                cluster._directNodesShiftX = targetNodesCX - currentNodesCX;
+                cluster._directNodesShiftY = targetNodesCY - currentNodesCY;
+            } else {
+                cluster._directNodesShiftX = 0;
+                cluster._directNodesShiftY = 0;
+            }
+
             // Center the grid around local (0,0)
             const startX = -totalGridW / 2;
-            const startY = -totalGridH / 2;
+            const startY = hNodes > 0 ? (-totalGridH / 2 + hNodes + padding) : (-totalGridH / 2);
             
             for (let i = 0; i < count; i++) {
                 const child = children[i];
@@ -11790,8 +11823,8 @@ class CanvasEngine {
             const directNodes = nodesByCluster.get(cluster.id) || [];
             for (const n of directNodes) {
                 if (n.position) {
-                    n.position.x += dx;
-                    n.position.y += dy;
+                    n.position.x += dx + (cluster._directNodesShiftX || 0);
+                    n.position.y += dy + (cluster._directNodesShiftY || 0);
                 }
             }
 

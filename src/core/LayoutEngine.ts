@@ -1,8 +1,9 @@
 import { Node, Cluster } from './GraphModel';
 import { GraphAnalysis } from './GraphAnalyzer';
 
-export const NODE_SPACING_X = 200;
-export const NODE_SPACING_Y = 120;
+// [v0.3.33.2] Tightened spacing based on user feedback
+export const NODE_SPACING_X = 140; // Reduced from 200
+export const NODE_SPACING_Y = 80;  // Reduced from 120
 
 export interface ClusterWithBBox extends Cluster {
     estWidth: number;
@@ -220,10 +221,10 @@ export function applyLayout(input: LayoutInput): LayoutResult {
             continue;
         }
 
-        const gridWidth = cols * NODE_SPACING_X + 150;
-        const labelWidth = c.label ? c.label.length * 15 + 150 : 200;
+        const gridWidth = cols * NODE_SPACING_X + 100;
+        const labelWidth = c.label ? c.label.length * 15 + 100 : 150;
         const estWidth = Math.max(gridWidth, labelWidth);
-        const estHeight = Math.max(rows * NODE_SPACING_Y + 150, 150);
+        const estHeight = Math.max(rows * NODE_SPACING_Y + 100, 100);
 
         const packedC: ClusterWithBBox = {
             ...c, estWidth, estHeight, area: estWidth * estHeight, nodeCount: count
@@ -305,8 +306,8 @@ export function applyLayout(input: LayoutInput): LayoutResult {
         }
         
         const estAvgW = Math.sqrt(totalClusterArea / data.clusters.length);
-        const dynamicClusterGap = Math.max(Math.min(estAvgW * 0.8, 500), 200);
-        const idealWidth = Math.max(Math.sqrt(totalClusterArea) * 1.5, maxClusterEstWidth * 1.2, 3000); // Make continent slightly wider than tall
+        const dynamicClusterGap = Math.max(Math.min(estAvgW * 0.3, 150), 60); // Tighter cluster gaps
+        const idealWidth = Math.max(Math.sqrt(totalClusterArea) * 1.5, maxClusterEstWidth * 1.2, 1500);
 
         console.log(`[WORLD_PACK]\ncontinent=${cont}\nclusterCount=${data.clusters.length}\nmaxClusterWidth=${maxClusterEstWidth}\nidealWidth=${idealWidth}`);
 
@@ -329,7 +330,7 @@ export function applyLayout(input: LayoutInput): LayoutResult {
             sumClusterH += c.estHeight;
         }
         
-        const dynamicContinentGap = Math.max(Math.sqrt(totalClusterArea) * 0.6, 1000);
+        const dynamicContinentGap = Math.max(Math.sqrt(totalClusterArea) * 0.3, 200); // Tighter continent gaps
         data.estWidth = maxW + dynamicContinentGap;
         data.estHeight = currentY + rowMaxHeight + dynamicContinentGap;
         console.log(`[PACK_BIN] cont="${cont}" currentY=${Math.round(currentY)} rowMaxH=${Math.round(rowMaxHeight)} clusterGap=${Math.round(dynamicClusterGap)} continentGap=${Math.round(dynamicContinentGap)} idealW=${Math.round(idealWidth)} estH1=${Math.round(data.estHeight)}`);
@@ -594,8 +595,8 @@ export function applyLayout(input: LayoutInput): LayoutResult {
 
         if (cNodes.length > 0) {
             // Actual BBox for leaf clusters with nodes
-            const width = maxX === -Infinity ? 200 : (maxX - minX) + 200;
-            const height = maxY === -Infinity ? 200 : (maxY - minY) + 200;
+            const width = maxX === -Infinity ? 150 : (maxX - minX) + 150;
+            const height = maxY === -Infinity ? 150 : (maxY - minY) + 150;
             const centerX = minX === -Infinity ? c.position!.x : minX + (maxX - minX) / 2;
             const centerY = minY === -Infinity ? c.position!.y : minY + (maxY - minY) / 2;
 
@@ -653,11 +654,11 @@ export function applyLayout(input: LayoutInput): LayoutResult {
                 }
                 
                 if (minX !== Infinity) {
-                    // Give ancestor a 100px padding around children
-                    minX -= 100;
-                    minY -= 100;
-                    maxX += 100;
-                    maxY += 100;
+                    // Give ancestor a 60px padding around children
+                    minX -= 60;
+                    minY -= 60;
+                    maxX += 60;
+                    maxY += 60;
                     
                     const width = maxX - minX;
                     const height = maxY - minY;

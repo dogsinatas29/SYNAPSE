@@ -3850,14 +3850,14 @@ class CanvasEngine {
     zoom(wheelDelta, centerX, centerY) {
 
         const oldZoom = this.transform.zoom;
-        // [v0.3.33.8] Non-linear adaptive zoom sensitivity (User requested)
-        // If called with old multiplier (0.9/1.1), convert it back to wheelDelta approx
+        // [v0.3.33.9] Fix: Truly smooth exponential zooming for trackpads
+        // Math.exp allows continuous scaling without massive jumps at tiny zoom levels
         let wDelta = wheelDelta;
         if (wheelDelta === 0.9) wDelta = -1;
         else if (wheelDelta === 1.1) wDelta = 1;
 
-        const sensitivity = Math.max(0.005, oldZoom * 0.15);
-        this.transform.zoom += wDelta * sensitivity;
+        const zoomFactor = Math.exp(wDelta * 0.15);
+        this.transform.zoom *= zoomFactor;
         
         const minZoom = 0.001; // Match fitCameraToBounds
         this.transform.zoom = Math.max(minZoom, Math.min(5.0, this.transform.zoom));
@@ -7960,6 +7960,9 @@ class CanvasEngine {
                 document.getElementById('selected-count').textContent = this.selectedNodes.size;
                 document.getElementById('node-count').textContent = this.nodes.length;
                 document.getElementById('edge-count').textContent = this.edges.length;
+                if (document.getElementById('cluster-count')) {
+                    document.getElementById('cluster-count').textContent = this.clusters ? this.clusters.length : 0;
+                }
                 document.getElementById('zoom-level').textContent = `${(this.transform.zoom * 100).toFixed(0)}%`;
                 document.getElementById('current-mode').textContent = this.currentMode.charAt(0).toUpperCase() + this.currentMode.slice(1);
             }
@@ -11902,6 +11905,15 @@ class CanvasEngine {
                 for (const idB of neighborIds) {
                     if (idA >= idB) continue; // Prevent double checking and self checking
                     
+                    // [v0.3.33.2 Fix] Prevent Ancestor-Descendant Collision!
+                    // Parent and child clusters SHOULD overlap. Pushing them apart rips the graph apart.
+                    if (this.clusterHierarchy) {
+                        const ancestorsA = this.clusterHierarchy.getAncestors(idA);
+                        if (ancestorsA.some(anc => anc.id === idB)) continue; // idB is ancestor of idA
+                        const ancestorsB = this.clusterHierarchy.getAncestors(idB);
+                        if (ancestorsB.some(anc => anc.id === idA)) continue; // idA is ancestor of idB
+                    }
+
                     const bB = bounds.get(idB);
                     if (!bA || !bB) continue;
 

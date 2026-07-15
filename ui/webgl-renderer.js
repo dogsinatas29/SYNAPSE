@@ -357,8 +357,14 @@ class WebGLRenderer {
                 float lineWidth = aThickness;
                 if (aIsHigh > 0.5) lineWidth += 2.0 * sin(uTime * 4.0);
                 
+                // [v0.3.33.2] Prevent sub-pixel culling at extreme zooms
+                // uProjectionMatrix[0][0] scales roughly inversely with zoom. Ensure minimal screen thickness.
+                float zoomScale = uProjectionMatrix[0][0] * 1000.0;
+                float minPixelWidth = 1.5;
+                float safeLineWidth = max(lineWidth, minPixelWidth / max(zoomScale, 0.0001));
+
                 float maxFlare = 3.5;
-                float flaredWidth = lineWidth * maxFlare;
+                float flaredWidth = safeLineWidth * maxFlare;
 
                 vec2 worldPos = pos + norm * (aVertexPosition.y * flaredWidth);
                 vec3 projected = uProjectionMatrix * vec3(worldPos, 1.0);
@@ -563,10 +569,10 @@ class WebGLRenderer {
         this.textInstanceBuffer = this.gl.createBuffer();
         
         // [v0.2.24-Final] Pre-allocate large buffers once to avoid gl.bufferData stalls
-        // 10k nodes, 20k edges, 50k characters
-        const maxNodes = 10000;
-        const maxEdges = 20000;
-        const maxChars = 50000;
+        // [v0.3.34] Expanded limits to support large projects like vscode-main
+        const maxNodes = 50000;
+        const maxEdges = 200000;
+        const maxChars = 100000;
 
         this._nodePosArr = new Float32Array(maxNodes * 2);
         this._nodeColorArr = new Float32Array(maxNodes * 3);
@@ -803,6 +809,9 @@ class WebGLRenderer {
     }
 
     updateEdgeData(edges, nodeMap, selectedNodeIds) {
+        const data = this._edgeArr;
+        const colorData = this._edgeColorArr;
+        const thickData = this._edgeThickArr;
         const dashData = this._edgeDashArr;
         const controlData = this._edgeControlArr;
         if (!data || !colorData || !thickData || !dashData || !controlData) return;

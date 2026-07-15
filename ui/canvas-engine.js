@@ -5895,18 +5895,6 @@ class CanvasEngine {
 
         // [P0] RBush 독립 검증 테스트
         console.log('[RBUSH_TEST] window.RBush:', window.RBush);
-        if (window.RBush) {
-            try {
-                const testTree = new window.RBush();
-                testTree.insert({ minX:0, minY:0, maxX:10, maxY:10, item: "test" });
-                console.log('[RBUSH_TEST] tree.all().length:', testTree.all().length);
-                const testSearch = testTree.search({ minX: 0, minY: 0, maxX: 10, maxY: 10 });
-                console.log('[RBUSH_TEST] search.length:', testSearch.length);
-            } catch(e) {
-                console.error('[RBUSH_TEST] Crash:', e);
-            }
-        }
-
         this.spatialIndex.clear();
         
         console.log('[RBUSH_DEBUG] nodes.length', this.nodes.length);
@@ -6906,6 +6894,22 @@ class CanvasEngine {
     }
 
     computeWorldBounds() {
+        if (this.renderMode === 'flow' && this.flowData && this.flowData.steps && this.flowData.steps.length > 0) {
+            let minX = Infinity, minY = Infinity;
+            let maxX = -Infinity, maxY = -Infinity;
+            for (const step of this.flowData.steps) {
+                if (!step.position || typeof step.position.x !== 'number' || typeof step.position.y !== 'number') continue;
+                if (Number.isNaN(step.position.x) || Number.isNaN(step.position.y)) continue;
+                minX = Math.min(minX, step.position.x);
+                minY = Math.min(minY, step.position.y);
+                maxX = Math.max(maxX, step.position.x + 220); // Flow node width
+                maxY = Math.max(maxY, step.position.y + 100); // Flow node height
+            }
+            if (minX !== Infinity) {
+                return { minX, minY, maxX, maxY, width: maxX - minX, height: maxY - minY };
+            }
+        }
+
         if (!this.nodes || this.nodes.length === 0) {
             return { minX: 0, minY: 0, maxX: 100, maxY: 100, width: 100, height: 100 };
         }
@@ -8017,11 +8021,12 @@ class CanvasEngine {
         // [Phase 2B.13] Edge Bundling LOD
         const hasMetaEdges = this.metaEdges && this.metaEdges.length > 0;
 
-        if (zoom <= 0.35) {
+        // [v0.3.34] Lowered LOD limit so edges are visible even when zoomed out a bit (e.g. 15% zoom)
+        if (zoom <= 0.10) {
             if (hasMetaEdges) {
                 this.renderEdgeBundles(zoom);
                 return; // Skip rendering individual edges
-            } else if (targetEdgesCount > 2000) {
+            } else if (targetEdgesCount > 5000) {
                 // Fallback LOD: if too many edges and zoomed out, don't draw them to save performance
                 return;
             }
@@ -11592,16 +11597,9 @@ class CanvasEngine {
             }
             
             // Recursive Case: Ancestor Cluster
-            let maxChildW = 0, maxChildH = 0;
             for (const child of children) {
-                const size = layoutBottomUp(child);
-                if (size.width > maxChildW) maxChildW = size.width;
-                if (size.height > maxChildH) maxChildH = size.height;
+                layoutBottomUp(child);
             }
-            
-            const padding = 600; // Dynamic padding between cells
-            const cellWidth = maxChildW + padding;
-            const cellHeight = maxChildH + padding;
             
             // Sort children alphabetically for stable deterministic layout
             children.sort((a, b) => a.id.localeCompare(b.id));
@@ -11610,21 +11608,49 @@ class CanvasEngine {
             const cols = Math.ceil(Math.sqrt(count));
             const rows = Math.ceil(count / cols);
             
-            const totalGridW = cols * cellWidth;
-            const totalGridH = rows * cellHeight;
+            // Dynamic Grid: Compute max width per column and max height per row
+            const colWidths = new Array(cols).fill(0);
+            const rowHeights = new Array(rows).fill(0);
+            
+            for (let i = 0; i < count; i++) {
+                const child = children[i];
+                const size = clusterBounds.get(child.id);
+                const col = i % cols;
+                const row = Math.floor(i / cols);
+                if (size.width > colWidths[col]) colWidths[col] = size.width;
+                if (size.height > rowHeights[row]) rowHeights[row] = size.height;
+            }
+            
+            const padding = 600; // Dynamic padding between cells
+            for (let c = 0; c < cols; c++) colWidths[c] += padding;
+            for (let r = 0; r < rows; r++) rowHeights[r] += padding;
+            
+            let totalGridW = 0;
+            for (let c = 0; c < cols; c++) totalGridW += colWidths[c];
+            
+            let totalGridH = 0;
+            for (let r = 0; r < rows; r++) totalGridH += rowHeights[r];
             
             // Center the grid around local (0,0)
-            const startX = -totalGridW / 2 + cellWidth / 2;
-            const startY = -totalGridH / 2 + cellHeight / 2;
+            const startX = -totalGridW / 2;
+            const startY = -totalGridH / 2;
             
             for (let i = 0; i < count; i++) {
                 const child = children[i];
                 const col = i % cols;
                 const row = Math.floor(i / cols);
                 
+                let cx = startX;
+                for (let c = 0; c < col; c++) cx += colWidths[c];
+                cx += colWidths[col] / 2;
+                
+                let cy = startY;
+                for (let r = 0; r < row; r++) cy += rowHeights[r];
+                cy += rowHeights[row] / 2;
+                
                 // Save local offset for Top-Down application later
-                child._localX = startX + col * cellWidth;
-                child._localY = startY + row * cellHeight;
+                child._localX = cx;
+                child._localY = cy;
             }
             
             const w = totalGridW + padding;

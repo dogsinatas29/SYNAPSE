@@ -472,6 +472,7 @@ app.get('/api/client/diagnostics', requireLead, (req, res) => {
 
 // State API (static file + client-pushed data)
 app.get('/api/state', (req, res) => {
+    const tExportStart = process.hrtime.bigint();
     if (fs.existsSync(stateFilePath)) {
         try {
             const state = JSON.parse(fs.readFileSync(stateFilePath, 'utf-8'));
@@ -504,7 +505,6 @@ app.get('/api/state', (req, res) => {
                         if (nodeMap.has(realId)) {
                             // Server has the real node, so map it and skip adding the ghost
                             idMap.set(n.id, realId);
-                            console.log(`[ID_MAP]\n${n.id}\n ->\n${realId}`);
                             continue;
                         }
                     }
@@ -519,23 +519,29 @@ app.get('/api/state', (req, res) => {
                     if (idMap.has(e.from)) { e.from = idMap.get(e.from)!; remapped = true; }
                     if (idMap.has(e.to)) { e.to = idMap.get(e.to)!; remapped = true; }
                     
-                    if (remapped) {
-                        console.log(`[EDGE_REMAP]\n${origFrom} -> ${origTo}\n =======>\n${e.from} -> ${e.to}`);
-                    }
-                    
-                    edgeMap.set(e.id, e);
+                    const edgeId = remapped ? `${e.from}::${e.to}::${e.type}` : e.id;
+                    edgeMap.set(edgeId, { ...e, id: edgeId });
                 }
                 for (const c of clientData.clusters) clusterMap.set(c.id, c);
-                Logger.info(`[ClientPush] Merged ${clientData.nodes.length} nodes from ${userId} (Mapped ${idMap.size} ghosts)`);
             }
-            state.nodes = Array.from(nodeMap.values()).map(normalizeNode);
-            state.edges = Array.from(edgeMap.values());
-            state.clusters = Array.from(clusterMap.values());
-            res.json({ success: true, state });
+
+            const finalState = {
+                nodes: Array.from(nodeMap.values()).map(normalizeNode),
+                edges: Array.from(edgeMap.values()),
+                clusters: Array.from(clusterMap.values())
+            };
+            
+            const exportMs = Number(process.hrtime.bigint() - tExportStart) / 1e6;
+            Logger.info(`[EXPORT_PROJECT_STATE] took ${exportMs.toFixed(2)}ms`);
+            Logger.info(`[PROJECT_STATS] Nodes: ${finalState.nodes.length}, Edges: ${finalState.edges.length}, Clusters: ${finalState.clusters.length}`);
+
+            res.json({ success: true, state: finalState });
         } catch (e: any) {
+            Logger.info(`[EXPORT_PROJECT_STATE] Error: ${e.message}`);
             res.status(500).json({ success: false, error: 'Failed to parse state file: ' + e.message });
         }
     } else {
+        console.timeEnd('exportProjectState');
         res.status(404).json({ success: false, error: 'State file not found' });
     }
 });

@@ -1432,6 +1432,16 @@ class TreeRenderer {
                 } else {
                     // Fallback: use only the last 3 segments if it's too deep
                     if (parts.length > 3) {
+                        if (current.type !== 'directory') {
+                        console.error('[TREE_NODE_DUMP]', {
+                            id: current.id,
+                            name: current.name,
+                            type: current.type,
+                            createdBy: current.createdBy,
+                            filePath: current.filePath
+                        });
+                        console.error(`[TREE_BUILD_FAILURE] Missing children in directory traversal:`);
+                        }
                         normalizedPath = parts.slice(-3).join('/');
                     }
                 }
@@ -1456,6 +1466,28 @@ class TreeRenderer {
                 if (!part || part === 'root') continue; // Skip redundant root segments
                 
                 currentPath = currentPath ? `${currentPath}/${part}` : part;
+                if (!current.children) {
+                    if (current.type !== 'directory') {
+                        console.error('[TREE_NODE_DUMP]', {
+                            id: current.id,
+                            name: current.name,
+                            type: current.type,
+                            createdBy: current.createdBy,
+                            filePath: current.filePath
+                        });
+                        console.error(`[TREE_BUILD_FAILURE] Missing children at file assignment`);
+                        console.error({
+                            fileName: node.id
+                        });
+                    }
+                    console.error('[TREE_BUILD_FAILURE] Missing children in directory traversal:', {
+                        part,
+                        currentName: current?.name,
+                        currentType: current?.type,
+                        fullPath: currentPath
+                    });
+                    current.children = {};
+                }
                 if (!current.children[part]) {
                     current.children[part] = { 
                         name: part, 
@@ -1469,6 +1501,15 @@ class TreeRenderer {
             }
 
             const fileName = parts[parts.length - 1];
+            if (!current.children) {
+                console.error('[TREE_BUILD_FAILURE] Missing children at file assignment:', {
+                    fileName,
+                    normalizedPath,
+                    currentName: current?.name,
+                    currentType: current?.type
+                });
+                current.children = {};
+            }
             current.children[fileName] = { name: fileName, type: 'file', node: node, fullPath: normalizedPath };
         }
 
@@ -1952,7 +1993,8 @@ class CanvasEngine {
         console.log('[SYNAPSE] CanvasEngine initialized. View Isolated.');
         
         // Request initial state - Start loop ONLY when data arrives or explicitly requested
-        this.getProjectState();
+        // [v0.3.34 FIX] Removed duplicate this.getProjectState() to prevent triple-rebuild on startup.
+        // We now rely solely on the 'ready' signal at the end of the script.
 
         this.setupToolbarListeners();
         this.setupEventListeners();
@@ -2695,10 +2737,12 @@ class CanvasEngine {
 
                 if (shouldRender) {
                     this._isRendering = true;  // [FIX v0.3.09] Mark rendering start
+                    console.time('render');
                     try {
                         this.render();
                         this.needsUpdate = false; // Reset after render
                     } finally {
+                        console.timeEnd('render');
                         this._isRendering = false;  // [FIX v0.3.09] Mark rendering end
                     }
                 }
@@ -5998,9 +6042,10 @@ class CanvasEngine {
     }
 
     loadProjectState(projectState, preserveView = false) {
+        console.time('loadProjectState');
         console.log('[LOAD_STATE_ENGINE]', this._instanceId);
         console.log('[LOAD_STATE]', { nodes: projectState?.nodes?.length ?? 0, clusters: projectState?.clusters?.length ?? 0, preserveView });
-        if (!projectState) return;
+        if (!projectState) { console.timeEnd('loadProjectState'); return; }
         const loadingEl = document.getElementById('loading');
 
         // [v0.3.10] Runtime Data Sanitization
@@ -6012,6 +6057,14 @@ class CanvasEngine {
 
         const rawNodes = projectState.nodes || [];
         const rawEdges = projectState.edges || [];
+
+        const bad = rawNodes.filter(n => {
+            const f = (n.data && n.data.file) ? n.data.file : (n.filePath || n.id || '');
+            return f.startsWith('./') || f.startsWith('../') || f === '.' || f === '..';
+        });
+        if (bad.length > 0) {
+            console.error('[BAD_PATHS]', bad.slice(0, 20).map(n => ({ id: n.id, file: n.data?.file, filePath: n.filePath, type: n.type })));
+        }
 
         console.log("[FLOW_DEBUG] loadProjectState raw nodes", rawNodes.length, "raw edges", rawEdges.length);
 
@@ -6144,12 +6197,12 @@ class CanvasEngine {
             // [v0.3.33.3] BYPASS STALE CACHE
             // The layout_state cache is overriding backend LayoutEngine with old bugged coordinates (e.g., Y=752000).
             // We temporarily bypass this to verify if the Backend layout is correct.
-            /*
             if (projectState.synapse_workspace && projectState.synapse_workspace.layout_state) {
                 const layout = projectState.synapse_workspace.layout_state;
                 this.nodes.forEach(n => {
                     const pos = layout.nodePositions[n.id];
-                    if (pos) {
+                    // Sanity check against old bugged coordinates
+                    if (pos && typeof pos.x === 'number' && typeof pos.y === 'number' && Math.abs(pos.x) < 500000 && Math.abs(pos.y) < 500000) {
                         n.position = { x: pos.x, y: pos.y };
                         n.positionSource = pos.source || 'auto';
                         n.confidence = pos.confidence || 0.2;
@@ -6160,7 +6213,6 @@ class CanvasEngine {
                     }
                 });
             } else {
-            */
                 this.nodes.forEach(n => {
                     if (!n.position) n.position = { x: 0, y: 0 };
                     if (!n.positionSource) {
@@ -6168,7 +6220,7 @@ class CanvasEngine {
                         n.confidence = 0.2;
                     }
                 });
-            // }
+            }
 
             // [v0.3.22.11] Position Persistence Guard:
             // When preserving view (e.g. incremental update or post-save sync), 
@@ -6232,12 +6284,12 @@ class CanvasEngine {
             if (trackDesktop1) console.log('[DESKTOP_TRACK] AFTER_LAYOUT', trackDesktop1.id, trackDesktop1.y || (trackDesktop1.position ? trackDesktop1.position.y : 'none'));
 
             // [Phase 2C] Apply Workspace Cluster Positions
-            /* BYPASSED
             if (projectState.synapse_workspace && projectState.synapse_workspace.layout_state) {
                 const layout = projectState.synapse_workspace.layout_state;
                 this.clusters.forEach(c => {
                     const pos = layout.clusterPositions[c.id];
-                    if (pos) {
+                    // Sanity check against the old Y=752000 bug
+                    if (pos && typeof pos.x === 'number' && typeof pos.y === 'number' && Math.abs(pos.x) < 500000 && Math.abs(pos.y) < 500000) {
                         c.position = { x: pos.x, y: pos.y }; // Use position for clusters in Phase 2C
                         c.positionSource = pos.source || 'auto';
                         c.confidence = pos.confidence || 0.2;
@@ -6250,7 +6302,6 @@ class CanvasEngine {
                     }
                 });
             }
-            */
 
             // [DESKTOP_TRACK] 2. AFTER_WORKSPACE_RESTORE (캐시 복원 직후)
             const trackDesktop2 = this.clusters.find(c => c.id.includes('desktop'));
@@ -6272,17 +6323,29 @@ class CanvasEngine {
             // [v0.2.22] System Clusters initialization
             this.getOrCreateSystemClusters();
 
+            // [v0.3.33.1] 3. Hierarchical Grid Distribution
+            this.distributeClustersHierarchically();
+
             // [v0.3.29] Cluster-level push-apart (runs after system clusters are placed, before node overlap resolution)
             if (!preserveView) {
                 try {
-                    // [v0.3.34] Disable this broken O(N^2) inner-cluster node repulsion which causes nodes to explode
-                    // this.resolveClusterOverlaps();
+                    // [v0.3.34] Re-enable resolveClusterOverlaps with new Spatial Grid (O(N)) implementation
+                    this.resolveClusterOverlaps();
                 } catch (clusterErr) {
                     this.log('resolveClusterOverlaps failed but continuing', 'error', clusterErr.message);
                 }
             }
 
             // [v0.2.24 New Rule] Documentation Shelf is collapsed by default
+            // [v0.3.33.1] Cluster Collapse Depth: Expand only up to Depth 2 by default
+            const depthMap = new Map();
+            const setDepth = (cId, depth) => {
+                depthMap.set(cId, depth);
+                const children = this.clusters.filter(c => c.parent_id === cId);
+                children.forEach(child => setDepth(child.id, depth + 1));
+            };
+            this.clusters.filter(c => !c.parent_id).forEach(root => setDepth(root.id, 1));
+
             this.clusters.forEach(cluster => {
                 if (cluster.id === 'doc_shelf') {
                     if (cluster.collapsed === undefined) {
@@ -6291,6 +6354,11 @@ class CanvasEngine {
                 } else if (cluster.id.startsWith('sys_cluster_')) {
                     if (cluster.collapsed === undefined) {
                         cluster.collapsed = false; // System clusters are expanded by default
+                    }
+                } else {
+                    if (cluster.collapsed === undefined) {
+                        const depth = depthMap.get(cluster.id) || 1;
+                        cluster.collapsed = depth >= 2; // Show only up to Depth 2
                     }
                 }
             });
@@ -6498,6 +6566,9 @@ class CanvasEngine {
             this.isGraphDataDirty = true;
             this.isEdgeDirty = true;
             this.isTextDirty = true;
+
+            console.log('[STATE_SIZE]', this.nodes?.length, this.edges?.length, this.clusters?.length);
+            console.timeEnd('loadProjectState');
 
             this.render();
         }
@@ -6834,11 +6905,9 @@ class CanvasEngine {
         }
     }
 
-    fitView() {
+    computeWorldBounds() {
         if (!this.nodes || this.nodes.length === 0) {
-            this.transform = { zoom: 1.0, offsetX: 0, offsetY: 0 };
-            this.updateZoomDisplay();
-            return;
+            return { minX: 0, minY: 0, maxX: 100, maxY: 100, width: 100, height: 100 };
         }
 
         let minX = Infinity, minY = Infinity;
@@ -6846,7 +6915,6 @@ class CanvasEngine {
 
         for (const node of this.nodes) {
             if (!node.position || typeof node.position.x !== 'number' || typeof node.position.y !== 'number') continue;
-            // Also skip if node position is NaN
             if (Number.isNaN(node.position.x) || Number.isNaN(node.position.y)) continue;
             minX = Math.min(minX, node.position.x);
             minY = Math.min(minY, node.position.y);
@@ -6854,47 +6922,46 @@ class CanvasEngine {
             maxY = Math.max(maxY, node.position.y + 60);
         }
 
-        // [v0.3.32.3] Safety check: If no nodes have valid positions, fallback to 0,0
         if (minX === Infinity || minY === Infinity) {
-            minX = 0;
-            minY = 0;
-            maxX = 100;
-            maxY = 100;
+            minX = 0; minY = 0; maxX = 100; maxY = 100;
         }
 
-        const width = maxX - minX;
-        const height = maxY - minY;
+        return { minX, minY, maxX, maxY, width: maxX - minX, height: maxY - minY };
+    }
 
-        // 캔버스에 맞게 줌 조정
-        // Padding 100px
+    fitCameraToBounds(bounds) {
         const padding = 100;
         const availableWidth = this.canvas.clientWidth - padding;
         const availableHeight = this.canvas.clientHeight - padding;
 
-        const zoomX = availableWidth / Math.max(width, 1);
-        const zoomY = availableHeight / Math.max(height, 1);
+        const zoomX = availableWidth / Math.max(bounds.width, 1);
+        const zoomY = availableHeight / Math.max(bounds.height, 1);
 
         let newZoom = Math.min(zoomX, zoomY);
-        newZoom = Math.min(Math.max(newZoom, 0.1), 2.0);
+        // [v0.3.33.1] Allow zooming out infinitely for massive graphs
+        newZoom = Math.min(Math.max(newZoom, 0.001), 2.0);
 
         this.transform.zoom = newZoom;
+        this.transform.offsetX = (this.canvas.clientWidth - bounds.width * this.transform.zoom) / 2 - bounds.minX * this.transform.zoom;
+        this.transform.offsetY = (this.canvas.clientHeight - bounds.height * this.transform.zoom) / 2 - bounds.minY * this.transform.zoom;
 
-        // 중앙 정렬
-        this.transform.offsetX = (this.canvas.clientWidth - width * this.transform.zoom) / 2 - minX * this.transform.zoom;
-        this.transform.offsetY = (this.canvas.clientHeight - height * this.transform.zoom) / 2 - minY * this.transform.zoom;
-
-        console.log('[DEBUG] fitView calculated:', {
-            minX, minY, width, height,
-            canvasWidth: this.canvas.width,
-            canvasHeight: this.canvas.height,
-            zoom: this.transform.zoom,
-            offsetX: this.transform.offsetX,
-            offsetY: this.transform.offsetY
+        console.log('[DEBUG] fitCameraToBounds applied:', {
+            bounds, zoom: this.transform.zoom, offsetX: this.transform.offsetX, offsetY: this.transform.offsetY
         });
 
         this.updateZoomDisplay();
         this.isDirty = true;
         this.requestRender();
+    }
+
+    fitView() {
+        if (!this.nodes || this.nodes.length === 0) {
+            this.transform = { zoom: 1.0, offsetX: 0, offsetY: 0 };
+            this.updateZoomDisplay();
+            return;
+        }
+        const bounds = this.computeWorldBounds();
+        this.fitCameraToBounds(bounds);
     }
 
     updateZoomDisplay() {
@@ -7123,6 +7190,15 @@ class CanvasEngine {
         // [v0.2.28] Render Clusters first (inside transform so it scales correctly)
         this.renderClusters();
 
+        if (this._frameCounter < 3 || this._frameCounter % 60 === 0) {
+            console.log(
+                '[DRAW] bootstrapMode=true',
+                'nodes=', frameState.nodes?.length,
+                'edges=', frameState.edges?.length,
+                'clusters=', this.clusters?.length
+            );
+        }
+
         // 3. Edges
         for (const edge of frameState.edges) {
             this.renderEdge(edge);
@@ -7140,6 +7216,17 @@ class CanvasEngine {
 
     render() {
         const _perfRenderStart = performance.now();
+        
+        if (this._frameCounter < 3 || this._frameCounter % 60 === 0) {
+            console.log(
+                '[RENDER_SOURCE]',
+                'this.nodes=', this.nodes?.length,
+                'this.edges=', this.edges?.length,
+                'this._visibleNodesCache=', this._visibleNodesCache?.length,
+                'this._visibleEdgesCache=', this._visibleEdgesCache?.length
+            );
+        }
+
         // [v0.3.13] Automatic Overlap Resolution
         if (this.isGraphDataDirty && this.nodes.length > 2) {
             this.resolveOverlaps();
@@ -7273,6 +7360,7 @@ class CanvasEngine {
         if (this.isRendering) return;
         this.isRendering = true;
         this.isDirty = false;
+        console.time('render');
 
         const now = performance.now();
         if (!this._fpsFrames) this._fpsFrames = [];
@@ -7335,6 +7423,7 @@ class CanvasEngine {
                 console.log('[PERF] renderNodes2D() entered. TotalNodes:', this.nodes ? this.nodes.length : 0);
 
                 if (this.isGraphDataDirty || !this._visibleNodesCache) {
+                    console.time('buildVisibleCaches');
                     const isUserLogic = (n) => 
                         n.layer === 'user' || 
                         (n.data && n.data.layer === 'user') || 
@@ -7362,6 +7451,8 @@ class CanvasEngine {
                         }
                     }
 
+                    console.time('updateLOD'); // overall cache building
+                    console.time('LOD:visibleNodes');
                     this._visibleNodesCache = this.nodes.filter(n => {
                         const isUser = isUserLogic(n);
                         const isExternal = isExternalLogic(n);
@@ -7390,17 +7481,27 @@ class CanvasEngine {
 
                         const clusterId = n.cluster_id || n.data?.cluster_id;
 
+                        // [v0.3.33 Phase 5] LOD System A (Zoom LOD) Check
+                        if (this._visibleGraphClusterIds && clusterId) {
+                            if (!this._visibleGraphClusterIds.has(clusterId)) {
+                                if (isActivity) console.log('[ACTIVITY_REJECT]', n.id, 'reason=lod_system_a');
+                                return false;
+                            }
+                        }
+
                         // [v0.3.33 Phase 4-D-1] LOD Dematerialization: Telescope LOD (System B) Hierarchy Check
                         let isTelescopeCollapsed = false;
                         if (this.clusterHierarchy && this.expandedClusters) {
                             let currNode = this.clusterHierarchy.get(clusterId);
-                            while (currNode) {
+                            let hDepth = 0;
+                            while (currNode && hDepth < 100) {
                                 const hasChildren = currNode.children && currNode.children.length > 0;
                                 if (hasChildren && !this.expandedClusters.has(currNode.id)) {
                                     isTelescopeCollapsed = true;
                                     break;
                                 }
                                 currNode = currNode.parentId ? this.clusterHierarchy.get(currNode.parentId) : null;
+                                hDepth++;
                             }
                         }
 
@@ -7410,24 +7511,32 @@ class CanvasEngine {
                         }
 
                         // [v0.2.27] Sync: Skip nodes in collapsed clusters (matches 2D behavior - System A)
-                        if (clusterId) {
-                            let cur = this.clusters?.find(c => c.id === clusterId);
-                            while (cur) {
-                                if (cur.collapsed) { if (isActivity) console.log('[ACTIVITY_REJECT]', n.id, 'reason=collapsed_sys_a'); return false; }
-                                cur = cur.parent_id ? this.clusters?.find(c => c.id === cur.parent_id) : null;
+                        if (clusterId && this.clusterHierarchy) {
+                            let curId = clusterId;
+                            let limit = 0;
+                            while (curId && limit++ < 100) {
+                                const hNode = this.clusterHierarchy.get(curId);
+                                if (hNode && hNode.cluster && hNode.cluster.collapsed) { 
+                                    if (isActivity) console.log('[ACTIVITY_REJECT]', n.id, 'reason=collapsed_sys_a'); 
+                                    return false; 
+                                }
+                                curId = hNode ? hNode.parentId : null;
                             }
                         }
                         if (isActivity) console.log('[ACTIVITY_REJECT]', n.id, 'reason=PASS');
                         return true;
                     });
-
+                    console.timeEnd('LOD:visibleNodes');
 
                     // [v0.3.33] Phase 1: Visible Cluster Registry
+                    console.time('LOD:visibleClusters');
                     this._visibleClusterIds = new Set();
                     for (const n of this._visibleNodesCache) {
                         const cid = n.cluster_id || n.data?.cluster_id;
                         if (cid) this._visibleClusterIds.add(cid);
+                        if (cid) this._visibleClusterIds.add(cid);
                     }
+                    console.timeEnd('LOD:visibleClusters');
 
                     console.log('[ACTIVITY_CLUSTER_VISIBLE]', this._visibleClusterIds.has('folder_app_src_main_java_de_danoeh_antennapod_activity'));
                     // [v0.3.33] Step 7: cluster registry vs node cluster_id sync check
@@ -7441,6 +7550,7 @@ class CanvasEngine {
                         }
                     }
 
+                    console.time('LOD:visibleEdges');
                     const visibleNodeIds = new Set(this._visibleNodesCache.map(n => n.id));
                     this._visibleNodesSet = new Set(this._visibleNodesCache);
                     this._visibleEdgesCache = this.edges.filter(e => {
@@ -7452,7 +7562,6 @@ class CanvasEngine {
                             const tc = tn?.cluster_id ?? tn?.data?.cluster_id;
                             if (fc) {
                                 const matched = this._visibleGraphClusterIds.has(fc);
-                                console.log('[LOD_EDGE]', e.id, 'fc=' + fc, 'in_visible=' + matched);
                                 if (!matched) return false;
                             }
                             if (tc) {
@@ -7462,6 +7571,57 @@ class CanvasEngine {
                         }
                         return true;
                     });
+                    console.timeEnd('LOD:visibleEdges');
+
+                    // [v0.3.33] Phase 2: Dynamic Aggregate Edge Generation (LOD)
+                    if (this._visibleGraphClusterIds && this.clusters) {
+                        console.time('LOD:aggregateEdges');
+                        const edgeMap = new Map();
+                        const findVisibleRep = (cid) => {
+                            let curId = cid;
+                            let depth = 0;
+                            while (curId && depth < 100) {
+                                if (this._visibleGraphClusterIds.has(curId)) return curId;
+                                if (this.clusterHierarchy) {
+                                    const hNode = this.clusterHierarchy.get(curId);
+                                    if (!hNode || !hNode.parentId || hNode.parentId === curId) break;
+                                    curId = hNode.parentId;
+                                } else {
+                                    const c = this.clusters.find(c => c.id === curId);
+                                    if (!c || !c.parent_id || c.parent_id === curId) break;
+                                    curId = c.parent_id;
+                                }
+                                depth++;
+                            }
+                            return null;
+                        };
+
+                        for (const edge of this.edges) {
+                            const fn = this.nodeMap.get(edge.from);
+                            const tn = this.nodeMap.get(edge.to);
+                            if (!fn || !tn) continue;
+
+                            const fc = fn.cluster_id || fn.data?.cluster_id;
+                            const tc = tn.cluster_id || tn.data?.cluster_id;
+                            if (!fc || !tc) continue;
+
+                            const fromRep = findVisibleRep(fc);
+                            const toRep = findVisibleRep(tc);
+
+                            if (fromRep && toRep && fromRep !== toRep) {
+                                const key = `${fromRep}→${toRep}`;
+                                edgeMap.set(key, (edgeMap.get(key) || 0) + (edge.weight || 1));
+                            }
+                        }
+
+                        this.metaEdges = [];
+                        for (const [key, weight] of edgeMap) {
+                            const sep = key.indexOf('→');
+                            this.metaEdges.push({ source: key.slice(0, sep), target: key.slice(sep + 1), weight });
+                        }
+                        console.timeEnd('LOD:aggregateEdges');
+                    }
+                    console.timeEnd('updateLOD');
 
                     // [v0.3.34] Invalidate Heatmap Cache on Graph Data Dirty
                     this.clusterFlows = [];
@@ -7487,6 +7647,8 @@ class CanvasEngine {
                     console.log(`[PERF] Camera: x=${this.transform?.offsetX}, y=${this.transform?.offsetY}, zoom=${this.transform?.zoom}`);
                     
                     console.log('[PERF] VisibleNodes', this._visibleNodesCache ? this._visibleNodesCache.length : 0);
+                    
+
                     console.log('[PERF] VisibleEdges', this._visibleEdgesCache ? this._visibleEdgesCache.length : 0);
                     console.log('[PERF] First10NodePositions', (this._visibleNodesCache || []).slice(0,10).map(n => ({
                         id: n.id,
@@ -7536,6 +7698,7 @@ class CanvasEngine {
                         if (!offsetY) return n;
                         return { ...n, position: { x: n.position?.x || 0, y: (n.position?.y || 0) + offsetY } };
                     });
+                    console.timeEnd('buildVisibleCaches');
                 }
 
                 // [v0.3.28-fix] Cache selectedNodeIds as Set<string> ONCE per frame for O(1) lookup in renderEdge()
@@ -7595,6 +7758,15 @@ class CanvasEngine {
 
                         // [v0.3.30-webgl-fix] Use offset-corrected cache for client node Y parity
                         const webglNodes = this._webglVisibleNodesCache || this._visibleNodesCache;
+                        
+                        if (this._frameCounter < 3 || this._frameCounter % 60 === 0) {
+                            console.log(
+                                '[WEBGL_DRAW]',
+                                'nodesToRender=', webglNodes ? webglNodes.length : 0,
+                                'edgesToRender=', this._visibleEdgesCache ? this._visibleEdgesCache.length : 0
+                            );
+                        }
+
                         this.webglRenderer.render(
                             webglNodes,
                             this.transform,
@@ -7681,9 +7853,11 @@ class CanvasEngine {
                         this.renderHotspots2D();
 
                         // [v0.3.9] Fixed 2D Mode: Render graph on transformed context
-                        this.renderEdges2D();
-                        this.renderNodes2D(zoom);
-                        this.renderLabels2D();
+                        if (this.currentMode !== 'cluster') {
+                            this.renderEdges2D();
+                            this.renderNodes2D(this.transform.zoom);
+                            this.renderLabels2D();
+                        }
 
                         this.ctx.restore();
 
@@ -7692,8 +7866,7 @@ class CanvasEngine {
                         this.isEdgeDirty = false;
                         this.isTextDirty = false;
                     }
-
-                    this.renderGhostNodes(zoom);
+                    this.renderGhostNodes(this.transform.zoom);
                 }
 
                 // 드래그 선택 영역 표시 (Always on top of overlay)
@@ -7724,7 +7897,7 @@ class CanvasEngine {
                 document.getElementById('selected-count').textContent = this.selectedNodes.size;
                 document.getElementById('node-count').textContent = this.nodes.length;
                 document.getElementById('edge-count').textContent = this.edges.length;
-                document.getElementById('zoom-level').textContent = `${(zoom * 100).toFixed(0)}%`;
+                document.getElementById('zoom-level').textContent = `${(this.transform.zoom * 100).toFixed(0)}%`;
                 document.getElementById('current-mode').textContent = this.currentMode.charAt(0).toUpperCase() + this.currentMode.slice(1);
             }
 
@@ -7745,15 +7918,17 @@ class CanvasEngine {
             if (this._debugLastWorldClick) {
                 this.ctx.fillStyle = '#fb4934';
                 this.ctx.beginPath();
-                this.ctx.arc(this._debugLastWorldClick.x, this._debugLastWorldClick.y, 5 / zoom, 0, Math.PI * 2);
+                this.ctx.arc(this._debugLastWorldClick.x, this._debugLastWorldClick.y, 5 / this.transform.zoom, 0, Math.PI * 2);
                 this.ctx.fill();
                 this.ctx.strokeStyle = '#ffffff';
-                this.ctx.lineWidth = 1 / zoom;
+                this.ctx.lineWidth = 1 / this.transform.zoom;
                 this.ctx.stroke();
             }
 
             this.renderDebugInfo();
 
+        } catch (e) {
+            console.error('[SYNAPSE_RENDER_CRASH]', e);
         } finally {
             if (this.webglRenderer) {
                 this.webglRenderer.endFrame();
@@ -7761,8 +7936,20 @@ class CanvasEngine {
             this.isRendering = false;
             
             const _perfRenderEnd = performance.now();
-            if (_perfRenderEnd - _perfRenderStart > 5) {
-                console.log(`[PERF] Interaction Render: ${(_perfRenderEnd - _perfRenderStart).toFixed(2)}ms`);
+            const elapsed = _perfRenderEnd - _perfRenderStart;
+            
+            if (this._frameCounter < 3 || elapsed > 16 || this._frameCounter % 60 === 0) {
+                console.log(`[FRAME] ${elapsed.toFixed(2)}ms`);
+                console.log(
+                  '[RENDER_STATS]',
+                  'visibleNodes=', this._visibleNodesCache ? this._visibleNodesCache.length : 0,
+                  'visibleEdges=', this._visibleEdgesCache ? this._visibleEdgesCache.length : 0,
+                  'visibleClusters=', this._visibleClusterIds ? this._visibleClusterIds.size : 0
+                );
+            }
+
+            if (elapsed > 5) {
+                console.log(`[PERF] Interaction Render: ${elapsed.toFixed(2)}ms`);
             }
         }
     }
@@ -7821,6 +8008,11 @@ class CanvasEngine {
         // Step 3: Draw the edges
         const targetEdges = (this.spatialIndex ? this.spatialIndex.queryViewport(cMinX, cMinY, cMaxX, cMaxY, 'edges') : null) || this._visibleEdgesCache || [];
         const targetEdgesCount = targetEdges instanceof Set ? targetEdges.size : targetEdges.length;
+
+        if (this._frameCounter < 3 || this._frameCounter % 60 === 0) {
+            console.log(`[CULLING]\nTotal Nodes: ${this.nodes ? this.nodes.length : 0}\nVisible Nodes: ${this._lastCulledNodesCount || 0}\nTotal Edges: ${this.edges ? this.edges.length : 0}\nVisible Edges: ${targetEdgesCount}`);
+            console.log(`[AGG_EDGE]\nreal=${this.edges ? this.edges.length : 0}\naggregate=${this.metaEdges ? this.metaEdges.length : 0}`);
+        }
 
         // [Phase 2B.13] Edge Bundling LOD
         const hasMetaEdges = this.metaEdges && this.metaEdges.length > 0;
@@ -8001,6 +8193,7 @@ class CanvasEngine {
             : this._visibleNodesCache;
 
         const targetLength = targetNodes ? (targetNodes instanceof Set ? targetNodes.size : targetNodes.length) : 0;
+        this._lastCulledNodesCount = targetLength;
         if (this._frameCounter % 60 === 0) {
             console.log('[RBUSH] viewportBBox', viewportBBox);
             console.log('[RBUSH] visibleNodes.length (culled)', targetLength);
@@ -9139,15 +9332,28 @@ class CanvasEngine {
                     if (!b) continue;
                     const cx = (b.minX + b.maxX) / 2;
                     const cy = (b.minY + b.maxY) / 2;
-                    if (Math.abs(cx) > 5000 || Math.abs(cy) > 5000) {
-                        const nodeCount = this.nodes.filter(
-                            n => (n.cluster_id || n.data?.cluster_id) === c.id
-                        ).length;
-                        console.log('[EXTREME_CENTER]', c.id, {
-                            center: `(${Math.round(cx)},${Math.round(cy)})`,
-                            collapsed: c.collapsed,
-                            nodeCount,
-                            layer: c.layer || c.data?.layer || '?'
+                    
+                    const nodeCount = this.nodes.filter(
+                        n => (n.cluster_id || n.data?.cluster_id) === c.id
+                    ).length;
+
+                    if (nodeCount === 0) {
+                        console.error('[EMPTY_CLUSTER]', {
+                            id: c.id,
+                            centerX: Math.round(cx),
+                            centerY: Math.round(cy),
+                            bounds: b
+                        });
+                    }
+
+                    if (Math.abs(cx) > 30000 || Math.abs(cy) > 30000) {
+                        console.error('[EXTREME_CLUSTER_TRACE]', {
+                            id: c.id,
+                            nodeCount: nodeCount,
+                            childClusterCount: c.children?.length,
+                            bounds: b,
+                            centerX: Math.round(cx),
+                            centerY: Math.round(cy)
                         });
                     }
                 }
@@ -11332,33 +11538,177 @@ class CanvasEngine {
         }
     }
 
-    // [v0.3.29] Cluster-level overlap resolution (Push-Apart with Mass weighting)
+    // [v0.3.33.1] Hierarchical Grid Distribution
+    // Distributes children in a neat grid around their parent's coordinate, top-down.
+    distributeClustersHierarchically() {
+        if (!this.clusters || this.clusters.length === 0) return;
+        
+        console.log('[SYNAPSE][distributeClustersHierarchically] Starting Hierarchical Grid Distribution...');
+        
+        const childrenMap = new Map();
+        const roots = [];
+        
+        // 1. Build Parent -> Children map
+        for (const c of this.clusters) {
+            if (c.parent_id) {
+                if (!childrenMap.has(c.parent_id)) childrenMap.set(c.parent_id, []);
+                childrenMap.get(c.parent_id).push(c);
+            } else {
+                roots.push(c);
+            }
+        }
+        
+        // 2. Pre-compute Node mapping for fast coordinate shifting
+        const nodesByCluster = new Map();
+        for (const n of this.nodes) {
+            const cid = n.cluster_id || (n.data && n.data.cluster_id);
+            if (!cid) continue;
+            if (!nodesByCluster.has(cid)) nodesByCluster.set(cid, []);
+            nodesByCluster.get(cid).push(n);
+        }
+        
+        const clusterBounds = new Map();
+
+        // 3. Bottom-Up Size Calculation and Local Grid Arrangement
+        const layoutBottomUp = (cluster) => {
+            const children = childrenMap.get(cluster.id);
+            const directNodes = nodesByCluster.get(cluster.id) || [];
+            
+            // Base Case: Leaf Cluster (No child clusters)
+            if (!children || children.length === 0) {
+                let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+                for (const n of directNodes) {
+                    if (n.position) {
+                        if (n.position.x < minX) minX = n.position.x;
+                        if (n.position.y < minY) minY = n.position.y;
+                        if (n.position.x > maxX) maxX = n.position.x;
+                        if (n.position.y > maxY) maxY = n.position.y;
+                    }
+                }
+                const w = minX === Infinity ? 400 : (maxX - minX) + 400; // 400 padding for nodes
+                const h = minY === Infinity ? 400 : (maxY - minY) + 400;
+                clusterBounds.set(cluster.id, { width: w, height: h });
+                return { width: w, height: h };
+            }
+            
+            // Recursive Case: Ancestor Cluster
+            let maxChildW = 0, maxChildH = 0;
+            for (const child of children) {
+                const size = layoutBottomUp(child);
+                if (size.width > maxChildW) maxChildW = size.width;
+                if (size.height > maxChildH) maxChildH = size.height;
+            }
+            
+            const padding = 600; // Dynamic padding between cells
+            const cellWidth = maxChildW + padding;
+            const cellHeight = maxChildH + padding;
+            
+            // Sort children alphabetically for stable deterministic layout
+            children.sort((a, b) => a.id.localeCompare(b.id));
+            
+            const count = children.length;
+            const cols = Math.ceil(Math.sqrt(count));
+            const rows = Math.ceil(count / cols);
+            
+            const totalGridW = cols * cellWidth;
+            const totalGridH = rows * cellHeight;
+            
+            // Center the grid around local (0,0)
+            const startX = -totalGridW / 2 + cellWidth / 2;
+            const startY = -totalGridH / 2 + cellHeight / 2;
+            
+            for (let i = 0; i < count; i++) {
+                const child = children[i];
+                const col = i % cols;
+                const row = Math.floor(i / cols);
+                
+                // Save local offset for Top-Down application later
+                child._localX = startX + col * cellWidth;
+                child._localY = startY + row * cellHeight;
+            }
+            
+            const w = totalGridW + padding;
+            const h = totalGridH + padding;
+            clusterBounds.set(cluster.id, { width: w, height: h });
+            return { width: w, height: h };
+        };
+
+        for (const root of roots) {
+            layoutBottomUp(root);
+        }
+
+        // 4. Top-Down Application of absolute coordinates
+        const applyTopDown = (cluster, absX, absY) => {
+            const oldX = cluster.position ? cluster.position.x : 0;
+            const oldY = cluster.position ? cluster.position.y : 0;
+            const dx = absX - oldX;
+            const dy = absY - oldY;
+
+            if (!cluster.position) cluster.position = { x: absX, y: absY };
+            else {
+                cluster.position.x = absX;
+                cluster.position.y = absY;
+            }
+
+            const directNodes = nodesByCluster.get(cluster.id) || [];
+            for (const n of directNodes) {
+                if (n.position) {
+                    n.position.x += dx;
+                    n.position.y += dy;
+                }
+            }
+
+            const children = childrenMap.get(cluster.id);
+            if (children) {
+                for (const child of children) {
+                    applyTopDown(child, absX + (child._localX || 0), absY + (child._localY || 0));
+                }
+            }
+        };
+
+        // For roots (Continents), keep their existing position (placed by Force Layout at Continent level)
+        for (const root of roots) {
+            const rootX = root.position ? root.position.x : 0;
+            const rootY = root.position ? root.position.y : 0;
+            applyTopDown(root, rootX, rootY);
+        }
+        
+        console.log('[SYNAPSE][distributeClustersHierarchically] Completed Hierarchical Grid.');
+    }
+
+    // [v0.3.34] Cluster-level overlap resolution using Spatial Grid (O(N) Push-Apart)
     resolveClusterOverlaps() {
         if (!this.clusters || this.clusters.length < 2) return;
-        const PADDING = 20; // [v0.3.31] 클러스터간 마진 대폭 축소 (기존 40)
-        const ITERATIONS = 3;
+        const PADDING = 20; 
+        const ITERATIONS = 30;
+        const CELL_SIZE = 4000; // Spatial Grid cell size
 
-        // [v0.3.29 hotfix] Debug: log cluster bounds before resolution
-        const boundsPreview = this.clusters.map(c => {
-            const nodes = this.nodes.filter(n => n.cluster_id === c.id);
-            if (nodes.length === 0) return null;
-            let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
-            for (const n of nodes) {
-                if (!n.position) continue;
-                minX = Math.min(minX, n.position.x);
-                minY = Math.min(minY, n.position.y);
-                maxX = Math.max(maxX, n.position.x + 120);
-                maxY = Math.max(maxY, n.position.y + 60);
+        console.log('[SYNAPSE][resolveClusterOverlaps] Starting O(N) Spatial Grid Overlap Resolution...');
+
+        // [Performance Fix] Pre-compute nodes by cluster BEFORE the iteration loop
+        const nodesByCluster = new Map();
+        for (const n of this.nodes) {
+            const cid = n.cluster_id || (n.data && n.data.cluster_id);
+            if (!cid) continue;
+            let arr = nodesByCluster.get(cid);
+            if (!arr) {
+                arr = [];
+                nodesByCluster.set(cid, arr);
             }
-            return { id: c.id, label: c.label, bounds: [minX, minY, maxX, maxY], mass: nodes.length };
-        }).filter(Boolean);
-        console.log('[SYNAPSE][resolveClusterOverlaps] Cluster bounds pre:', JSON.stringify(boundsPreview));
+            arr.push(n);
+        }
+
+        // [v0.3.33.1] Golden Spiral Seed is removed here. Hierarchical Grid Distribution is now responsible for initial separation.
+        // Golden Spiral is reserved ONLY as an escape route for zero-distance overlaps (dist < 0.001) in the relaxation phase.
 
         for (let iter = 0; iter < ITERATIONS; iter++) {
             const bounds = new Map();
             const centroids = new Map();
+            const grid = new Map();
+
+            // 1. Build Grid
             for (const cluster of this.clusters) {
-                const nodes = this.nodes.filter(n => n.cluster_id === cluster.id);
+                const nodes = nodesByCluster.get(cluster.id) || [];
                 if (nodes.length === 0) continue;
                 let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
                 let cx = 0, cy = 0;
@@ -11366,28 +11716,59 @@ class CanvasEngine {
                     if (!node.position) continue;
                     const px = node.position.x;
                     const py = node.position.y;
-                    minX = Math.min(minX, px);
-                    minY = Math.min(minY, py);
-                    maxX = Math.max(maxX, px + 120);
-                    maxY = Math.max(maxY, py + 60);
+                    if (px < minX) minX = px;
+                    if (py < minY) minY = py;
+                    if (px + 120 > maxX) maxX = px + 120;
+                    if (py + 60 > maxY) maxY = py + 60;
                     cx += px;
                     cy += py;
                 }
-                bounds.set(cluster.id, {
-                    minX: minX - PADDING, minY: minY - PADDING,
-                    maxX: maxX + PADDING, maxY: maxY + PADDING,
+                
+                if (minX === Infinity) continue; // FIX: Prevent NaN bounds from collapsing into 'NaN,NaN' cell
+
+                // [v0.3.33.1] Dynamic Padding
+                const diag = Math.sqrt(Math.pow(maxX - minX, 2) + Math.pow(maxY - minY, 2));
+                const dynamicPadding = Math.max(100, diag * 0.15); // Scale padding with cluster size
+
+                const b = {
+                    id: cluster.id,
+                    minX: minX - dynamicPadding, minY: minY - dynamicPadding,
+                    maxX: maxX + dynamicPadding, maxY: maxY + dynamicPadding,
                     mass: nodes.length + 1
-                });
+                };
+                bounds.set(cluster.id, b);
                 centroids.set(cluster.id, { x: cx / nodes.length, y: cy / nodes.length });
+                
+                // Add to spatial grid (based on centroid)
+                const gridX = Math.floor((b.minX + b.maxX) / 2 / CELL_SIZE);
+                const gridY = Math.floor((b.minY + b.maxY) / 2 / CELL_SIZE);
+                const cellKey = `${gridX},${gridY}`;
+                if (!grid.has(cellKey)) grid.set(cellKey, []);
+                grid.get(cellKey).push(cluster.id);
             }
 
-            const ids = this.clusters.map(c => c.id).filter(id => bounds.has(id));
             let moved = false;
-
-            for (let i = 0; i < ids.length; i++) {
-                for (let j = i + 1; j < ids.length; j++) {
-                    const idA = ids[i], idB = ids[j];
-                    const bA = bounds.get(idA), bB = bounds.get(idB);
+            const ids = Array.from(bounds.keys());
+            
+            // 2. Query neighbors and resolve overlaps
+            for (const idA of ids) {
+                const bA = bounds.get(idA);
+                
+                const cx = Math.floor((bA.minX + bA.maxX) / 2 / CELL_SIZE);
+                const cy = Math.floor((bA.minY + bA.maxY) / 2 / CELL_SIZE);
+                
+                const neighborIds = [];
+                for (let dx = -1; dx <= 1; dx++) {
+                    for (let dy = -1; dy <= 1; dy++) {
+                        const cell = grid.get(`${cx + dx},${cy + dy}`);
+                        if (cell) neighborIds.push(...cell);
+                    }
+                }
+                
+                for (const idB of neighborIds) {
+                    if (idA >= idB) continue; // Prevent double checking and self checking
+                    
+                    const bB = bounds.get(idB);
                     if (!bA || !bB) continue;
 
                     const overlapX = Math.min(bA.maxX, bB.maxX) - Math.max(bA.minX, bB.minX);
@@ -11401,48 +11782,72 @@ class CanvasEngine {
                     let dx = cB.x - cA.x, dy = cB.y - cA.y;
                     const dist = Math.sqrt(dx * dx + dy * dy);
 
-                    // Zero-Divide Guard: identical centroids → force X-axis
-                    if (dist < 0.001) { dx = 1; dy = 0; }
+                    // Zero-Divide Guard (Deterministic Direction)
+                    if (dist < 0.001) { 
+                        // If they perfectly overlap, use a deterministic angle derived from their IDs
+                        let hash = 0;
+                        const combinedId = idA + idB;
+                        for (let i = 0; i < combinedId.length; i++) {
+                            hash = Math.imul(31, hash) + combinedId.charCodeAt(i) | 0;
+                        }
+                        const angle = (Math.abs(hash) % 360) * (Math.PI / 180);
+                        dx = Math.cos(angle); 
+                        dy = Math.sin(angle); 
+                    }
 
                     const totalMass = bA.mass + bB.mass;
-                    const pushA = bB.mass / totalMass; // lighter = pushed more
-                    const pushB = bA.mass / totalMass;
+                    
+                    // [v0.3.33.1] Iterative Relaxation: Early iterations push harder, later ones stabilize
+                    const relaxation = 1.0 - (iter / ITERATIONS) * 0.5; 
+                    const pushA = (bB.mass / totalMass) * relaxation;
+                    const pushB = (bA.mass / totalMass) * relaxation;
 
                     let pushX = 0, pushY = 0;
-                    if (overlapX < overlapY) { pushX = overlapX + 4; }
-                    else { pushY = overlapY + 4; }
+                    if (overlapX < overlapY) { pushX = overlapX * 0.8 + 20; }
+                    else { pushY = overlapY * 0.8 + 20; }
 
-                    // [v0.3.31] Explosion Prevention Guard
-                    const MAX_PUSH = 2000;
+                    const MAX_PUSH = 10000; // Increased to allow clusters to escape
                     if (Math.abs(pushX) > MAX_PUSH) pushX = Math.sign(pushX) * MAX_PUSH;
                     if (Math.abs(pushY) > MAX_PUSH) pushY = Math.sign(pushY) * MAX_PUSH;
 
                     const sX = dx >= 0 ? 1 : -1;
                     const sY = dy >= 0 ? 1 : -1;
 
-                    const aNodes = this.nodes.filter(n => n.cluster_id === idA);
-                    const bNodes = this.nodes.filter(n => n.cluster_id === idB);
+                    const aNodes = nodesByCluster.get(idA) || [];
+                    const bNodes = nodesByCluster.get(idB) || [];
 
                     for (const node of aNodes) {
+                        if (!node.position) continue;
                         node.position.x -= pushX * pushA * sX;
                         node.position.y -= pushY * pushA * sY;
                     }
                     for (const node of bNodes) {
+                        if (!node.position) continue;
                         node.position.x += pushX * pushB * sX;
                         node.position.y += pushY * pushB * sY;
                     }
 
-                    // Shift Guard: update bounds in-place for next pair checks
                     const saX = pushX * pushA * sX, saY = pushY * pushA * sY;
                     const sbX = pushX * pushB * sX, sbY = pushY * pushB * sY;
                     bA.minX -= saX; bA.maxX -= saX;
                     bA.minY -= saY; bA.maxY -= saY;
                     bB.minX += sbX; bB.maxX += sbX;
                     bB.minY += sbY; bB.maxY += sbY;
+
+                    cA.x -= saX; cA.y -= saY;
+                    cB.x += sbX; cB.y += sbY;
                 }
             }
             if (!moved) break;
         }
+        
+        // Recompute final cluster bounds so rendering is correct
+        this._lastComputedBounds = new Map();
+        for (const cluster of this.clusters) {
+            this.computeClusterBounds(cluster);
+        }
+
+        console.log('[SYNAPSE][resolveClusterOverlaps] Completed.');
     }
 }
 
@@ -11781,6 +12186,8 @@ function initCanvas() {
                 }
                 break;
             case 'analysisResults':
+                console.time('analysisResults');
+                console.log('[ANALYSIS]', 'issues=', message.issues?.length || 0, 'edges=', engine.edges.length);
                 engine.isTestingLogic = false;
                 engine.analysisIssues = message.issues;
 
@@ -11847,6 +12254,7 @@ function initCanvas() {
                     });
                 }
 
+                console.timeEnd('analysisResults');
                 engine.render();
                 break;
             case 'virtualDebugImpact': {
@@ -11978,7 +12386,7 @@ function initCanvas() {
             engine.handleMessage(window._synapseMessageQueue.shift());
         }
     }
-    engine.getProjectState();
+    // [v0.3.34 FIX] Removed engine.getProjectState() to prevent redundant startup rebuilds.
     engine.refreshClientLayersFromAccounts();
 
     // Toolbar Event Listeners
@@ -12118,6 +12526,7 @@ function initCanvas() {
             // Switch Mode
             engine.currentMode = mode;
             engine.canvas.dataset.mode = mode; // Ensure WebGL isolation condition checks match mode
+            engine.canvas2d.dataset.mode = mode; // Fix: WebGL checks this canvas dataset!
             console.log('[SYNAPSE] Switched to mode:', mode);
 
             // [v0.3.09] Rule 8. [Rendering Isolation] 강제 WebGL 초기화 (Force flush WebGL state during view transition)

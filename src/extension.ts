@@ -804,8 +804,9 @@ function setupFileWatcher(workspaceFolder: vscode.WorkspaceFolder, context: vsco
         new vscode.RelativePattern(workspaceFolder, 'prompts/**/*.md')
     );
 
-    const refreshCanvas = async () => {
-        console.log('[SYNAPSE] File changed, refreshing canvas state...');
+    const refreshCanvas = async (uri?: vscode.Uri) => {
+        console.log(`[WATCHER] File changed: ${uri ? uri.fsPath : 'unknown'}, triggering refreshCanvas`);
+        console.log('[GRAPH_REBUILD_TRIGGER] Source: FileSystemWatcher (refreshCanvas)');
         if (CanvasPanel.currentPanel) {
             await CanvasPanel.currentPanel.refreshState();
         }

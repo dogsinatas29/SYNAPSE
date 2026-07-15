@@ -1,12 +1,13 @@
 import { Cluster, Node } from '../types/schema';
 
 const SYSTEM_CLUSTERS: Cluster[] = [
-    { id: 'cluster_ghosts', label: '☁️ External Ghosts', type: 'system', position: { x: 0, y: 0 }, bounds: { x: 0, y: 0, width: 0, height: 0 }, children: [], nodes: [], data: { layer: 'external' } },
+    { id: 'cluster_ghosts', label: '☁️ External Ghosts', type: 'system', position: { x: 0, y: 0 }, bounds: { x: 0, y: 0, width: 0, height: 0 }, children: [], nodes: [], data: { layer: 'external', continent: 'external', subcontinent: 'external' } },
     { id: 'sys_cluster_reserved', label: '🛡️ Reserved (Internal Pending)', type: 'system', position: { x: 0, y: 0 }, bounds: { x: 0, y: 0, width: 0, height: 0 }, children: [], nodes: [], data: {} },
-    { id: 'doc_shelf', label: '📚 Documentation Shelf', type: 'system', position: { x: 0, y: 0 }, bounds: { x: 0, y: 0, width: 0, height: 0 }, children: [], nodes: [], data: {} }
+    { id: 'doc_shelf', label: '📚 Documentation Shelf', type: 'system', position: { x: 0, y: 0 }, bounds: { x: 0, y: 0, width: 0, height: 0 }, children: [], nodes: [], data: {} },
+    { id: 'folder_root', label: '📁 Root Directory', type: 'folder', position: { x: 0, y: 0 }, bounds: { x: 0, y: 0, width: 0, height: 0 }, children: [], nodes: [], data: { layer: 'ai', continent: 'root', subcontinent: 'root' } }
 ];
 
-const SYSTEM_CLUSTER_IDS = new Set(['cluster_ghosts', 'sys_cluster_reserved', 'doc_shelf']);
+const SYSTEM_CLUSTER_IDS = new Set(['cluster_ghosts', 'sys_cluster_reserved', 'doc_shelf', 'folder_root']);
 
 const BOILERPLATE = new Set(['src', 'main', 'test', 'java', 'kotlin', 'androidTest', 'resources', 'assets']);
 
@@ -91,6 +92,25 @@ export function buildClusters(nodes: Node[]): ClusterBuildResult {
             currentClusterId = parentClusterId;
         }
     }
+
+    // [v0.3.34] Populate the children array for frontend tree/logging consistency
+    for (const c of clusters) {
+        if (c.parent_id && clusterMap.has(c.parent_id)) {
+            const parent = clusterMap.get(c.parent_id)!;
+            if (!parent.children) parent.children = [];
+            if (!parent.children.includes(c.id)) {
+                parent.children.push(c.id);
+            }
+        }
+    }
+
+    const emptyClusters = clusters.filter(
+        c => c.nodes.length === 0 && (!c.children || c.children.length === 0)
+    );
+    console.log('[EMPTY_CLUSTER_COUNT]', {
+        total: emptyClusters.length,
+        sample: emptyClusters.slice(0, 20).map(c => c.id)
+    });
 
     return { clusters, clusterIds };
 }

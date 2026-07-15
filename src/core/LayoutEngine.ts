@@ -61,6 +61,8 @@ export interface LayoutResult {
 }
 
 export function applyLayout(input: LayoutInput): LayoutResult {
+    console.error('LAYOUT_ENGINE_ALIVE', '2026-07-14-TEST');
+
     const tStart = process.hrtime.bigint();
     const { nodes, clusters, analysis } = input;
     console.log('[LAYOUT_ENTER] applyLayout called', {nodeCount: nodes.length, clusterCount: clusters.length});
@@ -192,17 +194,36 @@ export function applyLayout(input: LayoutInput): LayoutResult {
             `leaf=${leafCount}`, `leafSpace=${Math.round(leafSpace)}`);
     }
 
+    // [v0.3.34] User Requested Debug Log: EMPTY_LAYOUT_SAMPLE
+    const empties = activeClusters.filter(c => {
+        const count = clusterNodes.get(c.id)?.length || 0;
+        return count === 0;
+    });
+    console.log('[EMPTY_LAYOUT_SAMPLE]', {
+        count: empties.length,
+        sample: empties.slice(0, 20).map(c => ({
+            id: c.id,
+            nodeCount: clusterNodes.get(c.id)?.length || 0,
+            childCount: _childMap.get(c.id)?.length || 0,
+            parentId: c.parent_id
+        }))
+    });
+
     const continentMap = new Map<string, ContinentData>();
     for (const c of activeClusters) {
         const count = clusterNodes.get(c.id)?.length || 0;
         const cols = Math.ceil(Math.sqrt(Math.max(count, 1)));
         const rows = Math.ceil(Math.max(count, 1) / cols);
 
+        // [v0.3.34] Layout Fix: DO NOT pack empty clusters (ancestors or empty leaves)
+        if (count === 0) {
+            continue;
+        }
+
         const gridWidth = cols * NODE_SPACING_X + 150;
         const labelWidth = c.label ? c.label.length * 15 + 150 : 200;
         const estWidth = Math.max(gridWidth, labelWidth);
-        const hasCh = _childMap.has(c.id);
-        const estHeight = (hasCh && count === 0) ? 50 : Math.max(rows * NODE_SPACING_Y + 150, 150);
+        const estHeight = Math.max(rows * NODE_SPACING_Y + 150, 150);
 
         const packedC: ClusterWithBBox = {
             ...c, estWidth, estHeight, area: estWidth * estHeight, nodeCount: count
@@ -278,10 +299,16 @@ export function applyLayout(input: LayoutInput): LayoutResult {
         let maxClusterW = 0;
         let sumClusterW = 0;
         let sumClusterH = 0;
+        let maxClusterEstWidth = 0;
+        for (const c of data.clusters) {
+            maxClusterEstWidth = Math.max(maxClusterEstWidth, c.estWidth);
+        }
         
         const estAvgW = Math.sqrt(totalClusterArea / data.clusters.length);
         const dynamicClusterGap = Math.max(Math.min(estAvgW * 0.8, 500), 200);
-        const idealWidth = Math.max(Math.sqrt(totalClusterArea) * 1.5, 1000); // Make continent slightly wider than tall
+        const idealWidth = Math.max(Math.sqrt(totalClusterArea) * 1.5, maxClusterEstWidth * 1.2, 3000); // Make continent slightly wider than tall
+
+        console.log(`[WORLD_PACK]\ncontinent=${cont}\nclusterCount=${data.clusters.length}\nmaxClusterWidth=${maxClusterEstWidth}\nidealWidth=${idealWidth}`);
 
         for (const c of data.clusters) {
             if (currentX + c.estWidth > idealWidth && currentX > 0) {
@@ -437,6 +464,15 @@ export function applyLayout(input: LayoutInput): LayoutResult {
         
         if (!(data as any).forceLayoutMs) (data as any).forceLayoutMs = 0;
         (data as any).forceLayoutMs += Number(process.hrtime.bigint() - tForceStart) / 1e6;
+
+        // [USER PROBE] CONTINENT_STATS
+        console.log('[CONTINENT_STATS]', {
+            continent: cont,
+            clusterCount: data.clusters.length,
+            nodeCount: data.nodeCount,
+            width: data.estWidth,
+            height: data.estHeight
+        });
     }
 
     let continentPackingMs = Number(process.hrtime.bigint() - tContinentPackingStart) / 1e6;
@@ -457,7 +493,11 @@ export function applyLayout(input: LayoutInput): LayoutResult {
     }
     // [v0.3.33.7] Fix "Jack and the Beanstalk" vertical layout bug.
     // Instead of a hardcoded 12000, use a dynamic width to form a 16:9-ish layout.
-    const MAX_WORLD_WIDTH = Math.max(20000, Math.sqrt(totalWorldArea) * 1.8);
+    let maxContWidth = 0;
+    for (const cont of sortedContinentsArr) {
+        maxContWidth = Math.max(maxContWidth, cont.estWidth);
+    }
+    const MAX_WORLD_WIDTH = Math.max(20000, Math.sqrt(totalWorldArea) * 1.8, maxContWidth * 1.2);
 
     for (const cont of sortedContinentsArr) {
         if (worldX + cont.estWidth > MAX_WORLD_WIDTH && worldX > 0) {
@@ -468,6 +508,16 @@ export function applyLayout(input: LayoutInput): LayoutResult {
 
         console.log(`[WORLD_PACK] cont="${cont.id}" idx=${sortedContinentsArr.indexOf(cont)} worldX=${Math.round(worldX)} worldY=${Math.round(worldY)} estW=${Math.round(cont.estWidth)} estH=${Math.round(cont.estHeight)} rowMaxH=${Math.round(worldRowMaxHeight)} nodes=${cont.nodeCount}`);
         
+        // [USER PROBE] CONTINENT_PLACEMENT
+        console.log('[CONTINENT_PLACEMENT]', {
+            continent: cont.id,
+            x: worldX,
+            y: worldY,
+            width: cont.estWidth,
+            height: cont.estHeight,
+            rowMaxHeight: worldRowMaxHeight
+        });
+
         cont.centerX = worldX + cont.estWidth / 2;
         cont.centerY = worldY + cont.estHeight / 2;
 
@@ -519,6 +569,7 @@ export function applyLayout(input: LayoutInput): LayoutResult {
 
     // 6. Calculate Cluster Bounds and World Bounds
     const tBoundsStart = process.hrtime.bigint();
+    console.time('bounds');
     const clusterBounds = new Map<string, BoundingBox>();
     let worldMinX = Infinity, worldMinY = Infinity, worldMaxX = -Infinity, worldMaxY = -Infinity;
 
@@ -541,22 +592,89 @@ export function applyLayout(input: LayoutInput): LayoutResult {
             }
         }
 
-        // Actual BBox (with 200px padding for rendering parity with Legacy)
-        const width = maxX === -Infinity ? 200 : (maxX - minX) + 200;
-        const height = maxY === -Infinity ? 200 : (maxY - minY) + 200;
-        const centerX = minX === -Infinity ? c.position!.x : minX + (maxX - minX) / 2;
-        const centerY = minY === -Infinity ? c.position!.y : minY + (maxY - minY) / 2;
+        if (cNodes.length > 0) {
+            // Actual BBox for leaf clusters with nodes
+            const width = maxX === -Infinity ? 200 : (maxX - minX) + 200;
+            const height = maxY === -Infinity ? 200 : (maxY - minY) + 200;
+            const centerX = minX === -Infinity ? c.position!.x : minX + (maxX - minX) / 2;
+            const centerY = minY === -Infinity ? c.position!.y : minY + (maxY - minY) / 2;
 
-        clusterBounds.set(c.id, {
-            minX: minX === -Infinity ? c.position!.x : minX,
-            minY: minY === -Infinity ? c.position!.y : minY,
-            maxX: maxX === -Infinity ? c.position!.x : maxX,
-            maxY: maxY === -Infinity ? c.position!.y : maxY,
-            width,
-            height,
-            centerX,
-            centerY
-        });
+            clusterBounds.set(c.id, {
+                minX: minX === -Infinity ? c.position!.x : minX,
+                minY: minY === -Infinity ? c.position!.y : minY,
+                maxX: maxX === -Infinity ? c.position!.x : maxX,
+                maxY: maxY === -Infinity ? c.position!.y : maxY,
+                width,
+                height,
+                centerX,
+                centerY
+            });
+        }
+    }
+
+    // [USER PROBE] TOP_20_LARGEST_CLUSTERS
+    console.log('[TOP_20_LARGEST_CLUSTERS]',
+       activeClusters
+          .map(c => ({ id: c.id, nodeCount: clusterNodes.get(c.id)?.length || 0, bounds: clusterBounds.get(c.id) }))
+          .sort((a,b) => b.nodeCount - a.nodeCount)
+          .slice(0, 20)
+    );
+
+    // [USER PROBE] WORLD_BOUNDS
+    console.log('[WORLD_BOUNDS]', {
+        minX: worldMinX,
+        maxX: worldMaxX,
+        minY: worldMinY,
+        maxY: worldMaxY,
+        width: worldMaxX - worldMinX,
+        height: worldMaxY - worldMinY
+    });
+
+    // Post-pass: recursively compute bounds and positions for empty ancestor clusters
+    let changed = true;
+    let passes = 0;
+    while (changed && passes < 100) {
+        changed = false;
+        passes++;
+        for (const c of activeClusters) {
+            const count = clusterNodes.get(c.id)?.length || 0;
+            const hasCh = _childMap.has(c.id);
+            if (count === 0 && hasCh) {
+                const childrenIds = _childMap.get(c.id) || [];
+                let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+                for (const childId of childrenIds) {
+                    const cb = clusterBounds.get(childId);
+                    if (cb) {
+                        minX = Math.min(minX, cb.minX);
+                        minY = Math.min(minY, cb.minY);
+                        maxX = Math.max(maxX, cb.maxX);
+                        maxY = Math.max(maxY, cb.maxY);
+                    }
+                }
+                
+                if (minX !== Infinity) {
+                    // Give ancestor a 100px padding around children
+                    minX -= 100;
+                    minY -= 100;
+                    maxX += 100;
+                    maxY += 100;
+                    
+                    const width = maxX - minX;
+                    const height = maxY - minY;
+                    const centerX = minX + width / 2;
+                    const centerY = minY + height / 2;
+                    
+                    const oldCb = clusterBounds.get(c.id);
+                    if (!oldCb || oldCb.minX !== minX || oldCb.minY !== minY || oldCb.maxX !== maxX || oldCb.maxY !== maxY) {
+                        clusterBounds.set(c.id, {
+                            minX, minY, maxX, maxY, width, height, centerX, centerY
+                        });
+                        c.position = { x: centerX, y: centerY };
+                        changed = true;
+                    }
+                }
+            }
+        }
     }
 
     const worldBounds: BoundingBox = {
@@ -570,6 +688,8 @@ export function applyLayout(input: LayoutInput): LayoutResult {
         centerY: worldMinY === -Infinity ? 0 : worldMinY + (worldMaxY - worldMinY) / 2
     };
 
+    console.log(`[WORLD_PACK_FINAL]\nworldWidth=${Math.round(worldBounds.width)}\nworldHeight=${Math.round(worldBounds.height)}`);
+    console.timeEnd('bounds');
     const boundsCalculationMs = Number(process.hrtime.bigint() - tBoundsStart) / 1e6;
     const totalMs = Number(process.hrtime.bigint() - tStart) / 1e6;
 

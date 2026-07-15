@@ -242,7 +242,7 @@ export class FileScanner {
                     const hasKnownExt = knownExts.some(ext => fromPart.toLowerCase().endsWith(ext));
                     if (!hasKnownExt && !fromPart.startsWith('.')) {
                         const parts = fromPart.split('.');
-                        rootMod = parts[parts.length - 1] || fromPart;
+                        rootMod = parts[0] || fromPart;
                     }
 
                     if (rootMod && !summary.references.some(r => r.target === rootMod)) {
@@ -457,35 +457,18 @@ export class FileScanner {
             }
         }
 
-        // [v0.3.21] Improved Rust 'use' parsing to handle nested items {A, B}
-        const useRegex = /(?:^|\n)\s*(?:\/\/.*)?(?:\[SYNAPSE(?:_PENDING|_DELETED)?:([^\]]+)\]\s*)?use\s+([^;]+);/g;
+        // [v0.3.34 Fix] Change (?:\/\/.*)? to (?:\/\/\s*)? to prevent matching 'use' inside natural language comments
+        // [v0.3.34 Fix] Restrict use target to valid Rust path characters to prevent capturing paragraphs of natural language before a semicolon
+        const useRegex = /(?:^|\n)\s*(?:\/\/\s*)?(?:\[SYNAPSE(?:_PENDING|_DELETED)?:([^\]]+)\]\s*)?use\s+([a-zA-Z0-9_:{},\s]+);/g;
         while ((match = useRegex.exec(content)) !== null) {
             const idMatch = match[1];
             const rawPath = match[2].trim();
             
-            if (rawPath.includes('{')) {
-                const [base, items] = rawPath.split('{');
-                const basePart = base.trim().replace(/::$/, '');
-                const subItems = items.replace('}', '').split(',').map(i => i.trim());
-                
-                for (const item of subItems) {
-                    if (!item) continue;
-                    // Try both: the item itself and the full path if possible
-                    const target = item.split('::').pop() || item;
-                    if (target && !['std', 'core', 'alloc', 'prelude', 'self', 'super', 'crate'].includes(target.toLowerCase())) {
-                        if (!summary.references.some(r => r.target === target)) {
-                            summary.references.push({ target, type: 'dependency', nodeId: idMatch, isApproved: true });
-                        }
-                    }
-                }
-            } else {
-                const parts = rawPath.split('::').filter(p => p && !['crate', 'self', 'super'].includes(p));
-                const target = parts[parts.length - 1];
-                if (target && !['std', 'core', 'alloc', 'prelude'].includes(target.toLowerCase())) {
-                    if (!summary.references.some(r => r.target === target)) {
-                        summary.references.push({ target, type: 'dependency', nodeId: idMatch, isApproved: true });
-                        console.log(`[FLOW_DEBUG] RUST_USE parsed: ${target} from ${rawPath}`);
-                    }
+            const firstSegment = rawPath.split('::')[0];
+            if (firstSegment && !['std', 'core', 'alloc', 'prelude', 'crate', 'super', 'self'].includes(firstSegment.toLowerCase())) {
+                if (!summary.references.some(r => r.target === firstSegment)) {
+                    summary.references.push({ target: firstSegment, type: 'dependency', nodeId: idMatch, isApproved: true });
+                    console.log(`[FLOW_DEBUG] RUST_USE parsed: ${firstSegment} from ${rawPath}`);
                 }
             }
         }
@@ -552,7 +535,8 @@ export class FileScanner {
     }
 
     private parseConfig(content: string, summary: CodeSummary) {
-        const refRegex = /"(?:extends|import|using|include|source)"\s*:\s*"([^"]+)"|extends\s*:\s*([^\n]+)|import\s+([^\n]+)/gi;
+        // [v0.3.34 Fix] Restrict import regex to prevent capturing natural language comments
+        const refRegex = /"(?:extends|import|using|include|source)"\s*:\s*"([^"]+)"|extends\s*:\s*([^\n]+)|import\s+['"]([^'"]+)['"]/gi;
         let match;
         while ((match = refRegex.exec(content)) !== null) {
             const ref = (match[1] || match[2] || match[3] || '').trim();
@@ -579,10 +563,11 @@ export class FileScanner {
                 count++;
             }
 
-            const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
+            // [v0.3.34 Fix] Prevent capturing natural language sentences in markdown links by disallowing spaces in URL
+            const linkRegex = /\[([^\]]+)\]\(([^)\s]+)\)/g;
             while ((match = linkRegex.exec(content)) !== null) {
                 const ref = match[2].trim();
-                if (ref && !ref.startsWith('http') && !ref.startsWith('#')) {
+                if (ref && !ref.startsWith('http') && !ref.startsWith('#') && !ref.startsWith('mailto:')) {
                     // [v0.3.33 Fix] Keep the extension for markdown links so ReferenceVerifier can find the file
                     let cleanRef = ref.replace(/^file:\/\//, '').replace(/\\/g, '/');
                     // Remove url hash like #L123 if present

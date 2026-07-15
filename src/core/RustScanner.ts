@@ -31,32 +31,16 @@ export class RustScanner implements LanguageScanner {
             }
         }
 
-        const useRegex = /(?:^|\n)\s*(?:\/\/.*)?(?:\[SYNAPSE(?:_PENDING|_DELETED)?:([^\]]+)\]\s*)?use\s+([^;]+);/g;
+        // [v0.3.34 Fix] Restrict use target to valid Rust path characters to prevent capturing paragraphs of natural language before a semicolon
+        const useRegex = /(?:^|\n)\s*(?:\/\/\s*)?(?:\[SYNAPSE(?:_PENDING|_DELETED)?:([^\]]+)\]\s*)?use\s+([a-zA-Z0-9_:{},\s]+);/g;
         while ((match = useRegex.exec(content)) !== null) {
             const idMatch = match[1];
             const rawPath = match[2].trim();
 
-            if (rawPath.includes('{')) {
-                const [base, items] = rawPath.split('{');
-                const basePart = base.trim().replace(/::$/, '');
-                const subItems = items.replace('}', '').split(',').map(i => i.trim());
-
-                for (const item of subItems) {
-                    if (!item) continue;
-                    const target = item.split('::').pop() || item;
-                    if (target && !['std', 'core', 'alloc', 'prelude', 'self', 'super', 'crate'].includes(target.toLowerCase())) {
-                        if (!summary.references.some(r => r.target === target)) {
-                            summary.references.push({ target, type: 'dependency', nodeId: idMatch, isApproved: true });
-                        }
-                    }
-                }
-            } else {
-                const parts = rawPath.split('::').filter(p => p && !['crate', 'self', 'super'].includes(p));
-                const target = parts[parts.length - 1];
-                if (target && !['std', 'core', 'alloc', 'prelude'].includes(target.toLowerCase())) {
-                    if (!summary.references.some(r => r.target === target)) {
-                        summary.references.push({ target, type: 'dependency', nodeId: idMatch, isApproved: true });
-                    }
+            const firstSegment = rawPath.split('::')[0];
+            if (firstSegment && !['std', 'core', 'alloc', 'prelude', 'crate', 'super', 'self'].includes(firstSegment.toLowerCase())) {
+                if (!summary.references.some(r => r.target === firstSegment)) {
+                    summary.references.push({ target: firstSegment, type: 'dependency', nodeId: idMatch, isApproved: true });
                 }
             }
         }

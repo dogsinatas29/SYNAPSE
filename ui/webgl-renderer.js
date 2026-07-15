@@ -1370,7 +1370,7 @@ class WebGLRenderer {
         if (!this.gl) return;
         
         // [v0.2.25] Iron Isolation: Stop everything if not in graph mode
-        if (this.canvas2d.dataset.mode !== 'graph' && (!window.engine || window.engine.currentMode !== 'graph')) {
+        if (this.canvas2d.dataset.mode !== 'graph' || (!window.engine || window.engine.currentMode !== 'graph')) {
             return;
         }
 

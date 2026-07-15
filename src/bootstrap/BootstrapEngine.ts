@@ -117,7 +117,7 @@ export class BootstrapEngine {
             // [JVM_AUDIT] Phase A & B: Tally stats and Potential Edges safely
             JVMAuditor.runAudit(discoveredFiles, projectRoot);
             
-            const pipelineResult = dataPipeline.processFiles(discoveredFiles, projectRoot);
+            const pipelineResult = await dataPipeline.processFiles(discoveredFiles, projectRoot);
             
             // [P1.5] Bounds logger helper
             const getBounds = (nodes: any[]) => {
@@ -222,7 +222,7 @@ export class BootstrapEngine {
             // [JVM_AUDIT] Phase A & B: Tally stats and Potential Edges safely
             JVMAuditor.runAudit(discoveredFiles, projectRoot);
             
-            const pipelineResult = dataPipeline.processFiles(discoveredFiles, projectRoot);
+            const pipelineResult = await dataPipeline.processFiles(discoveredFiles, projectRoot);
             
             Logger.info(`[SCAN_DEBUG] Pipeline produced Nodes: ${pipelineResult.nodes.length}, Edges: ${pipelineResult.edges.length}`);
             
@@ -414,7 +414,7 @@ The **Documentation Shelf** of the Synapse canvas is a sacred storage area for m
         // [JVM_AUDIT] Execute JVM diagnostics on autoDiscover too
         JVMAuditor.runAudit(discoveredFiles, projectRoot);
         
-        const pipelineResult = dataPipeline.processFiles(discoveredFiles, projectRoot);
+        const pipelineResult = await dataPipeline.processFiles(discoveredFiles, projectRoot);
         
         // [v0.3.11] Core Freeze
         const frozenGraph = buildGraph(pipelineResult.nodes, pipelineResult.edges, pipelineResult.clusters);

@@ -273,9 +273,16 @@ export class CanvasPanel {
     }
 
     private async _handleMessage(message: any) {
+        console.log(
+            '[MESSAGE]',
+            message.command || message.type,
+            JSON.stringify(message).slice(0, 200)
+        );
         if (message.command !== 'contextData' && message.command !== 'log') {
             Logger.info(`[CanvasPanel] Received command: ${message.command}`);
         }
+
+        console.log('[HANDLE_MESSAGE]', message.command);
 
         switch (message.command) {
             case 'setEditLogicMode':
@@ -307,6 +314,7 @@ export class CanvasPanel {
                     Logger.info('[CanvasPanel] getProjectState blocked by rollback guard.');
                     return;
                 }
+                console.trace('[SEND_STATE_FROM]', message.command);
                 await this._taskQueue.push(() => this.sendProjectState());
                 return;
             case 'saveState':
@@ -456,6 +464,7 @@ export class CanvasPanel {
                 return;
             case 'ready':
                 console.log('[SYNAPSE] WebView Ready signal received. Starting initial analysis...');
+                console.trace('[SEND_STATE_FROM]', message.command);
                 await this.sendProjectState();
                 return;
             case 'updateNodeData':
@@ -899,6 +908,7 @@ export class CanvasPanel {
                 console.log(`[SYNAPSE] Node ${node.id} data updated via pipeline.`);
                 
                 // 🔥 [v0.3.11] IMMEDIATE REACTION
+                // console.trace('[SEND_STATE_FROM]', '_pushClientState');
                 // await this.sendProjectState(false, true); // [v0.3.30] Prevent UI overwrite that deletes client nodes
             }
         } catch (error) {
@@ -937,6 +947,7 @@ export class CanvasPanel {
     }
 
     public async refreshState() {
+        console.trace('[SEND_STATE_FROM]', 'refreshState');
         await this._taskQueue.push(() => this.sendProjectState());
     }
 
@@ -1865,11 +1876,14 @@ export class CanvasPanel {
                             }
                         }
 
+                        const tWebviewStart = process.hrtime.bigint();
                         this._panel.webview.postMessage({
                             command: 'projectState',
                             data: result.state,
                             forceReset: forceReset
                         });
+                        const webviewMs = Number(process.hrtime.bigint() - tWebviewStart) / 1e6;
+                        Logger.info(`[WEBVIEW_TIME] postMessage(projectState) took ${webviewMs.toFixed(2)}ms`);
                     } else {
                         Logger.warn(`[FetchState] Error: Success is false or state is missing`);
                     }
@@ -2238,11 +2252,14 @@ export class CanvasPanel {
             const normalized = relPath.replace(/[\/\\]/g, '/');
 
             // 무한 루프 방지
-            if (normalized.startsWith('data/') || normalized.startsWith('.synapse/')) return;
+            if (normalized.startsWith('data/') || normalized.startsWith('.synapse/') || normalized.includes('.synapse')) return;
             if (this._synapseIgnore?.isIgnored(normalized)) return;
+
+            Logger.info(`[GRAPH_REBUILD_TRIGGER] file changed: ${normalized}`);
 
             if (this._pushDebounceTimer) clearTimeout(this._pushDebounceTimer);
             this._pushDebounceTimer = setTimeout(() => {
+                Logger.info(`[GRAPH_REBUILD] pushClientStateSafe triggered by ${normalized}`);
                 this._pushClientStateSafe();
             }, 3000);
         };
@@ -3765,6 +3782,7 @@ export class CanvasPanel {
                     await vscode.workspace.fs.writeFile(projectStateUri, Buffer.from(normalizedJson, 'utf8'));
 
                     vscode.window.showInformationMessage('Project maps re-generated successfully.');
+                    console.trace('[SEND_STATE_FROM]', 'handleGenerateSubNodes');
                     await this.sendProjectState();
                 } else {
                     throw new Error(result.error);
@@ -4575,6 +4593,7 @@ export class CanvasPanel {
                 workspacePath: workspaceFolder.uri.fsPath
             });
             vscode.window.showInformationMessage(`Prompt logged: ${title || 'Untitled'}`);
+            console.trace('[SEND_STATE_FROM]', 'handleExecuteAiAction');
             await this.sendProjectState(); // Refresh to show the new history node
         } catch (e) {
             vscode.window.showErrorMessage(`Failed to log prompt: ${e}`);
@@ -4716,6 +4735,7 @@ export class CanvasPanel {
             // 3. Notify webview to reload with Force Reset
             // [v0.3.11] 롤백 후 2초간 getProjectState 차단
             this._rollbackGuardUntil = Date.now() + 2000;
+            console.trace('[SEND_STATE_FROM]', 'resetProjectState');
             await this.sendProjectState(true);
             await this.sendHistory();
 
@@ -4746,8 +4766,14 @@ export class CanvasPanel {
     }
 
     private _isSyncing: boolean = false;
+    private _sendStateCounter: number = 0;
 
     public async sendProjectState(forceReset: boolean = false, isAuthoritative: boolean = false) {
+        const seq = ++this._sendStateCounter;
+        console.error(`[SEND_STATE_START] seq=${seq}, forceReset=${forceReset}`);
+        console.log(`[GRAPH_REBUILD_TRIGGER] sendProjectState called (forceReset=${forceReset}, authoritative=${isAuthoritative})`);
+        const trace = new Error().stack?.split('\n')[2]?.trim() || 'unknown source';
+        console.log(`[GRAPH_REBUILD_TRIGGER] Caller: ${trace}`);
         if (!this._panel || this._isSyncing) return;
         this._isSyncing = true;
         
@@ -4956,6 +4982,25 @@ export class CanvasPanel {
 
             console.log(`[FLOW_DEBUG] webview payload nodes ${projectState.nodes.length} edges ${projectState.edges.length}`);
 
+            const badNodes = projectState.nodes.filter((n: any) => n.id === '.' || n.id === '..' || n.id === 'src' || n.filePath === '.' || n.filePath === '..' || n.filePath === 'src');
+            if (badNodes.length > 0) {
+                console.error('[BAD_NODE] Found colliding nodes before export:', badNodes.map((n: any) => ({ id: n.id, type: n.type, filePath: n.filePath })));
+            }
+
+            const badFiles = projectState.nodes.filter((n: any) =>
+                n.type !== 'directory' &&
+                projectState.nodes.some((x: any) => x.id.startsWith(n.id + '/'))
+            );
+            if (badFiles.length > 0) {
+                console.error('[FILE_ACTING_AS_DIR]', badFiles.slice(0, 50).map((n: any) => ({ id: n.id, type: n.type, filePath: n.filePath })));
+                console.error('[FILE_ACTING_AS_DIR_TRACE]', badFiles.map((n: any) => ({
+                    id: n.id,
+                    type: n.type,
+                    createdBy: n.createdBy,
+                    sourceFile: n.data?.file
+                })));
+            }
+
             // [v0.3.34] Robust Chunking to bypass VS Code IPC size limits
             const CHUNK_SIZE = 5000;
             this._panel.webview.postMessage({ command: 'projectStateChunkStart' });
@@ -4989,6 +5034,7 @@ export class CanvasPanel {
             Logger.error(`[CanvasPanel] sendProjectState failed: ${error}`);
         } finally {
             this._isSyncing = false;
+            console.error(`[SEND_STATE_END] seq=${seq}`);
         }
     }
 

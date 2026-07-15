@@ -32,6 +32,17 @@ export class ReferenceResolver {
 
         for (const { sourceFilePath, ref } of validReferences) {
             let targetNodeId = ref.target;
+
+            // [v0.3.34 FIX] Normalize relative paths based on source file location to prevent '.' and '..' ghost nodes
+            const isRelativePath = targetNodeId.startsWith('./') || targetNodeId.startsWith('../') || targetNodeId === '.' || targetNodeId === '..';
+            if (isRelativePath) {
+                targetNodeId = path.join(path.dirname(sourceFilePath), targetNodeId).replace(/\\/g, '/');
+                if (targetNodeId === '.' || targetNodeId === '..') {
+                    console.warn(`[ReferenceResolver] Skipping invalid relative path resolution: ${ref.target} from ${sourceFilePath}`);
+                    continue;
+                }
+            }
+
             const originalTarget = targetNodeId;
             let resolutionKind: ResolutionKind = 'direct';
 

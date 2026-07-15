@@ -18,11 +18,23 @@ export class GhostExpander {
     public static expand(
         resolvedReferences: ResolvedReference[],
         existingClusterIds: ReadonlySet<string>,
+        existingNodeIds: ReadonlySet<string>,
         internalNamespace?: string
     ): ExpansionResult {
         const ghostNodes: Node[] = [];
         const ghostClusters: Cluster[] = [];
         const expandedReferences: ExpandedReference[] = [];
+
+        // For GHOST_SUMMARY
+        const ghostStats = {
+            total: 0,
+            byLanguage: {} as Record<string, number>,
+            targets: {} as Record<string, number>
+        };
+
+        console.error('[GHOST_EXPANDER_ENTER]', {
+            existingNodeCount: existingNodeIds.size
+        });
         
         const newClusterIds = new Set<string>();
         const newNodeIds = new Set<string>();
@@ -50,7 +62,7 @@ export class GhostExpander {
                     bounds: { x: 0, y: 0, width: 0, height: 0 },
                     children: [],
                     nodes: [],
-                    data: { layer: 'external' }
+                    data: { layer: 'external', continent: 'external', subcontinent: 'external' }
                 });
                 newClusterIds.add(cId);
             }
@@ -104,7 +116,57 @@ export class GhostExpander {
                     ghostContinent = ghostClusterId;
                 }
 
+                // [Fix] Prevent creating ghost node if the target acts as a directory for existing nodes
+                if (targetNodeId === '.' || targetNodeId === '..') {
+                    continue; // Completely ignore relative path roots
+                }
+
+                if (targetNodeId === 'src') {
+                    console.error('[SRC_DEBUG]', {
+                        targetNodeId,
+                        existingNodeCount: existingNodeIds.size,
+                        sample: Array.from(existingNodeIds).slice(0, 20)
+                    });
+                }
+
+                const isActingAsDir = Array.from(existingNodeIds).some(id => id.startsWith(targetNodeId + '/'));
+
+                if (targetNodeId === 'src' || targetNodeId.startsWith('extensions/')) {
+                    console.error('[GHOST_CHECK]', {
+                        targetNodeId,
+                        isActingAsDir,
+                    });
+                }
+
+                if (isActingAsDir || existingNodeIds.has(targetNodeId)) {
+                    continue; // Skip creating ghost node to prevent FILE_ACTING_AS_DIR crashes
+                }
+
                 if (!newNodeIds.has(targetNodeId)) {
+                    // ==========================================
+                    // [USER PROBE: GHOST_SUMMARY STATS]
+                    // ==========================================
+                    const ext = targetNodeId.split('.').pop() || '';
+                    let parserLanguage = 'unknown';
+                    if (['ts', 'js'].includes(ext)) parserLanguage = 'javascript/typescript';
+                    else if (['rs'].includes(ext)) parserLanguage = 'rust';
+                    else if (['py'].includes(ext)) parserLanguage = 'python';
+                    else if (['md'].includes(ext)) parserLanguage = 'markdown';
+                    
+                    ghostStats.total++;
+                    ghostStats.byLanguage[parserLanguage] = (ghostStats.byLanguage[parserLanguage] || 0) + 1;
+                    ghostStats.targets[targetNodeId] = (ghostStats.targets[targetNodeId] || 0) + 1;
+
+                    if (targetNodeId === '.' || targetNodeId === '..' || targetNodeId === 'src' || targetNodeId.startsWith('extensions/')) {
+                        console.error('[EXTERNAL_NODE_CREATED]', {
+                            id: targetNodeId,
+                            source: 'GhostExpander',
+                            sourceFile: ref.sourceId,
+                            referenceType: ref.referenceType,
+                            originalTarget: ref.originalTarget
+                        });
+                    }
+
                     ghostNodes.push({
                         id: targetNodeId,
                         filePath: isExternal ? `external://${targetNodeId}` : `ghost://${targetNodeId}`,
@@ -115,6 +177,7 @@ export class GhostExpander {
                         layer: isExternal ? 'external' : 'ai',
                         position: { x: 0, y: 0 },
                         degree: 0,
+                        createdBy: 'GhostExpander',
                         data: {
                             label: targetNodeId,
                             file: targetNodeId,
@@ -124,7 +187,9 @@ export class GhostExpander {
                             continent: ghostContinent,
                             subcontinent: ghostContinent,
                             continent_type: 'EXTERNAL',
-                            layer: isExternal ? 'external' : 'ai'
+                            layer: isExternal ? 'external' : 'ai',
+                            sourceFile: ref.sourceId,
+                            referenceType: ref.referenceType
                         },
                         intelligence: {},
                         visual: { opacity: isExternal ? 0.6 : 1.0 }
@@ -133,6 +198,16 @@ export class GhostExpander {
                 }
             }
         }
+
+        // Print GHOST_SUMMARY
+        console.log('[GHOST_SUMMARY]', {
+            total: ghostStats.total,
+            byLanguage: ghostStats.byLanguage,
+            topTargets: Object.entries(ghostStats.targets)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 50)
+                .map(([t, c]) => `${t} (${c})`)
+        });
 
         return { ghostNodes, ghostClusters, expandedReferences };
     }

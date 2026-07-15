@@ -100,7 +100,7 @@ export class BenchmarkHarness {
 
         // Expand
         const tExpandStart = process.hrtime.bigint();
-        const expansionResult = GhostExpander.expand(resolvedRefs, graphData.clusterIds);
+        const expansionResult = GhostExpander.expand(resolvedRefs, graphData.clusterIds, graphData.nodeIds);
         backendProfile.expandMs = Number(process.hrtime.bigint() - tExpandStart) / 1e6;
 
         // Build

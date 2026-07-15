@@ -85,7 +85,9 @@ export function buildNodes(
         let clusterId = '';
         if (doc) {
             clusterId = 'doc_shelf';
-        } else if (relPath && relPath !== '.' && relPath !== '/' && !path.isAbsolute(relPath)) {
+        } else if (relPath === '.' || relPath === '') {
+            clusterId = 'folder_root';
+        } else if (relPath && relPath !== '/') {
             clusterId = getClusterIdForPath(relPath, directoryTree);
         }
 
@@ -106,6 +108,7 @@ export function buildNodes(
             status: 'confirmed' as any,
             position: { x: 0, y: 0 },
             degree: 0,
+            createdBy: 'NodeBuilder',
             data: {
                 label: fileName,
                 file: item.filePath,

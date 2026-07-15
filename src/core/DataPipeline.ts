@@ -45,7 +45,7 @@ export class DataPipeline {
    * 전체적인 데이터 처리 흐름 실행 (v0.3.11: dispatch 제거, 순수 데이터 반환)
    * @param files 분석할 파일 목록
    */
-  public processFiles(files: string[], projectRoot?: string): PipelineResult {
+  public async processFiles(files: string[], projectRoot?: string): Promise<PipelineResult> {
     try {
       // [v0.3.30] Security: validate all files are within project boundary
       if (projectRoot) {
@@ -63,10 +63,16 @@ export class DataPipeline {
       console.log(`[SYNAPSE] Processing ${files.length} files... Root: ${projectRoot || 'CWD'}`);
 
       const summaries: { filePath: string; summary: CodeSummary }[] = [];
-      for (const file of files) {
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
         const absolutePath = projectRoot ? (path.isAbsolute(file) ? file : path.join(projectRoot, file)) : file;
         const summary = this.scanner.scanFile(absolutePath);
         summaries.push({ filePath: file, summary });
+
+        // [v0.3.33.1] Prevent Extension Host freezing by yielding to the event loop
+        if (i % 100 === 0) {
+            await new Promise(resolve => setImmediate(resolve));
+        }
       }
 
       // [v0.3.30] Populate SymbolIndex
@@ -150,7 +156,7 @@ export class DataPipeline {
       }
 
       // [v0.3.32.4] Ghost Expansion (Extracted to GhostExpander)
-      const expansionResult = GhostExpander.expand(resolvedReferences, clusterIds, internalNamespace);
+      const expansionResult = GhostExpander.expand(resolvedReferences, clusterIds, nodeIds, internalNamespace);
       
       // Inject Mutated States (DataPipeline's responsibility)
       nodes.push(...expansionResult.ghostNodes);
@@ -183,7 +189,227 @@ export class DataPipeline {
     diagnosticOutput += generateDiagnosticReport(analysis, context);
 
     const layoutInput: LayoutInput = { nodes, clusters, analysis };
+    
+    // ==========================================
+    // [USER PROBE #1: ORPHAN NODES]
+    // ==========================================
+    const orphanNodes = nodes.filter(node => {
+        if (!node.cluster_id) return true;
+        const cluster = clusters.find(c => c.id === node.cluster_id);
+        return !cluster;
+    });
+    console.log('[ORPHAN_NODES]', {
+        count: orphanNodes.length,
+        sample: orphanNodes.slice(0,20).map(n => ({
+            id: n.id,
+            cluster_id: n.cluster_id
+        }))
+    });
+
+    // ==========================================
+    // [USER PROBE #2: EMPTY_CLUSTER_VERIFY]
+    // ==========================================
+    const emptyClustersCount = clusters.filter(c => {
+        const hasNodes = nodes.some(n => n.cluster_id === c.id || (n.data && n.data.cluster_id === c.id));
+        return !hasNodes;
+    });
+    
+    const suspiciousClusters = emptyClustersCount.slice(0, 20);
+    for (const cluster of suspiciousClusters) {
+        const actualNodes = nodes.filter(
+            n => n.cluster_id === cluster.id || (n.data && n.data.cluster_id === cluster.id)
+        );
+        console.log('[EMPTY_CLUSTER_VERIFY]', {
+            cluster: cluster.id,
+            actualNodes: actualNodes.length,
+            childClusterCount: clusters.filter(c => c.parent_id === cluster.id).length
+        });
+    }
+    
+    console.log('[LAYOUT_INPUT]', {
+        clusterCount: clusters.length,
+        emptyClusters: emptyClustersCount.length
+    });
+
+    // ==========================================
+    // [USER PROBE #3: GHOST_SAMPLE]
+    // ==========================================
+    const ghostNodes = nodes.filter(n => n.cluster_id && n.cluster_id.startsWith('cluster_ghost'));
+    const ghostSources = new Map<string, number>();
+    ghostNodes.forEach(n => {
+        const src = (n.data as any)?.sourceFile || 'unknown';
+        ghostSources.set(src, (ghostSources.get(src) || 0) + 1);
+    });
+    console.log('[GHOST_CLUSTER_BREAKDOWN]', {
+        total: ghostNodes.length,
+        topSources: [...ghostSources.entries()].sort((a,b) => b[1] - a[1]).slice(0, 20)
+    });
+    console.log('[GHOST_SAMPLE]', 
+        ghostNodes.slice(0, 50).map(n => ({
+            id: n.id,
+            cluster: n.cluster_id,
+            sourceFile: (n.data as any)?.sourceFile || 'unknown'
+        }))
+    );
+
+    // ==========================================
+
+
+    // ==========================================
+    // [SINGLE NODE CLUSTER COLLAPSE]
+    // ==========================================
+    let collapseCount = 0;
+    let chainCount = 0;
+    let collapseChanged = true;
+    while(collapseChanged) {
+        collapseChanged = false;
+        
+        for (let i = clusters.length - 1; i >= 0; i--) {
+            const c = clusters[i];
+            if (c.id === 'cluster_ghosts' || c.id === 'sys_cluster_reserved' || c.id === 'folder_root') continue;
+            
+            const childClusters = clusters.filter(child => child.parent_id === c.id);
+            const myNodes = nodes.filter(n => n.cluster_id === c.id || (n.data && n.data.cluster_id === c.id));
+            
+            // Calculate cluster depth
+            let depth = 1;
+            let currentForDepth = c;
+            while (currentForDepth.parent_id) {
+                depth++;
+                const parent = clusters.find(p => p.id === currentForDepth.parent_id);
+                if (!parent) break;
+                currentForDepth = parent;
+            }
+            
+            // 0. Force Compression (Depth > 5)
+            if (depth > 5) {
+                const parentId = c.parent_id;
+                if (parentId) {
+                    // Move my nodes to parent
+                    myNodes.forEach(n => {
+                        n.cluster_id = parentId;
+                        if (n.data) n.data.cluster_id = parentId;
+                    });
+                    
+                    // Move my children to parent
+                    childClusters.forEach(child => {
+                        child.parent_id = parentId;
+                    });
+                    
+                    clusters.splice(i, 1);
+                    collapseCount++;
+                    collapseChanged = true;
+                    continue;
+                }
+            }
+            
+            // 1. Aggressive Branch Promotion (nodeCount <= 2)
+            // If a cluster has very few direct nodes, it's not worth being a separate box.
+            // We promote its nodes and children to its parent.
+            if (myNodes.length <= 2) {
+                const parentId = c.parent_id;
+                if (parentId) {
+                    // Move my nodes to parent
+                    myNodes.forEach(n => {
+                        n.cluster_id = parentId;
+                        if (n.data) n.data.cluster_id = parentId;
+                    });
+                    
+                    // Move my children to parent
+                    childClusters.forEach(child => {
+                        child.parent_id = parentId;
+                        // Prepend my name to child's name to preserve path visually
+                        const myName = c.label.replace('📂 ', '').replace(/\[.*\]\s*/, '');
+                        if (!child.label.includes(myName + '/')) {
+                            child.label = child.label.replace('📂 ', `📂 ${myName}/`);
+                        }
+                    });
+                    
+                    clusters.splice(i, 1);
+                    collapseCount++;
+                    collapseChanged = true;
+                    continue;
+                }
+            }
+            
+            // 2. Chain Compression (childClusterCount === 1)
+            // For folders like A/B/C where B has no nodes but 1 child
+            if (childClusters.length === 1) {
+                if (myNodes.length <= 5) {
+                    const child = childClusters[0];
+                    const parentId = c.parent_id;
+                    
+                    // Move my nodes to the child cluster
+                    myNodes.forEach(n => {
+                        n.cluster_id = child.id;
+                        if (n.data) n.data.cluster_id = child.id;
+                    });
+                    
+                    // Bypass current cluster
+                    child.parent_id = parentId;
+                    
+                    // Merge labels: A + B -> A/B
+                    const myName = c.label.replace('📂 ', '').replace(/\[.*\]\s*/, '');
+                    if (!child.label.includes(myName + '/')) {
+                        child.label = child.label.replace('📂 ', `📂 ${myName}/`);
+                    }
+                    
+                    clusters.splice(i, 1);
+                    chainCount++;
+                    collapseChanged = true;
+                    continue;
+                }
+            }
+        }
+    }
+    console.log(`[CLUSTER_COLLAPSE] Aggressively Absorbed ${collapseCount} clusters, Compressed ${chainCount} chains`);
+
+    // ==========================================
+    // [USER PROBE #4: POST-COLLAPSE CLUSTER_SIZE_DISTRIBUTION]
+    // ==========================================
+    const sizeDistribution = {
+        '0': 0, '1': 0, '2-5': 0, '6-10': 0, '11-20': 0, '21-50': 0, '50+': 0
+    };
+    const clusterSizes = clusters.map(c => {
+        const nodeCount = nodes.filter(n => n.cluster_id === c.id || (n.data && n.data.cluster_id === c.id)).length;
+        if (nodeCount === 0) sizeDistribution['0']++;
+        else if (nodeCount === 1) sizeDistribution['1']++;
+        else if (nodeCount <= 5) sizeDistribution['2-5']++;
+        else if (nodeCount <= 10) sizeDistribution['6-10']++;
+        else if (nodeCount <= 20) sizeDistribution['11-20']++;
+        else if (nodeCount <= 50) sizeDistribution['21-50']++;
+        else sizeDistribution['50+']++;
+        return { id: c.id, nodeCount };
+    });
+    console.log('[POST_COLLAPSE_CLUSTER_SIZE_DISTRIBUTION]', sizeDistribution);
+    
+    console.log('[POST_COLLAPSE_SMALLEST_CLUSTERS]', 
+        clusterSizes.filter(c => c.nodeCount > 0).sort((a,b) => a.nodeCount - b.nodeCount).slice(0, 50)
+    );
+
+    // ==========================================
+    // [USER PROBE #5: POST-COLLAPSE DEPTH_DISTRIBUTION]
+    // ==========================================
+    const depthDistribution: Record<string, number> = {};
+    clusters.forEach(c => {
+        let depth = 1;
+        let current = c;
+        while (current.parent_id) {
+            depth++;
+            const parent = clusters.find(p => p.id === current.parent_id);
+            if (!parent) break;
+            current = parent;
+        }
+        const depthKey = depth >= 7 ? '7+' : depth.toString();
+        depthDistribution[depthKey] = (depthDistribution[depthKey] || 0) + 1;
+    });
+    console.log('[POST_COLLAPSE_DEPTH_DISTRIBUTION]', depthDistribution);
+
+    const tLayoutStart = process.hrtime.bigint();
     const layoutResult = applyLayout(layoutInput);
+    const layoutMs = Number(process.hrtime.bigint() - tLayoutStart) / 1e6;
+    Logger.info(`[LAYOUT_TIME] applyLayout took ${layoutMs.toFixed(2)}ms`);
+
     const continentMap = layoutResult.continentMap;
     const clusterNodes = new Map<string, Node[]>(Array.from(layoutResult.clusterNodes.entries()).map(([k, v]) => [k, [...v]]));
     const activeClusters = layoutResult.activeClusters;

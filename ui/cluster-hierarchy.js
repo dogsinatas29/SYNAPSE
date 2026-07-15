@@ -29,7 +29,7 @@
 
         const rootIds = [];
         for (const [id, node] of nodeMap) {
-            if (!node.parentId || !nodeMap.has(node.parentId)) {
+            if (!node.parentId || !nodeMap.has(node.parentId) || node.parentId === 'world') {
                 rootIds.push(id);
             }
         }

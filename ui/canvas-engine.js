@@ -2171,38 +2171,38 @@ class CanvasEngine {
             });
         }
 
-        // [v0.3.16] Edge Visibility Control
-        window.edgeVisibilityMode = 'ALL'; // 'ALL' | 'NO_BADGES' | 'NO_EDGES'
+        // [v0.3.33.8] 3-Level Edge Visibility Control (FULL / CLUSTER / NONE)
+        window.edgeVisibilityMode = 'FULL'; // 'FULL' | 'CLUSTER' | 'NONE'
         const btnEdgeVisAll = document.getElementById('btn-edge-vis-all');
-        const btnEdgeVisHideBadge = document.getElementById('btn-edge-vis-hide-badge');
-        const btnEdgeVisHideEdges = document.getElementById('btn-edge-vis-hide-edges');
+        const btnEdgeVisCluster = document.getElementById('btn-edge-vis-cluster');
+        const btnEdgeVisHideEdges = document.getElementById('btn-edge-vis-none');
 
         const updateEdgeVisButtons = (mode) => {
-            if (btnEdgeVisAll) btnEdgeVisAll.classList.toggle('active', mode === 'ALL');
-            if (btnEdgeVisHideBadge) btnEdgeVisHideBadge.classList.toggle('active', mode === 'NO_BADGES');
-            if (btnEdgeVisHideEdges) btnEdgeVisHideEdges.classList.toggle('active', mode === 'NO_EDGES');
+            if (btnEdgeVisAll) btnEdgeVisAll.classList.toggle('active', mode === 'FULL');
+            if (btnEdgeVisCluster) btnEdgeVisCluster.classList.toggle('active', mode === 'CLUSTER');
+            if (btnEdgeVisHideEdges) btnEdgeVisHideEdges.classList.toggle('active', mode === 'NONE');
         };
 
         if (btnEdgeVisAll) {
             btnEdgeVisAll.addEventListener('click', () => {
-                window.edgeVisibilityMode = 'ALL';
-                updateEdgeVisButtons('ALL');
+                window.edgeVisibilityMode = 'FULL';
+                updateEdgeVisButtons('FULL');
                 this.isEdgeDirty = true;
                 this.render();
             });
         }
-        if (btnEdgeVisHideBadge) {
-            btnEdgeVisHideBadge.addEventListener('click', () => {
-                window.edgeVisibilityMode = 'NO_BADGES';
-                updateEdgeVisButtons('NO_BADGES');
+        if (btnEdgeVisCluster) {
+            btnEdgeVisCluster.addEventListener('click', () => {
+                window.edgeVisibilityMode = 'CLUSTER';
+                updateEdgeVisButtons('CLUSTER');
                 this.isEdgeDirty = true;
                 this.render();
             });
         }
         if (btnEdgeVisHideEdges) {
             btnEdgeVisHideEdges.addEventListener('click', () => {
-                window.edgeVisibilityMode = 'NO_EDGES';
-                updateEdgeVisButtons('NO_EDGES');
+                window.edgeVisibilityMode = 'NONE';
+                updateEdgeVisButtons('NONE');
                 this.isEdgeDirty = true;
                 this.render();
             });
@@ -3153,8 +3153,9 @@ class CanvasEngine {
 
             e.preventDefault();
             e.stopPropagation(); // 브라우저 전체 줌 방지
-            const delta = e.deltaY > 0 ? 0.9 : 1.1;
-            this.zoom(delta, e.offsetX, e.offsetY);
+            // [v0.3.33.8] Use actual deltaY for smooth zooming (fixes trackpad microscope issue)
+            const wheelDelta = -e.deltaY / 100;
+            this.zoom(wheelDelta, e.offsetX, e.offsetY);
         }, { passive: false });
 
         // 마우스 드래그 (팬, 노드 드래그, 선택, 엣지 생성)
@@ -3846,11 +3847,20 @@ class CanvasEngine {
         // [v0.2.21] WebGL Acceleration Toggle Moved to setupToolbarListeners
     }
 
-    zoom(delta, centerX, centerY) {
+    zoom(wheelDelta, centerX, centerY) {
 
         const oldZoom = this.transform.zoom;
-        this.transform.zoom *= delta;
-        this.transform.zoom = Math.max(0.1, Math.min(5.0, this.transform.zoom));
+        // [v0.3.33.8] Non-linear adaptive zoom sensitivity (User requested)
+        // If called with old multiplier (0.9/1.1), convert it back to wheelDelta approx
+        let wDelta = wheelDelta;
+        if (wheelDelta === 0.9) wDelta = -1;
+        else if (wheelDelta === 1.1) wDelta = 1;
+
+        const sensitivity = Math.max(0.005, oldZoom * 0.15);
+        this.transform.zoom += wDelta * sensitivity;
+        
+        const minZoom = 0.001; // Match fitCameraToBounds
+        this.transform.zoom = Math.max(minZoom, Math.min(5.0, this.transform.zoom));
 
         // 줌 중심점 조정
         const zoomRatio = this.transform.zoom / oldZoom;
@@ -6195,14 +6205,18 @@ class CanvasEngine {
                         n.positionSource = pos.source || 'auto';
                         n.confidence = pos.confidence || 0.2;
                     } else {
-                        if (!n.position) n.position = { x: 0, y: 0 };
+                        if (!n.position || Math.abs(n.position.x) > 500000 || Math.abs(n.position.y) > 500000) {
+                            n.position = { x: 0, y: 0 };
+                        }
                         n.positionSource = 'auto';
                         n.confidence = 0.2;
                     }
                 });
             } else {
                 this.nodes.forEach(n => {
-                    if (!n.position) n.position = { x: 0, y: 0 };
+                    if (!n.position || Math.abs(n.position.x) > 500000 || Math.abs(n.position.y) > 500000) {
+                        n.position = { x: 0, y: 0 };
+                    }
                     if (!n.positionSource) {
                         n.positionSource = 'auto';
                         n.confidence = 0.2;
@@ -6278,15 +6292,25 @@ class CanvasEngine {
                     const pos = layout.clusterPositions[c.id];
                     // Sanity check against the old Y=752000 bug
                     if (pos && typeof pos.x === 'number' && typeof pos.y === 'number' && Math.abs(pos.x) < 500000 && Math.abs(pos.y) < 500000) {
-                        c.position = { x: pos.x, y: pos.y }; // Use position for clusters in Phase 2C
+                        c.position = { x: pos.x, y: pos.y }; 
                         c.positionSource = pos.source || 'auto';
                         c.confidence = pos.confidence || 0.2;
-                        // For backwards compatibility where cluster expects x,y directly
                         c.x = pos.x;
                         c.y = pos.y;
                     } else {
+                        if (c.position && (Math.abs(c.position.x) > 500000 || Math.abs(c.position.y) > 500000)) {
+                            c.position = { x: 0, y: 0 };
+                            c.x = 0; c.y = 0;
+                        }
                         c.positionSource = 'auto';
                         c.confidence = 0.2;
+                    }
+                });
+            } else {
+                this.clusters.forEach(c => {
+                    if (c.position && (Math.abs(c.position.x) > 500000 || Math.abs(c.position.y) > 500000)) {
+                        c.position = { x: 0, y: 0 };
+                        c.x = 0; c.y = 0;
                     }
                 });
             }
@@ -6311,11 +6335,18 @@ class CanvasEngine {
             // [v0.2.22] System Clusters initialization
             this.getOrCreateSystemClusters();
 
+            // [v0.3.33.6] Define hasWorkspaceLayout earlier to prevent layout reset
+            const hasWorkspaceLayout = !!(projectState.synapse_workspace && projectState.synapse_workspace.layout_state && Object.keys(projectState.synapse_workspace.layout_state.nodePositions || {}).length > 0);
+
             // [v0.3.33.1] 3. Hierarchical Grid Distribution
-            this.distributeClustersHierarchically();
+            if (!hasWorkspaceLayout) {
+                this.distributeClustersHierarchically();
+            } else {
+                console.log('[LAYOUT_SKIP] distributeClustersHierarchically skipped due to saved workspace layout');
+            }
 
             // [v0.3.29] Cluster-level push-apart (runs after system clusters are placed, before node overlap resolution)
-            if (!preserveView) {
+            if (!preserveView && !hasWorkspaceLayout) {
                 try {
                     // [v0.3.34] Re-enable resolveClusterOverlaps with new Spatial Grid (O(N)) implementation
                     this.resolveClusterOverlaps();
@@ -6415,14 +6446,16 @@ class CanvasEngine {
             const trackDesktop3 = this.clusters.find(c => c.id.includes('desktop'));
             if (trackDesktop3) console.log('[DESKTOP_TRACK] BEFORE_RENDER', trackDesktop3.id, trackDesktop3.y || (trackDesktop3.position ? trackDesktop3.position.y : 'none'));
 
-            if (!preserveView || !hasValidPositions || allAtOrigin) {
+            if (!hasWorkspaceLayout && (!preserveView || !hasValidPositions || allAtOrigin)) {
                 try {
                     this.resolveOverlaps();
+                    // [v0.3.33.5] Fix: Must rebuild spatial index after layout moves nodes, otherwise edges remain indexed at (0,0) and disappear!
+                    this.buildSpatialIndex();
                 } catch (overlapErr) {
                     this.log('resolveOverlaps failed but continuing', 'error', overlapErr.message);
                 }
             } else {
-                this.log(`Skipping overlap resolution (preserveView: ${preserveView}, hasValidPositions: ${hasValidPositions})`);
+                this.log(`Skipping overlap resolution (preserveView: ${preserveView}, hasWorkspaceLayout: ${hasWorkspaceLayout}, hasValidPositions: ${hasValidPositions})`);
             }
 
             // UI 업데이트
@@ -6773,14 +6806,38 @@ class CanvasEngine {
         // [v0.3.34] Optimization: Group by cluster to reduce O(N^2) to sum(O(K^2))
         const nodesByCluster = new Map();
         const posSnapshot = new Map();
+        const exactOverlapGroups = new Map();
         
         this.nodes.forEach(n => {
             if (n.position) {
-                posSnapshot.set(n.id, { x: n.position.x, y: n.position.y });
+                const key = `${n.position.x},${n.position.y}`;
+                if (!exactOverlapGroups.has(key)) exactOverlapGroups.set(key, []);
+                exactOverlapGroups.get(key).push(n);
+
                 const cid = n.cluster_id || 'unassigned';
                 if (!nodesByCluster.has(cid)) nodesByCluster.set(cid, []);
                 nodesByCluster.get(cid).push(n);
             }
+        });
+
+        // [v0.3.33.5] Anti-Explosion: Distribute nodes at EXACTLY the same position into a grid
+        for (const [key, group] of exactOverlapGroups.entries()) {
+            if (group.length > 1) {
+                const cols = Math.ceil(Math.sqrt(group.length));
+                const startX = group[0].position.x;
+                const startY = group[0].position.y;
+                for (let i = 0; i < group.length; i++) {
+                    const row = Math.floor(i / cols);
+                    const col = i % cols;
+                    group[i].position.x = startX + col * MIN_DISTANCE_X;
+                    group[i].position.y = startY + row * MIN_DISTANCE_Y;
+                }
+            }
+        }
+
+        // Populate snapshot AFTER grid distribution
+        this.nodes.forEach(n => {
+            if (n.position) posSnapshot.set(n.id, { x: n.position.x, y: n.position.y });
         });
 
         const clusterHiddenState = new Map();
@@ -7231,10 +7288,12 @@ class CanvasEngine {
             );
         }
 
-        // [v0.3.13] Automatic Overlap Resolution
-        if (this.isGraphDataDirty && this.nodes.length > 2) {
-            this.resolveOverlaps();
-        }
+        // [v0.3.33.7] Fix: Removed Automatic Overlap Resolution on every dirty flag.
+        // Toggling filters (like Hide Noise Nodes) should NOT trigger a complete auto-layout 
+        // that destroys the user's manual cluster positioning.
+        // if (this.isGraphDataDirty && this.nodes.length > 2) {
+        //     this.resolveOverlaps();
+        // }
 
         // [v0.2.28] Bootstrap Bypass (Step 4/5/6)
         // Use REAL data but in a pure, deterministic way.
@@ -7959,6 +8018,8 @@ class CanvasEngine {
     }
 
     renderEdges2D() {
+        if (window.edgeVisibilityMode === 'NO_EDGES') return;
+
         if (this.edges && this.edges.length > 50000) {
             console.log('[PERF] Edge rendering SKIPPED due to limit (> 50000)');
             return;
@@ -7987,8 +8048,8 @@ class CanvasEngine {
             console.log('[EDGE_BOUNDS]', minEdgeX, maxEdgeX);
         }
         const zoom = this.transform.zoom;
-        // [v0.3.22] Synchronized Visibility Floor with WebGL (0.05)
-        if (zoom <= 0.05) return;
+        // [v0.3.33.9] Removed strict Visibility Floor (0.05) as per user request
+        // We now rely solely on edgeVisibilityMode for LOD.
 
         this._confirmBadgeHits = [];
         this._deleteBadgeHits = [];
@@ -8021,18 +8082,19 @@ class CanvasEngine {
         // [Phase 2B.13] Edge Bundling LOD
         const hasMetaEdges = this.metaEdges && this.metaEdges.length > 0;
 
-        // [v0.3.34] Lowered LOD limit so edges are visible even when zoomed out a bit (e.g. 15% zoom)
-        if (zoom <= 0.10) {
+        // [v0.3.33.8] Explicit Edge Visibility Control (FULL, CLUSTER, NONE)
+        // Completely removed automatic LOD based on zoom.
+        if (window.edgeVisibilityMode === 'NONE') return;
+
+        if (window.edgeVisibilityMode === 'CLUSTER') {
             if (hasMetaEdges) {
                 this.renderEdgeBundles(zoom);
-                return; // Skip rendering individual edges
-            } else if (targetEdgesCount > 5000) {
-                // Fallback LOD: if too many edges and zoomed out, don't draw them to save performance
-                return;
             }
+            return; // Skip rendering individual physical edges
         }
 
-        console.log('[LOD_DEBUG] render physical edges');
+        // If mode is 'FULL', we render all physical edges regardless of zoom level.
+        // (Removed zoom <= 0.10 override logic)
 
         for (const edge of targetEdges) {
             const srcNode = this.nodeMap.get(edge.from);
@@ -8403,15 +8465,18 @@ class CanvasEngine {
 
             const allIds = new Set(this.clusters.map(c => c.id));
             for (const cluster of this.clusters) {
-                const isRoot = !cluster.parent_id || !allIds.has(cluster.parent_id);
+                // Determine if this is a top-level root
+                const isRoot = !cluster.parent_id || cluster.parent_id === cluster.id || !allIds.has(cluster.parent_id) || cluster.parent_id === 'world';
+                
                 if (isRoot) {
+                    // Roots must be expanded so their children (Continents) are visible to the Resolver
                     cluster.collapsed = false;
                     cluster.uiCollapsed = false;
-                    this.expandedClusters.add(cluster.id); // Resolver가 1단계 자식을 visible에 포함
+                    this.expandedClusters.add(cluster.id);
                 } else {
-                    cluster.collapsed = true;  // 자식은 타이틀바만
+                    // Level 1+ clusters are collapsed
+                    cluster.collapsed = true;
                     cluster.uiCollapsed = true;
-                    // expandedClusters에 없음 → Resolver가 손자 이하를 탐색하지 않음
                 }
             }
         } else {
@@ -8445,7 +8510,17 @@ class CanvasEngine {
     }
 
     expandRootsOnly() {
+        console.log('[DEBUG_ROOTS_ONLY] expandRootsOnly called. BEFORE state:');
+        console.log('[DEBUG_ROOTS_ONLY] Total clusters:', this.clusters?.length);
+        if (this.clusterHierarchy) {
+            const roots = this.clusterHierarchy.getRoots();
+            console.log('[DEBUG_ROOTS_ONLY] Hierarchy Roots:', roots.length, roots.map(r => r.id));
+        }
+
         this.setAllClustersCollapsedState(null, true);
+
+        console.log('[DEBUG_ROOTS_ONLY] AFTER state:');
+        console.log('[DEBUG_ROOTS_ONLY] Visible graph cluster IDs:', this._visibleGraphClusterIds?.size);
     }
 
     toggleClusterCollapse(clusterId) {
@@ -9517,6 +9592,24 @@ class CanvasEngine {
         }
         const targetClustersArray = clusterSource;
         console.log('[TARGET_ACTIVITY_IDS]', targetClustersArray.filter(c => c.id.includes('activity')).map(c => c.id));
+
+        // [USER_REQUEST] Log Roots Only details
+        if (this.expandedClusters && this.expandedClusters.size === 0) {
+            console.log(
+                '[ROOTS]', 
+                targetClustersArray.length, // visibleClusters.length
+                this.clusterHierarchy?.getRoots()?.length || 0 // rootClusters.length
+            );
+            if (targetClustersArray) {
+                targetClustersArray.forEach(c => {
+                    console.log(
+                        c.id, 
+                        c.parent_id,
+                        c.bounds ? { width: c.bounds.maxX - c.bounds.minX, height: c.bounds.maxY - c.bounds.minY } : null
+                    );
+                });
+            }
+        }
 
         if (this._frameCounter % 60 === 0) {
             console.log(
@@ -11354,6 +11447,11 @@ class CanvasEngine {
         } else {
             color = fps > 55 ? '#b8bb26' : (fps > 30 ? '#fabd2f' : '#fb4934');
             fpsEl.innerHTML = `<span style="color: ${color}">${fps} FPS</span> | <span style="color: #83a598">WebGL: ${webglStatus}</span> | <span style="color: #d3869b">Cache: ${cacheSize}</span>`;
+        }
+
+        // [v0.3.33.8] FPS Verification Logger for LOD modes
+        if (this._frameCounter % 60 === 0) {
+            console.log(`[LOD_FPS_VERIFY] Mode: ${window.edgeVisibilityMode} | FPS: ${fps}`);
         }
     }
 

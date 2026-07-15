@@ -8463,18 +8463,28 @@ class CanvasEngine {
             // 손자 이하: _isAncestorCollapsed에 의해 자동으로 숨겨짐
             this.expandedClusters.clear();
 
+            // [v0.3.33.1] Fix Roots Only level (Continent Level instead of World Level)
             const allIds = new Set(this.clusters.map(c => c.id));
+            
+            // 1. Identify true roots (World level)
+            const trueRoots = new Set();
             for (const cluster of this.clusters) {
-                // Determine if this is a top-level root
-                const isRoot = !cluster.parent_id || cluster.parent_id === cluster.id || !allIds.has(cluster.parent_id) || cluster.parent_id === 'world';
+                if (!cluster.parent_id || cluster.parent_id === cluster.id || !allIds.has(cluster.parent_id) || cluster.parent_id === 'world') {
+                    trueRoots.add(cluster.id);
+                }
+            }
+
+            for (const cluster of this.clusters) {
+                // Determine if this is a Continent (World level or child of World level)
+                const isRoot = trueRoots.has(cluster.id) || trueRoots.has(cluster.parent_id);
                 
                 if (isRoot) {
-                    // Roots must be expanded so their children (Continents) are visible to the Resolver
+                    // Roots must be expanded so their children are visible
                     cluster.collapsed = false;
                     cluster.uiCollapsed = false;
                     this.expandedClusters.add(cluster.id);
                 } else {
-                    // Level 1+ clusters are collapsed
+                    // Level 2+ clusters are collapsed
                     cluster.collapsed = true;
                     cluster.uiCollapsed = true;
                 }

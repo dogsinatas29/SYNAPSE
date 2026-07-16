@@ -6,7 +6,7 @@
  * This software incorporates fzf-inspired fuzzy matching logic, which is licensed under the MIT License.
  * fzf (C) 2013-2023 Junegunn Choi
  */
-console.log("[FLOW_DEBUG] BUILD_ID_20260628_A canvas-engine.js LOADED");
+console.log("SYNAPSE_BUILD_20260716_A");
 
 /**
  * PromotionParticle - 설계 승격 효과를 위한 파티클 클래스
@@ -2171,14 +2171,16 @@ class CanvasEngine {
             });
         }
 
-        // [v0.3.33.8] 3-Level Edge Visibility Control (FULL / CLUSTER / NONE)
-        window.edgeVisibilityMode = 'FULL'; // 'FULL' | 'CLUSTER' | 'NONE'
+        // [v0.3.33.8] 4-Level Edge Visibility Control (FULL / NO_BADGES / CLUSTER / NONE)
+        window.edgeVisibilityMode = 'FULL'; // 'FULL' | 'NO_BADGES' | 'CLUSTER' | 'NONE'
         const btnEdgeVisAll = document.getElementById('btn-edge-vis-all');
+        const btnEdgeVisNoBadge = document.getElementById('btn-edge-vis-nobadge');
         const btnEdgeVisCluster = document.getElementById('btn-edge-vis-cluster');
         const btnEdgeVisHideEdges = document.getElementById('btn-edge-vis-none');
 
         const updateEdgeVisButtons = (mode) => {
             if (btnEdgeVisAll) btnEdgeVisAll.classList.toggle('active', mode === 'FULL');
+            if (btnEdgeVisNoBadge) btnEdgeVisNoBadge.classList.toggle('active', mode === 'NO_BADGES');
             if (btnEdgeVisCluster) btnEdgeVisCluster.classList.toggle('active', mode === 'CLUSTER');
             if (btnEdgeVisHideEdges) btnEdgeVisHideEdges.classList.toggle('active', mode === 'NONE');
         };
@@ -2187,6 +2189,14 @@ class CanvasEngine {
             btnEdgeVisAll.addEventListener('click', () => {
                 window.edgeVisibilityMode = 'FULL';
                 updateEdgeVisButtons('FULL');
+                this.isEdgeDirty = true;
+                this.render();
+            });
+        }
+        if (btnEdgeVisNoBadge) {
+            btnEdgeVisNoBadge.addEventListener('click', () => {
+                window.edgeVisibilityMode = 'NO_BADGES';
+                updateEdgeVisButtons('NO_BADGES');
                 this.isEdgeDirty = true;
                 this.render();
             });
@@ -5456,6 +5466,19 @@ class CanvasEngine {
             for (const item of nodeTargets) {
                 item.node.targetX = item.tx + offsetX;
                 item.node.targetY = item.ty + offsetY;
+                
+                // [v0.3.34] Cluster Size Freeze Rule: Clamp target within cluster local bounds!
+                const cl = this.clusters.find(c => c.id === cid);
+                if (cl && cl._absCX !== undefined) {
+                    const pad = 60;
+                    const minX = cl._absCX - cl._absWidth / 2 + pad;
+                    const maxX = cl._absCX + cl._absWidth / 2 - pad;
+                    const minY = cl._absCY - cl._absHeight / 2 + pad;
+                    const maxY = cl._absCY + cl._absHeight / 2 - pad;
+                    
+                    item.node.targetX = Math.max(minX, Math.min(item.node.targetX, maxX));
+                    item.node.targetY = Math.max(minY, Math.min(item.node.targetY, maxY));
+                }
             }
         }
         
@@ -6799,8 +6822,8 @@ class CanvasEngine {
         };
         console.log("[LAYOUT_STAGE]", "BeforeLocalLayout", getBounds(this.nodes));
 
-        const MIN_DISTANCE_X = 160; 
-        const MIN_DISTANCE_Y = 80;  
+        const MIN_DISTANCE_X = 130; // [v0.3.33.2 Fix] Must be <= 140 (LayoutEngine's NODE_SPACING_X)
+        const MIN_DISTANCE_Y = 70;  // [v0.3.33.2 Fix] Must be <= 80 (LayoutEngine's NODE_SPACING_Y)
         const ITERATIONS = 4;
 
         // [v0.3.34] Optimization: Group by cluster to reduce O(N^2) to sum(O(K^2))
@@ -6928,8 +6951,9 @@ class CanvasEngine {
     resolveOverlaps() {
         if (!this.nodes || this.nodes.length < 2) return;
 
-        // [v0.3.32.2 Phase A] Two-Tier Layout implementation
-        this.updateClusterLayout();
+        // [v0.3.33.2 Phase A] We NO LONGER run updateClusterLayout() because distributeClustersHierarchically() 
+        // already guarantees perfect, non-overlapping physical bounds for all clusters! 
+        // Running physics simulations on top of it will only destroy the grid and cause random overlaps.
         this.updateLocalLayout();
 
         // [v0.3.15] Re-snap to grid after overlap resolution to maintain Grid Sovereignty
@@ -8036,8 +8060,9 @@ class CanvasEngine {
         if (window.edgeVisibilityMode === 'NO_EDGES') return;
 
         if (this.edges && this.edges.length > 50000) {
-            console.log('[PERF] Edge rendering SKIPPED due to limit (> 50000)');
-            return;
+            // [v0.3.33.9] Removed hard cutoff. Allow Spatial Hashing to cull edges.
+            // console.log('[PERF] Edge rendering SKIPPED due to limit (> 50000)');
+            // return;
         }
 
         // [v0.3.35] Temporary Diagnostic: Check Node Bounds vs Edge Bounds
@@ -8092,6 +8117,11 @@ class CanvasEngine {
         if (this._frameCounter < 3 || this._frameCounter % 60 === 0) {
             console.log(`[CULLING]\nTotal Nodes: ${this.nodes ? this.nodes.length : 0}\nVisible Nodes: ${this._lastCulledNodesCount || 0}\nTotal Edges: ${this.edges ? this.edges.length : 0}\nVisible Edges: ${targetEdgesCount}`);
             console.log(`[AGG_EDGE]\nreal=${this.edges ? this.edges.length : 0}\naggregate=${this.metaEdges ? this.metaEdges.length : 0}`);
+            
+            // USER REQUESTED PROBES
+            console.log("[EDGE_STATS]", "zoom=", this.transform.zoom, "edges=", targetEdgesCount);
+            console.log("[BUNDLE_STATS]", "bundles=", this.metaEdges ? this.metaEdges.length : 0);
+            console.log("[EDGE_MODE]", window.edgeVisibilityMode);
         }
 
         // [Phase 2B.13] Edge Bundling LOD
@@ -8595,6 +8625,10 @@ class CanvasEngine {
             }
             
             console.log(`[SYNAPSE] Toggled cluster ${cluster.label || cluster.id}: ${cluster.collapsed ? 'Collapsed' : 'Expanded'} (Cascaded to ${descendantIds.size} descendants)`);
+            
+            // Recalculate layout dynamically!
+            this.distributeClustersHierarchically();
+            
             this.isGraphDataDirty = true; // [v0.2.27] Sync WebGL visibility
             this.render();
             this.saveState();
@@ -10953,6 +10987,11 @@ class CanvasEngine {
             if (!this.focusCoreSet.has(fromNode.id) || !this.focusCoreSet.has(toNode.id)) finalAlpha *= 0.2;
         }
         
+        // USER REQUESTED PROBE
+        if (this._frameCounter % 60 === 0 && Math.random() < 0.02) {
+            console.log("[ARC_DRAW]", "lineWidth=", calculatedLineWidth, "alpha=", finalAlpha);
+        }
+
         this.ctx.globalAlpha = finalAlpha;
         this.ctx.strokeStyle = isSelected || isHovered ? (theme ? theme.STATUS.WARNING.border : '#fabd2f') : edgeColor;
         this.ctx.moveTo(fromX, fromY);
@@ -11432,6 +11471,7 @@ class CanvasEngine {
 
         const info = [
             `Nodes: ${this.nodes.length}`,
+            `Clusters: ${this.clusters ? this.clusters.length : 0}`,
             `Edges: ${this.edges.length}`,
             `Zoom: ${this.transform.zoom.toFixed(2)}`,
             `Offset: ${this.transform.offsetX.toFixed(0)}, ${this.transform.offsetY.toFixed(0)}`,
@@ -11666,9 +11706,9 @@ class CanvasEngine {
         }
     }
 
-    // [v0.3.33.1] Hierarchical Grid Distribution
-    // Distributes children in a neat grid around their parent's coordinate, top-down.
+    // [v0.3.34] Hierarchical Grid Distribution (Cluster-First)
     distributeClustersHierarchically() {
+        console.log("DISTRIBUTE_HIT");
         if (!this.clusters || this.clusters.length === 0) return;
         
         console.log('[SYNAPSE][distributeClustersHierarchically] Starting Hierarchical Grid Distribution...');
@@ -11676,7 +11716,6 @@ class CanvasEngine {
         const childrenMap = new Map();
         const roots = [];
         
-        // 1. Build Parent -> Children map
         for (const c of this.clusters) {
             if (c.parent_id) {
                 if (!childrenMap.has(c.parent_id)) childrenMap.set(c.parent_id, []);
@@ -11686,7 +11725,6 @@ class CanvasEngine {
             }
         }
         
-        // 2. Pre-compute Node mapping for fast coordinate shifting
         const nodesByCluster = new Map();
         for (const n of this.nodes) {
             const cid = n.cluster_id || (n.data && n.data.cluster_id);
@@ -11697,123 +11735,174 @@ class CanvasEngine {
         
         const clusterBounds = new Map();
 
-        // 3. Bottom-Up Size Calculation and Local Grid Arrangement
         const layoutBottomUp = (cluster) => {
             const children = childrenMap.get(cluster.id);
             const directNodes = nodesByCluster.get(cluster.id) || [];
             
-            // 1. Calculate directNodes bounds
             let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
-            for (const n of directNodes) {
-                if (n.position) {
-                    if (n.position.x < minX) minX = n.position.x;
-                    if (n.position.y < minY) minY = n.position.y;
-                    if (n.position.x > maxX) maxX = n.position.x;
-                    if (n.position.y > maxY) maxY = n.position.y;
-                }
-            }
-            const wNodes = minX === Infinity ? 0 : (maxX - minX) + 100; // Reduced padding
-            const hNodes = minY === Infinity ? 0 : (maxY - minY) + 100;
+            // Frontend assumes 100% layout authority. Ignore backend initial coordinates.
+            const nodeCount = directNodes.length;
+            const nCols = Math.max(1, Math.ceil(Math.sqrt(nodeCount)));
+            const nRows = Math.ceil(nodeCount / nCols);
+            const wNodes = nodeCount === 0 ? 0 : nCols * 120 + 100;
+            const hNodes = nodeCount === 0 ? 0 : nRows * 80 + 100;
 
-            // Base Case: Leaf Cluster (No child clusters)
-            if (!children || children.length === 0) {
-                const w = wNodes === 0 ? 200 : wNodes;
-                const h = hNodes === 0 ? 200 : hNodes;
+            if (cluster.collapsed) {
+                // Return fixed tiny size for collapsed clusters
+                const w = 250;
+                const h = 60; // 30px header + padding
                 clusterBounds.set(cluster.id, { width: w, height: h });
+                cluster._localTargetCX = 0;
+                cluster._localTargetCY = 0;
+                cluster._currentCX = 0;
+                cluster._currentCY = 0;
+                return { width: w, height: h };
+            }
+
+            if (!children || children.length === 0) {
+                if (wNodes === 0 && hNodes === 0) {
+                    clusterBounds.set(cluster.id, { width: 0, height: 0 });
+                    cluster._localTargetCX = 0;
+                    cluster._localTargetCY = 0;
+                    cluster._currentCX = 0;
+                    cluster._currentCY = 0;
+                    return { width: 0, height: 0 };
+                }
+                const w = wNodes;
+                const h = hNodes;
+                clusterBounds.set(cluster.id, { width: w, height: h });
+                
+                cluster._localTargetCX = 0;
+                cluster._localTargetCY = 0;
+                cluster._currentCX = 0;
+                cluster._currentCY = 0;
+                
                 return { width: w, height: h };
             }
             
-            // Recursive Case: Ancestor Cluster
             for (const child of children) {
                 layoutBottomUp(child);
             }
             
-            // Sort children alphabetically for stable deterministic layout
             children.sort((a, b) => a.id.localeCompare(b.id));
             
-            const count = children.length;
-            const cols = Math.ceil(Math.sqrt(count));
-            const rows = Math.ceil(count / cols);
-            
-            // Dynamic Grid: Compute max width per column and max height per row
-            const colWidths = new Array(cols).fill(0);
-            const rowHeights = new Array(rows).fill(0);
-            
-            for (let i = 0; i < count; i++) {
-                const child = children[i];
+            let totalArea = 0;
+            let activeChildCount = 0;
+            for (const child of children) {
                 const size = clusterBounds.get(child.id);
-                const col = i % cols;
-                const row = Math.floor(i / cols);
-                if (size.width > colWidths[col]) colWidths[col] = size.width;
-                if (size.height > rowHeights[row]) rowHeights[row] = size.height;
+                if (size.width === 0 && size.height === 0) continue;
+                totalArea += (size.width + 150) * (size.height + 150);
+                activeChildCount++;
+            }
+            const targetWidth = Math.max(500, Math.ceil(Math.sqrt(totalArea) * 1.5));
+            
+            let currentX = 0, currentY = 0, rowHeight = 0, maxRowWidth = 0;
+            
+            for (const child of children) {
+                const size = clusterBounds.get(child.id);
+                if (size.width === 0 && size.height === 0) {
+                    child._localX_tl = 0;
+                    child._localY_tl = 0;
+                    continue;
+                }
+                const w = size.width + 150;
+                const h = size.height + 150;
+                
+                if (currentX + w > targetWidth && currentX > 0) {
+                    currentX = 0;
+                    currentY += rowHeight;
+                    rowHeight = 0;
+                }
+                
+                child._localX_tl = currentX;
+                child._localY_tl = currentY;
+                
+                currentX += w;
+                if (h > rowHeight) rowHeight = h;
+                if (currentX > maxRowWidth) maxRowWidth = currentX;
+            }
+            currentY += rowHeight;
+            
+            const childGridWidth = maxRowWidth;
+            const childGridHeight = currentY;
+            
+            const HEADER_PADDING = 80;
+            const SECTION_GAP = 100;
+            const FOOTER_PADDING = 80;
+            const contentWidth = Math.max(wNodes, childGridWidth);
+            const contentHeight = (hNodes > 0 ? hNodes + SECTION_GAP : 0) + childGridHeight;
+            
+            if (contentWidth === 0 && contentHeight === 0) {
+                clusterBounds.set(cluster.id, { width: 0, height: 0 });
+                cluster._localTargetCX = 0;
+                cluster._localTargetCY = 0;
+                cluster._currentCX = 0;
+                cluster._currentCY = 0;
+                return { width: 0, height: 0 };
             }
             
-            const padding = 150; // Dynamic padding between cells (reduced from 600)
-            for (let c = 0; c < cols; c++) colWidths[c] += padding;
-            for (let r = 0; r < rows; r++) rowHeights[r] += padding;
+            const totalWidth = contentWidth + 150;
+            const totalHeight = HEADER_PADDING + contentHeight + FOOTER_PADDING;
             
-            let totalGridW = 0;
-            for (let c = 0; c < cols; c++) totalGridW += colWidths[c];
+            clusterBounds.set(cluster.id, { width: totalWidth, height: totalHeight });
             
-            let totalGridH = 0;
-            for (let r = 0; r < rows; r++) totalGridH += rowHeights[r];
+            if (totalWidth > 1000 || totalHeight > 1000) {
+                const ratio = totalWidth / (wNodes || 1); // Comparing to direct node width
+                console.log("[CLUSTER_BOUNDS_PROBE]", cluster.id, 
+                    "directNodes=", directNodes.length, 
+                    "childClusters=", children.length, 
+                    "wNodes=", wNodes, "hNodes=", hNodes,
+                    "childGridW=", childGridWidth, "childGridH=", childGridHeight,
+                    "totalWidth=", totalWidth, "totalHeight=", totalHeight,
+                    "ratio (Total/wNodes)=", ratio.toFixed(2));
+            }
             
-            // [v0.3.33.2 Fix] If ancestor has directNodes, stack them ABOVE the child clusters
             if (hNodes > 0) {
-                totalGridH += hNodes + padding;
-                if (wNodes > totalGridW) totalGridW = wNodes;
-                
-                // Shift directNodes to the top area
-                const currentNodesCX = (minX + maxX) / 2;
-                const currentNodesCY = (minY + maxY) / 2;
-                const targetNodesCX = 0;
-                const targetNodesCY = -totalGridH / 2 + hNodes / 2;
-                cluster._directNodesShiftX = targetNodesCX - currentNodesCX;
-                cluster._directNodesShiftY = targetNodesCY - currentNodesCY;
+                cluster._currentCX = 0;
+                cluster._currentCY = 0;
+                cluster._localTargetCX = 0;
+                cluster._localTargetCY = -totalHeight / 2 + HEADER_PADDING + hNodes / 2;
             } else {
-                cluster._directNodesShiftX = 0;
-                cluster._directNodesShiftY = 0;
-            }
-
-            // Center the grid around local (0,0)
-            const startX = -totalGridW / 2;
-            const startY = hNodes > 0 ? (-totalGridH / 2 + hNodes + padding) : (-totalGridH / 2);
-            
-            for (let i = 0; i < count; i++) {
-                const child = children[i];
-                const col = i % cols;
-                const row = Math.floor(i / cols);
-                
-                let cx = startX;
-                for (let c = 0; c < col; c++) cx += colWidths[c];
-                cx += colWidths[col] / 2;
-                
-                let cy = startY;
-                for (let r = 0; r < row; r++) cy += rowHeights[r];
-                cy += rowHeights[row] / 2;
-                
-                // Save local offset for Top-Down application later
-                child._localX = cx;
-                child._localY = cy;
+                cluster._currentCX = 0;
+                cluster._currentCY = 0;
+                cluster._localTargetCX = 0;
+                cluster._localTargetCY = 0;
             }
             
-            const w = totalGridW + padding;
-            const h = totalGridH + padding;
-            clusterBounds.set(cluster.id, { width: w, height: h });
-            return { width: w, height: h };
+            const childGridStartY = -totalHeight / 2 + HEADER_PADDING + (hNodes > 0 ? hNodes + SECTION_GAP : 0);
+            const startX = -childGridWidth / 2;
+            const startY = childGridStartY;
+            
+            for (const child of children) {
+                const size = clusterBounds.get(child.id);
+                const w = size.width + 150;
+                const h = size.height + 150;
+                
+                child._localX = startX + child._localX_tl + w / 2;
+                child._localY = startY + child._localY_tl + h / 2;
+            }
+            
+            return { width: totalWidth, height: totalHeight };
         };
 
         for (const root of roots) {
             layoutBottomUp(root);
         }
 
-        // 4. Top-Down Application of absolute coordinates
-        const applyTopDown = (cluster, absX, absY) => {
+        const applyTopDown = (cluster, dx, dy) => {
+            const size = clusterBounds.get(cluster.id);
+            if (size) {
+                cluster._absCX = dx;
+                cluster._absCY = dy;
+                cluster._absWidth = size.width;
+                cluster._absHeight = size.height;
+            }
+
             const oldX = cluster.position ? cluster.position.x : 0;
             const oldY = cluster.position ? cluster.position.y : 0;
-            const dx = absX - oldX;
-            const dy = absY - oldY;
-
+            const absX = dx;
+            const absY = dy;
+            
             if (!cluster.position) cluster.position = { x: absX, y: absY };
             else {
                 cluster.position.x = absX;
@@ -11821,33 +11910,140 @@ class CanvasEngine {
             }
 
             const directNodes = nodesByCluster.get(cluster.id) || [];
-            for (const n of directNodes) {
-                if (n.position) {
-                    n.position.x += dx + (cluster._directNodesShiftX || 0);
-                    n.position.y += dy + (cluster._directNodesShiftY || 0);
+            const children = childrenMap.get(cluster.id) || [];
+            
+            console.log("PACK", cluster.id, "cluster CX", cluster._currentCX, "CY", cluster._currentCY, "targetCX", cluster._localTargetCX, "targetCY", cluster._localTargetCY);
+            console.log(cluster.id, "directNodes", directNodes.length, "children", children.length);
+
+            if (directNodes.length > 0) {
+                const targetCX = absX + (cluster._localTargetCX || 0);
+                const targetCY = absY + (cluster._localTargetCY || 0);
+                
+                const nodeCount = directNodes.length;
+                const nCols = Math.max(1, Math.ceil(Math.sqrt(nodeCount)));
+                
+                // 120 and 80 are the grid cell sizes used in wNodes/hNodes
+                const gridW = nCols * 120;
+                const gridH = Math.ceil(nodeCount / nCols) * 80;
+                const startX = targetCX - gridW / 2 + 60; // 60 is half cell width
+                const startY = targetCY - gridH / 2 + 40; // 40 is half cell height
+                
+                console.log("CONTENT_ORIGIN", cluster.id, "startX", startX, "startY", startY, "targetCX", targetCX, "targetCY", targetCY);
+                
+                let i = 0;
+                for (const n of directNodes) {
+                    if (!n.position) n.position = { x: 0, y: 0 };
+                    n.position.x = startX + (i % nCols) * 120;
+                    n.position.y = startY + Math.floor(i / nCols) * 80;
+                    
+                    if (i === 0) {
+                        console.log("FIRST_PACKED_NODE", n.id, n.position.x, n.position.y);
+                    }
+                    i++;
                 }
+                console.log(cluster.id, "PACK_APPLIED", i, "nodes");
             }
 
-            const children = childrenMap.get(cluster.id);
-            if (children) {
+            if (children.length > 0) {
                 for (const child of children) {
                     applyTopDown(child, absX + (child._localX || 0), absY + (child._localY || 0));
                 }
             }
         };
 
-        // For roots (Continents), keep their existing position (placed by Force Layout at Continent level)
+        const count = roots.length;
+        console.log("ROOTS", count);
         for (const root of roots) {
-            const rootX = root.position ? root.position.x : 0;
-            const rootY = root.position ? root.position.y : 0;
-            applyTopDown(root, rootX, rootY);
+            const children = childrenMap.get(root.id) || [];
+            console.log(root.id, "children:", children.length);
+        }
+        let totalRootArea = 0;
+        for (const root of roots) {
+            const size = clusterBounds.get(root.id);
+            totalRootArea += (size.width + 400) * (size.height + 400);
+        }
+        const targetRootWidth = Math.max(1000, Math.ceil(Math.sqrt(totalRootArea) * 1.5));
+        
+        let rootX = 0, rootY = 0, rootRowH = 0, maxRootRowW = 0;
+        for (const root of roots) {
+            const size = clusterBounds.get(root.id);
+            const w = size.width + 400;
+            const h = size.height + 400;
+            
+            if (rootX + w > targetRootWidth && rootX > 0) {
+                rootX = 0; rootY += rootRowH; rootRowH = 0;
+            }
+            root._localX_tl = rootX;
+            root._localY_tl = rootY;
+            rootX += w;
+            if (h > rootRowH) rootRowH = h;
+            if (rootX > maxRootRowW) maxRootRowW = rootX;
+        }
+        rootY += rootRowH;
+        
+        const totalGridW = maxRootRowW;
+        const totalGridH = rootY;
+        const startX = -totalGridW / 2;
+        const startY = -totalGridH / 2;
+        
+        for (const root of roots) {
+            const size = clusterBounds.get(root.id);
+            const w = size.width + 400;
+            const h = size.height + 400;
+            const cx = startX + root._localX_tl + w / 2;
+            const cy = startY + root._localY_tl + h / 2;
+            applyTopDown(root, cx, cy);
         }
         
         console.log('[SYNAPSE][distributeClustersHierarchically] Completed Hierarchical Grid.');
+
+        let gMinX = Infinity, gMaxX = -Infinity, gMinY = Infinity, gMaxY = -Infinity;
+        for (const node of this.nodes) {
+            if (node.position) {
+                if (node.position.x < gMinX) gMinX = node.position.x;
+                if (node.position.x > gMaxX) gMaxX = node.position.x;
+                if (node.position.y < gMinY) gMinY = node.position.y;
+                if (node.position.y > gMaxY) gMaxY = node.position.y;
+            }
+        }
+        console.log("NODE_BOUNDS", gMinX, gMaxX, gMinY, gMaxY);
+        
+        for (const cluster of this.clusters.slice(0, 20)) {
+            let cx = 0, cy = 0;
+            const directNodes = nodesByCluster.get(cluster.id) || [];
+            if (directNodes.length > 0) {
+                let cmx = Infinity, cmxx = -Infinity, cmy = Infinity, cmyy = -Infinity;
+                for (const n of directNodes) {
+                    if (n.position) {
+                        if (n.position.x < cmx) cmx = n.position.x;
+                        if (n.position.x > cmxx) cmxx = n.position.x;
+                        if (n.position.y < cmy) cmy = n.position.y;
+                        if (n.position.y > cmyy) cmyy = n.position.y;
+                    }
+                }
+                cx = (cmx + cmxx) / 2;
+                cy = (cmy + cmyy) / 2;
+            }
+            const bounds = clusterBounds.get(cluster.id);
+            console.log("CLUSTER_BOUNDS", cluster.id, cx, cy, bounds ? bounds.width : 0, bounds ? bounds.height : 0);
+        }
+
+        if (this.nodes.length > 0) {
+            console.log("FIRST_NODE", this.nodes[0].id, this.nodes[0].position?.x, this.nodes[0].position?.y);
+        }
+        if (this.clusters.length > 0) {
+            const cluster = this.clusters[0];
+            const size = clusterBounds.get(cluster.id);
+            console.log("FIRST_CLUSTER", cluster.id, cluster.cx, cluster.cy, "width:", size ? size.width : 0, "height:", size ? size.height : 0);
+        }
     }
+
 
     // [v0.3.34] Cluster-level overlap resolution using Spatial Grid (O(N) Push-Apart)
     resolveClusterOverlaps() {
+        const USE_HIERARCHICAL_GRID = true;
+        if (USE_HIERARCHICAL_GRID) return; // Legacy Disabled
+
         if (!this.clusters || this.clusters.length < 2) return;
         const PADDING = 20; 
         const ITERATIONS = 30;

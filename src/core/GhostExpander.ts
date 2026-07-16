@@ -39,6 +39,16 @@ export class GhostExpander {
         const newClusterIds = new Set<string>();
         const newNodeIds = new Set<string>();
 
+        // [v0.3.33.2] Precompute existing directories to avoid O(N*E) loop and GC thrashing
+        const existingDirectories = new Set<string>();
+        for (const id of existingNodeIds) {
+            let dir = id;
+            while (dir.includes('/')) {
+                dir = dir.substring(0, dir.lastIndexOf('/'));
+                existingDirectories.add(dir);
+            }
+        }
+
         const getGhostClusterId = (cleanId: string): string => {
             const predefined = ['android', 'androidx', 'java', 'javax', 'kotlin', 'com.google', 'org.apache'];
             for (const p of predefined) {
@@ -68,7 +78,12 @@ export class GhostExpander {
             }
         };
 
+        let _ghostIdx = 0;
         for (const ref of resolvedReferences) {
+            if (_ghostIdx % 100000 === 0) {
+                console.error('[GHOST_PROGRESS]', _ghostIdx, '/', resolvedReferences.length);
+            }
+            _ghostIdx++;
             const targetNodeId = ref.targetId;
             const isUnresolved = ref.resolutionKind === 'unresolved';
 
@@ -129,7 +144,7 @@ export class GhostExpander {
                     });
                 }
 
-                const isActingAsDir = Array.from(existingNodeIds).some(id => id.startsWith(targetNodeId + '/'));
+                const isActingAsDir = existingDirectories.has(targetNodeId);
 
                 if (targetNodeId === 'src' || targetNodeId.startsWith('extensions/')) {
                     console.error('[GHOST_CHECK]', {
@@ -209,6 +224,7 @@ export class GhostExpander {
                 .map(([t, c]) => `${t} (${c})`)
         });
 
+        console.error('[GHOST_DONE]', 'ghostNodes=', ghostNodes.length, 'ghostClusters=', ghostClusters.length, 'expandedReferences=', expandedReferences.length);
         return { ghostNodes, ghostClusters, expandedReferences };
     }
 }

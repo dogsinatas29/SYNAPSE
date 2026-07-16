@@ -9,13 +9,13 @@ import { Node, Edge, Cluster, GraphSnapshot } from './GraphModel';
 
 export function buildGraph(nodes: Node[], edges: Edge[], clusters: Cluster[]): GraphSnapshot {
     // 1. 순서 결정성 확보 (Deterministic Order)
-    const sortedNodes = [...nodes].sort((a, b) => a.id.localeCompare(b.id));
-    const sortedEdges = [...edges].sort((a, b) => {
+    const sortedNodes = nodes.slice().sort((a, b) => a.id.localeCompare(b.id));
+    const sortedEdges = edges.slice().sort((a, b) => {
         const aKey = `${a.from}-${a.to}-${a.type}`;
         const bKey = `${b.from}-${b.to}-${b.type}`;
         return aKey.localeCompare(bKey);
     });
-    const sortedClusters = [...clusters].sort((a, b) => a.id.localeCompare(b.id));
+    const sortedClusters = clusters.slice().sort((a, b) => a.id.localeCompare(b.id));
 
     // 2. 스냅샷 생성
     const snapshot: GraphSnapshot = {

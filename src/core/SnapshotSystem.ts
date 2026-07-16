@@ -54,8 +54,10 @@ export class SnapshotSystem {
         ProjectMetadata.getInstance().incrementSnapshotCount();
       } catch {}
 
-      const serialized = JSON.stringify({ nodes: snapshot.nodes, edges: snapshot.edges, clusters: snapshot.clusters });
-      snapshot.checksum = crypto.createHash('sha256').update(serialized).digest('hex').slice(0, 16);
+      try {
+        const serialized = JSON.stringify({ nodes: snapshot.nodes, edges: snapshot.edges, clusters: snapshot.clusters });
+        snapshot.checksum = crypto.createHash('sha256').update(serialized).digest('hex').slice(0, 16);
+      } catch { snapshot.checksum = ''; }
 
       this.lastSnapshot = snapshot;
 
@@ -73,7 +75,9 @@ export class SnapshotSystem {
           timestamp: Date.now(),
           version: this.snapshotVersion,
           checksum: snapshot.checksum,
-          data: snapshot
+          nodeCount: snapshot.nodes.length,
+          edgeCount: snapshot.edges.length,
+          clusterCount: snapshot.clusters.length
         });
         
         if (history.length > SnapshotSystem.MAX_HISTORY) history.shift();
@@ -103,11 +107,13 @@ export class SnapshotSystem {
       }
 
       if (target.checksum) {
-        const serialized = JSON.stringify({ nodes: target.nodes, edges: target.edges, clusters: target.clusters });
-        const computed = crypto.createHash('sha256').update(serialized).digest('hex').slice(0, 16);
-        if (computed !== target.checksum) {
-          console.warn(`[SYNAPSE] Snapshot checksum mismatch (restoring anyway): ${computed} vs ${target.checksum}`);
-        }
+        try {
+          const serialized = JSON.stringify({ nodes: target.nodes, edges: target.edges, clusters: target.clusters });
+          const computed = crypto.createHash('sha256').update(serialized).digest('hex').slice(0, 16);
+          if (computed !== target.checksum) {
+            console.warn(`[SYNAPSE] Snapshot checksum mismatch (restoring anyway): ${computed} vs ${target.checksum}`);
+          }
+        } catch { /* checksum too large to verify */ }
       }
       
       graphModel.restoreSnapshot(target);

@@ -22,3 +22,30 @@ backup_md/
 prompts/
 .vscode/
 context/
+
+# Stray root files (Cleanup)
+foo
+http
+net
+node
+cors
+crypto
+express
+assert
+main
+ts
+Y
+")) type ="
+cluster_id
+position
+project_state_json
+"출력 가능한 ASCII"
+vscode-languageserver-textdocument
+
+# Test & Verify scripts
+test_*.ts
+verify_*.ts
+verify_*.js
+scratch.js
+debug_nodes.js
+fix_cluster.sh

@@ -12294,6 +12294,7 @@ function initCanvas() {
                 if (message.data) {
                     message.data.nodes = engine._chunkedNodes || [];
                     message.data.edges = engine._chunkedEdges || [];
+                    console.log('[WEBVIEW_RECEIVED] nodes=%d edges=%d clusters=%d', engine._chunkedNodes?.length ?? 0, engine._chunkedEdges?.length ?? 0, message.data.clusters?.length ?? 0);
                     console.log('[CHUNK_END_NODES]', engine._chunkedNodes?.length ?? 0);
                     engine._chunkedNodes = null;
                     engine._chunkedEdges = null;

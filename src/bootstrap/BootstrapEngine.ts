@@ -28,6 +28,7 @@ import { dataPipeline, PipelineResult } from '../core/DataPipeline';
 import { graphModel } from '../core/GraphModel';
 import { buildGraph } from '../core/graphBuilder';
 import { snapshotSystem } from '../core/SnapshotSystem';
+import { ProjectMetadata } from '../core/ProjectMetadata';
 import { Logger } from '../utils/Logger';
 
 export class BootstrapEngine {
@@ -210,6 +211,7 @@ export class BootstrapEngine {
 
         try {
             // [v0.3.1] Snapshot Storage Initialize
+            ProjectMetadata.getInstance().initialize(projectRoot);
             snapshotSystem.setStoragePath(projectRoot);
             graphModel.setProjectRoot(projectRoot);
 
@@ -224,7 +226,7 @@ export class BootstrapEngine {
             
             const pipelineResult = await dataPipeline.processFiles(discoveredFiles, projectRoot);
             
-            Logger.info(`[SCAN_DEBUG] Pipeline produced Nodes: ${pipelineResult.nodes.length}, Edges: ${pipelineResult.edges.length}`);
+            Logger.info(`[SCAN_DEBUG] Pipeline produced Nodes: ${pipelineResult.nodes.length}, Edges: ${pipelineResult.edges.length}, Clusters: ${pipelineResult.clusters.length}`);
             
             // [v0.3.11] Core Freeze
             const frozenGraph = buildGraph(pipelineResult.nodes, pipelineResult.edges, pipelineResult.clusters);
@@ -232,8 +234,8 @@ export class BootstrapEngine {
             Logger.info(`[SCAN_DEBUG] Final Frozen Graph Nodes: ${frozenGraph.nodes.length}`);
             graphModel.restoreSnapshot(frozenGraph);
 
-            let nodes = [...frozenGraph.nodes];
-            let edges = [...frozenGraph.edges];
+            let nodes = frozenGraph.nodes.slice();
+            let edges = frozenGraph.edges.slice();
 
             // [v0.3.10] 🛡️ PRESERVE MANUAL STATE: Merge with existing manual nodes/edges
             const existingStatePath = path.join(projectRoot, 'data', 'project_state.json');
@@ -296,6 +298,8 @@ export class BootstrapEngine {
             phaseManager.advancePhase(Phase.SNAPSHOT);
             snapshotSystem.save();
 
+            console.log('[SAVE_START]');
+
             const projectState: ProjectState = {
                 version: 1,
                 project_name: path.basename(projectRoot),
@@ -303,10 +307,9 @@ export class BootstrapEngine {
                 current_snapshot_id: '',
                 nodes: nodes as any,
                 edges: edges as any,
-                clusters: [
-                    ...(graphModel.createSnapshot().clusters as any),
-                    ...(existingData && existingData._preservedClusters ? existingData._preservedClusters : [])
-                ],
+                clusters: (graphModel.createSnapshot().clusters as any).concat(
+                    existingData && existingData._preservedClusters ? existingData._preservedClusters : []
+                ),
                 cluster_flows: [],
                 metaEdges: pipelineResult.metaEdges,
                 system_context: {},
@@ -319,7 +322,12 @@ export class BootstrapEngine {
             if (!fs.existsSync(stateDir)) {
                 fs.mkdirSync(stateDir, { recursive: true });
             }
-            fs.writeFileSync(statePath, JSON.stringify(projectState, null, 2), 'utf-8');
+            console.log('[JSON_STRINGIFY_START]', projectState.nodes!.length, projectState.edges!.length, projectState.clusters!.length);
+            const json = JSON.stringify(projectState, null, 2);
+            console.log('[JSON_STRINGIFY_DONE]', json.length);
+            console.log('[WRITE_FILE]', statePath);
+            fs.writeFileSync(statePath, json, 'utf-8');
+            console.log('[WRITE_SUCCESS]', fs.statSync(statePath).size);
 
             // [v0.3.10] Final Phase Advance: Hand over control to USER
             phaseManager.advancePhase(Phase.CONTROL);
@@ -332,7 +340,11 @@ export class BootstrapEngine {
                 metaEdges: pipelineResult.metaEdges
             };
         } catch (error: any) {
+            console.error('[WRITE_FAILED]', error.message);
             console.error('\n❌ Lite Bootstrap 실패:', error);
+            if (error && error.stack) {
+                console.error('[LITE_BOOTSTRAP_STACK_TRACE]\n', error.stack);
+            }
             phaseManager.lockSystem(`LITE BOOTSTRAP FAILED: ${error.message}`);
             return {
                 success: false,

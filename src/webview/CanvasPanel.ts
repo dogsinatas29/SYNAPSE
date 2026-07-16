@@ -4048,11 +4048,11 @@ export class CanvasPanel {
             const analyzer = new LogicAnalyzer();
             
             // 2. Build a single TEMP STATE containing all new edges for a single-pass analysis
-            const tempNodes = [...(baseState.nodes || [])];
-            const tempEdges = [...(baseState.edges || [])];
+            const tempNodes = (baseState.nodes || []).slice();
+            const tempEdges = (baseState.edges || []).slice();
             
             const CHUNK_SIZE = 500;
-            const existingNodeIds = new Set(tempNodes.map(n => n.id));
+            const existingNodeIds = new Set(tempNodes.map((n: any) => n.id));
             
             for (let i = 0; i < batch.length; i += CHUNK_SIZE) {
                 const chunk = batch.slice(i, i + CHUNK_SIZE);
@@ -4087,10 +4087,12 @@ export class CanvasPanel {
             const tempNodesNormalized = [];
             for (let i = 0; i < tempNodes.length; i += CHUNK_SIZE) {
                 const chunk = tempNodes.slice(i, i + CHUNK_SIZE);
-                tempNodesNormalized.push(...chunk.map(n => ({
-                    ...n,
-                    data: n.data || { label: n.label || n.id, file: n.filePath }
-                })));
+                for (const n of chunk) {
+                    tempNodesNormalized.push({
+                        ...n,
+                        data: n.data || { label: n.label || n.id, file: n.filePath }
+                    });
+                }
                 
                 // Progress (Nodes norm phase) - 30% to 50%
                 this._panel.webview.postMessage({
@@ -4206,7 +4208,7 @@ export class CanvasPanel {
             const tempState = {
                 ...state,
                 nodes: tempNodes,
-                edges: [...(state.edges || []), tempEdge]
+                edges: (state.edges || []).concat([tempEdge])
             };
 
             // 3. LogicAnalyzer 가동
@@ -4857,9 +4859,12 @@ export class CanvasPanel {
             const projectStateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'project_state.json');
             
             // [v0.3.11 HARD SSOT] Reality check: If engine is empty OR significantly differs from disk, sync it.
+            console.log('[LOAD_STATE_START]', projectStateUri.fsPath);
             try {
                 const data = await vscode.workspace.fs.readFile(projectStateUri);
+                console.log('[LOAD_STATE_READ]', data.length);
                 const fileState = JSON.parse(data.toString());
+                console.log('[LOAD_STATE_PARSED]', fileState.nodes?.length, fileState.edges?.length, fileState.clusters?.length);
                 
                 // [v0.3.21 Fix] Use RAW snapshot for count comparison to avoid infinite loop from projected view merging
                 const rawEngineSnap = canvasEngine.getRawSnapshot();
@@ -4934,6 +4939,7 @@ export class CanvasPanel {
                             // [v0.3.34] Robust Chunking
                             if (!this._isSyncing && this._panel) {
                                 const CHUNK_SIZE = 5000;
+                                console.log('[POST_MESSAGE_AUTODISCOVER] nodes=%d edges=%d', projectState.nodes.length, projectState.edges.length);
                                 this._panel.webview.postMessage({ command: 'projectStateChunkStart' });
                                 for (let i = 0; i < projectState.nodes.length; i += CHUNK_SIZE) {
                                     this._panel.webview.postMessage({ command: 'projectStateNodesChunk', data: projectState.nodes.slice(i, i + CHUNK_SIZE) });
@@ -4974,6 +4980,7 @@ export class CanvasPanel {
             // [v0.3.21.4] Amnesia Guard: WebView filter
             // If the state we are about to send is EMPTY, but we were NOT asked for a forceReset,
             // we skip the broadcast to prevent the UI from clearing out valid existing data.
+            console.log('[AMNESIA_GUARD_CHECK] nodes=%d forceReset=%s', projectState.nodes.length, forceReset);
             if (projectState.nodes.length === 0 && !forceReset) {
                 Logger.warn('[CanvasPanel] Aborting projectState broadcast: Nodes count is 0. Protecting UI state.');
                 this._isSyncing = false;
@@ -5003,6 +5010,7 @@ export class CanvasPanel {
 
             // [v0.3.34] Robust Chunking to bypass VS Code IPC size limits
             const CHUNK_SIZE = 5000;
+            console.log('[POST_MESSAGE_SEND] nodes=%d edges=%d clusters=%d', projectState.nodes.length, projectState.edges.length, projectState.clusters.length);
             this._panel.webview.postMessage({ command: 'projectStateChunkStart' });
             
             for (let i = 0; i < projectState.nodes.length; i += CHUNK_SIZE) {

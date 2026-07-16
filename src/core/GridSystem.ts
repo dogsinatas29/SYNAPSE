@@ -74,7 +74,7 @@ export class GridSystem {
     const layout: Record<string, { x: number, y: number }> = {};
     
     // 1. 노드 정렬 (ID 기준) - 결과의 결정론적 보장
-    const sortedNodes = [...nodes].sort((a, b) => a.id.localeCompare(b.id));
+    const sortedNodes = nodes.slice().sort((a, b) => a.id.localeCompare(b.id));
 
     // 2. 영역 분리 (Source: 상단, Doc: 하단)
     const sourceNodes = sortedNodes.filter(n => n.type !== NodeType.DOCUMENTATION);

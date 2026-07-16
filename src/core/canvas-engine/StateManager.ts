@@ -368,7 +368,7 @@ export class StateManager {
     };
 
     // 1. Collect all candidates
-    const allCandidates = [...coreSnap.nodes, ...Array.from(this.bufferNodes.values())];
+    const allCandidates = coreSnap.nodes.concat(Array.from(this.bufferNodes.values()));
     
     // 2. Build path-to-ID mapping for de-duplication and edge routing
     const pathToIdMap = new Map<string, string>();
@@ -393,7 +393,7 @@ export class StateManager {
 
     // 3. De-duplicate candidates (Authoritative: Buffer > Core)
     // We process Buffer first so they occupy the Map, preventing stale Core data from overwriting them.
-    const sortedCandidates = [...Array.from(this.bufferNodes.values()), ...coreSnap.nodes];
+    const sortedCandidates = Array.from(this.bufferNodes.values()).concat(coreSnap.nodes);
     sortedCandidates.forEach(n => {
         const path = this.normalizePath(getEffectivePath(n));
         const key = path || n.id;
@@ -407,7 +407,7 @@ export class StateManager {
 
     // 4. Calculate Degrees
     const degrees: Record<string, number> = {};
-    const allEdges = [...coreSnap.edges, ...Array.from(this.bufferEdges.values())];
+    const allEdges = coreSnap.edges.concat(Array.from(this.bufferEdges.values()));
     allEdges.forEach(e => {
         const realFrom = pathToIdMap.get(this.normalizePath(e.from)) || e.from;
         const realTo = pathToIdMap.get(this.normalizePath(e.to)) || e.to;
@@ -558,7 +558,7 @@ export class StateManager {
     });
 
     const clusterMap = new Map<string, any>();
-    [...coreSnap.clusters, ...Array.from(this.bufferClusters.values())].forEach(c => {
+    coreSnap.clusters.concat(Array.from(this.bufferClusters.values())).forEach(c => {
         if (c.id !== 'sys_cluster_root') clusterMap.set(c.id, c);
     });
 
@@ -760,7 +760,7 @@ export class StateManager {
     if (!scanState || !scanState.nodes) return;
     const coreSnap = graphModel.createSnapshot();
     const scanNodes = Array.isArray(scanState.nodes) ? scanState.nodes : Object.values(scanState.nodes);
-    let finalCoreNodes = [...coreSnap.nodes];
+    let finalCoreNodes = coreSnap.nodes.slice();
 
     scanNodes.forEach((sn: any) => {
       const snPath = this.normalizePath(sn.filePath || (sn.data && (sn.data.file || sn.data.filePath)) || "");

@@ -20,6 +20,7 @@ export class ReferenceResolver {
         symbolIndex: SymbolIndex
     ): ResolvedReference[] {
         const result: ResolvedReference[] = [];
+        console.error('[REFERENCE_RESOLVER_ENTER] validReferences=', validReferences.length);
         
         // [v0.3.34] Optimize O(N*M) basename lookups to prevent Extension Host freezing
         const stemMap = new Map<string, string>();
@@ -86,6 +87,7 @@ export class ReferenceResolver {
             });
         }
 
+        console.error('[REFERENCE_RESOLVER]', result.length);
         return result;
     }
 }

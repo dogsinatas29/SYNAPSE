@@ -108,9 +108,9 @@ export class GraphModel {
 
   public createSnapshot(): GraphSnapshot {
     return {
-      nodes: [...this.nodes.values()],
-      edges: [...this.edges],
-      clusters: [...this.clusters],
+      nodes: Array.from(this.nodes.values()),
+      edges: this.edges.slice(),
+      clusters: this.clusters.slice(),
       cluster_flows: this.getClusterFlows(),
       timestamp: Date.now()
     };
@@ -223,7 +223,7 @@ export class GraphModel {
     }
 
     if (snapshot.clusters) {
-      this.clusters = [...snapshot.clusters];
+      this.clusters = snapshot.clusters.slice();
     }
     
     this.finalizeGraph();
@@ -243,14 +243,14 @@ export class GraphModel {
 
     if (state.edges) {
       if (Array.isArray(state.edges)) {
-        this.edges = [...state.edges];
+        this.edges = state.edges.slice();
       } else {
         this.edges = Object.values(state.edges);
       }
     }
     
     if (state.clusters) {
-      this.clusters = Array.isArray(state.clusters) ? [...state.clusters] : Object.values(state.clusters);
+      this.clusters = Array.isArray(state.clusters) ? state.clusters.slice() : Object.values(state.clusters);
     }
 
     const requiredClusters = [

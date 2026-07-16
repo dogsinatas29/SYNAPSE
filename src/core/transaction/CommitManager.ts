@@ -76,9 +76,9 @@ export class CommitManager {
                 };
             });
 
-            const newNodes = [...currentSnap.nodes, ...finalizedNodes];
-            const newEdges = [...currentSnap.edges, ...req.edges.map(e => ({ ...e, status: 'confirmed' }))];
-            const newClusters = [...currentSnap.clusters, ...(req.clusters || [])];
+            const newNodes = currentSnap.nodes.concat(finalizedNodes);
+            const newEdges = currentSnap.edges.concat(req.edges.map(e => ({ ...e, status: 'confirmed' })));
+            const newClusters = currentSnap.clusters.concat(req.clusters || []);
 
             const frozenGraph = buildGraph(newNodes, newEdges, newClusters);
 

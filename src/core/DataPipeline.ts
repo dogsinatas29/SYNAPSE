@@ -140,6 +140,7 @@ export class DataPipeline {
     let exactFilteredCount = 0;
     const edgeTypeCount = new Map<string, number>();
 
+      console.error('[PIPELINE] Starting GhostPolicy.filter, summaries=', summaries.length);
       // [v0.3.32.2] GhostRule System: Early Pruning (Extracted to GhostPolicy)
       const policyResult = GhostPolicy.filter(summaries);
       packageFilteredCount = policyResult.packageFilteredCount;
@@ -156,6 +157,7 @@ export class DataPipeline {
       }
 
       // [v0.3.32.4] Ghost Expansion (Extracted to GhostExpander)
+      console.error('[GHOST] resolvedReferences=', resolvedReferences.length, 'clusterIds=', clusterIds.size, 'nodeIds=', nodeIds.size);
       const expansionResult = GhostExpander.expand(resolvedReferences, clusterIds, nodeIds, internalNamespace);
       
       // Inject Mutated States (DataPipeline's responsibility)

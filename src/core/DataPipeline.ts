@@ -121,13 +121,13 @@ export class DataPipeline {
     // [v0.3.32.4] NodeBuilder: Build nodes first (cluster_id computed internally)
     const directoryTree = buildDirectoryTree(summaries);
     const nodeResult = buildNodes(summaries, directoryTree);
-    nodes.push(...nodeResult.nodes);
+    for (const node of nodeResult.nodes) nodes.push(node);
     const nodeIds = nodeResult.nodeIds;
     const internalNamespace = nodeResult.internalNamespace;
 
     // [v0.3.32.4] ClusterBuilder: Build clusters from nodes
     const clusterResult = buildClusters(nodeResult.nodes);
-    clusters.push(...clusterResult.clusters);
+    for (const cluster of clusterResult.clusters) clusters.push(cluster);
     clusterResult.clusterIds.forEach(id => clusterIds.add(id));
 
 
@@ -159,15 +159,15 @@ export class DataPipeline {
       const expansionResult = GhostExpander.expand(resolvedReferences, clusterIds, nodeIds, internalNamespace);
       
       // Inject Mutated States (DataPipeline's responsibility)
-      nodes.push(...expansionResult.ghostNodes);
+      for (const node of expansionResult.ghostNodes) nodes.push(node);
       for (const n of expansionResult.ghostNodes) nodeIds.add(n.id);
       
-      clusters.push(...expansionResult.ghostClusters);
+      for (const cluster of expansionResult.ghostClusters) clusters.push(cluster);
       for (const c of expansionResult.ghostClusters) clusterIds.add(c.id);
 
       // [v0.3.32.5] Edge Materialization (Extracted to EdgeBuilder)
       const edgeBuilderResult = EdgeBuilder.build(expansionResult.expandedReferences);
-      edges.push(...edgeBuilderResult.edges);
+      for (const edge of edgeBuilderResult.edges) edges.push(edge);
       
       // Update pipeline diagnostics
       for (const [mappedType, count] of edgeBuilderResult.edgeTypeCount.entries()) {

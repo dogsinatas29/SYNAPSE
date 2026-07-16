@@ -338,10 +338,11 @@ SYNAPSE는 파일 시스템과 그래프를 Source Of Truth로 사용하는 협�
 ├── ui/
 │   ├── index.html
 │   ├── synapse-theme.js
-│   ├── canvas-engine.js
+│   ├── i18n.js                           ← 🟢 Added
+│   ├── canvas-engine.js                  ← 🟡 Modified (v0.3.33.1_fix)
 │   ├── webgl-renderer.js
-│   ├── cluster-hierarchy.js        ← 🟢 Added
-│   ├── rbush.js                    ← 🟢 Added (v0.3.33)
+│   ├── cluster-hierarchy.js              ← 🟢 Added (v0.3.33)
+│   ├── rbush.js                          ← 🟢 Added (v0.3.33)
 │   └── engine-core.js
 ├── demo/
 │   ├── index.html
@@ -413,7 +414,7 @@ SYNAPSE는 파일 시스템과 그래프를 Source Of Truth로 사용하는 협�
 │   │   ├── (Active) RendererCore.ts
 │   │   ├── (Active) RuleEngine.ts
 │   │   ├── (Active) GraphModel.ts
-│   │   ├── (Active) LayoutEngine.ts        ← 🟡 Modified (v0.3.33 수정됨)
+│   │   ├── (Active) LayoutEngine.ts          ← 🟡 Modified (v0.3.33)
 │   │   ├── (Active) BlacklistOrchestrator.ts
 │   │   ├── (Active) FileScanner.ts
 │   │   ├── (Active) FlowScanner.ts
@@ -454,6 +455,7 @@ SYNAPSE는 파일 시스템과 그래프를 Source Of Truth로 사용하는 협�
 │   │   ├── (Active) KotlinScanner.ts         ← 🟢 Added
 │   │   ├── (Active) PythonScanner.ts         ← 🟢 Added
 │   │   ├── (Active) RustScanner.ts           ← 🟢 Added
+│   │   ├── (Active) JsTsScanner.ts           ← 🟢 Added
 │   │   ├── (Active) MarkdownScanner.ts       ← 🟢 Added
 │   │   ├── (Active) ShellScanner.ts          ← 🟢 Added
 │   │   ├── (Active) SqlScanner.ts            ← 🟢 Added
@@ -502,9 +504,9 @@ SYNAPSE는 파일 시스템과 그래프를 Source Of Truth로 사용하는 협�
 │   └── webview/
 │       └── CanvasPanel.ts
 ├── mile_stone/
-│   ├── v0.2.xx.md ~ v0.3.32.md (버전별 마일스톤 문서 모음)
-│   ├── v0.3.33.md (현행) + RBush & Layout 엔진 최적화
-│   ├── v0.3.33_log.md (작업 기록)
+│   ├── v0.2.xx.md ~ v0.3.33.md (버전별 마일스톤 문서 모음)
+│   ├── v0.3.33.1_fix.md (현행) + Edge Pipeline & Cluster Bounds 최적화
+│   ├── v0.3.33.1_log.md (작업 기록)
 │   └── ... (기타 설계 문서)
 ├── release_note/
 │   └── v*_release_notes.md
@@ -525,8 +527,12 @@ SYNAPSE는 파일 시스템과 그래프를 Source Of Truth로 사용하는 협�
 | `RULES.md` | 유지 | 프로젝트 코딩 규칙 및 아키텍처 제약 문서 |
 | `synapse.config.json` | 유지 | 시냅스 아키텍처 규칙 및 설정 보관 파일 |
 | `.synapseignore` | 유지 | Gitignore-style 제외 패턴; 프로젝트 스캔/분석/시각화에서 파일 필터링 |
-| `ui/canvas-engine.js` | 변경됨 | O(N) 순회 병목 제거, sub-pixel 안티앨리어싱, NaN 방지, WebGL 수학적 패리티 동기화 적용 2D 엔진 + ViewStrategy 등 렌더링 파이프라인/공간 인덱스(RBush) 최적화 |
-| `ui/cluster-hierarchy.js` | 추가됨 | 클러스터 계층 및 바운딩 연산 분리 로직 |
+| `ui/index.html` | 변경됨 | 캔버스 웹뷰 마크업 및 UI 요소. v0.3.33.1_fix에서 `LINES (No Badges)` 엣지 가시성 버튼 부활 |
+| `ui/synapse-theme.js` | 유지 | 웹뷰 전용 UI 테마 컬러 및 스타일링 데이터 |
+| `ui/i18n.js` | 🟢 Active | 정적 마크업 메뉴, 버튼, 패널 제목 다국어 지원 로직 (`data-i18n`) |
+| `ui/canvas-engine.js` | 🟡 Active (v0.3.33.1_fix) | O(N) 순회 병목 제거, 공간 인덱스(RBush) 최적화, 5만 개 하드 리밋 제거 및 4단계 Edge Visibility (FULL/NO_BADGES/CLUSTER/NONE) 파이프라인 제어. 빈 폴더 Bounding Box 오류 교정 |
+| `ui/cluster-hierarchy.js` | 🟢 Active (v0.3.33+) | 클러스터 계층 및 바운딩 연산 분리 로직 (통합 드래그/가시성 토글) |
+| `ui/rbush.js` | 🟢 Active (v0.3.33+) | 2D 뷰포트 컬링용 공간 인덱싱 라이브러리 |
 | `ui/webgl-renderer.js` | 유지 | 대규모 노드 그래프 실시간 60FPS GPU 파이프라인 가속 렌더러 |
 | `ui/engine-core.js` | 유지 | 캔버스 엔진 + WebGL 렌더러 간 공통 코어 로직 및 상태 브릿지 |
 | `src/extension.ts` | 유지 | VS Code Extension 진입점, 확장 활성화 및 이벤트 최초 등록 |
@@ -555,6 +561,10 @@ SYNAPSE는 파일 시스템과 그래프를 Source Of Truth로 사용하는 협�
 | `src/core/DebuggerSystem.ts` | Active | 디버깅 트리거 아키텍처 및 진단 로그 |
 | `src/core/ControlSystem.ts` | Active | 시스템 제어 명령어 및 피드백 루프 |
 | `src/core/AiOrchestrator.ts` | Active | AI 에이전트 오케스트레이션 (PhaseGate/Mutation) |
+| `src/core/PythonScanner.ts` | Active | 파이썬 소스 분석 스캐너 |
+| `src/core/RustScanner.ts` | Active | Rust 소스 분석 스캐너 |
+| `src/core/JsTsScanner.ts` | 🟢 Active | JavaScript/TypeScript 소스 분석 스캐너 |
+| `src/core/MarkdownScanner.ts` | Active | 마크다운 문서 스캐너 |
 | `src/core/PhaseManager.ts` | Active | Phase 상태 관리 및 전이 |
 | `src/core/SnapshotSystem.ts` | Active | 프로젝트 상태 스냅샷 저장/복원 (v0.3.30: 버전/체크섬/메타데이터 업그레이드) |
 | `src/core/GridSystem.ts` | Active | 캔버스 그리드 시스템 및 스냅 정렬 |

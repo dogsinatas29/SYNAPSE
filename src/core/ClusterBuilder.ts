@@ -1,7 +1,7 @@
 import { Cluster, Node } from '../types/schema';
 
 const SYSTEM_CLUSTERS: Cluster[] = [
-    { id: 'cluster_ghosts', label: '☁️ External Ghosts', type: 'system', position: { x: 0, y: 0 }, bounds: { x: 0, y: 0, width: 0, height: 0 }, children: [], nodes: [], data: { layer: 'external', continent: 'external', subcontinent: 'external' } },
+    { id: 'cluster_ghosts', label: '🌐 External Dependencies', type: 'system', position: { x: 0, y: 0 }, bounds: { x: 0, y: 0, width: 0, height: 0 }, children: [], nodes: [], data: { layer: 'external', continent: 'external', subcontinent: 'external' } },
     { id: 'sys_cluster_reserved', label: '🛡️ Reserved (Internal Pending)', type: 'system', position: { x: 0, y: 0 }, bounds: { x: 0, y: 0, width: 0, height: 0 }, children: [], nodes: [], data: {} },
     { id: 'doc_shelf', label: '📚 Documentation Shelf', type: 'system', position: { x: 0, y: 0 }, bounds: { x: 0, y: 0, width: 0, height: 0 }, children: [], nodes: [], data: {} },
     { id: 'folder_root', label: '📁 Root Directory', type: 'folder', position: { x: 0, y: 0 }, bounds: { x: 0, y: 0, width: 0, height: 0 }, children: [], nodes: [], data: { layer: 'ai', continent: 'root', subcontinent: 'root' } }

@@ -64,16 +64,23 @@ export class StateManager {
     return null;
   }
 
+  private _normalizeCache = new Map<string, string>();
   private normalizePath(p?: string): string {
     if (!p) return "";
+    const cached = this._normalizeCache.get(p);
+    if (cached !== undefined) return cached;
     let normalized = p.replace(/\\/g, '/').trim();
     const parts = normalized.split('/').filter(x => x.length > 0);
+    let result: string;
     if (parts.length >= 2) {
-        return parts.slice(-2).join('/');
+        result = parts.slice(-2).join('/');
     } else if (parts.length === 1) {
-        return parts[0];
+        result = parts[0];
+    } else {
+        result = normalized;
     }
-    return normalized;
+    this._normalizeCache.set(p, result);
+    return result;
   }
 
   public apply(intent: Intent): CanvasState {
@@ -418,6 +425,13 @@ export class StateManager {
     const finalNodes: Record<string, Node> = {};
     let userCount = 0; let aiCount = 0; let externalCount = 0;
 
+    // [v0.3.34] Precompute core node lookup map (O(N) → O(1) per node)
+    const coreNodeMap = new Map<string, Node>();
+    for (const cn of coreSnap.nodes) {
+        coreNodeMap.set(cn.id, cn);
+        if (cn.filePath) coreNodeMap.set(cn.filePath, cn);
+    }
+
     // 5. Zen Classification Loop
     deDupMap.forEach((n, key) => {
         const pathRef = this.normalizePath(getEffectivePath(n));
@@ -486,7 +500,7 @@ export class StateManager {
         } else {
             // AI / Base Logic Domain
             finalLayer = 'ai';
-            const coreNode = coreSnap.nodes.find(cn => cn.id === resolvedId || cn.filePath === resolvedId || cn.id === n.id);
+            const coreNode = coreNodeMap.get(resolvedId) || coreNodeMap.get(n.id);
             const isOnDisk = isExternal || !!coreNode;
             const parentFolder = this.extractParentFolderName(n.filePath || resolvedId);
 
@@ -569,8 +583,8 @@ export class StateManager {
             if (isFolder || isGhostCluster) {
                 clusterMap.set(n.cluster_id, {
                     id: n.cluster_id,
-                    label: isGhostCluster ? '👻 External Ghosts' : `📂 ${n.cluster_id.replace('folder_', '')}`,
-                    type: 'folder', position: { x: 0, y: 0 }, data: { layer: isGhostCluster ? 'external' : 'ai' },
+                    label: isGhostCluster ? '🌐 External Dependencies' : `📂 ${n.cluster_id.replace('folder_', '')}`,
+                    type: 'folder', position: { x: 0, y: 0 }, data: isGhostCluster ? { layer: 'external', continent: 'external', subcontinent: 'external' } : { layer: 'ai' },
                     bounds: { x: 0, y: 0, width: 0, height: 0 }, children: [], nodes: []
                 });
             }
@@ -578,11 +592,14 @@ export class StateManager {
     });
 
     const systemIds = ['sys_cluster_buffer', 'sys_cluster_reserved', 'cluster_ghosts'];
-    const systemLabels: Record<string, string> = { 'sys_cluster_buffer': 'Buffer Cluster', 'sys_cluster_reserved': 'Reserved Cluster', 'cluster_ghosts': '👻 External Ghosts' };
+    const systemLabels: Record<string, string> = { 'sys_cluster_buffer': 'Buffer Cluster', 'sys_cluster_reserved': 'Reserved Cluster', 'cluster_ghosts': '🌐 External Dependencies' };
     systemIds.forEach(id => {
         if (!clusterMap.has(id)) {
             const layer = (id === 'cluster_ghosts') ? 'external' : 'ai'; // sys_cluster_buffer and sys_cluster_reserved are internal/AI
-            clusterMap.set(id, { id, label: systemLabels[id], type: 'system', position: { x: 0, y: 0 }, data: { layer }, collapsed: false, bounds: { x: 0, y: 0, width: 0, height: 0 }, children: [], nodes: [] });
+            const data = id === 'cluster_ghosts'
+                ? { layer, continent: 'external', subcontinent: 'external' }
+                : { layer };
+            clusterMap.set(id, { id, label: systemLabels[id], type: 'system', position: { x: 0, y: 0 }, data, collapsed: false, bounds: { x: 0, y: 0, width: 0, height: 0 }, children: [], nodes: [] });
         }
     });
 

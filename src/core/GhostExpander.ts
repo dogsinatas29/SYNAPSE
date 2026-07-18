@@ -1,5 +1,6 @@
 import { Node, Cluster, NodeType } from './GraphModel';
 import { ResolvedReference } from './ReferenceResolver';
+import { makeExternalSemantic } from './ExternalReferenceSemantics';
 
 export interface ExpandedReference {
     sourceId: string;
@@ -80,9 +81,6 @@ export class GhostExpander {
 
         let _ghostIdx = 0;
         for (const ref of resolvedReferences) {
-            if (_ghostIdx % 100000 === 0) {
-                console.error('[GHOST_PROGRESS]', _ghostIdx, '/', resolvedReferences.length);
-            }
             _ghostIdx++;
             const targetNodeId = ref.targetId;
             const isUnresolved = ref.resolutionKind === 'unresolved';
@@ -204,7 +202,12 @@ export class GhostExpander {
                             continent_type: 'EXTERNAL',
                             layer: isExternal ? 'external' : 'ai',
                             sourceFile: ref.sourceId,
-                            referenceType: ref.referenceType
+                            referenceType: ref.referenceType,
+                            ...(isDocRef
+                                ? makeExternalSemantic('DocumentationReference', 'DOCUMENTATION')
+                                : (isExternal
+                                    ? makeExternalSemantic('Unknown', 'UNKNOWN')
+                                    : makeExternalSemantic('Unknown', 'UNKNOWN')))
                         },
                         intelligence: {},
                         visual: { opacity: isExternal ? 0.6 : 1.0 }

@@ -1427,8 +1427,13 @@ class WebGLRenderer {
 
         // Draw Sequence: Background (Stars) -> Edges -> Nodes -> Text
         this.drawStars(transform);
+        console.time('drawEdges');
         if (this.edgeCount > 0) this.drawEdges(transform);
+        console.timeEnd('drawEdges');
+
+        console.time('drawNodes');
         this.drawNodes(transform);
+        console.timeEnd('drawNodes');
         
         // Satellite view에서는 텍스트 생략
         if (!isSatellite && this.charCount > 0) {

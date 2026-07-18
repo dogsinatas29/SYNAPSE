@@ -207,7 +207,7 @@ export class RemoteLayerProjector {
         }
 
         const systemClusters: ClassifiedCluster[] = [
-            { id: 'cluster_ghosts', label: '☁️ External Ghosts', layer: 'external', memberCount: 0 },
+            { id: 'cluster_ghosts', label: '🌐 External Dependencies', layer: 'external', memberCount: 0 },
             { id: 'sys_cluster_reserved', label: '🛡️ Reserved (Internal Pending)', layer: 'ai', memberCount: 0 },
             { id: 'doc_shelf', label: '📚 Documentation Shelf', layer: 'user', memberCount: 0 },
         ];

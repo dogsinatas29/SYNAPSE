@@ -18,6 +18,9 @@ export interface FlowData {
 }
 
 export class FlowScanner {
+    private static readonly MAX_FULL_SCAN_BYTES = 1024 * 1024; // 1MB
+    private static readonly DEFAULT_HEADER_SCAN_BYTES = 128 * 1024; // 128KB
+
     /**
      * 파일 내용을 분석하여 실행 흐름(Flow)을 추출
      */
@@ -33,8 +36,19 @@ export class FlowScanner {
         }
 
         try {
-            const content = fs.readFileSync(filePath, 'utf-8');
-            const ext = path.extname(filePath);
+            const ext = path.extname(filePath).toLowerCase();
+            const stats = fs.statSync(filePath);
+            const isLargeFile = stats.size > FlowScanner.MAX_FULL_SCAN_BYTES;
+            const headerBytes = this.getHeaderScanBytes(ext);
+            const content = isLargeFile
+                ? this.readFileHeaderUtf8(filePath, headerBytes)
+                : fs.readFileSync(filePath, 'utf-8');
+
+            if (isLargeFile) {
+                console.warn(
+                    `[SYNAPSE] FlowScanner large file header scan: ${filePath} (${Math.round(stats.size / 1024)} KB, head=${Math.round(headerBytes / 1024)} KB, ext=${ext || 'unknown'})`
+                );
+            }
 
             if (['.ts', '.js'].includes(ext)) {
                 this.parseJSFlow(content, flowData);
@@ -69,6 +83,23 @@ export class FlowScanner {
         }
 
         return flowData;
+    }
+
+    private readFileHeaderUtf8(filePath: string, byteLimit: number): string {
+        const fd = fs.openSync(filePath, 'r');
+        try {
+            const buffer = Buffer.alloc(byteLimit);
+            const bytesRead = fs.readSync(fd, buffer, 0, byteLimit, 0);
+            return buffer.subarray(0, bytesRead).toString('utf8');
+        } finally {
+            fs.closeSync(fd);
+        }
+    }
+
+    private getHeaderScanBytes(ext: string): number {
+        if (['.ts', '.js', '.py'].includes(ext)) return 192 * 1024;
+        if (['.java', '.kt', '.kts', '.rs', '.c', '.cc', '.cpp', '.h', '.hpp'].includes(ext)) return 128 * 1024;
+        return FlowScanner.DEFAULT_HEADER_SCAN_BYTES;
     }
 
     private parseJSFlow(content: string, flow: FlowData) {

@@ -207,8 +207,12 @@ export class CanvasPanel {
 
         // [v0.3.09_fix] Rendering Isolation - send clearCanvas when Phase changes
         phaseManager.onPhaseAdvance = (phase: Phase) => {
-            if (this._panel && this._panel.webview) {
-                this._panel.webview.postMessage({ command: 'clearCanvas', phase });
+            try {
+                console.log('[PHASE_CALLBACK]', { phase: Phase[phase] });
+                console.log('[PHASE_CALLBACK_INSTANCE]', { currentPanelExists: !!CanvasPanel.currentPanel });
+                this._panel?.webview.postMessage({ command: 'clearCanvas', phase });
+            } catch (err) {
+                console.warn('[PHASE_CALLBACK_DISPOSED]', err);
             }
         };
 
@@ -2867,6 +2871,11 @@ export class CanvasPanel {
     }
 
     public dispose() {
+        console.log('[PANEL_DISPOSE]', {
+            callbackExists: !!phaseManager.onPhaseAdvance,
+            currentPanelExists: !!CanvasPanel.currentPanel
+        });
+        phaseManager.onPhaseAdvance = null;
         if (this._saveListenerDisposable) {
             this._saveListenerDisposable.dispose();
             this._saveListenerDisposable = null;
@@ -3081,129 +3090,135 @@ export class CanvasPanel {
     }
 
     private normalizeProjectState(state: any): string {
-        // [v0.3.10] Handle Engine State (Record-based) to UI/File State (Array-based) translation
-        let processingState = state;
-        if (state && state.nodes && !Array.isArray(state.nodes)) {
-            processingState = {
-                ...state,
-                nodes: Object.values(state.nodes),
-                edges: Object.values(state.edges),
-                clusters: state.clusters || []
-            };
-        }
-
-        // [v0.3.10] Final Data Hygiene: ensure data.label exists for LogicAnalyzer
-        if (processingState && processingState.nodes) {
-            processingState.nodes = processingState.nodes.map((n: any) => ({
-                ...n,
-                data: n.data || { label: n.label || n.id, file: n.filePath }
-            }));
-        }
-
-        // [v0.2.18.1] Pre-save Validation
-        if (!this.validateProjectState(processingState)) {
-            Logger.warn('[SYNAPSE:v0.2.18.1] State normalization halted due to validation failure.');
-        }
-
-        const stateToSave = processingState;
-        const decycle = (obj: any, stack = new Set()): any => {
-            if (!obj || typeof obj !== 'object') return obj;
-            if (stack.has(obj)) return '[Circular]';
-            stack.add(obj);
-
-            let res: any = Array.isArray(obj) ? [] : {};
-            for (const key in obj) {
-                // [v0.2.23] Allow _ungrouped for persistent manual state
-                // [v0.3.10] Protect _fromFile/_toFile for edge confirmation context
-                const allowedLegacyKeys = ['_ungrouped', '_fromFile', '_toFile'];
-                if (key.startsWith('_') && !allowedLegacyKeys.includes(key)) continue;
-                res[key] = decycle(obj[key], stack);
+        console.time('state-export');
+        try {
+            // [v0.3.10] Handle Engine State (Record-based) to UI/File State (Array-based) translation
+            let processingState = state;
+            if (state && state.nodes && !Array.isArray(state.nodes)) {
+                processingState = {
+                    ...state,
+                    nodes: Object.values(state.nodes),
+                    edges: Object.values(state.edges),
+                    clusters: state.clusters || []
+                };
             }
-            stack.delete(obj);
-            return res;
-        };
 
-        const safeState = decycle(stateToSave);
+            // [v0.3.10] Final Data Hygiene: ensure data.label exists for LogicAnalyzer
+            if (processingState && processingState.nodes) {
+                processingState.nodes = processingState.nodes.map((n: any) => ({
+                    ...n,
+                    data: n.data || { label: n.label || n.id, file: n.filePath }
+                }));
+            }
 
-        // [v0.2.18.1] UTF8 & Byte-Oriented Header Logic
-        // Calculate total byte size of the state for the header
-        const stateString = JSON.stringify(safeState);
-        const byteSize = Buffer.byteLength(stateString, 'utf8');
-        console.log(`[SYNAPSE:v0.2.18.1] Exporting state - Size: ${byteSize} bytes (UTF-8)`);
+            // [v0.2.18.1] Pre-save Validation
+            if (!this.validateProjectState(processingState)) {
+                Logger.warn('[SYNAPSE:v0.2.18.1] State normalization halted due to validation failure.');
+            }
 
-        // 1. 기본값 제거 (Pruning)
-        const pruneDefaults = (obj: any, defaults: any): any => {
-            if (!obj || typeof obj !== 'object') return obj;
+            const stateToSave = processingState;
+            const decycle = (obj: any, stack = new Set()): any => {
+                if (!obj || typeof obj !== 'object') return obj;
+                if (stack.has(obj)) return '[Circular]';
+                stack.add(obj);
 
-            const pruned: any = Array.isArray(obj) ? [] : {};
-            for (const key in obj) {
-                const value = obj[key];
-                const defaultValue = defaults?.[key];
-
-                // 기본값과 동일하면 제거
-                if (defaultValue !== undefined && JSON.stringify(value) === JSON.stringify(defaultValue)) {
-                    continue;
+                let res: any = Array.isArray(obj) ? [] : {};
+                for (const key in obj) {
+                    // [v0.2.23] Allow _ungrouped for persistent manual state
+                    // [v0.3.10] Protect _fromFile/_toFile for edge confirmation context
+                    const allowedLegacyKeys = ['_ungrouped', '_fromFile', '_toFile'];
+                    if (key.startsWith('_') && !allowedLegacyKeys.includes(key)) continue;
+                    res[key] = decycle(obj[key], stack);
                 }
-
-                // 재귀적으로 처리
-                if (typeof value === 'object' && value !== null && value !== '[Circular]') {
-                    pruned[key] = pruneDefaults(value, defaultValue);
-                } else {
-                    pruned[key] = value;
-                }
-            }
-            return pruned;
-        };
-
-        // 기본값 정의
-        const defaults = {
-            visual: {
-                color: '#458588',
-                dashArray: undefined
-            }
-        };
-
-        // 2. 키 정렬 함수
-        const sortKeys = (obj: any): any => {
-            if (!obj || typeof obj !== 'object') return obj;
-            if (Array.isArray(obj)) return obj.map(sortKeys);
-
-            const sorted: any = {};
-            // [v0.2.18.1] Memory Alignment Simulation: Sort keys to ensure predictable layout
-            Object.keys(obj).sort().forEach(key => {
-                sorted[key] = sortKeys(obj[key]);
-            });
-            return sorted;
-        };
-
-        // 3. 정규화 적용
-        const prunedState = pruneDefaults(safeState, {});
-        const sortedState = sortKeys(prunedState);
-
-        // 5. [v0.3.10] Aggressive Edge Deduplication
-        if (sortedState && sortedState.edges && Array.isArray(sortedState.edges)) {
-            const seen = new Set<string>();
-            sortedState.edges = sortedState.edges.filter((e: any) => {
-                // Ignore type and cluster metadata for primary identity to collapse duplicates
-                const key = `${e.from}|${e.to}`;
-                if (seen.has(key)) return false;
-                seen.add(key);
-                return true;
-            });
-        }
-
-        // [v0.2.18.1] Add Byte-Oriented Metadata for Iron Guard Protocol
-        if (sortedState && typeof sortedState === 'object') {
-            sortedState._iron_guard = {
-                version: '0.2.18.1',
-                byte_size: byteSize,
-                encoding: 'UTF-8',
-                alignment: 8
+                stack.delete(obj);
+                return res;
             };
-        }
 
-        // 4. 정렬된 JSON 문자열 반환
-        return JSON.stringify(sortedState, null, 2);
+            const safeState = decycle(stateToSave);
+
+            // [v0.2.18.1] UTF8 & Byte-Oriented Header Logic
+            // Calculate total byte size of the state for the header
+            const stateString = JSON.stringify(safeState);
+            const byteSize = Buffer.byteLength(stateString, 'utf8');
+            console.log(`[SYNAPSE:v0.2.18.1] Exporting state - Size: ${byteSize} bytes (UTF-8)`);
+
+            // 1. 기본값 제거 (Pruning)
+            const pruneDefaults = (obj: any, defaults: any): any => {
+                if (!obj || typeof obj !== 'object') return obj;
+
+                const pruned: any = Array.isArray(obj) ? [] : {};
+                for (const key in obj) {
+                    const value = obj[key];
+                    const defaultValue = defaults?.[key];
+
+                    // 기본값과 동일하면 제거
+                    if (defaultValue !== undefined && JSON.stringify(value) === JSON.stringify(defaultValue)) {
+                        continue;
+                    }
+
+                    // 재귀적으로 처리
+                    if (typeof value === 'object' && value !== null && value !== '[Circular]') {
+                        pruned[key] = pruneDefaults(value, defaultValue);
+                    } else {
+                        pruned[key] = value;
+                    }
+                }
+                return pruned;
+            };
+
+            // 기본값 정의
+            const defaults = {
+                visual: {
+                    color: '#458588',
+                    dashArray: undefined
+                }
+            };
+
+            // 2. 키 정렬 함수
+            const sortKeys = (obj: any): any => {
+                if (!obj || typeof obj !== 'object') return obj;
+                if (Array.isArray(obj)) return obj.map(sortKeys);
+
+                const sorted: any = {};
+                // [v0.2.18.1] Memory Alignment Simulation: Sort keys to ensure predictable layout
+                Object.keys(obj).sort().forEach(key => {
+                    sorted[key] = sortKeys(obj[key]);
+                });
+                return sorted;
+            };
+
+            // 3. 정규화 적용
+            const prunedState = pruneDefaults(safeState, {});
+            const sortedState = sortKeys(prunedState);
+
+            // 5. [v0.3.10] Aggressive Edge Deduplication
+            if (sortedState && sortedState.edges && Array.isArray(sortedState.edges)) {
+                const seen = new Set<string>();
+                sortedState.edges = sortedState.edges.filter((e: any) => {
+                    // Ignore type and cluster metadata for primary identity to collapse duplicates
+                    const key = `${e.from}|${e.to}`;
+                    if (seen.has(key)) return false;
+                    seen.add(key);
+                    return true;
+                });
+            }
+
+            // [v0.2.18.1] Add Byte-Oriented Metadata for Iron Guard Protocol
+            if (sortedState && typeof sortedState === 'object') {
+                sortedState._iron_guard = {
+                    version: '0.2.18.1',
+                    byte_size: byteSize,
+                    encoding: 'UTF-8',
+                    alignment: 8
+                };
+            }
+
+            // 4. 정렬된 JSON 문자열 반환
+            const normalized = JSON.stringify(sortedState, null, 2);
+            return normalized;
+        } finally {
+            console.timeEnd('state-export');
+        }
     }
 
     private async handleCreateManualEdge(edge: any) {
@@ -4895,6 +4910,7 @@ export class CanvasPanel {
 
             // [v0.3.11] 3. 🛡️ Self-Healing: Background Reality-Check (Find roaming files)
             // [v0.3.33 Phase 2.1 Fix] Do NOT block the initial render. Run autoDiscover asynchronously if not forceReset.
+            const isHugeGraphState = projectState.nodes.length >= 50000 || projectState.edges.length >= 200000;
             const runAutoDiscover = async () => {
                 try {
                     // [v0.3.33 Phase 2 Fix] Yield to the event loop so IPC payload can be flushed to the Webview BEFORE we block the thread with heavy scanning!
@@ -4966,8 +4982,14 @@ export class CanvasPanel {
                 }
             };
 
-            // [v0.3.33 핫픽스] forceReset일 때도 일단 화면부터 띄우고 백그라운드에서 스캔하도록 변경 (await 제거)
-            runAutoDiscover(); // Non-blocking
+            // [v0.3.34 Stability] Skip autoDiscover for huge graphs to prevent Extension Host stalls on reopen.
+            // The graph is already persisted; eager roaming scan can cause multi-second blocking and VS Code recovery prompts.
+            if (isHugeGraphState && !forceReset) {
+                Logger.warn(`[CanvasPanel] Skipping autoDiscover for huge graph (nodes=${projectState.nodes.length}, edges=${projectState.edges.length}).`);
+            } else {
+                // [v0.3.33 핫픽스] forceReset일 때도 일단 화면부터 띄우고 백그라운드에서 스캔하도록 변경 (await 제거)
+                runAutoDiscover(); // Non-blocking
+            }
 
             // [v0.3.11] 4. Phase & Broadcast
             try {
@@ -4994,9 +5016,13 @@ export class CanvasPanel {
                 console.error('[BAD_NODE] Found colliding nodes before export:', badNodes.map((n: any) => ({ id: n.id, type: n.type, filePath: n.filePath })));
             }
 
+            const parentDirs = new Set<string>();
+            for (const node of projectState.nodes) {
+                const idx = node.id.lastIndexOf('/');
+                if (idx > 0) parentDirs.add(node.id.substring(0, idx));
+            }
             const badFiles = projectState.nodes.filter((n: any) =>
-                n.type !== 'directory' &&
-                projectState.nodes.some((x: any) => x.id.startsWith(n.id + '/'))
+                n.type !== 'directory' && parentDirs.has(n.id)
             );
             if (badFiles.length > 0) {
                 console.error('[FILE_ACTING_AS_DIR]', badFiles.slice(0, 50).map((n: any) => ({ id: n.id, type: n.type, filePath: n.filePath })));
@@ -5008,35 +5034,44 @@ export class CanvasPanel {
                 })));
             }
 
-            // [v0.3.34] Robust Chunking to bypass VS Code IPC size limits
-            const CHUNK_SIZE = 5000;
-            console.log('[POST_MESSAGE_SEND] nodes=%d edges=%d clusters=%d', projectState.nodes.length, projectState.edges.length, projectState.clusters.length);
-            this._panel.webview.postMessage({ command: 'projectStateChunkStart' });
-            
-            for (let i = 0; i < projectState.nodes.length; i += CHUNK_SIZE) {
-                this._panel.webview.postMessage({ 
-                    command: 'projectStateNodesChunk', 
-                    data: projectState.nodes.slice(i, i + CHUNK_SIZE) 
-                });
-            }
-            for (let i = 0; i < projectState.edges.length; i += CHUNK_SIZE) {
-                this._panel.webview.postMessage({ 
-                    command: 'projectStateEdgesChunk', 
-                    data: projectState.edges.slice(i, i + CHUNK_SIZE) 
-                });
-            }
-            
-            const finalPayload: any = { ...projectState, _ipcTimestamp: Date.now() };
-            delete finalPayload.nodes;
-            delete finalPayload.edges;
+            // [v0.3.34] Strip unnecessary fields before IPC to reduce renderer memory pressure
+            const stripNode = (n: any) => ({ id: n.id, position: n.position, type: n.type, label: n.label, layer: n.layer, cluster_id: n.cluster_id, filePath: n.filePath, data: n.data, visual: n.visual, status: n.status, color: n.color, _width: n._width });
+            const stripEdge = (e: any) => ({ id: e.id, from: e.from, to: e.to, type: e.type, weight: e.weight, status: e.status, visual: e.visual, data: e.data });
 
-            this._panel.webview.postMessage({
-                command: 'projectStateChunkEnd',
-                data: finalPayload, // [v0.3.33 Phase 0] Baseline: IPC send timestamp
-                workspaceFolder: workspaceFolder.uri.fsPath,
-                forceReset: forceReset,
-                isAuthoritative: isAuthoritative // 🔥 [v0.3.11] Interaction Bypass
-            });
+            // [v0.3.34] Robust Chunking to bypass VS Code IPC size limits
+            const CHUNK_SIZE = isHugeGraphState ? 2500 : 1000;
+            console.log('[POST_MESSAGE_SEND] nodes=%d edges=%d clusters=%d', projectState.nodes.length, projectState.edges.length, projectState.clusters.length);
+            console.time('webview-postmessage');
+            try {
+                this._panel.webview.postMessage({ command: 'projectStateChunkStart' });
+                
+                for (let i = 0; i < projectState.nodes.length; i += CHUNK_SIZE) {
+                    this._panel.webview.postMessage({ 
+                        command: 'projectStateNodesChunk', 
+                        data: projectState.nodes.slice(i, i + CHUNK_SIZE).map(stripNode)
+                    });
+                }
+                for (let i = 0; i < projectState.edges.length; i += CHUNK_SIZE) {
+                    this._panel.webview.postMessage({ 
+                        command: 'projectStateEdgesChunk', 
+                        data: projectState.edges.slice(i, i + CHUNK_SIZE).map(stripEdge)
+                    });
+                }
+                
+                const finalPayload: any = { ...projectState, _ipcTimestamp: Date.now() };
+                delete finalPayload.nodes;
+                delete finalPayload.edges;
+
+                this._panel.webview.postMessage({
+                    command: 'projectStateChunkEnd',
+                    data: finalPayload, // [v0.3.33 Phase 0] Baseline: IPC send timestamp
+                    workspaceFolder: workspaceFolder.uri.fsPath,
+                    forceReset: forceReset,
+                    isAuthoritative: isAuthoritative // 🔥 [v0.3.11] Interaction Bypass
+                });
+            } finally {
+                console.timeEnd('webview-postmessage');
+            }
 
         } catch (error) {
             Logger.error(`[CanvasPanel] sendProjectState failed: ${error}`);
@@ -5136,15 +5171,12 @@ export class CanvasPanel {
         // Add nonce first
         const nonce = getNonce();
 
-        // [v0.3.34 Phase 1] Inject VSCODE_LANGUAGE and i18n
+        // [v0.3.34 Phase 1] Load i18n script (injected at </head> below, after all <style> blocks are closed)
+        let i18nScript = '';
         try {
-            const i18nScript = fs.readFileSync(vscode.Uri.joinPath(this._extensionUri, 'ui', 'i18n.js').fsPath, 'utf8');
-            html = html.replace(
-                '<head>',
-                `<head>\n    <script nonce="${nonce}">\n        window.VSCODE_LANGUAGE = '${vscode.env.language}';\n${i18nScript}\n    </script>`
-            );
+            i18nScript = fs.readFileSync(vscode.Uri.joinPath(this._extensionUri, 'ui', 'i18n.js').fsPath, 'utf8');
         } catch (e) {
-            Logger.warn(`[CanvasPanel] Failed to inject i18n.js: ${e}`);
+            Logger.warn(`[CanvasPanel] Failed to load i18n.js: ${e}`);
         }
 
         html = html.replace(
@@ -5226,12 +5258,7 @@ ${canvasEngineScript}
 
         // (Nonce was already created above)
 
-        // Add CSP - relaxed for webview compatibility
-        // [v0.3.33 Debug] Removed CSP to see if it fixes InvalidStateError
-        html = html.replace(
-            '<head>',
-            `<head>`
-        );
+        // [v0.3.33 Debug] CSP removed for webview compatibility
 
         // Do not blanket replace all scripts with nonce since we already injected nonces for the inlined scripts.
         // The inline scripts above are already nonced.
@@ -5241,16 +5268,22 @@ ${canvasEngineScript}
             `<script nonce="${nonce}"`
         );
 
-        // Inject VS Code API
+        // Inject i18n + VSCODE_LANGUAGE + VS Code API — all at </head> (after <style> blocks are fully closed)
+        const i18nBlock = i18nScript
+            ? `    <script nonce="${nonce}">\n        window.VSCODE_LANGUAGE = '${vscode.env.language}';\n${i18nScript}\n    </script>\n`
+            : '';
         html = html.replace(
             '</head>',
-            `<script nonce="${nonce}">
+            `${i18nBlock}    <script nonce="${nonce}">
                 const vscode = acquireVsCodeApi();
                 window.vscode = vscode;
             </script>
             </head>`
         );
 
+        try {
+            require('fs').writeFileSync('/tmp/synapse_final.html', html, 'utf8');
+        } catch (e) {}
         return html;
     }
 }

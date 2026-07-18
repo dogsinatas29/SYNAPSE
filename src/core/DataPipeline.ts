@@ -14,6 +14,7 @@ import { detectCommunities } from './CommunityDetector';
 import { GhostPolicy } from './GhostPolicy';
 import { ReferenceResolver } from './ReferenceResolver';
 import { GhostExpander } from './GhostExpander';
+import { GhostClassifier } from './GhostClassifier';
 import { EdgeBuilder } from './EdgeBuilder';
 import { phaseManager, Phase } from './PhaseManager';
 import { graphModel, Node, Edge, Cluster, NodeType, EdgeType, GraphModel } from './GraphModel';
@@ -102,7 +103,7 @@ export class DataPipeline {
       // 2. GRAPH 데이터 추출 (Phase 1)
       phaseManager.assertPhase(Phase.GRAPH);
       
-      const result = this.extractGraphElements(summaries);
+      const result = this.extractGraphElements(summaries, projectRoot);
 
       return result;
     } catch (e: any) {
@@ -111,7 +112,8 @@ export class DataPipeline {
     }
   }
 
-  private extractGraphElements(summaries: { filePath: string; summary: CodeSummary }[]): PipelineResult {
+  private extractGraphElements(summaries: { filePath: string; summary: CodeSummary }[], projectRoot?: string): PipelineResult {
+    console.time('[PIPELINE] TOTAL');
     const nodes: Node[] = [];
     const edges: Edge[] = [];
     const clusters: Cluster[] = [];
@@ -126,7 +128,9 @@ export class DataPipeline {
     const internalNamespace = nodeResult.internalNamespace;
 
     // [v0.3.32.4] ClusterBuilder: Build clusters from nodes
+    console.time('[PIPELINE] buildClusters');
     const clusterResult = buildClusters(nodeResult.nodes);
+    console.timeEnd('[PIPELINE] buildClusters');
     for (const cluster of clusterResult.clusters) clusters.push(cluster);
     clusterResult.clusterIds.forEach(id => clusterIds.add(id));
 
@@ -159,6 +163,20 @@ export class DataPipeline {
       // [v0.3.32.4] Ghost Expansion (Extracted to GhostExpander)
       console.error('[GHOST] resolvedReferences=', resolvedReferences.length, 'clusterIds=', clusterIds.size, 'nodeIds=', nodeIds.size);
       const expansionResult = GhostExpander.expand(resolvedReferences, clusterIds, nodeIds, internalNamespace);
+      Logger.info(`[GHOST_CLASSIFIER_ENTRY] ghostNodes=${expansionResult.ghostNodes.length} resolvedRefs=${resolvedReferences.length}`);
+
+      console.time('ghost-classification');
+      const ghostReport = GhostClassifier.inspect({
+        ghostNodes: expansionResult.ghostNodes,
+        resolvedReferences,
+        projectRoot,
+        existingNodeIds: nodeIds
+      });
+      console.timeEnd('ghost-classification');
+      Logger.info(`[GHOST_CLASSIFIER_EXIT] total=${ghostReport.total} unknown=${ghostReport.v2Gate.unknownCount} readyForV2B=${ghostReport.v2Gate.readyForV2B}`);
+      diagnosticOutput += `\n[GHOST_CLASSIFICATION_SUMMARY] total=${ghostReport.total} unknown=${ghostReport.v2Gate.unknownCount} unknownRatio=${ghostReport.v2Gate.unknownRatio} readyForV2B=${ghostReport.v2Gate.readyForV2B}\n`;
+      const externalLayerMode = ghostReport.v2Gate.readyForV2B ? 'DECOMPOSE_READY' : 'SINGLE_EXTERNAL_LAYER';
+      diagnosticOutput += `[EXTERNAL_LAYER_MODE] mode=${externalLayerMode} unknownRatio=${ghostReport.v2Gate.unknownRatio} threshold=${ghostReport.v2Gate.thresholdUnknownRatio}\n`;
       
       // Inject Mutated States (DataPipeline's responsibility)
       for (const node of expansionResult.ghostNodes) nodes.push(node);
@@ -168,15 +186,18 @@ export class DataPipeline {
       for (const c of expansionResult.ghostClusters) clusterIds.add(c.id);
 
       // [v0.3.32.5] Edge Materialization (Extracted to EdgeBuilder)
+      console.time('[PIPELINE] edgeBuilder');
       const edgeBuilderResult = EdgeBuilder.build(expansionResult.expandedReferences);
+      console.timeEnd('[PIPELINE] edgeBuilder');
       for (const edge of edgeBuilderResult.edges) edges.push(edge);
       
       // Update pipeline diagnostics
       for (const [mappedType, count] of edgeBuilderResult.edgeTypeCount.entries()) {
         edgeTypeCount.set(mappedType, (edgeTypeCount.get(mappedType) || 0) + count);
       }
+    console.time('[PIPELINE] graphAnalyzer');
     const analysis = analyzeGraph({ nodes, edges, clusterIds, nodeIds });
-
+    console.timeEnd('[PIPELINE] graphAnalyzer');
     const nodeMap = new Map<string, Node>(nodes.map(n => [n.id, n]));
 
     const context: DiagnosticContext = {
@@ -195,11 +216,10 @@ export class DataPipeline {
     // ==========================================
     // [USER PROBE #1: ORPHAN NODES]
     // ==========================================
-    const orphanNodes = nodes.filter(node => {
-        if (!node.cluster_id) return true;
-        const cluster = clusters.find(c => c.id === node.cluster_id);
-        return !cluster;
-    });
+    const clusterIdSet = new Set(clusters.map(c => c.id));
+    const orphanNodes = nodes.filter(node =>
+        !node.cluster_id || !clusterIdSet.has(node.cluster_id)
+    );
     console.log('[ORPHAN_NODES]', {
         count: orphanNodes.length,
         sample: orphanNodes.slice(0,20).map(n => ({
@@ -211,19 +231,20 @@ export class DataPipeline {
     // ==========================================
     // [USER PROBE #2: EMPTY_CLUSTER_VERIFY]
     // ==========================================
-    const emptyClustersCount = clusters.filter(c => {
-        const hasNodes = nodes.some(n => n.cluster_id === c.id || (n.data && n.data.cluster_id === c.id));
-        return !hasNodes;
-    });
+    const nodeCountByCluster = new Map<string, number>();
+    for (const n of nodes) {
+        const cid = n.cluster_id || n.data?.cluster_id;
+        if (cid) nodeCountByCluster.set(cid, (nodeCountByCluster.get(cid) || 0) + 1);
+    }
+    const emptyClustersCount = clusters.filter(c =>
+        (nodeCountByCluster.get(c.id) || 0) === 0
+    );
     
     const suspiciousClusters = emptyClustersCount.slice(0, 20);
     for (const cluster of suspiciousClusters) {
-        const actualNodes = nodes.filter(
-            n => n.cluster_id === cluster.id || (n.data && n.data.cluster_id === cluster.id)
-        );
         console.log('[EMPTY_CLUSTER_VERIFY]', {
             cluster: cluster.id,
-            actualNodes: actualNodes.length,
+            actualNodes: nodeCountByCluster.get(cluster.id) || 0,
             childClusterCount: clusters.filter(c => c.parent_id === cluster.id).length
         });
     }
@@ -233,26 +254,7 @@ export class DataPipeline {
         emptyClusters: emptyClustersCount.length
     });
 
-    // ==========================================
-    // [USER PROBE #3: GHOST_SAMPLE]
-    // ==========================================
-    const ghostNodes = nodes.filter(n => n.cluster_id && n.cluster_id.startsWith('cluster_ghost'));
-    const ghostSources = new Map<string, number>();
-    ghostNodes.forEach(n => {
-        const src = (n.data as any)?.sourceFile || 'unknown';
-        ghostSources.set(src, (ghostSources.get(src) || 0) + 1);
-    });
-    console.log('[GHOST_CLUSTER_BREAKDOWN]', {
-        total: ghostNodes.length,
-        topSources: [...ghostSources.entries()].sort((a,b) => b[1] - a[1]).slice(0, 20)
-    });
-    console.log('[GHOST_SAMPLE]', 
-        ghostNodes.slice(0, 50).map(n => ({
-            id: n.id,
-            cluster: n.cluster_id,
-            sourceFile: (n.data as any)?.sourceFile || 'unknown'
-        }))
-    );
+    /* [USER PROBE #3: GHOST_SAMPLE] — removed for performance */
 
     // ==========================================
 
@@ -263,6 +265,7 @@ export class DataPipeline {
     let collapseCount = 0;
     let chainCount = 0;
     let collapseChanged = true;
+    console.time('[PIPELINE] clusterCollapse');
     while(collapseChanged) {
         collapseChanged = false;
         
@@ -364,53 +367,12 @@ export class DataPipeline {
             }
         }
     }
+    console.timeEnd('[PIPELINE] clusterCollapse');
     console.log(`[CLUSTER_COLLAPSE] Aggressively Absorbed ${collapseCount} clusters, Compressed ${chainCount} chains`);
 
-    // ==========================================
-    // [USER PROBE #4: POST-COLLAPSE CLUSTER_SIZE_DISTRIBUTION]
-    // ==========================================
-    const sizeDistribution = {
-        '0': 0, '1': 0, '2-5': 0, '6-10': 0, '11-20': 0, '21-50': 0, '50+': 0
-    };
-    const clusterSizes = clusters.map(c => {
-        const nodeCount = nodes.filter(n => n.cluster_id === c.id || (n.data && n.data.cluster_id === c.id)).length;
-        if (nodeCount === 0) sizeDistribution['0']++;
-        else if (nodeCount === 1) sizeDistribution['1']++;
-        else if (nodeCount <= 5) sizeDistribution['2-5']++;
-        else if (nodeCount <= 10) sizeDistribution['6-10']++;
-        else if (nodeCount <= 20) sizeDistribution['11-20']++;
-        else if (nodeCount <= 50) sizeDistribution['21-50']++;
-        else sizeDistribution['50+']++;
-        return { id: c.id, nodeCount };
-    });
-    console.log('[POST_COLLAPSE_CLUSTER_SIZE_DISTRIBUTION]', sizeDistribution);
-    
-    console.log('[POST_COLLAPSE_SMALLEST_CLUSTERS]', 
-        clusterSizes.filter(c => c.nodeCount > 0).sort((a,b) => a.nodeCount - b.nodeCount).slice(0, 50)
-    );
-
-    // ==========================================
-    // [USER PROBE #5: POST-COLLAPSE DEPTH_DISTRIBUTION]
-    // ==========================================
-    const depthDistribution: Record<string, number> = {};
-    clusters.forEach(c => {
-        let depth = 1;
-        let current = c;
-        while (current.parent_id) {
-            depth++;
-            const parent = clusters.find(p => p.id === current.parent_id);
-            if (!parent) break;
-            current = parent;
-        }
-        const depthKey = depth >= 7 ? '7+' : depth.toString();
-        depthDistribution[depthKey] = (depthDistribution[depthKey] || 0) + 1;
-    });
-    console.log('[POST_COLLAPSE_DEPTH_DISTRIBUTION]', depthDistribution);
-
-    const tLayoutStart = process.hrtime.bigint();
+    console.time('[PIPELINE] layout');
     const layoutResult = applyLayout(layoutInput);
-    const layoutMs = Number(process.hrtime.bigint() - tLayoutStart) / 1e6;
-    Logger.info(`[LAYOUT_TIME] applyLayout took ${layoutMs.toFixed(2)}ms`);
+    console.timeEnd('[PIPELINE] layout');
 
     const continentMap = layoutResult.continentMap;
     const clusterNodes = new Map<string, Node[]>(Array.from(layoutResult.clusterNodes.entries()).map(([k, v]) => [k, [...v]]));
@@ -432,6 +394,15 @@ export class DataPipeline {
     // === [v0.3.33] Phase 4: Label Propagation Algorithm (Community Detection) ===
     Logger.info(`[FLOW_DEBUG] Running Label Propagation Community Detection...`);
     const communityResult = detectCommunities(nodes, edges);
+
+    const communitySizes = Array.from(communityResult.communitySizes.entries())
+      .sort((a, b) => b[1] - a[1]);
+    const communityCount = communityResult.communityCount;
+    const communityNodeTotal = communitySizes.reduce((sum, [, size]) => sum + size, 0);
+    const largestCommunity = communitySizes[0]?.[1] || 0;
+    const avgCommunitySize = communityCount > 0 ? communityNodeTotal / communityCount : 0;
+    Logger.info(`[COMMUNITY_STATS] count=${communityCount} total=${communityNodeTotal} avg=${avgCommunitySize.toFixed(2)} largest=${largestCommunity}`);
+    Logger.info(`[COMMUNITY_STATS_TOP10] ${JSON.stringify(communitySizes.slice(0, 10).map(([id, size]) => ({ id, size })))}`);
     
     // Inject community labels into node.data
     for (const node of nodes) {
@@ -467,6 +438,7 @@ export class DataPipeline {
         metaEdges.push({ source, target, weight: traffic });
     }
 
+    console.timeEnd('[PIPELINE] TOTAL');
     return { nodes, edges, clusters, metaEdges };
   }
 

@@ -7,6 +7,7 @@
  * fzf (C) 2013-2023 Junegunn Choi
  */
 console.log("SYNAPSE_BUILD_20260716_A");
+console.log('[WEBVIEW_BOOT] canvas-engine.js loaded');
 
 /**
  * PromotionParticle - 설계 승격 효과를 위한 파티클 클래스
@@ -176,10 +177,19 @@ class FlowRenderer {
 
         // 1. Entry Point 탐색 & Root 결정
         const inDegrees = {};
+        const outDegrees = {};
         edges.forEach(e => {
             if (!e || !e.to) return;
             inDegrees[e.to] = (inDegrees[e.to] || 0) + 1;
+            if (e.from) {
+                outDegrees[e.from] = (outDegrees[e.from] || 0) + 1;
+            }
         });
+        const totalNodes = nodes.length || 1;
+        const totalEdges = edges.length;
+        console.log("[FLOW_DEBUG] total edges", totalEdges);
+        console.log("[FLOW_DEBUG] avg indegree", totalEdges / totalNodes);
+        console.log("[FLOW_DEBUG] avg outdegree", totalEdges / totalNodes);
 
         // [v0.3.32.1] Root Investigation Logs
         const _allRoots = nodes.filter(n => !inDegrees[n.id]);
@@ -243,6 +253,7 @@ class FlowRenderer {
 
         console.log("[FLOW_DEBUG] entryPoint", entryPoint?.data?.file || "null");
         console.log("[FLOW_DEBUG] roots count", roots.length);
+        console.log("[FLOW_DEBUG] root ratio", roots.length / totalNodes);
         console.log("[FLOW_DEBUG] roots files", roots.slice(0, 10).map(r => r.data?.file || r.id));
 
         // [Checkpoint A 진단] entry candidates 목록
@@ -1695,14 +1706,18 @@ class PolicyFactory {
 
 class CanvasEngine {
     constructor(canvasId) {
+        console.log('[ENGINE_CONSTRUCTOR_ENTER]', canvasId);
         this._instanceId = Math.random().toString(36).slice(2, 8);
         this._engineId = this._instanceId;
         console.log('[ENGINE_CREATED]', this._engineId);
+        // 모드 및 렌더러
+        this.currentMode = 'cluster'; // 'graph' | 'tree' | 'flow' | 'cluster'
         this.canvas = document.getElementById(canvasId);
         if (!this.canvas) {
             console.error('[SYNAPSE] Canvas not found:', canvasId);
             return;
         }
+        this.canvas.dataset.mode = this.currentMode;
         this.ctx = this.canvas.getContext('2d');
 
         // 캔버스 크기 설정
@@ -1803,6 +1818,8 @@ class CanvasEngine {
         // [v0.2.17] DTR State
         this.currentDTR = 0.3;
         this.clusters = []; // 클러스터 데이터
+        this._clusterMap = new Map(); // [v0.3.34] O(1) cluster lookup
+        this._spatialIndexDirty = true; // [v0.3.34] Rebuild on first render, then only when dirty
         this.docShelfNodes = []; // [v0.3.1] 문서화 전용 패널 리스트
         this.isExpectingUpdate = false; // 데이터 업데이트 시 뷰 유지 여부 플래그
 
@@ -1819,18 +1836,15 @@ class CanvasEngine {
         this.isAligning = false; // [v0.3.20] Strategic Alignment Animation state
         this.alignTimer = 0;
         this.clusterFlows = []; // [v0.3.21] Heatmap Flow Data
-        this.showHeatmap = true; // [v0.3.21] Traffic Heatmap Toggle state
+        this.showHeatmap = false; // [v0.3.21] Traffic Heatmap Toggle state
 
         // [v0.2.19] Layer Visibility State
         this.showBaseLayer = true;
         this.showUserLayer = true;
-        this.showExternalLayer = true;
+        this.showExternalLayer = false;
         this.clientLayers = {}; // { [clientId]: { visible: boolean, order: number } }
 
         this.showDocShelf = false;
-
-        // 모드 및 렌더러
-        this.currentMode = 'graph'; // 'graph' | 'tree' | 'flow'
 
         // [v0.3.33 Phase 1] ViewStrategy — 현재는 FullGraph 고정. Phase 3에서 분기 구현.
         this.viewStrategy = ViewStrategy.FullGraph;
@@ -2110,6 +2124,10 @@ class CanvasEngine {
                 this.render();
             });
         }
+        if (btnToggleHeatmap) {
+            btnToggleHeatmap.textContent = this.showHeatmap ? 'ON' : 'OFF';
+            btnToggleHeatmap.classList.toggle('active', this.showHeatmap);
+        }
 
         // [v0.3.19] Auto-Align Architecture (Role-based)
         const btnAlignRole = document.getElementById('btn-align-role');
@@ -2170,9 +2188,13 @@ class CanvasEngine {
                 this.render();
             });
         }
+        if (btnLayerExternal) {
+            btnLayerExternal.classList.toggle('active', this.showExternalLayer);
+            btnLayerExternal.textContent = this.showExternalLayer ? 'ON' : 'OFF';
+        }
 
         // [v0.3.33.8] 4-Level Edge Visibility Control (FULL / NO_BADGES / CLUSTER / NONE)
-        window.edgeVisibilityMode = 'FULL'; // 'FULL' | 'NO_BADGES' | 'CLUSTER' | 'NONE'
+        window.edgeVisibilityMode = 'NONE'; // 'FULL' | 'NO_BADGES' | 'CLUSTER' | 'NONE'
         const btnEdgeVisAll = document.getElementById('btn-edge-vis-all');
         const btnEdgeVisNoBadge = document.getElementById('btn-edge-vis-nobadge');
         const btnEdgeVisCluster = document.getElementById('btn-edge-vis-cluster');
@@ -2184,6 +2206,7 @@ class CanvasEngine {
             if (btnEdgeVisCluster) btnEdgeVisCluster.classList.toggle('active', mode === 'CLUSTER');
             if (btnEdgeVisHideEdges) btnEdgeVisHideEdges.classList.toggle('active', mode === 'NONE');
         };
+        updateEdgeVisButtons(window.edgeVisibilityMode);
 
         if (btnEdgeVisAll) {
             btnEdgeVisAll.addEventListener('click', () => {
@@ -3462,8 +3485,8 @@ class CanvasEngine {
                     const node = this.getNodeAt(worldPos.x, worldPos.y);
                     const _perfHitEnd = performance.now();
                     
-                    if (_perfHitEnd - _perfHitStart > 5) {
-                        console.log(`[PERF] Interaction HitTest: ${(_perfHitEnd - _perfHitStart).toFixed(2)}ms`);
+                    if (_perfHitEnd - _perfHitStart > 20) {
+                        console.warn(`[PERF] Interaction HitTest: ${(_perfHitEnd - _perfHitStart).toFixed(2)}ms, nodes=${this.nodes ? this.nodes.length : 0}`);
                     }
 
                     this.hoveredEdge = edge;
@@ -3586,7 +3609,7 @@ class CanvasEngine {
                         // Mark nodes as user-positioned
                         draggedNodes.forEach(n => n.positionSource = 'user');
                         this.saveWorkspace();
-                        this.buildSpatialIndex(); // [v0.3.33] Phase 3A: Update spatial index after drag
+                        this._spatialIndexDirty = true; // [v0.3.34] Defer rebuild to next render
                     }
                 }
                 this.isDragging = false;
@@ -3931,14 +3954,14 @@ class CanvasEngine {
 
             // Check if node is hidden (collapsed cluster or ancestor collapsed) [v0.3.32.4]
             if (node.cluster_id) {
-                const cluster = this.clusters?.find(c => c.id === node.cluster_id);
+                const cluster = this._clusterMap.get(node.cluster_id);
                 if (cluster && cluster.collapsed) continue;
                 // Check ancestor collapsed
                 if (cluster && cluster.parent_id) {
                     let cur = cluster;
                     let hiddenByAncestor = false;
                     while (cur && cur.parent_id) {
-                        const par = this.clusters.find(x => x.id === cur.parent_id);
+                        const par = this._clusterMap.get(cur.parent_id);
                         if (par && par.collapsed) { hiddenByAncestor = true; break; }
                         cur = par;
                     }
@@ -5958,53 +5981,8 @@ class CanvasEngine {
             if (bounds) this.spatialIndex.insertCluster(c);
         });
 
-        // Store computed bounds for use in flows/edges
-        // this._lastComputedBounds is updated inside computeClusterBounds
-
-        // [v0.3.33.2] Cluster Bounds Audit
-        if (this._lastComputedBounds && this.clusters.length > 0) {
-            const auditList = [];
-            for (const c of this.clusters) {
-                const b = this._lastComputedBounds.get(c.id);
-                if (b) {
-                    const width = b.maxX - b.minX;
-                    const height = b.maxY - b.minY;
-                    const directNodesCount = this.nodes.filter(n => (n.cluster_id === c.id || (n.data && n.data.cluster_id === c.id))).length;
-                    const childClustersCount = this.clusters.filter(x => x.parent_id === c.id).length;
-                    
-                    // [v0.3.33.3] Requested BOUND_COMPARE log
-                    if (height > 50000 || c.label === 'vs' || c.label === 'src' || c.id.includes('sys_cluster_buffer')) {
-                        console.log('[BOUND_COMPARE]', {
-                            id: c.id,
-                            label: c.label || c.id,
-                            minY: Math.round(b.minY),
-                            maxY: Math.round(b.maxY),
-                            computedHeight: Math.round(height),
-                            directNodes: directNodesCount,
-                            childClusters: childClustersCount
-                        });
-                    }
-
-                    auditList.push({ id: c.id, name: c.label || c.id, directNodesCount, childClustersCount, width: Math.round(width), height: Math.round(height), minX: Math.round(b.minX), maxX: Math.round(b.maxX), minY: Math.round(b.minY), maxY: Math.round(b.maxY) });
-                }
-            }
-            auditList.sort((a, b) => b.height - a.height);
-            console.log('[CLUSTER_BOUNDS_AUDIT] Top 10 largest clusters by HEIGHT:');
-            console.table(auditList.slice(0, 10));
-
-            // Clean up any existing debug overlay
-            const debugDivId = 'synapse-debug-audit-div';
-            const existingDebugDiv = document.getElementById(debugDivId);
-            if (existingDebugDiv) {
-                existingDebugDiv.remove();
-            }
-        }
-
         console.log(`[PERF] SpatialIndexBuildTime: ${(performance.now() - _tIndex).toFixed(1)}ms (nodes=${this.nodes.length}, clusters=${this.clusters.length})`);
-        console.log(`[DEBUG] buildSpatialIndex nodeTree count inside: `, this.spatialIndex.nodeTree ? this.spatialIndex.nodeTree.all().length : 'null');
-        console.log(`[DEBUG] buildSpatialIndex fallbackMode: `, this.spatialIndex.fallbackMode);
-        if (this.nodes.length > 0 && this.spatialIndex.nodeTree && this.spatialIndex.nodeTree.all().length === 0) {
-            console.log(`[DEBUG] First node position: `, this.nodes[0].position);
+        if (this.nodes.length > 0) {
             console.log(`[DEBUG] Is first node position finite? `, Number.isFinite(this.nodes[0].position?.x), Number.isFinite(this.nodes[0].position?.y));
         }
     }
@@ -6076,8 +6054,27 @@ class CanvasEngine {
             'analysis', 'report', 'logic'
         ];
 
-        const rawNodes = projectState.nodes || [];
+        const incomingNodes = projectState.nodes || [];
+        const rawNodes = incomingNodes.filter(n => {
+            const id = (n?.id || '').toString().toLowerCase();
+            const file = (n?.data?.file || n?.filePath || '').toString().toLowerCase();
+            const looksLikeCommand =
+                id.startsWith('command:') ||
+                file.startsWith('command:') ||
+                id.includes('command%3a') ||
+                file.includes('command%3a');
+            return !looksLikeCommand;
+        });
         const rawEdges = projectState.edges || [];
+
+        const legacyCommandNodes = incomingNodes.length - rawNodes.length;
+        if (legacyCommandNodes > 0) {
+            console.log('[LEGACY_SANITIZE]', {
+                removedCommandNodes: legacyCommandNodes,
+                incomingNodes: incomingNodes.length,
+                sanitizedNodes: rawNodes.length
+            });
+        }
 
         const bad = rawNodes.filter(n => {
             const f = (n.data && n.data.file) ? n.data.file : (n.filePath || n.id || '');
@@ -6092,15 +6089,40 @@ class CanvasEngine {
         // 1. Separate nodes into Canvas pool and Documentation/Blacklist pool
         const canvasNodes = [];
         const documentationNodes = [];
+        const ghostRemovedSamples = [];
+        const stage1DropStats = {
+            blacklistedGhost: 0,
+            reportGhost: 0,
+            untitledOrCommand: 0,
+            documentation: 0,
+            canvas: 0
+        };
 
         rawNodes.forEach(node => {
             const lowerId = node.id.toLowerCase();
             const isBlacklisted = ghostBlacklist.some(b => lowerId === b || lowerId.startsWith(b + ':') || lowerId.startsWith(b + '.'));
             
             // Skip blacklisted ghosts entirely
-            if ((node.status === 'ghost' || node.type === 'external') && isBlacklisted) return;
-            if (lowerId.includes('report') && (node.status === 'ghost' || node.type === 'external')) return;
-            if (lowerId.includes('untitled') || lowerId.includes('command:')) return;
+            if ((node.status === 'ghost' || node.type === 'external') && isBlacklisted) {
+                stage1DropStats.blacklistedGhost++;
+                if (ghostRemovedSamples.length < 50) {
+                    ghostRemovedSamples.push({
+                        id: node.id,
+                        type: node.type,
+                        status: node.status,
+                        file: node.data?.file || node.filePath || null
+                    });
+                }
+                return;
+            }
+            if (lowerId.includes('report') && (node.status === 'ghost' || node.type === 'external')) {
+                stage1DropStats.reportGhost++;
+                return;
+            }
+            if (lowerId.includes('untitled') || lowerId.includes('command:')) {
+                stage1DropStats.untitledOrCommand++;
+                return;
+            }
 
             // Mark or Move Documentation (Refined Pattern)
             const type = (node.type || '').toString().toLowerCase();
@@ -6114,12 +6136,36 @@ class CanvasEngine {
 
             if (isDoc) {
                 documentationNodes.push(node);
+                stage1DropStats.documentation++;
             } else {
                 canvasNodes.push(node);
+                stage1DropStats.canvas++;
             }
         });
 
         console.log("[FLOW_DEBUG] loadProjectState canvasNodes", canvasNodes.length, "docNodes", documentationNodes.length);
+        console.log('[FLOW_STAGE_1]', {
+            rawNodes: rawNodes.length,
+            keptNodes: canvasNodes.length + documentationNodes.length,
+            droppedNodes: rawNodes.length - (canvasNodes.length + documentationNodes.length),
+            canvasNodes: canvasNodes.length,
+            docNodes: documentationNodes.length,
+            dropReasons: {
+                blacklistedGhost: stage1DropStats.blacklistedGhost,
+                reportGhost: stage1DropStats.reportGhost,
+                untitledOrCommand: stage1DropStats.untitledOrCommand,
+                movedToDocShelf: stage1DropStats.documentation
+            }
+        });
+        console.log('[GHOST_RULE]', {
+            total: rawNodes.length,
+            removed: stage1DropStats.blacklistedGhost,
+            removedRate: rawNodes.length > 0 ? Number((stage1DropStats.blacklistedGhost / rawNodes.length).toFixed(4)) : 0,
+            sampleCount: ghostRemovedSamples.length
+        });
+        if (ghostRemovedSamples.length > 0) {
+            console.log('[GHOST_SAMPLE]', ghostRemovedSamples);
+        }
 
         // [v0.3.33 Phase 2] Apply Materialization Policy at the very beginning of the pipeline
         const policy = PolicyFactory.create(this.viewStrategy);
@@ -6301,6 +6347,8 @@ class CanvasEngine {
                     // [v0.3.34] Default collapsed to false to ensure initLODState captures them
                     return { ...c, layer, clientLayer, collapsed: c.collapsed === true ? true : false };
                 });
+            // [v0.3.34] Rebuild O(1) cluster lookup map
+            this._clusterMap = new Map(this.clusters.map(c => [c.id, c]));
             // [v0.3.33 Phase 2] Build ClusterHierarchy runtime index
             this.clusterHierarchy = new ClusterHierarchy(this.clusters);
 
@@ -7052,13 +7100,20 @@ class CanvasEngine {
     }
 
     fitView() {
+        console.time('[FIT_VIEW]');
         if (!this.nodes || this.nodes.length === 0) {
             this.transform = { zoom: 1.0, offsetX: 0, offsetY: 0 };
             this.updateZoomDisplay();
+            console.timeEnd('[FIT_VIEW]');
             return;
         }
+        console.time('[FIT_BOUNDS]');
         const bounds = this.computeWorldBounds();
+        console.timeEnd('[FIT_BOUNDS]');
+        console.time('[FIT_CAMERA]');
         this.fitCameraToBounds(bounds);
+        console.timeEnd('[FIT_CAMERA]');
+        console.timeEnd('[FIT_VIEW]');
     }
 
     updateZoomDisplay() {
@@ -7313,6 +7368,7 @@ class CanvasEngine {
 
     render() {
         const _perfRenderStart = performance.now();
+        console.time('render-frame');
         
         if (this._frameCounter < 3 || this._frameCounter % 60 === 0) {
             console.log(
@@ -7398,8 +7454,11 @@ class CanvasEngine {
             }
             this.edgeValidationCache.clear(); // Clear heavy validation results
             
-            // [v0.3.33] Spatial Index is now explicitly rebuilt via buildSpatialIndex()
-            this.buildSpatialIndex();
+            // [v0.3.34] Spatial Index: dirty flag-based rebuild (not every frame)
+            if (this._spatialIndexDirty) {
+                this.buildSpatialIndex();
+                this._spatialIndexDirty = false;
+            }
         }
 
         // [v0.2.24] Unified Animation Updates (Eco-mode aware)
@@ -7523,6 +7582,26 @@ class CanvasEngine {
 
                 if (this.isGraphDataDirty || !this._visibleNodesCache) {
                     console.time('buildVisibleCaches');
+                    console.time('visibleNodeFilter');
+                    const lodFilterStats = {
+                        inputNodes: this.nodes ? this.nodes.length : 0,
+                        pass: 0,
+                        clientLayer: 0,
+                        layerExternal: 0,
+                        layerUser: 0,
+                        layerBase: 0,
+                        hideLeaf: 0,
+                        focus: 0,
+                        lodSystemA: 0,
+                        lodDematerialized: 0,
+                        collapsedSystemA: 0
+                    };
+
+                    const markReject = (key) => {
+                        if (Object.prototype.hasOwnProperty.call(lodFilterStats, key)) {
+                            lodFilterStats[key]++;
+                        }
+                    };
                     const isUserLogic = (n) => 
                         n.layer === 'user' || 
                         (n.data && n.data.layer === 'user') || 
@@ -7559,23 +7638,23 @@ class CanvasEngine {
 
                         const cl = n.clientLayer || (n.data && n.data.clientLayer);
                         if (cl) {
-                            if (!this._isClientLayerVisible(n)) { if (isActivity) console.log('[ACTIVITY_REJECT]', n.id, 'reason=client_layer'); return false; }
+                            if (!this._isClientLayerVisible(n)) { if (isActivity) console.log('[ACTIVITY_REJECT]', n.id, 'reason=client_layer'); markReject('clientLayer'); return false; }
                         } else {
-                            if (isExternal && !this.showExternalLayer) { if (isActivity) console.log('[ACTIVITY_REJECT]', n.id, 'reason=layer_external'); return false; }
-                            if (isUser && !this.showUserLayer) { if (isActivity) console.log('[ACTIVITY_REJECT]', n.id, 'reason=layer_user'); return false; }
-                            if (!isUser && !isExternal && !this.showBaseLayer) { if (isActivity) console.log('[ACTIVITY_REJECT]', n.id, 'reason=layer_base'); return false; }
+                            if (isExternal && !this.showExternalLayer) { if (isActivity) console.log('[ACTIVITY_REJECT]', n.id, 'reason=layer_external'); markReject('layerExternal'); return false; }
+                            if (isUser && !this.showUserLayer) { if (isActivity) console.log('[ACTIVITY_REJECT]', n.id, 'reason=layer_user'); markReject('layerUser'); return false; }
+                            if (!isUser && !isExternal && !this.showBaseLayer) { if (isActivity) console.log('[ACTIVITY_REJECT]', n.id, 'reason=layer_base'); markReject('layerBase'); return false; }
                         }
 
                         // [v0.3.22.2] Noise Control: Hide Leaf Nodes (WebGL Parity)
                         if (this.hideLeafNodes) {
                             const stats = this.nodeStatsMap.get(n.id);
-                            if (stats && stats.connectedNodes < 3) { if (isActivity) console.log('[ACTIVITY_REJECT]', n.id, 'reason=hide_leaf', 'connectedNodes=' + stats.connectedNodes); return false; }
+                            if (stats && stats.connectedNodes < 3) { if (isActivity) console.log('[ACTIVITY_REJECT]', n.id, 'reason=hide_leaf', 'connectedNodes=' + stats.connectedNodes); markReject('hideLeaf'); return false; }
                         }
 
                         // [v0.3.22.2] Strategic Visibility: Top-N Focus View (WebGL Parity)
                         if (this.focusTopNodes) {
                             const isEssential = this.selectedNodes.has(n.id) || (this.hoveredNode && this.hoveredNode.id === n.id);
-                            if (!this.focusNodeSet.has(n.id) && !isEssential) { if (isActivity) console.log('[ACTIVITY_REJECT]', n.id, 'reason=focus'); return false; }
+                            if (!this.focusNodeSet.has(n.id) && !isEssential) { if (isActivity) console.log('[ACTIVITY_REJECT]', n.id, 'reason=focus'); markReject('focus'); return false; }
                         }
 
                         const clusterId = n.cluster_id || n.data?.cluster_id;
@@ -7584,6 +7663,7 @@ class CanvasEngine {
                         if (this._visibleGraphClusterIds && clusterId) {
                             if (!this._visibleGraphClusterIds.has(clusterId)) {
                                 if (isActivity) console.log('[ACTIVITY_REJECT]', n.id, 'reason=lod_system_a');
+                                markReject('lodSystemA');
                                 return false;
                             }
                         }
@@ -7606,6 +7686,7 @@ class CanvasEngine {
 
                         if (isTelescopeCollapsed) {
                             if (isActivity) console.log('[ACTIVITY_REJECT]', n.id, 'reason=lod_dematerialized');
+                            markReject('lodDematerialized');
                             return false;
                         }
 
@@ -7617,15 +7698,44 @@ class CanvasEngine {
                                 const hNode = this.clusterHierarchy.get(curId);
                                 if (hNode && hNode.cluster && hNode.cluster.collapsed) { 
                                     if (isActivity) console.log('[ACTIVITY_REJECT]', n.id, 'reason=collapsed_sys_a'); 
+                                    markReject('collapsedSystemA');
                                     return false; 
                                 }
                                 curId = hNode ? hNode.parentId : null;
                             }
                         }
                         if (isActivity) console.log('[ACTIVITY_REJECT]', n.id, 'reason=PASS');
+                        lodFilterStats.pass++;
                         return true;
                     });
+                    console.timeEnd('visibleNodeFilter');
                     console.timeEnd('LOD:visibleNodes');
+
+                    const _zoom = this.transform?.zoom || 1;
+                    const _lodLabel = _zoom < 0.4 ? 'SATELLITE' : (_zoom > 1.5 ? 'DETAIL' : 'NORMAL');
+                    console.log('[FLOW_STAGE_2]', {
+                        inputNodes: lodFilterStats.inputNodes,
+                        visibleNodes: this._visibleNodesCache.length,
+                        droppedNodes: lodFilterStats.inputNodes - this._visibleNodesCache.length,
+                        zoom: _zoom,
+                        lodLabel: _lodLabel,
+                        showLayers: {
+                            base: this.showBaseLayer,
+                            user: this.showUserLayer,
+                            external: this.showExternalLayer
+                        },
+                        rejectReasons: {
+                            clientLayer: lodFilterStats.clientLayer,
+                            layerExternal: lodFilterStats.layerExternal,
+                            layerUser: lodFilterStats.layerUser,
+                            layerBase: lodFilterStats.layerBase,
+                            hideLeaf: lodFilterStats.hideLeaf,
+                            focus: lodFilterStats.focus,
+                            lodSystemA: lodFilterStats.lodSystemA,
+                            lodDematerialized: lodFilterStats.lodDematerialized,
+                            collapsedSystemA: lodFilterStats.collapsedSystemA
+                        }
+                    });
 
                     // [v0.3.33] Phase 1: Visible Cluster Registry
                     console.time('LOD:visibleClusters');
@@ -7804,8 +7914,11 @@ class CanvasEngine {
                 this._selectedNodeIds = new Set(Array.from(this.selectedNodes).map(n => n.id));
 
                 // [v0.2.25] Forced 2D layer for clusters (Option 4)
+                console.time('drawClusters');
                 this.renderGrid();
                 this.renderClusters();
+                console.timeEnd('drawClusters');
+
                 this.renderTrafficHeatmap(); // [v0.3.21] Heatmap Layer
                 this.renderScrollbars();
 
@@ -7953,9 +8066,14 @@ class CanvasEngine {
 
                         // [v0.3.9] Fixed 2D Mode: Render graph on transformed context
                         if (this.currentMode !== 'cluster') {
+                            console.time('drawEdges');
                             this.renderEdges2D();
+                            console.timeEnd('drawEdges');
+
+                            console.time('drawNodes');
                             this.renderNodes2D(this.transform.zoom);
                             this.renderLabels2D();
+                            console.timeEnd('drawNodes');
                         }
 
                         this.ctx.restore();
@@ -8053,6 +8171,7 @@ class CanvasEngine {
             if (elapsed > 5) {
                 console.log(`[PERF] Interaction Render: ${elapsed.toFixed(2)}ms`);
             }
+            console.timeEnd('render-frame');
         }
     }
 
@@ -9399,9 +9518,12 @@ class CanvasEngine {
      */
     renderTrafficHeatmap() {
         if (!this.showHeatmap) return;
+        console.time('renderTrafficHeatmap');
+        try {
 
         // [v0.3.22.2] Dynamic Heatmap Calculation (if project data is missing or invalidated)
         if (!this.clusterFlows || this.clusterFlows.length === 0) {
+            console.time('heatmap-edge-scan');
             const flows = new Map();
             const activeEdges = this._visibleEdgesCache || this.edges; // [v0.3.34] Use visible edges!
             activeEdges.forEach(e => {
@@ -9412,10 +9534,14 @@ class CanvasEngine {
                     flows.set(key, (flows.get(key) || 0) + 1);
                 }
             });
+            console.timeEnd('heatmap-edge-scan');
+
+            console.time('heatmap-flow-build');
             this.clusterFlows = Array.from(flows.entries()).map(([key, count]) => {
                 const [source, target] = key.split('->');
                 return { source, target, count };
             });
+            console.timeEnd('heatmap-flow-build');
         }
 
         if (this.clusterFlows.length === 0) return;
@@ -9456,52 +9582,12 @@ class CanvasEngine {
                     'boundsUsed=' + srcBoundsCount + ' posFallback=' + srcPosCount);
             }
 
-            // [PROBE v0.3.33] _lastComputedBounds integrity + extreme center dump
-            {
-                const activeIds = new Set(this.clusters.map(c => c.id));
-                for (const [id] of (this._lastComputedBounds || [])) {
-                    if (!activeIds.has(id)) {
-                        const b = this._lastComputedBounds.get(id);
-                        console.warn('[STALE_BOUNDS]', id, '_lastComputedBounds but NOT in this.clusters',
-                            { center: `(${Math.round((b.minX+b.maxX)/2)},${Math.round((b.minY+b.maxY)/2)})` });
-                    }
-                }
-                for (const c of this.clusters) {
-                    const b = this._lastComputedBounds?.get(c.id);
-                    if (!b) continue;
-                    const cx = (b.minX + b.maxX) / 2;
-                    const cy = (b.minY + b.maxY) / 2;
-                    
-                    const nodeCount = this.nodes.filter(
-                        n => (n.cluster_id || n.data?.cluster_id) === c.id
-                    ).length;
-
-                    if (nodeCount === 0) {
-                        console.error('[EMPTY_CLUSTER]', {
-                            id: c.id,
-                            centerX: Math.round(cx),
-                            centerY: Math.round(cy),
-                            bounds: b
-                        });
-                    }
-
-                    if (Math.abs(cx) > 30000 || Math.abs(cy) > 30000) {
-                        console.error('[EXTREME_CLUSTER_TRACE]', {
-                            id: c.id,
-                            nodeCount: nodeCount,
-                            childClusterCount: c.children?.length,
-                            bounds: b,
-                            centerX: Math.round(cx),
-                            centerY: Math.round(cy)
-                        });
-                    }
-                }
-            }
         }
 
         const ctx = this.ctx;
         ctx.save();
 
+        console.time('heatmap-draw');
         this.clusterFlows.forEach(flow => {
             const srcCluster = this.clusters.find(c => c.id === flow.source);
             const tgtCluster = this.clusters.find(c => c.id === flow.target);
@@ -9573,8 +9659,12 @@ class CanvasEngine {
                 }
             }
         });
+        console.timeEnd('heatmap-draw');
 
         ctx.restore();
+        } finally {
+            console.timeEnd('renderTrafficHeatmap');
+        }
     }
 
     // [v0.3.33] Cluster Render Eligibility — 단일 진실 공급원
@@ -12036,6 +12126,40 @@ class CanvasEngine {
             const size = clusterBounds.get(cluster.id);
             console.log("FIRST_CLUSTER", cluster.id, cluster.cx, cluster.cy, "width:", size ? size.width : 0, "height:", size ? size.height : 0);
         }
+
+        const clusterStats = this.clusters
+            .map(cluster => {
+                const size = clusterBounds.get(cluster.id);
+                const directNodes = nodesByCluster.get(cluster.id) || [];
+                const width = size ? size.width : 0;
+                const height = size ? size.height : 0;
+                return {
+                    id: cluster.id,
+                    directNodes: directNodes.length,
+                    width,
+                    height,
+                    aspectRatio: height > 0 ? width / height : 0
+                };
+            })
+            .sort((a, b) => b.directNodes - a.directNodes);
+
+        const clusterCount = clusterStats.length;
+        const largestCluster = clusterStats[0] || null;
+        const avgDirectNodes = clusterCount > 0
+            ? clusterStats.reduce((sum, c) => sum + c.directNodes, 0) / clusterCount
+            : 0;
+        console.log('[CLUSTER_STATS]', JSON.stringify({
+            clusterCount,
+            avgDirectNodes: Number(avgDirectNodes.toFixed(2)),
+            largestCluster
+        }));
+        console.log('[CLUSTER_SIZE_TOP10]', JSON.stringify(clusterStats.slice(0, 10).map(c => ({
+            id: c.id,
+            directNodes: c.directNodes,
+            width: c.width,
+            height: c.height,
+            aspectRatio: Number(c.aspectRatio.toFixed(2))
+        }))));
     }
 
 
@@ -12230,13 +12354,18 @@ class CanvasEngine {
 var engine;
 
 function initCanvas() {
-    if (engine) return;
-
+    console.log('[INIT_CANVAS_ENTER]');
+    if (engine) {
+        console.log('[INIT_CANVAS_SKIP] engine already exists');
+        return;
+    }
+    console.log('[INIT_CANVAS_CREATING]');
     // index.html의 <canvas id="canvas">와 일치해야 함
     engine = new CanvasEngine('canvas');
     window.engine = engine; // [v0.2.25] Expose to global for button clicks
     self.engine = engine;
     globalThis.engine = engine;
+    console.log('[WINDOW_ENGINE_ASSIGNED]', !!window.engine);
     console.log('[SYNAPSE] Engine initialized:', engine);
 
     // Failsafe: Remove loading overlay after 3 seconds no matter what
@@ -12311,6 +12440,7 @@ function initCanvas() {
             }
             case 'projectStateData':
             case 'projectState': {
+                console.log('[PROJECT_STATE_ENTER] nodes=' + (message.data?.nodes?.length ?? message.data?.edges?.length ?? '?'));
                 if (message.state) {
                     message.data = message.state; // normalize for logic below
                 }
@@ -12326,7 +12456,9 @@ function initCanvas() {
                 if (message.isAuthoritative) {
                     console.log('[SYNAPSE] Authoritative projectState received. Bypassing interaction lock.');
                     if (message.data) message.data._msgReceiveT = performance.now(); // [v0.3.33 Phase 0]
+                    console.log('[LOAD_PROJECT_STATE_ENTER] authoritative nodes=' + (message.data?.nodes?.length ?? '?'));
                     engine.loadProjectState(message.data, true);
+                    console.log('[LOAD_PROJECT_STATE_DONE] authoritative');
                     engine.updateNodeStats(); // [v0.3.22.9] Force stats update for tooltips
                     engine._pendingState = null;
                     // [v0.3.32.4] Refresh cluster visibility panel if open
@@ -12346,7 +12478,9 @@ function initCanvas() {
                 const preserve = isFreshSaveResponse || (!message.forceReset && engine.nodes && engine.nodes.length > 0);
                 
                 if (message.data) message.data._msgReceiveT = performance.now(); // [v0.3.33 Phase 0]
+                console.log('[LOAD_PROJECT_STATE_ENTER] non-auth nodes=' + (message.data?.nodes?.length ?? '?'));
                 engine.loadProjectState(message.data, preserve);
+                console.log('[LOAD_PROJECT_STATE_DONE] non-auth');
                 engine.updateNodeStats(); // [v0.3.22.9] Force stats update for tooltips
                 engine.isExpectingUpdate = false;
                 // [v0.3.32.4] Refresh cluster visibility panel if open
@@ -12892,7 +13026,9 @@ function initCanvas() {
     // Mode Switcher
     document.querySelectorAll('[data-mode]').forEach(btn => {
         btn.addEventListener('click', () => {
+            if (!engine) return;
             const mode = btn.dataset.mode;
+            if (!mode) return;
 
             // Update UI
             document.querySelectorAll('[data-mode]').forEach(b => b.classList.remove('active'));
@@ -12901,8 +13037,8 @@ function initCanvas() {
 
             // Switch Mode
             engine.currentMode = mode;
-            engine.canvas.dataset.mode = mode; // Ensure WebGL isolation condition checks match mode
-            engine.canvas2d.dataset.mode = mode; // Fix: WebGL checks this canvas dataset!
+            if (engine.canvas) engine.canvas.dataset.mode = mode; // Ensure WebGL isolation condition checks match mode
+            if (engine.canvas2d) engine.canvas2d.dataset.mode = mode; // Fix: WebGL checks this canvas dataset!
             console.log('[SYNAPSE] Switched to mode:', mode);
 
             // [v0.3.09] Rule 8. [Rendering Isolation] 강제 WebGL 초기화 (Force flush WebGL state during view transition)

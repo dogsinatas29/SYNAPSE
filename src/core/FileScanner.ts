@@ -8,6 +8,8 @@ export { CodeSummary };
 
 export class FileScanner {
     private static cache: Map<string, { summary: CodeSummary, mtime: number }> = new Map();
+    private static readonly MAX_FULL_SCAN_BYTES = 1024 * 1024; // 1MB
+    private static readonly DEFAULT_HEADER_SCAN_BYTES = 128 * 1024; // 128KB
 
     /**
      * 파일 내용을 읽고 클래스와 함수 목록을 추출
@@ -36,13 +38,18 @@ export class FileScanner {
                 hasImportSignature: false
             };
 
-            // [v0.2.18.1 Opt] Skip files larger than 1MB to prevent hangs
-            if (stats.size > 1024 * 1024) {
-                console.warn(`[SYNAPSE] Skipping large file: ${filePath} (${Math.round(stats.size / 1024)} KB)`);
-                return summary;
-            }
+            const ext = path.extname(filePath).toLowerCase();
+            const isLargeFile = stats.size > FileScanner.MAX_FULL_SCAN_BYTES;
+            const headerBytes = this.getHeaderScanBytes(ext);
+            const content = isLargeFile
+                ? this.readFileHeaderUtf8(filePath, headerBytes)
+                : fs.readFileSync(filePath, 'utf-8');
 
-            const content = fs.readFileSync(filePath, 'utf-8');
+            if (isLargeFile) {
+                console.warn(
+                    `[SYNAPSE] Large file header scan: ${filePath} (${Math.round(stats.size / 1024)} KB, head=${Math.round(headerBytes / 1024)} KB, ext=${ext || 'unknown'})`
+                );
+            }
 
             // 🧬 Rugged Signature Detection (Regex Based)
             summary.hasAtomicSignature = /\[SYNAPSE\]\s+Atomic\s+Logic\s+Entry/i.test(content);
@@ -71,8 +78,6 @@ export class FileScanner {
                     }
                 }
             }
-
-            const ext = path.extname(filePath);
 
             // [v0.3.32.4] Delegate to ScannerRegistry for language-specific parsing
             const delegated = ScannerRegistry.getInstance().scan(ext, content, summary);
@@ -116,6 +121,24 @@ export class FileScanner {
             console.error(`[SYNAPSE] Failed to scan file ${filePath}:`, error);
             return { classes: [], functions: [], references: [] };
         }
+    }
+
+    private readFileHeaderUtf8(filePath: string, byteLimit: number): string {
+        const fd = fs.openSync(filePath, 'r');
+        try {
+            const buffer = Buffer.alloc(byteLimit);
+            const bytesRead = fs.readSync(fd, buffer, 0, byteLimit, 0);
+            return buffer.subarray(0, bytesRead).toString('utf8');
+        } finally {
+            fs.closeSync(fd);
+        }
+    }
+
+    private getHeaderScanBytes(ext: string): number {
+        if (['.ts', '.js', '.py'].includes(ext)) return 192 * 1024;
+        if (['.java', '.kt', '.kts', '.rs', '.c', '.cc', '.cpp', '.h', '.hpp'].includes(ext)) return 128 * 1024;
+        if (['.json', '.yaml', '.yml', '.toml', '.md', '.sql', '.sh'].includes(ext)) return 64 * 1024;
+        return FileScanner.DEFAULT_HEADER_SCAN_BYTES;
     }
 
     private parseJava(content: string, summary: CodeSummary) {
@@ -568,6 +591,13 @@ export class FileScanner {
             while ((match = linkRegex.exec(content)) !== null) {
                 const ref = match[2].trim();
                 if (ref && !ref.startsWith('http') && !ref.startsWith('#') && !ref.startsWith('mailto:')) {
+                    // Ignore command/data/custom scheme links. They are navigational actions, not file dependencies.
+                    // Keep file:// for explicit local file links.
+                    const hasUriScheme = /^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(ref);
+                    if (hasUriScheme && !ref.startsWith('file://')) {
+                        continue;
+                    }
+
                     // [v0.3.33 Fix] Keep the extension for markdown links so ReferenceVerifier can find the file
                     let cleanRef = ref.replace(/^file:\/\//, '').replace(/\\/g, '/');
                     // Remove url hash like #L123 if present

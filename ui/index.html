@@ -1268,17 +1268,17 @@ Please wait until harvesting completes.</p>
         <div class="dropdown">
             <div class="menu-label">👁️ View</div>
             <div class="dropdown-content">
-                <button class="btn active" data-mode="graph">Graph View</button>
-                <button class="btn" data-mode="cluster">Only Clusters</button>
+                <button class="btn" data-mode="graph">Graph View</button>
+                <button class="btn active" data-mode="cluster">Only Clusters</button>
                 <!-- <button class="btn" data-mode="tree">Tree View</button> Removed due to rendering issues -->
                 <button class="btn" data-mode="flow">Flow View</button>
                 <button class="btn" id="btn-toggle-docs">📚 Documentation Shelf</button>
                 <div class="menu-divider"></div>
                 <div style="padding: 5px 10px; font-size: 10px; color: var(--fg-dim); text-transform: uppercase; font-weight: bold;">Edge Visibility</div>
-                <button class="btn active" id="btn-edge-vis-all" title="Show all edges with badges">🟢 FULL (All Edges)</button>
+                <button class="btn" id="btn-edge-vis-all" title="Show all edges with badges">🟢 FULL (All Edges)</button>
                 <button class="btn" id="btn-edge-vis-nobadge" title="Show all edges without badges">🟡 LINES (No Badges)</button>
                 <button class="btn" id="btn-edge-vis-cluster" title="Show only cluster-to-cluster meta edges">🟠 CLUSTER (Meta Edges)</button>
-                <button class="btn" id="btn-edge-vis-none" title="Hide all edges">🔴 NONE (Hide Edges)</button>
+                <button class="btn active" id="btn-edge-vis-none" title="Hide all edges">🔴 NONE (Hide Edges)</button>
             </div>
         </div>
 
@@ -1573,9 +1573,18 @@ Please wait until harvesting completes.</p>
         // Listen for messages IMMEDIATELY and buffer them
         window.addEventListener('message', event => {
             const message = event.data;
+            console.log('[WEBVIEW_MESSAGE_RECEIVED] command=' + (message && message.command));
+            console.log('[ENGINE_STATE]', !!window.engine, typeof window.engine?.handleMessage);
             if (window.engine && window.engine.handleMessage) {
-                window.engine.handleMessage(message);
+                try {
+                    console.log('[ENGINE_DISPATCH]', window.engine.handleMessage.name);
+                    window.engine.handleMessage(message);
+                    console.log('[ENGINE_DISPATCH_DONE]');
+                } catch (e) {
+                    console.error('[ENGINE_DISPATCH_ERROR]', e);
+                }
             } else {
+                console.log('[ENGINE_MISSING] engine=' + !!window.engine);
                 window._synapseMessageQueue.push(message);
             }
         });
@@ -2841,7 +2850,7 @@ Please wait until harvesting completes.</p>
             </div>
             <div class="layer-toggle-row" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                 <span class="layer-label" style="font-size: 13px; color: var(--fg-main);" data-i18n="layer.external">외부 참조 (External) - <b id="layer-count-external" style="color: #a89984;">0</b></span>
-                <button id="btn-layer-external" class="layer-btn active" style="min-width: 50px;">ON</button>
+                <button id="btn-layer-external" class="layer-btn" style="min-width: 50px;">OFF</button>
             </div>
             <div id="client-layer-rows"></div>
             <div class="layer-toggle-row" style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; border-top: 1px solid #3c3836; padding-top: 10px;">
@@ -2854,7 +2863,7 @@ Please wait until harvesting completes.</p>
             </div>
             <div class="layer-toggle-row" style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px;">
                 <span class="layer-label" style="font-size: 13px; color: #fe8019; font-weight: bold;">Traffic Heatmap (Beta)</span>
-                <button id="btn-toggle-heatmap" class="layer-btn active" style="min-width: 50px;">ON</button>
+                <button id="btn-toggle-heatmap" class="layer-btn" style="min-width: 50px;">OFF</button>
             </div>
             <div class="layer-action-row" style="margin-top: 15px; border-top: 1px solid #3c3836; padding-top: 12px;">
                 <button id="btn-align-role" class="protocol-btn" style="width: 100%; font-size: 11px; background: #458588; color: #ebdbb2;">🎯 Align Architecture (Role-based)</button>

@@ -65,7 +65,8 @@ export class SnapshotSystem {
         let history: any[] = [];
         if (fs.existsSync(this.historyPath)) {
           try {
-            history = JSON.parse(fs.readFileSync(this.historyPath, 'utf8'));
+            const parsed = JSON.parse(fs.readFileSync(this.historyPath, 'utf8'));
+            history = Array.isArray(parsed) ? parsed : [];
           } catch (e) {
             history = [];
           }

@@ -55,4 +55,5 @@ node_modules/**
 !node_modules/vscode-languageserver/**
 !node_modules/vscode-languageserver-textdocument/**
 context/**
+command:*
 

@@ -1837,6 +1837,13 @@ class CanvasEngine {
         this.alignTimer = 0;
         this.clusterFlows = []; // [v0.3.21] Heatmap Flow Data
         this.showHeatmap = false; // [v0.3.21] Traffic Heatmap Toggle state
+        this.heatmapCacheCanvas = document.createElement('canvas');
+        this.heatmapCacheCtx = this.heatmapCacheCanvas.getContext('2d');
+        this.heatmapCacheValid = false;
+        this.heatmapCacheNeedsRebuild = true;
+        this.heatmapCacheKey = '';
+        this.heatmapCacheLastBuildAt = 0;
+        this.heatmapCacheMinIntervalMs = 250;
 
         // [v0.2.19] Layer Visibility State
         this.showBaseLayer = true;
@@ -2113,6 +2120,8 @@ class CanvasEngine {
             btnToggleHeatmap.addEventListener('click', () => {
                 this.showHeatmap = !this.showHeatmap;
                 this.clusterFlows = []; // [v0.3.34] Force recalculation
+                this.heatmapCacheValid = false;
+                this.heatmapCacheNeedsRebuild = true;
                 this.isGraphDataDirty = true; // [v0.3.34] Ensure cache flush
                 btnToggleHeatmap.textContent = this.showHeatmap ? 'ON' : 'OFF';
                 btnToggleHeatmap.classList.toggle('active', this.showHeatmap);
@@ -2594,6 +2603,8 @@ class CanvasEngine {
                 this.canvas.height = targetHeight;
                 this.canvas.style.width = `${width}px`;
                 this.canvas.style.height = `${height}px`;
+                this.heatmapCacheValid = false;
+                this.heatmapCacheNeedsRebuild = true;
 
                 if (this.webglEnabled && this.webglRenderer) {
                     this.webglRenderer.handleResize();
@@ -6392,6 +6403,8 @@ class CanvasEngine {
 
             // [v0.3.21] Heatmap Data Sync
             this.clusterFlows = projectState.cluster_flows || [];
+            this.heatmapCacheValid = false;
+            this.heatmapCacheNeedsRebuild = true;
             
             // [Phase 2B.13] Edge Bundle Data Sync
             this.metaEdges = projectState.metaEdges || [];
@@ -7834,6 +7847,8 @@ class CanvasEngine {
 
                     // [v0.3.34] Invalidate Heatmap Cache on Graph Data Dirty
                     this.clusterFlows = [];
+                    this.heatmapCacheValid = false;
+                    this.heatmapCacheNeedsRebuild = true;
 
                     // [v0.3.34] Disabled expensive stringify
                     // this.log(`[DEBUG_RENDER_NODES] Final visible nodes: ${JSON.stringify(this._visibleNodesCache.map(n => ({
@@ -9520,20 +9535,44 @@ class CanvasEngine {
         if (!this.showHeatmap) return;
         console.time('renderTrafficHeatmap');
         try {
+        // [v0.3.35] Heatmap cache key is quantized so minor pan/zoom jitter does not force full redraw every frame.
+        const q = (v, step) => Math.round(v / step);
+        const transformKey = [
+            q(this.transform.zoom, 0.02),
+            q(this.transform.offsetX, 80),
+            q(this.transform.offsetY, 80),
+            this._visibleClusterIds ? this._visibleClusterIds.size : 0,
+            (this._visibleEdgesCache ? this._visibleEdgesCache.length : this.edges.length)
+        ].join('|');
+
+        const now = Date.now();
+        const canReuseCache = this.heatmapCacheValid && this.heatmapCacheKey === transformKey;
+        const rebuildTooSoon = (now - this.heatmapCacheLastBuildAt) < this.heatmapCacheMinIntervalMs;
+
+        if (canReuseCache || (this.heatmapCacheValid && rebuildTooSoon && !this.heatmapCacheNeedsRebuild)) {
+            console.time('heatmap-cache-blit');
+            const ctx = this.ctx;
+            ctx.save();
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
+            ctx.drawImage(this.heatmapCacheCanvas, 0, 0);
+            ctx.restore();
+            console.timeEnd('heatmap-cache-blit');
+            return;
+        }
 
         // [v0.3.22.2] Dynamic Heatmap Calculation (if project data is missing or invalidated)
         if (!this.clusterFlows || this.clusterFlows.length === 0) {
             console.time('heatmap-edge-scan');
             const flows = new Map();
-            const activeEdges = this._visibleEdgesCache || this.edges; // [v0.3.34] Use visible edges!
-            activeEdges.forEach(e => {
+            const activeEdges = this._visibleEdgesCache || this.edges;
+            for (const e of activeEdges) {
                 const srcNode = this.nodeMap.get(e.from);
                 const tgtNode = this.nodeMap.get(e.to);
                 if (srcNode && tgtNode && srcNode.cluster_id && tgtNode.cluster_id && srcNode.cluster_id !== tgtNode.cluster_id) {
                     const key = `${srcNode.cluster_id}->${tgtNode.cluster_id}`;
                     flows.set(key, (flows.get(key) || 0) + 1);
                 }
-            });
+            }
             console.timeEnd('heatmap-edge-scan');
 
             console.time('heatmap-flow-build');
@@ -9546,122 +9585,102 @@ class CanvasEngine {
 
         if (this.clusterFlows.length === 0) return;
 
-        // [v0.3.33] Heatmap Bounds vs Node Bounds diagnostic
-        {
-            let hmMinX = Infinity, hmMaxX = -Infinity, hmMinY = Infinity, hmMaxY = -Infinity, hmArc = 0;
-            let srcBoundsCount = 0, srcPosCount = 0;
-            this.clusterFlows.forEach(flow => {
-                const srcCluster = this.clusters.find(c => c.id === flow.source);
-                const tgtCluster = this.clusters.find(c => c.id === flow.target);
-                if (!srcCluster || !tgtCluster) return;
-                [srcCluster, tgtCluster].forEach(cl => {
-                    const b = this._lastComputedBounds?.get(cl.id);
-                    let cx, cy;
-                    if (b) { cx = (b.minX + b.maxX) / 2; cy = (b.minY + b.maxY) / 2; srcBoundsCount++; }
-                    else { cx = cl.position?.x || 0; cy = cl.position?.y || 0; srcPosCount++; }
-                    if (cx < hmMinX) hmMinX = cx;
-                    if (cx > hmMaxX) hmMaxX = cx;
-                    if (cy < hmMinY) hmMinY = cy;
-                    if (cy > hmMaxY) hmMaxY = cy;
-                });
+        if (this._frameCounter % 120 === 0) {
+            let hmArc = 0;
+            for (const flow of this.clusterFlows) {
+                const srcCluster = this._clusterMap.get(flow.source) || this.clusters.find(c => c.id === flow.source);
+                const tgtCluster = this._clusterMap.get(flow.target) || this.clusters.find(c => c.id === flow.target);
+                if (!srcCluster || !tgtCluster) continue;
                 hmArc++;
-            });
-            if (hmArc > 0) {
-                let ndMinX = Infinity, ndMaxX = -Infinity, ndMinY = Infinity, ndMaxY = -Infinity;
-                (this.nodes || []).forEach(n => {
-                    const px = n.position?.x, py = n.position?.y;
-                    if (typeof px === 'number' && Number.isFinite(px)) { if (px < ndMinX) ndMinX = px; if (px > ndMaxX) ndMaxX = px; }
-                    if (typeof py === 'number' && Number.isFinite(py)) { if (py < ndMinY) ndMinY = py; if (py > ndMaxY) ndMaxY = py; }
-                });
-                console.log('[HM_BOUNDS]',
-                    'hmArcs=' + hmArc,
-                    'hmX=[' + Math.round(hmMinX) + '..' + Math.round(hmMaxX) + ']',
-                    'hmY=[' + Math.round(hmMinY) + '..' + Math.round(hmMaxY) + ']',
-                    'ndX=[' + Math.round(ndMinX) + '..' + Math.round(ndMaxX) + ']',
-                    'ndY=[' + Math.round(ndMinY) + '..' + Math.round(ndMaxY) + ']',
-                    'boundsUsed=' + srcBoundsCount + ' posFallback=' + srcPosCount);
             }
-
+            console.log('[HM_BOUNDS]', 'hmArcs=' + hmArc, 'cache=' + (this.heatmapCacheValid ? 'HIT' : 'MISS'));
         }
 
-        const ctx = this.ctx;
-        ctx.save();
+        const dpr = window.devicePixelRatio || 1;
+        const targetW = this.canvas.width;
+        const targetH = this.canvas.height;
+        if (this.heatmapCacheCanvas.width !== targetW || this.heatmapCacheCanvas.height !== targetH) {
+            this.heatmapCacheCanvas.width = targetW;
+            this.heatmapCacheCanvas.height = targetH;
+        }
+
+        const cacheCtx = this.heatmapCacheCtx;
+        if (!cacheCtx) return;
+
+        cacheCtx.setTransform(1, 0, 0, 1, 0, 0);
+        cacheCtx.clearRect(0, 0, targetW, targetH);
+        cacheCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        cacheCtx.translate(this.transform.offsetX, this.transform.offsetY);
+        cacheCtx.scale(this.transform.zoom, this.transform.zoom);
+
+        const clusterMap = this._clusterMap && this._clusterMap.size > 0
+            ? this._clusterMap
+            : new Map(this.clusters.map(c => [c.id, c]));
 
         console.time('heatmap-draw');
-        this.clusterFlows.forEach(flow => {
-            const srcCluster = this.clusters.find(c => c.id === flow.source);
-            const tgtCluster = this.clusters.find(c => c.id === flow.target);
+        for (const flow of this.clusterFlows) {
+            const srcCluster = clusterMap.get(flow.source);
+            const tgtCluster = clusterMap.get(flow.target);
 
-            if (srcCluster && tgtCluster && srcCluster.id !== tgtCluster.id) {
-                if (!this._visibleClusterIds || !this._visibleClusterIds.has(srcCluster.id) || !this._visibleClusterIds.has(tgtCluster.id)) return;
-                // [v0.3.34] Defensive: skip system clusters even if they sneak into _visibleClusterIds
-                if (isSystemCluster(srcCluster.id) || isSystemCluster(tgtCluster.id)) return;
+            if (!srcCluster || !tgtCluster || srcCluster.id === tgtCluster.id) continue;
+            if (!this._visibleClusterIds || !this._visibleClusterIds.has(srcCluster.id) || !this._visibleClusterIds.has(tgtCluster.id)) continue;
+            if (isSystemCluster(srcCluster.id) || isSystemCluster(tgtCluster.id)) continue;
 
-                // [v0.3.33] PROBE: actual draw targets (top-N)
-                if ((window.__probe_draw_arcs || 0) < 10) {
-                    console.log('[DRAW_ARC]',
-                        'src=' + srcCluster.id,
-                        'tgt=' + tgtCluster.id,
-                        'tgtInVis=' + this._visibleClusterIds?.has(tgtCluster.id),
-                        'count=' + flow.count);
-                    window.__probe_draw_arcs = (window.__probe_draw_arcs || 0) + 1;
-                }
+            const getCenter = (cluster) => {
+                const b = this._lastComputedBounds?.get(cluster.id);
+                if (b) return { x: (b.minX + b.maxX) / 2, y: (b.minY + b.maxY) / 2 };
+                return cluster.position || { x: 0, y: 0 };
+            };
 
-                // Get cluster bounds to find center
-                const getCenter = (cluster) => {
-                    const b = this._lastComputedBounds?.get(cluster.id);
-                    if (b) {
-                        return { x: (b.minX + b.maxX) / 2, y: (b.minY + b.maxY) / 2 };
-                    }
-                    return cluster.position || { x: 0, y: 0 };
-                };
+            const p1 = getCenter(srcCluster);
+            const p2 = getCenter(tgtCluster);
+            const dx = p2.x - p1.x;
+            const dy = p2.y - p1.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < 50) continue;
 
-                const p1 = getCenter(srcCluster);
-                const p2 = getCenter(tgtCluster);
+            const intensity = Math.min(flow.count / 20, 1.0);
+            const theme = (typeof SYNAPSE_THEME !== 'undefined') ? SYNAPSE_THEME : null;
+            const color = intensity > 0.7 ? theme.STATUS.WARNING.border : (intensity > 0.3 ? theme.EDGES.EVENT.color : theme.STATUS.PROPOSED.border);
 
-                const dx = p2.x - p1.x;
-                const dy = p2.y - p1.y;
-                const dist = Math.sqrt(dx * dx + dy * dy);
+            cacheCtx.beginPath();
+            cacheCtx.strokeStyle = color;
+            cacheCtx.globalAlpha = 0.1 + intensity * 0.4;
+            cacheCtx.lineWidth = 2 + intensity * 8;
+            cacheCtx.lineCap = 'round';
 
-                if (dist < 50) return;
+            const cx = (p1.x + p2.x) / 2 - dy * 0.2;
+            const cy = (p1.y + p2.y) / 2 + dx * 0.2;
+            cacheCtx.moveTo(p1.x, p1.y);
+            cacheCtx.quadraticCurveTo(cx, cy, p2.x, p2.y);
+            cacheCtx.stroke();
 
-                // Heatmap logic: intensity based on count
-                const intensity = Math.min(flow.count / 20, 1.0);
-                const theme = (typeof SYNAPSE_THEME !== 'undefined') ? SYNAPSE_THEME : null;
-                const color = intensity > 0.7 ? theme.STATUS.WARNING.border : (intensity > 0.3 ? theme.EDGES.EVENT.color : theme.STATUS.PROPOSED.border);
-                
-                ctx.beginPath();
-                ctx.strokeStyle = color;
-                ctx.globalAlpha = 0.1 + intensity * 0.4; // [v0.3.21] Subtle background
-                ctx.lineWidth = 2 + intensity * 8;
-                ctx.lineCap = 'round';
-
-                // Draw quadratic curve for a "flow" look
-                const cx = (p1.x + p2.x) / 2 - dy * 0.2;
-                const cy = (p1.y + p2.y) / 2 + dx * 0.2;
-
-                ctx.moveTo(p1.x, p1.y);
-                ctx.quadraticCurveTo(cx, cy, p2.x, p2.y);
-                ctx.stroke();
-
-                // Add small flow particles/arrows if intense
-                if (intensity > 0.4) {
-                    const t = (Date.now() % 1500) / 1500;
-                    const invT = 1 - t;
-                    const px = invT * invT * p1.x + 2 * invT * t * cx + t * t * p2.x;
-                    const py = invT * invT * p1.y + 2 * invT * t * cy + t * t * p2.y;
-                    
-                    ctx.fillStyle = color;
-                    ctx.globalAlpha = 0.6;
-                    ctx.beginPath();
-                    ctx.arc(px, py, 2.5, 0, Math.PI * 2);
-                    ctx.fill();
-                }
+            if (intensity > 0.4) {
+                const t = (Date.now() % 1500) / 1500;
+                const invT = 1 - t;
+                const px = invT * invT * p1.x + 2 * invT * t * cx + t * t * p2.x;
+                const py = invT * invT * p1.y + 2 * invT * t * cy + t * t * p2.y;
+                cacheCtx.fillStyle = color;
+                cacheCtx.globalAlpha = 0.6;
+                cacheCtx.beginPath();
+                cacheCtx.arc(px, py, 2.5, 0, Math.PI * 2);
+                cacheCtx.fill();
             }
-        });
+        }
         console.timeEnd('heatmap-draw');
 
+        this.heatmapCacheValid = true;
+        this.heatmapCacheNeedsRebuild = false;
+        this.heatmapCacheKey = transformKey;
+        this.heatmapCacheLastBuildAt = now;
+
+        console.time('heatmap-cache-blit');
+        const ctx = this.ctx;
+        ctx.save();
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.drawImage(this.heatmapCacheCanvas, 0, 0);
         ctx.restore();
+        console.timeEnd('heatmap-cache-blit');
         } finally {
             console.timeEnd('renderTrafficHeatmap');
         }

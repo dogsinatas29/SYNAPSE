@@ -10477,15 +10477,6 @@ class CanvasEngine {
         }
 
         if (this.clusterFlows.length === 0) {
-            const mainCtx = this.ctx;
-            if (mainCtx) {
-                mainCtx.save();
-                mainCtx.setTransform(1, 0, 0, 1, 0, 0);
-                mainCtx.fillStyle = 'red';
-                mainCtx.font = '24px sans-serif';
-                mainCtx.fillText(`[HEATMAP_DEBUG] flows: 0 (metaEdges: ${this.metaEdges ? this.metaEdges.length : 'null'})`, 20, 100);
-                mainCtx.restore();
-            }
             return;
         }
 
@@ -10586,16 +10577,7 @@ class CanvasEngine {
         const debugMsg = `[HEATMAP_DEBUG] flows: ${this.clusterFlows.length}, drawn: ${drawn}, skipVis: ${skippedVis}, skipDist: ${skippedDist}, skipSys: ${skippedSys}`;
         console.log(debugMsg);
         
-        // Draw debug text directly to the screen so it's impossible to miss
-        const mainCtx = this.ctx;
-        if (mainCtx) {
-            mainCtx.save();
-            mainCtx.setTransform(1, 0, 0, 1, 0, 0);
-            mainCtx.fillStyle = 'red';
-            mainCtx.font = '24px sans-serif';
-            mainCtx.fillText(debugMsg, 20, 100);
-            mainCtx.restore();
-        }
+
         console.timeEnd('heatmap-draw');
         this._recordPerfMetric('heatmap-draw', performance.now() - _tHeatmapDrawStart);
 

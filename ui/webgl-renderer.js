@@ -558,9 +558,6 @@ class WebGLRenderer {
         this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(curveVertices), this.gl.STATIC_DRAW);
         this.edgeCurveSegments = segments;
         
-        // Save maxEdges for bounds checking
-        this.maxEdges = maxEdges;
-
         // [v0.3.22.9] Expanded Edge Buffer Allocation
         this.edgeInstanceBuffer = this.gl.createBuffer();
 
@@ -577,6 +574,9 @@ class WebGLRenderer {
         const maxNodes = 60000;
         const maxEdges = 1000000; // Increased to 1M to support VSCode-main
         const maxChars = 150000;
+
+        // Save maxEdges for bounds checking
+        this.maxEdges = maxEdges;
 
         this._nodePosArr = new Float32Array(maxNodes * 2);
         this._nodeColorArr = new Float32Array(maxNodes * 3);

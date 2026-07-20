@@ -55,6 +55,16 @@ export class GraphModel {
     return this.projectRoot;
   }
 
+  public getDebugStats() {
+    return {
+      hasGraph: this.nodes.size > 0 || this.edges.length > 0 || this.clusters.length > 0,
+      nodeMapSize: this.nodes.size,
+      edgeListSize: this.edges.length,
+      clusterListSize: this.clusters.length,
+      hasProjectRoot: this.projectRoot.length > 0
+    };
+  }
+
   public nodeCount(): number {
     return this.nodes.size;
   }

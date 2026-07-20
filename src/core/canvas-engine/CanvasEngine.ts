@@ -115,8 +115,16 @@ export class CanvasEngine {
     this.stateManager.load(state);
   }
 
+  public resetState() {
+    this.stateManager.resetAllState();
+  }
+
   public mergeFromScan(state: any) {
     this.stateManager.mergeFromScan(state);
+  }
+
+  public getRetentionDiagnostics() {
+    return this.stateManager.getRetentionDiagnostics();
   }
 }
 

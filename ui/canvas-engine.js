@@ -175,7 +175,15 @@ class FlowRenderer {
         // })), null, 2));
         const edges = this.engine.edges || [];
 
-        // 1. Entry Point 탐색 & Root 결정
+        // [Optimization] O(N+E) Map based lookups for entire buildFlow
+        const nodeMap = new Map();
+        const nodeIndexMap = new Map();
+        nodes.forEach((node, index) => {
+            nodeMap.set(node.id, node);
+            nodeIndexMap.set(node.id, index);
+        });
+
+        const outEdgesMap = new Map();
         const inDegrees = {};
         const outDegrees = {};
         edges.forEach(e => {
@@ -183,6 +191,8 @@ class FlowRenderer {
             inDegrees[e.to] = (inDegrees[e.to] || 0) + 1;
             if (e.from) {
                 outDegrees[e.from] = (outDegrees[e.from] || 0) + 1;
+                if (!outEdgesMap.has(e.from)) outEdgesMap.set(e.from, []);
+                outEdgesMap.get(e.from).push(e);
             }
         });
         const totalNodes = nodes.length || 1;
@@ -275,26 +285,26 @@ class FlowRenderer {
 
         // [Checkpoint A 진단] edge 방향 확인
         console.log("[FLOW_DEBUG] edge sample", edges.slice(0, 30).map(e => ({
-            from: nodes.find(n => n.id === e.from)?.data?.file || e.from,
-            to: nodes.find(n => n.id === e.to)?.data?.file || e.to
+            from: nodeMap.get(e.from)?.data?.file || e.from,
+            to: nodeMap.get(e.to)?.data?.file || e.to
         })));
 
         // [Checkpoint A 진단] index 노드 incoming/outgoing
         const _diagIndex = nodes.find(n => n.data?.file?.match(/index\.[tj]s$/));
         if (_diagIndex) {
-            const _outgoing = edges.filter(e => e.from === _diagIndex.id);
-            const _incoming = edges.filter(e => e.to === _diagIndex.id);
-            console.log("[FLOW_DEBUG] index outgoing", _outgoing.length, _outgoing.slice(0, 5).map(e => nodes.find(n => n.id === e.to)?.data?.file || e.to));
-            console.log("[FLOW_DEBUG] index incoming", _incoming.length, _incoming.slice(0, 5).map(e => nodes.find(n => n.id === e.from)?.data?.file || e.from));
+            const _outgoing = outEdgesMap.get(_diagIndex.id) || [];
+            const _incoming = edges.filter(e => e.to === _diagIndex.id); // Optional: also map incoming if needed
+            console.log("[FLOW_DEBUG] index outgoing", _outgoing.length, _outgoing.slice(0, 5).map(e => nodeMap.get(e.to)?.data?.file || e.to));
+            console.log("[FLOW_DEBUG] index incoming", _incoming.length, _incoming.slice(0, 5).map(e => nodeMap.get(e.from)?.data?.file || e.from));
         }
 
         // [Checkpoint A 진단] root outgoing
         const _rootId = roots[0]?.id;
         if (_rootId) {
-            const _rootOut = edges.filter(e => e.from === _rootId).slice(0, 10);
+            const _rootOut = (outEdgesMap.get(_rootId) || []).slice(0, 10);
             console.log("[FLOW_DEBUG] root outgoing", _rootOut.map(e => ({
-                from: nodes.find(n => n.id === e.from)?.data?.file,
-                to: nodes.find(n => n.id === e.to)?.data?.file
+                from: nodeMap.get(e.from)?.data?.file,
+                to: nodeMap.get(e.to)?.data?.file
             })));
         }
 
@@ -303,9 +313,10 @@ class FlowRenderer {
         const queue = [...roots.map(r => r.id)];
         roots.forEach(r => reachableIds.add(r.id));
 
-        while (queue.length > 0) {
-            const currentId = queue.shift();
-            const targets = edges.filter(e => e.from === currentId).map(e => e.to);
+        let queueIdx = 0;
+        while (queueIdx < queue.length) {
+            const currentId = queue[queueIdx++];
+            const targets = (outEdgesMap.get(currentId) || []).map(e => e.to);
             for (const targetId of targets) {
                 if (!reachableIds.has(targetId)) {
                     reachableIds.add(targetId);
@@ -317,11 +328,11 @@ class FlowRenderer {
         // [v0.3.32.1] Reachability Investigation Logs
         console.log("[FLOW_DEBUG] reachable count", reachableIds.size);
         console.log("[FLOW_DEBUG] reachable sample", Array.from(reachableIds).slice(0, 50).map(id => {
-            const n = nodes.find(x => x.id === id);
+            const n = nodeMap.get(id);
             return n ? (n.data?.file || n.label || n.id) : id;
         }));
         console.log("[FLOW_DEBUG] reachable files count", Array.from(reachableIds).filter(id => {
-            const n = nodes.find(x => x.id === id);
+            const n = nodeMap.get(id);
             return n && n.type === 'source';
         }).length);
 
@@ -387,12 +398,16 @@ class FlowRenderer {
             label: n.label,
             type: n.type
         })), null, 2));
-        console.log("[FLOW_DEBUG] dropped client nodes", debugClientNodes.filter(n => !filteredNodes.some(f => f.id === n.id)).map(n => ({
+        const filteredNodeIds = new Set(filteredNodes.map(n => n.id));
+        
+        console.log("[FLOW_DEBUG] dropped client nodes", debugClientNodes.filter(n => !filteredNodeIds.has(n.id)).map(n => ({
             label: n.label,
             id: n.id
         })));
-        const dropped = nodes.filter(n => !filteredNodes.includes(n));
-        console.log("[FLOW_DEBUG] dropped nodes", dropped.map(n => ({
+        const dropped = nodes.filter(n => !filteredNodeIds.has(n.id));
+        // [v0.3.33.1_fix] Prevent massive console lag by capping the output to 100 items
+        console.log("[FLOW_DEBUG] dropped nodes count:", dropped.length);
+        console.log("[FLOW_DEBUG] dropped nodes sample:", dropped.slice(0, 100).map(n => ({
             id: n.id,
             type: n.type,
             label: n.label,
@@ -403,7 +418,7 @@ class FlowRenderer {
         
         const droppedSourceNodes = dropped.filter(n => n.type === "source");
         console.log("[FLOW_DEBUG] dropped source nodes", droppedSourceNodes.length);
-        console.table(droppedSourceNodes.map(n => ({
+        console.table(droppedSourceNodes.slice(0, 100).map(n => ({
             id: n.id,
             label: n.label,
             type: n.type,
@@ -436,11 +451,14 @@ class FlowRenderer {
             roots: rootStepIds
         });
 
+        const sortedNodeIndexMap = new Map();
+        sortedNodes.forEach((node, index) => sortedNodeIndexMap.set(node.id, index));
+
         sortedNodes.forEach((node, index) => {
-            const outEdges = edges.filter(e => e.from === node.id);
+            const outEdges = outEdgesMap.get(node.id) || [];
             const nextSteps = outEdges.map(e => {
-                const targetIdx = sortedNodes.findIndex(sn => sn.id === e.to);
-                return targetIdx !== -1 ? `step_${targetIdx}` : null;
+                const targetIdx = sortedNodeIndexMap.get(e.to);
+                return targetIdx !== undefined ? `step_${targetIdx}` : null;
             }).filter(id => id !== null);
 
             // 로직 패턴 (router, checker 등) 확인하여 실제 Decision 여부 결정
@@ -1881,6 +1899,12 @@ class CanvasEngine {
         this.colorCounter = 0;
         this.debugDisableOverlay = false;
         this._fpsFrames = [];
+        this._perfSample = null;
+        this._perfSummaries = [];
+        this._postLoadMemProbeBudget = 0;
+        this._postLoadMemProbeSeq = 0;
+        this._nodeStatsSummary = null;
+        this._spatialIndexStats = null;
 
         // 인터랙션 상태
         this.isDragging = false;
@@ -2019,6 +2043,136 @@ class CanvasEngine {
 
         this.setupToolbarListeners();
         this.setupEventListeners();
+    }
+
+    _recordPerfMetric(name, ms) {
+        const sample = this._perfSample;
+        if (!sample || !sample.active) return;
+        const prev = sample.metrics[name] || { sum: 0, count: 0, max: 0 };
+        prev.sum += ms;
+        prev.count += 1;
+        if (ms > prev.max) prev.max = ms;
+        sample.metrics[name] = prev;
+    }
+
+    _setHeatmapEnabled(next) {
+        this.showHeatmap = !!next;
+        this.clusterFlows = [];
+        this.heatmapCacheValid = false;
+        this.heatmapCacheNeedsRebuild = true;
+        this.isGraphDataDirty = true;
+        this.requestRender();
+    }
+
+    startPerfSampling(label = 'manual', durationMs = 15000) {
+        if (this._perfSample && this._perfSample.active) {
+            console.warn('[PERF_SAMPLE] already active:', this._perfSample.label);
+            return;
+        }
+        const now = performance.now();
+        this._perfSample = {
+            label,
+            active: true,
+            startedAt: now,
+            durationMs,
+            metrics: {},
+            frameCount: 0,
+            heatmap: !!this.showHeatmap,
+            mode: this.currentMode,
+            timeoutId: null
+        };
+        this._perfSample.timeoutId = setTimeout(() => this.stopPerfSampling(), durationMs);
+        console.log('[PERF_SAMPLE_START]', { label, durationMs, heatmap: this.showHeatmap, mode: this.currentMode });
+    }
+
+    stopPerfSampling() {
+        const sample = this._perfSample;
+        if (!sample || !sample.active) return null;
+        sample.active = false;
+        if (sample.timeoutId) clearTimeout(sample.timeoutId);
+        const endedAt = performance.now();
+        const elapsedMs = Math.max(1, endedAt - sample.startedAt);
+        const avgFps = (sample.frameCount * 1000) / elapsedMs;
+        const metricNames = Object.keys(sample.metrics).sort();
+        const metrics = {};
+        for (const name of metricNames) {
+            const m = sample.metrics[name];
+            metrics[name] = {
+                avgMs: m.count > 0 ? (m.sum / m.count) : 0,
+                maxMs: m.max,
+                samples: m.count
+            };
+        }
+        const summary = {
+            label: sample.label,
+            elapsedMs,
+            frameCount: sample.frameCount,
+            avgFps,
+            heatmap: sample.heatmap,
+            mode: sample.mode,
+            metrics
+        };
+        this._perfSummaries.push(summary);
+        if (this._perfSummaries.length > 10) this._perfSummaries.shift();
+        this._perfSample = null;
+        console.log('[PERF_SAMPLE_RESULT]', summary);
+        return summary;
+    }
+
+    async runHeatmapABSampling(durationMs = 15000, gapMs = 2000) {
+        const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+        this._setHeatmapEnabled(false);
+        this.startPerfSampling('HEATMAP_OFF', durationMs);
+        await wait(durationMs + 100);
+        const off = this._perfSummaries[this._perfSummaries.length - 1] || null;
+
+        await wait(gapMs);
+
+        this._setHeatmapEnabled(true);
+        this.startPerfSampling('HEATMAP_ON', durationMs);
+        await wait(durationMs + 100);
+        const on = this._perfSummaries[this._perfSummaries.length - 1] || null;
+
+        if (off && on) {
+            const compare = {
+                offAvgFps: off.avgFps,
+                onAvgFps: on.avgFps,
+                deltaFps: on.avgFps - off.avgFps,
+                offRenderFrameAvgMs: off.metrics['render-frame']?.avgMs || 0,
+                onRenderFrameAvgMs: on.metrics['render-frame']?.avgMs || 0,
+                offHeatmapAvgMs: off.metrics['renderTrafficHeatmap']?.avgMs || 0,
+                onHeatmapAvgMs: on.metrics['renderTrafficHeatmap']?.avgMs || 0
+            };
+            console.log('[PERF_AB_COMPARE]', compare);
+            return compare;
+        }
+        console.warn('[PERF_AB_COMPARE] insufficient sample data');
+        return null;
+    }
+
+    _getWebviewMemorySnapshot() {
+        const perf = (typeof performance !== 'undefined' && performance.memory) ? performance.memory : null;
+        return {
+            jsHeapUsedMB: perf ? Math.round((perf.usedJSHeapSize / (1024 * 1024)) * 10) / 10 : null,
+            jsHeapTotalMB: perf ? Math.round((perf.totalJSHeapSize / (1024 * 1024)) * 10) / 10 : null,
+            jsHeapLimitMB: perf ? Math.round((perf.jsHeapSizeLimit / (1024 * 1024)) * 10) / 10 : null,
+            nodes: this.nodes ? this.nodes.length : 0,
+            edges: this.edges ? this.edges.length : 0,
+            clusters: this.clusters ? this.clusters.length : 0,
+            visibleNodes: this._visibleNodesCache ? this._visibleNodesCache.length : 0,
+            visibleEdges: this._visibleEdgesCache ? this._visibleEdgesCache.length : 0,
+            chunkedNodes: this._chunkedNodes ? this._chunkedNodes.length : 0,
+            chunkedEdges: this._chunkedEdges ? this._chunkedEdges.length : 0
+        };
+    }
+
+    _logWebviewMemory(stage, extra = null) {
+        const snap = this._getWebviewMemorySnapshot();
+        if (extra && typeof extra === 'object') {
+            console.log('[MEM][WEBVIEW]', `stage=${stage}`, { ...snap, ...extra });
+            return;
+        }
+        console.log('[MEM][WEBVIEW]', `stage=${stage}`, snap);
     }
 
     setupToolbarListeners() {
@@ -2743,10 +2897,17 @@ class CanvasEngine {
 
     startLoop() {
         if (this._loopRunning) return;
+        
+        if (this._rafId) {
+            cancelAnimationFrame(this._rafId);
+            this._rafId = null;
+        }
+        
         this._loopRunning = true;
         console.log("[SYNAPSE] starting main loop (eco-mode with auto-sleep)");
 
         const loop = () => {
+            console.count("RAF_LOOP");
             try {
                 // [v0.2.24] Auto-Sleep Logic: Idle for 2 seconds -> Set isAnimating to false
                 const now = Date.now();
@@ -2771,6 +2932,7 @@ class CanvasEngine {
                         this.render();
                     }
                     this._loopRunning = false; // Stop recursive RAF
+                    this._rafId = null;
                     return; // EXIT LOOP
                 }
 
@@ -2783,7 +2945,7 @@ class CanvasEngine {
                     this._isRendering = true;  // [FIX v0.3.09] Mark rendering start
                     console.time('render');
                     try {
-                        this.render();
+                        this._performRender();
                         this.needsUpdate = false; // Reset after render
                     } finally {
                         console.timeEnd('render');
@@ -2795,11 +2957,11 @@ class CanvasEngine {
                 this._loopRunning = false;
             }
             if (this._loopRunning) {
-                requestAnimationFrame(loop);
+                this._rafId = requestAnimationFrame(loop);
             }
         };
 
-        requestAnimationFrame(loop);
+        this._rafId = requestAnimationFrame(loop);
     }
 
     requestRender() {
@@ -2856,6 +3018,92 @@ class CanvasEngine {
             rb = ab + amount * (bb - ab);
 
         return '#' + ((1 << 24) + (Math.round(rr) << 16) + (Math.round(rg) << 8) + Math.round(rb)).toString(16).slice(1);
+    }
+
+    /**
+     * _showProfileModal: 자동 프로필 적용 결과 모달 창 출력
+     */
+    _showProfileModal(score) {
+        const modalId = `profile-modal-${Date.now()}`;
+        const overlay = document.createElement('div');
+        overlay.id = modalId;
+        overlay.style.position = 'fixed';
+        overlay.style.top = '0';
+        overlay.style.left = '0';
+        overlay.style.width = '100vw';
+        overlay.style.height = '100vh';
+        overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+        overlay.style.zIndex = '10005';
+        overlay.style.display = 'flex';
+        overlay.style.alignItems = 'center';
+        overlay.style.justifyContent = 'center';
+
+        const modal = document.createElement('div');
+        modal.style.backgroundColor = '#282828';
+        modal.style.border = '1px solid #fabd2f';
+        modal.style.borderRadius = '12px';
+        modal.style.padding = '24px';
+        modal.style.minWidth = '320px';
+        modal.style.color = '#ebdbb2';
+        modal.style.fontFamily = 'Inter, sans-serif';
+        modal.style.boxShadow = '0 12px 48px rgba(0,0,0,0.9)';
+
+        const title = document.createElement('h3');
+        title.textContent = '🚀 자동 프로필이 적용되었습니다';
+        title.style.margin = '0 0 16px 0';
+        title.style.color = '#fabd2f';
+        title.style.fontSize = '18px';
+        
+        const subTitle = document.createElement('div');
+        subTitle.textContent = `규모 분석 점수: ${score.toLocaleString()}점 (EXTREME_SCALE)`;
+        subTitle.style.fontSize = '12px';
+        subTitle.style.color = '#928374';
+        subTitle.style.marginBottom = '20px';
+
+        const list = document.createElement('ul');
+        list.style.listStyleType = 'none';
+        list.style.padding = '0';
+        list.style.margin = '0 0 24px 0';
+        list.style.lineHeight = '2';
+        list.style.fontSize = '14px';
+
+        // Options
+        const options = [
+            { label: '노드 표시', checked: this.showBaseLayer },
+            { label: '엣지 표시', checked: true },
+            { label: '익스터널 클러스터 표시', checked: this.showExternalLayer },
+            { label: '히트맵 표시', checked: this.showHeatmap },
+            { label: '루트 클러스터만 표시', checked: true }
+        ];
+
+        options.forEach(opt => {
+            const li = document.createElement('li');
+            li.innerHTML = `<span style="color: ${opt.checked ? '#b8bb26' : '#fb4934'}; margin-right: 12px; font-weight: bold;">${opt.checked ? '[x]' : '[ ]'}</span> ${opt.label}`;
+            list.appendChild(li);
+        });
+
+        const btnWrap = document.createElement('div');
+        btnWrap.style.textAlign = 'right';
+
+        const okBtn = document.createElement('button');
+        okBtn.textContent = 'OK';
+        okBtn.style.padding = '8px 32px';
+        okBtn.style.backgroundColor = '#fabd2f';
+        okBtn.style.color = '#282828';
+        okBtn.style.border = 'none';
+        okBtn.style.borderRadius = '4px';
+        okBtn.style.cursor = 'pointer';
+        okBtn.style.fontWeight = 'bold';
+        okBtn.onclick = () => document.body.removeChild(overlay);
+
+        btnWrap.appendChild(okBtn);
+        modal.appendChild(title);
+        modal.appendChild(subTitle);
+        modal.appendChild(list);
+        modal.appendChild(btnWrap);
+        overlay.appendChild(modal);
+
+        document.body.appendChild(overlay);
     }
 
     /**
@@ -3211,7 +3459,7 @@ class CanvasEngine {
             this.canvas.focus();
 
             const worldPos = this.screenToWorld(e.offsetX, e.offsetY);
-            this._debugLastWorldClick = worldPos; // [v0.2.26] Debug indicator
+            // this._debugLastWorldClick = worldPos; // [v0.2.26] Debug indicator (Removed per user request)
             this.dragStart = { x: e.offsetX, y: e.offsetY };
             this.dragStartAbsolute = { x: e.offsetX, y: e.offsetY }; // [v0.2.20 Fix] Added for jitter tracking
 
@@ -3793,7 +4041,7 @@ class CanvasEngine {
             }
 
             const worldPosClick = this.screenToWorld(e.offsetX, e.offsetY);
-            this._debugLastWorldClick = worldPosClick; // [v0.2.26] Debug indicator
+            // this._debugLastWorldClick = worldPosClick; // [v0.2.26] Debug indicator (Removed)
             const hasModifier = e.shiftKey || e.ctrlKey || e.metaKey;
 
             if (this.currentMode === 'tree') {
@@ -4173,15 +4421,53 @@ class CanvasEngine {
         return movedAny;
     }
 
+    _buildClusterIndices() {
+        this._clusterNodesCache = new Map();
+        this._childClustersCache = new Map();
+        
+        if (this.nodes) {
+            for (const n of this.nodes) {
+                const cid = n.cluster_id || (n.data && n.data.cluster_id) || '';
+                if (cid) {
+                    let arr = this._clusterNodesCache.get(cid);
+                    if (!arr) {
+                        arr = [];
+                        this._clusterNodesCache.set(cid, arr);
+                    }
+                    arr.push(n);
+                }
+            }
+        }
+        
+        if (this.clusters) {
+            for (const c of this.clusters) {
+                const pid = c.parent_id;
+                if (pid) {
+                    let arr = this._childClustersCache.get(pid);
+                    if (!arr) {
+                        arr = [];
+                        this._childClustersCache.set(pid, arr);
+                    }
+                    arr.push(c);
+                }
+            }
+        }
+    }
+
     computeClusterBounds(cluster, visited = new Set()) {
         if (!this._lastComputedBounds) this._lastComputedBounds = new Map();
         if (visited.has(cluster.id)) return this._lastComputedBounds.get(cluster.id);
         visited.add(cluster.id);
 
-        const directNodes = this.nodes.filter(n => {
-            const cid = n.cluster_id || (n.data && n.data.cluster_id) || '';
-            return cid === cluster.id && cid !== '';
-        });
+        let directNodes;
+        if (this._clusterNodesCache) {
+            directNodes = this._clusterNodesCache.get(cluster.id) || [];
+        } else {
+            directNodes = this.nodes.filter(n => {
+                const cid = n.cluster_id || (n.data && n.data.cluster_id) || '';
+                return cid === cluster.id && cid !== '';
+            });
+        }
 
         let minX = Infinity, minY = Infinity;
         let maxX = -Infinity, maxY = -Infinity;
@@ -4216,7 +4502,12 @@ class CanvasEngine {
             maxY = Math.max(maxY, nodeRenderY + 60);
         }
 
-        const childClusters = this.clusters.filter(c => c.parent_id === cluster.id);
+        let childClusters;
+        if (this._childClustersCache) {
+            childClusters = this._childClustersCache.get(cluster.id) || [];
+        } else {
+            childClusters = this.clusters.filter(c => c.parent_id === cluster.id);
+        }
         for (const child of childClusters) {
             const b = this.computeClusterBounds(child, visited);
             if (b && b.minX !== Infinity && !b.isEmpty) {
@@ -4895,7 +5186,14 @@ class CanvasEngine {
                     y: this.transform.offsetY 
                 },
                 visibility: { 
-                    visibleLayers: this.visibleLayers ? Array.from(this.visibleLayers) : [], 
+                    showBaseLayer: this.showBaseLayer,
+                    showUserLayer: this.showUserLayer,
+                    showExternalLayer: this.showExternalLayer,
+                    visibleLayers: [
+                        ...(this.showBaseLayer ? ['base'] : []),
+                        ...(this.showUserLayer ? ['user'] : []),
+                        ...(this.showExternalLayer ? ['external'] : [])
+                    ],
                     hiddenClusters: [] // TODO
                 },
                 filters: {},
@@ -5221,6 +5519,21 @@ class CanvasEngine {
             }
             console.log(`[SYNAPSE] Focus Top-N calculated: ${topN.length} cores, ${this.focusNodeSet.size} total context nodes.`);
         }
+
+            let totalConnectedRefs = 0;
+            let totalDistributionBuckets = 0;
+            for (const stats of this.nodeStatsMap.values()) {
+                totalConnectedRefs += stats.connected ? stats.connected.size : 0;
+                totalDistributionBuckets += stats.distribution ? Object.keys(stats.distribution).length : 0;
+            }
+            this._nodeStatsSummary = {
+                nodeStatsCount: this.nodeStatsMap.size,
+                totalConnectedRefs,
+                totalDistributionBuckets,
+                edgeCount: edges.length,
+                edgeRefEstimate: edges.length * 2
+            };
+            console.log('[NODE_STATS_SUMMARY]', this._nodeStatsSummary);
 
         console.log(`[SYNAPSE] Node stats & roles updated for ${nodes.length} nodes.`);
         this.updateHotspots(); // [v0.3.20] Recompute functional areas
@@ -5946,13 +6259,22 @@ class CanvasEngine {
     // [v0.2.26] 🛡️ Normalization Pass (Isolation & Sort)
     normalizeProjectState(state) {
         if (!state) return null;
-        // 1. Sort Nodes & Edges to guarantee iteration order
-        if (state.nodes) state.nodes.sort((a, b) => a.id.localeCompare(b.id));
-        if (state.edges) state.edges.sort((a, b) => (a.id || "").localeCompare(b.id || "") || a.from.localeCompare(b.from));
-        if (state.clusters) state.clusters.sort((a, b) => a.id.localeCompare(b.id));
+        // [v0.3.35 OOM-guard] Avoid deep clone(JSON stringify/parse) on huge graphs.
+        // Keep object references and only normalize top-level arrays for deterministic iteration.
+        const nodes = Array.isArray(state.nodes) ? state.nodes.slice() : [];
+        const edges = Array.isArray(state.edges) ? state.edges.slice() : [];
+        const clusters = Array.isArray(state.clusters) ? state.clusters.slice() : [];
 
-        // 2. Return a Deep Clone to prevent in-place mutation of incoming data
-        return JSON.parse(JSON.stringify(state));
+        nodes.sort((a, b) => a.id.localeCompare(b.id));
+        edges.sort((a, b) => (a.id || "").localeCompare(b.id || "") || a.from.localeCompare(b.from));
+        clusters.sort((a, b) => a.id.localeCompare(b.id));
+
+        return {
+            ...state,
+            nodes,
+            edges,
+            clusters
+        };
     }
 
     // [v0.3.33] Phase 3A: Explicit Spatial Index Build
@@ -5991,6 +6313,46 @@ class CanvasEngine {
             const bounds = this.computeClusterBounds(c);
             if (bounds) this.spatialIndex.insertCluster(c);
         });
+
+        let spatialStats = {
+            maxDepth: 0,
+            internalCount: 0,
+            leafCount: 0,
+            totalCells: 0,
+            maxBucketSize: 0,
+            totalItemsInLeaves: 0
+        };
+        try {
+            const root = this.spatialIndex.nodeTree && this.spatialIndex.nodeTree.toJSON
+                ? this.spatialIndex.nodeTree.toJSON()
+                : null;
+            if (root) {
+                const stack = [{ node: root, depth: 1 }];
+                while (stack.length > 0) {
+                    const { node, depth } = stack.pop();
+                    spatialStats.totalCells += 1;
+                    if (depth > spatialStats.maxDepth) spatialStats.maxDepth = depth;
+                    const children = Array.isArray(node.children) ? node.children : [];
+                    const isLeaf = !!node.leaf;
+                    if (isLeaf) {
+                        spatialStats.leafCount += 1;
+                        if (children.length > spatialStats.maxBucketSize) {
+                            spatialStats.maxBucketSize = children.length;
+                        }
+                        spatialStats.totalItemsInLeaves += children.length;
+                    } else {
+                        spatialStats.internalCount += 1;
+                        for (const child of children) {
+                            stack.push({ node: child, depth: depth + 1 });
+                        }
+                    }
+                }
+            }
+        } catch (e) {
+            console.warn('[SPATIAL_INDEX_STATS] failed to summarize tree', e);
+        }
+        this._spatialIndexStats = spatialStats;
+        console.log('[SPATIAL_INDEX_STATS]', this._spatialIndexStats);
 
         console.log(`[PERF] SpatialIndexBuildTime: ${(performance.now() - _tIndex).toFixed(1)}ms (nodes=${this.nodes.length}, clusters=${this.clusters.length})`);
         if (this.nodes.length > 0) {
@@ -6053,8 +6415,44 @@ class CanvasEngine {
 
     loadProjectState(projectState, preserveView = false) {
         console.time('loadProjectState');
+        let _loadStage = 'load-start';
+        const markLoadStage = (stage, extra = null) => {
+            _loadStage = stage;
+            this._logWebviewMemory(stage, extra);
+        };
+
+        // [v0.3.35] Post-load OOM probe: track first few render stages after each state load.
+        this._postLoadMemProbeSeq += 1;
+        this._postLoadMemProbeBudget = 3;
+
+        markLoadStage('load-start', { preserveView });
         console.log('[LOAD_STATE_ENGINE]', this._instanceId);
         console.log('[LOAD_STATE]', { nodes: projectState?.nodes?.length ?? 0, clusters: projectState?.clusters?.length ?? 0, preserveView });
+        console.log('[LOAD_ENTER]',
+            projectState?.nodes?.length ?? 0,
+            projectState?.edges?.length ?? 0,
+            projectState?.clusters?.length ?? 0);
+        this.log('[LOAD_ENTER]', 'info', {
+            nodes: projectState?.nodes?.length ?? 0,
+            edges: projectState?.edges?.length ?? 0,
+            clusters: projectState?.clusters?.length ?? 0,
+            preserveView
+        });
+        console.log('[LOAD_BEFORE_ASSIGN]', this.nodes?.length ?? 0, this.edges?.length ?? 0);
+        this.log('[LOAD_BEFORE_ASSIGN]', 'info', {
+            nodes: this.nodes?.length ?? 0,
+            edges: this.edges?.length ?? 0
+        });
+        console.log('[STATE_CHECK]', 'loadProjectState-entry',
+            projectState?.nodes?.length ?? 0,
+            projectState?.edges?.length ?? 0,
+            projectState?.clusters?.length ?? 0);
+        this.log('[STATE_CHECK] loadProjectState-entry', 'info', {
+            nodes: projectState?.nodes?.length ?? 0,
+            edges: projectState?.edges?.length ?? 0,
+            clusters: projectState?.clusters?.length ?? 0,
+            preserveView
+        });
         if (!projectState) { console.timeEnd('loadProjectState'); return; }
         const loadingEl = document.getElementById('loading');
 
@@ -6077,6 +6475,11 @@ class CanvasEngine {
             return !looksLikeCommand;
         });
         const rawEdges = projectState.edges || [];
+        markLoadStage('after-raw-bind', {
+            incomingNodes: incomingNodes.length,
+            rawNodes: rawNodes.length,
+            rawEdges: rawEdges.length
+        });
 
         const legacyCommandNodes = incomingNodes.length - rawNodes.length;
         if (legacyCommandNodes > 0) {
@@ -6168,6 +6571,18 @@ class CanvasEngine {
                 movedToDocShelf: stage1DropStats.documentation
             }
         });
+        console.log('[FILTER_INPUT]', rawNodes.length);
+        this.log('[FILTER_INPUT]', 'info', {
+            rawNodes: rawNodes.length,
+            incomingNodes: incomingNodes.length,
+            rawEdges: rawEdges.length
+        });
+        markLoadStage('after-stage1-filter', {
+            rawNodes: rawNodes.length,
+            rawEdges: rawEdges.length,
+            canvasNodes: canvasNodes.length,
+            docNodes: documentationNodes.length
+        });
         console.log('[GHOST_RULE]', {
             total: rawNodes.length,
             removed: stage1DropStats.blacklistedGhost,
@@ -6187,6 +6602,14 @@ class CanvasEngine {
             activeIds.has(e.to) && 
             policy.shouldMaterializeEdge(e)
         );
+        console.log('[STATE_CHECK]', 'after-edge-materialization',
+            canvasNodes.length,
+            canvasEdges.length,
+            projectState?.clusters?.length ?? 0);
+        markLoadStage('after-edge-materialization', {
+            activeIds: activeIds.size,
+            canvasEdges: canvasEdges.length
+        });
 
         // 1. 파이프라인 초입 필터링 직후 로깅
         console.log(`[PERF] RawEdgeCount: ${rawEdges.length}`);
@@ -6219,6 +6642,11 @@ class CanvasEngine {
 
         // [v0.2.26] 🛡️ STEP 1: Normalize and Clone Input (Isolation)
         const baseState = this.normalizeProjectState(sanitizedProjectState);
+        markLoadStage('after-normalize-project-state', {
+            baseNodes: baseState?.nodes?.length || 0,
+            baseEdges: baseState?.edges?.length || 0,
+            baseClusters: baseState?.clusters?.length || 0
+        });
         this.log(`[STATE-DETERMINISM] Hash Before: ${this.getFingerprint(baseState.nodes).substring(0, 60)}...`);
 
         // [v0.2.24] Selection Preservation
@@ -6251,9 +6679,19 @@ class CanvasEngine {
             const oldManualNodes = (this.nodes || []).filter(n => n.id.startsWith('node_manual_'));
             const oldNodes = this.nodes || [];
 
+            console.log('[LOAD_PROJECT]', {
+                nodes: baseState.nodes?.length,
+                clusters: baseState.clusters?.length,
+                edges: baseState.edges?.length
+            });
+
             // [v0.3.16] docShelfNodes are already separated and set in step 1 (line 3652)
             this.nodes = baseState.nodes || [];
             console.log('[AFTER_ASSIGN]', this.nodes.length);
+            console.log('[STATE_CHECK]', 'after-raw-assign',
+                this.nodes.length,
+                baseState?.edges?.length ?? 0,
+                baseState?.clusters?.length ?? 0);
 
             // [v0.3.33] CLUSTER_WATCH: track cluster_id reassignment timing
             if (!window.__cluster_watch && this.nodes) {
@@ -6318,6 +6756,26 @@ class CanvasEngine {
             }
 
             this.edges = baseState.edges || [];
+            console.log('[LOAD_AFTER_ASSIGN]', this.nodes?.length ?? 0, this.edges?.length ?? 0);
+            this.log('[LOAD_AFTER_ASSIGN]', 'info', {
+                nodes: this.nodes?.length ?? 0,
+                edges: this.edges?.length ?? 0,
+                clusters: this.clusters?.length ?? 0
+            });
+            markLoadStage('after-node-edge-assign', {
+                nodes: this.nodes.length,
+                edges: this.edges.length,
+                edgeRefEstimate: (this.edges.length || 0) * 2
+            });
+            console.log('[STATE_CHECK]', 'after-node-edge-assign',
+                this.nodes.length,
+                this.edges.length,
+                projectState?.clusters?.length ?? 0);
+            this.log('[AFTER_ASSIGN]', 'info', {
+                nodes: this.nodes.length,
+                edges: this.edges.length,
+                clusters: Array.isArray(projectState?.clusters) ? projectState.clusters.length : 0
+            });
 
             // [v0.2.18.2] Detect matches between old manual nodes and new solid nodes
             oldManualNodes.forEach(oldNode => {
@@ -6362,6 +6820,35 @@ class CanvasEngine {
             this._clusterMap = new Map(this.clusters.map(c => [c.id, c]));
             // [v0.3.33 Phase 2] Build ClusterHierarchy runtime index
             this.clusterHierarchy = new ClusterHierarchy(this.clusters);
+            markLoadStage('after-cluster-hierarchy', {
+                clusters: this.clusters.length,
+                clusterMap: this._clusterMap.size
+            });
+
+            // [v0.3.34] Adaptive Rendering Profile (Project Scale Analyzer)
+            const nodeCount = this.nodes ? this.nodes.length : 0;
+            const edgeCount = this.edges ? this.edges.length : 0;
+            const clusterCount = this.clusters ? this.clusters.length : 0;
+            
+            // Edge 중심 가중치 (SYNAPSE 병목의 80% 이상은 Edge)
+            const scaleScore = nodeCount + (edgeCount * 5) + (clusterCount * 10);
+            const isExtreme = scaleScore > 500000; // e.g. Linux Kernel is ~1.9 million
+            
+            if (isExtreme) {
+                console.log(`[SYNAPSE PROFILE ANALYZER] Extreme Scale Detected (Score: ${scaleScore}). Forcing EXTREME_SCALE profile.`);
+                this.showExternalLayer = false;
+                this.showBaseLayer = true;
+                this.showContextVault = false;
+                // Collapse all non-roots to minimize initial cluster count
+                if (this.clusters) {
+                    this.clusters.forEach(c => {
+                        if (c.parent_id) c.collapsed = true;
+                    });
+                }
+                
+                // Show modal UI
+                setTimeout(() => this._showProfileModal(scaleScore), 500);
+            }
 
             // [DESKTOP_TRACK] 1. AFTER_LAYOUT (백엔드에서 막 넘어온 직후)
             const trackDesktop1 = this.clusters.find(c => c.id.includes('desktop'));
@@ -6405,6 +6892,8 @@ class CanvasEngine {
             this.clusterFlows = projectState.cluster_flows || [];
             this.heatmapCacheValid = false;
             this.heatmapCacheNeedsRebuild = true;
+
+            this.restoreVisibilityState(projectState);
             
             // [Phase 2B.13] Edge Bundle Data Sync
             this.metaEdges = projectState.metaEdges || [];
@@ -6499,6 +6988,9 @@ class CanvasEngine {
                 if (this.treeRenderer) {
                     this.treeData = this.treeRenderer.buildTree(this.nodes, this.projectName || 'Project') || [];
                 }
+                markLoadStage('after-tree-build', {
+                    treeRoots: this.treeData?.length || 0
+                });
             } catch (treeErr) {
                 this.log('Tree build failed but continuing', 'error', treeErr.message);
             }
@@ -6514,6 +7006,10 @@ class CanvasEngine {
                     } else {
                         this.log('Preserved Internal Flow data during state load');
                     }
+                    markLoadStage('after-flow-build', {
+                        flowSteps: this.flowData?.steps?.length || 0,
+                        flowType: this.flowData?.type || 'unknown'
+                    });
                 }
             } catch (flowErr) {
                 this.log('Flow build failed but continuing', 'error', flowErr.message);
@@ -6535,6 +7031,7 @@ class CanvasEngine {
                     this.resolveOverlaps();
                     // [v0.3.33.5] Fix: Must rebuild spatial index after layout moves nodes, otherwise edges remain indexed at (0,0) and disappear!
                     this.buildSpatialIndex();
+                    markLoadStage('after-overlap-and-spatial');
                 } catch (overlapErr) {
                     this.log('resolveOverlaps failed but continuing', 'error', overlapErr.message);
                 }
@@ -6569,6 +7066,7 @@ class CanvasEngine {
             const _tNodeCache = performance.now();
             this.updateNodeStats();
             console.log(`[PERF] NodeCacheTime: ${(performance.now() - _tNodeCache).toFixed(1)}ms (nodes=${this.nodes.length}, edges=${this.edges.length})`);
+            markLoadStage('after-node-stats', this._nodeStatsSummary || undefined);
             
             console.time('AFTER_NODE_CACHE');
             console.log('[PERF] BeforeValidationPrep');
@@ -6580,6 +7078,11 @@ class CanvasEngine {
                 this._lodStateInitialized = true;
             }
             try { this.buildSpatialIndex(); } catch(e) { console.error('[FATAL] buildSpatialIndex crashed:', e); }
+            markLoadStage('after-spatial-index', this._spatialIndexStats || undefined);
+            const _worldBounds = this.computeWorldBounds();
+            console.log('[WORLD_BOUNDS]', _worldBounds);
+            this.log('[WORLD_BOUNDS]', 'info', _worldBounds);
+            this._pendingPostLoadVisibleDiag = true;
 
             if (!preserveView) {
                 // [v0.3.34 Fix] Single camera init path: always fitView() on first load.
@@ -6660,8 +7163,9 @@ class CanvasEngine {
             console.log('[SYNAPSE] Flow data:', this.flowData);
             console.log('[SYNAPSE] Clusters:', this.clusters);
         } catch (error) {
-            console.error('[SYNAPSE] loadProjectState error:', error);
+            console.error('[SYNAPSE] loadProjectState error:', error, 'stage=', _loadStage);
         } finally {
+            markLoadStage('load-end', { lastStage: _loadStage });
             // 로딩 숨기기 (무조건 실행)
             const loadingEl = document.getElementById('loading');
             if (loadingEl) loadingEl.remove(); // Force remove to prevent blocking
@@ -7135,6 +7639,70 @@ class CanvasEngine {
         }
     }
 
+    syncLayerVisibilityUI() {
+        const btnLayerBase = document.getElementById('btn-layer-base');
+        if (btnLayerBase) {
+            btnLayerBase.classList.toggle('active', this.showBaseLayer);
+            btnLayerBase.textContent = this.showBaseLayer ? 'ON' : 'OFF';
+        }
+
+        const btnLayerUser = document.getElementById('btn-layer-user');
+        if (btnLayerUser) {
+            btnLayerUser.classList.toggle('active', this.showUserLayer);
+            btnLayerUser.textContent = this.showUserLayer ? 'ON' : 'OFF';
+        }
+
+        const btnLayerExternal = document.getElementById('btn-layer-external');
+        if (btnLayerExternal) {
+            btnLayerExternal.classList.toggle('active', this.showExternalLayer);
+            btnLayerExternal.textContent = this.showExternalLayer ? 'ON' : 'OFF';
+        }
+    }
+
+    restoreVisibilityState(projectState) {
+        const visibility = projectState?.synapse_workspace?.workspace_state?.visibility;
+        if (!visibility) return;
+
+        const visibleLayers = Array.isArray(visibility.visibleLayers)
+            ? new Set(visibility.visibleLayers.map(v => String(v).toLowerCase()))
+            : null;
+
+        if (typeof visibility.showBaseLayer === 'boolean') {
+            this.showBaseLayer = visibility.showBaseLayer;
+        } else if (visibleLayers) {
+            this.showBaseLayer = visibleLayers.has('base');
+        }
+
+        if (typeof visibility.showUserLayer === 'boolean') {
+            this.showUserLayer = visibility.showUserLayer;
+        } else if (visibleLayers) {
+            this.showUserLayer = visibleLayers.has('user');
+        }
+
+        if (typeof visibility.showExternalLayer === 'boolean') {
+            this.showExternalLayer = visibility.showExternalLayer;
+        } else if (visibleLayers) {
+            this.showExternalLayer = visibleLayers.has('external');
+        }
+
+        this.syncLayerVisibilityUI();
+        const payload = {
+            base: this.showBaseLayer,
+            user: this.showUserLayer,
+            external: this.showExternalLayer,
+            visibleNodeCount: this._visibleNodesCache ? this._visibleNodesCache.length : -1,
+            visibleClusterCount: this._visibleClusterIds ? this._visibleClusterIds.size : -1
+        };
+        console.log('[LAYER_STATE]', payload);
+        console.log('[VISIBILITY_RESTORE]', payload);
+        console.log('[VISIBLE_CACHE]', {
+            visibleNodes: this._visibleNodesCache ? this._visibleNodesCache.length : -1,
+            visibleClusters: this._visibleClusterIds ? this._visibleClusterIds.size : -1
+        });
+        this.log('[LAYER_STATE]', 'info', payload);
+        this.log('[VISIBILITY_RESTORE]', 'info', payload);
+    }
+
 
     /**
      * [v0.2.26] GPU 및 WebGL 상태 강제 초기화 (Isolation Guard)
@@ -7380,8 +7948,32 @@ class CanvasEngine {
     }
 
     render() {
+        this.requestRender();
+    }
+
+    _performRender() {
+        console.count("RENDER_ENTRY");
+        if (!window.__renderDebug) {
+            window.__renderDebug = true;
+            console.log("[RENDER_CALLER_FIRST]", new Error().stack);
+        }
+        
+        // Log all callers except the RAF loop itself to find the culprits
+        const stack = new Error().stack || "";
+        if (!stack.includes("requestAnimationFrame")) {
+            console.log("[RENDER_CALLER_DIRECT]", stack);
+        }
+
         const _perfRenderStart = performance.now();
         console.time('render-frame');
+
+        if (this._postLoadMemProbeBudget > 0) {
+            this._logWebviewMemory('post-load-render-start', {
+                probeSeq: this._postLoadMemProbeSeq,
+                probeBudget: this._postLoadMemProbeBudget,
+                frame: this._frameCounter
+            });
+        }
         
         if (this._frameCounter < 3 || this._frameCounter % 60 === 0) {
             console.log(
@@ -7461,16 +8053,47 @@ class CanvasEngine {
         // [v0.2.24] Strategic Cache Invalidation (Validate Map & Edge Cache)
         const nodeCount = (this.nodes ? this.nodes.length : 0);
         if (this.isGraphDataDirty || this.nodeMap.size !== nodeCount) {
+            console.time('REBUILD_NODE_MAP');
             this.nodeMap.clear();
             if (this.nodes) {
                 for (const n of this.nodes) this.nodeMap.set(n.id, n);
             }
+            console.timeEnd('REBUILD_NODE_MAP');
+            
+            // [v0.3.33.1_fix3] Edge Materialization Cache & Virtualization Index
+            console.time('EDGE_CACHE_CLUSTERS');
+            if (this.edges) {
+                const needsRebuild = this.nodeMap.size !== nodeCount || !this._clusterEdgeMap;
+                if (needsRebuild) this._clusterEdgeMap = new Map();
+
+                for (let i = 0; i < this.edges.length; i++) {
+                    const e = this.edges[i];
+                    // Avoid map lookup if already cached (unless full rebuild)
+                    if (e._fromCluster === undefined || needsRebuild) {
+                        const fn = this.nodeMap.get(e.from);
+                        e._fromCluster = fn?.cluster_id ?? fn?.data?.cluster_id;
+                        
+                        if (needsRebuild && e._fromCluster) {
+                            let arr = this._clusterEdgeMap.get(e._fromCluster);
+                            if (!arr) { arr = []; this._clusterEdgeMap.set(e._fromCluster, arr); }
+                            arr.push(e);
+                        }
+                    }
+                    if (e._toCluster === undefined || needsRebuild) {
+                        const tn = this.nodeMap.get(e.to);
+                        e._toCluster = tn?.cluster_id ?? tn?.data?.cluster_id;
+                    }
+                }
+            }
+            console.timeEnd('EDGE_CACHE_CLUSTERS');
             this.edgeValidationCache.clear(); // Clear heavy validation results
             
             // [v0.3.34] Spatial Index: dirty flag-based rebuild (not every frame)
             if (this._spatialIndexDirty) {
+                console.time('BUILD_SPATIAL_INDEX');
                 this.buildSpatialIndex();
                 this._spatialIndexDirty = false;
+                console.timeEnd('BUILD_SPATIAL_INDEX');
             }
         }
 
@@ -7505,6 +8128,7 @@ class CanvasEngine {
         // [v0.2.32] Power-Saving (Sleeping) Logic: Move ABOVE clear to prevent screen flickering/disappearance
         // If not dirty and not animating, NO NEED to clear or redraw.
         if (!this.isDirty && !this.isAnimating && !this._isInteracting && !this.isDragging) {
+            console.timeEnd('render-frame');
             return;
         }
 
@@ -7594,8 +8218,16 @@ class CanvasEngine {
                 console.log('[PERF] renderNodes2D() entered. TotalNodes:', this.nodes ? this.nodes.length : 0);
 
                 if (this.isGraphDataDirty || !this._visibleNodesCache) {
+                    if (this._postLoadMemProbeBudget > 0) {
+                        this._logWebviewMemory('post-load-before-visible-cache', {
+                            probeSeq: this._postLoadMemProbeSeq,
+                            isGraphDataDirty: this.isGraphDataDirty
+                        });
+                    }
+                    const _tBuildVisibleStart = performance.now();
                     console.time('buildVisibleCaches');
                     console.time('visibleNodeFilter');
+                    const _tVisibleNodeFilterStart = performance.now();
                     const lodFilterStats = {
                         inputNodes: this.nodes ? this.nodes.length : 0,
                         pass: 0,
@@ -7610,9 +8242,27 @@ class CanvasEngine {
                         collapsedSystemA: 0
                     };
 
+                    const externalRejectReasons = {
+                        clientLayer: 0,
+                        layerExternal: 0,
+                        layerUser: 0,
+                        layerBase: 0,
+                        hideLeaf: 0,
+                        focus: 0,
+                        lodSystemA: 0,
+                        lodDematerialized: 0,
+                        collapsedSystemA: 0
+                    };
+
+                    let _currentNodeForReject = null;
                     const markReject = (key) => {
                         if (Object.prototype.hasOwnProperty.call(lodFilterStats, key)) {
                             lodFilterStats[key]++;
+                        }
+                        if (_currentNodeForReject && isExternalLogic(_currentNodeForReject)) {
+                            if (Object.prototype.hasOwnProperty.call(externalRejectReasons, key)) {
+                                externalRejectReasons[key]++;
+                            }
                         }
                     };
                     const isUserLogic = (n) => 
@@ -7627,6 +8277,18 @@ class CanvasEngine {
                         n.type === 'external' ||
                         n.status === 'ghost' ||
                         (n.cluster_id && n.cluster_id === 'cluster_ghosts');
+
+                    console.log(
+                        '[NODE_SAMPLE]',
+                        this.nodes.slice(0, 10).map(n => ({
+                            id: n.id,
+                            type: n.type,
+                            status: n.status,
+                            layer: n.layer,
+                            dataLayer: n.data?.layer,
+                            cluster_id: n.cluster_id
+                        }))
+                    );
 
                     // [v0.3.33 Phase 4-D-1] Visible Graph from Resolver (cluster-driven) computed BEFORE node filtering
                     console.log('[VISIBLE_GRAPH_BUILD]', performance.now(), 'expanded', this.expandedClusters?.size);
@@ -7644,7 +8306,9 @@ class CanvasEngine {
 
                     console.time('updateLOD'); // overall cache building
                     console.time('LOD:visibleNodes');
+                    console.time('VISIBLE_NODE_BUILD');
                     this._visibleNodesCache = this.nodes.filter(n => {
+                        _currentNodeForReject = n;
                         const isUser = isUserLogic(n);
                         const isExternal = isExternalLogic(n);
                         const isActivity = n.cluster_id && typeof n.cluster_id === 'string' && n.cluster_id.includes('activity');
@@ -7659,13 +8323,13 @@ class CanvasEngine {
                         }
 
                         // [v0.3.22.2] Noise Control: Hide Leaf Nodes (WebGL Parity)
-                        if (this.hideLeafNodes) {
+                        if (this.hideLeafNodes && !isExternal) {
                             const stats = this.nodeStatsMap.get(n.id);
                             if (stats && stats.connectedNodes < 3) { if (isActivity) console.log('[ACTIVITY_REJECT]', n.id, 'reason=hide_leaf', 'connectedNodes=' + stats.connectedNodes); markReject('hideLeaf'); return false; }
                         }
 
                         // [v0.3.22.2] Strategic Visibility: Top-N Focus View (WebGL Parity)
-                        if (this.focusTopNodes) {
+                        if (this.focusTopNodes && !isExternal) {
                             const isEssential = this.selectedNodes.has(n.id) || (this.hoveredNode && this.hoveredNode.id === n.id);
                             if (!this.focusNodeSet.has(n.id) && !isEssential) { if (isActivity) console.log('[ACTIVITY_REJECT]', n.id, 'reason=focus'); markReject('focus'); return false; }
                         }
@@ -7676,6 +8340,7 @@ class CanvasEngine {
                         if (this._visibleGraphClusterIds && clusterId) {
                             if (!this._visibleGraphClusterIds.has(clusterId)) {
                                 if (isActivity) console.log('[ACTIVITY_REJECT]', n.id, 'reason=lod_system_a');
+                                console.log('[CLUSTER_REJECT]', n.id, clusterId);
                                 markReject('lodSystemA');
                                 return false;
                             }
@@ -7722,6 +8387,7 @@ class CanvasEngine {
                         return true;
                     });
                     console.timeEnd('visibleNodeFilter');
+                    this._recordPerfMetric('visibleNodeFilter', performance.now() - _tVisibleNodeFilterStart);
                     console.timeEnd('LOD:visibleNodes');
 
                     const _zoom = this.transform?.zoom || 1;
@@ -7749,6 +8415,50 @@ class CanvasEngine {
                             collapsedSystemA: lodFilterStats.collapsedSystemA
                         }
                     });
+                    // [USER_REQUEST] Always log LOD_FILTER_STATS and AFTER_VISIBLE for debugging large projects
+                    console.log('[LOD_FILTER_STATS]', JSON.stringify(lodFilterStats, null, 2));
+                    console.log('[VISIBLE_CLUSTERS]', this._visibleGraphClusterIds ? [...this._visibleGraphClusterIds] : []);
+                    
+                    console.log({
+                        sampleNodeCluster: this.nodes && this.nodes.length > 0 ? this.nodes[0].cluster_id : null
+                    });
+
+                    // [USER_REQUEST] 6. External Ref Visibility Logs
+                    const externalTotal = (this.nodes || []).filter(n => n.layer === 'external' || n.data?.layer === 'external').length;
+                    const externalVisible = (this._visibleNodesCache || []).filter(n => n.layer === 'external' || n.data?.layer === 'external').length;
+                    console.log('[EXTERNAL_STATS]', externalTotal);
+                    console.log('[EXTERNAL_VISIBLE]', externalVisible);
+                    console.log('[EXTERNAL_REJECT_REASONS]', JSON.stringify(externalRejectReasons, null, 2));
+
+                    this.log('[AFTER_VISIBLE]', 'info', {
+                        inputNodes: lodFilterStats.inputNodes,
+                        visibleNodes: this._visibleNodesCache.length,
+                        visibleClusterIds: this._visibleGraphClusterIds ? this._visibleGraphClusterIds.size : 0,
+                        zoom: _zoom,
+                        lodLabel: _lodLabel
+                    });
+
+                    console.log(
+                      '[VISIBLE_BREAKDOWN]',
+                      {
+                          total: this._visibleNodesCache.length,
+                          external: this._visibleNodesCache.filter(n => isExternalLogic(n)).length,
+                          user: this._visibleNodesCache.filter(n => isUserLogic(n)).length,
+                          base: this._visibleNodesCache.filter(n =>
+                              !isExternalLogic(n) &&
+                              !isUserLogic(n)
+                          ).length
+                      }
+                    );
+
+                    console.log(
+                      '[RENDER_CACHE]',
+                      {
+                          visibleNodes: this._visibleNodesCache.length,
+                          cacheNodes: this._webglNodeCache?.length ?? -1,
+                          canvasNodes: this.nodes?.length ?? -1
+                      }
+                    );
 
                     // [v0.3.33] Phase 1: Visible Cluster Registry
                     console.time('LOD:visibleClusters');
@@ -7775,64 +8485,98 @@ class CanvasEngine {
                     console.time('LOD:visibleEdges');
                     const visibleNodeIds = new Set(this._visibleNodesCache.map(n => n.id));
                     this._visibleNodesSet = new Set(this._visibleNodesCache);
-                    this._visibleEdgesCache = this.edges.filter(e => {
-                        if (!visibleNodeIds.has(e.from) || !visibleNodeIds.has(e.to)) return false;
-                        if (this._visibleGraphClusterIds) {
-                            const fn = this.nodeMap.get(e.from);
-                            const tn = this.nodeMap.get(e.to);
-                            const fc = fn?.cluster_id ?? fn?.data?.cluster_id;
-                            const tc = tn?.cluster_id ?? tn?.data?.cluster_id;
-                            if (fc) {
-                                const matched = this._visibleGraphClusterIds.has(fc);
-                                if (!matched) return false;
-                            }
-                            if (tc) {
-                                const matched = this._visibleGraphClusterIds.has(tc);
-                                if (!matched) return false;
+                    console.timeEnd('VISIBLE_NODE_BUILD');
+                    console.time('VISIBLE_EDGE_BUILD');
+                    this._visibleEdgesCache = [];
+                    if (this._visibleGraphClusterIds && this._clusterEdgeMap) {
+                        // [v0.3.33.1_fix3] O(Visible Clusters * Edges) Edge Virtualization
+                        for (const cid of this._visibleGraphClusterIds) {
+                            const edgesFromCluster = this._clusterEdgeMap.get(cid);
+                            if (!edgesFromCluster) continue;
+                            
+                            for (let i = 0; i < edgesFromCluster.length; i++) {
+                                const e = edgesFromCluster[i];
+                                if (!visibleNodeIds.has(e.from) || !visibleNodeIds.has(e.to)) continue;
+                                const tc = e._toCluster;
+                                if (tc && !this._visibleGraphClusterIds.has(tc)) continue;
+                                
+                                this._visibleEdgesCache.push(e);
                             }
                         }
-                        return true;
-                    });
+                    } else {
+                        // Fallback: Full iteration (should rarely happen now)
+                        this._visibleEdgesCache = this.edges.filter(e => {
+                            if (!visibleNodeIds.has(e.from) || !visibleNodeIds.has(e.to)) return false;
+                            if (this._visibleGraphClusterIds) {
+                                const fc = e._fromCluster;
+                                const tc = e._toCluster;
+                                if (fc && !this._visibleGraphClusterIds.has(fc)) return false;
+                                if (tc && !this._visibleGraphClusterIds.has(tc)) return false;
+                            }
+                            return true;
+                        });
+                    }
                     console.timeEnd('LOD:visibleEdges');
 
                     // [v0.3.33] Phase 2: Dynamic Aggregate Edge Generation (LOD)
                     if (this._visibleGraphClusterIds && this.clusters) {
                         console.time('LOD:aggregateEdges');
                         const edgeMap = new Map();
+                        const repCache = new Map();
                         const findVisibleRep = (cid) => {
+                            if (repCache.has(cid)) return repCache.get(cid);
                             let curId = cid;
                             let depth = 0;
                             while (curId && depth < 100) {
-                                if (this._visibleGraphClusterIds.has(curId)) return curId;
+                                if (this._visibleGraphClusterIds.has(curId)) {
+                                    repCache.set(cid, curId);
+                                    return curId;
+                                }
                                 if (this.clusterHierarchy) {
                                     const hNode = this.clusterHierarchy.get(curId);
                                     if (!hNode || !hNode.parentId || hNode.parentId === curId) break;
                                     curId = hNode.parentId;
                                 } else {
-                                    const c = this.clusters.find(c => c.id === curId);
+                                    const c = this._clusterMap ? this._clusterMap.get(curId) : this.clusters.find(c => c.id === curId);
                                     if (!c || !c.parent_id || c.parent_id === curId) break;
                                     curId = c.parent_id;
                                 }
                                 depth++;
                             }
+                            repCache.set(cid, null);
                             return null;
                         };
 
-                        for (const edge of this.edges) {
-                            const fn = this.nodeMap.get(edge.from);
-                            const tn = this.nodeMap.get(edge.to);
-                            if (!fn || !tn) continue;
+                        if (this._clusterEdgeMap) {
+                            for (const [fc, edgesFromCluster] of this._clusterEdgeMap.entries()) {
+                                const fromRep = findVisibleRep(fc);
+                                if (!fromRep) continue;
 
-                            const fc = fn.cluster_id || fn.data?.cluster_id;
-                            const tc = tn.cluster_id || tn.data?.cluster_id;
-                            if (!fc || !tc) continue;
+                                for (let i = 0; i < edgesFromCluster.length; i++) {
+                                    const edge = edgesFromCluster[i];
+                                    const tc = edge._toCluster;
+                                    if (!tc) continue;
 
-                            const fromRep = findVisibleRep(fc);
-                            const toRep = findVisibleRep(tc);
+                                    const toRep = findVisibleRep(tc);
+                                    if (toRep && fromRep !== toRep) {
+                                        const key = `${fromRep}→${toRep}`;
+                                        edgeMap.set(key, (edgeMap.get(key) || 0) + (edge.weight || 1));
+                                    }
+                                }
+                            }
+                        } else {
+                            for (const edge of this.edges) {
+                                const fc = edge._fromCluster;
+                                const tc = edge._toCluster;
+                                if (!fc || !tc) continue;
 
-                            if (fromRep && toRep && fromRep !== toRep) {
-                                const key = `${fromRep}→${toRep}`;
-                                edgeMap.set(key, (edgeMap.get(key) || 0) + (edge.weight || 1));
+                                const fromRep = findVisibleRep(fc);
+                                const toRep = findVisibleRep(tc);
+
+                                if (fromRep && toRep && fromRep !== toRep) {
+                                    const key = `${fromRep}→${toRep}`;
+                                    edgeMap.set(key, (edgeMap.get(key) || 0) + (edge.weight || 1));
+                                }
                             }
                         }
 
@@ -7843,12 +8587,25 @@ class CanvasEngine {
                         }
                         console.timeEnd('LOD:aggregateEdges');
                     }
+                    console.timeEnd('VISIBLE_EDGE_BUILD');
+                    console.log('[VISIBLE_EDGE_COUNT]', this._visibleEdgesCache ? this._visibleEdgesCache.length : 0);
                     console.timeEnd('updateLOD');
 
                     // [v0.3.34] Invalidate Heatmap Cache on Graph Data Dirty
                     this.clusterFlows = [];
                     this.heatmapCacheValid = false;
                     this.heatmapCacheNeedsRebuild = true;
+
+                    // [v0.3.33.1_fix] Fix Nodes Spilling Out: Recompute cluster bounds whenever LOD/Visibility changes
+                    this._lastComputedBounds = new Map();
+                    if (this.clusters) {
+                        this._buildClusterIndices(); // Fast O(1) lookups
+                        console.time('COMPUTE_CLUSTER_BOUNDS');
+                        for (const cluster of this.clusters) {
+                            this.computeClusterBounds(cluster);
+                        }
+                        console.timeEnd('COMPUTE_CLUSTER_BOUNDS');
+                    }
 
                     // [v0.3.34] Disabled expensive stringify
                     // this.log(`[DEBUG_RENDER_NODES] Final visible nodes: ${JSON.stringify(this._visibleNodesCache.map(n => ({
@@ -7923,6 +8680,14 @@ class CanvasEngine {
                         return { ...n, position: { x: n.position?.x || 0, y: (n.position?.y || 0) + offsetY } };
                     });
                     console.timeEnd('buildVisibleCaches');
+                    this._recordPerfMetric('buildVisibleCaches', performance.now() - _tBuildVisibleStart);
+                    if (this._postLoadMemProbeBudget > 0) {
+                        this._logWebviewMemory('post-load-after-visible-cache', {
+                            probeSeq: this._postLoadMemProbeSeq,
+                            visibleNodes: this._visibleNodesCache ? this._visibleNodesCache.length : 0,
+                            visibleEdges: this._visibleEdgesCache ? this._visibleEdgesCache.length : 0
+                        });
+                    }
                 }
 
                 // [v0.3.28-fix] Cache selectedNodeIds as Set<string> ONCE per frame for O(1) lookup in renderEdge()
@@ -7930,11 +8695,22 @@ class CanvasEngine {
 
                 // [v0.2.25] Forced 2D layer for clusters (Option 4)
                 console.time('drawClusters');
+                const _tDrawClustersStart = performance.now();
                 this.renderGrid();
                 this.renderClusters();
                 console.timeEnd('drawClusters');
+                this._recordPerfMetric('drawClusters', performance.now() - _tDrawClustersStart);
 
+                const _tHeatmapStart = performance.now();
                 this.renderTrafficHeatmap(); // [v0.3.21] Heatmap Layer
+                this._recordPerfMetric('renderTrafficHeatmap', performance.now() - _tHeatmapStart);
+                if (this._postLoadMemProbeBudget > 0) {
+                    this._logWebviewMemory('post-load-after-heatmap', {
+                        probeSeq: this._postLoadMemProbeSeq,
+                        heatmapOn: this.showHeatmap,
+                        clusterFlows: this.clusterFlows ? this.clusterFlows.length : 0
+                    });
+                }
                 this.renderScrollbars();
 
                 // [v0.2.25] Accel Mode (WebGL) - Iron Shell Synergy Check
@@ -8082,13 +8858,17 @@ class CanvasEngine {
                         // [v0.3.9] Fixed 2D Mode: Render graph on transformed context
                         if (this.currentMode !== 'cluster') {
                             console.time('drawEdges');
+                            const _tDrawEdgesStart = performance.now();
                             this.renderEdges2D();
                             console.timeEnd('drawEdges');
+                            this._recordPerfMetric('drawEdges', performance.now() - _tDrawEdgesStart);
 
                             console.time('drawNodes');
+                            const _tDrawNodesStart = performance.now();
                             this.renderNodes2D(this.transform.zoom);
                             this.renderLabels2D();
                             console.timeEnd('drawNodes');
+                            this._recordPerfMetric('drawNodes', performance.now() - _tDrawNodesStart);
                         }
 
                         this.ctx.restore();
@@ -8150,15 +8930,15 @@ class CanvasEngine {
             this._renderDiagnosticHUD();
 
             // Debug Overlay: Draw click point to verify world coordinates
-            if (this._debugLastWorldClick) {
-                this.ctx.fillStyle = '#fb4934';
-                this.ctx.beginPath();
-                this.ctx.arc(this._debugLastWorldClick.x, this._debugLastWorldClick.y, 5 / this.transform.zoom, 0, Math.PI * 2);
-                this.ctx.fill();
-                this.ctx.strokeStyle = '#ffffff';
-                this.ctx.lineWidth = 1 / this.transform.zoom;
-                this.ctx.stroke();
-            }
+            // if (this._debugLastWorldClick) {
+            //     this.ctx.fillStyle = '#fb4934';
+            //     this.ctx.beginPath();
+            //     this.ctx.arc(this._debugLastWorldClick.x, this._debugLastWorldClick.y, 5 / this.transform.zoom, 0, Math.PI * 2);
+            //     this.ctx.fill();
+            //     this.ctx.strokeStyle = '#ffffff';
+            //     this.ctx.lineWidth = 1 / this.transform.zoom;
+            //     this.ctx.stroke();
+            // }
 
             this.renderDebugInfo();
 
@@ -8172,6 +8952,10 @@ class CanvasEngine {
             
             const _perfRenderEnd = performance.now();
             const elapsed = _perfRenderEnd - _perfRenderStart;
+            this._recordPerfMetric('render-frame', elapsed);
+            if (this._perfSample && this._perfSample.active) {
+                this._perfSample.frameCount += 1;
+            }
             
             if (this._frameCounter < 3 || elapsed > 16 || this._frameCounter % 60 === 0) {
                 console.log(`[FRAME] ${elapsed.toFixed(2)}ms`);
@@ -8185,6 +8969,13 @@ class CanvasEngine {
 
             if (elapsed > 5) {
                 console.log(`[PERF] Interaction Render: ${elapsed.toFixed(2)}ms`);
+            }
+            if (this._postLoadMemProbeBudget > 0) {
+                this._logWebviewMemory('post-load-render-end', {
+                    probeSeq: this._postLoadMemProbeSeq,
+                    elapsedMs: Number(elapsed.toFixed(2))
+                });
+                this._postLoadMemProbeBudget -= 1;
             }
             console.timeEnd('render-frame');
         }
@@ -9551,18 +10342,21 @@ class CanvasEngine {
 
         if (canReuseCache || (this.heatmapCacheValid && rebuildTooSoon && !this.heatmapCacheNeedsRebuild)) {
             console.time('heatmap-cache-blit');
+            const _tHeatmapBlitStart = performance.now();
             const ctx = this.ctx;
             ctx.save();
             ctx.setTransform(1, 0, 0, 1, 0, 0);
             ctx.drawImage(this.heatmapCacheCanvas, 0, 0);
             ctx.restore();
             console.timeEnd('heatmap-cache-blit');
+            this._recordPerfMetric('heatmap-cache-blit', performance.now() - _tHeatmapBlitStart);
             return;
         }
 
         // [v0.3.22.2] Dynamic Heatmap Calculation (if project data is missing or invalidated)
         if (!this.clusterFlows || this.clusterFlows.length === 0) {
             console.time('heatmap-edge-scan');
+            const _tHeatmapEdgeScanStart = performance.now();
             const flows = new Map();
             const activeEdges = this._visibleEdgesCache || this.edges;
             for (const e of activeEdges) {
@@ -9574,13 +10368,16 @@ class CanvasEngine {
                 }
             }
             console.timeEnd('heatmap-edge-scan');
+            this._recordPerfMetric('heatmap-edge-scan', performance.now() - _tHeatmapEdgeScanStart);
 
             console.time('heatmap-flow-build');
+            const _tHeatmapFlowBuildStart = performance.now();
             this.clusterFlows = Array.from(flows.entries()).map(([key, count]) => {
                 const [source, target] = key.split('->');
                 return { source, target, count };
             });
             console.timeEnd('heatmap-flow-build');
+            this._recordPerfMetric('heatmap-flow-build', performance.now() - _tHeatmapFlowBuildStart);
         }
 
         if (this.clusterFlows.length === 0) return;
@@ -9618,6 +10415,7 @@ class CanvasEngine {
             : new Map(this.clusters.map(c => [c.id, c]));
 
         console.time('heatmap-draw');
+        const _tHeatmapDrawStart = performance.now();
         for (const flow of this.clusterFlows) {
             const srcCluster = clusterMap.get(flow.source);
             const tgtCluster = clusterMap.get(flow.target);
@@ -9668,6 +10466,7 @@ class CanvasEngine {
             }
         }
         console.timeEnd('heatmap-draw');
+        this._recordPerfMetric('heatmap-draw', performance.now() - _tHeatmapDrawStart);
 
         this.heatmapCacheValid = true;
         this.heatmapCacheNeedsRebuild = false;
@@ -9675,12 +10474,14 @@ class CanvasEngine {
         this.heatmapCacheLastBuildAt = now;
 
         console.time('heatmap-cache-blit');
+        const _tHeatmapBlitStart = performance.now();
         const ctx = this.ctx;
         ctx.save();
         ctx.setTransform(1, 0, 0, 1, 0, 0);
         ctx.drawImage(this.heatmapCacheCanvas, 0, 0);
         ctx.restore();
         console.timeEnd('heatmap-cache-blit');
+        this._recordPerfMetric('heatmap-cache-blit', performance.now() - _tHeatmapBlitStart);
         } finally {
             console.timeEnd('renderTrafficHeatmap');
         }
@@ -9791,13 +10592,16 @@ class CanvasEngine {
         }
 
         // 깊이(계층 수)에 따라 정렬하여 큰 부모부터 렌더링
+        const depthCache = new Map();
         const getDepth = (c) => {
+            if (depthCache.has(c.id)) return depthCache.get(c.id);
             let depth = 0;
             let curr = c;
             while (curr && curr.parent_id) {
                 depth++;
-                curr = this.clusters.find(p => p.id === curr.parent_id);
+                curr = this._clusterMap ? this._clusterMap.get(curr.parent_id) : this.clusters.find(p => p.id === curr.parent_id);
             }
+            depthCache.set(c.id, depth);
             return depth;
         };
 
@@ -9840,16 +10644,32 @@ class CanvasEngine {
             let cur = c;
             while (cur && cur.parent_id) {
                 if (_collapsedParents.has(cur.parent_id)) return true;
-                cur = this.clusters.find(x => x.id === cur.parent_id);
+                cur = this._clusterMap ? this._clusterMap.get(cur.parent_id) : this.clusters.find(x => x.id === cur.parent_id);
             }
             return false;
         };
 
         this._clusterIDsWithNodes = new Set();
-        for (const n of this.nodes) { const cid = n.cluster_id || n.data?.cluster_id; if (cid) this._clusterIDsWithNodes.add(cid); }
+        this._clusterVisibleNodeCountMap = new Map();
+        if (this._visibleNodesCache) {
+            for (const n of this._visibleNodesCache) {
+                const cid = n.cluster_id || n.data?.cluster_id;
+                if (cid) {
+                    this._clusterIDsWithNodes.add(cid);
+                    this._clusterVisibleNodeCountMap.set(cid, (this._clusterVisibleNodeCountMap.get(cid) || 0) + 1);
+                }
+            }
+        } else {
+            for (const n of this.nodes) { 
+                const cid = n.cluster_id || n.data?.cluster_id; 
+                if (cid) this._clusterIDsWithNodes.add(cid); 
+            }
+        }
 
         let visibleClusterCount = 0;
         const _fc = { canRender:0, ancestor:0, empty:0, vault:0, layer:0, clientLayer:0, bounds:0, viewport:0 };
+        
+        let t_boxes = 0, t_borders = 0, t_labels = 0;
         for (const cluster of sortedClusters) {
             if (cluster.id.includes('activity')) console.log('[ACTIVITY_LOOP]', cluster.id);
             const _isActivityCluster = cluster.id.includes('activity');
@@ -9934,11 +10754,9 @@ class CanvasEngine {
                 continue; // Cluster is entirely outside the viewport
             }
 
-            // PROBE: visible node count per cluster (Hide Noise aware)
-            const visibleNodeCount = this._visibleNodesCache 
-                ? this._visibleNodesCache.filter(n => (n.cluster_id || n.data?.cluster_id) === cluster.id).length 
-                : 0;
-            console.log('[CLUSTER_VISIBLE_NODES]', cluster.id, visibleNodeCount);
+            // Fast O(1) lookup for visible node count
+            const visibleNodeCount = this._clusterVisibleNodeCountMap.get(cluster.id) || 0;
+            // Removed spammy console.log('[CLUSTER_VISIBLE_NODES]')
 
             // Generate a consistent color based on cluster ID
             let hash = 0;
@@ -9952,22 +10770,24 @@ class CanvasEngine {
             const padding = 20;
 
             // 클러스터 박스 그리기
+            let _dt = performance.now();
             this.ctx.beginPath();
 
             if (cluster.collapsed) {
                 const headerHeight = 30;
                 this.ctx.fillStyle = cluster.color || (theme ? theme.COLORS.INFO : '#458588');
                 this.ctx.fillRect(minX - padding, minY - padding - headerHeight, (maxX - minX) + padding * 2, headerHeight);
+                t_boxes += performance.now() - _dt; _dt = performance.now();
 
                 this.ctx.fillStyle = (theme && theme.COLORS) ? theme.COLORS.BG_DARK : '#282828';
                 this.ctx.font = `bold ${14 / this.transform.zoom}px Inter, sans-serif`;
                 this.ctx.textAlign = 'left';
                 this.ctx.textBaseline = 'middle';
                 this.ctx.fillText(`[+] ${cluster.label}`, minX - padding + 10, minY - padding - headerHeight / 2);
+                t_labels += performance.now() - _dt;
             } else {
                 // Expanded
                 const headerHeight = 30;
-
                 const baseColor = cluster.color || (theme ? theme.COLORS.HIGHLIGHT : '#458588');
 
                 // Header
@@ -9977,11 +10797,13 @@ class CanvasEngine {
                 // Body background
                 this.ctx.fillStyle = baseColor + '10'; // 6% alpha
                 this.ctx.fillRect(minX - padding, minY - padding, (maxX - minX) + padding * 2, (maxY - minY) + padding * 2);
+                t_boxes += performance.now() - _dt; _dt = performance.now();
 
                 // Border
                 this.ctx.strokeStyle = baseColor;
                 this.ctx.lineWidth = 1.5 / this.transform.zoom;
                 this.ctx.strokeRect(minX - padding, minY - padding, (maxX - minX) + padding * 2, (maxY - minY) + padding * 2);
+                t_borders += performance.now() - _dt; _dt = performance.now();
 
                 // Label
                 this.ctx.fillStyle = (theme && theme.COLORS) ? theme.COLORS.BG_DARK : '#282828';
@@ -9989,6 +10811,7 @@ class CanvasEngine {
                 this.ctx.textAlign = 'left';
                 this.ctx.textBaseline = 'middle';
                 this.ctx.fillText(`[-] ${cluster.label}`, minX - padding + 10, minY - padding - headerHeight / 2);
+                t_labels += performance.now() - _dt;
             }
 
             cluster._headerBounds = {
@@ -10004,6 +10827,9 @@ class CanvasEngine {
         if (this._frameCounter % 60 === 0) {
             console.log(`[PERF] VisibleClusters: ${visibleClusterCount}`);
             console.log('[RC_FILTER]', JSON.stringify({ drawn: visibleClusterCount, ..._fc }));
+        }
+        if (t_boxes + t_borders + t_labels > 50) {
+            console.log(`[drawClusters_Breakdown] boxes: ${t_boxes.toFixed(2)}ms, borders: ${t_borders.toFixed(2)}ms, labels: ${t_labels.toFixed(2)}ms`);
         }
     }
 
@@ -11856,17 +12682,6 @@ class CanvasEngine {
             const wNodes = nodeCount === 0 ? 0 : nCols * 120 + 100;
             const hNodes = nodeCount === 0 ? 0 : nRows * 80 + 100;
 
-            if (cluster.collapsed) {
-                // Return fixed tiny size for collapsed clusters
-                const w = 250;
-                const h = 60; // 30px header + padding
-                clusterBounds.set(cluster.id, { width: w, height: h });
-                cluster._localTargetCX = 0;
-                cluster._localTargetCY = 0;
-                cluster._currentCX = 0;
-                cluster._currentCY = 0;
-                return { width: w, height: h };
-            }
 
             if (!children || children.length === 0) {
                 if (wNodes === 0 && hNodes === 0) {
@@ -12384,6 +13199,10 @@ function initCanvas() {
     window.engine = engine; // [v0.2.25] Expose to global for button clicks
     self.engine = engine;
     globalThis.engine = engine;
+    window.startPerfSampling = (label, durationMs) => engine.startPerfSampling(label, durationMs);
+    window.stopPerfSampling = () => engine.stopPerfSampling();
+    window.runHeatmapABSampling = (durationMs, gapMs) => engine.runHeatmapABSampling(durationMs, gapMs);
+    window.setHeatmapEnabled = (enabled) => engine._setHeatmapEnabled(enabled);
     console.log('[WINDOW_ENGINE_ASSIGNED]', !!window.engine);
     console.log('[SYNAPSE] Engine initialized:', engine);
 
@@ -12424,6 +13243,7 @@ function initCanvas() {
             case 'projectStateChunkStart': {
                 engine._chunkedNodes = [];
                 engine._chunkedEdges = [];
+                engine._logWebviewMemory('chunk-start');
                 break;
             }
             case 'projectStateNodesChunk': {
@@ -12440,8 +13260,20 @@ function initCanvas() {
             }
             case 'projectStateChunkEnd': {
                 if (message.data) {
+                    console.log('[STATE_CHECK]', 'chunk-end-enter',
+                        message.data.nodes?.length ?? 0,
+                        message.data.edges?.length ?? 0,
+                        message.data.clusters?.length ?? 0);
                     message.data.nodes = engine._chunkedNodes || [];
                     message.data.edges = engine._chunkedEdges || [];
+                    console.log('[STATE_CHECK]', 'chunk-end-after-bind',
+                        message.data.nodes?.length ?? 0,
+                        message.data.edges?.length ?? 0,
+                        message.data.clusters?.length ?? 0);
+                    engine._logWebviewMemory('chunk-end-before-dispatch', {
+                        incomingNodes: message.data.nodes?.length || 0,
+                        incomingEdges: message.data.edges?.length || 0
+                    });
                     console.log('[WEBVIEW_RECEIVED] nodes=%d edges=%d clusters=%d', engine._chunkedNodes?.length ?? 0, engine._chunkedEdges?.length ?? 0, message.data.clusters?.length ?? 0);
                     console.log('[CHUNK_END_NODES]', engine._chunkedNodes?.length ?? 0);
                     engine._chunkedNodes = null;
@@ -12454,15 +13286,29 @@ function initCanvas() {
                 }
                 // Re-route to projectState
                 message.command = 'projectState';
-                engine.handleMessage(message);
+                try {
+                    engine.handleMessage(message);
+                } catch (e) {
+                    console.error('[PROJECT_STATE_REROUTE_ERROR]', {
+                        error: e?.message || String(e),
+                        stack: e?.stack || null,
+                        nodes: message.data?.nodes?.length ?? 0,
+                        edges: message.data?.edges?.length ?? 0,
+                        clusters: message.data?.clusters?.length ?? 0
+                    });
+                }
                 break;
             }
             case 'projectStateData':
             case 'projectState': {
-                console.log('[PROJECT_STATE_ENTER] nodes=' + (message.data?.nodes?.length ?? message.data?.edges?.length ?? '?'));
                 if (message.state) {
                     message.data = message.state; // normalize for logic below
                 }
+                console.log('[PROJECT_STATE_ENTER] nodes=' + (message.data?.nodes?.length ?? message.data?.edges?.length ?? '?'));
+                console.log('[STATE_CHECK]', 'projectState-handler-enter',
+                    message.data?.nodes?.length ?? 0,
+                    message.data?.edges?.length ?? 0,
+                    message.data?.clusters?.length ?? 0);
                 if (message.data && message.data.project_name) {
                     engine.projectName = message.data.project_name;
                     console.log(`[SYNAPSE] Project Name Synchronized: ${engine.projectName}`);
@@ -12475,9 +13321,43 @@ function initCanvas() {
                 if (message.isAuthoritative) {
                     console.log('[SYNAPSE] Authoritative projectState received. Bypassing interaction lock.');
                     if (message.data) message.data._msgReceiveT = performance.now(); // [v0.3.33 Phase 0]
+                    console.log('[STATE_CHECK]', 'before-load-authoritative',
+                        message.data?.nodes?.length ?? 0,
+                        message.data?.edges?.length ?? 0,
+                        message.data?.clusters?.length ?? 0);
+                    const stateForLoad = message.data;
+                    const loadFn = engine.loadProjectState;
+                    engine.log('[LOAD_FN]', 'info', {
+                        mode: 'authoritative',
+                        name: loadFn?.name || '(anonymous)',
+                        type: typeof loadFn,
+                        head: String(loadFn).slice(0, 240)
+                    });
+                    engine.log('[STATE_CHECK] before-load-call', 'info', {
+                        nodes: stateForLoad?.nodes?.length ?? 0,
+                        edges: stateForLoad?.edges?.length ?? 0,
+                        clusters: stateForLoad?.clusters?.length ?? 0
+                    });
+                    console.log('[STATE_CHECK]', 'before-load-call',
+                        stateForLoad?.nodes?.length ?? 0,
+                        stateForLoad?.edges?.length ?? 0,
+                        stateForLoad?.clusters?.length ?? 0);
                     console.log('[LOAD_PROJECT_STATE_ENTER] authoritative nodes=' + (message.data?.nodes?.length ?? '?'));
-                    engine.loadProjectState(message.data, true);
+                    try {
+                        engine.loadProjectState(stateForLoad, true);
+                    } catch (e) {
+                        console.error('[LOAD_PROJECT_STATE_ERROR]', {
+                            mode: 'authoritative',
+                            error: e?.message || String(e),
+                            stack: e?.stack || null,
+                            nodes: stateForLoad?.nodes?.length ?? 0,
+                            edges: stateForLoad?.edges?.length ?? 0,
+                            clusters: stateForLoad?.clusters?.length ?? 0
+                        });
+                        throw e;
+                    }
                     console.log('[LOAD_PROJECT_STATE_DONE] authoritative');
+                    message.data = null;
                     engine.updateNodeStats(); // [v0.3.22.9] Force stats update for tooltips
                     engine._pendingState = null;
                     // [v0.3.32.4] Refresh cluster visibility panel if open
@@ -12497,9 +13377,43 @@ function initCanvas() {
                 const preserve = isFreshSaveResponse || (!message.forceReset && engine.nodes && engine.nodes.length > 0);
                 
                 if (message.data) message.data._msgReceiveT = performance.now(); // [v0.3.33 Phase 0]
+                console.log('[STATE_CHECK]', 'before-load-non-authoritative',
+                    message.data?.nodes?.length ?? 0,
+                    message.data?.edges?.length ?? 0,
+                    message.data?.clusters?.length ?? 0);
+                const stateForLoad = message.data;
+                const loadFn = engine.loadProjectState;
+                engine.log('[LOAD_FN]', 'info', {
+                    mode: 'non-authoritative',
+                    name: loadFn?.name || '(anonymous)',
+                    type: typeof loadFn,
+                    head: String(loadFn).slice(0, 240)
+                });
+                engine.log('[STATE_CHECK] before-load-call', 'info', {
+                    nodes: stateForLoad?.nodes?.length ?? 0,
+                    edges: stateForLoad?.edges?.length ?? 0,
+                    clusters: stateForLoad?.clusters?.length ?? 0
+                });
+                console.log('[STATE_CHECK]', 'before-load-call',
+                    stateForLoad?.nodes?.length ?? 0,
+                    stateForLoad?.edges?.length ?? 0,
+                    stateForLoad?.clusters?.length ?? 0);
                 console.log('[LOAD_PROJECT_STATE_ENTER] non-auth nodes=' + (message.data?.nodes?.length ?? '?'));
-                engine.loadProjectState(message.data, preserve);
+                try {
+                    engine.loadProjectState(stateForLoad, preserve);
+                } catch (e) {
+                    console.error('[LOAD_PROJECT_STATE_ERROR]', {
+                        mode: 'non-authoritative',
+                        error: e?.message || String(e),
+                        stack: e?.stack || null,
+                        nodes: stateForLoad?.nodes?.length ?? 0,
+                        edges: stateForLoad?.edges?.length ?? 0,
+                        clusters: stateForLoad?.clusters?.length ?? 0
+                    });
+                    throw e;
+                }
                 console.log('[LOAD_PROJECT_STATE_DONE] non-auth');
+                message.data = null;
                 engine.updateNodeStats(); // [v0.3.22.9] Force stats update for tooltips
                 engine.isExpectingUpdate = false;
                 // [v0.3.32.4] Refresh cluster visibility panel if open
@@ -13059,6 +13973,10 @@ function initCanvas() {
             if (engine.canvas) engine.canvas.dataset.mode = mode; // Ensure WebGL isolation condition checks match mode
             if (engine.canvas2d) engine.canvas2d.dataset.mode = mode; // Fix: WebGL checks this canvas dataset!
             console.log('[SYNAPSE] Switched to mode:', mode);
+
+            // [v0.3.33.2 Fix] Force re-render state on mode switch to prevent blank canvas
+            engine.isDirty = true;
+            engine.isGraphDataDirty = true;
 
             // [v0.3.09] Rule 8. [Rendering Isolation] 강제 WebGL 초기화 (Force flush WebGL state during view transition)
             if (engine.webglRenderer) {

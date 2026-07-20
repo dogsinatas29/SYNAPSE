@@ -1,29 +1,48 @@
+# Build Artifacts
 node_modules/
 dist/
 out/
-*.log
-.DS_Store
-data/snapshots/
+*.vsix
 *.tsbuildinfo
 
-# SYNAPSE specific
-*.vsix
-synapse-visual-architecture-*/
+# Runtime & Cache
+logs/
+tmp/
+temp/
+cache/
+.synapse-cache/
 
-# Temporary / Build artifacts
+# Generated Reports & Artifacts
+reports/
+exports/
+generated_reports/
+generated_debug/
+harvest_output/
+
+# Runtime Data
+snapshots/
+context/
+.session/
+.server_info
+.synapse/
+.synapse_contexts/
+
+# Debug & Scratch
+debug/
+scratch/
+.virtual-debug/
 *.backup
 *.original
 *_self_sync.js*
-test_*.js
-demo_bootstrap.js
 sync_check.js
-backup_md/
-.synapse_contexts/
-prompts/
-.vscode/
-context/
+debug_*.js
+fix_cluster.sh
 
-# Stray root files (Cleanup)
+# OS
+.DS_Store
+Thumbs.db
+
+# Legacy Stray root files (Cleanup)
 foo
 http
 net
@@ -42,10 +61,9 @@ project_state_json
 "출력 가능한 ASCII"
 vscode-languageserver-textdocument
 
-# Test & Verify scripts
-test_*.ts
-verify_*.ts
-verify_*.js
-scratch.js
-debug_nodes.js
-fix_cluster.sh
+# Explicitly INCLUDE Milestones & Release Notes
+!mile_stone/
+!mile_stone/**
+!release_note/
+!release_note/**
+

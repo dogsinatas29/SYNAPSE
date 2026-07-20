@@ -55,10 +55,14 @@ export class GhostExpander {
             for (const p of predefined) {
                 if (cleanId.startsWith(p + '.')) return `cluster_ghost_${p.replace(/\./g, '_')}`;
             }
-            const segments = cleanId.split('.');
-            if (segments.length > 1) {
-                return `cluster_ghost_${segments[0]}`; // fallback to first segment
+            
+            // Only split for obvious Java/Kotlin packages (e.g. com.*, org.*, net.*) 
+            // to avoid splitting C/C++ files, macros, or arbitrary extensions (like .o, .dts, .mk)
+            if (/^(com|org|net|io|dev)\.[a-zA-Z0-9_]+/.test(cleanId) && !cleanId.includes('/') && !cleanId.includes('\\')) {
+                const segments = cleanId.split('.');
+                return `cluster_ghost_${segments[0]}`;
             }
+
             return 'cluster_ghosts';
         };
 

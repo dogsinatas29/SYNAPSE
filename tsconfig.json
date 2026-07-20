@@ -19,6 +19,9 @@
             "jest"
         ]
     },
+    "include": [
+        "src/**/*"
+    ],
     "exclude": [
         "node_modules",
         ".vscode-test",

@@ -36,6 +36,8 @@ export class StateManager {
   private reservedPaths: Set<string> = new Set(); // 📡 Immediate Sovereignty Signal (RTOS Style)
   private currentTxnId: number = 0;
   private activeScopeId: string | null = null;
+    private lastMergedDiagTxn: number = -1;
+    private lastSnapshotDiagTxn: number = -1;
 
   constructor(clusters?: Cluster[]) {
     this.bufferNodes = new Map();
@@ -82,6 +84,15 @@ export class StateManager {
     this._normalizeCache.set(p, result);
     return result;
   }
+
+    private logDerivedGraphStats(tag: string, stats: Record<string, number>) {
+        try {
+            const parts = Object.entries(stats).map(([k, v]) => `${k}=${v}`);
+            console.log('[GRAPH_DERIVED][HOST]', `stage=${tag}`, ...parts);
+        } catch {
+            // no-op: diagnostics must never break the render pipeline
+        }
+    }
 
   public apply(intent: Intent): CanvasState {
     switch (intent.type) {
@@ -501,7 +512,11 @@ export class StateManager {
             // AI / Base Logic Domain
             finalLayer = 'ai';
             const coreNode = coreNodeMap.get(resolvedId) || coreNodeMap.get(n.id);
-            const isOnDisk = isExternal || !!coreNode;
+            // [v0.3.33.7 Fix] Avoid mass-ghosting during cold boot cache loading
+            // If coreNodeMap is empty, it means DataPipeline hasn't populated graphModel yet.
+            // We must trust the snapshot's original status instead of assuming all files were deleted.
+            const isColdBoot = coreNodeMap.size === 0;
+            const isOnDisk = isExternal || !!coreNode || isColdBoot;
             const parentFolder = this.extractParentFolderName(n.filePath || resolvedId);
 
 
@@ -648,6 +663,33 @@ export class StateManager {
         return false; // Remove empty clusters to prevent ghost UI boxes
     });
 
+    const mergedNodeCount = Object.keys(finalNodes).length;
+    const mergedEdgeCount = Object.keys(finalEdges).length;
+    const isHugeGraph = mergedNodeCount >= 50000 || mergedEdgeCount >= 200000;
+    if (isHugeGraph && this.lastMergedDiagTxn !== this.currentTxnId) {
+        this.lastMergedDiagTxn = this.currentTxnId;
+        this.logDerivedGraphStats('generate-merged-state', {
+            txn: this.currentTxnId,
+            raw: options.raw ? 1 : 0,
+            coreNodes: coreSnap.nodes.length,
+            coreEdges: coreSnap.edges.length,
+            bufferNodes: this.bufferNodes.size,
+            bufferEdges: this.bufferEdges.size,
+            allCandidates: allCandidates.length,
+            sortedCandidates: sortedCandidates.length,
+            dedupSize: deDupMap.size,
+            pathToIdSize: pathToIdMap.size,
+            allEdges: allEdges.length,
+            degreeKeys: Object.keys(degrees).length,
+            finalNodes: mergedNodeCount,
+            finalEdges: mergedEdgeCount,
+            clusterMapSize: clusterMap.size,
+            nodesWithClusters: nodesWithClusters.size,
+            subtreeHasNodes: subtreeHasNodes.size,
+            finalClusters: finalClusters.length
+        });
+    }
+
     return { nodes: finalNodes, edges: finalEdges, clusters: finalClusters, deletedNodeIds: Array.from(this.deletedNodeIds), deletedPaths: Array.from(this.deletedPaths), userCount, aiCount, externalCount };
   }
 
@@ -668,9 +710,11 @@ export class StateManager {
 
   public getSnapshot(): CanvasState {
     const merged = this.generateMergedState({ raw: false });
+        const mergedNodes: Node[] = Object.values(merged.nodes as Record<string, Node>);
+        const mergedEdges: Edge[] = Object.values(merged.edges as Record<string, Edge>);
     const draftSnap: GraphSnapshot = {
-        nodes: Object.values(merged.nodes),
-        edges: Object.values(merged.edges),
+        nodes: mergedNodes,
+        edges: mergedEdges,
         clusters: merged.clusters,
         cluster_flows: [],
         timestamp: Date.now()
@@ -727,6 +771,27 @@ export class StateManager {
         };
     });
 
+    const finalNodeCount = Object.keys(finalNodes).length;
+    const finalEdgeCount = viewSnap.edges.length;
+    const isHugeGraph = finalNodeCount >= 50000 || finalEdgeCount >= 200000;
+    if (isHugeGraph && this.lastSnapshotDiagTxn !== this.currentTxnId) {
+        this.lastSnapshotDiagTxn = this.currentTxnId;
+        this.logDerivedGraphStats('get-snapshot', {
+            txn: this.currentTxnId,
+            resolution: this.activeScopeId ? 1 : 0,
+            mergedNodes: mergedNodes.length,
+            mergedEdges: mergedEdges.length,
+            draftNodes: draftSnap.nodes.length,
+            draftEdges: draftSnap.edges.length,
+            projectedNodes: viewSnap.nodes.length,
+            projectedEdges: viewSnap.edges.length,
+            seenPathCount: seenPaths.size,
+            finalNodes: finalNodeCount,
+            finalEdges: finalEdgeCount,
+            clusterCount: viewSnap.clusters.length
+        });
+    }
+
     return {
         nodes: finalNodes,
         edges: Object.fromEntries(viewSnap.edges.map(e => [e.id, e])),
@@ -744,6 +809,58 @@ export class StateManager {
   public getRawSnapshot(): CanvasState {
     return this.generateMergedState({ raw: true });
   }
+
+    public resetAllState() {
+        this.bufferNodes.clear();
+        this.bufferEdges.clear();
+        this.bufferClusters.clear();
+        this.deletedNodeIds.clear();
+        this.deletedPaths.clear();
+        this.dirtyNodeIds.clear();
+        this.reservedPaths.clear();
+        this._normalizeCache.clear();
+        this.activeScopeId = null;
+        this.currentTxnId = 0;
+        this.lastMergedDiagTxn = -1;
+        this.lastSnapshotDiagTxn = -1;
+        graphModel.reset();
+    }
+
+    public getRetentionDiagnostics() {
+        const core = graphModel.getDebugStats();
+        const projection = projectionLayer.getDebugStats();
+        const backendGraphNodes = this.bufferNodes.size;
+        const backendGraphEdges = this.bufferEdges.size;
+        const currentGraphNodes = core.nodeMapSize;
+        const currentGraphEdges = core.edgeListSize;
+        const projectionCacheEntries = projection.nonRuleContainerCount;
+        return {
+            txn: this.currentTxnId,
+            activeScope: this.activeScopeId ? 1 : 0,
+            normalizeCacheSize: this._normalizeCache.size,
+            bufferNodeMapSize: this.bufferNodes.size,
+            bufferEdgeMapSize: this.bufferEdges.size,
+            bufferClusterMapSize: this.bufferClusters.size,
+            backendGraphNodes,
+            backendGraphEdges,
+            deletedNodeIdsSize: this.deletedNodeIds.size,
+            deletedPathsSize: this.deletedPaths.size,
+            dirtyNodeIdsSize: this.dirtyNodeIds.size,
+            reservedPathsSize: this.reservedPaths.size,
+            currentProjectGraph: core.hasGraph ? 1 : 0,
+            backendEngineGraph: (this.bufferNodes.size > 0 || this.bufferEdges.size > 0 || this.bufferClusters.size > 0) ? 1 : 0,
+            projectedGraphCache: projection.hasPersistentCache ? 1 : 0,
+            graphNodeMapSize: core.nodeMapSize,
+            graphEdgeListSize: core.edgeListSize,
+            graphClusterListSize: core.clusterListSize,
+            currentGraphNodes,
+            currentGraphEdges,
+            projectionRuleCount: projection.ruleCount,
+            projectionOwnKeyCount: projection.ownKeyCount,
+            projectionNonRuleContainerCount: projection.nonRuleContainerCount,
+            projectionCacheEntries
+        };
+    }
 
   public load(state: any) {
     if (!state) return;

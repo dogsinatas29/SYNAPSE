@@ -1,0 +1,44 @@
+[SYNAPSE] [PM 5:16:31] [INFO] [v0.3.30] ProjectMetadata loaded: synapse-demo (proj_1781250499404_3tskth)
+[SYNAPSE] [PM 5:16:31] [INFO] [SynapseIgnore] Loaded 0 patterns from .synapseignore
+[SYNAPSE] [PM 5:16:31] [INFO] [v0.3.30] Runtime initialization started
+[SYNAPSE] [PM 5:16:31] [INFO] [v0.3.30] Step 1/4: Loading Project Metadata...
+[SYNAPSE] [PM 5:16:31] [INFO] [v0.3.30] ProjectMetadata loaded: synapse-demo (proj_1781250499404_3tskth)
+[SYNAPSE] [PM 5:16:31] [INFO] [v0.3.30] Step 2/4: Loading Symbol Index...
+[SYNAPSE] [PM 5:16:31] [INFO] [v0.3.30] Step 3/4: Initializing Identity Manager...
+[SYNAPSE] [PM 5:16:31] [INFO] [v0.3.30] Step 4/4: Initializing Session Manager...
+[SYNAPSE] [PM 5:16:31] [INFO] [v0.3.30] Runtime ready for project: synapse-demo (proj_1781250499404_3tskth)
+[SYNAPSE] [PM 5:16:31] [INFO] [v0.3.30] Accounts loaded: 0 (schema v2)
+[SYNAPSE] [PM 5:16:31] [INFO] [MountManager] Mount root: /home/dogsinatas/TypeScript_project/antigravity-extension-vis/.synapse/mnt
+[SYNAPSE] [PM 5:16:31] [INFO] [ClientPush] Restored 0 client push cache(s)
+🚀 SYNAPSE Standalone Dev Server starting...
+📂 Root: /home/dogsinatas/TypeScript_project/antigravity-extension-vis
+🏷️  Server: antigravity-extension-vis
+🆔 UUID: proj_1781250499404_3tskth
+🔌 Port: 3000
+📄 State: /home/dogsinatas/TypeScript_project/antigravity-extension-vis/data/project_state.json
+
+✅ Standalone API server running at http://127.0.0.1:3000
+ℹ️  API only — no browser UI served.
+
+
+🚨 [CHAOS] Simulating crash: OOM
+
+
+
+<--- Last few GCs --->
+
+[93557:0x19024000]     9077 ms: Mark-Compact (reduce) 4092.9 (4117.2) -> 4092.9 (4110.2) MB, pooled: 0 MB, 220.82 / 0.00 ms  (+ 0.9 ms in 5 steps since start of marking, biggest step 0.8 ms, walltime since start of marking 225 ms) (average mu = 0.127, cur[93557:0x19024000]     9330 ms: Mark-Compact 4093.6 (4111.0) -> 4093.6 (4114.0) MB, pooled: 0 MB, 252.83 / 0.00 ms  (average mu = 0.065, current mu = 0.002) allocation failure; scavenge might not succeed
+
+FATAL ERROR: Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory
+----- Native stack trace -----
+
+ 1: 0x73f8c4 node::OOMErrorHandler(char const*, v8::OOMDetails const&) [node]
+ 2: 0xc06f90  [node]
+ 3: 0xc0707f  [node]
+ 4: 0xeaa885  [node]
+ 5: 0xeaa8b2  [node]
+ 6: 0xeaabaa  [node]
+ 7: 0xebb8aa  [node]
+ 8: 0xebfc50  [node]
+ 9: 0x1953f71  [node]
+Aborted (core dumped)

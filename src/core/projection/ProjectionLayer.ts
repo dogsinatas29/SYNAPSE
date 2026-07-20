@@ -26,51 +26,80 @@ export interface ViewSnapshot {
 export class ProjectionLayer {
     private rules: ProjectionRule[] = standardProjectionRules;
 
+    public getDebugStats() {
+        const self = this as any;
+        const ownKeys = Object.keys(self);
+        let nonRuleContainerCount = 0;
+
+        for (const key of ownKeys) {
+            if (key === 'rules') continue;
+            const value = self[key];
+            if (Array.isArray(value) || value instanceof Map || value instanceof Set) {
+                nonRuleContainerCount++;
+            }
+        }
+
+        return {
+            hasPersistentCache: nonRuleContainerCount > 0,
+            ruleCount: this.rules.length,
+            ownKeyCount: ownKeys.length,
+            nonRuleContainerCount
+        };
+    }
+
     /**
      * 그래프 스냅샷을 지정된 해상도로 투영하고 시각적 규칙을 적용합니다.
      */
     public project(graph: GraphSnapshot, resolution: ProjectionResolution): ViewSnapshot {
         console.log(`[SYNAPSE] Projecting graph with resolution: ${resolution}`);
+        const timer = `[TIMER] project-graph resolution=${resolution}`;
+        console.time(timer);
+        try {
 
-        // [v0.3.11] 전역 이름 정규화: 모든 뷰에서 일관된 이름을 보장 (확장자 보존)
-        const normalizedNodes = graph.nodes.map(n => {
-            const fileName = pathBasename(n.filePath);
-            // 우선순위: 사용자 직접 입력 > 파일 시스템 이름 > 기존 데이터 레이블 > 시스템 ID
-            const finalLabel = n.label || fileName || (n.data && n.data.label) || n.id;
-            
-            return {
-                ...n,
-                label: finalLabel,
-                data: { ...n.data, label: finalLabel }
-            };
-        });
+            // [v0.3.11] 전역 이름 정규화: 모든 뷰에서 일관된 이름을 보장 (확장자 보존)
+            const normalizedNodes = graph.nodes.map(n => {
+                const fileName = pathBasename(n.filePath);
+                // 우선순위: 사용자 직접 입력 > 파일 시스템 이름 > 기존 데이터 레이블 > 시스템 ID
+                const finalLabel = n.label || fileName || (n.data && n.data.label) || n.id;
+                
+                return {
+                    ...n,
+                    label: finalLabel,
+                    data: { ...n.data, label: finalLabel }
+                };
+            });
 
-        const normalizedGraph = { ...graph, nodes: normalizedNodes };
+            const normalizedGraph = { ...graph, nodes: normalizedNodes };
 
-        let view: ViewSnapshot;
-        switch (resolution) {
-            case ProjectionResolution.FILE:
-                view = this.projectToFileLevel(normalizedGraph);
-                break;
-            case ProjectionResolution.FUNCTION:
-                view = this.projectToFunctionLevel(normalizedGraph);
-                break;
-            default:
-                view = { ...normalizedGraph, resolution, timestamp: Date.now() };
+            let view: ViewSnapshot;
+            switch (resolution) {
+                case ProjectionResolution.FILE:
+                    view = this.projectToFileLevel(normalizedGraph);
+                    break;
+                case ProjectionResolution.FUNCTION:
+                    view = this.projectToFunctionLevel(normalizedGraph);
+                    break;
+                default:
+                    view = { ...normalizedGraph, resolution, timestamp: Date.now() };
+            }
+
+            // Apply Visual Rules
+            let { nodes, edges } = view;
+            for (const rule of this.rules) {
+                const result = rule.apply(nodes, edges, view.clusters);
+                nodes = result.nodes;
+                edges = result.edges;
+            }
+
+            return { ...view, nodes, edges, cluster_flows: graph.cluster_flows };
+        } finally {
+            console.timeEnd(timer);
         }
-
-        // Apply Visual Rules
-        let { nodes, edges } = view;
-        for (const rule of this.rules) {
-            const result = rule.apply(nodes, edges, view.clusters);
-            nodes = result.nodes;
-            edges = result.edges;
-        }
-
-        return { ...view, nodes, edges, cluster_flows: graph.cluster_flows };
     }
 
     private projectToFileLevel(graph: GraphSnapshot): ViewSnapshot {
+        console.time('[TIMER] project-graph:file-level');
+        try {
         // [v0.3.11] FILE 레벨 투영: 파일, 소스 뿐만 아니라 'pending' 상태인 수동 노드 무조건 포함
         const allowedTypes = ['file', 'source', 'documentation', 'external', 'symbol', 'FILE', 'SOURCE'];
         const fileNodes = graph.nodes
@@ -145,6 +174,9 @@ export class ProjectionLayer {
             resolution: ProjectionResolution.FILE,
             timestamp: Date.now()
         };
+        } finally {
+            console.timeEnd('[TIMER] project-graph:file-level');
+        }
     }
 
     private projectToFunctionLevel(graph: GraphSnapshot): ViewSnapshot {

@@ -55,8 +55,13 @@ export class SnapshotSystem {
       } catch {}
 
       try {
-        const serialized = JSON.stringify({ nodes: snapshot.nodes, edges: snapshot.edges, clusters: snapshot.clusters });
-        snapshot.checksum = crypto.createHash('sha256').update(serialized).digest('hex').slice(0, 16);
+        // [Fix v0.3.33.2] Prevent OOM crash on Chromium/Linux Kernel by skipping full stringify for massive graphs
+        if (snapshot.nodes.length > 20000) {
+          snapshot.checksum = `massive_bypass_${Date.now()}`;
+        } else {
+          const serialized = JSON.stringify({ nodes: snapshot.nodes, edges: snapshot.edges, clusters: snapshot.clusters });
+          snapshot.checksum = crypto.createHash('sha256').update(serialized).digest('hex').slice(0, 16);
+        }
       } catch { snapshot.checksum = ''; }
 
       this.lastSnapshot = snapshot;
@@ -107,7 +112,7 @@ export class SnapshotSystem {
         throw new Error("No snapshot available to restore.");
       }
 
-      if (target.checksum) {
+      if (target.checksum && !target.checksum.startsWith('massive_bypass_')) {
         try {
           const serialized = JSON.stringify({ nodes: target.nodes, edges: target.edges, clusters: target.clusters });
           const computed = crypto.createHash('sha256').update(serialized).digest('hex').slice(0, 16);

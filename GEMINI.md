@@ -315,6 +315,35 @@ SYNAPSE는 Database 기반 협업 시스템이 아니다.
 
 SYNAPSE는 파일 시스템과 그래프를 Source Of Truth로 사용하는 협업 시스템이다.
 
+---
+
+# SYNAPSE Core Rule (Layout vs Visibility)
+
+레이아웃 엔진은 절대 가시성 상태(Profile, Visibility)에 의존하여 계산을 수행하면 안 된다.
+
+**금지 (접근 불가 상태값):**
+```javascript
+cluster.collapsed
+cluster.visible
+showExternalLayer
+hideNodeModes
+focusMode
+```
+
+**허용 (실제 데이터):**
+```javascript
+actual node count
+actual descendants
+actual edges
+actual hierarchy
+```
+
+즉,
+**Layout = Reality**
+**Visibility = Presentation**
+이어야 합니다.
+(프로파일은 렌더링만 제한하며, 공간 배치는 항상 전체 그래프를 기준으로 계산된다)
+
 ## ROOT Structure
 프로젝트 주요 디렉터리 구조 및 소스코드 현황입니다. (Active/Orphaned/Legacy 상태 포함, 마일스톤/릴리즈 노트 제외)
 

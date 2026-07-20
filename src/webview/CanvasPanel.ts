@@ -2881,6 +2881,7 @@ export class CanvasPanel {
             this._saveListenerDisposable = null;
         }
         CanvasPanel.currentPanel = undefined;
+        canvasEngine.resetState();
 
         if (this._serverProcess && !this._serverProcess.killed) {
             this._serverProcess.kill('SIGTERM');
@@ -3090,6 +3091,7 @@ export class CanvasPanel {
     }
 
     private normalizeProjectState(state: any): string {
+        console.time('NORMALIZE_STATE');
         console.time('state-export');
         try {
             // [v0.3.10] Handle Engine State (Record-based) to UI/File State (Array-based) translation
@@ -3215,9 +3217,12 @@ export class CanvasPanel {
 
             // 4. 정렬된 JSON 문자열 반환
             const normalized = JSON.stringify(sortedState, null, 2);
+            console.timeEnd('state-export');
+            console.timeEnd('NORMALIZE_STATE');
             return normalized;
         } finally {
             console.timeEnd('state-export');
+            console.timeEnd('NORMALIZE_STATE');
         }
     }
 
@@ -3737,6 +3742,7 @@ export class CanvasPanel {
         }
 
         // STEP 2: Memory Flush - 익스텐션 호스트 내 상태 변수 초기화
+        canvasEngine.resetState();
         canvasEngine.loadInitialState(emptyState);
         Logger.info('[CanvasPanel] STEP 2: Memory Flush complete.');
 
@@ -3766,6 +3772,7 @@ export class CanvasPanel {
 
         if (confirm === 'Deep Reset') {
             try {
+                canvasEngine.resetState();
                 // 1. Bootstrap
                 const engine = new BootstrapEngine();
                 const result = await engine.liteBootstrap(
@@ -4319,9 +4326,21 @@ export class CanvasPanel {
         req.end();
     }
 
+    private _saveStateDebugCount = 0;
+
     private async handleSaveState(newState: any) {
+        console.time('SAVE_STATE');
+        console.count('SAVE_STATE_CALL');
+        if (typeof (this as any)._saveStateDebugCount === 'undefined') (this as any)._saveStateDebugCount = 0;
+        if (++(this as any)._saveStateDebugCount <= 5) {
+            console.trace('[SAVE_STATE_TRACE] Caller stack:');
+        }
+
         const workspaceFolder = this._workspaceFolder;
-        if (!workspaceFolder) return;
+        if (!workspaceFolder) {
+            console.timeEnd('SAVE_STATE');
+            return;
+        }
 
         try {
             const projectStateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'project_state.json');
@@ -4333,6 +4352,7 @@ export class CanvasPanel {
 
             if (uiNodesCount === 0 && engineNodesCount > 0) {
                 Logger.warn(`[CanvasPanel] saveState BLOCKED: Attempted to save 0 nodes while engine has ${engineNodesCount}. Probable initialization race condition.`);
+                console.timeEnd('SAVE_STATE');
                 return;
             }
 
@@ -4444,6 +4464,7 @@ export class CanvasPanel {
         } catch (error) {
             console.error('[SYNAPSE] Failed to save state:', error);
         }
+        console.timeEnd('SAVE_STATE');
     }
     private async handleSaveWorkspace(workspaceData: any) {
         const workspaceFolder = this._workspaceFolder;
@@ -4787,7 +4808,56 @@ export class CanvasPanel {
 
     public async sendProjectState(forceReset: boolean = false, isAuthoritative: boolean = false) {
         const seq = ++this._sendStateCounter;
-        console.error(`[SEND_STATE_START] seq=${seq}, forceReset=${forceReset}`);
+        const totalTimer = `[TIMER] send-project-state-total seq=${seq}`;
+        console.time(totalTimer);
+        const logHostMem = (stage: string) => {
+            try {
+                const m = process.memoryUsage();
+                const mb = (n: number) => Math.round((n / (1024 * 1024)) * 10) / 10;
+                console.log('[MEM][HOST]', `stage=${stage}`, `seq=${seq}`,
+                    `rssMB=${mb(m.rss)}`,
+                    `heapUsedMB=${mb(m.heapUsed)}`,
+                    `heapTotalMB=${mb(m.heapTotal)}`,
+                    `externalMB=${mb(m.external)}`,
+                    `arrayBuffersMB=${mb(m.arrayBuffers || 0)}`);
+            } catch (e) {
+                Logger.warn(`[CanvasPanel] host memory snapshot failed at ${stage}: ${e}`);
+            }
+        };
+        const logHostGraphShape = (stage: string, payload: any) => {
+            try {
+                const nodesSrc = payload?.nodes ?? payload?.nodeMap ?? {};
+                const edgesSrc = payload?.edges ?? payload?.edgeMap ?? {};
+                const clustersSrc = payload?.clusters ?? [];
+
+                const nodeMapSize = Array.isArray(nodesSrc) ? nodesSrc.length : Object.keys(nodesSrc).length;
+                const edgeMapSize = Array.isArray(edgesSrc) ? edgesSrc.length : Object.keys(edgesSrc).length;
+                const clusterCount = Array.isArray(clustersSrc) ? clustersSrc.length : Object.keys(clustersSrc || {}).length;
+
+                console.log('[GRAPH][HOST]',
+                    `stage=${stage}`,
+                    `seq=${seq}`,
+                    `nodes=${nodeMapSize}`,
+                    `edges=${edgeMapSize}`,
+                    `clusters=${clusterCount}`,
+                    `nodeMapSize=${nodeMapSize}`,
+                    `edgeMapSize=${edgeMapSize}`);
+            } catch (e) {
+                Logger.warn(`[CanvasPanel] host graph shape snapshot failed at ${stage}: ${e}`);
+            }
+        };
+        const logHostRetention = (stage: string) => {
+            try {
+                const diag = canvasEngine.getRetentionDiagnostics();
+                const parts = Object.entries(diag).map(([k, v]) => `${k}=${v}`);
+                console.log('[RETAIN][HOST]', `stage=${stage}`, `seq=${seq}`, ...parts);
+            } catch (e) {
+                Logger.warn(`[CanvasPanel] host retention snapshot failed at ${stage}: ${e}`);
+            }
+        };
+        logHostMem('send-start');
+        logHostRetention('send-start');
+        console.log(`[SEND_STATE_START] seq=${seq}, forceReset=${forceReset}`);
         console.log(`[GRAPH_REBUILD_TRIGGER] sendProjectState called (forceReset=${forceReset}, authoritative=${isAuthoritative})`);
         const trace = new Error().stack?.split('\n')[2]?.trim() || 'unknown source';
         console.log(`[GRAPH_REBUILD_TRIGGER] Caller: ${trace}`);
@@ -4801,54 +4871,15 @@ export class CanvasPanel {
         }
 
         try {
-            // [v0.3.11] 1. Load Current SSOT (Engine Snapshot)
-            const engineSnap = canvasEngine.getFinalSnapshot();
-
-            // [v0.3.33] Cluster Forensics: empty/duplicate cluster detection
-            {
-                const _cl = (engineSnap.clusters as any[]) || [];
-                const _empty = _cl.filter((c: any) => !c.nodes || c.nodes.length === 0);
-                const _totalIds = _cl.length;
-                const _uniqueIds = new Set(_cl.map((c: any) => c.id)).size;
-                const duplicateIds = _totalIds - _uniqueIds;
-
-                const byLabel = new Map<string, { count: number; ids: string[] }>();
-                for (const c of _cl) {
-                    const key = c.label || '';
-                    if (!byLabel.has(key)) byLabel.set(key, { count: 0, ids: [] });
-                    const entry = byLabel.get(key)!;
-                    entry.count++;
-                    entry.ids.push(c.id);
-                }
-                const duplicatePaths = Array.from(byLabel.values()).filter(e => e.count > 1).length;
-                const collidedCount = Array.from(byLabel.values()).reduce((s, e) => s + (e.count > 1 ? e.count - 1 : 0), 0);
-
-                console.log('[CLUSTER_STATS]',
-                    `total=${_totalIds}`,
-                    `empty=${_empty.length}`,
-                    `uniqueIds=${_uniqueIds}`,
-                    `duplicateIds=${duplicateIds}`,
-                    `dupLabels=${duplicatePaths}`,
-                    `collided=${collidedCount}`);
-
-                for (const [label, entry] of byLabel) {
-                    if (entry.count > 1)
-                        console.log('[CLUSTER_ID_COLLISION]', `"${label}"`, entry.ids.join(', '));
-                }
-
-                _empty.slice(0, 30).forEach((c: any) =>
-                    console.log('[EMPTY_CLUSTER]', `id="${c.id}"`, `label="${c.label || ''}"`, `parent="${c.parent_id || ''}"`));
-            }
-
             let projectState: any = {
                 version: 1,
                 project_name: workspaceFolder.name,
-                nodes: Object.values(engineSnap.nodes),
-                edges: Object.values(engineSnap.edges),
-                clusters: engineSnap.clusters || [],
-                userCount: engineSnap.userCount,
-                aiCount: engineSnap.aiCount,
-                externalCount: engineSnap.externalCount
+                nodes: [],
+                edges: [],
+                clusters: [],
+                userCount: 0,
+                aiCount: 0,
+                externalCount: 0
             };
 
             // Load Workspace / Layout State
@@ -4880,10 +4911,11 @@ export class CanvasPanel {
                 console.log('[LOAD_STATE_READ]', data.length);
                 const fileState = JSON.parse(data.toString());
                 console.log('[LOAD_STATE_PARSED]', fileState.nodes?.length, fileState.edges?.length, fileState.clusters?.length);
+                logHostMem('after-load-state-parsed');
+                logHostGraphShape('after-load-state-parsed', fileState);
                 
-                // [v0.3.21 Fix] Use RAW snapshot for count comparison to avoid infinite loop from projected view merging
-                const rawEngineSnap = canvasEngine.getRawSnapshot();
-                const rawNodeCount = Object.keys(rawEngineSnap.nodes).length;
+                const retention = canvasEngine.getRetentionDiagnostics();
+                const rawNodeCount = retention.backendGraphNodes;
 
                 // [v0.3.32.2 FIX] If forceReset is true (e.g. after a fresh Bootstrap scan), we MUST reload from disk!
                 if (forceReset || rawNodeCount === 0 || rawNodeCount < (fileState.nodes || []).length) {
@@ -4891,11 +4923,18 @@ export class CanvasPanel {
                     Logger.info(`[CACHE] nodes=${fileState.nodes?.length || 0} edges=${fileState.edges?.length || 0}`);
                     Logger.info(`[CanvasPanel] Syncing backend engine from project_state.json (File: ${fileState.nodes?.length || 0} vs Engine: ${rawNodeCount})`);
                     canvasEngine.loadInitialState(fileState);
+                    const rawAfterSync = canvasEngine.getRawSnapshot();
+                    logHostMem('after-sync-backend-engine');
+                    logHostGraphShape('after-sync-backend-engine', rawAfterSync);
                     
                     // [v0.3.21.5] Force authoritative reload on initial sync
                     isAuthoritative = true; 
                     
+                    console.time('[TIMER] project-graph');
                     const refreshedSnap = canvasEngine.getFinalSnapshot();
+                    console.timeEnd('[TIMER] project-graph');
+                    logHostMem('after-project-graph-refresh');
+                    logHostGraphShape('after-project-graph-refresh', refreshedSnap);
                     projectState.nodes = Object.values(refreshedSnap.nodes);
                     projectState.edges = Object.values(refreshedSnap.edges);
                     projectState.clusters = refreshedSnap.clusters || [];
@@ -4906,6 +4945,54 @@ export class CanvasPanel {
             } catch (e) {
                 Logger.info(`\n[CACHE] loaded_from_cache=false`);
                 Logger.warn(`[CanvasPanel] Boot-Sync: No project_state.json found or failed to parse.`);
+            }
+
+            if (projectState.nodes.length === 0 && projectState.edges.length === 0) {
+                console.time('[TIMER] project-graph');
+                const engineSnap = canvasEngine.getFinalSnapshot();
+                console.timeEnd('[TIMER] project-graph');
+                logHostGraphShape('after-project-graph', engineSnap);
+                projectState.nodes = Object.values(engineSnap.nodes);
+                projectState.edges = Object.values(engineSnap.edges);
+                projectState.clusters = engineSnap.clusters || [];
+                projectState.userCount = engineSnap.userCount;
+                projectState.aiCount = engineSnap.aiCount;
+                projectState.externalCount = engineSnap.externalCount;
+
+                const _cl = (engineSnap.clusters as any[]) || [];
+                const _empty = _cl.filter((c: any) => !c.nodes || c.nodes.length === 0);
+                const _totalIds = _cl.length;
+                const _uniqueIds = new Set(_cl.map((c: any) => c.id)).size;
+                const duplicateIds = _totalIds - _uniqueIds;
+
+                const byLabel = new Map<string, { count: number; ids: string[] }>();
+                for (const c of _cl) {
+                    const key = c.label || '';
+                    if (!byLabel.has(key)) byLabel.set(key, { count: 0, ids: [] });
+                    const entry = byLabel.get(key)!;
+                    entry.count++;
+                    entry.ids.push(c.id);
+                }
+                const duplicatePaths = Array.from(byLabel.values()).filter(e => e.count > 1).length;
+                const collidedCount = Array.from(byLabel.values()).reduce((s, e) => s + (e.count > 1 ? e.count - 1 : 0), 0);
+
+                console.log('[CLUSTER_STATS]',
+                    `total=${_totalIds}`,
+                    `empty=${_empty.length}`,
+                    `uniqueIds=${_uniqueIds}`,
+                    `duplicateIds=${duplicateIds}`,
+                    `dupLabels=${duplicatePaths}`,
+                    `collided=${collidedCount}`);
+
+                for (const [label, entry] of byLabel) {
+                    if (entry.count > 1)
+                        console.log('[CLUSTER_ID_COLLISION]', `"${label}"`, entry.ids.join(', '));
+                }
+
+                if (_empty.length > 0 && (forceReset || seq <= 2)) {
+                    _empty.slice(0, 30).forEach((c: any) =>
+                        console.log('[EMPTY_CLUSTER]', `id="${c.id}"`, `label="${c.label || ''}"`, `parent="${c.parent_id || ''}"`));
+                }
             }
 
             // [v0.3.11] 3. 🛡️ Self-Healing: Background Reality-Check (Find roaming files)
@@ -4998,6 +5085,8 @@ export class CanvasPanel {
                     if (projectState.nodes.length > 0) phaseManager.advancePhase(Phase.CONTROL);
                 }
             } catch (e) { /* ignore phase sync errors */ }
+            logHostMem('after-phase-sync');
+            logHostGraphShape('after-phase-sync', projectState);
 
             // [v0.3.21.4] Amnesia Guard: WebView filter
             // If the state we are about to send is EMPTY, but we were NOT asked for a forceReset,
@@ -5033,6 +5122,8 @@ export class CanvasPanel {
                     sourceFile: n.data?.file
                 })));
             }
+            logHostMem('after-integrity-scan');
+            logHostGraphShape('after-integrity-scan', projectState);
 
             // [v0.3.34] Strip unnecessary fields before IPC to reduce renderer memory pressure
             const stripNode = (n: any) => ({ id: n.id, position: n.position, type: n.type, label: n.label, layer: n.layer, cluster_id: n.cluster_id, filePath: n.filePath, data: n.data, visual: n.visual, status: n.status, color: n.color, _width: n._width });
@@ -5043,24 +5134,35 @@ export class CanvasPanel {
             console.log('[POST_MESSAGE_SEND] nodes=%d edges=%d clusters=%d', projectState.nodes.length, projectState.edges.length, projectState.clusters.length);
             console.time('webview-postmessage');
             try {
-                this._panel.webview.postMessage({ command: 'projectStateChunkStart' });
+                console.time('[TIMER] normalize-state');
+                logHostMem('before-postmessage-chunks');
+                logHostGraphShape('before-postmessage-chunks', projectState);
+                await this._panel.webview.postMessage({ command: 'projectStateChunkStart' });
                 
                 for (let i = 0; i < projectState.nodes.length; i += CHUNK_SIZE) {
-                    this._panel.webview.postMessage({ 
+                    await this._panel.webview.postMessage({ 
                         command: 'projectStateNodesChunk', 
                         data: projectState.nodes.slice(i, i + CHUNK_SIZE).map(stripNode)
                     });
+                    if (i % (CHUNK_SIZE * 4) === 0) {
+                        await new Promise(resolve => setTimeout(resolve, 0)); // Yield to prevent Host unresponsive
+                    }
                 }
                 for (let i = 0; i < projectState.edges.length; i += CHUNK_SIZE) {
-                    this._panel.webview.postMessage({ 
+                    await this._panel.webview.postMessage({ 
                         command: 'projectStateEdgesChunk', 
                         data: projectState.edges.slice(i, i + CHUNK_SIZE).map(stripEdge)
                     });
+                    if (i % (CHUNK_SIZE * 4) === 0) {
+                        await new Promise(resolve => setTimeout(resolve, 0)); // Yield to prevent Host unresponsive
+                    }
                 }
                 
                 const finalPayload: any = { ...projectState, _ipcTimestamp: Date.now() };
                 delete finalPayload.nodes;
                 delete finalPayload.edges;
+                console.timeEnd('[TIMER] normalize-state');
+                logHostMem('after-normalize-before-chunk-end');
 
                 this._panel.webview.postMessage({
                     command: 'projectStateChunkEnd',
@@ -5071,13 +5173,17 @@ export class CanvasPanel {
                 });
             } finally {
                 console.timeEnd('webview-postmessage');
+                logHostMem('after-webview-postmessage');
             }
 
         } catch (error) {
             Logger.error(`[CanvasPanel] sendProjectState failed: ${error}`);
         } finally {
             this._isSyncing = false;
-            console.error(`[SEND_STATE_END] seq=${seq}`);
+            console.log(`[SEND_STATE_END] seq=${seq}`);
+            logHostMem('send-end');
+            logHostRetention('send-end');
+            console.timeEnd(totalTimer);
         }
     }
 

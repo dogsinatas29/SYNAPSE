@@ -1,0 +1,27 @@
+[SYNAPSE] [PM 5:15:31] [INFO] [v0.3.30] ProjectMetadata loaded: synapse-demo (proj_1781250499404_3tskth)
+[SYNAPSE] [PM 5:15:31] [INFO] [SynapseIgnore] Loaded 0 patterns from .synapseignore
+[SYNAPSE] [PM 5:15:31] [INFO] [v0.3.30] Runtime initialization started
+[SYNAPSE] [PM 5:15:31] [INFO] [v0.3.30] Step 1/4: Loading Project Metadata...
+[SYNAPSE] [PM 5:15:31] [INFO] [v0.3.30] ProjectMetadata loaded: synapse-demo (proj_1781250499404_3tskth)
+[SYNAPSE] [PM 5:15:31] [INFO] [v0.3.30] Step 2/4: Loading Symbol Index...
+[SYNAPSE] [PM 5:15:31] [INFO] [v0.3.30] Step 3/4: Initializing Identity Manager...
+[SYNAPSE] [PM 5:15:31] [INFO] [v0.3.30] Step 4/4: Initializing Session Manager...
+[SYNAPSE] [PM 5:15:31] [INFO] [v0.3.30] Runtime ready for project: synapse-demo (proj_1781250499404_3tskth)
+[SYNAPSE] [PM 5:15:31] [INFO] [v0.3.30] Accounts loaded: 0 (schema v2)
+[SYNAPSE] [PM 5:15:31] [INFO] [MountManager] Mount root: /home/dogsinatas/TypeScript_project/antigravity-extension-vis/.synapse/mnt
+[SYNAPSE] [PM 5:15:31] [INFO] [ClientPush] Restored 0 client push cache(s)
+🚀 SYNAPSE Standalone Dev Server starting...
+📂 Root: /home/dogsinatas/TypeScript_project/antigravity-extension-vis
+🏷️  Server: antigravity-extension-vis
+🆔 UUID: proj_1781250499404_3tskth
+🔌 Port: 3000
+📄 State: /home/dogsinatas/TypeScript_project/antigravity-extension-vis/data/project_state.json
+
+✅ Standalone API server running at http://127.0.0.1:3000
+ℹ️  API only — no browser UI served.
+
+
+🚨 [CHAOS] Simulating crash: SIGKILL
+
+
+Killed

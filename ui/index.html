@@ -1785,6 +1785,13 @@ Please wait until harvesting completes.</p>
 
             window.__synapseWebglButtonRegistered = true;
             console.log('[SYNAPSE] btn-webgl listener registered successfully');
+
+            // [USER_REQUEST] Auto-enable WebGL for better UX on large projects
+            setTimeout(() => {
+                if (eng && !eng.webglEnabled) {
+                    btnWebgl.click();
+                }
+            }, 500);
         }
 
         // 안전 등록: readyState 체크하고 실행

@@ -1,8 +1,0 @@
-# Synapse ignore file — .gitignore 형식
-# 이 파일에 패턴을 추가하면 해당 파일이 Synapse 시각화에서 제외됩니다.
-# 
-# 예시:
-# build/
-# dist/
-# *.log
-# node_modules/

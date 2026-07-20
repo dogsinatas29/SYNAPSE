@@ -368,7 +368,7 @@ actual hierarchy
 │   ├── index.html
 │   ├── synapse-theme.js
 │   ├── i18n.js                           ← 🟢 Added
-│   ├── canvas-engine.js                  ← 🟡 Modified (v0.3.33.1_fix)
+│   ├── canvas-engine.js                  ← 🟡 Modified (v0.3.33.1_fix2)
 │   ├── webgl-renderer.js
 │   ├── cluster-hierarchy.js              ← 🟢 Added (v0.3.33)
 │   ├── rbush.js                          ← 🟢 Added (v0.3.33)
@@ -385,8 +385,11 @@ actual hierarchy
 │       ├── project_state.json
 │       ├── synapse_history.json
 │       └── .server_info            ← 🟢 Added
+├── generated_reports/
+├── harvest_output/
+├── .virtual-debug/
+├── .synapse-cache/
 ├── assets/
-├── backup_md/
 ├── context/
 ├── data/
 ├── dist/
@@ -477,7 +480,9 @@ actual hierarchy
 │   │   ├── (Active) ReferenceResolver.ts     ← 🟢 Added
 │   │   ├── (Active) VisibleGraphResolver.ts  ← 🟢 Added
 │   │   ├── (Active) GhostExpander.ts         ← 🟢 Added
+│   │   ├── (Active) GhostClassifier.ts       ← 🟢 Added
 │   │   ├── (Active) GhostPolicy.ts           ← 🟢 Added
+│   │   ├── (Active) ExternalReferenceSemantics.ts ← 🟢 Added
 │   │   ├── (Active) ScannerRegistry.ts       ← 🟢 Added
 │   │   ├── (Active) CppScanner.ts            ← 🟢 Added
 │   │   ├── (Active) JavaScanner.ts           ← 🟢 Added
@@ -559,7 +564,7 @@ actual hierarchy
 | `ui/index.html` | 변경됨 | 캔버스 웹뷰 마크업 및 UI 요소. v0.3.33.1_fix에서 `LINES (No Badges)` 엣지 가시성 버튼 부활 |
 | `ui/synapse-theme.js` | 유지 | 웹뷰 전용 UI 테마 컬러 및 스타일링 데이터 |
 | `ui/i18n.js` | 🟢 Active | 정적 마크업 메뉴, 버튼, 패널 제목 다국어 지원 로직 (`data-i18n`) |
-| `ui/canvas-engine.js` | 🟡 Active (v0.3.33.1_fix) | O(N) 순회 병목 제거, 공간 인덱스(RBush) 최적화, 5만 개 하드 리밋 제거 및 4단계 Edge Visibility (FULL/NO_BADGES/CLUSTER/NONE) 파이프라인 제어. 빈 폴더 Bounding Box 오류 교정 |
+| `ui/canvas-engine.js` | 🟡 Active (v0.3.33.1_fix2) | O(N) 순회 병목 제거, 공간 인덱스(RBush) 최적화, Layout Graph = Visible Graph 동기화 오류 완전 제거 및 거대 맵 분리 배치 로직 확정 |
 | `ui/cluster-hierarchy.js` | 🟢 Active (v0.3.33+) | 클러스터 계층 및 바운딩 연산 분리 로직 (통합 드래그/가시성 토글) |
 | `ui/rbush.js` | 🟢 Active (v0.3.33+) | 2D 뷰포트 컬링용 공간 인덱싱 라이브러리 |
 | `ui/webgl-renderer.js` | 유지 | 대규모 노드 그래프 실시간 60FPS GPU 파이프라인 가속 렌더러 |
@@ -626,6 +631,8 @@ actual hierarchy
 | `src/core/collaboration/AccountManager.ts` | Active | 계정 CRUD, 비밀번호 해싱, getAllAccounts/getUsernameByUserId + SSH mount 필드 (sshHost/sshPort/sshMountPath/sshKey) |
 | `src/core/collaboration/CollaborationTransport.ts` | Active | 추상 전송 계층 (WebSocket/REST 공통 인터페이스) |
 | `src/core/collaboration/RestCollaborationTransport.ts` | Active | REST 전송 구현체 |
+| `src/core/GhostClassifier.ts` | 🟢 Active | 고스트 노드 유형별 분류 로직 |
+| `src/core/ExternalReferenceSemantics.ts` | 🟢 Active | 외부 참조 시맨틱 파악 모듈 |
 | `src/analysis/hintEngine.ts` | Active | 실시간 아키텍처 분석 및 진단 힌트(R1~R5 경고) 캔버스 제공 |
 | `src/bootstrap/BootstrapEngine.ts` | Active | 초기 로드 시 디렉터리 스캔 → 아키텍처 그래프 자동 구성 |
 | `src/rust_checker/` | Active | Rust 프로젝트 소스 구조 분석 및 종속성 추출 (mod.rs + reporter.rs + state_checker.rs) |

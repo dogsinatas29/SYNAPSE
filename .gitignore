@@ -54,12 +54,19 @@ assert
 main
 ts
 Y
-")) type ="
 cluster_id
 position
 project_state_json
 "출력 가능한 ASCII"
 vscode-languageserver-textdocument
+)*
+\[^'\"\]+
+
+# IDE & AI Configs
+.vscode/
+.vscodeignore
+.synapseignore
+AGENTS.md
 
 # Explicitly INCLUDE Milestones & Release Notes
 !mile_stone/

@@ -2,7 +2,7 @@
     "name": "synapse-visual-architecture",
     "displayName": "SYNAPSE - Visual Architecture Engine",
     "description": "Visual architecture control engine for code outer-space visualization and design",
-    "version": "0.3.30",
+    "version": "0.3.33",
     "publisher": "synapse-team",
     "repository": {
         "type": "git",
@@ -213,7 +213,6 @@
         "express": "^5.2.1",
         "protobufjs": "^8.0.0",
         "rbush": "^4.0.1",
-        "sqlite3": "^5.1.7",
         "vscode-languageclient": "^9.0.1",
         "vscode-languageserver": "^9.0.1",
         "vscode-languageserver-textdocument": "^1.0.12"

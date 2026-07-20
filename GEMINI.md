@@ -354,11 +354,15 @@ actual hierarchy
 ├── webpack.config.js
 ├── tsconfig.json
 ├── build-guard.js
-├── test_scan.ts
 ├── RULES.md
+├── AGENTS.md
+├── GEMINI.md
 ├── synapse.config.json
 ├── .synapseignore
 ├── .vscodeignore
+├── README.md
+├── README.ko.md
+├── LICENSE
 ├── .github/
 ├── .vscode/
 ├── .backup/
@@ -646,7 +650,6 @@ actual hierarchy
 | `src/utils/exclusionRules.ts` | Active | 제외 규칙 정규식 관리 |
 | `src/utils/visualHints.ts` | Active | 시각 힌트(배지, 컬러) 유틸리티 |
 | `src/webview/CanvasPanel.ts` | Active | 웹뷰 캔버스 패널 (수동 노드 확장자 동적 추론, 스키마 검증 False Positive 회피, 삭제 경로 보정, 서버/계정 관리 상태 동기화) |
-| `test_scan.ts` | Active | 파일 스캔 및 분석 파이프라인의 로컬 테스트 독립 실행 스크립트 |
 | `src/test/__mocks__/vscode.ts` | Active | VS Code API Mock (테스트 환경) |
 | `src/test/phase1_validation.test.ts` | Active | Phase 1 검증 (ProjectBoundary + SymbolIndex) — 10 tests |
 | `src/test/phase2_validation.test.ts` | Active | Phase 2 검증 (Identity + Session + Runtime) — 14 tests |
@@ -656,7 +659,7 @@ actual hierarchy
 | `src/utils/SensitiveInfoMasker.ts` | Active | 로그 내 민감 정보(Secret, Token, Password 등) 자동 마스킹 유틸리티 |
 | `tools/*` | 유지 | 성능 벤치마킹, 규격 파일 생성, 진단 로그 분석용 보조 스크립트 |
 
-> **삭제된 파일**: `src/core/GhostNodeManager.ts`, `src/core/ContextVault.ts` — 이전 ROOT Structure에 Active로 기재되어 있었으나 현재 디스크에 존재하지 않습니다. (v0.3.30 이전 리팩토링 과정에서 제거)
+> **삭제된 파일**: `test_scan.ts`, `src/core/GhostNodeManager.ts`, `src/core/ContextVault.ts`, `src/core/collaboration/SubmissionManager.ts`, `src/test/phase3_validation.test.ts ~ transport_validation.test.ts` — 과거 일회성 테스트 스크립트 및 이전 리팩토링 과정에서 제거되어 현재 디스크에 존재하지 않습니다. (v0.3.33 리팩토링 기준)
 
 ### 📄 소스파일 성능 최적화 이전 원본 상태 (Pre-Optimization Sources)
 

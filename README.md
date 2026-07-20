@@ -12,12 +12,11 @@ SYNAPSE transforms source code into an explorable architecture map,
 allowing engineers to visualize dependencies, execution flow,
 bottlenecks, and system-wide interactions across large software systems.
 
-[![Version](https://img.shields.io/badge/version-v0.3.32-brightgreen.png)](https://github.com/dogsinatas29/SYNAPSE)
-[![Latest Release](https://img.shields.io/badge/latest-v0.3.32%20Collaboration%20Flow%20Visibility-orange.png)](https://github.com/dogsinatas29/SYNAPSE/releases)
+[![Version](https://img.shields.io/badge/version-v0.3.33.1_fix2-brightgreen.png)](https://github.com/dogsinatas29/SYNAPSE)
+[![Latest Release](https://img.shields.io/badge/latest-v0.3.33.1_fix2%20Layout%20Engine%20Sovereignity-orange.png)](https://github.com/dogsinatas29/SYNAPSE/releases)
 ![Status](https://img.shields.io/badge/status-Production_Ready-brightgreen.png)
 
 [🇰🇷 한국어 버전](./README.ko.md)
-
 
 ---
 
@@ -189,7 +188,7 @@ Launch your visual architecture journey in seconds.
 ### 1. Install Extension
 Download the latest `.vsix` from [Releases](https://github.com/dogsinatas29/SYNAPSE/releases) and run:
 ```bash
-code --install-extension synapse-visual-architecture-v0.3.28.vsix
+code --install-extension synapse-visual-architecture-v0.3.33.1_fix2.vsix
 ```
 
 ### 2. Launch Canvas
@@ -301,6 +300,24 @@ Clicking the `→` (REVEAL) button next to a folder smoothly navigates the canva
 Clusters created by clients connected to the network are clearly distinguished in the visibility panel. The system automatically prepends the client's account name (e.g., `[username]`) to their cluster names, keeping remote namespaces perfectly isolated and easily identifiable.
 
 ![Network Attached Cluster](assets/network_attached_cluster.png)
+
+### 5. Adaptive Scale Profile (EXTREME_SCALE)
+To proactively prevent browser lockups in extremely large mono-repos, SYNAPSE automatically analyzes the scale of the graph upon project load and applies the most optimal visibility profile.
+
+![Adaptive Scale Profile](assets/profile.png)
+
+#### Scale Score Formula
+The project scale score is calculated using the following formula:
+> **`Scale Score` = `Nodes` + `(Edges × 5)` + `(Clusters × 10)`**
+
+If the score exceeds a safe threshold (e.g., 500,000 points), the **EXTREME_SCALE** profile is triggered, automatically applying the following settings to control visual footprint and rendering overhead:
+
+#### Auto-Applied Settings (EXTREME_SCALE)
+- `[x] Show Nodes`: Rendering maintained.
+- `[x] Show Edges`: Rendering maintained (with LOD optimization).
+- `[ ] Show External Clusters`: **HIDDEN** - Instantly reduces rendering overhead by hiding hundreds of external dependency (External Packages) nodes. (Can be manually re-enabled in the visibility panel).
+- `[ ] Show Heatmap`: **HIDDEN** - Suspends real-time traffic computations.
+- `[x] Show Roots Only`: **ENABLED** - Enforces a wide field of view by collapsing all 2nd-depth and deeper folders, leaving only the top-level continental root folders expanded.
 
 ---
 
@@ -519,18 +536,7 @@ SYNAPSE was created to overcome the limitations of code-centric development. It 
 
 [View Full History](REVISION_HISTORY.md)
 
----
-
-## 📅 Status & Roadmap
-
-- **Status**: v0.3.30.1 – UI/UX Refinement & Feature Cleanup.
-- **Next**:
-    - Server / Client separation for remote analysis.
-    - Advanced Performance optimization for 50k+ nodes.
-    - Real-time collaborative architecture design.
-
----
-
 ## 📜 License & Author
 Licensed under the [GNU General Public License v3.0](LICENSE).  
 Created with 🧠 by [dogsinatas29](https://github.com/dogsinatas29)
+

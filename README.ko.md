@@ -12,8 +12,8 @@ SYNAPSE는 소스 코드를 탐색 가능한 아키텍처 맵으로 변환하여
 엔지니어가 대규모 소프트웨어 시스템 전반의 의존성, 실행 흐름,
 병목 현상, 그리고 시스템 전체의 상호작용을 시각화할 수 있게 해줍니다.
 
-[![Version](https://img.shields.io/badge/version-v0.3.30.1-brightgreen.png)](https://github.com/dogsinatas29/SYNAPSE)
-[![Latest Release](https://img.shields.io/badge/latest-v0.3.30.1%20UI%2FUX%20Refinement-orange.png)](https://github.com/dogsinatas29/SYNAPSE/releases)
+[![Version](https://img.shields.io/badge/version-v0.3.33.1_fix2-brightgreen.png)](https://github.com/dogsinatas29/SYNAPSE)
+[![Latest Release](https://img.shields.io/badge/latest-v0.3.33.1_fix2%20Layout%20Engine%20Sovereignity-orange.png)](https://github.com/dogsinatas29/SYNAPSE/releases)
 ![Status](https://img.shields.io/badge/status-Production_Ready-brightgreen.png)
 
 [🇺🇸 English Version](./README.md)
@@ -73,7 +73,7 @@ SYNAPSE는 **가시성(Visibility)**에 최우선적으로 집중합니다.
 * 스태프 엔지니어 (Staff Engineers)
 * CTO
 
-거대한 프로젝트의 구조를 파악하고 의존성을 추적해야 하는 사람들.
+거대한 프로젝트의 구조 파악하고 의존성을 추적해야 하는 사람들.
 
 ### 분산 개발 팀 (Distributed Development Teams)
 * 원격 근무 팀
@@ -187,7 +187,7 @@ SYNAPSE는 노드 간의 다양한 논리적 연결과 데이터 흐름을 구�
 ### 1. 확장 프로그램 설치
 [Releases](https://github.com/dogsinatas29/SYNAPSE/releases)에서 최신 `.vsix` 파일을 다운로드하고 다음 명령을 실행하세요:
 ```bash
-code --install-extension synapse-visual-architecture-v0.3.28.vsix
+code --install-extension synapse-visual-architecture-v0.3.33.1_fix2.vsix
 ```
 
 ### 2. 캔버스 실행
@@ -300,16 +300,23 @@ SYNAPSE는 방대한 아키텍처를 효과적으로 관리하기 위해 **클�
 
 ![Network Attached Cluster](assets/network_attached_cluster.png)
 
-## 📜 변경 이력 (Revision History)
+### 5. 자동 스케일 프로파일 (Adaptive Scale Profile)
+초거대 모노레포 환경에서 브라우저가 과부하로 인해 멈추는(Lockup) 것을 선제적으로 방지하기 위해, SYNAPSE는 프로젝트 로드 시 그래프 규모를 분석하여 최적의 가시성 프로파일을 자동 적용합니다.
 
-| 버전 | 릴리스 날짜 | 설명 |
-| :---: | :---: | :--- |
-| **v0.3.33.1_fix2** | 2026-07-20 | **Layout Engine 독립성 확보 및 초거대 스케일 성능 최적화**: 레이아웃 계산 로직이 가시성 상태(`cluster.collapsed`)에 오염되어 좌표계가 붕괴되는 치명적인 버그를 수정하여 Layout Graph와 Visible Graph를 완벽히 분리했습니다. `drawClusters` 및 `aggregateEdges` 구간의 O(N*C) 순회 병목을 O(1) 인덱스 매핑으로 파괴하여 렌더링 준비 시간을 1,830ms에서 5ms로 단축(약 366배 향상)했습니다. **VSCODE-main** 및 **리눅스 커널(Linux Kernel 72 rc3)** 수준의 초거대 모노레포를 대상으로 테스트를 성공적으로 완료했습니다. |
-| **v0.3.33.1_fix** | 2026-07-16 | **Render Virtualization & Pipeline Repair**: VSCode-main과 같은 거대 모노레포 환경에서 엣지 수가 50,000개를 초과할 경우 렌더링 파이프라인 전체가 즉시 강제 종료(Abort)되던 하드코딩된 방어 로직을 제거했습니다. 이제 Spatial Hashing 기반 컬링으로 무사히 렌더링을 시도합니다. `LINES (No Badges)` 엣지 가시성 모드를 복구하고, 렌더러 심층부(`[EDGE_STATS]`, `[ARC_DRAW]`)에 핵심 텔레메트리 프로브를 주입하여 LOD 동작을 4단계로 추적할 수 있도록 개선했습니다. 또한 빈 디렉토리의 과도한 패딩을 제거하여 클러스터 거대화(Bloat) 버그를 수정했습니다. |
-| **v0.3.33.1** | 2026-07-15 | **심미성 및 LOD 최적화**: "Roots Only(루트만 표시)" 모드에서 최상위 프로젝트 폴더만 통째로 닫혀버려 242개의 하위(Continent) 폴더들이 전부 소멸하던 가시성 버그를 수정했습니다. 이제 Depth-1 대륙 레벨까지 올바르게 루트(Root)로 식별되어 깔끔하게 펼쳐진(Expanded) 상태로 구조를 조망할 수 있습니다. 거대 모노레포에서 엣지가 조기 소멸하는 문제를 해결하기 위해 3단계 엣지 LOD(FULL/CLUSTER/NONE)를 도입했습니다. 트랙패드로 줌인/아웃 시 화면이 급격히 확대되는 현미경(Microscope) 효과를 비선형 DeltaY 민감도 로직으로 해결했습니다. |
-| **v0.3.33** | 2026-07-14 | **클러스터 계층 및 드래그 로직 개편**: 기존의 고립된 노드 드래그 방식에서 벗어나, 상위 클러스터 드래그 시 소속된 모든 하위 클러스터와 노드들이 재귀적으로 함께 이동하도록 단일 경로(`draggingCluster`)로 통합했습니다. 클러스터 가시성 패널에 3개의 퀵 액션 버튼(`모든 클러스터 -`, `루트만 보기`, `모든 클러스터 +`)을 추가하여 대규모 구조의 시야를 빠르게 제어할 수 있습니다. 또한 깊이(Depth) 기반 우선순위를 적용한 히트 감지(`getClusterHeaderAt`)를 통해 중첩된 환경에서도 부모 클러스터가 정확히 선택되도록 개선했습니다. |
-| **v0.3.32.4** | 2026-07-05 | **UX 및 가시성 옵션 개선**: 클러스터 가시성 패널에 하위 폴더 누적 카운트 기능 및 가시성 연쇄 동기화(Cascade)를 적용했습니다. REVEAL 기능의 실시간 좌표 추적 버그를 수정하고, 원격 접속 클라이언트의 클러스터 네임스페이스를 `👤 계정명` 형태로 완벽 격리했습니다. 또한 초기화(Reset State) 기능 작동 시 발생하던 메모리 누수를 해결했습니다. |
-| **v0.3.32.1** | 2026-06-27 | **크로스-네트워크 추적 및 시맨틱 순서도 도입**: 순서도의 렌더링 품질을 크게 개선했습니다(단일 패스 Barycenter 정렬로 엣지 교차 최소화, 붉은 점선 백엣지 시각화). `[SYNAPSE_NETWORK_LINK]` 매크로를 도입하여 언어의 문법 한계를 넘은 명시적 크로스-프로젝트 의존성 파서를 구현했습니다. 로컬 노드와 원격 클라이언트 노드를 정확히 식별(IFF 로직)하여 렌더링 오류를 수정하고, Harvest를 통한 분산 아키텍처 DAG 병합을 순서도 뷰에서 완벽하게 증명했습니다. |
+![Adaptive Scale Profile](assets/profile.png)
+
+#### 규모 분석 공식 (Scale Score)
+프로젝트 규모 점수는 다음 공식을 통해 산정됩니다:
+> **`Scale Score` = `노드 수(Nodes)` + `(엣지 수(Edges) × 5)` + `(클러스터 수(Clusters) × 10)`**
+
+점수가 안전 임계값(예: 500,000점)을 초과하면 **EXTREME_SCALE** 프로파일이 발동하며, 시각적 정보량과 렌더링 부하를 제어하기 위해 다음 설정이 강제 적용됩니다:
+
+#### 자동 적용 항목 (EXTREME_SCALE 기준)
+- `[x] 노드 표시`: 렌더링 유지
+- `[x] 엣지 표시`: 렌더링 유지 (LOD 최적화 적용)
+- `[ ] 익스터널 클러스터 표시`: **꺼짐(Hide)** - 수백 개의 외부 의존성(External Packages) 노드들을 화면에서 숨겨 렌더링 부하를 즉시 삭감합니다. (필요 시 가시성 패널에서 수동으로 다시 켤 수 있습니다.)
+- `[ ] 히트맵 표시`: **꺼짐(Hide)** - 실시간 트래픽 연산을 중지합니다.
+- `[x] 루트 클러스터만 표시`: **활성화(Roots Only)** - 대륙 단위의 최상위 폴더(Root)만 펼쳐두고, 2-Depth 이하의 모든 하위 폴더들을 전부 접음(Collapse) 상태로 초기화하여 광활한 시야를 확보합니다.
 
 ---
 
@@ -498,17 +505,21 @@ SYNAPSE는 코드 중심 개발의 한계를 극복하기 위해 만들어졌습
 
 ---
 
-## 🆕 릴리즈 노트
+## 📜 변경 이력 (Revision History)
 
-| 버전 | 날짜 | 설명 |
-| :--- | :--- | :--- |
-| **v0.3.32.3** | 2026-07-03 | **Viewport Culling & LOD 최적화**: 주요 캔버스 렌더링 경로(`renderNodes2D`, `renderEdges2D`, `renderClusters`, `renderGhostNodes`) 전체에 O(1) 뷰포트 컬링 도입. 화면 밖 요소를 Canvas API 호출 전에 즉시 스킵하여 대규모 그래프 환경에서 렌더링 CPU 사용량을 약 90% 절감. Fallback LOD 추가: zoom ≤ 0.35이고 번들 엣지 없이 2,000개 초과 시 물리 엣지 렌더링 생략. 위성 뷰(zoom < 0.2) 개선: 노드를 회색 사각형 대신 색상 도트로 표시. **벤치마크 검증(138초 프로파일링):** Main Thread 점유 시간 4.37초 / CPU 사용률 3.2%. FPS: 500~3,000 노드 구간 80~100 FPS, 5,000 노드/20,000 엣지 구간 ~55 FPS. |
+| 버전 | 릴리스 날짜 | 설명 |
+| :---: | :---: | :--- |
+| **v0.3.33.1_fix2** | 2026-07-20 | **Layout Engine 독립성 확보 및 초거대 스케일 성능 최적화**: 레이아웃 계산 로직이 가시성 상태(`cluster.collapsed`)에 오염되어 좌표계가 붕괴되는 치명적인 버그를 수정하여 Layout Graph와 Visible Graph를 완벽히 분리했습니다. `drawClusters` 및 `aggregateEdges` 구간의 O(N*C) 순회 병목을 O(1) 인덱스 매핑으로 파괴하여 렌더링 준비 시간을 1,830ms에서 5ms로 단축(약 366배 향상)했습니다. **VSCODE-main** 및 **리눅스 커널(Linux Kernel 72 rc3)** 수준의 초거대 모노레포를 대상으로 테스트를 성공적으로 완료했습니다. |
+| **v0.3.33.1_fix** | 2026-07-16 | **Render Virtualization & Pipeline Repair**: VSCode-main과 같은 거대 모노레포 환경에서 엣지 수가 50,000개를 초과할 경우 렌더링 파이프라인 전체가 즉시 강제 종료(Abort)되던 하드코딩된 방어 로직을 제거했습니다. 이제 Spatial Hashing 기반 컬링으로 무사히 렌더링을 시도합니다. `LINES (No Badges)` 엣지 가시성 모드를 복구하고, 렌더러 심층부(`[EDGE_STATS]`, `[ARC_DRAW]`)에 핵심 텔레메트리 프로브를 주입하여 LOD 동작을 4단계로 추적할 수 있도록 개선했습니다. 또한 빈 디렉토리의 과도한 패딩을 제거하여 클러스터 거대화(Bloat) 버그를 수정했습니다. |
+| **v0.3.33.1** | 2026-07-15 | **심미성 및 LOD 최적화**: "Roots Only(루트만 표시)" 모드에서 최상위 프로젝트 폴더만 통째로 닫혀버려 242개의 하위(Continent) 폴더들이 전부 소멸하던 가시성 버그를 수정했습니다. 이제 Depth-1 대륙 레벨까지 올바르게 루트(Root)로 식별되어 깔끔하게 펼쳐진(Expanded) 상태로 구조를 조망할 수 있습니다. 거대 모노레포에서 엣지가 조기 소멸하는 문제를 해결하기 위해 3단계 엣지 LOD(FULL/CLUSTER/NONE)를 도입했습니다. 트랙패드로 줌인/아웃 시 화면이 급격히 확대되는 현미경(Microscope) 효과를 비선형 DeltaY 민감도 로직으로 해결했습니다. |
+| **v0.3.33** | 2026-07-14 | **클러스터 계층 및 드래그 로직 개편**: 기존의 고립된 노드 드래그 방식에서 벗어나, 상위 클러스터 드래그 시 소속된 모든 하위 클러스터와 노드들이 재귀적으로 함께 이동하도록 단일 경로(`draggingCluster`)로 통합했습니다. 클러스터 가시성 패널에 3개의 퀵 액션 버튼(`모든 클러스터 -`, `루트만 보기`, `모든 클러스터 +`)을 추가하여 대규모 구조의 시야를 빠르게 제어할 수 있습니다. 또한 깊이(Depth) 기반 우선순위를 적용한 히트 감지(`getClusterHeaderAt`)를 통해 중첩된 환경에서도 부모 클러스터가 정확히 선택되도록 개선했습니다. |
+| **v0.3.32.4** | 2026-07-05 | **UX 및 가시성 옵션 개선**: 클러스터 가시성 패널에 하위 폴더 누적 카운트 기능 및 가시성 연쇄 동기화(Cascade)를 적용했습니다. REVEAL 기능의 실시간 좌표 추적 버그를 수정하고, 원격 접속 클라이언트의 클러스터 네임스페이스를 `👤 계정명` 형태로 완벽 격리했습니다. 또한 초기화(Reset State) 기능 작동 시 발생하던 메모리 누수를 해결했습니다. |
+| **v0.3.32.1** | 2026-06-27 | **크로스-네트워크 추적 및 시맨틱 순서도 도입**: 순서도의 렌더링 품질을 크게 개선했습니다(단일 패스 Barycenter 정렬로 엣지 교차 최소화, 붉은 점선 백엣지 시각화). `[SYNAPSE_NETWORK_LINK]` 매크로를 도입하여 언어의 문법 한계를 넘은 명시적 크로스-프로젝트 의존성 파서를 구현했습니다. 로컬 노드와 원격 클라이언트 노드를 정확히 식별(IFF 로직)하여 렌더링 오류를 수정하고, Harvest를 통한 분산 아키텍처 DAG 병합을 순서도 뷰에서 완벽하게 증명했습니다. |
 | **v0.3.32.2** | 2026-06-29 | **수동 노드 삭제 동기화 및 아키텍처 물리엔진 오류 수정**: 수동 생성 제네릭 노드의 삭제 동기화 실패(절대/상대 경로 조합 오류)를 해결했습니다. `EXTERNAL_PACKAGES` 화이트리스트를 7개 언어 100여 개 주요 라이브러리로 대폭 확장하여 허위 Ghost 오류를 박멸했습니다. 정규식을 고도화해 `[SYNAPSE_NETWORK_LINK]` 원격 통신 의존성을 정확히 파싱하고 `cluster_ghost_network_remote` 클러스터로 묶어냈습니다. 물리 엔진에서 누락되던 루트(Unclustered) 파일 노드를 위해 가상의 `📁 Root` 클러스터를 주입하여, 좌표 `(0,0)`의 무한 겹침 착시 버그를 고쳤습니다. UI 워크스페이스 상태 저장 시 발생하던 JSON 직렬화 스키마 검증기 오작동(False-positive)도 예외 처리했습니다. |
 | **v0.3.32.1** | 2026-06-27 | **크로스-네트워크 추적 및 시맨틱 순서도 도입**: 순서도의 렌더링 품질을 크게 개선했습니다(단일 패스 Barycenter 정렬로 엣지 교차 최소화, 붉은 점선 백엣지 시각화). `[SYNAPSE_NETWORK_LINK]` 매크로를 도입하여 언어의 문법 한계를 넘은 명시적 크로스-프로젝트 의존성 파서를 구현했습니다. 로컬 노드와 원격 클라이언트 노드를 정확히 식별(IFF 로직)하여 렌더링 오류를 수정하고, Harvest를 통한 분산 아키텍처 DAG 병합을 순서도 뷰에서 완벽하게 증명했습니다. |
 | **v0.3.32** | 2026-06-26 | **협업 노드 가시성 복구**: 클라이언트 노드 전체가 `!isGhost` 필터에 걸려 순서도에서 증발하던 버그를 100% 수정했습니다. `debug`/`survival`/`flow` 단계 전반에 걸쳐 분열되었던 클라이언트 식별 필터를 하나로 통일했습니다. 클라이언트 연결 시 `buildFlow()` 엔진이 무음 크래시를 일으키던 `reasons` 참조 오류를 패치했습니다. 기여 엔티티 그래프 Phase 0 (파일경로 + 유저ID 고유성 보장) 검증 완료. |
 | **v0.3.31** | 2026-06-25 | **진단 안정화 및 관찰 가능성 강화**: `doc`/`file`/`folder` 타입 노드의 허위 Necrosis 경고 수정. Pressure 계산식을 `criticalIssues / totalNodes` 비율 기반으로 정규화. Ghost Cluster(`cluster_ghosts`, `doc_shelf`)를 의존성 힌트 대상에서 제외. `clientTimestamp` 기반 Stale 불투명도 시각화(Active/Stale/Offline) 추가. 툴팁에 `"[username] Updated Xm ago"` 표시. 클라이언트 크래시 후 디버깅 단서 보존을 위한 15분 Soft Disconnect 캐시 보존 구현. |
 | **v0.3.30.2** | 2026-06-25 | **보안 검증 및 수확(Harvest) 안정화**: 6대 크리티컬 보안 위협(Path Traversal, 권한 우회, SSE 오염, 락 우회 등) 전면 차단 확인. 어드민 UI 포트 충돌 및 403 인증 오류 수정. 수확 실행 시 발생하던 `unshift` 에러를 방어하기 위해 레거시 배열 포맷의 `accounts.json` 및 `synapse_history.json` 파싱 역호환성 추가. |
-| **v0.3.30.1** | 2026-06-22 | **UI/UX 개선 및 기능 정리**: 노드와 엣지 중첩 호버 시 발생하는 Z-Index 겹침 현상을 해결하기 위한 툴팁 병합 로직(Merge) 도입. 시각적 구조와 맞지 않고 오류가 잦던 Tree View 모드 UI 완전 비활성화. |
 | **v0.3.30** | 2026-06-22 | **하비스트(Harvest) 기반 협업 모델**: 세션 관리(Session), 안전한 SSH 마운트, 원격 레이어 프로젝션 기능이 포함된 대규모 아키텍처 갱신. Harvest 시스템 및 권한 계층 완벽 통합. |
 | **v0.3.29** | 2026-06-06 | **클러스터 겹침 해소 및 External 레이어 수정**: FNV-1a 해시 기반 원형 배치(Initial Spread) + Mass 기반 Cluster Push-Apart 엔진 도입으로 클러스터/노드 겹침 해결. External 레이어 ON 시 External Ghosts 클러스터 박스가 보이지 않는 버그 수정. Align Architecture 시 클러스터 팽창 50% 감소(roleOffsets 절반 축소). |
 | **v0.3.27** | 2026-05-28 | **데이터 동기화 탄력성 및 레이어 독립성**: 유령 엣지가 사라지는(`Edges: 0`) 치명적인 데이터 동기화 버그 해결. 스캔된 폴더와 커스텀 그룹화를 구조적 손상 없이 분리하는 UI 레이어 로직 강화. |
@@ -524,15 +535,7 @@ SYNAPSE는 코드 중심 개발의 한계를 극복하기 위해 만들어졌습
 
 [전체 변경 내역 보기](REVISION_HISTORY.md)
 
----
 
-## 📅 상태 및 로드맵
-
-- **현재 상태**: v0.3.30.1 – UI/UX 개선 및 Tree View 비활성화.
-- **다음 계획 (Next)**:
-    - 원격 분석을 위한 서버/클라이언트 완전 분리.
-    - 50,000개 이상의 노드를 위한 고급 성능 최적화.
-    - 실시간 협업 아키텍처 설계.
 
 ---
 

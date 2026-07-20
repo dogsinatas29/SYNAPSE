@@ -5127,6 +5127,7 @@ export class CanvasPanel {
 
             // [v0.3.34] Strip unnecessary fields before IPC to reduce renderer memory pressure
             const stripNode = (n: any) => ({ id: n.id, position: n.position, type: n.type, label: n.label, layer: n.layer, cluster_id: n.cluster_id, filePath: n.filePath, data: n.data, visual: n.visual, status: n.status, color: n.color, _width: n._width });
+
             const stripEdge = (e: any) => ({ id: e.id, from: e.from, to: e.to, type: e.type, weight: e.weight, status: e.status, visual: e.visual, data: e.data });
 
             // [v0.3.34] Robust Chunking to bypass VS Code IPC size limits

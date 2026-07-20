@@ -7177,6 +7177,14 @@ class CanvasEngine {
             this.isTextDirty = true;
 
             console.log('[STATE_SIZE]', this.nodes?.length, this.edges?.length, this.clusters?.length);
+            // [v0.3.33.1_fix7] Force heatmap rebuild after full data load if heatmap is already ON
+            if (this.showHeatmap) {
+                console.log('[LOAD_COMPLETE] Force rebuilding heatmap data... nodes=', this.nodes.length, 'edges=', this.edges.length);
+                this.clusterFlows = []; // clear
+                this.metaEdges = []; // clear
+                // Let the next render() trigger the fallback aggregator
+            }
+
             console.timeEnd('loadProjectState');
 
             this.render();
@@ -8060,7 +8068,7 @@ class CanvasEngine {
             }
             console.timeEnd('REBUILD_NODE_MAP');
             
-            // [v0.3.33.1_fix3] Edge Materialization Cache & Virtualization Index
+            // [v0.3.33.1_fix2] Edge Materialization Cache & Virtualization Index
             console.time('EDGE_CACHE_CLUSTERS');
             if (this.edges) {
                 const needsRebuild = this.nodeMap.size !== nodeCount || !this._clusterEdgeMap;
@@ -10324,6 +10332,15 @@ class CanvasEngine {
      */
     renderTrafficHeatmap() {
         if (!this.showHeatmap) return;
+        
+        console.log(
+            '[HM_STATE]',
+            'nodes=', this.nodes?.length,
+            'edges=', this.edges?.length,
+            'flows=', this.clusterFlows?.length,
+            'metaEdges=', this.metaEdges?.length
+        );
+
         console.time('renderTrafficHeatmap');
         try {
         // [v0.3.35] Heatmap cache key is quantized so minor pan/zoom jitter does not force full redraw every frame.
@@ -10355,32 +10372,122 @@ class CanvasEngine {
 
         // [v0.3.22.2] Dynamic Heatmap Calculation (if project data is missing or invalidated)
         if (!this.clusterFlows || this.clusterFlows.length === 0) {
+            console.log(
+                '[HM_BUILD]',
+                'nodes=', this.nodes?.length,
+                'edges=', this.edges?.length
+            );
+
             console.time('heatmap-edge-scan');
             const _tHeatmapEdgeScanStart = performance.now();
-            const flows = new Map();
-            const activeEdges = this._visibleEdgesCache || this.edges;
-            for (const e of activeEdges) {
-                const srcNode = this.nodeMap.get(e.from);
-                const tgtNode = this.nodeMap.get(e.to);
-                if (srcNode && tgtNode && srcNode.cluster_id && tgtNode.cluster_id && srcNode.cluster_id !== tgtNode.cluster_id) {
-                    const key = `${srcNode.cluster_id}->${tgtNode.cluster_id}`;
-                    flows.set(key, (flows.get(key) || 0) + 1);
-                }
-            }
-            console.timeEnd('heatmap-edge-scan');
-            this._recordPerfMetric('heatmap-edge-scan', performance.now() - _tHeatmapEdgeScanStart);
 
-            console.time('heatmap-flow-build');
-            const _tHeatmapFlowBuildStart = performance.now();
-            this.clusterFlows = Array.from(flows.entries()).map(([key, count]) => {
-                const [source, target] = key.split('->');
-                return { source, target, count };
-            });
-            console.timeEnd('heatmap-flow-build');
-            this._recordPerfMetric('heatmap-flow-build', performance.now() - _tHeatmapFlowBuildStart);
+            // [v0.3.33.1_fix2] Use pre-aggregated LOD metaEdges if available to match visible clusters
+            if (this.metaEdges && this.metaEdges.length > 0) {
+                this.clusterFlows = this.metaEdges.map(e => ({ source: e.source, target: e.target, count: e.weight }));
+                console.timeEnd('heatmap-edge-scan');
+                this._recordPerfMetric('heatmap-edge-scan', performance.now() - _tHeatmapEdgeScanStart);
+            } else {
+                console.time('heatmap-flow-build');
+                const _tHeatmapFlowBuildStart = performance.now();
+                const flows = new Map();
+                
+                console.log(
+                    '[HM_FALLBACK]',
+                    'using raw edges',
+                    this.edges?.length
+                );
+                
+                // [v0.3.33.1_fix5] BULLETPROOF Edge Aggregation
+                const repCache = new Map();
+                const getRep = (cid) => {
+                    if (!cid) return null;
+                    if (repCache.has(cid)) return repCache.get(cid);
+                    
+                    let cur = cid;
+                    let depth = 0;
+                    while (cur && depth < 100) {
+                        if (this._visibleClusterIds && this._visibleClusterIds.has(cur)) {
+                            repCache.set(cid, cur);
+                            return cur;
+                        }
+                        if (this._visibleGraphClusterIds && this._visibleGraphClusterIds.has(cur)) {
+                            repCache.set(cid, cur);
+                            return cur;
+                        }
+                        
+                        let parentId = null;
+                        if (this.clusterHierarchy) {
+                            const hNode = this.clusterHierarchy.get(cur);
+                            parentId = hNode ? hNode.parentId : null;
+                        } else if (this._clusterMap) {
+                            const c = this._clusterMap.get(cur);
+                            parentId = c ? c.parent_id : null;
+                        }
+                        
+                        if (!parentId || parentId === cur || parentId === 'world') break;
+                        cur = parentId;
+                        depth++;
+                    }
+                    repCache.set(cid, null);
+                    return null;
+                };
+
+                for (let i = 0; i < this.edges.length; i++) {
+                    const e = this.edges[i];
+                    
+                    let fc = e._fromCluster;
+                    let tc = e._toCluster;
+                    
+                    if (!fc || !tc) {
+                        const srcNode = this.nodeMap ? this.nodeMap.get(e.from) : null;
+                        const tgtNode = this.nodeMap ? this.nodeMap.get(e.to) : null;
+                        fc = srcNode?.cluster_id ?? srcNode?.data?.cluster_id;
+                        tc = tgtNode?.cluster_id ?? tgtNode?.data?.cluster_id;
+                    }
+                    
+                    const fromRep = getRep(fc);
+                    const toRep = getRep(tc);
+                    
+                    if (fromRep && toRep && fromRep !== toRep) {
+                        const key = `${fromRep}→${toRep}`;
+                        flows.set(key, (flows.get(key) || 0) + 1);
+                    }
+                }
+                
+                this.clusterFlows = Array.from(flows.entries()).map(([key, count]) => {
+                    const sep = key.indexOf('→');
+                    return { 
+                        source: key.substring(0, sep), 
+                        target: key.substring(sep + 1), 
+                        count 
+                    };
+                });
+                
+                this.metaEdges = this.clusterFlows.map(f => ({ source: f.source, target: f.target, weight: f.count }));
+                
+                console.log(
+                    '[HM_RESULT]',
+                    'flows=', this.clusterFlows.length,
+                    'metaEdges=', this.metaEdges.length
+                );
+                
+                console.timeEnd('heatmap-flow-build');
+                this._recordPerfMetric('heatmap-flow-build', performance.now() - _tHeatmapFlowBuildStart);
+            }
         }
 
-        if (this.clusterFlows.length === 0) return;
+        if (this.clusterFlows.length === 0) {
+            const mainCtx = this.ctx;
+            if (mainCtx) {
+                mainCtx.save();
+                mainCtx.setTransform(1, 0, 0, 1, 0, 0);
+                mainCtx.fillStyle = 'red';
+                mainCtx.font = '24px sans-serif';
+                mainCtx.fillText(`[HEATMAP_DEBUG] flows: 0 (metaEdges: ${this.metaEdges ? this.metaEdges.length : 'null'})`, 20, 100);
+                mainCtx.restore();
+            }
+            return;
+        }
 
         if (this._frameCounter % 120 === 0) {
             let hmArc = 0;
@@ -10416,13 +10523,22 @@ class CanvasEngine {
 
         console.time('heatmap-draw');
         const _tHeatmapDrawStart = performance.now();
+        let skippedVis = 0, skippedDist = 0, skippedSys = 0, drawn = 0;
+        const visSet = this._visibleGraphClusterIds || this._visibleClusterIds;
         for (const flow of this.clusterFlows) {
             const srcCluster = clusterMap.get(flow.source);
             const tgtCluster = clusterMap.get(flow.target);
 
             if (!srcCluster || !tgtCluster || srcCluster.id === tgtCluster.id) continue;
-            if (!this._visibleClusterIds || !this._visibleClusterIds.has(srcCluster.id) || !this._visibleClusterIds.has(tgtCluster.id)) continue;
-            if (isSystemCluster(srcCluster.id) || isSystemCluster(tgtCluster.id)) continue;
+            
+            if (!visSet || !visSet.has(srcCluster.id) || !visSet.has(tgtCluster.id)) {
+                skippedVis++;
+                continue;
+            }
+            if (isSystemCluster(srcCluster.id) || isSystemCluster(tgtCluster.id)) {
+                skippedSys++;
+                continue;
+            }
 
             const getCenter = (cluster) => {
                 const b = this._lastComputedBounds?.get(cluster.id);
@@ -10464,6 +10580,21 @@ class CanvasEngine {
                 cacheCtx.arc(px, py, 2.5, 0, Math.PI * 2);
                 cacheCtx.fill();
             }
+            drawn++;
+        }
+        // [v0.3.33.1_fix4] On-screen Debug Text
+        const debugMsg = `[HEATMAP_DEBUG] flows: ${this.clusterFlows.length}, drawn: ${drawn}, skipVis: ${skippedVis}, skipDist: ${skippedDist}, skipSys: ${skippedSys}`;
+        console.log(debugMsg);
+        
+        // Draw debug text directly to the screen so it's impossible to miss
+        const mainCtx = this.ctx;
+        if (mainCtx) {
+            mainCtx.save();
+            mainCtx.setTransform(1, 0, 0, 1, 0, 0);
+            mainCtx.fillStyle = 'red';
+            mainCtx.font = '24px sans-serif';
+            mainCtx.fillText(debugMsg, 20, 100);
+            mainCtx.restore();
         }
         console.timeEnd('heatmap-draw');
         this._recordPerfMetric('heatmap-draw', performance.now() - _tHeatmapDrawStart);

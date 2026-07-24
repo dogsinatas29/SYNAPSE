@@ -142,12 +142,32 @@ export interface ArchitecturalSmell {
     evidence: any; // Raw data explaining the reasoning
 }
 
+export interface FragmentInfo {
+    id: string;
+    nodeCount: number;
+    representativeNodes: { id: string; degree: number }[]; // Top 2 by degree
+}
+
+export interface CriticalBridge {
+    sourceId: string;
+    targetId: string;
+    impact: number; // Percentage
+    untangleScore: number;
+    structuralRole: string; // e.g. 'Community Boundary Edge'
+    edgeType: string; // 'Regex Hypothesis' for v34.3
+    sccFragmentation: string; // e.g. "1 SCC (42 nodes) -> 4 Fragments (12, 10, 8, 12)"
+    largestRemainingScc: number;
+    fragmentCount: number;
+    fragments: FragmentInfo[];
+}
+
 export interface ReasonedReportBundle {
     version: 1;
     timestamp: number;
     
     sccs: SccCluster[];
     smells: ArchitecturalSmell[];
+    criticalBridges: CriticalBridge[];
     
     base: AggregatedReportBundle; // Retain base metrics for full report
 }

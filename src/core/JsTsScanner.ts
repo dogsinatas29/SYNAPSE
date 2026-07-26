@@ -1,5 +1,5 @@
 import * as path from 'path';
-import { LanguageScanner, CodeSummary } from '../types/schema';
+import { LanguageScanner, CodeSummary, EdgeProvenance } from '../types/schema';
 
 export class JsTsScanner implements LanguageScanner {
     supportsExtension(ext: string): boolean {
@@ -43,8 +43,7 @@ export class JsTsScanner implements LanguageScanner {
                         let type = 'dependency';
                         if (cleanRef.match(/api|http|fetch|axios/i)) type = 'api_call';
                         else if (cleanRef.match(/db|sql|database|query/i)) type = 'db_query';
-
-                        summary.references.push({ target: cleanRef, type });
+                        summary.references.push({ target: cleanRef, type, provenance: EdgeProvenance.UNKNOWN_RUNTIME });
                     }
                 }
             }

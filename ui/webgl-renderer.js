@@ -837,7 +837,7 @@ class WebGLRenderer {
             // [v0.3.16] Edge Visibility Control Early Return
             const isPathSelected = e.isSelected || 
                                  (selectedNodeIds && (selectedNodeIds.has(e.from) || selectedNodeIds.has(e.to)));
-            const isEdgeHidden = window.edgeVisibilityMode === 'NO_EDGES';
+            const isEdgeHidden = window.edgeVisibilityMode === 'NONE' || window.edgeVisibilityMode === 'CLUSTER';
 
             if (isEdgeHidden && !isPathSelected) {
                 continue; // Skip rendering completely for hidden edges to save GPU/CPU limits
@@ -1083,28 +1083,7 @@ class WebGLRenderer {
                     }
                 }
 
-                // D. Deep LOD: Architectural Stats (Parity with 2D line 6970)
-                if (currentZoom > 1.5 && stats) {
-                    const statsText = `L: ${stats.logicCount || 0} E: ${stats.entryCount || 0} C: ${stats.connectionCount || 0}`;
-                    this.textAtlas.addText(statsText);
-                    let stW = 0;
-                    for (const ch of statsText) {
-                        const g = this.textAtlas.glyphMap.get(ch);
-                        if (g) stW += g.w;
-                    }
-                    curX = 60 - stW / 2;
-                    let stY = 65; 
-                    for (const ch of statsText) {
-                        const g = this.textAtlas.glyphMap.get(ch);
-                        if (!g) continue;
-                        items.push({
-                            dx: curX, dy: stY,
-                            w: g.w, h: g.h,
-                            u0: g.u0, v0: g.v0, u1: g.u1, v1: g.v1
-                        });
-                        curX += g.w;
-                    }
-                }
+
 
                 // D. Deep LOD (Functions/Classes) - Parity with 2D lines 6031-6074
                 if (lodLevel === 2) {
@@ -1138,7 +1117,7 @@ class WebGLRenderer {
 
         // 2️⃣ Edge Badges (Type Icons, Validation Icons, Status Icons)
         const badgeItems = [];
-        const isBadgeHidden = window.edgeVisibilityMode === 'NO_BADGES' || window.edgeVisibilityMode === 'NO_EDGES';
+        const isBadgeHidden = window.edgeVisibilityMode === 'NO_BADGES' || window.edgeVisibilityMode === 'NONE';
         // [v0.3.22.4] Always draw badges in WebGL for consistent parity across zoom levels
         const skipGpuBadges = false; 
 
@@ -1426,7 +1405,7 @@ class WebGLRenderer {
         this._lastZoom = transform.zoom;
 
         // Draw Sequence: Background (Stars) -> Edges -> Nodes -> Text
-        this.drawStars(transform);
+        // this.drawStars(transform); // [v0.3.34] Disabled starfield to prevent user confusion (looks like a bug)
         console.time('drawEdges');
         if (this.edgeCount > 0) this.drawEdges(transform);
         console.timeEnd('drawEdges');
@@ -1637,8 +1616,20 @@ class WebGLRenderer {
     }
 
     hexToRgb(hex) {
-        if (!hex || typeof hex !== 'string') return { r: 0.27, g: 0.52, b: 0.53 };
+        if (!hex || typeof hex !== 'string') return { r: 1, g: 1, b: 1 };
         
+        // [v0.3.34] Fix rgba parsing for WebGL buffers (e.g. 'rgba(40, 40, 40, 0.7)')
+        if (hex.startsWith('rgba') || hex.startsWith('rgb')) {
+            const parts = hex.match(/[\d.]+/g);
+            if (parts && parts.length >= 3) {
+                return {
+                    r: parseInt(parts[0], 10) / 255,
+                    g: parseInt(parts[1], 10) / 255,
+                    b: parseInt(parts[2], 10) / 255
+                };
+            }
+        }
+
         let r = 0, g = 0, b = 0;
         let h = hex.replace('#', '');
         

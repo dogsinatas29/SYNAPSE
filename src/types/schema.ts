@@ -8,6 +8,30 @@ export type NodeStatus = any;
 export type EdgeType = any;
 export type EdgeStyle = any;
 
+export enum NodeRole {
+    RUNTIME = 'RUNTIME',
+    RUNTIME_ENTRY = 'RUNTIME_ENTRY',
+    DOMAIN_MODEL = 'DOMAIN_MODEL',
+    TEST = 'TEST',
+    TOOLING = 'TOOLING',
+    CONFIG = 'CONFIG',
+    DOCUMENT = 'DOCUMENT',
+    ASSET = 'ASSET',
+    EXTERNAL = 'EXTERNAL',
+    GHOST = 'GHOST'
+}
+
+export enum EdgeProvenance {
+    TYPE_ONLY = 'TYPE_ONLY',
+    UNKNOWN_RUNTIME = 'UNKNOWN_RUNTIME',
+    CONSTRUCTOR_CALL = 'CONSTRUCTOR_CALL',
+    FUNCTION_CALL = 'FUNCTION_CALL',
+    INHERITANCE = 'INHERITANCE',
+    DECORATOR = 'DECORATOR',
+    FRAMEWORK_REGISTRATION = 'FRAMEWORK_REGISTRATION',
+    DYNAMIC_IMPORT = 'DYNAMIC_IMPORT'
+}
+
 export interface Node {
     id: string;
     type?: any;
@@ -23,6 +47,9 @@ export interface Node {
     visual?: any;
     clientLayer?: string;
     clientTimestamp?: number;
+    role?: NodeRole;
+    category?: string;
+    confidence?: number;
     [key: string]: any;
 }
 
@@ -114,6 +141,33 @@ export interface SynapseWorkspace {
     bookmark_state: BookmarkState;
 }
 
+export interface ClusterBridge {
+    sourceCluster: string;
+    targetCluster: string;
+    totalEdges: number;
+    outboundEdges?: number; // from source to target
+    inboundEdges?: number;  // from target to source
+    typeOnlyEdges: number;
+    unknownRuntimeEdges: number;
+    functionCallEdges: number;
+    constructorEdges: number;
+    inheritanceEdges: number;
+    frameworkRegistrationEdges: number;
+    decoratorEdges: number;
+    couplingDensity: number; // Represents the absolute number of edges (equivalent to totalEdges, kept for clarity)
+    rawScore: number;
+    couplingStrength: number; // Normalized qualitative score of the bond
+    dominantProvenance?: string;
+    distribution?: {
+        typeOnlyPct: number;
+        functionCallPct: number;
+        constructorPct: number;
+        inheritancePct: number;
+        decoratorPct: number;
+        unknownPct: number;
+    };
+}
+
 export interface ProjectState {
     version?: number;
     project_name?: any;
@@ -124,6 +178,7 @@ export interface ProjectState {
     edges?: Edge[];
     clusters?: Cluster[];
     cluster_flows?: ClusterFlow[];
+    cluster_bridges?: ClusterBridge[];
     metaEdges?: any[];
     system_context?: any;
     deletedNodeIds?: string[];
@@ -245,7 +300,7 @@ export interface ContributionEdge {
 export interface CodeSummary {
     classes: string[];
     functions: string[];
-    references: { target: string, type: string, nodeId?: string, isApproved?: boolean, fullPath?: string }[];
+    references: { target: string, type: string, nodeId?: string, isApproved?: boolean, fullPath?: string, confidence?: number, provenance?: EdgeProvenance }[];
     package?: string;
     hasAtomicSignature?: boolean;
     hasImportSignature?: boolean;

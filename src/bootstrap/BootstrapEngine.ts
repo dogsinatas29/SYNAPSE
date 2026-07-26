@@ -495,7 +495,7 @@ The **Documentation Shelf** of the Synapse canvas is a sacred storage area for m
                     const isProtocol = fileName === 'rules.md' || fileName === 'gemini.md' || fileName === 'architecture.md' || fileName.includes('report');
                     
                     if (isIgnoredFile(currentRelPath)) continue;
-                    const scanExtensions = ['.ts', '.js', '.tsx', '.jsx', '.py', '.c', '.h', '.cpp', '.hpp', '.cc', '.rs', '.sh', '.sql', '.md', '.csv', '.yaml', '.yml', '.java', '.kt', '.kts', '.swift', '.go'];
+                    const scanExtensions = ['.ts', '.js', '.tsx', '.jsx', '.py', '.c', '.h', '.cpp', '.hpp', '.cc', '.rs', '.sh', '.sql', '.md', '.csv', '.yaml', '.yml', '.json', '.java', '.kt', '.kts', '.swift', '.go'];
                     if (scanExtensions.includes(ext) || isProtocol) {
                         fileList.push(currentRelPath);
                     }

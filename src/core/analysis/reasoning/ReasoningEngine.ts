@@ -28,7 +28,8 @@ export class ReasoningEngine {
             sccs,
             smells,
             criticalBridges,
-            base
+            base,
+            auditLog: TarjanSCC.lastAuditLog
         };
     }
 }

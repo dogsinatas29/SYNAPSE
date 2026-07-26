@@ -1248,7 +1248,6 @@ Please wait until harvesting completes.</p>
     </div>
 
     <div id="header">
-        <div class="logo">🧠 SYNAPSE</div>
         <div id="status-indicator" style="font-size: 12px; color: #fabd2f; font-weight: bold;"></div>
         <div id="project-path" style="font-size: 12px; color: var(--fg-dim);">Loading project...</div>
     </div>
@@ -1268,8 +1267,8 @@ Please wait until harvesting completes.</p>
         <div class="dropdown">
             <div class="menu-label">👁️ View</div>
             <div class="dropdown-content">
-                <button class="btn" data-mode="graph">Graph View</button>
-                <button class="btn active" data-mode="cluster">Only Clusters</button>
+                <button class="btn active" data-mode="graph">Graph View</button>
+                <button class="btn" data-mode="cluster">Only Clusters</button>
                 <!-- <button class="btn" data-mode="tree">Tree View</button> Removed due to rendering issues -->
                 <button class="btn" data-mode="flow">Flow View</button>
                 <button class="btn" id="btn-toggle-docs">📚 Documentation Shelf</button>
@@ -1295,8 +1294,8 @@ Please wait until harvesting completes.</p>
             <div class="menu-label" id="btn-edit-logic-label" style="color: #fb4934;">🔓 Edit Logic: OFF</div>
             <div class="dropdown-content">
                 <button class="btn" id="btn-edit-logic" title="Toggle Destructive Source Editing" style="color: #fb4934; font-weight: bold;">Toggle Edit Mode</button>
-                <button class="btn" id="btn-add-node" title="Add New Node">➕ Node</button>
-                <button class="btn" id="btn-connect" title="Connect Nodes (Alt+Click)">🔗 Connect</button>
+                <button class="btn" id="btn-add-node" title="Add New Node" style="display: none;">➕ Node</button>
+                <button class="btn" id="btn-connect" title="Connect Nodes (Alt+Click)" style="display: none;">🔗 Connect</button>
                 <button class="btn" id="btn-delete" title="Delete Selected Nodes/Edges" style="color: #fb4934;">🗑️ Delete</button>
             </div>
         </div>
@@ -1306,7 +1305,7 @@ Please wait until harvesting completes.</p>
             <div class="menu-label" style="color: #fabd2f;">🔍 Verify</div>
             <div class="dropdown-content">
                 <button class="btn" id="btn-test-logic" title="Run AI-Driven Semantic Analysis" style="color: #fabd2f; font-weight: bold;">🤖 Scan Architecture (AI)</button>
-                <button class="btn" id="btn-virtual-debug" title="Runtime Simulation Debug" style="color: #83a598; font-weight: bold;">📡 Simulation Debug</button>
+                <button class="btn" id="btn-virtual-debug" title="Runtime Simulation Debug" style="color: #83a598; font-weight: bold;" onclick="if(typeof vscode !== 'undefined') { vscode.postMessage({command: 'virtualDebug'}); } else if(window.vscode) { window.vscode.postMessage({command: 'virtualDebug'}); }">📡 Simulation Debug</button>
                 <div class="menu-divider"></div>
                 <div style="padding: 5px 10px; font-size: 10px; color: var(--fg-dim); text-transform: uppercase;">Simulate State</div>
                 <button class="btn" id="btn-sim-necrosis" title="Simulate Necrosis on Selection">💀 Simulate Necrosis</button>

@@ -1,4 +1,5 @@
 import { Node, Cluster, NodeType } from './GraphModel';
+import { NodeRole } from '../types/schema';
 import { ResolvedReference } from './ReferenceResolver';
 import { makeExternalSemantic } from './ExternalReferenceSemantics';
 
@@ -7,6 +8,7 @@ export interface ExpandedReference {
     targetId: string;
     referenceType: string;
     isGhost: boolean;
+    provenance?: any;
 }
 
 export interface ExpansionResult {
@@ -93,7 +95,8 @@ export class GhostExpander {
                 sourceId: ref.sourceId,
                 targetId: ref.targetId,
                 referenceType: ref.referenceType,
-                isGhost: isUnresolved
+                isGhost: isUnresolved,
+                provenance: ref.provenance
             });
 
             if (isUnresolved) {
@@ -195,6 +198,7 @@ export class GhostExpander {
                         position: { x: 0, y: 0 },
                         degree: 0,
                         createdBy: 'GhostExpander',
+                        role: isDocRef ? NodeRole.DOCUMENT : (isExternal ? NodeRole.EXTERNAL : NodeRole.GHOST),
                         data: {
                             label: targetNodeId,
                             file: targetNodeId,

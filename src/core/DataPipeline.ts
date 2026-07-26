@@ -1,5 +1,6 @@
 import * as crypto from 'crypto';
 import * as path from 'path';
+import { TypeScriptResolver } from './resolvers/TypeScriptResolver';
 import { Logger } from '../utils/Logger';
 import { FileScanner, CodeSummary } from './FileScanner';
 import { buildNodes, NodeBuildResult } from './NodeBuilder';
@@ -18,6 +19,7 @@ import { GhostClassifier } from './GhostClassifier';
 import { EdgeBuilder } from './EdgeBuilder';
 import { phaseManager, Phase } from './PhaseManager';
 import { graphModel, Node, Edge, Cluster, NodeType, EdgeType, GraphModel } from './GraphModel';
+import { NodeRole } from '../types/schema';
 import { canvasEngine } from './canvas-engine/CanvasEngine';
 import { RuleEngine } from './RuleEngine';
 import { SymbolIndex } from './SymbolIndex';
@@ -40,7 +42,13 @@ export interface PipelineResult {
 }
 
 export class DataPipeline {
-  private scanner = new FileScanner();
+  private scanner: FileScanner;
+  private tsResolver: TypeScriptResolver;
+
+  constructor() {
+    this.scanner = new FileScanner();
+    this.tsResolver = new TypeScriptResolver();
+  }
 
   /**
    * 전체적인 데이터 처리 흐름 실행 (v0.3.11: dispatch 제거, 순수 데이터 반환)
@@ -68,8 +76,14 @@ export class DataPipeline {
         const file = files[i];
         const absolutePath = projectRoot ? (path.isAbsolute(file) ? file : path.join(projectRoot, file)) : file;
         const summary = this.scanner.scanFile(absolutePath);
+        
+        // [v0.3.34.5] Resolver Upgrade for TypeScript/JavaScript
+        if (summary && ['.ts', '.tsx', '.js', '.jsx'].includes(path.extname(absolutePath).toLowerCase())) {
+            const fileContent = require('fs').readFileSync(absolutePath, 'utf8');
+            this.tsResolver.resolve(absolutePath, fileContent, summary);
+        }
+        
         summaries.push({ filePath: file, summary });
-
         // [v0.3.33.1] Prevent Extension Host freezing by yielding to the event loop
         if (i % 100 === 0) {
             await new Promise(resolve => setImmediate(resolve));
@@ -179,8 +193,9 @@ export class DataPipeline {
       diagnosticOutput += `[EXTERNAL_LAYER_MODE] mode=${externalLayerMode} unknownRatio=${ghostReport.v2Gate.unknownRatio} threshold=${ghostReport.v2Gate.thresholdUnknownRatio}\n`;
       
       // Inject Mutated States (DataPipeline's responsibility)
-      for (const node of expansionResult.ghostNodes) nodes.push(node);
-      for (const n of expansionResult.ghostNodes) nodeIds.add(n.id);
+      const validGhostNodes = expansionResult.ghostNodes.filter(n => n.role !== NodeRole.GHOST);
+      for (const node of validGhostNodes) nodes.push(node);
+      for (const n of validGhostNodes) nodeIds.add(n.id);
       
       for (const cluster of expansionResult.ghostClusters) clusters.push(cluster);
       for (const c of expansionResult.ghostClusters) clusterIds.add(c.id);

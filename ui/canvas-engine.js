@@ -1461,16 +1461,6 @@ class TreeRenderer {
                 } else {
                     // Fallback: use only the last 3 segments if it's too deep
                     if (parts.length > 3) {
-                        if (current.type !== 'directory') {
-                        console.error('[TREE_NODE_DUMP]', {
-                            id: current.id,
-                            name: current.name,
-                            type: current.type,
-                            createdBy: current.createdBy,
-                            filePath: current.filePath
-                        });
-                        console.error(`[TREE_BUILD_FAILURE] Missing children in directory traversal:`);
-                        }
                         normalizedPath = parts.slice(-3).join('/');
                     }
                 }
@@ -1729,7 +1719,7 @@ class CanvasEngine {
         this._engineId = this._instanceId;
         console.log('[ENGINE_CREATED]', this._engineId);
         // 모드 및 렌더러
-        this.currentMode = 'cluster'; // 'graph' | 'tree' | 'flow' | 'cluster'
+        this.currentMode = 'graph'; // 'graph' | 'tree' | 'flow' | 'cluster'
         this.canvas = document.getElementById(canvasId);
         if (!this.canvas) {
             console.error('[SYNAPSE] Canvas not found:', canvasId);
@@ -1791,6 +1781,11 @@ class CanvasEngine {
         this.spatialIndex = new SpatialGrid(2000); // [v0.3.33] O(1) Viewport Culling
         this._lastDataHash = null; // [v0.2.24] Data integrity guard
         this._lastLoadTime = 0; // [v0.2.24] Load throttling
+        
+        // [v0.3.34] Evidence Bundle (Architecture Analysis Engine)
+        this.evidenceBundle = null;
+        this.necroticNodeIds = new Set();
+        this.fracturedEdgeIds = new Set();
 
         // 데이터
         let _nodesBacking = [];
@@ -1866,7 +1861,7 @@ class CanvasEngine {
         // [v0.2.19] Layer Visibility State
         this.showBaseLayer = true;
         this.showUserLayer = true;
-        this.showExternalLayer = false;
+        this.showExternalLayer = true; // [v0.3.34] Default to true, let isExtreme profile turn it off if needed
         this.clientLayers = {}; // { [clientId]: { visible: boolean, order: number } }
 
         this.showDocShelf = false;
@@ -2357,7 +2352,7 @@ class CanvasEngine {
         }
 
         // [v0.3.33.8] 4-Level Edge Visibility Control (FULL / NO_BADGES / CLUSTER / NONE)
-        window.edgeVisibilityMode = 'NONE'; // 'FULL' | 'NO_BADGES' | 'CLUSTER' | 'NONE'
+        window.edgeVisibilityMode = 'FULL'; // 'FULL' | 'NO_BADGES' | 'CLUSTER' | 'NONE'
         const btnEdgeVisAll = document.getElementById('btn-edge-vis-all');
         const btnEdgeVisNoBadge = document.getElementById('btn-edge-vis-nobadge');
         const btnEdgeVisCluster = document.getElementById('btn-edge-vis-cluster');
@@ -2533,7 +2528,9 @@ class CanvasEngine {
             }
 
             if (this.isEditMode) {
-                this.canvas.style.boxShadow = `inset 0 0 20px ${theme.COLORS.ERROR}`;
+                const currentTheme = this.getTheme() || (typeof SYNAPSE_THEME !== 'undefined' ? SYNAPSE_THEME : window.SYNAPSE_THEME);
+                const errorColor = currentTheme ? currentTheme.COLORS.ERROR : '#fb4934';
+                this.canvas.style.boxShadow = `inset 0 0 20px ${errorColor}`;
                 if (_btnAddNode) _btnAddNode.style.display = 'block';
                 if (_btnConnect) _btnConnect.style.display = 'block';
             } else {
@@ -2695,6 +2692,13 @@ class CanvasEngine {
 
         // Optimistic update
         this.nodes.push(newNode);
+        try {
+            if (this._buildClusterIndices) this._buildClusterIndices();
+            this.buildSpatialIndex();
+        } catch(e) {
+            console.error('[SYNAPSE] Failed to rebuild hierarchy/spatial index during manual node creation', e);
+        }
+        this.isGraphDataDirty = true; // Fix: invalidate cache for the new node
         this.render();
 
         // [v0.2.20] Auto zoom to the new node in the buffer cluster
@@ -2775,56 +2779,6 @@ class CanvasEngine {
                 if (this._resizeTimeout) clearTimeout(this._resizeTimeout);
                 this._resizeTimeout = setTimeout(updateBuffer, 100);
             }
-        }
-
-        // [v0.2.20] Virtual Debug Button Listener
-        const btnVirtualDebug = document.getElementById('btn-virtual-debug');
-        if (btnVirtualDebug && !btnVirtualDebug._initialized) {
-            btnVirtualDebug._initialized = true;
-            btnVirtualDebug.addEventListener('click', () => {
-                if (typeof vscode !== 'undefined') {
-                    vscode.postMessage({ command: 'virtualDebug' });
-                }
-            });
-        }
-
-        // [v0.2.21] Debug Simulation Buttons
-        const btnSimNecrosis = document.getElementById('btn-sim-necrosis');
-        if (btnSimNecrosis) {
-            btnSimNecrosis.addEventListener('click', () => {
-                this.selectedNodes.forEach(node => {
-                    node.status = 'error_necrosis';
-                });
-                this.render();
-            });
-        }
-
-        const btnSimTombstone = document.getElementById('btn-sim-tombstone');
-        if (btnSimTombstone) {
-            btnSimTombstone.addEventListener('click', () => {
-                this.selectedNodes.forEach(node => {
-                    node.status = 'error_tombstone';
-                });
-                this.render();
-            });
-        }
-
-        const btnSimClear = document.getElementById('btn-sim-clear');
-        if (btnSimClear) {
-            btnSimClear.addEventListener('click', () => {
-                this.nodes.forEach(node => {
-                    if (node.status === 'error_necrosis' || node.status === 'error_tombstone') {
-                        node.status = 'active';
-                    }
-                    delete node.isVirtualDebugError;
-                    delete node.isError;
-                    delete node.isArchViolation;
-                });
-                this.edges.forEach(edge => {
-                    delete edge.isFractured;
-                });
-                this.render();
-            });
         }
     }
 
@@ -2907,7 +2861,6 @@ class CanvasEngine {
         console.log("[SYNAPSE] starting main loop (eco-mode with auto-sleep)");
 
         const loop = () => {
-            console.count("RAF_LOOP");
             try {
                 // [v0.2.24] Auto-Sleep Logic: Idle for 2 seconds -> Set isAnimating to false
                 const now = Date.now();
@@ -2915,7 +2868,7 @@ class CanvasEngine {
                 const hasActiveParticles = (this.particles?.length || 0) > 0 || (this.promotionSites?.length || 0) > 0;
 
                 // [v0.2.25] Eternal Loop: No Auto-Sleep if WebGL + Graph mode
-                const idleLimit = (this.webglEnabled && this.currentMode === 'graph') ? Infinity : 2000;
+                const idleLimit = (this.webglEnabled && this.currentMode === 'graph') ? Infinity : 300000;
 
                 // [FIX v0.3.09] 렌더링 중에는 수면에 들지 않음
                 // isDirty 또는 필요한 업데이트가 있으면 렌더링이 진행되므로, 이 경우 수면 진입 금지
@@ -2926,7 +2879,7 @@ class CanvasEngine {
                 if (idleTime > idleLimit && !hasActiveParticles && !this.isDragging && !this.isSelecting &&
                     !this.needsUpdate && !isRenderingActive) {
                     if (this.isAnimating) {
-                        this.log('[SYNAPSE] Eco-mode: Entering Sleep (IDLE > 2s)');
+                        this.log('[SYNAPSE] Eco-mode: Entering Sleep (IDLE > 5m)');
                         this.isAnimating = false;
                         this.needsUpdate = true; // Final indicator draw
                         this.render();
@@ -3528,6 +3481,14 @@ class CanvasEngine {
 
                 // 1.3 [v0.2.33] Priority 2: Nodes
                 if (topClickedNode) {
+                    // [v0.3.34] Intuitive Edge Creation: Click anywhere on node in Connect mode
+                    if (this.isCreatingEdge || e.altKey) {
+                        this.isCreatingEdge = true;
+                        this.edgeSource = { type: 'node', id: topClickedNode.id };
+                        this.edgeCurrentPos = worldPos;
+                        return;
+                    }
+
                     // [v0.3.11] Layer Filtering: Only select nodes if their layer is visible
                     this.selectedEdge = null;
                     if (e.ctrlKey || e.metaKey || e.shiftKey) {
@@ -3555,6 +3516,14 @@ class CanvasEngine {
 
                 // 1.4 [v0.2.33] Priority 3: Cluster Header Body (Dragging)
                 if (clickedClusterHeader) {
+                    // [v0.3.34] Intuitive Edge Creation: Click anywhere on cluster header in Connect mode
+                    if (this.isCreatingEdge || e.altKey) {
+                        this.isCreatingEdge = true;
+                        this.edgeSource = { type: 'cluster', id: clickedClusterHeader.id };
+                        this.edgeCurrentPos = worldPos;
+                        return;
+                    }
+
                     this.selectedEdge = null;
                     if (!(e.ctrlKey || e.metaKey || e.shiftKey)) {
                         this.selectedNodes.clear();
@@ -3569,6 +3538,14 @@ class CanvasEngine {
                     this.wasDragging = true;
                     console.log('[SYNAPSE] Cluster dragged:', clickedClusterHeader.label);
                     return;
+                }
+
+                // 1.45 Priority 3.5: Cluster Body Click
+                const clickedClusterBody = this.getClusterAt(worldPos.x, worldPos.y);
+                if (clickedClusterBody && !clickedClusterHeader && !topClickedNode) {
+                    this.selectedClusterId = clickedClusterBody.id;
+                    this.requestRender();
+                    return; // Prevent box selection
                 }
 
                 // 1.5 [v0.2.33] Priority 3: Edges
@@ -3605,6 +3582,7 @@ class CanvasEngine {
                 // 1.7 [v0.2.33] Priority 4: Background (Box Selection/Pan)
                 this.selectedEdge = null;
                 this.selectedNode = null;
+                this.selectedClusterId = null; // Clear cluster selection
                 this._onNodeSelected(null);
                 if (e.button === 0) {
                     this.isSelecting = true;
@@ -3751,6 +3729,20 @@ class CanvasEngine {
                     this.hoveredEdge = edge;
                     this.hoveredNode = node;
 
+                    // Hover cluster tracking
+                    const hoverCluster = this.getClusterAt(worldPos.x, worldPos.y);
+                    if (hoverCluster && !node) {
+                        if (this.hoverClusterId !== hoverCluster.id) {
+                            this.hoverClusterId = hoverCluster.id;
+                            this.requestRender();
+                        }
+                    } else {
+                        if (this.hoverClusterId) {
+                            this.hoverClusterId = null;
+                            this.requestRender();
+                        }
+                    }
+
                     // [v0.3.17] Node Summary Logic
                     if (node) {
                         const stats = this.nodeStatsMap.get(node.id);
@@ -3787,7 +3779,10 @@ class CanvasEngine {
                     this.edgeTarget.id !== this.edgeSource.id) {
                     this.showEdgeTypeSelector(e.clientX, e.clientY);
                 } else {
-                    this.isCreatingEdge = false;
+                    const btnConnect = document.getElementById('btn-connect');
+                    if (!(btnConnect && btnConnect.classList.contains('active'))) {
+                        this.isCreatingEdge = false;
+                    }
                     this.edgeSource = null;
                     this.edgeTarget = null;
                 }
@@ -4842,7 +4837,10 @@ class CanvasEngine {
             this.isEdgeMenuOpen = false;
             this.edgeSource = null;
             this.edgeTarget = null;
-            this.isCreatingEdge = false;
+            const btnConnect = document.getElementById('btn-connect');
+            if (!(btnConnect && btnConnect.classList.contains('active'))) {
+                this.isCreatingEdge = false;
+            }
             this.render();
             menu.remove();
         };
@@ -4857,7 +4855,10 @@ class CanvasEngine {
                     this.isEdgeMenuOpen = false;
                     this.edgeSource = null;
                     this.edgeTarget = null;
-                    this.isCreatingEdge = false;
+                    const btnConnect = document.getElementById('btn-connect');
+                    if (!(btnConnect && btnConnect.classList.contains('active'))) {
+                        this.isCreatingEdge = false;
+                    }
                     this.render();
                     menu.remove();
                     document.removeEventListener('click', closeMenu);
@@ -5138,11 +5139,13 @@ class CanvasEngine {
 
         // 엣지 생성 완료 후 상태 초기화
         this.edgeSource = null;
-        // Persistent connect mode: don't clear target so we can connect from target to next? Actually, user wants continuous connect mode, so we keep mode active but reset source/target
+        // Persistent connect mode: reset source/target but maintain mode if button is active
         this.edgeTarget = null;
-        this.isCreatingEdge = false;
+        const btnConnect = document.getElementById('btn-connect');
+        if (!(btnConnect && btnConnect.classList.contains('active'))) {
+            this.isCreatingEdge = false;
+        }
         
-        // Remove: document.getElementById('btn-connect')?.classList.remove('active');
         this.render();
     }
 
@@ -6413,6 +6416,25 @@ class CanvasEngine {
         this.currentLODLevel = Math.max(0, Math.min(3, level));
     }
 
+    // [v0.3.34] Evidence Bundle Injection
+    setEvidenceBundle(evidence) {
+        this.evidenceBundle = evidence;
+        this.necroticNodeIds.clear();
+        this.fracturedEdgeIds.clear();
+
+        if (evidence && evidence.findings) {
+            for (const f of evidence.findings) {
+                if (f.type === 'necrosis') this.necroticNodeIds.add(f.nodeId);
+                if (f.type === 'fracture') this.fracturedEdgeIds.add(f.edgeId);
+            }
+        }
+        
+        console.log(`[AAE] Overlay Updated: necrosis=${this.necroticNodeIds.size}, fracture=${this.fracturedEdgeIds.size}`);
+        this.isGraphDataDirty = true;
+        this.isEdgeDirty = true;
+        this.requestRender();
+    }
+
     loadProjectState(projectState, preserveView = false) {
         console.time('loadProjectState');
         let _loadStage = 'load-start';
@@ -6597,15 +6619,20 @@ class CanvasEngine {
         const policy = PolicyFactory.create(this.viewStrategy);
         // 2. Filter Edges to only connect visible or documentation nodes, AND apply policy
         const activeIds = new Set([...canvasNodes, ...documentationNodes].map(n => n.id));
-        const canvasEdges = rawEdges.filter(e => 
-            activeIds.has(e.from) && 
-            activeIds.has(e.to) && 
-            policy.shouldMaterializeEdge(e)
-        );
-        console.log('[STATE_CHECK]', 'after-edge-materialization',
-            canvasNodes.length,
-            canvasEdges.length,
-            projectState?.clusters?.length ?? 0);
+        const canvasEdges = rawEdges.filter(e => {
+            const hasFrom = activeIds.has(e.from);
+            const hasTo = activeIds.has(e.to);
+            const mat = policy.shouldMaterializeEdge(e);
+            if (!hasFrom || !hasTo) {
+                // this.log("[EDGE_DROP]", 'info', { from: e.from, to: e.to, hasFrom, hasTo });
+            }
+            return hasFrom && hasTo && mat;
+        });
+        this.log('[STATE_CHECK] after-edge-materialization', 'info', {
+            canvasNodes: canvasNodes.length,
+            canvasEdges: canvasEdges.length,
+            clusters: projectState?.clusters?.length ?? 0
+        });
         markLoadStage('after-edge-materialization', {
             activeIds: activeIds.size,
             canvasEdges: canvasEdges.length
@@ -7070,6 +7097,12 @@ class CanvasEngine {
             
             console.time('AFTER_NODE_CACHE');
             console.log('[PERF] BeforeValidationPrep');
+
+            // [v0.3.34.2 Fix] Ensure nodeMap is populated before building Hierarchy and SpatialIndex
+            this.nodeMap.clear();
+            if (this.nodes) {
+                for (const n of this.nodes) this.nodeMap.set(n.id, n);
+            }
 
             // 데이터 준비 후 항상 LOD State 초기화 + SpatialIndex 구축
             if (this.clusters && this.clusters.length > 0) {
@@ -7669,7 +7702,10 @@ class CanvasEngine {
 
     restoreVisibilityState(projectState) {
         const visibility = projectState?.synapse_workspace?.workspace_state?.visibility;
-        if (!visibility) return;
+        if (!visibility) {
+            this.syncLayerVisibilityUI(); // Force UI to reflect defaults
+            return;
+        }
 
         const visibleLayers = Array.isArray(visibility.visibleLayers)
             ? new Set(visibility.visibleLayers.map(v => String(v).toLowerCase()))
@@ -7867,6 +7903,9 @@ class CanvasEngine {
         // Manually clone fields to ensure nested stability
         const isolatedNodes = filtered.map(n => ({
             id: n.id,
+            type: n.type,
+            clientLayer: n.clientLayer,
+            cluster_id: n.cluster_id,
             category: n.category || 'base',
             status: n.status,
             data: n.data ? { ...n.data, meta: n.data.meta ? { ...n.data.meta } : undefined } : {},
@@ -7940,8 +7979,25 @@ class CanvasEngine {
             );
         }
 
+        // [v0.3.34] Cluster Edge Visibility Support in Bootstrap Mode
+        const hasMetaEdges = this.metaEdges && this.metaEdges.length > 0;
+        if (window.edgeVisibilityMode === 'CLUSTER' && hasMetaEdges) {
+            this.renderEdgeBundles(zoom);
+        }
+
+        const selectedIds = frameState.context.selectedNodeIds || new Set();
+
         // 3. Edges
         for (const edge of frameState.edges) {
+            const isSelected = this.selectedEdge && this.selectedEdge.id === edge.id;
+            const isHovered = this.hoveredEdge && this.hoveredEdge.id === edge.id;
+            const isPathSelected = isSelected || isHovered ||
+                selectedIds.has(edge.from) || selectedIds.has(edge.to) ||
+                (this.hoveredNode && (this.hoveredNode.id === edge.from || this.hoveredNode.id === edge.to));
+
+            if ((window.edgeVisibilityMode === 'NONE' || window.edgeVisibilityMode === 'CLUSTER') && !isPathSelected) {
+                continue;
+            }
             this.renderEdge(edge);
         }
 
@@ -8034,6 +8090,32 @@ class CanvasEngine {
             this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
             this.renderFromState(frameState);
 
+            // [v0.3.34] Draw interactive overlays (like ghost edges) in Bootstrap Mode
+            const dpr = window.devicePixelRatio || 1;
+            
+            // Draw World-Space Overlays (Ghost Edge, Handles)
+            this.ctx.save();
+            this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            this.ctx.translate(this.transform.offsetX, this.transform.offsetY);
+            this.ctx.scale(this.transform.zoom, this.transform.zoom);
+
+            this.renderConnectionHandles();
+            if (this.isCreatingEdge && this.edgeSource) this.renderGhostEdge();
+            this.renderParticles();
+            this.ctx.restore();
+
+            // Draw Screen-Space Overlays (Selection Rect)
+            if (this.isSelecting) {
+                this.ctx.save();
+                this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0); 
+                this.ctx.fillStyle = 'rgba(69, 133, 136, 0.25)';
+                this.ctx.strokeStyle = '#458588';
+                this.ctx.lineWidth = 1;
+                this.ctx.fillRect(this.selectionRect.x, this.selectionRect.y, this.selectionRect.width, this.selectionRect.height);
+                this.ctx.strokeRect(this.selectionRect.x, this.selectionRect.y, this.selectionRect.width, this.selectionRect.height);
+                this.ctx.restore();
+            }
+
             // 3D Redraw (Atomic update)
             if (this.webglRenderer && this.webglEnabled) {
                 this.webglRenderer.renderFromState(frameState);
@@ -8071,7 +8153,9 @@ class CanvasEngine {
             // [v0.3.33.1_fix2] Edge Materialization Cache & Virtualization Index
             console.time('EDGE_CACHE_CLUSTERS');
             if (this.edges) {
-                const needsRebuild = this.nodeMap.size !== nodeCount || !this._clusterEdgeMap;
+                // Fix: this.nodeMap was already populated above, so its size equals nodeCount.
+                // We MUST check this.isGraphDataDirty to ensure map rebuilds on data change.
+                const needsRebuild = this.isGraphDataDirty || !this._clusterEdgeMap;
                 if (needsRebuild) this._clusterEdgeMap = new Map();
 
                 for (let i = 0; i < this.edges.length; i++) {
@@ -8948,6 +9032,10 @@ class CanvasEngine {
             //     this.ctx.stroke();
             // }
 
+            if (this.selectedClusterId) {
+                this._drawClusterCouplingPanel(this.selectedClusterId);
+            }
+
             this.renderDebugInfo();
 
         } catch (e) {
@@ -9061,23 +9149,26 @@ class CanvasEngine {
         const hasMetaEdges = this.metaEdges && this.metaEdges.length > 0;
 
         // [v0.3.33.8] Explicit Edge Visibility Control (FULL, CLUSTER, NONE)
-        // Completely removed automatic LOD based on zoom.
-        if (window.edgeVisibilityMode === 'NONE') return;
-
-        if (window.edgeVisibilityMode === 'CLUSTER') {
-            if (hasMetaEdges) {
-                this.renderEdgeBundles(zoom);
-            }
-            return; // Skip rendering individual physical edges
+        if (window.edgeVisibilityMode === 'CLUSTER' && hasMetaEdges) {
+            this.renderEdgeBundles(zoom);
         }
 
-        // If mode is 'FULL', we render all physical edges regardless of zoom level.
-        // (Removed zoom <= 0.10 override logic)
+        const selectedIds = this._selectedNodeIds || new Set();
 
         for (const edge of targetEdges) {
             const srcNode = this.nodeMap.get(edge.from);
             const tgtNode = this.nodeMap.get(edge.to);
             if (!srcNode || !tgtNode || !srcNode.position || !tgtNode.position) continue;
+
+            const isSelected = this.selectedEdge && this.selectedEdge.id === edge.id;
+            const isHovered = this.hoveredEdge && this.hoveredEdge.id === edge.id;
+            const isPathSelected = isSelected || isHovered ||
+                selectedIds.has(edge.from) || selectedIds.has(edge.to) ||
+                (this.hoveredNode && (this.hoveredNode.id === edge.from || this.hoveredNode.id === edge.to));
+
+            if ((window.edgeVisibilityMode === 'NONE' || window.edgeVisibilityMode === 'CLUSTER') && !isPathSelected) {
+                continue;
+            }
 
             // [v0.3.33 Phase 4-D-2] Cluster LOD filter: skip edges between hidden clusters
             if (this._visibleGraphClusterIds) {
@@ -9589,12 +9680,56 @@ class CanvasEngine {
         const idMap = new Map();
         this.clusters.forEach(function(c) { idMap.set(c.id, c); });
 
-        // Build childMap from parent_id
+        // Build childMap from parent_id with fallback inference and create missing ancestors
+        const createMissingAncestors = (pid) => {
+            if (!pid || idMap.has(pid)) return;
+            const newCluster = {
+                id: pid,
+                label: pid.startsWith('folder_') ? '📂 ' + pid.replace('folder_', '') : pid,
+                type: 'folder', collapsed: true,
+                parent_id: null
+            };
+            let ppid = null;
+            if (pid.includes('/')) {
+                const ls = pid.lastIndexOf('/');
+                if (ls !== -1) ppid = pid.substring(0, ls);
+            } else if (pid.startsWith('folder_')) {
+                const lu = pid.lastIndexOf('_');
+                if (lu > 7) ppid = pid.substring(0, lu);
+            }
+            newCluster.parent_id = ppid;
+            
+            this.clusters.push(newCluster);
+            idMap.set(pid, newCluster);
+            
+            if (ppid && ppid !== pid) {
+                createMissingAncestors(ppid);
+            }
+        };
+
+        this.clusters.slice().forEach(c => {
+            let pid = c.parent_id;
+            if (!pid && c.id !== 'cluster_ghosts' && !c.id.startsWith('sys_') && c.id !== 'folder_root' && c.id !== '__unclustered__') {
+                if (c.id.includes('/')) {
+                    const lastSlash = c.id.lastIndexOf('/');
+                    if (lastSlash !== -1) pid = c.id.substring(0, lastSlash);
+                } else if (c.id.startsWith('folder_')) {
+                    const lastUnder = c.id.lastIndexOf('_');
+                    if (lastUnder > 7) pid = c.id.substring(0, lastUnder);
+                }
+                if (pid) c.parent_id = pid;
+            }
+            if (pid && pid !== c.id) {
+                createMissingAncestors(pid);
+            }
+        });
+
         const childMap = new Map();
-        this.clusters.forEach(function(c) {
-            if (c.parent_id && c.parent_id !== c.id && idMap.has(c.parent_id)) {
-                if (!childMap.has(c.parent_id)) childMap.set(c.parent_id, []);
-                childMap.get(c.parent_id).push(c);
+        this.clusters.forEach(c => {
+            const pid = c.parent_id;
+            if (pid && pid !== c.id && idMap.has(pid)) {
+                if (!childMap.has(pid)) childMap.set(pid, []);
+                childMap.get(pid).push(c);
             }
         });
 
@@ -9729,6 +9864,11 @@ class CanvasEngine {
         if (!cluster) return;
         cluster.collapsed = !visible;
         
+        if (this.expandedClusters) {
+            if (visible) this.expandedClusters.add(cluster.id);
+            else this.expandedClusters.delete(cluster.id);
+        }
+
         // Cascade to children
         const toggleVisited = new Set();
         const getDescendants = (parentId) => {
@@ -9740,7 +9880,13 @@ class CanvasEngine {
             return all;
         };
         const descendants = getDescendants(cluster.id);
-        descendants.forEach(d => d.collapsed = !visible);
+        descendants.forEach(d => {
+            d.collapsed = !visible;
+            if (this.expandedClusters) {
+                if (visible) this.expandedClusters.add(d.id);
+                else this.expandedClusters.delete(d.id);
+            }
+        });
         
         this.isGraphDataDirty = true;
         this.render();
@@ -9861,17 +10007,19 @@ class CanvasEngine {
         };
     }
 
-    saveState() {
+    saveState(fullSync = false) {
         this._lastSaveTime = Date.now();
         // VS Code 환경이면 저장을 위해 익스텐션으로 메시지 전송
         if (typeof vscode !== 'undefined') {
             const projectState = {
-                nodes: this.nodes,
-                edges: this.edges,
                 clusters: this.clusters,
                 view: this.transform // [v0.2.36] Persist camera view
             };
-            console.log('[SYNAPSE] Saving state to VS Code...');
+            if (fullSync) {
+                projectState.nodes = this.nodes;
+                projectState.edges = this.edges;
+            }
+            console.log('[SYNAPSE] Saving state to VS Code... (fullSync: ' + fullSync + ')');
             vscode.postMessage({
                 command: 'saveState',
                 data: projectState
@@ -11128,7 +11276,7 @@ class CanvasEngine {
         }
 
         // 3. Necrosis / Tombstone (Center)
-        if (node.status === 'error_necrosis' || node.status === 'error_tombstone') {
+        if (this.necroticNodeIds.has(node.id) || node.status === 'error_tombstone') {
             if (zoom > 0.8) {
                 renderCtx.fillStyle = theme.STATUS.WARNING.border;
                 renderCtx.font = 'bold 28px Inter';
@@ -11201,7 +11349,7 @@ class CanvasEngine {
             let satColor = node.data.color || SYNAPSE_THEME.STATUS.ACTIVE.color;
             if (node.status === 'ghost' || node.state === 'pending') {
                 satColor = SYNAPSE_THEME.STATUS.GHOST.color;
-            } else if (node.status === 'necrosis') {
+            } else if (this.necroticNodeIds.has(node.id) || node.status === 'error_necrosis') {
                 satColor = SYNAPSE_THEME.STATUS.NECROSIS.color;
             }
             
@@ -11249,7 +11397,7 @@ class CanvasEngine {
         // 1. 상태별 특수 효과 계산
         const isTombstone = node.status === 'error_tombstone' || (node.data?.issues?.some(i => i.includes('Tombstone')));
 
-        if ((node.status === 'error_necrosis' || isTombstone) && zoom > 0.4) {
+        if ((this.necroticNodeIds.has(node.id) || node.status === 'error_necrosis' || isTombstone) && zoom > 0.4) {
             style.bgColor = '#1d2021'; // Dark Necrosis Base
             style.borderColor = '#fb4934'; // Red Border
         }
@@ -11286,7 +11434,7 @@ class CanvasEngine {
             } else if (node.status === 'warning' || node.isError) {
                 borderColor = theme.STATUS.WARNING.border;
                 glowColor = theme.STATUS.WARNING.glow;
-            } else if (node.status === 'error_necrosis' || node.status === 'error_tombstone') {
+            } else if (this.necroticNodeIds.has(node.id) || node.status === 'error_necrosis' || node.status === 'error_tombstone') {
                 const ns = theme.STATUS.NECROSIS;
                 borderColor = ns.border;
                 bgColor = ns.color;
@@ -11443,7 +11591,7 @@ class CanvasEngine {
         this.ctx.fill();
 
         // 🎨 [v0.2.20] Necrosis Overlay (Necrotic Core & Static Noise)
-        if (node.status === 'error_necrosis') {
+        if (this.necroticNodeIds.has(node.id) || node.status === 'error_necrosis') {
             const centerX = x;
             const centerY = y;
             const radius = Math.min(nodeWidth, nodeHeight) * 0.45;
@@ -12169,15 +12317,16 @@ class CanvasEngine {
                 ctx.fillText(combinedText, bMidX, bMidY);
 
                 // [v0.3.13] Legacy Icon Restoration: B and D badges
-                if (edge.type === 'dependency' || edge.isDeterministicFracture) {
-                    const legacyChar = edge.isDeterministicFracture ? 'B' : 'D';
+                const isFractured = edge.isDeterministicFracture || this.fracturedEdgeIds.has(edge.id);
+                if (edge.type === 'dependency' || isFractured) {
+                    const legacyChar = isFractured ? 'B' : 'D';
                     const lx = bMidX - bw / 2 - 10 / this.transform.zoom;
                     const ly = bMidY;
                     const ls = badgeSize * 0.7;
                     
                     ctx.beginPath();
                     ctx.arc(lx, ly, ls * 0.8, 0, Math.PI * 2);
-                    ctx.fillStyle = edge.isDeterministicFracture ? (theme ? theme.STATUS.ERROR.color : '#fb4934') : (theme ? theme.STATUS.WARNING.border : '#fabd2f');
+                    ctx.fillStyle = isFractured ? (theme ? theme.STATUS.ERROR.color : '#fb4934') : (theme ? theme.STATUS.WARNING.border : '#fabd2f');
                     ctx.fill();
                     ctx.fillStyle = theme ? theme.COLORS.BACKGROUND : '#1d2021';
                     ctx.font = `bold ${ls}px Monospace`;
@@ -12506,7 +12655,113 @@ class CanvasEngine {
             vscode.postMessage({ command: 'contextData', data: context });
         }
     }
+    _drawClusterCouplingPanel(clusterId) {
+        if (!this.clusterBridges || this.clusterBridges.length === 0) return;
+        
+        const cluster = this.clusters.find(c => c.id === clusterId);
+        if (!cluster) return;
 
+        const bridges = this.clusterBridges.filter(b => b.sourceCluster === clusterId || b.targetCluster === clusterId);
+        if (bridges.length === 0) return;
+
+        bridges.sort((a, b) => b.rawScore - a.rawScore);
+
+        const b = cluster._headerBounds; 
+        if (!b) return;
+
+        const dpr = window.devicePixelRatio || 1;
+        const screenX = (b.x * this.transform.zoom + this.transform.offsetX) * dpr;
+        const screenY = (b.y * this.transform.zoom + this.transform.offsetY) * dpr;
+        const screenW = b.width * this.transform.zoom * dpr;
+        const screenH = (b.height + (cluster.collapsed ? 0 : (cluster._bodyHeight || 0))) * this.transform.zoom * dpr;
+
+        // Position to the right of the cluster box
+        let panelX = screenX + screenW + 20 * dpr;
+        let panelY = screenY;
+
+        this.ctx.save();
+        this.ctx.font = `${14 * dpr}px Inter, sans-serif`;
+        this.ctx.textBaseline = 'top';
+
+        const panelWidth = 250 * dpr;
+        const rowHeight = 35 * dpr;
+        const titleHeight = 40 * dpr;
+        const displayBridges = bridges.slice(0, 5);
+        const panelHeight = titleHeight + displayBridges.length * rowHeight + 10 * dpr;
+
+        // Draw background box
+        this.ctx.fillStyle = 'rgba(40, 40, 40, 0.95)';
+        this.ctx.strokeStyle = '#458588';
+        this.ctx.lineWidth = 1.5 * dpr;
+        this.ctx.beginPath();
+        if (this.ctx.roundRect) {
+            this.ctx.roundRect(panelX, panelY, panelWidth, panelHeight, 8 * dpr);
+        } else {
+            this.ctx.rect(panelX, panelY, panelWidth, panelHeight);
+        }
+        this.ctx.fill();
+        this.ctx.stroke();
+
+        // Title
+        this.ctx.fillStyle = '#b8bb26';
+        this.ctx.font = `bold ${14 * dpr}px Inter, sans-serif`;
+        this.ctx.fillText(`Coupling Analysis`, panelX + 15 * dpr, panelY + 15 * dpr);
+        
+        // Cluster Label in Title Bar
+        this.ctx.fillStyle = '#928374';
+        this.ctx.font = `${11 * dpr}px Inter, sans-serif`;
+        const labelText = cluster.label.length > 15 ? cluster.label.substring(0, 15) + '...' : cluster.label;
+        this.ctx.fillText(labelText, panelX + panelWidth - 15 * dpr - this.ctx.measureText(labelText).width, panelY + 16 * dpr);
+
+        // Separator
+        this.ctx.strokeStyle = '#3c3836';
+        this.ctx.beginPath();
+        this.ctx.moveTo(panelX + 15 * dpr, panelY + titleHeight);
+        this.ctx.lineTo(panelX + panelWidth - 15 * dpr, panelY + titleHeight);
+        this.ctx.stroke();
+
+        let currentY = panelY + titleHeight + 10 * dpr;
+        
+        for (const bridge of displayBridges) {
+            const otherId = bridge.sourceCluster === clusterId ? bridge.targetCluster : bridge.sourceCluster;
+            const otherCluster = this.clusters.find(c => c.id === otherId);
+            const otherName = otherCluster ? otherCluster.label : otherId;
+
+            // Target Cluster Name
+            this.ctx.fillStyle = '#ebdbb2';
+            this.ctx.font = `bold ${12 * dpr}px Inter, sans-serif`;
+            const displayOtherName = otherName.length > 20 ? otherName.substring(0, 20) + '...' : otherName;
+            this.ctx.fillText(displayOtherName, panelX + 15 * dpr, currentY);
+
+            // Raw Score
+            this.ctx.fillStyle = '#d3869b';
+            this.ctx.font = `bold ${12 * dpr}px Inter, sans-serif`;
+            const scoreText = `${bridge.rawScore}`;
+            this.ctx.fillText(scoreText, panelX + panelWidth - 15 * dpr - this.ctx.measureText(scoreText).width, currentY);
+
+            // Dominant Provenance & %
+            if (bridge.dominantProvenance && bridge.distribution) {
+                let pct = 0;
+                switch (bridge.dominantProvenance) {
+                    case 'TYPE_ONLY': pct = bridge.distribution.typeOnlyPct; break;
+                    case 'FUNCTION_CALL': pct = bridge.distribution.functionCallPct; break;
+                    case 'CONSTRUCTOR_CALL': pct = bridge.distribution.constructorPct; break;
+                    case 'INHERITANCE': pct = bridge.distribution.inheritancePct; break;
+                    case 'DECORATOR': pct = bridge.distribution.decoratorPct; break;
+                    case 'UNKNOWN': pct = bridge.distribution.unknownPct; break;
+                }
+                
+                this.ctx.fillStyle = '#83a598';
+                this.ctx.font = `${11 * dpr}px Inter, sans-serif`;
+                const provText = `${pct}% ${bridge.dominantProvenance}`;
+                this.ctx.fillText(provText, panelX + 15 * dpr, currentY + 16 * dpr);
+            }
+
+            currentY += rowHeight;
+        }
+
+        this.ctx.restore();
+    }
     renderDebugInfo() {
         const ctx = this.ctx;
         ctx.save();
@@ -13353,6 +13608,19 @@ function initCanvas() {
                 if (loadingText) loadingText.textContent = `검증 중 ${message.progress}%...`;
                 break;
             }
+            case 'updateEvidenceOverlay': {
+                if (message.evidence) {
+                    engine.setEvidenceBundle(message.evidence);
+                }
+                break;
+            }
+            case 'updateClusterBridges': {
+                if (message.data) {
+                    engine.clusterBridges = message.data;
+                    engine.render(); // Request a re-render to draw panels
+                }
+                break;
+            }
             case 'projectStateChunkStart': {
                 engine._chunkedNodes = [];
                 engine._chunkedEdges = [];
@@ -13409,6 +13677,18 @@ function initCanvas() {
                         edges: message.data?.edges?.length ?? 0,
                         clusters: message.data?.clusters?.length ?? 0
                     });
+                }
+                break;
+            }
+            case 'requestContextData': {
+                console.log('[WebView] 📡 Received requestContextData from Backend. Capturing snapshot for analysis...');
+                if (typeof vscode !== 'undefined') {
+                    const snap = {
+                        nodes: engine._visibleNodesCache || engine.nodes || [],
+                        edges: engine._visibleEdgesCache || engine.edges || [],
+                        clusters: engine._visibleGraphClusters || engine.clusters || []
+                    };
+                    vscode.postMessage({ command: 'contextData', data: snap });
                 }
                 break;
             }
@@ -13647,8 +13927,8 @@ function initCanvas() {
                     const targetClusterId = message.data.updates.cluster_id || (node.data && node.data.cluster_id);
                     if (targetClusterId) {
                         node.cluster_id = targetClusterId;
-                        if (engine.addToCluster) {
-                            engine.addToCluster(node.id, targetClusterId);
+                        if (engine._buildClusterIndices) {
+                            try { engine._buildClusterIndices(); } catch (e) {}
                         }
                     }
 
@@ -13661,6 +13941,27 @@ function initCanvas() {
                     engine.isDirty = true;
                     engine.render();
                 }
+                break;
+            }
+            case 'updateEdge': {
+                const edge = engine.edges.find(e => e.id === message.data.id);
+                if (edge) {
+                    Object.assign(edge, message.data.updates);
+                } else if (message.data.updates) {
+                    // 새로 생성된 엣지 (백엔드에서 SSoT로 브로드캐스트)
+                    engine.edges.push(message.data.updates);
+                    console.log(`[SYNAPSE] UI Edge added: ${message.data.id}`, message.data.updates);
+                }
+                
+                engine.isGraphDataDirty = true; // 엣지가 추가되었으므로 가시성 캐시(VisibleEdges) 무효화
+                engine.isEdgeDirty = true;
+                engine.isDirty = true;
+                
+                // Flow 모드 동기화 (옵션)
+                if (engine.flowRenderer) {
+                    engine.flowData = engine.flowRenderer.buildFlow(engine.nodes) || { steps: [] };
+                }
+                engine.render();
                 break;
             }
             case 'focusNode':
@@ -13978,6 +14279,42 @@ function initCanvas() {
         } else {
             alert('Deep Reset is only available in VS Code mode.');
         }
+    });
+
+    // [v0.3.34.6 Fix] Virtual Debug Button Listeners correctly moved here
+    document.getElementById('btn-virtual-debug')?.addEventListener('click', () => {
+        console.log('[WebView] 🚀 Simulation Debug button clicked! Sending command to backend...');
+        if (typeof vscode !== 'undefined') {
+            vscode.postMessage({ command: 'virtualDebug' });
+        }
+    });
+
+    document.getElementById('btn-sim-necrosis')?.addEventListener('click', () => {
+        engine.selectedNodes.forEach(node => {
+            node.status = 'error_necrosis';
+        });
+        engine.render();
+    });
+
+    document.getElementById('btn-sim-tombstone')?.addEventListener('click', () => {
+        engine.selectedNodes.forEach(node => {
+            node.status = 'error_tombstone';
+        });
+        engine.render();
+    });
+
+    document.getElementById('btn-sim-clear')?.addEventListener('click', () => {
+        engine.setEvidenceBundle(null);
+        engine.nodes.forEach(node => {
+            if (node.status === 'error_tombstone') node.status = 'active';
+            delete node.isVirtualDebugError;
+            delete node.isError;
+            delete node.isArchViolation;
+        });
+        engine.edges.forEach(edge => {
+            delete edge.isFractured;
+        });
+        engine.render();
     });
 
     document.getElementById('btn-reset-state')?.addEventListener('click', () => {

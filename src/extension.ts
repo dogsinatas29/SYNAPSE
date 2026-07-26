@@ -615,7 +615,9 @@ export async function activate(context: vscode.ExtensionContext) {
                         let stateStr = '';
                         try {
                             const data = await vscode.workspace.fs.readFile(projectStateUri);
-                            stateStr = data.toString();
+                            if (data) {
+                                stateStr = Buffer.from(data).toString('utf-8');
+                            }
                         } catch (e) {
                             return; // No project state, no validation
                         }
@@ -796,7 +798,7 @@ function setupFileWatcher(workspaceFolder: vscode.WorkspaceFolder, context: vsco
 
     // Source files watcher (auto-refresh canvas state)
     const sourceWatcher = vscode.workspace.createFileSystemWatcher(
-        new vscode.RelativePattern(workspaceFolder, 'src/**/*.{py,ts,js}')
+        new vscode.RelativePattern(workspaceFolder, 'src/**/*.{py,ts,js,json}')
     );
 
     // Prompt files watcher (auto-refresh canvas state for history nodes)

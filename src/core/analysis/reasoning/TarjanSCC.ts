@@ -4,6 +4,7 @@ import { determineNodeRole } from '../../NodeBuilder';
 import { GraphViewBuilder, GraphPolicy } from '../GraphViewBuilder';
 
 export class TarjanSCC {
+    public static lastAuditLog: any = null;
     
     /**
      * Extracts Strongly Connected Components (SCC) strictly from logic nodes.
@@ -84,13 +85,25 @@ export class TarjanSCC {
         });
 
         // Hub Stability Index (Top 5 hubs of Graph A)
-        const topHubsA = Array.from(graphA.degrees.entries()).sort((a, b) => b[1] - a[1]).slice(0, 5);
+        const topHubsA = Array.from(graphA.degrees.entries()).sort((a, b) => b[1] - a[1]).slice(0, 10);
         console.log('[HUB_STABILITY_INDEX]');
+        const topHubsOutput = [];
         for (const [hubId, degA] of topHubsA) {
             const degE = graphE.degrees.get(hubId) || 0;
             const stability = degA > 0 ? (degE / degA * 100).toFixed(1) : '0.0';
             console.log(`- ${hubId.split('/').pop()}: ${degA} -> ${degE} (${stability}%)`);
+            topHubsOutput.push({ id: hubId, degA, degE, stability });
         }
+
+        TarjanSCC.lastAuditLog = {
+            runtimeNodes: logicNodesMap.size,
+            sccSize_A: graphA.sccs.length > 0 ? graphA.sccs[0].nodeIds.length : 0,
+            sccSize_B: graphB.sccs.length > 0 ? graphB.sccs[0].nodeIds.length : 0,
+            sccSize_C: graphC.sccs.length > 0 ? graphC.sccs[0].nodeIds.length : 0,
+            sccSize_D: graphD.sccs.length > 0 ? graphD.sccs[0].nodeIds.length : 0,
+            sccSize_E: graphE.sccs.length > 0 ? graphE.sccs[0].nodeIds.length : 0,
+            topHubsA: topHubsOutput
+        };
 
         // Return Graph A as default to preserve current App behavior
         // Or if we want to clean up UI, we could return Graph C. For now we return A.

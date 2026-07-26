@@ -27,9 +27,9 @@ export class CommunityDetector {
         }
 
         for (const e of edges) {
-            if (sccNodeSet.has(e.source) && sccNodeSet.has(e.target)) {
-                adjacency.get(e.source)!.push(e.target);
-                adjacency.get(e.target)!.push(e.source); // undirected for LPA
+            if (sccNodeSet.has(e.from) && sccNodeSet.has(e.to)) {
+                adjacency.get(e.from)!.push(e.to);
+                adjacency.get(e.to)!.push(e.from); // undirected for LPA
             }
         }
 

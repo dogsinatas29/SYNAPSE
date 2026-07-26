@@ -113,6 +113,26 @@ export class FileScanner {
                 Logger.info(`[IMPORT_DEBUG] lang=${ext.replace('.', '')} | file=${path.basename(filePath)} | references=[${targetRefs.join(', ')}] | count=${targetRefs.length}`);
             }
 
+            // [v0.3.34] Confidence-based Early Ghost Rejection
+            summary.references = summary.references.filter(ref => {
+                let confidence = 100;
+                const t = ref.target;
+                
+                if (/[!@#$%^&*()_+={}\[\]|\\:;"'<>,?~]/.test(t)) confidence -= 50;
+                if (t.includes('||') || t.includes('&&') || t.includes('=>') || t.includes('==')) confidence -= 80;
+                if (/\s/.test(t)) confidence -= 40;
+                if (t.startsWith('.')) confidence += 10;
+                if (/^[a-zA-Z0-9_.-]+$/.test(t)) confidence = 100; // Clean alphanumeric/path
+                
+                ref.confidence = Math.max(0, Math.min(100, Math.round(confidence)));
+                
+                if (ref.confidence < 20) {
+                    // Silently drop very noisy regex artifacts before they pollute the pipeline
+                    return false;
+                }
+                return true;
+            });
+
             // 캐시 저장
             FileScanner.cache.set(filePath, { summary, mtime });
             return summary;

@@ -25,6 +25,7 @@ import { Node, Edge, ProjectState, EdgeType, NodeType } from '../types/schema';
 import { FileScanner } from '../core/FileScanner';
 import { LogicAnalyzer } from '../core/LogicAnalyzer';
 import { EdgeCodeRefactorer } from '../core/EdgeCodeRefactorer';
+import { ClusterBridgeAnalyzer } from '../core/analysis/ClusterBridgeAnalyzer';
 import { GeminiParser } from '../core/GeminiParser';
 import { FlowchartGenerator } from '../core/FlowchartGenerator';
 import { BootstrapEngine } from '../bootstrap/BootstrapEngine';
@@ -219,6 +220,7 @@ export class CanvasPanel {
         // Handle messages from the webview
         this._panel.webview.onDidReceiveMessage(
             async message => {
+                Logger.info(`[SYNAPSE-IPC] Received message command: ${message.command}`);
                 const stateModifyingCommands = [
                     'saveState', 'ungroup', 'takeSnapshot', 'rollback',
                     'createManualEdge', 'deleteEdge', 'deleteNodes',
@@ -322,7 +324,7 @@ export class CanvasPanel {
                 await this._taskQueue.push(() => this.sendProjectState());
                 return;
             case 'saveState':
-                await this._taskQueue.push(() => this.handleSaveState(message.data || message.state));
+                await this.handleSaveState(message.data || message.state);
                 return;
             case 'readFile':
                 await this.handleReadFile(message.filePath, message.clientUsername);
@@ -355,16 +357,16 @@ export class CanvasPanel {
                 await this.handleCreateManualEdge(message.edge);
                 return;
             case 'deleteEdge':
-                await this._taskQueue.push(() => this.handleDeleteEdge(message.edgeId));
+                await this.handleDeleteEdge(message.edgeId);
                 return;
             case 'deleteNodes':
-                await this._taskQueue.push(() => this.handleDeleteNodes(message));
+                await this.handleDeleteNodes(message);
                 return;
             case 'updateEdge':
-                await this._taskQueue.push(() => this.handleUpdateEdge(message.edgeId, message.updates));
+                await this.handleUpdateEdge(message.edgeId, message.updates);
                 return;
             case 'approveNode':
-                await this._taskQueue.push(() => this.handleApproveNode(message.nodeId));
+                await this.handleApproveNode(message.nodeId);
                 return;
             case 'rejectNode':
                 await this.handleRejectNode(message.nodeId);
@@ -431,13 +433,13 @@ export class CanvasPanel {
                 }
                 return;
             case 'reBootstrap':
-                await this._taskQueue.push(() => this.handleReBootstrap());
+                await this.handleReBootstrap();
                 return;
             case 'requestConfirmEdge':
-                await this._taskQueue.push(() => this.handleRequestConfirmEdge(message.edgeId, message.fromFile, message.toFile));
+                await this.handleRequestConfirmEdge(message.edgeId, message.fromFile, message.toFile);
                 return;
             case 'resetProjectState':
-                await this._taskQueue.push(() => this.handleResetProjectState());
+                await this.handleResetProjectState();
                 return;
             case 'logPrompt':
                 await this.handleLogPrompt(message.prompt, message.title);
@@ -927,7 +929,7 @@ export class CanvasPanel {
         try {
             const historyUri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'synapse_history.json');
             const data = await vscode.workspace.fs.readFile(historyUri);
-            const history = JSON.parse(data.toString());
+            const history = JSON.parse(Buffer.from(data).toString('utf-8'));
             const snapshot = history.find((s: any) => s.id === snapshotId);
 
             if (snapshot) {
@@ -984,6 +986,20 @@ export class CanvasPanel {
 
             // Request context from webview
             this._panel.webview.postMessage({ command: 'requestContext' });
+        });
+    }
+
+    private async _getContextDataFromWebView(): Promise<any> {
+        return new Promise<any>((resolve) => {
+            this._contextRequestCallback = resolve;
+            setTimeout(() => {
+                if (this._contextRequestCallback) {
+                    Logger.warn('[SYNAPSE] requestContextData timed out after 3000ms');
+                    this._contextRequestCallback(null);
+                    this._contextRequestCallback = undefined;
+                }
+            }, 3000);
+            this._panel.webview.postMessage({ command: 'requestContextData' });
         });
     }
 
@@ -2907,7 +2923,7 @@ export class CanvasPanel {
      */
     private async _getMergedState(workspaceFolder: vscode.WorkspaceFolder): Promise<any> {
         if (this._connHost) {
-            return new Promise<any>((resolve) => {
+            return new Promise<any>((resolve, reject) => {
                 const opts = {
                     hostname: this._connHost,
                     port: this._connPort || 3000,
@@ -2936,12 +2952,17 @@ export class CanvasPanel {
                 if (netState) return netState;
                 const uri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'project_state.json');
                 const data = await vscode.workspace.fs.readFile(uri);
-                return JSON.parse(data.toString());
+                return JSON.parse(Buffer.from(data).toString('utf-8'));
             });
         }
         const uri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'project_state.json');
         const data = await vscode.workspace.fs.readFile(uri);
-        return JSON.parse(data.toString());
+        try {
+            return JSON.parse(Buffer.from(data).toString('utf-8'));
+        } catch (e) {
+            console.error(`[SYNAPSE] Failed to parse project_state.json:`, e);
+            throw new Error(`Data Corruption: project_state.json is truncated or invalid. Please save again.`);
+        }
     }
 
     private async handleTestLogic() {
@@ -2949,7 +2970,13 @@ export class CanvasPanel {
         if (!workspaceFolder) return;
 
         try {
-            const state = await this._getMergedState(workspaceFolder);
+            Logger.info("[STEP-0] handleTestLogic start (Requesting ContextData from WebView)");
+            const state = await this._getContextDataFromWebView();
+            if (!state) {
+                Logger.error("[TestLogic] Failed to receive ContextData from WebView. Using fallback.");
+                return;
+            }
+            Logger.info(`[RUNTIME_SCOPE_AI] visibleClusters=${state.clusters?.length || 0} visibleNodes=${state.nodes?.length || 0}`);
 
             const analyzer = new LogicAnalyzer();
             const issues = analyzer.analyze(state);
@@ -2984,77 +3011,83 @@ export class CanvasPanel {
         if (!workspaceFolder) return;
 
         try {
-            // 1. Get current project state (Network Merged if connected)
-            const state = await this._getMergedState(workspaceFolder);
+            Logger.info("[STEP-0] handleVirtualDebug start (Requesting ContextData from WebView)");
+            
+            // 1. Get current project state FROM WEBVIEW to reflect UI visibility
+            const state = await this._getContextDataFromWebView();
+            if (!state) {
+                Logger.error("[VirtualDebug] Failed to receive ContextData from WebView. Using fallback.");
+                return;
+            }
+            Logger.info("[STEP-0.5] WebView state received");
+
+            let visibleClusterIds: string[] = [];
+            // [v0.3.34.6] Cluster Coupling Analysis on Demand
+            if (state.clusters) {
+                const allClusters = Array.isArray(state.clusters) ? state.clusters : Object.values(state.clusters);
+                visibleClusterIds = allClusters
+                    .filter((c: any) => c && c.id && typeof c.id === 'string' && c.collapsed !== true && !c.id.startsWith('client::'))
+                    .map((c: any) => c.id);
+
+                if (visibleClusterIds.length >= 2) {
+                    Logger.info(`[STEP-0.6] visibleClusterIds length = ${visibleClusterIds.length}`);
+                    const nodes = Array.isArray(state.nodes) ? state.nodes : Object.values(state.nodes || {});
+                    const edges = Array.isArray(state.edges) ? state.edges : Object.values(state.edges || {});
+                    Logger.info(`[STEP-0.7] Nodes: ${nodes.length}, Edges: ${edges.length}`);
+                    // @ts-ignore
+                    const allClustersForBridge = Array.isArray(state.clusters) ? state.clusters : Object.values(state.clusters || {});
+                    const bridges = ClusterBridgeAnalyzer.analyzeVisibleClusters(visibleClusterIds, nodes, edges, allClustersForBridge as any);
+                    Logger.info(`[STEP-0.8] ClusterBridgeAnalyzer returned ${bridges.length} bridges.`);
+                    
+                    if (bridges.length > 0) {
+                        Logger.info(`[CLUSTER_COUPLING_ANALYSIS] (VirtualDebug) Found ${bridges.length} bridges.`);
+                        const bridgesUri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'cluster_bridges.json');
+                        await vscode.workspace.fs.writeFile(bridgesUri, Buffer.from(JSON.stringify(bridges, null, 2), 'utf-8'));
+                        
+                        if (this._panel) {
+                            this._panel.webview.postMessage({ command: 'updateClusterBridges', data: bridges });
+                        }
+                    }
+                }
+            }
 
             // 2. Perform Virtual Debug scan
             const vDebugger = new VirtualDebugger();
-            const impact = await vDebugger.performVirtualDebug(state, workspaceFolder.uri.fsPath);
+            const { evidence, reports, analyzedNodeCount } = await vDebugger.performVirtualDebug(state, workspaceFolder.uri.fsPath, visibleClusterIds);
 
             // 3. Send results to WebView
-            this._panel.webview.postMessage({
-                command: 'virtualDebugImpact',
-                impact: impact
-            });
+            this.updateEvidenceOverlay(evidence);
 
             // Optional: Log results for traceability
-            Logger.info(`[SYNAPSE] Virtual Debug Impact sent: ${impact.necrosisNodeIds.length} nodes influenced.`);
+            Logger.info(`[SYNAPSE] Virtual Debug Impact sent: ${evidence.findings.length} findings.`);
             
-            // Show a summary message
-            if (impact.reports.length > 0) {
-                const errorCount = impact.reports.filter(r => r.severity === vscode.DiagnosticSeverity.Error).length;
-                vscode.window.showWarningMessage(`[SYNAPSE] Virtual Debugging found ${errorCount} Errors and ${impact.reports.length - errorCount} Warnings.`);
+            // [v0.3.34] Architecture Analysis Report (replaces legacy Virtual Debug Report)
+            const necroFindings = evidence.findings.filter((f: any) => f.type === 'necrosis');
+            const fractureFindings = evidence.findings.filter((f: any) => f.type === 'fracture');
 
-                // [v0.3.31] Generate and open markdown report
-                const reportContent = [
-                    '# SYNAPSE Virtual Debug Report',
-                    '',
-                    `**Generated At:** ${new Date().toLocaleString()}`,
-                    `**Total Errors:** ${errorCount}`,
-                    `**Total Warnings:** ${impact.reports.length - errorCount}`,
-                    '',
-                    '## Details',
-                    ''
-                ];
-
-                const reportsByFile = new Map<string, any[]>();
-                impact.reports.forEach(r => {
-                    const node = state.nodes.find((n: any) => n.id === r.nodeId);
-                    const file = node?.data?.file || 'Unknown File';
-                    if (!reportsByFile.has(file)) reportsByFile.set(file, []);
-                    reportsByFile.get(file)!.push(r);
-                });
-
-                for (const [file, reports] of reportsByFile.entries()) {
-                    reportContent.push(`### ${file}`);
-                    reports.forEach(r => {
-                        const sevType = r.severity === vscode.DiagnosticSeverity.Error ? '❌ Error' : '⚠️ Warning';
-                        reportContent.push(`- **${sevType}** (Line ${r.line + 1}): ${r.message}`);
-                    });
-                    reportContent.push('');
-                }
-
-                const synapseDir = vscode.Uri.joinPath(workspaceFolder.uri, '.synapse');
-                try {
-                    await vscode.workspace.fs.stat(synapseDir);
-                } catch {
-                    await vscode.workspace.fs.createDirectory(synapseDir);
-                }
-
-                const reportUri = vscode.Uri.joinPath(synapseDir, 'virtual_debug_report.md');
-                await vscode.workspace.fs.writeFile(reportUri, Buffer.from(reportContent.join('\n'), 'utf8'));
-
-                // Open in split view
-                const doc = await vscode.workspace.openTextDocument(reportUri);
-                await vscode.window.showTextDocument(doc, { viewColumn: vscode.ViewColumn.Beside, preview: true });
-
+            const errorCount = necroFindings.filter((f: any) => f.severity === vscode.DiagnosticSeverity.Error).length;
+            const warningCount = necroFindings.length - errorCount;
+            const fractureCount = fractureFindings.length;
+            
+            if (analyzedNodeCount === 0) {
+                vscode.window.showInformationMessage(`[SYNAPSE] 분석 대상 없음: 가시화된 클러스터 내부에 로직 노드가 없습니다.`);
+            } else if (necroFindings.length > 0 || fractureCount > 0) {
+                vscode.window.showWarningMessage(`[SYNAPSE] Architecture Analysis found ${errorCount} Errors, ${warningCount} Warnings, and ${fractureCount} Fractured Edges.`);
             } else {
-                vscode.window.showInformationMessage(`[SYNAPSE] Virtual Debugging complete: No physical errors found.`);
+                vscode.window.showInformationMessage(`[SYNAPSE] Architecture Analysis complete: System is stable.`);
+            }
+
+            // [v0.3.34.2] Auto-open the LOGIC_REPORT.md generated by ReportExporter
+            const reportUri = vscode.Uri.joinPath(workspaceFolder.uri, 'report', 'LOGIC_REPORT.md');
+            try {
+                await vscode.commands.executeCommand('vscode.open', reportUri, vscode.ViewColumn.Beside);
+            } catch (e) {
+                Logger.warn(`[SYNAPSE] Failed to open report/LOGIC_REPORT.md: ${e}`);
             }
 
         } catch (error) {
-            Logger.error('[SYNAPSE] Virtual Debug failed:', error);
-            vscode.window.showErrorMessage(`Virtual Debugging failed: ${error}`);
+            Logger.error('[SYNAPSE] Architecture Analysis failed:', error);
+            vscode.window.showErrorMessage(`Architecture Analysis failed: ${error}`);
         }
     }
 
@@ -3273,6 +3306,12 @@ export class CanvasPanel {
             let notificationMsg = `Edge connected: ${edge.type}`;
             if (isEditLogicMode) {
                 notificationMsg += ` (Import code updated)`;
+                // [v0.3.34 Fix] Automatically open the file where the relation was inserted
+                if (edge.from) {
+                    setTimeout(() => {
+                        this.openFile(edge.from, false);
+                    }, 500);
+                }
             }
             vscode.window.setStatusBarMessage(notificationMsg, 5000);
 
@@ -3912,7 +3951,7 @@ export class CanvasPanel {
                 const projectStateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'project_state.json');
                 try {
                     const data = await vscode.workspace.fs.readFile(projectStateUri);
-                    currentState = JSON.parse(data.toString());
+                    currentState = JSON.parse(Buffer.from(data).toString('utf-8'));
                 } catch (e) { /* ignore */ }
             }
 
@@ -4064,7 +4103,7 @@ export class CanvasPanel {
             let baseState: any = { nodes: [], edges: [], clusters: [] };
             try {
                 const data = await vscode.workspace.fs.readFile(projectStateUri);
-                baseState = JSON.parse(data.toString());
+                baseState = JSON.parse(Buffer.from(data).toString('utf-8'));
             } catch (e) {}
 
             const analyzer = new LogicAnalyzer();
@@ -4205,7 +4244,7 @@ export class CanvasPanel {
             let state: any = { nodes: [], edges: [], clusters: [] };
             try {
                 const data = await vscode.workspace.fs.readFile(projectStateUri);
-                state = JSON.parse(data.toString());
+                state = JSON.parse(Buffer.from(data).toString('utf-8'));
             } catch (e) {
                 // Ignore missing file, use empty state
             }
@@ -4347,13 +4386,15 @@ export class CanvasPanel {
 
             // [v0.3.11] Anti-Wipe Safety: If UI sends empty state but engine/disk has data, block the save.
             const engineSnap = canvasEngine.getFinalSnapshot();
-            const uiNodesCount = newState.nodes?.length || 0;
             const engineNodesCount = Object.keys(engineSnap.nodes).length;
 
-            if (uiNodesCount === 0 && engineNodesCount > 0) {
-                Logger.warn(`[CanvasPanel] saveState BLOCKED: Attempted to save 0 nodes while engine has ${engineNodesCount}. Probable initialization race condition.`);
-                console.timeEnd('SAVE_STATE');
-                return;
+            if (newState.nodes !== undefined) {
+                const uiNodesCount = newState.nodes?.length || 0;
+                if (uiNodesCount === 0 && engineNodesCount > 0) {
+                    Logger.warn(`[CanvasPanel] saveState BLOCKED: Attempted to save 0 nodes while engine has ${engineNodesCount}. Probable initialization race condition.`);
+                    console.timeEnd('SAVE_STATE');
+                    return;
+                }
             }
 
             // 2. [v0.3.11] Clusters & Nodes Bridge
@@ -4461,6 +4502,29 @@ export class CanvasPanel {
             
             // 🔥 [v0.3.11] IMMEDIATE REACTION: Ensure UI reflects backend identity sorting (AI vs User)
             // await this.sendProjectState(false, true); // [v0.3.30] Prevent UI overwrite that deletes client nodes
+
+            // [v0.3.34.6] Cluster Coupling Analysis
+            const allClusters = Object.values(rawSnap.clusters || {});
+            const visibleClusterIds = allClusters
+                .filter((c: any) => c.collapsed !== true && !c.id.startsWith('client::'))
+                .map((c: any) => c.id);
+
+            if (visibleClusterIds.length >= 2) {
+                const nodes = Object.values(rawSnap.nodes || {});
+                const edges = Object.values(rawSnap.edges || {});
+                // @ts-ignore
+                const bridges = ClusterBridgeAnalyzer.analyzeVisibleClusters(visibleClusterIds, nodes, edges, allClusters);
+                
+                if (bridges.length > 0) {
+                    console.log(`[CLUSTER_COUPLING_ANALYSIS] Found ${bridges.length} bridges.`);
+                    bridges.forEach(b => {
+                        console.log(`  ${b.sourceCluster} <-> ${b.targetCluster}: Score ${b.couplingStrength} (Raw: ${b.rawScore}, Total: ${b.couplingDensity})`);
+                    });
+                    
+                    const bridgesUri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'cluster_bridges.json');
+                    await vscode.workspace.fs.writeFile(bridgesUri, Buffer.from(JSON.stringify(bridges, null, 2), 'utf-8'));
+                }
+            }
         } catch (error) {
             console.error('[SYNAPSE] Failed to save state:', error);
         }
@@ -4514,6 +4578,7 @@ export class CanvasPanel {
             const normalizedJson = this.normalizeProjectState(existingWorkspace);
             await vscode.workspace.fs.writeFile(workspaceUri, Buffer.from(normalizedJson, 'utf-8'));
             // console.log(`[SYNAPSE] Workspace state synchronized to disk.`);
+
         } catch (error) {
             console.error('[SYNAPSE] Failed to save workspace state:', error);
         }
@@ -4680,7 +4745,7 @@ export class CanvasPanel {
         try {
             const historyUri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'synapse_history.json');
             const data = await vscode.workspace.fs.readFile(historyUri);
-            const history = JSON.parse(data.toString());
+            const history = JSON.parse(Buffer.from(data).toString('utf-8'));
 
             this._panel.webview.postMessage({
                 command: 'history',
@@ -4806,6 +4871,17 @@ export class CanvasPanel {
     private _isSyncing: boolean = false;
     private _sendStateCounter: number = 0;
 
+    // [v0.3.34] Evidence Bundle Injection
+    public updateEvidenceOverlay(evidenceBundle: any) {
+        if (this._panel) {
+            this._panel.webview.postMessage({
+                command: 'updateEvidenceOverlay',
+                evidence: evidenceBundle
+            });
+            Logger.info(`[AAE] Dispatched EvidenceBundle to Canvas (Findings: ${evidenceBundle.findings.length})`);
+        }
+    }
+
     public async sendProjectState(forceReset: boolean = false, isAuthoritative: boolean = false) {
         const seq = ++this._sendStateCounter;
         const totalTimer = `[TIMER] send-project-state-total seq=${seq}`;
@@ -4909,7 +4985,7 @@ export class CanvasPanel {
             try {
                 const data = await vscode.workspace.fs.readFile(projectStateUri);
                 console.log('[LOAD_STATE_READ]', data.length);
-                const fileState = JSON.parse(data.toString());
+                const fileState = JSON.parse(Buffer.from(data).toString('utf-8'));
                 console.log('[LOAD_STATE_PARSED]', fileState.nodes?.length, fileState.edges?.length, fileState.clusters?.length);
                 logHostMem('after-load-state-parsed');
                 logHostGraphShape('after-load-state-parsed', fileState);

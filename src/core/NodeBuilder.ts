@@ -1,5 +1,5 @@
 import * as path from 'path';
-import { Node } from '../types/schema';
+import { Node, NodeRole } from '../types/schema';
 import { NodeType } from './GraphModel';
 import { CodeSummary } from './FileScanner';
 import { DirNode, buildDirectoryTree, isDocFile } from './DirectoryTreeBuilder';
@@ -10,6 +10,42 @@ const MAX_CLUSTER_DEPTH = 4;
 function getClusterIdForPath(relPath: string, rootDir: DirNode): string {
     const normalizedDir = relPath.replace(/\\/g, '/');
     return `folder_${normalizedDir.replace(/[^a-zA-Z0-9]/g, '_')}`;
+}
+
+export function determineNodeRole(filePath: string): { role: NodeRole, category: string } {
+    const ext = path.extname(filePath).toLowerCase();
+    const basename = path.basename(filePath);
+    const relPath = filePath.replace(/\\/g, '/');
+
+    if (['package.json', 'tsconfig.json', 'webpack.config.js', 'vite.config.ts', '.eslintrc.js', '.prettierrc'].includes(basename) || ext === '.yaml' || ext === '.yml' || ext === '.json' || ext === '.toml') {
+        return { role: NodeRole.CONFIG, category: 'Config' };
+    }
+    
+    if (ext === '.md' || ext === '.txt') {
+        return { role: NodeRole.DOCUMENT, category: 'Document' };
+    }
+    
+    if (['.png', '.jpg', '.jpeg', '.webp', '.svg', '.gif', '.ico', '.woff', '.woff2', '.ttf', '.eot'].includes(ext)) {
+        return { role: NodeRole.ASSET, category: 'Asset' };
+    }
+    
+    if (relPath.includes('/test/') || relPath.includes('/tests/') || basename.includes('.test.') || basename.includes('.spec.') || basename === 'test-utils.ts') {
+        return { role: NodeRole.TEST, category: 'Test' };
+    }
+    
+    if (relPath.includes('/scripts/') || relPath.includes('/build/') || relPath.includes('/tools/')) {
+        return { role: NodeRole.TOOLING, category: 'Tooling' };
+    }
+    
+    if (['schema.ts', 'types.ts', 'interfaces.ts', 'constants.ts'].includes(basename) || basename.endsWith('.d.ts')) {
+        return { role: NodeRole.DOMAIN_MODEL, category: 'Domain' };
+    }
+    
+    if (['extension.ts', 'main.ts', 'index.ts', 'activate.ts'].includes(basename)) {
+        return { role: NodeRole.RUNTIME_ENTRY, category: 'Entry' };
+    }
+    
+    return { role: NodeRole.RUNTIME, category: 'Source' };
 }
 
 function getNodeContinent(relPath: string, rootDir: DirNode): { continent: string; subcontinent: string } {
@@ -98,6 +134,8 @@ export function buildNodes(
             nodeContinent = continent;
             nodeSubcontinent = subcontinent;
         }
+        
+        const roleInfo = determineNodeRole(item.filePath);
 
         const newNode: Node = {
             id: item.filePath,
@@ -109,6 +147,8 @@ export function buildNodes(
             position: { x: 0, y: 0 },
             degree: 0,
             createdBy: 'NodeBuilder',
+            role: roleInfo.role,
+            category: roleInfo.category,
             data: {
                 label: fileName,
                 file: item.filePath,

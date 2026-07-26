@@ -89,8 +89,8 @@ export class SmellDetector {
 
         // Detect Layer Inversion (Core -> UI)
         for (const edge of state.edges || []) {
-            const srcNode = nodeMap.get(edge.source);
-            const tgtNode = nodeMap.get(edge.target);
+            const srcNode = nodeMap.get(edge.from);
+            const tgtNode = nodeMap.get(edge.to);
             if (!srcNode || !tgtNode) continue;
 
             const srcPath = (srcNode.data?.file || srcNode.label || srcNode.id).toLowerCase();
@@ -101,7 +101,7 @@ export class SmellDetector {
                     type: 'layer-inversion',
                     targetId: srcNode.id,
                     message: `Layer Inversion: Core module (${srcNode.label || srcNode.id}) depends on UI module (${tgtNode.label || tgtNode.id})`,
-                    evidence: { sourceId: edge.source, targetId: edge.target }
+                    evidence: { sourceId: edge.from, targetId: edge.to }
                 });
             }
         }

@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { ProjectState, Node, Edge } from '../types/schema';
+import { ProjectState, Node, Edge, NodeRole } from '../types/schema';
+import { determineNodeRole } from './NodeBuilder';
 
 export interface AnalysisIssue {
     type: 'circular' | 'dead-end' | 'bottleneck' | 'isolated' | 'warning' | 'schema-violation' | 'architecture-violation';
@@ -25,6 +26,11 @@ export interface ArchitectureConfig {
     };
 }
 
+/**
+ * @deprecated LogicAnalyzer is deprecated in v0.3.34.1.
+ * Please use ArchitectureAnalysisEngine with plugins instead.
+ * This class will be removed in a future release (v0.3.35).
+ */
 export class LogicAnalyzer {
     private config: ArchitectureConfig | null = null;
     private projectRoot: string = '';
@@ -41,9 +47,12 @@ export class LogicAnalyzer {
         const nodes = state.nodes!;
         const edges = state.edges!;
 
-        // [v0.3.31] 논리 디버깅 대상 필터링 (문서, 디렉터리, 에셋 등은 실행 논리가 아니므로 제외)
-        const nonLogicTypes = ['document', 'documentation', 'doc', 'directory', 'folder', 'file', 'asset', 'history'];
-        const logicNodes = nodes.filter(n => !nonLogicTypes.includes(n.type as string));
+        // [v0.3.34] 논리 디버깅 대상 필터링 (오직 RUNTIME 노드만 포함하여 허브 노이즈 방지)
+        const logicNodes = nodes.filter(n => {
+            let r = n.role;
+            if (!r && n.id) r = determineNodeRole(n.id).role;
+            return r === NodeRole.RUNTIME;
+        });
         const logicNodeIds = new Set(logicNodes.map(n => n.id));
         const logicEdges = edges.filter(e => logicNodeIds.has(e.from) && logicNodeIds.has(e.to));
 
@@ -238,7 +247,9 @@ export class LogicAnalyzer {
      * 분석 결과를 바탕으로 리포트 생성
      */
     public generateReport(issues: AnalysisIssue[], projectRoot: string, nodes: Node[]): string {
-    const reportPath = path.join(projectRoot, 'LOGIC_REPORT.md');
+    const reportDir = path.join(projectRoot, 'report');
+    if (!fs.existsSync(reportDir)) fs.mkdirSync(reportDir, { recursive: true });
+    const reportPath = path.join(reportDir, 'LOGIC_REPORT.md');
     const vscode = require('vscode');
     const isKo = vscode.env.language.startsWith('ko');
 

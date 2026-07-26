@@ -104,6 +104,15 @@ export function buildClusters(nodes: Node[]): ClusterBuildResult {
         }
     }
 
+    // Populate the nodes array for each cluster
+    for (const node of nodes) {
+        if (!node.cluster_id) continue;
+        const cluster = clusterMap.get(node.cluster_id);
+        if (cluster && !cluster.nodes.includes(node.id)) {
+            cluster.nodes.push(node.id);
+        }
+    }
+
     const emptyClusters = clusters.filter(
         c => c.nodes.length === 0 && (!c.children || c.children.length === 0)
     );

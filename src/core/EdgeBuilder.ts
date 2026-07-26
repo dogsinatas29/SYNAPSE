@@ -25,7 +25,8 @@ export class EdgeBuilder {
                 is_approved: true,
                 data: {},
                 intelligence: {},
-                visual: { color: '#888', thickness: 1 }
+                visual: { color: '#888', thickness: 1 },
+                provenance: ref.provenance
             };
             
             edges.push(newEdge);

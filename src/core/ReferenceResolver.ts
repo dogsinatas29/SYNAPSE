@@ -11,6 +11,7 @@ export interface ResolvedReference {
     originalTarget: string;
     referenceType: string;
     fullPath?: string;
+    provenance?: any;
 }
 
 export class ReferenceResolver {
@@ -83,7 +84,8 @@ export class ReferenceResolver {
                 resolutionKind,
                 originalTarget,
                 referenceType: ref.type,
-                fullPath: ref.fullPath
+                fullPath: ref.fullPath,
+                provenance: ref.provenance
             });
         }
 

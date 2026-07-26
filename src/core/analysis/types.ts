@@ -1,4 +1,4 @@
-import { ProjectState, Node, Edge } from '../../types/schema';
+import { ProjectState, Node, Edge, ClusterBridge } from '../../types/schema';
 import * as vscode from 'vscode';
 
 export interface DiagnosticRecord {
@@ -168,8 +168,12 @@ export interface ReasonedReportBundle {
     sccs: SccCluster[];
     smells: ArchitecturalSmell[];
     criticalBridges: CriticalBridge[];
+    clusterBridges?: ClusterBridge[]; // Coupling Measurement
+
+    
     
     base: AggregatedReportBundle; // Retain base metrics for full report
+    auditLog?: any;
 }
 
 

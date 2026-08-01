@@ -88,6 +88,16 @@ export class DependencyPressureAnalyzer implements ArchitectureAnalyzer {
         const flowMap = new Map<string, number>();
         const clusterOutCount = new Map<string, number>();
         const nodeMap = context.nodeMap || new Map<string, Node>(nodes.map(n => [n.id, n]));
+        
+        const clusterNodesMap = new Map<string, Node[]>();
+        for (const n of nodes) {
+            const cid = n.data?.cluster_id;
+            if (cid) {
+                const arr = clusterNodesMap.get(cid);
+                if (arr) arr.push(n);
+                else clusterNodesMap.set(cid, [n]);
+            }
+        }
 
         edges.forEach(edge => {
             const src = nodeMap.get(edge.from);
@@ -107,7 +117,7 @@ export class DependencyPressureAnalyzer implements ArchitectureAnalyzer {
             const ratio = count / totalOut;
 
             if (ratio > 0.6 && count > 5) {
-                const relatedNodes = nodes.filter(n => n.data?.cluster_id === srcId);
+                const relatedNodes = clusterNodesMap.get(srcId) || [];
                 if (relatedNodes.length > 0) {
                     findings.push({
                         type: 'pressure',

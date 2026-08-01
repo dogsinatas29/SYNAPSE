@@ -9,6 +9,8 @@ export interface DiagnosticRecord {
     source?: string;
 }
 
+import { InterventionResult } from './InterventionSimulator';
+
 export interface AstFileInfo {
     symbols: string[];
     imports: string[];
@@ -169,6 +171,7 @@ export interface ReasonedReportBundle {
     smells: ArchitecturalSmell[];
     criticalBridges: CriticalBridge[];
     clusterBridges?: ClusterBridge[]; // Coupling Measurement
+    interventions?: InterventionResult[];
 
     
     

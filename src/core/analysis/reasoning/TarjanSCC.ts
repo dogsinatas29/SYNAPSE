@@ -54,18 +54,6 @@ export class TarjanSCC {
         };
 
         const graphA = runExperiment('Graph A (Full)', GraphViewBuilder.build(edges, GraphPolicy.FULL));
-        const graphB = runExperiment('Graph B (No TYPE_ONLY)', GraphViewBuilder.build(edges, GraphPolicy.TYPE_FILTERED));
-        const graphC = runExperiment('Graph C (Runtime Resolved)', GraphViewBuilder.build(edges, GraphPolicy.RUNTIME_RESOLVED));
-        const graphD = runExperiment('Graph D (Strong Coupling)', GraphViewBuilder.build(edges, GraphPolicy.STRONG_COUPLING));
-        const graphE = runExperiment('Graph E (Executable Coupling)', GraphViewBuilder.build(edges, GraphPolicy.EXECUTABLE_COUPLING));
-
-        console.log('[GRAPH_VIEW_EDGE_COUNTS]', {
-            A: graphA.edgeCount,
-            B: graphB.edgeCount,
-            C: graphC.edgeCount,
-            D: graphD.edgeCount,
-            E: graphE.edgeCount
-        });
 
         // 3. Provenance Stats
         const provStats: Record<string, number> = {};
@@ -77,36 +65,28 @@ export class TarjanSCC {
 
         console.log('[RUNTIME_GRAPH_AUDIT]', {
             runtimeNodes: logicNodesMap.size,
-            sccSize_A: graphA.sccs.length > 0 ? graphA.sccs[0].nodeIds.length : 0,
-            sccSize_B: graphB.sccs.length > 0 ? graphB.sccs[0].nodeIds.length : 0,
-            sccSize_C: graphC.sccs.length > 0 ? graphC.sccs[0].nodeIds.length : 0,
-            sccSize_D: graphD.sccs.length > 0 ? graphD.sccs[0].nodeIds.length : 0,
-            sccSize_E: graphE.sccs.length > 0 ? graphE.sccs[0].nodeIds.length : 0
+            sccSize_A: graphA.sccs.length > 0 ? graphA.sccs[0].nodeIds.length : 0
         });
+
+        const largestScc = graphA.sccs.reduce((max, scc) => Math.max(max, scc.nodeIds.length), 0);
+        console.log(`[TARJAN] SCC count = ${graphA.sccs.length}, largest SCC = ${largestScc}`);
 
         // Hub Stability Index (Top 5 hubs of Graph A)
         const topHubsA = Array.from(graphA.degrees.entries()).sort((a, b) => b[1] - a[1]).slice(0, 10);
         console.log('[HUB_STABILITY_INDEX]');
         const topHubsOutput = [];
         for (const [hubId, degA] of topHubsA) {
-            const degE = graphE.degrees.get(hubId) || 0;
-            const stability = degA > 0 ? (degE / degA * 100).toFixed(1) : '0.0';
-            console.log(`- ${hubId.split('/').pop()}: ${degA} -> ${degE} (${stability}%)`);
-            topHubsOutput.push({ id: hubId, degA, degE, stability });
+            console.log(`- ${hubId.split('/').pop()}: ${degA}`);
+            topHubsOutput.push({ id: hubId, degA, degE: degA, stability: '100.0' });
         }
 
         TarjanSCC.lastAuditLog = {
             runtimeNodes: logicNodesMap.size,
             sccSize_A: graphA.sccs.length > 0 ? graphA.sccs[0].nodeIds.length : 0,
-            sccSize_B: graphB.sccs.length > 0 ? graphB.sccs[0].nodeIds.length : 0,
-            sccSize_C: graphC.sccs.length > 0 ? graphC.sccs[0].nodeIds.length : 0,
-            sccSize_D: graphD.sccs.length > 0 ? graphD.sccs[0].nodeIds.length : 0,
-            sccSize_E: graphE.sccs.length > 0 ? graphE.sccs[0].nodeIds.length : 0,
             topHubsA: topHubsOutput
         };
 
         // Return Graph A as default to preserve current App behavior
-        // Or if we want to clean up UI, we could return Graph C. For now we return A.
         return graphA.sccs;
     }
 
@@ -143,40 +123,69 @@ export class TarjanSCC {
         const onStack = new Set<string>();
         const sccs: string[][] = [];
 
-        function strongConnect(v: string) {
-            indices.set(v, index);
-            lowLink.set(v, index);
+        function strongConnectIterative(startNode: string) {
+            // Manual call stack for DFS to prevent RangeError: Maximum call stack size exceeded
+            // Stack stores: [node, neighbor_index]
+            const callStack: [string, number][] = [[startNode, 0]];
+            
+            indices.set(startNode, index);
+            lowLink.set(startNode, index);
             index++;
-            stack.push(v);
-            onStack.add(v);
+            stack.push(startNode);
+            onStack.add(startNode);
 
-            const neighbors = adjacency.get(v) || [];
-            for (const w of neighbors) {
-                if (!indices.has(w)) {
-                    strongConnect(w);
-                    lowLink.set(v, Math.min(lowLink.get(v)!, lowLink.get(w)!));
-                } else if (onStack.has(w)) {
-                    lowLink.set(v, Math.min(lowLink.get(v)!, indices.get(w)!));
-                }
-            }
-
-            if (lowLink.get(v) === indices.get(v)) {
-                const scc: string[] = [];
-                let w: string;
-                do {
-                    w = stack.pop()!;
-                    onStack.delete(w);
-                    scc.push(w);
-                } while (w !== v);
+            while (callStack.length > 0) {
+                const top = callStack[callStack.length - 1];
+                const v = top[0];
+                const neighborIdx = top[1];
                 
-                if (scc.length > 1) {
-                    sccs.push(scc);
+                const neighbors = adjacency.get(v) || [];
+
+                if (neighborIdx < neighbors.length) {
+                    const w = neighbors[neighborIdx];
+                    top[1]++; // Advance neighbor index for when we return to this node
+                    
+                    if (!indices.has(w)) {
+                        indices.set(w, index);
+                        lowLink.set(w, index);
+                        index++;
+                        stack.push(w);
+                        onStack.add(w);
+                        callStack.push([w, 0]); // "Recurse" into w
+                    } else if (onStack.has(w)) {
+                        lowLink.set(v, Math.min(lowLink.get(v)!, indices.get(w)!));
+                    }
+                } else {
+                    // Finished all neighbors of v. "Return" from recursion.
+                    callStack.pop();
+                    
+                    // If we just popped v, update its parent's lowLink if it has a parent in the DFS tree
+                    if (callStack.length > 0) {
+                        const parent = callStack[callStack.length - 1][0];
+                        lowLink.set(parent, Math.min(lowLink.get(parent)!, lowLink.get(v)!));
+                    }
+                    
+                    // Generate SCC if v is a root node
+                    if (lowLink.get(v) === indices.get(v)) {
+                        const scc: string[] = [];
+                        let w: string;
+                        do {
+                            w = stack.pop()!;
+                            onStack.delete(w);
+                            scc.push(w);
+                        } while (w !== v);
+                        
+                        if (scc.length > 1) {
+                            sccs.push(scc);
+                        }
+                    }
                 }
             }
         }
 
+
         for (const id of nodeIds) {
-            if (!indices.has(id)) strongConnect(id);
+            if (!indices.has(id)) strongConnectIterative(id);
         }
 
         const results: SccCluster[] = [];

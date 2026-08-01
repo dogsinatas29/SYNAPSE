@@ -16,6 +16,10 @@ export class RuleEngine {
     private caseNormalizedBlacklist: Set<string> = new Set();
     private isCaseInsensitive: boolean = process.platform === 'win32' || process.platform === 'darwin';
     private isLoaded: boolean = false;
+    
+    // [Performance] Cache to prevent O(N) regex replacements during mass state generation
+    private ignoreFolderCache: Map<string, boolean> = new Map();
+    private ignoreFileCache: Map<string, boolean> = new Map();
 
     private constructor() {
         this.setDefaultRules();
@@ -42,6 +46,8 @@ export class RuleEngine {
                 this.blacklistPaths = new Set();
                 this.blacklistFolders = new Set();
                 this.caseNormalizedBlacklist = new Set();
+                this.ignoreFolderCache.clear();
+                this.ignoreFileCache.clear();
 
                 if (config.blacklist) {
                     if (Array.isArray(config.blacklist.folders)) {
@@ -180,49 +186,70 @@ export class RuleEngine {
     }
 
     public shouldIgnoreFolder(folderPath: string): boolean {
+        if (this.ignoreFolderCache.has(folderPath)) {
+            return this.ignoreFolderCache.get(folderPath)!;
+        }
+
         const folderName = path.basename(folderPath).toLowerCase();
-        if (this.ignoreFolders.has(folderName)) return true;
+        if (this.ignoreFolders.has(folderName)) {
+            this.ignoreFolderCache.set(folderPath, true);
+            return true;
+        }
 
         const normalizedPath = this.normalizePath(folderPath);
         for (const blackFolder of this.blacklistFolders) {
             if (normalizedPath === blackFolder || normalizedPath.startsWith(blackFolder + '/')) {
+                this.ignoreFolderCache.set(folderPath, true);
                 return true;
             }
         }
+        this.ignoreFolderCache.set(folderPath, false);
         return false;
     }
 
 
     public shouldIgnoreFile(filePath: string): boolean {
+        if (this.ignoreFileCache.has(filePath)) {
+            return this.ignoreFileCache.get(filePath)!;
+        }
+
         const fileName = path.basename(filePath).toLowerCase();
 
         // [v0.2.17 Patch] Never ignore core SYNAPSE documents
         if (fileName === 'gemini.md' || fileName === 'rules.md') {
+            this.ignoreFileCache.set(filePath, false);
             return false;
         }
 
         const normalizedPath = this.normalizePath(filePath);
         
         // [v0.3.23 L2 Hardening] O(1) Check via pre-normalized cache
-        if (this.caseNormalizedBlacklist.has(normalizedPath)) return true;
+        if (this.caseNormalizedBlacklist.has(normalizedPath)) {
+            this.ignoreFileCache.set(filePath, true);
+            return true;
+        }
 
         if (this.blacklistFiles.has(fileName)) {
+            this.ignoreFileCache.set(filePath, true);
             return true;
         }
 
         // Check recursive folder blacklists
         for (const blackFolder of this.blacklistFolders) {
             if (normalizedPath.startsWith(blackFolder + '/')) {
+                this.ignoreFileCache.set(filePath, true);
                 return true;
             }
         }
 
         for (const ext of this.binaryExcludes) {
             if (filePath.toLowerCase().endsWith(ext)) {
+                this.ignoreFileCache.set(filePath, true);
                 return true;
             }
         }
 
+        this.ignoreFileCache.set(filePath, false);
         return false;
     }
 

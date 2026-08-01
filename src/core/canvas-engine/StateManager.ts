@@ -264,7 +264,26 @@ export class StateManager {
       data: { ...payload.data, layer: payload.data?.layer || 'user' }
     });
     this.incrementTxn();
-    return this.getSnapshot();
+    // [v0.3.34.9 PERF FIX] Do NOT call getSnapshot() here.
+    // This is called in a tight loop (e.g., 2909 clusters in saveState).
+    // Each getSnapshot() triggers a full 500ms graph projection → 24 minutes total.
+    // The caller is responsible for calling getSnapshot() once after the loop.
+    return null as any;
+  }
+
+  // [v0.3.34.9] Batch variant: set all clusters in one pass, call getSnapshot() once.
+  public batchAddClusters(clusters: any[]): void {
+    for (const payload of clusters) {
+      this.bufferClusters.set(payload.id, {
+        ...payload,
+        id: payload.id,
+        label: payload.label || payload.id,
+        type: payload.type || 'folder',
+        collapsed: payload.collapsed || false,
+        data: { ...payload.data, layer: payload.data?.layer || 'user' }
+      });
+    }
+    this.incrementTxn();
   }
 
   private mutateConnectEdge(payload: any): CanvasState {
@@ -708,10 +727,16 @@ export class StateManager {
     };
   }
 
+  // [Performance] Fast O(1) way to check approximate node count without a full snapshot
+  public getEstimatedNodeCount(): number {
+      const coreSnap = graphModel.createSnapshot();
+      return coreSnap.nodes.length + this.bufferNodes.size;
+  }
+
   public getSnapshot(): CanvasState {
     const merged = this.generateMergedState({ raw: false });
-        const mergedNodes: Node[] = Object.values(merged.nodes as Record<string, Node>);
-        const mergedEdges: Edge[] = Object.values(merged.edges as Record<string, Edge>);
+    const mergedNodes: Node[] = Object.values(merged.nodes as Record<string, Node>);
+    const mergedEdges: Edge[] = Object.values(merged.edges as Record<string, Edge>);
     const draftSnap: GraphSnapshot = {
         nodes: mergedNodes,
         edges: mergedEdges,

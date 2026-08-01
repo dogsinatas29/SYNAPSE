@@ -6,6 +6,7 @@
 
 import * as path from 'path';
 import { BootstrapEngine } from './bootstrap/BootstrapEngine';
+import { BatchRunner } from './cli/BatchRunner';
 
 async function main() {
     const args = process.argv.slice(2);
@@ -16,6 +17,16 @@ async function main() {
         process.exit(1);
     }
 
+    const command = args[0];
+
+    if (command === 'analyze-batch') {
+        const projectsJsonPath = args[1] ? path.resolve(args[1]) : undefined;
+        const runner = new BatchRunner();
+        await runner.run(projectsJsonPath);
+        process.exit(0);
+    }
+
+    // Default bootstrap behavior for backwards compatibility
     const geminiMdPath = path.resolve(args[0]);
     const projectRoot = args[1] ? path.resolve(args[1]) : process.cwd();
 

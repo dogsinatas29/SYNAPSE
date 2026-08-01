@@ -1305,7 +1305,7 @@ Please wait until harvesting completes.</p>
             <div class="menu-label" style="color: #fabd2f;">🔍 Verify</div>
             <div class="dropdown-content">
                 <button class="btn" id="btn-test-logic" title="Run AI-Driven Semantic Analysis" style="color: #fabd2f; font-weight: bold;">🤖 Scan Architecture (AI)</button>
-                <button class="btn" id="btn-virtual-debug" title="Runtime Simulation Debug" style="color: #83a598; font-weight: bold;" onclick="if(typeof vscode !== 'undefined') { vscode.postMessage({command: 'virtualDebug'}); } else if(window.vscode) { window.vscode.postMessage({command: 'virtualDebug'}); }">📡 Simulation Debug</button>
+                <button class="btn" id="btn-virtual-debug" title="Runtime Simulation Debug" style="color: #83a598; font-weight: bold;">📡 Simulation Debug</button>
                 <div class="menu-divider"></div>
                 <div style="padding: 5px 10px; font-size: 10px; color: var(--fg-dim); text-transform: uppercase;">Simulate State</div>
                 <button class="btn" id="btn-sim-necrosis" title="Simulate Necrosis on Selection">💀 Simulate Necrosis</button>
@@ -1322,7 +1322,7 @@ Please wait until harvesting completes.</p>
             <div class="menu-label">⚙️ System</div>
             <div class="dropdown-content">
                 <button class="btn" id="btn-reset-state" title="project_state.json을 빈 상태로 초기화" style="color: #d3869b;" data-i18n="menu.reset_state">🔄 Reset State</button>
-                <button class="btn" id="btn-animate" title="Toggle Edge Animations">🎬 Animation: On</button>
+                <button class="btn" id="btn-animate" title="Toggle Edge Animations">⏸️ Animation: Off</button>
             </div>
         </div>
 
@@ -1572,6 +1572,10 @@ Please wait until harvesting completes.</p>
         // Listen for messages IMMEDIATELY and buffer them
         window.addEventListener('message', event => {
             const message = event.data;
+            if (message && message.command === 'ping') {
+                console.log('[PING_RECEIVED]', message.panelId);
+                return;
+            }
             console.log('[WEBVIEW_MESSAGE_RECEIVED] command=' + (message && message.command));
             console.log('[ENGINE_STATE]', !!window.engine, typeof window.engine?.handleMessage);
             if (window.engine && window.engine.handleMessage) {
@@ -1787,7 +1791,7 @@ Please wait until harvesting completes.</p>
 
             // [USER_REQUEST] Auto-enable WebGL for better UX on large projects
             setTimeout(() => {
-                if (eng && !eng.webglEnabled) {
+                if (window.engine && !window.engine.webglEnabled) {
                     btnWebgl.click();
                 }
             }, 500);

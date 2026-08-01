@@ -86,6 +86,7 @@ class SequentialTaskQueue {
 
 export class CanvasPanel {
     public static currentPanel: CanvasPanel | undefined;
+    private static saveCounter = 0;
     private readonly _panel: vscode.WebviewPanel;
     private readonly _extensionUri: vscode.Uri;
     private readonly _context: vscode.ExtensionContext;
@@ -135,6 +136,7 @@ export class CanvasPanel {
     private _diagnosticDebounceTimer: NodeJS.Timeout | null = null;
     private _lastDiagnosticHash: string = '';
 
+    private _panelId: string = crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(7); // UUID for tracking instances
 
     public static createOrShow(context: vscode.ExtensionContext, workspaceFolder: vscode.WorkspaceFolder) {
         const extensionUri = context.extensionUri;
@@ -182,6 +184,8 @@ export class CanvasPanel {
         this._context = context;
         this._workspaceFolder = workspaceFolder;
 
+        Logger.info(`[CanvasPanel] 🏗️ CONSTRUCTOR CALLED. Assigned ID: ${this._panelId}`);
+
         // [v0.2.17 Fix] Delay initial update to allow Webview host to stabilize
         // This addresses "ServiceWorker: InvalidStateError" in certain environments
         setTimeout(() => {
@@ -218,47 +222,18 @@ export class CanvasPanel {
         };
 
         // Handle messages from the webview
+        Logger.info(`[ON_RECEIVE_REGISTERED]`);
+        Logger.info(`[IPC_HANDLER_ALIVE] Extension Host is listening to Webview messages on Panel ID: ${this._panelId}`);
+        let receiveCounter = 0;
         this._panel.webview.onDidReceiveMessage(
             async message => {
-                Logger.info(`[SYNAPSE-IPC] Received message command: ${message.command}`);
-                const stateModifyingCommands = [
-                    'saveState', 'ungroup', 'takeSnapshot', 'rollback',
-                    'createManualEdge', 'deleteEdge', 'deleteNodes',
-                    'updateEdge', 'approveNode', 'rejectNode',
-                    'requestDeleteEdgeSource', 'createManualNode',
-                    'reBootstrap', 'requestConfirmEdge', 'setBaseline',
-                    'resetProjectState', 'virtualDebug', 'updateNodeData'
-                ];
-
-                if (stateModifyingCommands.includes(message.command)) {
-                    // [v0.3.1 Bootstrap Locked] Phase 3: CONTROL Interaction Check
-                    // [v0.3.09_fix] Allow interaction in RENDER (Phase 5) and DEBUG (Phase 6) as well.
-                    const currentPhase = phaseManager.getCurrentPhase();
-                    if (!controlSystem.verifyInteraction(message.command) && currentPhase < Phase.RENDER) {
-                        vscode.window.showErrorMessage(`[SYNAPSE] 명령 거부: Phase ${currentPhase} 상태에서는 '${message.command}'이(가) 금지됩니다.`);
-                        return;
-                    }
-
-                    // [v0.2.17 Patch 13.2] Strict Guard for confirm dialog
-                    if (message.command === 'requestConfirmEdge' && this._isProcessingConfirm) {
-                        Logger.warn('[CanvasPanel] Confirmation already in progress, ignoring duplicate request.');
-                        return;
-                    }
-                    await this._taskQueue.push(async () => {
-                        try {
-                            await this._handleMessage(message);
-                        } catch (e: any) {
-                            console.error('[SYNAPSE-DEBUG] Unhandled error in _handleMessage task:', e);
-                            vscode.window.showErrorMessage(`[SYNAPSE] 메시지 처리 중 치명적 에러: ${e.message}`);
-                        }
-                    });
-                } else {
-                    try {
-                        await this._handleMessage(message);
-                    } catch (e: any) {
-                        console.error('[SYNAPSE-DEBUG] Unhandled error in _handleMessage (direct):', e);
-                        vscode.window.showErrorMessage(`[SYNAPSE] 메시지 직접 처리 중 치명적 에러: ${e.message}`);
-                    }
+                Logger.info(
+                    `[RAW_MESSAGE_FULL] backend=${this._panelId} command=${message?.command} uiPanel=${message?.panelId}`
+                );
+                try {
+                    await this._handleMessage(message);
+                } catch(e) {
+                    console.error('[SYNAPSE-DEBUG] Error:', e);
                 }
             },
             null,
@@ -279,6 +254,7 @@ export class CanvasPanel {
     }
 
     private async _handleMessage(message: any) {
+        console.log("[MSG_IN]", message.command);
         console.log(
             '[MESSAGE]',
             message.command || message.type,
@@ -289,6 +265,9 @@ export class CanvasPanel {
         }
 
         console.log('[HANDLE_MESSAGE]', message.command);
+        if (message.command === 'virtualDebug') {
+            console.log("[VD_RECEIVED] command matched virtualDebug!");
+        }
 
         switch (message.command) {
             case 'setEditLogicMode':
@@ -324,6 +303,11 @@ export class CanvasPanel {
                 await this._taskQueue.push(() => this.sendProjectState());
                 return;
             case 'saveState':
+                {
+                    const s = message.data || message.state;
+                    const cs = Array.isArray(s?.clusters) ? s.clusters : Object.values(s?.clusters || {});
+                    Logger.info('[BACKEND_COLLAPSE_CHECK]', cs.filter((c: any) => c?.collapsed === true).length);
+                }
                 await this.handleSaveState(message.data || message.state);
                 return;
             case 'readFile':
@@ -457,6 +441,7 @@ export class CanvasPanel {
                 await this.handleTestLogic();
                 break;
             case 'virtualDebug':
+                console.log("[VD_RECEIVED] entering handleVirtualDebug");
                 await this.handleVirtualDebug();
                 break;
             case 'triggerLogPrompt':
@@ -464,6 +449,8 @@ export class CanvasPanel {
                 return;
             case 'contextData':
                 if (this._contextRequestCallback) {
+                    console.log("[VD-3]", Date.now());
+                    console.log("[VD_CONTEXT_RECEIVED]", Date.now());
                     this._contextRequestCallback(message.data);
                     this._contextRequestCallback = undefined;
                 }
@@ -994,11 +981,12 @@ export class CanvasPanel {
             this._contextRequestCallback = resolve;
             setTimeout(() => {
                 if (this._contextRequestCallback) {
-                    Logger.warn('[SYNAPSE] requestContextData timed out after 3000ms');
+                    Logger.warn('[SYNAPSE] requestContextData timed out after 30000ms');
                     this._contextRequestCallback(null);
                     this._contextRequestCallback = undefined;
                 }
-            }, 3000);
+            }, 30000);
+            console.log("[VD-2]", Date.now());
             this._panel.webview.postMessage({ command: 'requestContextData' });
         });
     }
@@ -2887,6 +2875,7 @@ export class CanvasPanel {
     }
 
     public dispose() {
+        Logger.info(`[CanvasPanel] 🗑️ DISPOSE CALLED for Panel ID: ${this._panelId}`);
         console.log('[PANEL_DISPOSE]', {
             callbackExists: !!phaseManager.onPhaseAdvance,
             currentPanelExists: !!CanvasPanel.currentPanel
@@ -3007,12 +2996,16 @@ export class CanvasPanel {
      * [v0.2.20] Virtual Debugging: Static Analysis visualization
      */
     private async handleVirtualDebug() {
+        console.log("[VD-4]", Date.now());
+        console.log("[VD_ENTRY] handleVirtualDebug started!");
+        console.log("[VD_STEP_1]");
         const workspaceFolder = this._workspaceFolder;
         if (!workspaceFolder) return;
 
         try {
-            Logger.info("[STEP-0] handleVirtualDebug start (Requesting ContextData from WebView)");
-            
+            Logger.info("[SIM_DEBUG_BACKEND_REQUESTING_CONTEXT] handleVirtualDebug start (Requesting ContextData from WebView)");
+            console.time("SIM_TOTAL");
+
             // 1. Get current project state FROM WEBVIEW to reflect UI visibility
             const state = await this._getContextDataFromWebView();
             if (!state) {
@@ -3020,23 +3013,63 @@ export class CanvasPanel {
                 return;
             }
             Logger.info("[STEP-0.5] WebView state received");
+            Logger.info(`[CONTEXT_SIZE] ${JSON.stringify(state).length}`);
+            const backendRaw = canvasEngine.getRawSnapshot();
+            console.log("[BACKEND_GRAPH]", {
+                nodes: backendRaw.nodes?.length,
+                edges: backendRaw.edges?.length,
+                clusters: backendRaw.clusters?.length
+            });
+            console.log("[VD_STEP_2]", state.nodes?.length || 0);
+
+            const nodes = Array.isArray(state.nodes) ? state.nodes : Object.values(state.nodes || {});
+            const edges = Array.isArray(state.edges) ? state.edges : Object.values(state.edges || {});
+            const allClusters = Array.isArray(state.clusters) ? state.clusters : Object.values(state.clusters || {});
+
+            console.log("[SIM_DEBUG_INPUT]", {
+                nodes: nodes.length,
+                edges: edges.length,
+                clusters: allClusters.length,
+                collapsedClusters: allClusters.filter((c: any) => c?.collapsed === true).length
+            });
+
+            console.log(
+                "[VD_GRAPH_STATS]",
+                nodes.length,
+                edges.length,
+                allClusters.length
+            );
 
             let visibleClusterIds: string[] = [];
             // [v0.3.34.6] Cluster Coupling Analysis on Demand
             if (state.clusters) {
-                const allClusters = Array.isArray(state.clusters) ? state.clusters : Object.values(state.clusters);
-                visibleClusterIds = allClusters
-                    .filter((c: any) => c && c.id && typeof c.id === 'string' && c.collapsed !== true && !c.id.startsWith('client::'))
-                    .map((c: any) => c.id);
+                if (state.visibleClusterIds && Array.isArray(state.visibleClusterIds)) {
+                    visibleClusterIds = state.visibleClusterIds;
+                    Logger.info(`[CTX_BACKEND_VISIBLE] Received directly from frontend: ${visibleClusterIds.length}`);
+                } else {
+                    Logger.info('[CTX_BACKEND_COLLAPSE]', allClusters.filter((c: any) => c?.collapsed === true).length);
+                    visibleClusterIds = allClusters
+                        .filter((c: any) => c && c.id && typeof c.id === 'string' && c.collapsed !== true && !c.id.startsWith('client::'))
+                        .map((c: any) => c.id);
+                }
+                    
+                console.log(
+                    "[VD_VISIBLE_STATS]",
+                    "Nodes N/A", // visibleNodes not calculated here
+                    "Edges N/A",
+                    visibleClusterIds.length
+                );
 
                 if (visibleClusterIds.length >= 2) {
                     Logger.info(`[STEP-0.6] visibleClusterIds length = ${visibleClusterIds.length}`);
-                    const nodes = Array.isArray(state.nodes) ? state.nodes : Object.values(state.nodes || {});
-                    const edges = Array.isArray(state.edges) ? state.edges : Object.values(state.edges || {});
-                    Logger.info(`[STEP-0.7] Nodes: ${nodes.length}, Edges: ${edges.length}`);
+                    console.log('[COUPLING_CALL_CANVAS]', {
+                        visibleClusterIds: visibleClusterIds.length,
+                        nodes: nodes.length,
+                        edges: edges.length
+                    });
                     // @ts-ignore
-                    const allClustersForBridge = Array.isArray(state.clusters) ? state.clusters : Object.values(state.clusters || {});
-                    const bridges = ClusterBridgeAnalyzer.analyzeVisibleClusters(visibleClusterIds, nodes, edges, allClustersForBridge as any);
+                    const bridges = ClusterBridgeAnalyzer.analyzeVisibleClusters(visibleClusterIds, nodes, edges, allClusters as any);
+                    console.log('[COUPLING_RESULT_CANVAS]', { bridges: bridges.length });
                     Logger.info(`[STEP-0.8] ClusterBridgeAnalyzer returned ${bridges.length} bridges.`);
                     
                     if (bridges.length > 0) {
@@ -3051,12 +3084,17 @@ export class CanvasPanel {
                 }
             }
 
+            console.log("[VD_STEP_3]");
+
             // 2. Perform Virtual Debug scan
             const vDebugger = new VirtualDebugger();
             const { evidence, reports, analyzedNodeCount } = await vDebugger.performVirtualDebug(state, workspaceFolder.uri.fsPath, visibleClusterIds);
 
+            console.log("[VD_STEP_4]");
+
             // 3. Send results to WebView
             this.updateEvidenceOverlay(evidence);
+            console.timeEnd("SIM_TOTAL");
 
             // Optional: Log results for traceability
             Logger.info(`[SYNAPSE] Virtual Debug Impact sent: ${evidence.findings.length} findings.`);
@@ -3085,9 +3123,9 @@ export class CanvasPanel {
                 Logger.warn(`[SYNAPSE] Failed to open report/LOGIC_REPORT.md: ${e}`);
             }
 
-        } catch (error) {
-            Logger.error('[SYNAPSE] Architecture Analysis failed:', error);
-            vscode.window.showErrorMessage(`Architecture Analysis failed: ${error}`);
+        } catch (error: any) {
+            Logger.error(`[AAE_STACK] Architecture Analysis failed: ${error?.stack || error}`);
+            vscode.window.showErrorMessage(`Architecture Analysis failed: ${error?.message || error}`);
         }
     }
 
@@ -4368,6 +4406,7 @@ export class CanvasPanel {
     private _saveStateDebugCount = 0;
 
     private async handleSaveState(newState: any) {
+        console.log("[SAVE_A] handleSaveState started");
         console.time('SAVE_STATE');
         console.count('SAVE_STATE_CALL');
         if (typeof (this as any)._saveStateDebugCount === 'undefined') (this as any)._saveStateDebugCount = 0;
@@ -4385,8 +4424,8 @@ export class CanvasPanel {
             const projectStateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'project_state.json');
 
             // [v0.3.11] Anti-Wipe Safety: If UI sends empty state but engine/disk has data, block the save.
-            const engineSnap = canvasEngine.getFinalSnapshot();
-            const engineNodesCount = Object.keys(engineSnap.nodes).length;
+            // [Performance] Use O(1) estimation instead of synchronous full state merge (which can take ~450ms for 70k nodes)
+            const engineNodesCount = canvasEngine.getEstimatedNodeCount();
 
             if (newState.nodes !== undefined) {
                 const uiNodesCount = newState.nodes?.length || 0;
@@ -4397,33 +4436,29 @@ export class CanvasPanel {
                 }
             }
 
-            // 2. [v0.3.11] Clusters & Nodes Bridge
-            if (newState.clusters && Array.isArray(newState.clusters)) {
-                for (const uiCluster of newState.clusters) {
-                    // [v0.3.27] Dynamically resolve cluster layer: scanned folders and system clusters are 'ai', others are 'user'
-                    const isScanFolder = uiCluster.id.startsWith('cluster_') && !/^\d+$/.test(uiCluster.id.replace('cluster_', ''));
-                    const isSystemAI = uiCluster.id === 'sys_cluster_reserved' || uiCluster.id === 'doc_shelf';
-                    const isExternal = uiCluster.id === 'cluster_ghosts';
-                    const defaultLayer = isExternal ? 'external' : ((isScanFolder || isSystemAI) ? 'ai' : 'user');
-
-                    // Sync cluster structure to engine if not already present
-                    canvasEngine.dispatch('ADD_CLUSTER', {
-                        id: uiCluster.id,
-                        label: uiCluster.label,
-                        type: uiCluster.type || 'folder',
-                        position: uiCluster.position, // [v0.3.11 Fix] Preserving cluster positions
-                        collapsed: uiCluster.collapsed,
-                        data: {
-                            ...(uiCluster.data || {}),
-                            layer: (uiCluster.data && uiCluster.data.layer) || defaultLayer
-                        }
-                    });
-                }
-            }
+            // [v0.3.34.9 PERF FIX] 배치 처리: 클러스터 2909개를 루프 dispatch하면
+            // 각 ADD_CLUSTER마다 getSnapshot() → 500ms 투영 → 2909 × 500ms = ~24분 대기 발생.
+            // batchAddClusters로 한 번에 처리하고 txn을 1회만 올린다.
+            const clustersToSync = newState.clusters.map((uiCluster: any) => {
+                const isScanFolder = uiCluster.id.startsWith('cluster_') && !/^\d+$/.test(uiCluster.id.replace('cluster_', ''));
+                const isSystemAI = uiCluster.id === 'sys_cluster_reserved' || uiCluster.id === 'doc_shelf';
+                const isExternal = uiCluster.id === 'cluster_ghosts';
+                const defaultLayer = isExternal ? 'external' : ((isScanFolder || isSystemAI) ? 'ai' : 'user');
+                return {
+                    id: uiCluster.id,
+                    label: uiCluster.label,
+                    type: uiCluster.type || 'folder',
+                    position: uiCluster.position,
+                    collapsed: uiCluster.collapsed,
+                    data: { ...(uiCluster.data || {}), layer: (uiCluster.data && uiCluster.data.layer) || defaultLayer }
+                };
+            });
+            canvasEngine.batchAddClusters(clustersToSync);
 
             // 1. Dispatch UPDATE_NODE for each node with a new position, cluster, and layer info
             // [v0.3.11] 🛡️ Hybrid Support: Handle both Array (UI) and Object (Internal Snapshot)
             const incomingNodes = Array.isArray(newState.nodes) ? newState.nodes : Object.values(newState.nodes || {});
+            console.log('[NODE_DISPATCH_START]', 'count:', incomingNodes.length);
             
             const positionUpdates: any[] = [];
             const now = Date.now();
@@ -4459,14 +4494,18 @@ export class CanvasPanel {
                     });
                 }
             }
+            console.log('[NODE_DISPATCH_END]');
+            console.log('[DISPATCH_END]');
 
             if (positionUpdates.length > 0) {
                 this._sendClientPositionUpdates(positionUpdates);
             }
 
-
+            Logger.info("[SAVESTATE-3] after basic dispatch, before SSoT serialization");
+            console.log("[SAVE_B]");
 
             const rawSnap = canvasEngine.getRawSnapshot();
+            console.log("[SAVE_C]");
             
             // [v0.3.11] 🛡️ Identity Protection: 
             // If the UI sends a snapshot missing nodes that were JUST created in the buffer, 
@@ -4488,8 +4527,14 @@ export class CanvasPanel {
                 deletedPaths: rawSnap.deletedPaths || []
             };
 
+            Logger.info('[FILE_SAVE_COLLAPSE]',
+                (Array.isArray(persistenceState.clusters) ? persistenceState.clusters : Object.values(persistenceState.clusters || {}))
+                    .filter((c: any) => c?.collapsed === true).length
+            );
+
             const normalizedJson = this.normalizeProjectState(persistenceState);
             try {
+                console.log("[SAVE_D] Writing file...");
                 console.log(`[STATE_SAVE_START] Output path: ${projectStateUri.fsPath} (handleSaveState)`);
                 console.log(`[STATE_SAVE] Nodes: ${persistenceState.nodes.length}, Edges: ${persistenceState.edges.length}`);
                 await vscode.workspace.fs.writeFile(projectStateUri, Buffer.from(normalizedJson, 'utf8'));
@@ -4503,28 +4548,11 @@ export class CanvasPanel {
             // 🔥 [v0.3.11] IMMEDIATE REACTION: Ensure UI reflects backend identity sorting (AI vs User)
             // await this.sendProjectState(false, true); // [v0.3.30] Prevent UI overwrite that deletes client nodes
 
-            // [v0.3.34.6] Cluster Coupling Analysis
-            const allClusters = Object.values(rawSnap.clusters || {});
-            const visibleClusterIds = allClusters
-                .filter((c: any) => c.collapsed !== true && !c.id.startsWith('client::'))
-                .map((c: any) => c.id);
-
-            if (visibleClusterIds.length >= 2) {
-                const nodes = Object.values(rawSnap.nodes || {});
-                const edges = Object.values(rawSnap.edges || {});
-                // @ts-ignore
-                const bridges = ClusterBridgeAnalyzer.analyzeVisibleClusters(visibleClusterIds, nodes, edges, allClusters);
-                
-                if (bridges.length > 0) {
-                    console.log(`[CLUSTER_COUPLING_ANALYSIS] Found ${bridges.length} bridges.`);
-                    bridges.forEach(b => {
-                        console.log(`  ${b.sourceCluster} <-> ${b.targetCluster}: Score ${b.couplingStrength} (Raw: ${b.rawScore}, Total: ${b.couplingDensity})`);
-                    });
-                    
-                    const bridgesUri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'cluster_bridges.json');
-                    await vscode.workspace.fs.writeFile(bridgesUri, Buffer.from(JSON.stringify(bridges, null, 2), 'utf-8'));
-                }
-            }
+            // [v0.3.34.6] Cluster Coupling Analysis is removed from here
+            // because running O(N^2) analysis synchronously inside saveState 
+            // completely locks up the VS Code Extension Host on large graphs.
+            
+            Logger.info("[SAVESTATE-4] exit successfully");
         } catch (error) {
             console.error('[SYNAPSE] Failed to save state:', error);
         }
@@ -5049,6 +5077,13 @@ export class CanvasPanel {
                     entry.count++;
                     entry.ids.push(c.id);
                 }
+                console.log("[SAVE_A] Starting save logic...");
+                console.log("[SAVE_B] Normalizing state...");
+                const normalizedJson = this.normalizeProjectState(engineSnap);
+                console.log("[SAVE_C] Writing file...");
+                await vscode.workspace.fs.writeFile(projectStateUri, Buffer.from(normalizedJson, 'utf-8'));
+                console.log("[SAVE_D] File written!");
+                
                 const duplicatePaths = Array.from(byLabel.values()).filter(e => e.count > 1).length;
                 const collidedCount = Array.from(byLabel.values()).reduce((s, e) => s + (e.count > 1 ? e.count - 1 : 0), 0);
 
@@ -5271,6 +5306,11 @@ export class CanvasPanel {
         const webview = this._panel.webview;
         Logger.info(`[CanvasPanel] Updating Webview HTML...`);
         this._panel.webview.html = this._getHtmlForWebview(webview);
+
+        setTimeout(() => {
+            Logger.info(`[PING_BACKEND] Sending ping to Panel ID: ${this._panelId}`);
+            this._panel.webview.postMessage({ command: 'ping', panelId: this._panelId });
+        }, 1000);
     }
 
     private _getHtmlForWebview(webview: vscode.Webview) {
@@ -5458,8 +5498,11 @@ ${canvasEngineScript}
         html = html.replace(
             '</head>',
             `${i18nBlock}    <script nonce="${nonce}">
-                const vscode = acquireVsCodeApi();
-                window.vscode = vscode;
+                if (typeof window.vscode === 'undefined') {
+                    try { window.vscode = acquireVsCodeApi(); } catch(e) {}
+                }
+                window.__PANEL_ID__ = '${this._panelId}';
+                console.log("[WEBVIEW_PANEL_ID]", window.__PANEL_ID__);
             </script>
             </head>`
         );

@@ -57,25 +57,40 @@ export class ArchitectureAnalysisEngine {
         astResolver.resolve(state, context);
 
         // 3. Execute Accumulation Pipeline (Synchronous)
+        console.time("AAE_TOTAL");
         for (const analyzer of this.analyzers) {
             try {
+                Logger.info(`[AAE_ENTER] ${analyzer.id}`);
+                console.time(`[AAE] ${analyzer.id}`);
                 const result = analyzer.analyze(state, context);
                 if (result && result.findings) {
-                    context.findings.push(...result.findings);
+                    for (const f of result.findings) {
+                        context.findings.push(f);
+                    }
                 }
+                console.timeEnd(`[AAE] ${analyzer.id}`);
+                Logger.info(`[AAE_EXIT] ${analyzer.id} findings=${result.findings.length}`);
             } catch (error) {
                 Logger.error(`[AnalysisEngine] Analyzer ${analyzer.id} failed:`, error);
                 // We intentionally do not throw here to allow subsequent analyzers to run.
             }
         }
 
-        Logger.info(`[AnalysisEngine] Pipeline complete. Generated ${context.findings.length} findings.`);
+        console.timeEnd("AAE_TOTAL");
 
-        // 4. Wrap and return the EvidenceBundle
-        return {
-            version: 1,
+        Logger.info(`[AnalysisEngine] Pipeline complete. Generated ${context.findings.length} findings.`);
+        Logger.info(`[DEBUG] findings=${context.findings.length}`);
+        Logger.info(`[DEBUG] keys=${Object.keys(context).join(',')}`);
+        Logger.info(`[DEBUG] before return context`);
+
+        const result = {
+            version: 1 as 1,
             timestamp: Date.now(),
             findings: context.findings
-        };
+        } as any;
+
+        Logger.info(`[DEBUG] context prepared`);
+
+        return result;
     }
 }

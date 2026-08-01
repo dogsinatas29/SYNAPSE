@@ -1908,7 +1908,7 @@ class CanvasEngine {
         this._isRendering = false;   // [v0.3.9] Rendering Guard: Prevent sleep during render
         this._pendingState = null;   // [v0.2.24] Queued updates
         this.animationOffset = 0;
-        this.isAnimating = true;
+        this.isAnimating = false; // [v0.3.35] Default off for performance
         this.isSelecting = false; // 드래그 선택 중인지 여부
         this.selectionRect = { x: 0, y: 0, width: 0, height: 0 }; // 드래그 선택 영역
         this.wasDragging = false; // 드래그/선택 후 클릭 무시용 플래그
@@ -6281,6 +6281,7 @@ class CanvasEngine {
     }
 
     // [v0.3.33] Phase 3A: Explicit Spatial Index Build
+        // [v0.3.33] Phase 3A: Explicit Spatial Index Build
     buildSpatialIndex() {
         if (!this.spatialIndex || !this.nodes || !this.clusters) return;
         const _tIndex = performance.now();
@@ -6365,6 +6366,30 @@ class CanvasEngine {
 
     buildHierarchy() {
         if (!this.clusters) return;
+        
+        // [v0.3.35] Repair broken parent_id chains (e.g. when intermediate empty folders are filtered out by backend)
+        const idMap = new Map();
+        this.clusters.forEach(c => idMap.set(c.id, c));
+        this.clusters.forEach(c => {
+            let pid = c.parent_id;
+            while (pid && !idMap.has(pid) && pid !== 'world') {
+                if (pid.includes('/')) {
+                    const lastSlash = pid.lastIndexOf('/');
+                    pid = lastSlash !== -1 ? pid.substring(0, lastSlash) : null;
+                } else if (pid.startsWith('folder_')) {
+                    const lastUnder = pid.lastIndexOf('_');
+                    pid = lastUnder > 7 ? pid.substring(0, lastUnder) : null;
+                } else {
+                    pid = null;
+                }
+            }
+            if (pid && pid !== c.id && idMap.has(pid)) {
+                c.parent_id = pid;
+            } else if (!idMap.has(c.parent_id)) {
+                c.parent_id = null;
+            }
+        });
+
         this.clusterHierarchy = new ClusterHierarchy(this.clusters);
     }
 
@@ -6379,6 +6404,12 @@ class CanvasEngine {
                     this.expandedClusters.add(c.id);
                 }
             }
+        }
+        // [ARCH_TRACE 3/4] EXPANDED — check expandedClusters after init
+        {
+            const _archTargets = ['folder_root', 'folder_arch', 'folder_arch_alpha', 'folder_arch_alpha_include', 'folder_arch_alpha_include_asm', 'folder_arch_arc'];
+            const _expandedState = _archTargets.map(id => ({ id, expanded: this.expandedClusters.has(id) }));
+            this.log(`[ARCH_EXPANDED] expandedState=${JSON.stringify(_expandedState)}`, 'info');
         }
         this.collapsedClusters = new Set();
         this.currentLODLevel = 1;
@@ -6405,6 +6436,7 @@ class CanvasEngine {
                 this.expandedClusters.delete(d.id);
             }
         }
+        console.log("[EXPANDED_COUNT]", this.expandedClusters.size);
         // console.log('[perf_engine]', 'event=collapse', 'cluster=' + id, 'expanded=' + this.expandedClusters.size);
     }
 
@@ -6454,6 +6486,7 @@ class CanvasEngine {
             projectState?.nodes?.length ?? 0,
             projectState?.edges?.length ?? 0,
             projectState?.clusters?.length ?? 0);
+        console.log('[LOAD_COLLAPSE_CHECK]', (projectState.clusters || []).filter(c => c.collapsed === true).length);
         this.log('[LOAD_ENTER]', 'info', {
             nodes: projectState?.nodes?.length ?? 0,
             edges: projectState?.edges?.length ?? 0,
@@ -6843,10 +6876,29 @@ class CanvasEngine {
                     // [v0.3.34] Default collapsed to false to ensure initLODState captures them
                     return { ...c, layer, clientLayer, collapsed: c.collapsed === true ? true : false };
                 });
+            // [ARCH_TRACE 1/4] LOAD — check cluster existence after assignment
+            {
+                const _archClusters = this.clusters.filter(c => c.id.startsWith('folder_arch_alpha') || c.id === 'folder_arch').map(c => ({ id: c.id, parent: c.parent_id, collapsed: c.collapsed }));
+                this.log(`[ARCH_LOAD] archClusters=${JSON.stringify(_archClusters)}`, 'info');
+            }
+            // [CLUSTER_EXISTENCE] folder_arch_alpha 존재 여부 + parent_id 확인
+            {
+                const _alphaCluster = this.clusters.find(c => c.id === 'folder_arch_alpha');
+                this.log(`[CLUSTER_EXISTENCE] folder_arch_alpha=${!!_alphaCluster}`, 'info');
+                this.log(`[CLUSTER_PARENT] ${_alphaCluster ? _alphaCluster.parent_id : 'N/A'}`, 'info');
+            }
             // [v0.3.34] Rebuild O(1) cluster lookup map
             this._clusterMap = new Map(this.clusters.map(c => [c.id, c]));
             // [v0.3.33 Phase 2] Build ClusterHierarchy runtime index
             this.clusterHierarchy = new ClusterHierarchy(this.clusters);
+            // [ARCH_TRACE 2/4] HIERARCHY — check parent-child links
+            {
+                const _archAlpha = this.clusterHierarchy.get('folder_arch_alpha');
+                const _arch = this.clusterHierarchy.get('folder_arch');
+                const _archChildren = _arch ? _arch.children : [];
+                const _archAlphaChildren = _archAlpha ? _archAlpha.children : [];
+                this.log(`[ARCH_HIERARCHY] arch_alpha_exists=${!!_archAlpha} arch_alpha_parent=${_archAlpha ? _archAlpha.parentId : 'N/A'} arch_children=${JSON.stringify(_archChildren)} arch_alpha_children=${JSON.stringify(_archAlphaChildren)}`, 'info');
+            }
             markLoadStage('after-cluster-hierarchy', {
                 clusters: this.clusters.length,
                 clusterMap: this._clusterMap.size
@@ -6861,6 +6913,7 @@ class CanvasEngine {
             const scaleScore = nodeCount + (edgeCount * 5) + (clusterCount * 10);
             const isExtreme = scaleScore > 500000; // e.g. Linux Kernel is ~1.9 million
             
+            /*
             if (isExtreme) {
                 console.log(`[SYNAPSE PROFILE ANALYZER] Extreme Scale Detected (Score: ${scaleScore}). Forcing EXTREME_SCALE profile.`);
                 this.showExternalLayer = false;
@@ -6876,6 +6929,7 @@ class CanvasEngine {
                 // Show modal UI
                 setTimeout(() => this._showProfileModal(scaleScore), 500);
             }
+            */
 
             // [DESKTOP_TRACK] 1. AFTER_LAYOUT (백엔드에서 막 넘어온 직후)
             const trackDesktop1 = this.clusters.find(c => c.id.includes('desktop'));
@@ -6968,7 +7022,7 @@ class CanvasEngine {
             this.clusters.forEach(cluster => {
                 if (cluster.id === 'doc_shelf') {
                     if (cluster.collapsed === undefined) {
-                        cluster.collapsed = true; // Collapse by default
+                        cluster.collapsed = true;
                     }
                 } else if (cluster.id.startsWith('sys_cluster_')) {
                     if (cluster.collapsed === undefined) {
@@ -6977,7 +7031,7 @@ class CanvasEngine {
                 } else {
                     if (cluster.collapsed === undefined) {
                         const depth = depthMap.get(cluster.id) || 1;
-                        cluster.collapsed = depth >= 2; // Show only up to Depth 2
+                        cluster.collapsed = depth >= 2;
                     }
                 }
             });
@@ -8016,16 +8070,8 @@ class CanvasEngine {
     }
 
     _performRender() {
-        console.count("RENDER_ENTRY");
         if (!window.__renderDebug) {
             window.__renderDebug = true;
-            console.log("[RENDER_CALLER_FIRST]", new Error().stack);
-        }
-        
-        // Log all callers except the RAF loop itself to find the culprits
-        const stack = new Error().stack || "";
-        if (!stack.includes("requestAnimationFrame")) {
-            console.log("[RENDER_CALLER_DIRECT]", stack);
         }
 
         const _perfRenderStart = performance.now();
@@ -8247,7 +8293,6 @@ class CanvasEngine {
         if (this.isRendering) return;
         this.isRendering = true;
         this.isDirty = false;
-        console.time('render');
 
         const now = performance.now();
         if (!this._fpsFrames) this._fpsFrames = [];
@@ -8393,6 +8438,7 @@ class CanvasEngine {
                                 .filter(Boolean);
                             this._visibleGraphClusterIds = new Set(_visIds);
                             console.log('[VISIBLE_GRAPH_CLUSTERS]', performance.now(), this._visibleGraphClusters.length);
+                            console.log("[VISIBLE_GRAPH_RESULT]", this._visibleGraphClusters.length);
                         }
                     }
 
@@ -8432,7 +8478,7 @@ class CanvasEngine {
                         if (this._visibleGraphClusterIds && clusterId) {
                             if (!this._visibleGraphClusterIds.has(clusterId)) {
                                 if (isActivity) console.log('[ACTIVITY_REJECT]', n.id, 'reason=lod_system_a');
-                                console.log('[CLUSTER_REJECT]', n.id, clusterId);
+                                // [PERF FIX] Removed console.log('[CLUSTER_REJECT]') which caused massive GC/UI pauses when culling thousands of nodes.
                                 markReject('lodSystemA');
                                 return false;
                             }
@@ -8507,41 +8553,14 @@ class CanvasEngine {
                             collapsedSystemA: lodFilterStats.collapsedSystemA
                         }
                     });
-                    // [USER_REQUEST] Always log LOD_FILTER_STATS and AFTER_VISIBLE for debugging large projects
-                    console.log('[LOD_FILTER_STATS]', JSON.stringify(lodFilterStats, null, 2));
-                    console.log('[VISIBLE_CLUSTERS]', this._visibleGraphClusterIds ? [...this._visibleGraphClusterIds] : []);
-                    
-                    console.log({
-                        sampleNodeCluster: this.nodes && this.nodes.length > 0 ? this.nodes[0].cluster_id : null
-                    });
-
-                    // [USER_REQUEST] 6. External Ref Visibility Logs
-                    const externalTotal = (this.nodes || []).filter(n => n.layer === 'external' || n.data?.layer === 'external').length;
-                    const externalVisible = (this._visibleNodesCache || []).filter(n => n.layer === 'external' || n.data?.layer === 'external').length;
-                    console.log('[EXTERNAL_STATS]', externalTotal);
-                    console.log('[EXTERNAL_VISIBLE]', externalVisible);
-                    console.log('[EXTERNAL_REJECT_REASONS]', JSON.stringify(externalRejectReasons, null, 2));
-
-                    this.log('[AFTER_VISIBLE]', 'info', {
+                    // [PERF FIX] Removed O(N) debug logs (VISIBLE_BREAKDOWN, EXTERNAL_STATS) that freeze the UI thread on large graphs
+                    console.log('[AFTER_VISIBLE]', 'info', {
                         inputNodes: lodFilterStats.inputNodes,
                         visibleNodes: this._visibleNodesCache.length,
                         visibleClusterIds: this._visibleGraphClusterIds ? this._visibleGraphClusterIds.size : 0,
                         zoom: _zoom,
                         lodLabel: _lodLabel
                     });
-
-                    console.log(
-                      '[VISIBLE_BREAKDOWN]',
-                      {
-                          total: this._visibleNodesCache.length,
-                          external: this._visibleNodesCache.filter(n => isExternalLogic(n)).length,
-                          user: this._visibleNodesCache.filter(n => isUserLogic(n)).length,
-                          base: this._visibleNodesCache.filter(n =>
-                              !isExternalLogic(n) &&
-                              !isUserLogic(n)
-                          ).length
-                      }
-                    );
 
                     console.log(
                       '[RENDER_CACHE]',
@@ -9544,8 +9563,8 @@ class CanvasEngine {
             }
 
             for (const cluster of this.clusters) {
-                // Determine if this is a Continent (World level or child of World level)
-                const isRoot = trueRoots.has(cluster.id) || trueRoots.has(cluster.parent_id);
+                // [v0.3.34] Roots Only strictly means World Level (Depth 1)
+                const isRoot = trueRoots.has(cluster.id);
                 
                 if (isRoot) {
                     // Roots must be expanded so their children are visible
@@ -9681,31 +9700,8 @@ class CanvasEngine {
         this.clusters.forEach(function(c) { idMap.set(c.id, c); });
 
         // Build childMap from parent_id with fallback inference and create missing ancestors
-        const createMissingAncestors = (pid) => {
-            if (!pid || idMap.has(pid)) return;
-            const newCluster = {
-                id: pid,
-                label: pid.startsWith('folder_') ? '📂 ' + pid.replace('folder_', '') : pid,
-                type: 'folder', collapsed: true,
-                parent_id: null
-            };
-            let ppid = null;
-            if (pid.includes('/')) {
-                const ls = pid.lastIndexOf('/');
-                if (ls !== -1) ppid = pid.substring(0, ls);
-            } else if (pid.startsWith('folder_')) {
-                const lu = pid.lastIndexOf('_');
-                if (lu > 7) ppid = pid.substring(0, lu);
-            }
-            newCluster.parent_id = ppid;
-            
-            this.clusters.push(newCluster);
-            idMap.set(pid, newCluster);
-            
-            if (ppid && ppid !== pid) {
-                createMissingAncestors(ppid);
-            }
-        };
+        // [Phase A] disabled: 가상 노드 주입 차단 — 실제/가상 데이터 혼재로 Hierarchy/Resolver 불일치 유발
+        const createMissingAncestors = (_pid) => { return; };
 
         this.clusters.slice().forEach(c => {
             let pid = c.parent_id;
@@ -9888,11 +9884,19 @@ class CanvasEngine {
             }
         });
         
+        console.log('[TOGGLE_CHECK]', this.clusters.filter(c => c.collapsed === true).length);
+        
         this.isGraphDataDirty = true;
         this.render();
         this.saveState();
         const searchEl = document.getElementById('cluster-vis-search');
         this.renderClusterVisibilityPanel(searchEl ? searchEl.value : '');
+        
+        // [v0.3.34.8 Debug] Check if button exists or got destroyed after collapse
+        const btn = document.getElementById('btn-virtual-debug');
+        const btnLog = `[BTN_CHECK_AFTER_COLLAPSE] Exists: ${!!btn}, Tag: ${btn?.tagName}, ID: ${btn?.id}, InstanceID: ${btn?.dataset?.instanceId}`;
+        console.log(btnLog, btn);
+        if (typeof vscode !== 'undefined') vscode.postMessage({ command: 'log', level: 'info', text: btnLog });
     }
     // [v0.3.32.4 fix2] Reveal — clientWidth 기준, requestRender() 사용 (fitView 공식 동일)
     _clusterVisReveal(clusterId) {
@@ -10008,22 +10012,52 @@ class CanvasEngine {
     }
 
     saveState(fullSync = false) {
+        console.log("[WEBVIEW_SAVE_STATE]", fullSync);
+        console.log('[SAVE_COLLAPSE_CHECK]', this.clusters.filter(c => c.collapsed === true).length);
+        const stack = new Error().stack;
+        console.trace("[FRONTEND_SAVE_STATE_TRACE] saveState called! fullSync=" + fullSync);
+        if (typeof vscode !== 'undefined') {
+            vscode.postMessage({
+                command: 'log',
+                level: 'info',
+                text: '[FRONTEND_SAVE_STATE_TRACE] saveState called. Stack: ' + stack
+            });
+        }
+        
         this._lastSaveTime = Date.now();
         // VS Code 환경이면 저장을 위해 익스텐션으로 메시지 전송
         if (typeof vscode !== 'undefined') {
-            const projectState = {
-                clusters: this.clusters,
-                view: this.transform // [v0.2.36] Persist camera view
-            };
-            if (fullSync) {
-                projectState.nodes = this.nodes;
-                projectState.edges = this.edges;
+            const sendLog = (txt) => { console.log(txt); vscode.postMessage({ command: 'log', level: 'info', text: txt }); };
+            sendLog('[SAVE_A] Beginning state serialization');
+            let projectState;
+            try {
+                projectState = {
+                    clusters: this.clusters,
+                    view: this.transform // [v0.2.36] Persist camera view
+                };
+                if (fullSync) {
+                    projectState.nodes = this.nodes;
+                    projectState.edges = this.edges;
+                }
+                sendLog('[SAVE_B] State object created, size check: ' + Object.keys(projectState).length);
+            } catch (err) {
+                sendLog('[SAVE_B_ERROR] ' + err.toString());
+                return;
             }
-            console.log('[SYNAPSE] Saving state to VS Code... (fullSync: ' + fullSync + ')');
-            vscode.postMessage({
-                command: 'saveState',
-                data: projectState
-            });
+            
+            sendLog('[SYNAPSE] Saving state to VS Code... (fullSync: ' + fullSync + ')');
+            
+            try {
+                sendLog('[SAVE_C] Calling postMessage');
+                vscode.postMessage({
+                    command: 'saveState',
+                    data: projectState,
+                    panelId: window.__PANEL_ID__
+                });
+                sendLog('[SAVE_D] postMessage completed successfully');
+            } catch (err) {
+                sendLog('[SAVE_D_ERROR] postMessage threw an error! ' + err.toString());
+            }
         } else {
             // 브라우저 환경 - 스탠드얼론 서버에 저장 요청
             const projectState = {
@@ -10758,6 +10792,7 @@ class CanvasEngine {
 
     // [v0.3.33 Phase 4-D-1] Resolver: Telescope expansion → visible cluster IDs
     _computeResolverVisibleIds() {
+        console.log("[RESOLVE_VISIBLE]", this.expandedClusters ? this.expandedClusters.size : 0);
         const hierarchy = this.clusterHierarchy;
         if (!hierarchy) return null;
         const expanded = this.expandedClusters;
@@ -10787,6 +10822,12 @@ class CanvasEngine {
         console.log('[perf_engine]', 'event=resolver', 'expanded=' + expanded.size, 'visible=' + visible.size);
         console.log('[LOD_VERIFY]', 'expanded=', expanded.size, 'visible=', visible.size);
         console.log('[RESOLVER_RESULT]', performance.now(), 'visible', visible.size, 'expanded', expanded.size);
+        // [ARCH_TRACE 4/4] VISIBLE — check resolver output
+        {
+            const _archTargets = ['folder_root', 'folder_arch', 'folder_arch_alpha', 'folder_arch_alpha_include', 'folder_arch_alpha_include_asm', 'folder_arch_arc'];
+            const _visibleState = _archTargets.map(id => ({ id, visible: visible.has(id) }));
+            this.log(`[ARCH_VISIBLE] visibleState=${JSON.stringify(_visibleState)}`, 'info');
+        }
         return visible;
     }
 
@@ -10821,7 +10862,6 @@ class CanvasEngine {
             clusterSource = targetClustersSet ? Array.from(targetClustersSet) : this.clusters;
         }
         const targetClustersArray = clusterSource;
-        console.log('[TARGET_ACTIVITY_IDS]', targetClustersArray.filter(c => c.id.includes('activity')).map(c => c.id));
 
         // [USER_REQUEST] Log Roots Only details
         if (this.expandedClusters && this.expandedClusters.size === 0) {
@@ -13681,14 +13721,64 @@ function initCanvas() {
                 break;
             }
             case 'requestContextData': {
-                console.log('[WebView] 📡 Received requestContextData from Backend. Capturing snapshot for analysis...');
+                console.log("[CTX_REQUEST]", Date.now());
+                console.log('[SIM_DEBUG_UI_RECEIVED_REQUEST] 📡 Received requestContextData from Backend. Capturing snapshot...');
                 if (typeof vscode !== 'undefined') {
+                    console.time('CTX_BUILD');
                     const snap = {
-                        nodes: engine._visibleNodesCache || engine.nodes || [],
-                        edges: engine._visibleEdgesCache || engine.edges || [],
-                        clusters: engine._visibleGraphClusters || engine.clusters || []
+                        nodes: engine.nodes || [],
+                        edges: engine.edges || [],
+                        clusters: engine.clusters || []
                     };
-                    vscode.postMessage({ command: 'contextData', data: snap });
+                    console.timeEnd('CTX_BUILD');
+                    console.log(`[CTX] visibleNodes=${snap.nodes.length}, visibleEdges=${snap.edges.length}, visibleClusters=${snap.clusters.length}`);
+                    console.log("[CTX_EXPORT]", {
+                        nodes: engine.nodes?.length,
+                        edges: engine.edges?.length,
+                        clusters: engine.clusters?.length
+                    });
+                    console.time('CTX_POST');
+                    try {
+                        // [v0.3.34.8] Strip heavy WebGL properties and source code from IPC payload to prevent VS Code crash
+                        const strippedNodes = snap.nodes.map(n => {
+                            const safeData = n.data ? { ...n.data } : {};
+                            delete safeData.content;
+                            return { 
+                                id: n.id, type: n.type, role: n.role, status: n.status, 
+                                cluster_id: n.cluster_id || safeData.cluster_id, data: safeData 
+                            };
+                        });
+                        const strippedEdges = snap.edges.map(e => ({
+                            id: e.id, from: e.from, to: e.to, type: e.type, provenance: e.provenance, weight: e.weight
+                        }));
+                        // [VIRTUAL DEBUG SCOPE FIX]
+                        // _visibleGraphClusterIds = 레이아웃 엔진 내부 집합 (Collapse와 무관, 항상 전체)
+                        // 가상 디버거는 사용자가 Expand한 클러스터만 분석해야 함 → collapsed !== true 기준
+                        const visibleClusterIds = engine.clusters
+                            .filter(c => c && c.id && c.collapsed !== true && !c.id.startsWith('client::'))
+                            .map(c => c.id);
+                        const safeSnap = { 
+                            nodes: strippedNodes, 
+                            edges: strippedEdges, 
+                            clusters: snap.clusters,
+                            visibleClusterIds
+                        };
+                        console.log("[CONTEXT_VISIBLE]", safeSnap.visibleClusterIds ? safeSnap.visibleClusterIds.length : 0);
+
+                        console.log("[CTX_RESPONSE]", {
+                            visibleClusterIds: safeSnap.visibleClusterIds?.length,
+                            nodes: safeSnap.nodes.length,
+                            edges: safeSnap.edges.length
+                        });
+
+                        console.log("CTX_SIZE (Bytes):", JSON.stringify(safeSnap).length);
+                        vscode.postMessage({ command: 'contextData', data: safeSnap });
+                        console.log('[SIM_DEBUG_CONTEXT_POSTED] 🚀 Sent contextData to backend!');
+                    } catch (err) {
+                        console.error('[WebView] ❌ Failed to serialize contextData via postMessage:', err);
+                        vscode.postMessage({ command: 'log', level: 'error', message: 'ContextData serialization failed: ' + err.message });
+                    }
+                    console.timeEnd('CTX_POST');
                 }
                 break;
             }
@@ -14067,9 +14157,24 @@ function initCanvas() {
 
                 // 이슈를 노드/엣지에 매핑
                 if (message.issues) {
+                    const nodeMap = new Map();
+                    for (let i = 0; i < engine.nodes.length; i++) {
+                        nodeMap.set(engine.nodes[i].id, engine.nodes[i]);
+                    }
+
+                    // Build edge map once for O(1) lookups
+                    const edgesByFrom = new Map();
+                    for (let i = 0; i < engine.edges.length; i++) {
+                        const e = engine.edges[i];
+                        if (!edgesByFrom.has(e.from)) edgesByFrom.set(e.from, []);
+                        edgesByFrom.get(e.from).push(e);
+                    }
+
                     message.issues.forEach(issue => {
+                        const issueNodeSet = new Set(issue.nodeIds);
+                        
                         issue.nodeIds.forEach(nodeId => {
-                            const node = engine.nodes.find(n => n.id === nodeId);
+                            const node = nodeMap.get(nodeId);
                             if (node) {
                                 // [v0.2.21] 결정론적 위반 → Tombstone
                                 if (issue.message && issue.message.includes('Tombstone')) {
@@ -14092,20 +14197,21 @@ function initCanvas() {
 
                             // 심각한 구조적 결함은 '엣지 파손(Fracture)'으로 표현
                             if (issue.type === 'circular' || issue.type === 'schema-violation') {
-                                engine.edges.forEach(e => {
-                                    if (issue.nodeIds.includes(e.from) && issue.nodeIds.includes(e.to)) {
+                                const fromEdges = edgesByFrom.get(nodeId) || [];
+                                for (let k = 0; k < fromEdges.length; k++) {
+                                    const e = fromEdges[k];
+                                    if (issueNodeSet.has(e.to)) {
                                         e.isCircular = true;
                                         e.type = 'broken_fracture';
                                     }
-                                });
+                                }
                             }
                             // [v0.2.21] 결정론적 위반 노드의 출력 엣지도 Fracture
                             if (issue.message && issue.message.includes('Tombstone')) {
-                                engine.edges.forEach(e => {
-                                    if (e.from === nodeId) {
-                                        e.isDeterministicFracture = true;
-                                    }
-                                });
+                                const fromEdges = edgesByFrom.get(nodeId) || [];
+                                for (let k = 0; k < fromEdges.length; k++) {
+                                    fromEdges[k].isDeterministicFracture = true;
+                                }
                             }
                         });
                     });
@@ -14139,16 +14245,20 @@ function initCanvas() {
 
                 // Apply necrosis + cyan scanner aura to VS Code error nodes
                 impact.necrosisNodeIds.forEach(nid => {
-                    const node = engine.nodes.find(n => n.id === nid);
+                    const node = engine.nodeMap ? engine.nodeMap.get(nid) : engine.nodes.find(n => n.id === nid);
                     if (node) {
                         node.status = 'error_necrosis';
                         node.isVirtualDebugError = true;
                     }
                 });
 
+                // [PERF FIX] Use temporary Map to avoid O(K * E) loop on 300k+ edges
+                const edgeById = new Map();
+                engine.edges.forEach(e => edgeById.set(e.id, e));
+
                 // [Fix B2] Apply VD Fracture (Ghost Purple) to broken edges
                 impact.fractureEdgeIds.forEach(eid => {
-                    const edge = engine.edges.find(e => e.id === eid);
+                    const edge = edgeById.get(eid);
                     if (edge) {
                         edge.isVirtualDebugFracture = true;
                         edge.isDeterministicFracture = true; // Reuse Ghost Purple fracture path
@@ -14281,13 +14391,67 @@ function initCanvas() {
         }
     });
 
-    // [v0.3.34.6 Fix] Virtual Debug Button Listeners correctly moved here
-    document.getElementById('btn-virtual-debug')?.addEventListener('click', () => {
-        console.log('[WebView] 🚀 Simulation Debug button clicked! Sending command to backend...');
-        if (typeof vscode !== 'undefined') {
-            vscode.postMessage({ command: 'virtualDebug' });
+    // [v0.3.34.8 Debug] Global click trap to catch what is ACTUALLY being clicked (overlay check)
+    document.addEventListener('click', (e) => {
+        const target = e.target;
+        const targetId = target?.id || 'NO_ID';
+        const targetClass = target?.className || 'NO_CLASS';
+        if (targetId.includes('virtual-debug') || target.closest('#btn-virtual-debug')) {
+            console.log('[GLOBAL_CLICK_TRAP] Clicked ON or NEAR virtual debug button! Target:', targetId, targetClass);
+            if (typeof vscode !== 'undefined') vscode.postMessage({ command: 'log', level: 'info', text: `[GLOBAL_CLICK_TRAP] Clicked on: ${target.tagName}#${targetId}.${targetClass}` });
         }
-    });
+    }, true); // useCapture to catch it before it stops propagating
+
+    // [v0.3.34.6 Fix] Virtual Debug Button Listeners correctly moved here
+    const vdBtn = document.getElementById('btn-virtual-debug');
+    if (vdBtn) {
+        vdBtn.dataset.instanceId = "ORIGINAL_" + Math.random().toString(36).substring(2);
+        console.log(`[VD_INIT] Assigned instanceId to btn-virtual-debug: ${vdBtn.dataset.instanceId}`);
+        if (typeof vscode !== 'undefined') vscode.postMessage({ command: 'log', level: 'info', text: `[VD_INIT] Assigned instanceId: ${vdBtn.dataset.instanceId}` });
+        
+        vdBtn.addEventListener('click', () => {
+            console.log('[VIRTUAL_DEBUG_CLICKED]');
+
+        const _collapsedCount = engine.clusters.filter(c => c.collapsed === true).length;
+        console.log(`[VD_COLLAPSE_CHECK] total=${engine.clusters.length} collapsed=${_collapsedCount}`);
+        console.log(`[VD_CLUSTER_SAMPLE]`, engine.clusters.filter(c => c.collapsed === true).slice(0, 5).map(c => c.id));
+
+        const precheckLog = `[VD_PRECHECK] selectedNodes: ${engine.selectedNodes?.length}, selectedClusters: ${engine.selectedClusters?.length}, visibleClusterIds: ${engine.visibleClusterIds?.size || engine._visibleGraphClusters?.length}`;
+        console.log(precheckLog);
+        
+        try {
+            console.log('[VD_SEND_1]');
+            if (typeof vscode !== 'undefined') {
+                console.log('[VD_SEND_2]');
+                vscode.postMessage({ command: 'log', level: 'info', text: '[VIRTUAL_DEBUG_CLICKED] Button click listener fired! ' + precheckLog });
+                console.log('[VD_SEND_3]');
+            }
+            console.log('[VD_SEND_4]');
+        } catch (e) {
+            console.error('[VD_SEND_EXCEPTION]', e);
+            console.error('[VD_SEND_STACK]', e?.stack);
+        }
+
+        console.log('[VD-1]', Date.now());
+        console.log('[SIM_DEBUG_CLICK_START] 🚀 Simulation Debug button clicked in UI!');
+        
+        console.log("[SIM_DEBUG_TARGET]", typeof vscode !== 'undefined' ? vscode : 'undefined', typeof vscode !== 'undefined', typeof vscode !== 'undefined' ? typeof vscode.postMessage : 'undefined');
+        console.log("[SIM_DEBUG_STATE]", engine.nodes?.length, engine.edges?.length, engine._visibleNodesCache?.length, engine._visibleGraphClusters?.length);
+        
+        if (typeof window.vscode !== 'undefined') {
+            const payload = { command: 'virtualDebug', timestamp: Date.now(), panelId: window.__PANEL_ID__ };
+            
+            console.log('[SIM_DEBUG_VSCODE_CHECK] Is window.vscode valid?:', typeof window.vscode.postMessage === 'function');
+            
+            const ok = window.vscode.postMessage(payload);
+            console.log('[VIRTUAL_DEBUG_SENT]');
+            console.log('[SIM_DEBUG_POSTED] 🚀 Sent virtualDebug command to backend!', ok);
+        } else {
+            console.log('[SIM_DEBUG_ERROR] vscode API is undefined, cannot postMessage');
+        }
+        console.log('[SIM_DEBUG_AFTER_POST] 🚀 Handler finished');
+        });
+    }
 
     document.getElementById('btn-sim-necrosis')?.addEventListener('click', () => {
         engine.selectedNodes.forEach(node => {

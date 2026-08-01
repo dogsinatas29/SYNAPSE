@@ -26,7 +26,7 @@ export class EdgeBuilder {
                 data: {},
                 intelligence: {},
                 visual: { color: '#888', thickness: 1 },
-                provenance: ref.provenance
+                provenance: ref.provenance ?? 'UNKNOWN_RUNTIME'
             };
             
             edges.push(newEdge);

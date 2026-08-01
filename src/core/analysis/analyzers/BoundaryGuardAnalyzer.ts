@@ -31,15 +31,21 @@ export class BoundaryGuardAnalyzer implements ArchitectureAnalyzer {
         const edges = state.edges || [];
         const nodeMap = context.nodeMap || new Map<string, Node>(nodes.map(n => [n.id, n]));
 
+        const bypassCache = new Map<string, boolean>();
+
         edges.forEach(edge => {
             const sourceNode = nodeMap.get(edge.from);
             const targetNode = nodeMap.get(edge.to);
 
             if (!sourceNode || !targetNode) return;
 
-            let isBypassed = false;
-            if (sourceNode.data?.content && bypassRegex.test(sourceNode.data.content)) {
-                isBypassed = true;
+            let isBypassed = bypassCache.get(sourceNode.id);
+            if (isBypassed === undefined) {
+                isBypassed = false;
+                if (sourceNode.data?.content && bypassRegex.test(sourceNode.data.content)) {
+                    isBypassed = true;
+                }
+                bypassCache.set(sourceNode.id, isBypassed);
             }
 
             const sourceLayer = sourceNode.data?.layer !== undefined ? sourceNode.data.layer : 1;

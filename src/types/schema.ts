@@ -64,6 +64,7 @@ export interface Edge {
     data?: any;
     intelligence?: any;
     visual?: any;
+    provenance?: EdgeProvenance;
     [key: string]: any;
 }
 
@@ -144,6 +145,7 @@ export interface SynapseWorkspace {
 export interface ClusterBridge {
     sourceCluster: string;
     targetCluster: string;
+    edgeIds: string[];
     totalEdges: number;
     outboundEdges?: number; // from source to target
     inboundEdges?: number;  // from target to source

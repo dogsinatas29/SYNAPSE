@@ -111,6 +111,11 @@ export class CanvasEngine {
     return this.stateManager.getRawSnapshot();
   }
 
+  // [Performance] Fast O(1) way to check approximate node count
+  public getEstimatedNodeCount(): number {
+    return this.stateManager.getEstimatedNodeCount();
+  }
+
   public loadInitialState(state: any) {
     this.stateManager.load(state);
   }
@@ -125,6 +130,11 @@ export class CanvasEngine {
 
   public getRetentionDiagnostics() {
     return this.stateManager.getRetentionDiagnostics();
+  }
+
+  // [v0.3.34.9] Batch cluster sync: O(N) instead of O(N × 500ms)
+  public batchAddClusters(clusters: any[]): void {
+    this.stateManager.batchAddClusters(clusters);
   }
 }
 

@@ -2,9 +2,20 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { AggregatedReportBundle, ReasonedReportBundle } from './types';
 import { ProjectState } from '../../types/schema';
+import { InterventionResult } from './InterventionSimulator';
 
 export class ReportExporter {
     public static export(bundle: ReasonedReportBundle, state: ProjectState, projectRoot: string): string {
+        // --- PROVENANCE AUDIT: REPORT_EXPORTER ---
+        const exportProvStats: Record<string, number> = {};
+        state.edges?.forEach(e => {
+            const p = e.provenance || 'UNDEFINED';
+            exportProvStats[p] = (exportProvStats[p] || 0) + 1;
+        });
+        const Logger = require('../../utils/Logger').Logger;
+        Logger.info(`[PROVENANCE_AUDIT] [REPORT_EXPORTER] Total Edges: ${state.edges?.length || 0} | Stats: ${JSON.stringify(exportProvStats)}`);
+        // -----------------------------------------
+        
         const reportDir = path.join(projectRoot, 'report');
         if (!fs.existsSync(reportDir)) {
             fs.mkdirSync(reportDir, { recursive: true });
@@ -38,29 +49,114 @@ export class ReportExporter {
         content += isKo 
             ? `## 🚀 Executive Summary (권장 조사 순서)\n`
             : `## 🚀 Executive Summary (Recommended Investigation Order)\n`;
-        
-        // 1. Highest Risk Hub
+
+        // 1. Critical Intervention (Tier 0)
+        let criticalInterventions = bundle.interventions?.filter((i: InterventionResult) => i.absoluteSccReduction >= 10 && i.aig >= 50) || [];
+        if (criticalInterventions.length > 0) {
+            const ci = criticalInterventions.sort((a: InterventionResult, b: InterventionResult) => b.absoluteSccReduction - a.absoluteSccReduction)[0];
+            content += isKo 
+                ? `1. 🔥 **Critical Intervention**: [Edges: ${ci.targetEdges.length}개 절단] (SCC ${ci.beforeSccSize} → ${ci.afterSccSize}, AIG: ${ci.aig.toFixed(1)}%)\n` 
+                : `1. 🔥 **Critical Intervention**: [Edges: ${ci.targetEdges.length} cut] (SCC ${ci.beforeSccSize} → ${ci.afterSccSize}, AIG: ${ci.aig.toFixed(1)}%)\n`;
+        } else {
+            content += `1. 🔥 **Critical Intervention**: N/A\n`;
+        }
+
+        // 2. Quick Win
+        let quickWins = bundle.interventions?.filter((i: InterventionResult) => i.adjustedRoi > 5 && i.structuralCost.totalCost < 5 && i.confidence.weighted >= 80 && i.absoluteSccReduction >= 20) || [];
+        if (quickWins.length > 0) {
+            const qw = quickWins.sort((a: InterventionResult, b: InterventionResult) => b.adjustedRoi - a.adjustedRoi)[0];
+            content += isKo 
+                ? `2. ⚡ **Quick Win**: [Edges: ${qw.targetEdges.length}개 절단] (Cost: ${qw.structuralCost.totalCost}, ROI: ${qw.adjustedRoi}, Conf: ${qw.confidence.weighted}%)\n` 
+                : `2. ⚡ **Quick Win**: [Edges: ${qw.targetEdges.length} cut] (Cost: ${qw.structuralCost.totalCost}, ROI: ${qw.adjustedRoi}, Conf: ${qw.confidence.weighted}%)\n`;
+        } else {
+            content += `2. ⚡ **Quick Win**: N/A\n`;
+        }
+
+        // 3. Highest ROI Intervention
+        let topRois = bundle.interventions?.sort((a: InterventionResult, b: InterventionResult) => b.adjustedRoi - a.adjustedRoi) || [];
+        if (topRois.length > 0) {
+            const topRoi = topRois[0];
+            content += isKo 
+                ? `3. 🚀 **Highest ROI Intervention**: [Edges: ${topRoi.targetEdges.length}개 절단] (ROI: ${topRoi.adjustedRoi}, AIG: ${topRoi.compositeAig.toFixed(1)}%, Cost: ${topRoi.structuralCost.totalCost})\n` 
+                : `3. 🚀 **Highest ROI Intervention**: [Edges: ${topRoi.targetEdges.length} cut] (ROI: ${topRoi.adjustedRoi}, AIG: ${topRoi.compositeAig.toFixed(1)}%, Cost: ${topRoi.structuralCost.totalCost})\n`;
+        } else {
+            content += `3. 🚀 **Highest ROI Intervention**: N/A\n`;
+        }
+
+        // 4. Largest SCC
+        if (bundle.sccs && bundle.sccs.length > 0) {
+            const largest = bundle.sccs[0];
+            content += isKo
+                ? `4. **Largest SCC**: ${largest.nodeIds.length}개 노드 순환 참조\n`
+                : `4. **Largest SCC**: ${largest.nodeIds.length} nodes cyclic reference\n`;
+        } else {
+            content += `4. **Largest SCC**: N/A\n`;
+        }
+
+        // 5. Strongest Cluster Bridge
+        if (bundle.clusterBridges && bundle.clusterBridges.length > 0) {
+            const strongestBridge = [...bundle.clusterBridges].sort((a, b) => b.couplingStrength - a.couplingStrength)[0];
+            content += isKo
+                ? `5. **Strongest Cluster Bridge**: \`${strongestBridge.sourceCluster}\` ↔ \`${strongestBridge.targetCluster}\` (강도: ${strongestBridge.couplingStrength})\n`
+                : `5. **Strongest Cluster Bridge**: \`${strongestBridge.sourceCluster}\` ↔ \`${strongestBridge.targetCluster}\` (Strength: ${strongestBridge.couplingStrength})\n`;
+        } else {
+            content += `5. **Strongest Cluster Bridge**: N/A\n`;
+        }
+
+        // 6. Highest Risk Hub
         if (bundle.auditLog?.topHubsA && bundle.auditLog.topHubsA.length > 0) {
             const topHub = bundle.auditLog.topHubsA[0];
             const link = this.extractNodeLinks([topHub.id], state.nodes || []);
             content += isKo
-                ? `1. **Highest Risk Hub**: ${link} (위험도: ${topHub.stability}%)\n`
-                : `1. **Highest Risk Hub**: ${link} (Stability: ${topHub.stability}%)\n`;
+                ? `6. **Highest Risk Hub**: ${link} (위험도: ${topHub.stability}%)\n`
+                : `6. **Highest Risk Hub**: ${link} (Stability: ${topHub.stability}%)\n`;
         } else {
-            content += `1. **Highest Risk Hub**: N/A\n`;
+            content += `6. **Highest Risk Hub**: N/A\n`;
         }
         
-        // 2. Strongest Cluster Bridge
-        if (bundle.clusterBridges && bundle.clusterBridges.length > 0) {
-            const strongestBridge = [...bundle.clusterBridges].sort((a, b) => b.couplingStrength - a.couplingStrength)[0];
-            content += isKo
-                ? `2. **Strongest Cluster Bridge**: \`${strongestBridge.sourceCluster}\` ↔ \`${strongestBridge.targetCluster}\` (강도: ${strongestBridge.couplingStrength}, 밀도: ${strongestBridge.couplingDensity})\n`
-                : `2. **Strongest Cluster Bridge**: \`${strongestBridge.sourceCluster}\` ↔ \`${strongestBridge.targetCluster}\` (Strength: ${strongestBridge.couplingStrength}, Density: ${strongestBridge.couplingDensity})\n`;
-        } else {
-            content += `2. **Strongest Cluster Bridge**: N/A\n`;
-        }
+        // --- 2. TOP 20 INTERVENTIONS ---
+        content += isKo ? `\n## ⚔️ Top 20 Interventions (가상 절단 시뮬레이션 결과)\n\n` : `\n## ⚔️ Top 20 Interventions (Demolition Simulation)\n\n`;
         
-        // 3. Largest SCC
+        let allInterventions = bundle.interventions?.sort((a: InterventionResult, b: InterventionResult) => {
+            // [v0.3.34.9 FIX] 1차: SCC 실제 감소량 (아키텍트 1순위)
+            // 2차: adjustedRoi (Confidence/Cost 반영)
+            if (b.absoluteSccReduction !== a.absoluteSccReduction) return b.absoluteSccReduction - a.absoluteSccReduction;
+            return b.adjustedRoi - a.adjustedRoi;
+        }) || [];
+        
+        // 1차 필터링: Root Cause (hub/bridge/scc) 기준 중복 랭킹 제거 (Ranking Pollution 방지)
+        const rootCauseMap = new Map<string, InterventionResult[]>();
+        allInterventions.forEach(inv => {
+            if (!rootCauseMap.has(inv.rootCauseId)) rootCauseMap.set(inv.rootCauseId, []);
+            rootCauseMap.get(inv.rootCauseId)!.push(inv);
+        });
+        const uniqueInterventions = Array.from(rootCauseMap.values()).map(group => group[0]).sort((a, b) => {
+            if (b.absoluteSccReduction !== a.absoluteSccReduction) return b.absoluteSccReduction - a.absoluteSccReduction;
+            return b.adjustedRoi - a.adjustedRoi;
+        });
+
+        uniqueInterventions.slice(0, 20).forEach((inv: InterventionResult, index: number) => {
+            content += `### #${index + 1} Target [${inv.targetTier}] (Rank: ${inv.candidateRank})\n`;
+            content += `- **Reason**: ${inv.targetReason}\n`;
+            content += `- **Edges to Cut**: ${inv.targetEdges.length}개\n`;
+            content += `- **Absolute SCC Reduction**: ${inv.absoluteSccReduction} (${inv.beforeSccSize} → ${inv.afterSccSize})\n`;
+            content += `- **AIG**: ${inv.aig.toFixed(1)}%\n`;
+            content += `- **Structural Cost**: ${inv.structuralCost.totalCost} (Files: ${inv.structuralCost.affectedFiles}, Clusters: ${inv.structuralCost.affectedClusters})\n`;
+            content += `- **Confidence**: ${inv.confidence.weighted}% (Min: ${inv.confidence.minimum}%)\n`;
+            content += `- **Adjusted ROI**: ${inv.adjustedRoi}\n`;
+            if (inv.astRecommended) {
+                content += `- **AST Microscope**: 🔍 ${inv.astReason}\n`;
+            }
+            
+            const siblings = rootCauseMap.get(inv.rootCauseId)!.length - 1;
+            if (siblings > 0) {
+                content += `- **Alternatives**: 동일 원인(${inv.rootCauseId})의 하위 대안 ${siblings}개 생략됨\n`;
+            }
+            
+            content += `- **Decision**: ${inv.decision}\n\n`;
+        });
+        
+        // --- 3. Largest SCC ---
         if (bundle.auditLog?.sccSize_A !== undefined) {
             content += isKo
                 ? `3. **Largest SCC (Raw Runtime)**: \`${bundle.auditLog.sccSize_A} 개 노드\`\n`

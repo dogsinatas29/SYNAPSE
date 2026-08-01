@@ -30,8 +30,9 @@ export class CycleAnalyzer implements ArchitectureAnalyzer {
 
             const neighbors = adj.get(u) || [];
             for (const v of neighbors) {
+                if (cycles.length >= 100) break; // [PERF FIX] Prevent exponential recursion explosion on huge graphs
                 if (!visited.has(v)) {
-                    findCycles(v, [...path]);
+                    findCycles(v, path);
                 } else if (recStack.has(v)) {
                     const cycleStartIdx = path.indexOf(v);
                     if (cycleStartIdx !== -1) {
@@ -49,9 +50,12 @@ export class CycleAnalyzer implements ArchitectureAnalyzer {
             path.pop();
         };
 
-        logicNodes.forEach(n => {
-            if (!visited.has(n.id)) findCycles(n.id, []);
-        });
+        for (const node of logicNodes) {
+            if (cycles.length >= 100) break;
+            if (!visited.has(node.id)) {
+                findCycles(node.id, []);
+            }
+        }
 
         // 결과 생성
         const nodeMap = context.nodeMap || new Map<string, Node>(nodes.map(n => [n.id, n]));

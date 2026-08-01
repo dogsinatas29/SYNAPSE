@@ -26,9 +26,10 @@ export class InterventionEngine {
         for (const scc of massiveSccs) {
             console.log(`\n[InterventionEngine] Analyzing SCC: ${scc.id} (${scc.nodeIds.length} nodes)`);
             
+            const sccNodeSet = new Set(scc.nodeIds);
             // Find edges strictly inside this SCC
             const sccEdges = edges.filter(e => 
-                scc.nodeIds.includes(e.from) && scc.nodeIds.includes(e.to)
+                sccNodeSet.has(e.from) && sccNodeSet.has(e.to)
             );
             
             // 1. Label Propagation Algorithm (LPA) to detect internal communities
@@ -40,12 +41,24 @@ export class InterventionEngine {
             // - Cross-Community Edges (from LPA)
             // - Edges connected to Top 30% Hubs
             // - Low-degree gateway edges (Articulation-like)
+            // Build Adjacency Map for O(1) degree lookup
+            const degreeMap = new Map<string, number>();
+            for (const id of scc.nodeIds) {
+                degreeMap.set(id, 0);
+            }
+            for (const e of sccEdges) {
+                if (degreeMap.has(e.from)) degreeMap.set(e.from, degreeMap.get(e.from)! + 1);
+                if (degreeMap.has(e.to)) degreeMap.set(e.to, degreeMap.get(e.to)! + 1);
+            }
+
             const nodeDegrees = [...scc.nodeIds]
-                .map(id => ({ id, degree: this.getNodeDegree(id, sccEdges) }))
+                .map(id => ({ id, degree: degreeMap.get(id) || 0 }))
                 .sort((a, b) => b.degree - a.degree);
             
             const hubLimit = Math.max(3, Math.floor(scc.nodeIds.length * 0.3));
             const topHubs = nodeDegrees.slice(0, hubLimit).map(n => n.id);
+
+            const topHubsSet = new Set(topHubs);
 
             const lowDegreeNodes = new Set(nodeDegrees.filter(n => n.degree < 5).map(n => n.id));
             
@@ -55,7 +68,7 @@ export class InterventionEngine {
 
             let potentialBridges = sccEdges.filter(e => {
                 const isCrossCommunity = communities.get(e.from) !== communities.get(e.to);
-                const isHubEdge = topHubs.includes(e.from) || topHubs.includes(e.to);
+                const isHubEdge = topHubsSet.has(e.from) || topHubsSet.has(e.to);
                 const isLowDegreeGate = lowDegreeNodes.has(e.from) || lowDegreeNodes.has(e.to);
                 
                 if (isCrossCommunity) crossCount++;
@@ -109,7 +122,18 @@ export class InterventionEngine {
                 // Calculate reduction percentages
                 const sccReductionPct = ((originalNodeCount - maxRemainingNodeCount) / originalNodeCount) * 100;
                 
-                const newTotalInternalEdges = virtualSccs.reduce((acc, vscc) => acc + this.countInternalEdges(vscc, virtualEdges), 0);
+                const nodeToVscc = new Map<string, string>();
+                for (const vscc of virtualSccs) {
+                    for (const id of vscc.nodeIds) nodeToVscc.set(id, vscc.id);
+                }
+                let newTotalInternalEdges = 0;
+                for (const e of virtualEdges) {
+                    const fromVscc = nodeToVscc.get(e.from);
+                    if (fromVscc && fromVscc === nodeToVscc.get(e.to)) {
+                        newTotalInternalEdges++;
+                    }
+                }
+                
                 const edgeReductionPct = originalEdgesCount === 0 ? 0 : ((originalEdgesCount - newTotalInternalEdges) / originalEdgesCount) * 100;
                 
                 // Add Fragment Count as a fragmentation bonus (+1.5 points per extra fragment)
@@ -156,10 +180,12 @@ export class InterventionEngine {
     }
     
     private getNodeDegree(nodeId: string, edges: Edge[]): number {
+        // [DEPRECATED] Use pre-calculated degreeMap instead. Left for compatibility if needed elsewhere.
         return edges.filter(e => e.from === nodeId || e.to === nodeId).length;
     }
     
     private countInternalEdges(scc: SccCluster, edges: Edge[]): number {
+        // [DEPRECATED] Use single pass O(E) map instead.
         const set = new Set(scc.nodeIds);
         let count = 0;
         for (const e of edges) {
@@ -169,24 +195,27 @@ export class InterventionEngine {
     }
     
     private buildFragments(virtualSccs: SccCluster[], virtualEdges: Edge[]): FragmentInfo[] {
-        return virtualSccs.map(vscc => {
-            // Find top 2 representative nodes by degree
-            const inDegrees = new Map<string, number>();
-            const outDegrees = new Map<string, number>();
-            const set = new Set(vscc.nodeIds);
-            
+        const inDegrees = new Map<string, number>();
+        const outDegrees = new Map<string, number>();
+        const nodeToVscc = new Map<string, string>();
+        
+        for (const vscc of virtualSccs) {
             for (const id of vscc.nodeIds) {
                 inDegrees.set(id, 0);
                 outDegrees.set(id, 0);
+                nodeToVscc.set(id, vscc.id);
             }
-            
-            for (const e of virtualEdges) {
-                if (set.has(e.from) && set.has(e.to)) {
-                    outDegrees.set(e.from, outDegrees.get(e.from)! + 1);
-                    inDegrees.set(e.to, inDegrees.get(e.to)! + 1);
-                }
+        }
+        
+        for (const e of virtualEdges) {
+            const fromVscc = nodeToVscc.get(e.from);
+            if (fromVscc && fromVscc === nodeToVscc.get(e.to)) {
+                outDegrees.set(e.from, outDegrees.get(e.from)! + 1);
+                inDegrees.set(e.to, inDegrees.get(e.to)! + 1);
             }
-            
+        }
+        
+        return virtualSccs.map(vscc => {
             const degreeList = vscc.nodeIds.map(id => {
                 let degree = inDegrees.get(id)! + outDegrees.get(id)!;
                 if (id.endsWith('index.ts') || id.endsWith('index.js') || id.endsWith('exports.ts')) {

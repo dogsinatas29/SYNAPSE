@@ -90,6 +90,17 @@ export class DataPipeline {
         }
       }
 
+      // --- PROVENANCE AUDIT: SCANNER ---
+      const scannerProvStats: Record<string, number> = {};
+      summaries.forEach(s => {
+          s.summary.references.forEach(r => {
+              const p = r.provenance || 'UNDEFINED';
+              scannerProvStats[p] = (scannerProvStats[p] || 0) + 1;
+          });
+      });
+      Logger.info(`[PROVENANCE_AUDIT] [SCANNER] Total References: ${summaries.reduce((acc, s) => acc + s.summary.references.length, 0)} | Stats: ${JSON.stringify(scannerProvStats)}`);
+      // ---------------------------------
+
       // [v0.3.30] Populate SymbolIndex
       if (projectRoot) {
         const symbolIndex = SymbolIndex.getInstance();
@@ -205,6 +216,15 @@ export class DataPipeline {
       const edgeBuilderResult = EdgeBuilder.build(expansionResult.expandedReferences);
       console.timeEnd('[PIPELINE] edgeBuilder');
       for (const edge of edgeBuilderResult.edges) edges.push(edge);
+      
+      // --- PROVENANCE AUDIT: EDGE_BUILDER ---
+      const edgeProvStats: Record<string, number> = {};
+      edgeBuilderResult.edges.forEach(e => {
+          const p = e.provenance || 'UNDEFINED';
+          edgeProvStats[p] = (edgeProvStats[p] || 0) + 1;
+      });
+      Logger.info(`[PROVENANCE_AUDIT] [EDGE_BUILDER] Total Edges: ${edgeBuilderResult.edges.length} | Stats: ${JSON.stringify(edgeProvStats)}`);
+      // --------------------------------------
       
       // Update pipeline diagnostics
       for (const [mappedType, count] of edgeBuilderResult.edgeTypeCount.entries()) {
@@ -326,8 +346,12 @@ export class DataPipeline {
             // 1. Aggressive Branch Promotion (nodeCount <= 2)
             // If a cluster has very few direct nodes, it's not worth being a separate box.
             // We promote its nodes and children to its parent.
+            // [Phase B.5] 조건문 직전 — 후보군 전체 출력
+            console.log('[PROMOTION_CANDIDATE]', c.id, 'parent=', c.parent_id, 'nodes:', myNodes.length, 'children:', childClusters.length, 'depth:', depth);
             if (myNodes.length <= 2) {
                 const parentId = c.parent_id;
+                // [Phase B.5] 조건 진입 — 실제 승격 대상 출력
+                console.log('[PROMOTION_TARGET]', c.id, 'parent=', c.parent_id, 'nodes=', myNodes.length, 'children=', childClusters.length);
                 if (parentId) {
                     // Move my nodes to parent
                     myNodes.forEach(n => {
@@ -337,6 +361,8 @@ export class DataPipeline {
                     
                     // Move my children to parent
                     childClusters.forEach(child => {
+                        // [Phase B.5] 재연결 직전 — old/new parent_id 출력
+                        console.log('[PROMOTION_REPARENT]', child.id, 'old=', child.parent_id, 'new=', parentId);
                         child.parent_id = parentId;
                         // Prepend my name to child's name to preserve path visually
                         const myName = c.label.replace('📂 ', '').replace(/\[.*\]\s*/, '');
@@ -345,7 +371,10 @@ export class DataPipeline {
                         }
                     });
                     
+                    // [Phase B.5] 삭제 직전 — 실제 제거 확인
+                    console.log('[PROMOTION_DELETE]', c.id, 'parent=', c.parent_id, 'children=', childClusters.length);
                     clusters.splice(i, 1);
+                    console.log('[PROMOTION_REMOVED]', c.id, 'nodes:', myNodes.length, 'children:', childClusters.length);
                     collapseCount++;
                     collapseChanged = true;
                     continue;
@@ -365,6 +394,8 @@ export class DataPipeline {
                         if (n.data) n.data.cluster_id = child.id;
                     });
                     
+                    // [Phase B.5] Chain 재연결 직전 — old/new parent_id 출력
+                    console.log('[CHAIN_REPARENT]', child.id, 'old=', child.parent_id, 'new=', parentId);
                     // Bypass current cluster
                     child.parent_id = parentId;
                     

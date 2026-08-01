@@ -17,11 +17,25 @@ export class ClusterBridgeAnalyzer {
     }
 
     public static analyzeVisibleClusters(targetClusterIds: string[], nodes: Node[], edges: Edge[], clusters?: Cluster[]): ClusterBridge[] {
+        console.time('[COUPLING_TOTAL]');
+        console.log('[COUPLING_RAW]', {
+            targetClusters: targetClusterIds.length,
+            nodes: nodes.length,
+            edges: edges.length,
+            clusters: clusters?.length
+        });
+        if (targetClusterIds.length > 100) {
+            console.warn(`[ClusterBridgeAnalyzer] WARNING: ${targetClusterIds.length} clusters — proceeding with edge-based analysis.`);
+            // [v0.3.34.8] Guard disabled for performance measurement
+            // return [];
+        }
+
         const bridges: ClusterBridge[] = [];
         
-        // Map node ID to the Set of cluster IDs it belongs to (target clusters only)
+        // Map node ID to the Set of cluster IDs it belongs to (target clusters AND all other clusters)
         const nodeToClusters = new Map<string, Set<string>>();
         const activeClusterSet = new Set(targetClusterIds);
+        const isFiltering = targetClusterIds.length > 0;
 
         const parentMap = new Map<string, string>();
         if (clusters) {
@@ -30,15 +44,15 @@ export class ClusterBridgeAnalyzer {
             });
         }
 
+        console.time('[COUPLING_NODEMAP]');
         for (const node of nodes) {
             if (node.cluster_id && typeof node.cluster_id === 'string') {
                 let currentId = node.cluster_id;
                 const belongsTo = new Set<string>();
                 
                 while (currentId) {
-                    if (activeClusterSet.has(currentId)) {
-                        belongsTo.add(currentId);
-                    }
+                    // Collect ALL clusters the node belongs to
+                    belongsTo.add(currentId);
                     const exactParent = parentMap.get(currentId);
                     if (exactParent) {
                         currentId = exactParent;
@@ -64,10 +78,13 @@ export class ClusterBridgeAnalyzer {
                 }
             }
         }
+        console.timeEnd('[COUPLING_NODEMAP]');
+        console.log('[COUPLING_NODE_MAP]', { mappedNodes: nodeToClusters.size, totalNodes: nodes.length });
 
-        // Bridge map: "sourceId||targetId" -> Edge[]
-        const bridgeMap = new Map<string, Edge[]>();
+        // Bridge map: "sourceId||targetId" -> { edges: Edge[], couplingStrength: number, totalEdges: number }
+        const bridgeMap = new Map<string, { edges: Edge[], couplingStrength: number, totalEdges: number }>();
 
+        console.time('[COUPLING_BRIDGE]');
         for (const edge of edges) {
             if (!edge.from || !edge.to) continue;
             
@@ -81,33 +98,54 @@ export class ClusterBridgeAnalyzer {
                 for (const t of targetClusters) {
                     if (s === t) continue; // Skip internal edges of the same cluster
                     
+                    // If filtering, AT LEAST ONE cluster must be in the active target set
+                    if (isFiltering && !activeClusterSet.has(s) && !activeClusterSet.has(t)) {
+                        continue;
+                    }
+                    
                     // Consistent key for undirected bridge accumulation
                     const key = s < t ? `${s}||${t}` : `${t}||${s}`;
-                    let bridgeEdges = bridgeMap.get(key);
-                    if (!bridgeEdges) {
-                        bridgeEdges = [];
-                        bridgeMap.set(key, bridgeEdges);
+                    let bridgeInfo = bridgeMap.get(key);
+                    if (!bridgeInfo) {
+                        bridgeInfo = { edges: [], couplingStrength: 0, totalEdges: 0 };
+                        bridgeMap.set(key, bridgeInfo);
                     }
-                    bridgeEdges.push(edge);
+                    bridgeInfo.couplingStrength += (edge.weight || 1);
+                    bridgeInfo.totalEdges++;
+                    // [GC Thrashing 방지] 엣지 객체를 무한정 담으면 38만 x 수백만 계층 시 메모리 2GB 초과
+                    if (bridgeInfo.edges.length < 10) {
+                        bridgeInfo.edges.push(edge);
+                    }
                 }
             }
         }
+        console.timeEnd('[COUPLING_BRIDGE]');
+        let totalBridgeEdges = 0;
+        for (const info of bridgeMap.values()) {
+            totalBridgeEdges += info.totalEdges;
+        }
+        const avgEdgesPerBridge = bridgeMap.size > 0 ? (totalBridgeEdges / bridgeMap.size).toFixed(2) : '0';
+        console.log('[COUPLING_BRIDGES]', { bridgePairs: bridgeMap.size, bridgeEdges: totalBridgeEdges, avgEdgesPerBridge });
 
+        console.time('[COUPLING_STATS]');
         // Now compute stats for each pair
-        for (const [key, bridgeEdges] of bridgeMap.entries()) {
+        for (const [key, info] of bridgeMap.entries()) {
             const [s, t] = key.split('||');
-            const bridge = this.computeBridgeStats(s, t, bridgeEdges, nodeToClusters);
+            const bridge = this.computeBridgeStats(s, t, info, nodeToClusters);
             bridges.push(bridge);
         }
+        console.timeEnd('[COUPLING_STATS]');
 
+        console.timeEnd('[COUPLING_TOTAL]');
         return bridges;
     }
 
-    private static computeBridgeStats(sourceCluster: string, targetCluster: string, edges: Edge[], nodeToClusters: Map<string, Set<string>>): ClusterBridge {
+    private static computeBridgeStats(sourceCluster: string, targetCluster: string, info: { edges: Edge[], couplingStrength: number, totalEdges: number }, nodeToClusters: Map<string, Set<string>>): ClusterBridge {
         const bridge: ClusterBridge = {
             sourceCluster,
             targetCluster,
-            totalEdges: edges.length,
+            edgeIds: info.edges.map(e => e.id),
+            totalEdges: info.totalEdges,
             outboundEdges: 0,
             inboundEdges: 0,
             typeOnlyEdges: 0,
@@ -117,15 +155,12 @@ export class ClusterBridgeAnalyzer {
             inheritanceEdges: 0,
             frameworkRegistrationEdges: 0,
             decoratorEdges: 0,
-            couplingDensity: edges.length,
-            rawScore: 0,
-            couplingStrength: 0
+            couplingDensity: info.totalEdges,
+            rawScore: info.couplingStrength,
+            couplingStrength: info.couplingStrength
         };
 
-        for (const edge of edges) {
-            const weight = this.getProvenanceWeight(edge.provenance);
-            bridge.rawScore += weight;
-            
+        for (const edge of info.edges) {
             if (edge.from && edge.to) {
                 const fromClusters = nodeToClusters.get(edge.from);
                 if (fromClusters && fromClusters.has(sourceCluster)) {

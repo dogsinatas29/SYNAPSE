@@ -28,9 +28,14 @@ export interface DiagnosticProvider {
 
 export class LocalDiagnosticProvider implements DiagnosticProvider {
     async getDiagnostics(): Promise<DiagnosticRecord[]> {
+        Logger.info('[VD-CHECKPOINT-LOCAL-1] vscode.languages.getDiagnostics() called');
         const diagnostics = vscode.languages.getDiagnostics();
+        Logger.info(`[VD-CHECKPOINT-LOCAL-2] vscode.languages.getDiagnostics() returned ${diagnostics.length} entries`);
+        
         const records: DiagnosticRecord[] = [];
+        let totalCount = 0;
         for (const [uri, diagList] of diagnostics) {
+            totalCount += diagList.length;
             const relativePath = vscode.workspace.asRelativePath(uri, false).replace(/\\/g, '/');
             for (const diag of diagList) {
                 records.push({
@@ -42,6 +47,7 @@ export class LocalDiagnosticProvider implements DiagnosticProvider {
                 });
             }
         }
+        Logger.info(`[VD-CHECKPOINT-LOCAL-3] Mapped ${totalCount} diagnostics`);
         return records;
     }
 }
@@ -97,35 +103,155 @@ export class VirtualDebugger {
         Logger.info('[VirtualDebugger] Starting Virtual Debug (AAE Facade)...');
         
         // --- [VP-02] State Mutation Check (Before) ---
-        let targetNodes = state.nodes || [];
-        let targetEdges = state.edges || [];
+        const { graphModel } = require('./GraphModel');
+
+        // [v0.3.34.8] Restore stripped data (like data.content) from graphModel to avoid massive IPC payloads
+        const allNodesMap = (graphModel as any).nodes instanceof Map ? (graphModel as any).nodes : new Map(Array.from((graphModel as any).nodes?.values() || []).map((n: any) => [n.id, n]));
+        const rawStateNodes = Array.isArray(state.nodes) ? state.nodes : Object.values(state.nodes || {});
+        let targetNodes = rawStateNodes.map((n: any) => {
+            const fullNode = (allNodesMap.get(n.id) || {}) as any;
+            return { ...fullNode, ...n, data: { ...(fullNode.data || {}), ...(n.data || {}) } };
+        });
+
+        const allEdgesMap = new Map(((graphModel as any).edges || []).map((e: any) => [e.id, e]));
+        const rawStateEdges = Array.isArray(state.edges) ? state.edges : Object.values(state.edges || {});
+        let targetEdges = rawStateEdges.map((e: any) => {
+            const fullEdge = (allEdgesMap.get(e.id) || {}) as any;
+            return { ...fullEdge, ...e };
+        });
         
-        if (visibleClusterIds && visibleClusterIds.length > 0) {
-            Logger.info(`[VirtualDebugger] Note: Frontend already pre-filters nodes. Skipping redundant backend cluster filter.`);
+        console.log("[AUDIT] VirtualDebugger Start");
+        console.log("[AUDIT] state.nodes", targetNodes.length);
+        console.log("[AUDIT] state.edges", targetEdges.length);
+        console.log("[AUDIT] state.clusters", state.clusters?.length || 0);
+
+        const allClusters = Array.isArray(state.clusters) ? state.clusters : Object.values(state.clusters || {});
+        const _collapsedCount = allClusters.filter((c: any) => c.collapsed === true).length;
+        console.log(`[VD_COLLAPSE_CHECK] total=${allClusters.length} collapsed=${_collapsedCount}`);
+        console.log(`[VD_CLUSTER_SAMPLE]`, allClusters.filter((c: any) => c.collapsed === true).slice(0, 5).map((c: any) => c.id));
+        Logger.info(`[VD_SCOPE] Nodes=${targetNodes.length} | Edges=${targetEdges.length} | Clusters=${allClusters.length} | VisibleClusters=${visibleClusterIds?.length || 0} | BridgeGuard=${allClusters.length > 100 ? 'BLOCKED(>100)' : 'PASS'}`);
+        
+        if (visibleClusterIds !== undefined) {
+            Logger.info(`[VirtualDebugger] Note: Frontend sent ${visibleClusterIds.length} visible clusters. Filtering nodes and edges on backend.`);
+            if (visibleClusterIds.length > 0) {
+                const visibleSet = new Set(visibleClusterIds);
+                targetNodes = targetNodes.filter((n: any) => visibleSet.has(n.cluster_id));
+                const targetNodeIds = new Set(targetNodes.map((n: any) => n.id));
+                targetEdges = targetEdges.filter((e: any) => targetNodeIds.has(e.from) && targetNodeIds.has(e.to));
+            } else {
+                targetNodes = [];
+                targetEdges = [];
+            }
         }
         
+        // [v0.3.34.9] Pre-Platform Filter Logging (Hub Top 5 Before)
+        const rawNodeMap = new Map();
+        targetNodes.forEach((n: any) => rawNodeMap.set(n.id, { id: n.id, fanout: 0 }));
+        targetEdges.forEach((e: any) => {
+            if (rawNodeMap.has(e.from)) rawNodeMap.get(e.from).fanout++;
+            if (rawNodeMap.has(e.to)) rawNodeMap.get(e.to).fanout++;
+        });
+        const hubBefore = Array.from(rawNodeMap.values()).sort((a: any, b: any) => b.fanout - a.fanout).slice(0, 5);
+        Logger.info(`[HUB_BEFORE] Top 5:\n${hubBefore.map((h, i) => `  ${i+1}. ${h.id} (fanout=${h.fanout})`).join('\n')}`);
+
+        // [v0.3.34.9] Platform Header 투명 처리
+        const { PlatformHeaderPolicy } = require('./analysis/PlatformHeaderPolicy');
+        const { ContractHeaderPolicy } = require('./analysis/ContractHeaderPolicy');
+        const { ArchitectureHeaderPolicy } = require('./analysis/ArchitectureHeaderPolicy');
+
+        const platformNodeIds = new Set<string>();
+        const contractNodeIds = new Set<string>();
+        const archNodeIds = new Set<string>();
+
+        for (const n of targetNodes) {
+            const id = n.id || (n.data as any)?.file || '';
+            if (PlatformHeaderPolicy.isPlatformHeader(id)) platformNodeIds.add(n.id);
+            else if (ArchitectureHeaderPolicy.isArchitectureHeader(id)) archNodeIds.add(n.id);
+            else if (ContractHeaderPolicy.isContractHeader(id)) contractNodeIds.add(n.id);
+        }
+
+        const beforeNodeCount = targetNodes.length;
+        const beforeEdgeCount = targetEdges.length;
+        const targetEdgesBefore = targetEdges;
+
+        targetNodes = targetNodes.filter((n: any) => !platformNodeIds.has(n.id) && !archNodeIds.has(n.id));
+        targetEdges = targetEdges.filter((e: any) =>
+            !platformNodeIds.has(e.from) && !platformNodeIds.has(e.to) &&
+            !archNodeIds.has(e.from) && !archNodeIds.has(e.to)
+        );
+
+        Logger.info(`[PLATFORM_FILTER] Platform Headers Removed: ${platformNodeIds.size}`);
+        Logger.info(`[PLATFORM_FILTER] Architecture Headers Removed: ${archNodeIds.size}`);
+        Logger.info(`[PLATFORM_FILTER] Contract Headers Retained: ${contractNodeIds.size}`);
+        Logger.info(`[PLATFORM_FILTER] Nodes: ${beforeNodeCount} → ${targetNodes.length}`);
+        Logger.info(`[PLATFORM_FILTER] Edges: ${beforeEdgeCount} → ${targetEdges.length}`);
+        
+        // [v0.3.34.9] Compute Hubs After
+        const rawNodeMapAfter = new Map();
+        targetNodes.forEach((n: any) => rawNodeMapAfter.set(n.id, { id: n.id, fanout: 0 }));
+        targetEdges.forEach((e: any) => {
+            if (rawNodeMapAfter.has(e.from)) rawNodeMapAfter.get(e.from).fanout++;
+            if (rawNodeMapAfter.has(e.to)) rawNodeMapAfter.get(e.to).fanout++;
+        });
+        const hubAfter = Array.from(rawNodeMapAfter.values()).sort((a: any, b: any) => b.fanout - a.fanout).slice(0, 5);
+        Logger.info(`[HUB_AFTER] Top 5:\n${hubAfter.map((h, i) => `  ${i+1}. ${h.id} (fanout=${h.fanout})`).join('\n')}`);
+        
+        try {
+            const { TarjanSCC } = require('./analysis/reasoning/TarjanSCC');
+            const sccBeforeFilter = TarjanSCC.extractFromSubset(Array.from(rawNodeMap.keys()), targetEdgesBefore);
+            const sccBeforeLargest = sccBeforeFilter.length > 0 ? Math.max(...sccBeforeFilter.map((s: any) => s.nodeIds.length)) : 0;
+            const sccBeforeAvg = sccBeforeFilter.length > 0 ? sccBeforeFilter.reduce((sum: number, s: any) => sum + s.nodeIds.length, 0) / sccBeforeFilter.length : 0;
+            Logger.info(`[SCC_BEFORE] SCC Count: ${sccBeforeFilter.length}, Largest SCC: ${sccBeforeLargest}, Average SCC: ${sccBeforeAvg.toFixed(1)}`);
+
+            const sccAfterFilter = TarjanSCC.extractFromSubset(Array.from(rawNodeMapAfter.keys()), targetEdges);
+            const sccAfterLargest = sccAfterFilter.length > 0 ? Math.max(...sccAfterFilter.map((s: any) => s.nodeIds.length)) : 0;
+            const sccAfterAvg = sccAfterFilter.length > 0 ? sccAfterFilter.reduce((sum: number, s: any) => sum + s.nodeIds.length, 0) / sccAfterFilter.length : 0;
+            Logger.info(`[SCC_AFTER] SCC Count: ${sccAfterFilter.length}, Largest SCC: ${sccAfterLargest}, Average SCC: ${sccAfterAvg.toFixed(1)}`);
+        } catch (e: any) {
+            Logger.error(`[SCC_COMPARE_ERROR] ${e.message}`);
+        }
+
         Logger.info(`[RUNTIME_SCOPE]\nvisibleClusters=${state.clusters?.length || 0}\nvisibleNodes=${targetNodes.length}\nruntimeNodes=${targetNodes.length}`);
 
-        
+        Logger.info('[PRE_AAE_COLLAPSE]', (Array.isArray(state.clusters) ? state.clusters : Object.values(state.clusters || {})).filter((c: any) => c?.collapsed === true).length);
+
+        Logger.info('[VD-CHECKPOINT-1] Creating targetState');
         const targetState = { ...state, nodes: targetNodes, edges: targetEdges };
         
         const nodesBefore = targetState.nodes;
         const edgesBefore = targetState.edges;
         const nodeCountBefore = targetState.nodes?.length || 0;
         const edgeCountBefore = targetState.edges?.length || 0;
+        
+        Logger.info('[VD-CHECKPOINT-2] Stringifying hashBefore');
         const hashBefore = JSON.stringify(targetState.nodes?.map(n => n.status));
-        // ---------------------------------------------
-
+        
+        Logger.info('[VD-CHECKPOINT-3] Getting diagnostics start');
+        
+        Logger.info('[VD-CHECKPOINT-3.1] Creating providers');
         const localProvider = new LocalDiagnosticProvider();
         const remoteProvider = new RemoteDiagnosticProvider();
 
+        Logger.info('[VD-CHECKPOINT-3.2] Calling Promise.all');
         const [localDiags, remoteDiags] = await Promise.all([
-            localProvider.getDiagnostics(),
-            remoteProvider.getDiagnostics()
+            (async () => {
+                Logger.info('[VD-CHECKPOINT-3.3] Local getDiagnostics start');
+                const diags = await localProvider.getDiagnostics();
+                Logger.info('[VD-CHECKPOINT-3.4] Local getDiagnostics end');
+                return diags;
+            })(),
+            (async () => {
+                Logger.info('[VD-CHECKPOINT-3.5] Remote getDiagnostics start');
+                const diags = await remoteProvider.getDiagnostics();
+                Logger.info('[VD-CHECKPOINT-3.6] Remote getDiagnostics end');
+                return diags;
+            })()
         ]);
 
+        Logger.info('[VD-CHECKPOINT-4] Diagnostics ready');
         const allDiags = [...localDiags, ...remoteDiags];
 
+        Logger.info('[VD-CHECKPOINT-5] Loading analyzers');
         const { ArchitectureAnalysisEngine } = require('./analysis/ArchitectureAnalysisEngine');
         const { NecrosisAnalyzer } = require('./analysis/analyzers/NecrosisAnalyzer');
         const { FractureAnalyzer } = require('./analysis/analyzers/FractureAnalyzer');
@@ -138,6 +264,7 @@ export class VirtualDebugger {
         const { ReportExporter } = require('./analysis/ReportExporter');
         const { ReportAggregator } = require('./analysis/aggregation/ReportAggregator');
         
+        Logger.info('[VD-CHECKPOINT-6] Registering analyzers');
         const engine = new ArchitectureAnalysisEngine();
         engine.registerAnalyzer(new NecrosisAnalyzer());
         engine.registerAnalyzer(new FractureAnalyzer());
@@ -148,21 +275,55 @@ export class VirtualDebugger {
         engine.registerAnalyzer(new DeadEndAnalyzer());
         engine.registerAnalyzer(new IsolatedNodeAnalyzer());
         
+        Logger.info('[VD-CHECKPOINT-7] Calling engine.run');
+        console.log('[AAE_INPUT]', {
+            nodes: targetState.nodes?.length,
+            edges: targetState.edges?.length,
+            clusters: targetState.clusters?.length,
+            diagnostics: allDiags.length
+        });
         const evidenceBundle = engine.run(targetState, allDiags, workspaceRoot);
+        Logger.info(`[CHECKPOINT-A] AAE returned`);
+        console.log('[AAE_RESULT]', {
+            findings: evidenceBundle.findings.length,
+            necrosis: evidenceBundle.findings.filter((f: any) => f.type === 'necrosis').length,
+            fracture: evidenceBundle.findings.filter((f: any) => f.type === 'fracture').length,
+            cycle: evidenceBundle.findings.filter((f: any) => f.type === 'cycle').length
+        });
+        Logger.info(`[CHECKPOINT-A1] findings=${evidenceBundle.findings.length}`);
+        
+        Logger.info(`[CHECKPOINT-B] before aggregate`);
         const aggregatedBundle = ReportAggregator.aggregate(evidenceBundle, targetState);
+        Logger.info(`[CHECKPOINT-C] after aggregate`);
         
         const { ReasoningEngine } = require('./analysis/reasoning/ReasoningEngine');
-        const reasonedBundle = ReasoningEngine.reason(aggregatedBundle, targetState);
+        Logger.info(`[CHECKPOINT-D] before reason`);
+        const reasonedBundle = ReasoningEngine.reason(aggregatedBundle, targetState, visibleClusterIds);
+        Logger.info(`[CHECKPOINT-E] after reason`);
         
-        // [v0.3.34.6] Cluster Coupling Measurement
+        // [v0.3.35] Fix empty array fallback bug
         const { ClusterBridgeAnalyzer } = require('./analysis/ClusterBridgeAnalyzer');
-        const activeClusterIds = (targetState.clusters || []).map((c: any) => c.id);
+        const activeClusterIds = visibleClusterIds !== undefined
+            ? visibleClusterIds
+            : allClusters.map((c: any) => c.id);
+        Logger.info(`[VD_BRIDGE_SCOPE] Using ${visibleClusterIds?.length ? 'VISIBLE' : 'ALL'} clusters (count=${activeClusterIds.length})`);
+        console.log('[COUPLING_CALL]', {
+            activeClusterIds: activeClusterIds.length,
+            nodes: targetState.nodes?.length,
+            edges: targetState.edges?.length
+        });
         const bridges = ClusterBridgeAnalyzer.analyzeVisibleClusters(activeClusterIds, targetState.nodes || [], targetState.edges || [], targetState.clusters);
+        console.log('[COUPLING_RESULT]', { bridges: bridges.length });
         reasonedBundle.clusterBridges = bridges;
+        Logger.info(`[CHECKPOINT-E1] after ClusterBridgeAnalyzer`);
+        Logger.info('[POST_AAE_COLLAPSE]', (Array.isArray(state.clusters) ? state.clusters : Object.values(state.clusters || {})).filter((c: any) => c?.collapsed === true).length);
+        Logger.info('[POST_AAE_VISIBLE]', visibleClusterIds?.length || 0);
 
         
         if (workspaceRoot) {
+            Logger.info(`[CHECKPOINT-F] before export`);
             ReportExporter.export(reasonedBundle, targetState, workspaceRoot);
+            Logger.info(`[CHECKPOINT-G] after export`);
         }
         
         // Extract reports from necrosis findings for the Markdown report
@@ -200,8 +361,9 @@ export class VirtualDebugger {
             Logger.info(`[VP-01] Cycle Match Test: PASS (Count: ${newCount}, Exact Node & Path Match)`);
         } else {
             Logger.error(`[VP-01] Cycle Match Test: FAIL`);
-            Logger.error(`Legacy: ${legacyCount}, ${legacyNodesStr}, ${legacyPaths}`);
-            Logger.error(`New: ${newCount}, ${newNodesStr}, ${newPaths}`);
+            Logger.error(`Legacy Count: ${legacyCount}, New Count: ${newCount}`);
+            // [v0.3.34.8] Prevent massive JSON dump that freezes terminal and Extension Host
+            Logger.error(`[VP-01] Mismatch details omitted for huge graphs to prevent OOM/freezing.`);
         }
         // --------------------------------
 

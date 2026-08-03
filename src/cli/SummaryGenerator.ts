@@ -12,19 +12,30 @@ export class SummaryGenerator {
         rows.push('| --- | --- | --- | ---: | ---: | ---: | ---: | ---: |');
 
         for (const project of projects) {
-            const resultPath = path.join(resultsDir, `${project}_result.json`);
-            const metricsPath = path.join(resultsDir, `${project}_metrics.json`);
+            const projectDir = path.join(resultsDir, project);
+            const resultPath = path.join(projectDir, 'analysis_result.json');
+            const metricsPath = path.join(projectDir, 'metrics.json');
+            const verifyPath = path.join(projectDir, 'verification.json');
             
             if (!fs.existsSync(resultPath)) continue;
 
             const result: AnalysisResult = JSON.parse(fs.readFileSync(resultPath, 'utf8'));
-            const statusStr = result.status;
+            let statusStr: string = result.status;
             let timeStr = `${Math.round(result.durationMs / 1000)}s`;
             let reasonStr = '-';
             let evStr = '-';
             let edgeStr = '-';
             let confStr = '-';
             let filesStr = '-';
+
+            // Also read verify status
+            if (result.status === 'PASS' && fs.existsSync(verifyPath)) {
+                const verifyResult = JSON.parse(fs.readFileSync(verifyPath, 'utf8'));
+                if (verifyResult.verificationStatus === 'FAIL') {
+                    statusStr = 'PASS (V-FAIL)';
+                    reasonStr = `Verification: ${verifyResult.reason}`;
+                }
+            }
 
             if (result.status === 'PASS' && fs.existsSync(metricsPath)) {
                 const metrics: AnalysisMetrics = JSON.parse(fs.readFileSync(metricsPath, 'utf8'));
@@ -46,14 +57,9 @@ export class SummaryGenerator {
 
     private findProjects(resultsDir: string): string[] {
         if (!fs.existsSync(resultsDir)) return [];
-        const files = fs.readdirSync(resultsDir);
-        const projects: string[] = [];
-        
-        for (const file of files) {
-            if (file.endsWith('_result.json')) {
-                projects.push(file.replace('_result.json', ''));
-            }
-        }
-        return projects;
+        return fs.readdirSync(resultsDir).filter(f => {
+            const full = path.join(resultsDir, f);
+            return fs.statSync(full).isDirectory();
+        });
     }
 }

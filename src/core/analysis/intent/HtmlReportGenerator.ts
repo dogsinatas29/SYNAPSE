@@ -2,45 +2,68 @@ import { ReasonedReportBundle } from './ReasonedReportBundle';
 
 export class HtmlReportGenerator {
     generate(bundle: ReasonedReportBundle): string {
-        const title = 'Architecture Intelligence Report';
+        const title = 'Architecture Atlas';
         const generatedAt = bundle.generatedAt;
-        const avgConfidence = (bundle.averageConfidence * 100).toFixed(2);
+        const map = bundle.onboardingMap;
 
-        // Map findings
-        const findingsHtml = bundle.findings.length === 0 
-            ? '<p>No findings recorded.</p>' 
-            : bundle.findings.map(f => `
-                <div class="card finding-card">
-                    <h3>${f.title} <span class="badge">Confidence: ${(f.confidence * 100).toFixed(2)}%</span></h3>
-                    <p>${f.description}</p>
-                </div>
-            `).join('');
+        if (!map) {
+            return `<html><body><h1>${title}</h1><p>Generated At: ${generatedAt}</p><p>No atlas generated.</p></body></html>`;
+        }
 
-        // Map intent edges
-        const edgesHtml = bundle.intentEdges.length === 0
-            ? '<p>No intent edges found.</p>'
-            : bundle.intentEdges.map(e => `
-                <div class="card edge-card">
-                    <h4>${e.source} &rarr; ${e.target}</h4>
+        let strategicAssetsHtml = '';
+        for (const asset of map.strategicAssets) {
+            strategicAssetsHtml += `
+                <div class="card" style="border-left: 4px solid #f85149;">
+                    <h3><code>${asset.file}</code></h3>
                     <ul>
-                        <li><strong>Intent:</strong> ${e.intent}</li>
-                        <li><strong>Confidence:</strong> ${(e.confidence * 100).toFixed(2)}%</li>
-                        <li><strong>Evidence Count:</strong> ${e.evidenceCount}</li>
-                        <li><strong>Providers:</strong> ${e.providers.join(', ')}</li>
+                        <li><strong>Criticality Score:</strong> ${asset.criticalityScore}</li>
+                        <li>Global Traffic: ${asset.globalTraffic}</li>
+                        <li>Regions Touched: ${asset.regionsTouched}</li>
+                        <li>Max Corridor Ownership: ${asset.maxCorridorOwnership * 100}%</li>
                     </ul>
                 </div>
-            `).join('');
+            `;
+        }
 
-        // Map evidence inventory
-        const evidenceHtml = bundle.evidence.length === 0
-            ? '<p>No evidence found.</p>'
-            : bundle.evidence.map(ev => `
-                <div class="card evidence-card">
-                    <h5><span class="badge provider-badge">${ev.provider}</span> ${ev.source} &rarr; ${ev.target} <span class="badge intent-badge">${ev.evidenceType}</span></h5>
-                    <p><strong>File:</strong> <code>${ev.file}:${ev.line}</code></p>
-                    <p><strong>Reason:</strong> ${ev.reason}</p>
+        let continentsHtml = '';
+        for (const c of map.continents) {
+            continentsHtml += `
+                <div class="card">
+                    <h3><strong>${c.name}</strong> <span style="color: #58a6ff;">[${c.role}]</span></h3>
+                    <ul>
+                        <li>Nodes: ${c.nodeCount}</li>
+                        <li>Internal Traffic: ${c.internalTraffic}</li>
+                        <li>External Traffic: ${c.externalTraffic}</li>
+                        <li>Connected Regions: ${c.connectedRegions}</li>
+                    </ul>
                 </div>
-            `).join('');
+            `;
+        }
+
+        let corridorsHtml = '';
+        for (const c of map.corridors.slice(0, 50)) {
+            corridorsHtml += `
+                <div class="card">
+                    <h3><code>${c.regionA}</code> ↔ <code>${c.regionB}</code> <span style="font-size: 0.8em; color: #888;">(Traffic: ${c.traffic})</span></h3>
+                    <h4>Top Bridges:</h4>
+                    <ul>
+                        ${c.topBridges.map((b: any) => `<li><code>${b.file}</code> <strong>(${b.contributionPercentage}%)</strong></li>`).join('')}
+                    </ul>
+                </div>
+            `;
+        }
+
+        let representativeHtml = '';
+        for (const rf of map.representativeFiles) {
+            representativeHtml += `
+                <div class="card">
+                    <h3><code>${rf.region}</code></h3>
+                    <ul>
+                        ${rf.coreFiles.map((f: string) => `<li><code>${f}</code></li>`).join('')}
+                    </ul>
+                </div>
+            `;
+        }
 
         const html = `<!DOCTYPE html>
 <html lang="en">
@@ -54,8 +77,6 @@ export class HtmlReportGenerator {
             --text-color: #c9d1d9;
             --card-bg: #161b22;
             --border-color: #30363d;
-            --accent-color: #58a6ff;
-            --success-color: #238636;
         }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
@@ -65,107 +86,29 @@ export class HtmlReportGenerator {
             margin: 0;
             padding: 2rem;
         }
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-        }
-        h1, h2, h3, h4, h5 {
-            color: #ffffff;
-            margin-top: 1.5em;
-        }
+        .container { max-width: 1000px; margin: 0 auto; }
+        h1, h2, h3, h4 { color: #ffffff; margin-top: 1.5em; }
         h1 { border-bottom: 1px solid var(--border-color); padding-bottom: 0.3em; }
-        .summary-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin: 2rem 0;
-        }
-        .stat-box {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            padding: 1.5rem;
-            text-align: center;
-        }
-        .stat-box .value {
-            font-size: 2rem;
-            font-weight: bold;
-            color: var(--accent-color);
-        }
-        .card {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            padding: 1rem;
-            margin-bottom: 1rem;
-        }
-        .badge {
-            display: inline-block;
-            padding: 0.2em 0.5em;
-            font-size: 0.8em;
-            font-weight: 600;
-            line-height: 1;
-            text-align: center;
-            white-space: nowrap;
-            vertical-align: baseline;
-            border-radius: 2rem;
-            background-color: var(--border-color);
-        }
-        .provider-badge { background-color: #1f6feb; color: white; }
-        .intent-badge { background-color: var(--success-color); color: white; }
-        ul { margin-top: 0; }
-        code {
-            background-color: rgba(240, 246, 252, 0.15);
-            padding: 0.2em 0.4em;
-            border-radius: 3px;
-            font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
-            font-size: 85%;
-        }
-        
-        /* Interactive Folding (No JS needed, using details/summary) */
-        details { margin-bottom: 1rem; }
-        summary { cursor: pointer; font-weight: bold; padding: 0.5rem; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 6px; }
-        details[open] summary { border-bottom-left-radius: 0; border-bottom-right-radius: 0; border-bottom: none; }
-        .details-content { padding: 1rem; border: 1px solid var(--border-color); border-top: none; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px; background: var(--bg-color); }
+        .card { background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 6px; padding: 1rem; margin-bottom: 1rem; }
+        code { background-color: rgba(240, 246, 252, 0.15); padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace; font-size: 85%; }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>${title}</h1>
         <p>Generated At: <strong>${generatedAt}</strong></p>
+        
+        <h2>[Strategic Assets (Critical Bridges)]</h2>
+        ${strategicAssetsHtml}
 
-        <h2>Executive Summary</h2>
-        <div class="summary-grid">
-            <div class="stat-box">
-                <div class="label">Evidence Count</div>
-                <div class="value">${bundle.evidenceCount}</div>
-            </div>
-            <div class="stat-box">
-                <div class="label">Intent Edge Count</div>
-                <div class="value">${bundle.intentEdgeCount}</div>
-            </div>
-            <div class="stat-box">
-                <div class="label">Average Confidence</div>
-                <div class="value">${avgConfidence}%</div>
-            </div>
-        </div>
+        <h2>[Continents (Roles)]</h2>
+        ${continentsHtml}
 
-        <h2>Findings</h2>
-        ${findingsHtml}
+        <h2>[Corridor Decomposition]</h2>
+        ${corridorsHtml}
 
-        <details open>
-            <summary>Intent Graph Summary</summary>
-            <div class="details-content">
-                ${edgesHtml}
-            </div>
-        </details>
-
-        <details>
-            <summary>Evidence Inventory</summary>
-            <div class="details-content">
-                ${evidenceHtml}
-            </div>
-        </details>
+        <h2>[Representative Files]</h2>
+        ${representativeHtml}
     </div>
 </body>
 </html>`;

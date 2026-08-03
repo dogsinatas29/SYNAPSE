@@ -6,14 +6,14 @@
 (moved to NodeBuilder)
 
 === CLUSTER SUMMARY ===
-doc_shelf                 nodes=426
+doc_shelf                 nodes=444
 folder_src_core           nodes=59
 cluster_ghosts            nodes=19
 folder_src_core_collaboration nodes=17
+folder_src_core_analysis_intent nodes=12
 folder_src_core_canvas_engine nodes=10
 folder_src_core_analysis  nodes=9
 folder_src_core_analysis_analyzers nodes=8
-folder_src_core_analysis_intent nodes=8
 folder_ui                 nodes=7
 folder_src                nodes=6
 folder_src_core_analysis_reasoning nodes=6
@@ -21,6 +21,7 @@ cluster_ghost_assets/v0   nodes=6
 folder_src_utils          nodes=5
 folder_root               nodes=4
 folder_demo               nodes=4
+folder_scratch            nodes=4
 folder_src_server         nodes=4
 folder_src_cli            nodes=3
 folder_src_core_transaction nodes=3
@@ -65,18 +66,18 @@ sys_cluster_reserved      nodes=0
 folder_test_core_analysis nodes=0
 folder_test_core          nodes=0
 folder_test               nodes=0
-TOTAL_CLUSTERS=59
+TOTAL_CLUSTERS=60
 
 === EDGE SUMMARY ===
-Internal Edges: 527
+Internal Edges: 540
 External/Ghost Edges: 104
 
 ======================================================
-[PIPELINE] Nodes=651 Edges=631
+[PIPELINE] Nodes=677 Edges=644
 [FILTER] package_removed=0 exact_removed=9
 ======================================================
 === EDGE BREAKDOWN ===
-  - INCLUDE: 623
+  - INCLUDE: 636
   - REFERENCE: 1
   - DB_QUERY: 3
   - CALL: 4
@@ -84,9 +85,9 @@ External/Ghost Edges: 104
 
 === CLUSTER SIZE DISTRIBUTION ===
 1 node   : 29 clusters
-2-5 nodes: 14 clusters
-6-10     : 8 clusters
-11-20    : 2 clusters
+2-5 nodes: 15 clusters
+6-10     : 7 clusters
+11-20    : 3 clusters
 20+      : 2 clusters
 ======================================================
 
@@ -103,7 +104,7 @@ id=src/core/GraphModel.ts
 cluster=folder_src_core
 role=none
 external=false
-degree=34 (in=31, out=3)
+degree=35 (in=32, out=3)
 
 rank=3
 id=src/utils/Logger.ts
@@ -197,57 +198,62 @@ external=false
 degree=13 (in=11, out=2)
 
 rank=16
+id=src/core/analysis/intent/ReasonedReportBundle.ts
+cluster=doc_shelf
+role=none
+external=false
+degree=12 (in=9, out=3)
+
+rank=17
 id=src/core/benchmark/BenchmarkHarness.ts
 cluster=folder_src_core_benchmark
 role=none
 external=false
 degree=12 (in=1, out=11)
 
-rank=17
+rank=18
 id=src/core/PhaseManager.ts
 cluster=folder_src_core
 role=none
 external=false
 degree=10 (in=10, out=0)
 
-rank=18
+rank=19
 id=src/core/canvas-engine/CanvasEngine.ts
 cluster=folder_src_core_canvas_engine
 role=none
 external=false
 degree=10 (in=3, out=7)
 
-rank=19
+rank=20
 id=src/core/canvas-engine/StateManager.ts
 cluster=folder_src_core_canvas_engine
 role=none
 external=false
 degree=10 (in=4, out=6)
 
-rank=20
-id=mile_stone/v0.2.17.md
-cluster=doc_shelf
-role=none
-external=false
-degree=9 (in=0, out=9)
-
 ========================
 
 === CLUSTER DISTRIBUTION ===
 doc_shelf
-  nodes: 426
+  nodes: 444
   internal_edges: 109
-  external_edges: 108
+  external_edges: 115
 
 folder_src_core
   nodes: 59
   internal_edges: 67
-  external_edges: 168
+  external_edges: 170
 
 folder_src_core_collaboration
   nodes: 17
   internal_edges: 14
   external_edges: 49
+
+folder_src_core_analysis_intent
+  nodes: 12
+  internal_edges: 13
+  external_edges: 26
 
 folder_src_core_canvas_engine
   nodes: 10
@@ -263,11 +269,6 @@ folder_src_core_analysis_analyzers
   nodes: 8
   internal_edges: 0
   external_edges: 16
-
-folder_src_core_analysis_intent
-  nodes: 8
-  internal_edges: 8
-  external_edges: 21
 
 folder_ui
   nodes: 7
@@ -299,26 +300,26 @@ folder_demo
   internal_edges: 0
   external_edges: 6
 
+folder_scratch
+  nodes: 4
+  internal_edges: 0
+  external_edges: 0
+
 folder_src_server
   nodes: 4
   internal_edges: 0
   external_edges: 25
 
-folder_src_cli
-  nodes: 3
-  internal_edges: 3
-  external_edges: 8
-
 === HUB RANKING ===
 folder_src_core
-  traffic: 235
-  degree: 168
+  traffic: 237
+  degree: 170
   nodes: 59
 
 doc_shelf
-  traffic: 217
-  degree: 108
-  nodes: 426
+  traffic: 224
+  degree: 115
+  nodes: 444
 
 folder_src_core_collaboration
   traffic: 63
@@ -334,6 +335,11 @@ folder_src_core_analysis
   traffic: 39
   degree: 33
   nodes: 9
+
+folder_src_core_analysis_intent
+  traffic: 39
+  degree: 26
+  nodes: 12
 
 folder_src_utils
   traffic: 39
@@ -354,11 +360,6 @@ folder_src_bootstrap
   traffic: 29
   degree: 29
   nodes: 1
-
-folder_src_core_analysis_intent
-  traffic: 29
-  degree: 21
-  nodes: 8
 
 folder_src_webview
   traffic: 26
@@ -387,23 +388,24 @@ folder_src_core_benchmark
 
 === CLUSTER MATRIX ===
                     folder_sr  doc_shelf  folder_sr  folder_sr  folder_sr  folder_sr  folder_sr  folder_sr  folder_sr  folder_sr 
-folder_src_core     -         16        8         26        1         16        12        11        22        1         
-doc_shelf           16        -         0         2         3         0         5         0         1         8         
-folder_src_core_collaboration 8         0         -         9         0         12        1         0         0         0         
-folder_src_types    26        2         9         -         6         0         0         0         1         0         
-folder_src_core_analysis 1         3         0         6         -         2         0         0         0         0         
-folder_src_utils    16        0         12        0         2         -         2         1         2         0         
-folder_src          12        5         1         0         0         2         -         1         2         0         
-folder_src_core_canvas_engine 11        0         0         0         0         1         1         -         0         0         
-folder_src_bootstrap 22        1         0         1         0         2         2         0         -         0         
-folder_src_core_analysis_intent 1         8         0         0         0         0         0         0         0         -         
+folder_src_core     -         18        8         26        1         1         16        12        11        22        
+doc_shelf           18        -         0         2         3         12        0         5         0         1         
+folder_src_core_collaboration 8         0         -         9         0         0         12        1         0         0         
+folder_src_types    26        2         9         -         6         0         0         0         0         1         
+folder_src_core_analysis 1         3         0         6         -         0         2         0         0         0         
+folder_src_core_analysis_intent 1         12        0         0         0         -         0         0         0         0         
+folder_src_utils    16        0         12        0         2         0         -         2         1         2         
+folder_src          12        5         1         0         0         0         2         -         1         2         
+folder_src_core_canvas_engine 11        0         0         0         0         0         1         1         -         0         
+folder_src_bootstrap 22        1         0         1         0         0         2         2         0         -         
 
 === CLUSTER EDGE LIST ===
 folder_src_core      ──(26)── folder_src_types
 folder_src_bootstrap ──(22)── folder_src_core
-doc_shelf            ──(16)── folder_src_core
+doc_shelf            ──(18)── folder_src_core
 folder_src_core      ──(16)── folder_src_utils
 folder_src_core      ──(15)── folder_src_webview
+doc_shelf            ──(12)── folder_src_core_analysis_intent
 folder_src_core_collaboration ──(12)── folder_src_utils
 folder_src           ──(12)── folder_src_core
 folder_src_core_collaboration ──(12)── folder_src_server
@@ -413,20 +415,19 @@ folder_src_core      ──(10)── folder_src_core_benchmark
 folder_src_core_collaboration ──(9)── folder_src_types
 folder_src_core_analysis_analyzers ──(8)── folder_src_types
 folder_src_core_analysis ──(8)── folder_src_core_analysis_analyzers
-doc_shelf            ──(8)── folder_src_core_analysis_intent
 folder_src_core      ──(8)── folder_src_core_collaboration
 folder_src_core      ──(7)── folder_src_server
 folder_src_core_analysis_intent ──(7)── folder_test_core_analysis_intent
 doc_shelf            ──(6)── folder_demo
+folder_src_cli       ──(6)── folder_src_core_analysis_intent
 folder_src_core_analysis ──(6)── folder_src_types
 folder_src_core_analysis_reasoning ──(6)── folder_src_types
 doc_shelf            ──(5)── folder_src
-folder_src_cli       ──(5)── folder_src_core_analysis_intent
 folder_src_core      ──(4)── folder_src_core_transaction
+doc_shelf            ──(3)── folder_src_cli
 doc_shelf            ──(3)── folder_src_core_analysis
 folder_src_core      ──(3)── folder_src_core_analysis_reasoning
 folder_src_bootstrap ──(2)── folder_src_utils
-doc_shelf            ──(2)── folder_src_cli
 folder_src           ──(2)── folder_src_bootstrap
 folder_src_core_analysis ──(2)── folder_src_utils
 
@@ -455,15 +456,16 @@ cluster_ghost_assets/network/network_attached_file -> doc_shelf                 
 === GHOST TRAFFIC ===
 ghost_nodes=51
 ghost_edges=96
-ghost_ratio=15.2%
+ghost_ratio=14.9%
 
 === INTERNAL CONTINENTS ===
-doc             nodes=426 clusters=1
-core            nodes=130 clusters=13
+doc             nodes=444 clusters=1
+core            nodes=134 clusters=13
 root            nodes=10 clusters=2
 ui              nodes=7 clusters=1
 utils           nodes=5 clusters=1
 demo            nodes=4 clusters=1
+scratch         nodes=4 clusters=1
 server          nodes=4 clusters=1
 cli             nodes=3 clusters=1
 tools           nodes=3 clusters=1
@@ -505,8 +507,8 @@ release_note/assets/synapse_topology_view nodes=1 clusters=1
 
 === TOP CONTINENT PAIRS ===
 core <-> types                 58
+core <-> doc                   34
 core <-> utils                 33
-core <-> doc                   28
 cluster_ghosts <-> core        23
 bootstrap <-> core             22
 core <-> webview               19
@@ -515,26 +517,26 @@ core <-> root                  17
 assets/v0 <-> doc              12
 cluster_ghosts <-> doc         6
 demo <-> doc                   6
+cli <-> core                   6
 cluster_ghosts <-> root        5
 doc <-> root                   5
-cli <-> core                   5
 cluster_ghosts <-> server      5
 
 === CONTINENT MATRIX ===
-            doc        core       root       ui         utils      demo       server     cli       
-doc         -         28        5         1         0         6         0         2         
-core        28        -         17        0         33        0         19        5         
-root        5         17        -         0         2         0         0         1         
+            doc        core       root       ui         utils      demo       scratch    server    
+doc         -         34        5         1         0         6         0         0         
+core        34        -         17        0         33        0         0         19        
+root        5         17        -         0         2         0         0         0         
 ui          1         0         0         -         0         0         0         0         
-utils       0         33        2         0         -         0         1         0         
+utils       0         33        2         0         -         0         0         1         
 demo        6         0         0         0         0         -         0         0         
-server      0         19        0         0         1         0         -         0         
-cli         2         5         1         0         0         0         0         -         
+scratch     0         0         0         0         0         0         -         0         
+server      0         19        0         0         1         0         0         -         
 
 === CONTINENT GRAPH (Top 20 Edges) ===
 core ──(58)── types
+core ──(34)── doc
 core ──(33)── utils
-core ──(28)── doc
 cluster_ghosts ──(23)── core
 bootstrap ──(22)── core
 core ──(19)── webview
@@ -543,15 +545,15 @@ core ──(17)── root
 assets/v0 ──(12)── doc
 cluster_ghosts ──(6)── doc
 demo ──(6)── doc
+cli ──(6)── core
 cluster_ghosts ──(5)── root
 doc ──(5)── root
-cli ──(5)── core
 cluster_ghosts ──(5)── server
+cli ──(3)── doc
 assets/1 ──(2)── doc
 assets/2 ──(2)── doc
 assets/3 ──(2)── doc
 assets/4 ──(2)── doc
-assets/synapse_feature_demo ──(2)── doc
 
 === CONTINENT LAYOUT ===
 
@@ -573,6 +575,11 @@ bbox_center=(0, 0)
 node_center=(194, 92)
 node_count=13
 
+folder_src_core_analysis_intent
+bbox_center=(0, 0)
+node_center=(210, 80)
+node_count=12
+
 folder_src_core_analysis
 bbox_center=(0, 0)
 node_center=(182, 64)
@@ -584,11 +591,6 @@ node_center=(182, 64)
 node_count=10
 
 folder_src_core_analysis_analyzers
-bbox_center=(0, 0)
-node_center=(123, 70)
-node_count=8
-
-folder_src_core_analysis_intent
 bbox_center=(0, 0)
 node_center=(123, 70)
 node_count=8
@@ -618,17 +620,17 @@ bbox_center=(0, 0)
 node_center=(70, 40)
 node_count=4
 
+folder_scratch
+bbox_center=(0, 0)
+node_center=(70, 40)
+node_count=4
+
 folder_src_server
 bbox_center=(0, 0)
 node_center=(70, 40)
 node_count=4
 
 folder_src_cli
-bbox_center=(0, 0)
-node_center=(47, 27)
-node_count=3
-
-folder_src_core_transaction
 bbox_center=(0, 0)
 node_center=(47, 27)
 node_count=3
@@ -657,16 +659,17 @@ NODE README.md | cluster=doc_shelf | comm=none | role=none
 
 === [RENDER DIAGNOSTIC] CLUSTER DUMP ===
 CLUSTER id=cluster_ghosts type=system nodes=0 (computed count=19)
-CLUSTER id=doc_shelf type=system nodes=0 (computed count=426)
+CLUSTER id=doc_shelf type=system nodes=0 (computed count=444)
 CLUSTER id=folder_root type=folder nodes=0 (computed count=4)
 CLUSTER id=folder_demo type=folder nodes=0 (computed count=4)
+CLUSTER id=folder_scratch type=folder nodes=0 (computed count=4)
 CLUSTER id=folder_scripts type=folder nodes=0 (computed count=1)
 CLUSTER id=folder_src type=folder nodes=0 (computed count=13)
 CLUSTER id=folder_src_cli type=folder nodes=0 (computed count=3)
 CLUSTER id=folder_src_core type=folder nodes=0 (computed count=65)
 CLUSTER id=folder_src_core_analysis type=folder nodes=0 (computed count=10)
 CLUSTER id=folder_src_core_analysis_analyzers type=folder nodes=0 (computed count=8)
-CLUSTER id=folder_src_core_analysis_intent type=folder nodes=0 (computed count=8)
+CLUSTER id=folder_src_core_analysis_intent type=folder nodes=0 (computed count=12)
 CLUSTER id=folder_src_core_analysis_reasoning type=folder nodes=0 (computed count=6)
 CLUSTER id=folder_src_core_canvas_engine type=folder nodes=0 (computed count=10)
 CLUSTER id=folder_src_core_collaboration type=folder nodes=0 (computed count=17)

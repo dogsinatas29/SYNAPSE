@@ -321,6 +321,125 @@ If the score exceeds a safe threshold (e.g., 500,000 points), the **EXTREME_SCAL
 
 ---
 
+## 🔬 Simulation Debug: Architecture Surgery Report
+
+SYNAPSE's **Architecture Surgery Report** generator transforms raw dependency analysis into actionable architectural decisions. It bridges the gap between problem discovery and surgical intervention by generating evidence-linked, decision-focused reports.
+
+### Three-Stage Pipeline
+
+```
+INPUT (Validation Data from b5_validation_layer)
+    ↓
+[Stage 1] Data Collection & Analysis
+    - Load graph (69,304 nodes, 387,282 edges)
+    - Run AST verification (9,297 edge sampling)
+    - Extract top impact files
+    ↓
+[Stage 2] Trust & Impact Calculation
+    - Graph Confidence: 92% (validated across 3 runs)
+    - AST Coverage: 2.4% (9,297 / 387,282 edges examined)
+    - Verified Sample Accuracy: 93% (within examined set)
+    - Overall Decision Confidence: MEDIUM (65-70%)
+    ↓
+[Stage 3] Decision Framework Assembly
+    - Section 0: Confidence transparency (Coverage ≠ Confidence)
+    - Section 1: Action directive (10 files, 2-4 days)
+    - Section 2-4: Decision scenarios (expected ranges, ignore cost)
+    - Section 5: Evidence Strength radar (what we know/don't know)
+    - Section 6-7: Technical execution guide
+    - Section 8: Evidence vault (proof artifacts)
+    ↓
+OUTPUT (Reports + Evidence Artifacts)
+```
+
+### 8-Section Decision Report Structure
+
+| Section | Focus | Audience | Example Output |
+|---------|-------|----------|-----------------|
+| **0. Report Confidence** | Transparency on measurement vs confidence | Decision-makers | "Graph 92%, AST Coverage 2.4%, Decision Confidence: MEDIUM" |
+| **1. What Should I Do?** | Exact action list | Engineers | "10 files, 2-4 days, modify includes & apply visibility" |
+| **2. What Happens If I Do It?** | Expected ranges (not fixed predictions) | Architects | "External edges: 6000-9000 (likely 7500), -65% reduction" |
+| **3. What Happens If I Ignore It?** | 6-month degradation scenario | CTO/Linus | "Bridge Candidates 12→18+, Entropy 75%→87%, Cost 3d→12-15d" |
+| **4. Cost vs Benefit** | ROI clarity | Finance/Decision-makers | "Spend 3 days now, avoid 12-15 days later. 4:1 ratio." |
+| **5. Evidence Strength** | Proof level radar | Architects/Lawyers | "HIGH: Graph, HIGH: Community Detection, MEDIUM: AST, NONE: Compile" |
+| **6. Technical Surgery Guide** | Where to look, cut, attach | Engineers | "Top file: 158 external edges, fanout to 344+ files" |
+| **7. AI Prompt Ready** | Measurable success criteria | AI/Automation | "Input: 17214 edges, Success: 6000-9000 range, Verify: green compile" |
+| **8. Full Evidence Vault** | Proof artifacts for lawyers | Regulators/Auditors | Linked JSON, chains, symbols, threshold sweeps |
+
+### Core Calculation Functions
+
+| Function | Input | Output | Purpose |
+|----------|-------|--------|---------|
+| `calculateConfidenceProgression()` | ValidationReport | {graphConfidence, astCoverage, finalConfidence} | Penalizes confidence when coverage is low |
+| `calculateReportConfidence()` | presenceMatrix | {stableSpecies, overallConfidence} | Tracks species stability across 3 runs |
+| `extractTopImpactFiles()` | Graph | {filePath, externalEdges, consumers} | Identifies top 10 files by external coupling |
+| `runASTVerification()` | graph.json | {resolvedEdges, coverage, accuracy} | Validates 2.4% sample with 93% accuracy |
+
+### Evidence Artifacts Generated
+
+```
+report/surgery/
+├── ASR_EV-1029.md                    [Main: 8-section decision report]
+├── ASR_EV-1029.html                  [Navigation: section guide + links]
+└── evidence/EV-1029/
+    ├── stability.json                [Species stability proof (3 runs)]
+    ├── chains.json                   [Full 17,214 external edge list]
+    ├── symbols.json                  [AST findings: 9,297 resolved edges]
+    ├── false_positives.txt           [188 removed edges (Kconfig, generated)]
+    ├── threshold_sweep.json          [Mesh stable at 0.80-0.86 proof]
+    └── EV-1029_graph.html            [Community structure visualization]
+```
+
+### Key Honesty Principle: Coverage ≠ Confidence
+
+**Previous (Dishonest):**
+```
+"AST Confidence: 92%"  ❌ (Wrong: only 2.4% examined)
+"Prediction: 6025"     ❌ (No basis for fixed number)
+```
+
+**Current (Honest):**
+```
+"AST Coverage: 2.4%"               ✅ (Fact)
+"Verified Sample Accuracy: 93%"    ✅ (Within examined set)
+"Expected range: 6000-9000"        ✅ (Range + conditions)
+"Decision Confidence: MEDIUM"      ✅ (Clear limitations)
+```
+
+### Usage
+
+```bash
+# 1. Generate validation data (prerequisite)
+npx ts-node src/cli/b5_validation_layer.ts <graph.json> 3
+
+# 2. Generate surgery report
+npm run b5:report:surgery -- EV-1029
+
+# Output
+report/surgery/ASR_EV-1029.md      # Main report
+report/surgery/ASR_EV-1029.html    # Navigation page
+report/surgery/evidence/EV-1029/   # Evidence vault
+```
+
+### Why This Matters
+
+Traditional architecture tools stop at **problem discovery**.
+
+SYNAPSE's Surgery Report goes further:
+
+```
+Problem Discovery (traditional)
+    ↓
+→ Root Cause Explanation
+→ Surgical Location Specification
+→ Surgical Sequence Proposal
+→ AI Prompt Generation (measurable criteria)
+```
+
+This transforms analysis into **actionable Architecture Surgery Orders**.
+
+---
+
 ## 🌾 Harvest
 
 Harvest is a snapshot-based collection system where the Architect (Server) safely collects the work results of collaboration participants.

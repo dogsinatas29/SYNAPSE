@@ -178,6 +178,8 @@
         "lint": "eslint src --ext ts",
         "test": "node ./out/test/runTest.js",
         "test:unit": "jest",
+        "b5:validate-layer": "ts-node src/cli/b5_validation_layer.ts",
+        "b5:report:surgery": "ts-node src/cli/generate_surgery_report.ts",
         "dev:ui": "cd demo && python3 -m http.server 8080",
         "dev:standalone": "ts-node src/server/standalone.ts"
     },

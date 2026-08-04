@@ -11,6 +11,12 @@ LLM Coding Principles:
 8. [Rendering Isolation] 뷰 격리: 그래프, 파일, 플로 뷰 간 전환 시 WebGL 상태(framebuffer, shader, buffer binding)를 강제 초기화하여 시각적 간섭을 차단하라.
 9. 작업 시작 전 반드시 작업 계획서를 제출하고 승인을 받은 이후에 작업을 진행한다. 문서를 읽고 멋대로 다른 문서를 만들지 않는다. 문서를 읽고 멋대로 작업을 진행하지 않는다. 
 
+## Lab (Architectural Ecology Laboratory)
+- v0.3.34.13에서 확립된 **Architectural Ecology Laboratory (아키텍처 생태계 실험실)** 프레임워크는 SYNAPSE의 영구적인 커뮤니티 품질 평가 표준으로 사용된다.
+- 앞으로 어떠한 새로운 시그널(예: Function Call, Struct Ownership, Lock Dependency 등)을 도입하더라도, 단순히 "좋아 보인다"는 가정으로 채택하지 않는다.
+- 반드시 이 실험실 프레임워크를 통과하여 **9대 물리 법칙 지표(Purity, Entropy, Stability, Retention, Intrusion, Erosion, Lineage, Dominance, Cohesion)**와 **객관적 상태 판독기(Strengthened, Isolated, Polluted, Dissolved, Fragmented)**를 통해 그 기여도와 오염도를 정량적으로 측정하고 수학적으로 증명해야 한다.
+- **"실험체(Signal)보다 실험실(Laboratory)을 먼저 만들고 신뢰한다"**는 과학적 철학을 영구히 유지한다.
+
 # Gemini Performance Constraints (LLM Coding Rules)
 
 ## Purpose

@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SYNAPSE Architecture Surgery Report - EV-1029</title>
+  <style>
+    :root { --bg:#f3f1ea; --ink:#1f2937; --accent:#0f766e; --warn:#b45309; --card:#fffdf7; }
+    body { margin:0; background:linear-gradient(135deg,#f3f1ea,#e7ecef); color:var(--ink); font-family: "IBM Plex Sans", "Noto Sans KR", sans-serif; line-height:1.6; }
+    .wrap { max-width: 1000px; margin: 24px auto; padding: 0 16px; }
+    .card { background: var(--card); border:1px solid #d5d8dd; border-radius:12px; padding:20px; margin-bottom:16px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    h1 { margin: 0 0 12px 0; font-size: 1.8em; }
+    h2 { margin: 16px 0 8px 0; font-size: 1.3em; }
+    .row { display:flex; gap:10px; flex-wrap:wrap; margin:12px 0; }
+    .pill { padding:6px 12px; border-radius:999px; background:#ecfeff; border:1px solid #a5f3fc; color:#155e75; font-weight:600; font-size:0.9em; }
+    .stat { background:#f0fdf4; border-left:4px solid #22c55e; padding:10px 12px; margin:8px 0; border-radius:4px; }
+    .sections { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    @media (max-width:768px) { .sections { grid-template-columns:1fr; } }
+    a { color:#0b7285; font-weight:500; text-decoration:none; }
+    a:hover { text-decoration:underline; }
+    ul { margin:8px 0; padding-left:20px; }
+    li { margin:6px 0; }
+    code { background:#eef2f7; padding:2px 6px; border-radius:4px; font-family: monospace; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>🔧 Architecture Surgery Report</h1>
+      <div class="row">
+        <span class="pill">Evidence-Linked</span>
+        <span class="pill">No-Ambiguity Answers</span>
+        <span class="pill">AI-Ready Prompts</span>
+      </div>
+      <div class="stat">
+        <strong>Report ID:</strong> EV-1029<br>
+        <strong>Primary Report:</strong> <a href="./ASR_EV-1029.md">ASR_EV-1029.md</a><br>
+        <strong>Validation Source:</strong> <a href="../b5_validation_layer.latest.json">b5_validation_layer.latest.json</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>📊 Report Sections</h2>
+      <ul>
+        <li><strong>0. Report Confidence</strong> - Analysis reliability score (HIGH/MEDIUM/LOW)</li>
+        <li><strong>1. Priority Assessment</strong> - Verdict & gate status</li>
+        <li><strong>2. Executive Summary</strong> - What, Why, Action</li>
+        <li><strong>3. Managerial Context</strong> - Q1-Q4 no-ambiguity answers</li>
+        <li><strong>4. Technical Surgery Guide</strong> - Where to look, cut, attach</li>
+        <li><strong>5. Classification Reasoning</strong> - Why this species classification</li>
+        <li><strong>6. Impact Forecast</strong> - Expected blast radius & ROI</li>
+        <li><strong>7. Priority Queue</strong> - P1/P2/P3 action items</li>
+        <li><strong>8. AI Prompt Ready</strong> - Copy-paste for Claude/GPT/Gemini</li>
+        <li><strong>9. Evidence Vault</strong> - Linked artifacts</li>
+        <li><strong>10. Risk & Threshold</strong> - Risk assessment & next steps</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>🔗 Evidence Vault</h2>
+      <ul>
+        <li><a href="./evidence/EV-1029/EV-1029_graph.html">📈 Mini Graph Render</a> (Community structure visualization)</li>
+        <li><a href="./evidence/EV-1029/EV-1029_dependency.json">📋 Dependency Trace</a> (Edge chains to candidates)</li>
+        <li><a href="./evidence/EV-1029/EV-1029_ast.json">🌳 Raw AST Trace</a> (Symbol-level evidence)</li>
+        <li><a href="./evidence/EV-1029/EV-1029_lines.txt">📝 Symbol Matched Lines</a> (Source file locations)</li>
+        <li><a href="./evidence/EV-1029/EV-1029_diff.html">🔄 Before/After Simulation</a> (Impact projection)</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>📖 How to Use</h2>
+      <ol>
+        <li>Read <strong>Report Confidence</strong> first (know if you can trust this)</li>
+        <li>Review <strong>Managerial Context</strong> (get unambiguous answers)</li>
+        <li>Check <strong>Priority Queue</strong> (see action order)</li>
+        <li>Copy <strong>AI Prompt Ready</strong> for Claude/GPT automation</li>
+        <li>Link to <strong>Evidence Vault</strong> when justifying to architects</li>
+        <li>Re-run generator after each validation update</li>
+      </ol>
+    </div>
+
+    <div class="card">
+      <h2>🔄 Workflow</h2>
+      <div class="sections">
+        <div style="border:1px solid #e5e7eb; padding:12px; border-radius:8px;">
+          <strong>1. Run Validation</strong><br>
+          <code>npx ts-node src/cli/b5_validation_layer.ts &lt;graph&gt; 3</code>
+        </div>
+        <div style="border:1px solid #e5e7eb; padding:12px; border-radius:8px;">
+          <strong>2. Generate Report</strong><br>
+          <code>npm run b5:report:surgery -- EV-1029</code>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

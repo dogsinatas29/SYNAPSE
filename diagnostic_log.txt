@@ -1,38 +1,41 @@
 
-[GHOST_CLASSIFICATION_SUMMARY] total=58 unknown=0 unknownRatio=0 readyForV2B=true
+[GHOST_CLASSIFICATION_SUMMARY] total=54 unknown=0 unknownRatio=0 readyForV2B=true
 [EXTERNAL_LAYER_MODE] mode=DECOMPOSE_READY unknownRatio=0 threshold=0.05
 
 === BRANCH COMPRESSION ===
 (moved to NodeBuilder)
 
 === CLUSTER SUMMARY ===
-doc_shelf                 nodes=444
+doc_shelf                 nodes=448
 folder_src_core           nodes=59
-cluster_ghosts            nodes=19
+cluster_ghosts            nodes=47
 folder_src_core_collaboration nodes=17
 folder_src_core_analysis_intent nodes=12
 folder_src_core_canvas_engine nodes=10
+folder_root               nodes=9
+folder_src_cli            nodes=9
 folder_src_core_analysis  nodes=9
 folder_src_core_analysis_analyzers nodes=8
 folder_ui                 nodes=7
 folder_src                nodes=6
 folder_src_core_analysis_reasoning nodes=6
-cluster_ghost_assets/v0   nodes=6
 folder_src_utils          nodes=5
-folder_root               nodes=4
 folder_demo               nodes=4
 folder_scratch            nodes=4
 folder_src_server         nodes=4
-folder_src_cli            nodes=3
 folder_src_core_transaction nodes=3
+folder_synapse_test_AntennaPod nodes=3
+folder_synapse_test_DOOM_master nodes=3
+folder_synapse_test_antigravity_extension_vis nodes=3
+folder_synapse_test_linux_7_2_rc3 nodes=3
+folder_synapse_test_vscode_main nodes=3
 folder_test_core_analysis_intent nodes=3
 folder_tools              nodes=3
 folder_src_core_benchmark nodes=2
 folder_src_core_projection nodes=2
 folder_src_core_resolvers nodes=2
 folder_src_rust_checker   nodes=2
-cluster_ghost_synapse-visual-architecture-v0 nodes=2
-cluster_ghost_/home/dogsinatas/TypeScript_project/antigravity-extension-vis/synapse-visual-architecture-v0 nodes=2
+folder_report             nodes=1
 folder_scripts            nodes=1
 folder_src_analysis       nodes=1
 folder_src_bootstrap      nodes=1
@@ -40,55 +43,33 @@ folder_src_core_analysis_ast nodes=1
 folder_src_explorer       nodes=1
 folder_src_types          nodes=1
 folder_src_webview        nodes=1
-cluster_ghost_assets/1    nodes=1
-cluster_ghost_assets/2    nodes=1
-cluster_ghost_assets/3    nodes=1
-cluster_ghost_assets/4    nodes=1
-cluster_ghost_assets/synapse_feature_demo nodes=1
-cluster_ghost_assets/synapse_zoom_detail nodes=1
-cluster_ghost_assets/network/flowview nodes=1
-cluster_ghost_assets/network/flow2 nodes=1
-cluster_ghost_assets/network/network_attached_flowview nodes=1
-cluster_ghost_assets/cluster_visibility2 nodes=1
-cluster_ghost_assets/cluster_fold nodes=1
-cluster_ghost_assets/network_attached_cluster nodes=1
-cluster_ghost_assets/profile nodes=1
-cluster_ghost_assets/network/network_attached_file nodes=1
-cluster_ghost_assets/network/harvest nodes=1
-cluster_ghost_/home/dogsinatas/TypeScript_project/antigravity-extension-vis/ui/index nodes=1
-cluster_ghost_/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/RawTextMiner nodes=1
-cluster_ghost_ui/index    nodes=1
-cluster_ghost_/home/dogsinatas/TypeScript_project/antigravity-extension-vis/package nodes=1
-cluster_ghost_/home/dogsinatas/TypeScript_project/antigravity-extension-vis/demo/index nodes=1
-cluster_ghost_network_remote nodes=1
-cluster_ghost_release_note/assets/synapse_topology_view nodes=1
 sys_cluster_reserved      nodes=0
+folder_synapse_test       nodes=0
 folder_test_core_analysis nodes=0
 folder_test_core          nodes=0
 folder_test               nodes=0
-TOTAL_CLUSTERS=60
+TOTAL_CLUSTERS=42
 
 === EDGE SUMMARY ===
-Internal Edges: 540
-External/Ghost Edges: 104
+Internal Edges: 547
+External/Ghost Edges: 99
 
 ======================================================
-[PIPELINE] Nodes=677 Edges=644
+[PIPELINE] Nodes=704 Edges=646
 [FILTER] package_removed=0 exact_removed=9
 ======================================================
 === EDGE BREAKDOWN ===
-  - INCLUDE: 636
-  - REFERENCE: 1
+  - INCLUDE: 639
   - DB_QUERY: 3
   - CALL: 4
 ======================================================
 
 === CLUSTER SIZE DISTRIBUTION ===
-1 node   : 29 clusters
-2-5 nodes: 15 clusters
-6-10     : 7 clusters
-11-20    : 3 clusters
-20+      : 2 clusters
+1 node   : 8 clusters
+2-5 nodes: 16 clusters
+6-10     : 8 clusters
+11-20    : 2 clusters
+20+      : 3 clusters
 ======================================================
 
 === TOP HUB FILES ===
@@ -184,18 +165,18 @@ external=false
 degree=14 (in=14, out=0)
 
 rank=14
-id=src/core/FileScanner.ts
-cluster=folder_src_core
-role=none
-external=false
-degree=13 (in=8, out=5)
-
-rank=15
 id=src/core/ProjectMetadata.ts
 cluster=folder_src_core
 role=none
 external=false
 degree=13 (in=11, out=2)
+
+rank=15
+id=src/core/FileScanner.ts
+cluster=folder_src_core
+role=none
+external=false
+degree=12 (in=8, out=4)
 
 rank=16
 id=src/core/analysis/intent/ReasonedReportBundle.ts
@@ -236,14 +217,14 @@ degree=10 (in=4, out=6)
 
 === CLUSTER DISTRIBUTION ===
 doc_shelf
-  nodes: 444
+  nodes: 448
   internal_edges: 109
-  external_edges: 115
+  external_edges: 114
 
 folder_src_core
   nodes: 59
   internal_edges: 67
-  external_edges: 170
+  external_edges: 169
 
 folder_src_core_collaboration
   nodes: 17
@@ -259,6 +240,16 @@ folder_src_core_canvas_engine
   nodes: 10
   internal_edges: 11
   external_edges: 19
+
+folder_root
+  nodes: 9
+  internal_edges: 0
+  external_edges: 6
+
+folder_src_cli
+  nodes: 9
+  internal_edges: 7
+  external_edges: 12
 
 folder_src_core_analysis
   nodes: 9
@@ -290,11 +281,6 @@ folder_src_utils
   internal_edges: 0
   external_edges: 39
 
-folder_root
-  nodes: 4
-  internal_edges: 0
-  external_edges: 5
-
 folder_demo
   nodes: 4
   internal_edges: 0
@@ -305,21 +291,16 @@ folder_scratch
   internal_edges: 0
   external_edges: 0
 
-folder_src_server
-  nodes: 4
-  internal_edges: 0
-  external_edges: 25
-
 === HUB RANKING ===
 folder_src_core
-  traffic: 237
-  degree: 170
+  traffic: 236
+  degree: 169
   nodes: 59
 
 doc_shelf
-  traffic: 224
-  degree: 115
-  nodes: 444
+  traffic: 223
+  degree: 114
+  nodes: 448
 
 folder_src_core_collaboration
   traffic: 63
@@ -376,15 +357,15 @@ folder_src_server
   degree: 25
   nodes: 4
 
+folder_src_cli
+  traffic: 19
+  degree: 12
+  nodes: 9
+
 folder_src_core_analysis_analyzers
   traffic: 16
   degree: 16
   nodes: 8
-
-folder_src_core_benchmark
-  traffic: 14
-  degree: 13
-  nodes: 2
 
 === CLUSTER MATRIX ===
                     folder_sr  doc_shelf  folder_sr  folder_sr  folder_sr  folder_sr  folder_sr  folder_sr  folder_sr  folder_sr 
@@ -428,48 +409,41 @@ doc_shelf            ──(3)── folder_src_cli
 doc_shelf            ──(3)── folder_src_core_analysis
 folder_src_core      ──(3)── folder_src_core_analysis_reasoning
 folder_src_bootstrap ──(2)── folder_src_utils
+folder_src_cli       ──(2)── folder_src_core
 folder_src           ──(2)── folder_src_bootstrap
-folder_src_core_analysis ──(2)── folder_src_utils
 
 === GHOST IMPACT MATRIX ===
-cluster_ghost_assets/v0   -> doc_shelf                           = 12
-cluster_ghosts            -> folder_src_core                     = 12
+cluster_ghosts            -> doc_shelf                           = 59
+cluster_ghosts            -> folder_src_core                     = 9
 cluster_ghosts            -> folder_src_core_collaboration       = 7
-cluster_ghosts            -> doc_shelf                           = 6
 cluster_ghosts            -> folder_src_server                   = 5
 cluster_ghosts            -> folder_root                         = 3
-cluster_ghost_assets/1    -> doc_shelf                           = 2
-cluster_ghost_assets/2    -> doc_shelf                           = 2
-cluster_ghost_assets/3    -> doc_shelf                           = 2
-cluster_ghost_assets/4    -> doc_shelf                           = 2
-cluster_ghost_assets/synapse_feature_demo -> doc_shelf                           = 2
-cluster_ghost_assets/synapse_zoom_detail -> doc_shelf                           = 2
-cluster_ghost_assets/network/flowview -> doc_shelf                           = 2
-cluster_ghost_assets/network/flow2 -> doc_shelf                           = 2
-cluster_ghost_assets/network/network_attached_flowview -> doc_shelf                           = 2
-cluster_ghost_assets/cluster_visibility2 -> doc_shelf                           = 2
-cluster_ghost_assets/cluster_fold -> doc_shelf                           = 2
-cluster_ghost_assets/network_attached_cluster -> doc_shelf                           = 2
-cluster_ghost_assets/profile -> doc_shelf                           = 2
-cluster_ghost_assets/network/network_attached_file -> doc_shelf                           = 2
+cluster_ghosts            -> folder_src                          = 2
+cluster_ghosts            -> folder_src_core_resolvers           = 2
+cluster_ghosts            -> folder_src_core_benchmark           = 1
+cluster_ghosts            -> folder_src_core_canvas_engine       = 1
+cluster_ghosts            -> folder_src_rust_checker             = 1
+cluster_ghosts            -> folder_src_webview                  = 1
 
 === GHOST TRAFFIC ===
-ghost_nodes=51
-ghost_edges=96
-ghost_ratio=14.9%
+ghost_nodes=47
+ghost_edges=91
+ghost_ratio=14.1%
 
 === INTERNAL CONTINENTS ===
-doc             nodes=444 clusters=1
+doc             nodes=448 clusters=1
 core            nodes=134 clusters=13
-root            nodes=10 clusters=2
+root            nodes=15 clusters=2
+synapse-test    nodes=15 clusters=5
+cli             nodes=9 clusters=1
 ui              nodes=7 clusters=1
 utils           nodes=5 clusters=1
 demo            nodes=4 clusters=1
 scratch         nodes=4 clusters=1
 server          nodes=4 clusters=1
-cli             nodes=3 clusters=1
 tools           nodes=3 clusters=1
 rust_checker    nodes=2 clusters=1
+report          nodes=1 clusters=1
 scripts         nodes=1 clusters=1
 analysis        nodes=1 clusters=1
 bootstrap       nodes=1 clusters=1
@@ -478,82 +452,57 @@ types           nodes=1 clusters=1
 webview         nodes=1 clusters=1
 
 === EXTERNAL CONTINENTS ===
-cluster_ghosts  nodes=19 clusters=1
-assets/v0       nodes=6 clusters=1
-synapse-visual-architecture-v0 nodes=2 clusters=1
-/home/dogsinatas/TypeScript_project/antigravity-extension-vis/synapse-visual-architecture-v0 nodes=2 clusters=1
-assets/1        nodes=1 clusters=1
-assets/2        nodes=1 clusters=1
-assets/3        nodes=1 clusters=1
-assets/4        nodes=1 clusters=1
-assets/synapse_feature_demo nodes=1 clusters=1
-assets/synapse_zoom_detail nodes=1 clusters=1
-assets/network/flowview nodes=1 clusters=1
-assets/network/flow2 nodes=1 clusters=1
-assets/network/network_attached_flowview nodes=1 clusters=1
-assets/cluster_visibility2 nodes=1 clusters=1
-assets/cluster_fold nodes=1 clusters=1
-assets/network_attached_cluster nodes=1 clusters=1
-assets/profile  nodes=1 clusters=1
-assets/network/network_attached_file nodes=1 clusters=1
-assets/network/harvest nodes=1 clusters=1
-/home/dogsinatas/TypeScript_project/antigravity-extension-vis/ui/index nodes=1 clusters=1
-/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/RawTextMiner nodes=1 clusters=1
-ui/index        nodes=1 clusters=1
-/home/dogsinatas/TypeScript_project/antigravity-extension-vis/package nodes=1 clusters=1
-/home/dogsinatas/TypeScript_project/antigravity-extension-vis/demo/index nodes=1 clusters=1
-network_remote  nodes=1 clusters=1
-release_note/assets/synapse_topology_view nodes=1 clusters=1
+cluster_ghosts  nodes=47 clusters=1
 
 === TOP CONTINENT PAIRS ===
+cluster_ghosts <-> doc         59
 core <-> types                 58
 core <-> doc                   34
 core <-> utils                 33
-cluster_ghosts <-> core        23
 bootstrap <-> core             22
+cluster_ghosts <-> core        20
 core <-> webview               19
 core <-> server                19
 core <-> root                  17
-assets/v0 <-> doc              12
-cluster_ghosts <-> doc         6
+cli <-> core                   8
 demo <-> doc                   6
-cli <-> core                   6
+doc <-> root                   6
 cluster_ghosts <-> root        5
-doc <-> root                   5
 cluster_ghosts <-> server      5
+cli <-> doc                    3
 
 === CONTINENT MATRIX ===
-            doc        core       root       ui         utils      demo       scratch    server    
-doc         -         34        5         1         0         6         0         0         
-core        34        -         17        0         33        0         0         19        
-root        5         17        -         0         2         0         0         0         
-ui          1         0         0         -         0         0         0         0         
-utils       0         33        2         0         -         0         0         1         
-demo        6         0         0         0         0         -         0         0         
-scratch     0         0         0         0         0         0         -         0         
-server      0         19        0         0         1         0         0         -         
+            doc        core       root       synapse-test cli        ui         utils      demo      
+doc         -         34        6         0         3         1         0         6         
+core        34        -         17        0         8         0         33        0         
+root        6         17        -         0         1         0         2         0         
+synapse-test 0         0         0         -         0         0         0         0         
+cli         3         8         1         0         -         0         0         0         
+ui          1         0         0         0         0         -         0         0         
+utils       0         33        2         0         0         0         -         0         
+demo        6         0         0         0         0         0         0         -         
 
 === CONTINENT GRAPH (Top 20 Edges) ===
+cluster_ghosts ──(59)── doc
 core ──(58)── types
 core ──(34)── doc
 core ──(33)── utils
-cluster_ghosts ──(23)── core
 bootstrap ──(22)── core
+cluster_ghosts ──(20)── core
 core ──(19)── webview
 core ──(19)── server
 core ──(17)── root
-assets/v0 ──(12)── doc
-cluster_ghosts ──(6)── doc
+cli ──(8)── core
 demo ──(6)── doc
-cli ──(6)── core
+doc ──(6)── root
 cluster_ghosts ──(5)── root
-doc ──(5)── root
 cluster_ghosts ──(5)── server
 cli ──(3)── doc
-assets/1 ──(2)── doc
-assets/2 ──(2)── doc
-assets/3 ──(2)── doc
-assets/4 ──(2)── doc
+bootstrap ──(2)── utils
+bootstrap ──(2)── root
+doc ──(2)── types
+root ──(2)── webview
+root ──(2)── utils
 
 === CONTINENT LAYOUT ===
 
@@ -590,6 +539,16 @@ bbox_center=(0, 0)
 node_center=(182, 64)
 node_count=10
 
+folder_root
+bbox_center=(0, 0)
+node_center=(140, 80)
+node_count=9
+
+folder_src_cli
+bbox_center=(0, 0)
+node_center=(140, 80)
+node_count=9
+
 folder_src_core_analysis_analyzers
 bbox_center=(0, 0)
 node_center=(123, 70)
@@ -610,11 +569,6 @@ bbox_center=(0, 0)
 node_center=(112, 32)
 node_count=5
 
-folder_root
-bbox_center=(0, 0)
-node_center=(70, 40)
-node_count=4
-
 folder_demo
 bbox_center=(0, 0)
 node_center=(70, 40)
@@ -629,11 +583,6 @@ folder_src_server
 bbox_center=(0, 0)
 node_center=(70, 40)
 node_count=4
-
-folder_src_cli
-bbox_center=(0, 0)
-node_center=(47, 27)
-node_count=3
 
 === [DIAGNOSTIC] CLUSTER BOUNDS ===
 
@@ -658,50 +607,32 @@ NODE README.ko.md | cluster=doc_shelf | comm=none | role=none
 NODE README.md | cluster=doc_shelf | comm=none | role=none
 
 === [RENDER DIAGNOSTIC] CLUSTER DUMP ===
-CLUSTER id=cluster_ghosts type=system nodes=0 (computed count=19)
-CLUSTER id=doc_shelf type=system nodes=0 (computed count=444)
-CLUSTER id=folder_root type=folder nodes=0 (computed count=4)
-CLUSTER id=folder_demo type=folder nodes=0 (computed count=4)
-CLUSTER id=folder_scratch type=folder nodes=0 (computed count=4)
-CLUSTER id=folder_scripts type=folder nodes=0 (computed count=1)
-CLUSTER id=folder_src type=folder nodes=0 (computed count=13)
-CLUSTER id=folder_src_cli type=folder nodes=0 (computed count=3)
-CLUSTER id=folder_src_core type=folder nodes=0 (computed count=65)
-CLUSTER id=folder_src_core_analysis type=folder nodes=0 (computed count=10)
-CLUSTER id=folder_src_core_analysis_analyzers type=folder nodes=0 (computed count=8)
-CLUSTER id=folder_src_core_analysis_intent type=folder nodes=0 (computed count=12)
-CLUSTER id=folder_src_core_analysis_reasoning type=folder nodes=0 (computed count=6)
-CLUSTER id=folder_src_core_canvas_engine type=folder nodes=0 (computed count=10)
-CLUSTER id=folder_src_core_collaboration type=folder nodes=0 (computed count=17)
-CLUSTER id=folder_src_core_transaction type=folder nodes=0 (computed count=3)
-CLUSTER id=folder_src_server type=folder nodes=0 (computed count=4)
-CLUSTER id=folder_src_utils type=folder nodes=0 (computed count=5)
-CLUSTER id=folder_test_core_analysis_intent type=folder nodes=0 (computed count=3)
-CLUSTER id=folder_tools type=folder nodes=0 (computed count=3)
-CLUSTER id=folder_ui type=folder nodes=0 (computed count=7)
-CLUSTER id=cluster_ghost_assets/1 type=system nodes=0 (computed count=1)
-CLUSTER id=cluster_ghost_assets/2 type=system nodes=0 (computed count=1)
-CLUSTER id=cluster_ghost_assets/3 type=system nodes=0 (computed count=1)
-CLUSTER id=cluster_ghost_assets/4 type=system nodes=0 (computed count=1)
-CLUSTER id=cluster_ghost_assets/synapse_feature_demo type=system nodes=0 (computed count=1)
-CLUSTER id=cluster_ghost_assets/synapse_zoom_detail type=system nodes=0 (computed count=1)
-CLUSTER id=cluster_ghost_assets/v0 type=system nodes=0 (computed count=6)
-CLUSTER id=cluster_ghost_assets/network/flowview type=system nodes=0 (computed count=1)
-CLUSTER id=cluster_ghost_assets/network/flow2 type=system nodes=0 (computed count=1)
-CLUSTER id=cluster_ghost_assets/network/network_attached_flowview type=system nodes=0 (computed count=1)
-CLUSTER id=cluster_ghost_assets/cluster_visibility2 type=system nodes=0 (computed count=1)
-CLUSTER id=cluster_ghost_assets/cluster_fold type=system nodes=0 (computed count=1)
-CLUSTER id=cluster_ghost_assets/network_attached_cluster type=system nodes=0 (computed count=1)
-CLUSTER id=cluster_ghost_assets/profile type=system nodes=0 (computed count=1)
-CLUSTER id=cluster_ghost_assets/network/network_attached_file type=system nodes=0 (computed count=1)
-CLUSTER id=cluster_ghost_assets/network/harvest type=system nodes=0 (computed count=1)
-CLUSTER id=cluster_ghost_synapse-visual-architecture-v0 type=system nodes=0 (computed count=2)
-CLUSTER id=cluster_ghost_/home/dogsinatas/TypeScript_project/antigravity-extension-vis/ui/index type=system nodes=0 (computed count=1)
-CLUSTER id=cluster_ghost_/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/RawTextMiner type=system nodes=0 (computed count=1)
-CLUSTER id=cluster_ghost_ui/index type=system nodes=0 (computed count=1)
-CLUSTER id=cluster_ghost_/home/dogsinatas/TypeScript_project/antigravity-extension-vis/package type=system nodes=0 (computed count=1)
-CLUSTER id=cluster_ghost_/home/dogsinatas/TypeScript_project/antigravity-extension-vis/demo/index type=system nodes=0 (computed count=1)
-CLUSTER id=cluster_ghost_network_remote type=system nodes=0 (computed count=1)
-CLUSTER id=cluster_ghost_release_note/assets/synapse_topology_view type=system nodes=0 (computed count=1)
-CLUSTER id=cluster_ghost_/home/dogsinatas/TypeScript_project/antigravity-extension-vis/synapse-visual-architecture-v0 type=system nodes=0 (computed count=2)
+CLUSTER id=cluster_ghosts type=system nodes=0 (computed count=47)
+CLUSTER id=doc_shelf type=system nodes=442 (computed count=448)
+CLUSTER id=folder_root type=folder nodes=9 (computed count=9)
+CLUSTER id=folder_demo type=folder nodes=4 (computed count=4)
+CLUSTER id=folder_report type=folder nodes=1 (computed count=1)
+CLUSTER id=folder_scratch type=folder nodes=4 (computed count=4)
+CLUSTER id=folder_scripts type=folder nodes=1 (computed count=1)
+CLUSTER id=folder_src type=folder nodes=6 (computed count=13)
+CLUSTER id=folder_src_cli type=folder nodes=9 (computed count=9)
+CLUSTER id=folder_src_core type=folder nodes=59 (computed count=65)
+CLUSTER id=folder_src_core_analysis type=folder nodes=9 (computed count=10)
+CLUSTER id=folder_src_core_analysis_analyzers type=folder nodes=8 (computed count=8)
+CLUSTER id=folder_src_core_analysis_intent type=folder nodes=12 (computed count=12)
+CLUSTER id=folder_src_core_analysis_reasoning type=folder nodes=6 (computed count=6)
+CLUSTER id=folder_src_core_canvas_engine type=folder nodes=10 (computed count=10)
+CLUSTER id=folder_src_core_collaboration type=folder nodes=17 (computed count=17)
+CLUSTER id=folder_src_core_transaction type=folder nodes=3 (computed count=3)
+CLUSTER id=folder_src_server type=folder nodes=4 (computed count=4)
+CLUSTER id=folder_src_utils type=folder nodes=5 (computed count=5)
+CLUSTER id=folder_synapse_test_AntennaPod type=folder nodes=3 (computed count=3)
+CLUSTER id=folder_synapse_test type=folder nodes=0 (computed count=0)
+CLUSTER id=folder_synapse_test_DOOM_master type=folder nodes=3 (computed count=3)
+CLUSTER id=folder_synapse_test_antigravity_extension_vis type=folder nodes=3 (computed count=3)
+CLUSTER id=folder_synapse_test_linux_7_2_rc3 type=folder nodes=3 (computed count=3)
+CLUSTER id=folder_synapse_test_vscode_main type=folder nodes=3 (computed count=3)
+CLUSTER id=folder_test_core_analysis_intent type=folder nodes=3 (computed count=3)
+CLUSTER id=folder_tools type=folder nodes=3 (computed count=3)
+CLUSTER id=folder_ui type=folder nodes=7 (computed count=7)
 =========================================

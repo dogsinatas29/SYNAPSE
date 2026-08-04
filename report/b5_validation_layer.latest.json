@@ -1,0 +1,497 @@
+{
+  "generatedAt": "2026-08-04T08:16:41.561Z",
+  "graphFilePath": "/home/dogsinatas/다운로드/linux-7.2-rc3/data/project_state.json",
+  "runCount": 3,
+  "speciesStability": [
+    {
+      "species": "Noise Cluster",
+      "min": 98,
+      "max": 105,
+      "avg": 102.33333333333333,
+      "values": [
+        105,
+        98,
+        104
+      ]
+    },
+    {
+      "species": "Subsystem Core",
+      "min": 26,
+      "max": 38,
+      "avg": 32,
+      "values": [
+        38,
+        26,
+        32
+      ]
+    },
+    {
+      "species": "Mixed Core",
+      "min": 19,
+      "max": 29,
+      "avg": 24.666666666666668,
+      "values": [
+        29,
+        19,
+        26
+      ]
+    },
+    {
+      "species": "Utility Cluster",
+      "min": 18,
+      "max": 26,
+      "avg": 22.666666666666668,
+      "values": [
+        24,
+        18,
+        26
+      ]
+    },
+    {
+      "species": "Contract Core",
+      "min": 16,
+      "max": 17,
+      "avg": 16.333333333333332,
+      "values": [
+        17,
+        16,
+        16
+      ]
+    },
+    {
+      "species": "Utility Candidate",
+      "min": 12,
+      "max": 14,
+      "avg": 12.666666666666666,
+      "values": [
+        12,
+        14,
+        12
+      ]
+    },
+    {
+      "species": "Bridge Candidate",
+      "min": 8,
+      "max": 13,
+      "avg": 11.333333333333334,
+      "values": [
+        13,
+        13,
+        8
+      ]
+    },
+    {
+      "species": "Mixed: Execution Layer",
+      "min": 6,
+      "max": 7,
+      "avg": 6.333333333333333,
+      "values": [
+        6,
+        7,
+        6
+      ]
+    },
+    {
+      "species": "Mixed: Utility Residual",
+      "min": 2,
+      "max": 6,
+      "avg": 4.666666666666667,
+      "values": [
+        2,
+        6,
+        6
+      ]
+    },
+    {
+      "species": "Mixed: Contract Hub",
+      "min": 1,
+      "max": 5,
+      "avg": 3,
+      "values": [
+        5,
+        3,
+        1
+      ]
+    },
+    {
+      "species": "Balanced Community",
+      "min": 2,
+      "max": 2,
+      "avg": 2,
+      "values": [
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "species": "Bridge Cluster",
+      "min": 1,
+      "max": 3,
+      "avg": 2,
+      "values": [
+        3,
+        2,
+        1
+      ]
+    },
+    {
+      "species": "Execution Core",
+      "min": 1,
+      "max": 1,
+      "avg": 1,
+      "values": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "species": "Contract Candidate",
+      "min": 0,
+      "max": 1,
+      "avg": 0.3333333333333333,
+      "values": [
+        1,
+        0,
+        0
+      ]
+    }
+  ],
+  "establishmentGate": {
+    "stable": false,
+    "rule": "default: range<=6 and rel<=0.35; Infrastructure Mesh range<=1",
+    "failures": [
+      "Mixed Core: range=10, rel=0.41",
+      "Bridge Candidate: range=5, rel=0.44",
+      "Bridge Cluster: range=2, rel=1.00",
+      "Utility Cluster: range=8, rel=0.35",
+      "Infrastructure Mesh: missing"
+    ]
+  },
+  "presenceMatrix": [
+    {
+      "species": "Infrastructure Mesh",
+      "runPresence": [
+        false,
+        false,
+        false
+      ],
+      "hitCount": 0,
+      "status": "Unstable"
+    },
+    {
+      "species": "Mixed Core",
+      "runPresence": [
+        true,
+        true,
+        true
+      ],
+      "hitCount": 3,
+      "status": "Stable"
+    },
+    {
+      "species": "Subsystem Core",
+      "runPresence": [
+        true,
+        true,
+        true
+      ],
+      "hitCount": 3,
+      "status": "Stable"
+    },
+    {
+      "species": "Contract Core",
+      "runPresence": [
+        true,
+        true,
+        true
+      ],
+      "hitCount": 3,
+      "status": "Stable"
+    },
+    {
+      "species": "Execution Core",
+      "runPresence": [
+        true,
+        true,
+        true
+      ],
+      "hitCount": 3,
+      "status": "Stable"
+    },
+    {
+      "species": "Bridge Cluster",
+      "runPresence": [
+        true,
+        true,
+        true
+      ],
+      "hitCount": 3,
+      "status": "Stable"
+    },
+    {
+      "species": "Bridge Candidate",
+      "runPresence": [
+        true,
+        true,
+        true
+      ],
+      "hitCount": 3,
+      "status": "Stable"
+    },
+    {
+      "species": "Utility Cluster",
+      "runPresence": [
+        true,
+        true,
+        true
+      ],
+      "hitCount": 3,
+      "status": "Stable"
+    },
+    {
+      "species": "Utility Candidate",
+      "runPresence": [
+        true,
+        true,
+        true
+      ],
+      "hitCount": 3,
+      "status": "Stable"
+    }
+  ],
+  "speciesConfidence": [
+    {
+      "species": "Bridge Candidate",
+      "confidence": 1
+    },
+    {
+      "species": "Bridge Cluster",
+      "confidence": 1
+    },
+    {
+      "species": "Contract Core",
+      "confidence": 1
+    },
+    {
+      "species": "Execution Core",
+      "confidence": 1
+    },
+    {
+      "species": "Mixed Core",
+      "confidence": 1
+    },
+    {
+      "species": "Subsystem Core",
+      "confidence": 1
+    },
+    {
+      "species": "Utility Candidate",
+      "confidence": 1
+    },
+    {
+      "species": "Utility Cluster",
+      "confidence": 1
+    },
+    {
+      "species": "Infrastructure Mesh",
+      "confidence": 0
+    }
+  ],
+  "speciesScoreConfidence": [],
+  "boundaryPressure": [
+    {
+      "label": "Bridge Candidate",
+      "threshold": 0.7,
+      "band": 0.05,
+      "nearCount": 0,
+      "totalCount": 0
+    },
+    {
+      "label": "Utility Candidate",
+      "threshold": 0.75,
+      "band": 0.05,
+      "nearCount": 0,
+      "totalCount": 0
+    },
+    {
+      "label": "Contract Candidate",
+      "threshold": 0.75,
+      "band": 0.05,
+      "nearCount": 0,
+      "totalCount": 0
+    }
+  ],
+  "boundaryConfidenceHistogram": [
+    {
+      "label": "Bridge Candidate",
+      "bins": [
+        {
+          "range": "<0.60",
+          "count": 0
+        },
+        {
+          "range": "0.60-0.70",
+          "count": 0
+        },
+        {
+          "range": "0.70-0.80",
+          "count": 0
+        },
+        {
+          "range": "0.80-0.90",
+          "count": 0
+        },
+        {
+          "range": ">=0.90",
+          "count": 0
+        }
+      ],
+      "totalCount": 0
+    },
+    {
+      "label": "Utility Candidate",
+      "bins": [
+        {
+          "range": "<0.60",
+          "count": 0
+        },
+        {
+          "range": "0.60-0.70",
+          "count": 0
+        },
+        {
+          "range": "0.70-0.80",
+          "count": 0
+        },
+        {
+          "range": "0.80-0.90",
+          "count": 0
+        },
+        {
+          "range": ">=0.90",
+          "count": 0
+        }
+      ],
+      "totalCount": 0
+    },
+    {
+      "label": "Contract Candidate",
+      "bins": [
+        {
+          "range": "<0.60",
+          "count": 0
+        },
+        {
+          "range": "0.60-0.70",
+          "count": 0
+        },
+        {
+          "range": "0.70-0.80",
+          "count": 0
+        },
+        {
+          "range": "0.80-0.90",
+          "count": 0
+        },
+        {
+          "range": ">=0.90",
+          "count": 0
+        }
+      ],
+      "totalCount": 0
+    }
+  ],
+  "infraMeshThresholdSweep": [
+    {
+      "threshold": 0.8,
+      "count": 0,
+      "ids": []
+    },
+    {
+      "threshold": 0.82,
+      "count": 0,
+      "ids": []
+    },
+    {
+      "threshold": 0.84,
+      "count": 0,
+      "ids": []
+    },
+    {
+      "threshold": 0.86,
+      "count": 0,
+      "ids": []
+    }
+  ],
+  "infraMeshBaselineThreshold": 0.84,
+  "infraMeshThresholdRecommendation": {
+    "baselineThreshold": 0.84,
+    "baselineCount": 0,
+    "baselineIds": [],
+    "nextThreshold": 0.86,
+    "nextCount": 0,
+    "rationale": "No high-priority mesh residue after ghost-aware filtering; treat mesh as calibrated-out for this dataset and prioritize Bridge/Utility boundary tuning."
+  },
+  "auditThresholds": {
+    "bridgeAuditMinScore": 0.7,
+    "utilityAuditMinScore": 0.75,
+    "contractAuditMinScore": 0.75
+  },
+  "infrastructureSplitCandidates": [],
+  "auditQueueSeed": [
+    {
+      "communityId": "community_5",
+      "species": "Mixed Core"
+    },
+    {
+      "communityId": "community_3",
+      "species": "Mixed Core"
+    },
+    {
+      "communityId": "community_2",
+      "species": "Mixed Core"
+    },
+    {
+      "communityId": "community_1",
+      "species": "Mixed: Utility Residual"
+    },
+    {
+      "communityId": "community_6::community_13",
+      "species": "Mixed: Execution Layer"
+    },
+    {
+      "communityId": "community_12",
+      "species": "Mixed Core"
+    },
+    {
+      "communityId": "community_25",
+      "species": "Mixed: Execution Layer"
+    },
+    {
+      "communityId": "community_4",
+      "species": "Mixed: Utility Residual"
+    },
+    {
+      "communityId": "community_6::community_12",
+      "species": "Mixed: Execution Layer"
+    },
+    {
+      "communityId": "community_16",
+      "species": "Mixed Core"
+    },
+    {
+      "communityId": "community_8",
+      "species": "Mixed: Utility Residual"
+    },
+    {
+      "communityId": "community_4::community_11",
+      "species": "Mixed: Execution Layer"
+    },
+    {
+      "communityId": "community_23",
+      "species": "Mixed Core"
+    }
+  ]
+}

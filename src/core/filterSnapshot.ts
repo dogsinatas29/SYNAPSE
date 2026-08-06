@@ -22,11 +22,26 @@ export function filterSnapshot(snapshot: GraphSnapshot): GraphSnapshot {
     nodeIds.has(e.from) && nodeIds.has(e.to)
   );
 
-  // 4. Filter Clusters (at least one node in the cluster must still exist)
-  const clusters = (snapshot.clusters || []).filter(c => {
-    const members = (c as any).children || (c as any).nodeIds || [];
-    return members.some((id: string) => nodeIds.has(id));
-  }).map(c => {
+  // 4. Filter Clusters
+  // Instead of checking if a cluster has direct nodes, we keep any cluster that is an ancestor of a node's cluster.
+  const clusterMap = new Map((snapshot.clusters || []).map(c => [c.id, c]));
+  const activeClusterIds = new Set<string>();
+  
+  for (const n of nodes) {
+      const cid = n.cluster_id || n.data?.cluster_id;
+      if (cid) activeClusterIds.add(cid);
+  }
+
+  // Add all ancestors
+  for (const cid of Array.from(activeClusterIds)) {
+      let curr = clusterMap.get(cid);
+      while (curr && curr.parent_id) {
+          activeClusterIds.add(curr.parent_id);
+          curr = clusterMap.get(curr.parent_id);
+      }
+  }
+
+  const clusters = (snapshot.clusters || []).filter(c => activeClusterIds.has(c.id)).map(c => {
     const members = (c as any).children || (c as any).nodeIds || [];
     const filteredMembers = members.filter((id: string) => nodeIds.has(id));
     

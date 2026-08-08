@@ -63,6 +63,14 @@ export interface LayoutResult {
 export function applyLayout(input: LayoutInput): LayoutResult {
     const tStart = process.hrtime.bigint();
     const { nodes, clusters, analysis } = input;
+
+    console.log('[LAYOUT_INVOCATION]', Date.now(), 'activeClusters=', clusters.length, 'clusterNodes=', nodes.length);
+
+    console.log('[LAYOUT_CLUSTER_TYPES]', clusters.map(c => ({
+        id: c.id,
+        type: c.type,
+        nodeCount: c.nodeCount ?? c.nodes?.length ?? 0
+    })));
     
     const clusterNodes = new Map<string, Node[]>();
     for (const n of nodes) {
@@ -121,6 +129,75 @@ export function applyLayout(input: LayoutInput): LayoutResult {
         }
     }
 
+    // [v0.3.34] Minimal cluster bounds calculation (was missing)
+    const clusterBounds = new Map<string, BoundingBox>();
+    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+
+    for (const [cid, cNodes] of clusterNodes) {
+        if (cNodes.length === 0) continue;
+
+        console.log('[BOUND_BUILD]', cid, 'nodes=', cNodes.length);
+
+        let cMinX = Infinity, cMinY = Infinity, cMaxX = -Infinity, cMaxY = -Infinity;
+        for (const n of cNodes) {
+            const p = n.position || { x: 0, y: 0 };
+            console.log('[BOUND_NODE]', cid, n.id, p);
+            if (p.x < cMinX) cMinX = p.x;
+            if (p.y < cMinY) cMinY = p.y;
+            if (p.x > cMaxX) cMaxX = p.x;
+            if (p.y > cMaxY) cMaxY = p.y;
+        }
+
+        const width = Math.max(140, cMaxX - cMinX + 120);
+        const height = Math.max(80, cMaxY - cMinY + 80);
+        const bbox: BoundingBox = {
+            minX: cMinX, minY: cMinY, maxX: cMaxX, maxY: cMaxY,
+            width, height,
+            centerX: (cMinX + cMaxX) / 2,
+            centerY: (cMinY + cMaxY) / 2
+        };
+        clusterBounds.set(cid, bbox);
+
+        if (cMinX < minX) minX = cMinX;
+        if (cMinY < minY) minY = cMinY;
+        if (cMaxX > maxX) maxX = cMaxX;
+        if (cMaxY > maxY) maxY = cMaxY;
+
+        // also write back to the Cluster object if present
+        const clusterObj = activeClusters.find(c => c.id === cid);
+        if (clusterObj) {
+            clusterObj.bounds = { x: cMinX, y: cMinY, width, height };
+            if (!clusterObj.position) clusterObj.position = { x: bbox.centerX, y: bbox.centerY };
+        }
+    }
+
+    const worldBounds: BoundingBox = {
+        minX: minX === Infinity ? 0 : minX,
+        minY: minY === Infinity ? 0 : minY,
+        maxX: maxX === -Infinity ? 0 : maxX,
+        maxY: maxY === -Infinity ? 0 : maxY,
+        width: maxX === -Infinity ? 0 : maxX - minX + 200,
+        height: maxY === -Infinity ? 0 : maxY - minY + 160,
+        centerX: (minX + maxX) / 2,
+        centerY: (minY + maxY) / 2
+    };
+
+    // Critical diagnostic: compare the two sources of truth at return time
+    console.log('[CLUSTER_BOUNDS_MAP]', Array.from(clusterBounds.entries()));
+    console.log('[ACTIVE_CLUSTER_BOUNDS]', activeClusters.map(c => ({
+        id: c.id,
+        bounds: c.bounds
+    })));
+
+    console.log('[LAYOUT_RESULT_HASH]', {
+        clusters: activeClusters.length,
+        worldWidth: worldBounds.width,
+        worldHeight: worldBounds.height,
+        nonZeroBounds: activeClusters.filter(
+            c => c.bounds && (c.bounds.width > 0 || c.bounds.height > 0)
+        ).length
+    });
+
     const dtTotalMs = Number(process.hrtime.bigint() - tStart) / 1e6;
 
     return {
@@ -128,8 +205,8 @@ export function applyLayout(input: LayoutInput): LayoutResult {
         sortedContinents: [],
         clusterNodes: new Map(Array.from(clusterNodes.entries()).map(([k, v]) => [k, v as readonly Node[]])),
         activeClusters: [...activeClusters],
-        clusterBounds: new Map(),
-        worldBounds: { minX: 0, minY: 0, maxX: 0, maxY: 0, width: 0, height: 0, centerX: 0, centerY: 0 },
+        clusterBounds,
+        worldBounds,
         profile: {
             continentPackingMs: 0,
             forceLayoutMs: 0,

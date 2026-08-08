@@ -541,7 +541,8 @@ export class StateManager {
 
             if (isExternal) {
                 finalLayer = 'external';
-                finalClusterId = 'cluster_ghosts';
+                // [v0.3.35 Fix] Respect 3-Tier External Sub-clusters instead of forcing 'cluster_ghosts'
+                finalClusterId = (n.cluster_id && n.cluster_id.startsWith('cluster_ghost')) ? n.cluster_id : 'cluster_ghosts';
             } else if (!isOnDisk) {
                 finalStatus = 'ghost';
                 // [v0.3.33.6 Fix] For ghost nodes, if their cached cluster is a system cluster (like sys_cluster_buffer),

@@ -43,6 +43,7 @@ function renderBranchCompression(): string {
 }
 
 function renderClusterSummary(analysis: GraphAnalysis): string {
+    console.log('[SUMMARY_SOURCE]', 'clusterTraffic.size=', analysis.clusterTraffic.size);
     let out = `=== CLUSTER SUMMARY ===\n`;
     for (const [cId, cCount] of Array.from(analysis.clusterTraffic.entries())
         .map(([id, data]) => [id, data.nodes] as [string, number])

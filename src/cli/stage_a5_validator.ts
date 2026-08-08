@@ -1,7 +1,7 @@
-import * as fs from 'fs';
 import * as path from 'path';
 import { detectCommunities } from '../core/CommunityDetector';
 import { MetricsCalculator, CommunityMetrics, DominanceCalculator, NodeMetadataExtractor, ThresholdProfile, DiagnosisEngine } from './signal_laboratory';
+import { GraphSnapshot } from '../core/validation/ValidationContext';
 
 interface Node {
     id?: string;
@@ -813,20 +813,12 @@ class GraphCentrality {
     }
 }
 
-export function runStageB5Validation(graphFilePath: string) {
+export function runStageB5Validation(snapshot: Readonly<GraphSnapshot>, workspaceRoot: string) {
     console.log(`\n=== 🔬 SYNAPSE Stage B.5: Dominance Signature Validation (Multi-Dimensional) ===`);
-    if (!fs.existsSync(graphFilePath)) {
-        console.error(`File not found: ${graphFilePath}`); return;
-    }
 
-    const data = JSON.parse(fs.readFileSync(graphFilePath, 'utf8'));
-    let nodes: Node[] = data.nodes || [];
-    let edges: Edge[] = data.edges || [];
-    if (!data.nodes && data.graph && data.graph.nodes) {
-        nodes = data.graph.nodes; edges = data.graph.edges;
-    }
+    let nodes: Node[] = (snapshot.nodes as Node[]) || [];
+    let edges: Edge[] = (snapshot.edges as Edge[]) || [];
 
-    const workspaceRoot = path.resolve(path.dirname(graphFilePath), '..');
     const semanticFilter = buildSemanticGraphFilter(nodes, edges, workspaceRoot);
     nodes = semanticFilter.nodes;
     edges = semanticFilter.edges;
@@ -1250,5 +1242,17 @@ export function runStageB5Validation(graphFilePath: string) {
 if (require.main === module) {
     const defaultPath = path.join(__dirname, '../../data/project_state.json');
     const targetPath = process.argv[2] || defaultPath;
-    runStageB5Validation(targetPath);
+    const fs = require('fs');
+    if (fs.existsSync(targetPath)) {
+        const data = JSON.parse(fs.readFileSync(targetPath, 'utf8'));
+        const snapshot: GraphSnapshot = {
+            nodes: data.nodes || (data.graph && data.graph.nodes) || [],
+            edges: data.edges || (data.graph && data.graph.edges) || [],
+            clusters: data.clusters || []
+        };
+        const workspaceRoot = path.resolve(path.dirname(targetPath), '..');
+        runStageB5Validation(snapshot, workspaceRoot);
+    } else {
+        console.error(`File not found: ${targetPath}`);
+    }
 }

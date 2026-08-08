@@ -1,4 +1,7 @@
 import * as vscode from 'vscode';
+import { ValidationEngine } from './validation/ValidationEngine';
+import { ValidationReportBuilder } from './validation/ValidationReportBuilder';
+import { GraphSnapshot } from './validation/ValidationContext';
 import * as path from 'path';
 import { ProjectState, Node, Edge, NodeStatus, EdgeType } from '../types/schema';
 import { Logger } from '../utils/Logger';
@@ -98,7 +101,7 @@ export class VirtualDebugger {
     /**
      * Harvests diagnostics from VS Code and maps them to the current project state.
      */
-    public async performVirtualDebug(state: ProjectState, workspaceRoot: string, visibleClusterIds?: string[]): Promise<{ evidence: any, reports: any[], analyzedNodeCount: number }> {
+    public async performVirtualDebug(state: ProjectState, workspaceRoot: string, visibleClusterIds?: string[]): Promise<{ evidence: any, reports: any[], analyzedNodeCount: number, surgeryReportUri?: any }> {
         console.log("[STEP-1] VirtualDebug start");
         Logger.info('[VirtualDebugger] Starting Virtual Debug (AAE Facade)...');
         
@@ -131,17 +134,124 @@ export class VirtualDebugger {
         console.log(`[VD_CLUSTER_SAMPLE]`, allClusters.filter((c: any) => c.collapsed === true).slice(0, 5).map((c: any) => c.id));
         Logger.info(`[VD_SCOPE] Nodes=${targetNodes.length} | Edges=${targetEdges.length} | Clusters=${allClusters.length} | VisibleClusters=${visibleClusterIds?.length || 0} | BridgeGuard=${allClusters.length > 100 ? 'BLOCKED(>100)' : 'PASS'}`);
         
+        // [CLUSTER_HIERARCHY_AUDIT]
+        const auditTargets = ['trace', 'util', 'sys', 'arch', 'arm64', 'External (trace)', 'External (util)', 'cluster_external'];
+        for (const target of auditTargets) {
+            const found: any = allClusters.find((c: any) => c.id === target || c.label === target || c.id?.includes(target));
+            if (found) {
+                console.log("[CLUSTER_HIERARCHY_AUDIT]", {
+                    cluster: found.id,
+                    label: found.label,
+                    parent: found.parent_id || found.parentId,
+                    type: found.type || found.layer
+                });
+            }
+        }
+        
         if (visibleClusterIds !== undefined) {
+            console.log(
+              '[VD_VISIBLE_INPUT]',
+              {
+                 visibleClusterIds: visibleClusterIds.length,
+                 stateNodes: state.nodes?.length,
+                 stateEdges: state.edges?.length
+              }
+            );
             Logger.info(`[VirtualDebugger] Note: Frontend sent ${visibleClusterIds.length} visible clusters. Filtering nodes and edges on backend.`);
             if (visibleClusterIds.length > 0) {
                 const visibleSet = new Set(visibleClusterIds);
-                targetNodes = targetNodes.filter((n: any) => visibleSet.has(n.cluster_id));
+                
+                // [BOUNDARY_AUDIT]
+                let exp2exp = 0, exp2col = 0, col2col = 0;
+                // Map to build parent relationships
+                const clusterMap = new Map(allClusters.map((c: any) => [c.id, c]));
+                
+                // Function to find the lowest visible ancestor (which is the effective cluster for the node)
+                const getVisibleAncestor = (cid: string): string | null => {
+                    let current = cid;
+                    let lastVisible = null;
+                    while (current) {
+                        if (visibleSet.has(current)) {
+                            // First visible ancestor going up the tree is the one we want
+                            // Wait, if 'folder_drivers' is visible and 'folder_drivers_gpu' is NOT visible,
+                            // the node should belong to 'folder_drivers'.
+                            return current;
+                        }
+                        const c = clusterMap.get(current);
+                        if (!c || !c.parent_id) break;
+                        current = c.parent_id;
+                    }
+                    return null;
+                };
+
+                // Map all nodes to their effective visible cluster
+                const allNodeClusters = new Map<string, string | null>();
+                rawStateNodes.forEach((n: any) => {
+                    const effectiveCluster = getVisibleAncestor(n.cluster_id);
+                    allNodeClusters.set(n.id, effectiveCluster);
+                });
+
+                // Keep only nodes that have a visible ancestor, and UPDATE their cluster_id on the cloned objects
+                targetNodes = targetNodes.filter((n: any) => {
+                    const eff = allNodeClusters.get(n.id);
+                    if (eff) {
+                        n.cluster_id = eff; // Aggregate! This is safe because n is already a shallow copy from line 114
+                        return true;
+                    }
+                    return false;
+                });
+
                 const targetNodeIds = new Set(targetNodes.map((n: any) => n.id));
-                targetEdges = targetEdges.filter((e: any) => targetNodeIds.has(e.from) && targetNodeIds.has(e.to));
+                
+                // Aggregate Nodes Map: cluster_id -> AggregateNode
+                const aggregateNodes = new Map<string, any>();
+
+                targetEdges = rawStateEdges.map((e: any) => {
+                    const fullEdge = (allEdgesMap.get(e.id) || {}) as any;
+                    return { ...fullEdge, ...e };
+                }).filter((e: any) => {
+                    const fromExp = targetNodeIds.has(e.from);
+                    const toExp = targetNodeIds.has(e.to);
+                    
+                    if (fromExp && toExp) return true; // exp2exp (Both ends have visible ancestors)
+                    
+                    if (fromExp || toExp) { // Boundary to completely invisible cluster
+                        const collapsedNodeId = fromExp ? e.to : e.from;
+                        // Use original cluster_id for the collapsed node, since getVisibleAncestor is null
+                        const collapsedNode: any = rawStateNodes.find((n:any) => n.id === collapsedNodeId);
+                        const originalCollapsedCluster = (collapsedNode && collapsedNode.cluster_id) ? collapsedNode.cluster_id : 'unknown';
+                        
+                        const aggId = `AGGREGATE_${originalCollapsedCluster}`;
+                        if (!aggregateNodes.has(originalCollapsedCluster)) {
+                            aggregateNodes.set(originalCollapsedCluster, {
+                                id: aggId,
+                                cluster_id: originalCollapsedCluster,
+                                label: `[Aggregate] ${originalCollapsedCluster}`,
+                                type: 'aggregate'
+                            });
+                        }
+                        
+                        if (fromExp) e.to = aggId;
+                        else e.from = aggId;
+                        
+                        return true;
+                    }
+                    return false;
+                });
+                
+                // Append aggregate nodes to targetNodes
+                targetNodes.push(...Array.from(aggregateNodes.values()));
             } else {
                 targetNodes = [];
                 targetEdges = [];
             }
+            
+            console.log(
+              "[VD_VISIBLE_FILTER_RESULT]",
+              targetNodes.length,
+              targetEdges.length,
+              state.clusters?.length
+            );
         }
         
         // [v0.3.34.9] Pre-Platform Filter Logging (Hub Top 5 Before)
@@ -217,6 +327,14 @@ export class VirtualDebugger {
 
         Logger.info('[VD-CHECKPOINT-1] Creating targetState');
         const targetState = { ...state, nodes: targetNodes, edges: targetEdges };
+        console.log(
+          '[VD_SNAPSHOT_BUILD]',
+          {
+             nodes: targetState.nodes?.length,
+             edges: targetState.edges?.length,
+             clusters: targetState.clusters?.length
+          }
+        );
         
         const nodesBefore = targetState.nodes;
         const edgesBefore = targetState.edges;
@@ -273,14 +391,20 @@ export class VirtualDebugger {
         engine.registerAnalyzer(new DependencyPressureAnalyzer());
         engine.registerAnalyzer(new SchemaViolationAnalyzer());
         engine.registerAnalyzer(new DeadEndAnalyzer());
-        engine.registerAnalyzer(new IsolatedNodeAnalyzer());
-        
-        Logger.info('[VD-CHECKPOINT-7] Calling engine.run');
-        console.log('[AAE_INPUT]', {
+        console.log('[ASR_SCOPE]', {
+            expanded: visibleClusterIds?.length || 0,
+            collapsed: (targetState.clusters?.length || 0) - (visibleClusterIds?.length || 0)
+        });
+
+        console.log('[ASR_GRAPH_INPUT]', {
             nodes: targetState.nodes?.length,
             edges: targetState.edges?.length,
             clusters: targetState.clusters?.length,
             diagnostics: allDiags.length
+        });
+        console.log('[ASR_GRAPH_SAMPLE]', {
+            firstNodes: targetState.nodes?.slice(0, 5).map((n: any) => n.id),
+            firstEdges: targetState.edges?.slice(0, 5).map((e: any) => `${e.from}->${e.to}`)
         });
         const evidenceBundle = engine.run(targetState, allDiags, workspaceRoot);
         Logger.info(`[CHECKPOINT-A] AAE returned`);
@@ -320,10 +444,84 @@ export class VirtualDebugger {
         Logger.info('[POST_AAE_VISIBLE]', visibleClusterIds?.length || 0);
 
         
+        let surgeryReportUri: any = null;
         if (workspaceRoot) {
-            Logger.info(`[CHECKPOINT-F] before export`);
-            ReportExporter.export(reasonedBundle, targetState, workspaceRoot);
-            Logger.info(`[CHECKPOINT-G] after export`);
+            Logger.info(`[CHECKPOINT-F] before ValidationEngine execution (Surgery Pipeline)`);
+            const fs = require('fs');
+            const path = require('path');
+            
+            // Phase 1: Temporary JSON dump for CLI compatibility / debugging
+            if (process.env.SYNAPSE_DEBUG_DUMP === 'true') {
+                const tempStatePath = path.join(workspaceRoot, 'synapse_report', 'temp_target_state.json');
+                fs.mkdirSync(path.join(workspaceRoot, 'synapse_report'), { recursive: true });
+                fs.writeFileSync(tempStatePath, JSON.stringify(targetState, null, 2), 'utf8');
+                console.log("[ASR] temp dump ok");
+            }
+
+            try {
+                // 1. Run Validation Engine directly
+                Logger.info(`[Laboratory] Running Validation Engine in-memory`);
+                console.log("[ASR] validation start");
+                
+                // Construct GraphSnapshot from targetState
+                const snapshot: GraphSnapshot = {
+                    nodes: targetState.nodes || [],
+                    edges: targetState.edges || [],
+                    clusters: targetState.clusters || []
+                };
+
+                console.log(
+                  '[ASR_SNAPSHOT]',
+                  {
+                    nodes: snapshot.nodes.length,
+                    edges: snapshot.edges.length,
+                    clusters: snapshot.clusters?.length ?? 0
+                  }
+                );
+
+                console.log(
+                  '[ASR_CLUSTER_SAMPLE]',
+                  snapshot.clusters
+                    ?.slice(0, 20)
+                    .map((c: any) => ({
+                      id: c.id,
+                      collapsed: c.collapsed
+                    }))
+                );
+
+                const context = ValidationEngine.analyzeState(snapshot, 1, workspaceRoot);
+                console.log("[ASR] validation exit 0");
+                
+                console.log(
+                  '[ASR_CTX]',
+                  {
+                    findings: (context.metrics as any).findings?.length,
+                    communities: (context.metrics as any).communities?.length,
+                    species: (context.metrics as any).species?.length,
+                    diagnostics: (context.metrics as any).diagnostics?.length
+                  }
+                );
+
+                console.log(
+                  '[ASR_REPORT_INPUT]',
+                  Object.keys(context.metrics)
+                );
+
+                // 2. Run generate_surgery_report logic
+                Logger.info(`[Laboratory] Generating Surgery Report (ASR_EV-LIVE)...`);
+                console.log("[ASR] surgery start");
+                
+                const { mdPath } = ValidationReportBuilder.generateReports(context, 'EV-LIVE');
+                console.log("[ASR] surgery exit 0");
+                
+                surgeryReportUri = vscode.Uri.file(mdPath);
+                console.log("[ASR] report generated", surgeryReportUri.fsPath);
+            } catch (err: any) {
+                Logger.error(`[Surgery Error] Engine execution failed: ${err.message}`);
+                console.log("[ASR] execution failed", err.message);
+                if (err.stack) Logger.error(`STACK: ${err.stack}`);
+            }
+            Logger.info(`[CHECKPOINT-G] after ValidationEngine execution`);
         }
         
         // Extract reports from necrosis findings for the Markdown report
@@ -442,7 +640,8 @@ export class VirtualDebugger {
         return {
             evidence: evidenceBundle,
             reports,
-            analyzedNodeCount: targetNodes.length
+            analyzedNodeCount: targetNodes.length,
+            surgeryReportUri
         };
     }
 

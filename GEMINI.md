@@ -395,8 +395,9 @@ actual hierarchy
 │       ├── project_state.json
 │       ├── synapse_history.json
 │       └── .server_info            ← 🟢 Added
-├── generated_reports/
-├── harvest_output/
+├── synapse_generated_reports/
+├── synapse_harvest_output/
+├── synapse_report/
 ├── .virtual-debug/
 ├── .synapse-cache/
 ├── assets/
@@ -591,13 +592,13 @@ actual hierarchy
 | `src/core/SymbolIndex.ts` | Active | Cross-file registry (FolderTree + FileRegistry + FunctionCatalog, .synapseignore 필터링 + setIgnore() 연동) |
 | `src/core/DataPipeline.ts` | Active | 물리 파일 시스템 스캔 → 노드/엣지/클러스터 추출, 📁 Root 클러스터를 통한 무소속 노드 물리 배정 및 초기 원형 분산 배치 |
 | `src/core/RendererCore.ts` | Active | 렌더러 생명주기 관리 및 WebGL/Canvas 2D 전환 브릿지 |
-| `src/core/RuleEngine.ts` | Active | 핵심 규칙 검증 엔진 (Phase/Rule/Mutation pipeline) |
+| `src/core/RuleEngine.ts` | 🟡 Modified | 핵심 규칙 검증 엔진 (Phase/Rule/Mutation pipeline) + 블랙리스트 폴더(synapse_report 등) 자동 무시 처리 |
 | `src/core/GraphModel.ts` | Active | 그래프 데이터 모델 (노드/엣지 CRUD, 직렬화) |
 | `src/core/BlacklistOrchestrator.ts` | Active | 노이즈 폴더(`dist`, `node_modules` 등) O(1) 하이브리드 블랙리스트 필터 |
 | `src/core/FileScanner.ts` | Active | 단일 파일 단위 소스 분석 및 의존성 추출 (크로스-워크스페이스 [SYNAPSE_NETWORK_LINK] 정규식 파싱 포함) |
 | `src/core/FlowScanner.ts` | Active | 파일 간 데이터 흐름(Flow) 분석 엔진 |
 | `src/core/FlowchartGenerator.ts` | Active | 분석 결과 → 계층형 레이아웃 플로우차트 생성 (DFS Rank 할당, Logic Inversion) |
-| `src/core/LogicAnalyzer.ts` | Active | 스키마 무결성 검증 및 아키텍처 논리 분석 (detectSchemaViolations) |
+| `src/core/LogicAnalyzer.ts` | 🟡 Modified | 스키마 무결성 검증 및 아키텍처 논리 분석 (LOGIC_REPORT.md 생성 폴더를 synapse_report로 격리) |
 | `src/core/GeminiParser.ts` | Active | Gemini/Copilot 대화 데이터 파싱 전담 |
 | `src/core/graphBuilder.ts` | Active | 스캔된 소스 → 그래프 구조화 빌더 |
 | `src/core/DatabaseEngine.ts` | Active | VS Code globalState 기반 KV 스토리지 (billing_meta, managed_nodes) |
@@ -612,12 +613,12 @@ actual hierarchy
 | `src/core/PhaseManager.ts` | Active | Phase 상태 관리 및 전이 |
 | `src/core/SnapshotSystem.ts` | Active | 프로젝트 상태 스냅샷 저장/복원 (v0.3.30: 버전/체크섬/메타데이터 업그레이드) |
 | `src/core/GridSystem.ts` | Active | 캔버스 그리드 시스템 및 스냅 정렬 |
-| `src/core/VirtualDebugger.ts` | Active | 가상 디버거 (런타임 상태 모니터링) |
+| `src/core/VirtualDebugger.ts` | 🟡 Modified | 가상 디버거 (런타임 상태 모니터링) + temp_target_state.json을 synapse_report로 격리 생성 |
 | `src/core/EdgeCodeRefactorer.ts` | Active | 엣지 코드 리팩터링 검증 도구 |
 | `src/core/PbSessionWatcher.ts` | Active | Protobuf 세션 파일 감시 및 추출 트리거 |
 | `src/core/filterSnapshot.ts` | Active | 스냅샷 레이어/타입 기반 필터링 |
 | `src/core/JVMAuditor.ts` | Active | Java 및 Kotlin 소스의 심층 구조적 무결성 분석 및 클래스 기반 로직 오디팅 |
-| `src/core/ReportExporter.ts` | Active | 리포트 내보내기 |
+| `src/core/ReportExporter.ts` | 🟡 Modified | 리포트 내보내기 (경로를 synapse_report로 격리) |
 | `src/core/VscdbAdapter.ts` | Active | VS Code DB 어댑터 |
 | `src/core/SynapseIgnore.ts` | Active | Gitignore-style 패턴 파서; `.synapseignore` 로드/매칭/통합 |
 | `src/core/BillingManager.ts` | **Legacy** | 상용화 과금 뼈대. Free node/session limit + Pro mode. 모든 과금 UX 주석 Lock. Dev 강제 Pro |
@@ -643,6 +644,8 @@ actual hierarchy
 | `src/core/collaboration/RestCollaborationTransport.ts` | Active | REST 전송 구현체 |
 | `src/core/GhostClassifier.ts` | 🟢 Active | 고스트 노드 유형별 분류 로직 |
 | `src/core/ExternalReferenceSemantics.ts` | 🟢 Active | 외부 참조 시맨틱 파악 모듈 |
+| `src/core/ClusterBuilder.ts` | 🟡 Modified | 클러스터 생성기 + [CREATE_CLUSTER] 유령 클러스터 생성 추적용 정밀 프로브 주입 |
+| `src/core/NodeBuilder.ts` | 🟡 Modified | 노드 생성기 + [REPORT_FILES] 특정 폴더 내부 노드 증발 여부 감시용 정밀 프로브 주입 |
 | `src/analysis/hintEngine.ts` | Active | 실시간 아키텍처 분석 및 진단 힌트(R1~R5 경고) 캔버스 제공 |
 | `src/bootstrap/BootstrapEngine.ts` | Active | 초기 로드 시 디렉터리 스캔 → 아키텍처 그래프 자동 구성 |
 | `src/rust_checker/` | Active | Rust 프로젝트 소스 구조 분석 및 종속성 추출 (mod.rs + reporter.rs + state_checker.rs) |
@@ -655,7 +658,7 @@ actual hierarchy
 | `src/utils/Logger.ts` | Active | 시스템 전역 로깅 유틸리티 — standalone 모드 지원 (try/catch vscode require, console.log 폴백) |
 | `src/utils/exclusionRules.ts` | Active | 제외 규칙 정규식 관리 |
 | `src/utils/visualHints.ts` | Active | 시각 힌트(배지, 컬러) 유틸리티 |
-| `src/webview/CanvasPanel.ts` | Active | 웹뷰 캔버스 패널 (수동 노드 확장자 동적 추론, 스키마 검증 False Positive 회피, 삭제 경로 보정, 서버/계정 관리 상태 동기화) |
+| `src/webview/CanvasPanel.ts` | 🟡 Modified | 웹뷰 캔버스 패널 (LOGIC_REPORT.md 자동 열기 경로를 synapse_report 폴더로 수정 등 버그 픽스) |
 | `src/test/__mocks__/vscode.ts` | Active | VS Code API Mock (테스트 환경) |
 | `src/test/phase1_validation.test.ts` | Active | Phase 1 검증 (ProjectBoundary + SymbolIndex) — 10 tests |
 | `src/test/phase2_validation.test.ts` | Active | Phase 2 검증 (Identity + Session + Runtime) — 14 tests |

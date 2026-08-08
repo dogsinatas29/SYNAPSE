@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { Logger } from '../utils/Logger';
 import { ScannerRegistry } from './ScannerRegistry';
-import { CodeSummary } from '../types/schema';
+import { CodeSummary, EdgeProvenance } from '../types/schema';
 
 export { CodeSummary };
 
@@ -452,7 +452,7 @@ export class FileScanner {
                         let type = 'dependency';
                         const idMatch = line.match(/\[SYNAPSE(?:_PENDING|_DELETED)?:([^\]]+)\]/);
                         const nodeId = idMatch ? idMatch[1] : undefined;
-                        summary.references.push({ target: cleanRef, type, nodeId, isApproved: !isPendingOrDeleted });
+                        summary.references.push({ target: cleanRef, type, nodeId, isApproved: !isPendingOrDeleted, provenance: EdgeProvenance.INCLUDE_DIRECTIVE });
                     }
                 } else if (quoteType === '<') {
                     const systemLib = ref.split('/')[0];
@@ -461,12 +461,12 @@ export class FileScanner {
                     if (!standardLibs.includes(systemLib)) {
                         // [v0.3.21] If not a standard lib, treat as a potential internal dependency (common in CMake)
                         if (cleanRef && !summary.references.some(r => r.target === cleanRef)) {
-                            summary.references.push({ target: cleanRef, type: 'dependency' });
+                            summary.references.push({ target: cleanRef, type: 'dependency', provenance: EdgeProvenance.INCLUDE_DIRECTIVE });
                         }
                     } else {
                         // Standard library call
                         if (!summary.references.some(r => r.target === systemLib)) {
-                            summary.references.push({ target: systemLib, type: 'api_call' });
+                            summary.references.push({ target: systemLib, type: 'api_call', provenance: EdgeProvenance.INCLUDE_DIRECTIVE });
                         }
                     }
                 }

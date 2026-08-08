@@ -1,6 +1,6 @@
 import { IntentEdge } from './IntentEdge';
 import { 
-    ArchitectureAtlas, PipelineStats, 
+    ArchitectureAtlas, PipelineStats, StrategicAsset,
     ContinentInfo, CorridorInfo, RegionConnectivity, RepresentativeFile 
 } from './ReasonedReportBundle';
 import { ActionCandidate, ImpactVector } from './ActionCandidate';

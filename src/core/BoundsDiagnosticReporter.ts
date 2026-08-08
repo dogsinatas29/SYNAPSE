@@ -8,11 +8,22 @@ export function generateBoundsDiagnostics(layoutResult: LayoutResult, nodes: Nod
     // CLUSTER BOUNDS
     diagnosticOutput += `=== [DIAGNOSTIC] CLUSTER BOUNDS ===\n`;
 
-    const allPackedClusters = layoutResult.sortedContinents.flatMap(cont => cont.clusters);
+    // Use authoritative sources (activeClusters or the clusters param) instead of the now-empty sortedContinents
+    const allPackedClusters = (layoutResult.activeClusters?.length ? layoutResult.activeClusters : clusters);
+    const MAX_DIAGNOSTICS = 1000;
+    const isHugeGraph = allPackedClusters.length > MAX_DIAGNOSTICS;
+    const processCount = Math.min(allPackedClusters.length, MAX_DIAGNOSTICS);
 
-    for (let i = 0; i < allPackedClusters.length; i++) {
+    if (isHugeGraph) {
+        diagnosticOutput += `\n[WARNING] Graph is huge (${allPackedClusters.length} clusters). Capping bounds diagnostics to first ${MAX_DIAGNOSTICS} clusters to prevent OOM.\n`;
+    }
+
+    for (let i = 0; i < processCount; i++) {
         const c1 = allPackedClusters[i];
-        const c1Bounds = layoutResult.clusterBounds.get(c1.id)!;
+        const c1Bounds = layoutResult.clusterBounds.get(c1.id);
+        if (!c1Bounds) {
+            continue;
+        }
         
         diagnosticOutput += `\n=== [CLUSTER] ===\n`;
         diagnosticOutput += `id=${c1.id}\n`;
@@ -26,26 +37,38 @@ export function generateBoundsDiagnostics(layoutResult: LayoutResult, nodes: Nod
         const density = c1.nodeCount / (c1Bounds.width * c1Bounds.height || 1);
         diagnosticOutput += `density=${density.toFixed(6)}\n`;
         
-        // Overlap detection
+        // Overlap detection (capped to avoid O(N^2) explosion)
+        let overlapsLogged = 0;
         for (let j = i + 1; j < allPackedClusters.length; j++) {
             const c2 = allPackedClusters[j];
-            const c2Bounds = layoutResult.clusterBounds.get(c2.id)!;
+            const c2Bounds = layoutResult.clusterBounds.get(c2.id);
+            if (!c2Bounds) continue;
             
             const dx = Math.abs(c1Bounds.centerX - c2Bounds.centerX);
             const dy = Math.abs(c1Bounds.centerY - c2Bounds.centerY);
             
             if (dx < (c1Bounds.width + c2Bounds.width) / 2 && dy < (c1Bounds.height + c2Bounds.height) / 2) {
-                const overlapX = (c1Bounds.width + c2Bounds.width) / 2 - dx;
-                const overlapY = (c1Bounds.height + c2Bounds.height) / 2 - dy;
-                const overlapArea = overlapX * overlapY;
-                diagnosticOutput += `[OVERLAP] ${c1.id} ↔ ${c2.id} area=${overlapArea.toFixed(0)}\n`;
                 overlapCount++;
+                if (overlapsLogged < 5) { // Cap overlap logging per cluster
+                    const overlapX = (c1Bounds.width + c2Bounds.width) / 2 - dx;
+                    const overlapY = (c1Bounds.height + c2Bounds.height) / 2 - dy;
+                    diagnosticOutput += `[OVERLAP] ${c1.id} & ${c2.id} (area=${Math.round(overlapX * overlapY)})\n`;
+                    overlapsLogged++;
+                }
             }
+        }
+        if (overlapsLogged >= 5) {
+            diagnosticOutput += `... (more overlaps omitted)\n`;
         }
     }
 
     // WORLD BOUNDS
     const wb = layoutResult.worldBounds;
+    console.log('[BOUNDS_SOURCE]', {
+        clustersLength: clusters?.length,
+        firstIds: clusters?.slice(0,5).map(c => c.id)
+    });
+    console.log('[LAYOUT_RESULT_KEYS]', Object.keys(layoutResult));
     diagnosticOutput += `\n=== [LAYOUT] ===\n`;
     diagnosticOutput += `[LAYOUT] cluster_count=${allPackedClusters.length}\n`;
     diagnosticOutput += `[LAYOUT] overlap_pairs=${overlapCount / 2}\n`; // Because in DataPipeline they incremented inside nested loop which checked i+1 to end, wait... it was overlapCount++ once. It did NOT do symmetric increment. Let me check DataPipeline to see if they divided by 2 or not. 
@@ -64,6 +87,7 @@ export function generateBoundsDiagnostics(layoutResult: LayoutResult, nodes: Nod
     }
 
     // CLUSTER DUMP
+    console.log('[RENDER_SOURCE]', 'clusters.length=', clusters.length);
     diagnosticOutput += `\n=== [RENDER DIAGNOSTIC] CLUSTER DUMP ===\n`;
     for (const c of clusters) {
         diagnosticOutput += `CLUSTER id=${c.id} type=${c.type} nodes=${c.nodes?.length || 0} (computed count=${layoutResult.clusterNodes.get(c.id)?.length || 0})\n`;

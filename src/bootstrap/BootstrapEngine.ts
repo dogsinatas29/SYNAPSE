@@ -253,8 +253,12 @@ export class BootstrapEngine {
                                 ...n,
                                 position: existing.position || n.position,
                                 layer: existing.layer || n.layer,
-                                cluster_id: existing.cluster_id || n.cluster_id,
-                                data: { ...(n.data || {}), ...(existing.data || {}) }
+                                // [v0.3.34.13 Fix] NEVER restore cluster_id for auto-generated nodes from snapshot!
+                                // It creates a feedback loop where Ghost/Community mutations become permanent.
+                                // ONLY preserve cluster_id for manual nodes (handled below).
+                                cluster_id: n.cluster_id, 
+                                // Do not blindly merge `existing.data` as it contains old ghost/community metadata.
+                                data: n.data
                             };
                         }
                         return n;
@@ -466,6 +470,7 @@ The **Documentation Shelf** of the Synapse canvas is a sacred storage area for m
         const scanDir = (dir: string, relPath: string = '', depth: number = 0) => {
             if (!fs.existsSync(dir) || depth > 10) return;
             const files = fs.readdirSync(dir);
+            files.sort(); // [v0.3.34.13 Fix] Ensure deterministic file scanning order
             for (const file of files) {
                 const fullPath = path.join(dir, file);
                 const currentRelPath = path.join(relPath, file).replace(/\\/g, '/');

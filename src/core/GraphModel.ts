@@ -264,7 +264,7 @@ export class GraphModel {
     }
 
     const requiredClusters = [
-      { id: 'cluster_ghosts', label: '🌐 External Dependencies', type: 'system', position: { x: 800, y: 0 }, data: { layer: 'external', continent: 'external', subcontinent: 'external' } },
+      { id: 'cluster_ghosts', label: '🌐 External Dependencies', type: 'system', collapsed: false, position: { x: 800, y: 0 }, data: { layer: 'external', continent: 'external', subcontinent: 'external' } },
       { id: 'sys_cluster_reserved', label: 'Reserved Cluster', type: 'system', position: { x: 0, y: 600 } },
       { id: 'sys_cluster_buffer', label: '🛡️ Buffer Cluster', type: 'system', position: { x: -400, y: 600 } },
       { id: 'doc_shelf', label: '📚 Documentation Shelf', type: 'system', collapsed: true, position: { x: 800, y: 600 } }

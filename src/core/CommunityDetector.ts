@@ -91,8 +91,16 @@ export function detectCommunities(
             }
             
             const shuffledNodes = [...currentNodes];
+            
+            // [v0.3.34.13 Fix] Deterministic PRNG to avoid Canvas flapping
+            let seed = 123456789 + pass * 1000 + iter;
+            const random = () => {
+                seed = (1103515245 * seed + 12345) % 2147483648;
+                return seed / 2147483648;
+            };
+
             for (let i = shuffledNodes.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
+                const j = Math.floor(random() * (i + 1));
                 [shuffledNodes[i], shuffledNodes[j]] = [shuffledNodes[j], shuffledNodes[i]];
             }
             

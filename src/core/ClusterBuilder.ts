@@ -1,7 +1,7 @@
 import { Cluster, Node } from '../types/schema';
 
 const SYSTEM_CLUSTERS: Cluster[] = [
-    { id: 'cluster_ghosts', label: '🌐 External Dependencies', type: 'system', position: { x: 0, y: 0 }, bounds: { x: 0, y: 0, width: 0, height: 0 }, children: [], nodes: [], data: { layer: 'external', continent: 'external', subcontinent: 'external' } },
+    { id: 'cluster_ghosts', label: '🌐 External Dependencies', type: 'system', collapsed: false, position: { x: 0, y: 0 }, bounds: { x: 0, y: 0, width: 0, height: 0 }, children: [], nodes: [], data: { layer: 'external', continent: 'external', subcontinent: 'external' } },
     { id: 'sys_cluster_reserved', label: '🛡️ Reserved (Internal Pending)', type: 'system', position: { x: 0, y: 0 }, bounds: { x: 0, y: 0, width: 0, height: 0 }, children: [], nodes: [], data: {} },
     { id: 'doc_shelf', label: '📚 Documentation Shelf', type: 'system', position: { x: 0, y: 0 }, bounds: { x: 0, y: 0, width: 0, height: 0 }, children: [], nodes: [], data: {} },
     { id: 'folder_root', label: '📁 Root Directory', type: 'folder', position: { x: 0, y: 0 }, bounds: { x: 0, y: 0, width: 0, height: 0 }, children: [], nodes: [], data: { layer: 'ai', continent: 'root', subcontinent: 'root' } }
@@ -76,10 +76,22 @@ export function buildClusters(nodes: Node[]): ClusterBuildResult {
                     parent_id: parentClusterId
                 };
                 const directCount = dirNodeCount.get(currentPath) || 0;
-                console.log('[CLUSTER_CREATED]', newCluster.id,
-                    'directNodes:', directCount,
-                    'parent:', parentClusterId || 'none',
-                    'path:', currentPath);
+                if (currentClusterId === 'folder_report') {
+                    console.error(
+                        "[CREATE_CLUSTER]",
+                        currentClusterId,
+                        {
+                            directNodes: directCount,
+                            parent: parentClusterId || 'none',
+                            path: currentPath
+                        }
+                    );
+                } else {
+                    console.log('[CLUSTER_CREATED]', currentClusterId,
+                        'directNodes:', directCount,
+                        'parent:', parentClusterId || 'none',
+                        'path:', currentPath);
+                }
                 clusterMap.set(currentClusterId, newCluster);
                 clusters.push(newCluster);
                 clusterIds.add(currentClusterId);
@@ -119,6 +131,20 @@ export function buildClusters(nodes: Node[]): ClusterBuildResult {
     console.log('[EMPTY_CLUSTER_COUNT]', {
         total: emptyClusters.length,
         sample: emptyClusters.slice(0, 20).map(c => c.id)
+    });
+    
+    // [ROOT_AUDIT] Identify all root clusters (no parent) and sort by node count deterministically
+    const rootClusters = clusters.filter(c => !c.parent_id);
+    rootClusters.sort((a, b) => {
+        const aCount = a.nodes.length || 0;
+        const bCount = b.nodes.length || 0;
+        if (bCount !== aCount) return bCount - aCount;
+        return a.id.localeCompare(b.id); // Deterministic tie-breaker
+    });
+    
+    console.log('[ROOT_AUDIT] Cluster Build completed. Top 20 Roots:', {
+        totalRoots: rootClusters.length,
+        top20: rootClusters.slice(0, 20).map(c => `${c.id} (${c.nodes?.length || 0} files)`)
     });
 
     return { clusters, clusterIds };

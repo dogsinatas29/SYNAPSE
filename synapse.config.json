@@ -65,5 +65,41 @@
       "src/test"
     ],
     "files": []
+  },
+  "determinism": {
+    "enabled": true,
+    "runs": 5,
+    "hashAlgorithm": "sha256",
+    "diffReport": true,
+    "isolateProcess": true,
+    "canonicalizeJson": true,
+    "normalizeFloats": {
+      "enabled": true,
+      "precision": 4,
+      "fields": [
+        "confidence",
+        "ratio",
+        "score",
+        "weight",
+        "probability"
+      ],
+      "semanticTypes": [
+        "confidence",
+        "ratio",
+        "score",
+        "weight",
+        "probability"
+      ]
+    },
+    "runtimeMetadataKeys": [
+      "generatedAt",
+      "duration",
+      "durationMs",
+      "executionTime",
+      "memoryUsage",
+      "timestamp"
+    ],
+    "saveResults": true,
+    "validationRuns": 3
   }
 }

@@ -247,7 +247,7 @@ export class LogicAnalyzer {
      * 분석 결과를 바탕으로 리포트 생성
      */
     public generateReport(issues: AnalysisIssue[], projectRoot: string, nodes: Node[]): string {
-    const reportDir = path.join(projectRoot, 'report');
+    const reportDir = path.join(projectRoot, 'synapse_report');
     if (!fs.existsSync(reportDir)) fs.mkdirSync(reportDir, { recursive: true });
     const reportPath = path.join(reportDir, 'LOGIC_REPORT.md');
     const vscode = require('vscode');

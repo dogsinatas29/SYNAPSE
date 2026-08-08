@@ -33,6 +33,24 @@
                 rootIds.push(id);
             }
         }
+        
+        // Sort rootIds deterministically by cluster node length then by id
+        rootIds.sort((a, b) => {
+            const nodeA = nodeMap.get(a).cluster;
+            const nodeB = nodeMap.get(b).cluster;
+            const lenA = (nodeA.nodes && nodeA.nodes.length) || 0;
+            const lenB = (nodeB.nodes && nodeB.nodes.length) || 0;
+            if (lenB !== lenA) return lenB - lenA;
+            return a.localeCompare(b);
+        });
+
+        console.log('[FRONTEND_ROOT_AUDIT] ClusterHierarchy initialized. Top 20 Roots:', {
+            totalRoots: rootIds.length,
+            top20: rootIds.slice(0, 20).map(id => {
+                const c = nodeMap.get(id).cluster;
+                return `${id} (${(c.nodes && c.nodes.length) || 0} files)`;
+            })
+        });
 
         function assignDepth(ids, depth) {
             for (const id of ids) {

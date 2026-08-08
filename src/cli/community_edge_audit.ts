@@ -1,6 +1,7 @@
-import * as fs from 'fs';
 import * as path from 'path';
 import { detectCommunities } from '../core/CommunityDetector';
+
+import { GraphSnapshot } from '../core/validation/ValidationContext';
 
 interface Node { id?: string; name?: string; type?: string; label?: string; filePath?: string; }
 interface Edge { source: any; target: any; type?: string; weight?: number; }
@@ -40,20 +41,11 @@ function resolveEndpoint(raw: any, nodeIds: Set<string>, workspaceRoot: string):
     return raw;
 }
 
-export function runAudit(graphFilePath: string) {
+export function runAudit(snapshot: Readonly<GraphSnapshot>, workspaceRoot: string) {
     console.log(`\n=== 🔬 SYNAPSE Community Edge Audit ===`);
-    if (!fs.existsSync(graphFilePath)) {
-        console.error(`File not found: ${graphFilePath}`); return;
-    }
 
-    const data = JSON.parse(fs.readFileSync(graphFilePath, 'utf8'));
-    let nodes: Node[] = data.nodes || [];
-    let edges: Edge[] = data.edges || [];
-    if (!data.nodes && data.graph && data.graph.nodes) {
-        nodes = data.graph.nodes; edges = data.graph.edges;
-    }
-
-    const workspaceRoot = path.resolve(path.dirname(graphFilePath), '..');
+    const nodes: Node[] = (snapshot.nodes as Node[]) || [];
+    const edges: Edge[] = (snapshot.edges as Edge[]) || [];
 
     const nodeIds = new Set(nodes.map(n => n.id || n.name || '').filter(id => id !== ''));
     console.log(`[Audit] Total Nodes: ${nodeIds.size}`);
@@ -219,5 +211,17 @@ export function runAudit(graphFilePath: string) {
 if (require.main === module) {
     const defaultPath = path.join(__dirname, '../../data/project_state.json');
     const targetPath = process.argv[2] || defaultPath;
-    runAudit(targetPath);
+    const fs = require('fs');
+    if (fs.existsSync(targetPath)) {
+        const data = JSON.parse(fs.readFileSync(targetPath, 'utf8'));
+        const snapshot: GraphSnapshot = {
+            nodes: data.nodes || (data.graph && data.graph.nodes) || [],
+            edges: data.edges || (data.graph && data.graph.edges) || [],
+            clusters: data.clusters || []
+        };
+        const workspaceRoot = path.resolve(path.dirname(targetPath), '..');
+        runAudit(snapshot, workspaceRoot);
+    } else {
+        console.error(`File not found: ${targetPath}`);
+    }
 }

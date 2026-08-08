@@ -32,7 +32,8 @@ export class GhostExpander {
         const ghostStats = {
             total: 0,
             byLanguage: {} as Record<string, number>,
-            targets: {} as Record<string, number>
+            targets: {} as Record<string, number>,
+            domainCounts: {} as Record<string, number>
         };
 
         console.error('[GHOST_EXPANDER_ENTER]', {
@@ -52,29 +53,19 @@ export class GhostExpander {
             }
         }
 
-        const getGhostClusterId = (cleanId: string): string => {
-            const predefined = ['android', 'androidx', 'java', 'javax', 'kotlin', 'com.google', 'org.apache'];
-            for (const p of predefined) {
-                if (cleanId.startsWith(p + '.')) return `cluster_ghost_${p.replace(/\./g, '_')}`;
-            }
-            
-            // Only split for obvious Java/Kotlin packages (e.g. com.*, org.*, net.*) 
-            // to avoid splitting C/C++ files, macros, or arbitrary extensions (like .o, .dts, .mk)
-            if (/^(com|org|net|io|dev)\.[a-zA-Z0-9_]+/.test(cleanId) && !cleanId.includes('/') && !cleanId.includes('\\')) {
-                const segments = cleanId.split('.');
-                return `cluster_ghost_${segments[0]}`;
-            }
-
-            return 'cluster_ghosts';
+        const getGhostClusterId = (domain: string): string => {
+            // [v0.3.35] External Layer Compression - 3-Tier 계층 도메인 분리 적용
+            return `cluster_ghost_${domain}`;
         };
 
-        const addGhostCluster = (cId: string, label: string) => {
+        const addGhostCluster = (cId: string, label: string, parentId: string | null = null) => {
             if (!existingClusterIds.has(cId) && !newClusterIds.has(cId)) {
                 ghostClusters.push({
                     id: cId,
+                    parent_id: parentId, // [v0.3.35] 계층 구조 연결
                     label: label,
                     type: 'system',
-                    collapsed: false,
+                    collapsed: false, // User Request: Expand all by default
                     position: { x: 0, y: 0 },
                     bounds: { x: 0, y: 0, width: 0, height: 0 },
                     children: [],
@@ -83,6 +74,16 @@ export class GhostExpander {
                 });
                 newClusterIds.add(cId);
             }
+        };
+
+        const extractGhostDomain = (id: string): string => {
+            const p = id.split('/');
+            if (p[0] === 'uapi') return 'uapi';
+            if (p[0] === 'asm' || p[0] === 'arch') return 'asm';
+            if (p[0] === 'trace') return 'trace';
+            if (p[0] === 'generated') return 'generated';
+            if (p[0] === 'linux' || id.includes('/linux/')) return 'linux';
+            return p[0] || 'other';
         };
 
         let _ghostIdx = 0;
@@ -113,7 +114,9 @@ export class GhostExpander {
                     isExternal = ref.referenceType === 'api_call' || ref.referenceType === 'dependency' || !targetNodeId.includes('.');
                 }
 
-                let ghostClusterId = isDocRef ? 'doc_shelf' : (isExternal ? getGhostClusterId(cleanId) : 'sys_cluster_reserved');
+                const ghostDomain = extractGhostDomain(targetNodeId);
+
+                let ghostClusterId = isDocRef ? 'doc_shelf' : (isExternal ? getGhostClusterId(ghostDomain) : 'sys_cluster_reserved');
 
                 if (ref.referenceType === 'network_link') {
                     ghostClusterId = 'cluster_ghost_network_remote';
@@ -121,10 +124,15 @@ export class GhostExpander {
                 }
 
                 if (isExternal && ghostClusterId !== 'doc_shelf') {
+                    // [v0.3.35] 최상위 Root Cluster 강제 생성
+                    addGhostCluster('cluster_ghosts', '🌐 External Dependencies', null);
+                    
                     const label = ghostClusterId === 'cluster_ghost_network_remote' 
                         ? '🌐 Remote Network / Cross-Workspace' 
-                        : `☁️ External (${ghostClusterId.replace('cluster_ghost_', '')})`;
-                    addGhostCluster(ghostClusterId, label);
+                        : `☁️ External (${ghostDomain})`;
+                    
+                    // [v0.3.35] Domain Sub-Cluster 생성 및 Parent 연결
+                    addGhostCluster(ghostClusterId, label, 'cluster_ghosts');
                 }
 
                 let ghostContinent = 'unknown';
@@ -176,6 +184,7 @@ export class GhostExpander {
                     ghostStats.total++;
                     ghostStats.byLanguage[parserLanguage] = (ghostStats.byLanguage[parserLanguage] || 0) + 1;
                     ghostStats.targets[targetNodeId] = (ghostStats.targets[targetNodeId] || 0) + 1;
+                    ghostStats.domainCounts[ghostDomain] = (ghostStats.domainCounts[ghostDomain] || 0) + 1;
 
                     if (targetNodeId === '.' || targetNodeId === '..' || targetNodeId === 'src' || targetNodeId.startsWith('extensions/')) {
                         console.error('[EXTERNAL_NODE_CREATED]', {
@@ -209,6 +218,7 @@ export class GhostExpander {
                             subcontinent: ghostContinent,
                             continent_type: 'EXTERNAL',
                             layer: isExternal ? 'external' : 'ai',
+                            domain: ghostDomain,
                             sourceFile: ref.sourceId,
                             referenceType: ref.referenceType,
                             ...(isDocRef
@@ -229,6 +239,7 @@ export class GhostExpander {
         console.log('[GHOST_SUMMARY]', {
             total: ghostStats.total,
             byLanguage: ghostStats.byLanguage,
+            domainCounts: ghostStats.domainCounts,
             topTargets: Object.entries(ghostStats.targets)
                 .sort((a, b) => b[1] - a[1])
                 .slice(0, 50)

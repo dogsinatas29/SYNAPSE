@@ -1,12 +1,14 @@
 import { EvidenceIR } from './EvidenceIR';
 import { IntentEdge } from './IntentEdge';
-import { ActionCandidate } from './ActionCandidate';
+import { ActionCandidate, ImpactVector } from './ActionCandidate';
 
 export interface PipelineStats {
     rawEdges: number;
     resolvedEdges: number;
     unresolvedSymbols: number;
     subsystemEdges: number;
+    findingCandidates?: number;
+    finalFindings?: number;
 }
 
 export interface DependencyCorridor {
@@ -90,4 +92,32 @@ export interface ReasonedReportBundle {
     intentEdges: IntentEdge[];
 
     onboardingMap?: ArchitectureAtlas;
+}
+
+export type FindingType =
+    | 'circular_dependency'
+    | 'domain_bottleneck'
+    | 'diffuse_coupling'
+    | 'shared_infrastructure'
+    | 'orchestrator';
+
+export interface CriticalEdge {
+    sourceSub: string;
+    targetSub: string;
+    count: number;
+    topFiles: string[];
+    traceReference: string;
+}
+
+export interface Finding {
+    title: string;
+    findingType: FindingType;
+    observation: string;
+    interpretation: string;
+    consequence: string;
+    confidence: number;
+    impactVector: ImpactVector;
+    relatedEdges: IntentEdge[];
+    evidencePattern: string;
+    criticalEdges: CriticalEdge[];
 }

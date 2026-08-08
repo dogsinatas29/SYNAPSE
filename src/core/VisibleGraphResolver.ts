@@ -89,5 +89,19 @@ export function resolveVisibleGraph(
     visibleEdges.push({ from: key.slice(0, sep), to: key.slice(sep + 1), weight });
   }
 
+  const roots = visibleClusters.filter(c => !c.parent_id).map(c => c.id);
+  
+  // Depth analysis
+  const depthCount: Record<string, number> = { roots: roots.length };
+  for (const c of visibleClusters) {
+    if (!c.parent_id) continue;
+    const ancestors = hierarchy.getAncestors(c.id);
+    const depthStr = `depth${ancestors.length}`;
+    depthCount[depthStr] = (depthCount[depthStr] || 0) + 1;
+  }
+
+  console.log('[VISIBLE_ROOTS]', roots);
+  console.log('[VISIBLE_DEPTH]', depthCount);
+
   return { visibleClusters, visibleEdges };
 }

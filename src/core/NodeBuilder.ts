@@ -127,6 +127,16 @@ export function buildNodes(
             clusterId = getClusterIdForPath(relPath, directoryTree);
         }
 
+        if (item.filePath.includes('/report/')) {
+            console.error(
+                "[REPORT_FILES]",
+                item.filePath,
+                clusterId,
+                "doc:", doc,
+                "relPath:", relPath
+            );
+        }
+
         let nodeContinent = 'doc';
         let nodeSubcontinent = 'doc';
         if (!doc) {

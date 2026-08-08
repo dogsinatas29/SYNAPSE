@@ -4447,6 +4447,15 @@ class CanvasEngine {
                 }
             }
         }
+        
+        for (const c of this.clusters || []) {
+            if (!this._clusterNodesCache.has(c.id)) {
+                this._clusterNodesCache.set(c.id, []);
+                if (c.id === "folder_report") {
+                    console.warn("[EMPTY_CLUSTER_CACHE]", c.id);
+                }
+            }
+        }
     }
 
     computeClusterBounds(cluster, visited = new Set()) {
@@ -4469,7 +4478,30 @@ class CanvasEngine {
         const padding = 30;
         let hasVisibleContent = false;
 
+        if (cluster.id === "folder_report") {
+            if (!window._loggedReportCluster) {
+                const allNodes = this.nodes.filter(n =>
+                    (n.cluster_id === "folder_report") ||
+                    (n.data?.cluster_id === "folder_report")
+                );
 
+                console.error(
+                    "[REPORT_NODE_SCAN]",
+                    {
+                        total: allNodes.length,
+                        sample: allNodes.slice(0,5)
+                    }
+                );
+
+                console.error(
+                    "[REPORT_CLUSTER]",
+                    cluster.id,
+                    "directNodes.length:", directNodes.length,
+                    "first 5:", directNodes.slice(0, 5)
+                );
+                window._loggedReportCluster = true;
+            }
+        }
         for (const node of directNodes) {
             if (!node.position) continue;
 
@@ -4512,6 +4544,18 @@ class CanvasEngine {
                 maxX = Math.max(maxX, b.maxX + padding);
                 maxY = Math.max(maxY, b.maxY + padding);
             }
+        }
+
+        if (cluster.id === "folder_report") {
+            console.error(
+                "[REPORT_LIFECYCLE]",
+                {
+                    directNodes: directNodes.length,
+                    hasBounds: hasVisibleContent,
+                    visibleClusterIds: this._visibleClusterIds?.has(cluster.id),
+                    dirty: this.isGraphDataDirty
+                }
+            );
         }
 
         if (!hasVisibleContent) {
@@ -6286,6 +6330,11 @@ class CanvasEngine {
         if (!this.spatialIndex || !this.nodes || !this.clusters) return;
         const _tIndex = performance.now();
 
+        // [v0.3.33 Fix] Ensure cluster node caches are fresh before bounds computation
+        if (typeof this._buildClusterIndices === 'function') {
+            this._buildClusterIndices();
+        }
+
         // [P0] RBush 독립 검증 테스트
         console.log('[RBUSH_TEST] window.RBush:', window.RBush);
         this.spatialIndex.clear();
@@ -6365,14 +6414,30 @@ class CanvasEngine {
     }
 
     buildHierarchy() {
-        if (!this.clusters) return;
+        console.warn("[BUILD_HIERARCHY_ENTER]", this.clusters ? this.clusters.filter(c => c.collapsed).length : 0);
+        console.count("buildHierarchy");
+        console.time("buildHierarchy");
+        console.error(
+          "[HIERARCHY_REBUILD_START]",
+          {
+            collapsedClusters:
+              this.clusters ? this.clusters.filter(c => c.collapsed === true).length : 0
+          }
+        );
+        if (!this.clusters) {
+            console.timeEnd("buildHierarchy");
+            return;
+        }
         
         // [v0.3.35] Repair broken parent_id chains (e.g. when intermediate empty folders are filtered out by backend)
         const idMap = new Map();
         this.clusters.forEach(c => idMap.set(c.id, c));
         this.clusters.forEach(c => {
             let pid = c.parent_id;
-            while (pid && !idMap.has(pid) && pid !== 'world') {
+            if (!pid && c.id !== 'cluster_ghosts' && !c.id.startsWith('sys_') && c.id !== 'folder_root' && c.id !== '__unclustered__') {
+                pid = c.id;
+            }
+            while (pid && (!idMap.has(pid) || pid === c.id) && pid !== 'world') {
                 if (pid.includes('/')) {
                     const lastSlash = pid.lastIndexOf('/');
                     pid = lastSlash !== -1 ? pid.substring(0, lastSlash) : null;
@@ -6391,6 +6456,16 @@ class CanvasEngine {
         });
 
         this.clusterHierarchy = new ClusterHierarchy(this.clusters);
+        console.warn("[BUILD_HIERARCHY_EXIT]", this.clusters ? this.clusters.filter(c => c.collapsed).length : 0);
+        
+        console.error(
+          "[HIERARCHY_REBUILD_END]",
+          {
+            collapsedClusters:
+              this.clusters.filter(c => c.collapsed === true).length
+          }
+        );
+        console.timeEnd("buildHierarchy");
     }
 
     initLODState() {
@@ -6468,6 +6543,22 @@ class CanvasEngine {
     }
 
     loadProjectState(projectState, preserveView = false) {
+        console.warn(
+            "[LOAD_PROJECT_STATE]",
+            performance.now(),
+            projectState.clusters?.length
+        );
+        console.warn("[ROOTS_ONLY_STATE]", this.rootsOnly);
+        console.warn("[VISIBLE_CLUSTER_COUNT]", this._visibleGraphClusters?.length);
+        console.warn("[COLLAPSED_CLUSTER_COUNT]", this.clusters ? this.clusters.filter(c => c.collapsed).length : 0);
+
+        console.error("[ENTRY]", "loadProjectState", performance.now());
+        console.error("[LOAD_STATE]", {
+            rootsOnly: this.rootsOnly,
+            visibleClusters: this._visibleGraphClusters?.length,
+            collapsedClusters: this.clusters ? this.clusters.filter(c => c.collapsed).length : 0
+        });
+        console.trace();
         console.time('loadProjectState');
         let _loadStage = 'load-start';
         const markLoadStage = (stage, extra = null) => {
@@ -6936,8 +7027,10 @@ class CanvasEngine {
             if (trackDesktop1) console.log('[DESKTOP_TRACK] AFTER_LAYOUT', trackDesktop1.id, trackDesktop1.y || (trackDesktop1.position ? trackDesktop1.position.y : 'none'));
 
             // [Phase 2C] Apply Workspace Cluster Positions
+            let hasWorkspaceLayout = false;
             if (projectState.synapse_workspace && projectState.synapse_workspace.layout_state) {
                 const layout = projectState.synapse_workspace.layout_state;
+                let restoredCount = 0;
                 this.clusters.forEach(c => {
                     const pos = layout.clusterPositions[c.id];
                     // Sanity check against the old Y=752000 bug
@@ -6947,6 +7040,7 @@ class CanvasEngine {
                         c.confidence = pos.confidence || 0.2;
                         c.x = pos.x;
                         c.y = pos.y;
+                        restoredCount++;
                     } else {
                         if (c.position && (Math.abs(c.position.x) > 500000 || Math.abs(c.position.y) > 500000)) {
                             c.position = { x: 0, y: 0 };
@@ -6956,6 +7050,10 @@ class CanvasEngine {
                         c.confidence = 0.2;
                     }
                 });
+                if (restoredCount > 0) {
+                    hasWorkspaceLayout = true;
+                    console.log(`[WORKSPACE_RESTORE] Restored layout for ${restoredCount} clusters.`);
+                }
             } else {
                 this.clusters.forEach(c => {
                     if (c.position && (Math.abs(c.position.x) > 500000 || Math.abs(c.position.y) > 500000)) {
@@ -6974,7 +7072,14 @@ class CanvasEngine {
             this.heatmapCacheValid = false;
             this.heatmapCacheNeedsRebuild = true;
 
-            this.restoreVisibilityState(projectState);
+            // [v0.3.35] Re-enable visibility state restore
+            if (typeof this.restoreVisibilityState === 'function') {
+                this.restoreVisibilityState(projectState);
+            }
+            this.showBaseLayer = true;
+            this.showUserLayer = true;
+            this.showExternalLayer = true;
+            this.syncLayerVisibilityUI();
             
             // [Phase 2B.13] Edge Bundle Data Sync
             this.metaEdges = projectState.metaEdges || [];
@@ -6988,9 +7093,6 @@ class CanvasEngine {
 
             // [v0.2.22] System Clusters initialization
             this.getOrCreateSystemClusters();
-
-            // [v0.3.33.6] Define hasWorkspaceLayout earlier to prevent layout reset
-            const hasWorkspaceLayout = !!(projectState.synapse_workspace && projectState.synapse_workspace.layout_state && Object.keys(projectState.synapse_workspace.layout_state.nodePositions || {}).length > 0);
 
             // [v0.3.33.1] 3. Hierarchical Grid Distribution
             if (!hasWorkspaceLayout) {
@@ -7010,15 +7112,7 @@ class CanvasEngine {
             }
 
             // [v0.2.24 New Rule] Documentation Shelf is collapsed by default
-            // [v0.3.33.1] Cluster Collapse Depth: Expand only up to Depth 2 by default
-            const depthMap = new Map();
-            const setDepth = (cId, depth) => {
-                depthMap.set(cId, depth);
-                const children = this.clusters.filter(c => c.parent_id === cId);
-                children.forEach(child => setDepth(child.id, depth + 1));
-            };
-            this.clusters.filter(c => !c.parent_id).forEach(root => setDepth(root.id, 1));
-
+            // [v0.3.34.20] User Request: Expand ALL clusters by default on initial load
             this.clusters.forEach(cluster => {
                 if (cluster.id === 'doc_shelf') {
                     if (cluster.collapsed === undefined) {
@@ -7030,10 +7124,14 @@ class CanvasEngine {
                     }
                 } else {
                     if (cluster.collapsed === undefined) {
-                        const depth = depthMap.get(cluster.id) || 1;
-                        cluster.collapsed = depth >= 2;
+                        // User request: Everything is expanded (false) initially
+                        cluster.collapsed = false;
                     }
                 }
+            });
+            
+            console.error("[AFTER_COLLAPSE_LOGIC]", {
+                collapsedClusters: this.clusters.filter(c => c.collapsed).length
             });
 
             // Reset transient states
@@ -7686,6 +7784,100 @@ class CanvasEngine {
         return { minX, minY, maxX, maxY, width: maxX - minX, height: maxY - minY };
     }
 
+    // [v0.3.34.16] Visible Bounds Engine (B+ Policy)
+    computeVisibleBounds() {
+        if (this.renderMode === 'flow' && this.flowData && this.flowData.steps && this.flowData.steps.length > 0) {
+            return this.computeWorldBounds(); // Flow mode defaults to world bounds
+        }
+
+        if (!this.nodes || this.nodes.length === 0) {
+            return { minX: 0, minY: 0, maxX: 100, maxY: 100, width: 100, height: 100 };
+        }
+
+        let minX = Infinity, minY = Infinity;
+        let maxX = -Infinity, maxY = -Infinity;
+
+        const nodesToMeasure = this._visibleNodesCache || this.nodes;
+        for (const node of nodesToMeasure) {
+            if (!node.position || typeof node.position.x !== 'number' || typeof node.position.y !== 'number') continue;
+            if (Number.isNaN(node.position.x) || Number.isNaN(node.position.y)) continue;
+            minX = Math.min(minX, node.position.x);
+            minY = Math.min(minY, node.position.y);
+            maxX = Math.max(maxX, node.position.x + 120);
+            maxY = Math.max(maxY, node.position.y + 60);
+        }
+
+        // B+ Policy: Separate Layout Reality from Presentation Visible Bounds
+        const COLLAPSED_CLUSTER_WIDTH = 250;
+        const COLLAPSED_CLUSTER_HEIGHT = 80;
+
+        const clustersToMeasure = this._visibleGraphClusters || this.clusters || [];
+        
+        console.log(
+            "[VISIBLE_ENGINE]",
+            {
+                totalClusters: (this.clusters || []).length,
+                visibleClusters: clustersToMeasure.length,
+                collapsedClusters: (this.clusters || []).filter(c => c.collapsed).length
+            }
+        );
+        console.log(
+            "[VISIBLE_CLUSTER_SAMPLE]",
+            clustersToMeasure.slice(0, 20).map(c => ({
+                id: c.id,
+                collapsed: c.collapsed
+            }))
+        );
+
+        for (const cluster of clustersToMeasure) {
+
+            if (cluster.bounds && cluster.bounds.minX !== Infinity) {
+                // [v0.3.35 Fix] Skip measuring sub-clusters if their parent is collapsed (Telescope LOD)
+                let isTelescopeCollapsed = false;
+                if (this.clusterHierarchy && this.expandedClusters) {
+                    let currNode = this.clusterHierarchy.get(cluster.id);
+                    let parentNode = currNode && currNode.parentId ? this.clusterHierarchy.get(currNode.parentId) : null;
+                    let hDepth = 0;
+                    while (parentNode && hDepth < 100) {
+                        const hasChildren = parentNode.children && parentNode.children.length > 0;
+                        if (hasChildren && !this.expandedClusters.has(parentNode.id)) {
+                            isTelescopeCollapsed = true;
+                            break;
+                        }
+                        parentNode = parentNode.parentId ? this.clusterHierarchy.get(parentNode.parentId) : null;
+                        hDepth++;
+                    }
+                }
+                
+                if (isTelescopeCollapsed) {
+                    continue;
+                }
+
+                if (cluster.collapsed) {
+                    // Use UI Visual Dimensions instead of Reality Bounds
+                    const cx = (cluster.position && typeof cluster.position.x === 'number') ? cluster.position.x : cluster.bounds.minX;
+                    const cy = (cluster.position && typeof cluster.position.y === 'number') ? cluster.position.y : cluster.bounds.minY;
+                    minX = Math.min(minX, cx);
+                    minY = Math.min(minY, cy);
+                    maxX = Math.max(maxX, cx + COLLAPSED_CLUSTER_WIDTH);
+                    maxY = Math.max(maxY, cy + COLLAPSED_CLUSTER_HEIGHT);
+                } else {
+                    // Expanded clusters take up their full reality bounds
+                    minX = Math.min(minX, cluster.bounds.minX);
+                    minY = Math.min(minY, cluster.bounds.minY);
+                    maxX = Math.max(maxX, cluster.bounds.maxX);
+                    maxY = Math.max(maxY, cluster.bounds.maxY);
+                }
+            }
+        }
+
+        if (minX === Infinity || minY === Infinity) {
+            minX = 0; minY = 0; maxX = 100; maxY = 100;
+        }
+
+        return { minX, minY, maxX, maxY, width: maxX - minX, height: maxY - minY };
+    }
+
     fitCameraToBounds(bounds) {
         const padding = 100;
         const availableWidth = this.canvas.clientWidth - padding;
@@ -7720,7 +7912,7 @@ class CanvasEngine {
             return;
         }
         console.time('[FIT_BOUNDS]');
-        const bounds = this.computeWorldBounds();
+        const bounds = this.computeVisibleBounds();
         console.timeEnd('[FIT_BOUNDS]');
         console.time('[FIT_CAMERA]');
         this.fitCameraToBounds(bounds);
@@ -8352,9 +8544,28 @@ class CanvasEngine {
             } else {
                 // Graph 모드: 그리드 -> 클러스터 -> 엣지 -> 노드 순으로 렌더링
                 // [v0.3.27-edge-fix] Unify Node and Edge Visibility Filtering and Cache
-                console.log('[PERF] renderNodes2D() entered. TotalNodes:', this.nodes ? this.nodes.length : 0);
+                // console.log('[PERF] buildVisibleNodesCache() entered. TotalNodes:', this.nodes ? this.nodes.length : 0);
+
+                console.log(
+                    "[FRAME]",
+                    performance.now(),
+                    "visibleNodes",
+                    this._visibleNodesCache ? this._visibleNodesCache.length : 0,
+                    "visibleClusters",
+                    this._visibleGraphClusters ? this._visibleGraphClusters.length : 0,
+                    "dirty",
+                    this.isGraphDataDirty
+                );
+
+                console.log(
+                    "[CACHE_STATE]",
+                    !!this._visibleNodesCache,
+                    !!this._visibleClusterCache,
+                    this.isGraphDataDirty
+                );
 
                 if (this.isGraphDataDirty || !this._visibleNodesCache) {
+                    console.count("VISIBLE_NODE_CACHE_REBUILD");
                     if (this._postLoadMemProbeBudget > 0) {
                         this._logWebviewMemory('post-load-before-visible-cache', {
                             probeSeq: this._postLoadMemProbeSeq,
@@ -8428,6 +8639,8 @@ class CanvasEngine {
                     );
 
                     // [v0.3.33 Phase 4-D-1] Visible Graph from Resolver (cluster-driven) computed BEFORE node filtering
+                    console.error("[ENTRY]", "rebuildGraphData (render block)", performance.now());
+                    console.trace();
                     console.log('[VISIBLE_GRAPH_BUILD]', performance.now(), 'expanded', this.expandedClusters?.size);
                     this._visibleGraphClusters = null;
                     if (this.clusterHierarchy && this.expandedClusters) {
@@ -8437,6 +8650,8 @@ class CanvasEngine {
                                 .map(id => this.clusterHierarchy.get(id)?.cluster)
                                 .filter(Boolean);
                             this._visibleGraphClusterIds = new Set(_visIds);
+                            console.error("[CLUSTER_COUNT_CHANGED]", this._visibleGraphClusters.length);
+                            console.trace("[VISIBLE_CLUSTERS_REASSIGNED]");
                             console.log('[VISIBLE_GRAPH_CLUSTERS]', performance.now(), this._visibleGraphClusters.length);
                             console.log("[VISIBLE_GRAPH_RESULT]", this._visibleGraphClusters.length);
                         }
@@ -8561,6 +8776,52 @@ class CanvasEngine {
                         zoom: _zoom,
                         lodLabel: _lodLabel
                     });
+
+                    // [TRUTH_VS_VIEW_AUDIT] Injecting Truth vs View probe
+                    const rootClustersCount = this.clusters ? this.clusters.filter(c => !c.parent_id).length : 0;
+                    const visibleClustersCount = this._visibleGraphClusters ? this._visibleGraphClusters.length : 0;
+                    console.error(
+                      "[TRUTH_VS_VIEW]",
+                      JSON.stringify({
+                        stateNodes: this.nodes ? this.nodes.length : 0,
+                        stateClusters: this.clusters ? this.clusters.length : 0,
+                        stateRoots: rootClustersCount,
+                        renderNodes: this._visibleNodesCache ? this._visibleNodesCache.length : 0,
+                        renderClusters: visibleClustersCount
+                      })
+                    );
+
+                    // [CLUSTER_HIERARCHY_AUDIT]
+                    const visibleRootsCount = this._visibleGraphClusters ? this._visibleGraphClusters.filter(c => !c.parent_id).length : 0;
+                    console.error(
+                      "[VISIBLE_CLUSTER_TREE]",
+                      JSON.stringify({
+                        stateRoots: rootClustersCount,
+                        visibleRoots: visibleRootsCount,
+                        stateClusters: this.clusters ? this.clusters.length : 0,
+                        visibleClusters: visibleClustersCount
+                      })
+                    );
+                    
+                    console.error(
+                      "[CLUSTER_REFERENCE]",
+                      this.clusters === this._visibleGraphClusters
+                    );
+
+                    // [ROOT_IDS_AUDIT]
+                    if (this.clusters) {
+                      console.error(
+                        "[ROOT_IDS]",
+                        this.clusters.filter(c => !c.parent_id).map(c => c.id).sort()
+                      );
+                    }
+                    if (this._visibleGraphClusters) {
+                      console.error(
+                        "[VISIBLE_ROOT_IDS]",
+                        this._visibleGraphClusters.filter(c => !c.parent_id).map(c => c.id).sort()
+                      );
+                    }
+
 
                     console.log(
                       '[RENDER_CACHE]',
@@ -8748,7 +9009,15 @@ class CanvasEngine {
                         y: n.position?.y
                     })));
                     console.log('[PERF] LayoutBounds', { minX, maxX, minY, maxY });
-                    
+
+                    console.error(
+                      "[VISIBLE_TREE_FINAL]",
+                      {
+                        roots: this.clusterHierarchy ? this.clusterHierarchy.getRoots().length : 0,
+                        visibleClusters: this._visibleGraphClusters?.length,
+                        hierarchySize: this.clusterHierarchy ? this.clusterHierarchy.nodes?.size : 0
+                      }
+                    );
                     const dpr = window.devicePixelRatio || 1;
                     const zoom = this.transform.zoom;
                     const viewWidth = this.canvas.width / dpr;
@@ -8873,6 +9142,14 @@ class CanvasEngine {
                         // [v0.3.30-webgl-fix] Use offset-corrected cache for client node Y parity
                         const webglNodes = this._webglVisibleNodesCache || this._visibleNodesCache;
                         
+                        // [PROBE] User requested visibility state probe
+                        /* console.error("[VISIBILITY_STATE]", {
+                            collapsedClusters: this.clusters ? this.clusters.filter(c => c.collapsed).length : 0,
+                            visibleClusters: this._visibleGraphClusters ? this._visibleGraphClusters.length : 0,
+                            visibleNodes: webglNodes ? webglNodes.length : 0,
+                            visibleEdges: this._visibleEdgesCache ? this._visibleEdgesCache.length : 0
+                        }); */
+
                         if (this._frameCounter < 3 || this._frameCounter % 60 === 0) {
                             console.log(
                                 '[WEBGL_DRAW]',
@@ -9626,6 +9903,29 @@ class CanvasEngine {
         const cluster = this.clusters.find(c => c.id === clusterId);
         if (cluster) {
             cluster.collapsed = !cluster.collapsed;
+
+            console.error(
+                "[CLUSTER_VISIBILITY_EVENT]",
+                clusterId,
+                !cluster.collapsed
+            );
+            console.error(
+                "[CLUSTER_STORE]",
+                this.clusters.length
+            );
+
+            // [VISIBILITY_MODEL_AUDIT]
+            const hiddenClustersCount = this.clusters.filter(c => c.collapsed).length;
+            const visibleClustersArr = this._visibleGraphClusters || this.clusters;
+            console.error(
+                "[VISIBILITY_MODEL]",
+                JSON.stringify({
+                    hiddenClusters: hiddenClustersCount,
+                    visibleClusters: visibleClustersArr.length,
+                    roots: visibleClustersArr.filter(c => !c.parent_id).length
+                })
+            );
+
             cluster.uiCollapsed = cluster.collapsed;
             
             let descendantIds = new Set();
@@ -10012,6 +10312,7 @@ class CanvasEngine {
     }
 
     saveState(fullSync = false) {
+        console.count("FRONTEND_SAVE_STATE");
         console.log("[WEBVIEW_SAVE_STATE]", fullSync);
         console.log('[SAVE_COLLAPSE_CHECK]', this.clusters.filter(c => c.collapsed === true).length);
         const stack = new Error().stack;
@@ -10792,6 +11093,17 @@ class CanvasEngine {
 
     // [v0.3.33 Phase 4-D-1] Resolver: Telescope expansion → visible cluster IDs
     _computeResolverVisibleIds() {
+        console.error("[ENTRY]", "_computeResolverVisibleIds", performance.now());
+        console.trace();
+        console.error(
+          "[VISIBLE_UPDATE]",
+          {
+            collapsedClusters:
+              this.clusters ? this.clusters.filter(c => c.collapsed === true).length : 0,
+            visibleClusters:
+              this._visibleGraphClusters?.length
+          }
+        );
         console.log("[RESOLVE_VISIBLE]", this.expandedClusters ? this.expandedClusters.size : 0);
         const hierarchy = this.clusterHierarchy;
         if (!hierarchy) return null;
@@ -10854,7 +11166,7 @@ class CanvasEngine {
         let clusterSource;
         if (this._visibleGraphClusters) {
             clusterSource = this._visibleGraphClusters;
-            console.log('[VISIBLE_GRAPH_SOURCE] resolver:', clusterSource.length);
+            // console.log('[VISIBLE_GRAPH_SOURCE] resolver:', clusterSource.length);
         } else {
             const targetClustersSet = this.spatialIndex
                 ? this.spatialIndex.queryViewport(cMinX, cMinY, cMaxX, cMaxY, 'clusters')
@@ -10907,10 +11219,18 @@ class CanvasEngine {
         };
 
         const sortedClusters = targetClustersArray.slice().sort((a, b) => getDepth(a) - getDepth(b));
-        console.log('[RBUSH_CLUSTER_COUNT]', this.spatialIndex?.clusterTree?.all()?.length || 0);
-        console.log('[NULL_BOUNDS_COUNT]', this.clusters.filter(c => !c.bounds).length);
-        console.log('[NULL_BOUNDS_ACTIVITY]', this.clusters.filter(c => !c.bounds && c.id.includes('activity')).map(c => c.id));
-        console.log('[VIEWPORT_QUERY]', { cMinX, cMinY, cMaxX, cMaxY });
+        // console.log("cluster count", this.clusters?.length);
+        // console.log("cluster index", this.spatialIndex?.clusterTree);
+        // console.log('[RBUSH_CLUSTER_COUNT]', this.spatialIndex?.clusterTree?.all()?.length || 0);
+        
+        if (!window._loggedNullClusters) {
+            const nullClusters = this.clusters.filter(c => !c.bounds);
+            if (nullClusters.length > 0) {
+                console.error('[NULL_CLUSTER]', nullClusters.map(c => ({ id: c.id, label: c.label })));
+                window._loggedNullClusters = true;
+            }
+        }
+        // console.log('[VIEWPORT_QUERY]', { cMinX, cMinY, cMaxX, cMaxY });
         const _ac = this.clusters.find(c => c.id === 'folder_app_src_main_java_de_danoeh_antennapod_activity');
         if (_ac?.bounds) {
             const _vs = this.spatialIndex?.clusterTree?.search({
@@ -10929,15 +11249,15 @@ class CanvasEngine {
                 queryViewportSetHas: _targetSet?.has(_ac)
             });
         }
-        console.log('[GRAPH_BOUNDS]', {
+        /* console.log('[GRAPH_BOUNDS]', {
             minX: Math.min(...this.clusters.map(c => c.bounds?.minX).filter(Number.isFinite)),
             maxX: Math.max(...this.clusters.map(c => c.bounds?.maxX).filter(Number.isFinite)),
             minY: Math.min(...this.clusters.map(c => c.bounds?.minY).filter(Number.isFinite)),
             maxY: Math.max(...this.clusters.map(c => c.bounds?.maxY).filter(Number.isFinite)),
-        });
-        console.log('[SORTED_CLUSTER_COUNT]', sortedClusters.length);
-        console.log('[SORTED_ACTIVITY_IDS]', sortedClusters.filter(c => c.id.includes('activity')).map(c => c.id));
-        console.log('[SORTED_ACTIVITY]', sortedClusters.filter(c => c.id.includes('activity')).map(c => c.id));
+        }); */
+        // console.log('[SORTED_CLUSTER_COUNT]', sortedClusters.length);
+        // console.log('[SORTED_ACTIVITY_IDS]', sortedClusters.filter(c => c.id.includes('activity')).map(c => c.id));
+        // console.log('[SORTED_ACTIVITY]', sortedClusters.filter(c => c.id.includes('activity')).map(c => c.id));
         // [v0.3.32.4] Build parent-collapsed lookup for fast skip
         const _collapsedParents = new Set();
         this.clusters.forEach(c => { if (c.collapsed) _collapsedParents.add(c.id); });
@@ -13278,7 +13598,7 @@ class CanvasEngine {
 
             if (children.length > 0) {
                 for (const child of children) {
-                    applyTopDown(child, absX + (child._localX || 0), absY + (child._localY || 0));
+                    applyTopDown(child, absX + (child._localX_tl || 0), absY + (child._localY_tl || 0));
                 }
             }
         };
@@ -13407,6 +13727,7 @@ class CanvasEngine {
 
     // [v0.3.34] Cluster-level overlap resolution using Spatial Grid (O(N) Push-Apart)
     resolveClusterOverlaps() {
+        console.count("RESOLVE_CLUSTER_OVERLAPS");
         const USE_HIERARCHICAL_GRID = true;
         if (USE_HIERARCHICAL_GRID) return; // Legacy Disabled
 
@@ -13752,17 +14073,33 @@ function initCanvas() {
                             id: e.id, from: e.from, to: e.to, type: e.type, provenance: e.provenance, weight: e.weight
                         }));
                         // [VIRTUAL DEBUG SCOPE FIX]
-                        // _visibleGraphClusterIds = 레이아웃 엔진 내부 집합 (Collapse와 무관, 항상 전체)
-                        // 가상 디버거는 사용자가 Expand한 클러스터만 분석해야 함 → collapsed !== true 기준
-                        const visibleClusterIds = engine.clusters
-                            .filter(c => c && c.id && c.collapsed !== true && !c.id.startsWith('client::'))
-                            .map(c => c.id);
+                        // [v0.3.34.17] Virtual Debug Scope MUST respect Telescope LOD (System B)
+                        const visibleClusterIds = engine.clusters.filter(c => {
+                            if (!c || !c.id || c.id.startsWith('client::')) return false;
+                            
+                            // Telescope LOD Logic: Check if it or its parent is NOT in expandedClusters
+                            let isTelescopeCollapsed = !engine.expandedClusters.has(c.id);
+                            if (c.parent_id && engine.clusters) {
+                                const parentCluster = engine.clusters.find(p => p.id === c.parent_id);
+                                if (parentCluster && !engine.expandedClusters.has(parentCluster.id)) {
+                                    isTelescopeCollapsed = true;
+                                }
+                            }
+                            // Only include if NOT collapsed
+                            return !isTelescopeCollapsed;
+                        }).map(c => c.id);
                         const safeSnap = { 
                             nodes: strippedNodes, 
                             edges: strippedEdges, 
                             clusters: snap.clusters,
                             visibleClusterIds
                         };
+                        
+                        console.log("[VIEWPORT_VISIBLE]", engine._visibleGraphClusterIds ? engine._visibleGraphClusterIds.size : 0);
+                        console.log("[EXPANDED_VISIBLE]", visibleClusterIds.length);
+                        console.log("[CAMERA_BOUNDS]", engine.camera ? engine.camera.x : 0, engine.camera ? engine.camera.y : 0, engine.camera ? engine.camera.zoom : 1);
+                        console.log("[VISIBLE_NODE_COUNT]", engine._visibleNodesCache ? engine._visibleNodesCache.length : 0);
+                        
                         console.log("[CONTEXT_VISIBLE]", safeSnap.visibleClusterIds ? safeSnap.visibleClusterIds.length : 0);
 
                         console.log("[CTX_RESPONSE]", {

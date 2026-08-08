@@ -99,6 +99,24 @@ export class DataPipeline {
           });
       });
       Logger.info(`[PROVENANCE_AUDIT] [SCANNER] Total References: ${summaries.reduce((acc, s) => acc + s.summary.references.length, 0)} | Stats: ${JSON.stringify(scannerProvStats)}`);
+
+      // [v0.3.34.16 DIAGNOSTIC] UNDEFINED Reference Sampling (P1 investigation)
+      const undefinedSamples: any[] = [];
+      for (const s of summaries) {
+        for (const r of s.summary.references) {
+          if (!r.provenance && undefinedSamples.length < 20) {
+            undefinedSamples.push({
+              source: s.filePath,
+              raw: r.target,
+              type: r.type,
+              hasFullPath: !!(r as any).fullPath
+            });
+          }
+        }
+      }
+      if (undefinedSamples.length > 0) {
+        Logger.info(`[UNDEFINED_SAMPLE] count=${undefinedSamples.length} samples=${JSON.stringify(undefinedSamples)}`);
+      }
       // ---------------------------------
 
       // [v0.3.30] Populate SymbolIndex
@@ -297,6 +315,21 @@ export class DataPipeline {
     // ==========================================
     // [SINGLE NODE CLUSTER COLLAPSE]
     // ==========================================
+
+    // [v0.3.34.15 P0.1] Pre-Normalize: Collapse 전에 nodeCount를 미리 계산
+    // Promotion 판단 로직이 undefined를 보지 않도록 함
+    {
+        const preCountMap = new Map<string, number>();
+        for (const n of nodes) {
+            if (n.cluster_id) {
+                preCountMap.set(n.cluster_id, (preCountMap.get(n.cluster_id) || 0) + 1);
+            }
+        }
+        for (const c of clusters) {
+            c.nodeCount = preCountMap.get(c.id) || 0;
+        }
+    }
+
     let collapseCount = 0;
     let chainCount = 0;
     let collapseChanged = true;
@@ -374,11 +407,19 @@ export class DataPipeline {
                     // [Phase B.5] 삭제 직전 — 실제 제거 확인
                     console.log('[PROMOTION_DELETE]', c.id, 'parent=', c.parent_id, 'children=', childClusters.length);
                     clusters.splice(i, 1);
+                    const stillExists = clusters.some(cc => cc.id === c.id);
+                    console.log('[PROMOTION_POST_DELETE_CHECK]', c.id, 'stillExists=', stillExists);
                     console.log('[PROMOTION_REMOVED]', c.id, 'nodes:', myNodes.length, 'children:', childClusters.length);
                     collapseCount++;
                     collapseChanged = true;
                     continue;
                 }
+            }
+
+            // [v0.3.34.15] Promotion Lifecycle Invariant Check
+            const actualNodes = nodes.filter(n => n.cluster_id === c.id).length;
+            if (c.nodeCount !== actualNodes) {
+                console.error('[CLUSTER_INVARIANT_FAIL]', c.id, 'nodeCount=', c.nodeCount, 'actual=', actualNodes);
             }
             
             // 2. Chain Compression (childClusterCount === 1)
@@ -416,9 +457,50 @@ export class DataPipeline {
     console.timeEnd('[PIPELINE] clusterCollapse');
     console.log(`[CLUSTER_COLLAPSE] Aggressively Absorbed ${collapseCount} clusters, Compressed ${chainCount} chains`);
 
+    // [v0.3.34.15 P0] Cluster Single Source of Truth Normalization
+    // O(n)으로 clusterNodeMap을 한 번만 구축한 뒤 재사용
+    const clusterNodeMap = new Map<string, Node[]>();
+    for (const n of nodes) {
+        const cid = n.cluster_id;
+        if (!cid) continue;
+        if (!clusterNodeMap.has(cid)) clusterNodeMap.set(cid, []);
+        clusterNodeMap.get(cid)!.push(n);
+    }
+
+    let normalizeCount = 0;
+    for (const c of clusters) {
+        const actualNodes = clusterNodeMap.get(c.id) || [];
+        const computed = actualNodes.length;
+
+        if (c.nodeCount !== computed) {
+            console.log(`[CLUSTER_NORMALIZE] ${c.id} ${c.nodeCount} -> ${computed}`);
+            normalizeCount++;
+        }
+
+        c.nodeCount = computed;
+        if (Array.isArray(c.nodes)) {
+            c.nodes = actualNodes;
+        }
+    }
+    if (normalizeCount > 0) {
+        console.log(`[CLUSTER_NORMALIZE_SUMMARY] fixed=${normalizeCount}`);
+    }
+
     console.time('[PIPELINE] layout');
+    const nonEmpty = clusters.filter(c => (c.nodes?.length || 0) > 0 || (c.children?.length || 0) > 0);
+    console.log('[LAYOUT_PRE]', { total: clusters.length, nonEmpty: nonEmpty.length, sample: nonEmpty.slice(0,5).map(c => c.id) });
     const layoutResult = applyLayout(layoutInput);
     console.timeEnd('[PIPELINE] layout');
+
+    console.log('[ACTIVE_CLUSTERS]', layoutResult.activeClusters.map(c => ({
+        id: c.id,
+        x: c.position?.x,
+        y: c.position?.y,
+        bounds: c.bounds
+    })));
+    console.log('[WORLD_BOUNDS]', layoutResult.worldBounds);
+    console.log('[CLUSTER_BOUNDS_MAP]', layoutResult.clusterBounds);
+    console.log('[ACTIVE_CLUSTER_0]', layoutResult.activeClusters[0]);
 
     const continentMap = layoutResult.continentMap;
     const clusterNodes = new Map<string, Node[]>(Array.from(layoutResult.clusterNodes.entries()).map(([k, v]) => [k, [...v]]));
@@ -485,6 +567,14 @@ export class DataPipeline {
     }
 
     console.timeEnd('[PIPELINE] TOTAL');
+    const rootClusterCount = clusters.filter(c => !c.parent_id).length;
+    console.log('[SNAPSHOT_AUDIT] DataPipeline finished:', {
+        NODE_COUNT: nodes.length,
+        EDGE_COUNT: edges.length,
+        CLUSTER_COUNT: clusters.length,
+        ROOT_CLUSTER_COUNT: rootClusterCount
+    });
+
     return { nodes, edges, clusters, metaEdges };
   }
 

@@ -16,7 +16,7 @@ export class ReportExporter {
         Logger.info(`[PROVENANCE_AUDIT] [REPORT_EXPORTER] Total Edges: ${state.edges?.length || 0} | Stats: ${JSON.stringify(exportProvStats)}`);
         // -----------------------------------------
         
-        const reportDir = path.join(projectRoot, 'report');
+        const reportDir = path.join(projectRoot, 'synapse_report');
         if (!fs.existsSync(reportDir)) {
             fs.mkdirSync(reportDir, { recursive: true });
         }

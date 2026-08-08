@@ -1330,14 +1330,22 @@ class WebGLRenderer {
         // Build map for edges (or use from state if available)
         const nodeMap = new Map();
         for (const n of frameState.nodes) nodeMap.set(n.id, n);
+        
+        console.time('[PERF] updateEdgeData');
         this.updateEdgeData(frameState.edges, nodeMap, selectedIds);
+        console.timeEnd('[PERF] updateEdgeData');
+        
         this.updateTextData(frameState.nodes, frameState.edges);
 
         // Render Layers
         this.drawNodes(frameState.context);
+        
+        console.time('[PERF] drawEdges');
         this.drawEdges(frameState.context);
+        console.timeEnd('[PERF] drawEdges');
         
         this.endFrame();
+
         const hash = calculateFrameHash(frameState);
         console.log(`[SYNAPSE 3D] Frame Rendered. Hash: ${hash}`);
     }

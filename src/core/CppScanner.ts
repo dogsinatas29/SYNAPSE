@@ -1,5 +1,5 @@
 import * as path from 'path';
-import { LanguageScanner, CodeSummary } from '../types/schema';
+import { LanguageScanner, CodeSummary, EdgeProvenance } from '../types/schema';
 
 export class CppScanner implements LanguageScanner {
     supportsExtension(ext: string): boolean {
@@ -53,7 +53,7 @@ export class CppScanner implements LanguageScanner {
                         let type = 'dependency';
                         const idMatch = line.match(/\[SYNAPSE(?:_PENDING|_DELETED)?:([^\]]+)\]/);
                         const nodeId = idMatch ? idMatch[1] : undefined;
-                        summary.references.push({ target: cleanRef, type, nodeId, isApproved: !isPendingOrDeleted });
+                        summary.references.push({ target: cleanRef, type, nodeId, isApproved: !isPendingOrDeleted, provenance: EdgeProvenance.INCLUDE_DIRECTIVE });
                     }
                 } else if (quoteType === '<') {
                     const systemLib = ref.split('/')[0];
@@ -61,11 +61,11 @@ export class CppScanner implements LanguageScanner {
 
                     if (!standardLibs.includes(systemLib)) {
                         if (cleanRef && !summary.references.some(r => r.target === cleanRef)) {
-                            summary.references.push({ target: cleanRef, type: 'dependency' });
+                            summary.references.push({ target: cleanRef, type: 'dependency', provenance: EdgeProvenance.INCLUDE_DIRECTIVE });
                         }
                     } else {
                         if (!summary.references.some(r => r.target === systemLib)) {
-                            summary.references.push({ target: systemLib, type: 'api_call' });
+                            summary.references.push({ target: systemLib, type: 'api_call', provenance: EdgeProvenance.INCLUDE_DIRECTIVE });
                         }
                     }
                 }

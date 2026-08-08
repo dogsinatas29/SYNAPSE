@@ -1,5 +1,5 @@
 # SYNAPSE Architecture Diagnosis Report (EV-1029)
-Generated: 2026-08-04T08:16:41.561Z | Dataset: Linux 7.2-rc3 (69.3K nodes, 387.3K edges)
+Generated: 2026-08-06T05:31:04.514Z | Dataset: Linux 7.2-rc3 (69.3K nodes, 387.3K edges)
 Verdict: **🔴 UNSTABLE (gate failed)** | Mesh: ❌ Not detected
 
 ---
@@ -50,16 +50,8 @@ Verdict: **🔴 UNSTABLE (gate failed)** | Mesh: ❌ Not detected
 - No clear boundary between public API and internal details
 
 **What We Found:**
-1. **drivers/accel/habanalabs/include/gaudi2/asic_reg/gaudi2_regs.h** (158 external edges)
-2. **arch/alpha/kernel/traps.c** (150 external edges)
-3. **arch/alpha/kernel/setup.c** (121 external edges)
-4. **arch/alpha/kernel/process.c** (119 external edges)
-5. **arch/alpha/kernel/smp.c** (107 external edges)
-6. **drivers/accel/habanalabs/include/goya/asic_reg/goya_regs.h** (96 external edges)
-7. **drivers/accel/habanalabs/include/gaudi/asic_reg/gaudi_regs.h** (91 external edges)
-8. **arch/alpha/mm/init.c** (84 external edges)
-9. **arch/alpha/kernel/irq.c** (76 external edges)
-10. **arch/alpha/kernel/signal.c** (73 external edges)
+1. **/home/dogsinatas/다운로드/linux-7.2-rc3/kernel/sched/core.c** (0 external edges)
+2. **/home/dogsinatas/다운로드/linux-7.2-rc3/kernel/sched/fair.c** (0 external edges)
 
 ---
 
@@ -249,7 +241,7 @@ PROOF LEVEL HIERARCHY
 ## 6. Technical Surgery Guide
 
 **Where to look first?**
-→ drivers/accel/habanalabs/include/gaudi2/asic_reg/gaudi2_regs.h (158 external edges)
+→ /home/dogsinatas/다운로드/linux-7.2-rc3/kernel/sched/core.c (150 external edges)
 
 **Where it explodes?**
 → External fanout to ~344+ downstream files
@@ -266,7 +258,7 @@ PROOF LEVEL HIERARCHY
 
 ```
 TASK: Reduce cross-boundary infrastructure coupling
-TARGET FILES: gaudi2_regs.h, traps.c, setup.c
+TARGET FILES: core.c, fair.c
 
 INPUT METRICS (BEFORE):
 - External edges: undefined
@@ -319,7 +311,7 @@ VERIFICATION:
 
 **Verdict:**
 - Gate Rule: default: range<=6 and rel<=0.35; Infrastructure Mesh range<=1
-- Failures: 5 species exceeded thresholds
+- Failures: 7 species exceeded thresholds
 
 ---
 

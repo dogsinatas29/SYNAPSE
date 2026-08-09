@@ -320,122 +320,45 @@ SYNAPSE는 방대한 아키텍처를 효과적으로 관리하기 위해 **클�
 
 ---
 
-## 🔬 Simulation Debug: 아키텍처 수술 보고서 (Architecture Surgery Report)
+## 🔬 아키텍처 스캔 리포트 (Architecture Scan Report, ASR 3.0)
 
-SYNAPSE의 **아키텍처 수술 보고서(Architecture Surgery Report)** 생성기는 원시 의존성 분석을 실행 가능한 아키텍처 의사결정으로 변환합니다. 문제 발견과 수술적 개입 사이의 간격을 메우며, 증거 기반의 의사결정 중심 보고서를 생성합니다.
+SYNAPSE의 **아키텍처 스캔 리포트(ASR)**는 프로젝트의 아키텍처 건강도를 팩트와 데이터 기반으로 촬영하는 "MRI 스캔"입니다. 우리는 객관적인 측정(Scan)과 주관적인 해석(Diagnosis)을 엄격하게 구분하여, 의사결정자에게 AI의 환각(Hallucination)이 섞이지 않은 명확한 아키텍처 증거를 제공합니다.
 
-### 3단계 파이프라인
+### 핵심 철학: 진단(Diagnosis)보다 스캔(Scan)
+기존 도구들은 깊이 있는 "AI 진단"을 시도하지만, 파서의 한계나 환각으로 인해 실패하는 경우가 많습니다. ASR 3.0은 과도한 추론을 배제하고 **데이터 신뢰도(Data Reliability)와 감사 가능성(Auditability)**에 집중합니다.
 
-```
-입력 (b5_validation_layer의 검증 데이터)
-    ↓
-[Stage 1] 데이터 수집 & 분석
-    - 그래프 로드 (69,304개 노드, 387,282개 엣지)
-    - AST 검증 실행 (9,297개 엣지 샘플링)
-    - 상위 영향력 파일 추출
-    ↓
-[Stage 2] 신뢰도 & 영향도 계산
-    - Graph Confidence: 92% (3 run 검증)
-    - AST Coverage: 2.4% (9,297 / 387,282 엣지 검사)
-    - Verified Sample Accuracy: 93% (검사된 범위 내)
-    - Overall Decision Confidence: MEDIUM (65-70%)
-    ↓
-[Stage 3] 의사결정 프레임 구성
-    - Section 0: 신뢰도 투명공시 (Coverage ≠ Confidence)
-    - Section 1: 행동 지시 (10개 파일, 2-4일)
-    - Section 2-4: 의사결정 시나리오 (범위, 무시 비용)
-    - Section 5: 증거강도 레이더 (아는 것/모르는 것)
-    - Section 6-7: 기술 실행 가이드
-    - Section 8: 증거 저장소 (법정 수준 증명)
-    ↓
-출력 (Reports + Evidence Artifacts)
-```
+- **매직 넘버 금지**: 영향도(Impact) 점수는 잘려나간 목록이 아닌 전체 의존성(Intent Edge) 스코프를 기반으로 계산됩니다.
+- **추적 가능한 증거**: 모든 유령 의존성(Ghost Dependency)과 경계 침범(Boundary Crossing)은 실제 심볼과 함께 추적됩니다.
+- **GUI 우선 워크플로우**: 복잡한 터미널 실행은 폐기되었습니다. 리포트는 VSCode 캔버스 내에서 매끄럽게 생성됩니다.
 
-### 8섹션 의사결정 보고서 구조
+### 6단계 MRI 구조
 
-| 섹션 | 초점 | 대상 | 예시 출력 |
-|------|------|------|---------|
-| **0. Report Confidence** | 측정값 vs 신뢰도 투명공시 | 의사결정자 | "Graph 92%, AST Coverage 2.4%, Decision Confidence: MEDIUM" |
-| **1. What Should I Do?** | 정확한 행동 지시 | 엔지니어 | "10개 파일, 2-4일, #include 수정 & visibility 적용" |
-| **2. What Happens If I Do It?** | 예상 범위 (고정값 아님) | 아키텍트 | "외부 엣지: 6000-9000 (대략 7500), -65% 감소" |
-| **3. What Happens If I Ignore It?** | 6개월 악화 시나리오 | CTO/리누스 | "Bridge 12→18+, Entropy 75%→87%, 비용 3일→12-15일" |
-| **4. Cost vs Benefit** | ROI 명확화 | 재무/의사결정자 | "지금 3일 투입, 6개월 후 12-15일 절약. 4:1 비율" |
-| **5. Evidence Strength** | 증거강도 레이더 | 아키텍트/변호사 | "HIGH: Graph, HIGH: Community Detection, MEDIUM: AST, NONE: Compile" |
-| **6. Technical Surgery Guide** | 어디를 보고, 자르고, 붙일지 | 엔지니어 | "상위 파일: 158개 외부 엣지, 344+ 파일에 fanout" |
-| **7. AI Prompt Ready** | 측정 가능한 성공 기준 | AI/자동화 | "입력: 17214 edges, 성공: 6000-9000 범위, 검증: compile green" |
-| **8. Full Evidence Vault** | 변호사용 증명 아티팩트 | 규제/감사 | 연결된 JSON, chains, symbols, threshold sweeps |
+| 섹션 | 초점 | 목적 |
+|------|------|------|
+| **0. Analysis Subject** | 스캔 범위 | 분석된 전체 파일, 내부 엣지, 경계 엣지의 수를 표시합니다. |
+| **1. Executive Summary** | 핵심 판정 | 엔트로피와 경계 비율(Boundary Ratio)을 기반으로 즉각적인 PASS/UNSTABLE 판정을 내립니다. |
+| **2. Impact Files** | 수술 대상 | 절대적인 전체 외부 엣지 결합도를 기준으로 최상위 "God Class"를 식별합니다. |
+| **3. Evidence Layer** | 부채 증명 | 유령 의존성과 경계 위반에 대한 감사 가능한 증거 목록입니다. |
+| **4. Expected After Surgery** | 예상 상태 | 최상위 수술 대상을 리팩토링할 경우 예상되는 팩트 기반의 엔트로피 및 경계 변화량입니다. |
+| **5. Raw Metrics** | 엔진 출력 | 세부적인 AEL(Architecture Ecology Laboratory) 지표 및 출처 분류(Breakdowns)입니다. |
 
-### 핵심 계산 함수들
+### 실행 방법 (GUI First)
 
-| 함수 | 입력 | 출력 | 목적 |
-|------|------|------|------|
-| `calculateConfidenceProgression()` | ValidationReport | {graphConfidence, astCoverage, finalConfidence} | 커버리지가 낮으면 신뢰도 페널티 적용 |
-| `calculateReportConfidence()` | presenceMatrix | {stableSpecies, overallConfidence} | 3 run 간 종의 안정성 추적 |
-| `extractTopImpactFiles()` | Graph | {filePath, externalEdges, consumers} | 외부 결합도 상위 10개 파일 식별 |
-| `runASTVerification()` | graph.json | {resolvedEdges, coverage, accuracy} | 2.4% 샘플을 93% 정확도로 검증 |
+복잡한 터미널 CLI 스크립트는 잊으십시오.
+1. VSCode에서 SYNAPSE 캔버스를 엽니다.
+2. UI에서 **가상 디버그(Virtual Debug)** 버튼을 클릭합니다.
+3. ASR이 워크스페이스 내에 HTML, Markdown, JSON 형태의 전체 스캔 결과를 즉시 생성합니다.
 
 ### 생성되는 증거 아티팩트
 
-```
-report/surgery/
-├── ASR_EV-1029.md                    [Main: 8섹션 의사결정 보고서]
-├── ASR_EV-1029.html                  [네비게이션: 섹션 가이드 + 링크]
-└── evidence/EV-1029/
-    ├── stability.json                [종의 안정성 증명 (3 run 비교)]
-    ├── chains.json                   [전체 17,214개 외부 엣지 목록]
-    ├── symbols.json                  [AST 결과: 9,297 resolved edges]
-    ├── false_positives.txt           [188개 제거된 엣지 (Kconfig, generated)]
-    ├── threshold_sweep.json          [Mesh 0.80-0.86에서 안정성 증명]
-    └── EV-1029_graph.html            [커뮤니티 구조 시각화]
+```text
+synapse_report/surgery/
+├── ASR_EV-LIVE.md      [Main: 6섹션 마크다운 리포트]
+├── ASR_EV-LIVE.html    [Main: 웹 열람용 HTML 리포트]
+└── ASR_EV-LIVE.json    [Source of Truth: 전체 그래프 및 메타데이터 덤프]
 ```
 
-### 핵심 정직함의 원칙: Coverage ≠ Confidence
-
-**이전 (거짓):**
-```
-"AST Confidence: 92%"  ❌ (잘못됨: 2.4%만 검사)
-"Prediction: 6025"     ❌ (고정값의 근거 없음)
-```
-
-**현재 (정직):**
-```
-"AST Coverage: 2.4%"               ✅ (사실)
-"Verified Sample Accuracy: 93%"    ✅ (검사 범위 내)
-"Expected range: 6000-9000"        ✅ (범위 + 전제조건)
-"Decision Confidence: MEDIUM"      ✅ (명확한 한계)
-```
-
-### 실행 방법
-
-```bash
-# 1. 검증 데이터 생성 (선행 단계)
-npx ts-node src/cli/b5_validation_layer.ts <graph.json> 3
-
-# 2. 수술 보고서 생성
-npm run b5:report:surgery -- EV-1029
-
-# 출력
-report/surgery/ASR_EV-1029.md      # 메인 보고서
-report/surgery/ASR_EV-1029.html    # 네비게이션 페이지
-report/surgery/evidence/EV-1029/   # 증거 저장소
-```
-
-### 왜 중요한가?
-
-기존 아키텍처 도구는 **문제 발견**에서 멈춥니다.
-
-SYNAPSE의 수술 보고서는 한 단계 더 나아갑니다:
-
-```
-문제 발견 (기존 도구)
-    ↓
-→ 원인 설명
-→ 수술 위치 지정
-→ 수술 순서 제안
-→ AI 프롬프트 생성 (측정 가능한 기준)
-```
-
-이는 분석을 **실행 가능한 아키텍처 수술 지시서(Architecture Surgery Order)**로 변환합니다.
+아키텍처 수술에 앞서 팩트 기반의 증거를 제시함으로써, ASR은 모호한 기술 부채를 실행 가능하고 측정 가능한 목표로 변환합니다.
 
 ---
 

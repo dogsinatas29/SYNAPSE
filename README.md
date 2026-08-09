@@ -321,122 +321,45 @@ If the score exceeds a safe threshold (e.g., 500,000 points), the **EXTREME_SCAL
 
 ---
 
-## 🔬 Simulation Debug: Architecture Surgery Report
+## 🔬 Architecture Scan Report (ASR 3.0)
 
-SYNAPSE's **Architecture Surgery Report** generator transforms raw dependency analysis into actionable architectural decisions. It bridges the gap between problem discovery and surgical intervention by generating evidence-linked, decision-focused reports.
+SYNAPSE's **Architecture Scan Report (ASR)** is a factual, data-driven "MRI Scan" of your project's architectural health. We strictly distinguish between objective measurements (Scan) and subjective interpretation (Diagnosis), ensuring that decision-makers are provided with undeniable architectural evidence without AI hallucination.
 
-### Three-Stage Pipeline
+### Key Philosophy: Scan > Diagnosis
+Traditional tools attempt to offer deep "AI Diagnosis" but often fail due to parser limitations or hallucinated metrics. ASR 3.0 abandons excessive interpretation in favor of **Data Reliability and Auditability**.
 
-```
-INPUT (Validation Data from b5_validation_layer)
-    ↓
-[Stage 1] Data Collection & Analysis
-    - Load graph (69,304 nodes, 387,282 edges)
-    - Run AST verification (9,297 edge sampling)
-    - Extract top impact files
-    ↓
-[Stage 2] Trust & Impact Calculation
-    - Graph Confidence: 92% (validated across 3 runs)
-    - AST Coverage: 2.4% (9,297 / 387,282 edges examined)
-    - Verified Sample Accuracy: 93% (within examined set)
-    - Overall Decision Confidence: MEDIUM (65-70%)
-    ↓
-[Stage 3] Decision Framework Assembly
-    - Section 0: Confidence transparency (Coverage ≠ Confidence)
-    - Section 1: Action directive (10 files, 2-4 days)
-    - Section 2-4: Decision scenarios (expected ranges, ignore cost)
-    - Section 5: Evidence Strength radar (what we know/don't know)
-    - Section 6-7: Technical execution guide
-    - Section 8: Evidence vault (proof artifacts)
-    ↓
-OUTPUT (Reports + Evidence Artifacts)
-```
+- **No Magic Numbers**: Impact scores are calculated based on the full scope of intent edges, not truncated lists.
+- **Traceable Evidence**: Every ghost dependency and boundary crossing is tracked with direct symbols.
+- **GUI-First Workflow**: Terminal execution is deprecated. Reports are generated seamlessly within the VSCode Canvas.
 
-### 8-Section Decision Report Structure
+### 6-Stage MRI Structure
 
-| Section | Focus | Audience | Example Output |
-|---------|-------|----------|-----------------|
-| **0. Report Confidence** | Transparency on measurement vs confidence | Decision-makers | "Graph 92%, AST Coverage 2.4%, Decision Confidence: MEDIUM" |
-| **1. What Should I Do?** | Exact action list | Engineers | "10 files, 2-4 days, modify includes & apply visibility" |
-| **2. What Happens If I Do It?** | Expected ranges (not fixed predictions) | Architects | "External edges: 6000-9000 (likely 7500), -65% reduction" |
-| **3. What Happens If I Ignore It?** | 6-month degradation scenario | CTO/Linus | "Bridge Candidates 12→18+, Entropy 75%→87%, Cost 3d→12-15d" |
-| **4. Cost vs Benefit** | ROI clarity | Finance/Decision-makers | "Spend 3 days now, avoid 12-15 days later. 4:1 ratio." |
-| **5. Evidence Strength** | Proof level radar | Architects/Lawyers | "HIGH: Graph, HIGH: Community Detection, MEDIUM: AST, NONE: Compile" |
-| **6. Technical Surgery Guide** | Where to look, cut, attach | Engineers | "Top file: 158 external edges, fanout to 344+ files" |
-| **7. AI Prompt Ready** | Measurable success criteria | AI/Automation | "Input: 17214 edges, Success: 6000-9000 range, Verify: green compile" |
-| **8. Full Evidence Vault** | Proof artifacts for lawyers | Regulators/Auditors | Linked JSON, chains, symbols, threshold sweeps |
+| Section | Focus | Purpose |
+|---------|-------|---------|
+| **0. Analysis Subject** | Scope of Scan | Displays the total number of files, internal edges, and boundary edges analyzed. |
+| **1. Executive Summary** | Core Verdict | Provides an immediate PASS/UNSTABLE verdict based on Entropy and Boundary Ratios. |
+| **2. Impact Files** | Surgery Targets | Identifies the top "God Classes" based on absolute total external edge counting. |
+| **3. Evidence Layer** | Proof of Debt | Auditable list of Ghost Dependencies and Boundary Violations. |
+| **4. Expected After Surgery** | Projected State | Estimated factual changes to Entropy and Boundaries if top impact files are refactored. |
+| **5. Raw Metrics** | Engine Output | Granular AEL (Architecture Ecology Laboratory) metrics and Source Breakdowns. |
 
-### Core Calculation Functions
+### Usage (GUI First)
 
-| Function | Input | Output | Purpose |
-|----------|-------|--------|---------|
-| `calculateConfidenceProgression()` | ValidationReport | {graphConfidence, astCoverage, finalConfidence} | Penalizes confidence when coverage is low |
-| `calculateReportConfidence()` | presenceMatrix | {stableSpecies, overallConfidence} | Tracks species stability across 3 runs |
-| `extractTopImpactFiles()` | Graph | {filePath, externalEdges, consumers} | Identifies top 10 files by external coupling |
-| `runASTVerification()` | graph.json | {resolvedEdges, coverage, accuracy} | Validates 2.4% sample with 93% accuracy |
+Forget complex CLI scripts. 
+1. Open the SYNAPSE Canvas in VSCode.
+2. Click the **Virtual Debug** button on the UI.
+3. ASR instantly generates the full scan as HTML, Markdown, and JSON within your workspace.
 
 ### Evidence Artifacts Generated
 
-```
-report/surgery/
-├── ASR_EV-1029.md                    [Main: 8-section decision report]
-├── ASR_EV-1029.html                  [Navigation: section guide + links]
-└── evidence/EV-1029/
-    ├── stability.json                [Species stability proof (3 runs)]
-    ├── chains.json                   [Full 17,214 external edge list]
-    ├── symbols.json                  [AST findings: 9,297 resolved edges]
-    ├── false_positives.txt           [188 removed edges (Kconfig, generated)]
-    ├── threshold_sweep.json          [Mesh stable at 0.80-0.86 proof]
-    └── EV-1029_graph.html            [Community structure visualization]
+```text
+synapse_report/surgery/
+├── ASR_EV-LIVE.md      [Main: 6-section Markdown Report]
+├── ASR_EV-LIVE.html    [Main: Web-viewable HTML Report]
+└── ASR_EV-LIVE.json    [Source of Truth: Complete Graph & Metadata Dump]
 ```
 
-### Key Honesty Principle: Coverage ≠ Confidence
-
-**Previous (Dishonest):**
-```
-"AST Confidence: 92%"  ❌ (Wrong: only 2.4% examined)
-"Prediction: 6025"     ❌ (No basis for fixed number)
-```
-
-**Current (Honest):**
-```
-"AST Coverage: 2.4%"               ✅ (Fact)
-"Verified Sample Accuracy: 93%"    ✅ (Within examined set)
-"Expected range: 6000-9000"        ✅ (Range + conditions)
-"Decision Confidence: MEDIUM"      ✅ (Clear limitations)
-```
-
-### Usage
-
-```bash
-# 1. Generate validation data (prerequisite)
-npx ts-node src/cli/b5_validation_layer.ts <graph.json> 3
-
-# 2. Generate surgery report
-npm run b5:report:surgery -- EV-1029
-
-# Output
-report/surgery/ASR_EV-1029.md      # Main report
-report/surgery/ASR_EV-1029.html    # Navigation page
-report/surgery/evidence/EV-1029/   # Evidence vault
-```
-
-### Why This Matters
-
-Traditional architecture tools stop at **problem discovery**.
-
-SYNAPSE's Surgery Report goes further:
-
-```
-Problem Discovery (traditional)
-    ↓
-→ Root Cause Explanation
-→ Surgical Location Specification
-→ Surgical Sequence Proposal
-→ AI Prompt Generation (measurable criteria)
-```
-
-This transforms analysis into **actionable Architecture Surgery Orders**.
+By presenting fact-based evidence before any architectural surgery, ASR transforms vague technical debt into an actionable, measurable target.
 
 ---
 

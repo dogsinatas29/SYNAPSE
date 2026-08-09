@@ -323,6 +323,8 @@ If the score exceeds a safe threshold (e.g., 500,000 points), the **EXTREME_SCAL
 
 ## 🔬 Architecture Scan Report (ASR 3.0)
 
+[![Architecture Scan Report Demo](https://img.youtube.com/vi/yU-_NRrADR0/0.jpg)](https://youtu.be/yU-_NRrADR0)
+
 SYNAPSE's **Architecture Scan Report (ASR)** is a factual, data-driven "MRI Scan" of your project's architectural health. We strictly distinguish between objective measurements (Scan) and subjective interpretation (Diagnosis), ensuring that decision-makers are provided with undeniable architectural evidence without AI hallucination.
 
 ### Key Philosophy: Scan > Diagnosis

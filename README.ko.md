@@ -322,6 +322,8 @@ SYNAPSE는 방대한 아키텍처를 효과적으로 관리하기 위해 **클�
 
 ## 🔬 아키텍처 스캔 리포트 (Architecture Scan Report, ASR 3.0)
 
+[![Architecture Scan Report Demo](https://img.youtube.com/vi/yU-_NRrADR0/0.jpg)](https://youtu.be/yU-_NRrADR0)
+
 SYNAPSE의 **아키텍처 스캔 리포트(ASR)**는 프로젝트의 아키텍처 건강도를 팩트와 데이터 기반으로 촬영하는 "MRI 스캔"입니다. 우리는 객관적인 측정(Scan)과 주관적인 해석(Diagnosis)을 엄격하게 구분하여, 의사결정자에게 AI의 환각(Hallucination)이 섞이지 않은 명확한 아키텍처 증거를 제공합니다.
 
 ### 핵심 철학: 진단(Diagnosis)보다 스캔(Scan)

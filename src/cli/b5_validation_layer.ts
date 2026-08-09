@@ -13,9 +13,21 @@ export function runB5ValidationLayer(graphFilePath: string, runCount: number): v
 
     const workspaceRoot = process.env.SYNAPSE_WORKSPACE_ROOT || path.resolve(path.dirname(graphFilePath), '..');
     
-    const context = ValidationEngine.analyzeState(snapshot, runCount, workspaceRoot);
+    // Run Graph Edge Aggregator to generate IntentEdge Cache for ASR Evidence Layer
+    const edgeMap = new Map<string, any>();
+    for (const e of snapshot.edges) {
+        if (!e.from || !e.to) continue;
+        const key = `${e.from}|${e.to}`;
+        if (!edgeMap.has(key)) {
+            edgeMap.set(key, { source: e.from, target: e.to, evidenceCount: 0 });
+        }
+        edgeMap.get(key).evidenceCount += (e.weight || 1);
+    }
+    const intentEdges = Array.from(edgeMap.values());
+    
+    const context = ValidationEngine.analyzeState(snapshot, runCount, workspaceRoot, intentEdges);
 
-    const reportPath = path.join(workspaceRoot, 'report/b5_validation_layer.latest.json');
+    const reportPath = path.join(workspaceRoot, 'synapse_report', 'b5_validation_layer.latest.json');
     fs.mkdirSync(path.dirname(reportPath), { recursive: true });
     fs.writeFileSync(reportPath, JSON.stringify(context.metrics, null, 2), 'utf-8');
     console.log(`\n[Validation] JSON report saved: ${reportPath}`);

@@ -75,7 +75,7 @@ export class BatchRunner {
                     fs.writeFileSync(path.join(projectOutDir, 'logic_report.html'), htmlReport, 'utf8');
 
                     // Write raw data to data/ subdir (Machine-readable, full fidelity)
-                    const dataDir = path.join(projectOutDir, 'data');
+                    const dataDir = path.join(projectOutDir, 'synapse_data');
                     if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir);
                     fs.writeFileSync(path.join(dataDir, 'intent_edges.json'), JSON.stringify(bundle.intentEdges, null, 2), 'utf8');
                     fs.writeFileSync(path.join(dataDir, 'onboarding_map.json'), JSON.stringify(bundle.onboardingMap, null, 2), 'utf8');

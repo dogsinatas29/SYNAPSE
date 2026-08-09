@@ -165,7 +165,7 @@ export class CanvasPanel {
                 retainContextWhenHidden: true,
                 localResourceRoots: [
                     vscode.Uri.joinPath(extensionUri, 'ui'),
-                    vscode.Uri.joinPath(extensionUri, 'data'),
+                    vscode.Uri.joinPath(extensionUri, 'synapse_data'),
                     vscode.Uri.joinPath(extensionUri, 'node_modules')
                 ]
             }
@@ -239,6 +239,12 @@ export class CanvasPanel {
             null,
             this._disposables
         );
+    }
+
+    public postMessage(message: any) {
+        if (this._panel && this._panel.webview) {
+            this._panel.webview.postMessage(message);
+        }
     }
 
     public async runWebviewBenchmark(phase: string): Promise<any> {
@@ -719,7 +725,7 @@ export class CanvasPanel {
         if (!workspaceFolder) return;
 
         try {
-            const projectStateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'project_state.json');
+            const projectStateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'synapse_data', 'project_state.json');
 
             // 1. [v0.3.11] Sync Physical File if requested (Fast Check)
             if (node.createPhysicalFile && node.data?.label) {
@@ -888,7 +894,7 @@ export class CanvasPanel {
         if (!workspaceFolder) return;
 
         try {
-            const projectStateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'project_state.json');
+            const projectStateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'synapse_data', 'project_state.json');
             
             // Dispatch update intent (currently using ADD_NODE logic for update if exists)
             // [TODO: v0.3.11] Introduce UPDATE_NODE_DATA intent specifically
@@ -914,7 +920,7 @@ export class CanvasPanel {
         if (!workspaceFolder) return;
 
         try {
-            const historyUri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'synapse_history.json');
+            const historyUri = vscode.Uri.joinPath(workspaceFolder.uri, 'synapse_data', 'synapse_history.json');
             const data = await vscode.workspace.fs.readFile(historyUri);
             const history = JSON.parse(Buffer.from(data).toString('utf-8'));
             const snapshot = history.find((s: any) => s.id === snapshotId);
@@ -1478,7 +1484,7 @@ export class CanvasPanel {
     private async _spawnNewServer(): Promise<void> {
         const workspaceRoot = this._workspaceFolder ? this._workspaceFolder.uri.fsPath : this._extensionUri.fsPath;
         // [SYN-SEC-040] 안전한 프로세스 종료 (pkill 정규식 범위 축소 및 PID 기반 종료)
-        const serverInfoPath = path.join(workspaceRoot, 'data', '.server_info');
+        const serverInfoPath = path.join(workspaceRoot, 'synapse_data', '.server_info');
         if (fs.existsSync(serverInfoPath)) {
             try {
                 const info = JSON.parse(fs.readFileSync(serverInfoPath, 'utf-8'));
@@ -1635,7 +1641,7 @@ export class CanvasPanel {
     private async _readServerInfo(): Promise<{port: number; pid: number; projectUUID: string; serverName: string; adminSecret?: string} | null> {
         try {
             const workspaceRoot = this._workspaceFolder ? this._workspaceFolder.uri.fsPath : this._extensionUri.fsPath;
-            const filePath = path.join(workspaceRoot, 'data', '.server_info');
+            const filePath = path.join(workspaceRoot, 'synapse_data', '.server_info');
             if (fs.existsSync(filePath)) {
                 const info = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
                 if (this._adminSecret) {
@@ -2026,7 +2032,7 @@ export class CanvasPanel {
 
             // [v0.3.30] 추가: project_state.json에서 manual node 가져와서 포함
             try {
-                const uri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'project_state.json');
+                const uri = vscode.Uri.joinPath(workspaceFolder.uri, 'synapse_data', 'project_state.json');
                 const data = await vscode.workspace.fs.readFile(uri);
                 let projectState: any = JSON.parse(Buffer.from(data).toString('utf-8'));
                 if (typeof projectState === 'string') projectState = JSON.parse(projectState);
@@ -2418,6 +2424,8 @@ export class CanvasPanel {
                                 } else {
                                     vscode.window.showInformationMessage('Harvest Session ended. Workspace UNLOCKED.');
                                 }
+                            } else if (data.command === 'progress' || data.command === 'progressComplete') {
+                                this._panel.webview.postMessage(data);
                             }
                         } catch (e) {
                             Logger.warn(`[SSE] Failed to parse message: ${e}`);
@@ -2939,12 +2947,12 @@ export class CanvasPanel {
                 req.end();
             }).then(async (netState) => {
                 if (netState) return netState;
-                const uri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'project_state.json');
+                const uri = vscode.Uri.joinPath(workspaceFolder.uri, 'synapse_data', 'project_state.json');
                 const data = await vscode.workspace.fs.readFile(uri);
                 return JSON.parse(Buffer.from(data).toString('utf-8'));
             });
         }
-        const uri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'project_state.json');
+        const uri = vscode.Uri.joinPath(workspaceFolder.uri, 'synapse_data', 'project_state.json');
         const data = await vscode.workspace.fs.readFile(uri);
         try {
             return JSON.parse(Buffer.from(data).toString('utf-8'));
@@ -3074,7 +3082,7 @@ export class CanvasPanel {
                     
                     if (bridges.length > 0) {
                         Logger.info(`[CLUSTER_COUPLING_ANALYSIS] (VirtualDebug) Found ${bridges.length} bridges.`);
-                        const bridgesUri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'cluster_bridges.json');
+                        const bridgesUri = vscode.Uri.joinPath(workspaceFolder.uri, 'synapse_data', 'cluster_bridges.json');
                         await vscode.workspace.fs.writeFile(bridgesUri, Buffer.from(JSON.stringify(bridges, null, 2), 'utf-8'));
                         
                         if (this._panel) {
@@ -3497,7 +3505,7 @@ export class CanvasPanel {
         }
 
         try {
-            const projectStateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'project_state.json');
+            const projectStateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'synapse_data', 'project_state.json');
             const data = await vscode.workspace.fs.readFile(projectStateUri);
             let projectState = JSON.parse(Buffer.from(data).toString('utf-8'));
             if (typeof projectState === 'string') {
@@ -3605,7 +3613,7 @@ export class CanvasPanel {
         try {
             // [v0.3.10] SSOT Strategy: Use Engine snapshot directly
             const engineState = canvasEngine.getFinalSnapshot();
-            const stateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'project_state.json');
+            const stateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'synapse_data', 'project_state.json');
             
             // Convert Records to Arrays for search logic consistency with legacy code
             const allEdges = Object.values(engineState.edges || {});
@@ -3812,7 +3820,7 @@ export class CanvasPanel {
 
         // STEP 1: Disk Purge - project_state.json 물리적 초기화
         const emptyState = { nodes: [], edges: [], clusters: [] };
-        const uri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'project_state.json');
+        const uri = vscode.Uri.joinPath(workspaceFolder.uri, 'synapse_data', 'project_state.json');
         try {
             await vscode.workspace.fs.writeFile(uri, Buffer.from(JSON.stringify(emptyState, null, 2), 'utf8'));
             Logger.info('[CanvasPanel] STEP 1: Disk Purge complete.');
@@ -3858,13 +3866,16 @@ export class CanvasPanel {
                 const engine = new BootstrapEngine();
                 const result = await engine.liteBootstrap(
                     workspaceFolder.uri.fsPath,
-                    (msg) => {
+                    (msg, percent) => {
                         this._panel.webview.postMessage({
-                            command: 'analysisProgress',
-                            message: msg
+                            command: 'progress',
+                            label: msg,
+                            progress: percent || 0,
+                            taskId: 'bootstrap'
                         });
                     }
                 );
+                this._panel.webview.postMessage({ command: 'progressComplete', taskId: 'bootstrap' });
 
                 if (result.success) {
                     // 2. Reload Engine
@@ -3874,7 +3885,7 @@ export class CanvasPanel {
                         clusters: []
                     });
                     
-                    const projectStateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'project_state.json');
+                    const projectStateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'synapse_data', 'project_state.json');
                     const newState = {
                         project_name: path.basename(workspaceFolder.uri.fsPath),
                         nodes: result.initial_nodes,
@@ -3902,7 +3913,7 @@ export class CanvasPanel {
         if (!workspaceFolder) return;
 
         try {
-            const projectStateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'project_state.json');
+            const projectStateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'synapse_data', 'project_state.json');
             
             // 1. Dispatch UPDATE_EDGE Intent
             const parts = edgeId.split('->');
@@ -3990,7 +4001,7 @@ export class CanvasPanel {
             const workspaceFolder = this._workspaceFolder;
             let currentState: any = { nodes: [] };
             if (workspaceFolder) {
-                const projectStateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'project_state.json');
+                const projectStateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'synapse_data', 'project_state.json');
                 try {
                     const data = await vscode.workspace.fs.readFile(projectStateUri);
                     currentState = JSON.parse(Buffer.from(data).toString('utf-8'));
@@ -4071,7 +4082,7 @@ export class CanvasPanel {
             }
 
             // 2. Persistence
-            const projectStateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'project_state.json');
+            const projectStateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'synapse_data', 'project_state.json');
             const finalState = canvasEngine.getFinalSnapshot();
             await vscode.workspace.fs.writeFile(projectStateUri, Buffer.from(this.normalizeProjectState(finalState), 'utf8'));
 
@@ -4116,7 +4127,7 @@ export class CanvasPanel {
             }
 
             // 3. Persistence
-            const projectStateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'project_state.json');
+            const projectStateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'synapse_data', 'project_state.json');
             const finalState = canvasEngine.getFinalSnapshot();
             await vscode.workspace.fs.writeFile(projectStateUri, Buffer.from(this.normalizeProjectState(finalState), 'utf8'));
 
@@ -4141,7 +4152,7 @@ export class CanvasPanel {
             Logger.info(`[CanvasPanel] Batch validating ${batch.length} edges...`);
 
             // 1. Read project state ONLY ONCE
-            const projectStateUri = vscode.Uri.joinPath(this._workspaceFolder.uri, 'data', 'project_state.json');
+            const projectStateUri = vscode.Uri.joinPath(this._workspaceFolder.uri, 'synapse_data', 'project_state.json');
             let baseState: any = { nodes: [], edges: [], clusters: [] };
             try {
                 const data = await vscode.workspace.fs.readFile(projectStateUri);
@@ -4181,7 +4192,9 @@ export class CanvasPanel {
                 
                 // Progress (Edges chunk phase) - up to 30%
                 this._panel.webview.postMessage({
-                    command: 'validationProgress',
+                    command: 'progress',
+                    label: `Verifying Rules (Edges)... ${i + chunk.length} / ${batch.length}`,
+                    taskId: 'verification',
                     progress: Math.floor(((i + chunk.length) / batch.length) * 30)
                 });
                 await this.yieldToEventLoop();
@@ -4199,7 +4212,9 @@ export class CanvasPanel {
                 
                 // Progress (Nodes norm phase) - 30% to 50%
                 this._panel.webview.postMessage({
-                    command: 'validationProgress',
+                    command: 'progress',
+                    label: `Verifying Rules (Nodes)... ${i + chunk.length} / ${tempNodes.length}`,
+                    taskId: 'verification',
                     progress: 30 + Math.floor(((i + chunk.length) / tempNodes.length) * 20)
                 });
                 await this.yieldToEventLoop();
@@ -4253,7 +4268,9 @@ export class CanvasPanel {
                 
                 // Progress (Results mapping phase) - 50% to 100%
                 this._panel.webview.postMessage({
-                    command: 'validationProgress',
+                    command: 'progress',
+                    label: `Verifying Rules (Results)... ${i + chunk.length} / ${batch.length}`,
+                    taskId: 'verification',
                     progress: 50 + Math.floor(((i + chunk.length) / batch.length) * 50)
                 });
                 await this.yieldToEventLoop();
@@ -4263,6 +4280,7 @@ export class CanvasPanel {
                 command: 'edgeValidationResultsBatch',
                 results: resultsBatch
             });
+            this._panel.webview.postMessage({ command: 'progressComplete', taskId: 'verification' });
 
             Logger.info(`[CanvasPanel] Batch validation for ${batch.length} edges complete. Results sent.`);
         } catch (error) {
@@ -4282,7 +4300,7 @@ export class CanvasPanel {
             }
 
             // 1. 기존 프로젝트 상태 읽기
-            const projectStateUri = vscode.Uri.joinPath(this._workspaceFolder.uri, 'data', 'project_state.json');
+            const projectStateUri = vscode.Uri.joinPath(this._workspaceFolder.uri, 'synapse_data', 'project_state.json');
             let state: any = { nodes: [], edges: [], clusters: [] };
             try {
                 const data = await vscode.workspace.fs.readFile(projectStateUri);
@@ -4426,7 +4444,7 @@ export class CanvasPanel {
         }
 
         try {
-            const projectStateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'project_state.json');
+            const projectStateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'synapse_data', 'project_state.json');
 
             // [v0.3.11] Anti-Wipe Safety: If UI sends empty state but engine/disk has data, block the save.
             // [Performance] Use O(1) estimation instead of synchronous full state merge (which can take ~450ms for 70k nodes)
@@ -4570,7 +4588,7 @@ export class CanvasPanel {
         if (!workspaceFolder) return;
 
         try {
-            const workspaceUri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'synapse_workspace.json');
+            const workspaceUri = vscode.Uri.joinPath(workspaceFolder.uri, 'synapse_data', 'synapse_workspace.json');
             
             // Try to load existing to preserve things like graphFingerprint if only updating a subset
             let existingWorkspace: any = {
@@ -4625,7 +4643,7 @@ export class CanvasPanel {
         if (!workspaceFolder) return;
 
         try {
-            const projectStateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'project_state.json');
+            const projectStateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'synapse_data', 'project_state.json');
             let currentProjectState = state.data;
 
             // [v0.3.11 HARD SSOT] Priority: State in message -> Raw Engine Snapshot (merged with Disk metadata)
@@ -4657,7 +4675,7 @@ export class CanvasPanel {
                 };
             }
 
-            const historyUri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'synapse_history.json');
+            const historyUri = vscode.Uri.joinPath(workspaceFolder.uri, 'synapse_data', 'synapse_history.json');
             let history: any[] = [];
 
             try {
@@ -4778,7 +4796,7 @@ export class CanvasPanel {
         if (!workspaceFolder) return;
 
         try {
-            const historyUri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'synapse_history.json');
+            const historyUri = vscode.Uri.joinPath(workspaceFolder.uri, 'synapse_data', 'synapse_history.json');
             const data = await vscode.workspace.fs.readFile(historyUri);
             const history = JSON.parse(Buffer.from(data).toString('utf-8'));
 
@@ -4800,7 +4818,7 @@ export class CanvasPanel {
         if (!workspaceFolder) return;
 
         try {
-            const historyUri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'synapse_history.json');
+            const historyUri = vscode.Uri.joinPath(workspaceFolder.uri, 'synapse_data', 'synapse_history.json');
             const historyData = await vscode.workspace.fs.readFile(historyUri);
             const history = JSON.parse(historyData.toString());
 
@@ -4810,7 +4828,7 @@ export class CanvasPanel {
             }
 
             // 1. Safety backup: Take snapshot of current state before rollback
-            const projectStateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'project_state.json');
+            const projectStateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'synapse_data', 'project_state.json');
             try {
                 const currentData = await vscode.workspace.fs.readFile(projectStateUri);
                 const currentState = JSON.parse(currentData.toString());
@@ -4996,7 +5014,7 @@ export class CanvasPanel {
             };
 
             // Load Workspace / Layout State
-            const workspaceUri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'synapse_workspace.json');
+            const workspaceUri = vscode.Uri.joinPath(workspaceFolder.uri, 'synapse_data', 'synapse_workspace.json');
             let synapseWorkspace: any = null;
             try {
                 const wsData = await vscode.workspace.fs.readFile(workspaceUri);
@@ -5015,7 +5033,7 @@ export class CanvasPanel {
             projectState.synapse_workspace = synapseWorkspace;
 
             // [v0.3.11] 2. Boot-Sync: If Engine is new OR incomplete, load from persistence file
-            const projectStateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'project_state.json');
+            const projectStateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'synapse_data', 'project_state.json');
             
             // [v0.3.11 HARD SSOT] Reality check: If engine is empty OR significantly differs from disk, sync it.
             console.log('[LOAD_STATE_START]', projectStateUri.fsPath);

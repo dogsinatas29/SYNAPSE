@@ -231,8 +231,13 @@ export class VirtualDebugger {
                             });
                         }
                         
-                        if (fromExp) e.to = aggId;
-                        else e.from = aggId;
+                        if (fromExp) {
+                            e.originalTo = e.to;
+                            e.to = aggId;
+                        } else {
+                            e.originalFrom = e.from;
+                            e.from = aggId;
+                        }
                         
                         return true;
                     }
@@ -489,7 +494,22 @@ export class VirtualDebugger {
                     }))
                 );
 
-                const context = ValidationEngine.analyzeState(snapshot, 1, workspaceRoot);
+                // Run Graph Edge Aggregator to generate IntentEdge Cache for ASR Evidence Layer
+                const edgeMap = new Map<string, any>();
+                for (const e of snapshot.edges) {
+                    const fromId = e.originalFrom || e.from;
+                    const toId = e.originalTo || e.to;
+                    if (!fromId || !toId) continue;
+                    const key = `${fromId}|${toId}`;
+                    if (!edgeMap.has(key)) {
+                        const isGhost = (e.originalFrom && e.from.includes('AGGREGATE')) || (e.originalTo && e.to.includes('AGGREGATE'));
+                        edgeMap.set(key, { source: fromId, target: toId, evidenceCount: 0, isGhost });
+                    }
+                    edgeMap.get(key).evidenceCount += (e.weight ?? 1);
+                }
+                const intentEdges = Array.from(edgeMap.values());
+
+                const context = ValidationEngine.analyzeState(snapshot, 1, workspaceRoot, intentEdges);
                 console.log("[ASR] validation exit 0");
                 
                 console.log(

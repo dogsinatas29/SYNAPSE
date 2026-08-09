@@ -15,7 +15,8 @@ import {
     InfraMeshThresholdRecommendation,
     TopCommunitySpeciesRow,
     HistogramBin,
-    SpeciesScoreConfidenceRow
+    SpeciesScoreConfidenceRow,
+    BreakdownEntry
 } from './ValidationContext';
 
 const STABILITY_LABELS = [
@@ -576,7 +577,7 @@ export function printSummary(
 }
 
 export class ValidationEngine {
-    static analyzeState(snapshot: Readonly<GraphSnapshot>, runCount: number, workspaceRoot: string): ValidationContext {
+    static analyzeState(snapshot: Readonly<GraphSnapshot>, runCount: number, workspaceRoot: string, intentEdges?: any[]): ValidationContext {
         const runs: ParsedRun[] = [];
         for (let i = 0; i < runCount; i++) {
             console.log(`[Validation] run ${i + 1}/${runCount} started`);
@@ -614,6 +615,67 @@ export class ValidationEngine {
             auditRows
         );
 
+        const { analyzeGraph } = require('../GraphAnalyzer');
+        const graphAnalysis = analyzeGraph({
+            nodes: snapshot.nodes,
+            edges: snapshot.edges,
+            clusterIds: new Set(snapshot.clusters?.map(c => c.id) || []),
+            nodeIds: new Set(snapshot.nodes.map(n => n.id))
+        });
+
+        const ghostBreakdown: BreakdownEntry[] = [];
+        let totalGhost = 0;
+        for (const [source, count] of graphAnalysis.ghostImpactTraffic.entries()) {
+            ghostBreakdown.push({ name: source, count, ratio: 0 });
+            totalGhost += count;
+        }
+        if (totalGhost > 0) {
+            ghostBreakdown.forEach(entry => entry.ratio = Math.round((entry.count / totalGhost) * 1000) / 10);
+            ghostBreakdown.sort((a, b) => b.count - a.count);
+        }
+
+        const couplingBreakdown: BreakdownEntry[] = [];
+        let totalCoupling = 0;
+        for (const [source, traffic] of graphAnalysis.continentTraffic.entries()) {
+            couplingBreakdown.push({ name: source, count: traffic.external, ratio: 0 });
+            totalCoupling += traffic.external;
+        }
+        if (totalCoupling > 0) {
+            couplingBreakdown.forEach(entry => entry.ratio = Math.round((entry.count / totalCoupling) * 1000) / 10);
+            couplingBreakdown.sort((a, b) => b.count - a.count);
+        }
+
+        let ghostEvidence: any[] = [];
+        let boundaryEvidence: any[] = [];
+        let topImpactFiles: any[] = [];
+        if (intentEdges && intentEdges.length > 0) {
+            const TOP_IMPACT_LIMIT = 10;
+            const EVIDENCE_LIMIT = 50;
+
+            const impactMap = new Map<string, { externalEdges: number, consumers: Set<string> }>();
+            for (const e of intentEdges) {
+                // Now strictly relying on isGhost flag instead of string matching
+                if (e.isGhost) continue;
+                if (!impactMap.has(e.source)) impactMap.set(e.source, { externalEdges: 0, consumers: new Set() });
+                impactMap.get(e.source)!.externalEdges += e.evidenceCount;
+                impactMap.get(e.source)!.consumers.add(e.target);
+            }
+            topImpactFiles = Array.from(impactMap.entries())
+                .map(([filePath, data]) => ({ filePath, externalEdges: data.externalEdges, consumers: Array.from(data.consumers) }))
+                .sort((a, b) => b.externalEdges - a.externalEdges)
+                .slice(0, TOP_IMPACT_LIMIT);
+
+            ghostEvidence = intentEdges
+                .filter(e => e.isGhost)
+                .sort((a, b) => b.evidenceCount - a.evidenceCount)
+                .slice(0, EVIDENCE_LIMIT);
+                
+            boundaryEvidence = intentEdges
+                .filter(e => !e.isGhost && e.evidenceCount > 0)
+                .sort((a, b) => b.evidenceCount - a.evidenceCount)
+                .slice(0, EVIDENCE_LIMIT);
+        }
+
         const metrics: ValidationMetrics = {
             generatedAt: new Date().toISOString(),
             runCount,
@@ -629,7 +691,12 @@ export class ValidationEngine {
             infraMeshThresholdRecommendation: infraMeshRecommendation,
             auditThresholds: CANDIDATE_GATE,
             infrastructureSplitCandidates: infraRows,
-            auditQueueSeed: auditRows.slice(0, 200)
+            auditQueueSeed: auditRows.slice(0, 200),
+            ghostBreakdown,
+            couplingBreakdown,
+            ghostEvidence,
+            boundaryEvidence,
+            topImpactFiles
         };
 
         return {

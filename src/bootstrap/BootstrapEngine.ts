@@ -65,7 +65,8 @@ export class BootstrapEngine {
     public async bootstrap(
         geminiMdPath: string,
         projectRoot: string,
-        autoApprove: boolean = false
+        autoApprove: boolean = false,
+        onProgress?: (msg: string, percent?: number) => void
     ): Promise<BootstrapResult> {
         console.log('🚀 SYNAPSE Bootstrap 시작 (Phase 0: DATA)...');
         phaseManager.reset(); 
@@ -118,7 +119,11 @@ export class BootstrapEngine {
             // [JVM_AUDIT] Phase A & B: Tally stats and Potential Edges safely
             JVMAuditor.runAudit(discoveredFiles, projectRoot);
             
-            const pipelineResult = await dataPipeline.processFiles(discoveredFiles, projectRoot);
+            const pipelineResult = await dataPipeline.processFiles(discoveredFiles, projectRoot, (msg, percent) => {
+                if (onProgress) {
+                    onProgress(msg, percent);
+                }
+            });
             
             // [P1.5] Bounds logger helper
             const getBounds = (nodes: any[]) => {
@@ -162,7 +167,7 @@ export class BootstrapEngine {
                 system_context: {}
             };
 
-            const statePath = path.join(projectRoot, 'data', 'project_state.json');
+            const statePath = path.join(projectRoot, 'synapse_data', 'project_state.json');
             const stateDir = path.dirname(statePath);
             
             console.log(`[STATE_SAVE_START] Output path: ${statePath}`);
@@ -205,7 +210,7 @@ export class BootstrapEngine {
     /**
      * 프로젝트 자동 발견 및 초기화 (Lite Bootstrap - Phase 0 Integration)
      */
-    public async liteBootstrap(projectRoot: string, onProgress?: (msg: string) => void): Promise<BootstrapResult> {
+    public async liteBootstrap(projectRoot: string, onProgress?: (msg: string, percent?: number) => void): Promise<BootstrapResult> {
         console.log(`🔍 [SYNAPSE] Lite Bootstrapping project at: ${projectRoot}`);
         phaseManager.reset();
 
@@ -224,7 +229,11 @@ export class BootstrapEngine {
             // [JVM_AUDIT] Phase A & B: Tally stats and Potential Edges safely
             JVMAuditor.runAudit(discoveredFiles, projectRoot);
             
-            const pipelineResult = await dataPipeline.processFiles(discoveredFiles, projectRoot);
+            const pipelineResult = await dataPipeline.processFiles(discoveredFiles, projectRoot, (msg, percent) => {
+                if (onProgress) {
+                    onProgress(msg, percent);
+                }
+            });
             
             Logger.info(`[SCAN_DEBUG] Pipeline produced Nodes: ${pipelineResult.nodes.length}, Edges: ${pipelineResult.edges.length}, Clusters: ${pipelineResult.clusters.length}`);
             
@@ -238,7 +247,7 @@ export class BootstrapEngine {
             let edges = frozenGraph.edges.slice();
 
             // [v0.3.10] 🛡️ PRESERVE MANUAL STATE: Merge with existing manual nodes/edges
-            const existingStatePath = path.join(projectRoot, 'data', 'project_state.json');
+            const existingStatePath = path.join(projectRoot, 'synapse_data', 'project_state.json');
             let existingData: any = null;
             if (fs.existsSync(existingStatePath)) {
                 try {
@@ -321,7 +330,7 @@ export class BootstrapEngine {
                 deletedPaths: (existingData && existingData.deletedPaths) ? existingData.deletedPaths : []
             };
 
-            const statePath = path.join(projectRoot, 'data', 'project_state.json');
+            const statePath = path.join(projectRoot, 'synapse_data', 'project_state.json');
             const stateDir = path.dirname(statePath);
             if (!fs.existsSync(stateDir)) {
                 fs.mkdirSync(stateDir, { recursive: true });
@@ -477,7 +486,12 @@ The **Documentation Shelf** of the Synapse canvas is a sacred storage area for m
                 if (isIgnoredFolder(currentRelPath)) continue;
                 
                 // [v0.3.32.2] Let exclusion rules handle 'data' instead of hardcoding, as some C projects (like DOOM) use it for source.
-                const stat = fs.statSync(fullPath);
+                let stat;
+                try {
+                    stat = fs.statSync(fullPath);
+                } catch (e) {
+                    continue; // Skip unreadable files like .asar which throws "Invalid package" in VSCode fs
+                }
                 
                 if (includePaths && includePaths.length > 0 && relPath === '' && !stat.isDirectory()) {
                     // [v0.3.11] 🛡️ 루트 디렉토리의 파일은 includePaths 설정과 관계없이 항상 포함 시도

@@ -28,7 +28,7 @@ export class ProjectMetadata {
 
     initialize(projectRoot: string, projectName?: string): void {
         this.projectRoot = path.resolve(projectRoot);
-        this.storagePath = path.join(this.projectRoot, 'data', 'project_metadata.json');
+        this.storagePath = path.join(this.projectRoot, 'synapse_data', 'project_metadata.json');
         this.metadata = null;
         if (projectName && this.storagePath && fs.existsSync(this.storagePath)) {
             try {

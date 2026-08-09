@@ -96,7 +96,7 @@ export class RemoteLayerProjector {
 
     project(snapshot: SubmissionSnapshot): ProjectionResult {
         const projectRoot = ProjectMetadata.getInstance().getProjectRoot();
-        const projectionDir = path.join(projectRoot, 'data', 'projection', snapshot.id);
+        const projectionDir = path.join(projectRoot, 'synapse_data', 'projection', snapshot.id);
 
         Logger.info(`[v0.3.30] Projecting submission: ${snapshot.id} (${snapshot.files.length} files)`);
 

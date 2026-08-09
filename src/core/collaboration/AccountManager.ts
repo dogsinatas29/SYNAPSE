@@ -35,7 +35,7 @@ export class AccountManager {
     }
 
     initialize(projectRoot: string): void {
-        this.storePath = path.join(projectRoot, 'data', 'accounts.json');
+        this.storePath = path.join(projectRoot, 'synapse_data', 'accounts.json');
         const dir = path.dirname(this.storePath);
         if (!fs.existsSync(dir)) {
             fs.mkdirSync(dir, { recursive: true });

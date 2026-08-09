@@ -121,11 +121,12 @@ export class RuleEngine {
 
     private setDefaultRules(): void {
         this.ignoreFolders = new Set([
-            'node_modules', '.git', 'build', 'dist', 'data', 'out',
+            'node_modules', '.git', 'build', 'dist', 'out',
             '.venv', 'venv', 'env', '__pycache__', '.pytest_cache',
             '.idea', '.vscode', '.github', 'target', 'vendor',
             'bin', 'obj', '.synapse_contexts', '.synapse',
-            'synapse_report', 'synapse_harvest_output', 'synapse_generated_reports'
+            'synapse_report', 'synapse_harvest_output', 'synapse_generated_reports',
+            'synapse_data', 'synapse-test'
         ]);
         this.blacklistFiles = new Set([
             'package-lock.json',

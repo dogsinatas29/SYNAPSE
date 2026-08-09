@@ -14,7 +14,7 @@ describe('Phase 2 — Identity & Session Foundation', () => {
         if (fs.existsSync(testRoot)) {
             fs.rmSync(testRoot, { recursive: true, force: true });
         }
-        fs.mkdirSync(path.join(testRoot, 'data'), { recursive: true });
+        fs.mkdirSync(path.join(testRoot, 'synapse_data'), { recursive: true });
         const meta = ProjectMetadata.getInstance();
         meta.initialize(testRoot, 'test-project');
         meta.loadSync();

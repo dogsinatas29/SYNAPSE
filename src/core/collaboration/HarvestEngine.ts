@@ -25,7 +25,7 @@ export class HarvestEngine {
         return HarvestEngine.instance;
     }
 
-    async harvest(candidates: HarvestCandidate[], getFileContentCallback: (userId: string, filePath: string) => Promise<string>): Promise<HarvestResult> {
+    async harvest(candidates: HarvestCandidate[], getFileContentCallback: (userId: string, filePath: string) => Promise<string>, onProgress?: (msg: string, percent: number) => void): Promise<HarvestResult> {
         const projectRoot = ProjectMetadata.getInstance().getProjectRoot();
         const clientsPath = path.join(projectRoot, '.synapse', 'clients');
 
@@ -40,7 +40,15 @@ export class HarvestEngine {
         const createdFolders = new Set<string>();
         const harvestedClients = new Set<string>();
 
+        let processedCount = 0;
+        const totalCount = candidates.length;
+
         for (const candidate of candidates) {
+            processedCount++;
+            if (onProgress && (processedCount % 5 === 0 || processedCount === totalCount)) {
+                const percent = Math.floor((processedCount / totalCount) * 100);
+                onProgress(`Harvesting... ${processedCount} / ${totalCount} files`, percent);
+            }
             // [SYN-SEC-013] Prevent Arbitrary File Write via malicious clientUsername
             if (!candidate.clientUsername || !/^[a-zA-Z0-9_-]{1,64}$/.test(candidate.clientUsername)) {
                 Logger.warn(`[v0.3.30] Harvest rejected: Invalid clientUsername format '${candidate.clientUsername}'`);

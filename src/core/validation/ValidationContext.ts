@@ -1,4 +1,5 @@
 import { ASTVerificationReport } from '../../cli/ast_verification_engine';
+import { IntentEdge } from '../analysis/intent/IntentEdge';
 
 export interface GraphSnapshot {
     nodes: ReadonlyArray<any>;
@@ -97,6 +98,11 @@ export interface InfraMeshThresholdRecommendation {
     nextCount: number;
     rationale: string;
 }
+export interface BreakdownEntry {
+    name: string;
+    count: number;
+    ratio: number;
+}
 
 export interface ValidationMetrics {
     generatedAt?: string;
@@ -134,6 +140,15 @@ export interface ValidationMetrics {
         estimatedMonthsToIssue: number;
     };
     astVerification?: ASTVerificationReport;
+
+    // ASR 2.0 Breakdown fields
+    ghostBreakdown?: BreakdownEntry[];
+    couplingBreakdown?: BreakdownEntry[];
+    entropyBreakdown?: BreakdownEntry[];
+
+    // ASR 3.0 Evidence Layer fields
+    ghostEvidence?: IntentEdge[];
+    boundaryEvidence?: IntentEdge[];
 }
 
 export interface ValidationContext {

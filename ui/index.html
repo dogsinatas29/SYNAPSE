@@ -61,6 +61,12 @@
             align-items: center;
         }
 
+        .loading-progress { width:100%; max-width:420px; }
+        .loading-progress .task-label { font-weight:600; margin-bottom:2px; }
+        .loading-progress .progress-bar { height:6px; background:#3c3836; border-radius:3px; overflow:hidden; margin:3px 0; }
+        .loading-progress .progress-fill { height:100%; background:#fabd2f; transition:width .2s ease; }
+        .loading-progress .task-steps { font-size:10px; color:#a89984; white-space:pre; }
+
         .logo {
             font-weight: bold;
             font-size: 18px;
@@ -1249,8 +1255,25 @@ Please wait until harvesting completes.</p>
 
     <div id="header">
         <div id="status-indicator" style="font-size: 12px; color: #fabd2f; font-weight: bold;"></div>
-        <div id="project-path" style="font-size: 12px; color: var(--fg-dim);">Loading project...</div>
+        <div id="project-path" style="font-size: 12px; color: var(--fg-dim);"></div>
+        <div id="global-task-progress" class="loading-progress" style="margin-top:4px; font-size:11px; color:var(--fg-dim); display:none; width:100%; align-items:center; gap:12px;">
+            <div class="task-label" style="flex: 0 0 auto; min-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></div>
+            <div class="progress-bar" style="flex: 1; height:8px; background:#3c3836; border-radius:4px; overflow:hidden;"><div class="progress-fill" style="height:100%; width:0%; background:#fabd2f; transition:width .2s;"></div></div>
+        </div>
     </div>
+
+    <script>
+    // [v0.3.34] Global Task Progress updater (dynamic)
+    window.updateGlobalProgress = function(label = '', percent = 0, show = true) {
+        const c = document.getElementById('global-task-progress');
+        if (!c) return;
+        c.style.display = show ? 'flex' : 'none';
+        const l = c.querySelector('.task-label');
+        if (l) l.textContent = label;
+        const f = c.querySelector('.progress-fill');
+        if (f) f.style.width = Math.max(0, Math.min(100, percent)) + '%';
+    };
+    </script>
 
     <div id="toolbar">
         <!-- Strategy Menu -->

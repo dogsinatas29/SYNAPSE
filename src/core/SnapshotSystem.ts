@@ -29,7 +29,7 @@ export class SnapshotSystem {
   }
 
   public setStoragePath(projectRoot: string) {
-    this.historyPath = path.join(projectRoot, 'data', 'synapse_history.json');
+    this.historyPath = path.join(projectRoot, 'synapse_data', 'synapse_history.json');
     if (!fs.existsSync(path.dirname(this.historyPath))) {
       fs.mkdirSync(path.dirname(this.historyPath), { recursive: true });
     }

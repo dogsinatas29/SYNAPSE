@@ -145,7 +145,7 @@ const serverName = path.basename(projectRoot);
 let actualPort: number = port;
 let httpServer: any = null;
 const uiRoot = path.resolve(__dirname, '../../ui');
-const stateFilePath = path.join(projectRoot, 'data', 'project_state.json');
+const stateFilePath = path.join(projectRoot, 'synapse_data', 'project_state.json');
 let ADMIN_SECRET = process.env.ADMIN_SECRET || '';
 const SERVER_VERSION = '0.3.30';
 
@@ -186,7 +186,7 @@ const requireAdmin = (req: any, res: any, next: any) => {
 };
 
 // Collaboration Transport 초기화
-const dataDir = path.join(projectRoot, 'data');
+const dataDir = path.join(projectRoot, 'synapse_data');
 if (!fs.existsSync(dataDir)) {
     fs.mkdirSync(dataDir, { recursive: true });
 }
@@ -239,7 +239,7 @@ function normalizeNode(node: any): any {
 }
 
 // clientPushData 영속화
-const clientPushDir = path.join(projectRoot, 'data', 'client_push');
+const clientPushDir = path.join(projectRoot, 'synapse_data', 'client_push');
 if (!fs.existsSync(clientPushDir)) fs.mkdirSync(clientPushDir, { recursive: true });
 const PUSH_TTL_MS = 24 * 60 * 60 * 1000;
 for (const file of fs.readdirSync(clientPushDir)) {
@@ -275,7 +275,7 @@ function requireSafeModeOff(req: express.Request, res: express.Response, next: e
 let isReadOnlySafeMode = false;
 let recoveryReason = '';
 
-const historyPath = path.join(projectRoot, 'data', 'synapse_history.json');
+const historyPath = path.join(projectRoot, 'synapse_data', 'synapse_history.json');
 let historySchemaVersion = null;
 let historyVersion = null;
 
@@ -672,7 +672,7 @@ app.post('/api/save-state', requireSafeModeOff, requireLead, (req, res) => {
 // 4. 히스토리 조회
 app.get('/api/history', (req, res) => {
     try {
-        const historyPath = path.join(projectRoot, 'data', 'synapse_history.json');
+        const historyPath = path.join(projectRoot, 'synapse_data', 'synapse_history.json');
         if (fs.existsSync(historyPath)) {
             const hData = JSON.parse(fs.readFileSync(historyPath, 'utf-8'));
             const history = Array.isArray(hData) ? hData : (hData.history || []);
@@ -717,7 +717,7 @@ app.post('/api/snapshot', requireSafeModeOff, requireLead, (req, res) => {
             });
         }
 
-        const historyPath = path.join(projectRoot, 'data', 'synapse_history.json');
+        const historyPath = path.join(projectRoot, 'synapse_data', 'synapse_history.json');
         let historyData: any = { history: [] };
         if (fs.existsSync(historyPath)) {
             const parsed = JSON.parse(fs.readFileSync(historyPath, 'utf-8'));
@@ -744,7 +744,7 @@ app.post('/api/snapshot', requireSafeModeOff, requireLead, (req, res) => {
 app.post('/api/rollback', requireSafeModeOff, requireLead, (req, res) => {
     try {
         const { snapshotId } = req.body;
-        const historyPath = path.join(projectRoot, 'data', 'synapse_history.json');
+        const historyPath = path.join(projectRoot, 'synapse_data', 'synapse_history.json');
         if (!fs.existsSync(historyPath)) throw new Error('History not found');
 
         const hData = JSON.parse(fs.readFileSync(historyPath, 'utf-8'));
@@ -1366,11 +1366,20 @@ app.post('/api/harvest/execute', requireSafeModeOff, requireLead, async (req, re
 
         let result;
         try {
-            result = await HarvestEngine.getInstance().harvest(candidates, requestClientFile);
+            result = await HarvestEngine.getInstance().harvest(candidates, requestClientFile, (msg, percent) => {
+                for (const sse of sseClients.values()) {
+                    sse.write(`data: ${JSON.stringify({ command: 'progress', label: msg, progress: percent, taskId: 'harvest' })}\n\n`);
+                }
+            });
+
+            // Send completion progress explicitly
+            for (const sse of sseClients.values()) {
+                sse.write(`data: ${JSON.stringify({ command: 'progressComplete', taskId: 'harvest' })}\n\n`);
+            }
 
             // [Persistence Sequence]
             // 1. History (Snapshot) 기록
-            const historyPath = path.join(projectRoot, 'data', 'synapse_history.json');
+            const historyPath = path.join(projectRoot, 'synapse_data', 'synapse_history.json');
             let historyArray: any[] = [];
             if (fs.existsSync(historyPath)) {
                 try {
@@ -1388,7 +1397,7 @@ app.post('/api/harvest/execute', requireSafeModeOff, requireLead, async (req, re
             atomicWriteFileSync(historyPath, historyArray);
 
             // 2. State 기록
-            const statePath = path.join(projectRoot, 'data', 'project_state.json');
+            const statePath = path.join(projectRoot, 'synapse_data', 'project_state.json');
             let stateData: any = { schemaVersion: 1, version: 1, nodes: [] };
             if (fs.existsSync(statePath)) {
                 stateData = JSON.parse(fs.readFileSync(statePath, 'utf-8'));
@@ -1396,7 +1405,7 @@ app.post('/api/harvest/execute', requireSafeModeOff, requireLead, async (req, re
             atomicWriteFileSync(statePath, stateData);
 
             // 3. Audit 기록
-            const auditPath = path.join(projectRoot, 'data', 'audit.log');
+            const auditPath = path.join(projectRoot, 'synapse_data', 'audit.log');
             fs.appendFileSync(auditPath, `${new Date().toISOString()} [HARVEST] Snapshot ${snapshot.id} created\n`, 'utf-8');
 
             if (process.env.TEST_CRASH_A06) {
@@ -1502,7 +1511,7 @@ function tryListen(port: number, maxAttempts: number = 10): Promise<number> {
 (async () => {
     try {
         actualPort = await tryListen(port);
-        const serverInfoPath = path.join(projectRoot, 'data', '.server_info');
+        const serverInfoPath = path.join(projectRoot, 'synapse_data', '.server_info');
         const schema = ProjectMetadata.getInstance().get();
         atomicWriteFileSync(serverInfoPath, JSON.stringify({
             port: actualPort,

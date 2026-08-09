@@ -7,7 +7,7 @@ if (!projectDir) {
     process.exit(1);
 }
 
-const edgesPath = path.join(projectDir, 'data', 'intent_edges.json');
+const edgesPath = path.join(projectDir, 'synapse_data', 'intent_edges.json');
 if (!fs.existsSync(edgesPath)) {
     console.error(`Edges not found: ${edgesPath}`);
     process.exit(1);

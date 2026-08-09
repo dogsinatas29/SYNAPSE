@@ -3723,7 +3723,7 @@ class CanvasEngine {
                     const _perfHitEnd = performance.now();
                     
                     if (_perfHitEnd - _perfHitStart > 20) {
-                        console.warn(`[PERF] Interaction HitTest: ${(_perfHitEnd - _perfHitStart).toFixed(2)}ms, nodes=${this.nodes ? this.nodes.length : 0}`);
+                        console.warn(`[PERF] Interaction HitTest: ${(_perfHitEnd - _perfHitStart).toFixed(2)}ms, nodes=${this.nodes ? this.nodes.length : 0} (check getNodeAt for actual candidates)`);
                     }
 
                     this.hoveredEdge = edge;
@@ -4193,10 +4193,14 @@ class CanvasEngine {
 
         // [v0.3.33] Phase 3A: rbush Node Spatial Index Hit Test
         const PADDING = 15; // Max padding
-        const queryRes = this.spatialIndex ? this.spatialIndex.queryViewport(worldX - PADDING, worldY - PADDING, worldX + PADDING, worldY + PADDING, 'nodes') : null;
-        const searchNodes = queryRes 
-            ? Array.from(queryRes)
-            : ((this.bootstrapMode && this.lastFrameState) ? this.lastFrameState.nodes : this.nodes);
+        let searchNodes = [];
+        if (this.spatialIndex && !this.spatialIndex.fallbackMode) {
+            const queryRes = this.spatialIndex.queryViewport(worldX - PADDING, worldY - PADDING, worldX + PADDING, worldY + PADDING, 'nodes');
+            if (queryRes) searchNodes = Array.from(queryRes);
+        } else if (this.bootstrapMode && this.lastFrameState) {
+            searchNodes = this.lastFrameState.nodes || [];
+        }
+        // never fall back to this.nodes (avoids 69990 scan on dirty/rebuild)
 
         // REVERSE order to hit top nodes first
         for (let i = searchNodes.length - 1; i >= 0; i--) {
@@ -13964,9 +13968,20 @@ function initCanvas() {
         console.log('[SYNAPSE] Processing incoming message:', message.command);
 
         switch (message.command) {
-            case 'validationProgress': {
-                const loadingText = document.getElementById('loading-text');
-                if (loadingText) loadingText.textContent = `검증 중 ${message.progress}%...`;
+            case 'progress': {
+                if (window.updateGlobalProgress) {
+                    const percent = typeof message.progress === 'number' ? message.progress : 0;
+                    window.updateGlobalProgress(message.label || message.taskId || 'Processing...', percent, true);
+                }
+                break;
+            }
+            case 'progressComplete': {
+                if (window.updateGlobalProgress) {
+                    window.updateGlobalProgress('', 0, false);
+                }
+                // Dismiss legacy loading overlay if it exists
+                const loader = document.getElementById('loading');
+                if (loader) loader.style.display = 'none';
                 break;
             }
             case 'updateEvidenceOverlay': {
@@ -14311,13 +14326,7 @@ function initCanvas() {
                 console.log('[SYNAPSE] clearCanvas message received. WebGL/2D buffers safely wiped.');
                 break;
             }
-            case 'analysisProgress': {
-                const loadingText = document.querySelector('#loading div:not(.spinner)');
-                if (loadingText) {
-                    loadingText.textContent = message.message || '프로젝트 분석 중...';
-                }
-                break;
-            }
+
             case 'projectProposal':
                 engine.loadProjectState(message.data);
                 engine.fitView();

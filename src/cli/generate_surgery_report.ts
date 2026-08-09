@@ -22,6 +22,6 @@ export function runSurgeryReportGeneration(reportPath: string, evId: string): vo
 if (require.main === module) {
     const evId = process.argv[2] || 'EV-LIVE';
     const workspaceRoot = process.env.SYNAPSE_WORKSPACE_ROOT || path.join(__dirname, '../..');
-    const reportPath = path.join(workspaceRoot, 'report/b5_validation_layer.latest.json');
+    const reportPath = path.join(workspaceRoot, 'synapse_report', 'b5_validation_layer.latest.json');
     runSurgeryReportGeneration(reportPath, evId);
 }

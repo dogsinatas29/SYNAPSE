@@ -54,7 +54,7 @@ export class DataPipeline {
    * 전체적인 데이터 처리 흐름 실행 (v0.3.11: dispatch 제거, 순수 데이터 반환)
    * @param files 분석할 파일 목록
    */
-  public async processFiles(files: string[], projectRoot?: string): Promise<PipelineResult> {
+  public async processFiles(files: string[], projectRoot?: string, onProgress?: (msg: string, percent: number) => void): Promise<PipelineResult> {
     try {
       // [v0.3.30] Security: validate all files are within project boundary
       if (projectRoot) {
@@ -72,7 +72,8 @@ export class DataPipeline {
       console.log(`[SYNAPSE] Processing ${files.length} files... Root: ${projectRoot || 'CWD'}`);
 
       const summaries: { filePath: string; summary: CodeSummary }[] = [];
-      for (let i = 0; i < files.length; i++) {
+      const totalFiles = files.length;
+      for (let i = 0; i < totalFiles; i++) {
         const file = files[i];
         const absolutePath = projectRoot ? (path.isAbsolute(file) ? file : path.join(projectRoot, file)) : file;
         const summary = this.scanner.scanFile(absolutePath);
@@ -84,6 +85,12 @@ export class DataPipeline {
         }
         
         summaries.push({ filePath: file, summary });
+        
+        if (onProgress && (i % 5 === 0 || i === totalFiles - 1)) {
+            const percent = Math.floor(((i + 1) / totalFiles) * 100);
+            onProgress(`Analyzing ${i + 1} / ${totalFiles} files...`, percent);
+        }
+
         // [v0.3.33.1] Prevent Extension Host freezing by yielding to the event loop
         if (i % 100 === 0) {
             await new Promise(resolve => setImmediate(resolve));

@@ -163,7 +163,7 @@ export async function activate(context: vscode.ExtensionContext) {
                         enableScripts: true,
                         localResourceRoots: [
                             vscode.Uri.joinPath(context.extensionUri, 'ui'),
-                            vscode.Uri.joinPath(context.extensionUri, 'data')
+                            vscode.Uri.joinPath(context.extensionUri, 'synapse_data')
                         ]
                     };
                     const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
@@ -193,7 +193,7 @@ export async function activate(context: vscode.ExtensionContext) {
                 }
 
                 // [v0.3.21.5] Zero-Config Auto-Onboarding
-                const projectStateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'project_state.json');
+                const projectStateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'synapse_data', 'project_state.json');
                 let stateExists = false;
                 try {
                     await vscode.workspace.fs.stat(projectStateUri);
@@ -611,7 +611,7 @@ export async function activate(context: vscode.ExtensionContext) {
                 // Debounce to avoid spamming
                 validationTimeout = setTimeout(async () => {
                     try {
-                        const projectStateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'project_state.json');
+                        const projectStateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'synapse_data', 'project_state.json');
                         let stateStr = '';
                         try {
                             const data = await vscode.workspace.fs.readFile(projectStateUri);
@@ -720,7 +720,7 @@ async function loadSovereignPrinciples(context: vscode.ExtensionContext, folder:
 
 async function checkProjectStatus(workspaceFolder: vscode.WorkspaceFolder, context: vscode.ExtensionContext) {
     const geminiUri = vscode.Uri.joinPath(workspaceFolder.uri, 'GEMINI.md');
-    const projectStateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'data', 'project_state.json');
+    const projectStateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'synapse_data', 'project_state.json');
 
     try {
         let geminiExists = false;
@@ -848,7 +848,23 @@ async function liteBootstrap(context: vscode.ExtensionContext, folder?: vscode.W
                 progress.report({ message: 'Auto-discovering project structure...' });
 
                 const engine = new BootstrapEngine();
-                const result = await engine.liteBootstrap(workspaceFolder.uri.fsPath);
+                const result = await engine.liteBootstrap(
+                    workspaceFolder.uri.fsPath,
+                    (msg, percent) => {
+                        progress.report({ message: `${msg} (${percent}%)` });
+                        if (CanvasPanel.currentPanel) {
+                            CanvasPanel.currentPanel.postMessage({
+                                command: 'progress',
+                                label: msg,
+                                progress: percent || 0,
+                                taskId: 'bootstrap'
+                            });
+                        }
+                    }
+                );
+                if (CanvasPanel.currentPanel) {
+                    CanvasPanel.currentPanel.postMessage({ command: 'progressComplete', taskId: 'bootstrap' });
+                }
 
                 if (result.success) {
                     progress.report({ message: 'Opening canvas...' });
@@ -892,8 +908,22 @@ async function bootstrapFromGemini(uri: vscode.Uri, context: vscode.ExtensionCon
                 const result = await engine.bootstrap(
                     uri.fsPath,
                     workspaceFolder.uri.fsPath,
-                    true
+                    true,
+                    (msg, percent) => {
+                        progress.report({ message: `${msg} (${percent}%)` });
+                        if (CanvasPanel.currentPanel) {
+                            CanvasPanel.currentPanel.postMessage({
+                                command: 'progress',
+                                label: msg,
+                                progress: percent || 0,
+                                taskId: 'bootstrap'
+                            });
+                        }
+                    }
                 );
+                if (CanvasPanel.currentPanel) {
+                    CanvasPanel.currentPanel.postMessage({ command: 'progressComplete', taskId: 'bootstrap' });
+                }
 
                 if (result.success) {
                     progress.report({ message: 'Opening canvas...' });

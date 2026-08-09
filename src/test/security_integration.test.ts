@@ -23,8 +23,8 @@ describe('SYNAPSE Security Integration E2E', () => {
         const accountsDir = path.join(dummyRoot, '.synapse', 'accounts');
         fs.mkdirSync(accountsDir, { recursive: true });
         
-        projectStatePath = path.join(dummyRoot, 'data', 'project_state.json');
-        fs.mkdirSync(path.join(dummyRoot, 'data'), { recursive: true });
+        projectStatePath = path.join(dummyRoot, 'synapse_data', 'project_state.json');
+        fs.mkdirSync(path.join(dummyRoot, 'synapse_data'), { recursive: true });
         fs.writeFileSync(projectStatePath, JSON.stringify({ nodes: [] }), 'utf-8');
 
         // Pre-create accounts
@@ -57,7 +57,7 @@ describe('SYNAPSE Security Integration E2E', () => {
             const timeout = setTimeout(() => reject(new Error('Server start timeout')), 60000);
             const interval = setInterval(async () => {
                 try {
-                    const serverInfoPath = path.join(dummyRoot, 'data', '.server_info');
+                    const serverInfoPath = path.join(dummyRoot, 'synapse_data', '.server_info');
                     if (fs.existsSync(serverInfoPath)) {
                         const info = JSON.parse(fs.readFileSync(serverInfoPath, 'utf-8'));
                         baseURL = `http://127.0.0.1:${info.port}`;
@@ -110,7 +110,7 @@ describe('SYNAPSE Security Integration E2E', () => {
             expect(environ).not.toContain('ADMIN_SECRET=');
         }
         
-        const serverInfoPath = path.join(dummyRoot, 'data', '.server_info');
+        const serverInfoPath = path.join(dummyRoot, 'synapse_data', '.server_info');
         if (fs.existsSync(serverInfoPath)) {
             const info = JSON.parse(fs.readFileSync(serverInfoPath, 'utf-8'));
             expect(info.adminSecret).toBeUndefined();

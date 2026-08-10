@@ -9258,6 +9258,12 @@ class CanvasEngine {
                             this.renderLabels2D();
                             console.timeEnd('drawNodes');
                             this._recordPerfMetric('drawNodes', performance.now() - _tDrawNodesStart);
+                        } else {
+                            // [v0.3.34.22] Fix: Render Meta Edges even in Cluster Only mode!
+                            const hasMetaEdges = this.metaEdges && this.metaEdges.length > 0;
+                            if (window.edgeVisibilityMode === 'CLUSTER' && hasMetaEdges) {
+                                this.renderEdgeBundles(this.transform.zoom);
+                            }
                         }
 
                         this.ctx.restore();

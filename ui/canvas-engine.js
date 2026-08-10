@@ -4508,20 +4508,31 @@ class CanvasEngine {
         }
         for (const node of directNodes) {
             if (!node.position) continue;
-
-            if (!this._isClientLayerVisible(node)) continue;
             
-            const isExternalNode = node.layer === 'external' || (node.data && node.data.layer === 'external') || node.type === 'external' || node.status === 'ghost' || (node.cluster_id && node.cluster_id.startsWith('cluster_ghost'));
-            const isUserNode = node.layer === 'user' || (node.data && node.data.layer === 'user') || (node.id && typeof node.id === 'string' && node.id.startsWith('node_manual_')) || (node.cluster_id && typeof node.cluster_id === 'string' && node.cluster_id.startsWith('sys_') && node.cluster_id !== 'sys_cluster_reserved' && node.cluster_id !== 'sys_cluster_buffer');
+            // [v0.3.34.21] Fix: If a cluster is collapsed, its nodes are removed from _visibleNodesSet by LOD.
+            // We must fall back to layer checks to ensure collapsed clusters don't shrink to null and disappear!
+            let nodeIsVisible = false;
+            if (this._visibleNodesSet && this._visibleNodesSet.has(node)) {
+                nodeIsVisible = true;
+            } else {
+                if (this._isClientLayerVisible(node)) {
+                    const isExternalNode = node.layer === 'external' || (node.data && node.data.layer === 'external') || node.type === 'external' || node.status === 'ghost' || (node.cluster_id && node.cluster_id.startsWith('cluster_ghost'));
+                    const isUserNode = node.layer === 'user' || (node.data && node.data.layer === 'user') || (node.id && typeof node.id === 'string' && node.id.startsWith('node_manual_')) || (node.cluster_id && typeof node.cluster_id === 'string' && node.cluster_id.startsWith('sys_') && node.cluster_id !== 'sys_cluster_reserved' && node.cluster_id !== 'sys_cluster_buffer');
 
-            if (isExternalNode && !this.showExternalLayer) continue;
-            if (isUserNode && !this.showUserLayer) continue;
-            if (!isExternalNode && !isUserNode && !this.showBaseLayer) continue;
+                    let layerVisible = true;
+                    if (isExternalNode && !this.showExternalLayer) layerVisible = false;
+                    if (isUserNode && !this.showUserLayer) layerVisible = false;
+                    if (!isExternalNode && !isUserNode && !this.showBaseLayer) layerVisible = false;
 
-            if (this.hideLeafNodes) {
-                const stats = this.nodeStatsMap.get(node.id);
-                if (stats && stats.primaryRole === 'Leaf node') continue;
+                    if (layerVisible && this.hideLeafNodes) {
+                        const stats = this.nodeStatsMap.get(node.id);
+                        if (stats && (stats.primaryRole === 'Leaf node' || stats.connectedNodes < 3)) layerVisible = false;
+                    }
+                    if (layerVisible) nodeIsVisible = true;
+                }
             }
+
+            if (!nodeIsVisible) continue;
 
             if (!Number.isFinite(node.position.x) || !Number.isFinite(node.position.y)) continue;
 
@@ -7811,30 +7822,10 @@ class CanvasEngine {
             maxY = Math.max(maxY, node.position.y + 60);
         }
 
-        // B+ Policy: Separate Layout Reality from Presentation Visible Bounds
-        const COLLAPSED_CLUSTER_WIDTH = 250;
-        const COLLAPSED_CLUSTER_HEIGHT = 80;
-
+        // Use reality bounds for all clusters (including collapsed) to sync with renderer and prevent zoom jumping
         const clustersToMeasure = this._visibleGraphClusters || this.clusters || [];
         
-        console.log(
-            "[VISIBLE_ENGINE]",
-            {
-                totalClusters: (this.clusters || []).length,
-                visibleClusters: clustersToMeasure.length,
-                collapsedClusters: (this.clusters || []).filter(c => c.collapsed).length
-            }
-        );
-        console.log(
-            "[VISIBLE_CLUSTER_SAMPLE]",
-            clustersToMeasure.slice(0, 20).map(c => ({
-                id: c.id,
-                collapsed: c.collapsed
-            }))
-        );
-
         for (const cluster of clustersToMeasure) {
-
             if (cluster.bounds && cluster.bounds.minX !== Infinity) {
                 // [v0.3.35 Fix] Skip measuring sub-clusters if their parent is collapsed (Telescope LOD)
                 let isTelescopeCollapsed = false;
@@ -7857,21 +7848,11 @@ class CanvasEngine {
                     continue;
                 }
 
-                if (cluster.collapsed) {
-                    // Use UI Visual Dimensions instead of Reality Bounds
-                    const cx = (cluster.position && typeof cluster.position.x === 'number') ? cluster.position.x : cluster.bounds.minX;
-                    const cy = (cluster.position && typeof cluster.position.y === 'number') ? cluster.position.y : cluster.bounds.minY;
-                    minX = Math.min(minX, cx);
-                    minY = Math.min(minY, cy);
-                    maxX = Math.max(maxX, cx + COLLAPSED_CLUSTER_WIDTH);
-                    maxY = Math.max(maxY, cy + COLLAPSED_CLUSTER_HEIGHT);
-                } else {
-                    // Expanded clusters take up their full reality bounds
-                    minX = Math.min(minX, cluster.bounds.minX);
-                    minY = Math.min(minY, cluster.bounds.minY);
-                    maxX = Math.max(maxX, cluster.bounds.maxX);
-                    maxY = Math.max(maxY, cluster.bounds.maxY);
-                }
+                // Expanded and collapsed clusters take up their full reality bounds
+                minX = Math.min(minX, cluster.bounds.minX);
+                minY = Math.min(minY, cluster.bounds.minY);
+                maxX = Math.max(maxX, cluster.bounds.maxX);
+                maxY = Math.max(maxY, cluster.bounds.maxY);
             }
         }
 
@@ -8836,6 +8817,30 @@ class CanvasEngine {
                       }
                     );
 
+                    // [v0.3.34.20] Fix: Generate Meta Edges from ALL edges, because edges are indexed by LEAF clusters.
+                        // If a parent is collapsed, the leaf cluster is not in _visibleGraphClusterIds, but we STILL want its edges!
+                        if (this._clusterEdgeMap) {
+                            for (const edgesFromCluster of this._clusterEdgeMap.values()) {
+                                for (let i = 0; i < edgesFromCluster.length; i++) {
+                                    const edge = edgesFromCluster[i];
+                                    const fc = edge._fromCluster;
+                                    const tc = edge._toCluster;
+                                    if (!fc || !tc) continue;
+
+                                    const fromRep = findVisibleRep(fc);
+                                    const toRep = findVisibleRep(tc);
+
+                                    // Only include if both representatives are actually visible in the graph
+                                    if (fromRep && toRep && fromRep !== toRep && 
+                                        this._visibleGraphClusterIds.has(fromRep) && 
+                                        this._visibleGraphClusterIds.has(toRep)) {
+                                        const key = `${fromRep}→${toRep}`;
+                                        edgeMap.set(key, (edgeMap.get(key) || 0) + (edge.weight || 1));
+                                    }
+                                }
+                            }
+                        }
+
                     // [v0.3.33] Phase 1: Visible Cluster Registry
                     console.time('LOD:visibleClusters');
                     this._visibleClusterIds = new Set();
@@ -8851,6 +8856,7 @@ class CanvasEngine {
                     console.log('[CLUSTER_COUNT]', this.clusters?.length);
                     console.log('[ACTIVITY_CLUSTER_IDS]', this.clusters?.filter(c => c.id.includes('activity')).map(c => c.id));
                     console.log('[CLUSTER_EXISTS]', this.clusters?.some(c => c.id === 'folder_app_src_main_java_de_danoeh_antennapod_activity'));
+                    
                     // [v0.3.33] Probe ⑥: activity node cluster_id dump at build time
                     for (const n of this.nodes) {
                         if (n.id && typeof n.id === 'string' && n.id.includes('MainActivity')) {
@@ -9130,6 +9136,13 @@ class CanvasEngine {
                         this.ctx.save();
                         this.ctx.setTransform(this.transform.zoom * dpr, 0, 0, this.transform.zoom * dpr, this.transform.offsetX * dpr, this.transform.offsetY * dpr);
                         this.renderHotspots2D();
+
+                        // [v0.3.34.18] Fix: Render Meta Edges on the 2D background canvas when WebGL is active
+                        const hasMetaEdges = this.metaEdges && this.metaEdges.length > 0;
+                        if (window.edgeVisibilityMode === 'CLUSTER' && hasMetaEdges) {
+                            this.renderEdgeBundles(this.transform.zoom);
+                        }
+
                         this.ctx.restore();
 
                         // [v0.2.31] Final Consolidated WebGL Render call (Unified cache is precomputed)
@@ -9204,6 +9217,13 @@ class CanvasEngine {
                              }
 
                             // [v0.3.34] Viewport Culling for 2D Badges (CPU Relief)
+                            const viewWidth = overlay.width / dpr;
+                            const viewHeight = overlay.height / dpr;
+                            const cMinX = -this.transform.offsetX / this.transform.zoom - 200;
+                            const cMinY = -this.transform.offsetY / this.transform.zoom - 100;
+                            const cMaxX = cMinX + viewWidth / this.transform.zoom + 400;
+                            const cMaxY = cMinY + viewHeight / this.transform.zoom + 200;
+                            
                             const viewportNodes = (this.spatialIndex && this.spatialIndex.nodeTree) 
                                 ? (this.spatialIndex.queryViewport(cMinX, cMinY, cMaxX, cMaxY, 'nodes') || this._visibleNodesCache)
                                 : this._visibleNodesCache;
@@ -9554,8 +9574,9 @@ class CanvasEngine {
                 ctx.strokeStyle = color;
                 // Base opacity + dynamic opacity based on weight
                 ctx.globalAlpha = 0.2 + (intensity * 0.6); 
-                // Bundled lines are thicker
-                ctx.lineWidth = 2 + (Math.sqrt(flow.weight) * 1.5) / zoom;
+                // Bundled lines are thicker (Clamp to 8000 to prevent browser dropping draw call at extreme zoom)
+                const computedWidth = 2 + (Math.sqrt(flow.weight) * 1.5) / zoom;
+                ctx.lineWidth = Math.min(computedWidth, 8000);
                 ctx.lineCap = 'round';
 
                 // Quadratic curve for bundled feel
@@ -9566,12 +9587,13 @@ class CanvasEngine {
                 ctx.quadraticCurveTo(cx, cy, p2.x, p2.y);
                 ctx.stroke();
 
-                // Draw traffic count badge
-                if (flow.weight > 3 && zoom > 0.15) {
+                // [v0.3.34.19] Draw traffic count badge (Disabled for Meta Edges per user request)
+                /*
+                if (flow.weight > 3 && zoom > 0.15 && window.edgeVisibilityMode !== 'NO_BADGES') {
                     const midX = (p1.x + 2 * cx + p2.x) / 4;
                     const midY = (p1.y + 2 * cy + p2.y) / 4;
 
-                    ctx.fillStyle = theme ? theme.SURFACE.DEEP : '#1a1a1a';
+                    ctx.fillStyle = (theme && theme.SURFACE && theme.SURFACE.DEEP) ? theme.SURFACE.DEEP : '#1a1a1a';
                     ctx.globalAlpha = 0.8;
                     const badgeW = 24 + (flow.weight.toString().length * 6);
                     const badgeH = 16;
@@ -9588,6 +9610,7 @@ class CanvasEngine {
                     ctx.textBaseline = 'middle';
                     ctx.fillText(flow.weight.toString(), midX, midY);
                 }
+                */
             }
         });
 
@@ -11405,7 +11428,8 @@ class CanvasEngine {
                 t_boxes += performance.now() - _dt; _dt = performance.now();
 
                 this.ctx.fillStyle = (theme && theme.COLORS) ? theme.COLORS.BG_DARK : '#282828';
-                this.ctx.font = `bold ${14 / this.transform.zoom}px Inter, sans-serif`;
+                const fontSize = Math.min(14 / this.transform.zoom, 1000);
+                this.ctx.font = `bold ${fontSize}px Inter, sans-serif`;
                 this.ctx.textAlign = 'left';
                 this.ctx.textBaseline = 'middle';
                 this.ctx.fillText(`[+] ${cluster.label}`, minX - padding + 10, minY - padding - headerHeight / 2);
@@ -11432,7 +11456,8 @@ class CanvasEngine {
 
                 // Label
                 this.ctx.fillStyle = (theme && theme.COLORS) ? theme.COLORS.BG_DARK : '#282828';
-                this.ctx.font = `bold ${14 / this.transform.zoom}px Inter, sans-serif`;
+                const fontSize = Math.min(14 / this.transform.zoom, 1000);
+                this.ctx.font = `bold ${fontSize}px Inter, sans-serif`;
                 this.ctx.textAlign = 'left';
                 this.ctx.textBaseline = 'middle';
                 this.ctx.fillText(`[-] ${cluster.label}`, minX - padding + 10, minY - padding - headerHeight / 2);
@@ -13136,11 +13161,15 @@ class CanvasEngine {
         ctx.textAlign = 'left';
         ctx.textBaseline = 'top';
 
+        const zoomStr = this.transform.zoom < 0.01 
+            ? this.transform.zoom.toFixed(3) 
+            : this.transform.zoom.toFixed(2);
+            
         const info = [
             `Nodes: ${this.nodes.length}`,
             `Clusters: ${this.clusters ? this.clusters.length : 0}`,
             `Edges: ${this.edges.length}`,
-            `Zoom: ${this.transform.zoom.toFixed(2)}`,
+            `Zoom: ${zoomStr}`,
             `Offset: ${this.transform.offsetX.toFixed(0)}, ${this.transform.offsetY.toFixed(0)}`,
             `Canvas: ${this.canvas.width}x${this.canvas.height}`,
             `Last Input: ${this.lastInputTime ? new Date(this.lastInputTime).toLocaleTimeString() : 'None'}`

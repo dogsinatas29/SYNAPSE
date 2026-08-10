@@ -1,0 +1,1060 @@
+
+[GHOST_CLASSIFICATION_SUMMARY] total=52 unknown=0 unknownRatio=0 readyForV2B=true
+[EXTERNAL_LAYER_MODE] mode=DECOMPOSE_READY unknownRatio=0 threshold=0.05
+
+=== BRANCH COMPRESSION ===
+(moved to NodeBuilder)
+
+=== CLUSTER SUMMARY ===
+doc_shelf                 nodes=449
+folder_src_core           nodes=59
+cluster_ghost_assets      nodes=21
+folder_src_core_collaboration nodes=17
+folder_src_core_analysis_intent nodes=12
+folder_src_cli            nodes=11
+folder_src_core_canvas_engine nodes=10
+folder_src_core_analysis  nodes=9
+folder_src_core_analysis_analyzers nodes=8
+folder_src_utils          nodes=7
+folder_ui                 nodes=7
+folder_src                nodes=6
+folder_src_core_analysis_reasoning nodes=6
+cluster_ghost_other       nodes=6
+folder_scratch            nodes=5
+folder_root               nodes=4
+folder_demo               nodes=4
+folder_demo_data          nodes=4
+folder_src_server         nodes=4
+folder_src_core_transaction nodes=3
+folder_test_core_analysis_intent nodes=3
+folder_test_data          nodes=3
+folder_tools              nodes=3
+folder_src_core_benchmark nodes=2
+folder_src_core_projection nodes=2
+folder_src_core_resolvers nodes=2
+folder_src_core_validation nodes=2
+folder_src_rust_checker   nodes=2
+folder_data               nodes=1
+folder_scripts            nodes=1
+folder_src_analysis       nodes=1
+folder_src_bootstrap      nodes=1
+folder_src_core_analysis_ast nodes=1
+folder_src_explorer       nodes=1
+folder_src_types          nodes=1
+folder_src_webview        nodes=1
+cluster_ghost_LICENSE     nodes=1
+cluster_ghost_synapse-visual-architecture-v0.3.5.vsix nodes=1
+cluster_ghost_synapse-visual-architecture-v0.3.8.vsix nodes=1
+cluster_ghost_ui          nodes=1
+cluster_ghost_[^'"]+      nodes=1
+cluster_ghost_release_note nodes=1
+cluster_ghost_util        nodes=1
+cluster_ghost_node        nodes=1
+cluster_ghost_http        nodes=1
+cluster_ghost_net         nodes=1
+cluster_ghost_crypto      nodes=1
+cluster_ghost_Y           nodes=1
+cluster_ghost_typescript  nodes=1
+cluster_ghost_foo         nodes=1
+cluster_ghost_project_state_json nodes=1
+cluster_ghost_vscode-languageserver-textdocument nodes=1
+cluster_ghost_express     nodes=1
+cluster_ghost_cors        nodes=1
+cluster_ghosts            nodes=0
+sys_cluster_reserved      nodes=0
+folder_test_core_analysis nodes=0
+folder_test_core          nodes=0
+folder_test               nodes=0
+cluster_ghost_src         nodes=0
+TOTAL_CLUSTERS=60
+
+=== EDGE SUMMARY ===
+Internal Edges: 561
+External/Ghost Edges: 99
+
+======================================================
+[PIPELINE] Nodes=697 Edges=660
+[FILTER] package_removed=0 exact_removed=9
+======================================================
+=== EDGE BREAKDOWN ===
+  - INCLUDE: 654
+  - DB_QUERY: 3
+  - CALL: 3
+======================================================
+
+=== CLUSTER SIZE DISTRIBUTION ===
+1 node   : 26 clusters
+2-5 nodes: 14 clusters
+6-10     : 8 clusters
+11-20    : 3 clusters
+20+      : 3 clusters
+======================================================
+
+=== TOP HUB FILES ===
+rank=1
+id=src/types/schema.ts
+cluster=folder_src_types
+role=none
+external=false
+degree=62 (in=62, out=0)
+
+rank=2
+id=src/core/GraphModel.ts
+cluster=folder_src_core
+role=none
+external=false
+degree=35 (in=32, out=3)
+
+rank=3
+id=src/utils/Logger.ts
+cluster=folder_src_utils
+role=none
+external=false
+degree=33 (in=33, out=0)
+
+rank=4
+id=README.md
+cluster=doc_shelf
+role=none
+external=false
+degree=29 (in=5, out=24)
+
+rank=5
+id=src/bootstrap/BootstrapEngine.ts
+cluster=folder_src_bootstrap
+role=none
+external=false
+degree=29 (in=4, out=25)
+
+rank=6
+id=README.ko.md
+cluster=doc_shelf
+role=none
+external=false
+degree=28 (in=4, out=24)
+
+rank=7
+id=src/webview/CanvasPanel.ts
+cluster=folder_src_webview
+role=none
+external=false
+degree=26 (in=3, out=23)
+
+rank=8
+id=src/core/DataPipeline.ts
+cluster=folder_src_core
+role=none
+external=false
+degree=26 (in=1, out=25)
+
+rank=9
+id=src/extension.ts
+cluster=folder_src
+role=none
+external=false
+degree=24 (in=3, out=21)
+
+rank=10
+id=src/core/analysis/types.ts
+cluster=folder_src_core_analysis
+role=none
+external=false
+degree=21 (in=19, out=2)
+
+rank=11
+id=src/server/standalone.ts
+cluster=folder_src_server
+role=none
+external=false
+degree=21 (in=0, out=21)
+
+rank=12
+id=crypto
+cluster=cluster_ghost_crypto
+role=none
+external=true
+degree=17 (in=17, out=0)
+
+rank=13
+id=src/core/RuleEngine.ts
+cluster=folder_src_core
+role=none
+external=false
+degree=14 (in=14, out=0)
+
+rank=14
+id=src/core/ProjectMetadata.ts
+cluster=folder_src_core
+role=none
+external=false
+degree=13 (in=11, out=2)
+
+rank=15
+id=src/core/FileScanner.ts
+cluster=folder_src_core
+role=none
+external=false
+degree=12 (in=8, out=4)
+
+rank=16
+id=src/core/analysis/intent/ReasonedReportBundle.ts
+cluster=doc_shelf
+role=none
+external=false
+degree=12 (in=9, out=3)
+
+rank=17
+id=src/core/benchmark/BenchmarkHarness.ts
+cluster=folder_src_core_benchmark
+role=none
+external=false
+degree=12 (in=1, out=11)
+
+rank=18
+id=src/core/PhaseManager.ts
+cluster=folder_src_core
+role=none
+external=false
+degree=10 (in=10, out=0)
+
+rank=19
+id=src/core/validation/ValidationContext.ts
+cluster=folder_src_core_validation
+role=none
+external=false
+degree=10 (in=8, out=2)
+
+rank=20
+id=src/core/canvas-engine/CanvasEngine.ts
+cluster=folder_src_core_canvas_engine
+role=none
+external=false
+degree=10 (in=3, out=7)
+
+========================
+
+=== CLUSTER DISTRIBUTION ===
+doc_shelf
+  nodes: 449
+  internal_edges: 110
+  external_edges: 118
+
+folder_src_core
+  nodes: 59
+  internal_edges: 67
+  external_edges: 171
+
+folder_src_core_collaboration
+  nodes: 17
+  internal_edges: 14
+  external_edges: 49
+
+folder_src_core_analysis_intent
+  nodes: 12
+  internal_edges: 13
+  external_edges: 27
+
+folder_src_cli
+  nodes: 11
+  internal_edges: 6
+  external_edges: 21
+
+folder_src_core_canvas_engine
+  nodes: 10
+  internal_edges: 11
+  external_edges: 19
+
+folder_src_core_analysis
+  nodes: 9
+  internal_edges: 6
+  external_edges: 33
+
+folder_src_core_analysis_analyzers
+  nodes: 8
+  internal_edges: 0
+  external_edges: 16
+
+folder_src_utils
+  nodes: 7
+  internal_edges: 0
+  external_edges: 43
+
+folder_ui
+  nodes: 7
+  internal_edges: 0
+  external_edges: 1
+
+folder_src
+  nodes: 6
+  internal_edges: 1
+  external_edges: 30
+
+folder_src_core_analysis_reasoning
+  nodes: 6
+  internal_edges: 3
+  external_edges: 21
+
+folder_scratch
+  nodes: 5
+  internal_edges: 0
+  external_edges: 0
+
+folder_root
+  nodes: 4
+  internal_edges: 0
+  external_edges: 1
+
+folder_demo
+  nodes: 4
+  internal_edges: 0
+  external_edges: 6
+
+=== HUB RANKING ===
+folder_src_core
+  traffic: 238
+  degree: 171
+  nodes: 59
+
+doc_shelf
+  traffic: 228
+  degree: 118
+  nodes: 449
+
+folder_src_core_collaboration
+  traffic: 63
+  degree: 49
+  nodes: 17
+
+folder_src_types
+  traffic: 62
+  degree: 62
+  nodes: 1
+
+folder_src_utils
+  traffic: 43
+  degree: 43
+  nodes: 7
+
+folder_src_core_analysis_intent
+  traffic: 40
+  degree: 27
+  nodes: 12
+
+folder_src_core_analysis
+  traffic: 39
+  degree: 33
+  nodes: 9
+
+folder_src
+  traffic: 31
+  degree: 30
+  nodes: 6
+
+folder_src_core_canvas_engine
+  traffic: 30
+  degree: 19
+  nodes: 10
+
+folder_src_bootstrap
+  traffic: 29
+  degree: 29
+  nodes: 1
+
+folder_src_cli
+  traffic: 27
+  degree: 21
+  nodes: 11
+
+folder_src_webview
+  traffic: 26
+  degree: 26
+  nodes: 1
+
+folder_src_server
+  traffic: 25
+  degree: 25
+  nodes: 4
+
+folder_src_core_analysis_reasoning
+  traffic: 24
+  degree: 21
+  nodes: 6
+
+folder_src_core_analysis_analyzers
+  traffic: 16
+  degree: 16
+  nodes: 8
+
+=== CLUSTER MATRIX ===
+                    folder_sr  doc_shelf  folder_sr  folder_sr  folder_sr  folder_sr  folder_sr  folder_sr  folder_sr  folder_sr 
+folder_src_core     -         19        8         26        16        1         1         12        11        22        
+doc_shelf           19        -         0         2         1         12        3         5         0         1         
+folder_src_core_collaboration 8         0         -         9         12        0         0         1         0         0         
+folder_src_types    26        2         9         -         0         0         6         0         0         1         
+folder_src_utils    16        1         12        0         -         0         2         2         1         2         
+folder_src_core_analysis_intent 1         12        0         0         0         -         0         0         0         0         
+folder_src_core_analysis 1         3         0         6         2         0         -         0         0         0         
+folder_src          12        5         1         0         2         0         0         -         1         2         
+folder_src_core_canvas_engine 11        0         0         0         1         0         0         1         -         0         
+folder_src_bootstrap 22        1         0         1         2         0         0         2         0         -         
+
+=== CLUSTER EDGE LIST ===
+folder_src_core      ──(26)── folder_src_types
+folder_src_bootstrap ──(22)── folder_src_core
+doc_shelf            ──(19)── folder_src_core
+folder_src_core      ──(16)── folder_src_utils
+folder_src_core      ──(15)── folder_src_webview
+doc_shelf            ──(12)── folder_src_core_analysis_intent
+folder_src_core_collaboration ──(12)── folder_src_utils
+folder_src           ──(12)── folder_src_core
+folder_src_core_collaboration ──(12)── folder_src_server
+folder_src_core      ──(11)── folder_src_core_canvas_engine
+folder_src_core_analysis ──(11)── folder_src_core_analysis_reasoning
+folder_src_core      ──(10)── folder_src_core_benchmark
+folder_src_core_collaboration ──(9)── folder_src_types
+folder_src_core_analysis_analyzers ──(8)── folder_src_types
+folder_src_core_analysis ──(8)── folder_src_core_analysis_analyzers
+folder_src_core      ──(8)── folder_src_core_collaboration
+folder_src_cli       ──(7)── folder_src_core_validation
+folder_src_core      ──(7)── folder_src_server
+folder_src_core_analysis_intent ──(7)── folder_test_core_analysis_intent
+doc_shelf            ──(6)── folder_demo
+folder_src_cli       ──(6)── folder_src_core_analysis_intent
+folder_src_core_analysis ──(6)── folder_src_types
+folder_src_core_analysis_reasoning ──(6)── folder_src_types
+doc_shelf            ──(5)── folder_src
+folder_src_core      ──(4)── folder_src_core_transaction
+doc_shelf            ──(3)── folder_src_cli
+doc_shelf            ──(3)── folder_src_core_analysis
+folder_src_core      ──(3)── folder_src_core_analysis_reasoning
+folder_src_bootstrap ──(2)── folder_src_utils
+folder_src_cli       ──(2)── folder_src_core
+
+=== GHOST IMPACT MATRIX ===
+cluster_ghost_assets      -> doc_shelf                           = 42
+cluster_ghost_other       -> doc_shelf                           = 8
+cluster_ghost_crypto      -> folder_src_core                     = 6
+cluster_ghost_crypto      -> folder_src_core_collaboration       = 6
+cluster_ghost_LICENSE     -> doc_shelf                           = 3
+cluster_ghost_node        -> folder_src                          = 2
+cluster_ghost_synapse-visual-architecture-v0.3.5.vsix -> doc_shelf                           = 1
+cluster_ghost_synapse-visual-architecture-v0.3.8.vsix -> doc_shelf                           = 1
+cluster_ghost_ui          -> doc_shelf                           = 1
+cluster_ghost_[^'"]+      -> doc_shelf                           = 1
+cluster_ghost_release_note -> doc_shelf                           = 1
+cluster_ghost_util        -> folder_src_cli                      = 1
+cluster_ghost_http        -> folder_src_core                     = 1
+cluster_ghost_net         -> folder_src_core                     = 1
+cluster_ghost_Y           -> folder_src_core                     = 1
+cluster_ghost_crypto      -> doc_shelf                           = 1
+cluster_ghost_crypto      -> folder_src_core_benchmark           = 1
+cluster_ghost_crypto      -> folder_src_core_canvas_engine       = 1
+cluster_ghost_net         -> folder_src_core_collaboration       = 1
+cluster_ghost_typescript  -> folder_src_core_resolvers           = 1
+
+=== GHOST TRAFFIC ===
+ghost_nodes=45
+ghost_edges=91
+ghost_ratio=13.8%
+
+=== INTERNAL CONTINENTS ===
+doc             nodes=449 clusters=1
+core            nodes=136 clusters=14
+cli             nodes=11 clusters=1
+root            nodes=10 clusters=2
+demo            nodes=8 clusters=2
+ui              nodes=8 clusters=2
+utils           nodes=7 clusters=1
+scratch         nodes=5 clusters=1
+data            nodes=4 clusters=2
+server          nodes=4 clusters=1
+tools           nodes=3 clusters=1
+rust_checker    nodes=2 clusters=1
+scripts         nodes=1 clusters=1
+analysis        nodes=1 clusters=1
+bootstrap       nodes=1 clusters=1
+explorer        nodes=1 clusters=1
+types           nodes=1 clusters=1
+webview         nodes=1 clusters=1
+
+=== EXTERNAL CONTINENTS ===
+assets          nodes=21 clusters=1
+other           nodes=6 clusters=1
+LICENSE         nodes=1 clusters=1
+synapse-visual-architecture-v0.3.5.vsix nodes=1 clusters=1
+synapse-visual-architecture-v0.3.8.vsix nodes=1 clusters=1
+[^'"]+          nodes=1 clusters=1
+release_note    nodes=1 clusters=1
+util            nodes=1 clusters=1
+node            nodes=1 clusters=1
+http            nodes=1 clusters=1
+net             nodes=1 clusters=1
+crypto          nodes=1 clusters=1
+Y               nodes=1 clusters=1
+typescript      nodes=1 clusters=1
+foo             nodes=1 clusters=1
+project_state_json nodes=1 clusters=1
+vscode-languageserver-textdocument nodes=1 clusters=1
+express         nodes=1 clusters=1
+cors            nodes=1 clusters=1
+
+=== TOP CONTINENT PAIRS ===
+core <-> types                 58
+assets <-> doc                 42
+core <-> doc                   37
+core <-> utils                 33
+bootstrap <-> core             22
+core <-> webview               19
+core <-> server                19
+cli <-> core                   15
+core <-> root                  15
+core <-> crypto                14
+doc <-> other                  8
+demo <-> doc                   6
+doc <-> root                   6
+LICENSE <-> doc                3
+cli <-> doc                    3
+
+=== CONTINENT MATRIX ===
+            doc        core       cli        root       demo       ui         utils      scratch   
+doc         -         37        3         6         6         2         1         0         
+core        37        -         15        15        0         0         33        0         
+cli         3         15        -         1         0         0         1         0         
+root        6         15        1         -         0         0         2         0         
+demo        6         0         0         0         -         0         0         0         
+ui          2         0         0         0         0         -         0         0         
+utils       1         33        1         2         0         0         -         0         
+scratch     0         0         0         0         0         0         0         -         
+
+=== CONTINENT GRAPH (Top 20 Edges) ===
+core ──(58)── types
+assets ──(42)── doc
+core ──(37)── doc
+core ──(33)── utils
+bootstrap ──(22)── core
+core ──(19)── webview
+core ──(19)── server
+cli ──(15)── core
+core ──(15)── root
+core ──(14)── crypto
+doc ──(8)── other
+demo ──(6)── doc
+doc ──(6)── root
+LICENSE ──(3)── doc
+cli ──(3)── doc
+doc ──(2)── ui
+bootstrap ──(2)── utils
+bootstrap ──(2)── root
+node ──(2)── root
+core ──(2)── net
+
+=== CONTINENT LAYOUT ===
+
+=== CONTINENT DISTANCE ===
+
+=== CLUSTER CENTROIDS ===
+folder_src_core
+bbox_center=(0, 0)
+node_center=(539, 259)
+node_count=67
+
+folder_src_core_collaboration
+bbox_center=(0, 0)
+node_center=(255, 99)
+node_count=17
+
+folder_src
+bbox_center=(0, 0)
+node_center=(194, 92)
+node_count=13
+
+folder_src_core_analysis_intent
+bbox_center=(0, 0)
+node_center=(210, 80)
+node_count=12
+
+folder_src_cli
+bbox_center=(0, 0)
+node_center=(191, 73)
+node_count=11
+
+folder_src_core_analysis
+bbox_center=(0, 0)
+node_center=(182, 64)
+node_count=10
+
+folder_src_core_canvas_engine
+bbox_center=(0, 0)
+node_center=(182, 64)
+node_count=10
+
+folder_demo_data
+bbox_center=(0, 0)
+node_center=(123, 70)
+node_count=8
+
+folder_src_core_analysis_analyzers
+bbox_center=(0, 0)
+node_center=(123, 70)
+node_count=8
+
+folder_src_utils
+bbox_center=(0, 0)
+node_center=(120, 57)
+node_count=7
+
+folder_ui
+bbox_center=(0, 0)
+node_center=(120, 57)
+node_count=7
+
+folder_src_core_analysis_reasoning
+bbox_center=(0, 0)
+node_center=(140, 40)
+node_count=6
+
+folder_scratch
+bbox_center=(0, 0)
+node_center=(112, 32)
+node_count=5
+
+folder_root
+bbox_center=(0, 0)
+node_center=(70, 40)
+node_count=4
+
+folder_src_server
+bbox_center=(0, 0)
+node_center=(70, 40)
+node_count=4
+
+=== [DIAGNOSTIC] CLUSTER BOUNDS ===
+
+=== [CLUSTER] ===
+id=cluster_ghosts
+nodes=18
+estimated_w=undefined
+estimated_h=undefined
+actual_w=680
+actual_h=320
+center=(280,120)
+density=0.000083
+[OVERLAP] cluster_ghosts & doc_shelf (area=217600)
+[OVERLAP] cluster_ghosts & folder_root (area=41600)
+[OVERLAP] cluster_ghosts & folder_data (area=10400)
+[OVERLAP] cluster_ghosts & folder_demo_data (area=96000)
+[OVERLAP] cluster_ghosts & folder_scratch (area=64000)
+... (more overlaps omitted)
+
+=== [CLUSTER] ===
+id=doc_shelf
+nodes=449
+estimated_w=undefined
+estimated_h=undefined
+actual_w=3060
+actual_h=1680
+center=(1470,800)
+density=0.000087
+[OVERLAP] doc_shelf & folder_root (area=41600)
+[OVERLAP] doc_shelf & folder_data (area=10400)
+[OVERLAP] doc_shelf & folder_demo_data (area=96000)
+[OVERLAP] doc_shelf & folder_scratch (area=64000)
+[OVERLAP] doc_shelf & folder_scripts (area=10400)
+... (more overlaps omitted)
+
+=== [CLUSTER] ===
+id=folder_root
+nodes=4
+estimated_w=undefined
+estimated_h=undefined
+actual_w=260
+actual_h=160
+center=(70,40)
+density=0.000096
+[OVERLAP] folder_root & folder_data (area=10400)
+[OVERLAP] folder_root & folder_demo_data (area=41600)
+[OVERLAP] folder_root & folder_scratch (area=41600)
+[OVERLAP] folder_root & folder_scripts (area=10400)
+[OVERLAP] folder_root & folder_src (area=41600)
+... (more overlaps omitted)
+
+=== [CLUSTER] ===
+id=folder_data
+nodes=1
+estimated_w=undefined
+estimated_h=undefined
+actual_w=140
+actual_h=80
+center=(0,0)
+density=0.000089
+[OVERLAP] folder_data & folder_demo_data (area=10400)
+[OVERLAP] folder_data & folder_scratch (area=10400)
+[OVERLAP] folder_data & folder_scripts (area=11200)
+[OVERLAP] folder_data & folder_src (area=10400)
+[OVERLAP] folder_data & folder_src_cli (area=10400)
+... (more overlaps omitted)
+
+=== [CLUSTER] ===
+id=folder_demo_data
+nodes=8
+estimated_w=undefined
+estimated_h=undefined
+actual_w=400
+actual_h=240
+center=(140,80)
+density=0.000083
+[OVERLAP] folder_demo_data & folder_scratch (area=64000)
+[OVERLAP] folder_demo_data & folder_scripts (area=10400)
+[OVERLAP] folder_demo_data & folder_src (area=96000)
+[OVERLAP] folder_demo_data & folder_src_cli (area=96000)
+[OVERLAP] folder_demo_data & folder_src_core (area=96000)
+... (more overlaps omitted)
+
+=== [CLUSTER] ===
+id=folder_scratch
+nodes=5
+estimated_w=undefined
+estimated_h=undefined
+actual_w=400
+actual_h=160
+center=(140,40)
+density=0.000078
+[OVERLAP] folder_scratch & folder_scripts (area=10400)
+[OVERLAP] folder_scratch & folder_src (area=64000)
+[OVERLAP] folder_scratch & folder_src_cli (area=64000)
+[OVERLAP] folder_scratch & folder_src_core (area=64000)
+[OVERLAP] folder_scratch & folder_src_core_analysis (area=64000)
+... (more overlaps omitted)
+
+=== [CLUSTER] ===
+id=folder_scripts
+nodes=1
+estimated_w=undefined
+estimated_h=undefined
+actual_w=140
+actual_h=80
+center=(0,0)
+density=0.000089
+[OVERLAP] folder_scripts & folder_src (area=10400)
+[OVERLAP] folder_scripts & folder_src_cli (area=10400)
+[OVERLAP] folder_scripts & folder_src_core (area=10400)
+[OVERLAP] folder_scripts & folder_src_core_analysis (area=10400)
+[OVERLAP] folder_scripts & folder_src_core_analysis_analyzers (area=10400)
+... (more overlaps omitted)
+
+=== [CLUSTER] ===
+id=folder_src
+nodes=13
+estimated_w=undefined
+estimated_h=undefined
+actual_w=540
+actual_h=320
+center=(210,120)
+density=0.000075
+[OVERLAP] folder_src & folder_src_cli (area=129600)
+[OVERLAP] folder_src & folder_src_core (area=172800)
+[OVERLAP] folder_src & folder_src_core_analysis (area=129600)
+[OVERLAP] folder_src & folder_src_core_analysis_analyzers (area=96000)
+[OVERLAP] folder_src & folder_src_core_analysis_intent (area=129600)
+... (more overlaps omitted)
+
+=== [CLUSTER] ===
+id=folder_src_cli
+nodes=11
+estimated_w=undefined
+estimated_h=undefined
+actual_w=540
+actual_h=240
+center=(210,80)
+density=0.000085
+[OVERLAP] folder_src_cli & folder_src_core (area=129600)
+[OVERLAP] folder_src_cli & folder_src_core_analysis (area=129600)
+[OVERLAP] folder_src_cli & folder_src_core_analysis_analyzers (area=96000)
+[OVERLAP] folder_src_cli & folder_src_core_analysis_intent (area=129600)
+[OVERLAP] folder_src_cli & folder_src_core_analysis_reasoning (area=64000)
+... (more overlaps omitted)
+
+=== [CLUSTER] ===
+id=folder_src_core
+nodes=67
+estimated_w=undefined
+estimated_h=undefined
+actual_w=1240
+actual_h=640
+center=(560,280)
+density=0.000084
+[OVERLAP] folder_src_core & folder_src_core_analysis (area=129600)
+[OVERLAP] folder_src_core & folder_src_core_analysis_analyzers (area=96000)
+[OVERLAP] folder_src_core & folder_src_core_analysis_intent (area=129600)
+[OVERLAP] folder_src_core & folder_src_core_analysis_reasoning (area=64000)
+[OVERLAP] folder_src_core & folder_src_core_canvas_engine (area=129600)
+... (more overlaps omitted)
+
+=== [CLUSTER] ===
+id=folder_src_core_analysis
+nodes=10
+estimated_w=undefined
+estimated_h=undefined
+actual_w=540
+actual_h=240
+center=(210,80)
+density=0.000077
+[OVERLAP] folder_src_core_analysis & folder_src_core_analysis_analyzers (area=96000)
+[OVERLAP] folder_src_core_analysis & folder_src_core_analysis_intent (area=129600)
+[OVERLAP] folder_src_core_analysis & folder_src_core_analysis_reasoning (area=64000)
+[OVERLAP] folder_src_core_analysis & folder_src_core_canvas_engine (area=129600)
+[OVERLAP] folder_src_core_analysis & folder_src_core_collaboration (area=129600)
+... (more overlaps omitted)
+
+=== [CLUSTER] ===
+id=folder_src_core_analysis_analyzers
+nodes=8
+estimated_w=undefined
+estimated_h=undefined
+actual_w=400
+actual_h=240
+center=(140,80)
+density=0.000083
+[OVERLAP] folder_src_core_analysis_analyzers & folder_src_core_analysis_intent (area=96000)
+[OVERLAP] folder_src_core_analysis_analyzers & folder_src_core_analysis_reasoning (area=64000)
+[OVERLAP] folder_src_core_analysis_analyzers & folder_src_core_canvas_engine (area=96000)
+[OVERLAP] folder_src_core_analysis_analyzers & folder_src_core_collaboration (area=96000)
+[OVERLAP] folder_src_core_analysis_analyzers & folder_src_core_transaction (area=41600)
+... (more overlaps omitted)
+
+=== [CLUSTER] ===
+id=folder_src_core_analysis_intent
+nodes=12
+estimated_w=undefined
+estimated_h=undefined
+actual_w=540
+actual_h=240
+center=(210,80)
+density=0.000093
+[OVERLAP] folder_src_core_analysis_intent & folder_src_core_analysis_reasoning (area=64000)
+[OVERLAP] folder_src_core_analysis_intent & folder_src_core_canvas_engine (area=129600)
+[OVERLAP] folder_src_core_analysis_intent & folder_src_core_collaboration (area=129600)
+[OVERLAP] folder_src_core_analysis_intent & folder_src_core_transaction (area=41600)
+[OVERLAP] folder_src_core_analysis_intent & folder_src_server (area=41600)
+... (more overlaps omitted)
+
+=== [CLUSTER] ===
+id=folder_src_core_analysis_reasoning
+nodes=6
+estimated_w=undefined
+estimated_h=undefined
+actual_w=400
+actual_h=160
+center=(140,40)
+density=0.000094
+[OVERLAP] folder_src_core_analysis_reasoning & folder_src_core_canvas_engine (area=64000)
+[OVERLAP] folder_src_core_analysis_reasoning & folder_src_core_collaboration (area=64000)
+[OVERLAP] folder_src_core_analysis_reasoning & folder_src_core_transaction (area=41600)
+[OVERLAP] folder_src_core_analysis_reasoning & folder_src_server (area=41600)
+[OVERLAP] folder_src_core_analysis_reasoning & folder_src_utils (area=64000)
+... (more overlaps omitted)
+
+=== [CLUSTER] ===
+id=folder_src_core_canvas_engine
+nodes=10
+estimated_w=undefined
+estimated_h=undefined
+actual_w=540
+actual_h=240
+center=(210,80)
+density=0.000077
+[OVERLAP] folder_src_core_canvas_engine & folder_src_core_collaboration (area=129600)
+[OVERLAP] folder_src_core_canvas_engine & folder_src_core_transaction (area=41600)
+[OVERLAP] folder_src_core_canvas_engine & folder_src_server (area=41600)
+[OVERLAP] folder_src_core_canvas_engine & folder_src_utils (area=96000)
+[OVERLAP] folder_src_core_canvas_engine & folder_test_core_analysis_intent (area=41600)
+... (more overlaps omitted)
+
+=== [CLUSTER] ===
+id=folder_src_core_collaboration
+nodes=17
+estimated_w=undefined
+estimated_h=undefined
+actual_w=680
+actual_h=320
+center=(280,120)
+density=0.000078
+[OVERLAP] folder_src_core_collaboration & folder_src_core_transaction (area=41600)
+[OVERLAP] folder_src_core_collaboration & folder_src_server (area=41600)
+[OVERLAP] folder_src_core_collaboration & folder_src_utils (area=96000)
+[OVERLAP] folder_src_core_collaboration & folder_test_core_analysis_intent (area=41600)
+[OVERLAP] folder_src_core_collaboration & folder_test_data (area=41600)
+... (more overlaps omitted)
+
+=== [CLUSTER] ===
+id=folder_src_core_transaction
+nodes=3
+estimated_w=undefined
+estimated_h=undefined
+actual_w=260
+actual_h=160
+center=(70,40)
+density=0.000072
+[OVERLAP] folder_src_core_transaction & folder_src_server (area=41600)
+[OVERLAP] folder_src_core_transaction & folder_src_utils (area=41600)
+[OVERLAP] folder_src_core_transaction & folder_test_core_analysis_intent (area=41600)
+[OVERLAP] folder_src_core_transaction & folder_test_data (area=41600)
+[OVERLAP] folder_src_core_transaction & folder_tools (area=41600)
+... (more overlaps omitted)
+
+=== [CLUSTER] ===
+id=folder_src_server
+nodes=4
+estimated_w=undefined
+estimated_h=undefined
+actual_w=260
+actual_h=160
+center=(70,40)
+density=0.000096
+[OVERLAP] folder_src_server & folder_src_utils (area=41600)
+[OVERLAP] folder_src_server & folder_test_core_analysis_intent (area=41600)
+[OVERLAP] folder_src_server & folder_test_data (area=41600)
+[OVERLAP] folder_src_server & folder_tools (area=41600)
+[OVERLAP] folder_src_server & folder_ui (area=41600)
+... (more overlaps omitted)
+
+=== [CLUSTER] ===
+id=folder_src_utils
+nodes=7
+estimated_w=undefined
+estimated_h=undefined
+actual_w=400
+actual_h=240
+center=(140,80)
+density=0.000073
+[OVERLAP] folder_src_utils & folder_test_core_analysis_intent (area=41600)
+[OVERLAP] folder_src_utils & folder_test_data (area=41600)
+[OVERLAP] folder_src_utils & folder_tools (area=41600)
+[OVERLAP] folder_src_utils & folder_ui (area=96000)
+[OVERLAP] folder_src_utils & cluster_ghost_assets (area=96000)
+... (more overlaps omitted)
+
+=== [CLUSTER] ===
+id=folder_test_core_analysis_intent
+nodes=3
+estimated_w=undefined
+estimated_h=undefined
+actual_w=260
+actual_h=160
+center=(70,40)
+density=0.000072
+[OVERLAP] folder_test_core_analysis_intent & folder_test_data (area=41600)
+[OVERLAP] folder_test_core_analysis_intent & folder_tools (area=41600)
+[OVERLAP] folder_test_core_analysis_intent & folder_ui (area=41600)
+[OVERLAP] folder_test_core_analysis_intent & cluster_ghost_assets (area=41600)
+[OVERLAP] folder_test_core_analysis_intent & cluster_ghost_other (area=41600)
+... (more overlaps omitted)
+
+=== [CLUSTER] ===
+id=folder_test_data
+nodes=3
+estimated_w=undefined
+estimated_h=undefined
+actual_w=260
+actual_h=160
+center=(70,40)
+density=0.000072
+[OVERLAP] folder_test_data & folder_tools (area=41600)
+[OVERLAP] folder_test_data & folder_ui (area=41600)
+[OVERLAP] folder_test_data & cluster_ghost_assets (area=41600)
+[OVERLAP] folder_test_data & cluster_ghost_other (area=41600)
+
+=== [CLUSTER] ===
+id=folder_tools
+nodes=3
+estimated_w=undefined
+estimated_h=undefined
+actual_w=260
+actual_h=160
+center=(70,40)
+density=0.000072
+[OVERLAP] folder_tools & folder_ui (area=41600)
+[OVERLAP] folder_tools & cluster_ghost_assets (area=41600)
+[OVERLAP] folder_tools & cluster_ghost_other (area=41600)
+
+=== [CLUSTER] ===
+id=folder_ui
+nodes=7
+estimated_w=undefined
+estimated_h=undefined
+actual_w=400
+actual_h=240
+center=(140,80)
+density=0.000073
+[OVERLAP] folder_ui & cluster_ghost_assets (area=96000)
+[OVERLAP] folder_ui & cluster_ghost_other (area=64000)
+
+=== [CLUSTER] ===
+id=cluster_ghost_assets
+nodes=21
+estimated_w=undefined
+estimated_h=undefined
+actual_w=680
+actual_h=400
+center=(280,160)
+density=0.000077
+[OVERLAP] cluster_ghost_assets & cluster_ghost_other (area=64000)
+
+=== [CLUSTER] ===
+id=cluster_ghost_other
+nodes=6
+estimated_w=undefined
+estimated_h=undefined
+actual_w=400
+actual_h=160
+center=(140,40)
+density=0.000094
+
+=== [LAYOUT] ===
+[LAYOUT] cluster_count=26
+[LAYOUT] overlap_pairs=150
+[LAYOUT] world_bounds=min(0, 0) max(2940, 1600)
+[LAYOUT] world_width=2940
+[LAYOUT] world_height=1600
+================
+
+=== [RENDER DIAGNOSTIC] NODE DUMP ===
+NODE .backup/mile_stone/v0.2.18.md | cluster=doc_shelf | comm=none | role=none
+NODE .backup/mile_stone/v0.2.19.md | cluster=doc_shelf | comm=none | role=none
+NODE .backup/mile_stone/v0.2.20.md | cluster=doc_shelf | comm=none | role=none
+NODE .backup/mile_stone/v0.2.21.md | cluster=doc_shelf | comm=none | role=none
+NODE .backup/release_note/v0.2.18_release_notes.md | cluster=doc_shelf | comm=none | role=none
+NODE .backup/release_note/v0.2.21_release_notes.md | cluster=doc_shelf | comm=none | role=none
+NODE AGENTS.md | cluster=doc_shelf | comm=none | role=none
+NODE GEMINI.md | cluster=doc_shelf | comm=none | role=none
+NODE README.ko.md | cluster=doc_shelf | comm=none | role=none
+NODE README.md | cluster=doc_shelf | comm=none | role=none
+
+=== [RENDER DIAGNOSTIC] CLUSTER DUMP ===
+CLUSTER id=cluster_ghosts type=system nodes=18 (computed count=18)
+CLUSTER id=doc_shelf type=system nodes=449 (computed count=449)
+CLUSTER id=folder_root type=folder nodes=4 (computed count=4)
+CLUSTER id=folder_data type=folder nodes=1 (computed count=1)
+CLUSTER id=folder_demo_data type=folder nodes=8 (computed count=8)
+CLUSTER id=folder_scratch type=folder nodes=5 (computed count=5)
+CLUSTER id=folder_scripts type=folder nodes=1 (computed count=1)
+CLUSTER id=folder_src type=folder nodes=13 (computed count=13)
+CLUSTER id=folder_src_cli type=folder nodes=11 (computed count=11)
+CLUSTER id=folder_src_core type=folder nodes=67 (computed count=67)
+CLUSTER id=folder_src_core_analysis type=folder nodes=10 (computed count=10)
+CLUSTER id=folder_src_core_analysis_analyzers type=folder nodes=8 (computed count=8)
+CLUSTER id=folder_src_core_analysis_intent type=folder nodes=12 (computed count=12)
+CLUSTER id=folder_src_core_analysis_reasoning type=folder nodes=6 (computed count=6)
+CLUSTER id=folder_src_core_canvas_engine type=folder nodes=10 (computed count=10)
+CLUSTER id=folder_src_core_collaboration type=folder nodes=17 (computed count=17)
+CLUSTER id=folder_src_core_transaction type=folder nodes=3 (computed count=3)
+CLUSTER id=folder_src_server type=folder nodes=4 (computed count=4)
+CLUSTER id=folder_src_utils type=folder nodes=7 (computed count=7)
+CLUSTER id=folder_test_core_analysis_intent type=folder nodes=3 (computed count=3)
+CLUSTER id=folder_test type=folder nodes=0 (computed count=0)
+CLUSTER id=folder_test_data type=folder nodes=3 (computed count=3)
+CLUSTER id=folder_tools type=folder nodes=3 (computed count=3)
+CLUSTER id=folder_ui type=folder nodes=7 (computed count=7)
+CLUSTER id=cluster_ghost_assets type=system nodes=21 (computed count=21)
+CLUSTER id=cluster_ghost_other type=system nodes=6 (computed count=6)
+=========================================

@@ -223,11 +223,17 @@ export class VirtualDebugger {
                         
                         const aggId = `AGGREGATE_${originalCollapsedCluster}`;
                         if (!aggregateNodes.has(originalCollapsedCluster)) {
+                            const originalClusterInfo = state.clusters?.find((c: any) => c.id === originalCollapsedCluster);
+                            const aggContinent = originalClusterInfo?.data?.continent || (originalCollapsedCluster.startsWith('cluster_ghost') ? 'external' : (originalCollapsedCluster.replace('folder_', '').split('_')[0] || 'unknown'));
+                            
                             aggregateNodes.set(originalCollapsedCluster, {
                                 id: aggId,
                                 cluster_id: originalCollapsedCluster,
                                 label: `[Aggregate] ${originalCollapsedCluster}`,
-                                type: 'aggregate'
+                                type: 'aggregate',
+                                data: {
+                                    continent: aggContinent
+                                }
                             });
                         }
                         
@@ -508,6 +514,20 @@ export class VirtualDebugger {
                     edgeMap.get(key).evidenceCount += (e.weight ?? 1);
                 }
                 const intentEdges = Array.from(edgeMap.values());
+
+                const analysisMode = visibleClusterIds !== undefined ? 'SELECTED_CLUSTER' : 'GLOBAL';
+                const selectedClusters = visibleClusterIds || [];
+                const nodeCount = snapshot.nodes.length;
+                const edgeCount = snapshot.edges.length;
+                const visibleClusterCount = visibleClusterIds?.length || (snapshot.clusters?.length ?? 0);
+
+                console.log("[SCOPE_AUDIT]", {
+                  analysisMode,
+                  selectedClusters,
+                  nodeCount,
+                  edgeCount,
+                  visibleClusterCount
+                });
 
                 const context = ValidationEngine.analyzeState(snapshot, 1, workspaceRoot, intentEdges);
                 console.log("[ASR] validation exit 0");

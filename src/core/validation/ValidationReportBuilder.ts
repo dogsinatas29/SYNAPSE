@@ -91,16 +91,13 @@ function calculateImpactForecast(report: ValidationReport): string {
     const top = report.infrastructureSplitCandidates?.[0];
     if (!top) return 'No impact forecast for calibrated-out mesh.';
     
+    if (top.external === 0 && top.internal === 0) return 'N/A (No edges)';
     const edgeReduction = Math.round((top.external / (top.external + top.internal)) * 100);
-    const purityIncrease = (0.15).toFixed(2);
-    const affectedNodes = Math.round((top.external + top.internal) * 0.65);
+    const affectedNodes = top.external + top.internal; // Real count instead of magic 0.65
     
     return [
-        `Affected Nodes: ~${affectedNodes}`,
-        `Affected Communities: 2-3 (cascade)`,
-        `Predicted Edge Reduction: ${edgeReduction}%`,
-        `Predicted Purity Increase: +${purityIncrease}`,
-        `Blast Radius: Medium (affects subsystem fan-out paths)`
+        `Affected Nodes: ${affectedNodes}`,
+        `Predicted Edge Reduction: ${edgeReduction}%`
     ].join('\n');
 }
 
@@ -232,14 +229,16 @@ function calculateFalsePositiveProbability(report: ValidationReport): number {
     return Math.max(0.05, Math.min(0.35, prob));
 }
 
-function estimateCost(report: ValidationReport): { engineers: number; days: number; filesAffected: number; edgesAffected: number } {
+function estimateCost(report: ValidationReport): any {
     const top = report.infrastructureSplitCandidates?.[0];
-    if (!top) return { engineers: 1, days: 1, filesAffected: 5, edgesAffected: 20 };
+    if (!top) return { engineers: 'N/A', days: 'N/A', filesAffected: 'N/A', edgesAffected: 'N/A' };
     
     const totalEdges = top.external + top.internal;
-    const filesAffected = Math.max(5, Math.round(Math.sqrt(totalEdges / 100)));
-    const engineers = Math.min(3, Math.ceil(filesAffected / 8));
-    const days = Math.max(1, Math.ceil(filesAffected / 12));
+    if (totalEdges === 0) return { engineers: 'N/A', days: 'N/A', filesAffected: 'N/A', edgesAffected: 0 };
+    
+    const filesAffected = Math.max(1, Math.round(Math.sqrt(totalEdges))); // Simplified real heuristic
+    const engineers = Math.min(3, Math.ceil(filesAffected / 10));
+    const days = Math.max(1, Math.ceil(filesAffected / 5));
     
     return {
         engineers,
@@ -249,23 +248,24 @@ function estimateCost(report: ValidationReport): { engineers: number; days: numb
     };
 }
 
-function projectIfIgnored(report: ValidationReport): { architectureEntropy: number; boundaryFragmentation: boolean; estimatedMonthsToIssue: number } {
+function projectIfIgnored(report: ValidationReport): any {
     const top = report.infrastructureSplitCandidates?.[0];
-    const baseEntropy = 0.68;
     
-    let entropy = baseEntropy;
-    if (top) {
-        const ratio = top.external / (top.external + top.internal);
-        entropy += ratio * 0.12;
+    if (!top || (top.external === 0 && top.internal === 0)) {
+        return {
+            architectureEntropy: 'N/A',
+            boundaryFragmentation: false,
+            estimatedMonthsToIssue: 'UNKNOWN'
+        };
     }
     
-    const fragmented = top ? true : false;
-    const months = Math.max(1, Math.round(4 - (report.runCount || 1)));
+    const ratio = top.external / (top.external + top.internal);
+    const entropy = Math.min(1.0, ratio); // Real calculation based on coupling
     
     return {
-        architectureEntropy: Math.min(1.0, entropy),
-        boundaryFragmentation: fragmented,
-        estimatedMonthsToIssue: months
+        architectureEntropy: Math.round(entropy * 100),
+        boundaryFragmentation: true,
+        estimatedMonthsToIssue: 'UNKNOWN'
     };
 }
 
@@ -304,7 +304,11 @@ export class ValidationReportBuilder {
 
     private static cleanDomainName(name: string): string {
         if (!name) return 'Unknown';
-        if (name.includes('ghost')) return 'Ghost Dependency Zone';
+        if (name.includes('ghost')) {
+            const parts = name.split('_');
+            const libName = parts.length > 2 ? parts.slice(2).join('/') : name;
+            return `Ghost Dependency (${libName})`;
+        }
         if (name.startsWith('folder_')) {
             return 'Module: ' + name.replace('folder_', '').replace(/_/g, '/');
         }
@@ -316,12 +320,12 @@ export class ValidationReportBuilder {
         const verdict = report.establishmentGate?.stable ? 'PASS' : 'HOLD';
         const confidenceScore = (1 - (report.falsePositiveProbability || 0.125)) * 100;
         
-        const boundaryRatio = fp.internalEdges > 0 ? (fp.boundaryEdges / fp.internalEdges).toFixed(1) : fp.boundaryEdges;
-        const entropyScore = Math.round((report.ifIgnoredImpact?.architectureEntropy || 0.81) * 100);
-        const entropyLevel = entropyScore > 75 ? 'HIGH' : entropyScore > 50 ? 'MEDIUM' : 'LOW';
+        const boundaryRatio = fp.internalEdges > 0 ? (fp.boundaryEdges / fp.internalEdges).toFixed(1) : (fp.boundaryEdges === 0 ? '0.0' : 'N/A');
+        const entropyScore = report.ifIgnoredImpact?.architectureEntropy !== 'N/A' ? report.ifIgnoredImpact.architectureEntropy : 'N/A';
+        const entropyLevel = entropyScore !== 'N/A' ? (entropyScore > 75 ? 'HIGH' : entropyScore > 50 ? 'MEDIUM' : 'LOW') : 'UNKNOWN';
 
-        const expectedEntropy = Math.round(entropyScore * 0.5); 
-        const expectedBoundary = Math.round(fp.boundaryEdges * 0.38);
+        const expectedEntropy = 'N/A'; 
+        const expectedBoundary = 'N/A';
         const ghostCount = fp.boundaryTargets?.find((t:any) => t.target.includes('ghost'))?.count || 0;
 
         let ghostBreakdownText = '';
@@ -393,8 +397,8 @@ export class ValidationReportBuilder {
         let rawMetricsSection = [
             '## 5. Raw Metrics',
             `### 5.1 AEL Metrics`,
-            `- **Architecture Entropy**: ${entropyScore} / 100 (Risk Level: **${entropyLevel}**)`,
-            `- **False Positive Probability**: ${(report.falsePositiveProbability * 100).toFixed(1)}%`,
+            `- **Architecture Entropy**: ${entropyScore !== 'N/A' ? entropyScore + ' / 100' : 'N/A'} (Risk Level: **${entropyLevel}**)`,
+            `- **False Positive Probability**: ${report.falsePositiveProbability !== undefined ? (report.falsePositiveProbability * 100).toFixed(1) + '%' : 'UNKNOWN'}`,
             '',
             '### 5.2 Source Breakdown (ASR 3.0)',
             '#### Ghost Source Top N',
@@ -417,10 +421,8 @@ export class ValidationReportBuilder {
             for (const file of topImpactFiles) {
                 const absFile = path.isAbsolute(file.filePath) ? file.filePath : path.join(rootPath, file.filePath);
                 surgerySection.push(`### ${this.cleanDomainName(file.filePath)}`);
-                surgerySection.push(`- **Role**: High-Coupling Domain Entity`);
-                surgerySection.push(`- **Problem**: Coupled to ${file.consumers.length} external modules (Total External Edges: ${file.externalEdges}).`);
-                surgerySection.push(`- **Risk**: Domain Leakage (High Coupling).`);
-                surgerySection.push(`- **Recommendation**: Introduce DTO boundary or Interface isolation.`);
+                surgerySection.push(`- **Coupled Consumers**: ${file.consumers.length} external modules`);
+                surgerySection.push(`- **Total External Edges**: ${file.externalEdges}`);
                 surgerySection.push(`- [View File](vscode://file/${absFile})`);
                 surgerySection.push('');
             }
@@ -467,12 +469,12 @@ export class ValidationReportBuilder {
         const verdict = report.establishmentGate?.stable ? 'PASS' : 'HOLD';
         const confidenceScore = (1 - (report.falsePositiveProbability || 0.125)) * 100;
         
-        const boundaryRatio = fp.internalEdges > 0 ? (fp.boundaryEdges / fp.internalEdges).toFixed(1) : fp.boundaryEdges;
-        const entropyScore = Math.round((report.ifIgnoredImpact?.architectureEntropy || 0.81) * 100);
-        const entropyLevel = entropyScore > 75 ? 'HIGH' : entropyScore > 50 ? 'MEDIUM' : 'LOW';
+        const boundaryRatio = fp.internalEdges > 0 ? (fp.boundaryEdges / fp.internalEdges).toFixed(1) : (fp.boundaryEdges === 0 ? '0.0' : 'N/A');
+        const entropyScore = report.ifIgnoredImpact?.architectureEntropy !== 'N/A' ? report.ifIgnoredImpact.architectureEntropy : 'N/A';
+        const entropyLevel = entropyScore !== 'N/A' ? (entropyScore > 75 ? 'HIGH' : entropyScore > 50 ? 'MEDIUM' : 'LOW') : 'UNKNOWN';
 
-        const expectedEntropy = Math.round(entropyScore * 0.5); 
-        const expectedBoundary = Math.round(fp.boundaryEdges * 0.38);
+        const expectedEntropy = 'N/A'; 
+        const expectedBoundary = 'N/A';
         const ghostCount = fp.boundaryTargets?.find((t:any) => t.target.includes('ghost'))?.count || 0;
 
         let ghostBreakdownHtml = '';
@@ -551,8 +553,8 @@ export class ValidationReportBuilder {
   <h2>5. Raw Metrics</h2>
   <h3>5.1 AEL Metrics</h3>
   <ul>
-      <li><strong>Architecture Entropy</strong>: ${entropyScore} / 100 (Risk Level: <strong>${entropyLevel}</strong>)</li>
-      <li><strong>False Positive Probability</strong>: ${(report.falsePositiveProbability * 100).toFixed(1)}%</li>
+      <li><strong>Architecture Entropy</strong>: ${entropyScore !== 'N/A' ? entropyScore + ' / 100' : 'N/A'} (Risk Level: <strong>${entropyLevel}</strong>)</li>
+      <li><strong>False Positive Probability</strong>: ${report.falsePositiveProbability !== undefined ? (report.falsePositiveProbability * 100).toFixed(1) + '%' : 'UNKNOWN'}</li>
   </ul>
   
   <h3>5.2 Source Breakdown (ASR 3.0)</h3>

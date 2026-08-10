@@ -8817,29 +8817,6 @@ class CanvasEngine {
                       }
                     );
 
-                    // [v0.3.34.20] Fix: Generate Meta Edges from ALL edges, because edges are indexed by LEAF clusters.
-                        // If a parent is collapsed, the leaf cluster is not in _visibleGraphClusterIds, but we STILL want its edges!
-                        if (this._clusterEdgeMap) {
-                            for (const edgesFromCluster of this._clusterEdgeMap.values()) {
-                                for (let i = 0; i < edgesFromCluster.length; i++) {
-                                    const edge = edgesFromCluster[i];
-                                    const fc = edge._fromCluster;
-                                    const tc = edge._toCluster;
-                                    if (!fc || !tc) continue;
-
-                                    const fromRep = findVisibleRep(fc);
-                                    const toRep = findVisibleRep(tc);
-
-                                    // Only include if both representatives are actually visible in the graph
-                                    if (fromRep && toRep && fromRep !== toRep && 
-                                        this._visibleGraphClusterIds.has(fromRep) && 
-                                        this._visibleGraphClusterIds.has(toRep)) {
-                                        const key = `${fromRep}→${toRep}`;
-                                        edgeMap.set(key, (edgeMap.get(key) || 0) + (edge.weight || 1));
-                                    }
-                                }
-                            }
-                        }
 
                     // [v0.3.33] Phase 1: Visible Cluster Registry
                     console.time('LOD:visibleClusters');

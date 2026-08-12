@@ -232,21 +232,28 @@ function calculateFalsePositiveProbability(report: ValidationReport): number {
 
 function estimateCost(report: ValidationReport): any {
     const top = report.infrastructureSplitCandidates?.[0];
-    if (!top) return { engineers: 0, days: 0, filesAffected: 0, edgesAffected: 0 };
+    
+    // Healthy codebase: no infra mesh candidates → derive cost from topImpactFiles instead
+    if (!top) {
+        const impactFiles: any[] = (report as any).topImpactFiles || [];
+        console.log(`[CostProjection] infra candidates=0, topImpactFiles=${impactFiles.length}`);
+        if (impactFiles.length === 0) return { engineers: 0, days: 0, filesAffected: 0, edgesAffected: 0 };
+        
+        const totalEdges = impactFiles.reduce((sum: number, f: any) => sum + (f.externalEdges || 0), 0);
+        const filesAffected = impactFiles.length;
+        const engineers = Math.min(8, Math.max(1, Math.ceil(filesAffected / 5)));
+        const days = Math.max(1, Math.ceil(totalEdges / 50));
+        return { engineers, days, filesAffected, edgesAffected: totalEdges };
+    }
     
     const totalEdges = top.external + top.internal;
     if (totalEdges === 0) return { engineers: 0, days: 0, filesAffected: 0, edgesAffected: 0 };
     
-    const filesAffected = Math.max(1, Math.round(Math.sqrt(totalEdges))); // Simplified real heuristic
+    const filesAffected = Math.max(1, Math.round(Math.sqrt(totalEdges)));
     const engineers = Math.min(3, Math.ceil(filesAffected / 10));
     const days = Math.max(1, Math.ceil(filesAffected / 5));
     
-    return {
-        engineers,
-        days,
-        filesAffected,
-        edgesAffected: totalEdges
-    };
+    return { engineers, days, filesAffected, edgesAffected: totalEdges };
 }
 
 function projectIfIgnored(report: ValidationReport): any {

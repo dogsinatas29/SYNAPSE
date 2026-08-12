@@ -324,45 +324,182 @@ SYNAPSE는 방대한 아키텍처를 효과적으로 관리하기 위해 **클�
 
 [![Architecture Scan Report Demo](https://img.youtube.com/vi/yU-_NRrADR0/0.jpg)](https://youtu.be/yU-_NRrADR0)
 
-SYNAPSE의 **아키텍처 스캔 리포트(ASR)**는 프로젝트의 아키텍처 건강도를 팩트와 데이터 기반으로 촬영하는 "MRI 스캔"입니다. 우리는 객관적인 측정(Scan)과 주관적인 해석(Diagnosis)을 엄격하게 구분하여, 의사결정자에게 AI의 환각(Hallucination)이 섞이지 않은 명확한 아키텍처 증거를 제공합니다.
+SYNAPSE의 **아키텍처 스캔 리포트(ASR)**는 코드베이스의 아키텍처 건강도를 팩트와 데이터 기반으로 촬영하는 정적(Static) MRI 스캔입니다. AI 해석이나 휴리스틱 추측에 의존하지 않으며, 모든 발견은 실제 의존성 그래프 엣지 수치로 보증됩니다.
 
-### 핵심 철학: 진단(Diagnosis)보다 스캔(Scan)
-기존 도구들은 깊이 있는 "AI 진단"을 시도하지만, 파서의 한계나 환각으로 인해 실패하는 경우가 많습니다. ASR 3.0은 과도한 추론을 배제하고 **데이터 신뢰도(Data Reliability)와 감사 가능성(Auditability)**에 집중합니다.
+> **샘플 출력**: [vscode_main_report.md](assets/test_sample/vscode_main_report.md) &nbsp;|&nbsp; [vscode_main_report.json](assets/test_sample/vscode_main_report.json)
 
-- **매직 넘버 금지**: 영향도(Impact) 점수는 잘려나간 목록이 아닌 전체 의존성(Intent Edge) 스코프를 기반으로 계산됩니다.
-- **추적 가능한 증거**: 모든 유령 의존성(Ghost Dependency)과 경계 침범(Boundary Crossing)은 실제 심볼과 함께 추적됩니다.
-- **GUI 우선 워크플로우**: 복잡한 터미널 실행은 폐기되었습니다. 리포트는 VSCode 캔버스 내에서 매끄럽게 생성됩니다.
+---
 
-### 6단계 MRI 구조
+### 동작 원리
 
-| 섹션 | 초점 | 목적 |
-|------|------|------|
-| **0. Analysis Subject** | 스캔 범위 | 분석된 전체 파일, 내부 엣지, 경계 엣지의 수를 표시합니다. |
-| **1. Executive Summary** | 핵심 판정 | 엔트로피와 경계 비율(Boundary Ratio)을 기반으로 즉각적인 PASS/UNSTABLE 판정을 내립니다. |
-| **2. Impact Files** | 수술 대상 | 절대적인 전체 외부 엣지 결합도를 기준으로 최상위 "God Class"를 식별합니다. |
-| **3. Evidence Layer** | 부채 증명 | 유령 의존성과 경계 위반에 대한 감사 가능한 증거 목록입니다. |
-| **4. Expected After Surgery** | 예상 상태 | 최상위 수술 대상을 리팩토링할 경우 예상되는 팩트 기반의 엔트로피 및 경계 변화량입니다. |
-| **5. Raw Metrics** | 엔진 출력 | 세부적인 AEL(Architecture Ecology Laboratory) 지표 및 출처 분류(Breakdowns)입니다. |
+ASR은 소스에서 리포트까지 단일한 결정론적(Deterministic) 파이프라인을 따릅니다:
+
+```text
+소스 파일
+  ↓ (언어 스캐너: TS/JS, Python, C++, Kotlin, Rust, Java, ...)
+의존성 그래프 (Node + Edge 생성)
+  ↓ (GraphAnalyzer → SemanticRole 할당)
+후보군 (Boundary Crossing × Fan-Out 기준 1차 정렬)
+  ↓ (ArchitectureAuditor → Role 분류 + Finding 판정)
+페널티 정렬 (TEST_ARTIFACT 하단으로 강등)
+  ↓ (ValidationEngine → Top Impact Files + Assembly Points 확정)
+리포트 생성
+  ↓ (ValidationReportBuilder)
+Markdown + HTML + JSON
+```
+
+**파이프라인 주요 결정 사항:**
+- 파일 점수는 **Boundary Crossing**(외부 엣지 수)과 **Fan-Out**(전체 출력 의존성 수)만으로 산정됩니다. 주관적 점수 없습니다.
+- `TEST_ARTIFACT` 파일(테스트 리졸버, fixtures, simulation)은 정렬 *이전에* `ArchitectureAuditor`로 분류되어, 페널티가 실제로 적용됩니다.
+- 후보군은 동적 `bfsLimit`(최대 200)을 사용하므로 Top 10 / Top 50 / Top 100이 실제로 다른 파일을 반영합니다.
+
+---
 
 ### 실행 방법 (GUI First)
 
-복잡한 터미널 CLI 스크립트는 잊으십시오.
-1. VSCode에서 SYNAPSE 캔버스를 엽니다.
-2. UI에서 **가상 디버그(Virtual Debug)** 버튼을 클릭합니다.
-3. ASR이 워크스페이스 내에 HTML, Markdown, JSON 형태의 전체 스캔 결과를 즉시 생성합니다.
+1. VSCode에서 **SYNAPSE 캔버스**를 엽니다.
+2. 상단 툴바의 **`Virtual Debug`** 버튼을 클릭합니다.
+3. ASR이 워크스페이스 내에 세 가지 형식을 즉시 생성합니다.
 
-### 생성되는 증거 아티팩트
+터미널 불필요. 설정 파일 불필요. 입력값은 현재 열린 워크스페이스면 충분합니다.
+
+---
+
+### 출력 구조
 
 ```text
 synapse_report/surgery/
-├── ASR_EV-LIVE.md      [Main: 6섹션 마크다운 리포트]
-├── ASR_EV-LIVE.html    [Main: 웹 열람용 HTML 리포트]
-└── ASR_EV-LIVE.json    [Source of Truth: 전체 그래프 및 메타데이터 덤프]
+├── ASR_EV-LIVE.md      ← 전체 리포트 Markdown (엔지니어 전용)
+├── ASR_EV-LIVE.html    ← 렌더링된 HTML 버전 (실장 또는 공유용)
+└── ASR_EV-LIVE.json    ← 원시 그래프 스냅샷 + 전체 메트릭 (Source of Truth)
 ```
 
-아키텍처 수술에 앞서 팩트 기반의 증거를 제시함으로써, ASR은 모호한 기술 부채를 실행 가능하고 측정 가능한 목표로 변환합니다.
+Markdown 리포트는 7개 섹션으로 구성됩니다:
+
+| 섹션 | 포함 내용 |
+|---------|------------------|
+| **0. Analysis Subject** | 전체 파일 수, 내부 엣지, 경계 엣지, Ghost Breakdown (NPM / Grammar / Unresolved / Dynamic) |
+| **1. Executive Summary** | PASS / UNSTABLE 판정. Architecture Entropy, Audit Confidence 점수, Ghost Health 등급. |
+| **2. Top Impact Files** | 최고 결합도 파일 랭킹 (Role, Boundary Crossing, Fan-Out, Blast Radius, Evidence 포함). |
+| **3. System Assembly Points** | 시스템을 연결하는 컴포지션 루트 파일 (진입점, main, 서비스 레지스트리). |
+| **4. Cost Projection** | Top Impact 파일 리팩토링 시 예상 엔지니어링 비용 (인력, 일수, 영향 파일 수, 영향 엣지 수). |
+| **5. Expected After Surgery** | 리팩토링 후 예상 Entropy 및 Boundary Edges 수치. |
+| **6. Raw Metrics** | AEL 점수, Coupling Source 분류 (어느 네임스페이스가 경계 엣지를 가장 많이 소유하는가), Ghost 증거 목록. |
 
 ---
+
+### 증거는 어떻게 구성되는가
+
+**Top Impact Files** 섹션의 모든 항목은 한 줄 요약문이 아닌, 구조화된 증거 블록으로 제시됩니다:
+
+```markdown
+### 1. workbench.common.main.ts
+- **Role**: ASSEMBLY_POINT
+- **Boundary Crossing**: 131    ← 클러스터 경계를 넘는 엣지 수
+- **Fan-Out**: 136              ← 전체 출력 의존성 수
+- **Blast Radius**: 18 Clusters ← 3홉 이내에 도달 가능한 클러스터 수
+
+**Evidence (Observed Behavior)**
+- Boundary Crossing: 131
+- Blast Radius (Clusters): 18
+- Fan-Out: 136
+- Fan-In: 3
+
+**Architectural Assessment**
+> HEALTHY_HUB: No action required. Excluded from risk ranking.
+```
+
+`Role`은 `ArchitectureAuditor`가 파일 경로 패턴과 결합도 지표를 기반으로 분류합니다:
+
+| Role | 의미 |
+|------|------|
+| `ASSEMBLY_POINT` | 컴포지션 루트 / 진입점 — 높은 fan-out은 정상적 설계 |
+| `CONTRACT_HUB` | 프로토콜 또는 인터페이스 정의 — 여러 서브시스템을 연결 |
+| `DOMAIN_SERVICE` | 코어 로직 레이어 (editor, workbench, platform) |
+| `UI_COMPONENT` | 뷰 / 브라우저 레이어 |
+| `TEST_ARTIFACT` | 테스트 파일, fixture, simulation — **랭킹에서 페널티 적용** |
+| `COORDINATOR` | 오케스트레이터 또는 매니저 |
+| `INFRASTRUCTURE` | 빌드, 컨피그, 스캐폴딩 파일 |
+
+`Finding`은 실제 리팩토링이 필요한지 여부를 결정합니다:
+
+| Finding | 트리거 조건 |
+|---------|------------|
+| `HEALTHY_HUB` | ASSEMBLY_POINT — 높은 fan-out은 아키텍처적 의도 |
+| `UI_TO_SERVICE_COUPLING` | UI_COMPONENT이 외부 엣지 >20 |
+| `GOD_SERVICE` | DOMAIN_SERVICE fan-out >50 & 높은 경계 비율 |
+| `CONTRACT_BLOAT` | CONTRACT_HUB fan-in >200 & fan-out >100 |
+| `EXCESSIVE_FAN_OUT` | 리파일 중 fan-out >30 & 경계 비율 >0.7 |
+| `NORMAL` | 즉각적인 조치 불필요 |
+
+---
+
+### Audit Confidence 점수
+
+리포트는 스캔 데이터 신뢰도를 나타내는 **Audit Confidence** 점수(0~100)를 포함합니다:
+
+- 기본 점수: **70**
+- **+10**: Grammar 노이즈(`.tmLanguage` 참조)를 필터링한 경우
+- **+5**: ASSEMBLY_POINT가 최소 1개 이상 분류된 경우
+- **+4**: CONTRACT_HUB가 최소 1개 이상 확인된 경우
+- **+6**: Ghost Ratio가 5% 미만인 경우
+- **-2/1%**: UNKNOWN_REFERENCE Ghost 비율 초과시 감점
+
+**85 이상**: 모든 발견을 신뢰할 수 있는 깨끗한 그래프. **70 미만**: 스캐너가 주요 의존성을 놓쳤을 가능성이 높음.
+
+---
+
+### Ghost Health 평가
+
+SYNAPSE가 실제 파일로 해소하지 못하는 참조(Ghost 의존성)는 범주별로 세분화됩니다:
+
+| 유형 | 출처 |
+|------|------|
+| `GRAMMAR_REFERENCE` | `.tmLanguage`, `.tmGrammar`, TextMate 토큰 참조 |
+| `NPM_PACKAGE` | `node_modules` 및 외부 npm 의존성 |
+| `UNRESOLVED_IMPORT` | 경로 해소에 실패한 임포트 |
+| `DYNAMIC_IMPORT` | 런타임 변수를 사용하는 `import()`, `require()` |
+| `GENERATED_REFERENCE` | 자동 생성 파일 (`.d.ts`, 빌드 출력) |
+| `UNKNOWN_REFERENCE` | 그 외 생음 수 없는 참조 — "더러운" 범주 |
+
+`UNKNOWN_REFERENCE` 비율이 Ghost 전체대비 높을수록 `POOR` 등급이 부여됩니다: `EXCELLENT / GOOD / FAIR / POOR`.
+
+---
+
+### ⚠️ AST 검증 레이어 (현재 미적용 — 향후 계획)
+
+`ast_verification_engine.ts`는 구현되어 있으나 현재 Virtual Debug 실행 경로에는 **연결되어 있지 않습니다**.
+
+AST 검증이 활성화되면 다음 단계가 파이프라인 끝에 추가됩니다:
+
+```text
+Markdown + HTML + JSON
+  ↓ (ASTVerificationEngine)
+상위 10,000개 엣지 샘플 추출
+  ↓ (경로 패턴 기반 휴리스틱 검증)
+RESOLVED / PARTIAL / UNRESOLVED 분류
+  ↓
+Audit Coverage % + 오탐(False Positive) 제거
+  ↓
+AST Verification 섹션을 리포트에 추가
+```
+
+**예상 소요 시간**: VSCode(엣지 387k) 기준, 10k 샘플은 파일 I/O 없이 경로명 패턴 검사만 수행하므로 **1~3초** 내외.
+
+이 레이어가 활성화되면 보고서에 **"Top Impact 파일 중 실제로 심볼을 익스포트하는 파일이 93%"** 같은 정량적 신뢰도 지표가 추가됩니다.
+
+---
+
+### 🚧 추가 작업 예정
+
+| # | 항목 | 상태 |
+|---|------|------|
+| 1 | **리눅스 커널 분석 지원** — 현재 스캐너로는 리눅스 커널 규모의 C/C++ 프로젝트를 분석할 수 없습니다. 매크로 중심 코드베이스에 대한 C++ 스캐너 및 엣지 해소 로직 추가 작업이 필요합니다. | ⏳ 미착수 |
+| 2 | **AST 검증기 연결** — `ast_verification_engine.ts`는 구현 완료 상태이지만 Virtual Debug 파이프라인에 아직 연결되어 있지 않습니다. `ValidationEngine` 및 `ValidationReportBuilder`와의 통합 작업이 필요합니다. | ⏳ 미착수 |
+
+---
+
+
 
 ## 🌾 Harvest
 
@@ -553,6 +690,7 @@ SYNAPSE는 코드 중심 개발의 한계를 극복하기 위해 만들어졌습
 
 | 버전 | 릴리스 날짜 | 설명 |
 | :---: | :---: | :--- |
+| **v0.3.34.19** | 2026-08-12 | **Auditor 검증 레이어 및 보고서 신뢰성 확보**: RAW Top 20 덤프 로그를 통해 TEST_ARTIFACT 페널티 파이프라인을 물리적으로 증명합니다. `vscode-test-resolver`가 RAW 14위에서 최종 Top 10에서 완전히 탈락하는 것을 확인했습니다. `bfsLimit`을 최대 200으로 동적 산출하여 Top 50 == Top 100 집계 버그를 수정했습니다. `UI_COMPONENT` 및 `DOMAIN_SERVICE` 분류 규칙을 신설하여 UNKNOWN 대량 발생 문제를 해결했습니다. 건강한 코드베이스에서 Cost Projection이 항상 0/0/0/0을 반환하던 버그를 `topImpactFiles` fallback으로 수정했습니다. Auditor를 Sort 이전에 실행하도록 순서를 조정하여 TEST_ARTIFACT 페널티가 정상 작동하도록 수정했습니다. |
 | **v0.3.34.17** | 2026-08-09 | **ASR 3.0 안정화 및 데이터 신뢰성 확보**: 주관적 진단(Diagnosis)에서 팩트 기반 스캔(Scan)으로 리포트 철학 전면 개편. 6단계 MRI 논리 흐름으로 레이아웃 재편. Impact Files 산출 시 Top 50 컷오프를 제거하고 전체 엣지를 집계하여 정확도 복원. `isGhost` 메타데이터 의존성 복구 및 Webview 로컬 파일 절대 경로 바인딩 버그 수정. |
 | **v0.3.33.1_fix2** | 2026-07-20 | **Layout Engine 독립성 확보 및 초거대 스케일 성능 최적화**: 레이아웃 계산 로직이 가시성 상태(`cluster.collapsed`)에 오염되어 좌표계가 붕괴되는 치명적인 버그를 수정하여 Layout Graph와 Visible Graph를 완벽히 분리했습니다. `drawClusters` 및 `aggregateEdges` 구간의 O(N*C) 순회 병목을 O(1) 인덱스 매핑으로 파괴하여 렌더링 준비 시간을 1,830ms에서 5ms로 단축(약 366배 향상)했습니다. **VSCODE-main** 및 **리눅스 커널(Linux Kernel 72 rc3)** 수준의 초거대 모노레포를 대상으로 테스트를 성공적으로 완료했습니다. |
 | **v0.3.33.1_fix** | 2026-07-16 | **Render Virtualization & Pipeline Repair**: VSCode-main과 같은 거대 모노레포 환경에서 엣지 수가 50,000개를 초과할 경우 렌더링 파이프라인 전체가 즉시 강제 종료(Abort)되던 하드코딩된 방어 로직을 제거했습니다. 이제 Spatial Hashing 기반 컬링으로 무사히 렌더링을 시도합니다. `LINES (No Badges)` 엣지 가시성 모드를 복구하고, 렌더러 심층부(`[EDGE_STATS]`, `[ARC_DRAW]`)에 핵심 텔레메트리 프로브를 주입하여 LOD 동작을 4단계로 추적할 수 있도록 개선했습니다. 또한 빈 디렉토리의 과도한 패딩을 제거하여 클러스터 거대화(Bloat) 버그를 수정했습니다. |

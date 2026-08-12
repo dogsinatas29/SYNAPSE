@@ -325,47 +325,182 @@ If the score exceeds a safe threshold (e.g., 500,000 points), the **EXTREME_SCAL
 
 [![Architecture Scan Report Demo](https://img.youtube.com/vi/yU-_NRrADR0/0.jpg)](https://youtu.be/yU-_NRrADR0)
 
-SYNAPSE's **Architecture Scan Report (ASR)** is a factual, data-driven "MRI Scan" of your project's architectural health. We strictly distinguish between objective measurements (Scan) and subjective interpretation (Diagnosis), ensuring that decision-makers are provided with undeniable architectural evidence without AI hallucination.
+SYNAPSE's **Architecture Scan Report (ASR)** is a fact-based, data-driven architectural health scan — a static MRI of your codebase. It does not rely on AI interpretation or heuristic guesses. Every finding is backed by a countable dependency graph edge.
 
-### Key Philosophy: Scan > Diagnosis
-Traditional tools attempt to offer deep "AI Diagnosis" but often fail due to parser limitations or hallucinated metrics. ASR 3.0 abandons excessive interpretation in favor of **Data Reliability and Auditability**.
-
-- **No Magic Numbers**: Impact scores are calculated based on the full scope of intent edges, not truncated lists.
-- **Traceable Evidence**: Every ghost dependency and boundary crossing is tracked with direct symbols.
-- **GUI-First Workflow**: Terminal execution is deprecated. Reports are generated seamlessly within the VSCode Canvas.
-
-### 6-Stage MRI Structure
-
-| Section | Focus | Purpose |
-|---------|-------|---------|
-| **0. Analysis Subject** | Scope of Scan | Displays the total number of files, internal edges, and boundary edges analyzed. |
-| **1. Executive Summary** | Core Verdict | Provides an immediate PASS/UNSTABLE verdict based on Entropy and Boundary Ratios. |
-| **2. Impact Files** | Surgery Targets | Identifies the top "God Classes" based on absolute total external edge counting. |
-| **3. Evidence Layer** | Proof of Debt | Auditable list of Ghost Dependencies and Boundary Violations. |
-| **4. Expected After Surgery** | Projected State | Estimated factual changes to Entropy and Boundaries if top impact files are refactored. |
-| **5. Raw Metrics** | Engine Output | Granular AEL (Architecture Ecology Laboratory) metrics and Source Breakdowns. |
-
-### Usage (GUI First)
-
-Forget complex CLI scripts. 
-1. Open the SYNAPSE Canvas in VSCode.
-2. Click the **Virtual Debug** button on the UI.
-3. ASR instantly generates the full scan as HTML, Markdown, and JSON within your workspace.
-
-### Evidence Artifacts Generated
-
-```text
-synapse_report/surgery/
-├── ASR_EV-LIVE.md      [Main: 6-section Markdown Report]
-├── ASR_EV-LIVE.html    [Main: Web-viewable HTML Report]
-└── ASR_EV-LIVE.json    [Source of Truth: Complete Graph & Metadata Dump]
-```
-
-By presenting fact-based evidence before any architectural surgery, ASR transforms vague technical debt into an actionable, measurable target.
+> **Sample Output**: [vscode_main_report.md](assets/test_sample/vscode_main_report.md) &nbsp;|&nbsp; [vscode_main_report.json](assets/test_sample/vscode_main_report.json)
 
 ---
 
+### How It Works
+
+ASR follows a single deterministic pipeline from raw source to final report:
+
+```text
+Source Files
+  ↓ (Language Scanners: TS/JS, Python, C++, Kotlin, Rust, Java, ...)
+Dependency Graph (Nodes + Edges)
+  ↓ (GraphAnalyzer → SemanticRole assignment)
+Candidate Pool (sorted by Boundary Crossing × Fan-Out)
+  ↓ (ArchitectureAuditor → Role classification + Finding type)
+Penalty Sort (TEST_ARTIFACT pushed to bottom)
+  ↓ (ValidationEngine → Top Impact Files + Assembly Points)
+Report Generation
+  ↓ (ValidationReportBuilder)
+Markdown + HTML + JSON
+```
+
+**Key decisions made during this pipeline:**
+- Files are scored purely by **Boundary Crossings** (external edges) and **Fan-Out** (total outgoing edges).
+- `TEST_ARTIFACT` files (test resolvers, fixtures, simulation code) are classified by `ArchitectureAuditor` *before* the sort, so their penalty takes effect in the final ranking.
+- The candidate pool uses a dynamic `bfsLimit` (up to 200) so Top 10 / Top 50 / Top 100 always reflect genuinely different files.
+
+---
+
+### Usage (GUI First)
+
+1. Open the **SYNAPSE Canvas** inside VSCode.
+2. Click the **`Virtual Debug`** button in the upper toolbar.
+3. ASR generates all three output formats immediately inside your workspace.
+
+No terminal required. No configuration files needed. The only input is the open workspace.
+
+---
+
+### Output Structure
+
+```text
+synapse_report/surgery/
+├── ASR_EV-LIVE.md      ← Full report in Markdown (engineer-readable)
+├── ASR_EV-LIVE.html    ← Same report as rendered HTML (shareable)
+└── ASR_EV-LIVE.json    ← Raw graph snapshot + all metrics (source of truth)
+```
+
+The Markdown report is structured in 7 sections:
+
+| Section | What It Contains |
+|---------|------------------|
+| **0. Analysis Subject** | Total files, internal edges, boundary edges, Ghost Breakdown (NPM / Grammar / Unresolved / Dynamic) |
+| **1. Executive Summary** | PASS / UNSTABLE verdict. Architecture Entropy, Audit Confidence score, Ghost Health rating. |
+| **2. Top Impact Files** | Ranked list of highest-coupling files with Role, Boundary Crossing, Fan-Out, Blast Radius, and Evidence. |
+| **3. System Assembly Points** | Composition-root files that wire the system together (entry points, main, service registries). |
+| **4. Cost Projection** | Estimated engineering effort if top impact files are refactored (Engineers, Days, Files Affected, Edges Affected). |
+| **5. Expected After Surgery** | Projected Entropy and Boundary Edges after refactoring the top impact files. |
+| **6. Raw Metrics** | AEL scores, Coupling Source breakdown (which namespace owns the most boundary edges), Ghost evidence list. |
+
+---
+
+### How Evidence Is Built
+
+Every entry in the **Top Impact Files** section is backed by a structured evidence block, not a summary sentence:
+
+```markdown
+### 1. workbench.common.main.ts
+- **Role**: ASSEMBLY_POINT
+- **Boundary Crossing**: 131    ← number of edges that cross cluster boundaries
+- **Fan-Out**: 136              ← total outgoing dependencies
+- **Blast Radius**: 18 Clusters ← how many clusters are reachable within 3 hops
+
+**Evidence (Observed Behavior)**
+- Boundary Crossing: 131
+- Blast Radius (Clusters): 18
+- Fan-Out: 136
+- Fan-In: 3
+
+**Architectural Assessment**
+> HEALTHY_HUB: No action required. Excluded from risk ranking.
+```
+
+The `Role` field comes from `ArchitectureAuditor`, which classifies each file based on its file path pattern and coupling metrics:
+
+| Role | Meaning |
+|------|---------|
+| `ASSEMBLY_POINT` | Composition root / entry point — high fan-out is expected and healthy |
+| `CONTRACT_HUB` | Protocol or interface definition — bridges multiple subsystems |
+| `DOMAIN_SERVICE` | Core logic layer (editor, workbench, platform) |
+| `UI_COMPONENT` | View / browser layer |
+| `TEST_ARTIFACT` | Test file, fixture, or simulation — **penalized in ranking** |
+| `COORDINATOR` | Orchestrator or manager |
+| `INFRASTRUCTURE` | Build, config, or scaffolding file |
+
+The `Finding` type determines whether a file is flagged for action:
+
+| Finding | Triggered When |
+|---------|----------------|
+| `HEALTHY_HUB` | ASSEMBLY_POINT — high fan-out is architectural intent |
+| `UI_TO_SERVICE_COUPLING` | UI_COMPONENT with >20 external edges |
+| `GOD_SERVICE` | DOMAIN_SERVICE with fan-out >50 and high boundary ratio |
+| `CONTRACT_BLOAT` | CONTRACT_HUB with fan-in >200 and fan-out >100 |
+| `EXCESSIVE_FAN_OUT` | Any file with fan-out >30 and boundary ratio >0.7 |
+| `NORMAL` | No immediate architectural action required |
+
+---
+
+### Audit Confidence Score
+
+The report includes a single **Audit Confidence** score (0–100) that reflects how trustworthy the scan data is:
+
+- Base score: **70**
+- **+10** if Grammar noise (`.tmLanguage` references) was filtered out
+- **+5** if at least one ASSEMBLY_POINT was classified
+- **+4** if at least one CONTRACT_HUB was verified
+- **+6** if Ghost Ratio is below 5%
+- **−2 per 1%** of UNKNOWN_REFERENCE Ghost ratio above threshold
+
+A score above **85** means the graph is clean enough to trust all findings. Below **70** means the scanner likely missed significant dependencies.
+
+---
+
+### Ghost Health Assessment
+
+Ghost dependencies (references SYNAPSE cannot resolve to a real file) are broken down by category:
+
+| Category | Source |
+|----------|--------|
+| `GRAMMAR_REFERENCE` | `.tmLanguage`, `.tmGrammar`, TextMate token refs |
+| `NPM_PACKAGE` | `node_modules` and external npm dependencies |
+| `UNRESOLVED_IMPORT` | Import paths that failed path resolution |
+| `DYNAMIC_IMPORT` | `import()`, `require()` with runtime variables |
+| `GENERATED_REFERENCE` | Auto-generated files (`.d.ts`, build outputs) |
+| `UNKNOWN_REFERENCE` | Anything else — the "dirty" category |
+
+The ratio of `UNKNOWN_REFERENCE` to total Ghosts produces a health label: `EXCELLENT / GOOD / FAIR / POOR`.
+
+---
+
+### ⚠️ AST Verification Layer (Implemented — Not Yet Wired In)
+
+`ast_verification_engine.ts` is fully implemented but currently **not connected** to the Virtual Debug execution path.
+
+When enabled, this layer appends the following steps at the end of the pipeline:
+
+```text
+Markdown + HTML + JSON
+  ↓ (ASTVerificationEngine)
+Sample top 10,000 edges from the graph
+  ↓ (Path-pattern heuristic: export symbols, header presence, false-positive patterns)
+Classify each edge: RESOLVED / PARTIAL / UNRESOLVED
+  ↓
+Compute Audit Coverage % + remove false positives
+  ↓
+Append AST Verification section to report
+```
+
+**Estimated time**: For VSCode scale (387k edges), a 10k sample with no file I/O (path-pattern checks only) runs in **1–3 seconds**.
+
+When active, the report gains a quantitative reliability signal such as: _"93% of audited edges in Top Impact files were verified as exporting real symbols."_
+
+### 🚧 Pending Work
+
+| # | Item | Status |
+|---|------|--------|
+| 1 | **Linux Kernel support** — The scanner currently cannot analyze C/C++ projects at Linux Kernel scale. Additional work is required on the C++ scanner and edge resolution for macro-heavy codebases. | ⏳ Not started |
+| 2 | **AST Verification Layer** — `ast_verification_engine.ts` is implemented but not wired into the Virtual Debug pipeline. Needs integration into `ValidationEngine` and `ValidationReportBuilder`. | ⏳ Not started |
+
+---
+
+
 ## 🌾 Harvest
+
 
 Harvest is a snapshot-based collection system where the Architect (Server) safely collects the work results of collaboration participants.
 
@@ -554,6 +689,7 @@ SYNAPSE was created to overcome the limitations of code-centric development. It 
 
 | Version | Release Date | Description |
 | :---: | :---: | :--- |
+| **v0.3.34.19** | 2026-08-12 | **Auditor Verification Layer & Report Reliability**: Physically verified TEST_ARTIFACT penalty pipeline via RAW Top 20 dump log — `vscode-test-resolver` dropped from #14 raw to outside Top 10. Fixed Top50==Top100 aggregation bug by dynamically scaling `bfsLimit` to 200. Added `UI_COMPONENT` and `DOMAIN_SERVICE` classification rules, eliminating mass UNKNOWN labels. Fixed Cost Projection always returning 0/0/0/0 for healthy codebases by falling back to `topImpactFiles`. Fixed Auditor execution order so TEST_ARTIFACT penalty runs before sort. |
 | **v0.3.34.17** | 2026-08-09 | **ASR 3.0 (Architecture Scan Report) Stabilization & Data Reliability**: Transitioned from subjective "Diagnosis Reasoner" to fact-based MRI scans (Scan > Diagnosis). Overhauled layout into a 6-stage logical flow. Fixed critical Impact Files slicing flaw to correctly aggregate all external edges. Restored `isGhost` metadata reliability. Replaced absolute file path dependencies for Webview URIs. |
 | **v0.3.33.1_fix2** | 2026-07-20 | **Layout Engine Sovereignity & Extreme Scale Profiling**: Completely decoupled the Layout Engine from the Visibility State by removing `cluster.collapsed` constraints from the physics packer, preventing massive bounding box overlaps. Eliminated O(N*C) bottlenecks in `drawClusters` and `aggregateEdges`, reducing rendering preparation time from 1,830ms to 5ms (366x faster). Successfully tested against extreme mono-repo scales including **VSCODE-main** and **Linux Kernel 72 rc3**. |
 | **v0.3.33.1_fix** | 2026-07-16 | **Render Virtualization & Pipeline Repair**: Removed the hardcoded edge limit (50k) that silently aborted the rendering pipeline for massive mono-repos like VSCode-main. Restored the 'LINES (No Badges)' edge visibility mode. Integrated precise telemetry probes into the WebGL/Canvas2D pipeline to trace culling and LOD bottlenecks. Resolved Cluster Bloating issues by excising padding from empty directories and properly propagating `collapsed` state bounds logic to the BottomUp packer. |

@@ -7,7 +7,7 @@ import { Node, Edge, Cluster, GraphSnapshot } from './GraphModel';
  * 생성된 그래프를 불변(Immutable) 상태로 동결한다.
  */
 
-export function buildGraph(nodes: Node[], edges: Edge[], clusters: Cluster[]): GraphSnapshot {
+export function buildGraph(nodes: Node[], edges: Edge[], clusters: Cluster[], metadata?: any): GraphSnapshot {
     // 1. 순서 결정성 확보 (Deterministic Order)
     const sortedNodes = nodes.slice().sort((a, b) => a.id.localeCompare(b.id));
     const sortedEdges = edges.slice().sort((a, b) => {
@@ -23,7 +23,8 @@ export function buildGraph(nodes: Node[], edges: Edge[], clusters: Cluster[]): G
         edges: sortedEdges,
         clusters: sortedClusters,
         cluster_flows: [],
-        timestamp: Date.now()
+        timestamp: Date.now(),
+        metadata: metadata || undefined
     };
 
     // 3. 불변화 (Deep Freeze)

@@ -6980,7 +6980,7 @@ class CanvasEngine {
                     const clientLayer = c.clientLayer || (c.data && c.data.clientLayer);
 
                     // [v0.3.34] Default collapsed to false to ensure initLODState captures them
-                    return { ...c, layer, clientLayer, collapsed: c.collapsed === true ? true : false };
+                    return { ...c, layer, clientLayer, collapsed: false };
                 });
             // [ARCH_TRACE 1/4] LOAD — check cluster existence after assignment
             {
@@ -14121,6 +14121,18 @@ function initCanvas() {
                             clusters: snap.clusters,
                             visibleClusterIds
                         };
+                        
+                        // [P0 진단] 13773 → 0 증발 지점 추적
+                        console.log('[CTX_DIAG]', {
+                            engineNodes: engine.nodes?.length || 0,
+                            engineEdges: engine.edges?.length || 0,
+                            engineClusters: engine.clusters?.length || 0,
+                            snapNodes: snap?.nodes?.length || 0,
+                            snapEdges: snap?.edges?.length || 0,
+                            strippedNodes: strippedNodes?.length || 0,
+                            safeNodes: safeSnap?.nodes?.length || 0,
+                            safeEdges: safeSnap?.edges?.length || 0
+                        });
                         
                         console.log("[VIEWPORT_VISIBLE]", engine._visibleGraphClusterIds ? engine._visibleGraphClusterIds.size : 0);
                         console.log("[EXPANDED_VISIBLE]", visibleClusterIds.length);

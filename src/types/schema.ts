@@ -17,7 +17,24 @@ export enum NodeRole {
     CONFIG = 'CONFIG',
     DOCUMENT = 'DOCUMENT',
     ASSET = 'ASSET',
+    GRAMMAR = 'GRAMMAR',
     EXTERNAL = 'EXTERNAL',
+    GHOST = 'GHOST'
+}
+
+export enum SemanticRole {
+    NORMAL = 'NORMAL',
+    ASSEMBLY_POINT = 'ASSEMBLY_POINT',
+    TEST_HARNESS = 'TEST_HARNESS',
+    DOCUMENTATION = 'DOCUMENTATION',
+    GENERATED_RESERVED = 'GENERATED_RESERVED'
+}
+
+export enum SemanticEdgeType {
+    CODE = 'CODE',
+    TEST = 'TEST',
+    DOC = 'DOC',
+    GENERATED = 'GENERATED',
     GHOST = 'GHOST'
 }
 
@@ -49,6 +66,7 @@ export interface Node {
     clientLayer?: string;
     clientTimestamp?: number;
     role?: NodeRole;
+    semanticRole?: SemanticRole;
     category?: string;
     confidence?: number;
     [key: string]: any;
@@ -66,6 +84,7 @@ export interface Edge {
     intelligence?: any;
     visual?: any;
     provenance?: EdgeProvenance;
+    semanticType?: SemanticEdgeType;
     [key: string]: any;
 }
 
@@ -206,6 +225,65 @@ export interface SymbolIndexData {
     functionCatalog: any[];
 }
 
+export enum ArchitecturalRole {
+    UI_COMPONENT = 'UI_COMPONENT',
+    DOMAIN_SERVICE = 'DOMAIN_SERVICE',
+    INFRASTRUCTURE = 'INFRASTRUCTURE',
+    ASSEMBLY_POINT = 'ASSEMBLY_POINT',
+    CONTRACT_HUB = 'CONTRACT_HUB',
+    TEST_ARTIFACT = 'TEST_ARTIFACT',
+    COORDINATOR = 'COORDINATOR',
+    UNKNOWN = 'UNKNOWN'
+}
+
+export enum FindingType {
+    UI_TO_SERVICE_COUPLING = 'UI_TO_SERVICE_COUPLING',
+    EXCESSIVE_FAN_OUT = 'EXCESSIVE_FAN_OUT',
+    GOD_SERVICE = 'GOD_SERVICE',
+    CYCLIC_DEPENDENCY = 'CYCLIC_DEPENDENCY',
+    HEALTHY_HUB = 'HEALTHY_HUB',
+    CONTRACT_BLOAT = 'CONTRACT_BLOAT',
+    NORMAL = 'NORMAL'
+}
+
+export enum RiskLevel {
+    CRITICAL = 'CRITICAL',
+    HIGH = 'HIGH',
+    MEDIUM = 'MEDIUM',
+    LOW = 'LOW',
+    NONE = 'NONE'
+}
+
+export interface ArchitecturalFinding {
+    nodeId: string;
+    filePath: string;
+    role: ArchitecturalRole;
+    findingType: FindingType;
+    risk: RiskLevel;
+    evidence: Array<{ type: string; value: string | number }>;
+    reasonCodes?: string[];
+}
+
+export enum AssemblyAuditReason {
+    ACCEPTED = 'ACCEPTED',
+    REJECTED_BOUNDED = 'REJECTED_BOUNDED',
+    REJECTED_LOW_FANOUT = 'REJECTED_LOW_FANOUT',
+    REJECTED_LOW_BOUNDARY_RATIO = 'REJECTED_LOW_BOUNDARY_RATIO',
+    ASSEMBLY_HIGH_FANOUT = 'ASSEMBLY_HIGH_FANOUT',
+    ASSEMBLY_HIGH_BOUNDARY_RATIO = 'ASSEMBLY_HIGH_BOUNDARY_RATIO',
+    NOT_CANDIDATE_NAME = 'NOT_CANDIDATE_NAME'
+}
+
+export interface AssemblyAuditEntry {
+    nodeId: string;
+    filePath: string;
+    accepted: boolean;
+    fanOut: number;
+    fanOutPercentile: number;
+    boundaryRatio: number;
+    reasons: AssemblyAuditReason[];
+}
+
 export interface GraphSnapshot {
     nodes: Node[];
     edges: Edge[];
@@ -217,6 +295,10 @@ export interface GraphSnapshot {
         projectUUID: string;
         projectName: string;
         snapshotCount: number;
+        assemblyAudit?: AssemblyAuditEntry[];
+        architecturalFindings?: ArchitecturalFinding[];
+        ghostBreakdown?: Record<string, number>;
+        externalBreakdown?: Record<string, number>;
     };
     checksum?: string;
 }

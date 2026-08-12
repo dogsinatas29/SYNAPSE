@@ -39,6 +39,8 @@ export interface PipelineResult {
   edges: Edge[];
   clusters: Cluster[];
   metaEdges?: any[]; // [Phase 2B.13] Edge Bundle Data
+  ghostBreakdown?: Record<string, number>;
+  externalBreakdown?: Record<string, number>;
 }
 
 export class DataPipeline {
@@ -190,15 +192,11 @@ export class DataPipeline {
     let unresolvedCount = 0;
     let totalReferencesFound = 0;
     let fallbackMatchedCount = 0;
-    let packageFilteredCount = 0;
-    let exactFilteredCount = 0;
     const edgeTypeCount = new Map<string, number>();
 
       console.error('[PIPELINE] Starting GhostPolicy.filter, summaries=', summaries.length);
       // [v0.3.32.2] GhostRule System: Early Pruning (Extracted to GhostPolicy)
       const policyResult = GhostPolicy.filter(summaries);
-      packageFilteredCount = policyResult.packageFilteredCount;
-      exactFilteredCount = policyResult.exactFilteredCount;
 
       // [v0.3.32.3] Reference Resolution (Extracted to ReferenceResolver)
       const resolvedReferences = ReferenceResolver.resolve(policyResult.validReferences, nodeIds, SymbolIndex.getInstance());
@@ -258,14 +256,18 @@ export class DataPipeline {
     console.time('[PIPELINE] graphAnalyzer');
     const analysis = analyzeGraph({ nodes, edges, clusterIds, nodeIds });
     console.timeEnd('[PIPELINE] graphAnalyzer');
+    
+    // [P0 진단] DataPipeline 첫 번째 analyzeGraph 결과 확인
+    console.log('[PIPELINE_ASSEMBLY_AUDIT]', {
+        assemblyAuditLength: analysis.assemblyAudit?.length ?? -1
+    });
+    
     const nodeMap = new Map<string, Node>(nodes.map(n => [n.id, n]));
 
     const context: DiagnosticContext = {
         nodeCount: nodes.length,
         edgeCount: edges.length,
         edgeTypeCount,
-        packageRemoved: packageFilteredCount,
-        exactRemoved: exactFilteredCount,
         nodeMap
     };
 
@@ -581,8 +583,7 @@ export class DataPipeline {
         CLUSTER_COUNT: clusters.length,
         ROOT_CLUSTER_COUNT: rootClusterCount
     });
-
-    return { nodes, edges, clusters, metaEdges };
+    return { nodes, edges, clusters, metaEdges, ghostBreakdown: policyResult.ghostBreakdown, externalBreakdown: policyResult.externalBreakdown };
   }
 
 

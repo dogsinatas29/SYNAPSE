@@ -5,8 +5,6 @@ export interface DiagnosticContext {
     nodeCount: number;
     edgeCount: number;
     edgeTypeCount: Map<string, number>;
-    packageRemoved: number;
-    exactRemoved: number;
     nodeMap: Map<string, Node>;
 }
 
@@ -59,7 +57,7 @@ function renderEdgeSummary(analysis: GraphAnalysis): string {
 }
 
 function renderPipelineSummary(context: DiagnosticContext): string {
-    return `======================================================\n[PIPELINE] Nodes=${context.nodeCount} Edges=${context.edgeCount}\n[FILTER] package_removed=${context.packageRemoved} exact_removed=${context.exactRemoved}\n======================================================\n`;
+    return `======================================================\n[PIPELINE] Nodes=${context.nodeCount} Edges=${context.edgeCount}\n======================================================\n`;
 }
 
 function renderEdgeBreakdown(context: DiagnosticContext): string {

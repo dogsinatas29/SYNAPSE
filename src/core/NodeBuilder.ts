@@ -17,6 +17,10 @@ export function determineNodeRole(filePath: string): { role: NodeRole, category:
     const basename = path.basename(filePath);
     const relPath = filePath.replace(/\\/g, '/');
 
+    if (ext === '.json' && basename.includes('.tmLanguage')) {
+        return { role: NodeRole.GRAMMAR, category: 'Grammar' };
+    }
+
     if (['package.json', 'tsconfig.json', 'webpack.config.js', 'vite.config.ts', '.eslintrc.js', '.prettierrc'].includes(basename) || ext === '.yaml' || ext === '.yml' || ext === '.json' || ext === '.toml') {
         return { role: NodeRole.CONFIG, category: 'Config' };
     }

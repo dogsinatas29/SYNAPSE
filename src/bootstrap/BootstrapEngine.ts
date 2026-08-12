@@ -141,7 +141,15 @@ export class BootstrapEngine {
             
             console.log(`[SCAN_DEBUG] Pipeline produced Nodes: ${pipelineResult.nodes.length}, Edges: ${pipelineResult.edges.length}`);
             // [v0.3.11] Core Freeze: Build and freeze graph
-            const frozenGraph = buildGraph(pipelineResult.nodes, pipelineResult.edges, pipelineResult.clusters);
+            const frozenGraph = buildGraph(
+                pipelineResult.nodes,
+                pipelineResult.edges,
+                pipelineResult.clusters,
+                {
+                    ghostBreakdown: pipelineResult.ghostBreakdown,
+                    externalBreakdown: pipelineResult.externalBreakdown
+                }
+            );
             
             console.log(`[SCAN_DEBUG] Final Frozen Graph Nodes: ${frozenGraph.nodes.length}`);
             graphModel.restoreSnapshot(frozenGraph);
@@ -238,7 +246,15 @@ export class BootstrapEngine {
             Logger.info(`[SCAN_DEBUG] Pipeline produced Nodes: ${pipelineResult.nodes.length}, Edges: ${pipelineResult.edges.length}, Clusters: ${pipelineResult.clusters.length}`);
             
             // [v0.3.11] Core Freeze
-            const frozenGraph = buildGraph(pipelineResult.nodes, pipelineResult.edges, pipelineResult.clusters);
+            const frozenGraph = buildGraph(
+                pipelineResult.nodes,
+                pipelineResult.edges,
+                pipelineResult.clusters,
+                {
+                    ghostBreakdown: pipelineResult.ghostBreakdown,
+                    externalBreakdown: pipelineResult.externalBreakdown
+                }
+            );
             
             Logger.info(`[SCAN_DEBUG] Final Frozen Graph Nodes: ${frozenGraph.nodes.length}`);
             graphModel.restoreSnapshot(frozenGraph);
@@ -442,7 +458,15 @@ The **Documentation Shelf** of the Synapse canvas is a sacred storage area for m
         const pipelineResult = await dataPipeline.processFiles(discoveredFiles, projectRoot);
         
         // [v0.3.11] Core Freeze
-        const frozenGraph = buildGraph(pipelineResult.nodes, pipelineResult.edges, pipelineResult.clusters);
+        const frozenGraph = buildGraph(
+            pipelineResult.nodes,
+            pipelineResult.edges,
+            pipelineResult.clusters,
+            {
+                ghostBreakdown: pipelineResult.ghostBreakdown,
+                externalBreakdown: pipelineResult.externalBreakdown
+            }
+        );
         graphModel.restoreSnapshot(frozenGraph);
 
         const nodes = frozenGraph.nodes;

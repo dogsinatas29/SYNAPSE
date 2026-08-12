@@ -80,7 +80,7 @@ export class CommitManager {
             const newEdges = currentSnap.edges.concat(req.edges.map(e => ({ ...e, status: 'confirmed' })));
             const newClusters = currentSnap.clusters.concat(req.clusters || []);
 
-            const frozenGraph = buildGraph(newNodes, newEdges, newClusters);
+            const frozenGraph = buildGraph(newNodes, newEdges, newClusters, (currentSnap as any).metadata);
 
             // 4. VERIFY: 최종 검증 (STAGE 5)
             this.verifyCommit(createdFiles);

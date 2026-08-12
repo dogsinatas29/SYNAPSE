@@ -140,15 +140,27 @@ export interface ValidationMetrics {
         estimatedMonthsToIssue: number;
     };
     astVerification?: ASTVerificationReport;
+    auditConfidenceMatrix?: {
+        baseScore: number;
+        grammarNoiseFiltered: number;
+        assemblyPointClassified: number;
+        contractHubVerified: number;
+        lowGhostRatio: number;
+        unknownReferences: number;
+        finalScore: number;
+    };
 
     // ASR 2.0 Breakdown fields
     ghostBreakdown?: BreakdownEntry[];
+    externalBreakdown?: BreakdownEntry[];
     couplingBreakdown?: BreakdownEntry[];
     entropyBreakdown?: BreakdownEntry[];
 
     // ASR 3.0 Evidence Layer fields
     ghostEvidence?: IntentEdge[];
     boundaryEvidence?: IntentEdge[];
+    docEvidence?: IntentEdge[];
+    systemAssemblyPoints?: any[];
 }
 
 export interface ValidationContext {

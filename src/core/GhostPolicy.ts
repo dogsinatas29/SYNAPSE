@@ -10,12 +10,13 @@ export interface RawReference {
 export interface ReferenceWithSource {
     sourceFilePath: string;
     ref: RawReference;
+    category?: string; // Ghost or External breakdown category
 }
 
 export interface GhostPolicyOutput {
     validReferences: ReferenceWithSource[];
-    packageFilteredCount: number;
-    exactFilteredCount: number;
+    ghostBreakdown: Record<string, number>;
+    externalBreakdown: Record<string, number>;
 }
 
 export class GhostPolicy {
@@ -35,39 +36,85 @@ export class GhostPolicy {
 
     public static filter(summaries: { filePath: string; summary: CodeSummary }[]): GhostPolicyOutput {
         const validReferences: ReferenceWithSource[] = [];
-        let packageFilteredCount = 0;
-        let exactFilteredCount = 0;
+        const ghostBreakdown: Record<string, number> = {
+            'GRAMMAR_REFERENCE': 0,
+            'UNRESOLVED_IMPORT': 0,
+            'DYNAMIC_IMPORT': 0,
+            'GENERATED_REFERENCE': 0,
+            'UNKNOWN_REFERENCE': 0
+        };
+        const externalBreakdown: Record<string, number> = {
+            'NPM_PACKAGE': 0,
+            'JAVA_PACKAGE': 0,
+            'ANDROID_PACKAGE': 0,
+            'PYTHON_PACKAGE': 0,
+            'RUST_CRATE': 0,
+            'VSCODE_API': 0
+        };
 
         for (const item of summaries) {
             for (const ref of item.summary.references) {
                 if (!ref.target) continue;
 
                 let isBlacklisted = false;
+                let category: string | undefined;
 
                 if ((ref as any).fullPath) {
                     const lowerFullPath = ((ref as any).fullPath as string).toLowerCase();
-                    if (this.packagePrefix.some(prefix => lowerFullPath.startsWith(prefix))) {
+                    if (lowerFullPath.includes('node_modules')) {
+                        externalBreakdown['NPM_PACKAGE']++;
                         isBlacklisted = true;
-                        packageFilteredCount++;
+                    } else if (lowerFullPath.startsWith('vscode')) {
+                        externalBreakdown['VSCODE_API']++;
+                        isBlacklisted = true;
+                    } else if (this.packagePrefix.some(prefix => lowerFullPath.startsWith(prefix))) {
+                        if (lowerFullPath.startsWith('java.') || lowerFullPath.startsWith('javax.') || lowerFullPath.startsWith('org.')) {
+                            externalBreakdown['JAVA_PACKAGE']++;
+                        } else if (lowerFullPath.startsWith('android.') || lowerFullPath.startsWith('androidx.') || lowerFullPath.startsWith('com.google.android.')) {
+                            externalBreakdown['ANDROID_PACKAGE']++;
+                        } else if (lowerFullPath.startsWith('kotlin')) {
+                            externalBreakdown['JAVA_PACKAGE']++;
+                        } else {
+                            externalBreakdown['JAVA_PACKAGE']++;
+                        }
+                        isBlacklisted = true;
                     }
                 }
 
                 const lowerId = ref.target.toLowerCase();
+                
+                // Grammar reference filters
+                if (!isBlacklisted && (
+                    lowerId === '$self' || 
+                    lowerId === '$base' || 
+                    lowerId.startsWith('#') || 
+                    lowerId.includes('#') ||
+                    lowerId.startsWith('source.') || 
+                    lowerId.startsWith('text.') ||
+                    lowerId.includes('include:') ||
+                    lowerId.includes('include ') ||
+                    item.filePath.toLowerCase().endsWith('.tmlanguage.json')
+                )) {
+                    isBlacklisted = true;
+                    ghostBreakdown['GRAMMAR_REFERENCE']++;
+                }
+
                 if (!isBlacklisted && this.exact.some(b => lowerId === b || lowerId.startsWith(b + '.'))) {
                     isBlacklisted = true;
-                    exactFilteredCount++;
+                    ghostBreakdown['UNKNOWN_REFERENCE']++;
                 }
 
                 if (!isBlacklisted) {
-                    validReferences.push({ sourceFilePath: item.filePath, ref: ref as RawReference });
+                    // For now, references making it here are un-filtered CODE references or local unresolved.
+                    validReferences.push({ sourceFilePath: item.filePath, ref: ref as RawReference, category });
                 }
             }
         }
 
         return {
             validReferences,
-            packageFilteredCount,
-            exactFilteredCount
+            ghostBreakdown,
+            externalBreakdown
         };
     }
 }

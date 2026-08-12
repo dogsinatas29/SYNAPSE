@@ -1,4 +1,4 @@
-import { Node, Edge } from './GraphModel';
+import { Node, Edge, SemanticRole, SemanticEdgeType, AssemblyAuditReason, AssemblyAuditEntry } from './GraphModel';
 
 export interface DegreeInfo {
     in: number;
@@ -42,6 +42,7 @@ export interface GraphAnalysis {
     clusterSizes: Record<string, number>;
     continentInfo: Map<string, ContinentInfo>;
     stats: GraphStats;
+    assemblyAudit: AssemblyAuditEntry[];
 }
 
 export interface AnalysisInput {
@@ -52,35 +53,189 @@ export interface AnalysisInput {
 }
 
 export function analyzeGraph(input: AnalysisInput): GraphAnalysis {
+    console.log('[GRAPH_ANALYZER_ENTER]', { nodeCount: input.nodes?.length, edgeCount: input.edges?.length });
     const { nodes, edges, clusterIds, nodeIds } = input;
+    const path = require('path');
+
+    // [P0 진단] 후보 파일 존재 여부 확인
+    const candidateNames = nodes
+        .map(n => path.basename(n.filePath || n.id || '').toLowerCase())
+        .filter(name =>
+            /^(main|app|bootstrap|startup|program|compositionroot|server|client|container|dependencyregistrar|services)\./
+                .test(name)
+        );
+
+    console.log('[GRAPH_ANALYZER_RAW_CANDIDATES]', {
+        count: candidateNames.length,
+        sample: candidateNames.slice(0, 20)
+    });
 
     const nodeMap = new Map<string, Node>(nodes.map(n => [n.id, n]));
-
     const degreeMap = new Map<string, DegreeInfo>();
+    const nodeBoundaryMap = new Map<string, number>();
+
+    // 1. Assign SemanticEdgeType and Count Boundaries
+    for (const edge of edges) {
+        if (!edge.semanticType) {
+            const source = edge.from;
+            const target = edge.to;
+            if (source.endsWith('.md') || source.endsWith('.txt') || source.toLowerCase().includes('readme') || source.toLowerCase().includes('plan')) {
+                edge.semanticType = SemanticEdgeType.DOC;
+            } else if (source.includes('.test.') || source.includes('.spec.') || source.includes('/test/') || source.includes('/mock/')) {
+                edge.semanticType = SemanticEdgeType.TEST;
+            } else if (source.includes('generated') || source.includes('auto-generated')) {
+                edge.semanticType = SemanticEdgeType.GENERATED;
+            } else if (target.startsWith('ghost://') || target.startsWith('external://') || nodeMap.get(target)?.status === 'ghost') {
+                edge.semanticType = SemanticEdgeType.GHOST;
+            } else {
+                edge.semanticType = SemanticEdgeType.CODE;
+            }
+        }
+    }
+
     let internalEdges = 0;
     let externalEdges = 0;
 
-    // internalEdges: edge to a confirmed (non-ghost) node
-    // externalEdges: edge to a ghost node or unknown (external) target
     for (const edge of edges) {
-        if (nodeIds.has(edge.to) && !edge.to.startsWith('external://') && !edge.to.startsWith('ghost://')) {
-            const tgt = nodeMap.get(edge.to);
-            if (tgt && tgt.status === 'ghost') {
-                externalEdges++;
+        // Core structural analysis only considers CODE and GHOST edges
+        if (edge.semanticType === SemanticEdgeType.CODE || edge.semanticType === SemanticEdgeType.GHOST) {
+            
+            // Calculate global internal/external (Ghost/External targets)
+            if (nodeIds.has(edge.to) && !edge.to.startsWith('external://') && !edge.to.startsWith('ghost://')) {
+                const tgt = nodeMap.get(edge.to);
+                if (tgt && tgt.status === 'ghost') {
+                    externalEdges++;
+                } else {
+                    internalEdges++;
+                }
             } else {
-                internalEdges++;
+                externalEdges++;
             }
-        } else {
-            externalEdges++;
+
+            if (!degreeMap.has(edge.from)) degreeMap.set(edge.from, { in: 0, out: 0, total: 0 });
+            if (!degreeMap.has(edge.to)) degreeMap.set(edge.to, { in: 0, out: 0, total: 0 });
+
+            degreeMap.get(edge.from)!.out++;
+            degreeMap.get(edge.from)!.total++;
+            degreeMap.get(edge.to)!.in++;
+            degreeMap.get(edge.to)!.total++;
+
+            // Calculate node-level Boundary Crossing (Cross-Cluster or Ghost)
+            const sourceNode = nodeMap.get(edge.from);
+            const targetNode = nodeMap.get(edge.to);
+            const sourceCluster = sourceNode?.cluster_id;
+            const targetCluster = targetNode?.cluster_id;
+            
+            const isBoundary = edge.semanticType === SemanticEdgeType.GHOST || !targetCluster || sourceCluster !== targetCluster;
+            if (isBoundary) {
+                nodeBoundaryMap.set(edge.from, (nodeBoundaryMap.get(edge.from) || 0) + 1);
+            }
         }
+    }
 
-        if (!degreeMap.has(edge.from)) degreeMap.set(edge.from, { in: 0, out: 0, total: 0 });
-        if (!degreeMap.has(edge.to)) degreeMap.set(edge.to, { in: 0, out: 0, total: 0 });
+    // Calculate Percentiles for FanOut
+    const arrFanOut: number[] = [];
+    for (const d of degreeMap.values()) arrFanOut.push(d.out);
+    arrFanOut.sort((a, b) => a - b);
+    
+    const getPercentile = (sortedArr: number[], val: number) => {
+        if (sortedArr.length === 0) return 0;
+        let idx = sortedArr.findIndex(v => v >= val);
+        if (idx === -1) idx = sortedArr.length;
+        // Standard percentile: 95 means top 5%
+        return (idx / sortedArr.length) * 100;
+    };
 
-        degreeMap.get(edge.from)!.out++;
-        degreeMap.get(edge.from)!.total++;
-        degreeMap.get(edge.to)!.in++;
-        degreeMap.get(edge.to)!.total++;
+    const assemblyAudit: AssemblyAuditEntry[] = [];
+    
+    // [P0 진단] GraphAnalyzer candidate 추적
+    let candidateCount = 0;
+    let pushCount = 0;
+
+    // 2. Assign SemanticRole (2-Stage Logic for ASSEMBLY_POINT)
+    for (const node of nodes) {
+        delete node.semanticRole; // Force re-evaluation for shared node objects (ponytail: deep cloning is overkill)
+        if (!node.semanticRole) {
+            const filePath = node.filePath || node.id;
+            const degree = degreeMap.get(node.id) || { in: 0, out: 0, total: 0 };
+            const nodeFanOut = degree.out;
+            const boundaryEdges = nodeBoundaryMap.get(node.id) || 0;
+            const boundaryRatio = nodeFanOut > 0 ? (boundaryEdges / nodeFanOut) : 0;
+            
+            if (filePath.includes('/test/') || filePath.includes('test/') || filePath.includes('/mock/') || filePath.includes('mock/') || filePath.includes('fixtures/') || filePath.includes('simulation') || filePath.includes('test-resolver') || filePath.includes('test-harness') || filePath.includes('testServices')) {
+                node.semanticRole = SemanticRole.TEST_HARNESS;
+            } else if (filePath.endsWith('.md') || filePath.endsWith('.txt') || filePath.toLowerCase().includes('readme')) {
+                node.semanticRole = SemanticRole.DOCUMENTATION;
+            } else if (filePath.includes('generated')) {
+                node.semanticRole = SemanticRole.GENERATED_RESERVED;
+            } else {
+                // Stage 1: Heuristic Extraction
+                const basename = path.basename(filePath).toLowerCase();
+                const isStrongCandidate = /(main|app|bootstrap|startup|program|compositionroot)\.(ts|js|cs|java|go|rs)$/.test(basename);
+                const isWeakCandidate = /(server|client|container|dependencyregistrar|services)\.(ts|js|cs|java|go|rs)$/.test(basename);
+                const isAssemblyCandidate = isStrongCandidate || isWeakCandidate;
+                
+                // [P0 진단] 후보 판정 상세 상태
+                if (basename.match(/(main|app|server|services|client)\./)) {
+                    console.log('[ASSEMBLY_CANDIDATE_STATE]', {
+                        nodeCount: nodes.length,
+                        basename,
+                        semanticRole: node.semanticRole,
+                        isAssemblyCandidate,
+                        isStrongCandidate,
+                        isWeakCandidate
+                    });
+                }
+                
+                // Stage 2: Structural Verification
+                if (isAssemblyCandidate) {
+                    candidateCount++;
+                    const pFanOut = getPercentile(arrFanOut, nodeFanOut);
+                    const reasons: AssemblyAuditReason[] = [];
+                    let accepted = false;
+
+                    const isHighFanOut = nodeFanOut > 50 || pFanOut >= 95;
+                    const isStrictHighFanOut = nodeFanOut > 50 && pFanOut >= 95;
+
+                    if (isStrongCandidate) {
+                        if (!isHighFanOut) reasons.push(AssemblyAuditReason.REJECTED_LOW_FANOUT);
+                        if (boundaryRatio <= 0.8) reasons.push(AssemblyAuditReason.REJECTED_LOW_BOUNDARY_RATIO);
+                        if (isHighFanOut && boundaryRatio > 0.8) accepted = true;
+                    } else if (isWeakCandidate) {
+                        if (!isStrictHighFanOut) {
+                            if (nodeFanOut <= 50) reasons.push(AssemblyAuditReason.REJECTED_LOW_FANOUT);
+                        }
+                        if (boundaryRatio <= 0.8) reasons.push(AssemblyAuditReason.REJECTED_LOW_BOUNDARY_RATIO);
+                        if (isStrictHighFanOut && boundaryRatio > 0.8) accepted = true;
+                    }
+
+                    if (accepted) {
+                        if (nodeFanOut > 100) reasons.push(AssemblyAuditReason.ASSEMBLY_HIGH_FANOUT);
+                        if (boundaryRatio > 0.9) reasons.push(AssemblyAuditReason.ASSEMBLY_HIGH_BOUNDARY_RATIO);
+                    }
+
+                    if (accepted) {
+                        reasons.push(AssemblyAuditReason.ACCEPTED);
+                        node.semanticRole = SemanticRole.ASSEMBLY_POINT;
+                    } else {
+                        node.semanticRole = SemanticRole.NORMAL;
+                    }
+
+                    assemblyAudit.push({
+                        nodeId: node.id,
+                        filePath: node.filePath || node.id,
+                        accepted,
+                        fanOut: nodeFanOut,
+                        fanOutPercentile: pFanOut,
+                        boundaryRatio: boundaryRatio,
+                        reasons
+                    });
+                    pushCount++;
+                } else {
+                    node.semanticRole = SemanticRole.NORMAL;
+                }
+            }
+        }
     }
 
     const clusterNodesCount = new Map<string, number>();
@@ -212,6 +367,13 @@ export function analyzeGraph(input: AnalysisInput): GraphAnalysis {
         }
     }
 
+    // [P0 진단] GraphAnalyzer candidate 추적 결과
+    console.log('[GRAPH_ANALYZER_CANDIDATES]', {
+        candidateCount,
+        pushCount,
+        assemblyAuditLength: assemblyAudit.length
+    });
+
     return {
         degreeMap,
         clusterTraffic,
@@ -228,6 +390,7 @@ export function analyzeGraph(input: AnalysisInput): GraphAnalysis {
             ghostNodes,
             ghostEdges,
             ghostRatio
-        }
+        },
+        assemblyAudit
     };
 }

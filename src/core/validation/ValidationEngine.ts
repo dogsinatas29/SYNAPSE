@@ -1,4 +1,5 @@
 import { runBundle } from '../../cli/run_b5_bundle';
+import { ArchitectureAuditor } from './ArchitectureAuditor';
 import { 
     GraphSnapshot,
     ValidationContext,
@@ -615,6 +616,32 @@ export class ValidationEngine {
             auditRows
         );
 
+        // [P0 진단] ValidationEngine 진입 시 semanticRole 분포
+        const semanticRoleDist = new Map<string, number>();
+        for (const node of snapshot.nodes) {
+            const role = (node as any).semanticRole || 'UNDEFINED';
+            semanticRoleDist.set(role, (semanticRoleDist.get(role) || 0) + 1);
+        }
+        console.log('[SEMANTIC_ROLE_DIST]', Object.fromEntries(semanticRoleDist));
+
+        // [P0 진단] ValidationEngine 진입 시 노드 샘플
+        console.log('[VE_SAMPLE_NODE]', {
+            id: snapshot.nodes[0]?.id,
+            semanticRole: (snapshot.nodes[0] as any)?.semanticRole,
+            role: (snapshot.nodes[0] as any)?.role,
+            architecturalRole: (snapshot.nodes[0] as any)?.architecturalRole
+        });
+
+        // [P0 진단] ASSEMBLY_POINT 노드 존재 여부
+        const sampleAssembly = snapshot.nodes.find(
+            n => (n as any).semanticRole === 'ASSEMBLY_POINT'
+        );
+        console.log('[VE_ASSEMBLY_SAMPLE]', {
+            found: !!sampleAssembly,
+            id: sampleAssembly?.id?.substring(0, 60),
+            semanticRole: (sampleAssembly as any)?.semanticRole
+        });
+
         const { analyzeGraph } = require('../GraphAnalyzer');
         const graphAnalysis = analyzeGraph({
             nodes: snapshot.nodes,
@@ -622,16 +649,45 @@ export class ValidationEngine {
             clusterIds: new Set(snapshot.clusters?.map(c => c.id) || []),
             nodeIds: new Set(snapshot.nodes.map(n => n.id))
         });
+        
+        const anySnapshot = snapshot as any;
+        if (!anySnapshot.metadata) {
+            anySnapshot.metadata = { projectUUID: '', projectName: '', snapshotCount: 0 };
+        }
+        anySnapshot.metadata.assemblyAudit = graphAnalysis.assemblyAudit;
+        
+        // [P0 진단] assemblyAudit 생성 여부 확인
+        console.log('[ASSEMBLY_AUDIT_SAVE]', {
+            graphAnalysisLength: graphAnalysis.assemblyAudit?.length ?? -1,
+            metadataLength: anySnapshot.metadata.assemblyAudit?.length ?? -1
+        });
 
         const ghostBreakdown: BreakdownEntry[] = [];
         let totalGhost = 0;
-        for (const [source, count] of graphAnalysis.ghostImpactTraffic.entries()) {
-            ghostBreakdown.push({ name: source, count, ratio: 0 });
-            totalGhost += count;
+        const metaGhost = anySnapshot.metadata?.ghostBreakdown || {};
+        for (const [source, count] of Object.entries(metaGhost)) {
+            if ((count as number) > 0) {
+                ghostBreakdown.push({ name: source, count: count as number, ratio: 0 });
+                totalGhost += (count as number);
+            }
         }
         if (totalGhost > 0) {
             ghostBreakdown.forEach(entry => entry.ratio = Math.round((entry.count / totalGhost) * 1000) / 10);
             ghostBreakdown.sort((a, b) => b.count - a.count);
+        }
+
+        const externalBreakdown: BreakdownEntry[] = [];
+        let totalExternal = 0;
+        const metaExternal = anySnapshot.metadata?.externalBreakdown || {};
+        for (const [source, count] of Object.entries(metaExternal)) {
+            if ((count as number) > 0) {
+                externalBreakdown.push({ name: source, count: count as number, ratio: 0 });
+                totalExternal += (count as number);
+            }
+        }
+        if (totalExternal > 0) {
+            externalBreakdown.forEach(entry => entry.ratio = Math.round((entry.count / totalExternal) * 1000) / 10);
+            externalBreakdown.sort((a, b) => b.count - a.count);
         }
 
         const couplingBreakdown: BreakdownEntry[] = [];
@@ -648,33 +704,316 @@ export class ValidationEngine {
         let ghostEvidence: any[] = [];
         let boundaryEvidence: any[] = [];
         let topImpactFiles: any[] = [];
+        let systemAssemblyPoints: any[] = [];
+        let docEvidence: any[] = [];
         if (intentEdges && intentEdges.length > 0) {
-            const TOP_IMPACT_LIMIT = 10;
+            const TOP_IMPACT_LIMIT = 100;
             const EVIDENCE_LIMIT = 50;
+            const path = require('path');
 
-            const impactMap = new Map<string, { externalEdges: number, consumers: Set<string> }>();
-            for (const e of intentEdges) {
-                // Now strictly relying on isGhost flag instead of string matching
-                if (e.isGhost) continue;
-                if (!impactMap.has(e.source)) impactMap.set(e.source, { externalEdges: 0, consumers: new Set() });
-                impactMap.get(e.source)!.externalEdges += e.evidenceCount;
-                impactMap.get(e.source)!.consumers.add(e.target);
+            const nodeMap = new Map<string, any>();
+            for (const n of snapshot.nodes) {
+                nodeMap.set(n.id, n);
             }
-            topImpactFiles = Array.from(impactMap.entries())
-                .map(([filePath, data]) => ({ filePath, externalEdges: data.externalEdges, consumers: Array.from(data.consumers) }))
-                .sort((a, b) => b.externalEdges - a.externalEdges)
-                .slice(0, TOP_IMPACT_LIMIT);
+
+            // [P0 진단] tmLanguage 노드 존재 여부 + role 확인
+            const tmlNodes = snapshot.nodes.filter((n: any) => 
+                n.id?.toLowerCase().includes('tmlanguage') || 
+                n.filePath?.toLowerCase().includes('tmlanguage')
+            );
+            console.log('[SNAPSHOT_ROLE_AUDIT]', {
+                tmlNodes: tmlNodes.slice(0, 5).map((n: any) => ({
+                    id: n.id?.substring(0, 80),
+                    role: n.role,
+                    type: n.type
+                }))
+            });
+
+            const impactMap = new Map<string, { externalEdges: number, targets: Map<string, number> }>();
+            
+            // To find semanticType of an intentEdge, we can look up the first matching edge in snapshot
+            const edgeTypeMap = new Map<string, string>();
+            for (const e of snapshot.edges) {
+                const key = `${e.from}->${e.to}`;
+                if (!edgeTypeMap.has(key)) {
+                    edgeTypeMap.set(key, e.semanticType || 'CODE');
+                }
+            }
+
+            for (const e of intentEdges) {
+                const edgeKey = `${e.source}->${e.target}`;
+                const semType = edgeTypeMap.get(edgeKey) || 'CODE';
+                
+                // 순수 CODE_EDGE 및 GHOST(unresolved code reference) 만을 아키텍처 위험도 평가에 반영
+                if (semType === 'DOC' || semType === 'TEST' || semType === 'GENERATED') {
+                    continue; 
+                }
+
+                const sourceNode = nodeMap.get(e.source);
+                if (sourceNode?.data?.role === 'GRAMMAR' || sourceNode?.role === 'GRAMMAR' || e.source.toLowerCase().endsWith('.tmlanguage.json')) {
+                    continue;
+                }
+
+                // [Ponytail] Test artifacts are not valid architectural boundary targets. Strip them out.
+                if (e.target.includes('/test/') || e.target.includes('test/') || e.target.includes('/mock/') || e.target.includes('mock/') || e.target.includes('fixtures/') || e.target.includes('simulation') || e.target.includes('test-resolver') || e.target.includes('test-harness') || e.target.includes('testServices')) {
+                    continue;
+                }
+
+                const targetNode = nodeMap.get(e.target);
+                const sourceCluster = sourceNode?.cluster_id;
+                const targetCluster = targetNode?.cluster_id;
+                const isBoundary = e.isGhost || !targetCluster || sourceCluster !== targetCluster;
+                
+                if (isBoundary) {
+                    if (!impactMap.has(e.source)) impactMap.set(e.source, { externalEdges: 0, targets: new Map() });
+                    const data = impactMap.get(e.source)!;
+                    data.externalEdges += e.evidenceCount;
+                    data.targets.set(e.target, (data.targets.get(e.target) || 0) + e.evidenceCount);
+                }
+            }
+            
+            // Calculate Global Averages and Percentiles
+            const globalStats = new Map<string, { boundary: number, fanIn: number, fanOut: number }>();
+            for (const n of snapshot.nodes) {
+                const degree = graphAnalysis.degreeMap.get(n.id) || { in: 0, out: 0, total: 0 };
+                globalStats.set(n.id, { boundary: 0, fanIn: degree.in, fanOut: degree.out });
+            }
+            for (const [source, data] of impactMap.entries()) {
+                if (globalStats.has(source)) {
+                    globalStats.get(source)!.boundary = data.externalEdges;
+                }
+            }
+            
+            let sumBoundary = 0, sumFanIn = 0, sumFanOut = 0;
+            const arrBoundary: number[] = [];
+            const arrFanIn: number[] = [];
+            const arrFanOut: number[] = [];
+            
+            for (const stats of globalStats.values()) {
+                sumBoundary += stats.boundary;
+                sumFanIn += stats.fanIn;
+                sumFanOut += stats.fanOut;
+                arrBoundary.push(stats.boundary);
+                arrFanIn.push(stats.fanIn);
+                arrFanOut.push(stats.fanOut);
+            }
+            
+            const nodeCount = globalStats.size || 1;
+            const avgBoundary = sumBoundary / nodeCount;
+            const avgFanIn = sumFanIn / nodeCount;
+            const avgFanOut = sumFanOut / nodeCount;
+            
+            arrBoundary.sort((a, b) => a - b);
+            arrFanIn.sort((a, b) => a - b);
+            arrFanOut.sort((a, b) => a - b);
+            
+            const getPercentile = (sortedArr: number[], val: number) => {
+                if (sortedArr.length === 0) return 0;
+                let idx = sortedArr.findIndex(v => v >= val);
+                if (idx === -1) idx = sortedArr.length;
+                return 100 - ((idx / sortedArr.length) * 100);
+            };
+            
+            const fanInTop5 = arrFanIn[Math.floor(arrFanIn.length * 0.95)] || 0;
+            const fanOutTop5 = arrFanOut[Math.floor(arrFanOut.length * 0.95)] || 0;
+
+            const candidates = Array.from(impactMap.entries())
+                .filter(([source, data]) => {
+                    const node = nodeMap.get(source);
+                    if (node && (node.role === 'GRAMMAR' || node.role === 'ASSET')) {
+                        return false;
+                    }
+                    return data.externalEdges > 0;
+                })
+                .map(([filePath, data]) => {
+                    const node = nodeMap.get(filePath);
+                    
+                    const targetsList = Array.from(data.targets.entries())
+                        .map(([target, count]) => ({ target, count }))
+                        .sort((a, b) => b.count - a.count)
+                        .slice(0, 10);
+                        
+                    const degree = graphAnalysis.degreeMap.get(filePath) || { in: 0, out: 0, total: 0 };
+                    const pBoundary = getPercentile(arrBoundary, data.externalEdges);
+                    const pFanIn = getPercentile(arrFanIn, degree.in);
+                    const pFanOut = getPercentile(arrFanOut, degree.out);
+                    
+                    return { 
+                        filePath, 
+                        externalEdges: data.externalEdges, 
+                        targets: targetsList,
+                        fanIn: degree.in,
+                        fanOut: degree.out,
+                        reachability: 0,
+                        percentiles: { boundary: pBoundary, fanIn: pFanIn, fanOut: pFanOut },
+                        averages: { boundary: avgBoundary, fanIn: avgFanIn, fanOut: avgFanOut },
+                        // [v0.3.34.20] 메타데이터 보존: 역할 계층 분리
+                        role: node?.role,                    // NodeRole (파일 유형: GRAMMAR, RUNTIME, CONFIG 등)
+                        semanticRole: node?.semanticRole     // SemanticRole (그래프 구조: ASSEMBLY_POINT 등)
+                    };
+                });
+                
+            // 1차 필터링: Boundary + FanOut 기준으로 상위 N개 추출
+            candidates.sort((a, b) => (b.externalEdges + b.fanOut) - (a.externalEdges + a.fanOut));
+            const bfsLimit = Math.min(200, Math.max(100, Math.ceil(candidates.length * 0.05)));
+            const topCandidates = candidates.slice(0, bfsLimit);
+            
+            const rawTop20Log = topCandidates.slice(0, 20).map((c, idx) => {
+                return `  #${idx + 1} ${c.filePath} | Role: ${(c as any).role || 'UNKNOWN'}/${(c as any).semanticRole || 'UNKNOWN'} | Boundary: ${c.externalEdges} | FanOut: ${c.fanOut}`;
+            }).join('\n');
+            console.log(`[ValidationEngine] RAW Top 20 candidates (Before Penalty):\n${rawTop20Log}`);
+            
+            const adjacency = new Map<string, string[]>();
+            for (const e of snapshot.edges) {
+                if (!adjacency.has(e.from)) adjacency.set(e.from, []);
+                adjacency.get(e.from)!.push(e.to);
+            }
+            
+            // 3-Hop Cross-Cluster BFS (Blast Radius)
+            for (const candidate of topCandidates) {
+                const startNode = nodeMap.get(candidate.filePath);
+                const startCluster = startNode?.cluster_id;
+                const visitedClusters = new Set<string>();
+                const visitedNodes = new Set<string>();
+                
+                const queue: {id: string, depth: number}[] = [{id: candidate.filePath, depth: 0}];
+                visitedNodes.add(candidate.filePath);
+                
+                let head = 0;
+                while (head < queue.length) {
+                    const current = queue[head++];
+                    if (current.depth >= 3) continue;
+                    
+                    const neighbors = adjacency.get(current.id);
+                    if (neighbors) {
+                        for (const n of neighbors) {
+                            if (!visitedNodes.has(n)) {
+                                visitedNodes.add(n);
+                                queue.push({id: n, depth: current.depth + 1});
+                                
+                                const nNode = nodeMap.get(n);
+                                const targetCluster = nNode?.cluster_id;
+                                if (targetCluster && targetCluster !== startCluster && !targetCluster.includes('ghost')) {
+                                    visitedClusters.add(targetCluster);
+                                }
+                            }
+                        }
+                    }
+                }
+                candidate.reachability = visitedClusters.size;
+            }
+            
+            const architecturalFindings = ArchitectureAuditor.audit(snapshot as any, topCandidates);
+            
+            const assemblyFindings = architecturalFindings.filter(f => f.findingType === 'HEALTHY_HUB');
+            const impactFindings = architecturalFindings.filter(f => f.findingType !== 'HEALTHY_HUB');
+            
+            // [v0.3.34.20] architecturalRole 병합: Auditor 판정 결과를 candidate에 미리 추가 (정렬 전)
+            topCandidates.forEach(c => {
+                const finding = architecturalFindings.find(f => f.filePath === c.filePath);
+                if (finding) {
+                    (c as any).architecturalRole = finding.role;
+                }
+            });
+
+            // 최종 Multi-Level Sort: Role Penalty > Boundary DESC > Reachability DESC > FanOut DESC
+            topCandidates.sort((a, b) => {
+                // [Ponytail] Test fixtures pollute Top N. Push them to the bottom.
+                const aPenalty = (a as any).semanticRole === 'TEST_HARNESS' || (a as any).semanticRole === 'DOCUMENTATION' || (a as any).architecturalRole === 'TEST_ARTIFACT' ? 1 : 0;
+                const bPenalty = (b as any).semanticRole === 'TEST_HARNESS' || (b as any).semanticRole === 'DOCUMENTATION' || (b as any).architecturalRole === 'TEST_ARTIFACT' ? 1 : 0;
+                if (aPenalty !== bPenalty) return aPenalty - bPenalty;
+                
+                if (b.externalEdges !== a.externalEdges) return b.externalEdges - a.externalEdges;
+                if (b.reachability !== a.reachability) return b.reachability - a.reachability;
+                return b.fanOut - a.fanOut;
+            });
+            
+            const assemblyPoints = topCandidates
+                .filter(c => assemblyFindings.some(f => f.filePath === c.filePath));
+            const testHarnessCount = candidates.filter(c => c.semanticRole === 'TEST_HARNESS' || c.role === 'TEST_ARTIFACT').length;
+            console.log(`[ValidationEngine] TEST_HARNESS or TEST_ARTIFACT count: ${testHarnessCount}`);
+            
+            const logStr = topCandidates.slice(0, 10).map((c, idx) => {
+                const cAny = c as any;
+                const roleStr = cAny.architecturalRole || cAny.role || 'UNKNOWN';
+                const semanticStr = cAny.semanticRole || 'UNKNOWN';
+                return `  #${idx + 1} ${c.filePath} | Role: ${roleStr}/${semanticStr} | Boundary: ${c.externalEdges} | FanOut: ${c.fanOut}`;
+            }).join('\n');
+            console.log(`[ValidationEngine] Top 10 sorted candidates:\n${logStr}`);
+            
+            // Validation Report Data Structure 생성을 위한 임시 배열
+            let validCandidates: any[] = topCandidates
+                .filter(c => impactFindings.some(f => f.filePath === c.filePath));
+            
+            topImpactFiles = validCandidates.slice(0, TOP_IMPACT_LIMIT);
+            systemAssemblyPoints = assemblyPoints.slice(0, TOP_IMPACT_LIMIT);
+
+            const allAuditedFiles = [...topImpactFiles, ...systemAssemblyPoints];
+            
+            const anySnapshot = snapshot as any;
+            if (!anySnapshot.metadata) {
+                anySnapshot.metadata = { projectUUID: '', projectName: '', snapshotCount: 1 };
+            }
+            anySnapshot.metadata.architecturalFindings = architecturalFindings;
 
             ghostEvidence = intentEdges
-                .filter(e => e.isGhost)
+                .filter(e => {
+                    const semType = edgeTypeMap.get(`${e.source}->${e.target}`) || 'CODE';
+                    return semType === 'GHOST';
+                })
                 .sort((a, b) => b.evidenceCount - a.evidenceCount)
                 .slice(0, EVIDENCE_LIMIT);
                 
             boundaryEvidence = intentEdges
-                .filter(e => !e.isGhost && e.evidenceCount > 0)
+                .filter(e => {
+                    const semType = edgeTypeMap.get(`${e.source}->${e.target}`) || 'CODE';
+                    // We only show true CODE/GHOST boundaries, wait GHOST is covered above
+                    return !e.isGhost && e.evidenceCount > 0 && semType === 'CODE';
+                })
                 .sort((a, b) => b.evidenceCount - a.evidenceCount)
                 .slice(0, EVIDENCE_LIMIT);
+                
+            docEvidence = intentEdges
+                .filter(e => {
+                    const semType = edgeTypeMap.get(`${e.source}->${e.target}`) || 'CODE';
+                    return semType === 'DOC';
+                })
+                .sort((a, b) => b.evidenceCount - a.evidenceCount)
+                .slice(0, Math.min(EVIDENCE_LIMIT, 20)); // Up to 20 doc edges
         }
+
+        // --- Compute Confidence Matrix ---
+        let grammarNoiseFiltered = 0;
+        let assemblyPointClassified = 0;
+        let contractHubVerified = 0;
+        let lowGhostRatioScore = 0;
+        let unknownReferencesPenalty = 0;
+        
+        const grammarCount = ghostBreakdown.find(e => e.name === 'GRAMMAR_REFERENCE')?.count || 0;
+        if (grammarCount > 0) grammarNoiseFiltered = 10;
+        
+        if (systemAssemblyPoints && systemAssemblyPoints.length > 0) assemblyPointClassified = 5;
+        
+        const hasContractHub = anySnapshot.metadata?.architecturalFindings?.some((f: any) => f.role === 'CONTRACT_HUB');
+        if (hasContractHub) contractHubVerified = 4;
+        
+        const totalGhostRatio = (ghostBreakdown.reduce((sum, e) => sum + e.count, 0) / snapshot.edges.length) * 100;
+        if (totalGhostRatio < 5 && snapshot.edges.length > 0) lowGhostRatioScore = 6;
+        
+        const unknownCount = ghostBreakdown.find(e => e.name === 'UNKNOWN_REFERENCE')?.count || 0;
+        if (unknownCount > 0) unknownReferencesPenalty = -2;
+
+        const baseScore = 70;
+        const finalScore = baseScore + grammarNoiseFiltered + assemblyPointClassified + contractHubVerified + lowGhostRatioScore + unknownReferencesPenalty;
+        const auditConfidenceMatrix = {
+            baseScore,
+            grammarNoiseFiltered,
+            assemblyPointClassified,
+            contractHubVerified,
+            lowGhostRatio: lowGhostRatioScore,
+            unknownReferences: unknownReferencesPenalty,
+            finalScore: Math.min(100, Math.max(0, finalScore))
+        };
 
         const metrics: ValidationMetrics = {
             generatedAt: new Date().toISOString(),
@@ -693,11 +1032,23 @@ export class ValidationEngine {
             infrastructureSplitCandidates: infraRows,
             auditQueueSeed: auditRows.slice(0, 200),
             ghostBreakdown,
+            externalBreakdown,
             couplingBreakdown,
             ghostEvidence,
             boundaryEvidence,
-            topImpactFiles
+            docEvidence,
+            topImpactFiles,
+            systemAssemblyPoints,
+            auditConfidenceMatrix
         };
+
+        // [P0 진단] 결함 1 원인 규명: 데이터 흐름 계측
+        console.log('[VE_DIAG]', {
+            assemblyAudit: anySnapshot.metadata?.assemblyAudit?.length || 0,
+            architecturalFindings: anySnapshot.metadata?.architecturalFindings?.length || 0,
+            systemAssemblyPoints: systemAssemblyPoints.length,
+            topImpactFiles: topImpactFiles.length
+        });
 
         return {
             snapshot,

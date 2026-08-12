@@ -6,9 +6,9 @@
 
 import { RuleEngine } from './RuleEngine';
 import { filterSnapshot } from './filterSnapshot';
-import { Node, Edge, Cluster, GraphSnapshot, ClusterFlow, NodeType as SNodeType, EdgeType as SEdgeType } from '../types/schema';
+import { Node, Edge, Cluster, GraphSnapshot, ClusterFlow, NodeType as SNodeType, EdgeType as SEdgeType, SemanticRole, SemanticEdgeType, AssemblyAuditReason, AssemblyAuditEntry, ArchitecturalRole, FindingType, RiskLevel, ArchitecturalFinding } from '../types/schema';
 
-export { Node, Edge, Cluster, GraphSnapshot, ClusterFlow };
+export { Node, Edge, Cluster, GraphSnapshot, ClusterFlow, SemanticRole, SemanticEdgeType, AssemblyAuditReason, AssemblyAuditEntry, ArchitecturalRole, FindingType, RiskLevel, ArchitecturalFinding };
 
 // [v0.3.23] Runtime Value Constants for Types (Casted to any for extreme flexibility)
 export const NodeType: any = {

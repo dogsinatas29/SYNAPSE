@@ -1,0 +1,3882 @@
+{
+  "generatedAt": "2026-08-12T08:59:07.058Z",
+  "runCount": 1,
+  "speciesStability": [],
+  "establishmentGate": {
+    "stable": false,
+    "rule": "default: range<=6 and rel<=0.35; Infrastructure Mesh range<=1",
+    "failures": [
+      "Mixed Core: missing",
+      "Bridge Candidate: missing",
+      "Bridge Cluster: missing",
+      "Utility Candidate: missing",
+      "Utility Cluster: missing",
+      "Contract Core: missing",
+      "Infrastructure Mesh: missing"
+    ]
+  },
+  "presenceMatrix": [
+    {
+      "species": "Infrastructure Mesh",
+      "runPresence": [
+        false
+      ],
+      "hitCount": 0,
+      "status": "Unstable"
+    },
+    {
+      "species": "Mixed Core",
+      "runPresence": [
+        false
+      ],
+      "hitCount": 0,
+      "status": "Unstable"
+    },
+    {
+      "species": "Subsystem Core",
+      "runPresence": [
+        false
+      ],
+      "hitCount": 0,
+      "status": "Unstable"
+    },
+    {
+      "species": "Contract Core",
+      "runPresence": [
+        false
+      ],
+      "hitCount": 0,
+      "status": "Unstable"
+    },
+    {
+      "species": "Execution Core",
+      "runPresence": [
+        false
+      ],
+      "hitCount": 0,
+      "status": "Unstable"
+    },
+    {
+      "species": "Bridge Cluster",
+      "runPresence": [
+        false
+      ],
+      "hitCount": 0,
+      "status": "Unstable"
+    },
+    {
+      "species": "Bridge Candidate",
+      "runPresence": [
+        false
+      ],
+      "hitCount": 0,
+      "status": "Unstable"
+    },
+    {
+      "species": "Utility Cluster",
+      "runPresence": [
+        false
+      ],
+      "hitCount": 0,
+      "status": "Unstable"
+    },
+    {
+      "species": "Utility Candidate",
+      "runPresence": [
+        false
+      ],
+      "hitCount": 0,
+      "status": "Unstable"
+    }
+  ],
+  "speciesConfidence": [
+    {
+      "species": "Bridge Candidate",
+      "confidence": 0
+    },
+    {
+      "species": "Bridge Cluster",
+      "confidence": 0
+    },
+    {
+      "species": "Contract Core",
+      "confidence": 0
+    },
+    {
+      "species": "Execution Core",
+      "confidence": 0
+    },
+    {
+      "species": "Infrastructure Mesh",
+      "confidence": 0
+    },
+    {
+      "species": "Mixed Core",
+      "confidence": 0
+    },
+    {
+      "species": "Subsystem Core",
+      "confidence": 0
+    },
+    {
+      "species": "Utility Candidate",
+      "confidence": 0
+    },
+    {
+      "species": "Utility Cluster",
+      "confidence": 0
+    }
+  ],
+  "speciesScoreConfidence": [],
+  "boundaryPressure": [
+    {
+      "label": "Bridge Candidate",
+      "threshold": 0.7,
+      "band": 0.05,
+      "nearCount": 0,
+      "totalCount": 0
+    },
+    {
+      "label": "Utility Candidate",
+      "threshold": 0.75,
+      "band": 0.05,
+      "nearCount": 0,
+      "totalCount": 0
+    },
+    {
+      "label": "Contract Candidate",
+      "threshold": 0.75,
+      "band": 0.05,
+      "nearCount": 0,
+      "totalCount": 0
+    }
+  ],
+  "boundaryConfidenceHistogram": [
+    {
+      "label": "Bridge Candidate",
+      "bins": [
+        {
+          "range": "<0.60",
+          "count": 0
+        },
+        {
+          "range": "0.60-0.70",
+          "count": 0
+        },
+        {
+          "range": "0.70-0.80",
+          "count": 0
+        },
+        {
+          "range": "0.80-0.90",
+          "count": 0
+        },
+        {
+          "range": ">=0.90",
+          "count": 0
+        }
+      ],
+      "totalCount": 0
+    },
+    {
+      "label": "Utility Candidate",
+      "bins": [
+        {
+          "range": "<0.60",
+          "count": 0
+        },
+        {
+          "range": "0.60-0.70",
+          "count": 0
+        },
+        {
+          "range": "0.70-0.80",
+          "count": 0
+        },
+        {
+          "range": "0.80-0.90",
+          "count": 0
+        },
+        {
+          "range": ">=0.90",
+          "count": 0
+        }
+      ],
+      "totalCount": 0
+    },
+    {
+      "label": "Contract Candidate",
+      "bins": [
+        {
+          "range": "<0.60",
+          "count": 0
+        },
+        {
+          "range": "0.60-0.70",
+          "count": 0
+        },
+        {
+          "range": "0.70-0.80",
+          "count": 0
+        },
+        {
+          "range": "0.80-0.90",
+          "count": 0
+        },
+        {
+          "range": ">=0.90",
+          "count": 0
+        }
+      ],
+      "totalCount": 0
+    }
+  ],
+  "infraMeshThresholdSweep": [
+    {
+      "threshold": 0.8,
+      "count": 0,
+      "ids": []
+    },
+    {
+      "threshold": 0.82,
+      "count": 0,
+      "ids": []
+    },
+    {
+      "threshold": 0.84,
+      "count": 0,
+      "ids": []
+    },
+    {
+      "threshold": 0.86,
+      "count": 0,
+      "ids": []
+    }
+  ],
+  "infraMeshBaselineThreshold": 0.84,
+  "infraMeshThresholdRecommendation": {
+    "baselineThreshold": 0.84,
+    "baselineCount": 0,
+    "baselineIds": [],
+    "nextThreshold": 0.86,
+    "nextCount": 0,
+    "rationale": "No high-priority mesh residue after ghost-aware filtering; treat mesh as calibrated-out for this dataset and prioritize Bridge/Utility boundary tuning."
+  },
+  "auditThresholds": {
+    "bridgeAuditMinScore": 0.7,
+    "utilityAuditMinScore": 0.75,
+    "contractAuditMinScore": 0.75
+  },
+  "infrastructureSplitCandidates": [],
+  "auditQueueSeed": [],
+  "ghostBreakdown": [],
+  "externalBreakdown": [],
+  "couplingBreakdown": [
+    {
+      "name": "core",
+      "count": 241,
+      "ratio": 29.5
+    },
+    {
+      "name": "unknown",
+      "count": 176,
+      "ratio": 21.5
+    },
+    {
+      "name": "src",
+      "count": 82,
+      "ratio": 10
+    },
+    {
+      "name": "types",
+      "count": 64,
+      "ratio": 7.8
+    },
+    {
+      "name": "utils",
+      "count": 43,
+      "ratio": 5.3
+    },
+    {
+      "name": "root",
+      "count": 35,
+      "ratio": 4.3
+    },
+    {
+      "name": "bootstrap",
+      "count": 29,
+      "ratio": 3.5
+    },
+    {
+      "name": "webview",
+      "count": 26,
+      "ratio": 3.2
+    },
+    {
+      "name": "server",
+      "count": 25,
+      "ratio": 3.1
+    },
+    {
+      "name": "cli",
+      "count": 21,
+      "ratio": 2.6
+    },
+    {
+      "name": "crypto",
+      "count": 17,
+      "ratio": 2.1
+    },
+    {
+      "name": "extensions",
+      "count": 15,
+      "ratio": 1.8
+    },
+    {
+      "name": "test",
+      "count": 6,
+      "ratio": 0.7
+    },
+    {
+      "name": "ui",
+      "count": 4,
+      "ratio": 0.5
+    },
+    {
+      "name": "demo",
+      "count": 4,
+      "ratio": 0.5
+    },
+    {
+      "name": "assets",
+      "count": 4,
+      "ratio": 0.5
+    },
+    {
+      "name": "node",
+      "count": 3,
+      "ratio": 0.4
+    },
+    {
+      "name": "rust_checker",
+      "count": 2,
+      "ratio": 0.2
+    },
+    {
+      "name": "http",
+      "count": 2,
+      "ratio": 0.2
+    },
+    {
+      "name": "util",
+      "count": 2,
+      "ratio": 0.2
+    },
+    {
+      "name": "...",
+      "count": 2,
+      "ratio": 0.2
+    },
+    {
+      "name": "net",
+      "count": 2,
+      "ratio": 0.2
+    },
+    {
+      "name": "project_state_json",
+      "count": 1,
+      "ratio": 0.1
+    },
+    {
+      "name": "typescript",
+      "count": 1,
+      "ratio": 0.1
+    },
+    {
+      "name": "explorer",
+      "count": 1,
+      "ratio": 0.1
+    },
+    {
+      "name": "cluster_id",
+      "count": 1,
+      "ratio": 0.1
+    },
+    {
+      "name": "express",
+      "count": 1,
+      "ratio": 0.1
+    },
+    {
+      "name": "Y",
+      "count": 1,
+      "ratio": 0.1
+    },
+    {
+      "name": "foo",
+      "count": 1,
+      "ratio": 0.1
+    },
+    {
+      "name": "position",
+      "count": 1,
+      "ratio": 0.1
+    },
+    {
+      "name": "cors",
+      "count": 1,
+      "ratio": 0.1
+    },
+    {
+      "name": "other",
+      "count": 1,
+      "ratio": 0.1
+    },
+    {
+      "name": "[^'\"]+",
+      "count": 1,
+      "ratio": 0.1
+    },
+    {
+      "name": "ts",
+      "count": 1,
+      "ratio": 0.1
+    },
+    {
+      "name": "vscode-languageserver-textdocument",
+      "count": 1,
+      "ratio": 0.1
+    }
+  ],
+  "ghostEvidence": [
+    {
+      "source": "src/rust_checker/state_checker.rs",
+      "target": "project_state_json",
+      "evidenceCount": 1
+    },
+    {
+      "source": "src/utils/hash_utils.ts",
+      "target": "crypto",
+      "evidenceCount": 1
+    },
+    {
+      "source": "src/core/collaboration/CompareProjection.ts",
+      "target": "crypto",
+      "evidenceCount": 1
+    },
+    {
+      "source": "src/core/resolvers/TypeScriptResolver.ts",
+      "target": "typescript",
+      "evidenceCount": 1
+    },
+    {
+      "source": "src/core/CDPManager.ts",
+      "target": "http",
+      "evidenceCount": 1
+    },
+    {
+      "source": "src/utils/hash_utils.ts",
+      "target": "util",
+      "evidenceCount": 1
+    },
+    {
+      "source": "src/extension.ts",
+      "target": "node",
+      "evidenceCount": 1
+    },
+    {
+      "source": "src/webview/CanvasPanel.ts",
+      "target": "http",
+      "evidenceCount": 1
+    },
+    {
+      "source": "src/server/standalone.ts",
+      "target": "express",
+      "evidenceCount": 1
+    },
+    {
+      "source": "src/core/FileScanner.ts",
+      "target": "Y",
+      "evidenceCount": 1
+    },
+    {
+      "source": "src/core/resolvers/TypeScriptResolver.ts",
+      "target": "foo",
+      "evidenceCount": 1
+    },
+    {
+      "source": "src/core/benchmark/BenchmarkGraphGenerator.ts",
+      "target": "crypto",
+      "evidenceCount": 1
+    },
+    {
+      "source": "src/server/standalone.ts",
+      "target": "cors",
+      "evidenceCount": 1
+    },
+    {
+      "source": "src/core/collaboration/HarvestProjection.ts",
+      "target": "crypto",
+      "evidenceCount": 1
+    },
+    {
+      "source": "src/cli/verify_determinism.ts",
+      "target": "util",
+      "evidenceCount": 1
+    },
+    {
+      "source": "src/core/ProjectMetadata.ts",
+      "target": "crypto",
+      "evidenceCount": 1
+    },
+    {
+      "source": "src/core/SnapshotSystem.ts",
+      "target": "crypto",
+      "evidenceCount": 1
+    },
+    {
+      "source": "src/core/EdgeBuilder.ts",
+      "target": "crypto",
+      "evidenceCount": 1
+    },
+    {
+      "source": "src/core/collaboration/SessionManager.ts",
+      "target": "crypto",
+      "evidenceCount": 1
+    },
+    {
+      "source": "src/core/DataPipeline.ts",
+      "target": "crypto",
+      "evidenceCount": 1
+    },
+    {
+      "source": "src/core/DirectChatScraper.ts",
+      "target": "crypto",
+      "evidenceCount": 1
+    },
+    {
+      "source": "src/client.ts",
+      "target": "node",
+      "evidenceCount": 1
+    },
+    {
+      "source": "src/server/server.ts",
+      "target": "vscode-languageserver-textdocument",
+      "evidenceCount": 1
+    },
+    {
+      "source": "src/core/collaboration/CompareEngine.ts",
+      "target": "crypto",
+      "evidenceCount": 1
+    },
+    {
+      "source": "src/core/CDPManager.ts",
+      "target": "net",
+      "evidenceCount": 1
+    },
+    {
+      "source": "src/core/collaboration/MountManager.ts",
+      "target": "net",
+      "evidenceCount": 1
+    },
+    {
+      "source": "src/server/standalone.ts",
+      "target": "crypto",
+      "evidenceCount": 1
+    },
+    {
+      "source": "src/core/collaboration/AccountManager.ts",
+      "target": "crypto",
+      "evidenceCount": 1
+    },
+    {
+      "source": "src/core/canvas-engine/StateManager.ts",
+      "target": "crypto",
+      "evidenceCount": 1
+    },
+    {
+      "source": "src/core/collaboration/EdgeGenerator.ts",
+      "target": "crypto",
+      "evidenceCount": 1
+    },
+    {
+      "source": "src/server/server.ts",
+      "target": "node",
+      "evidenceCount": 1
+    },
+    {
+      "source": "src/core/CDPManager.ts",
+      "target": "crypto",
+      "evidenceCount": 1
+    }
+  ],
+  "boundaryEvidence": [
+    {
+      "source": "test_hygiene.ts",
+      "target": "src/core/analysis/reasoning/TarjanSCC.ts",
+      "evidenceCount": 1
+    },
+    {
+      "source": "src/cli/BatchRunner.ts",
+      "target": "src/cli/SummaryGenerator.ts",
+      "evidenceCount": 1
+    },
+    {
+      "source": "src/core/DataPipeline.ts",
+      "target": "src/utils/Logger.ts",
+      "evidenceCount": 1
+    },
+    {
+      "source": "src/core/DebuggerSystem.ts",
+      "target": "src/core/RendererCore.ts",
+      "evidenceCount": 1
+    },
+    {
+      "source": "src/core/SnapshotSystem.ts",
+      "target": "src/core/BlacklistOrchestrator.ts",
+      "evidenceCount": 1
+    },
+    {
+      "source": "src/core/collaboration/MountManager.ts",
+      "target": "src/core/SynapseIgnore.ts",
+      "evidenceCount": 1
+    },
+    {
+      "source": "src/core/canvas-engine/Intent.ts",
+      "target": "src/core/GraphModel.ts",
+      "evidenceCount": 1
+    },
+    {
+      "source": "src/cli/ProjectAnalyzer.ts",
+      "target": "src/core/analysis/intent/ConfidenceEngine.ts",
+      "evidenceCount": 1
+    },
+    {
+      "source": "src/core/RendererCore.ts",
+      "target": "src/core/canvas-engine/RenderProtocol.ts",
+      "evidenceCount": 1
+    },
+    {
+      "source": "src/core/VirtualDebugger.ts",
+      "target": "src/utils/Logger.ts",
+      "evidenceCount": 1
+    },
+    {
+      "source": "src/core/DataPipeline.ts",
+      "target": "src/core/FileScanner.ts",
+      "evidenceCount": 1
+    },
+    {
+      "source": "src/core/GeminiParser.ts",
+      "target": "src/core/RuleEngine.ts",
+      "evidenceCount": 1
+    },
+    {
+      "source": "src/bootstrap/BootstrapEngine.ts",
+      "target": "src/core/JsTsScanner.ts",
+      "evidenceCount": 1
+    },
+    {
+      "source": "src/core/analysis/reasoning/CommunityDetector.ts",
+      "target": "src/types/schema.ts",
+      "evidenceCount": 1
+    },
+    {
+      "source": "src/server/standalone.ts",
+      "target": "src/core/collaboration/SessionManager.ts",
+      "evidenceCount": 1
+    },
+    {
+      "source": "src/core/analysis/analyzers/SchemaViolationAnalyzer.ts",
+      "target": "src/types/schema.ts",
+      "evidenceCount": 1
+    },
+    {
+      "source": "src/extension.ts",
+      "target": "src/core/GeminiParser.ts",
+      "evidenceCount": 1
+    },
+    {
+      "source": "src/core/PythonScanner.ts",
+      "target": "src/types/schema.ts",
+      "evidenceCount": 1
+    },
+    {
+      "source": "src/core/analysis/InterventionSimulator.ts",
+      "target": "src/core/analysis/reasoning/TarjanSCC.ts",
+      "evidenceCount": 1
+    },
+    {
+      "source": "src/core/NodeBuilder.ts",
+      "target": "src/core/DirectoryTreeBuilder.ts",
+      "evidenceCount": 1
+    },
+    {
+      "source": "src/core/collaboration/ReferenceVerifier.ts",
+      "target": "src/utils/Logger.ts",
+      "evidenceCount": 1
+    },
+    {
+      "source": "src/core/collaboration/EdgeGenerator.ts",
+      "target": "src/types/schema.ts",
+      "evidenceCount": 1
+    },
+    {
+      "source": "src/core/DataPipeline.ts",
+      "target": "src/types/schema.ts",
+      "evidenceCount": 1
+    },
+    {
+      "source": "src/core/GhostPolicy.ts",
+      "target": "src/core/FileScanner.ts",
+      "evidenceCount": 1
+    },
+    {
+      "source": "src/core/VisibleGraphResolver.ts",
+      "target": "src/types/schema.ts",
+      "evidenceCount": 1
+    },
+    {
+      "source": "src/core/collaboration/ArchitectureIndexBuilder.ts",
+      "target": "src/types/schema.ts",
+      "evidenceCount": 1
+    },
+    {
+      "source": "src/core/canvas-engine/StateManager.ts",
+      "target": "src/core/GraphModel.ts",
+      "evidenceCount": 1
+    },
+    {
+      "source": "src/core/canvas-engine/ValidationHarness.ts",
+      "target": "src/core/RuleEngine.ts",
+      "evidenceCount": 1
+    },
+    {
+      "source": "src/core/transaction/ExecutionLayer.ts",
+      "target": "src/core/EdgeCodeRefactorer.ts",
+      "evidenceCount": 1
+    },
+    {
+      "source": "src/core/projection/ProjectionLayer.ts",
+      "target": "src/core/projection/RuleStore.ts",
+      "evidenceCount": 1
+    },
+    {
+      "source": "src/cli/stage_a5_validator.ts",
+      "target": "src/cli/signal_laboratory.ts",
+      "evidenceCount": 1
+    },
+    {
+      "source": "src/bootstrap/BootstrapEngine.ts",
+      "target": "src/core/KotlinScanner.ts",
+      "evidenceCount": 1
+    },
+    {
+      "source": "src/core/DataPipeline.ts",
+      "target": "src/core/canvas-engine/CanvasEngine.ts",
+      "evidenceCount": 1
+    },
+    {
+      "source": "src/core/benchmark/BenchmarkHarness.ts",
+      "target": "src/core/GhostPolicy.ts",
+      "evidenceCount": 1
+    },
+    {
+      "source": "src/core/analysis/reasoning/TarjanSCC.ts",
+      "target": "src/core/analysis/types.ts",
+      "evidenceCount": 1
+    },
+    {
+      "source": "src/core/analysis/reasoning/SmellDetector.ts",
+      "target": "src/core/analysis/types.ts",
+      "evidenceCount": 1
+    },
+    {
+      "source": "src/core/analysis/InterventionSimulator.ts",
+      "target": "src/types/schema.ts",
+      "evidenceCount": 1
+    },
+    {
+      "source": "src/server/standalone.ts",
+      "target": "src/utils/Logger.ts",
+      "evidenceCount": 1
+    },
+    {
+      "source": "src/core/analysis/reasoning/TarjanSCC.ts",
+      "target": "src/core/analysis/GraphViewBuilder.ts",
+      "evidenceCount": 1
+    },
+    {
+      "source": "src/core/analysis/GraphViewBuilder.ts",
+      "target": "src/types/schema.ts",
+      "evidenceCount": 1
+    },
+    {
+      "source": "src/core/analysis/analyzers/FractureAnalyzer.ts",
+      "target": "src/core/analysis/types.ts",
+      "evidenceCount": 1
+    },
+    {
+      "source": "src/server/standalone.ts",
+      "target": "src/core/collaboration/MountManager.ts",
+      "evidenceCount": 1
+    },
+    {
+      "source": "src/core/GhostClassifier.ts",
+      "target": "src/utils/Logger.ts",
+      "evidenceCount": 1
+    },
+    {
+      "source": "src/core/benchmark/BenchmarkGraphGenerator.ts",
+      "target": "src/core/GraphModel.ts",
+      "evidenceCount": 1
+    },
+    {
+      "source": "src/core/collaboration/BoundaryGuard.ts",
+      "target": "src/core/ProjectMetadata.ts",
+      "evidenceCount": 1
+    },
+    {
+      "source": "src/core/benchmark/BenchmarkHarness.ts",
+      "target": "src/core/ReferenceResolver.ts",
+      "evidenceCount": 1
+    },
+    {
+      "source": "src/core/canvas-engine/SpatialRuleBook.ts",
+      "target": "src/core/RuleEngine.ts",
+      "evidenceCount": 1
+    },
+    {
+      "source": "src/core/canvas-engine/CanvasEngine.ts",
+      "target": "src/core/canvas-engine/PhaseGate.ts",
+      "evidenceCount": 1
+    },
+    {
+      "source": "src/core/RendererCore.ts",
+      "target": "src/core/GraphModel.ts",
+      "evidenceCount": 1
+    },
+    {
+      "source": "src/webview/CanvasPanel.ts",
+      "target": "src/core/GraphModel.ts",
+      "evidenceCount": 1
+    }
+  ],
+  "docEvidence": [],
+  "topImpactFiles": [
+    {
+      "filePath": "src/bootstrap/BootstrapEngine.ts",
+      "externalEdges": 24,
+      "targets": [
+        {
+          "target": "src/core/JsTsScanner.ts",
+          "count": 1
+        },
+        {
+          "target": "src/core/KotlinScanner.ts",
+          "count": 1
+        },
+        {
+          "target": "src/core/graphBuilder.ts",
+          "count": 1
+        },
+        {
+          "target": "src/core/CppScanner.ts",
+          "count": 1
+        },
+        {
+          "target": "src/core/MarkdownScanner.ts",
+          "count": 1
+        },
+        {
+          "target": "src/utils/Logger.ts",
+          "count": 1
+        },
+        {
+          "target": "src/core/SnapshotSystem.ts",
+          "count": 1
+        },
+        {
+          "target": "src/core/GeminiParser.ts",
+          "count": 1
+        },
+        {
+          "target": "src/core/ScannerRegistry.ts",
+          "count": 1
+        },
+        {
+          "target": "src/core/RuleEngine.ts",
+          "count": 1
+        }
+      ],
+      "fanIn": 3,
+      "fanOut": 25,
+      "reachability": 11,
+      "percentiles": {
+        "boundary": 0.3012048192771175,
+        "fanIn": 11.144578313253021,
+        "fanOut": 0.9036144578313241
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "COORDINATOR"
+    },
+    {
+      "filePath": "src/server/standalone.ts",
+      "externalEdges": 21,
+      "targets": [
+        {
+          "target": "src/core/collaboration/SessionManager.ts",
+          "count": 1
+        },
+        {
+          "target": "src/utils/Logger.ts",
+          "count": 1
+        },
+        {
+          "target": "src/core/collaboration/MountManager.ts",
+          "count": 1
+        },
+        {
+          "target": "src/core/collaboration/IdentityManager.ts",
+          "count": 1
+        },
+        {
+          "target": "src/core/SymbolIndex.ts",
+          "count": 1
+        },
+        {
+          "target": "src/core/collaboration/ReferenceVerifier.ts",
+          "count": 1
+        },
+        {
+          "target": "src/core/FlowScanner.ts",
+          "count": 1
+        },
+        {
+          "target": "src/core/collaboration/RestCollaborationTransport.ts",
+          "count": 1
+        },
+        {
+          "target": "src/core/collaboration/HarvestSessionManager.ts",
+          "count": 1
+        },
+        {
+          "target": "src/core/collaboration/AccountManager.ts",
+          "count": 1
+        }
+      ],
+      "fanIn": 0,
+      "fanOut": 21,
+      "reachability": 4,
+      "percentiles": {
+        "boundary": 0.6024096385542066,
+        "fanIn": 100,
+        "fanOut": 1.8072289156626482
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "UNKNOWN"
+    },
+    {
+      "filePath": "src/webview/CanvasPanel.ts",
+      "externalEdges": 20,
+      "targets": [
+        {
+          "target": "src/core/GraphModel.ts",
+          "count": 1
+        },
+        {
+          "target": "src/core/SnapshotSystem.ts",
+          "count": 1
+        },
+        {
+          "target": "src/core/SynapseIgnore.ts",
+          "count": 1
+        },
+        {
+          "target": "src/core/VirtualDebugger.ts",
+          "count": 1
+        },
+        {
+          "target": "http",
+          "count": 1
+        },
+        {
+          "target": "src/utils/Logger.ts",
+          "count": 1
+        },
+        {
+          "target": "src/core/FileScanner.ts",
+          "count": 1
+        },
+        {
+          "target": "src/core/GeminiParser.ts",
+          "count": 1
+        },
+        {
+          "target": "src/core/LogicAnalyzer.ts",
+          "count": 1
+        },
+        {
+          "target": "src/core/EdgeCodeRefactorer.ts",
+          "count": 1
+        }
+      ],
+      "fanIn": 2,
+      "fanOut": 23,
+      "reachability": 12,
+      "percentiles": {
+        "boundary": 0.9036144578313241,
+        "fanIn": 20.180722891566262,
+        "fanOut": 1.2048192771084416
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "UI_COMPONENT"
+    },
+    {
+      "filePath": "src/extension.ts",
+      "externalEdges": 17,
+      "targets": [
+        {
+          "target": "src/core/GeminiParser.ts",
+          "count": 1
+        },
+        {
+          "target": "src/core/ReportExporter.ts",
+          "count": 1
+        },
+        {
+          "target": "src/core/SymbolIndex.ts",
+          "count": 1
+        },
+        {
+          "target": "src/core/ProjectMetadata.ts",
+          "count": 1
+        },
+        {
+          "target": "src/core/LogicAnalyzer.ts",
+          "count": 1
+        },
+        {
+          "target": "node",
+          "count": 1
+        },
+        {
+          "target": "src/core/collaboration/RuntimeInitializer.ts",
+          "count": 1
+        },
+        {
+          "target": "src/core/BillingManager.ts",
+          "count": 1
+        },
+        {
+          "target": "src/core/AiOrchestrator.ts",
+          "count": 1
+        },
+        {
+          "target": "src/core/RuleEngine.ts",
+          "count": 1
+        }
+      ],
+      "fanIn": 0,
+      "fanOut": 21,
+      "reachability": 14,
+      "percentiles": {
+        "boundary": 1.2048192771084416,
+        "fanIn": 100,
+        "fanOut": 1.8072289156626482
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME_ENTRY",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "UNKNOWN"
+    },
+    {
+      "filePath": "src/core/DataPipeline.ts",
+      "externalEdges": 7,
+      "targets": [
+        {
+          "target": "src/utils/Logger.ts",
+          "count": 1
+        },
+        {
+          "target": "src/types/schema.ts",
+          "count": 1
+        },
+        {
+          "target": "src/core/canvas-engine/CanvasEngine.ts",
+          "count": 1
+        },
+        {
+          "target": "src/core/BoundsDiagnosticReporter.ts",
+          "count": 1
+        },
+        {
+          "target": "src/core/LayoutDiagnosticReporter.ts",
+          "count": 1
+        },
+        {
+          "target": "src/core/DiagnosticReporter.ts",
+          "count": 1
+        },
+        {
+          "target": "crypto",
+          "count": 1
+        }
+      ],
+      "fanIn": 2,
+      "fanOut": 25,
+      "reachability": 14,
+      "percentiles": {
+        "boundary": 1.506024096385545,
+        "fanIn": 20.180722891566262,
+        "fanOut": 0.9036144578313241
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "DOMAIN_SERVICE"
+    },
+    {
+      "filePath": "src/cli/ProjectAnalyzer.ts",
+      "externalEdges": 6,
+      "targets": [
+        {
+          "target": "src/core/analysis/intent/ConfidenceEngine.ts",
+          "count": 1
+        },
+        {
+          "target": "src/core/analysis/intent/VSCodeProvider.ts",
+          "count": 1
+        },
+        {
+          "target": "src/core/analysis/intent/RegexProvider.ts",
+          "count": 1
+        },
+        {
+          "target": "src/core/analysis/intent/ArchitectMapGenerator.ts",
+          "count": 1
+        },
+        {
+          "target": "src/core/analysis/intent/EvidenceAggregator.ts",
+          "count": 1
+        },
+        {
+          "target": "src/core/analysis/intent/ReasonedReportBundle.ts",
+          "count": 1
+        }
+      ],
+      "fanIn": 2,
+      "fanOut": 6,
+      "reachability": 13,
+      "percentiles": {
+        "boundary": 2.409638554216869,
+        "fanIn": 20.180722891566262,
+        "fanOut": 3.313253012048193
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "UNKNOWN"
+    },
+    {
+      "filePath": "src/core/analysis/reasoning/ReasoningEngine.ts",
+      "externalEdges": 6,
+      "targets": [
+        {
+          "target": "src/types/schema.ts",
+          "count": 1
+        },
+        {
+          "target": "src/core/analysis/InterventionSimulator.ts",
+          "count": 1
+        },
+        {
+          "target": "src/utils/Logger.ts",
+          "count": 1
+        },
+        {
+          "target": "src/core/analysis/types.ts",
+          "count": 1
+        },
+        {
+          "target": "src/core/analysis/TargetSelector.ts",
+          "count": 1
+        },
+        {
+          "target": "src/core/GraphModel.ts",
+          "count": 1
+        }
+      ],
+      "fanIn": 0,
+      "fanOut": 8,
+      "reachability": 4,
+      "percentiles": {
+        "boundary": 2.409638554216869,
+        "fanIn": 100,
+        "fanOut": 2.409638554216869
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "DOMAIN_SERVICE"
+    },
+    {
+      "filePath": "src/core/canvas-engine/StateManager.ts",
+      "externalEdges": 6,
+      "targets": [
+        {
+          "target": "src/core/GraphModel.ts",
+          "count": 1
+        },
+        {
+          "target": "src/core/transaction/CommitManager.ts",
+          "count": 1
+        },
+        {
+          "target": "src/utils/Logger.ts",
+          "count": 1
+        },
+        {
+          "target": "crypto",
+          "count": 1
+        },
+        {
+          "target": "src/core/RuleEngine.ts",
+          "count": 1
+        },
+        {
+          "target": "src/core/projection/ProjectionLayer.ts",
+          "count": 1
+        }
+      ],
+      "fanIn": 4,
+      "fanOut": 6,
+      "reachability": 4,
+      "percentiles": {
+        "boundary": 2.409638554216869,
+        "fanIn": 8.132530120481931,
+        "fanOut": 3.313253012048193
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "DOMAIN_SERVICE"
+    },
+    {
+      "filePath": "src/core/VirtualDebugger.ts",
+      "externalEdges": 5,
+      "targets": [
+        {
+          "target": "src/utils/Logger.ts",
+          "count": 1
+        },
+        {
+          "target": "src/types/schema.ts",
+          "count": 1
+        },
+        {
+          "target": "src/core/validation/ValidationEngine.ts",
+          "count": 1
+        },
+        {
+          "target": "src/core/validation/ValidationContext.ts",
+          "count": 1
+        },
+        {
+          "target": "src/core/validation/ValidationReportBuilder.ts",
+          "count": 1
+        }
+      ],
+      "fanIn": 1,
+      "fanOut": 5,
+      "reachability": 13,
+      "percentiles": {
+        "boundary": 2.7108433734939723,
+        "fanIn": 72.89156626506025,
+        "fanOut": 6.024096385542165
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "DOMAIN_SERVICE"
+    },
+    {
+      "filePath": "src/core/analysis/reasoning/TarjanSCC.ts",
+      "externalEdges": 4,
+      "targets": [
+        {
+          "target": "src/core/analysis/types.ts",
+          "count": 1
+        },
+        {
+          "target": "src/core/analysis/GraphViewBuilder.ts",
+          "count": 1
+        },
+        {
+          "target": "src/types/schema.ts",
+          "count": 1
+        },
+        {
+          "target": "src/core/NodeBuilder.ts",
+          "count": 1
+        }
+      ],
+      "fanIn": 5,
+      "fanOut": 4,
+      "reachability": 4,
+      "percentiles": {
+        "boundary": 4.216867469879517,
+        "fanIn": 5.722891566265062,
+        "fanOut": 9.638554216867462
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "DOMAIN_SERVICE"
+    },
+    {
+      "filePath": "src/core/collaboration/CompareEngine.ts",
+      "externalEdges": 4,
+      "targets": [
+        {
+          "target": "src/core/ProjectMetadata.ts",
+          "count": 1
+        },
+        {
+          "target": "src/types/schema.ts",
+          "count": 1
+        },
+        {
+          "target": "crypto",
+          "count": 1
+        },
+        {
+          "target": "src/utils/Logger.ts",
+          "count": 1
+        }
+      ],
+      "fanIn": 1,
+      "fanOut": 5,
+      "reachability": 3,
+      "percentiles": {
+        "boundary": 4.216867469879517,
+        "fanIn": 72.89156626506025,
+        "fanOut": 6.024096385542165
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "DOMAIN_SERVICE"
+    },
+    {
+      "filePath": "src/server/server.ts",
+      "externalEdges": 4,
+      "targets": [
+        {
+          "target": "src/core/FlowScanner.ts",
+          "count": 1
+        },
+        {
+          "target": "src/core/GeminiParser.ts",
+          "count": 1
+        },
+        {
+          "target": "vscode-languageserver-textdocument",
+          "count": 1
+        },
+        {
+          "target": "node",
+          "count": 1
+        }
+      ],
+      "fanIn": 0,
+      "fanOut": 4,
+      "reachability": 3,
+      "percentiles": {
+        "boundary": 4.216867469879517,
+        "fanIn": 100,
+        "fanOut": 9.638554216867462
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "UNKNOWN"
+    },
+    {
+      "filePath": "src/core/resolvers/TypeScriptResolver.ts",
+      "externalEdges": 4,
+      "targets": [
+        {
+          "target": "typescript",
+          "count": 1
+        },
+        {
+          "target": "foo",
+          "count": 1
+        },
+        {
+          "target": "src/types/schema.ts",
+          "count": 1
+        },
+        {
+          "target": "src/utils/Logger.ts",
+          "count": 1
+        }
+      ],
+      "fanIn": 1,
+      "fanOut": 5,
+      "reachability": 2,
+      "percentiles": {
+        "boundary": 4.216867469879517,
+        "fanIn": 72.89156626506025,
+        "fanOut": 6.024096385542165
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "CONTRACT_HUB"
+    },
+    {
+      "filePath": "src/core/CDPManager.ts",
+      "externalEdges": 4,
+      "targets": [
+        {
+          "target": "http",
+          "count": 1
+        },
+        {
+          "target": "src/utils/Logger.ts",
+          "count": 1
+        },
+        {
+          "target": "net",
+          "count": 1
+        },
+        {
+          "target": "crypto",
+          "count": 1
+        }
+      ],
+      "fanIn": 0,
+      "fanOut": 4,
+      "reachability": 1,
+      "percentiles": {
+        "boundary": 4.216867469879517,
+        "fanIn": 100,
+        "fanOut": 9.638554216867462
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "DOMAIN_SERVICE"
+    },
+    {
+      "filePath": "src/cli/BatchRunner.ts",
+      "externalEdges": 3,
+      "targets": [
+        {
+          "target": "src/cli/ReportVerifier.ts",
+          "count": 1
+        },
+        {
+          "target": "src/core/analysis/intent/MarkdownExporter.ts",
+          "count": 1
+        },
+        {
+          "target": "src/core/analysis/intent/HtmlReportGenerator.ts",
+          "count": 1
+        }
+      ],
+      "fanIn": 1,
+      "fanOut": 5,
+      "reachability": 13,
+      "percentiles": {
+        "boundary": 8.132530120481931,
+        "fanIn": 72.89156626506025,
+        "fanOut": 6.024096385542165
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "UNKNOWN"
+    },
+    {
+      "filePath": "src/utils/hash_utils.ts",
+      "externalEdges": 3,
+      "targets": [
+        {
+          "target": "crypto",
+          "count": 1
+        },
+        {
+          "target": "util",
+          "count": 1
+        },
+        {
+          "target": "docs/determinism.md",
+          "count": 1
+        }
+      ],
+      "fanIn": 1,
+      "fanOut": 3,
+      "reachability": 13,
+      "percentiles": {
+        "boundary": 8.132530120481931,
+        "fanIn": 72.89156626506025,
+        "fanOut": 16.86746987951807
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "UNKNOWN"
+    },
+    {
+      "filePath": "src/core/analysis/InterventionSimulator.ts",
+      "externalEdges": 3,
+      "targets": [
+        {
+          "target": "src/core/analysis/reasoning/TarjanSCC.ts",
+          "count": 1
+        },
+        {
+          "target": "src/types/schema.ts",
+          "count": 1
+        },
+        {
+          "target": "src/utils/Logger.ts",
+          "count": 1
+        }
+      ],
+      "fanIn": 3,
+      "fanOut": 5,
+      "reachability": 4,
+      "percentiles": {
+        "boundary": 8.132530120481931,
+        "fanIn": 11.144578313253021,
+        "fanOut": 6.024096385542165
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "DOMAIN_SERVICE"
+    },
+    {
+      "filePath": "src/core/analysis/TargetSelector.ts",
+      "externalEdges": 3,
+      "targets": [
+        {
+          "target": "src/core/GraphModel.ts",
+          "count": 1
+        },
+        {
+          "target": "src/types/schema.ts",
+          "count": 1
+        },
+        {
+          "target": "src/core/analysis/reasoning/TarjanSCC.ts",
+          "count": 1
+        }
+      ],
+      "fanIn": 1,
+      "fanOut": 5,
+      "reachability": 4,
+      "percentiles": {
+        "boundary": 8.132530120481931,
+        "fanIn": 72.89156626506025,
+        "fanOut": 6.024096385542165
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "DOMAIN_SERVICE"
+    },
+    {
+      "filePath": "src/core/analysis/reasoning/InterventionEngine.ts",
+      "externalEdges": 3,
+      "targets": [
+        {
+          "target": "src/core/analysis/types.ts",
+          "count": 1
+        },
+        {
+          "target": "src/core/CommunityDetector.ts",
+          "count": 1
+        },
+        {
+          "target": "src/types/schema.ts",
+          "count": 1
+        }
+      ],
+      "fanIn": 1,
+      "fanOut": 4,
+      "reachability": 4,
+      "percentiles": {
+        "boundary": 8.132530120481931,
+        "fanIn": 72.89156626506025,
+        "fanOut": 9.638554216867462
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "DOMAIN_SERVICE"
+    },
+    {
+      "filePath": "src/core/collaboration/RemoteLayerProjector.ts",
+      "externalEdges": 3,
+      "targets": [
+        {
+          "target": "src/core/ProjectMetadata.ts",
+          "count": 1
+        },
+        {
+          "target": "src/utils/Logger.ts",
+          "count": 1
+        },
+        {
+          "target": "src/types/schema.ts",
+          "count": 1
+        }
+      ],
+      "fanIn": 0,
+      "fanOut": 3,
+      "reachability": 3,
+      "percentiles": {
+        "boundary": 8.132530120481931,
+        "fanIn": 100,
+        "fanOut": 16.86746987951807
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "DOMAIN_SERVICE"
+    },
+    {
+      "filePath": "src/core/collaboration/HarvestEngine.ts",
+      "externalEdges": 3,
+      "targets": [
+        {
+          "target": "src/utils/Logger.ts",
+          "count": 1
+        },
+        {
+          "target": "src/types/schema.ts",
+          "count": 1
+        },
+        {
+          "target": "src/core/ProjectMetadata.ts",
+          "count": 1
+        }
+      ],
+      "fanIn": 2,
+      "fanOut": 3,
+      "reachability": 3,
+      "percentiles": {
+        "boundary": 8.132530120481931,
+        "fanIn": 20.180722891566262,
+        "fanOut": 16.86746987951807
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "DOMAIN_SERVICE"
+    },
+    {
+      "filePath": "src/core/collaboration/RuntimeInitializer.ts",
+      "externalEdges": 3,
+      "targets": [
+        {
+          "target": "src/utils/Logger.ts",
+          "count": 1
+        },
+        {
+          "target": "src/core/SymbolIndex.ts",
+          "count": 1
+        },
+        {
+          "target": "src/core/ProjectMetadata.ts",
+          "count": 1
+        }
+      ],
+      "fanIn": 2,
+      "fanOut": 5,
+      "reachability": 2,
+      "percentiles": {
+        "boundary": 8.132530120481931,
+        "fanIn": 20.180722891566262,
+        "fanOut": 6.024096385542165
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "DOMAIN_SERVICE"
+    },
+    {
+      "filePath": "src/core/collaboration/SessionManager.ts",
+      "externalEdges": 3,
+      "targets": [
+        {
+          "target": "src/core/ProjectMetadata.ts",
+          "count": 1
+        },
+        {
+          "target": "crypto",
+          "count": 1
+        },
+        {
+          "target": "src/utils/Logger.ts",
+          "count": 1
+        }
+      ],
+      "fanIn": 5,
+      "fanOut": 4,
+      "reachability": 2,
+      "percentiles": {
+        "boundary": 8.132530120481931,
+        "fanIn": 5.722891566265062,
+        "fanOut": 9.638554216867462
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "DOMAIN_SERVICE"
+    },
+    {
+      "filePath": "src/core/FileScanner.ts",
+      "externalEdges": 3,
+      "targets": [
+        {
+          "target": "Y",
+          "count": 1
+        },
+        {
+          "target": "src/utils/Logger.ts",
+          "count": 1
+        },
+        {
+          "target": "src/types/schema.ts",
+          "count": 1
+        }
+      ],
+      "fanIn": 7,
+      "fanOut": 4,
+      "reachability": 2,
+      "percentiles": {
+        "boundary": 8.132530120481931,
+        "fanIn": 3.6144578313252964,
+        "fanOut": 9.638554216867462
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "DOMAIN_SERVICE"
+    },
+    {
+      "filePath": "src/core/collaboration/MountManager.ts",
+      "externalEdges": 3,
+      "targets": [
+        {
+          "target": "src/core/SynapseIgnore.ts",
+          "count": 1
+        },
+        {
+          "target": "src/utils/Logger.ts",
+          "count": 1
+        },
+        {
+          "target": "net",
+          "count": 1
+        }
+      ],
+      "fanIn": 1,
+      "fanOut": 3,
+      "reachability": 2,
+      "percentiles": {
+        "boundary": 8.132530120481931,
+        "fanIn": 72.89156626506025,
+        "fanOut": 16.86746987951807
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "DOMAIN_SERVICE"
+    },
+    {
+      "filePath": "src/core/FlowchartGenerator.ts",
+      "externalEdges": 3,
+      "targets": [
+        {
+          "target": "src/types/schema.ts",
+          "count": 1
+        },
+        {
+          "target": "src/utils/visualHints.ts",
+          "count": 1
+        },
+        {
+          "target": "src/utils/Logger.ts",
+          "count": 1
+        }
+      ],
+      "fanIn": 2,
+      "fanOut": 3,
+      "reachability": 2,
+      "percentiles": {
+        "boundary": 8.132530120481931,
+        "fanIn": 20.180722891566262,
+        "fanOut": 16.86746987951807
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "DOMAIN_SERVICE"
+    },
+    {
+      "filePath": "fix_cluster.sh",
+      "externalEdges": 3,
+      "targets": [
+        {
+          "target": "cluster_id",
+          "count": 1
+        },
+        {
+          "target": "position",
+          "count": 1
+        },
+        {
+          "target": "ts",
+          "count": 1
+        }
+      ],
+      "fanIn": 0,
+      "fanOut": 3,
+      "reachability": 0,
+      "percentiles": {
+        "boundary": 8.132530120481931,
+        "fanIn": 100,
+        "fanOut": 16.86746987951807
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "UNKNOWN"
+    },
+    {
+      "filePath": "src/rust_checker/state_checker.rs",
+      "externalEdges": 2,
+      "targets": [
+        {
+          "target": "project_state_json",
+          "count": 1
+        },
+        {
+          "target": "src/rust_checker/reporter.rs",
+          "count": 1
+        }
+      ],
+      "fanIn": 1,
+      "fanOut": 2,
+      "reachability": 13,
+      "percentiles": {
+        "boundary": 17.771084337349393,
+        "fanIn": 72.89156626506025,
+        "fanOut": 29.51807228915662
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "UNKNOWN"
+    },
+    {
+      "filePath": "test_hygiene.ts",
+      "externalEdges": 2,
+      "targets": [
+        {
+          "target": "src/core/analysis/reasoning/TarjanSCC.ts",
+          "count": 1
+        },
+        {
+          "target": "src/core/DataPipeline.ts",
+          "count": 1
+        }
+      ],
+      "fanIn": 0,
+      "fanOut": 2,
+      "reachability": 12,
+      "percentiles": {
+        "boundary": 17.771084337349393,
+        "fanIn": 100,
+        "fanOut": 29.51807228915662
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "UNKNOWN"
+    },
+    {
+      "filePath": "src/cli/verify_determinism.ts",
+      "externalEdges": 2,
+      "targets": [
+        {
+          "target": "src/utils/hash_utils.ts",
+          "count": 1
+        },
+        {
+          "target": "util",
+          "count": 1
+        }
+      ],
+      "fanIn": 0,
+      "fanOut": 2,
+      "reachability": 11,
+      "percentiles": {
+        "boundary": 17.771084337349393,
+        "fanIn": 100,
+        "fanOut": 29.51807228915662
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "UNKNOWN"
+    },
+    {
+      "filePath": "src/core/canvas-engine/CanvasEngine.ts",
+      "externalEdges": 2,
+      "targets": [
+        {
+          "target": "src/core/transaction/ExecutionLayer.ts",
+          "count": 1
+        },
+        {
+          "target": "src/core/RuleEngine.ts",
+          "count": 1
+        }
+      ],
+      "fanIn": 3,
+      "fanOut": 7,
+      "reachability": 4,
+      "percentiles": {
+        "boundary": 17.771084337349393,
+        "fanIn": 11.144578313253021,
+        "fanOut": 2.7108433734939723
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "DOMAIN_SERVICE"
+    },
+    {
+      "filePath": "src/cli/stage_a5_validator.ts",
+      "externalEdges": 2,
+      "targets": [
+        {
+          "target": "src/core/CommunityDetector.ts",
+          "count": 1
+        },
+        {
+          "target": "src/core/validation/ValidationContext.ts",
+          "count": 1
+        }
+      ],
+      "fanIn": 1,
+      "fanOut": 3,
+      "reachability": 4,
+      "percentiles": {
+        "boundary": 17.771084337349393,
+        "fanIn": 72.89156626506025,
+        "fanOut": 16.86746987951807
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "UNKNOWN"
+    },
+    {
+      "filePath": "src/core/analysis/analyzers/SchemaViolationAnalyzer.ts",
+      "externalEdges": 2,
+      "targets": [
+        {
+          "target": "src/types/schema.ts",
+          "count": 1
+        },
+        {
+          "target": "src/core/analysis/types.ts",
+          "count": 1
+        }
+      ],
+      "fanIn": 0,
+      "fanOut": 2,
+      "reachability": 4,
+      "percentiles": {
+        "boundary": 17.771084337349393,
+        "fanIn": 100,
+        "fanOut": 29.51807228915662
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "CONTRACT_HUB"
+    },
+    {
+      "filePath": "src/core/analysis/analyzers/FractureAnalyzer.ts",
+      "externalEdges": 2,
+      "targets": [
+        {
+          "target": "src/core/analysis/types.ts",
+          "count": 1
+        },
+        {
+          "target": "src/types/schema.ts",
+          "count": 1
+        }
+      ],
+      "fanIn": 0,
+      "fanOut": 2,
+      "reachability": 4,
+      "percentiles": {
+        "boundary": 17.771084337349393,
+        "fanIn": 100,
+        "fanOut": 29.51807228915662
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "DOMAIN_SERVICE"
+    },
+    {
+      "filePath": "src/core/analysis/analyzers/CycleAnalyzer.ts",
+      "externalEdges": 2,
+      "targets": [
+        {
+          "target": "src/core/analysis/types.ts",
+          "count": 1
+        },
+        {
+          "target": "src/types/schema.ts",
+          "count": 1
+        }
+      ],
+      "fanIn": 0,
+      "fanOut": 2,
+      "reachability": 4,
+      "percentiles": {
+        "boundary": 17.771084337349393,
+        "fanIn": 100,
+        "fanOut": 29.51807228915662
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "DOMAIN_SERVICE"
+    },
+    {
+      "filePath": "src/core/analysis/analyzers/BoundaryGuardAnalyzer.ts",
+      "externalEdges": 2,
+      "targets": [
+        {
+          "target": "src/types/schema.ts",
+          "count": 1
+        },
+        {
+          "target": "src/core/analysis/types.ts",
+          "count": 1
+        }
+      ],
+      "fanIn": 0,
+      "fanOut": 2,
+      "reachability": 4,
+      "percentiles": {
+        "boundary": 17.771084337349393,
+        "fanIn": 100,
+        "fanOut": 29.51807228915662
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "DOMAIN_SERVICE"
+    },
+    {
+      "filePath": "src/core/analysis/analyzers/DependencyPressureAnalyzer.ts",
+      "externalEdges": 2,
+      "targets": [
+        {
+          "target": "src/types/schema.ts",
+          "count": 1
+        },
+        {
+          "target": "src/core/analysis/types.ts",
+          "count": 1
+        }
+      ],
+      "fanIn": 0,
+      "fanOut": 2,
+      "reachability": 4,
+      "percentiles": {
+        "boundary": 17.771084337349393,
+        "fanIn": 100,
+        "fanOut": 29.51807228915662
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "DOMAIN_SERVICE"
+    },
+    {
+      "filePath": "src/core/analysis/analyzers/DeadEndAnalyzer.ts",
+      "externalEdges": 2,
+      "targets": [
+        {
+          "target": "src/core/analysis/types.ts",
+          "count": 1
+        },
+        {
+          "target": "src/types/schema.ts",
+          "count": 1
+        }
+      ],
+      "fanIn": 0,
+      "fanOut": 2,
+      "reachability": 4,
+      "percentiles": {
+        "boundary": 17.771084337349393,
+        "fanIn": 100,
+        "fanOut": 29.51807228915662
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "DOMAIN_SERVICE"
+    },
+    {
+      "filePath": "src/cli/community_edge_audit.ts",
+      "externalEdges": 2,
+      "targets": [
+        {
+          "target": "src/core/CommunityDetector.ts",
+          "count": 1
+        },
+        {
+          "target": "src/core/validation/ValidationContext.ts",
+          "count": 1
+        }
+      ],
+      "fanIn": 1,
+      "fanOut": 2,
+      "reachability": 4,
+      "percentiles": {
+        "boundary": 17.771084337349393,
+        "fanIn": 72.89156626506025,
+        "fanOut": 29.51807228915662
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "UNKNOWN"
+    },
+    {
+      "filePath": "src/core/analysis/analyzers/NecrosisAnalyzer.ts",
+      "externalEdges": 2,
+      "targets": [
+        {
+          "target": "src/core/analysis/types.ts",
+          "count": 1
+        },
+        {
+          "target": "src/types/schema.ts",
+          "count": 1
+        }
+      ],
+      "fanIn": 0,
+      "fanOut": 2,
+      "reachability": 4,
+      "percentiles": {
+        "boundary": 17.771084337349393,
+        "fanIn": 100,
+        "fanOut": 29.51807228915662
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "DOMAIN_SERVICE"
+    },
+    {
+      "filePath": "src/core/analysis/analyzers/IsolatedNodeAnalyzer.ts",
+      "externalEdges": 2,
+      "targets": [
+        {
+          "target": "src/core/analysis/types.ts",
+          "count": 1
+        },
+        {
+          "target": "src/types/schema.ts",
+          "count": 1
+        }
+      ],
+      "fanIn": 0,
+      "fanOut": 2,
+      "reachability": 4,
+      "percentiles": {
+        "boundary": 17.771084337349393,
+        "fanIn": 100,
+        "fanOut": 29.51807228915662
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "DOMAIN_SERVICE"
+    },
+    {
+      "filePath": "src/core/collaboration/BoundaryGuard.ts",
+      "externalEdges": 2,
+      "targets": [
+        {
+          "target": "src/core/ProjectMetadata.ts",
+          "count": 1
+        },
+        {
+          "target": "src/utils/Logger.ts",
+          "count": 1
+        }
+      ],
+      "fanIn": 1,
+      "fanOut": 5,
+      "reachability": 3,
+      "percentiles": {
+        "boundary": 17.771084337349393,
+        "fanIn": 72.89156626506025,
+        "fanOut": 6.024096385542165
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "DOMAIN_SERVICE"
+    },
+    {
+      "filePath": "src/core/analysis/ArchitectureAnalysisEngine.ts",
+      "externalEdges": 2,
+      "targets": [
+        {
+          "target": "src/types/schema.ts",
+          "count": 1
+        },
+        {
+          "target": "src/utils/Logger.ts",
+          "count": 1
+        }
+      ],
+      "fanIn": 0,
+      "fanOut": 3,
+      "reachability": 3,
+      "percentiles": {
+        "boundary": 17.771084337349393,
+        "fanIn": 100,
+        "fanOut": 16.86746987951807
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "DOMAIN_SERVICE"
+    },
+    {
+      "filePath": "src/core/analysis/reasoning/CommunityDetector.ts",
+      "externalEdges": 2,
+      "targets": [
+        {
+          "target": "src/types/schema.ts",
+          "count": 1
+        },
+        {
+          "target": "src/core/analysis/types.ts",
+          "count": 1
+        }
+      ],
+      "fanIn": 0,
+      "fanOut": 2,
+      "reachability": 3,
+      "percentiles": {
+        "boundary": 17.771084337349393,
+        "fanIn": 100,
+        "fanOut": 29.51807228915662
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "DOMAIN_SERVICE"
+    },
+    {
+      "filePath": "src/core/analysis/reasoning/SmellDetector.ts",
+      "externalEdges": 2,
+      "targets": [
+        {
+          "target": "src/core/analysis/types.ts",
+          "count": 1
+        },
+        {
+          "target": "src/types/schema.ts",
+          "count": 1
+        }
+      ],
+      "fanIn": 0,
+      "fanOut": 2,
+      "reachability": 3,
+      "percentiles": {
+        "boundary": 17.771084337349393,
+        "fanIn": 100,
+        "fanOut": 29.51807228915662
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "DOMAIN_SERVICE"
+    },
+    {
+      "filePath": "src/cli/b5_validation_layer.ts",
+      "externalEdges": 2,
+      "targets": [
+        {
+          "target": "src/core/validation/ValidationContext.ts",
+          "count": 1
+        },
+        {
+          "target": "src/core/validation/ValidationEngine.ts",
+          "count": 1
+        }
+      ],
+      "fanIn": 0,
+      "fanOut": 2,
+      "reachability": 3,
+      "percentiles": {
+        "boundary": 17.771084337349393,
+        "fanIn": 100,
+        "fanOut": 29.51807228915662
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "UNKNOWN"
+    },
+    {
+      "filePath": "src/core/analysis/reasoning/DependencyClassifier.ts",
+      "externalEdges": 2,
+      "targets": [
+        {
+          "target": "src/types/schema.ts",
+          "count": 1
+        },
+        {
+          "target": "src/core/analysis/types.ts",
+          "count": 1
+        }
+      ],
+      "fanIn": 0,
+      "fanOut": 2,
+      "reachability": 3,
+      "percentiles": {
+        "boundary": 17.771084337349393,
+        "fanIn": 100,
+        "fanOut": 29.51807228915662
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "DOMAIN_SERVICE"
+    },
+    {
+      "filePath": "src/core/transaction/CommitManager.ts",
+      "externalEdges": 2,
+      "targets": [
+        {
+          "target": "src/core/graphBuilder.ts",
+          "count": 1
+        },
+        {
+          "target": "src/core/GraphModel.ts",
+          "count": 1
+        }
+      ],
+      "fanIn": 1,
+      "fanOut": 4,
+      "reachability": 2,
+      "percentiles": {
+        "boundary": 17.771084337349393,
+        "fanIn": 72.89156626506025,
+        "fanOut": 9.638554216867462
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "DOMAIN_SERVICE"
+    },
+    {
+      "filePath": "src/core/collaboration/ReferenceVerifier.ts",
+      "externalEdges": 2,
+      "targets": [
+        {
+          "target": "src/utils/Logger.ts",
+          "count": 1
+        },
+        {
+          "target": "src/types/schema.ts",
+          "count": 1
+        }
+      ],
+      "fanIn": 1,
+      "fanOut": 3,
+      "reachability": 2,
+      "percentiles": {
+        "boundary": 17.771084337349393,
+        "fanIn": 72.89156626506025,
+        "fanOut": 16.86746987951807
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "DOMAIN_SERVICE"
+    },
+    {
+      "filePath": "src/core/GeminiParser.ts",
+      "externalEdges": 2,
+      "targets": [
+        {
+          "target": "src/utils/exclusionRules.ts",
+          "count": 1
+        },
+        {
+          "target": "src/types/schema.ts",
+          "count": 1
+        }
+      ],
+      "fanIn": 5,
+      "fanOut": 3,
+      "reachability": 2,
+      "percentiles": {
+        "boundary": 17.771084337349393,
+        "fanIn": 5.722891566265062,
+        "fanOut": 16.86746987951807
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "DOMAIN_SERVICE"
+    },
+    {
+      "filePath": "src/core/collaboration/ArchitectureIndexBuilder.ts",
+      "externalEdges": 2,
+      "targets": [
+        {
+          "target": "src/types/schema.ts",
+          "count": 1
+        },
+        {
+          "target": "src/utils/Logger.ts",
+          "count": 1
+        }
+      ],
+      "fanIn": 2,
+      "fanOut": 2,
+      "reachability": 2,
+      "percentiles": {
+        "boundary": 17.771084337349393,
+        "fanIn": 20.180722891566262,
+        "fanOut": 29.51807228915662
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "UI_COMPONENT"
+    },
+    {
+      "filePath": "src/core/transaction/ExecutionLayer.ts",
+      "externalEdges": 2,
+      "targets": [
+        {
+          "target": "src/core/EdgeCodeRefactorer.ts",
+          "count": 1
+        },
+        {
+          "target": "src/core/GraphModel.ts",
+          "count": 1
+        }
+      ],
+      "fanIn": 2,
+      "fanOut": 2,
+      "reachability": 2,
+      "percentiles": {
+        "boundary": 17.771084337349393,
+        "fanIn": 20.180722891566262,
+        "fanOut": 29.51807228915662
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "DOMAIN_SERVICE"
+    },
+    {
+      "filePath": "src/core/collaboration/HarvestSessionManager.ts",
+      "externalEdges": 2,
+      "targets": [
+        {
+          "target": "src/types/schema.ts",
+          "count": 1
+        },
+        {
+          "target": "src/utils/Logger.ts",
+          "count": 1
+        }
+      ],
+      "fanIn": 1,
+      "fanOut": 2,
+      "reachability": 2,
+      "percentiles": {
+        "boundary": 17.771084337349393,
+        "fanIn": 72.89156626506025,
+        "fanOut": 29.51807228915662
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "DOMAIN_SERVICE"
+    },
+    {
+      "filePath": "src/core/validation/ValidationContext.ts",
+      "externalEdges": 2,
+      "targets": [
+        {
+          "target": "src/core/analysis/intent/IntentEdge.ts",
+          "count": 1
+        },
+        {
+          "target": "src/cli/ast_verification_engine.ts",
+          "count": 1
+        }
+      ],
+      "fanIn": 8,
+      "fanOut": 2,
+      "reachability": 2,
+      "percentiles": {
+        "boundary": 17.771084337349393,
+        "fanIn": 3.01204819277109,
+        "fanOut": 29.51807228915662
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "DOMAIN_SERVICE"
+    },
+    {
+      "filePath": "src/core/collaboration/AccountManager.ts",
+      "externalEdges": 2,
+      "targets": [
+        {
+          "target": "src/utils/Logger.ts",
+          "count": 1
+        },
+        {
+          "target": "crypto",
+          "count": 1
+        }
+      ],
+      "fanIn": 4,
+      "fanOut": 3,
+      "reachability": 1,
+      "percentiles": {
+        "boundary": 17.771084337349393,
+        "fanIn": 8.132530120481931,
+        "fanOut": 16.86746987951807
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "DOMAIN_SERVICE"
+    },
+    {
+      "filePath": "src/core/collaboration/EdgeGenerator.ts",
+      "externalEdges": 2,
+      "targets": [
+        {
+          "target": "src/types/schema.ts",
+          "count": 1
+        },
+        {
+          "target": "crypto",
+          "count": 1
+        }
+      ],
+      "fanIn": 0,
+      "fanOut": 2,
+      "reachability": 1,
+      "percentiles": {
+        "boundary": 17.771084337349393,
+        "fanIn": 100,
+        "fanOut": 29.51807228915662
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "DOMAIN_SERVICE"
+    },
+    {
+      "filePath": "src/core/collaboration/CompareProjection.ts",
+      "externalEdges": 2,
+      "targets": [
+        {
+          "target": "crypto",
+          "count": 1
+        },
+        {
+          "target": "src/types/schema.ts",
+          "count": 1
+        }
+      ],
+      "fanIn": 0,
+      "fanOut": 2,
+      "reachability": 1,
+      "percentiles": {
+        "boundary": 17.771084337349393,
+        "fanIn": 100,
+        "fanOut": 29.51807228915662
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "DOMAIN_SERVICE"
+    },
+    {
+      "filePath": "src/core/collaboration/HarvestProjection.ts",
+      "externalEdges": 2,
+      "targets": [
+        {
+          "target": "src/types/schema.ts",
+          "count": 1
+        },
+        {
+          "target": "crypto",
+          "count": 1
+        }
+      ],
+      "fanIn": 0,
+      "fanOut": 2,
+      "reachability": 1,
+      "percentiles": {
+        "boundary": 17.771084337349393,
+        "fanIn": 100,
+        "fanOut": 29.51807228915662
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "DOMAIN_SERVICE"
+    },
+    {
+      "filePath": "src/core/ProjectMetadata.ts",
+      "externalEdges": 2,
+      "targets": [
+        {
+          "target": "crypto",
+          "count": 1
+        },
+        {
+          "target": "src/utils/Logger.ts",
+          "count": 1
+        }
+      ],
+      "fanIn": 11,
+      "fanOut": 2,
+      "reachability": 1,
+      "percentiles": {
+        "boundary": 17.771084337349393,
+        "fanIn": 2.409638554216869,
+        "fanOut": 29.51807228915662
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "DOMAIN_SERVICE"
+    },
+    {
+      "filePath": "src/core/analysis/intent/ArchitectureActionGenerator.ts",
+      "externalEdges": 1,
+      "targets": [
+        {
+          "target": "src/core/analysis/intent/ReasonedReportBundle.ts",
+          "count": 1
+        }
+      ],
+      "fanIn": 0,
+      "fanOut": 3,
+      "reachability": 13,
+      "percentiles": {
+        "boundary": 35.2409638554217,
+        "fanIn": 100,
+        "fanOut": 16.86746987951807
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "DOMAIN_SERVICE"
+    },
+    {
+      "filePath": "src/core/analysis/intent/ArchitectMapGenerator.ts",
+      "externalEdges": 1,
+      "targets": [
+        {
+          "target": "src/core/analysis/intent/ReasonedReportBundle.ts",
+          "count": 1
+        }
+      ],
+      "fanIn": 1,
+      "fanOut": 3,
+      "reachability": 13,
+      "percentiles": {
+        "boundary": 35.2409638554217,
+        "fanIn": 72.89156626506025,
+        "fanOut": 16.86746987951807
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "DOMAIN_SERVICE"
+    },
+    {
+      "filePath": "src/core/analysis/intent/FindingGenerator.ts",
+      "externalEdges": 1,
+      "targets": [
+        {
+          "target": "src/core/analysis/intent/ReasonedReportBundle.ts",
+          "count": 1
+        }
+      ],
+      "fanIn": 0,
+      "fanOut": 2,
+      "reachability": 13,
+      "percentiles": {
+        "boundary": 35.2409638554217,
+        "fanIn": 100,
+        "fanOut": 29.51807228915662
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "DOMAIN_SERVICE"
+    },
+    {
+      "filePath": "src/core/analysis/intent/MarkdownExporter.ts",
+      "externalEdges": 1,
+      "targets": [
+        {
+          "target": "src/core/analysis/intent/ReasonedReportBundle.ts",
+          "count": 1
+        }
+      ],
+      "fanIn": 1,
+      "fanOut": 1,
+      "reachability": 13,
+      "percentiles": {
+        "boundary": 35.2409638554217,
+        "fanIn": 72.89156626506025,
+        "fanOut": 41.86746987951807
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "DOMAIN_SERVICE"
+    },
+    {
+      "filePath": "src/cli.ts",
+      "externalEdges": 1,
+      "targets": [
+        {
+          "target": "src/cli/BatchRunner.ts",
+          "count": 1
+        }
+      ],
+      "fanIn": 1,
+      "fanOut": 2,
+      "reachability": 11,
+      "percentiles": {
+        "boundary": 35.2409638554217,
+        "fanIn": 72.89156626506025,
+        "fanOut": 29.51807228915662
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "UNKNOWN"
+    },
+    {
+      "filePath": "src/core/benchmark/BenchmarkHarness.ts",
+      "externalEdges": 1,
+      "targets": [
+        {
+          "target": "src/webview/CanvasPanel.ts",
+          "count": 1
+        }
+      ],
+      "fanIn": 1,
+      "fanOut": 11,
+      "reachability": 7,
+      "percentiles": {
+        "boundary": 35.2409638554217,
+        "fanIn": 72.89156626506025,
+        "fanOut": 2.1084337349397657
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "DOMAIN_SERVICE"
+    },
+    {
+      "filePath": "src/core/canvas-engine/SpatialRuleBook.ts",
+      "externalEdges": 1,
+      "targets": [
+        {
+          "target": "src/core/RuleEngine.ts",
+          "count": 1
+        }
+      ],
+      "fanIn": 1,
+      "fanOut": 3,
+      "reachability": 4,
+      "percentiles": {
+        "boundary": 35.2409638554217,
+        "fanIn": 72.89156626506025,
+        "fanOut": 16.86746987951807
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "DOMAIN_SERVICE"
+    },
+    {
+      "filePath": "src/core/validation/ValidationEngine.ts",
+      "externalEdges": 1,
+      "targets": [
+        {
+          "target": "src/cli/run_b5_bundle.ts",
+          "count": 1
+        }
+      ],
+      "fanIn": 2,
+      "fanOut": 3,
+      "reachability": 4,
+      "percentiles": {
+        "boundary": 35.2409638554217,
+        "fanIn": 20.180722891566262,
+        "fanOut": 16.86746987951807
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "DOMAIN_SERVICE"
+    },
+    {
+      "filePath": "src/core/canvas-engine/VisualRuleBook.ts",
+      "externalEdges": 1,
+      "targets": [
+        {
+          "target": "src/core/RuleEngine.ts",
+          "count": 1
+        }
+      ],
+      "fanIn": 1,
+      "fanOut": 3,
+      "reachability": 4,
+      "percentiles": {
+        "boundary": 35.2409638554217,
+        "fanIn": 72.89156626506025,
+        "fanOut": 16.86746987951807
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "DOMAIN_SERVICE"
+    },
+    {
+      "filePath": "src/core/canvas-engine/ValidationHarness.ts",
+      "externalEdges": 1,
+      "targets": [
+        {
+          "target": "src/core/RuleEngine.ts",
+          "count": 1
+        }
+      ],
+      "fanIn": 1,
+      "fanOut": 2,
+      "reachability": 4,
+      "percentiles": {
+        "boundary": 35.2409638554217,
+        "fanIn": 72.89156626506025,
+        "fanOut": 29.51807228915662
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "DOMAIN_SERVICE"
+    },
+    {
+      "filePath": "src/core/analysis/types.ts",
+      "externalEdges": 1,
+      "targets": [
+        {
+          "target": "src/types/schema.ts",
+          "count": 1
+        }
+      ],
+      "fanIn": 19,
+      "fanOut": 2,
+      "reachability": 4,
+      "percentiles": {
+        "boundary": 35.2409638554217,
+        "fanIn": 1.2048192771084416,
+        "fanOut": 29.51807228915662
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "DOMAIN_MODEL",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "CONTRACT_HUB"
+    },
+    {
+      "filePath": "src/core/canvas-engine/ScenarioRunner.ts",
+      "externalEdges": 1,
+      "targets": [
+        {
+          "target": "src/core/GraphModel.ts",
+          "count": 1
+        }
+      ],
+      "fanIn": 1,
+      "fanOut": 2,
+      "reachability": 4,
+      "percentiles": {
+        "boundary": 35.2409638554217,
+        "fanIn": 72.89156626506025,
+        "fanOut": 29.51807228915662
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "DOMAIN_SERVICE"
+    },
+    {
+      "filePath": "src/core/analysis/intent/RegexProvider.ts",
+      "externalEdges": 1,
+      "targets": [
+        {
+          "target": "src/core/FileScanner.ts",
+          "count": 1
+        }
+      ],
+      "fanIn": 1,
+      "fanOut": 3,
+      "reachability": 3,
+      "percentiles": {
+        "boundary": 35.2409638554217,
+        "fanIn": 72.89156626506025,
+        "fanOut": 16.86746987951807
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "DOMAIN_SERVICE"
+    },
+    {
+      "filePath": "src/cli/run_b5_bundle.ts",
+      "externalEdges": 1,
+      "targets": [
+        {
+          "target": "src/core/validation/ValidationContext.ts",
+          "count": 1
+        }
+      ],
+      "fanIn": 1,
+      "fanOut": 3,
+      "reachability": 3,
+      "percentiles": {
+        "boundary": 35.2409638554217,
+        "fanIn": 72.89156626506025,
+        "fanOut": 16.86746987951807
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "UNKNOWN"
+    },
+    {
+      "filePath": "src/core/analysis/ast/AstSymbolResolver.ts",
+      "externalEdges": 1,
+      "targets": [
+        {
+          "target": "src/types/schema.ts",
+          "count": 1
+        }
+      ],
+      "fanIn": 0,
+      "fanOut": 2,
+      "reachability": 3,
+      "percentiles": {
+        "boundary": 35.2409638554217,
+        "fanIn": 100,
+        "fanOut": 29.51807228915662
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "DOMAIN_SERVICE"
+    },
+    {
+      "filePath": "src/core/SnapshotSystem.ts",
+      "externalEdges": 1,
+      "targets": [
+        {
+          "target": "crypto",
+          "count": 1
+        }
+      ],
+      "fanIn": 4,
+      "fanOut": 5,
+      "reachability": 2,
+      "percentiles": {
+        "boundary": 35.2409638554217,
+        "fanIn": 8.132530120481931,
+        "fanOut": 6.024096385542165
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "DOMAIN_SERVICE"
+    },
+    {
+      "filePath": "src/core/RendererCore.ts",
+      "externalEdges": 1,
+      "targets": [
+        {
+          "target": "src/core/canvas-engine/RenderProtocol.ts",
+          "count": 1
+        }
+      ],
+      "fanIn": 2,
+      "fanOut": 4,
+      "reachability": 2,
+      "percentiles": {
+        "boundary": 35.2409638554217,
+        "fanIn": 20.180722891566262,
+        "fanOut": 9.638554216867462
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "DOMAIN_SERVICE"
+    },
+    {
+      "filePath": "src/core/GhostClassifier.ts",
+      "externalEdges": 1,
+      "targets": [
+        {
+          "target": "src/utils/Logger.ts",
+          "count": 1
+        }
+      ],
+      "fanIn": 1,
+      "fanOut": 4,
+      "reachability": 2,
+      "percentiles": {
+        "boundary": 35.2409638554217,
+        "fanIn": 72.89156626506025,
+        "fanOut": 9.638554216867462
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "DOMAIN_SERVICE"
+    },
+    {
+      "filePath": "src/core/NodeBuilder.ts",
+      "externalEdges": 1,
+      "targets": [
+        {
+          "target": "src/types/schema.ts",
+          "count": 1
+        }
+      ],
+      "fanIn": 3,
+      "fanOut": 4,
+      "reachability": 2,
+      "percentiles": {
+        "boundary": 35.2409638554217,
+        "fanIn": 11.144578313253021,
+        "fanOut": 9.638554216867462
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "UI_COMPONENT"
+    },
+    {
+      "filePath": "src/core/GhostExpander.ts",
+      "externalEdges": 1,
+      "targets": [
+        {
+          "target": "src/types/schema.ts",
+          "count": 1
+        }
+      ],
+      "fanIn": 3,
+      "fanOut": 4,
+      "reachability": 2,
+      "percentiles": {
+        "boundary": 35.2409638554217,
+        "fanIn": 11.144578313253021,
+        "fanOut": 9.638554216867462
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "DOMAIN_SERVICE"
+    },
+    {
+      "filePath": "src/core/LogicAnalyzer.ts",
+      "externalEdges": 1,
+      "targets": [
+        {
+          "target": "src/types/schema.ts",
+          "count": 1
+        }
+      ],
+      "fanIn": 2,
+      "fanOut": 2,
+      "reachability": 2,
+      "percentiles": {
+        "boundary": 35.2409638554217,
+        "fanIn": 20.180722891566262,
+        "fanOut": 29.51807228915662
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "DOMAIN_SERVICE"
+    },
+    {
+      "filePath": "src/core/canvas-engine/Intent.ts",
+      "externalEdges": 1,
+      "targets": [
+        {
+          "target": "src/core/GraphModel.ts",
+          "count": 1
+        }
+      ],
+      "fanIn": 0,
+      "fanOut": 1,
+      "reachability": 2,
+      "percentiles": {
+        "boundary": 35.2409638554217,
+        "fanIn": 100,
+        "fanOut": 41.86746987951807
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "DOMAIN_SERVICE"
+    },
+    {
+      "filePath": "src/core/BlacklistOrchestrator.ts",
+      "externalEdges": 1,
+      "targets": [
+        {
+          "target": "src/types/schema.ts",
+          "count": 1
+        }
+      ],
+      "fanIn": 2,
+      "fanOut": 4,
+      "reachability": 1,
+      "percentiles": {
+        "boundary": 35.2409638554217,
+        "fanIn": 20.180722891566262,
+        "fanOut": 9.638554216867462
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "DOMAIN_SERVICE"
+    },
+    {
+      "filePath": "src/core/EdgeBuilder.ts",
+      "externalEdges": 1,
+      "targets": [
+        {
+          "target": "crypto",
+          "count": 1
+        }
+      ],
+      "fanIn": 2,
+      "fanOut": 3,
+      "reachability": 1,
+      "percentiles": {
+        "boundary": 35.2409638554217,
+        "fanIn": 20.180722891566262,
+        "fanOut": 16.86746987951807
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "UI_COMPONENT"
+    },
+    {
+      "filePath": "src/core/GraphModel.ts",
+      "externalEdges": 1,
+      "targets": [
+        {
+          "target": "src/types/schema.ts",
+          "count": 1
+        }
+      ],
+      "fanIn": 32,
+      "fanOut": 3,
+      "reachability": 1,
+      "percentiles": {
+        "boundary": 35.2409638554217,
+        "fanIn": 0.9036144578313241,
+        "fanOut": 16.86746987951807
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "DOMAIN_SERVICE"
+    },
+    {
+      "filePath": "src/core/VisibleGraphResolver.ts",
+      "externalEdges": 1,
+      "targets": [
+        {
+          "target": "src/types/schema.ts",
+          "count": 1
+        }
+      ],
+      "fanIn": 0,
+      "fanOut": 2,
+      "reachability": 1,
+      "percentiles": {
+        "boundary": 35.2409638554217,
+        "fanIn": 100,
+        "fanOut": 29.51807228915662
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "DOMAIN_SERVICE"
+    },
+    {
+      "filePath": "src/core/filterSnapshot.ts",
+      "externalEdges": 1,
+      "targets": [
+        {
+          "target": "src/types/schema.ts",
+          "count": 1
+        }
+      ],
+      "fanIn": 2,
+      "fanOut": 2,
+      "reachability": 1,
+      "percentiles": {
+        "boundary": 35.2409638554217,
+        "fanIn": 20.180722891566262,
+        "fanOut": 29.51807228915662
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "DOMAIN_SERVICE"
+    },
+    {
+      "filePath": "src/core/benchmark/BenchmarkGraphGenerator.ts",
+      "externalEdges": 1,
+      "targets": [
+        {
+          "target": "crypto",
+          "count": 1
+        }
+      ],
+      "fanIn": 1,
+      "fanOut": 2,
+      "reachability": 1,
+      "percentiles": {
+        "boundary": 35.2409638554217,
+        "fanIn": 72.89156626506025,
+        "fanOut": 29.51807228915662
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "DOMAIN_SERVICE"
+    },
+    {
+      "filePath": "src/core/DirectChatScraper.ts",
+      "externalEdges": 1,
+      "targets": [
+        {
+          "target": "crypto",
+          "count": 1
+        }
+      ],
+      "fanIn": 0,
+      "fanOut": 2,
+      "reachability": 1,
+      "percentiles": {
+        "boundary": 35.2409638554217,
+        "fanIn": 100,
+        "fanOut": 29.51807228915662
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "DOMAIN_SERVICE"
+    },
+    {
+      "filePath": "src/core/SymbolIndex.ts",
+      "externalEdges": 1,
+      "targets": [
+        {
+          "target": "src/utils/Logger.ts",
+          "count": 1
+        }
+      ],
+      "fanIn": 6,
+      "fanOut": 2,
+      "reachability": 1,
+      "percentiles": {
+        "boundary": 35.2409638554217,
+        "fanIn": 4.216867469879517,
+        "fanOut": 29.51807228915662
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "DOMAIN_SERVICE"
+    },
+    {
+      "filePath": "src/core/PythonScanner.ts",
+      "externalEdges": 1,
+      "targets": [
+        {
+          "target": "src/types/schema.ts",
+          "count": 1
+        }
+      ],
+      "fanIn": 1,
+      "fanOut": 1,
+      "reachability": 1,
+      "percentiles": {
+        "boundary": 35.2409638554217,
+        "fanIn": 72.89156626506025,
+        "fanOut": 41.86746987951807
+      },
+      "averages": {
+        "boundary": 0.8825301204819277,
+        "fanIn": 1.716867469879518,
+        "fanOut": 1.716867469879518
+      },
+      "role": "RUNTIME",
+      "semanticRole": "NORMAL",
+      "architecturalRole": "DOMAIN_SERVICE"
+    }
+  ],
+  "systemAssemblyPoints": [],
+  "auditConfidenceMatrix": {
+    "baseScore": 70,
+    "grammarNoiseFiltered": 0,
+    "assemblyPointClassified": 0,
+    "contractHubVerified": 4,
+    "lowGhostRatio": 6,
+    "unknownReferences": 0,
+    "finalScore": 80
+  },
+  "subjectFingerprint": {
+    "subjectName": "folder_src_core",
+    "filesCount": 331,
+    "internalEdges": 151,
+    "boundaryEdges": 461,
+    "topInternalDomains": [
+      "folder_src_core",
+      "folder_src_core_collaboration",
+      "folder_src",
+      "folder_src_core_analysis_intent",
+      "folder_src_cli"
+    ],
+    "boundaryTargets": [
+      {
+        "target": "folder_src_core",
+        "count": 103
+      },
+      {
+        "target": "cluster_ghost_src",
+        "count": 82
+      },
+      {
+        "target": "folder_src",
+        "count": 70
+      },
+      {
+        "target": "cluster_ghosts",
+        "count": 42
+      },
+      {
+        "target": "folder_src_utils",
+        "count": 39
+      },
+      {
+        "target": "folder_src_core_analysis_intent",
+        "count": 22
+      },
+      {
+        "target": "folder_src_core_analysis",
+        "count": 21
+      },
+      {
+        "target": "unknown",
+        "count": 15
+      },
+      {
+        "target": "cluster_ghost_extensions",
+        "count": 15
+      },
+      {
+        "target": "folder_src_core_collaboration",
+        "count": 13
+      }
+    ]
+  },
+  "buildVersion": "v0.3.34.20",
+  "assemblyAudit": [
+    {
+      "nodeId": "src/client.ts",
+      "filePath": "src/client.ts",
+      "accepted": false,
+      "fanOut": 1,
+      "fanOutPercentile": 49.81949458483754,
+      "boundaryRatio": 1,
+      "reasons": [
+        "REJECTED_LOW_FANOUT"
+      ]
+    },
+    {
+      "nodeId": "src/main.ts",
+      "filePath": "src/main.ts",
+      "accepted": false,
+      "fanOut": 0,
+      "fanOutPercentile": 0,
+      "boundaryRatio": 0,
+      "reasons": [
+        "REJECTED_LOW_FANOUT",
+        "REJECTED_LOW_BOUNDARY_RATIO"
+      ]
+    },
+    {
+      "nodeId": "src/server/server.ts",
+      "filePath": "src/server/server.ts",
+      "accepted": false,
+      "fanOut": 4,
+      "fanOutPercentile": 88.4476534296029,
+      "boundaryRatio": 1,
+      "reasons": [
+        "REJECTED_LOW_FANOUT"
+      ]
+    },
+    {
+      "nodeId": "src/vs/workbench/workbench.common.main.ts",
+      "filePath": "external://src/vs/workbench/workbench.common.main.ts",
+      "accepted": false,
+      "fanOut": 0,
+      "fanOutPercentile": 0,
+      "boundaryRatio": 0,
+      "reasons": [
+        "REJECTED_LOW_FANOUT",
+        "REJECTED_LOW_BOUNDARY_RATIO"
+      ]
+    },
+    {
+      "nodeId": "src/vs/workbench/workbench.web.main.ts",
+      "filePath": "external://src/vs/workbench/workbench.web.main.ts",
+      "accepted": false,
+      "fanOut": 0,
+      "fanOutPercentile": 0,
+      "boundaryRatio": 0,
+      "reasons": [
+        "REJECTED_LOW_FANOUT",
+        "REJECTED_LOW_BOUNDARY_RATIO"
+      ]
+    }
+  ],
+  "falsePositiveProbability": 0.3,
+  "estimatedCost": {
+    "engineers": 8,
+    "days": 6,
+    "filesAffected": 90,
+    "edgesAffected": 266
+  },
+  "ifIgnoredImpact": {
+    "architectureEntropy": 12,
+    "boundaryFragmentation": false,
+    "estimatedMonthsToIssue": "Healthy (>36 months)"
+  }
+}

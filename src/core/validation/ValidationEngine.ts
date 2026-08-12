@@ -837,6 +837,12 @@ export class ValidationEngine {
                     const pBoundary = getPercentile(arrBoundary, data.externalEdges);
                     const pFanIn = getPercentile(arrFanIn, degree.in);
                     const pFanOut = getPercentile(arrFanOut, degree.out);
+
+                    // consumers = files that import THIS file (fan-in sources from intentEdges)
+                    const consumerSet = new Set<string>();
+                    for (const e of intentEdges) {
+                        if (e.target === filePath) consumerSet.add(e.source);
+                    }
                     
                     return { 
                         filePath, 
@@ -845,6 +851,7 @@ export class ValidationEngine {
                         fanIn: degree.in,
                         fanOut: degree.out,
                         reachability: 0,
+                        consumers: Array.from(consumerSet),
                         percentiles: { boundary: pBoundary, fanIn: pFanIn, fanOut: pFanOut },
                         averages: { boundary: avgBoundary, fanIn: avgFanIn, fanOut: avgFanOut },
                         // [v0.3.34.20] 메타데이터 보존: 역할 계층 분리
@@ -852,6 +859,7 @@ export class ValidationEngine {
                         semanticRole: node?.semanticRole     // SemanticRole (그래프 구조: ASSEMBLY_POINT 등)
                     };
                 });
+
                 
             // 1차 필터링: Boundary + FanOut 기준으로 상위 N개 추출
             candidates.sort((a, b) => (b.externalEdges + b.fanOut) - (a.externalEdges + a.fanOut));

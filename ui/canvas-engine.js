@@ -3807,12 +3807,12 @@ class CanvasEngine {
                     // Check if node is hidden by a collapsed cluster or ancestor [v0.3.32.4]
                     if (node.cluster_id) {
                         const cluster = this.clusters.find(c => c.id === node.cluster_id);
-                        if (cluster && cluster.collapsed) continue;
+                        if (cluster && (cluster.collapsed || cluster.forcedCollapsed)) continue;
                         if (cluster && cluster.parent_id) {
                             let cur = cluster; let skip = false;
                             while (cur && cur.parent_id) {
                                 const par = this.clusters.find(x => x.id === cur.parent_id);
-                                if (par && par.collapsed) { skip = true; break; }
+                                if (par && (par.collapsed || par.forcedCollapsed)) { skip = true; break; }
                                 cur = par;
                             }
                             if (skip) continue;
@@ -4210,17 +4210,17 @@ class CanvasEngine {
             const isSelected = this.selectedNodes.has(node);
             const HIT_PADDING = isSelected ? 15 : 0; // [v0.2.32] Extra 15px grab area for selected nodes
 
-            // Check if node is hidden (collapsed cluster or ancestor collapsed) [v0.3.32.4]
+            // Check if node is hidden (collapsed || forcedCollapsed, or ancestor) [v0.3.34.20]
             if (node.cluster_id) {
                 const cluster = this._clusterMap.get(node.cluster_id);
-                if (cluster && cluster.collapsed) continue;
+                if (cluster && (cluster.collapsed || cluster.forcedCollapsed)) continue;
                 // Check ancestor collapsed
                 if (cluster && cluster.parent_id) {
                     let cur = cluster;
                     let hiddenByAncestor = false;
                     while (cur && cur.parent_id) {
                         const par = this._clusterMap.get(cur.parent_id);
-                        if (par && par.collapsed) { hiddenByAncestor = true; break; }
+                        if (par && (par.collapsed || par.forcedCollapsed)) { hiddenByAncestor = true; break; }
                         cur = par;
                     }
                     if (hiddenByAncestor) continue;
@@ -8712,7 +8712,7 @@ class CanvasEngine {
                             let limit = 0;
                             while (curId && limit++ < 100) {
                                 const hNode = this.clusterHierarchy.get(curId);
-                                if (hNode && hNode.cluster && hNode.cluster.collapsed) { 
+                                if (hNode && hNode.cluster && (hNode.cluster.collapsed || hNode.cluster.forcedCollapsed)) { 
                                     if (isActivity) console.log('[ACTIVITY_REJECT]', n.id, 'reason=collapsed_sys_a'); 
                                     markReject('collapsedSystemA');
                                     return false; 
@@ -9909,83 +9909,61 @@ class CanvasEngine {
     }
 
     toggleClusterCollapse(clusterId) {
-        // console.log('[perf_engine_debug]', 'toggleClusterCollapse CALLED', clusterId);
+        // [v0.3.34.20] collapsed = user intent, forcedCollapsed = ancestor override
         const cluster = this.clusters.find(c => c.id === clusterId);
-        if (cluster) {
-            cluster.collapsed = !cluster.collapsed;
+        if (!cluster) return;
 
-            console.error(
-                "[CLUSTER_VISIBILITY_EVENT]",
-                clusterId,
-                !cluster.collapsed
-            );
-            console.error(
-                "[CLUSTER_STORE]",
-                this.clusters.length
-            );
+        cluster.collapsed = !cluster.collapsed;
+        cluster.uiCollapsed = cluster.collapsed;
 
-            // [VISIBILITY_MODEL_AUDIT]
-            const hiddenClustersCount = this.clusters.filter(c => c.collapsed).length;
-            const visibleClustersArr = this._visibleGraphClusters || this.clusters;
-            console.error(
-                "[VISIBILITY_MODEL]",
-                JSON.stringify({
-                    hiddenClusters: hiddenClustersCount,
-                    visibleClusters: visibleClustersArr.length,
-                    roots: visibleClustersArr.filter(c => !c.parent_id).length
-                })
-            );
+        console.error("[CLUSTER_VISIBILITY_EVENT]", clusterId, !cluster.collapsed);
 
-            cluster.uiCollapsed = cluster.collapsed;
-            
-            let descendantIds = new Set();
-            if (this.clusterHierarchy) {
-                descendantIds = new Set(this.clusterHierarchy.getDescendants(cluster.id).map(n => n.id));
-            } else {
-                // Fallback for extreme cases where hierarchy isn't built yet
-                const getDescendants = (parentId) => {
-                    const children = this.clusters.filter(c => c.parent_id === parentId);
-                    let all = [...children];
-                    children.forEach(c => all = all.concat(getDescendants(c.id)));
-                    return all;
-                };
-                descendantIds = new Set(getDescendants(cluster.id).map(c => c.id));
-            }
+        let descendantIds = new Set();
+        if (this.clusterHierarchy) {
+            descendantIds = new Set(this.clusterHierarchy.getDescendants(cluster.id).map(n => n.id));
+        } else {
+            const getDescendants = (parentId) => {
+                const children = this.clusters.filter(c => c.parent_id === parentId);
+                let all = [...children];
+                children.forEach(c => all = all.concat(getDescendants(c.id)));
+                return all;
+            };
+            descendantIds = new Set(getDescendants(cluster.id).map(c => c.id));
+        }
 
-            // Sync legacy properties
+        // forcedCollapsed: ancestor is collapsed → descendant is force-hidden.
+        // collapsed: user's own intent. Never touched here.
+        const forcing = cluster.collapsed;
+        for (let i = 0; i < this.clusters.length; i++) {
+            const c = this.clusters[i];
+            if (!descendantIds.has(c.id)) continue;
+            c.forcedCollapsed = forcing;
+        }
+
+        // Sync Phase 4 expandedClusters Set
+        if (cluster.collapsed) {
+            this.collapseCluster(cluster.id);
+            for (const dId of descendantIds) this.expandedClusters.delete(dId);
+        } else {
+            this.expandCluster(cluster.id);
+            // Each descendant: add to expanded only if its own intent is expanded
             for (let i = 0; i < this.clusters.length; i++) {
                 const c = this.clusters[i];
-                if (descendantIds.has(c.id)) {
-                    c.collapsed = cluster.collapsed;
-                    c.uiCollapsed = cluster.collapsed;
+                if (!descendantIds.has(c.id)) continue;
+                if (c.collapsed) {
+                    this.expandedClusters.delete(c.id);
+                } else {
+                    this.expandedClusters.add(c.id);
                 }
             }
-
-            // Sync Phase 4 State Manager (this.expandedClusters)
-            if (cluster.collapsed) {
-                // Collapse: Remove parent and all descendants
-                this.collapseCluster(cluster.id); 
-                // Note: this.collapseCluster already removes descendants internally, but we'll do a safe manual pass just in case
-                for (const dId of descendantIds) {
-                    this.expandedClusters.delete(dId);
-                }
-            } else {
-                // Expand: Add parent and all descendants
-                this.expandCluster(cluster.id);
-                for (const dId of descendantIds) {
-                    this.expandedClusters.add(dId);
-                }
-            }
-            
-            console.log(`[SYNAPSE] Toggled cluster ${cluster.label || cluster.id}: ${cluster.collapsed ? 'Collapsed' : 'Expanded'} (Cascaded to ${descendantIds.size} descendants)`);
-            
-            // Recalculate layout dynamically!
-            this.distributeClustersHierarchically();
-            
-            this.isGraphDataDirty = true; // [v0.2.27] Sync WebGL visibility
-            this.render();
-            this.saveState();
         }
+
+        console.log(`[SYNAPSE] Toggled ${cluster.label || cluster.id}: ${cluster.collapsed ? 'Collapsed' : 'Expanded'} (forcedCollapsed → ${descendantIds.size} descendants)`);
+
+        this.distributeClustersHierarchically();
+        this.isGraphDataDirty = true;
+        this.render();
+        this.saveState();
     }
 
     // [v0.3.32.4 improved] Cluster Visibility Panel

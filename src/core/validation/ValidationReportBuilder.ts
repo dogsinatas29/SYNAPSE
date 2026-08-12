@@ -240,9 +240,18 @@ function estimateCost(report: ValidationReport): any {
         if (impactFiles.length === 0) return { engineers: 0, days: 0, filesAffected: 0, edgesAffected: 0 };
         
         const totalEdges = impactFiles.reduce((sum: number, f: any) => sum + (f.externalEdges || 0), 0);
-        const filesAffected = impactFiles.length;
-        const engineers = Math.min(8, Math.max(1, Math.ceil(filesAffected / 5)));
+
+        // filesAffected = deduplicated consumers across all top impact files
+        // impactFiles.length is the SCAN LIMIT, not the actual affected file count
+        const consumerSet = new Set<string>();
+        for (const f of impactFiles) {
+            for (const c of (f.consumers || [])) consumerSet.add(c);
+        }
+        const filesAffected = consumerSet.size > 0 ? consumerSet.size : impactFiles.length;
+
+        const engineers = Math.min(8, Math.max(1, Math.ceil(filesAffected / 20)));
         const days = Math.max(1, Math.ceil(totalEdges / 50));
+        console.log(`[CostProjection] filesAffected=${filesAffected}(consumers=${consumerSet.size}), totalEdges=${totalEdges}`);
         return { engineers, days, filesAffected, edgesAffected: totalEdges };
     }
     
@@ -255,6 +264,7 @@ function estimateCost(report: ValidationReport): any {
     
     return { engineers, days, filesAffected, edgesAffected: totalEdges };
 }
+
 
 function projectIfIgnored(report: ValidationReport): any {
     const top = report.infrastructureSplitCandidates?.[0];
@@ -678,10 +688,10 @@ export class ValidationReportBuilder {
             couplingBreakdownText,
             '',
             '### 6.3 Cost Projection',
-            `- **Estimated Engineers**: ${report.estimatedCost?.engineers}`,
-            `- **Estimated Days**: ${report.estimatedCost?.days}`,
-            `- **Files Affected**: ${report.estimatedCost?.filesAffected}`,
-            `- **Edges Affected**: ${report.estimatedCost?.edgesAffected}`
+            `- **Estimated Engineers**: ${report.estimatedCost?.engineers ?? 0}`,
+            `- **Estimated Days**: ${report.estimatedCost?.days ?? 0}`,
+            `- **Files Affected**: ${report.estimatedCost?.filesAffected ?? 0}`,
+            `- **Edges Affected**: ${report.estimatedCost?.edgesAffected ?? 0}`
         ].join('\n');
 
         return [
@@ -895,10 +905,10 @@ export class ValidationReportBuilder {
 
   <h3>7.3 Cost Projection</h3>
   <ul>
-      <li><strong>Estimated Engineers</strong>: ${report.estimatedCost?.engineers}</li>
-      <li><strong>Estimated Days</strong>: ${report.estimatedCost?.days}</li>
-      <li><strong>Files Affected</strong>: ${report.estimatedCost?.filesAffected}</li>
-      <li><strong>Edges Affected</strong>: ${report.estimatedCost?.edgesAffected}</li>
+      <li><strong>Estimated Engineers</strong>: ${report.estimatedCost?.engineers ?? 0}</li>
+      <li><strong>Estimated Days</strong>: ${report.estimatedCost?.days ?? 0}</li>
+      <li><strong>Files Affected</strong>: ${report.estimatedCost?.filesAffected ?? 0}</li>
+      <li><strong>Edges Affected</strong>: ${report.estimatedCost?.edgesAffected ?? 0}</li>
   </ul>
 `;
 

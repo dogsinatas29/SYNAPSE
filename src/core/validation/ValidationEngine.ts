@@ -741,6 +741,10 @@ export class ValidationEngine {
             }
 
             for (const e of intentEdges) {
+                // [v0.3.34.20b] AGGREGATE_ nodes are collapsed external clusters (extensions/cli/etc).
+                // They are valid as boundary targets in evidence, but must NOT pollute impact ranking.
+                if (e.source?.startsWith('AGGREGATE_') || e.target?.startsWith('AGGREGATE_')) continue;
+
                 const edgeKey = `${e.source}->${e.target}`;
                 const semType = edgeTypeMap.get(edgeKey) || 'CODE';
                 
@@ -839,9 +843,10 @@ export class ValidationEngine {
                     const pFanOut = getPercentile(arrFanOut, degree.out);
 
                     // consumers = files that import THIS file (fan-in sources from intentEdges)
+                    // Exclude AGGREGATE_ nodes (collapsed external clusters) from consumer list
                     const consumerSet = new Set<string>();
                     for (const e of intentEdges) {
-                        if (e.target === filePath) consumerSet.add(e.source);
+                        if (e.target === filePath && !e.source?.startsWith('AGGREGATE_')) consumerSet.add(e.source);
                     }
                     
                     return { 
@@ -966,6 +971,7 @@ export class ValidationEngine {
 
             ghostEvidence = intentEdges
                 .filter(e => {
+                    if (e.source?.startsWith('AGGREGATE_')) return false;
                     const semType = edgeTypeMap.get(`${e.source}->${e.target}`) || 'CODE';
                     return semType === 'GHOST';
                 })
@@ -974,6 +980,7 @@ export class ValidationEngine {
                 
             boundaryEvidence = intentEdges
                 .filter(e => {
+                    if (e.source?.startsWith('AGGREGATE_')) return false;
                     const semType = edgeTypeMap.get(`${e.source}->${e.target}`) || 'CODE';
                     // We only show true CODE/GHOST boundaries, wait GHOST is covered above
                     return !e.isGhost && e.evidenceCount > 0 && semType === 'CODE';
@@ -983,6 +990,7 @@ export class ValidationEngine {
                 
             docEvidence = intentEdges
                 .filter(e => {
+                    if (e.source?.startsWith('AGGREGATE_')) return false;
                     const semType = edgeTypeMap.get(`${e.source}->${e.target}`) || 'CODE';
                     return semType === 'DOC';
                 })

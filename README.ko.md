@@ -690,7 +690,9 @@ SYNAPSE는 코드 중심 개발의 한계를 극복하기 위해 만들어졌습
 
 | 버전 | 릴리스 날짜 | 설명 |
 | :---: | :---: | :--- |
+| **v0.3.34.19b** | 2026-08-13 | **서브그래프 격리 버그 수정**: 클러스터 스코프 분석 시 `AGGREGATE_*` 노드(VirtualDebugger의 외부 클러스터 대체 플레이스홀더)가 `intentEdges`를 통해 `impactMap`, `consumers`, `ghostEvidence`, `boundaryEvidence`로 유입되어 `extensions/*`, `cli/*` 외부 경로가 workbench 스코프 보고서를 오염시키던 버그 수정. `ValidationEngine.ts` 4개 지점에 `startsWith('AGGREGATE_')` 단일 가드 추가. 수정 후: coupling breakdown이 전역 통계 복사(extensions 42.7% > vs 39%)에서 벗어나 `vs(43.9%) > extensions(42%)`로 재조정되어 진정한 서브그래프 격리 확인. BFS reachability 순회는 AGGREGATE 노드가 nodeMap에 없어 별도 패치 불필요로 확인. |
 | **v0.3.34.19a** | 2026-08-12 | **Cost Projection 근본 원인 수정 및 Collapse 상태 모델 분리**: `Files Affected = 100` 고정 버그의 근본 원인 제거 — `ValidationEngine`이 candidate 객체에 `consumers` 필드를 채우지 않아 `ValidationReportBuilder`가 항상 Top N 컷오프(100)를 fallback으로 사용하던 문제. `intentEdges` 역방향 탐색으로 실제 fan-in consumer 목록을 candidate에 주입. `?? 0` 가드를 추가하여 `undefined` 출력 방지. 파손된 `_preCollapseState` 핫픽스를 제거하고 `collapsed`(사용자 의도) / `forcedCollapsed`(조상 강제) 2-필드 모델로 교체하여 부모 expand 시 사용자가 접은 자식 클러스터가 강제로 열리던 문제 해결. |
+
 | **v0.3.34.19** | 2026-08-12 | **Auditor 검증 레이어 및 보고서 신뢰성 확보**: RAW Top 20 덤프 로그를 통해 TEST_ARTIFACT 페널티 파이프라인을 물리적으로 증명합니다. `vscode-test-resolver`가 RAW 14위에서 최종 Top 10에서 완전히 탈락하는 것을 확인했습니다. `bfsLimit`을 최대 200으로 동적 산출하여 Top 50 == Top 100 집계 버그를 수정했습니다. `UI_COMPONENT` 및 `DOMAIN_SERVICE` 분류 규칙을 신설하여 UNKNOWN 대량 발생 문제를 해결했습니다. 건강한 코드베이스에서 Cost Projection이 항상 0/0/0/0을 반환하던 버그를 `topImpactFiles` fallback으로 수정했습니다. Auditor를 Sort 이전에 실행하도록 순서를 조정하여 TEST_ARTIFACT 페널티가 정상 작동하도록 수정했습니다. |
 
 | **v0.3.34.17** | 2026-08-09 | **ASR 3.0 안정화 및 데이터 신뢰성 확보**: 주관적 진단(Diagnosis)에서 팩트 기반 스캔(Scan)으로 리포트 철학 전면 개편. 6단계 MRI 논리 흐름으로 레이아웃 재편. Impact Files 산출 시 Top 50 컷오프를 제거하고 전체 엣지를 집계하여 정확도 복원. `isGhost` 메타데이터 의존성 복구 및 Webview 로컬 파일 절대 경로 바인딩 버그 수정. |

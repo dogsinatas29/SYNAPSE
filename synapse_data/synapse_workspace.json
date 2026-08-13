@@ -226,12 +226,6 @@
         "x": -185,
         "y": -3205
       },
-      "cluster_id": {
-        "confidence": 0.2,
-        "source": "auto",
-        "x": -2540,
-        "y": -3125
-      },
       "cors": {
         "confidence": 0.2,
         "source": "auto",
@@ -244,17 +238,35 @@
         "x": -2300,
         "y": -3125
       },
-      "debug_nodes.js": {
-        "confidence": 0.2,
-        "source": "auto",
-        "x": -65,
-        "y": -3205
-      },
       "demo/canvas-engine.js": {
         "confidence": 0.2,
         "source": "auto",
         "x": 1293.3066489715384,
         "y": -2118.585581938768
+      },
+      "demo/data/accounts.json": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": 140,
+        "y": 473.75230355413447
+      },
+      "demo/data/project_metadata.json": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": 280,
+        "y": 473.75230355413447
+      },
+      "demo/data/project_state.json": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": 0,
+        "y": 473.75230355413447
+      },
+      "demo/data/synapse_history.json": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": 140,
+        "y": 473.75230355413447
       },
       "demo/engine-core.js": {
         "confidence": 0.2,
@@ -370,12 +382,6 @@
         "x": -1666.6022197399125,
         "y": -2605.6806638723338
       },
-      "fix_cluster.sh": {
-        "confidence": 0.2,
-        "source": "auto",
-        "x": 55,
-        "y": -3205
-      },
       "foo": {
         "confidence": 0.2,
         "source": "auto",
@@ -400,11 +406,11 @@
         "x": -2300,
         "y": -3045
       },
-      "position": {
+      "package.json": {
         "confidence": 0.2,
         "source": "auto",
-        "x": -2780,
-        "y": -2965
+        "x": 140,
+        "y": 473.75230355413447
       },
       "project_state_json": {
         "confidence": 0.2,
@@ -774,9 +780,9 @@
       },
       "src/core/PhaseManager.ts": {
         "confidence": 0.2,
-        "source": "auto",
-        "x": 443.9312524570043,
-        "y": 113.75230355413441
+        "source": "user",
+        "x": 440,
+        "y": 120
       },
       "src/core/ProjectMetadata.ts": {
         "confidence": 0.2,
@@ -1948,6 +1954,12 @@
         "x": -1140,
         "y": -345
       },
+      "synapse.config.json": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": 0,
+        "y": 473.75230355413447
+      },
       "test/automation/src/workbench.ts": {
         "confidence": 0.2,
         "source": "auto",
@@ -1971,6 +1983,24 @@
         "source": "auto",
         "x": 1665,
         "y": -305
+      },
+      "test/data/baseline_AntennaPod.json": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": 0,
+        "y": 473.75230355413447
+      },
+      "test/data/baseline_Synapse.json": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": 0,
+        "y": 473.75230355413447
+      },
+      "test/data/baseline_Synapse_current.json": {
+        "confidence": 0.2,
+        "source": "auto",
+        "x": 140,
+        "y": 473.75230355413447
       },
       "test/mcp/src/automationTools/terminal.ts": {
         "confidence": 0.2,
@@ -2002,18 +2032,6 @@
         "x": -970,
         "y": -1575
       },
-      "test_hierarchy.js": {
-        "confidence": 0.2,
-        "source": "auto",
-        "x": -185,
-        "y": -3125
-      },
-      "test_hygiene.ts": {
-        "confidence": 0.2,
-        "source": "auto",
-        "x": -65,
-        "y": -3125
-      },
       "tools/compare.js": {
         "confidence": 0.2,
         "source": "auto",
@@ -2032,11 +2050,11 @@
         "x": 2160.8589553080183,
         "y": -1889.5467467385001
       },
-      "ts": {
+      "tsconfig.json": {
         "confidence": 0.2,
         "source": "auto",
-        "x": -2540,
-        "y": -2965
+        "x": 140,
+        "y": 473.75230355413447
       },
       "typescript": {
         "confidence": 0.2,
@@ -2111,9 +2129,9 @@
   "workspace_state": {
     "bookmarks": {},
     "camera": {
-      "x": 697.842924799775,
-      "y": 680.7070595453561,
-      "zoom": 0.19789869908361463
+      "x": 0,
+      "y": 0,
+      "zoom": 1
     },
     "filters": {},
     "version": 1,
@@ -2131,7 +2149,7 @@
   },
   "_iron_guard": {
     "version": "0.2.18.1",
-    "byte_size": 39791,
+    "byte_size": 40177,
     "encoding": "UTF-8",
     "alignment": 8
   }

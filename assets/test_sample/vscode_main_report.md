@@ -1,5 +1,5 @@
 # 🔬 SYNAPSE Architecture Scan Report (EV-LIVE)
-Generated: 2026-08-12T07:29:33.032Z
+Generated: 2026-08-13T01:14:23.977Z
 
 ## 0. Analysis Subject (Layer -3)
 - **Subject**: Module: src/vs/platform/agentHost/node
@@ -63,16 +63,16 @@ Final Score                   85
 - Blast Radius: 170 Clusters
 
 **Top External Targets (Evidence)**
-- src/vs/platform/action/common/action.ts (1 edges)
-- src/vs/workbench/contrib/terminal/common/environmentVariable.ts (1 edges)
-- src/vs/base/common/themables.ts (1 edges)
-- extensions/copilot/src/extension/prompts/node/panel/chatVariables.tsx (1 edges)
-- extensions/copilot/src/extension/completions-core/vscode-node/lib/src/openai/model.ts (1 edges)
-- extensions/copilot/src/extension/prompts/node/panel/search.tsx (1 edges)
-- src/vs/code/electron-utility/sharedProcess/contrib/extensions.ts (1 edges)
-- src/vs/workbench/contrib/chat/common/chatSessionsService.ts (1 edges)
-- src/vs/workbench/contrib/chat/common/editing/chatCodeMapperService.ts (1 edges)
-- src/vs/editor/common/encodedTokenAttributes.ts (1 edges)
+- src/vs/platform/telemetry/common/gdprTypings.ts (1 edges)
+- src/vs/workbench/contrib/notebook/common/notebookCommon.ts (1 edges)
+- src/vs/base/common/severity.ts (1 edges)
+- src/vs/editor/common/config/editorOptions.ts (1 edges)
+- extensions/copilot/src/extension/completions-core/vscode-node/lib/src/progress.ts (1 edges)
+- src/vs/platform/extensionManagement/common/extensionStorage.ts (1 edges)
+- src/vs/platform/tunnel/common/tunnel.ts (1 edges)
+- src/vs/base/common/cancellation.ts (1 edges)
+- src/vs/platform/label/common/label.ts (1 edges)
+- cli/src/commands/output.rs (1 edges)
 
 ### 2. src/vs/workbench/contrib/chat/browser/widget/input/chatInputPart.ts
 - **Role**: UI_COMPONENT
@@ -84,16 +84,16 @@ Final Score                   85
 - Blast Radius: 178 Clusters
 
 **Top External Targets (Evidence)**
-- extensions/copilot/src/extension/completions-core/vscode-node/lib/src/snippy/network.ts (1 edges)
-- src/vs/platform/agentHost/common/state/protocol/common/actions.ts (1 edges)
-- src/vs/editor/contrib/suggest/browser/suggestController.ts (1 edges)
-- src/vs/workbench/contrib/accessibility/browser/accessibilityConfiguration.ts (1 edges)
-- src/vs/workbench/contrib/accessibility/common/accessibilityCommands.ts (1 edges)
-- src/vs/base/common/codicons.ts (1 edges)
-- src/vs/nls.ts (1 edges)
-- src/vs/base/browser/ui/actionbar/actionViewItems.ts (1 edges)
-- src/vs/editor/common/core/position.ts (1 edges)
 - src/vs/platform/accessibility/common/accessibility.ts (1 edges)
+- src/vs/editor/contrib/dropOrPasteInto/browser/copyPasteController.ts (1 edges)
+- extensions/copilot/src/extension/completions-core/vscode-node/lib/src/util/map.ts (1 edges)
+- src/vs/platform/list/browser/listService.ts (1 edges)
+- src/vs/base/common/marshallingIds.ts (1 edges)
+- src/vs/platform/observable/common/platformObservableUtils.ts (1 edges)
+- src/vs/editor/contrib/hover/browser/glyphHoverController.ts (1 edges)
+- src/vs/editor/common/config/editorConfiguration.ts (1 edges)
+- cli/src/constants.rs (1 edges)
+- extensions/copilot/src/extension/completions-core/vscode-node/lib/src/language/languages.ts (1 edges)
 
 ### 3. src/vs/workbench/electron-browser/window.ts
 - **Role**: UI_COMPONENT
@@ -105,16 +105,16 @@ Final Score                   85
 - Blast Radius: 134 Clusters
 
 **Top External Targets (Evidence)**
-- src/vs/base/parts/sandbox/electron-browser/globals.ts (1 edges)
-- src/vs/platform/actions/browser/menuEntryActionViewItem.ts (1 edges)
-- extensions/copilot/src/extension/typescriptContext/serverPlugin/src/common/host.ts (1 edges)
+- src/vs/workbench/common/dialogs.ts (1 edges)
 - src/vs/workbench/services/integrity/common/integrity.ts (1 edges)
+- src/vs/base/parts/sandbox/common/sandboxTypes.ts (1 edges)
 - src/vs/base/browser/ui/actionbar/actionbar.ts (1 edges)
-- extensions/markdown-language-features/src/util/async.ts (1 edges)
-- src/vs/workbench/services/environment/common/environmentService.ts (1 edges)
-- src/vs/workbench/services/lifecycle/common/lifecycle.ts (1 edges)
-- extensions/copilot/src/extension/completions-core/vscode-node/lib/src/util/uri.ts (1 edges)
-- src/vs/platform/product/common/productService.ts (1 edges)
+- src/vs/platform/workspaces/common/workspaces.ts (1 edges)
+- extensions/git/src/hover.ts (1 edges)
+- src/vs/platform/uriIdentity/common/uriIdentity.ts (1 edges)
+- src/vs/workbench/services/driver/browser/driver.ts (1 edges)
+- extensions/copilot/src/extension/completions-core/vscode-node/lib/src/telemetry.ts (1 edges)
+- extensions/typescript-language-features/src/configuration/configuration.ts (1 edges)
 
 ### 4. extensions/copilot/src/extension/intents/node/agentIntent.ts
 - **Role**: COORDINATOR
@@ -126,16 +126,16 @@ Final Score                   85
 - Blast Radius: 130 Clusters
 
 **Top External Targets (Evidence)**
-- extensions/copilot/src/extension/prompts/node/agent/backgroundSummarizer.ts (1 edges)
-- extensions/copilot/src/extension/prompt/common/conversation.ts (1 edges)
-- extensions/copilot/src/platform/tasks/common/tasksService.ts (1 edges)
-- extensions/copilot/src/extension/prompts/node/agent/promptRegistry.ts (1 edges)
-- src/vs/platform/instantiation/common/instantiation.ts (1 edges)
-- extensions/copilot/src/extension/prompt/node/documentContext.ts (1 edges)
-- extensions/copilot/src/platform/otel/common/genAiMetrics.ts (1 edges)
-- extensions/copilot/src/extension/prompts/node/base/promptRenderer.ts (1 edges)
-- extensions/copilot/src/extension/completions-core/vscode-node/lib/src/networking.ts (1 edges)
-- extensions/copilot/src/platform/otel/common/otelService.ts (1 edges)
+- extensions/copilot/src/platform/multiFileEdit/common/editLogService.ts (1 edges)
+- extensions/copilot/src/extension/prompt/node/chatParticipantTelemetry.ts (1 edges)
+- extensions/copilot/src/extension/commands/node/commandService.ts (1 edges)
+- extensions/copilot/src/platform/telemetry/common/nullExperimentationService.ts (1 edges)
+- extensions/copilot/src/extension/prompts/node/codeMapper/codeMapperService.ts (1 edges)
+- extensions/copilot/src/extension/prompt/node/defaultIntentRequestHandler.ts (1 edges)
+- extensions/copilot/src/platform/endpoint/common/chatModelCapabilities.ts (1 edges)
+- extensions/copilot/src/extension/prompt/common/specialRequestTypes.ts (1 edges)
+- extensions/copilot/src/extension/tools/node/replaceStringTool.tsx (1 edges)
+- extensions/copilot/src/extension/prompts/node/agent/summarizedConversationHistory.tsx (1 edges)
 
 ### 5. src/vs/workbench/contrib/terminal/browser/terminalInstance.ts
 - **Role**: UI_COMPONENT
@@ -147,16 +147,16 @@ Final Score                   85
 - Blast Radius: 146 Clusters
 
 **Top External Targets (Evidence)**
-- src/vs/base/browser/keyboardEvent.ts (1 edges)
-- src/vs/workbench/contrib/accessibility/common/accessibilityCommands.ts (1 edges)
-- addon-progress (1 edges)
-- resources/server/bin-dev/helpers/browser.sh (1 edges)
-- src/vs/base/common/uuid.ts (1 edges)
-- src/vs/platform/instantiation/common/instantiation.ts (1 edges)
+- extensions/copilot/src/extension/completions-core/vscode-node/lib/src/util/event.ts (1 edges)
+- src/vs/base/browser/canIUse.ts (1 edges)
+- extensions/copilot/src/extension/completions-core/vscode-node/lib/src/util/uri.ts (1 edges)
+- src/vs/workbench/services/path/browser/pathService.ts (1 edges)
+- src/vs/amdX.ts (1 edges)
 - src/vs/platform/opener/common/opener.ts (1 edges)
-- src/vs/base/browser/ui/scrollbar/scrollableElement.ts (1 edges)
+- src/vs/platform/keybinding/common/keybinding.ts (1 edges)
 - extensions/copilot/src/extension/agents/node/adapters/types.ts (1 edges)
-- src/vs/workbench/services/editor/browser/editorService.ts (1 edges)
+- src/vs/platform/theme/common/themeService.ts (1 edges)
+- src/vs/platform/instantiation/common/instantiation.ts (1 edges)
 
 ### 6. src/vs/workbench/contrib/search/browser/searchView.ts
 - **Role**: UI_COMPONENT
@@ -168,16 +168,16 @@ Final Score                   85
 - Blast Radius: 143 Clusters
 
 **Top External Targets (Evidence)**
-- src/vs/nls.ts (1 edges)
-- src/vs/editor/common/editorCommon.ts (1 edges)
-- extensions/copilot/src/extension/prompts/node/panel/preferences.tsx (1 edges)
-- src/vs/platform/theme/common/themeService.ts (1 edges)
-- extensions/copilot/src/extension/completions-core/vscode-node/lib/src/progress.ts (1 edges)
-- src/vs/platform/list/browser/listService.ts (1 edges)
-- src/vs/platform/opener/common/opener.ts (1 edges)
-- src/vs/editor/browser/editorBrowser.ts (1 edges)
-- src/vs/platform/agentHost/common/state/protocol/common/actions.ts (1 edges)
-- extensions/media-preview/src/util/dom.ts (1 edges)
+- src/vs/base/common/strings.ts (1 edges)
+- src/vs/workbench/contrib/scm/common/scm.ts (1 edges)
+- src/vs/workbench/common/memento.ts (1 edges)
+- src/vs/platform/instantiation/common/instantiation.ts (1 edges)
+- src/vs/workbench/contrib/files/common/files.ts (1 edges)
+- src/vs/workbench/services/search/common/queryBuilder.ts (1 edges)
+- src/vs/base/common/keyCodes.ts (1 edges)
+- cli/src/constants.rs (1 edges)
+- src/vs/workbench/browser/parts/views/viewPane.ts (1 edges)
+- src/vs/platform/contextkey/common/contextkey.ts (1 edges)
 
 ### 7. src/vs/editor/browser/view.ts
 - **Role**: UI_COMPONENT
@@ -189,16 +189,16 @@ Final Score                   85
 - Blast Radius: 95 Clusters
 
 **Top External Targets (Evidence)**
-- src/vs/editor/browser/view/viewPart.ts (1 edges)
-- src/vs/editor/common/viewLayout/viewLinesViewportData.ts (1 edges)
-- src/vs/editor/browser/viewParts/overviewRuler/decorationsOverviewRuler.ts (1 edges)
-- src/vs/editor/browser/viewParts/marginDecorations/marginDecorations.ts (1 edges)
-- src/vs/base/browser/mouseEvent.ts (1 edges)
+- src/vs/platform/theme/common/themeService.ts (1 edges)
+- cli/src/util/errors.rs (1 edges)
+- src/vs/platform/instantiation/common/instantiation.ts (1 edges)
+- src/vs/editor/browser/viewParts/linesDecorations/linesDecorations.ts (1 edges)
+- src/vs/editor/browser/viewParts/minimap/minimap.ts (1 edges)
+- src/vs/workbench/services/lifecycle/common/lifecycle.ts (1 edges)
+- src/vs/workbench/browser/window.ts (1 edges)
+- src/vs/workbench/api/common/extHostTypes/selection.ts (1 edges)
 - src/vs/editor/browser/view/viewUserInputEvents.ts (1 edges)
-- src/vs/editor/browser/controller/editContext/native/nativeEditContext.ts (1 edges)
-- src/vs/editor/browser/viewParts/lineNumbers/lineNumbers.ts (1 edges)
-- src/vs/platform/userInteraction/browser/userInteractionService.ts (1 edges)
-- src/vs/workbench/contrib/notebook/browser/viewModel/viewContext.ts (1 edges)
+- src/vs/editor/browser/view/viewPart.ts (1 edges)
 
 ### 8. src/vs/sessions/contrib/changes/browser/changesView.ts
 - **Role**: UI_COMPONENT
@@ -210,16 +210,16 @@ Final Score                   85
 - Blast Radius: 154 Clusters
 
 **Top External Targets (Evidence)**
-- extensions/media-preview/src/util/dom.ts (1 edges)
+- src/vs/workbench/contrib/chat/common/actions/chatContextKeys.ts (1 edges)
+- src/vs/base/common/iconLabels.ts (1 edges)
+- src/vs/platform/instantiation/common/instantiation.ts (1 edges)
+- src/vs/sessions/common/agentHostSessionsProvider.ts (1 edges)
+- src/vs/platform/actions/browser/buttonbar.ts (1 edges)
+- src/vs/platform/actions/browser/actionWidgetDropdownActionViewItem.ts (1 edges)
+- src/vs/nls.ts (1 edges)
 - src/vs/platform/actionWidget/browser/actionWidget.ts (1 edges)
-- src/vs/workbench/services/views/browser/viewsService.ts (1 edges)
-- src/vs/platform/list/browser/listService.ts (1 edges)
-- src/vs/base/common/resourceTree.ts (1 edges)
-- src/vs/platform/label/common/label.ts (1 edges)
-- src/vs/workbench/browser/dnd.ts (1 edges)
-- src/vs/sessions/services/sessions/browser/sessionsService.ts (1 edges)
-- src/vs/platform/actions/browser/menuEntryActionViewItem.ts (1 edges)
-- src/vs/sessions/contrib/providers/agentHost/browser/agentHostSkillButtons.ts (1 edges)
+- src/vs/base/browser/ui/sash/sash.ts (1 edges)
+- src/vs/platform/observable/common/platformObservableUtils.ts (1 edges)
 
 ### 9. src/vs/editor/editor.all.ts
 - **Role**: DOMAIN_SERVICE
@@ -231,16 +231,16 @@ Final Score                   85
 - Blast Radius: 170 Clusters
 
 **Top External Targets (Evidence)**
-- src/vs/editor/contrib/wordHighlighter/browser/wordHighlighter.ts (1 edges)
-- src/vs/editor/contrib/colorPicker/browser/colorPickerContribution.ts (1 edges)
-- src/vs/editor/contrib/gotoError/browser/markerSelectionStatus.ts (1 edges)
-- extensions/typescript-language-features/src/languageFeatures/folding.ts (1 edges)
-- src/vs/editor/contrib/fontZoom/browser/fontZoom.ts (1 edges)
-- src/vs/editor/contrib/inPlaceReplace/browser/inPlaceReplace.ts (1 edges)
-- src/vs/editor/contrib/format/browser/formatActions.ts (1 edges)
-- src/vs/editor/contrib/stickyScroll/browser/stickyScrollContribution.ts (1 edges)
-- src/vs/editor/contrib/gotoError/browser/gotoError.ts (1 edges)
+- src/vs/editor/contrib/hover/browser/hoverContribution.ts (1 edges)
+- extensions/typescript-language-features/src/languageFeatures/linkedEditing.ts (1 edges)
 - src/vs/editor/contrib/insertFinalNewLine/browser/insertFinalNewLine.ts (1 edges)
+- src/vs/base/browser/ui/codicons/codiconStyles.ts (1 edges)
+- src/vs/editor/contrib/caretOperations/browser/transpose.ts (1 edges)
+- src/vs/editor/contrib/snippet/browser/snippetController2.ts (1 edges)
+- src/vs/editor/contrib/middleScroll/browser/middleScroll.contribution.ts (1 edges)
+- src/vs/editor/contrib/format/browser/formatActions.ts (1 edges)
+- src/vs/editor/contrib/wordHighlighter/browser/wordHighlighter.ts (1 edges)
+- src/vs/editor/contrib/anchorSelect/browser/anchorSelect.ts (1 edges)
 
 ### 10. src/vs/workbench/contrib/debug/browser/repl.ts
 - **Role**: UI_COMPONENT
@@ -252,127 +252,127 @@ Final Score                   85
 - Blast Radius: 163 Clusters
 
 **Top External Targets (Evidence)**
-- src/vs/base/common/range.ts (1 edges)
-- src/vs/base/common/codicons.ts (1 edges)
+- extensions/copilot/src/extension/completions-core/vscode-node/lib/src/util/event.ts (1 edges)
+- extensions/git/src/decorators.ts (1 edges)
+- src/vs/base/common/keyCodes.ts (1 edges)
+- src/vs/editor/contrib/suggest/browser/suggestController.ts (1 edges)
+- src/vs/workbench/contrib/codeEditor/browser/simpleEditorOptions.ts (1 edges)
+- extensions/markdown-language-features/src/util/async.ts (1 edges)
 - src/vs/base/common/themables.ts (1 edges)
-- src/vs/workbench/browser/actions/widgetNavigationCommands.ts (1 edges)
-- src/vs/workbench/common/views.ts (1 edges)
-- extensions/media-preview/src/util/dom.ts (1 edges)
-- src/vs/editor/common/config/editorOptions.ts (1 edges)
-- extensions/copilot/src/extension/completions-core/vscode-node/lib/src/language/languages.ts (1 edges)
-- src/vs/platform/accessibilitySignal/browser/accessibilitySignalService.ts (1 edges)
-- src/vs/workbench/contrib/accessibility/browser/accessibilityConfiguration.ts (1 edges)
+- src/vs/base/browser/ui/actionbar/actionbar.ts (1 edges)
+- src/vs/editor/common/services/textResourceConfiguration.ts (1 edges)
+- src/vs/editor/browser/editorBrowser.ts (1 edges)
 
 
 ## 3. Evidence Layer
 ### 3.1 Ghost Evidence
 <details><summary><b>Show Ghost Evidence (Top 50)</b></summary>
 
-- [src/vs/workbench/services/textMate/browser/backgroundTokenization/threadedBackgroundTokenizerFactory.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/services/textMate/browser/backgroundTokenization/threadedBackgroundTokenizerFactory.ts) -> src/vs/workbench/services/textMate/browser/backgroundTokenization/worker/textMateTokenizationWorker.worker.ts (Count: 1)
-- [src/vs/workbench/services/textMate/browser/backgroundTokenization/worker/textMateTokenizationWorker.worker.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/services/textMate/browser/backgroundTokenization/worker/textMateTokenizationWorker.worker.ts) -> vscode-oniguruma (Count: 1)
-- [src/vs/workbench/contrib/terminalContrib/chatAgentTools/browser/taskHelpers.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/terminalContrib/chatAgentTools/browser/taskHelpers.ts) -> xterm (Count: 1)
-- [src/vs/workbench/contrib/terminalContrib/quickFix/browser/quickFixAddon.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/terminalContrib/quickFix/browser/quickFixAddon.ts) -> headless (Count: 1)
-- [src/vs/workbench/workbench.common.main.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/workbench.common.main.ts) -> src/vs/workbench/contrib/mcp/browser/mcp.view.contribution.ts (Count: 1)
-- [test/sanity/src/index.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/test/sanity/src/index.ts) -> vscode-uri (Count: 1)
-- [src/vs/workbench/contrib/terminal/browser/xterm-private.d.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/terminal/browser/xterm-private.d.ts) -> xterm (Count: 1)
-- [src/vs/workbench/services/keybinding/browser/keyboardLayouts/layout.contribution.darwin.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/services/keybinding/browser/keyboardLayouts/layout.contribution.darwin.ts) -> src/vs/workbench/services/keybinding/browser/keyboardLayouts/_.contribution.ts (Count: 1)
-- [src/vs/workbench/contrib/terminalContrib/commandGuide/browser/terminal.commandGuide.contribution.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/terminalContrib/commandGuide/browser/terminal.commandGuide.contribution.ts) -> xterm (Count: 1)
-- [src/vs/workbench/services/host/browser/browserHostService.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/services/host/browser/browserHostService.ts) -> src/vs/workbench/browser/web.api.ts (Count: 1)
-- [src/vs/workbench/contrib/terminal/browser/terminalInstance.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/terminal/browser/terminalInstance.ts) -> addon-progress (Count: 1)
-- [src/vs/workbench/contrib/styleOverrides/browser/styleOverrides.contribution.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/styleOverrides/browser/styleOverrides.contribution.ts) -> fontRamp (Count: 1)
 - [src/vs/workbench/workbench.common.main.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/workbench.common.main.ts) -> src/vs/workbench/contrib/bracketPairColorizer2Telemetry/browser/bracketPairColorizer2Telemetry.contribution.ts (Count: 1)
-- [src/vs/workbench/services/keybinding/browser/keyboardLayouts/cz.win.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/services/keybinding/browser/keyboardLayouts/cz.win.ts) -> src/vs/workbench/services/keybinding/browser/keyboardLayouts/_.contribution.ts (Count: 1)
-- [src/vs/workbench/contrib/terminal/browser/xterm/xtermAddonImporter.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/terminal/browser/xterm/xtermAddonImporter.ts) -> addon-image (Count: 1)
-- [test/unit/node/index.js](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/test/unit/node/index.js) -> minimist (Count: 1)
-- [src/vs/workbench/contrib/terminalContrib/find/browser/terminalFindWidget.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/terminalContrib/find/browser/terminalFindWidget.ts) -> addon-search (Count: 1)
-- [src/vs/workbench/contrib/terminal/browser/xterm/xtermTerminal.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/terminal/browser/xterm/xtermTerminal.ts) -> addon-search (Count: 1)
-- [src/vs/workbench/services/keybinding/browser/keyboardLayouts/pt-br.win.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/services/keybinding/browser/keyboardLayouts/pt-br.win.ts) -> src/vs/workbench/services/keybinding/browser/keyboardLayouts/_.contribution.ts (Count: 1)
-- [src/vs/workbench/services/textMate/browser/tokenizationSupport/textMateTokenizationSupport.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/services/textMate/browser/tokenizationSupport/textMateTokenizationSupport.ts) -> vscode-textmate (Count: 1)
-- [src/vs/workbench/services/keybinding/browser/keyboardLayouts/en-belgian.win.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/services/keybinding/browser/keyboardLayouts/en-belgian.win.ts) -> src/vs/workbench/services/keybinding/browser/keyboardLayouts/_.contribution.ts (Count: 1)
-- [test/monaco/core.js](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/test/monaco/core.js) -> monaco-editor-core (Count: 1)
-- [src/vs/workbench/workbench.web.main.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/workbench.web.main.ts) -> src/vs/workbench/contrib/webview/browser/webview.web.contribution.ts (Count: 1)
-- [src/vs/workbench/contrib/terminal/browser/xterm/xtermTerminal.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/terminal/browser/xterm/xtermTerminal.ts) -> addon-ligatures (Count: 1)
-- [src/vs/workbench/contrib/styleOverrides/browser/styleOverrides.contribution.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/styleOverrides/browser/styleOverrides.contribution.ts) -> padding (Count: 1)
-- [src/vs/workbench/services/keybinding/browser/keyboardLayouts/es-latin.win.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/services/keybinding/browser/keyboardLayouts/es-latin.win.ts) -> src/vs/workbench/services/keybinding/browser/keyboardLayouts/_.contribution.ts (Count: 1)
-- [src/vs/workbench/services/environment/browser/environmentService.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/services/environment/browser/environmentService.ts) -> src/vs/workbench/browser/web.api.ts (Count: 1)
-- [src/vs/workbench/workbench.common.main.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/workbench.common.main.ts) -> src/vs/workbench/contrib/accessibilitySignals/browser/accessibilitySignal.contribution.ts (Count: 1)
-- [src/vs/workbench/contrib/terminal/browser/terminalConfigurationService.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/terminal/browser/terminalConfigurationService.ts) -> xterm-private (Count: 1)
-- [src/vs/workbench/services/treeSitter/browser/treeSitterLibraryService.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/services/treeSitter/browser/treeSitterLibraryService.ts) -> tree-sitter-wasm (Count: 1)
-- [src/vs/workbench/workbench.common.main.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/workbench.common.main.ts) -> src/vs/workbench/contrib/chat/browser/chat.view.contribution.ts (Count: 1)
-- [src/vs/workbench/contrib/terminalContrib/stickyScroll/browser/terminalStickyScrollOverlay.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/terminalContrib/stickyScroll/browser/terminalStickyScrollOverlay.ts) -> xterm-private (Count: 1)
-- [src/vs/workbench/services/keybinding/browser/keyboardLayouts/de.linux.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/services/keybinding/browser/keyboardLayouts/de.linux.ts) -> src/vs/workbench/services/keybinding/browser/keyboardLayouts/_.contribution.ts (Count: 1)
-- [src/vs/workbench/contrib/terminalContrib/links/browser/terminalMultiLineLinkDetector.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/terminalContrib/links/browser/terminalMultiLineLinkDetector.ts) -> xterm (Count: 1)
-- [src/vs/workbench/services/keybinding/browser/keyboardLayouts/ru.win.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/services/keybinding/browser/keyboardLayouts/ru.win.ts) -> src/vs/workbench/services/keybinding/browser/keyboardLayouts/_.contribution.ts (Count: 1)
-- [test/sanity/src/context.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/test/sanity/src/context.ts) -> node-fetch (Count: 1)
-- [src/vs/workbench/contrib/terminal/browser/widgets/terminalHoverWidget.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/terminal/browser/widgets/terminalHoverWidget.ts) -> xterm (Count: 1)
-- [src/vs/workbench/workbench.common.main.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/workbench.common.main.ts) -> src/vs/workbench/contrib/logs/browser/logs.contribution.ts (Count: 1)
+- [src/vs/workbench/contrib/terminalContrib/clipboard/browser/terminal.clipboard.contribution.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/terminalContrib/clipboard/browser/terminal.clipboard.contribution.ts) -> xterm (Count: 1)
+- [src/vs/workbench/contrib/styleOverrides/browser/styleOverrides.contribution.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/styleOverrides/browser/styleOverrides.contribution.ts) -> roundedCorners (Count: 1)
+- [test/mcp/src/automationTools/editor.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/test/mcp/src/automationTools/editor.ts) -> zod (Count: 1)
+- [src/vs/workbench/workbench.web.main.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/workbench.web.main.ts) -> src/vs/workbench/contrib/extensions/browser/extensions.web.contribution.ts (Count: 1)
 - [test/mcp/src/automationTools/terminal.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/test/mcp/src/automationTools/terminal.ts) -> zod (Count: 1)
-- [src/vs/workbench/services/keybinding/browser/keyboardLayouts/es.win.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/services/keybinding/browser/keyboardLayouts/es.win.ts) -> src/vs/workbench/services/keybinding/browser/keyboardLayouts/_.contribution.ts (Count: 1)
 - [src/vs/workbench/workbench.common.main.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/workbench.common.main.ts) -> src/vs/workbench/contrib/welcomeViews/common/newFile.contribution.ts (Count: 1)
-- [src/vs/workbench/contrib/terminalContrib/links/browser/links.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/terminalContrib/links/browser/links.ts) -> xterm (Count: 1)
-- [src/vs/workbench/services/textMate/browser/backgroundTokenization/worker/textMateWorkerTokenizer.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/services/textMate/browser/backgroundTokenization/worker/textMateWorkerTokenizer.ts) -> src/vs/workbench/services/textMate/browser/backgroundTokenization/worker/textMateTokenizationWorker.worker.ts (Count: 1)
-- [src/vs/workbench/contrib/output/browser/outputLinkProvider.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/output/browser/outputLinkProvider.ts) -> src/vs/editor/common/services/textModelSync/textModelSync.impl.ts (Count: 1)
-- [src/vs/workbench/contrib/terminalContrib/links/browser/terminalLinkManager.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/terminalContrib/links/browser/terminalLinkManager.ts) -> xterm (Count: 1)
-- [src/vs/workbench/contrib/debug/browser/debug.contribution.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/debug/browser/debug.contribution.ts) -> src/vs/workbench/contrib/debug/browser/debug.service.contribution.ts (Count: 1)
-- [test/sanity/src/index.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/test/sanity/src/index.ts) -> rimraf (Count: 1)
-- [src/vs/workbench/contrib/terminal/common/scripts/shellIntegration-bash.sh](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/terminal/common/scripts/shellIntegration-bash.sh) -> profile (Count: 1)
-- [src/vs/workbench/contrib/terminalContrib/chatAgentTools/browser/executeStrategy/basicExecuteStrategy.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/terminalContrib/chatAgentTools/browser/executeStrategy/basicExecuteStrategy.ts) -> xterm (Count: 1)
+- [src/vs/workbench/workbench.web.main.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/workbench.web.main.ts) -> src/vs/workbench/contrib/processExplorer/browser/processExplorer.web.contribution.ts (Count: 1)
+- [src/vs/workbench/services/languageDetection/browser/languageDetectionWorkerServiceImpl.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/services/languageDetection/browser/languageDetectionWorkerServiceImpl.ts) -> src/vs/editor/common/services/textModelSync/textModelSync.impl.ts (Count: 1)
+- [src/vs/workbench/contrib/terminalContrib/links/browser/terminal.links.contribution.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/terminalContrib/links/browser/terminal.links.contribution.ts) -> xterm (Count: 1)
+- [src/vs/workbench/contrib/terminal/browser/xterm/xtermTerminal.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/terminal/browser/xterm/xtermTerminal.ts) -> addon-clipboard (Count: 1)
+- [src/vs/workbench/contrib/terminalContrib/developer/browser/terminal.developer.contribution.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/terminalContrib/developer/browser/terminal.developer.contribution.ts) -> xterm (Count: 1)
+- [src/vs/workbench/services/keybinding/browser/keyboardLayouts/en-uk.win.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/services/keybinding/browser/keyboardLayouts/en-uk.win.ts) -> src/vs/workbench/services/keybinding/browser/keyboardLayouts/_.contribution.ts (Count: 1)
+- [src/vs/workbench/services/textMate/browser/backgroundTokenization/threadedBackgroundTokenizerFactory.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/services/textMate/browser/backgroundTokenization/threadedBackgroundTokenizerFactory.ts) -> vscode-textmate (Count: 1)
+- [src/vs/workbench/services/keybinding/browser/keyboardLayouts/dk.win.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/services/keybinding/browser/keyboardLayouts/dk.win.ts) -> src/vs/workbench/services/keybinding/browser/keyboardLayouts/_.contribution.ts (Count: 1)
+- [src/vs/workbench/contrib/meteredConnection/browser/meteredConnection.contribution.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/meteredConnection/browser/meteredConnection.contribution.ts) -> src/vs/platform/meteredConnection/common/meteredConnection.config.contribution.ts (Count: 1)
+- [test/sanity/scripts/run-docker.sh](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/test/sanity/scripts/run-docker.sh) -> artifacts (Count: 1)
 - [src/vs/workbench/services/keybinding/browser/keyboardLayouts/es.darwin.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/services/keybinding/browser/keyboardLayouts/es.darwin.ts) -> src/vs/workbench/services/keybinding/browser/keyboardLayouts/_.contribution.ts (Count: 1)
+- [src/vs/workbench/workbench.common.main.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/workbench.common.main.ts) -> src/vs/workbench/contrib/styleOverrides/browser/styleOverrides.contribution.ts (Count: 1)
+- [src/vs/workbench/services/assignment/common/assignmentService.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/services/assignment/common/assignmentService.ts) -> tas-client (Count: 1)
+- [src/vs/workbench/services/keybinding/browser/keyboardLayouts/layout.contribution.darwin.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/services/keybinding/browser/keyboardLayouts/layout.contribution.darwin.ts) -> src/vs/workbench/services/keybinding/browser/keyboardLayouts/_.contribution.ts (Count: 1)
+- [src/vs/workbench/services/keybinding/browser/keyboardLayouts/pt-br.win.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/services/keybinding/browser/keyboardLayouts/pt-br.win.ts) -> src/vs/workbench/services/keybinding/browser/keyboardLayouts/_.contribution.ts (Count: 1)
+- [test/sanity/src/index.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/test/sanity/src/index.ts) -> minimist (Count: 1)
+- [src/vs/workbench/contrib/editTelemetry/browser/editStats/aiStatsStatusBar.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/editTelemetry/browser/editStats/aiStatsStatusBar.ts) -> media (Count: 1)
+- [src/vs/workbench/services/textMate/browser/backgroundTokenization/textMateWorkerTokenizerController.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/services/textMate/browser/backgroundTokenization/textMateWorkerTokenizerController.ts) -> vscode-textmate (Count: 1)
+- [src/vs/workbench/contrib/terminal/browser/xterm/markNavigationAddon.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/terminal/browser/xterm/markNavigationAddon.ts) -> xterm (Count: 1)
+- [src/vs/workbench/contrib/styleOverrides/browser/styleOverrides.contribution.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/styleOverrides/browser/styleOverrides.contribution.ts) -> commandCenter (Count: 1)
+- [src/vs/workbench/contrib/terminalContrib/links/browser/terminalLinkManager.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/terminalContrib/links/browser/terminalLinkManager.ts) -> xterm-private (Count: 1)
+- [src/vs/workbench/services/keybinding/browser/keyboardLayouts/no.win.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/services/keybinding/browser/keyboardLayouts/no.win.ts) -> src/vs/workbench/services/keybinding/browser/keyboardLayouts/_.contribution.ts (Count: 1)
+- [src/vs/workbench/contrib/terminal/common/scripts/shellIntegration-bash.sh](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/terminal/common/scripts/shellIntegration-bash.sh) -> bashrc (Count: 1)
+- [src/vs/workbench/services/keybinding/browser/keyboardLayouts/en-intl.darwin.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/services/keybinding/browser/keyboardLayouts/en-intl.darwin.ts) -> src/vs/workbench/services/keybinding/browser/keyboardLayouts/_.contribution.ts (Count: 1)
+- [src/vs/workbench/contrib/terminalContrib/links/browser/terminalUriLinkDetector.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/terminalContrib/links/browser/terminalUriLinkDetector.ts) -> xterm (Count: 1)
+- [src/vs/workbench/contrib/terminal/browser/widgets/terminalHoverWidget.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/terminal/browser/widgets/terminalHoverWidget.ts) -> xterm (Count: 1)
+- [src/vs/workbench/contrib/terminal/terminal.all.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/terminal/terminal.all.ts) -> src/vs/workbench/contrib/terminalContrib/stickyScroll/browser/terminal.stickyScroll.contribution.ts (Count: 1)
+- [src/vs/workbench/contrib/terminal/terminal.all.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/terminal/terminal.all.ts) -> src/vs/workbench/contrib/terminalContrib/voice/browser/terminal.voice.contribution.ts (Count: 1)
+- [src/vs/workbench/contrib/terminalContrib/chatAgentTools/browser/tools/task/getTaskOutputTool.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/terminalContrib/chatAgentTools/browser/tools/task/getTaskOutputTool.ts) -> xterm (Count: 1)
+- [src/vs/workbench/services/keybinding/browser/keyboardLayouts/en.linux.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/services/keybinding/browser/keyboardLayouts/en.linux.ts) -> src/vs/workbench/services/keybinding/browser/keyboardLayouts/_.contribution.ts (Count: 1)
+- [src/vs/workbench/services/keybinding/browser/keyboardLayouts/sv.win.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/services/keybinding/browser/keyboardLayouts/sv.win.ts) -> src/vs/workbench/services/keybinding/browser/keyboardLayouts/_.contribution.ts (Count: 1)
+- [src/vs/workbench/workbench.web.main.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/workbench.web.main.ts) -> src/vs/workbench/contrib/webview/browser/webview.web.contribution.ts (Count: 1)
+- [src/vs/workbench/contrib/terminal/common/scripts/shellIntegration-bash.sh](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/terminal/common/scripts/shellIntegration-bash.sh) -> activation (Count: 1)
+- [src/vs/workbench/contrib/terminalContrib/zoom/browser/terminal.zoom.contribution.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/terminalContrib/zoom/browser/terminal.zoom.contribution.ts) -> xterm (Count: 1)
+- [src/vs/workbench/services/textMate/browser/backgroundTokenization/worker/textMateTokenizationWorker.worker.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/services/textMate/browser/backgroundTokenization/worker/textMateTokenizationWorker.worker.ts) -> vscode-oniguruma (Count: 1)
+- [test/mcp/src/application.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/test/mcp/src/application.ts) -> test-electron (Count: 1)
+- [src/vs/workbench/services/languageDetection/browser/languageDetectionWebWorker.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/services/languageDetection/browser/languageDetectionWebWorker.ts) -> src/vs/workbench/services/languageDetection/browser/languageDetectionWorker.protocol.ts (Count: 1)
+- [src/vs/workbench/contrib/terminal/browser/xterm/xtermTerminal.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/terminal/browser/xterm/xtermTerminal.ts) -> addon-serialize (Count: 1)
+- [src/vs/workbench/contrib/terminalContrib/stickyScroll/browser/terminalStickyScrollOverlay.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/terminalContrib/stickyScroll/browser/terminalStickyScrollOverlay.ts) -> addon-webgl (Count: 1)
+- [src/vs/workbench/contrib/terminal/common/scripts/shellIntegration-bash.sh](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/terminal/common/scripts/shellIntegration-bash.sh) -> bash_profile (Count: 1)
+- [src/vs/workbench/contrib/terminal/terminal.all.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/terminal/terminal.all.ts) -> src/vs/workbench/contrib/terminalContrib/quickAccess/browser/terminal.quickAccess.contribution.ts (Count: 1)
+- [src/vs/workbench/contrib/terminal/terminal.all.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/terminal/terminal.all.ts) -> src/vs/workbench/contrib/terminalContrib/autoReplies/browser/terminal.autoReplies.contribution.ts (Count: 1)
+- [src/vs/workbench/contrib/terminal/terminal.all.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/terminal/terminal.all.ts) -> src/vs/workbench/contrib/terminalContrib/sendSequence/browser/terminal.sendSequence.contribution.ts (Count: 1)
 </details>
 
 ### 3.2 Boundary Evidence
 <details><summary><b>Show Boundary Evidence (Top 50)</b></summary>
 
-- [extensions/copilot/src/platform/workspaceChunkSearch/node/codeSearch/codeSearchChunkSearch.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/extensions/copilot/src/platform/workspaceChunkSearch/node/codeSearch/codeSearchChunkSearch.ts) -> src/vs/workbench/common/resources.ts (Count: 1)
-- [src/vs/code/node/cli.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/code/node/cli.ts) -> src/vs/code/node/cliArgs.ts (Count: 1)
-- [Ghost Dependency (extensions/copilot/src/extension/completions-core/vscode-node/lib/src/ghostText/ghostText.ts)](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/extensions/copilot/src/extension/completions-core/vscode-node/lib/src/ghostText/ghostText.ts) -> extensions/copilot/src/platform/completions-core/common/openai/copilotAnnotations.ts (Count: 1)
-- [src/vs/platform/agentHost/common/agentService.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/platform/agentHost/common/agentService.ts) -> src/vs/platform/agentHost/common/state/sessionActions.ts (Count: 1)
-- [src/vs/sessions/contrib/providers/remoteAgentHost/browser/remoteAgentHostActions.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/sessions/contrib/providers/remoteAgentHost/browser/remoteAgentHostActions.ts) -> extensions/copilot/test/simulation/fixtures/codeMapper/quickInput.ts (Count: 1)
-- [src/vs/workbench/contrib/search/browser/searchQuickAccess.contribution.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/search/browser/searchQuickAccess.contribution.ts) -> src/vs/editor/contrib/quickAccess/browser/gotoLineQuickAccess.ts (Count: 1)
-- [src/vs/base/common/codiconsUtil.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/base/common/codiconsUtil.ts) -> extensions/copilot/src/extension/agents/node/adapters/types.ts (Count: 1)
-- [extensions/copilot/src/extension/completions-core/vscode-node/extension/src/codeReferencing/outputChannel.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/extensions/copilot/src/extension/completions-core/vscode-node/extension/src/codeReferencing/outputChannel.ts) -> src/vs/workbench/services/lifecycle/common/lifecycle.ts (Count: 1)
-- [src/vs/workbench/contrib/welcomeGettingStarted/browser/gettingStarted.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/welcomeGettingStarted/browser/gettingStarted.ts) -> src/vs/workbench/contrib/welcomeGettingStarted/common/gettingStartedContent.ts (Count: 1)
-- [src/vs/workbench/contrib/terminal/browser/terminalIcon.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/terminal/browser/terminalIcon.ts) -> src/vs/platform/instantiation/common/instantiation.ts (Count: 1)
-- [src/vs/workbench/contrib/terminalContrib/chatAgentTools/browser/tools/runInTerminalTool.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/terminalContrib/chatAgentTools/browser/tools/runInTerminalTool.ts) -> extensions/copilot/src/extension/completions-core/vscode-node/lib/src/util/uri.ts (Count: 1)
-- [src/vs/workbench/contrib/terminal/browser/detachedTerminal.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/terminal/browser/detachedTerminal.ts) -> cli/src/util/errors.rs (Count: 1)
-- [extensions/copilot/src/extension/completions-core/vscode-node/extension/src/copilotCompletionFeedbackTracker.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/extensions/copilot/src/extension/completions-core/vscode-node/extension/src/copilotCompletionFeedbackTracker.ts) -> src/vs/platform/instantiation/common/instantiation.ts (Count: 1)
-- [extensions/copilot/src/extension/chatSessions/copilotcli/common/copilotCLIPrompt.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/extensions/copilot/src/extension/chatSessions/copilotcli/common/copilotCLIPrompt.ts) -> extensions/copilot/src/vscodeTypes.ts (Count: 1)
-- [src/vs/workbench/contrib/tasks/electron-browser/taskService.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/tasks/electron-browser/taskService.ts) -> src/vs/workbench/services/path/browser/pathService.ts (Count: 1)
-- [src/vs/sessions/contrib/codeReview/browser/codeReview.contributions.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/sessions/contrib/codeReview/browser/codeReview.contributions.ts) -> src/vs/sessions/services/sessions/common/sessionsManagement.ts (Count: 1)
-- [src/vs/workbench/contrib/bulkEdit/browser/preview/bulkEdit.contribution.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/bulkEdit/browser/preview/bulkEdit.contribution.ts) -> src/vs/base/common/cancellation.ts (Count: 1)
-- [src/vs/sessions/contrib/chat/browser/repoPicker.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/sessions/contrib/chat/browser/repoPicker.ts) -> src/vs/base/common/iconLabels.ts (Count: 1)
-- [src/vs/platform/files/browser/indexedDBFileSystemProvider.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/platform/files/browser/indexedDBFileSystemProvider.ts) -> src/vs/base/browser/indexedDB.ts (Count: 1)
-- [src/vs/workbench/contrib/chat/browser/widget/input/sessionTargetPickerActionItem.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/widget/input/sessionTargetPickerActionItem.ts) -> src/vs/workbench/contrib/chat/browser/widget/input/chatInputPickerActionItem.ts (Count: 1)
-- [src/vs/workbench/electron-browser/parts/titlebar/titlebarPart.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/electron-browser/parts/titlebar/titlebarPart.ts) -> src/vs/workbench/electron-browser/parts/titlebar/menubarControl.ts (Count: 1)
-- [src/vs/workbench/contrib/notebook/browser/diff/notebookDiffEditorBrowser.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/notebook/browser/diff/notebookDiffEditorBrowser.ts) -> src/vs/workbench/contrib/notebook/browser/notebookBrowser.ts (Count: 1)
-- [src/vs/workbench/contrib/extensions/browser/extensions.contribution.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/extensions/browser/extensions.contribution.ts) -> extensions/copilot/test/simulation/fixtures/gen-method-issue-3602/editor.ts (Count: 1)
-- [src/vs/workbench/contrib/chat/browser/aiCustomization/promptsServiceCustomizationItemProvider.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/aiCustomization/promptsServiceCustomizationItemProvider.ts) -> src/vs/sessions/contrib/chat/browser/customizationHarnessService.ts (Count: 1)
-- [extensions/copilot/src/extension/tools/node/vscodeAPITool.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/extensions/copilot/src/extension/tools/node/vscodeAPITool.ts) -> extensions/copilot/src/extension/tools/common/toolsRegistry.ts (Count: 1)
-- [extensions/copilot/src/extension/tools/node/findTextInFilesTool.tsx](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/extensions/copilot/src/extension/tools/node/findTextInFilesTool.tsx) -> extensions/copilot/src/platform/prompts/common/promptPathRepresentationService.ts (Count: 1)
-- [extensions/copilot/src/extension/intents/node/unknownIntent.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/extensions/copilot/src/extension/intents/node/unknownIntent.ts) -> extensions/copilot/src/util/common/test/shims/l10n.ts (Count: 1)
-- [src/vs/sessions/contrib/changes/browser/checksWidget.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/sessions/contrib/changes/browser/checksWidget.ts) -> src/vs/platform/agentHost/common/state/protocol/common/actions.ts (Count: 1)
-- [extensions/html-language-features/server/src/modes/languageModes.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/extensions/html-language-features/server/src/modes/languageModes.ts) -> extensions/html-language-features/server/src/modes/htmlMode.ts (Count: 1)
-- [extensions/copilot/src/extension/chatSessions/copilotcli/vscode-node/copilotCLIPromptReferences.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/extensions/copilot/src/extension/chatSessions/copilotcli/vscode-node/copilotCLIPromptReferences.ts) -> src/vs/workbench/common/resources.ts (Count: 1)
-- [src/vs/workbench/browser/parts/editor/breadcrumbs.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/browser/parts/editor/breadcrumbs.ts) -> src/vs/base/common/glob.ts (Count: 1)
-- [src/vs/workbench/contrib/chat/browser/chatDebug/chatDebugLogsView.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/chatDebug/chatDebugLogsView.ts) -> src/vs/workbench/contrib/chat/common/model/chatUri.ts (Count: 1)
-- [src/vs/workbench/contrib/issue/browser/issueQuickAccess.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/issue/browser/issueQuickAccess.ts) -> src/vs/platform/agentHost/common/state/protocol/common/actions.ts (Count: 1)
-- [src/vs/workbench/contrib/files/browser/fileCommands.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/files/browser/fileCommands.ts) -> src/vs/base/common/keyCodes.ts (Count: 1)
-- [src/vs/editor/contrib/colorPicker/browser/standaloneColorPicker/standaloneColorPickerActions.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/editor/contrib/colorPicker/browser/standaloneColorPicker/standaloneColorPickerActions.ts) -> src/vs/editor/contrib/colorPicker/browser/standaloneColorPicker/standaloneColorPickerController.ts (Count: 1)
-- [src/vs/workbench/browser/parts/editor/singleEditorTabsControl.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/browser/parts/editor/singleEditorTabsControl.ts) -> src/vs/workbench/browser/parts/editor/editorTabsControl.ts (Count: 1)
-- [src/vs/workbench/contrib/debug/common/debugContentProvider.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/debug/common/debugContentProvider.ts) -> src/vs/editor/common/languages/language.ts (Count: 1)
-- [test/automation/src/workbench.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/test/automation/src/workbench.ts) -> test/automation/src/problems.ts (Count: 1)
-- [src/vs/workbench/contrib/testing/browser/testingExplorerView.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/testing/browser/testingExplorerView.ts) -> src/vs/platform/actions/browser/dropdownWithPrimaryActionViewItem.ts (Count: 1)
-- [src/vs/workbench/contrib/multiDiffEditor/browser/multiDiffEditorInput.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/multiDiffEditor/browser/multiDiffEditorInput.ts) -> src/vs/editor/browser/widget/multiDiffEditor/multiDiffEditorViewModel.ts (Count: 1)
-- [extensions/copilot/src/extension/intents/node/testIntent/testFromTestInvocation.tsx](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/extensions/copilot/src/extension/intents/node/testIntent/testFromTestInvocation.tsx) -> extensions/copilot/src/extension/prompt/node/documentContext.ts (Count: 1)
-- [src/vs/editor/standalone/browser/referenceSearch/standaloneReferenceSearch.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/editor/standalone/browser/referenceSearch/standaloneReferenceSearch.ts) -> src/vs/editor/contrib/gotoSymbol/browser/peek/referencesController.ts (Count: 1)
-- [src/vs/platform/extensionManagement/common/extensionStorage.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/platform/extensionManagement/common/extensionStorage.ts) -> src/vs/workbench/services/extensionManagement/common/extensionManagement.ts (Count: 1)
-- [src/vs/workbench/services/agentHost/common/agentHostResourceService.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/services/agentHost/common/agentHostResourceService.ts) -> extensions/typescript-language-features/src/configuration/configuration.ts (Count: 1)
-- [src/vs/editor/common/diff/defaultLinesDiffComputer/defaultLinesDiffComputer.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/editor/common/diff/defaultLinesDiffComputer/defaultLinesDiffComputer.ts) -> src/vs/editor/common/diff/defaultLinesDiffComputer/heuristicSequenceOptimizations.ts (Count: 1)
-- [src/vs/sessions/contrib/files/browser/workspaceFolderActions.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/sessions/contrib/files/browser/workspaceFolderActions.ts) -> src/vs/sessions/services/sessions/browser/sessionsService.ts (Count: 1)
-- [src/vs/workbench/contrib/browserView/electron-browser/tools/browserTools.contribution.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/browserView/electron-browser/tools/browserTools.contribution.ts) -> src/vs/workbench/services/editor/browser/editorService.ts (Count: 1)
-- [src/vs/workbench/contrib/notebook/browser/diff/notebookDiffActions.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/notebook/browser/diff/notebookDiffActions.ts) -> src/vs/workbench/contrib/notebook/browser/diff/notebookMultiDiffEditor.ts (Count: 1)
-- [src/vs/workbench/contrib/chat/browser/chatEditing/chatEditingDeletedFileEntry.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/chatEditing/chatEditingDeletedFileEntry.ts) -> src/vs/editor/common/languages/language.ts (Count: 1)
-- [src/vs/workbench/contrib/inlineChat/browser/inlineChatWidget.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/inlineChat/browser/inlineChatWidget.ts) -> src/vs/base/common/iconLabels.ts (Count: 1)
+- [src/vs/workbench/services/policies/browser/accountPolicyGateContribution.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/services/policies/browser/accountPolicyGateContribution.ts) -> src/vs/platform/contextkey/common/contextkey.ts (Count: 1)
+- [src/vs/sessions/contrib/agentFeedback/browser/agentFeedbackHover.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/sessions/contrib/agentFeedback/browser/agentFeedbackHover.ts) -> src/vs/workbench/services/lifecycle/common/lifecycle.ts (Count: 1)
+- [src/vs/platform/agentHost/node/claude/claudeAgentSession.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/platform/agentHost/node/claude/claudeAgentSession.ts) -> src/vs/platform/agentHost/node/claude/claudeSessionMetadataStore.ts (Count: 1)
+- [src/vs/workbench/contrib/chat/browser/agentSessions/experiments/agentSessionProjectionActions.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/agentSessions/experiments/agentSessionProjectionActions.ts) -> src/vs/nls.ts (Count: 1)
+- [src/vs/workbench/services/extensions/common/abstractExtensionService.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/services/extensions/common/abstractExtensionService.ts) -> src/vs/workbench/services/extensions/common/rpcProtocol.ts (Count: 1)
+- [src/vs/workbench/contrib/inlineChat/browser/inlineChatWidget.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/inlineChat/browser/inlineChatWidget.ts) -> extensions/git/src/hover.ts (Count: 1)
+- [src/vs/workbench/contrib/testing/common/nullTestingService.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/testing/common/nullTestingService.ts) -> src/vs/workbench/contrib/testing/common/testTypes.ts (Count: 1)
+- [src/vs/platform/agentHost/electron-browser/localAgentHostService.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/platform/agentHost/electron-browser/localAgentHostService.ts) -> cli/src/commands.rs (Count: 1)
+- [src/vs/workbench/api/browser/extensionHost.contribution.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/api/browser/extensionHost.contribution.ts) -> src/vs/workbench/api/browser/mainThreadNotebookSaveParticipant.ts (Count: 1)
+- [src/vs/server/node/remoteExtensionsScanner.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/server/node/remoteExtensionsScanner.ts) -> src/vs/code/electron-utility/sharedProcess/contrib/extensions.ts (Count: 1)
+- [src/vs/workbench/contrib/terminalContrib/chatAgentTools/browser/runInTerminalHelpers.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/terminalContrib/chatAgentTools/browser/runInTerminalHelpers.ts) -> src/vs/workbench/contrib/chat/common/tools/languageModelToolsService.ts (Count: 1)
+- [src/vs/editor/contrib/colorPicker/browser/hoverColorPicker/hoverColorPickerParticipant.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/editor/contrib/colorPicker/browser/hoverColorPicker/hoverColorPickerParticipant.ts) -> extensions/notebook-renderers/src/color.ts (Count: 1)
+- [src/vs/workbench/contrib/chat/browser/agentSessions/agentHost/agentHostCustomizationService.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/agentSessions/agentHost/agentHostCustomizationService.ts) -> src/vs/platform/mcp/common/mcpPlatformTypes.ts (Count: 1)
+- [src/vs/workbench/contrib/chat/browser/tools/clientToolSetsContribution.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/tools/clientToolSetsContribution.ts) -> src/vs/base/common/codicons.ts (Count: 1)
+- [extensions/copilot/src/platform/chat/node/hookExecutor.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/extensions/copilot/src/platform/chat/node/hookExecutor.ts) -> extensions/copilot/src/platform/chat/common/hookExecutor.ts (Count: 1)
+- [src/vs/workbench/contrib/notebook/common/notebookExecutionService.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/notebook/common/notebookExecutionService.ts) -> src/vs/workbench/contrib/notebook/common/notebookCommon.ts (Count: 1)
+- [extensions/copilot/src/extension/xtab/node/xtabProvider.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/extensions/copilot/src/extension/xtab/node/xtabProvider.ts) -> extensions/copilot/src/platform/endpoint/node/proxyXtabEndpoint.ts (Count: 1)
+- [src/vs/workbench/contrib/codeEditor/browser/editorSettingsMigration.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/codeEditor/browser/editorSettingsMigration.ts) -> extensions/typescript-language-features/src/configuration/configuration.ts (Count: 1)
+- [src/vs/workbench/browser/codeeditor.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/browser/codeeditor.ts) -> src/vs/editor/common/config/editorOptions.ts (Count: 1)
+- [src/vs/platform/menubar/electron-main/menubar.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/platform/menubar/electron-main/menubar.ts) -> src/vs/platform/lifecycle/electron-main/lifecycleMainService.ts (Count: 1)
+- [src/vs/workbench/api/common/extHost.protocol.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/api/common/extHost.protocol.ts) -> src/vs/platform/telemetry/common/gdprTypings.ts (Count: 1)
+- [src/vs/workbench/contrib/chat/browser/widgetHosts/viewPane/chatViewPane.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/widgetHosts/viewPane/chatViewPane.ts) -> src/vs/workbench/contrib/chat/browser/agentSessions/agentSessions.ts (Count: 1)
+- [src/vs/workbench/contrib/chat/browser/agentSessions/experiments/unifiedQuickAccess.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/agentSessions/experiments/unifiedQuickAccess.ts) -> src/vs/workbench/services/lifecycle/common/lifecycle.ts (Count: 1)
+- [src/vs/workbench/contrib/extensions/browser/extensions.contribution.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/extensions/browser/extensions.contribution.ts) -> src/vs/workbench/contrib/chat/browser/pluginInstallService.ts (Count: 1)
+- [extensions/emmet/src/imageSizeHelper.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/extensions/emmet/src/imageSizeHelper.ts) -> image-size (Count: 1)
+- [src/vs/workbench/services/host/electron-browser/nativeHostService.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/services/host/electron-browser/nativeHostService.ts) -> src/vs/code/electron-utility/sharedProcess/contrib/extensions.ts (Count: 1)
+- [src/vs/workbench/contrib/searchEditor/browser/searchEditorInput.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/searchEditor/browser/searchEditorInput.ts) -> src/vs/workbench/services/path/browser/pathService.ts (Count: 1)
+- [src/vs/editor/contrib/suggest/browser/suggest.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/editor/contrib/suggest/browser/suggest.ts) -> src/vs/base/common/range.ts (Count: 1)
+- [src/vs/workbench/contrib/chat/browser/widgetHosts/viewPane/chatViewPane.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/widgetHosts/viewPane/chatViewPane.ts) -> src/vs/base/browser/mouseEvent.ts (Count: 1)
+- [src/vs/workbench/contrib/terminal/common/remote/terminal.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/terminal/common/remote/terminal.ts) -> extensions/copilot/src/extension/prompts/node/panel/terminal.tsx (Count: 1)
+- [src/vs/workbench/contrib/chat/browser/widget/chatContentParts/toolInvocationParts/chatToolConfirmationSubPart.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/widget/chatContentParts/toolInvocationParts/chatToolConfirmationSubPart.ts) -> src/vs/workbench/contrib/chat/browser/tools/chatToolRiskAssessmentService.ts (Count: 1)
+- [src/vs/workbench/services/userDataProfile/browser/settingsResource.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/services/userDataProfile/browser/settingsResource.ts) -> src/vs/platform/userDataSync/common/settingsMerge.ts (Count: 1)
+- [src/vs/workbench/contrib/chat/browser/widget/input/modePickerActionItem.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/widget/input/modePickerActionItem.ts) -> cli/src/constants.rs (Count: 1)
+- [src/vs/workbench/contrib/chat/browser/widgetHosts/chatQuick.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/widgetHosts/chatQuick.ts) -> extensions/copilot/src/extension/completions-core/vscode-node/lib/src/util/uri.ts (Count: 1)
+- [src/vs/editor/common/services/model.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/editor/common/services/model.ts) -> src/vs/editor/common/textModelEditSource.ts (Count: 1)
+- [src/vs/workbench/browser/parts/notifications/notificationsToasts.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/browser/parts/notifications/notificationsToasts.ts) -> src/vs/workbench/browser/parts/notifications/notificationsList.ts (Count: 1)
+- [src/vs/workbench/contrib/notebook/browser/contrib/multicursor/notebookMulticursor.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/notebook/browser/contrib/multicursor/notebookMulticursor.ts) -> src/vs/workbench/contrib/notebook/browser/view/cellParts/cellEditorOptions.ts (Count: 1)
+- [src/vs/editor/browser/widget/multiDiffEditor/diffEditorItemTemplate.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/editor/browser/widget/multiDiffEditor/diffEditorItemTemplate.ts) -> src/vs/base/browser/ui/button/button.ts (Count: 1)
+- [src/vs/workbench/contrib/debug/browser/debugHover.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/debug/browser/debugHover.ts) -> src/vs/base/common/cancellation.ts (Count: 1)
+- [src/vs/workbench/contrib/issue/browser/issueService.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/issue/browser/issueService.ts) -> src/vs/workbench/services/integrity/common/integrity.ts (Count: 1)
+- [src/vs/workbench/contrib/notebook/browser/diff/notebookDiffActions.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/notebook/browser/diff/notebookDiffActions.ts) -> src/vs/platform/contextkey/common/contextkey.ts (Count: 1)
+- [src/vs/sessions/contrib/providers/copilotChatSessions/browser/copilotChatSessionsChangesets.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/sessions/contrib/providers/copilotChatSessions/browser/copilotChatSessionsChangesets.ts) -> src/vs/nls.ts (Count: 1)
+- [src/vs/workbench/contrib/mcp/common/discovery/installedMcpServersDiscovery.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/mcp/common/discovery/installedMcpServersDiscovery.ts) -> src/vs/base/common/arrays.ts (Count: 1)
+- [src/vs/server/node/remoteExtensionsScanner.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/server/node/remoteExtensionsScanner.ts) -> extensions/copilot/src/extension/completions-core/vscode-node/lib/src/util/uri.ts (Count: 1)
+- [src/vs/editor/common/cursor/cursorDeleteOperations.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/editor/common/cursor/cursorDeleteOperations.ts) -> src/vs/base/common/range.ts (Count: 1)
+- [extensions/copilot/src/extension/intents/node/askAgentIntent.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/extensions/copilot/src/extension/intents/node/askAgentIntent.ts) -> extensions/copilot/src/platform/multiFileEdit/common/editLogService.ts (Count: 1)
+- [extensions/copilot/src/extension/testing/node/aiEvaluationService.tsx](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/extensions/copilot/src/extension/testing/node/aiEvaluationService.tsx) -> extensions/copilot/src/platform/chat/common/commonTypes.ts (Count: 1)
+- [src/vs/sessions/contrib/agentFeedback/browser/agentFeedbackItemsBackend.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/sessions/contrib/agentFeedback/browser/agentFeedbackItemsBackend.ts) -> src/vs/sessions/contrib/codeReview/browser/codeReviewService.ts (Count: 1)
+- [extensions/typescript-language-features/src/languageFeatures/completions.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/extensions/typescript-language-features/src/languageFeatures/completions.ts) -> extensions/copilot/src/extension/completions-core/vscode-node/lib/src/telemetry.ts (Count: 1)
+- [src/vs/workbench/contrib/format/browser/format.contribution.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/format/browser/format.contribution.ts) -> src/vs/workbench/contrib/format/browser/formatActionsMultiple.ts (Count: 1)
 </details>
 
 ## 4. System Assembly Points (Healthy Hubs)
@@ -1863,7 +1863,7 @@ Verdict: ACCEPTED
 
 Evidence
 FanOut: 83
-Boundary Ratio: 0.99
+Boundary Ratio: 0.98
 
 Reason Code:
 ASSEMBLY_HIGH_BOUNDARY_RATIO
@@ -2107,26 +2107,26 @@ ACCEPTED
 ## 5. Knowledge Connectivity
 <details><summary><b>Show Knowledge Sources</b></summary>
 
-- [src/vs/workbench/contrib/chat/browser/chatEditing/chatEditingExplanationWidget.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/chatEditing/chatEditingExplanationWidget.ts) -> src/vs/platform/theme/common/themeService.ts
-- [src/vs/workbench/contrib/chat/browser/planReviewFeedback/planReviewFeedbackService.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/planReviewFeedback/planReviewFeedbackService.ts) -> src/vs/workbench/contrib/chat/common/chatService/chatService.ts
-- [src/vs/workbench/contrib/chat/browser/chatEditing/chatEditingExplanationWidget.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/chatEditing/chatEditingExplanationWidget.ts) -> extensions/copilot/src/platform/inlineEdits/common/utils/observable.ts
-- [src/vs/workbench/contrib/chat/common/tools/builtinTools/reviewPlanTool.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/common/tools/builtinTools/reviewPlanTool.ts) -> src/vs/base/common/uuid.ts
-- [src/vs/workbench/contrib/chat/browser/chatEditing/chatEditingExplanationModelManager.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/chatEditing/chatEditingExplanationModelManager.ts) -> extensions/copilot/src/extension/completions-core/vscode-node/lib/src/util/map.ts
-- [src/vs/workbench/api/browser/mainThreadMeteredConnection.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/api/browser/mainThreadMeteredConnection.ts) -> src/vs/workbench/api/common/extHost.protocol.ts
-- [src/vs/workbench/contrib/mcp/browser/mcpLanguageFeatures.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/mcp/browser/mcpLanguageFeatures.ts) -> src/vs/workbench/services/lifecycle/common/lifecycle.ts
-- [extensions/copilot/src/extension/agents/vscode-node/test/planAgentProvider.spec.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/extensions/copilot/src/extension/agents/vscode-node/test/planAgentProvider.spec.ts) -> src/vs/platform/instantiation/common/instantiation.ts
-- [src/vs/workbench/contrib/chat/test/browser/widget/chatContentParts/chatPlanReviewPart.test.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/test/browser/widget/chatContentParts/chatPlanReviewPart.test.ts) -> src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatPlanReviewPart.ts
-- [src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatPlanReviewPart.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatPlanReviewPart.ts) -> extensions/typescript-language-features/src/configuration/configuration.ts
-- [src/vs/workbench/contrib/mcp/browser/mcpLanguageFeatures.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/mcp/browser/mcpLanguageFeatures.ts) -> extensions/copilot/src/platform/parser/test/node/markers.ts
-- [extensions/copilot/src/extension/chatSessions/copilotcli/node/exitPlanModeHandler.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/extensions/copilot/src/extension/chatSessions/copilotcli/node/exitPlanModeHandler.ts) -> extensions/markdown-language-features/src/util/async.ts
-- [src/vs/workbench/contrib/chat/test/browser/widget/chatContentParts/chatPlanReviewPart.test.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/test/browser/widget/chatContentParts/chatPlanReviewPart.test.ts) -> src/vs/workbench/common/dialogs.ts
-- [src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatPlanReviewPart.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatPlanReviewPart.ts) -> src/vs/editor/common/languages/language.ts
-- [src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatPlanReviewPart.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatPlanReviewPart.ts) -> src/vs/workbench/contrib/chat/common/model/chatProgressTypes/chatPlanReviewData.ts
-- [extensions/copilot/src/extension/chatSessions/claude/common/test/claudePlanFileTracker.spec.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/extensions/copilot/src/extension/chatSessions/claude/common/test/claudePlanFileTracker.spec.ts) -> src/vs/platform/registry/common/platform.ts
+- [src/vs/workbench/contrib/mcp/common/mcpLanguageModelToolContribution.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/mcp/common/mcpLanguageModelToolContribution.ts) -> extensions/copilot/src/extension/agents/node/adapters/types.ts
+- [src/vs/workbench/contrib/mcp/common/mcpLanguageModelToolContribution.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/mcp/common/mcpLanguageModelToolContribution.ts) -> src/vs/workbench/contrib/chat/common/enablement.ts
+- [src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatPlanReviewPart.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatPlanReviewPart.ts) -> src/vs/base/browser/keyboardEvent.ts
+- [extensions/copilot/src/extension/agents/vscode-node/test/planAgentProvider.spec.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/extensions/copilot/src/extension/agents/vscode-node/test/planAgentProvider.spec.ts) -> src/vs/workbench/services/lifecycle/common/lifecycle.ts
+- [src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatPlanReviewPart.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatPlanReviewPart.ts) -> extensions/media-preview/src/util/dom.ts
+- [extensions/copilot/src/extension/agents/vscode-node/test/planAgentProvider.spec.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/extensions/copilot/src/extension/agents/vscode-node/test/planAgentProvider.spec.ts) -> src/vs/platform/configuration/common/configurationService.ts
+- [extensions/copilot/src/extension/chatSessions/copilotcli/node/test/exitPlanModeHandler.spec.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/extensions/copilot/src/extension/chatSessions/copilotcli/node/test/exitPlanModeHandler.spec.ts) -> extensions/copilot/src/extension/completions-core/vscode-node/lib/src/util/uri.ts
+- [src/vs/workbench/api/browser/mainThreadMessageService.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/api/browser/mainThreadMessageService.ts) -> src/vs/workbench/services/lifecycle/common/lifecycle.ts
+- [src/vs/workbench/contrib/chat/browser/chatEditing/chatEditingExplanationWidget.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/chatEditing/chatEditingExplanationWidget.ts) -> src/vs/nls.ts
+- [extensions/copilot/src/extension/agents/vscode-node/test/planAgentProvider.spec.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/extensions/copilot/src/extension/agents/vscode-node/test/planAgentProvider.spec.ts) -> chai
+- [extensions/copilot/src/extension/agents/vscode-node/test/planAgentProvider.spec.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/extensions/copilot/src/extension/agents/vscode-node/test/planAgentProvider.spec.ts) -> extensions/copilot/src/platform/configuration/test/common/inMemoryConfigurationService.ts
+- [src/vs/workbench/contrib/chat/test/browser/planReviewFeedbackService.test.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/test/browser/planReviewFeedbackService.test.ts) -> src/vs/workbench/contrib/chat/browser/planReviewFeedback/planReviewFeedbackService.ts
+- [src/vs/workbench/contrib/mcp/browser/mcpLanguageFeatures.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/mcp/browser/mcpLanguageFeatures.ts) -> src/vs/platform/secrets/common/secrets.ts
+- [src/vs/workbench/contrib/chat/browser/chatEditing/chatEditingExplanationModelManager.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/chatEditing/chatEditingExplanationModelManager.ts) -> src/vs/workbench/common/resources.ts
+- [src/vs/workbench/contrib/chat/browser/planReviewFeedback/planReviewFeedbackEditorActions.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/planReviewFeedback/planReviewFeedbackEditorActions.ts) -> src/vs/base/common/codicons.ts
+- [src/vs/workbench/contrib/chat/browser/planReviewFeedback/planReviewFeedbackEditorContribution.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/planReviewFeedback/planReviewFeedbackEditorContribution.ts) -> src/vs/editor/browser/editorBrowser.ts
+- [src/vs/workbench/contrib/mcp/common/mcpLanguageModelToolContribution.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/mcp/common/mcpLanguageModelToolContribution.ts) -> src/vs/workbench/contrib/mcp/test/common/mcpRegistryTypes.ts
+- [src/vs/platform/agentHost/node/codex/protocol/generated/v2/TurnPlanUpdatedNotification.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/platform/agentHost/node/codex/protocol/generated/v2/TurnPlanUpdatedNotification.ts) -> src/vs/platform/agentHost/node/codex/protocol/generated/v2/TurnPlanStep.ts
+- [extensions/copilot/src/extension/agents/vscode-node/planAgentProvider.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/extensions/copilot/src/extension/agents/vscode-node/planAgentProvider.ts) -> src/vs/platform/log/common/logService.ts
 - [src/vs/workbench/contrib/chat/browser/chatEditing/chatEditingExplanationWidget.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/chatEditing/chatEditingExplanationWidget.ts) -> src/vs/editor/browser/editorBrowser.ts
-- [src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatPlanReviewPart.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatPlanReviewPart.ts) -> extensions/copilot/src/extension/completions-core/vscode-node/lib/src/snippy/network.ts
-- [extensions/copilot/src/extension/chatSessions/claude/common/toolPermissionHandlers/exitPlanModeHandler.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/extensions/copilot/src/extension/chatSessions/claude/common/toolPermissionHandlers/exitPlanModeHandler.ts) -> src/vs/base/common/cancellation.ts
-- [src/vs/workbench/contrib/chat/browser/chatEditing/chatEditingExplanationModelManager.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/chatEditing/chatEditingExplanationModelManager.ts) -> src/vs/code/electron-utility/sharedProcess/contrib/extensions.ts
 </details>
 
 ## 4. Expected After Surgery
@@ -2155,5 +2155,5 @@ ACCEPTED
 ### 6.3 Cost Projection
 - **Estimated Engineers**: 8
 - **Estimated Days**: 99
-- **Files Affected**: 100
+- **Files Affected**: 835
 - **Edges Affected**: 4927

@@ -30,7 +30,7 @@ export class ArchitectureAuditor {
 
     private static evaluateNode(node: Node, candidateData: any): ArchitecturalFinding {
         const filePath = node.filePath || node.id;
-        let role = this.deduceRole(filePath, node.semanticRole);
+        let role = this.deduceRole(filePath, node.semanticRole, (node as any).isAssemblyPoint);
         let findingType = FindingType.NORMAL;
         let risk = RiskLevel.NONE;
         const reasonCodes: string[] = [];
@@ -90,8 +90,8 @@ export class ArchitectureAuditor {
         };
     }
 
-    private static deduceRole(filePath: string, semanticRole?: SemanticRole): ArchitecturalRole {
-        if (semanticRole === SemanticRole.ASSEMBLY_POINT) {
+    private static deduceRole(filePath: string, semanticRole?: SemanticRole, isAssemblyPoint?: boolean): ArchitecturalRole {
+        if (isAssemblyPoint === true) {
             return ArchitecturalRole.ASSEMBLY_POINT;
         }
 

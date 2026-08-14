@@ -119,6 +119,7 @@ class WebGLRenderer {
         }
 
         this.canvas = this.glCanvas;
+        
         this.gl = this.glCanvas.getContext('webgl', { 
             antialias: true, 
             alpha: true, 
@@ -128,8 +129,8 @@ class WebGLRenderer {
         });
 
         if (!this.gl) {
-            console.error('[SYNAPSE] WebGL not supported.');
-            return;
+            console.error('[SYNAPSE] WebGL not supported or context creation failed.');
+            throw new Error('WebGL not supported or context creation failed in this environment');
         }
 
         this.ext = this.gl.getExtension('ANGLE_instanced_arrays');
@@ -139,6 +140,7 @@ class WebGLRenderer {
             background: { id: 'background', fbo: null, texture: null, isDirty: true },
             middle: { id: 'middle', fbo: null, texture: null, isDirty: true }
         };
+        console.log('[WEBGL_INIT] success');
 
         this.gl.disable(this.gl.DEPTH_TEST);
         this.gl.enable(this.gl.BLEND);
@@ -741,7 +743,7 @@ class WebGLRenderer {
             // Adjust to match 2D layout centering
             posArr[i * 2] = p.x + (nodeWidth / 2);
             let clientLayer = n.clientLayer || (n.data && n.data.clientLayer) || null;
-            let yOffset = clientLayer && window.engine ? window.engine.getClientLayerOffset(clientLayer).y : 0;
+            let yOffset = clientLayer && window.engine ? window.engine.getClientLayerOffset(clientLayer) : 0;
             posArr[i * 2 + 1] = p.y + yOffset + (nodeHeight / 2);
 
             // [v0.3.22] Use Centralized Theme Logic (Defensive)
@@ -1371,10 +1373,15 @@ class WebGLRenderer {
     }
 
     render(nodes, transform, isDataDirty = false, edges = null, nodeMap = null, isEdgeDirty = false, isTextDirty = false, selectedNodeIds = null) {
-        if (!this.gl) return;
+        console.log('[WEBGL_GATE]', !!this.gl, this.canvas2d?.dataset?.mode, window.engine?.currentMode);
+        if (!this.gl) {
+            console.log('[WEBGL_EXIT] no gl');
+            return;
+        }
         
         // [v0.2.25] Iron Isolation: Stop everything if not in graph mode
         if (this.canvas2d.dataset.mode !== 'graph' || (!window.engine || window.engine.currentMode !== 'graph')) {
+            if (shouldLog) console.log('[WEBGL_EXIT] not in graph mode');
             return;
         }
 

@@ -1,4 +1,4 @@
-import { ASTVerificationReport } from '../../cli/ast_verification_engine';
+import type { ASTVerificationResult } from '../../cli/ast_verification_engine';
 import { IntentEdge } from '../analysis/intent/IntentEdge';
 
 export interface GraphSnapshot {
@@ -139,7 +139,7 @@ export interface ValidationMetrics {
         boundaryFragmentation: boolean;
         estimatedMonthsToIssue: number;
     };
-    astVerification?: ASTVerificationReport;
+    astVerification?: ASTVerificationResult;
     auditConfidenceMatrix?: {
         baseScore: number;
         grammarNoiseFiltered: number;

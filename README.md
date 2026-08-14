@@ -675,6 +675,10 @@ SYNAPSE consists of the following layers:
 - **Visualization Layer**: Hybrid 2D Canvas & 3D WebGL accelerated rendering.
 - **AI Merge Logic**: Intelligent resolution of ghost references and active files.
 
+> **⚠️ Troubleshooting: Canvas Blank / Nodes Disappearing on `Accel ON`**  
+> If nodes and edges disappear when WebGL Acceleration is enabled, your environment may be restricting GPU context creation.  
+> **Fix**: Open your IDE's `argv.json` (e.g., `~/.antigravity-ide/argv.json` or VSCode equivalent), set `"disable-hardware-acceleration": false,` and restart the IDE.
+
 ---
 
 ## 🧠 Philosophy

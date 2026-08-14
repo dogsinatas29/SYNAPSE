@@ -1,5 +1,6 @@
 import { runBundle } from '../../cli/run_b5_bundle';
 import { ArchitectureAuditor } from './ArchitectureAuditor';
+import type { ASTVerificationResult } from '../../cli/ast_verification_engine';
 import { 
     GraphSnapshot,
     ValidationContext,
@@ -632,16 +633,15 @@ export class ValidationEngine {
             architecturalRole: (snapshot.nodes[0] as any)?.architecturalRole
         });
 
-        // [P0 진단] ASSEMBLY_POINT 노드 존재 여부
-        const sampleAssembly = snapshot.nodes.find(
-            n => (n as any).semanticRole === 'ASSEMBLY_POINT'
+        // Assembly Point 현황 확인
+        const assemblyPoints = snapshot.nodes.filter(
+            n => (n as any).isAssemblyPoint === true
         );
-        console.log('[VE_ASSEMBLY_SAMPLE]', {
-            found: !!sampleAssembly,
-            id: sampleAssembly?.id?.substring(0, 60),
-            semanticRole: (sampleAssembly as any)?.semanticRole
-        });
-
+        const sampleAssembly = assemblyPoints[0];
+        console.log(`[ValidationEngine] Found ${assemblyPoints.length} assembly points. Sample:`, sampleAssembly ? {
+            id: sampleAssembly.id,
+            isAssemblyPoint: (sampleAssembly as any)?.isAssemblyPoint
+        } : 'None');
         const { analyzeGraph } = require('../GraphAnalyzer');
         const graphAnalysis = analyzeGraph({
             nodes: snapshot.nodes,
@@ -931,11 +931,6 @@ export class ValidationEngine {
 
             // 최종 Multi-Level Sort: Role Penalty > Boundary DESC > Reachability DESC > FanOut DESC
             topCandidates.sort((a, b) => {
-                // [Ponytail] Test fixtures pollute Top N. Push them to the bottom.
-                const aPenalty = (a as any).semanticRole === 'TEST_HARNESS' || (a as any).semanticRole === 'DOCUMENTATION' || (a as any).architecturalRole === 'TEST_ARTIFACT' ? 1 : 0;
-                const bPenalty = (b as any).semanticRole === 'TEST_HARNESS' || (b as any).semanticRole === 'DOCUMENTATION' || (b as any).architecturalRole === 'TEST_ARTIFACT' ? 1 : 0;
-                if (aPenalty !== bPenalty) return aPenalty - bPenalty;
-                
                 if (b.externalEdges !== a.externalEdges) return b.externalEdges - a.externalEdges;
                 if (b.reachability !== a.reachability) return b.reachability - a.reachability;
                 return b.fanOut - a.fanOut;
@@ -943,8 +938,8 @@ export class ValidationEngine {
             
             const assemblyPoints = topCandidates
                 .filter(c => assemblyFindings.some(f => f.filePath === c.filePath));
-            const testHarnessCount = candidates.filter(c => c.semanticRole === 'TEST_HARNESS' || c.role === 'TEST_ARTIFACT').length;
-            console.log(`[ValidationEngine] TEST_HARNESS or TEST_ARTIFACT count: ${testHarnessCount}`);
+            const testHarnessCount = candidates.filter(c => c.semanticRole === 'TEST' || c.role === 'TEST_ARTIFACT').length;
+            console.log(`[ValidationEngine] TEST or TEST_ARTIFACT count: ${testHarnessCount}`);
             
             const logStr = topCandidates.slice(0, 10).map((c, idx) => {
                 const cAny = c as any;
@@ -956,9 +951,66 @@ export class ValidationEngine {
             
             // Validation Report Data Structure 생성을 위한 임시 배열
             let validCandidates: any[] = topCandidates
-                .filter(c => impactFindings.some(f => f.filePath === c.filePath));
+                .filter(c => impactFindings.some(f => f.filePath === c.filePath))
+                .filter(c => {
+                    const role = (c as any).semanticRole;
+                    // Ponytail: Hard filter for Runtime Hub. Kick out tests, tooling, docs, samples.
+                    return role === 'CORE_RUNTIME' || role === 'UNKNOWN' || role === 'NORMAL' || role === undefined;
+                });
             
             topImpactFiles = validCandidates.slice(0, TOP_IMPACT_LIMIT);
+
+            // === AST Evidence Verification Layer (Step 1 integration) ===
+            // Regex 그래프는 절대 건드리지 않음. Top Impact Files만 AST로 재검증하여 위험도 랭킹 오탐 제거.
+            try {
+                const { ASTVerificationEngine } = require('../../cli/ast_verification_engine');
+                const astEngine = new ASTVerificationEngine();
+                const topFilePaths = topImpactFiles.map((f: any) => f.filePath);
+                const astResults = astEngine.verifyTopFiles(topFilePaths, workspaceRoot);
+                
+                // adjustedImpactScore 적용 + 재정렬 + Top 재선정
+                const adjustedCandidates = topImpactFiles.map((candidate: any) => {
+                    const astResult = astResults.find((r: any) => r.filePath === candidate.filePath);
+                    if (astResult && !astResult.degraded) {
+                        const originalScore = candidate.impactScore || candidate.externalEdges || 0;
+                        const adjustedScore = Math.round(originalScore * astResult.multiplier);
+                        return {
+                            ...candidate,
+                            adjustedImpactScore: adjustedScore,
+                            astVerification: {
+                                classification: astResult.classification,
+                                classificationReason: astResult.classificationReason,
+                                ratios: astResult.ratios,
+                                multiplier: astResult.multiplier,
+                                nodeCount: astResult.nodeCount,
+                                confidence: astResult.confidence
+                            }
+                        };
+                    }
+                    // Degraded Mode: 기존 보고서 유지
+                    return {
+                        ...candidate,
+                        adjustedImpactScore: candidate.impactScore || candidate.externalEdges || 0,
+                        astVerification: astResult ? {
+                            classification: astResult.classification,
+                            classificationReason: astResult.classificationReason,
+                            degraded: true
+                        } : undefined
+                    };
+                });
+                
+                // 재정렬: adjustedImpactScore DESC (TEST_ARTIFACT는 이미 Multi-Level Sort에서 penalty 받음)
+                adjustedCandidates.sort((a: any, b: any) => (b.adjustedImpactScore || 0) - (a.adjustedImpactScore || 0));
+                
+                // Top 재선정
+                topImpactFiles = adjustedCandidates.slice(0, TOP_IMPACT_LIMIT);
+                
+                console.log(`[ValidationEngine] AST Verification complete: ${astResults.length} files processed, re-ranked top ${topImpactFiles.length}`);
+            } catch (err) {
+                console.warn('[ValidationEngine] AST Verification skipped (import or execution failed):', err);
+                // Degraded Mode: 기존 topImpactFiles 유지
+            }
+
             systemAssemblyPoints = assemblyPoints.slice(0, TOP_IMPACT_LIMIT);
 
             const allAuditedFiles = [...topImpactFiles, ...systemAssemblyPoints];

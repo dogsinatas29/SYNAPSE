@@ -676,6 +676,10 @@ SYNAPSE는 다음 레이어들로 구성됩니다:
 - **Visualization Layer**: 하이브리드 2D 캔버스 & 3D WebGL 가속 렌더링.
 - **AI Merge Logic**: Ghost 참조와 실제 활성 파일을 지능적으로 병합.
 
+> **⚠️ 트러블슈팅: `Accel ON` 시 캔버스가 비어있거나 노드가 사라지는 경우**  
+> WebGL 가속을 켰을 때 노드와 엣지가 사라진다면, 현재 구동 환경(Webview)에서 GPU 컨텍스트 생성을 차단하고 있을 확률이 높습니다.  
+> **해결 방법**: IDE의 `argv.json` 파일(예: `~/.antigravity-ide/argv.json` 또는 VSCode 설정)을 열어 `"disable-hardware-acceleration": false,` 옵션을 명시적으로 추가하고 IDE를 재시작하세요.
+
 ---
 
 ## 🧠 철학

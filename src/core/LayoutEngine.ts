@@ -136,12 +136,9 @@ export function applyLayout(input: LayoutInput): LayoutResult {
     for (const [cid, cNodes] of clusterNodes) {
         if (cNodes.length === 0) continue;
 
-        console.log('[BOUND_BUILD]', cid, 'nodes=', cNodes.length);
-
         let cMinX = Infinity, cMinY = Infinity, cMaxX = -Infinity, cMaxY = -Infinity;
         for (const n of cNodes) {
             const p = n.position || { x: 0, y: 0 };
-            console.log('[BOUND_NODE]', cid, n.id, p);
             if (p.x < cMinX) cMinX = p.x;
             if (p.y < cMinY) cMinY = p.y;
             if (p.x > cMaxX) cMaxX = p.x;

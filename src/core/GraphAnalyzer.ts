@@ -162,13 +162,24 @@ export function analyzeGraph(input: AnalysisInput): GraphAnalysis {
             const boundaryEdges = nodeBoundaryMap.get(node.id) || 0;
             const boundaryRatio = nodeFanOut > 0 ? (boundaryEdges / nodeFanOut) : 0;
             
-            if (filePath.includes('/test/') || filePath.includes('test/') || filePath.includes('/mock/') || filePath.includes('mock/') || filePath.includes('fixtures/') || filePath.includes('simulation') || filePath.includes('test-resolver') || filePath.includes('test-harness') || filePath.includes('testServices')) {
-                node.semanticRole = SemanticRole.TEST_HARNESS;
-            } else if (filePath.endsWith('.md') || filePath.endsWith('.txt') || filePath.toLowerCase().includes('readme')) {
+            node.semanticRole = SemanticRole.CORE_RUNTIME; // Default until proven otherwise
+            
+            if (/(^|\/)(test|tests|testing|selftests|mock|mocks|fixtures?|spec|specs|__tests__|__mocks__)\//i.test(filePath)) {
+                node.semanticRole = SemanticRole.TEST;
+            } else if (/(^|\/)(examples?|samples?|demo|demos)\//i.test(filePath)) {
+                node.semanticRole = SemanticRole.SAMPLE;
+            } else if (/(^|\/)(bench|benchmark|benchmarks|perf)\//i.test(filePath)) {
+                node.semanticRole = SemanticRole.BENCHMARK;
+            } else if (/(^|\/)(docs?|documentation|man)\//i.test(filePath) || filePath.endsWith('.md') || filePath.endsWith('.txt') || filePath.toLowerCase().includes('readme')) {
                 node.semanticRole = SemanticRole.DOCUMENTATION;
-            } else if (filePath.includes('generated')) {
-                node.semanticRole = SemanticRole.GENERATED_RESERVED;
-            } else {
+            } else if (/(^|\/)(tools?|scripts?|build|kconfig|kbuild)\//i.test(filePath)) {
+                node.semanticRole = SemanticRole.TOOLING;
+            } else if (filePath.includes('generated') || filePath.endsWith('.pb.go') || filePath.endsWith('lex.yy.c') || filePath.endsWith('y.tab.c')) {
+                node.semanticRole = SemanticRole.GENERATED;
+            }
+            
+            // Only process CORE_RUNTIME for assembly points
+            if (node.semanticRole === SemanticRole.CORE_RUNTIME) {
                 // Stage 1: Heuristic Extraction
                 const basename = path.basename(filePath).toLowerCase();
                 const isStrongCandidate = /(main|app|bootstrap|startup|program|compositionroot)\.(ts|js|cs|java|go|rs)$/.test(basename);
@@ -216,9 +227,9 @@ export function analyzeGraph(input: AnalysisInput): GraphAnalysis {
 
                     if (accepted) {
                         reasons.push(AssemblyAuditReason.ACCEPTED);
-                        node.semanticRole = SemanticRole.ASSEMBLY_POINT;
+                        (node as any).isAssemblyPoint = true;
                     } else {
-                        node.semanticRole = SemanticRole.NORMAL;
+                        (node as any).isAssemblyPoint = false;
                     }
 
                     assemblyAudit.push({
@@ -231,8 +242,7 @@ export function analyzeGraph(input: AnalysisInput): GraphAnalysis {
                         reasons
                     });
                     pushCount++;
-                } else {
-                    node.semanticRole = SemanticRole.NORMAL;
+                    (node as any).isAssemblyPoint = false;
                 }
             }
         }

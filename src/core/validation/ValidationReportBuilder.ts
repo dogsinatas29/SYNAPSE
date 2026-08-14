@@ -376,7 +376,7 @@ export class ValidationReportBuilder {
         const verdict = report.establishmentGate?.stable ? 'PASS' : 'HOLD';
         const confidenceScore = (1 - (report.falsePositiveProbability || 0.125)) * 100;
         
-        const boundaryRatio = fp.internalEdges > 0 ? (fp.boundaryEdges / fp.internalEdges).toFixed(1) : (fp.boundaryEdges === 0 ? '0.0' : 'N/A');
+        const mBoundaryRatio = fp.internalEdges > 0 ? (fp.boundaryEdges / fp.internalEdges).toFixed(1) : (fp.boundaryEdges === 0 ? '0.0' : 'N/A');
         const entropyScore = report.ifIgnoredImpact?.architectureEntropy !== 'N/A' ? report.ifIgnoredImpact.architectureEntropy : 'N/A';
         const entropyLevel = entropyScore !== 'N/A' ? (entropyScore > 75 ? 'HIGH' : entropyScore > 50 ? 'MEDIUM' : 'LOW') : 'UNKNOWN';
 
@@ -462,7 +462,7 @@ export class ValidationReportBuilder {
         const verdictSection = [
             `## 1. Executive Summary`,
             `**Scan Context**: Sub-cluster Analysis`,
-            `**Observation**: External Dependency Ratio = ${boundaryRatio}x`,
+            `**Observation**: External Dependency Ratio = ${mBoundaryRatio}x`,
             `**Assessment**: Selected cluster depends heavily on modules outside the scan boundary.`,
             `**Implication**: This does not imply whole-project instability.`,
             '',
@@ -574,8 +574,33 @@ export class ValidationReportBuilder {
                     // Legacy fallback
                     surgerySection.push(`- **Coupled Consumers**: ${file.consumers.length} external modules`);
                 }
-                
+
+                // [v0.3.34.20] AST Evidence Verification output
+                if (file.astVerification && !file.astVerification.degraded) {
+                    const av = file.astVerification;
+                    const cls = av.classification || 'UNKNOWN';
+                    const r = av.ratios || {};
+                    const humanMap: Record<string, string> = {
+                        TYPE_ONLY: '이 파일은 주로 타입과 인터페이스 정의를 담당한다. 런타임 위험도 낮음.',
+                        CONTRACT_HUB: '이 파일은 대규모 계약 허브다. 변경 시 광범위한 타입 호환성 영향.',
+                        BARREL_EXPORT: '이 파일은 하위 모듈을 일괄 재수출하는 배럴 파일이다. 직접 실행 로직 없음.',
+                        HEADER_CONTRACT: '이 파일은 선언 중심 헤더 계약이다. 런타임 로직 없음.',
+                        TEST_ARTIFACT: '이 파일은 테스트 아티팩트다. 프로덕션 위험도에서 제외.',
+                        RUNTIME_HUB: '이 파일은 실제 실행 로직을 포함하는 런타임 허브다. 변경 시 즉각적 영향.',
+                        HEALTHY_CONTRACT: '이 파일은 계약과 구현이 균형을 이룬다. 표준 위험도.',
+                        DATA_HUB: '이 파일은 데이터 전용 파일이다. 위험도 낮음.',
+                    };
+                    surgerySection.push('');
+                    surgerySection.push(`**AST Evidence Verification** \`[${cls}]\``);
+                    surgerySection.push(`- interface: ${r.interface ?? 0}% | type: ${r.type ?? 0}% | function: ${r.function ?? 0}% | statement: ${r.statement ?? 0}%`);
+                    if (file.adjustedImpactScore !== undefined && file.adjustedImpactScore !== (file.impactScore || file.externalEdges)) {
+                        surgerySection.push(`- Score: ${file.impactScore || file.externalEdges || 0} → ${file.adjustedImpactScore} (×${av.multiplier})`);
+                    }
+                    surgerySection.push(`> ${humanMap[cls] || cls}`);
+                }
+
                 surgerySection.push('');
+
             }
         } else {
             surgerySection.push('*No specific impact files identified.*');
@@ -627,39 +652,7 @@ export class ValidationReportBuilder {
             assemblyAuditSection.push('*No candidates found.*');
         }
 
-        let contractHubSection = ['### 4.2 CONTRACT_HUB Audit'];
-        if (archFindings && archFindings.length > 0) {
-            const contractFindings = archFindings.filter((f: any) => f.role === 'CONTRACT_HUB');
-            const totalContract = contractFindings.length;
-            const bloatCount = contractFindings.filter((f: any) => f.findingType === 'CONTRACT_BLOAT').length;
-            const normalCount = contractFindings.filter((f: any) => f.findingType === 'NORMAL').length;
-            
-            contractHubSection.push(`Candidates: ${totalContract}`);
-            contractHubSection.push('');
-            contractHubSection.push(`NORMAL: ${normalCount}`);
-            contractHubSection.push(`CONTRACT_BLOAT: ${bloatCount}`);
-            contractHubSection.push('');
-            contractHubSection.push(`Largest Contract Hubs`);
-            
-            // Sort by FanIn descending
-            const topContracts = contractFindings.sort((a: any, b: any) => {
-                const aFanIn = (a.evidence.find((e: any) => e.type === 'Fan-In')?.value as number) || 0;
-                const bFanIn = (b.evidence.find((e: any) => e.type === 'Fan-In')?.value as number) || 0;
-                return bFanIn - aFanIn;
-            }).slice(0, 5);
-            
-            for (const f of topContracts) {
-                contractHubSection.push(`${this.cleanDomainName(f.filePath)}`);
-                const fanIn = f.evidence.find((e: any) => e.type === 'Fan-In')?.value || 0;
-                const fanOut = f.evidence.find((e: any) => e.type === 'Fan-Out')?.value || 0;
-                contractHubSection.push(`FanIn ${fanIn}`);
-                contractHubSection.push(`FanOut ${fanOut}`);
-                contractHubSection.push(`Finding ${f.findingType}`);
-                contractHubSection.push('');
-            }
-        } else {
-            contractHubSection.push('*No candidates found.*');
-        }
+        let contractHubSection = [];
 
         let docEvidenceSection = ['## 5. Knowledge Connectivity'];
         if (report.docEvidence && report.docEvidence.length > 0) {
@@ -674,24 +667,20 @@ export class ValidationReportBuilder {
             docEvidenceSection.push('*No knowledge sources linked.*');
         }
 
+        const totalSubjectEdges = fp.boundaryEdges + fp.internalEdges;
+        const boundaryPercentage = totalSubjectEdges > 0 ? ((fp.boundaryEdges / totalSubjectEdges) * 100).toFixed(1) + '%' : 'N/A';
+        
         let rawMetricsSection = [
-            '## 6. Raw Metrics',
-            `### 6.1 AEL Metrics`,
-            `- **Architecture Entropy**: ${entropyScore !== 'N/A' ? entropyScore + ' / 100' : 'N/A'} (Risk Level: **${entropyLevel}**)`,
-            `- **False Positive Probability**: ${report.falsePositiveProbability !== undefined ? (report.falsePositiveProbability * 100).toFixed(1) + '%' : 'UNKNOWN'}`,
+            '## 5. Raw Metrics',
+            `### 5.1 Global Metrics`,
+            `- **Boundary Ratio**: ${boundaryPercentage}`,
             '',
-            '### 6.2 Source Breakdown (ASR 3.0)',
+            '### 5.2 Source Breakdown (ASR 3.0)',
             '#### Ghost Source Top N',
             ghostBreakdownText,
             '',
             '#### Coupling Source Top N',
-            couplingBreakdownText,
-            '',
-            '### 6.3 Cost Projection',
-            `- **Estimated Engineers**: ${report.estimatedCost?.engineers ?? 0}`,
-            `- **Estimated Days**: ${report.estimatedCost?.days ?? 0}`,
-            `- **Files Affected**: ${report.estimatedCost?.filesAffected ?? 0}`,
-            `- **Edges Affected**: ${report.estimatedCost?.edgesAffected ?? 0}`
+            couplingBreakdownText
         ].join('\n');
 
         return [
@@ -717,11 +706,7 @@ export class ValidationReportBuilder {
             '',
             assemblyAuditSection.join('\n'),
             '',
-            contractHubSection.join('\n'),
-            '',
             docEvidenceSection.join('\n'),
-            '',
-            expectedSection,
             '',
             rawMetricsSection
         ].join('\n');
@@ -732,7 +717,7 @@ export class ValidationReportBuilder {
         const verdict = report.establishmentGate?.stable ? 'PASS' : 'HOLD';
         const confidenceScore = (1 - (report.falsePositiveProbability || 0.125)) * 100;
         
-        const boundaryRatio = fp.internalEdges > 0 ? (fp.boundaryEdges / fp.internalEdges).toFixed(1) : (fp.boundaryEdges === 0 ? '0.0' : 'N/A');
+        const htmlBoundaryRatio = fp.internalEdges > 0 ? (fp.boundaryEdges / fp.internalEdges).toFixed(1) : (fp.boundaryEdges === 0 ? '0.0' : 'N/A');
         const entropyScore = report.ifIgnoredImpact?.architectureEntropy !== 'N/A' ? report.ifIgnoredImpact.architectureEntropy : 'N/A';
         const entropyLevel = entropyScore !== 'N/A' ? (entropyScore > 75 ? 'HIGH' : entropyScore > 50 ? 'MEDIUM' : 'LOW') : 'UNKNOWN';
 
@@ -947,7 +932,7 @@ export class ValidationReportBuilder {
   <h2>1. Executive Summary</h2>
   <div class="verdict-box">
       <h3>Scan Context: Sub-cluster Analysis</h3>
-      <p><strong>Observation:</strong> External Dependency Ratio = ${boundaryRatio}x</p>
+      <p><strong>Observation:</strong> External Dependency Ratio = ${htmlBoundaryRatio}x</p>
       <p><strong>Assessment:</strong> Selected cluster depends heavily on modules outside the scan boundary.</p>
       <p><strong>Implication:</strong> This does not imply whole-project instability.</p>
       

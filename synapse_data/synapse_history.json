@@ -1,0 +1,20 @@
+[
+  {
+    "id": "06584f63-0f7b-484c-a839-0d1baed33c03",
+    "timestamp": 1786625896176,
+    "version": 1,
+    "checksum": "f2c265a509e211ff",
+    "nodeCount": 807,
+    "edgeCount": 770,
+    "clusterCount": 30
+  },
+  {
+    "id": "1f9e0fbb-c7d9-49d9-bd95-5c9e5d845a71",
+    "timestamp": 1786679114854,
+    "version": 1,
+    "checksum": "87c1d1054d9029ba",
+    "nodeCount": 807,
+    "edgeCount": 770,
+    "clusterCount": 30
+  }
+]

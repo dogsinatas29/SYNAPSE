@@ -110,23 +110,9 @@ export class InterventionSimulator {
         if (affectedFiles <= 5 && affectedClusters <= 2) costLevel = 'LOW';
         else if (affectedFiles >= 20 || affectedClusters >= 5) costLevel = 'HIGH';
 
-        // 1. 엣지 절단 (Virtual Cut)
-        const cutEdges = edges.filter(e => !targetEdgeIds.includes(e.id));
-        
-        // 2. SCC 계산 (Before & After)
-        // executableEdges and beforeScc are now computed upstream
-        const executableCutEdges = GraphViewBuilder.build(cutEdges, GraphPolicy.FULL);
-        
-        const nodeIds = nodes.map(n => n.id);
-        const afterScc = TarjanSCC.extractFromSubset(nodeIds, executableCutEdges);
-        
         const largestBeforeScc = beforeScc.length > 0 ? beforeScc.reduce((prev, current) => (prev.nodeIds.length > current.nodeIds.length) ? prev : current) : { nodeIds: [] as string[] };
         const largestBeforeSccSet = new Set(largestBeforeScc.nodeIds);
         const beforeSccSize = largestBeforeScc.nodeIds.length;
-        const afterSccSize = Math.max(0, ...afterScc.map(s => s.nodeIds.length));
-        
-        console.log(`\n[SIM CUT ANALYSIS] Tier: ${targetTier} | ${targetReason}`);
-        console.log(`- Edges to Cut: ${targetEdgeIds.length}`);
         
         let internalCuts = 0;
         let externalCuts = 0;
@@ -139,11 +125,32 @@ export class InterventionSimulator {
             } else {
                 externalCuts++;
             }
+        });
+        console.timeEnd("SCC_MEMBERSHIP");
+
+        let afterSccSize = beforeSccSize;
+        let afterScc = beforeScc;
+        
+        if (internalCuts > 0 || beforeSccSize === 0) {
+            // 1. 엣지 절단 (Virtual Cut)
+            const cutEdges = edges.filter(e => !targetEdgeIds.includes(e.id));
+            
+            // 2. SCC 계산 (Before & After)
+            const executableCutEdges = GraphViewBuilder.build(cutEdges, GraphPolicy.FULL);
+            const nodeIds = nodes.map(n => n.id);
+            afterScc = TarjanSCC.extractFromSubset(nodeIds, executableCutEdges);
+            afterSccSize = Math.max(0, ...afterScc.map(s => s.nodeIds.length));
+        }
+        
+        console.log(`\n[SIM CUT ANALYSIS] Tier: ${targetTier} | ${targetReason}`);
+        console.log(`- Edges to Cut: ${targetEdgeIds.length}`);
+        
+        targetEdges.forEach(e => {
+            const isInside = largestBeforeSccSet.has(e.from) && largestBeforeSccSet.has(e.to);
             if (targetEdgeIds.length <= 5) {
                 console.log(`  * Edge: ${e.from} -> ${e.to} | IsInsideLargestSCC: ${isInside}`);
             }
         });
-        console.timeEnd("SCC_MEMBERSHIP");
         
         if (targetEdgeIds.length > 5) {
             console.log(`  * Internal Cuts (Inside Largest SCC): ${internalCuts}`);

@@ -9145,13 +9145,23 @@ class CanvasEngine {
                         }); */
 
                         if (this._frameCounter < 3 || this._frameCounter % 60 === 0) {
-                            console.log(
-                                '[WEBGL_DRAW]',
-                                'nodesToRender=', webglNodes ? webglNodes.length : 0,
-                                'edgesToRender=', this._visibleEdgesCache ? this._visibleEdgesCache.length : 0
-                            );
+                            let missingSource = 0, missingTarget = 0;
+                            const webglVisibleNodeSet = new Set((webglNodes || []).map(n => n.id));
+                            for (const e of (this._visibleEdgesCache || [])) {
+                                if (!this.nodeMap.has(e.from)) missingSource++;
+                                else if (!webglVisibleNodeSet.has(e.from)) missingSource++;
+                                
+                                if (!this.nodeMap.has(e.to)) missingTarget++;
+                                else if (!webglVisibleNodeSet.has(e.to)) missingTarget++;
+                            }
+                            const statsMsg = `[WEBGL_DRAW_STATS] nodesToRender=${webglNodes ? webglNodes.length : 0} | edgesToRender=${this._visibleEdgesCache ? this._visibleEdgesCache.length : 0} | missingSource=${missingSource} | missingTarget=${missingTarget}`;
+                            console.log(statsMsg);
+                            if (this.vscode) {
+                                this.vscode.postMessage({ command: 'alert', text: statsMsg });
+                            }
                         }
 
+                        console.log('[WEBGL_RENDERER]', !!this.webglRenderer);
                         this.webglRenderer.render(
                             webglNodes,
                             this.transform,
@@ -9382,6 +9392,28 @@ class CanvasEngine {
 
     renderEdges2D() {
         if (window.edgeVisibilityMode === 'NO_EDGES') return;
+
+        // [v0.3.34.20] Edge visibility skip diagnostics
+        let missingSource = 0;
+        let missingTarget = 0;
+        let visibleNodeSet = new Set((this._visibleNodesCache || []).map(n => n.id));
+        for (const e of (this.edges || [])) {
+            if (!this.nodeMap.has(e.from)) missingSource++;
+            else if (!visibleNodeSet.has(e.from)) missingSource++;
+            
+            if (!this.nodeMap.has(e.to)) missingTarget++;
+            else if (!visibleNodeSet.has(e.to)) missingTarget++;
+        }
+        if (this._frameCounter % 60 === 0) {
+            console.log('[EDGE_STATS_2D]', {
+                visibleNodes: visibleNodeSet.size,
+                totalEdges: (this.edges || []).length,
+                missingSource,
+                missingTarget,
+                _visibleGraphClusterIdsSize: this._visibleGraphClusterIds ? this._visibleGraphClusterIds.size : 'null',
+                _visibleClusterIdsSize: this._visibleClusterIds ? this._visibleClusterIds.size : 'null'
+            });
+        }
 
         if (this.edges && this.edges.length > 50000) {
             // [v0.3.33.9] Removed hard cutoff. Allow Spatial Hashing to cull edges.
@@ -10982,6 +11014,16 @@ class CanvasEngine {
         const clusterMap = this._clusterMap && this._clusterMap.size > 0
             ? this._clusterMap
             : new Map(this.clusters.map(c => [c.id, c]));
+
+        // [v0.3.34.20] Edge skip diagnostics
+        let missingSource = 0;
+        let missingTarget = 0;
+        const visibleNodeSet = new Set(this._visibleNodesCache.map(n => n.id));
+        for (const edge of this.edges) {
+            if (!visibleNodeSet.has(edge.source)) missingSource++;
+            if (!visibleNodeSet.has(edge.target)) missingTarget++;
+        }
+        console.log('[EDGE_STATS]', 'visibleNodes=', visibleNodeSet.size, 'totalEdges=', this.edges.length, 'missingSource=', missingSource, 'missingTarget=', missingTarget);
 
         console.time('heatmap-draw');
         const _tHeatmapDrawStart = performance.now();

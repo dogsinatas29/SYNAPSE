@@ -1,257 +1,168 @@
-/**
- * AST Verification Engine
- * Layer 2: Validate graph edges against AST symbols
- * 
- * Purpose:
- * - Resolve INCLUDE edges to actual symbols (EXPORT_SYMBOL, function defs)
- * - Detect false positives (layout artifacts, macro expansions)
- * - Measure verification coverage and confidence
- */
-
 import * as fs from 'fs';
-import * as path from 'path';
+import * as ts from 'typescript';
 
-export interface SymbolResolutionResult {
-    edgeId: string;
-    from: string;
-    to: string;
-    status: 'RESOLVED' | 'PARTIAL' | 'UNRESOLVED';
-    symbols?: string[];
+export interface ASTVerificationResult {
+    filePath: string;
+    nodeCount: {
+        interface: number;
+        type: number;
+        enum: number;
+        class: number;
+        function: number;
+        variable: number;
+        statement: number;
+        total: number;
+    };
+    ratios: {
+        interface: number;
+        type: number;
+        enum: number;
+        class: number;
+        function: number;
+        variable: number;
+        statement: number;
+    };
+    classification: 'RUNTIME_HUB' | 'HEALTHY_CONTRACT' | 'TYPE_ONLY' | 'CONTRACT_HUB' | 'BARREL_EXPORT' | 'HEADER_CONTRACT' | 'TEST_ARTIFACT' | 'DATA_HUB' | 'DEGRADED';
+    classificationReason: string[];
+    multiplier: number;
     confidence: number;
-    isFalsePositive: boolean;
-    reason?: string;
+    degraded: boolean;
+    error?: string;
 }
 
-export interface ASTVerificationReport {
-    // Graph context
-    totalGraphEdges: number; // Total edges in graph (e.g., 387,282)
-    auditedEdges: number; // Edges actually examined by AST (e.g., 9,297)
-    
-    // Coverage metrics (honest reporting)
-    auditCoverage: number; // % of graph actually audited (e.g., 2.4%)
-    auditSuccessRate: number; // % success within audited set (e.g., 93%)
-    
-    // Verification results (within audited set)
-    resolvedEdges: number; // Edges with high confidence
-    partialEdges: number; // Edges with medium confidence
-    unresolvedEdges: number; // Edges with low confidence
-    falsePositivesDetected: number; // False positives removed
-    
-    // Statistics
-    averageConfidence: number; // Average confidence of audited edges
-    symbolsResolved: number;
-    symbolsPartial: number;
-    symbolsUnresolved: number;
-    
-    results: SymbolResolutionResult[];
+const cache = new Map<string, ASTVerificationResult>();
+
+function getCacheKey(filePath: string): string {
+    try {
+        return `${filePath}:${fs.statSync(filePath).mtimeMs}`;
+    } catch {
+        return filePath;
+    }
 }
 
-/**
- * Simplified AST verification:
- * 1. Check if target file has EXPORT_SYMBOL or function definitions
- * 2. Verify that source file actually includes target
- * 3. Detect common false positives (macro expansions, build artifacts)
- */
+function countNodes(sourceFile: ts.SourceFile): ASTVerificationResult['nodeCount'] {
+    const counts = { interface: 0, type: 0, enum: 0, class: 0, function: 0, variable: 0, statement: 0, total: 0 };
+    function visit(node: ts.Node) {
+        let isTracked = false;
+        if (ts.isInterfaceDeclaration(node)) { counts.interface++; isTracked = true; }
+        else if (ts.isTypeAliasDeclaration(node)) { counts.type++; isTracked = true; }
+        else if (ts.isEnumDeclaration(node)) { counts.enum++; isTracked = true; }
+        else if (ts.isClassDeclaration(node)) { counts.class++; isTracked = true; }
+        else if (ts.isFunctionDeclaration(node) || ts.isMethodDeclaration(node) || ts.isArrowFunction(node)) { counts.function++; isTracked = true; }
+        else if (ts.isVariableDeclaration(node)) { counts.variable++; isTracked = true; }
+        else if (ts.isExpressionStatement(node) || ts.isReturnStatement(node) || ts.isIfStatement(node)) { counts.statement++; isTracked = true; }
+        
+        if (isTracked) counts.total++;
+        ts.forEachChild(node, visit);
+    }
+    visit(sourceFile);
+    return counts;
+}
+
+function classify(counts: ASTVerificationResult['nodeCount'], filePath: string): { classification: ASTVerificationResult['classification']; reason: string[]; multiplier: number } {
+    const total = counts.total || 1;
+    const reasons: string[] = [];
+
+    // Test artifact — highest priority
+    if (filePath.includes('.test.') || filePath.includes('__tests__') || filePath.includes('.spec.')) {
+        return { classification: 'TEST_ARTIFACT', reason: ['Test 파일'], multiplier: 0.1 };
+    }
+
+    const hasRuntime = counts.function > 0 || counts.statement > 0 || counts.variable > 3;
+    const hasTypes = counts.interface > 0 || counts.type > 0 || counts.enum > 0 || counts.class > 0;
+
+    const runtimeRatio = (counts.function + counts.statement) / total;
+    const typeRatio = (counts.interface + counts.type + counts.enum) / total;
+
+    // Barrel export: index file with no runtime
+    if ((filePath.endsWith('index.ts') || filePath.includes('/barrel')) && !hasRuntime) {
+        return { classification: 'BARREL_EXPORT', reason: ['Re-export 전용'], multiplier: 0.3 };
+    }
+
+    // TYPE_ONLY: no runtime, has types
+    if (!hasRuntime && hasTypes) {
+        if (counts.interface > 5 && counts.type > 10) {
+            return { classification: 'CONTRACT_HUB', reason: ['Contract Hub: 타입 정의 집중'], multiplier: 0.5 };
+        }
+        return { classification: 'TYPE_ONLY', reason: ['Runtime Logic 없음'], multiplier: 0.2 };
+    }
+
+    // RUNTIME_HUB: heavy runtime
+    if (runtimeRatio > 0.3) {
+        reasons.push(`Runtime ${Math.round(runtimeRatio * 100)}%`);
+        return { classification: 'RUNTIME_HUB', reason: reasons, multiplier: 1.0 };
+    }
+
+    // HEADER_CONTRACT: declarations only, low runtime
+    if (hasTypes && !hasRuntime) {
+        return { classification: 'HEADER_CONTRACT', reason: ['Declaration 중심, Runtime 없음'], multiplier: 0.4 };
+    }
+
+    // DATA_HUB: tiny file
+    if (counts.total < 5) {
+        return { classification: 'DATA_HUB', reason: ['데이터 전용'], multiplier: 0.4 };
+    }
+
+    return { classification: 'HEALTHY_CONTRACT', reason: ['계약 + 구현 혼재'], multiplier: 0.8 };
+}
+
 export class ASTVerificationEngine {
-    private graphNodes: Map<string, any> = new Map();
-    private graphEdges: Array<any> = [];
+    verifyFile(filePath: string, workspaceRoot: string = ''): ASTVerificationResult {
+        const path = require('path');
+        const absPath = path.isAbsolute(filePath) ? filePath : path.join(workspaceRoot, filePath);
+        const key = getCacheKey(absPath);
+        if (cache.has(key)) {
+            const cached = { ...cache.get(key)! };
+            cached.filePath = filePath; // keep relative
+            return cached;
+        }
 
-    constructor(graphPath: string) {
         try {
-            const graph = JSON.parse(fs.readFileSync(graphPath, 'utf8'));
-            this.graphNodes = new Map((graph.nodes || []).map((n: any) => [n.id || n.filePath, n]));
-            this.graphEdges = graph.edges || [];
+            const content = fs.readFileSync(absPath, 'utf8');
+            const source = ts.createSourceFile(absPath, content, ts.ScriptTarget.Latest, true);
+            const counts = countNodes(source);
+            const { classification, reason, multiplier } = classify(counts, filePath);
+            const total = counts.total || 1;
+            const ratios = {
+                interface: Math.round((counts.interface / total) * 100),
+                type: Math.round((counts.type / total) * 100),
+                enum: Math.round((counts.enum / total) * 100),
+                class: Math.round((counts.class / total) * 100),
+                function: Math.round((counts.function / total) * 100),
+                variable: Math.round((counts.variable / total) * 100),
+                statement: Math.round((counts.statement / total) * 100)
+            };
+            const result: ASTVerificationResult = {
+                filePath,
+                nodeCount: counts,
+                ratios,
+                classification,
+                classificationReason: reason,
+                multiplier,
+                confidence: 0.95,
+                degraded: false
+            };
+            cache.set(key, result);
+            return result;
         } catch (e) {
-            console.warn('[ASTVerifier] Could not load graph:', e instanceof Error ? e.message : String(e));
-        }
-    }
-
-    /**
-     * Verify an edge: does source actually include/use target?
-     */
-    verifyEdge(edge: any): SymbolResolutionResult {
-        const from = edge.from || edge.source || '';
-        const to = edge.to || edge.target || '';
-        const edgeType = edge.type || 'UNKNOWN';
-
-        // False positive patterns
-        if (this.isFalsePositive(from, to, edgeType)) {
-            return {
-                edgeId: edge.id || `${from}→${to}`,
-                from,
-                to,
-                status: 'UNRESOLVED',
-                confidence: 0.1,
-                isFalsePositive: true,
-                reason: 'Detected as layout artifact or macro expansion'
+            console.error('[AST_VERIFY]', absPath, e instanceof Error ? e.stack : e);
+            const degraded: ASTVerificationResult = {
+                filePath,
+                nodeCount: { interface: 0, type: 0, enum: 0, class: 0, function: 0, variable: 0, statement: 0, total: 0 },
+                ratios: { interface: 0, type: 0, enum: 0, class: 0, function: 0, variable: 0, statement: 0 },
+                classification: 'DEGRADED',
+                classificationReason: ['AST 파싱 실패 - 기존 보고서 유지'],
+                multiplier: 1.0,
+                confidence: 0.0,
+                degraded: true,
+                error: e instanceof Error ? e.message : String(e)
             };
+            cache.set(key, degraded);
+            return degraded;
         }
-
-        // Check if target is a header with symbols
-        const targetNode = this.graphNodes.get(to);
-        const hasExports = targetNode?.data?.has_exports || this.hasSymbolExports(to);
-        const hasDefinitions = targetNode?.data?.has_definitions || this.hasDefinitions(to);
-
-        if (hasExports || hasDefinitions) {
-            return {
-                edgeId: edge.id || `${from}→${to}`,
-                from,
-                to,
-                status: 'RESOLVED',
-                symbols: this.extractSymbols(to),
-                confidence: 0.92,
-                isFalsePositive: false,
-                reason: 'Symbol exports verified'
-            };
-        }
-
-        // Partial resolution
-        if (this.isArchitectureHeader(to)) {
-            return {
-                edgeId: edge.id || `${from}→${to}`,
-                from,
-                to,
-                status: 'PARTIAL',
-                symbols: ['<architecture-local>'],
-                confidence: 0.75,
-                isFalsePositive: false,
-                reason: 'Architecture-local header, partial resolution'
-            };
-        }
-
-        // Unresolved
-        return {
-            edgeId: edge.id || `${from}→${to}`,
-            from,
-            to,
-            status: 'UNRESOLVED',
-            confidence: 0.45,
-            isFalsePositive: false,
-            reason: 'Could not verify symbol usage'
-        };
     }
 
-    /**
-     * Run full verification on all edges
-     */
-    verify(): ASTVerificationReport {
-        const results: SymbolResolutionResult[] = [];
-        let resolved = 0;
-        let partial = 0;
-        let unresolved = 0;
-        let falsePositives = 0;
-        let totalSymbols = 0;
-
-        for (const edge of this.graphEdges.slice(0, 10000)) {
-            // Sampling: first 10k edges for performance
-            const result = this.verifyEdge(edge);
-            results.push(result);
-
-            if (result.isFalsePositive) {
-                falsePositives++;
-            } else if (result.status === 'RESOLVED') {
-                resolved++;
-                totalSymbols += result.symbols?.length || 0;
-            } else if (result.status === 'PARTIAL') {
-                partial++;
-                totalSymbols += result.symbols?.length || 0;
-            } else {
-                unresolved++;
-            }
-        }
-
-        const total = results.length;
-        const avgConfidence =
-            results.reduce((sum, r) => sum + r.confidence, 0) / Math.max(1, total);
-        
-        // HONEST METRICS (both returned as 0-100 percentages):
-        // auditSuccessRate = success within audited set (93% = 93.0)
-        const auditedSet = resolved + partial + unresolved;
-        const auditSuccessRate = auditedSet > 0 ? ((resolved + partial) / auditedSet) * 100 : 0;
-        
-        // auditCoverage = audited edges / total graph edges (2.4% = 2.4)
-        const totalGraphEdges = this.graphEdges.length;
-        const auditCoverage = totalGraphEdges > 0 ? ((total) / totalGraphEdges) * 100 : 0;
-
-        return {
-            totalGraphEdges: totalGraphEdges,
-            auditedEdges: total,
-            auditCoverage: auditCoverage,
-            auditSuccessRate: auditSuccessRate,
-            resolvedEdges: resolved,
-            partialEdges: partial,
-            unresolvedEdges: unresolved,
-            falsePositivesDetected: falsePositives,
-            averageConfidence: avgConfidence,
-            symbolsResolved: resolved,
-            symbolsPartial: partial,
-            symbolsUnresolved: unresolved,
-            results
-        };
+    verifyTopFiles(filePaths: string[], workspaceRoot: string = ''): ASTVerificationResult[] {
+        return filePaths.map(f => this.verifyFile(f, workspaceRoot));
     }
-
-    private isFalsePositive(from: string, to: string, type: string): boolean {
-        // Build artifacts
-        if (to.includes('/.kconfig') || to.includes('/Makefile') || to.includes('/Kbuild')) {
-            return true;
-        }
-
-        // Generated files
-        if (to.includes('/generated/') || to.includes('.lds')) {
-            return true;
-        }
-
-        // Same file reference
-        if (from === to) {
-            return true;
-        }
-
-        // Very short filenames (likely macros)
-        if (path.basename(to).length < 3) {
-            return true;
-        }
-
-        return false;
-    }
-
-    private hasSymbolExports(filePath: string): boolean {
-        // Heuristic: files in /include usually export symbols
-        if (filePath.includes('/include/')) {
-            return true;
-        }
-        if (filePath.includes('/asm/')) {
-            return true;
-        }
-        if (filePath.endsWith('.h')) {
-            return true;
-        }
-        return false;
-    }
-
-    private hasDefinitions(filePath: string): boolean {
-        if (filePath.endsWith('.c') || filePath.endsWith('.S')) {
-            return true;
-        }
-        if (filePath.endsWith('.h')) {
-            return true;
-        }
-        return false;
-    }
-
-    private isArchitectureHeader(filePath: string): boolean {
-        return filePath.includes('/asm/') || filePath.includes('/include/');
-    }
-
-    private extractSymbols(filePath: string): string[] {
-        // Simplified: extract base name as symbol prefix
-        const base = path.basename(filePath, path.extname(filePath));
-        return [base, `${base}_ops`, `${base}_driver`, `${base}_init`].filter(
-            (s) => s.length > 0
-        );
-    }
-}
-
-export function runASTVerification(graphPath: string): ASTVerificationReport {
-    const engine = new ASTVerificationEngine(graphPath);
-    return engine.verify();
 }

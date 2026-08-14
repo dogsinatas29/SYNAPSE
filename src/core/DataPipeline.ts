@@ -41,6 +41,14 @@ export interface PipelineResult {
   metaEdges?: any[]; // [Phase 2B.13] Edge Bundle Data
   ghostBreakdown?: Record<string, number>;
   externalBreakdown?: Record<string, number>;
+  resolutionStats?: {
+      total: number;
+      resolved: number;
+      ambiguous: number;
+      ghost: number;
+      unresolved: number;
+  };
+  edgeTypeDistribution?: Record<string, number>;
 }
 
 export class DataPipeline {
@@ -201,11 +209,24 @@ export class DataPipeline {
       // [v0.3.32.3] Reference Resolution (Extracted to ReferenceResolver)
       const resolvedReferences = ReferenceResolver.resolve(policyResult.validReferences, nodeIds, SymbolIndex.getInstance());
       
+      const resolutionStats = {
+          total: resolvedReferences.length,
+          resolved: 0,
+          ambiguous: 0,
+          ghost: 0,
+          unresolved: 0
+      };
+
       for (const r of resolvedReferences) {
         totalReferencesFound++;
-        if (r.resolutionKind === 'symbol_index') symbolResolvedCount++;
-        if (r.resolutionKind === 'basename') fallbackMatchedCount++;
-        if (r.resolutionKind === 'unresolved') unresolvedCount++;
+        if (r.resolutionKind === 'symbol_index') { symbolResolvedCount++; resolutionStats.resolved++; }
+        else if (r.resolutionKind === 'direct') { resolutionStats.resolved++; }
+        else if (r.resolutionKind === 'basename') { fallbackMatchedCount++; resolutionStats.ambiguous++; }
+        else if (r.resolutionKind === 'unresolved') { unresolvedCount++; resolutionStats.unresolved++; }
+        
+        if (r.targetId.startsWith('ghost://') || r.targetId.startsWith('external://')) {
+            resolutionStats.ghost++;
+        }
       }
 
       // [v0.3.32.4] Ghost Expansion (Extracted to GhostExpander)
@@ -388,12 +409,8 @@ export class DataPipeline {
             // 1. Aggressive Branch Promotion (nodeCount <= 2)
             // If a cluster has very few direct nodes, it's not worth being a separate box.
             // We promote its nodes and children to its parent.
-            // [Phase B.5] 조건문 직전 — 후보군 전체 출력
-            console.log('[PROMOTION_CANDIDATE]', c.id, 'parent=', c.parent_id, 'nodes:', myNodes.length, 'children:', childClusters.length, 'depth:', depth);
             if (myNodes.length <= 2) {
                 const parentId = c.parent_id;
-                // [Phase B.5] 조건 진입 — 실제 승격 대상 출력
-                console.log('[PROMOTION_TARGET]', c.id, 'parent=', c.parent_id, 'nodes=', myNodes.length, 'children=', childClusters.length);
                 if (parentId) {
                     // Move my nodes to parent
                     myNodes.forEach(n => {
@@ -403,8 +420,6 @@ export class DataPipeline {
                     
                     // Move my children to parent
                     childClusters.forEach(child => {
-                        // [Phase B.5] 재연결 직전 — old/new parent_id 출력
-                        console.log('[PROMOTION_REPARENT]', child.id, 'old=', child.parent_id, 'new=', parentId);
                         child.parent_id = parentId;
                         // Prepend my name to child's name to preserve path visually
                         const myName = c.label.replace('📂 ', '').replace(/\[.*\]\s*/, '');
@@ -413,12 +428,7 @@ export class DataPipeline {
                         }
                     });
                     
-                    // [Phase B.5] 삭제 직전 — 실제 제거 확인
-                    console.log('[PROMOTION_DELETE]', c.id, 'parent=', c.parent_id, 'children=', childClusters.length);
                     clusters.splice(i, 1);
-                    const stillExists = clusters.some(cc => cc.id === c.id);
-                    console.log('[PROMOTION_POST_DELETE_CHECK]', c.id, 'stillExists=', stillExists);
-                    console.log('[PROMOTION_REMOVED]', c.id, 'nodes:', myNodes.length, 'children:', childClusters.length);
                     collapseCount++;
                     collapseChanged = true;
                     continue;
@@ -428,7 +438,14 @@ export class DataPipeline {
             // [v0.3.34.15] Promotion Lifecycle Invariant Check
             const actualNodes = nodes.filter(n => n.cluster_id === c.id).length;
             if (c.nodeCount !== actualNodes) {
-                console.error('[CLUSTER_INVARIANT_FAIL]', c.id, 'nodeCount=', c.nodeCount, 'actual=', actualNodes);
+                console.error('[CLUSTER_INVARIANT_FAIL]', 
+                    c.id, 
+                    'nodeCount=', c.nodeCount, 
+                    'actual=', actualNodes,
+                    'childrenLen=', childClusters.length,
+                    'collapsed=', c.collapsed,
+                    'forcedCollapsed=', c.forcedCollapsed
+                );
             }
             
             // 2. Chain Compression (childClusterCount === 1)
@@ -444,8 +461,6 @@ export class DataPipeline {
                         if (n.data) n.data.cluster_id = child.id;
                     });
                     
-                    // [Phase B.5] Chain 재연결 직전 — old/new parent_id 출력
-                    console.log('[CHAIN_REPARENT]', child.id, 'old=', child.parent_id, 'new=', parentId);
                     // Bypass current cluster
                     child.parent_id = parentId;
                     
@@ -583,7 +598,20 @@ export class DataPipeline {
         CLUSTER_COUNT: clusters.length,
         ROOT_CLUSTER_COUNT: rootClusterCount
     });
-    return { nodes, edges, clusters, metaEdges, ghostBreakdown: policyResult.ghostBreakdown, externalBreakdown: policyResult.externalBreakdown };
+    
+    const edgeTypeDistribution: Record<string, number> = {};
+    for (const [k, v] of edgeTypeCount.entries()) edgeTypeDistribution[k] = v;
+
+    return { 
+        nodes, 
+        edges, 
+        clusters, 
+        metaEdges, 
+        ghostBreakdown: policyResult.ghostBreakdown, 
+        externalBreakdown: policyResult.externalBreakdown,
+        resolutionStats,
+        edgeTypeDistribution
+    };
   }
 
 

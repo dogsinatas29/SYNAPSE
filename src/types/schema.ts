@@ -23,11 +23,14 @@ export enum NodeRole {
 }
 
 export enum SemanticRole {
-    NORMAL = 'NORMAL',
-    ASSEMBLY_POINT = 'ASSEMBLY_POINT',
-    TEST_HARNESS = 'TEST_HARNESS',
+    CORE_RUNTIME = 'CORE_RUNTIME',
+    TEST = 'TEST',
+    BENCHMARK = 'BENCHMARK',
+    SAMPLE = 'SAMPLE',
+    TOOLING = 'TOOLING',
     DOCUMENTATION = 'DOCUMENTATION',
-    GENERATED_RESERVED = 'GENERATED_RESERVED'
+    GENERATED = 'GENERATED',
+    UNKNOWN = 'UNKNOWN'
 }
 
 export enum SemanticEdgeType {
@@ -67,6 +70,7 @@ export interface Node {
     clientTimestamp?: number;
     role?: NodeRole;
     semanticRole?: SemanticRole;
+    isAssemblyPoint?: boolean;
     category?: string;
     confidence?: number;
     [key: string]: any;
@@ -299,6 +303,14 @@ export interface GraphSnapshot {
         architecturalFindings?: ArchitecturalFinding[];
         ghostBreakdown?: Record<string, number>;
         externalBreakdown?: Record<string, number>;
+        resolutionStats?: {
+            total: number;
+            resolved: number;
+            ambiguous: number;
+            ghost: number;
+            unresolved: number;
+        };
+        edgeTypeDistribution?: Record<string, number>;
     };
     checksum?: string;
 }

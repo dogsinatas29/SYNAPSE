@@ -729,15 +729,15 @@ export class ValidationEngine {
                 }))
             });
 
-            const impactMap = new Map<string, { externalEdges: number, targets: Map<string, number> }>();
+            const impactMap = new Map<string, { externalEdges: number, targets: Map<string, { count: number, types: Set<string> }> }>();
             
-            // To find semanticType of an intentEdge, we can look up the first matching edge in snapshot
-            const edgeTypeMap = new Map<string, string>();
+            // To find semanticType and type of an intentEdge, we can look up the first matching edge in snapshot
+            const edgeSemTypeMap = new Map<string, string>();
+            const edgeRefTypeMap = new Map<string, string>();
             for (const e of snapshot.edges) {
                 const key = `${e.from}->${e.to}`;
-                if (!edgeTypeMap.has(key)) {
-                    edgeTypeMap.set(key, e.semanticType || 'CODE');
-                }
+                if (!edgeSemTypeMap.has(key)) edgeSemTypeMap.set(key, e.semanticType || 'CODE');
+                if (!edgeRefTypeMap.has(key)) edgeRefTypeMap.set(key, e.type || 'UNKNOWN');
             }
 
             for (const e of intentEdges) {
@@ -746,7 +746,8 @@ export class ValidationEngine {
                 if (e.source?.startsWith('AGGREGATE_') || e.target?.startsWith('AGGREGATE_')) continue;
 
                 const edgeKey = `${e.source}->${e.target}`;
-                const semType = edgeTypeMap.get(edgeKey) || 'CODE';
+                const semType = edgeSemTypeMap.get(edgeKey) || 'CODE';
+                const refType = edgeRefTypeMap.get(edgeKey) || 'UNKNOWN';
                 
                 // 순수 CODE_EDGE 및 GHOST(unresolved code reference) 만을 아키텍처 위험도 평가에 반영
                 if (semType === 'DOC' || semType === 'TEST' || semType === 'GENERATED') {
@@ -772,7 +773,11 @@ export class ValidationEngine {
                     if (!impactMap.has(e.source)) impactMap.set(e.source, { externalEdges: 0, targets: new Map() });
                     const data = impactMap.get(e.source)!;
                     data.externalEdges += e.evidenceCount;
-                    data.targets.set(e.target, (data.targets.get(e.target) || 0) + e.evidenceCount);
+                    
+                    if (!data.targets.has(e.target)) data.targets.set(e.target, { count: 0, types: new Set() });
+                    const targetData = data.targets.get(e.target)!;
+                    targetData.count += e.evidenceCount;
+                    targetData.types.add(refType);
                 }
             }
             
@@ -833,7 +838,11 @@ export class ValidationEngine {
                     const node = nodeMap.get(filePath);
                     
                     const targetsList = Array.from(data.targets.entries())
-                        .map(([target, count]) => ({ target, count }))
+                        .map(([target, tData]) => ({ 
+                            target, 
+                            count: tData.count, 
+                            typeStr: Array.from(tData.types).join(', ') 
+                        }))
                         .sort((a, b) => b.count - a.count)
                         .slice(0, 10);
                         
@@ -1024,7 +1033,7 @@ export class ValidationEngine {
             ghostEvidence = intentEdges
                 .filter(e => {
                     if (e.source?.startsWith('AGGREGATE_')) return false;
-                    const semType = edgeTypeMap.get(`${e.source}->${e.target}`) || 'CODE';
+                    const semType = edgeSemTypeMap.get(`${e.source}->${e.target}`) || 'CODE';
                     return semType === 'GHOST';
                 })
                 .sort((a, b) => b.evidenceCount - a.evidenceCount)
@@ -1033,7 +1042,7 @@ export class ValidationEngine {
             boundaryEvidence = intentEdges
                 .filter(e => {
                     if (e.source?.startsWith('AGGREGATE_')) return false;
-                    const semType = edgeTypeMap.get(`${e.source}->${e.target}`) || 'CODE';
+                    const semType = edgeSemTypeMap.get(`${e.source}->${e.target}`) || 'CODE';
                     // We only show true CODE/GHOST boundaries, wait GHOST is covered above
                     return !e.isGhost && e.evidenceCount > 0 && semType === 'CODE';
                 })
@@ -1043,7 +1052,7 @@ export class ValidationEngine {
             docEvidence = intentEdges
                 .filter(e => {
                     if (e.source?.startsWith('AGGREGATE_')) return false;
-                    const semType = edgeTypeMap.get(`${e.source}->${e.target}`) || 'CODE';
+                    const semType = edgeSemTypeMap.get(`${e.source}->${e.target}`) || 'CODE';
                     return semType === 'DOC';
                 })
                 .sort((a, b) => b.evidenceCount - a.evidenceCount)
@@ -1117,6 +1126,11 @@ export class ValidationEngine {
             systemAssemblyPoints: systemAssemblyPoints.length,
             topImpactFiles: topImpactFiles.length
         });
+
+        // [v0.3.34.21] Copy Edge Type Distribution to metrics so the report can read it
+        if (anySnapshot.metadata?.edgeTypeDistribution) {
+            metrics.edgeTypeDistribution = anySnapshot.metadata.edgeTypeDistribution;
+        }
 
         return {
             snapshot,

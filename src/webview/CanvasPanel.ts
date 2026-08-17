@@ -44,6 +44,7 @@ import { graphModel } from '../core/GraphModel';
 import { snapshotSystem } from '../core/SnapshotSystem';
 import { canvasEngine } from '../core/canvas-engine/CanvasEngine';
 import { RenderProtocol } from '../core/canvas-engine/RenderProtocol';
+import { ProjectStateSerializer } from '../core/transaction/ProjectStateSerializer';
 
 /**
  * SequentialTaskQueue - Asynchronous task serializer
@@ -2955,7 +2956,7 @@ export class CanvasPanel {
         const uri = vscode.Uri.joinPath(workspaceFolder.uri, 'synapse_data', 'project_state.json');
         const data = await vscode.workspace.fs.readFile(uri);
         try {
-            return JSON.parse(Buffer.from(data).toString('utf-8'));
+            return ProjectStateSerializer.restore(JSON.parse(Buffer.from(data).toString('utf-8')));
         } catch (e) {
             console.error(`[SYNAPSE] Failed to parse project_state.json:`, e);
             throw new Error(`Data Corruption: project_state.json is truncated or invalid. Please save again.`);
@@ -3299,7 +3300,7 @@ export class CanvasPanel {
             }
 
             // 4. 정렬된 JSON 문자열 반환
-            const normalized = JSON.stringify(sortedState, null, 2);
+            const normalized = ProjectStateSerializer.serialize(sortedState);
             console.timeEnd('state-export');
             console.timeEnd('NORMALIZE_STATE');
             return normalized;

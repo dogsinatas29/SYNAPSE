@@ -139,12 +139,25 @@ export class SymbolIndex {
             if (className) entry.classCount++;
             else entry.functionCount++;
         }
+        
+        // [v0.3.34] Register function names in symbol catalog to resolve C/C++ function calls directly to implementation files
+        this.addSymbol(filePath, functionName);
     }
 
     addSymbol(filePath: string, symbolName: string): void {
         if (!this.index || !symbolName) return;
-        if (!this.index.symbolCatalog.has(symbolName)) {
+        
+        const existing = this.index.symbolCatalog.get(symbolName);
+        if (!existing) {
             this.index.symbolCatalog.set(symbolName, filePath);
+        } else {
+            // [v0.3.34] Symbol Resolution: Prefer Implementation (Definition) over Header (Declaration)
+            const isExistingHeader = existing.endsWith('.h') || existing.endsWith('.hpp') || existing.endsWith('.hxx');
+            const isNewSource = filePath.endsWith('.c') || filePath.endsWith('.cpp') || filePath.endsWith('.cc') || filePath.endsWith('.rs');
+            
+            if (isExistingHeader && isNewSource) {
+                this.index.symbolCatalog.set(symbolName, filePath);
+            }
         }
     }
 

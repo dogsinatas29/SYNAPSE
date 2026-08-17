@@ -314,7 +314,7 @@ export class ValidationReportBuilder {
         console.log('[ASR_BUILDER]', BUILD_VERSION, new Date().toISOString());
 
         const fingerprint = extractSubjectFingerprint(ctx.snapshot);
-        const report = { ...ctx.metrics, subjectFingerprint: fingerprint, buildVersion: BUILD_VERSION } as any;
+        const report = { ...ctx.metrics, snapshot: ctx.snapshot, subjectFingerprint: fingerprint, buildVersion: BUILD_VERSION } as any;
         report.assemblyAudit = (ctx.snapshot as any).metadata?.assemblyAudit || [];
 
         // [P0 진단] 결함 1 원인 규명: 데이터 전달 계측
@@ -470,6 +470,22 @@ export class ValidationReportBuilder {
             `- **Boundary Edge Count**: ${fp.boundaryEdges} / ${fp.internalEdges} (Internal)`,
             `- **Top 3 Contributors**: 상위 3개 파일(${top3Names || 'N/A'})이 전체 Boundary Edge의 **${calcTopPct(top3Sum)}%** (${top3Sum}개)를 생성하고 있습니다.`,
             '',
+            (report.snapshot?.metadata?.resolutionStats ? [
+                `### Edge Resolution Quality`,
+                `- **TOTAL EDGES**: ${report.snapshot.metadata.resolutionStats.total}`,
+                `- **RESOLVED**: ${report.snapshot.metadata.resolutionStats.resolved}`,
+                `- **AMBIGUOUS**: ${report.snapshot.metadata.resolutionStats.ambiguous}`,
+                `- **GHOST**: ${report.snapshot.metadata.resolutionStats.ghost}`,
+                `- **UNRESOLVED**: ${report.snapshot.metadata.resolutionStats.unresolved}`,
+                ''
+            ].join('\n') : ''),
+            ((report.metrics?.edgeTypeDistribution || report.snapshot?.metadata?.edgeTypeDistribution) ? [
+                `### Edge Type Distribution`,
+                ...Object.entries((report.metrics?.edgeTypeDistribution || report.snapshot?.metadata?.edgeTypeDistribution) as Record<string, number>)
+                    .sort((a: any, b: any) => b[1] - a[1])
+                    .map(([k, v]) => `- **${k}**: ${v}`),
+                ''
+            ].join('\n') : ''),
             `**Cumulative Boundary Contribution**`,
             `- **Top 3**: ${calcTopPct(top3Sum)}% (${top3Sum} edges)`,
             `- **Top 10**: ${calcTopPct(top10Sum)}% (${top10Sum} edges)`,
@@ -568,7 +584,7 @@ export class ValidationReportBuilder {
                 if (file.targets && file.targets.length > 0) {
                     surgerySection.push(`**Top External Targets (Evidence)**`);
                     for (const t of file.targets) {
-                        surgerySection.push(`- ${this.cleanDomainName(t.target)} (${t.count} edges)`);
+                        surgerySection.push(`- ${this.cleanDomainName(t.target)} (${t.count} edges - Type: ${t.typeStr || 'UNKNOWN'})`);
                     }
                 } else if (file.consumers && file.consumers.length > 0) {
                     // Legacy fallback

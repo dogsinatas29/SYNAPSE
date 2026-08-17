@@ -7,6 +7,8 @@ import * as path from 'path';
 import * as fs from 'fs';
 import { JVMAuditor } from '../core/JVMAuditor';
 import { GeminiParser } from '../core/GeminiParser';
+import { AiOrchestrator } from '../core/AiOrchestrator';
+import { ProjectStateSerializer } from '../core/transaction/ProjectStateSerializer';
 import { FlowchartGenerator } from '../core/FlowchartGenerator';
 import { FileScanner } from '../core/FileScanner';
 import { ScannerRegistry } from '../core/ScannerRegistry';
@@ -73,7 +75,9 @@ export class BootstrapEngine {
 
         try {
             // [v0.3.1] Snapshot Storage Initialize
+            ProjectMetadata.getInstance().initialize(projectRoot);
             snapshotSystem.setStoragePath(projectRoot);
+            graphModel.setProjectRoot(projectRoot);
 
             // 1. DATA 수집 시작 (Phase 0)
             phaseManager.assertPhase(Phase.DATA);
@@ -147,7 +151,9 @@ export class BootstrapEngine {
                 pipelineResult.clusters,
                 {
                     ghostBreakdown: pipelineResult.ghostBreakdown,
-                    externalBreakdown: pipelineResult.externalBreakdown
+                    externalBreakdown: pipelineResult.externalBreakdown,
+                    resolutionStats: pipelineResult.resolutionStats,
+                    edgeTypeDistribution: pipelineResult.edgeTypeDistribution
                 }
             );
             
@@ -187,7 +193,7 @@ export class BootstrapEngine {
             }
             
             try {
-                fs.writeFileSync(statePath, JSON.stringify(projectState, null, 2), 'utf-8');
+                fs.writeFileSync(statePath, ProjectStateSerializer.serialize(projectState), 'utf-8');
                 console.log(`[STATE_SAVE_COMPLETE] project_state.json successfully written.`);
             } catch (err) {
                 console.error(`[STATE_SAVE_ERROR] Failed to write project_state.json:`, err);
@@ -352,7 +358,7 @@ export class BootstrapEngine {
                 fs.mkdirSync(stateDir, { recursive: true });
             }
             console.log('[JSON_STRINGIFY_START]', projectState.nodes!.length, projectState.edges!.length, projectState.clusters!.length);
-            const json = JSON.stringify(projectState, null, 2);
+            const json = ProjectStateSerializer.serialize(projectState);
             console.log('[JSON_STRINGIFY_DONE]', json.length);
             console.log('[WRITE_FILE]', statePath);
             fs.writeFileSync(statePath, json, 'utf-8');

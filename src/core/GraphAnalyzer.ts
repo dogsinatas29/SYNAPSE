@@ -65,10 +65,7 @@ export function analyzeGraph(input: AnalysisInput): GraphAnalysis {
                 .test(name)
         );
 
-    console.log('[GRAPH_ANALYZER_RAW_CANDIDATES]', {
-        count: candidateNames.length,
-        sample: candidateNames.slice(0, 20)
-    });
+    console.log('[ASSEMBLY_CANDIDATE_DUMP]', candidateNames);
 
     const nodeMap = new Map<string, Node>(nodes.map(n => [n.id, n]));
     const degreeMap = new Map<string, DegreeInfo>();
@@ -182,9 +179,13 @@ export function analyzeGraph(input: AnalysisInput): GraphAnalysis {
             if (node.semanticRole === SemanticRole.CORE_RUNTIME) {
                 // Stage 1: Heuristic Extraction
                 const basename = path.basename(filePath).toLowerCase();
-                const isStrongCandidate = /(main|app|bootstrap|startup|program|compositionroot)\.(ts|js|cs|java|go|rs)$/.test(basename);
-                const isWeakCandidate = /(server|client|container|dependencyregistrar|services)\.(ts|js|cs|java|go|rs)$/.test(basename);
+                const isStrongCandidate = /(main|app|bootstrap|startup|program|compositionroot)\.(ts|js|cs|java|go|rs|c|cpp)$/.test(basename);
+                const isWeakCandidate = /(server|client|container|dependencyregistrar|services)\.(ts|js|cs|java|go|rs|c|cpp|h|hpp)$/.test(basename);
                 const isAssemblyCandidate = isStrongCandidate || isWeakCandidate;
+                
+                if (!isAssemblyCandidate && /^(main|app|bootstrap|startup|program|compositionroot|server|client|container|dependencyregistrar|services)\./.test(basename)) {
+                    console.log(`\n[ASSEMBLY_AUDIT]\n\n${node.filePath || node.id}\n\nREJECTED\nReason=REJECT_EXTENSION_MISMATCH\n\nFanIn=${degree.in}\nFanOut=${degree.out}\nBoundaryRatio=${boundaryRatio.toFixed(2)}`);
+                }
                 
                 // [P0 진단] 후보 판정 상세 상태
                 if (basename.match(/(main|app|server|services|client)\./)) {
@@ -242,7 +243,7 @@ export function analyzeGraph(input: AnalysisInput): GraphAnalysis {
                         reasons
                     });
                     pushCount++;
-                    (node as any).isAssemblyPoint = false;
+                    console.log(`\n[ASSEMBLY_AUDIT]\n\n${node.filePath || node.id}\n\n${accepted ? 'ACCEPTED' : 'REJECTED'}\nReason=${reasons.join(', ')}\n\nFanIn=${degree.in}\nFanOut=${degree.out}\nBoundaryRatio=${boundaryRatio.toFixed(2)}`);
                 }
             }
         }

@@ -3,8 +3,11 @@ import * as path from 'path';
 import { ValidationEngine } from '../core/validation/ValidationEngine';
 import { GraphSnapshot } from '../core/validation/ValidationContext';
 
+import { ProjectStateSerializer } from '../core/transaction/ProjectStateSerializer';
+
 export function runB5ValidationLayer(graphFilePath: string, runCount: number): void {
-    const data = JSON.parse(fs.readFileSync(graphFilePath, 'utf8'));
+    let data = JSON.parse(fs.readFileSync(graphFilePath, 'utf8'));
+    data = ProjectStateSerializer.restore(data);
     const snapshot: GraphSnapshot = {
         nodes: data.nodes || (data.graph && data.graph.nodes) || [],
         edges: data.edges || (data.graph && data.graph.edges) || [],

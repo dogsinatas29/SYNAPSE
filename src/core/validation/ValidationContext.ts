@@ -158,6 +158,9 @@ export interface ValidationMetrics {
 
     // ASR 3.0 Evidence Layer fields
     ghostEvidence?: IntentEdge[];
+    
+    // [v0.3.34.21] Edge Type Distribution for Report
+    edgeTypeDistribution?: Record<string, number>;
     boundaryEvidence?: IntentEdge[];
     docEvidence?: IntentEdge[];
     systemAssemblyPoints?: any[];

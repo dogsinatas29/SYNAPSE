@@ -1,0 +1,267 @@
+[DEBUG] state.nodes length: 484
+[SYNAPSE] Loaded real AST graph: 484 nodes, 190 edges.
+[DEBUG] Nodes after injection: 491
+[DEBUG] Snapshot Node IDs: mile_stone/v0.2.18.md, mile_stone/v0.2.19.md, mile_stone/v0.2.20.md, mile_stone/v0.2.21.md, release_note/v0.2.18_release_notes.md, release_note/v0.2.21_release_notes.md, ) || trimmed, )) type = , 리포트.md, 출력 가능한 ASCII, architecture, architecture.md, backup_md/리포트.md, backup_md/architecture.md, backup_md/core_synapse.md, backup_md/data_scheme.md, backup_md/GEMINI.md, backup_md/GHOST_NODE.md, mile_stone/v0.2.14fix.md, mile_stone/v0.2.15.md, mile_stone/v0.2.16.md, mile_stone/v0.2.17.md, backup_md/prompts/2026-02-17_keybinding_check.md, backup_md/prompts/2026-02-17_origin_edge_verification.md, backup_md/prompts/2026-02-17_test.md, backup_md/prompts/2026-02-18_auto_push_after_drag.md, backup_md/prompts/2026-02-18_deep_reset_triggered.md, backup_md/prompts/2026-02-18_group_created_doc.md, backup_md/prompts/2026-02-18_manual_snapshot.md, backup_md/prompts/2026-02-18_selection_ungrouped.md, backup_md/prompts/2026-02-18_snapshot__121710.md, backup_md/prompts/2026-02-20_auto_push_after_drag.md, backup_md/prompts/2026-02-22_auto_push_after_drag.md, backup_md/README.ko.md, backup_md/README.md, release_note/architecture.md, release_note/CHANGELOG.md, release_note/DEBUG_GUIDE.md, release_note/EXTENSION_README.md, release_note/GEMINI (사본).md, release_note/release_notes_0.2.12.md, release_note/release_notes_0.2.14.md, release_note/RELEASES_v0.2.7.md, release_note/v0.1.6_release_notes.md, release_note/v0.1.7_release_notes.md, release_note/v0.1.8_release_notes.md, release_note/v0.2.0_release_notes.md, release_note/v0.2.1_release_notes.md, release_note/v0.2.10_release_notes.md, release_note/v0.2.11_release_notes.md, release_note/v0.2.12_release_notes.md, release_note/v0.2.13_release_notes.md, release_note/v0.2.14_hotfix_release_notes.md, release_note/v0.2.14_release_notes.md, release_note/v0.2.14fix_release_notes.md, release_note/v0.2.15_release_notes.md, release_note/v0.2.16_release_notes.md, release_note/v0.2.17_release_notes.md, release_note/v0.2.2_release_notes.md, release_note/v0.2.3_release_notes.md, release_note/v0.2.4_release_notes.md, release_note/v0.2.5_release_notes.md, release_note/v0.2.6_release_notes.md, release_note/v0.2.9_release_notes.md, backup_md/reporting.md, backup_md/RULES.md, backup_md/vega_agent.md, backup_md/walkthrough.md, build-guard.js, cluster_id, color_aqua, color_beige, color_blue, color_brown, color_gold, color_magenta, color_orange, color_pink, core_synapse, core_synapse.md, cors, crypto, data_scheme, data_scheme.md, express, fix_cluster.sh, flow_view, gemini_performance_constraints.md, GEMINI.md, GHOST_NODE, GHOST_NODE.md, hint_dashed_border, hint_grayed_out, hint_purple_glow, hint_red_pulse, hint_solid_border, index, LOGIC_REPORT.md, main, mile_stone/_v0.3.0.md, mile_stone/_v0.3.09_COMPREHENSIVE.md, mile_stone/_v0.3.09_fix_implementation_plan.md, mile_stone/_v0.3.09_fix.md, mile_stone/_v0.3.09.md, mile_stone/_v0.3.1_Data_Pipeline.md, mile_stone/_v0.3.1_Debugging_Trigger_Architecture.md, mile_stone/_v0.3.1_Graph_Model.md, mile_stone/_v0.3.1_Grid_System_Architecture.md, mile_stone/_v0.3.1_implementation_plan.md, mile_stone/_v0.3.1_Iron_Grid_Refined.md, mile_stone/_v0.3.1_Performance_Budget.md, mile_stone/_v0.3.1_Runtime_Enforcement.md, mile_stone/_v0.3.1_State_Snapshot_System.md, mile_stone/_v0.3.1_System_Validation.md, mile_stone/_v0.3.1_Warning_Rendering_Optimization.md, mile_stone/_v0.3.1_zz_Bootstrap_Locked.md, mile_stone/_v0.3.10_Bootstrap_Locked.md, mile_stone/_v0.3.10_candidate.md, mile_stone/_v0.3.10_convergence.md, mile_stone/_v0.3.10_edge.md, mile_stone/_v0.3.10_extraction_rules.md, mile_stone/_v0.3.10_forced_scenario.md, mile_stone/_v0.3.10_implementation.md, mile_stone/_v0.3.10_intent_score.md, mile_stone/_v0.3.10_intent.md, mile_stone/_v0.3.10_logical_rule.md, mile_stone/_v0.3.10_merger.md, mile_stone/_v0.3.10_node_move.md, mile_stone/_v0.3.10_phase_contamination_rules.md, mile_stone/_v0.3.10_runner_spec.md, mile_stone/_v0.3.10_spec.md, mile_stone/_v0.3.10_state.md, mile_stone/_v0.3.11_기본작업방향.md, mile_stone/_v0.3.11_작업순서.md, mile_stone/_v0.3.11_책임분리_지침.md, mile_stone/_v0.3.11_Architecture_Set.md, mile_stone/_v0.3.11_Bootstrap.md, mile_stone/_v0.3.11_Cluster_Commit_규칙.md, mile_stone/_v0.3.11_Commit_TestStrategy.md, mile_stone/_v0.3.11_CommitContract.md, mile_stone/_v0.3.11_CommitPipeline_Freeze.md, mile_stone/_v0.3.11_CoreFreeze_변경지침.md, mile_stone/_v0.3.11_CoreFreeze_설계.md, mile_stone/_v0.3.11_DraftContract.md, mile_stone/_v0.3.11_ExecutionLayer.md, mile_stone/_v0.3.11_implementation_plan.md, mile_stone/_v0.3.11_mutation_model.md, mile_stone/_v0.3.11_NodeEdgeDraft.md, mile_stone/_v0.3.11_original_logic_reference.md, mile_stone/_v0.3.11_spec_ko_v2.md, mile_stone/_v0.3.11_VerificationLayer.md, mile_stone/_v0.3.2_implementation_plan.md, mile_stone/_v0.3.2.md, mile_stone/_v0.3.3.md, mile_stone/_v0.3.4.md, mile_stone/_v0.3.8.md, mile_stone/_v0.3.9_ANALYSIS_AND_FIX_PLAN.md, mile_stone/_v0.3.9.md, mile_stone/2026_04_06_23작업내용.md, mile_stone/2026_04_11_작업.md, mile_stone/202604011_시냅스마지막작업.md, mile_stone/구현안된목록/b/v0.2.19.md, mile_stone/구현안된목록/b/v0.2.20.md, mile_stone/구현안된목록/b/v1.0.md, mile_stone/구현안된목록/v0.2.19.md, mile_stone/구현안된목록/v0.2.20.md, mile_stone/context_vault_bootstrap_v0_2_31.md, mile_stone/context_vault_poison_test_v0_2_31.md, mile_stone/context_vault_spec_v0_2_31.md, mile_stone/v0.2.18.1.md, mile_stone/v0.2.18.2.md, mile_stone/v0.2.21-fix.md, mile_stone/v0.2.23.md, mile_stone/v0.2.24.md, mile_stone/v0.2.25.md, mile_stone/v0.2.26.md, mile_stone/v0.2.27.md, mile_stone/v0.2.28.md, mile_stone/v0.2.29_implementation_plan.md, mile_stone/v0.2.29.md, mile_stone/v0.2.30.md, mile_stone/v0.2.31.md, mile_stone/v0.2.32_implementation_plan.md, mile_stone/v0.2.32.md, mile_stone/v0.2.33_implementation_plan.md, mile_stone/v0.2.33.md, mile_stone/v0.2.34_implementation_plan.md, mile_stone/v0.2.34.md, mile_stone/v0.2.35.md, mile_stone/v0.2.36.md, mile_stone/v0.2.37.md, mile_stone/v0.2.38.md, mile_stone/v0.2.40.md, mile_stone/v0.2.41.md, mile_stone/v0.2.42_implementation_plan.md, mile_stone/v0.2.42.md, mile_stone/v0.2.43.md, mile_stone/v0.2.44_implementation_plan.md, mile_stone/v0.2.44.md, mile_stone/v0.2.45_implementation_plan.md, mile_stone/v0.2.45.md, mile_stone/v0.2.46.md, mile_stone/v0.2.47_implementation_plan.md, mile_stone/v0.2.47.md, mile_stone/v0.2.48.md, mile_stone/v0.2.49.md, mile_stone/v0.2.50.md, mile_stone/v0.2.51.md, mile_stone/v0.2.52.md, mile_stone/v0.2.53.md, mile_stone/v0.2.54.md, mile_stone/v0.3.10_hotfix_plan.md, mile_stone/v0.3.10.md, mile_stone/v0.3.11.md, mile_stone/v0.3.12.md, mile_stone/v0.3.13.md, mile_stone/v0.3.14_implementation.md, mile_stone/v0.3.14.md, mile_stone/v0.3.15_fix.md, mile_stone/v0.3.15.md, mile_stone/v0.3.16.md, mile_stone/v0.3.17.md, mile_stone/v0.3.18_implementation_plan.md, mile_stone/v0.3.18.md, mile_stone/v0.3.19_implementation_plan.md, mile_stone/v0.3.19.md, mile_stone/v0.3.20_implementation_plan.md, mile_stone/v0.3.20.md, mile_stone/v0.3.21.md, minimalist_view, net, node, node_active, node_deleted, node_ghost, node_high_dtr, node_summary, node_warning, package, position, project_state_json, RawTextMiner, README, README.ko, README.ko.md, README.md, release_note/v0.2.18.1_release_notes.md, release_note/v0.2.18.2_release_notes.md, release_note/v0.2.19_release_notes.md, release_note/v0.2.20_release_notes.md, release_note/v0.2.21-fix_release_notes_final.md, release_note/v0.2.21-fix_release_notes.md, release_note/v0.2.21fix4.md, release_note/v0.2.21fix5_release_notes.md, release_note/v0.2.21fix6_release_notes.md, release_note/v0.2.23_release_notes.md, release_note/v0.2.24_release_notes.md, release_note/v0.2.25_release_notes.md, release_note/v0.2.26_release_notes.md, release_note/v0.2.27_release_notes.md, release_note/v0.2.28_release_notes.md, release_note/v0.2.29_release_notes.md, release_note/v0.2.30_release_notes.md, release_note/v0.2.31_release_notes.md, release_note/v0.2.32_release_notes.md, release_note/v0.2.33_release_notes.md, release_note/v0.2.34_hotfix_2_release_notes.md, release_note/v0.2.34_hotfix_release_notes.md, release_note/v0.2.34_release_notes.md, release_note/v0.2.35_release_notes.md, release_note/v0.2.36_release_notes.md, release_note/v0.2.37_release_notes.md, release_note/v0.2.38_release_notes.md, release_note/v0.2.40_release_notes.md, release_note/v0.2.41_release_notes.md, release_note/v0.2.42_release_notes.md, release_note/v0.2.43_release_notes.md, release_note/v0.2.44_release_notes.md, release_note/v0.2.45_release_notes.md, release_note/v0.2.46_release_notes.md, release_note/v0.2.47_release_notes.md, release_note/v0.2.48_release_notes.md, release_note/v0.2.49_release_notes.md, release_note/v0.2.50_release_notes.md, release_note/v0.2.51_patch1_release_notes.md, release_note/v0.2.52_release_notes.md, release_note/v0.2.53_release_notes.md, release_note/v0.3.09_fix_release_notes.md, release_note/v0.3.09_hotfix_release_notes.md, release_note/v0.3.09_release_notes_ko.md, release_note/v0.3.09_RELEASE_NOTES_KO.md, release_note/v0.3.09_release_notes.md, release_note/v0.3.09_RELEASE_NOTES.md, release_note/v0.3.1_release_notes.md, release_note/v0.3.1_zz_Bootstrap_Locked_release_notes.md, release_note/v0.3.10_release_notes.md, release_note/v0.3.11_책임분리_지침_release_notes.md, release_note/v0.3.11_release_notes.md, release_note/v0.3.12_release_notes.md, release_note/v0.3.13_release_notes.md, release_note/v0.3.14_release_notes.md, release_note/v0.3.15_fix_release_notes.md, release_note/v0.3.15_release_notes.md, release_note/v0.3.16_release_notes.md, release_note/v0.3.17_release_notes.md, release_note/v0.3.18_release_notes.md, release_note/v0.3.19_release_notes.md, release_note/v0.3.2_release_notes.md, release_note/v0.3.20_release_notes.md, release_note/v0.3.21_release_notes.md, release_note/v0.3.3_release_notes.md, release_note/v0.3.4_release_notes.md, release_note/v0.3.5_release_notes.md, release_note/v0.3.6_release_notes.md, release_note/v0.3.7_release_notes.md, release_note/v0.3.8_release_notes.md, release_note/v0.3.9_ANALYSIS_AND_FIX_PLAN_release_notes.md, release_note/v0.3.9_release_notes.md, reporting, reporting.md, RULES, RULES.md, scratch/debug_match.js, scratch/debug_scanner.js, scratch/test_cpp_regex.js, src/analysis/hintEngine.ts, src/bootstrap/BootstrapEngine.ts, src/cli.ts, src/client.ts, src/core/AiOrchestrator.ts, src/core/ArchitectureDSL.ts, src/core/BillingManager.ts, src/core/canvas-engine/CanvasEngine.ts, src/core/canvas-engine/Intent.ts, src/core/canvas-engine/PhaseGate.ts, src/core/canvas-engine/RenderProtocol.ts, src/core/canvas-engine/RuleEngine.ts, src/core/canvas-engine/ScenarioRunner.ts, src/core/canvas-engine/SpatialRuleBook.ts, src/core/canvas-engine/StateManager.ts, src/core/canvas-engine/ValidationHarness.ts, src/core/canvas-engine/VisualRuleBook.ts, src/core/CDPManager.ts, src/core/CommandInterceptor.ts, src/core/ControlSystem.ts, src/core/DatabaseEngine.ts, src/core/DataPipeline.ts, src/core/DebuggerSystem.ts, src/core/DirectChatScraper.ts, src/core/EdgeCodeRefactorer.ts, src/core/FileScanner.ts, src/core/FlowchartGenerator.ts, src/core/FlowScanner.ts, src/core/GeminiParser.ts, src/core/graphBuilder.ts, src/core/GraphModel.ts, src/core/GridSystem.ts, src/core/LogicAnalyzer.ts, src/core/PbSessionWatcher.ts, src/core/PhaseManager.ts, src/core/projection/ProjectionLayer.ts, src/core/projection/RuleStore.ts, src/core/PromptLogger.ts, src/core/RendererCore.ts, src/core/ReportExporter.ts, src/core/RuleEngine.ts, src/core/SnapshotSystem.ts, src/core/transaction/CommitManager.ts, src/core/transaction/ExecutionLayer.ts, src/core/transaction/VerificationLayer.ts, src/core/VirtualDebugger.ts, src/core/VscdbAdapter.ts, src/core/WebviewInterceptor.ts, src/explorer/ArchitectureExplorer.ts, src/extension.ts, src/rust_checker/mod.rs, src/rust_checker/reporter.rs, src/rust_checker/state_checker.rs, src/server/server.ts, src/server/standalone.ts, src/types/schema.ts, src/utils/ChatExtractor.ts, src/utils/exclusionRules.ts, src/utils/Logger.ts, src/utils/visualHints.ts, src/verify_v0.3.10.ts, src/webview/CanvasPanel.ts, style_dashed_2px, style_dotted_2px, style_pulse_5px, style_solid_1.5px, style_solid_1px, style_solid_2px, style_solid_3px, synapse_flow_v0.2.16, synapse_graph_v0.2.16, synapse_topology_v0.3.20, synapse_topology_view, synapse_tree_v0.2.16, synapse-visual-architecture-v0.2.20, synapse-visual-architecture-v0.3.3, synapse-visual-architecture-v0.3.5, synapse-visual-architecture-v0.3.8, synapse-visual-architecture-v0.3.9, tools/compare.js, tools/config-generator.js, tools/log-analyzer.js, ts, ui/canvas-engine.js, ui/engine-core.js, ui/webgl-renderer.js, v0.2.15, v0.2.16_release_notes, v0.2.18, v0.2.18.1, v0.2.18.2, v0.2.19, v0.2.20_release_notes, v0.2.21, v0.2.23, v0.2.24, v0.2.25, v0.2.26, v0.2.27, v0.2.28, v0.2.29, v0.2.30, v0.2.31, v0.2.32, v0.2.32_release_notes, v0.2.33, v0.2.34, v0.2.34_release_notes, v0.2.35, v0.2.35_release_notes, v0.2.36, v0.2.37, v0.2.42_implementation_plan, v0.2.43, v0.2.44, v0.2.44_release_notes, v0.2.45, v0.2.46, v0.2.47, v0.2.48, v0.2.50, v0.2.51, v0.2.52, v0.3.0, v0.3.1_zz_Bootstrap_Locked, v0.3.10, v0.3.10_Bootstrap_Locked, v0.3.11, v0.3.12, v0.3.13, v0.3.14, v0.3.16, v0.3.17, v0.3.18, v0.3.19, v0.3.2, v0.3.20, v0.3.5_release_notes, v0.3.8_release_notes, vega_agent, visual_impact, visual_impact.md, vscode-languageserver-textdocument, walkthrough.md, synapse_topology_v0.3.21, ) || trimmed.includes(, vscode-languageclient, mile_stone/v0.3.21.9.md, release_note/v0.3.21.9_release_notes.md, mile_stone/v0.3.22.md, v0.3.21.9, mile_stone/v0.3.22_implementation_plan.md, ui/synapse-theme.js, release_note/v0.3.22_release_notes.md, v0.3.21, focus_view, REVISION_HISTORY, synapse_feature_demo, synapse_zoom_detail, SessionManager, IdentityManager, ConfigManager, Logger, ThemeManager, SettingsManager, GraphSchema
+[DEBUG] Evaluated GraphSchema: label=graphschema
+[DEBUG] PayloadCandidateGenerator generated 12 candidates.
+[DEBUG] Found GraphSchema in PayloadCandidateGenerator candidates!
+[DEBUG] StateOwnerCandidateGenerator generated 14 candidates.
+[DEBUG] GraphSchema NOT FOUND in StateOwnerCandidateGenerator candidates.
+
+=== Architecture IR Audit ===
+Candidates Found : 26
+Promoted Edges   : 7 (DEFINES_PAYLOAD:3, MANAGES_STATE:4)
+Rejected Edges   : 19
+
+Top Promoted DEFINES_PAYLOAD:
+- src/core/GraphModel.ts
+  Confidence: 1
+  + high_fan_in (+0.3)
+  + referenced_by_pipeline (+0.4)
+- src/types/schema.ts
+  Confidence: 1.2999999999999998
+  + type_naming_convention (+0.3)
+  + high_fan_in (+0.3)
+  + referenced_by_pipeline (+0.4)
+- GraphSchema
+  Confidence: 1.2999999999999998
+  + type_naming_convention (+0.3)
+  + high_fan_in (+0.3)
+  + referenced_by_pipeline (+0.4)
+- src/core/canvas-engine/StateManager.ts
+  Confidence: 1.2999999999999998
+  + stateowner_naming_convention (+0.1)
+  + high_fan_in (+0.3)
+  + referenced_by_pipeline (+0.6)
+- src/core/PhaseManager.ts
+  Confidence: 1.2999999999999998
+  + stateowner_naming_convention (+0.1)
+  + high_fan_in (+0.3)
+  + referenced_by_pipeline (+0.6)
+- SessionManager
+  Confidence: 1.2999999999999998
+  + stateowner_naming_convention (+0.1)
+  + high_fan_in (+0.3)
+  + referenced_by_pipeline (+0.6)
+- IdentityManager
+  Confidence: 1.2999999999999998
+  + stateowner_naming_convention (+0.1)
+  + high_fan_in (+0.3)
+  + referenced_by_pipeline (+0.6)
+
+Top Rejected DEFINES_PAYLOAD:
+- mile_stone/_v0.3.1_Graph_Model.md
+  Final Score: 0.00 (Threshold: 0.8)
+  Reason: Insufficient STRUCTURAL evidence. At least 1 structural evidence is required.
+  - no_incoming_dependencies (-0.3)
+- mile_stone/_v0.3.1_State_Snapshot_System.md
+  Final Score: 0.00 (Threshold: 0.8)
+  Reason: Insufficient STRUCTURAL evidence. At least 1 structural evidence is required.
+  - no_incoming_dependencies (-0.3)
+- mile_stone/_v0.3.10_state.md
+  Final Score: 0.00 (Threshold: 0.8)
+  Reason: Insufficient STRUCTURAL evidence. At least 1 structural evidence is required.
+  - no_incoming_dependencies (-0.3)
+- mile_stone/_v0.3.11_mutation_model.md
+  Final Score: 0.00 (Threshold: 0.8)
+  Reason: Insufficient STRUCTURAL evidence. At least 1 structural evidence is required.
+  - no_incoming_dependencies (-0.3)
+- project_state_json
+  Final Score: 0.30 (Threshold: 0.8)
+  Reason: Insufficient STRUCTURAL evidence. At least 1 structural evidence is required.
+- src/core/canvas-engine/StateManager.ts
+  Final Score: 0.60 (Threshold: 0.8)
+  Reason: Confidence (0.60) is below the required threshold (0.80).
+  + high_fan_in (+0.3)
+  + referenced_by_pipeline (+0.4)
+  - behavior_suffix_detected (-0.4)
+- src/rust_checker/state_checker.rs
+  Final Score: 0.30 (Threshold: 0.8)
+  Reason: Insufficient STRUCTURAL evidence. At least 1 structural evidence is required.
+- tools/config-generator.js
+  Final Score: -0.20 (Threshold: 0.8)
+  Reason: Insufficient STRUCTURAL evidence. At least 1 structural evidence is required.
+  - config_suffix_detected (-0.2)
+  - no_incoming_dependencies (-0.3)
+- ConfigManager
+  Final Score: 0.40 (Threshold: 0.8)
+  Reason: Confidence (0.40) is below the required threshold (0.80).
+  + high_fan_in (+0.3)
+  + referenced_by_pipeline (+0.4)
+  - config_suffix_detected (-0.2)
+  - behavior_suffix_detected (-0.4)
+- mile_stone/context_vault_bootstrap_v0_2_31.md
+  Final Score: 0.10 (Threshold: 0.8)
+  Reason: Insufficient STRUCTURAL evidence. At least 1 structural evidence is required.
+  + stateowner_naming_convention (+0.1)
+  - no_incoming_dependencies (-0.3)
+
+Specific Node Checks:
+
+===================
+Node: GraphModel
+===================
+Status: NOT CANDIDATE
+Failed Generator: StateOwnerCandidateGenerator
+Reason: No StateOwner Heuristic Match (manager, controller, session, identity)
+
+===================
+Node: GraphSchema
+===================
+Status: NOT CANDIDATE
+Failed Generator: StateOwnerCandidateGenerator
+Reason: No StateOwner Heuristic Match (manager, controller, session, identity)
+
+===================
+Node: SessionManager
+===================
+Status: NOT CANDIDATE
+Failed Generator: PayloadCandidateGenerator
+Reason: No Payload Heuristic Match (schema, model, state, types, config, payload)
+
+===================
+Node: IdentityManager
+===================
+Status: NOT CANDIDATE
+Failed Generator: PayloadCandidateGenerator
+Reason: No Payload Heuristic Match (schema, model, state, types, config, payload)
+
+===================
+Node: ConfigManager
+===================
+Status: REJECTED (Final Score: 0.40)
+Proposed Edge Type: DEFINES_PAYLOAD
+Reject Reason: Confidence (0.40) is below the required threshold (0.80).
+Evidence Breakdown:
+  + high_fan_in (+0.30)
+  + referenced_by_pipeline (+0.40)
+  - config_suffix_detected (-0.20)
+  - behavior_suffix_detected (-0.40)
+
+===================
+Node: Logger
+===================
+Status: NOT CANDIDATE
+Failed Generator: PayloadCandidateGenerator
+Reason: No Payload Heuristic Match (schema, model, state, types, config, payload)
+
+===================
+Node: ThemeManager
+===================
+Status: NOT CANDIDATE
+Failed Generator: PayloadCandidateGenerator
+Reason: No Payload Heuristic Match (schema, model, state, types, config, payload)
+
+===================
+Node: SettingsManager
+===================
+Status: NOT CANDIDATE
+Failed Generator: PayloadCandidateGenerator
+Reason: No Payload Heuristic Match (schema, model, state, types, config, payload)
+
+==============================
+
+- mile_stone/v0.2.18.md
+  Reason: No Payload Heuristic Match (schema, model, state, types, config, payload)
+- mile_stone/v0.2.19.md
+  Reason: No Payload Heuristic Match (schema, model, state, types, config, payload)
+- mile_stone/v0.2.20.md
+  Reason: No Payload Heuristic Match (schema, model, state, types, config, payload)
+- mile_stone/v0.2.21.md
+  Reason: No Payload Heuristic Match (schema, model, state, types, config, payload)
+- release_note/v0.2.18_release_notes.md
+  Reason: No Payload Heuristic Match (schema, model, state, types, config, payload)
+- release_note/v0.2.21_release_notes.md
+  Reason: No Payload Heuristic Match (schema, model, state, types, config, payload)
+- ) || trimmed
+  Reason: No Payload Heuristic Match (schema, model, state, types, config, payload)
+- )) type = 
+  Reason: No Payload Heuristic Match (schema, model, state, types, config, payload)
+- 리포트.md
+  Reason: No Payload Heuristic Match (schema, model, state, types, config, payload)
+- 출력 가능한 ASCII
+  Reason: No Payload Heuristic Match (schema, model, state, types, config, payload)
+- architecture
+  Reason: No Payload Heuristic Match (schema, model, state, types, config, payload)
+- architecture.md
+  Reason: No Payload Heuristic Match (schema, model, state, types, config, payload)
+- backup_md/리포트.md
+  Reason: No Payload Heuristic Match (schema, model, state, types, config, payload)
+- backup_md/architecture.md
+  Reason: No Payload Heuristic Match (schema, model, state, types, config, payload)
+- backup_md/core_synapse.md
+  Reason: No Payload Heuristic Match (schema, model, state, types, config, payload)
+- backup_md/data_scheme.md
+  Reason: No Payload Heuristic Match (schema, model, state, types, config, payload)
+- backup_md/GEMINI.md
+  Reason: No Payload Heuristic Match (schema, model, state, types, config, payload)
+- backup_md/GHOST_NODE.md
+  Reason: No Payload Heuristic Match (schema, model, state, types, config, payload)
+- mile_stone/v0.2.14fix.md
+  Reason: No Payload Heuristic Match (schema, model, state, types, config, payload)
+- mile_stone/v0.2.15.md
+  Reason: No Payload Heuristic Match (schema, model, state, types, config, payload)
+- mile_stone/v0.2.16.md
+  Reason: No Payload Heuristic Match (schema, model, state, types, config, payload)
+- mile_stone/v0.2.17.md
+  Reason: No Payload Heuristic Match (schema, model, state, types, config, payload)
+- backup_md/prompts/2026-02-17_keybinding_check.md
+  Reason: No Payload Heuristic Match (schema, model, state, types, config, payload)
+- backup_md/prompts/2026-02-17_origin_edge_verification.md
+  Reason: No Payload Heuristic Match (schema, model, state, types, config, payload)
+- backup_md/prompts/2026-02-17_test.md
+  Reason: No Payload Heuristic Match (schema, model, state, types, config, payload)
+- backup_md/prompts/2026-02-18_auto_push_after_drag.md
+  Reason: No Payload Heuristic Match (schema, model, state, types, config, payload)
+- backup_md/prompts/2026-02-18_deep_reset_triggered.md
+  Reason: No Payload Heuristic Match (schema, model, state, types, config, payload)
+- backup_md/prompts/2026-02-18_group_created_doc.md
+  Reason: No Payload Heuristic Match (schema, model, state, types, config, payload)
+- backup_md/prompts/2026-02-18_manual_snapshot.md
+  Reason: No Payload Heuristic Match (schema, model, state, types, config, payload)
+- backup_md/prompts/2026-02-18_selection_ungrouped.md
+  Reason: No Payload Heuristic Match (schema, model, state, types, config, payload)
+- backup_md/prompts/2026-02-18_snapshot__121710.md
+  Reason: No Payload Heuristic Match (schema, model, state, types, config, payload)
+- backup_md/prompts/2026-02-20_auto_push_after_drag.md
+  Reason: No Payload Heuristic Match (schema, model, state, types, config, payload)
+- backup_md/prompts/2026-02-22_auto_push_after_drag.md
+  Reason: No Payload Heuristic Match (schema, model, state, types, config, payload)
+- backup_md/README.ko.md
+  Reason: No Payload Heuristic Match (schema, model, state, types, config, payload)
+- backup_md/README.md
+  Reason: No Payload Heuristic Match (schema, model, state, types, config, payload)
+- release_note/architecture.md
+  Reason: No Payload Heuristic Match (schema, model, state, types, config, payload)
+- release_note/CHANGELOG.md
+  Reason: No Payload Heuristic Match (schema, model, state, types, config, payload)
+- release_note/DEBUG_GUIDE.md
+  Reason: No Payload Heuristic Match (schema, model, state, types, config, payload)
+- release_note/EXTENSION_README.md
+  Reason: No Payload Heuristic Match (schema, model, state, types, config, payload)
+- release_note/GEMINI (사본).md
+  Reason: No Payload Heuristic Match (schema, model, state, types, config, payload)
+- release_note/release_notes_0.2.12.md
+  Reason: No Payload Heuristic Match (schema, model, state, types, config, payload)
+- release_note/release_notes_0.2.14.md
+  Reason: No Payload Heuristic Match (schema, model, state, types, config, payload)
+- release_note/RELEASES_v0.2.7.md
+  Reason: No Payload Heuristic Match (schema, model, state, types, config, payload)
+- release_note/v0.1.6_release_notes.md
+  Reason: No Payload Heuristic Match (schema, model, state, types, config, payload)
+- release_note/v0.1.7_release_notes.md
+  Reason: No Payload Heuristic Match (schema, model, state, types, config, payload)
+- release_note/v0.1.8_release_notes.md
+  Reason: No Payload Heuristic Match (schema, model, state, types, config, payload)
+- release_note/v0.2.0_release_notes.md
+  Reason: No Payload Heuristic Match (schema, model, state, types, config, payload)
+- release_note/v0.2.1_release_notes.md
+  Reason: No Payload Heuristic Match (schema, model, state, types, config, payload)
+- release_note/v0.2.10_release_notes.md
+  Reason: No Payload Heuristic Match (schema, model, state, types, config, payload)
+- release_note/v0.2.11_release_notes.md
+  Reason: No Payload Heuristic Match (schema, model, state, types, config, payload)
+==============================
+
+[SYNAPSE] Running Reasoning Pipeline...
+[SYNAPSE] Report generated at reasoning_report.md

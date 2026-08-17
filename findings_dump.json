@@ -1,0 +1,152 @@
+[
+  {
+    "id": "f-R-001-src/core/canvas-engine/StateManager.ts",
+    "type": "STATE_OWNER",
+    "confidence": 0.6,
+    "evidenceIds": [
+      "ev-storage-src/core/canvas-engine/StateManager.ts"
+    ],
+    "ruleId": "R-001",
+    "targetType": "NODE",
+    "targetIds": [
+      "src/core/canvas-engine/StateManager.ts"
+    ],
+    "summary": "Node src/core/canvas-engine/StateManager.ts is a State Owner",
+    "explanation": "Found state logic with confidence 0.6."
+  },
+  {
+    "id": "f-R-001-src/core/GraphModel.ts",
+    "type": "STATE_OWNER",
+    "confidence": 0.6,
+    "evidenceIds": [
+      "ev-storage-src/core/GraphModel.ts"
+    ],
+    "ruleId": "R-001",
+    "targetType": "NODE",
+    "targetIds": [
+      "src/core/GraphModel.ts"
+    ],
+    "summary": "Node src/core/GraphModel.ts is a State Owner",
+    "explanation": "Found state logic with confidence 0.6."
+  },
+  {
+    "id": "f-R-001-src/core/PhaseManager.ts",
+    "type": "STATE_OWNER",
+    "confidence": 0.6,
+    "evidenceIds": [
+      "ev-storage-src/core/PhaseManager.ts"
+    ],
+    "ruleId": "R-001",
+    "targetType": "NODE",
+    "targetIds": [
+      "src/core/PhaseManager.ts"
+    ],
+    "summary": "Node src/core/PhaseManager.ts is a State Owner",
+    "explanation": "Found state logic with confidence 0.6."
+  },
+  {
+    "id": "f-R-001-src/types/schema.ts",
+    "type": "STATE_OWNER",
+    "confidence": 0.6,
+    "evidenceIds": [
+      "ev-storage-src/types/schema.ts"
+    ],
+    "ruleId": "R-001",
+    "targetType": "NODE",
+    "targetIds": [
+      "src/types/schema.ts"
+    ],
+    "summary": "Node src/types/schema.ts is a State Owner",
+    "explanation": "Found state logic with confidence 0.6."
+  },
+  {
+    "id": "f-crit-core-src/core/GraphModel.ts",
+    "type": "CORE",
+    "confidence": 0.9,
+    "evidenceIds": [
+      "ev-crit-src/core/GraphModel.ts"
+    ],
+    "ruleId": "rule-criticality",
+    "summary": "src/core/GraphModel.ts is a CORE architectural pillar.",
+    "explanation": "State Owner, Participates in 1 critical pipelines",
+    "targetType": "NODE",
+    "targetIds": [
+      "src/core/GraphModel.ts"
+    ]
+  },
+  {
+    "id": "f-crit-core-src/types/schema.ts",
+    "type": "CORE",
+    "confidence": 0.9,
+    "evidenceIds": [
+      "ev-crit-src/types/schema.ts"
+    ],
+    "ruleId": "rule-criticality",
+    "summary": "src/types/schema.ts is a CORE architectural pillar.",
+    "explanation": "State Owner, Participates in 1 critical pipelines",
+    "targetType": "NODE",
+    "targetIds": [
+      "src/types/schema.ts"
+    ]
+  },
+  {
+    "id": "f-blast-src/core/canvas-engine/StateManager.ts",
+    "type": "BLAST_RADIUS",
+    "confidence": 0.9,
+    "evidenceIds": [
+      "ev-blast-src/core/canvas-engine/StateManager.ts"
+    ],
+    "ruleId": "rule-blast-radius",
+    "summary": "Blast Radius for src/core/canvas-engine/StateManager.ts is LOW",
+    "explanation": "[LOW] LOW Impact: UTILITY nodes cause localized compile errors but no architectural logic shifts.",
+    "targetType": "NODE",
+    "targetIds": [
+      "src/core/canvas-engine/StateManager.ts"
+    ]
+  },
+  {
+    "id": "f-blast-src/core/GraphModel.ts",
+    "type": "BLAST_RADIUS",
+    "confidence": 0.9,
+    "evidenceIds": [
+      "ev-blast-src/core/GraphModel.ts"
+    ],
+    "ruleId": "rule-blast-radius",
+    "summary": "Blast Radius for src/core/GraphModel.ts is CRITICAL",
+    "explanation": "[CRITICAL] CRITICAL Impact: CORE node that causes pipeline collapse, severs primary communication, or shatters ecosystem.",
+    "targetType": "NODE",
+    "targetIds": [
+      "src/core/GraphModel.ts"
+    ]
+  },
+  {
+    "id": "f-blast-src/core/PhaseManager.ts",
+    "type": "BLAST_RADIUS",
+    "confidence": 0.9,
+    "evidenceIds": [
+      "ev-blast-src/core/PhaseManager.ts"
+    ],
+    "ruleId": "rule-blast-radius",
+    "summary": "Blast Radius for src/core/PhaseManager.ts is LOW",
+    "explanation": "[LOW] LOW Impact: UTILITY nodes cause localized compile errors but no architectural logic shifts.",
+    "targetType": "NODE",
+    "targetIds": [
+      "src/core/PhaseManager.ts"
+    ]
+  },
+  {
+    "id": "f-blast-src/types/schema.ts",
+    "type": "BLAST_RADIUS",
+    "confidence": 0.9,
+    "evidenceIds": [
+      "ev-blast-src/types/schema.ts"
+    ],
+    "ruleId": "rule-blast-radius",
+    "summary": "Blast Radius for src/types/schema.ts is CRITICAL",
+    "explanation": "[CRITICAL] CRITICAL Impact: CORE node that causes pipeline collapse, severs primary communication, or shatters ecosystem.",
+    "targetType": "NODE",
+    "targetIds": [
+      "src/types/schema.ts"
+    ]
+  }
+]

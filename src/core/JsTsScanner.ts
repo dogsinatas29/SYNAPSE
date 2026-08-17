@@ -47,6 +47,28 @@ export class JsTsScanner implements LanguageScanner {
                     }
                 }
             }
+
+            // JS/TS implements
+            const implementsRegex = /class\s+(\w+)\s+implements\s+([^{]+)/g;
+            while ((match = implementsRegex.exec(content)) !== null) {
+                const interfaces = match[2].split(',').map(s => s.trim());
+                for (const iface of interfaces) {
+                    const cleanIface = iface.split('<')[0].trim();
+                    if (cleanIface) {
+                        summary.references.push({ target: cleanIface, type: 'IMPLEMENTS', provenance: EdgeProvenance.INHERITANCE });
+                    }
+                }
+            }
+
+            // JS/TS extends
+            const extendsRegex = /class\s+(\w+)\s+extends\s+([^{]+)/g;
+            while ((match = extendsRegex.exec(content)) !== null) {
+                const baseClassRaw = match[2].split('implements')[0].split(',')[0].trim();
+                const cleanBase = baseClassRaw.split('<')[0].trim();
+                if (cleanBase) {
+                    summary.references.push({ target: cleanBase, type: 'EXTENDS', provenance: EdgeProvenance.INHERITANCE });
+                }
+            }
         } catch (error) {
             console.error('[SYNAPSE] JS/TS parse error:', error);
         }

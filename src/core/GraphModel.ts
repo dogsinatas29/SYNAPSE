@@ -142,6 +142,10 @@ export class GraphModel {
     this.nodes.set(node.id, node);
   }
 
+  public addEdge(edge: Edge) {
+    this.edges.push(edge);
+  }
+
   public applyBlacklist() {
     const ruleEngine = RuleEngine.getInstance();
     const affectedNodes: Node[] = [];

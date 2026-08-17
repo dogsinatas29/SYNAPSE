@@ -46,6 +46,8 @@ export class EdgeBuilder {
             case 'conditional': return 'CONDITIONAL' as any;
             case 'loop_back': return 'LOOP_BACK' as any;
             case 'static_unidirectional': return 'STATIC' as any;
+            case 'IMPLEMENTS': return 'IMPLEMENTS' as any;
+            case 'EXTENDS': return 'EXTENDS' as any;
             default: return 'REFERENCE' as any;
         }
     }

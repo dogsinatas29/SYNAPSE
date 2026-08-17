@@ -1,0 +1,194 @@
+[
+  {
+    "id": "ev-storage-src/core/canvas-engine/StateManager.ts",
+    "category": "STORAGE",
+    "nodeId": "src/core/canvas-engine/StateManager.ts",
+    "description": "Storage / Payload definition detected for src/core/canvas-engine/StateManager.ts",
+    "metadata": {
+      "fieldCount": 1
+    }
+  },
+  {
+    "id": "ev-storage-src/core/GraphModel.ts",
+    "category": "STORAGE",
+    "nodeId": "src/core/GraphModel.ts",
+    "description": "Storage / Payload definition detected for src/core/GraphModel.ts",
+    "metadata": {
+      "fieldCount": 1
+    }
+  },
+  {
+    "id": "ev-storage-src/core/PhaseManager.ts",
+    "category": "STORAGE",
+    "nodeId": "src/core/PhaseManager.ts",
+    "description": "Storage / Payload definition detected for src/core/PhaseManager.ts",
+    "metadata": {
+      "fieldCount": 1
+    }
+  },
+  {
+    "id": "ev-storage-src/types/schema.ts",
+    "category": "STORAGE",
+    "nodeId": "src/types/schema.ts",
+    "description": "Storage / Payload definition detected for src/types/schema.ts",
+    "metadata": {
+      "fieldCount": 1
+    }
+  },
+  {
+    "id": "ev-crit-src/core/canvas-engine/StateManager.ts",
+    "category": "CRITICALITY",
+    "nodeId": "src/core/canvas-engine/StateManager.ts",
+    "description": "Aggregated structural metrics for Criticality classification of src/core/canvas-engine/StateManager.ts",
+    "metadata": {
+      "nodeId": "src/core/canvas-engine/StateManager.ts",
+      "authorityScore": 0,
+      "pipelineParticipationCount": 0,
+      "criticalPipelineCount": 0,
+      "isBoundaryCrosser": false,
+      "isStateOwner": true,
+      "isPolicyOwner": false,
+      "isIsolatedIsland": false
+    }
+  },
+  {
+    "id": "ev-crit-src/core/GraphModel.ts",
+    "category": "CRITICALITY",
+    "nodeId": "src/core/GraphModel.ts",
+    "description": "Aggregated structural metrics for Criticality classification of src/core/GraphModel.ts",
+    "metadata": {
+      "nodeId": "src/core/GraphModel.ts",
+      "authorityScore": 0,
+      "pipelineParticipationCount": 1,
+      "criticalPipelineCount": 1,
+      "isBoundaryCrosser": false,
+      "isStateOwner": true,
+      "isPolicyOwner": false,
+      "isIsolatedIsland": false
+    }
+  },
+  {
+    "id": "ev-crit-src/core/PhaseManager.ts",
+    "category": "CRITICALITY",
+    "nodeId": "src/core/PhaseManager.ts",
+    "description": "Aggregated structural metrics for Criticality classification of src/core/PhaseManager.ts",
+    "metadata": {
+      "nodeId": "src/core/PhaseManager.ts",
+      "authorityScore": 0,
+      "pipelineParticipationCount": 0,
+      "criticalPipelineCount": 0,
+      "isBoundaryCrosser": false,
+      "isStateOwner": true,
+      "isPolicyOwner": false,
+      "isIsolatedIsland": false
+    }
+  },
+  {
+    "id": "ev-crit-src/types/schema.ts",
+    "category": "CRITICALITY",
+    "nodeId": "src/types/schema.ts",
+    "description": "Aggregated structural metrics for Criticality classification of src/types/schema.ts",
+    "metadata": {
+      "nodeId": "src/types/schema.ts",
+      "authorityScore": 0,
+      "pipelineParticipationCount": 1,
+      "criticalPipelineCount": 1,
+      "isBoundaryCrosser": false,
+      "isStateOwner": true,
+      "isPolicyOwner": false,
+      "isIsolatedIsland": false
+    }
+  },
+  {
+    "id": "ev-blast-src/core/canvas-engine/StateManager.ts",
+    "category": "BLAST_RADIUS",
+    "nodeId": "src/core/canvas-engine/StateManager.ts",
+    "description": "Blast radius analysis for src/core/canvas-engine/StateManager.ts",
+    "metadata": {
+      "nodeId": "src/core/canvas-engine/StateManager.ts",
+      "affectedBoundaryIds": [],
+      "affectedCoreNodeIds": [],
+      "affectedPipelineIds": [],
+      "affectedExtensionPointIds": [],
+      "affectedBoundaryCount": 0,
+      "affectedCoreCount": 0,
+      "affectedPipelineCount": 0,
+      "affectedExtensionPointCount": 0,
+      "affectedExtensionImplementationCount": 0,
+      "isBoundaryCrosser": false,
+      "isPipelineOwner": false,
+      "isPipelinePayloadDefinition": true,
+      "criticality": "UTILITY",
+      "confidence": 0.9
+    }
+  },
+  {
+    "id": "ev-blast-src/core/GraphModel.ts",
+    "category": "BLAST_RADIUS",
+    "nodeId": "src/core/GraphModel.ts",
+    "description": "Blast radius analysis for src/core/GraphModel.ts",
+    "metadata": {
+      "nodeId": "src/core/GraphModel.ts",
+      "affectedBoundaryIds": [],
+      "affectedCoreNodeIds": [],
+      "affectedPipelineIds": [],
+      "affectedExtensionPointIds": [],
+      "affectedBoundaryCount": 0,
+      "affectedCoreCount": 0,
+      "affectedPipelineCount": 0,
+      "affectedExtensionPointCount": 0,
+      "affectedExtensionImplementationCount": 0,
+      "isBoundaryCrosser": false,
+      "isPipelineOwner": false,
+      "isPipelinePayloadDefinition": true,
+      "criticality": "CORE",
+      "confidence": 0.9
+    }
+  },
+  {
+    "id": "ev-blast-src/core/PhaseManager.ts",
+    "category": "BLAST_RADIUS",
+    "nodeId": "src/core/PhaseManager.ts",
+    "description": "Blast radius analysis for src/core/PhaseManager.ts",
+    "metadata": {
+      "nodeId": "src/core/PhaseManager.ts",
+      "affectedBoundaryIds": [],
+      "affectedCoreNodeIds": [],
+      "affectedPipelineIds": [],
+      "affectedExtensionPointIds": [],
+      "affectedBoundaryCount": 0,
+      "affectedCoreCount": 0,
+      "affectedPipelineCount": 0,
+      "affectedExtensionPointCount": 0,
+      "affectedExtensionImplementationCount": 0,
+      "isBoundaryCrosser": false,
+      "isPipelineOwner": false,
+      "isPipelinePayloadDefinition": true,
+      "criticality": "UTILITY",
+      "confidence": 0.9
+    }
+  },
+  {
+    "id": "ev-blast-src/types/schema.ts",
+    "category": "BLAST_RADIUS",
+    "nodeId": "src/types/schema.ts",
+    "description": "Blast radius analysis for src/types/schema.ts",
+    "metadata": {
+      "nodeId": "src/types/schema.ts",
+      "affectedBoundaryIds": [],
+      "affectedCoreNodeIds": [],
+      "affectedPipelineIds": [],
+      "affectedExtensionPointIds": [],
+      "affectedBoundaryCount": 0,
+      "affectedCoreCount": 0,
+      "affectedPipelineCount": 0,
+      "affectedExtensionPointCount": 0,
+      "affectedExtensionImplementationCount": 0,
+      "isBoundaryCrosser": false,
+      "isPipelineOwner": false,
+      "isPipelinePayloadDefinition": true,
+      "criticality": "CORE",
+      "confidence": 0.9
+    }
+  }
+]

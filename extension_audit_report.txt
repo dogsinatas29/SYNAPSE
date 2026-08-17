@@ -1,0 +1,88 @@
+=== Extension Discovery Audit ===
+
+1. Interfaces Implemented (Potential Extension Points):
+
+[13] IRule
+  ├ AuthorityRule
+  ├ BlastRadiusRule
+  ├ BoundaryCrosserRule
+  ├ BoundaryRule
+  ├ CriticalityRule
+  ├ ExtensionRule
+  ├ ControlPipelineRule
+  ├ DataPipelineRule
+  ├ AdapterRule
+  ├ ControllerRule
+  ├ PolicyOwnerRule
+  ├ StateOwnerRule
+  ├ ViewRule
+
+[10] LanguageScanner
+  ├ ConfigScanner
+  ├ CppScanner
+  ├ JavaScanner
+  ├ JsTsScanner
+  ├ KotlinScanner
+  ├ MarkdownScanner
+  ├ PythonScanner
+  ├ RustScanner
+  ├ ShellScanner
+  ├ SqlScanner
+
+[8] ArchitectureAnalyzer
+  ├ BoundaryGuardAnalyzer
+  ├ CycleAnalyzer
+  ├ DeadEndAnalyzer
+  ├ DependencyPressureAnalyzer
+  ├ FractureAnalyzer
+  ├ IsolatedNodeAnalyzer
+  ├ NecrosisAnalyzer
+  ├ SchemaViolationAnalyzer
+
+[8] IAnswerAggregator
+  ├ Q1EntryPointAggregator
+  ├ Q2AuthorityAggregator
+  ├ Q3CriticalityAggregator
+  ├ Q4ExtensionAggregator
+  ├ Q5BlastRadiusAggregator
+  ├ Q6BoundaryAggregator
+  ├ Q7DataFlowAggregator
+  ├ Q8ControlFlowAggregator
+
+[4] ChatAdapter
+  ├ MultiAdapter
+  ├ StreamAdapter
+  ├ FileAdapter
+  ├ ForensicAdapter
+
+[3] RuleSubEngine
+  ├ SpatialRuleBook
+  ├ ValidationHarness
+  ├ VisualRuleBook
+
+[3] IEvidenceEvaluator
+  ├ BoundaryEvidenceEvaluator
+  ├ PayloadEvidenceEvaluator
+  ├ StateOwnerEvidenceEvaluator
+
+[3] ICandidateGenerator
+  ├ BoundaryCandidateGenerator
+  ├ PayloadCandidateGenerator
+  ├ StateOwnerCandidateGenerator
+
+[3] ProjectionRule
+  ├ EdgeCompressionRule
+  ├ LayerIsolationRule
+  ├ DocumentClassificationRule
+
+[2] DiagnosticProvider
+  ├ LocalDiagnosticProvider
+  ├ RemoteDiagnosticProvider
+
+[2] IEvidenceProvider
+  ├ RegexProvider
+  ├ VSCodeProvider
+
+======================================================
+
+2. Base Classes Extended (Potential Extension Points):

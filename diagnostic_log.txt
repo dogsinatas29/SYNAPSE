@@ -1,54 +1,157 @@
 
-[GHOST_CLASSIFICATION_SUMMARY] total=152 unknown=99 unknownRatio=0.6513 readyForV2B=false
-[EXTERNAL_LAYER_MODE] mode=SINGLE_EXTERNAL_LAYER unknownRatio=0.6513 threshold=0.05
+[GHOST_CLASSIFICATION_SUMMARY] total=43 unknown=0 unknownRatio=0 readyForV2B=true
+[EXTERNAL_LAYER_MODE] mode=DECOMPOSE_READY unknownRatio=0 threshold=0.05
 
 === BRANCH COMPRESSION ===
 (moved to NodeBuilder)
 
 === CLUSTER SUMMARY ===
-doc_shelf                 nodes=458
-cluster_ghost_src         nodes=85
+doc_shelf                 nodes=489
 folder_src_core           nodes=59
 cluster_ghost_assets      nodes=21
 folder_src_core_collaboration nodes=17
+folder_test               nodes=15
 folder_src_core_analysis_intent nodes=12
 folder_src_cli            nodes=11
 folder_src_core_canvas_engine nodes=10
 folder_src_core_analysis  nodes=9
-cluster_ghost_extensions  nodes=9
+folder_src_vs_workbench_services_keybinding_browser_keyboardLayouts nodes=9
 folder_src_core_analysis_analyzers nodes=8
+folder_src_core_reasoning_analysis nodes=8
+folder_src_core_reasoning_answers_aggregators nodes=8
+folder_root               nodes=7
 folder_src_utils          nodes=7
 folder_ui                 nodes=7
 folder_src                nodes=6
 folder_src_core_analysis_reasoning nodes=6
-cluster_ghost_other       nodes=6
 folder_scratch            nodes=5
-cluster_ghost_test        nodes=5
-folder_root               nodes=4
+folder_src_core_reasoning_rules_roles nodes=5
+folder_tools              nodes=5
 folder_demo               nodes=4
 folder_demo_data          nodes=4
+folder_src_core_transaction nodes=4
 folder_src_server         nodes=4
-folder_src_core_transaction nodes=3
+folder_scripts            nodes=3
+folder_src_core_ir_evaluators nodes=3
+folder_src_core_ir_generators nodes=3
 folder_src_core_validation nodes=3
+folder_src_vs_workbench_contrib_terminalContrib_links_browser nodes=3
 folder_test_core_analysis_intent nodes=3
 folder_test_data          nodes=3
-folder_tools              nodes=3
+cluster_ghost_other       nodes=3
 folder_src_core_benchmark nodes=2
+folder_src_core_ir_models nodes=2
 folder_src_core_projection nodes=2
+folder_src_core_reasoning_answers nodes=2
+folder_src_core_reasoning_evidence nodes=2
+folder_src_core_reasoning_rules nodes=2
+folder_src_core_reasoning_rules_boundary nodes=2
+folder_src_core_reasoning_rules_flow nodes=2
 folder_src_core_resolvers nodes=2
 folder_src_rust_checker   nodes=2
+folder_src_vs_sessions_contrib_agentFeedback_browser nodes=2
+folder_src_vs_workbench_api_browser nodes=2
+folder_src_vs_workbench   nodes=2
+folder_src_vs_workbench_contrib_chat_browser_agentSessions_experiments nodes=2
+folder_src_vs_workbench_contrib_chat_browser_chatEditing nodes=2
+folder_src_vs_workbench_contrib_chat_browser_planReviewFeedback nodes=2
+folder_src_vs_workbench_contrib_terminal_browser_xterm nodes=2
+folder_src_vs_workbench_services_languageDetection_browser nodes=2
+folder_src_vs_workbench_services_textMate_browser_backgroundTokenization nodes=2
+folder_test_mcp_src_automationTools nodes=2
+folder_vscode__file_home_dogsinatas______vscode_vscode_main_src_vs_sessions nodes=2
+folder_vscode__file_home_dogsinatas______vscode_vscode_main_src_vs_workbench nodes=2
 folder_data               nodes=1
-folder_scripts            nodes=1
+folder_extensions_copilot_src_extension_agents_vscode_node nodes=1
+folder_extensions_copilot_src_extension_agents_vscode_node_test nodes=1
+folder_extensions_copilot_src_extension_chatSessions_copilotcli_node_test nodes=1
+folder_extensions_copilot_src_extension_intents_node nodes=1
+folder_extensions_copilot_src_extension_testing_node nodes=1
+folder_extensions_copilot_src_extension_xtab_node nodes=1
+folder_extensions_copilot_src_platform_chat_node nodes=1
+folder_extensions_emmet_src nodes=1
+folder_extensions_typescript_language_features_src_languageFeatures nodes=1
+folder_home_dogsinatas_TypeScript_project_antigravity_extension_vis_src_core nodes=1
 folder_src_analysis       nodes=1
 folder_src_bootstrap      nodes=1
 folder_src_core_analysis_ast nodes=1
+folder_src_core_ir        nodes=1
+folder_src_core_ir_promoters nodes=1
+folder_src_core_reasoning_ontology nodes=1
+folder_src_core_reasoning_rules_authority nodes=1
+folder_src_core_reasoning_rules_blast nodes=1
+folder_src_core_reasoning_rules_criticality nodes=1
+folder_src_core_reasoning_rules_extension nodes=1
+folder_src_core_reasoning_snapshot nodes=1
 folder_src_explorer       nodes=1
 folder_src_types          nodes=1
+folder_src_vs_editor_browser_widget_multiDiffEditor nodes=1
+folder_src_vs_editor_common_cursor nodes=1
+folder_src_vs_editor_common_services nodes=1
+folder_src_vs_editor_contrib_colorPicker_browser_hoverColorPicker nodes=1
+folder_src_vs_editor_contrib_suggest_browser nodes=1
+folder_src_vs_platform_agentHost_electron_browser nodes=1
+folder_src_vs_platform_agentHost_node_claude nodes=1
+folder_src_vs_platform_agentHost_node_codex_protocol_generated_v2 nodes=1
+folder_src_vs_platform_menubar_electron_main nodes=1
+folder_src_vs_server_node nodes=1
+folder_src_vs_sessions_contrib_providers_copilotChatSessions_browser nodes=1
+folder_src_vs_workbench_api_common nodes=1
+folder_src_vs_workbench_browser nodes=1
+folder_src_vs_workbench_browser_parts_notifications nodes=1
+folder_src_vs_workbench_contrib_chat_browser_agentSessions_agentHost nodes=1
+folder_src_vs_workbench_contrib_chat_browser_tools nodes=1
+folder_src_vs_workbench_contrib_chat_browser_widget_chatContentParts nodes=1
+folder_src_vs_workbench_contrib_chat_browser_widget_chatContentParts_toolInvocationParts nodes=1
+folder_src_vs_workbench_contrib_chat_browser_widget_input nodes=1
+folder_src_vs_workbench_contrib_chat_browser_widgetHosts nodes=1
+folder_src_vs_workbench_contrib_chat_browser_widgetHosts_viewPane nodes=1
+folder_src_vs_workbench_contrib_chat_test_browser nodes=1
+folder_src_vs_workbench_contrib_codeEditor_browser nodes=1
+folder_src_vs_workbench_contrib_debug_browser nodes=1
+folder_src_vs_workbench_contrib_editTelemetry_browser_editStats nodes=1
+folder_src_vs_workbench_contrib_extensions_browser nodes=1
+folder_src_vs_workbench_contrib_format_browser nodes=1
+folder_src_vs_workbench_contrib_inlineChat_browser nodes=1
+folder_src_vs_workbench_contrib_issue_browser nodes=1
+folder_src_vs_workbench_contrib_mcp_browser nodes=1
+folder_src_vs_workbench_contrib_mcp_common_discovery nodes=1
+folder_src_vs_workbench_contrib_mcp_common nodes=1
+folder_src_vs_workbench_contrib_meteredConnection_browser nodes=1
+folder_src_vs_workbench_contrib_notebook_browser_contrib_multicursor nodes=1
+folder_src_vs_workbench_contrib_notebook_browser_diff nodes=1
+folder_src_vs_workbench_contrib_notebook_common nodes=1
+folder_src_vs_workbench_contrib_searchEditor_browser nodes=1
+folder_src_vs_workbench_contrib_styleOverrides_browser nodes=1
+folder_src_vs_workbench_contrib_terminal_browser_widgets nodes=1
+folder_src_vs_workbench_contrib_terminal nodes=1
+folder_src_vs_workbench_contrib_terminal_common_remote nodes=1
+folder_src_vs_workbench_contrib_terminal_common_scripts nodes=1
+folder_src_vs_workbench_contrib_terminalContrib_chatAgentTools_browser nodes=1
+folder_src_vs_workbench_contrib_terminalContrib_chatAgentTools_browser_tools_task nodes=1
+folder_src_vs_workbench_contrib_terminalContrib_clipboard_browser nodes=1
+folder_src_vs_workbench_contrib_terminalContrib_developer_browser nodes=1
+folder_src_vs_workbench_contrib_terminalContrib_stickyScroll_browser nodes=1
+folder_src_vs_workbench_contrib_terminalContrib_zoom_browser nodes=1
+folder_src_vs_workbench_contrib_testing_common nodes=1
+folder_src_vs_workbench_services_assignment_common nodes=1
+folder_src_vs_workbench_services_extensions_common nodes=1
+folder_src_vs_workbench_services_host_electron_browser nodes=1
+folder_src_vs_workbench_services_policies_browser nodes=1
+folder_src_vs_workbench_services_textMate_browser_backgroundTokenization_worker nodes=1
+folder_src_vs_workbench_services_userDataProfile_browser nodes=1
 folder_src_webview        nodes=1
+folder_test_mcp_src       nodes=1
+folder_test_sanity_scripts nodes=1
+folder_test_sanity_src    nodes=1
+folder_vscode__file_home_dogsinatas______vscode_vscode_main_extensions_emmet_src nodes=1
+folder_vscode__file_home_dogsinatas______vscode_vscode_main_src_vs_editor nodes=1
+folder_vscode__file_home_dogsinatas______vscode_vscode_main_test_mcp_src nodes=1
+folder_vscode__file_home_dogsinatas______vscode_vscode_main_test_sanity_scripts nodes=1
+folder_vscode__file_home_dogsinatas______vscode_vscode_main_test_sanity_src nodes=1
 cluster_ghost_LICENSE     nodes=1
 cluster_ghost_synapse-visual-architecture-v0.3.5.vsix nodes=1
 cluster_ghost_synapse-visual-architecture-v0.3.8.vsix nodes=1
-cluster_ghost_ui          nodes=1
 cluster_ghost_[^'"]+      nodes=1
 cluster_ghost_...         nodes=1
 cluster_ghost_release_note nodes=1
@@ -66,30 +169,135 @@ cluster_ghost_express     nodes=1
 cluster_ghost_cors        nodes=1
 cluster_ghosts            nodes=0
 sys_cluster_reserved      nodes=0
+folder_extensions_copilot_src_extension_agents nodes=0
+folder_extensions_copilot_src_extension nodes=0
+folder_extensions_copilot_src nodes=0
+folder_extensions_copilot nodes=0
+folder_extensions         nodes=0
+folder_extensions_copilot_src_extension_chatSessions_copilotcli_node nodes=0
+folder_extensions_copilot_src_extension_chatSessions_copilotcli nodes=0
+folder_extensions_copilot_src_extension_chatSessions nodes=0
+folder_extensions_copilot_src_extension_intents nodes=0
+folder_extensions_copilot_src_extension_testing nodes=0
+folder_extensions_copilot_src_extension_xtab nodes=0
+folder_extensions_copilot_src_platform_chat nodes=0
+folder_extensions_copilot_src_platform nodes=0
+folder_extensions_emmet   nodes=0
+folder_extensions_typescript_language_features_src nodes=0
+folder_extensions_typescript_language_features nodes=0
+folder_home_dogsinatas_TypeScript_project_antigravity_extension_vis_src nodes=0
+folder_home_dogsinatas_TypeScript_project_antigravity_extension_vis nodes=0
+folder_home_dogsinatas_TypeScript_project nodes=0
+folder_home_dogsinatas    nodes=0
+folder_home               nodes=0
+folder_src_core_reasoning nodes=0
+folder_src_vs_editor_browser_widget nodes=0
+folder_src_vs_editor_browser nodes=0
+folder_src_vs_editor      nodes=0
+folder_src_vs             nodes=0
+folder_src_vs_editor_common nodes=0
+folder_src_vs_editor_contrib_colorPicker_browser nodes=0
+folder_src_vs_editor_contrib_colorPicker nodes=0
+folder_src_vs_editor_contrib nodes=0
+folder_src_vs_editor_contrib_suggest nodes=0
+folder_src_vs_platform_agentHost nodes=0
+folder_src_vs_platform    nodes=0
+folder_src_vs_platform_agentHost_node nodes=0
+folder_src_vs_platform_agentHost_node_codex_protocol_generated nodes=0
+folder_src_vs_platform_agentHost_node_codex_protocol nodes=0
+folder_src_vs_platform_agentHost_node_codex nodes=0
+folder_src_vs_platform_menubar nodes=0
+folder_src_vs_server      nodes=0
+folder_src_vs_sessions_contrib_agentFeedback nodes=0
+folder_src_vs_sessions_contrib nodes=0
+folder_src_vs_sessions    nodes=0
+folder_src_vs_sessions_contrib_providers_copilotChatSessions nodes=0
+folder_src_vs_sessions_contrib_providers nodes=0
+folder_src_vs_workbench_api nodes=0
+folder_src_vs_workbench_browser_parts nodes=0
+folder_src_vs_workbench_contrib_chat_browser_agentSessions nodes=0
+folder_src_vs_workbench_contrib_chat_browser nodes=0
+folder_src_vs_workbench_contrib_chat nodes=0
+folder_src_vs_workbench_contrib nodes=0
+folder_src_vs_workbench_contrib_chat_browser_widget nodes=0
+folder_src_vs_workbench_contrib_chat_test nodes=0
+folder_src_vs_workbench_contrib_codeEditor nodes=0
+folder_src_vs_workbench_contrib_debug nodes=0
+folder_src_vs_workbench_contrib_editTelemetry_browser nodes=0
+folder_src_vs_workbench_contrib_editTelemetry nodes=0
+folder_src_vs_workbench_contrib_extensions nodes=0
+folder_src_vs_workbench_contrib_format nodes=0
+folder_src_vs_workbench_contrib_inlineChat nodes=0
+folder_src_vs_workbench_contrib_issue nodes=0
+folder_src_vs_workbench_contrib_mcp nodes=0
+folder_src_vs_workbench_contrib_meteredConnection nodes=0
+folder_src_vs_workbench_contrib_notebook_browser_contrib nodes=0
+folder_src_vs_workbench_contrib_notebook_browser nodes=0
+folder_src_vs_workbench_contrib_notebook nodes=0
+folder_src_vs_workbench_contrib_searchEditor nodes=0
+folder_src_vs_workbench_contrib_styleOverrides nodes=0
+folder_src_vs_workbench_contrib_terminal_browser nodes=0
+folder_src_vs_workbench_contrib_terminal_common nodes=0
+folder_src_vs_workbench_contrib_terminalContrib_chatAgentTools nodes=0
+folder_src_vs_workbench_contrib_terminalContrib nodes=0
+folder_src_vs_workbench_contrib_terminalContrib_chatAgentTools_browser_tools nodes=0
+folder_src_vs_workbench_contrib_terminalContrib_clipboard nodes=0
+folder_src_vs_workbench_contrib_terminalContrib_developer nodes=0
+folder_src_vs_workbench_contrib_terminalContrib_links nodes=0
+folder_src_vs_workbench_contrib_terminalContrib_stickyScroll nodes=0
+folder_src_vs_workbench_contrib_terminalContrib_zoom nodes=0
+folder_src_vs_workbench_contrib_testing nodes=0
+folder_src_vs_workbench_services_assignment nodes=0
+folder_src_vs_workbench_services nodes=0
+folder_src_vs_workbench_services_extensions nodes=0
+folder_src_vs_workbench_services_host nodes=0
+folder_src_vs_workbench_services_keybinding_browser nodes=0
+folder_src_vs_workbench_services_keybinding nodes=0
+folder_src_vs_workbench_services_languageDetection nodes=0
+folder_src_vs_workbench_services_policies nodes=0
+folder_src_vs_workbench_services_textMate_browser nodes=0
+folder_src_vs_workbench_services_textMate nodes=0
+folder_src_vs_workbench_services_userDataProfile nodes=0
 folder_test_core_analysis nodes=0
 folder_test_core          nodes=0
-folder_test               nodes=0
-TOTAL_CLUSTERS=63
+folder_test_mcp           nodes=0
+folder_test_sanity        nodes=0
+folder_vscode__file_home_dogsinatas______vscode_vscode_main_extensions_emmet nodes=0
+folder_vscode__file_home_dogsinatas______vscode_vscode_main_extensions nodes=0
+folder_vscode__file_home_dogsinatas______vscode_vscode_main nodes=0
+folder_vscode__file_home_dogsinatas______vscode nodes=0
+folder_vscode__file_home_dogsinatas_____ nodes=0
+folder_vscode__file_home_dogsinatas nodes=0
+folder_vscode__file_home  nodes=0
+folder_vscode__file       nodes=0
+folder_vscode_            nodes=0
+folder_vscode__file_home_dogsinatas______vscode_vscode_main_src_vs nodes=0
+folder_vscode__file_home_dogsinatas______vscode_vscode_main_src nodes=0
+folder_vscode__file_home_dogsinatas______vscode_vscode_main_test_mcp nodes=0
+folder_vscode__file_home_dogsinatas______vscode_vscode_main_test nodes=0
+folder_vscode__file_home_dogsinatas______vscode_vscode_main_test_sanity nodes=0
+cluster_ghost_src         nodes=0
+TOTAL_CLUSTERS=271
 
 === EDGE SUMMARY ===
-Internal Edges: 431
-External/Ghost Edges: 134
+Internal Edges: 699
+External/Ghost Edges: 35
 
 ======================================================
-[PIPELINE] Nodes=807 Edges=770
+[PIPELINE] Nodes=914 Edges=1088
 ======================================================
 === EDGE BREAKDOWN ===
-  - INCLUDE: 764
+  - INCLUDE: 1076
+  - CALL: 9
   - DB_QUERY: 3
-  - CALL: 3
 ======================================================
 
 === CLUSTER SIZE DISTRIBUTION ===
-1 node   : 27 clusters
-2-5 nodes: 15 clusters
-6-10     : 9 clusters
-11-20    : 3 clusters
-20+      : 4 clusters
+1 node   : 106 clusters
+2-5 nodes: 37 clusters
+6-10     : 11 clusters
+11-20    : 4 clusters
+20+      : 3 clusters
 ======================================================
 
 === TOP HUB FILES ===
@@ -105,151 +313,156 @@ id=src/types/schema.ts
 cluster=folder_src_types
 role=none
 external=false
-degree=64 (in=64, out=0)
+degree=65 (in=65, out=0)
 
 rank=3
 id=src/core/GraphModel.ts
 cluster=folder_src_core
 role=none
 external=false
-degree=35 (in=32, out=3)
+degree=50 (in=47, out=3)
 
 rank=4
+id=src/core/reasoning/snapshot/ReasoningSnapshot.ts
+cluster=folder_src_core_reasoning_snapshot
+role=none
+external=false
+degree=36 (in=35, out=1)
+
+rank=5
 id=src/utils/Logger.ts
 cluster=folder_src_utils
 role=none
 external=false
 degree=33 (in=33, out=0)
 
-rank=5
+rank=6
+id=src/core/reasoning/rules/Rule.ts
+cluster=folder_src_core_reasoning_rules
+role=none
+external=false
+degree=31 (in=30, out=1)
+
+rank=7
 id=src/bootstrap/BootstrapEngine.ts
 cluster=folder_src_bootstrap
 role=none
 external=false
-degree=28 (in=3, out=25)
+degree=30 (in=3, out=27)
 
-rank=6
+rank=8
+id=scripts/run_reasoning_on_real_graph.ts
+cluster=folder_scripts
+role=none
+external=false
+degree=27 (in=0, out=27)
+
+rank=9
 id=src/core/DataPipeline.ts
 cluster=folder_src_core
 role=none
 external=false
 degree=26 (in=1, out=25)
 
-rank=7
+rank=10
 id=src/webview/CanvasPanel.ts
 cluster=folder_src_webview
 role=none
 external=false
-degree=25 (in=2, out=23)
+degree=26 (in=2, out=24)
 
-rank=8
+rank=11
+id=src/core/reasoning/evidence/Evidence.ts
+cluster=folder_src_core_reasoning_evidence
+role=none
+external=false
+degree=24 (in=24, out=0)
+
+rank=12
 id=src/core/analysis/types.ts
 cluster=folder_src_core_analysis
 role=none
 external=false
 degree=21 (in=19, out=2)
 
-rank=9
+rank=13
 id=src/extension.ts
 cluster=folder_src
 role=none
 external=false
 degree=21 (in=0, out=21)
 
-rank=10
+rank=14
 id=src/server/standalone.ts
 cluster=folder_src_server
 role=none
 external=false
 degree=21 (in=0, out=21)
 
-rank=11
+rank=15
 id=crypto
 cluster=cluster_ghost_crypto
 role=none
 external=true
 degree=17 (in=17, out=0)
 
-rank=12
+rank=16
 id=src/core/RuleEngine.ts
 cluster=folder_src_core
 role=none
 external=false
-degree=14 (in=14, out=0)
+degree=15 (in=15, out=0)
 
-rank=13
+rank=17
 id=src/core/ProjectMetadata.ts
 cluster=folder_src_core
 role=none
 external=false
 degree=13 (in=11, out=2)
 
-rank=14
+rank=18
 id=src/core/benchmark/BenchmarkHarness.ts
 cluster=folder_src_core_benchmark
 role=none
 external=false
 degree=12 (in=1, out=11)
 
-rank=15
+rank=19
+id=src/core/ir/ArchitectureIrBuilder.ts
+cluster=folder_src_core_ir
+role=none
+external=false
+degree=11 (in=1, out=10)
+
+rank=20
 id=src/core/FileScanner.ts
 cluster=folder_src_core
 role=none
 external=false
 degree=11 (in=7, out=4)
 
-rank=16
-id=src/core/PhaseManager.ts
-cluster=folder_src_core
-role=none
-external=false
-degree=10 (in=10, out=0)
-
-rank=17
-id=src/core/validation/ValidationContext.ts
-cluster=folder_src_core_validation
-role=none
-external=false
-degree=10 (in=8, out=2)
-
-rank=18
-id=src/core/canvas-engine/CanvasEngine.ts
-cluster=folder_src_core_canvas_engine
-role=none
-external=false
-degree=10 (in=3, out=7)
-
-rank=19
-id=src/core/canvas-engine/StateManager.ts
-cluster=folder_src_core_canvas_engine
-role=none
-external=false
-degree=10 (in=4, out=6)
-
-rank=20
-id=src/core/SnapshotSystem.ts
-cluster=folder_src_core
-role=none
-external=false
-degree=9 (in=4, out=5)
-
 ========================
 
 === CLUSTER DISTRIBUTION ===
 doc_shelf
-  nodes: 458
+  nodes: 489
   internal_edges: 114
   external_edges: 220
 
 folder_src_core
   nodes: 59
   internal_edges: 67
-  external_edges: 171
+  external_edges: 213
 
 folder_src_core_collaboration
   nodes: 17
   internal_edges: 14
   external_edges: 49
+
+folder_test
+  nodes: 15
+  internal_edges: 0
+  external_edges: 149
 
 folder_src_core_analysis_intent
   nodes: 12
@@ -259,7 +472,7 @@ folder_src_core_analysis_intent
 folder_src_cli
   nodes: 11
   internal_edges: 6
-  external_edges: 23
+  external_edges: 24
 
 folder_src_core_canvas_engine
   nodes: 10
@@ -271,10 +484,30 @@ folder_src_core_analysis
   internal_edges: 6
   external_edges: 33
 
+folder_src_vs_workbench_services_keybinding_browser_keyboardLayouts
+  nodes: 9
+  internal_edges: 0
+  external_edges: 9
+
 folder_src_core_analysis_analyzers
   nodes: 8
   internal_edges: 0
   external_edges: 16
+
+folder_src_core_reasoning_analysis
+  nodes: 8
+  internal_edges: 0
+  external_edges: 52
+
+folder_src_core_reasoning_answers_aggregators
+  nodes: 8
+  internal_edges: 0
+  external_edges: 66
+
+folder_root
+  nodes: 7
+  internal_edges: 0
+  external_edges: 3
 
 folder_src_utils
   nodes: 7
@@ -286,51 +519,46 @@ folder_ui
   internal_edges: 0
   external_edges: 1
 
-folder_src
-  nodes: 6
-  internal_edges: 1
-  external_edges: 30
-
-folder_src_core_analysis_reasoning
-  nodes: 6
-  internal_edges: 3
-  external_edges: 21
-
-folder_scratch
-  nodes: 5
-  internal_edges: 0
-  external_edges: 0
-
-folder_root
-  nodes: 4
-  internal_edges: 0
-  external_edges: 1
-
-folder_demo
-  nodes: 4
-  internal_edges: 0
-  external_edges: 6
-
 === HUB RANKING ===
 doc_shelf
   traffic: 334
   degree: 220
-  nodes: 458
+  nodes: 489
 
 folder_src_core
-  traffic: 238
-  degree: 171
+  traffic: 280
+  degree: 213
   nodes: 59
 
+folder_test
+  traffic: 149
+  degree: 149
+  nodes: 15
+
+folder_src_core_reasoning_answers_aggregators
+  traffic: 66
+  degree: 66
+  nodes: 8
+
 folder_src_types
-  traffic: 64
-  degree: 64
+  traffic: 65
+  degree: 65
   nodes: 1
 
 folder_src_core_collaboration
   traffic: 63
   degree: 49
   nodes: 17
+
+folder_src_core_reasoning_analysis
+  traffic: 52
+  degree: 52
+  nodes: 8
+
+folder_src_core_reasoning_snapshot
+  traffic: 46
+  degree: 46
+  nodes: 1
 
 folder_src_utils
   traffic: 43
@@ -347,105 +575,81 @@ folder_src_core_analysis
   degree: 33
   nodes: 9
 
+folder_src_core_reasoning_evidence
+  traffic: 38
+  degree: 37
+  nodes: 2
+
+folder_src_core_reasoning_rules
+  traffic: 38
+  degree: 37
+  nodes: 2
+
+folder_src_core_reasoning_rules_roles
+  traffic: 34
+  degree: 34
+  nodes: 5
+
 folder_src
   traffic: 31
   degree: 30
   nodes: 6
 
-folder_src_core_canvas_engine
-  traffic: 30
-  degree: 19
-  nodes: 10
-
-folder_src_bootstrap
-  traffic: 29
-  degree: 29
-  nodes: 1
-
-folder_src_cli
-  traffic: 29
-  degree: 23
-  nodes: 11
-
-folder_src_webview
-  traffic: 26
-  degree: 26
-  nodes: 1
-
-folder_src_server
-  traffic: 25
-  degree: 25
-  nodes: 4
-
-folder_src_core_analysis_reasoning
-  traffic: 24
-  degree: 21
-  nodes: 6
-
-folder_src_core_analysis_analyzers
-  traffic: 16
-  degree: 16
-  nodes: 8
-
 === CLUSTER MATRIX ===
-                    doc_shelf  folder_sr  folder_sr  folder_sr  folder_sr  folder_sr  folder_sr  folder_sr  folder_sr  folder_sr 
-doc_shelf           -         19        3         0         1         12        3         5         0         1         
-folder_src_core     19        -         26        8         16        1         1         12        11        22        
-folder_src_types    3         26        -         9         0         0         6         0         0         1         
-folder_src_core_collaboration 0         8         9         -         12        0         0         1         0         0         
-folder_src_utils    1         16        0         12        -         0         2         2         1         2         
-folder_src_core_analysis_intent 12        1         0         0         0         -         0         0         0         0         
-folder_src_core_analysis 3         1         6         0         2         0         -         0         0         0         
-folder_src          5         12        0         1         2         0         0         -         1         2         
-folder_src_core_canvas_engine 0         11        0         0         1         0         0         1         -         0         
-folder_src_bootstrap 1         22        1         0         2         0         0         2         0         -         
+                    doc_shelf  folder_sr  folder_te  folder_sr  folder_sr  folder_sr  folder_sr  folder_sr  folder_sr  folder_sr 
+doc_shelf           -         19        0         0         3         0         0         0         1         12        
+folder_src_core     19        -         23        0         26        8         5         0         16        1         
+folder_test         0         23        -         32        0         0         19        10        0         0         
+folder_src_core_reasoning_answers_aggregators 0         0         32        -         0         0         0         8         0         0         
+folder_src_types    3         26        0         0         -         9         0         0         0         0         
+folder_src_core_collaboration 0         8         0         0         9         -         0         0         12        0         
+folder_src_core_reasoning_analysis 0         5         19        0         0         0         -         8         0         0         
+folder_src_core_reasoning_snapshot 0         0         10        8         0         0         8         -         0         0         
+folder_src_utils    1         16        0         0         0         12        0         0         -         0         
+folder_src_core_analysis_intent 12        1         0         0         0         0         0         0         0         -         
 
 === CLUSTER EDGE LIST ===
+folder_src_core_reasoning_answers_aggregators ──(32)── folder_test
 folder_src_core      ──(26)── folder_src_types
-folder_src_bootstrap ──(22)── folder_src_core
+folder_src_bootstrap ──(23)── folder_src_core
+folder_src_core      ──(23)── folder_test
 doc_shelf            ──(19)── folder_src_core
+folder_src_core_reasoning_analysis ──(19)── folder_test
+folder_src_core_reasoning_rules_roles ──(18)── folder_test
 folder_src_core      ──(16)── folder_src_utils
 folder_src_core      ──(15)── folder_src_webview
 doc_shelf            ──(12)── folder_src_core_analysis_intent
 folder_src_core_collaboration ──(12)── folder_src_utils
 folder_src           ──(12)── folder_src_core
 folder_src_core_collaboration ──(12)── folder_src_server
+folder_src_core_reasoning_evidence ──(12)── folder_test
 folder_src_core      ──(11)── folder_src_core_canvas_engine
 folder_src_core_analysis ──(11)── folder_src_core_analysis_reasoning
 folder_src_core      ──(10)── folder_src_core_benchmark
+folder_src_core_reasoning_snapshot ──(10)── folder_test
+doc_shelf            ──(9)── folder_src_vs_workbench_services_keybinding_browser_keyboardLayouts
 folder_src_core_collaboration ──(9)── folder_src_types
+folder_src_core_reasoning_rules_flow ──(9)── folder_test
+folder_scripts       ──(8)── folder_src_core_reasoning_answers_aggregators
 folder_src_cli       ──(8)── folder_src_core_validation
 folder_src_core_analysis_analyzers ──(8)── folder_src_types
 folder_src_core_analysis ──(8)── folder_src_core_analysis_analyzers
 folder_src_core      ──(8)── folder_src_core_collaboration
-folder_src_core      ──(7)── folder_src_server
-folder_src_core_analysis_intent ──(7)── folder_test_core_analysis_intent
-doc_shelf            ──(6)── folder_demo
-folder_src_cli       ──(6)── folder_src_core_analysis_intent
-folder_src_core_analysis ──(6)── folder_src_types
-folder_src_core_analysis_reasoning ──(6)── folder_src_types
-doc_shelf            ──(5)── folder_src
-folder_src_core      ──(4)── folder_src_core_transaction
-doc_shelf            ──(3)── folder_src_cli
-doc_shelf            ──(3)── folder_src_core_analysis
-doc_shelf            ──(3)── folder_src_types
-folder_src_core      ──(3)── folder_src_core_analysis_reasoning
-folder_src_bootstrap ──(2)── folder_src_utils
+folder_src_core_reasoning_analysis ──(8)── folder_src_core_reasoning_snapshot
+folder_src_core_reasoning_answers ──(8)── folder_src_core_reasoning_answers_aggregators
+folder_src_core_reasoning_answers_aggregators ──(8)── folder_src_core_reasoning_rules
+folder_src_core_reasoning_answers_aggregators ──(8)── folder_src_core_reasoning_snapshot
 
 === GHOST IMPACT MATRIX ===
-cluster_ghost_src         -> doc_shelf                           = 85
 cluster_ghost_assets      -> doc_shelf                           = 42
-cluster_ghost_extensions  -> doc_shelf                           = 9
-cluster_ghost_other       -> doc_shelf                           = 8
 cluster_ghost_crypto      -> folder_src_core                     = 6
 cluster_ghost_crypto      -> folder_src_core_collaboration       = 6
-cluster_ghost_test        -> doc_shelf                           = 5
 cluster_ghost_LICENSE     -> doc_shelf                           = 3
+cluster_ghost_other       -> doc_shelf                           = 3
 cluster_ghost_...         -> doc_shelf                           = 2
 cluster_ghost_node        -> folder_src                          = 2
 cluster_ghost_synapse-visual-architecture-v0.3.5.vsix -> doc_shelf                           = 1
 cluster_ghost_synapse-visual-architecture-v0.3.8.vsix -> doc_shelf                           = 1
-cluster_ghost_ui          -> doc_shelf                           = 1
 cluster_ghost_[^'"]+      -> doc_shelf                           = 1
 cluster_ghost_release_note -> doc_shelf                           = 1
 cluster_ghost_typescript  -> folder_src_cli                      = 1
@@ -453,26 +657,35 @@ cluster_ghost_util        -> folder_src_cli                      = 1
 cluster_ghost_http        -> folder_src_core                     = 1
 cluster_ghost_net         -> folder_src_core                     = 1
 cluster_ghost_Y           -> folder_src_core                     = 1
+cluster_ghost_crypto      -> doc_shelf                           = 1
+cluster_ghost_crypto      -> folder_src_core_benchmark           = 1
+cluster_ghost_crypto      -> folder_src_core_canvas_engine       = 1
+cluster_ghost_net         -> folder_src_core_collaboration       = 1
 
 === GHOST TRAFFIC ===
-ghost_nodes=145
-ghost_edges=193
-ghost_ratio=25.1%
+ghost_nodes=42
+ghost_edges=88
+ghost_ratio=8.1%
 
 === INTERNAL CONTINENTS ===
-doc             nodes=458 clusters=1
-core            nodes=137 clusters=14
+doc             nodes=489 clusters=1
+core            nodes=186 clusters=34
+vs              nodes=85 clusters=66
+root            nodes=28 clusters=3
 cli             nodes=11 clusters=1
-root            nodes=10 clusters=2
+extensions      nodes=9 clusters=9
+vscode-main     nodes=9 clusters=7
 demo            nodes=8 clusters=2
-ui              nodes=8 clusters=2
 utils           nodes=7 clusters=1
+ui              nodes=7 clusters=1
 scratch         nodes=5 clusters=1
+tools           nodes=5 clusters=1
 data            nodes=4 clusters=2
 server          nodes=4 clusters=1
-tools           nodes=3 clusters=1
+scripts         nodes=3 clusters=1
+mcp             nodes=3 clusters=2
 rust_checker    nodes=2 clusters=1
-scripts         nodes=1 clusters=1
+sanity          nodes=2 clusters=2
 analysis        nodes=1 clusters=1
 bootstrap       nodes=1 clusters=1
 explorer        nodes=1 clusters=1
@@ -480,11 +693,8 @@ types           nodes=1 clusters=1
 webview         nodes=1 clusters=1
 
 === EXTERNAL CONTINENTS ===
-src             nodes=85 clusters=1
 assets          nodes=21 clusters=1
-extensions      nodes=9 clusters=1
-other           nodes=6 clusters=1
-test            nodes=5 clusters=1
+other           nodes=3 clusters=1
 LICENSE         nodes=1 clusters=1
 synapse-visual-architecture-v0.3.5.vsix nodes=1 clusters=1
 synapse-visual-architecture-v0.3.8.vsix nodes=1 clusters=1
@@ -505,54 +715,54 @@ express         nodes=1 clusters=1
 cors            nodes=1 clusters=1
 
 === TOP CONTINENT PAIRS ===
-doc <-> src                    85
+core <-> root                  165
+doc <-> vs                     85
 core <-> types                 59
 assets <-> doc                 42
-core <-> doc                   37
+core <-> doc                   39
 core <-> utils                 33
-bootstrap <-> core             22
-core <-> webview               19
+core <-> scripts               27
+bootstrap <-> core             24
+core <-> webview               20
 core <-> server                19
-cli <-> core                   16
-core <-> root                  15
+cli <-> core                   17
 core <-> crypto                14
 doc <-> extensions             9
-doc <-> other                  8
+doc <-> sanity                 6
 demo <-> doc                   6
-doc <-> root                   6
 
 === CONTINENT MATRIX ===
-            doc        core       cli        root       demo       ui         utils      scratch   
-doc         -         37        3         6         6         2         1         0         
-core        37        -         16        15        0         0         33        0         
-cli         3         16        -         1         0         0         1         0         
-root        6         15        1         -         0         0         2         0         
-demo        6         0         0         0         -         0         0         0         
-ui          2         0         0         0         0         -         0         0         
-utils       1         33        1         2         0         0         -         0         
-scratch     0         0         0         0         0         0         0         -         
+            doc        core       vs         root       cli        extensions vscode-main demo      
+doc         -         39        85        6         3         9         0         6         
+core        39        -         0         165       17        0         0         0         
+vs          85        0         -         0         0         0         0         0         
+root        6         165       0         -         1         0         0         0         
+cli         3         17        0         1         -         0         0         0         
+extensions  9         0         0         0         0         -         0         0         
+vscode-main 0         0         0         0         0         0         -         0         
+demo        6         0         0         0         0         0         0         -         
 
 === CONTINENT GRAPH (Top 20 Edges) ===
-doc ──(85)── src
+core ──(165)── root
+doc ──(85)── vs
 core ──(59)── types
 assets ──(42)── doc
-core ──(37)── doc
+core ──(39)── doc
 core ──(33)── utils
-bootstrap ──(22)── core
-core ──(19)── webview
+core ──(27)── scripts
+bootstrap ──(24)── core
+core ──(20)── webview
 core ──(19)── server
-cli ──(16)── core
-core ──(15)── root
+cli ──(17)── core
 core ──(14)── crypto
 doc ──(9)── extensions
-doc ──(8)── other
+doc ──(6)── sanity
 demo ──(6)── doc
 doc ──(6)── root
-doc ──(5)── test
 LICENSE ──(3)── doc
+doc ──(3)── mcp
+doc ──(3)── other
 cli ──(3)── doc
-doc ──(3)── types
-doc ──(2)── ui
 
 === CONTINENT LAYOUT ===
 
@@ -564,12 +774,27 @@ bbox_center=(0, 0)
 node_center=(545, 250)
 node_count=65
 
+folder_src_vs_workbench_contrib
+bbox_center=(0, 0)
+node_center=(257, 107)
+node_count=18
+
 folder_src_core_collaboration
 bbox_center=(0, 0)
 node_center=(255, 99)
 node_count=17
 
+folder_test
+bbox_center=(0, 0)
+node_center=(255, 99)
+node_count=17
+
 folder_src
+bbox_center=(0, 0)
+node_center=(194, 92)
+node_count=13
+
+folder_src_vs_workbench_contrib_chat_browser
 bbox_center=(0, 0)
 node_center=(194, 92)
 node_count=13
@@ -594,94 +819,79 @@ bbox_center=(0, 0)
 node_center=(182, 64)
 node_count=10
 
-folder_demo_data
+folder_src_core_reasoning_rules
 bbox_center=(0, 0)
-node_center=(123, 70)
-node_count=8
+node_center=(182, 64)
+node_count=10
 
-folder_src_core_analysis_analyzers
+folder_extensions_copilot_src_extension
 bbox_center=(0, 0)
-node_center=(123, 70)
-node_count=8
+node_center=(140, 80)
+node_count=9
 
-folder_src_utils
+folder_src_vs_workbench_contrib_terminalContrib
 bbox_center=(0, 0)
-node_center=(120, 57)
-node_count=7
+node_center=(140, 80)
+node_count=9
 
-folder_ui
+folder_src_vs_workbench_services_keybinding_browser_keyboardLayouts
 bbox_center=(0, 0)
-node_center=(120, 57)
-node_count=7
+node_center=(140, 80)
+node_count=9
 
-folder_src_core_analysis_reasoning
+folder_vscode__file_home_dogsinatas______vscode_vscode_main
 bbox_center=(0, 0)
-node_center=(140, 40)
-node_count=6
-
-folder_scratch
-bbox_center=(0, 0)
-node_center=(112, 32)
-node_count=5
-
-folder_root
-bbox_center=(0, 0)
-node_center=(70, 40)
-node_count=4
-
-folder_src_server
-bbox_center=(0, 0)
-node_center=(70, 40)
-node_count=4
+node_center=(140, 80)
+node_count=9
 
 === [DIAGNOSTIC] CLUSTER BOUNDS ===
 
 === [CLUSTER] ===
 id=cluster_ghosts
-nodes=19
+nodes=18
 estimated_w=undefined
 estimated_h=undefined
 actual_w=680
 actual_h=320
 center=(280,120)
-density=0.000087
+density=0.000083
 [OVERLAP] cluster_ghosts & doc_shelf (area=217600)
-[OVERLAP] cluster_ghosts & folder_root (area=41600)
+[OVERLAP] cluster_ghosts & folder_root (area=96000)
 [OVERLAP] cluster_ghosts & folder_data (area=10400)
 [OVERLAP] cluster_ghosts & folder_demo_data (area=96000)
-[OVERLAP] cluster_ghosts & folder_scratch (area=64000)
+[OVERLAP] cluster_ghosts & folder_extensions_copilot_src_extension (area=96000)
 ... (more overlaps omitted)
 
 === [CLUSTER] ===
 id=doc_shelf
-nodes=458
+nodes=489
 estimated_w=undefined
 estimated_h=undefined
-actual_w=3060
-actual_h=1680
-center=(1470,800)
-density=0.000089
-[OVERLAP] doc_shelf & folder_root (area=41600)
+actual_w=3200
+actual_h=1760
+center=(1540,840)
+density=0.000087
+[OVERLAP] doc_shelf & folder_root (area=96000)
 [OVERLAP] doc_shelf & folder_data (area=10400)
 [OVERLAP] doc_shelf & folder_demo_data (area=96000)
-[OVERLAP] doc_shelf & folder_scratch (area=64000)
-[OVERLAP] doc_shelf & folder_scripts (area=10400)
+[OVERLAP] doc_shelf & folder_extensions_copilot_src_extension (area=96000)
+[OVERLAP] doc_shelf & folder_home_dogsinatas_TypeScript_project_antigravity_extension_vis_src_core (area=10400)
 ... (more overlaps omitted)
 
 === [CLUSTER] ===
 id=folder_root
-nodes=4
+nodes=7
 estimated_w=undefined
 estimated_h=undefined
-actual_w=260
-actual_h=160
-center=(70,40)
-density=0.000096
+actual_w=400
+actual_h=240
+center=(140,80)
+density=0.000073
 [OVERLAP] folder_root & folder_data (area=10400)
-[OVERLAP] folder_root & folder_demo_data (area=41600)
-[OVERLAP] folder_root & folder_scratch (area=41600)
-[OVERLAP] folder_root & folder_scripts (area=10400)
-[OVERLAP] folder_root & folder_src (area=41600)
+[OVERLAP] folder_root & folder_demo_data (area=96000)
+[OVERLAP] folder_root & folder_extensions_copilot_src_extension (area=96000)
+[OVERLAP] folder_root & folder_home_dogsinatas_TypeScript_project_antigravity_extension_vis_src_core (area=10400)
+[OVERLAP] folder_root & folder_scratch (area=64000)
 ... (more overlaps omitted)
 
 === [CLUSTER] ===
@@ -694,10 +904,10 @@ actual_h=80
 center=(0,0)
 density=0.000089
 [OVERLAP] folder_data & folder_demo_data (area=10400)
+[OVERLAP] folder_data & folder_extensions_copilot_src_extension (area=10400)
+[OVERLAP] folder_data & folder_home_dogsinatas_TypeScript_project_antigravity_extension_vis_src_core (area=11200)
 [OVERLAP] folder_data & folder_scratch (area=10400)
-[OVERLAP] folder_data & folder_scripts (area=11200)
-[OVERLAP] folder_data & folder_src (area=10400)
-[OVERLAP] folder_data & folder_src_cli (area=10400)
+[OVERLAP] folder_data & folder_scripts (area=10400)
 ... (more overlaps omitted)
 
 === [CLUSTER] ===
@@ -709,11 +919,43 @@ actual_w=400
 actual_h=240
 center=(140,80)
 density=0.000083
+[OVERLAP] folder_demo_data & folder_extensions_copilot_src_extension (area=96000)
+[OVERLAP] folder_demo_data & folder_home_dogsinatas_TypeScript_project_antigravity_extension_vis_src_core (area=10400)
 [OVERLAP] folder_demo_data & folder_scratch (area=64000)
-[OVERLAP] folder_demo_data & folder_scripts (area=10400)
+[OVERLAP] folder_demo_data & folder_scripts (area=41600)
 [OVERLAP] folder_demo_data & folder_src (area=96000)
-[OVERLAP] folder_demo_data & folder_src_cli (area=96000)
-[OVERLAP] folder_demo_data & folder_src_core (area=96000)
+... (more overlaps omitted)
+
+=== [CLUSTER] ===
+id=folder_extensions_copilot_src_extension
+nodes=9
+estimated_w=undefined
+estimated_h=undefined
+actual_w=400
+actual_h=240
+center=(140,80)
+density=0.000094
+[OVERLAP] folder_extensions_copilot_src_extension & folder_home_dogsinatas_TypeScript_project_antigravity_extension_vis_src_core (area=10400)
+[OVERLAP] folder_extensions_copilot_src_extension & folder_scratch (area=64000)
+[OVERLAP] folder_extensions_copilot_src_extension & folder_scripts (area=41600)
+[OVERLAP] folder_extensions_copilot_src_extension & folder_src (area=96000)
+[OVERLAP] folder_extensions_copilot_src_extension & folder_src_cli (area=96000)
+... (more overlaps omitted)
+
+=== [CLUSTER] ===
+id=folder_home_dogsinatas_TypeScript_project_antigravity_extension_vis_src_core
+nodes=1
+estimated_w=undefined
+estimated_h=undefined
+actual_w=140
+actual_h=80
+center=(0,0)
+density=0.000089
+[OVERLAP] folder_home_dogsinatas_TypeScript_project_antigravity_extension_vis_src_core & folder_scratch (area=10400)
+[OVERLAP] folder_home_dogsinatas_TypeScript_project_antigravity_extension_vis_src_core & folder_scripts (area=10400)
+[OVERLAP] folder_home_dogsinatas_TypeScript_project_antigravity_extension_vis_src_core & folder_src (area=10400)
+[OVERLAP] folder_home_dogsinatas_TypeScript_project_antigravity_extension_vis_src_core & folder_src_cli (area=10400)
+[OVERLAP] folder_home_dogsinatas_TypeScript_project_antigravity_extension_vis_src_core & folder_src_core (area=10400)
 ... (more overlaps omitted)
 
 === [CLUSTER] ===
@@ -725,7 +967,7 @@ actual_w=400
 actual_h=160
 center=(140,40)
 density=0.000078
-[OVERLAP] folder_scratch & folder_scripts (area=10400)
+[OVERLAP] folder_scratch & folder_scripts (area=41600)
 [OVERLAP] folder_scratch & folder_src (area=64000)
 [OVERLAP] folder_scratch & folder_src_cli (area=64000)
 [OVERLAP] folder_scratch & folder_src_core (area=64000)
@@ -734,18 +976,18 @@ density=0.000078
 
 === [CLUSTER] ===
 id=folder_scripts
-nodes=1
+nodes=3
 estimated_w=undefined
 estimated_h=undefined
-actual_w=140
-actual_h=80
-center=(0,0)
-density=0.000089
-[OVERLAP] folder_scripts & folder_src (area=10400)
-[OVERLAP] folder_scripts & folder_src_cli (area=10400)
-[OVERLAP] folder_scripts & folder_src_core (area=10400)
-[OVERLAP] folder_scripts & folder_src_core_analysis (area=10400)
-[OVERLAP] folder_scripts & folder_src_core_analysis_analyzers (area=10400)
+actual_w=260
+actual_h=160
+center=(70,40)
+density=0.000072
+[OVERLAP] folder_scripts & folder_src (area=41600)
+[OVERLAP] folder_scripts & folder_src_cli (area=41600)
+[OVERLAP] folder_scripts & folder_src_core (area=41600)
+[OVERLAP] folder_scripts & folder_src_core_analysis (area=41600)
+[OVERLAP] folder_scripts & folder_src_core_analysis_analyzers (area=41600)
 ... (more overlaps omitted)
 
 === [CLUSTER] ===
@@ -825,7 +1067,7 @@ density=0.000083
 [OVERLAP] folder_src_core_analysis_analyzers & folder_src_core_analysis_reasoning (area=64000)
 [OVERLAP] folder_src_core_analysis_analyzers & folder_src_core_canvas_engine (area=96000)
 [OVERLAP] folder_src_core_analysis_analyzers & folder_src_core_collaboration (area=96000)
-[OVERLAP] folder_src_core_analysis_analyzers & folder_src_core_transaction (area=41600)
+[OVERLAP] folder_src_core_analysis_analyzers & folder_src_core_ir (area=41600)
 ... (more overlaps omitted)
 
 === [CLUSTER] ===
@@ -840,8 +1082,8 @@ density=0.000093
 [OVERLAP] folder_src_core_analysis_intent & folder_src_core_analysis_reasoning (area=64000)
 [OVERLAP] folder_src_core_analysis_intent & folder_src_core_canvas_engine (area=129600)
 [OVERLAP] folder_src_core_analysis_intent & folder_src_core_collaboration (area=129600)
-[OVERLAP] folder_src_core_analysis_intent & folder_src_core_transaction (area=41600)
-[OVERLAP] folder_src_core_analysis_intent & folder_src_core_validation (area=41600)
+[OVERLAP] folder_src_core_analysis_intent & folder_src_core_ir (area=41600)
+[OVERLAP] folder_src_core_analysis_intent & folder_src_core_ir_evaluators (area=41600)
 ... (more overlaps omitted)
 
 === [CLUSTER] ===
@@ -855,9 +1097,9 @@ center=(140,40)
 density=0.000094
 [OVERLAP] folder_src_core_analysis_reasoning & folder_src_core_canvas_engine (area=64000)
 [OVERLAP] folder_src_core_analysis_reasoning & folder_src_core_collaboration (area=64000)
-[OVERLAP] folder_src_core_analysis_reasoning & folder_src_core_transaction (area=41600)
-[OVERLAP] folder_src_core_analysis_reasoning & folder_src_core_validation (area=41600)
-[OVERLAP] folder_src_core_analysis_reasoning & folder_src_server (area=41600)
+[OVERLAP] folder_src_core_analysis_reasoning & folder_src_core_ir (area=41600)
+[OVERLAP] folder_src_core_analysis_reasoning & folder_src_core_ir_evaluators (area=41600)
+[OVERLAP] folder_src_core_analysis_reasoning & folder_src_core_ir_generators (area=41600)
 ... (more overlaps omitted)
 
 === [CLUSTER] ===
@@ -870,10 +1112,10 @@ actual_h=240
 center=(210,80)
 density=0.000077
 [OVERLAP] folder_src_core_canvas_engine & folder_src_core_collaboration (area=129600)
-[OVERLAP] folder_src_core_canvas_engine & folder_src_core_transaction (area=41600)
-[OVERLAP] folder_src_core_canvas_engine & folder_src_core_validation (area=41600)
-[OVERLAP] folder_src_core_canvas_engine & folder_src_server (area=41600)
-[OVERLAP] folder_src_core_canvas_engine & folder_src_utils (area=96000)
+[OVERLAP] folder_src_core_canvas_engine & folder_src_core_ir (area=41600)
+[OVERLAP] folder_src_core_canvas_engine & folder_src_core_ir_evaluators (area=41600)
+[OVERLAP] folder_src_core_canvas_engine & folder_src_core_ir_generators (area=41600)
+[OVERLAP] folder_src_core_canvas_engine & folder_src_core_reasoning_analysis (area=96000)
 ... (more overlaps omitted)
 
 === [CLUSTER] ===
@@ -885,15 +1127,31 @@ actual_w=680
 actual_h=320
 center=(280,120)
 density=0.000078
-[OVERLAP] folder_src_core_collaboration & folder_src_core_transaction (area=41600)
-[OVERLAP] folder_src_core_collaboration & folder_src_core_validation (area=41600)
-[OVERLAP] folder_src_core_collaboration & folder_src_server (area=41600)
-[OVERLAP] folder_src_core_collaboration & folder_src_utils (area=96000)
-[OVERLAP] folder_src_core_collaboration & folder_test_core_analysis_intent (area=41600)
+[OVERLAP] folder_src_core_collaboration & folder_src_core_ir (area=41600)
+[OVERLAP] folder_src_core_collaboration & folder_src_core_ir_evaluators (area=41600)
+[OVERLAP] folder_src_core_collaboration & folder_src_core_ir_generators (area=41600)
+[OVERLAP] folder_src_core_collaboration & folder_src_core_reasoning_analysis (area=96000)
+[OVERLAP] folder_src_core_collaboration & folder_src_core_reasoning (area=64000)
 ... (more overlaps omitted)
 
 === [CLUSTER] ===
-id=folder_src_core_transaction
+id=folder_src_core_ir
+nodes=4
+estimated_w=undefined
+estimated_h=undefined
+actual_w=260
+actual_h=160
+center=(70,40)
+density=0.000096
+[OVERLAP] folder_src_core_ir & folder_src_core_ir_evaluators (area=41600)
+[OVERLAP] folder_src_core_ir & folder_src_core_ir_generators (area=41600)
+[OVERLAP] folder_src_core_ir & folder_src_core_reasoning_analysis (area=41600)
+[OVERLAP] folder_src_core_ir & folder_src_core_reasoning (area=41600)
+[OVERLAP] folder_src_core_ir & folder_src_core_reasoning_answers_aggregators (area=41600)
+... (more overlaps omitted)
+
+=== [CLUSTER] ===
+id=folder_src_core_ir_evaluators
 nodes=3
 estimated_w=undefined
 estimated_h=undefined
@@ -901,11 +1159,123 @@ actual_w=260
 actual_h=160
 center=(70,40)
 density=0.000072
+[OVERLAP] folder_src_core_ir_evaluators & folder_src_core_ir_generators (area=41600)
+[OVERLAP] folder_src_core_ir_evaluators & folder_src_core_reasoning_analysis (area=41600)
+[OVERLAP] folder_src_core_ir_evaluators & folder_src_core_reasoning (area=41600)
+[OVERLAP] folder_src_core_ir_evaluators & folder_src_core_reasoning_answers_aggregators (area=41600)
+[OVERLAP] folder_src_core_ir_evaluators & folder_src_core_reasoning_rules (area=41600)
+... (more overlaps omitted)
+
+=== [CLUSTER] ===
+id=folder_src_core_ir_generators
+nodes=3
+estimated_w=undefined
+estimated_h=undefined
+actual_w=260
+actual_h=160
+center=(70,40)
+density=0.000072
+[OVERLAP] folder_src_core_ir_generators & folder_src_core_reasoning_analysis (area=41600)
+[OVERLAP] folder_src_core_ir_generators & folder_src_core_reasoning (area=41600)
+[OVERLAP] folder_src_core_ir_generators & folder_src_core_reasoning_answers_aggregators (area=41600)
+[OVERLAP] folder_src_core_ir_generators & folder_src_core_reasoning_rules (area=41600)
+[OVERLAP] folder_src_core_ir_generators & folder_src_core_reasoning_rules_roles (area=41600)
+... (more overlaps omitted)
+
+=== [CLUSTER] ===
+id=folder_src_core_reasoning_analysis
+nodes=8
+estimated_w=undefined
+estimated_h=undefined
+actual_w=400
+actual_h=240
+center=(140,80)
+density=0.000083
+[OVERLAP] folder_src_core_reasoning_analysis & folder_src_core_reasoning (area=64000)
+[OVERLAP] folder_src_core_reasoning_analysis & folder_src_core_reasoning_answers_aggregators (area=96000)
+[OVERLAP] folder_src_core_reasoning_analysis & folder_src_core_reasoning_rules (area=96000)
+[OVERLAP] folder_src_core_reasoning_analysis & folder_src_core_reasoning_rules_roles (area=64000)
+[OVERLAP] folder_src_core_reasoning_analysis & folder_src_core_transaction (area=41600)
+... (more overlaps omitted)
+
+=== [CLUSTER] ===
+id=folder_src_core_reasoning
+nodes=6
+estimated_w=undefined
+estimated_h=undefined
+actual_w=400
+actual_h=160
+center=(140,40)
+density=0.000094
+[OVERLAP] folder_src_core_reasoning & folder_src_core_reasoning_answers_aggregators (area=64000)
+[OVERLAP] folder_src_core_reasoning & folder_src_core_reasoning_rules (area=64000)
+[OVERLAP] folder_src_core_reasoning & folder_src_core_reasoning_rules_roles (area=64000)
+[OVERLAP] folder_src_core_reasoning & folder_src_core_transaction (area=41600)
+[OVERLAP] folder_src_core_reasoning & folder_src_core_validation (area=41600)
+... (more overlaps omitted)
+
+=== [CLUSTER] ===
+id=folder_src_core_reasoning_answers_aggregators
+nodes=8
+estimated_w=undefined
+estimated_h=undefined
+actual_w=400
+actual_h=240
+center=(140,80)
+density=0.000083
+[OVERLAP] folder_src_core_reasoning_answers_aggregators & folder_src_core_reasoning_rules (area=96000)
+[OVERLAP] folder_src_core_reasoning_answers_aggregators & folder_src_core_reasoning_rules_roles (area=64000)
+[OVERLAP] folder_src_core_reasoning_answers_aggregators & folder_src_core_transaction (area=41600)
+[OVERLAP] folder_src_core_reasoning_answers_aggregators & folder_src_core_validation (area=41600)
+[OVERLAP] folder_src_core_reasoning_answers_aggregators & folder_src_server (area=41600)
+... (more overlaps omitted)
+
+=== [CLUSTER] ===
+id=folder_src_core_reasoning_rules
+nodes=10
+estimated_w=undefined
+estimated_h=undefined
+actual_w=540
+actual_h=240
+center=(210,80)
+density=0.000077
+[OVERLAP] folder_src_core_reasoning_rules & folder_src_core_reasoning_rules_roles (area=64000)
+[OVERLAP] folder_src_core_reasoning_rules & folder_src_core_transaction (area=41600)
+[OVERLAP] folder_src_core_reasoning_rules & folder_src_core_validation (area=41600)
+[OVERLAP] folder_src_core_reasoning_rules & folder_src_server (area=41600)
+[OVERLAP] folder_src_core_reasoning_rules & folder_src_utils (area=96000)
+... (more overlaps omitted)
+
+=== [CLUSTER] ===
+id=folder_src_core_reasoning_rules_roles
+nodes=5
+estimated_w=undefined
+estimated_h=undefined
+actual_w=400
+actual_h=160
+center=(140,40)
+density=0.000078
+[OVERLAP] folder_src_core_reasoning_rules_roles & folder_src_core_transaction (area=41600)
+[OVERLAP] folder_src_core_reasoning_rules_roles & folder_src_core_validation (area=41600)
+[OVERLAP] folder_src_core_reasoning_rules_roles & folder_src_server (area=41600)
+[OVERLAP] folder_src_core_reasoning_rules_roles & folder_src_utils (area=64000)
+[OVERLAP] folder_src_core_reasoning_rules_roles & folder_src_vs_editor_browser_widget_multiDiffEditor (area=64000)
+... (more overlaps omitted)
+
+=== [CLUSTER] ===
+id=folder_src_core_transaction
+nodes=4
+estimated_w=undefined
+estimated_h=undefined
+actual_w=260
+actual_h=160
+center=(70,40)
+density=0.000096
 [OVERLAP] folder_src_core_transaction & folder_src_core_validation (area=41600)
 [OVERLAP] folder_src_core_transaction & folder_src_server (area=41600)
 [OVERLAP] folder_src_core_transaction & folder_src_utils (area=41600)
-[OVERLAP] folder_src_core_transaction & folder_test_core_analysis_intent (area=41600)
-[OVERLAP] folder_src_core_transaction & folder_test_data (area=41600)
+[OVERLAP] folder_src_core_transaction & folder_src_vs_editor_browser_widget_multiDiffEditor (area=41600)
+[OVERLAP] folder_src_core_transaction & folder_src_vs (area=41600)
 ... (more overlaps omitted)
 
 === [CLUSTER] ===
@@ -919,9 +1289,9 @@ center=(70,40)
 density=0.000072
 [OVERLAP] folder_src_core_validation & folder_src_server (area=41600)
 [OVERLAP] folder_src_core_validation & folder_src_utils (area=41600)
-[OVERLAP] folder_src_core_validation & folder_test_core_analysis_intent (area=41600)
-[OVERLAP] folder_src_core_validation & folder_test_data (area=41600)
-[OVERLAP] folder_src_core_validation & folder_tools (area=41600)
+[OVERLAP] folder_src_core_validation & folder_src_vs_editor_browser_widget_multiDiffEditor (area=41600)
+[OVERLAP] folder_src_core_validation & folder_src_vs (area=41600)
+[OVERLAP] folder_src_core_validation & folder_src_vs_workbench (area=41600)
 ... (more overlaps omitted)
 
 === [CLUSTER] ===
@@ -934,10 +1304,10 @@ actual_h=160
 center=(70,40)
 density=0.000096
 [OVERLAP] folder_src_server & folder_src_utils (area=41600)
-[OVERLAP] folder_src_server & folder_test_core_analysis_intent (area=41600)
-[OVERLAP] folder_src_server & folder_test_data (area=41600)
-[OVERLAP] folder_src_server & folder_tools (area=41600)
-[OVERLAP] folder_src_server & folder_ui (area=41600)
+[OVERLAP] folder_src_server & folder_src_vs_editor_browser_widget_multiDiffEditor (area=41600)
+[OVERLAP] folder_src_server & folder_src_vs (area=41600)
+[OVERLAP] folder_src_server & folder_src_vs_workbench (area=41600)
+[OVERLAP] folder_src_server & folder_src_vs_workbench_contrib_chat_browser (area=41600)
 ... (more overlaps omitted)
 
 === [CLUSTER] ===
@@ -949,11 +1319,187 @@ actual_w=400
 actual_h=240
 center=(140,80)
 density=0.000073
-[OVERLAP] folder_src_utils & folder_test_core_analysis_intent (area=41600)
-[OVERLAP] folder_src_utils & folder_test_data (area=41600)
-[OVERLAP] folder_src_utils & folder_tools (area=41600)
-[OVERLAP] folder_src_utils & folder_ui (area=96000)
-[OVERLAP] folder_src_utils & cluster_ghost_assets (area=96000)
+[OVERLAP] folder_src_utils & folder_src_vs_editor_browser_widget_multiDiffEditor (area=64000)
+[OVERLAP] folder_src_utils & folder_src_vs (area=96000)
+[OVERLAP] folder_src_utils & folder_src_vs_workbench (area=96000)
+[OVERLAP] folder_src_utils & folder_src_vs_workbench_contrib_chat_browser (area=96000)
+[OVERLAP] folder_src_utils & folder_src_vs_workbench_contrib (area=96000)
+... (more overlaps omitted)
+
+=== [CLUSTER] ===
+id=folder_src_vs_editor_browser_widget_multiDiffEditor
+nodes=5
+estimated_w=undefined
+estimated_h=undefined
+actual_w=400
+actual_h=160
+center=(140,40)
+density=0.000078
+[OVERLAP] folder_src_vs_editor_browser_widget_multiDiffEditor & folder_src_vs (area=64000)
+[OVERLAP] folder_src_vs_editor_browser_widget_multiDiffEditor & folder_src_vs_workbench (area=64000)
+[OVERLAP] folder_src_vs_editor_browser_widget_multiDiffEditor & folder_src_vs_workbench_contrib_chat_browser (area=64000)
+[OVERLAP] folder_src_vs_editor_browser_widget_multiDiffEditor & folder_src_vs_workbench_contrib (area=64000)
+[OVERLAP] folder_src_vs_editor_browser_widget_multiDiffEditor & folder_src_vs_workbench_contrib_terminal_browser_widgets (area=64000)
+... (more overlaps omitted)
+
+=== [CLUSTER] ===
+id=folder_src_vs
+nodes=8
+estimated_w=undefined
+estimated_h=undefined
+actual_w=400
+actual_h=240
+center=(140,80)
+density=0.000083
+[OVERLAP] folder_src_vs & folder_src_vs_workbench (area=96000)
+[OVERLAP] folder_src_vs & folder_src_vs_workbench_contrib_chat_browser (area=96000)
+[OVERLAP] folder_src_vs & folder_src_vs_workbench_contrib (area=96000)
+[OVERLAP] folder_src_vs & folder_src_vs_workbench_contrib_terminal_browser_widgets (area=64000)
+[OVERLAP] folder_src_vs & folder_src_vs_workbench_contrib_terminalContrib (area=96000)
+... (more overlaps omitted)
+
+=== [CLUSTER] ===
+id=folder_src_vs_workbench
+nodes=7
+estimated_w=undefined
+estimated_h=undefined
+actual_w=400
+actual_h=240
+center=(140,80)
+density=0.000073
+[OVERLAP] folder_src_vs_workbench & folder_src_vs_workbench_contrib_chat_browser (area=96000)
+[OVERLAP] folder_src_vs_workbench & folder_src_vs_workbench_contrib (area=96000)
+[OVERLAP] folder_src_vs_workbench & folder_src_vs_workbench_contrib_terminal_browser_widgets (area=64000)
+[OVERLAP] folder_src_vs_workbench & folder_src_vs_workbench_contrib_terminalContrib (area=96000)
+[OVERLAP] folder_src_vs_workbench & folder_src_vs_workbench_services (area=96000)
+... (more overlaps omitted)
+
+=== [CLUSTER] ===
+id=folder_src_vs_workbench_contrib_chat_browser
+nodes=13
+estimated_w=undefined
+estimated_h=undefined
+actual_w=540
+actual_h=320
+center=(210,120)
+density=0.000075
+[OVERLAP] folder_src_vs_workbench_contrib_chat_browser & folder_src_vs_workbench_contrib (area=172800)
+[OVERLAP] folder_src_vs_workbench_contrib_chat_browser & folder_src_vs_workbench_contrib_terminal_browser_widgets (area=64000)
+[OVERLAP] folder_src_vs_workbench_contrib_chat_browser & folder_src_vs_workbench_contrib_terminalContrib (area=96000)
+[OVERLAP] folder_src_vs_workbench_contrib_chat_browser & folder_src_vs_workbench_services (area=96000)
+[OVERLAP] folder_src_vs_workbench_contrib_chat_browser & folder_src_vs_workbench_services_keybinding_browser_keyboardLayouts (area=96000)
+... (more overlaps omitted)
+
+=== [CLUSTER] ===
+id=folder_src_vs_workbench_contrib
+nodes=18
+estimated_w=undefined
+estimated_h=undefined
+actual_w=680
+actual_h=320
+center=(280,120)
+density=0.000083
+[OVERLAP] folder_src_vs_workbench_contrib & folder_src_vs_workbench_contrib_terminal_browser_widgets (area=64000)
+[OVERLAP] folder_src_vs_workbench_contrib & folder_src_vs_workbench_contrib_terminalContrib (area=96000)
+[OVERLAP] folder_src_vs_workbench_contrib & folder_src_vs_workbench_services (area=96000)
+[OVERLAP] folder_src_vs_workbench_contrib & folder_src_vs_workbench_services_keybinding_browser_keyboardLayouts (area=96000)
+[OVERLAP] folder_src_vs_workbench_contrib & folder_src_vs_workbench_services_textMate_browser_backgroundTokenization (area=41600)
+... (more overlaps omitted)
+
+=== [CLUSTER] ===
+id=folder_src_vs_workbench_contrib_terminal_browser_widgets
+nodes=6
+estimated_w=undefined
+estimated_h=undefined
+actual_w=400
+actual_h=160
+center=(140,40)
+density=0.000094
+[OVERLAP] folder_src_vs_workbench_contrib_terminal_browser_widgets & folder_src_vs_workbench_contrib_terminalContrib (area=64000)
+[OVERLAP] folder_src_vs_workbench_contrib_terminal_browser_widgets & folder_src_vs_workbench_services (area=64000)
+[OVERLAP] folder_src_vs_workbench_contrib_terminal_browser_widgets & folder_src_vs_workbench_services_keybinding_browser_keyboardLayouts (area=64000)
+[OVERLAP] folder_src_vs_workbench_contrib_terminal_browser_widgets & folder_src_vs_workbench_services_textMate_browser_backgroundTokenization (area=41600)
+[OVERLAP] folder_src_vs_workbench_contrib_terminal_browser_widgets & folder_test (area=64000)
+... (more overlaps omitted)
+
+=== [CLUSTER] ===
+id=folder_src_vs_workbench_contrib_terminalContrib
+nodes=9
+estimated_w=undefined
+estimated_h=undefined
+actual_w=400
+actual_h=240
+center=(140,80)
+density=0.000094
+[OVERLAP] folder_src_vs_workbench_contrib_terminalContrib & folder_src_vs_workbench_services (area=96000)
+[OVERLAP] folder_src_vs_workbench_contrib_terminalContrib & folder_src_vs_workbench_services_keybinding_browser_keyboardLayouts (area=96000)
+[OVERLAP] folder_src_vs_workbench_contrib_terminalContrib & folder_src_vs_workbench_services_textMate_browser_backgroundTokenization (area=41600)
+[OVERLAP] folder_src_vs_workbench_contrib_terminalContrib & folder_test (area=96000)
+[OVERLAP] folder_src_vs_workbench_contrib_terminalContrib & folder_test_core_analysis_intent (area=41600)
+... (more overlaps omitted)
+
+=== [CLUSTER] ===
+id=folder_src_vs_workbench_services
+nodes=7
+estimated_w=undefined
+estimated_h=undefined
+actual_w=400
+actual_h=240
+center=(140,80)
+density=0.000073
+[OVERLAP] folder_src_vs_workbench_services & folder_src_vs_workbench_services_keybinding_browser_keyboardLayouts (area=96000)
+[OVERLAP] folder_src_vs_workbench_services & folder_src_vs_workbench_services_textMate_browser_backgroundTokenization (area=41600)
+[OVERLAP] folder_src_vs_workbench_services & folder_test (area=96000)
+[OVERLAP] folder_src_vs_workbench_services & folder_test_core_analysis_intent (area=41600)
+[OVERLAP] folder_src_vs_workbench_services & folder_test_data (area=41600)
+... (more overlaps omitted)
+
+=== [CLUSTER] ===
+id=folder_src_vs_workbench_services_keybinding_browser_keyboardLayouts
+nodes=9
+estimated_w=undefined
+estimated_h=undefined
+actual_w=400
+actual_h=240
+center=(140,80)
+density=0.000094
+[OVERLAP] folder_src_vs_workbench_services_keybinding_browser_keyboardLayouts & folder_src_vs_workbench_services_textMate_browser_backgroundTokenization (area=41600)
+[OVERLAP] folder_src_vs_workbench_services_keybinding_browser_keyboardLayouts & folder_test (area=96000)
+[OVERLAP] folder_src_vs_workbench_services_keybinding_browser_keyboardLayouts & folder_test_core_analysis_intent (area=41600)
+[OVERLAP] folder_src_vs_workbench_services_keybinding_browser_keyboardLayouts & folder_test_data (area=41600)
+[OVERLAP] folder_src_vs_workbench_services_keybinding_browser_keyboardLayouts & folder_test_mcp_src (area=41600)
+... (more overlaps omitted)
+
+=== [CLUSTER] ===
+id=folder_src_vs_workbench_services_textMate_browser_backgroundTokenization
+nodes=3
+estimated_w=undefined
+estimated_h=undefined
+actual_w=260
+actual_h=160
+center=(70,40)
+density=0.000072
+[OVERLAP] folder_src_vs_workbench_services_textMate_browser_backgroundTokenization & folder_test (area=41600)
+[OVERLAP] folder_src_vs_workbench_services_textMate_browser_backgroundTokenization & folder_test_core_analysis_intent (area=41600)
+[OVERLAP] folder_src_vs_workbench_services_textMate_browser_backgroundTokenization & folder_test_data (area=41600)
+[OVERLAP] folder_src_vs_workbench_services_textMate_browser_backgroundTokenization & folder_test_mcp_src (area=41600)
+[OVERLAP] folder_src_vs_workbench_services_textMate_browser_backgroundTokenization & folder_tools (area=41600)
+... (more overlaps omitted)
+
+=== [CLUSTER] ===
+id=folder_test
+nodes=17
+estimated_w=undefined
+estimated_h=undefined
+actual_w=680
+actual_h=320
+center=(280,120)
+density=0.000078
+[OVERLAP] folder_test & folder_test_core_analysis_intent (area=41600)
+[OVERLAP] folder_test & folder_test_data (area=41600)
+[OVERLAP] folder_test & folder_test_mcp_src (area=41600)
+[OVERLAP] folder_test & folder_tools (area=64000)
+[OVERLAP] folder_test & folder_ui (area=96000)
 ... (more overlaps omitted)
 
 === [CLUSTER] ===
@@ -966,10 +1512,10 @@ actual_h=160
 center=(70,40)
 density=0.000072
 [OVERLAP] folder_test_core_analysis_intent & folder_test_data (area=41600)
+[OVERLAP] folder_test_core_analysis_intent & folder_test_mcp_src (area=41600)
 [OVERLAP] folder_test_core_analysis_intent & folder_tools (area=41600)
 [OVERLAP] folder_test_core_analysis_intent & folder_ui (area=41600)
-[OVERLAP] folder_test_core_analysis_intent & cluster_ghost_assets (area=41600)
-[OVERLAP] folder_test_core_analysis_intent & cluster_ghost_src (area=41600)
+[OVERLAP] folder_test_core_analysis_intent & folder_vscode__file_home_dogsinatas______vscode_vscode_main (area=41600)
 ... (more overlaps omitted)
 
 === [CLUSTER] ===
@@ -981,15 +1527,15 @@ actual_w=260
 actual_h=160
 center=(70,40)
 density=0.000072
+[OVERLAP] folder_test_data & folder_test_mcp_src (area=41600)
 [OVERLAP] folder_test_data & folder_tools (area=41600)
 [OVERLAP] folder_test_data & folder_ui (area=41600)
+[OVERLAP] folder_test_data & folder_vscode__file_home_dogsinatas______vscode_vscode_main (area=41600)
 [OVERLAP] folder_test_data & cluster_ghost_assets (area=41600)
-[OVERLAP] folder_test_data & cluster_ghost_src (area=41600)
-[OVERLAP] folder_test_data & cluster_ghost_test (area=41600)
 ... (more overlaps omitted)
 
 === [CLUSTER] ===
-id=folder_tools
+id=folder_test_mcp_src
 nodes=3
 estimated_w=undefined
 estimated_h=undefined
@@ -997,12 +1543,26 @@ actual_w=260
 actual_h=160
 center=(70,40)
 density=0.000072
-[OVERLAP] folder_tools & folder_ui (area=41600)
-[OVERLAP] folder_tools & cluster_ghost_assets (area=41600)
-[OVERLAP] folder_tools & cluster_ghost_src (area=41600)
-[OVERLAP] folder_tools & cluster_ghost_test (area=41600)
-[OVERLAP] folder_tools & cluster_ghost_extensions (area=41600)
+[OVERLAP] folder_test_mcp_src & folder_tools (area=41600)
+[OVERLAP] folder_test_mcp_src & folder_ui (area=41600)
+[OVERLAP] folder_test_mcp_src & folder_vscode__file_home_dogsinatas______vscode_vscode_main (area=41600)
+[OVERLAP] folder_test_mcp_src & cluster_ghost_assets (area=41600)
+[OVERLAP] folder_test_mcp_src & cluster_ghost_other (area=41600)
 ... (more overlaps omitted)
+
+=== [CLUSTER] ===
+id=folder_tools
+nodes=5
+estimated_w=undefined
+estimated_h=undefined
+actual_w=400
+actual_h=160
+center=(140,40)
+density=0.000078
+[OVERLAP] folder_tools & folder_ui (area=64000)
+[OVERLAP] folder_tools & folder_vscode__file_home_dogsinatas______vscode_vscode_main (area=64000)
+[OVERLAP] folder_tools & cluster_ghost_assets (area=64000)
+[OVERLAP] folder_tools & cluster_ghost_other (area=41600)
 
 === [CLUSTER] ===
 id=folder_ui
@@ -1013,12 +1573,21 @@ actual_w=400
 actual_h=240
 center=(140,80)
 density=0.000073
+[OVERLAP] folder_ui & folder_vscode__file_home_dogsinatas______vscode_vscode_main (area=96000)
 [OVERLAP] folder_ui & cluster_ghost_assets (area=96000)
-[OVERLAP] folder_ui & cluster_ghost_src (area=96000)
-[OVERLAP] folder_ui & cluster_ghost_test (area=64000)
-[OVERLAP] folder_ui & cluster_ghost_extensions (area=96000)
-[OVERLAP] folder_ui & cluster_ghost_other (area=64000)
-... (more overlaps omitted)
+[OVERLAP] folder_ui & cluster_ghost_other (area=41600)
+
+=== [CLUSTER] ===
+id=folder_vscode__file_home_dogsinatas______vscode_vscode_main
+nodes=9
+estimated_w=undefined
+estimated_h=undefined
+actual_w=400
+actual_h=240
+center=(140,80)
+density=0.000094
+[OVERLAP] folder_vscode__file_home_dogsinatas______vscode_vscode_main & cluster_ghost_assets (area=96000)
+[OVERLAP] folder_vscode__file_home_dogsinatas______vscode_vscode_main & cluster_ghost_other (area=41600)
 
 === [CLUSTER] ===
 id=cluster_ghost_assets
@@ -1029,63 +1598,24 @@ actual_w=680
 actual_h=400
 center=(280,160)
 density=0.000077
-[OVERLAP] cluster_ghost_assets & cluster_ghost_src (area=272000)
-[OVERLAP] cluster_ghost_assets & cluster_ghost_test (area=64000)
-[OVERLAP] cluster_ghost_assets & cluster_ghost_extensions (area=96000)
-[OVERLAP] cluster_ghost_assets & cluster_ghost_other (area=64000)
-
-=== [CLUSTER] ===
-id=cluster_ghost_src
-nodes=85
-estimated_w=undefined
-estimated_h=undefined
-actual_w=1380
-actual_h=720
-center=(630,320)
-density=0.000086
-[OVERLAP] cluster_ghost_src & cluster_ghost_test (area=64000)
-[OVERLAP] cluster_ghost_src & cluster_ghost_extensions (area=96000)
-[OVERLAP] cluster_ghost_src & cluster_ghost_other (area=64000)
-
-=== [CLUSTER] ===
-id=cluster_ghost_test
-nodes=5
-estimated_w=undefined
-estimated_h=undefined
-actual_w=400
-actual_h=160
-center=(140,40)
-density=0.000078
-[OVERLAP] cluster_ghost_test & cluster_ghost_extensions (area=64000)
-[OVERLAP] cluster_ghost_test & cluster_ghost_other (area=64000)
-
-=== [CLUSTER] ===
-id=cluster_ghost_extensions
-nodes=9
-estimated_w=undefined
-estimated_h=undefined
-actual_w=400
-actual_h=240
-center=(140,80)
-density=0.000094
-[OVERLAP] cluster_ghost_extensions & cluster_ghost_other (area=64000)
+[OVERLAP] cluster_ghost_assets & cluster_ghost_other (area=41600)
 
 === [CLUSTER] ===
 id=cluster_ghost_other
-nodes=6
+nodes=3
 estimated_w=undefined
 estimated_h=undefined
-actual_w=400
+actual_w=260
 actual_h=160
-center=(140,40)
-density=0.000094
+center=(70,40)
+density=0.000072
 
 === [LAYOUT] ===
-[LAYOUT] cluster_count=30
-[LAYOUT] overlap_pairs=203
-[LAYOUT] world_bounds=min(0, 0) max(2940, 1600)
-[LAYOUT] world_width=2940
-[LAYOUT] world_height=1600
+[LAYOUT] cluster_count=49
+[LAYOUT] overlap_pairs=588
+[LAYOUT] world_bounds=min(0, 0) max(3080, 1680)
+[LAYOUT] world_width=3080
+[LAYOUT] world_height=1680
 ================
 
 === [RENDER DIAGNOSTIC] NODE DUMP ===
@@ -1101,13 +1631,15 @@ NODE README.ko.md | cluster=doc_shelf | comm=none | role=none
 NODE README.md | cluster=doc_shelf | comm=none | role=none
 
 === [RENDER DIAGNOSTIC] CLUSTER DUMP ===
-CLUSTER id=cluster_ghosts type=system nodes=19 (computed count=19)
-CLUSTER id=doc_shelf type=system nodes=458 (computed count=458)
-CLUSTER id=folder_root type=folder nodes=4 (computed count=4)
+CLUSTER id=cluster_ghosts type=system nodes=18 (computed count=18)
+CLUSTER id=doc_shelf type=system nodes=489 (computed count=489)
+CLUSTER id=folder_root type=folder nodes=7 (computed count=7)
 CLUSTER id=folder_data type=folder nodes=1 (computed count=1)
 CLUSTER id=folder_demo_data type=folder nodes=8 (computed count=8)
+CLUSTER id=folder_extensions_copilot_src_extension type=folder nodes=9 (computed count=9)
+CLUSTER id=folder_home_dogsinatas_TypeScript_project_antigravity_extension_vis_src_core type=folder nodes=1 (computed count=1)
 CLUSTER id=folder_scratch type=folder nodes=5 (computed count=5)
-CLUSTER id=folder_scripts type=folder nodes=1 (computed count=1)
+CLUSTER id=folder_scripts type=folder nodes=3 (computed count=3)
 CLUSTER id=folder_src type=folder nodes=13 (computed count=13)
 CLUSTER id=folder_src_cli type=folder nodes=11 (computed count=11)
 CLUSTER id=folder_src_core type=folder nodes=65 (computed count=65)
@@ -1117,18 +1649,35 @@ CLUSTER id=folder_src_core_analysis_intent type=folder nodes=12 (computed count=
 CLUSTER id=folder_src_core_analysis_reasoning type=folder nodes=6 (computed count=6)
 CLUSTER id=folder_src_core_canvas_engine type=folder nodes=10 (computed count=10)
 CLUSTER id=folder_src_core_collaboration type=folder nodes=17 (computed count=17)
-CLUSTER id=folder_src_core_transaction type=folder nodes=3 (computed count=3)
+CLUSTER id=folder_src_core_ir type=folder nodes=4 (computed count=4)
+CLUSTER id=folder_src_core_ir_evaluators type=folder nodes=3 (computed count=3)
+CLUSTER id=folder_src_core_ir_generators type=folder nodes=3 (computed count=3)
+CLUSTER id=folder_src_core_reasoning_analysis type=folder nodes=8 (computed count=8)
+CLUSTER id=folder_src_core_reasoning type=folder nodes=6 (computed count=6)
+CLUSTER id=folder_src_core_reasoning_answers_aggregators type=folder nodes=8 (computed count=8)
+CLUSTER id=folder_src_core_reasoning_rules type=folder nodes=10 (computed count=10)
+CLUSTER id=folder_src_core_reasoning_rules_roles type=folder nodes=5 (computed count=5)
+CLUSTER id=folder_src_core_transaction type=folder nodes=4 (computed count=4)
 CLUSTER id=folder_src_core_validation type=folder nodes=3 (computed count=3)
 CLUSTER id=folder_src_server type=folder nodes=4 (computed count=4)
 CLUSTER id=folder_src_utils type=folder nodes=7 (computed count=7)
+CLUSTER id=folder_src_vs_editor_browser_widget_multiDiffEditor type=folder nodes=5 (computed count=5)
+CLUSTER id=folder_src_vs type=folder nodes=8 (computed count=8)
+CLUSTER id=folder_src_vs_workbench type=folder nodes=7 (computed count=7)
+CLUSTER id=folder_src_vs_workbench_contrib_chat_browser type=folder nodes=13 (computed count=13)
+CLUSTER id=folder_src_vs_workbench_contrib type=folder nodes=18 (computed count=18)
+CLUSTER id=folder_src_vs_workbench_contrib_terminal_browser_widgets type=folder nodes=6 (computed count=6)
+CLUSTER id=folder_src_vs_workbench_contrib_terminalContrib type=folder nodes=9 (computed count=9)
+CLUSTER id=folder_src_vs_workbench_services type=folder nodes=7 (computed count=7)
+CLUSTER id=folder_src_vs_workbench_services_keybinding_browser_keyboardLayouts type=folder nodes=9 (computed count=9)
+CLUSTER id=folder_src_vs_workbench_services_textMate_browser_backgroundTokenization type=folder nodes=3 (computed count=3)
+CLUSTER id=folder_test type=folder nodes=17 (computed count=17)
 CLUSTER id=folder_test_core_analysis_intent type=folder nodes=3 (computed count=3)
-CLUSTER id=folder_test type=folder nodes=0 (computed count=0)
 CLUSTER id=folder_test_data type=folder nodes=3 (computed count=3)
-CLUSTER id=folder_tools type=folder nodes=3 (computed count=3)
+CLUSTER id=folder_test_mcp_src type=folder nodes=3 (computed count=3)
+CLUSTER id=folder_tools type=folder nodes=5 (computed count=5)
 CLUSTER id=folder_ui type=folder nodes=7 (computed count=7)
+CLUSTER id=folder_vscode__file_home_dogsinatas______vscode_vscode_main type=folder nodes=9 (computed count=9)
 CLUSTER id=cluster_ghost_assets type=system nodes=21 (computed count=21)
-CLUSTER id=cluster_ghost_src type=system nodes=85 (computed count=85)
-CLUSTER id=cluster_ghost_test type=system nodes=5 (computed count=5)
-CLUSTER id=cluster_ghost_extensions type=system nodes=9 (computed count=9)
-CLUSTER id=cluster_ghost_other type=system nodes=6 (computed count=6)
+CLUSTER id=cluster_ghost_other type=system nodes=3 (computed count=3)
 =========================================

@@ -340,6 +340,8 @@ export class ValidationReportBuilder {
             files: fingerprint.filesCount,
             totalBoundaryEdges: fingerprint.boundaryEdges
         });
+        
+        console.log('[REPORT_REASONING]', !!(ctx as any).answerBundle);
 
         const mdContent = this.buildMarkdown(report, evId, ctx.workspaceRoot || '');
         const root = ctx.workspaceRoot || process.cwd();
@@ -687,17 +689,45 @@ export class ValidationReportBuilder {
         const boundaryPercentage = totalSubjectEdges > 0 ? ((fp.boundaryEdges / totalSubjectEdges) * 100).toFixed(1) + '%' : 'N/A';
         
         let rawMetricsSection = [
-            '## 5. Raw Metrics',
-            `### 5.1 Global Metrics`,
+            '## 6. Raw Metrics',
+            `### 6.1 Global Metrics`,
             `- **Boundary Ratio**: ${boundaryPercentage}`,
             '',
-            '### 5.2 Source Breakdown (ASR 3.0)',
+            '### 6.2 Source Breakdown (ASR 3.0)',
             '#### Ghost Source Top N',
             ghostBreakdownText,
             '',
             '#### Coupling Source Top N',
             couplingBreakdownText
         ].join('\n');
+
+        let architecturalReasoningSection = ['## 7. Architectural Reasoning'];
+        const answerBundle = (report.snapshot?.metadata as any)?.answerBundle || (report as any).answerBundle;
+        if (answerBundle) {
+            if (answerBundle.extensionPoints && answerBundle.extensionPoints.length > 0) {
+                architecturalReasoningSection.push('### Q4 Extension Points');
+                // The answer engine returns answers. We want to extract findings from the answers.
+                // Q4ExtensionAggregator returns Answer objects with findings
+                for (const answer of answerBundle.extensionPoints) {
+                    if (answer.findings && answer.findings.length > 0) {
+                        for (const finding of answer.findings) {
+                            architecturalReasoningSection.push(`- **${this.cleanDomainName(finding.nodeId)}** (Confidence: ${finding.confidence.toFixed(2)})`);
+                            if (finding.metadata?.reasons && finding.metadata.reasons.length > 0) {
+                                for (const reason of finding.metadata.reasons) {
+                                    architecturalReasoningSection.push(`  - ${reason}`);
+                                }
+                            }
+                        }
+                    } else {
+                        architecturalReasoningSection.push('*No significant extension points found.*');
+                    }
+                }
+            } else {
+                architecturalReasoningSection.push('### Q4 Extension Points\n*No extension points answered.*');
+            }
+        } else {
+            architecturalReasoningSection.push('*Reasoning Pipeline was not executed or results unavailable.*');
+        }
 
         return [
             `# 🔬 SYNAPSE Architecture Scan Report (${evId})`,
@@ -723,6 +753,8 @@ export class ValidationReportBuilder {
             assemblyAuditSection.join('\n'),
             '',
             docEvidenceSection.join('\n'),
+            '',
+            architecturalReasoningSection.join('\n'),
             '',
             rawMetricsSection
         ].join('\n');

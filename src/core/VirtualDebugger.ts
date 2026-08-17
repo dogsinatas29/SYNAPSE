@@ -531,6 +531,18 @@ export class VirtualDebugger {
 
                 const context = ValidationEngine.analyzeState(snapshot, 1, workspaceRoot, intentEdges);
                 console.log("[ASR] validation exit 0");
+
+                try {
+                    const { ReasoningPipelineRunner } = require('./reasoning/ReasoningPipelineRunner');
+                    const answerBundle = ReasoningPipelineRunner.run(snapshot, context);
+                    (context as any).answerBundle = answerBundle;
+                    console.log("[REASONING] bundle attached");
+                    console.log("[REASONING]", answerBundle?.extensionPoints?.length);
+                    console.log("[REASONING_CONTEXT]", !!(context as any).answerBundle);
+                } catch (reasoningErr: any) {
+                    console.log("[ASR] reasoning pipeline failed", reasoningErr.message);
+                    console.error("[REASONING] failed", reasoningErr);
+                }
                 
                 console.log(
                   '[ASR_CTX]',

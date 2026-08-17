@@ -17,11 +17,9 @@ export class ExtensionRule implements IRule {
         for (const ev of extensionEvidence) {
             const meta = ev.metadata;
 
-            // Strict Gate:
-            // 1. Must have 2+ implementations
-            // 2. Must either have a Registry OR be injected centrally (not just a ubiquitous dependency like Logger)
-            const isCentralInjection = meta.injectedIntoCount > 0 && meta.injectedIntoCount <= 5;
-            const qualifies = meta.implementationCount >= 2 && (meta.hasRegistry || isCentralInjection);
+            // The new ExtensionPointEvidenceEvaluator already handles structural validation
+            // and computes the confidence score based on density and clusters.
+            const qualifies = meta.confidence >= 0.8;
 
             if (qualifies) {
                 findings.push({

@@ -4,7 +4,9 @@ import {
     EvidenceCategory, 
     IStructuralEvidence, 
     IDependencyEvidence,
-    IReachabilityEvidence
+    IReachabilityEvidence,
+    IDataFlowSegmentEvidence,
+    IControlFlowSegmentEvidence
 } from './Evidence';
 
 /**
@@ -31,8 +33,9 @@ export class EvidenceExtractor {
 
 
     private extractStructuralEvidence(graph: GraphModel, snapshot: ReasoningSnapshot): void {
-        const nodes = graph.getNodes();
-        const edges = graph.getEdges();
+        const snapshotData = graph.createSnapshot();
+        const nodes = snapshotData.nodes;
+        const edges = snapshotData.edges;
 
         for (const node of nodes) {
             // Count purely structural connections
@@ -54,8 +57,9 @@ export class EvidenceExtractor {
     }
 
     private extractDependencyAndReachability(graph: GraphModel, snapshot: ReasoningSnapshot): void {
-        const nodes = graph.getNodes();
-        const edges = graph.getEdges();
+        const snapshotData = graph.createSnapshot();
+        const nodes = snapshotData.nodes;
+        const edges = snapshotData.edges;
 
         for (const node of nodes) {
             const incoming = edges.filter(e => e.target === node.id);
@@ -89,7 +93,8 @@ export class EvidenceExtractor {
     }
 
     private extractFlowSegments(graph: GraphModel, snapshot: ReasoningSnapshot): void {
-        const edges = graph.getEdges();
+        const snapshotData = graph.createSnapshot();
+        const edges = snapshotData.edges;
 
         for (const edge of edges) {
             if (edge.type === 'return' || edge.type === 'inject') {

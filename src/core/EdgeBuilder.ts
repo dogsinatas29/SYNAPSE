@@ -23,7 +23,10 @@ export class EdgeBuilder {
                 weight: 1,
                 status: 'confirmed',
                 is_approved: true,
-                data: {},
+                data: {
+                    originalTarget: ref.originalTarget,
+                    resolvedTarget: ref.targetId
+                },
                 intelligence: {},
                 visual: { color: '#888', thickness: 1 },
                 provenance: ref.provenance ?? 'UNKNOWN_RUNTIME'

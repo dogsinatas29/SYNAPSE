@@ -7,34 +7,32 @@ export class Q4ExtensionAggregator implements IAnswerAggregator {
     public readonly questionId = 'Q4';
 
     public aggregate(snapshot: ReasoningSnapshot, findings: Finding[]): IAnswer | null {
-        const extFindings = findings.filter(f => f.type === 'EXTENSION_POINT');
-        if (extFindings.length === 0) return null;
+        const extEvidence = snapshot.getEvidenceByCategory<IExtensionEvidence>(EvidenceCategory.EXTENSION);
+        console.log('[Q4]', extEvidence.length);
+        if (extEvidence.length === 0) return null;
 
         const items: IAnswerItem[] = [];
 
-        for (const f of extFindings) {
-            // Find the backing evidence to extract the rich data
-            const ev = snapshot.getAllEvidence().find(
-                e => e.id === f.evidenceIds[0] && e.category === EvidenceCategory.EXTENSION
-            ) as IExtensionEvidence | undefined;
-
-            if (!ev) continue;
-
+        for (const ev of extEvidence) {
             const meta = ev.metadata;
             let explanation = `- ${meta.implementationCount} implementations\n`;
             
-            if (meta.hasRegistry) {
-                explanation += `- Registered in ${meta.registryIds.join(', ')}\n`;
-            }
-            if (meta.injectedIntoCount > 0) {
-                explanation += `- Consumed by ${meta.consumerIds.join(', ')}`;
+            if ((meta as any).reasons && (meta as any).reasons.length > 0) {
+                explanation += (meta as any).reasons.map((r: string) => `- ${r}`).join('\n');
+            } else {
+                if (meta.hasRegistry) {
+                    explanation += `- Registered in ${meta.registryIds?.join(', ')}\n`;
+                }
+                if (meta.injectedIntoCount > 0) {
+                    explanation += `- Consumed by ${meta.consumerIds?.join(', ')}`;
+                }
             }
 
             items.push({
-                targetId: f.targetIds[0],
+                targetId: ev.nodeId,
                 score: meta.confidence, // Strong signals bubble up
                 explanation: explanation.trim(),
-                supportingFindings: [f.id],
+                supportingFindings: [],
                 supportingEvidence: [ev.id]
             });
         }

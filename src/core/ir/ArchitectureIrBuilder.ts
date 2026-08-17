@@ -1,16 +1,19 @@
-import { GraphModel, Edge } from '../GraphModel';
-import { ICandidateGenerator, IEvidenceEvaluator } from './models/GeneratorInterfaces';
+import { GraphModel, Edge, Node } from '../GraphModel';
+import { ICandidateGenerator, IEvidenceEvaluator, INodeFactCandidateGenerator, INodeFactEvidenceEvaluator } from './models/GeneratorInterfaces';
 import { PayloadCandidateGenerator } from './generators/PayloadCandidateGenerator';
 import { PayloadEvidenceEvaluator } from './evaluators/PayloadEvidenceEvaluator';
 import { StateOwnerCandidateGenerator } from './generators/StateOwnerCandidateGenerator';
 import { StateOwnerEvidenceEvaluator } from './evaluators/StateOwnerEvidenceEvaluator';
 import { BoundaryCandidateGenerator } from './generators/BoundaryCandidateGenerator';
 import { BoundaryEvidenceEvaluator } from './evaluators/BoundaryEvidenceEvaluator';
+import { ExtensionPointCandidateGenerator } from './generators/ExtensionPointCandidateGenerator';
+import { ExtensionPointEvidenceEvaluator } from './evaluators/ExtensionPointEvidenceEvaluator';
 import { PromotionEngine } from './promoters/PromotionEngine';
-import { RejectedCandidateReport, IArchitectureIrAudit } from './models/SemanticTypes';
+import { RejectedCandidateReport, IArchitectureIrAudit, RejectedNodeFactReport } from './models/SemanticTypes';
 
 export class ArchitectureIrBuilder {
     private pipelines: { generator: ICandidateGenerator, evaluator: IEvidenceEvaluator }[];
+    private factPipelines: { generator: INodeFactCandidateGenerator, evaluator: INodeFactEvidenceEvaluator }[];
     private promotionEngine: PromotionEngine;
 
     constructor() {
@@ -19,11 +22,14 @@ export class ArchitectureIrBuilder {
             { generator: new StateOwnerCandidateGenerator(), evaluator: new StateOwnerEvidenceEvaluator() },
             { generator: new BoundaryCandidateGenerator(), evaluator: new BoundaryEvidenceEvaluator() }
         ];
+        this.factPipelines = [
+            { generator: new ExtensionPointCandidateGenerator(), evaluator: new ExtensionPointEvidenceEvaluator() }
+        ];
         this.promotionEngine = new PromotionEngine();
     }
 
-    public build(rawGraph: GraphModel, languageFamily: string = 'ts'): { 
-        enrichedGraph: GraphModel, 
+    public build(rawGraph: GraphModel, languageFamily: string = 'ts'): {
+        enrichedGraph: GraphModel,
         rejectedReports: RejectedCandidateReport[],
         audit: IArchitectureIrAudit
     } {
@@ -38,48 +44,206 @@ export class ArchitectureIrBuilder {
             rejectedByCategory: {}
         };
 
+        console.log('[IR_DEBUG] build start', {
+            rawGraphType: rawGraph?.constructor?.name
+        });
+
+        // GraphModel을 평가기들이 요구하는 GraphSnapshot 형태로 안전하게 변환하여 전달
+        const graphTarget = typeof (rawGraph as any).createSnapshot === 'function'
+            ? rawGraph.createSnapshot()
+            : rawGraph;
+
         for (const pipeline of this.pipelines) {
-            // 1. Generate Candidates
-            const { candidates, notCandidates } = pipeline.generator.generate(rawGraph);
-            console.log(`[DEBUG] ${pipeline.generator.generatorName} generated ${candidates.length} candidates.`);
-            
+            console.log('[IR_DEBUG] pipeline start', {
+                generator: pipeline.generator.constructor.name,
+                evaluator: pipeline.evaluator.constructor.name
+            });
+
+            // 1. Generate Candidates (타입 충돌 방지를 위해 as any 캐스팅 적용)
+            const { candidates, notCandidates } = pipeline.generator.generate(rawGraph as any);
+
+            console.log('[IR_DEBUG] candidates generated', {
+                generator: pipeline.generator.constructor.name,
+                count: candidates.length
+            });
+
             audit.candidateCount += candidates.length;
             audit.notCandidateReports.push(...notCandidates);
 
             for (const candidate of candidates) {
-                // 2. Evaluate Candidates
-                const evaluation = pipeline.evaluator.evaluate(candidate, rawGraph);
+                try {
+                    const evaluation = pipeline.evaluator.evaluate(candidate, rawGraph as any);
 
-                // 3. Promote or Reject
-                const { edge, report } = this.promotionEngine.promote(candidate, evaluation, languageFamily);
+                    const { edge, report } =
+                        this.promotionEngine.promote(
+                            candidate,
+                            evaluation,
+                            languageFamily
+                        );
 
-                if (edge) {
-                    audit.promotedCount++;
-                    audit.promotedByType[edge.type] = (audit.promotedByType[edge.type] || 0) + 1;
+                    if (edge) {
+                        audit.promotedCount++;
 
-                    const newGraphEdge: Edge = {
-                        id: edge.id,
-                        from: edge.sourceId,
-                        to: edge.targetId,
-                        type: edge.type,
-                        semanticType: edge.type as any,
-                        confidence: edge.confidence,
-                        data: {
-                            promotionReasons: edge.promotionReasons
+                        audit.promotedByType[edge.type] =
+                            (audit.promotedByType[edge.type] || 0) + 1;
+
+                        const newGraphEdge: Edge = {
+                            id: edge.id,
+                            from: edge.sourceId,
+                            to: edge.targetId,
+                            type: edge.type,
+                            semanticType: edge.type as any,
+                            confidence: edge.confidence,
+                            data: {
+                                promotionReasons: edge.promotionReasons
+                            }
+                        };
+
+                        rawGraph.addEdge(newGraphEdge);
+                    } else if (report) {
+                        audit.rejectedCount++;
+
+                        audit.rejectedByType[report.proposedEdgeType] =
+                            (audit.rejectedByType[report.proposedEdgeType] || 0) + 1;
+
+                        if (report.rejectCategory) {
+                            audit.rejectedByCategory[report.rejectCategory] =
+                                (audit.rejectedByCategory[report.rejectCategory] || 0) + 1;
                         }
-                    };
-                    
-                    (rawGraph as any).edges.push(newGraphEdge);
-                } else if (report) {
-                    audit.rejectedCount++;
-                    audit.rejectedByType[report.proposedEdgeType] = (audit.rejectedByType[report.proposedEdgeType] || 0) + 1;
-                    if (report.rejectCategory) {
-                        audit.rejectedByCategory[report.rejectCategory] = (audit.rejectedByCategory[report.rejectCategory] || 0) + 1;
+
+                        rejectedReports.push(report);
                     }
-                    rejectedReports.push(report);
+                } catch (err) {
+                    console.error('[IR_DEBUG] evaluator failed', {
+                        generator: pipeline.generator.constructor.name,
+                        evaluator: pipeline.evaluator.constructor.name,
+                        candidate
+                    });
+
+                    console.error(err);
+
+                    throw err;
                 }
             }
         }
+
+        const rejectedFactReports: RejectedNodeFactReport[] = [];
+
+        for (const pipeline of this.factPipelines) {
+            console.log('[IR_DEBUG] fact pipeline start', {
+                generator: pipeline.generator.constructor.name,
+                evaluator: pipeline.evaluator.constructor.name
+            });
+
+            const { candidates, notCandidates } =
+                pipeline.generator.generate(rawGraph as any);
+
+            console.log('[IR_DEBUG] fact candidates generated', {
+                generator: pipeline.generator.constructor.name,
+                count: candidates.length
+            });
+
+            audit.candidateCount += candidates.length;
+            audit.notCandidateReports.push(...notCandidates);
+
+            for (const candidate of candidates) {
+                try {
+                    const evaluation =
+                        pipeline.evaluator.evaluate(candidate, rawGraph as any);
+
+                    console.log('[FACT_INPUT]', {
+                        languageFamily,
+                        candidateType: (candidate as any).type || (candidate as any).factType,
+                        confidence: (evaluation as any).confidence || (evaluation as any).finalConfidence,
+                        nodeId: candidate.nodeId
+                    });
+
+                    const { fact, report } =
+                        this.promotionEngine.promoteFact(
+                            candidate,
+                            evaluation,
+                            languageFamily
+                        );
+
+                    console.log('[FACT_RESULT]', {
+                        fact: !!fact,
+                        report: !!report,
+                        nodeId: candidate.nodeId,
+                        reason: report ? report.rejectReason : null
+                    });
+
+                    // Lookup log
+                    const node = (rawGraph as any)['nodes']?.get(candidate.nodeId);
+                    console.log('[NODE_LOOKUP]', {
+                        nodeId: candidate.nodeId,
+                        found: !!node,
+                        isSymbol: candidate.nodeId && !candidate.nodeId.includes('/')
+                    });
+
+                    if (fact) {
+                        console.log('[FACT_PROMOTED]', {
+                            nodeId: fact.nodeId,
+                            factType: fact.factType,
+                            confidence: fact.confidence
+                        });
+                        audit.promotedCount++;
+
+                        audit.promotedByType[fact.factType] =
+                            (audit.promotedByType[fact.factType] || 0) + 1;
+
+                        const node = (rawGraph as any)['nodes']?.get(fact.nodeId);
+
+                        if (node) {
+                            if (!node.data) {
+                                node.data = {};
+                            }
+
+                            if (!node.data.semanticFacts) {
+                                node.data.semanticFacts = [];
+                            }
+
+                            node.data.semanticFacts.push({
+                                type: fact.factType,
+                                confidence: fact.confidence,
+                                promotionReasons: fact.promotionReasons
+                            });
+                        } else {
+                            console.warn('[IR_DEBUG] fact target node not found', {
+                                nodeId: fact.nodeId
+                            });
+                        }
+                    } else if (report) {
+                        audit.rejectedCount++;
+
+                        audit.rejectedByType[report.proposedFactType] =
+                            (audit.rejectedByType[report.proposedFactType] || 0) + 1;
+
+                        if (report.rejectCategory) {
+                            audit.rejectedByCategory[report.rejectCategory] =
+                                (audit.rejectedByCategory[report.rejectCategory] || 0) + 1;
+                        }
+
+                        rejectedFactReports.push(report);
+                    }
+                } catch (err) {
+                    console.error('[IR_DEBUG] fact evaluator failed', {
+                        generator: pipeline.generator.constructor.name,
+                        evaluator: pipeline.evaluator.constructor.name,
+                        candidate
+                    });
+
+                    console.error(err);
+
+                    throw err;
+                }
+            }
+        }
+
+        console.log('[IR_DEBUG] build completed', {
+            candidateCount: audit.candidateCount,
+            promotedCount: audit.promotedCount,
+            rejectedCount: audit.rejectedCount
+        });
 
         return {
             enrichedGraph: rawGraph,

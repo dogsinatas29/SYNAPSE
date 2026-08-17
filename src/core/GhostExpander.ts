@@ -8,6 +8,7 @@ export interface ExpandedReference {
     targetId: string;
     referenceType: string;
     isGhost: boolean;
+    originalTarget?: string;
     provenance?: any;
 }
 
@@ -97,6 +98,7 @@ export class GhostExpander {
                 targetId: ref.targetId,
                 referenceType: ref.referenceType,
                 isGhost: isUnresolved,
+                originalTarget: ref.originalTarget,
                 provenance: ref.provenance
             });
 

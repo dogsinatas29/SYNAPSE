@@ -18,11 +18,43 @@ export interface ISemanticEvidence {
     description: string;
 }
 
+export interface IPromotionReason {
+    evidenceId: string;
+    kind: string;
+    score: number;
+    explanation: string;
+}
+
+export type SemanticNodeFactType =
+    | 'IS_EXTENSION_POINT'
+    | 'STATE_OWNER'
+    | 'CORE';
+
+export interface ISemanticNodeFact {
+    nodeId: string;
+    factType: SemanticNodeFactType;
+    confidence: number;
+    evidence: ISemanticEvidence[];
+    promotionReasons: IPromotionReason[];
+}
+
+export interface INotCandidateReport {
+    nodeId: string;
+    reason: string;
+}
+
 export interface ISemanticCandidate {
     id: string;
     sourceId: string;
     targetId: string;
     proposedEdgeType: SemanticEdgeType;
+    baseConfidence: number;
+}
+
+export interface INodeFactCandidate {
+    id: string;
+    nodeId: string;
+    proposedFactType: SemanticNodeFactType;
     baseConfidence: number;
 }
 
@@ -32,13 +64,6 @@ export interface ICandidateEvaluation {
     structuralEvidenceCount: number;
     languageEvidenceCount: number;
     finalConfidence: number;
-}
-
-export interface IPromotionReason {
-    evidenceId: string;
-    kind: string;
-    score: number;
-    explanation: string;
 }
 
 export interface ISemanticEdge {
@@ -55,6 +80,18 @@ export interface RejectedCandidateReport {
     sourceId: string;
     targetId: string;
     proposedEdgeType: SemanticEdgeType;
+    finalScore: number;
+    threshold: number;
+    positiveEvidence: ISemanticEvidence[];
+    negativeEvidence: ISemanticEvidence[];
+    rejectReason: string;
+    rejectCategory?: 'LOW_CONFIDENCE' | 'NO_STRUCTURAL_EVIDENCE' | 'NEGATIVE_EVIDENCE';
+}
+
+export interface RejectedNodeFactReport {
+    candidateId: string;
+    nodeId: string;
+    proposedFactType: SemanticNodeFactType;
     finalScore: number;
     threshold: number;
     positiveEvidence: ISemanticEvidence[];

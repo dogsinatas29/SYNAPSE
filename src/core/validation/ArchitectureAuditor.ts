@@ -95,80 +95,49 @@ export class ArchitectureAuditor {
             return ArchitecturalRole.ASSEMBLY_POINT;
         }
 
-        const normalizedPath = filePath.toLowerCase().replace(/\\/g, '/');
+        const normalizedPath = filePath.replace(/\\/g, '/');
 
-        if (normalizedPath.includes('/test/') || 
-            normalizedPath.includes('test/') || 
-            normalizedPath.includes('/mock/') || 
-            normalizedPath.includes('mock/') || 
-            normalizedPath.includes('/fixtures/') || 
-            normalizedPath.includes('fixtures/') || 
-            normalizedPath.includes('simulation') || 
-            normalizedPath.includes('test-resolver') || 
-            normalizedPath.includes('test-harness') || 
-            normalizedPath.includes('.test.') || 
-            normalizedPath.includes('.spec.')) {
+        const matches = (keywords: string[]) => {
+            return keywords.some(keyword => {
+                // If the keyword contains a slash or dot, use plain includes
+                if (keyword.includes('/') || keyword.includes('.')) {
+                    return normalizedPath.toLowerCase().includes(keyword.toLowerCase());
+                }
+                // Otherwise use word boundaries to avoid partial matches like 'ui' in 'builder'
+                const regex = new RegExp(`(^|/|_|-)${keyword}($|/|_|-)`, 'i');
+                return regex.test(normalizedPath);
+            });
+        };
+
+        if (matches(['/test/', 'test/', '/mock/', 'mock/', '/fixtures/', 'fixtures/', 'simulation', 'test-resolver', 'test-harness', '.test.', '.spec.'])) {
             return ArchitecturalRole.TEST_ARTIFACT;
         }
 
-        if (normalizedPath.includes('protocol') || 
-            normalizedPath.includes('types') || 
-            normalizedPath.includes('contracts') || 
-            normalizedPath.includes('interfaces') || 
-            normalizedPath.includes('schema') || 
-            normalizedPath.includes('dto') || 
-            normalizedPath.includes('messages') || 
-            normalizedPath.includes('ipc') || 
-            normalizedPath.includes('events')) {
+        if (matches(['protocol', 'types', 'contracts', 'interfaces', 'schema', 'dto', 'messages', 'ipc', 'events'])) {
             return ArchitecturalRole.CONTRACT_HUB;
         }
 
-        if (normalizedPath.includes('browser') || 
-            normalizedPath.includes('widget') || 
-            normalizedPath.includes('view') || 
-            normalizedPath.includes('ui') ||
-            normalizedPath.includes('components')) {
+        if (matches(['browser', 'widget', 'view', 'ui', 'components'])) {
             return ArchitecturalRole.UI_COMPONENT;
         }
 
-        if (normalizedPath.includes('editor') || 
-            normalizedPath.includes('workbench') || 
-            normalizedPath.includes('platform') || 
-            normalizedPath.includes('common') ||
-            normalizedPath.includes('core')) {
+        if (matches(['editor', 'workbench', 'platform', 'common', 'core'])) {
             return ArchitecturalRole.DOMAIN_SERVICE;
         }
 
-        if (normalizedPath.includes('orchestrator') ||
-            normalizedPath.includes('coordinator') ||
-            normalizedPath.includes('intent') ||
-            normalizedPath.includes('manager') ||
-            normalizedPath.includes('engine') ||
-            normalizedPath.includes('provider') ||
-            normalizedPath.includes('registry')) {
+        if (matches(['orchestrator', 'coordinator', 'intent', 'manager', 'engine', 'provider', 'registry'])) {
             return ArchitecturalRole.COORDINATOR;
         }
 
-        if (normalizedPath.includes('/ui/') || 
-            normalizedPath.includes('/browser/') || 
-            normalizedPath.includes('/components/') || 
-            normalizedPath.includes('/views/') || 
-            normalizedPath.includes('part.ts') || 
-            normalizedPath.includes('view.ts')) {
+        if (matches(['/ui/', '/browser/', '/components/', '/views/', 'part.ts', 'view.ts'])) {
             return ArchitecturalRole.UI_COMPONENT;
         }
 
-        if (normalizedPath.includes('/service') || 
-            normalizedPath.includes('/handler') || 
-            normalizedPath.includes('/controller') || 
-            normalizedPath.includes('/domain')) {
+        if (matches(['/service', '/handler', '/controller', '/domain'])) {
             return ArchitecturalRole.DOMAIN_SERVICE;
         }
 
-        if (normalizedPath.includes('/infra') || 
-            normalizedPath.includes('/database') || 
-            normalizedPath.includes('/api/') || 
-            normalizedPath.includes('client.ts')) {
+        if (matches(['/infra', '/database', '/api/', 'client.ts'])) {
             return ArchitecturalRole.INFRASTRUCTURE;
         }
 

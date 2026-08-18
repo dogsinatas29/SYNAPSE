@@ -14,22 +14,26 @@ export class ExtensionPointCandidateGenerator implements INodeFactCandidateGener
         
         const snapshot = graph.createSnapshot();
         
-        const targetImplementorCount = new Map<string, number>();
+        const targetImplementorCount = new Map<string, { count: number, fileId: string }>();
         
         for (const edge of snapshot.edges) {
             if (edge.type === 'IMPLEMENTS' || edge.type === 'EXTENDS') {
                 const targetSymbol = edge.data?.originalTarget || edge.to || edge.targetId;
                 if (targetSymbol) {
-                    targetImplementorCount.set(targetSymbol, (targetImplementorCount.get(targetSymbol) || 0) + 1);
+                    const prev = targetImplementorCount.get(targetSymbol);
+                    targetImplementorCount.set(targetSymbol, {
+                        count: (prev?.count || 0) + 1,
+                        fileId: edge.to // edge.to is the target file
+                    });
                 }
             }
         }
         
-        for (const [targetSymbol, count] of targetImplementorCount.entries()) {
-            if (count >= 2) {
+        for (const [targetSymbol, data] of targetImplementorCount.entries()) {
+            if (data.count >= 2) {
                 candidates.push({
                     id: `cand_extension_point_${targetSymbol}`,
-                    nodeId: targetSymbol,
+                    nodeId: data.fileId, // Use fileId instead of targetSymbol for node lookup
                     proposedFactType: 'IS_EXTENSION_POINT',
                     baseConfidence: 0.5
                 });
@@ -37,7 +41,7 @@ export class ExtensionPointCandidateGenerator implements INodeFactCandidateGener
                 notCandidates.push({
                     subjectId: targetSymbol,
                     generatorName: this.generatorName,
-                    reason: `Only ${count} implementor(s) detected. Minimum extension density is 2.`
+                    reason: `Only ${data.count} implementor(s) detected. Minimum extension density is 2.`
                 });
             }
         }

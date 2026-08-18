@@ -25,7 +25,34 @@ export class ReasoningPipelineRunner {
         const sampleNodes = Array.from((graph as any).nodes.keys() || []).slice(0, 5);
         console.log('[REASONING] graph sample nodes', sampleNodes);
 
-        irBuilder.build(graph);
+        // Detect languageFamily from node paths (default: 'ts')
+        let languageFamily = 'ts';
+        const exts: Record<string, number> = { ts: 0, js: 0, java: 0, kt: 0, cpp: 0, c: 0, h: 0, py: 0, rs: 0, go: 0 };
+        for (const node of (graph as any).nodes.values() || []) {
+            const file = node.filePath || node.id || '';
+            const m = file.match(/\.([^.]+)$/);
+            if (m && exts[m[1]] !== undefined) exts[m[1]]++;
+        }
+        
+        let maxCount = 0;
+        let maxExt = 'ts';
+        for (const [ext, count] of Object.entries(exts)) {
+            if (count > maxCount) {
+                maxCount = count;
+                maxExt = ext;
+            }
+        }
+        
+        if (['cpp', 'c', 'h'].includes(maxExt)) languageFamily = 'cpp';
+        else if (['java', 'kt'].includes(maxExt)) languageFamily = 'java';
+        else if (['py'].includes(maxExt)) languageFamily = 'python';
+        else if (['rs'].includes(maxExt)) languageFamily = 'rust';
+        else if (['go'].includes(maxExt)) languageFamily = 'go';
+        else languageFamily = 'ts';
+        
+        console.log('[REASONING] detected languageFamily', { maxExt, maxCount, languageFamily });
+
+        irBuilder.build(graph, languageFamily);
 
         // 2. Initialize ReasoningSnapshot
         let snapshot = new ReasoningSnapshot();

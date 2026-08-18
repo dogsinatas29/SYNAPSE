@@ -72,6 +72,15 @@ export class PromotionEngine {
                 rejectCategory
             };
 
+            console.log('[PROMOTION_REJECT]', {
+                type: 'EDGE',
+                candidateId: candidate.id,
+                proposedType: candidate.proposedEdgeType,
+                score: evaluation.finalConfidence,
+                threshold,
+                reason: rejectReason
+            });
+
             return { report };
         }
     }
@@ -146,6 +155,16 @@ export class PromotionEngine {
                 rejectReason,
                 rejectCategory
             };
+
+            console.log('[PROMOTION_REJECT]', {
+                type: 'FACT',
+                candidateId: candidate.id,
+                nodeId: candidate.nodeId,
+                proposedType: candidate.proposedFactType,
+                score: evaluation.finalConfidence,
+                threshold,
+                reason: rejectReason
+            });
 
             return { report };
         }

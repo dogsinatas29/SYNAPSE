@@ -11,6 +11,36 @@ export class FileScanner {
     private static readonly MAX_FULL_SCAN_BYTES = 1024 * 1024; // 1MB
     private static readonly DEFAULT_HEADER_SCAN_BYTES = 128 * 1024; // 128KB
 
+    constructor() {
+        console.log('[FILE_SCANNER_CONSTRUCTOR]');
+        const registry = ScannerRegistry.getInstance();
+        if (!registry.isInitialized()) {
+            const { JsTsScanner } = require('./JsTsScanner');
+            const { PythonScanner } = require('./PythonScanner');
+            const { JavaScanner } = require('./JavaScanner');
+            const { KotlinScanner } = require('./KotlinScanner');
+            const { MarkdownScanner } = require('./MarkdownScanner');
+            const { ShellScanner } = require('./ShellScanner');
+            const { SqlScanner } = require('./SqlScanner');
+            const { ConfigScanner } = require('./ConfigScanner');
+            const { CppScanner } = require('./CppScanner');
+            const { RustScanner } = require('./RustScanner');
+            
+            registry.register(new JsTsScanner());
+            registry.register(new PythonScanner());
+            registry.register(new JavaScanner());
+            registry.register(new KotlinScanner());
+            registry.register(new MarkdownScanner());
+            registry.register(new ShellScanner());
+            registry.register(new SqlScanner());
+            registry.register(new ConfigScanner());
+            registry.register(new CppScanner());
+            registry.register(new RustScanner());
+            
+            registry.markInitialized();
+        }
+    }
+
     /**
      * 파일 내용을 읽고 클래스와 함수 목록을 추출
      * [v0.3.11] Intelligence: Sovereignty signature detection
@@ -162,6 +192,7 @@ export class FileScanner {
     }
 
     private parseJava(content: string, summary: CodeSummary) {
+        console.log('[LEGACY_PARSE_JAVA]', summary.package || 'unknown');
         // Java package
         const pkgMatch = content.match(/^\s*package\s+([a-zA-Z0-9_.]+)\s*;/m);
         if (pkgMatch && pkgMatch[1]) {

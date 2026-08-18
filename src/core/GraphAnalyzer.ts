@@ -57,13 +57,12 @@ export function analyzeGraph(input: AnalysisInput): GraphAnalysis {
     const { nodes, edges, clusterIds, nodeIds } = input;
     const path = require('path');
 
-    // [P0 진단] 후보 파일 존재 여부 확인
-    const candidateNames = nodes
-        .map(n => path.basename(n.filePath || n.id || '').toLowerCase())
-        .filter(name =>
-            /^(main|app|bootstrap|startup|program|compositionroot|server|client|container|dependencyregistrar|services)\./
-                .test(name)
-        );
+        // [P0 진단] 후보 파일 존재 여부 확인
+        const candidateNames = nodes
+            .map(n => path.basename(n.filePath || n.id || '').toLowerCase())
+            .filter(name =>
+                /(main|app|bootstrap|startup|program|compositionroot|server|client|container|dependencyregistrar|services?)/.test(name)
+            );
 
     console.log('[ASSEMBLY_CANDIDATE_DUMP]', candidateNames);
 
@@ -180,10 +179,10 @@ export function analyzeGraph(input: AnalysisInput): GraphAnalysis {
                 // Stage 1: Heuristic Extraction
                 const basename = path.basename(filePath).toLowerCase();
                 const isStrongCandidate = /(main|app|bootstrap|startup|program|compositionroot)\.(ts|js|cs|java|go|rs|c|cpp)$/.test(basename);
-                const isWeakCandidate = /(server|client|container|dependencyregistrar|services)\.(ts|js|cs|java|go|rs|c|cpp|h|hpp)$/.test(basename);
+                const isWeakCandidate = /(server|client|container|dependencyregistrar|services?)\.(ts|js|cs|java|go|rs|c|cpp|h|hpp)$/.test(basename);
                 const isAssemblyCandidate = isStrongCandidate || isWeakCandidate;
                 
-                if (!isAssemblyCandidate && /^(main|app|bootstrap|startup|program|compositionroot|server|client|container|dependencyregistrar|services)\./.test(basename)) {
+                if (!isAssemblyCandidate && /(main|app|bootstrap|startup|program|compositionroot|server|client|container|dependencyregistrar|services?)/.test(basename)) {
                     console.log(`\n[ASSEMBLY_AUDIT]\n\n${node.filePath || node.id}\n\nREJECTED\nReason=REJECT_EXTENSION_MISMATCH\n\nFanIn=${degree.in}\nFanOut=${degree.out}\nBoundaryRatio=${boundaryRatio.toFixed(2)}`);
                 }
                 
@@ -206,8 +205,16 @@ export function analyzeGraph(input: AnalysisInput): GraphAnalysis {
                     const reasons: AssemblyAuditReason[] = [];
                     let accepted = false;
 
-                    const isHighFanOut = nodeFanOut > 50 || pFanOut >= 95;
-                    const isStrictHighFanOut = nodeFanOut > 50 && pFanOut >= 95;
+                    console.log('[ASSEMBLY_CANDIDATE]', {
+                        node: node.label || basename,
+                        fanOut: nodeFanOut,
+                        boundaryRatio,
+                        isStrongCandidate,
+                        isWeakCandidate
+                    });
+
+                    const isHighFanOut = nodeFanOut > 10 || pFanOut >= 90;
+                    const isStrictHighFanOut = nodeFanOut > 20 && pFanOut >= 90;
 
                     if (isStrongCandidate) {
                         if (!isHighFanOut) reasons.push(AssemblyAuditReason.REJECTED_LOW_FANOUT);

@@ -118,6 +118,21 @@ export class ASTVerificationEngine {
         }
 
         try {
+            if (!filePath.match(/\.(ts|tsx|js|jsx)$/i)) {
+                const nonTsResult: ASTVerificationResult = {
+                    filePath,
+                    nodeCount: { interface: 0, type: 0, enum: 0, class: 0, function: 0, variable: 0, statement: 0, total: 0 },
+                    ratios: { interface: 0, type: 0, enum: 0, class: 0, function: 0, variable: 0, statement: 0 },
+                    classification: 'DEGRADED',
+                    classificationReason: ['지원하지 않는 언어 확장자 (AST 분석 건너뜀)'],
+                    multiplier: 1.0,
+                    confidence: 0.0,
+                    degraded: true
+                };
+                cache.set(key, nonTsResult);
+                return nonTsResult;
+            }
+
             const content = fs.readFileSync(absPath, 'utf8');
             const source = ts.createSourceFile(absPath, content, ts.ScriptTarget.Latest, true);
             const counts = countNodes(source);

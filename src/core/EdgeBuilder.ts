@@ -9,6 +9,14 @@ export interface EdgeBuilderResult {
 
 export class EdgeBuilder {
     public static build(expandedReferences: ExpandedReference[]): EdgeBuilderResult {
+        console.log('[EDGE_BUILDER_ENTER]');
+        console.error(
+            '[EDGE_BUILDER_INPUT]',
+            expandedReferences.reduce((acc: any, r) => {
+                acc[r.referenceType] = (acc[r.referenceType] || 0) + 1;
+                return acc;
+            }, {})
+        );
         const edges: Edge[] = [];
         const edgeTypeCount = new Map<string, number>();
 
@@ -32,10 +40,17 @@ export class EdgeBuilder {
                 provenance: ref.provenance ?? 'UNKNOWN_RUNTIME'
             };
             
+            edgeTypeCount.set(
+               mappedType,
+               (edgeTypeCount.get(mappedType) || 0) + 1
+            );
             edges.push(newEdge);
-            edgeTypeCount.set(mappedType, (edgeTypeCount.get(mappedType) || 0) + 1);
         }
 
+        console.error(
+            '[EDGE_BUILDER_OUTPUT]',
+            Object.fromEntries(edgeTypeCount)
+        );
         return { edges, edgeTypeCount };
     }
 

@@ -146,17 +146,21 @@ export class ArchitectureIrBuilder {
             audit.candidateCount += candidates.length;
             audit.notCandidateReports.push(...notCandidates);
 
+            let acceptedCount = 0;
+            let rejectedCount = 0;
+            let promotedCount = 0;
+            let promotionRejectCount = 0;
+
             for (const candidate of candidates) {
                 try {
                     const evaluation =
                         pipeline.evaluator.evaluate(candidate, rawGraph as any);
 
-                    console.log('[FACT_INPUT]', {
-                        languageFamily,
-                        candidateType: (candidate as any).type || (candidate as any).factType,
-                        confidence: (evaluation as any).confidence || (evaluation as any).finalConfidence,
-                        nodeId: candidate.nodeId
-                    });
+                    if (evaluation.evidence && evaluation.evidence.length > 0) {
+                        acceptedCount++;
+                    } else {
+                        rejectedCount++;
+                    }
 
                     const { fact, report } =
                         this.promotionEngine.promoteFact(
@@ -165,12 +169,8 @@ export class ArchitectureIrBuilder {
                             languageFamily
                         );
 
-                    console.log('[FACT_RESULT]', {
-                        fact: !!fact,
-                        report: !!report,
-                        nodeId: candidate.nodeId,
-                        reason: report ? report.rejectReason : null
-                    });
+                    if (fact) promotedCount++;
+                    if (report) promotionRejectCount++;
 
                     // Lookup log
                     const node = (rawGraph as any)['nodes']?.get(candidate.nodeId);
@@ -191,18 +191,17 @@ export class ArchitectureIrBuilder {
                         audit.promotedByType[fact.factType] =
                             (audit.promotedByType[fact.factType] || 0) + 1;
 
-                        const node = (rawGraph as any)['nodes']?.get(fact.nodeId);
-
-                        if (node) {
-                            if (!node.data) {
-                                node.data = {};
+                        const targetNode = (rawGraph as any)['nodes']?.get(fact.nodeId);
+                        if (targetNode) {
+                            if (!targetNode.data) {
+                                targetNode.data = {};
                             }
 
-                            if (!node.data.semanticFacts) {
-                                node.data.semanticFacts = [];
+                            if (!targetNode.data.semanticFacts) {
+                                targetNode.data.semanticFacts = [];
                             }
 
-                            node.data.semanticFacts.push({
+                            targetNode.data.semanticFacts.push({
                                 type: fact.factType,
                                 confidence: fact.confidence,
                                 promotionReasons: fact.promotionReasons
@@ -214,29 +213,29 @@ export class ArchitectureIrBuilder {
                         }
                     } else if (report) {
                         audit.rejectedCount++;
-
                         audit.rejectedByType[report.proposedFactType] =
                             (audit.rejectedByType[report.proposedFactType] || 0) + 1;
-
                         if (report.rejectCategory) {
                             audit.rejectedByCategory[report.rejectCategory] =
                                 (audit.rejectedByCategory[report.rejectCategory] || 0) + 1;
                         }
-
                         rejectedFactReports.push(report);
                     }
                 } catch (err) {
-                    console.error('[IR_DEBUG] fact evaluator failed', {
-                        generator: pipeline.generator.constructor.name,
-                        evaluator: pipeline.evaluator.constructor.name,
-                        candidate
-                    });
-
-                    console.error(err);
-
                     throw err;
                 }
             }
+
+            console.error('[EXTENSION_EVALUATOR]', {
+                input: candidates.length,
+                accepted: acceptedCount,
+                rejected: rejectedCount
+            });
+
+            console.error('[EXTENSION_PROMOTION]', {
+                promoted: promotedCount,
+                rejected: promotionRejectCount
+            });
         }
 
         console.log('[IR_DEBUG] build completed', {

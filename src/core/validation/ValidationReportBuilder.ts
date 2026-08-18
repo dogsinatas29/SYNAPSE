@@ -314,7 +314,7 @@ export class ValidationReportBuilder {
         console.log('[ASR_BUILDER]', BUILD_VERSION, new Date().toISOString());
 
         const fingerprint = extractSubjectFingerprint(ctx.snapshot);
-        const report = { ...ctx.metrics, snapshot: ctx.snapshot, subjectFingerprint: fingerprint, buildVersion: BUILD_VERSION } as any;
+        const report = { ...ctx.metrics, snapshot: ctx.snapshot, subjectFingerprint: fingerprint, buildVersion: BUILD_VERSION, answerBundle: (ctx as any).answerBundle } as any;
         report.assemblyAudit = (ctx.snapshot as any).metadata?.assemblyAudit || [];
 
         // [P0 진단] 결함 1 원인 규명: 데이터 전달 계측

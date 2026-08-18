@@ -274,6 +274,7 @@ export class DataPipeline {
       for (const [mappedType, count] of edgeBuilderResult.edgeTypeCount.entries()) {
         edgeTypeCount.set(mappedType, (edgeTypeCount.get(mappedType) || 0) + count);
       }
+      console.log('[EDGE_TYPE_BREAKDOWN]', Object.fromEntries(edgeTypeCount));
     console.time('[PIPELINE] graphAnalyzer');
     const analysis = analyzeGraph({ nodes, edges, clusterIds, nodeIds });
     console.timeEnd('[PIPELINE] graphAnalyzer');

@@ -5,7 +5,8 @@ export class KotlinScanner implements LanguageScanner {
         return ['.kt', '.kts'].includes(ext);
     }
 
-    parse(content: string, summary: CodeSummary): void {
+    parse(content: string, summary: CodeSummary, filePath?: string): void {
+        console.log('[KOTLIN_SCANNER_ENTER]', filePath || 'unknown');
         // Kotlin package
         const pkgMatch = content.match(/^\s*package\s+([a-zA-Z0-9_.]+)/m);
         if (pkgMatch && pkgMatch[1]) {
@@ -44,6 +45,27 @@ export class KotlinScanner implements LanguageScanner {
             if (name && !summary.functions.includes(name)) {
                 summary.functions.push(name);
             }
+        }
+
+        // Kotlin inheritance (extends/implements using ':')
+        let inheritanceCount = 0;
+        const inheritRegex = /(?:class|interface|object)\s+\w+(?:<[^>]+>)?(?:\([^)]*\))?\s*:\s*([^{]+)/g;
+        while ((match = inheritRegex.exec(content)) !== null) {
+            const interfaces = match[1].split(',').map(s => s.trim());
+            for (let iface of interfaces) {
+                // Remove constructor calls if it's a class
+                iface = iface.split('(')[0].trim();
+                const cleanIface = iface.split('<')[0].trim();
+                if (cleanIface) {
+                    // We don't know if it's extends or implements, so we default to IMPLEMENTS
+                    // since interfaces are more commonly listed
+                    summary.references.push({ target: cleanIface, type: 'IMPLEMENTS', provenance: 'INHERITANCE' as any });
+                    inheritanceCount++;
+                }
+            }
+        }
+        if (inheritanceCount > 0) {
+            console.log('[KOTLIN_INHERITANCE]', { found: inheritanceCount });
         }
     }
 }

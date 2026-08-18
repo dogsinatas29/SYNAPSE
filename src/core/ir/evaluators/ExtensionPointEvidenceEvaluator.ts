@@ -18,7 +18,9 @@ export class ExtensionPointEvidenceEvaluator implements INodeFactEvidenceEvaluat
         // Gather implementors
         const implementorEdges = snapshot.edges.filter(e => {
             const target = e.data?.originalTarget || e.to || (e as any).targetId;
-            return (e.type === 'IMPLEMENTS' || e.type === 'EXTENDS') && target === candidate.nodeId;
+            const matchesId = `cand_extension_point_${target}` === candidate.id;
+            const matchesNodeId = e.to === candidate.nodeId || target === candidate.nodeId;
+            return (e.type === 'IMPLEMENTS' || e.type === 'EXTENDS') && (matchesId || matchesNodeId);
         });
         
         // Tier 1: Extension Density

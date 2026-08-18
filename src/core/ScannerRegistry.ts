@@ -15,9 +15,10 @@ export class ScannerRegistry {
     }
 
     public register(scanner: LanguageScanner): void {
-        const isDuplicate = this.scanners.some(s => s.constructor.name === scanner.constructor.name);
+        const isDuplicate = this.scanners.some(s => s.constructor === scanner.constructor);
         if (isDuplicate) return;
         this.scanners.push(scanner);
+        console.log('[REGISTERED]', scanner.constructor ? scanner.constructor.name : 'unknown', 'Total:', this.scanners.length);
     }
 
     public isInitialized(): boolean {
@@ -34,6 +35,12 @@ export class ScannerRegistry {
 
     public scan(ext: string, content: string, summary: CodeSummary): boolean {
         const scanner = this.getScanner(ext);
+        console.log(
+            '[SCANNER_MATCH]',
+            ext,
+            scanner ? scanner.constructor.name : 'none',
+            'Registered:', this.scanners.map(s => s.constructor.name)
+        );
         if (scanner) {
             scanner.parse(content, summary);
             return true;

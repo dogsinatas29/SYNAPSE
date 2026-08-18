@@ -117,7 +117,7 @@ export class ArchitectureAuditor {
             return ArchitecturalRole.CONTRACT_HUB;
         }
 
-        if (matches(['browser', 'widget', 'view', 'ui', 'components'])) {
+        if (matches(['browser', 'widget', 'view', 'ui', 'components', 'activity', 'fragment', 'adapter', 'viewholder'])) {
             return ArchitecturalRole.UI_COMPONENT;
         }
 

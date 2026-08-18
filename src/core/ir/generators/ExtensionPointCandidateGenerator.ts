@@ -16,8 +16,10 @@ export class ExtensionPointCandidateGenerator implements INodeFactCandidateGener
         
         const targetImplementorCount = new Map<string, { count: number, fileId: string }>();
         
+        let inheritanceEdgeCount = 0;
         for (const edge of snapshot.edges) {
             if (edge.type === 'IMPLEMENTS' || edge.type === 'EXTENDS') {
+                inheritanceEdgeCount++;
                 const targetSymbol = edge.data?.originalTarget || edge.to || edge.targetId;
                 if (targetSymbol) {
                     const prev = targetImplementorCount.get(targetSymbol);
@@ -45,6 +47,11 @@ export class ExtensionPointCandidateGenerator implements INodeFactCandidateGener
                 });
             }
         }
+        console.log('[EXTENSION_CANDIDATES]', {
+            inheritanceEdgeCount,
+            candidates: candidates.length,
+            notCandidates: notCandidates.length
+        });
         
         return { candidates, notCandidates };
     }

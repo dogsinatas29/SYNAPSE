@@ -8,6 +8,11 @@ export class Q4ExtensionAggregator implements IAnswerAggregator {
 
     public aggregate(snapshot: ReasoningSnapshot, findings: Finding[]): IAnswer | null {
         const extEvidence = snapshot.getEvidenceByCategory<IExtensionEvidence>(EvidenceCategory.EXTENSION);
+        
+        console.error('[Q4_INPUT]', {
+            extensionPoints: extEvidence.length
+        });
+        
         console.log('[Q4]', extEvidence.length);
         if (extEvidence.length === 0) return null;
 

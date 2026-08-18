@@ -101,7 +101,15 @@ export class PayloadEvidenceEvaluator implements IEvidenceEvaluator {
             const sourceNode = snapshot.nodes.find((n: any) => n.id === edge.from || n.id === edge.source);
             if (sourceNode) {
                 const sourceLabel = (sourceNode.data?.label || sourceNode.id || '').toLowerCase();
-                if (sourceLabel.includes('pipeline') || sourceLabel.includes('engine') || sourceLabel.includes('orchestrator')) {
+                if (
+                    sourceLabel.includes('pipeline') || 
+                    sourceLabel.includes('engine') || 
+                    sourceLabel.includes('orchestrator') ||
+                    sourceLabel.includes('fragment') ||
+                    sourceLabel.includes('activity') ||
+                    sourceLabel.includes('screen') ||
+                    sourceLabel.includes('view')
+                ) {
                     referencedByPipeline = true;
                 }
             }

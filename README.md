@@ -334,8 +334,8 @@ SYNAPSE's **Architecture Scan Report (ASR)** is a fact-based, data-driven archit
 - [VSCode Main Report](assets/test_sample/vscode_main_report.md)
 - [VSCode Main Evidence](assets/test_sample/vscode_main_report.json)
 
-- [AntennaPod Whole Project Report](assets/test_sample/app_src_wearos.md)
-- [AntennaPod Whole Project Evidence](assets/test_sample/app_src_wearos.json)
+- [AntennaPod Whole Project Report](assets/test_sample/antennapod.md)
+- [AntennaPod Whole Project Evidence](assets/test_sample/antennapod.json)
 
 - [AntennaPod app/src Report](assets/test_sample/antennapod_app_src.md)
 - [AntennaPod app/src Evidence](assets/test_sample/antennapod_app_src.json)

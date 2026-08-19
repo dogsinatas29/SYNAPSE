@@ -78,6 +78,17 @@ export class ReferenceResolver {
                 resolutionKind = 'unresolved';
             }
 
+            if (resolutionKind === 'unresolved') {
+                console.log('[GHOST_CHECK]', {
+                    source: sourceFilePath,
+                    target: originalTarget,
+                    resolvedTarget: targetNodeId,
+                    exists: existingNodeIds.has(targetNodeId),
+                    // We don't have the role here easily, but the key question is existence
+                    isFramework: targetNodeId.includes('android.') || targetNodeId.includes('java.')
+                });
+            }
+
             result.push({
                 sourceId: sourceFilePath,
                 targetId: targetNodeId,

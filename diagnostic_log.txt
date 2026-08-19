@@ -1,14 +1,16 @@
 
-[GHOST_CLASSIFICATION_SUMMARY] total=43 unknown=0 unknownRatio=0 readyForV2B=true
-[EXTERNAL_LAYER_MODE] mode=DECOMPOSE_READY unknownRatio=0 threshold=0.05
+[GHOST_CLASSIFICATION_SUMMARY] total=115 unknown=72 unknownRatio=0.6261 readyForV2B=false
+[EXTERNAL_LAYER_MODE] mode=SINGLE_EXTERNAL_LAYER unknownRatio=0.6261 threshold=0.05
 
 === BRANCH COMPRESSION ===
 (moved to NodeBuilder)
 
 === CLUSTER SUMMARY ===
-doc_shelf                 nodes=490
+doc_shelf                 nodes=493
 folder_src_core           nodes=59
+cluster_ghost_app         nodes=41
 cluster_ghost_assets      nodes=21
+cluster_ghost_ui          nodes=19
 folder_src_core_collaboration nodes=17
 folder_test               nodes=15
 folder_src_core_analysis_intent nodes=12
@@ -34,10 +36,14 @@ folder_src_core_ir_evaluators nodes=4
 folder_src_core_ir_generators nodes=4
 folder_src_core_transaction nodes=4
 folder_src_server         nodes=4
+cluster_ghost_app-wearos  nodes=4
+folder_assets_test_sample nodes=3
 folder_src_core_validation nodes=3
 folder_src_vs_workbench_contrib_terminalContrib_links_browser nodes=3
 folder_test_core_analysis_intent nodes=3
 folder_test_data          nodes=3
+cluster_ghost_playback    nodes=3
+cluster_ghost_net         nodes=3
 cluster_ghost_other       nodes=3
 folder_src_core_benchmark nodes=2
 folder_src_core_ir_models nodes=2
@@ -151,6 +157,9 @@ folder_vscode__file_home_dogsinatas______vscode_vscode_main_test_mcp_src nodes=1
 folder_vscode__file_home_dogsinatas______vscode_vscode_main_test_sanity_scripts nodes=1
 folder_vscode__file_home_dogsinatas______vscode_vscode_main_test_sanity_src nodes=1
 cluster_ghost_LICENSE     nodes=1
+cluster_ghost_parser      nodes=1
+cluster_ghost_scripts     nodes=1
+cluster_ghost_storage     nodes=1
 cluster_ghost_synapse-visual-architecture-v0.3.5.vsix nodes=1
 cluster_ghost_synapse-visual-architecture-v0.3.8.vsix nodes=1
 cluster_ghost_[^'"]+      nodes=1
@@ -160,7 +169,6 @@ cluster_ghost_typescript  nodes=1
 cluster_ghost_util        nodes=1
 cluster_ghost_node        nodes=1
 cluster_ghost_http        nodes=1
-cluster_ghost_net         nodes=1
 cluster_ghost_crypto      nodes=1
 cluster_ghost_Y           nodes=1
 cluster_ghost_foo         nodes=1
@@ -170,6 +178,7 @@ cluster_ghost_express     nodes=1
 cluster_ghost_cors        nodes=1
 cluster_ghosts            nodes=0
 sys_cluster_reserved      nodes=0
+folder_assets             nodes=0
 folder_extensions_copilot_src_extension_agents nodes=0
 folder_extensions_copilot_src_extension nodes=0
 folder_extensions_copilot_src nodes=0
@@ -277,43 +286,43 @@ folder_vscode__file_home_dogsinatas______vscode_vscode_main_test_mcp nodes=0
 folder_vscode__file_home_dogsinatas______vscode_vscode_main_test nodes=0
 folder_vscode__file_home_dogsinatas______vscode_vscode_main_test_sanity nodes=0
 cluster_ghost_src         nodes=0
-TOTAL_CLUSTERS=271
+TOTAL_CLUSTERS=280
 
 === EDGE SUMMARY ===
-Internal Edges: 720
-External/Ghost Edges: 35
+Internal Edges: 621
+External/Ghost Edges: 151
 
 ======================================================
-[PIPELINE] Nodes=920 Edges=1109
+[PIPELINE] Nodes=998 Edges=1138
 ======================================================
 === EDGE BREAKDOWN ===
-  - INCLUDE: 1096
+  - INCLUDE: 1125
   - CALL: 10
   - DB_QUERY: 3
 ======================================================
 
 === CLUSTER SIZE DISTRIBUTION ===
-1 node   : 107 clusters
-2-5 nodes: 37 clusters
+1 node   : 109 clusters
+2-5 nodes: 41 clusters
 6-10     : 11 clusters
-11-20    : 4 clusters
-20+      : 3 clusters
+11-20    : 5 clusters
+20+      : 4 clusters
 ======================================================
 
 === TOP HUB FILES ===
 rank=1
-id=assets/test_sample/vscode_main_report.json
-cluster=doc_shelf
-role=none
-external=false
-degree=99 (in=0, out=99)
-
-rank=2
 id=src/types/schema.ts
 cluster=folder_src_types
 role=none
 external=false
 degree=66 (in=66, out=0)
+
+rank=2
+id=assets/test_sample/antennapod.json
+cluster=folder_assets_test_sample
+role=none
+external=false
+degree=56 (in=0, out=56)
 
 rank=3
 id=src/core/GraphModel.ts
@@ -337,117 +346,117 @@ external=false
 degree=33 (in=33, out=0)
 
 rank=6
+id=assets/test_sample/antennapod_app_src_wearos.json
+cluster=folder_assets_test_sample
+role=none
+external=false
+degree=31 (in=0, out=31)
+
+rank=7
 id=src/core/reasoning/rules/Rule.ts
 cluster=folder_src_core_reasoning_rules
 role=none
 external=false
 degree=31 (in=30, out=1)
 
-rank=7
+rank=8
 id=src/bootstrap/BootstrapEngine.ts
 cluster=folder_src_bootstrap
 role=none
 external=false
 degree=30 (in=3, out=27)
 
-rank=8
+rank=9
+id=assets/test_sample/antennapod_app_src.json
+cluster=folder_assets_test_sample
+role=none
+external=false
+degree=29 (in=0, out=29)
+
+rank=10
 id=scripts/run_reasoning_on_real_graph.ts
 cluster=folder_scripts
 role=none
 external=false
 degree=27 (in=0, out=27)
 
-rank=9
+rank=11
 id=src/core/DataPipeline.ts
 cluster=folder_src_core
 role=none
 external=false
 degree=27 (in=2, out=25)
 
-rank=10
+rank=12
 id=src/webview/CanvasPanel.ts
 cluster=folder_src_webview
 role=none
 external=false
 degree=26 (in=2, out=24)
 
-rank=11
+rank=13
 id=src/core/reasoning/evidence/Evidence.ts
 cluster=folder_src_core_reasoning_evidence
 role=none
 external=false
 degree=24 (in=24, out=0)
 
-rank=12
+rank=14
 id=src/core/analysis/types.ts
 cluster=folder_src_core_analysis
 role=none
 external=false
 degree=21 (in=19, out=2)
 
-rank=13
+rank=15
 id=src/extension.ts
 cluster=folder_src
 role=none
 external=false
 degree=21 (in=0, out=21)
 
-rank=14
+rank=16
 id=src/server/standalone.ts
 cluster=folder_src_server
 role=none
 external=false
 degree=21 (in=0, out=21)
 
-rank=15
+rank=17
 id=crypto
 cluster=cluster_ghost_crypto
 role=none
 external=true
 degree=17 (in=17, out=0)
 
-rank=16
+rank=18
 id=src/core/RuleEngine.ts
 cluster=folder_src_core
 role=none
 external=false
 degree=15 (in=15, out=0)
 
-rank=17
+rank=19
 id=src/core/ir/ArchitectureIrBuilder.ts
 cluster=folder_src_core_ir
 role=none
 external=false
 degree=14 (in=2, out=12)
 
-rank=18
+rank=20
 id=src/core/ProjectMetadata.ts
 cluster=folder_src_core
 role=none
 external=false
 degree=13 (in=11, out=2)
 
-rank=19
-id=src/core/benchmark/BenchmarkHarness.ts
-cluster=folder_src_core_benchmark
-role=none
-external=false
-degree=12 (in=1, out=11)
-
-rank=20
-id=src/core/FileScanner.ts
-cluster=folder_src_core
-role=none
-external=false
-degree=11 (in=7, out=4)
-
 ========================
 
 === CLUSTER DISTRIBUTION ===
 doc_shelf
-  nodes: 490
-  internal_edges: 114
-  external_edges: 220
+  nodes: 493
+  internal_edges: 120
+  external_edges: 127
 
 folder_src_core
   nodes: 59
@@ -487,7 +496,7 @@ folder_src_core_analysis
 folder_src_vs_workbench_services_keybinding_browser_keyboardLayouts
   nodes: 9
   internal_edges: 0
-  external_edges: 9
+  external_edges: 0
 
 folder_src_core_analysis_analyzers
   nodes: 8
@@ -520,20 +529,25 @@ folder_ui
   external_edges: 1
 
 === HUB RANKING ===
-doc_shelf
-  traffic: 334
-  degree: 220
-  nodes: 490
-
 folder_src_core
   traffic: 284
   degree: 217
   nodes: 59
 
+doc_shelf
+  traffic: 247
+  degree: 127
+  nodes: 493
+
 folder_test
   traffic: 149
   degree: 149
   nodes: 15
+
+folder_assets_test_sample
+  traffic: 122
+  degree: 122
+  nodes: 3
 
 folder_src_core_reasoning_answers_aggregators
   traffic: 67
@@ -590,23 +604,18 @@ folder_src_core_reasoning_rules_roles
   degree: 34
   nodes: 5
 
-folder_scripts
-  traffic: 31
-  degree: 31
-  nodes: 5
-
 === CLUSTER MATRIX ===
-                    doc_shelf  folder_sr  folder_te  folder_sr  folder_sr  folder_sr  folder_sr  folder_sr  folder_sr  folder_sr 
-doc_shelf           -         19        0         0         3         0         0         0         1         12        
-folder_src_core     19        -         23        0         26        8         5         0         16        1         
-folder_test         0         23        -         32        0         0         19        10        0         0         
-folder_src_core_reasoning_answers_aggregators 0         0         32        -         0         0         0         8         0         0         
-folder_src_types    3         26        0         0         -         9         0         0         0         0         
-folder_src_core_collaboration 0         8         0         0         9         -         0         0         12        0         
-folder_src_core_reasoning_analysis 0         5         19        0         0         0         -         8         0         0         
-folder_src_core_reasoning_snapshot 0         0         10        8         0         0         8         -         0         0         
-folder_src_utils    1         16        0         0         0         12        0         0         -         0         
-folder_src_core_analysis_intent 12        1         0         0         0         0         0         0         0         -         
+                    folder_sr  doc_shelf  folder_te  folder_as  folder_sr  folder_sr  folder_sr  folder_sr  folder_sr  folder_sr 
+folder_src_core     -         19        23        0         0         26        8         5         0         16        
+doc_shelf           19        -         0         6         0         3         0         0         0         1         
+folder_test         23        0         -         0         32        0         0         19        10        0         
+folder_assets_test_sample 0         6         0         -         0         0         0         0         0         0         
+folder_src_core_reasoning_answers_aggregators 0         0         32        0         -         0         0         0         8         0         
+folder_src_types    26        3         0         0         0         -         9         0         0         0         
+folder_src_core_collaboration 8         0         0         0         0         9         -         0         0         12        
+folder_src_core_reasoning_analysis 5         0         19        0         0         0         0         -         8         0         
+folder_src_core_reasoning_snapshot 0         0         10        0         8         0         0         8         -         0         
+folder_src_utils    16        1         0         0         0         0         12        0         0         -         
 
 === CLUSTER EDGE LIST ===
 folder_src_core_reasoning_answers_aggregators ──(32)── folder_test
@@ -627,7 +636,6 @@ folder_src_core      ──(11)── folder_src_core_canvas_engine
 folder_src_core_analysis ──(11)── folder_src_core_analysis_reasoning
 folder_src_core      ──(10)── folder_src_core_benchmark
 folder_src_core_reasoning_snapshot ──(10)── folder_test
-doc_shelf            ──(9)── folder_src_vs_workbench_services_keybinding_browser_keyboardLayouts
 folder_src_core_collaboration ──(9)── folder_src_types
 folder_src_core_reasoning_rules_flow ──(9)── folder_test
 folder_scripts       ──(8)── folder_src_core_reasoning_answers_aggregators
@@ -639,50 +647,52 @@ folder_src_core_ir_evaluators ──(8)── folder_src_core_ir_models
 folder_src_core_ir_generators ──(8)── folder_src_core_ir_models
 folder_src_core_reasoning_analysis ──(8)── folder_src_core_reasoning_snapshot
 folder_src_core_reasoning_answers ──(8)── folder_src_core_reasoning_answers_aggregators
+folder_src_core_reasoning_answers_aggregators ──(8)── folder_src_core_reasoning_rules
 
 === GHOST IMPACT MATRIX ===
+cluster_ghost_app         -> folder_assets_test_sample           = 85
 cluster_ghost_assets      -> doc_shelf                           = 42
+cluster_ghost_ui          -> folder_assets_test_sample           = 19
 cluster_ghost_crypto      -> folder_src_core                     = 6
 cluster_ghost_crypto      -> folder_src_core_collaboration       = 6
+cluster_ghost_app-wearos  -> folder_assets_test_sample           = 4
 cluster_ghost_LICENSE     -> doc_shelf                           = 3
+cluster_ghost_playback    -> folder_assets_test_sample           = 3
 cluster_ghost_other       -> doc_shelf                           = 3
+cluster_ghost_net         -> folder_assets_test_sample           = 2
 cluster_ghost_...         -> doc_shelf                           = 2
 cluster_ghost_node        -> folder_src                          = 2
+cluster_ghost_parser      -> folder_assets_test_sample           = 1
+cluster_ghost_scripts     -> folder_assets_test_sample           = 1
+cluster_ghost_storage     -> folder_assets_test_sample           = 1
 cluster_ghost_synapse-visual-architecture-v0.3.5.vsix -> doc_shelf                           = 1
 cluster_ghost_synapse-visual-architecture-v0.3.8.vsix -> doc_shelf                           = 1
 cluster_ghost_[^'"]+      -> doc_shelf                           = 1
 cluster_ghost_release_note -> doc_shelf                           = 1
 cluster_ghost_typescript  -> folder_src_cli                      = 1
-cluster_ghost_util        -> folder_src_cli                      = 1
-cluster_ghost_http        -> folder_src_core                     = 1
-cluster_ghost_net         -> folder_src_core                     = 1
-cluster_ghost_Y           -> folder_src_core                     = 1
-cluster_ghost_crypto      -> doc_shelf                           = 1
-cluster_ghost_crypto      -> folder_src_core_benchmark           = 1
-cluster_ghost_crypto      -> folder_src_core_canvas_engine       = 1
-cluster_ghost_net         -> folder_src_core_collaboration       = 1
 
 === GHOST TRAFFIC ===
-ghost_nodes=42
-ghost_edges=88
-ghost_ratio=7.9%
+ghost_nodes=114
+ghost_edges=204
+ghost_ratio=17.9%
 
 === INTERNAL CONTINENTS ===
-doc             nodes=490 clusters=1
+doc             nodes=493 clusters=1
 core            nodes=189 clusters=35
 vs              nodes=85 clusters=66
 root            nodes=28 clusters=3
+ui              nodes=26 clusters=2
 cli             nodes=11 clusters=1
 extensions      nodes=9 clusters=9
 vscode-main     nodes=9 clusters=7
 demo            nodes=8 clusters=2
 utils           nodes=7 clusters=1
-ui              nodes=7 clusters=1
+scripts         nodes=6 clusters=2
 scratch         nodes=5 clusters=1
-scripts         nodes=5 clusters=1
 tools           nodes=5 clusters=1
 data            nodes=4 clusters=2
 server          nodes=4 clusters=1
+test_sample     nodes=3 clusters=1
 mcp             nodes=3 clusters=2
 rust_checker    nodes=2 clusters=1
 sanity          nodes=2 clusters=2
@@ -693,9 +703,15 @@ types           nodes=1 clusters=1
 webview         nodes=1 clusters=1
 
 === EXTERNAL CONTINENTS ===
+app             nodes=41 clusters=1
 assets          nodes=21 clusters=1
+app-wearos      nodes=4 clusters=1
+playback        nodes=3 clusters=1
+net             nodes=3 clusters=1
 other           nodes=3 clusters=1
 LICENSE         nodes=1 clusters=1
+parser          nodes=1 clusters=1
+storage         nodes=1 clusters=1
 synapse-visual-architecture-v0.3.5.vsix nodes=1 clusters=1
 synapse-visual-architecture-v0.3.8.vsix nodes=1 clusters=1
 [^'"]+          nodes=1 clusters=1
@@ -705,7 +721,6 @@ typescript      nodes=1 clusters=1
 util            nodes=1 clusters=1
 node            nodes=1 clusters=1
 http            nodes=1 clusters=1
-net             nodes=1 clusters=1
 crypto          nodes=1 clusters=1
 Y               nodes=1 clusters=1
 foo             nodes=1 clusters=1
@@ -716,7 +731,7 @@ cors            nodes=1 clusters=1
 
 === TOP CONTINENT PAIRS ===
 core <-> root                  165
-doc <-> vs                     85
+app <-> test_sample            85
 core <-> types                 59
 assets <-> doc                 42
 core <-> doc                   39
@@ -724,27 +739,27 @@ core <-> utils                 33
 core <-> scripts               30
 bootstrap <-> core             24
 core <-> webview               20
+test_sample <-> ui             19
 core <-> server                19
 cli <-> core                   17
 core <-> crypto                14
-doc <-> extensions             9
-doc <-> sanity                 6
+doc <-> test_sample            6
 demo <-> doc                   6
 
 === CONTINENT MATRIX ===
-            doc        core       vs         root       cli        extensions vscode-main demo      
-doc         -         39        85        6         3         9         0         6         
-core        39        -         0         165       17        0         0         0         
-vs          85        0         -         0         0         0         0         0         
-root        6         165       0         -         1         0         0         0         
-cli         3         17        0         1         -         0         0         0         
-extensions  9         0         0         0         0         -         0         0         
-vscode-main 0         0         0         0         0         0         -         0         
-demo        6         0         0         0         0         0         0         -         
+            doc        core       vs         root       ui         cli        extensions vscode-main
+doc         -         39        0         6         1         3         0         0         
+core        39        -         0         165       0         17        0         0         
+vs          0         0         -         0         0         0         0         0         
+root        6         165       0         -         0         1         0         0         
+ui          1         0         0         0         -         0         0         0         
+cli         3         17        0         1         0         -         0         0         
+extensions  0         0         0         0         0         0         -         0         
+vscode-main 0         0         0         0         0         0         0         -         
 
 === CONTINENT GRAPH (Top 20 Edges) ===
 core ──(165)── root
-doc ──(85)── vs
+app ──(85)── test_sample
 core ──(59)── types
 assets ──(42)── doc
 core ──(39)── doc
@@ -752,17 +767,17 @@ core ──(33)── utils
 core ──(30)── scripts
 bootstrap ──(24)── core
 core ──(20)── webview
+test_sample ──(19)── ui
 core ──(19)── server
 cli ──(17)── core
 core ──(14)── crypto
-doc ──(9)── extensions
-doc ──(6)── sanity
+doc ──(6)── test_sample
 demo ──(6)── doc
 doc ──(6)── root
+app-wearos ──(4)── test_sample
+doc ──(4)── sanity
 LICENSE ──(3)── doc
-doc ──(3)── mcp
-doc ──(3)── other
-cli ──(3)── doc
+playback ──(3)── test_sample
 
 === CONTINENT LAYOUT ===
 
@@ -848,34 +863,34 @@ node_count=9
 
 === [CLUSTER] ===
 id=cluster_ghosts
-nodes=18
+nodes=20
 estimated_w=undefined
 estimated_h=undefined
 actual_w=680
 actual_h=320
 center=(280,120)
-density=0.000083
+density=0.000092
 [OVERLAP] cluster_ghosts & doc_shelf (area=217600)
 [OVERLAP] cluster_ghosts & folder_root (area=96000)
+[OVERLAP] cluster_ghosts & folder_assets_test_sample (area=41600)
 [OVERLAP] cluster_ghosts & folder_data (area=10400)
 [OVERLAP] cluster_ghosts & folder_demo_data (area=96000)
-[OVERLAP] cluster_ghosts & folder_extensions_copilot_src_extension (area=96000)
 ... (more overlaps omitted)
 
 === [CLUSTER] ===
 id=doc_shelf
-nodes=490
+nodes=493
 estimated_w=undefined
 estimated_h=undefined
 actual_w=3200
 actual_h=1760
 center=(1540,840)
-density=0.000087
+density=0.000088
 [OVERLAP] doc_shelf & folder_root (area=96000)
+[OVERLAP] doc_shelf & folder_assets_test_sample (area=41600)
 [OVERLAP] doc_shelf & folder_data (area=10400)
 [OVERLAP] doc_shelf & folder_demo_data (area=96000)
 [OVERLAP] doc_shelf & folder_extensions_copilot_src_extension (area=96000)
-[OVERLAP] doc_shelf & folder_home_dogsinatas_TypeScript_project_antigravity_extension_vis_src_core (area=10400)
 ... (more overlaps omitted)
 
 === [CLUSTER] ===
@@ -887,11 +902,27 @@ actual_w=400
 actual_h=240
 center=(140,80)
 density=0.000073
+[OVERLAP] folder_root & folder_assets_test_sample (area=41600)
 [OVERLAP] folder_root & folder_data (area=10400)
 [OVERLAP] folder_root & folder_demo_data (area=96000)
 [OVERLAP] folder_root & folder_extensions_copilot_src_extension (area=96000)
 [OVERLAP] folder_root & folder_home_dogsinatas_TypeScript_project_antigravity_extension_vis_src_core (area=10400)
-[OVERLAP] folder_root & folder_scratch (area=64000)
+... (more overlaps omitted)
+
+=== [CLUSTER] ===
+id=folder_assets_test_sample
+nodes=3
+estimated_w=undefined
+estimated_h=undefined
+actual_w=260
+actual_h=160
+center=(70,40)
+density=0.000072
+[OVERLAP] folder_assets_test_sample & folder_data (area=10400)
+[OVERLAP] folder_assets_test_sample & folder_demo_data (area=41600)
+[OVERLAP] folder_assets_test_sample & folder_extensions_copilot_src_extension (area=41600)
+[OVERLAP] folder_assets_test_sample & folder_home_dogsinatas_TypeScript_project_antigravity_extension_vis_src_core (area=10400)
+[OVERLAP] folder_assets_test_sample & folder_scratch (area=41600)
 ... (more overlaps omitted)
 
 === [CLUSTER] ===
@@ -1547,7 +1578,7 @@ density=0.000072
 [OVERLAP] folder_test_mcp_src & folder_ui (area=41600)
 [OVERLAP] folder_test_mcp_src & folder_vscode__file_home_dogsinatas______vscode_vscode_main (area=41600)
 [OVERLAP] folder_test_mcp_src & cluster_ghost_assets (area=41600)
-[OVERLAP] folder_test_mcp_src & cluster_ghost_other (area=41600)
+[OVERLAP] folder_test_mcp_src & cluster_ghost_ui (area=41600)
 ... (more overlaps omitted)
 
 === [CLUSTER] ===
@@ -1562,7 +1593,9 @@ density=0.000078
 [OVERLAP] folder_tools & folder_ui (area=64000)
 [OVERLAP] folder_tools & folder_vscode__file_home_dogsinatas______vscode_vscode_main (area=64000)
 [OVERLAP] folder_tools & cluster_ghost_assets (area=64000)
-[OVERLAP] folder_tools & cluster_ghost_other (area=41600)
+[OVERLAP] folder_tools & cluster_ghost_ui (area=64000)
+[OVERLAP] folder_tools & cluster_ghost_app (area=64000)
+... (more overlaps omitted)
 
 === [CLUSTER] ===
 id=folder_ui
@@ -1575,7 +1608,10 @@ center=(140,80)
 density=0.000073
 [OVERLAP] folder_ui & folder_vscode__file_home_dogsinatas______vscode_vscode_main (area=96000)
 [OVERLAP] folder_ui & cluster_ghost_assets (area=96000)
-[OVERLAP] folder_ui & cluster_ghost_other (area=41600)
+[OVERLAP] folder_ui & cluster_ghost_ui (area=96000)
+[OVERLAP] folder_ui & cluster_ghost_app (area=96000)
+[OVERLAP] folder_ui & cluster_ghost_playback (area=41600)
+... (more overlaps omitted)
 
 === [CLUSTER] ===
 id=folder_vscode__file_home_dogsinatas______vscode_vscode_main
@@ -1587,7 +1623,11 @@ actual_h=240
 center=(140,80)
 density=0.000094
 [OVERLAP] folder_vscode__file_home_dogsinatas______vscode_vscode_main & cluster_ghost_assets (area=96000)
-[OVERLAP] folder_vscode__file_home_dogsinatas______vscode_vscode_main & cluster_ghost_other (area=41600)
+[OVERLAP] folder_vscode__file_home_dogsinatas______vscode_vscode_main & cluster_ghost_ui (area=96000)
+[OVERLAP] folder_vscode__file_home_dogsinatas______vscode_vscode_main & cluster_ghost_app (area=96000)
+[OVERLAP] folder_vscode__file_home_dogsinatas______vscode_vscode_main & cluster_ghost_playback (area=41600)
+[OVERLAP] folder_vscode__file_home_dogsinatas______vscode_vscode_main & cluster_ghost_app-wearos (area=41600)
+... (more overlaps omitted)
 
 === [CLUSTER] ===
 id=cluster_ghost_assets
@@ -1598,7 +1638,78 @@ actual_w=680
 actual_h=400
 center=(280,160)
 density=0.000077
-[OVERLAP] cluster_ghost_assets & cluster_ghost_other (area=41600)
+[OVERLAP] cluster_ghost_assets & cluster_ghost_ui (area=217600)
+[OVERLAP] cluster_ghost_assets & cluster_ghost_app (area=272000)
+[OVERLAP] cluster_ghost_assets & cluster_ghost_playback (area=41600)
+[OVERLAP] cluster_ghost_assets & cluster_ghost_app-wearos (area=41600)
+[OVERLAP] cluster_ghost_assets & cluster_ghost_net (area=41600)
+... (more overlaps omitted)
+
+=== [CLUSTER] ===
+id=cluster_ghost_ui
+nodes=19
+estimated_w=undefined
+estimated_h=undefined
+actual_w=680
+actual_h=320
+center=(280,120)
+density=0.000087
+[OVERLAP] cluster_ghost_ui & cluster_ghost_app (area=217600)
+[OVERLAP] cluster_ghost_ui & cluster_ghost_playback (area=41600)
+[OVERLAP] cluster_ghost_ui & cluster_ghost_app-wearos (area=41600)
+[OVERLAP] cluster_ghost_ui & cluster_ghost_net (area=41600)
+[OVERLAP] cluster_ghost_ui & cluster_ghost_other (area=41600)
+... (more overlaps omitted)
+
+=== [CLUSTER] ===
+id=cluster_ghost_app
+nodes=41
+estimated_w=undefined
+estimated_h=undefined
+actual_w=960
+actual_h=480
+center=(420,200)
+density=0.000089
+[OVERLAP] cluster_ghost_app & cluster_ghost_playback (area=41600)
+[OVERLAP] cluster_ghost_app & cluster_ghost_app-wearos (area=41600)
+[OVERLAP] cluster_ghost_app & cluster_ghost_net (area=41600)
+[OVERLAP] cluster_ghost_app & cluster_ghost_other (area=41600)
+
+=== [CLUSTER] ===
+id=cluster_ghost_playback
+nodes=3
+estimated_w=undefined
+estimated_h=undefined
+actual_w=260
+actual_h=160
+center=(70,40)
+density=0.000072
+[OVERLAP] cluster_ghost_playback & cluster_ghost_app-wearos (area=41600)
+[OVERLAP] cluster_ghost_playback & cluster_ghost_net (area=41600)
+[OVERLAP] cluster_ghost_playback & cluster_ghost_other (area=41600)
+
+=== [CLUSTER] ===
+id=cluster_ghost_app-wearos
+nodes=4
+estimated_w=undefined
+estimated_h=undefined
+actual_w=260
+actual_h=160
+center=(70,40)
+density=0.000096
+[OVERLAP] cluster_ghost_app-wearos & cluster_ghost_net (area=41600)
+[OVERLAP] cluster_ghost_app-wearos & cluster_ghost_other (area=41600)
+
+=== [CLUSTER] ===
+id=cluster_ghost_net
+nodes=3
+estimated_w=undefined
+estimated_h=undefined
+actual_w=260
+actual_h=160
+center=(70,40)
+density=0.000072
+[OVERLAP] cluster_ghost_net & cluster_ghost_other (area=41600)
 
 === [CLUSTER] ===
 id=cluster_ghost_other
@@ -1611,8 +1722,8 @@ center=(70,40)
 density=0.000072
 
 === [LAYOUT] ===
-[LAYOUT] cluster_count=49
-[LAYOUT] overlap_pairs=588
+[LAYOUT] cluster_count=55
+[LAYOUT] overlap_pairs=742.5
 [LAYOUT] world_bounds=min(0, 0) max(3080, 1680)
 [LAYOUT] world_width=3080
 [LAYOUT] world_height=1680
@@ -1631,9 +1742,10 @@ NODE README.ko.md | cluster=doc_shelf | comm=none | role=none
 NODE README.md | cluster=doc_shelf | comm=none | role=none
 
 === [RENDER DIAGNOSTIC] CLUSTER DUMP ===
-CLUSTER id=cluster_ghosts type=system nodes=18 (computed count=18)
-CLUSTER id=doc_shelf type=system nodes=490 (computed count=490)
+CLUSTER id=cluster_ghosts type=system nodes=20 (computed count=20)
+CLUSTER id=doc_shelf type=system nodes=493 (computed count=493)
 CLUSTER id=folder_root type=folder nodes=7 (computed count=7)
+CLUSTER id=folder_assets_test_sample type=folder nodes=3 (computed count=3)
 CLUSTER id=folder_data type=folder nodes=1 (computed count=1)
 CLUSTER id=folder_demo_data type=folder nodes=8 (computed count=8)
 CLUSTER id=folder_extensions_copilot_src_extension type=folder nodes=9 (computed count=9)
@@ -1679,5 +1791,10 @@ CLUSTER id=folder_tools type=folder nodes=5 (computed count=5)
 CLUSTER id=folder_ui type=folder nodes=7 (computed count=7)
 CLUSTER id=folder_vscode__file_home_dogsinatas______vscode_vscode_main type=folder nodes=9 (computed count=9)
 CLUSTER id=cluster_ghost_assets type=system nodes=21 (computed count=21)
+CLUSTER id=cluster_ghost_ui type=system nodes=19 (computed count=19)
+CLUSTER id=cluster_ghost_app type=system nodes=41 (computed count=41)
+CLUSTER id=cluster_ghost_playback type=system nodes=3 (computed count=3)
+CLUSTER id=cluster_ghost_app-wearos type=system nodes=4 (computed count=4)
+CLUSTER id=cluster_ghost_net type=system nodes=3 (computed count=3)
 CLUSTER id=cluster_ghost_other type=system nodes=3 (computed count=3)
 =========================================

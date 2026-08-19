@@ -331,7 +331,7 @@ SYNAPSE의 **아키텍처 스캔 리포트(ASR)**는 코드베이스의 아키�
 
 
 - [VSCode Main Report](assets/test_sample/vscode_main_report.md)
-- [VSCode Main Evidence](assets/test_sample/vscode_main_report.json)
+- [VSCode Main Evidence](/assets/test_sample/vscode_main_report.json)
 
 - [AntennaPod Whole Project Report](assets/test_sample/antennapod.md)
 - [AntennaPod Whole Project Evidence](assets/test_sample/antennapod.json)

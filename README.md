@@ -329,14 +329,19 @@ SYNAPSE's **Architecture Scan Report (ASR)** is a fact-based, data-driven archit
 
 > **Sample Output**: 
 > **Sample Output**:
-[vscode_main_report.md](assets/test_sample/vscode_main_report.md) |
-[vscode_main_report.json](assets/test_sample/vscode_main_report.json) |
-[AntennaPod whole porject REPORT](assets/test_sample/app/src + wearos.md) | 
-[AntennaPod whole porject Evidence](assets/test_sample/app/src + wearos.json) |
-[AntennaPod app/src REPORT](assets/test_sample/antennapod_app_src.md) |
-[AntennaPod app/src Evidence](assets/test_sample/antennapod_app_src.json) |
-[AntennaPod app/src + wearos REPORT](assets/test_sample/antennapod_app_src_wearos.md) |
-[AntennaPod app/src + wearos Evidence](assets/test_sample/antennapod_app_src_wearos.json)
+> **Sample Output**
+
+- [VSCode Main Report](assets/test_sample/vscode_main_report.md)
+- [VSCode Main Evidence](assets/test_sample/vscode_main_report.json)
+
+- [AntennaPod Whole Project Report](assets/test_sample/app_src_wearos.md)
+- [AntennaPod Whole Project Evidence](assets/test_sample/app_src_wearos.json)
+
+- [AntennaPod app/src Report](assets/test_sample/antennapod_app_src.md)
+- [AntennaPod app/src Evidence](assets/test_sample/antennapod_app_src.json)
+
+- [AntennaPod app/src + WearOS Report](assets/test_sample/antennapod_app_src_wearos.md)
+- [AntennaPod app/src + WearOS Evidence](assets/test_sample/antennapod_app_src_wearos.json)
 ---
 
 ### How It Works

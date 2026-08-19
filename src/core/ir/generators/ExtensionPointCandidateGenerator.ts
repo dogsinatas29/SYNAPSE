@@ -22,7 +22,7 @@ export class ExtensionPointCandidateGenerator implements INodeFactCandidateGener
                 inheritanceEdgeCount++;
                 const targetSymbol = edge.data?.originalTarget || edge.to || edge.targetId;
                 if (targetSymbol) {
-                    if (this.isFrameworkType(targetSymbol)) {
+                    if (this.isFrameworkType(targetSymbol) || targetSymbol.startsWith('AGGREGATE_')) {
                         continue;
                     }
                     const prev = targetImplementorCount.get(targetSymbol);

@@ -364,11 +364,19 @@ export function analyzeGraph(input: AnalysisInput): GraphAnalysis {
     const continentTraffic = new Map<string, ContinentTraffic>();
     const interContinentTraffic = new Map<string, number>();
 
+    const unknownSample: any[] = [];
     for (const edge of edges) {
         const fromNode = nodeMap.get(edge.from);
         const toNode = nodeMap.get(edge.to);
         const fromCont = fromNode?.data?.continent || 'unknown';
         const toCont = toNode?.data?.continent || 'unknown';
+
+        if (fromCont === 'unknown' && unknownSample.length < 10) {
+            unknownSample.push({ id: edge.from, cluster_id: fromNode?.cluster_id, role: fromNode?.role, type: fromNode?.type });
+        }
+        if (toCont === 'unknown' && unknownSample.length < 10) {
+            unknownSample.push({ id: edge.to, cluster_id: toNode?.cluster_id, role: toNode?.role, type: toNode?.type });
+        }
 
         if (!continentTraffic.has(fromCont)) continentTraffic.set(fromCont, { internal: 0, external: 0 });
         if (!continentTraffic.has(toCont)) continentTraffic.set(toCont, { internal: 0, external: 0 });
@@ -391,6 +399,11 @@ export function analyzeGraph(input: AnalysisInput): GraphAnalysis {
         pushCount,
         assemblyAuditLength: assemblyAudit.length
     });
+    console.error('[COUPLING_UNKNOWN]', { sampleCount: unknownSample.length });
+    for (const s of unknownSample) {
+        console.error('[COUPLING_UNKNOWN_ITEM]', JSON.stringify(s));
+    }
+
 
     return {
         degreeMap,

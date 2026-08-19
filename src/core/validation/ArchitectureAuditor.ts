@@ -125,7 +125,7 @@ export class ArchitectureAuditor {
             return ArchitecturalRole.DOMAIN_SERVICE;
         }
 
-        if (matches(['orchestrator', 'coordinator', 'intent', 'manager', 'engine', 'provider', 'registry'])) {
+        if (matches(['orchestrator', 'coordinator', 'intent', 'intents', 'manager', 'engine', 'provider', 'registry', 'commands', 'handlers'])) {
             return ArchitecturalRole.COORDINATOR;
         }
 
@@ -141,6 +141,11 @@ export class ArchitectureAuditor {
             return ArchitecturalRole.INFRASTRUCTURE;
         }
 
+        console.error('[ROLE_CLASSIFIER_TRACE]', {
+            file: normalizedPath,
+            result: 'UNKNOWN',
+            reason: 'No heuristic matched'
+        });
         return ArchitecturalRole.UNKNOWN;
     }
 }

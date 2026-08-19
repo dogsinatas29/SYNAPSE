@@ -39,6 +39,10 @@ export class EdgeBuilder {
                 visual: { color: '#888', thickness: 1 },
                 provenance: ref.provenance ?? 'UNKNOWN_RUNTIME'
             };
+
+            if (!mappedType || mappedType === 'UNKNOWN') {
+                console.error('[UNKNOWN_EDGE]', { from: ref.sourceId, to: ref.targetId, rawType: ref.referenceType });
+            }
             
             edgeTypeCount.set(
                mappedType,

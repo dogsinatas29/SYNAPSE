@@ -219,7 +219,10 @@ export class VirtualDebugger {
                         const collapsedNodeId = fromExp ? e.to : e.from;
                         // Use original cluster_id for the collapsed node, since getVisibleAncestor is null
                         const collapsedNode: any = rawStateNodes.find((n:any) => n.id === collapsedNodeId);
-                        const originalCollapsedCluster = (collapsedNode && collapsedNode.cluster_id) ? collapsedNode.cluster_id : 'unknown';
+                        // nodeFound=false → node exists in graph but not in current view scope
+                        const clusterFallback = collapsedNode ? 'unknown' : 'out_of_scope';
+                        const originalCollapsedCluster = collapsedNode?.cluster_id || clusterFallback;
+
                         
                         const aggId = `AGGREGATE_${originalCollapsedCluster}`;
                         if (!aggregateNodes.has(originalCollapsedCluster)) {

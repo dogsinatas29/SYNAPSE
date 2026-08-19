@@ -22,6 +22,9 @@ export class ExtensionPointCandidateGenerator implements INodeFactCandidateGener
                 inheritanceEdgeCount++;
                 const targetSymbol = edge.data?.originalTarget || edge.to || edge.targetId;
                 if (targetSymbol) {
+                    if (this.isFrameworkType(targetSymbol)) {
+                        continue;
+                    }
                     const prev = targetImplementorCount.get(targetSymbol);
                     targetImplementorCount.set(targetSymbol, {
                         count: (prev?.count || 0) + 1,
@@ -54,5 +57,53 @@ export class ExtensionPointCandidateGenerator implements INodeFactCandidateGener
         });
         
         return { candidates, notCandidates };
+    }
+
+    private isFrameworkType(targetSymbol: string): boolean {
+        const lower = targetSymbol.toLowerCase();
+        
+        // Package level rejection
+        if (
+            lower.startsWith('android.') ||
+            lower.startsWith('androidx.') ||
+            lower.startsWith('java.') ||
+            lower.startsWith('javax.') ||
+            lower.startsWith('kotlin.') ||
+            lower.startsWith('com.google.')
+        ) {
+            return true;
+        }
+
+        // Common class/interface names rejection
+        const FRAMEWORK_TYPES = new Set([
+            'fragment',
+            'appcompatactivity',
+            'activity',
+            'recyclerview.adapter',
+            'recyclerview.viewholder',
+            'serializable',
+            'parcelable',
+            'comparator',
+            'drawable',
+            'worker',
+            'viewmodel',
+            'context',
+            'intent',
+            'application',
+            'service',
+            'broadcastreceiver',
+            'contentprovider'
+        ]);
+
+        // Some targetSymbols might be ghost paths like ghost://Fragment, so we extract the last part
+        const parts = targetSymbol.split(/[\/\.]/);
+        const name = parts[parts.length - 1].toLowerCase();
+
+        // Also check if the raw target symbol includes any of these as exact matches
+        if (FRAMEWORK_TYPES.has(name) || FRAMEWORK_TYPES.has(lower)) {
+            return true;
+        }
+
+        return false;
     }
 }

@@ -709,13 +709,12 @@ export class ValidationReportBuilder {
                 // The answer engine returns answers. We want to extract findings from the answers.
                 // Q4ExtensionAggregator returns Answer objects with findings
                 for (const answer of answerBundle.extensionPoints) {
-                    if (answer.findings && answer.findings.length > 0) {
-                        for (const finding of answer.findings) {
-                            architecturalReasoningSection.push(`- **${this.cleanDomainName(finding.nodeId)}** (Confidence: ${finding.confidence.toFixed(2)})`);
-                            if (finding.metadata?.reasons && finding.metadata.reasons.length > 0) {
-                                for (const reason of finding.metadata.reasons) {
-                                    architecturalReasoningSection.push(`  - ${reason}`);
-                                }
+                    if (answer.items && answer.items.length > 0) {
+                        for (const item of answer.items) {
+                            architecturalReasoningSection.push(`- **${this.cleanDomainName(item.targetId)}** (Confidence: ${item.score.toFixed(2)})`);
+                            const reasons = item.explanation.split('\n').filter(Boolean);
+                            for (const reason of reasons) {
+                                architecturalReasoningSection.push(`  - ${reason}`);
                             }
                         }
                     } else {

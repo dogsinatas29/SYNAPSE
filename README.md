@@ -327,8 +327,15 @@ If the score exceeds a safe threshold (e.g., 500,000 points), the **EXTREME_SCAL
 
 SYNAPSE's **Architecture Scan Report (ASR)** is a fact-based, data-driven architectural health scan — a static MRI of your codebase. It does not rely on AI interpretation or heuristic guesses. Every finding is backed by a countable dependency graph edge.
 
-> **Sample Output**: [vscode_main_report.md](assets/test_sample/vscode_main_report.md) &nbsp;|&nbsp; [vscode_main_report.json](assets/test_sample/vscode_main_report.json)
-
+> **Sample Output**: 
+[vscode_main_report.md](assets/test_sample/vscode_main_report.md)
+[vscode_main_report.json](assets/test_sample/vscode_main_report.json)
+[AntennaPod whole porject REPORT](assets/test_sample/app/src + wearos.md)
+[AntennaPod whole porject Evidence](assets/test_sample/app/src + wearos.json)
+[AntennaPod app/src REPORT](assets/test_sample/antennapod_app_src.md)
+[AntennaPod app/src Evidence](assets/test_sample/antennapod_app_src.json)
+[AntennaPod app/src + wearos REPORT](assets/test_sample/antennapod_app_src_wearos.md)
+[AntennaPod app/src + wearos Evidence](assets/test_sample/antennapod_app_src_wearos.json)
 ---
 
 ### How It Works

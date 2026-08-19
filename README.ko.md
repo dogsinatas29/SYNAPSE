@@ -326,7 +326,15 @@ SYNAPSE는 방대한 아키텍처를 효과적으로 관리하기 위해 **클�
 
 SYNAPSE의 **아키텍처 스캔 리포트(ASR)**는 코드베이스의 아키텍처 건강도를 팩트와 데이터 기반으로 촬영하는 정적(Static) MRI 스캔입니다. AI 해석이나 휴리스틱 추측에 의존하지 않으며, 모든 발견은 실제 의존성 그래프 엣지 수치로 보증됩니다.
 
-> **샘플 출력**: [vscode_main_report.md](assets/test_sample/vscode_main_report.md) &nbsp;|&nbsp; [vscode_main_report.json](assets/test_sample/vscode_main_report.json)
+> **샘플 출력**: 
+[vscode_main_report.md](assets/test_sample/vscode_main_report.md)
+[vscode_main_report.json](assets/test_sample/vscode_main_report.json)
+[AntennaPod whole porject REPORT](assets/test_sample/app/src + wearos.md)
+[AntennaPod whole porject Evidence](assets/test_sample/app/src + wearos.json)
+[AntennaPod app/src REPORT](assets/test_sample/antennapod_app_src.md)
+[AntennaPod app/src Evidence](assets/test_sample/antennapod_app_src.json)
+[AntennaPod app/src + wearos REPORT](assets/test_sample/antennapod_app_src_wearos.md)
+[AntennaPod app/src + wearos Evidence](assets/test_sample/antennapod_app_src_wearos.json)
 
 ---
 

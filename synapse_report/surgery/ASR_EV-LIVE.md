@@ -1,50 +1,48 @@
 # 🔬 SYNAPSE Architecture Scan Report (EV-LIVE)
-Generated: 2026-08-17T14:49:01.924Z
+Generated: 2026-08-19T03:09:47.103Z
 
 ## 0. Analysis Subject (Layer -3)
 - **Subject**: Module: src/core
-- **Files**: 386
+- **Files**: 302
 - **Internal Edges**: 177
-- **Boundary Edges**: 865
+- **Boundary Edges**: 743
 
 ### Subject Fingerprint (Top Internal Domains)
 - Module: src/core
 - Module: src/vs/workbench/contrib
 - Module: src/core/collaboration
-- Module: test
 - Module: src/vs/workbench/contrib/chat/browser
+- Module: src
 
 ## 1. Executive Summary
 **Scan Context**: Sub-cluster Analysis
-**Observation**: External Dependency Ratio = 4.9x
+**Observation**: External Dependency Ratio = 4.2x
 **Assessment**: Selected cluster depends heavily on modules outside the scan boundary.
 **Implication**: This does not imply whole-project instability.
 
 **Why High External Coupling?**
-- **Boundary Edge Count**: 865 / 177 (Internal)
-- **Top 3 Contributors**: 상위 3개 파일(BootstrapEngine.ts, CanvasPanel.ts, standalone.ts)이 전체 Boundary Edge의 **7.9%** (68개)를 생성하고 있습니다.
-
-
+- **Boundary Edge Count**: 743 / 177 (Internal)
+- **Top 3 Contributors**: 상위 3개 파일(BootstrapEngine.ts, CanvasPanel.ts, standalone.ts)이 전체 Boundary Edge의 **9.2%** (68개)를 생성하고 있습니다.
 
 **Cumulative Boundary Contribution**
-- **Top 3**: 7.9% (68 edges)
-- **Top 10**: 14.6% (126 edges)
-- **Top 50**: 30.4% (263 edges)
-- **Top 100**: 40.1% (347 edges)
+- **Top 3**: 9.2% (68 edges)
+- **Top 10**: 17.0% (126 edges)
+- **Top 50**: 35.4% (263 edges)
+- **Top 100**: 44.1% (328 edges)
 
-**Audit Confidence**: 76%
+**Audit Confidence**: 80%
 
 Base Score                     70
 Grammar Noise Filtered        +0
 Assembly Point Classified      +0
-Contract Hub Verified          +0
+Contract Hub Verified          +4
 Ghost Ratio < 5%               +6
 Unknown References             0
-Final Score                   76
+Final Score                   80
 
 ### Global Metrics
 - **Entropy**: 12
-- **Ghost Dependencies**: 37
+- **Ghost Dependencies**: 33
 
 ### Dependency Sources Breakdown
 **Ghost Dependencies (Scanner Issues)**
@@ -56,72 +54,56 @@ Final Score                   76
 
 ## 2. Impact Files (Architectural Assessment)
 ### 1. src/bootstrap/BootstrapEngine.ts
-- **Role**: UNKNOWN
+- **Role**: COORDINATOR
 [View Source File](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/bootstrap/BootstrapEngine.ts)
 
 **Evidence (Observed Behavior)**
 - Boundary Crossing: 26
-- Blast Radius (Clusters): 24
 - Fan-Out: 27
-- Fan-In: 3
-
-**Architectural Assessment**
-> NORMAL: Standard node behavior without severe structural anomalies.
-
-**Risk Level**: NONE
-
-**Recommended Action**
-> No immediate architectural action required.
+- Blast Radius: 18 Clusters
 
 **Top External Targets (Evidence)**
-- src/core/GeminiParser.ts (1 edges - Type: INCLUDE)
-- src/core/SnapshotSystem.ts (1 edges - Type: INCLUDE)
-- src/core/ConfigScanner.ts (1 edges - Type: INCLUDE)
-- src/core/DataPipeline.ts (1 edges - Type: CALL)
-- src/core/GraphModel.ts (1 edges - Type: INCLUDE)
-- src/core/JsTsScanner.ts (1 edges - Type: INCLUDE)
-- src/utils/Logger.ts (1 edges - Type: INCLUDE)
-- src/core/JVMAuditor.ts (1 edges - Type: INCLUDE)
-- src/core/MarkdownScanner.ts (1 edges - Type: INCLUDE)
-- src/core/PhaseManager.ts (1 edges - Type: INCLUDE)
+- src/core/FlowchartGenerator.ts (1 edges)
+- src/core/JVMAuditor.ts (1 edges)
+- src/core/GraphModel.ts (1 edges)
+- src/core/KotlinScanner.ts (1 edges)
+- src/core/SnapshotSystem.ts (1 edges)
+- src/core/JavaScanner.ts (1 edges)
+- src/core/JsTsScanner.ts (1 edges)
+- src/utils/Logger.ts (1 edges)
+- src/core/RuleEngine.ts (1 edges)
+- src/core/ScannerRegistry.ts (1 edges)
 
-**AST Evidence Verification** `[RUNTIME_HUB]`
-- interface: 0% | type: 0% | function: 11% | statement: 61%
-> 이 파일은 실제 실행 로직을 포함하는 런타임 허브다. 변경 시 즉각적 영향.
+**AST Evidence Verification** `[HEALTHY_CONTRACT]`
+- interface: 0% | type: 0% | function: 1% | statement: 5%
+- Score: 26 → 21 (×0.8)
+> 이 파일은 계약과 구현이 균형을 이룬다. 표준 위험도.
 
 ### 2. src/webview/CanvasPanel.ts
-- **Role**: UNKNOWN
+- **Role**: UI_COMPONENT
 [View Source File](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/webview/CanvasPanel.ts)
 
 **Evidence (Observed Behavior)**
 - Boundary Crossing: 21
-- Blast Radius (Clusters): 25
 - Fan-Out: 24
-- Fan-In: 2
-
-**Architectural Assessment**
-> NORMAL: Standard node behavior without severe structural anomalies.
-
-**Risk Level**: NONE
-
-**Recommended Action**
-> No immediate architectural action required.
+- Blast Radius: 20 Clusters
 
 **Top External Targets (Evidence)**
-- src/core/DebuggerSystem.ts (1 edges - Type: INCLUDE)
-- src/core/SnapshotSystem.ts (1 edges - Type: INCLUDE)
-- src/core/SynapseIgnore.ts (1 edges - Type: INCLUDE)
-- src/utils/Logger.ts (1 edges - Type: INCLUDE)
-- src/core/VirtualDebugger.ts (1 edges - Type: INCLUDE)
-- src/core/RendererCore.ts (1 edges - Type: INCLUDE)
-- src/core/canvas-engine/RenderProtocol.ts (1 edges - Type: INCLUDE)
-- src/core/GraphModel.ts (1 edges - Type: INCLUDE)
-- src/core/analysis/ClusterBridgeAnalyzer.ts (1 edges - Type: INCLUDE)
-- src/core/transaction/ProjectStateSerializer.ts (1 edges - Type: INCLUDE)
+- src/core/transaction/ProjectStateSerializer.ts (1 edges)
+- src/core/GraphModel.ts (1 edges)
+- src/core/RendererCore.ts (1 edges)
+- src/core/RuleEngine.ts (1 edges)
+- src/core/FileScanner.ts (1 edges)
+- http (1 edges)
+- src/core/EdgeCodeRefactorer.ts (1 edges)
+- src/core/FlowchartGenerator.ts (1 edges)
+- src/core/ControlSystem.ts (1 edges)
+- src/core/analysis/ClusterBridgeAnalyzer.ts (1 edges)
 
-**AST Evidence Verification** `[RUNTIME_HUB]`
-- interface: 0% | type: 0% | function: 13% | statement: 61%
-> 이 파일은 실제 실행 로직을 포함하는 런타임 허브다. 변경 시 즉각적 영향.
+**AST Evidence Verification** `[HEALTHY_CONTRACT]`
+- interface: 0% | type: 0% | function: 1% | statement: 6%
+- Score: 21 → 17 (×0.8)
+> 이 파일은 계약과 구현이 균형을 이룬다. 표준 위험도.
 
 ### 3. src/server/standalone.ts
 - **Role**: UNKNOWN
@@ -129,33 +111,25 @@ Final Score                   76
 
 **Evidence (Observed Behavior)**
 - Boundary Crossing: 21
-- Blast Radius (Clusters): 5
 - Fan-Out: 21
-- Fan-In: 0
-
-**Architectural Assessment**
-> NORMAL: Standard node behavior without severe structural anomalies.
-
-**Risk Level**: NONE
-
-**Recommended Action**
-> No immediate architectural action required.
+- Blast Radius: 5 Clusters
 
 **Top External Targets (Evidence)**
-- src/core/collaboration/RestCollaborationTransport.ts (1 edges - Type: INCLUDE)
-- crypto (1 edges - Type: INCLUDE)
-- src/core/collaboration/MountManager.ts (1 edges - Type: INCLUDE)
-- src/core/collaboration/CompareEngine.ts (1 edges - Type: INCLUDE)
-- src/core/collaboration/RuntimeInitializer.ts (1 edges - Type: INCLUDE)
-- src/core/FlowScanner.ts (1 edges - Type: INCLUDE)
-- src/core/ProjectMetadata.ts (1 edges - Type: INCLUDE)
-- src/core/collaboration/HarvestSessionManager.ts (1 edges - Type: INCLUDE)
-- src/core/collaboration/AccountManager.ts (1 edges - Type: INCLUDE)
-- src/utils/Logger.ts (1 edges - Type: INCLUDE)
+- src/core/collaboration/AccountManager.ts (1 edges)
+- src/core/GeminiParser.ts (1 edges)
+- src/core/collaboration/ArchitectureIndexBuilder.ts (1 edges)
+- src/core/SynapseIgnore.ts (1 edges)
+- express (1 edges)
+- src/core/collaboration/RuntimeInitializer.ts (1 edges)
+- src/core/collaboration/CompareEngine.ts (1 edges)
+- cors (1 edges)
+- crypto (1 edges)
+- src/core/collaboration/HarvestSessionManager.ts (1 edges)
 
-**AST Evidence Verification** `[RUNTIME_HUB]`
-- interface: 0% | type: 0% | function: 10% | statement: 62%
-> 이 파일은 실제 실행 로직을 포함하는 런타임 허브다. 변경 시 즉각적 영향.
+**AST Evidence Verification** `[HEALTHY_CONTRACT]`
+- interface: 0% | type: 0% | function: 1% | statement: 6%
+- Score: 21 → 17 (×0.8)
+> 이 파일은 계약과 구현이 균형을 이룬다. 표준 위험도.
 
 ### 4. src/extension.ts
 - **Role**: UNKNOWN
@@ -163,66 +137,50 @@ Final Score                   76
 
 **Evidence (Observed Behavior)**
 - Boundary Crossing: 18
-- Blast Radius (Clusters): 27
 - Fan-Out: 22
-- Fan-In: 0
-
-**Architectural Assessment**
-> NORMAL: Standard node behavior without severe structural anomalies.
-
-**Risk Level**: NONE
-
-**Recommended Action**
-> No immediate architectural action required.
+- Blast Radius: 22 Clusters
 
 **Top External Targets (Evidence)**
-- src/core/GeminiParser.ts (1 edges - Type: INCLUDE)
-- src/utils/ChatExtractor.ts (1 edges - Type: INCLUDE)
-- demo/canvas-engine.js (1 edges - Type: INCLUDE)
-- src/core/AiOrchestrator.ts (1 edges - Type: INCLUDE)
-- src/core/benchmark/BenchmarkHarness.ts (1 edges - Type: INCLUDE)
-- src/core/BlacklistOrchestrator.ts (1 edges - Type: INCLUDE)
-- src/utils/Logger.ts (1 edges - Type: INCLUDE)
-- node (1 edges - Type: INCLUDE)
-- src/core/PbSessionWatcher.ts (1 edges - Type: INCLUDE)
-- src/core/BillingManager.ts (1 edges - Type: INCLUDE)
+- src/core/LogicAnalyzer.ts (1 edges)
+- src/utils/ChatExtractor.ts (1 edges)
+- src/core/collaboration/RuntimeInitializer.ts (1 edges)
+- src/core/PbSessionWatcher.ts (1 edges)
+- src/core/ReportExporter.ts (1 edges)
+- src/core/GeminiParser.ts (1 edges)
+- src/core/ProjectMetadata.ts (1 edges)
+- src/core/GraphModel.ts (1 edges)
+- src/core/BillingManager.ts (1 edges)
+- src/core/AiOrchestrator.ts (1 edges)
 
-**AST Evidence Verification** `[RUNTIME_HUB]`
-- interface: 0% | type: 0% | function: 11% | statement: 63%
-> 이 파일은 실제 실행 로직을 포함하는 런타임 허브다. 변경 시 즉각적 영향.
+**AST Evidence Verification** `[HEALTHY_CONTRACT]`
+- interface: 0% | type: 0% | function: 1% | statement: 6%
+- Score: 18 → 14 (×0.8)
+> 이 파일은 계약과 구현이 균형을 이룬다. 표준 위험도.
 
 ### 5. src/core/ir/ArchitectureIrBuilder.ts
-- **Role**: DOMAIN_SERVICE
+- **Role**: UI_COMPONENT
 [View Source File](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/ir/ArchitectureIrBuilder.ts)
 
 **Evidence (Observed Behavior)**
 - Boundary Crossing: 9
-- Blast Radius (Clusters): 4
 - Fan-Out: 12
-- Fan-In: 2
-
-**Architectural Assessment**
-> NORMAL: Standard node behavior without severe structural anomalies.
-
-**Risk Level**: NONE
-
-**Recommended Action**
-> No immediate architectural action required.
+- Blast Radius: 4 Clusters
 
 **Top External Targets (Evidence)**
-- src/core/ir/evaluators/PayloadEvidenceEvaluator.ts (1 edges - Type: INCLUDE)
-- src/core/GraphModel.ts (1 edges - Type: INCLUDE)
-- src/core/ir/evaluators/ExtensionPointEvidenceEvaluator.ts (1 edges - Type: INCLUDE)
-- src/core/ir/evaluators/BoundaryEvidenceEvaluator.ts (1 edges - Type: INCLUDE)
-- src/core/ir/generators/BoundaryCandidateGenerator.ts (1 edges - Type: INCLUDE)
-- src/core/ir/generators/StateOwnerCandidateGenerator.ts (1 edges - Type: INCLUDE)
-- src/core/ir/generators/PayloadCandidateGenerator.ts (1 edges - Type: INCLUDE)
-- src/core/ir/generators/ExtensionPointCandidateGenerator.ts (1 edges - Type: INCLUDE)
-- src/core/ir/evaluators/StateOwnerEvidenceEvaluator.ts (1 edges - Type: INCLUDE)
+- src/core/ir/generators/BoundaryCandidateGenerator.ts (1 edges)
+- src/core/ir/evaluators/BoundaryEvidenceEvaluator.ts (1 edges)
+- src/core/ir/evaluators/ExtensionPointEvidenceEvaluator.ts (1 edges)
+- src/core/ir/generators/PayloadCandidateGenerator.ts (1 edges)
+- src/core/ir/evaluators/PayloadEvidenceEvaluator.ts (1 edges)
+- src/core/ir/evaluators/StateOwnerEvidenceEvaluator.ts (1 edges)
+- src/core/ir/generators/ExtensionPointCandidateGenerator.ts (1 edges)
+- src/core/ir/generators/StateOwnerCandidateGenerator.ts (1 edges)
+- src/core/GraphModel.ts (1 edges)
 
-**AST Evidence Verification** `[RUNTIME_HUB]`
-- interface: 0% | type: 0% | function: 1% | statement: 70%
-> 이 파일은 실제 실행 로직을 포함하는 런타임 허브다. 변경 시 즉각적 영향.
+**AST Evidence Verification** `[HEALTHY_CONTRACT]`
+- interface: 0% | type: 0% | function: 0% | statement: 5%
+- Score: 9 → 7 (×0.8)
+> 이 파일은 계약과 구현이 균형을 이룬다. 표준 위험도.
 
 ### 6. src/core/DataPipeline.ts
 - **Role**: DOMAIN_SERVICE
@@ -230,30 +188,22 @@ Final Score                   76
 
 **Evidence (Observed Behavior)**
 - Boundary Crossing: 7
-- Blast Radius (Clusters): 27
 - Fan-Out: 25
-- Fan-In: 2
-
-**Architectural Assessment**
-> NORMAL: Standard node behavior without severe structural anomalies.
-
-**Risk Level**: NONE
-
-**Recommended Action**
-> No immediate architectural action required.
+- Blast Radius: 22 Clusters
 
 **Top External Targets (Evidence)**
-- src/types/schema.ts (1 edges - Type: INCLUDE)
-- src/core/BoundsDiagnosticReporter.ts (1 edges - Type: UNKNOWN)
-- src/core/DiagnosticReporter.ts (1 edges - Type: UNKNOWN)
-- src/core/canvas-engine/CanvasEngine.ts (1 edges - Type: INCLUDE)
-- crypto (1 edges - Type: INCLUDE)
-- src/utils/Logger.ts (1 edges - Type: INCLUDE)
-- src/core/LayoutDiagnosticReporter.ts (1 edges - Type: UNKNOWN)
+- src/core/canvas-engine/CanvasEngine.ts (1 edges)
+- src/utils/Logger.ts (1 edges)
+- crypto (1 edges)
+- src/core/BoundsDiagnosticReporter.ts (1 edges)
+- src/core/DiagnosticReporter.ts (1 edges)
+- src/types/schema.ts (1 edges)
+- src/core/LayoutDiagnosticReporter.ts (1 edges)
 
-**AST Evidence Verification** `[RUNTIME_HUB]`
-- interface: 0% | type: 0% | function: 9% | statement: 52%
-> 이 파일은 실제 실행 로직을 포함하는 런타임 허브다. 변경 시 즉각적 영향.
+**AST Evidence Verification** `[HEALTHY_CONTRACT]`
+- interface: 0% | type: 0% | function: 1% | statement: 5%
+- Score: 7 → 6 (×0.8)
+> 이 파일은 계약과 구현이 균형을 이룬다. 표준 위험도.
 
 ### 7. src/cli/ProjectAnalyzer.ts
 - **Role**: UNKNOWN
@@ -261,29 +211,21 @@ Final Score                   76
 
 **Evidence (Observed Behavior)**
 - Boundary Crossing: 6
-- Blast Radius (Clusters): 27
 - Fan-Out: 6
-- Fan-In: 2
-
-**Architectural Assessment**
-> NORMAL: Standard node behavior without severe structural anomalies.
-
-**Risk Level**: NONE
-
-**Recommended Action**
-> No immediate architectural action required.
+- Blast Radius: 22 Clusters
 
 **Top External Targets (Evidence)**
-- src/core/analysis/intent/ReasonedReportBundle.ts (1 edges - Type: UNKNOWN)
-- src/core/analysis/intent/VSCodeProvider.ts (1 edges - Type: INCLUDE)
-- src/core/analysis/intent/ArchitectMapGenerator.ts (1 edges - Type: INCLUDE)
-- src/core/analysis/intent/RegexProvider.ts (1 edges - Type: INCLUDE)
-- src/core/analysis/intent/EvidenceAggregator.ts (1 edges - Type: INCLUDE)
-- src/core/analysis/intent/ConfidenceEngine.ts (1 edges - Type: INCLUDE)
+- src/core/analysis/intent/RegexProvider.ts (1 edges)
+- src/core/analysis/intent/ReasonedReportBundle.ts (1 edges)
+- src/core/analysis/intent/EvidenceAggregator.ts (1 edges)
+- src/core/analysis/intent/ConfidenceEngine.ts (1 edges)
+- src/core/analysis/intent/VSCodeProvider.ts (1 edges)
+- src/core/analysis/intent/ArchitectMapGenerator.ts (1 edges)
 
-**AST Evidence Verification** `[RUNTIME_HUB]`
-- interface: 3% | type: 2% | function: 13% | statement: 25%
-> 이 파일은 실제 실행 로직을 포함하는 런타임 허브다. 변경 시 즉각적 영향.
+**AST Evidence Verification** `[HEALTHY_CONTRACT]`
+- interface: 0% | type: 0% | function: 1% | statement: 2%
+- Score: 6 → 5 (×0.8)
+> 이 파일은 계약과 구현이 균형을 이룬다. 표준 위험도.
 
 ### 8. src/core/reasoning/analysis/ExtensionAnalyzer.ts
 - **Role**: DOMAIN_SERVICE
@@ -291,29 +233,21 @@ Final Score                   76
 
 **Evidence (Observed Behavior)**
 - Boundary Crossing: 6
-- Blast Radius (Clusters): 7
 - Fan-Out: 6
-- Fan-In: 2
-
-**Architectural Assessment**
-> NORMAL: Standard node behavior without severe structural anomalies.
-
-**Risk Level**: NONE
-
-**Recommended Action**
-> No immediate architectural action required.
+- Blast Radius: 7 Clusters
 
 **Top External Targets (Evidence)**
-- src/core/ir/evaluators/ExtensionPointEvidenceEvaluator.ts (1 edges - Type: INCLUDE)
-- src/core/GraphModel.ts (1 edges - Type: INCLUDE)
-- src/core/ir/generators/ExtensionPointCandidateGenerator.ts (1 edges - Type: INCLUDE)
-- src/core/reasoning/snapshot/ReasoningSnapshot.ts (1 edges - Type: INCLUDE)
-- src/core/reasoning/evidence/Evidence.ts (1 edges - Type: INCLUDE)
-- src/core/reasoning/rules/Rule.ts (1 edges - Type: INCLUDE)
+- src/core/reasoning/rules/Rule.ts (1 edges)
+- src/core/reasoning/evidence/Evidence.ts (1 edges)
+- src/core/reasoning/snapshot/ReasoningSnapshot.ts (1 edges)
+- src/core/ir/generators/ExtensionPointCandidateGenerator.ts (1 edges)
+- src/core/GraphModel.ts (1 edges)
+- src/core/ir/evaluators/ExtensionPointEvidenceEvaluator.ts (1 edges)
 
-**AST Evidence Verification** `[RUNTIME_HUB]`
-- interface: 0% | type: 0% | function: 26% | statement: 30%
-> 이 파일은 실제 실행 로직을 포함하는 런타임 허브다. 변경 시 즉각적 영향.
+**AST Evidence Verification** `[HEALTHY_CONTRACT]`
+- interface: 0% | type: 0% | function: 2% | statement: 2%
+- Score: 6 → 5 (×0.8)
+> 이 파일은 계약과 구현이 균형을 이룬다. 표준 위험도.
 
 ### 9. src/core/analysis/reasoning/ReasoningEngine.ts
 - **Role**: DOMAIN_SERVICE
@@ -321,29 +255,21 @@ Final Score                   76
 
 **Evidence (Observed Behavior)**
 - Boundary Crossing: 6
-- Blast Radius (Clusters): 4
 - Fan-Out: 8
-- Fan-In: 0
-
-**Architectural Assessment**
-> NORMAL: Standard node behavior without severe structural anomalies.
-
-**Risk Level**: NONE
-
-**Recommended Action**
-> No immediate architectural action required.
+- Blast Radius: 4 Clusters
 
 **Top External Targets (Evidence)**
-- src/utils/Logger.ts (1 edges - Type: INCLUDE)
-- src/core/analysis/TargetSelector.ts (1 edges - Type: INCLUDE)
-- src/core/analysis/types.ts (1 edges - Type: INCLUDE)
-- src/core/analysis/InterventionSimulator.ts (1 edges - Type: INCLUDE)
-- src/core/GraphModel.ts (1 edges - Type: INCLUDE)
-- src/types/schema.ts (1 edges - Type: INCLUDE)
+- src/core/analysis/types.ts (1 edges)
+- src/types/schema.ts (1 edges)
+- src/core/GraphModel.ts (1 edges)
+- src/core/analysis/TargetSelector.ts (1 edges)
+- src/core/analysis/InterventionSimulator.ts (1 edges)
+- src/utils/Logger.ts (1 edges)
 
-**AST Evidence Verification** `[RUNTIME_HUB]`
-- interface: 0% | type: 0% | function: 8% | statement: 53%
-> 이 파일은 실제 실행 로직을 포함하는 런타임 허브다. 변경 시 즉각적 영향.
+**AST Evidence Verification** `[HEALTHY_CONTRACT]`
+- interface: 0% | type: 0% | function: 1% | statement: 4%
+- Score: 6 → 5 (×0.8)
+> 이 파일은 계약과 구현이 균형을 이룬다. 표준 위험도.
 
 ### 10. src/core/canvas-engine/StateManager.ts
 - **Role**: DOMAIN_SERVICE
@@ -351,116 +277,80 @@ Final Score                   76
 
 **Evidence (Observed Behavior)**
 - Boundary Crossing: 6
-- Blast Radius (Clusters): 4
 - Fan-Out: 6
-- Fan-In: 4
-
-**Architectural Assessment**
-> NORMAL: Standard node behavior without severe structural anomalies.
-
-**Risk Level**: NONE
-
-**Recommended Action**
-> No immediate architectural action required.
+- Blast Radius: 4 Clusters
 
 **Top External Targets (Evidence)**
-- src/utils/Logger.ts (1 edges - Type: INCLUDE)
-- src/core/GraphModel.ts (1 edges - Type: INCLUDE)
-- crypto (1 edges - Type: INCLUDE)
-- src/core/transaction/CommitManager.ts (1 edges - Type: INCLUDE)
-- src/core/RuleEngine.ts (1 edges - Type: INCLUDE)
-- src/core/projection/ProjectionLayer.ts (1 edges - Type: INCLUDE)
+- src/core/RuleEngine.ts (1 edges)
+- src/core/projection/ProjectionLayer.ts (1 edges)
+- crypto (1 edges)
+- src/core/GraphModel.ts (1 edges)
+- src/core/transaction/CommitManager.ts (1 edges)
+- src/utils/Logger.ts (1 edges)
 
-**AST Evidence Verification** `[RUNTIME_HUB]`
-- interface: 0% | type: 0% | function: 13% | statement: 58%
-> 이 파일은 실제 실행 로직을 포함하는 런타임 허브다. 변경 시 즉각적 영향.
+**AST Evidence Verification** `[HEALTHY_CONTRACT]`
+- interface: 0% | type: 0% | function: 1% | statement: 5%
+- Score: 6 → 5 (×0.8)
+> 이 파일은 계약과 구현이 균형을 이룬다. 표준 위험도.
 
 
 ## 3. Evidence Layer
 ### 3.1 Ghost Evidence
-<details><summary><b>Show Ghost Evidence (Top 50)</b></summary>
-
-- [src/cli/ast_verification_engine.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/cli/ast_verification_engine.ts) -> typescript (Count: 1)
-- [src/server/standalone.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/server/standalone.ts) -> crypto (Count: 1)
-- [src/core/collaboration/SessionManager.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/collaboration/SessionManager.ts) -> crypto (Count: 1)
-- [src/core/benchmark/BenchmarkGraphGenerator.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/benchmark/BenchmarkGraphGenerator.ts) -> crypto (Count: 1)
-- [src/core/FileScanner.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/FileScanner.ts) -> Y (Count: 1)
-- [src/utils/hash_utils.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/utils/hash_utils.ts) -> crypto (Count: 1)
-- [src/cli/verify_determinism.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/cli/verify_determinism.ts) -> util (Count: 1)
-- [src/core/canvas-engine/StateManager.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/canvas-engine/StateManager.ts) -> crypto (Count: 1)
-- [src/core/EdgeBuilder.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/EdgeBuilder.ts) -> crypto (Count: 1)
-- [src/utils/hash_utils.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/utils/hash_utils.ts) -> util (Count: 1)
-- [src/core/resolvers/TypeScriptResolver.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/resolvers/TypeScriptResolver.ts) -> foo (Count: 1)
-- [src/core/collaboration/CompareEngine.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/collaboration/CompareEngine.ts) -> crypto (Count: 1)
-- [src/server/server.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/server/server.ts) -> vscode-languageserver-textdocument (Count: 1)
-- [src/core/CDPManager.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/CDPManager.ts) -> http (Count: 1)
-- [src/core/collaboration/CompareProjection.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/collaboration/CompareProjection.ts) -> crypto (Count: 1)
-- [src/core/SnapshotSystem.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/SnapshotSystem.ts) -> crypto (Count: 1)
-- [src/core/DirectChatScraper.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/DirectChatScraper.ts) -> crypto (Count: 1)
-- [src/core/ProjectMetadata.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/ProjectMetadata.ts) -> crypto (Count: 1)
-- [src/core/DataPipeline.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/DataPipeline.ts) -> crypto (Count: 1)
-- [src/core/resolvers/TypeScriptResolver.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/resolvers/TypeScriptResolver.ts) -> typescript (Count: 1)
-- [src/core/collaboration/EdgeGenerator.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/collaboration/EdgeGenerator.ts) -> crypto (Count: 1)
-- [src/core/collaboration/AccountManager.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/collaboration/AccountManager.ts) -> crypto (Count: 1)
-- [src/core/collaboration/HarvestProjection.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/collaboration/HarvestProjection.ts) -> crypto (Count: 1)
-- [src/core/CDPManager.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/CDPManager.ts) -> crypto (Count: 1)
-- [src/rust_checker/state_checker.rs](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/rust_checker/state_checker.rs) -> project_state_json (Count: 1)
-- [src/webview/CanvasPanel.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/webview/CanvasPanel.ts) -> http (Count: 1)
-</details>
+*No ghost evidence found.*
 
 ### 3.2 Boundary Evidence
 <details><summary><b>Show Boundary Evidence (Top 50)</b></summary>
 
-- [src/core/analysis/reasoning/ReasoningEngine.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/reasoning/ReasoningEngine.ts) -> src/utils/Logger.ts (Count: 1)
-- [src/server/standalone.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/server/standalone.ts) -> src/core/collaboration/RestCollaborationTransport.ts (Count: 1)
-- [scripts/run_reasoning_on_real_graph.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/scripts/run_reasoning_on_real_graph.ts) -> src/core/reasoning/rules/criticality/CriticalityRule.ts (Count: 1)
-- [src/core/ir/evaluators/StateOwnerEvidenceEvaluator.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/ir/evaluators/StateOwnerEvidenceEvaluator.ts) -> src/core/ir/models/GeneratorInterfaces.ts (Count: 1)
-- [src/bootstrap/BootstrapEngine.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/bootstrap/BootstrapEngine.ts) -> src/core/GeminiParser.ts (Count: 1)
-- [src/core/ir/generators/StateOwnerCandidateGenerator.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/ir/generators/StateOwnerCandidateGenerator.ts) -> src/core/ir/models/SemanticTypes.ts (Count: 1)
-- [src/core/SnapshotSystem.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/SnapshotSystem.ts) -> src/core/BlacklistOrchestrator.ts (Count: 1)
-- [src/core/analysis/InterventionSimulator.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/InterventionSimulator.ts) -> src/types/schema.ts (Count: 1)
-- [src/core/analysis/intent/ArchitectMapGenerator.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/intent/ArchitectMapGenerator.ts) -> src/core/analysis/intent/ActionCandidate.ts (Count: 1)
-- [src/core/analysis/analyzers/IsolatedNodeAnalyzer.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/analyzers/IsolatedNodeAnalyzer.ts) -> src/core/analysis/types.ts (Count: 1)
-- [src/core/reasoning/analysis/ExtensionAnalyzer.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reasoning/analysis/ExtensionAnalyzer.ts) -> src/core/ir/evaluators/ExtensionPointEvidenceEvaluator.ts (Count: 1)
-- [scripts/run_reasoning_on_real_graph.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/scripts/run_reasoning_on_real_graph.ts) -> src/core/reasoning/answers/aggregators/Q3CriticalityAggregator.ts (Count: 1)
-- [src/core/analysis/InterventionSimulator.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/InterventionSimulator.ts) -> src/utils/Logger.ts (Count: 1)
+- [src/bootstrap/BootstrapEngine.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/bootstrap/BootstrapEngine.ts) -> src/core/FlowchartGenerator.ts (Count: 1)
+- [src/core/canvas-engine/SpatialRuleBook.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/canvas-engine/SpatialRuleBook.ts) -> src/core/canvas-engine/RuleEngine.ts (Count: 1)
+- [src/utils/exclusionRules.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/utils/exclusionRules.ts) -> src/core/RuleEngine.ts (Count: 1)
+- [src/core/analysis/TargetSelector.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/TargetSelector.ts) -> src/core/analysis/types.ts (Count: 1)
+- [src/core/reasoning/rules/extension/ExtensionRule.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reasoning/rules/extension/ExtensionRule.ts) -> src/core/reasoning/evidence/Evidence.ts (Count: 1)
+- [src/core/CommandInterceptor.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/CommandInterceptor.ts) -> src/core/PromptLogger.ts (Count: 1)
+- [src/core/analysis/analyzers/CycleAnalyzer.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/analyzers/CycleAnalyzer.ts) -> src/core/analysis/types.ts (Count: 1)
+- [src/core/reasoning/analysis/BoundaryAnalyzer.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reasoning/analysis/BoundaryAnalyzer.ts) -> src/core/GraphModel.ts (Count: 1)
+- [src/core/ir/promoters/PromotionEngine.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/ir/promoters/PromotionEngine.ts) -> src/core/ir/models/SemanticTypes.ts (Count: 1)
+- [src/core/ir/generators/ExtensionPointCandidateGenerator.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/ir/generators/ExtensionPointCandidateGenerator.ts) -> src/core/GraphModel.ts (Count: 1)
+- [src/core/analysis/analyzers/DeadEndAnalyzer.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/analyzers/DeadEndAnalyzer.ts) -> src/types/schema.ts (Count: 1)
+- [src/core/ir/ArchitectureIrBuilder.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/ir/ArchitectureIrBuilder.ts) -> src/core/ir/generators/BoundaryCandidateGenerator.ts (Count: 1)
+- [src/cli/b5_validation_layer.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/cli/b5_validation_layer.ts) -> src/core/validation/ValidationContext.ts (Count: 1)
+- [src/core/analysis/reasoning/CommunityDetector.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/reasoning/CommunityDetector.ts) -> src/core/analysis/types.ts (Count: 1)
 - [src/core/VisibleGraphResolver.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/VisibleGraphResolver.ts) -> src/core/ClusterHierarchy.ts (Count: 1)
-- [src/core/AiOrchestrator.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/AiOrchestrator.ts) -> src/utils/Logger.ts (Count: 1)
-- [src/core/analysis/reasoning/ReasoningEngine.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/reasoning/ReasoningEngine.ts) -> src/core/analysis/TargetSelector.ts (Count: 1)
-- [src/core/SymbolIndex.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/SymbolIndex.ts) -> src/utils/Logger.ts (Count: 1)
-- [src/core/DataPipeline.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/DataPipeline.ts) -> src/core/RuleEngine.ts (Count: 1)
-- [src/core/ir/generators/BoundaryCandidateGenerator.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/ir/generators/BoundaryCandidateGenerator.ts) -> src/core/ir/models/SemanticTypes.ts (Count: 1)
-- [src/core/canvas-engine/ValidationHarness.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/canvas-engine/ValidationHarness.ts) -> src/core/RuleEngine.ts (Count: 1)
-- [src/core/filterSnapshot.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/filterSnapshot.ts) -> src/core/RuleEngine.ts (Count: 1)
-- [src/cli/run_b5_bundle.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/cli/run_b5_bundle.ts) -> src/cli/stage_a5_validator.ts (Count: 1)
-- [src/core/reasoning/answers/aggregators/Q4ExtensionAggregator.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reasoning/answers/aggregators/Q4ExtensionAggregator.ts) -> src/core/reasoning/evidence/Evidence.ts (Count: 1)
-- [src/core/DataPipeline.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/DataPipeline.ts) -> src/types/schema.ts (Count: 1)
-- [src/core/reasoning/analysis/CriticalityAnalyzer.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reasoning/analysis/CriticalityAnalyzer.ts) -> src/core/reasoning/snapshot/ReasoningSnapshot.ts (Count: 1)
-- [src/core/analysis/analyzers/DependencyPressureAnalyzer.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/analyzers/DependencyPressureAnalyzer.ts) -> src/types/schema.ts (Count: 1)
-- [src/core/analysis/analyzers/FractureAnalyzer.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/analyzers/FractureAnalyzer.ts) -> src/core/analysis/types.ts (Count: 1)
-- [src/core/ir/ArchitectureIrBuilder.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/ir/ArchitectureIrBuilder.ts) -> src/core/ir/evaluators/PayloadEvidenceEvaluator.ts (Count: 1)
-- [src/core/analysis/intent/ConfidenceEngine.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/intent/ConfidenceEngine.ts) -> src/core/analysis/intent/IntentEdge.ts (Count: 1)
-- [src/core/collaboration/AccountManager.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/collaboration/AccountManager.ts) -> src/utils/Logger.ts (Count: 1)
-- [src/core/ir/ArchitectureIrBuilder.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/ir/ArchitectureIrBuilder.ts) -> src/core/GraphModel.ts (Count: 1)
-- [src/core/reasoning/analysis/RoleAnalyzer.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reasoning/analysis/RoleAnalyzer.ts) -> src/core/reasoning/evidence/Evidence.ts (Count: 1)
-- [src/cli.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/cli.ts) -> src/cli/BatchRunner.ts (Count: 1)
-- [src/core/ir/evaluators/ExtensionPointEvidenceEvaluator.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/ir/evaluators/ExtensionPointEvidenceEvaluator.ts) -> src/core/ir/models/SemanticTypes.ts (Count: 1)
-- [src/core/RendererCore.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/RendererCore.ts) -> src/core/canvas-engine/RenderProtocol.ts (Count: 1)
-- [src/core/ir/generators/StateOwnerCandidateGenerator.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/ir/generators/StateOwnerCandidateGenerator.ts) -> src/core/GraphModel.ts (Count: 1)
-- [src/cli/BatchRunner.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/cli/BatchRunner.ts) -> src/core/analysis/intent/MarkdownExporter.ts (Count: 1)
-- [src/core/collaboration/RestCollaborationTransport.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/collaboration/RestCollaborationTransport.ts) -> src/core/collaboration/CollaborationTransport.ts (Count: 1)
-- [src/core/benchmark/BenchmarkHarness.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/benchmark/BenchmarkHarness.ts) -> src/core/GraphModel.ts (Count: 1)
-- [src/core/canvas-engine/CanvasEngine.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/canvas-engine/CanvasEngine.ts) -> src/core/canvas-engine/PhaseGate.ts (Count: 1)
-- [src/core/canvas-engine/VisualRuleBook.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/canvas-engine/VisualRuleBook.ts) -> src/core/canvas-engine/StateManager.ts (Count: 1)
-- [src/core/canvas-engine/StateManager.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/canvas-engine/StateManager.ts) -> src/utils/Logger.ts (Count: 1)
+- [src/bootstrap/BootstrapEngine.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/bootstrap/BootstrapEngine.ts) -> src/types/schema.ts (Count: 1)
+- [src/webview/CanvasPanel.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/webview/CanvasPanel.ts) -> src/core/transaction/ProjectStateSerializer.ts (Count: 1)
+- [src/core/analysis/intent/VSCodeProvider.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/intent/VSCodeProvider.ts) -> src/core/analysis/intent/IEvidenceProvider.ts (Count: 1)
+- [src/core/ir/ArchitectureIrBuilder.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/ir/ArchitectureIrBuilder.ts) -> src/core/ir/evaluators/BoundaryEvidenceEvaluator.ts (Count: 1)
+- [src/core/analysis/analyzers/CycleAnalyzer.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/analyzers/CycleAnalyzer.ts) -> src/types/schema.ts (Count: 1)
+- [src/core/collaboration/RuntimeInitializer.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/collaboration/RuntimeInitializer.ts) -> src/core/SymbolIndex.ts (Count: 1)
+- [src/core/reasoning/analysis/BoundaryAnalyzer.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reasoning/analysis/BoundaryAnalyzer.ts) -> src/core/reasoning/snapshot/ReasoningSnapshot.ts (Count: 1)
+- [src/core/benchmark/BenchmarkHarness.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/benchmark/BenchmarkHarness.ts) -> src/core/GhostExpander.ts (Count: 1)
+- [src/core/analysis/reasoning/ReasoningEngine.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/reasoning/ReasoningEngine.ts) -> src/core/analysis/types.ts (Count: 1)
+- [src/core/analysis/analyzers/SchemaViolationAnalyzer.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/analyzers/SchemaViolationAnalyzer.ts) -> src/core/analysis/types.ts (Count: 1)
+- [src/core/ir/evaluators/BoundaryEvidenceEvaluator.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/ir/evaluators/BoundaryEvidenceEvaluator.ts) -> src/core/ir/models/GeneratorInterfaces.ts (Count: 1)
+- [src/core/analysis/reasoning/ReasoningEngine.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/reasoning/ReasoningEngine.ts) -> src/types/schema.ts (Count: 1)
+- [src/core/reasoning/analysis/CriticalityAnalyzer.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reasoning/analysis/CriticalityAnalyzer.ts) -> src/core/reasoning/rules/Rule.ts (Count: 1)
+- [src/server/standalone.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/server/standalone.ts) -> src/core/collaboration/AccountManager.ts (Count: 1)
+- [src/core/VirtualDebugger.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/VirtualDebugger.ts) -> src/core/validation/ValidationEngine.ts (Count: 1)
+- [src/core/canvas-engine/CanvasEngine.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/canvas-engine/CanvasEngine.ts) -> src/core/RuleEngine.ts (Count: 1)
+- [src/core/analysis/ast/AstSymbolResolver.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/ast/AstSymbolResolver.ts) -> src/types/schema.ts (Count: 1)
+- [src/core/reasoning/analysis/RoleAnalyzer.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reasoning/analysis/RoleAnalyzer.ts) -> src/core/reasoning/snapshot/ReasoningSnapshot.ts (Count: 1)
+- [src/extension.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/extension.ts) -> src/core/LogicAnalyzer.ts (Count: 1)
+- [src/core/RendererCore.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/RendererCore.ts) -> src/core/PhaseManager.ts (Count: 1)
+- [src/core/analysis/InterventionSimulator.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/InterventionSimulator.ts) -> src/core/analysis/GraphViewBuilder.ts (Count: 1)
+- [src/server/standalone.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/server/standalone.ts) -> src/core/GeminiParser.ts (Count: 1)
+- [src/core/ShellScanner.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/ShellScanner.ts) -> src/types/schema.ts (Count: 1)
+- [src/extension.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/extension.ts) -> src/utils/ChatExtractor.ts (Count: 1)
+- [src/core/DataPipeline.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/DataPipeline.ts) -> src/core/ReferenceResolver.ts (Count: 1)
+- [src/core/analysis/analyzers/NecrosisAnalyzer.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/analyzers/NecrosisAnalyzer.ts) -> src/types/schema.ts (Count: 1)
+- [src/core/reasoning/analysis/ExtensionAnalyzer.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reasoning/analysis/ExtensionAnalyzer.ts) -> src/core/reasoning/rules/Rule.ts (Count: 1)
+- [src/core/collaboration/BoundaryGuard.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/collaboration/BoundaryGuard.ts) -> src/core/collaboration/SessionManager.ts (Count: 1)
+- [src/core/collaboration/HarvestSessionManager.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/collaboration/HarvestSessionManager.ts) -> src/utils/Logger.ts (Count: 1)
+- [src/core/NodeBuilder.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/NodeBuilder.ts) -> src/core/DirectoryTreeBuilder.ts (Count: 1)
 - [src/cli/verify_determinism.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/cli/verify_determinism.ts) -> src/utils/hash_utils.ts (Count: 1)
-- [src/core/ir/evaluators/ExtensionPointEvidenceEvaluator.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/ir/evaluators/ExtensionPointEvidenceEvaluator.ts) -> src/core/ir/models/GeneratorInterfaces.ts (Count: 1)
-- [src/core/LayoutEngine.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/LayoutEngine.ts) -> src/core/GraphModel.ts (Count: 1)
-- [scripts/run_reasoning_on_real_graph.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/scripts/run_reasoning_on_real_graph.ts) -> src/core/reasoning/analysis/CriticalityAnalyzer.ts (Count: 1)
-- [src/core/reasoning/analysis/AuthorityAnalyzer.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reasoning/analysis/AuthorityAnalyzer.ts) -> src/core/reasoning/rules/Rule.ts (Count: 1)
-- [src/core/ir/models/GeneratorInterfaces.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/ir/models/GeneratorInterfaces.ts) -> src/core/ir/models/SemanticTypes.ts (Count: 1)
-- [src/core/GhostClassifier.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/GhostClassifier.ts) -> src/core/GraphModel.ts (Count: 1)
-- [src/core/analysis/types.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/types.ts) -> src/types/schema.ts (Count: 1)
+- [src/core/ir/ArchitectureIrBuilder.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/ir/ArchitectureIrBuilder.ts) -> src/core/ir/evaluators/ExtensionPointEvidenceEvaluator.ts (Count: 1)
+- [src/cli.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/cli.ts) -> src/bootstrap/BootstrapEngine.ts (Count: 1)
+- [src/core/resolvers/TypeScriptResolver.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/resolvers/TypeScriptResolver.ts) -> src/core/resolvers/LanguageResolver.ts (Count: 1)
+- [src/core/GridSystem.ts](vscode://file//home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/GridSystem.ts) -> src/core/ControlSystem.ts (Count: 1)
 </details>
 
 ## 4. System Assembly Points (Healthy Hubs)
@@ -501,73 +391,38 @@ Reason Code:
 REJECTED_LOW_FANOUT
 
 ---
-vscode:/file/home/dogsinatas/다운로드/vscode/vscode-main/src/vs/sessions/sessions.common.main.ts
-Verdict: REJECTED
 
-Evidence
-FanOut: 0
-Boundary Ratio: 0.00
-
-Reason Code:
-REJECTED_LOW_FANOUT
-REJECTED_LOW_BOUNDARY_RATIO
-
----
-vscode:/file/home/dogsinatas/다운로드/vscode/vscode-main/src/vs/sessions/sessions.web.main.ts
-Verdict: REJECTED
-
-Evidence
-FanOut: 0
-Boundary Ratio: 0.00
-
-Reason Code:
-REJECTED_LOW_FANOUT
-REJECTED_LOW_BOUNDARY_RATIO
-
----
-vscode:/file/home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/workbench.common.main.ts
-Verdict: REJECTED
-
-Evidence
-FanOut: 0
-Boundary Ratio: 0.00
-
-Reason Code:
-REJECTED_LOW_FANOUT
-REJECTED_LOW_BOUNDARY_RATIO
-
----
-vscode:/file/home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/workbench.web.main.ts
-Verdict: REJECTED
-
-Evidence
-FanOut: 0
-Boundary Ratio: 0.00
-
-Reason Code:
-REJECTED_LOW_FANOUT
-REJECTED_LOW_BOUNDARY_RATIO
-
----
+### 4.2 CONTRACT_HUB Audit
+*No candidates found.*
 
 ## 5. Knowledge Connectivity
 *No knowledge sources linked.*
 
-## 7. Architectural Reasoning
-*Reasoning Pipeline was not executed or results unavailable.*
+## 4. Expected After Surgery
+🟢 **STRENGTHENED**
+- **Entropy**: 12 -> N/A
+- **Boundary Edges**: 743 -> N/A
+
 
 ## 6. Raw Metrics
-### 6.1 Global Metrics
-- **Boundary Ratio**: 83.0%
+### 6.1 AEL Metrics
+- **Architecture Entropy**: 12 / 100 (Risk Level: **LOW**)
+- **False Positive Probability**: 30.0%
 
 ### 6.2 Source Breakdown (ASR 3.0)
 #### Ghost Source Top N
   - N/A
 
 #### Coupling Source Top N
-  - **core**: 430 (31.5%)
-  - **unknown**: 258 (18.9%)
-  - **root**: 183 (13.4%)
-  - **vs**: 166 (12.2%)
-  - **types**: 68 (5%)
+  - **core**: 427 (38.1%)
+  - **root**: 183 (16.3%)
+  - **unknown**: 137 (12.2%)
+  - **vs**: 83 (7.4%)
+  - **types**: 68 (6.1%)
   - ...
+
+### 6.3 Cost Projection
+- **Estimated Engineers**: 4
+- **Estimated Days**: 7
+- **Files Affected**: 64
+- **Edges Affected**: 328

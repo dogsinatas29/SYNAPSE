@@ -1,11 +1,11 @@
 # 🔬 SYNAPSE Architecture Scan Report (EV-LIVE)
-Generated: 2026-08-19T03:25:27.879Z
+Generated: 2026-08-19T09:18:54.915Z
 
 ## 0. Analysis Subject (Layer -3)
 - **Subject**: Module: src/vs/platform/agentHost/node
-- **Files**: 13764
-- **Internal Edges**: 17372
-- **Boundary Edges**: 85396
+- **Files**: 11832
+- **Internal Edges**: 17137
+- **Boundary Edges**: 84380
 
 ### Subject Fingerprint (Top Internal Domains)
 - Module: src/vs/platform/agentHost/node
@@ -21,16 +21,16 @@ Generated: 2026-08-19T03:25:27.879Z
 **Implication**: This does not imply whole-project instability.
 
 **Why High External Coupling?**
-- **Boundary Edge Count**: 85396 / 17372 (Internal)
-- **Top 3 Contributors**: 상위 3개 파일(aiCustomizationManagementEditor.ts, agentSessionsViewer.ts, aiCustomizationListWidget.ts)이 전체 Boundary Edge의 **0.3%** (256개)를 생성하고 있습니다.
+- **Boundary Edge Count**: 84380 / 17137 (Internal)
+- **Top 3 Contributors**: 상위 3개 파일(chatInputPart.ts, extension.ts, scmViewPane.ts)이 전체 Boundary Edge의 **0.3%** (218개)를 생성하고 있습니다.
 
 
 
 **Cumulative Boundary Contribution**
-- **Top 3**: 0.3% (256 edges)
-- **Top 10**: 0.9% (770 edges)
-- **Top 50**: 3.6% (3047 edges)
-- **Top 100**: 6.2% (5278 edges)
+- **Top 3**: 0.3% (218 edges)
+- **Top 10**: 0.8% (693 edges)
+- **Top 50**: 3.4% (2864 edges)
+- **Top 100**: 6.0% (5032 edges)
 
 **Audit Confidence**: 81%
 
@@ -44,7 +44,7 @@ Final Score                   81
 
 ### Global Metrics
 - **Entropy**: 12
-- **Ghost Dependencies**: 2974
+- **Ghost Dependencies**: 2579
 
 ### Dependency Sources Breakdown
 **Ghost Dependencies (Scanner Issues)**
@@ -55,143 +55,7 @@ Final Score                   81
 
 
 ## 2. Impact Files (Architectural Assessment)
-### 1. src/vs/workbench/contrib/chat/browser/aiCustomization/aiCustomizationManagementEditor.ts
-- **Role**: UI_COMPONENT
-[View Source File](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/aiCustomization/aiCustomizationManagementEditor.ts)
-
-**Evidence (Observed Behavior)**
-- Boundary Crossing: 96
-- Blast Radius (Clusters): 190
-- Fan-Out: 146
-- Fan-In: 5
-
-**Architectural Assessment**
-> UI_TO_SERVICE_COUPLING: UI layer is directly coupled to domain services and state-management layers.
-
-**Risk Level**: HIGH
-
-**Recommended Action**
-> Introduce ViewModel, Facade, or Presentation Boundary.
-
-**Top External Targets (Evidence)**
-- extensions/notebook-renderers/src/color.ts (2 edges - Type: INCLUDE)
-- extensions/copilot/src/platform/customInstructions/common/promptTypes.ts (2 edges - Type: INCLUDE)
-- src/vs/workbench/contrib/codeEditor/browser/simpleEditorOptions.ts (2 edges - Type: INCLUDE)
-- src/vs/platform/list/browser/listService.ts (2 edges - Type: INCLUDE)
-- src/vs/platform/opener/common/opener.ts (2 edges - Type: INCLUDE)
-- src/vs/editor/common/services/resolverService.ts (2 edges - Type: INCLUDE)
-- src/vs/workbench/services/workingCopy/common/workingCopyService.ts (2 edges - Type: INCLUDE)
-- extensions/copilot/src/extension/completions-core/vscode-node/lib/src/openai/model.ts (2 edges - Type: INCLUDE)
-- extensions/git/src/hover.ts (2 edges - Type: INCLUDE)
-- extensions/copilot/src/platform/promptFiles/common/promptsService.ts (2 edges - Type: INCLUDE)
-
-**AST Evidence Verification** `[RUNTIME_HUB]`
-- interface: 0% | type: 1% | function: 13% | statement: 73%
-> 이 파일은 실제 실행 로직을 포함하는 런타임 허브다. 변경 시 즉각적 영향.
-
-### 2. src/vs/workbench/contrib/chat/browser/agentSessions/agentSessionsViewer.ts
-- **Role**: UI_COMPONENT
-[View Source File](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/agentSessions/agentSessionsViewer.ts)
-
-**Evidence (Observed Behavior)**
-- Boundary Crossing: 84
-- Blast Radius (Clusters): 116
-- Fan-Out: 102
-- Fan-In: 12
-
-**Architectural Assessment**
-> UI_TO_SERVICE_COUPLING: UI layer is directly coupled to domain services and state-management layers.
-
-**Risk Level**: HIGH
-
-**Recommended Action**
-> Introduce ViewModel, Facade, or Presentation Boundary.
-
-**Top External Targets (Evidence)**
-- src/vs/base/common/strings.ts (2 edges - Type: INCLUDE)
-- src/vs/platform/instantiation/common/serviceCollection.ts (2 edges - Type: INCLUDE)
-- src/vs/base/browser/ui/aria/aria.ts (2 edges - Type: INCLUDE)
-- IAgentSessionSectionTemplate> (2 edges - Type: IMPLEMENTS)
-- src/vs/base/browser/ui/tree/objectTree.ts (2 edges - Type: IMPLEMENTS)
-- src/vs/base/browser/ui/tree/asyncDataTree.ts (2 edges - Type: IMPLEMENTS)
-- src/vs/platform/markdown/browser/markdownRenderer.ts (2 edges - Type: INCLUDE)
-- src/vs/base/common/arrays.ts (2 edges - Type: INCLUDE)
-- src/vs/platform/agentHost/common/state/protocol/common/actions.ts (2 edges - Type: INCLUDE)
-- src/vs/base/common/htmlContent.ts (2 edges - Type: INCLUDE)
-
-**AST Evidence Verification** `[RUNTIME_HUB]`
-- interface: 1% | type: 0% | function: 13% | statement: 59%
-> 이 파일은 실제 실행 로직을 포함하는 런타임 허브다. 변경 시 즉각적 영향.
-
-### 3. src/vs/workbench/contrib/chat/browser/aiCustomization/aiCustomizationListWidget.ts
-- **Role**: UI_COMPONENT
-[View Source File](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/aiCustomization/aiCustomizationListWidget.ts)
-
-**Evidence (Observed Behavior)**
-- Boundary Crossing: 76
-- Blast Radius (Clusters): 155
-- Fan-Out: 90
-- Fan-In: 4
-
-**Architectural Assessment**
-> UI_TO_SERVICE_COUPLING: UI layer is directly coupled to domain services and state-management layers.
-
-**Risk Level**: HIGH
-
-**Recommended Action**
-> Introduce ViewModel, Facade, or Presentation Boundary.
-
-**Top External Targets (Evidence)**
-- src/vs/base/browser/ui/list/list.ts (2 edges - Type: IMPLEMENTS)
-- src/vs/platform/actions/browser/menuEntryActionViewItem.ts (2 edges - Type: INCLUDE)
-- extensions/copilot/src/extension/completions-core/vscode-node/lib/src/util/uri.ts (2 edges - Type: INCLUDE)
-- src/vs/base/common/themables.ts (2 edges - Type: INCLUDE)
-- src/vs/platform/list/browser/listService.ts (2 edges - Type: INCLUDE)
-- IAICustomizationItemTemplateData> (2 edges - Type: IMPLEMENTS)
-- src/vs/platform/theme/browser/defaultStyles.ts (2 edges - Type: INCLUDE)
-- src/vs/platform/agentHost/common/state/protocol/common/actions.ts (2 edges - Type: INCLUDE)
-- src/vs/platform/label/common/label.ts (2 edges - Type: INCLUDE)
-- src/vs/base/browser/ui/highlightedlabel/highlightedLabel.ts (2 edges - Type: INCLUDE)
-
-**AST Evidence Verification** `[RUNTIME_HUB]`
-- interface: 1% | type: 0% | function: 14% | statement: 65%
-> 이 파일은 실제 실행 로직을 포함하는 런타임 허브다. 변경 시 즉각적 영향.
-
-### 4. src/vs/workbench/contrib/chat/browser/agentSessions/agentHost/agentHostSessionHandler.ts
-- **Role**: UI_COMPONENT
-[View Source File](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/agentSessions/agentHost/agentHostSessionHandler.ts)
-
-**Evidence (Observed Behavior)**
-- Boundary Crossing: 76
-- Blast Radius (Clusters): 153
-- Fan-Out: 120
-- Fan-In: 3
-
-**Architectural Assessment**
-> UI_TO_SERVICE_COUPLING: UI layer is directly coupled to domain services and state-management layers.
-
-**Risk Level**: HIGH
-
-**Recommended Action**
-> Introduce ViewModel, Facade, or Presentation Boundary.
-
-**Top External Targets (Evidence)**
-- src/vs/platform/agentHost/common/sessionConfigKeys.ts (2 edges - Type: INCLUDE)
-- extensions/copilot/src/extension/completions-core/vscode-node/lib/src/util/event.ts (2 edges - Type: INCLUDE)
-- extensions/copilot/src/extension/prompts/node/panel/terminal.tsx (2 edges - Type: INCLUDE)
-- src/vs/platform/agentHost/common/meta/agentCompletionAttachmentMeta.ts (2 edges - Type: INCLUDE)
-- extensions/copilot/src/platform/chat/common/chatAgents.ts (2 edges - Type: INCLUDE)
-- src/vs/platform/agentHost/common/state/protocol/common/actions.ts (2 edges - Type: INCLUDE)
-- src/vs/base/common/cancellation.ts (2 edges - Type: INCLUDE)
-- src/vs/base/common/objects.ts (2 edges - Type: INCLUDE)
-- src/vs/platform/agentHost/common/state/sessionProtocol.ts (2 edges - Type: INCLUDE)
-- extensions/copilot/src/extension/completions-core/vscode-node/lib/src/util/uri.ts (2 edges - Type: INCLUDE)
-
-**AST Evidence Verification** `[RUNTIME_HUB]`
-- interface: 0% | type: 0% | function: 14% | statement: 58%
-> 이 파일은 실제 실행 로직을 포함하는 런타임 허브다. 변경 시 즉각적 영향.
-
-### 5. src/vs/workbench/contrib/chat/browser/widget/input/chatInputPart.ts
+### 1. src/vs/workbench/contrib/chat/browser/widget/input/chatInputPart.ts
 - **Role**: UI_COMPONENT
 [View Source File](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/widget/input/chatInputPart.ts)
 
@@ -210,29 +74,29 @@ Final Score                   81
 > Introduce ViewModel, Facade, or Presentation Boundary.
 
 **Top External Targets (Evidence)**
-- src/vs/base/browser/ui/button/button.ts (1 edges - Type: INCLUDE)
-- extensions/copilot/src/extension/completions-core/vscode-node/lib/src/language/languages.ts (1 edges - Type: INCLUDE)
-- extensions/copilot/src/extension/completions-core/vscode-node/lib/src/util/event.ts (1 edges - Type: INCLUDE)
-- src/vs/editor/common/services/resolverService.ts (1 edges - Type: INCLUDE)
-- src/vs/workbench/services/editor/browser/editorService.ts (1 edges - Type: INCLUDE)
+- src/vs/editor/contrib/dropOrPasteInto/browser/dropIntoEditorController.ts (1 edges - Type: INCLUDE)
+- cli/src/constants.rs (1 edges - Type: INCLUDE)
+- src/vs/platform/registry/common/platform.ts (1 edges - Type: INCLUDE)
+- src/vs/workbench/contrib/files/common/files.ts (1 edges - Type: INCLUDE)
+- extensions/copilot/src/platform/chat/common/chatAgents.ts (1 edges - Type: INCLUDE)
+- extensions/typescript-language-features/src/configuration/configuration.ts (1 edges - Type: INCLUDE)
 - src/vs/base/common/marshallingIds.ts (1 edges - Type: INCLUDE)
-- src/vs/platform/webContentExtractor/common/webContentExtractor.ts (1 edges - Type: INCLUDE)
-- src/vs/platform/history/browser/contextScopedHistoryWidget.ts (1 edges - Type: INCLUDE)
-- src/vs/workbench/contrib/codeEditor/browser/simpleEditorOptions.ts (1 edges - Type: INCLUDE)
-- extensions/copilot/src/extension/completions-core/vscode-node/lib/src/util/uri.ts (1 edges - Type: INCLUDE)
+- extensions/copilot/src/extension/agents/node/adapters/types.ts (1 edges - Type: INCLUDE)
+- src/vs/editor/contrib/hover/browser/contentHoverController.ts (1 edges - Type: INCLUDE)
+- src/vs/editor/common/config/editorOptions.ts (1 edges - Type: INCLUDE)
 
 **AST Evidence Verification** `[RUNTIME_HUB]`
 - interface: 0% | type: 0% | function: 15% | statement: 63%
 > 이 파일은 실제 실행 로직을 포함하는 런타임 허브다. 변경 시 즉각적 영향.
 
-### 6. extensions/vscode-test-resolver/src/extension.ts
+### 2. extensions/vscode-test-resolver/src/extension.ts
 - **Role**: TEST_ARTIFACT
 [View Source File](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/extensions/vscode-test-resolver/src/extension.ts)
 
 **Evidence (Observed Behavior)**
-- Boundary Crossing: 74
-- Blast Radius (Clusters): 218
-- Fan-Out: 78
+- Boundary Crossing: 73
+- Blast Radius (Clusters): 215
+- Fan-Out: 76
 - Fan-In: 1
 
 **Architectural Assessment**
@@ -244,22 +108,22 @@ Final Score                   81
 > Split responsibilities or apply Dependency Inversion Principle (DIP).
 
 **Top External Targets (Evidence)**
-- extensions/github/src/canonicalUriProvider.ts (1 edges - Type: INCLUDE)
-- src/vs/base/common/cancellation.ts (1 edges - Type: INCLUDE)
-- extensions/media-preview/media/videoPreview.js (1 edges - Type: INCLUDE)
-- extensions/github/src/branchProtection.ts (1 edges - Type: INCLUDE)
-- .eslint-plugin-local/index.ts (1 edges - Type: INCLUDE)
-- extensions/configuration-editing/src/browser/net.ts (1 edges - Type: INCLUDE)
-- extensions/microsoft-authentication/src/UriEventHandler.ts (1 edges - Type: INCLUDE)
-- extensions/git/src/git.ts (1 edges - Type: INCLUDE)
+- extensions/markdown-language-features/src/client/client.ts (1 edges - Type: INCLUDE)
+- extensions/github/src/credentialProvider.ts (1 edges - Type: INCLUDE)
+- extensions/typescript-language-features/src/tsServer/logDirectoryProvider.ts (1 edges - Type: INCLUDE)
+- extensions/terminal-suggest/src/completions/upstream/split.ts (1 edges - Type: INCLUDE)
+- extensions/typescript-language-features/src/utils/packageInfo.ts (1 edges - Type: INCLUDE)
+- extensions/markdown-language-features/src/markdownEngine.ts (1 edges - Type: INCLUDE)
+- extensions/microsoft-authentication/src/common/config.ts (1 edges - Type: INCLUDE)
+- extensions/simple-browser/src/simpleBrowserView.ts (1 edges - Type: INCLUDE)
+- extensions/typescript-language-features/src/task/taskProvider.ts (1 edges - Type: INCLUDE)
 - extensions/copilot/src/extension/chatSessions/copilotcli/node/logger.ts (1 edges - Type: INCLUDE)
-- src/vs/workbench/contrib/debug/node/debugAdapter.ts (1 edges - Type: INCLUDE)
 
 **AST Evidence Verification** `[RUNTIME_HUB]`
 - interface: 0% | type: 0% | function: 20% | statement: 60%
 > 이 파일은 실제 실행 로직을 포함하는 런타임 허브다. 변경 시 즉각적 영향.
 
-### 7. src/vs/workbench/contrib/scm/browser/scmViewPane.ts
+### 3. src/vs/workbench/contrib/scm/browser/scmViewPane.ts
 - **Role**: UI_COMPONENT
 [View Source File](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/scm/browser/scmViewPane.ts)
 
@@ -278,22 +142,22 @@ Final Score                   81
 > Introduce ViewModel, Facade, or Presentation Boundary.
 
 **Top External Targets (Evidence)**
-- ISCMResourceGroup> (1 edges - Type: IMPLEMENTS)
-- src/vs/base/browser/ui/list/listView.ts (1 edges - Type: INCLUDE)
+- ResourceTemplate> (1 edges - Type: IMPLEMENTS)
+- src/vs/workbench/common/views.ts (1 edges - Type: INCLUDE)
+- src/vs/workbench/browser/parts/views/viewPane.ts (1 edges - Type: EXTENDS)
+- extensions/references-view/src/tree.ts (1 edges - Type: INCLUDE)
+- src/vs/workbench/browser/parts/editor/editorCommands.ts (1 edges - Type: INCLUDE)
+- extensions/markdown-language-features/src/util/async.ts (1 edges - Type: INCLUDE)
+- src/vs/base/browser/ui/tree/tree.ts (1 edges - Type: IMPLEMENTS)
+- src/vs/base/common/labels.ts (1 edges - Type: INCLUDE)
 - src/vs/workbench/browser/dnd.ts (1 edges - Type: INCLUDE)
-- src/vs/base/common/iterator.ts (1 edges - Type: INCLUDE)
-- extensions/media-preview/src/util/dom.ts (1 edges - Type: INCLUDE)
-- src/vs/platform/agentHost/common/state/protocol/common/actions.ts (1 edges - Type: INCLUDE)
 - src/vs/base/browser/ui/tree/objectTree.ts (1 edges - Type: IMPLEMENTS)
-- InputTemplate> (1 edges - Type: IMPLEMENTS)
-- src/vs/workbench/api/common/extHostTypes/selection.ts (1 edges - Type: INCLUDE)
-- src/vs/platform/actions/browser/menuEntryActionViewItem.ts (1 edges - Type: INCLUDE)
 
 **AST Evidence Verification** `[RUNTIME_HUB]`
 - interface: 1% | type: 0% | function: 17% | statement: 61%
 > 이 파일은 실제 실행 로직을 포함하는 런타임 허브다. 변경 시 즉각적 영향.
 
-### 8. src/vs/workbench/api/common/extHost.protocol.ts
+### 4. src/vs/workbench/api/common/extHost.protocol.ts
 - **Role**: DOMAIN_SERVICE
 [View Source File](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/api/common/extHost.protocol.ts)
 
@@ -312,23 +176,23 @@ Final Score                   81
 > Decompose into smaller domain-specific services.
 
 **Top External Targets (Evidence)**
-- src/vs/editor/common/diff/legacyLinesDiffComputer.ts (1 edges - Type: INCLUDE)
-- extensions/typescript-language-features/src/languageFeatures/callHierarchy.ts (1 edges - Type: INCLUDE)
-- src/vs/workbench/services/remote/common/tunnelModel.ts (1 edges - Type: INCLUDE)
-- src/vs/workbench/contrib/terminal/common/environmentVariable.ts (1 edges - Type: INCLUDE)
-- extensions/copilot/src/extension/prompts/node/panel/chatVariables.tsx (1 edges - Type: INCLUDE)
+- src/vs/workbench/services/extensions/common/extensionHostProtocol.ts (1 edges - Type: INCLUDE)
+- src/vs/base/common/range.ts (1 edges - Type: INCLUDE)
 - extensions/copilot/src/platform/customInstructions/common/promptTypes.ts (1 edges - Type: INCLUDE)
-- cli/src/util/errors.rs (1 edges - Type: INCLUDE)
-- src/vs/code/electron-utility/sharedProcess/contrib/extensions.ts (1 edges - Type: INCLUDE)
-- cli/src/constants.rs (1 edges - Type: INCLUDE)
-- src/vs/platform/tunnel/common/tunnel.ts (1 edges - Type: INCLUDE)
+- src/vs/workbench/contrib/search/browser/notebookSearch/searchNotebookHelpers.ts (1 edges - Type: INCLUDE)
+- src/vs/workbench/services/search/common/queryBuilder.ts (1 edges - Type: DB_QUERY)
+- extensions/copilot/src/extension/completions-core/vscode-node/lib/src/progress.ts (1 edges - Type: INCLUDE)
+- src/vs/workbench/services/inlineCompletions/common/inlineCompletionsUnification.ts (1 edges - Type: INCLUDE)
+- src/vs/workbench/services/workspaces/common/workspaceTrust.ts (1 edges - Type: INCLUDE)
+- src/vs/base/browser/history.ts (1 edges - Type: INCLUDE)
+- src/vs/base/common/cancellation.ts (1 edges - Type: INCLUDE)
 
 **AST Evidence Verification** `[HEALTHY_CONTRACT]`
 - interface: 82% | type: 13% | function: 0% | statement: 1%
 - Score: 86 → 69 (×0.8)
 > 이 파일은 계약과 구현이 균형을 이룬다. 표준 위험도.
 
-### 9. src/vs/workbench/contrib/files/browser/views/explorerViewer.ts
+### 5. src/vs/workbench/contrib/files/browser/views/explorerViewer.ts
 - **Role**: UI_COMPONENT
 [View Source File](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/files/browser/views/explorerViewer.ts)
 
@@ -347,22 +211,22 @@ Final Score                   81
 > Introduce ViewModel, Facade, or Presentation Boundary.
 
 **Top External Targets (Evidence)**
-- extensions/copilot/src/extension/completions-core/vscode-node/lib/src/util/event.ts (1 edges - Type: INCLUDE)
-- src/vs/platform/workspaces/common/workspaces.ts (1 edges - Type: INCLUDE)
-- src/vs/base/browser/ui/contextview/contextview.ts (1 edges - Type: INCLUDE)
-- src/vs/platform/registry/common/platform.ts (1 edges - Type: INCLUDE)
-- src/vs/platform/instantiation/common/instantiation.ts (1 edges - Type: INCLUDE)
-- extensions/media-preview/src/util/dom.ts (1 edges - Type: INCLUDE)
-- src/vs/base/common/comparers.ts (1 edges - Type: INCLUDE)
-- src/vs/platform/theme/common/colorRegistry.ts (1 edges - Type: INCLUDE)
-- src/vs/platform/contextkey/common/contextkey.ts (1 edges - Type: INCLUDE)
-- src/vs/base/browser/keyboardEvent.ts (1 edges - Type: INCLUDE)
+- extensions/copilot/src/extension/trajectory/vscode-node/otelChatDebugLogProvider.ts (1 edges - Type: IMPLEMENTS)
+- src/vs/base/common/errorMessage.ts (1 edges - Type: INCLUDE)
+- extensions/markdown-language-features/src/util/async.ts (1 edges - Type: INCLUDE)
+- extensions/copilot/src/extension/prompts/node/panel/search.tsx (1 edges - Type: INCLUDE)
+- src/vs/base/common/glob.ts (1 edges - Type: INCLUDE)
+- FuzzyScore> (1 edges - Type: IMPLEMENTS)
+- src/vs/platform/label/common/label.ts (1 edges - Type: INCLUDE)
+- src/vs/platform/notification/common/notification.ts (1 edges - Type: INCLUDE)
+- src/vs/workbench/browser/dnd.ts (1 edges - Type: INCLUDE)
+- src/vs/workbench/services/editor/browser/editorService.ts (1 edges - Type: INCLUDE)
 
 **AST Evidence Verification** `[RUNTIME_HUB]`
 - interface: 0% | type: 0% | function: 16% | statement: 59%
 > 이 파일은 실제 실행 로직을 포함하는 런타임 허브다. 변경 시 즉각적 영향.
 
-### 10. src/vs/workbench/electron-browser/window.ts
+### 6. src/vs/workbench/electron-browser/window.ts
 - **Role**: UI_COMPONENT
 [View Source File](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/electron-browser/window.ts)
 
@@ -381,19 +245,155 @@ Final Score                   81
 > Introduce ViewModel, Facade, or Presentation Boundary.
 
 **Top External Targets (Evidence)**
-- extensions/git/src/hover.ts (1 edges - Type: INCLUDE)
-- src/vs/platform/uriIdentity/common/uriIdentity.ts (1 edges - Type: INCLUDE)
-- src/vs/platform/windows/electron-main/windowImpl.ts (1 edges - Type: EXTENDS)
-- src/vs/workbench/services/banner/browser/bannerService.ts (1 edges - Type: INCLUDE)
-- src/vs/workbench/services/filesConfiguration/common/filesConfigurationService.ts (1 edges - Type: INCLUDE)
-- extensions/media-preview/src/util/dom.ts (1 edges - Type: INCLUDE)
-- src/vs/platform/remote/common/remoteAuthorityResolver.ts (1 edges - Type: INCLUDE)
-- src/vs/base/common/arrays.ts (1 edges - Type: INCLUDE)
-- src/vs/platform/tunnel/common/tunnel.ts (1 edges - Type: INCLUDE)
-- extensions/copilot/src/extension/completions-core/vscode-node/lib/src/progress.ts (1 edges - Type: INCLUDE)
+- src/vs/workbench/browser/window.ts (1 edges - Type: INCLUDE)
+- src/vs/workbench/services/editor/common/editorGroupsService.ts (1 edges - Type: INCLUDE)
+- src/vs/platform/instantiation/common/instantiation.ts (1 edges - Type: INCLUDE)
+- src/vs/platform/workspaces/common/workspaces.ts (1 edges - Type: INCLUDE)
+- src/vs/workbench/services/layout/browser/layoutService.ts (1 edges - Type: INCLUDE)
+- src/vs/workbench/services/integrity/common/integrity.ts (1 edges - Type: INCLUDE)
+- extensions/copilot/src/extension/extension/vscode/services.ts (1 edges - Type: INCLUDE)
+- extensions/markdown-language-features/src/util/async.ts (1 edges - Type: INCLUDE)
+- extensions/copilot/src/extension/completions-core/vscode-node/lib/src/telemetry.ts (1 edges - Type: INCLUDE)
+- extensions/copilot/src/extension/prompts/node/panel/preferences.tsx (1 edges - Type: INCLUDE)
 
 **AST Evidence Verification** `[RUNTIME_HUB]`
 - interface: 0% | type: 0% | function: 22% | statement: 56%
+> 이 파일은 실제 실행 로직을 포함하는 런타임 허브다. 변경 시 즉각적 영향.
+
+### 7. src/vs/workbench/contrib/scm/browser/scmHistoryViewPane.ts
+- **Role**: UI_COMPONENT
+[View Source File](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/scm/browser/scmHistoryViewPane.ts)
+
+**Evidence (Observed Behavior)**
+- Boundary Crossing: 65
+- Blast Radius (Clusters): 158
+- Fan-Out: 73
+- Fan-In: 1
+
+**Architectural Assessment**
+> UI_TO_SERVICE_COUPLING: UI layer is directly coupled to domain services and state-management layers.
+
+**Risk Level**: HIGH
+
+**Recommended Action**
+> Introduce ViewModel, Facade, or Presentation Boundary.
+
+**Top External Targets (Evidence)**
+- extensions/references-view/src/tree.ts (1 edges - Type: INCLUDE)
+- src/vs/base/browser/ui/iconLabel/iconLabel.ts (1 edges - Type: INCLUDE)
+- src/vs/platform/theme/common/themeService.ts (1 edges - Type: INCLUDE)
+- src/vs/platform/list/browser/listService.ts (1 edges - Type: INCLUDE)
+- src/vs/base/browser/ui/hover/hoverWidget.ts (1 edges - Type: INCLUDE)
+- src/vs/base/browser/ui/tree/asyncDataTree.ts (1 edges - Type: IMPLEMENTS)
+- src/vs/platform/keybinding/common/keybinding.ts (1 edges - Type: INCLUDE)
+- src/vs/workbench/browser/dnd.ts (1 edges - Type: INCLUDE)
+- src/vs/base/browser/ui/tree/objectTree.ts (1 edges - Type: IMPLEMENTS)
+- extensions/copilot/src/extension/completions-core/vscode-node/lib/src/telemetry.ts (1 edges - Type: INCLUDE)
+
+**AST Evidence Verification** `[RUNTIME_HUB]`
+- interface: 0% | type: 1% | function: 18% | statement: 56%
+> 이 파일은 실제 실행 로직을 포함하는 런타임 허브다. 변경 시 즉각적 영향.
+
+### 8. src/vs/workbench/contrib/search/browser/searchView.ts
+- **Role**: UI_COMPONENT
+[View Source File](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/search/browser/searchView.ts)
+
+**Evidence (Observed Behavior)**
+- Boundary Crossing: 64
+- Blast Radius (Clusters): 157
+- Fan-Out: 81
+- Fan-In: 8
+
+**Architectural Assessment**
+> UI_TO_SERVICE_COUPLING: UI layer is directly coupled to domain services and state-management layers.
+
+**Risk Level**: HIGH
+
+**Recommended Action**
+> Introduce ViewModel, Facade, or Presentation Boundary.
+
+**Top External Targets (Evidence)**
+- extensions/copilot/src/extension/prompts/node/panel/preferences.tsx (1 edges - Type: INCLUDE)
+- extensions/copilot/src/extension/completions-core/vscode-node/lib/src/progress.ts (1 edges - Type: INCLUDE)
+- src/vs/platform/theme/browser/defaultStyles.ts (1 edges - Type: INCLUDE)
+- src/vs/base/browser/ui/tree/tree.ts (1 edges - Type: IMPLEMENTS)
+- src/vs/workbench/contrib/files/common/files.ts (1 edges - Type: INCLUDE)
+- src/vs/workbench/common/views.ts (1 edges - Type: INCLUDE)
+- src/vs/workbench/services/lifecycle/common/lifecycle.ts (1 edges - Type: INCLUDE)
+- src/vs/workbench/browser/parts/views/viewPane.ts (1 edges - Type: EXTENDS)
+- src/vs/workbench/contrib/scm/common/scm.ts (1 edges - Type: INCLUDE)
+- src/vs/editor/contrib/find/browser/findController.ts (1 edges - Type: INCLUDE)
+
+**AST Evidence Verification** `[RUNTIME_HUB]`
+- interface: 0% | type: 0% | function: 16% | statement: 66%
+> 이 파일은 실제 실행 로직을 포함하는 런타임 허브다. 변경 시 즉각적 영향.
+
+### 9. src/vs/workbench/browser/parts/views/treeView.ts
+- **Role**: UI_COMPONENT
+[View Source File](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/browser/parts/views/treeView.ts)
+
+**Evidence (Observed Behavior)**
+- Boundary Crossing: 64
+- Blast Radius (Clusters): 145
+- Fan-Out: 69
+- Fan-In: 4
+
+**Architectural Assessment**
+> UI_TO_SERVICE_COUPLING: UI layer is directly coupled to domain services and state-management layers.
+
+**Risk Level**: HIGH
+
+**Recommended Action**
+> Introduce ViewModel, Facade, or Presentation Boundary.
+
+**Top External Targets (Evidence)**
+- src/vs/platform/list/browser/listService.ts (1 edges - Type: EXTENDS)
+- extensions/copilot/src/extension/trajectory/vscode-node/otelChatDebugLogProvider.ts (1 edges - Type: IMPLEMENTS)
+- src/vs/base/browser/ui/contextview/contextview.ts (1 edges - Type: INCLUDE)
+- src/vs/base/browser/ui/list/list.ts (1 edges - Type: IMPLEMENTS)
+- src/vs/base/common/codicons.ts (1 edges - Type: INCLUDE)
+- src/vs/base/common/dataTransfer.ts (1 edges - Type: INCLUDE)
+- extensions/markdown-language-features/src/util/async.ts (1 edges - Type: INCLUDE)
+- src/vs/base/browser/ui/tree/treeDefaults.ts (1 edges - Type: INCLUDE)
+- src/vs/platform/telemetry/common/telemetryUtils.ts (1 edges - Type: INCLUDE)
+- src/vs/platform/label/common/label.ts (1 edges - Type: INCLUDE)
+
+**AST Evidence Verification** `[RUNTIME_HUB]`
+- interface: 0% | type: 0% | function: 18% | statement: 64%
+> 이 파일은 실제 실행 로직을 포함하는 런타임 허브다. 변경 시 즉각적 영향.
+
+### 10. src/vs/sessions/contrib/changes/browser/changesView.ts
+- **Role**: UI_COMPONENT
+[View Source File](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/sessions/contrib/changes/browser/changesView.ts)
+
+**Evidence (Observed Behavior)**
+- Boundary Crossing: 63
+- Blast Radius (Clusters): 167
+- Fan-Out: 76
+- Fan-In: 2
+
+**Architectural Assessment**
+> UI_TO_SERVICE_COUPLING: UI layer is directly coupled to domain services and state-management layers.
+
+**Risk Level**: HIGH
+
+**Recommended Action**
+> Introduce ViewModel, Facade, or Presentation Boundary.
+
+**Top External Targets (Evidence)**
+- src/vs/workbench/services/layout/browser/layoutService.ts (1 edges - Type: INCLUDE)
+- src/vs/workbench/common/views.ts (1 edges - Type: INCLUDE)
+- src/vs/workbench/common/resources.ts (1 edges - Type: INCLUDE)
+- src/vs/sessions/common/sessionsTelemetry.ts (1 edges - Type: INCLUDE)
+- src/vs/base/browser/ui/sash/sash.ts (1 edges - Type: INCLUDE)
+- src/vs/workbench/browser/dnd.ts (1 edges - Type: INCLUDE)
+- src/vs/platform/opener/common/opener.ts (1 edges - Type: INCLUDE)
+- src/vs/base/browser/ui/countBadge/countBadge.ts (1 edges - Type: INCLUDE)
+- extensions/copilot/src/extension/completions-core/vscode-node/lib/src/telemetry.ts (1 edges - Type: INCLUDE)
+- src/vs/base/browser/ui/tree/tree.ts (1 edges - Type: IMPLEMENTS)
+
+**AST Evidence Verification** `[RUNTIME_HUB]`
+- interface: 0% | type: 0% | function: 17% | statement: 54%
 > 이 파일은 실제 실행 로직을 포함하는 런타임 허브다. 변경 시 즉각적 영향.
 
 
@@ -401,111 +401,111 @@ Final Score                   81
 ### 3.1 Ghost Evidence
 <details><summary><b>Show Ghost Evidence (Top 50)</b></summary>
 
-- [src/vs/workbench/contrib/chat/browser/agentSessions/agentSessionsViewer.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/agentSessions/agentSessionsViewer.ts) -> IAgentSessionSectionTemplate> (Count: 2)
-- [src/vs/workbench/contrib/chat/browser/agentSessions/agentSessionsViewer.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/agentSessions/agentSessionsViewer.ts) -> IAgentSessionShowMoreTemplate> (Count: 2)
-- [src/vs/workbench/workbench.common.main.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/workbench.common.main.ts) -> src/vs/workbench/contrib/chat/browser/chat.shared.contribution.ts (Count: 1)
-- [src/vs/workbench/services/keybinding/browser/keyboardLayouts/en-uk.darwin.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/services/keybinding/browser/keyboardLayouts/en-uk.darwin.ts) -> src/vs/workbench/services/keybinding/browser/keyboardLayouts/_.contribution.ts (Count: 1)
-- [src/vs/workbench/contrib/markers/browser/markersTreeViewer.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/markers/browser/markersTreeViewer.ts) -> IMarkerTemplateData> (Count: 1)
-- [test/mcp/src/automationTools/scm.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/test/mcp/src/automationTools/scm.ts) -> zod (Count: 1)
-- [src/vs/workbench/contrib/scm/browser/scmViewPane.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/scm/browser/scmViewPane.ts) -> ISCMResourceGroup> (Count: 1)
-- [src/vs/workbench/contrib/terminalContrib/stickyScroll/browser/terminalStickyScrollOverlay.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/terminalContrib/stickyScroll/browser/terminalStickyScrollOverlay.ts) -> addon-webgl (Count: 1)
-- [src/vs/workbench/services/keybinding/browser/keyboardLayouts/es.win.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/services/keybinding/browser/keyboardLayouts/es.win.ts) -> src/vs/workbench/services/keybinding/browser/keyboardLayouts/_.contribution.ts (Count: 1)
-- [test/smoke/src/main.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/test/smoke/src/main.ts) -> node-fetch (Count: 1)
-- [src/vs/workbench/services/keybinding/browser/keyboardLayouts/dvorak.darwin.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/services/keybinding/browser/keyboardLayouts/dvorak.darwin.ts) -> src/vs/workbench/services/keybinding/browser/keyboardLayouts/_.contribution.ts (Count: 1)
-- [src/vs/workbench/contrib/terminal/browser/xterm/xtermAddonImporter.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/terminal/browser/xterm/xtermAddonImporter.ts) -> addon-clipboard (Count: 1)
-- [src/vs/workbench/contrib/workspace/browser/workspaceTrustEditor.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/workspace/browser/workspaceTrustEditor.ts) -> ITrustedUriPathColumnTemplateData> (Count: 1)
-- [src/vs/workbench/services/search/node/ripgrepTextSearchEngine.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/services/search/node/ripgrepTextSearchEngine.ts) -> string_decoder (Count: 1)
-- [src/vs/workbench/services/mcp/browser/mcpWorkbenchManagementService.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/services/mcp/browser/mcpWorkbenchManagementService.ts) -> BaseWorkbenchMcpManagementService (Count: 1)
-- [src/vs/workbench/services/assignment/common/assignmentService.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/services/assignment/common/assignmentService.ts) -> IKeyValueStorage (Count: 1)
-- [src/vs/workbench/contrib/testing/browser/testCoverageView.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/testing/browser/testCoverageView.ts) -> HTMLElement> (Count: 1)
-- [src/vs/workbench/contrib/debug/browser/replViewer.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/debug/browser/replViewer.ts) -> IRawObjectReplTemplateData> (Count: 1)
-- [src/vs/workbench/services/languageDetection/browser/languageDetectionWebWorker.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/services/languageDetection/browser/languageDetectionWebWorker.ts) -> src/vs/workbench/services/languageDetection/browser/languageDetectionWorker.protocol.ts (Count: 1)
-- [src/vs/workbench/contrib/styleOverrides/browser/styleOverrides.contribution.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/styleOverrides/browser/styleOverrides.contribution.ts) -> roundedCorners (Count: 1)
-- [src/vs/workbench/contrib/workspace/browser/workspaceTrustEditor.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/workspace/browser/workspaceTrustEditor.ts) -> IActionsColumnTemplateData> (Count: 1)
-- [src/vs/workbench/contrib/notebook/browser/diff/notebookDiffList.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/notebook/browser/diff/notebookDiffList.ts) -> NotebookDocumentDiffElementRenderTemplate> (Count: 1)
-- [src/vs/workbench/contrib/userDataProfile/browser/userDataProfilesEditor.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/userDataProfile/browser/userDataProfilesEditor.ts) -> IActionsColumnTemplateData> (Count: 1)
-- [src/vs/workbench/contrib/chat/browser/widget/chatContentParts/toolInvocationParts/chatToolConfirmationCarouselPart.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/widget/chatContentParts/toolInvocationParts/chatToolConfirmationCarouselPart.ts) -> chatToolConfirmationCarousel (Count: 1)
-- [src/vs/workbench/services/assignment/common/assignmentService.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/services/assignment/common/assignmentService.ts) -> tas-client (Count: 1)
-- [src/vs/workbench/workbench.common.main.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/workbench.common.main.ts) -> src/vs/workbench/contrib/dropOrPasteInto/browser/dropOrPasteInto.contribution.ts (Count: 1)
-- [src/vs/workbench/contrib/userDataProfile/browser/userDataProfilesEditor.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/userDataProfile/browser/userDataProfilesEditor.ts) -> ProfileTreeElement> (Count: 1)
-- [src/vs/workbench/contrib/chat/browser/chatEditing/chatEditingCodeEditorIntegration.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/chatEditing/chatEditingCodeEditorIntegration.ts) -> src/vs/editor/browser/widget/diffEditor/registrations.contribution.ts (Count: 1)
-- [src/vs/workbench/contrib/preferences/browser/keybindingsEditor.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/preferences/browser/keybindingsEditor.ts) -> IWhenColumnTemplateData> (Count: 1)
-- [src/vs/workbench/workbench.common.main.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/workbench.common.main.ts) -> src/vs/workbench/contrib/accessibilitySignals/browser/accessibilitySignal.contribution.ts (Count: 1)
-- [src/vs/workbench/contrib/terminal/terminal.all.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/terminal/terminal.all.ts) -> src/vs/workbench/contrib/terminalContrib/sendSignal/browser/terminal.sendSignal.contribution.ts (Count: 1)
-- [src/vs/workbench/contrib/terminal/browser/xterm/xtermAddonImporter.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/terminal/browser/xterm/xtermAddonImporter.ts) -> addon-progress (Count: 1)
-- [src/vs/workbench/services/extensionManagement/electron-browser/extensionManagementService.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/services/extensionManagement/electron-browser/extensionManagementService.ts) -> BaseExtensionManagementService (Count: 1)
-- [src/vs/workbench/contrib/terminal/terminal.all.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/terminal/terminal.all.ts) -> src/vs/workbench/contrib/terminalContrib/resizeDimensionsOverlay/browser/terminal.resizeDimensionsOverlay.contribution.ts (Count: 1)
-- [src/vs/workbench/contrib/styleOverrides/browser/styleOverrides.contribution.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/styleOverrides/browser/styleOverrides.contribution.ts) -> commandCenter (Count: 1)
-- [src/vs/workbench/contrib/terminal/browser/terminal.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/terminal/browser/terminal.ts) -> xterm-private (Count: 1)
-- [src/vs/workbench/contrib/terminal/browser/xterm/xtermTerminal.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/terminal/browser/xterm/xtermTerminal.ts) -> addon-clipboard (Count: 1)
-- [src/vs/workbench/contrib/styleOverrides/browser/styleOverrides.contribution.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/styleOverrides/browser/styleOverrides.contribution.ts) -> scrollShadows (Count: 1)
-- [src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatEditPillElement.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatEditPillElement.ts) -> chatCodeBlockPill (Count: 1)
-- [src/vs/workbench/contrib/chat/browser/aiCustomization/pluginListWidget.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/aiCustomization/pluginListWidget.ts) -> IPluginRemoteItemTemplateData> (Count: 1)
-- [src/vs/workbench/contrib/scm/browser/scmRepositoryRenderer.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/scm/browser/scmRepositoryRenderer.ts) -> RepositoryTemplate> (Count: 1)
-- [src/vs/workbench/contrib/markers/browser/markersTreeViewer.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/markers/browser/markersTreeViewer.ts) -> FilterData> (Count: 1)
-- [src/vs/workbench/contrib/comments/browser/commentsTreeViewer.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/comments/browser/commentsTreeViewer.ts) -> ICommentThreadTemplateData> (Count: 1)
-- [src/vs/workbench/services/keybinding/browser/keyboardLayouts/pt.darwin.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/services/keybinding/browser/keyboardLayouts/pt.darwin.ts) -> src/vs/workbench/services/keybinding/browser/keyboardLayouts/_.contribution.ts (Count: 1)
-- [src/vs/workbench/services/keybinding/browser/keyboardLayouts/pt.win.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/services/keybinding/browser/keyboardLayouts/pt.win.ts) -> src/vs/workbench/services/keybinding/browser/keyboardLayouts/_.contribution.ts (Count: 1)
-- [src/vs/workbench/services/keybinding/browser/keyboardLayouts/cz.win.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/services/keybinding/browser/keyboardLayouts/cz.win.ts) -> src/vs/workbench/services/keybinding/browser/keyboardLayouts/_.contribution.ts (Count: 1)
+- [src/vs/workbench/contrib/notebook/browser/view/renderers/webviewPreloads.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/notebook/browser/view/renderers/webviewPreloads.ts) -> vscode-notebook-renderer (Count: 1)
+- [src/vs/workbench/contrib/remote/browser/remote.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/remote/browser/remote.ts) -> IHelpItemTemplateData> (Count: 1)
+- [src/vs/workbench/contrib/chat/browser/aiCustomization/mcpListWidget.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/aiCustomization/mcpListWidget.ts) -> IMcpServerItemTemplateData> (Count: 1)
+- [test/smoke/src/main.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/test/smoke/src/main.ts) -> extension-host-restart (Count: 1)
 - [src/vs/workbench/services/userDataSync/browser/userDataSyncEnablementService.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/services/userDataSync/browser/userDataSyncEnablementService.ts) -> BaseUserDataSyncEnablementService (Count: 1)
-- [src/vs/workbench/contrib/markers/browser/markersTable.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/markers/browser/markersTable.ts) -> IMarkerHighlightedLabelColumnTemplateData> (Count: 1)
-- [test/smoke/src/main.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/test/smoke/src/main.ts) -> test/sanity/src/devTunnel.test.ts (Count: 1)
-- [src/vs/workbench/contrib/debug/browser/replViewer.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/debug/browser/replViewer.ts) -> IReplEvaluationResultTemplateData> (Count: 1)
+- [src/vs/workbench/contrib/scm/browser/scmViewPane.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/scm/browser/scmViewPane.ts) -> ResourceTemplate> (Count: 1)
+- [test/smoke/src/main.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/test/smoke/src/main.ts) -> node-fetch (Count: 1)
+- [src/vs/workbench/services/keybinding/browser/keyboardLayouts/jp.darwin.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/services/keybinding/browser/keyboardLayouts/jp.darwin.ts) -> src/vs/workbench/services/keybinding/browser/keyboardLayouts/_.contribution.ts (Count: 1)
+- [src/vs/workbench/workbench.common.main.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/workbench.common.main.ts) -> src/vs/workbench/contrib/processExplorer/browser/processExplorer.contribution.ts (Count: 1)
+- [src/vs/workbench/contrib/terminal/terminal.all.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/terminal/terminal.all.ts) -> src/vs/workbench/contrib/terminalContrib/resizeDimensionsOverlay/browser/terminal.resizeDimensionsOverlay.contribution.ts (Count: 1)
+- [src/vs/workbench/services/keybinding/browser/keyboardLayouts/de.win.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/services/keybinding/browser/keyboardLayouts/de.win.ts) -> src/vs/workbench/services/keybinding/browser/keyboardLayouts/_.contribution.ts (Count: 1)
+- [src/vs/workbench/contrib/comments/browser/commentsTreeViewer.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/comments/browser/commentsTreeViewer.ts) -> IResourceTemplateData> (Count: 1)
+- [src/vs/workbench/contrib/terminalContrib/find/browser/terminalFindWidget.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/terminalContrib/find/browser/terminalFindWidget.ts) -> src/vs/workbench/contrib/terminalContrib/clipboard/browser/terminal.clipboard.contribution.ts (Count: 1)
+- [src/vs/workbench/contrib/debug/browser/replViewer.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/debug/browser/replViewer.ts) -> IReplElement> (Count: 1)
+- [test/mcp/src/automationTools/problems.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/test/mcp/src/automationTools/problems.ts) -> zod (Count: 1)
+- [src/vs/workbench/services/keybinding/browser/keyboardLayouts/ko.darwin.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/services/keybinding/browser/keyboardLayouts/ko.darwin.ts) -> src/vs/workbench/services/keybinding/browser/keyboardLayouts/_.contribution.ts (Count: 1)
+- [src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatReferencesContentPart.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatReferencesContentPart.ts) -> ICollapsibleListTemplate> (Count: 1)
+- [src/vs/workbench/contrib/terminalContrib/chatAgentTools/browser/treeSitterCommandParser.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/terminalContrib/chatAgentTools/browser/treeSitterCommandParser.ts) -> tree-sitter-wasm (Count: 1)
+- [src/vs/workbench/workbench.web.main.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/workbench.web.main.ts) -> src/vs/workbench/contrib/extensions/browser/extensions.web.contribution.ts (Count: 1)
+- [src/vs/workbench/workbench.common.main.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/workbench.common.main.ts) -> src/vs/workbench/contrib/interactive/browser/interactive.contribution.ts (Count: 1)
+- [src/vs/workbench/contrib/terminal/terminal.all.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/terminal/terminal.all.ts) -> src/vs/workbench/contrib/terminalContrib/commandGuide/browser/terminal.commandGuide.contribution.ts (Count: 1)
+- [src/vs/workbench/services/textMate/browser/backgroundTokenization/worker/textMateTokenizationWorker.worker.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/services/textMate/browser/backgroundTokenization/worker/textMateTokenizationWorker.worker.ts) -> vscode-oniguruma (Count: 1)
+- [src/vs/workbench/services/keybinding/browser/keyboardLayouts/en-ext.darwin.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/services/keybinding/browser/keyboardLayouts/en-ext.darwin.ts) -> src/vs/workbench/services/keybinding/browser/keyboardLayouts/_.contribution.ts (Count: 1)
+- [src/vs/workbench/workbench.common.main.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/workbench.common.main.ts) -> src/vs/workbench/contrib/remoteCodingAgents/browser/remoteCodingAgents.contribution.ts (Count: 1)
+- [test/smoke/src/main.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/test/smoke/src/main.ts) -> multiroot (Count: 1)
+- [src/vs/workbench/contrib/codeEditor/browser/outline/documentSymbolsTree.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/codeEditor/browser/outline/documentSymbolsTree.ts) -> DocumentSymbolTemplate> (Count: 1)
+- [src/vs/workbench/contrib/codeEditor/browser/inspectEditorTokens/inspectEditorTokens.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/codeEditor/browser/inspectEditorTokens/inspectEditorTokens.ts) -> vscode-textmate (Count: 1)
+- [test/mcp/src/automationTools/search.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/test/mcp/src/automationTools/search.ts) -> zod (Count: 1)
+- [src/vs/workbench/contrib/preferences/browser/keybindingsEditor.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/preferences/browser/keybindingsEditor.ts) -> IActionsColumnTemplateData> (Count: 1)
+- [src/vs/workbench/contrib/terminalContrib/find/browser/terminalFindWidget.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/terminalContrib/find/browser/terminalFindWidget.ts) -> addon-search (Count: 1)
+- [src/vs/workbench/contrib/chat/browser/aiCustomization/aiCustomizationManagementEditor.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/aiCustomization/aiCustomizationManagementEditor.ts) -> ISectionItemTemplateData> (Count: 1)
+- [src/vs/workbench/contrib/styleOverrides/browser/styleOverrides.contribution.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/styleOverrides/browser/styleOverrides.contribution.ts) -> roundedCorners (Count: 1)
+- [src/vs/workbench/workbench.common.main.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/workbench.common.main.ts) -> src/vs/workbench/contrib/surveys/browser/languageSurveys.contribution.ts (Count: 1)
+- [src/vs/workbench/contrib/terminal/browser/xterm/xtermTerminal.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/terminal/browser/xterm/xtermTerminal.ts) -> xterm-private (Count: 1)
+- [src/vs/workbench/services/textMate/common/TMGrammarFactory.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/services/textMate/common/TMGrammarFactory.ts) -> vscode-textmate (Count: 1)
+- [src/vs/workbench/contrib/terminal/terminal.all.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/terminal/terminal.all.ts) -> src/vs/workbench/contrib/terminalContrib/notification/browser/terminal.notification.contribution.ts (Count: 1)
+- [src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatChangesSummaryPart.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatChangesSummaryPart.ts) -> ICollapsibleChangesSummaryListTemplate> (Count: 1)
+- [src/vs/workbench/workbench.web.main.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/workbench.web.main.ts) -> src/vs/workbench/contrib/processExplorer/browser/processExplorer.web.contribution.ts (Count: 1)
+- [src/vs/workbench/contrib/terminal/browser/xterm/xtermAddonImporter.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/terminal/browser/xterm/xtermAddonImporter.ts) -> addon-clipboard (Count: 1)
+- [src/vs/workbench/contrib/testing/browser/testResultsView/testResultsTree.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/testing/browser/testResultsView/testResultsTree.ts) -> TemplateData> (Count: 1)
+- [src/vs/workbench/services/textMate/browser/backgroundTokenization/worker/textMateWorkerHost.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/services/textMate/browser/backgroundTokenization/worker/textMateWorkerHost.ts) -> src/vs/workbench/services/textMate/browser/backgroundTokenization/worker/textMateTokenizationWorker.worker.ts (Count: 1)
+- [test/mcp/src/automationTools/settings.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/test/mcp/src/automationTools/settings.ts) -> zod (Count: 1)
+- [test/mcp/src/automationTools/debug.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/test/mcp/src/automationTools/debug.ts) -> zod (Count: 1)
+- [src/vs/workbench/services/assignment/common/assignmentFilters.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/services/assignment/common/assignmentFilters.ts) -> tas-client (Count: 1)
+- [src/vs/workbench/contrib/files/browser/views/explorerViewer.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/files/browser/views/explorerViewer.ts) -> FuzzyScore> (Count: 1)
+- [src/vs/workbench/contrib/userDataProfile/browser/userDataProfilesEditor.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/userDataProfile/browser/userDataProfilesEditor.ts) -> IProfileElementTemplateData> (Count: 1)
+- [src/vs/workbench/contrib/bulkEdit/browser/preview/bulkEditTree.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/bulkEdit/browser/preview/bulkEditTree.ts) -> FileElementTemplate> (Count: 1)
+- [src/vs/workbench/services/keybinding/browser/keyboardLayouts/jp-roman.darwin.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/services/keybinding/browser/keyboardLayouts/jp-roman.darwin.ts) -> src/vs/workbench/services/keybinding/browser/keyboardLayouts/_.contribution.ts (Count: 1)
+- [src/vs/workbench/contrib/terminal/browser/xterm/xtermTerminal.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/terminal/browser/xterm/xtermTerminal.ts) -> addon-image (Count: 1)
+- [src/vs/workbench/services/keybinding/browser/keyboardLayouts/pt.darwin.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/services/keybinding/browser/keyboardLayouts/pt.darwin.ts) -> src/vs/workbench/services/keybinding/browser/keyboardLayouts/_.contribution.ts (Count: 1)
 </details>
 
 ### 3.2 Boundary Evidence
 <details><summary><b>Show Boundary Evidence (Top 50)</b></summary>
 
-- [src/vs/workbench/contrib/chat/browser/aiCustomization/aiCustomizationItemsModel.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/aiCustomization/aiCustomizationItemsModel.ts) -> src/vs/workbench/contrib/chat/browser/agentSessions/agentSessions.ts (Count: 2)
-- [src/vs/workbench/contrib/chat/browser/agentSessions/agentHost/agentHostLocalCustomizations.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/agentSessions/agentHost/agentHostLocalCustomizations.ts) -> src/vs/platform/mcp/common/mcpPlatformTypes.ts (Count: 2)
-- [src/vs/workbench/contrib/chat/browser/agentSessions/agentHost/agentHostSessionHandler.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/agentSessions/agentHost/agentHostSessionHandler.ts) -> src/vs/workbench/contrib/chat/common/model/chatProgressTypes/chatToolInvocation.ts (Count: 2)
-- [src/vs/workbench/contrib/chat/browser/agentSessions/agentHost/agentHostSessionHandler.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/agentSessions/agentHost/agentHostSessionHandler.ts) -> src/vs/platform/agentHost/common/sessionConfigKeys.ts (Count: 2)
-- [src/vs/workbench/contrib/chat/browser/agentSessions/experiments/agentSessionProjectionActions.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/agentSessions/experiments/agentSessionProjectionActions.ts) -> src/vs/platform/instantiation/common/instantiation.ts (Count: 2)
-- [src/vs/workbench/contrib/chat/browser/aiCustomization/aiCustomizationListWidget.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/aiCustomization/aiCustomizationListWidget.ts) -> src/vs/base/browser/ui/list/list.ts (Count: 2)
-- [src/vs/workbench/contrib/chat/browser/agentSessions/agentSessionsControl.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/agentSessions/agentSessionsControl.ts) -> src/vs/workbench/contrib/chat/browser/agentSessions/agentSessionsService.ts (Count: 2)
-- [src/vs/workbench/contrib/chat/browser/aiCustomization/aiCustomizationManagement.contribution.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/aiCustomization/aiCustomizationManagement.contribution.ts) -> src/vs/base/common/buffer.ts (Count: 2)
-- [src/vs/workbench/contrib/chat/browser/aiCustomization/aiCustomizationManagementEditor.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/aiCustomization/aiCustomizationManagementEditor.ts) -> extensions/copilot/src/extension/prompts/node/test/fixtures/codeEditorWidget.ts (Count: 2)
-- [src/vs/workbench/contrib/chat/browser/agentSessions/agentSessionsViewer.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/agentSessions/agentSessionsViewer.ts) -> src/vs/base/common/strings.ts (Count: 2)
-- [src/vs/workbench/contrib/chat/browser/aiCustomization/aiCustomizationManagement.contribution.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/aiCustomization/aiCustomizationManagement.contribution.ts) -> src/vs/nls.ts (Count: 2)
-- [src/vs/workbench/contrib/chat/browser/aiCustomization/aiCustomizationManagement.contribution.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/aiCustomization/aiCustomizationManagement.contribution.ts) -> src/vs/workbench/contrib/chat/browser/agentPluginEditor/agentPluginItems.ts (Count: 2)
-- [src/vs/workbench/contrib/chat/browser/aiCustomization/aiCustomizationListWidget.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/aiCustomization/aiCustomizationListWidget.ts) -> src/vs/platform/actions/browser/menuEntryActionViewItem.ts (Count: 2)
-- [src/vs/workbench/contrib/chat/browser/agentSessions/agentSessionsViewer.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/agentSessions/agentSessionsViewer.ts) -> src/vs/platform/instantiation/common/serviceCollection.ts (Count: 2)
-- [src/vs/workbench/contrib/chat/browser/agentSessions/agentHost/agentHostSessionListStore.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/agentSessions/agentHost/agentHostSessionListStore.ts) -> src/vs/platform/agentHost/common/agentService.ts (Count: 2)
-- [src/vs/workbench/contrib/chat/browser/aiCustomization/aiCustomizationListWidget.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/aiCustomization/aiCustomizationListWidget.ts) -> src/vs/workbench/contrib/chat/browser/aiCustomization/aiCustomizationListWidgetUtils.ts (Count: 2)
-- [src/vs/workbench/contrib/chat/browser/agentSessions/agentHost/agentHostSessionHandler.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/agentSessions/agentHost/agentHostSessionHandler.ts) -> src/vs/workbench/contrib/chat/common/model/chatUri.ts (Count: 2)
-- [src/vs/workbench/contrib/chat/browser/agentSessions/localAgentDisabledInputTipContribution.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/agentSessions/localAgentDisabledInputTipContribution.ts) -> src/vs/workbench/common/contributions.ts (Count: 2)
-- [src/vs/workbench/contrib/chat/browser/agentSessions/agentHost/stateToProgressAdapter.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/agentSessions/agentHost/stateToProgressAdapter.ts) -> src/vs/platform/agentHost/common/meta/agentFeedbackAnnotations.ts (Count: 2)
-- [src/vs/workbench/contrib/chat/electron-browser/agentSessions/agentSessionsActions.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/electron-browser/agentSessions/agentSessionsActions.ts) -> src/vs/workbench/contrib/chat/common/actions/chatContextKeys.ts (Count: 2)
-- [src/vs/workbench/contrib/chat/browser/agentSessions/agentSessionsModel.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/agentSessions/agentSessionsModel.ts) -> src/vs/workbench/contrib/chat/common/chatSessionsService.ts (Count: 2)
-- [src/vs/workbench/contrib/chat/browser/agentSessions/agentHost/agentHostSessionHandler.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/agentSessions/agentHost/agentHostSessionHandler.ts) -> extensions/copilot/src/extension/completions-core/vscode-node/lib/src/util/event.ts (Count: 2)
-- [src/vs/workbench/contrib/chat/browser/agentSessions/localAgentSessionsController.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/agentSessions/localAgentSessionsController.ts) -> src/vs/workbench/contrib/chat/common/chatSessionsService.ts (Count: 2)
-- [src/vs/workbench/contrib/chat/browser/aiCustomization/aiCustomizationManagementEditor.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/aiCustomization/aiCustomizationManagementEditor.ts) -> extensions/notebook-renderers/src/color.ts (Count: 2)
-- [src/vs/workbench/contrib/chat/browser/agentSessions/agentSessionsViewer.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/agentSessions/agentSessionsViewer.ts) -> src/vs/base/browser/ui/aria/aria.ts (Count: 2)
-- [src/vs/workbench/contrib/chat/browser/agentSessions/localAgentDisabledInputTipContribution.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/agentSessions/localAgentDisabledInputTipContribution.ts) -> src/vs/workbench/contrib/chat/common/model/chatUri.ts (Count: 2)
-- [src/vs/workbench/contrib/chat/browser/agentSessions/experiments/agentTitleBarStatusWidget.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/agentSessions/experiments/agentTitleBarStatusWidget.ts) -> extensions/git/src/hover.ts (Count: 2)
-- [src/vs/workbench/contrib/chat/browser/agentSessions/agentHost/agentHostToolSetEnablementService.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/agentSessions/agentHost/agentHostToolSetEnablementService.ts) -> src/vs/platform/instantiation/common/instantiation.ts (Count: 2)
-- [src/vs/workbench/contrib/chat/browser/agentSessions/agentHost/agentHostSessionHandler.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/agentSessions/agentHost/agentHostSessionHandler.ts) -> extensions/copilot/src/extension/prompts/node/panel/terminal.tsx (Count: 2)
-- [src/vs/workbench/contrib/chat/browser/agentSessions/experiments/agentSessionProjectionService.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/agentSessions/experiments/agentSessionProjectionService.ts) -> cli/src/constants.rs (Count: 2)
-- [src/vs/workbench/contrib/chat/browser/agentSessions/agentHost/agentHostSessionListStore.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/agentSessions/agentHost/agentHostSessionListStore.ts) -> src/vs/base/common/cancellation.ts (Count: 2)
-- [src/vs/workbench/contrib/chat/browser/agentSessions/experiments/agentSessionProjectionService.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/agentSessions/experiments/agentSessionProjectionService.ts) -> src/vs/workbench/contrib/chat/browser/agentSessions/agentSessionsModel.ts (Count: 2)
-- [src/vs/workbench/contrib/chat/browser/agentSessions/agentSessionsModel.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/agentSessions/agentSessionsModel.ts) -> src/vs/platform/registry/common/platform.ts (Count: 2)
-- [src/vs/workbench/contrib/chat/browser/agentSessions/agentSessionsViewer.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/agentSessions/agentSessionsViewer.ts) -> src/vs/workbench/contrib/chat/common/chatSessionsService.ts (Count: 2)
-- [src/vs/workbench/contrib/chat/browser/aiCustomization/aiCustomizationIcons.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/aiCustomization/aiCustomizationIcons.ts) -> src/vs/nls.ts (Count: 2)
-- [src/vs/workbench/contrib/chat/browser/agentSessions/agentSessionsControl.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/agentSessions/agentSessionsControl.ts) -> src/vs/workbench/contrib/chat/browser/agentSessions/agentSessionsOpener.ts (Count: 2)
-- [src/vs/workbench/contrib/chat/browser/agentSessions/experiments/agentSessionProjectionService.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/agentSessions/experiments/agentSessionProjectionService.ts) -> extensions/copilot/src/extension/completions-core/vscode-node/lib/src/util/event.ts (Count: 2)
-- [src/vs/workbench/contrib/chat/browser/agentSessions/agentHost/agentHostModeSynchronizer.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/agentSessions/agentHost/agentHostModeSynchronizer.ts) -> extensions/copilot/test/simulation/workbench/stores/storage.ts (Count: 2)
-- [src/vs/workbench/contrib/chat/browser/aiCustomization/aiCustomizationListWidget.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/aiCustomization/aiCustomizationListWidget.ts) -> extensions/copilot/src/extension/completions-core/vscode-node/lib/src/util/uri.ts (Count: 2)
-- [src/vs/workbench/contrib/chat/browser/aiCustomization/aiCustomizationItemsModel.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/aiCustomization/aiCustomizationItemsModel.ts) -> src/vs/workbench/contrib/chat/common/plugins/agentPluginService.ts (Count: 2)
-- [src/vs/workbench/contrib/chat/browser/aiCustomization/aiCustomizationManagement.contribution.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/aiCustomization/aiCustomizationManagement.contribution.ts) -> src/vs/workbench/common/contributions.ts (Count: 2)
-- [src/vs/workbench/contrib/chat/browser/agentSessions/agentSessionsModel.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/agentSessions/agentSessionsModel.ts) -> src/vs/workbench/services/workspaces/common/workspaceTrust.ts (Count: 2)
-- [src/vs/workbench/contrib/chat/browser/agentSessions/experiments/agentTitleBarStatusWidget.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/agentSessions/experiments/agentTitleBarStatusWidget.ts) -> src/vs/workbench/services/layout/browser/layoutService.ts (Count: 2)
-- [src/vs/workbench/contrib/chat/browser/agentSessions/agentHost/agentHostSnapshotController.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/agentSessions/agentHost/agentHostSnapshotController.ts) -> extensions/copilot/src/extension/completions-core/vscode-node/lib/src/util/uri.ts (Count: 2)
-- [src/vs/workbench/contrib/chat/browser/aiCustomization/aiCustomizationItemSource.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/aiCustomization/aiCustomizationItemSource.ts) -> src/vs/platform/product/common/productService.ts (Count: 2)
-- [src/vs/workbench/contrib/chat/browser/agentSessions/agentHost/agentHostLocalCustomizations.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/agentSessions/agentHost/agentHostLocalCustomizations.ts) -> extensions/copilot/src/platform/promptFiles/common/promptsService.ts (Count: 2)
-- [src/vs/workbench/contrib/chat/browser/aiCustomization/aiCustomizationManagement.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/aiCustomization/aiCustomizationManagement.ts) -> extensions/copilot/src/platform/customInstructions/common/promptTypes.ts (Count: 2)
-- [src/vs/workbench/contrib/chat/browser/agentSessions/agentSessionsPicker.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/agentSessions/agentSessionsPicker.ts) -> src/vs/workbench/contrib/chat/browser/agentSessions/agentSessionsModel.ts (Count: 2)
-- [src/vs/workbench/contrib/chat/browser/agentSessions/experiments/agentSessionsExperiments.contribution.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/agentSessions/experiments/agentSessionsExperiments.contribution.ts) -> src/vs/nls.ts (Count: 2)
-- [src/vs/workbench/contrib/chat/browser/agentSessions/agentSessionsViewer.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/agentSessions/agentSessionsViewer.ts) -> src/vs/base/browser/ui/tree/objectTree.ts (Count: 2)
+- [src/vs/editor/common/viewLayout/viewLineRenderer.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/editor/common/viewLayout/viewLineRenderer.ts) -> src/vs/editor/common/core/ranges/offsetRange.ts (Count: 1)
+- [src/vs/platform/telemetry/common/commonProperties.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/platform/telemetry/common/commonProperties.ts) -> extensions/copilot/src/extension/completions-core/vscode-node/lib/src/telemetry.ts (Count: 1)
+- [src/vs/workbench/browser/web.main.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/browser/web.main.ts) -> extensions/copilot/src/extension/completions-core/vscode-node/lib/src/util/event.ts (Count: 1)
+- [src/vs/workbench/contrib/terminal/browser/terminalActions.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/terminal/browser/terminalActions.ts) -> src/vs/workbench/services/lifecycle/common/lifecycle.ts (Count: 1)
+- [src/vs/workbench/contrib/debug/browser/debugTitle.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/debug/browser/debugTitle.ts) -> extensions/copilot/src/extension/typescriptContext/serverPlugin/src/common/host.ts (Count: 1)
+- [src/vs/editor/common/model/bracketPairsTextModelPart/bracketPairsTree/beforeEditPositionMapper.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/editor/common/model/bracketPairsTextModelPart/bracketPairsTree/beforeEditPositionMapper.ts) -> src/vs/base/common/range.ts (Count: 1)
+- [src/vs/platform/meteredConnection/common/meteredConnection.config.contribution.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/platform/meteredConnection/common/meteredConnection.config.contribution.ts) -> src/vs/platform/registry/common/platform.ts (Count: 1)
+- [src/vs/workbench/contrib/chat/browser/aiCustomization/mcpListWidget.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/aiCustomization/mcpListWidget.ts) -> extensions/copilot/src/platform/inlineEdits/common/utils/observable.ts (Count: 1)
+- [src/vs/workbench/api/common/extHostChatSessions.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/api/common/extHostChatSessions.ts) -> src/vs/base/common/marshallingIds.ts (Count: 1)
+- [src/vs/workbench/services/themes/common/themeConfiguration.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/services/themes/common/themeConfiguration.ts) -> src/vs/platform/theme/common/tokenClassificationRegistry.ts (Count: 1)
+- [src/vs/workbench/contrib/mergeEditor/browser/utils.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/mergeEditor/browser/utils.ts) -> extensions/copilot/src/extension/completions-core/vscode-node/lib/src/util/event.ts (Count: 1)
+- [src/vs/workbench/services/workingCopy/common/storedFileWorkingCopy.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/services/workingCopy/common/storedFileWorkingCopy.ts) -> extensions/copilot/src/extension/completions-core/vscode-node/lib/src/progress.ts (Count: 1)
+- [src/vs/code/node/cliProcessMain.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/code/node/cliProcessMain.ts) -> src/vs/platform/mcp/common/mcpGalleryManifest.ts (Count: 1)
+- [extensions/copilot/src/extension/completions-core/vscode-node/lib/src/prompt/prompt.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/extensions/copilot/src/extension/completions-core/vscode-node/lib/src/prompt/prompt.ts) -> extensions/copilot/src/extension/completions-core/vscode-node/lib/src/openai/openai.ts (Count: 1)
+- [src/vs/workbench/contrib/chat/browser/chatEditing/chatEditingCodeEditorIntegration.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/chatEditing/chatEditingCodeEditorIntegration.ts) -> src/vs/workbench/contrib/chat/browser/chatEditing/chatEditingExplanationWidget.ts (Count: 1)
+- [src/vs/workbench/contrib/debug/browser/debugActionViewItems.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/debug/browser/debugActionViewItems.ts) -> src/vs/platform/theme/common/colorRegistry.ts (Count: 1)
+- [src/vs/workbench/browser/parts/editor/multiEditorTabsControl.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/browser/parts/editor/multiEditorTabsControl.ts) -> src/vs/platform/keybinding/common/keybinding.ts (Count: 1)
+- [extensions/copilot/src/extension/conversation/vscode-node/chatParticipants.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/extensions/copilot/src/extension/conversation/vscode-node/chatParticipants.ts) -> extensions/copilot/src/platform/telemetry/common/nullExperimentationService.ts (Count: 1)
+- [src/vs/workbench/contrib/chat/browser/agentSessions/agentSessionsPicker.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/agentSessions/agentSessionsPicker.ts) -> src/vs/workbench/contrib/chat/browser/agentSessions/agentSessions.ts (Count: 1)
+- [src/vs/editor/browser/controller/mouseTarget.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/editor/browser/controller/mouseTarget.ts) -> extensions/copilot/src/extension/completions-core/vscode-node/lib/src/openai/model.ts (Count: 1)
+- [src/vs/workbench/contrib/terminalContrib/developer/browser/terminal.developer.contribution.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/terminalContrib/developer/browser/terminal.developer.contribution.ts) -> src/vs/nls.ts (Count: 1)
+- [src/vs/editor/common/viewModel/minimapTokensColorTracker.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/editor/common/viewModel/minimapTokensColorTracker.ts) -> extensions/copilot/src/extension/completions-core/vscode-node/lib/src/util/event.ts (Count: 1)
+- [src/vs/editor/standalone/browser/quickAccess/standaloneCommandsQuickAccess.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/editor/standalone/browser/quickAccess/standaloneCommandsQuickAccess.ts) -> extensions/copilot/test/simulation/fixtures/codeMapper/quickInput.ts (Count: 1)
+- [src/vs/workbench/contrib/notebook/browser/outputEditor/notebookOutputEditorInput.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/notebook/browser/outputEditor/notebookOutputEditorInput.ts) -> extensions/copilot/src/extension/completions-core/vscode-node/lib/src/util/uri.ts (Count: 1)
+- [src/vs/editor/common/model/textModelPart.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/editor/common/model/textModelPart.ts) -> src/vs/workbench/services/lifecycle/common/lifecycle.ts (Count: 1)
+- [extensions/copilot/src/extension/xtab/node/responseFormatHandlers.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/extensions/copilot/src/extension/xtab/node/responseFormatHandlers.ts) -> extensions/copilot/src/extension/xtab/node/xtabUtils.ts (Count: 1)
+- [src/vs/workbench/contrib/search/browser/searchView.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/search/browser/searchView.ts) -> extensions/copilot/src/extension/prompts/node/panel/preferences.tsx (Count: 1)
+- [src/vs/workbench/contrib/notebook/browser/notebook.contribution.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/notebook/browser/notebook.contribution.ts) -> src/vs/workbench/common/editor/editorInput.ts (Count: 1)
+- [src/vs/editor/common/model/bracketPairsTextModelPart/bracketPairsTree/length.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/editor/common/model/bracketPairsTextModelPart/bracketPairsTree/length.ts) -> src/vs/editor/common/core/text/textLength.ts (Count: 1)
+- [src/vs/workbench/services/extensionManagement/common/webExtensionManagementService.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/services/extensionManagement/common/webExtensionManagementService.ts) -> src/vs/workbench/services/extensions/common/extensionManifestPropertiesService.ts (Count: 1)
+- [src/vs/workbench/contrib/themes/browser/themes.contribution.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/themes/browser/themes.contribution.ts) -> src/vs/platform/extensionResourceLoader/common/extensionResourceLoader.ts (Count: 1)
+- [extensions/copilot/src/platform/nesFetch/common/responseStream.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/extensions/copilot/src/platform/nesFetch/common/responseStream.ts) -> extensions/copilot/src/extension/completions-core/vscode-node/lib/src/openai/fetch.ts (Count: 1)
+- [src/vs/platform/agentHost/common/agentHostClientResourceChannel.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/platform/agentHost/common/agentHostClientResourceChannel.ts) -> src/vs/platform/agentHost/common/ahpJsonlLogger.ts (Count: 1)
+- [src/vs/platform/userDataSync/common/keybindingsSync.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/platform/userDataSync/common/keybindingsSync.ts) -> extensions/copilot/src/extension/completions-core/vscode-node/lib/src/util/uri.ts (Count: 1)
+- [src/vs/workbench/services/environment/common/environmentService.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/services/environment/common/environmentService.ts) -> extensions/copilot/src/extension/completions-core/vscode-node/lib/src/util/uri.ts (Count: 1)
+- [src/vs/workbench/contrib/testing/browser/testResultsView/testResultsOutput.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/testing/browser/testResultsView/testResultsOutput.ts) -> extensions/copilot/src/extension/completions-core/vscode-node/lib/src/util/uri.ts (Count: 1)
+- [extensions/copilot/src/extension/prompts/node/agent/defaultAgentInstructions.tsx](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/extensions/copilot/src/extension/prompts/node/agent/defaultAgentInstructions.tsx) -> extensions/copilot/src/extension/completions-core/vscode-node/lib/src/networking.ts (Count: 1)
+- [src/vs/workbench/contrib/chat/browser/widgetHosts/viewPane/chatViewPane.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/widgetHosts/viewPane/chatViewPane.ts) -> cli/src/commands.rs (Count: 1)
+- [src/vs/editor/browser/widget/diffEditor/utils.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/editor/browser/widget/diffEditor/utils.ts) -> extensions/copilot/src/extension/trajectory/vscode-node/otelChatDebugLogProvider.ts (Count: 1)
+- [src/vs/workbench/contrib/chat/electron-browser/actions/voiceChatActions.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/electron-browser/actions/voiceChatActions.ts) -> src/vs/platform/agentHost/common/state/protocol/common/actions.ts (Count: 1)
+- [src/vs/workbench/contrib/search/browser/replaceService.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/search/browser/replaceService.ts) -> src/vs/editor/browser/services/bulkEditService.ts (Count: 1)
+- [src/vs/workbench/contrib/authentication/browser/authentication.contribution.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/authentication/browser/authentication.contribution.ts) -> src/vs/code/electron-utility/sharedProcess/contrib/extensions.ts (Count: 1)
+- [extensions/copilot/src/platform/ignore/node/ignoreServiceImpl.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/extensions/copilot/src/platform/ignore/node/ignoreServiceImpl.ts) -> extensions/copilot/src/platform/filesystem/common/fileTypes.ts (Count: 1)
+- [extensions/copilot/src/extension/intents/node/testIntent/setupTestsFrameworkQueryInvocation.tsx](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/extensions/copilot/src/extension/intents/node/testIntent/setupTestsFrameworkQueryInvocation.tsx) -> extensions/copilot/src/extension/prompts/node/panel/chatVariables.tsx (Count: 1)
+- [src/vs/editor/contrib/middleScroll/browser/middleScrollController.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/editor/contrib/middleScroll/browser/middleScrollController.ts) -> src/vs/editor/common/editorCommon.ts (Count: 1)
+- [src/vs/workbench/services/languageDetection/browser/languageDetectionWorkerServiceImpl.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/services/languageDetection/browser/languageDetectionWorkerServiceImpl.ts) -> extensions/copilot/src/extension/completions-core/vscode-node/lib/src/openai/model.ts (Count: 1)
+- [src/vs/workbench/contrib/chat/browser/agentSessions/agentSessionsViewer.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/agentSessions/agentSessionsViewer.ts) -> extensions/copilot/src/extension/completions-core/vscode-node/lib/src/experiments/filters.ts (Count: 1)
+- [extensions/github/src/remoteSourceProvider.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/extensions/github/src/remoteSourceProvider.ts) -> extensions/git/src/git-base.ts (Count: 1)
+- [src/vs/platform/userDataProfile/common/userDataProfileStorageService.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/platform/userDataProfile/common/userDataProfileStorageService.ts) -> src/vs/platform/storage/common/storageIpc.ts (Count: 1)
+- [src/vs/sessions/contrib/editor/browser/editor.contribution.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/sessions/contrib/editor/browser/editor.contribution.ts) -> src/vs/code/electron-browser/workbench/workbench.ts (Count: 1)
 </details>
 
 ## 4. System Assembly Points (Healthy Hubs)
@@ -514,8 +514,8 @@ Final Score                   81
 - [src/vs/code/electron-utility/sharedProcess/sharedProcessMain.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/code/electron-utility/sharedProcess/sharedProcessMain.ts) (Role: ASSEMBLY_POINT)
 - [src/vs/sessions/sessions.common.main.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/sessions/sessions.common.main.ts) (Role: ASSEMBLY_POINT)
 - [extensions/copilot/src/lib/node/chatLibMain.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/extensions/copilot/src/lib/node/chatLibMain.ts) (Role: ASSEMBLY_POINT)
-- [extensions/copilot/src/extension/extension/vscode/services.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/extensions/copilot/src/extension/extension/vscode/services.ts) (Role: ASSEMBLY_POINT)
 - [src/vs/editor/standalone/browser/standaloneServices.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/editor/standalone/browser/standaloneServices.ts) (Role: ASSEMBLY_POINT)
+- [extensions/copilot/src/extension/extension/vscode/services.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/extensions/copilot/src/extension/extension/vscode/services.ts) (Role: ASSEMBLY_POINT)
 - [src/vs/workbench/browser/web.main.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/browser/web.main.ts) (Role: ASSEMBLY_POINT)
 - [src/vs/server/node/serverServices.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/server/node/serverServices.ts) (Role: ASSEMBLY_POINT)
 - [src/vs/sessions/sessions.web.main.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/sessions/sessions.web.main.ts) (Role: ASSEMBLY_POINT)
@@ -538,7 +538,7 @@ cli/src/tunnels/code_server.rs
 Verdict: REJECTED
 
 Evidence
-FanOut: 5
+FanOut: 4
 Boundary Ratio: 1.00
 
 Reason Code:
@@ -651,7 +651,7 @@ extensions/copilot/src/extension/chat/vscode-node/chatDebugFileLoggerService.ts
 Verdict: REJECTED
 
 Evidence
-FanOut: 15
+FanOut: 14
 Boundary Ratio: 1.00
 
 Reason Code:
@@ -674,7 +674,7 @@ extensions/copilot/src/extension/chat/vscode-node/sessionTranscriptService.ts
 Verdict: REJECTED
 
 Evidence
-FanOut: 9
+FanOut: 8
 Boundary Ratio: 1.00
 
 Reason Code:
@@ -915,7 +915,7 @@ extensions/copilot/src/extension/chatSessions/copilotcli/node/copilotcliSessionS
 Verdict: REJECTED
 
 Evidence
-FanOut: 49
+FanOut: 48
 Boundary Ratio: 0.71
 
 Reason Code:
@@ -937,8 +937,8 @@ extensions/copilot/src/extension/chatSessions/copilotcli/vscode-node/inProcHttpS
 Verdict: REJECTED
 
 Evidence
-FanOut: 10
-Boundary Ratio: 0.90
+FanOut: 8
+Boundary Ratio: 0.88
 
 Reason Code:
 REJECTED_LOW_FANOUT
@@ -1085,7 +1085,7 @@ extensions/copilot/src/extension/extension/vscode/services.ts
 Verdict: ACCEPTED
 
 Evidence
-FanOut: 88
+FanOut: 87
 Boundary Ratio: 1.00
 
 Reason Code:
@@ -1141,8 +1141,8 @@ extensions/copilot/src/extension/linkify/common/linkifyService.ts
 Verdict: REJECTED
 
 Evidence
-FanOut: 13
-Boundary Ratio: 0.62
+FanOut: 12
+Boundary Ratio: 0.58
 
 Reason Code:
 REJECTED_LOW_FANOUT
@@ -1326,7 +1326,7 @@ extensions/copilot/src/lib/node/chatLibMain.ts
 Verdict: ACCEPTED
 
 Evidence
-FanOut: 115
+FanOut: 114
 Boundary Ratio: 1.00
 
 Reason Code:
@@ -1520,8 +1520,8 @@ extensions/copilot/src/platform/customInstructions/common/customInstructionsServ
 Verdict: REJECTED
 
 Evidence
-FanOut: 21
-Boundary Ratio: 0.76
+FanOut: 20
+Boundary Ratio: 0.75
 
 Reason Code:
 REJECTED_LOW_FANOUT
@@ -1577,7 +1577,7 @@ extensions/copilot/src/platform/endpoint/common/capiClient.ts
 Verdict: REJECTED
 
 Evidence
-FanOut: 6
+FanOut: 5
 Boundary Ratio: 1.00
 
 Reason Code:
@@ -1599,8 +1599,8 @@ extensions/copilot/src/platform/endpoint/node/automodeService.ts
 Verdict: REJECTED
 
 Evidence
-FanOut: 21
-Boundary Ratio: 0.86
+FanOut: 20
+Boundary Ratio: 0.85
 
 Reason Code:
 REJECTED_LOW_FANOUT
@@ -1702,7 +1702,7 @@ extensions/copilot/src/platform/github/common/githubApiFetcherService.ts
 Verdict: REJECTED
 
 Evidence
-FanOut: 10
+FanOut: 9
 Boundary Ratio: 1.00
 
 Reason Code:
@@ -2031,7 +2031,7 @@ extensions/copilot/src/platform/remoteCodeSearch/common/adoCodeSearchService.ts
 Verdict: ACCEPTED
 
 Evidence
-FanOut: 26
+FanOut: 25
 Boundary Ratio: 0.96
 
 Reason Code:
@@ -2043,7 +2043,7 @@ extensions/copilot/src/platform/remoteCodeSearch/common/githubCodeSearchService.
 Verdict: ACCEPTED
 
 Evidence
-FanOut: 26
+FanOut: 25
 Boundary Ratio: 0.96
 
 Reason Code:
@@ -2168,8 +2168,8 @@ extensions/copilot/src/platform/telemetry/common/ghTelemetryService.ts
 Verdict: REJECTED
 
 Evidence
-FanOut: 8
-Boundary Ratio: 0.88
+FanOut: 7
+Boundary Ratio: 0.86
 
 Reason Code:
 REJECTED_LOW_FANOUT
@@ -2223,7 +2223,7 @@ extensions/copilot/src/platform/telemetry/vscode-node/microsoftExperimentationSe
 Verdict: REJECTED
 
 Evidence
-FanOut: 15
+FanOut: 14
 Boundary Ratio: 0.93
 
 Reason Code:
@@ -2916,8 +2916,8 @@ src/server-main.ts
 Verdict: REJECTED
 
 Evidence
-FanOut: 15
-Boundary Ratio: 0.80
+FanOut: 14
+Boundary Ratio: 0.79
 
 Reason Code:
 REJECTED_LOW_BOUNDARY_RATIO
@@ -3883,7 +3883,7 @@ src/vs/platform/agentHost/node/otel/agentHostOTelService.ts
 Verdict: REJECTED
 
 Evidence
-FanOut: 11
+FanOut: 10
 Boundary Ratio: 1.00
 
 Reason Code:
@@ -5394,8 +5394,8 @@ src/vs/platform/terminal/node/ptyService.ts
 Verdict: ACCEPTED
 
 Evidence
-FanOut: 27
-Boundary Ratio: 0.93
+FanOut: 26
+Boundary Ratio: 0.92
 
 Reason Code:
 ASSEMBLY_HIGH_BOUNDARY_RATIO
@@ -6719,7 +6719,7 @@ Verdict: ACCEPTED
 
 Evidence
 FanOut: 85
-Boundary Ratio: 0.96
+Boundary Ratio: 0.98
 
 Reason Code:
 ASSEMBLY_HIGH_BOUNDARY_RATIO
@@ -6832,7 +6832,7 @@ src/vs/workbench/contrib/chat/browser/agentSessions/agentHost/agentHostNewSessio
 Verdict: REJECTED
 
 Evidence
-FanOut: 18
+FanOut: 9
 Boundary Ratio: 0.89
 
 Reason Code:
@@ -6843,7 +6843,7 @@ src/vs/workbench/contrib/chat/browser/agentSessions/agentHost/agentHostToolSetEn
 Verdict: REJECTED
 
 Evidence
-FanOut: 10
+FanOut: 5
 Boundary Ratio: 1.00
 
 Reason Code:
@@ -6854,7 +6854,7 @@ src/vs/workbench/contrib/chat/browser/agentSessions/agentSessionsService.ts
 Verdict: REJECTED
 
 Evidence
-FanOut: 12
+FanOut: 6
 Boundary Ratio: 0.67
 
 Reason Code:
@@ -6866,10 +6866,11 @@ src/vs/workbench/contrib/chat/browser/agentSessions/experiments/agentSessionProj
 Verdict: REJECTED
 
 Evidence
-FanOut: 40
+FanOut: 20
 Boundary Ratio: 0.55
 
 Reason Code:
+REJECTED_LOW_FANOUT
 REJECTED_LOW_BOUNDARY_RATIO
 
 ---
@@ -6877,7 +6878,7 @@ src/vs/workbench/contrib/chat/browser/agentSessions/experiments/agentTitleBarSta
 Verdict: REJECTED
 
 Evidence
-FanOut: 8
+FanOut: 4
 Boundary Ratio: 1.00
 
 Reason Code:
@@ -10959,475 +10960,288 @@ ACCEPTED
 ## 5. Knowledge Connectivity
 <details><summary><b>Show Knowledge Sources</b></summary>
 
-- [src/vs/workbench/contrib/mcp/browser/mcpLanguageFeatures.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/mcp/browser/mcpLanguageFeatures.ts) -> src/vs/base/common/range.ts
-- [extensions/copilot/src/extension/chatSessions/copilotcli/node/test/exitPlanModeHandler.spec.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/extensions/copilot/src/extension/chatSessions/copilotcli/node/test/exitPlanModeHandler.spec.ts) -> src/vs/workbench/services/lifecycle/common/lifecycle.ts
-- [src/vs/workbench/contrib/chat/browser/chatEditing/chatEditingExplanationWidget.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/chatEditing/chatEditingExplanationWidget.ts) -> src/vs/base/common/themables.ts
-- [src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatPlanReviewPart.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatPlanReviewPart.ts) -> extensions/copilot/src/extension/prompts/node/test/fixtures/codeEditorWidget.ts
-- [src/vs/workbench/contrib/chat/browser/planReviewFeedback/planReviewFeedbackEditorContribution.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/planReviewFeedback/planReviewFeedbackEditorContribution.ts) -> src/vs/workbench/contrib/chat/browser/planReviewFeedback/planReviewFeedbackEditorActions.ts
-- [src/vs/workbench/contrib/chat/browser/planReviewFeedback/planReviewFeedbackEditorActions.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/planReviewFeedback/planReviewFeedbackEditorActions.ts) -> extensions/copilot/src/extension/completions-core/vscode-node/lib/src/util/uri.ts
-- [src/vs/workbench/contrib/chat/browser/planReviewFeedback/planReviewFeedbackEditorContribution.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/planReviewFeedback/planReviewFeedbackEditorContribution.ts) -> src/vs/base/common/themables.ts
-- [extensions/copilot/src/extension/agents/vscode-node/test/planAgentProvider.spec.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/extensions/copilot/src/extension/agents/vscode-node/test/planAgentProvider.spec.ts) -> extensions/copilot/src/extension/agents/vscode-node/agentTypes.ts
-- [extensions/copilot/src/extension/agents/vscode-node/planAgentProvider.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/extensions/copilot/src/extension/agents/vscode-node/planAgentProvider.ts) -> extensions/copilot/src/platform/extContext/common/extensionContext.ts
 - [extensions/copilot/test/simulation/fixtures/multiFileEdit/readme-generation/.devcontainer/post-install.sh](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/extensions/copilot/test/simulation/fixtures/multiFileEdit/readme-generation/.devcontainer/post-install.sh) -> sh
-- [src/vs/workbench/contrib/mcp/common/mcpLanguageModelToolContribution.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/mcp/common/mcpLanguageModelToolContribution.ts) -> extensions/copilot/src/platform/inlineEdits/common/utils/observable.ts
-- [extensions/copilot/src/extension/chatSessions/copilotcli/node/test/exitPlanModeHandler.spec.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/extensions/copilot/src/extension/chatSessions/copilotcli/node/test/exitPlanModeHandler.spec.ts) -> extensions/copilot/src/platform/workspace/common/workspaceService.ts
-- [src/vs/workbench/contrib/chat/browser/chatEditing/chatEditingExplanationWidget.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/chatEditing/chatEditingExplanationWidget.ts) -> src/vs/base/common/iconLabels.ts
-- [src/vs/workbench/contrib/chat/test/browser/widget/chatContentParts/chatPlanReviewPart.test.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/test/browser/widget/chatContentParts/chatPlanReviewPart.test.ts) -> src/vs/workbench/contrib/chat/common/model/chatViewModel.ts
-- [src/vs/workbench/contrib/chat/browser/chatEditing/chatEditingExplanationWidget.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/chatEditing/chatEditingExplanationWidget.ts) -> src/vs/base/common/codicons.ts
+- [src/vs/workbench/contrib/chat/browser/planReviewFeedback/planReviewFeedbackEditorActions.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/planReviewFeedback/planReviewFeedbackEditorActions.ts) -> src/vs/platform/instantiation/common/instantiation.ts
+- [extensions/copilot/src/extension/agents/vscode-node/planAgentProvider.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/extensions/copilot/src/extension/agents/vscode-node/planAgentProvider.ts) -> src/vs/platform/log/common/logService.ts
 - [src/vs/workbench/contrib/mcp/browser/mcpLanguageFeatures.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/mcp/browser/mcpLanguageFeatures.ts) -> src/vs/workbench/services/configurationResolver/common/configurationResolverExpression.ts
-- [src/vs/workbench/contrib/chat/browser/planReviewFeedback/planReviewFeedbackEditorActions.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/planReviewFeedback/planReviewFeedbackEditorActions.ts) -> src/vs/workbench/contrib/chat/common/actions/chatActions.ts
-- [src/vs/workbench/contrib/chat/browser/planReviewFeedback/planReviewFeedbackEditorContribution.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/planReviewFeedback/planReviewFeedbackEditorContribution.ts) -> src/vs/workbench/contrib/chat/browser/planReviewFeedback/planReviewFeedbackService.ts
-- [src/vs/workbench/contrib/chat/browser/chatEditing/chatEditingExplanationWidget.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/chatEditing/chatEditingExplanationWidget.ts) -> src/vs/workbench/contrib/chat/browser/chat.ts
-- [src/vs/workbench/contrib/chat/common/tools/builtinTools/reviewPlanTool.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/common/tools/builtinTools/reviewPlanTool.ts) -> src/vs/base/common/htmlContent.ts
+- [extensions/copilot/src/extension/chatSessions/copilotcli/node/exitPlanModeHandler.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/extensions/copilot/src/extension/chatSessions/copilotcli/node/exitPlanModeHandler.ts) -> extensions/markdown-language-features/src/util/async.ts
+- [src/vs/workbench/contrib/chat/browser/planReviewFeedback/planReviewFeedbackEditorContribution.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/planReviewFeedback/planReviewFeedbackEditorContribution.ts) -> extensions/copilot/src/platform/inlineEdits/common/utils/observable.ts
+- [src/vs/workbench/contrib/mcp/browser/mcpLanguageFeatures.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/mcp/browser/mcpLanguageFeatures.ts) -> src/vs/nls.ts
+- [extensions/copilot/src/extension/chatSessions/copilotcli/node/test/exitPlanModeHandler.spec.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/extensions/copilot/src/extension/chatSessions/copilotcli/node/test/exitPlanModeHandler.spec.ts) -> extensions/copilot/src/extension/chatSessions/claude/common/toolPermissionHandlers/exitPlanModeHandler.ts
+- [extensions/copilot/src/extension/chatSessions/copilotcli/node/exitPlanModeHandler.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/extensions/copilot/src/extension/chatSessions/copilotcli/node/exitPlanModeHandler.ts) -> extensions/copilot/src/vscodeTypes.ts
+- [src/vs/workbench/contrib/chat/browser/chatEditing/chatEditingExplanationModelManager.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/chatEditing/chatEditingExplanationModelManager.ts) -> src/vs/nls.ts
+- [src/vs/workbench/contrib/chat/browser/planReviewFeedback/planReviewFeedbackService.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/planReviewFeedback/planReviewFeedbackService.ts) -> extensions/copilot/src/extension/completions-core/vscode-node/lib/src/util/uri.ts
+- [src/vs/workbench/contrib/chat/browser/planReviewFeedback/planReviewFeedbackEditorContribution.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/planReviewFeedback/planReviewFeedbackEditorContribution.ts) -> src/vs/platform/instantiation/common/instantiation.ts
+- [src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatPlanReviewPart.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatPlanReviewPart.ts) -> extensions/copilot/src/extension/completions-core/vscode-node/lib/src/snippy/network.ts
+- [src/vs/workbench/contrib/mcp/common/mcpLanguageModelToolContribution.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/mcp/common/mcpLanguageModelToolContribution.ts) -> src/vs/workbench/contrib/mcp/common/mcpTypesUtils.ts
+- [src/vs/workbench/contrib/chat/browser/chatEditing/chatEditingExplanationWidget.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/chatEditing/chatEditingExplanationWidget.ts) -> src/vs/editor/browser/editorBrowser.ts
+- [src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatPlanReviewPart.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatPlanReviewPart.ts) -> src/vs/workbench/common/resources.ts
+- [src/vs/workbench/contrib/mcp/browser/mcpLanguageFeatures.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/mcp/browser/mcpLanguageFeatures.ts) -> extensions/typescript-language-features/src/configuration/configuration.ts
+- [src/vs/workbench/contrib/mcp/browser/mcpLanguageFeatures.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/mcp/browser/mcpLanguageFeatures.ts) -> src/vs/editor/common/services/languageFeatures.ts
+- [extensions/copilot/src/extension/agents/vscode-node/test/planAgentProvider.spec.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/extensions/copilot/src/extension/agents/vscode-node/test/planAgentProvider.spec.ts) -> extensions/copilot/src/platform/extContext/common/extensionContext.ts
+- [src/vs/workbench/contrib/chat/browser/chatEditing/chatEditingExplanationWidget.ts](vscode://file//home/dogsinatas/다운로드/vscode/vscode-main/src/vs/workbench/contrib/chat/browser/chatEditing/chatEditingExplanationWidget.ts) -> src/vs/base/common/codicons.ts
 </details>
 
 ## 7. Architectural Reasoning
 ### Q4 Extension Points
-- **src/vs/editor/common/languages.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 18 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 15 architectural clusters.
-- **extensions/copilot/src/extension/prompts/node/test/fixtures/tempo-actions.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 249 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 132 architectural clusters.
-- **src/vs/sessions/contrib/layout/browser/baseSessionLayoutController.ts** (Confidence: 1.00)
+- **src/vs/platform/agentHost/common/agentPluginManager.ts** (Confidence: 1.00)
   - - 3 implementations
   - - [EXTENSION_DENSITY] Has 3 implementations.
   - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **extensions/copilot/src/extension/prompts/node/base/promptElement.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 156 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 32 architectural clusters.
-- **extensions/copilot/src/extension/completions-core/vscode-node/prompt/src/error.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 86 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 75 architectural clusters.
-- **extensions/copilot/src/extension/completions-core/vscode-node/prompt/src/tokenization/tokenizer.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **extensions/copilot/src/platform/diff/common/diffService.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **extensions/copilot/src/extension/prompts/node/test/fixtures/tempo-actions.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 249 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 132 architectural clusters.
-- **AGGREGATE_unknown** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 17 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 14 architectural clusters.
-- **extensions/git/src/ipc/ipcClient.ts** (Confidence: 1.00)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
-- **src/vs/platform/log/common/log.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 14 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 10 architectural clusters.
 - **extensions/copilot/src/extension/trajectory/vscode-node/otelChatDebugLogProvider.ts** (Confidence: 1.00)
   - - 10 implementations
   - - [EXTENSION_DENSITY] Has 97 implementations.
   - - [CROSS_CLUSTER_DENSITY] Implementors span across 78 architectural clusters.
-- **src/vs/base/browser/ui/list/list.ts** (Confidence: 1.00)
+- **src/vs/code/electron-utility/sharedProcess/sharedProcessMain.ts** (Confidence: 1.00)
+  - - 7 implementations
+  - - [EXTENSION_DENSITY] Has 7 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 7 architectural clusters.
+- **extensions/copilot/src/extension/prompts/node/base/promptElement.ts** (Confidence: 1.00)
   - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 71 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 42 architectural clusters.
-- **src/vs/base/browser/ui/list/listWidget.ts** (Confidence: 1.00)
+  - - [EXTENSION_DENSITY] Has 156 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 32 architectural clusters.
+- **src/vs/workbench/browser/parts/editor/editorPane.ts** (Confidence: 1.00)
   - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 36 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 23 architectural clusters.
-- **src/vs/workbench/contrib/mcp/common/mcpGatewayService.ts** (Confidence: 1.00)
+  - - [EXTENSION_DENSITY] Has 32 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 28 architectural clusters.
+- **src/vs/editor/common/editorAction.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 52 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 46 architectural clusters.
+- **eslint.Rule.RuleModule** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 44 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/api/common/extHostExtensionActivator.ts** (Confidence: 1.00)
   - - 2 implementations
   - - [EXTENSION_DENSITY] Has 2 implementations.
   - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **extensions/copilot/src/extension/completions-core/vscode-node/extension/src/panelShared/languages/javaScriptReact.tmLanguage.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 10 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 9 architectural clusters.
-- **src/vs/platform/extensionManagement/common/extensionsScannerService.ts** (Confidence: 1.00)
+- **src/vs/editor/browser/view/viewLayer.ts** (Confidence: 1.00)
   - - 4 implementations
   - - [EXTENSION_DENSITY] Has 4 implementations.
   - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
-- **src/vs/workbench/api/common/extHostConsoleForwarder.ts** (Confidence: 1.00)
+- **src/vs/platform/accessibility/browser/accessibleViewRegistry.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 29 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 22 architectural clusters.
+- **src/vs/platform/list/browser/listService.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 17 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 16 architectural clusters.
+- **extensions/copilot/src/extension/prompts/node/test/fixtures/tempo-actions.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 246 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 132 architectural clusters.
+- **src/vs/workbench/services/localization/common/locale.ts** (Confidence: 1.00)
   - - 2 implementations
   - - [EXTENSION_DENSITY] Has 2 implementations.
   - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **extensions/vscode-colorize-perf-tests/test/colorize-fixtures/test-treeView.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 22 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 20 architectural clusters.
-- **src/vs/base/browser/ui/tree/asyncDataTree.ts** (Confidence: 1.00)
-  - - 9 implementations
-  - - [EXTENSION_DENSITY] Has 9 implementations.
+- **extensions/copilot/src/extension/chatSessions/common/folderRepositoryManager.ts** (Confidence: 1.00)
+  - - 7 implementations
+  - - [EXTENSION_DENSITY] Has 7 implementations.
   - - [CROSS_CLUSTER_DENSITY] Implementors span across 6 architectural clusters.
-- **extensions/copilot/test/base/cache.ts** (Confidence: 1.00)
-  - - 6 implementations
-  - - [EXTENSION_DENSITY] Has 6 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **extensions/copilot/src/extension/intents/node/toolCallingLoop.ts** (Confidence: 1.00)
-  - - 9 implementations
-  - - [EXTENSION_DENSITY] Has 9 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
-- **src/vs/base/common/equals.ts** (Confidence: 1.00)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
-- **extensions/copilot/src/extension/chatSessions/copilotcli/node/test/missionControlApiClient.spec.ts** (Confidence: 1.00)
+- **src/vs/workbench/api/common/extHostExtensionService.ts** (Confidence: 1.00)
   - - 5 implementations
   - - [EXTENSION_DENSITY] Has 5 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
-- **src/vs/workbench/common/editor/editorModel.ts** (Confidence: 1.00)
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/editor/browser/editorExtensions.ts** (Confidence: 1.00)
   - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 15 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 12 architectural clusters.
-- **src/vs/platform/agentHost/common/agentHostChangesetOperationService.ts** (Confidence: 1.00)
-  - - 5 implementations
-  - - [EXTENSION_DENSITY] Has 5 implementations.
+  - - [EXTENSION_DENSITY] Has 18 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 18 architectural clusters.
+- **src/vs/editor/common/languages.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 18 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 15 architectural clusters.
+- **src/vs/platform/files/node/diskFileSystemProviderServer.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
   - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
 - **src/vscode-dts/vscode.d.ts** (Confidence: 1.00)
   - - 10 implementations
   - - [EXTENSION_DENSITY] Has 22 implementations.
   - - [CROSS_CLUSTER_DENSITY] Implementors span across 16 architectural clusters.
-- **src/vs/base/browser/ui/tree/tree.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 51 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 38 architectural clusters.
-- **src/vs/workbench/common/editor/editorInput.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 37 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 29 architectural clusters.
-- **src/vs/workbench/contrib/chat/common/chatSessionsService.ts** (Confidence: 1.00)
-  - - 6 implementations
-  - - [EXTENSION_DENSITY] Has 6 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
-- **src/vs/platform/accessibility/browser/accessibleViewRegistry.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 29 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 22 architectural clusters.
-- **extensions/copilot/src/extension/tools/common/toolsRegistry.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 27 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
-- **src/vs/platform/agentHost/common/agentService.ts** (Confidence: 1.00)
-  - - 6 implementations
-  - - [EXTENSION_DENSITY] Has 6 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 6 architectural clusters.
-- **src/vs/platform/telemetry/common/telemetry.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 18 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 11 architectural clusters.
 - **src/vs/platform/action/common/action.ts** (Confidence: 1.00)
   - - 10 implementations
   - - [EXTENSION_DENSITY] Has 31 implementations.
   - - [CROSS_CLUSTER_DENSITY] Implementors span across 26 architectural clusters.
-- **src/vs/workbench/contrib/extensions/browser/abstractRuntimeExtensionsEditor.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **extensions/copilot/test/testExecutor.ts** (Confidence: 1.00)
+- **src/vs/base/common/fuzzyScorer.ts** (Confidence: 1.00)
   - - 3 implementations
   - - [EXTENSION_DENSITY] Has 3 implementations.
   - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
-- **extensions/copilot/src/platform/networking/common/networking.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 11 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 8 architectural clusters.
-- **src/vs/platform/theme/common/themeService.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 18 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 13 architectural clusters.
-- **extensions/copilot/src/extension/trajectory/vscode-node/otelChatDebugLogProvider.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 97 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 78 architectural clusters.
-- **HTMLElement>** (Confidence: 1.00)
-  - - 5 implementations
-  - - [EXTENSION_DENSITY] Has 5 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
-- **src/vs/workbench/api/common/extHostExtensionService.ts** (Confidence: 1.00)
-  - - 5 implementations
-  - - [EXTENSION_DENSITY] Has 5 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
-- **src/vs/platform/quickinput/browser/pickerQuickAccess.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 18 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 14 architectural clusters.
-- **extensions/copilot/src/platform/endpoint/node/chatEndpoint.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 10 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
-- **src/vs/workbench/contrib/chat/browser/chat.ts** (Confidence: 1.00)
+- **extensions/copilot/src/extension/chatSessions/copilotcli/node/copilotCli.ts** (Confidence: 1.00)
   - - 4 implementations
   - - [EXTENSION_DENSITY] Has 4 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
-- **extensions/copilot/test/scenarios/test-explain/foo.ts** (Confidence: 1.00)
-  - - 5 implementations
-  - - [EXTENSION_DENSITY] Has 5 implementations.
   - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
-- **BaseWorkbenchMcpManagementService** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/editor/browser/editorExtensions.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 18 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 18 architectural clusters.
-- **extensions/git/src/ipc/ipcServer.ts** (Confidence: 1.00)
-  - - 6 implementations
-  - - [EXTENSION_DENSITY] Has 6 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
-- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/progress.ts** (Confidence: 1.00)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
-- **src/vs/editor/common/editorAction.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 52 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 46 architectural clusters.
-- **src/vs/base/browser/ui/list/list.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 71 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 42 architectural clusters.
-- **src/vs/workbench/common/editor.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 37 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 30 architectural clusters.
-- **src/vs/workbench/common/dialogs.ts** (Confidence: 1.00)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
-- **eslint.Rule.RuleModule** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 44 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/workbench/services/userData/browser/userDataInit.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **extensions/copilot/src/util/common/diff.ts** (Confidence: 1.00)
-  - - 7 implementations
-  - - [EXTENSION_DENSITY] Has 7 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 6 architectural clusters.
-- **src/vs/base/browser/ui/tree/objectTree.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 18 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 11 architectural clusters.
-- **src/vs/workbench/contrib/notebook/browser/diff/diffComponents.ts** (Confidence: 1.00)
-  - - 4 implementations
-  - - [EXTENSION_DENSITY] Has 4 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
-- **src/vs/platform/agentHost/common/agentPluginManager.ts** (Confidence: 1.00)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/workbench/contrib/debug/common/debug.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 13 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
-- **extensions/copilot/src/extension/prompts/node/agent/defaultAgentInstructions.tsx** (Confidence: 1.00)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/base/browser/ui/tree/tree.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 51 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 38 architectural clusters.
-- **src/vs/platform/agentHost/common/agentHostGitStateService.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/base/test/common/mock.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 48 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 21 architectural clusters.
-- **src/vs/platform/telemetry/common/errorTelemetry.ts** (Confidence: 1.00)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
-- **src/vs/base/test/common/mock.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 48 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 21 architectural clusters.
-- **src/vs/base/parts/ipc/test/browser/ipc.mp.test.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/workbench/browser/parts/editor/editorPane.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 33 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 28 architectural clusters.
-- **src/vs/workbench/browser/parts/views/viewPane.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 43 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 24 architectural clusters.
-- **extensions/copilot/src/extension/prompts/node/test/fixtures/codeEditorWidget.ts** (Confidence: 1.00)
-  - - 5 implementations
-  - - [EXTENSION_DENSITY] Has 5 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
-- **extensions/copilot/src/extension/typescriptContext/serverPlugin/src/common/contextProvider.ts** (Confidence: 1.00)
-  - - 6 implementations
-  - - [EXTENSION_DENSITY] Has 6 implementations.
-- **src/vs/base/browser/ui/actionbar/actionViewItems.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 59 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 42 architectural clusters.
 - **src/vs/workbench/services/configuration/common/configuration.ts** (Confidence: 1.00)
   - - 5 implementations
   - - [EXTENSION_DENSITY] Has 5 implementations.
   - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **extensions/typescript-language-features/src/tsServer/versionManager.ts** (Confidence: 1.00)
+- **extensions/copilot/src/extension/tools/common/toolsService.ts** (Confidence: 1.00)
   - - 3 implementations
   - - [EXTENSION_DENSITY] Has 3 implementations.
   - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
-- **src/vs/workbench/services/textfile/browser/textFileService.ts** (Confidence: 1.00)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
-- **src/vs/workbench/services/workspaces/browser/abstractWorkspaceEditingService.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **extensions/copilot/src/extension/chatSessions/copilotcli/node/test/copilotCliSessionService.spec.ts** (Confidence: 1.00)
-  - - 6 implementations
-  - - [EXTENSION_DENSITY] Has 6 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
-- **src/vs/workbench/browser/parts/editor/editorPane.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 33 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 28 architectural clusters.
-- **IActionsColumnTemplateData>** (Confidence: 1.00)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
-- **src/vs/editor/common/services/treeSitter/treeSitterLibraryService.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/workbench/common/contributions.ts** (Confidence: 1.00)
-  - - 4 implementations
-  - - [EXTENSION_DENSITY] Has 4 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
-- **src/vs/platform/secrets/test/common/secrets.test.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/editor/common/model/tokens/abstractSyntaxTokenBackend.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **extensions/copilot/src/extension/prompt/node/intents.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 28 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 7 architectural clusters.
-- **extensions/copilot/src/platform/telemetry/common/nullTelemetryService.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 11 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 8 architectural clusters.
-- **extensions/copilot/src/platform/workspace/common/workspaceService.ts** (Confidence: 1.00)
-  - - 4 implementations
-  - - [EXTENSION_DENSITY] Has 4 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
-- **src/vs/editor/contrib/codeAction/test/browser/codeActionModel.test.ts** (Confidence: 1.00)
+- **src/vs/base/common/worker/webWorker.ts** (Confidence: 1.00)
   - - 6 implementations
   - - [EXTENSION_DENSITY] Has 6 implementations.
   - - [CROSS_CLUSTER_DENSITY] Implementors span across 6 architectural clusters.
-- **extensions/copilot/src/platform/ignore/node/test/mockAuthenticationService.ts** (Confidence: 1.00)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/base/browser/ui/actionbar/actionViewItems.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 59 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 42 architectural clusters.
-- **cli/src/util/command.rs** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 31 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
-- **src/vs/workbench/browser/parts/paneCompositePart.ts** (Confidence: 1.00)
-  - - 8 implementations
-  - - [EXTENSION_DENSITY] Has 8 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 6 architectural clusters.
-- **src/vs/workbench/contrib/git/common/gitService.ts** (Confidence: 1.00)
-  - - 4 implementations
-  - - [EXTENSION_DENSITY] Has 4 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
-- **extensions/copilot/src/extension/agents/vscode-node/githubOrgChatResourcesService.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 14 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 11 architectural clusters.
-- **extensions/copilot/src/platform/test/node/testWorkspaceService.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/editor/contrib/quickAccess/browser/gotoLineQuickAccess.ts** (Confidence: 1.00)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
-- **src/vs/editor/standalone/browser/standaloneServices.ts** (Confidence: 1.00)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
-- **src/vs/editor/contrib/snippet/browser/snippetParser.ts** (Confidence: 1.00)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
-- **extensions/copilot/src/extension/byok/vscode-node/abstractLanguageModelChatProvider.ts** (Confidence: 1.00)
-  - - 8 implementations
-  - - [EXTENSION_DENSITY] Has 8 implementations.
-- **extensions/copilot/test/simulation/diagnosticProviders/utils.ts** (Confidence: 1.00)
-  - - 6 implementations
-  - - [EXTENSION_DENSITY] Has 6 implementations.
-- **src/vs/base/browser/ui/dropdown/dropdownActionViewItem.ts** (Confidence: 1.00)
-  - - 9 implementations
-  - - [EXTENSION_DENSITY] Has 9 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 8 architectural clusters.
-- **src/vs/workbench/browser/parts/views/viewPane.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 43 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 24 architectural clusters.
 - **src/vs/base/browser/ui/list/list.ts** (Confidence: 1.00)
   - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 71 implementations.
+  - - [EXTENSION_DENSITY] Has 68 implementations.
   - - [CROSS_CLUSTER_DENSITY] Implementors span across 42 architectural clusters.
-- **src/vs/base/browser/ui/actionbar/actionViewItems.ts** (Confidence: 1.00)
+- **IFileTemplateData>** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/base/browser/ui/tree/tree.ts** (Confidence: 1.00)
   - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 59 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 42 architectural clusters.
-- **src/vs/editor/browser/editorBrowser.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 14 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 12 architectural clusters.
-- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/textDocument.ts** (Confidence: 1.00)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
-- **src/vs/platform/telemetry/common/1dsAppender.ts** (Confidence: 1.00)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
-- **src/vs/editor/common/viewEventHandler.ts** (Confidence: 1.00)
+  - - [EXTENSION_DENSITY] Has 50 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 38 architectural clusters.
+- **src/vs/workbench/contrib/chat/browser/attachments/chatContextPickService.ts** (Confidence: 1.00)
   - - 7 implementations
   - - [EXTENSION_DENSITY] Has 7 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 6 architectural clusters.
-- **src/vs/editor/browser/view/viewLayer.ts** (Confidence: 1.00)
-  - - 4 implementations
-  - - [EXTENSION_DENSITY] Has 4 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
-- **extensions/copilot/src/platform/chat/common/chatHookService.ts** (Confidence: 1.00)
-  - - 4 implementations
-  - - [EXTENSION_DENSITY] Has 4 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
-- **src/vs/platform/action/common/action.ts** (Confidence: 1.00)
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 7 architectural clusters.
+- **src/vs/workbench/contrib/browserView/electron-browser/browserEditor.ts** (Confidence: 1.00)
   - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 31 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 26 architectural clusters.
+  - - [EXTENSION_DENSITY] Has 15 implementations.
+- **src/vs/platform/telemetry/common/telemetry.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 18 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 11 architectural clusters.
+- **src/vs/base/browser/ui/tree/objectTree.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 17 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 11 architectural clusters.
 - **src/vs/workbench/contrib/workspace/common/workspace.ts** (Confidence: 1.00)
   - - 4 implementations
   - - [EXTENSION_DENSITY] Has 4 implementations.
   - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **src/vs/base/parts/ipc/test/browser/ipc.mp.test.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/platform/actions/browser/actionViewItemService.ts** (Confidence: 1.00)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/platform/languages/common/languageDiagnosticsService.ts** (Confidence: 1.00)
+  - - 4 implementations
+  - - [EXTENSION_DENSITY] Has 4 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **src/vs/platform/quickinput/browser/pickerQuickAccess.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 17 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 14 architectural clusters.
+- **src/vs/editor/common/viewEventHandler.ts** (Confidence: 1.00)
+  - - 7 implementations
+  - - [EXTENSION_DENSITY] Has 7 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 6 architectural clusters.
+- **src/vs/base/browser/ui/list/listWidget.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 35 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 23 architectural clusters.
+- **src/vs/editor/common/languages/language.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/common/editor.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 36 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 30 architectural clusters.
+- **src/vs/editor/common/services/treeSitter/treeSitterLibraryService.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/browser/parts/views/viewPane.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 43 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 24 architectural clusters.
+- **src/vs/editor/common/services/resolverService.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 14 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 14 architectural clusters.
+- **extensions/copilot/src/platform/chat/common/chatHookService.ts** (Confidence: 1.00)
+  - - 4 implementations
+  - - [EXTENSION_DENSITY] Has 4 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **src/vs/base/browser/ui/list/list.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 68 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 42 architectural clusters.
+- **extensions/copilot/src/extension/tools/common/toolsRegistry.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 27 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **extensions/typescript-language-features/src/tsServer/versionProvider.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/platform/tunnel/common/tunnel.ts** (Confidence: 1.00)
+  - - 4 implementations
+  - - [EXTENSION_DENSITY] Has 4 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **src/vs/workbench/services/userDataProfile/common/userDataProfile.ts** (Confidence: 1.00)
+  - - 9 implementations
+  - - [EXTENSION_DENSITY] Has 9 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/platform/testing/common/testProvider.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/browser/parts/views/viewPane.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 43 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 24 architectural clusters.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/node/test/copilotcliPromptResolver.spec.ts** (Confidence: 1.00)
+  - - 4 implementations
+  - - [EXTENSION_DENSITY] Has 4 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **src/vs/platform/list/browser/listService.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 17 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 16 architectural clusters.
+- **src/vs/platform/agentHost/common/agentHostChangesetOperationService.ts** (Confidence: 1.00)
+  - - 5 implementations
+  - - [EXTENSION_DENSITY] Has 5 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/platform/agentHost/common/agentService.ts** (Confidence: 1.00)
+  - - 6 implementations
+  - - [EXTENSION_DENSITY] Has 6 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 6 architectural clusters.
+- **extensions/copilot/src/extension/chatSessions/common/agentSessionsWorkspace.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/extension/completions-core/vscode-node/prompt/src/error.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 86 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 75 architectural clusters.
+- **src/vs/platform/actions/browser/menuEntryActionViewItem.ts** (Confidence: 1.00)
+  - - 9 implementations
+  - - [EXTENSION_DENSITY] Has 9 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 9 architectural clusters.
+- **src/vs/workbench/browser/part.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 10 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 8 architectural clusters.
+- **extensions/copilot/src/extension/byok/vscode-node/abstractLanguageModelChatProvider.ts** (Confidence: 1.00)
+  - - 8 implementations
+  - - [EXTENSION_DENSITY] Has 8 implementations.
+- **extensions/vscode-colorize-perf-tests/test/colorize-fixtures/test-treeView.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 22 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 20 architectural clusters.
+- **extensions/copilot/src/extension/completions-core/vscode-node/prompt/src/error.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 86 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 75 architectural clusters.
+- **src/vs/base/browser/ui/grid/grid.ts** (Confidence: 1.00)
+  - - 4 implementations
+  - - [EXTENSION_DENSITY] Has 4 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **extensions/copilot/src/util/common/diff.ts** (Confidence: 1.00)
+  - - 7 implementations
+  - - [EXTENSION_DENSITY] Has 7 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 6 architectural clusters.
 - **extensions/copilot/src/extension/prompts/node/agent/promptRegistry.ts** (Confidence: 1.00)
   - - 10 implementations
   - - [EXTENSION_DENSITY] Has 18 implementations.
@@ -11436,825 +11250,71 @@ ACCEPTED
   - - 10 implementations
   - - [EXTENSION_DENSITY] Has 19 implementations.
   - - [CROSS_CLUSTER_DENSITY] Implementors span across 16 architectural clusters.
-- **src/vs/platform/environment/common/environment.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/platform/actions/browser/menuEntryActionViewItem.ts** (Confidence: 1.00)
-  - - 9 implementations
-  - - [EXTENSION_DENSITY] Has 9 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 9 architectural clusters.
-- **src/vs/workbench/contrib/localization/common/localization.contribution.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/editor/standalone/common/standaloneTheme.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/platform/keybinding/common/baseResolvedKeybinding.ts** (Confidence: 1.00)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/workbench/services/lifecycle/common/lifecycle.ts** (Confidence: 1.00)
+- **extensions/copilot/src/extension/trajectory/vscode-node/otelChatDebugLogProvider.ts** (Confidence: 1.00)
   - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 16 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 10 architectural clusters.
-- **extensions/media-preview/src/mediaPreview.ts** (Confidence: 1.00)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/base/browser/ui/widget.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 24 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 18 architectural clusters.
-- **src/vs/platform/theme/common/themeService.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 18 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 13 architectural clusters.
-- **src/vs/editor/common/services/textResourceConfiguration.ts** (Confidence: 1.00)
-  - - 5 implementations
-  - - [EXTENSION_DENSITY] Has 5 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
-- **src/vs/platform/storage/common/storage.ts** (Confidence: 1.00)
-  - - 7 implementations
-  - - [EXTENSION_DENSITY] Has 7 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 7 architectural clusters.
-- **src/vs/base/parts/ipc/common/ipc.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 29 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 22 architectural clusters.
-- **extensions/copilot/src/extension/agents/vscode-node/githubOrgChatResourcesService.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 14 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 11 architectural clusters.
-- **src/vs/platform/windows/electron-main/windowImpl.ts** (Confidence: 1.00)
-  - - 5 implementations
-  - - [EXTENSION_DENSITY] Has 5 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
-- **src/vs/editor/common/editorCommon.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 47 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 38 architectural clusters.
-- **src/vs/workbench/services/extensions/common/abstractExtensionService.ts** (Confidence: 1.00)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
-- **extensions/copilot/test/simulation/workbench/stores/storage.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/workbench/services/userDataProfile/common/userDataProfile.ts** (Confidence: 1.00)
-  - - 9 implementations
-  - - [EXTENSION_DENSITY] Has 9 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **FilterData>** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **extensions/copilot/src/platform/tabs/common/tabsAndEditorsService.ts** (Confidence: 1.00)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
-- **src/vs/editor/contrib/zoneWidget/browser/zoneWidget.ts** (Confidence: 1.00)
-  - - 6 implementations
-  - - [EXTENSION_DENSITY] Has 6 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
-- **Ghost Dependency (extensions/copilot/src/extension/completions-core/vscode-node/lib/src/ghostText/test/statementTree.test.ts)** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/code/electron-utility/sharedProcess/sharedProcessMain.ts** (Confidence: 1.00)
-  - - 7 implementations
-  - - [EXTENSION_DENSITY] Has 7 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 7 architectural clusters.
-- **src/vs/base/common/filters.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 25 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 18 architectural clusters.
-- **src/vs/workbench/services/lifecycle/common/lifecycle.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 16 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 10 architectural clusters.
-- **src/vs/workbench/browser/parts/editor/textCodeEditor.ts** (Confidence: 1.00)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
-- **extensions/copilot/src/platform/github/common/githubService.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/platform/agentHost/node/agentHostTelemetryService.ts** (Confidence: 1.00)
-  - - 4 implementations
-  - - [EXTENSION_DENSITY] Has 4 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
-- **src/vs/platform/label/common/label.ts** (Confidence: 1.00)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
-- **extensions/copilot/src/platform/inlineEdits/common/observableWorkspace.ts** (Confidence: 1.00)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
-- **extensions/copilot/src/util/common/chatResponseStreamImpl.ts** (Confidence: 1.00)
-  - - 4 implementations
-  - - [EXTENSION_DENSITY] Has 4 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
-- **src/vs/platform/meteredConnection/common/meteredConnection.ts** (Confidence: 1.00)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
-- **src/vs/sessions/browser/parts/editorPart.ts** (Confidence: 1.00)
-  - - 4 implementations
-  - - [EXTENSION_DENSITY] Has 4 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **extensions/copilot/src/extension/chatSessions/copilotcli/node/test/copilotcliPromptResolver.spec.ts** (Confidence: 1.00)
-  - - 4 implementations
-  - - [EXTENSION_DENSITY] Has 4 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
-- **src/vs/editor/browser/view/viewPart.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 17 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 17 architectural clusters.
-- **src/vs/platform/accessibility/browser/accessibleViewRegistry.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 29 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 22 architectural clusters.
-- **src/vs/workbench/contrib/chat/browser/widget/input/chatInputPickerActionItem.ts** (Confidence: 1.00)
-  - - 5 implementations
-  - - [EXTENSION_DENSITY] Has 5 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/workbench/common/views.ts** (Confidence: 1.00)
-  - - 8 implementations
-  - - [EXTENSION_DENSITY] Has 8 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 7 architectural clusters.
-- **src/vs/workbench/contrib/terminal/common/basePty.ts** (Confidence: 1.00)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/platform/list/browser/listService.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 17 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 16 architectural clusters.
-- **extensions/copilot/src/extension/chatSessions/claude/common/claudeToolPermission.ts** (Confidence: 1.00)
-  - - 6 implementations
-  - - [EXTENSION_DENSITY] Has 6 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
-- **src/vs/workbench/services/textfile/common/textfiles.ts** (Confidence: 1.00)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
-- **src/vs/workbench/contrib/browserView/electron-browser/browserEditor.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 15 implementations.
-- **extensions/copilot/src/extension/tools/common/virtualTools/toolEmbeddingsComputer.ts** (Confidence: 1.00)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **extensions/copilot/src/extension/agents/node/adapters/types.ts** (Confidence: 1.00)
-  - - 4 implementations
-  - - [EXTENSION_DENSITY] Has 4 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
-- **extensions/copilot/src/extension/chatSessions/claude/vscode-node/slashCommands/claudeSlashCommandRegistry.ts** (Confidence: 1.00)
-  - - 6 implementations
-  - - [EXTENSION_DENSITY] Has 6 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
-- **src/vs/base/browser/ui/tree/tree.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 51 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 38 architectural clusters.
-- **extensions/copilot/src/util/common/diff.ts** (Confidence: 1.00)
-  - - 7 implementations
-  - - [EXTENSION_DENSITY] Has 7 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 6 architectural clusters.
-- **src/vs/workbench/contrib/terminal/browser/baseTerminalBackend.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **extensions/copilot/src/extension/chatSessions/vscode-node/test/copilotCLIChatSessionParticipant.spec.ts** (Confidence: 1.00)
-  - - 5 implementations
-  - - [EXTENSION_DENSITY] Has 5 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
-- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/util/event.ts** (Confidence: 1.00)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+  - - [EXTENSION_DENSITY] Has 97 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 78 architectural clusters.
 - **src/vs/workbench/contrib/tasks/browser/abstractTaskService.ts** (Confidence: 1.00)
   - - 2 implementations
   - - [EXTENSION_DENSITY] Has 2 implementations.
   - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **AGGREGATE_unknown** (Confidence: 1.00)
+- **src/vs/workbench/common/editor/editorInput.ts** (Confidence: 1.00)
   - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 17 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 14 architectural clusters.
-- **src/vs/workbench/contrib/browserView/electron-browser/tools/clickBrowserTool.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 24 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 8 architectural clusters.
-- **src/vs/workbench/contrib/notebook/browser/controller/coreActions.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 10 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 7 architectural clusters.
-- **src/vs/workbench/services/localization/common/locale.ts** (Confidence: 1.00)
+  - - [EXTENSION_DENSITY] Has 36 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 29 architectural clusters.
+- **src/vs/workbench/contrib/terminal/browser/baseTerminalBackend.ts** (Confidence: 1.00)
   - - 2 implementations
   - - [EXTENSION_DENSITY] Has 2 implementations.
   - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **extensions/copilot/src/platform/requestLogger/node/requestLogger.ts** (Confidence: 1.00)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
-- **src/vs/editor/contrib/hover/browser/markdownHoverParticipant.ts** (Confidence: 1.00)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
-- **src/vs/editor/common/editorCommon.ts** (Confidence: 1.00)
+- **extensions/copilot/src/platform/telemetry/common/nullTelemetryService.ts** (Confidence: 1.00)
   - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 47 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 38 architectural clusters.
-- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/language/languages.ts** (Confidence: 1.00)
+  - - [EXTENSION_DENSITY] Has 11 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 8 architectural clusters.
+- **HTMLElement>** (Confidence: 1.00)
   - - 5 implementations
   - - [EXTENSION_DENSITY] Has 5 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
-- **src/vs/workbench/contrib/browserView/electron-browser/tools/clickBrowserTool.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 24 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 8 architectural clusters.
-- **extensions/copilot/src/extension/chatSessions/common/folderRepositoryManager.ts** (Confidence: 1.00)
-  - - 7 implementations
-  - - [EXTENSION_DENSITY] Has 7 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 6 architectural clusters.
-- **extensions/copilot/src/extension/chatSessions/common/agentSessionsWorkspace.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/platform/undoRedo/common/undoRedo.ts** (Confidence: 1.00)
-  - - 7 implementations
-  - - [EXTENSION_DENSITY] Has 7 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 6 architectural clusters.
-- **src/vs/platform/extensionManagement/common/abstractExtensionManagementService.ts** (Confidence: 1.00)
-  - - 4 implementations
-  - - [EXTENSION_DENSITY] Has 4 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/common/customSessionTitleService.ts** (Confidence: 1.00)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
   - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
-- **src/vs/platform/tunnel/node/tunnelProxy.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/workbench/services/configuration/common/jsonEditing.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/platform/terminal/common/capabilities/capabilities.ts** (Confidence: 1.00)
+- **src/vs/workbench/services/path/common/pathService.ts** (Confidence: 1.00)
   - - 4 implementations
   - - [EXTENSION_DENSITY] Has 4 implementations.
   - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
-- **src/vs/platform/files/common/inMemoryFilesystemProvider.ts** (Confidence: 1.00)
-  - - 4 implementations
-  - - [EXTENSION_DENSITY] Has 4 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
-- **src/vs/platform/configuration/common/configurationService.ts** (Confidence: 1.00)
-  - - 7 implementations
-  - - [EXTENSION_DENSITY] Has 7 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 7 architectural clusters.
-- **src/vs/workbench/services/userDataSync/common/userDataSync.ts** (Confidence: 1.00)
-  - - 8 implementations
-  - - [EXTENSION_DENSITY] Has 8 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 7 architectural clusters.
-- **src/vs/platform/agentHost/common/sessionDataService.ts** (Confidence: 1.00)
-  - - 4 implementations
-  - - [EXTENSION_DENSITY] Has 4 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
-- **extensions/copilot/src/extension/typescriptContext/serverPlugin/fixtures/context/testbed/src/person.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **extensions/copilot/src/extension/completions-core/vscode-node/prompt/src/components/components.ts** (Confidence: 1.00)
-  - - 8 implementations
-  - - [EXTENSION_DENSITY] Has 8 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 7 architectural clusters.
-- **src/vs/workbench/services/lifecycle/common/lifecycleService.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **extensions/typescript-language-features/src/tsServer/server.ts** (Confidence: 1.00)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/sessions/contrib/github/common/types.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/editor/browser/editorExtensions.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 18 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 18 architectural clusters.
-- **src/vs/base/browser/ui/list/list.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 71 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 42 architectural clusters.
-- **src/vs/editor/common/diff/documentDiffProvider.ts** (Confidence: 1.00)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
-- **src/vs/sessions/contrib/chat/browser/sessionTaskRunner.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/workbench/browser/parts/views/viewPaneContainer.ts** (Confidence: 1.00)
-  - - 7 implementations
-  - - [EXTENSION_DENSITY] Has 7 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 7 architectural clusters.
-- **extensions/copilot/src/extension/chatSessions/claude/common/claudeAgentSdkLoaderService.ts** (Confidence: 1.00)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/workbench/services/workingCopy/electron-browser/workingCopyBackupService.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/platform/contextview/browser/contextView.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **extensions/copilot/src/platform/chunking/common/chunkingEndpointClient.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/base/common/parsers.ts** (Confidence: 1.00)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **extensions/copilot/src/extension/typescriptContext/serverPlugin/fixtures/context/p9/source/f1.ts** (Confidence: 1.00)
-  - - 4 implementations
-  - - [EXTENSION_DENSITY] Has 4 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/base/browser/ui/widget.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 24 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 18 architectural clusters.
-- **src/vs/editor/common/languages.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 18 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 15 architectural clusters.
-- **src/vs/workbench/services/extensionRecommendations/common/extensionRecommendations.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 10 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
 - **src/vs/editor/browser/editorBrowser.ts** (Confidence: 1.00)
   - - 10 implementations
   - - [EXTENSION_DENSITY] Has 14 implementations.
   - - [CROSS_CLUSTER_DENSITY] Implementors span across 12 architectural clusters.
-- **extensions/copilot/src/platform/testing/common/testLogService.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/workbench/contrib/debug/browser/debugSession.ts** (Confidence: 1.00)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/sessions/contrib/providers/agentHost/browser/agentHostModePicker.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **extensions/copilot/test/simulation/fixtures/codeMapper/extHostExtensionActivator.test.ts** (Confidence: 1.00)
-  - - 8 implementations
-  - - [EXTENSION_DENSITY] Has 8 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
-- **src/vs/workbench/common/editor/editorModel.ts** (Confidence: 1.00)
+- **src/vs/workbench/contrib/browserView/electron-browser/tools/clickBrowserTool.ts** (Confidence: 1.00)
   - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 15 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 12 architectural clusters.
-- **extensions/vscode-colorize-perf-tests/test/colorize-fixtures/test-treeView.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 22 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 20 architectural clusters.
-- **extensions/copilot/test/simulation/fixtures/doc/issue-6406/debugModel.ts** (Confidence: 1.00)
-  - - 6 implementations
-  - - [EXTENSION_DENSITY] Has 6 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
-- **src/vs/workbench/common/editor/resourceEditorInput.ts** (Confidence: 1.00)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
-- **src/vs/editor/common/services/resolverService.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 14 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 14 architectural clusters.
-- **src/vs/platform/list/browser/listService.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 17 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 16 architectural clusters.
-- **extensions/copilot/src/platform/chat/common/sessionTranscriptService.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/sessions/browser/parts/sessionHeaderMetaActionViewItem.ts** (Confidence: 1.00)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
-- **src/vs/workbench/contrib/notebook/browser/controller/coreActions.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 10 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 7 architectural clusters.
-- **src/vs/base/browser/ui/list/listWidget.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 36 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 23 architectural clusters.
-- **extensions/copilot/src/platform/requestLogger/common/requestLogger.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/workbench/contrib/terminalContrib/links/browser/links.ts** (Confidence: 1.00)
-  - - 7 implementations
-  - - [EXTENSION_DENSITY] Has 7 implementations.
-- **extensions/copilot/src/extension/completions-core/vscode-node/prompt/src/error.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 86 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 75 architectural clusters.
-- **src/vs/base/browser/ui/list/list.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 71 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 42 architectural clusters.
-- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/toolInvocationParts/chatToolInvocationSubPart.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 11 implementations.
-- **extensions/copilot/src/platform/editing/common/abstractText.ts** (Confidence: 1.00)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
-- **extensions/copilot/src/extension/byok/node/openAIEndpoint.ts** (Confidence: 1.00)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/platform/userDataSync/common/abstractSynchronizer.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 12 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
-- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/networkingTypes.ts** (Confidence: 1.00)
-  - - 6 implementations
-  - - [EXTENSION_DENSITY] Has 6 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
-- **src/vs/base/common/observableInternal/base.ts** (Confidence: 1.00)
-  - - 7 implementations
-  - - [EXTENSION_DENSITY] Has 7 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 7 architectural clusters.
-- **src/vs/workbench/contrib/splash/browser/splash.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/workbench/browser/parts/views/viewPane.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 43 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 24 architectural clusters.
-- **src/vs/editor/common/services/resolverService.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 14 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 14 architectural clusters.
-- **src/vs/base/browser/ui/actionbar/actionbar.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **extensions/copilot/test/simulation/fixtures/codeMapper/extHostExtensionActivator.test.ts** (Confidence: 1.00)
-  - - 8 implementations
-  - - [EXTENSION_DENSITY] Has 8 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
-- **extensions/copilot/src/extension/linkify/common/linkifyService.ts** (Confidence: 1.00)
-  - - 6 implementations
-  - - [EXTENSION_DENSITY] Has 6 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
-- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/toolInvocationParts/abstractToolConfirmationSubPart.ts** (Confidence: 1.00)
-  - - 5 implementations
-  - - [EXTENSION_DENSITY] Has 5 implementations.
-- **extensions/terminal-suggest/src/completions/copilot.ts** (Confidence: 1.00)
-  - - 4 implementations
-  - - [EXTENSION_DENSITY] Has 4 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
-- **src/vs/platform/agentHost/common/state/protocol/common/actions.ts** (Confidence: 1.00)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
-- **src/vs/sessions/contrib/chat/browser/sessionTypePicker.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/platform/configuration/test/common/testConfigurationService.ts** (Confidence: 1.00)
-  - - 5 implementations
-  - - [EXTENSION_DENSITY] Has 5 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
-- **src/vs/base/browser/ui/actionbar/actionViewItems.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 59 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 42 architectural clusters.
-- **src/vs/platform/agentHost/common/agentServerTools.ts** (Confidence: 1.00)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **extensions/copilot/src/extension/chatSessions/copilotcli/node/userInputHelpers.ts** (Confidence: 1.00)
-  - - 5 implementations
-  - - [EXTENSION_DENSITY] Has 5 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
-- **src/vs/workbench/contrib/mcp/common/discovery/nativeMcpDiscoveryAbstract.ts** (Confidence: 1.00)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **extensions/copilot/src/extension/chatSessions/copilotcli/node/copilotCli.ts** (Confidence: 1.00)
-  - - 4 implementations
-  - - [EXTENSION_DENSITY] Has 4 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
-- **src/vs/base/common/worker/webWorker.ts** (Confidence: 1.00)
-  - - 6 implementations
-  - - [EXTENSION_DENSITY] Has 6 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 6 architectural clusters.
-- **src/vs/platform/telemetry/common/telemetryService.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/base/browser/ui/table/table.ts** (Confidence: 1.00)
-  - - 7 implementations
-  - - [EXTENSION_DENSITY] Has 7 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 7 architectural clusters.
-- **src/vs/workbench/services/dialogs/common/dialogService.ts** (Confidence: 1.00)
-  - - 4 implementations
-  - - [EXTENSION_DENSITY] Has 4 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
-- **src/vs/workbench/contrib/debug/common/abstractDebugAdapter.ts** (Confidence: 1.00)
-  - - 4 implementations
-  - - [EXTENSION_DENSITY] Has 4 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
-- **src/vs/workbench/contrib/notebook/common/notebookService.ts** (Confidence: 1.00)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
-- **src/vs/workbench/services/workingCopy/common/storedFileWorkingCopy.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/workbench/services/search/common/searchService.ts** (Confidence: 1.00)
-  - - 7 implementations
-  - - [EXTENSION_DENSITY] Has 7 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 6 architectural clusters.
-- **src/vs/workbench/services/environment/common/environmentService.ts** (Confidence: 1.00)
-  - - 5 implementations
-  - - [EXTENSION_DENSITY] Has 5 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
-- **src/vs/base/browser/ui/dropdown/dropdownActionViewItem.ts** (Confidence: 1.00)
-  - - 9 implementations
-  - - [EXTENSION_DENSITY] Has 9 implementations.
+  - - [EXTENSION_DENSITY] Has 24 implementations.
   - - [CROSS_CLUSTER_DENSITY] Implementors span across 8 architectural clusters.
-- **extensions/copilot/src/lib/node/chatLibMain.ts** (Confidence: 1.00)
-  - - 6 implementations
-  - - [EXTENSION_DENSITY] Has 6 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
-- **src/vs/workbench/common/editor/textResourceEditorInput.ts** (Confidence: 1.00)
-  - - 4 implementations
-  - - [EXTENSION_DENSITY] Has 4 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
-- **src/vs/workbench/common/editor.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 37 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 30 architectural clusters.
-- **extensions/copilot/src/platform/filesystem/common/fileSystemService.ts** (Confidence: 1.00)
-  - - 6 implementations
-  - - [EXTENSION_DENSITY] Has 6 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 6 architectural clusters.
-- **extensions/copilot/src/lib/vscode-node/test/nesProvider.spec.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/sessions/services/sessions/common/session.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/platform/sandbox/common/sandboxHelperService.ts** (Confidence: 1.00)
-  - - 4 implementations
-  - - [EXTENSION_DENSITY] Has 4 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
-- **src/vs/workbench/contrib/notebook/browser/view/cellPart.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 17 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **extensions/copilot/src/platform/telemetry/node/baseExperimentationService.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/workbench/common/editor.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 37 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 30 architectural clusters.
-- **extensions/copilot/src/extension/chatSessions/copilotcli/node/logger.ts** (Confidence: 1.00)
+- **extensions/git/src/ipc/ipcClient.ts** (Confidence: 1.00)
   - - 3 implementations
   - - [EXTENSION_DENSITY] Has 3 implementations.
   - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
-- **extensions/copilot/src/extension/agents/node/langModelServer.ts** (Confidence: 1.00)
-  - - 4 implementations
-  - - [EXTENSION_DENSITY] Has 4 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
-- **src/vs/workbench/contrib/codeEditor/browser/find/simpleFindWidget.ts** (Confidence: 1.00)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
-- **extensions/copilot/src/platform/endpoint/common/endpointProvider.ts** (Confidence: 1.00)
-  - - 8 implementations
-  - - [EXTENSION_DENSITY] Has 8 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 8 architectural clusters.
-- **extensions/copilot/src/platform/workbench/common/workbenchService.ts** (Confidence: 1.00)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
-- **src/vs/platform/extensionManagement/common/extensionsProfileScannerService.ts** (Confidence: 1.00)
-  - - 4 implementations
-  - - [EXTENSION_DENSITY] Has 4 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
-- **src/vs/editor/contrib/peekView/browser/peekView.ts** (Confidence: 1.00)
-  - - 6 implementations
-  - - [EXTENSION_DENSITY] Has 6 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 6 architectural clusters.
-- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatCollapsibleContentPart.ts** (Confidence: 1.00)
-  - - 6 implementations
-  - - [EXTENSION_DENSITY] Has 6 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **extensions/copilot/src/platform/scopeSelection/common/scopeSelection.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/base/browser/ui/toggle/toggle.ts** (Confidence: 1.00)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/workbench/browser/parts/views/viewPane.ts** (Confidence: 1.00)
+- **extensions/copilot/src/extension/prompts/node/test/fixtures/tempo-actions.ts** (Confidence: 1.00)
   - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 43 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 24 architectural clusters.
-- **extensions/copilot/src/platform/chat/common/chatAgents.ts** (Confidence: 1.00)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
-- **src/vs/platform/list/browser/listService.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 17 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 16 architectural clusters.
-- **src/vs/platform/quickinput/browser/pickerQuickAccess.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 18 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 14 architectural clusters.
-- **src/vs/platform/agentHost/common/state/protocol/common/errors.ts** (Confidence: 1.00)
-  - - 4 implementations
-  - - [EXTENSION_DENSITY] Has 4 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
-- **src/vs/workbench/contrib/multiDiffEditor/browser/multiDiffSourceResolverService.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/editor/browser/widget/diffEditor/diffEditorWidget.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **extensions/copilot/src/extension/inlineEdits/node/nextEditProviderTelemetry.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **extensions/copilot/src/extension/chatSessions/claude/common/claudeMessageDispatch.ts** (Confidence: 1.00)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **extensions/typescript-language-features/src/configuration/configuration.ts** (Confidence: 1.00)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/platform/agentHost/common/agentHostChangesetService.ts** (Confidence: 1.00)
-  - - 6 implementations
-  - - [EXTENSION_DENSITY] Has 6 implementations.
-- **src/vs/workbench/api/test/browser/mainThreadDocumentsAndEditors.test.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/base/browser/dom.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/platform/actions/browser/actionViewItemService.ts** (Confidence: 1.00)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **extensions/copilot/src/platform/chat/common/chatMLFetcher.ts** (Confidence: 1.00)
-  - - 4 implementations
-  - - [EXTENSION_DENSITY] Has 4 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/editor/common/editorAction.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 52 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 46 architectural clusters.
+  - - [EXTENSION_DENSITY] Has 246 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 132 architectural clusters.
+- **src/vs/platform/storage/common/storage.ts** (Confidence: 1.00)
+  - - 7 implementations
+  - - [EXTENSION_DENSITY] Has 7 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 7 architectural clusters.
 - **src/vs/workbench/browser/parts/titlebar/titlebarActions.ts** (Confidence: 1.00)
-  - - 6 implementations
-  - - [EXTENSION_DENSITY] Has 6 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
-- **src/vs/sessions/contrib/providers/agentHost/browser/baseAgentHostSessionsProvider.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/platform/remote/common/managedSocket.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/platform/userDataSync/common/extensionsSync.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/editor/contrib/peekView/browser/peekView.ts** (Confidence: 1.00)
-  - - 6 implementations
-  - - [EXTENSION_DENSITY] Has 6 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 6 architectural clusters.
-- **extensions/copilot/src/extension/tools/common/toolsService.ts** (Confidence: 1.00)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
-- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/completionNotifier.ts** (Confidence: 1.00)
   - - 5 implementations
   - - [EXTENSION_DENSITY] Has 5 implementations.
   - - [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
-- **src/vs/editor/contrib/zoneWidget/browser/zoneWidget.ts** (Confidence: 1.00)
-  - - 6 implementations
-  - - [EXTENSION_DENSITY] Has 6 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
-- **src/vs/platform/actions/browser/menuEntryActionViewItem.ts** (Confidence: 1.00)
-  - - 9 implementations
-  - - [EXTENSION_DENSITY] Has 9 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 9 architectural clusters.
-- **src/vs/platform/tunnel/common/tunnel.ts** (Confidence: 1.00)
-  - - 4 implementations
-  - - [EXTENSION_DENSITY] Has 4 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
-- **extensions/copilot/src/platform/languages/common/languageFeaturesService.ts** (Confidence: 1.00)
-  - - 5 implementations
-  - - [EXTENSION_DENSITY] Has 5 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
-- **src/vs/editor/contrib/hover/browser/hoverTypes.ts** (Confidence: 1.00)
-  - - 6 implementations
-  - - [EXTENSION_DENSITY] Has 6 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
-- **src/vs/editor/browser/controller/editContext/editContext.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **extensions/copilot/src/platform/telemetry/common/telemetryData.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/workbench/contrib/chat/browser/attachments/chatContextPickService.ts** (Confidence: 1.00)
-  - - 7 implementations
-  - - [EXTENSION_DENSITY] Has 7 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 7 architectural clusters.
-- **src/vs/base/browser/ui/tree/objectTree.ts** (Confidence: 1.00)
+- **src/vs/base/parts/ipc/common/ipc.ts** (Confidence: 1.00)
   - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 18 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 11 architectural clusters.
-- **src/vs/platform/terminal/common/capabilities/commandDetectionCapability.ts** (Confidence: 1.00)
+  - - [EXTENSION_DENSITY] Has 29 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 22 architectural clusters.
+- **extensions/copilot/src/platform/git/common/gitExtensionService.ts** (Confidence: 1.00)
   - - 2 implementations
   - - [EXTENSION_DENSITY] Has 2 implementations.
   - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **extensions/configuration-editing/src/settingsDocumentHelper.ts** (Confidence: 1.00)
-  - - 4 implementations
-  - - [EXTENSION_DENSITY] Has 4 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **extensions/copilot/src/util/common/test/shims/textEditor.ts** (Confidence: 1.00)
-  - - 5 implementations
-  - - [EXTENSION_DENSITY] Has 5 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
-- **test/automation/src/viewlet.ts** (Confidence: 1.00)
-  - - 5 implementations
-  - - [EXTENSION_DENSITY] Has 5 implementations.
-- **src/vs/base/browser/ui/list/listPaging.ts** (Confidence: 1.00)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
-- **src/vs/workbench/services/remote/common/abstractRemoteAgentService.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **extensions/copilot/test/codeMapper/codeMapper.stest.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/base/browser/ui/tree/tree.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 51 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 38 architectural clusters.
-- **FuzzyScore>** (Confidence: 1.00)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **extensions/copilot/src/extension/commands/node/commandService.ts** (Confidence: 1.00)
-  - - 5 implementations
-  - - [EXTENSION_DENSITY] Has 5 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
-- **src/vs/workbench/common/views.ts** (Confidence: 1.00)
-  - - 8 implementations
-  - - [EXTENSION_DENSITY] Has 8 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 7 architectural clusters.
-- **EventTarget** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/workbench/common/memento.ts** (Confidence: 1.00)
+- **src/vs/platform/tunnel/node/tunnelProxy.ts** (Confidence: 1.00)
   - - 2 implementations
   - - [EXTENSION_DENSITY] Has 2 implementations.
   - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
@@ -12262,475 +11322,65 @@ ACCEPTED
   - - 2 implementations
   - - [EXTENSION_DENSITY] Has 2 implementations.
   - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/contrib/localization/common/localization.contribution.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/common/dialogs.ts** (Confidence: 1.00)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
 - **src/vs/editor/browser/widget/multiDiffEditor/workbenchUIElementFactory.ts** (Confidence: 1.00)
   - - 3 implementations
   - - [EXTENSION_DENSITY] Has 3 implementations.
   - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
-- **src/vs/editor/common/config/fontInfo.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
+- **extensions/copilot/src/extension/byok/node/openAIEndpoint.ts** (Confidence: 1.00)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
   - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/platform/agentHost/common/agentHostGitService.ts** (Confidence: 1.00)
+- **extensions/copilot/test/base/cache.ts** (Confidence: 1.00)
   - - 6 implementations
   - - [EXTENSION_DENSITY] Has 6 implementations.
   - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/base/browser/ui/tree/tree.ts** (Confidence: 1.00)
+- **src/vs/workbench/browser/parts/views/viewPane.ts** (Confidence: 1.00)
   - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 51 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 38 architectural clusters.
-- **IErrorTemplateData>** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/workbench/contrib/chat/browser/defaultModelContribution.ts** (Confidence: 1.00)
-  - - 5 implementations
-  - - [EXTENSION_DENSITY] Has 5 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
-- **src/vs/editor/common/model.ts** (Confidence: 1.00)
-  - - 6 implementations
-  - - [EXTENSION_DENSITY] Has 6 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
-- **src/vs/platform/actions/browser/actionWidgetDropdownActionViewItem.ts** (Confidence: 1.00)
-  - - 6 implementations
-  - - [EXTENSION_DENSITY] Has 6 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
-- **src/vs/platform/tunnel/common/tunnel.ts** (Confidence: 1.00)
-  - - 4 implementations
-  - - [EXTENSION_DENSITY] Has 4 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
-- **src/vs/platform/agentHost/test/node/agentHostFileMonitorService.test.ts** (Confidence: 1.00)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
-- **src/vs/sessions/contrib/chat/browser/sessionWorkspacePicker.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/workbench/contrib/terminalContrib/suggest/browser/terminal.suggest.contribution.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 19 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 16 architectural clusters.
-- **src/vs/base/browser/ui/tree/tree.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 51 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 38 architectural clusters.
-- **src/vs/workbench/services/notification/common/notificationService.ts** (Confidence: 1.00)
-  - - 4 implementations
-  - - [EXTENSION_DENSITY] Has 4 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
-- **extensions/copilot/src/platform/chat/common/chatSessionService.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/platform/log/common/logService.ts** (Confidence: 1.00)
-  - - 5 implementations
-  - - [EXTENSION_DENSITY] Has 5 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
-- **src/vs/workbench/common/editor/editorInput.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 37 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 29 architectural clusters.
-- **extensions/php-language-features/src/features/hoverProvider.ts** (Confidence: 1.00)
-  - - 4 implementations
-  - - [EXTENSION_DENSITY] Has 4 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
-- **src/vs/platform/files/node/watcher/baseWatcher.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/workbench/api/common/extHostExtensionActivator.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/workbench/services/search/common/searchService.ts** (Confidence: 1.00)
-  - - 7 implementations
-  - - [EXTENSION_DENSITY] Has 7 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 6 architectural clusters.
-- **src/vs/workbench/services/extensionManagement/common/extensionManagementChannelClient.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/platform/secrets/common/secrets.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/workbench/services/configurationResolver/common/variableResolver.ts** (Confidence: 1.00)
-  - - 4 implementations
-  - - [EXTENSION_DENSITY] Has 4 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
-- **extensions/copilot/src/extension/prompts/node/test/fixtures/tempo-actions.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 249 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 132 architectural clusters.
-- **src/vs/workbench/services/decorations/common/decorations.ts** (Confidence: 1.00)
-  - - 4 implementations
-  - - [EXTENSION_DENSITY] Has 4 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
-- **src/vs/base/common/filters.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 25 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 18 architectural clusters.
-- **extensions/copilot/src/platform/inlineCompletions/common/api.ts** (Confidence: 1.00)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
-- **src/vs/workbench/common/views.ts** (Confidence: 1.00)
-  - - 8 implementations
-  - - [EXTENSION_DENSITY] Has 8 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 7 architectural clusters.
-- **extensions/copilot/src/extension/typescriptContext/vscode-node/inspector.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/editor/common/core/characterClassifier.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/base/browser/ui/dropdown/dropdownActionViewItem.ts** (Confidence: 1.00)
-  - - 9 implementations
-  - - [EXTENSION_DENSITY] Has 9 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 8 architectural clusters.
-- **src/vs/editor/contrib/colorPicker/browser/colorPickerParticipantUtils.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **extensions/copilot/src/extension/completions-core/vscode-node/extension/src/panelShared/languages/javaScriptReact.tmLanguage.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 10 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 9 architectural clusters.
-- **src/vs/editor/browser/services/bulkEditService.ts** (Confidence: 1.00)
-  - - 4 implementations
-  - - [EXTENSION_DENSITY] Has 4 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/platform/contextkey/common/contextkey.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **SpanExporter** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/workbench/services/integrity/common/integrity.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/platform/keybinding/common/abstractKeybindingService.ts** (Confidence: 1.00)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
-- **extensions/media-preview/src/ownedStatusBarEntry.ts** (Confidence: 1.00)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **IExperimentationFilterProvider** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/workbench/contrib/debug/common/debug.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 13 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
-- **src/vs/platform/agentHost/common/agentHostFileSystemProvider.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/workbench/browser/parts/views/viewPaneContainer.ts** (Confidence: 1.00)
-  - - 7 implementations
-  - - [EXTENSION_DENSITY] Has 7 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 7 architectural clusters.
-- **src/vs/workbench/services/extensions/common/extensionHostKind.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/platform/windows/electron-main/windowImpl.ts** (Confidence: 1.00)
-  - - 5 implementations
-  - - [EXTENSION_DENSITY] Has 5 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
-- **src/vs/platform/request/common/request.ts** (Confidence: 1.00)
-  - - 4 implementations
-  - - [EXTENSION_DENSITY] Has 4 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
-- **src/vs/platform/userDataProfile/common/userDataProfileStorageService.ts** (Confidence: 1.00)
-  - - 4 implementations
-  - - [EXTENSION_DENSITY] Has 4 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
-- **src/vs/editor/common/services/textResourceConfiguration.ts** (Confidence: 1.00)
-  - - 5 implementations
-  - - [EXTENSION_DENSITY] Has 5 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
-- **src/vs/workbench/contrib/terminalContrib/chatAgentTools/browser/tools/runInTerminalTool.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/platform/files/node/diskFileSystemProviderServer.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/editor/browser/view/dynamicViewOverlay.ts** (Confidence: 1.00)
-  - - 8 implementations
-  - - [EXTENSION_DENSITY] Has 8 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 8 architectural clusters.
+  - - [EXTENSION_DENSITY] Has 43 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 24 architectural clusters.
 - **extensions/copilot/src/extension/githubPullRequest.d.ts** (Confidence: 1.00)
   - - 2 implementations
   - - [EXTENSION_DENSITY] Has 2 implementations.
   - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **extensions/typescript-language-features/src/tsServer/versionProvider.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/platform/encryption/common/encryptionService.ts** (Confidence: 1.00)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
-- **src/vs/platform/sign/common/abstractSignService.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **extensions/copilot/src/platform/languages/common/languageDiagnosticsService.ts** (Confidence: 1.00)
-  - - 4 implementations
-  - - [EXTENSION_DENSITY] Has 4 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
-- **src/vs/workbench/browser/parts/titlebar/titlebarActions.ts** (Confidence: 1.00)
-  - - 6 implementations
-  - - [EXTENSION_DENSITY] Has 6 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
-- **extensions/copilot/src/extension/chatSessions/copilotcli/node/copilotCliBridgeSpanProcessor.ts** (Confidence: 1.00)
-  - - 4 implementations
-  - - [EXTENSION_DENSITY] Has 4 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
-- **extensions/copilot/src/extension/prompts/node/test/adjustSelection.spec.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/workbench/contrib/terminal/common/environmentVariable.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/platform/files/common/inMemoryFilesystemProvider.ts** (Confidence: 1.00)
-  - - 4 implementations
-  - - [EXTENSION_DENSITY] Has 4 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
-- **src/vs/base/common/range.ts** (Confidence: 1.00)
-  - - 4 implementations
-  - - [EXTENSION_DENSITY] Has 4 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
-- **ITreeItem>** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **ExplorerItem>** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **extensions/references-view/src/references-view.d.ts** (Confidence: 1.00)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
-- **src/vs/platform/files/common/watcher.ts** (Confidence: 1.00)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
-- **src/vs/platform/backup/electron-main/backup.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/workbench/contrib/snippets/browser/snippets.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **extensions/copilot/src/platform/testing/common/workspaceMutationManager.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/base/common/observableInternal/logging/logging.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **BaseWorkspace** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/platform/extensionManagement/common/extensionGalleryManifestService.ts** (Confidence: 1.00)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
-- **src/vs/base/browser/ui/tree/tree.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 51 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 38 architectural clusters.
-- **src/vs/base/browser/ui/grid/grid.ts** (Confidence: 1.00)
-  - - 4 implementations
-  - - [EXTENSION_DENSITY] Has 4 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
-- **src/vs/workbench/services/files/common/elevatedFileService.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/workbench/services/extensionRecommendations/common/extensionRecommendations.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 10 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
-- **src/vs/workbench/browser/part.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 10 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 8 architectural clusters.
-- **src/vs/base/common/fuzzyScorer.ts** (Confidence: 1.00)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
-- **src/vs/editor/common/languages/language.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/workbench/contrib/notebook/common/notebookKernelService.ts** (Confidence: 1.00)
-  - - 5 implementations
-  - - [EXTENSION_DENSITY] Has 5 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/workbench/contrib/issue/common/issue.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/workbench/contrib/update/common/update.ts** (Confidence: 1.00)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/workbench/services/history/common/history.ts** (Confidence: 1.00)
-  - - 4 implementations
-  - - [EXTENSION_DENSITY] Has 4 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
-- **Iterable** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/workbench/services/configurationResolver/browser/baseConfigurationResolverService.ts** (Confidence: 1.00)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
-- **src/vs/platform/agentHost/common/state/protocol/common/errors.ts** (Confidence: 1.00)
-  - - 4 implementations
-  - - [EXTENSION_DENSITY] Has 4 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
-- **src/vs/workbench/api/common/extHostTypes.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **extensions/copilot/src/platform/extensions/common/extensionsService.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/platform/request/common/request.ts** (Confidence: 1.00)
-  - - 4 implementations
-  - - [EXTENSION_DENSITY] Has 4 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
-- **extensions/copilot/test/simulation/workbench/components/toolbar.tsx** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/workbench/api/common/extHostRequireInterceptor.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/workbench/browser/web.factory.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **extensions/copilot/src/platform/authentication/node/copilotTokenManager.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/workbench/services/workingCopy/test/browser/workingCopyEditorService.test.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/editor/browser/editorBrowser.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 14 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 12 architectural clusters.
-- **src/vs/platform/agentHost/node/agentSdkDownloader.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/editor/common/services/textModelSync/textModelSync.protocol.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **extensions/copilot/src/platform/git/common/gitDiffService.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/workbench/services/panecomposite/browser/panecomposite.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **extensions/copilot/src/platform/notebook/common/alternativeContent.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **extensions/copilot/src/extension/chatSessions/copilotcli/common/customSessionTitleService.ts** (Confidence: 1.00)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
-- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/prompt/similarFiles/relatedFiles.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/platform/agentHost/node/shared/loopbackProxyServer.ts** (Confidence: 1.00)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
-- **extensions/copilot/src/platform/inlineEdits/common/statelessNextEditProvider.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/editor/browser/viewParts/glyphMargin/glyphMargin.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **IResourceMarkersTemplateData>** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/workbench/services/dialogs/browser/abstractFileDialogService.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/workbench/contrib/terminal/common/terminal.ts** (Confidence: 1.00)
-  - - 5 implementations
-  - - [EXTENSION_DENSITY] Has 5 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
-- **src/vs/workbench/services/authentication/common/authentication.ts** (Confidence: 1.00)
-  - - 4 implementations
-  - - [EXTENSION_DENSITY] Has 4 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
-- **IssueModel** (Confidence: 1.00)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **extensions/copilot/src/extension/prompts/node/base/promptRenderer.ts** (Confidence: 1.00)
+- **extensions/copilot/test/simulation/fixtures/codeMapper/extHostExtensionActivator.test.ts** (Confidence: 1.00)
   - - 8 implementations
   - - [EXTENSION_DENSITY] Has 8 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
-- **src/vs/workbench/common/editor/textEditorModel.ts** (Confidence: 1.00)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
-- **src/vs/platform/agentHost/node/agentHostCompletions.ts** (Confidence: 1.00)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/editor/common/services/modelService.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/workbench/services/languageDetection/common/languageDetectionWorkerService.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/workbench/services/search/common/search.ts** (Confidence: 1.00)
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
+- **extensions/copilot/test/simulation/diagnosticProviders/utils.ts** (Confidence: 1.00)
+  - - 6 implementations
+  - - [EXTENSION_DENSITY] Has 6 implementations.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/toolInvocationParts/chatToolInvocationSubPart.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 11 implementations.
+- **extensions/php-language-features/src/features/completionItemProvider.ts** (Confidence: 1.00)
   - - 4 implementations
   - - [EXTENSION_DENSITY] Has 4 implementations.
   - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
-- **test/automation/src/terminal.ts** (Confidence: 1.00)
+- **src/vs/base/browser/ui/widget.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 24 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 18 architectural clusters.
+- **extensions/copilot/src/extension/agents/vscode-node/githubOrgChatResourcesService.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 14 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 11 architectural clusters.
+- **src/vs/workbench/contrib/notebook/browser/view/cellPart.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 17 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/platform/configuration/test/common/testConfigurationService.ts** (Confidence: 1.00)
+  - - 5 implementations
+  - - [EXTENSION_DENSITY] Has 5 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
+- **src/vs/platform/agentHost/node/agentHostCompletions.ts** (Confidence: 1.00)
   - - 3 implementations
   - - [EXTENSION_DENSITY] Has 3 implementations.
   - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
@@ -12738,155 +11388,7 @@ ACCEPTED
   - - 4 implementations
   - - [EXTENSION_DENSITY] Has 4 implementations.
   - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
-- **src/vs/base/common/observableInternal/set.ts** (Confidence: 1.00)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/platform/webWorker/browser/webWorkerService.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/base/browser/ui/table/table.ts** (Confidence: 1.00)
-  - - 7 implementations
-  - - [EXTENSION_DENSITY] Has 7 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 7 architectural clusters.
-- **extensions/copilot/src/platform/testing/common/testProvider.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **extensions/copilot/src/platform/filesystem/node/test/mockFileSystemService.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **extensions/copilot/src/platform/ignore/common/ignoreService.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/editor/common/modelLineProjectionData.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **extensions/copilot/src/extension/chatSessions/vscode-node/copilotCloudSessionContentBuilder.ts** (Confidence: 1.00)
-  - - 4 implementations
-  - - [EXTENSION_DENSITY] Has 4 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
-- **src/vs/workbench/services/path/common/pathService.ts** (Confidence: 1.00)
-  - - 4 implementations
-  - - [EXTENSION_DENSITY] Has 4 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
-- **src/vs/workbench/contrib/chat/common/chatSessionsService.ts** (Confidence: 1.00)
-  - - 6 implementations
-  - - [EXTENSION_DENSITY] Has 6 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
-- **extensions/copilot/src/platform/authentication/common/copilotTokenManager.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **extensions/copilot/src/platform/git/common/gitExtensionService.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/editor/common/model.ts** (Confidence: 1.00)
-  - - 6 implementations
-  - - [EXTENSION_DENSITY] Has 6 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
-- **src/vs/workbench/contrib/chat/common/plugins/pluginGitCommandService.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/platform/list/browser/listService.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 17 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 16 architectural clusters.
-- **extensions/copilot/src/extension/chatSessions/copilotcli/vscode-node/test/askUserQuestionHandler.spec.ts** (Confidence: 1.00)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/platform/instantiation/common/instantiation.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/workbench/browser/parts/editor/editorWithViewState.ts** (Confidence: 1.00)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
-- **src/vs/base/browser/ui/list/list.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 71 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 42 architectural clusters.
-- **extensions/copilot/src/extension/inlineEdits/test/node/nextEditProviderTelemetry.spec.ts** (Confidence: 1.00)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **extensions/copilot/src/platform/git/vscode/git.d.ts** (Confidence: 1.00)
-  - - 5 implementations
-  - - [EXTENSION_DENSITY] Has 5 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
-- **src/vs/platform/files/common/fileService.ts** (Confidence: 1.00)
-  - - 4 implementations
-  - - [EXTENSION_DENSITY] Has 4 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
-- **src/vs/workbench/contrib/chat/common/enablement.ts** (Confidence: 1.00)
-  - - 5 implementations
-  - - [EXTENSION_DENSITY] Has 5 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
-- **extensions/copilot/src/platform/review/common/reviewService.ts** (Confidence: 1.00)
-  - - 4 implementations
-  - - [EXTENSION_DENSITY] Has 4 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
-- **src/vs/platform/list/browser/listService.ts** (Confidence: 1.00)
-  - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 17 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 16 architectural clusters.
-- **src/vs/base/browser/ui/menu/menubar.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/platform/extensionResourceLoader/common/extensionResourceLoader.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/editor/common/diff/linesDiffComputer.ts** (Confidence: 1.00)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/editor/contrib/wordOperations/browser/wordOperations.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **extensions/copilot/src/extension/inlineEdits/node/nextEditProvider.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **extensions/copilot/src/platform/remoteSearch/common/codeOrDocsSearchClient.ts** (Confidence: 1.00)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/code/node/cliProcessMain.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/workbench/services/editor/test/browser/editorGroupsService.test.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/platform/files/common/diskFileSystemProvider.ts** (Confidence: 1.00)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
-- **src/vs/editor/browser/services/abstractCodeEditorService.ts** (Confidence: 1.00)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
-- **src/vs/platform/undoRedo/common/undoRedo.ts** (Confidence: 1.00)
-  - - 7 implementations
-  - - [EXTENSION_DENSITY] Has 7 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 6 architectural clusters.
-- **src/vs/platform/actions/browser/actionWidgetDropdownActionViewItem.ts** (Confidence: 1.00)
-  - - 6 implementations
-  - - [EXTENSION_DENSITY] Has 6 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
-- **src/vs/platform/mcp/common/mcpManagementService.ts** (Confidence: 1.00)
+- **src/vs/platform/agentHost/node/shared/loopbackProxyServer.ts** (Confidence: 1.00)
   - - 3 implementations
   - - [EXTENSION_DENSITY] Has 3 implementations.
   - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
@@ -12894,63 +11396,114 @@ ACCEPTED
   - - 2 implementations
   - - [EXTENSION_DENSITY] Has 2 implementations.
   - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/workbench/contrib/debug/common/abstractDebugAdapter.ts** (Confidence: 1.00)
-  - - 4 implementations
-  - - [EXTENSION_DENSITY] Has 4 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
-- **src/vs/base/common/glob.ts** (Confidence: 1.00)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatCollapsibleContentPart.ts** (Confidence: 1.00)
+  - - 6 implementations
+  - - [EXTENSION_DENSITY] Has 6 implementations.
   - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/platform/languagePacks/common/languagePacks.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/workbench/contrib/notebook/browser/controller/coreActions.ts** (Confidence: 1.00)
+- **extensions/copilot/src/extension/intents/node/toolCallingLoop.ts** (Confidence: 1.00)
+  - - 9 implementations
+  - - [EXTENSION_DENSITY] Has 9 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/base/test/common/mock.ts** (Confidence: 1.00)
   - - 10 implementations
-  - - [EXTENSION_DENSITY] Has 10 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 7 architectural clusters.
-- **extensions/copilot/src/extension/prompts/node/test/fixtures/5710.summarized.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **extensions/copilot/src/extension/commands/node/commandService.ts** (Confidence: 1.00)
-  - - 5 implementations
-  - - [EXTENSION_DENSITY] Has 5 implementations.
+  - - [EXTENSION_DENSITY] Has 48 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 21 architectural clusters.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/node/test/copilotCliSessionService.spec.ts** (Confidence: 1.00)
+  - - 6 implementations
+  - - [EXTENSION_DENSITY] Has 6 implementations.
   - - [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
-- **src/vs/workbench/contrib/tags/common/workspaceTags.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/editor/common/model/textModelPart.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/platform/quickinput/common/quickAccess.ts** (Confidence: 1.00)
+- **src/vs/platform/log/common/log.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 14 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 10 architectural clusters.
+- **src/vs/base/browser/ui/tree/tree.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 50 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 38 architectural clusters.
+- **src/vs/base/common/filters.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 24 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 18 architectural clusters.
+- **src/vs/editor/common/diff/documentDiffProvider.ts** (Confidence: 1.00)
   - - 3 implementations
   - - [EXTENSION_DENSITY] Has 3 implementations.
   - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
-- **extensions/php-language-features/src/features/completionItemProvider.ts** (Confidence: 1.00)
+- **src/vs/workbench/common/editor/textEditorModel.ts** (Confidence: 1.00)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/editor/common/model/tokens/abstractSyntaxTokenBackend.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/textDocument.ts** (Confidence: 1.00)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/editor/browser/editorExtensions.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 18 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 18 architectural clusters.
+- **src/vs/base/browser/ui/tree/tree.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 50 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 38 architectural clusters.
+- **src/vs/base/browser/ui/actionbar/actionViewItems.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 58 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 42 architectural clusters.
+- **extensions/copilot/src/platform/editing/common/abstractText.ts** (Confidence: 1.00)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/workbench/services/search/common/search.ts** (Confidence: 1.00)
   - - 4 implementations
   - - [EXTENSION_DENSITY] Has 4 implementations.
   - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
-- **src/vs/workbench/services/path/common/pathService.ts** (Confidence: 1.00)
+- **src/vs/workbench/contrib/git/common/gitService.ts** (Confidence: 1.00)
   - - 4 implementations
   - - [EXTENSION_DENSITY] Has 4 implementations.
   - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
-- **extensions/copilot/src/platform/configuration/test/common/inMemoryConfigurationService.ts** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/workbench/browser/parts/paneCompositePart.ts** (Confidence: 1.00)
-  - - 8 implementations
-  - - [EXTENSION_DENSITY] Has 8 implementations.
+- **src/vs/base/browser/ui/actionbar/actionViewItems.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 58 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 42 architectural clusters.
+- **extensions/copilot/src/lib/node/chatLibMain.ts** (Confidence: 1.00)
+  - - 6 implementations
+  - - [EXTENSION_DENSITY] Has 6 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
+- **src/vs/editor/contrib/zoneWidget/browser/zoneWidget.ts** (Confidence: 1.00)
+  - - 6 implementations
+  - - [EXTENSION_DENSITY] Has 6 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
+- **src/vs/editor/contrib/hover/browser/hoverTypes.ts** (Confidence: 1.00)
+  - - 6 implementations
+  - - [EXTENSION_DENSITY] Has 6 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
+- **src/vs/platform/undoRedo/common/undoRedo.ts** (Confidence: 1.00)
+  - - 7 implementations
+  - - [EXTENSION_DENSITY] Has 7 implementations.
   - - [CROSS_CLUSTER_DENSITY] Implementors span across 6 architectural clusters.
-- **src/vs/platform/workspaces/common/workspaces.ts** (Confidence: 1.00)
+- **src/vs/editor/contrib/wordOperations/browser/wordOperations.ts** (Confidence: 1.00)
   - - 2 implementations
   - - [EXTENSION_DENSITY] Has 2 implementations.
   - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/sessions/contrib/providers/agentHost/browser/agentHostModelPicker.ts** (Confidence: 1.00)
+- **src/vs/base/common/filters.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 24 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 18 architectural clusters.
+- **IExperimentationFilterProvider** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/platform/tabs/common/tabsAndEditorsService.ts** (Confidence: 1.00)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/src/common/contextProvider.ts** (Confidence: 1.00)
+  - - 6 implementations
+  - - [EXTENSION_DENSITY] Has 6 implementations.
+- **src/vs/platform/agentHost/common/agentHostFileSystemProvider.ts** (Confidence: 1.00)
   - - 2 implementations
   - - [EXTENSION_DENSITY] Has 2 implementations.
   - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
@@ -12958,33 +11511,1461 @@ ACCEPTED
   - - 3 implementations
   - - [EXTENSION_DENSITY] Has 3 implementations.
   - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **extensions/copilot/src/extension/prompt/vscode-node/endpointProviderImpl.ts** (Confidence: 1.00)
+- **src/vs/platform/encryption/common/encryptionService.ts** (Confidence: 1.00)
   - - 3 implementations
   - - [EXTENSION_DENSITY] Has 3 implementations.
   - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
-- **extensions/copilot/test/simulation/fixtures/codeMapper/quickInput.ts** (Confidence: 1.00)
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/toolInvocationParts/abstractToolConfirmationSubPart.ts** (Confidence: 1.00)
+  - - 5 implementations
+  - - [EXTENSION_DENSITY] Has 5 implementations.
+- **src/vs/workbench/contrib/notebook/common/notebookService.ts** (Confidence: 1.00)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/platform/files/node/watcher/baseWatcher.ts** (Confidence: 1.00)
   - - 2 implementations
   - - [EXTENSION_DENSITY] Has 2 implementations.
   - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
-- **src/vs/base/common/worker/webWorker.ts** (Confidence: 1.00)
+- **IActionsColumnTemplateData>** (Confidence: 1.00)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/base/browser/ui/list/listWidget.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 35 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 23 architectural clusters.
+- **src/vs/platform/userDataSync/common/abstractSynchronizer.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 12 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
+- **src/vs/workbench/contrib/notebook/browser/controller/coreActions.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 10 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 7 architectural clusters.
+- **extensions/copilot/src/extension/prompts/node/test/fixtures/tempo-actions.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 246 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 132 architectural clusters.
+- **src/vs/base/test/common/mock.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 48 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 21 architectural clusters.
+- **src/vs/platform/theme/common/themeService.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 18 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 13 architectural clusters.
+- **src/vs/platform/files/common/fileService.ts** (Confidence: 1.00)
+  - - 4 implementations
+  - - [EXTENSION_DENSITY] Has 4 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/workbench/contrib/terminalContrib/suggest/browser/terminal.suggest.contribution.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 19 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 16 architectural clusters.
+- **src/vs/workbench/contrib/chat/browser/chat.ts** (Confidence: 1.00)
+  - - 4 implementations
+  - - [EXTENSION_DENSITY] Has 4 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **extensions/copilot/src/platform/filesystem/common/fileSystemService.ts** (Confidence: 1.00)
   - - 6 implementations
   - - [EXTENSION_DENSITY] Has 6 implementations.
   - - [CROSS_CLUSTER_DENSITY] Implementors span across 6 architectural clusters.
-- **IFileTemplateData>** (Confidence: 1.00)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
+- **src/vs/editor/common/editorCommon.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 47 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 38 architectural clusters.
+- **src/vs/base/browser/ui/actionbar/actionViewItems.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 58 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 42 architectural clusters.
+- **extensions/media-preview/src/ownedStatusBarEntry.ts** (Confidence: 1.00)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
   - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/base/browser/ui/tree/tree.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 50 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 38 architectural clusters.
+- **src/vs/workbench/services/extensionRecommendations/common/extensionRecommendations.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 10 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/node/userInputHelpers.ts** (Confidence: 1.00)
+  - - 5 implementations
+  - - [EXTENSION_DENSITY] Has 5 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **extensions/copilot/src/platform/git/vscode/git.d.ts** (Confidence: 1.00)
+  - - 5 implementations
+  - - [EXTENSION_DENSITY] Has 5 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/base/browser/ui/dropdown/dropdownActionViewItem.ts** (Confidence: 1.00)
+  - - 9 implementations
+  - - [EXTENSION_DENSITY] Has 9 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 8 architectural clusters.
+- **cli/src/util/command.rs** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 31 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
+- **src/vs/workbench/services/lifecycle/common/lifecycle.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 16 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 10 architectural clusters.
+- **src/vs/editor/browser/editorBrowser.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 14 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 12 architectural clusters.
+- **src/vs/editor/common/editorCommon.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 47 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 38 architectural clusters.
+- **extensions/copilot/src/platform/networking/common/networking.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 11 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 8 architectural clusters.
+- **src/vs/sessions/browser/parts/sessionHeaderMetaActionViewItem.ts** (Confidence: 1.00)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **extensions/vscode-colorize-perf-tests/test/colorize-fixtures/test-treeView.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 22 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 20 architectural clusters.
+- **src/vs/base/browser/ui/table/table.ts** (Confidence: 1.00)
+  - - 7 implementations
+  - - [EXTENSION_DENSITY] Has 7 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 7 architectural clusters.
+- **extensions/copilot/src/extension/chatSessions/vscode-node/test/copilotCLIChatSessionParticipant.spec.ts** (Confidence: 1.00)
+  - - 5 implementations
+  - - [EXTENSION_DENSITY] Has 5 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
+- **src/vs/platform/action/common/action.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 31 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 26 architectural clusters.
+- **src/vs/workbench/contrib/notebook/browser/diff/diffComponents.ts** (Confidence: 1.00)
+  - - 4 implementations
+  - - [EXTENSION_DENSITY] Has 4 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **extensions/copilot/src/extension/completions-core/vscode-node/prompt/src/components/components.ts** (Confidence: 1.00)
+  - - 8 implementations
+  - - [EXTENSION_DENSITY] Has 8 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 7 architectural clusters.
+- **src/vs/workbench/services/history/common/history.ts** (Confidence: 1.00)
+  - - 4 implementations
+  - - [EXTENSION_DENSITY] Has 4 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **extensions/git/src/ipc/ipcServer.ts** (Confidence: 1.00)
+  - - 6 implementations
+  - - [EXTENSION_DENSITY] Has 6 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
 - **extensions/copilot/src/extension/typescriptContext/serverPlugin/fixtures/context/testbed/src/events.ts** (Confidence: 1.00)
   - - 2 implementations
   - - [EXTENSION_DENSITY] Has 2 implementations.
   - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/extension/completions-core/vscode-node/extension/src/panelShared/languages/javaScriptReact.tmLanguage.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 10 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 9 architectural clusters.
+- **src/vs/platform/agentHost/common/agentServerTools.ts** (Confidence: 1.00)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/extension/typescriptContext/vscode-node/inspector.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/services/extensions/common/abstractExtensionService.ts** (Confidence: 1.00)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **extensions/terminal-suggest/src/completions/copilot.ts** (Confidence: 1.00)
+  - - 4 implementations
+  - - [EXTENSION_DENSITY] Has 4 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **src/vs/base/browser/ui/table/table.ts** (Confidence: 1.00)
+  - - 7 implementations
+  - - [EXTENSION_DENSITY] Has 7 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 7 architectural clusters.
+- **extensions/copilot/src/extension/chatSessions/vscode-node/copilotCloudSessionContentBuilder.ts** (Confidence: 1.00)
+  - - 4 implementations
+  - - [EXTENSION_DENSITY] Has 4 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **extensions/copilot/src/extension/prompts/node/agent/defaultAgentInstructions.tsx** (Confidence: 1.00)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/platform/filesystem/node/test/mockFileSystemService.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/services/configuration/common/jsonEditing.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/common/editor/editorModel.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 15 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 12 architectural clusters.
+- **src/vs/workbench/services/environment/common/environmentService.ts** (Confidence: 1.00)
+  - - 5 implementations
+  - - [EXTENSION_DENSITY] Has 5 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
+- **src/vs/workbench/common/views.ts** (Confidence: 1.00)
+  - - 8 implementations
+  - - [EXTENSION_DENSITY] Has 8 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 7 architectural clusters.
+- **extensions/copilot/src/extension/prompt/vscode-node/endpointProviderImpl.ts** (Confidence: 1.00)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/base/browser/ui/tree/objectTree.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 17 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 11 architectural clusters.
+- **extensions/copilot/src/util/common/diff.ts** (Confidence: 1.00)
+  - - 7 implementations
+  - - [EXTENSION_DENSITY] Has 7 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 6 architectural clusters.
+- **src/vs/base/common/observableInternal/base.ts** (Confidence: 1.00)
+  - - 7 implementations
+  - - [EXTENSION_DENSITY] Has 7 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 7 architectural clusters.
+- **src/vs/workbench/contrib/codeEditor/browser/find/simpleFindWidget.ts** (Confidence: 1.00)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/editor/common/services/textModelSync/textModelSync.protocol.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/services/search/common/searchService.ts** (Confidence: 1.00)
+  - - 7 implementations
+  - - [EXTENSION_DENSITY] Has 7 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 6 architectural clusters.
+- **extensions/copilot/src/extension/prompt/node/intents.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 28 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 7 architectural clusters.
+- **extensions/copilot/src/platform/requestLogger/node/requestLogger.ts** (Confidence: 1.00)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/workbench/contrib/chat/common/enablement.ts** (Confidence: 1.00)
+  - - 5 implementations
+  - - [EXTENSION_DENSITY] Has 5 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
+- **src/vs/platform/log/common/logService.ts** (Confidence: 1.00)
+  - - 5 implementations
+  - - [EXTENSION_DENSITY] Has 5 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
+- **src/vs/editor/contrib/colorPicker/browser/colorPickerParticipantUtils.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/extension/prompts/node/test/fixtures/codeEditorWidget.ts** (Confidence: 1.00)
+  - - 5 implementations
+  - - [EXTENSION_DENSITY] Has 5 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
+- **src/vs/platform/environment/common/environment.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/base/browser/ui/list/list.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 68 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 42 architectural clusters.
+- **src/vs/base/browser/ui/tree/tree.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 50 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 38 architectural clusters.
+- **FuzzyScore>** (Confidence: 1.00)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/extension/tools/common/virtualTools/toolEmbeddingsComputer.ts** (Confidence: 1.00)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/sessions/contrib/layout/browser/baseSessionLayoutController.ts** (Confidence: 1.00)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **AGGREGATE_out_of_scope** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 17 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 14 architectural clusters.
+- **src/vs/platform/quickinput/common/quickAccess.ts** (Confidence: 1.00)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/workbench/contrib/mcp/common/discovery/nativeMcpDiscoveryAbstract.ts** (Confidence: 1.00)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/editor/contrib/zoneWidget/browser/zoneWidget.ts** (Confidence: 1.00)
+  - - 6 implementations
+  - - [EXTENSION_DENSITY] Has 6 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
+- **extensions/media-preview/src/mediaPreview.ts** (Confidence: 1.00)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/platform/agentHost/test/node/agentHostFileMonitorService.test.ts** (Confidence: 1.00)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/platform/agentHost/node/agentSdkDownloader.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/platform/extensionManagement/common/extensionsScannerService.ts** (Confidence: 1.00)
+  - - 4 implementations
+  - - [EXTENSION_DENSITY] Has 4 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **extensions/copilot/src/extension/chatSessions/claude/common/claudeToolPermission.ts** (Confidence: 1.00)
+  - - 6 implementations
+  - - [EXTENSION_DENSITY] Has 6 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **extensions/typescript-language-features/src/tsServer/versionManager.ts** (Confidence: 1.00)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/platform/sandbox/common/sandboxHelperService.ts** (Confidence: 1.00)
+  - - 4 implementations
+  - - [EXTENSION_DENSITY] Has 4 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **src/vs/platform/secrets/common/secrets.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/base/browser/ui/tree/tree.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 50 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 38 architectural clusters.
+- **src/vs/platform/undoRedo/common/undoRedo.ts** (Confidence: 1.00)
+  - - 7 implementations
+  - - [EXTENSION_DENSITY] Has 7 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 6 architectural clusters.
+- **src/vs/workbench/contrib/multiDiffEditor/browser/multiDiffSourceResolverService.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/base/browser/ui/tree/asyncDataTree.ts** (Confidence: 1.00)
+  - - 8 implementations
+  - - [EXTENSION_DENSITY] Has 8 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 6 architectural clusters.
+- **src/vs/platform/tunnel/common/tunnel.ts** (Confidence: 1.00)
+  - - 4 implementations
+  - - [EXTENSION_DENSITY] Has 4 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **extensions/copilot/src/platform/ignore/node/test/mockAuthenticationService.ts** (Confidence: 1.00)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/editor/browser/services/bulkEditService.ts** (Confidence: 1.00)
+  - - 4 implementations
+  - - [EXTENSION_DENSITY] Has 4 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/services/lifecycle/common/lifecycle.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 16 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 10 architectural clusters.
+- **src/vs/base/browser/ui/menu/menubar.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/editor/common/diff/linesDiffComputer.ts** (Confidence: 1.00)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/editor/contrib/snippet/browser/snippetParser.ts** (Confidence: 1.00)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/platform/terminal/common/capabilities/capabilities.ts** (Confidence: 1.00)
+  - - 4 implementations
+  - - [EXTENSION_DENSITY] Has 4 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **src/vs/platform/secrets/test/common/secrets.test.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/contrib/chat/browser/widget/input/chatInputPickerActionItem.ts** (Confidence: 1.00)
+  - - 5 implementations
+  - - [EXTENSION_DENSITY] Has 5 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/base/browser/ui/list/list.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 68 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 42 architectural clusters.
+- **extensions/copilot/src/extension/agents/node/adapters/types.ts** (Confidence: 1.00)
+  - - 4 implementations
+  - - [EXTENSION_DENSITY] Has 4 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **extensions/copilot/src/extension/prompts/node/test/fixtures/5710.summarized.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/platform/agentHost/common/agentHostChangesetService.ts** (Confidence: 1.00)
+  - - 6 implementations
+  - - [EXTENSION_DENSITY] Has 6 implementations.
+- **extensions/copilot/src/platform/chat/common/chatSessionService.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/test/simulation/fixtures/codeMapper/quickInput.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/platform/telemetry/common/1dsAppender.ts** (Confidence: 1.00)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **test/automation/src/viewlet.ts** (Confidence: 1.00)
+  - - 5 implementations
+  - - [EXTENSION_DENSITY] Has 5 implementations.
+- **src/vs/platform/extensionManagement/common/extensionsProfileScannerService.ts** (Confidence: 1.00)
+  - - 4 implementations
+  - - [EXTENSION_DENSITY] Has 4 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **src/vs/base/common/range.ts** (Confidence: 1.00)
+  - - 4 implementations
+  - - [EXTENSION_DENSITY] Has 4 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **src/vs/workbench/contrib/notebook/browser/controller/coreActions.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 10 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 7 architectural clusters.
+- **extensions/copilot/src/platform/ignore/common/ignoreService.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/platform/telemetry/node/baseExperimentationService.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **Ghost Dependency (extensions/copilot/src/extension/completions-core/vscode-node/lib/src/ghostText/test/statementTree.test.ts)** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/contrib/terminalContrib/links/browser/links.ts** (Confidence: 1.00)
+  - - 7 implementations
+  - - [EXTENSION_DENSITY] Has 7 implementations.
+- **src/vs/platform/terminal/common/capabilities/commandDetectionCapability.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/editor/common/config/fontInfo.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **IErrorTemplateData>** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/base/browser/ui/dropdown/dropdownActionViewItem.ts** (Confidence: 1.00)
+  - - 9 implementations
+  - - [EXTENSION_DENSITY] Has 9 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 8 architectural clusters.
+- **src/vs/platform/userDataProfile/common/userDataProfileStorageService.ts** (Confidence: 1.00)
+  - - 4 implementations
+  - - [EXTENSION_DENSITY] Has 4 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **src/vs/platform/files/common/inMemoryFilesystemProvider.ts** (Confidence: 1.00)
+  - - 4 implementations
+  - - [EXTENSION_DENSITY] Has 4 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **src/vs/workbench/services/search/common/searchService.ts** (Confidence: 1.00)
+  - - 7 implementations
+  - - [EXTENSION_DENSITY] Has 7 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 6 architectural clusters.
+- **src/vs/platform/quickinput/browser/pickerQuickAccess.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 17 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 14 architectural clusters.
+- **src/vs/base/common/observableInternal/set.ts** (Confidence: 1.00)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/platform/list/browser/listService.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 17 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 16 architectural clusters.
+- **src/vs/workbench/common/editor/resourceEditorInput.ts** (Confidence: 1.00)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/editor/browser/view/viewPart.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 17 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 17 architectural clusters.
+- **src/vs/workbench/browser/parts/paneCompositePart.ts** (Confidence: 1.00)
+  - - 8 implementations
+  - - [EXTENSION_DENSITY] Has 8 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 6 architectural clusters.
+- **src/vs/platform/theme/common/themeService.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 18 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 13 architectural clusters.
+- **src/vs/editor/browser/view/dynamicViewOverlay.ts** (Confidence: 1.00)
+  - - 8 implementations
+  - - [EXTENSION_DENSITY] Has 8 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 8 architectural clusters.
+- **src/vs/editor/common/editorAction.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 52 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 46 architectural clusters.
+- **extensions/copilot/src/extension/linkify/common/linkifyService.ts** (Confidence: 1.00)
+  - - 6 implementations
+  - - [EXTENSION_DENSITY] Has 6 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **extensions/copilot/src/platform/chunking/common/chunkingEndpointClient.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/contrib/debug/common/abstractDebugAdapter.ts** (Confidence: 1.00)
+  - - 4 implementations
+  - - [EXTENSION_DENSITY] Has 4 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **extensions/copilot/src/extension/completions-core/vscode-node/extension/src/panelShared/languages/javaScriptReact.tmLanguage.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 10 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 9 architectural clusters.
+- **src/vs/editor/common/services/textResourceConfiguration.ts** (Confidence: 1.00)
+  - - 5 implementations
+  - - [EXTENSION_DENSITY] Has 5 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/fixtures/context/p9/source/f1.ts** (Confidence: 1.00)
+  - - 4 implementations
+  - - [EXTENSION_DENSITY] Has 4 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/language/languages.ts** (Confidence: 1.00)
+  - - 5 implementations
+  - - [EXTENSION_DENSITY] Has 5 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
+- **src/vs/workbench/common/contributions.ts** (Confidence: 1.00)
+  - - 4 implementations
+  - - [EXTENSION_DENSITY] Has 4 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **src/vs/platform/meteredConnection/common/meteredConnection.ts** (Confidence: 1.00)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **extensions/copilot/src/extension/chatSessions/claude/vscode-node/slashCommands/claudeSlashCommandRegistry.ts** (Confidence: 1.00)
+  - - 6 implementations
+  - - [EXTENSION_DENSITY] Has 6 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/editor/browser/controller/editContext/editContext.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/editor/contrib/quickAccess/browser/gotoLineQuickAccess.ts** (Confidence: 1.00)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/base/browser/ui/widget.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 24 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 18 architectural clusters.
+- **src/vs/editor/common/services/resolverService.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 14 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 14 architectural clusters.
+- **extensions/copilot/src/platform/extensions/common/extensionsService.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **FilterData>** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/contrib/terminal/common/basePty.ts** (Confidence: 1.00)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/services/lifecycle/common/lifecycleService.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/extension/agents/vscode-node/githubOrgChatResourcesService.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 14 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 11 architectural clusters.
+- **extensions/copilot/src/extension/agents/node/langModelServer.ts** (Confidence: 1.00)
+  - - 4 implementations
+  - - [EXTENSION_DENSITY] Has 4 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/platform/webWorker/browser/webWorkerService.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/platform/review/common/reviewService.ts** (Confidence: 1.00)
+  - - 4 implementations
+  - - [EXTENSION_DENSITY] Has 4 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **src/vs/base/common/parsers.ts** (Confidence: 1.00)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/base/browser/ui/list/list.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 68 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 42 architectural clusters.
+- **src/vs/platform/windows/electron-main/windowImpl.ts** (Confidence: 1.00)
+  - - 5 implementations
+  - - [EXTENSION_DENSITY] Has 5 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
+- **src/vs/platform/userDataSync/common/extensionsSync.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/services/path/common/pathService.ts** (Confidence: 1.00)
+  - - 4 implementations
+  - - [EXTENSION_DENSITY] Has 4 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **extensions/copilot/src/lib/vscode-node/test/nesProvider.spec.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/browser/parts/editor/editorWithViewState.ts** (Confidence: 1.00)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **extensions/configuration-editing/src/settingsDocumentHelper.ts** (Confidence: 1.00)
+  - - 4 implementations
+  - - [EXTENSION_DENSITY] Has 4 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/base/browser/ui/list/list.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 68 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 42 architectural clusters.
+- **src/vs/sessions/services/sessions/common/session.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/platform/workbench/common/workbenchService.ts** (Confidence: 1.00)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/workbench/common/memento.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/completionNotifier.ts** (Confidence: 1.00)
+  - - 5 implementations
+  - - [EXTENSION_DENSITY] Has 5 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
+- **src/vs/platform/files/common/watcher.ts** (Confidence: 1.00)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/platform/agentHost/common/sessionDataService.ts** (Confidence: 1.00)
+  - - 4 implementations
+  - - [EXTENSION_DENSITY] Has 4 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/workbench/services/authentication/common/authentication.ts** (Confidence: 1.00)
+  - - 4 implementations
+  - - [EXTENSION_DENSITY] Has 4 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **extensions/copilot/test/scenarios/test-explain/foo.ts** (Confidence: 1.00)
+  - - 5 implementations
+  - - [EXTENSION_DENSITY] Has 5 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/code/node/cliProcessMain.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/api/common/extHostRequireInterceptor.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/typescript-language-features/src/tsServer/server.ts** (Confidence: 1.00)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/platform/inlineEdits/common/statelessNextEditProvider.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/services/languageDetection/common/languageDetectionWorkerService.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/browser/parts/paneCompositePart.ts** (Confidence: 1.00)
+  - - 8 implementations
+  - - [EXTENSION_DENSITY] Has 8 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 6 architectural clusters.
+- **src/vs/workbench/contrib/terminal/common/environmentVariable.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/extension/chatSessions/claude/common/claudeMessageDispatch.ts** (Confidence: 1.00)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/platform/testing/common/testLogService.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/platform/extensionResourceLoader/common/extensionResourceLoader.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/platform/contextkey/common/contextkey.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/base/browser/ui/actionbar/actionViewItems.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 58 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 42 architectural clusters.
+- **extensions/copilot/src/platform/workspace/common/workspaceService.ts** (Confidence: 1.00)
+  - - 4 implementations
+  - - [EXTENSION_DENSITY] Has 4 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **src/vs/workbench/services/notification/common/notificationService.ts** (Confidence: 1.00)
+  - - 4 implementations
+  - - [EXTENSION_DENSITY] Has 4 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **src/vs/workbench/browser/parts/views/viewPane.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 43 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 24 architectural clusters.
+- **extensions/copilot/src/extension/prompts/node/base/promptRenderer.ts** (Confidence: 1.00)
+  - - 8 implementations
+  - - [EXTENSION_DENSITY] Has 8 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/platform/agentHost/common/agentHostGitService.ts** (Confidence: 1.00)
+  - - 6 implementations
+  - - [EXTENSION_DENSITY] Has 6 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/api/test/browser/mainThreadDocumentsAndEditors.test.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/services/extensionManagement/common/extensionManagementChannelClient.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/browser/parts/views/viewPaneContainer.ts** (Confidence: 1.00)
+  - - 7 implementations
+  - - [EXTENSION_DENSITY] Has 7 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 7 architectural clusters.
+- **src/vs/platform/files/common/diskFileSystemProvider.ts** (Confidence: 1.00)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/workbench/contrib/debug/common/debug.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 13 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
+- **extensions/copilot/src/platform/testing/common/workspaceMutationManager.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/platform/endpoint/common/endpointProvider.ts** (Confidence: 1.00)
+  - - 8 implementations
+  - - [EXTENSION_DENSITY] Has 8 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 8 architectural clusters.
+- **src/vs/workbench/services/workspaces/browser/abstractWorkspaceEditingService.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/util/common/chatResponseStreamImpl.ts** (Confidence: 1.00)
+  - - 4 implementations
+  - - [EXTENSION_DENSITY] Has 4 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **extensions/references-view/src/references-view.d.ts** (Confidence: 1.00)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/platform/files/common/inMemoryFilesystemProvider.ts** (Confidence: 1.00)
+  - - 4 implementations
+  - - [EXTENSION_DENSITY] Has 4 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **src/vs/workbench/contrib/notebook/common/notebookKernelService.ts** (Confidence: 1.00)
+  - - 5 implementations
+  - - [EXTENSION_DENSITY] Has 5 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/services/panecomposite/browser/panecomposite.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/contrib/terminal/common/terminal.ts** (Confidence: 1.00)
+  - - 5 implementations
+  - - [EXTENSION_DENSITY] Has 5 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
+- **src/vs/editor/common/services/modelService.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/platform/languages/common/languageFeaturesService.ts** (Confidence: 1.00)
+  - - 5 implementations
+  - - [EXTENSION_DENSITY] Has 5 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **src/vs/sessions/contrib/providers/agentHost/browser/agentHostModePicker.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/extension/chatSessions/claude/common/claudeAgentSdkLoaderService.ts** (Confidence: 1.00)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/contrib/chat/common/chatSessionsService.ts** (Confidence: 1.00)
+  - - 5 implementations
+  - - [EXTENSION_DENSITY] Has 5 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
+- **extensions/copilot/src/platform/inlineEdits/common/observableWorkspace.ts** (Confidence: 1.00)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/networkingTypes.ts** (Confidence: 1.00)
+  - - 6 implementations
+  - - [EXTENSION_DENSITY] Has 6 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
+- **src/vs/platform/keybinding/common/baseResolvedKeybinding.ts** (Confidence: 1.00)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/platform/authentication/common/copilotTokenManager.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/services/dialogs/common/dialogService.ts** (Confidence: 1.00)
+  - - 4 implementations
+  - - [EXTENSION_DENSITY] Has 4 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **src/vs/workbench/common/editor.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 36 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 30 architectural clusters.
+- **Iterable** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **IssueModel** (Confidence: 1.00)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/test/simulation/workbench/stores/storage.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/contrib/tags/common/workspaceTags.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/editor/contrib/peekView/browser/peekView.ts** (Confidence: 1.00)
+  - - 6 implementations
+  - - [EXTENSION_DENSITY] Has 6 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 6 architectural clusters.
+- **src/vs/editor/browser/editorBrowser.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 14 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 12 architectural clusters.
+- **src/vs/platform/list/browser/listService.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 17 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 16 architectural clusters.
+- **extensions/copilot/src/platform/chat/common/chatMLFetcher.ts** (Confidence: 1.00)
+  - - 4 implementations
+  - - [EXTENSION_DENSITY] Has 4 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/browser/parts/views/viewPaneContainer.ts** (Confidence: 1.00)
+  - - 7 implementations
+  - - [EXTENSION_DENSITY] Has 7 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 7 architectural clusters.
+- **extensions/copilot/src/platform/endpoint/node/chatEndpoint.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 10 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **extensions/typescript-language-features/src/configuration/configuration.ts** (Confidence: 1.00)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/editor/standalone/browser/standaloneServices.ts** (Confidence: 1.00)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/platform/actions/browser/actionWidgetDropdownActionViewItem.ts** (Confidence: 1.00)
+  - - 6 implementations
+  - - [EXTENSION_DENSITY] Has 6 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
+- **extensions/copilot/test/testExecutor.ts** (Confidence: 1.00)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/workbench/contrib/chat/common/plugins/pluginGitCommandService.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/sessions/contrib/providers/agentHost/browser/agentHostModelPicker.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/extension/commands/node/commandService.ts** (Confidence: 1.00)
+  - - 5 implementations
+  - - [EXTENSION_DENSITY] Has 5 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
+- **src/vs/editor/contrib/codeAction/test/browser/codeActionModel.test.ts** (Confidence: 1.00)
+  - - 6 implementations
+  - - [EXTENSION_DENSITY] Has 6 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 6 architectural clusters.
+- **extensions/copilot/src/platform/inlineCompletions/common/api.ts** (Confidence: 1.00)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/platform/actions/browser/menuEntryActionViewItem.ts** (Confidence: 1.00)
+  - - 9 implementations
+  - - [EXTENSION_DENSITY] Has 9 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 9 architectural clusters.
+- **src/vs/platform/contextview/browser/contextView.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/base/common/glob.ts** (Confidence: 1.00)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/platform/github/common/githubService.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/editor/browser/widget/diffEditor/diffEditorWidget.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **BaseWorkspace** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/services/workingCopy/test/browser/workingCopyEditorService.test.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/contrib/issue/common/issue.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/platform/languagePacks/common/languagePacks.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/editor/common/core/characterClassifier.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/platform/requestLogger/common/requestLogger.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/platform/label/common/label.ts** (Confidence: 1.00)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **extensions/copilot/src/extension/inlineEdits/test/node/nextEditProviderTelemetry.spec.ts** (Confidence: 1.00)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/services/workingCopy/electron-browser/workingCopyBackupService.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/extension/inlineEdits/node/nextEditProviderTelemetry.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/platform/accessibility/browser/accessibleViewRegistry.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 29 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 22 architectural clusters.
+- **src/vs/workbench/contrib/debug/common/abstractDebugAdapter.ts** (Confidence: 1.00)
+  - - 4 implementations
+  - - [EXTENSION_DENSITY] Has 4 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **src/vs/base/common/observableInternal/logging/logging.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/browser/parts/editor/textCodeEditor.ts** (Confidence: 1.00)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **extensions/php-language-features/src/features/hoverProvider.ts** (Confidence: 1.00)
+  - - 4 implementations
+  - - [EXTENSION_DENSITY] Has 4 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **src/vs/sessions/contrib/chat/browser/sessionTaskRunner.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/platform/extensionManagement/common/abstractExtensionManagementService.ts** (Confidence: 1.00)
+  - - 4 implementations
+  - - [EXTENSION_DENSITY] Has 4 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/platform/actions/browser/actionWidgetDropdownActionViewItem.ts** (Confidence: 1.00)
+  - - 6 implementations
+  - - [EXTENSION_DENSITY] Has 6 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
+- **extensions/copilot/src/extension/completions-core/vscode-node/prompt/src/tokenization/tokenizer.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/base/browser/ui/dropdown/dropdownActionViewItem.ts** (Confidence: 1.00)
+  - - 9 implementations
+  - - [EXTENSION_DENSITY] Has 9 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 8 architectural clusters.
+- **src/vs/platform/configuration/common/configurationService.ts** (Confidence: 1.00)
+  - - 7 implementations
+  - - [EXTENSION_DENSITY] Has 7 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 7 architectural clusters.
+- **src/vs/workbench/services/remote/common/abstractRemoteAgentService.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/contrib/extensions/browser/extensionsViews.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/test/simulation/fixtures/doc/issue-6406/debugModel.ts** (Confidence: 1.00)
+  - - 6 implementations
+  - - [EXTENSION_DENSITY] Has 6 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/progress.ts** (Confidence: 1.00)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/util/event.ts** (Confidence: 1.00)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/editor/contrib/peekView/browser/peekView.ts** (Confidence: 1.00)
+  - - 6 implementations
+  - - [EXTENSION_DENSITY] Has 6 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 6 architectural clusters.
+- **src/vs/workbench/services/dialogs/browser/abstractFileDialogService.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **test/automation/src/terminal.ts** (Confidence: 1.00)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/contrib/splash/browser/splash.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/sessions/contrib/chat/browser/sessionWorkspacePicker.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/contrib/debug/browser/debugSession.ts** (Confidence: 1.00)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/base/browser/ui/toggle/toggle.ts** (Confidence: 1.00)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/contrib/chat/browser/defaultModelContribution.ts** (Confidence: 1.00)
+  - - 5 implementations
+  - - [EXTENSION_DENSITY] Has 5 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/editor/common/languages.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 18 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 15 architectural clusters.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/prompt/similarFiles/relatedFiles.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/platform/extensionManagement/common/extensionGalleryManifestService.ts** (Confidence: 1.00)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/sessions/contrib/github/common/types.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **IResourceMarkersTemplateData>** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/base/browser/ui/tree/tree.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 50 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 38 architectural clusters.
+- **src/vs/workbench/contrib/extensions/browser/abstractRuntimeExtensionsEditor.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/vscode-node/test/askUserQuestionHandler.spec.ts** (Confidence: 1.00)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/node/logger.ts** (Confidence: 1.00)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/workbench/contrib/snippets/browser/snippets.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **SpanExporter** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/api/common/extHostTypes.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/platform/agentHost/common/agentHostGitStateService.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/platform/mcp/common/mcpManagementService.ts** (Confidence: 1.00)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/platform/telemetry/common/telemetryService.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/platform/agentHost/node/agentHostTelemetryService.ts** (Confidence: 1.00)
+  - - 4 implementations
+  - - [EXTENSION_DENSITY] Has 4 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **extensions/copilot/test/simulation/workbench/components/toolbar.tsx** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/node/copilotCliBridgeSpanProcessor.ts** (Confidence: 1.00)
+  - - 4 implementations
+  - - [EXTENSION_DENSITY] Has 4 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/workbench/services/configurationResolver/browser/baseConfigurationResolverService.ts** (Confidence: 1.00)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/base/browser/ui/actionbar/actionbar.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **EventTarget** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/common/views.ts** (Confidence: 1.00)
+  - - 8 implementations
+  - - [EXTENSION_DENSITY] Has 8 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 7 architectural clusters.
+- **src/vs/editor/common/model/textModelPart.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/platform/authentication/node/copilotTokenManager.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/base/browser/dom.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/sessions/contrib/providers/agentHost/browser/baseAgentHostSessionsProvider.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/platform/request/common/request.ts** (Confidence: 1.00)
+  - - 4 implementations
+  - - [EXTENSION_DENSITY] Has 4 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **src/vs/editor/browser/services/abstractCodeEditorService.ts** (Confidence: 1.00)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **extensions/copilot/src/platform/test/node/testWorkspaceService.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/platform/instantiation/common/instantiation.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/services/integrity/common/integrity.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/platform/diff/common/diffService.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/platform/notebook/common/alternativeContent.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/platform/workspaces/common/workspaces.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/sessions/browser/parts/editorPart.ts** (Confidence: 1.00)
+  - - 4 implementations
+  - - [EXTENSION_DENSITY] Has 4 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/common/editor.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 36 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 30 architectural clusters.
+- **src/vs/workbench/services/extensions/common/extensionHostKind.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/services/userData/browser/userDataInit.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/editor/contrib/hover/browser/markdownHoverParticipant.ts** (Confidence: 1.00)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/node/test/missionControlApiClient.spec.ts** (Confidence: 1.00)
+  - - 5 implementations
+  - - [EXTENSION_DENSITY] Has 5 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
+- **src/vs/platform/undoRedo/common/undoRedo.ts** (Confidence: 1.00)
+  - - 7 implementations
+  - - [EXTENSION_DENSITY] Has 7 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 6 architectural clusters.
+- **src/vs/platform/sign/common/abstractSignService.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **ITreeItem>** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/sessions/contrib/chat/browser/sessionTypePicker.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/extension/commands/node/commandService.ts** (Confidence: 1.00)
+  - - 5 implementations
+  - - [EXTENSION_DENSITY] Has 5 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
+- **extensions/copilot/src/platform/scopeSelection/common/scopeSelection.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/services/files/common/elevatedFileService.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/base/browser/ui/list/listPaging.ts** (Confidence: 1.00)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/editor/common/services/textResourceConfiguration.ts** (Confidence: 1.00)
+  - - 5 implementations
+  - - [EXTENSION_DENSITY] Has 5 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
+- **src/vs/workbench/common/editor/textResourceEditorInput.ts** (Confidence: 1.00)
+  - - 4 implementations
+  - - [EXTENSION_DENSITY] Has 4 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **extensions/copilot/src/platform/remoteSearch/common/codeOrDocsSearchClient.ts** (Confidence: 1.00)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/test/codeMapper/codeMapper.stest.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/contrib/mcp/common/mcpGatewayService.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/platform/backup/electron-main/backup.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/fixtures/context/testbed/src/person.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/test/simulation/fixtures/codeMapper/extHostExtensionActivator.test.ts** (Confidence: 1.00)
+  - - 8 implementations
+  - - [EXTENSION_DENSITY] Has 8 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
+- **src/vs/base/common/equals.ts** (Confidence: 1.00)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/base/common/worker/webWorker.ts** (Confidence: 1.00)
+  - - 6 implementations
+  - - [EXTENSION_DENSITY] Has 6 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 6 architectural clusters.
+- **src/vs/workbench/common/views.ts** (Confidence: 1.00)
+  - - 8 implementations
+  - - [EXTENSION_DENSITY] Has 8 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 7 architectural clusters.
+- **src/vs/workbench/services/extensionRecommendations/common/extensionRecommendations.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 10 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/editor/browser/viewParts/glyphMargin/glyphMargin.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/editor/standalone/common/standaloneTheme.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/services/userDataSync/common/userDataSync.ts** (Confidence: 1.00)
+  - - 8 implementations
+  - - [EXTENSION_DENSITY] Has 8 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 7 architectural clusters.
+- **extensions/copilot/src/platform/configuration/test/common/inMemoryConfigurationService.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/platform/telemetry/common/errorTelemetry.ts** (Confidence: 1.00)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **extensions/copilot/src/platform/git/common/gitDiffService.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/platform/agentHost/common/state/protocol/common/errors.ts** (Confidence: 1.00)
+  - - 4 implementations
+  - - [EXTENSION_DENSITY] Has 4 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **src/vs/platform/agentHost/common/state/protocol/common/actions.ts** (Confidence: 1.00)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/platform/agentHost/common/state/protocol/common/errors.ts** (Confidence: 1.00)
+  - - 4 implementations
+  - - [EXTENSION_DENSITY] Has 4 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **ExplorerItem>** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/editor/common/model.ts** (Confidence: 1.00)
+  - - 6 implementations
+  - - [EXTENSION_DENSITY] Has 6 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **extensions/copilot/src/extension/prompts/node/test/adjustSelection.spec.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/platform/chat/common/sessionTranscriptService.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/services/workingCopy/common/storedFileWorkingCopy.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **BaseWorkbenchMcpManagementService** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/editor/contrib/peekView/browser/peekView.ts** (Confidence: 1.00)
+  - - 6 implementations
+  - - [EXTENSION_DENSITY] Has 6 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 6 architectural clusters.
+- **extensions/copilot/src/platform/telemetry/common/telemetryData.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/contrib/debug/common/debug.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 13 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
+- **src/vs/workbench/services/decorations/common/decorations.ts** (Confidence: 1.00)
+  - - 4 implementations
+  - - [EXTENSION_DENSITY] Has 4 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **src/vs/workbench/services/textfile/common/textfiles.ts** (Confidence: 1.00)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/workbench/services/textfile/browser/textFileService.ts** (Confidence: 1.00)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/workbench/services/configurationResolver/common/variableResolver.ts** (Confidence: 1.00)
+  - - 4 implementations
+  - - [EXTENSION_DENSITY] Has 4 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **src/vs/workbench/contrib/update/common/update.ts** (Confidence: 1.00)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/platform/request/common/request.ts** (Confidence: 1.00)
+  - - 4 implementations
+  - - [EXTENSION_DENSITY] Has 4 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **extensions/copilot/src/util/common/test/shims/textEditor.ts** (Confidence: 1.00)
+  - - 5 implementations
+  - - [EXTENSION_DENSITY] Has 5 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
+- **src/vs/workbench/contrib/notebook/browser/controller/coreActions.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 10 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 7 architectural clusters.
+- **src/vs/editor/common/modelLineProjectionData.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/api/common/extHostConsoleForwarder.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/platform/chat/common/chatAgents.ts** (Confidence: 1.00)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/workbench/services/editor/test/browser/editorGroupsService.test.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/extension/inlineEdits/node/nextEditProvider.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/platform/keybinding/common/abstractKeybindingService.ts** (Confidence: 1.00)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/platform/list/browser/listService.ts** (Confidence: 1.00)
+  - - 10 implementations
+  - - [EXTENSION_DENSITY] Has 17 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 16 architectural clusters.
+- **src/vs/workbench/contrib/terminalContrib/chatAgentTools/browser/tools/runInTerminalTool.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/platform/remote/common/managedSocket.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/editor/common/model.ts** (Confidence: 1.00)
+  - - 6 implementations
+  - - [EXTENSION_DENSITY] Has 6 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **src/vs/workbench/browser/web.factory.ts** (Confidence: 1.00)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+  - - [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/contrib/snippets/browser/commands/abstractSnippetsActions.ts** (Confidence: 0.90)
+  - - 4 implementations
+  - - [EXTENSION_DENSITY] Has 4 implementations.
 - **src/vs/workbench/contrib/terminalContrib/chatAgentTools/browser/tools/commandLinePresenter/commandLinePresenter.ts** (Confidence: 0.90)
   - - 4 implementations
   - - [EXTENSION_DENSITY] Has 4 implementations.
 - **extensions/copilot/src/extension/tools/common/virtualTools/virtualToolTypes.ts** (Confidence: 0.90)
-  - - 4 implementations
-  - - [EXTENSION_DENSITY] Has 4 implementations.
-- **src/vs/workbench/contrib/snippets/browser/commands/abstractSnippetsActions.ts** (Confidence: 0.90)
   - - 4 implementations
   - - [EXTENSION_DENSITY] Has 4 implementations.
 - **src/vs/workbench/contrib/debug/browser/baseDebugView.ts** (Confidence: 0.90)
@@ -12996,112 +12977,94 @@ ACCEPTED
 - **src/vs/workbench/contrib/snippets/browser/commands/abstractSnippetsActions.ts** (Confidence: 0.90)
   - - 4 implementations
   - - [EXTENSION_DENSITY] Has 4 implementations.
-- **src/vs/workbench/contrib/chat/browser/chatEditing/chatEditingModifiedFileEntry.ts** (Confidence: 0.80)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-- **WarmQuery** (Confidence: 0.80)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatIncrementalRendering/buffers/buffer.ts** (Confidence: 0.80)
+- **src/vs/platform/keyboardLayout/common/keyboardMapper.ts** (Confidence: 0.80)
   - - 3 implementations
   - - [EXTENSION_DENSITY] Has 3 implementations.
 - **src/vs/workbench/browser/parts/editor/editorTabsControl.ts** (Confidence: 0.80)
   - - 3 implementations
   - - [EXTENSION_DENSITY] Has 3 implementations.
-- **src/vs/workbench/contrib/mergeEditor/browser/view/editors/codeEditorView.ts** (Confidence: 0.80)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-- **extensions/copilot/src/shared-fetch-utils/common/test/fetchedValue.spec.ts** (Confidence: 0.80)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-- **extensions/copilot/src/platform/notebook/common/alternativeContentProvider.ts** (Confidence: 0.80)
+- **extensions/copilot/src/extension/inlineEdits/vscode-node/features/diagnosticsBasedCompletions/diagnosticsCompletions.ts** (Confidence: 0.80)
   - - 3 implementations
   - - [EXTENSION_DENSITY] Has 3 implementations.
 - **extensions/copilot/src/platform/notebook/common/alternativeNotebookDocument.ts** (Confidence: 0.80)
   - - 3 implementations
   - - [EXTENSION_DENSITY] Has 3 implementations.
-- **extensions/copilot/src/extension/inlineEdits/vscode-node/features/diagnosticsBasedCompletions/diagnosticsCompletions.ts** (Confidence: 0.80)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-- **src/vs/platform/keyboardLayout/common/keyboardMapper.ts** (Confidence: 0.80)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-- **extensions/typescript-language-features/src/languageFeatures/definitionProviderBase.ts** (Confidence: 0.80)
-  - - 3 implementations
-  - - [EXTENSION_DENSITY] Has 3 implementations.
-- **src/vs/platform/agentHost/node/agentHostTerminalManager.ts** (Confidence: 0.80)
+- **WarmQuery** (Confidence: 0.80)
   - - 3 implementations
   - - [EXTENSION_DENSITY] Has 3 implementations.
 - **src/vs/platform/agentHost/node/claude/claudeAgentSdkService.ts** (Confidence: 0.80)
   - - 3 implementations
   - - [EXTENSION_DENSITY] Has 3 implementations.
-- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/prompt/completionsPromptFactory/completionsPromptFactory.ts** (Confidence: 0.70)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-- **extensions/copilot/src/extension/intents/node/editCodeIntent.ts** (Confidence: 0.70)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-- **IAgentSessionSectionTemplate>** (Confidence: 0.70)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
+- **extensions/copilot/src/platform/notebook/common/alternativeContentProvider.ts** (Confidence: 0.80)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
+- **src/vs/workbench/contrib/chat/browser/chatEditing/chatEditingModifiedFileEntry.ts** (Confidence: 0.80)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
+- **extensions/typescript-language-features/src/languageFeatures/definitionProviderBase.ts** (Confidence: 0.80)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatIncrementalRendering/buffers/buffer.ts** (Confidence: 0.80)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
+- **src/vs/workbench/contrib/mergeEditor/browser/view/editors/codeEditorView.ts** (Confidence: 0.80)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
+- **src/vs/platform/agentHost/node/agentHostTerminalManager.ts** (Confidence: 0.80)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
+- **extensions/copilot/src/shared-fetch-utils/common/test/fetchedValue.spec.ts** (Confidence: 0.80)
+  - - 3 implementations
+  - - [EXTENSION_DENSITY] Has 3 implementations.
 - **src/vs/workbench/services/authentication/browser/authenticationUsageService.ts** (Confidence: 0.70)
   - - 2 implementations
   - - [EXTENSION_DENSITY] Has 2 implementations.
-- **void>** (Confidence: 0.70)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-- **src/vs/base/browser/ui/scrollbar/abstractScrollbar.ts** (Confidence: 0.70)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-- **IAICustomizationItemTemplateData>** (Confidence: 0.70)
+- **src/vs/workbench/contrib/testing/browser/explorerProjections/index.ts** (Confidence: 0.70)
   - - 2 implementations
   - - [EXTENSION_DENSITY] Has 2 implementations.
 - **extensions/ipynb/src/notebookSerializer.ts** (Confidence: 0.70)
   - - 2 implementations
   - - [EXTENSION_DENSITY] Has 2 implementations.
-- **test/automation/src/logger.ts** (Confidence: 0.70)
+- **src/vs/base/browser/ui/scrollbar/abstractScrollbar.ts** (Confidence: 0.70)
   - - 2 implementations
   - - [EXTENSION_DENSITY] Has 2 implementations.
-- **src/vs/workbench/contrib/notebook/browser/viewModel/baseCellViewModel.ts** (Confidence: 0.70)
+- **extensions/copilot/src/platform/telemetry/test/node/telemetry.spec.ts** (Confidence: 0.70)
   - - 2 implementations
   - - [EXTENSION_DENSITY] Has 2 implementations.
-- **extensions/copilot/src/extension/intents/node/agentIntent.ts** (Confidence: 0.70)
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/prompt/completionsPromptFactory/completionsPromptFactory.ts** (Confidence: 0.70)
   - - 2 implementations
   - - [EXTENSION_DENSITY] Has 2 implementations.
-- **src/vs/workbench/browser/parts/compositeBarActions.ts** (Confidence: 0.70)
+- **src/vs/editor/browser/gpu/renderStrategy/baseRenderStrategy.ts** (Confidence: 0.70)
   - - 2 implementations
   - - [EXTENSION_DENSITY] Has 2 implementations.
-- **src/vs/editor/contrib/hover/browser/hoverOperation.ts** (Confidence: 0.70)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-- **src/vs/editor/browser/widget/diffEditor/utils.ts** (Confidence: 0.70)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-- **src/vs/sessions/contrib/providers/agentHost/browser/agentHostSettingsShared.ts** (Confidence: 0.70)
+- **src/vs/platform/download/common/download.ts** (Confidence: 0.70)
   - - 2 implementations
   - - [EXTENSION_DENSITY] Has 2 implementations.
 - **src/vs/editor/browser/gpu/atlas/atlas.ts** (Confidence: 0.70)
   - - 2 implementations
   - - [EXTENSION_DENSITY] Has 2 implementations.
+- **extensions/copilot/src/extension/intents/node/editCodeIntent.ts** (Confidence: 0.70)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+- **AsyncGenerator** (Confidence: 0.70)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+- **test/automation/src/logger.ts** (Confidence: 0.70)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+- **extensions/copilot/src/extension/intents/node/agentIntent.ts** (Confidence: 0.70)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+- **src/vs/workbench/contrib/chat/browser/widget/input/chatInputNotificationService.ts** (Confidence: 0.70)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
 - **extensions/copilot/src/platform/authentication/vscode-node/copilotTokenManager.ts** (Confidence: 0.70)
   - - 2 implementations
   - - [EXTENSION_DENSITY] Has 2 implementations.
-- **src/vs/editor/common/services/editorWorker.ts** (Confidence: 0.70)
+- **void>** (Confidence: 0.70)
   - - 2 implementations
   - - [EXTENSION_DENSITY] Has 2 implementations.
-- **extensions/copilot/src/extension/chatSessions/vscode/cloudAgentBackend.ts** (Confidence: 0.70)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-- **src/vs/workbench/api/node/proxyResolver.ts** (Confidence: 0.70)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-- **extensions/copilot/src/extension/completions-core/vscode-node/prompt/src/snippetInclusion/selectRelevance.ts** (Confidence: 0.70)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-- **extensions/copilot/src/platform/inlineEdits/common/workspaceEditTracker/historyContextProvider.ts** (Confidence: 0.70)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-- **src/vs/platform/download/common/download.ts** (Confidence: 0.70)
+- **src/vs/editor/common/diff/defaultLinesDiffComputer/algorithms/diffAlgorithm.ts** (Confidence: 0.70)
   - - 2 implementations
   - - [EXTENSION_DENSITY] Has 2 implementations.
 - **src/vs/workbench/contrib/notebook/common/notebookLoggingService.ts** (Confidence: 0.70)
@@ -13110,58 +13073,61 @@ ACCEPTED
 - **src/vs/workbench/contrib/chat/browser/agentSessions/agentHost/agentCustomizationSyncProvider.ts** (Confidence: 0.70)
   - - 2 implementations
   - - [EXTENSION_DENSITY] Has 2 implementations.
-- **src/vs/editor/contrib/folding/browser/folding.ts** (Confidence: 0.70)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-- **AsyncGenerator** (Confidence: 0.70)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-- **IGroupHeaderTemplateData>** (Confidence: 0.70)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-- **src/vs/editor/common/diff/defaultLinesDiffComputer/algorithms/diffAlgorithm.ts** (Confidence: 0.70)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-- **src/vs/editor/browser/gpu/renderStrategy/baseRenderStrategy.ts** (Confidence: 0.70)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
-- **src/vs/platform/userDataSync/common/abstractJsonSynchronizer.ts** (Confidence: 0.70)
-  - - 2 implementations
-  - - [EXTENSION_DENSITY] Has 2 implementations.
 - **src/vs/editor/contrib/quickAccess/browser/editorNavigationQuickAccess.ts** (Confidence: 0.70)
   - - 2 implementations
   - - [EXTENSION_DENSITY] Has 2 implementations.
-- **ISectionItemTemplateData>** (Confidence: 0.70)
+- **extensions/copilot/src/platform/inlineEdits/common/workspaceEditTracker/historyContextProvider.ts** (Confidence: 0.70)
   - - 2 implementations
   - - [EXTENSION_DENSITY] Has 2 implementations.
-- **src/vs/platform/agentHost/common/relayTransport.ts** (Confidence: 0.70)
+- **src/vs/workbench/api/node/proxyResolver.ts** (Confidence: 0.70)
   - - 2 implementations
   - - [EXTENSION_DENSITY] Has 2 implementations.
-- **extensions/merge-conflict/src/interfaces.ts** (Confidence: 0.70)
+- **extensions/copilot/src/extension/completions-core/vscode-node/prompt/src/snippetInclusion/selectRelevance.ts** (Confidence: 0.70)
   - - 2 implementations
   - - [EXTENSION_DENSITY] Has 2 implementations.
-- **IAgentSessionShowMoreTemplate>** (Confidence: 0.70)
+- **src/vs/sessions/contrib/providers/agentHost/browser/agentHostSettingsShared.ts** (Confidence: 0.70)
   - - 2 implementations
   - - [EXTENSION_DENSITY] Has 2 implementations.
-- **src/vs/workbench/contrib/chat/browser/widget/input/chatInputNotificationService.ts** (Confidence: 0.70)
+- **src/vs/editor/common/services/editorWorker.ts** (Confidence: 0.70)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+- **src/vs/editor/browser/widget/diffEditor/utils.ts** (Confidence: 0.70)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+- **src/vs/editor/contrib/folding/browser/folding.ts** (Confidence: 0.70)
   - - 2 implementations
   - - [EXTENSION_DENSITY] Has 2 implementations.
 - **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatEditPillElement.ts** (Confidence: 0.70)
   - - 2 implementations
   - - [EXTENSION_DENSITY] Has 2 implementations.
-- **src/vs/workbench/contrib/testing/browser/explorerProjections/index.ts** (Confidence: 0.70)
+- **extensions/copilot/src/platform/endpoint/node/copilotChatEndpoint.ts** (Confidence: 0.70)
   - - 2 implementations
   - - [EXTENSION_DENSITY] Has 2 implementations.
 - **src/vs/workbench/contrib/webviewPanel/browser/webviewWorkbenchService.ts** (Confidence: 0.70)
   - - 2 implementations
   - - [EXTENSION_DENSITY] Has 2 implementations.
-- **extensions/copilot/src/platform/endpoint/node/copilotChatEndpoint.ts** (Confidence: 0.70)
+- **extensions/copilot/src/extension/chatSessions/vscode/cloudAgentBackend.ts** (Confidence: 0.70)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+- **src/vs/platform/userDataSync/common/abstractJsonSynchronizer.ts** (Confidence: 0.70)
   - - 2 implementations
   - - [EXTENSION_DENSITY] Has 2 implementations.
 - **extensions/typescript-language-features/src/languageFeatures/codeLens/baseCodeLensProvider.ts** (Confidence: 0.70)
   - - 2 implementations
   - - [EXTENSION_DENSITY] Has 2 implementations.
-- **extensions/copilot/src/platform/telemetry/test/node/telemetry.spec.ts** (Confidence: 0.70)
+- **extensions/merge-conflict/src/interfaces.ts** (Confidence: 0.70)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+- **src/vs/workbench/contrib/notebook/browser/viewModel/baseCellViewModel.ts** (Confidence: 0.70)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+- **src/vs/platform/agentHost/common/relayTransport.ts** (Confidence: 0.70)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+- **src/vs/workbench/browser/parts/compositeBarActions.ts** (Confidence: 0.70)
+  - - 2 implementations
+  - - [EXTENSION_DENSITY] Has 2 implementations.
+- **src/vs/editor/contrib/hover/browser/hoverOperation.ts** (Confidence: 0.70)
   - - 2 implementations
   - - [EXTENSION_DENSITY] Has 2 implementations.
 
@@ -13174,9 +13140,9 @@ ACCEPTED
   - N/A
 
 #### Coupling Source Top N
-  - **vs**: 25166 (43.8%)
-  - **extensions**: 23960 (41.7%)
-  - **cli**: 2296 (4%)
-  - **.eslint-plugin-local**: 1655 (2.9%)
-  - **unknown**: 625 (1.1%)
+  - **vs**: 24832 (44.1%)
+  - **extensions**: 23592 (41.9%)
+  - **cli**: 2246 (4%)
+  - **.eslint-plugin-local**: 1653 (2.9%)
+  - **out**: 634 (1.1%)
   - ...

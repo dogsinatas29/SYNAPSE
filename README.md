@@ -642,12 +642,6 @@ Runs a full AI-driven semantic analysis on the current architecture graph. Scans
 - Includes remote client nodes (connected via SSE) in the analysis scope.
 - Reports are output in the OS display language (Korean / English auto-detected via `vscode.env.language`).
 
-#### 🧪 Simulation Debug
-Activates the Virtual Debugger mode. Simulates runtime behavior across the architecture graph, applying diagnosis states (Necrosis, Tombstone) to nodes that fail logical validation.
-
-- Diagnoses include all connected clients' architecture layers, not just the local project.
-- Allows the Architect to observe which remote nodes have failed or are stale without requiring a Harvest.
-
 #### 💀 Simulate Necrosis
 Manually applies the **Necrosis** state to selected nodes. Used to mark a node as logically dead — indicating it has broken dependencies, missing references, or has been flagged by the AI analysis.
 

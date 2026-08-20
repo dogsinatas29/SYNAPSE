@@ -171,4 +171,5 @@ export interface ValidationContext {
     metrics: ValidationMetrics;
     workspaceRoot?: string;
     anomalySummary?: import('../../types/schema').AnomalySummary;
+    fsmAudit?: import('../../types/schema').FSMAuditSummary;
 }

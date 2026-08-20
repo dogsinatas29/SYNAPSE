@@ -508,3 +508,49 @@ export interface AnomalySummary {
 
 /** Continent 미분류 노드 fallback 상수 — 'unknown' 하드코딩 금지 */
 export const UNCHARTED_CONTINENT = 'UNCHARTED' as const;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// v0.3.34.25 — Transition Grammar Engine
+// Invariant: 현재 상태의 정합성 검증. 과거 상태 저장/재구성 없음.
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** Violation 최대 보관 수 (커널 7만 노드 대응, 보고서 폭발 방지) */
+export const MAX_VIOLATIONS = 100;
+
+/**
+ * 허용/금지 전이 선언.
+ * ViewState는 전이 Rule 대상에서 제외 — 축 오염 방지.
+ */
+export interface TransitionRule {
+    from    : LifecycleState | HealthState;
+    to      : LifecycleState | HealthState;
+    allowed : boolean;
+    reason  : string;
+}
+
+/**
+ * 경로 단위 전이 유효성.
+ * A→B 단일 검사가 아니라 DISCOVERED→REGISTERED→CLUSTERED 등 경로 전체 판정.
+ */
+export interface TransitionChain {
+    nodeId  : string;
+    path    : (LifecycleState | HealthState)[];
+    valid   : boolean;
+    reason? : string;
+}
+
+/** 전이 위반 단건 (보고서 인라인 출력 금지 — 요약 + 링크만) */
+export interface TransitionViolation {
+    nodeId  : string;
+    path    : string;   // "DISCOVERED→CLASSIFIED" 형태
+    type    : 'MISSING' | 'INVALID' | 'UNCHARTED';
+    reason  : string;
+}
+
+/** FSM 일관성 검사 결과 집계 */
+export interface FSMAuditSummary {
+    missing    : number;   // 중간 단계 누락
+    invalid    : number;   // 논리적 불가 전이
+    uncharted  : number;   // 정의되지 않은 경로 (Unknown 아님)
+    violations : TransitionViolation[];  // MAX_VIOLATIONS 상한
+}

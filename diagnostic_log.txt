@@ -289,14 +289,14 @@ cluster_ghost_src         nodes=0
 TOTAL_CLUSTERS=280
 
 === EDGE SUMMARY ===
-Internal Edges: 625
+Internal Edges: 626
 External/Ghost Edges: 151
 
 ======================================================
-[PIPELINE] Nodes=1003 Edges=1142
+[PIPELINE] Nodes=1003 Edges=1143
 ======================================================
 === EDGE BREAKDOWN ===
-  - INCLUDE: 1129
+  - INCLUDE: 1130
   - CALL: 10
   - DB_QUERY: 3
 ======================================================
@@ -315,7 +315,7 @@ id=src/types/schema.ts
 cluster=folder_src_types
 role=none
 external=false
-degree=69 (in=69, out=0)
+degree=70 (in=70, out=0)
 
 rank=2
 id=assets/test_sample/antennapod.json
@@ -461,7 +461,7 @@ doc_shelf
 folder_src_core
   nodes: 60
   internal_edges: 67
-  external_edges: 219
+  external_edges: 220
 
 folder_src_core_collaboration
   nodes: 17
@@ -530,8 +530,8 @@ folder_ui
 
 === HUB RANKING ===
 folder_src_core
-  traffic: 286
-  degree: 219
+  traffic: 287
+  degree: 220
   nodes: 60
 
 doc_shelf
@@ -550,8 +550,8 @@ folder_assets_test_sample
   nodes: 3
 
 folder_src_types
-  traffic: 69
-  degree: 69
+  traffic: 70
+  degree: 70
   nodes: 1
 
 folder_src_core_reasoning_answers_aggregators
@@ -606,11 +606,11 @@ folder_src_core_reasoning_rules_roles
 
 === CLUSTER MATRIX ===
                     folder_sr  doc_shelf  folder_te  folder_as  folder_sr  folder_sr  folder_sr  folder_sr  folder_sr  folder_sr 
-folder_src_core     -         19        23        0         27        0         8         5         0         16        
+folder_src_core     -         19        23        0         28        0         8         5         0         16        
 doc_shelf           19        -         0         6         3         0         0         0         0         1         
 folder_test         23        0         -         0         0         32        0         19        10        0         
 folder_assets_test_sample 0         6         0         -         0         0         0         0         0         0         
-folder_src_types    27        3         0         0         -         0         9         0         0         0         
+folder_src_types    28        3         0         0         -         0         9         0         0         0         
 folder_src_core_reasoning_answers_aggregators 0         0         32        0         0         -         0         0         8         0         
 folder_src_core_collaboration 8         0         0         0         9         0         -         0         0         12        
 folder_src_core_reasoning_analysis 5         0         19        0         0         0         0         -         8         0         
@@ -619,7 +619,7 @@ folder_src_utils    16        1         0         0         0         0         
 
 === CLUSTER EDGE LIST ===
 folder_src_core_reasoning_answers_aggregators ──(32)── folder_test
-folder_src_core      ──(27)── folder_src_types
+folder_src_core      ──(28)── folder_src_types
 folder_src_bootstrap ──(23)── folder_src_core
 folder_src_core      ──(23)── folder_test
 doc_shelf            ──(19)── folder_src_core
@@ -674,7 +674,7 @@ cluster_ghost_typescript  -> folder_src_cli                      = 1
 === GHOST TRAFFIC ===
 ghost_nodes=114
 ghost_edges=204
-ghost_ratio=17.9%
+ghost_ratio=17.8%
 
 === INTERNAL CONTINENTS ===
 doc             nodes=496 clusters=1
@@ -732,7 +732,7 @@ cors            nodes=1 clusters=1
 === TOP CONTINENT PAIRS ===
 core <-> root                  165
 app <-> test_sample            85
-core <-> types                 62
+core <-> types                 63
 assets <-> doc                 42
 core <-> doc                   39
 core <-> utils                 33
@@ -760,7 +760,7 @@ vscode-main 0         0         0         0         0         0         0       
 === CONTINENT GRAPH (Top 20 Edges) ===
 core ──(165)── root
 app ──(85)── test_sample
-core ──(62)── types
+core ──(63)── types
 assets ──(42)── doc
 core ──(39)── doc
 core ──(33)── utils

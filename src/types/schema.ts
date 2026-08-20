@@ -505,3 +505,6 @@ export interface AnomalySummary {
     outOfScope         : number;
     ghost              : number;
 }
+
+/** Continent 미분류 노드 fallback 상수 — 'unknown' 하드코딩 금지 */
+export const UNCHARTED_CONTINENT = 'UNCHARTED' as const;

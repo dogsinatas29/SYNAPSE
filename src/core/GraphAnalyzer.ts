@@ -1,4 +1,5 @@
 import { Node, Edge, SemanticRole, SemanticEdgeType, AssemblyAuditReason, AssemblyAuditEntry } from './GraphModel';
+import { UNCHARTED_CONTINENT } from '../types/schema';
 
 export interface DegreeInfo {
     in: number;
@@ -342,7 +343,7 @@ export function analyzeGraph(input: AnalysisInput): GraphAnalysis {
     const continentInfo = new Map<string, ContinentInfo>();
 
     for (const node of nodes) {
-        const cont = node.data?.continent || 'UNCHARTED'; // no continent data → UNCHARTED (not UNKNOWN)
+        const cont = node.data?.continent || UNCHARTED_CONTINENT;
         if (!continentInfo.has(cont)) {
             continentInfo.set(cont, {
                 nodeCount: 0,
@@ -368,13 +369,13 @@ export function analyzeGraph(input: AnalysisInput): GraphAnalysis {
     for (const edge of edges) {
         const fromNode = nodeMap.get(edge.from);
         const toNode = nodeMap.get(edge.to);
-        const fromCont = fromNode?.data?.continent || 'UNCHARTED';
-        const toCont   = toNode?.data?.continent   || 'UNCHARTED';
+        const fromCont = fromNode?.data?.continent || UNCHARTED_CONTINENT;
+        const toCont   = toNode?.data?.continent   || UNCHARTED_CONTINENT;
 
-        if (fromCont === 'UNCHARTED' && unknownSample.length < 10) {
+        if (fromCont === UNCHARTED_CONTINENT && unknownSample.length < 10) {
             unknownSample.push({ id: edge.from, cluster_id: fromNode?.cluster_id, role: fromNode?.role, type: fromNode?.type });
         }
-        if (toCont === 'UNCHARTED' && unknownSample.length < 10) {
+        if (toCont === UNCHARTED_CONTINENT && unknownSample.length < 10) {
             unknownSample.push({ id: edge.to, cluster_id: toNode?.cluster_id, role: toNode?.role, type: toNode?.type });
         }
 

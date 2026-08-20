@@ -3,7 +3,7 @@ import { ValidationEngine } from './validation/ValidationEngine';
 import { ValidationReportBuilder } from './validation/ValidationReportBuilder';
 import { GraphSnapshot } from './validation/ValidationContext';
 import * as path from 'path';
-import { ProjectState, Node, Edge, NodeStatus, EdgeType } from '../types/schema';
+import { ProjectState, Node, Edge, NodeStatus, EdgeType, HealthState, ViewState, UNCHARTED_CONTINENT } from '../types/schema';
 import { Logger } from '../utils/Logger';
 
 export interface DebugImpact {
@@ -221,14 +221,14 @@ export class VirtualDebugger {
                         const collapsedNode: any = rawStateNodes.find((n:any) => n.id === collapsedNodeId);
                         // nodeFound=false → node in graph but absent from current view scope (OUT_OF_SCOPE)
                         // nodeFound=true but cluster_id missing → UNCLUSTERED (soft bug)
-                        const clusterFallback = collapsedNode ? 'unclustered' : 'out_of_scope';
+                        const clusterFallback = collapsedNode ? HealthState.UNCLUSTERED : ViewState.OUT_OF_SCOPE;
                         const originalCollapsedCluster = collapsedNode?.cluster_id || clusterFallback;
 
                         
                         const aggId = `AGGREGATE_${originalCollapsedCluster}`;
                         if (!aggregateNodes.has(originalCollapsedCluster)) {
                             const originalClusterInfo = state.clusters?.find((c: any) => c.id === originalCollapsedCluster);
-                            const aggContinent = originalClusterInfo?.data?.continent || (originalCollapsedCluster.startsWith('cluster_ghost') ? 'external' : (originalCollapsedCluster.replace('folder_', '').split('_')[0] || 'UNCHARTED'));
+                            const aggContinent = originalClusterInfo?.data?.continent || (originalCollapsedCluster.startsWith('cluster_ghost') ? 'external' : (originalCollapsedCluster.replace('folder_', '').split('_')[0] || UNCHARTED_CONTINENT));
                             
                             aggregateNodes.set(originalCollapsedCluster, {
                                 id: aggId,

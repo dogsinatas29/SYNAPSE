@@ -6,7 +6,7 @@
 (moved to NodeBuilder)
 
 === CLUSTER SUMMARY ===
-doc_shelf                 nodes=493
+doc_shelf                 nodes=494
 folder_src_core           nodes=59
 cluster_ghost_app         nodes=41
 cluster_ghost_assets      nodes=21
@@ -293,7 +293,7 @@ Internal Edges: 621
 External/Ghost Edges: 151
 
 ======================================================
-[PIPELINE] Nodes=998 Edges=1138
+[PIPELINE] Nodes=999 Edges=1138
 ======================================================
 === EDGE BREAKDOWN ===
   - INCLUDE: 1125
@@ -454,7 +454,7 @@ degree=13 (in=11, out=2)
 
 === CLUSTER DISTRIBUTION ===
 doc_shelf
-  nodes: 493
+  nodes: 494
   internal_edges: 120
   external_edges: 127
 
@@ -537,7 +537,7 @@ folder_src_core
 doc_shelf
   traffic: 247
   degree: 127
-  nodes: 493
+  nodes: 494
 
 folder_test
   traffic: 149
@@ -677,7 +677,7 @@ ghost_edges=204
 ghost_ratio=17.9%
 
 === INTERNAL CONTINENTS ===
-doc             nodes=493 clusters=1
+doc             nodes=494 clusters=1
 core            nodes=189 clusters=35
 vs              nodes=85 clusters=66
 root            nodes=28 clusters=3
@@ -879,7 +879,7 @@ density=0.000092
 
 === [CLUSTER] ===
 id=doc_shelf
-nodes=493
+nodes=494
 estimated_w=undefined
 estimated_h=undefined
 actual_w=3200
@@ -1743,7 +1743,7 @@ NODE README.md | cluster=doc_shelf | comm=none | role=none
 
 === [RENDER DIAGNOSTIC] CLUSTER DUMP ===
 CLUSTER id=cluster_ghosts type=system nodes=20 (computed count=20)
-CLUSTER id=doc_shelf type=system nodes=493 (computed count=493)
+CLUSTER id=doc_shelf type=system nodes=494 (computed count=494)
 CLUSTER id=folder_root type=folder nodes=7 (computed count=7)
 CLUSTER id=folder_assets_test_sample type=folder nodes=3 (computed count=3)
 CLUSTER id=folder_data type=folder nodes=1 (computed count=1)

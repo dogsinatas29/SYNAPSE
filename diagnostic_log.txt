@@ -6,7 +6,7 @@
 (moved to NodeBuilder)
 
 === CLUSTER SUMMARY ===
-doc_shelf                 nodes=495
+doc_shelf                 nodes=496
 folder_src_core           nodes=60
 cluster_ghost_app         nodes=41
 cluster_ghost_assets      nodes=21
@@ -24,10 +24,10 @@ folder_src_core_reasoning_answers_aggregators nodes=8
 folder_root               nodes=7
 folder_src_utils          nodes=7
 folder_ui                 nodes=7
+folder_scripts            nodes=6
 folder_src                nodes=6
 folder_src_core_analysis_reasoning nodes=6
 folder_scratch            nodes=5
-folder_scripts            nodes=5
 folder_src_core_reasoning_rules_roles nodes=5
 folder_tools              nodes=5
 folder_demo               nodes=4
@@ -289,22 +289,22 @@ cluster_ghost_src         nodes=0
 TOTAL_CLUSTERS=280
 
 === EDGE SUMMARY ===
-Internal Edges: 624
+Internal Edges: 625
 External/Ghost Edges: 151
 
 ======================================================
-[PIPELINE] Nodes=1001 Edges=1141
+[PIPELINE] Nodes=1003 Edges=1142
 ======================================================
 === EDGE BREAKDOWN ===
-  - INCLUDE: 1128
+  - INCLUDE: 1129
   - CALL: 10
   - DB_QUERY: 3
 ======================================================
 
 === CLUSTER SIZE DISTRIBUTION ===
 1 node   : 109 clusters
-2-5 nodes: 41 clusters
-6-10     : 11 clusters
+2-5 nodes: 40 clusters
+6-10     : 12 clusters
 11-20    : 5 clusters
 20+      : 4 clusters
 ======================================================
@@ -454,14 +454,14 @@ degree=13 (in=11, out=2)
 
 === CLUSTER DISTRIBUTION ===
 doc_shelf
-  nodes: 495
+  nodes: 496
   internal_edges: 120
   external_edges: 127
 
 folder_src_core
   nodes: 60
   internal_edges: 67
-  external_edges: 218
+  external_edges: 219
 
 folder_src_core_collaboration
   nodes: 17
@@ -530,14 +530,14 @@ folder_ui
 
 === HUB RANKING ===
 folder_src_core
-  traffic: 285
-  degree: 218
+  traffic: 286
+  degree: 219
   nodes: 60
 
 doc_shelf
   traffic: 247
   degree: 127
-  nodes: 495
+  nodes: 496
 
 folder_test
   traffic: 149
@@ -677,7 +677,7 @@ ghost_edges=204
 ghost_ratio=17.9%
 
 === INTERNAL CONTINENTS ===
-doc             nodes=495 clusters=1
+doc             nodes=496 clusters=1
 core            nodes=190 clusters=35
 vs              nodes=85 clusters=66
 root            nodes=28 clusters=3
@@ -686,8 +686,8 @@ cli             nodes=11 clusters=1
 extensions      nodes=9 clusters=9
 vscode-main     nodes=9 clusters=7
 demo            nodes=8 clusters=2
+scripts         nodes=7 clusters=2
 utils           nodes=7 clusters=1
-scripts         nodes=6 clusters=2
 scratch         nodes=5 clusters=1
 tools           nodes=5 clusters=1
 data            nodes=4 clusters=2
@@ -736,7 +736,7 @@ core <-> types                 62
 assets <-> doc                 42
 core <-> doc                   39
 core <-> utils                 33
-core <-> scripts               30
+core <-> scripts               31
 bootstrap <-> core             24
 core <-> webview               20
 test_sample <-> ui             19
@@ -764,7 +764,7 @@ core ──(62)── types
 assets ──(42)── doc
 core ──(39)── doc
 core ──(33)── utils
-core ──(30)── scripts
+core ──(31)── scripts
 bootstrap ──(24)── core
 core ──(20)── webview
 test_sample ──(19)── ui
@@ -879,7 +879,7 @@ density=0.000092
 
 === [CLUSTER] ===
 id=doc_shelf
-nodes=495
+nodes=496
 estimated_w=undefined
 estimated_h=undefined
 actual_w=3200
@@ -1007,13 +1007,13 @@ density=0.000078
 
 === [CLUSTER] ===
 id=folder_scripts
-nodes=5
+nodes=6
 estimated_w=undefined
 estimated_h=undefined
 actual_w=400
 actual_h=160
 center=(140,40)
-density=0.000078
+density=0.000094
 [OVERLAP] folder_scripts & folder_src (area=64000)
 [OVERLAP] folder_scripts & folder_src_cli (area=64000)
 [OVERLAP] folder_scripts & folder_src_core (area=64000)
@@ -1743,7 +1743,7 @@ NODE README.md | cluster=doc_shelf | comm=none | role=none
 
 === [RENDER DIAGNOSTIC] CLUSTER DUMP ===
 CLUSTER id=cluster_ghosts type=system nodes=20 (computed count=20)
-CLUSTER id=doc_shelf type=system nodes=495 (computed count=495)
+CLUSTER id=doc_shelf type=system nodes=496 (computed count=496)
 CLUSTER id=folder_root type=folder nodes=7 (computed count=7)
 CLUSTER id=folder_assets_test_sample type=folder nodes=3 (computed count=3)
 CLUSTER id=folder_data type=folder nodes=1 (computed count=1)
@@ -1751,7 +1751,7 @@ CLUSTER id=folder_demo_data type=folder nodes=8 (computed count=8)
 CLUSTER id=folder_extensions_copilot_src_extension type=folder nodes=9 (computed count=9)
 CLUSTER id=folder_home_dogsinatas_TypeScript_project_antigravity_extension_vis_src_core type=folder nodes=1 (computed count=1)
 CLUSTER id=folder_scratch type=folder nodes=5 (computed count=5)
-CLUSTER id=folder_scripts type=folder nodes=5 (computed count=5)
+CLUSTER id=folder_scripts type=folder nodes=6 (computed count=6)
 CLUSTER id=folder_src type=folder nodes=13 (computed count=13)
 CLUSTER id=folder_src_cli type=folder nodes=11 (computed count=11)
 CLUSTER id=folder_src_core type=folder nodes=66 (computed count=66)

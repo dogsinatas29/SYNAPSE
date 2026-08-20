@@ -219,15 +219,16 @@ export class VirtualDebugger {
                         const collapsedNodeId = fromExp ? e.to : e.from;
                         // Use original cluster_id for the collapsed node, since getVisibleAncestor is null
                         const collapsedNode: any = rawStateNodes.find((n:any) => n.id === collapsedNodeId);
-                        // nodeFound=false → node exists in graph but not in current view scope
-                        const clusterFallback = collapsedNode ? 'unknown' : 'out_of_scope';
+                        // nodeFound=false → node in graph but absent from current view scope (OUT_OF_SCOPE)
+                        // nodeFound=true but cluster_id missing → UNCLUSTERED (soft bug)
+                        const clusterFallback = collapsedNode ? 'unclustered' : 'out_of_scope';
                         const originalCollapsedCluster = collapsedNode?.cluster_id || clusterFallback;
 
                         
                         const aggId = `AGGREGATE_${originalCollapsedCluster}`;
                         if (!aggregateNodes.has(originalCollapsedCluster)) {
                             const originalClusterInfo = state.clusters?.find((c: any) => c.id === originalCollapsedCluster);
-                            const aggContinent = originalClusterInfo?.data?.continent || (originalCollapsedCluster.startsWith('cluster_ghost') ? 'external' : (originalCollapsedCluster.replace('folder_', '').split('_')[0] || 'unknown'));
+                            const aggContinent = originalClusterInfo?.data?.continent || (originalCollapsedCluster.startsWith('cluster_ghost') ? 'external' : (originalCollapsedCluster.replace('folder_', '').split('_')[0] || 'UNCHARTED'));
                             
                             aggregateNodes.set(originalCollapsedCluster, {
                                 id: aggId,

@@ -342,7 +342,7 @@ export function analyzeGraph(input: AnalysisInput): GraphAnalysis {
     const continentInfo = new Map<string, ContinentInfo>();
 
     for (const node of nodes) {
-        const cont = node.data?.continent || 'unknown';
+        const cont = node.data?.continent || 'UNCHARTED'; // no continent data → UNCHARTED (not UNKNOWN)
         if (!continentInfo.has(cont)) {
             continentInfo.set(cont, {
                 nodeCount: 0,
@@ -368,13 +368,13 @@ export function analyzeGraph(input: AnalysisInput): GraphAnalysis {
     for (const edge of edges) {
         const fromNode = nodeMap.get(edge.from);
         const toNode = nodeMap.get(edge.to);
-        const fromCont = fromNode?.data?.continent || 'unknown';
-        const toCont = toNode?.data?.continent || 'unknown';
+        const fromCont = fromNode?.data?.continent || 'UNCHARTED';
+        const toCont   = toNode?.data?.continent   || 'UNCHARTED';
 
-        if (fromCont === 'unknown' && unknownSample.length < 10) {
+        if (fromCont === 'UNCHARTED' && unknownSample.length < 10) {
             unknownSample.push({ id: edge.from, cluster_id: fromNode?.cluster_id, role: fromNode?.role, type: fromNode?.type });
         }
-        if (toCont === 'unknown' && unknownSample.length < 10) {
+        if (toCont === 'UNCHARTED' && unknownSample.length < 10) {
             unknownSample.push({ id: edge.to, cluster_id: toNode?.cluster_id, role: toNode?.role, type: toNode?.type });
         }
 

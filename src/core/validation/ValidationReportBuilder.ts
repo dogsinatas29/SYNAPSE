@@ -728,6 +728,42 @@ export class ValidationReportBuilder {
             architecturalReasoningSection.push('*Reasoning Pipeline was not executed or results unavailable.*');
         }
 
+        // ── Section 8: Architecture State Report (v0.3.34.24) ───────────────────
+        const anomaly = (report as any).anomalySummary as import('../../types/schema').AnomalySummary | undefined;
+        let architectureStateSection: string;
+        if (anomaly) {
+            const fsmStatus = (anomaly.missingTransitions === 0 && anomaly.invalidTransitions === 0) ? '✅ PASS' : '⚠️ ISSUES';
+            architectureStateSection = [
+                '## 8. Architecture State Report',
+                '',
+                '### FSM Completeness',
+                `| Metric | Count |`,
+                `|---|---|`,
+                `| Missing Transitions | ${anomaly.missingTransitions} |`,
+                `| Invalid Transitions | ${anomaly.invalidTransitions} |`,
+                `| **State Completeness** | **${fsmStatus}** |`,
+                '',
+                '### HealthState',
+                `| State | Count | Severity |`,
+                `|---|---|---|`,
+                `| UNCLUSTERED  | ${anomaly.unclustered}  | Soft Bug |`,
+                `| UNCLASSIFIED | ${anomaly.unclassified} | Soft Anomaly (Role ontology gap) |`,
+                `| CORRUPTED    | ${anomaly.corrupted}    | Hard Bug |`,
+                '',
+                '### ViewState',
+                `| State | Count |`,
+                `|---|---|`,
+                `| OUT_OF_SCOPE | ${anomaly.outOfScope} |`,
+                '',
+                '### ReferenceState',
+                `| State | Count |`,
+                `|---|---|`,
+                `| GHOST | ${anomaly.ghost} |`,
+            ].join('\n');
+        } else {
+            architectureStateSection = '## 8. Architecture State Report\n\n*AnomalyCollector not available.*';
+        }
+
         return [
             `# 🔬 SYNAPSE Architecture Scan Report (${evId})`,
             `Generated: ${report.generatedAt || new Date().toISOString()}`,
@@ -754,6 +790,8 @@ export class ValidationReportBuilder {
             docEvidenceSection.join('\n'),
             '',
             architecturalReasoningSection.join('\n'),
+            '',
+            architectureStateSection,
             '',
             rawMetricsSection
         ].join('\n');

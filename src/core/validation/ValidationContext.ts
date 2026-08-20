@@ -170,4 +170,5 @@ export interface ValidationContext {
     snapshot: Readonly<GraphSnapshot>;
     metrics: ValidationMetrics;
     workspaceRoot?: string;
+    anomalySummary?: import('../../types/schema').AnomalySummary;
 }

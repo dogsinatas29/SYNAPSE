@@ -1132,10 +1132,26 @@ export class ValidationEngine {
             metrics.edgeTypeDistribution = anySnapshot.metadata.edgeTypeDistribution;
         }
 
+        // [v0.3.34.24] Architecture State Model — AnomalyCollector
+        // snapshot.nodes = 전체 그래프 노드 (rawStateNodes 개념 없음 — ValidationEngine은 전체 그래프 대상)
+        // 모든 노드를 분류하고 FSM Completeness 집계
+        let anomalySummary: import('../../types/schema').AnomalySummary | undefined;
+        try {
+            const { AnomalyCollector } = require('../AnomalyCollector');
+            // ValidationEngine은 전체 그래프 기준 → rawStateNodes = snapshot.nodes (OUT_OF_SCOPE 없음)
+            const collector = new AnomalyCollector(snapshot.nodes, snapshot.nodes);
+            collector.classifyAll(snapshot.nodes, snapshot.edges);
+            anomalySummary = collector.summarize();
+            console.log('[ANOMALY_SUMMARY]', anomalySummary);
+        } catch (e) {
+            console.warn('[AnomalyCollector] skipped:', e);
+        }
+
         return {
             snapshot,
             metrics,
-            workspaceRoot
+            workspaceRoot,
+            anomalySummary,
         };
     }
 }

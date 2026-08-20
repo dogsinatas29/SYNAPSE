@@ -407,3 +407,101 @@ export interface LanguageScanner {
     supportsExtension(ext: string): boolean;
     parse(content: string, summary: CodeSummary): void;
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// v0.3.34.24 — Architecture State Model (FSM)
+// UNKNOWN은 분류 실패가 아니다. 상태 전이 이력이 존재하지 않는 노드다.
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** 노드 생애주기 단계 (단방향, 정상 경로만) */
+export enum LifecycleState {
+    DISCOVERED  = 'DISCOVERED',   // 파일 발견
+    PARSED      = 'PARSED',       // AST 파싱 완료
+    REGISTERED  = 'REGISTERED',   // GraphModel 등록
+    CLUSTERED   = 'CLUSTERED',    // cluster_id 배정
+    CLASSIFIED  = 'CLASSIFIED',   // role 분류 완료
+}
+
+/** 노드 건강 상태 (LifecycleState 실패 판정) */
+export enum HealthState {
+    HEALTHY      = 'HEALTHY',      // 정상
+    UNCLUSTERED  = 'UNCLUSTERED',  // cluster_id 미배정
+    UNCLASSIFIED = 'UNCLASSIFIED', // role 분류 실패
+    CORRUPTED    = 'CORRUPTED',    // 데이터 손상
+}
+
+/** 현재 뷰 기준 상태 (노드 상태가 아닌 뷰 상태) */
+export enum ViewState {
+    VISIBLE      = 'VISIBLE',      // 현재 표시 중
+    COLLAPSED    = 'COLLAPSED',    // 상위 클러스터에 접힘
+    FILTERED     = 'FILTERED',     // 필터에 의해 숨김
+    OUT_OF_SCOPE = 'OUT_OF_SCOPE', // 현재 View 범위 밖 (정상 상태)
+}
+
+/** 참조(Edge) 기준 상태 (노드 상태 아님) */
+export enum ReferenceState {
+    RESOLVED = 'RESOLVED', // 대상 노드 존재
+    GHOST    = 'GHOST',    // 대상 파일/노드 없음
+}
+
+/** FSM 전이 완전성 */
+export enum FSMCompleteness {
+    KNOWN                = 'KNOWN',                 // 모든 전이 기록됨
+    INCOMPLETE_TRANSITION = 'INCOMPLETE_TRANSITION', // 전이 단계 누락
+    INVALID_TRANSITION   = 'INVALID_TRANSITION',    // 불가능한 전이
+}
+
+/** 노드 상태 집약 (여러 상태 축을 단일 객체로) */
+export interface NodeState {
+    lifecycle : LifecycleState;
+    health    : HealthState;
+    view      : ViewState;
+}
+
+/** 상태 전이 검증 결과 (상태가 아닌 검증 판정) */
+export interface TransitionValidation {
+    completeness : FSMCompleteness;
+    reason?      : string;
+}
+
+/** 노드/참조 이벤트 (도메인 이벤트, 구현 함수명 아님) */
+export enum NodeEvent {
+    // Lifecycle
+    NODE_DISCOVERED = 'NODE_DISCOVERED',
+    NODE_RESOLVED   = 'NODE_RESOLVED',
+    NODE_CLASSIFIED = 'NODE_CLASSIFIED',
+
+    // Health
+    NODE_UNCLUSTERED  = 'NODE_UNCLUSTERED',
+    NODE_UNCLASSIFIED = 'NODE_UNCLASSIFIED',
+    NODE_CORRUPTED    = 'NODE_CORRUPTED',
+
+    // View
+    NODE_HIDDEN   = 'NODE_HIDDEN',
+    NODE_REVEALED = 'NODE_REVEALED',
+
+    // Reference
+    REFERENCE_BROKEN   = 'REFERENCE_BROKEN',
+    REFERENCE_RESOLVED = 'REFERENCE_RESOLVED',
+}
+
+/** 상태 전이 기록 (v0.3.34.25+ 시뮬레이션 기반) */
+export interface StateTransitionRecord {
+    nodeId     : string;
+    state      : NodeState;
+    validation : TransitionValidation;
+    event      : NodeEvent;
+    reason     : string;
+    timestamp? : number;
+}
+
+/** AnomalyCollector 집계 결과 */
+export interface AnomalySummary {
+    missingTransitions : number;
+    invalidTransitions : number;
+    unclustered        : number;
+    unclassified       : number;
+    corrupted          : number;
+    outOfScope         : number;
+    ghost              : number;
+}

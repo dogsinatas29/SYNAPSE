@@ -6,8 +6,8 @@
 (moved to NodeBuilder)
 
 === CLUSTER SUMMARY ===
-doc_shelf                 nodes=494
-folder_src_core           nodes=59
+doc_shelf                 nodes=495
+folder_src_core           nodes=60
 cluster_ghost_app         nodes=41
 cluster_ghost_assets      nodes=21
 cluster_ghost_ui          nodes=19
@@ -289,14 +289,14 @@ cluster_ghost_src         nodes=0
 TOTAL_CLUSTERS=280
 
 === EDGE SUMMARY ===
-Internal Edges: 621
+Internal Edges: 624
 External/Ghost Edges: 151
 
 ======================================================
-[PIPELINE] Nodes=999 Edges=1138
+[PIPELINE] Nodes=1001 Edges=1141
 ======================================================
 === EDGE BREAKDOWN ===
-  - INCLUDE: 1125
+  - INCLUDE: 1128
   - CALL: 10
   - DB_QUERY: 3
 ======================================================
@@ -315,7 +315,7 @@ id=src/types/schema.ts
 cluster=folder_src_types
 role=none
 external=false
-degree=66 (in=66, out=0)
+degree=69 (in=69, out=0)
 
 rank=2
 id=assets/test_sample/antennapod.json
@@ -454,14 +454,14 @@ degree=13 (in=11, out=2)
 
 === CLUSTER DISTRIBUTION ===
 doc_shelf
-  nodes: 494
+  nodes: 495
   internal_edges: 120
   external_edges: 127
 
 folder_src_core
-  nodes: 59
+  nodes: 60
   internal_edges: 67
-  external_edges: 217
+  external_edges: 218
 
 folder_src_core_collaboration
   nodes: 17
@@ -530,14 +530,14 @@ folder_ui
 
 === HUB RANKING ===
 folder_src_core
-  traffic: 284
-  degree: 217
-  nodes: 59
+  traffic: 285
+  degree: 218
+  nodes: 60
 
 doc_shelf
   traffic: 247
   degree: 127
-  nodes: 494
+  nodes: 495
 
 folder_test
   traffic: 149
@@ -549,15 +549,15 @@ folder_assets_test_sample
   degree: 122
   nodes: 3
 
+folder_src_types
+  traffic: 69
+  degree: 69
+  nodes: 1
+
 folder_src_core_reasoning_answers_aggregators
   traffic: 67
   degree: 67
   nodes: 8
-
-folder_src_types
-  traffic: 66
-  degree: 66
-  nodes: 1
 
 folder_src_core_collaboration
   traffic: 63
@@ -606,20 +606,20 @@ folder_src_core_reasoning_rules_roles
 
 === CLUSTER MATRIX ===
                     folder_sr  doc_shelf  folder_te  folder_as  folder_sr  folder_sr  folder_sr  folder_sr  folder_sr  folder_sr 
-folder_src_core     -         19        23        0         0         26        8         5         0         16        
-doc_shelf           19        -         0         6         0         3         0         0         0         1         
-folder_test         23        0         -         0         32        0         0         19        10        0         
+folder_src_core     -         19        23        0         27        0         8         5         0         16        
+doc_shelf           19        -         0         6         3         0         0         0         0         1         
+folder_test         23        0         -         0         0         32        0         19        10        0         
 folder_assets_test_sample 0         6         0         -         0         0         0         0         0         0         
-folder_src_core_reasoning_answers_aggregators 0         0         32        0         -         0         0         0         8         0         
-folder_src_types    26        3         0         0         0         -         9         0         0         0         
-folder_src_core_collaboration 8         0         0         0         0         9         -         0         0         12        
+folder_src_types    27        3         0         0         -         0         9         0         0         0         
+folder_src_core_reasoning_answers_aggregators 0         0         32        0         0         -         0         0         8         0         
+folder_src_core_collaboration 8         0         0         0         9         0         -         0         0         12        
 folder_src_core_reasoning_analysis 5         0         19        0         0         0         0         -         8         0         
-folder_src_core_reasoning_snapshot 0         0         10        0         8         0         0         8         -         0         
+folder_src_core_reasoning_snapshot 0         0         10        0         0         8         0         8         -         0         
 folder_src_utils    16        1         0         0         0         0         12        0         0         -         
 
 === CLUSTER EDGE LIST ===
 folder_src_core_reasoning_answers_aggregators ──(32)── folder_test
-folder_src_core      ──(26)── folder_src_types
+folder_src_core      ──(27)── folder_src_types
 folder_src_bootstrap ──(23)── folder_src_core
 folder_src_core      ──(23)── folder_test
 doc_shelf            ──(19)── folder_src_core
@@ -677,8 +677,8 @@ ghost_edges=204
 ghost_ratio=17.9%
 
 === INTERNAL CONTINENTS ===
-doc             nodes=494 clusters=1
-core            nodes=189 clusters=35
+doc             nodes=495 clusters=1
+core            nodes=190 clusters=35
 vs              nodes=85 clusters=66
 root            nodes=28 clusters=3
 ui              nodes=26 clusters=2
@@ -732,7 +732,7 @@ cors            nodes=1 clusters=1
 === TOP CONTINENT PAIRS ===
 core <-> root                  165
 app <-> test_sample            85
-core <-> types                 59
+core <-> types                 62
 assets <-> doc                 42
 core <-> doc                   39
 core <-> utils                 33
@@ -760,7 +760,7 @@ vscode-main 0         0         0         0         0         0         0       
 === CONTINENT GRAPH (Top 20 Edges) ===
 core ──(165)── root
 app ──(85)── test_sample
-core ──(59)── types
+core ──(62)── types
 assets ──(42)── doc
 core ──(39)── doc
 core ──(33)── utils
@@ -786,8 +786,8 @@ playback ──(3)── test_sample
 === CLUSTER CENTROIDS ===
 folder_src_core
 bbox_center=(0, 0)
-node_center=(545, 250)
-node_count=65
+node_center=(541, 255)
+node_count=66
 
 folder_src_vs_workbench_contrib
 bbox_center=(0, 0)
@@ -879,7 +879,7 @@ density=0.000092
 
 === [CLUSTER] ===
 id=doc_shelf
-nodes=494
+nodes=495
 estimated_w=undefined
 estimated_h=undefined
 actual_w=3200
@@ -1055,13 +1055,13 @@ density=0.000085
 
 === [CLUSTER] ===
 id=folder_src_core
-nodes=65
+nodes=66
 estimated_w=undefined
 estimated_h=undefined
 actual_w=1240
 actual_h=640
 center=(560,280)
-density=0.000082
+density=0.000083
 [OVERLAP] folder_src_core & folder_src_core_analysis (area=129600)
 [OVERLAP] folder_src_core & folder_src_core_analysis_analyzers (area=96000)
 [OVERLAP] folder_src_core & folder_src_core_analysis_intent (area=129600)
@@ -1743,7 +1743,7 @@ NODE README.md | cluster=doc_shelf | comm=none | role=none
 
 === [RENDER DIAGNOSTIC] CLUSTER DUMP ===
 CLUSTER id=cluster_ghosts type=system nodes=20 (computed count=20)
-CLUSTER id=doc_shelf type=system nodes=494 (computed count=494)
+CLUSTER id=doc_shelf type=system nodes=495 (computed count=495)
 CLUSTER id=folder_root type=folder nodes=7 (computed count=7)
 CLUSTER id=folder_assets_test_sample type=folder nodes=3 (computed count=3)
 CLUSTER id=folder_data type=folder nodes=1 (computed count=1)
@@ -1754,7 +1754,7 @@ CLUSTER id=folder_scratch type=folder nodes=5 (computed count=5)
 CLUSTER id=folder_scripts type=folder nodes=5 (computed count=5)
 CLUSTER id=folder_src type=folder nodes=13 (computed count=13)
 CLUSTER id=folder_src_cli type=folder nodes=11 (computed count=11)
-CLUSTER id=folder_src_core type=folder nodes=65 (computed count=65)
+CLUSTER id=folder_src_core type=folder nodes=66 (computed count=66)
 CLUSTER id=folder_src_core_analysis type=folder nodes=10 (computed count=10)
 CLUSTER id=folder_src_core_analysis_analyzers type=folder nodes=8 (computed count=8)
 CLUSTER id=folder_src_core_analysis_intent type=folder nodes=12 (computed count=12)

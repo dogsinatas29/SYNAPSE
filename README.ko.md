@@ -341,6 +341,9 @@ SYNAPSE의 **아키텍처 스캔 리포트(ASR)**는 코드베이스의 아키�
 
 - [AntennaPod app/src + WearOS Report](assets/test_sample/antennapod_app_src_wearos.md)
 - [AntennaPod app/src + WearOS Evidence](assets/test_sample/antennapod_app_src_wearos.json)
+
+- [Linux Kernel 7.2 rc3 report](assets/test_sample/linux_kernel.md)
+
 ---
 
 ### 동작 원리

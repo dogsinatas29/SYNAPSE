@@ -342,6 +342,8 @@ SYNAPSE's **Architecture Scan Report (ASR)** is a fact-based, data-driven archit
 
 - [AntennaPod app/src + WearOS Report](assets/test_sample/antennapod_app_src_wearos.md)
 - [AntennaPod app/src + WearOS Evidence](assets/test_sample/antennapod_app_src_wearos.json)
+
+- [Linux Kernel 7.2 rc3 report](assets/test_sample/linux_kernel.md)
 ---
 
 ### How It Works

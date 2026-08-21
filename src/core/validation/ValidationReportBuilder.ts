@@ -730,9 +730,23 @@ export class ValidationReportBuilder {
 
         // ── Section 8: Architecture State Report (v0.3.34.24) ───────────────────
         const anomaly = (report as any).anomalySummary as import('../../types/schema').AnomalySummary | undefined;
+        const fsmAudit = (report as any).fsmAudit as import('../../types/schema').FSMAuditSummary | undefined;
+
         let architectureStateSection: string;
         if (anomaly) {
             const fsmStatus = (anomaly.missingTransitions === 0 && anomaly.invalidTransitions === 0) ? '✅ PASS' : '⚠️ ISSUES';
+            const fsmAuditText = fsmAudit ? [
+                '### FSM Audit (v0.3.34.25)',
+                `| Type | Count |`,
+                `|---|---|`,
+                `| Missing Transitions | ${fsmAudit.missing} |`,
+                `| Invalid Transitions | ${fsmAudit.invalid} |`,
+                `| Uncharted Transitions | ${fsmAudit.uncharted} |`,
+                '',
+                fsmAudit.violations.length > 0 ? `Top violations → [View in Workspace](command:synapse.openFsmAudit)` : '*No violations detected.*',
+                ''
+            ].join('\n') : '';
+
             architectureStateSection = [
                 '## 8. Architecture State Report',
                 '',
@@ -743,6 +757,7 @@ export class ValidationReportBuilder {
                 `| Invalid Transitions | ${anomaly.invalidTransitions} |`,
                 `| **State Completeness** | **${fsmStatus}** |`,
                 '',
+                fsmAuditText,
                 '### HealthState',
                 `| State | Count | Severity |`,
                 `|---|---|---|`,

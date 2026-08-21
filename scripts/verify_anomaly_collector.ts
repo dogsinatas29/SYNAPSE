@@ -7,7 +7,7 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
-import { AnomalyCollector } from '../src/core/AnomalyCollector';
+import { StateAuditPipeline } from '../src/core/StateAuditPipeline';
 
 const PROJECTS: { name: string; statePath: string }[] = [
     {
@@ -48,9 +48,15 @@ function run() {
         }
 
         // ValidationEngine과 동일: 전체 그래프 기준 (rawStateNodes = allNodes)
-        const collector = new AnomalyCollector(nodes, nodes);
-        collector.classifyAll(nodes, edges);
-        const summary = collector.summarize();
+        const pipeline = new StateAuditPipeline(nodes, nodes);
+
+        const startHeap = process.memoryUsage().heapUsed;
+        const result = pipeline.run(nodes, edges);
+        const endHeap = process.memoryUsage().heapUsed;
+        const heapDiffMB = ((endHeap - startHeap) / 1024 / 1024).toFixed(2);
+
+        const summary = result.anomalySummary;
+        const fsmAudit = result.fsmAudit;
 
         const fsmPass = summary.missingTransitions === 0 && summary.invalidTransitions === 0;
 
@@ -58,12 +64,19 @@ function run() {
 ════════════════════════════════════════
 ${proj.name}
 Nodes: ${nodes.length} / Edges: ${edges.length}
+Heap Increase: +${heapDiffMB} MB
 ════════════════════════════════════════
 
-FSM Completeness
+FSM Completeness (AnomalyCollector)
   Missing Transitions : ${summary.missingTransitions}
   Invalid Transitions : ${summary.invalidTransitions}
   State Completeness  : ${fsmPass ? '✅ PASS' : '⚠️  ISSUES'}
+
+FSM Audit (TransitionGrammar)
+  Missing   : ${fsmAudit.missing}
+  Invalid   : ${fsmAudit.invalid}
+  Uncharted : ${fsmAudit.uncharted}
+  Violations: ${fsmAudit.violations.length}
 
 HealthState
   UNCLUSTERED         : ${summary.unclustered}

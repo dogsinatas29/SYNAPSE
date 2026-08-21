@@ -1137,6 +1137,7 @@ export class ValidationEngine {
         // 모든 노드를 분류하고 FSM Completeness 집계
         let anomalySummary: import('../../types/schema').AnomalySummary | undefined;
         let fsmAudit: import('../../types/schema').FSMAuditSummary | undefined;
+        let failurePropagation: import('../../types/schema').FailurePropagationReport | undefined;
         try {
             const { StateAuditPipeline } = require('../StateAuditPipeline');
             // ValidationEngine은 전체 그래프 기준 → rawStateNodes = snapshot.nodes (OUT_OF_SCOPE 없음)
@@ -1144,8 +1145,10 @@ export class ValidationEngine {
             const result = pipeline.run(snapshot.nodes, snapshot.edges);
             anomalySummary = result.anomalySummary;
             fsmAudit = result.fsmAudit;
+            failurePropagation = result.failurePropagation;
             console.log('[ANOMALY_SUMMARY]', anomalySummary);
             console.log('[FSM_AUDIT]', fsmAudit);
+            console.log('[FAILURE_PROPAGATION_SUMMARY] direct:', failurePropagation?.totalDirect, 'indirect:', failurePropagation?.totalIndirect, 'cascade:', failurePropagation?.totalCascade);
         } catch (e) {
             console.warn('[AnomalyCollector] skipped:', e);
         }
@@ -1156,6 +1159,7 @@ export class ValidationEngine {
             workspaceRoot,
             anomalySummary,
             fsmAudit,
+            failurePropagation,
         };
     }
 }

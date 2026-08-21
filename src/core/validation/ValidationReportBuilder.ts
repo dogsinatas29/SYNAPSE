@@ -779,6 +779,38 @@ export class ValidationReportBuilder {
             architectureStateSection = '## 8. Architecture State Report\n\n*AnomalyCollector not available.*';
         }
 
+        // ── Section 9: Failure Propagation (v0.3.34.26) ───────────────────
+        const propagation = (report as any).failurePropagation as import('../../types/schema').FailurePropagationReport | undefined;
+        let failurePropagationSection: string;
+        if (propagation) {
+            const totalImpact = propagation.totalDirect + propagation.totalIndirect + propagation.totalCascade;
+            const ratio = propagation.totalNodes > 0 ? (totalImpact / propagation.totalNodes) : 0;
+            
+            let blastRadius = 'SAFE';
+            if (totalImpact > 0) {
+                if (ratio >= 0.10) blastRadius = 'HIGH';
+                else if (ratio >= 0.02) blastRadius = 'MEDIUM';
+                else blastRadius = 'LOW';
+            }
+
+            failurePropagationSection = [
+                '## 9. Failure Propagation Report',
+                '',
+                `| Impact Depth | Count |`,
+                `|---|---|`,
+                `| Direct Impact | ${propagation.totalDirect} |`,
+                `| Indirect Impact | ${propagation.totalIndirect} |`,
+                `| Cascade Impact | ${propagation.totalCascade} |`,
+                '',
+                `**Blast Radius Score:** ${blastRadius} (${(ratio * 100).toFixed(2)}%)`,
+                '',
+                propagation.impacts.length > 0 ? `> Top impacts → [View Failure Graph](command:synapse.openFailurePropagation)` : '*No failure propagation detected.*',
+                ''
+            ].join('\n');
+        } else {
+            failurePropagationSection = '## 9. Failure Propagation Report\n\n*FailurePropagator not available.*';
+        }
+
         return [
             `# 🔬 SYNAPSE Architecture Scan Report (${evId})`,
             `Generated: ${report.generatedAt || new Date().toISOString()}`,
@@ -807,6 +839,8 @@ export class ValidationReportBuilder {
             architecturalReasoningSection.join('\n'),
             '',
             architectureStateSection,
+            '',
+            failurePropagationSection,
             '',
             rawMetricsSection
         ].join('\n');

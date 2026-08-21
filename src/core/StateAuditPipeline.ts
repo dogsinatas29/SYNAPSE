@@ -12,27 +12,41 @@
 
 import { AnomalyCollector } from './AnomalyCollector';
 import { TransitionGrammar } from './TransitionGrammar';
-import { AnomalySummary, FSMAuditSummary } from '../types/schema';
+import { FailurePropagator } from './FailurePropagator';
+import { AnomalySummary, FSMAuditSummary, FailurePropagationReport } from '../types/schema';
 
 export interface StateAuditResult {
-    anomalySummary : AnomalySummary;
-    fsmAudit       : FSMAuditSummary;
+    anomalySummary     : AnomalySummary;
+    fsmAudit           : FSMAuditSummary;
+    failurePropagation : FailurePropagationReport;
+    memoryMetrics      : {
+        baseline         : number;
+        afterAnomaly     : number;
+        afterFsmAudit    : number;
+        afterPropagation : number;
+    };
 }
 
 export class StateAuditPipeline {
 
-    private readonly collector : AnomalyCollector;
-    private readonly grammar   : TransitionGrammar;
+    private readonly collector  : AnomalyCollector;
+    private readonly grammar    : TransitionGrammar;
+    private readonly propagator : FailurePropagator;
 
     constructor(allNodes: any[], rawStateNodes: any[]) {
-        this.collector = new AnomalyCollector(allNodes, rawStateNodes);
-        this.grammar   = new TransitionGrammar();
+        this.collector  = new AnomalyCollector(allNodes, rawStateNodes);
+        this.grammar    = new TransitionGrammar();
+        this.propagator = new FailurePropagator();
     }
 
     run(nodes: any[], edges: any[]): StateAuditResult {
-        // 1. State 생산
+        const getHeapMB = () => process.memoryUsage().heapUsed / 1024 / 1024;
+        const memoryMetrics = { baseline: getHeapMB(), afterAnomaly: 0, afterFsmAudit: 0, afterPropagation: 0 };
+
+        // 1. 상태 분류 (생성)
         this.collector.classifyAll(nodes, edges);
         const anomalySummary = this.collector.summarize();
+        memoryMetrics.afterAnomaly = getHeapMB();
 
         // 2. State 소비 — NodeState[] 추출 후 일관성 검사
         const nodeStates = nodes.map((n: any) => ({
@@ -40,7 +54,12 @@ export class StateAuditPipeline {
             state : this.collector.classifyNode(n),
         }));
         const fsmAudit = this.grammar.auditStateConsistency(nodeStates);
+        memoryMetrics.afterFsmAudit = getHeapMB();
 
-        return { anomalySummary, fsmAudit };
+        // 3. 결함 전파 계산 (계산 후 즉시 폐기 원칙에 따라 Report만 반환)
+        const failurePropagation = this.propagator.propagate(nodeStates, edges);
+        memoryMetrics.afterPropagation = getHeapMB();
+
+        return { anomalySummary, fsmAudit, failurePropagation, memoryMetrics };
     }
 }

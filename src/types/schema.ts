@@ -554,3 +554,32 @@ export interface FSMAuditSummary {
     uncharted  : number;   // 정의되지 않은 경로 (Unknown 아님)
     violations : TransitionViolation[];  // MAX_VIOLATIONS 상한
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// v0.3.34.26 — Failure Propagation Engine
+// Invariant: 정적 의존성 기반 결함 전파 계산. Runtime 예측/캐싱 불가.
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** 전파 최대 깊이 (성능 폭발 방지 하드 스탑) */
+export const MAX_PROPAGATION_DEPTH = 3;
+
+/** 전파 영향 노드 수 최대치 (대형 프로젝트 스케일 방어) */
+export const MAX_IMPACT_NODES = 1000;
+
+/** 노드 단건에 대한 전파 이력 (어떤 노드가 영향받았는가) */
+export interface FailureImpact {
+    sourceNodeId   : string;
+    directImpact   : number; // depth=1
+    indirectImpact : number; // depth=2
+    cascadeImpact  : number; // depth>=3
+    impactedNodes  : string[]; // 영향받은 노드 ID 목록 (최대 MAX_IMPACT_NODES 제한)
+}
+
+/** 결함 전파 전체 집계 (보고서용 요약) */
+export interface FailurePropagationReport {
+    totalDirect   : number;
+    totalIndirect : number;
+    totalCascade  : number;
+    totalNodes    : number; // 비율 계산용 전체 노드 수
+    impacts       : FailureImpact[]; 
+}

@@ -172,4 +172,5 @@ export interface ValidationContext {
     workspaceRoot?: string;
     anomalySummary?: import('../../types/schema').AnomalySummary;
     fsmAudit?: import('../../types/schema').FSMAuditSummary;
+    failurePropagation?: import('../../types/schema').FailurePropagationReport;
 }

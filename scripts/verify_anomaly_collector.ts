@@ -50,13 +50,25 @@ function run() {
         // ValidationEngine과 동일: 전체 그래프 기준 (rawStateNodes = allNodes)
         const pipeline = new StateAuditPipeline(nodes, nodes);
 
-        const startHeap = process.memoryUsage().heapUsed;
         const result = pipeline.run(nodes, edges);
-        const endHeap = process.memoryUsage().heapUsed;
-        const heapDiffMB = ((endHeap - startHeap) / 1024 / 1024).toFixed(2);
+        
+        const metrics = result.memoryMetrics;
+        const fsmDiff = (metrics.afterFsmAudit - metrics.baseline).toFixed(2);
+        const propDiff = (metrics.afterPropagation - metrics.afterFsmAudit).toFixed(2);
+        const totalDiff = (metrics.afterPropagation - metrics.baseline).toFixed(2);
 
         const summary = result.anomalySummary;
         const fsmAudit = result.fsmAudit;
+        const propagation = result.failurePropagation;
+
+        let blastRadius = 'SAFE';
+        const totalImpact = propagation.totalDirect + propagation.totalIndirect + propagation.totalCascade;
+        const ratio = propagation.totalNodes > 0 ? (totalImpact / propagation.totalNodes) : 0;
+        if (totalImpact > 0) {
+            if (ratio >= 0.10) blastRadius = 'HIGH';
+            else if (ratio >= 0.02) blastRadius = 'MEDIUM';
+            else blastRadius = 'LOW';
+        }
 
         const fsmPass = summary.missingTransitions === 0 && summary.invalidTransitions === 0;
 
@@ -64,7 +76,10 @@ function run() {
 ════════════════════════════════════════
 ${proj.name}
 Nodes: ${nodes.length} / Edges: ${edges.length}
-Heap Increase: +${heapDiffMB} MB
+Heap Baseline : ${metrics.baseline.toFixed(2)} MB
+After FSM     : +${fsmDiff} MB
+After Prop    : +${propDiff} MB
+Total Increase: +${totalDiff} MB
 ════════════════════════════════════════
 
 FSM Completeness (AnomalyCollector)
@@ -77,6 +92,13 @@ FSM Audit (TransitionGrammar)
   Invalid   : ${fsmAudit.invalid}
   Uncharted : ${fsmAudit.uncharted}
   Violations: ${fsmAudit.violations.length}
+
+Failure Propagation (v0.3.34.26)
+  Direct Impact   : ${propagation.totalDirect}
+  Indirect Impact : ${propagation.totalIndirect}
+  Cascade Impact  : ${propagation.totalCascade}
+  Blast Radius    : ${blastRadius} (${(ratio * 100).toFixed(2)}%)
+  Total Impacts   : ${propagation.impacts.length}
 
 HealthState
   UNCLUSTERED         : ${summary.unclustered}

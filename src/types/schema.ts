@@ -575,6 +575,7 @@ export enum TargetPolicyType {
 export interface SimulationTargetPolicy {
     type: TargetPolicyType;
     value: number; // TOP_N이면 개수, TOP_PERCENT면 0.0~1.0, ABOVE_THRESHOLD면 절대값 기준
+    hardCap: number; // Prevent OOM by capping maximum simulation targets (Safety Invariant <= 100)
 }
 
 /** 노드 단건에 대한 전파 이력 (어떤 노드가 영향받았는가) */
@@ -593,4 +594,128 @@ export interface FailurePropagationReport {
     totalCascade  : number;
     totalNodes    : number; // 비율 계산용 전체 노드 수
     impacts       : FailureImpact[]; 
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// v0.3.34.28 & 29 — Reporting View Layer
+// Invariant: Pure Projection. No new BFS/DFS or graph traversals.
+// ─────────────────────────────────────────────────────────────────────────────
+
+export interface IGraphView {
+    isNodeAlive(nodeId: string): boolean;
+    isEdgeActive(source: string, target: string): boolean;
+    addedEdges: { source: string; target: string; type: string }[];
+}
+
+export interface BlastRadiusRiskPolicy {
+    highRiskPercent: number;   // e.g., 0.1 for 10%
+    mediumRiskPercent: number; // e.g., 0.02 for 2%
+}
+
+export interface ReportDisplayPolicy {
+    percentile: number; // e.g., 0.2 for Top 20%
+    hardCap: number;    // e.g., 10 for max 10 items
+}
+
+export interface ReportConfig {
+    safeExplorationPolicy: {
+        blastRadiusPercentile: number;
+        authorityPercentile: number;
+        couplingPercentile: number;
+        hardCap: number;
+    };
+    blastRadiusRiskPolicy: BlastRadiusRiskPolicy;
+    systemHeartPolicy: ReportDisplayPolicy;
+    assemblyPointPolicy: ReportDisplayPolicy;
+    authorityCenterPolicy: ReportDisplayPolicy;
+    refactoringCandidatePolicy: ReportDisplayPolicy;
+    teamScalingPolicy: ReportDisplayPolicy;
+}
+
+export interface ReportContext {
+    graph?: never;
+    nodes?: never;
+    edges?: never;
+    
+    systemStats: {
+        totalNodes: number;
+        totalEdges: number;
+        totalClusters: number;
+    };
+    failureReport: FailurePropagationReport;
+    authorityNodes: string[]; 
+    assemblyNodes: string[];  
+    nodeStats: Array<{
+        nodeId: string;
+        authorityScore: number;
+        couplingScore: number;
+        cohesionScore: number; // For refactoring candidates
+    }>;
+    generatedAt: number;
+}
+
+export interface OnboardingReport {
+    systemHeart: string[];
+    coreAssemblyPoints: string[];
+    safeExplorationZones: string[];
+    architectureLandmarks: {
+        systemHeart: string[];
+        coreAssembly: string[];
+        authorityCenters: string[];
+        peripheralZones: string[];
+    };
+    doNotTouch: string[];
+}
+
+export interface ExecutiveReport {
+    systemSnapshot: {
+        totalNodes: number;
+        totalEdges: number;
+        totalClusters: number;
+        assemblyPoints: number;
+        authorityNodes: number;
+    };
+    topRisks: string[];
+    blastRadiusDashboard: {
+        highRiskCount: number;
+        mediumRiskCount: number;
+        lowRiskCount: number;
+    };
+    authorityConcentration: {
+        topNodesCoverPercent: number; // e.g. 61.5 for 61.5%
+        topNodes: string[];
+    };
+    refactoringCandidates: string[];
+    teamScalingRisks: string[];
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// v0.3.34.30 — Architecture What-if Laboratory (Orchestration Layer)
+// Invariant: No Calculation Engines, Pure Orchestration and Replay.
+// ─────────────────────────────────────────────────────────────────────────────
+
+export enum SimulationActionType {
+    REMOVE_NODE = 'REMOVE_NODE',
+    REMOVE_EDGE = 'REMOVE_EDGE',
+    ADD_EDGE = 'ADD_EDGE'
+}
+
+export interface SimulationAction {
+    type: SimulationActionType;
+    nodeId?: string;
+    source?: string;
+    target?: string;
+    edgeType?: string;
+}
+
+export interface ScenarioSnapshot {
+    id: string;
+    timestamp: number;
+    description: string;
+    actions: SimulationAction[];
+}
+
+export interface ScenarioComparison {
+    baselineReport: ExecutiveReport;
+    scenarioReport: ExecutiveReport;
 }

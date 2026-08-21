@@ -15,11 +15,11 @@ export class SimulationTargetSelector {
         });
 
         if (policy.type === TargetPolicyType.TOP_N) {
-            return sortedImpacts.slice(0, policy.value).map(i => i.sourceNodeId);
+            const count = Math.min(policy.value, policy.hardCap);
+            return sortedImpacts.slice(0, count).map(i => i.sourceNodeId);
         } else if (policy.type === TargetPolicyType.TOP_PERCENT) {
             // value is e.g. 0.05 for 5%
-            const HARD_CAP = 100; // 방어용 하드캡
-            const count = Math.min(Math.max(1, Math.floor(report.totalNodes * policy.value)), HARD_CAP);
+            const count = Math.min(Math.max(1, Math.floor(report.totalNodes * policy.value)), policy.hardCap);
             return sortedImpacts.slice(0, count).map(i => i.sourceNodeId);
         } else if (policy.type === TargetPolicyType.ABOVE_THRESHOLD) {
             return sortedImpacts.filter(i => {

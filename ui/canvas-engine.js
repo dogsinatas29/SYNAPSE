@@ -14781,6 +14781,28 @@ function initCanvas() {
         }
     });
 
+    document.getElementById('btn-report-onboard')?.addEventListener('click', () => {
+        if (typeof vscode !== 'undefined') {
+            vscode.postMessage({ command: 'fetchOnboardingReport' });
+        } else {
+            alert('Available only in VS Code mode.');
+        }
+    });
+
+    document.getElementById('btn-report-exec')?.addEventListener('click', () => {
+        if (typeof vscode !== 'undefined') {
+            vscode.postMessage({ command: 'fetchExecutiveReport' });
+        } else {
+            alert('Available only in VS Code mode.');
+        }
+    });
+
+    document.getElementById('report-panel-close')?.addEventListener('click', () => {
+        document.getElementById('report-panel')?.classList.remove('visible');
+    });
+
+
+
     // [v0.3.34.8 Debug] Global click trap to catch what is ACTUALLY being clicked (overlay check)
     document.addEventListener('click', (e) => {
         const target = e.target;

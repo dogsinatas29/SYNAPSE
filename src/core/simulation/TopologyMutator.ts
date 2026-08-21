@@ -26,8 +26,12 @@ export class TopologyMutator {
         edges: any[], 
         baseReport: FailurePropagationReport,
         nodeStates: { nodeId: string; state: any }[],
-        policy: SimulationTargetPolicy = { type: TargetPolicyType.TOP_N, value: 5 }
+        policy: SimulationTargetPolicy
     ): TopologyMutationReport[] {
+        if (!policy) {
+            throw new Error("SimulationTargetPolicy is required. The Simulation Layer cannot run without an explicit policy.");
+        }
+
         const targetNodes = SimulationTargetSelector.getTopImpactNodes(baseReport, policy);
         const mutationReports: TopologyMutationReport[] = [];
 

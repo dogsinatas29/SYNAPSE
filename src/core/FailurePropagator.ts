@@ -12,9 +12,9 @@ import {
     FailureImpact,
     FailurePropagationReport,
     MAX_PROPAGATION_DEPTH,
-    MAX_IMPACT_NODES
+    MAX_IMPACT_NODES,
+    IGraphView
 } from '../types/schema';
-import { TopologyOverlay } from './simulation/TopologyOverlay';
 
 export class FailurePropagator {
 
@@ -24,7 +24,7 @@ export class FailurePropagator {
      * @param edges 그래프 엣지 목록
      * @param overlay 가상 그래프 레이어 (Topology Mutation 시 적용)
      */
-    propagate(nodeStates: { nodeId: string; state: any }[], edges: any[], overlay?: TopologyOverlay): FailurePropagationReport {
+    propagate(nodeStates: { nodeId: string; state: any }[], edges: any[], overlay?: IGraphView): FailurePropagationReport {
         const stateMap = new Map<string, HealthState>();
         for (const n of nodeStates) {
             stateMap.set(n.nodeId, n.state.health);
@@ -75,7 +75,7 @@ export class FailurePropagator {
         };
     }
 
-    private _calculateImpact(sourceNodeId: string, adj: Map<string, string[]>, stateMap: Map<string, HealthState>, overlay?: TopologyOverlay): FailureImpact {
+    private _calculateImpact(sourceNodeId: string, adj: Map<string, string[]>, stateMap: Map<string, HealthState>, overlay?: IGraphView): FailureImpact {
         const visited = new Set<string>();
         visited.add(sourceNodeId);
 

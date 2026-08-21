@@ -34,6 +34,10 @@ import { Logger } from '../utils/Logger';
 import { VirtualDebugger, DiagnosticsStore } from '../core/VirtualDebugger';
 import { SynapseIgnore } from '../core/SynapseIgnore';
 import { RuleEngine } from '../core/RuleEngine';
+import { StateAuditPipeline } from '../core/StateAuditPipeline';
+import { OnboardingReportBuilder } from '../core/reporting/OnboardingReportBuilder';
+import { ExecutiveReportBuilder } from '../core/reporting/ExecutiveReportBuilder';
+import { ReportContext, ReportConfig } from '../types/schema';
 // [v0.3.1 Bootstrap Locked] Core Systems
 import { phaseManager, Phase } from '../core/PhaseManager';
 import { gridSystem } from '../core/GridSystem';
@@ -99,6 +103,7 @@ export class CanvasPanel {
     private _contextRequestCallback: ((data: any) => void) | undefined;
     private _isProcessingConfirm: boolean = false; // [v0.2.17 Patch 13.2] Prevent duplicate dialogs
     private _taskQueue = new SequentialTaskQueue();
+    private projectState: ProjectState | undefined;
 
     public pushTask(task: () => Promise<void>) {
         return this._taskQueue.push(task);
@@ -192,6 +197,9 @@ export class CanvasPanel {
         setTimeout(() => {
             if (this._panel && this._panel.webview) {
                 Logger.info(`[CanvasPanel] Performing initial update...`);
+                // ─────────────────────────────────────────────────────────────────────────────
+                // v0.3.34.28/29 Report Handlers
+                // ─────────────────────────────────────────────────────────────────────────────
                 this._update();
             }
         }, 100);
@@ -241,6 +249,86 @@ export class CanvasPanel {
             this._disposables
         );
     }
+
+    private async buildReportContext(): Promise<ReportContext> {
+        const nodes = this.projectState?.nodes || [];
+        const edges = this.projectState?.edges || [];
+        const clusters = this.projectState?.clusters || [];
+        
+        const pipeline = new StateAuditPipeline(nodes, nodes); // We pass nodes as rawStateNodes for now
+        const auditResult = pipeline.run(nodes, edges);
+        
+        const assemblyNodes = nodes.filter(n => n.isAssemblyPoint).map(n => n.id);
+        
+        // Calculate degree for authority and coupling if not present
+        const nodeStats = nodes.map(n => {
+            const inDegree = edges.filter(e => e.target === n.id || e.to === n.id).length;
+            const outDegree = edges.filter(e => e.source === n.id || e.from === n.id).length;
+            return {
+                nodeId: n.id,
+                authorityScore: inDegree, 
+                couplingScore: inDegree + outDegree,
+                cohesionScore: 1.0 // Mock cohesion for now
+            };
+        });
+        
+        const authorityNodes = [...nodeStats].sort((a, b) => b.authorityScore - a.authorityScore).map(n => n.nodeId);
+        
+        return {
+            systemStats: {
+                totalNodes: nodes.length,
+                totalEdges: edges.length,
+                totalClusters: clusters.length
+            },
+            failureReport: auditResult.failurePropagation,
+            authorityNodes,
+            assemblyNodes,
+            nodeStats,
+            generatedAt: Date.now()
+        };
+    }
+    
+    private getDefaultReportConfig(): ReportConfig {
+        return {
+            safeExplorationPolicy: { blastRadiusPercentile: 0.2, authorityPercentile: 0.2, couplingPercentile: 0.2, hardCap: 10 },
+            blastRadiusRiskPolicy: { highRiskPercent: 0.1, mediumRiskPercent: 0.02 },
+            systemHeartPolicy: { percentile: 0.01, hardCap: 5 },
+            assemblyPointPolicy: { percentile: 0.05, hardCap: 10 },
+            authorityCenterPolicy: { percentile: 0.05, hardCap: 10 },
+            refactoringCandidatePolicy: { percentile: 0.05, hardCap: 10 },
+            teamScalingPolicy: { percentile: 0.01, hardCap: 5 }
+        };
+    }
+    
+    private async handleFetchOnboardingReport() {
+        try {
+            const context = await this.buildReportContext();
+            const builder = new OnboardingReportBuilder();
+            const config = this.getDefaultReportConfig();
+            const report = builder.build(context, config);
+            
+            this._panel.webview.postMessage({ command: 'onboardingReportData', report });
+        } catch (e: any) {
+            Logger.error(`[CanvasPanel] Error fetching onboarding report: ${e.message}`);
+        }
+    }
+
+    private async handleFetchExecutiveReport() {
+        try {
+            const context = await this.buildReportContext();
+            const builder = new ExecutiveReportBuilder();
+            const config = this.getDefaultReportConfig();
+            const report = builder.build(context, config);
+            
+            this._panel.webview.postMessage({ command: 'executiveReportData', report });
+        } catch (e: any) {
+            Logger.error(`[CanvasPanel] Error fetching executive report: ${e.message}`);
+        }
+    }
+
+    // ==========================================
+    // Lifecycle Event Handlers
+    // ==========================================
 
     public postMessage(message: any) {
         if (this._panel && this._panel.webview) {
@@ -361,6 +449,15 @@ export class CanvasPanel {
                 return;
             case 'rejectNode':
                 await this.handleRejectNode(message.nodeId);
+                return;
+            case 'fetchOnboardingReport':
+                await this.handleFetchOnboardingReport();
+                return;
+            case 'fetchExecutiveReport':
+                await this.handleFetchExecutiveReport();
+                return;
+            case 'generateGraphData':
+                await this.handleGenerateFlow(message.nodeId, message.filePath);
                 return;
             case 'generateFlow':
                 await this.handleGenerateFlow(message.nodeId, message.filePath);

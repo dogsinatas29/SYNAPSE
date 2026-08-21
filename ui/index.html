@@ -224,11 +224,11 @@
             z-index: 2000;
         }
 
-        #side-panel.visible {
+        #side-panel.visible, #report-panel.visible {
             display: flex;
         }
 
-        #side-panel-header, .panel-header {
+        #side-panel-header, #report-panel-header, .panel-header {
             padding: 12px 16px;
             background: #3c3836;
             border-bottom: 1px solid #504945;
@@ -271,11 +271,53 @@
             padding: 0 5px;
         }
 
-        #side-panel-content {
+        #side-panel-content, #report-panel-content {
             flex: 1;
             overflow: auto;
             padding: 0;
             background: #1d2021;
+        }
+
+        /* Report Panel Specific */
+        #report-panel {
+            position: fixed;
+            right: 0;
+            top: 0;
+            width: 500px;
+            height: 100vh;
+            background: var(--bg-panel);
+            border-left: 1px solid var(--border);
+            display: none;
+            flex-direction: column;
+            box-shadow: -10px 0 25px rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+        }
+
+        .report-section {
+            padding: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .report-section h3 {
+            margin-top: 0;
+            margin-bottom: 12px;
+            color: var(--accent);
+            font-size: 14px;
+        }
+
+        .report-item {
+            padding: 6px 10px;
+            background: #3c3836;
+            border-radius: 4px;
+            margin-bottom: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .report-item:hover {
+            background: #504945;
+            color: var(--accent);
         }
 
         #file-content {
@@ -1340,6 +1382,13 @@ Please wait until harvesting completes.</p>
             </div>
         </div>
 
+        <!-- Reports (v0.3.34.28/29) -->
+        <div class="btn-group" style="margin-left: 10px; margin-right: 10px;">
+            <button class="btn" id="btn-report-arch" title="Architecture Report" style="color: #83a598; font-weight: bold;">📐 Architecture</button>
+            <button class="btn" id="btn-report-onboard" title="Onboarding Report" style="color: #b8bb26; font-weight: bold;">🌱 Onboarding</button>
+            <button class="btn" id="btn-report-exec" title="Executive Report" style="color: #d3869b; font-weight: bold;">👔 Executive</button>
+        </div>
+
         <!-- System Menu -->
         <div class="dropdown">
             <div class="menu-label">⚙️ System</div>
@@ -1462,6 +1511,16 @@ Please wait until harvesting completes.</p>
             </div>
             <div id="side-panel-content">
                 <pre id="file-content"></pre>
+            </div>
+        </div>
+
+        <div id="report-panel">
+            <div id="report-panel-header">
+                <div id="report-panel-title" style="color: var(--fg-main); font-weight: bold; font-size: 14px;">Report</div>
+                <button id="report-panel-close" style="background:none; border:none; color:var(--fg-dim); font-size:20px; cursor:pointer;">×</button>
+            </div>
+            <div id="report-panel-content">
+                <!-- Report content injected here -->
             </div>
         </div>
 

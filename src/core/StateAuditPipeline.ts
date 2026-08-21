@@ -72,7 +72,7 @@ export class StateAuditPipeline {
         memoryMetrics.afterPropagation = getHeapMB();
 
         // 4. 가상 토폴로지 시뮬레이션 (Clone 금지, Overlay 적용)
-        const policy: SimulationTargetPolicy = { type: TargetPolicyType.TOP_N, value: 5 };
+        const policy: SimulationTargetPolicy = { type: TargetPolicyType.TOP_N, value: 5, hardCap: 100 };
         const topologyMutations = this.mutator.simulateNodeRemovals(
             nodes, edges, failurePropagation, nodeStates, policy
         );

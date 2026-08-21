@@ -1,4 +1,6 @@
-export class TopologyOverlay {
+import { IGraphView } from '../../types/schema';
+
+export class TopologyOverlay implements IGraphView {
     public readonly removedNodes = new Set<string>();
     public readonly removedEdges = new Set<string>(); // Edge ID or stringified source->target
     public readonly addedEdges: { source: string; target: string; type: string }[] = [];

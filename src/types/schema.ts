@@ -566,6 +566,17 @@ export const MAX_PROPAGATION_DEPTH = 3;
 /** 전파 영향 노드 수 최대치 (대형 프로젝트 스케일 방어) */
 export const MAX_IMPACT_NODES = 1000;
 
+export enum TargetPolicyType {
+    TOP_N = 'TOP_N',
+    TOP_PERCENT = 'TOP_PERCENT',
+    ABOVE_THRESHOLD = 'ABOVE_THRESHOLD'
+}
+
+export interface SimulationTargetPolicy {
+    type: TargetPolicyType;
+    value: number; // TOP_N이면 개수, TOP_PERCENT면 0.0~1.0, ABOVE_THRESHOLD면 절대값 기준
+}
+
 /** 노드 단건에 대한 전파 이력 (어떤 노드가 영향받았는가) */
 export interface FailureImpact {
     sourceNodeId   : string;

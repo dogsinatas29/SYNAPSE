@@ -14,6 +14,7 @@ import {
     MAX_PROPAGATION_DEPTH,
     MAX_IMPACT_NODES
 } from '../types/schema';
+import { TopologyOverlay } from './simulation/TopologyOverlay';
 
 export class FailurePropagator {
 
@@ -21,20 +22,29 @@ export class FailurePropagator {
      * 노드 리스트와 엣지 정보를 바탕으로 결함 전파 보고서를 생성한다.
      * @param nodeStates 현재 상태가 매핑된 노드 목록
      * @param edges 그래프 엣지 목록
+     * @param overlay 가상 그래프 레이어 (Topology Mutation 시 적용)
      */
-    propagate(nodeStates: { nodeId: string; state: any }[], edges: any[]): FailurePropagationReport {
+    propagate(nodeStates: { nodeId: string; state: any }[], edges: any[], overlay?: TopologyOverlay): FailurePropagationReport {
         const stateMap = new Map<string, HealthState>();
         for (const n of nodeStates) {
             stateMap.set(n.nodeId, n.state.health);
         }
 
-        // 인접 리스트 (source가 무너지면 target이 영향을 받음. 즉 의존성의 역방향이거나, Owns 등)
-        // Failure 전파는 의존성 그래프의 특정 방향을 따라가지만, 
-        // 여기서는 단순화를 위해 A->B 엣지가 있으면 A가 B에게 영향을 줄 수 있다고 가정.
+        // 인접 리스트 (source가 무너지면 target이 영향을 받음)
         const adj = new Map<string, string[]>();
         for (const e of edges) {
+            if (overlay && !overlay.isEdgeActive(e.source, e.target)) continue;
+            
             if (!adj.has(e.source)) adj.set(e.source, []);
             adj.get(e.source)!.push(e.target);
+        }
+        
+        // 추가된 가상 엣지가 있다면 반영
+        if (overlay) {
+            for (const added of overlay.addedEdges) {
+                if (!adj.has(added.source)) adj.set(added.source, []);
+                adj.get(added.source)!.push(added.target);
+            }
         }
 
         let totalDirect = 0;
@@ -45,8 +55,9 @@ export class FailurePropagator {
         // 이미 결함이 있는 노드를 출발점(Source)으로 삼아 파급력을 BFS 계산
         for (const [sourceNodeId, health] of stateMap.entries()) {
             if (health === HealthState.HEALTHY) continue;
+            if (overlay && !overlay.isNodeAlive(sourceNodeId)) continue; // 폭파된 노드는 시발점이 되지 않음
 
-            const impact = this._calculateImpact(sourceNodeId, adj, stateMap);
+            const impact = this._calculateImpact(sourceNodeId, adj, stateMap, overlay);
             if (impact.impactedNodes.length > 0) {
                 impacts.push(impact);
                 totalDirect += impact.directImpact;
@@ -64,7 +75,7 @@ export class FailurePropagator {
         };
     }
 
-    private _calculateImpact(sourceNodeId: string, adj: Map<string, string[]>, stateMap: Map<string, HealthState>): FailureImpact {
+    private _calculateImpact(sourceNodeId: string, adj: Map<string, string[]>, stateMap: Map<string, HealthState>, overlay?: TopologyOverlay): FailureImpact {
         const visited = new Set<string>();
         visited.add(sourceNodeId);
 
@@ -89,6 +100,9 @@ export class FailurePropagator {
                 if (impactedNodes.length >= MAX_IMPACT_NODES) break;
                 if (visited.has(targetNode)) continue;
                 
+                // Overlay에서 지워진 노드라면 영향 전파 경로 단절
+                if (overlay && !overlay.isNodeAlive(targetNode)) continue;
+
                 // 타겟 노드가 이미 결함 상태라면 전파 영향으로 세지 않음 (순수 전파만 추적)
                 if (stateMap.get(targetNode) !== HealthState.HEALTHY) continue;
 

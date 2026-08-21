@@ -13,17 +13,20 @@
 import { AnomalyCollector } from './AnomalyCollector';
 import { TransitionGrammar } from './TransitionGrammar';
 import { FailurePropagator } from './FailurePropagator';
-import { AnomalySummary, FSMAuditSummary, FailurePropagationReport } from '../types/schema';
+import { AnomalySummary, FSMAuditSummary, FailurePropagationReport, TargetPolicyType, SimulationTargetPolicy } from '../types/schema';
+import { TopologyMutator, TopologyMutationReport } from './simulation/TopologyMutator';
 
 export interface StateAuditResult {
     anomalySummary     : AnomalySummary;
     fsmAudit           : FSMAuditSummary;
     failurePropagation : FailurePropagationReport;
+    topologyMutations  : TopologyMutationReport[];
     memoryMetrics      : {
         baseline         : number;
         afterAnomaly     : number;
         afterFsmAudit    : number;
         afterPropagation : number;
+        afterMutation    : number;
     };
 }
 
@@ -32,16 +35,24 @@ export class StateAuditPipeline {
     private readonly collector  : AnomalyCollector;
     private readonly grammar    : TransitionGrammar;
     private readonly propagator : FailurePropagator;
+    private readonly mutator    : TopologyMutator;
 
     constructor(allNodes: any[], rawStateNodes: any[]) {
         this.collector  = new AnomalyCollector(allNodes, rawStateNodes);
         this.grammar    = new TransitionGrammar();
         this.propagator = new FailurePropagator();
+        this.mutator    = new TopologyMutator();
     }
 
     run(nodes: any[], edges: any[]): StateAuditResult {
         const getHeapMB = () => process.memoryUsage().heapUsed / 1024 / 1024;
-        const memoryMetrics = { baseline: getHeapMB(), afterAnomaly: 0, afterFsmAudit: 0, afterPropagation: 0 };
+        const memoryMetrics = { 
+            baseline: getHeapMB(), 
+            afterAnomaly: 0, 
+            afterFsmAudit: 0, 
+            afterPropagation: 0,
+            afterMutation: 0
+        };
 
         // 1. 상태 분류 (생성)
         this.collector.classifyAll(nodes, edges);
@@ -60,6 +71,13 @@ export class StateAuditPipeline {
         const failurePropagation = this.propagator.propagate(nodeStates, edges);
         memoryMetrics.afterPropagation = getHeapMB();
 
-        return { anomalySummary, fsmAudit, failurePropagation, memoryMetrics };
+        // 4. 가상 토폴로지 시뮬레이션 (Clone 금지, Overlay 적용)
+        const policy: SimulationTargetPolicy = { type: TargetPolicyType.TOP_N, value: 5 };
+        const topologyMutations = this.mutator.simulateNodeRemovals(
+            nodes, edges, failurePropagation, nodeStates, policy
+        );
+        memoryMetrics.afterMutation = getHeapMB();
+
+        return { anomalySummary, fsmAudit, failurePropagation, topologyMutations, memoryMetrics };
     }
 }

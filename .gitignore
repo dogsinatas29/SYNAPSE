@@ -76,5 +76,9 @@ AGENTS.md
 
 .synapse-test/
 synapse-test/
-.synapse-test/
-synapse-test/
+
+# Diagnostic and Test Artifacts
+diagnostic_log.txt
+synapse_data/
+scripts/test_architecture_*.ts
+scripts/verify_anomaly_collector.ts

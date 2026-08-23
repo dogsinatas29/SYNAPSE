@@ -1,0 +1,1259 @@
+[Validation] run 1/1 started
+[Validation] run 1/1 completed
+[Validation] Species Stability (min/max/avg over runs)
+  - Noise Cluster: min=3, max=3, avg=3.00, rel=0.00, values=[3]
+  - Utility Candidate: min=3, max=3, avg=3.00, rel=0.00, values=[3]
+  - Execution Core: min=2, max=2, avg=2.00, rel=0.00, values=[2]
+  - Subsystem Core: min=2, max=2, avg=2.00, rel=0.00, values=[2]
+  - Mixed: Contract Hub: min=1, max=1, avg=1.00, rel=0.00, values=[1]
+
+[Validation] Establishment Gate
+  - verdict: HOLD
+  - rule: default: range<=6 and rel<=0.35; Infrastructure Mesh range<=1
+  - fail: Mixed Core: missing
+  - fail: Bridge Candidate: missing
+  - fail: Bridge Cluster: missing
+  - fail: Utility Cluster: missing
+  - fail: Contract Core: missing
+  - fail: Infrastructure Mesh: missing
+
+[Validation] Species Presence Matrix
+  - Infrastructure Mesh: · | hit=0/1 | status=Unstable
+  - Mixed Core: · | hit=0/1 | status=Unstable
+  - Subsystem Core: ✓ | hit=1/1 | status=Stable
+  - Contract Core: · | hit=0/1 | status=Unstable
+  - Execution Core: ✓ | hit=1/1 | status=Stable
+  - Bridge Cluster: · | hit=0/1 | status=Unstable
+  - Bridge Candidate: · | hit=0/1 | status=Unstable
+  - Utility Cluster: · | hit=0/1 | status=Unstable
+  - Utility Candidate: ✓ | hit=1/1 | status=Stable
+
+[Validation] Species Confidence
+  - Execution Core: confidence=1.00
+  - Subsystem Core: confidence=1.00
+  - Utility Candidate: confidence=1.00
+  - Bridge Candidate: confidence=0.00
+  - Bridge Cluster: confidence=0.00
+  - Contract Core: confidence=0.00
+  - Infrastructure Mesh: confidence=0.00
+  - Mixed Core: confidence=0.00
+  - Utility Cluster: confidence=0.00
+
+[Validation] Species Score Confidence
+  - Utility Candidate: avg=0.708, min=0.622, max=0.754, n=3
+
+[Validation] Candidate Boundary Pressure
+  - Bridge Candidate: near=0/0 within ±0.05 of threshold 0.70
+  - Utility Candidate: near=2/3 within ±0.05 of threshold 0.75
+  - Contract Candidate: near=0/0 within ±0.05 of threshold 0.75
+
+[Validation] Boundary Confidence Histogram
+  - Bridge Candidate: total=0 | <0.60:0, 0.60-0.70:0, 0.70-0.80:0, 0.80-0.90:0, >=0.90:0
+  - Utility Candidate: total=3 | <0.60:0, 0.60-0.70:1, 0.70-0.80:2, 0.80-0.90:0, >=0.90:0
+  - Contract Candidate: total=0 | <0.60:0, 0.60-0.70:0, 0.70-0.80:0, 0.80-0.90:0, >=0.90:0
+
+[Validation] Infrastructure Mesh Split Candidates
+  - none
+
+[Validation] Infrastructure Mesh Threshold Sweep
+  - threshold=0.80 -> count=0 | ids=none
+  - threshold=0.82 -> count=0 | ids=none
+  - threshold=0.84 -> count=0 | ids=none
+  - threshold=0.86 -> count=0 | ids=none
+
+[Validation] Infrastructure Mesh Threshold Recommendation
+  - baseline=0.84 -> count=0 | ids=none
+  - next=0.86 -> count=0
+  - rationale: No high-priority mesh residue after ghost-aware filtering; treat mesh as calibrated-out for this dataset and prioritize Bridge/Utility boundary tuning.
+
+[Validation] AST Audit Queue Seed (top-community uncertain species)
+  - community_2: species=Utility Candidate, base=Utility Cluster, speciesConfidence=1.00, utilityScore=0.754
+  - community_7: species=Mixed: Contract Hub
+[SEMANTIC_ROLE_DIST] {
+  CORE_RUNTIME: 334,
+  DOCUMENTATION: 489,
+  SAMPLE: 1,
+  NORMAL: 19,
+  TOOLING: 14,
+  BENCHMARK: 2,
+  TEST_HARNESS: 1,
+  GENERATED: 1,
+  TEST: 2
+}
+[VE_SAMPLE_NODE] {
+  id: '...',
+  semanticRole: 'CORE_RUNTIME',
+  role: 'EXTERNAL',
+  architecturalRole: undefined
+}
+[ValidationEngine] Found 0 assembly points. Sample: None
+[GRAPH_ANALYZER_ENTER] { nodeCount: 863, edgeCount: 836 }
+[ASSEMBLY_CANDIDATE_DUMP] [
+  'v0.3.1_zz_bootstrap_locked.md',
+  'v0.3.10_bootstrap_locked.md',
+  '_v0.3.1_zz_bootstrap_locked.md',
+  '_v0.3.10_bootstrap_locked.md',
+  '_v0.3.11_bootstrap.md',
+  '_v0.3.23_bootstrap_execution.md',
+  'context_vault_bootstrap_v0_2_31.md',
+  'maintenance_protocol.md',
+  'synapse_v0.3.30_bootstrap_specification.md',
+  'v0.3.30_harvest_bootstrap_revised.md',
+  'v0.3.31_bootstrap.md',
+  'v0.3.32_bootstrap.md',
+  'v0.3.32.3_add_bootstrap.md',
+  'v0.3.32.3_bootstrap.md',
+  'v0.3.33_bootstrap.md',
+  'v0.3.33_fix_bootstrap.md',
+  'v0.3.33.1_bootstrap.md',
+  'v0.3.34_bootstrap.md',
+  'v0.3.34.1_bootstrap.md',
+  'v0.3.34.11_bootstrap.md',
+  'v0.3.34.11a_bootstrap.md',
+  'v0.3.34.22_bootstrap.md',
+  'v0.3.35_bootstrap.md',
+  'v0.4.0_bootstrap.md',
+  'v0.3.1_zz_bootstrap_locked_release_notes.md',
+  'bootstrapengine.ts',
+  'client.ts',
+  'main.ts',
+  'server.ts',
+  'localagenthostservice.ts',
+  'mainthreadmessageservice.ts',
+  'agenthostcustomizationservice.ts',
+  'clienttoolsetscontribution.ts',
+  'planreviewfeedbackservice.test.ts',
+  'issueservice.ts',
+  'installedmcpserversdiscovery.ts',
+  'notebookexecutionservice.ts',
+  'nulltestingservice.ts',
+  'assignmentservice.ts',
+  'abstractextensionservice.ts',
+  'nativehostservice.ts',
+  'languagedetectionworkerserviceimpl.ts',
+  'workbench.common.main.ts',
+  'workbench.web.main.ts',
+  'vscode-languageserver-textdocument'
+]
+
+[ASSEMBLY_AUDIT]
+
+src/bootstrap/BootstrapEngine.ts
+
+REJECTED
+Reason=REJECT_EXTENSION_MISMATCH
+
+FanIn=3
+FanOut=27
+BoundaryRatio=0.96
+[ASSEMBLY_CANDIDATE_STATE] {
+  nodeCount: 863,
+  basename: 'client.ts',
+  semanticRole: 'CORE_RUNTIME',
+  isAssemblyCandidate: true,
+  isStrongCandidate: false,
+  isWeakCandidate: true
+}
+[ASSEMBLY_CANDIDATE] {
+  node: 'client',
+  fanOut: 1,
+  boundaryRatio: 0,
+  isStrongCandidate: false,
+  isWeakCandidate: true
+}
+
+[ASSEMBLY_AUDIT]
+
+src/client.ts
+
+REJECTED
+Reason=REJECTED_LOW_FANOUT, REJECTED_LOW_BOUNDARY_RATIO
+
+FanIn=2
+FanOut=1
+BoundaryRatio=0.00
+[ASSEMBLY_CANDIDATE_STATE] {
+  nodeCount: 863,
+  basename: 'main.ts',
+  semanticRole: 'CORE_RUNTIME',
+  isAssemblyCandidate: true,
+  isStrongCandidate: true,
+  isWeakCandidate: false
+}
+[ASSEMBLY_CANDIDATE] {
+  node: 'main',
+  fanOut: 0,
+  boundaryRatio: 0,
+  isStrongCandidate: true,
+  isWeakCandidate: false
+}
+
+[ASSEMBLY_AUDIT]
+
+src/main.ts
+
+REJECTED
+Reason=REJECTED_LOW_FANOUT, REJECTED_LOW_BOUNDARY_RATIO
+
+FanIn=0
+FanOut=0
+BoundaryRatio=0.00
+[ASSEMBLY_CANDIDATE_STATE] {
+  nodeCount: 863,
+  basename: 'server.ts',
+  semanticRole: 'CORE_RUNTIME',
+  isAssemblyCandidate: true,
+  isStrongCandidate: false,
+  isWeakCandidate: true
+}
+[ASSEMBLY_CANDIDATE] {
+  node: 'server',
+  fanOut: 4,
+  boundaryRatio: 1,
+  isStrongCandidate: false,
+  isWeakCandidate: true
+}
+
+[ASSEMBLY_AUDIT]
+
+src/server/server.ts
+
+REJECTED
+Reason=REJECTED_LOW_FANOUT
+
+FanIn=0
+FanOut=4
+BoundaryRatio=1.00
+[ASSEMBLY_CANDIDATE] {
+  node: 'localAgentHostService',
+  fanOut: 0,
+  boundaryRatio: 0,
+  isStrongCandidate: false,
+  isWeakCandidate: true
+}
+
+[ASSEMBLY_AUDIT]
+
+src/vs/platform/agentHost/electron-browser/localAgentHostService.ts
+
+REJECTED
+Reason=REJECTED_LOW_FANOUT, REJECTED_LOW_BOUNDARY_RATIO
+
+FanIn=0
+FanOut=0
+BoundaryRatio=0.00
+[ASSEMBLY_CANDIDATE] {
+  node: 'agentHostCustomizationService',
+  fanOut: 0,
+  boundaryRatio: 0,
+  isStrongCandidate: false,
+  isWeakCandidate: true
+}
+
+[ASSEMBLY_AUDIT]
+
+src/vs/workbench/contrib/chat/browser/agentSessions/agentHost/agentHostCustomizationService.ts
+
+REJECTED
+Reason=REJECTED_LOW_FANOUT, REJECTED_LOW_BOUNDARY_RATIO
+
+FanIn=0
+FanOut=0
+BoundaryRatio=0.00
+[ASSEMBLY_CANDIDATE] {
+  node: 'issueService',
+  fanOut: 0,
+  boundaryRatio: 0,
+  isStrongCandidate: false,
+  isWeakCandidate: true
+}
+
+[ASSEMBLY_AUDIT]
+
+src/vs/workbench/contrib/issue/browser/issueService.ts
+
+REJECTED
+Reason=REJECTED_LOW_FANOUT, REJECTED_LOW_BOUNDARY_RATIO
+
+FanIn=0
+FanOut=0
+BoundaryRatio=0.00
+
+[ASSEMBLY_AUDIT]
+
+src/vs/workbench/contrib/mcp/common/discovery/installedMcpServersDiscovery.ts
+
+REJECTED
+Reason=REJECT_EXTENSION_MISMATCH
+
+FanIn=0
+FanOut=0
+BoundaryRatio=0.00
+[ASSEMBLY_CANDIDATE] {
+  node: 'notebookExecutionService',
+  fanOut: 0,
+  boundaryRatio: 0,
+  isStrongCandidate: false,
+  isWeakCandidate: true
+}
+
+[ASSEMBLY_AUDIT]
+
+src/vs/workbench/contrib/notebook/common/notebookExecutionService.ts
+
+REJECTED
+Reason=REJECTED_LOW_FANOUT, REJECTED_LOW_BOUNDARY_RATIO
+
+FanIn=0
+FanOut=0
+BoundaryRatio=0.00
+[ASSEMBLY_CANDIDATE] {
+  node: 'assignmentService',
+  fanOut: 0,
+  boundaryRatio: 0,
+  isStrongCandidate: false,
+  isWeakCandidate: true
+}
+
+[ASSEMBLY_AUDIT]
+
+src/vs/workbench/services/assignment/common/assignmentService.ts
+
+REJECTED
+Reason=REJECTED_LOW_FANOUT, REJECTED_LOW_BOUNDARY_RATIO
+
+FanIn=0
+FanOut=0
+BoundaryRatio=0.00
+[ASSEMBLY_CANDIDATE] {
+  node: 'abstractExtensionService',
+  fanOut: 0,
+  boundaryRatio: 0,
+  isStrongCandidate: false,
+  isWeakCandidate: true
+}
+
+[ASSEMBLY_AUDIT]
+
+src/vs/workbench/services/extensions/common/abstractExtensionService.ts
+
+REJECTED
+Reason=REJECTED_LOW_FANOUT, REJECTED_LOW_BOUNDARY_RATIO
+
+FanIn=0
+FanOut=0
+BoundaryRatio=0.00
+[ASSEMBLY_CANDIDATE] {
+  node: 'nativeHostService',
+  fanOut: 0,
+  boundaryRatio: 0,
+  isStrongCandidate: false,
+  isWeakCandidate: true
+}
+
+[ASSEMBLY_AUDIT]
+
+src/vs/workbench/services/host/electron-browser/nativeHostService.ts
+
+REJECTED
+Reason=REJECTED_LOW_FANOUT, REJECTED_LOW_BOUNDARY_RATIO
+
+FanIn=0
+FanOut=0
+BoundaryRatio=0.00
+
+[ASSEMBLY_AUDIT]
+
+src/vs/workbench/services/languageDetection/browser/languageDetectionWorkerServiceImpl.ts
+
+REJECTED
+Reason=REJECT_EXTENSION_MISMATCH
+
+FanIn=0
+FanOut=0
+BoundaryRatio=0.00
+[ASSEMBLY_CANDIDATE_STATE] {
+  nodeCount: 863,
+  basename: 'workbench.common.main.ts',
+  semanticRole: 'CORE_RUNTIME',
+  isAssemblyCandidate: true,
+  isStrongCandidate: true,
+  isWeakCandidate: false
+}
+[ASSEMBLY_CANDIDATE] {
+  node: 'workbench.common.main',
+  fanOut: 0,
+  boundaryRatio: 0,
+  isStrongCandidate: true,
+  isWeakCandidate: false
+}
+
+[ASSEMBLY_AUDIT]
+
+src/vs/workbench/workbench.common.main.ts
+
+REJECTED
+Reason=REJECTED_LOW_FANOUT, REJECTED_LOW_BOUNDARY_RATIO
+
+FanIn=0
+FanOut=0
+BoundaryRatio=0.00
+[ASSEMBLY_CANDIDATE_STATE] {
+  nodeCount: 863,
+  basename: 'workbench.web.main.ts',
+  semanticRole: 'CORE_RUNTIME',
+  isAssemblyCandidate: true,
+  isStrongCandidate: true,
+  isWeakCandidate: false
+}
+[ASSEMBLY_CANDIDATE] {
+  node: 'workbench.web.main',
+  fanOut: 0,
+  boundaryRatio: 0,
+  isStrongCandidate: true,
+  isWeakCandidate: false
+}
+
+[ASSEMBLY_AUDIT]
+
+src/vs/workbench/workbench.web.main.ts
+
+REJECTED
+Reason=REJECTED_LOW_FANOUT, REJECTED_LOW_BOUNDARY_RATIO
+
+FanIn=0
+FanOut=0
+BoundaryRatio=0.00
+
+[ASSEMBLY_AUDIT]
+
+external://vscode-languageserver-textdocument
+
+REJECTED
+Reason=REJECT_EXTENSION_MISMATCH
+
+FanIn=1
+FanOut=0
+BoundaryRatio=0.00
+[GRAPH_ANALYZER_CANDIDATES] { candidateCount: 12, pushCount: 12, assemblyAuditLength: 12 }
+[ASSEMBLY_AUDIT_SAVE] { graphAnalysisLength: 12, metadataLength: 12 }
+[SNAPSHOT_ROLE_AUDIT] { tmlNodes: [] }
+[ValidationEngine] RAW Top 20 candidates (Before Penalty):
+
+[ValidationEngine] TEST or TEST_ARTIFACT count: 0
+[ValidationEngine] Top 10 sorted candidates:
+
+[ValidationEngine] AST Verification complete: 0 files processed, re-ranked top 0
+[VE_DIAG] {
+  assemblyAudit: 12,
+  architecturalFindings: 0,
+  systemAssemblyPoints: 0,
+  topImpactFiles: 0
+}
+[ANOMALY_SUMMARY] {
+  missingTransitions: 0,
+  invalidTransitions: 0,
+  unclustered: 0,
+  unclassified: 0,
+  corrupted: 0,
+  outOfScope: 0,
+  ghost: 0
+}
+[FSM_AUDIT] { missing: 0, invalid: 0, uncharted: 0, violations: [] }
+[FAILURE_PROPAGATION_SUMMARY] direct: 0 indirect: 0 cascade: 0
+{
+  "generatedAt": "2026-08-22T07:34:08.726Z",
+  "runCount": 1,
+  "speciesStability": [
+    {
+      "species": "Noise Cluster",
+      "min": 3,
+      "max": 3,
+      "avg": 3,
+      "values": [
+        3
+      ]
+    },
+    {
+      "species": "Utility Candidate",
+      "min": 3,
+      "max": 3,
+      "avg": 3,
+      "values": [
+        3
+      ]
+    },
+    {
+      "species": "Execution Core",
+      "min": 2,
+      "max": 2,
+      "avg": 2,
+      "values": [
+        2
+      ]
+    },
+    {
+      "species": "Subsystem Core",
+      "min": 2,
+      "max": 2,
+      "avg": 2,
+      "values": [
+        2
+      ]
+    },
+    {
+      "species": "Mixed: Contract Hub",
+      "min": 1,
+      "max": 1,
+      "avg": 1,
+      "values": [
+        1
+      ]
+    }
+  ],
+  "establishmentGate": {
+    "stable": false,
+    "rule": "default: range<=6 and rel<=0.35; Infrastructure Mesh range<=1",
+    "failures": [
+      "Mixed Core: missing",
+      "Bridge Candidate: missing",
+      "Bridge Cluster: missing",
+      "Utility Cluster: missing",
+      "Contract Core: missing",
+      "Infrastructure Mesh: missing"
+    ]
+  },
+  "presenceMatrix": [
+    {
+      "species": "Infrastructure Mesh",
+      "runPresence": [
+        false
+      ],
+      "hitCount": 0,
+      "status": "Unstable"
+    },
+    {
+      "species": "Mixed Core",
+      "runPresence": [
+        false
+      ],
+      "hitCount": 0,
+      "status": "Unstable"
+    },
+    {
+      "species": "Subsystem Core",
+      "runPresence": [
+        true
+      ],
+      "hitCount": 1,
+      "status": "Stable"
+    },
+    {
+      "species": "Contract Core",
+      "runPresence": [
+        false
+      ],
+      "hitCount": 0,
+      "status": "Unstable"
+    },
+    {
+      "species": "Execution Core",
+      "runPresence": [
+        true
+      ],
+      "hitCount": 1,
+      "status": "Stable"
+    },
+    {
+      "species": "Bridge Cluster",
+      "runPresence": [
+        false
+      ],
+      "hitCount": 0,
+      "status": "Unstable"
+    },
+    {
+      "species": "Bridge Candidate",
+      "runPresence": [
+        false
+      ],
+      "hitCount": 0,
+      "status": "Unstable"
+    },
+    {
+      "species": "Utility Cluster",
+      "runPresence": [
+        false
+      ],
+      "hitCount": 0,
+      "status": "Unstable"
+    },
+    {
+      "species": "Utility Candidate",
+      "runPresence": [
+        true
+      ],
+      "hitCount": 1,
+      "status": "Stable"
+    }
+  ],
+  "speciesConfidence": [
+    {
+      "species": "Execution Core",
+      "confidence": 1
+    },
+    {
+      "species": "Subsystem Core",
+      "confidence": 1
+    },
+    {
+      "species": "Utility Candidate",
+      "confidence": 1
+    },
+    {
+      "species": "Bridge Candidate",
+      "confidence": 0
+    },
+    {
+      "species": "Bridge Cluster",
+      "confidence": 0
+    },
+    {
+      "species": "Contract Core",
+      "confidence": 0
+    },
+    {
+      "species": "Infrastructure Mesh",
+      "confidence": 0
+    },
+    {
+      "species": "Mixed Core",
+      "confidence": 0
+    },
+    {
+      "species": "Utility Cluster",
+      "confidence": 0
+    }
+  ],
+  "speciesScoreConfidence": [
+    {
+      "species": "Utility Candidate",
+      "avg": 0.7080000000000001,
+      "min": 0.622,
+      "max": 0.754,
+      "count": 3
+    }
+  ],
+  "boundaryPressure": [
+    {
+      "label": "Bridge Candidate",
+      "threshold": 0.7,
+      "band": 0.05,
+      "nearCount": 0,
+      "totalCount": 0
+    },
+    {
+      "label": "Utility Candidate",
+      "threshold": 0.75,
+      "band": 0.05,
+      "nearCount": 2,
+      "totalCount": 3
+    },
+    {
+      "label": "Contract Candidate",
+      "threshold": 0.75,
+      "band": 0.05,
+      "nearCount": 0,
+      "totalCount": 0
+    }
+  ],
+  "boundaryConfidenceHistogram": [
+    {
+      "label": "Bridge Candidate",
+      "bins": [
+        {
+          "range": "<0.60",
+          "count": 0
+        },
+        {
+          "range": "0.60-0.70",
+          "count": 0
+        },
+        {
+          "range": "0.70-0.80",
+          "count": 0
+        },
+        {
+          "range": "0.80-0.90",
+          "count": 0
+        },
+        {
+          "range": ">=0.90",
+          "count": 0
+        }
+      ],
+      "totalCount": 0
+    },
+    {
+      "label": "Utility Candidate",
+      "bins": [
+        {
+          "range": "<0.60",
+          "count": 0
+        },
+        {
+          "range": "0.60-0.70",
+          "count": 1
+        },
+        {
+          "range": "0.70-0.80",
+          "count": 2
+        },
+        {
+          "range": "0.80-0.90",
+          "count": 0
+        },
+        {
+          "range": ">=0.90",
+          "count": 0
+        }
+      ],
+      "totalCount": 3
+    },
+    {
+      "label": "Contract Candidate",
+      "bins": [
+        {
+          "range": "<0.60",
+          "count": 0
+        },
+        {
+          "range": "0.60-0.70",
+          "count": 0
+        },
+        {
+          "range": "0.70-0.80",
+          "count": 0
+        },
+        {
+          "range": "0.80-0.90",
+          "count": 0
+        },
+        {
+          "range": ">=0.90",
+          "count": 0
+        }
+      ],
+      "totalCount": 0
+    }
+  ],
+  "infraMeshThresholdSweep": [
+    {
+      "threshold": 0.8,
+      "count": 0,
+      "ids": []
+    },
+    {
+      "threshold": 0.82,
+      "count": 0,
+      "ids": []
+    },
+    {
+      "threshold": 0.84,
+      "count": 0,
+      "ids": []
+    },
+    {
+      "threshold": 0.86,
+      "count": 0,
+      "ids": []
+    }
+  ],
+  "infraMeshBaselineThreshold": 0.84,
+  "infraMeshThresholdRecommendation": {
+    "baselineThreshold": 0.84,
+    "baselineCount": 0,
+    "baselineIds": [],
+    "nextThreshold": 0.86,
+    "nextCount": 0,
+    "rationale": "No high-priority mesh residue after ghost-aware filtering; treat mesh as calibrated-out for this dataset and prioritize Bridge/Utility boundary tuning."
+  },
+  "auditThresholds": {
+    "bridgeAuditMinScore": 0.7,
+    "utilityAuditMinScore": 0.75,
+    "contractAuditMinScore": 0.75
+  },
+  "infrastructureSplitCandidates": [],
+  "auditQueueSeed": [
+    {
+      "communityId": "community_2",
+      "species": "Utility Candidate",
+      "speciesBase": "Utility Cluster",
+      "utilityScore": 0.754
+    },
+    {
+      "communityId": "community_7",
+      "species": "Mixed: Contract Hub"
+    }
+  ],
+  "ghostBreakdown": [],
+  "externalBreakdown": [],
+  "couplingBreakdown": [
+    {
+      "name": "core",
+      "count": 290,
+      "ratio": 39.6
+    },
+    {
+      "name": "types",
+      "count": 85,
+      "ratio": 11.6
+    },
+    {
+      "name": "doc",
+      "count": 75,
+      "ratio": 10.2
+    },
+    {
+      "name": "scripts",
+      "count": 48,
+      "ratio": 6.6
+    },
+    {
+      "name": "utils",
+      "count": 43,
+      "ratio": 5.9
+    },
+    {
+      "name": "root",
+      "count": 32,
+      "ratio": 4.4
+    },
+    {
+      "name": "bootstrap",
+      "count": 31,
+      "ratio": 4.2
+    },
+    {
+      "name": "webview",
+      "count": 30,
+      "ratio": 4.1
+    },
+    {
+      "name": "cli",
+      "count": 24,
+      "ratio": 3.3
+    },
+    {
+      "name": "server",
+      "count": 23,
+      "ratio": 3.1
+    },
+    {
+      "name": "crypto",
+      "count": 20,
+      "ratio": 2.7
+    },
+    {
+      "name": "ui",
+      "count": 5,
+      "ratio": 0.7
+    },
+    {
+      "name": "other",
+      "count": 4,
+      "ratio": 0.5
+    },
+    {
+      "name": "analysis",
+      "count": 3,
+      "ratio": 0.4
+    },
+    {
+      "name": "...",
+      "count": 2,
+      "ratio": 0.3
+    },
+    {
+      "name": "typescript",
+      "count": 2,
+      "ratio": 0.3
+    },
+    {
+      "name": "util",
+      "count": 2,
+      "ratio": 0.3
+    },
+    {
+      "name": "http",
+      "count": 2,
+      "ratio": 0.3
+    },
+    {
+      "name": "rust_checker",
+      "count": 2,
+      "ratio": 0.3
+    },
+    {
+      "name": "[^'\"]+",
+      "count": 1,
+      "ratio": 0.1
+    },
+    {
+      "name": "command:synapse.openFsmAudit",
+      "count": 1,
+      "ratio": 0.1
+    },
+    {
+      "name": "링크",
+      "count": 1,
+      "ratio": 0.1
+    },
+    {
+      "name": "출력 가능한 ASCII",
+      "count": 1,
+      "ratio": 0.1
+    },
+    {
+      "name": "Y",
+      "count": 1,
+      "ratio": 0.1
+    },
+    {
+      "name": "foo",
+      "count": 1,
+      "ratio": 0.1
+    },
+    {
+      "name": "explorer",
+      "count": 1,
+      "ratio": 0.1
+    },
+    {
+      "name": "project_state_json",
+      "count": 1,
+      "ratio": 0.1
+    },
+    {
+      "name": "vscode-languageserver-textdocument",
+      "count": 1,
+      "ratio": 0.1
+    }
+  ],
+  "ghostEvidence": [
+    {
+      "source": "scripts/test_architecture_verification_27.ts",
+      "target": "crypto",
+      "type": "INCLUDE",
+      "semanticType": "GHOST"
+    },
+    {
+      "source": "scripts/test_architecture_verification_28_29.ts",
+      "target": "crypto",
+      "type": "INCLUDE",
+      "semanticType": "GHOST"
+    },
+    {
+      "source": "scripts/test_architecture_verification_30.ts",
+      "target": "crypto",
+      "type": "INCLUDE",
+      "semanticType": "GHOST"
+    },
+    {
+      "source": "src/cli/ast_verification_engine.ts",
+      "target": "typescript",
+      "type": "INCLUDE",
+      "semanticType": "GHOST"
+    },
+    {
+      "source": "src/cli/verify_determinism.ts",
+      "target": "util",
+      "type": "INCLUDE",
+      "semanticType": "GHOST"
+    },
+    {
+      "source": "src/core/analysis/aggregation/ReportAggregator.ts",
+      "target": "crypto",
+      "type": "INCLUDE",
+      "semanticType": "GHOST"
+    },
+    {
+      "source": "src/core/benchmark/BenchmarkGraphGenerator.ts",
+      "target": "crypto",
+      "type": "INCLUDE",
+      "semanticType": "GHOST"
+    },
+    {
+      "source": "src/core/canvas-engine/StateManager.ts",
+      "target": "crypto",
+      "type": "INCLUDE",
+      "semanticType": "GHOST"
+    },
+    {
+      "source": "src/core/CDPManager.ts",
+      "target": "crypto",
+      "type": "INCLUDE",
+      "semanticType": "GHOST"
+    },
+    {
+      "source": "src/core/CDPManager.ts",
+      "target": "http",
+      "type": "CALL",
+      "semanticType": "GHOST"
+    },
+    {
+      "source": "src/core/collaboration/AccountManager.ts",
+      "target": "crypto",
+      "type": "INCLUDE",
+      "semanticType": "GHOST"
+    },
+    {
+      "source": "src/core/collaboration/CompareEngine.ts",
+      "target": "crypto",
+      "type": "INCLUDE",
+      "semanticType": "GHOST"
+    },
+    {
+      "source": "src/core/collaboration/CompareProjection.ts",
+      "target": "crypto",
+      "type": "INCLUDE",
+      "semanticType": "GHOST"
+    },
+    {
+      "source": "src/core/collaboration/EdgeGenerator.ts",
+      "target": "crypto",
+      "type": "INCLUDE",
+      "semanticType": "GHOST"
+    },
+    {
+      "source": "src/core/collaboration/HarvestProjection.ts",
+      "target": "crypto",
+      "type": "INCLUDE",
+      "semanticType": "GHOST"
+    },
+    {
+      "source": "src/core/collaboration/SessionManager.ts",
+      "target": "crypto",
+      "type": "INCLUDE",
+      "semanticType": "GHOST"
+    },
+    {
+      "source": "src/core/DataPipeline.ts",
+      "target": "crypto",
+      "type": "INCLUDE",
+      "semanticType": "GHOST"
+    },
+    {
+      "source": "src/core/DirectChatScraper.ts",
+      "target": "crypto",
+      "type": "INCLUDE",
+      "semanticType": "GHOST"
+    },
+    {
+      "source": "src/core/EdgeBuilder.ts",
+      "target": "crypto",
+      "type": "INCLUDE",
+      "semanticType": "GHOST"
+    },
+    {
+      "source": "src/core/FileScanner.ts",
+      "target": "Y",
+      "type": "INCLUDE",
+      "semanticType": "GHOST"
+    },
+    {
+      "source": "src/core/ProjectMetadata.ts",
+      "target": "crypto",
+      "type": "INCLUDE",
+      "semanticType": "GHOST"
+    },
+    {
+      "source": "src/core/resolvers/TypeScriptResolver.ts",
+      "target": "foo",
+      "type": "INCLUDE",
+      "semanticType": "GHOST"
+    },
+    {
+      "source": "src/core/resolvers/TypeScriptResolver.ts",
+      "target": "typescript",
+      "type": "INCLUDE",
+      "semanticType": "GHOST"
+    },
+    {
+      "source": "src/core/SnapshotSystem.ts",
+      "target": "crypto",
+      "type": "INCLUDE",
+      "semanticType": "GHOST"
+    },
+    {
+      "source": "src/rust_checker/state_checker.rs",
+      "target": "project_state_json",
+      "type": "INCLUDE",
+      "semanticType": "GHOST"
+    },
+    {
+      "source": "src/server/server.ts",
+      "target": "vscode-languageserver-textdocument",
+      "type": "INCLUDE",
+      "semanticType": "GHOST"
+    },
+    {
+      "source": "src/server/standalone.ts",
+      "target": "crypto",
+      "type": "INCLUDE",
+      "semanticType": "GHOST"
+    },
+    {
+      "source": "src/utils/hash_utils.ts",
+      "target": "crypto",
+      "type": "INCLUDE",
+      "semanticType": "GHOST"
+    },
+    {
+      "source": "src/utils/hash_utils.ts",
+      "target": "util",
+      "type": "INCLUDE",
+      "semanticType": "GHOST"
+    },
+    {
+      "source": "src/webview/CanvasPanel.ts",
+      "target": "http",
+      "type": "CALL",
+      "semanticType": "GHOST"
+    }
+  ],
+  "boundaryEvidence": [],
+  "docEvidence": [
+    {
+      "source": "mile_stone/_v0.3.09_COMPREHENSIVE.md",
+      "target": "README.md",
+      "type": "INCLUDE",
+      "semanticType": "DOC"
+    },
+    {
+      "source": "mile_stone/_v0.3.09.md",
+      "target": "README.md",
+      "type": "INCLUDE",
+      "semanticType": "DOC"
+    },
+    {
+      "source": "mile_stone/_v0.3.10_implementation.md",
+      "target": "home/dogsinatas/TypeScript_project/antigravity-extension-vis/mile_stone/v0.3.10_Bootstrap_Locked.md",
+      "type": "INCLUDE",
+      "semanticType": "DOC"
+    },
+    {
+      "source": "mile_stone/_v0.3.2.md",
+      "target": "home/dogsinatas/TypeScript_project/antigravity-extension-vis/mile_stone/v0.3.1_zz_Bootstrap_Locked.md",
+      "type": "INCLUDE",
+      "semanticType": "DOC"
+    },
+    {
+      "source": "mile_stone/_v0.3.3.md",
+      "target": "v0.3.2.md",
+      "type": "INCLUDE",
+      "semanticType": "DOC"
+    },
+    {
+      "source": "mile_stone/_v0.3.4.md",
+      "target": "release_note/v0.3.5_release_notes.md",
+      "type": "INCLUDE",
+      "semanticType": "DOC"
+    },
+    {
+      "source": "mile_stone/_v0.3.8.md",
+      "target": "release_note/v0.3.8_release_notes.md",
+      "type": "INCLUDE",
+      "semanticType": "DOC"
+    },
+    {
+      "source": "mile_stone/구현안된목록/b/v0.2.19.md",
+      "target": "mile_stone/v0.2.18.md",
+      "type": "INCLUDE",
+      "semanticType": "DOC"
+    },
+    {
+      "source": "mile_stone/구현안된목록/b/v0.2.19.md",
+      "target": "release_note/architecture.md",
+      "type": "INCLUDE",
+      "semanticType": "DOC"
+    },
+    {
+      "source": "mile_stone/구현안된목록/b/v0.2.20.md",
+      "target": "mile_stone/v0.2.19.md",
+      "type": "INCLUDE",
+      "semanticType": "DOC"
+    },
+    {
+      "source": "mile_stone/구현안된목록/b/v0.2.20.md",
+      "target": "mile_stone/v0.2.18.2.md",
+      "type": "INCLUDE",
+      "semanticType": "DOC"
+    },
+    {
+      "source": "mile_stone/구현안된목록/b/v0.2.20.md",
+      "target": "release_note/architecture.md",
+      "type": "INCLUDE",
+      "semanticType": "DOC"
+    },
+    {
+      "source": "mile_stone/구현안된목록/v0.2.19.md",
+      "target": "mile_stone/v0.2.18.md",
+      "type": "INCLUDE",
+      "semanticType": "DOC"
+    },
+    {
+      "source": "mile_stone/구현안된목록/v0.2.19.md",
+      "target": "release_note/architecture.md",
+      "type": "INCLUDE",
+      "semanticType": "DOC"
+    },
+    {
+      "source": "mile_stone/구현안된목록/v0.2.20.md",
+      "target": "mile_stone/v0.2.19.md",
+      "type": "INCLUDE",
+      "semanticType": "DOC"
+    },
+    {
+      "source": "mile_stone/구현안된목록/v0.2.20.md",
+      "target": "mile_stone/v0.2.18.2.md",
+      "type": "INCLUDE",
+      "semanticType": "DOC"
+    },
+    {
+      "source": "mile_stone/구현안된목록/v0.2.20.md",
+      "target": "release_note/architecture.md",
+      "type": "INCLUDE",
+      "semanticType": "DOC"
+    },
+    {
+      "source": "mile_stone/v0.2.16.md",
+      "target": "mile_stone/v0.2.15.md",
+      "type": "INCLUDE",
+      "semanticType": "DOC"
+    },
+    {
+      "source": "mile_stone/v0.2.17.md",
+      "target": "ui/index.html",
+      "type": "INCLUDE",
+      "semanticType": "DOC"
+    },
+    {
+      "source": "mile_stone/v0.2.17.md",
+      "target": "release_note/v0.2.16_release_notes.md",
+      "type": "INCLUDE",
+      "semanticType": "DOC"
+    }
+  ],
+  "topImpactFiles": [],
+  "systemAssemblyPoints": [],
+  "auditConfidenceMatrix": {
+    "baseScore": 70,
+    "grammarNoiseFiltered": 0,
+    "assemblyPointClassified": 0,
+    "contractHubVerified": 0,
+    "lowGhostRatio": 6,
+    "unknownReferences": 0,
+    "finalScore": 76
+  }
+}

@@ -320,200 +320,7 @@ SYNAPSE는 방대한 아키텍처를 효과적으로 관리하기 위해 **클�
 
 ---
 
-## 🔬 아키텍처 스캔 리포트 (Architecture Scan Report, ASR 3.0)
 
-[![Architecture Scan Report Demo](https://img.youtube.com/vi/yU-_NRrADR0/0.jpg)](https://youtu.be/yU-_NRrADR0)
-
-SYNAPSE의 **아키텍처 스캔 리포트(ASR)**는 코드베이스의 아키텍처 건강도를 팩트와 데이터 기반으로 촬영하는 정적(Static) MRI 스캔입니다. AI 해석이나 휴리스틱 추측에 의존하지 않으며, 모든 발견은 실제 의존성 그래프 엣지 수치로 보증됩니다.
-
-> **샘플 출력**: 
-> **Sample Output**
-
-
-- [VSCode Main Report](assets/test_sample/vscode_main_report.md)
-- [VSCode Main Evidence](/assets/test_sample/vscode_main_report.json)
-
-- [AntennaPod Whole Project Report](assets/test_sample/antennapod.md)
-- [AntennaPod Whole Project Evidence](assets/test_sample/antennapod.json)
-
-- [AntennaPod app/src Report](assets/test_sample/antennapod_app_src.md)
-- [AntennaPod app/src Evidence](assets/test_sample/antennapod_app_src.json)
-
-- [AntennaPod app/src + WearOS Report](assets/test_sample/antennapod_app_src_wearos.md)
-- [AntennaPod app/src + WearOS Evidence](assets/test_sample/antennapod_app_src_wearos.json)
-
-- [Linux Kernel 7.2 rc3 report](assets/test_sample/linux_kernel.md)
-
----
-
-### 동작 원리
-
-ASR은 소스에서 리포트까지 단일한 결정론적(Deterministic) 파이프라인을 따릅니다:
-
-```text
-소스 파일
-  ↓ (언어 스캐너: TS/JS, Python, C++, Kotlin, Rust, Java, ...)
-의존성 그래프 (Node + Edge 생성)
-  ↓ (GraphAnalyzer → SemanticRole 할당)
-후보군 (Boundary Crossing × Fan-Out 기준 1차 정렬)
-  ↓ (ArchitectureAuditor → Role 분류 + Finding 판정)
-페널티 정렬 (TEST_ARTIFACT 하단으로 강등)
-  ↓ (ValidationEngine → Top Impact Files + Assembly Points 확정)
-리포트 생성
-  ↓ (ValidationReportBuilder)
-Markdown + HTML + JSON
-```
-
-**파이프라인 주요 결정 사항:**
-- 파일 점수는 **Boundary Crossing**(외부 엣지 수)과 **Fan-Out**(전체 출력 의존성 수)만으로 산정됩니다. 주관적 점수 없습니다.
-- `TEST_ARTIFACT` 파일(테스트 리졸버, fixtures, simulation)은 정렬 *이전에* `ArchitectureAuditor`로 분류되어, 페널티가 실제로 적용됩니다.
-- 후보군은 동적 `bfsLimit`(최대 200)을 사용하므로 Top 10 / Top 50 / Top 100이 실제로 다른 파일을 반영합니다.
-
----
-
-### 실행 방법 (GUI First)
-
-1. VSCode에서 **SYNAPSE 캔버스**를 엽니다.
-2. 상단 툴바의 **`Virtual Debug`** 버튼을 클릭합니다.
-3. ASR이 워크스페이스 내에 세 가지 형식을 즉시 생성합니다.
-
-터미널 불필요. 설정 파일 불필요. 입력값은 현재 열린 워크스페이스면 충분합니다.
-
----
-
-### 출력 구조
-
-```text
-synapse_report/surgery/
-├── ASR_EV-LIVE.md      ← 전체 리포트 Markdown (엔지니어 전용)
-├── ASR_EV-LIVE.html    ← 렌더링된 HTML 버전 (실장 또는 공유용)
-└── ASR_EV-LIVE.json    ← 원시 그래프 스냅샷 + 전체 메트릭 (Source of Truth)
-```
-
-Markdown 리포트는 7개 섹션으로 구성됩니다:
-
-| 섹션 | 포함 내용 |
-|---------|------------------|
-| **0. Analysis Subject** | 전체 파일 수, 내부 엣지, 경계 엣지, Ghost Breakdown (NPM / Grammar / Unresolved / Dynamic) |
-| **1. Executive Summary** | PASS / UNSTABLE 판정. Architecture Entropy, Audit Confidence 점수, Ghost Health 등급. |
-| **2. Top Impact Files** | 최고 결합도 파일 랭킹 (Role, Boundary Crossing, Fan-Out, Blast Radius, Evidence 포함). |
-| **3. System Assembly Points** | 시스템을 연결하는 컴포지션 루트 파일 (진입점, main, 서비스 레지스트리). |
-| **4. Cost Projection** | Top Impact 파일 리팩토링 시 예상 엔지니어링 비용 (인력, 일수, 영향 파일 수, 영향 엣지 수). |
-| **5. Expected After Surgery** | 리팩토링 후 예상 Entropy 및 Boundary Edges 수치. |
-| **6. Raw Metrics** | AEL 점수, Coupling Source 분류 (어느 네임스페이스가 경계 엣지를 가장 많이 소유하는가), Ghost 증거 목록. |
-
----
-
-### 증거는 어떻게 구성되는가
-
-**Top Impact Files** 섹션의 모든 항목은 한 줄 요약문이 아닌, 구조화된 증거 블록으로 제시됩니다:
-
-```markdown
-### 1. workbench.common.main.ts
-- **Role**: ASSEMBLY_POINT
-- **Boundary Crossing**: 131    ← 클러스터 경계를 넘는 엣지 수
-- **Fan-Out**: 136              ← 전체 출력 의존성 수
-- **Blast Radius**: 18 Clusters ← 3홉 이내에 도달 가능한 클러스터 수
-
-**Evidence (Observed Behavior)**
-- Boundary Crossing: 131
-- Blast Radius (Clusters): 18
-- Fan-Out: 136
-- Fan-In: 3
-
-**Architectural Assessment**
-> HEALTHY_HUB: No action required. Excluded from risk ranking.
-```
-
-`Role`은 `ArchitectureAuditor`가 파일 경로 패턴과 결합도 지표를 기반으로 분류합니다:
-
-| Role | 의미 |
-|------|------|
-| `ASSEMBLY_POINT` | 컴포지션 루트 / 진입점 — 높은 fan-out은 정상적 설계 |
-| `CONTRACT_HUB` | 프로토콜 또는 인터페이스 정의 — 여러 서브시스템을 연결 |
-| `DOMAIN_SERVICE` | 코어 로직 레이어 (editor, workbench, platform) |
-| `UI_COMPONENT` | 뷰 / 브라우저 레이어 |
-| `TEST_ARTIFACT` | 테스트 파일, fixture, simulation — **랭킹에서 페널티 적용** |
-| `COORDINATOR` | 오케스트레이터 또는 매니저 |
-| `INFRASTRUCTURE` | 빌드, 컨피그, 스캐폴딩 파일 |
-
-`Finding`은 실제 리팩토링이 필요한지 여부를 결정합니다:
-
-| Finding | 트리거 조건 |
-|---------|------------|
-| `HEALTHY_HUB` | ASSEMBLY_POINT — 높은 fan-out은 아키텍처적 의도 |
-| `UI_TO_SERVICE_COUPLING` | UI_COMPONENT이 외부 엣지 >20 |
-| `GOD_SERVICE` | DOMAIN_SERVICE fan-out >50 & 높은 경계 비율 |
-| `CONTRACT_BLOAT` | CONTRACT_HUB fan-in >200 & fan-out >100 |
-| `EXCESSIVE_FAN_OUT` | 리파일 중 fan-out >30 & 경계 비율 >0.7 |
-| `NORMAL` | 즉각적인 조치 불필요 |
-
----
-
-### Audit Confidence 점수
-
-리포트는 스캔 데이터 신뢰도를 나타내는 **Audit Confidence** 점수(0~100)를 포함합니다:
-
-- 기본 점수: **70**
-- **+10**: Grammar 노이즈(`.tmLanguage` 참조)를 필터링한 경우
-- **+5**: ASSEMBLY_POINT가 최소 1개 이상 분류된 경우
-- **+4**: CONTRACT_HUB가 최소 1개 이상 확인된 경우
-- **+6**: Ghost Ratio가 5% 미만인 경우
-- **-2/1%**: UNKNOWN_REFERENCE Ghost 비율 초과시 감점
-
-**85 이상**: 모든 발견을 신뢰할 수 있는 깨끗한 그래프. **70 미만**: 스캐너가 주요 의존성을 놓쳤을 가능성이 높음.
-
----
-
-### Ghost Health 평가
-
-SYNAPSE가 실제 파일로 해소하지 못하는 참조(Ghost 의존성)는 범주별로 세분화됩니다:
-
-| 유형 | 출처 |
-|------|------|
-| `GRAMMAR_REFERENCE` | `.tmLanguage`, `.tmGrammar`, TextMate 토큰 참조 |
-| `NPM_PACKAGE` | `node_modules` 및 외부 npm 의존성 |
-| `UNRESOLVED_IMPORT` | 경로 해소에 실패한 임포트 |
-| `DYNAMIC_IMPORT` | 런타임 변수를 사용하는 `import()`, `require()` |
-| `GENERATED_REFERENCE` | 자동 생성 파일 (`.d.ts`, 빌드 출력) |
-| `UNKNOWN_REFERENCE` | 그 외 생음 수 없는 참조 — "더러운" 범주 |
-
-`UNKNOWN_REFERENCE` 비율이 Ghost 전체대비 높을수록 `POOR` 등급이 부여됩니다: `EXCELLENT / GOOD / FAIR / POOR`.
-
----
-
-### ⚠️ AST 검증 레이어 (현재 미적용 — 향후 계획)
-
-`ast_verification_engine.ts`는 구현되어 있으나 현재 Virtual Debug 실행 경로에는 **연결되어 있지 않습니다**.
-
-AST 검증이 활성화되면 다음 단계가 파이프라인 끝에 추가됩니다:
-
-```text
-Markdown + HTML + JSON
-  ↓ (ASTVerificationEngine)
-상위 10,000개 엣지 샘플 추출
-  ↓ (경로 패턴 기반 휴리스틱 검증)
-RESOLVED / PARTIAL / UNRESOLVED 분류
-  ↓
-Audit Coverage % + 오탐(False Positive) 제거
-  ↓
-AST Verification 섹션을 리포트에 추가
-```
-
-**예상 소요 시간**: VSCode(엣지 387k) 기준, 10k 샘플은 파일 I/O 없이 경로명 패턴 검사만 수행하므로 **1~3초** 내외.
-
-이 레이어가 활성화되면 보고서에 **"Top Impact 파일 중 실제로 심볼을 익스포트하는 파일이 93%"** 같은 정량적 신뢰도 지표가 추가됩니다.
-
----
-
-### 🚧 추가 작업 예정
-
-| # | 항목 | 상태 |
-|---|------|------|
-| 1 | **리눅스 커널 분석 지원** — 현재 스캐너로는 리눅스 커널 규모의 C/C++ 프로젝트를 분석할 수 없습니다. 매크로 중심 코드베이스에 대한 C++ 스캐너 및 엣지 해소 로직 추가 작업이 필요합니다. | ⏳ 미착수 |
-| 2 | **AST 검증기 연결** — `ast_verification_engine.ts`는 구현 완료 상태이지만 Virtual Debug 파이프라인에 아직 연결되어 있지 않습니다. `ValidationEngine` 및 `ValidationReportBuilder`와의 통합 작업이 필요합니다. | ⏳ 미착수 |
-
----
 
 
 
@@ -640,22 +447,45 @@ Verify는 아키텍처 그래프의 상태를 실시간으로 진단하는 Archi
 
 ### Verify 메뉴 항목
 
-#### 🔬 Scan Architecture (AI) — AI 아키텍처 스캔
-현재 아키텍처 그래프에 대한 전체 AI 기반 의미론적 분석을 실행합니다. 모든 노드와 엣지를 스캔하여 스키마 위반, 데드엔드 노드, 끊어진 엣지, 결합도 이상을 감지합니다. 결과는 `LOGIC_REPORT.md`에 출력됩니다.
+#### 🔬 Simulation Debug (가상 디버그)
+현재 아키텍처 그래프를 기반으로 순환 참조, 결합도 이상, 경계 파손 등을 감지하기 위한 결정론적 시뮬레이션을 실행합니다.
+- 순수 AST 분석 결과를 포함한 핵심 원시 데이터 스냅샷(`synapse_report/surgery/simulation_evidence.json`)을 생성하며, 이는 이후 모든 보고서 생성의 **단일 진실 공급원(Single Source of Truth)** 역할을 합니다.
+- 캔버스 화면에 파손된 엣지(빨간 점선)나 괴사 노드 등 시각적 증거를 렌더링합니다.
+- **필수 선행 작업**: 사람이 읽을 수 있는 모든 종류의 리포트는 이 Simulation Debug가 먼저 실행된 이후에만 생성할 수 있습니다.
 
-- **원격 클라이언트 포함**: SSE로 연결된 원격 클라이언트 노드도 분석 대상에 포함됩니다.
-- **언어 자동 감지**: 리포트는 OS 표시 언어(한국어/영어)에 따라 자동으로 출력됩니다(`vscode.env.language` 기반).
+#### 📊 Architecture Scan Reports (ASR 3.0) 파이프라인
 
-#### 💀 Simulate Necrosis — 괴사 시뮬레이션
-선택한 노드에 **Necrosis(괴사)** 상태를 수동으로 적용합니다. 의존성이 끊기거나, 참조가 누락되었거나, AI 분석에 의해 문제로 flagged된 노드를 논리적으로 사망한 상태로 표시합니다.
+ASR 3.0은 데이터를 수집하는 단일 스캔(Virtual Debug)과 이 데이터를 다각도로 해석하는 3개의 보고서로 구성됩니다. 모든 보고서는 **반드시 `simulation_evidence.json`을 단일 진실 공급원(Single Source of Truth)으로 사용**해야만 생성될 수 있습니다.
 
-괴사 노드는 빨간 테두리와 어두운 배경으로 표시되며, 연결된 엣지는 Fractured(단절) 상태로 처리됩니다.
+##### Phase 1 - 분석 (Virtual Debug)
+- 캔버스에서 **Virtual Debug**를 실행합니다.
+- 시스템이 **Architecture What-if Laboratory**를 수행하여 구조적 결함을 시뮬레이션합니다.
+- **출력물**: 전체 아키텍처 원시 데이터 스냅샷인 `synapse_report/surgery/simulation_evidence.json` 단 하나만 생성합니다.
 
-#### 🪦 Simulate Tombstone — 툼스톤 시뮬레이션
-선택한 노드에 **Tombstone(묘비)** 상태를 수동으로 적용합니다. 아키텍처에서 완전히 deprecated되거나 제거된 노드를 표시하며, 캔버스에 묘비 시각 마커로 렌더링됩니다.
+##### Phase 2 - 원본 보고서 (Simulation Debug)
+- `simulation_evidence.json`이 생성됨과 동시에 내부 로직 검증을 위한 원본 디버그 보고서(`03_SIMULATION_DEBUG.md`)가 생성됩니다.
+- 본 보고서는 결합도와 파손된 엣지 등의 발견 사항(Findings)과, 그 원인이 되는 `simulation_evidence.json` 내부의 **정확한 증거 링크(Evidence Reference)**만을 담고 있습니다.
+
+##### Phase 3 - 아키텍트 보고서 (Architecture Report)
+- **입력**: `simulation_evidence.json` + `03_SIMULATION_DEBUG.md`
+- **역할**: 시니어 엔지니어와 아키텍트를 위한 실천 가능한 리팩토링 가이드입니다.
+- **출력물**: 리팩토링 대상(Refactor Candidate), 위험한 이유(Reason), 그리고 그 물리적 증거(Evidence Reference)의 랭킹을 제공합니다. 
+
+##### Phase 4 - 온보딩 보고서 (Onboarding Report)
+- **입력**: `simulation_evidence.json`
+- **역할**: 프로젝트에 합류한 신규 개발자들을 위한 아키텍처 내비게이션 맵입니다.
+- **출력물**: 시스템의 뼈대를 이루는 진입점(Entry Point), 핵심 도메인(Core Domain), 안전 구역(Safe Area) 등을 파악할 수 있도록 안내합니다.
+
+##### Phase 5 - 경영 요약 보고서 (Executive Report)
+- **입력**: `simulation_evidence.json`
+- **역할**: 경영진 및 기술 리더십을 위한 아키텍처 건강 요약서입니다.
+- **출력물**: 명확한 건강 상태(Health), 최고 위험 요소(Top Risk), 그리고 권장 조치(Recommended Action)를 요약하여 제공합니다.
+
+> **⚠️ 규칙 (Rule-001)**
+> `simulation_context.json`이 존재하지 않으면 Executive, Architect, Onboarding 보고서는 절대 생성될 수 없습니다. (에러 발생: `Run Virtual Debug first.`)
 
 #### 🧹 Clear Debug — 디버그 초기화
-캔버스에서 모든 디버그 시각 상태(Necrosis, Tombstone)를 제거하고 노드를 기본 렌더링 상태로 초기화합니다. 실제 그래프 데이터에는 영향을 주지 않습니다.
+캔버스에서 모든 디버그 시각 상태를 제거하고 노드를 기본 렌더링 상태로 초기화합니다. 실제 그래프 데이터에는 영향을 주지 않습니다.
 
 #### 💎 Det Bootstrap (`v0.2.28: Determinism Bootstrap`)
 결정론적 부트스트랩 시퀀스를 실행합니다. 내부 상태 체크섬을 초기화하고 현재 아키텍처 스냅샷에 대한 결정론적 기준선을 재확립합니다. 반복적인 편집으로 누적된 비결정성을 제거하는 데 사용합니다.

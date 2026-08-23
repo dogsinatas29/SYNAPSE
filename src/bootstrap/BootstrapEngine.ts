@@ -71,7 +71,7 @@ export class BootstrapEngine {
         onProgress?: (msg: string, percent?: number) => void
     ): Promise<BootstrapResult> {
         console.log('🚀 SYNAPSE Bootstrap 시작 (Phase 0: DATA)...');
-        phaseManager.reset(); 
+        phaseManager.reset();
 
         try {
             // [v0.3.1] Snapshot Storage Initialize
@@ -81,7 +81,7 @@ export class BootstrapEngine {
 
             // 1. DATA 수집 시작 (Phase 0)
             phaseManager.assertPhase(Phase.DATA);
-            
+
             // Ensure RULES.md exists and load it
             this.ensureRulesFile(projectRoot);
             RuleEngine.getInstance().loadRules(projectRoot);
@@ -119,16 +119,16 @@ export class BootstrapEngine {
 
             // [v0.3.10] Pass projectRoot for absolute path scanning
             const discoveredFiles = this.getDiscoverableFiles(projectRoot, structure.includePaths);
-            
+
             // [JVM_AUDIT] Phase A & B: Tally stats and Potential Edges safely
             JVMAuditor.runAudit(discoveredFiles, projectRoot);
-            
+
             const pipelineResult = await dataPipeline.processFiles(discoveredFiles, projectRoot, (msg, percent) => {
                 if (onProgress) {
                     onProgress(msg, percent);
                 }
             });
-            
+
             // [P1.5] Bounds logger helper
             const getBounds = (nodes: any[]) => {
                 let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
@@ -142,7 +142,7 @@ export class BootstrapEngine {
             };
             console.log("[LAYOUT_STAGE]", "DataPipeline", getBounds(pipelineResult.nodes));
             console.log("[LAYOUT_STAGE]", "FlowchartGenerator", getBounds(pipelineResult.nodes));
-            
+
             console.log(`[SCAN_DEBUG] Pipeline produced Nodes: ${pipelineResult.nodes.length}, Edges: ${pipelineResult.edges.length}`);
             // [v0.3.11] Core Freeze: Build and freeze graph
             const frozenGraph = buildGraph(
@@ -156,7 +156,7 @@ export class BootstrapEngine {
                     edgeTypeDistribution: pipelineResult.edgeTypeDistribution
                 }
             );
-            
+
             console.log(`[SCAN_DEBUG] Final Frozen Graph Nodes: ${frozenGraph.nodes.length}`);
             graphModel.restoreSnapshot(frozenGraph);
 
@@ -183,15 +183,15 @@ export class BootstrapEngine {
 
             const statePath = path.join(projectRoot, 'synapse_data', 'project_state.json');
             const stateDir = path.dirname(statePath);
-            
+
             console.log(`[STATE_SAVE_START] Output path: ${statePath}`);
             console.log(`[STATE_SAVE] Nodes: ${nodes.length}, Edges: ${edges.length}`);
-            
+
             if (!fs.existsSync(stateDir)) {
                 fs.mkdirSync(stateDir, { recursive: true });
                 console.log(`[STATE_SAVE] Created directory: ${stateDir}`);
             }
-            
+
             try {
                 fs.writeFileSync(statePath, ProjectStateSerializer.serialize(projectState), 'utf-8');
                 console.log(`[STATE_SAVE_COMPLETE] project_state.json successfully written.`);
@@ -239,18 +239,18 @@ export class BootstrapEngine {
             RuleEngine.getInstance().loadRules(projectRoot);
 
             const discoveredFiles = this.getDiscoverableFiles(projectRoot);
-            
+
             // [JVM_AUDIT] Phase A & B: Tally stats and Potential Edges safely
             JVMAuditor.runAudit(discoveredFiles, projectRoot);
-            
+
             const pipelineResult = await dataPipeline.processFiles(discoveredFiles, projectRoot, (msg, percent) => {
                 if (onProgress) {
                     onProgress(msg, percent);
                 }
             });
-            
+
             Logger.info(`[SCAN_DEBUG] Pipeline produced Nodes: ${pipelineResult.nodes.length}, Edges: ${pipelineResult.edges.length}, Clusters: ${pipelineResult.clusters.length}`);
-            
+
             // [v0.3.11] Core Freeze
             const frozenGraph = buildGraph(
                 pipelineResult.nodes,
@@ -261,7 +261,7 @@ export class BootstrapEngine {
                     externalBreakdown: pipelineResult.externalBreakdown
                 }
             );
-            
+
             Logger.info(`[SCAN_DEBUG] Final Frozen Graph Nodes: ${frozenGraph.nodes.length}`);
             graphModel.restoreSnapshot(frozenGraph);
 
@@ -274,7 +274,7 @@ export class BootstrapEngine {
             if (fs.existsSync(existingStatePath)) {
                 try {
                     existingData = JSON.parse(fs.readFileSync(existingStatePath, 'utf8'));
-                    
+
                     // 1. Preserve Positions, Layers, and Clusters for scanned nodes
                     const existingNodeMap = new Map<string, any>((existingData.nodes || []).map((n: any) => [n.id, n]));
                     nodes = nodes.map((n: any) => {
@@ -287,7 +287,7 @@ export class BootstrapEngine {
                                 // [v0.3.34.13 Fix] NEVER restore cluster_id for auto-generated nodes from snapshot!
                                 // It creates a feedback loop where Ghost/Community mutations become permanent.
                                 // ONLY preserve cluster_id for manual nodes (handled below).
-                                cluster_id: n.cluster_id, 
+                                cluster_id: n.cluster_id,
                                 // Do not blindly merge `existing.data` as it contains old ghost/community metadata.
                                 data: n.data
                             };
@@ -296,24 +296,24 @@ export class BootstrapEngine {
                     });
 
                     // 2. Preserve Manual Nodes & Edges
-                    const manualNodes = (existingData.nodes || []).filter((n: any) => 
+                    const manualNodes = (existingData.nodes || []).filter((n: any) =>
                         n.id.startsWith('node_manual_') ||
                         n.data?.isUserCreated === true ||
                         (n.layer === 'user' && n.status === 'pending')
                     );
                     const manualNodeIds = new Set(manualNodes.map((n: any) => n.id));
-                    const manualEdges = (existingData.edges || []).filter((e: any) => 
-                        e.id.startsWith('edge_node_manual_') || 
-                        e.status === 'pending' || 
+                    const manualEdges = (existingData.edges || []).filter((e: any) =>
+                        e.id.startsWith('edge_node_manual_') ||
+                        e.status === 'pending' ||
                         e.status === 'pending_confirm' ||
                         e.status === 'manual' ||
                         manualNodeIds.has(e.from) ||
                         manualNodeIds.has(e.to)
                     );
-                    
+
                     if (manualNodes.length > 0) nodes = [...nodes, ...manualNodes] as any;
                     if (manualEdges.length > 0) edges = [...edges, ...manualEdges] as any;
-                    
+
                     // 3. Preserve Manual Clusters
                     if (existingData.clusters && Array.isArray(existingData.clusters)) {
                         const currentClusterIds = new Set(graphModel.createSnapshot().clusters.map(c => c.id));
@@ -457,12 +457,12 @@ The **Documentation Shelf** of the Synapse canvas is a sacred storage area for m
         // [v0.3.13 Fix] Ensure exclusion rules are loaded before scan to prevent explosions
         RuleEngine.getInstance().loadRules(projectRoot);
         const discoveredFiles = this.getDiscoverableFiles(projectRoot, includePaths);
-        
+
         // [JVM_AUDIT] Execute JVM diagnostics on autoDiscover too
         JVMAuditor.runAudit(discoveredFiles, projectRoot);
-        
+
         const pipelineResult = await dataPipeline.processFiles(discoveredFiles, projectRoot);
-        
+
         // [v0.3.11] Core Freeze
         const frozenGraph = buildGraph(
             pipelineResult.nodes,
@@ -493,7 +493,7 @@ The **Documentation Shelf** of the Synapse canvas is a sacred storage area for m
             cluster_flows: [],
             system_context: {}
         };
-        
+
         // [v0.3.10] Advance phase for interactive auto-discovery
         phaseManager.advancePhase(Phase.CONTROL);
         return state;
@@ -505,7 +505,7 @@ The **Documentation Shelf** of the Synapse canvas is a sacred storage area for m
     private getDiscoverableFiles(projectRoot: string, includePaths?: string[]): string[] {
         const fileList: string[] = [];
         const stats: Record<string, number> = {};
-        
+
         const scanDir = (dir: string, relPath: string = '', depth: number = 0) => {
             if (!fs.existsSync(dir) || depth > 10) return;
             const files = fs.readdirSync(dir);
@@ -514,7 +514,7 @@ The **Documentation Shelf** of the Synapse canvas is a sacred storage area for m
                 const fullPath = path.join(dir, file);
                 const currentRelPath = path.join(relPath, file).replace(/\\/g, '/');
                 if (isIgnoredFolder(currentRelPath)) continue;
-                
+
                 // [v0.3.32.2] Let exclusion rules handle 'data' instead of hardcoding, as some C projects (like DOOM) use it for source.
                 let stat;
                 try {
@@ -522,7 +522,7 @@ The **Documentation Shelf** of the Synapse canvas is a sacred storage area for m
                 } catch (e) {
                     continue; // Skip unreadable files like .asar which throws "Invalid package" in VSCode fs
                 }
-                
+
                 if (includePaths && includePaths.length > 0 && relPath === '' && !stat.isDirectory()) {
                     // [v0.3.11] 🛡️ 루트 디렉토리의 파일은 includePaths 설정과 관계없이 항상 포함 시도
                 } else if (includePaths && includePaths.length > 0 && relPath === '' && stat.isDirectory()) {
@@ -537,12 +537,12 @@ The **Documentation Shelf** of the Synapse canvas is a sacred storage area for m
                 } else {
                     const ext = path.extname(file).toLowerCase();
                     const fileName = file.toLowerCase();
-                    
+
                     stats[ext] = (stats[ext] || 0) + 1;
-                    
+
                     // [v0.3.10] All MD files are now discoverable
                     const isProtocol = fileName === 'rules.md' || fileName === 'gemini.md' || fileName === 'architecture.md' || fileName.includes('report');
-                    
+
                     if (isIgnoredFile(currentRelPath)) continue;
                     const scanExtensions = ['.ts', '.js', '.tsx', '.jsx', '.py', '.c', '.h', '.cpp', '.hpp', '.cc', '.rs', '.sh', '.sql', '.md', '.csv', '.yaml', '.yml', '.json', '.java', '.kt', '.kts', '.swift', '.go'];
                     if (scanExtensions.includes(ext) || isProtocol) {
@@ -552,10 +552,10 @@ The **Documentation Shelf** of the Synapse canvas is a sacred storage area for m
             }
         };
         scanDir(projectRoot);
-        
+
         Logger.info(`[SCAN_DEBUG] Directory Walker completed. Total valid nodes added to fileList: ${fileList.length}`);
         Logger.info(`[SCAN_DEBUG] Extension Stats:`, JSON.stringify(stats, null, 2));
-        
+
         return fileList;
     }
 

@@ -62,7 +62,8 @@
   "blacklist": {
     "folders": [
       "TEST",
-      "src/test"
+      "src/test",
+      "assets"
     ],
     "files": []
   },

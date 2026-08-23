@@ -300,30 +300,48 @@ export class CanvasPanel {
         };
     }
     
-    private async handleFetchOnboardingReport() {
+    private async handleUnifiedReportGeneration(message: any) {
         try {
-            const context = await this.buildReportContext();
-            const builder = new OnboardingReportBuilder();
-            const config = this.getDefaultReportConfig();
-            const report = builder.build(context, config);
+            const workspaceFolders = vscode.workspace.workspaceFolders;
+            if (!workspaceFolders || workspaceFolders.length === 0) return;
+            const root = workspaceFolders[0].uri.fsPath;
             
-            this._panel.webview.postMessage({ command: 'onboardingReportData', report });
+            const { ValidationEngine } = require('../core/validation/ValidationEngine');
+            const snapshot = {
+                nodes: this.projectState?.nodes || [],
+                edges: this.projectState?.edges || [],
+                clusters: this.projectState?.clusters || []
+            };
+            Logger.info(`[REPORT] START: ${message.command}`);
+            
+            const context: any = {
+                snapshot,
+                metrics: { topImpactFiles: [], systemAssemblyPoints: [] }
+            };
+            
+            const { ReportBundleGenerator } = require('../core/reporting/ReportBundleGenerator');
+            
+            Logger.info(`[REPORT] Calling generateBundle`);
+            const summaryPath = await ReportBundleGenerator.generateBundle(context, root, message);
+            Logger.info(`[REPORT] generateBundle FINISHED: ${summaryPath}`);
+            
+            await vscode.commands.executeCommand('vscode.open', vscode.Uri.file(summaryPath), vscode.ViewColumn.Beside);
         } catch (e: any) {
-            Logger.error(`[CanvasPanel] Error fetching onboarding report: ${e.message}`);
+            Logger.error(`[CanvasPanel] Error generating unified reports: ${e.message}`);
+            vscode.window.showErrorMessage(`Failed to generate reports: ${e.message}`);
         }
     }
 
-    private async handleFetchExecutiveReport() {
-        try {
-            const context = await this.buildReportContext();
-            const builder = new ExecutiveReportBuilder();
-            const config = this.getDefaultReportConfig();
-            const report = builder.build(context, config);
-            
-            this._panel.webview.postMessage({ command: 'executiveReportData', report });
-        } catch (e: any) {
-            Logger.error(`[CanvasPanel] Error fetching executive report: ${e.message}`);
-        }
+    private async handleFetchOnboardingReport(message: any) {
+        await this.handleUnifiedReportGeneration(message);
+    }
+
+    private async handleFetchExecutiveReport(message: any) {
+        await this.handleUnifiedReportGeneration(message);
+    }
+
+    private async handleFetchArchitectureReport(message: any) {
+        await this.handleUnifiedReportGeneration(message);
     }
 
     // ==========================================
@@ -451,10 +469,13 @@ export class CanvasPanel {
                 await this.handleRejectNode(message.nodeId);
                 return;
             case 'fetchOnboardingReport':
-                await this.handleFetchOnboardingReport();
+                await this.handleFetchOnboardingReport(message);
                 return;
             case 'fetchExecutiveReport':
-                await this.handleFetchExecutiveReport();
+                await this.handleFetchExecutiveReport(message);
+                return;
+            case 'fetchArchitectureReport':
+                await this.handleFetchArchitectureReport(message);
                 return;
             case 'generateGraphData':
                 await this.handleGenerateFlow(message.nodeId, message.filePath);

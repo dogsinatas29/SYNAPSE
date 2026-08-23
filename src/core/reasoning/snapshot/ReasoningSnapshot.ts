@@ -47,7 +47,9 @@ export class ReasoningSnapshot {
     public getAllEvidence(): ReadonlyArray<IEvidence> {
         const result: IEvidence[] = [];
         for (const list of this.evidenceMap.values()) {
-            result.push(...list);
+            for (const ev of list) {
+                result.push(ev);
+            }
         }
         return this.isFrozen ? Object.freeze(result) : result;
     }

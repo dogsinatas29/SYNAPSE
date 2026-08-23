@@ -343,19 +343,74 @@ export class ValidationReportBuilder {
         
         console.log('[REPORT_REASONING]', !!(ctx as any).answerBundle);
 
-        const mdContent = this.buildMarkdown(report, evId, ctx.workspaceRoot || '');
         const root = ctx.workspaceRoot || process.cwd();
-        const mdPath = path.join(root, 'synapse_report', 'surgery', `ASR_${evId}.md`);
+        const path = require('path');
+        const projectName = path.basename(root);
+        const timestamp = new Date().toISOString().replace(/T/, '_').replace(/:/g, '').split('.')[0]; // YYYY-MM-DD_HHMMSS
         
-        fs.mkdirSync(path.dirname(mdPath), { recursive: true });
-        fs.writeFileSync(mdPath, mdContent, 'utf-8');
+        const bundleDir = path.join(root, 'synapse_report', 'surgery');
+        fs.mkdirSync(bundleDir, { recursive: true });
 
-        const htmlContent = this.buildHtml(report, evId, ctx.workspaceRoot || '');
-        const htmlPath = path.join(root, 'synapse_report', 'surgery', `ASR_${evId}.html`);
-        fs.writeFileSync(htmlPath, htmlContent, 'utf-8');
+        // Generate the legacy ASR content to preserve data during transition
+        const mdContent = this.buildMarkdown(report, evId, ctx.workspaceRoot || '');
+        
+        // Output the 4 structured files using InsightEngine
+        const { InsightEngine } = require('../reporting/InsightEngine');
+        const insight = new InsightEngine();
+        
+        const evidenceCount = ctx.snapshot?.nodes?.length || 0;
+        
+        // 00_EXECUTIVE_SUMMARY
+        const execHeader = insight.generateHeader('EXECUTIVE', 'ARCHITECTURAL_SCAN', ctx, evidenceCount);
+        const execSummaryStr = insight.generateExecutiveSummary(ctx);
+        const execContract = {
+            header: execHeader,
+            summary: execSummaryStr,
+            findings: [{ title: 'Overview', content: 'See Executive Summary for high-level health.' }],
+            evidence: [],
+            appendix: []
+        };
+        fs.writeFileSync(path.join(bundleDir, '00_EXECUTIVE_SUMMARY.md'), insight.renderReportToMarkdown(execContract));
+        
+        // 01_ARCHITECT_REPORT
+        const archHeader = insight.generateHeader('ARCHITECT', 'ARCHITECTURAL_SCAN', ctx, evidenceCount);
+        const archContract = {
+            header: archHeader,
+            summary: 'Focuses on boundaries, roles, and structural risks.',
+            findings: [{ title: 'Role Distribution', content: 'Pending Integration' }],
+            evidence: [],
+            appendix: []
+        };
+        fs.writeFileSync(path.join(bundleDir, '01_ARCHITECT_REPORT.md'), insight.renderReportToMarkdown(archContract));
 
-        const jsonPath = path.join(root, 'synapse_report', 'surgery', `ASR_${evId}.json`);
-        fs.writeFileSync(jsonPath, JSON.stringify(report, null, 2), 'utf-8');
+        // 02_ONBOARDING_REPORT
+        const onboardHeader = insight.generateHeader('ONBOARDING', 'ARCHITECTURAL_SCAN', ctx, evidenceCount);
+        const onboardContract = {
+            header: onboardHeader,
+            summary: 'Guides new developers through entry points and the system heart.',
+            findings: [{ title: 'Entry Points', content: 'Pending Integration' }],
+            evidence: [],
+            appendix: []
+        };
+        fs.writeFileSync(path.join(bundleDir, '02_ONBOARDING_REPORT.md'), insight.renderReportToMarkdown(onboardContract));
+
+        // 03_SIMULATION_DEBUG
+        const debugHeader = insight.generateHeader('SIMULATION_DEBUG', 'EXECUTION_TRACE', ctx, evidenceCount);
+        const debugContract = {
+            header: debugHeader,
+            summary: 'Analyzes blast radius and failure propagation of changes.',
+            findings: [{ title: 'Legacy ASR Findings', content: 'See Appendix for full dump.' }],
+            evidence: [],
+            appendix: [{ title: 'Legacy ASR Dump', content: mdContent }]
+        };
+        fs.writeFileSync(path.join(bundleDir, '03_SIMULATION_DEBUG.md'), insight.renderReportToMarkdown(debugContract));
+
+        // 04_RAW_DATA
+        fs.writeFileSync(path.join(bundleDir, '04_RAW_DATA.json'), JSON.stringify(report, null, 2), 'utf-8');
+
+        // Return the summary path as mdPath
+        const mdPath = path.join(bundleDir, '00_EXECUTIVE_SUMMARY.md');
+        const htmlPath = ''; 
 
         return { mdPath, htmlPath };
     }

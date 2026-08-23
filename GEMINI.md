@@ -395,18 +395,10 @@ actual hierarchy
 │       ├── project_state.json
 │       ├── synapse_history.json
 │       └── .server_info            ← 🟢 Added
-├── synapse_generated_reports/
-├── synapse_harvest_output/
-├── synapse_report/
-├── .virtual-debug/
-├── .synapse-cache/
 ├── assets/
-├── context/
-├── data/
 ├── dist/
 ├── docs/
 ├── resources/
-├── scratch/
 ├── src/
 │   ├── extension.ts
 │   ├── cli.ts
@@ -451,6 +443,19 @@ actual hierarchy
 │   │   │   ├── AccountManager.ts
 │   │   │   ├── CollaborationTransport.ts
 │   │   │   └── RestCollaborationTransport.ts
+│   │   ├── reporting/              ← 🟢 Active (v0.3.34.28+)
+│   │   │   ├── ExecutiveReportBuilder.ts
+│   │   │   └── OnboardingReportBuilder.ts
+│   │   ├── simulation/             ← 🟢 Active (v0.3.34.30)
+│   │   │   ├── ExecutiveReportDiffBuilder.ts
+│   │   │   ├── SimulationSession.ts
+│   │   │   ├── SimulationTargetSelector.ts
+│   │   │   ├── TopologyMutator.ts
+│   │   │   └── TopologyOverlay.ts
+│   │   ├── (Active) StateAuditPipeline.ts
+│   │   ├── (Active) AnomalyCollector.ts
+│   │   ├── (Active) TransitionGrammar.ts
+│   │   ├── (Active) FailurePropagator.ts
 │   │   ├── (Active) ProjectMetadata.ts
 │   │   ├── (Active) SymbolIndex.ts
 │   │   ├── (Active) DataPipeline.ts
@@ -561,6 +566,21 @@ actual hierarchy
     └── log-analyzer.js
 ```
 
+### 🧪 TESTED Section (Generated Artifacts & Garbage)
+런타임 또는 테스트 실행 중 생성되는 가비지/출력 디렉토리 목록입니다. (이 항목들은 Source of Truth 구성 요소가 아닙니다.)
+```text
+.
+├── mt/                        ← Maintenance Test Report 보관소 (Phase 0~7 오딧 결과)
+├── synapse_generated_reports/ ← [테스트/출력] 스캐너가 생성한 리포트 폴더
+├── synapse_harvest_output/    ← [테스트/출력] Harvest 동작 결과물 폴더
+├── synapse_report/            ← [테스트/출력] 시냅스 리포트
+├── .virtual-debug/            ← [테스트/캐시] 가상 디버깅 캐시
+├── .synapse-cache/            ← [테스트/캐시] 시냅스 성능 최적화 캐시
+├── context/                   ← [테스트/출력] 문맥 추출 데이터 보관소
+├── data/                      ← [테스트/데이터] 임시 데이터 보관소
+└── scratch/                   ← [테스트/임시] 스크래치 패드용 임시 파일
+```
+
 ### 📇 File Index (파일별 역할 설명)
 
 기존 파일들의 역할에 새로 추가되거나 변경된 항목의 주석을 보강했습니다.
@@ -588,6 +608,10 @@ actual hierarchy
 | `src/core/canvas-engine/` | Active | CanvasEngine, Intent, PhaseGate, StateManager, RuleEngine, VisualRuleBook, SpatialRuleBook, ValidationHarness, ScenarioRunner, RenderProtocol — 캔버스 구동 도메인 물리 분리 (10개 파일) |
 | `src/core/transaction/` | Active | CommitManager, ExecutionLayer, VerificationLayer — 아키텍처 상태 변경 트랜잭션 무결성 검증 및 커밋 |
 | `src/core/projection/` | Active | ProjectionLayer, RuleStore — 추상화된 설계 룰을 시각적 레이어에 투영 |
+| `src/core/reporting/` | 🟢 Active | OnboardingReportBuilder, ExecutiveReportBuilder — 경영/신규 진입자를 위한 의존성 없는 순수 리포트 뷰 |
+| `src/core/simulation/` | 🟢 Active | TopologyOverlay, SimulationSession, DiffBuilder — 기존 구조 파괴 없이 가상 Action과 Undo를 테스트하는 What-if 시뮬레이터 |
+| `src/core/StateAuditPipeline.ts` | 🟢 Active | Anomaly, FSMAudit, Propagation을 연결하는 뷰/시뮬레이션 전단 오케스트레이터 |
+| `src/core/FailurePropagator.ts` | 🟢 Active | 노드 고장에 따른 정적 파급 효과(Blast Radius) 연산기 (TopologyOverlay 참조 없음, IGraphView 추상화) |
 | `src/core/ProjectMetadata.ts` | Active | Server-owned project boundary manager (싱글톤, UUID, 경로 검증, SymbolIndex 통합) |
 | `src/core/SymbolIndex.ts` | Active | Cross-file registry (FolderTree + FileRegistry + FunctionCatalog, .synapseignore 필터링 + setIgnore() 연동) |
 | `src/core/DataPipeline.ts` | Active | 물리 파일 시스템 스캔 → 노드/엣지/클러스터 추출, 📁 Root 클러스터를 통한 무소속 노드 물리 배정 및 초기 원형 분산 배치 |

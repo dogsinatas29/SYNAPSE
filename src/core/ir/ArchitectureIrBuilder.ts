@@ -68,7 +68,9 @@ export class ArchitectureIrBuilder {
             });
 
             audit.candidateCount += candidates.length;
-            audit.notCandidateReports.push(...notCandidates);
+            for (const c of notCandidates) {
+                audit.notCandidateReports.push(c);
+            }
 
             for (const candidate of candidates) {
                 try {
@@ -144,7 +146,9 @@ export class ArchitectureIrBuilder {
             });
 
             audit.candidateCount += candidates.length;
-            audit.notCandidateReports.push(...notCandidates);
+            for (const c of notCandidates) {
+                audit.notCandidateReports.push(c);
+            }
 
             let acceptedCount = 0;
             let rejectedCount = 0;

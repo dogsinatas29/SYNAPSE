@@ -431,6 +431,15 @@ export class VirtualDebugger {
         });
         Logger.info(`[CHECKPOINT-A1] findings=${evidenceBundle.findings.length}`);
         
+        const simContextPath = require('path').join(workspaceRoot, 'synapse_report', 'surgery', 'simulation_evidence.json');
+        require('fs').mkdirSync(require('path').dirname(simContextPath), { recursive: true });
+        const simulationContext = {
+            timestamp: Date.now(),
+            evidenceBundle: evidenceBundle,
+            visibleClusterIds: visibleClusterIds
+        };
+        require('fs').writeFileSync(simContextPath, JSON.stringify(simulationContext, null, 2), 'utf-8');
+        
         Logger.info(`[CHECKPOINT-B] before aggregate`);
         const aggregatedBundle = ReportAggregator.aggregate(evidenceBundle, targetState);
         Logger.info(`[CHECKPOINT-C] after aggregate`);
@@ -564,10 +573,11 @@ export class VirtualDebugger {
                 );
 
                 // 2. Run generate_surgery_report logic
-                Logger.info(`[Laboratory] Generating Surgery Report (ASR_EV-LIVE)...`);
+                Logger.info(`[Laboratory] Generating Surgery Report (SIMULATION_DEBUG)...`);
                 console.log("[ASR] surgery start");
                 
-                const { mdPath } = ValidationReportBuilder.generateReports(context, 'EV-LIVE');
+                const { ReportBundleGenerator } = require('./reporting/ReportBundleGenerator');
+                const mdPath = await ReportBundleGenerator.generateBundle(context, workspaceRoot, { command: 'fetchSimulationDebug' });
                 console.log("[ASR] surgery exit 0");
                 
                 surgeryReportUri = vscode.Uri.file(mdPath);

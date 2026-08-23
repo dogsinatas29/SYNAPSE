@@ -321,197 +321,7 @@ If the score exceeds a safe threshold (e.g., 500,000 points), the **EXTREME_SCAL
 
 ---
 
-## 🔬 Architecture Scan Report (ASR 3.0)
 
-[![Architecture Scan Report Demo](https://img.youtube.com/vi/yU-_NRrADR0/0.jpg)](https://youtu.be/yU-_NRrADR0)
-
-SYNAPSE's **Architecture Scan Report (ASR)** is a fact-based, data-driven architectural health scan — a static MRI of your codebase. It does not rely on AI interpretation or heuristic guesses. Every finding is backed by a countable dependency graph edge.
-
-> **Sample Output**: 
-> **Sample Output**:
-> **Sample Output**
-
-- [VSCode Main Report](assets/test_sample/vscode_main_report.md)
-- [VSCode Main Evidence](/assets/test_sample/vscode_main_report.json)
-
-- [AntennaPod Whole Project Report](assets/test_sample/antennapod.md)
-- [AntennaPod Whole Project Evidence](assets/test_sample/antennapod.json)
-
-- [AntennaPod app/src Report](assets/test_sample/antennapod_app_src.md)
-- [AntennaPod app/src Evidence](assets/test_sample/antennapod_app_src.json)
-
-- [AntennaPod app/src + WearOS Report](assets/test_sample/antennapod_app_src_wearos.md)
-- [AntennaPod app/src + WearOS Evidence](assets/test_sample/antennapod_app_src_wearos.json)
-
-- [Linux Kernel 7.2 rc3 report](assets/test_sample/linux_kernel.md)
----
-
-### How It Works
-
-ASR follows a single deterministic pipeline from raw source to final report:
-
-```text
-Source Files
-  ↓ (Language Scanners: TS/JS, Python, C++, Kotlin, Rust, Java, ...)
-Dependency Graph (Nodes + Edges)
-  ↓ (GraphAnalyzer → SemanticRole assignment)
-Candidate Pool (sorted by Boundary Crossing × Fan-Out)
-  ↓ (ArchitectureAuditor → Role classification + Finding type)
-Penalty Sort (TEST_ARTIFACT pushed to bottom)
-  ↓ (ValidationEngine → Top Impact Files + Assembly Points)
-Report Generation
-  ↓ (ValidationReportBuilder)
-Markdown + HTML + JSON
-```
-
-**Key decisions made during this pipeline:**
-- Files are scored purely by **Boundary Crossings** (external edges) and **Fan-Out** (total outgoing edges).
-- `TEST_ARTIFACT` files (test resolvers, fixtures, simulation code) are classified by `ArchitectureAuditor` *before* the sort, so their penalty takes effect in the final ranking.
-- The candidate pool uses a dynamic `bfsLimit` (up to 200) so Top 10 / Top 50 / Top 100 always reflect genuinely different files.
-
----
-
-### Usage (GUI First)
-
-1. Open the **SYNAPSE Canvas** inside VSCode.
-2. Click the **`Virtual Debug`** button in the upper toolbar.
-3. ASR generates all three output formats immediately inside your workspace.
-
-No terminal required. No configuration files needed. The only input is the open workspace.
-
----
-
-### Output Structure
-
-```text
-synapse_report/surgery/
-├── ASR_EV-LIVE.md      ← Full report in Markdown (engineer-readable)
-├── ASR_EV-LIVE.html    ← Same report as rendered HTML (shareable)
-└── ASR_EV-LIVE.json    ← Raw graph snapshot + all metrics (source of truth)
-```
-
-The Markdown report is structured in 7 sections:
-
-| Section | What It Contains |
-|---------|------------------|
-| **0. Analysis Subject** | Total files, internal edges, boundary edges, Ghost Breakdown (NPM / Grammar / Unresolved / Dynamic) |
-| **1. Executive Summary** | PASS / UNSTABLE verdict. Architecture Entropy, Audit Confidence score, Ghost Health rating. |
-| **2. Top Impact Files** | Ranked list of highest-coupling files with Role, Boundary Crossing, Fan-Out, Blast Radius, and Evidence. |
-| **3. System Assembly Points** | Composition-root files that wire the system together (entry points, main, service registries). |
-| **4. Cost Projection** | Estimated engineering effort if top impact files are refactored (Engineers, Days, Files Affected, Edges Affected). |
-| **5. Expected After Surgery** | Projected Entropy and Boundary Edges after refactoring the top impact files. |
-| **6. Raw Metrics** | AEL scores, Coupling Source breakdown (which namespace owns the most boundary edges), Ghost evidence list. |
-
----
-
-### How Evidence Is Built
-
-Every entry in the **Top Impact Files** section is backed by a structured evidence block, not a summary sentence:
-
-```markdown
-### 1. workbench.common.main.ts
-- **Role**: ASSEMBLY_POINT
-- **Boundary Crossing**: 131    ← number of edges that cross cluster boundaries
-- **Fan-Out**: 136              ← total outgoing dependencies
-- **Blast Radius**: 18 Clusters ← how many clusters are reachable within 3 hops
-
-**Evidence (Observed Behavior)**
-- Boundary Crossing: 131
-- Blast Radius (Clusters): 18
-- Fan-Out: 136
-- Fan-In: 3
-
-**Architectural Assessment**
-> HEALTHY_HUB: No action required. Excluded from risk ranking.
-```
-
-The `Role` field comes from `ArchitectureAuditor`, which classifies each file based on its file path pattern and coupling metrics:
-
-| Role | Meaning |
-|------|---------|
-| `ASSEMBLY_POINT` | Composition root / entry point — high fan-out is expected and healthy |
-| `CONTRACT_HUB` | Protocol or interface definition — bridges multiple subsystems |
-| `DOMAIN_SERVICE` | Core logic layer (editor, workbench, platform) |
-| `UI_COMPONENT` | View / browser layer |
-| `TEST_ARTIFACT` | Test file, fixture, or simulation — **penalized in ranking** |
-| `COORDINATOR` | Orchestrator or manager |
-| `INFRASTRUCTURE` | Build, config, or scaffolding file |
-
-The `Finding` type determines whether a file is flagged for action:
-
-| Finding | Triggered When |
-|---------|----------------|
-| `HEALTHY_HUB` | ASSEMBLY_POINT — high fan-out is architectural intent |
-| `UI_TO_SERVICE_COUPLING` | UI_COMPONENT with >20 external edges |
-| `GOD_SERVICE` | DOMAIN_SERVICE with fan-out >50 and high boundary ratio |
-| `CONTRACT_BLOAT` | CONTRACT_HUB with fan-in >200 and fan-out >100 |
-| `EXCESSIVE_FAN_OUT` | Any file with fan-out >30 and boundary ratio >0.7 |
-| `NORMAL` | No immediate architectural action required |
-
----
-
-### Audit Confidence Score
-
-The report includes a single **Audit Confidence** score (0–100) that reflects how trustworthy the scan data is:
-
-- Base score: **70**
-- **+10** if Grammar noise (`.tmLanguage` references) was filtered out
-- **+5** if at least one ASSEMBLY_POINT was classified
-- **+4** if at least one CONTRACT_HUB was verified
-- **+6** if Ghost Ratio is below 5%
-- **−2 per 1%** of UNKNOWN_REFERENCE Ghost ratio above threshold
-
-A score above **85** means the graph is clean enough to trust all findings. Below **70** means the scanner likely missed significant dependencies.
-
----
-
-### Ghost Health Assessment
-
-Ghost dependencies (references SYNAPSE cannot resolve to a real file) are broken down by category:
-
-| Category | Source |
-|----------|--------|
-| `GRAMMAR_REFERENCE` | `.tmLanguage`, `.tmGrammar`, TextMate token refs |
-| `NPM_PACKAGE` | `node_modules` and external npm dependencies |
-| `UNRESOLVED_IMPORT` | Import paths that failed path resolution |
-| `DYNAMIC_IMPORT` | `import()`, `require()` with runtime variables |
-| `GENERATED_REFERENCE` | Auto-generated files (`.d.ts`, build outputs) |
-| `UNKNOWN_REFERENCE` | Anything else — the "dirty" category |
-
-The ratio of `UNKNOWN_REFERENCE` to total Ghosts produces a health label: `EXCELLENT / GOOD / FAIR / POOR`.
-
----
-
-### ⚠️ AST Verification Layer (Implemented — Not Yet Wired In)
-
-`ast_verification_engine.ts` is fully implemented but currently **not connected** to the Virtual Debug execution path.
-
-When enabled, this layer appends the following steps at the end of the pipeline:
-
-```text
-Markdown + HTML + JSON
-  ↓ (ASTVerificationEngine)
-Sample top 10,000 edges from the graph
-  ↓ (Path-pattern heuristic: export symbols, header presence, false-positive patterns)
-Classify each edge: RESOLVED / PARTIAL / UNRESOLVED
-  ↓
-Compute Audit Coverage % + remove false positives
-  ↓
-Append AST Verification section to report
-```
-
-**Estimated time**: For VSCode scale (387k edges), a 10k sample with no file I/O (path-pattern checks only) runs in **1–3 seconds**.
-
-When active, the report gains a quantitative reliability signal such as: _"93% of audited edges in Top Impact files were verified as exporting real symbols."_
-
-### 🚧 Pending Work
-
-| # | Item | Status |
-|---|------|--------|
-| 1 | **Linux Kernel support** — The scanner currently cannot analyze C/C++ projects at Linux Kernel scale. Additional work is required on the C++ scanner and edge resolution for macro-heavy codebases. | ⏳ Not started |
-| 2 | **AST Verification Layer** — `ast_verification_engine.ts` is implemented but not wired into the Virtual Debug pipeline. Needs integration into `ValidationEngine` and `ValidationReportBuilder`. | ⏳ Not started |
-
----
 
 
 ## 🌾 Harvest
@@ -638,22 +448,45 @@ Verify is the Architect's real-time diagnostic system for inspecting the health 
 
 ### Verify Menu Items
 
-#### 🔬 Scan Architecture (AI)
-Runs a full AI-driven semantic analysis on the current architecture graph. Scans all nodes and edges, detects schema violations, dead-end nodes, broken edges, and coupling anomalies. Generates a `LOGIC_REPORT.md` with detailed findings.
+#### 🔬 Simulation Debug (Virtual Debug)
+Runs an isolated, deterministic simulation of the architecture graph to detect structural defects, logical failures, and coupling anomalies (e.g., Circular Dependencies, Fractured Boundaries, Necrosis).
+- Extracts a raw diagnostic baseline (`synapse_report/surgery/simulation_evidence.json`) which serves as the **Single Source of Truth** for all subsequent reports.
+- Generates on-screen visual evidence (red links for fractures, warning badges for high impact nodes).
+- **Required First Step**: You must run Simulation Debug before generating any Human-readable reports.
 
-- Includes remote client nodes (connected via SSE) in the analysis scope.
-- Reports are output in the OS display language (Korean / English auto-detected via `vscode.env.language`).
+#### 📊 Architecture Scan Reports (ASR 3.0) Pipeline
 
-#### 💀 Simulate Necrosis
-Manually applies the **Necrosis** state to selected nodes. Used to mark a node as logically dead — indicating it has broken dependencies, missing references, or has been flagged by the AI analysis.
+ASR 3.0 consists of a single scan (Virtual Debug) that collects data, and 3 reports that interpret this data from multiple angles. All reports **must use `simulation_evidence.json` as the Single Source of Truth** and cannot be generated without it.
 
-Necrosis nodes appear with a red border and darkened background. Connected edges are marked as fractured.
+##### Phase 1 - Analysis (Virtual Debug)
+- Execute **Virtual Debug** from the canvas.
+- The system acts as an **Architecture What-if Laboratory** to simulate structural defects.
+- **Output**: Generates a single raw architecture data snapshot: `synapse_report/surgery/simulation_evidence.json`.
 
-#### 🪦 Simulate Tombstone
-Manually applies the **Tombstone** state to selected nodes. A tombstone represents a node that has been fully deprecated or removed from the active architecture. Rendered as a gravestone visual marker on the canvas.
+##### Phase 2 - Origin Report (Simulation Debug)
+- Along with `simulation_evidence.json`, a raw debug report (`03_SIMULATION_DEBUG.md`) is generated for internal logic verification.
+- This report contains findings such as coupling and fractured edges, but only provides the **exact Evidence Reference** pointing to the internal data inside `simulation_evidence.json`.
+
+##### Phase 3 - Architecture Report (📐)
+- **Input**: `simulation_evidence.json` + `03_SIMULATION_DEBUG.md`
+- **Role**: Actionable refactoring guide for Senior Engineers and Architects.
+- **Output**: Provides a prioritized list of Refactor Candidates, the Reason for the risk, and its physical Evidence Reference.
+
+##### Phase 4 - Onboarding Report (🌱)
+- **Input**: `simulation_evidence.json`
+- **Role**: Architectural navigation map for new developers joining the project.
+- **Output**: Guides developers by identifying System Entry Points, Core Domains, and Safe Areas to prevent them from getting lost in the noise.
+
+##### Phase 5 - Executive Report (👔)
+- **Input**: `simulation_evidence.json`
+- **Role**: High-level architectural health summary for management and technical leadership.
+- **Output**: Summarizes clear Health status, Top Risks, and Recommended Actions.
+
+> **⚠️ Rule (Rule-001)**
+> The Executive, Architect, and Onboarding reports can NEVER be generated if `simulation_evidence.json` does not exist. (Error: `Run Virtual Debug first.`)
 
 #### 🧹 Clear Debug
-Removes all debug visual states (Necrosis, Tombstone) from the canvas and resets nodes to their default rendering state. Does not affect actual graph data.
+Removes all debug visual states from the canvas and resets nodes to their default rendering state. Does not affect actual graph data.
 
 #### 💎 Det Bootstrap (`v0.2.28: Determinism Bootstrap`)
 Runs the Determinism Bootstrap sequence. Resets internal state checksums and re-establishes a deterministic baseline for the current architecture snapshot. Used to eliminate accumulated non-determinism from repeated edits.

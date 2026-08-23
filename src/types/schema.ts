@@ -153,6 +153,14 @@ export interface WorkspaceState {
     filters?: any;
 }
 
+export interface SimulationContext {
+    timestamp: number;
+    evidenceBundle: any;
+    validationContext?: any;
+    visibleClusterIds?: string[];
+}
+
+
 export interface BookmarkState {
     version: number;
     bookmarks: any[];
@@ -718,4 +726,80 @@ export interface ScenarioSnapshot {
 export interface ScenarioComparison {
     baselineReport: ExecutiveReport;
     scenarioReport: ExecutiveReport;
+}
+
+export enum ReportScope {
+    FULL_PROJECT = 'FULL_PROJECT',
+    SELECTED_CLUSTER = 'SELECTED_CLUSTER',
+    BOUNDARY_SCAN = 'BOUNDARY_SCAN',
+    SINGLE_NODE = 'SINGLE_NODE'
+}
+
+export enum SelectionSource {
+    USER_SELECTED = 'USER_SELECTED',
+    AUTO_SELECTED = 'AUTO_SELECTED'
+}
+
+export interface ReportHeader {
+    reportType: string;
+    analysisMode: string;
+    scope: ReportScope;
+    target: string;
+    selectionSource: SelectionSource;
+    reason: string;
+    generatedBy: string;
+    evidenceCount: number;
+    reportConfidence: number;
+}
+
+export interface ReportSection {
+    title: string;
+    content: string;
+}
+
+export interface ReportContract {
+    header: ReportHeader;
+    summary: string;
+    findings: ReportSection[];
+    evidence: ReportSection[];
+    appendix: ReportSection[];
+}
+
+export interface InsightSource {
+    value: string | number | string[];
+    source: string;
+}
+
+export interface ExecutiveInsight {
+    health: string;
+    topRisk: string;
+    action: string;
+    whyItMatters: string;
+    sources?: Record<string, InsightSource>;
+}
+
+export interface RefactorCandidate {
+    filePath: string;
+    reason: string;
+    evidence: string;
+}
+
+export interface ArchitectInsight {
+    candidates: RefactorCandidate[];
+    sources?: Record<string, InsightSource>;
+}
+
+export interface OnboardingInsight {
+    entryPoint: string;
+    coreDomain: string;
+    safeArea: string[];
+    avoidReadingYet: string;
+    sources?: Record<string, InsightSource>;
+}
+
+export interface SimulationInsight {
+    immediateImpact: string[];
+    secondaryImpact: string[];
+    blastRadius: number;
+    sources?: Record<string, InsightSource>;
 }

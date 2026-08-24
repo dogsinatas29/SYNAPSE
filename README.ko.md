@@ -457,6 +457,15 @@ Verify는 아키텍처 그래프의 상태를 실시간으로 진단하는 Archi
 
 #### 📊 Architecture Scan Reports (ASR 3.0) 파이프라인
 
+godot simulation debug report : https://github.com/dogsinatas29/SYNAPSE/blob/main/assets/v0.3.34.30/godot_SIMULATION_DEBUG.md
+godot architect report  : https://github.com/dogsinatas29/SYNAPSE/blob/main/assets/v0.3.34.30/godot_ARCHITECT_REPORT.md
+
+vscode simulation debug report : https://github.com/dogsinatas29/SYNAPSE/blob/main/assets/v0.3.34.30/viscode_SIMULATION_DEBUG.md
+vscode architect report : https://github.com/dogsinatas29/SYNAPSE/blob/main/assets/v0.3.34.30/vsc0de_ARCHITECT_REPORT.md
+
+linux kernel simulation debug report :  https://github.com/dogsinatas29/SYNAPSE/blob/main/assets/v0.3.34.30/linux_SIMULATION_DEBUG.md
+linux kernel architect report : https://github.com/dogsinatas29/SYNAPSE/blob/main/assets/v0.3.34.30/linux_ARCHITECT_REPORT.md
+
 ASR 3.0은 토폴로지 및 시맨틱 데이터를 수집하는 단일 스캔(Virtual Debug)과 이 데이터를 다각도로 해석하여 아키텍처 서술로 변환하는 파이프라인으로 구성됩니다. 모든 보고서는 **반드시 `simulation_evidence.json`을 단일 진실 공급원(Single Source of Truth)으로 사용**해야만 생성될 수 있습니다.
 
 ##### Phase 1 - 분석 및 경계 발견 (Virtual Debug)

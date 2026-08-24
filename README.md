@@ -457,6 +457,16 @@ Runs an isolated, deterministic simulation of the architecture graph to detect s
 - **Required First Step**: You must run Simulation Debug before generating any Human-readable reports.
 
 #### 📊 Architecture Scan Reports (ASR 3.0) Pipeline
+sample 
+godot simulation debug report : https://github.com/dogsinatas29/SYNAPSE/blob/main/assets/v0.3.34.30/godot_SIMULATION_DEBUG.md
+godot architect report  : https://github.com/dogsinatas29/SYNAPSE/blob/main/assets/v0.3.34.30/godot_ARCHITECT_REPORT.md
+
+vscode simulation debug report : https://github.com/dogsinatas29/SYNAPSE/blob/main/assets/v0.3.34.30/viscode_SIMULATION_DEBUG.md
+vscode architect report : https://github.com/dogsinatas29/SYNAPSE/blob/main/assets/v0.3.34.30/vsc0de_ARCHITECT_REPORT.md
+
+linux kernel simulation debug report :  https://github.com/dogsinatas29/SYNAPSE/blob/main/assets/v0.3.34.30/linux_SIMULATION_DEBUG.md
+linux kernel architect report : https://github.com/dogsinatas29/SYNAPSE/blob/main/assets/v0.3.34.30/linux_ARCHITECT_REPORT.md
+
 
 ASR 3.0 consists of a single scan (Virtual Debug) that collects topological and semantic data, followed by a pipeline that interprets this data into architectural narratives. All reports **must use `simulation_evidence.json` as the Single Source of Truth** and cannot be generated without it.
 

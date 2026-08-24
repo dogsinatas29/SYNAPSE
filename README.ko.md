@@ -449,40 +449,42 @@ Verify는 아키텍처 그래프의 상태를 실시간으로 진단하는 Archi
 
 #### 🔬 Simulation Debug (가상 디버그)
 현재 아키텍처 그래프를 기반으로 순환 참조, 결합도 이상, 경계 파손 등을 감지하기 위한 결정론적 시뮬레이션을 실행합니다.
+- **Boundary Discovery (경계 발견)**: 내부 응집도(Cohesion)와 규모(Volume)를 기반으로 시스템 경계와 거대 서브시스템을 능동적으로 탐지합니다.
+- **Semantic Context Generation**: 발견된 경계를 중앙 Semantic Context에 등록하여 단순 토폴로지 수치와 의도된 아키텍처를 구별합니다.
 - 순수 AST 분석 결과를 포함한 핵심 원시 데이터 스냅샷(`synapse_report/surgery/simulation_evidence.json`)을 생성하며, 이는 이후 모든 보고서 생성의 **단일 진실 공급원(Single Source of Truth)** 역할을 합니다.
 - 캔버스 화면에 파손된 엣지(빨간 점선)나 괴사 노드 등 시각적 증거를 렌더링합니다.
 - **필수 선행 작업**: 사람이 읽을 수 있는 모든 종류의 리포트는 이 Simulation Debug가 먼저 실행된 이후에만 생성할 수 있습니다.
 
 #### 📊 Architecture Scan Reports (ASR 3.0) 파이프라인
 
-ASR 3.0은 데이터를 수집하는 단일 스캔(Virtual Debug)과 이 데이터를 다각도로 해석하는 3개의 보고서로 구성됩니다. 모든 보고서는 **반드시 `simulation_evidence.json`을 단일 진실 공급원(Single Source of Truth)으로 사용**해야만 생성될 수 있습니다.
+ASR 3.0은 토폴로지 및 시맨틱 데이터를 수집하는 단일 스캔(Virtual Debug)과 이 데이터를 다각도로 해석하여 아키텍처 서술로 변환하는 파이프라인으로 구성됩니다. 모든 보고서는 **반드시 `simulation_evidence.json`을 단일 진실 공급원(Single Source of Truth)으로 사용**해야만 생성될 수 있습니다.
 
-##### Phase 1 - 분석 (Virtual Debug)
+##### Phase 1 - 분석 및 경계 발견 (Virtual Debug)
 - 캔버스에서 **Virtual Debug**를 실행합니다.
-- 시스템이 **Architecture What-if Laboratory**를 수행하여 구조적 결함을 시뮬레이션합니다.
+- 시스템이 **Architecture What-if Laboratory**를 수행하여 구조적 결함을 시뮬레이션하고 Semantic Boundary를 발견합니다.
 - **출력물**: 전체 아키텍처 원시 데이터 스냅샷인 `synapse_report/surgery/simulation_evidence.json` 단 하나만 생성합니다.
 
 ##### Phase 2 - 원본 보고서 (Simulation Debug)
 - `simulation_evidence.json`이 생성됨과 동시에 내부 로직 검증을 위한 원본 디버그 보고서(`03_SIMULATION_DEBUG.md`)가 생성됩니다.
-- 본 보고서는 결합도와 파손된 엣지 등의 발견 사항(Findings)과, 그 원인이 되는 `simulation_evidence.json` 내부의 **정확한 증거 링크(Evidence Reference)**만을 담고 있습니다.
+- 본 보고서는 결합도와 파손된 엣지 등의 발견 사항(Findings)과 더불어, 발견된 Semantic Boundary에 대한 원시 정보를 담고 있습니다.
 
 ##### Phase 3 - 아키텍트 보고서 (Architecture Report)
 - **입력**: `simulation_evidence.json` + `03_SIMULATION_DEBUG.md`
 - **역할**: 시니어 엔지니어와 아키텍트를 위한 실천 가능한 리팩토링 가이드입니다.
-- **출력물**: 리팩토링 대상(Refactor Candidate), 위험한 이유(Reason), 그리고 그 물리적 증거(Evidence Reference)의 랭킹을 제공합니다. 
+- **출력물**: 리팩토링 대상 랭킹을 제공합니다. 원시 메트릭(예: fan-out)을 Semantic Context와 교차 검증하여 의미론적 **아키텍처 해석(Architectural Interpretation)**으로 번역합니다. (예: 높은 fan-out을 가진 노드라도 보호받는 경계 내부에 있다면 `INTENDED_HUB`로 분류).
 
 ##### Phase 4 - 온보딩 보고서 (Onboarding Report)
 - **입력**: `simulation_evidence.json`
 - **역할**: 프로젝트에 합류한 신규 개발자들을 위한 아키텍처 내비게이션 맵입니다.
-- **출력물**: 시스템의 뼈대를 이루는 진입점(Entry Point), 핵심 도메인(Core Domain), 안전 구역(Safe Area) 등을 파악할 수 있도록 안내합니다.
+- **출력물**: 시스템의 뼈대를 이루는 진입점(Entry Point), 핵심 도메인(Core Domain), 안전 구역(Safe Area) 등을 파악할 수 있도록 안내하며, 노이즈에 길을 잃지 않도록 Semantic Boundary를 가이드라인으로 활용합니다.
 
 ##### Phase 5 - 경영 요약 보고서 (Executive Report)
 - **입력**: `simulation_evidence.json`
 - **역할**: 경영진 및 기술 리더십을 위한 아키텍처 건강 요약서입니다.
-- **출력물**: 명확한 건강 상태(Health), 최고 위험 요소(Top Risk), 그리고 권장 조치(Recommended Action)를 요약하여 제공합니다.
+- **출력물**: 명확한 건강 상태(Health), 최고 위험 요소(Top Risk), 그리고 권장 조치(Recommended Action)를 해석된 Semantic Context 기반으로 요약하여 제공합니다.
 
 > **⚠️ 규칙 (Rule-001)**
-> `simulation_context.json`이 존재하지 않으면 Executive, Architect, Onboarding 보고서는 절대 생성될 수 없습니다. (에러 발생: `Run Virtual Debug first.`)
+> `simulation_evidence.json`이 존재하지 않으면 Executive, Architect, Onboarding 보고서는 절대 생성될 수 없습니다. (에러 발생: `Run Virtual Debug first.`)
 
 #### 🧹 Clear Debug — 디버그 초기화
 캔버스에서 모든 디버그 시각 상태를 제거하고 노드를 기본 렌더링 상태로 초기화합니다. 실제 그래프 데이터에는 영향을 주지 않습니다.
@@ -534,6 +536,7 @@ SYNAPSE는 코드 중심 개발의 한계를 극복하기 위해 만들어졌습
 
 | 버전 | 릴리스 날짜 | 설명 |
 | :---: | :---: | :--- |
+| **v0.3.34.31** | 2026-08-24 | **시맨틱 허브 인지 및 래퍼 부활 버그 수정**: 시맨틱 엔진을 고도화하여 단순한 Fan-out 기반의 구조적 결함과 의도된 아키텍처 허브를 완벽히 구분하도록 개선했습니다. VSCode의 `src/vs`, Godot의 `core`, `scene`, `servers/rendering` 같은 거대 핵심 모듈들이 이제 `[CRITICAL] STRUCTURAL_DEFECT`가 아닌 `[INFO] INTENDED_HUB`로 정확히 분류됩니다. `BoundaryGraphBuilder`가 폐기(SPLIT)한 래퍼 디렉토리(예: `extensions/copilot`)를 `RootCauseAggregator`가 가짜 허브로 부활시키던 'Wrapper Resurrection' 버그를 수정했습니다. 이를 위해 `splitWrappers` 추적, `EvidenceType.WRAPPER_NODE` 방출, 그리고 최대 Depth 5까지 파고드는 동적 집계 드릴다운 로직을 구현했습니다. VSCode와 Godot 아키텍처에서 성공적으로 검증을 완료했습니다. |
 | **v0.3.34.24** | 2026-08-20 | **Architecture State Model — 그래프 → 상태 그래프**: `UNKNOWN`을 분류 실패에서 **상태 머신 완전성(State Machine Completeness) 문제**로 재정의(`UNKNOWN = Transition Missing`). FSM 기반 상태 모델 전체 도입: `LifecycleState`(DISCOVERED→CLASSIFIED, 단방향), `HealthState`(UNCLUSTERED / UNCLASSIFIED / CORRUPTED), `ViewState`(뷰 기준 상태, 노드 상태 아님), `ReferenceState`(RESOLVED / GHOST, 엣지 기준), `FSMCompleteness`(KNOWN / INCOMPLETE / INVALID, NodeState에서 분리된 검증 결과). `NodeState`가 세 축을 단일 객체로 집약. `AnomalyCollector` 구현 — 순수 상태 판정기, 아키텍처 패턴 추론 없음. `ValidationEngine.analyzeState()`에 try/catch 래핑으로 비파괴적 주입. 모든 ASR 보고서에 Section 8 `Architecture State Report` 추가 (FSM Completeness 표 + Health/View/Reference 이상 분류 출력). `UNCLASSIFIED` = Soft Anomaly로 지정(Role Ontology 공백, FSM 위반 아님). AntennaPod(839 노드), VSCode Main(12,373 노드), Linux Kernel 7.2-rc3(70,089 노드) 검증: FSM ✅ PASS, 3개 프로젝트 모두 `AGGREGATE_unknown = 0` 달성. 로드맵 첫 번째 마일스톤: 정적 그래프 → 상태 그래프 → 전이 기록 → 시뮬레이션 엔진. |
 | **v0.3.34.23** | 2026-08-19 | **Architecture IR Builder — Q4 Extension Point Engine**: `IMPLEMENTS`/`EXTENDS` 엣지에서 구조적 확장 축을 발견하는 다단계 Candidate → Evidence → Promotion 파이프라인 확립. 다중 라인 혼합 상속 선언을 처리하도록 `JavaScanner` 및 `KotlinScanner` 정규식 재작성(AntennaPod 기준 `EXTENDS: 174`, `IMPLEMENTS: 98` 복구). Webpack 클래스 맹글링에 의해 첫 번째 이후 모든 스캐너가 묵음으로 등록 거부되던 `ScannerRegistry` 치명적 버그 수정(이름 문자열 비교 → 생성자 참조 동등성). `FileScanner` 생성자 자동 등록으로 레거시 `parseJava()` 폴백 영구 차단. `answer.findings` → `answer.items` 필드명 불일치로 Q4가 항상 빈 결과를 출력하던 버그 수정. Android/Java SDK 노이즈 필터링을 위한 `isFrameworkType()` 추가. AntennaPod 전체 파이프라인 검증: `PodcastSearcher`, `Playable`, `SwipeAction` Extension Point 확인. `AGGREGATE_unknown` 근본 원인 추적: `nodeFound: false` = View Scope 이탈(분류 실패 아님) — `AGGREGATE_out_of_scope` 상태 분리 도입, v0.3.34.24 Node Lifecycle FSM의 설계 기반 마련. |
 | **v0.3.34.19b** | 2026-08-13 | **서브그래프 격리 버그 수정**: 클러스터 스코프 분석 시 `AGGREGATE_*` 노드(VirtualDebugger의 외부 클러스터 대체 플레이스홀더)가 `intentEdges`를 통해 `impactMap`, `consumers`, `ghostEvidence`, `boundaryEvidence`로 유입되어 `extensions/*`, `cli/*` 외부 경로가 workbench 스코프 보고서를 오염시키던 버그 수정. `ValidationEngine.ts` 4개 지점에 `startsWith('AGGREGATE_')` 단일 가드 추가. 수정 후: coupling breakdown이 전역 통계 복사(extensions 42.7% > vs 39%)에서 벗어나 `vs(43.9%) > extensions(42%)`로 재조정되어 진정한 서브그래프 격리 확인. BFS reachability 순회는 AGGREGATE 노드가 nodeMap에 없어 별도 패치 불필요로 확인. |

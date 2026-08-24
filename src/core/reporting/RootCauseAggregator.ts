@@ -7,7 +7,7 @@ export class RootCauseAggregator {
      * Groups raw findings by their root cause (source node or target cluster)
      * rather than keeping them as a flat list of 500+ items.
      */
-    public aggregate(context: SimulationContext): ProblemGroup[] {
+    public aggregate(context: SimulationContext, semanticContext?: any): ProblemGroup[] {
         if (!context.evidenceBundle || !context.evidenceBundle.findings) {
             return [];
         }
@@ -19,6 +19,9 @@ export class RootCauseAggregator {
         const findingTypes = new Map<string, number>();
 
         for (const finding of findings) {
+            // Skip semantic metadata findings from grouping
+            if (finding.type === 'semantic') continue;
+
             findingTypes.set(finding.type, (findingTypes.get(finding.type) || 0) + 1);
 
             const rawId = finding.sourceId || finding.nodeId || (finding.nodeIds && finding.nodeIds[0]) || 'UNKNOWN';
@@ -28,16 +31,22 @@ export class RootCauseAggregator {
                 continue;
             }
 
-            // Extract subsystem/module (top 2 directories) for massive scale grouping
+            // Try to match the exact boundary id discovered by SemanticContext
             let ownerId = rawId;
-            if (typeof rawId === 'string' && rawId.includes('/')) {
-                const parts = rawId.split('/');
-                if (parts.length >= 2) {
-                    // e.g. "core/config/project_settings.cpp" -> "core/config"
-                    ownerId = parts.slice(0, 2).join('/');
-                } else if (parts.length === 1) {
-                    ownerId = parts[0];
+            if (semanticContext) {
+                const boundary = semanticContext.getBoundaryForNode(rawId);
+                if (boundary) {
+                    ownerId = boundary.id;
+                } else {
+                    let depth = 2;
+                    ownerId = extractTopLevelDir(rawId, depth) || rawId;
+                    while (semanticContext.isWrapper(ownerId) && depth < 5) {
+                        depth++;
+                        ownerId = extractTopLevelDir(rawId, depth) || rawId;
+                    }
                 }
+            } else {
+                ownerId = extractTopLevelDir(rawId, 2) || rawId;
             }
             
             const groupKey = ownerId; // Group by subsystem entirely, merging finding types
@@ -104,4 +113,13 @@ export class RootCauseAggregator {
         Logger.info(`[AGGREGATOR] end. Group count: ${result.length}`);
         return result;
     }
+}
+
+function extractTopLevelDir(filePath: string, depth: number = 2): string | null {
+    if (!filePath || filePath.indexOf('/') === -1) return null;
+    const parts = filePath.split('/');
+    if (parts.length >= depth) {
+        return parts.slice(0, depth).join('/');
+    }
+    return parts[0];
 }

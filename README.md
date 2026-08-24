@@ -449,38 +449,40 @@ Verify is the Architect's real-time diagnostic system for inspecting the health 
 ### Verify Menu Items
 
 #### 🔬 Simulation Debug (Virtual Debug)
-Runs an isolated, deterministic simulation of the architecture graph to detect structural defects, logical failures, and coupling anomalies (e.g., Circular Dependencies, Fractured Boundaries, Necrosis).
+Runs an isolated, deterministic simulation of the architecture graph to detect structural defects, logical failures, and coupling anomalies (e.g., Circular Dependencies, Fractured Boundaries, Necrosis). 
+- **Boundary Discovery**: Actively detects system boundaries and massive subsystems based on internal cohesion and volume.
+- **Semantic Context Generation**: Registers discovered boundaries into a central Semantic Context to distinguish intended architecture from raw topology.
 - Extracts a raw diagnostic baseline (`synapse_report/surgery/simulation_evidence.json`) which serves as the **Single Source of Truth** for all subsequent reports.
 - Generates on-screen visual evidence (red links for fractures, warning badges for high impact nodes).
 - **Required First Step**: You must run Simulation Debug before generating any Human-readable reports.
 
 #### 📊 Architecture Scan Reports (ASR 3.0) Pipeline
 
-ASR 3.0 consists of a single scan (Virtual Debug) that collects data, and 3 reports that interpret this data from multiple angles. All reports **must use `simulation_evidence.json` as the Single Source of Truth** and cannot be generated without it.
+ASR 3.0 consists of a single scan (Virtual Debug) that collects topological and semantic data, followed by a pipeline that interprets this data into architectural narratives. All reports **must use `simulation_evidence.json` as the Single Source of Truth** and cannot be generated without it.
 
-##### Phase 1 - Analysis (Virtual Debug)
+##### Phase 1 - Analysis & Boundary Discovery (Virtual Debug)
 - Execute **Virtual Debug** from the canvas.
-- The system acts as an **Architecture What-if Laboratory** to simulate structural defects.
+- The system acts as an **Architecture What-if Laboratory** to simulate structural defects and discover Semantic Boundaries.
 - **Output**: Generates a single raw architecture data snapshot: `synapse_report/surgery/simulation_evidence.json`.
 
 ##### Phase 2 - Origin Report (Simulation Debug)
 - Along with `simulation_evidence.json`, a raw debug report (`03_SIMULATION_DEBUG.md`) is generated for internal logic verification.
-- This report contains findings such as coupling and fractured edges, but only provides the **exact Evidence Reference** pointing to the internal data inside `simulation_evidence.json`.
+- Contains findings such as coupling and fractured edges, and Semantic Boundary discoveries.
 
 ##### Phase 3 - Architecture Report (📐)
 - **Input**: `simulation_evidence.json` + `03_SIMULATION_DEBUG.md`
 - **Role**: Actionable refactoring guide for Senior Engineers and Architects.
-- **Output**: Provides a prioritized list of Refactor Candidates, the Reason for the risk, and its physical Evidence Reference.
+- **Output**: Provides a prioritized list of Refactor Candidates. Translates raw metrics (like fan-out) into meaningful **Architectural Interpretations** by checking the Semantic Context (e.g., classifying a high fan-out node as an `INTENDED_HUB` if it resides in a protected boundary).
 
 ##### Phase 4 - Onboarding Report (🌱)
 - **Input**: `simulation_evidence.json`
 - **Role**: Architectural navigation map for new developers joining the project.
-- **Output**: Guides developers by identifying System Entry Points, Core Domains, and Safe Areas to prevent them from getting lost in the noise.
+- **Output**: Guides developers by identifying System Entry Points, Core Domains, and Safe Areas, utilizing Semantic Boundaries to prevent them from getting lost in the noise.
 
 ##### Phase 5 - Executive Report (👔)
 - **Input**: `simulation_evidence.json`
 - **Role**: High-level architectural health summary for management and technical leadership.
-- **Output**: Summarizes clear Health status, Top Risks, and Recommended Actions.
+- **Output**: Summarizes clear Health status, Top Risks, and Recommended Actions using the interpreted Semantic Context.
 
 > **⚠️ Rule (Rule-001)**
 > The Executive, Architect, and Onboarding reports can NEVER be generated if `simulation_evidence.json` does not exist. (Error: `Run Virtual Debug first.`)
@@ -535,6 +537,7 @@ SYNAPSE was created to overcome the limitations of code-centric development. It 
 
 | Version | Release Date | Description |
 | :---: | :---: | :--- |
+| **v0.3.34.31** | 2026-08-24 | **Semantic Hub Recognition & Wrapper Resurrection Fix**: Advanced the Semantic Engine to properly distinguish between high fan-out structural defects and intended architectural hubs. Massive core modules (e.g., `src/vs` in VSCode, `core`/`scene`/`servers/rendering` in Godot) are now correctly classified as `[INFO] INTENDED_HUB` instead of `[CRITICAL] STRUCTURAL_DEFECT`. Fixed the "Wrapper Resurrection" bug where `RootCauseAggregator` artificially recreated wrapper hubs (like `extensions/copilot`) that were intentionally split by `BoundaryGraphBuilder`. Added `splitWrappers` tracking, `EvidenceType.WRAPPER_NODE` emission, and dynamic depth drill-down (up to depth 5) to ensure aggregator groupings respect semantic boundaries. Validated successfully against VSCode and Godot architectures. |
 | **v0.3.34.24** | 2026-08-20 | **Architecture State Model — Graph → State Graph**: Redefined `UNKNOWN` from a classification failure to a **State Machine Completeness problem** (`UNKNOWN = Transition Missing`). Introduced a complete FSM-based state model: `LifecycleState` (DISCOVERED→CLASSIFIED, one-way), `HealthState` (UNCLUSTERED / UNCLASSIFIED / CORRUPTED), `ViewState` (VISIBLE / OUT_OF_SCOPE, view-scope only, not node state), `ReferenceState` (RESOLVED / GHOST, edge-scoped), `FSMCompleteness` (KNOWN / INCOMPLETE / INVALID, separated from NodeState as a validation result). `NodeState` aggregates three axes as a single object. Implemented `AnomalyCollector` — a pure state classifier with no architecture pattern inference. Injected into `ValidationEngine.analyzeState()` (try/catch, non-breaking). Added Section 8 `Architecture State Report` to every ASR output with FSM Completeness table and Health/View/Reference anomaly breakdown. `UNCLASSIFIED` designated as Soft Anomaly (role ontology gap, not FSM violation). Verified on AntennaPod (839 nodes), VSCode Main (12,373 nodes), Linux Kernel 7.2-rc3 (70,089 nodes): FSM ✅ PASS, `AGGREGATE_unknown = 0` on all three. First milestone on the roadmap: Static Graph → State Graph → Transition Record → Simulation Engine. |
 | **v0.3.34.23** | 2026-08-19 | **Architecture IR Builder — Q4 Extension Point Engine**: Established a multi-stage Candidate → Evidence → Promotion pipeline to discover structural extension axes from `IMPLEMENTS`/`EXTENDS` edges. Rewrote `JavaScanner` and `KotlinScanner` regex to handle multi-line mixed inheritance declarations, recovering `EXTENDS: 174` and `IMPLEMENTS: 98` edges on AntennaPod. Fixed a critical Webpack class-mangling bug in `ScannerRegistry` (switched dedup from name-string to constructor-reference equality), preventing all scanners after the first from being silently rejected. Added `FileScanner` auto-registration to permanently block legacy `parseJava()` fallback. Fixed `answer.findings` → `answer.items` field mismatch that caused Q4 to always output empty results. Added `isFrameworkType()` to filter Android/Java SDK noise from extension point candidates. Validated full pipeline on AntennaPod: `PodcastSearcher`, `Playable`, `SwipeAction` confirmed as extension points. Traced `AGGREGATE_unknown` root cause: `nodeFound: false` = View Scope mismatch, not a classification bug — introduces `AGGREGATE_out_of_scope` distinction, laying groundwork for v0.3.34.24 Node Lifecycle FSM. |
 | **v0.3.34.19b** | 2026-08-13 | **Subgraph Isolation Fix**: Fixed evidence/impact pipeline contamination when analyzing a selected cluster. `AGGREGATE_*` nodes (VirtualDebugger's collapsed-external-cluster placeholders) were passing through `intentEdges` into `impactMap`, `consumers`, `ghostEvidence`, and `boundaryEvidence`, causing external paths (`extensions/*`, `cli/*`) to pollute workbench-scoped reports. Added a single `startsWith('AGGREGATE_')` guard at 4 sites in `ValidationEngine.ts`. After fix: coupling breakdown shows `vs (43.9%) > extensions (42%)` instead of mirroring global stats — confirming true subgraph isolation. |

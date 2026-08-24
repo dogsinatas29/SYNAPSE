@@ -6,9 +6,14 @@ import {
     DiagnosticRecord
 } from './types';
 import { Logger } from '../../utils/Logger';
+import { BoundaryAnalyzer } from './analyzers/BoundaryAnalyzer';
 
 export class ArchitectureAnalysisEngine {
     private analyzers: ArchitectureAnalyzer[] = [];
+
+    constructor() {
+        // VirtualDebugger manually registers analyzers
+    }
 
     /**
      * Registers a new analyzer to the pipeline.

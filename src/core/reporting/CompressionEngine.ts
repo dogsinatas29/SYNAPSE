@@ -8,6 +8,7 @@ export class CompressionEngine {
         const result: CompressionResult = {
             immediateActions: [],
             watchList: [],
+            infoList: [],
             externalPressures: [],
             ignoredNoiseCount: 0
         };
@@ -33,6 +34,13 @@ export class CompressionEngine {
                 // Cap watchlist to prevent noise
                 if (result.watchList.length < 15) {
                     result.watchList.push(group);
+                } else {
+                    result.ignoredNoiseCount += group.totalImpact;
+                }
+            } else if (group.priority === PriorityLevel.INFO) {
+                // Ensure info list does not become a dump
+                if (result.infoList.length < 20) {
+                    result.infoList.push(group);
                 } else {
                     result.ignoredNoiseCount += group.totalImpact;
                 }

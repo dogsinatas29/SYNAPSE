@@ -72,7 +72,15 @@ export interface SchemaFinding extends BaseFinding {
     edgeId?: string; // For missing-edge-ref
 }
 
-export type Finding = NecrosisFinding | FractureFinding | CycleFinding | BoundaryFinding | PressureFinding | StructuralFinding | SchemaFinding;
+export interface SemanticFinding extends BaseFinding {
+    type: 'semantic';
+    evidenceType: string; // e.g., 'BOUNDARY_NODE', 'CROSS_BOUNDARY_DEPENDENCY'
+    targetId: string;
+    metadata: any;
+    message: string;
+}
+
+export type Finding = NecrosisFinding | FractureFinding | CycleFinding | BoundaryFinding | PressureFinding | StructuralFinding | SchemaFinding | SemanticFinding;
 
 export interface EvidenceBundle {
     version: 1;

@@ -16,6 +16,7 @@ import { PriorityEngine } from './PriorityEngine';
 import { CompressionEngine } from './CompressionEngine';
 import { OnboardingAnalyzer } from './OnboardingAnalyzer';
 import { RiskClassifier } from './RiskClassifier';
+import { SemanticContext } from '../analysis/SemanticContext';
 
 /**
  * InsightEngine orchestrates the presentation pipeline:
@@ -90,25 +91,35 @@ export class InsightEngine {
         const candidates: any[] = [];
         
         if (simContext && simContext.evidenceBundle) {
-            const groups = this.aggregator.aggregate(simContext);
-            const classified = this.classifier.classify(groups);
+            const semanticContext = new SemanticContext(simContext);
+            const groups = this.aggregator.aggregate(simContext, semanticContext);
+            const classified = this.classifier.classify(groups, simContext, semanticContext);
             const prioritized = this.priority.assignPriorities(classified);
             const compressed = this.compression.compress(prioritized);
 
-            // Add Immediate Actions
+            // Add Immediate Actions (CRITICAL)
             for (const c of compressed.immediateActions) {
                 candidates.push({
                     filePath: c.ownerCluster,
-                    reason: `[CRITICAL] [${c.primaryRiskType}] ${c.cycleParticipation} structural cycles\nBlast Radius: ${c.blastRadius} files\n\n**Reason:**\nArchitectural Risk detected. Contains ${c.fanOut} fan-out issues.`,
-                    evidence: `**Recommended Investigation:**\nReview ownership boundaries and isolate cyclic dependencies in this module.`
+                    reason: `[CRITICAL] [${c.primaryRiskType}]\nSubsystem: ${c.boundaryContext?.id || 'None / Unbounded'}\nBoundary Strength: ${c.boundaryContext?.strength || 'None'}\n\n**Role:**\n${c.boundaryContext?.id ? 'Bounded' : 'Unbounded'} Structural Defect\n\n**Architectural Interpretation:**\nThis node contains serious structural defects (Fan-out: ${c.fanOut}, Cycles: ${c.cycleParticipation}). ${c.boundaryContext?.id ? 'Although it is within a boundary, the defect severity is too high.' : 'It lacks strong Boundary protection.'}\nChanges to this code will trigger massive side-effects across the entire system.`,
+                    evidence: `**Status:**\nHigh Priority Technical Debt. This architecture is dangerously fragile.\n\n**Recommendation:**\nExtract responsibilities into separate layers or isolate via abstract interfaces.`
                 });
             }
-            // Add Watch List
+            // Add Watch List (UNKNOWN_HUB - Weak Boundary)
             for (const w of compressed.watchList) {
                 candidates.push({
                     filePath: w.ownerCluster,
-                    reason: `[WATCH] [${w.primaryRiskType}] ${w.cycleParticipation} structural cycles\nBlast Radius: ${w.blastRadius} files\n\n**Reason:**\nElevated risk metrics. Contains ${w.fanOut} fan-out issues.`,
-                    evidence: `**Recommended Investigation:**\nMonitor dependency growth and resolve cycles to prevent architectural coupling.`
+                    reason: `[WATCH] [${w.primaryRiskType}]\nSubsystem: ${w.boundaryContext?.id || 'Unknown'}\nBoundary Strength: Weak\n\n**Role:**\nSuspicious Structural Hub\n\n**Architectural Interpretation:**\nThis node acts as a hub (${w.fanOut} fan-out). It is technically inside the '${w.boundaryContext?.id}' subsystem, but that boundary's internal cohesion is too weak to provide true architectural encapsulation.\nIt is leaking complexity outside its intended Semantic Context.`,
+                    evidence: `**Recommended Investigation:**\nStrengthen the boundary of '${w.boundaryContext?.id}' or reduce external coupling.`
+                });
+            }
+
+            // Add Info List (INTENDED_HUB - Strong Boundary)
+            for (const i of compressed.infoList) {
+                candidates.push({
+                    filePath: i.ownerCluster,
+                    reason: `[INFO] [${i.primaryRiskType}]\nSubsystem: ${i.boundaryContext?.id || 'Unknown'}\nBoundary Strength: ${i.boundaryContext?.strength || 'Strong'}\n\n**Role:**\nCentral Resource / API Registry\n\n**Architectural Interpretation:**\nExpected high fan-out (${i.fanOut}) because this node acts as a canonical registry or core hub strictly within the '${i.boundaryContext?.id}' subsystem.\nThe Semantic Context confirms this structure is intentional and safely encapsulated by a Strong boundary.`,
+                    evidence: `**Status:**\nValidated as Intended Architecture. No immediate topology refactoring required. Keep monitoring for Ownership/Authority violations.`
                 });
             }
 

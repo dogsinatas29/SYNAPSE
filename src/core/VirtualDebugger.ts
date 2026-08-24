@@ -393,6 +393,7 @@ export class VirtualDebugger {
         const { DependencyPressureAnalyzer } = require('./analysis/analyzers/DependencyPressureAnalyzer');
         const { SchemaViolationAnalyzer } = require('./analysis/analyzers/SchemaViolationAnalyzer');
         const { DeadEndAnalyzer } = require('./analysis/analyzers/DeadEndAnalyzer');
+        const { BoundaryAnalyzer } = require('./analysis/analyzers/BoundaryAnalyzer');
         const { IsolatedNodeAnalyzer } = require('./analysis/analyzers/IsolatedNodeAnalyzer');
         const { ReportExporter } = require('./analysis/ReportExporter');
         const { ReportAggregator } = require('./analysis/aggregation/ReportAggregator');
@@ -401,6 +402,7 @@ export class VirtualDebugger {
         const engine = new ArchitectureAnalysisEngine();
         engine.registerAnalyzer(new NecrosisAnalyzer());
         engine.registerAnalyzer(new FractureAnalyzer());
+        engine.registerAnalyzer(new BoundaryAnalyzer()); // Added for Semantic Boundary Discovery
         engine.registerAnalyzer(new CycleAnalyzer());
         engine.registerAnalyzer(new BoundaryGuardAnalyzer());
         engine.registerAnalyzer(new DependencyPressureAnalyzer());
@@ -439,6 +441,17 @@ export class VirtualDebugger {
             visibleClusterIds: visibleClusterIds
         };
         require('fs').writeFileSync(simContextPath, JSON.stringify(simulationContext, null, 2), 'utf-8');
+
+        // [v0.3.34.31] Dump Boundary Analysis Report for Semantic Discovery Verification
+        try {
+            const { BoundaryAnalysisReportBuilder } = require('./reporting/BoundaryAnalysisReportBuilder');
+            const bReport = BoundaryAnalysisReportBuilder.build(evidenceBundle);
+            const bReportPath = require('path').join(workspaceRoot, 'synapse_report', 'BoundaryAnalysisReport.md');
+            require('fs').writeFileSync(bReportPath, bReport, 'utf-8');
+            Logger.info(`[BoundaryGraphBuilder] Dumped BoundaryAnalysisReport to ${bReportPath}`);
+        } catch (err) {
+            Logger.error('[BoundaryGraphBuilder] Failed to build BoundaryAnalysisReport', err);
+        }
         
         Logger.info(`[CHECKPOINT-B] before aggregate`);
         const aggregatedBundle = ReportAggregator.aggregate(evidenceBundle, targetState);

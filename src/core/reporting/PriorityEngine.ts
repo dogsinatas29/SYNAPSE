@@ -1,4 +1,4 @@
-import { PriorityLevel, ProblemGroup } from './types';
+import { PriorityLevel, ProblemGroup, RiskType } from './types';
 import { Logger } from '../../utils/Logger';
 
 export class PriorityEngine {
@@ -21,15 +21,24 @@ export class PriorityEngine {
         Logger.info('[PRIORITY] start');
         for (const group of groups) {
             const score = this.calculateScore(group);
-            
-            if (score >= this.THRESHOLDS.CRITICAL) {
-                group.priority = PriorityLevel.CRITICAL;
-            } else if (score >= this.THRESHOLDS.HIGH) {
-                group.priority = PriorityLevel.HIGH;
-            } else if (score >= this.THRESHOLDS.WATCH) {
-                group.priority = PriorityLevel.WATCH;
+            if (group.primaryRiskType === RiskType.INTENDED_HUB) {
+                // INTENDED_HUB is downgraded to INFO so it is reported but not as a risk
+                group.priority = PriorityLevel.INFO;
+            } else if (group.primaryRiskType === RiskType.UNKNOWN_HUB) {
+                // UNKNOWN_HUB is downgraded to WATCH (it is a hub in a boundary, but the boundary is weak)
+                group.priority = score >= this.THRESHOLDS.CRITICAL ? PriorityLevel.WATCH : 
+                                 score >= this.THRESHOLDS.HIGH ? PriorityLevel.WATCH : 
+                                 score >= this.THRESHOLDS.WATCH ? PriorityLevel.WATCH : PriorityLevel.IGNORE;
             } else {
-                group.priority = PriorityLevel.IGNORE;
+                if (score >= this.THRESHOLDS.CRITICAL) {
+                    group.priority = PriorityLevel.CRITICAL;
+                } else if (score >= this.THRESHOLDS.HIGH) {
+                    group.priority = PriorityLevel.HIGH;
+                } else if (score >= this.THRESHOLDS.WATCH) {
+                    group.priority = PriorityLevel.WATCH;
+                } else {
+                    group.priority = PriorityLevel.IGNORE;
+                }
             }
         }
         

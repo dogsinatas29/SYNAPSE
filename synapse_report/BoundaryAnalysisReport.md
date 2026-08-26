@@ -15,8 +15,8 @@ Connected To:
 - src/core/GraphModel.ts (Unpromoted) (4)
 - src/utils (Unpromoted) (3)
 - src/core/CommunityDetector.ts (Unpromoted) (1)
-- src/core/FileScanner.ts (Unpromoted) (1)
 - src/core/NodeBuilder.ts (Unpromoted) (1)
+- src/core/FileScanner.ts (Unpromoted) (1)
 
 --------------------------------
 

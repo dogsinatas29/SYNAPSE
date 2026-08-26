@@ -22,11 +22,11 @@ Executive Summary focusing on system health and immediate actions.
 
 **Architecture Health:** WARNING
 
-**Frontier Observation:** 1 non-dominated structural hotspots observed.
+**Frontier Observation:** 3 non-dominated structural hotspots observed.
 
 **Business Impact:** No single node dominates another across all dimensions.
 
-**Recommended Action:** 1 frontier nodes identified for review.
+**Recommended Action:** 3 frontier nodes identified for review.
 
 ## Evidence
 

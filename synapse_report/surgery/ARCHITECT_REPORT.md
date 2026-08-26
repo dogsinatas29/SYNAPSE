@@ -34,29 +34,7 @@ Authority Reach: 62
 
 ## Interpretation
 This node is located on the Pareto Frontier.
-The node belongs to the subsystem boundary.
-It remains non-dominated across all observed dimensions.
-
-## Recommendation
-Review boundary ownership and dependency propagation.
-
----
-
-### src/core/ir
-
-## Observation
-Classification: FRONTIER
-Topology Type: UNKNOWN_HUB
-Subsystem: src/core/ir
-Boundary Strength: Weak
-Coupling: 10
-Cycle Participation: 0
-Boundary Crossings: 0
-Authority Reach: 44
-
-## Interpretation
-This node is located on the Pareto Frontier.
-The node belongs to the subsystem boundary.
+The node belongs to the 'src/core/analysis' subsystem.
 It remains non-dominated across all observed dimensions.
 
 ## Recommendation
@@ -85,45 +63,29 @@ Review boundary ownership and dependency propagation.
 
 ---
 
-### src/rust_checker
+### src/core/ir
 
 ## Observation
-Classification: WATCH
-Topology Type: NORMAL
-Subsystem: Unknown
+Classification: FRONTIER
+Topology Type: UNKNOWN_HUB
+Subsystem: src/core/ir
 Boundary Strength: Weak
-Coupling: 0
+Coupling: 10
+Cycle Participation: 0
+Boundary Crossings: 0
+Authority Reach: 44
 
 ## Interpretation
-This node has multiple outbound connections.
-It belongs to the 'Unknown' subsystem.
-Outbound connections cross the subsystem boundary.
+This node is located on the Pareto Frontier.
+The node belongs to the 'src/core/ir' subsystem.
+It remains non-dominated across all observed dimensions.
 
 ## Recommendation
-Review subsystem isolation and external coupling.
+Review boundary ownership and dependency propagation.
 
 ---
 
-### src/core/metrology
-
-## Observation
-Classification: WATCH
-Topology Type: NORMAL
-Subsystem: Unknown
-Boundary Strength: Weak
-Coupling: 0
-
-## Interpretation
-This node has multiple outbound connections.
-It belongs to the 'Unknown' subsystem.
-Outbound connections cross the subsystem boundary.
-
-## Recommendation
-Review subsystem isolation and external coupling.
-
----
-
-### src/extension.ts
+### scripts/run_reasoning_on_real_graph.ts
 
 ## Observation
 Classification: WATCH
@@ -133,104 +95,8 @@ Boundary Strength: Weak
 Coupling: 2
 
 ## Interpretation
-This node has multiple outbound connections.
-It belongs to the 'Unknown' subsystem.
-Outbound connections cross the subsystem boundary.
-
-## Recommendation
-Review subsystem isolation and external coupling.
-
----
-
-### src/server
-
-## Observation
-Classification: WATCH
-Topology Type: ARCHITECTURAL_HUB
-Subsystem: Unknown
-Boundary Strength: Weak
-Coupling: 2
-
-## Interpretation
-This node has multiple outbound connections.
-It belongs to the 'Unknown' subsystem.
-Outbound connections cross the subsystem boundary.
-
-## Recommendation
-Review subsystem isolation and external coupling.
-
----
-
-### src/bootstrap
-
-## Observation
-Classification: WATCH
-Topology Type: ARCHITECTURAL_HUB
-Subsystem: Unknown
-Boundary Strength: Weak
-Coupling: 2
-
-## Interpretation
-This node has multiple outbound connections.
-It belongs to the 'Unknown' subsystem.
-Outbound connections cross the subsystem boundary.
-
-## Recommendation
-Review subsystem isolation and external coupling.
-
----
-
-### src/core/canvas-engine
-
-## Observation
-Classification: WATCH
-Topology Type: ARCHITECTURAL_HUB
-Subsystem: Unknown
-Boundary Strength: Weak
-Coupling: 1
-
-## Interpretation
-This node has multiple outbound connections.
-It belongs to the 'Unknown' subsystem.
-Outbound connections cross the subsystem boundary.
-
-## Recommendation
-Review subsystem isolation and external coupling.
-
----
-
-### src/core/benchmark
-
-## Observation
-Classification: WATCH
-Topology Type: ARCHITECTURAL_HUB
-Subsystem: Unknown
-Boundary Strength: Weak
-Coupling: 2
-
-## Interpretation
-This node has multiple outbound connections.
-It belongs to the 'Unknown' subsystem.
-Outbound connections cross the subsystem boundary.
-
-## Recommendation
-Review subsystem isolation and external coupling.
-
----
-
-### src/core/validation
-
-## Observation
-Classification: WATCH
-Topology Type: ARCHITECTURAL_HUB
-Subsystem: Unknown
-Boundary Strength: Weak
-Coupling: 3
-
-## Interpretation
-This node has multiple outbound connections.
-It belongs to the 'Unknown' subsystem.
-Outbound connections cross the subsystem boundary.
+This node has 2 outbound connections.
+No subsystem classification was available.
 
 ## Recommendation
 Review subsystem isolation and external coupling.
@@ -247,16 +113,33 @@ Boundary Strength: Weak
 Coupling: 2
 
 ## Interpretation
-This node has multiple outbound connections.
-It belongs to the 'Unknown' subsystem.
-Outbound connections cross the subsystem boundary.
+This node has 2 outbound connections.
+No subsystem classification was available.
 
 ## Recommendation
 Review subsystem isolation and external coupling.
 
 ---
 
-### scripts/test_architecture_verification_26.ts
+### src/extension.ts
+
+## Observation
+Classification: WATCH
+Topology Type: ARCHITECTURAL_HUB
+Subsystem: Unknown
+Boundary Strength: Weak
+Coupling: 2
+
+## Interpretation
+This node has 2 outbound connections.
+No subsystem classification was available.
+
+## Recommendation
+Review subsystem isolation and external coupling.
+
+---
+
+### src/core/WebviewInterceptor.ts
 
 ## Observation
 Classification: WATCH
@@ -266,16 +149,15 @@ Boundary Strength: Weak
 Coupling: 0
 
 ## Interpretation
-This node has multiple outbound connections.
-It belongs to the 'Unknown' subsystem.
-Outbound connections cross the subsystem boundary.
+No outbound coupling detected.
+No subsystem classification was available.
 
 ## Recommendation
 Review subsystem isolation and external coupling.
 
 ---
 
-### src/core/DataPipeline.ts
+### src/server
 
 ## Observation
 Classification: WATCH
@@ -285,16 +167,33 @@ Boundary Strength: Weak
 Coupling: 2
 
 ## Interpretation
-This node has multiple outbound connections.
-It belongs to the 'Unknown' subsystem.
-Outbound connections cross the subsystem boundary.
+This node has 2 outbound connections.
+No subsystem classification was available.
 
 ## Recommendation
 Review subsystem isolation and external coupling.
 
 ---
 
-### scripts/run_reasoning_on_real_graph.ts
+### scripts/test_architecture_verification_28_29.ts
+
+## Observation
+Classification: WATCH
+Topology Type: NORMAL
+Subsystem: Unknown
+Boundary Strength: Weak
+Coupling: 0
+
+## Interpretation
+No outbound coupling detected.
+No subsystem classification was available.
+
+## Recommendation
+Review subsystem isolation and external coupling.
+
+---
+
+### src/core/collaboration
 
 ## Observation
 Classification: WATCH
@@ -304,9 +203,116 @@ Boundary Strength: Weak
 Coupling: 2
 
 ## Interpretation
-This node has multiple outbound connections.
-It belongs to the 'Unknown' subsystem.
-Outbound connections cross the subsystem boundary.
+This node has 2 outbound connections.
+No subsystem classification was available.
+
+## Recommendation
+Review subsystem isolation and external coupling.
+
+---
+
+### src/bootstrap
+
+## Observation
+Classification: WATCH
+Topology Type: ARCHITECTURAL_HUB
+Subsystem: Unknown
+Boundary Strength: Weak
+Coupling: 2
+
+## Interpretation
+This node has 2 outbound connections.
+No subsystem classification was available.
+
+## Recommendation
+Review subsystem isolation and external coupling.
+
+---
+
+### src/core/metrology
+
+## Observation
+Classification: WATCH
+Topology Type: NORMAL
+Subsystem: Unknown
+Boundary Strength: Weak
+Coupling: 0
+
+## Interpretation
+No outbound coupling detected.
+No subsystem classification was available.
+
+## Recommendation
+Review subsystem isolation and external coupling.
+
+---
+
+### src/core/GraphAnalyzer.ts
+
+## Observation
+Classification: WATCH
+Topology Type: NORMAL
+Subsystem: Unknown
+Boundary Strength: Weak
+Coupling: 0
+
+## Interpretation
+No outbound coupling detected.
+No subsystem classification was available.
+
+## Recommendation
+Review subsystem isolation and external coupling.
+
+---
+
+### src/core/filterSnapshot.ts
+
+## Observation
+Classification: WATCH
+Topology Type: NORMAL
+Subsystem: Unknown
+Boundary Strength: Weak
+Coupling: 0
+
+## Interpretation
+No outbound coupling detected.
+No subsystem classification was available.
+
+## Recommendation
+Review subsystem isolation and external coupling.
+
+---
+
+### src/core/EdgeBuilder.ts
+
+## Observation
+Classification: WATCH
+Topology Type: NORMAL
+Subsystem: Unknown
+Boundary Strength: Weak
+Coupling: 0
+
+## Interpretation
+No outbound coupling detected.
+No subsystem classification was available.
+
+## Recommendation
+Review subsystem isolation and external coupling.
+
+---
+
+### src/core/GeminiParser.ts
+
+## Observation
+Classification: WATCH
+Topology Type: ARCHITECTURAL_HUB
+Subsystem: Unknown
+Boundary Strength: Weak
+Coupling: 1
+
+## Interpretation
+This node has 1 outbound connection.
+No subsystem classification was available.
 
 ## Recommendation
 Review subsystem isolation and external coupling.
@@ -323,16 +329,15 @@ Boundary Strength: Weak
 Coupling: 0
 
 ## Interpretation
-This node has multiple outbound connections.
-It belongs to the 'Unknown' subsystem.
-Outbound connections cross the subsystem boundary.
+No outbound coupling detected.
+No subsystem classification was available.
 
 ## Recommendation
 Review subsystem isolation and external coupling.
 
 ---
 
-### src/core/ClusterHierarchy.ts
+### src/core/TransitionGrammar.ts
 
 ## Observation
 Classification: WATCH
@@ -342,28 +347,8 @@ Boundary Strength: Weak
 Coupling: 0
 
 ## Interpretation
-This node has multiple outbound connections.
-It belongs to the 'Unknown' subsystem.
-Outbound connections cross the subsystem boundary.
-
-## Recommendation
-Review subsystem isolation and external coupling.
-
----
-
-### scripts/test_architecture_verification_27.ts
-
-## Observation
-Classification: WATCH
-Topology Type: NORMAL
-Subsystem: Unknown
-Boundary Strength: Weak
-Coupling: 0
-
-## Interpretation
-This node has multiple outbound connections.
-It belongs to the 'Unknown' subsystem.
-Outbound connections cross the subsystem boundary.
+No outbound coupling detected.
+No subsystem classification was available.
 
 ## Recommendation
 Review subsystem isolation and external coupling.
@@ -380,9 +365,9 @@ Boundary Strength: Moderate
 Coupling: 22
 
 ## Interpretation
-This node has high outbound connectivity.
+This node has 22 outbound connections.
 It belongs to the 'src/core/reasoning' subsystem.
-The Semantic Context confirms the boundary is intentional.
+The Semantic Context indicates the boundary strength is 'Moderate'.
 
 ## Recommendation
 Monitor for Ownership/Authority violations.

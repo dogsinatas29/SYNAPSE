@@ -79,6 +79,8 @@ export class ReferenceResolver {
             }
 
             if (resolutionKind === 'unresolved') {
+                // [PONTYAIL-FIX] Removed 3.2M console.log I/O bomb that caused 7-hour Linux scan
+                /*
                 console.log('[GHOST_CHECK]', {
                     source: sourceFilePath,
                     target: originalTarget,
@@ -87,6 +89,7 @@ export class ReferenceResolver {
                     // We don't have the role here easily, but the key question is existence
                     isFramework: targetNodeId.includes('android.') || targetNodeId.includes('java.')
                 });
+                */
             }
 
             result.push({

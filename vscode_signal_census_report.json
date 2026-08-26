@@ -1,0 +1,86 @@
+{
+  "totalSignals": 4647,
+  "totalNodes": 11783,
+  "signalizedNodes": 4227,
+  "nodeCoverage": 35.87,
+  "signalDensity": 0.39,
+  "uniqueSignals": 4,
+  "topSignals": [
+    {
+      "signalId": "dependency_resolution",
+      "count": 3648
+    },
+    {
+      "signalId": "state_mutation",
+      "count": 842
+    },
+    {
+      "signalId": "object_creation",
+      "count": 113
+    },
+    {
+      "signalId": "lifecycle_control",
+      "count": 44
+    }
+  ],
+  "topNodes": [
+    {
+      "nodeId": "/tmp/vscode/build/azure-pipelines/common/publish.ts",
+      "signalCount": 3
+    },
+    {
+      "nodeId": "/tmp/vscode/build/azure-pipelines/common/retry.ts",
+      "signalCount": 3
+    },
+    {
+      "nodeId": "/tmp/vscode/build/azure-pipelines/common/sign.ts",
+      "signalCount": 3
+    },
+    {
+      "nodeId": "/tmp/vscode/build/azure-pipelines/common/codesign.ts",
+      "signalCount": 3
+    },
+    {
+      "nodeId": "/tmp/vscode/build/azure-pipelines/oss/parse-notices.ts",
+      "signalCount": 3
+    },
+    {
+      "nodeId": "/tmp/vscode/build/azure-pipelines/oss/utils.ts",
+      "signalCount": 3
+    },
+    {
+      "nodeId": "/tmp/vscode/build/azure-pipelines/oss/scan-licenses.ts",
+      "signalCount": 3
+    },
+    {
+      "nodeId": "/tmp/vscode/extensions/copilot/test/pipeline/alternativeAction/processor.ts",
+      "signalCount": 3
+    },
+    {
+      "nodeId": "/tmp/vscode/extensions/copilot/test/pipeline/logRecordingTypes.ts",
+      "signalCount": 3
+    },
+    {
+      "nodeId": "/tmp/vscode/extensions/copilot/test/pipeline/continuous/continuousRecord.ts",
+      "signalCount": 3
+    }
+  ],
+  "distribution": {
+    "dependency_resolution": {
+      "count": 3648,
+      "percent": 78.5
+    },
+    "state_mutation": {
+      "count": 842,
+      "percent": 18.12
+    },
+    "object_creation": {
+      "count": 113,
+      "percent": 2.43
+    },
+    "lifecycle_control": {
+      "count": 44,
+      "percent": 0.95
+    }
+  }
+}

@@ -1,0 +1,84 @@
+{
+  "totalSignals": 170,
+  "totalNodes": 403,
+  "signalDensity": 0.42,
+  "uniqueSignals": 4,
+  "topSignals": [
+    {
+      "signalId": "dependency_resolution",
+      "count": 68
+    },
+    {
+      "signalId": "lifecycle_control",
+      "count": 43
+    },
+    {
+      "signalId": "object_creation",
+      "count": 34
+    },
+    {
+      "signalId": "state_mutation",
+      "count": 25
+    }
+  ],
+  "topNodes": [
+    {
+      "nodeId": "/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reasoning/builders/ArchitecturalReasoningModelBuilder.ts",
+      "signalCount": 3
+    },
+    {
+      "nodeId": "/home/dogsinatas/TypeScript_project/antigravity-extension-vis/dist/core/canvas-engine/StateManager.js",
+      "signalCount": 3
+    },
+    {
+      "nodeId": "/home/dogsinatas/TypeScript_project/antigravity-extension-vis/dist/core/GraphModel.js",
+      "signalCount": 2
+    },
+    {
+      "nodeId": "/home/dogsinatas/TypeScript_project/antigravity-extension-vis/dist/core/RuleEngine.js",
+      "signalCount": 2
+    },
+    {
+      "nodeId": "/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reasoning/rules/flow/DataPipelineRule.ts",
+      "signalCount": 2
+    },
+    {
+      "nodeId": "/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reporting/OnboardingReportBuilder.ts",
+      "signalCount": 2
+    },
+    {
+      "nodeId": "/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reporting/ExecutiveReportBuilder.ts",
+      "signalCount": 2
+    },
+    {
+      "nodeId": "/home/dogsinatas/TypeScript_project/antigravity-extension-vis/dist/core/DataPipeline.js",
+      "signalCount": 2
+    },
+    {
+      "nodeId": "/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/StateAuditPipeline.ts",
+      "signalCount": 2
+    },
+    {
+      "nodeId": "/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/transaction/ProjectStateSerializer.ts",
+      "signalCount": 2
+    }
+  ],
+  "distribution": {
+    "dependency_resolution": {
+      "count": 68,
+      "percent": 40
+    },
+    "state_mutation": {
+      "count": 25,
+      "percent": 14.71
+    },
+    "object_creation": {
+      "count": 34,
+      "percent": 20
+    },
+    "lifecycle_control": {
+      "count": 43,
+      "percent": 25.29
+    }
+  }
+}

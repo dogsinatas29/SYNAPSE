@@ -274,6 +274,8 @@ function buildSuffixIndex(existingNodeIds: ReadonlySet<string>): Set<string> {
     return suffixIndex;
 }
 
+const statCache = new Map<string, boolean>();
+
 function isResolvableInternal(
     candidate: string,
     sourceFilePath: string,
@@ -331,15 +333,24 @@ function isResolvableInternal(
     }
 
     for (const candidatePath of candidates) {
+        if (statCache.has(candidatePath)) {
+            if (statCache.get(candidatePath)) return { match: true, matchedPath: candidatePath };
+            continue;
+        }
+
+        let isFile = false;
         if (fs.existsSync(candidatePath)) {
             try {
                 if (fs.statSync(candidatePath).isFile()) {
-                    return { match: true, matchedPath: candidatePath };
+                    isFile = true;
                 }
             } catch {
-                // ignore stat failures and continue to suffix matching
+                // ignore
             }
         }
+        
+        statCache.set(candidatePath, isFile);
+        if (isFile) return { match: true, matchedPath: candidatePath };
     }
 
     if (suffixIndex && suffixIndex.has(lowerClean)) {

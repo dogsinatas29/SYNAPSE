@@ -1,0 +1,37 @@
+{
+  "totalNodes": 84102,
+  "signalizedNodes": 29435,
+  "nodeCoverage": 35.01,
+  "totalSignals": 34481,
+  "signalDensity": 0.41,
+  "uniqueSignals": 3,
+  "topSignals": [
+    {
+      "signalId": "state_mutation",
+      "count": 27241
+    },
+    {
+      "signalId": "dependency_resolution",
+      "count": 6896
+    },
+    {
+      "signalId": "object_creation",
+      "count": 344
+    }
+  ],
+  "topNodes": [],
+  "distribution": {
+    "state_mutation": {
+      "count": 27241,
+      "percent": 79.0
+    },
+    "dependency_resolution": {
+      "count": 6896,
+      "percent": 20.0
+    },
+    "object_creation": {
+      "count": 344,
+      "percent": 1.0
+    }
+  }
+}

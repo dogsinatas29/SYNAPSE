@@ -362,7 +362,8 @@ export class ValidationReportBuilder {
         
         // 00_EXECUTIVE_SUMMARY
         const execHeader = insight.generateHeader('EXECUTIVE', 'ARCHITECTURAL_SCAN', ctx, evidenceCount);
-        const execSummaryStr = insight.generateExecutiveSummary(ctx);
+        const execInsight = insight.buildExecutiveInsight(ctx);
+        const execSummaryStr = `**Health**: ${execInsight.health}\n\n**Top Risk**: ${execInsight.topRisk}\n\n**Action**: ${execInsight.action}\n\n**Why It Matters**: ${execInsight.whyItMatters}`;
         const execContract = {
             header: execHeader,
             summary: execSummaryStr,

@@ -1,0 +1,45 @@
+{
+  "projectsAnalyzed": [
+    "SYNAPSE",
+    "AntennaPod",
+    "VSCode"
+  ],
+  "survivability": [
+    {
+      "signalId": "dependency_resolution",
+      "projectPresence": 3,
+      "meanPercent": 65.75,
+      "variance": 331.54
+    },
+    {
+      "signalId": "state_mutation",
+      "projectPresence": 3,
+      "meanPercent": 17.19,
+      "variance": 3.15
+    },
+    {
+      "signalId": "object_creation",
+      "projectPresence": 3,
+      "meanPercent": 8.31,
+      "variance": 68.33
+    },
+    {
+      "signalId": "lifecycle_control",
+      "projectPresence": 2,
+      "meanPercent": 8.75,
+      "variance": 136.99
+    }
+  ],
+  "tier1": [
+    "state_mutation"
+  ],
+  "tier2": [
+    "dependency_resolution"
+  ],
+  "tier3": [
+    "object_creation"
+  ],
+  "rejected": [
+    "lifecycle_control"
+  ]
+}

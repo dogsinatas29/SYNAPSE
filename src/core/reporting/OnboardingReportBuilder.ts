@@ -13,7 +13,7 @@ export class OnboardingReportBuilder {
         return [
             {
                 title: 'Onboarding Guide',
-                content: `### Reading Path\n1. **Entry Point:** ${insight.entryPoint}\n${pipelineSteps}\n\n### Safe Areas (Low Risk)\n${insight.safeArea.map(s => `- ${s}`).join('\n')}\n\n### Read Later (Complex / High Risk)\n${readLaterSteps}`
+                content: `### Reading Path\n1. **Entry Point:** ${insight.entryPoint}\n${pipelineSteps}\n\n### Safe Areas (Low Coupling)\n${insight.safeArea.map(s => `- ${s}`).join('\n')}\n\n### Read Later (Structural Complexity)\n${readLaterSteps}`
             }
         ];
     }

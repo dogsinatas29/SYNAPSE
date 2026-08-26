@@ -75,10 +75,10 @@ export class ReportBundleGenerator {
             const archHeader = insight.generateHeader('ARCHITECT', 'ARCHITECTURAL_SCAN', context, evidenceCount);
             const archContract: ReportContract = {
                 header: archHeader,
-                summary: 'Focuses on boundaries, roles, and structural risks. Redundant noise has been compressed.',
+                summary: 'Observation-based structural analysis. Findings classified by Pareto Frontier membership.',
                 findings: [{
-                    title: 'Actionable Insights',
-                    content: archInsight.candidates.length > 0 ? archInsight.candidates.map(c => `### ${c.filePath}\n\n**Risk:** ${c.reason}\n\n**Why It Matters:** ${c.evidence}`).join('\n\n---\n\n') : 'No high-gravity modules in this scope.'
+                    title: 'Architectural Findings',
+                    content: archInsight.findings.length > 0 ? archInsight.findings.map(f => `### ${f.filePath}\n\n## Observation\n${f.observation}\n\n## Interpretation\n${f.interpretation}\n\n## Recommendation\n${f.recommendation}`).join('\n\n---\n\n') : 'No architectural findings in this scope.'
                 }],
                 evidence: [],
                 appendix: []

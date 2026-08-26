@@ -778,14 +778,15 @@ export interface ExecutiveInsight {
     sources?: Record<string, InsightSource>;
 }
 
-export interface RefactorCandidate {
+export interface ArchitectReportFinding {
     filePath: string;
-    reason: string;
-    evidence: string;
+    observation: string;
+    interpretation: string;
+    recommendation: string;
 }
 
 export interface ArchitectInsight {
-    candidates: RefactorCandidate[];
+    findings: ArchitectReportFinding[];
     sources?: Record<string, InsightSource>;
 }
 

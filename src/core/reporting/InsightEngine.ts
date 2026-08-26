@@ -60,7 +60,7 @@ export class InsightEngine {
 
     public buildExecutiveInsight(context: ValidationContext, simContext?: SimulationContext): ExecutiveInsight {
         let health = "STABLE";
-        let frontierObservation = "No immediate risk detected";
+        let frontierObservation = "No frontier nodes detected";
         let action = "Continue normal operations";
         let whyItMatters = "Architecture is well-bounded.";
         let sourceVal = "None";
@@ -74,12 +74,9 @@ export class InsightEngine {
 
             if (partitioned.frontier.length > 0) {
                 health = "WARNING";
-                const frontierNames = partitioned.frontier
-                    .map(v => v.sourceGroup.ownerCluster)
-                    .join(', ');
-                frontierObservation = `${partitioned.frontier.length} nodes on the Pareto Frontier: ${frontierNames}.`;
-                action = `Immediate action recommended on ${partitioned.frontier.length} frontier nodes.`;
-                whyItMatters = `These nodes are mutually non-dominated across all risk dimensions.`;
+                frontierObservation = `${partitioned.frontier.length} non-dominated structural hotspots observed.`;
+                action = `${partitioned.frontier.length} frontier nodes identified for review.`;
+                whyItMatters = `No single node dominates another across all dimensions.`;
                 sourceVal = "ParetoFrontier (non-dominated set)";
             }
         }
@@ -94,7 +91,7 @@ export class InsightEngine {
     }
 
     public buildArchitectInsight(context: ValidationContext, simInsight?: SimulationInsight, simContext?: SimulationContext): ArchitectInsight {
-        const candidates: any[] = [];
+        const findings: any[] = [];
         
         if (simContext && simContext.evidenceBundle) {
             const semanticContext = new SemanticContext(simContext);
@@ -107,47 +104,53 @@ export class InsightEngine {
             // Add Frontier nodes (non-dominated set)
             for (const c of partitioned.frontier) {
                 const g = c.sourceGroup;
-                candidates.push({
+                findings.push({
                     filePath: g.ownerCluster,
-                    reason: `[FRONTIER] [${g.primaryRiskType}]\nSubsystem: ${g.boundaryContext?.id || 'None / Unbounded'}\nBoundary Strength: ${g.boundaryContext?.strength || 'None'}\n\n**Role:**\n${g.boundaryContext?.id ? 'Bounded' : 'Unbounded'} Structural Defect\n\n**Architectural Interpretation:**\nThis node is on the Pareto Frontier (Coupling: ${c.coupling}, Cycle: ${c.cycle}). ${g.boundaryContext?.id ? 'Although it is within a boundary, the defect severity is too high.' : 'It lacks strong Boundary protection.'}\nChanges to this code will trigger massive side-effects across the entire system.`,
-                    evidence: `**Status:**\nHigh Priority Technical Debt. This architecture is dangerously fragile.\n\n**Recommendation:**\nExtract responsibilities into separate layers or isolate via abstract interfaces.`
+                    observation: `Classification: FRONTIER\nTopology Type: ${g.primaryRiskType}\nSubsystem: ${g.boundaryContext?.id || 'None / Unbounded'}\nBoundary Strength: ${g.boundaryContext?.strength || 'None'}\nCoupling: ${c.coupling}\nCycle Participation: ${c.cycle}\nBoundary Crossings: ${c.boundary}\nAuthority Reach: ${c.authority}`,
+                    interpretation: g.boundaryContext?.id
+                        ? `This node is located on the Pareto Frontier.\nThe node belongs to the subsystem boundary.\nIt remains non-dominated across all observed dimensions.`
+                        : `This node is located on the Pareto Frontier.\nNo enclosing boundary was detected.`,
+                    recommendation: `Review boundary ownership and dependency propagation.`
                 });
             }
             // Add Watch List (non-frontier with signals)
             for (const w of partitioned.watchList) {
                 const g = w.sourceGroup;
-                candidates.push({
+                findings.push({
                     filePath: g.ownerCluster,
-                    reason: `[WATCH] [${g.primaryRiskType}]\nSubsystem: ${g.boundaryContext?.id || 'Unknown'}\nBoundary Strength: ${g.boundaryContext?.strength || 'Weak'}\n\n**Role:**\nSuspicious Structural Hub\n\n**Architectural Interpretation:**\nThis node acts as a hub (${w.coupling} fan-out). It is technically inside the '${g.boundaryContext?.id}' subsystem, but that boundary's internal cohesion is too weak to provide true architectural encapsulation.\nIt is leaking complexity outside its intended Semantic Context.`,
-                    evidence: `**Recommended Investigation:**\nStrengthen the boundary of '${g.boundaryContext?.id}' or reduce external coupling.`
+                    observation: `Classification: WATCH\nTopology Type: ${g.primaryRiskType}\nSubsystem: ${g.boundaryContext?.id || 'Unknown'}\nBoundary Strength: ${g.boundaryContext?.strength || 'Weak'}\nCoupling: ${w.coupling}`,
+                    interpretation: `This node has multiple outbound connections.\nIt belongs to the '${g.boundaryContext?.id || 'Unknown'}' subsystem.\nOutbound connections cross the subsystem boundary.`,
+                    recommendation: `Review subsystem isolation and external coupling.`
                 });
             }
 
             // Add Info List (INTENDED_HUB)
             for (const i of partitioned.infoList) {
                 const g = i.sourceGroup;
-                candidates.push({
+                findings.push({
                     filePath: g.ownerCluster,
-                    reason: `[INTENDED] [${g.primaryRiskType}]\nSubsystem: ${g.boundaryContext?.id || 'Unknown'}\nBoundary Strength: ${g.boundaryContext?.strength || 'Strong'}\n\n**Role:**\nCentral Resource / API Registry\n\n**Architectural Interpretation:**\nExpected high fan-out (${i.coupling}) because this node acts as a canonical registry or core hub strictly within the '${g.boundaryContext?.id}' subsystem.\nThe Semantic Context confirms this structure is intentional and safely encapsulated by a Strong boundary.`,
-                    evidence: `**Status:**\nValidated as Intended Architecture. No immediate topology refactoring required. Keep monitoring for Ownership/Authority violations.`
+                    observation: `Classification: INTENDED\nTopology Type: ${g.primaryRiskType}\nSubsystem: ${g.boundaryContext?.id || 'Unknown'}\nBoundary Strength: ${g.boundaryContext?.strength || 'Strong'}\nCoupling: ${i.coupling}`,
+                    interpretation: `This node has high outbound connectivity.\nIt belongs to the '${g.boundaryContext?.id || 'Unknown'}' subsystem.\nThe Semantic Context confirms the boundary is intentional.`,
+                    recommendation: `Monitor for Ownership/Authority violations.`
                 });
             }
 
             // Append External Pressures
             if (partitioned.externalPressures.length > 0) {
                 const topExternal = partitioned.externalPressures.slice(0, 5).map(e => `- ${e.sourceGroup.ownerCluster} (${e.authority} refs)`).join('\n');
-                candidates.push({
+                findings.push({
                     filePath: "External Dependency Pressures",
-                    reason: `[INFO] High usage of external/platform boundaries.\n\n**Top External References:**\n${topExternal}`,
-                    evidence: `**Note:** These are heavily referenced but not considered internal structural risks.`
+                    observation: `Classification: EXTERNAL\nExternal References:\n${topExternal}`,
+                    interpretation: `These nodes are external or platform dependencies.\nThey are not considered internal structural risks.`,
+                    recommendation: `Monitor external dependency updates.`
                 });
             }
             
-            // Note: We'll pass ignored noise count via the first candidate's evidence or via ReportBundleGenerator
+            // Note: We'll pass ignored noise count via the first finding's recommendation or via ReportBundleGenerator
             // For now, no ignored noise tracking in new pipeline
         }
         
-        return { candidates, sources: {} };
+        return { findings, sources: {} };
     }
 
     public buildOnboardingInsight(context: ValidationContext, simContext?: SimulationContext): OnboardingInsight {

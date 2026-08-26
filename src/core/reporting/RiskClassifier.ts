@@ -39,10 +39,18 @@ export class RiskClassifier {
                             size: boundary.size
                         };
 
+                        if (process.env.SC_AUDIT) {
+                            console.log(`[SC_AUDIT] Classifier: ${group.id} => boundaryContext={id:${boundary.id}, strength:${strength}}`);
+                        }
+
                         if (strength === 'Strong' || strength === 'Moderate') {
                             isIntendedHub = true;
                         } else {
                             isUnknownHub = true;
+                        }
+                    } else {
+                        if (process.env.SC_AUDIT) {
+                            console.log(`[SC_AUDIT] Classifier: ${group.id} => boundaryContext=NULL`);
                         }
                     }
                 }

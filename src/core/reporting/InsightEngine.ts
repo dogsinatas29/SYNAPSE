@@ -66,8 +66,9 @@ export class InsightEngine {
         let sourceVal = "None";
 
         if (simContext && simContext.evidenceBundle) {
-            const groups = this.aggregator.aggregate(simContext);
-            const classified = this.classifier.classify(groups, simContext);
+            const semanticContext = new SemanticContext(simContext);
+            const groups = this.aggregator.aggregate(simContext, semanticContext);
+            const classified = this.classifier.classify(groups, simContext, semanticContext);
             const vectors = this.vectorBuilder.build(classified);
             const frontierResult = this.frontier.compute(vectors);
             const partitioned = this.partitioner.partition(frontierResult, vectors);
@@ -101,14 +102,24 @@ export class InsightEngine {
             const frontierResult = this.frontier.compute(vectors);
             const partitioned = this.partitioner.partition(frontierResult, vectors);
 
+            if (process.env.SC_AUDIT) {
+                console.log(`[SC_AUDIT] InsightEngine: frontier=${partitioned.frontier.length}, watch=${partitioned.watchList.length}, info=${partitioned.infoList.length}`);
+            }
+
             // Add Frontier nodes (non-dominated set)
             for (const c of partitioned.frontier) {
                 const g = c.sourceGroup;
+                const subsystemId = g.boundaryContext?.id;
+                
+                if (process.env.SC_AUDIT) {
+                    console.log(`[SC_AUDIT] InsightEngine FRONTIER: ${g.ownerCluster} => boundaryContext=${subsystemId ?? 'NULL'}`);
+                }
+                
                 findings.push({
                     filePath: g.ownerCluster,
-                    observation: `Classification: FRONTIER\nTopology Type: ${g.primaryRiskType}\nSubsystem: ${g.boundaryContext?.id || 'None / Unbounded'}\nBoundary Strength: ${g.boundaryContext?.strength || 'None'}\nCoupling: ${c.coupling}\nCycle Participation: ${c.cycle}\nBoundary Crossings: ${c.boundary}\nAuthority Reach: ${c.authority}`,
-                    interpretation: g.boundaryContext?.id
-                        ? `This node is located on the Pareto Frontier.\nThe node belongs to the subsystem boundary.\nIt remains non-dominated across all observed dimensions.`
+                    observation: `Classification: FRONTIER\nTopology Type: ${g.primaryRiskType}\nSubsystem: ${subsystemId || 'None / Unbounded'}\nBoundary Strength: ${g.boundaryContext?.strength || 'None'}\nCoupling: ${c.coupling}\nCycle Participation: ${c.cycle}\nBoundary Crossings: ${c.boundary}\nAuthority Reach: ${c.authority}`,
+                    interpretation: subsystemId
+                        ? `This node is located on the Pareto Frontier.\nThe node belongs to the '${subsystemId}' subsystem.\nIt remains non-dominated across all observed dimensions.`
                         : `This node is located on the Pareto Frontier.\nNo enclosing boundary was detected.`,
                     recommendation: `Review boundary ownership and dependency propagation.`
                 });
@@ -116,10 +127,33 @@ export class InsightEngine {
             // Add Watch List (non-frontier with signals)
             for (const w of partitioned.watchList) {
                 const g = w.sourceGroup;
+                const subsystemId = g.boundaryContext?.id;
+                const couplingVal = w.coupling;
+                
+                if (process.env.SC_AUDIT) {
+                    console.log(`[SC_AUDIT] InsightEngine WATCH: ${g.ownerCluster} => boundaryContext=${subsystemId ?? 'NULL'}, coupling=${couplingVal}`);
+                }
+                
+                let interpretationText: string;
+                if (couplingVal === 0) {
+                    interpretationText = `No outbound coupling detected.`;
+                } else {
+                    interpretationText = `This node has ${couplingVal} outbound connection${couplingVal === 1 ? '' : 's'}.`;
+                }
+                
+                if (subsystemId) {
+                    interpretationText += `\nIt belongs to the '${subsystemId}' subsystem.`;
+                    if (w.boundary > 0) {
+                        interpretationText += `\nOutbound connections cross the subsystem boundary.`;
+                    }
+                } else {
+                    interpretationText += `\nNo subsystem classification was available.`;
+                }
+                
                 findings.push({
                     filePath: g.ownerCluster,
-                    observation: `Classification: WATCH\nTopology Type: ${g.primaryRiskType}\nSubsystem: ${g.boundaryContext?.id || 'Unknown'}\nBoundary Strength: ${g.boundaryContext?.strength || 'Weak'}\nCoupling: ${w.coupling}`,
-                    interpretation: `This node has multiple outbound connections.\nIt belongs to the '${g.boundaryContext?.id || 'Unknown'}' subsystem.\nOutbound connections cross the subsystem boundary.`,
+                    observation: `Classification: WATCH\nTopology Type: ${g.primaryRiskType}\nSubsystem: ${subsystemId || 'Unknown'}\nBoundary Strength: ${g.boundaryContext?.strength || 'Weak'}\nCoupling: ${couplingVal}`,
+                    interpretation: interpretationText,
                     recommendation: `Review subsystem isolation and external coupling.`
                 });
             }
@@ -127,10 +161,29 @@ export class InsightEngine {
             // Add Info List (INTENDED_HUB)
             for (const i of partitioned.infoList) {
                 const g = i.sourceGroup;
+                const subsystemId = g.boundaryContext?.id;
+                const couplingVal = i.coupling;
+                
+                if (process.env.SC_AUDIT) {
+                    console.log(`[SC_AUDIT] InsightEngine INTENDED: ${g.ownerCluster} => boundaryContext=${subsystemId ?? 'NULL'}, coupling=${couplingVal}`);
+                }
+                
+                let interpretationText: string;
+                interpretationText = `This node has ${couplingVal} outbound connection${couplingVal === 1 ? '' : 's'}.`;
+                
+                if (subsystemId) {
+                    interpretationText += `\nIt belongs to the '${subsystemId}' subsystem.`;
+                    if (g.boundaryContext?.strength) {
+                        interpretationText += `\nThe Semantic Context indicates the boundary strength is '${g.boundaryContext.strength}'.`;
+                    }
+                } else {
+                    interpretationText += `\nNo subsystem classification was available.`;
+                }
+                
                 findings.push({
                     filePath: g.ownerCluster,
-                    observation: `Classification: INTENDED\nTopology Type: ${g.primaryRiskType}\nSubsystem: ${g.boundaryContext?.id || 'Unknown'}\nBoundary Strength: ${g.boundaryContext?.strength || 'Strong'}\nCoupling: ${i.coupling}`,
-                    interpretation: `This node has high outbound connectivity.\nIt belongs to the '${g.boundaryContext?.id || 'Unknown'}' subsystem.\nThe Semantic Context confirms the boundary is intentional.`,
+                    observation: `Classification: INTENDED\nTopology Type: ${g.primaryRiskType}\nSubsystem: ${subsystemId || 'Unknown'}\nBoundary Strength: ${g.boundaryContext?.strength || 'Strong'}\nCoupling: ${couplingVal}`,
+                    interpretation: interpretationText,
                     recommendation: `Monitor for Ownership/Authority violations.`
                 });
             }

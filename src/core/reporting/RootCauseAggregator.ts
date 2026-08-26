@@ -33,10 +33,12 @@ export class RootCauseAggregator {
 
             // Try to match the exact boundary id discovered by SemanticContext
             let ownerId = rawId;
+            let semanticBoundaryId: string | null = null;
             if (semanticContext) {
                 const boundary = semanticContext.getBoundaryForNode(rawId);
                 if (boundary) {
                     ownerId = boundary.id;
+                    semanticBoundaryId = boundary.id;
                 } else {
                     let depth = 2;
                     ownerId = extractTopLevelDir(rawId, depth) || rawId;
@@ -47,6 +49,10 @@ export class RootCauseAggregator {
                 }
             } else {
                 ownerId = extractTopLevelDir(rawId, 2) || rawId;
+            }
+            
+            if (process.env.SC_AUDIT) {
+                console.log(`[SC_AUDIT] Aggregator: ${rawId} => owner=${ownerId}, semanticBoundary=${semanticBoundaryId ?? 'NULL'}`);
             }
             
             const groupKey = ownerId; // Group by subsystem entirely, merging finding types

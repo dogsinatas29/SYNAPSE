@@ -49,17 +49,27 @@ export class SemanticContext {
         // Direct map lookup (fast)
         const boundaryId = this.nodeToBoundary.get(nodeId);
         if (boundaryId) {
-            return this.boundaries.get(boundaryId) || null;
+            const boundary = this.boundaries.get(boundaryId) || null;
+            if (process.env.SC_AUDIT) {
+                console.log(`[SC_AUDIT] SemanticContext: ${nodeId} => ${boundary?.id ?? 'NULL'} (direct)`);
+            }
+            return boundary;
         }
 
         // Fallback: prefix matching if node was not explicitly in members but falls under the boundary
         // This handles cases where RootCauseAggregator compressed the path (e.g., src/vs/workbench)
         for (const [id, boundary] of this.boundaries.entries()) {
             if (nodeId === id || nodeId.startsWith(id + '/')) {
+                if (process.env.SC_AUDIT) {
+                    console.log(`[SC_AUDIT] SemanticContext: ${nodeId} => ${boundary.id} (prefix)`);
+                }
                 return boundary;
             }
         }
         
+        if (process.env.SC_AUDIT) {
+            console.log(`[SC_AUDIT] SemanticContext: ${nodeId} => NULL (no match)`);
+        }
         return null;
     }
 

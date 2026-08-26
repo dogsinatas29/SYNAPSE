@@ -12,22 +12,24 @@ import { ValidationContext } from '../validation/ValidationContext';
 import { SimulationContext } from '../../types/schema';
 
 import { RootCauseAggregator } from './RootCauseAggregator';
-import { PriorityEngine } from './PriorityEngine';
-import { CompressionEngine } from './CompressionEngine';
+import { RiskVectorBuilder } from './RiskVectorBuilder';
+import { ParetoFrontier } from './ParetoFrontier';
+import { FrontierPartitioner } from './FrontierPartitioner';
 import { OnboardingAnalyzer } from './OnboardingAnalyzer';
 import { RiskClassifier } from './RiskClassifier';
 import { SemanticContext } from '../analysis/SemanticContext';
 
 /**
  * InsightEngine orchestrates the presentation pipeline:
- * FindingAggregator -> PriorityEngine -> CompressionEngine -> DTOs
+ * RootCauseAggregator -> RiskClassifier -> RiskVectorBuilder -> ParetoFrontier -> FrontierPartitioner -> DTOs
  */
 export class InsightEngine {
     
     private aggregator = new RootCauseAggregator();
     private classifier = new RiskClassifier();
-    private priority = new PriorityEngine();
-    private compression = new CompressionEngine();
+    private vectorBuilder = new RiskVectorBuilder();
+    private frontier = new ParetoFrontier();
+    private partitioner = new FrontierPartitioner();
     private onboarding = new OnboardingAnalyzer();
     
     public generateHeader(
@@ -58,32 +60,36 @@ export class InsightEngine {
 
     public buildExecutiveInsight(context: ValidationContext, simContext?: SimulationContext): ExecutiveInsight {
         let health = "STABLE";
-        let topRisk = "No immediate risk detected";
+        let frontierObservation = "No immediate risk detected";
         let action = "Continue normal operations";
         let whyItMatters = "Architecture is well-bounded.";
         let sourceVal = "None";
 
         if (simContext && simContext.evidenceBundle) {
             const groups = this.aggregator.aggregate(simContext);
-            const prioritized = this.priority.assignPriorities(groups);
-            const compressed = this.compression.compress(prioritized);
+            const classified = this.classifier.classify(groups, simContext);
+            const vectors = this.vectorBuilder.build(classified);
+            const frontierResult = this.frontier.compute(vectors);
+            const partitioned = this.partitioner.partition(frontierResult, vectors);
 
-            if (compressed.immediateActions.length > 0) {
+            if (partitioned.frontier.length > 0) {
                 health = "WARNING";
-                const top = compressed.immediateActions[0];
-                topRisk = `Dependency concentration around ${top.ownerCluster} increases change impact.`;
-                action = `Immediate action recommended on Top ${compressed.immediateActions.length} risk areas.`;
-                whyItMatters = `Changes to ${top.ownerCluster} affect ${top.blastRadius} downstream nodes.`;
-                sourceVal = "CompressionEngine (Priority CRITICAL)";
+                const frontierNames = partitioned.frontier
+                    .map(v => v.sourceGroup.ownerCluster)
+                    .join(', ');
+                frontierObservation = `${partitioned.frontier.length} nodes on the Pareto Frontier: ${frontierNames}.`;
+                action = `Immediate action recommended on ${partitioned.frontier.length} frontier nodes.`;
+                whyItMatters = `These nodes are mutually non-dominated across all risk dimensions.`;
+                sourceVal = "ParetoFrontier (non-dominated set)";
             }
         }
         
         return { 
             health, 
-            topRisk, 
+            frontierObservation, 
             action, 
             whyItMatters,
-            sources: { topRisk: { value: topRisk, source: sourceVal } }
+            sources: { frontierObservation: { value: frontierObservation, source: sourceVal } }
         };
     }
 
@@ -94,38 +100,42 @@ export class InsightEngine {
             const semanticContext = new SemanticContext(simContext);
             const groups = this.aggregator.aggregate(simContext, semanticContext);
             const classified = this.classifier.classify(groups, simContext, semanticContext);
-            const prioritized = this.priority.assignPriorities(classified);
-            const compressed = this.compression.compress(prioritized);
+            const vectors = this.vectorBuilder.build(classified);
+            const frontierResult = this.frontier.compute(vectors);
+            const partitioned = this.partitioner.partition(frontierResult, vectors);
 
-            // Add Immediate Actions (CRITICAL)
-            for (const c of compressed.immediateActions) {
+            // Add Frontier nodes (non-dominated set)
+            for (const c of partitioned.frontier) {
+                const g = c.sourceGroup;
                 candidates.push({
-                    filePath: c.ownerCluster,
-                    reason: `[CRITICAL] [${c.primaryRiskType}]\nSubsystem: ${c.boundaryContext?.id || 'None / Unbounded'}\nBoundary Strength: ${c.boundaryContext?.strength || 'None'}\n\n**Role:**\n${c.boundaryContext?.id ? 'Bounded' : 'Unbounded'} Structural Defect\n\n**Architectural Interpretation:**\nThis node contains serious structural defects (Fan-out: ${c.fanOut}, Cycles: ${c.cycleParticipation}). ${c.boundaryContext?.id ? 'Although it is within a boundary, the defect severity is too high.' : 'It lacks strong Boundary protection.'}\nChanges to this code will trigger massive side-effects across the entire system.`,
+                    filePath: g.ownerCluster,
+                    reason: `[FRONTIER] [${g.primaryRiskType}]\nSubsystem: ${g.boundaryContext?.id || 'None / Unbounded'}\nBoundary Strength: ${g.boundaryContext?.strength || 'None'}\n\n**Role:**\n${g.boundaryContext?.id ? 'Bounded' : 'Unbounded'} Structural Defect\n\n**Architectural Interpretation:**\nThis node is on the Pareto Frontier (Coupling: ${c.coupling}, Cycle: ${c.cycle}). ${g.boundaryContext?.id ? 'Although it is within a boundary, the defect severity is too high.' : 'It lacks strong Boundary protection.'}\nChanges to this code will trigger massive side-effects across the entire system.`,
                     evidence: `**Status:**\nHigh Priority Technical Debt. This architecture is dangerously fragile.\n\n**Recommendation:**\nExtract responsibilities into separate layers or isolate via abstract interfaces.`
                 });
             }
-            // Add Watch List (UNKNOWN_HUB - Weak Boundary)
-            for (const w of compressed.watchList) {
+            // Add Watch List (non-frontier with signals)
+            for (const w of partitioned.watchList) {
+                const g = w.sourceGroup;
                 candidates.push({
-                    filePath: w.ownerCluster,
-                    reason: `[WATCH] [${w.primaryRiskType}]\nSubsystem: ${w.boundaryContext?.id || 'Unknown'}\nBoundary Strength: Weak\n\n**Role:**\nSuspicious Structural Hub\n\n**Architectural Interpretation:**\nThis node acts as a hub (${w.fanOut} fan-out). It is technically inside the '${w.boundaryContext?.id}' subsystem, but that boundary's internal cohesion is too weak to provide true architectural encapsulation.\nIt is leaking complexity outside its intended Semantic Context.`,
-                    evidence: `**Recommended Investigation:**\nStrengthen the boundary of '${w.boundaryContext?.id}' or reduce external coupling.`
+                    filePath: g.ownerCluster,
+                    reason: `[WATCH] [${g.primaryRiskType}]\nSubsystem: ${g.boundaryContext?.id || 'Unknown'}\nBoundary Strength: ${g.boundaryContext?.strength || 'Weak'}\n\n**Role:**\nSuspicious Structural Hub\n\n**Architectural Interpretation:**\nThis node acts as a hub (${w.coupling} fan-out). It is technically inside the '${g.boundaryContext?.id}' subsystem, but that boundary's internal cohesion is too weak to provide true architectural encapsulation.\nIt is leaking complexity outside its intended Semantic Context.`,
+                    evidence: `**Recommended Investigation:**\nStrengthen the boundary of '${g.boundaryContext?.id}' or reduce external coupling.`
                 });
             }
 
-            // Add Info List (INTENDED_HUB - Strong Boundary)
-            for (const i of compressed.infoList) {
+            // Add Info List (INTENDED_HUB)
+            for (const i of partitioned.infoList) {
+                const g = i.sourceGroup;
                 candidates.push({
-                    filePath: i.ownerCluster,
-                    reason: `[INFO] [${i.primaryRiskType}]\nSubsystem: ${i.boundaryContext?.id || 'Unknown'}\nBoundary Strength: ${i.boundaryContext?.strength || 'Strong'}\n\n**Role:**\nCentral Resource / API Registry\n\n**Architectural Interpretation:**\nExpected high fan-out (${i.fanOut}) because this node acts as a canonical registry or core hub strictly within the '${i.boundaryContext?.id}' subsystem.\nThe Semantic Context confirms this structure is intentional and safely encapsulated by a Strong boundary.`,
+                    filePath: g.ownerCluster,
+                    reason: `[INTENDED] [${g.primaryRiskType}]\nSubsystem: ${g.boundaryContext?.id || 'Unknown'}\nBoundary Strength: ${g.boundaryContext?.strength || 'Strong'}\n\n**Role:**\nCentral Resource / API Registry\n\n**Architectural Interpretation:**\nExpected high fan-out (${i.coupling}) because this node acts as a canonical registry or core hub strictly within the '${g.boundaryContext?.id}' subsystem.\nThe Semantic Context confirms this structure is intentional and safely encapsulated by a Strong boundary.`,
                     evidence: `**Status:**\nValidated as Intended Architecture. No immediate topology refactoring required. Keep monitoring for Ownership/Authority violations.`
                 });
             }
 
             // Append External Pressures
-            if (compressed.externalPressures.length > 0) {
-                const topExternal = compressed.externalPressures.slice(0, 5).map(e => `- ${e.ownerCluster} (${e.blastRadius} refs)`).join('\n');
+            if (partitioned.externalPressures.length > 0) {
+                const topExternal = partitioned.externalPressures.slice(0, 5).map(e => `- ${e.sourceGroup.ownerCluster} (${e.authority} refs)`).join('\n');
                 candidates.push({
                     filePath: "External Dependency Pressures",
                     reason: `[INFO] High usage of external/platform boundaries.\n\n**Top External References:**\n${topExternal}`,
@@ -134,9 +144,7 @@ export class InsightEngine {
             }
             
             // Note: We'll pass ignored noise count via the first candidate's evidence or via ReportBundleGenerator
-            if (compressed.ignoredNoiseCount > 0 && candidates.length > 0) {
-                 candidates[0].evidence += `\n\n*Note: ${compressed.ignoredNoiseCount} findings were intentionally ignored as noise (tests, docs, etc.).*`;
-            }
+            // For now, no ignored noise tracking in new pipeline
         }
         
         return { candidates, sources: {} };

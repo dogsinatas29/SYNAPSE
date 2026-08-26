@@ -5,7 +5,7 @@ export class ExecutiveReportBuilder {
         return [
             {
                 title: 'System Health & Business Impact',
-                content: `**Architecture Health:** ${insight.health}\n\n**Top Risk Area:** ${insight.topRisk}\n\n**Business Impact:** ${insight.whyItMatters}\n\n**Recommended Action:** ${insight.action}`
+                content: `**Architecture Health:** ${insight.health}\n\n**Frontier Observation:** ${insight.frontierObservation}\n\n**Business Impact:** ${insight.whyItMatters}\n\n**Recommended Action:** ${insight.action}`
             }
         ];
     }

@@ -19,7 +19,10 @@ export class GateMAudit {
         
         // Mock Inputs
         const mockEvidences: ArchitecturalEvidence[] = [{
-            nodeId: 'MockNode', boundaryId: 'mock', fanIn: 1, fanOut: 1, blastRadius: 1, crossBoundaryDependencies: [], roleHints: {}, constraintHints: {}, boundaryInboundPressure: 0, sources: {}
+            nodeId: 'MockNode', boundaryId: 'mock', fanIn: 1, fanOut: 1, blastRadius: 1, crossBoundaryDependencies: [], 
+            roleHints: { isEntryPoint: false, hasLifecycleControl: false, hasStateMutation: false, hasServiceRegistry: false, hasFactoryPattern: false }, 
+            constraintHints: { boundaryRootCount: 0, singletonPatternDetected: false, replacementCandidates: 0, inboundDependencyCount: 1, outboundDependencyCount: 1, uniqueImplementationCount: 1 }, 
+            boundaryInboundPressure: 0, sources: {}
         }];
         const mockAuthority: AuthorityFinding[] = [{
             nodeId: 'MockNode', signals: [{ type: 'HIGH_INBOUND', description: 'Mock', evidenceReferences: ['fanIn'] }]

@@ -772,7 +772,7 @@ export interface InsightSource {
 
 export interface ExecutiveInsight {
     health: string;
-    topRisk: string;
+    frontierObservation: string;
     action: string;
     whyItMatters: string;
     sources?: Record<string, InsightSource>;

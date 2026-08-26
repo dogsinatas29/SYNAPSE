@@ -25,7 +25,9 @@ export class AdversarialValidationAudit {
         const mockEmptyEvidence: ArchitecturalEvidence = {
             nodeId: 'MockEmpty', boundaryId: 'mock',
             fanIn: 0, fanOut: 0, blastRadius: 0,
-            crossBoundaryDependencies: [], roleHints: {}, constraintHints: {},
+            crossBoundaryDependencies: [], 
+            roleHints: { isEntryPoint: false, hasLifecycleControl: false, hasStateMutation: false, hasServiceRegistry: false, hasFactoryPattern: false }, 
+            constraintHints: { boundaryRootCount: 0, singletonPatternDetected: false, replacementCandidates: 0, inboundDependencyCount: 0, outboundDependencyCount: 0, uniqueImplementationCount: 0 },
             boundaryInboundPressure: 0, sources: {}
         };
 
@@ -53,16 +55,20 @@ export class AdversarialValidationAudit {
         // Case D: Reference 제거 공격 방어 (RefactorAnalyzer)
         // =====================================
         const refactorAnalyzer = new RefactorAnalyzer();
-        const mockCorridorResult = { path: ['A'], crossedBoundaries: [] };
-        const mockPropagationResult = { nodeId: 'A', propagationExtent: 'HIGH', evidenceReferences: [] };
+        const mockEvidence: ArchitecturalEvidence = {
+            nodeId: 'A', boundaryId: 'mock', fanIn: 10, fanOut: 5, blastRadius: 100,
+            crossBoundaryDependencies: ['B'],
+            roleHints: { isEntryPoint: false, hasLifecycleControl: false, hasStateMutation: false, hasServiceRegistry: false, hasFactoryPattern: false },
+            constraintHints: { boundaryRootCount: 1, singletonPatternDetected: false, replacementCandidates: 0, inboundDependencyCount: 10, outboundDependencyCount: 5, uniqueImplementationCount: 1 },
+            boundaryInboundPressure: 5, sources: {}
+        };
         
-        // RefactorAnalyzer 내부 로직을 통해 evidenceReferences가 없으면 Constraint를 버려야 함
-        // (실제 로직이 구현되었다면 이를 테스트합니다. 여기서는 모의 테스트)
-        const constraints = refactorAnalyzer.analyzeConstraints('A', [mockCorridorResult], [mockPropagationResult as any]);
+        // RefactorAnalyzer.analyze()를 사용하여 제약 생성 검증
+        const findings = refactorAnalyzer.analyze([mockEvidence]);
         
         let testDPass = true;
-        // 현재 RefactorAnalyzer가 참조를 필수 검증하지 않으면 FAIL
-        if (constraints.length > 0 && constraints[0].evidenceReferences.length === 0) {
+        // 제약이 생성되었다면 evidenceReferences가 비어있으면 안 됨
+        if (findings.length > 0 && findings[0].evidenceReferences.length === 0) {
             testDPass = false; // "증거 없음"
             failureReasons.push('Case D FAIL: Constraint generated despite empty evidenceReferences.');
         }

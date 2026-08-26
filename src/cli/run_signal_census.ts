@@ -63,7 +63,8 @@ async function run() {
     // 4. 통계 산출
     console.log("Generating Statistics...");
     const statsGenerator = new SignalStatisticsGenerator();
-    const stats = statsGenerator.generateStatistics(findings);
+    const totalNodes = mockEvidences.length;
+    const stats = statsGenerator.generateStatistics(findings, totalNodes);
     
     // 5. 보고서 출력
     const reportPath = path.join(process.cwd(), 'synapse_signal_census_report.json');

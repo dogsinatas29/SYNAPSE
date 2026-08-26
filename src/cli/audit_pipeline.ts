@@ -24,15 +24,15 @@ export class PipelineIntegrityAudit {
         // 1. Signal Count Check (Before vs After)
         const rawAuthorityFindings = this.rawAuthorityAnalyzer.analyze(evidences);
         let beforeAuthoritySignalCount = 0;
-        rawAuthorityFindings.forEach(f => {
-            beforeAuthoritySignalCount += f.authoritySignals.length;
+        rawAuthorityFindings.forEach((f: any) => {
+            beforeAuthoritySignalCount += f.signals ? f.signals.length : 0;
         });
 
         const model = this.pipeline.run(evidences);
         let afterAuthoritySignalCount = 0;
-        Object.values(model.nodes).forEach(node => {
-            if (node.authority) {
-                afterAuthoritySignalCount += node.authority.authoritySignals.length;
+        Object.values(model.nodes).forEach((node: any) => {
+            if (node.authority && node.authority.signals) {
+                afterAuthoritySignalCount += node.authority.signals.length;
             }
         });
 
@@ -50,11 +50,12 @@ export class PipelineIntegrityAudit {
         let sampleReference = '';
         
         for (const node of Object.values(model.nodes)) {
-            if (node.authority && node.authority.authoritySignals.length > 0) {
-                if (!node.authority.evidenceReferences || node.authority.evidenceReferences.length === 0) {
+            const n = node as any;
+            if (n.authority && n.authority.signals && n.authority.signals.length > 0) {
+                if (!n.authority.evidenceReferences || n.authority.evidenceReferences.length === 0) {
                     referenceIntact = false;
                 } else if (!sampleReference) {
-                    sampleReference = node.authority.evidenceReferences[0];
+                    sampleReference = n.authority.evidenceReferences[0];
                 }
             }
         }
@@ -71,10 +72,13 @@ export class PipelineIntegrityAudit {
         let contaminationDetected = false;
         
         for (const node of Object.values(model.nodes)) {
-            if (node.authority) {
+            const n = node as any;
+            if (n.authority && n.authority.signals) {
                 // Check if typical ownership/dominance signals leaked into authority
-                const hasOwnershipSignal = node.authority.authoritySignals.some(s => 
-                    s.includes('Boundary') || s.includes('Cross') || s.includes('Responsibility'));
+                const hasOwnershipSignal = n.authority.signals.some((s: any) => {
+                    const text = typeof s === 'string' ? s : (s.type || '');
+                    return text.includes('Boundary') || text.includes('Cross') || text.includes('Responsibility');
+                });
                 
                 if (hasOwnershipSignal) {
                     contaminationDetected = true;

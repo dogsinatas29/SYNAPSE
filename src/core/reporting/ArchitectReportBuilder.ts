@@ -40,7 +40,7 @@ export class ArchitectReportBuilder {
         if (model.propagation && model.propagation.length > 0) {
             md += `### Propagation\n`;
             model.propagation.forEach(prop => {
-                md += `- Node: \`${prop.nodeId}\` | Extent: **${prop.propagationExtent}** [REF: ${prop.evidenceReferences.join(', ')}]\n`;
+                md += `- Node: \`${prop.nodeId}\` | Affected Nodes: **${prop.affectedNodeCount}** [REF: ${prop.evidenceReferences.join(', ')}]\n`;
             });
             md += `\n`;
         }

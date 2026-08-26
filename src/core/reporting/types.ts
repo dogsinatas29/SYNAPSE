@@ -1,11 +1,3 @@
-export enum PriorityLevel {
-    CRITICAL = 'CRITICAL',
-    HIGH = 'HIGH',
-    WATCH = 'WATCH',
-    INFO = 'INFO',
-    IGNORE = 'IGNORE'
-}
-
 export enum RiskType {
     STRUCTURAL_DEFECT = 'STRUCTURAL_DEFECT',
     BOUNDARY_ISSUE = 'BOUNDARY_ISSUE',
@@ -32,7 +24,6 @@ export interface ProblemGroup {
     relatedFindings: any[];
     totalImpact: number;
     category?: 'INTERNAL' | 'EXTERNAL' | 'TESTS' | 'DOCS' | 'PLATFORM';
-    priority?: PriorityLevel;
     primaryRiskType?: RiskType;
     riskTags?: RiskType[];
     blastRadius: number;
@@ -46,17 +37,31 @@ export interface ProblemGroup {
     };
 }
 
-export interface CompressionResult {
-    immediateActions: ProblemGroup[];
-    watchList: ProblemGroup[];
-    infoList: ProblemGroup[];
-    externalPressures: ProblemGroup[];
-    ignoredNoiseCount: number;
-}
-
 export interface OnboardingPath {
     entryPoint: string;
     corePipeline: string[];
     safeAreas: string[];
     readLater: string[];
+}
+
+// v0.3.34.36 Governance Engine
+export interface RiskVector {
+    sourceGroup: ProblemGroup;
+    boundary: number;
+    cycle: number;
+    coupling: number;
+    authority: number;
+    isIntendedHub: boolean;
+}
+
+export interface FrontierResult {
+    frontier: RiskVector[];
+    dominated: RiskVector[];
+}
+
+export interface PartitionResult {
+    frontier: RiskVector[];
+    watchList: RiskVector[];
+    infoList: RiskVector[];
+    externalPressures: RiskVector[];
 }

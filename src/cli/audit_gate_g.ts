@@ -19,8 +19,8 @@ export class GateGAudit {
             boundaryId: 'core',
             fanIn: 10, fanOut: 5, blastRadius: 100,
             crossBoundaryDependencies: ['DataPipeline', 'RuleEngine'],
-            roleHints: { isEntryPoint: false, hasLifecycleControl: true, hasStateMutation: true, hasServiceRegistry: true },
-            constraintHints: { boundaryRootCount: 1, singletonPatternDetected: true, replacementCandidates: 0 },
+            roleHints: { isEntryPoint: false, hasLifecycleControl: true, hasStateMutation: true, hasServiceRegistry: true, hasFactoryPattern: false },
+            constraintHints: { boundaryRootCount: 1, singletonPatternDetected: true, replacementCandidates: 0, inboundDependencyCount: 10, outboundDependencyCount: 5, uniqueImplementationCount: 1 },
             boundaryInboundPressure: 5,
             sources: {}
         },
@@ -29,8 +29,8 @@ export class GateGAudit {
             boundaryId: 'pipeline',
             fanIn: 5, fanOut: 5, blastRadius: 50,
             crossBoundaryDependencies: ['CanvasEngine'],
-            roleHints: { isEntryPoint: false, hasLifecycleControl: true, hasStateMutation: false, hasServiceRegistry: false },
-            constraintHints: { boundaryRootCount: 1, singletonPatternDetected: true, replacementCandidates: 0 },
+            roleHints: { isEntryPoint: false, hasLifecycleControl: true, hasStateMutation: false, hasServiceRegistry: false, hasFactoryPattern: false },
+            constraintHints: { boundaryRootCount: 1, singletonPatternDetected: true, replacementCandidates: 0, inboundDependencyCount: 5, outboundDependencyCount: 5, uniqueImplementationCount: 1 },
             boundaryInboundPressure: 2,
             sources: {}
         },
@@ -39,8 +39,8 @@ export class GateGAudit {
             boundaryId: 'canvas',
             fanIn: 8, fanOut: 2, blastRadius: 20,
             crossBoundaryDependencies: [],
-            roleHints: { isEntryPoint: false, hasLifecycleControl: true, hasStateMutation: false, hasServiceRegistry: false },
-            constraintHints: { boundaryRootCount: 1, singletonPatternDetected: true, replacementCandidates: 0 },
+            roleHints: { isEntryPoint: false, hasLifecycleControl: true, hasStateMutation: false, hasServiceRegistry: false, hasFactoryPattern: false },
+            constraintHints: { boundaryRootCount: 1, singletonPatternDetected: true, replacementCandidates: 0, inboundDependencyCount: 8, outboundDependencyCount: 2, uniqueImplementationCount: 1 },
             boundaryInboundPressure: 3,
             sources: {}
         },
@@ -49,8 +49,8 @@ export class GateGAudit {
             boundaryId: 'rule',
             fanIn: 4, fanOut: 6, blastRadius: 30,
             crossBoundaryDependencies: ['GraphModel', 'CanvasEngine'],
-            roleHints: { isEntryPoint: false, hasLifecycleControl: true, hasStateMutation: false, hasServiceRegistry: false },
-            constraintHints: { boundaryRootCount: 1, singletonPatternDetected: true, replacementCandidates: 0 },
+            roleHints: { isEntryPoint: false, hasLifecycleControl: true, hasStateMutation: false, hasServiceRegistry: false, hasFactoryPattern: false },
+            constraintHints: { boundaryRootCount: 1, singletonPatternDetected: true, replacementCandidates: 0, inboundDependencyCount: 4, outboundDependencyCount: 6, uniqueImplementationCount: 1 },
             boundaryInboundPressure: 2,
             sources: {}
         },
@@ -64,8 +64,8 @@ export class GateGAudit {
             blastRadius: 5000,
             crossBoundaryDependencies: [], // 스스로 외부를 호출하지 않음
             // 의미적 역할 전무
-            roleHints: { isEntryPoint: false, hasLifecycleControl: false, hasStateMutation: false, hasServiceRegistry: false },
-            constraintHints: { boundaryRootCount: 0, singletonPatternDetected: false, replacementCandidates: 10 },
+            roleHints: { isEntryPoint: false, hasLifecycleControl: false, hasStateMutation: false, hasServiceRegistry: false, hasFactoryPattern: false },
+            constraintHints: { boundaryRootCount: 0, singletonPatternDetected: false, replacementCandidates: 10, inboundDependencyCount: 5000, outboundDependencyCount: 0, uniqueImplementationCount: 1 },
             boundaryInboundPressure: 100,
             sources: {}
         },
@@ -76,8 +76,8 @@ export class GateGAudit {
             boundaryId: 'docs',
             fanIn: 0, fanOut: 0, blastRadius: 0,
             crossBoundaryDependencies: [],
-            roleHints: { isEntryPoint: false, hasLifecycleControl: false, hasStateMutation: false, hasServiceRegistry: false },
-            constraintHints: { boundaryRootCount: 0, singletonPatternDetected: false, replacementCandidates: 0 },
+            roleHints: { isEntryPoint: false, hasLifecycleControl: false, hasStateMutation: false, hasServiceRegistry: false, hasFactoryPattern: false },
+            constraintHints: { boundaryRootCount: 0, singletonPatternDetected: false, replacementCandidates: 0, inboundDependencyCount: 0, outboundDependencyCount: 0, uniqueImplementationCount: 1 },
             boundaryInboundPressure: 0,
             sources: {}
         }

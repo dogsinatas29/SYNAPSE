@@ -35,8 +35,8 @@ export class GateIAudit {
             boundaryId: 'core',
             fanIn: 10, fanOut: 5, blastRadius: 100,
             crossBoundaryDependencies: ['DataPipeline', 'RuleEngine'],
-            roleHints: {},
-            constraintHints: { boundaryRootCount: 1, singletonPatternDetected: true, replacementCandidates: 0 },
+            roleHints: { isEntryPoint: false, hasLifecycleControl: false, hasStateMutation: false, hasServiceRegistry: false, hasFactoryPattern: false },
+            constraintHints: { boundaryRootCount: 1, singletonPatternDetected: true, replacementCandidates: 0, inboundDependencyCount: 10, outboundDependencyCount: 5, uniqueImplementationCount: 1 },
             boundaryInboundPressure: 5,
             sources: {}
         },
@@ -46,8 +46,8 @@ export class GateIAudit {
             boundaryId: 'util',
             fanIn: 1, fanOut: 1, blastRadius: 0,
             crossBoundaryDependencies: [],
-            roleHints: {},
-            constraintHints: { boundaryRootCount: 0, singletonPatternDetected: false, replacementCandidates: 5 },
+            roleHints: { isEntryPoint: false, hasLifecycleControl: false, hasStateMutation: false, hasServiceRegistry: false, hasFactoryPattern: false },
+            constraintHints: { boundaryRootCount: 0, singletonPatternDetected: false, replacementCandidates: 5, inboundDependencyCount: 1, outboundDependencyCount: 1, uniqueImplementationCount: 1 },
             boundaryInboundPressure: 0,
             sources: {}
         },
@@ -57,8 +57,8 @@ export class GateIAudit {
             boundaryId: 'util',
             fanIn: 5000, fanOut: 0, blastRadius: 0,
             crossBoundaryDependencies: [],
-            roleHints: {},
-            constraintHints: { boundaryRootCount: 0, singletonPatternDetected: false, replacementCandidates: 1 },
+            roleHints: { isEntryPoint: false, hasLifecycleControl: false, hasStateMutation: false, hasServiceRegistry: false, hasFactoryPattern: false },
+            constraintHints: { boundaryRootCount: 0, singletonPatternDetected: false, replacementCandidates: 1, inboundDependencyCount: 5000, outboundDependencyCount: 0, uniqueImplementationCount: 1 },
             boundaryInboundPressure: 0,
             sources: {}
         }
@@ -89,7 +89,7 @@ export class GateIAudit {
                     if (evidence.constraintHints && evidence.constraintHints[mappedField] !== undefined) hasEvidence = true;
                 } else if (mappedField) {
                     const val = evidence[mappedField];
-                    if (Array.isArray(val) ? val.length > 0 : val > 0) hasEvidence = true;
+                    if (Array.isArray(val) ? val.length > 0 : (typeof val === 'number' && val > 0)) hasEvidence = true;
                 }
 
                 if (!hasEvidence) {

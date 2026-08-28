@@ -53,6 +53,15 @@ class PhaseManager {
    * 다음 단계로 전이. 순서가 맞지 않거나 시스템이 locked 상태면 거부.
    */
   public advancePhase(next: Phase) {
+    // 🔍 Call Site Identification
+    console.trace(
+        '[ADVANCE_PHASE_TRACE]',
+        {
+            current: this.currentPhase,
+            target: next
+        }
+    );
+
     if (this.locked) return;
 
     // [v0.3.09_fix] Relaxed transition for recovery

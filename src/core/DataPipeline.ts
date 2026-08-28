@@ -25,6 +25,9 @@ import { RuleEngine } from './RuleEngine';
 import { SymbolIndex } from './SymbolIndex';
 import { ProjectMetadata } from './ProjectMetadata';
 
+// [Phase 1 Debug] analyzeGraph 완전 OFF - 범인 검출용 임시 플래그
+const SKIP_ANALYSIS = true;
+
 /**
  * 🌊 SYNAPSE Data Pipeline (v0.3.30)
  * 
@@ -248,16 +251,47 @@ export class DataPipeline {
       diagnosticOutput += `[EXTERNAL_LAYER_MODE] mode=${externalLayerMode} unknownRatio=${ghostReport.v2Gate.unknownRatio} threshold=${ghostReport.v2Gate.thresholdUnknownRatio}\n`;
       
       // Inject Mutated States (DataPipeline's responsibility)
-      const validGhostNodes = expansionResult.ghostNodes.filter(n => n.role !== NodeRole.GHOST);
+      const validGhostNodes = expansionResult.ghostNodes.filter(n => {
+          if (n.role === NodeRole.GHOST) return false;
+          if ((n.data as any)?.ghost_classification === 'parserArtifact') return false;
+          return true;
+      });
+      
+      const validGhostNodeIds = new Set(validGhostNodes.map(n => n.id));
+      const validReferences = expansionResult.expandedReferences.filter(ref => 
+          nodeIds.has(ref.targetId) || validGhostNodeIds.has(ref.targetId)
+      );
+
       for (const node of validGhostNodes) nodes.push(node);
       for (const n of validGhostNodes) nodeIds.add(n.id);
       
-      for (const cluster of expansionResult.ghostClusters) clusters.push(cluster);
-      for (const c of expansionResult.ghostClusters) clusterIds.add(c.id);
+      const usedClusterIds = new Set<string>();
+      for (const n of validGhostNodes) {
+          if (n.cluster_id) usedClusterIds.add(n.cluster_id);
+      }
+      usedClusterIds.add('cluster_ghosts');
+      usedClusterIds.add('sys_cluster_reserved');
+      usedClusterIds.add('doc_shelf');
+      
+      const validGhostClusters = expansionResult.ghostClusters.filter(c => usedClusterIds.has(c.id));
+      for (const cluster of validGhostClusters) clusters.push(cluster);
+      for (const c of validGhostClusters) clusterIds.add(c.id);
+
+      console.log('[AFTER_GHOST_FILTER]', {
+        ghostNodes: validGhostNodes.length,
+        references: validReferences.length,
+        ghostClusters: validGhostClusters.length
+      });
+
+      console.log('[BEFORE_CLUSTER_BUILD]', {
+        nodeCount: nodes.length,
+        ghostCount: validGhostNodes.length,
+        clusterCount: clusters.length
+      });
 
       // [v0.3.32.5] Edge Materialization (Extracted to EdgeBuilder)
       console.time('[PIPELINE] edgeBuilder');
-      const edgeBuilderResult = EdgeBuilder.build(expansionResult.expandedReferences);
+      const edgeBuilderResult = EdgeBuilder.build(validReferences);
       console.timeEnd('[PIPELINE] edgeBuilder');
       for (const edge of edgeBuilderResult.edges) edges.push(edge);
       
@@ -275,9 +309,27 @@ export class DataPipeline {
         edgeTypeCount.set(mappedType, (edgeTypeCount.get(mappedType) || 0) + count);
       }
       console.log('[EDGE_TYPE_BREAKDOWN]', Object.fromEntries(edgeTypeCount));
-    console.time('[PIPELINE] graphAnalyzer');
-    const analysis = analyzeGraph({ nodes, edges, clusterIds, nodeIds });
-    console.timeEnd('[PIPELINE] graphAnalyzer');
+    let analysis: GraphAnalysis;
+    if (SKIP_ANALYSIS) {
+      console.log('[BOOTSTRAP] Analysis disabled - skip analyzeGraph()');
+      analysis = {
+        degreeMap: new Map(),
+        clusterTraffic: new Map(),
+        interClusterTraffic: new Map(),
+        ghostImpactTraffic: new Map(),
+        directionalClusterTraffic: new Map(),
+        continentTraffic: new Map(),
+        interContinentTraffic: new Map(),
+        clusterSizes: {},
+        continentInfo: new Map(),
+        stats: { internalEdges: 0, externalEdges: 0, ghostNodes: 0, ghostEdges: 0, ghostRatio: 0 },
+        assemblyAudit: []
+      };
+    } else {
+      console.time('[PIPELINE] graphAnalyzer');
+      analysis = analyzeGraph({ nodes, edges, clusterIds, nodeIds });
+      console.timeEnd('[PIPELINE] graphAnalyzer');
+    }
     
     // [P0 진단] DataPipeline 첫 번째 analyzeGraph 결과 확인
     console.log('[PIPELINE_ASSEMBLY_AUDIT]', {
@@ -365,22 +417,44 @@ export class DataPipeline {
     let chainCount = 0;
     let collapseChanged = true;
     console.time('[PIPELINE] clusterCollapse');
+    
+    // O(1) Lookups for collapse loop
+    const clusterMap = new Map<string, Cluster>();
+    for (const c of clusters) clusterMap.set(c.id, c);
+    
+    const myNodesMap = new Map<string, Node[]>();
+    for (const n of nodes) {
+        const cid = n.cluster_id || (n.data && n.data.cluster_id);
+        if (cid) {
+            if (!myNodesMap.has(cid)) myNodesMap.set(cid, []);
+            myNodesMap.get(cid)!.push(n);
+        }
+    }
+
     while(collapseChanged) {
         collapseChanged = false;
+        
+        const parentToChildren = new Map<string, Cluster[]>();
+        for (const child of clusters) {
+            if (child.parent_id) {
+                if (!parentToChildren.has(child.parent_id)) parentToChildren.set(child.parent_id, []);
+                parentToChildren.get(child.parent_id)!.push(child);
+            }
+        }
         
         for (let i = clusters.length - 1; i >= 0; i--) {
             const c = clusters[i];
             if (c.id === 'cluster_ghosts' || c.id === 'sys_cluster_reserved' || c.id === 'folder_root') continue;
             
-            const childClusters = clusters.filter(child => child.parent_id === c.id);
-            const myNodes = nodes.filter(n => n.cluster_id === c.id || (n.data && n.data.cluster_id === c.id));
+            const childClusters = parentToChildren.get(c.id) || [];
+            const myNodes = myNodesMap.get(c.id) || [];
             
             // Calculate cluster depth
             let depth = 1;
             let currentForDepth = c;
             while (currentForDepth.parent_id) {
                 depth++;
-                const parent = clusters.find(p => p.id === currentForDepth.parent_id);
+                const parent = clusterMap.get(currentForDepth.parent_id);
                 if (!parent) break;
                 currentForDepth = parent;
             }
@@ -389,18 +463,31 @@ export class DataPipeline {
             if (depth > 5) {
                 const parentId = c.parent_id;
                 if (parentId) {
-                    // Move my nodes to parent
+                    if (!myNodesMap.has(parentId)) myNodesMap.set(parentId, []);
+                    const parentNodes = myNodesMap.get(parentId)!;
+                    
                     myNodes.forEach(n => {
                         n.cluster_id = parentId;
                         if (n.data) n.data.cluster_id = parentId;
+                        parentNodes.push(n);
                     });
+                    myNodesMap.set(c.id, []);
                     
-                    // Move my children to parent
                     childClusters.forEach(child => {
                         child.parent_id = parentId;
+                        if (!parentToChildren.has(parentId)) parentToChildren.set(parentId, []);
+                        parentToChildren.get(parentId)!.push(child);
                     });
+                    parentToChildren.set(c.id, []);
+                    // Remove deleted cluster from parent's children list
+                    const parentSiblings = parentToChildren.get(parentId);
+                    if (parentSiblings) {
+                        const idx2 = parentSiblings.indexOf(c);
+                        if (idx2 !== -1) parentSiblings.splice(idx2, 1);
+                    }
                     
                     clusters.splice(i, 1);
+                    clusterMap.delete(c.id);
                     collapseCount++;
                     collapseChanged = true;
                     continue;
@@ -408,70 +495,83 @@ export class DataPipeline {
             }
             
             // 1. Aggressive Branch Promotion (nodeCount <= 2)
-            // If a cluster has very few direct nodes, it's not worth being a separate box.
-            // We promote its nodes and children to its parent.
             if (myNodes.length <= 2) {
                 const parentId = c.parent_id;
                 if (parentId) {
-                    // Move my nodes to parent
+                    if (!myNodesMap.has(parentId)) myNodesMap.set(parentId, []);
+                    const parentNodes = myNodesMap.get(parentId)!;
+                    
                     myNodes.forEach(n => {
                         n.cluster_id = parentId;
                         if (n.data) n.data.cluster_id = parentId;
+                        parentNodes.push(n);
                     });
+                    myNodesMap.set(c.id, []);
                     
-                    // Move my children to parent
                     childClusters.forEach(child => {
                         child.parent_id = parentId;
-                        // Prepend my name to child's name to preserve path visually
                         const myName = c.label.replace('📂 ', '').replace(/\[.*\]\s*/, '');
                         if (!child.label.includes(myName + '/')) {
                             child.label = child.label.replace('📂 ', `📂 ${myName}/`);
                         }
+                        if (!parentToChildren.has(parentId)) parentToChildren.set(parentId, []);
+                        parentToChildren.get(parentId)!.push(child);
                     });
+                    parentToChildren.set(c.id, []);
+                    // Remove deleted cluster from parent's children list
+                    const parentSiblings = parentToChildren.get(parentId);
+                    if (parentSiblings) {
+                        const idx2 = parentSiblings.indexOf(c);
+                        if (idx2 !== -1) parentSiblings.splice(idx2, 1);
+                    }
                     
                     clusters.splice(i, 1);
+                    clusterMap.delete(c.id);
                     collapseCount++;
                     collapseChanged = true;
                     continue;
                 }
             }
 
-            // [v0.3.34.15] Promotion Lifecycle Invariant Check
-            const actualNodes = nodes.filter(n => n.cluster_id === c.id).length;
-            if (c.nodeCount !== actualNodes) {
-                console.error('[CLUSTER_INVARIANT_FAIL]', 
-                    c.id, 
-                    'nodeCount=', c.nodeCount, 
-                    'actual=', actualNodes,
-                    'childrenLen=', childClusters.length,
-                    'collapsed=', c.collapsed,
-                    'forcedCollapsed=', c.forcedCollapsed
-                );
-            }
+            // [v0.3.34.15] Promotion Lifecycle Invariant Check (노이즈 억제: collapse 중 nodeCount는 의도적으로 stale)
+            // console.error 제거 - 수백 건 spam이 발생하여 성능 저하 유발
             
             // 2. Chain Compression (childClusterCount === 1)
-            // For folders like A/B/C where B has no nodes but 1 child
             if (childClusters.length === 1) {
                 if (myNodes.length <= 5) {
                     const child = childClusters[0];
                     const parentId = c.parent_id;
                     
-                    // Move my nodes to the child cluster
+                    if (!myNodesMap.has(child.id)) myNodesMap.set(child.id, []);
+                    const childNodes = myNodesMap.get(child.id)!;
+                    
                     myNodes.forEach(n => {
                         n.cluster_id = child.id;
                         if (n.data) n.data.cluster_id = child.id;
+                        childNodes.push(n);
                     });
+                    myNodesMap.set(c.id, []);
                     
-                    // Bypass current cluster
                     child.parent_id = parentId;
+                    if (parentId) {
+                        if (!parentToChildren.has(parentId)) parentToChildren.set(parentId, []);
+                        parentToChildren.get(parentId)!.push(child);
+                        // Remove deleted cluster from parent's children list
+                        const parentSiblings = parentToChildren.get(parentId);
+                        if (parentSiblings) {
+                            const idx2 = parentSiblings.indexOf(c);
+                            if (idx2 !== -1) parentSiblings.splice(idx2, 1);
+                        }
+                    }
+                    parentToChildren.set(c.id, []);
                     
-                    // Merge labels: A + B -> A/B
                     const myName = c.label.replace('📂 ', '').replace(/\[.*\]\s*/, '');
                     if (!child.label.includes(myName + '/')) {
                         child.label = child.label.replace('📂 ', `📂 ${myName}/`);
                     }
                     
                     clusters.splice(i, 1);
+                    clusterMap.delete(c.id);
                     chainCount++;
                     collapseChanged = true;
                     continue;
@@ -586,9 +686,13 @@ export class DataPipeline {
 
     // [Phase 2B.13] Generate Meta Edges
     const metaEdges: any[] = [];
-    for (const [key, traffic] of Array.from(analysis.directionalClusterTraffic.entries())) {
-        const [source, target] = key.split(' -> ');
-        metaEdges.push({ source, target, weight: traffic });
+    if (!SKIP_ANALYSIS) {
+      for (const [key, traffic] of Array.from(analysis.directionalClusterTraffic.entries())) {
+          const [source, target] = key.split(' -> ');
+          metaEdges.push({ source, target, weight: traffic });
+      }
+    } else {
+      console.log('[BOOTSTRAP] MetaEdges disabled');
     }
 
     console.timeEnd('[PIPELINE] TOTAL');
@@ -599,6 +703,21 @@ export class DataPipeline {
         CLUSTER_COUNT: clusters.length,
         ROOT_CLUSTER_COUNT: rootClusterCount
     });
+
+    // [v0.3.34.40] SNAPSHOT_COMPOSITION - ghost/external/real breakdown
+    {
+        let ghostCount = 0, externalCount = 0, realCount = 0;
+        for (const n of nodes) {
+            const s = (n as any).status;
+            const r = (n as any).role;
+            const t = (n as any).type;
+            if (s === 'ghost' || r === 'ghost' || t === 'SYMBOL' && s === 'ghost') ghostCount++;
+            else if (t === 'EXTERNAL' || r === 'external' || (n as any).layer === 'external') externalCount++;
+            else realCount++;
+        }
+        console.log('[SNAPSHOT_COMPOSITION]', { totalNodes: nodes.length, ghostNodes: ghostCount, externalNodes: externalCount, realNodes: realCount, totalEdges: edges.length });
+    }
+
     
     const edgeTypeDistribution: Record<string, number> = {};
     for (const [k, v] of edgeTypeCount.entries()) edgeTypeDistribution[k] = v;

@@ -46,12 +46,14 @@ export class FileScanner {
      * [v0.3.11] Intelligence: Sovereignty signature detection
      */
     public scanFile(filePath: string): CodeSummary {
-        if (!fs.existsSync(filePath)) {
+        let stats: fs.Stats;
+        try {
+            stats = fs.statSync(filePath);
+        } catch {
             return { classes: [], functions: [], references: [] };
         }
 
         try {
-            const stats = fs.statSync(filePath);
             const mtime = stats.mtimeMs;
 
             // 캐시 확인
@@ -447,8 +449,8 @@ export class FileScanner {
             }
         }
 
-        // C/C++ 함수 (Catastrophic backtracking 방지를 위해 \s 대신 [ \t] 사용)
-        const funcRegex = /^[ \t]*(?:[\w \t:*&<>]+\s+)?([\w::]+)\s*\([^)]*\)\s*(?:const)?\s*(?={|;)/gm;
+        // C/C++ 함수 (Catastrophic backtracking 완전 차단)
+        const funcRegex = /\b([a-zA-Z0-9_]+)\s*\([^)]*\)\s*(?:const)?\s*(?={|;)/g;
         while ((match = funcRegex.exec(content)) !== null) {
             const funcName = match[1];
             if (funcName && !['if', 'while', 'for', 'switch', 'return', 'catch', 'template', 'using', 'static', 'explicit'].includes(funcName)) {

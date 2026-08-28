@@ -5260,8 +5260,12 @@ export class CanvasPanel {
                     // [v0.3.33 Phase 2 Fix] Yield to the event loop so IPC payload can be flushed to the Webview BEFORE we block the thread with heavy scanning!
                     await new Promise(resolve => setTimeout(resolve, 100));
 
+                    console.log('[BEFORE_AUTODISCOVER]');
                     const engine = new BootstrapEngine();
                     const discoveredState = await engine.autoDiscover(workspaceFolder.uri.fsPath);
+                    console.log('[AUTODISCOVER_RECEIVED]', discoveredState.nodes?.length, discoveredState.edges?.length, discoveredState.clusters?.length);
+                    console.log('[AUTODISCOVER_SIZE]', discoveredState.nodes?.length, discoveredState.edges?.length, discoveredState.clusters?.length);
+                    console.log('[BEFORE_GET_FINAL_SNAPSHOT]');
                     if (discoveredState.nodes!.length > 0) {
                         const currentEngineNodes = canvasEngine.getFinalSnapshot().nodes;
                         const existingNodeIds = new Set(Object.keys(currentEngineNodes));

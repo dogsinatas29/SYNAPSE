@@ -573,7 +573,8 @@ class WebGLRenderer {
         
         // [v0.2.24-Final] Pre-allocate large buffers once to avoid gl.bufferData stalls
         // [v0.3.34] Expanded limits to support large projects like vscode-main
-        const maxNodes = 60000;
+        // [v0.3.34] Expanded limits to support large projects like vscode-main
+        const maxNodes = 150000;
         const maxEdges = 1000000; // Increased to 1M to support VSCode-main
         const maxChars = 150000;
 
@@ -852,9 +853,9 @@ class WebGLRenderer {
                 const nodeWidth = 120;
                 const nodeHeight = 60;
                 let srcClientLayer = src.clientLayer || (src.data && src.data.clientLayer) || null;
-                let srcYOffset = srcClientLayer && window.engine ? window.engine.getClientLayerOffset(srcClientLayer).y : 0;
+                let srcYOffset = srcClientLayer && window.engine ? window.engine.getClientLayerOffset(srcClientLayer) : 0;
                 let tgtClientLayer = tgt.clientLayer || (tgt.data && tgt.data.clientLayer) || null;
-                let tgtYOffset = tgtClientLayer && window.engine ? window.engine.getClientLayerOffset(tgtClientLayer).y : 0;
+                let tgtYOffset = tgtClientLayer && window.engine ? window.engine.getClientLayerOffset(tgtClientLayer) : 0;
 
                 let x1 = src.position.x + (nodeWidth / 2);
                 let y1 = src.position.y + srcYOffset + (nodeHeight / 2);
@@ -974,6 +975,7 @@ class WebGLRenderer {
             }
         }
         this.edgeCount = cnt / 4;
+        console.log('[WEBGL_EDGE_BUFFER]', { inputEdges: edges.length, writtenEdges: this.edgeCount });
 
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.edgeInstanceBuffer);
         this.gl.bufferSubData(this.gl.ARRAY_BUFFER, 0, data.subarray(0, cnt));
@@ -1141,9 +1143,9 @@ class WebGLRenderer {
                 const nodeWidth = 120;
                 const nodeHeight = 60;
                 let srcClientLayer = src.clientLayer || (src.data && src.data.clientLayer) || null;
-                let srcYOffset = srcClientLayer && window.engine ? window.engine.getClientLayerOffset(srcClientLayer).y : 0;
+                let srcYOffset = srcClientLayer && window.engine ? window.engine.getClientLayerOffset(srcClientLayer) : 0;
                 let tgtClientLayer = tgt.clientLayer || (tgt.data && tgt.data.clientLayer) || null;
-                let tgtYOffset = tgtClientLayer && window.engine ? window.engine.getClientLayerOffset(tgtClientLayer).y : 0;
+                let tgtYOffset = tgtClientLayer && window.engine ? window.engine.getClientLayerOffset(tgtClientLayer) : 0;
 
                 const x1 = src.position.x + (nodeWidth / 2);
                 const y1 = src.position.y + srcYOffset + (nodeHeight / 2);
@@ -1509,6 +1511,9 @@ class WebGLRenderer {
         this.setAttrPointer(this.edgeControlBuffer, this.locs.edge.controlPoint, 2, 0, 0, 1);
 
         if (this.ext) {
+            if (window.engine && window.engine._frameCounter % 60 === 0) {
+                console.log("[EDGE_DRAW]", this.edgeCount);
+            }
             this.ext.drawArraysInstancedANGLE(this.gl.TRIANGLE_STRIP, 0, (this.edgeCurveSegments + 1) * 2, this.edgeCount);
             this.drawCalls++;
         }

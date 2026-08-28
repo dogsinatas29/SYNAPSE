@@ -76,7 +76,25 @@ export class CppScanner implements LanguageScanner {
             }
         }
 
-        // [v0.3.34.21] Phase 3-1: C/C++ 함수 호출 (CALL 추출)
+        // [v0.3.34.40] Phase 3-1: C/C++ 함수 호출 (CALL 추출)
+        // 주석/문자열을 완전히 제거한 뒤 callRegex를 적용한다.
+        // Copyright (, Author (, Notice ( 같은 주석 토큰이 api_call로 오인식되는 걸 차단.
+        //
+        // [v0.3.34.40.1] 레지스터 테이블 헤더 조기 종료:
+        // asic_reg/*_sh_mask.h, *_offset.h 같은 파일은 첫 2KB부터 #define 도배.
+        // 이런 파일은 함수 호출이 없으므로 callRegex 자체를 스킵.
+        const probe = content.length > 2048 ? content.slice(0, 2048) : content;
+        const defineCount = (probe.match(/#define\s/g) || []).length;
+        const lineCount = (probe.match(/\n/g) || []).length || 1;
+        const isDefineHeavy = (defineCount / lineCount) > 0.5; // 50%+ 줄이 #define
+
+        if (!isDefineHeavy) {
+        const stripped = content
+            .replace(/\/\*[\s\S]*?\*\//g, ' ')   // /* ... */ block comments
+            .replace(/\/\/[^\n]*/g, ' ')           // // line comments
+            .replace(/"(?:[^"\\]|\\.)*"/g, '""')  // string literals
+            .replace(/'(?:[^'\\]|\\.)*'/g, "''"); // char literals
+
         const callRegex = /\b([a-zA-Z_]\w*)\s*\(/g;
         const kernelMacroIgnoreSet = new Set([
             // Language Keywords
@@ -111,7 +129,7 @@ export class CppScanner implements LanguageScanner {
             'min', 'max', 'clamp', 'roundup', 'rounddown', 'ARRAY_SIZE'
         ]);
 
-        while ((match = callRegex.exec(content)) !== null) {
+        while ((match = callRegex.exec(stripped)) !== null) {
             const funcName = match[1];
             if (!kernelMacroIgnoreSet.has(funcName)) {
                 if (!summary.references.some(r => r.target === funcName && r.type === 'api_call')) {
@@ -123,5 +141,6 @@ export class CppScanner implements LanguageScanner {
                 }
             }
         }
+        } // end if (!isDefineHeavy)
     }
 }

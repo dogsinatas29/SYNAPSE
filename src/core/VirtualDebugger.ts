@@ -116,6 +116,22 @@ export class VirtualDebugger {
             return { ...fullNode, ...n, data: { ...(fullNode.data || {}), ...(n.data || {}) } };
         });
 
+        // [v0.3.34.40] 노이즈 소스 추적: 3계층 동시 검증
+        const suspiciousIds = [
+          '129',
+          '__future__',
+          '0-only'
+        ];
+
+        for (const id of suspiciousIds) {
+          console.log('[NOISE_SOURCE_CHECK]', {
+            id,
+            state: rawStateNodes.some((n: any) => n.id === id),
+            graph: allNodesMap.has(id),
+            target: targetNodes.some((n: any) => n.id === id)
+          });
+        }
+
         const allEdgesMap = new Map(((graphModel as any).edges || []).map((e: any) => [e.id, e]));
         const rawStateEdges = Array.isArray(state.edges) ? state.edges : Object.values(state.edges || {});
         let targetEdges = rawStateEdges.map((e: any) => {

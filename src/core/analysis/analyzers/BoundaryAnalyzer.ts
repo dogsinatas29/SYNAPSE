@@ -64,6 +64,30 @@ export class BoundaryAnalyzer implements ArchitectureAnalyzer {
             });
         }
 
+        // Generate Semantic Findings for Rejected Candidates (v0.3.34.39 Audit)
+        if (result.auditLog) {
+            for (const candidate of result.auditLog) {
+                if (candidate.result !== 'PROMOTED') {
+                    findings.push({
+                        type: 'semantic',
+                        evidenceType: EvidenceType.REJECTED_CANDIDATE,
+                        targetId: candidate.id,
+                        message: `Rejected Boundary Candidate: ${candidate.id} (${candidate.result})`,
+                        metadata: {
+                            members: candidate.members,
+                            internalEdges: candidate.internalEdges,
+                            externalEdges: candidate.externalEdges,
+                            cohesion: candidate.cohesion,
+                            targetConcentration: candidate.targetConcentration,
+                            result: candidate.result,
+                            memberFiles: candidate.memberFiles, // v0.3.34.40: Pass member files
+                            depth: candidate.depth // v0.3.34.40: Pass depth
+                        }
+                    });
+                }
+            }
+        }
+
         return { findings };
     }
 }

@@ -121,7 +121,7 @@ export class GraphModel {
       nodes: Array.from(this.nodes.values()),
       edges: this.edges.slice(),
       clusters: this.clusters.slice(),
-      cluster_flows: this.getClusterFlows(),
+      cluster_flows: [],  // [v0.3.34.41] Bootstrap 경로에서 getClusterFlows() 격리
       timestamp: Date.now()
     };
   }
@@ -221,8 +221,8 @@ export class GraphModel {
   }
 
   private finalizeGraph() {
-    const flows = this.getClusterFlows();
-    console.log(`[SYNAPSE] Graph finalized with ${this.nodes.size} nodes and ${flows.length} flows.`);
+    // [v0.3.34.41] Bootstrap 경로에서 getClusterFlows() 격리
+    console.log(`[SYNAPSE] Graph finalized with ${this.nodes.size} nodes.`);
   }
 
   public restoreSnapshot(snapshot: GraphSnapshot) {

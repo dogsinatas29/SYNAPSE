@@ -3718,8 +3718,10 @@ class CanvasEngine {
                     this._lastHoverCheck = now;
                     const _perfHitStart = performance.now();
                     // 🔍 툴팁 처리 (Phase 4)
+                    console.time("pick");
                     const edge = this.findEdgeAtPoint(worldPos.x, worldPos.y);
                     const node = this.getNodeAt(worldPos.x, worldPos.y);
+                    console.timeEnd("pick");
                     const _perfHitEnd = performance.now();
                     
                     if (_perfHitEnd - _perfHitStart > 20) {
@@ -3803,7 +3805,7 @@ class CanvasEngine {
                     this.selectedNodes.clear();
                 }
 
-                for (const node of this.nodes) {
+                for (const node of (this._visibleNodesCache || this.nodes)) {
                     // Check if node is hidden by a collapsed cluster or ancestor [v0.3.32.4]
                     if (node.cluster_id) {
                         const cluster = this.clusters.find(c => c.id === node.cluster_id);
@@ -4320,7 +4322,7 @@ class CanvasEngine {
 
     getConnectionHandleAt(worldX, worldY) {
         // 노드 핸들 체크
-        for (const node of this.nodes) {
+        for (const node of (this._visibleNodesCache || this.nodes)) {
             if (!node.position) continue;
             const nodeRenderY = this._getNodeRenderY ? this._getNodeRenderY(node) : node.position.y;
             const centerX = node.position.x + 60;
@@ -6330,6 +6332,22 @@ class CanvasEngine {
         nodes.sort((a, b) => a.id.localeCompare(b.id));
         edges.sort((a, b) => (a.id || "").localeCompare(b.id || "") || a.from.localeCompare(b.from));
         clusters.sort((a, b) => a.id.localeCompare(b.id));
+
+        const edgeStats = {};
+        let externalCount = 0;
+        edges.forEach(e => {
+            const t = e.type || 'UNKNOWN';
+            edgeStats[t] = (edgeStats[t] || 0) + 1;
+            if (e.to && !e.to.includes('.')) externalCount++;
+        });
+        console.log('[EDGE_TYPES]', { ...edgeStats, EXTERNAL_REF: externalCount });
+
+        // [v0.3.34.40] Ponytail Visual Policy: Spagetti Protection
+        // If graph has > 50k edges, completely drop CALL edges from WebGL rendering to preserve architecture shape
+        if (edges.length > 50000) {
+            console.warn('[PONYTAIL_POLICY] Graph is massive. Filtering out CALL edges for rendering.');
+            state._ponytailHideCalls = true;
+        }
 
         return {
             ...state,
@@ -8386,7 +8404,7 @@ class CanvasEngine {
                     // Avoid map lookup if already cached (unless full rebuild)
                     if (e._fromCluster === undefined || needsRebuild) {
                         const fn = this.nodeMap.get(e.from);
-                        e._fromCluster = fn?.cluster_id ?? fn?.data?.cluster_id;
+                        e._fromCluster = fn?.cluster_id ?? fn?.data?.cluster_id ?? null;
                         
                         if (needsRebuild && e._fromCluster) {
                             let arr = this._clusterEdgeMap.get(e._fromCluster);
@@ -8396,7 +8414,7 @@ class CanvasEngine {
                     }
                     if (e._toCluster === undefined || needsRebuild) {
                         const tn = this.nodeMap.get(e.to);
-                        e._toCluster = tn?.cluster_id ?? tn?.data?.cluster_id;
+                        e._toCluster = tn?.cluster_id ?? tn?.data?.cluster_id ?? null;
                     }
                 }
             }
@@ -8645,7 +8663,34 @@ class CanvasEngine {
                     console.time('updateLOD'); // overall cache building
                     console.time('LOD:visibleNodes');
                     console.time('VISIBLE_NODE_BUILD');
-                    this._visibleNodesCache = this.nodes.filter(n => {
+
+                    // [Ponytail] Viewport Culling: Never process nodes outside the screen
+                    let candidateNodes = this.nodes;
+                    let rbushSuccess = false;
+                    if (this.spatialIndex && this.spatialIndex.nodeTree) {
+                        const viewWidth = this.canvas ? this.canvas.width / (window.devicePixelRatio || 1) : window.innerWidth;
+                        const viewHeight = this.canvas ? this.canvas.height / (window.devicePixelRatio || 1) : window.innerHeight;
+                        const zoom = this.transform.zoom;
+                        const cMinX = -this.transform.offsetX / zoom - 200;
+                        const cMinY = -this.transform.offsetY / zoom - 100;
+                        const cMaxX = cMinX + viewWidth / zoom + 400;
+                        const cMaxY = cMinY + viewHeight / zoom + 200;
+
+                        const queryRes = this.spatialIndex.queryViewport(cMinX, cMinY, cMaxX, cMaxY, 'nodes');
+                        if (queryRes) {
+                            candidateNodes = Array.from(queryRes);
+                            rbushSuccess = true;
+                        }
+                    }
+
+                    const preCapCandidateCount = candidateNodes.length;
+
+                    // [Ponytail] Hard Cap for extreme Zoom Out (Density Protection)
+                    if (candidateNodes.length > 1000) {
+                        candidateNodes = candidateNodes.slice(0, 1000);
+                    }
+
+                    this._visibleNodesCache = candidateNodes.filter(n => {
                         _currentNodeForReject = n;
                         const isUser = isUserLogic(n);
                         const isExternal = isExternalLogic(n);
@@ -8728,7 +8773,16 @@ class CanvasEngine {
                     this._recordPerfMetric('visibleNodeFilter', performance.now() - _tVisibleNodeFilterStart);
                     console.timeEnd('LOD:visibleNodes');
 
+                    console.log("[VIEWPORT_CULL]", {
+                        totalNodes: this.nodes.length,
+                        candidateNodes: preCapCandidateCount,
+                        visibleNodes: this._visibleNodesCache.length,
+                        rbushSuccess: rbushSuccess,
+                        zoom: this.transform.zoom
+                    });
+
                     const _zoom = this.transform?.zoom || 1;
+
                     const _lodLabel = _zoom < 0.4 ? 'SATELLITE' : (_zoom > 1.5 ? 'DETAIL' : 'NORMAL');
                     console.log('[FLOW_STAGE_2]', {
                         inputNodes: lodFilterStats.inputNodes,
@@ -8847,6 +8901,10 @@ class CanvasEngine {
                     console.timeEnd('VISIBLE_NODE_BUILD');
                     console.time('VISIBLE_EDGE_BUILD');
                     this._visibleEdgesCache = [];
+                    let spaghettiBefore = 0;
+                    let spaghettiDropped = 0;
+                    const DISABLE_SPAGHETTI_FILTER = true; // [USER DIAGNOSTIC]
+
                     if (this._visibleGraphClusterIds && this._clusterEdgeMap) {
                         // [v0.3.33.1_fix3] O(Visible Clusters * Edges) Edge Virtualization
                         for (const cid of this._visibleGraphClusterIds) {
@@ -8855,6 +8913,15 @@ class CanvasEngine {
                             
                             for (let i = 0; i < edgesFromCluster.length; i++) {
                                 const e = edgesFromCluster[i];
+                                // [v0.3.34.40] Ponytail Policy
+                                if (window.engine && window.engine.lastState && window.engine.lastState._ponytailHideCalls && e.type === 'CALL') continue;
+
+                                // [Ponytail] Spaghetti Protection: Drop cross-cluster edges if graph is huge
+                                spaghettiBefore++;
+                                const isSpaghetti = false; // [v0.3.34.40] Disabled spaghetti filter to prevent cross-cluster edges from dropping
+                                if (isSpaghetti) spaghettiDropped++;
+                                if (!DISABLE_SPAGHETTI_FILTER && isSpaghetti) continue;
+
                                 if (!visibleNodeIds.has(e.from) || !visibleNodeIds.has(e.to)) continue;
                                 const tc = e._toCluster;
                                 if (tc && !this._visibleGraphClusterIds.has(tc)) continue;
@@ -8865,6 +8932,14 @@ class CanvasEngine {
                     } else {
                         // Fallback: Full iteration (should rarely happen now)
                         this._visibleEdgesCache = this.edges.filter(e => {
+                            if (window.engine && window.engine.lastState && window.engine.lastState._ponytailHideCalls && e.type === 'CALL') return false;
+                            
+                            // [Ponytail] Spaghetti Protection: Drop cross-cluster edges if graph is huge
+                            spaghettiBefore++;
+                            const isSpaghetti = false; // [v0.3.34.40] Disabled spaghetti filter to prevent cross-cluster edges from dropping
+                            if (isSpaghetti) spaghettiDropped++;
+                            if (!DISABLE_SPAGHETTI_FILTER && isSpaghetti) return false;
+
                             if (!visibleNodeIds.has(e.from) || !visibleNodeIds.has(e.to)) return false;
                             if (this._visibleGraphClusterIds) {
                                 const fc = e._fromCluster;
@@ -8875,8 +8950,13 @@ class CanvasEngine {
                             return true;
                         });
                     }
+                    console.log("[SPAGHETTI_FILTER]", {
+                        before: spaghettiBefore,
+                        after: spaghettiBefore - spaghettiDropped,
+                        dropped: spaghettiDropped,
+                        disabled: DISABLE_SPAGHETTI_FILTER
+                    });
                     console.timeEnd('LOD:visibleEdges');
-
                     // [v0.3.33] Phase 2: Dynamic Aggregate Edge Generation (LOD)
                     if (this._visibleGraphClusterIds && this.clusters) {
                         console.time('LOD:aggregateEdges');
@@ -8948,6 +9028,12 @@ class CanvasEngine {
                     }
                     console.timeEnd('VISIBLE_EDGE_BUILD');
                     console.log('[VISIBLE_EDGE_COUNT]', this._visibleEdgesCache ? this._visibleEdgesCache.length : 0);
+                    
+                    console.log("[DENSITY_TEST]", {
+                        visibleNodes: this._visibleNodesCache.length,
+                        visibleEdges: this._visibleEdgesCache ? this._visibleEdgesCache.length : 0
+                    });
+
                     console.timeEnd('updateLOD');
 
                     // [v0.3.34] Invalidate Heatmap Cache on Graph Data Dirty
@@ -9099,10 +9185,8 @@ class CanvasEngine {
                 }
 
                 // [v0.2.25] Accel Mode (Accel: ON) Constant Rendering Fix
-                // Force isDirty to true when Accel is ON to prevent disappearing/flickering
-                if (this.webglEnabled && this.currentMode === 'graph') {
-                    this.isDirty = true;
-                }
+                // [SYNAPSE] LLM Rule 1 & 3: Removed `this.isDirty = true` loop. 
+                // Render loop must be state-driven, not frame-driven.
 
                 if (!this.debugDisableOverlay) {
                     const dpr = window.devicePixelRatio || 1;
@@ -9154,14 +9238,20 @@ class CanvasEngine {
                                 if (!this.nodeMap.has(e.to)) missingTarget++;
                                 else if (!webglVisibleNodeSet.has(e.to)) missingTarget++;
                             }
-                            const statsMsg = `[WEBGL_DRAW_STATS] nodesToRender=${webglNodes ? webglNodes.length : 0} | edgesToRender=${this._visibleEdgesCache ? this._visibleEdgesCache.length : 0} | missingSource=${missingSource} | missingTarget=${missingTarget}`;
-                            console.log(statsMsg);
-                            if (this.vscode) {
-                                this.vscode.postMessage({ command: 'alert', text: statsMsg });
-                            }
+                        const statsMsg = `[WEBGL_DRAW_STATS] nodesToRender=${webglNodes ? webglNodes.length : 0} | edgesToRender=${this._visibleEdgesCache ? this._visibleEdgesCache.length : 0} | missingSource=${missingSource} | missingTarget=${missingTarget}`;
+                        console.log(statsMsg);
+                        if (this.vscode) {
+                            this.vscode.postMessage({ command: 'alert', text: statsMsg });
                         }
+                    }
 
-                        console.log('[WEBGL_RENDERER]', !!this.webglRenderer);
+                    console.log('[RENDER_INPUT]', {
+                        nodes: webglNodes ? webglNodes.length : 0,
+                        edges: this._visibleEdgesCache ? this._visibleEdgesCache.length : 0,
+                        clusters: this._visibleGraphClusterIds ? this._visibleGraphClusterIds.size : 0
+                    });
+
+                    console.log('[WEBGL_RENDERER]', !!this.webglRenderer);
                         this.webglRenderer.render(
                             webglNodes,
                             this.transform,
@@ -9211,9 +9301,15 @@ class CanvasEngine {
                             const cMaxX = cMinX + viewWidth / this.transform.zoom + 400;
                             const cMaxY = cMinY + viewHeight / this.transform.zoom + 200;
                             
-                            const viewportNodes = (this.spatialIndex && this.spatialIndex.nodeTree) 
-                                ? (this.spatialIndex.queryViewport(cMinX, cMinY, cMaxX, cMaxY, 'nodes') || this._visibleNodesCache)
-                                : this._visibleNodesCache;
+                            let viewportNodes = [];
+                            // SKIP 2D node badges completely when zoomed out (SATELLITE view) to prevent FPS drop to 1
+                            if (this.transform.zoom >= 0.4) {
+                                viewportNodes = (this.spatialIndex && this.spatialIndex.nodeTree) 
+                                    ? (this.spatialIndex.queryViewport(cMinX, cMinY, cMaxX, cMaxY, 'nodes') || this._visibleNodesCache)
+                                    : this._visibleNodesCache;
+                            }
+
+                            this._currentViewportNodeCount = viewportNodes.length; // [Ponytail] Density LOD tracking
 
                             for (const node of viewportNodes) {
                                 const pos = projectedPosMap.get(node.id);
@@ -9373,6 +9469,16 @@ class CanvasEngine {
                   'visibleNodes=', this._visibleNodesCache ? this._visibleNodesCache.length : 0,
                   'visibleEdges=', this._visibleEdgesCache ? this._visibleEdgesCache.length : 0,
                   'visibleClusters=', this._visibleClusterIds ? this._visibleClusterIds.size : 0
+                );
+                // [LOD_STATS] Requested by user to verify exact counts
+                console.log(
+                  "[LOD_STATS]",
+                  {
+                    totalNodes: this.nodes ? this.nodes.length : 0,
+                    visibleNodes: this._visibleNodesCache ? this._visibleNodesCache.length : 0,
+                    totalEdges: this.edges ? this.edges.length : 0,
+                    visibleEdges: this._visibleEdgesCache ? this._visibleEdgesCache.length : 0
+                  }
                 );
             }
 
@@ -11736,7 +11842,9 @@ class CanvasEngine {
         const nodeHeight = 60;
 
         // Level 1: Satellite View (Lowered from 0.4 to 0.2 for shape persistence, or dynamically forced by LOD)
-        const isDynamicLOD = this.nodes.length > 5000 && zoom < 0.3;
+        // [Ponytail] Density LOD: If there are too many nodes in the viewport, force LOD regardless of zoom level.
+        const densityLOD = (this._currentViewportNodeCount && this._currentViewportNodeCount > 5000);
+        const isDynamicLOD = (this.nodes.length > 5000 && zoom < 0.3) || densityLOD;
         if (zoom < 0.2 || isDynamicLOD) {
             let satColor = node.data.color || SYNAPSE_THEME.STATUS.ACTIVE.color;
             if (node.status === 'ghost' || node.state === 'pending') {

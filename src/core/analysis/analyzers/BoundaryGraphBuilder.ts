@@ -18,10 +18,23 @@ export interface BoundaryEdge {
     weight: number;
 }
 
+export interface BoundaryCandidateAudit {
+    id: string;
+    members: number;
+    internalEdges: number;
+    externalEdges: number;
+    cohesion: number;
+    targetConcentration: number;
+    result: 'PROMOTED' | 'REJECT_SMALL' | 'REJECT_WEAK' | 'WRAPPER';
+    memberFiles?: string[]; // v0.3.34.40: Track actual member files for audit
+    depth?: number; // v0.3.34.40: Track candidate depth in prefix tree
+}
+
 export interface BoundaryResult {
     nodes: BoundaryNode[];
     edges: BoundaryEdge[];
     splitWrappers?: string[];
+    auditLog?: BoundaryCandidateAudit[];
 }
 
 export class BoundaryGraphBuilder {
@@ -65,7 +78,12 @@ export class BoundaryGraphBuilder {
             queue.push({ id, members });
         }
         
+        // v0.3.34.40: Dump initial grouping for audit
         console.log(`[BOUNDARY_DISCOVERY_START] Queued ${queue.length} top-level candidates from ${nodes.length} nodes.`);
+        console.log(`[CANDIDATE_GEN_AUDIT] Initial Groups:`);
+        for (const [id, members] of initialGroups.entries()) {
+            console.log(`  ${id}: ${members.length} nodes`);
+        }
 
         // Edge index for fast lookup
         const edgesBySource = new Map<string, Edge[]>();
@@ -83,6 +101,7 @@ export class BoundaryGraphBuilder {
         const diag = { processed: 0, promoted: 0, split: 0, rejectedSmall: 0, rejectedWeak: 0 };
         const nodeToBoundary = new Map<string, string>(); // Record successful boundaries
         const nodeToLastCandidate = new Map<string, string>(); // Record deepest checked prefix
+        const auditLog: BoundaryCandidateAudit[] = []; // Track all candidates for audit
 
         // 2. Queue-based Hierarchical Validation and Promotion
         while (queue.length > 0) {
@@ -166,6 +185,37 @@ export class BoundaryGraphBuilder {
                 resultStatus = 'PROMOTED';
             } else {
                 resultStatus = 'SPLIT';
+            }
+
+            // Record audit entry for this candidate
+            let auditResult: BoundaryCandidateAudit['result'];
+            if (resultStatus === 'PROMOTED') {
+                auditResult = 'PROMOTED';
+            } else if (resultStatus === 'REJECT_SMALL') {
+                auditResult = 'REJECT_SMALL';
+            } else if (isWrapper) {
+                auditResult = 'WRAPPER';
+            } else {
+                auditResult = 'REJECT_WEAK';
+            }
+            auditLog.push({
+                id: candidate.id,
+                members: memberIds.length,
+                internalEdges,
+                externalEdges,
+                cohesion: parseFloat(cohesion.toFixed(3)),
+                targetConcentration: parseFloat(targetConcentration.toFixed(3)),
+                result: auditResult,
+                memberFiles: memberIds.slice(0, 20), // v0.3.34.40: Track first 20 member files for audit
+                depth: candidate.id.split('/').length // v0.3.34.40: Track depth in prefix tree
+            });
+
+            // v0.3.34.40: Dump candidate details for audit
+            console.log(`[CANDIDATE_GEN_AUDIT] ${candidate.id}: members=${memberIds.length}, depth=${candidate.id.split('/').length}, result=${auditResult}`);
+            if (memberIds.length <= 20) {
+                console.log(`  Files: ${memberIds.join(', ')}`);
+            } else {
+                console.log(`  Files (first 20): ${memberIds.slice(0, 20).join(', ')}...`);
             }
 
             // Dump SUBMODULE_ANALYSIS for large candidates to help tune heuristics
@@ -256,8 +306,8 @@ export class BoundaryGraphBuilder {
         for (const edge of edges) {
             if (!edge.from || !edge.to) continue;
             
-            let sourceCluster = this.findCluster(edge.from, boundaryNodes);
-            let targetCluster = this.findCluster(edge.to, boundaryNodes);
+            let sourceCluster = nodeToBoundary.get(edge.from);
+            let targetCluster = nodeToBoundary.get(edge.to);
             
             // If one of the endpoints is a promoted boundary but the other isn't, 
             // we still want to track where the edge goes!
@@ -271,7 +321,7 @@ export class BoundaryGraphBuilder {
             // Record edge only if at least one endpoint is a PROMOTED boundary, 
             // or if we want to see everything, just record it as long as they differ.
             // Semantic Boundary Graph should focus on paths touching at least one Boundary.
-            const hasPromotedBoundary = this.findCluster(edge.from, boundaryNodes) || this.findCluster(edge.to, boundaryNodes);
+            const hasPromotedBoundary = nodeToBoundary.has(edge.from) || nodeToBoundary.has(edge.to);
             
             if (hasPromotedBoundary && sourceCluster && targetCluster && sourceCluster !== targetCluster) {
                 const edgeKey = `${sourceCluster}->${targetCluster}`;
@@ -292,16 +342,8 @@ export class BoundaryGraphBuilder {
         return {
             nodes: Array.from(boundaryNodes.values()),
             edges: Array.from(boundaryEdgesMap.values()),
-            splitWrappers
+            splitWrappers,
+            auditLog
         };
-    }
-
-    private findCluster(nodeId: string, boundaryNodes: Map<string, BoundaryNode>): string | null {
-        for (const [clusterId, node] of boundaryNodes.entries()) {
-            if (node.members.includes(nodeId)) {
-                return clusterId;
-            }
-        }
-        return null;
     }
 }

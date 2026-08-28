@@ -137,9 +137,19 @@ export function analyzeGraph(input: AnalysisInput): GraphAnalysis {
     
     const getPercentile = (sortedArr: number[], val: number) => {
         if (sortedArr.length === 0) return 0;
-        let idx = sortedArr.findIndex(v => v >= val);
-        if (idx === -1) idx = sortedArr.length;
-        // Standard percentile: 95 means top 5%
+        let left = 0;
+        let right = sortedArr.length - 1;
+        let idx = sortedArr.length;
+        
+        while (left <= right) {
+            const mid = Math.floor((left + right) / 2);
+            if (sortedArr[mid] >= val) {
+                idx = mid;
+                right = mid - 1;
+            } else {
+                left = mid + 1;
+            }
+        }
         return (idx / sortedArr.length) * 100;
     };
 

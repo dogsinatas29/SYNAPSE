@@ -248,6 +248,25 @@ export class GhostExpander {
                 .map(([t, c]) => `${t} (${c})`)
         });
 
+        // [v0.3.34.40] Ghost Sample Evidence - Top20 with sourceFile + referenceType
+        const ghostNodeMap = new Map<string, Node>(ghostNodes.map(n => [n.id, n]));
+        console.log('[GHOST_SAMPLE]', Object.entries(ghostStats.targets)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 20)
+            .map(([target, count]) => {
+                const n = ghostNodeMap.get(target);
+                return { target, count, sampleFile: n?.data?.sourceFile ?? 'unknown', referenceType: n?.data?.referenceType ?? 'unknown' };
+            })
+        );
+
+        // [v0.3.34.40] Ghost Origin Type Stats - which referenceType is exploding
+        const originTypeStats: Record<string, number> = {};
+        for (const n of ghostNodes) {
+            const rt = (n.data?.referenceType as string) || 'unknown';
+            originTypeStats[rt] = (originTypeStats[rt] || 0) + 1;
+        }
+        console.log('[GHOST_ORIGIN_TYPE_STATS]', originTypeStats);
+
         console.error('[GHOST_DONE]', 'ghostNodes=', ghostNodes.length, 'ghostClusters=', ghostClusters.length, 'expandedReferences=', expandedReferences.length);
         return { ghostNodes, ghostClusters, expandedReferences };
     }

@@ -17,11 +17,17 @@ export class EdgeBuilder {
                 return acc;
             }, {})
         );
-        const edges: Edge[] = [];
+        const edgeMap = new Map<string, Edge>();
         const edgeTypeCount = new Map<string, number>();
 
         for (const ref of expandedReferences) {
             const mappedType = EdgeBuilder.mapEdgeType(ref.referenceType);
+            const edgeKey = `${ref.sourceId}::${ref.targetId}::${mappedType}`;
+
+            if (edgeMap.has(edgeKey)) {
+                edgeMap.get(edgeKey)!.weight += 1;
+                continue;
+            }
             
             const newEdge: Edge = {
                 id: crypto.randomUUID(),
@@ -48,7 +54,27 @@ export class EdgeBuilder {
                mappedType,
                (edgeTypeCount.get(mappedType) || 0) + 1
             );
-            edges.push(newEdge);
+            edgeMap.set(edgeKey, newEdge);
+        }
+
+        let edges = Array.from(edgeMap.values());
+
+        console.log(
+            '[EDGE_DEDUP]',
+            'raw=', expandedReferences.length,
+            'unique=', edges.length
+        );
+
+        // [v0.3.34.40] Ponytail Solution: Cap edges to prevent JSON/WebGL OOM
+        // Architecture primarily needs INCLUDE, and the most frequent CALLs.
+        if (edges.length > 150000) {
+            edges.sort((a, b) => {
+                if (a.type === 'INCLUDE' && b.type !== 'INCLUDE') return -1;
+                if (b.type === 'INCLUDE' && a.type !== 'INCLUDE') return 1;
+                return b.weight - a.weight;
+            });
+            console.warn(`[EDGE_LIMIT] Capping edges from ${edges.length} to 150000 to prevent OOM`);
+            edges = edges.slice(0, 150000);
         }
 
         console.error(

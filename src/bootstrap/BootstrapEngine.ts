@@ -453,6 +453,7 @@ The **Documentation Shelf** of the Synapse canvas is a sacred storage area for m
      * 프로젝트 자동 발견 (Headless - Phase 0 DATA Collection)
      */
     public async autoDiscover(projectRoot: string, includePaths?: string[], onProgress?: (msg: string) => void): Promise<ProjectState> {
+        console.log('[AUTODISCOVER_ENTER]');
         Logger.info(`🔍 [SYNAPSE] Auto-discovering source files in: ${projectRoot}`);
         // [v0.3.13 Fix] Ensure exclusion rules are loaded before scan to prevent explosions
         RuleEngine.getInstance().loadRules(projectRoot);
@@ -496,6 +497,7 @@ The **Documentation Shelf** of the Synapse canvas is a sacred storage area for m
 
         // [v0.3.10] Advance phase for interactive auto-discovery
         phaseManager.advancePhase(Phase.CONTROL);
+        console.log('[AUTODISCOVER_RETURN]', state.nodes?.length, state.edges?.length, state.clusters?.length);
         return state;
     }
 

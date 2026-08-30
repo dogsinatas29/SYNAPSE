@@ -20,7 +20,13 @@ export class EdgeBuilder {
         const edgeMap = new Map<string, Edge>();
         const edgeTypeCount = new Map<string, number>();
 
+        console.error("[EDGE_STAGE] START");
+        let processedEdges = 0;
         for (const ref of expandedReferences) {
+            processedEdges++;
+            if (processedEdges % 1000000 === 0) {
+                console.error("[EDGE_STAGE]", processedEdges);
+            }
             const mappedType = EdgeBuilder.mapEdgeType(ref.referenceType);
             const edgeKey = `${ref.sourceId}::${ref.targetId}::${mappedType}`;
 
@@ -56,6 +62,8 @@ export class EdgeBuilder {
             );
             edgeMap.set(edgeKey, newEdge);
         }
+        
+        console.error("[EDGE_STAGE] COMPLETE", edgeMap.size);
 
         let edges = Array.from(edgeMap.values());
 

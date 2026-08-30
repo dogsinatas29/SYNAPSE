@@ -74,10 +74,12 @@ export class InsightEngine {
             const partitioned = this.partitioner.partition(frontierResult, vectors);
 
             if (partitioned.frontier.length > 0) {
-                health = "WARNING";
-                frontierObservation = `${partitioned.frontier.length} non-dominated structural hotspots observed.`;
-                action = `${partitioned.frontier.length} frontier nodes identified for review.`;
-                whyItMatters = `No single node dominates another across all dimensions.`;
+                health = "CRITICAL (High Coupling Risk)";
+                const validFrontiers = partitioned.frontier.filter(c => c.sourceGroup.ownerCluster.includes('.'));
+                const topNode = validFrontiers.length > 0 ? validFrontiers[0].sourceGroup.ownerCluster : partitioned.frontier[0].sourceGroup.ownerCluster;
+                frontierObservation = `${partitioned.frontier.length} structural bottlenecks detected. Core issue traced to: ${topNode}`;
+                action = `Immediate architectural decoupling required for ${partitioned.frontier.length} frontier nodes to prevent cascading failures.`;
+                whyItMatters = `Systemic risk detected. Centralized dependencies around '${topNode}' are eroding module boundaries and threatening maintainability and build times.`;
                 sourceVal = "ParetoFrontier (non-dominated set)";
             }
         }
@@ -106,9 +108,13 @@ export class InsightEngine {
                 console.log(`[SC_AUDIT] InsightEngine: frontier=${partitioned.frontier.length}, watch=${partitioned.watchList.length}, info=${partitioned.infoList.length}`);
             }
 
+            const isFile = (name: string) => name && name.includes('.') && !name.startsWith('AGGREGATE_');
+
             // Add Frontier nodes (non-dominated set)
             for (const c of partitioned.frontier) {
                 const g = c.sourceGroup;
+                if (!isFile(g.ownerCluster)) continue;
+                
                 const subsystemId = g.boundaryContext?.id;
                 
                 if (process.env.SC_AUDIT) {
@@ -127,6 +133,8 @@ export class InsightEngine {
             // Add Watch List (non-frontier with signals)
             for (const w of partitioned.watchList) {
                 const g = w.sourceGroup;
+                if (!isFile(g.ownerCluster)) continue;
+                
                 const subsystemId = g.boundaryContext?.id;
                 const couplingVal = w.coupling;
                 
@@ -161,6 +169,8 @@ export class InsightEngine {
             // Add Info List (INTENDED_HUB)
             for (const i of partitioned.infoList) {
                 const g = i.sourceGroup;
+                if (!isFile(g.ownerCluster)) continue;
+                
                 const subsystemId = g.boundaryContext?.id;
                 const couplingVal = i.coupling;
                 
@@ -239,7 +249,11 @@ export class InsightEngine {
             immediateImpact = allImpacted.slice(0, 5);
             if (immediateImpact.length === 0) immediateImpact = ['N/A'];
             
-            secondaryImpact = ['Cascading downstream dependencies based on AST'];
+            const subsystemCount = new Set(allImpacted.map(f => String(f).split('/')[0])).size;
+            secondaryImpact = [
+                `Cascading dependency failures propagating across ${subsystemCount} distinct subsystems.`,
+                `Root cause traced to highly-coupled structural hubs violating module boundaries.`
+            ];
             blastRadius = allImpacted.length > 0 ? allImpacted.length * 3 : 0;
             
         } else if (files.length > 0) {

@@ -206,7 +206,19 @@ class WebGLRenderer {
                 vDtr = aDtrLevel;
                 vStatus = aStatusType;
                 vTime = uTime;
-                vec2 worldPos = aInstancePosition + aVertexPosition * aInstanceSize;
+
+                // [v0.3.34.41] Prevent sub-pixel culling for nodes at extreme zoom
+                // Approximation of zoom using the projection matrix (similar to edge shader)
+                float zoomScale = uProjectionMatrix[0][0] * 1000.0;
+                float minPixelWidth = 4.0; // Minimum 4 pixels on screen
+                float minWorldWidth = minPixelWidth / max(zoomScale, 0.0001);
+                
+                vec2 safeSize = vec2(
+                    max(aInstanceSize.x, minWorldWidth),
+                    max(aInstanceSize.y, minWorldWidth * 0.5)
+                );
+
+                vec2 worldPos = aInstancePosition + aVertexPosition * safeSize;
                 vec3 projected = uProjectionMatrix * vec3(worldPos, 1.0);
                 gl_Position = vec4(projected.xy, 0.0, 1.0);
             }
@@ -721,6 +733,7 @@ class WebGLRenderer {
         }
 
         this.nodeCount = nodes.length;
+        console.error("[NODE_BUFFER]", this.nodeCount);
 
         // Use pre-allocated buffers
         const posArr = this._nodePosArr;
@@ -811,11 +824,12 @@ class WebGLRenderer {
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.nodeStatusBuffer);
         this.gl.bufferSubData(this.gl.ARRAY_BUFFER, 0, statusArr.subarray(0, nodes.length));
 
-        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.nodeDtrBuffer);
         this.gl.bufferSubData(this.gl.ARRAY_BUFFER, 0, dtrArr.subarray(0, nodes.length));
     }
 
     updateEdgeData(edges, nodeMap, selectedNodeIds) {
+        if (!this.gl) return;
+        console.error("[EDGE_BUFFER]", edges ? edges.length : 0);
         const data = this._edgeArr;
         const colorData = this._edgeColorArr;
         const thickData = this._edgeThickArr;
@@ -1121,7 +1135,7 @@ class WebGLRenderer {
 
         // 2️⃣ Edge Badges (Type Icons, Validation Icons, Status Icons)
         const badgeItems = [];
-        const isBadgeHidden = window.edgeVisibilityMode === 'NO_BADGES' || window.edgeVisibilityMode === 'NONE';
+        const isBadgeHidden = window.edgeVisibilityMode === 'NO_BADGES' || window.edgeVisibilityMode === 'NONE' || window.edgeVisibilityMode === 'NO_EDGES' || window.edgeVisibilityMode === 'CLUSTER';
         // [v0.3.22.4] Always draw badges in WebGL for consistent parity across zoom levels
         const skipGpuBadges = false; 
 
@@ -1511,6 +1525,7 @@ class WebGLRenderer {
         this.setAttrPointer(this.edgeControlBuffer, this.locs.edge.controlPoint, 2, 0, 0, 1);
 
         if (this.ext) {
+            console.error("[DRAW_CALL_EDGES]", this.edgeCount);
             if (window.engine && window.engine._frameCounter % 60 === 0) {
                 console.log("[EDGE_DRAW]", this.edgeCount);
             }
@@ -1560,9 +1575,11 @@ class WebGLRenderer {
         this.setAttrPointer(this.nodeDtrBuffer, this.locs.node.dtr, 1, 0, 0, 1);
 
         if (this.ext) {
+            console.error("[DRAW_CALL_NODES]", this.nodeCount);
             this.ext.drawArraysInstancedANGLE(this.gl.TRIANGLE_STRIP, 0, 4, this.nodeCount);
             this.drawCalls++;
         } else {
+            console.error("[DRAW_CALL_NODES_FALLBACK]", this.nodeCount);
             for (let i = 0; i < this.nodeCount; i++) {
                 this.gl.drawArrays(this.gl.TRIANGLE_STRIP, 0, 4);
                 this.drawCalls++;

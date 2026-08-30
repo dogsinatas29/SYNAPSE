@@ -20,8 +20,8 @@ export class OnboardingAnalyzer {
             return -1000;
         }
         // Bonus for entry/bootstrap semantics
-        if (lower.includes('main') || lower.includes('index') || lower.includes('bootstrap') || lower.includes('extension') || lower.includes('orchestrator')) {
-            return +100;
+        if (lower.includes('main') || lower.includes('index') || lower.includes('bootstrap') || lower.includes('extension') || lower.includes('orchestrator') || lower.includes('init') || lower.includes('core')) {
+            return +500;
         }
         return 0;
     }
@@ -115,6 +115,11 @@ export class OnboardingAnalyzer {
             // Sort top impact files by their centrality or external dependencies
             const sortedImpact = [...topFiles].sort((a, b) => (b.externalEdges || 0) - (a.externalEdges || 0));
             
+            if (trueEntryPoint === 'N/A') {
+                trueEntryPoint = sortedImpact[0].filePath || 'N/A';
+                path.entryPoint = trueEntryPoint;
+            }
+            
             for (const f of sortedImpact) {
                 const fPath = f.filePath || '';
                 if (fPath !== trueEntryPoint && pipeline.length < 4) {
@@ -125,12 +130,14 @@ export class OnboardingAnalyzer {
         
         path.corePipeline = pipeline;
 
-        // Extract Safe Areas (Low Fan-Out, Low Fan-In - utils, types)
+        // Extract Safe Areas (Low Fan-Out, High Fan-In typically)
         if (context.metrics.topImpactFiles) {
-             const safe = context.metrics.topImpactFiles.filter((f: any) => {
-                 const name = f.filePath || '';
-                 return this.isRealFile(name) && (name.includes('/utils/') || name.includes('/types/'));
-             });
+             const safe = context.metrics.topImpactFiles
+                 .filter((f: any) => {
+                     const name = f.filePath || '';
+                     return this.isRealFile(name);
+                 })
+                 .sort((a: any, b: any) => (a.externalEdges || 0) - (b.externalEdges || 0));
              path.safeAreas = safe.slice(0, 3).map((f: any) => f.filePath || '');
         }
 
@@ -143,9 +150,11 @@ export class OnboardingAnalyzer {
              if (complex) {
                  path.readLater.push(complex.filePath || '');
              }
-        } // Fallbacks if extraction was empty
-        if (path.safeAreas.length === 0) path.safeAreas = ['src/utils/', 'src/types/'];
-        if (path.readLater.length === 0) path.readLater = ['src/webview/canvas-engine.js'];
+        } 
+        
+        // Fallbacks if extraction was empty
+        if (path.safeAreas.length === 0) path.safeAreas = ['N/A (No isolated leaf nodes detected)'];
+        if (path.readLater.length === 0) path.readLater = ['N/A (No peripheral complexity detected)'];
 
         return path;
     }

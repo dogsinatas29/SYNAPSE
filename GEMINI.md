@@ -884,3 +884,88 @@ SYNAPSE에서 수동으로 생성되는 노드와 클러스터의 상태 전이 
 - **규칙 명세**:
   - **📁 Root 클러스터 동적 생성**: 폴더 경로가 없어 소속 클러스터를 배정받지 못한 최상위 루트 파일(`__unclustered__`)들은 과거 레이아웃 계산 단계에서 제외되어 좌표 `(0,0)`에 무한히 겹쳐 쌓이는 치명적 버그를 유발했습니다. 파이프라인은 이를 방어하기 위해 런타임에 동적으로 **`📁 Root`** 클러스터를 생성하여 무소속 노드들을 강제 편입시키고 정상적인 물리 팩킹(World Packing) 궤도에 올려놓습니다.
   - **🌐 Remote Ghost 클러스터 격리**: `[SYNAPSE_NETWORK_LINK]` 매크로 등으로 식별된 외부 워크스페이스 의존성(원격 파일) 노드들은 일반 에러 노드로 섞이지 않도록 **`cluster_ghost_network_remote`**라는 전용 특수 클러스터 공간에 격리 할당되어 시각적 명확성을 보장합니다.
+
+## 🛑 렌더링 파이프라인 절대 불변 규칙 (v0.3.34.40 무한 리빌드 사태의 교훈)
+
+과거 v0.3.34.40에서 발생했던 "마우스 이동 시 1919ms 멈춤 및 화면 증발 현상"의 근본 원인은 렌더 루프(`_performRender`) 내부의 방어 코드 설계 결함이었습니다. 이를 교훈 삼아 다음의 렌더링 로직은 **어떠한 상황에서도 절대 수정하거나 건드리지 않아야 합니다.**
+
+### 1. `nodeMap` 사이즈 검사 로직 절대 변경 금지
+- **과거의 재앙**: `this.nodes && this.nodeMap.size !== nodeCount` (노드 배열 내 중복 ID가 존재할 경우, 해시맵 특성상 사이즈가 영구적으로 어긋나 매 프레임 10만 개 캐시를 리빌드하는 무한 루프 지옥 발생)
+- **현재의 철칙**: 캐시 맵의 최초 생성 여부를 판단할 때는 반드시 `this.nodeMap.size === 0`으로만 검사해야 합니다. 
+- **금지 사항**: 어떠한 경우에도 `nodeMap.size`를 원본 배열의 `length`(혹은 `nodeCount`)와 직접 비교하여 리빌드를 유발하는 Fallback 방어 코드를 재도입해서는 안 됩니다.
+
+### 2. `beginFrame()` 버퍼 클리어 위치 절대 고정
+- **과거의 재앙**: GPU 프레임 버퍼를 초기화하는 `webglRenderer.beginFrame()`이 절전 모드의 조기 종료(Early Return) 조건보다 상단에 위치하여, 실제 갱신할 데이터가 없거나 렌더링이 취소된 잉여 프레임에서도 기존 화면을 하얗게 지워버리는(Disappearing) 시각적 파탄을 유발했습니다.
+- **현재의 철칙**: `webglRenderer.beginFrame()`은 반드시 `if (!this.isDirty && !this.isAnimating && !this._isInteracting && !this.isDragging) return;` 형태의 조기 종료 방어선 **아래**에 위치해야 합니다.
+- **금지 사항**: 화면 잔상이나 렌더링 갱신 버그가 의심된다고 해서 `beginFrame()` 호출 위치를 함수 최상단이나 조기 종료 검사 이전으로 끌어올리는 행위를 엄격히 금지합니다.
+
+### 3. Dirty Flag 단일 진실 원칙 (Single Source of Truth)
+- **철칙**: 그래프 재빌드는 반드시 `this.isGraphDataDirty` 플래그에 의해서만 수행되어야 합니다.
+- **금지 사항**: `nodeMap.size !== nodeCount`, `visibleNodeCount !== ...` 등 렌더러가 스스로 상태를 추론하여 암묵적으로 `rebuildGraphData()`를 유발하는 조건식을 추가하지 마십시오. Dirty 상태는 이벤트가 선언하며, 렌더러가 추측하지 않습니다.
+
+### 4. Render Loop 내부에서 Graph Rebuild 금지
+- **철칙**: `_performRender()`는 오직 렌더링만 수행해야 합니다.
+- **금지 사항**: `_performRender()` 내부에서 `rebuildGraphData()`나 `rebuildVisibleCache()`를 직접 호출하여 대규모 캐시 재생성을 유발하는 것을 엄격히 금지합니다. 10만 노드 60FPS(16ms) 예산을 지키기 위해 렌더 단계와 데이터 갱신 단계는 완벽히 분리되어야 합니다.
+
+### 5. MouseMove 에서 O(N) 순회 금지
+- **철칙**: `mousemove`, `pointermove`, `hover`, `tooltip`, `pick` 이벤트 처리 중에는 절대 O(N) 이상의 연산을 수행해서는 안 됩니다.
+- **허용 사항**: 위치 검색은 반드시 `RBush` (Spatial Index), `Visible Cache`, `NodeMap Lookup` (O(1))만을 사용하십시오.
+- **금지 사항**: `this.nodes.filter(...)`, `for (const node of this.nodes)` 등 전체 O(N) 순회를 마우스 이동 틱마다 수행하는 코드는 절대 작성 금지입니다 (수십~수백 ms 지연 유발).
+
+### 6. Hover 는 Render 요청만 가능
+- **철칙**: Hover 관련 이벤트는 오직 UI 상태 변경이므로 `requestRender()`만 호출할 수 있습니다.
+- **금지 사항**: Hover 처리 중 `rebuildGraphData()`, `rebuildNodeMap()`, `rebuildEdgeCache()` 등 그래프 구조 갱신 로직을 트리거하지 마십시오.
+
+### 7. Performance Budget (Linux Kernel 10만 노드 기준)
+- **목표 지표**:
+  - Render Frame: < 5ms
+  - MouseMove: < 5ms
+  - Pick: < 10ms
+  - Hover Update: < 1ms
+  - Graph Rebuild: Explicit Only (명시적 호출 시에만)
+- **경고 기준**: 10ms 이상 (WARN) -> 30ms 이상 (ERROR) -> 100ms 이상 (CRITICAL)
+
+### 8. Golden Benchmark (회귀 검증 기준)
+**Linux Kernel 7.2-rc3**
+- Nodes: 103313
+- Edges: 138133
+- Clusters: 2921
+
+**Expected Behavior:**
+- Bootstrap succeeds
+- Fit View succeeds
+- Pan works
+- Zoom works
+- Nodes remain visible
+- Edges remain visible
+- No disappearing artifacts
+- No infinite rebuild loop
+- No renderer freeze
+
+*Any rendering change must pass this benchmark.*
+
+### 9. Duplicate ID Policy
+The renderer must **never** assume:
+`nodeMap.size === nodes.length`
+
+**Reason:**
+- Map structures collapse duplicate IDs.
+- Duplicate IDs are considered input-data problems, not renderer problems.
+- The renderer must remain stable even if duplicate IDs exist.
+
+## 🚨 RENDERING RED ZONE 🚨
+The following systems are considered STABLE.
+**DO NOT MODIFY** without reproducing the original bug first.
+
+- `nodeMap.size === 0` bootstrap logic
+- `beginFrame()` placement
+- Dirty Flag ownership
+- Render loop early return guard
+- MouseMove hit-test pipeline
+- Hover -> `requestRender` flow
+
+**Any modification requires:**
+1. Bug reproduction
+2. Performance benchmark
+3. Linux Kernel validation (100k+ Nodes, 130k+ Edges)
+4. Regression verification

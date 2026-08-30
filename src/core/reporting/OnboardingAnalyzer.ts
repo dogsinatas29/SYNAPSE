@@ -9,6 +9,8 @@ export class OnboardingAnalyzer {
         if (filePath.startsWith('AGGREGATE_') || filePath.startsWith('SYSTEM_') || filePath.includes('UNKNOWN') || filePath.includes('OUT_OF_SCOPE')) {
             return false;
         }
+        // Allow boundary nodes (which typically lack file extensions)
+        if (!filePath.includes('.')) return true;
         // Basic check for file extension (typical source files)
         return /\.(ts|js|rs|kt|java|py|cpp|c|h|go|rb)$/i.test(filePath);
     }
@@ -68,10 +70,21 @@ export class OnboardingAnalyzer {
         if (trueEntryPoint === 'N/A' && simContext && simContext.evidenceBundle && simContext.evidenceBundle.findings) {
              const findings = simContext.evidenceBundle.findings;
              const possibleEntry = new Set<string>();
-             for (const f of findings) {
-                 const src = f.sourceId || '';
-                 if (src && this.isRealFile(src)) possibleEntry.add(src);
+             
+             // 1. Prioritize semantic boundaries
+             const semanticBoundaries = findings.filter((f: any) => f.type === 'semantic' && f.evidenceType === 'BOUNDARY_NODE').map((f: any) => f.targetId);
+             for (const b of semanticBoundaries) {
+                 if (b && this.isRealFile(b)) possibleEntry.add(b);
              }
+             
+             // 2. Fallback to raw files
+             if (possibleEntry.size === 0) {
+                 for (const f of findings) {
+                     const src = f.sourceId || f.targetId || f.nodeId || '';
+                     if (src && this.isRealFile(src)) possibleEntry.add(src);
+                 }
+             }
+             
              if (possibleEntry.size > 0) {
                  // Sort using role score and depth (shallower is better, bonus/penalty applied)
                  const sortedSrc = Array.from(possibleEntry).sort((a, b) => {
@@ -98,9 +111,9 @@ export class OnboardingAnalyzer {
         if (topFiles.length === 0 && simContext && simContext.evidenceBundle && simContext.evidenceBundle.findings) {
             const counts = new Map<string, number>();
             for (const f of simContext.evidenceBundle.findings) {
-                const targetId = f.nodeId || (f.nodeIds && f.nodeIds[0]) || '';
-                if (targetId && this.isRealFile(targetId) && this.getRoleScore(targetId) > -1000) {
-                    counts.set(targetId, (counts.get(targetId) || 0) + 1);
+                const src = f.sourceId || f.targetId || f.nodeId || '';
+                if (src && this.isRealFile(src) && this.getRoleScore(src) > -1000) {
+                    counts.set(src, (counts.get(src) || 0) + 1);
                 }
             }
             const sortedCounts = Array.from(counts.entries()).sort((a, b) => b[1] - a[1]);

@@ -1,11 +1,13 @@
 import { GraphModel, Node, Edge } from '../../GraphModel';
 import { EvidenceType } from '../../reporting/types';
+import { Logger } from '../../../utils/Logger';
 
 export interface BoundaryNode {
     id: string;
     members: string[]; // 속한 파일들
     internalEdges: number;
     externalEdges: number;
+    inboundEdges?: number;
     size: number;      // members.length
     cohesion: number;  // internal / (internal + external)
     strength: string;  // 'Strong' | 'Weak' 등 텍스트 혹은 점수
@@ -25,6 +27,7 @@ export interface BoundaryCandidateAudit {
     externalEdges: number;
     cohesion: number;
     targetConcentration: number;
+    inboundEdges: number; // For Control Ranking
     result: 'PROMOTED' | 'REJECT_SMALL' | 'REJECT_WEAK' | 'WRAPPER';
     memberFiles?: string[]; // v0.3.34.40: Track actual member files for audit
     depth?: number; // v0.3.34.40: Track candidate depth in prefix tree
@@ -40,8 +43,10 @@ export interface BoundaryResult {
 export class BoundaryGraphBuilder {
     private static readonly DEFAULT_DENSITY_THRESHOLD = 0.3;
     private static readonly DEFAULT_EXTERNAL_RATIO = 0.2;
-    private static readonly MIN_BOUNDARY_MEMBERS = 5;
-    private static readonly MIN_INTERNAL_EDGES = 20;
+    // QUALITY FILTER: Increased minimums to avoid micro-boundaries (noise)
+    private static readonly MIN_BOUNDARY_MEMBERS = 20;
+    private static readonly MIN_INTERNAL_EDGES = 50;
+    private static readonly MAX_BOUNDARY_SIZE = 1500;
 
     public build(nodes: Node[], edges: Edge[]): BoundaryResult {
         if (!nodes) nodes = [];
@@ -57,10 +62,31 @@ export class BoundaryGraphBuilder {
         const initialGroups = new Map<string, Node[]>();
         const splitWrappers: string[] = [];
         
+        const diag = { 
+            processed: 0, promoted: 0, split: 0, rejectedSmall: 0, rejectedWeak: 0,
+            rawNodes: nodes.length, filteredSymbols: 0, filteredFiles: 0, collapsedDirectories: 0, candidateCount: 0 
+        };
+
         for (const node of nodes) {
-            const path = node.filePath || (node.data as any)?.file || node.id;
-            if (!path) continue;
+            const path = node.filePath || (node.data as any)?.file || (node.data as any)?.sourceFile || node.id;
+            if (!path) {
+                diag.filteredSymbols++;
+                continue;
+            }
             
+            // P0: Filter out AST symbols that lack file paths
+            const hasPathDelim = path.includes('/') || path.includes('\\') || path.includes('.');
+            const isKnownFile = ['makefile', 'kconfig', 'readme', 'license', 'authors', 'changes', 'maintainers', 'copying'].includes(path.split(/[\/\\]/).pop()!.toLowerCase());
+            
+            // DROP hasFileMeta check because Linux Kernel AST parser lies with origin='filesystem' for pure symbols.
+            if (!hasPathDelim && !isKnownFile) {
+                if (diag.filteredSymbols < 20) {
+                    Logger.info(`[P0_DROP] ${path}`);
+                }
+                diag.filteredSymbols++;
+                continue; 
+            }
+
             const parts = path.split(/[\/\\]/);
             let clusterId = 'unknown';
 
@@ -77,12 +103,13 @@ export class BoundaryGraphBuilder {
         for (const [id, members] of initialGroups.entries()) {
             queue.push({ id, members });
         }
+        diag.candidateCount = initialGroups.size;
         
         // v0.3.34.40: Dump initial grouping for audit
-        console.log(`[BOUNDARY_DISCOVERY_START] Queued ${queue.length} top-level candidates from ${nodes.length} nodes.`);
-        console.log(`[CANDIDATE_GEN_AUDIT] Initial Groups:`);
+        Logger.info(`[BOUNDARY_DISCOVERY_START] Queued ${queue.length} top-level candidates from ${nodes.length} nodes.`);
+        Logger.info(`[CANDIDATE_GEN_AUDIT] Initial Groups:`);
         for (const [id, members] of initialGroups.entries()) {
-            console.log(`  ${id}: ${members.length} nodes`);
+            Logger.info(`  ${id}: ${members.length} nodes`);
         }
 
         // Edge index for fast lookup
@@ -98,7 +125,6 @@ export class BoundaryGraphBuilder {
         }
 
         const boundaryNodes = new Map<string, BoundaryNode>();
-        const diag = { processed: 0, promoted: 0, split: 0, rejectedSmall: 0, rejectedWeak: 0 };
         const nodeToBoundary = new Map<string, string>(); // Record successful boundaries
         const nodeToLastCandidate = new Map<string, string>(); // Record deepest checked prefix
         const auditLog: BoundaryCandidateAudit[] = []; // Track all candidates for audit
@@ -109,7 +135,8 @@ export class BoundaryGraphBuilder {
             diag.processed++;
             
             let internalEdges = 0;
-            let externalEdges = 0;
+            let externalEdges = 0; // Outbound (Fan-Out)
+            let inboundEdges = 0;  // Inbound (Fan-In) - Used for Control Ranking
             const externalTargets = new Map<string, number>();
 
             const memberIds = candidate.members.map(n => n.id);
@@ -120,14 +147,29 @@ export class BoundaryGraphBuilder {
             }
 
             const subfolders = new Map<string, string>();
+            const uniqueSubfolders = new Set<string>();
+            let hasFiles = false;
+
             for (const id of memberIds) {
                 let relativePath = id;
                 if (id.startsWith(candidate.id + '/')) {
                     relativePath = id.substring(candidate.id.length + 1);
                 }
                 const parts = relativePath.split(/[\/\\]/);
-                subfolders.set(id, parts.length > 1 ? parts[0] : '__root__');
+                const sub = parts.length > 1 ? parts[0] : '__root__';
+                subfolders.set(id, sub);
+                if (sub === '__root__') {
+                    hasFiles = true;
+                } else {
+                    uniqueSubfolders.add(sub);
+                }
             }
+
+            // P2: Pass-Through Collapse (Single child directory, no direct files)
+            const isPassThrough = uniqueSubfolders.size === 1 && !hasFiles;
+            
+            // P1: Leaf Directory (No subdirectories, only direct files)
+            const isLeafDirectory = uniqueSubfolders.size === 0 && hasFiles;
 
             let crossSubfolderEdges = 0;
 
@@ -146,6 +188,14 @@ export class BoundaryGraphBuilder {
                         const targetParts = outEdge.to!.split(/[\/\\]/);
                         const targetPrefix = targetParts[0] === 'src' && targetParts.length > 1 ? `src/${targetParts[1]}` : targetParts[0];
                         externalTargets.set(targetPrefix, (externalTargets.get(targetPrefix) || 0) + 1);
+                    }
+                }
+                
+                // Count Inbound Edges (Fan-In)
+                const inEdges = edgesByTarget.get(memberId) || [];
+                for (const inEdge of inEdges) {
+                    if (!memberSet.has(inEdge.from!)) {
+                        inboundEdges++;
                     }
                 }
             }
@@ -169,20 +219,35 @@ export class BoundaryGraphBuilder {
             
             // A directory is a wrapper (not a subsystem) if its internal submodules don't talk to each other.
             // If < 20% of internal edges cross subfolders, it's just a bucket of isolated modules.
-            const isStructuralWrapper = memberIds.length >= 50 && submoduleCouplingRatio < 0.20;
-            const isWrapper = memberIds.length >= (nodes.length * 0.75) || isStructuralWrapper; 
             
-            const isMassive = !isWrapper && memberIds.length >= 100 && internalEdges >= 1000;
-            const isPromoted = !isWrapper && (cohesion >= 0.45 || (cohesion >= 0.2 && targetConcentration >= 0.5) || isMassive);
+            // P1: Leaf directories have no submodules, so they cannot be structural wrappers.
+            const isStructuralWrapper = !isLeafDirectory && !isPassThrough && memberIds.length >= 50 && submoduleCouplingRatio < 0.20;
+            const isWrapper = !isLeafDirectory && !isPassThrough && (memberIds.length >= (nodes.length * 0.75) || isStructuralWrapper); 
+            
+            const isMassive = !isPassThrough && memberIds.length >= 100 && internalEdges >= 1000;
+            // BOUNDARY QUALITY FILTER: Must meet minimum size/complexity to even be considered for promotion
+            const meetsQualityFilter = memberIds.length >= BoundaryGraphBuilder.MIN_BOUNDARY_MEMBERS && internalEdges >= BoundaryGraphBuilder.MIN_INTERNAL_EDGES;
+            const isPromoted = !isPassThrough && meetsQualityFilter && (cohesion >= 0.45 || (cohesion >= 0.2 && targetConcentration >= 0.5) || isMassive);
 
-            if (isWrapper) {
+            if (isPassThrough) {
+                resultStatus = 'SPLIT';
+                diag.collapsedDirectories++;
+            } else if (memberIds.length > BoundaryGraphBuilder.MAX_BOUNDARY_SIZE && !isLeafDirectory) {
+                resultStatus = 'SPLIT';
+                diag.split++;
+            } else if (isPromoted) {
+                // STRONG BOUNDARY STOP RULE: Stop splitting if it has high cohesion or massive structure
+                resultStatus = 'PROMOTED';
+            } else if (isWrapper) {
                 resultStatus = 'SPLIT';
                 diag.split++;
             } else if (memberIds.length < BoundaryGraphBuilder.MIN_BOUNDARY_MEMBERS || internalEdges < BoundaryGraphBuilder.MIN_INTERNAL_EDGES) {
                 resultStatus = 'REJECT_SMALL';
                 diag.rejectedSmall++;
-            } else if (isPromoted) {
-                resultStatus = 'PROMOTED';
+            } else if (isLeafDirectory) {
+                // P1: Leaf directories (files only) cannot be SPLIT further.
+                resultStatus = 'REJECT_WEAK';
+                diag.rejectedWeak++;
             } else {
                 resultStatus = 'SPLIT';
             }
@@ -203,6 +268,7 @@ export class BoundaryGraphBuilder {
                 members: memberIds.length,
                 internalEdges,
                 externalEdges,
+                inboundEdges,
                 cohesion: parseFloat(cohesion.toFixed(3)),
                 targetConcentration: parseFloat(targetConcentration.toFixed(3)),
                 result: auditResult,
@@ -211,11 +277,11 @@ export class BoundaryGraphBuilder {
             });
 
             // v0.3.34.40: Dump candidate details for audit
-            console.log(`[CANDIDATE_GEN_AUDIT] ${candidate.id}: members=${memberIds.length}, depth=${candidate.id.split('/').length}, result=${auditResult}`);
+            Logger.info(`[CANDIDATE_GEN_AUDIT] ${candidate.id}: members=${memberIds.length}, depth=${candidate.id.split('/').length}, result=${auditResult}`);
             if (memberIds.length <= 20) {
-                console.log(`  Files: ${memberIds.join(', ')}`);
+                Logger.info(`  Files: ${memberIds.join(', ')}`);
             } else {
-                console.log(`  Files (first 20): ${memberIds.slice(0, 20).join(', ')}...`);
+                Logger.info(`  Files (first 20): ${memberIds.slice(0, 20).join(', ')}...`);
             }
 
             // Dump SUBMODULE_ANALYSIS for large candidates to help tune heuristics
@@ -229,7 +295,7 @@ export class BoundaryGraphBuilder {
                     .slice(0, 5)
                     .map(e => `${e[0]}(${e[1]})`);
                 
-                console.log(`[SUBMODULE_ANALYSIS] ` + JSON.stringify({
+                Logger.info(`[SUBMODULE_ANALYSIS] ` + JSON.stringify({
                     id: candidate.id,
                     subfolders: sortedSubfolders,
                     internalEdges,
@@ -239,12 +305,13 @@ export class BoundaryGraphBuilder {
                 }));
             }
 
-            console.log(JSON.stringify({
+            Logger.info(JSON.stringify({
                 event: 'BOUNDARY_CANDIDATE',
                 id: candidate.id,
                 members: memberIds.length,
                 internalEdges,
                 externalEdges,
+                inboundEdges,
                 cohesion: parseFloat(cohesion.toFixed(3)),
                 concentration: parseFloat(targetConcentration.toFixed(3)),
                 result: resultStatus
@@ -262,6 +329,7 @@ export class BoundaryGraphBuilder {
                     members: memberIds,
                     internalEdges,
                     externalEdges,
+                    inboundEdges,
                     size: memberIds.length,
                     cohesion,
                     strength: strengthText
@@ -280,17 +348,31 @@ export class BoundaryGraphBuilder {
                     const parts = path.split(/[\/\\]/);
                     
                     if (parts.length > prefixParts.length) {
-                        nextPrefix = parts.slice(0, prefixParts.length + 1).join('/');
+                        const nextSegment = parts[prefixParts.length];
+                        if (nextSegment.includes('.')) {
+                            // P1: Direct files inside a wrapper cannot form a boundary.
+                            nextPrefix = candidate.id + '/__files__';
+                        } else {
+                            nextPrefix = parts.slice(0, prefixParts.length + 1).join('/');
+                        }
+                    } else {
+                        nextPrefix = candidate.id + '/__files__';
                     }
                     
                     if (!subGroups.has(nextPrefix)) subGroups.set(nextPrefix, []);
                     subGroups.get(nextPrefix)!.push(node);
                 }
 
-                if (subGroups.size > 1) {
-                    diag.split++;
+                if (subGroups.size > 0) {
+                    if (!isPassThrough) diag.split++; // Avoid double counting if it's a pass-through
                     for (const [nextId, subMembers] of subGroups.entries()) {
+                        if (nextId.endsWith('/__files__')) {
+                            // P1: Orphan files inside a wrapper cannot be a subsystem
+                            diag.filteredFiles += subMembers.length;
+                            continue;
+                        }
                         queue.push({ id: nextId, members: subMembers });
+                        diag.candidateCount++;
                     }
                 } else {
                     diag.rejectedWeak++;
@@ -298,7 +380,7 @@ export class BoundaryGraphBuilder {
             }
         }
 
-        console.log(`[BOUNDARY_DIAG] ${JSON.stringify(diag)}`);
+        Logger.info(`[BOUNDARY_DIAG] ${JSON.stringify(diag)}`);
 
         // 3. Create Boundary Graph Edges
         const boundaryEdgesMap = new Map<string, BoundaryEdge>();

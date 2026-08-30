@@ -33,8 +33,67 @@ export class ReportBundleGenerator {
         const simulationContext = JSON.parse(simulationContextStr);
         
         let evidenceCount = context.nodeStats?.length || 0;
+        let formattedEvidence: any[] = [];
         if (simulationContext && simulationContext.evidenceBundle && simulationContext.evidenceBundle.findings) {
-            evidenceCount = simulationContext.evidenceBundle.findings.length;
+            const findings = simulationContext.evidenceBundle.findings;
+            const semanticFindings = findings.filter((f: any) => f.type === 'semantic' && f.evidenceType === 'BOUNDARY_NODE');
+            
+            evidenceCount = semanticFindings.length;
+            
+            Logger.info("[EVIDENCE_SAMPLE]", findings.slice(0, 5));
+            Logger.info("[SEMANTIC_COUNT]", semanticFindings.length);
+            Logger.info("[BOUNDARY_TARGETS]", semanticFindings.slice(0, 10).map((f: any) => f.targetId));
+
+            const scoredFindings = semanticFindings.map((f: any) => {
+                const size = f.metadata?.size || 0;
+                const internalEdges = f.metadata?.internalEdges || 0;
+                const externalEdges = f.metadata?.externalEdges || 0;
+                const inboundEdges = f.metadata?.inboundEdges || 0; // Fan-In
+                
+                const internalDensity = size > 0 ? internalEdges / size : 0;
+                const externalDensity = size > 0 ? externalEdges / size : 0;
+                
+                // Report A: Complexity (Size * InternalDensity^2 * ExternalDensity)
+                const complexityScore = Math.floor(size * internalDensity * internalDensity * externalDensity);
+                
+                // Report B: Control (Fan-In * Blast Radius)
+                // A module with high Fan-In affects many other modules if it dies. 
+                const controlScore = Math.floor(inboundEdges * 10 + (size * externalDensity));
+                
+                let tier = 'Tier 3 (Implementation Module)';
+                if (complexityScore >= 5000 || size >= 800) tier = 'Tier 1 (Architecture Level)';
+                else if (complexityScore >= 1000 || size >= 100) tier = 'Tier 2 (Subsystem Level)';
+                
+                return { ...f, complexityScore, controlScore, tier };
+            });
+
+            // --- Report A: Architectural Complexity Ranking ---
+            const complexityRanked = [...scoredFindings].sort((a: any, b: any) => b.complexityScore - a.complexityScore).slice(0, 50);
+            
+            const cTier1 = complexityRanked.filter((f: any) => f.tier.includes('Tier 1'));
+            const cTier2 = complexityRanked.filter((f: any) => f.tier.includes('Tier 2'));
+            const cTier3 = complexityRanked.filter((f: any) => f.tier.includes('Tier 3'));
+            
+            let contentA = '';
+            if (cTier1.length > 0) contentA += `#### Tier 1 (Architecture Level)\n` + cTier1.map((f: any) => `- **[Score: ${f.complexityScore}]** Node: \`${f.targetId}\` | ${f.message}`).join('\n') + `\n\n`;
+            if (cTier2.length > 0) contentA += `#### Tier 2 (Subsystem Level)\n` + cTier2.map((f: any) => `- **[Score: ${f.complexityScore}]** Node: \`${f.targetId}\` | ${f.message}`).join('\n') + `\n\n`;
+            if (cTier3.length > 0) contentA += `<details>\n<summary>Tier 3 (Micro Boundaries) - Click to expand</summary>\n\n` + cTier3.map((f: any) => `- **[Score: ${f.complexityScore}]** Node: \`${f.targetId}\` | ${f.message}`).join('\n') + `\n</details>\n`;
+
+            // --- Report B: Architectural Control Ranking (System Dominators) ---
+            const controlRanked = [...scoredFindings].sort((a: any, b: any) => b.controlScore - a.controlScore).slice(0, 50);
+            
+            let contentB = controlRanked.map((f: any, i: number) => `${i+1}. **[Control Score: ${f.controlScore}]** Node: \`${f.targetId}\` (Fan-In: ${f.metadata?.inboundEdges || 0}, Size: ${f.metadata?.size || 0})`).join('\n');
+
+            formattedEvidence = [
+                {
+                    title: 'Report A: Architectural Complexity Ranking (Top 50)',
+                    content: contentA || 'No Boundary Nodes found.'
+                },
+                {
+                    title: 'Report B: Architectural Control Ranking (System Dominators)',
+                    content: contentB || 'No Boundary Nodes found.'
+                }
+            ];
         }
         
         Logger.info('[REPORT] start');
@@ -64,7 +123,7 @@ export class ReportBundleGenerator {
                 header: execHeader,
                 summary: 'Executive Summary focusing on system health and immediate actions.',
                 findings: execBuilder.build(execInsight),
-                evidence: [],
+                evidence: formattedEvidence,
                 appendix: []
             };
             returnPath = path.join(bundleDir, 'EXECUTIVE_SUMMARY.md');
@@ -80,7 +139,7 @@ export class ReportBundleGenerator {
                     title: 'Architectural Findings',
                     content: archInsight.findings.length > 0 ? archInsight.findings.map(f => `### ${f.filePath}\n\n## Observation\n${f.observation}\n\n## Interpretation\n${f.interpretation}\n\n## Recommendation\n${f.recommendation}`).join('\n\n---\n\n') : 'No architectural findings in this scope.'
                 }],
-                evidence: [],
+                evidence: formattedEvidence,
                 appendix: []
             };
             returnPath = path.join(bundleDir, 'ARCHITECT_REPORT.md');
@@ -94,7 +153,7 @@ export class ReportBundleGenerator {
                 header: onboardHeader,
                 summary: 'Guides new developers through entry points and the system heart.',
                 findings: onboardBuilder.build(onboardInsight),
-                evidence: [],
+                evidence: formattedEvidence,
                 appendix: []
             };
             returnPath = path.join(bundleDir, 'ONBOARDING_REPORT.md');
@@ -112,7 +171,7 @@ export class ReportBundleGenerator {
                     title: 'Impact Analysis',
                     content: `**Immediate Impact:**\n${simInsight.immediateImpact.map(i => `- ${i}`).join('\n')}\n\n**Secondary Impact:**\n${simInsight.secondaryImpact.map(i => `- ${i}`).join('\n')}\n\n**Estimated Blast Radius:** ${simInsight.blastRadius} files`
                 }],
-                evidence: [],
+                evidence: formattedEvidence,
                 appendix: []
             };
             returnPath = path.join(bundleDir, 'SIMULATION_DEBUG.md');

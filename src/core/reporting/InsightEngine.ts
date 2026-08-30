@@ -18,6 +18,7 @@ import { FrontierPartitioner } from './FrontierPartitioner';
 import { OnboardingAnalyzer } from './OnboardingAnalyzer';
 import { RiskClassifier } from './RiskClassifier';
 import { SemanticContext } from '../analysis/SemanticContext';
+import { Logger } from '../../utils/Logger';
 
 /**
  * InsightEngine orchestrates the presentation pipeline:
@@ -108,12 +109,20 @@ export class InsightEngine {
                 console.log(`[SC_AUDIT] InsightEngine: frontier=${partitioned.frontier.length}, watch=${partitioned.watchList.length}, info=${partitioned.infoList.length}`);
             }
 
-            const isFile = (name: string) => name && name.includes('.') && !name.startsWith('AGGREGATE_');
+            const isBoundary = (name: string) => name && !name.includes('.') && !name.startsWith('AGGREGATE_');
+
+            const candidates = partitioned.frontier;
+            Logger.info('[FRONTIER_INPUT]', {
+                total: candidates.length,
+                boundaries: candidates.filter((c: any) => isBoundary(c.sourceGroup.ownerCluster)).length
+            });
 
             // Add Frontier nodes (non-dominated set)
+            let validFrontierCount = 0;
             for (const c of partitioned.frontier) {
                 const g = c.sourceGroup;
-                if (!isFile(g.ownerCluster)) continue;
+                if (!isBoundary(g.ownerCluster)) continue;
+                validFrontierCount++;
                 
                 const subsystemId = g.boundaryContext?.id;
                 
@@ -130,10 +139,12 @@ export class InsightEngine {
                     recommendation: `Review boundary ownership and dependency propagation.`
                 });
             }
+            Logger.info('[FRONTIER_OUTPUT]', { frontierCount: validFrontierCount });
+
             // Add Watch List (non-frontier with signals)
             for (const w of partitioned.watchList) {
                 const g = w.sourceGroup;
-                if (!isFile(g.ownerCluster)) continue;
+                if (!isBoundary(g.ownerCluster)) continue;
                 
                 const subsystemId = g.boundaryContext?.id;
                 const couplingVal = w.coupling;
@@ -169,7 +180,7 @@ export class InsightEngine {
             // Add Info List (INTENDED_HUB)
             for (const i of partitioned.infoList) {
                 const g = i.sourceGroup;
-                if (!isFile(g.ownerCluster)) continue;
+                if (!isBoundary(g.ownerCluster)) continue;
                 
                 const subsystemId = g.boundaryContext?.id;
                 const couplingVal = i.coupling;
@@ -241,20 +252,60 @@ export class InsightEngine {
             // Extract nodes correctly based on finding type
             const cycleFiles = findings.filter((f: any) => f.type === 'cycle').flatMap((f: any) => f.nodeIds || []);
             const fractureFiles = findings.filter((f: any) => f.type === 'fracture').map((f: any) => f.nodeId || f.sourceId);
-            const boundaryFiles = findings.filter((f: any) => String(f.type).includes('boundary')).map((f: any) => f.sourceId);
+            const legacyBoundaryFiles = findings.filter((f: any) => String(f.type).includes('boundary')).map((f: any) => f.sourceId);
             
-            const allImpacted = Array.from(new Set([...cycleFiles, ...fractureFiles, ...boundaryFiles].filter(Boolean)))
+            const semanticBoundaryNodes = findings
+                .filter((f: any) => f.type === 'semantic' && f.evidenceType === 'BOUNDARY_NODE')
+                .map((f: any) => {
+                    const size = f.metadata?.size || 0;
+                    const internalEdges = f.metadata?.internalEdges || 0;
+                    const externalEdges = f.metadata?.externalEdges || 0;
+                    
+                    const internalDensity = size > 0 ? internalEdges / size : 0;
+                    const externalDensity = size > 0 ? externalEdges / size : 0;
+                    
+                    // Priority Engine: Reward complex subsystems over flat utility libraries
+                    // Squaring internalDensity demotes utility folders (high fan-out, low internal complexity)
+                    const score = Math.floor(size * internalDensity * internalDensity * externalDensity);
+                    
+                    return { targetId: f.targetId, size, internalEdges, externalEdges, score };
+                })
+                .sort((a: any, b: any) => b.score - a.score);
+            
+            Logger.info('[IMPACT_SCORE_TOP_20]', semanticBoundaryNodes.slice(0, 20));
+            
+            const semanticBoundaries = semanticBoundaryNodes.map((b: any) => b.targetId);
+            const semanticDependencies = findings.filter((f: any) => f.type === 'semantic' && f.evidenceType === 'CROSS_BOUNDARY_DEPENDENCY').map((f: any) => f.targetId);
+            
+            const allImpacted = Array.from(new Set([
+                ...semanticBoundaries, 
+                ...semanticDependencies,
+                ...legacyBoundaryFiles, 
+                ...cycleFiles, 
+                ...fractureFiles
+            ].filter(Boolean)))
                 .filter(name => typeof name === 'string' && !name.startsWith('AGGREGATE_') && !name.startsWith('SYSTEM_') && !name.includes('UNKNOWN'));
             
-            immediateImpact = allImpacted.slice(0, 5);
+            // Ghost Isolation for Legacy Architectures
+            const isLegacyGhost = (name: string) => {
+                return name.startsWith('arch/alpha') || 
+                       name.startsWith('arch/mips') || 
+                       name.startsWith('arch/arm') ||
+                       name.startsWith('arch/powerpc') ||
+                       name.startsWith('arch/sh');
+            };
+
+            const actualImpacted = allImpacted.filter(name => !isLegacyGhost(name));
+            
+            immediateImpact = actualImpacted.slice(0, 5);
             if (immediateImpact.length === 0) immediateImpact = ['N/A'];
             
-            const subsystemCount = new Set(allImpacted.map(f => String(f).split('/')[0])).size;
+            const subsystemCount = new Set(actualImpacted.map(f => String(f).split('/')[0])).size;
             secondaryImpact = [
                 `Cascading dependency failures propagating across ${subsystemCount} distinct subsystems.`,
                 `Root cause traced to highly-coupled structural hubs violating module boundaries.`
             ];
-            blastRadius = allImpacted.length > 0 ? allImpacted.length * 3 : 0;
+            blastRadius = actualImpacted.length > 0 ? actualImpacted.length * 3 : 0;
             
         } else if (files.length > 0) {
             const consumers = files[0].consumers || [];
@@ -267,6 +318,8 @@ export class InsightEngine {
             immediateImpact = ['N/A'];
             secondaryImpact = ['N/A'];
         }
+        
+        Logger.info("[IMPACT_OUTPUT]", immediateImpact);
         
         return { 
             immediateImpact, 

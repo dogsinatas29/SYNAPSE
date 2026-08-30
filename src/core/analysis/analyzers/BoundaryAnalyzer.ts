@@ -29,6 +29,7 @@ export class BoundaryAnalyzer implements ArchitectureAnalyzer {
                     members: node.members,
                     internalEdges: node.internalEdges,
                     externalEdges: node.externalEdges,
+                    inboundEdges: node.inboundEdges, // Added for Control Ranking
                     size: node.size,
                     cohesion: node.cohesion,
                     strength: node.strength
@@ -77,6 +78,7 @@ export class BoundaryAnalyzer implements ArchitectureAnalyzer {
                             members: candidate.members,
                             internalEdges: candidate.internalEdges,
                             externalEdges: candidate.externalEdges,
+                            inboundEdges: candidate.inboundEdges, // Added for Control Ranking
                             cohesion: candidate.cohesion,
                             targetConcentration: candidate.targetConcentration,
                             result: candidate.result,

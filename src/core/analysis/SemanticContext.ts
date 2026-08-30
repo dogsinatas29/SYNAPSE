@@ -7,6 +7,7 @@ export interface BoundaryNode {
     members: string[];
     strength: string;
     size: number;
+    inboundEdges?: number;
 }
 
 export class SemanticContext {

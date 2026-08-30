@@ -456,6 +456,12 @@ export class VirtualDebugger {
             evidenceBundle: evidenceBundle,
             visibleClusterIds: visibleClusterIds
         };
+        
+        Logger.info('[SIM_CONTEXT]', {
+            findings: evidenceBundle?.findings?.length ?? 0,
+            clusters: visibleClusterIds?.length ?? 0
+        });
+        
         require('fs').writeFileSync(simContextPath, JSON.stringify(simulationContext, null, 2), 'utf-8');
 
         // [v0.3.34.31] Dump Boundary Analysis Report for Semantic Discovery Verification

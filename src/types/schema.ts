@@ -53,6 +53,17 @@ export enum EdgeProvenance {
     INCLUDE_DIRECTIVE = 'IncludeReference'
 }
 
+export interface BoundaryNode {
+    id: string;
+    members: string[];
+    internalEdges: number;
+    externalEdges: number;
+    inboundEdges?: number;
+    size: number;
+    cohesion: number;
+    strength: 'Strong' | 'Moderate' | 'Weak';
+}
+
 export interface Node {
     id: string;
     type?: any;

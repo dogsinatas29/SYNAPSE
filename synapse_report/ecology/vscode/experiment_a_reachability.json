@@ -1,0 +1,405 @@
+{
+  "experiment": "reachability",
+  "targets": [
+    {
+      "nodeId": "src/vs/workbench/contrib/chat/browser/widget/input/chatInputPart.ts",
+      "path": "src/vs/workbench/contrib/chat/browser/widget/input/chatInputPart.ts",
+      "impactedNodes": 8745,
+      "impactedEdges": 135,
+      "maxDepth": 17,
+      "peakRegistryCount": 135
+    },
+    {
+      "nodeId": "src/vs/code/electron-utility/sharedProcess/sharedProcessMain.ts",
+      "path": "src/vs/code/electron-utility/sharedProcess/sharedProcessMain.ts",
+      "impactedNodes": 8745,
+      "impactedEdges": 131,
+      "maxDepth": 15,
+      "peakRegistryCount": 131
+    },
+    {
+      "nodeId": "extensions/copilot/src/lib/node/chatLibMain.ts",
+      "path": "extensions/copilot/src/lib/node/chatLibMain.ts",
+      "impactedNodes": 8745,
+      "impactedEdges": 114,
+      "maxDepth": 12,
+      "peakRegistryCount": 114
+    },
+    {
+      "nodeId": "src/vs/workbench/contrib/chat/browser/widget/chatListRenderer.ts",
+      "path": "src/vs/workbench/contrib/chat/browser/widget/chatListRenderer.ts",
+      "impactedNodes": 8745,
+      "impactedEdges": 105,
+      "maxDepth": 18,
+      "peakRegistryCount": 105
+    },
+    {
+      "nodeId": "src/vs/workbench/api/common/extHost.protocol.ts",
+      "path": "src/vs/workbench/api/common/extHost.protocol.ts",
+      "impactedNodes": 8745,
+      "impactedEdges": 94,
+      "maxDepth": 21,
+      "peakRegistryCount": 94
+    },
+    {
+      "nodeId": "extensions/copilot/src/extension/extension/vscode/services.ts",
+      "path": "extensions/copilot/src/extension/extension/vscode/services.ts",
+      "impactedNodes": 8745,
+      "impactedEdges": 87,
+      "maxDepth": 12,
+      "peakRegistryCount": 87
+    },
+    {
+      "nodeId": "src/vs/workbench/contrib/terminal/browser/terminalInstance.ts",
+      "path": "src/vs/workbench/contrib/terminal/browser/terminalInstance.ts",
+      "impactedNodes": 8745,
+      "impactedEdges": 85,
+      "maxDepth": 17,
+      "peakRegistryCount": 85
+    },
+    {
+      "nodeId": "extensions/copilot/test/simulation/fixtures/codeMapper/notebookEditorWidget.ts",
+      "path": "extensions/copilot/test/simulation/fixtures/codeMapper/notebookEditorWidget.ts",
+      "impactedNodes": 8745,
+      "impactedEdges": 83,
+      "maxDepth": 22,
+      "peakRegistryCount": 83
+    },
+    {
+      "nodeId": "extensions/copilot/src/extension/chatSessions/vscode-node/chatSessions.ts",
+      "path": "extensions/copilot/src/extension/chatSessions/vscode-node/chatSessions.ts",
+      "impactedNodes": 8745,
+      "impactedEdges": 79,
+      "maxDepth": 19,
+      "peakRegistryCount": 79
+    },
+    {
+      "nodeId": "src/vs/workbench/contrib/chat/browser/widget/chatWidget.ts",
+      "path": "src/vs/workbench/contrib/chat/browser/widget/chatWidget.ts",
+      "impactedNodes": 8745,
+      "impactedEdges": 78,
+      "maxDepth": 17,
+      "peakRegistryCount": 78
+    },
+    {
+      "nodeId": "src/vs/workbench/contrib/testing/browser/testingExplorerView.ts",
+      "path": "src/vs/workbench/contrib/testing/browser/testingExplorerView.ts",
+      "impactedNodes": 8745,
+      "impactedEdges": 78,
+      "maxDepth": 19,
+      "peakRegistryCount": 78
+    },
+    {
+      "nodeId": "src/vs/workbench/contrib/files/browser/views/explorerViewer.ts",
+      "path": "src/vs/workbench/contrib/files/browser/views/explorerViewer.ts",
+      "impactedNodes": 8745,
+      "impactedEdges": 72,
+      "maxDepth": 20,
+      "peakRegistryCount": 72
+    },
+    {
+      "nodeId": "src/vs/workbench/contrib/tasks/browser/abstractTaskService.ts",
+      "path": "src/vs/workbench/contrib/tasks/browser/abstractTaskService.ts",
+      "impactedNodes": 8745,
+      "impactedEdges": 71,
+      "maxDepth": 17,
+      "peakRegistryCount": 71
+    },
+    {
+      "nodeId": "extensions/copilot/src/extension/xtab/node/xtabProvider.ts",
+      "path": "extensions/copilot/src/extension/xtab/node/xtabProvider.ts",
+      "impactedNodes": 8745,
+      "impactedEdges": 70,
+      "maxDepth": 13,
+      "peakRegistryCount": 70
+    },
+    {
+      "nodeId": "src/vs/workbench/test/browser/componentFixtures/fixtureUtils.ts",
+      "path": "src/vs/workbench/test/browser/componentFixtures/fixtureUtils.ts",
+      "impactedNodes": 43,
+      "impactedEdges": 93,
+      "maxDepth": 2,
+      "peakRegistryCount": 93
+    },
+    {
+      "nodeId": "src/vs/workbench/contrib/search/browser/searchView.ts",
+      "path": "src/vs/workbench/contrib/search/browser/searchView.ts",
+      "impactedNodes": 32,
+      "impactedEdges": 81,
+      "maxDepth": 6,
+      "peakRegistryCount": 81
+    },
+    {
+      "nodeId": "src/vs/platform/agentHost/node/codex/protocol/generated/ClientRequest.ts",
+      "path": "src/vs/platform/agentHost/node/codex/protocol/generated/ClientRequest.ts",
+      "impactedNodes": 21,
+      "impactedEdges": 103,
+      "maxDepth": 9,
+      "peakRegistryCount": 103
+    },
+    {
+      "nodeId": "src/vs/platform/agentHost/node/codex/codexAgent.ts",
+      "path": "src/vs/platform/agentHost/node/codex/codexAgent.ts",
+      "impactedNodes": 18,
+      "impactedEdges": 75,
+      "maxDepth": 7,
+      "peakRegistryCount": 75
+    },
+    {
+      "nodeId": "src/vs/workbench/contrib/chat/browser/aiCustomization/aiCustomizationManagementEditor.ts",
+      "path": "src/vs/workbench/contrib/chat/browser/aiCustomization/aiCustomizationManagementEditor.ts",
+      "impactedNodes": 14,
+      "impactedEdges": 73,
+      "maxDepth": 4,
+      "peakRegistryCount": 73
+    },
+    {
+      "nodeId": "src/vs/workbench/contrib/terminalContrib/chatAgentTools/browser/tools/runInTerminalTool.ts",
+      "path": "src/vs/workbench/contrib/terminalContrib/chatAgentTools/browser/tools/runInTerminalTool.ts",
+      "impactedNodes": 11,
+      "impactedEdges": 77,
+      "maxDepth": 2,
+      "peakRegistryCount": 77
+    },
+    {
+      "nodeId": "src/vs/editor/standalone/browser/standaloneServices.ts",
+      "path": "src/vs/editor/standalone/browser/standaloneServices.ts",
+      "impactedNodes": 10,
+      "impactedEdges": 94,
+      "maxDepth": 3,
+      "peakRegistryCount": 94
+    },
+    {
+      "nodeId": "src/vs/sessions/browser/web.main.ts",
+      "path": "src/vs/sessions/browser/web.main.ts",
+      "impactedNodes": 9,
+      "impactedEdges": 86,
+      "maxDepth": 3,
+      "peakRegistryCount": 86
+    },
+    {
+      "nodeId": "src/vs/workbench/browser/parts/views/treeView.ts",
+      "path": "src/vs/workbench/browser/parts/views/treeView.ts",
+      "impactedNodes": 9,
+      "impactedEdges": 69,
+      "maxDepth": 3,
+      "peakRegistryCount": 69
+    },
+    {
+      "nodeId": "src/vs/workbench/contrib/debug/browser/repl.ts",
+      "path": "src/vs/workbench/contrib/debug/browser/repl.ts",
+      "impactedNodes": 7,
+      "impactedEdges": 72,
+      "maxDepth": 2,
+      "peakRegistryCount": 72
+    },
+    {
+      "nodeId": "extensions/copilot/src/extension/prompts/node/test/fixtures/extHost.api.impl.ts",
+      "path": "extensions/copilot/src/extension/prompts/node/test/fixtures/extHost.api.impl.ts",
+      "impactedNodes": 4,
+      "impactedEdges": 94,
+      "maxDepth": 2,
+      "peakRegistryCount": 94
+    },
+    {
+      "nodeId": "src/vs/server/node/serverServices.ts",
+      "path": "src/vs/server/node/serverServices.ts",
+      "impactedNodes": 4,
+      "impactedEdges": 91,
+      "maxDepth": 3,
+      "peakRegistryCount": 91
+    },
+    {
+      "nodeId": "src/vs/workbench/contrib/welcomeGettingStarted/browser/gettingStarted.ts",
+      "path": "src/vs/workbench/contrib/welcomeGettingStarted/browser/gettingStarted.ts",
+      "impactedNodes": 4,
+      "impactedEdges": 71,
+      "maxDepth": 2,
+      "peakRegistryCount": 71
+    },
+    {
+      "nodeId": "extensions/copilot/src/platform/parser/test/node/fixtures/dllmain.cpp",
+      "path": "extensions/copilot/src/platform/parser/test/node/fixtures/dllmain.cpp",
+      "impactedNodes": 3,
+      "impactedEdges": 83,
+      "maxDepth": 3,
+      "peakRegistryCount": 83
+    },
+    {
+      "nodeId": "src/vs/workbench/contrib/scm/browser/scmViewPane.ts",
+      "path": "src/vs/workbench/contrib/scm/browser/scmViewPane.ts",
+      "impactedNodes": 3,
+      "impactedEdges": 78,
+      "maxDepth": 2,
+      "peakRegistryCount": 78
+    },
+    {
+      "nodeId": "src/vs/sessions/contrib/changes/browser/changesView.ts",
+      "path": "src/vs/sessions/contrib/changes/browser/changesView.ts",
+      "impactedNodes": 3,
+      "impactedEdges": 76,
+      "maxDepth": 2,
+      "peakRegistryCount": 76
+    },
+    {
+      "nodeId": "src/vs/workbench/test/browser/workbenchTestServices.ts",
+      "path": "src/vs/workbench/test/browser/workbenchTestServices.ts",
+      "impactedNodes": 2,
+      "impactedEdges": 180,
+      "maxDepth": 2,
+      "peakRegistryCount": 180
+    },
+    {
+      "nodeId": "src/vs/workbench/contrib/chat/browser/chat.shared.contribution.ts",
+      "path": "src/vs/workbench/contrib/chat/browser/chat.shared.contribution.ts",
+      "impactedNodes": 2,
+      "impactedEdges": 166,
+      "maxDepth": 2,
+      "peakRegistryCount": 166
+    },
+    {
+      "nodeId": "extensions/copilot/test/simulation/fixtures/multiFileEdit/asciiart/src/extension.ts",
+      "path": "extensions/copilot/test/simulation/fixtures/multiFileEdit/asciiart/src/extension.ts",
+      "impactedNodes": 2,
+      "impactedEdges": 77,
+      "maxDepth": 2,
+      "peakRegistryCount": 77
+    },
+    {
+      "nodeId": "src/vs/workbench/contrib/chat/test/browser/agentSessions/agentHostChatContribution.test.ts",
+      "path": "src/vs/workbench/contrib/chat/test/browser/agentSessions/agentHostChatContribution.test.ts",
+      "impactedNodes": 2,
+      "impactedEdges": 74,
+      "maxDepth": 2,
+      "peakRegistryCount": 74
+    },
+    {
+      "nodeId": "src/vs/workbench/contrib/scm/browser/scmHistoryViewPane.ts",
+      "path": "src/vs/workbench/contrib/scm/browser/scmHistoryViewPane.ts",
+      "impactedNodes": 2,
+      "impactedEdges": 73,
+      "maxDepth": 2,
+      "peakRegistryCount": 73
+    },
+    {
+      "nodeId": "report/LOGIC_REPORT.md",
+      "path": "report/LOGIC_REPORT.md",
+      "impactedNodes": 1,
+      "impactedEdges": 238,
+      "maxDepth": 1,
+      "peakRegistryCount": 238
+    },
+    {
+      "nodeId": "report/LOGIC_REPORT_all.md",
+      "path": "report/LOGIC_REPORT_all.md",
+      "impactedNodes": 1,
+      "impactedEdges": 237,
+      "maxDepth": 1,
+      "peakRegistryCount": 237
+    },
+    {
+      "nodeId": "report/LOGIC_REPORT_vscode.md",
+      "path": "report/LOGIC_REPORT_vscode.md",
+      "impactedNodes": 1,
+      "impactedEdges": 229,
+      "maxDepth": 1,
+      "peakRegistryCount": 229
+    },
+    {
+      "nodeId": "extensions/copilot/src/extension/extension/vscode-node/services.ts",
+      "path": "extensions/copilot/src/extension/extension/vscode-node/services.ts",
+      "impactedNodes": 1,
+      "impactedEdges": 174,
+      "maxDepth": 1,
+      "peakRegistryCount": 174
+    },
+    {
+      "nodeId": "extensions/copilot/src/extension/test/node/services.ts",
+      "path": "extensions/copilot/src/extension/test/node/services.ts",
+      "impactedNodes": 1,
+      "impactedEdges": 160,
+      "maxDepth": 1,
+      "peakRegistryCount": 160
+    },
+    {
+      "nodeId": "src/vs/workbench/workbench.common.main.ts",
+      "path": "src/vs/workbench/workbench.common.main.ts",
+      "impactedNodes": 1,
+      "impactedEdges": 136,
+      "maxDepth": 1,
+      "peakRegistryCount": 136
+    },
+    {
+      "nodeId": "src/vs/code/electron-main/app.ts",
+      "path": "src/vs/code/electron-main/app.ts",
+      "impactedNodes": 1,
+      "impactedEdges": 129,
+      "maxDepth": 1,
+      "peakRegistryCount": 129
+    },
+    {
+      "nodeId": "src/vs/sessions/sessions.common.main.ts",
+      "path": "src/vs/sessions/sessions.common.main.ts",
+      "impactedNodes": 1,
+      "impactedEdges": 119,
+      "maxDepth": 1,
+      "peakRegistryCount": 119
+    },
+    {
+      "nodeId": "src/vs/workbench/api/common/extHost.api.impl.ts",
+      "path": "src/vs/workbench/api/common/extHost.api.impl.ts",
+      "impactedNodes": 1,
+      "impactedEdges": 119,
+      "maxDepth": 1,
+      "peakRegistryCount": 119
+    },
+    {
+      "nodeId": "src/vs/workbench/api/browser/extensionHost.contribution.ts",
+      "path": "src/vs/workbench/api/browser/extensionHost.contribution.ts",
+      "impactedNodes": 1,
+      "impactedEdges": 98,
+      "maxDepth": 1,
+      "peakRegistryCount": 98
+    },
+    {
+      "nodeId": "extensions/copilot/test/simulation/fixtures/vscode/extHost.api.impl.ts",
+      "path": "extensions/copilot/test/simulation/fixtures/vscode/extHost.api.impl.ts",
+      "impactedNodes": 1,
+      "impactedEdges": 94,
+      "maxDepth": 1,
+      "peakRegistryCount": 94
+    },
+    {
+      "nodeId": "src/vs/workbench/contrib/notebook/browser/notebookEditorWidget.ts",
+      "path": "src/vs/workbench/contrib/notebook/browser/notebookEditorWidget.ts",
+      "impactedNodes": 1,
+      "impactedEdges": 86,
+      "maxDepth": 1,
+      "peakRegistryCount": 86
+    },
+    {
+      "nodeId": "src/vs/workbench/contrib/notebook/browser/notebook.contribution.ts",
+      "path": "src/vs/workbench/contrib/notebook/browser/notebook.contribution.ts",
+      "impactedNodes": 1,
+      "impactedEdges": 79,
+      "maxDepth": 1,
+      "peakRegistryCount": 79
+    },
+    {
+      "nodeId": "src/vs/workbench/contrib/extensions/browser/extensions.contribution.ts",
+      "path": "src/vs/workbench/contrib/extensions/browser/extensions.contribution.ts",
+      "impactedNodes": 1,
+      "impactedEdges": 74,
+      "maxDepth": 1,
+      "peakRegistryCount": 74
+    },
+    {
+      "nodeId": "src/vs/code/electron-main/main.ts",
+      "path": "src/vs/code/electron-main/main.ts",
+      "impactedNodes": 1,
+      "impactedEdges": 69,
+      "maxDepth": 1,
+      "peakRegistryCount": 69
+    }
+  ]
+}

@@ -1,0 +1,305 @@
+{
+  "experiment": "reachability",
+  "results": [
+    {
+      "nodeId": "src/vs/code/electron-utility/sharedProcess/sharedProcessMain.ts",
+      "path": "src/vs/code/electron-utility/sharedProcess/sharedProcessMain.ts",
+      "impactedNodes": 4490,
+      "impactedEdges": 109,
+      "maxDepth": 12,
+      "evidencePaths": [
+        "sharedProcessMain.ts -> desktopEnvironmentInfo.ts -> ... (4491 cascades)",
+        "sharedProcessMain.ts -> policy.ts -> ... (4491 cascades)",
+        "sharedProcessMain.ts -> osDisplayProtocolInfo.ts -> ... (4491 cascades)"
+      ]
+    },
+    {
+      "nodeId": "src/vs/workbench/contrib/chat/browser/widget/input/chatInputPart.ts",
+      "path": "src/vs/workbench/contrib/chat/browser/widget/input/chatInputPart.ts",
+      "impactedNodes": 4490,
+      "impactedEdges": 98,
+      "maxDepth": 18,
+      "evidencePaths": [
+        "chatInputPart.ts -> fonts.ts -> ... (4491 cascades)",
+        "chatInputPart.ts -> history.ts -> ... (4491 cascades)",
+        "chatInputPart.ts -> keyboardEvent.ts -> ... (4491 cascades)"
+      ]
+    },
+    {
+      "nodeId": "src/vs/workbench/contrib/chat/browser/widget/chatListRenderer.ts",
+      "path": "src/vs/workbench/contrib/chat/browser/widget/chatListRenderer.ts",
+      "impactedNodes": 4490,
+      "impactedEdges": 76,
+      "maxDepth": 19,
+      "evidencePaths": [
+        "chatListRenderer.ts -> formattedTextRenderer.ts -> ... (4491 cascades)",
+        "chatListRenderer.ts -> keyboardEvent.ts -> ... (4491 cascades)",
+        "chatListRenderer.ts -> markdownRenderer.ts -> ... (4491 cascades)"
+      ]
+    },
+    {
+      "nodeId": "src/vs/workbench/api/common/extHost.protocol.ts",
+      "path": "src/vs/workbench/api/common/extHost.protocol.ts",
+      "impactedNodes": 4490,
+      "impactedEdges": 55,
+      "maxDepth": 20,
+      "evidencePaths": [
+        "extHost.protocol.ts -> history.ts -> ... (4491 cascades)",
+        "extHost.protocol.ts -> console.ts -> ... (4491 cascades)",
+        "extHost.protocol.ts -> oauth.ts -> ... (4491 cascades)"
+      ]
+    },
+    {
+      "nodeId": "src/vs/workbench/contrib/chat/browser/widget/chatWidget.ts",
+      "path": "src/vs/workbench/contrib/chat/browser/widget/chatWidget.ts",
+      "impactedNodes": 4490,
+      "impactedEdges": 45,
+      "maxDepth": 18,
+      "evidencePaths": [
+        "chatWidget.ts -> mouseEvent.ts -> ... (4491 cascades)",
+        "chatWidget.ts -> aria.ts -> ... (4491 cascades)",
+        "chatWidget.ts -> actions.ts -> ... (4491 cascades)"
+      ]
+    },
+    {
+      "nodeId": "src/vs/workbench/contrib/testing/browser/testingExplorerView.ts",
+      "path": "src/vs/workbench/contrib/testing/browser/testingExplorerView.ts",
+      "impactedNodes": 4481,
+      "impactedEdges": 51,
+      "maxDepth": 20,
+      "evidencePaths": [
+        "testingExplorerView.ts -> keyboardEvent.ts -> ... (4482 cascades)",
+        "testingExplorerView.ts -> markdownRenderer.ts -> ... (4482 cascades)",
+        "testingExplorerView.ts -> actionbar.ts -> ... (4482 cascades)"
+      ]
+    },
+    {
+      "nodeId": "src/vs/workbench/contrib/terminal/browser/terminalInstance.ts",
+      "path": "src/vs/workbench/contrib/terminal/browser/terminalInstance.ts",
+      "impactedNodes": 48,
+      "impactedEdges": 56,
+      "maxDepth": 8,
+      "evidencePaths": [
+        "terminalInstance.ts -> amdX.ts -> ... (49 cascades)",
+        "terminalInstance.ts -> canIUse.ts -> ... (49 cascades)",
+        "terminalInstance.ts -> dnd.ts -> ... (49 cascades)"
+      ]
+    },
+    {
+      "nodeId": "src/vs/workbench/contrib/search/browser/searchView.ts",
+      "path": "src/vs/workbench/contrib/search/browser/searchView.ts",
+      "impactedNodes": 32,
+      "impactedEdges": 50,
+      "maxDepth": 6,
+      "evidencePaths": [
+        "searchView.ts -> dnd.ts -> ... (33 cascades)",
+        "searchView.ts -> keyboardEvent.ts -> ... (33 cascades)",
+        "searchView.ts -> aria.ts -> ... (33 cascades)"
+      ]
+    },
+    {
+      "nodeId": "src/vs/workbench/workbench.web.main.ts",
+      "path": "src/vs/workbench/workbench.web.main.ts",
+      "impactedNodes": 31,
+      "impactedEdges": 46,
+      "maxDepth": 6,
+      "evidencePaths": [
+        "workbench.web.main.ts -> extensions.web.contribution.ts -> ... (32 cascades)",
+        "workbench.web.main.ts -> logs.contribution.ts -> ... (32 cascades)",
+        "workbench.web.main.ts -> performance.web.contribution.ts -> ... (32 cascades)"
+      ]
+    },
+    {
+      "nodeId": "src/vs/platform/agentHost/node/codex/protocol/generated/ClientRequest.ts",
+      "path": "src/vs/platform/agentHost/node/codex/protocol/generated/ClientRequest.ts",
+      "impactedNodes": 21,
+      "impactedEdges": 103,
+      "maxDepth": 9,
+      "evidencePaths": [
+        "ClientRequest.ts -> FuzzyFileSearchParams.ts -> ... (22 cascades)",
+        "ClientRequest.ts -> FuzzyFileSearchSessionStartParams.ts -> ... (22 cascades)",
+        "ClientRequest.ts -> FuzzyFileSearchSessionStopParams.ts -> ... (22 cascades)"
+      ]
+    },
+    {
+      "nodeId": "src/vs/platform/agentHost/node/codex/protocol/generated/ServerNotification.ts",
+      "path": "src/vs/platform/agentHost/node/codex/protocol/generated/ServerNotification.ts",
+      "impactedNodes": 21,
+      "impactedEdges": 65,
+      "maxDepth": 9,
+      "evidencePaths": [
+        "ServerNotification.ts -> FuzzyFileSearchSessionCompletedNotification.ts -> ... (22 cascades)",
+        "ServerNotification.ts -> FuzzyFileSearchSessionUpdatedNotification.ts -> ... (22 cascades)",
+        "ServerNotification.ts -> AccountLoginCompletedNotification.ts -> ... (22 cascades)"
+      ]
+    },
+    {
+      "nodeId": "src/vs/platform/agentHost/node/codex/codexAgent.ts",
+      "path": "src/vs/platform/agentHost/node/codex/codexAgent.ts",
+      "impactedNodes": 18,
+      "impactedEdges": 63,
+      "maxDepth": 7,
+      "evidencePaths": [
+        "codexAgent.ts -> agentHostSchema.ts -> ... (19 cascades)",
+        "codexAgent.ts -> agentModelPricing.ts -> ... (19 cascades)",
+        "codexAgent.ts -> agentServerTools.ts -> ... (19 cascades)"
+      ]
+    },
+    {
+      "nodeId": "src/vs/workbench/contrib/terminalContrib/chatAgentTools/browser/tools/runInTerminalTool.ts",
+      "path": "src/vs/workbench/contrib/terminalContrib/chatAgentTools/browser/tools/runInTerminalTool.ts",
+      "impactedNodes": 11,
+      "impactedEdges": 49,
+      "maxDepth": 2,
+      "evidencePaths": [
+        "runInTerminalTool.ts -> history.ts -> ... (12 cascades)",
+        "runInTerminalTool.ts -> label.ts -> ... (12 cascades)",
+        "runInTerminalTool.ts -> terminalSandboxService.ts -> ... (12 cascades)"
+      ]
+    },
+    {
+      "nodeId": "src/vs/editor/standalone/browser/standaloneServices.ts",
+      "path": "src/vs/editor/standalone/browser/standaloneServices.ts",
+      "impactedNodes": 10,
+      "impactedEdges": 59,
+      "maxDepth": 3,
+      "evidencePaths": [
+        "standaloneServices.ts -> keyboardEvent.ts -> ... (11 cascades)",
+        "standaloneServices.ts -> contextview.ts -> ... (11 cascades)",
+        "standaloneServices.ts -> window.ts -> ... (11 cascades)"
+      ]
+    },
+    {
+      "nodeId": "src/vs/sessions/browser/web.main.ts",
+      "path": "src/vs/sessions/browser/web.main.ts",
+      "impactedNodes": 9,
+      "impactedEdges": 58,
+      "maxDepth": 3,
+      "evidencePaths": [
+        "web.main.ts -> policy.ts -> ... (10 cascades)",
+        "web.main.ts -> workbench.ts -> ... (10 cascades)",
+        "web.main.ts -> environmentService.ts -> ... (10 cascades)"
+      ]
+    },
+    {
+      "nodeId": "src/vs/workbench/contrib/preferences/browser/settingsTree.ts",
+      "path": "src/vs/workbench/contrib/preferences/browser/settingsTree.ts",
+      "impactedNodes": 4,
+      "impactedEdges": 46,
+      "maxDepth": 3,
+      "evidencePaths": []
+    },
+    {
+      "nodeId": "src/vs/server/node/serverServices.ts",
+      "path": "src/vs/server/node/serverServices.ts",
+      "impactedNodes": 3,
+      "impactedEdges": 73,
+      "maxDepth": 3,
+      "evidencePaths": []
+    },
+    {
+      "nodeId": "src/vs/sessions/contrib/changes/browser/changesView.ts",
+      "path": "src/vs/sessions/contrib/changes/browser/changesView.ts",
+      "impactedNodes": 3,
+      "impactedEdges": 49,
+      "maxDepth": 2,
+      "evidencePaths": []
+    },
+    {
+      "nodeId": "src/vs/workbench/contrib/chat/browser/chat.shared.contribution.ts",
+      "path": "src/vs/workbench/contrib/chat/browser/chat.shared.contribution.ts",
+      "impactedNodes": 2,
+      "impactedEdges": 142,
+      "maxDepth": 2,
+      "evidencePaths": []
+    },
+    {
+      "nodeId": "src/vs/workbench/workbench.common.main.ts",
+      "path": "src/vs/workbench/workbench.common.main.ts",
+      "impactedNodes": 1,
+      "impactedEdges": 108,
+      "maxDepth": 1,
+      "evidencePaths": []
+    },
+    {
+      "nodeId": "src/vs/workbench/api/common/extHost.api.impl.ts",
+      "path": "src/vs/workbench/api/common/extHost.api.impl.ts",
+      "impactedNodes": 1,
+      "impactedEdges": 107,
+      "maxDepth": 1,
+      "evidencePaths": []
+    },
+    {
+      "nodeId": "src/vs/sessions/sessions.common.main.ts",
+      "path": "src/vs/sessions/sessions.common.main.ts",
+      "impactedNodes": 1,
+      "impactedEdges": 100,
+      "maxDepth": 1,
+      "evidencePaths": []
+    },
+    {
+      "nodeId": "src/vs/code/electron-main/app.ts",
+      "path": "src/vs/code/electron-main/app.ts",
+      "impactedNodes": 1,
+      "impactedEdges": 99,
+      "maxDepth": 1,
+      "evidencePaths": []
+    },
+    {
+      "nodeId": "src/vs/workbench/api/browser/extensionHost.contribution.ts",
+      "path": "src/vs/workbench/api/browser/extensionHost.contribution.ts",
+      "impactedNodes": 1,
+      "impactedEdges": 95,
+      "maxDepth": 1,
+      "evidencePaths": []
+    },
+    {
+      "nodeId": "src/vs/sessions/sessions.web.main.ts",
+      "path": "src/vs/sessions/sessions.web.main.ts",
+      "impactedNodes": 1,
+      "impactedEdges": 65,
+      "maxDepth": 1,
+      "evidencePaths": []
+    },
+    {
+      "nodeId": "src/vs/workbench/contrib/notebook/browser/notebookEditorWidget.ts",
+      "path": "src/vs/workbench/contrib/notebook/browser/notebookEditorWidget.ts",
+      "impactedNodes": 1,
+      "impactedEdges": 65,
+      "maxDepth": 1,
+      "evidencePaths": []
+    },
+    {
+      "nodeId": "src/vs/workbench/contrib/notebook/browser/notebook.contribution.ts",
+      "path": "src/vs/workbench/contrib/notebook/browser/notebook.contribution.ts",
+      "impactedNodes": 1,
+      "impactedEdges": 59,
+      "maxDepth": 1,
+      "evidencePaths": []
+    },
+    {
+      "nodeId": "src/vs/editor/editor.all.ts",
+      "path": "src/vs/editor/editor.all.ts",
+      "impactedNodes": 1,
+      "impactedEdges": 54,
+      "maxDepth": 1,
+      "evidencePaths": []
+    },
+    {
+      "nodeId": "src/vs/editor/browser/view.ts",
+      "path": "src/vs/editor/browser/view.ts",
+      "impactedNodes": 1,
+      "impactedEdges": 53,
+      "maxDepth": 1,
+      "evidencePaths": []
+    },
+    {
+      "nodeId": "src/vs/workbench/contrib/extensions/browser/extensions.contribution.ts",
+      "path": "src/vs/workbench/contrib/extensions/browser/extensions.contribution.ts",
+      "impactedNodes": 1,
+      "impactedEdges": 53,
+      "maxDepth": 1,
+      "evidencePaths": []
+    }
+  ]
+}

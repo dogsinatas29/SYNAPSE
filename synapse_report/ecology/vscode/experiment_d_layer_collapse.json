@@ -1,0 +1,8 @@
+{
+  "experiment": "layer_collapse",
+  "targetLayer": "vs/platform",
+  "workbenchImpact": 3370,
+  "servicesImpact": 676,
+  "extensionHostImpact": 56,
+  "maxDepth": 10
+}

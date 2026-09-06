@@ -95,9 +95,9 @@ HIGH
 PRELIMINARY
 
 **Evidence Strength**:
-- Studies: 1
-- Replications: 1
-- Mock: 1
+- Studies: 5
+- Replications: 102
+- Mock: 5
 - Simulated: 0
 - Measured: 0
 

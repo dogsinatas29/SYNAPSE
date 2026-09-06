@@ -7765,13 +7765,19 @@
               "before": 2699,
               "after": 712,
               "deltaPercent": 73.6
-            }
+            },
+            "supportingStudyIds": [
+              "validation-0h"
+            ]
           },
           {
             "id": "claim-0h-glue",
             "statement": "REGISTRATION is the primary glue for secondary SCC persistence.",
             "status": "rejected",
-            "observation": "Removing REGISTRATION edges from the Without STRUCTURE graph only reduced the secondary SCC from 49 to 50, failing to shatter the remaining cycles."
+            "observation": "Removing REGISTRATION edges from the Without STRUCTURE graph only reduced the secondary SCC from 49 to 50, failing to shatter the remaining cycles.",
+            "supportingStudyIds": [
+              "validation-0h"
+            ]
           }
         ],
         "metrics": [
@@ -7820,7 +7826,10 @@
               "before": 341,
               "after": 712,
               "deltaPercent": -108.8
-            }
+            },
+            "supportingStudyIds": [
+              "validation-0i"
+            ]
           }
         ],
         "metrics": [
@@ -7865,7 +7874,10 @@
             "id": "claim-0j-obs-call",
             "statement": "Boundary CALL edges account for 83.9% of boundary connectivity.",
             "status": "observed",
-            "observation": "418 out of 498 total boundary edges are CALL."
+            "observation": "418 out of 498 total boundary edges are CALL.",
+            "supportingStudyIds": [
+              "validation-0j"
+            ]
           },
           {
             "id": "claim-0j-sup-call",
@@ -7877,19 +7889,28 @@
               "before": 712,
               "after": 305,
               "deltaPercent": 57.2
-            }
+            },
+            "supportingStudyIds": [
+              "validation-0j"
+            ]
           },
           {
             "id": "claim-0j-rej-reg",
             "statement": "Removing boundary REGISTRATION edges did not materially reduce SCC size.",
             "status": "rejected",
-            "observation": "Largest SCC remained at 712."
+            "observation": "Largest SCC remained at 712.",
+            "supportingStudyIds": [
+              "validation-0j"
+            ]
           },
           {
             "id": "claim-0j-inc-meta",
             "statement": "Boundary METADATA edges show mixed effects and require additional study.",
             "status": "inconclusive",
-            "observation": "Removing METADATA edges caused a minor drop from 712 to 680, indicating a secondary coupling mechanism."
+            "observation": "Removing METADATA edges caused a minor drop from 712 to 680, indicating a secondary coupling mechanism.",
+            "supportingStudyIds": [
+              "validation-0j"
+            ]
           }
         ],
         "metrics": [],
@@ -7994,19 +8015,28 @@
             "id": "claim-j2.5-obs-mixed",
             "statement": "Residual SCC contains nodes from both ecosystems.",
             "status": "observed",
-            "observation": "Residual SCC contains 248 VSCode nodes and 57 Copilot nodes."
+            "observation": "Residual SCC contains 248 VSCode nodes and 57 Copilot nodes.",
+            "supportingStudyIds": [
+              "validation-j2.5"
+            ]
           },
           {
             "id": "claim-j2.5-obs-metadata",
             "statement": "METADATA edges represent 61% of remaining boundary edges.",
             "status": "observed",
-            "observation": "METADATA edges account for 81 out of 133 remaining boundary edges."
+            "observation": "METADATA edges account for 81 out of 133 remaining boundary edges.",
+            "supportingStudyIds": [
+              "validation-j2.5"
+            ]
           },
           {
             "id": "claim-j2.5-obs-remaining",
             "statement": "Boundary edges remain after CALL ablation.",
             "status": "observed",
-            "observation": "133 boundary edges remain connecting the components."
+            "observation": "133 boundary edges remain connecting the components.",
+            "supportingStudyIds": [
+              "validation-j2.5"
+            ]
           }
         ],
         "metrics": [],
@@ -8125,7 +8155,10 @@
             "id": "claim-j2.5b-obs-composition",
             "statement": "The 305-node residual SCC spans core VSCode platform directories and Copilot extensions.",
             "status": "observed",
-            "observation": "src/vs/platform and src/vs/workbench account for 208 Core nodes, while extensions/copilot accounts for 57 nodes."
+            "observation": "src/vs/platform and src/vs/workbench account for 208 Core nodes, while extensions/copilot accounts for 57 nodes.",
+            "supportingStudyIds": [
+              "validation-j2.5b"
+            ]
           }
         ],
         "metrics": [],
@@ -8181,19 +8214,28 @@
             "id": "claim-j2.6-obs-metadata-delta",
             "statement": "Removing METADATA changed largest SCC from 305 to 41.",
             "status": "observed",
-            "observation": "Ablating METADATA edges resulted in massive fragmentation of the 305-node residual SCC."
+            "observation": "Ablating METADATA edges resulted in massive fragmentation of the 305-node residual SCC.",
+            "supportingStudyIds": [
+              "validation-j2.6"
+            ]
           },
           {
             "id": "claim-j2.6-obs-copilot-absent",
             "statement": "Copilot directories were largely absent from the resulting largest SCC.",
             "status": "observed",
-            "observation": "extensions/copilot/* node count dropped from 57 to 1 in the largest SCC after METADATA ablation."
+            "observation": "extensions/copilot/* node count dropped from 57 to 1 in the largest SCC after METADATA ablation.",
+            "supportingStudyIds": [
+              "validation-j2.6"
+            ]
           },
           {
             "id": "claim-j2.6-obs-fragmentation",
             "statement": "Residual SCC fragmented into 17 components.",
             "status": "observed",
-            "observation": "The original 305-node SCC split into 17 smaller disconnected components, with the largest being 41 nodes."
+            "observation": "The original 305-node SCC split into 17 smaller disconnected components, with the largest being 41 nodes.",
+            "supportingStudyIds": [
+              "validation-j2.6"
+            ]
           }
         ],
         "metrics": [],
@@ -8290,7 +8332,11 @@
             "id": "claim-j2.6b-obs-repeatability",
             "statement": "Ablation of METADATA consistently results in a largest SCC of 41 across 100 runs.",
             "status": "observed",
-            "observation": "The resulting largest SCC size exhibits 0 variance, confirming deterministic graph fragmentation."
+            "observation": "The resulting largest SCC size exhibits 0 variance, confirming deterministic graph fragmentation.",
+            "supportingStudyIds": [
+              "validation-j2.6",
+              "validation-j2.6b"
+            ]
           }
         ],
         "metrics": [],
@@ -8335,13 +8381,19 @@
             "id": "claim-j2.7-obs-set-a",
             "statement": "Removing edge set A produced SCC=38.",
             "status": "observed",
-            "observation": "Ablating the top 3 ranked candidate edges resulted in a massive structural collapse from 305 to 38."
+            "observation": "Ablating the top 3 ranked candidate edges resulted in a massive structural collapse from 305 to 38.",
+            "supportingStudyIds": [
+              "validation-j2.7"
+            ]
           },
           {
             "id": "claim-j2.7-obs-provenance-dominance",
             "statement": "3 out of the top 3 candidate edges were METADATA provenance.",
             "status": "observed",
-            "observation": "The highest impact edges selected via betweenness and bridging criteria were predominantly METADATA edges."
+            "observation": "The highest impact edges selected via betweenness and bridging criteria were predominantly METADATA edges.",
+            "supportingStudyIds": [
+              "validation-j2.7"
+            ]
           }
         ],
         "metrics": [],
@@ -8478,7 +8530,14 @@
                 "extensions/copilot/*",
                 "src/vs/workbench/*"
               ]
-            }
+            },
+            "supportingStudyIds": [
+              "validation-j2.5",
+              "validation-j2.6",
+              "validation-j2.6b",
+              "validation-j2.7",
+              "validation-j2.8"
+            ]
           }
         ],
         "metrics": [],

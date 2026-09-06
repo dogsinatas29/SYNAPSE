@@ -374,7 +374,9 @@ actual hierarchy
 ├── .vscode/                              # VS Code 설정
 ├── .backup/                              # 백업 파일
 ├── scripts/
-│   └── create-account.js                 # 계정 생성 스크립트
+│   ├── run-validation-pipeline.ts        # 검증 파이프라인 실행 스크립트
+│   ├── create-account.js                 # 계정 생성 스크립트
+│   └── ...                               # 기타 유틸리티 스크립트
 ├── ui/
 │   ├── index.html                        # 캔버스 웹뷰 마크업
 │   ├── synapse-theme.js                  # 웹뷰 테마 컬러/스타일
@@ -969,3 +971,122 @@ The following systems are considered STABLE.
 2. Performance benchmark
 3. Linux Kernel validation (100k+ Nodes, 130k+ Edges)
 4. Regression verification
+
+---
+
+# SYNAPSE Architecture & Validation Tier (v0.3.34.41+)
+
+## 1. Validation 계층의 독립 (Independent Validation Tier)
+Validation Engine은 Reporting의 하위 시스템이 아니라, 엔진의 핵심 축(독립 계층)으로 승격되었습니다. 보고서가 결과를 "말하는" 것이 아니라, 결과를 "추적"할 수 있도록 근거(Provenance)를 제공합니다.
+
+- **Validation Engine (연구자)**
+  - `ValidationStudy`: 개별 가설 실험 및 붕괴 관측
+  - `ValidationClaim`: 증명된 명제
+  - `ValidationRegistry`: 다중 시나리오 상태 저장소
+  - `ValidationPipeline`: 시뮬레이션 및 데이터 주입 오케스트레이션
+  - `ProvenanceTracking`: `ValidationClaim` ↔ `ValidationStudy` ↔ `supportingStudyIds`를 연결하여 100% 격리된 로컬 증거(Strength, Quality) 산출
+
+- **Report Builder (출판사)**
+  - 엔진이 증명한 `SUPPORTED` 상태의 데이터만을 선별하여 목적에 맞게 정제 후 렌더링.
+  - 레거시 Rule-based 추천 로직은 완전히 배제.
+
+## 2. Evidence Flow 패러다임 전환
+과거의 단방향 통계 덤프 구조에서, 과학적 증명 기반의 구조로 데이터 흐름이 거대하게 진화했습니다.
+
+- **이전 구조 (Legacy Flow)**:
+  `Scanner → Graph → Report`
+- **현재 구조 (v0.3.34.41 Flow)**:
+  `Scanner → Graph → Validation Study → Validation Claim → Report`
+
+## 3. SYNAPSE 성숙도 레벨 (Maturity Levels)
+현재 SYNAPSE의 위치와 한계를 객관적으로 정의하여 P4(의사결정 엔진)의 보류 사유를 명확히 합니다.
+
+- **Level 1**: Static Inventory (단순 정적 목록) ✅ 통과
+- **Level 2**: Dependency Analysis (구조 관찰 및 원인 후보 제시) ✅ 통과
+- **Level 3**: Architectural Diagnostics (반복 검증된 가설) ✅ 도달
+- **Level 3.5**: Validation Engine (현재 상태) 📍
+- **Level 4**: Cross-Project Patterns (보편적 패턴 발견) 
+- **Level 5**: Decision Support (실제 작업 의사결정 및 자동 리팩토링 제안) 
+
+> *결론: "숙련된 엔지니어가 검토를 전제로 작업 우선순위를 정하는 데는 충분히 신뢰할 수 있으나(Level 3.5), 보고서만 보고 바로 코드를 뜯어고치는 수준(Level 5)은 아직 아니다."*
+
+## 4. [TECH DEBT] v0.3.34.42 Backlog
+Level 4.5 이상의 진정한 Decision Engine을 구축하기 위해 해결해야 할 핵심 기술 부채 목록입니다.
+
+- [ ] **Cost Estimation Engine 없음**: 구조 변경 시 수정해야 할 파일 수, 작업량(Cost) 평가 지표 부재.
+- [ ] **Risk Estimation Engine 없음**: 런타임 파괴, API 호환성 붕괴 등 기능적 위험성(Risk) 평가 지표 부재.
+- [ ] **Cross-Project Validation 없음**: 발견된 패턴(예: METADATA)이 VSCode 단일 데이터셋에 과적합되었는지 여부 미검증. (NestJS, AntennaPod, Linux Kernel 등 검증 필수)
+- [ ] **Measured Evidence 없음**: 모의(Mock), 시뮬레이션(Simulated)을 넘어선 실제 런타임/계측(Measured) 증거 체계 부재.
+- [ ] **Quality Rules 재정의 필요**: 횡단 검증 이후, 여러 프로젝트를 관통하는 보편적 Evidence Quality 룰 재설계 요망.
+
+---
+
+# AST Analysis Constraints
+
+## Purpose
+AST analysis is an expensive operation and must be treated as a targeted investigation tool, not a default scanning mechanism.
+
+## Allowed Triggers
+AST analysis may only be executed for:
+1. Top Intervention Target
+2. Largest SCC
+3. Highest Risk Hub
+4. User Selected Cluster or Node
+
+## Prohibited Operations
+The following operations are forbidden:
+- Full-project AST traversal
+- Global Call Graph generation
+- Repository-wide symbol resolution
+- Repository-wide type inference
+- AST analysis during frame rendering
+- AST analysis during layout calculation
+
+## Rationale
+Linux Kernel, Chromium, VSCode and similar repositories can exceed safe memory and CPU limits when AST is executed globally.
+AST must always be scoped to a validated target discovered by the Graph Engine.
+
+---
+
+# Propagation Safety Rules
+
+## Default Limits
+- MAX_PROPAGATION_DEPTH = 3
+- MAX_PROPAGATION_NODES = 500
+- MAX_PROPAGATION_EDGES = 2000
+
+## Escalation Policy
+Limits may only be increased when:
+- User explicitly requests deep analysis
+- Analysis target has already been narrowed
+- Memory budget is verified
+
+## Fail Fast
+If any propagation limit is exceeded:
+1. Stop traversal
+2. Emit warning
+3. Record truncation in report
+
+Never silently continue.
+
+---
+
+# Validation Engine Constraints
+
+## Evidence Quality
+`SUPPORTED` does not imply universal truth.
+`SUPPORTED` only means:
+- Evidence chain exists
+- Replication completed
+- Dataset scope explicitly defined
+
+**Cross-project replication is required before promoting a pattern to a general architectural rule.**
+
+## Current Validation Level
+Current system capability:
+**Level 3.5 - Validation Engine**
+
+Not yet:
+- Architectural Decision Engine
+- Automatic Refactoring Engine
+- Universal Pattern Discovery

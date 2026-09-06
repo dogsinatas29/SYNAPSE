@@ -44,13 +44,15 @@ function main() {
                         before: 2699,
                         after: 712,
                         deltaPercent: 73.6
-                    }
+                    },
+                    supportingStudyIds: ['validation-0h']
                 },
                 {
                     id: 'claim-0h-glue',
                     statement: 'REGISTRATION is the primary glue for secondary SCC persistence.',
                     status: 'rejected',
-                    observation: 'Removing REGISTRATION edges from the Without STRUCTURE graph only reduced the secondary SCC from 49 to 50, failing to shatter the remaining cycles.'
+                    observation: 'Removing REGISTRATION edges from the Without STRUCTURE graph only reduced the secondary SCC from 49 to 50, failing to shatter the remaining cycles.',
+                    supportingStudyIds: ['validation-0h']
                 }
             ],
             metrics: [
@@ -87,7 +89,8 @@ function main() {
                         before: 341,
                         after: 712,
                         deltaPercent: -108.8
-                    }
+                    },
+                    supportingStudyIds: ['validation-0i']
                 }
             ],
             metrics: [
@@ -113,7 +116,7 @@ function main() {
             evidenceSource: 'mock',
             confidenceLevel: 'low',
             replicationCount: 0,
-            claims: jData.J3_ValidationClaims,
+            claims: (jData.J3_ValidationClaims || []).map((c: any) => ({ ...c, supportingStudyIds: ['validation-0j'] })),
             metrics: [],
             evidence: [
                 { type: 'inventory', data: jData.J0_Inventory },
@@ -138,7 +141,7 @@ function main() {
             evidenceSource: 'mock',
             confidenceLevel: 'low',
             replicationCount: 0,
-            claims: j25Data.J2_5_ValidationClaims,
+            claims: (j25Data.J2_5_ValidationClaims || []).map((c: any) => ({ ...c, supportingStudyIds: ['validation-j2.5'] })),
             metrics: [],
             evidence: [
                 { type: 'composition', data: j25Data.J2_5_Composition },
@@ -164,7 +167,7 @@ function main() {
             evidenceSource: 'mock',
             confidenceLevel: 'low',
             replicationCount: 0,
-            claims: j25bData.J2_5b_ValidationClaims,
+            claims: (j25bData.J2_5b_ValidationClaims || []).map((c: any) => ({ ...c, supportingStudyIds: ['validation-j2.5b'] })),
             metrics: [],
             evidence: [
                 { type: 'directory_composition', data: j25bData.J2_5b_DirectoryComposition }
@@ -185,7 +188,7 @@ function main() {
             methods: ['ablation'],
             dataset,
             evidenceSource: 'mock',
-            claims: j26Data.J2_6_ValidationClaims,
+            claims: (j26Data.J2_6_ValidationClaims || []).map((c: any) => ({ ...c, supportingStudyIds: ['validation-j2.6'] })),
             metrics: [],
             evidence: [
                 { type: 'scc_size_delta', data: j26Data.J2_6_SCC_Size_Delta },
@@ -210,7 +213,7 @@ function main() {
             evidenceSource: 'mock',
             confidenceLevel: 'medium',
             replicationCount: j26bData.J2_6b_Repeatability_Result.runCount,
-            claims: j26bData.J2_6b_ValidationClaims,
+            claims: (j26bData.J2_6b_ValidationClaims || []).map((c: any) => ({ ...c, supportingStudyIds: ['validation-j2.6', 'validation-j2.6b'] })),
             metrics: [],
             evidence: [
                 { type: 'repeatability_result', data: j26bData.J2_6b_Repeatability_Result }
@@ -233,7 +236,7 @@ function main() {
             evidenceSource: 'mock',
             confidenceLevel: 'medium',
             replicationCount: 1, // Simulated as a single study step based on J2.6b foundation
-            claims: j27Data.J2_7_ValidationClaims,
+            claims: (j27Data.J2_7_ValidationClaims || []).map((c: any) => ({ ...c, supportingStudyIds: ['validation-j2.7'] })),
             metrics: [],
             evidence: [
                 { type: 'candidate_ranking', data: j27Data.J2_7_Candidate_Ranking },
@@ -258,7 +261,10 @@ function main() {
             evidenceSource: 'mock',
             confidenceLevel: 'high',
             replicationCount: 1, // Represents the culmination of previous repeated studies
-            claims: j28Data.J2_8_ValidationClaims,
+            claims: (j28Data.J2_8_ValidationClaims || []).map((c: any) => ({ 
+                ...c, 
+                supportingStudyIds: ['validation-j2.5', 'validation-j2.6', 'validation-j2.6b', 'validation-j2.7', 'validation-j2.8'] 
+            })),
             metrics: [],
             evidence: [
                 { type: 'promotion_conditions', data: j28Data.J2_8_Promotion_Conditions }

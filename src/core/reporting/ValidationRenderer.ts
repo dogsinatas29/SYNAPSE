@@ -2,7 +2,17 @@ import { ValidationClaim, ValidationStudy } from './types';
 
 export class ValidationRenderer {
     public static claim = class ClaimRenderer {
-        public static render(claim: ValidationClaim, allStudies: ValidationStudy[], quality: string, mockCount: number, simCount: number, measCount: number, totalReps: number): string {
+        public static render(claim: ValidationClaim, allStudies: ValidationStudy[]): string {
+            let supportingStudies: ValidationStudy[] = [];
+            if (claim.supportingStudyIds && claim.supportingStudyIds.length > 0) {
+                supportingStudies = allStudies.filter(s => claim.supportingStudyIds!.includes(s.id));
+            } else {
+                const parentStudy = allStudies.find(s => (s.claims || []).some(c => c.id === claim.id));
+                if (parentStudy) supportingStudies.push(parentStudy);
+            }
+            
+            const { quality, mockCount, simCount, measCount, totalReps } = ValidationRenderer.evidence.calculateQualityAndStrength(supportingStudies);
+
             let section = `**Status**: ${claim.status.toUpperCase()}\n\n`;
             section += `**Claim**:\n${claim.statement}\n\n`;
             
@@ -29,14 +39,14 @@ export class ValidationRenderer {
                 section += `**Dataset Scope**:\n${claim.datasetScope}\n\n`;
             }
             
-            const confidenceLevels = allStudies.map(s => s.confidenceLevel);
+            const confidenceLevels = supportingStudies.map(s => s.confidenceLevel);
             const conf = confidenceLevels.includes('high') ? 'HIGH' : (confidenceLevels.includes('medium') ? 'MEDIUM' : 'LOW');
             section += `**Logical Confidence**:\n${conf}\n\n`;
             
             section += `**Evidence Quality**:\n${quality}\n\n`;
             
             section += `**Evidence Strength**:\n`;
-            section += `- Studies: ${allStudies.length}\n`;
+            section += `- Studies: ${supportingStudies.length}\n`;
             section += `- Replications: ${totalReps}\n`;
             section += `- Mock: ${mockCount}\n`;
             section += `- Simulated: ${simCount}\n`;

@@ -94,6 +94,7 @@ export interface ValidationClaim {
         deltaPercent?: number;
         affectedAreas?: string[];
     };
+    supportingStudyIds?: string[];
 }
 
 export interface SourceDataset {

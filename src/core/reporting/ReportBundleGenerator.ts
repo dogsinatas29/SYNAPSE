@@ -137,23 +137,35 @@ export class ReportBundleGenerator {
         
         if (message.command === 'fetchExecutiveReport') {
             const execHeader = insight.generateHeader('EXECUTIVE', 'ARCHITECTURAL_SCAN', context, evidenceCount);
-            const execBuilder = new ExecutiveReportBuilder();
-            let execFindings = execBuilder.build(execInsight);
+            
+            let execFindings: any[] = [];
             
             const valEv: ValidationEvidence = simulationContext.validationEvidence;
             if (valEv && valEv.studies) {
-                const { quality } = ValidationRenderer.evidence.calculateQualityAndStrength(valEv.studies);
+                const supportedClaims = valEv.studies.flatMap(s => s.claims || []).filter(c => c.status === 'supported');
+                
+                let valContent = '';
+                if (supportedClaims.length > 0) {
+                    supportedClaims.forEach(c => {
+                        valContent += ValidationRenderer.claim.render(c, valEv.studies);
+                        valContent += `\n---\n\n`;
+                    });
+                }
+                
                 execFindings = [{
-                    title: 'Major Complexity Sources',
-                    content: `1. Primary complexity driver: Structural dependency network.\n2. Secondary effects: Subsystem interaction observed.\n\n**Confidence: High**\n**Quality: ${quality}**`
-                }, ...execFindings];
+                    title: 'Validated Architectural Discoveries',
+                    content: valContent || 'No validated claims found.'
+                }];
+            } else {
+                const execBuilder = new ExecutiveReportBuilder();
+                execFindings = execBuilder.build(execInsight);
             }
 
             const execContract: ReportContract = {
                 header: execHeader,
-                summary: 'Executive Summary focusing on system health and immediate actions.',
+                summary: 'Executive Summary focusing on validated system health and architectural discoveries.',
                 findings: execFindings,
-                evidence: formattedEvidence,
+                evidence: [],
                 appendix: []
             };
             returnPath = path.join(bundleDir, 'EXECUTIVE_SUMMARY.md');
@@ -176,7 +188,7 @@ export class ReportBundleGenerator {
                 if (supportedClaims.length > 0) {
                     supportedClaims.forEach((claim, idx) => {
                         valSection += `### Finding #${idx + 1}\n\n`;
-                        valSection += ValidationRenderer.claim.render(claim, studies, quality, mockCount, simCount, measCount, totalReps);
+                        valSection += ValidationRenderer.claim.render(claim, studies);
                         valSection += ValidationRenderer.evidence.renderChain(studies);
                     });
                 }
@@ -243,19 +255,19 @@ export class ReportBundleGenerator {
                 let valContent = ``;
                 if (supported.length > 0) {
                     valContent += `### Supported\n---\n`;
-                    supported.forEach(c => valContent += ValidationRenderer.claim.render(c, valEv.studies, quality, mockCount, simCount, measCount, totalReps));
+                    supported.forEach(c => valContent += ValidationRenderer.claim.render(c, valEv.studies));
                 }
                 if (rejected.length > 0) {
                     valContent += `### Rejected\n---\n`;
-                    rejected.forEach(c => valContent += ValidationRenderer.claim.render(c, valEv.studies, quality, mockCount, simCount, measCount, totalReps));
+                    rejected.forEach(c => valContent += ValidationRenderer.claim.render(c, valEv.studies));
                 }
                 if (observed.length > 0) {
                     valContent += `### Observed\n---\n`;
-                    observed.forEach(c => valContent += ValidationRenderer.claim.render(c, valEv.studies, quality, mockCount, simCount, measCount, totalReps));
+                    observed.forEach(c => valContent += ValidationRenderer.claim.render(c, valEv.studies));
                 }
                 if (inconclusive.length > 0) {
                     valContent += `### Inconclusive\n---\n`;
-                    inconclusive.forEach(c => valContent += ValidationRenderer.claim.render(c, valEv.studies, quality, mockCount, simCount, measCount, totalReps));
+                    inconclusive.forEach(c => valContent += ValidationRenderer.claim.render(c, valEv.studies));
                 }
 
                 formattedEvidence.push({

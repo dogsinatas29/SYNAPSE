@@ -67,15 +67,15 @@ STRUCTURE contributes significantly to giant SCC persistence.
 - Delta: 73.6%
 
 **Logical Confidence**:
-HIGH
+LOW
 
 **Evidence Quality**:
 PRELIMINARY
 
 **Evidence Strength**:
-- Studies: 9
-- Replications: 102
-- Mock: 9
+- Studies: 1
+- Replications: 0
+- Mock: 1
 - Simulated: 0
 - Measured: 0
 
@@ -90,15 +90,15 @@ Removing boundary CALL edges reduces largest SCC from 712 to 305.
 - Delta: 57.2%
 
 **Logical Confidence**:
-HIGH
+LOW
 
 **Evidence Quality**:
 PRELIMINARY
 
 **Evidence Strength**:
-- Studies: 9
-- Replications: 102
-- Mock: 9
+- Studies: 1
+- Replications: 0
+- Mock: 1
 - Simulated: 0
 - Measured: 0
 
@@ -125,9 +125,9 @@ HIGH
 PRELIMINARY
 
 **Evidence Strength**:
-- Studies: 9
-- Replications: 102
-- Mock: 9
+- Studies: 1
+- Replications: 1
+- Mock: 1
 - Simulated: 0
 - Measured: 0
 
@@ -143,15 +143,15 @@ PRELIMINARY
 REGISTRATION is the primary glue for secondary SCC persistence.
 
 **Logical Confidence**:
-HIGH
+LOW
 
 **Evidence Quality**:
 PRELIMINARY
 
 **Evidence Strength**:
-- Studies: 9
-- Replications: 102
-- Mock: 9
+- Studies: 1
+- Replications: 0
+- Mock: 1
 - Simulated: 0
 - Measured: 0
 
@@ -161,15 +161,15 @@ PRELIMINARY
 Removing boundary REGISTRATION edges did not materially reduce SCC size.
 
 **Logical Confidence**:
-HIGH
+LOW
 
 **Evidence Quality**:
 PRELIMINARY
 
 **Evidence Strength**:
-- Studies: 9
-- Replications: 102
-- Mock: 9
+- Studies: 1
+- Replications: 0
+- Mock: 1
 - Simulated: 0
 - Measured: 0
 
@@ -186,15 +186,15 @@ Combined analysis exhibits substantially larger SCCs than isolated analyses.
 - Delta: -108.8%
 
 **Logical Confidence**:
-HIGH
+LOW
 
 **Evidence Quality**:
 PRELIMINARY
 
 **Evidence Strength**:
-- Studies: 9
-- Replications: 102
-- Mock: 9
+- Studies: 1
+- Replications: 0
+- Mock: 1
 - Simulated: 0
 - Measured: 0
 
@@ -204,15 +204,15 @@ PRELIMINARY
 Boundary CALL edges account for 83.9% of boundary connectivity.
 
 **Logical Confidence**:
-HIGH
+LOW
 
 **Evidence Quality**:
 PRELIMINARY
 
 **Evidence Strength**:
-- Studies: 9
-- Replications: 102
-- Mock: 9
+- Studies: 1
+- Replications: 0
+- Mock: 1
 - Simulated: 0
 - Measured: 0
 
@@ -222,15 +222,15 @@ PRELIMINARY
 Residual SCC contains nodes from both ecosystems.
 
 **Logical Confidence**:
-HIGH
+LOW
 
 **Evidence Quality**:
 PRELIMINARY
 
 **Evidence Strength**:
-- Studies: 9
-- Replications: 102
-- Mock: 9
+- Studies: 1
+- Replications: 0
+- Mock: 1
 - Simulated: 0
 - Measured: 0
 
@@ -240,15 +240,15 @@ PRELIMINARY
 METADATA edges represent 61% of remaining boundary edges.
 
 **Logical Confidence**:
-HIGH
+LOW
 
 **Evidence Quality**:
 PRELIMINARY
 
 **Evidence Strength**:
-- Studies: 9
-- Replications: 102
-- Mock: 9
+- Studies: 1
+- Replications: 0
+- Mock: 1
 - Simulated: 0
 - Measured: 0
 
@@ -258,15 +258,15 @@ PRELIMINARY
 Boundary edges remain after CALL ablation.
 
 **Logical Confidence**:
-HIGH
+LOW
 
 **Evidence Quality**:
 PRELIMINARY
 
 **Evidence Strength**:
-- Studies: 9
-- Replications: 102
-- Mock: 9
+- Studies: 1
+- Replications: 0
+- Mock: 1
 - Simulated: 0
 - Measured: 0
 
@@ -276,15 +276,15 @@ PRELIMINARY
 The 305-node residual SCC spans core VSCode platform directories and Copilot extensions.
 
 **Logical Confidence**:
-HIGH
+LOW
 
 **Evidence Quality**:
 PRELIMINARY
 
 **Evidence Strength**:
-- Studies: 9
-- Replications: 102
-- Mock: 9
+- Studies: 1
+- Replications: 0
+- Mock: 1
 - Simulated: 0
 - Measured: 0
 
@@ -294,15 +294,15 @@ PRELIMINARY
 Removing METADATA changed largest SCC from 305 to 41.
 
 **Logical Confidence**:
-HIGH
+LOW
 
 **Evidence Quality**:
 PRELIMINARY
 
 **Evidence Strength**:
-- Studies: 9
-- Replications: 102
-- Mock: 9
+- Studies: 1
+- Replications: 0
+- Mock: 1
 - Simulated: 0
 - Measured: 0
 
@@ -312,15 +312,15 @@ PRELIMINARY
 Copilot directories were largely absent from the resulting largest SCC.
 
 **Logical Confidence**:
-HIGH
+LOW
 
 **Evidence Quality**:
 PRELIMINARY
 
 **Evidence Strength**:
-- Studies: 9
-- Replications: 102
-- Mock: 9
+- Studies: 1
+- Replications: 0
+- Mock: 1
 - Simulated: 0
 - Measured: 0
 
@@ -330,15 +330,15 @@ PRELIMINARY
 Residual SCC fragmented into 17 components.
 
 **Logical Confidence**:
-HIGH
+LOW
 
 **Evidence Quality**:
 PRELIMINARY
 
 **Evidence Strength**:
-- Studies: 9
-- Replications: 102
-- Mock: 9
+- Studies: 1
+- Replications: 0
+- Mock: 1
 - Simulated: 0
 - Measured: 0
 
@@ -348,15 +348,15 @@ PRELIMINARY
 Ablation of METADATA consistently results in a largest SCC of 41 across 100 runs.
 
 **Logical Confidence**:
-HIGH
+MEDIUM
 
 **Evidence Quality**:
 PRELIMINARY
 
 **Evidence Strength**:
-- Studies: 9
-- Replications: 102
-- Mock: 9
+- Studies: 1
+- Replications: 100
+- Mock: 1
 - Simulated: 0
 - Measured: 0
 
@@ -366,15 +366,15 @@ PRELIMINARY
 Removing edge set A produced SCC=38.
 
 **Logical Confidence**:
-HIGH
+MEDIUM
 
 **Evidence Quality**:
 PRELIMINARY
 
 **Evidence Strength**:
-- Studies: 9
-- Replications: 102
-- Mock: 9
+- Studies: 1
+- Replications: 1
+- Mock: 1
 - Simulated: 0
 - Measured: 0
 
@@ -384,15 +384,15 @@ PRELIMINARY
 3 out of the top 3 candidate edges were METADATA provenance.
 
 **Logical Confidence**:
-HIGH
+MEDIUM
 
 **Evidence Quality**:
 PRELIMINARY
 
 **Evidence Strength**:
-- Studies: 9
-- Replications: 102
-- Mock: 9
+- Studies: 1
+- Replications: 1
+- Mock: 1
 - Simulated: 0
 - Measured: 0
 
@@ -404,15 +404,15 @@ PRELIMINARY
 Boundary METADATA edges show mixed effects and require additional study.
 
 **Logical Confidence**:
-HIGH
+LOW
 
 **Evidence Quality**:
 PRELIMINARY
 
 **Evidence Strength**:
-- Studies: 9
-- Replications: 102
-- Mock: 9
+- Studies: 1
+- Replications: 0
+- Mock: 1
 - Simulated: 0
 - Measured: 0
 

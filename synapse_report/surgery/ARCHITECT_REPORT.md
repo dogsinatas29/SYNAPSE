@@ -33,15 +33,15 @@ STRUCTURE contributes significantly to giant SCC persistence.
 - Delta: 73.6%
 
 **Logical Confidence**:
-HIGH
+LOW
 
 **Evidence Quality**:
 PRELIMINARY
 
 **Evidence Strength**:
-- Studies: 9
-- Replications: 102
-- Mock: 9
+- Studies: 1
+- Replications: 0
+- Mock: 1
 - Simulated: 0
 - Measured: 0
 
@@ -69,15 +69,15 @@ Removing boundary CALL edges reduces largest SCC from 712 to 305.
 - Delta: 57.2%
 
 **Logical Confidence**:
-HIGH
+LOW
 
 **Evidence Quality**:
 PRELIMINARY
 
 **Evidence Strength**:
-- Studies: 9
-- Replications: 102
-- Mock: 9
+- Studies: 1
+- Replications: 0
+- Mock: 1
 - Simulated: 0
 - Measured: 0
 
@@ -117,9 +117,9 @@ HIGH
 PRELIMINARY
 
 **Evidence Strength**:
-- Studies: 9
-- Replications: 102
-- Mock: 9
+- Studies: 1
+- Replications: 1
+- Mock: 1
 - Simulated: 0
 - Measured: 0
 

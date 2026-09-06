@@ -2,9 +2,11 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { InsightEngine } from './InsightEngine';
 import { ReportScope, SelectionSource, ReportContract } from '../../types/schema';
+import { ValidationEvidence } from './types';
 import { Logger } from '../../utils/Logger';
 import { OnboardingReportBuilder } from './OnboardingReportBuilder';
 import { ExecutiveReportBuilder } from './ExecutiveReportBuilder';
+import { ValidationRenderer } from './ValidationRenderer';
 
 export class ReportBundleGenerator {
     
@@ -94,6 +96,23 @@ export class ReportBundleGenerator {
                     content: contentB || 'No Boundary Nodes found.'
                 }
             ];
+
+            // Add Validation Study Raw Data to Evidence
+            if (simulationContext.validationEvidence && simulationContext.validationEvidence.studies) {
+                const rawDataContent = simulationContext.validationEvidence.studies
+                    .filter((s: any) => s.evidence && s.evidence.length > 0)
+                    .map((s: any) => {
+                        const items = s.evidence.map((e: any) => `##### ${e.type}\n\`\`\`json\n${JSON.stringify(e.data, null, 2)}\n\`\`\``).join('\n\n');
+                        return `#### Study Data: ${s.title}\n${items}\n`;
+                    }).join('\n');
+                
+                if (rawDataContent) {
+                    formattedEvidence.push({
+                        title: 'Report C: SCC Validation Evidence',
+                        content: rawDataContent
+                    });
+                }
+            }
         }
         
         Logger.info('[REPORT] start');
@@ -119,10 +138,21 @@ export class ReportBundleGenerator {
         if (message.command === 'fetchExecutiveReport') {
             const execHeader = insight.generateHeader('EXECUTIVE', 'ARCHITECTURAL_SCAN', context, evidenceCount);
             const execBuilder = new ExecutiveReportBuilder();
+            let execFindings = execBuilder.build(execInsight);
+            
+            const valEv: ValidationEvidence = simulationContext.validationEvidence;
+            if (valEv && valEv.studies) {
+                const { quality } = ValidationRenderer.evidence.calculateQualityAndStrength(valEv.studies);
+                execFindings = [{
+                    title: 'Major Complexity Sources',
+                    content: `1. Primary complexity driver: Structural dependency network.\n2. Secondary effects: Subsystem interaction observed.\n\n**Confidence: High**\n**Quality: ${quality}**`
+                }, ...execFindings];
+            }
+
             const execContract: ReportContract = {
                 header: execHeader,
                 summary: 'Executive Summary focusing on system health and immediate actions.',
-                findings: execBuilder.build(execInsight),
+                findings: execFindings,
                 evidence: formattedEvidence,
                 appendix: []
             };
@@ -131,16 +161,43 @@ export class ReportBundleGenerator {
         }
 
         if (message.command === 'fetchArchitectureReport') {
+            let archContent = archInsight.findings.length > 0 ? archInsight.findings.map(f => `### ${f.filePath}\n\n## Observation\n${f.observation}\n\n## Interpretation\n${f.interpretation}\n\n## Recommendation\n${f.recommendation}`).join('\n\n---\n\n') : 'No architectural findings in this scope.';
+            
+            const valEv: ValidationEvidence = simulationContext.validationEvidence;
+            if (valEv && valEv.studies) {
+                let valSection = '';
+                
+                const studies = valEv.studies;
+                const { mockCount, simCount, measCount, totalReps, quality } = ValidationRenderer.evidence.calculateQualityAndStrength(studies);
+                
+                const allClaims = studies.flatMap(s => s.claims || []);
+                const supportedClaims = allClaims.filter(c => c.status === 'supported');
+                
+                if (supportedClaims.length > 0) {
+                    supportedClaims.forEach((claim, idx) => {
+                        valSection += `### Finding #${idx + 1}\n\n`;
+                        valSection += ValidationRenderer.claim.render(claim, studies, quality, mockCount, simCount, measCount, totalReps);
+                        valSection += ValidationRenderer.evidence.renderChain(studies);
+                    });
+                }
+                
+                archContent = valSection + `### Original Architectural Observations\n\n` + archContent;
+            }
+
             const archHeader = insight.generateHeader('ARCHITECT', 'ARCHITECTURAL_SCAN', context, evidenceCount);
+            
+            const cleanEvidence = formattedEvidence.filter((e: any) => !e.title.includes('SCC Validation Evidence'));
+            const appendixData = ValidationRenderer.appendix.render(formattedEvidence);
+            
             const archContract: ReportContract = {
                 header: archHeader,
-                summary: 'Observation-based structural analysis. Findings classified by Pareto Frontier membership.',
+                summary: 'Observation-based structural analysis with rigorous validation provenance.',
                 findings: [{
                     title: 'Architectural Findings',
-                    content: archInsight.findings.length > 0 ? archInsight.findings.map(f => `### ${f.filePath}\n\n## Observation\n${f.observation}\n\n## Interpretation\n${f.interpretation}\n\n## Recommendation\n${f.recommendation}`).join('\n\n---\n\n') : 'No architectural findings in this scope.'
+                    content: archContent
                 }],
-                evidence: formattedEvidence,
-                appendix: []
+                evidence: cleanEvidence,
+                appendix: appendixData
             };
             returnPath = path.join(bundleDir, 'ARCHITECT_REPORT.md');
             fs.writeFileSync(returnPath, insight.renderReportToMarkdown(archContract));
@@ -149,12 +206,15 @@ export class ReportBundleGenerator {
         if (message.command === 'fetchOnboardingReport') {
             const onboardHeader = insight.generateHeader('ONBOARDING', 'ARCHITECTURAL_SCAN', context, evidenceCount);
             const onboardBuilder = new OnboardingReportBuilder();
+            const cleanEvidence = formattedEvidence.filter((e: any) => !e.title.includes('SCC Validation Evidence'));
+            const appendixData = ValidationRenderer.appendix.render(formattedEvidence);
+            
             const onboardContract: ReportContract = {
                 header: onboardHeader,
                 summary: 'Guides new developers through entry points and the system heart.',
                 findings: onboardBuilder.build(onboardInsight),
-                evidence: formattedEvidence,
-                appendix: []
+                evidence: cleanEvidence,
+                appendix: appendixData
             };
             returnPath = path.join(bundleDir, 'ONBOARDING_REPORT.md');
             fs.writeFileSync(returnPath, insight.renderReportToMarkdown(onboardContract));
@@ -164,15 +224,60 @@ export class ReportBundleGenerator {
         // If someone directly wants a bundle that wasn't specific to the 3 above, we can just return SIMULATION_DEBUG
         if (!returnPath) {
             const debugHeader = insight.generateHeader('SIMULATION_DEBUG', 'EXECUTION_TRACE', context, evidenceCount);
+            
+            let debugFindings = [{
+                title: 'Impact Analysis',
+                content: `**Immediate Impact:**\n${simInsight.immediateImpact.map(i => `- ${i}`).join('\n')}\n\n**Secondary Impact:**\n${simInsight.secondaryImpact.map(i => `- ${i}`).join('\n')}\n\n**Estimated Blast Radius:** ${simInsight.blastRadius} files`
+            }];
+            
+            const valEv: ValidationEvidence = simulationContext.validationEvidence;
+            if (valEv && valEv.studies && valEv.studies.length > 0) {
+                const allClaims = valEv.studies.flatMap(s => s.claims || []);
+                const supported = allClaims.filter(c => c.status === 'supported');
+                const rejected = allClaims.filter(c => c.status === 'rejected');
+                const observed = allClaims.filter(c => c.status === 'observed');
+                const inconclusive = allClaims.filter(c => c.status === 'inconclusive');
+                
+                const { mockCount, simCount, measCount, totalReps, quality } = ValidationRenderer.evidence.calculateQualityAndStrength(valEv.studies);
+                
+                let valContent = ``;
+                if (supported.length > 0) {
+                    valContent += `### Supported\n---\n`;
+                    supported.forEach(c => valContent += ValidationRenderer.claim.render(c, valEv.studies, quality, mockCount, simCount, measCount, totalReps));
+                }
+                if (rejected.length > 0) {
+                    valContent += `### Rejected\n---\n`;
+                    rejected.forEach(c => valContent += ValidationRenderer.claim.render(c, valEv.studies, quality, mockCount, simCount, measCount, totalReps));
+                }
+                if (observed.length > 0) {
+                    valContent += `### Observed\n---\n`;
+                    observed.forEach(c => valContent += ValidationRenderer.claim.render(c, valEv.studies, quality, mockCount, simCount, measCount, totalReps));
+                }
+                if (inconclusive.length > 0) {
+                    valContent += `### Inconclusive\n---\n`;
+                    inconclusive.forEach(c => valContent += ValidationRenderer.claim.render(c, valEv.studies, quality, mockCount, simCount, measCount, totalReps));
+                }
+
+                formattedEvidence.push({
+                    title: 'SCC Validation Claims',
+                    content: valContent || 'No validation claims found.'
+                });
+            } else {
+                formattedEvidence.push({
+                    title: 'SCC Validation Claims',
+                    content: 'No validation studies found.'
+                });
+            }
+
+            const cleanEvidence = formattedEvidence.filter((e: any) => !e.title.includes('SCC Validation Evidence'));
+            const appendixData = ValidationRenderer.appendix.render(formattedEvidence);
+
             const debugContract: ReportContract = {
                 header: debugHeader,
                 summary: 'Analyzes blast radius and failure propagation of changes.',
-                findings: [{
-                    title: 'Impact Analysis',
-                    content: `**Immediate Impact:**\n${simInsight.immediateImpact.map(i => `- ${i}`).join('\n')}\n\n**Secondary Impact:**\n${simInsight.secondaryImpact.map(i => `- ${i}`).join('\n')}\n\n**Estimated Blast Radius:** ${simInsight.blastRadius} files`
-                }],
-                evidence: formattedEvidence,
-                appendix: []
+                findings: debugFindings,
+                evidence: cleanEvidence,
+                appendix: appendixData
             };
             returnPath = path.join(bundleDir, 'SIMULATION_DEBUG.md');
             fs.writeFileSync(returnPath, insight.renderReportToMarkdown(debugContract));

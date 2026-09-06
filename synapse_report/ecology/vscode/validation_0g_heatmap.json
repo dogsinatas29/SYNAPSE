@@ -1,0 +1,92 @@
+{
+  "global": {
+    "counts": {
+      "CALL": 39630,
+      "CONTROL": 0,
+      "REGISTRATION": 13333,
+      "STRUCTURE": 32141,
+      "METADATA": 12828,
+      "UNKNOWN": 4425
+    },
+    "ratios": {
+      "CALL": 0.38717430170872535,
+      "CONTROL": 0,
+      "REGISTRATION": 0.13025977705481795,
+      "STRUCTURE": 0.3140088122942251,
+      "METADATA": 0.12532606465605675,
+      "UNKNOWN": 0.04323104428617486
+    },
+    "total": 102357
+  },
+  "giant_scc": {
+    "counts": {
+      "CALL": 7736,
+      "CONTROL": 0,
+      "REGISTRATION": 2706,
+      "STRUCTURE": 8788,
+      "METADATA": 4118,
+      "UNKNOWN": 633
+    },
+    "ratios": {
+      "CALL": 0.32258871606688627,
+      "CONTROL": 0,
+      "REGISTRATION": 0.11283933113715025,
+      "STRUCTURE": 0.3664567782828072,
+      "METADATA": 0.17171927776156123,
+      "UNKNOWN": 0.026395896751595014
+    },
+    "total": 23981
+  },
+  "secondary_scc": {
+    "counts": {
+      "CALL": 18,
+      "CONTROL": 0,
+      "REGISTRATION": 47,
+      "STRUCTURE": 41,
+      "METADATA": 0,
+      "UNKNOWN": 14
+    },
+    "ratios": {
+      "CALL": 0.15,
+      "CONTROL": 0,
+      "REGISTRATION": 0.39166666666666666,
+      "STRUCTURE": 0.3416666666666667,
+      "METADATA": 0,
+      "UNKNOWN": 0.11666666666666667
+    },
+    "total": 120
+  },
+  "dag_region": {
+    "counts": {
+      "CALL": 31876,
+      "CONTROL": 0,
+      "REGISTRATION": 10580,
+      "STRUCTURE": 23312,
+      "METADATA": 8710,
+      "UNKNOWN": 3778
+    },
+    "ratios": {
+      "CALL": 0.4073297894091188,
+      "CONTROL": 0,
+      "REGISTRATION": 0.13519730116540585,
+      "STRUCTURE": 0.2978940911878961,
+      "METADATA": 0.1113013698630137,
+      "UNKNOWN": 0.04827744837456553
+    },
+    "total": 78256
+  },
+  "enrichment_ratio": {
+    "CALL": 0.8331873129058359,
+    "CONTROL": 0,
+    "REGISTRATION": 0.8662638128857187,
+    "STRUCTURE": 1.167027051264531,
+    "METADATA": 1.3701800837106426
+  },
+  "secondary_enrichment_ratio": {
+    "CALL": 0.38742240726722177,
+    "CONTROL": 0,
+    "REGISTRATION": 3.006812045301132,
+    "STRUCTURE": 1.0880798668367506,
+    "METADATA": 0
+  }
+}

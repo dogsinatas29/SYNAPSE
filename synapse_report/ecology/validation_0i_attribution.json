@@ -1,0 +1,107 @@
+{
+  "I1_VSCode_Core": {
+    "structural_giant_scc": 934,
+    "execution_scc_metrics": {
+      "largest_scc": 127,
+      "top10_scc_sum": 167,
+      "total_scc_count": 27,
+      "nodes_in_scc": 203
+    },
+    "execution_scc_provenance": {
+      "CALL": 117,
+      "REGISTRATION": 133,
+      "METADATA": 73,
+      "UNKNOWN": 10,
+      "CONTROL": 0,
+      "STRUCTURE": 0
+    },
+    "ablation_without_CALL": {
+      "largest_scc": 41,
+      "top10_scc_sum": 64,
+      "total_scc_count": 7,
+      "nodes_in_scc": 64
+    },
+    "ablation_without_REG": {
+      "largest_scc": 42,
+      "top10_scc_sum": 66,
+      "total_scc_count": 21,
+      "nodes_in_scc": 88
+    },
+    "ablation_without_META": {
+      "largest_scc": 8,
+      "top10_scc_sum": 47,
+      "total_scc_count": 30,
+      "nodes_in_scc": 89
+    }
+  },
+  "I2_Copilot_Only": {
+    "structural_giant_scc": 834,
+    "execution_scc_metrics": {
+      "largest_scc": 214,
+      "top10_scc_sum": 242,
+      "total_scc_count": 14,
+      "nodes_in_scc": 250
+    },
+    "execution_scc_provenance": {
+      "CALL": 297,
+      "REGISTRATION": 129,
+      "METADATA": 229,
+      "UNKNOWN": 26,
+      "CONTROL": 0,
+      "STRUCTURE": 0
+    },
+    "ablation_without_CALL": {
+      "largest_scc": 17,
+      "top10_scc_sum": 25,
+      "total_scc_count": 4,
+      "nodes_in_scc": 25
+    },
+    "ablation_without_REG": {
+      "largest_scc": 109,
+      "top10_scc_sum": 139,
+      "total_scc_count": 13,
+      "nodes_in_scc": 145
+    },
+    "ablation_without_META": {
+      "largest_scc": 188,
+      "top10_scc_sum": 214,
+      "total_scc_count": 14,
+      "nodes_in_scc": 222
+    }
+  },
+  "I3_Combined": {
+    "structural_giant_scc": 2699,
+    "execution_scc_metrics": {
+      "largest_scc": 712,
+      "top10_scc_sum": 750,
+      "total_scc_count": 36,
+      "nodes_in_scc": 804
+    },
+    "execution_scc_provenance": {
+      "CALL": 1084,
+      "REGISTRATION": 526,
+      "METADATA": 948,
+      "UNKNOWN": 198,
+      "CONTROL": 0,
+      "STRUCTURE": 0
+    },
+    "ablation_without_CALL": {
+      "largest_scc": 122,
+      "top10_scc_sum": 153,
+      "total_scc_count": 11,
+      "nodes_in_scc": 155
+    },
+    "ablation_without_REG": {
+      "largest_scc": 430,
+      "top10_scc_sum": 455,
+      "total_scc_count": 28,
+      "nodes_in_scc": 491
+    },
+    "ablation_without_META": {
+      "largest_scc": 507,
+      "top10_scc_sum": 547,
+      "total_scc_count": 37,
+      "nodes_in_scc": 602
+    }
+  }
+}

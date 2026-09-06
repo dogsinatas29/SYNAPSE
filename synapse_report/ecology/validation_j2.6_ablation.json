@@ -1,0 +1,81 @@
+{
+  "J2_6_SCC_Size_Delta": {
+    "baseline": 305,
+    "ablations": [
+      {
+        "edgeType": "METADATA",
+        "resultingLargestScc": 41
+      },
+      {
+        "edgeType": "CALL",
+        "resultingLargestScc": 297
+      },
+      {
+        "edgeType": "REGISTRATION",
+        "resultingLargestScc": 305
+      },
+      {
+        "edgeType": "UNKNOWN",
+        "resultingLargestScc": 302
+      }
+    ]
+  },
+  "J2_6_Directory_Transition_Delta": {
+    "ablationTarget": "METADATA",
+    "transition": [
+      {
+        "directory": "src/vs/platform/*",
+        "before": 120,
+        "after": 23,
+        "retainedRatio": 0.19
+      },
+      {
+        "directory": "src/vs/workbench/*",
+        "before": 88,
+        "after": 15,
+        "retainedRatio": 0.17
+      },
+      {
+        "directory": "extensions/copilot/*",
+        "before": 57,
+        "after": 1,
+        "retainedRatio": 0.02
+      }
+    ]
+  },
+  "J2_6_Component_Split_Profile": {
+    "ablatedEdge": "METADATA",
+    "originalScc": 305,
+    "resultingLargest": 41,
+    "componentCount": 17,
+    "topComponents": [
+      41,
+      38,
+      29,
+      23,
+      15,
+      12,
+      11
+    ]
+  },
+  "J2_6_ValidationClaims": [
+    {
+      "id": "claim-j2.6-obs-metadata-delta",
+      "statement": "Removing METADATA changed largest SCC from 305 to 41.",
+      "status": "observed",
+      "observation": "Ablating METADATA edges resulted in massive fragmentation of the 305-node residual SCC."
+    },
+    {
+      "id": "claim-j2.6-obs-copilot-absent",
+      "statement": "Copilot directories were largely absent from the resulting largest SCC.",
+      "status": "observed",
+      "observation": "extensions/copilot/* node count dropped from 57 to 1 in the largest SCC after METADATA ablation."
+    },
+    {
+      "id": "claim-j2.6-obs-fragmentation",
+      "statement": "Residual SCC fragmented into 17 components.",
+      "status": "observed",
+      "observation": "The original 305-node SCC split into 17 smaller disconnected components, with the largest being 41 nodes."
+    }
+  ]
+}

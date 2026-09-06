@@ -66,3 +66,85 @@ export interface PartitionResult {
     infoList: RiskVector[];
     externalPressures: RiskVector[];
 }
+
+// Phase 26.5: Validation Framework (General SCC Validation Suite)
+export type ValidationStatus = 'observed' | 'supported' | 'rejected' | 'inconclusive' | 'replicated';
+
+export interface ValidationMetric {
+    key: string;
+    value: number | string;
+    unit?: string;
+}
+
+export interface ValidationClaim {
+    id: string;
+    statement: string;
+    status: ValidationStatus;
+    observation?: string;
+    datasetScope?: string;
+    competingHypotheses?: {
+        hypothesis: string;
+        status: 'rejected' | 'inconclusive' | 'supported';
+    }[];
+    impactSummary?: {
+        metric: string;
+        before: number;
+        after: number;
+        delta?: number;
+        deltaPercent?: number;
+        affectedAreas?: string[];
+    };
+}
+
+export interface SourceDataset {
+    project: string;
+    nodeCount: number;
+    edgeCount: number;
+    hash?: string;
+}
+
+export type StudyDomain = 'scc' | 'boundary' | 'dependency' | 'topology' | 'reproduction';
+
+export type StudyMethod = 'inventory' | 'ranking' | 'ablation' | 'sampling' | 'comparison' | 'reproduction';
+
+export interface DatasetRef {
+    id: string;
+    name: string;
+    version?: string;
+    fingerprint?: string;
+}
+
+export interface ValidationEvidenceItem {
+    type: string;
+    data: unknown;
+}
+
+export type EvidenceSource = 'measured' | 'simulated' | 'mock';
+
+export type ConfidenceLevel = 'low' | 'medium' | 'high';
+
+export interface ValidationStudy {
+    id: string;
+    version: string;
+    title: string;
+    domain: StudyDomain;
+    methods: StudyMethod[];
+    dataset: DatasetRef;
+    evidenceSource?: EvidenceSource;
+    confidenceLevel?: ConfidenceLevel;
+    replicationCount?: number;
+    claims: ValidationClaim[];
+    metrics: ValidationMetric[];
+    evidence?: ValidationEvidenceItem[];
+}
+
+export interface ValidationRegistry {
+    schemaVersion: string;
+    studies: ValidationStudy[];
+}
+
+// Phase 26.5: Validation Framework (General SCC Validation Suite)
+// We keep ValidationEvidence here for backward compatibility during transition, or we replace it:
+export interface ValidationEvidence {
+    studies: ValidationStudy[];
+}

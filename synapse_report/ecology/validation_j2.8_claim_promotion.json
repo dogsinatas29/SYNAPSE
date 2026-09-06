@@ -1,0 +1,43 @@
+{
+  "J2_8_Promotion_Conditions": {
+    "repeatabilityMet": true,
+    "impactThresholdMet": true,
+    "directoryCompositionMatch": true,
+    "evidenceBased": true,
+    "alternativeHypothesesRejected": [
+      "CALL",
+      "REGISTRATION",
+      "UNKNOWN"
+    ],
+    "datasetScope": "VSCode + Copilot"
+  },
+  "J2_8_ValidationClaims": [
+    {
+      "id": "claim-j2.8-supported-metadata-ablation",
+      "statement": "Removing METADATA fragments residual SCC",
+      "status": "supported",
+      "observation": "Ablation of METADATA edges consistently collapses the 305-node residual SCC into fragments (largest 41), isolating the Copilot directories.",
+      "datasetScope": "VSCode + Copilot",
+      "competingHypotheses": [
+        {
+          "hypothesis": "CALL edges maintain the SCC",
+          "status": "rejected"
+        },
+        {
+          "hypothesis": "REGISTRATION edges maintain the SCC",
+          "status": "rejected"
+        }
+      ],
+      "impactSummary": {
+        "metric": "SCC Size",
+        "before": 305,
+        "after": 41,
+        "deltaPercent": 86.6,
+        "affectedAreas": [
+          "extensions/copilot/*",
+          "src/vs/workbench/*"
+        ]
+      }
+    }
+  ]
+}

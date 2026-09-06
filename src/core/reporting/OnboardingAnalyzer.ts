@@ -9,8 +9,8 @@ export class OnboardingAnalyzer {
         if (filePath.startsWith('AGGREGATE_') || filePath.startsWith('SYSTEM_') || filePath.includes('UNKNOWN') || filePath.includes('OUT_OF_SCOPE')) {
             return false;
         }
-        // Allow boundary nodes (which typically lack file extensions)
-        if (!filePath.includes('.')) return true;
+        // Prevent boundary nodes or directories (which lack extensions) from being selected
+        if (!filePath.includes('.')) return false;
         // Basic check for file extension (typical source files)
         return /\.(ts|js|rs|kt|java|py|cpp|c|h|go|rb)$/i.test(filePath);
     }
@@ -32,11 +32,18 @@ export class OnboardingAnalyzer {
         const fanIn = node.fanIn || 0;
         const fanOut = node.fanOut || 0;
         const depth = (node.filePath || node.id || '').split('/').length;
-        const roleScore = this.getRoleScore(node.filePath || node.id || '');
+        const filePath = (node.filePath || node.id || '').toLowerCase();
         
-        // We want: Fan-In = 0, Depth = low, Fan-Out = high
-        // Score = RoleBonus - (FanIn * 50) - (Depth * 10) + FanOut
-        return roleScore - (fanIn * 50) - (depth * 10) + fanOut;
+        let priorityScore = 0;
+        
+        // Priority 1: Activation point / Extension entry
+        if (filePath.includes('extension.ts') || filePath.includes('activate') || filePath.includes('main.ts') || filePath.includes('index.ts') || filePath.includes('bootstrap')) {
+            priorityScore += 10000;
+        }
+        
+        // Priority 2: Assembly/Authority (if flagged elsewhere, it typically has high fanOut and low depth)
+        // Score = Priority - (Depth * 10) - (FanIn * 5) + FanOut
+        return priorityScore - (depth * 10) - (fanIn * 5) + fanOut;
     }
 
     /**

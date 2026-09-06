@@ -1,0 +1,2021 @@
+{
+  "coverageConfidence": 0.3665338645418327,
+  "stats": {
+    "CALL": 1,
+    "CONTROL": 0,
+    "REGISTRATION": 32,
+    "STRUCTURE": 59,
+    "METADATA": 0,
+    "UNKNOWN": 159
+  },
+  "samples": [
+    {
+      "edgeId": ".agents/skills/launch/scripts/launch.sh->.eslint-plugin-local/code-no-telemetry-common-property.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "UNKNOWN_RUNTIME",
+      "layer": "UNKNOWN",
+      "confidence": 0.1,
+      "reason": "No clear pattern matched"
+    },
+    {
+      "edgeId": ".agents/skills/launch/scripts/launch.sh->extensions/copilot/src/extension/byok/node/test/openAIEndpoint.spec.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "UNKNOWN_RUNTIME",
+      "layer": "UNKNOWN",
+      "confidence": 0.1,
+      "reason": "No clear pattern matched"
+    },
+    {
+      "edgeId": ".agents/skills/launch/scripts/launch.sh->extensions/copilot/src/extension/typescriptContext/serverPlugin/src/common/code.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "UNKNOWN_RUNTIME",
+      "layer": "UNKNOWN",
+      "confidence": 0.1,
+      "reason": "No clear pattern matched"
+    },
+    {
+      "edgeId": ".agents/skills/launch/scripts/launch.sh->extensions/copilot/src/platform/inlineEdits/common/dataTypes/textEditLengthHelper/length.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "UNKNOWN_RUNTIME",
+      "layer": "UNKNOWN",
+      "confidence": 0.1,
+      "reason": "No clear pattern matched"
+    },
+    {
+      "edgeId": ".agents/skills/launch/scripts/launch.sh->sh",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "UNKNOWN_RUNTIME",
+      "layer": "UNKNOWN",
+      "confidence": 0.1,
+      "reason": "No clear pattern matched"
+    },
+    {
+      "edgeId": ".agents/skills/launch/scripts/launch.sh->src/vs/base/test/common/filters.perf.test.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "UNKNOWN_RUNTIME",
+      "layer": "UNKNOWN",
+      "confidence": 0.1,
+      "reason": "No clear pattern matched"
+    },
+    {
+      "edgeId": ".agents/skills/launch/scripts/launch.sh->src/vs/workbench/contrib/welcomeGettingStarted/common/media/empty.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "UNKNOWN_RUNTIME",
+      "layer": "UNKNOWN",
+      "confidence": 0.1,
+      "reason": "No clear pattern matched"
+    },
+    {
+      "edgeId": ".agents/skills/launch/scripts/launch.sh->vscdb",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "UNKNOWN_RUNTIME",
+      "layer": "UNKNOWN",
+      "confidence": 0.1,
+      "reason": "No clear pattern matched"
+    },
+    {
+      "edgeId": ".agents/skills/launch/scripts/launch.sh->vscode-oss-shared",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "UNKNOWN_RUNTIME",
+      "layer": "UNKNOWN",
+      "confidence": 0.1,
+      "reason": "No clear pattern matched"
+    },
+    {
+      "edgeId": ".agents/skills/launch/scripts/monaco-paste.sh->extensions/copilot/src/extension/chatSessions/vscode-node/copilotCloudSessionsProvider.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "UNKNOWN_RUNTIME",
+      "layer": "UNKNOWN",
+      "confidence": 0.1,
+      "reason": "No clear pattern matched"
+    },
+    {
+      "edgeId": ".agents/skills/launch/scripts/monaco-paste.sh->new-chat-input-area",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "UNKNOWN_RUNTIME",
+      "layer": "UNKNOWN",
+      "confidence": 0.1,
+      "reason": "No clear pattern matched"
+    },
+    {
+      "edgeId": ".agents/skills/launch/scripts/monaco-paste.sh->sessions-chat-editor",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "UNKNOWN_RUNTIME",
+      "layer": "UNKNOWN",
+      "confidence": 0.1,
+      "reason": "No clear pattern matched"
+    },
+    {
+      "edgeId": ".agents/skills/launch/scripts/monaco-paste.sh->sh",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "UNKNOWN_RUNTIME",
+      "layer": "UNKNOWN",
+      "confidence": 0.1,
+      "reason": "No clear pattern matched"
+    },
+    {
+      "edgeId": ".devcontainer/devcontainer.json->vscode-dev",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "UNKNOWN_RUNTIME",
+      "layer": "UNKNOWN",
+      "confidence": 0.1,
+      "reason": "No clear pattern matched"
+    },
+    {
+      "edgeId": ".devcontainer/install-vscode.sh->-c",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "UNKNOWN_RUNTIME",
+      "layer": "UNKNOWN",
+      "confidence": 0.1,
+      "reason": "No clear pattern matched"
+    },
+    {
+      "edgeId": ".devcontainer/install-vscode.sh->asc",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "UNKNOWN_RUNTIME",
+      "layer": "UNKNOWN",
+      "confidence": 0.1,
+      "reason": "No clear pattern matched"
+    },
+    {
+      "edgeId": ".devcontainer/install-vscode.sh->extensions/terminal-suggest/src/completions/upstream/apt.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "UNKNOWN_RUNTIME",
+      "layer": "UNKNOWN",
+      "confidence": 0.1,
+      "reason": "No clear pattern matched"
+    },
+    {
+      "edgeId": ".devcontainer/install-vscode.sh->gpg",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "UNKNOWN_RUNTIME",
+      "layer": "UNKNOWN",
+      "confidence": 0.1,
+      "reason": "No clear pattern matched"
+    },
+    {
+      "edgeId": ".devcontainer/post-create.sh->extensions/terminal-suggest/src/completions/npm.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "UNKNOWN_RUNTIME",
+      "layer": "UNKNOWN",
+      "confidence": 0.1,
+      "reason": "No clear pattern matched"
+    },
+    {
+      "edgeId": ".devcontainer/README.md->.agents/skills/launch/scripts/launch.sh",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "UNKNOWN_RUNTIME",
+      "layer": "UNKNOWN",
+      "confidence": 0.1,
+      "reason": "No clear pattern matched"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/code-amd-node-module.ts->eslint.Rule.RuleModule",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "INHERITANCE",
+      "layer": "STRUCTURE",
+      "confidence": 0.9,
+      "reason": "implements clause"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/code-amd-node-module.ts->extensions/copilot/test/simulation/diagnosticProviders/eslint.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "INHERITANCE",
+      "layer": "STRUCTURE",
+      "confidence": 0.9,
+      "reason": "implements clause"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/code-declare-service-brand.ts->eslint.Rule.RuleModule",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "INHERITANCE",
+      "layer": "STRUCTURE",
+      "confidence": 0.9,
+      "reason": "implements clause"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/code-declare-service-brand.ts->extensions/copilot/test/simulation/diagnosticProviders/eslint.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "INHERITANCE",
+      "layer": "STRUCTURE",
+      "confidence": 0.9,
+      "reason": "implements clause"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/code-ensure-no-disposables-leak-in-test.ts->eslint.Rule.RuleModule",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "INHERITANCE",
+      "layer": "STRUCTURE",
+      "confidence": 0.9,
+      "reason": "implements clause"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/code-ensure-no-disposables-leak-in-test.ts->extensions/copilot/test/simulation/diagnosticProviders/eslint.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "INHERITANCE",
+      "layer": "STRUCTURE",
+      "confidence": 0.9,
+      "reason": "implements clause"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/code-import-patterns.ts->extensions/copilot/test/simulation/diagnosticProviders/eslint.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "INHERITANCE",
+      "layer": "STRUCTURE",
+      "confidence": 0.9,
+      "reason": "implements clause"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/code-layering.ts->extensions/copilot/test/simulation/diagnosticProviders/eslint.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "INHERITANCE",
+      "layer": "STRUCTURE",
+      "confidence": 0.9,
+      "reason": "implements clause"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/code-limited-top-functions.ts->extensions/copilot/test/simulation/diagnosticProviders/eslint.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "INHERITANCE",
+      "layer": "STRUCTURE",
+      "confidence": 0.9,
+      "reason": "implements clause"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/code-must-use-result.ts->.eslint-plugin-local/utils.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/code-must-use-result.ts->eslint.Rule.RuleModule",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "INHERITANCE",
+      "layer": "STRUCTURE",
+      "confidence": 0.9,
+      "reason": "implements clause"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/code-must-use-result.ts->extensions/copilot/test/simulation/diagnosticProviders/eslint.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "INHERITANCE",
+      "layer": "STRUCTURE",
+      "confidence": 0.9,
+      "reason": "implements clause"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/code-must-use-super-dispose.ts->.eslint-plugin-local/utils.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/code-must-use-super-dispose.ts->eslint.Rule.RuleModule",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "INHERITANCE",
+      "layer": "STRUCTURE",
+      "confidence": 0.9,
+      "reason": "implements clause"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/code-must-use-super-dispose.ts->extensions/copilot/test/simulation/diagnosticProviders/eslint.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "INHERITANCE",
+      "layer": "STRUCTURE",
+      "confidence": 0.9,
+      "reason": "implements clause"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/code-no-accessor-after-await.ts->.eslint-plugin-local/utils.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/code-no-accessor-after-await.ts->eslint.Rule.RuleModule",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "INHERITANCE",
+      "layer": "STRUCTURE",
+      "confidence": 0.9,
+      "reason": "implements clause"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/code-no-accessor-after-await.ts->extensions/copilot/test/simulation/diagnosticProviders/eslint.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "INHERITANCE",
+      "layer": "STRUCTURE",
+      "confidence": 0.9,
+      "reason": "implements clause"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/code-no-any-casts.ts->.eslint-plugin-local/utils.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/code-no-any-casts.ts->eslint.Rule.RuleModule",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "INHERITANCE",
+      "layer": "STRUCTURE",
+      "confidence": 0.9,
+      "reason": "implements clause"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/code-no-any-casts.ts->extensions/copilot/test/simulation/diagnosticProviders/eslint.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "INHERITANCE",
+      "layer": "STRUCTURE",
+      "confidence": 0.9,
+      "reason": "implements clause"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/code-no-dangerous-type-assertions.ts->.eslint-plugin-local/utils.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/code-no-dangerous-type-assertions.ts->eslint.Rule.RuleModule",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "INHERITANCE",
+      "layer": "STRUCTURE",
+      "confidence": 0.9,
+      "reason": "implements clause"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/code-no-dangerous-type-assertions.ts->extensions/copilot/test/simulation/diagnosticProviders/eslint.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "INHERITANCE",
+      "layer": "STRUCTURE",
+      "confidence": 0.9,
+      "reason": "implements clause"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/code-no-declare-const-enum.ts->eslint.Rule.RuleModule",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "INHERITANCE",
+      "layer": "STRUCTURE",
+      "confidence": 0.9,
+      "reason": "implements clause"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/code-no-declare-const-enum.ts->extensions/copilot/test/simulation/diagnosticProviders/eslint.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "INHERITANCE",
+      "layer": "STRUCTURE",
+      "confidence": 0.9,
+      "reason": "implements clause"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/code-no-deep-import-of-internal.ts->extensions/copilot/test/simulation/diagnosticProviders/eslint.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "INHERITANCE",
+      "layer": "STRUCTURE",
+      "confidence": 0.9,
+      "reason": "implements clause"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/code-no-direct-gulp-import.ts->extensions/copilot/test/simulation/diagnosticProviders/eslint.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "INHERITANCE",
+      "layer": "STRUCTURE",
+      "confidence": 0.9,
+      "reason": "implements clause"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/code-no-global-document-listener.ts->eslint.Rule.RuleModule",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "INHERITANCE",
+      "layer": "STRUCTURE",
+      "confidence": 0.9,
+      "reason": "implements clause"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/code-no-global-document-listener.ts->extensions/copilot/test/simulation/diagnosticProviders/eslint.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "INHERITANCE",
+      "layer": "STRUCTURE",
+      "confidence": 0.9,
+      "reason": "implements clause"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/code-no-http-import.ts->cli/src/util/http.rs",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "UNKNOWN_RUNTIME",
+      "layer": "UNKNOWN",
+      "confidence": 0.1,
+      "reason": "No clear pattern matched"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/code-no-http-import.ts->extensions/copilot/test/simulation/diagnosticProviders/eslint.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "INHERITANCE",
+      "layer": "STRUCTURE",
+      "confidence": 0.9,
+      "reason": "implements clause"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/code-no-http-import.ts->typescript-estree",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/code-no-icons-in-localized-strings.ts->.eslint-plugin-local/utils.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/code-no-icons-in-localized-strings.ts->eslint.Rule.RuleModule",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "INHERITANCE",
+      "layer": "STRUCTURE",
+      "confidence": 0.9,
+      "reason": "implements clause"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/code-no-icons-in-localized-strings.ts->extensions/copilot/test/simulation/diagnosticProviders/eslint.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "INHERITANCE",
+      "layer": "STRUCTURE",
+      "confidence": 0.9,
+      "reason": "implements clause"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/code-no-in-operator.ts->.eslint-plugin-local/utils.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/code-no-in-operator.ts->eslint.Rule.RuleModule",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "INHERITANCE",
+      "layer": "STRUCTURE",
+      "confidence": 0.9,
+      "reason": "implements clause"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/code-no-in-operator.ts->extensions/copilot/test/simulation/diagnosticProviders/eslint.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "INHERITANCE",
+      "layer": "STRUCTURE",
+      "confidence": 0.9,
+      "reason": "implements clause"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/code-no-localization-template-literals.ts->.eslint-plugin-local/utils.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/code-no-localization-template-literals.ts->eslint.Rule.RuleModule",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "INHERITANCE",
+      "layer": "STRUCTURE",
+      "confidence": 0.9,
+      "reason": "implements clause"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/code-no-localization-template-literals.ts->extensions/copilot/test/simulation/diagnosticProviders/eslint.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "INHERITANCE",
+      "layer": "STRUCTURE",
+      "confidence": 0.9,
+      "reason": "implements clause"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/code-no-localized-model-description.ts->.eslint-plugin-local/utils.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/code-no-localized-model-description.ts->eslint-visitor-keys",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/code-no-localized-model-description.ts->eslint.Rule.RuleModule",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "INHERITANCE",
+      "layer": "STRUCTURE",
+      "confidence": 0.9,
+      "reason": "implements clause"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/code-no-localized-model-description.ts->extensions/copilot/test/simulation/diagnosticProviders/eslint.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "INHERITANCE",
+      "layer": "STRUCTURE",
+      "confidence": 0.9,
+      "reason": "implements clause"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/code-no-new-javascript-files.ts->eslint.Rule.RuleModule",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "INHERITANCE",
+      "layer": "STRUCTURE",
+      "confidence": 0.9,
+      "reason": "implements clause"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/code-no-new-javascript-files.ts->extensions/copilot/test/simulation/diagnosticProviders/eslint.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "INHERITANCE",
+      "layer": "STRUCTURE",
+      "confidence": 0.9,
+      "reason": "implements clause"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/code-no-nls-in-standalone-editor.ts->eslint.Rule.RuleModule",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "INHERITANCE",
+      "layer": "STRUCTURE",
+      "confidence": 0.9,
+      "reason": "implements clause"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/code-no-nls-in-standalone-editor.ts->extensions/copilot/test/simulation/diagnosticProviders/eslint.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "INHERITANCE",
+      "layer": "STRUCTURE",
+      "confidence": 0.9,
+      "reason": "implements clause"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/code-no-observable-get-in-reactive-context.ts->.eslint-plugin-local/utils.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/code-no-observable-get-in-reactive-context.ts->eslint-visitor-keys",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/code-no-observable-get-in-reactive-context.ts->eslint.Rule.RuleModule",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "INHERITANCE",
+      "layer": "STRUCTURE",
+      "confidence": 0.9,
+      "reason": "implements clause"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/code-no-observable-get-in-reactive-context.ts->extensions/copilot/test/simulation/diagnosticProviders/eslint.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "INHERITANCE",
+      "layer": "STRUCTURE",
+      "confidence": 0.9,
+      "reason": "implements clause"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/code-no-potentially-unsafe-disposables.ts->extensions/copilot/test/simulation/diagnosticProviders/eslint.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "INHERITANCE",
+      "layer": "STRUCTURE",
+      "confidence": 0.9,
+      "reason": "implements clause"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/code-no-reader-after-await.ts->.eslint-plugin-local/utils.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/code-no-reader-after-await.ts->eslint.Rule.RuleModule",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "INHERITANCE",
+      "layer": "STRUCTURE",
+      "confidence": 0.9,
+      "reason": "implements clause"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/code-no-reader-after-await.ts->extensions/copilot/test/simulation/diagnosticProviders/eslint.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "INHERITANCE",
+      "layer": "STRUCTURE",
+      "confidence": 0.9,
+      "reason": "implements clause"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/code-no-runtime-import.ts->extensions/copilot/test/simulation/diagnosticProviders/eslint.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "INHERITANCE",
+      "layer": "STRUCTURE",
+      "confidence": 0.9,
+      "reason": "implements clause"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/code-no-runtime-import.ts->typescript-estree",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/code-no-standalone-editor.ts->eslint.Rule.RuleModule",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "INHERITANCE",
+      "layer": "STRUCTURE",
+      "confidence": 0.9,
+      "reason": "implements clause"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/code-no-standalone-editor.ts->extensions/copilot/test/simulation/diagnosticProviders/eslint.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "INHERITANCE",
+      "layer": "STRUCTURE",
+      "confidence": 0.9,
+      "reason": "implements clause"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/code-no-static-node-module-import.ts->extensions/copilot/test/simulation/diagnosticProviders/eslint.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "INHERITANCE",
+      "layer": "STRUCTURE",
+      "confidence": 0.9,
+      "reason": "implements clause"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/code-no-static-node-module-import.ts->typescript-estree",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/code-no-static-self-ref.ts->.eslint-plugin-local/utils.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/code-no-static-self-ref.ts->extensions/copilot/test/simulation/diagnosticProviders/eslint.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "INHERITANCE",
+      "layer": "STRUCTURE",
+      "confidence": 0.9,
+      "reason": "implements clause"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/code-no-telemetry-common-property.ts->eslint.Rule.RuleModule",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "INHERITANCE",
+      "layer": "STRUCTURE",
+      "confidence": 0.9,
+      "reason": "implements clause"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/code-no-telemetry-common-property.ts->extensions/copilot/test/simulation/diagnosticProviders/eslint.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "INHERITANCE",
+      "layer": "STRUCTURE",
+      "confidence": 0.9,
+      "reason": "implements clause"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/code-no-test-async-suite.ts->.eslint-plugin-local/utils.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/code-no-test-async-suite.ts->eslint.Rule.RuleModule",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "INHERITANCE",
+      "layer": "STRUCTURE",
+      "confidence": 0.9,
+      "reason": "implements clause"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/code-no-test-async-suite.ts->extensions/copilot/test/simulation/diagnosticProviders/eslint.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "INHERITANCE",
+      "layer": "STRUCTURE",
+      "confidence": 0.9,
+      "reason": "implements clause"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/code-no-test-only.ts->eslint.Rule.RuleModule",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "INHERITANCE",
+      "layer": "STRUCTURE",
+      "confidence": 0.9,
+      "reason": "implements clause"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/code-no-test-only.ts->extensions/copilot/test/simulation/diagnosticProviders/eslint.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "INHERITANCE",
+      "layer": "STRUCTURE",
+      "confidence": 0.9,
+      "reason": "implements clause"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/code-no-unexternalized-strings.ts->.eslint-plugin-local/utils.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/code-no-unexternalized-strings.ts->eslint.Rule.RuleModule",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "INHERITANCE",
+      "layer": "STRUCTURE",
+      "confidence": 0.9,
+      "reason": "implements clause"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/code-no-unexternalized-strings.ts->extensions/copilot/test/simulation/diagnosticProviders/eslint.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "INHERITANCE",
+      "layer": "STRUCTURE",
+      "confidence": 0.9,
+      "reason": "implements clause"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/code-no-untyped-meta-access.ts->.eslint-plugin-local/utils.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/code-no-untyped-meta-access.ts->eslint.Rule.RuleModule",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "INHERITANCE",
+      "layer": "STRUCTURE",
+      "confidence": 0.9,
+      "reason": "implements clause"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/code-no-untyped-meta-access.ts->extensions/copilot/test/simulation/diagnosticProviders/eslint.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "INHERITANCE",
+      "layer": "STRUCTURE",
+      "confidence": 0.9,
+      "reason": "implements clause"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/code-no-unused-expressions.ts->.eslint-plugin-local/utils.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/utils.ts->.eslint-plugin-local/code-no-untyped-meta-access.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "UNKNOWN_RUNTIME",
+      "layer": "UNKNOWN",
+      "confidence": 0.1,
+      "reason": "No clear pattern matched"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/utils.ts->extensions/copilot/test/simulation/diagnosticProviders/eslint.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": "cli/src/auth.rs->cli/src/commands/tunnels.rs",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "UNKNOWN_RUNTIME",
+      "layer": "UNKNOWN",
+      "confidence": 0.1,
+      "reason": "No clear pattern matched"
+    },
+    {
+      "edgeId": "cli/src/commands.rs->cli/src/commands/agent_logs.rs",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "UNKNOWN_RUNTIME",
+      "layer": "UNKNOWN",
+      "confidence": 0.1,
+      "reason": "No clear pattern matched"
+    },
+    {
+      "edgeId": "cli/src/commands.rs->cli/src/commands/output.rs",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "UNKNOWN_RUNTIME",
+      "layer": "UNKNOWN",
+      "confidence": 0.1,
+      "reason": "No clear pattern matched"
+    },
+    {
+      "edgeId": "cli/src/commands.rs->cli/src/commands/serve_web.rs",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "UNKNOWN_RUNTIME",
+      "layer": "UNKNOWN",
+      "confidence": 0.1,
+      "reason": "No clear pattern matched"
+    },
+    {
+      "edgeId": "cli/src/commands.rs->cli/src/commands/tunnels.rs",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "UNKNOWN_RUNTIME",
+      "layer": "UNKNOWN",
+      "confidence": 0.1,
+      "reason": "No clear pattern matched"
+    },
+    {
+      "edgeId": "cli/src/commands/agent_logs.rs->src/vs/base/common/console.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "UNKNOWN_RUNTIME",
+      "layer": "UNKNOWN",
+      "confidence": 0.1,
+      "reason": "No clear pattern matched"
+    },
+    {
+      "edgeId": "cli/src/commands/output.rs->src/vs/base/common/console.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "UNKNOWN_RUNTIME",
+      "layer": "UNKNOWN",
+      "confidence": 0.1,
+      "reason": "No clear pattern matched"
+    },
+    {
+      "edgeId": "cli/src/commands/serve_web.rs->extensions/copilot/src/extension/chatSessions/claude/common/test/claudeMessageDispatch.spec.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "UNKNOWN_RUNTIME",
+      "layer": "UNKNOWN",
+      "confidence": 0.1,
+      "reason": "No clear pattern matched"
+    },
+    {
+      "edgeId": "cli/src/commands/tunnels.rs->extensions/copilot/src/extension/chatSessions/claude/common/test/claudeMessageDispatch.spec.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "UNKNOWN_RUNTIME",
+      "layer": "UNKNOWN",
+      "confidence": 0.1,
+      "reason": "No clear pattern matched"
+    },
+    {
+      "edgeId": "cli/src/desktop.rs->cli/src/desktop/version_manager.rs",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "UNKNOWN_RUNTIME",
+      "layer": "UNKNOWN",
+      "confidence": 0.1,
+      "reason": "No clear pattern matched"
+    },
+    {
+      "edgeId": "cli/src/desktop/version_manager.rs->src/vs/base/browser/dompurify/dompurify.d.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "UNKNOWN_RUNTIME",
+      "layer": "UNKNOWN",
+      "confidence": 0.1,
+      "reason": "No clear pattern matched"
+    },
+    {
+      "edgeId": "cli/src/util.rs->cli/src/util/io.rs",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "UNKNOWN_RUNTIME",
+      "layer": "UNKNOWN",
+      "confidence": 0.1,
+      "reason": "No clear pattern matched"
+    },
+    {
+      "edgeId": "cli/src/util.rs->cli/src/util/prereqs.rs",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "UNKNOWN_RUNTIME",
+      "layer": "UNKNOWN",
+      "confidence": 0.1,
+      "reason": "No clear pattern matched"
+    },
+    {
+      "edgeId": "cli/src/util.rs->cli/src/util/zipper.rs",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "UNKNOWN_RUNTIME",
+      "layer": "UNKNOWN",
+      "confidence": 0.1,
+      "reason": "No clear pattern matched"
+    },
+    {
+      "edgeId": "cli/src/util/io.rs->extensions/copilot/src/platform/editing/node/edits.spec.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "UNKNOWN_RUNTIME",
+      "layer": "UNKNOWN",
+      "confidence": 0.1,
+      "reason": "No clear pattern matched"
+    },
+    {
+      "edgeId": "cli/src/util/prereqs.rs->src/vs/base/browser/dompurify/dompurify.d.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "UNKNOWN_RUNTIME",
+      "layer": "UNKNOWN",
+      "confidence": 0.1,
+      "reason": "No clear pattern matched"
+    },
+    {
+      "edgeId": "cli/src/util/zipper.rs->src/vs/base/node/libc.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "UNKNOWN_RUNTIME",
+      "layer": "UNKNOWN",
+      "confidence": 0.1,
+      "reason": "No clear pattern matched"
+    },
+    {
+      "edgeId": "extensions/copilot/.eslintplugin/no-runtime-import.ts->extensions/copilot/test/simulation/diagnosticProviders/eslint.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "INHERITANCE",
+      "layer": "STRUCTURE",
+      "confidence": 0.9,
+      "reason": "implements clause"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/agents/node/adapters/anthropicAdapter.ts->extensions/copilot/src/extension/agents/node/adapters/types.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/agents/node/langModelServer.ts->extensions/copilot/src/platform/chat/common/commonTypes.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/agents/vscode-node/githubOrgChatResourcesService.ts->extensions/copilot/src/platform/filesystem/common/fileTypes.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "FRAMEWORK_REGISTRATION",
+      "layer": "REGISTRATION",
+      "confidence": 0.7,
+      "reason": "register call"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/api/vscode/vscodeContextProviderApi.ts->extensions/copilot/src/extension/typescriptContext/serverPlugin/src/common/api.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "FRAMEWORK_REGISTRATION",
+      "layer": "REGISTRATION",
+      "confidence": 0.7,
+      "reason": "register call"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/byok/common/anthropicMessageConverter.ts->extensions/copilot/src/extension/agents/node/adapters/types.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/byok/common/byokProvider.ts->extensions/copilot/src/extension/completions-core/vscode-node/prompt/src/tokenization/tokenizer.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "FRAMEWORK_REGISTRATION",
+      "layer": "REGISTRATION",
+      "confidence": 0.7,
+      "reason": "register call"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/byok/node/openAIEndpoint.ts->extensions/copilot/src/platform/endpoint/node/chatEndpoint.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/byok/node/test/openAIEndpoint.spec.ts->extensions/copilot/src/extension/byok/node/openAIEndpoint.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/byok/node/test/openAIEndpoint.spec.ts->extensions/copilot/src/platform/configuration/common/configurationService.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/byok/node/test/openAIEndpoint.spec.ts->extensions/copilot/src/platform/endpoint/node/chatEndpoint.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/byok/node/test/openAIEndpoint.spec.ts->extensions/copilot/src/util/vs/base/common/cancellation.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chat/vscode-node/chatDebugFileLoggerService.ts->.eslint-plugin-local/index.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "FRAMEWORK_REGISTRATION",
+      "layer": "REGISTRATION",
+      "confidence": 0.7,
+      "reason": "register call"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chat/vscode-node/chatHookService.ts->extensions/copilot/src/platform/chat/common/chatHookService.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chat/vscode-node/chatHookService.ts->extensions/copilot/src/util/vs/base/common/cancellation.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chat/vscode-node/hooksOutputChannel.ts->extensions/copilot/src/platform/chat/common/hooksOutputChannel.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chat/vscode-node/sessionTranscriptService.ts->extensions/copilot/src/platform/chat/common/sessionTranscriptService.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chat/vscode-node/test/chatDebugFileLoggerService.spec.ts->.eslint-plugin-local/index.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "FRAMEWORK_REGISTRATION",
+      "layer": "REGISTRATION",
+      "confidence": 0.7,
+      "reason": "register call"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chat/vscode-node/test/chatDebugFileLoggerService.spec.ts->src/vs/platform/configuration/test/common/testConfigurationService.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "UNKNOWN_RUNTIME",
+      "layer": "UNKNOWN",
+      "confidence": 0.1,
+      "reason": "No clear pattern matched"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chatSessions/claude/common/claudeMessageDispatch.ts->extensions/copilot/src/extension/chatSessions/claude/common/claudePlanFileTracker.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chatSessions/claude/common/claudeMessageDispatch.ts->extensions/copilot/src/extension/chatSessions/claude/common/claudeSessionStateService.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chatSessions/claude/common/claudeMessageDispatch.ts->extensions/copilot/src/extension/tools/common/toolNames.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chatSessions/claude/common/claudeMessageDispatch.ts->extensions/copilot/src/extension/tools/common/toolsService.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chatSessions/claude/common/claudeToolPermission.ts->extensions/copilot/src/extension/chat/vscode-node/test/chatDebugFileLoggerService.spec.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "UNKNOWN_RUNTIME",
+      "layer": "UNKNOWN",
+      "confidence": 0.1,
+      "reason": "No clear pattern matched"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chatSessions/claude/common/claudeToolPermissionService.ts->extensions/copilot/src/extension/tools/common/toolNames.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chatSessions/claude/common/claudeToolPermissionService.ts->extensions/copilot/src/util/vs/base/common/cancellation.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chatSessions/claude/common/test/claudeMessageDispatch.spec.ts->extensions/copilot/src/extension/chatSessions/claude/common/claudePlanFileTracker.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chatSessions/claude/common/test/claudeMessageDispatch.spec.ts->extensions/copilot/src/extension/chatSessions/claude/common/claudeSessionStateService.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chatSessions/claude/common/test/claudeMessageDispatch.spec.ts->extensions/copilot/src/extension/chatSessions/claude/common/claudeTools.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chatSessions/claude/common/test/claudeMessageDispatch.spec.ts->extensions/copilot/src/platform/log/common/logService.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chatSessions/claude/common/test/claudeMessageDispatch.spec.ts->extensions/copilot/src/platform/requestLogger/common/requestLogger.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chatSessions/claude/common/toolPermissionHandlers/askUserQuestionHandler.ts->extensions/copilot/src/extension/chatSessions/claude/common/claudeToolPermission.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "FRAMEWORK_REGISTRATION",
+      "layer": "REGISTRATION",
+      "confidence": 0.7,
+      "reason": "register call"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chatSessions/claude/common/toolPermissionHandlers/askUserQuestionHandler.ts->extensions/copilot/src/extension/chatSessions/claude/common/claudeTools.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "FRAMEWORK_REGISTRATION",
+      "layer": "REGISTRATION",
+      "confidence": 0.7,
+      "reason": "register call"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chatSessions/claude/common/toolPermissionHandlers/askUserQuestionHandler.ts->extensions/copilot/src/extension/tools/common/toolNames.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "FRAMEWORK_REGISTRATION",
+      "layer": "REGISTRATION",
+      "confidence": 0.7,
+      "reason": "register call"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chatSessions/claude/common/toolPermissionHandlers/askUserQuestionHandler.ts->extensions/copilot/src/util/vs/base/common/cancellation.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "FRAMEWORK_REGISTRATION",
+      "layer": "REGISTRATION",
+      "confidence": 0.7,
+      "reason": "register call"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chatSessions/claude/common/toolPermissionHandlers/exitPlanModeHandler.ts->extensions/copilot/src/extension/chatSessions/claude/common/claudeToolPermission.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "FRAMEWORK_REGISTRATION",
+      "layer": "REGISTRATION",
+      "confidence": 0.7,
+      "reason": "register call"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chatSessions/claude/common/toolPermissionHandlers/exitPlanModeHandler.ts->extensions/copilot/src/extension/tools/common/toolNames.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "FRAMEWORK_REGISTRATION",
+      "layer": "REGISTRATION",
+      "confidence": 0.7,
+      "reason": "register call"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chatSessions/claude/common/toolPermissionHandlers/exitPlanModeHandler.ts->extensions/copilot/src/util/vs/base/common/cancellation.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "FRAMEWORK_REGISTRATION",
+      "layer": "REGISTRATION",
+      "confidence": 0.7,
+      "reason": "register call"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chatSessions/claude/node/bundledClaudeAgentSdkLoaderService.ts->extensions/copilot/src/extension/chatSessions/claude/common/claudeAgentSdkLoaderService.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chatSessions/claude/node/claudeCodeAgent.ts->extensions/copilot/src/extension/chatSessions/claude/common/claudeMessageDispatch.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "FRAMEWORK_REGISTRATION",
+      "layer": "REGISTRATION",
+      "confidence": 0.7,
+      "reason": "register call"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chatSessions/claude/node/claudeCodeAgent.ts->extensions/copilot/src/platform/otel/node/extractToolParameters.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "FRAMEWORK_REGISTRATION",
+      "layer": "REGISTRATION",
+      "confidence": 0.7,
+      "reason": "register call"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chatSessions/claude/node/claudeCodeAgent.ts->extensions/copilot/src/util/vs/base/common/platform.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "FRAMEWORK_REGISTRATION",
+      "layer": "REGISTRATION",
+      "confidence": 0.7,
+      "reason": "register call"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chatSessions/claude/node/claudeCodeFolderMru.ts->extensions/copilot/src/extension/chatSessions/common/folderRepositoryManager.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chatSessions/claude/node/claudeLanguageModelServer.ts->extensions/copilot/src/extension/chatSessions/claude/common/claudeMessageDispatch.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "FRAMEWORK_REGISTRATION",
+      "layer": "REGISTRATION",
+      "confidence": 0.7,
+      "reason": "register call"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chatSessions/claude/node/claudeLanguageModelServer.ts->extensions/copilot/src/platform/networking/common/networking.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "FRAMEWORK_REGISTRATION",
+      "layer": "REGISTRATION",
+      "confidence": 0.7,
+      "reason": "register call"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chatSessions/claude/node/claudeSettingsChangeTracker.ts->extensions/copilot/src/platform/filesystem/common/fileTypes.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "FRAMEWORK_REGISTRATION",
+      "layer": "REGISTRATION",
+      "confidence": 0.7,
+      "reason": "register call"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chatSessions/claude/node/claudeSkills.ts->extensions/copilot/src/extension/completions-core/vscode-node/lib/src/snippy/network.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chatSessions/claude/node/test/askUserQuestionHandler.spec.ts->extensions/copilot/src/extension/chatSessions/claude/common/claudeTools.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chatSessions/claude/node/test/askUserQuestionHandler.spec.ts->extensions/copilot/src/extension/chatSessions/vscode-node/test/copilotCLIChatSessionParticipant.spec.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "UNKNOWN_RUNTIME",
+      "layer": "UNKNOWN",
+      "confidence": 0.1,
+      "reason": "No clear pattern matched"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chatSessions/claude/node/test/askUserQuestionHandler.spec.ts->extensions/copilot/src/util/vs/platform/instantiation/common/instantiation.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chatSessions/claude/vscode-node/claudeSlashCommandService.ts->.eslint-plugin-local/index.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "FRAMEWORK_REGISTRATION",
+      "layer": "REGISTRATION",
+      "confidence": 0.7,
+      "reason": "register call"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chatSessions/claude/vscode-node/routingClaudeAgentSdkLoaderService.ts->extensions/copilot/src/extension/chatSessions/claude/common/claudeAgentSdkLoaderService.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chatSessions/claude/vscode-node/routingClaudeAgentSdkLoaderService.ts->extensions/copilot/src/extension/chatSessions/claude/node/bundledClaudeAgentSdkLoaderService.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chatSessions/common/test/mockChatSessionMetadataStore.ts->extensions/copilot/src/extension/chatSessions/common/chatSessionMetadataStore.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chatSessions/copilotcli/common/copilotCLIPrompt.ts->extensions/copilot/src/extension/completions-core/vscode-node/lib/src/snippy/network.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chatSessions/copilotcli/common/copilotCLIPrompt.ts->extensions/copilot/src/extension/prompt/common/chatVariablesCollection.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chatSessions/copilotcli/common/copilotCLITools.ts->extensions/copilot/src/extension/chatSessions/vscode-node/test/copilotCLIChatSessionParticipant.spec.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "UNKNOWN_RUNTIME",
+      "layer": "UNKNOWN",
+      "confidence": 0.1,
+      "reason": "No clear pattern matched"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chatSessions/copilotcli/node/copilotCli.ts->extensions/copilot/src/util/vs/base/common/cancellation.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "FRAMEWORK_REGISTRATION",
+      "layer": "REGISTRATION",
+      "confidence": 0.7,
+      "reason": "register call"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chatSessions/copilotcli/node/copilotcliPromptResolver.ts->extensions/copilot/src/extension/completions-core/vscode-node/lib/src/snippy/network.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chatSessions/copilotcli/node/copilotcliPromptResolver.ts->extensions/copilot/src/util/vs/base/common/cancellation.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chatSessions/copilotcli/node/copilotcliSession.ts->extensions/copilot/src/extension/agents/vscode-node/githubOrgChatResourcesService.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "UNKNOWN_RUNTIME",
+      "layer": "UNKNOWN",
+      "confidence": 0.1,
+      "reason": "No clear pattern matched"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chatSessions/copilotcli/node/copilotcliSession.ts->extensions/copilot/src/platform/github/common/githubService.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "FRAMEWORK_REGISTRATION",
+      "layer": "REGISTRATION",
+      "confidence": 0.7,
+      "reason": "register call"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chatSessions/copilotcli/node/copilotcliSession.ts->extensions/copilot/src/platform/tokenizer/node/promptTokenDetails.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "FRAMEWORK_REGISTRATION",
+      "layer": "REGISTRATION",
+      "confidence": 0.7,
+      "reason": "register call"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chatSessions/copilotcli/node/copilotcliSession.ts->extensions/copilot/src/util/vs/base/common/codicons.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "FRAMEWORK_REGISTRATION",
+      "layer": "REGISTRATION",
+      "confidence": 0.7,
+      "reason": "register call"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chatSessions/copilotcli/node/copilotcliSessionService.ts->extensions/copilot/src/extension/inlineEdits/node/nextEditProviderTelemetry.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "UNKNOWN_RUNTIME",
+      "layer": "UNKNOWN",
+      "confidence": 0.1,
+      "reason": "No clear pattern matched"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chatSessions/copilotcli/node/copilotcliSessionService.ts->extensions/copilot/src/extension/typescriptContext/serverPlugin/src/common/api.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "FRAMEWORK_REGISTRATION",
+      "layer": "REGISTRATION",
+      "confidence": 0.7,
+      "reason": "register call"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chatSessions/copilotcli/node/copilotCLISkills.ts->extensions/copilot/src/extension/chatSessions/copilotcli/node/copilotCli.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chatSessions/copilotcli/node/copilotCLISkills.ts->extensions/copilot/src/extension/completions-core/vscode-node/lib/src/snippy/network.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chatSessions/copilotcli/node/permissionHelpers.ts->extensions/copilot/src/extension/tools/common/toolNames.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chatSessions/copilotcli/node/test/copilotCliSessionService.spec.ts->extensions/copilot/src/extension/chatSessions/common/agentSessionsWorkspace.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chatSessions/copilotcli/node/test/copilotCliSessionService.spec.ts->extensions/copilot/src/extension/chatSessions/copilotcli/common/customSessionTitleService.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chatSessions/copilotcli/node/test/copilotCliSessionService.spec.ts->extensions/copilot/src/extension/chatSessions/copilotcli/node/missionControlApiClient.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/code-parameter-properties-must-have-explicit-accessibility.ts->.eslint-plugin-local/utils.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/vscode-dts-cancellation.ts->.eslint-plugin-local/utils.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/vscode-dts-create-func.ts->.eslint-plugin-local/utils.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/vscode-dts-event-naming.ts->.eslint-plugin-local/utils.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/vscode-dts-interface-naming.ts->.eslint-plugin-local/utils.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/vscode-dts-literal-or-types.ts->.eslint-plugin-local/utils.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/vscode-dts-provider-naming.ts->.eslint-plugin-local/utils.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/vscode-dts-string-type-literals.ts->.eslint-plugin-local/utils.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": ".eslint-plugin-local/vscode-dts-use-export.ts->.eslint-plugin-local/utils.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": "cli/src/async_pipe.rs->extensions/copilot/src/util/vs/base/common/uuid.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "UNKNOWN_RUNTIME",
+      "layer": "UNKNOWN",
+      "confidence": 0.1,
+      "reason": "No clear pattern matched"
+    },
+    {
+      "edgeId": "cli/src/commands.rs->cli/src/commands/agent_host.rs",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "UNKNOWN_RUNTIME",
+      "layer": "UNKNOWN",
+      "confidence": 0.1,
+      "reason": "No clear pattern matched"
+    },
+    {
+      "edgeId": "cli/src/commands.rs->cli/src/commands/agent_kill.rs",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "UNKNOWN_RUNTIME",
+      "layer": "UNKNOWN",
+      "confidence": 0.1,
+      "reason": "No clear pattern matched"
+    },
+    {
+      "edgeId": "cli/src/commands.rs->cli/src/commands/agent_ps.rs",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "UNKNOWN_RUNTIME",
+      "layer": "UNKNOWN",
+      "confidence": 0.1,
+      "reason": "No clear pattern matched"
+    },
+    {
+      "edgeId": "cli/src/commands.rs->cli/src/commands/agent_stop.rs",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "UNKNOWN_RUNTIME",
+      "layer": "UNKNOWN",
+      "confidence": 0.1,
+      "reason": "No clear pattern matched"
+    },
+    {
+      "edgeId": "cli/src/commands.rs->cli/src/commands/agent.rs",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "UNKNOWN_RUNTIME",
+      "layer": "UNKNOWN",
+      "confidence": 0.1,
+      "reason": "No clear pattern matched"
+    },
+    {
+      "edgeId": "cli/src/commands.rs->cli/src/commands/args.rs",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "UNKNOWN_RUNTIME",
+      "layer": "UNKNOWN",
+      "confidence": 0.1,
+      "reason": "No clear pattern matched"
+    },
+    {
+      "edgeId": "cli/src/commands.rs->cli/src/commands/update.rs",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "UNKNOWN_RUNTIME",
+      "layer": "UNKNOWN",
+      "confidence": 0.1,
+      "reason": "No clear pattern matched"
+    },
+    {
+      "edgeId": "cli/src/commands.rs->cli/src/commands/version.rs",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "UNKNOWN_RUNTIME",
+      "layer": "UNKNOWN",
+      "confidence": 0.1,
+      "reason": "No clear pattern matched"
+    },
+    {
+      "edgeId": "cli/src/constants.rs->const_format",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "UNKNOWN_RUNTIME",
+      "layer": "UNKNOWN",
+      "confidence": 0.1,
+      "reason": "No clear pattern matched"
+    },
+    {
+      "edgeId": "cli/src/constants.rs->serde",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "FUNCTION_CALL",
+      "layer": "CALL",
+      "confidence": 0.6,
+      "reason": "Function call suspected"
+    },
+    {
+      "edgeId": "cli/src/lib.rs->cli/src/commands.rs",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "UNKNOWN_RUNTIME",
+      "layer": "UNKNOWN",
+      "confidence": 0.1,
+      "reason": "No clear pattern matched"
+    },
+    {
+      "edgeId": "cli/src/lib.rs->cli/src/constants.rs",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "UNKNOWN_RUNTIME",
+      "layer": "UNKNOWN",
+      "confidence": 0.1,
+      "reason": "No clear pattern matched"
+    },
+    {
+      "edgeId": "cli/src/util.rs->cli/src/util/errors.rs",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "UNKNOWN_RUNTIME",
+      "layer": "UNKNOWN",
+      "confidence": 0.1,
+      "reason": "No clear pattern matched"
+    },
+    {
+      "edgeId": "cli/src/util/errors.rs->thiserror",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "FRAMEWORK_REGISTRATION",
+      "layer": "REGISTRATION",
+      "confidence": 0.7,
+      "reason": "register call"
+    },
+    {
+      "edgeId": "extensions/copilot/script/test/scoredEditsReconciler.spec.ts->extensions/copilot/src/platform/inlineEdits/common/utils/observable.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": "extensions/copilot/script/test/scoredEditsReconciler.spec.ts->extensions/copilot/src/util/vs/base/common/lifecycle.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/agentDebug/vscode-node/toolResultContentRenderer.ts->extensions/copilot/src/vscodeTypes.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/agents/node/adapters/openaiAdapterForSTests.ts->extensions/copilot/src/extension/agents/node/adapters/types.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/agents/node/adapters/types.ts->cli/src/util/http.rs",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "UNKNOWN_RUNTIME",
+      "layer": "UNKNOWN",
+      "confidence": 0.1,
+      "reason": "No clear pattern matched"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/agents/node/adapters/types.ts->prompt-tsx",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/agents/node/langModelServer.ts->extensions/copilot/src/vscodeTypes.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/agents/vscode-node/test/askAgentProvider.spec.ts->extensions/copilot/src/platform/configuration/common/configurationService.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/agents/vscode-node/test/githubOrgCustomAgentProvider.spec.ts->extensions/copilot/src/platform/log/common/logService.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/agents/vscode-node/test/githubOrgInstructionsProvider.spec.ts->extensions/copilot/src/platform/log/common/logService.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/agents/vscode-node/test/planAgentProvider.spec.ts->extensions/copilot/src/platform/configuration/common/configurationService.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chatSessions/claude/common/claudeToolPermissionService.ts->extensions/copilot/src/vscodeTypes.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chatSessions/claude/common/test/claudePlanFileTracker.spec.ts->extensions/copilot/src/util/vs/base/common/platform.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chatSessions/claude/common/toolPermissionHandlers/askUserQuestionHandler.ts->extensions/copilot/src/vscodeTypes.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "FRAMEWORK_REGISTRATION",
+      "layer": "REGISTRATION",
+      "confidence": 0.7,
+      "reason": "register call"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chatSessions/claude/common/toolPermissionHandlers/bashToolHandler.ts->extensions/copilot/src/util/vs/base/common/cancellation.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "FRAMEWORK_REGISTRATION",
+      "layer": "REGISTRATION",
+      "confidence": 0.7,
+      "reason": "register call"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chatSessions/claude/common/toolPermissionHandlers/bashToolHandler.ts->extensions/copilot/src/vscodeTypes.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "FRAMEWORK_REGISTRATION",
+      "layer": "REGISTRATION",
+      "confidence": 0.7,
+      "reason": "register call"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chatSessions/claude/common/toolPermissionHandlers/exitPlanModeHandler.ts->extensions/copilot/src/vscodeTypes.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "FRAMEWORK_REGISTRATION",
+      "layer": "REGISTRATION",
+      "confidence": 0.7,
+      "reason": "register call"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chatSessions/claude/node/claudeCodeAgent.ts->extensions/copilot/src/vscodeTypes.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "FRAMEWORK_REGISTRATION",
+      "layer": "REGISTRATION",
+      "confidence": 0.7,
+      "reason": "register call"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chatSessions/claude/node/claudePromptResolver.ts->extensions/copilot/src/vscodeTypes.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chatSessions/claude/node/sessionParser/test/claudeCodeSessionService.spec.ts->extensions/copilot/src/util/vs/platform/instantiation/common/instantiation.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chatSessions/claude/node/test/claudeCodeAgentOTel.spec.ts->extensions/copilot/src/util/vs/base/common/cancellation.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chatSessions/claude/node/test/claudeCodeAgentOTel.spec.ts->extensions/copilot/src/util/vs/platform/instantiation/common/instantiation.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chatSessions/claude/node/test/claudeCodeFolderMru.spec.ts->extensions/copilot/src/extension/completions-core/vscode-node/lib/src/util/event.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chatSessions/claude/node/test/claudeCodeFolderMru.spec.ts->extensions/copilot/src/util/vs/base/common/cancellation.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chatSessions/claude/node/test/claudeCodeModels.spec.ts->extensions/copilot/src/util/vs/platform/instantiation/common/instantiation.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "FRAMEWORK_REGISTRATION",
+      "layer": "REGISTRATION",
+      "confidence": 0.7,
+      "reason": "register call"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chatSessions/claude/node/test/claudePluginService.spec.ts->extensions/copilot/src/extension/completions-core/vscode-node/lib/src/util/event.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chatSessions/claude/node/test/claudePluginService.spec.ts->extensions/copilot/src/util/vs/base/common/cancellation.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chatSessions/claude/node/test/claudeSettingsChangeTracker.spec.ts->extensions/copilot/src/util/vs/platform/instantiation/common/instantiation.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "FRAMEWORK_REGISTRATION",
+      "layer": "REGISTRATION",
+      "confidence": 0.7,
+      "reason": "register call"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chatSessions/claude/node/test/skillConfigLocations.spec.ts->extensions/copilot/src/extension/completions-core/vscode-node/lib/src/util/event.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chatSessions/claude/vscode-node/slashCommands/test/terminalCommand.spec.ts->extensions/copilot/src/util/vs/base/common/cancellation.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chatSessions/claude/vscode-node/slashCommands/test/terminalCommand.spec.ts->extensions/copilot/src/util/vs/base/common/uuid.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chatSessions/claude/vscode-node/slashCommands/test/terminalCommand.spec.ts->extensions/copilot/src/util/vs/platform/instantiation/common/instantiation.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chatSessions/claude/vscode-node/test/claudeSlashCommandService.spec.ts->extensions/copilot/src/util/vs/platform/instantiation/common/instantiation.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chatSessions/claude/vscode-node/test/routingClaudeAgentSdkLoaderService.spec.ts->extensions/copilot/src/platform/configuration/common/configurationService.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chatSessions/common/test/externalEditTracker.spec.ts->extensions/copilot/src/util/vs/base/common/cancellation.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    },
+    {
+      "edgeId": "extensions/copilot/src/extension/chatSessions/copilotcli/common/test/copilotCLITools.spec.ts->extensions/copilot/src/util/vs/base/common/cancellation.ts",
+      "current": "UNKNOWN_RUNTIME",
+      "reclassified": "TYPE_ONLY",
+      "layer": "STRUCTURE",
+      "confidence": 0.4,
+      "reason": "generic import, likely type in TS"
+    }
+  ]
+}

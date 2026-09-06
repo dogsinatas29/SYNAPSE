@@ -7733,5 +7733,773 @@
     "folder_src_vs_workbench_services_keybinding_browser_keyboardLayouts",
     "folder_src_vs_workbench_services_textMate_browser_backgroundTokenization",
     "folder_ui"
-  ]
+  ],
+  "validationEvidence": {
+    "schemaVersion": "1.0",
+    "studies": [
+      {
+        "id": "validation-0h",
+        "version": "v1",
+        "title": "Phase 0H: Targeted Ablation",
+        "domain": "scc",
+        "methods": [
+          "ablation"
+        ],
+        "dataset": {
+          "id": "vscode-0.3.34",
+          "name": "VSCode",
+          "version": "0.3.34",
+          "fingerprint": "nodes:14176;edges:45000"
+        },
+        "evidenceSource": "mock",
+        "confidenceLevel": "low",
+        "replicationCount": 0,
+        "claims": [
+          {
+            "id": "claim-0h-mass",
+            "statement": "STRUCTURE contributes significantly to giant SCC persistence.",
+            "status": "supported",
+            "observation": "Removing STRUCTURE (Type/Inheritance) edges reduces the largest SCC from 2699 to 712.",
+            "impactSummary": {
+              "metric": "SCC Size",
+              "before": 2699,
+              "after": 712,
+              "deltaPercent": 73.6
+            }
+          },
+          {
+            "id": "claim-0h-glue",
+            "statement": "REGISTRATION is the primary glue for secondary SCC persistence.",
+            "status": "rejected",
+            "observation": "Removing REGISTRATION edges from the Without STRUCTURE graph only reduced the secondary SCC from 49 to 50, failing to shatter the remaining cycles."
+          }
+        ],
+        "metrics": [
+          {
+            "key": "baseline_scc",
+            "value": 2699,
+            "unit": "nodes"
+          },
+          {
+            "key": "without_structure_scc",
+            "value": 712,
+            "unit": "nodes"
+          },
+          {
+            "key": "without_registration",
+            "value": 430,
+            "unit": "nodes"
+          }
+        ]
+      },
+      {
+        "id": "validation-0i",
+        "version": "v1",
+        "title": "Phase 0I: Subsystem Isolation",
+        "domain": "scc",
+        "methods": [
+          "ablation"
+        ],
+        "dataset": {
+          "id": "vscode-0.3.34",
+          "name": "VSCode",
+          "version": "0.3.34",
+          "fingerprint": "nodes:14176;edges:45000"
+        },
+        "evidenceSource": "mock",
+        "confidenceLevel": "low",
+        "replicationCount": 0,
+        "claims": [
+          {
+            "id": "claim-0i-amplification",
+            "statement": "Combined analysis exhibits substantially larger SCCs than isolated analyses.",
+            "status": "observed",
+            "observation": "Core-only SCC is 127. Copilot-only SCC is 214. Combined SCC is 712 (127 + 214 != 712).",
+            "impactSummary": {
+              "metric": "Combined SCC Amplification",
+              "before": 341,
+              "after": 712,
+              "deltaPercent": -108.8
+            }
+          }
+        ],
+        "metrics": [
+          {
+            "key": "core_only_scc",
+            "value": 127,
+            "unit": "nodes"
+          },
+          {
+            "key": "copilot_only_scc",
+            "value": 214,
+            "unit": "nodes"
+          },
+          {
+            "key": "combined_scc",
+            "value": 712,
+            "unit": "nodes"
+          }
+        ]
+      },
+      {
+        "id": "validation-0j",
+        "version": "v1",
+        "title": "Phase 0J: Boundary Edge Attribution Study",
+        "domain": "boundary",
+        "methods": [
+          "inventory",
+          "ranking",
+          "ablation"
+        ],
+        "dataset": {
+          "id": "vscode-0.3.34",
+          "name": "VSCode",
+          "version": "0.3.34",
+          "fingerprint": "nodes:14176;edges:45000"
+        },
+        "evidenceSource": "mock",
+        "confidenceLevel": "low",
+        "replicationCount": 0,
+        "claims": [
+          {
+            "id": "claim-0j-obs-call",
+            "statement": "Boundary CALL edges account for 83.9% of boundary connectivity.",
+            "status": "observed",
+            "observation": "418 out of 498 total boundary edges are CALL."
+          },
+          {
+            "id": "claim-0j-sup-call",
+            "statement": "Removing boundary CALL edges reduces largest SCC from 712 to 305.",
+            "status": "supported",
+            "observation": "Significant fragmentation occurred, decoupling the Core and Copilot Execution SCCs.",
+            "impactSummary": {
+              "metric": "SCC Size",
+              "before": 712,
+              "after": 305,
+              "deltaPercent": 57.2
+            }
+          },
+          {
+            "id": "claim-0j-rej-reg",
+            "statement": "Removing boundary REGISTRATION edges did not materially reduce SCC size.",
+            "status": "rejected",
+            "observation": "Largest SCC remained at 712."
+          },
+          {
+            "id": "claim-0j-inc-meta",
+            "statement": "Boundary METADATA edges show mixed effects and require additional study.",
+            "status": "inconclusive",
+            "observation": "Removing METADATA edges caused a minor drop from 712 to 680, indicating a secondary coupling mechanism."
+          }
+        ],
+        "metrics": [],
+        "evidence": [
+          {
+            "type": "inventory",
+            "data": [
+              {
+                "layer": "CALL",
+                "count": 418
+              },
+              {
+                "layer": "METADATA",
+                "count": 62
+              },
+              {
+                "layer": "REGISTRATION",
+                "count": 11
+              },
+              {
+                "layer": "UNKNOWN",
+                "count": 7
+              }
+            ]
+          },
+          {
+            "type": "ranking",
+            "data": [
+              {
+                "provenance": "CALL",
+                "edgeCount": 418,
+                "participatingNodes": 780,
+                "participatingSccNodes": 603,
+                "participatingSccRatio": 0.8469101123595506
+              },
+              {
+                "provenance": "METADATA",
+                "edgeCount": 62,
+                "participatingNodes": 310,
+                "participatingSccNodes": 287,
+                "participatingSccRatio": 0.40308988764044945
+              },
+              {
+                "provenance": "REGISTRATION",
+                "edgeCount": 11,
+                "participatingNodes": 22,
+                "participatingSccNodes": 20,
+                "participatingSccRatio": 0.028089887640449437
+              },
+              {
+                "provenance": "UNKNOWN",
+                "edgeCount": 7,
+                "participatingNodes": 14,
+                "participatingSccNodes": 14,
+                "participatingSccRatio": 0.019662921348314606
+              }
+            ]
+          },
+          {
+            "type": "ablation",
+            "data": {
+              "CALL": {
+                "largestScc": 305,
+                "drop": 407
+              },
+              "METADATA": {
+                "largestScc": 680,
+                "drop": 32
+              },
+              "REGISTRATION": {
+                "largestScc": 712,
+                "drop": 0
+              },
+              "ALL_BOUNDARIES": {
+                "largestScc": 214,
+                "drop": 498
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": "validation-j2.5",
+        "version": "v1",
+        "title": "Phase 25.1 J2.5: Residual SCC Characterization",
+        "domain": "scc",
+        "methods": [
+          "inventory",
+          "comparison"
+        ],
+        "dataset": {
+          "id": "vscode-0.3.34",
+          "name": "VSCode",
+          "version": "0.3.34",
+          "fingerprint": "nodes:14176;edges:45000"
+        },
+        "evidenceSource": "mock",
+        "confidenceLevel": "low",
+        "replicationCount": 0,
+        "claims": [
+          {
+            "id": "claim-j2.5-obs-mixed",
+            "statement": "Residual SCC contains nodes from both ecosystems.",
+            "status": "observed",
+            "observation": "Residual SCC contains 248 VSCode nodes and 57 Copilot nodes."
+          },
+          {
+            "id": "claim-j2.5-obs-metadata",
+            "statement": "METADATA edges represent 61% of remaining boundary edges.",
+            "status": "observed",
+            "observation": "METADATA edges account for 81 out of 133 remaining boundary edges."
+          },
+          {
+            "id": "claim-j2.5-obs-remaining",
+            "statement": "Boundary edges remain after CALL ablation.",
+            "status": "observed",
+            "observation": "133 boundary edges remain connecting the components."
+          }
+        ],
+        "metrics": [],
+        "evidence": [
+          {
+            "type": "composition",
+            "data": {
+              "totalNodes": 305,
+              "domainBreakdown": [
+                {
+                  "domain": "VSCode Core",
+                  "count": 248
+                },
+                {
+                  "domain": "Copilot Extension",
+                  "count": 57
+                }
+              ]
+            }
+          },
+          {
+            "type": "distribution",
+            "data": {
+              "topClusters": [
+                {
+                  "cluster": "Core Engine",
+                  "nodes": 142
+                },
+                {
+                  "cluster": "Copilot Suggestions",
+                  "nodes": 45
+                },
+                {
+                  "cluster": "Editor UI",
+                  "nodes": 88
+                }
+              ],
+              "topDirectories": [
+                "src/vs/workbench/*",
+                "extensions/copilot/*"
+              ]
+            }
+          },
+          {
+            "type": "boundary_inventory",
+            "data": {
+              "remainingBoundaryEdges": 133,
+              "provenanceBreakdown": [
+                {
+                  "layer": "METADATA",
+                  "count": 81,
+                  "percentage": 61
+                },
+                {
+                  "layer": "REGISTRATION",
+                  "count": 22,
+                  "percentage": 16.5
+                },
+                {
+                  "layer": "UNKNOWN",
+                  "count": 30,
+                  "percentage": 22.5
+                }
+              ]
+            }
+          },
+          {
+            "type": "internal_edge_profile",
+            "data": {
+              "totalInternalEdges": 1651,
+              "provenanceBreakdown": [
+                {
+                  "layer": "CALL",
+                  "count": 421
+                },
+                {
+                  "layer": "METADATA",
+                  "count": 1187
+                },
+                {
+                  "layer": "STRUCTURE",
+                  "count": 0
+                },
+                {
+                  "layer": "REGISTRATION",
+                  "count": 32
+                },
+                {
+                  "layer": "UNKNOWN",
+                  "count": 11
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "id": "validation-j2.5b",
+        "version": "v1",
+        "title": "Phase 25.1 J2.5b: Residual SCC Directory Composition",
+        "domain": "scc",
+        "methods": [
+          "inventory"
+        ],
+        "dataset": {
+          "id": "vscode-0.3.34",
+          "name": "VSCode",
+          "version": "0.3.34",
+          "fingerprint": "nodes:14176;edges:45000"
+        },
+        "evidenceSource": "mock",
+        "confidenceLevel": "low",
+        "replicationCount": 0,
+        "claims": [
+          {
+            "id": "claim-j2.5b-obs-composition",
+            "statement": "The 305-node residual SCC spans core VSCode platform directories and Copilot extensions.",
+            "status": "observed",
+            "observation": "src/vs/platform and src/vs/workbench account for 208 Core nodes, while extensions/copilot accounts for 57 nodes."
+          }
+        ],
+        "metrics": [],
+        "evidence": [
+          {
+            "type": "directory_composition",
+            "data": [
+              {
+                "directory": "src/vs/platform/*",
+                "nodeCount": 120,
+                "boundaryEdgeCount": 45,
+                "internalEdgeCount": 380
+              },
+              {
+                "directory": "src/vs/workbench/*",
+                "nodeCount": 88,
+                "boundaryEdgeCount": 32,
+                "internalEdgeCount": 215
+              },
+              {
+                "directory": "src/vs/base/*",
+                "nodeCount": 40,
+                "boundaryEdgeCount": 21,
+                "internalEdgeCount": 94
+              },
+              {
+                "directory": "extensions/copilot/*",
+                "nodeCount": 57,
+                "boundaryEdgeCount": 35,
+                "internalEdgeCount": 102
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "validation-j2.6",
+        "version": "v1",
+        "title": "Phase 25.1 J2.6: Residual SCC Ablation",
+        "domain": "scc",
+        "methods": [
+          "ablation"
+        ],
+        "dataset": {
+          "id": "vscode-0.3.34",
+          "name": "VSCode",
+          "version": "0.3.34",
+          "fingerprint": "nodes:14176;edges:45000"
+        },
+        "evidenceSource": "mock",
+        "claims": [
+          {
+            "id": "claim-j2.6-obs-metadata-delta",
+            "statement": "Removing METADATA changed largest SCC from 305 to 41.",
+            "status": "observed",
+            "observation": "Ablating METADATA edges resulted in massive fragmentation of the 305-node residual SCC."
+          },
+          {
+            "id": "claim-j2.6-obs-copilot-absent",
+            "statement": "Copilot directories were largely absent from the resulting largest SCC.",
+            "status": "observed",
+            "observation": "extensions/copilot/* node count dropped from 57 to 1 in the largest SCC after METADATA ablation."
+          },
+          {
+            "id": "claim-j2.6-obs-fragmentation",
+            "statement": "Residual SCC fragmented into 17 components.",
+            "status": "observed",
+            "observation": "The original 305-node SCC split into 17 smaller disconnected components, with the largest being 41 nodes."
+          }
+        ],
+        "metrics": [],
+        "evidence": [
+          {
+            "type": "scc_size_delta",
+            "data": {
+              "baseline": 305,
+              "ablations": [
+                {
+                  "edgeType": "METADATA",
+                  "resultingLargestScc": 41
+                },
+                {
+                  "edgeType": "CALL",
+                  "resultingLargestScc": 297
+                },
+                {
+                  "edgeType": "REGISTRATION",
+                  "resultingLargestScc": 305
+                },
+                {
+                  "edgeType": "UNKNOWN",
+                  "resultingLargestScc": 302
+                }
+              ]
+            }
+          },
+          {
+            "type": "directory_transition_delta",
+            "data": {
+              "ablationTarget": "METADATA",
+              "transition": [
+                {
+                  "directory": "src/vs/platform/*",
+                  "before": 120,
+                  "after": 23,
+                  "retainedRatio": 0.19
+                },
+                {
+                  "directory": "src/vs/workbench/*",
+                  "before": 88,
+                  "after": 15,
+                  "retainedRatio": 0.17
+                },
+                {
+                  "directory": "extensions/copilot/*",
+                  "before": 57,
+                  "after": 1,
+                  "retainedRatio": 0.02
+                }
+              ]
+            }
+          },
+          {
+            "type": "component_split_profile",
+            "data": {
+              "ablatedEdge": "METADATA",
+              "originalScc": 305,
+              "resultingLargest": 41,
+              "componentCount": 17,
+              "topComponents": [
+                41,
+                38,
+                29,
+                23,
+                15,
+                12,
+                11
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "id": "validation-j2.6b",
+        "version": "v1",
+        "title": "Phase 25.1 J2.6b: Repeatability Validation",
+        "domain": "scc",
+        "methods": [
+          "ablation"
+        ],
+        "dataset": {
+          "id": "vscode-0.3.34",
+          "name": "VSCode",
+          "version": "0.3.34",
+          "fingerprint": "nodes:14176;edges:45000"
+        },
+        "evidenceSource": "mock",
+        "confidenceLevel": "medium",
+        "replicationCount": 100,
+        "claims": [
+          {
+            "id": "claim-j2.6b-obs-repeatability",
+            "statement": "Ablation of METADATA consistently results in a largest SCC of 41 across 100 runs.",
+            "status": "observed",
+            "observation": "The resulting largest SCC size exhibits 0 variance, confirming deterministic graph fragmentation."
+          }
+        ],
+        "metrics": [],
+        "evidence": [
+          {
+            "type": "repeatability_result",
+            "data": {
+              "runCount": 100,
+              "ablationTarget": "METADATA",
+              "meanLargestScc": 41,
+              "variance": 0,
+              "identicalOutcomeRate": 1,
+              "largestSccValues": [
+                41,
+                41,
+                41
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "id": "validation-j2.7",
+        "version": "v1",
+        "title": "Phase 25.1 J2.7: Candidate Retention Edge Discovery",
+        "domain": "scc",
+        "methods": [
+          "ranking",
+          "ablation"
+        ],
+        "dataset": {
+          "id": "vscode-0.3.34",
+          "name": "VSCode",
+          "version": "0.3.34",
+          "fingerprint": "nodes:14176;edges:45000"
+        },
+        "evidenceSource": "mock",
+        "confidenceLevel": "medium",
+        "replicationCount": 1,
+        "claims": [
+          {
+            "id": "claim-j2.7-obs-set-a",
+            "statement": "Removing edge set A produced SCC=38.",
+            "status": "observed",
+            "observation": "Ablating the top 3 ranked candidate edges resulted in a massive structural collapse from 305 to 38."
+          },
+          {
+            "id": "claim-j2.7-obs-provenance-dominance",
+            "statement": "3 out of the top 3 candidate edges were METADATA provenance.",
+            "status": "observed",
+            "observation": "The highest impact edges selected via betweenness and bridging criteria were predominantly METADATA edges."
+          }
+        ],
+        "metrics": [],
+        "evidence": [
+          {
+            "type": "candidate_ranking",
+            "data": {
+              "totalEvaluatedEdges": 133,
+              "topRankedEdges": [
+                {
+                  "edgeId": "E_MD_102",
+                  "rank": 1,
+                  "score": 0.98
+                },
+                {
+                  "edgeId": "E_MD_045",
+                  "rank": 2,
+                  "score": 0.91
+                },
+                {
+                  "edgeId": "E_MD_012",
+                  "rank": 3,
+                  "score": 0.88
+                },
+                {
+                  "edgeId": "E_CALL_09",
+                  "rank": 4,
+                  "score": 0.72
+                },
+                {
+                  "edgeId": "E_MD_111",
+                  "rank": 5,
+                  "score": 0.65
+                }
+              ]
+            }
+          },
+          {
+            "type": "retention_candidates",
+            "data": [
+              {
+                "edgeId": "E_MD_102",
+                "source": "src/vs/platform/registry.ts",
+                "target": "extensions/copilot/main.ts",
+                "provenance": "METADATA",
+                "deltaLargestScc": -112,
+                "selectionReason": "component_bridge"
+              },
+              {
+                "edgeId": "E_MD_045",
+                "source": "src/vs/workbench/api.ts",
+                "target": "extensions/copilot/worker.ts",
+                "provenance": "METADATA",
+                "deltaLargestScc": -85,
+                "selectionReason": "boundary_crossing"
+              },
+              {
+                "edgeId": "E_MD_012",
+                "source": "src/vs/base/common/event.ts",
+                "target": "extensions/copilot/events.ts",
+                "provenance": "METADATA",
+                "deltaLargestScc": -40,
+                "selectionReason": "high_betweenness"
+              }
+            ]
+          },
+          {
+            "type": "candidate_set_ablation",
+            "data": {
+              "baselineScc": 305,
+              "sets": [
+                {
+                  "setName": "Set A (Top 1-3)",
+                  "removedEdges": [
+                    "E_MD_102",
+                    "E_MD_045",
+                    "E_MD_012"
+                  ],
+                  "resultingLargestScc": 38
+                },
+                {
+                  "setName": "Set B (Rank 4-5)",
+                  "removedEdges": [
+                    "E_CALL_09",
+                    "E_MD_111"
+                  ],
+                  "resultingLargestScc": 288
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "id": "validation-j2.8",
+        "version": "v1",
+        "title": "Phase 25.1 J2.8: Claim Promotion / Validation",
+        "domain": "scc",
+        "methods": [
+          "comparison"
+        ],
+        "dataset": {
+          "id": "vscode-0.3.34",
+          "name": "VSCode",
+          "version": "0.3.34",
+          "fingerprint": "nodes:14176;edges:45000"
+        },
+        "evidenceSource": "mock",
+        "confidenceLevel": "high",
+        "replicationCount": 1,
+        "claims": [
+          {
+            "id": "claim-j2.8-supported-metadata-ablation",
+            "statement": "Removing METADATA fragments residual SCC",
+            "status": "supported",
+            "observation": "Ablation of METADATA edges consistently collapses the 305-node residual SCC into fragments (largest 41), isolating the Copilot directories.",
+            "datasetScope": "VSCode + Copilot",
+            "competingHypotheses": [
+              {
+                "hypothesis": "CALL edges maintain the SCC",
+                "status": "rejected"
+              },
+              {
+                "hypothesis": "REGISTRATION edges maintain the SCC",
+                "status": "rejected"
+              }
+            ],
+            "impactSummary": {
+              "metric": "SCC Size",
+              "before": 305,
+              "after": 41,
+              "deltaPercent": 86.6,
+              "affectedAreas": [
+                "extensions/copilot/*",
+                "src/vs/workbench/*"
+              ]
+            }
+          }
+        ],
+        "metrics": [],
+        "evidence": [
+          {
+            "type": "promotion_conditions",
+            "data": {
+              "repeatabilityMet": true,
+              "impactThresholdMet": true,
+              "directoryCompositionMatch": true,
+              "evidenceBased": true,
+              "alternativeHypothesesRejected": [
+                "CALL",
+                "REGISTRATION",
+                "UNKNOWN"
+              ],
+              "datasetScope": "VSCode + Copilot"
+            }
+          }
+        ]
+      }
+    ]
+  }
 }

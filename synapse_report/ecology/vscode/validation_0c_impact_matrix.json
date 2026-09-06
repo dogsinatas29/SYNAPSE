@@ -1,0 +1,140 @@
+{
+  "independentProfiles": {
+    "I0": {
+      "edgeCount": 22476,
+      "largestSccSize": 9,
+      "top10SccSum": 37,
+      "totalSccCount": 19,
+      "nodesInScc": 55,
+      "sccOccupancy": 0.0055634230224559985
+    },
+    "I1": {
+      "edgeCount": 39581,
+      "largestSccSize": 6,
+      "top10SccSum": 33,
+      "totalSccCount": 14,
+      "nodesInScc": 41,
+      "sccOccupancy": 0.00414727898037629
+    },
+    "I2": {
+      "edgeCount": 0,
+      "largestSccSize": 0,
+      "top10SccSum": 0,
+      "totalSccCount": 0,
+      "nodesInScc": 0,
+      "sccOccupancy": 0
+    },
+    "I3": {
+      "edgeCount": 1226,
+      "largestSccSize": 0,
+      "top10SccSum": 0,
+      "totalSccCount": 0,
+      "nodesInScc": 0,
+      "sccOccupancy": 0
+    },
+    "I4": {
+      "edgeCount": 26223,
+      "largestSccSize": 45,
+      "top10SccSum": 128,
+      "totalSccCount": 47,
+      "nodesInScc": 214,
+      "sccOccupancy": 0.021646773214646975
+    },
+    "I5": {
+      "edgeCount": 12819,
+      "largestSccSize": 2,
+      "top10SccSum": 2,
+      "totalSccCount": 1,
+      "nodesInScc": 2,
+      "sccOccupancy": 0.00020230629172567267
+    }
+  },
+  "cumulativeProfiles": {
+    "C1": {
+      "edgeCount": 39581,
+      "largestSccSize": 6,
+      "top10SccSum": 33,
+      "totalSccCount": 14,
+      "nodesInScc": 41,
+      "sccOccupancy": 0.00414727898037629
+    },
+    "C2": {
+      "edgeCount": 39581,
+      "largestSccSize": 6,
+      "top10SccSum": 33,
+      "totalSccCount": 14,
+      "nodesInScc": 41,
+      "sccOccupancy": 0.00414727898037629
+    },
+    "C3": {
+      "edgeCount": 40807,
+      "largestSccSize": 6,
+      "top10SccSum": 33,
+      "totalSccCount": 14,
+      "nodesInScc": 41,
+      "sccOccupancy": 0.00414727898037629
+    },
+    "C4": {
+      "edgeCount": 67030,
+      "largestSccSize": 1073,
+      "top10SccSum": 1135,
+      "totalSccCount": 50,
+      "nodesInScc": 1221,
+      "sccOccupancy": 0.12350799109852316
+    },
+    "C5": {
+      "edgeCount": 79849,
+      "largestSccSize": 1259,
+      "top10SccSum": 1329,
+      "totalSccCount": 53,
+      "nodesInScc": 1423,
+      "sccOccupancy": 0.1439409265628161
+    },
+    "BASE": {
+      "edgeCount": 102325,
+      "largestSccSize": 2699,
+      "top10SccSum": 2748,
+      "totalSccCount": 50,
+      "nodesInScc": 2832,
+      "sccOccupancy": 0.2864657090835525
+    }
+  },
+  "impactMatrix": {
+    "I0_UNKNOWN": {
+      "edgePercentage": 0.21958439579120137,
+      "largestSccContribution": 0.5335309373842164,
+      "sccCountContribution": -0.06,
+      "nodesInSccContribution": 0.4975282485875706
+    },
+    "I1_CALL": {
+      "edgePercentage": 0.3866955850601327,
+      "largestSccContribution": 0.5020377917747314,
+      "sccCountContribution": 0.24,
+      "nodesInSccContribution": 0.4812853107344633
+    },
+    "I2_CONTROL": {
+      "edgePercentage": 0,
+      "largestSccContribution": 0,
+      "sccCountContribution": 0,
+      "nodesInSccContribution": 0
+    },
+    "I3_REGISTRATION": {
+      "edgePercentage": 0.011977685942339068,
+      "largestSccContribution": 0.010744720266765468,
+      "sccCountContribution": 0.02,
+      "nodesInSccContribution": 0.010946327683615819
+    },
+    "I4_STRUCTURE": {
+      "edgePercentage": 0.25619156481725724,
+      "largestSccContribution": 0.6072619488699519,
+      "sccCountContribution": 0.32,
+      "nodesInSccContribution": 0.5826271186440678
+    },
+    "I5_METADATA": {
+      "edgePercentage": 0.12523813710835605,
+      "largestSccContribution": 0.07780659503519823,
+      "sccCountContribution": 0,
+      "nodesInSccContribution": 0.06497175141242938
+    }
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "criteriaCheck": {
+    "minSamplesMet": true,
+    "minSuccessMet": true,
+    "structUniformityMet": false,
+    "structVariance": 0.3380281690140845,
+    "regUniformityMet": false,
+    "regVariance": 0.3380281690140845,
+    "isV3Verified": false
+  },
+  "buckets": [
+    {
+      "name": "Bucket 1 (General)",
+      "total": 100,
+      "successCount": 79,
+      "successRate": 0.79,
+      "stats": {
+        "CALL": 0,
+        "CONTROL": 0,
+        "REGISTRATION": 0,
+        "STRUCTURE": 79,
+        "METADATA": 0,
+        "UNKNOWN": 21
+      },
+      "ratios": {
+        "CALL": 0,
+        "STRUCTURE": 1,
+        "REGISTRATION": 0
+      }
+    },
+    {
+      "name": "Bucket 2 (SCC Core)",
+      "total": 100,
+      "successCount": 71,
+      "successRate": 0.71,
+      "stats": {
+        "CALL": 0,
+        "CONTROL": 0,
+        "REGISTRATION": 24,
+        "STRUCTURE": 47,
+        "METADATA": 0,
+        "UNKNOWN": 29
+      },
+      "ratios": {
+        "CALL": 0,
+        "STRUCTURE": 0.6619718309859155,
+        "REGISTRATION": 0.3380281690140845
+      }
+    },
+    {
+      "name": "Bucket 3 (Hub Connection)",
+      "total": 100,
+      "successCount": 81,
+      "successRate": 0.81,
+      "stats": {
+        "CALL": 1,
+        "CONTROL": 0,
+        "REGISTRATION": 13,
+        "STRUCTURE": 67,
+        "METADATA": 0,
+        "UNKNOWN": 19
+      },
+      "ratios": {
+        "CALL": 0.012345679012345678,
+        "STRUCTURE": 0.8271604938271605,
+        "REGISTRATION": 0.16049382716049382
+      }
+    }
+  ]
+}

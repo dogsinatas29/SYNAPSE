@@ -1,4 +1,5 @@
-import { SimulationScenario, SimulationScenarioType } from '../scenario/SimulationScenario';
+import { SimulationScenario } from '../scenario/SimulationScenario';
+import { SimulationScenarioType } from '../scenario/SimulationScenarioType';
 import { SimulationSnapshot } from '../SimulationSnapshot';
 import { PropagationContext } from './PropagationContext';
 import { PropagationResult } from './PropagationResult';

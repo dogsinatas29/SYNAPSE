@@ -64,12 +64,38 @@ export class JavaScanner implements LanguageScanner {
             }
         }
         
+        // Java Function Calls
+        const stripped = content
+            .replace(/\/\*[\s\S]*?\*\//g, ' ')   // /* ... */ block comments
+            .replace(/\/\/[^\n]*/g, ' ')           // // line comments
+            .replace(/"(?:[^"\\]|\\.)*"/g, '""')  // string literals
+            .replace(/'(?:[^'\\]|\\.)*'/g, "''"); // char literals
+
+        const callRegex = /\b([a-zA-Z_$][\w$]*)\s*\(/g;
+        const javaKeywordIgnoreSet = new Set([
+            'if', 'for', 'while', 'switch', 'return', 'catch', 'super', 'this', 'synchronized', 'new', 'assert'
+        ]);
+
+        while ((match = callRegex.exec(stripped)) !== null) {
+            const funcName = match[1];
+            if (!javaKeywordIgnoreSet.has(funcName)) {
+                if (!summary.references.some(r => r.target === funcName && r.type === 'api_call')) {
+                    summary.references.push({ 
+                        target: funcName, 
+                        type: 'api_call',
+                        provenance: 'FUNCTION_CALL' as any 
+                    });
+                }
+            }
+        }
+
         console.error(
             '[JAVA_SCAN_RESULT]',
             {
                 references: summary.references.length,
                 implements: summary.references.filter(r => r.type === 'IMPLEMENTS').length,
-                extends: summary.references.filter(r => r.type === 'EXTENDS').length
+                extends: summary.references.filter(r => r.type === 'EXTENDS').length,
+                calls: summary.references.filter(r => r.provenance === 'FUNCTION_CALL' as any).length
             }
         );
     }

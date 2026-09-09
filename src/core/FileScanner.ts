@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { Logger } from '../utils/Logger';
 import { ScannerRegistry } from './ScannerRegistry';
-import { CodeSummary, EdgeProvenance } from '../types/schema';
+import { CodeSummary, EdgeProvenance, ParseStatus, ParseCoverage } from '../types/schema';
 
 export { CodeSummary };
 
@@ -67,17 +67,25 @@ export class FileScanner {
                 functions: [],
                 references: [],
                 hasAtomicSignature: false,
-                hasImportSignature: false
+                hasImportSignature: false,
+                parseStatus: ParseStatus.FULL
             };
 
             const ext = path.extname(filePath).toLowerCase();
             const isLargeFile = stats.size > FileScanner.MAX_FULL_SCAN_BYTES;
             const headerBytes = this.getHeaderScanBytes(ext);
+            
+            const totalBytes = stats.size;
+            let bytesRead = totalBytes;
+
             const content = isLargeFile
                 ? this.readFileHeaderUtf8(filePath, headerBytes)
                 : fs.readFileSync(filePath, 'utf-8');
 
             if (isLargeFile) {
+                bytesRead = headerBytes;
+                summary.parseStatus = ParseStatus.TRUNCATED;
+                summary.parseReason = 'FILE_TOO_LARGE';
                 console.warn(
                     `[SYNAPSE] Large file header scan: ${filePath} (${Math.round(stats.size / 1024)} KB, head=${Math.round(headerBytes / 1024)} KB, ext=${ext || 'unknown'})`
                 );
@@ -112,7 +120,7 @@ export class FileScanner {
             }
 
             // [v0.3.32.4] Delegate to ScannerRegistry for language-specific parsing
-            const delegated = ScannerRegistry.getInstance().scan(ext, content, summary);
+            const delegated = ScannerRegistry.getInstance().scan(ext, content, summary, filePath);
             
             // Fallback to built-in parsers if no scanner handled it
             if (!delegated) {
@@ -121,7 +129,7 @@ export class FileScanner {
                 } else if (['.ts', '.js'].includes(ext)) {
                     this.parseJavaScript(content, summary);
                 } else if (['.cpp', '.h', '.c', '.hpp', '.cc'].includes(ext)) {
-                    this.parseCpp(content, summary);
+                    this.parseCpp(content, summary, ext);
                 } else if (ext === '.rs') {
                     this.parseRust(content, summary);
                 } else if (ext === '.sh') {
@@ -165,13 +173,39 @@ export class FileScanner {
                 return true;
             });
 
+            // ParseCoverage 산출
+            const functionsCount = summary.functions.length;
+            const classesCount = summary.classes.length;
+            const referencesCount = summary.references.length;
+            
+            const callsCount = summary.references.filter(r => r.provenance === EdgeProvenance.FUNCTION_CALL || r.provenance === 'FUNCTION_CALL' as any).length;
+            const importsCount = summary.references.filter(r => r.type === 'dependency').length;
+            const includesCount = summary.references.filter(r => r.provenance === EdgeProvenance.INCLUDE_DIRECTIVE).length;
+
+            summary.parseCoverage = {
+                bytesRead,
+                totalBytes,
+                coverageRatio: totalBytes > 0 ? (bytesRead / totalBytes) : 1.0,
+                evidenceCounts: {
+                    functions: functionsCount,
+                    calls: callsCount,
+                    imports: importsCount,
+                    includes: includesCount,
+                    types: classesCount
+                }
+            };
+
             // 캐시 저장
             FileScanner.cache.set(filePath, { summary, mtime });
             return summary;
 
-        } catch (error) {
+        } catch (error: any) {
             console.error(`[SYNAPSE] Failed to scan file ${filePath}:`, error);
-            return { classes: [], functions: [], references: [] };
+            return { 
+                classes: [], functions: [], references: [],
+                parseStatus: ParseStatus.ERROR,
+                parseReason: error.message || String(error)
+            };
         }
     }
 
@@ -438,7 +472,7 @@ export class FileScanner {
         }
     }
 
-    private parseCpp(content: string, summary: CodeSummary) {
+    private parseCpp(content: string, summary: CodeSummary, ext: string = '') {
         // C++ 클래스 및 구조체
         const classRegex = /(?:class|struct)\s+([a-zA-Z0-9_:]+)[\s{:]/gm;
         let match;

@@ -1,10 +1,17 @@
 import * as crypto from 'crypto';
 import { Edge, EdgeType } from './GraphModel';
+import { EdgeProvenance } from '../types/schema';
 import { ExpandedReference } from './GhostExpander';
 
 export interface EdgeBuilderResult {
     edges: Edge[];
     edgeTypeCount: Map<string, number>;
+    stats: {
+        totalEdgesGenerated: number;
+        totalEdgesStored: number;
+        droppedEdges: number;
+        edgeCapTriggered: boolean;
+    };
 }
 
 export class EdgeBuilder {
@@ -73,7 +80,74 @@ export class EdgeBuilder {
             'unique=', edges.length
         );
 
+        // [P-2 Observation Integrity] Audit Edge Distribution Before Cap
+        const preCapCounts = new Map<string, number>();
+        const preCapProvenance = new Map<string, number>();
+        const verifiedCallsFreq = new Map<string, number>();
+        const macroCallsFreq = new Map<string, number>();
+        const dslCallsFreq = new Map<string, number>();
+
+        for (const e of edges) {
+            preCapCounts.set(e.type, (preCapCounts.get(e.type) || 0) + 1);
+            const prov = e.provenance || 'UNKNOWN_RUNTIME';
+            preCapProvenance.set(prov as string, (preCapProvenance.get(prov as string) || 0) + 1);
+
+            if (e.data?.originalTarget) {
+                if (prov === 'VERIFIED_FUNCTION_CALL') {
+                    verifiedCallsFreq.set(e.data.originalTarget, (verifiedCallsFreq.get(e.data.originalTarget) || 0) + e.weight);
+                } else if (prov === 'MACRO_CALL') {
+                    macroCallsFreq.set(e.data.originalTarget, (macroCallsFreq.get(e.data.originalTarget) || 0) + e.weight);
+                } else if (prov === 'DSL_CALL') {
+                    dslCallsFreq.set(e.data.originalTarget, (dslCallsFreq.get(e.data.originalTarget) || 0) + e.weight);
+                }
+            }
+        }
+        
+        console.log('[EDGE_AUDIT_BEFORE_CAP]', Object.fromEntries(preCapCounts));
+        console.log('[EDGE_AUDIT_AFTER_CLASSIFICATION]', Object.fromEntries(preCapProvenance));
+
+        // [P-4.0] Ponytail Data Shape Measurement
+        const sortedVerified = Array.from(verifiedCallsFreq.entries()).sort((a, b) => b[1] - a[1]);
+        const uniqueTargets = sortedVerified.length;
+        
+        let totalVerifiedCalls = 0;
+        for (const [_, freq] of sortedVerified) totalVerifiedCalls += freq;
+        
+        const getSum = (n: number) => sortedVerified.slice(0, n).reduce((sum, [_, freq]) => sum + freq, 0);
+        
+        const top10Sum = getSum(10);
+        const top50Sum = getSum(50);
+        const top100Sum = getSum(100);
+        const top500Sum = getSum(500);
+        const top1000Sum = getSum(1000);
+        
+        const formatPct = (sum: number) => totalVerifiedCalls > 0 ? ((sum / totalVerifiedCalls) * 100).toFixed(2) : '0.00';
+
+        const uniqueVerifiedEdges = edges.filter(e => e.provenance === 'VERIFIED_FUNCTION_CALL' || e.provenance === EdgeProvenance.FUNCTION_CALL).length;
+        
+        const logMessage = `
+================== [P-4.0 DATA SHAPE MEASUREMENT] ==================
+Total VERIFIED_FUNCTION_CALL raw events (Sum of Weights): ${totalVerifiedCalls}
+Unique VERIFIED_FUNCTION_CALL edges (Caller -> Callee): ${uniqueVerifiedEdges}
+Unique Target Count (Callees): ${uniqueTargets}
+Top 10 Coverage (Events): ${formatPct(top10Sum)}% (${top10Sum})
+Top 50 Coverage (Events): ${formatPct(top50Sum)}% (${top50Sum})
+Top 100 Coverage (Events): ${formatPct(top100Sum)}% (${top100Sum})
+Top 500 Coverage (Events): ${formatPct(top500Sum)}% (${top500Sum})
+Top 1000 Coverage (Events): ${formatPct(top1000Sum)}% (${top1000Sum})
+Remaining event calls after removing Top 1000: ${totalVerifiedCalls - top1000Sum}
+====================================================================
+`;
+        console.log(logMessage);
+        
         // [v0.3.34.40] Ponytail Solution: Cap edges to prevent JSON/WebGL OOM
+        const stats = {
+            totalEdgesGenerated: edges.length,
+            totalEdgesStored: edges.length,
+            droppedEdges: 0,
+            edgeCapTriggered: false
+        };
+
         // Architecture primarily needs INCLUDE, and the most frequent CALLs.
         if (edges.length > 150000) {
             edges.sort((a, b) => {
@@ -89,7 +163,7 @@ export class EdgeBuilder {
             '[EDGE_BUILDER_OUTPUT]',
             Object.fromEntries(edgeTypeCount)
         );
-        return { edges, edgeTypeCount };
+        return { edges, edgeTypeCount, stats };
     }
 
     private static mapEdgeType(rawType: string): any {

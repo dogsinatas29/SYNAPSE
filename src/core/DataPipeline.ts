@@ -52,6 +52,12 @@ export interface PipelineResult {
       unresolved: number;
   };
   edgeTypeDistribution?: Record<string, number>;
+  edgeStats?: {
+      totalEdgesGenerated: number;
+      totalEdgesStored: number;
+      droppedEdges: number;
+      edgeCapTriggered: boolean;
+  };
 }
 
 export class DataPipeline {
@@ -104,11 +110,63 @@ export class DataPipeline {
             onProgress(`Analyzing ${i + 1} / ${totalFiles} files...`, percent);
         }
 
-        // [v0.3.33.1] Prevent Extension Host freezing by yielding to the event loop
+      // [v0.3.33.1] Prevent Extension Host freezing by yielding to the event loop
         if (i % 100 === 0) {
             await new Promise(resolve => setImmediate(resolve));
         }
       }
+
+      // --- HARVEST COVERAGE REPORT (P-2) ---
+      let totalParsedBytes = 0;
+      let totalSourceBytes = 0;
+      let fullCount = 0;
+      let truncatedCount = 0;
+      let skippedCount = 0;
+      let errorCount = 0;
+      const evidenceTotals = { functions: 0, calls: 0, imports: 0, includes: 0, types: 0 };
+
+      for (const s of summaries) {
+          const c = s.summary.parseCoverage;
+          if (c) {
+              totalParsedBytes += c.bytesRead;
+              totalSourceBytes += c.totalBytes;
+              evidenceTotals.functions += c.evidenceCounts.functions;
+              evidenceTotals.calls += c.evidenceCounts.calls;
+              evidenceTotals.imports += c.evidenceCounts.imports;
+              evidenceTotals.includes += c.evidenceCounts.includes;
+              evidenceTotals.types += c.evidenceCounts.types;
+          }
+          const status = s.summary.parseStatus;
+          if (status === 'FULL') fullCount++;
+          else if (status === 'TRUNCATED') truncatedCount++;
+          else if (status === 'SKIPPED') skippedCount++;
+          else if (status === 'ERROR') errorCount++;
+      }
+
+      const coveragePercent = totalSourceBytes > 0 ? ((totalParsedBytes / totalSourceBytes) * 100).toFixed(1) : '100.0';
+      const evidenceSum = evidenceTotals.functions + evidenceTotals.calls + evidenceTotals.imports + evidenceTotals.includes + evidenceTotals.types;
+      const observationConfidence = evidenceSum > 100000 ? 'HIGH' : evidenceSum > 10000 ? 'MEDIUM' : 'LOW';
+
+      console.log(`\n==================================================`);
+      console.log(`📊 HARVEST COVERAGE REPORT`);
+      console.log(`==================================================`);
+      console.log(`[Files] Total: ${totalFiles}`);
+      console.log(`  FULL:      ${fullCount.toLocaleString()}`);
+      console.log(`  TRUNCATED: ${truncatedCount.toLocaleString()}`);
+      console.log(`  SKIPPED:   ${skippedCount.toLocaleString()}`);
+      console.log(`  ERROR:     ${errorCount.toLocaleString()}`);
+      console.log(`\n[Bytes]`);
+      console.log(`  Total Source:  ${(totalSourceBytes / 1024 / 1024).toFixed(2)} MB`);
+      console.log(`  Parsed Source: ${(totalParsedBytes / 1024 / 1024).toFixed(2)} MB`);
+      console.log(`  Coverage:      ${coveragePercent}%`);
+      console.log(`\n[Evidence]`);
+      console.log(`  Functions: ${evidenceTotals.functions.toLocaleString()}`);
+      console.log(`  Calls:     ${evidenceTotals.calls.toLocaleString()}`);
+      console.log(`  Imports:   ${evidenceTotals.imports.toLocaleString()}`);
+      console.log(`  Includes:  ${evidenceTotals.includes.toLocaleString()}`);
+      console.log(`  Types:     ${evidenceTotals.types.toLocaleString()}`);
+      console.log(`\nObservation Confidence: ${observationConfidence}`);
+      console.log(`==================================================\n`);
 
       // --- PROVENANCE AUDIT: SCANNER ---
       const scannerProvStats: Record<string, number> = {};
@@ -145,19 +203,157 @@ export class DataPipeline {
         try { symbolIndex.initialize(path.basename(projectRoot), projectRoot); } catch {}
         const absoluteFiles = files.map(f => projectRoot ? (path.isAbsolute(f) ? f : path.join(projectRoot, f)) : f);
         symbolIndex.rebuildFromFiles(absoluteFiles);
+        // [P-3.7A.4] Suspicious Categorization Audit V3 (Def vs Dcl)
+        const funcFreq = new Map<string, { count: number, def: number, dcl: number }>();
+        const suspiciousFreq = new Map<string, { count: number, def: number, dcl: number }>();
+        
+        let catFunction = 0;
+        let catMacro = 0;
+        let catKeyword = 0;
+        let catAttribute = 0;
+        let catDsl = 0;
+
+        let totalDef = 0, defNormal = 0, defPrep = 0, defCompound = 0, defPtr = 0, defComment = 0, defAssign = 0, defCtrl = 0, defStor = 0, defType = 0;
+        let totalDcl = 0, dclNormal = 0, dclPrep = 0, dclCompound = 0, dclPtr = 0, dclComment = 0, dclAssign = 0, dclCtrl = 0, dclStor = 0, dclType = 0;
+        
+        const defNormalFreq = new Map<string, { count: number }>();
+        const defCompoundFreq = new Map<string, { count: number }>();
+
+        const keywords = new Set(['sizeof', 'typeof', 'alignof', 'offsetof', 'return', 'volatile', 'asm', 'new', 'delete']);
+        const attributes = new Set(['__aligned', '__packed', '__counted_by', '__must_check', '__init', '__exit', '__weak', '__always_inline', 'EXPORT_SYMBOL', 'EXPORT_SYMBOL_GPL']);
+        const macros = new Set(['container_of', 'min', 'max', 'clamp', 'min_t', 'max_t', 'BUG_ON', 'WARN_ON', 'likely', 'unlikely', 'IS_ERR', 'PTR_ERR']);
+        const dsls = new Set(['list_for_each_entry', 'list_for_each_entry_safe', 'hlist_for_each_entry']);
+
         for (const item of summaries) {
-          for (const fn of item.summary.functions) {
-            const fnName = typeof fn === 'string' ? fn : (fn as any).name || '';
+          for (let fn of item.summary.functions) {
+            let fnName = typeof fn === 'string' ? fn : (fn as any).name || '';
             const clsName = typeof fn === 'string' ? null : ((fn as any).className || null);
             const line = typeof fn === 'string' ? 0 : ((fn as any).line || 0);
-            if (fnName) symbolIndex.addFunction(item.filePath, fnName, clsName, line);
+
+            if (fnName) {
+                let isDef = false;
+                let isDcl = false;
+                
+                if (fnName.includes('|DEF_')) {
+                    isDef = true;
+                    totalDef++;
+                    if (fnName.endsWith('_PREP')) defPrep++;
+                    else if (fnName.endsWith('_COMPOUND')) {
+                        defCompound++;
+                        const cleanName = fnName.split('|')[0];
+                        if (!defCompoundFreq.has(cleanName)) defCompoundFreq.set(cleanName, { count: 0 });
+                        defCompoundFreq.get(cleanName)!.count++;
+                    }
+                    else if (fnName.endsWith('_PTR')) defPtr++;
+                    else if (fnName.endsWith('_COMMENT')) defComment++;
+                    else if (fnName.endsWith('_ASSIGN')) defAssign++;
+                    else if (fnName.endsWith('_CTRL')) defCtrl++;
+                    else if (fnName.endsWith('_STOR')) defStor++;
+                    else if (fnName.endsWith('_TYPE')) defType++;
+                    else {
+                        defNormal++;
+                        const cleanName = fnName.split('|')[0];
+                        if (!defNormalFreq.has(cleanName)) defNormalFreq.set(cleanName, { count: 0 });
+                        defNormalFreq.get(cleanName)!.count++;
+                    }
+                    fnName = fnName.split('|')[0];
+                } else if (fnName.includes('|DCL_')) {
+                    isDcl = true;
+                    totalDcl++;
+                    if (fnName.endsWith('_PREP')) dclPrep++;
+                    else if (fnName.endsWith('_COMPOUND')) dclCompound++;
+                    else if (fnName.endsWith('_PTR')) dclPtr++;
+                    else if (fnName.endsWith('_COMMENT')) dclComment++;
+                    else if (fnName.endsWith('_ASSIGN')) dclAssign++;
+                    else if (fnName.endsWith('_CTRL')) dclCtrl++;
+                    else if (fnName.endsWith('_STOR')) dclStor++;
+                    else if (fnName.endsWith('_TYPE')) dclType++;
+                    else dclNormal++;
+                    fnName = fnName.split('|')[0];
+                }
+
+                symbolIndex.addFunction(item.filePath, fnName, clsName, line);
+                
+                let isSuspicious = false;
+                if (keywords.has(fnName)) {
+                    catKeyword++;
+                    isSuspicious = true;
+                } else if (attributes.has(fnName) || fnName.startsWith('__')) {
+                    catAttribute++;
+                    isSuspicious = true;
+                } else if (macros.has(fnName) || fnName === fnName.toUpperCase()) {
+                    catMacro++;
+                    isSuspicious = true;
+                } else if (dsls.has(fnName) || fnName.startsWith('list_for_each')) {
+                    catDsl++;
+                    isSuspicious = true;
+                } else {
+                    catFunction++;
+                }
+
+                const targetMap = isSuspicious ? suspiciousFreq : funcFreq;
+                const stats = targetMap.get(fnName) || { count: 0, def: 0, dcl: 0 };
+                stats.count++;
+                if (isDef) stats.def++;
+                if (isDcl) stats.dcl++;
+                targetMap.set(fnName, stats);
+            }
           }
-        }
-        for (const item of summaries) {
           for (const cls of item.summary.classes) {
             if (cls) symbolIndex.addSymbol(item.filePath, cls);
           }
         }
+
+        // Output Audit Logs
+        const top100Funcs = Array.from(funcFreq.entries()).sort((a, b) => b[1].count - a[1].count).slice(0, 100);
+        const top100Suspicious = Array.from(suspiciousFreq.entries()).sort((a, b) => b[1].count - a[1].count).slice(0, 100);
+
+        const auditLogMessage = `
+================== [SCANNER_AUDIT_SUMMARY_V5] ==================
+Total Extracted 'Functions': ${catFunction + catMacro + catKeyword + catAttribute + catDsl}
+Unique Names: ${funcFreq.size + suspiciousFreq.size}
+----------------------------------------------------------------
+DEF_TOTAL: ${totalDef}
+  DEF_NORMAL:    ${defNormal}
+  DEF_COMPOUND:  ${defCompound}
+  DEF_CTRL:      ${defCtrl}
+  DEF_STOR:      ${defStor}
+  DEF_TYPE:      ${defType}
+  DEF_PREP:      ${defPrep}
+  DEF_PTR:       ${defPtr}
+  DEF_COMMENT:   ${defComment}
+  DEF_ASSIGN:    ${defAssign}
+----------------------------------------------------------------
+DCL_TOTAL: ${totalDcl}
+  DCL_NORMAL:    ${dclNormal}
+  DCL_COMPOUND:  ${dclCompound}
+  DCL_CTRL:      ${dclCtrl}
+  DCL_STOR:      ${dclStor}
+  DCL_TYPE:      ${dclType}
+  DCL_PREP:      ${dclPrep}
+  DCL_PTR:       ${dclPtr}
+  DCL_COMMENT:   ${dclComment}
+  DCL_ASSIGN:    ${dclAssign}
+================================================================
+
+================== [CPP_SCANNER_AUDIT_TOP_100_FUNCTIONS] ==================
+${top100Funcs.map((f, i) => `  ${i + 1}. ${f[0]} (Total: ${f[1].count} | DEF: ${f[1].def} | DCL: ${f[1].dcl})`).join('\n')}
+===========================================================================
+
+================== [CPP_SCANNER_AUDIT_TOP_100_DEF_NORMAL] =================
+${Array.from(defNormalFreq.entries()).sort((a, b) => b[1].count - a[1].count).slice(0, 100).map((f, i) => `  ${i + 1}. ${f[0]} (Count: ${f[1].count})`).join('\n')}
+===========================================================================
+
+================== [CPP_SCANNER_AUDIT_TOP_100_DEF_COMPOUND] ===============
+${Array.from(defCompoundFreq.entries()).sort((a, b) => b[1].count - a[1].count).slice(0, 100).map((f, i) => `  ${i + 1}. ${f[0]} (Count: ${f[1].count})`).join('\n')}
+===========================================================================
+
+================== [CPP_SCANNER_AUDIT_TOP_100_SUSPICIOUS] =================
+${top100Suspicious.slice(0, 100).map((x, i) => `  ${i+1}. ${x[0]} (Total: ${x[1].count} | DEF: ${x[1].def} | DCL: ${x[1].dcl})`).join('\n')}
+===========================================================================
+`;
+        console.log(auditLogMessage);
+
       }
 
       // DATA 수집 완료 -> Phase 전이
@@ -730,7 +926,8 @@ export class DataPipeline {
         ghostBreakdown: policyResult.ghostBreakdown, 
         externalBreakdown: policyResult.externalBreakdown,
         resolutionStats,
-        edgeTypeDistribution
+        edgeTypeDistribution,
+        edgeStats: edgeBuilderResult.stats
     };
   }
 

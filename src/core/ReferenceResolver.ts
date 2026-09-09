@@ -1,6 +1,7 @@
 import * as path from 'path';
 import { SymbolIndex } from './SymbolIndex';
 import { ReferenceWithSource } from './GhostPolicy';
+import { EdgeProvenance } from '../types/schema';
 
 export type ResolutionKind = 'direct' | 'basename' | 'symbol_index' | 'unresolved';
 
@@ -22,6 +23,17 @@ export class ReferenceResolver {
     ): ResolvedReference[] {
         const result: ResolvedReference[] = [];
         console.error('[REFERENCE_RESOLVER_ENTER] validReferences=', validReferences.length);
+        
+        // [P-4.0] Call Resolution Audit Metrics
+        const auditStats = {
+            totalFunctionCalls: 0,
+            resolvedBySymbolIndex: 0,
+            macroClassified: 0,
+            dslClassified: 0,
+            unresolved: 0,
+            dropped: 0
+        };
+        const resolvedSymbolsFreq = new Map<string, number>();
         
         // [v0.3.34] Optimize O(N*M) basename lookups to prevent Extension Host freezing
         const stemMap = new Map<string, string>();
@@ -62,6 +74,10 @@ export class ReferenceResolver {
                     if (resolvedPath) {
                         targetNodeId = resolvedPath;
                         resolutionKind = 'symbol_index';
+                        if (ref.provenance === 'FUNCTION_CALL' || ref.provenance === EdgeProvenance.FUNCTION_CALL) {
+                            auditStats.resolvedBySymbolIndex++;
+                            resolvedSymbolsFreq.set(originalTarget, (resolvedSymbolsFreq.get(originalTarget) || 0) + 1);
+                        }
                     }
                 }
             }
@@ -78,18 +94,45 @@ export class ReferenceResolver {
                 resolutionKind = 'unresolved';
             }
 
+            let finalProvenance = ref.provenance;
+
+            // [P-3.6] Call Classification Layer - Option B (Ponytail: Heuristic First)
+            if (ref.provenance === 'FUNCTION_CALL' || ref.provenance === EdgeProvenance.FUNCTION_CALL) {
+                auditStats.totalFunctionCalls++;
+                const name = originalTarget;
+                const garbageKeywords = new Set([
+                    'void', 'int', 'char', 'unsigned', 'long', 'short', 'struct', 'union', 'enum',
+                    'const', 'volatile', 'static', 'extern', 'inline', 'bool', 'size_t', 'ssize_t',
+                    'u8', 'u16', 'u32', 'u64', 's8', 's16', 's32', 's64', '__u8', '__u16', '__u32', '__u64',
+                    'defined', 'Copyright', 'c', 'C', 's', 'S', 'i', 'j', 'k', 'n', 'v', 'ptr', 'p'
+                ]);
+                const dslKeywords = [
+                    'list_for_each', 'container_of', 'guard', 'DEFINE_', 'DECLARE_',
+                    'FOR_EACH', 'for_each', 'offsetof'
+                ];
+
+                if (garbageKeywords.has(name) || name.length === 1) {
+                    // [P-3.6] Garbage Discard
+                    auditStats.dropped++;
+                    continue;
+                } else if (name === name.toUpperCase()) {
+                    finalProvenance = 'MACRO_CALL' as any;
+                    auditStats.macroClassified++;
+                } else if (dslKeywords.some(prefix => name.startsWith(prefix) || name.includes(prefix))) {
+                    finalProvenance = 'DSL_CALL' as any;
+                    auditStats.dslClassified++;
+                } else if (resolutionKind !== 'unresolved') {
+                    // Passed all heuristic filters AND exists in SymbolIndex (or basename)
+                    finalProvenance = 'VERIFIED_FUNCTION_CALL' as any;
+                } else {
+                    // Passed all heuristic filters but NOT in SymbolIndex
+                    finalProvenance = 'UNRESOLVED_CALL' as any;
+                    auditStats.unresolved++;
+                }
+            }
+
             if (resolutionKind === 'unresolved') {
                 // [PONTYAIL-FIX] Removed 3.2M console.log I/O bomb that caused 7-hour Linux scan
-                /*
-                console.log('[GHOST_CHECK]', {
-                    source: sourceFilePath,
-                    target: originalTarget,
-                    resolvedTarget: targetNodeId,
-                    exists: existingNodeIds.has(targetNodeId),
-                    // We don't have the role here easily, but the key question is existence
-                    isFramework: targetNodeId.includes('android.') || targetNodeId.includes('java.')
-                });
-                */
             }
 
             result.push({
@@ -99,11 +142,30 @@ export class ReferenceResolver {
                 originalTarget,
                 referenceType: ref.type,
                 fullPath: ref.fullPath,
-                provenance: ref.provenance
+                provenance: finalProvenance
             });
         }
 
-        console.error('[REFERENCE_RESOLVER]', result.length);
+        const top100Resolved = Array.from(resolvedSymbolsFreq.entries())
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 100);
+
+        const auditLog = `
+================== [CALL_RESOLUTION_AUDIT] ==================
+Total Function Call Candidates: ${auditStats.totalFunctionCalls}
+Resolved By SymbolIndex: ${auditStats.resolvedBySymbolIndex}
+Macro Classified: ${auditStats.macroClassified}
+DSL Classified: ${auditStats.dslClassified}
+Unresolved (No Symbol Match): ${auditStats.unresolved}
+Dropped (Garbage/1-letter): ${auditStats.dropped}
+-------------------------------------------------------------
+Top 10 Resolved Symbols (By Event Frequency):
+${top100Resolved.slice(0, 10).map((x, i) => `  ${i+1}. ${x[0]} (${x[1]})`).join('\n')}
+=============================================================
+`;
+        console.log(auditLog);
+
+        console.error('[REFERENCE_RESOLVER_COMPLETE] output=', result.length);
         return result;
     }
 }

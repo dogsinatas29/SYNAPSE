@@ -46,11 +46,35 @@ export enum EdgeProvenance {
     UNKNOWN_RUNTIME = 'UNKNOWN_RUNTIME',
     CONSTRUCTOR_CALL = 'CONSTRUCTOR_CALL',
     FUNCTION_CALL = 'FUNCTION_CALL',
+    VERIFIED_FUNCTION_CALL = 'VERIFIED_FUNCTION_CALL',
+    MACRO_CALL = 'MACRO_CALL',
+    DSL_CALL = 'DSL_CALL',
+    UNRESOLVED_CALL = 'UNRESOLVED_CALL',
     INHERITANCE = 'INHERITANCE',
     DECORATOR = 'DECORATOR',
     FRAMEWORK_REGISTRATION = 'FRAMEWORK_REGISTRATION',
     DYNAMIC_IMPORT = 'DYNAMIC_IMPORT',
     INCLUDE_DIRECTIVE = 'IncludeReference'
+}
+
+export enum ParseStatus {
+    FULL = 'FULL',
+    TRUNCATED = 'TRUNCATED',
+    ERROR = 'ERROR',
+    SKIPPED = 'SKIPPED'
+}
+
+export interface ParseCoverage {
+    bytesRead: number;
+    totalBytes: number;
+    coverageRatio: number;
+    evidenceCounts: {
+        functions: number;
+        calls: number;
+        imports: number;
+        includes: number;
+        types: number;
+    };
 }
 
 export interface BoundaryNode {
@@ -420,11 +444,14 @@ export interface CodeSummary {
     package?: string;
     hasAtomicSignature?: boolean;
     hasImportSignature?: boolean;
+    parseStatus?: ParseStatus;
+    parseReason?: string;
+    parseCoverage?: ParseCoverage;
 }
 
 export interface LanguageScanner {
     supportsExtension(ext: string): boolean;
-    parse(content: string, summary: CodeSummary): void;
+    parse(content: string, summary: CodeSummary, filePath?: string): void;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

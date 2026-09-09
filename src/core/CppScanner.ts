@@ -6,7 +6,7 @@ export class CppScanner implements LanguageScanner {
         return ['.cpp', '.h', '.c', '.hpp', '.cc'].includes(ext);
     }
 
-    parse(content: string, summary: CodeSummary): void {
+    parse(content: string, summary: CodeSummary, filePath?: string): void {
         // C++ 클래스 및 구조체
         const classRegex = /(?:class|struct)\s+([a-zA-Z0-9_:]+)[\s{:]/gm;
         let match;
@@ -18,16 +18,76 @@ export class CppScanner implements LanguageScanner {
         }
 
         // C/C++ 함수 (안전한 정규식으로 선언부 앞부분 추출 후 마지막 단어를 함수명으로 식별)
-        const funcRegex = /^[ \t]*([^()={};\n]+)\s*\([^)]*\)\s*(?:const)?\s*(?={|;)/gm;
+        const funcRegex = /^[ \t]*([^()={};\n]+)\s*\([^)]*\)\s*(?:const)?\s*({|;)/gm;
+        
+        // [P-3.7A.2] Suspicious Match Audit State
+        const suspiciousTokens = new Set(['container_of', 'sizeof', '__aligned', '__counted_by', 'volatile', 'min', 'max', 'unlikely', 'offsetof', 'sysfs_emit', 'dev_err_probe', 'readl', 'sprintf']);
+        const suspiciousLogCount = new Map<string, number>();
+
         while ((match = funcRegex.exec(content)) !== null) {
             const prefix = match[1].trim();
-            const nameMatch = prefix.match(/([a-zA-Z_]\w*)$/);
+            const suffix = match[2]; // '{' or ';'
+
+            // [P-3.7A] "Call" vs "Definition" Disambiguation
+            const isSingleWord = /^[a-zA-Z_]\w*$/.test(prefix);
+            if (isSingleWord) {
+                continue;
+            }
+
+            // [P-3.7A.3] Statement Rejection Filter (Safe approach)
+            // Reject if the prefix contains keywords that prove it's a statement (return, goto, asm, etc.)
+            // or if it contains a closing brace '}' which usually means it's an attribute macro after a struct.
+            const prefixWords = prefix.split(/[\s*&~:]+/).filter(w => w.length > 0);
+            const forbiddenWords = new Set(['return', 'goto', 'asm', 'volatile', 'sizeof', 'typeof', 'alignof', 'offsetof', 'min', 'max', 'likely', 'unlikely', 'container_of', 'EXPORT_SYMBOL', 'EXPORT_SYMBOL_GPL']);
+            
+            if (prefixWords.some(w => forbiddenWords.has(w)) || prefix.includes('}')) {
+                continue;
+            }
+
+            const nameMatch = prefix.match(/([a-zA-Z_~]\w*)$/);
             if (nameMatch) {
                 const funcName = nameMatch[1];
-                if (!['if', 'while', 'for', 'switch', 'return', 'catch', 'template', 'using', 'static', 'explicit'].includes(funcName)) {
-                    if (!summary.functions.includes(funcName)) {
-                        summary.functions.push(funcName);
+                
+                // [P-3.7A.2] Log the exact prefix context for suspicious extractions (max 5 times per token)
+                const sampleTargets = new Set(['callback', 'invoke', 'from', 'name', 'func', 'f', 'drop', 'parse', 'deref', 'BPF_PROG', 'EM', 'CHAN2G', 'IS_ENABLED']);
+                if (suffix === '{' && sampleTargets.has(funcName)) {
+                    const count = suspiciousLogCount.get(funcName) || 0;
+                    if (count < 5) {
+                        suspiciousLogCount.set(funcName, count + 1);
+                        console.log(`\n[DEF_SAMPLE]\nName: ${funcName}\nPrefix:\n${prefix}\nRaw:\n${match[0]}\nFile: ${filePath}\n`);
                     }
+                }
+
+                // [P-3.7A.5] Append |DEF or |DCL with Category for audit
+                const ctrlKeys = new Set(['if', 'for', 'while', 'switch', 'do', 'return', 'sizeof', 'typeof', 'case', 'goto']);
+                const storKeys = new Set(['static', 'extern', 'inline']);
+                const typeKeys = new Set(['int', 'void', 'char', 'struct', 'union', 'enum', 'long', 'short', 'unsigned', 'signed', 'float', 'double']);
+                
+                let cat = 'NORMAL';
+                const fullMatch = match[0];
+                
+                if (ctrlKeys.has(funcName)) {
+                    cat = 'CTRL';
+                } else if (storKeys.has(funcName)) {
+                    cat = 'STOR';
+                } else if (typeKeys.has(funcName)) {
+                    cat = 'TYPE';
+                } else if (prefix.includes('#')) {
+                    cat = 'PREP';
+                } else if (fullMatch.includes('(struct ') || fullMatch.includes('(union ') || fullMatch.includes('){')) {
+                    cat = 'COMPOUND';
+                } else if (prefix.includes('/*') || prefix.includes('//') || prefix.trim().startsWith('*')) {
+                    cat = 'COMMENT';
+                } else if (prefix.includes('=')) {
+                    cat = 'ASSIGN';
+                } else if (prefix.includes('->') || prefix.includes('.')) {
+                    cat = 'PTR';
+                }
+
+                const tag = `|${suffix === '{' ? 'DEF' : 'DCL'}_${cat}`;
+                const taggedName = funcName + tag;
+                if (!summary.functions.includes(taggedName)) {
+                    summary.functions.push(taggedName);
                 }
             }
         }
@@ -86,7 +146,11 @@ export class CppScanner implements LanguageScanner {
         const probe = content.length > 2048 ? content.slice(0, 2048) : content;
         const defineCount = (probe.match(/#define\s/g) || []).length;
         const lineCount = (probe.match(/\n/g) || []).length || 1;
-        const isDefineHeavy = (defineCount / lineCount) > 0.5; // 50%+ 줄이 #define
+        
+        let isDefineHeavy = false;
+        if (filePath && (filePath.endsWith('.h') || filePath.endsWith('.hpp'))) {
+            isDefineHeavy = (defineCount / lineCount) > 0.5; // 50%+ 줄이 #define
+        }
 
         if (!isDefineHeavy) {
         const stripped = content
@@ -141,6 +205,9 @@ export class CppScanner implements LanguageScanner {
                 }
             }
         }
+        } else {
+            summary.parseStatus = 'SKIPPED' as any;
+            summary.parseReason = 'DEFINE_HEAVY';
         } // end if (!isDefineHeavy)
     }
 }

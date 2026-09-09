@@ -32,10 +32,10 @@ export class ScannerRegistry {
         return this.scanners.find(s => s.supportsExtension(ext));
     }
 
-    public scan(ext: string, content: string, summary: CodeSummary): boolean {
+    public scan(ext: string, content: string, summary: CodeSummary, filePath?: string): boolean {
         const scanner = this.getScanner(ext);
         if (scanner) {
-            scanner.parse(content, summary);
+            scanner.parse(content, summary, filePath);
             return true;
         }
         return false;

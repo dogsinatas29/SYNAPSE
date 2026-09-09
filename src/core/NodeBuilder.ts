@@ -176,7 +176,10 @@ export function buildNodes(
                 continent_type: 'INTERNAL'
             },
             intelligence: {},
-            visual: { opacity: 1.0 }
+            visual: { opacity: 1.0 },
+            parseStatus: item.summary.parseStatus,
+            parseReason: item.summary.parseReason,
+            parseCoverage: item.summary.parseCoverage
         };
 
         nodes.push(newNode);

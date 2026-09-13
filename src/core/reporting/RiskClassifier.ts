@@ -36,7 +36,11 @@ export class RiskClassifier {
                         group.boundaryContext = {
                             id: boundary.id,
                             strength: strength,
-                            size: boundary.size
+                            size: boundary.size,
+                            internalEdges: (boundary as any).internalEdges,
+                            externalEdges: (boundary as any).externalEdges,
+                            inboundEdges: (boundary as any).inboundEdges,
+                            cohesion: (boundary as any).cohesion
                         };
 
                         if (process.env.SC_AUDIT) {
@@ -45,13 +49,12 @@ export class RiskClassifier {
 
                         if (strength === 'Strong' || strength === 'Moderate') {
                             isIntendedHub = true;
-                        } else {
-                            isUnknownHub = true;
                         }
                     } else {
                         if (process.env.SC_AUDIT) {
                             console.log(`[SC_AUDIT] Classifier: ${group.id} => boundaryContext=NULL`);
                         }
+                        isUnknownHub = true;
                     }
                 }
 

@@ -173,7 +173,7 @@ export class ReportBundleGenerator {
         }
 
         if (message.command === 'fetchArchitectureReport') {
-            let archContent = archInsight.findings.length > 0 ? archInsight.findings.map(f => `### ${f.filePath}\n\n## Observation\n${f.observation}\n\n## Interpretation\n${f.interpretation}\n\n## Recommendation\n${f.recommendation}`).join('\n\n---\n\n') : 'No architectural findings in this scope.';
+            let archContent = archInsight.findings.length > 0 ? archInsight.findings.map(f => `### ${f.filePath}\n\n## Observation\n${f.observation}\n\n## Evidence\n${f.evidence || 'No specific evidence available.'}\n\n## Interpretation\n${f.interpretation}\n\n## Recommendation\n${f.recommendation}`).join('\n\n---\n\n') : 'No architectural findings in this scope.';
             
             const valEv: ValidationEvidence = simulationContext.validationEvidence;
             if (valEv && valEv.studies) {

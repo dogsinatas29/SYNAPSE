@@ -78,9 +78,14 @@ export class InsightEngine {
                 health = "CRITICAL (High Coupling Risk)";
                 const validFrontiers = partitioned.frontier.filter(c => c.sourceGroup.ownerCluster.includes('.'));
                 const topNode = validFrontiers.length > 0 ? validFrontiers[0].sourceGroup.ownerCluster : partitioned.frontier[0].sourceGroup.ownerCluster;
+                
+                const maxFanIn = Math.max(...partitioned.frontier.map(c => c.sourceGroup.boundaryContext?.inboundEdges || 0));
+                const maxBoundaryCrossings = Math.max(...partitioned.frontier.map(c => c.boundary || 0));
+                const maxScc = Math.max(...partitioned.frontier.map(c => c.cycle || 0));
+
                 frontierObservation = `${partitioned.frontier.length} structural bottlenecks detected. Core issue traced to: ${topNode}`;
                 action = `Immediate architectural decoupling required for ${partitioned.frontier.length} frontier nodes to prevent cascading failures.`;
-                whyItMatters = `Systemic risk detected. Centralized dependencies around '${topNode}' are eroding module boundaries and threatening maintainability and build times.`;
+                whyItMatters = `Systemic risk detected. Centralized dependencies around '${topNode}' are eroding module boundaries and threatening maintainability and build times.\n\n**근거 (Evidence):**\n- Frontier Nodes: ${partitioned.frontier.length}개\n- 최대 Fan-In: ${maxFanIn}\n- 최대 Boundary Crossing: ${maxBoundaryCrossings}\n- 최대 SCC Participation: ${maxScc}`;
                 sourceVal = "ParetoFrontier (non-dominated set)";
             }
         }
@@ -133,6 +138,7 @@ export class InsightEngine {
                 findings.push({
                     filePath: g.ownerCluster,
                     observation: `Classification: FRONTIER\nTopology Type: ${g.primaryRiskType}\nSubsystem: ${subsystemId || 'None / Unbounded'}\nBoundary Strength: ${g.boundaryContext?.strength || 'None'}\nCoupling: ${c.coupling}\nCycle Participation: ${c.cycle}\nBoundary Crossings: ${c.boundary}\nAuthority Reach: ${c.authority}`,
+                    evidence: `- Internal Edges: ${g.boundaryContext?.internalEdges !== undefined ? g.boundaryContext.internalEdges : 'N/A'}\n- External Edges: ${g.boundaryContext?.externalEdges !== undefined ? g.boundaryContext.externalEdges : 'N/A'}\n- Cohesion: ${g.boundaryContext?.cohesion !== undefined ? g.boundaryContext.cohesion.toFixed(3) : 'N/A'}\n- Fan-In: ${g.boundaryContext?.inboundEdges !== undefined ? g.boundaryContext.inboundEdges : 'N/A'}\n- Boundary Crossings: ${c.boundary}\n- Outbound Coupling: ${c.coupling}\n- SCC Participation: ${c.cycle}\n- Authority Reach: ${c.authority}`,
                     interpretation: subsystemId
                         ? `This node is located on the Pareto Frontier.\nThe node belongs to the '${subsystemId}' subsystem.\nIt remains non-dominated across all observed dimensions.`
                         : `This node is located on the Pareto Frontier.\nNo enclosing boundary was detected.`,
@@ -172,6 +178,7 @@ export class InsightEngine {
                 findings.push({
                     filePath: g.ownerCluster,
                     observation: `Classification: WATCH\nTopology Type: ${g.primaryRiskType}\nSubsystem: ${subsystemId || 'Unknown'}\nBoundary Strength: ${g.boundaryContext?.strength || 'Weak'}\nCoupling: ${couplingVal}`,
+                    evidence: `- Internal Edges: ${g.boundaryContext?.internalEdges !== undefined ? g.boundaryContext.internalEdges : 'N/A'}\n- External Edges: ${g.boundaryContext?.externalEdges !== undefined ? g.boundaryContext.externalEdges : 'N/A'}\n- Cohesion: ${g.boundaryContext?.cohesion !== undefined ? g.boundaryContext.cohesion.toFixed(3) : 'N/A'}\n- Fan-In: ${g.boundaryContext?.inboundEdges !== undefined ? g.boundaryContext.inboundEdges : 'N/A'}\n- Boundary Crossings: ${w.boundary}\n- Outbound Coupling: ${couplingVal}`,
                     interpretation: interpretationText,
                     recommendation: `Review subsystem isolation and external coupling.`
                 });
@@ -204,6 +211,7 @@ export class InsightEngine {
                 findings.push({
                     filePath: g.ownerCluster,
                     observation: `Classification: INTENDED\nTopology Type: ${g.primaryRiskType}\nSubsystem: ${subsystemId || 'Unknown'}\nBoundary Strength: ${g.boundaryContext?.strength || 'Strong'}\nCoupling: ${couplingVal}`,
+                    evidence: `- Internal Edges: ${g.boundaryContext?.internalEdges !== undefined ? g.boundaryContext.internalEdges : 'N/A'}\n- External Edges: ${g.boundaryContext?.externalEdges !== undefined ? g.boundaryContext.externalEdges : 'N/A'}\n- Cohesion: ${g.boundaryContext?.cohesion !== undefined ? g.boundaryContext.cohesion.toFixed(3) : 'N/A'}\n- Fan-In: ${g.boundaryContext?.inboundEdges !== undefined ? g.boundaryContext.inboundEdges : 'N/A'}\n- Outbound Coupling: ${couplingVal}`,
                     interpretation: interpretationText,
                     recommendation: `Monitor for Ownership/Authority violations.`
                 });
@@ -275,11 +283,10 @@ export class InsightEngine {
             Logger.info('[IMPACT_SCORE_TOP_20]', semanticBoundaryNodes.slice(0, 20));
             
             const semanticBoundaries = semanticBoundaryNodes.map((b: any) => b.targetId);
-            const semanticDependencies = findings.filter((f: any) => f.type === 'semantic' && f.evidenceType === 'CROSS_BOUNDARY_DEPENDENCY').map((f: any) => f.targetId);
+            const crossBoundaryDeps = findings.filter((f: any) => f.type === 'semantic' && f.evidenceType === 'CROSS_BOUNDARY_DEPENDENCY');
             
             const allImpacted = Array.from(new Set([
                 ...semanticBoundaries, 
-                ...semanticDependencies,
                 ...legacyBoundaryFiles, 
                 ...cycleFiles, 
                 ...fractureFiles
@@ -300,13 +307,29 @@ export class InsightEngine {
             immediateImpact = actualImpacted.slice(0, 5);
             if (immediateImpact.length === 0) immediateImpact = ['N/A'];
             
-            const subsystemCount = new Set(actualImpacted.map(f => String(f).split('/')[0])).size;
+            // Subsystem count is directly the number of impacted boundaries/components
+            const subsystemCount = actualImpacted.length;
+            
             secondaryImpact = [
                 `Cascading dependency failures propagating across ${subsystemCount} distinct subsystems.`,
                 `Root cause traced to highly-coupled structural hubs violating module boundaries.`
             ];
-            blastRadius = actualImpacted.length > 0 ? actualImpacted.length * 3 : 0;
             
+            // Blast Radius Calculation Fix (v0.3.34.46)
+            // Instead of summing up edge weights (which inflates the number to thousands),
+            // sum the actual unique file count (size) of the impacted boundaries.
+            let actualAffectedFiles = 0;
+            actualImpacted.forEach(impactedName => {
+                const node = semanticBoundaryNodes.find((b: any) => b.targetId === impactedName);
+                if (node && node.size) {
+                    actualAffectedFiles += node.size;
+                } else {
+                    actualAffectedFiles += 1; // Fallback for single files
+                }
+            });
+            
+            // Add a modest 10% cascade penalty, since cross-deps were removed from the raw sum.
+            blastRadius = Math.ceil(actualAffectedFiles * 1.1);            
         } else if (files.length > 0) {
             const consumers = files[0].consumers || [];
             immediateImpact = consumers.slice(0, 3);

@@ -28,6 +28,24 @@ export class OnboardingAnalyzer {
         return 0;
     }
 
+    private getPipelineRoleScore(filePath: string): number {
+        const lower = filePath.toLowerCase();
+        
+        // 1. Domain/Model (Heart of the app)
+        if (lower.includes('model') || lower.includes('domain') || lower.includes('entity')) return 400;
+        
+        // 2. Core Logic/Service
+        if (lower.includes('service') || lower.includes('manager') || lower.includes('engine') || lower.includes('core') || lower.includes('usecase')) return 300;
+        
+        // 3. Storage/Persistence
+        if (lower.includes('repository') || lower.includes('database') || lower.includes('storage') || lower.includes('dao')) return 200;
+        
+        // 4. UI/Presentation (Lowest priority for pipeline to avoid blackhole)
+        if (lower.includes('ui') || lower.includes('view') || lower.includes('activity') || lower.includes('fragment') || lower.includes('adapter') || lower.includes('action')) return -100;
+        
+        return 0;
+    }
+
     private calculateEntryPointScore(node: any): number {
         const fanIn = node.fanIn || 0;
         const fanOut = node.fanOut || 0;
@@ -132,8 +150,12 @@ export class OnboardingAnalyzer {
         
         // We will build a logical sequence from the top impact files
         if (topFiles.length > 0) {
-            // Sort top impact files by their centrality or external dependencies
-            const sortedImpact = [...topFiles].sort((a, b) => (b.externalEdges || 0) - (a.externalEdges || 0));
+            // Sort top impact files by structural role to enforce Entry -> Domain -> Logic -> Persistence -> UI
+            const sortedImpact = [...topFiles].sort((a, b) => {
+                const scoreA = this.getPipelineRoleScore(a.filePath || '') - ((a.externalEdges || 0) * 0.01);
+                const scoreB = this.getPipelineRoleScore(b.filePath || '') - ((b.externalEdges || 0) * 0.01);
+                return scoreB - scoreA;
+            });
             
             if (trueEntryPoint === 'N/A') {
                 trueEntryPoint = sortedImpact[0].filePath || 'N/A';

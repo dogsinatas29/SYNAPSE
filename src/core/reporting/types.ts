@@ -35,6 +35,10 @@ export interface ProblemGroup {
         id: string;
         strength: string;
         size: number;
+        internalEdges?: number;
+        externalEdges?: number;
+        inboundEdges?: number;
+        cohesion?: number;
     };
 }
 

@@ -1276,10 +1276,9 @@ export class CanvasPanel {
                 stat = await vscode.workspace.fs.stat(fileUri);
             } catch (err: any) {
                 if (createIfNotExists) {
-                    Logger.info(`[CanvasPanel] Creating missing file: ${filePath}`);
-                    await vscode.workspace.fs.writeFile(fileUri, Buffer.from('', 'utf8'));
-                    stat = await vscode.workspace.fs.stat(fileUri);
-                    vscode.window.showInformationMessage(`[SYNAPSE] File created: ${filePath}`);
+                    Logger.warn(`[CanvasPanel] Blocked attempt to create 0-byte file for: ${filePath}`);
+                    vscode.window.showErrorMessage(`[SYNAPSE] 존재하지 않는 외부 심볼/가상 노드입니다: ${filePath}`);
+                    return;
                 } else {
                     throw err;
                 }
@@ -1302,14 +1301,9 @@ export class CanvasPanel {
             await vscode.window.showTextDocument(doc);
         } catch (error) {
             if (createIfNotExists) {
-                 try {
-                    await vscode.workspace.fs.writeFile(fileUri, Buffer.from('', 'utf8'));
-                    const doc = await vscode.workspace.openTextDocument(fileUri);
-                    await vscode.window.showTextDocument(doc);
-                    return;
-                 } catch (e) {
-                    Logger.error(`Failed to create file: ${filePath}`, e);
-                 }
+                Logger.warn(`[CanvasPanel] Blocked fallback 0-byte file creation for: ${filePath}`);
+                vscode.window.showErrorMessage(`[SYNAPSE] 존재하지 않는 가상 파일입니다: ${filePath}`);
+                return;
             }
             Logger.error(`Failed to open/create file: ${filePath}`, error);
             vscode.window.showErrorMessage(`[SYNAPSE] 파일 열기 실패: ${filePath} (${error instanceof Error ? error.message : 'Unknown error'})`);

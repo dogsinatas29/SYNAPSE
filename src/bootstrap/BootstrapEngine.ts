@@ -186,6 +186,10 @@ export class BootstrapEngine {
 
             console.log(`[STATE_SAVE_START] Output path: ${statePath}`);
             console.log(`[STATE_SAVE] Nodes: ${nodes.length}, Edges: ${edges.length}`);
+            
+            // [LOGIC_REPORT_CHECK]
+            const logicReportNodes = nodes.filter(n => typeof n.id === 'string' && n.id.includes('LOGIC_REPORT'));
+            console.log(`[GRAPH_MODEL_CHECK] LOGIC_REPORT nodes before save:`, logicReportNodes.length > 0 ? logicReportNodes.map(n => n.id) : 'NONE');
 
             if (!fs.existsSync(stateDir)) {
                 fs.mkdirSync(stateDir, { recursive: true });
@@ -542,12 +546,17 @@ The **Documentation Shelf** of the Synapse canvas is a sacred storage area for m
 
                     stats[ext] = (stats[ext] || 0) + 1;
 
-                    // [v0.3.10] All MD files are now discoverable
-                    const isProtocol = fileName === 'rules.md' || fileName === 'gemini.md' || fileName === 'architecture.md' || fileName.includes('report');
+                    // [v0.3.34.44] Stop scanning AI reports to prevent Data-UI Loop (polluting ReferenceResolver)
+                    const isProtocol = fileName === 'rules.md' || fileName === 'gemini.md' || fileName === 'architecture.md';
 
                     if (isIgnoredFile(currentRelPath)) continue;
                     const scanExtensions = ['.ts', '.js', '.tsx', '.jsx', '.py', '.c', '.h', '.cpp', '.hpp', '.cc', '.rs', '.sh', '.sql', '.md', '.csv', '.yaml', '.yml', '.json', '.java', '.kt', '.kts', '.swift', '.go'];
                     if (scanExtensions.includes(ext) || isProtocol) {
+                        if (fileName.includes('logic_report') || fileName.includes('synapse')) {
+                            // [v0.3.34.45] 🚫 Block SYNAPSE generated data from being scanned as source
+                            console.log(`[BOOTSTRAP_PROTOCOL] 🚫 Blocked ${fileName} from scan pool! (path: ${currentRelPath})`);
+                            continue;
+                        }
                         fileList.push(currentRelPath);
                     }
                 }

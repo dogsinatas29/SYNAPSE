@@ -22,6 +22,7 @@ export class BoundaryAnalyzer implements ArchitectureAnalyzer {
         for (const node of result.nodes) {
             findings.push({
                 type: 'semantic',
+                category: 'ARCHITECTURE',
                 evidenceType: EvidenceType.BOUNDARY_NODE,
                 targetId: node.id,
                 message: `Boundary Node discovered: ${node.id} with ${node.size} members (Strength: ${node.strength})`,
@@ -41,6 +42,7 @@ export class BoundaryAnalyzer implements ArchitectureAnalyzer {
             for (const wrapperId of result.splitWrappers) {
                 findings.push({
                     type: 'semantic',
+                    category: 'ARCHITECTURE',
                     evidenceType: EvidenceType.WRAPPER_NODE,
                     targetId: wrapperId,
                     message: `Wrapper Node split: ${wrapperId}`,
@@ -53,6 +55,7 @@ export class BoundaryAnalyzer implements ArchitectureAnalyzer {
         for (const edge of result.edges) {
             findings.push({
                 type: 'semantic',
+                category: 'ARCHITECTURE',
                 evidenceType: EvidenceType.CROSS_BOUNDARY_DEPENDENCY,
                 targetId: edge.from, // Focus on source
                 message: `Cross Boundary Dependency: ${edge.from} -> ${edge.to} (${edge.dependencyCount} dependencies)`,
@@ -71,6 +74,7 @@ export class BoundaryAnalyzer implements ArchitectureAnalyzer {
                 if (candidate.result !== 'PROMOTED') {
                     findings.push({
                         type: 'semantic',
+                        category: 'DEBUG',
                         evidenceType: EvidenceType.REJECTED_CANDIDATE,
                         targetId: candidate.id,
                         message: `Rejected Boundary Candidate: ${candidate.id} (${candidate.result})`,

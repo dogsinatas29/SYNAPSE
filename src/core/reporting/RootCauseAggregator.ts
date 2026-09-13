@@ -19,12 +19,17 @@ export class RootCauseAggregator {
         const findingTypes = new Map<string, number>();
 
         for (const finding of findings) {
-            // Skip semantic metadata findings from grouping
-            if (finding.type === 'semantic') continue;
+            // Selectively pass ARCHITECTURE and STRUCTURE semantics
+            if (finding.type === 'semantic') {
+                const category = (finding as any).category;
+                if (category !== 'ARCHITECTURE' && category !== 'STRUCTURE') {
+                    continue;
+                }
+            }
 
             findingTypes.set(finding.type, (findingTypes.get(finding.type) || 0) + 1);
 
-            const rawId = finding.sourceId || finding.nodeId || (finding.nodeIds && finding.nodeIds[0]) || 'UNKNOWN';
+            const rawId = finding.sourceId || finding.nodeId || finding.targetId || (finding.nodeIds && finding.nodeIds[0]) || 'UNKNOWN';
             
             // Skip synthetic cluster aggregates
             if (rawId.startsWith('AGGREGATE_') || rawId.startsWith('SYSTEM_') || rawId === 'UNKNOWN') {
@@ -100,6 +105,10 @@ export class RootCauseAggregator {
             }
             if (finding.type === FindingType.EXCESSIVE_FAN_OUT || finding.type === 'necrosis' || finding.type === 'pressure') {
                 group.fanOut += 1;
+            }
+            if ((finding as any).evidenceType === 'CROSS_BOUNDARY_DEPENDENCY') {
+                const count = (finding as any).metadata?.dependencyCount || 1;
+                group.boundaryCrossings += count;
             }
             
             // Blast radius is ideally extracted from the finding's impact or pre-calculated metrics.

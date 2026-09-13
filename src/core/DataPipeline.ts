@@ -874,7 +874,9 @@ ${top100Suspicious.slice(0, 100).map((x, i) => `  ${i+1}. ${x[0]} (Total: ${x[1]
         const vscode = require('vscode');
         if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
             const rootPath = vscode.workspace.workspaceFolders[0].uri.fsPath;
-            fs.writeFileSync(path.join(rootPath, 'diagnostic_log.txt'), diagnosticOutput, 'utf8');
+            const reportDir = path.join(rootPath, 'synapse_report');
+            if (!fs.existsSync(reportDir)) fs.mkdirSync(reportDir, { recursive: true });
+            fs.writeFileSync(path.join(reportDir, 'diagnostic_log.txt'), diagnosticOutput, 'utf8');
         }
     } catch (e) {
         Logger.warn('Failed to write diagnostic_log.txt: ' + e);

@@ -1,4 +1,8 @@
 # Principles
+Node = file
+cluster = folder
+
+
 🚀 [LLM 코딩 원칙]
 LLM Coding Principles: 
 1. [Think Before Coding] 코딩 전 사고: 추측하지 마라. 요구사항이 모호하면 즉시 질문하고, 접근 방식과 트레이드오프(장단점)를 먼저 제시하라. 항상 가장 단순한 해결책부터 제안한다.

@@ -1,0 +1,7 @@
+--- RootCauseAggregator.ts
++++ RootCauseAggregator.ts
+@@ -20,6 +20,11 @@
+             // Skip semantic metadata findings
+-            if (finding.type === 'semantic') continue;
++            // We MUST NOT skip them entirely if we want boundaries to appear even without problems!
++            // But wait, I'm just verifying this right now.

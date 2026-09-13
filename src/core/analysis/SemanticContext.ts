@@ -57,13 +57,8 @@ export class SemanticContext {
             return boundary;
         }
 
-        // Fallback: prefix matching if node was not explicitly in members but falls under the boundary
-        // This handles cases where RootCauseAggregator compressed the path (e.g., src/vs/workbench)
         for (const [id, boundary] of this.boundaries.entries()) {
             if (nodeId === id || nodeId.startsWith(id + '/')) {
-                if (process.env.SC_AUDIT) {
-                    console.log(`[SC_AUDIT] SemanticContext: ${nodeId} => ${boundary.id} (prefix)`);
-                }
                 return boundary;
             }
         }

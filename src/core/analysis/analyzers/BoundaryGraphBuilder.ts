@@ -11,6 +11,14 @@ export interface BoundaryNode {
     size: number;      // members.length
     cohesion: number;  // internal / (internal + external)
     strength: string;  // 'Strong' | 'Weak' 등 텍스트 혹은 점수
+    metadata?: {
+        systemDeps: number;
+        unknownDeps: number;
+        projectExternalDeps: number;
+        projectIntegrity: number;
+        projectExternalUniqueDeps: number;
+        projectExternalTopTargets: Array<{ target: string, count: number }>;
+    };
 }
 
 export interface BoundaryEdge {
@@ -31,6 +39,14 @@ export interface BoundaryCandidateAudit {
     result: 'PROMOTED' | 'REJECT_SMALL' | 'REJECT_WEAK' | 'WRAPPER';
     memberFiles?: string[]; // v0.3.34.40: Track actual member files for audit
     depth?: number; // v0.3.34.40: Track candidate depth in prefix tree
+    metadata?: {
+        systemDeps: number;
+        unknownDeps: number;
+        projectExternalDeps: number;
+        projectIntegrity: number;
+        projectExternalUniqueDeps: number;
+        projectExternalTopTargets: Array<{ target: string, count: number }>;
+    };
 }
 
 export interface BoundaryResult {
@@ -43,9 +59,9 @@ export interface BoundaryResult {
 export class BoundaryGraphBuilder {
     private static readonly DEFAULT_DENSITY_THRESHOLD = 0.3;
     private static readonly DEFAULT_EXTERNAL_RATIO = 0.2;
-    // QUALITY FILTER: Increased minimums to avoid micro-boundaries (noise)
-    private static readonly MIN_BOUNDARY_MEMBERS = 20;
-    private static readonly MIN_INTERNAL_EDGES = 50;
+    // QUALITY FILTER: Reduced minimums to prevent slaughtering feature modules in low-cohesion projects
+    private static readonly MIN_BOUNDARY_MEMBERS = 5;
+    private static readonly MIN_INTERNAL_EDGES = 3;
     private static readonly MAX_BOUNDARY_SIZE = 1500;
 
     public build(nodes: Node[], edges: Edge[]): BoundaryResult {
@@ -61,6 +77,8 @@ export class BoundaryGraphBuilder {
         const queue: Candidate[] = [];
         const initialGroups = new Map<string, Node[]>();
         const splitWrappers: string[] = [];
+        const allNodeIds = new Set<string>(nodes.map(n => n.id));
+        const validStructuralNodeIds = new Set<string>();
         
         const diag = { 
             processed: 0, promoted: 0, split: 0, rejectedSmall: 0, rejectedWeak: 0,
@@ -85,6 +103,13 @@ export class BoundaryGraphBuilder {
                 }
                 diag.filteredSymbols++;
                 continue; 
+            }
+            
+            validStructuralNodeIds.add(node.id);
+            
+            // Phase 15.6: Dump node samples to verify if they are files, classes, or raw symbols
+            if (validStructuralNodeIds.size <= 50) {
+                Logger.info(`[NODE_SAMPLE] id=${node.id} | filePath=${node.filePath || 'UNDEFINED'} | type=${(node as any).type || (node.data as any)?.type || 'UNDEFINED'}`);
             }
 
             const parts = path.split(/[\/\\]/);
@@ -139,6 +164,14 @@ export class BoundaryGraphBuilder {
             let inboundEdges = 0;  // Inbound (Fan-In) - Used for Control Ranking
             const externalTargets = new Map<string, number>();
 
+            // P2 Instrumentation
+            let structuralExternalDeps = 0;
+            const structuralExternalTargets = new Map<string, number>();
+            let sdkDeps = 0;
+            const sdkTargets = new Map<string, number>();
+            let unknownDeps = 0;
+            const unknownTargets = new Map<string, number>();
+
             const memberIds = candidate.members.map(n => n.id);
             const memberSet = new Set(memberIds);
             
@@ -188,6 +221,25 @@ export class BoundaryGraphBuilder {
                         const targetParts = outEdge.to!.split(/[\/\\]/);
                         const targetPrefix = targetParts[0] === 'src' && targetParts.length > 1 ? `src/${targetParts[1]}` : targetParts[0];
                         externalTargets.set(targetPrefix, (externalTargets.get(targetPrefix) || 0) + 1);
+
+                        // P2 Dependency Classification
+                        if (validStructuralNodeIds.has(outEdge.to!)) {
+                            structuralExternalDeps++;
+                            structuralExternalTargets.set(outEdge.to!, (structuralExternalTargets.get(outEdge.to!) || 0) + 1);
+                        } else if (
+                            outEdge.to!.startsWith('java/') || 
+                            outEdge.to!.startsWith('javax/') || 
+                            outEdge.to!.startsWith('android/') || 
+                            outEdge.to!.startsWith('androidx/') || 
+                            outEdge.to!.startsWith('kotlin/') ||
+                            allNodeIds.has(outEdge.to!) // Originally projectExternalDeps, but not structural, likely framework method symbols
+                        ) {
+                            sdkDeps++;
+                            sdkTargets.set(outEdge.to!, (sdkTargets.get(outEdge.to!) || 0) + 1);
+                        } else {
+                            unknownDeps++;
+                            unknownTargets.set(outEdge.to!, (unknownTargets.get(outEdge.to!) || 0) + 1);
+                        }
                     }
                 }
                 
@@ -200,15 +252,85 @@ export class BoundaryGraphBuilder {
                 }
             }
 
-            const totalEdges = internalEdges + externalEdges;
-            const cohesion = totalEdges > 0 ? internalEdges / totalEdges : 0;
+            // Phase 15.2: Cohesion Formula Redesign
+            // 1. Reward structural depth by weighting crossSubfolderEdges
+            const adjustedInternal = internalEdges + crossSubfolderEdges;
+            
+            // Phase 15.3 & 15.5: Abstraction Level Tracking & File vs Symbol Split
+            const structuralExternalUniqueFolders = new Set<string>();
+            const structuralExternalUniqueClusters = new Set<string>();
+            const clusterCounts = new Map<string, number>();
+            let structuralExternalUniqueFileTargets = 0;
+            let structuralExternalUniqueSymbolTargets = 0;
+
+            // Calculate Folders and Clusters for external targets
+            for (const target of structuralExternalTargets.keys()) {
+                const isFile = target.endsWith('.java') || target.endsWith('.kt') || target.endsWith('.ts') || target.endsWith('.cpp') || target.includes('/') || target.includes('\\');
+                if (isFile) {
+                    structuralExternalUniqueFileTargets++;
+                } else {
+                    structuralExternalUniqueSymbolTargets++;
+                }
+
+                const parts = target.split(/[\/\\]/);
+                
+                // Folder heuristic (remove last segment which is usually file/class name)
+                if (parts.length > 1) {
+                    structuralExternalUniqueFolders.add(parts.slice(0, -1).join('/'));
+                } else {
+                    structuralExternalUniqueFolders.add(target);
+                }
+
+                // Cluster heuristic (reusing SYNAPSE logic to see if it matches architectural boundaries)
+                let clusterId = 'unknown';
+                if (parts.length >= 2 && parts[0] === 'app' && parts[1] === 'src') {
+                    // For Android typical structure, grab up to 6 depth (e.g. app/src/main/java/de/danoeh)
+                    // We'll use depth 7 to capture the actual module (e.g. app/src/main/java/de/danoeh/antennapod/storage)
+                    clusterId = parts.slice(0, Math.min(parts.length, 7)).join('/');
+                } else if (parts.length >= 1) {
+                    clusterId = parts[0];
+                }
+                
+                structuralExternalUniqueClusters.add(clusterId);
+                const targetWeight = structuralExternalTargets.get(target) || 1;
+                clusterCounts.set(clusterId, (clusterCounts.get(clusterId) || 0) + targetWeight);
+            }
+
+            const structuralExternalUniqueDeps = structuralExternalTargets.size;
+            const compressionRatio = structuralExternalUniqueClusters.size > 0 
+                ? structuralExternalUniqueDeps / structuralExternalUniqueClusters.size 
+                : 0;
+
+            const sdkUniqueDeps = sdkTargets.size;
+            const unknownUniqueDeps = unknownTargets.size;
+
+            const totalStructuralEdges = adjustedInternal + structuralExternalUniqueDeps;
+            const cohesion = totalStructuralEdges > 0 ? adjustedInternal / totalStructuralEdges : 0;
             const submoduleCouplingRatio = internalEdges > 0 ? crossSubfolderEdges / internalEdges : 0;
             
             let maxExternalTargetEdges = 0;
-            for (const count of externalTargets.values()) {
+            for (const count of structuralExternalTargets.values()) {
                 if (count > maxExternalTargetEdges) maxExternalTargetEdges = count;
             }
-            const targetConcentration = externalEdges > 0 ? maxExternalTargetEdges / externalEdges : 0;
+            const targetConcentration = structuralExternalDeps > 0 ? maxExternalTargetEdges / structuralExternalDeps : 0;
+
+            const projectIntegrity = (internalEdges + structuralExternalUniqueDeps) > 0 
+                ? internalEdges / (internalEdges + structuralExternalUniqueDeps)
+                : 0;
+
+            const structuralExternalTopTargets = Array.from(structuralExternalTargets.entries())
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 10)
+                .map(e => ({ target: e[0], count: e[1] }));
+
+            const auditMetadata = {
+                systemDeps: sdkDeps,
+                unknownDeps,
+                projectExternalDeps: structuralExternalDeps,
+                projectIntegrity: parseFloat(projectIntegrity.toFixed(3)),
+                projectExternalUniqueDeps: structuralExternalUniqueDeps,
+                projectExternalTopTargets: structuralExternalTopTargets
+            };
 
             let resultStatus = '';
 
@@ -222,12 +344,15 @@ export class BoundaryGraphBuilder {
             
             // P1: Leaf directories have no submodules, so they cannot be structural wrappers.
             const isStructuralWrapper = !isLeafDirectory && !isPassThrough && memberIds.length >= 50 && submoduleCouplingRatio < 0.20;
-            const isWrapper = !isLeafDirectory && !isPassThrough && (memberIds.length >= (nodes.length * 0.75) || isStructuralWrapper); 
+            const isWrapper = !isLeafDirectory && !isPassThrough && (memberIds.length >= (validStructuralNodeIds.size * 0.50) || isStructuralWrapper); 
             
             const isMassive = !isPassThrough && memberIds.length >= 100 && internalEdges >= 1000;
             // BOUNDARY QUALITY FILTER: Must meet minimum size/complexity to even be considered for promotion
             const meetsQualityFilter = memberIds.length >= BoundaryGraphBuilder.MIN_BOUNDARY_MEMBERS && internalEdges >= BoundaryGraphBuilder.MIN_INTERNAL_EDGES;
             const isPromoted = !isPassThrough && meetsQualityFilter && (cohesion >= 0.45 || (cohesion >= 0.2 && targetConcentration >= 0.5) || isMassive);
+
+            const wrapperReason = `isStructural=${isStructuralWrapper}(size>=50:${memberIds.length>=50}, coupling=${submoduleCouplingRatio.toFixed(3)}), size>50%:${memberIds.length >= (validStructuralNodeIds.size * 0.50)}`;
+            const promoteReason = `quality=${meetsQualityFilter}, cohesion=${cohesion.toFixed(3)}, target=${targetConcentration.toFixed(3)}, massive=${isMassive}`;
 
             if (isPassThrough) {
                 resultStatus = 'SPLIT';
@@ -235,22 +360,75 @@ export class BoundaryGraphBuilder {
             } else if (memberIds.length > BoundaryGraphBuilder.MAX_BOUNDARY_SIZE && !isLeafDirectory) {
                 resultStatus = 'SPLIT';
                 diag.split++;
-            } else if (isPromoted) {
-                // STRONG BOUNDARY STOP RULE: Stop splitting if it has high cohesion or massive structure
-                resultStatus = 'PROMOTED';
             } else if (isWrapper) {
                 resultStatus = 'SPLIT';
                 diag.split++;
+            } else if (isPromoted) {
+                // STRONG BOUNDARY STOP RULE: Stop splitting if it has high cohesion or massive structure
+                resultStatus = 'PROMOTED';
             } else if (memberIds.length < BoundaryGraphBuilder.MIN_BOUNDARY_MEMBERS || internalEdges < BoundaryGraphBuilder.MIN_INTERNAL_EDGES) {
                 resultStatus = 'REJECT_SMALL';
                 diag.rejectedSmall++;
             } else if (isLeafDirectory) {
                 // P1: Leaf directories (files only) cannot be SPLIT further.
-                resultStatus = 'REJECT_WEAK';
-                diag.rejectedWeak++;
+                // FALLBACK PROMOTION: If it meets the basic size/edge quality filter, promote it.
+                // Otherwise low-cohesion Android feature packages disappear entirely.
+                if (meetsQualityFilter) {
+                    resultStatus = 'PROMOTED';
+                } else {
+                    resultStatus = 'REJECT_WEAK';
+                    diag.rejectedWeak++;
+                }
             } else {
                 resultStatus = 'SPLIT';
             }
+
+            Logger.info(`[DEBUG_DECISION] path=${candidate.id} | size=${memberIds.length} | internalEdges=${internalEdges} | cohesion=${cohesion.toFixed(3)} | isWrapper=${isWrapper} [${wrapperReason}] | isPromoted=${isPromoted} [${promoteReason}] | resultStatus=${resultStatus}`);
+
+            // Phase 15.4: Dump Sample External Targets to identify abstraction mismatch (Symbol vs File)
+            if (candidate.id === 'app' || candidate.id === 'ui' || candidate.id === 'app/src/main/java/de/danoeh/antennapod') {
+                const sampleTargets = Array.from(structuralExternalTargets.entries())
+                    .sort((a, b) => b[1] - a[1])
+                    .slice(0, 100)
+                    .map(([k, v]) => `${k} (${v})`)
+                    .join('\n  ');
+                Logger.info(`\n[SAMPLE_EXTERNAL_TARGETS] path=${candidate.id}\n  ${sampleTargets}\n`);
+            }
+
+            const structuralExternalTopClusters = Array.from(clusterCounts.entries())
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 10)
+                .map(([k, v]) => `${k}=${v}`)
+                .join(', ');
+
+            
+
+            const cohesionNew = totalStructuralEdges > 0 ? adjustedInternal / totalStructuralEdges : 0;
+            
+            Logger.info(`\n[COHESION_FORMULA]
+path=${candidate.id}
+internalEdges=${internalEdges}
+crossSubfolderEdges=${crossSubfolderEdges}
+
+structuralExternalDeps=${structuralExternalDeps}
+structuralExternalUniqueTargets=${structuralExternalUniqueDeps}
+  └─ fileTargets=${structuralExternalUniqueFileTargets}
+  └─ symbolTargets=${structuralExternalUniqueSymbolTargets}
+structuralExternalUniqueFolders=${structuralExternalUniqueFolders.size}
+structuralExternalUniqueClusters=${structuralExternalUniqueClusters.size}
+realFileCompressionRatio=${compressionRatio.toFixed(1)}
+
+TopExternalClusters: ${structuralExternalTopClusters}
+
+sdkDeps=${sdkDeps}
+sdkUniqueDeps=${sdkUniqueDeps}
+
+unknownDeps=${unknownDeps}
+unknownUniqueDeps=${unknownUniqueDeps}
+
+numerator=${adjustedInternal}
+denominator=${totalStructuralEdges}
+final=${cohesionNew.toFixed(3)}\n`);
 
             // Record audit entry for this candidate
             let auditResult: BoundaryCandidateAudit['result'];
@@ -273,7 +451,8 @@ export class BoundaryGraphBuilder {
                 targetConcentration: parseFloat(targetConcentration.toFixed(3)),
                 result: auditResult,
                 memberFiles: memberIds.slice(0, 20), // v0.3.34.40: Track first 20 member files for audit
-                depth: candidate.id.split('/').length // v0.3.34.40: Track depth in prefix tree
+                depth: candidate.id.split('/').length, // v0.3.34.40: Track depth in prefix tree
+                metadata: auditMetadata
             });
 
             // v0.3.34.40: Dump candidate details for audit
@@ -318,11 +497,19 @@ export class BoundaryGraphBuilder {
             }));
 
             if (resultStatus === 'PROMOTED') {
-                const sizeFactor = Math.min(1, Math.log10(internalEdges + 1) / 3);
-                const strengthVal = cohesion * sizeFactor;
+                // Phase 19: Boundary Strength Logic Overhaul
+                // Removed brutal sizeFactor penalty that forced all small/medium modules to 'Weak'.
+                // High Fan-In (inboundEdges) acts as a direct floor for strength, as they are architectural foundations.
+                let strengthVal = cohesion;
+                if (memberIds.length < 5) strengthVal -= 0.15; // Penalty for tiny fragments
+                
                 let strengthText = 'Weak';
-                if (isMassive || strengthVal >= 0.8) strengthText = 'Strong';
-                else if (strengthVal >= 0.5) strengthText = 'Moderate';
+                
+                if (isMassive || strengthVal >= 0.75 || inboundEdges >= 100) {
+                    strengthText = 'Strong';
+                } else if (strengthVal >= 0.45 || inboundEdges >= 30) {
+                    strengthText = 'Moderate';
+                }
 
                 boundaryNodes.set(candidate.id, {
                     id: candidate.id,
@@ -332,7 +519,8 @@ export class BoundaryGraphBuilder {
                     inboundEdges,
                     size: memberIds.length,
                     cohesion,
-                    strength: strengthText
+                    strength: strengthText,
+                    metadata: auditMetadata
                 });
                 for (const id of memberIds) nodeToBoundary.set(id, candidate.id);
                 diag.promoted++;

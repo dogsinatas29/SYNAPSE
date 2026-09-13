@@ -41,6 +41,19 @@ export class GhostExpander {
             existingNodeCount: existingNodeIds.size
         });
         
+        // Phase 15.7: Dump Unresolved References for Root Cause Analysis
+        const unresolvedSamples: string[] = [];
+        let unresolvedTotalCount = 0;
+        for (const ref of resolvedReferences) {
+            if (ref.resolutionKind === 'unresolved') {
+                unresolvedTotalCount++;
+                if (unresolvedSamples.length < 100) {
+                    unresolvedSamples.push(`${ref.targetId} (type: ${ref.referenceType || 'unknown'})`);
+                }
+            }
+        }
+        console.error(`\n[UNRESOLVED_SAMPLE] Total Unresolved: ${unresolvedTotalCount}\n  ${unresolvedSamples.join('\n  ')}\n`);
+        
         const newClusterIds = new Set<string>();
         const newNodeIds = new Set<string>();
 

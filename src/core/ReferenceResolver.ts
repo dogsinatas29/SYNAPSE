@@ -24,6 +24,14 @@ export class ReferenceResolver {
         const result: ResolvedReference[] = [];
         console.error('[REFERENCE_RESOLVER_ENTER] validReferences=', validReferences.length);
         
+        // Phase 15.8: Dump ReferenceResolver Inputs for Root Cause Analysis
+        const inputSamples: string[] = [];
+        for (let i = 0; i < Math.min(100, validReferences.length); i++) {
+            const v = validReferences[i];
+            inputSamples.push(`source=${v.sourceFilePath} | target=${v.ref.target} | type=${v.ref.referenceType || (v.ref as any).provenance || 'unknown'}`);
+        }
+        console.error(`\n[REFERENCE_INPUT_SAMPLE] Total Inputs: ${validReferences.length}\n  ${inputSamples.join('\n  ')}\n`);
+        
         // [P-4.0] Call Resolution Audit Metrics
         const auditStats = {
             totalFunctionCalls: 0,

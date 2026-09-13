@@ -74,6 +74,7 @@ export interface SchemaFinding extends BaseFinding {
 
 export interface SemanticFinding extends BaseFinding {
     type: 'semantic';
+    category?: 'ARCHITECTURE' | 'STRUCTURE' | 'METADATA' | 'DEBUG' | 'PARSER';
     evidenceType: string; // e.g., 'BOUNDARY_NODE', 'CROSS_BOUNDARY_DEPENDENCY'
     targetId: string;
     metadata: any;

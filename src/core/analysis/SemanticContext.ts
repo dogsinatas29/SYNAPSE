@@ -29,8 +29,15 @@ export class SemanticContext {
                     const members = semanticFinding.metadata?.members || [];
                     const strength = semanticFinding.metadata?.strength || 'Unknown';
                     const size = semanticFinding.metadata?.size || members.length;
+                    const internalEdges = semanticFinding.metadata?.internalEdges;
+                    const externalEdges = semanticFinding.metadata?.externalEdges;
+                    const inboundEdges = semanticFinding.metadata?.inboundEdges;
+                    const cohesion = semanticFinding.metadata?.cohesion;
 
-                    this.boundaries.set(id, { id, members, strength, size });
+                    this.boundaries.set(id, { 
+                        id, members, strength, size, 
+                        internalEdges, externalEdges, inboundEdges, cohesion 
+                    } as any);
 
                     for (const member of members) {
                         this.nodeToBoundary.set(member, id);

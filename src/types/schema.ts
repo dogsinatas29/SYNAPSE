@@ -821,6 +821,7 @@ export interface ArchitectReportFinding {
     observation: string;
     interpretation: string;
     recommendation: string;
+    evidence?: string;
 }
 
 export interface ArchitectInsight {

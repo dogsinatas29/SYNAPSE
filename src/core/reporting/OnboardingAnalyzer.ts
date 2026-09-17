@@ -1,6 +1,7 @@
 import { ValidationContext } from '../validation/ValidationContext';
 import { SimulationContext } from '../../types/schema';
 import { OnboardingPath } from './types';
+import { EntryPointDetector } from '../analysis/patterns/detectors/EntryPointDetector';
 
 export class OnboardingAnalyzer {
     
@@ -80,45 +81,13 @@ export class OnboardingAnalyzer {
             return path;
         }
 
-        // 1. Detect True Entry Point
-        let candidates = (context.metrics.systemAssemblyPoints || []).filter(c => this.isRealFile(c.filePath || c.id || ''));
+        // 1. Detect True Entry Point using the isolated PatternDetector
+        const entryPointDetector = new EntryPointDetector();
+        const findings = entryPointDetector.detect(context, simContext);
         
         let trueEntryPoint = 'N/A';
-        
-        if (candidates.length > 0) {
-            // Sort by calculated score (descending)
-            candidates = candidates.sort((a, b) => this.calculateEntryPointScore(b) - this.calculateEntryPointScore(a));
-            trueEntryPoint = candidates[0].filePath || candidates[0].id || 'N/A';
-        }
-
-        // If Assembly Points missing, mine evidence for root-level nodes
-        if (trueEntryPoint === 'N/A' && simContext && simContext.evidenceBundle && simContext.evidenceBundle.findings) {
-             const findings = simContext.evidenceBundle.findings;
-             const possibleEntry = new Set<string>();
-             
-             // 1. Prioritize semantic boundaries
-             const semanticBoundaries = findings.filter((f: any) => f.type === 'semantic' && f.evidenceType === 'BOUNDARY_NODE').map((f: any) => f.targetId);
-             for (const b of semanticBoundaries) {
-                 if (b && this.isRealFile(b)) possibleEntry.add(b);
-             }
-             
-             // 2. Fallback to raw files
-             if (possibleEntry.size === 0) {
-                 for (const f of findings) {
-                     const src = f.sourceId || f.targetId || f.nodeId || '';
-                     if (src && this.isRealFile(src)) possibleEntry.add(src);
-                 }
-             }
-             
-             if (possibleEntry.size > 0) {
-                 // Sort using role score and depth (shallower is better, bonus/penalty applied)
-                 const sortedSrc = Array.from(possibleEntry).sort((a, b) => {
-                     const scoreA = this.getRoleScore(a) - (a.split('/').length * 10);
-                     const scoreB = this.getRoleScore(b) - (b.split('/').length * 10);
-                     return scoreB - scoreA;
-                 });
-                 trueEntryPoint = sortedSrc[0];
-             }
+        if (findings && findings.length > 0) {
+            trueEntryPoint = findings[0].targetId;
         }
         
         path.entryPoint = trueEntryPoint;

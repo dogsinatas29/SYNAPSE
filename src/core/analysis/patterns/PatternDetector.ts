@@ -5,6 +5,7 @@ export interface PatternFinding {
     patternId: string;
     targetId: string;
     confidence: number;
+    isCandidate?: boolean;
     evidence: Record<string, any>;
 }
 

@@ -1,0 +1,1113 @@
+{
+  "project": "SYNAPSE",
+  "candidateCount": 357,
+  "distribution": {
+    "count": 357,
+    "max": 1,
+    "p99": 0.43,
+    "p95": 0.2,
+    "p50": 0.05
+  },
+  "top100": [
+    {
+      "path": "src/types/schema.ts",
+      "confidence": 1,
+      "evidence": {
+        "fanIn": 110,
+        "fanOut": 0,
+        "blastRadius": 0,
+        "authorityReach": 1,
+        "controlScore": 1200
+      }
+    },
+    {
+      "path": "src/core/GraphModel.ts",
+      "confidence": 0.56,
+      "evidence": {
+        "fanIn": 57,
+        "fanOut": 3,
+        "blastRadius": 3,
+        "authorityReach": 1,
+        "controlScore": 676
+      }
+    },
+    {
+      "path": "src/core/analysis/types.ts",
+      "confidence": 0.43,
+      "evidence": {
+        "fanIn": 41,
+        "fanOut": 2,
+        "blastRadius": 6,
+        "authorityReach": 1,
+        "controlScore": 522
+      }
+    },
+    {
+      "path": "src/utils/Logger.ts",
+      "confidence": 0.43,
+      "evidence": {
+        "fanIn": 42,
+        "fanOut": 0,
+        "blastRadius": 0,
+        "authorityReach": 1,
+        "controlScore": 520
+      }
+    },
+    {
+      "path": "src/core/simulation/SimulationSnapshot.ts",
+      "confidence": 0.4,
+      "evidence": {
+        "fanIn": 37,
+        "fanOut": 3,
+        "blastRadius": 3,
+        "authorityReach": 1,
+        "controlScore": 476
+      }
+    },
+    {
+      "path": "src/core/reasoning/snapshot/ReasoningSnapshot.ts",
+      "confidence": 0.39,
+      "evidence": {
+        "fanIn": 36,
+        "fanOut": 1,
+        "blastRadius": 1,
+        "authorityReach": 1,
+        "controlScore": 462
+      }
+    },
+    {
+      "path": "crypto",
+      "confidence": 0.35,
+      "evidence": {
+        "fanIn": 32,
+        "fanOut": 0,
+        "blastRadius": 0,
+        "authorityReach": 1,
+        "controlScore": 420
+      }
+    },
+    {
+      "path": "src/core/simulation/state/SimulationState.ts",
+      "confidence": 0.35,
+      "evidence": {
+        "fanIn": 32,
+        "fanOut": 0,
+        "blastRadius": 0,
+        "authorityReach": 1,
+        "controlScore": 420
+      }
+    },
+    {
+      "path": "src/core/reasoning/rules/Rule.ts",
+      "confidence": 0.34,
+      "evidence": {
+        "fanIn": 30,
+        "fanOut": 1,
+        "blastRadius": 2,
+        "authorityReach": 1,
+        "controlScore": 404
+      }
+    },
+    {
+      "path": "src/core/validation/ValidationContext.ts",
+      "confidence": 0.3,
+      "evidence": {
+        "fanIn": 25,
+        "fanOut": 3,
+        "blastRadius": 4,
+        "authorityReach": 1,
+        "controlScore": 358
+      }
+    },
+    {
+      "path": "src/core/reasoning/evidence/Evidence.ts",
+      "confidence": 0.28,
+      "evidence": {
+        "fanIn": 24,
+        "fanOut": 0,
+        "blastRadius": 0,
+        "authorityReach": 1,
+        "controlScore": 340
+      }
+    },
+    {
+      "path": "src/core/ProjectMetadata.ts",
+      "confidence": 0.23,
+      "evidence": {
+        "fanIn": 17,
+        "fanOut": 2,
+        "blastRadius": 2,
+        "authorityReach": 1,
+        "controlScore": 274
+      }
+    },
+    {
+      "path": "src/core/reasoning/evidence/ArchitecturalEvidence.ts",
+      "confidence": 0.23,
+      "evidence": {
+        "fanIn": 18,
+        "fanOut": 0,
+        "blastRadius": 0,
+        "authorityReach": 1,
+        "controlScore": 280
+      }
+    },
+    {
+      "path": "src/core/simulation/scenario/SimulationScenario.ts",
+      "confidence": 0.22,
+      "evidence": {
+        "fanIn": 16,
+        "fanOut": 1,
+        "blastRadius": 1,
+        "authorityReach": 1,
+        "controlScore": 262
+      }
+    },
+    {
+      "path": "src/core/FileScanner.ts",
+      "confidence": 0.21,
+      "evidence": {
+        "fanIn": 15,
+        "fanOut": 4,
+        "blastRadius": 4,
+        "authorityReach": 1,
+        "controlScore": 258
+      }
+    },
+    {
+      "path": "src/core/RuleEngine.ts",
+      "confidence": 0.21,
+      "evidence": {
+        "fanIn": 15,
+        "fanOut": 0,
+        "blastRadius": 0,
+        "authorityReach": 1,
+        "controlScore": 250
+      }
+    },
+    {
+      "path": "src/core/simulation/scenario/SimulationScenarioType.ts",
+      "confidence": 0.21,
+      "evidence": {
+        "fanIn": 15,
+        "fanOut": 0,
+        "blastRadius": 0,
+        "authorityReach": 1,
+        "controlScore": 250
+      }
+    },
+    {
+      "path": "src/core/SymbolIndex.ts",
+      "confidence": 0.2,
+      "evidence": {
+        "fanIn": 14,
+        "fanOut": 2,
+        "blastRadius": 2,
+        "authorityReach": 1,
+        "controlScore": 244
+      }
+    },
+    {
+      "path": "src/core/simulation/state/SimulationTransition.ts",
+      "confidence": 0.19,
+      "evidence": {
+        "fanIn": 12,
+        "fanOut": 2,
+        "blastRadius": 3,
+        "authorityReach": 1,
+        "controlScore": 226
+      }
+    },
+    {
+      "path": "src/core/simulation/state/StateTransitionEngine.ts",
+      "confidence": 0.19,
+      "evidence": {
+        "fanIn": 11,
+        "fanOut": 5,
+        "blastRadius": 9,
+        "authorityReach": 1,
+        "controlScore": 228
+      }
+    },
+    {
+      "path": "src/core/ir/models/SemanticTypes.ts",
+      "confidence": 0.17,
+      "evidence": {
+        "fanIn": 11,
+        "fanOut": 0,
+        "blastRadius": 0,
+        "authorityReach": 1,
+        "controlScore": 210
+      }
+    },
+    {
+      "path": "src/core/PhaseManager.ts",
+      "confidence": 0.17,
+      "evidence": {
+        "fanIn": 10,
+        "fanOut": 0,
+        "blastRadius": 0,
+        "authorityReach": 1,
+        "controlScore": 200
+      }
+    },
+    {
+      "path": "src/core/simulation/propagation/SimulationRuleEngine.ts",
+      "confidence": 0.17,
+      "evidence": {
+        "fanIn": 9,
+        "fanOut": 9,
+        "blastRadius": 13,
+        "authorityReach": 0.9,
+        "controlScore": 206
+      }
+    },
+    {
+      "path": "src/core/simulation/scenario/RecoveryEventType.ts",
+      "confidence": 0.17,
+      "evidence": {
+        "fanIn": 10,
+        "fanOut": 0,
+        "blastRadius": 0,
+        "authorityReach": 1,
+        "controlScore": 200
+      }
+    },
+    {
+      "path": "src/extension.ts",
+      "confidence": 0.17,
+      "evidence": {
+        "fanIn": 3,
+        "fanOut": 22,
+        "blastRadius": 70,
+        "authorityReach": 0.3,
+        "controlScore": 200
+      }
+    },
+    {
+      "path": "src/core/ir/models/GeneratorInterfaces.ts",
+      "confidence": 0.16,
+      "evidence": {
+        "fanIn": 9,
+        "fanOut": 2,
+        "blastRadius": 5,
+        "authorityReach": 0.9,
+        "controlScore": 190
+      }
+    },
+    {
+      "path": "src/core/reporting/OnboardingAnalyzer.ts",
+      "confidence": 0.16,
+      "evidence": {
+        "fanIn": 9,
+        "fanOut": 4,
+        "blastRadius": 8,
+        "authorityReach": 0.9,
+        "controlScore": 196
+      }
+    },
+    {
+      "path": "src/webview/CanvasPanel.ts",
+      "confidence": 0.16,
+      "evidence": {
+        "fanIn": 3,
+        "fanOut": 27,
+        "blastRadius": 65,
+        "authorityReach": 0.3,
+        "controlScore": 190
+      }
+    },
+    {
+      "path": "release_note/architecture.md",
+      "confidence": 0.15,
+      "evidence": {
+        "fanIn": 9,
+        "fanOut": 0,
+        "blastRadius": 0,
+        "authorityReach": 0.9,
+        "controlScore": 180
+      }
+    },
+    {
+      "path": "src/bootstrap/BootstrapEngine.ts",
+      "confidence": 0.15,
+      "evidence": {
+        "fanIn": 4,
+        "fanOut": 28,
+        "blastRadius": 51,
+        "authorityReach": 0.4,
+        "controlScore": 182
+      }
+    },
+    {
+      "path": "src/core/reasoning/answers/Answer.ts",
+      "confidence": 0.15,
+      "evidence": {
+        "fanIn": 9,
+        "fanOut": 2,
+        "blastRadius": 3,
+        "authorityReach": 0.9,
+        "controlScore": 186
+      }
+    },
+    {
+      "path": "src/core/simulation/propagation/rules/DependencyRemovedRealRule.ts",
+      "confidence": 0.15,
+      "evidence": {
+        "fanIn": 8,
+        "fanOut": 9,
+        "blastRadius": 11,
+        "authorityReach": 0.8,
+        "controlScore": 182
+      }
+    },
+    {
+      "path": "src/types/metrology.ts",
+      "confidence": 0.15,
+      "evidence": {
+        "fanIn": 9,
+        "fanOut": 0,
+        "blastRadius": 0,
+        "authorityReach": 0.9,
+        "controlScore": 180
+      }
+    },
+    {
+      "path": "demo/canvas-engine.js",
+      "confidence": 0.13,
+      "evidence": {
+        "fanIn": 8,
+        "fanOut": 0,
+        "blastRadius": 0,
+        "authorityReach": 0.8,
+        "controlScore": 160
+      }
+    },
+    {
+      "path": "src/core/reasoning/analysis/AuthorityAnalyzer.ts",
+      "confidence": 0.13,
+      "evidence": {
+        "fanIn": 7,
+        "fanOut": 3,
+        "blastRadius": 7,
+        "authorityReach": 0.7,
+        "controlScore": 154
+      }
+    },
+    {
+      "path": "src/core/simulation/propagation/recovery/RecoveryRuleEngine.ts",
+      "confidence": 0.13,
+      "evidence": {
+        "fanIn": 7,
+        "fanOut": 7,
+        "blastRadius": 10,
+        "authorityReach": 0.7,
+        "controlScore": 160
+      }
+    },
+    {
+      "path": "src/core/simulation/propagation/recovery/rules/DependencyRestoredRealRule.ts",
+      "confidence": 0.13,
+      "evidence": {
+        "fanIn": 7,
+        "fanOut": 6,
+        "blastRadius": 7,
+        "authorityReach": 0.7,
+        "controlScore": 154
+      }
+    },
+    {
+      "path": "src/core/simulation/scenario/ValidationEventType.ts",
+      "confidence": 0.13,
+      "evidence": {
+        "fanIn": 8,
+        "fanOut": 0,
+        "blastRadius": 0,
+        "authorityReach": 0.8,
+        "controlScore": 160
+      }
+    },
+    {
+      "path": "src/core/analysis/intent/IntentEdge.ts",
+      "confidence": 0.12,
+      "evidence": {
+        "fanIn": 7,
+        "fanOut": 0,
+        "blastRadius": 0,
+        "authorityReach": 0.7,
+        "controlScore": 140
+      }
+    },
+    {
+      "path": "src/core/CommunityDetector.ts",
+      "confidence": 0.12,
+      "evidence": {
+        "fanIn": 7,
+        "fanOut": 1,
+        "blastRadius": 4,
+        "authorityReach": 0.7,
+        "controlScore": 148
+      }
+    },
+    {
+      "path": "src/core/simulation/scenario/RecoveryScenario.ts",
+      "confidence": 0.12,
+      "evidence": {
+        "fanIn": 7,
+        "fanOut": 1,
+        "blastRadius": 1,
+        "authorityReach": 0.7,
+        "controlScore": 142
+      }
+    },
+    {
+      "path": "src/core/simulation/scenario/ValidationScenario.ts",
+      "confidence": 0.12,
+      "evidence": {
+        "fanIn": 7,
+        "fanOut": 1,
+        "blastRadius": 1,
+        "authorityReach": 0.7,
+        "controlScore": 142
+      }
+    },
+    {
+      "path": "src/core/simulation/SimulationScopeResolver.ts",
+      "confidence": 0.12,
+      "evidence": {
+        "fanIn": 7,
+        "fanOut": 1,
+        "blastRadius": 4,
+        "authorityReach": 0.7,
+        "controlScore": 148
+      }
+    },
+    {
+      "path": "src/core/analysis/semantic/ProjectContextDetector.ts",
+      "confidence": 0.12,
+      "evidence": {
+        "fanIn": 7,
+        "fanOut": 0,
+        "blastRadius": 0,
+        "authorityReach": 0.7,
+        "controlScore": 140
+      }
+    },
+    {
+      "path": "src/core/simulation/SimulationProjectionBuilder.ts",
+      "confidence": 0.11,
+      "evidence": {
+        "fanIn": 6,
+        "fanOut": 3,
+        "blastRadius": 5,
+        "authorityReach": 0.6,
+        "controlScore": 130
+      }
+    },
+    {
+      "path": "src/core/validation/ValidationEngine.ts",
+      "confidence": 0.11,
+      "evidence": {
+        "fanIn": 5,
+        "fanOut": 7,
+        "blastRadius": 15,
+        "authorityReach": 0.5,
+        "controlScore": 130
+      }
+    },
+    {
+      "path": "src/core/analysis/patterns/PatternDetector.ts",
+      "confidence": 0.11,
+      "evidence": {
+        "fanIn": 6,
+        "fanOut": 2,
+        "blastRadius": 4,
+        "authorityReach": 0.6,
+        "controlScore": 128
+      }
+    },
+    {
+      "path": "mile_stone/v0.2.17.md",
+      "confidence": 0.1,
+      "evidence": {
+        "fanIn": 0,
+        "fanOut": 9,
+        "blastRadius": 61,
+        "authorityReach": 0,
+        "controlScore": 122
+      }
+    },
+    {
+      "path": "src/cli/ProjectAnalyzer.ts",
+      "confidence": 0.1,
+      "evidence": {
+        "fanIn": 5,
+        "fanOut": 6,
+        "blastRadius": 11,
+        "authorityReach": 0.5,
+        "controlScore": 122
+      }
+    },
+    {
+      "path": "src/core/analysis/intent/ReasonedReportBundle.ts",
+      "confidence": 0.1,
+      "evidence": {
+        "fanIn": 6,
+        "fanOut": 3,
+        "blastRadius": 3,
+        "authorityReach": 0.6,
+        "controlScore": 126
+      }
+    },
+    {
+      "path": "src/core/DataPipeline.ts",
+      "confidence": 0.1,
+      "evidence": {
+        "fanIn": 2,
+        "fanOut": 26,
+        "blastRadius": 41,
+        "authorityReach": 0.2,
+        "controlScore": 122
+      }
+    },
+    {
+      "path": "src/core/GeminiParser.ts",
+      "confidence": 0.1,
+      "evidence": {
+        "fanIn": 6,
+        "fanOut": 3,
+        "blastRadius": 3,
+        "authorityReach": 0.6,
+        "controlScore": 126
+      }
+    },
+    {
+      "path": "src/core/reasoning/analyzers/ArchitecturalVocabulary.ts",
+      "confidence": 0.1,
+      "evidence": {
+        "fanIn": 6,
+        "fanOut": 0,
+        "blastRadius": 0,
+        "authorityReach": 0.6,
+        "controlScore": 120
+      }
+    },
+    {
+      "path": "src/core/reasoning/signal/SignalFinding.ts",
+      "confidence": 0.1,
+      "evidence": {
+        "fanIn": 6,
+        "fanOut": 0,
+        "blastRadius": 0,
+        "authorityReach": 0.6,
+        "controlScore": 120
+      }
+    },
+    {
+      "path": "src/core/simulation/propagation/PropagationTraceEdge.ts",
+      "confidence": 0.1,
+      "evidence": {
+        "fanIn": 6,
+        "fanOut": 0,
+        "blastRadius": 0,
+        "authorityReach": 0.6,
+        "controlScore": 120
+      }
+    },
+    {
+      "path": "src/core/simulation/propagation/validation/ValidationRuleEngine.ts",
+      "confidence": 0.1,
+      "evidence": {
+        "fanIn": 5,
+        "fanOut": 6,
+        "blastRadius": 9,
+        "authorityReach": 0.5,
+        "controlScore": 118
+      }
+    },
+    {
+      "path": "src/core/simulation/state/FailureCauseRegistry.ts",
+      "confidence": 0.1,
+      "evidence": {
+        "fanIn": 6,
+        "fanOut": 1,
+        "blastRadius": 1,
+        "authorityReach": 0.6,
+        "controlScore": 122
+      }
+    },
+    {
+      "path": "README.md",
+      "confidence": 0.09,
+      "evidence": {
+        "fanIn": 5,
+        "fanOut": 2,
+        "blastRadius": 2,
+        "authorityReach": 0.5,
+        "controlScore": 104
+      }
+    },
+    {
+      "path": "src/core/benchmark/BenchmarkHarness.ts",
+      "confidence": 0.09,
+      "evidence": {
+        "fanIn": 1,
+        "fanOut": 11,
+        "blastRadius": 41,
+        "authorityReach": 0.1,
+        "controlScore": 102
+      }
+    },
+    {
+      "path": "src/core/canvas-engine/StateManager.ts",
+      "confidence": 0.09,
+      "evidence": {
+        "fanIn": 4,
+        "fanOut": 6,
+        "blastRadius": 12,
+        "authorityReach": 0.4,
+        "controlScore": 104
+      }
+    },
+    {
+      "path": "src/core/collaboration/IdentityManager.ts",
+      "confidence": 0.09,
+      "evidence": {
+        "fanIn": 5,
+        "fanOut": 1,
+        "blastRadius": 1,
+        "authorityReach": 0.5,
+        "controlScore": 102
+      }
+    },
+    {
+      "path": "src/core/collaboration/SessionManager.ts",
+      "confidence": 0.09,
+      "evidence": {
+        "fanIn": 5,
+        "fanOut": 4,
+        "blastRadius": 4,
+        "authorityReach": 0.5,
+        "controlScore": 108
+      }
+    },
+    {
+      "path": "src/core/reasoning/builder/ArchitecturalEvidenceBuilder.ts",
+      "confidence": 0.09,
+      "evidence": {
+        "fanIn": 5,
+        "fanOut": 2,
+        "blastRadius": 5,
+        "authorityReach": 0.5,
+        "controlScore": 110
+      }
+    },
+    {
+      "path": "src/core/reasoning/builders/ArchitecturalReasoningModelBuilder.ts",
+      "confidence": 0.09,
+      "evidence": {
+        "fanIn": 4,
+        "fanOut": 8,
+        "blastRadius": 13,
+        "authorityReach": 0.4,
+        "controlScore": 106
+      }
+    },
+    {
+      "path": "src/core/reporting/ReportBundleGenerator.ts",
+      "confidence": 0.09,
+      "evidence": {
+        "fanIn": 4,
+        "fanOut": 7,
+        "blastRadius": 16,
+        "authorityReach": 0.4,
+        "controlScore": 112
+      }
+    },
+    {
+      "path": "src/core/simulation/propagation/validation/rules/ValidationPassedRealRule.ts",
+      "confidence": 0.09,
+      "evidence": {
+        "fanIn": 5,
+        "fanOut": 4,
+        "blastRadius": 4,
+        "authorityReach": 0.5,
+        "controlScore": 108
+      }
+    },
+    {
+      "path": "src/core/transaction/ProjectStateSerializer.ts",
+      "confidence": 0.09,
+      "evidence": {
+        "fanIn": 5,
+        "fanOut": 1,
+        "blastRadius": 4,
+        "authorityReach": 0.5,
+        "controlScore": 108
+      }
+    },
+    {
+      "path": "src/core/analysis/analyzers/BoundaryAnalyzer.ts",
+      "confidence": 0.08,
+      "evidence": {
+        "fanIn": 4,
+        "fanOut": 3,
+        "blastRadius": 6,
+        "authorityReach": 0.4,
+        "controlScore": 92
+      }
+    },
+    {
+      "path": "src/core/analysis/analyzers/BoundaryGraphBuilder.ts",
+      "confidence": 0.08,
+      "evidence": {
+        "fanIn": 4,
+        "fanOut": 3,
+        "blastRadius": 7,
+        "authorityReach": 0.4,
+        "controlScore": 94
+      }
+    },
+    {
+      "path": "src/core/analysis/intent/EvidenceIR.ts",
+      "confidence": 0.08,
+      "evidence": {
+        "fanIn": 5,
+        "fanOut": 0,
+        "blastRadius": 0,
+        "authorityReach": 0.5,
+        "controlScore": 100
+      }
+    },
+    {
+      "path": "src/core/analysis/reasoning/TarjanSCC.ts",
+      "confidence": 0.08,
+      "evidence": {
+        "fanIn": 4,
+        "fanOut": 4,
+        "blastRadius": 8,
+        "authorityReach": 0.4,
+        "controlScore": 96
+      }
+    },
+    {
+      "path": "src/core/canvas-engine/CanvasEngine.ts",
+      "confidence": 0.08,
+      "evidence": {
+        "fanIn": 3,
+        "fanOut": 7,
+        "blastRadius": 16,
+        "authorityReach": 0.3,
+        "controlScore": 92
+      }
+    },
+    {
+      "path": "src/core/GhostExpander.ts",
+      "confidence": 0.08,
+      "evidence": {
+        "fanIn": 4,
+        "fanOut": 4,
+        "blastRadius": 10,
+        "authorityReach": 0.4,
+        "controlScore": 100
+      }
+    },
+    {
+      "path": "src/core/ReferenceResolver.ts",
+      "confidence": 0.08,
+      "evidence": {
+        "fanIn": 4,
+        "fanOut": 5,
+        "blastRadius": 9,
+        "authorityReach": 0.4,
+        "controlScore": 98
+      }
+    },
+    {
+      "path": "src/core/simulation/scenario/validation/SimulationScenarioPolicy.ts",
+      "confidence": 0.08,
+      "evidence": {
+        "fanIn": 4,
+        "fanOut": 3,
+        "blastRadius": 7,
+        "authorityReach": 0.4,
+        "controlScore": 94
+      }
+    },
+    {
+      "path": "src/core/simulation/scenario/validation/SimulationScenarioValidationResult.ts",
+      "confidence": 0.08,
+      "evidence": {
+        "fanIn": 5,
+        "fanOut": 0,
+        "blastRadius": 0,
+        "authorityReach": 0.5,
+        "controlScore": 100
+      }
+    },
+    {
+      "path": "src/core/SnapshotSystem.ts",
+      "confidence": 0.08,
+      "evidence": {
+        "fanIn": 4,
+        "fanOut": 5,
+        "blastRadius": 9,
+        "authorityReach": 0.4,
+        "controlScore": 98
+      }
+    },
+    {
+      "path": "README.ko.md",
+      "confidence": 0.07,
+      "evidence": {
+        "fanIn": 4,
+        "fanOut": 2,
+        "blastRadius": 2,
+        "authorityReach": 0.4,
+        "controlScore": 84
+      }
+    },
+    {
+      "path": "scripts/run_reasoning_on_real_graph.ts",
+      "confidence": 0.07,
+      "evidence": {
+        "fanIn": 0,
+        "fanOut": 27,
+        "blastRadius": 45,
+        "authorityReach": 0,
+        "controlScore": 90
+      }
+    },
+    {
+      "path": "src/core/canvas-engine/RenderProtocol.ts",
+      "confidence": 0.07,
+      "evidence": {
+        "fanIn": 4,
+        "fanOut": 0,
+        "blastRadius": 0,
+        "authorityReach": 0.4,
+        "controlScore": 80
+      }
+    },
+    {
+      "path": "src/core/collaboration/AccountManager.ts",
+      "confidence": 0.07,
+      "evidence": {
+        "fanIn": 4,
+        "fanOut": 3,
+        "blastRadius": 3,
+        "authorityReach": 0.4,
+        "controlScore": 86
+      }
+    },
+    {
+      "path": "src/core/ControlSystem.ts",
+      "confidence": 0.07,
+      "evidence": {
+        "fanIn": 3,
+        "fanOut": 3,
+        "blastRadius": 9,
+        "authorityReach": 0.3,
+        "controlScore": 78
+      }
+    },
+    {
+      "path": "src/core/FailurePropagator.ts",
+      "confidence": 0.07,
+      "evidence": {
+        "fanIn": 4,
+        "fanOut": 1,
+        "blastRadius": 1,
+        "authorityReach": 0.4,
+        "controlScore": 82
+      }
+    },
+    {
+      "path": "src/core/GraphAnalyzer.ts",
+      "confidence": 0.07,
+      "evidence": {
+        "fanIn": 4,
+        "fanOut": 2,
+        "blastRadius": 4,
+        "authorityReach": 0.4,
+        "controlScore": 88
+      }
+    },
+    {
+      "path": "src/core/LayoutEngine.ts",
+      "confidence": 0.07,
+      "evidence": {
+        "fanIn": 4,
+        "fanOut": 2,
+        "blastRadius": 5,
+        "authorityReach": 0.4,
+        "controlScore": 90
+      }
+    },
+    {
+      "path": "src/core/NodeBuilder.ts",
+      "confidence": 0.07,
+      "evidence": {
+        "fanIn": 3,
+        "fanOut": 4,
+        "blastRadius": 9,
+        "authorityReach": 0.3,
+        "controlScore": 78
+      }
+    },
+    {
+      "path": "src/core/reasoning/signal/extractors/BasicSignalExtractor.ts",
+      "confidence": 0.07,
+      "evidence": {
+        "fanIn": 4,
+        "fanOut": 3,
+        "blastRadius": 3,
+        "authorityReach": 0.4,
+        "controlScore": 86
+      }
+    },
+    {
+      "path": "src/core/reasoning/signal/SignalRegistry.ts",
+      "confidence": 0.07,
+      "evidence": {
+        "fanIn": 4,
+        "fanOut": 4,
+        "blastRadius": 4,
+        "authorityReach": 0.4,
+        "controlScore": 88
+      }
+    },
+    {
+      "path": "src/core/reasoning/signal/SignalStatisticsGenerator.ts",
+      "confidence": 0.07,
+      "evidence": {
+        "fanIn": 4,
+        "fanOut": 1,
+        "blastRadius": 1,
+        "authorityReach": 0.4,
+        "controlScore": 82
+      }
+    },
+    {
+      "path": "src/core/simulation/evidence/SimulationEvidenceType.ts",
+      "confidence": 0.07,
+      "evidence": {
+        "fanIn": 4,
+        "fanOut": 0,
+        "blastRadius": 0,
+        "authorityReach": 0.4,
+        "controlScore": 80
+      }
+    },
+    {
+      "path": "src/core/simulation/propagation/PropagationContext.ts",
+      "confidence": 0.07,
+      "evidence": {
+        "fanIn": 4,
+        "fanOut": 0,
+        "blastRadius": 0,
+        "authorityReach": 0.4,
+        "controlScore": 80
+      }
+    },
+    {
+      "path": "src/core/simulation/propagation/PropagationImpact.ts",
+      "confidence": 0.07,
+      "evidence": {
+        "fanIn": 4,
+        "fanOut": 1,
+        "blastRadius": 1,
+        "authorityReach": 0.4,
+        "controlScore": 82
+      }
+    },
+    {
+      "path": "src/core/simulation/propagation/PropagationRule.ts",
+      "confidence": 0.07,
+      "evidence": {
+        "fanIn": 3,
+        "fanOut": 5,
+        "blastRadius": 10,
+        "authorityReach": 0.3,
+        "controlScore": 80
+      }
+    },
+    {
+      "path": "src/core/simulation/TopologyOverlay.ts",
+      "confidence": 0.07,
+      "evidence": {
+        "fanIn": 4,
+        "fanOut": 1,
+        "blastRadius": 1,
+        "authorityReach": 0.4,
+        "controlScore": 82
+      }
+    },
+    {
+      "path": "src/core/SynapseIgnore.ts",
+      "confidence": 0.07,
+      "evidence": {
+        "fanIn": 4,
+        "fanOut": 1,
+        "blastRadius": 1,
+        "authorityReach": 0.4,
+        "controlScore": 82
+      }
+    },
+    {
+      "path": "src/main.ts",
+      "confidence": 0.07,
+      "evidence": {
+        "fanIn": 4,
+        "fanOut": 0,
+        "blastRadius": 0,
+        "authorityReach": 0.4,
+        "controlScore": 80
+      }
+    },
+    {
+      "path": "src/core/analysis/semantic/profiles/SemanticProfile.ts",
+      "confidence": 0.07,
+      "evidence": {
+        "fanIn": 4,
+        "fanOut": 1,
+        "blastRadius": 1,
+        "authorityReach": 0.4,
+        "controlScore": 82
+      }
+    },
+    {
+      "path": "mile_stone/v0.2.18.2.md",
+      "confidence": 0.06,
+      "evidence": {
+        "fanIn": 3,
+        "fanOut": 3,
+        "blastRadius": 3,
+        "authorityReach": 0.3,
+        "controlScore": 66
+      }
+    },
+    {
+      "path": "mile_stone/v0.3.23.md",
+      "confidence": 0.06,
+      "evidence": {
+        "fanIn": 1,
+        "fanOut": 5,
+        "blastRadius": 27,
+        "authorityReach": 0.1,
+        "controlScore": 74
+      }
+    },
+    {
+      "path": "src/cli.ts",
+      "confidence": 0.06,
+      "evidence": {
+        "fanIn": 0,
+        "fanOut": 2,
+        "blastRadius": 35,
+        "authorityReach": 0,
+        "controlScore": 70
+      }
+    }
+  ]
+}

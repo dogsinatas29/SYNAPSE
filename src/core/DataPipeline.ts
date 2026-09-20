@@ -455,7 +455,7 @@ ${top100Suspicious.slice(0, 100).map((x, i) => `  ${i+1}. ${x[0]} (Total: ${x[1]
       
       const validGhostNodeIds = new Set(validGhostNodes.map(n => n.id));
       const validReferences = expansionResult.expandedReferences.filter(ref => 
-          nodeIds.has(ref.targetId) || validGhostNodeIds.has(ref.targetId)
+          nodeIds.has(ref.targetId) || validGhostNodeIds.has(ref.targetId) || ref.resolutionKind === 'stdlib'
       );
 
       for (const node of validGhostNodes) nodes.push(node);

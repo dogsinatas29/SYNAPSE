@@ -52,7 +52,9 @@ export class EdgeBuilder {
                 is_approved: true,
                 data: {
                     originalTarget: ref.originalTarget,
-                    resolvedTarget: ref.targetId
+                    resolvedTarget: ref.targetId,
+                    resolutionKind: ref.resolutionKind,
+                    candidateCount: ref.candidateCount
                 },
                 intelligence: {},
                 visual: { color: '#888', thickness: 1 },

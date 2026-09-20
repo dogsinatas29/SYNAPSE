@@ -25,6 +25,7 @@ export class FileScanner {
             const { ConfigScanner } = require('./ConfigScanner');
             const { CppScanner } = require('./CppScanner');
             const { RustScanner } = require('./RustScanner');
+            const { GoScanner } = require('./GoScanner');
             
             registry.register(new JsTsScanner());
             registry.register(new PythonScanner());
@@ -36,6 +37,7 @@ export class FileScanner {
             registry.register(new ConfigScanner());
             registry.register(new CppScanner());
             registry.register(new RustScanner());
+            registry.register(new GoScanner());
             
             registry.markInitialized();
         }

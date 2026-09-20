@@ -1950,7 +1950,7 @@ class CanvasEngine {
                     command: 'openFile',
                     filePath,
                     clientUsername,
-                    createIfNotExists: this.isEditMode
+                    createIfNotExists: false // [v0.3.34.44] Stop 0-byte ghost file creation
                 });
             } else if (typeof window.showFilePreview === 'function') {
                 window.showFilePreview(filePath, clientUsername);

@@ -160,7 +160,7 @@ export class ProjectionLayer {
                         from: fromFileId,
                         to: toFileId,
                         weight: edge.weight,
-                        data: { originalType: edge.type, projected: true }
+                        data: { ...(edge.data || {}), originalType: edge.type, projected: true }
                     });
                     edgeKeys.add(key);
                 }

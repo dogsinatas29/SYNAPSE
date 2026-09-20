@@ -368,7 +368,7 @@ actual hierarchy
 
 ## ROOT Structure
 프로젝트 주요 디렉터리 구조 및 소스코드 현황입니다. (Active/Orphaned/Legacy 상태 포함, 마일스톤/릴리즈 노트 제외)
-*Last Updated: v0.3.34.39 (2026-08-26)*
+*Last Updated: v0.3.34.47 (2026-09-20)*
 
 ### 📂 Directory Tree
 ```text
@@ -389,6 +389,11 @@ actual hierarchy
 ├── .github/                              # GitHub 워크플로우
 ├── .vscode/                              # VS Code 설정
 ├── .backup/                              # 백업 파일
+├── mile_stone/                           # 버전별 마일스톤 및 작업 계획 로그
+├── release_note/                         # 버전별 릴리즈 노트
+├── scratch/                              # 임시 스크립트 및 테스트 파일
+├── synapse_data/                         # 스캔된 프로젝트 데이터셋 (project_state.json 등)
+├── synapse_report/                       # 분석 리포트 및 검증 결과 출력
 ├── scripts/
 │   ├── run-validation-pipeline.ts        # 검증 파이프라인 실행 스크립트
 │   ├── create-account.js                 # 계정 생성 스크립트
@@ -546,6 +551,10 @@ actual hierarchy
 │   │   ├── (Active) ProjectMetadata.ts        # 프로젝트 메타데이터
 │   │   ├── (Active) SymbolIndex.ts            # Cross-file 레지스트리
 │   │   ├── (Active) DataPipeline.ts           # 파일 스캔 → 그래프 추출
+│   │   ├── ReferenceResolver.ts               # 🟢 STDLIB/Broadcast 해상도 결정기 (v0.3.34.47)
+│   │   ├── GhostExpander.ts                   # 🟢 미해결 참조 고스트 변환기
+│   │   ├── GhostPolicy.ts                     # 🟢 고스트/외부 참조 필터 및 분류
+│   │   └── EdgeBuilder.ts                     # 🟢 최종 엣지 팩토리 (Provenance 검증)
 │   │   ├── (Active) RendererCore.ts           # 렌더러 생명주기
 │   │   ├── (Active) RuleEngine.ts             # 핵심 규칙 검증
 │   │   ├── (Active) GraphModel.ts             # 그래프 데이터 모델

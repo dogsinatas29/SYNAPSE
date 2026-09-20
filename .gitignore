@@ -82,3 +82,4 @@ diagnostic_log.txt
 synapse_data/
 scripts/test_architecture_*.ts
 scripts/verify_anomaly_collector.ts
+graph_*.json

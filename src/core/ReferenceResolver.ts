@@ -115,6 +115,7 @@ export class ReferenceResolver {
 
             const originalTarget = targetNodeId;
             let resolutionKind: ResolutionKind = 'direct';
+            let fallbackResult = '';
 
             if (!existingNodeIds.has(targetNodeId)) {
                 // Try basename fallback
@@ -129,6 +130,7 @@ export class ReferenceResolver {
 
                 if (matchedId && !disableStemMap) {
                     targetNodeId = matchedId;
+                    fallbackResult = matchedId;
                     resolutionKind = 'basename';
                 } else {
                     // Try symbol index
@@ -142,6 +144,25 @@ export class ReferenceResolver {
                         }
                     }
                 }
+            }
+
+            // [INSTRUMENTATION AUDIT v0.3.34.48]
+            const targetStemLower = path.basename(originalTarget, path.extname(originalTarget)).toLowerCase();
+            const isAuditTarget = ['event', 'nls', 'assert', 'actions', 'utils', 'model'].includes(targetStemLower);
+            if (isAuditTarget && sourceFilePath.endsWith('.ts')) {
+                const normalizedTarget = originalTarget.replace(/\.(ts|js)$/, '');
+                console.warn(JSON.stringify({
+                    _type: 'RESOLVER_AUDIT',
+                    source: sourceFilePath,
+                    importPath: ref.target,
+                    resolvedPath: originalTarget,
+                    normalizedPath: normalizedTarget,
+                    existsBeforeNormalize: existingNodeIds.has(originalTarget),
+                    existsAfterNormalize: existingNodeIds.has(normalizedTarget),
+                    fallbackUsed: resolutionKind === 'basename',
+                    fallbackResult: fallbackResult,
+                    resolutionKind: resolutionKind
+                }));
             }
 
             // Final check if it's actually in nodeIds, otherwise mark unresolved.

@@ -39,6 +39,18 @@ export class JsTsScanner implements LanguageScanner {
 
                     // [v0.3.21] Robust path cleaning: extract filename stem for both relative and absolute-style imports
                     const cleanRef = path.basename(ref, path.extname(ref));
+
+                    // [INSTRUMENTATION AUDIT v0.3.34.48]
+                    const isAuditTarget = ['event', 'nls', 'assert', 'actions', 'utils', 'model'].includes(cleanRef.toLowerCase());
+                    if (isAuditTarget) {
+                        console.warn(JSON.stringify({
+                            _type: 'SCANNER_AUDIT',
+                            scanner: 'JsTsScanner',
+                            rawRef: ref,
+                            cleanRef: cleanRef
+                        }));
+                    }
+
                     if (cleanRef && !['react', 'vscode', 'path', 'fs', 'os', 'child_process'].includes(cleanRef) && !summary.references.some(r => r.target === cleanRef)) {
                         let type = 'dependency';
                         if (cleanRef.match(/api|http|fetch|axios/i)) type = 'api_call';

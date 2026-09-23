@@ -1,0 +1,4201 @@
+[
+  {
+    "directory": "ui",
+    "q4": {
+      "membershipLoss": 0.5714,
+      "rankLoss": 0.2427,
+      "dominatorLoss": false,
+      "signalLoss": 0.1279,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.4211,
+      "rankLoss": 0.3087,
+      "dominatorLoss": false,
+      "signalLoss": 0.0912,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "ui/statistics",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.009,
+      "dominatorLoss": false,
+      "signalLoss": 0.0034,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0491,
+      "dominatorLoss": false,
+      "signalLoss": 0.0179,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "ui/statistics/src",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.009,
+      "dominatorLoss": false,
+      "signalLoss": 0.0034,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0491,
+      "dominatorLoss": false,
+      "signalLoss": 0.0179,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "ui/statistics/src/main",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.009,
+      "dominatorLoss": false,
+      "signalLoss": 0.0034,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0491,
+      "dominatorLoss": false,
+      "signalLoss": 0.0179,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "ui/statistics/src/main/java",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.009,
+      "dominatorLoss": false,
+      "signalLoss": 0.0034,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0491,
+      "dominatorLoss": false,
+      "signalLoss": 0.0179,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "ui/statistics/src/main/java/de",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.009,
+      "dominatorLoss": false,
+      "signalLoss": 0.0034,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0491,
+      "dominatorLoss": false,
+      "signalLoss": 0.0179,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "ui/transcript",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0001,
+      "dominatorLoss": false,
+      "signalLoss": 0.0011,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "ui/transcript/src",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0001,
+      "dominatorLoss": false,
+      "signalLoss": 0.0011,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "ui/transcript/src/main",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0001,
+      "dominatorLoss": false,
+      "signalLoss": 0.0011,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "ui/transcript/src/main/java",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0001,
+      "dominatorLoss": false,
+      "signalLoss": 0.0011,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "ui/transcript/src/main/java/de",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0001,
+      "dominatorLoss": false,
+      "signalLoss": 0.0011,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "ui/chapters",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0055,
+      "dominatorLoss": false,
+      "signalLoss": 0.0028,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0219,
+      "dominatorLoss": false,
+      "signalLoss": 0.0092,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "ui/chapters/src",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0055,
+      "dominatorLoss": false,
+      "signalLoss": 0.0028,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0219,
+      "dominatorLoss": false,
+      "signalLoss": 0.0092,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "ui/chapters/src/test",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "ui/chapters/src/test/java",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "ui/chapters/src/test/java/de",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "ui/chapters/src/main",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0055,
+      "dominatorLoss": false,
+      "signalLoss": 0.0028,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0218,
+      "dominatorLoss": false,
+      "signalLoss": 0.0075,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "ui/chapters/src/main/java",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0055,
+      "dominatorLoss": false,
+      "signalLoss": 0.0028,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0218,
+      "dominatorLoss": false,
+      "signalLoss": 0.0075,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "ui/chapters/src/main/java/de",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0055,
+      "dominatorLoss": false,
+      "signalLoss": 0.0028,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0218,
+      "dominatorLoss": false,
+      "signalLoss": 0.0075,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "ui/app-start-intent",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0491,
+      "dominatorLoss": false,
+      "signalLoss": 0.0249,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "ui/app-start-intent/src",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0491,
+      "dominatorLoss": false,
+      "signalLoss": 0.0249,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "ui/app-start-intent/src/main",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0491,
+      "dominatorLoss": false,
+      "signalLoss": 0.0249,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "ui/app-start-intent/src/main/java",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0491,
+      "dominatorLoss": false,
+      "signalLoss": 0.0249,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "ui/app-start-intent/src/main/java/de",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0491,
+      "dominatorLoss": false,
+      "signalLoss": 0.0249,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "ui/notifications",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.016,
+      "dominatorLoss": false,
+      "signalLoss": 0.0057,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "ui/notifications/src",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.016,
+      "dominatorLoss": false,
+      "signalLoss": 0.0057,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "ui/notifications/src/main",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.016,
+      "dominatorLoss": false,
+      "signalLoss": 0.0057,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "ui/notifications/src/main/java",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.016,
+      "dominatorLoss": false,
+      "signalLoss": 0.0057,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "ui/notifications/src/main/java/de",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.016,
+      "dominatorLoss": false,
+      "signalLoss": 0.0057,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "ui/preferences",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.025,
+      "dominatorLoss": false,
+      "signalLoss": 0.0096,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0538,
+      "dominatorLoss": false,
+      "signalLoss": 0.0196,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "ui/preferences/src",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.025,
+      "dominatorLoss": false,
+      "signalLoss": 0.0096,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0538,
+      "dominatorLoss": false,
+      "signalLoss": 0.0196,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "ui/preferences/src/main",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.025,
+      "dominatorLoss": false,
+      "signalLoss": 0.0096,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0538,
+      "dominatorLoss": false,
+      "signalLoss": 0.0196,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "ui/preferences/src/main/java",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.025,
+      "dominatorLoss": false,
+      "signalLoss": 0.0096,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0538,
+      "dominatorLoss": false,
+      "signalLoss": 0.0196,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "ui/preferences/src/main/java/de",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.025,
+      "dominatorLoss": false,
+      "signalLoss": 0.0096,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0538,
+      "dominatorLoss": false,
+      "signalLoss": 0.0196,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "ui/glide",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0018,
+      "dominatorLoss": false,
+      "signalLoss": 0.0023,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0188,
+      "dominatorLoss": false,
+      "signalLoss": 0.0075,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "ui/glide/src",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0018,
+      "dominatorLoss": false,
+      "signalLoss": 0.0023,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0188,
+      "dominatorLoss": false,
+      "signalLoss": 0.0075,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "ui/glide/src/main",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0018,
+      "dominatorLoss": false,
+      "signalLoss": 0.0023,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0188,
+      "dominatorLoss": false,
+      "signalLoss": 0.0075,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "ui/glide/src/main/java",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0018,
+      "dominatorLoss": false,
+      "signalLoss": 0.0023,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0188,
+      "dominatorLoss": false,
+      "signalLoss": 0.0075,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "ui/glide/src/main/java/de",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0018,
+      "dominatorLoss": false,
+      "signalLoss": 0.0023,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0188,
+      "dominatorLoss": false,
+      "signalLoss": 0.0075,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "ui/common",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0752,
+      "dominatorLoss": false,
+      "signalLoss": 0.0606,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "ui/common/src",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0752,
+      "dominatorLoss": false,
+      "signalLoss": 0.0606,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "ui/common/src/test",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "ui/common/src/test/java",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "ui/common/src/test/java/de",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "ui/common/src/main",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0752,
+      "dominatorLoss": false,
+      "signalLoss": 0.0606,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "ui/common/src/main/java",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0752,
+      "dominatorLoss": false,
+      "signalLoss": 0.0606,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "ui/common/src/main/java/de",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0752,
+      "dominatorLoss": false,
+      "signalLoss": 0.0606,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "ui/discovery",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0004,
+      "dominatorLoss": false,
+      "signalLoss": 0.0017,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0402,
+      "dominatorLoss": false,
+      "signalLoss": 0.0115,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "ui/discovery/src",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0004,
+      "dominatorLoss": false,
+      "signalLoss": 0.0017,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0402,
+      "dominatorLoss": false,
+      "signalLoss": 0.0115,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "ui/discovery/src/main",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0004,
+      "dominatorLoss": false,
+      "signalLoss": 0.0017,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0402,
+      "dominatorLoss": false,
+      "signalLoss": 0.0115,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "ui/discovery/src/main/java",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0004,
+      "dominatorLoss": false,
+      "signalLoss": 0.0017,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0402,
+      "dominatorLoss": false,
+      "signalLoss": 0.0115,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "ui/discovery/src/main/java/de",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0004,
+      "dominatorLoss": false,
+      "signalLoss": 0.0017,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0402,
+      "dominatorLoss": false,
+      "signalLoss": 0.0115,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "ui/echo",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.004,
+      "dominatorLoss": false,
+      "signalLoss": 0.0028,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.025,
+      "dominatorLoss": false,
+      "signalLoss": 0.0092,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "ui/echo/src",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.004,
+      "dominatorLoss": false,
+      "signalLoss": 0.0028,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.025,
+      "dominatorLoss": false,
+      "signalLoss": 0.0092,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "ui/echo/src/main",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.004,
+      "dominatorLoss": false,
+      "signalLoss": 0.0028,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.025,
+      "dominatorLoss": false,
+      "signalLoss": 0.0092,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "ui/echo/src/main/java",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.004,
+      "dominatorLoss": false,
+      "signalLoss": 0.0028,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.025,
+      "dominatorLoss": false,
+      "signalLoss": 0.0092,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "ui/echo/src/main/java/de",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.004,
+      "dominatorLoss": false,
+      "signalLoss": 0.0028,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.025,
+      "dominatorLoss": false,
+      "signalLoss": 0.0092,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "ui/widget",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.001,
+      "dominatorLoss": false,
+      "signalLoss": 0.0023,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.036,
+      "dominatorLoss": false,
+      "signalLoss": 0.0115,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "ui/widget/src",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.001,
+      "dominatorLoss": false,
+      "signalLoss": 0.0023,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.036,
+      "dominatorLoss": false,
+      "signalLoss": 0.0115,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "ui/widget/src/main",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.001,
+      "dominatorLoss": false,
+      "signalLoss": 0.0023,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.036,
+      "dominatorLoss": false,
+      "signalLoss": 0.0115,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "ui/widget/src/main/java",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.001,
+      "dominatorLoss": false,
+      "signalLoss": 0.0023,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.036,
+      "dominatorLoss": false,
+      "signalLoss": 0.0115,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "ui/widget/src/main/java/de",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.001,
+      "dominatorLoss": false,
+      "signalLoss": 0.0023,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.036,
+      "dominatorLoss": false,
+      "signalLoss": 0.0115,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "ui/episodes",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0402,
+      "dominatorLoss": false,
+      "signalLoss": 0.0108,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0071,
+      "dominatorLoss": false,
+      "signalLoss": 0.0063,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "ui/episodes/src",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0402,
+      "dominatorLoss": false,
+      "signalLoss": 0.0108,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0071,
+      "dominatorLoss": false,
+      "signalLoss": 0.0063,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "ui/episodes/src/main",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0402,
+      "dominatorLoss": false,
+      "signalLoss": 0.0108,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0071,
+      "dominatorLoss": false,
+      "signalLoss": 0.0063,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "ui/episodes/src/main/java",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0402,
+      "dominatorLoss": false,
+      "signalLoss": 0.0108,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0071,
+      "dominatorLoss": false,
+      "signalLoss": 0.0063,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "ui/episodes/src/main/java/de",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0402,
+      "dominatorLoss": false,
+      "signalLoss": 0.0108,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0071,
+      "dominatorLoss": false,
+      "signalLoss": 0.0063,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "net",
+    "q4": {
+      "membershipLoss": 0.3333,
+      "rankLoss": 0.278,
+      "dominatorLoss": false,
+      "signalLoss": 0.1143,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.3333,
+      "rankLoss": 0.2937,
+      "dominatorLoss": true,
+      "signalLoss": 0.1645,
+      "verdict": "Q5-unsafe"
+    }
+  },
+  {
+    "directory": "net/ssl",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "net/ssl/src",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "net/ssl/src/play",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "net/ssl/src/play/java",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "net/ssl/src/play/java/de",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "net/ssl/src/free",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "net/ssl/src/free/java",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "net/ssl/src/free/java/de",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "net/ssl/src/main",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "net/ssl/src/main/java",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "net/ssl/src/main/java/de",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "net/sync",
+    "q4": {
+      "membershipLoss": 0.125,
+      "rankLoss": 0.0677,
+      "dominatorLoss": false,
+      "signalLoss": 0.0357,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.125,
+      "rankLoss": 0.0981,
+      "dominatorLoss": false,
+      "signalLoss": 0.0335,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "net/sync/service",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0641,
+      "dominatorLoss": false,
+      "signalLoss": 0.0231,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "net/sync/service/src",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0641,
+      "dominatorLoss": false,
+      "signalLoss": 0.0231,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "net/sync/service/src/test",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "net/sync/service/src/test/java",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "net/sync/service/src/main",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0641,
+      "dominatorLoss": false,
+      "signalLoss": 0.0225,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "net/sync/service/src/main/java",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0641,
+      "dominatorLoss": false,
+      "signalLoss": 0.0225,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "net/sync/wear-interface",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0002,
+      "dominatorLoss": false,
+      "signalLoss": 0.004,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "net/sync/wear-interface/src",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0002,
+      "dominatorLoss": false,
+      "signalLoss": 0.004,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "net/sync/wear-interface/src/test",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "net/sync/wear-interface/src/test/java",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "net/sync/wear-interface/src/main",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "net/sync/wear-interface/src/main/java",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "net/sync/gpoddernet",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0028,
+      "dominatorLoss": false,
+      "signalLoss": 0.0028,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0321,
+      "dominatorLoss": false,
+      "signalLoss": 0.011,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "net/sync/gpoddernet/src",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0028,
+      "dominatorLoss": false,
+      "signalLoss": 0.0028,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0321,
+      "dominatorLoss": false,
+      "signalLoss": 0.011,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "net/sync/gpoddernet/src/test",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "net/sync/gpoddernet/src/test/java",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "net/sync/gpoddernet/src/main",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0028,
+      "dominatorLoss": false,
+      "signalLoss": 0.0028,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0321,
+      "dominatorLoss": false,
+      "signalLoss": 0.011,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "net/sync/gpoddernet/src/main/java",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0028,
+      "dominatorLoss": false,
+      "signalLoss": 0.0028,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0321,
+      "dominatorLoss": false,
+      "signalLoss": 0.011,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "net/sync/service-interface",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0641,
+      "dominatorLoss": false,
+      "signalLoss": 0.0328,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "net/sync/service-interface/src",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0641,
+      "dominatorLoss": false,
+      "signalLoss": 0.0328,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "net/sync/service-interface/src/main",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0641,
+      "dominatorLoss": false,
+      "signalLoss": 0.0328,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "net/sync/service-interface/src/main/java",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0641,
+      "dominatorLoss": false,
+      "signalLoss": 0.0328,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "net/common",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0538,
+      "dominatorLoss": false,
+      "signalLoss": 0.026,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "net/common/src",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0538,
+      "dominatorLoss": false,
+      "signalLoss": 0.026,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "net/common/src/test",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "net/common/src/test/java",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "net/common/src/test/java/de",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "net/common/src/main",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0538,
+      "dominatorLoss": false,
+      "signalLoss": 0.026,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "net/common/src/main/java",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0538,
+      "dominatorLoss": false,
+      "signalLoss": 0.026,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "net/common/src/main/java/de",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0538,
+      "dominatorLoss": false,
+      "signalLoss": 0.026,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "net/discovery",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.036,
+      "dominatorLoss": false,
+      "signalLoss": 0.0102,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0001,
+      "dominatorLoss": false,
+      "signalLoss": 0.0035,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "net/discovery/src",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.036,
+      "dominatorLoss": false,
+      "signalLoss": 0.0102,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0001,
+      "dominatorLoss": false,
+      "signalLoss": 0.0035,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "net/discovery/src/main",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.036,
+      "dominatorLoss": false,
+      "signalLoss": 0.0102,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0001,
+      "dominatorLoss": false,
+      "signalLoss": 0.0035,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "net/discovery/src/main/java",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.036,
+      "dominatorLoss": false,
+      "signalLoss": 0.0102,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0001,
+      "dominatorLoss": false,
+      "signalLoss": 0.0035,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "net/discovery/src/main/java/de",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.036,
+      "dominatorLoss": false,
+      "signalLoss": 0.0102,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0001,
+      "dominatorLoss": false,
+      "signalLoss": 0.0035,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "net/download",
+    "q4": {
+      "membershipLoss": 0.125,
+      "rankLoss": 0.0929,
+      "dominatorLoss": false,
+      "signalLoss": 0.0424,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.1818,
+      "rankLoss": 0.1791,
+      "dominatorLoss": true,
+      "signalLoss": 0.1275,
+      "verdict": "Q5-unsafe"
+    }
+  },
+  {
+    "directory": "net/download/service",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0218,
+      "dominatorLoss": false,
+      "signalLoss": 0.0085,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.125,
+      "rankLoss": 0.1595,
+      "dominatorLoss": true,
+      "signalLoss": 0.122,
+      "verdict": "Q5-unsafe"
+    }
+  },
+  {
+    "directory": "net/download/service/src",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0218,
+      "dominatorLoss": false,
+      "signalLoss": 0.0085,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.125,
+      "rankLoss": 0.1595,
+      "dominatorLoss": true,
+      "signalLoss": 0.122,
+      "verdict": "Q5-unsafe"
+    }
+  },
+  {
+    "directory": "net/download/service/src/test",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0695,
+      "dominatorLoss": false,
+      "signalLoss": 0.0415,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "net/download/service/src/test/java",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0695,
+      "dominatorLoss": false,
+      "signalLoss": 0.0415,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "net/download/service/src/main",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0218,
+      "dominatorLoss": false,
+      "signalLoss": 0.0085,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0872,
+      "dominatorLoss": true,
+      "signalLoss": 0.0785,
+      "verdict": "Q5-unsafe"
+    }
+  },
+  {
+    "directory": "net/download/service/src/main/java",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0218,
+      "dominatorLoss": false,
+      "signalLoss": 0.0085,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0872,
+      "dominatorLoss": true,
+      "signalLoss": 0.0785,
+      "verdict": "Q5-unsafe"
+    }
+  },
+  {
+    "directory": "net/download/service-interface",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0695,
+      "dominatorLoss": false,
+      "signalLoss": 0.034,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0162,
+      "dominatorLoss": false,
+      "signalLoss": 0.0086,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "net/download/service-interface/src",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0695,
+      "dominatorLoss": false,
+      "signalLoss": 0.034,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0162,
+      "dominatorLoss": false,
+      "signalLoss": 0.0086,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "net/download/service-interface/src/test",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "net/download/service-interface/src/test/java",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "net/download/service-interface/src/main",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0695,
+      "dominatorLoss": false,
+      "signalLoss": 0.034,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.016,
+      "dominatorLoss": false,
+      "signalLoss": 0.0075,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "net/download/service-interface/src/main/java",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0695,
+      "dominatorLoss": false,
+      "signalLoss": 0.034,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.016,
+      "dominatorLoss": false,
+      "signalLoss": 0.0075,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "app",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0339,
+      "dominatorLoss": false,
+      "signalLoss": 0.0102,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.1818,
+      "rankLoss": 0.2008,
+      "dominatorLoss": true,
+      "signalLoss": 0.5164,
+      "verdict": "Q5-unsafe"
+    }
+  },
+  {
+    "directory": "app/src",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0339,
+      "dominatorLoss": false,
+      "signalLoss": 0.0102,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.1818,
+      "rankLoss": 0.2008,
+      "dominatorLoss": true,
+      "signalLoss": 0.5164,
+      "verdict": "Q5-unsafe"
+    }
+  },
+  {
+    "directory": "app/src/play",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0135,
+      "dominatorLoss": false,
+      "signalLoss": 0.0075,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "app/src/play/java",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0135,
+      "dominatorLoss": false,
+      "signalLoss": 0.0075,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "app/src/play/java/de",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0135,
+      "dominatorLoss": false,
+      "signalLoss": 0.0075,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "app/src/play/java/de/danoeh",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0135,
+      "dominatorLoss": false,
+      "signalLoss": 0.0075,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "app/src/test",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "app/src/test/java",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "app/src/test/java/de",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "app/src/test/java/de/danoeh",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "app/src/androidTest",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0811,
+      "dominatorLoss": false,
+      "signalLoss": 0.0565,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "app/src/androidTest/java",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0811,
+      "dominatorLoss": false,
+      "signalLoss": 0.0565,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "app/src/androidTest/java/de",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0811,
+      "dominatorLoss": false,
+      "signalLoss": 0.0565,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "app/src/androidTest/java/de/test",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0811,
+      "dominatorLoss": false,
+      "signalLoss": 0.0565,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "app/src/main",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0321,
+      "dominatorLoss": false,
+      "signalLoss": 0.0102,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.1001,
+      "dominatorLoss": true,
+      "signalLoss": 0.4524,
+      "verdict": "Q5-unsafe"
+    }
+  },
+  {
+    "directory": "app/src/main/java",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0321,
+      "dominatorLoss": false,
+      "signalLoss": 0.0102,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.1001,
+      "dominatorLoss": true,
+      "signalLoss": 0.4524,
+      "verdict": "Q5-unsafe"
+    }
+  },
+  {
+    "directory": "app/src/main/java/de",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0321,
+      "dominatorLoss": false,
+      "signalLoss": 0.0102,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.1001,
+      "dominatorLoss": true,
+      "signalLoss": 0.4524,
+      "verdict": "Q5-unsafe"
+    }
+  },
+  {
+    "directory": "app/src/main/java/de/danoeh",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0321,
+      "dominatorLoss": false,
+      "signalLoss": 0.0102,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.1001,
+      "dominatorLoss": true,
+      "signalLoss": 0.4524,
+      "verdict": "Q5-unsafe"
+    }
+  },
+  {
+    "directory": "app/src/main/java/com",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "app/src/main/java/com/google",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "storage",
+    "q4": {
+      "membershipLoss": 0.1818,
+      "rankLoss": 0.188,
+      "dominatorLoss": true,
+      "signalLoss": 0.1981,
+      "verdict": "Q4-unsafe"
+    },
+    "q5": {
+      "membershipLoss": 0.2353,
+      "rankLoss": 0.1566,
+      "dominatorLoss": false,
+      "signalLoss": 0.0877,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "storage/importexport",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0135,
+      "dominatorLoss": false,
+      "signalLoss": 0.0045,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0091,
+      "dominatorLoss": false,
+      "signalLoss": 0.0075,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "storage/importexport/src",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0135,
+      "dominatorLoss": false,
+      "signalLoss": 0.0045,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0091,
+      "dominatorLoss": false,
+      "signalLoss": 0.0075,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "storage/importexport/src/test",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "storage/importexport/src/test/java",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "storage/importexport/src/test/java/de",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "storage/importexport/src/main",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0135,
+      "dominatorLoss": false,
+      "signalLoss": 0.0045,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.009,
+      "dominatorLoss": false,
+      "signalLoss": 0.0069,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "storage/importexport/src/main/java",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0135,
+      "dominatorLoss": false,
+      "signalLoss": 0.0045,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.009,
+      "dominatorLoss": false,
+      "signalLoss": 0.0069,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "storage/importexport/src/main/java/de",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0135,
+      "dominatorLoss": false,
+      "signalLoss": 0.0045,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.009,
+      "dominatorLoss": false,
+      "signalLoss": 0.0069,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "storage/database",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0872,
+      "dominatorLoss": true,
+      "signalLoss": 0.1024,
+      "verdict": "Q4-unsafe"
+    },
+    "q5": {
+      "membershipLoss": 0.125,
+      "rankLoss": 0.1366,
+      "dominatorLoss": false,
+      "signalLoss": 0.0761,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "storage/database/src",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0872,
+      "dominatorLoss": true,
+      "signalLoss": 0.1024,
+      "verdict": "Q4-unsafe"
+    },
+    "q5": {
+      "membershipLoss": 0.125,
+      "rankLoss": 0.1366,
+      "dominatorLoss": false,
+      "signalLoss": 0.0761,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "storage/database/src/test",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0588,
+      "dominatorLoss": false,
+      "signalLoss": 0.0219,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "storage/database/src/test/java",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0588,
+      "dominatorLoss": false,
+      "signalLoss": 0.0219,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "storage/database/src/test/java/de",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0588,
+      "dominatorLoss": false,
+      "signalLoss": 0.0219,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "storage/database/src/main",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0872,
+      "dominatorLoss": true,
+      "signalLoss": 0.1024,
+      "verdict": "Q4-unsafe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0752,
+      "dominatorLoss": false,
+      "signalLoss": 0.0531,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "storage/database/src/main/java",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0872,
+      "dominatorLoss": true,
+      "signalLoss": 0.1024,
+      "verdict": "Q4-unsafe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0752,
+      "dominatorLoss": false,
+      "signalLoss": 0.0531,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "storage/database/src/main/java/de",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0872,
+      "dominatorLoss": true,
+      "signalLoss": 0.1024,
+      "verdict": "Q4-unsafe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0752,
+      "dominatorLoss": false,
+      "signalLoss": 0.0531,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "storage/preferences",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0811,
+      "dominatorLoss": false,
+      "signalLoss": 0.0911,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0055,
+      "dominatorLoss": false,
+      "signalLoss": 0.0058,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "storage/preferences/src",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0811,
+      "dominatorLoss": false,
+      "signalLoss": 0.0911,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0055,
+      "dominatorLoss": false,
+      "signalLoss": 0.0058,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "storage/preferences/src/main",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0811,
+      "dominatorLoss": false,
+      "signalLoss": 0.0911,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0055,
+      "dominatorLoss": false,
+      "signalLoss": 0.0058,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "storage/preferences/src/main/java",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0811,
+      "dominatorLoss": false,
+      "signalLoss": 0.0911,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0055,
+      "dominatorLoss": false,
+      "signalLoss": 0.0058,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "storage/preferences/src/main/java/de",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0811,
+      "dominatorLoss": false,
+      "signalLoss": 0.0911,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0055,
+      "dominatorLoss": false,
+      "signalLoss": 0.0058,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "storage/database-maintenance-service",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "storage/database-maintenance-service/src",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "storage/database-maintenance-service/src/main",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "storage/database-maintenance-service/src/main/java",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "storage/database-maintenance-service/src/main/java/de",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "playback",
+    "q4": {
+      "membershipLoss": 0.1818,
+      "rankLoss": 0.1149,
+      "dominatorLoss": false,
+      "signalLoss": 0.0498,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.2353,
+      "rankLoss": 0.1503,
+      "dominatorLoss": true,
+      "signalLoss": 0.1091,
+      "verdict": "Q5-unsafe"
+    }
+  },
+  {
+    "directory": "playback/service",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0588,
+      "dominatorLoss": false,
+      "signalLoss": 0.0272,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.125,
+      "rankLoss": 0.0968,
+      "dominatorLoss": true,
+      "signalLoss": 0.0927,
+      "verdict": "Q5-unsafe"
+    }
+  },
+  {
+    "directory": "playback/service/src",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0588,
+      "dominatorLoss": false,
+      "signalLoss": 0.0272,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.125,
+      "rankLoss": 0.0968,
+      "dominatorLoss": true,
+      "signalLoss": 0.0927,
+      "verdict": "Q5-unsafe"
+    }
+  },
+  {
+    "directory": "playback/service/src/test",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0028,
+      "dominatorLoss": false,
+      "signalLoss": 0.0052,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "playback/service/src/test/java",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0028,
+      "dominatorLoss": false,
+      "signalLoss": 0.0052,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "playback/service/src/test/java/de",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0028,
+      "dominatorLoss": false,
+      "signalLoss": 0.0052,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "playback/service/src/main",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0588,
+      "dominatorLoss": false,
+      "signalLoss": 0.0272,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0935,
+      "dominatorLoss": true,
+      "signalLoss": 0.086,
+      "verdict": "Q5-unsafe"
+    }
+  },
+  {
+    "directory": "playback/service/src/main/java",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0588,
+      "dominatorLoss": false,
+      "signalLoss": 0.0272,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0935,
+      "dominatorLoss": true,
+      "signalLoss": 0.086,
+      "verdict": "Q5-unsafe"
+    }
+  },
+  {
+    "directory": "playback/service/src/main/java/de",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0588,
+      "dominatorLoss": false,
+      "signalLoss": 0.0272,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0935,
+      "dominatorLoss": true,
+      "signalLoss": 0.086,
+      "verdict": "Q5-unsafe"
+    }
+  },
+  {
+    "directory": "playback/cast",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0071,
+      "dominatorLoss": false,
+      "signalLoss": 0.0034,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0445,
+      "dominatorLoss": false,
+      "signalLoss": 0.0127,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "playback/cast/src",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0071,
+      "dominatorLoss": false,
+      "signalLoss": 0.0034,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0445,
+      "dominatorLoss": false,
+      "signalLoss": 0.0127,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "playback/cast/src/play",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0445,
+      "dominatorLoss": false,
+      "signalLoss": 0.0121,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "playback/cast/src/play/java",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0445,
+      "dominatorLoss": false,
+      "signalLoss": 0.0121,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "playback/cast/src/play/java/de",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0445,
+      "dominatorLoss": false,
+      "signalLoss": 0.0121,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "playback/cast/src/free",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0071,
+      "dominatorLoss": false,
+      "signalLoss": 0.0034,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "playback/cast/src/free/java",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0071,
+      "dominatorLoss": false,
+      "signalLoss": 0.0034,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "playback/cast/src/free/java/de",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0071,
+      "dominatorLoss": false,
+      "signalLoss": 0.0034,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "playback/base",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0445,
+      "dominatorLoss": false,
+      "signalLoss": 0.0192,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.004,
+      "dominatorLoss": false,
+      "signalLoss": 0.0058,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "playback/base/src",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0445,
+      "dominatorLoss": false,
+      "signalLoss": 0.0192,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.004,
+      "dominatorLoss": false,
+      "signalLoss": 0.0058,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "playback/base/src/test",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "playback/base/src/test/java",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "playback/base/src/test/java/de",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "playback/base/src/main",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0445,
+      "dominatorLoss": false,
+      "signalLoss": 0.0192,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.004,
+      "dominatorLoss": false,
+      "signalLoss": 0.0058,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "playback/base/src/main/java",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0445,
+      "dominatorLoss": false,
+      "signalLoss": 0.0192,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.004,
+      "dominatorLoss": false,
+      "signalLoss": 0.0058,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "playback/base/src/main/java/de",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0445,
+      "dominatorLoss": false,
+      "signalLoss": 0.0192,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.004,
+      "dominatorLoss": false,
+      "signalLoss": 0.0058,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "system",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0111,
+      "dominatorLoss": false,
+      "signalLoss": 0.0045,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "system/src",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0111,
+      "dominatorLoss": false,
+      "signalLoss": 0.0045,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "system/src/main",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0111,
+      "dominatorLoss": false,
+      "signalLoss": 0.0045,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "system/src/main/java",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0111,
+      "dominatorLoss": false,
+      "signalLoss": 0.0045,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "system/src/main/java/de",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0111,
+      "dominatorLoss": false,
+      "signalLoss": 0.0045,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "system/src/main/java/de/danoeh",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0111,
+      "dominatorLoss": false,
+      "signalLoss": 0.0045,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "model",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.1001,
+      "dominatorLoss": true,
+      "signalLoss": 0.3656,
+      "verdict": "Q4-unsafe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "model/src",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.1001,
+      "dominatorLoss": true,
+      "signalLoss": 0.3656,
+      "verdict": "Q4-unsafe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "model/src/test",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "model/src/test/java",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "model/src/test/java/de",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "model/src/test/java/de/danoeh",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "model/src/main",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.1001,
+      "dominatorLoss": true,
+      "signalLoss": 0.3656,
+      "verdict": "Q4-unsafe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "model/src/main/java",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.1001,
+      "dominatorLoss": true,
+      "signalLoss": 0.3656,
+      "verdict": "Q4-unsafe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "model/src/main/java/de",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.1001,
+      "dominatorLoss": true,
+      "signalLoss": 0.3656,
+      "verdict": "Q4-unsafe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "model/src/main/java/de/danoeh",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.1001,
+      "dominatorLoss": true,
+      "signalLoss": 0.3656,
+      "verdict": "Q4-unsafe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "event",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0935,
+      "dominatorLoss": true,
+      "signalLoss": 0.1115,
+      "verdict": "Q4-unsafe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0018,
+      "dominatorLoss": false,
+      "signalLoss": 0.0046,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "event/src",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0935,
+      "dominatorLoss": true,
+      "signalLoss": 0.1115,
+      "verdict": "Q4-unsafe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0018,
+      "dominatorLoss": false,
+      "signalLoss": 0.0046,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "event/src/main",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0935,
+      "dominatorLoss": true,
+      "signalLoss": 0.1115,
+      "verdict": "Q4-unsafe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0018,
+      "dominatorLoss": false,
+      "signalLoss": 0.0046,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "event/src/main/java",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0935,
+      "dominatorLoss": true,
+      "signalLoss": 0.1115,
+      "verdict": "Q4-unsafe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0018,
+      "dominatorLoss": false,
+      "signalLoss": 0.0046,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "event/src/main/java/de",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0935,
+      "dominatorLoss": true,
+      "signalLoss": 0.1115,
+      "verdict": "Q4-unsafe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0018,
+      "dominatorLoss": false,
+      "signalLoss": 0.0046,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "event/src/main/java/de/danoeh",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0935,
+      "dominatorLoss": true,
+      "signalLoss": 0.1115,
+      "verdict": "Q4-unsafe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0018,
+      "dominatorLoss": false,
+      "signalLoss": 0.0046,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "parser",
+    "q4": {
+      "membershipLoss": 0.125,
+      "rankLoss": 0.0489,
+      "dominatorLoss": false,
+      "signalLoss": 0.0181,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.2353,
+      "rankLoss": 0.0436,
+      "dominatorLoss": false,
+      "signalLoss": 0.0327,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "parser/feed",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0288,
+      "dominatorLoss": false,
+      "signalLoss": 0.0102,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.125,
+      "rankLoss": 0.041,
+      "dominatorLoss": false,
+      "signalLoss": 0.0179,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "parser/feed/src",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0288,
+      "dominatorLoss": false,
+      "signalLoss": 0.0102,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.125,
+      "rankLoss": 0.041,
+      "dominatorLoss": false,
+      "signalLoss": 0.0179,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "parser/feed/src/test",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0111,
+      "dominatorLoss": false,
+      "signalLoss": 0.0075,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "parser/feed/src/test/java",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0111,
+      "dominatorLoss": false,
+      "signalLoss": 0.0075,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "parser/feed/src/test/java/de",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0111,
+      "dominatorLoss": false,
+      "signalLoss": 0.0075,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "parser/feed/src/main",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0285,
+      "dominatorLoss": false,
+      "signalLoss": 0.0102,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0285,
+      "dominatorLoss": false,
+      "signalLoss": 0.0104,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "parser/feed/src/main/java",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0285,
+      "dominatorLoss": false,
+      "signalLoss": 0.0102,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0285,
+      "dominatorLoss": false,
+      "signalLoss": 0.0104,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "parser/feed/src/main/java/de",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0285,
+      "dominatorLoss": false,
+      "signalLoss": 0.0102,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0285,
+      "dominatorLoss": false,
+      "signalLoss": 0.0104,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "parser/transcript",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0014,
+      "dominatorLoss": false,
+      "signalLoss": 0.0063,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "parser/transcript/src",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0014,
+      "dominatorLoss": false,
+      "signalLoss": 0.0063,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "parser/transcript/src/test",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "parser/transcript/src/test/java",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "parser/transcript/src/test/java/de",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "parser/transcript/src/main",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.001,
+      "dominatorLoss": false,
+      "signalLoss": 0.0046,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "parser/transcript/src/main/java",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.001,
+      "dominatorLoss": false,
+      "signalLoss": 0.0046,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "parser/transcript/src/main/java/de",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.001,
+      "dominatorLoss": false,
+      "signalLoss": 0.0046,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "parser/media",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0188,
+      "dominatorLoss": false,
+      "signalLoss": 0.0079,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0004,
+      "dominatorLoss": false,
+      "signalLoss": 0.0046,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "parser/media/src",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0188,
+      "dominatorLoss": false,
+      "signalLoss": 0.0079,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0004,
+      "dominatorLoss": false,
+      "signalLoss": 0.0046,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "parser/media/src/test",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0004,
+      "dominatorLoss": false,
+      "signalLoss": 0.004,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "parser/media/src/test/java",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0004,
+      "dominatorLoss": false,
+      "signalLoss": 0.004,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "parser/media/src/test/java/de",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0004,
+      "dominatorLoss": false,
+      "signalLoss": 0.004,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "parser/media/src/main",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0188,
+      "dominatorLoss": false,
+      "signalLoss": 0.0079,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "parser/media/src/main/java",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0188,
+      "dominatorLoss": false,
+      "signalLoss": 0.0079,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "parser/media/src/main/java/de",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0188,
+      "dominatorLoss": false,
+      "signalLoss": 0.0079,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  }
+]
